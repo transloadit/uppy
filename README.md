@@ -14,12 +14,12 @@ Nothing to see here - a work in progress.
 
 ## Minimum viable product
 
+ - [ ] Tests on all main browsers from the start (see https://github.com/tus/tus-js-client)
+ - [ ] tus at the core of uploading (see https://github.com/tus/tus-js-client)
+ - [ ] Small core. Pluggable architecture
  - [ ] Documentation
  - [ ] Enable on existing forms, just like the jquery-sdk
- - [ ] Tests on all main browsers
- - [ ] https://github.com/tus/tus-js-client
  - [ ] Drag & Drop
- - [ ] Pluggable architecture
 
 ## Agenda 2015-11-16
 
