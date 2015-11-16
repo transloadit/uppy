@@ -1,6 +1,18 @@
 # transloadit-js-client
 
+## Design Goals
+ 
+ - Support for IE10+??
+ - Lightweight / easy on dependencies
+ - tus.io enabled
+ - ES6, transpiling to ES5
+ - Robust (retries / resumes for *all the things*), avoid showing 'weird errors'
+ - Small core, pluggable architecture for adding more file sources: (webcam / google drive / dropbox / etc)
+ - Customizable layout - but beautiful by default. Compatible with... Bootstrap?
 
+## Minutes 2015-11-16
+
+ - 
 
 ## Agenda 2015-11-16
 
@@ -14,3 +26,4 @@
  1. Decide what is the minimum viable product
  1. Figure out what the steps are needed to get to a minimum viable product
  1. Divide the workload
+ 1. Any more questions? Anything else?
