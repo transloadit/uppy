@@ -15,6 +15,7 @@ Nothing to see here - a work in progress.
 ## Minimum viable product
 
  - [ ] Documentation
+ - [ ] Enable on existing forms, just like the jquery-sdk
  - [ ] Tests on all main browsers
  - [ ] https://github.com/tus/tus-js-client
  - [ ] Drag & Drop
