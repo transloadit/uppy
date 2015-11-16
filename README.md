@@ -1,5 +1,7 @@
 # transloadit-js-client
 
+Nothing to see here - a work in progress.
+
 ## Design Goals
  
  - Support for IE10+??
