@@ -1,0 +1,32 @@
+{
+  "name": "transloadit-js-client",
+  "version": "0.0.0",
+  "description": "Transloadit JS Client",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run build:js && npm run build:css",
+    "build:js": "browserify js/lib/transloadit-js-sdk.js -o build/transloadit-js-sdk.js -t [ babelify ]",
+    "build:css": "node-sass --include-path scss scss/index.scss build/transloadit2.css", 
+    "watch": "npm run watch:js & npm run watch:css",
+    "watch:js": "watchify js/lib/transloadit-js-sdk.js -do build/transloadit-js-sdk.js", 
+    "watch:css": "nodemon -e scss -x \"npm run build:css\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/transloadit-js-client.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/transloadit/transloadit-js-client/issues"
+  },
+  "homepage": "https://github.com/transloadit/transloadit-js-client#readme",
+  "devDependencies": {
+    "babelify": "^6.4.0",
+    "browserify": "^12.0.1",
+    "node-sass": "^3.4.2",
+    "nodemon": "^1.8.1",
+    "watchify": "^3.6.1"
+  }
+}
