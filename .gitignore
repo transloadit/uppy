@@ -1,3 +1,2 @@
 node_modules
-build/transloadit2.css
-build/transloadit-js-sdk.js
+build/transloadit-js-client.*

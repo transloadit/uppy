@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run build:js && npm run build:css",
-    "build:js": "browserify js/lib/transloadit-js-sdk.js -o build/transloadit-js-sdk.js -t [ babelify ]",
-    "build:css": "node-sass --include-path scss scss/index.scss build/transloadit2.css", 
+    "build:js": "browserify js/lib/transloadit-js-client.js -o build/transloadit-js-client.js -t [ babelify ]",
+    "build:css": "node-sass --include-path scss scss/index.scss build/transloadit-js-client.css",
     "watch": "npm run watch:js & npm run watch:css",
-    "watch:js": "watchify js/lib/transloadit-js-sdk.js -do build/transloadit-js-sdk.js", 
+    "watch:js": "watchify js/lib/transloadit-js-client.js -do build/transloadit-js-client.js",
     "watch:css": "nodemon -e scss -x \"npm run build:css\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
