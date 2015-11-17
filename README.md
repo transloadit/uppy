@@ -13,3 +13,22 @@ A work in progress - nothing to see here.
  - Themable UI with a beautiful default. UI is opt-out if people want to use just tus for instance
 
 Check [open issues](https://github.com/transloadit/transloadit-js-client/milestones/Minimum%20Viable%20Product) for our Minimum Viable Product. 
+
+## Local Development
+
+First clone and install the project:
+
+```bash
+git clone git@github.com:transloadit/transloadit-js-client.git
+cd transloadit-js-client
+npm install
+```
+
+Now to get a sandbox environment set up, type:
+
+```bash
+npm run preview
+```
+
+This will `npm run build` the project into `./build`, and then serve that
+directory using a simple static http server.
