@@ -1,11 +1,13 @@
 language: node_js
 
 node_js:
-- 4.2.2
+  - 4.2.2
 
-before_script: "echo 'Build the project : )'"
+before_script:
+  - "npm run-script build"
 
-script: "echo 'Tested : )'"
+script:
+  - "echo 'Tested :)'"
 
 deploy:
   acl              : public_read
