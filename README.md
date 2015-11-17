@@ -28,6 +28,8 @@ Now to get a sandbox environment set up, type:
 
 ```bash
 npm run preview
+# For instant rebuilds, in a new tab, type:
+npm run watch
 ```
 
 This will `npm run build` the project into `./build`, and then serve that
