@@ -11,7 +11,7 @@
     "watch:js": "watchify js/lib/transloadit-js-client.js -do build/transloadit-js-client.js",
     "watch:css": "nodemon -e scss -x \"npm run build:css\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "preview": "npm run build & http-server ./build -d -o "
+    "preview": "npm run watch & http-server ./build -d -o "
   },
   "repository": {
     "type": "git",
