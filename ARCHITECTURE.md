@@ -8,13 +8,13 @@
 
 ### Plugins
 1. We should be able to register a plugin with something like:
-```
+```javascript
   transloadit.plugin('dragndrop', function(options) {
     console.log('dragging and dropping here');
   });
 ```
 or:
-```
+```javascript
   transloadit.use(dragndrop, {
     selector: '.drop'
   });
@@ -22,7 +22,7 @@ or:
 2. ?
 
 ### Usage
-```
+```javascript
 import transloadit   from 'transloadit';
 import dragndrop     from 'transloadit-dragndrop';
 import dropbox'      from 'transloadit-dropbox';
