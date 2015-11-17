@@ -1,0 +1,27 @@
+language: node_js
+
+node_js:
+- 4.2.2
+
+before_script: "echo 'Build the project : )'"
+
+script: "echo 'Tested : )'"
+
+deploy:
+  acl              : public_read
+  bucket           : hackathon.transloadit.com
+  cache_control    : no-cache
+  local-dir        : build
+  provider         : s3
+  skip_cleanup     : true
+  upload-dir       : transloadit-js-client/$TRAVIS_BRANCH
+  access_key_id    : AKIAI45MV2S7O67ZPLXA
+  secret_access_key:
+    secure: k+T/4s49gdbNftD8HSyfUU2UoF1His/11Fu5YcZjUTfjtroqozqf7JV7nW7hB86wkHzXamS/0SlsEhC/P7bgJ3jnrzQfoSFZDr3lJSMBsiVqwzTnyltqrerWqZQNYvcdu9sUOH6UCOpVjKZYB71k84gmgeSmPlyyH0ukziYex/bhs3qyaaix8GkyP58C9Z2PssIew6s/mVNYveidgWdMe3OxMVvfwYHlZ8euJ8QDvGWlKj/9Hh3W/BW6BcTmnzZONf8c4me0C0gZ6HbLtYCfkUB1r1mvKRiLviOOnFHzmNhM/7a+srgaPgY8CF0dQ7dO1wN5k8ClrF33jytFWz2R4ZZgzKzWxYgZ7tisqTjhBlbcKBDJNw05Y6bu7Fiyyw7HY1/mibK+Fu7Rfvt6ZBjDVJtmXiLSMT2vD1rMLUa+MyDCIyG2iNARThbj0aQbrkVjviYYXqG/2vQjKWlqJ9Sus0v0Y/jqkVwpviohGd2F2iPEqBexLYgBaxU/LgTBTYAKJ0SzKosRAW4dYxm6dnWABV1v7oxIUJAKvt51haNGqTO4a87UzAHa4ND2nZBYLWdKoGCKWmV3DBtI/ha2Re6gO2HoK95S3ZRV8hfT3Nzt2wONNtiObuuv7U+osh62wvX5Rj0XHb/sV3vopjJpanmm+zYWtI/+k/+453XNMOIXmBA=
+  on:
+    repo: transloadit/transloadit-js-client
+    all_branches: true
+
+notifications:
+  slack:
+    secure: L3iQQE8sZ0ik1Z26gPoNMiIam9EOEwYhraHCY60Jk/wmfH6SW/727yKXpgcb/yayx37rUZplvoO7H8e05ISxTJKSepEeqbBUIBQs48S8hr+FHk0VPtpP4HGxqaITRLm+mI1coPRvfISxzrB8d240oup6muhC9Ws4/LXi6v8miyIOs2zoYmGxd56TrUeON3UYlKt6dMava0V4bugARzrafN/tfyI9ccqbHzQLBspQvBI61DzZ5I2vnWpkjfWgIHz9Fl4VzXHqMXwjuTUEu8ibA12b3dHZiJEAoqeb9Oj9QcLPbstPLhlNTZZaOrfiFtwLctI2rFh37slDpAfk5idv3ycxcoG5rbCxgyg5i6dpQqrqHxnyglgHg2/nZ+YA5okeS7nJJNtU/4S6AFRWOUUWMVVY0VBEV+8w+uurl0PDy80RUY3uyK64qAgQ8U0M81/Ys1oyWyn78TqHcbby7V2Ws5I9Yakrq8D+mdfsWYCio8F6LXHSwJ0mt2FanJtdDvpPk9sAwsXZN0n8xhELt5TiRp3bzVIQ0IPUgF54dTG9/zWRvC1P4TFaFU/2fg73ZEUC5aWJoFMnLSZjbZvp5gwpCVd0MjSBk80nF9dHYcavIgJ0wMGI3BMb8Nn6+T11Gw/ycr7OGU4NMkj7i8vSFgKF74piWZyiNW8orkMN6XZgM+o=
