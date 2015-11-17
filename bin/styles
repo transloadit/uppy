@@ -1,0 +1,6 @@
+#!/bin/bash
+
+INPUT=src/scss/index.scss
+OUTPUT=build/transloadit-js-client.css
+
+node-sass $INPUT $OUTPUT
