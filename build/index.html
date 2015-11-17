@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>
+      Loading..
+    </title>
+    <link rel="shortcut icon" href="./favicon.ico">
+    <link rel="stylesheet" href="./transloadit-js-client.css" type="text/css" />
+  </head>
+  <body>
+    <h1>
+      Loading..
+    </h1>
+
+    <footer>
+      <hr />
+      <ul>
+        <li><a href="https://travis-ci.org/transloadit/transloadit-js-client">Travis</a></li>
+        <li><a href="https://github.com/transloadit/transloadit-js-client">GitHub</a></li>
+      </ul>
+    </footer>
+  </body>
+  <script src="./transloadit-js-client.js"></script>
+  <script>
+    var branch  = location.pathname.split('/')[2];
+    var elTitle = document.querySelector('title');
+    var elH1    = document.querySelector('h1');
+    var title   = 'You are reviewing the latest push of branch: ' + branch;
+    elTitle.innerHTML = title;
+    elH1.innerHTML    = title;
+  </script>
+</html>
