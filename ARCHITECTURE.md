@@ -25,7 +25,7 @@ or:
 ```javascript
 import transloadit   from 'transloadit';
 import dragndrop     from 'transloadit-dragndrop';
-import dropbox'      from 'transloadit-dropbox';
+import dropbox       from 'transloadit-dropbox';
 
 transloadit([
   dragndrop(),
