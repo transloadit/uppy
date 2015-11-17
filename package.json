@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run build:js && npm run build:css",
-    "build:js": "browserify js/lib/transloadit-js-client.js -o build/transloadit-js-client.js -t [ babelify ]",
-    "build:css": "node-sass --include-path scss scss/index.scss build/transloadit-js-client.css",
     "watch": "npm run watch:js & npm run watch:css",
-    "watch:js": "watchify js/lib/transloadit-js-client.js -do build/transloadit-js-client.js",
+    "test": "./scripts/test",
+    "build:js": "browserify src/js/lib/transloadit-js-client.js -o build/transloadit-js-client.js -t [ babelify ]",
+    "build:css": "node-sass --include-path src/scss src/scss/index.scss build/transloadit-js-client.css",
+    "watch:js": "watchify src/js/lib/transloadit-js-client.js -do build/transloadit-js-client.js",
     "watch:css": "nodemon -e scss -x \"npm run build:css\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "preview": "npm run watch & http-server ./build -d -o "
+    "preview": "npm run build & http-server ./build -d -o ",
+    "lint": "eslint *.js src/js"
   },
   "repository": {
     "type": "git",
@@ -26,9 +27,12 @@
   "devDependencies": {
     "babelify": "^6.4.0",
     "browserify": "^12.0.1",
+    "eslint": "^1.9.0",
     "node-sass": "^3.4.2",
     "nodemon": "^1.8.1",
+    "http-server": "^0.8.5",
+    "phantomjs": "^1.9.18",
     "watchify": "^3.6.1",
-    "http-server": "^0.8.5"
+    "zuul": "^3.7.2"
   }
 }
