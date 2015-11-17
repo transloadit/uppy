@@ -1,6 +1,5 @@
 # Contributing Guidelines
 
-
 ## CSS Guidelines
 The CSS standards followed in this project closely resemble those from [Medium's CSS Guidelines](https://gist.github.com/fat/a47b882eb5f84293c4ed). If it's not mentioned here, follow their guidelines.
 
@@ -74,9 +73,19 @@ h1 {
   color: red;
 }
 
+.article {
+  width: 100%;
+  padding: 32px;
+}
+
 /* GOOD */
 h1 {
   color: red;
+}
+
+.article {
+  padding: 32px;
+  width: 100%;
 }
 
 .wrapper {
