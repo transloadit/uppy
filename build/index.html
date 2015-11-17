@@ -1,44 +1,84 @@
-<html>
-  <head>
-    <title>
-      Loading..
-    </title>
-    <link rel="shortcut icon" href="./favicon.ico">
-    <link rel="stylesheet" href="./transloadit-js-client.css" type="text/css" />
-  </head>
-  <body>
-    <h1>
-      Loading..
-    </h1>
-    <p>
-      With this file we can easily test the built js client locally (via <code>npm run preview</code>)
-      and online.
-    </p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-    <div id="upload-target">
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Loading...</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+
+  <link rel="stylesheet" href="./transloadit-js-client.css" type="text/css" />
+</head>
+<body>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container">
+    <div class="row">
+      <div class="twelve columns" style="margin-top: 10%">
+        <h1>
+          Loading..
+        </h1>
+
+        <h4>transloadit-js-client</h4>
+        <p>
+          With this file we can easily test the built js client locally (via <code>npm run preview</code>)
+          and online.
+        </p>
+
+        <div id="upload-target">
+          Loading..
+        </div>
+
+      </div>
     </div>
+  </div>
 
+  <footer>
+    <hr />
+    <ul>
+      <li><a href="https://travis-ci.org/transloadit/transloadit-js-client">Travis</a></li>
+      <li><a href="https://github.com/transloadit/transloadit-js-client">GitHub</a></li>
+    </ul>
+  </footer>
 
+</body>
 
+<!-- Include the built js client -->
+<script src="./transloadit-js-client.js"></script>
 
-    <footer>
-      <hr />
-      <ul>
-        <li><a href="https://travis-ci.org/transloadit/transloadit-js-client">Travis</a></li>
-        <li><a href="https://github.com/transloadit/transloadit-js-client">GitHub</a></li>
-      </ul>
-    </footer>
-  </body>
-  <script src="./transloadit-js-client.js"></script>
-  <script>
-    var tl = Transloadit("#upload-target");
-  </script>
-  <script>
-    var branch  = location.pathname.split('/')[2] || 'local-unknown';
-    var elTitle = document.querySelector('title');
-    var elH1    = document.querySelector('h1');
-    var title   = 'You are reviewing branch: ' + branch;
-    elTitle.innerHTML = title;
-    elH1.innerHTML    = title;
-  </script>
+<!-- Apply the js client on a selector -->
+<script>
+  var tl = Transloadit("#upload-target");
+</script>
+
+<!-- Add the branch name to the <title> and <h1> of this page -->
+<script>
+  var branch        = location.pathname.split('/')[2] || 'local-unknown';
+  var elTitle       = document.querySelector('title');
+  var elH1          = document.querySelector('h1');
+  var title         = 'You are reviewing branch: ' + branch;
+  elTitle.innerHTML = title;
+  elH1.innerHTML    = title;
+</script>
 </html>
