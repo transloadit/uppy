@@ -7,6 +7,7 @@
     "build": "npm run build:js && npm run build:css",
     "watch": "npm run watch:js & npm run watch:css",
     "test": "./scripts/test",
+    "phantom-test": "zuul test/spec/upload.js --phantom",
     "build:js": "browserify src/js/lib/transloadit-js-client.js -o build/transloadit-js-client.js -t [ babelify ]",
     "build:css": "node-sass --include-path src/scss src/scss/index.scss build/transloadit-js-client.css",
     "watch:js": "watchify src/js/lib/transloadit-js-client.js -do build/transloadit-js-client.js",
