@@ -4,14 +4,18 @@
   "description": "Transloadit JS Client",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build:js && npm run build:css",
-    "build:js": "browserify js/lib/transloadit-js-client.js -o build/transloadit-js-client.js -t [ babelify ]",
-    "build:css": "node-sass --include-path scss scss/index.scss build/transloadit-js-client.css",
-    "watch": "npm run watch:js & npm run watch:css",
-    "watch:js": "watchify js/lib/transloadit-js-client.js -do build/transloadit-js-client.js",
+    "browser-sync": "browser-sync start --config bs-config.js",
+    "build": "npm run build:js & npm run build:css",
+    "build:css": "bin/styles",
+    "build:js": "bin/scripts node_modules/.bin/browserify",
+    "clean": "rm -rf build/*.js & rm -rf build/*.css",
+    "lint": "eslint src/js/lib/**/*.js",
+    "phantom-test": "zuul test/spec/upload.js --phantom",
+    "preview": "npm run watch & npm run browser-sync",
+    "test": "bin/test",
+    "watch": "npm run watch:css & npm run watch:js",
     "watch:css": "nodemon -e scss -x \"npm run build:css\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "preview": "npm run build & http-server ./build -d -o "
+    "watch:js": "bin/scripts node_modules/.bin/watchify"
   },
   "repository": {
     "type": "git",
@@ -24,11 +28,16 @@
   },
   "homepage": "https://github.com/transloadit/transloadit-js-client#readme",
   "devDependencies": {
+    "babel-eslint": "^4.1.5",
     "babelify": "^6.4.0",
+    "browser-sync": "^2.10.0",
     "browserify": "^12.0.1",
+    "eslint": "^1.9.0",
+    "http-server": "^0.8.5",
     "node-sass": "^3.4.2",
     "nodemon": "^1.8.1",
+    "phantomjs": "^1.9.18",
     "watchify": "^3.6.1",
-    "http-server": "^0.8.5"
+    "zuul": "^3.7.2"
   }
 }
