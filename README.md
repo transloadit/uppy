@@ -9,8 +9,9 @@ A work in progress - nothing to see here.
  - tus.io enabled
  - ES6
  - Robust (retries / resumes for *all the things*), avoid showing 'weird errors'
- - Small core, pluggable architecture for adding more file sources: (webcam / google drive / dropbox / etc)
+ - Small core, modular plugin architecture for everything: (modal / dragdrop / themes/ webcam / google drive / dropbox / etc)
  - Themable UI with a beautiful default. UI is opt-out if people want to use just tus for instance
+ - Compatible with React
 
 Check [open issues](https://github.com/transloadit/transloadit-js-client/milestones/Minimum%20Viable%20Product) for our Minimum Viable Product. 
 
