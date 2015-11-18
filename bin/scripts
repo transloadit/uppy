@@ -1,0 +1,8 @@
+#!/bin/bash
+
+ENTRY=src/js/lib/transloadit-js-client.js
+OUTPUT=build/transloadit-js-client.js
+TRANSFORMS="[ babelify ]"
+
+# Argument should be browserify or watchify
+$1 $ENTRY -o $OUTPUT -t $TRANSFORMS

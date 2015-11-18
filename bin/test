@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Move into a known directory
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR/..
+
+npm run phantom-test -s
+result=$?
+if [ "$result" = 0 ];
+then
+  if [ "${CI}" = "true" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ];
+  then
+    npm run zuul-test -s
+    result=$?
+  else
+    echo "Skipping zuul-test as this is not a master CI branch test run"
+  fi
+fi
+
+exit $result
