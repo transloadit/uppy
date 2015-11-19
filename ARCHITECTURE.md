@@ -38,6 +38,14 @@ transloadit
 
     *See [```es2015-preset```](https://babeljs.io/docs/plugins/preset-es2015/) for Babel and [```PreCSS```](https://github.com/jonathantneal/precss#plugins) for PostCSS.*
 
+    or just make it a code sample for easy copy/pasting and future customizations (no need to change the main function call, just add/remove lines to modify behaviour):
+    ```javascript
+    transloadit
+      .set({ wait: true })
+      .use(transloaditModal, {some: 'config'})
+      .use(dragdrop, {target: transloaditModal})
+    ```
+
 5. Users should be able to set themes and style settings in config: ```.use(myTheme)```.
 
 6. Would be cool if you could use whatever drag & drop library you wanted (DropZone) with our wrapper.
@@ -49,6 +57,12 @@ import dragndrop     from 'transloadit-dragndrop';
 import dropbox       from 'transloadit-dropbox';
 import instagram     from 'transloadit-instagram';
 import modal         from 'transloadit-modal';
+
+// import Transloadit from 'transloadit-client'
+// import { dropbox, instagram, dragdrop, webcam } from 'transloadit-client/plugins'
+
+// or to import all of them
+// import { * as plugins } from 'transloadit/plugins'
 
 transloadit
   .set({ wait: true })
