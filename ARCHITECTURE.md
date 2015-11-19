@@ -1,10 +1,10 @@
 # Draft Transloadit JavaScript SDK architecture
 
-### The main Processor
-1. Processor (Transloadit?) accepts ```options``` and an array of ```plugins``` (each plugin also has own ```options```)
-2. Processor iterates on plugins, calles each of them and returns the result.
-3. The result is passed from the plugin to ```prepareMedia``` for some final processign
-4. Then the processed stuff goes into ```upload``` which uploads everything to Transloadit
+### Core
+1. The core function `thansloadit` accepts `options` and exposes methods like `.use` for adding plugins and `.set` for setting options
+2. Each plugin is called by the `use` with given `options` as an argument.
+3. The result is passed from the plugin to ```prepareMedia``` for some final processing
+4. Then the processed files go into ```upload``` which uploads everything to Transloadit servers, using `tus`.
 
 ### Plugins
 1. Plugins should be registered like this:
@@ -27,9 +27,9 @@ transloadit
   .on('error', handleError);
 ```
 
-3. In ```transloadit-js``` everything is a plugin: a modal dialog, drag & drop, Instagram . We take the general approach from the new Babel and PostCSS — almost barebones by default, each chunk of functionality exists in as separate plugin — easier to pick and choose exactly what you need to get a lightweight solution for production, but also easier to work on and avoid merge conflicts.
+3. In ```transloadit-js``` everything is a plugin: a `Modal` dialog, `Drag & Drop`, `Instagram`. We take the general approach from the new Babel and PostCSS — almost barebones by default, each chunk of functionality exists as separate plugin — easier to pick and choose exactly what you need, to get a lightweight solution for production, while also easier to develop and avoid merge conflicts.
 
-4. Presets with basic plugins like modal & dragndrop. This should let people who just want to get it working as quickly as possible get started in seconds:
+4. Presets should exist with basic plugins like Modal & Dragndrop. This should let people who just want to get it working as quickly as possible get started in seconds:
     ```javascript
     transloadit
       .set({ wait: true })
