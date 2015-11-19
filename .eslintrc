@@ -165,7 +165,7 @@
     "prefer-reflect": 0,
     "prefer-template": 0,
     "quote-props": 0,
-    "quotes": [2, "double"],
+    "quotes": [2, "single"],
     "radix": 0,
     "id-match": 0,
     "require-jsdoc": 0,
