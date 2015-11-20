@@ -1,8 +1,8 @@
-# Draft Transloadit JavaScript SDK architecture
+# Transloadit JavaScript SDK architecture
 
 ### Core
-1. The core function `thansloadit` accepts `options` and exposes methods like `.use` for adding plugins and `.set` for setting options
-2. Each plugin is called by the `use` with given `options` as an argument.
+1. The core function `thansloadit` accepts `options` and exposes methods like `.use` for adding plugins and `.set` for setting options.
+2. Each plugin is then called by the `use` with given `options` as an argument.
 3. The result is passed from the plugin to ```prepareMedia``` for some final processing
 4. Then the processed files go into ```upload``` which uploads everything to Transloadit servers, using `tus`.
 
@@ -27,9 +27,9 @@ transloadit
   .on('error', handleError);
 ```
 
-3. In ```transloadit-js``` everything is a plugin: a `Modal` dialog, `Drag & Drop`, `Instagram`. We take the general approach from the new Babel and PostCSS — almost barebones by default, each chunk of functionality exists as separate plugin — easier to pick and choose exactly what you need, to get a lightweight solution for production, while also easier to develop and avoid merge conflicts.
+3. In ```transloadit-js``` everything is a plugin: a `Modal` dialog, `Drag & Drop`, `Instagram`. We borrow general approach from the new Babel and PostCSS — almost barebones by default, each chunk of functionality exists as separate plugin — easier to pick and choose exactly what you need to get a lightweight solution for production, while also easier to develop and avoid merge conflicts.
 
-4. Presets should exist with basic plugins like Modal & Dragndrop. This should let people who just want to get it working as quickly as possible get started in seconds:
+4. Presets should exist with basic plugins like `Modal` & `Drag & Drop`. This should let people who just want to get it working as quickly as possible get started in seconds:
     ```javascript
     transloadit
       .set({ wait: true })
@@ -54,7 +54,6 @@ transloadit
 ```javascript
 import transloadit   from 'transloadit';
 import dragndrop     from 'transloadit-dragndrop';
-import dropbox       from 'transloadit-dropbox';
 import instagram     from 'transloadit-instagram';
 import modal         from 'transloadit-modal';
 
@@ -73,3 +72,9 @@ transloadit
   .on('error', handleError)
   .on('done', handleResult);
 ```
+
+### References & Inspiration
+1. PostCSS
+2. Markdown-It
+3. Babel
+4. Lodash
