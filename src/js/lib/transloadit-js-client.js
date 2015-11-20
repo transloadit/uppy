@@ -16,5 +16,5 @@ transloadit()
   .use(dragndrop, {
     selector: '.drop'
   })
-  .use(instagram, {})
+  .use(instagram, {userID: 36177})
   .set({someOption: true});

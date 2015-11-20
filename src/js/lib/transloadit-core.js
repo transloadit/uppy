@@ -1,12 +1,13 @@
 
 // Using classes internally
 class Transloadit {
-  constructor(opts = {}) {
-    this.opts = opts;
+  constructor(options = {}) {
+    this.options = options;
   }
 
-  use(plugin, opts) {
-    plugin(opts);
+  use(plugin, options) {
+    const transloadit = this;
+    plugin(transloadit, options);
     return this;
   }
 
@@ -16,7 +17,7 @@ class Transloadit {
     return this;
   }
 
-  prepare() {
+  prepare(data) {
     // ...
   }
 

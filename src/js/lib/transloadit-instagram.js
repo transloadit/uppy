@@ -1,6 +1,20 @@
-// The Dragndrop plugin
+const DATA_FROM_INSTAGRAM = {
+  images: [
+    'https://unsplash.it/600/600?image=921',
+    'https://unsplash.it/600/600?image=870',
+    'https://unsplash.it/600/600?image=823'
+  ]
+};
 
-export default function instagram(options) {
-  console.log(options);
-  console.log('Put a Filter On It (https://youtu.be/iHmLljk2t8M)!');
+function fetchData(apiEndpoint) {
+  return Promise.resolve(DATA_FROM_INSTAGRAM);
+}
+
+export default function transloaditInstagram(core, options) {
+  const userID = options.userID;
+  fetchData('http://transloadit-endpoint/instagram/${userID}')
+    .then(function(data) {
+      console.log(data);
+      core.prepare(data);
+    });
 }
