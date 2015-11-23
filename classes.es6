@@ -3,25 +3,12 @@
 // file: core/Transloadit.js
 class Transloadit {
   constructor(opts) {
-    this.opts = opts
-  }
-  run() {
-    this.core = new TransloaditCore(this.opts)
-      .use(DragDrop, {modal: true, wait: this.opts.wait})
-      .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
-
-    return this.core.run();
-  }
-}
-
-// file: core/TransloaditCore.js
-class TransloaditCore {
-  constructor(opts) {
     // Dictates in what order different plugin types are ran:
-    this.types = ['selecter', 'uploader'];
+    this.types = ['presetter', 'selecter', 'uploader'];
 
     // Container for different types of plugins
     this.plugins = {
+      presetter: [],
       selecter: [],
       uploader: [],
     };
@@ -79,6 +66,17 @@ class TransloaditPlugin {
   }
 }
 
+// file: presets/TransloaditBasic.js
+class TransloaditBasic extends TransloaditPlugin {
+  constructor(core, opts) {
+    super(core, opts);
+    this.type = 'presetter';
+    this.core
+      .use(DragDrop, {modal: true, wait: true})
+      .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
+  }
+}
+
 // file: plugins/DragDrop.js
 class DragDrop extends TransloaditPlugin {
   constructor(core, opts) {
@@ -115,7 +113,7 @@ class Tus10 extends TransloaditPlugin {
 }
 
 // file: ./examples/advanced.js
-var transloadit = new TransloaditCore({wait: false});
+var transloadit = new Transloadit({wait: false});
 var files = transloadit
   .use(DragDrop, {modal: true})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
@@ -127,7 +125,11 @@ console.dir(files);
 
 
 // file: ./examples/novice.js
-var transloadit = new Transloadit({wait: false});
+var transloadit = new Transloadit();
+var files = transloadit
+  .use(TransloaditBasic)
+  .run();
+
 var files = transloadit.run();
 
 console.log('--> Finished transloadit. Final result: ');
