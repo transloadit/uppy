@@ -14,9 +14,9 @@ class Transloadit {
     };
   }
 
-  use(TransloaditPlugin, opts) {
+  use(Plugin, opts) {
     // Instantiate
-    var plugin = new TransloaditPlugin(this, opts);
+    var plugin = new Plugin(this, opts);
 
     // Save in container
     this.plugins[plugin.type].push(plugin);
