@@ -5,6 +5,7 @@ node_js:
 
 before_script:
   - "npm run-script build"
+  - "echo 'I think we need to make the build accessible to playground now?'"
 
 script:
   - "echo 'Tested :)'"
@@ -13,7 +14,7 @@ deploy:
   acl              : public_read
   bucket           : hackathon.transloadit.com
   cache_control    : no-cache
-  local-dir        : build
+  local-dir        : examples/playground
   provider         : s3
   skip_cleanup     : true
   upload-dir       : transloadit-js-client/$TRAVIS_BRANCH
