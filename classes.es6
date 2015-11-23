@@ -1,5 +1,6 @@
 'use strict';
 
+// file: core/Core.js
 class Core {
   constructor(opts) {
     // Dictates in what order different plugin types are ran:
@@ -49,7 +50,11 @@ class Core {
   }
 }
 
+// file: plugins/Plugin.js
 class Plugin {
+  // This contains boilerplate that all Plugins share - and should not be used
+  // directly. It also shows which methods final plugins should implement/override,
+  // this deciding on structure.
   constructor(core, opts) {
     this.core = core
     this.opts = opts
@@ -60,6 +65,7 @@ class Plugin {
   }
 }
 
+// file: plugins/DragDrop.js
 class DragDrop extends Plugin {
   constructor(core, opts) {
     super(core, opts);
@@ -74,6 +80,7 @@ class DragDrop extends Plugin {
   }
 }
 
+// file: plugins/Tus10.js
 class Tus10 extends Plugin {
   constructor(core, opts) {
     super(core, opts);
@@ -93,8 +100,7 @@ class Tus10 extends Plugin {
   }
 }
 
-// Example use:
-
+// file: ./examples/playground.js
 var transloadit = new Core({wait: false});
 var files = transloadit
   .use(DragDrop, {modal: true})
