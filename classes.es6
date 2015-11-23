@@ -1,7 +1,21 @@
 'use strict';
 
-// file: core/Core.js
-class Core {
+// file: core/Transloadit.js
+class Transloadit {
+  constructor(opts) {
+    this.opts = opts
+  }
+  run() {
+    this.core = new TransloaditCore(this.opts)
+      .use(DragDrop, {modal: true, wait: this.opts.wait})
+      .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
+
+    return this.core.run();
+  }
+}
+
+// file: core/TransloaditCore.js
+class TransloaditCore {
   constructor(opts) {
     // Dictates in what order different plugin types are ran:
     this.types = ['selecter', 'uploader'];
@@ -13,9 +27,9 @@ class Core {
     };
   }
 
-  use(Plugin, opts) {
+  use(TransloaditPlugin, opts) {
     // Instantiate
-    var plugin = new Plugin(this, opts);
+    var plugin = new TransloaditPlugin(this, opts);
 
     // Save in container
     this.plugins[plugin.type].push(plugin);
@@ -50,9 +64,9 @@ class Core {
   }
 }
 
-// file: plugins/Plugin.js
-class Plugin {
-  // This contains boilerplate that all Plugins share - and should not be used
+// file: plugins/TransloaditPlugin.js
+class TransloaditPlugin {
+  // This contains boilerplate that all TransloaditPlugins share - and should not be used
   // directly. It also shows which methods final plugins should implement/override,
   // this deciding on structure.
   constructor(core, opts) {
@@ -66,7 +80,7 @@ class Plugin {
 }
 
 // file: plugins/DragDrop.js
-class DragDrop extends Plugin {
+class DragDrop extends TransloaditPlugin {
   constructor(core, opts) {
     super(core, opts);
     this.type = 'selecter';
@@ -81,7 +95,7 @@ class DragDrop extends Plugin {
 }
 
 // file: plugins/Tus10.js
-class Tus10 extends Plugin {
+class Tus10 extends TransloaditPlugin {
   constructor(core, opts) {
     super(core, opts);
     this.type = 'uploader';
@@ -100,12 +114,21 @@ class Tus10 extends Plugin {
   }
 }
 
-// file: ./examples/playground.js
-var transloadit = new Core({wait: false});
+// file: ./examples/advanced.js
+var transloadit = new TransloaditCore({wait: false});
 var files = transloadit
   .use(DragDrop, {modal: true})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
   .run();
+
+console.log('--> Finished transloadit. Final result: ');
+console.dir(files);
+
+
+
+// file: ./examples/novice.js
+var transloadit = new Transloadit({wait: false});
+var files = transloadit.run();
 
 console.log('--> Finished transloadit. Final result: ');
 console.dir(files);
