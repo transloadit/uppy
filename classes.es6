@@ -2,6 +2,10 @@
 
 class Core {
   constructor(opts) {
+    // Dictates in what order different plugin types are ran:
+    this.types = ['selecter', 'uploader'];
+
+    // Container for different types of plugins
     this.plugins = {
       selecter: [],
       uploader: [],
@@ -9,22 +13,27 @@ class Core {
   }
 
   use(Plugin, opts) {
+    // Instantiate
     var plugin = new Plugin(this, opts);
+
+    // Save in container
     this.plugins[plugin.type].push(plugin);
+
     return this;
   }
 
   setProgress(plugin, percentage) {
+    // Any plugin can call this via `this.core.setProgress(this, precentage)`
     console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage);
     return this;
   }
 
   run() {
-    // Dictates in what order different plugin types are ran:
-    var types = ['selecter', 'uploader'];
+    // Walk over plugins in the order as defined by this.types.
     var files = []
-    for (var j in types) {
-      var type = types[j];
+    for (var j in this.types) {
+      var type = this.types[j];
+      // Walk over all plugins of this type, passing & modifying the files array as we go
       for (var i in this.plugins[type]) {
         var plugin = this.plugins[type][i];
         console.log('--> Now running ' + plugin.type + ' plugin ' + plugin.name + ': ');
@@ -33,6 +42,9 @@ class Core {
         console.log('');
       }
     }
+
+    // core.run is the final step and retuns the results (vs every other method, returning `this`)
+    // for chainability
     return files;
   }
 }
@@ -69,12 +81,15 @@ class Tus10 extends Plugin {
   }
 
   run(files) {
+
     this.core.setProgress(this, 1);
-    this.core.setProgress(this, 100);
+    var uploaded = []
     for (var i in files) {
-      files[i] = this.opts.endpoint + '/uploaded/' + files[i];
+      uploaded[i] = this.opts.endpoint + '/uploaded/' + files[i];
     }
-    return files;
+    this.core.setProgress(this, 100);
+
+    return uploaded;
   }
 }
 
