@@ -8,6 +8,7 @@
     "build": "npm run build:js & npm run build:css",
     "build:css": "bin/styles",
     "build:js": "bin/scripts node_modules/.bin/browserify",
+    "build:examples": "examples/buildAll",
     "clean": "rm -rf build/*.js & rm -rf build/*.css",
     "lint": "eslint src/js/lib/**/*.js",
     "phantom-test": "zuul test/spec/upload.js --phantom",

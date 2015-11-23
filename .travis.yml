@@ -5,7 +5,7 @@ node_js:
 
 before_script:
   - "npm run-script build"
-  - "echo 'I think we need to make the build accessible to playground now?'"
+  - "npm run-script build:examples"
 
 script:
   - "echo 'Tested :)'"
