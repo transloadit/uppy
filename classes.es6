@@ -4,21 +4,20 @@
 class Transloadit {
   constructor(opts) {
     // Dictates in what order different plugin types are ran:
-    this.types = ['presetter', 'selecter', 'uploader'];
+    this.types = [ 'presetter', 'selecter', 'uploader' ];
 
     // Container for different types of plugins
-    this.plugins = {
-      presetter: [],
-      selecter: [],
-      uploader: [],
-    };
+    this.plugins = {};
   }
 
   use(Plugin, opts) {
     // Instantiate
     var plugin = new Plugin(this, opts);
 
-    // Save in container
+    // Save in plugin container
+    if (!this.plugins[plugin.type]) {
+      this.plugins[plugin.type] = [];
+    }
     this.plugins[plugin.type].push(plugin);
 
     return this;
@@ -27,6 +26,7 @@ class Transloadit {
   setProgress(plugin, percentage) {
     // Any plugin can call this via `this.core.setProgress(this, precentage)`
     console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage);
+
     return this;
   }
 
@@ -57,10 +57,11 @@ class TransloaditPlugin {
   // directly. It also shows which methods final plugins should implement/override,
   // this deciding on structure.
   constructor(core, opts) {
-    this.core = core
-    this.opts = opts
+    this.core = core;
+    this.opts = opts;
     this.name = this.constructor.name;
   }
+
   run(files) {
     return files;
   }
@@ -86,8 +87,9 @@ class DragDrop extends TransloaditPlugin {
 
   run(files) {
     this.core.setProgress(this, 0);
+    var selected = [ {name: 'lolcat.jpeg'} ]
     this.core.setProgress(this, 100);
-    var selected = [ 'lolcat.jpeg' ]
+
     return selected;
   }
 }
@@ -100,17 +102,20 @@ class Tus10 extends TransloaditPlugin {
   }
 
   run(files) {
-
-    this.core.setProgress(this, 1);
-    var uploaded = []
+    this.core.setProgress(this, 0);
+    var uploaded = [];
     for (var i in files) {
-      uploaded[i] = this.opts.endpoint + '/uploaded/' + files[i];
+      var file = files[i];
+      this.core.setProgress(this, (i * 1) + 1);
+      uploaded[i]     = file;
+      uploaded[i].url = this.opts.endpoint + '/uploaded/' + file.name;
     }
     this.core.setProgress(this, 100);
 
     return uploaded;
   }
 }
+
 
 // file: ./examples/advanced.js
 var transloadit = new Transloadit({wait: false});
@@ -139,15 +144,21 @@ console.dir(files);
 
 // This outputs:
 
+// --> Now running presetter plugin TransloaditBasic:
+// []
+//
 // --> Now running selecter plugin DragDrop:
 // selecter plugin DragDrop set the progress to 0
 // selecter plugin DragDrop set the progress to 100
-// [ 'lolcat.jpeg' ]
+// [ { name: 'lolcat.jpeg' } ]
 //
 // --> Now running uploader plugin Tus10:
+// uploader plugin Tus10 set the progress to 0
 // uploader plugin Tus10 set the progress to 1
 // uploader plugin Tus10 set the progress to 100
-// [ 'http://master.tus.io:8080/uploaded/lolcat.jpeg' ]
+// [ { name: 'lolcat.jpeg',
+//     url: 'http://master.tus.io:8080/uploaded/lolcat.jpeg' } ]
 //
 // --> Finished transloadit. Final result:
-// [ 'http://master.tus.io:8080/uploaded/lolcat.jpeg' ]
+// [ { name: 'lolcat.jpeg',
+//     url: 'http://master.tus.io:8080/uploaded/lolcat.jpeg' } ]
