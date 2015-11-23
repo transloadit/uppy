@@ -10,6 +10,9 @@ before_script:
 script:
   - "echo 'Tested :)'"
 
+after_script:
+  - "cp build/transloadit-js-client.js examples/playground/static/js/transloadit-js-client.js"
+
 deploy:
   acl              : public_read
   bucket           : hackathon.transloadit.com
