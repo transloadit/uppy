@@ -26,9 +26,14 @@ class Core {
     for (var j in types) {
       var type = types[j];
       for (var i in this.plugins[type]) {
-        files = this.plugins[type][i].run(files);
+        var plugin = this.plugins[type][i];
+        console.log('--> Now running ' + plugin.type + ' plugin ' + plugin.name + ': ');
+        files = plugin.run(files);
+        console.dir(files);
+        console.log('');
       }
     }
+    return files;
   }
 }
 
@@ -50,14 +55,9 @@ class DragDrop extends Plugin {
   }
 
   run(files) {
+    this.core.setProgress(this, 0);
+    this.core.setProgress(this, 100);
     var selected = [ 'lolcat.jpeg' ]
-    console.log('');
-    console.log('Selected files: ');
-    console.dir(selected);
-    console.log('With options: ');
-    console.dir(this.opts);
-    this.core.setProgress(this, 80);
-
     return selected;
   }
 }
@@ -69,36 +69,39 @@ class Tus10 extends Plugin {
   }
 
   run(files) {
-    console.log('');
-    console.log('Uploading files: ');
-    console.dir(files);
-    console.log('With options: ');
-    console.dir(this.opts);
-    this.core.setProgress(this, 80);
-    return [ this.opts.endpoint + '/uploaded/lolcat.jpeg' ];
+    this.core.setProgress(this, 1);
+    this.core.setProgress(this, 100);
+    for (var i in files) {
+      files[i] = this.opts.endpoint + '/uploaded/' + files[i];
+    }
+    return files;
   }
 }
 
 // Example use:
 
 var transloadit = new Core({wait: false});
-transloadit
+var files = transloadit
   .use(DragDrop, {modal: true})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
   .run();
+
+console.log('--> Finished transloadit. Final result: ');
+console.dir(files);
 
 // $ node classes.es6
 
 // This outputs:
 
-// Selected files:
+// --> Now running selecter plugin DragDrop:
+// selecter plugin DragDrop set the progress to 0
+// selecter plugin DragDrop set the progress to 100
 // [ 'lolcat.jpeg' ]
-// With options:
-// { modal: true }
-// selecter plugin DragDrop set the progress to 80
 //
-// Uploading files:
-// [ 'lolcat.jpeg' ]
-// With options:
-// { endpoint: 'http://master.tus.io:8080' }
-// uploader plugin Tus10 set the progress to 80
+// --> Now running uploader plugin Tus10:
+// uploader plugin Tus10 set the progress to 1
+// uploader plugin Tus10 set the progress to 100
+// [ 'http://master.tus.io:8080/uploaded/lolcat.jpeg' ]
+//
+// --> Finished transloadit. Final result:
+// [ 'http://master.tus.io:8080/uploaded/lolcat.jpeg' ]
