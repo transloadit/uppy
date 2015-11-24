@@ -1,3 +1,4 @@
+import TransloaditPlugin from './TransloaditPlugin';
 class TransloaditBasic extends TransloaditPlugin {
   constructor(core, opts) {
     super(core, opts);

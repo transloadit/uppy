@@ -1,3 +1,4 @@
+import TransloaditPlugin from './TransloaditPlugin';
 export default class DragDrop extends TransloaditPlugin {
   constructor(core, opts) {
     super(core, opts);
