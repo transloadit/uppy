@@ -1,0 +1,44 @@
+#!/bin/bash
+TRANSFORMS="[ babelify ]"
+tool="${1:-node_modules/.bin/browserify}"
+toolBasename="$(basename "${tool}")"
+
+if [ "${toolBasename}" = "node-sass" ]; then
+  srcExtension="scss"
+  dstExtension="css"
+else
+  srcExtension="js"
+  dstExtension="js"
+fi
+
+# Individual files, built seperately
+allSourceFiles=""
+for src in $(find src -name "*.${srcExtension}" -type f); do
+  allSourceFiles="${allSourceFiles} ${src}"
+  dst="build/$(basename $(dirname ${src}))/$(basename ${src})"
+  echo "--> ${src} -> ${dst}"
+
+  # Argument should be browserify or watchify
+  if [ "${toolBasename}" = "node-sass" ]; then
+    "${tool}" "${src}" "${dst}"
+  else
+    "${tool}" "${src}" -o "${dst}" -t ${TRANSFORMS}
+  fi
+done
+
+# All files in one bundle
+if [ "${toolBasename}" = "node-sass" ]; then
+  "${tool}" ${allSourceFiles} "build/transloadit-bundle.${dstExtension}"
+else
+  "${tool}" ${allSourceFiles} -o "build/transloadit-bundle.${dstExtension}" -t ${TRANSFORMS}
+fi
+
+# Install into examples
+for path in $(find examples -type d -maxdepth 1 -mindepth 1); do
+  exampleProject="$(basename "${path}")"
+  rsync \
+    -ai \
+    --exclude='.DS_Store' \
+    --exclude='.empty' \
+  build/ "examples/${exampleProject}/static/transloadit-js-client"
+done

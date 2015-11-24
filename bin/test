@@ -2,14 +2,12 @@
 
 # Move into a known directory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $DIR/..
+cd ${DIR}/..
 
 npm run phantom-test -s
 result=$?
-if [ "$result" = 0 ];
-then
-  if [ "${CI}" = "true" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ];
-  then
+if [ "$result" = 0 ]; then
+  if [ "${CI}" = "true" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
     npm run zuul-test -s
     result=$?
   else
@@ -17,4 +15,4 @@ then
   fi
 fi
 
-exit $result
+exit ${result}

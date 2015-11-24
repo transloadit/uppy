@@ -6,8 +6,8 @@
   "scripts": {
     "browser-sync": "browser-sync start --config bs-config.js",
     "build": "npm run build:js && npm run build:css",
-    "build:css": "bin/styles",
-    "build:js": "bin/scripts node_modules/.bin/browserify",
+    "build:css": "bin/builder node_modules/.bin/node-sass",
+    "build:js": "bin/builder node_modules/.bin/browserify",
     "build:examples": "examples/buildAll node_modules/.bin/browserify",
     "clean": "rm -rf build/*.js && rm -rf build/*.css",
     "lint": "eslint src/js/lib/**/*.js",
@@ -16,7 +16,7 @@
     "test": "bin/test",
     "watch": "npm run watch:css && npm run watch:js",
     "watch:css": "nodemon -e scss -x \"npm run build:css\"",
-    "watch:js": "bin/scripts node_modules/.bin/watchify"
+    "watch:js": "bin/builder node_modules/.bin/watchify"
   },
   "repository": {
     "type": "git",
