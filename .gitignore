@@ -1,5 +1,6 @@
 node_modules
-build/transloadit-js-client.*
+build/
+
 npm-debug.log
 examples/playground/static/js/app.js
 
