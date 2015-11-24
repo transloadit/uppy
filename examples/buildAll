@@ -1,1 +1,8 @@
-./node_modules/.bin/browserify examples/playground/src/js/app.js -o examples/playground/static/js/app.js
+#!/bin/bash
+
+ENTRY=examples/playground/src/js/app.js
+OUTPUT=examples/playground/static/js/app.js
+TRANSFORMS="[ babelify ]"
+
+# Argument should be browserify or watchify
+$ENTRY -o $OUTPUT -t $TRANSFORMS
