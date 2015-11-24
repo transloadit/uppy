@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ENTRY=src/js/lib/transloadit-js-client.js
+ENTRY=src/js/core/transloadit-core.js
 OUTPUT=build/transloadit-js-client.js
 TRANSFORMS="[ babelify ]"
 

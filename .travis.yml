@@ -3,17 +3,19 @@ language: node_js
 node_js:
   - 4.2.2
 
-before_script:
-  - "npm run-script build"
-
 script:
+  - "npm run-script build"
+  - "npm run-script build:examples"
+  - "cp build/transloadit-js-client.js examples/playground/static/js/transloadit-js-client.js"
+
+after_script:
   - "echo 'Tested :)'"
 
 deploy:
   acl              : public_read
   bucket           : hackathon.transloadit.com
   cache_control    : no-cache
-  local-dir        : build
+  local-dir        : examples/playground
   provider         : s3
   skip_cleanup     : true
   upload-dir       : transloadit-js-client/$TRAVIS_BRANCH
