@@ -1,5 +1,8 @@
 # Transloadit JavaScript SDK architecture
 
+This file might be slightly outdate. Current proposal as of 2015-11-23 is reflected in  [classes.es6](https://github.com/transloadit/transloadit-js-client/blob/f1aa1072d5159c372624a57d5a8edaad2119efa9/classes.es6)
+
+
 ## Core
 
 1. The core function `transloadit` accepts `options` and exposes methods like `.use` for adding plugins and `.set` for setting options.
