@@ -2,3 +2,7 @@ node_modules
 build/transloadit-js-client.*
 npm-debug.log
 examples/playground/static/js/app.js
+
+examples/playground/static/css/transloadit-js-client.css
+
+examples/playground/static/js/transloadit-js-client.js

@@ -4,3 +4,7 @@ INPUT=src/scss/index.scss
 OUTPUT=build/transloadit-js-client.css
 
 node-sass $INPUT $OUTPUT
+
+# Copy the build into all examples:
+set -x
+cp build/transloadit-js-client.css examples/playground/static/css/
