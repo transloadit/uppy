@@ -1,6 +1,6 @@
-import Transloadit from './core/Transloadit';
-import DragDrop from './plugins/DragDrop';
-import Tus10 from './plugins/Tus10';
+import Transloadit from './src/core/Transloadit';
+import DragDrop from './src/plugins/DragDrop';
+import Tus10 from './src/plugins/Tus10';
 
 const transloadit = new Transloadit({wait: false});
 const files = transloadit
