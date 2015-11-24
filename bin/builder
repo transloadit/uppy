@@ -1,9 +1,12 @@
 #!/bin/bash
-TRANSFORMS="[ babelify ]"
-tool="${1:-node_modules/.bin/browserify}"
-toolBasename="$(basename "${tool}")"
 
-if [ "${toolBasename}" = "node-sass" ]; then
+# Setup
+#######################################################
+transformations="[ babelify ]"
+toolpath="${1:-node_modules/.bin/browserify}"
+toolname="$(basename "${toolpath}")"
+
+if [ "${toolname}" = "node-sass" ]; then
   srcExtension="scss"
   dstExtension="css"
 else
@@ -11,26 +14,40 @@ else
   dstExtension="js"
 fi
 
+if [ "${toolname}" = "watchify" ]; then
+  extraArgs="-t ${transformations} --ignore-watch=**/build/** --verbose"
+elif [ "${toolname}" = "browserify" ]; then
+  extraArgs="-t ${transformations} --ignore-watch=**/build/** --verbose"
+else
+  extraArgs=""
+fi
+
+
+bundleTarget="build/transloadit-js-client.${dstExtension}"
+
 # Individual files, built seperately
+#######################################################
 allSourceFiles=""
 for src in $(find src -name "*.${srcExtension}" -type f); do
   allSourceFiles="${allSourceFiles} ${src}"
   dst="build/$(basename $(dirname ${src}))/$(basename ${src})"
   echo "--> ${src} -> ${dst}"
 
-  # Argument should be browserify or watchify
-  if [ "${toolBasename}" = "node-sass" ]; then
-    "${tool}" "${src}" "${dst}"
+  # Argument should be `browserify`, or `node-sass`
+  if [ "${toolname}" = "node-sass" ]; then
+    "${toolpath}" "${src}" "${dst}" ${extraArgs}
   else
-    "${tool}" "${src}" -o "${dst}" -t ${TRANSFORMS}
+    "${toolpath}" "${src}" -o "${dst}" ${extraArgs}
   fi
 done
 
 # All files in one bundle
-if [ "${toolBasename}" = "node-sass" ]; then
-  "${tool}" ${allSourceFiles} "build/transloadit-bundle.${dstExtension}"
+#######################################################
+echo "--> *.${srcExtension} -> ${bundleTarget}"
+if [ "${toolname}" = "node-sass" ]; then
+  "${toolpath}" ${allSourceFiles} "${bundleTarget}" ${extraArgs}
 else
-  "${tool}" ${allSourceFiles} -o "build/transloadit-bundle.${dstExtension}" -t ${TRANSFORMS}
+  "${toolpath}" ${allSourceFiles} -o "${bundleTarget}" ${extraArgs}
 fi
 
 # Install into examples

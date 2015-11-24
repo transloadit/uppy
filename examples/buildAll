@@ -5,4 +5,4 @@ OUTPUT=examples/playground/static/js/app.js
 TRANSFORMS="[ babelify ]"
 
 # Argument should be browserify or watchify
-$ENTRY -o $OUTPUT -t $TRANSFORMS
+$1 $ENTRY -o $OUTPUT -t $TRANSFORMS
