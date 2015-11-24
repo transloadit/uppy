@@ -34,3 +34,15 @@ npm run preview
 
 This will `npm run build` the project into `./build`, and then serve that
 directory using a simple static http server.
+
+
+## What does Travis do?
+
+Travis should:
+
+- [x] check out code 
+- [x] build project
+- [ ] run unit tests
+- [ ] run acceptance tests
+- [x] copy/install the built project into any `examples/*/`
+- [x] deploy the examples to our hackathon S3 bucket in a folder named by branch (http://hackathon.transloadit.com/transloadit-js-client/master/index.html), so we can all play with the current state of the project & examples per branch, without installing everything locally.
