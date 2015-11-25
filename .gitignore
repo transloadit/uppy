@@ -4,6 +4,7 @@ npm-debug.log
 node_modules
 
 build/
+lib/
 examples/playground/static/js/app.js
 examples/playground/static/uppy/
 
