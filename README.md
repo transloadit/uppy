@@ -1,4 +1,4 @@
-# transloadit-js-client
+# uppy
 
 A work in progress - nothing to see here.
 
@@ -15,15 +15,15 @@ A work in progress - nothing to see here.
  - Small core, modular plugin architecture for everything: (modal / dragdrop / themes/ webcam / google drive / dropbox / etc)
  - Offering sugared shortcuts for novice users (presets)
 
-Check [open issues](https://github.com/transloadit/transloadit-js-client/milestones/Minimum%20Viable%20Product) for our Minimum Viable Product. 
+Check [open issues](https://github.com/transloadit/uppy/milestones/Minimum%20Viable%20Product) for our Minimum Viable Product. 
 
 ## Local Development
 
 First clone and install the project:
 
 ```bash
-git clone git@github.com:transloadit/transloadit-js-client.git
-cd transloadit-js-client
+git clone git@github.com:transloadit/uppy.git
+cd uppy
 npm install
 ```
 
@@ -46,4 +46,4 @@ Travis should:
 - [ ] run unit tests
 - [ ] run acceptance tests
 - [x] copy/install the built project into any `examples/*/`
-- [x] deploy the examples to our hackathon S3 bucket in a folder named by branch (http://hackathon.transloadit.com/transloadit-js-client/master/index.html), so we can all play with the current state of the project & examples per branch, without installing everything locally.
+- [x] deploy the examples to our hackathon S3 bucket in a folder named by branch (http://hackathon.transloadit.com/uppy/master/index.html), so we can all play with the current state of the project & examples per branch, without installing everything locally.

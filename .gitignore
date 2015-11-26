@@ -3,6 +3,6 @@ build/
 
 npm-debug.log
 examples/playground/static/js/app.js
-examples/playground/static/transloadit-js-client/
+examples/playground/static/uppy/
 
 examples/playground/static/js/app.js

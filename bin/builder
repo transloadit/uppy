@@ -23,7 +23,7 @@ else
 fi
 
 
-bundleTarget="build/transloadit-js-client.${dstExtension}"
+bundleTarget="build/uppy.${dstExtension}"
 
 # Individual files, built seperately
 #######################################################
@@ -57,5 +57,5 @@ for path in $(find examples -maxdepth 1 -mindepth 1 -type d); do
     -ai \
     --exclude='.DS_Store' \
     --exclude='.empty' \
-  build/ "examples/${exampleProject}/static/transloadit-js-client"
+  build/ "examples/${exampleProject}/static/uppy"
 done
