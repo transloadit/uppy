@@ -1,3 +1,9 @@
-export DragDrop from './DragDrop'
-export TransloaditBasic from './TransloaditBasic'
-export Tus10 from './Tus10'
+import DragDrop from './DragDrop'
+import TransloaditBasic from './TransloaditBasic'
+import Tus10 from './Tus10'
+
+export default {
+  DragDrop,
+  TransloaditBasic,
+  Tus10
+}

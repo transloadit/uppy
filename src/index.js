@@ -1,15 +1,12 @@
 import Core from './core'
 import {
   DragDrop,
-  UppyBasic,
+  TransloaditBasic,
   Tus10
 } from './plugins'
 
 import createUppy from './create'
 
-export default {
-  DragDrop,
-  TransloaditBasic,
-  Tus10,
-  createUppy
-}
+var uppy = createUppy();
+
+export default uppy
