@@ -1,0 +1,34 @@
+#benchmark-results
+    margin-bottom 2em
+    ul
+        list-style-type none
+        padding 0
+        margin-left 0
+
+    .framework, .time, .bar, .inner
+        display inline-block
+
+    .framework
+        width 4.2em
+        //text-align right
+        margin-right 1em
+        font-weight 600
+
+    .time
+        width 4.2em
+        margin-right 1em
+
+    .bar
+        width 60%
+        &.min .inner
+            background-color #e74c3c
+
+    .inner
+        height 3px
+        vertical-align middle
+        background-color #3498db
+
+@media screen and (max-width: 600px)
+    #benchmark-results
+        .bar
+            width 45%
