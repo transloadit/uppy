@@ -48,11 +48,15 @@ export default class DragDrop extends TransloaditPlugin {
     return files;
   }
 
-  run(files) {
+  run(done) {
+    console.log('DragDrop running!');
+    // console.log(files);
     this.listenForEvents();
     this.core.setProgress(this, 0);
     var selected = [ {name: 'lolcat.jpeg'} ];
     this.core.setProgress(this, 100);
     // return selected;
+    done(null, 'done with DragDrop');
+    // return Promise.resolve('done with DragDrop');
   }
 }

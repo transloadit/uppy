@@ -45,5 +45,8 @@
     "phantomjs": "^1.9.18",
     "watchify": "^3.6.1",
     "zuul": "^3.7.2"
+  },
+  "dependencies": {
+    "async": "^1.5.0"
   }
 }
