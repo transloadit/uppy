@@ -1,7 +1,7 @@
 {
   "name": "uppy",
-  "version": "0.0.0",
-  "description": "Transloadit JS Client",
+  "version": "0.0.1",
+  "description": "Almost as cute as a Puppy :dog:",
   "main": "index.js",
   "scripts": {
     "browser-sync": "browser-sync start --config bs-config.js",
