@@ -8,8 +8,8 @@ const files = transloadit
   .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
   .run();
 
-console.log('--> Finished transloadit. Final result: ');
-console.dir(files);
+// console.log('--> Finished transloadit. Final result: ');
+// console.dir(files);
 
 // var Transloadit = require('./src/core/Transloadit.js');
 // var DragDrop = require('./src/plugins/DragDrop.js');
