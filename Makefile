@@ -2,36 +2,28 @@ SHELL          := /usr/bin/env bash
 ghpages_repo   := "transloadit/uppy"
 ghpages_branch := "gh-pages"
 
-.PHONY: all
-all: install build deploy
-
-.PHONY: install
-install:
-	@echo "--> Installing dependencies.."
-	cd website && npm install
-
-.PHONY: build-site
-build-site:
-	@echo "--> Building site.."
-	cd website && ./node_modules/.bin/hexo generate
-
-.PHONY: build
-build: build-site
-	@echo "--> Building all.."
-	@echo "Done :)"
-
 .PHONY: pull
 pull:
 	@echo "--> Running pull.."
 	@git pull
 
-.PHONY: preview
-preview: install build
-	@echo "--> Running preview.."
-	cd website && ./node_modules/.bin/hexo server
+.PHONY: website-install
+website-install:
+	@echo "--> Installing dependencies.."
+	@cd website && npm install
 
-.PHONY: deploy
-deploy: pull build
+.PHONY: website-build
+website-build:
+	@echo "--> Building site.."
+	@cd website && ./node_modules/.bin/hexo generate
+
+.PHONY: website-preview
+website-preview: website-install website-build
+	@echo "--> Running preview.."
+	@cd website && ./node_modules/.bin/hexo server
+
+.PHONY: website-deploy
+website-deploy: pull website-build
 	@echo "--> Deploying to GitHub pages.."
 	@mkdir -p /tmp/deploy-$(ghpages_repo)
 

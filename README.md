@@ -17,7 +17,7 @@ A work in progress - nothing to see here.
 
 Check [open issues](https://github.com/transloadit/uppy/milestones/Minimum%20Viable%20Product) for our Minimum Viable Product. 
 
-## Local Development
+## Uppy Development
 
 First clone and install the project:
 
@@ -36,8 +36,30 @@ npm run preview
 This will `npm run build` the project into `./build`, and then serve that
 directory using a simple static http server.
 
+## Website Development
 
-## What does Travis do?
+We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for now so it's very easy to keep docs & code in sync as we're still 
+iterating at high velocity.
+
+This site is built with [hexo](http://hexo.io/). And deployed onto GitHub pages (`gh-pages` branch is of the `uppy` repo is overrwitten at every deploy. Site content is written in Markdown format located in `./website/src`. Pull requests welcome!
+  
+The website is currently a clone of the [Vue.js](http://vuejs.org/) website - just so we can hit the ground rolling in terms of setting up Haxo etc. Obviously as soon as possible, we should start rolling out our own layout & content.
+
+For local previews on `localhost:4000` type:
+
+```bash
+make website-preview
+```
+
+To deploy your work type
+
+```bash
+make website-deploy
+```
+
+## FAQ
+
+### What does Travis do?
 
 Travis should:
 
