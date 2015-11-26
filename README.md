@@ -43,7 +43,7 @@ iterating at high velocity.
 
 This site is built with [hexo](http://hexo.io/). And deployed onto GitHub pages (`gh-pages` branch is of the `uppy` repo is overrwitten at every deploy. Site content is written in Markdown format located in `./website/src`. Pull requests welcome!
   
-The website is currently a clone of the [Vue.js](http://vuejs.org/) website - just so we can hit the ground rolling in terms of setting up Haxo etc. Obviously as soon as possible, we should start rolling out our own layout & content.
+The website is currently a clone of Yuxi Evan You's [Vue.js](http://vuejs.org/) website ([view license](website/LICENSE)) - just so we can hit the ground rolling in terms of setting up Haxo etc. Obviously as soon as possible, we should start rolling out our own layout & content.
 
 For local previews on `localhost:4000` type:
 
