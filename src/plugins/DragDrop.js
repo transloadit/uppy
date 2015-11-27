@@ -1,5 +1,5 @@
 import { toggleClass } from '../core/Utils';
-import { TransloaditPlugin } from './';
+import TransloaditPlugin from './TransloaditPlugin';
 console.log('pizza', TransloaditPlugin);
 
 export default class DragDrop extends TransloaditPlugin {

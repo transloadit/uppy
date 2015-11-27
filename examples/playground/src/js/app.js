@@ -1,5 +1,5 @@
-import Transloadit from '../../../../core';
-import { DragDrop, Tus10 } from '../../../../plugins';
+import Transloadit from '../../../../src/core';
+import { DragDrop, Tus10 } from '../../../../src/plugins';
 
 const transloadit = new Transloadit({wait: false});
 const files = transloadit
