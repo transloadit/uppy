@@ -50,7 +50,7 @@ export default class DragDrop extends TransloaditPlugin {
 
   run(files, done) {
     console.dir({
-      method: "DragDrop.run",
+      method: 'DragDrop.run',
       files : files,
       done  : done
     });
