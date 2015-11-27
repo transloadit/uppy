@@ -276,7 +276,7 @@ var DropboxPlugin = (function () {
 
       // for each file in the directory, create a list item element
       var elems = files.map(function (file, i) {
-        var icon = file.isFolder ? 'Folder' : 'File';
+        var icon = file.isFolder ? 'folder' : 'file';
         return '<li data-type="' + icon + '" data-name="' + file.name + '"><span>' + icon + ' : </span><span> ' + file.name + '</span></li>';
       });
 
@@ -284,27 +284,32 @@ var DropboxPlugin = (function () {
       this._target.innerHTML = elems.sort().join('');
 
       if (this.currentDir.length > 1) {
-        var back = document.createElement('LI');
-        back.setAttribute('data-type', 'back');
-        back.innerHTML = '<span>...</span>';
-        this._target.appendChild(back);
+        var _parent = document.createElement('LI');
+        _parent.setAttribute('data-type', 'parent');
+        _parent.innerHTML = '<span>...</span>';
+        this._target.appendChild(_parent);
       }
 
       // add an onClick to each list item
       var fileElems = this._target.querySelectorAll('li');
+
       Array.prototype.forEach.call(fileElems, function (element) {
         var type = element.getAttribute('data-type');
-        if (type === 'File') {
-          element.addEventListener('click', function (e) {
+
+        if (type === 'file') {
+          element.addEventListener('click', function () {
             _this2.files.push(element.getAttribute('data-name'));
+            console.dir('files: ' + _this2.files);
           });
         } else {
-          element.addEventListener('dblclick', function (e) {
-            console.log(type);
-            console.log(_this2.currentDir.split('/').slice(0, length - 2));
-            console.log(_this2.currentDir.split('/').slice(0, length - 2).join('/'));
+          element.addEventListener('dblclick', function () {
             var length = _this2.currentDir.split('/').length;
-            _this2.currentDir = type === 'Folder' ? '' + _this2.currentDir + element.getAttribute('data-name') + '/' : _this2.currentDir.split('/').slice(0, length - 2).join('/');
+
+            if (type === 'folder') {
+              _this2.currentDir = '' + _this2.currentDir + element.getAttribute('data-name') + '/';
+            } else if (type === 'parent') {
+              _this2.currentDir = _this2.currentDir.split('/').slice(0, length - 2).join('/') + '/';
+            }
             console.log(_this2.currentDir);
             _this2.getDirectory();
           });
