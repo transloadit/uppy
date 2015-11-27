@@ -60,11 +60,12 @@ export default class Transloadit {
 
     // plugins.push(plugin.run.bind(plugin));
 
-    var pluginTypePack = [];
-    // function dummy(cb) {
-    //   cb(null, 'smth');
-    // }
-    // pluginTypePack.push(dummy);
+    var pluginTypePacks = [];
+    function dummy(cb) {
+      cb(null, 'smth');
+    }
+    // pluginTypePacks.push(async.value([]));
+    pluginTypePacks.push(dummy);
 
     for (let j in this.types) {
       const type = this.types[j];
@@ -75,18 +76,24 @@ export default class Transloadit {
         pluginPack.push(plugin.run.bind(plugin));
       }
       // console.log(pluginPack);
-      const pluginTypePackExecuter = function (done) {
+
+      // async.parallel(pluginPack, function (err, files) {
+      //   // console.log('parallel done');
+      //   console.log(files);
+      //   // done(files);
+      // });
+      const pluginTypePackExecuter = function (files, done) {
         async.parallel(pluginPack, function (err, files) {
           // console.log('parallel done');
-          console.log(files);
+          // console.log(files);
           done(files);
         });
       };
-      pluginTypePack.push(pluginTypePackExecuter);
-    }
-    // console.log(pluginTypePack);
 
-    async.waterfall(pluginTypePack, function (result) {
+      pluginTypePacks.push(pluginTypePackExecuter);
+    }
+
+    async.waterfall(pluginTypePacks, function (result) {
       // console.log(result);
     });
 
