@@ -2,7 +2,6 @@
 Thumbs.db
 npm-debug.log
 node_modules
-build/
 dist/
 lib/
 examples/playground/static/js/app.js
