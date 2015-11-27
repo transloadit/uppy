@@ -8,4 +8,4 @@ export default {
   DragDrop,
   TransloaditBasic,
   Tus10
-}
+};
