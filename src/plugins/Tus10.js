@@ -6,7 +6,7 @@ export default class Tus10 extends TransloaditPlugin {
     this.type = 'uploader';
   }
 
-  run(done) {
+  run(files, done) {
     // console.log(files);
     this.core.setProgress(this, 0);
     var uploaded = [];
