@@ -1,5 +1,5 @@
 import TransloaditPlugin from './TransloaditPlugin';
-console.log('pizza', TransloaditPlugin)
+
 // This is how we roll $('.element').toggleClass in non-jQuery world
 function toggleClass(el, className) {
   // console.log(el);

@@ -1,5 +1,5 @@
 import TransloaditPlugin from './TransloaditPlugin';
-console.log(TransloaditPlugin)
+
 class TransloaditBasic extends TransloaditPlugin {
   constructor(core, opts) {
     super(core, opts);
