@@ -13,7 +13,7 @@
     "clean": "rm -rf lib && rm -rf dist",
     "lint": "eslint src/**/*.js",
     "dev": "npm run watch & npm run server",
-    "dev:examples": "npm run watch & npm run server",
+    "dev:examples": "npm run watch:examples & npm run server",
     "server": "browser-sync start --config bs-config.js",
     "test": "bin/test",
     "test:phantom": "zuul test/spec/upload.js --phantom",
