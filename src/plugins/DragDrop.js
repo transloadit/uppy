@@ -48,7 +48,7 @@ export default class DragDrop extends TransloaditPlugin {
     return files;
   }
 
-  run(done) {
+  run(files, done) {
     console.log('DragDrop running!');
     // console.log(files);
     this.listenForEvents();
