@@ -1,6 +1,6 @@
 # Transloadit JavaScript SDK architecture
 
-This file might be slightly outdate. Current proposal as of 2015-11-23 is reflected in  [classes.es6](https://github.com/transloadit/transloadit-js-client/blob/f1aa1072d5159c372624a57d5a8edaad2119efa9/classes.es6)
+This file might be slightly outdate. Current proposal as of 2015-11-23 is reflected in  [classes.es6](https://github.com/transloadit/uppy/blob/f1aa1072d5159c372624a57d5a8edaad2119efa9/classes.es6)
 
 
 ## Core

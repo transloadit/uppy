@@ -1,8 +1,15 @@
-node_modules
-build/
-
+.DS_Store
+Thumbs.db
 npm-debug.log
-examples/playground/static/js/app.js
-examples/playground/static/transloadit-js-client/
+node_modules
 
+build/
 examples/playground/static/js/app.js
+examples/playground/static/uppy/
+
+website/db.json
+website/*.log
+website/node_modules/
+website/public/
+website/.deploy*/
+website/src/_drafts

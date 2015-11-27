@@ -1,0 +1,16 @@
+<div class="sidebar">
+  <ul class="main-menu">
+      <%- partial('partials/main_menu') %>
+  </ul>
+</div>
+<div class="content blog">
+<h1 style="text-align: center; margin-bottom:.5em">The Uppy.js Blog</h1>
+<% site.posts.sort('date', -1).each(function (post) { %>
+    <div class="post">
+        <h2><a href="/<%- post.path %>"><%- post.title %></a></h2>
+        <h4><%- post.date.format('MMM D[,] YYYY') %></h4>
+        <div><%- post.excerpt %></div>
+        <a href="/<%- post.path %>">... continue reading</a>
+    </div>
+<% }) %>
+</div>
