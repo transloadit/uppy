@@ -1,0 +1,11 @@
+SRC="src/index.js"
+OUT="uppy.js"
+
+OUTDIR="dist"
+TRANSFORMS="[ babelify ]"
+FLAGS="-t [ babelify ] --standalone Uppy"
+
+rm -rf $OUTDIR
+mkdir $OUTDIR
+
+browserify $SRC $FLAGS > $OUTDIR/$OUT
