@@ -57,9 +57,9 @@ export default class Transloadit {
 
     async.waterfall(typeMethods, function (err, finalFiles) {
       console.dir({
-        err       :err,
-        finalFiles:finalFiles
-      })
+        err       : err ,
+        finalFiles: finalFiles
+      });
     });
   }
 }
