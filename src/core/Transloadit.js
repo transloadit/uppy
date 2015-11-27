@@ -1,6 +1,6 @@
 import async from 'async';
 
-export default class Transloadit {
+export default class {
   constructor(opts) {
     // Dictates in what order different plugin types are ran:
     this.types = [ 'presetter', 'selecter', 'uploader' ];
