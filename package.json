@@ -1,7 +1,7 @@
 {
-  "name": "transloadit-js-client",
-  "version": "0.0.0",
-  "description": "Transloadit JS Client",
+  "name": "uppy",
+  "version": "0.0.1",
+  "description": "Almost as cute as a Puppy :dog:",
   "main": "index.js",
   "scripts": {
     "browser-sync": "browser-sync start --config bs-config.js",
@@ -21,14 +21,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/transloadit/transloadit-js-client.git"
+    "url": "git+https://github.com/transloadit/uppy.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/transloadit/transloadit-js-client/issues"
+    "url": "https://github.com/transloadit/uppy/issues"
   },
-  "homepage": "https://github.com/transloadit/transloadit-js-client#readme",
+  "homepage": "https://github.com/transloadit/uppy#readme",
   "devDependencies": {
     "babel-eslint": "^4.1.5",
     "babelify": "^6.4.0",

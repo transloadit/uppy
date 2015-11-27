@@ -1,0 +1,3 @@
+---
+blog_index: true
+---

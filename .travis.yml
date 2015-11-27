@@ -17,12 +17,12 @@ deploy:
   local-dir        : examples/playground
   provider         : s3
   skip_cleanup     : true
-  upload-dir       : transloadit-js-client/$TRAVIS_BRANCH
+  upload-dir       : uppy/$TRAVIS_BRANCH
   access_key_id    : AKIAIULY4M67345T7IOQ
   secret_access_key:
     secure: "iQN9qqNgODP5J54m4J6XmuDTqPzeg20uUXbfccjUt5HVW+nljO1V5/onsQfxbjj225EFMNGPnyUvI7+PgezB/+ggyFfPcEbFVPPDYV8chhWWMK3r84o8IaaP05gmrGjy2YP/sOhLPk3ALkffwXyfbCNDd/XyW8821B7uugJo7zlQlZv7cQ4/s2p4o87VVgNL+0Wm47py5YqpNaTUM2KGlZtoniFYknWCzRmbQz9fPIZiVpWcyOdPbzb/qqNtdH/GNvDIKbK6Eyj4PxwE3rve36q+cH6SQu8aVtoo3sU5P5URMuMzecHeH4YDPxJuwvtZy1ytp7MJbN5vvESoFdYSP6czwqHnyIgCT88VWW75Y3j13/OMEvfVPkxPFTIOSUjdYwC3oiZ+rWVQ6N0KhAatSgxSgR/JOWEfHVJBdpwT4NJZoMAGwREiDb7fansvRiuWi2+oVSizSvVXgDTqAfHCTLqtyCXoTBcVR9kylaT4pxXr4INw3ALunPwCE7Ut3ULWhC9QVzVzeuTTr8R5CACbKUynTICHuBd/OReipab8EsrktmAs/Np8qJ9lGQCT18T7DsoMO1BK2yTPXayUwwSAB8jTerFRrsx6yT7UCzQbDSRn/lgT8nR6m3svsq3yb6244wR3DzwH9UZm3EGpK57slpKQlsH4LfBrYbj9qlhZ+1I="
   on:
-    repo: transloadit/transloadit-js-client
+    repo: transloadit/uppy
     all_branches: true
 
 notifications:

@@ -1,0 +1,197 @@
+@import "_settings"
+@import "_syntax"
+
+body
+    font-family $body-font
+    font-size $body-font-size
+    -webkit-font-smoothing antialiased
+    -moz-osx-font-smoothing grayscale
+    color $medium
+    margin 0
+
+a
+    text-decoration none
+    color $medium
+
+img
+    border none
+
+h1, h2, h3, h4, strong
+    font-weight 600
+    color $dark
+
+code, pre
+    font-family $code-font
+    font-size $code-font-size
+    background-color $codebg
+    -webkit-font-smoothing initial
+    -moz-osx-font-smoothing initial
+
+code
+    color #e96900
+    padding 3px 5px
+    margin 0 2px
+    border-radius 2px
+    white-space nowrap
+
+em
+    color $light
+
+p
+    word-spacing 0.05em
+
+a.button
+    display inline-block
+    font-family $code-font
+    font-weight 700
+    color #fff
+    background-color lighten($green, 8%)
+    border-bottom 2px solid darken($green, 12%)
+    padding 12px 14px
+    border-radius 4px
+    transition all .15s ease
+    &:hover
+        background-color lighten($green, 15%)
+        -webkit-transform translate(0, -2px)
+        transform translate(0, -2px)
+
+.highlight
+    overflow-x auto
+    position relative
+    padding 0
+    background-color $codebg
+    padding .8em .8em .4em
+    line-height 1.1em
+    border-radius $radius
+    table, tr, td
+        width 100%
+        border-collapse collapse
+        padding 0
+        margin 0
+    .gutter
+        width 1.5em
+    .code
+        pre
+            padding 1.2em 1.4em
+            line-height 1.5em
+            margin 0
+    &.html, &.js, &.bash, &.css
+        .code:after
+            position absolute
+            top 0
+            right 0
+            color #ccc
+            text-align right
+            font-size .75em
+            padding 5px 10px 0
+            line-height 15px
+            height 15px
+            font-weight 600
+    &.html .code:after
+        content 'HTML'
+    &.js .code:after
+        content 'JS'
+    &.bash .code:after
+        content 'Shell'
+    &.css .code:after
+        content 'CSS'
+
+#main
+    position relative
+    z-index 1
+    padding 0 60px 30px
+    overflow-x hidden
+
+#ad
+    width 130px
+    position fixed
+    z-index 99
+    bottom 10px
+    right 10px
+    padding 10px
+    background-color #fff
+    border-radius 3px
+    font-size 13px
+    .carbon-img, .carbon-text
+        display block
+        margin-bottom 6px
+        font-weight normal
+        color $medium
+    .carbon-poweredby
+        color #aaa
+        font-weight normal
+
+#nav
+    .nav-link
+        cursor pointer
+    .nav-dropdown-container
+        .nav-link
+            &:hover
+                border-bottom none
+        &:hover
+            .nav-dropdown
+                display block
+    .nav-dropdown
+        display none
+        position absolute
+        top 100%
+        left 0
+        background-color #fff
+        padding 10px 0
+        border 1px solid #ddd
+        border-bottom-color #ccc
+        text-align left
+        border-radius 4px
+        li
+            line-height 1.8em
+            margin 0
+            display block
+        a
+            color $light
+            font-size .9em
+            display block
+            padding 0 30px 0 20px
+            &:hover
+                color $green
+    .arrow
+        display inline-block
+        vertical-align middle
+        margin-top -1px
+        margin-left 6px
+        margin-right -14px
+        width 0
+        height 0
+        border-left 4px solid transparent
+        border-right 4px solid transparent
+        border-top 5px solid #ccc
+
+#donate
+    height 24px
+    .wrapper
+        vertical-align top
+        height 20px
+        border 1px solid #d4d4d4
+        display inline-block
+        box-sizing border-box
+        line-height 16px
+        border-radius 3px
+        cursor pointer
+        background-image linear-gradient(to bottom,#fcfcfc 0,#eee 100%)
+        position relative
+        width 72px
+        &:hover
+            border-color #ccc
+            background-image linear-gradient(to bottom,#eee 0,#ddd 100%)
+        img
+            width 14px
+            height 14px
+            position absolute
+            top 3px
+            left 5px
+        a
+            font 700 11px/14px 'Helvetica Neue', Helvetica, Arial, sans-serif
+            color #333333
+            text-shadow 0 1px 0 #fff
+            position absolute
+            top 2px
+            left 24px
