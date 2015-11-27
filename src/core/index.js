@@ -1,1 +1,1 @@
-export default from './Transloadit.js'
+export default from './Transloadit'

@@ -1,4 +1,4 @@
-import TransloaditPlugin from '../plugins/TransloaditPlugin';
+import { TransloaditPlugin } from './';
 
 // This is how we roll $('.element').toggleClass in non-jQuery world
 function toggleClass(el, className) {
