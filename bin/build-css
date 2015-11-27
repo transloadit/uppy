@@ -1,0 +1,1 @@
+node_modules/.bin/node-sass src/scss/index.scss -o dist/uppy.css
