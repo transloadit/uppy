@@ -6,3 +6,5 @@ TRANSFORMS="[ babelify ]"
 
 # Argument should be browserify or watchify
 $1 $ENTRY -o $OUTPUT -t $TRANSFORMS
+
+browserify examples/dropbox/src/app.js -o examples/dropbox/static/js/app.js -t $TRANSFORMS
