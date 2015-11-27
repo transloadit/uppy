@@ -1,4 +1,5 @@
-import TransloaditPlugin from './TransloaditPlugin';
+import { TransloaditPlugin } from './';
+
 export default class Tus10 extends TransloaditPlugin {
   constructor(core, opts) {
     super(core, opts);

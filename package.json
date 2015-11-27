@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run build:lib && npm run build:umd && npm run build:umd:min && npm run build:css",
     "build:css": "bin/build-css",
-    "build:lib": "rm -rf ./lib && babel src -d lib --stage 0",
+    "build:lib": "babel src -d lib --stage 0",
     "build:umd": "./bin/build-umd",
     "build:umd:min": "./bin/build-umd",
     "build:examples": "examples/buildAll node_modules/.bin/browserify",
@@ -19,7 +19,7 @@
     "test:phantom": "zuul test/spec/upload.js --phantom",
     "watch": "npm run watch:css & npm run watch:js",
     "watch:css": "nodemon -e src/scss -x \"npm run build:css\"",
-    "watch:examples": "examples/buildAll node_modules/.bin/watchify & npm run watch:js",
+    "watch:examples": "(rm -rf lib && npm run build:lib) && (npm run watch:js & examples/buildAll node_modules/.bin/watchify)",
     "watch:js": "nodemon --watch src -e js --ignore src/scss -x \"npm run build:lib\""
   },
   "repository": {
