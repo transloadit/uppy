@@ -33,11 +33,13 @@ export default class {
       cb    : cb
     });
 
-    const methods = [];
-    for (let p in this.plugins[type]) {
-      const plugin = this.plugins[type][p];
-      methods.push(plugin.run.bind(plugin, files));
-    }
+    // const methods = [];
+    // for (let p in this.plugins[type]) {
+    //   const plugin = this.plugins[type][p];
+    //   methods.push(plugin.run.bind(plugin, files));
+    // }
+
+    const methods = this.plugins[type].map(plugin => plugin.run.bind(plugin, files));
 
     async.parallel(methods, cb);
   }
