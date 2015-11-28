@@ -44,7 +44,9 @@ This site is built with [hexo](http://hexo.io/) and Travis automatically deploys
   
 > The website is currently a clone of Yuxi Evan You's [Vue.js](http://vuejs.org/) website ([view license](website/LICENSE)) - just so we can hit the ground rolling in terms of setting up Haxo etc. Obviously as soon as possible, we should start rolling out our own layout & content.
 
-For local previews on `localhost:4000` type:
+`./website/update.js` is called during website builds to inject the Uppy versions & filesizes into the documentation.
+
+For local previews on `http://127.0.0.1:4000` type:
 
 ```bash
 make website-preview
