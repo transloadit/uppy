@@ -12,11 +12,11 @@ script:
   - "npm run-script build"
   - "npm run-script build:examples"
 
-# Automatically deploy website onto gh-pages
-after_script:
+# Automatically deploy website onto gh-pages (if master and not PR)
+after_success:
   - git config --global user.name 'Uppy Bot'
   - git config --global user.email 'uppybot@uppyjs.io'
-  - make website-deploy ghpages_url=${GHPAGES_URL}
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && make website-deploy ghpages_url=${GHPAGES_URL}
 
 env:
   global:
