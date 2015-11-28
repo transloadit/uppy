@@ -4,7 +4,7 @@ type: guide
 order: 2
 ---
 
-Uppy.js (pronounced /vjuː/, like **view**) is a library for building interactive web interfaces. The goal of Uppy.js is to provide the benefits of **reactive data binding** and **composable view components** with an API that is as simple as possible.
+Uppy.js (pronounced like puppy) is a library for building interactive web interfaces. The goal of Uppy.js is to provide the benefits of **reactive data binding** and **composable view components** with an API that is as simple as possible.
 
 Uppy.js itself is not a full-blown framework - it is focused on the view layer only. It is therefore very easy to pick up and to integrate with other libraries or existing projects. On the other hand, when used in combination with proper tooling and supporting libraries, Uppy.js is also perfectly capable of powering sophisticated Single-Page Applications.
 
