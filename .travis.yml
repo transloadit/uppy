@@ -3,6 +3,11 @@ language: node_js
 node_js:
   - 4.2.2
 
+addons:
+  apt:
+    packages:
+    - g++-4.8
+
 script:
   - "npm run-script build"
   - "npm run-script build:examples"
