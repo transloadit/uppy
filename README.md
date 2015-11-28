@@ -38,9 +38,11 @@ directory using a simple static http server.
 
 ## Website Development
 
-We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity.
+We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity. For those reading this and screaming murder, [HashiCorp does this](https://github.com/hashicorp/terraform/tree/master/website) for all their projects, and it working well for them on a scale vastly more impressive than ours.
 
-This site is built with [hexo](http://hexo.io/) and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch at every deploy). Content is written in Markdown and located in `./website/src`. Pull requests welcome!
+The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the [`gh-pages`](https://github.com/transloadit/uppy/tree/gh-pages) branch at every deploy).
+
+Content is written in Markdown and located in `./website/src`. Pull requests welcome!
   
 > The website is currently a clone of Yuxi Evan You's [Vue.js](http://vuejs.org/) website ([view license](website/LICENSE)) - just so we can hit the ground rolling in terms of setting up Haxo etc. Obviously as soon as possible, we should start rolling out our own layout & content.
 
