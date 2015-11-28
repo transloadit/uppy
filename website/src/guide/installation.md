@@ -2,7 +2,7 @@
 title: Installation
 type: guide
 order: 0
-vue_version: 1.0.10
+uppy_version: 0.0.1
 dev_size: "240.69"
 min_size: "68.54"
 gz_size: "23.46"
@@ -22,7 +22,7 @@ Simply download and include with a script tag. `Uppy` will be registered as a gl
 
 ### CDN
 
-Available on [jsdelivr](//cdn.jsdelivr.net/uppy/{{vue_version}}/uppy.min.js) or [cdnjs](//cdnjs.cloudflare.com/ajax/libs/uppy/{{vue_version}}/uppy.min.js) (takes some time to sync so the latest version might not be available yet).
+Available on [assets.transloadt.com](//assets.transloadt.com/uppy/{{uppy_version}}/uppy.min.js) or [cdnjs](//cdnjs.cloudflare.com/ajax/libs/uppy/{{uppy_version}}/uppy.min.js) (takes some time to sync so the latest version might not be available yet).
 
 ### CSP-compliant build
 

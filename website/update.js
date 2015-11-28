@@ -7,7 +7,7 @@ var installation = fs.readFileSync(installPath, 'utf-8')
 
 fs.writeFileSync(
   themeconfPath,
-  themeconfig.replace(/vue_version: .*/, 'vue_version: ' + version)
+  themeconfig.replace(/uppy_version: .*/, 'uppy_version: ' + version)
 )
 
 var sizes = {
@@ -24,7 +24,7 @@ for (var file in sizes) {
 fs.writeFileSync(
   installPath,
   installation
-    .replace(/vue_version: .*/, 'vue_version: ' + version)
+    .replace(/uppy_version: .*/, 'uppy_version: ' + version)
     .replace(/(\w+)_size:.*/g, function (m, p1) {
       return p1 + '_size: "' + sizes[p1] + '"'
     })

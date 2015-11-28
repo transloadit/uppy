@@ -1,5 +1,5 @@
 /*!
- * Uppy.js v1.0.10
+ * Uppy.js v0.0.1
  * (c) 2015 Transloadit
  * Released under the MIT License.
  */
@@ -9274,7 +9274,7 @@
     partial: partial
   };
 
-  Uppy.version = '1.0.10';
+  Uppy.version = '0.0.1';
 
   /**
    * Uppy and every constructor that extends Uppy has an
