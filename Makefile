@@ -9,12 +9,12 @@ website-install:
 	@cd website && npm install
 
 .PHONY: website-build
-website-build:
+website-build: website-install
 	@echo "--> Building site.."
 	@cd website && ./node_modules/.bin/hexo generate
 
 .PHONY: website-preview
-website-preview: website-install website-build
+website-preview: website-build
 	@echo "--> Running preview.."
 	@cd website && ./node_modules/.bin/hexo server
 
