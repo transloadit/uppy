@@ -46,6 +46,8 @@ This site is built with [hexo](http://hexo.io/) and Travis automatically deploys
 
 `./website/update.js` is called during website builds to inject the Uppy versions & filesizes into the documentation.
 
+It's recommended to exclude `./website/public/` from your editor if you want efficient searches.
+
 For local previews on `http://127.0.0.1:4000` type:
 
 ```bash
