@@ -6,9 +6,7 @@
         <h2>
             <%- type === 'api' ? 'API' : (type.charAt(0).toUpperCase() + type.slice(1)) %>
             <select class="version-select">
-                <option selected>1.0</option>
-                <option>0.12</option>
-                <option>0.11</option>
+                <option selected>0.0.1</option>
             </select>
         </h2>
         <ul class="menu-root">
@@ -18,10 +16,9 @@
                 </li>
             <% }) %>
         </ul>
-        <div id="donate">
+        <div id="buildbadge">
             <span class="wrapper" style="width: 110px">
-              <img src="/images/paypal.png">
-              <a href="https://www.paypal.me/transloadit" target="_blank">Buy Me Coffee</a>
+              <a href="https://travis-ci.org/transloadit/uppy"><img src="https://travis-ci.org/transloadit/uppy.svg" alt="Build Status"></a>
             </span>
         </div>
     </div>

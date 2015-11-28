@@ -3,9 +3,6 @@
 <% } %>
 <div class="content <%- page.type ? page.type + ' with-sidebar' : '' %>">
     <h1><%- page.title %><%- page.type === 'examples' ? ' Example' : '' %></h1>
-    <div id="ad">
-        <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?zoneid=1673&serve=C6AILKT&placement=transloadit" id="_carbonads_js"></script>
-    </div>
     <%- page.content %>
     <% if (page.type === 'guide') { %>
       <div class="guide-links">
@@ -17,5 +14,5 @@
         <% }) %>
       </div>
     <% } %>
-    <div class="footer">Caught a mistake or want to contribute to the documentation? <a href="https://github.com/transloadit/uppyjs.io" target="_blank">Fork this site on Github</a>!</div>
+    <div class="footer">Caught a mistake or want to contribute to the documentation? <a href="https://github.com/transloadit/uppy" target="_blank">Fork this site on Github</a>!</div>
 </div>

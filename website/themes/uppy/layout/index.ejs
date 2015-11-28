@@ -8,18 +8,22 @@
       <%- partial('partials/community_dropdown') %>
     </ul>
     <div id="logo-wrap">
-      <img id="logo" width="200" height="200" class="emoji dog" title="puppy" src="/images/emojis/dog.png">
-      <h1>Uppy.js</h1>
+      <img id="logo" width="200" class="emoji dog" title="puppy" src="<%- config.logo_large %>">
+      <h1><%- config.title %></h1>
     </div>
     <p class="desc">
       <strong>
-        Uppy - Almost as cute as a <img width="24" height="24" class="emoji dog" title="puppy" src="/images/emojis/dog.png">
+        <%- config.title %> - <%- config.subtitle %> <img align="absmiddle" width="18" height="18" class="emoji dog" title="puppy" src="/images/emojis/dog.png">
       </strong>
       <br />
       <br />
 
       Hey there stranger! We just copied the wonderful <a href="http://vuejs.org">Vue.js</a> website (we included its MIT license and attribution with our sources) to push our
         boilerplate out. We'll iterate and make this place our own - but there really is nothing to see here yet other than ~plagiarism : )
+
+      <br />
+      <br />
+      <%- config.description %>
 
     </p>
     <p class="buttons">
@@ -29,11 +33,11 @@
       <li><a href="https://twitter.com/transloadit" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @transloadit</a></li>
       <li><iframe src="http://ghbtns.com/github-btn.html?user=transloadit&repo=uppy&type=watch&count=true"
     allowtransparency="true" frameborder="0" scrolling="0" width="100" height="20"></iframe></li>
-      <li id="donate">
-        <span class="wrapper">
-          <img src="/images/paypal.png">
-          <a href="https://www.paypal.me/transloadit" target="_blank">Donate</a>
-        </span>
+
+      <li id="buildbadge">
+       <span class="wrapper">
+         <a href="https://travis-ci.org/transloadit/uppy"><img src="https://travis-ci.org/transloadit/uppy.svg" alt="Build Status"></a>
+       </span>
       </li>
     </ul>
   </div>
