@@ -1,5 +1,5 @@
 var fs = require('fs')
-var version = require('../uppy/package.json').version
+var version = require('../package.json').version
 var themeconfPath = 'themes/uppy/_config.yml'
 var installPath = 'src/guide/installation.md'
 var themeconfig = fs.readFileSync(themeconfPath, 'utf-8')
@@ -11,13 +11,13 @@ fs.writeFileSync(
 )
 
 var sizes = {
-  dev: 'Uppy.js',
-  min: 'uppy.min.js',
-  gz: 'uppy.min.js.gz'
+  // min: 'uppy.min.js',
+  // gz: 'uppy.min.js.gz',
+  dev: './uppy.js'
 }
 
 for (var file in sizes) {
-  var filesize = fs.statSync('../uppy/dist/' + sizes[file], 'utf-8').size
+  var filesize = fs.statSync('../dist/' + sizes[file], 'utf-8').size
   sizes[file] = (filesize / 1024).toFixed(2)
 }
 

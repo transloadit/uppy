@@ -11,6 +11,7 @@ website-install:
 .PHONY: website-build
 website-build: website-install
 	@echo "--> Building site.."
+	@cd website && node update.js
 	@cd website && ./node_modules/.bin/hexo generate
 
 .PHONY: website-preview

@@ -3,9 +3,9 @@ title: Installation
 type: guide
 order: 0
 uppy_version: 0.0.1
-dev_size: "240.69"
-min_size: "68.54"
-gz_size: "23.46"
+dev_size: "16.62"
+min_size: "undefined"
+gz_size: "undefined"
 ---
 
 > **Compatibility Note:** Uppy.js does not support IE8 and below.
