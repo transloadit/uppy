@@ -4,7 +4,7 @@
 
 # Site
 title: Uppy
-subtitle: "An open source file uploader nearly as cute as a puppy"
+subtitle: "Almost as cute as a puppy"
 logo_large: /images/cute-puppy-2.png
 logo_medium: /images/dog-172.png
 logo_icon: /images/emojis/dog.png
@@ -15,8 +15,8 @@ description: >
   Uppy is brought to you by the people behind Transloadit and as such has first class
   support for adding their uploading and encoding backend, but this is opt-in.
 author: Transloadit
-email:
-language:
+email: uppybot@uppyjs.io
+language: English
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
