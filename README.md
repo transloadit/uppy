@@ -11,7 +11,7 @@ A work in progress - nothing to see here.
  - Robust (retries / resumes for *all the things*), avoid showing 'weird errors'
  - Themable UI with a beautiful default
  - Compatible with React (Native)
- - Should work great on mobile
+ - Works great on mobile
  - Small core, modular plugin architecture for everything: (modal / dragdrop / themes/ webcam / google drive / dropbox / etc)
  - Offering sugared shortcuts for novice users (presets)
 
@@ -38,23 +38,16 @@ directory using a simple static http server.
 
 ## Website Development
 
-We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for now so it's very easy to keep docs & code in sync as we're still 
-iterating at high velocity.
+We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity.
 
-This site is built with [hexo](http://hexo.io/). And deployed onto GitHub pages (`gh-pages` branch is of the `uppy` repo is overrwitten at every deploy. Site content is written in Markdown format located in `./website/src`. Pull requests welcome!
+This site is built with [hexo](http://hexo.io/) and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch at every deploy). Content is written in Markdown and located in `./website/src`. Pull requests welcome!
   
-The website is currently a clone of Yuxi Evan You's [Vue.js](http://vuejs.org/) website ([view license](website/LICENSE)) - just so we can hit the ground rolling in terms of setting up Haxo etc. Obviously as soon as possible, we should start rolling out our own layout & content.
+> The website is currently a clone of Yuxi Evan You's [Vue.js](http://vuejs.org/) website ([view license](website/LICENSE)) - just so we can hit the ground rolling in terms of setting up Haxo etc. Obviously as soon as possible, we should start rolling out our own layout & content.
 
 For local previews on `localhost:4000` type:
 
 ```bash
 make website-preview
-```
-
-To deploy your work type
-
-```bash
-make website-deploy
 ```
 
 ## FAQ
