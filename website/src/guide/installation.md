@@ -15,7 +15,7 @@ gz_size: "undefined"
 Simply download and include with a script tag. `Uppy` will be registered as a global variable. **Pro tip: don't use the minified version during development. you will miss out all the nice warnings for common mistakes.**
 
 <div id="downloads">
-<a class="button" href="/js/Uppy.js" download>Development Version</a><span class="light info">With full warnings and debug mode</span>
+<a class="button" href="/js/uppy.js" download>Development Version</a><span class="light info">With full warnings and debug mode</span>
 
 <a class="button" href="/js/uppy.min.js" download>Production Version</a><span class="light info">Warnings stripped, {{gz_size}}kb min+gzip</span>
 </div>
