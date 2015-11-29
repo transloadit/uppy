@@ -8,7 +8,7 @@ min_size: "undefined"
 gz_size: "undefined"
 ---
 
-> **Compatibility Note:** Uppy.js does not support IE8 and below.
+> **Compatibility Note:** Uppy does not support IE8 and below.
 
 ## Standalone
 
@@ -30,7 +30,7 @@ Some environments, such as Google Chrome Apps, enforces Content Security Policy 
 
 ## NPM
 
-NPM is the recommended installation method when building large scale apps with Uppy.js. It pairs nicely with a CommonJS module bundler such as [Webpack](http://webpack.github.io/) or [Browserify](http://browserify.org/). Uppy.js also provides accompanying tools for authoring [Single File Components](application.html#Single_File_Components).
+NPM is the recommended installation method when building large scale apps with Uppy. It pairs nicely with a CommonJS module bundler such as [Webpack](http://webpack.github.io/) or [Browserify](http://browserify.org/). Uppy also provides accompanying tools for authoring [Single File Components](application.html#Single_File_Components).
 
 ``` bash
 # latest stable
