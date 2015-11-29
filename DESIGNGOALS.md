@@ -8,3 +8,5 @@
  - Works great on mobile
  - Small core, modular plugin architecture for everything: (modal / dragdrop / themes/ webcam / google drive / dropbox / etc)
  - Offering sugared shortcuts for novice users (presets)
+
+ 

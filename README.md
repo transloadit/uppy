@@ -33,7 +33,7 @@ Content is written in Markdown and located in `./website/src`. Pull requests wel
   
 > The website is currently a clone of Yuxi Evan You's [Vue.js](http://vuejs.org/) website ([view license](website/LICENSE)) - just so we can hit the ground rolling in terms of setting up Haxo etc. Obviously as soon as possible, we should start rolling out our own layout & content.
 
-`./website/update.js` is called during website builds to inject the Uppy versions & filesizes into the documentation.
+`./website/update.js` is called during website builds to inject the Uppy versions & filesizes into the documentation. `website` in an independent folder and so it cannot rely on anything from the root project, without `update.js` explicitly making it available (copying).
 
 It's recommended to exclude `./website/public/` from your editor if you want efficient searches.
 

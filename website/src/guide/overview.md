@@ -31,7 +31,7 @@ var exampleData = {
   name: 'Uppy'
 }
 
-// create a Uppy instance, or, a "ViewModel"
+// create an Uppy instance, or, a "ViewModel"
 // which links the View and the Model
 var exampleVM = new Uppy({
   el: '#example-1',

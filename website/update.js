@@ -1,9 +1,11 @@
-var fs = require('fs')
-var version = require('../package.json').version
+var fs            = require('fs')
+var version       = require('../package.json').version
 var themeconfPath = 'themes/uppy/_config.yml'
-var installPath = 'src/guide/installation.md'
-var themeconfig = fs.readFileSync(themeconfPath, 'utf-8')
-var installation = fs.readFileSync(installPath, 'utf-8')
+var installPath   = 'src/guide/installation.md'
+var themeconfig   = fs.readFileSync(themeconfPath, 'utf-8')
+var installation  = fs.readFileSync(installPath, 'utf-8')
+
+fs.writeFileSync('themes/uppy/layout/partials/DESIGNGOALS.md', fs.readFileSync('../DESIGNGOALS.md', 'utf-8'));
 
 fs.writeFileSync(
   themeconfPath,

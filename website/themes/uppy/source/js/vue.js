@@ -1575,7 +1575,7 @@
 
   strats.data = function (parentVal, childVal, vm) {
     if (!vm) {
-      // in a Uppy.extend merge, both should be functions
+      // in an Uppy.extend merge, both should be functions
       if (!childVal) {
         return parentVal;
       }
@@ -4446,7 +4446,7 @@
   }
 
   /**
-   * Call attach hook for a Uppy instance.
+   * Call attach hook for an Uppy instance.
    *
    * @param {Uppy} child
    */
@@ -4472,7 +4472,7 @@
   }
 
   /**
-   * Call detach hook for a Uppy instance.
+   * Call detach hook for an Uppy instance.
    *
    * @param {Uppy} child
    */
