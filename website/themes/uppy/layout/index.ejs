@@ -13,18 +13,11 @@
     </div>
     <p class="desc">
       <strong>
-        <%- config.title %> - <%- config.subtitle %> <img align="absmiddle" width="18" height="18" class="emoji dog" title="puppy" src="/images/emojis/dog.png">
+        <%- config.subtitle %> <img align="absmiddle" width="18" height="18" class="emoji dog" title="puppy" src="/images/emojis/dog.png">
       </strong>
       <br />
       <br />
-
-      Hey there stranger! We just copied the wonderful <a href="http://vuejs.org">Vue.js</a> website (we included its MIT license and attribution with our sources) to push our
-        boilerplate out. We'll iterate and make this place our own - but there really is nothing to see here yet other than ~plagiarism : )
-
-      <br />
-      <br />
       <%- config.description %>
-
     </p>
     <p class="buttons">
       <a href="/guide/installation.html" class="button">Install v<%- theme.uppy_version %></a>
@@ -95,35 +88,23 @@
 </div>
 <div id="features">
   <div class="feats">
-    <div class="feat">
-      <h2><span class="icon simple"></span>Simple</h2>
-      <p>Write some HTML, grab some JSON, create an Uppy instance, that's it.</p>
-    </div>
-    <div class="feat">
-      <h2><span class="icon powerful"></span>Reactive</h2>
-      <p>Expressions & computed properties with transparent dependency tracking.</p>
-    </div>
-    <div class="feat">
-      <h2><span class="icon composable"></span>Components</h2>
-      <p>Compose your application with decoupled, reusable components.</p>
-    </div>
-    <div class="feat">
-      <h2><span class="icon compact"></span>Compact</h2>
-      <p>~24kb min+gzip, no dependency.</p>
-    </div>
-    <div class="feat">
-      <h2><span class="icon fast"></span>Fast</h2>
-      <p>Precise and efficient async batch DOM updates.</p>
-    </div>
-    <div class="feat">
-      <h2><span class="icon module"></span>Package Ready</h2>
-      <p>Install via NPM or Bower - leverage your favorite eco system!</p>
-    </div>
+    <% for (var k in site.data.features) { var v = site.data.features[k]; %>
+      <div class="feat">
+        <h2><span class="icon <%- v.icon %>"></span><%- v.title %></h2>
+        <p> <%- v.description %></p>
+      </div>
+    <% } %>
   </div>
 </div>
 <div id="design_goals">
   <h2>Design Goals:</h2>
-  <%- partial('partials/DESIGNGOALS') %>
+  <ul>
+    <% for (var k in site.data.design_goals) { var v = site.data.design_goals[k]; %>
+    <li>
+      <%- v %>
+    </li>
+    <% } %>
+  </ul>
 </div>
 <div id="footer">
   <a class="start" href="/guide/index.html">Get Started</a>

@@ -5,7 +5,7 @@ var installPath   = 'src/guide/installation.md'
 var themeconfig   = fs.readFileSync(themeconfPath, 'utf-8')
 var installation  = fs.readFileSync(installPath, 'utf-8')
 
-fs.writeFileSync('themes/uppy/layout/partials/DESIGNGOALS.md', fs.readFileSync('../DESIGNGOALS.md', 'utf-8'));
+// fs.writeFileSync('themes/uppy/layout/partials/DESIGNGOALS.md', fs.readFileSync('../DESIGNGOALS.md', 'utf-8'));
 
 fs.writeFileSync(
   themeconfPath,
