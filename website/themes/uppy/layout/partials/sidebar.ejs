@@ -10,7 +10,7 @@
             </select>
         </h2>
         <ul class="menu-root">
-            <% type !== 'api' && site.pages.find({type: type}).sort('order').each(function (p) { %>
+            <% site.pages.find({type: type}).sort('order').each(function (p) { %>
                 <li>
                     <a href="/<%- p.path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
                 </li>
