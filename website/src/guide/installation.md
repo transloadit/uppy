@@ -40,14 +40,3 @@ $ npm install uppy@csp
 # dev build (directly from GitHub):
 $ npm install transloadit/uppy#dev
 ```
-
-## Bower
-
-``` bash
-# latest stable
-$ bower install uppy
-```
-
-## AMD Module Loaders
-
-The standalone downloads or versions installed via Bower are wrapped with UMD so they can be used directly as an AMD module.
