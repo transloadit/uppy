@@ -16,6 +16,16 @@ export default class DragDrop extends TransloaditPlugin {
     this.handleDragEnter = this.handleDragEnter.bind(this);
     this.handleDragOver = this.handleDragOver.bind(this);
     this.handleDrop = this.handleDrop.bind(this);
+    this.checkDragDropSupport = this.checkDragDropSupport(this);
+  }
+
+  checkDragDropSupport() {
+    this.isDragDropSupported = function () {
+      const div = document.createElement('div');
+      return (('draggable' in div) ||
+             ('ondragstart' in div && 'ondrop' in div))
+             && 'FormData' in window && 'FileReader' in window;
+    }();
   }
 
   listenForEvents() {

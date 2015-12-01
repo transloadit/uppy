@@ -21,10 +21,10 @@ export default class {
   setProgress(plugin, percentage) {
     // Any plugin can call this via `this.core.setProgress(this, precentage)`
     console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage);
-
     return this;
   }
 
+  // Runs all plugins of the same type in parallel
   runType(type, files, cb) {
     console.dir({
       method: 'Transloadit.runType',
@@ -44,6 +44,8 @@ export default class {
     async.parallel(methods, cb);
   }
 
+  // Runs a waterfall of runType plugin packs, like so:
+  // All preseters(data) --> All selecters(data) --> All uploaders(data) --> done
   run() {
     console.dir({
       method: 'Transloadit.run'
@@ -52,10 +54,16 @@ export default class {
     var typeMethods = [];
     typeMethods.push(async.constant([]));
 
-    for (let t in this.types) {
-      const type = this.types[t];
-      typeMethods.push(this.runType.bind(this, type));
-    }
+    // for (let t in this.types) {
+    //   const type = this.types[t];
+    //   typeMethods.push(this.runType.bind(this, type));
+    // }
+
+    this.types.forEach(type => {
+      if (this.plugins[type]) {
+        typeMethods.push(this.runType.bind(this, type));
+      }
+    });
 
     async.waterfall(typeMethods, function (err, finalFiles) {
       console.dir({
