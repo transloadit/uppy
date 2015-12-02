@@ -1,4 +1,4 @@
-import { toggleClass, addClass, removeClass, addListenerMulti } from '../core/Utils';
+import Utils from '../core/Utils';
 import TransloaditPlugin from './TransloaditPlugin';
 // import Tus from 'tus-js-client';
 
@@ -6,7 +6,17 @@ export default class DragDrop extends TransloaditPlugin {
   constructor(core, opts) {
     super(core, opts);
     this.type = 'selecter';
-    this.opts = opts;
+
+    // Set default options
+    const defaultOptions = {
+      bla: 'blabla',
+      modal: true
+    };
+
+    // Merge default options with the ones set by user
+    this.opts = defaultOptions;
+    Object.assign(this.opts, opts);
+
     console.log(this.opts);
 
     // get the element where Drag & Drop event will occur
@@ -20,34 +30,39 @@ export default class DragDrop extends TransloaditPlugin {
     this.checkDragDropSupport = this.checkDragDropSupport(this);
   }
 
+  /**
+   * Checks if the browser supports Drag & Drop
+   * data may not have been accepted by the server yet.
+   * @param  {number} bytesSent  Number of bytes sent to the server.
+   * @param  {number} bytesTotal Total number of bytes to be sent to the server.
+   */
   checkDragDropSupport() {
     this.isDragDropSupported = function () {
       const div = document.createElement('div');
       return (('draggable' in div) ||
-             ('ondragstart' in div && 'ondrop' in div))
-             && 'FormData' in window && 'FileReader' in window;
+             ('ondragstart' in div && 'ondrop' in div)) &&
+             'FormData' in window && 'FileReader' in window;
     }();
   }
 
   listenForEvents() {
     if (this.isDragDropSupported) {
-      addClass(this.dropzone, 'is-dragdrop-supported');
+      Utils.addClass(this.dropzone, 'is-dragdrop-supported');
     }
 
     // prevent default actions for all drag & drop events
-    addListenerMulti(this.dropzone, 'drag dragstart dragend dragover dragenter dragleave drop', (e) => {
-      // console.log('yo!');
+    Utils.addListenerMulti(this.dropzone, 'drag dragstart dragend dragover dragenter dragleave drop', (e) => {
       e.preventDefault();
       e.stopPropagation();
     });
 
     // Toggle is-dragover state when files are dragged over or dropped
-    addListenerMulti(this.dropzone, 'dragover dragenter', () => {
-      addClass(this.dropzone, 'is-dragover');
+    Utils.addListenerMulti(this.dropzone, 'dragover dragenter', () => {
+      Utils.addClass(this.dropzone, 'is-dragover');
     });
 
-    addListenerMulti(this.dropzone, 'dragleave dragend drop', () => {
-      removeClass(this.dropzone, 'is-dragover');
+    Utils.addListenerMulti(this.dropzone, 'dragleave dragend drop', () => {
+      Utils.removeClass(this.dropzone, 'is-dragover');
     });
 
     this.dropzone.addEventListener('drop', this.handleDrop);

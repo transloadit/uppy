@@ -1,10 +1,10 @@
 // This is how we roll $('.element').toggleClass in non-jQuery world
-export function toggleClass(el, className) {
+function toggleClass(el, className) {
   if (el.classList) {
     el.classList.toggle(className);
   } else {
-    var classes = el.className.split(' ');
-    var existingIndex = classes.indexOf(className);
+    const classes = el.className.split(' ');
+    const existingIndex = classes.indexOf(className);
 
     if (existingIndex >= 0) {
       classes.splice(existingIndex, 1);
@@ -15,7 +15,7 @@ export function toggleClass(el, className) {
   }
 }
 
-export function addClass(el, className) {
+function addClass(el, className) {
   if (el.classList) {
     el.classList.add(className);
   } else {
@@ -23,8 +23,7 @@ export function addClass(el, className) {
   }
 }
 
-export function removeClass(el, className) {
-  console.log(el);
+function removeClass(el, className) {
   if (el.classList) {
     el.classList.remove(className);
   } else {
@@ -33,9 +32,16 @@ export function removeClass(el, className) {
 }
 
 // $form.on('drag dragstart dragend dragover dragenter dragleave drop');
-export function addListenerMulti(el, events, func) {
+function addListenerMulti(el, events, func) {
   const eventsArray = events.split(' ');
   for (let event in eventsArray) {
     el.addEventListener(eventsArray[event], func, false);
   }
 }
+
+export default {
+  toggleClass,
+  addClass,
+  removeClass,
+  addListenerMulti
+};

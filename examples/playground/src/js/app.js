@@ -3,7 +3,7 @@ import { DragDrop, Tus10 } from '../../../../src/plugins';
 
 const transloadit = new Transloadit({wait: false});
 const files = transloadit
-  .use(DragDrop, {modal: true, selector: '#upload-target'})
+  .use(DragDrop, {selector: '#upload-target'})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
   .run();
 
