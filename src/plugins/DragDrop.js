@@ -7,13 +7,14 @@ export default class DragDrop extends TransloaditPlugin {
     super(core, opts);
     this.type = 'selecter';
 
-    // Set default options
+    // set default options
     const defaultOptions = {
       bla: 'blabla',
+      autoSubmit: true,
       modal: true
     };
 
-    // Merge default options with the ones set by user
+    // merge default options with the ones set by user
     this.opts = defaultOptions;
     Object.assign(this.opts, opts);
 
@@ -21,28 +22,28 @@ export default class DragDrop extends TransloaditPlugin {
 
     // get the element where Drag & Drop event will occur
     this.dropzone = document.querySelectorAll(this.opts.selector)[0];
+    this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0];
+
     this.status = document.querySelectorAll('.UppyDragDrop-status')[0];
+
+    this.isDragDropSupported = this.checkDragDropSupport();
 
     // crazy stuff so that ‘this’ will behave in class
     this.listenForEvents = this.listenForEvents.bind(this);
-    // this.toggleDragoverState = this.toggleDragoverState.bind(this);
     this.handleDrop = this.handleDrop.bind(this);
-    this.checkDragDropSupport = this.checkDragDropSupport(this);
+    this.checkDragDropSupport = this.checkDragDropSupport.bind(this);
+    this.upload = this.upload.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
   /**
    * Checks if the browser supports Drag & Drop
-   * data may not have been accepted by the server yet.
-   * @param  {number} bytesSent  Number of bytes sent to the server.
-   * @param  {number} bytesTotal Total number of bytes to be sent to the server.
    */
   checkDragDropSupport() {
-    this.isDragDropSupported = function () {
-      const div = document.createElement('div');
-      return (('draggable' in div) ||
-             ('ondragstart' in div && 'ondrop' in div)) &&
-             'FormData' in window && 'FileReader' in window;
-    }();
+    const div = document.createElement('div');
+    return (('draggable' in div) ||
+           ('ondragstart' in div && 'ondrop' in div)) &&
+           'FormData' in window && 'FileReader' in window;
   }
 
   listenForEvents() {
@@ -67,6 +68,8 @@ export default class DragDrop extends TransloaditPlugin {
 
     this.dropzone.addEventListener('drop', this.handleDrop);
 
+    this.dropzoneInput.addEventListener('change', this.handleInputChange);
+
     console.log(`waiting for some files to be dropped on ${this.opts.selector}`);
   }
 
@@ -82,13 +85,40 @@ export default class DragDrop extends TransloaditPlugin {
 
   handleDrop(e) {
     console.log('all right, someone dropped something here...');
-    this.displayStatus('Uploading...');
     const files = e.dataTransfer.files;
-    console.log(files);
-    // this.handleFiles(files);
+    const formData = new FormData(this.dropzone);
+    console.log('pizza', formData);
+
+    for (var i = 0; i < files.length; i++) {
+      formData.append(this.dropzoneInput.getAttribute('name'), files[i]);
+      console.log('pizza', files[i]);
+    }
+
+    this.upload(formData);
   }
 
-  handleFiles(files) {
+  handleInputChange() {
+    const fileInput = document.querySelectorAll('.UppyDragDrop-input')[0];
+    const formData = new FormData(this.dropzone);
+
+    this.upload(formData);
+  }
+
+  upload(data) {
+    this.displayStatus('Uploading...');
+
+    setTimeout(() => {
+      this.displayStatus('Done.');
+    }, 3000);
+
+    // files.forEach((file) => formData.append('files', files[file]));
+    // console.log(formData);
+
+    // const request = new XMLHttpRequest();
+    // request.open('POST', 'http://api2.transloadit.com', true);
+    // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    // request.send(files);
+
     // Create a new tus upload
     // const upload = new Tus.Upload(files, {
     //   endpoint: 'http://master.tus.io:8080',
