@@ -87,10 +87,10 @@ export default class DragDrop extends TransloaditPlugin {
     console.log('all right, someone dropped something here...');
     const files = e.dataTransfer.files;
     const formData = new FormData(this.dropzone);
-    console.log('pizza', formData);
+    // console.log('pizza', formData);
 
     for (var i = 0; i < files.length; i++) {
-      formData.append(this.dropzoneInput.getAttribute('name'), files[i]);
+      formData.append('file', files[i]);
       console.log('pizza', files[i]);
     }
 
@@ -98,8 +98,9 @@ export default class DragDrop extends TransloaditPlugin {
   }
 
   handleInputChange() {
-    const fileInput = document.querySelectorAll('.UppyDragDrop-input')[0];
+    // const fileInput = document.querySelectorAll('.UppyDragDrop-input')[0];
     const formData = new FormData(this.dropzone);
+    console.log('pizza', formData);
 
     this.upload(formData);
   }
@@ -107,17 +108,16 @@ export default class DragDrop extends TransloaditPlugin {
   upload(data) {
     this.displayStatus('Uploading...');
 
-    setTimeout(() => {
+    const request = new XMLHttpRequest();
+    request.open('POST', 'http://api2.transloadit.com', true);
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+
+    request.addEventListener('load', () => {
+      console.log('fucking done!');
       this.displayStatus('Done.');
-    }, 3000);
+    });
 
-    // files.forEach((file) => formData.append('files', files[file]));
-    // console.log(formData);
-
-    // const request = new XMLHttpRequest();
-    // request.open('POST', 'http://api2.transloadit.com', true);
-    // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-    // request.send(files);
+    request.send(data);
 
     // Create a new tus upload
     // const upload = new Tus.Upload(files, {
