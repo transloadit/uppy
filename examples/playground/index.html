@@ -46,11 +46,11 @@
           and online.
         </p>
 
-        <form id="upload-target" class="uppyDragDrop" method="post" action="/" enctype="multipart/form-data">
+        <form id="upload-target" class="UppyDragDrop" method="post" action="/" enctype="multipart/form-data">
           <div>
-            <input class="UppyDragDrop-file" type="file" name="files[]" id="file" data-multiple-caption="{count} files selected" multiple />
-            <label class="UppyDragDrop-label" for="UppyDragDrop-file"><strong>Choose a file</strong><span class="UppyDragDrop-drag"> or drag it here</span>.</label>
-            <button class="UppyDragDrop-btn" type="submit">Upload</button>
+            <input id="UppyDragDrop-input" class="UppyDragDrop-input" type="file" name="files[]" data-multiple-caption="{count} files selected" multiple />
+            <label class="UppyDragDrop-label" for="UppyDragDrop-input"><strong>Choose a file</strong><span class="UppyDragDrop-dragText"> or drag it here</span>.</label>
+            <!-- <button class="UppyDragDrop-btn" type="submit">Upload</button> -->
           </div>
           <div class="UppyDragDrop-status">Uploading&hellip;</div>
         </form>

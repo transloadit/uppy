@@ -1,6 +1,5 @@
-import { toggleClass } from '../core/Utils';
+import { toggleClass, addClass, removeClass, addListenerMulti } from '../core/Utils';
 import TransloaditPlugin from './TransloaditPlugin';
-console.log('pizza', TransloaditPlugin);
 
 export default class DragDrop extends TransloaditPlugin {
   constructor(core, opts) {
@@ -13,8 +12,8 @@ export default class DragDrop extends TransloaditPlugin {
     this.dropzone = document.querySelectorAll(this.opts.selector)[0];
 
     // crazy stuff so that ‘this’ will behave in class
-    this.handleDragEnter = this.handleDragEnter.bind(this);
-    this.handleDragOver = this.handleDragOver.bind(this);
+    this.listenForEvents = this.listenForEvents.bind(this);
+    // this.toggleDragoverState = this.toggleDragoverState.bind(this);
     this.handleDrop = this.handleDrop.bind(this);
     this.checkDragDropSupport = this.checkDragDropSupport(this);
   }
@@ -29,30 +28,42 @@ export default class DragDrop extends TransloaditPlugin {
   }
 
   listenForEvents() {
-    this.dropzone.addEventListener('dragenter', this.handleDragEnter);
-    this.dropzone.addEventListener('dragover', this.handleDragOver);
+    if (this.isDragDropSupported) {
+      addClass(this.dropzone, 'is-dragdrop-supported');
+    }
+
+    // prevent default actions for all drag & drop events
+    addListenerMulti(this.dropzone, 'drag dragstart dragend dragover dragenter dragleave drop', (e) => {
+      // console.log('yo!');
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    // Toggle is-dragover state when files are dragged over or dropped
+    addListenerMulti(this.dropzone, 'dragover dragenter', () => {
+      addClass(this.dropzone, 'is-dragover');
+    });
+
+    addListenerMulti(this.dropzone, 'dragleave dragend drop', () => {
+      removeClass(this.dropzone, 'is-dragover');
+    });
+
     this.dropzone.addEventListener('drop', this.handleDrop);
+
     console.log(`waiting for some files to be dropped on ${this.opts.selector}`);
   }
 
-  handleDragEnter(e) {
-    event.stopPropagation();
-    event.preventDefault();
-    toggleClass(this.dropzone, 'is-dragover');
-  }
-
-  handleDragOver(e) {
-    e.stopPropagation();
-    e.preventDefault();
-  }
+  // Toggle is-dragover state when files are dragged over or dropped
+  // in this case — add/remove 'is-dragover' class
+  // toggleDragoverState(e) {
+  //   toggleClass(this.dropzone, 'is-dragover');
+  // }
 
   handleDrop(e) {
     console.log('all right, someone dropped something here...');
-    e.preventDefault();
-    toggleClass(this.dropzone, 'is-dragover');
     const files = e.dataTransfer.files;
     console.log(files);
-    this.handleFiles(files);
+    // this.handleFiles(files);
   }
 
   handleFiles(files) {
@@ -65,6 +76,7 @@ export default class DragDrop extends TransloaditPlugin {
       files : files,
       done  : done
     });
+
     console.log('DragDrop running!');
     // console.log(files);
     this.listenForEvents();
