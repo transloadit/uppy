@@ -1,5 +1,6 @@
 import { toggleClass, addClass, removeClass, addListenerMulti } from '../core/Utils';
 import TransloaditPlugin from './TransloaditPlugin';
+// import Tus from 'tus-js-client';
 
 export default class DragDrop extends TransloaditPlugin {
   constructor(core, opts) {
@@ -10,6 +11,7 @@ export default class DragDrop extends TransloaditPlugin {
 
     // get the element where Drag & Drop event will occur
     this.dropzone = document.querySelectorAll(this.opts.selector)[0];
+    this.status = document.querySelectorAll('.UppyDragDrop-status')[0];
 
     // crazy stuff so that ‘this’ will behave in class
     this.listenForEvents = this.listenForEvents.bind(this);
@@ -59,15 +61,36 @@ export default class DragDrop extends TransloaditPlugin {
   //   toggleClass(this.dropzone, 'is-dragover');
   // }
 
+  displayStatus(status) {
+    this.status.innerHTML = status;
+  }
+
   handleDrop(e) {
     console.log('all right, someone dropped something here...');
+    this.displayStatus('Uploading...');
     const files = e.dataTransfer.files;
     console.log(files);
     // this.handleFiles(files);
   }
 
   handleFiles(files) {
-    return files;
+    // Create a new tus upload
+    // const upload = new Tus.Upload(files, {
+    //   endpoint: 'http://master.tus.io:8080',
+    //   onError: function(error) {
+    //     console.log('Failed because: ' + error);
+    //   },
+    //   onProgress: function(bytesUploaded, bytesTotal) {
+    //     var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
+    //     console.log(bytesUploaded, bytesTotal, percentage + '%');
+    //   },
+    //   onSuccess: function() {
+    //     console.log('Download %s from %s', upload.file.name, upload.url);
+    //   }
+    // });
+
+    // Start the upload
+    // upload.start();
   }
 
   run(files, done) {
