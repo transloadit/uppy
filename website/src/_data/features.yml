@@ -1,0 +1,18 @@
+- title      : Simple
+  icon       : simple
+  description: You can support complex workflows by refering to existing presets in just a few lines of code.
+- title      : Presets
+  icon       : powerful
+  description: Resumable file uploads. Is there any other way? Thanks to tus.io.
+- title      : Plugins
+  icon       : composable
+  description: Every feature in Puppy is available as a plugin. It's easy to use some, none, or roll your own.
+- title      : Compact
+  icon       : compact
+  description: ~10kb min+gzip, no dependencies.
+- title      : Fast
+  icon       : fast
+  description: Parallel uploading and handling of files
+- title      : Package Ready
+  icon       : module
+  description: Install via NPM our include directly form our CDN!

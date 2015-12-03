@@ -6,7 +6,7 @@ order: 1
 
 Let's start with a quick tour of Uppy's data binding features. If you are more interested in a high-level overview first, check out this [blog post](http://transloadit.com/blog/2015/10/25/transloadit-re-introduction/).
 
-The easiest way to try out Uppy.js is using the [JSFiddle Hello World example](https://jsfiddle.net/yyx990803/okv0rgrk/). Feel free to open it in another tab and follow along as we go through some basic examples. If you prefer downloading / installing from a package manager, check out the [Installation](/guide/installation.html) page.
+The easiest way to try out Uppy is using the [JSFiddle Hello World example](https://jsfiddle.net/yyx990803/okv0rgrk/). Feel free to open it in another tab and follow along as we go through some basic examples. If you prefer downloading / installing from a package manager, check out the [Installation](/guide/installation.html) page.
 
 ### Hello World
 
@@ -19,7 +19,7 @@ The easiest way to try out Uppy.js is using the [JSFiddle Hello World example](h
 new Uppy({
   el: '#app',
   data: {
-    message: 'Hello Uppy.js!'
+    message: 'Hello Uppy!'
   }
 })
 ```
@@ -31,7 +31,7 @@ new Uppy({
 new Uppy({
   el: '#app',
   data: {
-    message: 'Hello Uppy.js!'
+    message: 'Hello Uppy!'
   }
 })
 </script>
@@ -49,7 +49,7 @@ new Uppy({
 new Uppy({
   el: '#app',
   data: {
-    message: 'Hello Uppy.js!'
+    message: 'Hello Uppy!'
   }
 })
 ```
@@ -62,7 +62,7 @@ new Uppy({
 new Uppy({
   el: '#app2',
   data: {
-    message: 'Hello Uppy.js!'
+    message: 'Hello Uppy!'
   }
 })
 </script>
@@ -85,7 +85,7 @@ new Uppy({
   data: {
     todos: [
       { text: 'Learn JavaScript' },
-      { text: 'Learn Uppy.js' },
+      { text: 'Learn Uppy' },
       { text: 'Build Something Awesome' }
     ]
   }
@@ -105,7 +105,7 @@ new Uppy({
   data: {
     todos: [
       { text: 'Learn JavaScript' },
-      { text: 'Learn Uppy.js' },
+      { text: 'Learn Uppy' },
       { text: 'Build Something Awesome' }
     ]
   }
@@ -125,7 +125,7 @@ new Uppy({
 new Uppy({
   el: '#app',
   data: {
-    message: 'Hello Uppy.js!'
+    message: 'Hello Uppy!'
   },
   methods: {
     reverseMessage: function () {
@@ -143,7 +143,7 @@ new Uppy({
 new Uppy({
   el: '#app4',
   data: {
-    message: 'Hello Uppy.js!'
+    message: 'Hello Uppy!'
   },
   methods: {
     reverseMessage: function () {
@@ -225,4 +225,4 @@ new Uppy({
 </script>
 {% endraw %}
 
-I hope this gives you a basic idea of how Uppy.js works. I'm sure you also have many questions now - read along, and we will cover them in the rest of the guide.
+I hope this gives you a basic idea of how Uppy works. I'm sure you also have many questions now - read along, and we will cover them in the rest of the guide.

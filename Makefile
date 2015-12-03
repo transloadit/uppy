@@ -1,11 +1,7 @@
 SHELL          := /usr/bin/env bash
 ghpages_repo   := "transloadit/uppy"
 ghpages_branch := "gh-pages"
-
-.PHONY: pull
-pull:
-	@echo "--> Running pull.."
-	@git pull
+ghpages_url    := "git@github.com:$(ghpages_repo).git"
 
 .PHONY: website-install
 website-install:
@@ -13,17 +9,18 @@ website-install:
 	@cd website && npm install
 
 .PHONY: website-build
-website-build:
+website-build: website-install
 	@echo "--> Building site.."
+	@cd website && node update.js
 	@cd website && ./node_modules/.bin/hexo generate
 
 .PHONY: website-preview
-website-preview: website-install website-build
+website-preview: website-build
 	@echo "--> Running preview.."
 	@cd website && ./node_modules/.bin/hexo server
 
 .PHONY: website-deploy
-website-deploy: pull website-build
+website-deploy: website-build
 	@echo "--> Deploying to GitHub pages.."
 	@mkdir -p /tmp/deploy-$(ghpages_repo)
 
@@ -46,8 +43,8 @@ website-deploy: pull website-build
 
 	@cd /tmp/deploy-$(ghpages_repo) \
 	  && git init && git checkout -B $(ghpages_branch) && git add --all . \
-	  && git commit -nm "Update $(ghpages_repo) _site by $${USER}" \
-	  && (git remote add origin git@github.com:$(ghpages_repo).git || true)  \
+	  && git commit -nm "Update $(ghpages_repo) website by $${USER}" \
+	  && (git remote add origin $(ghpages_url)|| true)  \
 	  && git push origin $(ghpages_branch):refs/heads/$(ghpages_branch) --force
 
 	@rm -rf /tmp/deploy-$(ghpages_repo)

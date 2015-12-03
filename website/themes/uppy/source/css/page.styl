@@ -30,7 +30,7 @@ $header-height = 40px
 .nav-link
     padding-bottom 3px
     &:hover, &.current
-        border-bottom 3px solid $green
+        border-bottom 3px solid $primary
 
 #search-query
     height 30px
@@ -45,7 +45,7 @@ $header-height = 40px
     background #fff url(/images/search.png) 8px 5px no-repeat
     background-size 20px
     &:focus
-        border-color $green
+        border-color $primary
 
 #logo
     display inline-block
@@ -82,7 +82,7 @@ $header-height = 40px
         position absolute
         width 30px
         height 30px
-        background url(../images/logo.png) center center no-repeat
+        background url(../images/cute-puppy-2.png) center center no-repeat
         top 5px
         left 50%
         margin-left -15px
@@ -121,7 +121,7 @@ $header-height = 40px
         color $light
         &.current
             font-weight 600
-            color $green
+            color $primary
         &.new
             &:after
                 content "NEW"
@@ -129,7 +129,7 @@ $header-height = 40px
                 font-size 10px
                 font-weight 600
                 color #fff
-                background-color $green
+                background-color $primary
                 line-height 14px
                 padding 0 4px
                 border-radius 3px
@@ -138,11 +138,11 @@ $header-height = 40px
                 position relative
                 top -1px
         &:hover
-            border-bottom 2px solid $green
+            border-bottom 2px solid $primary
     .section-link
         &.active
             font-weight bold
-            color $green
+            color $primary
     .main-menu
         margin-bottom 20px
         display none
@@ -188,7 +188,7 @@ $header-height = 40px
         position relative
         &:before
             content "#"
-            color $green
+            color $primary
             position absolute
             left -0.7em
             top -2px
@@ -201,12 +201,12 @@ $header-height = 40px
     ul, ol
         padding-left 1.5em
     a
-        color $green
+        color $primary
         font-weight 600
     blockquote
         margin 2em 0
         padding-left 20px
-        border-left 4px solid $green
+        border-left 4px solid $primary
         p
             font-weight 600
             margin-left 0
@@ -255,27 +255,8 @@ $header-height = 40px
 @media screen and (max-width: 1200px)
     .content.with-sidebar
         margin-left 280px
-    #ad
-        z-index 8
-        position relative
-        width auto
-        height 100px
-        padding 0
-        bottom 0
-        right 0
-        margin 30px 0 35px
-        .carbon-wrap, .carbon-img, .carbon-text, .carbon-poweredby
-            display inline-block
-            vertical-align top
-        .carbon-text
-            width 130px
-            margin-left 15px
-        .carbon-poweredby
-            position absolute
-            bottom 0
-            left 145px
 
-#donate
+#buildbadge
     margin-top 15px
 
 @media screen and (max-width: 560px)
@@ -299,7 +280,7 @@ $header-height = 40px
     .nav-link
         padding-bottom 1px
         &:hover, &.current
-            border-bottom 2px solid $green
+            border-bottom 2px solid $primary
     #search-query
         width 200px
         margin-bottom 10px

@@ -2,19 +2,6 @@
 
 A work in progress - nothing to see here.
 
-## Design Goals
- 
- - Support for IE10+?? (decide what our entry level IE is, it's okay to have a cut-off if that results in a more focused higher quality codebase. older browsers will need to opt for our jquery-sdk)
- - Lightweight / easy on dependencies
- - tus.io enabled
- - ES6
- - Robust (retries / resumes for *all the things*), avoid showing 'weird errors'
- - Themable UI with a beautiful default
- - Compatible with React (Native)
- - Should work great on mobile
- - Small core, modular plugin architecture for everything: (modal / dragdrop / themes/ webcam / google drive / dropbox / etc)
- - Offering sugared shortcuts for novice users (presets)
-
 Check [open issues](https://github.com/transloadit/uppy/milestones/Minimum%20Viable%20Product) for our Minimum Viable Product. 
 
 ## Uppy Development
@@ -38,23 +25,22 @@ directory using a simple static http server.
 
 ## Website Development
 
-We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for now so it's very easy to keep docs & code in sync as we're still 
-iterating at high velocity.
+We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity. For those reading this and screaming murder, [HashiCorp does this](https://github.com/hashicorp/terraform/tree/master/website) for all their projects, and it working well for them on a scale vastly more impressive than ours.
 
-This site is built with [hexo](http://hexo.io/). And deployed onto GitHub pages (`gh-pages` branch is of the `uppy` repo is overrwitten at every deploy. Site content is written in Markdown format located in `./website/src`. Pull requests welcome!
+The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the [`gh-pages`](https://github.com/transloadit/uppy/tree/gh-pages) branch at every deploy).
+
+Content is written in Markdown and located in `./website/src`. Pull requests welcome!
   
-The website is currently a clone of Yuxi Evan You's [Vue.js](http://vuejs.org/) website ([view license](website/LICENSE)) - just so we can hit the ground rolling in terms of setting up Haxo etc. Obviously as soon as possible, we should start rolling out our own layout & content.
+> The website is currently a clone of Yuxi Evan You's [Vue.js](http://vuejs.org/) website ([view license](website/LICENSE)) - just so we can hit the ground rolling in terms of setting up Haxo etc. Obviously as soon as possible, we should start rolling out our own layout & content.
 
-For local previews on `localhost:4000` type:
+`./website/update.js` is called during website builds to inject the Uppy versions & filesizes into the documentation. `website` in an independent folder and so it cannot rely on anything from the root project, without `update.js` explicitly making it available (copying).
+
+It's recommended to exclude `./website/public/` from your editor if you want efficient searches.
+
+For local previews on `http://127.0.0.1:4000` type:
 
 ```bash
 make website-preview
-```
-
-To deploy your work type
-
-```bash
-make website-deploy
 ```
 
 ## FAQ

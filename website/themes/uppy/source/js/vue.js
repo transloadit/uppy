@@ -1,5 +1,5 @@
 /*!
- * Uppy.js v1.0.10
+ * Uppy.js v0.0.1
  * (c) 2015 Transloadit
  * Released under the MIT License.
  */
@@ -1575,7 +1575,7 @@
 
   strats.data = function (parentVal, childVal, vm) {
     if (!vm) {
-      // in a Uppy.extend merge, both should be functions
+      // in an Uppy.extend merge, both should be functions
       if (!childVal) {
         return parentVal;
       }
@@ -4446,7 +4446,7 @@
   }
 
   /**
-   * Call attach hook for a Uppy instance.
+   * Call attach hook for an Uppy instance.
    *
    * @param {Uppy} child
    */
@@ -4472,7 +4472,7 @@
   }
 
   /**
-   * Call detach hook for a Uppy instance.
+   * Call detach hook for an Uppy instance.
    *
    * @param {Uppy} child
    */
@@ -9274,7 +9274,7 @@
     partial: partial
   };
 
-  Uppy.version = '1.0.10';
+  Uppy.version = '0.0.1';
 
   /**
    * Uppy and every constructor that extends Uppy has an

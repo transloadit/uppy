@@ -3,12 +3,25 @@ language: node_js
 node_js:
   - 4.2.2
 
+addons:
+  apt:
+    packages:
+    - g++-4.8
+
 script:
   - "npm run-script build"
   - "npm run-script build:examples"
 
-after_script:
-  - "echo 'Tested :)'"
+# Automatically deploy website onto gh-pages (if master and not PR)
+after_success:
+  - git config --global user.name 'Uppy Bot'
+  - git config --global user.email 'uppybot@uppyjs.io'
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && make website-deploy ghpages_url=${GHPAGES_URL}
+
+env:
+  global:
+    # travis encrypt GHPAGES_URL=https://secret_access_token@github.com/transloadit/uppy.git
+    secure: "Z+Twmk8/yo4FbeHqk3TcLVK4fR+KUoevrUxkRM6SLckVeCwlFnoD1kQ4JTVHuS2LbW9r2T4VJ/SC6yDtdjqMRvD/ZtPw//vMw9mKyBEMZN4uxOhmHp4hltkBErqeHbZpgd4eSwSVrqDwliK27Q42wIs+Rjilc3UXqddWEmmw/VuxGR3SRpACILqe2Fqm/g73iX/7PNNASuXwmWi6Vf5ZeBQTGiCfPETblBa4WSCrPpsBv5flUEGNM9uFoXXqjAC2TyZrS4yiFGxJNf5/UPp9xipr+RhoEp8NX2GP0W2jDDfUTHFGfcUyF2lluVJKpkHjYQYrYBknjTFcQHL+aE7GWU7f6kh4g3i6e9qktVFV7yNPPokxuvVG+AxExVhZHK3wBTh2ZWs5vjcd0u5w+IV9+v+d/CZWl/zGRcHDILt2eUW9KZwoGtgrcaPnlVtYPCRBXPpsoD+lE3uOuGGGS/V5lmhBnCLexj+2rzztyb8zhQgZB2rLKF1zQ5JiBE+z0ykjHtZWMECE7r4H8K4hoaeOlIG9suPSgwQgl5HFniFUBzHWXqdsOA/tAwGAtdYSlSNAPrkiMYqXjb+1Je2uhYnfV2roBolufLmgYjmDkpVtaY968Zi3qSYTDX7gkx4NEdkiZDLJK8iXXF5RlcHHaUlno+4ytvcNMpf6V9EpTVeLaIs="
 
 deploy:
   acl              : public_read

@@ -36,7 +36,7 @@ html, body
     &:first-child
         margin-left 0
     &:hover, &.current
-        border-bottom 3px solid $green
+        border-bottom 3px solid $primary
 
 #logo
     display block
@@ -78,7 +78,7 @@ html, body
         left 0
         padding 1.5em 0
         img
-            width 20px  
+            width 20px
     a.button
         width 280px
         margin .5em
@@ -137,7 +137,7 @@ html, body
             font-family $body-font
             &:focus
                 outline none
-                border-color $green
+                border-color $primary
 
 #features
     padding 3em 0
@@ -168,7 +168,7 @@ html, body
             padding-left 52px
             margin .4em 0
         a
-            color $green
+            color $primary
             font-weight 600
     .icon
         display inline-block
@@ -191,9 +191,9 @@ html, body
         &.module
             background-position -200px 0
 
-#why
+#design_goals
     padding 4em 0
-    background-color $green
+    background-color $primary
     color #fff
     h2
         margin-top 0
@@ -203,7 +203,7 @@ html, body
     ul
         line-height 1.8em
         font-size 1.15em
-        width 320px
+        width 640px
         margin 0 auto
         padding 0
         list-style-type none
@@ -222,7 +222,7 @@ html, body
     text-align center
     color #fff
     padding 4em 0
-    background-color #7f8c8d
+    background-color $darkgray
     .avatar
         width 100px
         border-radius 100%
@@ -251,7 +251,7 @@ html, body
 #main
     display none
 
-#donate
+#buildbadge
     margin-left -2px !important
 
 @media screen and (max-width: 480px)
@@ -302,16 +302,12 @@ html, body
         font-size 14px
         margin .8em 0
         width 250px
-    #why
+    #design_goals
         ul
             width 280px
             font-size 1.1em
         h2
             font-size 1.4em
-    #ad
-        position static
-        .carbon-img, .carbon-text, .carbon-poweredby
-            display inline-bloc
 
 @media screen and (max-width: 860px)
     #features, #hero
