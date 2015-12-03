@@ -5,8 +5,6 @@ var configPath    = '_config.yml'
 var themeconfig   = fs.readFileSync(themeconfPath, 'utf-8')
 var config        = fs.readFileSync(configPath, 'utf-8')
 
-// fs.writeFileSync('themes/uppy/layout/partials/DESIGNGOALS.md', fs.readFileSync('../DESIGNGOALS.md', 'utf-8'));
-
 fs.writeFileSync(
   themeconfPath,
   themeconfig.replace(/uppy_version: .*/, 'uppy_version: ' + version)
