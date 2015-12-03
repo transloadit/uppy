@@ -10,10 +10,11 @@ fs.writeFileSync(
   themeconfig.replace(/uppy_version: .*/, 'uppy_version: ' + version)
 )
 
+// @todo: Refer to actual minified builds in dist:
 var sizes = {
-  min: '../dist/uppy.min.js',
-  // gz : '../dist/uppy.min.js.gz',
-  // dev: '../dist/uppy.js'
+  min: '../dist/uppy.js',
+  gz : '../dist/uppy.js',
+  dev: '../dist/uppy.js'
 }
 
 for (var file in sizes) {

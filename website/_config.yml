@@ -4,9 +4,9 @@
 
 # Uppy versions, auto updated by update.js
 uppy_version: 0.0.1
-uppy_dev_size: "99999"
+uppy_dev_size: "16.62"
 uppy_min_size: "16.62"
-uppy_gz_size: "99999"
+uppy_gz_size: "16.62"
 
 # Theme
 google_analytics: UA-63083-12
