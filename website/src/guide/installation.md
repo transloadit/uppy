@@ -2,10 +2,6 @@
 title: Installation
 type: guide
 order: 0
-uppy_version: 0.0.1
-dev_size: "16.62"
-min_size: "undefined"
-gz_size: "undefined"
 ---
 
 > **Compatibility Note:** Uppy does not support IE8 and below.
@@ -17,12 +13,12 @@ Simply download and include with a script tag. `Uppy` will be registered as a gl
 <div id="downloads">
 <a class="button" href="/js/uppy.js" download>Development Version</a><span class="light info">With full warnings and debug mode</span>
 
-<a class="button" href="/js/uppy.min.js" download>Production Version</a><span class="light info">Warnings stripped, {{gz_size}}kb min+gzip</span>
+<a class="button" href="/js/uppy.min.js" download>Production Version</a><span class="light info">Warnings stripped, {{config.uppy_gz_size}}kb min+gzip</span>
 </div>
 
 ### CDN
 
-Available on [assets.transloadt.com](//assets.transloadt.com/uppy/{{uppy_version}}/uppy.min.js) or [cdnjs](//cdnjs.cloudflare.com/ajax/libs/uppy/{{uppy_version}}/uppy.min.js) (takes some time to sync so the latest version might not be available yet).
+Available on [assets.transloadt.com](//assets.transloadt.com/uppy/{{config.uppy_version}}/uppy.min.js) or [cdnjs](//cdnjs.cloudflare.com/ajax/libs/uppy/{{config.uppy_version}}/uppy.min.js) (takes some time to sync so the latest version might not be available yet).
 
 ### CSP-compliant build
 

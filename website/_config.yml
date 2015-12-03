@@ -2,6 +2,12 @@
 ## Docs: http://zespia.tw/hexo/docs/configuration.html
 ## Source: https://github.com/tommy351/hexo/
 
+# Uppy versions, auto updated by update.js
+uppy_version: 0.0.1
+uppy_dev_size: "99999"
+uppy_min_size: "16.62"
+uppy_gz_size: "99999"
+
 # Site
 title: Uppy
 subtitle: "Almost as cute as a puppy"
@@ -11,9 +17,10 @@ logo_icon: /images/emojis/dog.png
 description: >
   Uppy is (going to be) an uploader written in ES6 JavaScript with a plugin-based architecture, making
   it very extensible. Out of the box it supports tapping into Dropbox, Instagram, Local files. It
-  has support for resumable file uploads via tus.io, and adding encoding backends.
-  Uppy is brought to you by the people behind Transloadit and as such has first class
-  support for adding their uploading and encoding backend, but this is opt-in.
+  has support for resumable file uploads via [tus.io](http://tus.io), and adding encoding backends.
+  Uppy is brought to you by the people behind [Transloadit](https://transloadit.com) and as such has first class
+  support for adding their uploading and encoding backend, but this is opt-in, and you can just as easily
+  roll your own.
 author: Transloadit
 email: uppybot@uppyjs.io
 language: English
