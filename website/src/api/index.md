@@ -23,10 +23,11 @@ const files = uppy
 
 ## Core
 
-1. Core class `Uppy` accepts global object `options`, and exposes methods like `.use` for adding plugins and `.set` for setting options.
-2. We create a new instance of `Uppy` and call `.use` methods on that, passing the plugins and their options.
-3. Plugins have types: `presetter`, `selecter` and `uploader` (more types could be added in the future). When `use` is called, each plugin’s `run` method is added to an array of corresponding types, `methods`.
-4. Ok, here is the tricky part. Core’s method `run` iterates over plugin types in a waterfall manner — each `runTypes`  runs its `method`s in parallel and returns an array of results (files) to the next plugin type in the waterfall:
+1. Core class `Uppy` accepts object `options` (with general options), and exposes methods `.use` for adding plugins and `.set` for setting options.
+2. We create a new instance of `Uppy` and call `.use` on it, passing the plugins and their options.
+3. Then `run` is called to get things going.
+4. Plugins have types: `presetter`, `selecter` and `uploader` (more could be added in the future). When `use` is called, each plugin’s `run` method is added to an array of corresponding types, `methods`.
+5. Ok, now the tricky part. Core’s method `run` iterates over plugin types in a waterfall manner — each `runTypes`  runs its `method`s in parallel and returns an array of results (files) to the next plugin type in the waterfall. This way we first get all the of files from `DragDrop`, `Dropbox`, `Instagram` and other inputs — then parse them somehow — and then upload:
 
 ![waterfall of parallels](/images/uppy-core-plugins-architecture.jpg)
 
