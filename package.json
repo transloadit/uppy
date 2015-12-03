@@ -14,7 +14,7 @@
     "lint": "eslint src/**/*.js",
     "dev": "npm run watch & npm run server",
     "dev:examples": "npm run watch:examples & npm run server",
-    "server": "browser-sync start --config bs-config.js",
+    "server": "browser-sync start --config .browsersync.js",
     "test": "bin/test",
     "test:phantom": "zuul test/spec/upload.js --phantom",
     "watch": "npm run watch:css & npm run watch:js",
