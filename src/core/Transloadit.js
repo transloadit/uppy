@@ -1,3 +1,5 @@
+import async from 'async';
+
 export default class {
   constructor(opts) {
     // Dictates in what order different plugin types are ran:
@@ -10,11 +12,7 @@ export default class {
   use(Plugin, opts) {
     // Instantiate
     var plugin = new Plugin(this, opts);
-
-    // Save in plugin container
-    if (!this.plugins[plugin.type]) {
-      this.plugins[plugin.type] = [];
-    }
+    this.plugins[plugin.type] = this.plugins[plugin.type] || [];
     this.plugins[plugin.type].push(plugin);
 
     return this;
@@ -23,27 +21,55 @@ export default class {
   setProgress(plugin, percentage) {
     // Any plugin can call this via `this.core.setProgress(this, precentage)`
     console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage);
-
     return this;
   }
 
-  run() {
-    // Walk over plugins in the order as defined by this.types.
-    var files = []
-    for (var j in this.types) {
-      var type = this.types[j];
-      // Walk over all plugins of this type, passing & modifying the files array as we go
-      for (var i in this.plugins[type]) {
-        var plugin = this.plugins[type][i];
-        console.log('--> Now running ' + plugin.type + ' plugin ' + plugin.name + ': ');
-        files = plugin.run(files);
-        console.dir(files);
-        console.log('');
-      }
+  // Runs all plugins of the same type in parallel
+  runType(type, files, cb) {
+    console.dir({
+      method: 'Transloadit.runType',
+      type  : type,
+      files : files,
+      cb    : cb
+    });
+
+    const methods = [];
+    for (let p in this.plugins[type]) {
+      const plugin = this.plugins[type][p];
+      methods.push(plugin.run.bind(plugin, files));
     }
 
-    // core.run is the final step and retuns the results (vs every other method, returning `this`)
-    // for chainability
-    return files;
+    // const methods = this.plugins[type].map(plugin => plugin.run.bind(plugin, files));
+
+    async.parallel(methods, cb);
+  }
+
+  // Runs a waterfall of runType plugin packs, like so:
+  // All preseters(data) --> All selecters(data) --> All uploaders(data) --> done
+  run() {
+    console.dir({
+      method: 'Transloadit.run'
+    });
+
+    var typeMethods = [];
+    typeMethods.push(async.constant([]));
+
+    // for (let t in this.types) {
+    //   const type = this.types[t];
+    //   typeMethods.push(this.runType.bind(this, type));
+    // }
+
+    this.types.forEach(type => {
+      if (this.plugins[type]) {
+        typeMethods.push(this.runType.bind(this, type));
+      }
+    });
+
+    async.waterfall(typeMethods, function (err, finalFiles) {
+      console.dir({
+        err       : err ,
+        finalFiles: finalFiles
+      });
+    });
   }
 }

@@ -1,12 +1,3 @@
-#upload-target {
-  width: 300px;
-  /*height: 300px;*/
-  border: 2px dashed;
-  border-color: #ccc;
-  text-align: center;
-  padding: 100px 0;
-}
-
-#upload-target.is-dragover {
-  border-color: #575757;
+.UppyDragDrop-puppy {
+  max-width: 80px;
 }
