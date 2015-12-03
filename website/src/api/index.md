@@ -28,7 +28,7 @@ const files = uppy
 3. Plugins have types: `presetter`, `selecter` and `uploader` (more types could be added in the future). When `use` is called, each plugin’s `run` method is added to an array of corresponding types, `methods`.
 4. Ok, here is the tricky part. Core’s method `run` iterates over plugin types in a waterfall manner — each `runTypes`  runs its `method`s in parallel and returns an array of results (files) to the next plugin type in the waterfall:
 
-![waterfall of parallels](uppy-core-plugins-architecture.jpg)
+![waterfall of parallels](/images/uppy-core-plugins-architecture.jpg)
 
 ## Plugins
 
