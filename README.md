@@ -2,7 +2,11 @@
 
 A work in progress - nothing to see here.
 
-Check [open issues](https://github.com/transloadit/uppy/milestones/Minimum%20Viable%20Product) for our Minimum Viable Product. 
+Interesting places if you want to dig in:
+
+ - Architecture in [`website/src/api/index.md`](https://github.com/transloadit/uppy/blob/master/website/src/api/index.md)
+ - Contributor's guide in [`website/src/guide/contributing.md`](https://github.com/transloadit/uppy/blob/master/src/guide/contributing.md)
+ - [Open issues](https://github.com/transloadit/uppy/milestones/Minimum%20Viable%20Product) before having a Minimum Valuable Product. 
 
 ## Uppy Development
 
@@ -14,36 +18,35 @@ cd uppy
 npm install
 ```
 
-Now to get a sandbox environment set up, type:
+Our website's examples section is also our playground. To get it to run locally type:
 
 ```bash
-npm run preview
+make website-preview
 ```
-
-This will `npm run build` the project into `./build`, and then serve that
-directory using a simple static http server.
 
 ## Website Development
 
-We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity. For those reading this and screaming murder, [HashiCorp does this](https://github.com/hashicorp/terraform/tree/master/website) for all their projects, and it working well for them on a scale vastly more impressive than ours.
+We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity. For those reading this screaming murder, [HashiCorp does this](https://github.com/hashicorp/terraform/tree/master/website) for all their projects, and it's working well for them on a scale vastly more impressive than :dog:'s.
 
 The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the [`gh-pages`](https://github.com/transloadit/uppy/tree/gh-pages) branch at every deploy).
 
-Content is written in Markdown and located in `./website/src`. Pull requests welcome!
-  
-> The website is currently a clone of Yuxi Evan You's [Vue.js](http://vuejs.org/) website ([view license](website/LICENSE)) - just so we can hit the ground rolling in terms of setting up Haxo etc. Obviously as soon as possible, we should start rolling out our own layout & content.
+Content is written in Markdown and located in [`./website/src`](https://github.com/transloadit/uppy/tree/master/website/src). Feel free to fork & hack!  
 
-`./website/update.js` is called during website builds to inject the Uppy versions & filesizes into the documentation. `website` in an independent folder and so it cannot rely on anything from the root project, without `update.js` explicitly making it available (copying).
+`./website/update.js` is called during website builds to inject the Uppy versions & filesizes into the documentation. `website` in an independent folder (with e.g. its own package.json) and so it cannot rely on anything from the root project directly. `update.js` is the bridge that explicitly makes information available by injecting it into the website.
 
 It's recommended to exclude `./website/public/` from your editor if you want efficient searches.
 
-For local previews on `http://127.0.0.1:4000` type:
+For local previews on http://127.0.0.1:4000 type:
 
 ```bash
 make website-preview
 ```
 
 ## FAQ
+
+### Why does your site look like vuejs.org?
+
+The website is currently a clone of Yuxi Evan You's wonderful [Vue.js](http://vuejs.org/) website ([view license](website/VUEORG_LICENSE)) - just so we can hit the ground running in terms of Haxo boilerplate, etc. Obviously as soon as possible, we'll start rolling out our own layout & content and make this place our own. We'll keep the Vue website MIT license & credit in the footer in tact of course.
 
 ### What does Travis do?
 

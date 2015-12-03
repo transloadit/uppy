@@ -1,5 +1,2 @@
 index: true
 ---
-
-
-bla bla
