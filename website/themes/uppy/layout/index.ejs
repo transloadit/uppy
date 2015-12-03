@@ -39,52 +39,13 @@
 
 <div id="example">
   <h2>10 Second Example</h2>
-  <div class="block">
-    <figure class="highlight lang-html"><table><tbody><tr><td class="gutter"><pre>1
-2
-3
-4
-</pre></td><td class="code"><pre><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"demo"</span>&gt;</span>
-  <span class="tag">&lt;<span class="title">p</span>&gt;</span>{{message}}<span class="tag">&lt;/<span class="title">p</span>&gt;</span>
-  <span class="tag">&lt;<span class="title">input</span> <span class="attribute">v-model</span>=<span class="value">"message"</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
-</pre></td></tr></tbody></table></figure>
-  </div>
 
-  <div class="sign">+</div>
+  <div class="block"><%- partial('partials/example1') %></div>
 
-  <div class="block">
-    <figure class="highlight lang-js"><table><tbody><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-</pre></td><td class="code"><pre><span class="keyword">var</span> demo = <span class="keyword">new</span> Uppy({
-  el: <span class="string">'#demo'</span>,
-  data: {
-    message: <span class="string">'Hello Uppy!'</span>
-  }
-})
-</pre></td></tr></tbody></table></figure>
-  </div>
+  <div class="sign">&raquo;</div>
 
-  <div class="sign">=</div>
+  <div class="block"><%- partial('partials/example2') %></div>
 
-  <div class="block result">
-    <div id="demo">
-      <p>{{message}}</p>
-      <input v-model="message">
-    </div>
-    <script>
-    var demo = new Uppy({
-      el: '#demo',
-      data: {
-        message: 'Hello Uppy!'
-      }
-    })
-    </script>
-  </div>
 </div>
 <div id="features">
   <div class="feats">
