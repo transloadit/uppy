@@ -1,5 +1,8 @@
+import request from 'superagent';
+
 class DropboxPlugin {
   constructor() {
+    this.authenticate = this.authenticate.bind(this);
     this.connect = this.connect.bind(this);
     this.render = this.render.bind(this);
     this.files = [];
@@ -11,7 +14,7 @@ class DropboxPlugin {
 
     this.client = new Dropbox.Client({ key: 'b7dzc9ei5dv5hcv', token: '' });
     this.client.authDriver(new Dropbox.AuthDriver.Redirect());
-    this.client.authenticate();
+    this.authenticate();
 
     if (this.client.credentials().token) {
       this.getDirectory();
@@ -19,7 +22,7 @@ class DropboxPlugin {
   }
 
   authenticate() {
-
+    this.client.authenticate();
   }
 
   addFile() {
@@ -27,6 +30,16 @@ class DropboxPlugin {
   }
 
   getDirectory() {
+    request.get(`https://api18.dropbox.com/1/metadata/auto`)
+      .query({
+        client_id: 'b7dzc9ei5dv5hcv',
+        token: this.client.credentials().token
+      })
+      .set('Content-Type', 'application/json')
+      .end((err, res) => {
+        console.log(res);
+      })
+
     return this.client.readdir(this.currentDir, (error, entries, stat, statFiles) => {
       if (error) {
         return showError(error);  // Something went wrong.
