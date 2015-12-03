@@ -117,6 +117,14 @@ export default class DragDrop extends TransloaditPlugin {
       this.displayStatus('Done.');
     });
 
+    request.addEventListener('load', () => {
+      this.displayStatus('Done.');
+    });
+
+    request.addEventListener('error', () => {
+      console.log('fucking error!');
+    });
+
     request.send(data);
 
     // Create a new tus upload
