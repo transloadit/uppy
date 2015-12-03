@@ -74,4 +74,4 @@ uppyDist
 3. [Babel](babeljs.io)
 4. [Lodash](https://lodash.com/)
 5. [Vue.js](http://vuejs.org/guide/plugins.html#Using_a_Plugin)
-6. [Tus.js](https://github.com/tus/tus-js-client)
+6. [The tus js client](https://github.com/tus/tus-js-client)
