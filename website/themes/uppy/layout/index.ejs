@@ -20,7 +20,7 @@
       <%- config.description %>
     </p>
     <p class="buttons">
-      <a href="/guide/installation.html" class="button">Install v<%- theme.uppy_version %></a>
+      <a href="/guide/installation.html" class="button">Install v<%- config.uppy_version %></a>
     </p>
     <ul id="social">
       <li><a href="https://twitter.com/uppyjs" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @uppyjs</a></li>
@@ -52,7 +52,7 @@
     <% for (var k in site.data.features) { var v = site.data.features[k]; %>
       <div class="feat">
         <h2><span class="icon <%- v.icon %>"></span><%- v.title %></h2>
-        <p> <%- v.description %></p>
+        <p> <%- render(v.description, 'swig', {uppy_gz_size: config.uppy_gz_size}) %></p>
       </div>
     <% } %>
   </div>
