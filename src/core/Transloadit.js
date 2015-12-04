@@ -1,4 +1,10 @@
-import async from 'async';
+function promiseWaterfall([resolvedPromise, ...tasks]) {
+    const finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
+        return prevTaskPromise.then(task);
+    }, resolvedPromise(1));  // initial value
+
+    return finalTaskPromise;
+}
 
 export default class {
   constructor(opts) {
@@ -25,23 +31,25 @@ export default class {
   }
 
   // Runs all plugins of the same type in parallel
-  runType(type, files, cb) {
+  runType(type, files) {
     console.dir({
       method: 'Transloadit.runType',
       type  : type,
-      files : files,
-      cb    : cb
+      files : files
+      // cb    : cb
     });
 
     const methods = [];
     for (let p in this.plugins[type]) {
       const plugin = this.plugins[type][p];
-      methods.push(plugin.run.bind(plugin, files));
+      methods.push(plugin.run.call(plugin, files));
     }
+
+    return Promise.all(methods);
 
     // const methods = this.plugins[type].map(plugin => plugin.run.bind(plugin, files));
 
-    async.parallel(methods, cb);
+    // async.parallel(methods, cb);
   }
 
   // Runs a waterfall of runType plugin packs, like so:
@@ -52,7 +60,7 @@ export default class {
     });
 
     var typeMethods = [];
-    typeMethods.push(async.constant([]));
+    // typeMethods.push(async.constant([]));
 
     // for (let t in this.types) {
     //   const type = this.types[t];
@@ -65,11 +73,15 @@ export default class {
       }
     });
 
-    async.waterfall(typeMethods, function (err, finalFiles) {
-      console.dir({
-        err       : err ,
-        finalFiles: finalFiles
-      });
-    });
+    promiseWaterfall(typeMethods)
+      .then((result) => console.log(result))
+      .catch((error) => console.error(error));
+
+    // async.waterfall(typeMethods, function (err, finalFiles) {
+    //   console.dir({
+    //     err       : err ,
+    //     finalFiles: finalFiles
+    //   });
+    // });
   }
 }
