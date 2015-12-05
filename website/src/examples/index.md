@@ -45,7 +45,7 @@ order: 0
   </footer>
 
 <!-- Include the bundled app.js client -->
-<script src="static/js/app.js"></script>
+<script src="playground/static/js/app.js"></script>
 
 <!-- Apply the js client on a selector -->
 <script>
