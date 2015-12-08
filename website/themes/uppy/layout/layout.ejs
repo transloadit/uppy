@@ -5,7 +5,7 @@
         <title><%- page.title ? page.title + ' - ' : '' %><%- config.title %></title>
         <meta charset="utf-8">
         <meta name="description" content="<%- config.title %> - <%- config.subtitle %>">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Dosis:300,500&text=Uppy' rel='stylesheet' type='text/css'>
         <link rel="icon" href="<%- config.logo_icon %>" type="image/x-icon">
@@ -14,7 +14,6 @@
         </script>
         <%- css(isIndex ? 'css/index' : 'css/page') %>
         <%- partial('partials/ga') %>
-        <script src="/js/vue.js"></script>
     </head>
     <body>
         <div id="mobile-bar">
@@ -35,12 +34,5 @@
         <% } else { %>
             <%- body %>
         <% } %>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-              FastClick.attach(document.body);
-            }, false);
-        </script>
     </body>
 </html>
