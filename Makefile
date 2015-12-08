@@ -11,12 +11,14 @@ website-install:
 .PHONY: website-build
 website-build: website-install
 	@echo "--> Building site.."
+	@npm run build:umd
 	@cd website && node update.js
 	@cd website && ./node_modules/.bin/hexo generate
 
 .PHONY: website-preview
 website-preview: website-build
 	@echo "--> Running preview.."
+	@npm run build:umd
 	@cd website && ./node_modules/.bin/hexo server
 
 .PHONY: website-deploy
