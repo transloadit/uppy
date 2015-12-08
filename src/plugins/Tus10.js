@@ -6,7 +6,7 @@ export default class Tus10 extends TransloaditPlugin {
     this.type = 'uploader';
   }
 
-  run(files, done) {
+  run(files) {
     // console.log(files);
     this.core.setProgress(this, 0);
     var uploaded = [];
@@ -18,8 +18,8 @@ export default class Tus10 extends TransloaditPlugin {
     // }
     this.core.setProgress(this, 100);
 
-    done(null, 'done with Tus');
-    // return Promise.resolve('done with Tus');
+    // done(null, 'done with Tus');
+    return Promise.resolve(files);
 
     // return uploaded;
   }

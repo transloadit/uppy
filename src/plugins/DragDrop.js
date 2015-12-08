@@ -1,6 +1,7 @@
 import Utils from '../core/Utils';
 import TransloaditPlugin from './TransloaditPlugin';
 // import Tus from 'tus-js-client';
+// console.log('pizza', Tus);
 
 export default class DragDrop extends TransloaditPlugin {
   constructor(core, opts) {
@@ -128,7 +129,7 @@ export default class DragDrop extends TransloaditPlugin {
     request.send(data);
 
     // Create a new tus upload
-    // const upload = new Tus.Upload(files, {
+    // const upload = new Tus.Upload(data, {
     //   endpoint: 'http://master.tus.io:8080',
     //   onError: function(error) {
     //     console.log('Failed because: ' + error);
@@ -141,16 +142,16 @@ export default class DragDrop extends TransloaditPlugin {
     //     console.log('Download %s from %s', upload.file.name, upload.url);
     //   }
     // });
-
-    // Start the upload
+    //
+    // // Start the upload
     // upload.start();
   }
 
-  run(files, done) {
+  run(files) {
     console.dir({
       method: 'DragDrop.run',
-      files : files,
-      done  : done
+      files : files
+      // done  : done
     });
 
     console.log('DragDrop running!');
@@ -160,7 +161,7 @@ export default class DragDrop extends TransloaditPlugin {
     var selected = [ {name: 'lolcat.jpeg'} ];
     this.core.setProgress(this, 100);
     // return selected;
-    done(null, 'done with DragDrop');
-    // return Promise.resolve('done with DragDrop');
+    // done(null, 'done with DragDrop');
+    return Promise.resolve(files);
   }
 }

@@ -47,8 +47,6 @@
     "zuul": "^3.7.2"
   },
   "dependencies": {
-    "async": "^1.5.0",
-    "superagent": "^1.5.0",
-    "tus-js-client": "^1.1.0"
+    "superagent": "^1.5.0"
   }
 }
