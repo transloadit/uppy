@@ -1,671 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
-
-module.exports = require('./lib/core');
-
-},{"./lib/core":4}],2:[function(require,module,exports){
-'use strict';
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-var _core = require('../../../../core');
-
-var _core2 = _interopRequireDefault(_core);
-
-var _plugins = require('../../../../plugins');
-
-var transloadit = new _core2['default']({ wait: false });
-var files = transloadit.use(_plugins.DragDrop, { modal: true, selector: '#upload-target' }).use(_plugins.Tus10, { endpoint: 'http://master.tus.io:8080' }).run();
-
-console.log('--> Finished transloadit. Final result: ');
-console.dir(files);
-
-// var Transloadit = require('./src/core/Transloadit.js');
-// var DragDrop = require('./src/plugins/DragDrop.js');
-// var Tus10 = require('./src/plugins/Tus10.js');
-//
-// var transloadit = new Transloadit({wait: false});
-// var files = transloadit
-//   .use(DragDrop, {modal: true})
-//   .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
-//   .run();
-//
-// console.log('--> Finished transloadit. Final result: ');
-// console.dir(files);
-
-},{"../../../../core":1,"../../../../plugins":14}],3:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _createClass = (function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ('value' in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-  };
-})();
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError('Cannot call a class as a function');
-  }
-}
-
-var _default = (function () {
-  function _default(opts) {
-    _classCallCheck(this, _default);
-
-    // Dictates in what order different plugin types are ran:
-    this.types = ['presetter', 'selecter', 'uploader'];
-
-    // Container for different types of plugins
-    this.plugins = {};
-  }
-
-  _createClass(_default, [{
-    key: 'use',
-    value: function use(Plugin, opts) {
-      // Instantiate
-      var plugin = new Plugin(this, opts);
-
-      // Save in plugin container
-      if (!this.plugins[plugin.type]) {
-        this.plugins[plugin.type] = [];
-      }
-      this.plugins[plugin.type].push(plugin);
-
-      return this;
-    }
-  }, {
-    key: 'setProgress',
-    value: function setProgress(plugin, percentage) {
-      // Any plugin can call this via `this.core.setProgress(this, precentage)`
-      console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage);
-
-      return this;
-    }
-  }, {
-    key: 'run',
-    value: function run() {
-      // Walk over plugins in the order as defined by this.types.
-      var files = [];
-      for (var j in this.types) {
-        var type = this.types[j];
-        // Walk over all plugins of this type, passing & modifying the files array as we go
-        for (var i in this.plugins[type]) {
-          var plugin = this.plugins[type][i];
-          console.log('--> Now running ' + plugin.type + ' plugin ' + plugin.name + ': ');
-          files = plugin.run(files);
-          console.dir(files);
-          console.log('');
-        }
-      }
-
-      // core.run is the final step and retuns the results (vs every other method, returning `this`)
-      // for chainability
-      return files;
-    }
-  }]);
-
-  return _default;
-})();
-
-exports['default'] = _default;
-module.exports = exports['default'];
-
-},{}],4:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { 'default': obj };
-}
-
-var _Transloadit = require('./Transloadit');
-
-var _Transloadit2 = _interopRequireDefault(_Transloadit);
-
-exports['default'] = _Transloadit2['default'];
-module.exports = exports['default'];
-
-},{"./Transloadit":3}],5:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _createClass = (function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ('value' in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-  };
-})();
-
-var _get = function get(_x, _x2, _x3) {
-  var _again = true;_function: while (_again) {
-    var object = _x,
-        property = _x2,
-        receiver = _x3;_again = false;if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
-      var parent = Object.getPrototypeOf(object);if (parent === null) {
-        return undefined;
-      } else {
-        _x = parent;_x2 = property;_x3 = receiver;_again = true;desc = parent = undefined;continue _function;
-      }
-    } else if ('value' in desc) {
-      return desc.value;
-    } else {
-      var getter = desc.get;if (getter === undefined) {
-        return undefined;
-      }return getter.call(receiver);
-    }
-  }
-};
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { 'default': obj };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError('Cannot call a class as a function');
-  }
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== 'function' && superClass !== null) {
-    throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
-  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
-
-var _TransloaditPlugin2 = require('./TransloaditPlugin');
-
-var _TransloaditPlugin3 = _interopRequireDefault(_TransloaditPlugin2);
-
-// This is how we roll $('.element').toggleClass in non-jQuery world
-function toggleClass(el, className) {
-  // console.log(el);
-
-  if (el.classList) {
-    el.classList.toggle(className);
-  } else {
-    var classes = el.className.split(' ');
-    var existingIndex = classes.indexOf(className);
-
-    if (existingIndex >= 0) {
-      classes.splice(existingIndex, 1);
-    } else {
-      classes.push(className);
-      el.className = classes.join(' ');
-    }
-  }
-}
-
-var DragDrop = (function (_TransloaditPlugin) {
-  _inherits(DragDrop, _TransloaditPlugin);
-
-  function DragDrop(core, opts) {
-    _classCallCheck(this, DragDrop);
-
-    _get(Object.getPrototypeOf(DragDrop.prototype), 'constructor', this).call(this, core, opts);
-    this.type = 'selecter';
-    this.opts = opts;
-    console.log(this.opts);
-
-    // get the element where Drag & Drop event will occur
-    this.dropzone = document.querySelectorAll(this.opts.selector)[0];
-
-    // crazy stuff so that ‘this’ will behave in class
-    this.handleDragEnter = this.handleDragEnter.bind(this);
-    this.handleDragOver = this.handleDragOver.bind(this);
-    this.handleDrop = this.handleDrop.bind(this);
-  }
-
-  _createClass(DragDrop, [{
-    key: 'listenForEvents',
-    value: function listenForEvents() {
-      this.dropzone.addEventListener('dragenter', this.handleDragEnter);
-      this.dropzone.addEventListener('dragover', this.handleDragOver);
-      this.dropzone.addEventListener('drop', this.handleDrop);
-      console.log('waiting for some files to be dropped on ' + this.opts.selector);
-    }
-  }, {
-    key: 'handleDragEnter',
-    value: function handleDragEnter(e) {
-      event.stopPropagation();
-      event.preventDefault();
-      toggleClass(this.dropzone, 'is-dragover');
-    }
-  }, {
-    key: 'handleDragOver',
-    value: function handleDragOver(e) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-  }, {
-    key: 'handleDrop',
-    value: function handleDrop(e) {
-      console.log('all right, someone dropped something here...');
-      e.preventDefault();
-      toggleClass(this.dropzone, 'is-dragover');
-      var files = e.dataTransfer.files;
-      console.log(files);
-      this.handleFiles(files);
-    }
-  }, {
-    key: 'handleFiles',
-    value: function handleFiles(files) {
-      return files;
-    }
-  }, {
-    key: 'run',
-    value: function run(files) {
-      this.listenForEvents();
-      // this.core.setProgress(this, 0);
-      var selected = [{ name: 'lolcat.jpeg' }];
-      // this.core.setProgress(this, 100);
-
-      // return selected;
-    }
-  }]);
-
-  return DragDrop;
-})(_TransloaditPlugin3['default']);
-
-exports['default'] = DragDrop;
-module.exports = exports['default'];
-
-},{"./TransloaditPlugin":8}],6:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _createClass = (function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ('value' in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-  };
-})();
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { 'default': obj };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError('Cannot call a class as a function');
-  }
-}
-
-var _superagent = require('superagent');
-
-var _superagent2 = _interopRequireDefault(_superagent);
-
-var DropboxPlugin = (function () {
-  function DropboxPlugin() {
-    _classCallCheck(this, DropboxPlugin);
-
-    this.authenticate = this.authenticate.bind(this);
-    this.connect = this.connect.bind(this);
-    this.render = this.render.bind(this);
-    this.files = [];
-    this.currentDir = '/';
-  }
-
-  _createClass(DropboxPlugin, [{
-    key: 'connect',
-    value: function connect(target) {
-      this._target = document.getElementById(target);
-
-      this.client = new Dropbox.Client({ key: 'b7dzc9ei5dv5hcv', token: '' });
-      this.client.authDriver(new Dropbox.AuthDriver.Redirect());
-      this.authenticate();
-
-      if (this.client.credentials().token) {
-        this.getDirectory();
-      }
-    }
-  }, {
-    key: 'authenticate',
-    value: function authenticate() {
-      this.client.authenticate();
-    }
-  }, {
-    key: 'addFile',
-    value: function addFile() {}
-  }, {
-    key: 'getDirectory',
-    value: function getDirectory() {
-      var _this = this;
-
-      // request.get(`https://api18.dropbox.com/1/metadata/auto/`)
-      //   .query({
-      //     client_id: 'b7dzc9ei5dv5hcv',
-      //     token: this.client.credentials().token
-      //   })
-      //   .set('Content-Type', 'application/json')
-      //   .end((err, res) => {
-      //     console.log(res);
-      //   })
-
-      return this.client.readdir(this.currentDir, function (error, entries, stat, statFiles) {
-        if (error) {
-          return showError(error); // Something went wrong.
-        }
-        return _this.render(statFiles);
-      });
-    }
-  }, {
-    key: 'run',
-    value: function run() {}
-  }, {
-    key: 'render',
-    value: function render(files) {
-      var _this2 = this;
-
-      // for each file in the directory, create a list item element
-      var elems = files.map(function (file, i) {
-        var icon = file.isFolder ? 'folder' : 'file';
-        return '<li data-type="' + icon + '" data-name="' + file.name + '"><span>' + icon + ' : </span><span> ' + file.name + '</span></li>';
-      });
-
-      // appends the list items to the target
-      this._target.innerHTML = elems.sort().join('');
-
-      if (this.currentDir.length > 1) {
-        var _parent = document.createElement('LI');
-        _parent.setAttribute('data-type', 'parent');
-        _parent.innerHTML = '<span>...</span>';
-        this._target.appendChild(_parent);
-      }
-
-      // add an onClick to each list item
-      var fileElems = this._target.querySelectorAll('li');
-
-      Array.prototype.forEach.call(fileElems, function (element) {
-        var type = element.getAttribute('data-type');
-
-        if (type === 'file') {
-          element.addEventListener('click', function () {
-            _this2.files.push(element.getAttribute('data-name'));
-            console.dir('files: ' + _this2.files);
-          });
-        } else {
-          element.addEventListener('dblclick', function () {
-            var length = _this2.currentDir.split('/').length;
-
-            if (type === 'folder') {
-              _this2.currentDir = '' + _this2.currentDir + element.getAttribute('data-name') + '/';
-            } else if (type === 'parent') {
-              _this2.currentDir = _this2.currentDir.split('/').slice(0, length - 2).join('/') + '/';
-            }
-            console.log(_this2.currentDir);
-            _this2.getDirectory();
-          });
-        }
-      });
-    }
-  }]);
-
-  return DropboxPlugin;
-})();
-
-exports['default'] = new DropboxPlugin();
-module.exports = exports['default'];
-
-},{"superagent":11}],7:[function(require,module,exports){
-'use strict';
-
-var _get = function get(_x, _x2, _x3) {
-  var _again = true;_function: while (_again) {
-    var object = _x,
-        property = _x2,
-        receiver = _x3;_again = false;if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
-      var parent = Object.getPrototypeOf(object);if (parent === null) {
-        return undefined;
-      } else {
-        _x = parent;_x2 = property;_x3 = receiver;_again = true;desc = parent = undefined;continue _function;
-      }
-    } else if ('value' in desc) {
-      return desc.value;
-    } else {
-      var getter = desc.get;if (getter === undefined) {
-        return undefined;
-      }return getter.call(receiver);
-    }
-  }
-};
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { 'default': obj };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError('Cannot call a class as a function');
-  }
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== 'function' && superClass !== null) {
-    throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
-  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
-
-var _TransloaditPlugin2 = require('./TransloaditPlugin');
-
-var _TransloaditPlugin3 = _interopRequireDefault(_TransloaditPlugin2);
-
-var TransloaditBasic = (function (_TransloaditPlugin) {
-  _inherits(TransloaditBasic, _TransloaditPlugin);
-
-  function TransloaditBasic(core, opts) {
-    _classCallCheck(this, TransloaditBasic);
-
-    _get(Object.getPrototypeOf(TransloaditBasic.prototype), 'constructor', this).call(this, core, opts);
-    this.type = 'presetter';
-    this.core.use(DragDrop, { modal: true, wait: true }).use(Tus10, { endpoint: 'http://master.tus.io:8080' });
-  }
-
-  return TransloaditBasic;
-})(_TransloaditPlugin3['default']);
-
-},{"./TransloaditPlugin":8}],8:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = (function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-  };
-})();
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-var TransloaditPlugin = (function () {
-  // This contains boilerplate that all TransloaditPlugins share - and should not be used
-  // directly. It also shows which methods final plugins should implement/override,
-  // this deciding on structure.
-
-  function TransloaditPlugin(core, opts) {
-    _classCallCheck(this, TransloaditPlugin);
-
-    this.core = core;
-    this.opts = opts;
-    this.name = this.constructor.name;
-  }
-
-  _createClass(TransloaditPlugin, [{
-    key: "run",
-    value: function run(files) {
-      return files;
-    }
-  }]);
-
-  return TransloaditPlugin;
-})();
-
-exports["default"] = TransloaditPlugin;
-module.exports = exports["default"];
-
-},{}],9:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _createClass = (function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ('value' in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-  };
-})();
-
-var _get = function get(_x, _x2, _x3) {
-  var _again = true;_function: while (_again) {
-    var object = _x,
-        property = _x2,
-        receiver = _x3;_again = false;if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
-      var parent = Object.getPrototypeOf(object);if (parent === null) {
-        return undefined;
-      } else {
-        _x = parent;_x2 = property;_x3 = receiver;_again = true;desc = parent = undefined;continue _function;
-      }
-    } else if ('value' in desc) {
-      return desc.value;
-    } else {
-      var getter = desc.get;if (getter === undefined) {
-        return undefined;
-      }return getter.call(receiver);
-    }
-  }
-};
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { 'default': obj };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError('Cannot call a class as a function');
-  }
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== 'function' && superClass !== null) {
-    throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
-  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
-
-var _TransloaditPlugin2 = require('./TransloaditPlugin');
-
-var _TransloaditPlugin3 = _interopRequireDefault(_TransloaditPlugin2);
-
-var Tus10 = (function (_TransloaditPlugin) {
-  _inherits(Tus10, _TransloaditPlugin);
-
-  function Tus10(core, opts) {
-    _classCallCheck(this, Tus10);
-
-    _get(Object.getPrototypeOf(Tus10.prototype), 'constructor', this).call(this, core, opts);
-    this.type = 'uploader';
-  }
-
-  _createClass(Tus10, [{
-    key: 'run',
-    value: function run(files) {
-      this.core.setProgress(this, 0);
-      var uploaded = [];
-      for (var i in files) {
-        var file = files[i];
-        this.core.setProgress(this, i * 1 + 1);
-        uploaded[i] = file;
-        uploaded[i].url = this.opts.endpoint + '/uploaded/' + file.name;
-      }
-      this.core.setProgress(this, 100);
-
-      return uploaded;
-    }
-  }]);
-
-  return Tus10;
-})(_TransloaditPlugin3['default']);
-
-exports['default'] = Tus10;
-module.exports = exports['default'];
-
-},{"./TransloaditPlugin":8}],10:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { 'default': obj };
-}
-
-var _TransloaditPlugin = require('./TransloaditPlugin');
-
-var _TransloaditPlugin2 = _interopRequireDefault(_TransloaditPlugin);
-
-var _DragDrop = require('./DragDrop');
-
-var _DragDrop2 = _interopRequireDefault(_DragDrop);
-
-var _Dropbox = require('./Dropbox');
-
-var _Dropbox2 = _interopRequireDefault(_Dropbox);
-
-var _TransloaditBasic = require('./TransloaditBasic');
-
-var _TransloaditBasic2 = _interopRequireDefault(_TransloaditBasic);
-
-var _Tus10 = require('./Tus10');
-
-var _Tus102 = _interopRequireDefault(_Tus10);
-
-exports['default'] = {
-  TransloaditPlugin: _TransloaditPlugin2['default'],
-  DropboxPlugin: _Dropbox2['default'],
-  DragDrop: _DragDrop2['default'],
-  TransloaditBasic: _TransloaditBasic2['default'],
-  Tus10: _Tus102['default']
-};
-module.exports = exports['default'];
-
-},{"./DragDrop":5,"./Dropbox":6,"./TransloaditBasic":7,"./TransloaditPlugin":8,"./Tus10":9}],11:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -771,11 +104,29 @@ function serialize(obj) {
   var pairs = [];
   for (var key in obj) {
     if (null != obj[key]) {
-      pairs.push(encodeURIComponent(key)
-        + '=' + encodeURIComponent(obj[key]));
-    }
-  }
+      pushEncodedKeyValuePair(pairs, key, obj[key]);
+        }
+      }
   return pairs.join('&');
+}
+
+/**
+ * Helps 'serialize' with serializing arrays.
+ * Mutates the pairs array.
+ *
+ * @param {Array} pairs
+ * @param {String} key
+ * @param {Mixed} val
+ */
+
+function pushEncodedKeyValuePair(pairs, key, val) {
+  if (Array.isArray(val)) {
+    return val.forEach(function(v) {
+      pushEncodedKeyValuePair(pairs, key, v);
+    });
+  }
+  pairs.push(encodeURIComponent(key)
+    + '=' + encodeURIComponent(val));
 }
 
 /**
@@ -1020,20 +371,6 @@ Response.prototype.setHeaderProperties = function(header){
 };
 
 /**
- * Force given parser
- * 
- * Sets the body parser no matter type.
- * 
- * @param {Function}
- * @api public
- */
-
-Response.prototype.parse = function(fn){
-  this.parser = fn;
-  return this;
-};
-
-/**
  * Parse the given body `str`.
  *
  * Used for auto-parsing of bodies. Parsers
@@ -1045,7 +382,7 @@ Response.prototype.parse = function(fn){
  */
 
 Response.prototype.parseBody = function(str){
-  var parse = this.parser || request.parse[this.type];
+  var parse = request.parse[this.type];
   return parse && str && (str.length || str instanceof Object)
     ? parse(str)
     : null;
@@ -1327,6 +664,20 @@ Request.prototype.type = function(type){
 };
 
 /**
+ * Force given parser
+ *
+ * Sets the body parser no matter type.
+ *
+ * @param {Function}
+ * @api public
+ */
+
+Request.prototype.parse = function(fn){
+  this._parser = fn;
+  return this;
+};
+
+/**
  * Set Accept to `type`, mapping values from `request.types`.
  *
  * Examples:
@@ -1451,7 +802,7 @@ Request.prototype.attach = function(field, file, filename){
  *       // manual json
  *       request.post('/user')
  *         .type('json')
- *         .send('{"name":"tj"})
+ *         .send('{"name":"tj"}')
  *         .end(callback)
  *
  *       // auto json
@@ -1648,7 +999,7 @@ Request.prototype.end = function(fn){
   if ('GET' != this.method && 'HEAD' != this.method && 'string' != typeof data && !isHost(data)) {
     // serialize stuff
     var contentType = this.getHeader('Content-Type');
-    var serialize = request.serialize[contentType ? contentType.split(';')[0] : ''];
+    var serialize = this._parser || request.serialize[contentType ? contentType.split(';')[0] : ''];
     if (serialize) data = serialize(data);
   }
 
@@ -1660,7 +1011,10 @@ Request.prototype.end = function(fn){
 
   // send stuff
   this.emit('request', this);
-  xhr.send(data);
+
+  // IE11 xhr.send(undefined) sends 'undefined' string as POST payload (instead of nothing)
+  // We need null here if data is undefined
+  xhr.send(typeof data !== 'undefined' ? data : null);
   return this;
 };
 
@@ -1758,11 +1112,14 @@ request.head = function(url, data, fn){
  * @api public
  */
 
-request.del = function(url, fn){
+function del(url, fn){
   var req = request('DELETE', url);
   if (fn) req.end(fn);
   return req;
 };
+
+request.del = del;
+request.delete = del;
 
 /**
  * PATCH `url` with optional `data` and callback `fn(res)`.
@@ -1824,7 +1181,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":12,"reduce":13}],12:[function(require,module,exports){
+},{"emitter":2,"reduce":3}],2:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -1990,7 +1347,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],13:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -2015,9 +1372,716 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}],14:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
-module.exports = require('./lib/plugins');
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 
-},{"./lib/plugins":10}]},{},[2]);
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function promiseWaterfall(_ref) {
+  var _ref2 = _toArray(_ref);
+
+  var resolvedPromise = _ref2[0];
+
+  var tasks = _ref2.slice(1);
+
+  var finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
+    return prevTaskPromise.then(task);
+  }, resolvedPromise(1)); // initial value
+
+  return finalTaskPromise;
+}
+
+var _default = (function () {
+  function _default(opts) {
+    _classCallCheck(this, _default);
+
+    // Dictates in what order different plugin types are ran:
+    this.types = ['presetter', 'selecter', 'uploader'];
+
+    // Container for different types of plugins
+    this.plugins = {};
+  }
+
+  _createClass(_default, [{
+    key: 'use',
+    value: function use(Plugin, opts) {
+      // Instantiate
+      var plugin = new Plugin(this, opts);
+      this.plugins[plugin.type] = this.plugins[plugin.type] || [];
+      this.plugins[plugin.type].push(plugin);
+
+      return this;
+    }
+  }, {
+    key: 'setProgress',
+    value: function setProgress(plugin, percentage) {
+      // Any plugin can call this via `this.core.setProgress(this, precentage)`
+      console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage);
+      return this;
+    }
+
+    // Runs all plugins of the same type in parallel
+  }, {
+    key: 'runType',
+    value: function runType(type, files) {
+      console.dir({
+        method: 'Transloadit.runType',
+        type: type,
+        files: files
+        // cb    : cb
+      });
+
+      var methods = [];
+      for (var p in this.plugins[type]) {
+        var plugin = this.plugins[type][p];
+        methods.push(plugin.run.call(plugin, files));
+      }
+
+      return Promise.all(methods);
+
+      // const methods = this.plugins[type].map(plugin => plugin.run.bind(plugin, files));
+
+      // async.parallel(methods, cb);
+    }
+
+    // Runs a waterfall of runType plugin packs, like so:
+    // All preseters(data) --> All selecters(data) --> All uploaders(data) --> done
+  }, {
+    key: 'run',
+    value: function run() {
+      var _this = this;
+
+      console.dir({
+        method: 'Transloadit.run'
+      });
+
+      var typeMethods = [];
+      // typeMethods.push(async.constant([]));
+
+      // for (let t in this.types) {
+      //   const type = this.types[t];
+      //   typeMethods.push(this.runType.bind(this, type));
+      // }
+
+      this.types.forEach(function (type) {
+        if (_this.plugins[type]) {
+          typeMethods.push(_this.runType.bind(_this, type));
+        }
+      });
+
+      promiseWaterfall(typeMethods).then(function (result) {
+        return console.log(result);
+      })['catch'](function (error) {
+        return console.error(error);
+      });
+
+      // async.waterfall(typeMethods, function (err, finalFiles) {
+      //   console.dir({
+      //     err       : err ,
+      //     finalFiles: finalFiles
+      //   });
+      // });
+    }
+  }]);
+
+  return _default;
+})();
+
+exports['default'] = _default;
+module.exports = exports['default'];
+
+},{}],5:[function(require,module,exports){
+// This is how we roll $('.element').toggleClass in non-jQuery world
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+function toggleClass(el, className) {
+  if (el.classList) {
+    el.classList.toggle(className);
+  } else {
+    var classes = el.className.split(' ');
+    var existingIndex = classes.indexOf(className);
+
+    if (existingIndex >= 0) {
+      classes.splice(existingIndex, 1);
+    } else {
+      classes.push(className);
+      el.className = classes.join(' ');
+    }
+  }
+}
+
+function addClass(el, className) {
+  if (el.classList) {
+    el.classList.add(className);
+  } else {
+    el.className += ' ' + className;
+  }
+}
+
+function removeClass(el, className) {
+  if (el.classList) {
+    el.classList.remove(className);
+  } else {
+    el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+  }
+}
+
+// $form.on('drag dragstart dragend dragover dragenter dragleave drop');
+function addListenerMulti(el, events, func) {
+  var eventsArray = events.split(' ');
+  for (var _event in eventsArray) {
+    el.addEventListener(eventsArray[_event], func, false);
+  }
+}
+
+exports['default'] = {
+  toggleClass: toggleClass,
+  addClass: addClass,
+  removeClass: removeClass,
+  addListenerMulti: addListenerMulti
+};
+module.exports = exports['default'];
+
+},{}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _Transloadit = require('./Transloadit');
+
+var _Transloadit2 = _interopRequireDefault(_Transloadit);
+
+exports['default'] = _Transloadit2['default'];
+module.exports = exports['default'];
+
+},{"./Transloadit":4}],7:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _coreUtils = require('../core/Utils');
+
+var _coreUtils2 = _interopRequireDefault(_coreUtils);
+
+var _TransloaditPlugin2 = require('./TransloaditPlugin');
+
+var _TransloaditPlugin3 = _interopRequireDefault(_TransloaditPlugin2);
+
+// import Tus from 'tus-js-client';
+// console.log('pizza', Tus);
+
+var DragDrop = (function (_TransloaditPlugin) {
+  _inherits(DragDrop, _TransloaditPlugin);
+
+  function DragDrop(core, opts) {
+    _classCallCheck(this, DragDrop);
+
+    _get(Object.getPrototypeOf(DragDrop.prototype), 'constructor', this).call(this, core, opts);
+    this.type = 'selecter';
+
+    // set default options
+    var defaultOptions = {
+      bla: 'blabla',
+      autoSubmit: true,
+      modal: true
+    };
+
+    // merge default options with the ones set by user
+    this.opts = defaultOptions;
+    Object.assign(this.opts, opts);
+
+    console.log(this.opts);
+
+    // get the element where Drag & Drop event will occur
+    this.dropzone = document.querySelectorAll(this.opts.selector)[0];
+    this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0];
+
+    this.status = document.querySelectorAll('.UppyDragDrop-status')[0];
+
+    this.isDragDropSupported = this.checkDragDropSupport();
+
+    // crazy stuff so that ‘this’ will behave in class
+    this.listenForEvents = this.listenForEvents.bind(this);
+    this.handleDrop = this.handleDrop.bind(this);
+    this.checkDragDropSupport = this.checkDragDropSupport.bind(this);
+    this.upload = this.upload.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+  }
+
+  /**
+   * Checks if the browser supports Drag & Drop
+   */
+
+  _createClass(DragDrop, [{
+    key: 'checkDragDropSupport',
+    value: function checkDragDropSupport() {
+      var div = document.createElement('div');
+      return ('draggable' in div || 'ondragstart' in div && 'ondrop' in div) && 'FormData' in window && 'FileReader' in window;
+    }
+  }, {
+    key: 'listenForEvents',
+    value: function listenForEvents() {
+      var _this = this;
+
+      if (this.isDragDropSupported) {
+        _coreUtils2['default'].addClass(this.dropzone, 'is-dragdrop-supported');
+      }
+
+      // prevent default actions for all drag & drop events
+      _coreUtils2['default'].addListenerMulti(this.dropzone, 'drag dragstart dragend dragover dragenter dragleave drop', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      // Toggle is-dragover state when files are dragged over or dropped
+      _coreUtils2['default'].addListenerMulti(this.dropzone, 'dragover dragenter', function () {
+        _coreUtils2['default'].addClass(_this.dropzone, 'is-dragover');
+      });
+
+      _coreUtils2['default'].addListenerMulti(this.dropzone, 'dragleave dragend drop', function () {
+        _coreUtils2['default'].removeClass(_this.dropzone, 'is-dragover');
+      });
+
+      this.dropzone.addEventListener('drop', this.handleDrop);
+
+      this.dropzoneInput.addEventListener('change', this.handleInputChange);
+
+      console.log('waiting for some files to be dropped on ' + this.opts.selector);
+    }
+
+    // Toggle is-dragover state when files are dragged over or dropped
+    // in this case — add/remove 'is-dragover' class
+    // toggleDragoverState(e) {
+    //   toggleClass(this.dropzone, 'is-dragover');
+    // }
+
+  }, {
+    key: 'displayStatus',
+    value: function displayStatus(status) {
+      this.status.innerHTML = status;
+    }
+  }, {
+    key: 'handleDrop',
+    value: function handleDrop(e) {
+      console.log('all right, someone dropped something here...');
+      var files = e.dataTransfer.files;
+      var formData = new FormData(this.dropzone);
+      // console.log('pizza', formData);
+
+      for (var i = 0; i < files.length; i++) {
+        formData.append('file', files[i]);
+        console.log('pizza', files[i]);
+      }
+
+      this.upload(formData);
+    }
+  }, {
+    key: 'handleInputChange',
+    value: function handleInputChange() {
+      // const fileInput = document.querySelectorAll('.UppyDragDrop-input')[0];
+      var formData = new FormData(this.dropzone);
+      console.log('pizza', formData);
+
+      this.upload(formData);
+    }
+  }, {
+    key: 'upload',
+    value: function upload(data) {
+      var _this2 = this;
+
+      this.displayStatus('Uploading...');
+
+      var request = new XMLHttpRequest();
+      request.open('POST', 'http://api2.transloadit.com', true);
+      request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+
+      request.addEventListener('load', function () {
+        console.log('fucking done!');
+        _this2.displayStatus('Done.');
+      });
+
+      request.addEventListener('load', function () {
+        _this2.displayStatus('Done.');
+      });
+
+      request.addEventListener('error', function () {
+        console.log('fucking error!');
+      });
+
+      request.send(data);
+
+      // Create a new tus upload
+      // const upload = new Tus.Upload(data, {
+      //   endpoint: 'http://master.tus.io:8080',
+      //   onError: function(error) {
+      //     console.log('Failed because: ' + error);
+      //   },
+      //   onProgress: function(bytesUploaded, bytesTotal) {
+      //     var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
+      //     console.log(bytesUploaded, bytesTotal, percentage + '%');
+      //   },
+      //   onSuccess: function() {
+      //     console.log('Download %s from %s', upload.file.name, upload.url);
+      //   }
+      // });
+      //
+      // // Start the upload
+      // upload.start();
+    }
+  }, {
+    key: 'run',
+    value: function run(files) {
+      console.dir({
+        method: 'DragDrop.run',
+        files: files
+        // done  : done
+      });
+
+      console.log('DragDrop running!');
+      // console.log(files);
+      this.listenForEvents();
+      this.core.setProgress(this, 0);
+      var selected = [{ name: 'lolcat.jpeg' }];
+      this.core.setProgress(this, 100);
+      // return selected;
+      // done(null, 'done with DragDrop');
+      return Promise.resolve(files);
+    }
+  }]);
+
+  return DragDrop;
+})(_TransloaditPlugin3['default']);
+
+exports['default'] = DragDrop;
+module.exports = exports['default'];
+
+},{"../core/Utils":5,"./TransloaditPlugin":10}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _superagent = require('superagent');
+
+var _superagent2 = _interopRequireDefault(_superagent);
+
+var DropboxPlugin = (function () {
+  function DropboxPlugin() {
+    _classCallCheck(this, DropboxPlugin);
+
+    this.authenticate = this.authenticate.bind(this);
+    this.connect = this.connect.bind(this);
+    this.render = this.render.bind(this);
+    this.files = [];
+    this.currentDir = '/';
+  }
+
+  _createClass(DropboxPlugin, [{
+    key: 'connect',
+    value: function connect(target) {
+      this._target = document.getElementById(target);
+
+      this.client = new Dropbox.Client({ key: 'b7dzc9ei5dv5hcv', token: '' });
+      this.client.authDriver(new Dropbox.AuthDriver.Redirect());
+      this.authenticate();
+
+      if (this.client.credentials().token) {
+        this.getDirectory();
+      }
+    }
+  }, {
+    key: 'authenticate',
+    value: function authenticate() {
+      this.client.authenticate();
+    }
+  }, {
+    key: 'addFile',
+    value: function addFile() {}
+  }, {
+    key: 'getDirectory',
+    value: function getDirectory() {
+      var _this = this;
+
+      _superagent2['default'].get('https://api18.dropbox.com/1/metadata/auto').query({
+        client_id: 'b7dzc9ei5dv5hcv',
+        token: this.client.credentials().token
+      }).set('Content-Type', 'application/json').end(function (err, res) {
+        console.log(res);
+      });
+
+      return this.client.readdir(this.currentDir, function (error, entries, stat, statFiles) {
+        if (error) {
+          return showError(error); // Something went wrong.
+        }
+        return _this.render(statFiles);
+      });
+    }
+  }, {
+    key: 'run',
+    value: function run() {}
+  }, {
+    key: 'render',
+    value: function render(files) {
+      var _this2 = this;
+
+      // for each file in the directory, create a list item element
+      var elems = files.map(function (file, i) {
+        var icon = file.isFolder ? 'folder' : 'file';
+        return '<li data-type="' + icon + '" data-name="' + file.name + '"><span>' + icon + ' : </span><span> ' + file.name + '</span></li>';
+      });
+
+      // appends the list items to the target
+      this._target.innerHTML = elems.sort().join('');
+
+      if (this.currentDir.length > 1) {
+        var _parent = document.createElement('LI');
+        _parent.setAttribute('data-type', 'parent');
+        _parent.innerHTML = '<span>...</span>';
+        this._target.appendChild(_parent);
+      }
+
+      // add an onClick to each list item
+      var fileElems = this._target.querySelectorAll('li');
+
+      Array.prototype.forEach.call(fileElems, function (element) {
+        var type = element.getAttribute('data-type');
+
+        if (type === 'file') {
+          element.addEventListener('click', function () {
+            _this2.files.push(element.getAttribute('data-name'));
+            console.dir('files: ' + _this2.files);
+          });
+        } else {
+          element.addEventListener('dblclick', function () {
+            var length = _this2.currentDir.split('/').length;
+
+            if (type === 'folder') {
+              _this2.currentDir = '' + _this2.currentDir + element.getAttribute('data-name') + '/';
+            } else if (type === 'parent') {
+              _this2.currentDir = _this2.currentDir.split('/').slice(0, length - 2).join('/') + '/';
+            }
+            console.log(_this2.currentDir);
+            _this2.getDirectory();
+          });
+        }
+      });
+    }
+  }]);
+
+  return DropboxPlugin;
+})();
+
+exports['default'] = new DropboxPlugin();
+module.exports = exports['default'];
+
+},{"superagent":1}],9:[function(require,module,exports){
+'use strict';
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _TransloaditPlugin2 = require('./TransloaditPlugin');
+
+var _TransloaditPlugin3 = _interopRequireDefault(_TransloaditPlugin2);
+
+var TransloaditBasic = (function (_TransloaditPlugin) {
+  _inherits(TransloaditBasic, _TransloaditPlugin);
+
+  function TransloaditBasic(core, opts) {
+    _classCallCheck(this, TransloaditBasic);
+
+    _get(Object.getPrototypeOf(TransloaditBasic.prototype), 'constructor', this).call(this, core, opts);
+    this.type = 'presetter';
+    this.core.use(DragDrop, { modal: true, wait: true }).use(Tus10, { endpoint: 'http://master.tus.io:8080' });
+  }
+
+  return TransloaditBasic;
+})(_TransloaditPlugin3['default']);
+
+},{"./TransloaditPlugin":10}],10:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TransloaditPlugin = (function () {
+  // This contains boilerplate that all TransloaditPlugins share - and should not be used
+  // directly. It also shows which methods final plugins should implement/override,
+  // this deciding on structure.
+
+  function TransloaditPlugin(core, opts) {
+    _classCallCheck(this, TransloaditPlugin);
+
+    this.core = core;
+    this.opts = opts;
+    this.name = this.constructor.name;
+  }
+
+  _createClass(TransloaditPlugin, [{
+    key: "run",
+    value: function run(files) {
+      return files;
+    }
+  }]);
+
+  return TransloaditPlugin;
+})();
+
+exports["default"] = TransloaditPlugin;
+module.exports = exports["default"];
+
+},{}],11:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _TransloaditPlugin2 = require('./TransloaditPlugin');
+
+var _TransloaditPlugin3 = _interopRequireDefault(_TransloaditPlugin2);
+
+var Tus10 = (function (_TransloaditPlugin) {
+  _inherits(Tus10, _TransloaditPlugin);
+
+  function Tus10(core, opts) {
+    _classCallCheck(this, Tus10);
+
+    _get(Object.getPrototypeOf(Tus10.prototype), 'constructor', this).call(this, core, opts);
+    this.type = 'uploader';
+  }
+
+  _createClass(Tus10, [{
+    key: 'run',
+    value: function run(files) {
+      // console.log(files);
+      this.core.setProgress(this, 0);
+      var uploaded = [];
+      // for (var i in files) {
+      //   var file = files[i];
+      //   this.core.setProgress(this, (i * 1) + 1);
+      //   uploaded[i]     = file;
+      //   uploaded[i].url = this.opts.endpoint + '/uploaded/' + file.name;
+      // }
+      this.core.setProgress(this, 100);
+
+      // done(null, 'done with Tus');
+      return Promise.resolve(files);
+
+      // return uploaded;
+    }
+  }]);
+
+  return Tus10;
+})(_TransloaditPlugin3['default']);
+
+exports['default'] = Tus10;
+module.exports = exports['default'];
+
+},{"./TransloaditPlugin":10}],12:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _TransloaditPlugin = require('./TransloaditPlugin');
+
+var _TransloaditPlugin2 = _interopRequireDefault(_TransloaditPlugin);
+
+var _DragDrop = require('./DragDrop');
+
+var _DragDrop2 = _interopRequireDefault(_DragDrop);
+
+var _Dropbox = require('./Dropbox');
+
+var _Dropbox2 = _interopRequireDefault(_Dropbox);
+
+var _TransloaditBasic = require('./TransloaditBasic');
+
+var _TransloaditBasic2 = _interopRequireDefault(_TransloaditBasic);
+
+var _Tus10 = require('./Tus10');
+
+var _Tus102 = _interopRequireDefault(_Tus10);
+
+exports['default'] = {
+  TransloaditPlugin: _TransloaditPlugin2['default'],
+  DropboxPlugin: _Dropbox2['default'],
+  DragDrop: _DragDrop2['default'],
+  TransloaditBasic: _TransloaditBasic2['default'],
+  Tus10: _Tus102['default']
+};
+module.exports = exports['default'];
+
+},{"./DragDrop":7,"./Dropbox":8,"./TransloaditBasic":9,"./TransloaditPlugin":10,"./Tus10":11}],13:[function(require,module,exports){
+'use strict';
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _srcCore = require('../../../../../../src/core');
+
+var _srcCore2 = _interopRequireDefault(_srcCore);
+
+var _srcPlugins = require('../../../../../../src/plugins');
+
+var uppy = new _srcCore2['default']({ wait: false });
+var files = uppy.use(_srcPlugins.DragDrop, { selector: '#upload-target' }).use(_srcPlugins.Tus10, { endpoint: 'http://master.tus.io:8080' }).run();
+
+},{"../../../../../../src/core":6,"../../../../../../src/plugins":12}]},{},[13]);

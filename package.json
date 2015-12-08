@@ -9,7 +9,7 @@
     "build:lib": "babel src -d lib --stage 0",
     "build:umd": "./bin/build-umd",
     "build:umd:min": "./bin/build-umd",
-    "build:examples": "examples/buildAll node_modules/.bin/browserify",
+    "build:examples": "website/src/examples/buildAll node_modules/.bin/browserify",
     "clean": "rm -rf lib && rm -rf dist",
     "lint": "eslint src/**/*.js",
     "dev": "npm run watch & npm run server",

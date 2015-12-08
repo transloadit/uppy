@@ -1,5 +1,5 @@
-import Uppy from '../../../../src/core';
-import { DragDrop, Tus10 } from '../../../../src/plugins';
+import Uppy from '../../../../../../src/core';
+import { DragDrop, Tus10 } from '../../../../../../src/plugins';
 
 const uppy = new Uppy({wait: false});
 const files = uppy
