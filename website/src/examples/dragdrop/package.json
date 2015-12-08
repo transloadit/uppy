@@ -1,0 +1,13 @@
+{
+  "name": "playground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "../../node_modules/.bin/browserify src/js/app.js -o static/js/app.js -t [ babelify ]",
+    "watch": "../../node_modules/.bin/watchify src/js/app.js -o static/js/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
