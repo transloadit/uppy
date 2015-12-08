@@ -18,7 +18,6 @@ website-build: website-install
 .PHONY: website-preview
 website-preview: website-build
 	@echo "--> Running preview.."
-	@npm run build:umd
 	@cd website && ./node_modules/.bin/hexo server
 
 .PHONY: website-deploy
