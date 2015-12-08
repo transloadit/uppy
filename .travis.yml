@@ -23,21 +23,6 @@ env:
     # travis encrypt GHPAGES_URL=https://secret_access_token@github.com/transloadit/uppy.git
     secure: "Z+Twmk8/yo4FbeHqk3TcLVK4fR+KUoevrUxkRM6SLckVeCwlFnoD1kQ4JTVHuS2LbW9r2T4VJ/SC6yDtdjqMRvD/ZtPw//vMw9mKyBEMZN4uxOhmHp4hltkBErqeHbZpgd4eSwSVrqDwliK27Q42wIs+Rjilc3UXqddWEmmw/VuxGR3SRpACILqe2Fqm/g73iX/7PNNASuXwmWi6Vf5ZeBQTGiCfPETblBa4WSCrPpsBv5flUEGNM9uFoXXqjAC2TyZrS4yiFGxJNf5/UPp9xipr+RhoEp8NX2GP0W2jDDfUTHFGfcUyF2lluVJKpkHjYQYrYBknjTFcQHL+aE7GWU7f6kh4g3i6e9qktVFV7yNPPokxuvVG+AxExVhZHK3wBTh2ZWs5vjcd0u5w+IV9+v+d/CZWl/zGRcHDILt2eUW9KZwoGtgrcaPnlVtYPCRBXPpsoD+lE3uOuGGGS/V5lmhBnCLexj+2rzztyb8zhQgZB2rLKF1zQ5JiBE+z0ykjHtZWMECE7r4H8K4hoaeOlIG9suPSgwQgl5HFniFUBzHWXqdsOA/tAwGAtdYSlSNAPrkiMYqXjb+1Je2uhYnfV2roBolufLmgYjmDkpVtaY968Zi3qSYTDX7gkx4NEdkiZDLJK8iXXF5RlcHHaUlno+4ytvcNMpf6V9EpTVeLaIs="
 
-deploy:
-  acl              : public_read
-  bucket           : hackathon.transloadit.com
-  cache_control    : no-cache
-  local-dir        : examples/playground
-  provider         : s3
-  skip_cleanup     : true
-  upload-dir       : uppy/$TRAVIS_BRANCH
-  access_key_id    : AKIAIULY4M67345T7IOQ
-  secret_access_key:
-    secure: "iQN9qqNgODP5J54m4J6XmuDTqPzeg20uUXbfccjUt5HVW+nljO1V5/onsQfxbjj225EFMNGPnyUvI7+PgezB/+ggyFfPcEbFVPPDYV8chhWWMK3r84o8IaaP05gmrGjy2YP/sOhLPk3ALkffwXyfbCNDd/XyW8821B7uugJo7zlQlZv7cQ4/s2p4o87VVgNL+0Wm47py5YqpNaTUM2KGlZtoniFYknWCzRmbQz9fPIZiVpWcyOdPbzb/qqNtdH/GNvDIKbK6Eyj4PxwE3rve36q+cH6SQu8aVtoo3sU5P5URMuMzecHeH4YDPxJuwvtZy1ytp7MJbN5vvESoFdYSP6czwqHnyIgCT88VWW75Y3j13/OMEvfVPkxPFTIOSUjdYwC3oiZ+rWVQ6N0KhAatSgxSgR/JOWEfHVJBdpwT4NJZoMAGwREiDb7fansvRiuWi2+oVSizSvVXgDTqAfHCTLqtyCXoTBcVR9kylaT4pxXr4INw3ALunPwCE7Ut3ULWhC9QVzVzeuTTr8R5CACbKUynTICHuBd/OReipab8EsrktmAs/Np8qJ9lGQCT18T7DsoMO1BK2yTPXayUwwSAB8jTerFRrsx6yT7UCzQbDSRn/lgT8nR6m3svsq3yb6244wR3DzwH9UZm3EGpK57slpKQlsH4LfBrYbj9qlhZ+1I="
-  on:
-    repo: transloadit/uppy
-    all_branches: true
-
 notifications:
   slack:
     secure: L3iQQE8sZ0ik1Z26gPoNMiIam9EOEwYhraHCY60Jk/wmfH6SW/727yKXpgcb/yayx37rUZplvoO7H8e05ISxTJKSepEeqbBUIBQs48S8hr+FHk0VPtpP4HGxqaITRLm+mI1coPRvfISxzrB8d240oup6muhC9Ws4/LXi6v8miyIOs2zoYmGxd56TrUeON3UYlKt6dMava0V4bugARzrafN/tfyI9ccqbHzQLBspQvBI61DzZ5I2vnWpkjfWgIHz9Fl4VzXHqMXwjuTUEu8ibA12b3dHZiJEAoqeb9Oj9QcLPbstPLhlNTZZaOrfiFtwLctI2rFh37slDpAfk5idv3ycxcoG5rbCxgyg5i6dpQqrqHxnyglgHg2/nZ+YA5okeS7nJJNtU/4S6AFRWOUUWMVVY0VBEV+8w+uurl0PDy80RUY3uyK64qAgQ8U0M81/Ys1oyWyn78TqHcbby7V2Ws5I9Yakrq8D+mdfsWYCio8F6LXHSwJ0mt2FanJtdDvpPk9sAwsXZN0n8xhELt5TiRp3bzVIQ0IPUgF54dTG9/zWRvC1P4TFaFU/2fg73ZEUC5aWJoFMnLSZjbZvp5gwpCVd0MjSBk80nF9dHYcavIgJ0wMGI3BMb8Nn6+T11Gw/ycr7OGU4NMkj7i8vSFgKF74piWZyiNW8orkMN6XZgM+o=
