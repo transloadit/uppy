@@ -1,14 +1,7 @@
 var fs            = require('fs')
 var version       = require('../package.json').version
-var themeconfPath = 'themes/uppy/_config.yml'
 var configPath    = '_config.yml'
-var themeconfig   = fs.readFileSync(themeconfPath, 'utf-8')
 var config        = fs.readFileSync(configPath, 'utf-8')
-
-fs.writeFileSync(
-  themeconfPath,
-  themeconfig.replace(/uppy_version: .*/, 'uppy_version: ' + version)
-)
 
 // Inject current Uppy version and sizes in website's _config.yml
 var sizes = {};
