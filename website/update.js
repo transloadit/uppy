@@ -10,15 +10,17 @@ fs.writeFileSync(
   themeconfig.replace(/uppy_version: .*/, 'uppy_version: ' + version)
 )
 
-// @todo: Refer to actual minified builds in dist:
-var sizes = {
+// Inject current Uppy version and sizes in website's _config.yml
+var sizes = {};
+var locations = {
   min: '../dist/uppy.js',
   gz : '../dist/uppy.js',
   dev: '../dist/uppy.js'
 }
+// @todo: ^-- Refer to actual minified builds in dist:
 
-for (var file in sizes) {
-  var filesize = fs.statSync(sizes[file], 'utf-8').size
+for (var file in locations) {
+  var filesize = fs.statSync(locations[file], 'utf-8').size
   sizes[file] = (filesize / 1024).toFixed(2)
 }
 
@@ -30,3 +32,10 @@ fs.writeFileSync(
       return 'uppy_' + p1 + '_size: "' + (sizes[p1] || 99999 ) + '"'
     })
 )
+
+
+// Copy latest uppy version into website so examples can use it
+fs.writeFileSync(
+  './src/examples/uppy.js',
+  fs.readFileSync(locations.dev, 'utf-8')
+);
