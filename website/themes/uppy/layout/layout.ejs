@@ -15,7 +15,7 @@
         <%- css('css/main') %>
         <%- partial('partials/ga') %>
     </head>
-    <body>
+    <body class="<%= isIndex ? 'index' : 'page' %>">
         <div id="mobile-bar">
             <a class="menu-button"></a>
             <a class="logo" href="/"></a>
