@@ -18,7 +18,7 @@
     "test:phantom": "zuul test/spec/upload.js --phantom",
     "watch": "npm run watch:css & npm run watch:js",
     "watch:css": "nodemon -e src/scss -x \"npm run build:css\"",
-    "watch:examples": "node website/watch.js",
+    "watch:examples": "cd website && node watch.js",
     "watch:js": "nodemon --watch src -e js --ignore src/scss -x \"npm run build:lib\""
   },
   "repository": {

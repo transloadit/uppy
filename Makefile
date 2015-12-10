@@ -17,7 +17,7 @@ website-build: website-install
 .PHONY: website-preview
 website-preview: website-build
 	@echo "--> Running preview.."
-	@cd website && ./node_modules/.bin/hexo server
+	@cd website && ./node_modules/.bin/hexo server --debug
 
 .PHONY: website-deploy
 website-deploy: website-build
