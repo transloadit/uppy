@@ -4,9 +4,9 @@
 
 # Uppy versions, auto updated by update.js
 uppy_version: 0.0.1
-uppy_dev_size: "0.00"
-uppy_min_size: "0.00"
-uppy_gz_size: "0.00"
+uppy_dev_size: "54.87"
+uppy_min_size: "54.87"
+uppy_gz_size: "54.87"
 
 # Theme
 google_analytics: UA-63083-12
@@ -15,7 +15,7 @@ root_domain: uppyjs.io
 # Site
 title: Uppy
 subtitle: "Almost as cute as a puppy"
-logo_large: /images/cute-puppy-2.png
+logo_large: /images/uppy.svg
 logo_medium: /images/dog-172.png
 logo_icon: /images/emojis/dog.png
 description: >
@@ -115,6 +115,12 @@ markdown:
   breaks: true
   smartLists: true
   smartypants: true
+
+node_sass:
+  debug: false
+  outputStyle: nested
+  precision: 5
+  sourceComments: false
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
