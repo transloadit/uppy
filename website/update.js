@@ -25,10 +25,3 @@ fs.writeFileSync(
       return 'uppy_' + p1 + '_size: "' + (sizes[p1] || 99999 ) + '"'
     })
 )
-
-
-// Copy latest uppy version into website so examples can use it
-fs.writeFileSync(
-  './src/examples/uppy.js',
-  fs.readFileSync(locations.dev, 'utf-8')
-);
