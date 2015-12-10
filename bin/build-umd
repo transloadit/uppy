@@ -1,3 +1,5 @@
+#!/bin/bash
+
 SRC="src/index.js"
 OUT="uppy.js"
 

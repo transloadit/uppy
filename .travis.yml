@@ -10,7 +10,6 @@ addons:
 
 script:
   - "npm run-script build"
-  - "npm run-script build:examples"
 
 # Automatically deploy website onto gh-pages (if master and not PR)
 after_success:
