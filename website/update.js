@@ -1,24 +1,19 @@
 var fs            = require('fs')
 var version       = require('../package.json').version
-var themeconfPath = 'themes/uppy/_config.yml'
 var configPath    = '_config.yml'
-var themeconfig   = fs.readFileSync(themeconfPath, 'utf-8')
 var config        = fs.readFileSync(configPath, 'utf-8')
 
-fs.writeFileSync(
-  themeconfPath,
-  themeconfig.replace(/uppy_version: .*/, 'uppy_version: ' + version)
-)
-
-// @todo: Refer to actual minified builds in dist:
-var sizes = {
+// Inject current Uppy version and sizes in website's _config.yml
+var sizes = {};
+var locations = {
   min: '../dist/uppy.js',
   gz : '../dist/uppy.js',
   dev: '../dist/uppy.js'
 }
+// @todo: ^-- Refer to actual minified builds in dist:
 
-for (var file in sizes) {
-  var filesize = fs.statSync(sizes[file], 'utf-8').size
+for (var file in locations) {
+  var filesize = fs.statSync(locations[file], 'utf-8').size
   sizes[file] = (filesize / 1024).toFixed(2)
 }
 

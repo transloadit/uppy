@@ -9,18 +9,17 @@
     "build:lib": "babel src -d lib --stage 0",
     "build:umd": "./bin/build-umd",
     "build:umd:min": "./bin/build-umd",
-    "build:examples": "website/src/examples/buildAll node_modules/.bin/browserify",
     "clean": "rm -rf lib && rm -rf dist",
     "lint": "eslint src/**/*.js",
-    "dev": "npm run watch & npm run server",
-    "dev:examples": "npm run watch:examples & npm run server",
     "server": "browser-sync start --config .browsersync.js",
     "test": "bin/test",
     "test:phantom": "zuul test/spec/upload.js --phantom",
-    "watch": "npm run watch:css & npm run watch:js",
     "watch:css": "nodemon -e src/scss -x \"npm run build:css\"",
-    "watch:examples": "npm run build:lib && (examples/buildAll node_modules/.bin/watchify & npm run watch:js)",
-    "watch:js": "nodemon --watch src -e js --ignore src/scss -x \"npm run build:lib\""
+    "watch:examples": "cd website && node watch.js",
+    "watch:js": "nodemon --watch src -e js --ignore src/scss -x \"npm run build:lib\"",
+    "website:build": "echo \"--> Building site..\" && cd website && node update.js && ./node_modules/.bin/hexo generate",
+    "website:install": "echo \"--> Installing dependencies\" && cd website && npm install",
+    "website:preview": "npm run website:build && cd website && ./node_modules/.bin/hexo server --debug"
   },
   "repository": {
     "type": "git",

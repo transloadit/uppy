@@ -19,5 +19,12 @@
     "hexo-server": "^0.1.2",
     "hexo-tag-emojis": "^2.0.0",
     "hexo-util": "^0.2.1"
+  },
+  "devDependencies": {
+    "browserify": "^12.0.1",
+    "chalk": "^1.1.1",
+    "glob": "^6.0.1",
+    "multi-glob": "^1.0.1",
+    "watchify": "^3.6.1"
   }
 }

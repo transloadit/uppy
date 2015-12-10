@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Uppy = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -1576,6 +1576,29 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _core = require('./core');
+
+var _core2 = _interopRequireDefault(_core);
+
+var _plugins = require('./plugins');
+
+var _plugins2 = _interopRequireDefault(_plugins);
+
+exports['default'] = {
+  Core: _core2['default'],
+  plugins: _plugins2['default']
+};
+module.exports = exports['default'];
+
+},{"./core":6,"./plugins":13}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -1782,7 +1805,7 @@ var DragDrop = (function (_TransloaditPlugin) {
 exports['default'] = DragDrop;
 module.exports = exports['default'];
 
-},{"../core/Utils":5,"./TransloaditPlugin":10}],8:[function(require,module,exports){
+},{"../core/Utils":5,"./TransloaditPlugin":11}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1908,7 +1931,7 @@ var DropboxPlugin = (function () {
 exports['default'] = new DropboxPlugin();
 module.exports = exports['default'];
 
-},{"superagent":1}],9:[function(require,module,exports){
+},{"superagent":1}],10:[function(require,module,exports){
 'use strict';
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -1937,7 +1960,7 @@ var TransloaditBasic = (function (_TransloaditPlugin) {
   return TransloaditBasic;
 })(_TransloaditPlugin3['default']);
 
-},{"./TransloaditPlugin":10}],10:[function(require,module,exports){
+},{"./TransloaditPlugin":11}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1974,7 +1997,7 @@ var TransloaditPlugin = (function () {
 exports["default"] = TransloaditPlugin;
 module.exports = exports["default"];
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2032,7 +2055,7 @@ var Tus10 = (function (_TransloaditPlugin) {
 exports['default'] = Tus10;
 module.exports = exports['default'];
 
-},{"./TransloaditPlugin":10}],12:[function(require,module,exports){
+},{"./TransloaditPlugin":11}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2070,18 +2093,5 @@ exports['default'] = {
 };
 module.exports = exports['default'];
 
-},{"./DragDrop":7,"./Dropbox":8,"./TransloaditBasic":9,"./TransloaditPlugin":10,"./Tus10":11}],13:[function(require,module,exports){
-'use strict';
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-var _srcCore = require('../../../../../../src/core');
-
-var _srcCore2 = _interopRequireDefault(_srcCore);
-
-var _srcPlugins = require('../../../../../../src/plugins');
-
-var uppy = new _srcCore2['default']({ wait: false });
-var files = uppy.use(_srcPlugins.DragDrop, { selector: '#upload-target' }).use(_srcPlugins.Tus10, { endpoint: 'http://master.tus.io:8080' }).run();
-
-},{"../../../../../../src/core":6,"../../../../../../src/plugins":12}]},{},[13]);
+},{"./DragDrop":8,"./Dropbox":9,"./TransloaditBasic":10,"./TransloaditPlugin":11,"./Tus10":12}]},{},[7])(7)
+});

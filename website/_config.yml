@@ -128,3 +128,6 @@ node_sass:
 #   type: git
 #   branch: gh-pages
 #   repository: git@github.com:transloadit/uppy.git
+
+skip_render:
+  - 'examples/**/*.js'
