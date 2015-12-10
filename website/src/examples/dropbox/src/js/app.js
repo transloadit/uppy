@@ -1,3 +1,3 @@
-import { DropboxPlugin } from '../../../../../../src/plugins'
+import { DropboxPlugin } from 'uppy/plugins';
 
-console.log('pizza');
+console.log(DropboxPlugin);

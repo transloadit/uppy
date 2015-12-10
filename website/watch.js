@@ -21,7 +21,11 @@ glob([pattern, 'website/' + pattern], function(err, files) {
       cache: {},
       packageCache: {},
       plugin: [watchify]
-    }).transform(babelify);
+    })
+      .require('../src/index.js', { expose: 'uppy' })
+      .require('../src/core/index.js', { expose: 'uppy/core' })
+      .require('../src/plugins/index.js', { expose: 'uppy/plugins' })
+      .transform(babelify);
 
     watcher
       .on('update', bundle)
@@ -38,9 +42,11 @@ glob([pattern, 'website/' + pattern], function(err, files) {
         console.log(chalk.cyan('change:'), chalk.bold(id[0]));
         mute = true;
       }
+
+      var output = file.replace(src, dest);
       var bundle = watcher.bundle();
-      bundle.pipe(createStream(file.replace(src, dest)));
-      bundle.pipe(createStream('public' + file.slice(3)));
+      bundle.pipe(createStream(output));
+      bundle.pipe(createStream(output.replace('src', 'public')));
     }
   });
 });
