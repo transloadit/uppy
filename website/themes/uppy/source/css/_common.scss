@@ -78,9 +78,7 @@ a.button {
     margin: 0;
   }
 
-  .gutter {
-    width: 1.5em;
-  }
+  .gutter { width: 1.5em; }
 
   .code {
     pre {
@@ -88,27 +86,28 @@ a.button {
       line-height: 1.5em;
       margin: 0;
     }
-
-    &.html, &.js, &.bash, &.css {
-      .code:after {
-        position: absolute;
-        top: 0;
-        right: 0;
-        color: #ccc;
-        text-align: right;
-        font-size: .75em;
-        padding: 5px 10px 0;
-        line-height: 15px;
-        height: 15px;
-        font-weight: 600;
-      }
-    }
-
-    &.html .code:after { content: 'HTML'; }
-    &.js .code:after { content: 'JS'; }
-    &.bash .code:after { content: 'Shell'; }
-    &.css .code:after { content: 'CSS'; }
   }
+
+  &.html, &.js, &.bash, &.css {
+    .code:after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      color: #ccc;
+      text-align: right;
+      font-size: .75em;
+      padding: 5px 10px 0;
+      line-height: 15px;
+      height: 15px;
+      font-weight: 600;
+    }
+  }
+
+  &.html .code:after { content: 'HTML'; }
+  &.js .code:after { content: 'JS'; }
+  &.bash .code:after { content: 'Shell'; }
+  &.css .code:after { content: 'CSS'; }
+
 }
 
 #main {
