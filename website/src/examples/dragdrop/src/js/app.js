@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-import Uppy from '../../../../../src/core';
-import { DragDrop, Tus10 } from '../../../../../src/plugins';
-=======
-// // import Uppy from '../../../../../../src/core';
-// // import { DragDrop, Tus10 } from '../../../../../../src/plugins';
->>>>>>> origin/master
+import { DragDrop } from 'uppy/plugins';
+
+console.log(DragDrop);
 
 // const uppy = new Uppy({wait: false});
 // const files = uppy
