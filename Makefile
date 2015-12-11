@@ -2,19 +2,19 @@ SHELL := /usr/bin/env bash
 
 .PHONY: web-install
 web-install:
-	npm run website:install
+	npm run web:install
 
 .PHONY: web-build
 web-build:
-	npm run website:build
+	npm run web:build
 
 .PHONY: web-preview
 web-preview:
-	npm run website:preview
+	npm run web:preview
 
 .PHONY: web-deploy
 web-deploy:
-	npm run website:deploy
+	npm run web:deploy
 
 .PHONY: watch
 watch:
