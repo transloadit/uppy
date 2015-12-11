@@ -15,19 +15,18 @@
     "hexo-renderer-ejs": "^0.1.0",
     "hexo-renderer-marked": "^0.2.4",
     "hexo-renderer-scss": "^1.0.1",
-    "hexo-renderer-stylus": "^0.2.0",
+    "hexo-renderer-postcss": "https://github.com/arturi/hexo-renderer-postcss",
     "hexo-server": "^0.1.2",
     "hexo-tag-emojis": "^2.0.0",
-    "hexo-util": "^0.2.1"
+    "hexo-util": "^0.2.1",
+    "postcss-svg": "^1.0.4"
   },
   "devDependencies": {
     "node-notifier": "^4.4.0",
     "browserify": "^12.0.1",
     "chalk": "^1.1.1",
     "glob": "^6.0.1",
-    "hexo-renderer-postcss": "^1.0.1",
     "multi-glob": "^1.0.1",
-    "postcss-svg": "^1.0.4",
     "watchify": "^3.6.1"
   }
 }
