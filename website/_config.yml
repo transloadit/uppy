@@ -122,6 +122,12 @@ node_sass:
   precision: 5
   sourceComments: false
 
+postcss:
+  plugins:
+    postcss-svg:
+      paths: ['images']
+      defaults: "[fill]: #000000"
+
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 # deploy:
