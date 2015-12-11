@@ -1,7 +1,4 @@
-SHELL          := /usr/bin/env bash
-ghpages_repo   := "transloadit/uppy"
-ghpages_branch := "gh-pages"
-ghpages_url    := "git@github.com:$(ghpages_repo).git"
+SHELL := /usr/bin/env bash
 
 .PHONY: web-install
 web-install:
