@@ -4,8 +4,8 @@ A work in progress - nothing to see here.
 
 Interesting places if you want to dig in:
 
- - Architecture in [`website/src/api/index.md`](https://github.com/transloadit/uppy/blob/master/website/src/api/index.md)
- - Contributor's guide in [`website/src/guide/contributing.md`](https://github.com/transloadit/uppy/blob/master/src/guide/contributing.md)
+ - Architecture in [`website/src/api/index.md`](website/src/api/index.md)
+ - Contributor's guide in [`website/src/guide/contributing.md`](src/guide/contributing.md)
  - [Open issues](https://github.com/transloadit/uppy/milestones/Minimum%20Viable%20Product) before having a Minimum Valuable Product. 
 
 ## Uppy Development
@@ -28,11 +28,10 @@ make web-preview
 
 We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity. For those reading this screaming murder, [HashiCorp does this](https://github.com/hashicorp/terraform/tree/master/website) for all their projects, and it's working well for them on a scale vastly more impressive than :dog:'s.
 
-The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the [`gh-pages`](https://github.com/transloadit/uppy/tree/gh-pages) branch at every deploy).
+The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the [`gh-pages`](https://github.com/transloadit/uppy/tree/gh-pages) branch with Hexo's build at every change to `master`). The content is written in Markdown and located in [`./website/src`](website/src). Feel free to fork & hack!  
 
-Content is written in Markdown and located in [`./website/src`](https://github.com/transloadit/uppy/tree/master/website/src). Feel free to fork & hack!  
+Even though bundled in this repo, the website is regarded as a separate project. So it has its own `package.json` and we aim keep the surface where the two projects interface as small as possible. [`./website/update.js`](website/update.js) is called during website builds to inject the Uppy knowledge into the site.
 
-`./website/update.js` is called during website builds to inject the Uppy versions & filesizes into the documentation. `website` in an independent folder (with e.g. its own package.json) and so it cannot rely on anything from the root project directly. `update.js` is the bridge that explicitly makes information available by injecting it into the website.
 
 It's recommended to exclude `./website/public/` from your editor if you want efficient searches.
 
