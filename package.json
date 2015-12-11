@@ -17,10 +17,11 @@
     "watch:css": "nodemon -e src/scss -x \"npm run build:css\"",
     "watch:examples": "cd website && node watch.js",
     "watch:js": "nodemon --watch src -e js --ignore src/scss -x \"npm run build:lib\"",
+    "web": "npm run web:install && npm run web:build && npm run web:preview",
     "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate",
     "web:install": "cd website && npm install",
-    "web:deploy": "./bin/web-deploy",
-    "web:preview": "npm run web:build && cd website && ./node_modules/.bin/hexo server --debug"
+    "web:deploy": "npm run web:install && npm run web:build && ./bin/web-deploy",
+    "web:preview": "cd website && ./node_modules/.bin/hexo server --debug"
   },
   "repository": {
     "type": "git",
