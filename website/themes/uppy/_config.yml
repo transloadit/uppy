@@ -1,11 +1,5 @@
 node_sass:
   debug: false
-  outputStyle: nested
+  outputStyle: compressed
   precision: 5
   sourceComments: false
-
-postcss:
-  plugins:
-    postcss-svg:
-      paths: ['images']
-      defaults: "[fill]: #000000"

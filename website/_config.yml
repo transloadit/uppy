@@ -118,15 +118,21 @@ markdown:
 
 node_sass:
   debug: false
-  outputStyle: nested
+  outputStyle: compressed
   precision: 5
   sourceComments: false
 
 postcss:
   plugins:
     postcss-svg:
-      paths: ['images']
+      debug: false
+      paths:
+        - 'src/images'
       defaults: "[fill]: #000000"
+    autoprefixer:
+      browsers:
+        - 'last 2 versions'
+
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
