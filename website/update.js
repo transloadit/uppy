@@ -25,3 +25,9 @@ fs.writeFileSync(
       return 'uppy_' + p1 + '_size: "' + (sizes[p1] || 99999 ) + '"'
     })
 )
+
+// Copy latest uppy version into website so the CDN example can use it
+fs.writeFileSync(
+  './themes/uppy/source/js/uppy.js',
+  fs.readFileSync(locations.dev, 'utf-8')
+);
