@@ -17,6 +17,7 @@
     "hexo-renderer-scss": "^1.0.1",
     "hexo-renderer-postcss": "https://github.com/arturi/hexo-renderer-postcss",
     "hexo-server": "^0.1.2",
+    "postcss-svg": "^1.0.4",
     "hexo-tag-emojis": "^2.0.0",
     "hexo-util": "^0.2.1",
     "postcss-svg": "^1.0.4"
