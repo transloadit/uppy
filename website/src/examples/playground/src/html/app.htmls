@@ -1,0 +1,9 @@
+<script src="/js/uppy.js"></script>
+
+<script>
+var uppy = new Uppy.Core();
+uppy.use(Uppy.plugins.Tus10);
+
+console.log(Uppy);
+console.log('Uppy loaded from CDN with a tus 1.0 plugin');
+</script>
