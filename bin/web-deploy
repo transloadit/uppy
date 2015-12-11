@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ghpages_repo=${GHPAGES_REPO:-"transloadit/uppy"}
 ghpages_branch=${GHPAGES_BRANCH:-"gh-pages"}
 ghpages_url=${GHPAGES_URL:-"git@github.com:${ghpages_repo}.git"}

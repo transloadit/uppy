@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Move into a known directory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
