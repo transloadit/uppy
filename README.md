@@ -32,6 +32,7 @@ The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys
 
 Even though bundled in this repo, the website is regarded as a separate project. So it has its own `package.json` and we aim keep the surface where the two projects interface as small as possible. [`./website/update.js`](website/update.js) is called during website builds to inject the Uppy knowledge into the site.
 
+### Getting started
 
 It's recommended to exclude `./website/public/` from your editor if you want efficient searches.
 
@@ -39,6 +40,12 @@ For local previews on http://127.0.0.1:4000 type:
 
 ```bash
 make web-preview
+```
+
+This will start Hexo and rebuilds the site as you save. If you also want to work on examples / Uppy itself you then open a second tab in which you type:
+
+```bash
+make watch
 ```
 
 ## FAQ
