@@ -2,6 +2,7 @@
 type: api
 order: 0
 title: "Architecture"
+permalink: api/
 ---
 
 # Uppy File Uploader Architecture

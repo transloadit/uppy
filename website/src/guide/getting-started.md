@@ -2,6 +2,7 @@
 title: Getting Started
 type: guide
 order: 0
+permalink: guide/
 ---
 
 > **Compatibility Note:** Uppy does not support IE8 and below.
