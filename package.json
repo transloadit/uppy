@@ -17,8 +17,8 @@
     "watch:css": "nodemon -e src/scss -x \"npm run build:css\"",
     "watch:examples": "cd website && node watch.js",
     "watch:js": "nodemon --watch src -e js --ignore src/scss -x \"npm run build:lib\"",
-    "website:build": "echo \"--> Building site..\" && cd website && node update.js && ./node_modules/.bin/hexo generate",
-    "website:install": "echo \"--> Installing dependencies\" && cd website && npm install",
+    "website:build": "cd website && node update.js && ./node_modules/.bin/hexo generate",
+    "website:install": "cd website && npm install",
     "website:deploy": "./bin/website-deploy",
     "website:preview": "npm run website:build && cd website && ./node_modules/.bin/hexo server --debug"
   },
