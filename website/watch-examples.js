@@ -1,5 +1,5 @@
 /**
- * watch.js
+ * watch-examples.js
  * --------
  * Searches for each example's `src/js/app.js` file.
  * Creates a new watchify instance for each `app.js`.
@@ -27,7 +27,7 @@ var dest = 'static/js/app.js';
 var pattern = 'src/examples/**/' + src;
 
 // Find each app.js file with glob.
-// 'website/' glob is for when calling `node website/watch.js` from root.
+// 'website/' glob is for when calling `node website/watch-examples.js` from root.
 glob([pattern, 'website/' + pattern], function(err, files) {
   if (err) throw new Error(err);
 
