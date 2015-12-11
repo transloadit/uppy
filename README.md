@@ -21,7 +21,7 @@ npm install
 Our website's examples section is also our playground. To get it to run locally type:
 
 ```bash
-make website-preview
+make web-preview
 ```
 
 ## Website Development
@@ -39,7 +39,7 @@ It's recommended to exclude `./website/public/` from your editor if you want eff
 For local previews on http://127.0.0.1:4000 type:
 
 ```bash
-make website-preview
+make web-preview
 ```
 
 ## FAQ
