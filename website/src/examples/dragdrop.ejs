@@ -1,0 +1,40 @@
+---
+title: Drag and Drop
+type: examples
+order: 2
+---
+
+<!-- Basic Uppy styles -->
+<link rel="stylesheet" href="dragdrop/static/css/uppy.css">
+
+{% blockquote %}
+Drag &amp; Drop
+{% endblockquote %}
+
+<p>
+Here you'll see a demo of how you might set up Drag and Drop with Uppy:
+</p>
+
+<link rel="stylesheet" href="dragdrop/static/js/app.css">
+<% include dragdrop/src/html/app.htmls %>
+<script src="dragdrop/static/js/app.js"></script>
+
+<hr />
+
+<p>
+  On this page we're using the following HTML snippet:
+</p>
+
+{% include_code &nbsp; lang:html dragdrop/src/html/app.htmls %}
+
+<p>
+  Along with this JavaScript:
+</p>
+
+{% include_code &nbsp; lang:js dragdrop/src/js/app.js %}
+
+<p>
+  And the following CSS:
+</p>
+
+{% include_code &nbsp; lang:js dragdrop/src/css/app.css %}
