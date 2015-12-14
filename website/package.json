@@ -6,6 +6,7 @@
     "version": "3.1.1"
   },
   "dependencies": {
+    "autoprefixer": "^6.1.2",
     "hexo": "^3.1.1",
     "hexo-deployer-git": "0.0.4",
     "hexo-generator-archive": "^0.1.2",
