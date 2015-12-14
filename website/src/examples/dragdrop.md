@@ -6,7 +6,7 @@ order: 2
 
 > Drag & Drop
 
-<!-- Playground styles -->
+<!-- styles -->
 <link rel="stylesheet" href="dragdrop/static/css/style.css">
 
 <!-- Basic Uppy styles -->
