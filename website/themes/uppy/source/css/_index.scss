@@ -6,7 +6,7 @@ html, body {
   height: 100%;
 }
 
-#nav, #translations {
+.page-index .MainMenu {
   list-style-type: none;
   text-align: center;
   padding: 0;
@@ -16,24 +16,24 @@ html, body {
     display: inline-block;;
     position: relative;
     line-height: 40px;
-    &:last-child {
-      .nav-link { margin-right: 0; }
+    &:last-child .nav-link {
+       margin-right: 0;
     }
   }
 }
 
-#translations {
-  margin-bottom: 3em;
-
-  .delimiter {
-    color: $light;
-    margin: 0 5px;
-  }
-
-  .nav-link {
-    margin: 0;
-  }
-}
+// #translations {
+//   margin-bottom: 3em;
+//
+//   .delimiter {
+//     color: $light;
+//     margin: 0 5px;
+//   }
+//
+//   .nav-link {
+//     margin: 0;
+//   }
+// }
 
 .nav-link {
   color: $light;
@@ -44,71 +44,70 @@ html, body {
   &:hover, &.current { border-bottom: 3px solid $primary; }
 }
 
-#logo {
+.page-index .MainLogo {
+  display: none;
+}
+
+.page-index .MainMenu-search {
+  display: none;
+}
+
+.MainLogo {
   display: block;
   margin: 0 auto;
   width: 200px;
 }
 
-#logo-wrap {
-  margin: 2em 0 2em;
-}
-
-#hero {
+.IndexHero {
   text-align: center;
   position: relative;
-
-  .inner { padding-top: 20px; }
-
-  h1 {
-    font-family: $logo-font;
-    font-weight: 300;
-    font-size: 4em;
-    margin: 0;
-  }
 
   .warning {
     color: $light;
   }
-
-  .desc {
-    max-width: 800px;
-    padding: 0 20px;
-    text-align: center;
-    margin: 1.5em auto;
-    color: $light;
-  }
-
-  .down {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    left: 0;
-    padding: 1.5em 0;
-  }
-
-  a.button {
-    width: 280px;
-    margin: .5em;
-  }
 }
 
-#social {
+.IndexHero-installBtn {
+  width: 280px;
+  margin: .5em;
+}
+
+.IndexHero-logo {
+  margin: 2em 0 2em;
+}
+
+.IndexHero-title {
+  font-family: $logo-font;
+  font-weight: 300;
+  font-size: 4em;
+  margin: 0;
+}
+
+.IndexHero-desc {
+  max-width: 800px;
+  padding: 0 20px;
+  text-align: center;
+  margin: 1.5em auto;
+  color: $light;
+}
+
+.IndexSocial {
   text-align: center;
   list-style-type: none;
   margin: 0 auto;
   padding: 0;
   margin: 1.5em auto;
-
-  li {
-    display: inline-block;
-    margin: 0 5px;
-    vertical-align: middle;
-    &.last { margin-left: -2px; }
-  }
 }
 
-#example {
+.IndexSocial li {
+  display: inline-block;
+  margin: 0 5px;
+  vertical-align: middle;
+
+  &.last { margin-left: -2px; }
+}
+
+.IndexExample {
   text-align: center;
   padding: 20px;
   max-width: 1200px;
@@ -288,9 +287,6 @@ html, body {
 
   p { margin: .3em 0; }
 }
-
-// #main { display: none; }
-#buildbadge { margin-left: -2px !important; }
 
 @media screen and (max-width: 480px) {
   body {

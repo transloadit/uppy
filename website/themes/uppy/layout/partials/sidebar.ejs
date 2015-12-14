@@ -1,22 +1,22 @@
 <div class="sidebar">
-    <ul class="main-menu">
-        <%- partial('partials/main_menu') %>
+  <ul class="main-menu">
+    <%- partial('partials/main_menu') %>
+  </ul>
+  <div class="list">
+    <h2>
+      <%- type === 'api' ? 'API' : (type.charAt(0).toUpperCase() + type.slice(1)) %>
+    </h2>
+    <ul class="menu-root">
+      <% site.pages.find({type: type}).sort('order').each(function (p) { %>
+        <li>
+          <a href="/<%- p.path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
+        </li>
+      <% }) %>
     </ul>
-    <div class="list">
-        <h2>
-          <%- type === 'api' ? 'API' : (type.charAt(0).toUpperCase() + type.slice(1)) %>
-        </h2>
-        <ul class="menu-root">
-            <% site.pages.find({type: type}).sort('order').each(function (p) { %>
-                <li>
-                    <a href="/<%- p.path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
-                </li>
-            <% }) %>
-        </ul>
-        <div id="buildbadge">
-            <span class="wrapper" style="width: 110px">
-              <a href="https://travis-ci.org/transloadit/uppy"><img src="https://travis-ci.org/transloadit/uppy.svg" alt="Build Status"></a>
-            </span>
-        </div>
+    <div id="buildbadge" class="BuildBadge">
+      <span class="wrapper" style="width: 110px">
+        <a href="https://travis-ci.org/transloadit/uppy"><img src="https://travis-ci.org/transloadit/uppy.svg" alt="Build Status"></a>
+      </span>
     </div>
+  </div>
 </div>

@@ -6,7 +6,7 @@
   z-index: 2;
 }
 
-.page #nav {
+.page-inner #nav {
   position: absolute;
   right: 60px;
   top: 25px;
@@ -41,7 +41,7 @@
   &:focus { border-color: $primary; }
 }
 
-#logo {
+.MainLogo {
   display: inline-block;
   font-size: 1.5em;
   line-height: $header-height;
@@ -307,10 +307,6 @@
   .content.with-sidebar {
     margin-left: 280px;
   }
-}
-
-#buildbadge {
-  margin-top: 15px;
 }
 
 @media screen and (max-width: 560px) {

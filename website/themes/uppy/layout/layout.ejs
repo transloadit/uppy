@@ -1,38 +1,46 @@
 <% var isIndex = page.path === 'index.html' %>
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title><%- page.title ? page.title + ' - ' : '' %><%- config.title %></title>
-        <meta charset="utf-8">
-        <meta name="description" content="<%- config.title %> - <%- config.subtitle %>">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono' rel='stylesheet' type='text/css'>
-        <link href='http://fonts.googleapis.com/css?family=Dosis:300,500&text=Uppy' rel='stylesheet' type='text/css'>
-        <link rel="icon" href="<%- config.logo_icon %>" type="image/x-icon">
-        <script>
-            window.PAGE_TYPE = "<%- page.type %>"
-        </script>
-        <%- css('css/main') %>
-        <%- partial('partials/ga') %>
-    </head>
-    <body class="<%= isIndex ? 'index' : 'page' %>">
-        <div id="mobile-bar">
-            <a class="menu-button"></a>
-            <a class="logo" href="/"></a>
-        </div>
-        <% if (!isIndex) { %>
-            <%- partial('partials/header') %>
-            <div id="main">
-                <% if (page.blog_index) { %>
-                    <%- partial('partials/blog') %>
-                <% } else { %>
-                    <%- body %>
-                <% } %>
-            </div>
-            <script src="/js/smooth-scroll.min.js"></script>
-            <script src="/js/common.js"></script>
-        <% } else { %>
-            <%- body %>
-        <% } %>
-    </body>
+  <head>
+    <title><%- page.title ? page.title + ' - ' : '' %><%- config.title %></title>
+    <meta charset="utf-8">
+    <meta name="description" content="<%- config.title %> - <%- config.subtitle %>">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Dosis:300,500&text=Uppy' rel='stylesheet' type='text/css'>
+    <link rel="icon" href="<%- config.logo_icon %>" type="image/x-icon">
+    <script>
+      window.PAGE_TYPE = "<%- page.type %>"
+    </script>
+    <%- css('css/main') %>
+    <%- partial('partials/ga') %>
+  </head>
+  <body class="<%= isIndex ? 'page-index' : 'page-inner' %>">
+    <nav id="mobile-bar">
+      <a class="menu-button"></a>
+      <a class="logo" href="/"></a>
+    </nav>
+
+    <header id="header" class="MainHeader">
+      <a id="logo" class="MainLogo" href="/">
+        <img src="<%- config.logo_medium %>">
+        <span><%- config.title %></span>
+      </a>
+
+      <nav>
+        <ul id="nav" class="MainMenu">
+          <%- partial('partials/main_menu') %>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="main">
+      <%- body %>
+    </main>
+
+    <% if (!isIndex) { %>
+      <script src="/js/smooth-scroll.min.js"></script>
+      <script src="/js/common.js"></script>
+    <% } %>
+  </body>
 </html>

@@ -1,10 +1,13 @@
 <li>
-  <form id="search-form">
+  <form id="search-form" class="MainMenu-search">
     <input type="text" id="search-query" class="st-default-search-input">
   </form>
 </li>
 <li><a href="/guide/" class="nav-link<%- page.path.match(/guide/) ? ' current' : '' %>">Guide</a></li>
 <li><a href="/api/" class="nav-link<%- page.path.match(/api/) ? ' current' : '' %>">API</a></li>
 <li><a href="/examples/" class="nav-link<%- page.path.match(/examples/) ? ' current' : '' %>">Examples</a></li>
-<!-- <li><a href="/blog/" class="nav-link<%- page.path.match(/blog/) ? ' current' : '' %>">Blog</a></li> -->
+<li><a href="https://github.com/transloadit/uppy" class="nav-link">Github</a></li>
+<!--
+<li><a href="/blog/" class="nav-link<%- page.path.match(/blog/) ? ' current' : '' %>">Blog</a></li>
 <%- partial('partials/community_dropdown') %>
+-->

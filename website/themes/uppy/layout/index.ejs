@@ -1,43 +1,31 @@
-<div id="hero">
-  <div class="inner">
-    <ul id="nav">
-      <li><a href="/guide/" class="nav-link">Guide</a></li>
-      <li><a href="/api/" class="nav-link">API</a></li>
-      <li><a href="/examples/" class="nav-link">Examples</a></li>
-      <!-- <li><a href="/blog" class="nav-link">Blog</a></li> -->
-      <%- partial('partials/community_dropdown') %>
-    </ul>
-    <div id="logo-wrap">
-      <img id="logo" width="200" class="emoji dog" title="puppy" src="<%- config.logo_large %>">
-      <h1><%- config.title %></h1>
-    </div>
-    <p class="desc">
-      <strong>
-        <%- config.subtitle %> <img align="absmiddle" width="18" height="18" class="emoji dog" title="puppy" src="/images/emojis/dog.png">
-      </strong>
-      <br />
-      <br />
-      <%- config.description %>
-    </p>
-    <p class="buttons">
-      <a href="/guide/installation.html" class="button">Install v<%- config.uppy_version %></a>
-    </p>
-    <ul id="social">
-      <li><a href="https://twitter.com/uppyjs" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @uppyjs</a></li>
-      <li><iframe src="http://ghbtns.com/github-btn.html?user=transloadit&repo=uppy&type=watch&count=true"
-    allowtransparency="true" frameborder="0" scrolling="0" width="100" height="20"></iframe></li>
+<section id="hero" class="IndexHero">
+  <header id="logo-wrap" class="IndexHero-logo">
+    <img id="logo" width="200" class="IndexHero-logoImg emoji dog" title="puppy" alt="uppy" src="<%- config.logo_large %>">
+    <h1 class="indexHero-title"><%- config.title %></h1>
+  </header>
 
-      <li id="buildbadge">
-       <span class="wrapper">
-         <a href="https://travis-ci.org/transloadit/uppy"><img src="https://travis-ci.org/transloadit/uppy.svg" alt="Build Status"></a>
-       </span>
-      </li>
-    </ul>
+  <div class="IndexHero-desc">
+    <h3 class="IndexHero-subtitle">
+      <%- config.subtitle %> <img align="absmiddle" width="18" height="18" class="emoji dog" title="puppy" src="/images/emojis/dog.png">
+    </h3>
+    <p><%- config.description %></p>
   </div>
-  <!-- <div class="down"><img src="/images/down.png"></div> -->
-</div>
 
-<div id="example">
+  <a href="/guide/installation.html" class="IndexHero-installBtn button">Install v<%- config.uppy_version %></a>
+
+  <ul id="social" class="IndexSocial">
+    <li><a href="https://twitter.com/uppyjs" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @uppyjs</a></li>
+    <li><iframe src="http://ghbtns.com/github-btn.html?user=transloadit&repo=uppy&type=watch&count=true"
+  allowtransparency="true" frameborder="0" scrolling="0" width="100" height="20"></iframe></li>
+    <li id="buildbadge" class="BuildBadge">
+     <span class="wrapper">
+       <a href="https://travis-ci.org/transloadit/uppy"><img src="https://travis-ci.org/transloadit/uppy.svg" alt="Build Status"></a>
+     </span>
+    </li>
+  </ul>
+</section>
+
+<section id="example" class="IndexExample">
   <h2>10 Second Example</h2>
 
   <div class="block"><%- partial('partials/example1') %></div>
@@ -46,8 +34,9 @@
 
   <div class="block"><%- partial('partials/example2') %></div>
 
-</div>
-<div id="features">
+</section>
+
+<section id="features">
   <div class="feats">
     <% for (var k in site.data.features) { var v = site.data.features[k]; %>
       <div class="feat">
@@ -56,8 +45,9 @@
       </div>
     <% } %>
   </div>
-</div>
-<div id="design_goals">
+</section>
+
+<section id="design_goals">
   <h2>Design Goals:</h2>
   <ul>
     <% for (var k in site.data.design_goals) { var v = site.data.design_goals[k]; %>
@@ -66,14 +56,15 @@
     </li>
     <% } %>
   </ul>
-</div>
-<div id="footer">
+</section>
+
+<footer id="footer">
   <a class="start" href="/guide/index.html">Get Started</a>
   <p>Released under the <a href="http://opensource.org/licenses/MIT" target="_blank">MIT License</a></p>
   <p>This site borrows heavily from Evan You's excellent <a href="https://github.com/vuejs/vuejs.org">Vue.js</a> (<a href="https://github.com/transloadit/uppy/blob/master/website/VUEORG_LICENSE">LICENSE</a>) (he <a href="https://twitter.com/youyuxi/status/672441843183960067">approves</a>)</p>
   <p>Puppy icon by <a href="https://thenounproject.com/2y2"></a>Jorge Fernandez del Castillo Gomez</a> from the Noun Project.</p>
   <p>Copyright (c) <%- date(Date.now(), 'YYYY') %> <a href="https://transloadit.com" target="_blank">Transloadit</a></p>
-</div>
+</footer>
 
 <!-- Twitter follow button script -->
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
