@@ -2,7 +2,7 @@
 
 A work in progress - you'll find nothing useful here yet.
 
-But you're here to dig in, these are some places you might find interesting:
+But if you're here to dig in, these are some places you might find interesting:
 
  - Our website (under construction) [http://uppyjs.io/](http://uppyjs.io/)
  - Architecture in [`website/src/api/architecture.md`](website/src/api/architecture.md)
