@@ -65,6 +65,10 @@ a.button {
   line-height: 1.1em;
   border-radius: $radius;
 
+  figcaption {
+    display: none;
+  }
+
   table, tr, td {
     width: 100%;
     border-collapse: collapse;
