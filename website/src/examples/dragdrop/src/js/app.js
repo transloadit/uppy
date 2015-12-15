@@ -1,3 +1,5 @@
+console.log('a');
+
 import Uppy from 'uppy/core';
 import { DragDrop, Tus10 } from 'uppy/plugins';
 
