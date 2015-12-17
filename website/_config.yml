@@ -141,5 +141,6 @@ postcss:
 #   branch: gh-pages
 #   repository: git@github.com:transloadit/uppy.git
 
+# Done by build-examples.js:
 skip_render:
   - 'examples/**/*.js'

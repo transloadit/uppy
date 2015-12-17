@@ -15,7 +15,7 @@
     "test:phantom": "zuul test/spec/upload.js --phantom",
     "test": "bin/test",
     "watch:css": "nodemon -e src/scss -x \"npm run build:css\"",
-    "watch:examples": "cd website && node watch-examples.js",
+    "watch:examples": "cd website && node build-examples.js watch",
     "watch:js": "nodemon --watch src -e js --ignore src/scss -x \"npm run build:lib\"",
     "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate",
     "web:deploy": "npm run web:install && npm run web:build && ./bin/web-deploy",

@@ -1,5 +1,5 @@
 /**
- * watch-examples.js
+ * build-examples.js
  * --------
  * Searches for each example's `src/js/app.js` file.
  * Creates a new watchify instance for each `app.js`.
@@ -16,19 +16,26 @@
 var createStream = require('fs').createWriteStream;
 var glob = require('multi-glob').glob;
 var chalk = require('chalk');
+var path = require('path');
 var notifier = require('node-notifier');
 var babelify = require('babelify');
 var browserify = require('browserify');
 var watchify = require('watchify');
 
-var src = 'src/js/app.js';
-var dest = 'static/js/app.js';
+var webRoot = __dirname;
+var uppyRoot = path.dirname(webRoot);
 
-var pattern = 'src/examples/**/' + src;
+var srcPattern = webRoot + '/src/examples/**/js/app.js';
+var dstPattern = webRoot + '/public/examples/**/js/app.js';
+
+var watchifyEnabled = process.argv[2] === 'watch';
+var browserifyPlugins = [];
+if (watchifyEnabled) {
+  browserifyPlugins.push(watchify);
+}
 
 // Find each app.js file with glob.
-// 'website/' glob is for when calling `node website/watch-examples.js` from root.
-glob([pattern, 'website/' + pattern], function(err, files) {
+glob(srcPattern, function(err, files) {
   if (err) throw new Error(err);
 
   console.log('--> Watching examples..');
@@ -38,23 +45,25 @@ glob([pattern, 'website/' + pattern], function(err, files) {
 
   // Create a new watchify instance for each file.
   files.forEach(function(file) {
-    var watcher = browserify(file, {
-      cache: {},
+    var browseFy = browserify(file, {
+      cache       : {},
       packageCache: {},
-      plugin: [watchify]
+      plugin      : browserifyPlugins
     })
-      // Aliasing for using `require('uppy')`, etc.
-      .require('../src/index.js', { expose: 'uppy' })
-      .require('../src/core/index.js', { expose: 'uppy/core' })
-      .require('../src/plugins/index.js', { expose: 'uppy/plugins' })
+
+    // Aliasing for using `require('uppy')`, etc.
+    browseFy
+      .require(uppyRoot + '/src/index.js', { expose: 'uppy' })
+      .require(uppyRoot + '/src/core/index.js', { expose: 'uppy/core' })
+      .require(uppyRoot + '/src/plugins/index.js', { expose: 'uppy/plugins' })
       .transform(babelify);
 
     // Listeners for changes, errors, and completion.
-    watcher
+    browseFy
       .on('update', bundle)
       .on('error', onError)
       .on('log', function(msg) {
-        console.info(chalk.green('✓ done:'), chalk.green(file), chalk.gray.dim('(' + msg + ')'));
+
       })
       .on('file', function(file, id, parent) {
         // When file completes, unmute it.
@@ -81,11 +90,17 @@ glob([pattern, 'website/' + pattern], function(err, files) {
         }
       });
 
-      var output = file.replace(src, dest);
-      var bundle = watcher.bundle()
-      .on('error', onError)
+      var exampleName = path.dirname(path.dirname(file));
+      var output      = file.replace('**', exampleName);
+
+      console.log('output: '+output);
+
+      var bundle = browseFy.bundle()
+        .on('error', onError)
+        .on('file', onFile)
+
       bundle.pipe(createStream(output));
-      bundle.pipe(createStream(output.replace('src', 'public')));
+      // bundle.pipe(createStream(output.replace('src', 'public')));
     }
   });
 });
@@ -102,6 +117,11 @@ function onError(err) {
     'message': err.message
   })
   this.emit('end');
+}
+
+function onFile(file, id, parent) {
+  var msg = id + '-' + parent;
+  console.info(chalk.green('✓ done:'), chalk.green(file), chalk.gray.dim('(' + msg + ')'));
 }
 
 /**
