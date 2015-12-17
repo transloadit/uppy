@@ -76,9 +76,6 @@ glob(srcPattern, function(err, files) {
     browseFy
       .on('update', bundle)
       .on('error', onError)
-      .on('log', function(msg) {
-
-      })
       .on('file', function(file, id, parent) {
         // When file completes, unmute it.
         muted = muted.filter(function(mutedId) {
