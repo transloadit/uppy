@@ -17,6 +17,7 @@ var createStream = require('fs').createWriteStream;
 var glob = require('multi-glob').glob;
 var chalk = require('chalk');
 var path = require('path');
+var mkdirp = require('mkdirp');
 var notifier = require('node-notifier');
 var babelify = require('babelify');
 var browserify = require('browserify');
@@ -90,9 +91,11 @@ glob(srcPattern, function(err, files) {
         }
       });
 
-      var exampleName = path.dirname(path.dirname(file));
-      var output      = file.replace('**', exampleName);
+      var exampleName = path.basename(path.dirname(path.dirname(file)));
+      var output      = dstPattern.replace('**', exampleName);
+      var parentDir   = path.dirname(output);
 
+      mkdirp.sync(parentDir);
       console.log('output: '+output);
 
       var bundle = browseFy.bundle()
