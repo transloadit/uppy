@@ -1,1 +1,1 @@
-@todo screenshot here?
+![](/images/uppy-dragdrop-screenshot.png)
