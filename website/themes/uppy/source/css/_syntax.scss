@@ -40,7 +40,7 @@ pre {
   .symbol .string,
   .value,
   .regexp {
-    color: $green;
+    color: $color-green;
   }
 
   .title {
@@ -71,7 +71,7 @@ pre {
   .apache .cbracket,
   .tex .command,
   .prompt {
-    color: $green;
+    color: $color-green;
   }
 
   .comment,

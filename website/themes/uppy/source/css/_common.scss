@@ -1,28 +1,28 @@
 body {
-  font-family: $body-font;
-  font-size: $body-font-size;
+  font-family: $fontFamily-body;
+  font-size: $fontSize-body;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: $medium;
+  color: $color-medium;
   margin: 0;
 }
 
 a {
   text-decoration: none;
-  color: $medium;
+  color: $color-medium;
 }
 
 img { border: none; }
 
 h1, h2, h3, h4, strong {
   font-weight: 600;
-  color: $dark;
+  color: $color-dark;
 }
 
 code, pre {
-  font-family: $code-font;;
-  font-size: $code-font-size;
-  background-color: $codebg;
+  font-family: $fontFamily-code;;
+  font-size: $fontSize-code;
+  background-color: $color-codebg;
   -webkit-font-smoothing: initial;
   -moz-osx-font-smoothing: initial;
 }
@@ -35,23 +35,23 @@ code {
   white-space: nowrap;
 }
 
-em { color: $light; }
+em { color: $color-light; }
 
 p { word-spacing: 0.05em; }
 
 a.button {
   display: inline-block;
-  font-family: $code-font;
+  font-family: $fontFamily-code;
   font-weight: 700;
   color: #fff;
-  background-color: lighten($primary, 8%);
-  border-bottom: 2px solid darken($primary, 12%);
+  background-color: lighten($color-primary, 8%);
+  border-bottom: 2px solid darken($color-primary, 12%);
   padding: 12px 14px;
   border-radius: 4px;
   transition: all .15s ease;
 
   &:hover {
-    background-color: lighten($primary, 15%);
+    background-color: lighten($color-primary, 15%);
     transform: translate(0, -2px);
   }
 }
@@ -60,10 +60,10 @@ a.button {
   overflow-x: auto;
   position: relative;
   padding: 0;
-  background-color: $codebg;
+  background-color: $color-codebg;
   padding: .8em .8em .4em;
   line-height: 1.1em;
-  border-radius: $radius;
+  border-radius: $size-radius;
 
   figcaption {
     display: none;
@@ -154,11 +154,11 @@ a.button {
   //   }
   //
   //   a {
-  //     color: $light;
+  //     color: $color-light;
   //     font-size: .9em;
   //     display: block;
   //     padding: 0 30px 0 20px;
-  //     &:hover { color: $primary; }
+  //     &:hover { color: $color-primary; }
   //   }
   // }
 }
