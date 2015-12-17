@@ -133,15 +133,19 @@ html, body {
 
 .IndexExample-block {
   padding: 7px;
-  text-align: left;
-  display: inline-block;
-  width: 43%;
+  // text-align: left;
+  // display: inline-block;
   height: 300px;
-  vertical-align: top;
   background-color: $color-codebg;
   border-radius: $size-radius;
   // box-shadow: 0 1px 2px rgba(0,0,0,.125);
   overflow-x: scroll;
+
+  @media #{$screen-small} {
+    width: 43%;
+    display: inline-block;
+    vertical-align: top;
+  }
 }
 
 #features {
@@ -239,10 +243,6 @@ html, body {
 }
 
 #footer {
-  text-align: center;
-  color: #fff;
-  padding: 4em 0;
-  background-color: $color-darkgray;
 
   .avatar {
     width: 100px;
@@ -274,6 +274,13 @@ html, body {
   }
 
   p { margin: .3em 0; }
+}
+
+.IndexFooter {
+  text-align: center;
+  color: #fff;
+  padding: 4em 0;
+  background-color: darken($color-violet, 15%);
 }
 
 @media screen and (max-width: 480px) {

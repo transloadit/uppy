@@ -28,3 +28,9 @@ $color-primary    : $color-violet;
 // sizes
 $size-radius : 2px;
 $size-headerHeight: 40px;
+
+// Media queries
+
+// small screen
+$screen-small: 'only screen and (min-width: 480px)';
+$screen-medium: 'only screen and (min-width: 860px)';
