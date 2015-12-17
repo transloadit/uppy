@@ -4,11 +4,13 @@
 // that script then writes the public/**/*.js files.
 var exec             = require('child_process').exec;
 var path             = require('path');
+var fs               = require('fs');
 var webRoot          = path.dirname(path.dirname(__dirname));
 var uppyRoot         = path.dirname(webRoot);
 var browserifyScript = webRoot + '/build-examples.js'
 
-hexo.extend.renderer.register('es6', 'es6', function(data, options, callback) {
+
+hexo.extend.renderer.register('es6', 'js', function(data, options, callback) {
   if (!data || !data.path) {
     return callback(null);
   }
@@ -17,14 +19,24 @@ hexo.extend.renderer.register('es6', 'es6', function(data, options, callback) {
     callback(null, data.text);
   }
 
-  var cmd = 'node ' + browserifyScript + ' ' + data.path + ' --colors';
-  // hexo.log.i('hexo-uppyexamplebuilder: change detected in examples. running: ' + cmd);
+  var slug    = data.path.replace(/[^a-zA-Z0-9\_\.]/g, '-');
+  var dstPath = '/tmp/' + slug + '.js';
+  var cmd     = 'node ' + browserifyScript + ' ' + data.path + ' ' + dstPath + ' --colors';
+  // hexo.log.i('hexo-renderer-uppyexamples: change detected in examples. running: ' + cmd);
   exec(cmd, function(err, stdout, stderr) {
     if (err) {
       return callback(err);
     }
 
-    hexo.log.i('hexo-uppyexamplebuilder: ' + stdout.trim());
-    callback(null, data.text);
+    hexo.log.i('hexo-renderer-uppyexamples: ' + stdout.trim());
+
+    fs.readFile(dstPath, 'utf-8', function(err, data) {
+      if (err) {
+        return callback(err);
+      }
+      hexo.log.i('hexo-renderer-uppyexamples: read: ' + dstPath);
+
+      callback(null, data);
+    });
   });
 });

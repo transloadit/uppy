@@ -7,9 +7,10 @@
  *
  * Run as:
  *
- * build-examples.js        # to build all examples one-off
- * build-examples.js watch  # to keep rebuilding examples with an internal watchify
- * build-examples.js <path> # to build just one example app.es6
+ * build-examples.js               # to build all examples one-off
+ * build-examples.js watch         # to keep rebuilding examples with an internal watchify
+ * build-examples.js <path>        # to build just one example app.es6
+ * build-examples.js <path> <path> # to build just one example app.es6 to a specific location
  *
  * Note:
  * Since each example is dependent on Uppy's source,
@@ -45,6 +46,9 @@ if (watchifyEnabled) {
 // In this case we'll only bundle the specified path/pattern
 if (!watchifyEnabled && process.argv[2]) {
   srcPattern = process.argv[2];
+  if (process.argv[3]) {
+    dstPattern = process.argv[3];
+  }
 }
 
 // Find each app.es6 file with glob.
@@ -107,7 +111,7 @@ glob(srcPattern, function(err, files) {
 
       mkdirp.sync(parentDir);
 
-      console.info(chalk.green('✓ building:'), chalk.green(path.relative(process.cwd(), output)));
+      console.info(chalk.green('✓ building:'), chalk.green(path.relative(process.cwd(), file)));
 
       var bundle = browseFy.bundle()
         .on('error', onError)
