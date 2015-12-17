@@ -5,9 +5,13 @@ $fontFamily-code : 'Roboto Mono', Monaco, courier, monospace;
 
 // font sizes
 $fontSize-body : 15px;
+$fontSize-m    : 14px;
+$fontSize-l    : 17px;
 $fontSize-code : .8em;
 
 // colors
+$color-white      : #fff;
+$color-black      : #000;
 $color-blue       : #01A5E1;
 $color-dark       : #2c3e50;
 $color-medium     : #34495e;
@@ -17,7 +21,9 @@ $color-border     : #dddddd;
 $color-codebg     : #f8f8f8;
 $color-red        : #ff6666;
 $color-darkgray   : #34393A;
-$color-primary    : $color-blue;
+$color-violet     : #492e7c;
+$color-orange     : #e96900;
+$color-primary    : $color-violet;
 
 // sizes
 $size-radius : 2px;

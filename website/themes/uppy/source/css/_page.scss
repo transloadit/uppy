@@ -1,9 +1,16 @@
-#header {
-  background-color: #fff;
-  box-shadow: 0 0 4px rgba(0,0,0,.25);
+.MainHeader {
+  background-color: $color-white;
+  // box-shadow: 0 0 4px rgba(0,0,0,.25);
   padding: 25px 60px;
   position: relative;
   z-index: 2;
+  border-top: 6px solid $color-primary;
+}
+
+.MainMenu li {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: $fontSize-m;
 }
 
 .page-inner #nav {
@@ -12,6 +19,7 @@
   top: 25px;
   height: $size-headerHeight;
   line-height: $size-headerHeight;
+
   .break { display: none; }
 
   li {
@@ -29,7 +37,6 @@
 #search-query {
   height: 30px;
   line-height: 30px;
-  box-sizing: border-box;
   padding: 0 15px 0 30px;
   border: 1px solid #e3e3e3;
   outline: none;
@@ -370,7 +377,6 @@
     left: 0;
     padding: 60px 30px 20px;
     box-shadow: 0 0 10px rgba(0,0,0,.2);
-    box-sizing: border-box;
     transition: all .4s cubic-bezier(0.4, 0, 0, 1);
     transform: translate(-280px, 0);
 

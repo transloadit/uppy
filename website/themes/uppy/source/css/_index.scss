@@ -22,19 +22,6 @@ html, body {
   }
 }
 
-// #translations {
-//   margin-bottom: 3em;
-//
-//   .delimiter {
-//     color: $color-light;
-//     margin: 0 5px;
-//   }
-//
-//   .nav-link {
-//     margin: 0;
-//   }
-// }
-
 .nav-link {
   color: $color-light;
   padding-bottom: 3px;
@@ -73,7 +60,7 @@ html, body {
 }
 
 .IndexHero-logo {
-  margin: 2em 0 2em;
+  margin: 1em 0 2em;
 }
 
 .IndexHero-title {
@@ -84,6 +71,8 @@ html, body {
 }
 
 .IndexHero-desc {
+  font-size: $fontSize-l;
+  line-height: 1.5;
   max-width: 800px;
   padding: 0 20px;
   text-align: center;
@@ -140,19 +129,19 @@ html, body {
     font-weight: 600;
     color: $color-light;
   }
+}
 
-  .block {
-    padding: 7px;
-    text-align: left;
-    display: inline-block;
-    width: 43%;
-    height: 12em;
-    vertical-align: top;
-    background-color: #f9f9f9;
-    border-radius: 2px;
-    box-shadow: 0 1px 2px rgba(0,0,0,.125);
-    overflow-x: scroll;
-  }
+.IndexExample-block {
+  padding: 7px;
+  text-align: left;
+  display: inline-block;
+  width: 43%;
+  height: 300px;
+  vertical-align: top;
+  background-color: $color-codebg;
+  border-radius: $size-radius;
+  // box-shadow: 0 1px 2px rgba(0,0,0,.125);
+  overflow-x: scroll;
 }
 
 #features {
@@ -173,7 +162,6 @@ html, body {
   }
 
   .feat {
-    box-sizing: border-box;
     display: inline-block;
     text-align: left;
     vertical-align: top;

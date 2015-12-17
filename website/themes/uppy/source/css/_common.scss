@@ -1,3 +1,11 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *:after, *:before {
+  box-sizing: inherit;
+}
+
 body {
   font-family: $fontFamily-body;
   font-size: $fontSize-body;
@@ -12,7 +20,11 @@ a {
   color: $color-medium;
 }
 
-img { border: none; }
+img {
+  max-width: 100%;
+  height: auto;
+  border: 0;
+}
 
 h1, h2, h3, h4, strong {
   font-weight: 600;
@@ -28,10 +40,10 @@ code, pre {
 }
 
 code {
-  color: #e96900;
+  color: $color-orange;
   padding: 3px 5px;
   margin: 0 2px;
-  border-radius: 2px;
+  border-radius: $size-radius;
   white-space: nowrap;
 }
 
