@@ -132,15 +132,3 @@ postcss:
     autoprefixer:
       browsers:
         - 'last 2 versions'
-
-
-# Deployment
-## Docs: https://hexo.io/docs/deployment.html
-# deploy:
-#   type: git
-#   branch: gh-pages
-#   repository: git@github.com:transloadit/uppy.git
-
-# Done by build-examples.js:
-skip_render:
-  - 'examples/**/*.js'

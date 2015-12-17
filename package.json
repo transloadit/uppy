@@ -19,7 +19,7 @@
     "watch:js": "nodemon --watch src -e js --ignore src/scss -x \"npm run build:lib\"",
     "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate",
     "web:deploy": "npm run web:install && npm run web:build && ./bin/web-deploy",
-    "web:install": "cd website && npm install",
+    "web:install": "cd website && rm -rf node_modules/hexo-uppyexamplebuilder && npm install",
     "web:preview": "cd website && ./node_modules/.bin/hexo server --debug",
     "web": "npm run web:install && npm run web:build && npm run web:preview"
   },

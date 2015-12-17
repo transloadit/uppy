@@ -1,8 +1,8 @@
 /**
  * build-examples.js
  * --------
- * Searches for each example's `src/js/app.js` file.
- * Creates a new watchify instance for each `app.js`.
+ * Searches for each example's `js/app.es6` file.
+ * Creates a new watchify instance for each `app.es6`.
  * Changes to Uppy's source will trigger rebundling.
  *
  * Note:
@@ -26,7 +26,7 @@ var watchify = require('watchify');
 var webRoot = __dirname;
 var uppyRoot = path.dirname(webRoot);
 
-var srcPattern = webRoot + '/src/examples/**/js/app.js';
+var srcPattern = webRoot + '/src/examples/**/js/app.es6';
 var dstPattern = webRoot + '/public/examples/**/js/app.js';
 
 var watchifyEnabled = process.argv[2] === 'watch';
@@ -35,7 +35,7 @@ if (watchifyEnabled) {
   browserifyPlugins.push(watchify);
 }
 
-// Find each app.js file with glob.
+// Find each app.es6 file with glob.
 glob(srcPattern, function(err, files) {
   if (err) throw new Error(err);
 
