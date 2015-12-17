@@ -5,6 +5,12 @@
  * Creates a new watchify instance for each `app.es6`.
  * Changes to Uppy's source will trigger rebundling.
  *
+ * Run as:
+ *
+ * build-examples.js        # to build all examples one-off
+ * build-examples.js watch  # to keep rebuilding examples with an internal watchify
+ * build-examples.js <path> # to build just one example app.es6
+ *
  * Note:
  * Since each example is dependent on Uppy's source,
  * changing one source file causes the 'file changed'
@@ -35,12 +41,19 @@ if (watchifyEnabled) {
   browserifyPlugins.push(watchify);
 }
 
+// Instead of 'watch', build-examples.js can also take a path as cli argument.
+// In this case we'll only bundle the specified path/pattern
+if (!watchifyEnabled && process.argv[2]) {
+  srcPattern = process.argv[2];
+}
+
 // Find each app.es6 file with glob.
 glob(srcPattern, function(err, files) {
   if (err) throw new Error(err);
 
-  console.log('--> Watching examples..');
-  console.log('--> Pre-building ' + files.length + ' files..')
+  if (watchifyEnabled) {
+    console.log('--> Watching examples..');
+  }
 
   var muted = [];
 
@@ -96,14 +109,13 @@ glob(srcPattern, function(err, files) {
       var parentDir   = path.dirname(output);
 
       mkdirp.sync(parentDir);
-      console.log('output: '+output);
+
+      console.info(chalk.green('✓ building:'), chalk.green(path.relative(process.cwd(), output)));
 
       var bundle = browseFy.bundle()
         .on('error', onError)
-        .on('file', onFile)
 
       bundle.pipe(createStream(output));
-      // bundle.pipe(createStream(output.replace('src', 'public')));
     }
   });
 });
@@ -120,11 +132,6 @@ function onError(err) {
     'message': err.message
   })
   this.emit('end');
-}
-
-function onFile(file, id, parent) {
-  var msg = id + '-' + parent;
-  console.info(chalk.green('✓ done:'), chalk.green(file), chalk.gray.dim('(' + msg + ')'));
 }
 
 /**
