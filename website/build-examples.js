@@ -1,9 +1,15 @@
 /**
- * watch-examples.js
+ * build-examples.js
  * --------
- * Searches for each example's `src/js/app.js` file.
- * Creates a new watchify instance for each `app.js`.
+ * Searches for each example's `js/app.es6` file.
+ * Creates a new watchify instance for each `app.es6`.
  * Changes to Uppy's source will trigger rebundling.
+ *
+ * Run as:
+ *
+ * build-examples.js        # to build all examples one-off
+ * build-examples.js watch  # to keep rebuilding examples with an internal watchify
+ * build-examples.js <path> # to build just one example app.es6
  *
  * Note:
  * Since each example is dependent on Uppy's source,
@@ -16,46 +22,60 @@
 var createStream = require('fs').createWriteStream;
 var glob = require('multi-glob').glob;
 var chalk = require('chalk');
+var path = require('path');
+var mkdirp = require('mkdirp');
 var notifier = require('node-notifier');
 var babelify = require('babelify');
 var browserify = require('browserify');
 var watchify = require('watchify');
 
-var src = 'src/js/app.js';
-var dest = 'static/js/app.js';
+var webRoot = __dirname;
+var uppyRoot = path.dirname(webRoot);
 
-var pattern = 'src/examples/**/' + src;
+var srcPattern = webRoot + '/src/examples/**/js/app.es6';
+var dstPattern = webRoot + '/public/examples/**/js/app.js';
 
-// Find each app.js file with glob.
-// 'website/' glob is for when calling `node website/watch-examples.js` from root.
-glob([pattern, 'website/' + pattern], function(err, files) {
+var watchifyEnabled = process.argv[2] === 'watch';
+var browserifyPlugins = [];
+if (watchifyEnabled) {
+  browserifyPlugins.push(watchify);
+}
+
+// Instead of 'watch', build-examples.js can also take a path as cli argument.
+// In this case we'll only bundle the specified path/pattern
+if (!watchifyEnabled && process.argv[2]) {
+  srcPattern = process.argv[2];
+}
+
+// Find each app.es6 file with glob.
+glob(srcPattern, function(err, files) {
   if (err) throw new Error(err);
 
-  console.log('--> Watching examples..');
-  console.log('--> Pre-building ' + files.length + ' files..')
+  if (watchifyEnabled) {
+    console.log('--> Watching examples..');
+  }
 
   var muted = [];
 
   // Create a new watchify instance for each file.
   files.forEach(function(file) {
-    var watcher = browserify(file, {
-      cache: {},
+    var browseFy = browserify(file, {
+      cache       : {},
       packageCache: {},
-      plugin: [watchify]
+      plugin      : browserifyPlugins
     })
-      // Aliasing for using `require('uppy')`, etc.
-      .require('../src/index.js', { expose: 'uppy' })
-      .require('../src/core/index.js', { expose: 'uppy/core' })
-      .require('../src/plugins/index.js', { expose: 'uppy/plugins' })
+
+    // Aliasing for using `require('uppy')`, etc.
+    browseFy
+      .require(uppyRoot + '/src/index.js', { expose: 'uppy' })
+      .require(uppyRoot + '/src/core/index.js', { expose: 'uppy/core' })
+      .require(uppyRoot + '/src/plugins/index.js', { expose: 'uppy/plugins' })
       .transform(babelify);
 
     // Listeners for changes, errors, and completion.
-    watcher
+    browseFy
       .on('update', bundle)
       .on('error', onError)
-      .on('log', function(msg) {
-        console.info(chalk.green('✓ done:'), chalk.green(file), chalk.gray.dim('(' + msg + ')'));
-      })
       .on('file', function(file, id, parent) {
         // When file completes, unmute it.
         muted = muted.filter(function(mutedId) {
@@ -81,11 +101,18 @@ glob([pattern, 'website/' + pattern], function(err, files) {
         }
       });
 
-      var output = file.replace(src, dest);
-      var bundle = watcher.bundle()
-      .on('error', onError)
+      var exampleName = path.basename(path.dirname(path.dirname(file)));
+      var output      = dstPattern.replace('**', exampleName);
+      var parentDir   = path.dirname(output);
+
+      mkdirp.sync(parentDir);
+
+      console.info(chalk.green('✓ building:'), chalk.green(path.relative(process.cwd(), output)));
+
+      var bundle = browseFy.bundle()
+        .on('error', onError)
+
       bundle.pipe(createStream(output));
-      bundle.pipe(createStream(output.replace('src', 'public')));
     }
   });
 });

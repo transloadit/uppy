@@ -9,6 +9,7 @@
     "autoprefixer": "^6.1.2",
     "hexo": "^3.1.1",
     "hexo-browsersync": "^0.2.0",
+    "hexo-uppyexamplebuilder": "file:./private_modules/hexo-uppyexamplebuilder",
     "hexo-deployer-git": "0.0.4",
     "hexo-generator-archive": "^0.1.2",
     "hexo-generator-category": "^0.1.2",
@@ -21,6 +22,7 @@
     "hexo-server": "^0.1.2",
     "hexo-tag-emojis": "^2.0.0",
     "hexo-util": "^0.2.1",
+    "mkdirp": "^0.5.1",
     "postcss-svg": "^1.0.4"
   },
   "devDependencies": {
