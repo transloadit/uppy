@@ -1,7 +1,7 @@
 // We listen for hexo changes on *.es6 extensions.
-// We tell it to just copy the original to public/**/*.es6
 // We fire our own build-examples.js and tell it which example to build -
-// that script then writes the public/**/*.js files.
+// that script then writes temporary js files
+// which we return via the callback.
 var exec             = require('child_process').exec;
 var path             = require('path');
 var fs               = require('fs');
@@ -30,13 +30,13 @@ hexo.extend.renderer.register('es6', 'js', function(data, options, callback) {
 
     hexo.log.i('hexo-renderer-uppyexamples: ' + stdout.trim());
 
-    fs.readFile(dstPath, 'utf-8', function(err, data) {
+    fs.readFile(dstPath, 'utf-8', function(err, tmpJs) {
       if (err) {
         return callback(err);
       }
       hexo.log.i('hexo-renderer-uppyexamples: read: ' + dstPath);
 
-      callback(null, data);
+      callback(null, tmpJs);
     });
   });
 });
