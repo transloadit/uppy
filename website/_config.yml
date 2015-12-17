@@ -16,7 +16,7 @@ root_domain: uppyjs.io
 title: Uppy
 subtitle: "Almost as cute as a puppy"
 logo_large: /images/uppy.svg
-logo_medium: /images/dog-172.png
+logo_medium: /images/uppy.svg
 logo_icon: /images/emojis/dog.png
 description: >
   Uppy is (going to be) an uploader written in ES6 JavaScript with a plugin-based architecture, making
