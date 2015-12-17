@@ -137,9 +137,3 @@ For local previews on http://127.0.0.1:4000 type:
 ```bash
 npm run web
 ```
-
-This will start Hexo and rebuilds the site as you save. If you also want to work on examples / Uppy itself you then open a second tab in which you type:
-
-```bash
-npm run watch:examples
-```
