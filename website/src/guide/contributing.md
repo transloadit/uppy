@@ -119,7 +119,6 @@ h1 {
 }
 ```
 
-
 ## Website Development
 
 We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity. For those reading this screaming murder, [HashiCorp does this](https://github.com/hashicorp/terraform/tree/master/website) for all their projects, and it's working well for them on a scale vastly more impressive than Uppy's.
@@ -136,4 +135,10 @@ For local previews on http://127.0.0.1:4000 type:
 
 ```bash
 npm run web
+```
+
+If you want to work on Uppy itself, and see its changes reflected in the website, open a new tab and type:
+
+```bash
+npm run watch:js
 ```

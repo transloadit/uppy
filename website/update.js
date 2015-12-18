@@ -1,5 +1,6 @@
-var fs         = require('fs')
-var path       = require('path')
+var fs    = require('fs')
+var path  = require('path')
+var chalk = require('chalk');
 
 var webRoot  = __dirname;
 var uppyRoot = path.dirname(__dirname);
@@ -36,3 +37,5 @@ fs.writeFileSync(
   webRoot + '/themes/uppy/source/js/uppy.js',
   fs.readFileSync(locations.dev, 'utf-8')
 );
+
+console.info(chalk.green('✓ injected: uppy build into site'));
