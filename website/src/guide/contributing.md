@@ -16,6 +16,33 @@ npm install
 
 Our website's examples section is also our playground, read "Website Development"'s "Getting Started" section to get up and running.
 
+## Website Development
+
+We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity. For those reading this screaming murder, [HashiCorp does this](https://github.com/hashicorp/terraform/tree/master/website) for all their projects, and it's working well for them on a scale vastly more impressive than Uppy's.
+
+The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch with Hexo's build at every change to `master`). The content is written in Markdown and located in `./website/src`. Feel free to fork & hack!  
+
+Even though bundled in this repo, the website is regarded as a separate project. So it has its own `package.json` and we aim keep the surface where the two projects interface as small as possible. `./website/update.js` is called during website builds to inject the Uppy knowledge into the site.
+
+### Getting Started
+
+It's recommended to exclude `./website/public/` from your editor if you want efficient searches.
+
+For local previews on http://127.0.0.1:4000 type:
+
+```bash
+npm run web
+```
+
+If you want to work on Uppy itself, and see its changes reflected in the website, open a new tab and type:
+
+```bash
+npm run watch
+# Or if you're only interested in one of these:
+npm run watch:js
+npm run watch:css
+```
+
 ## CSS Guidelines
 
 The CSS standards followed in this project closely resemble those from [Medium's CSS Guidelines](https://gist.github.com/fat/a47b882eb5f84293c4ed). If it's not mentioned here, follow their guidelines.
@@ -117,31 +144,4 @@ h1 {
   margin: auto;
   width: 940px;
 }
-```
-
-## Website Development
-
-We keep the [uppyjs.io](http://uppyjs.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity. For those reading this screaming murder, [HashiCorp does this](https://github.com/hashicorp/terraform/tree/master/website) for all their projects, and it's working well for them on a scale vastly more impressive than Uppy's.
-
-The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch with Hexo's build at every change to `master`). The content is written in Markdown and located in `./website/src`. Feel free to fork & hack!  
-
-Even though bundled in this repo, the website is regarded as a separate project. So it has its own `package.json` and we aim keep the surface where the two projects interface as small as possible. `./website/update.js` is called during website builds to inject the Uppy knowledge into the site.
-
-### Getting Started
-
-It's recommended to exclude `./website/public/` from your editor if you want efficient searches.
-
-For local previews on http://127.0.0.1:4000 type:
-
-```bash
-npm run web
-```
-
-If you want to work on Uppy itself, and see its changes reflected in the website, open a new tab and type:
-
-```bash
-npm run watch
-# Or if you're only interested in one of these:
-npm run watch:js
-npm run watch:css
 ```
