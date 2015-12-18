@@ -38,18 +38,12 @@ hexo.extend.renderer.register('es6', 'js', function(data, options, callback) {
       }
       hexo.log.i('hexo-renderer-uppyexamples: read: ' + tmpFile);
 
+
+      // @TODO remove this hack
+      // once this is resolved: https://github.com/hexojs/hexo/issues/1663
+      bundledJS = bundledJS.replace(/</g, ' < ');
+
       callback(null, bundledJS);
-
-      // @TODO REMOVE THIS MASSIVE HACK!
-      // Once this is resolved: https://github.com/hexojs/hexo/issues/1663
-      var finalDest = data.path.replace('/src/', '/public/')
-      finalDest = finalDest.replace('.es6', '.js');
-
-      setTimeout(function(){
-        hexo.log.i('hexo-renderer-uppyexamples: applying hack for: ' + finalDest);
-        fs.writeFileSync(finalDest, bundledJS);
-      }, 1000)
-
     });
   });
 });
