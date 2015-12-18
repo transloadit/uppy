@@ -26,7 +26,7 @@ description_primary: >
 description_secondary: >
   Uppy (almost as cute as a puppy) is brought to you by the people behind <a href="https://transloadit.com">Transloadit</a> and as such has first class
   support for adding their uploading and encoding backend, but this is opt-in, and you can just as easily
-  roll your own.
+  roll your own. Uppy is in the early stages of development and should not be used for anything serious yet.
 author: Transloadit
 email: uppybot@uppyjs.io
 language: English
