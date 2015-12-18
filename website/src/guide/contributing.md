@@ -14,7 +14,7 @@ cd uppy
 npm install
 ```
 
-Our website's examples section is also our playground, read "Website Development"'s "Getting Started" section to get up and running.
+Our website's examples section is also our playground, read "Website Development"'s "Local Previews" section to get up and running.
 
 ## Website Development
 
@@ -24,7 +24,7 @@ The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys
 
 Even though bundled in this repo, the website is regarded as a separate project. So it has its own `package.json` and we aim keep the surface where the two projects interface as small as possible. `./website/update.js` is called during website builds to inject the Uppy knowledge into the site.
 
-### Getting Started
+### Local Previews
 
 It's recommended to exclude `./website/public/` from your editor if you want efficient searches.
 
