@@ -6,16 +6,12 @@ order: 2
 ---
 
 {% blockquote %}
-Drag &amp; Drop
+Here you'll see a demo of how you might set up Drag and Drop with Uppy:
 {% endblockquote %}
 
-<p>
-  Here you'll see a demo of how you might set up Drag and Drop with Uppy:
-</p>
-
-<link rel="stylesheet" href="css/app.css">
-<% include html/app.html %>
-<script src="js/app.js"></script>
+<link rel="stylesheet" href="app.css">
+<% include app.html %>
+<script src="app.js"></script>
 
 <hr />
 
@@ -26,14 +22,14 @@ Drag &amp; Drop
 <p>
   On this page we're using the following HTML snippet:
 </p>
-{% include_code lang:html dragdrop/html/app.html %}
+{% include_code lang:html dragdrop/app.html %}
 
 <p>
   Along with this JavaScript:
 </p>
-{% include_code lang:js dragdrop/js/app.es6 %}
+{% include_code lang:js dragdrop/app.es6 %}
 
 <p>
   And the following CSS:
 </p>
-{% include_code lang:css dragdrop/css/app.css %}
+{% include_code lang:css dragdrop/app.css %}
