@@ -133,3 +133,7 @@ postcss:
     autoprefixer:
       browsers:
         - 'last 2 versions'
+
+skip_render:
+  - '*.js'
+  - '**/*.js'
