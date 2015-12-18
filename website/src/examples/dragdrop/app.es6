@@ -7,4 +7,4 @@ const files = uppy
   .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
   .run();
 
-console.log(uppy.type);
+console.log('Uppy ' + uppy.type + ' loaded');
