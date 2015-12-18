@@ -1,7 +1,5 @@
 import Utils from '../core/Utils';
 import Plugin from './Plugin';
-// import Tus from 'tus-js-client';
-// console.log('pizza', Tus);
 
 export default class DragDrop extends Plugin {
   constructor(core, opts) {
@@ -33,7 +31,6 @@ export default class DragDrop extends Plugin {
     this.listenForEvents = this.listenForEvents.bind(this);
     this.handleDrop = this.handleDrop.bind(this);
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this);
-    this.upload = this.upload.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
@@ -87,64 +84,25 @@ export default class DragDrop extends Plugin {
   handleDrop(e) {
     console.log('all right, someone dropped something here...');
     const files = e.dataTransfer.files;
-    const formData = new FormData(this.dropzone);
+    // const formData = new FormData(this.dropzone);
     // console.log('pizza', formData);
 
-    for (var i = 0; i < files.length; i++) {
-      formData.append('file', files[i]);
-      console.log('pizza', files[i]);
-    }
+    // for (var i = 0; i < files.length; i++) {
+    //   formData.append('file', files[i]);
+    //   console.log('pizza', files[i]);
+    // }
 
-    this.upload(formData);
+    return Promise.resolve(files);
   }
 
   handleInputChange() {
     // const fileInput = document.querySelectorAll('.UppyDragDrop-input')[0];
     const formData = new FormData(this.dropzone);
-    console.log('pizza', formData);
 
-    this.upload(formData);
-  }
+    console.log('@todo: No support for formData yet', formData);
+    const files = [];
 
-  upload(data) {
-    this.displayStatus('Uploading...');
-
-    const request = new XMLHttpRequest();
-    request.open('POST', 'http://api2.transloadit.com', true);
-    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-
-    request.addEventListener('load', () => {
-      console.log('fucking done!');
-      this.displayStatus('Done.');
-    });
-
-    request.addEventListener('load', () => {
-      this.displayStatus('Done.');
-    });
-
-    request.addEventListener('error', () => {
-      console.log('fucking error!');
-    });
-
-    request.send(data);
-
-    // Create a new tus upload
-    // const upload = new Tus.Upload(data, {
-    //   endpoint: 'http://master.tus.io:8080',
-    //   onError: function(error) {
-    //     console.log('Failed because: ' + error);
-    //   },
-    //   onProgress: function(bytesUploaded, bytesTotal) {
-    //     var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
-    //     console.log(bytesUploaded, bytesTotal, percentage + '%');
-    //   },
-    //   onSuccess: function() {
-    //     console.log('Download %s from %s', upload.file.name, upload.url);
-    //   }
-    // });
-    //
-    // // Start the upload
-    // upload.start();
+    return Promise.resolve(files);
   }
 
   run(files) {
@@ -162,6 +120,6 @@ export default class DragDrop extends Plugin {
     this.core.setProgress(this, 100);
     // return selected;
     // done(null, 'done with DragDrop');
-    return Promise.resolve(files);
+    // return Promise.resolve(files);
   }
 }

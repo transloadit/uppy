@@ -1,4 +1,5 @@
 import Plugin from './Plugin';
+import Tus from 'tus-js-client';
 
 export default class Tus10 extends Plugin {
   constructor(core, opts) {
