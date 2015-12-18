@@ -1,5 +1,5 @@
 /**
-* Drag & Drop
+* Drag & Drop CSS to style the demo itself
 */
 
 .UppyDragDrop-puppy {
@@ -9,42 +9,4 @@
 .UppyDragDropExample-credit {
   display: block;
   margin: 20px 0;
-}
-
-.UppyDragDrop {
-  width: 300px;
-  text-align: center;
-  padding: 100px 10px;
-}
-
-/* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
-.UppyDragDrop-input {
-  width: 0.1px;
-	height: 0.1px;
-	opacity: 0;
-	overflow: hidden;
-	position: absolute;
-	z-index: -1;
-}
-
-.UppyDragDrop.is-dragdrop-supported {
-  border: 2px dashed;
-  border-color: #ccc;
-}
-
-.UppyDragDrop-label {
-  cursor: pointer;
-}
-
-.UppyDragDrop-dragText {
-  display: none;
-}
-
-.is-dragdrop-supported .UppyDragDrop-dragText {
-  display: inline;
-}
-
-.UppyDragDrop.is-dragover {
-  border-color: #d2ecea;
-  background-color: #dbf5f3;
 }
