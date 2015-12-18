@@ -22,8 +22,8 @@ hexo.extend.renderer.register('es6', 'js', function(data, options, callback) {
 
   var slug    = data.path.replace(/[^a-zA-Z0-9\_\.]/g, '-');
   var slug    = uuid.v4();
-  var dstPath = '/tmp/' + slug + '.js';
-  var cmd     = 'node ' + browserifyScript + ' ' + data.path + ' ' + dstPath + ' --colors';
+  var tmpFile = '/tmp/' + slug + '.js';
+  var cmd     = 'node ' + browserifyScript + ' ' + data.path + ' ' + tmpFile + ' --colors';
   // hexo.log.i('hexo-renderer-uppyexamples: change detected in examples. running: ' + cmd);
   exec(cmd, function(err, stdout, stderr) {
     if (err) {
@@ -32,11 +32,11 @@ hexo.extend.renderer.register('es6', 'js', function(data, options, callback) {
 
     hexo.log.i('hexo-renderer-uppyexamples: ' + stdout.trim());
 
-    fs.readFile(dstPath, 'utf-8', function(err, bundledJS) {
+    fs.readFile(tmpFile, 'utf-8', function(err, bundledJS) {
       if (err) {
         return callback(err);
       }
-      hexo.log.i('hexo-renderer-uppyexamples: read: ' + dstPath);
+      hexo.log.i('hexo-renderer-uppyexamples: read: ' + tmpFile);
 
       callback(null, bundledJS);
 
