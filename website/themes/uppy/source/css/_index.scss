@@ -1,16 +1,11 @@
-@mixin zoom() {
-  transform: scale(1.05);
-}
-
-html, body {
-  height: 100%;
-}
+// html, body {
+//   height: 100%;
+// }
 
 .page-index .MainMenu {
-  list-style-type: none;
   text-align: center;
-  padding: 0;
-  margin: 0;
+  // padding: 0;
+  // margin: 0;
 
   li {
     display: inline-block;;
@@ -22,6 +17,14 @@ html, body {
   }
 }
 
+.page-index .MainLogo {
+  display: none;
+}
+
+.page-index .MainMenu-search {
+  display: none;
+}
+
 .nav-link {
   color: $color-light;
   padding-bottom: 3px;
@@ -31,48 +34,62 @@ html, body {
   &:hover, &.current { border-bottom: 3px solid $color-primary; }
 }
 
-.page-index .MainLogo {
-  display: none;
-}
-
-.page-index .MainMenu-search {
-  display: none;
-}
-
 .MainLogo {
   display: block;
   margin: 0 auto;
-  width: 200px;
+  width: 150px;
 }
 
 .IndexHero {
   text-align: center;
   position: relative;
 
-  .warning {
-    color: $color-light;
-  }
+  // .warning {
+  //   color: $color-light;
+  // }
 }
 
-.IndexHero-installBtn {
-  width: 280px;
-  margin: .5em;
-}
+// .IndexHero-installBtn {
+//   width: 280px;
+//   margin: .5em;
+// }
 
 .IndexHero-logo {
-  margin: 1em 0 2em;
+  margin: 0.5em 0 0.5em;
+}
+
+.IndexHero-logoImg {
+  margin-bottom: 1em;
 }
 
 .IndexHero-title {
   font-family: $fontFamily-logo;
-  font-weight: 300;
+  font-weight: 400;
   font-size: 4em;
+  margin: 0;
+  margin-bottom: 0.2em;
+}
+
+.IndexHero-subtitle {
+  font-family: $fontFamily-logo;
+  font-size: 1.6em;
+  font-weight: 400;
   margin: 0;
 }
 
-.IndexHero-desc {
+.IndexHero-descPrimary {
   font-size: $fontSize-l;
-  line-height: 1.5;
+  line-height: 1.4;
+  max-width: 950px;
+  padding: 0 20px;
+  text-align: center;
+  margin: 1em auto;
+  color: $color-light;
+}
+
+.IndexHero-descSecondary {
+  font-size: 16px;
+  line-height: 1.4;
   max-width: 800px;
   padding: 0 20px;
   text-align: center;
@@ -83,26 +100,42 @@ html, body {
 .IndexSocial {
   text-align: center;
   list-style-type: none;
-  margin: 0 auto;
+  margin: auto;
   padding: 0;
-  margin: 1.5em auto;
+  margin-bottom: 2em;
 }
 
 .IndexSocial li {
   display: inline-block;
-  margin: 0 5px;
+  margin: 0 1.2em;
   vertical-align: middle;
 
   &.last { margin-left: -2px; }
 }
 
+.GetStartedBtn {
+  font-size: 1.2em;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 12px 40px;
+  border-radius: 25px;
+  transition: all .15s ease;
+  background-color: $color-primary;
+  color: $color-white;
+  margin-bottom: 1em;
+  
+  &:hover {
+    @include zoom;
+  }
+}
+
 .IndexExample {
   text-align: center;
-  padding: 20px;
+  // padding: 20px;
   max-width: 1200px;
   margin: 0 auto 3em;
-
-  h2 { margin-bottom: 1.5em; }
 
   code, pre {
     padding: 0;
@@ -123,6 +156,7 @@ html, body {
 
   .sign {
     display: inline-block;
+    vertical-align: middle;
     height: 10em;
     line-height: 9em;
     padding: 0 .5em;
@@ -131,20 +165,24 @@ html, body {
   }
 }
 
+.IndexExample-title {
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+
 .IndexExample-block {
   padding: 7px;
-  // text-align: left;
-  // display: inline-block;
-  height: 300px;
+  text-align: left;
+  height: 250px;
   background-color: $color-codebg;
   border-radius: $size-radius;
-  // box-shadow: 0 1px 2px rgba(0,0,0,.125);
   overflow-x: scroll;
+  // box-shadow: 0 1px 2px rgba(0,0,0,.125);
 
   @media #{$screen-small} {
     width: 43%;
     display: inline-block;
-    vertical-align: top;
+    vertical-align: middle;
   }
 }
 
@@ -208,7 +246,7 @@ html, body {
   }
 }
 
-#design_goals {
+.IndexDesignGoals {
   padding: 4em 0;
   background-color: $color-primary;
   color: #fff;
@@ -253,24 +291,6 @@ html, body {
   a {
     color: #fff;
     text-decoration: underline;
-
-    &.start {
-      font-size: 1.2em;
-      text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      border: 1px solid #fff;
-      display: inline-block;
-      padding: 12px 20px;
-      border-radius: 25px;
-      transition: all .15s ease;
-      margin-bottom: 2em;
-      &:hover {
-        background-color: #fff;
-        color: #7f8c8d;
-        @include zoom;
-      }
-    }
   }
 
   p { margin: .3em 0; }
@@ -278,9 +298,9 @@ html, body {
 
 .IndexFooter {
   text-align: center;
-  color: #fff;
+  color: $color-white;
   padding: 4em 0;
-  background-color: darken($color-violet, 15%);
+  background-color: darken($color-primary, 15%);
 }
 
 @media screen and (max-width: 480px) {

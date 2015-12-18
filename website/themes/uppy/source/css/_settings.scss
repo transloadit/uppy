@@ -1,12 +1,14 @@
 // font faces
 $fontFamily-body : 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
-$fontFamily-logo : 'Dosis', 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+$fontFamily-logo : 'Poiret One', 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
 $fontFamily-code : 'Roboto Mono', Monaco, courier, monospace;
 
 // font sizes
 $fontSize-body : 15px;
-$fontSize-m    : 14px;
-$fontSize-l    : 17px;
+$fontSize-s    : 14px;
+$fontSize-m    : 17px;
+$fontSize-l    : 24px;
+$fontSize-xl   : 28px;
 $fontSize-code : .8em;
 
 // colors
@@ -24,7 +26,9 @@ $color-darkgray   : #34393A;
 $color-violet     : #492e7c;
 $color-orange     : #e96900;
 $color-mint       : #02B1AC;
-$color-primary    : $color-blue;
+$color-yellow     : #ffd12a;
+$color-pink       : #e02177;
+$color-primary    : $color-pink;
 
 // sizes
 $size-radius : 2px;

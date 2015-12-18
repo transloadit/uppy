@@ -1,16 +1,8 @@
-.MainHeader {
-  background-color: $color-white;
-  // box-shadow: 0 0 4px rgba(0,0,0,.25);
-  padding: 25px 60px;
+.page-inner #main {
   position: relative;
-  z-index: 2;
-  border-top: 6px solid $color-primary;
-}
-
-.MainMenu li {
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: $fontSize-m;
+  z-index: 1;
+  padding: 0 60px 30px;
+  overflow-x: hidden;
 }
 
 .page-inner #nav {
