@@ -1,13 +1,9 @@
 <link rel="stylesheet" href="/css/uppy.css">
 
-<script>
-document.addEventListener('DOMContentLoaded', function(event) {
-  var uppy = new Uppy.Core();
-  uppy.use(Uppy.plugins.Tus10);
-
-  console.log(uppy.type);
-  console.log('Uppy loaded from CDN with a tus 1.0 plugin');
-});
-</script>
-
 <script src="/js/uppy.js"></script>
+<script>
+var uppy = new Uppy.Core();
+uppy.use(Uppy.plugins.Tus10);
+
+console.log('Uppy ' + uppy.type + ' loaded from CDN with tus enabled');
+</script>
