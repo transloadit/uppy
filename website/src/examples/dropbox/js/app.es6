@@ -1,10 +1,9 @@
 import Uppy from 'uppy/core';
-import { Dropbox, Tus10 } from 'uppy/plugins';
+import { Dropbox } from 'uppy/plugins';
 
 const uppy = new Uppy({wait: false});
 const files = uppy
-  .use(Dropbox, {selector: '#upload-target'})
-  .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
+  .use(Dropbox, {selector: '#target'})
   .run();
 
 console.log(uppy.type);
