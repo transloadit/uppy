@@ -35,7 +35,7 @@ export default class {
   // Runs all plugins of the same type in parallel
   runType(type, files) {
     console.dir({
-      method: 'Transloadit.runType',
+      method: 'Core.runType',
       type  : type,
       files : files
       // cb    : cb
@@ -58,7 +58,7 @@ export default class {
   // All preseters(data) --> All selecters(data) --> All uploaders(data) --> done
   run() {
     console.dir({
-      method: 'Transloadit.run'
+      method: 'Core.run'
     });
 
     var typeMethods = [];
