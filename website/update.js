@@ -14,7 +14,8 @@ var sizes     = {};
 var locations = {
   min: uppyRoot + '/dist/uppy.js',
   gz : uppyRoot + '/dist/uppy.js',
-  dev: uppyRoot + '/dist/uppy.js'
+  dev: uppyRoot + '/dist/uppy.js',
+  css: uppyRoot + '/dist/uppy.css'
 }
 // @todo: ^-- Refer to actual minified builds in dist:
 
@@ -37,5 +38,11 @@ fs.writeFileSync(
   webRoot + '/themes/uppy/source/js/uppy.js',
   fs.readFileSync(locations.dev, 'utf-8')
 );
+console.info(chalk.green('✓ injected: '), chalk.dim('uppy.js build into site'));
 
-console.info(chalk.green('✓ injected: '), chalk.dim('uppy build into site'));
+
+fs.writeFileSync(
+  webRoot + '/themes/uppy/source/css/uppy.css',
+  fs.readFileSync(locations.css, 'utf-8')
+);
+console.info(chalk.green('✓ injected: '), chalk.dim('uppy.css build into site'));
