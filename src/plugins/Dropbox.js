@@ -1,8 +1,10 @@
+import Utils from '../core/Utils';
+import TransloaditPlugin from './TransloaditPlugin';
 import request from 'superagent';
 
-class DropboxPlugin {
-  constructor() {
-    this.name = 'DropboxPlugin';
+export default class Dropbox extends TransloaditPlugin {
+  constructor(core, opts) {
+    super(core, opts);
     this.type = 'selecter';
     this.authenticate = this.authenticate.bind(this);
     this.connect = this.connect.bind(this);
@@ -98,5 +100,3 @@ class DropboxPlugin {
     })
   }
 }
-
-export default new DropboxPlugin()
