@@ -1,5 +1,6 @@
 ---
 title: CDN
+layout: example
 type: examples
 order: 0
 ---
@@ -9,22 +10,30 @@ CDN
 {% endblockquote %}
 
 <p>
-This example showcases sourcing an UMD dist build straight from a CDN.
+  This example showcases sourcing an UMD dist build straight from a CDN.
 </p>
 
+<!-- <link rel="stylesheet" href="css/app.css"> -->
 <% include html/app.html %>
 <script src="js/app.js"></script>
 
 <hr />
 
+<p id="console-wrapper">
+  Console output: <br />
+</p>
+
 <p>
   On this page we're using the following HTML snippet:
 </p>
-
 {% include_code lang:html cdn/html/app.html %}
 
 <p>
   Along with this JavaScript:
 </p>
-
 {% include_code lang:js cdn/js/app.es6 %}
+
+<!-- <p>
+  And the following CSS:
+</p>
+{% include_code lang:css cdn/css/app.css %} -->

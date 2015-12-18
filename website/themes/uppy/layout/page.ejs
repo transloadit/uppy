@@ -2,7 +2,7 @@
     <%- partial('partials/sidebar', { type: page.type, index: page.index }) %>
 <% } %>
 <div class="content <%- page.type ? page.type + ' with-sidebar' : '' %>">
-    <h1><%- page.title %><%- page.type === 'examples' ? ' Example' : '' %></h1>
+    <h1><%- page.title %></h1>
     <%- page.content %>
     <% if (page.type === 'guide') { %>
       <div class="guide-links">

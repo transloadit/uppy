@@ -1,0 +1,33 @@
+<%- partial('partials/sidebar', { type: page.type, index: page.index }) %>
+<div class="content <%- page.type ? page.type + ' with-sidebar' : '' %>">
+  <h1><%- page.title %> Example</h1>
+
+  <!--
+  Add textarea already so it's available immediately for logging.
+  It is later made visible, and moved into the #console-wrapper to position it in layout how
+  you see fit.
+  -->
+  <textarea id="console-log"></textarea>
+  <script>
+  console.log = (function (old_function, div_log) {
+    return function (text) {
+      old_function(text);
+      div_log.value = text + "\n" + div_log.value;
+    };
+  } (console.log.bind(console), document.getElementById("console-log")));
+  </script>
+
+  <%- page.content %>
+
+  <script>
+    // #console-log textarea is declared earlier so it's available immediately for logging.
+    // Here it is made visible, and moved into the #console-wrapper, so you can position it in the layout how
+    // you see fit.
+    document.getElementById('console-wrapper').appendChild(document.getElementById('console-log'));
+    document.getElementById('console-log').style.display = 'block';
+  </script>
+
+  <div class="footer">Caught a mistake or want to contribute to the documentation?
+     <a href="https://github.com/transloadit/uppy/blob/master/website/src/<%- page.source %>" target="_blank">Edit/fork this page directly on Github</a>!
+  </div>
+</div>
