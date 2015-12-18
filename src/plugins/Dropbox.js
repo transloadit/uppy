@@ -3,6 +3,7 @@ import request from 'superagent';
 class DropboxPlugin {
   constructor() {
     this.name = 'DropboxPlugin';
+    this.type = 'selecter';
     this.authenticate = this.authenticate.bind(this);
     this.connect = this.connect.bind(this);
     this.render = this.render.bind(this);

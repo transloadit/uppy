@@ -11,6 +11,8 @@ export default class {
     // Dictates in what order different plugin types are ran:
     this.types = [ 'presetter', 'selecter', 'uploader' ];
 
+    this.type = 'core';
+
     // Container for different types of plugins
     this.plugins = {};
   }

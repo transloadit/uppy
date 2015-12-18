@@ -5,6 +5,7 @@ export default class TransloaditPlugin {
   constructor(core, opts) {
     this.core = core;
     this.opts = opts;
+    this.type = 'none';
     this.name = this.constructor.name;
   }
 
