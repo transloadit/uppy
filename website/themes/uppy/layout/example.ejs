@@ -12,6 +12,11 @@
   console.log = (function (old_function, div_log) {
     return function (text) {
       old_function(text);
+
+      if (text !== (text + '')) {
+        text = JSON.stringify(text);
+      }
+
       div_log.value = text + "\n" + div_log.value;
     };
   } (console.log.bind(console), document.getElementById("console-log")));
