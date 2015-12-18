@@ -18,6 +18,7 @@
     "watch:css": "nodemon --watch src --ext scss -x \"npm run build && node website/update.js\"",
     "watch:examples": "cd website && node build-examples.js watch",
     "watch:js": "nodemon --watch src --ext js -x \"npm run build && node website/update.js\"",
+    "web:update-frontpage-code-sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
     "web:clean": "cd website && ./node_modules/.bin/hexo clean",
     "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate",
     "web:deploy": "npm run web:install && npm run web:build && ./bin/web-deploy",
