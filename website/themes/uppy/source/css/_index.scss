@@ -83,7 +83,7 @@
   max-width: 950px;
   padding: 0 20px;
   text-align: center;
-  margin: 1em auto;
+  margin: 1.5em auto;
   color: $color-light;
 }
 
@@ -100,9 +100,9 @@
 .IndexSocial {
   text-align: center;
   list-style-type: none;
-  margin: auto;
+  margin: 3em auto;
   padding: 0;
-  margin-bottom: 2em;
+  // margin-bottom: 3.5em;
 }
 
 .IndexSocial li {
@@ -124,8 +124,8 @@
   transition: all .15s ease;
   background-color: $color-primary;
   color: $color-white;
-  margin-bottom: 1em;
-  
+  margin-bottom: 1.5em;
+
   &:hover {
     @include zoom;
   }
