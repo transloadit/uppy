@@ -36,8 +36,7 @@ hexo.extend.renderer.register('es6', 'js', function(data, options, callback) {
       if (err) {
         return callback(err);
       }
-      hexo.log.i('hexo-renderer-uppyexamples: read: ' + tmpFile);
-
+      // hexo.log.i('hexo-renderer-uppyexamples: read: ' + tmpFile);
 
       // @TODO remove this hack
       // once this is resolved: https://github.com/hexojs/hexo/issues/1663
