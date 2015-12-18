@@ -38,4 +38,4 @@ fs.writeFileSync(
   fs.readFileSync(locations.dev, 'utf-8')
 );
 
-console.info(chalk.green('✓ injected: uppy build into site'));
+console.info(chalk.green('✓ injected: '), chalk.dim('uppy build into site'));
