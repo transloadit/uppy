@@ -140,5 +140,8 @@ npm run web
 If you want to work on Uppy itself, and see its changes reflected in the website, open a new tab and type:
 
 ```bash
+npm run watch
+# Or if you're only interested in one of these:
 npm run watch:js
+npm run watch:css
 ```
