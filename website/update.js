@@ -1,14 +1,19 @@
-var fs            = require('fs')
-var version       = require('../package.json').version
-var configPath    = '_config.yml'
-var config        = fs.readFileSync(configPath, 'utf-8')
+var fs         = require('fs')
+var path       = require('path')
+
+var webRoot  = __dirname;
+var uppyRoot = path.dirname(__dirname);
+
+var configPath = webRoot + '/_config.yml'
+var config     = fs.readFileSync(configPath, 'utf-8')
+var version    = require(uppyRoot + '/package.json').version
 
 // Inject current Uppy version and sizes in website's _config.yml
-var sizes = {};
+var sizes     = {};
 var locations = {
-  min: '../dist/uppy.js',
-  gz : '../dist/uppy.js',
-  dev: '../dist/uppy.js'
+  min: uppyRoot + '/dist/uppy.js',
+  gz : uppyRoot + '/dist/uppy.js',
+  dev: uppyRoot + '/dist/uppy.js'
 }
 // @todo: ^-- Refer to actual minified builds in dist:
 
@@ -28,6 +33,6 @@ fs.writeFileSync(
 
 // Copy latest uppy version into website so the CDN example can use it
 fs.writeFileSync(
-  './themes/uppy/source/js/uppy.js',
+  webRoot + '/themes/uppy/source/js/uppy.js',
   fs.readFileSync(locations.dev, 'utf-8')
 );
