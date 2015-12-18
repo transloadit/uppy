@@ -1,6 +1,6 @@
-import TransloaditPlugin from './TransloaditPlugin';
+import Plugin from './Plugin';
 
-export default class Tus10 extends TransloaditPlugin {
+export default class Tus10 extends Plugin {
   constructor(core, opts) {
     super(core, opts);
     this.type = 'uploader';

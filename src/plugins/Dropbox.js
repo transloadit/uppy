@@ -1,8 +1,8 @@
 import Utils from '../core/Utils';
-import TransloaditPlugin from './TransloaditPlugin';
+import Plugin from './Plugin';
 import request from 'superagent';
 
-export default class Dropbox extends TransloaditPlugin {
+export default class Dropbox extends Plugin {
   constructor(core, opts) {
     super(core, opts);
     this.type = 'selecter';

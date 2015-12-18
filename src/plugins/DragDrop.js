@@ -1,9 +1,9 @@
 import Utils from '../core/Utils';
-import TransloaditPlugin from './TransloaditPlugin';
+import Plugin from './Plugin';
 // import Tus from 'tus-js-client';
 // console.log('pizza', Tus);
 
-export default class DragDrop extends TransloaditPlugin {
+export default class DragDrop extends Plugin {
   constructor(core, opts) {
     super(core, opts);
     this.type = 'selecter';

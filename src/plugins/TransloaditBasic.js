@@ -1,6 +1,6 @@
-import TransloaditPlugin from './TransloaditPlugin';
+import Plugin from './Plugin';
 
-class TransloaditBasic extends TransloaditPlugin {
+class TransloaditBasic extends Plugin {
   constructor(core, opts) {
     super(core, opts);
     this.type = 'presetter';
