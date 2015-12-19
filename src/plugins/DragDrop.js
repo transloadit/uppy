@@ -45,6 +45,8 @@ export default class DragDrop extends Plugin {
   }
 
   listenForEvents() {
+    console.log(`waiting for some files to be dropped on ${this.opts.selector}`);
+
     if (this.isDragDropSupported) {
       Utils.addClass(this.dropzone, 'is-dragdrop-supported');
     }
@@ -64,18 +66,23 @@ export default class DragDrop extends Plugin {
       Utils.removeClass(this.dropzone, 'is-dragover');
     });
 
-    this.dropzone.addEventListener('drop', this.handleDrop);
+    let onDrop = new Promise((resolve, reject) => {
+      this.dropzone.addEventListener('drop', (e) => {
+        resolve(this.handleDrop.bind(null, e));
+      });
+    });
 
-    this.dropzoneInput.addEventListener('change', this.handleInputChange);
+    let onInput = new Promise((resolve, reject) => {
+      this.dropzoneInput.addEventListener('change', (e) => {
+        resolve(this.handleInputChange.bind(null, e));
+      });
+    });
 
-    console.log(`waiting for some files to be dropped on ${this.opts.selector}`);
+    return Promise.race([onDrop, onInput]).then(handler => handler());
+
+    // this.dropzone.addEventListener('drop', this.handleDrop);
+    // this.dropzoneInput.addEventListener('change', this.handleInputChange);
   }
-
-  // Toggle is-dragover state when files are dragged over or dropped
-  // in this case — add/remove 'is-dragover' class
-  // toggleDragoverState(e) {
-  //   toggleClass(this.dropzone, 'is-dragover');
-  // }
 
   displayStatus(status) {
     this.status.innerHTML = status;
@@ -114,10 +121,10 @@ export default class DragDrop extends Plugin {
 
     console.log('DragDrop running!');
     // console.log(files);
-    this.listenForEvents();
-    this.core.setProgress(this, 0);
-    var selected = [ {name: 'lolcat.jpeg'} ];
-    this.core.setProgress(this, 100);
+    return this.listenForEvents();
+    // this.core.setProgress(this, 0);
+    // var selected = [ {name: 'lolcat.jpeg'} ];
+    // this.core.setProgress(this, 100);
     // return selected;
     // done(null, 'done with DragDrop');
     // return Promise.resolve(files);

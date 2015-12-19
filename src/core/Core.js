@@ -41,15 +41,19 @@ export default class {
       // cb    : cb
     });
 
-    const methods = [];
-    for (let p in this.plugins[type]) {
-      const plugin = this.plugins[type][p];
-      methods.push(plugin.run.call(plugin, files));
-    }
+    // const methods = this.plugins[type].map(
+    //   plugin => {
+    //     return new Promise(function (resolve, reject) {
+    //       plugin.run.call(plugin, files).then(files => resolve(files));
+    //     });
+    //   }
+    // );
+
+    const methods = this.plugins[type].map(
+      plugin => plugin.run.call(plugin, files)
+    );
 
     return Promise.all(methods);
-
-    // const methods = this.plugins[type].map(plugin => plugin.run.bind(plugin, files));
 
     // async.parallel(methods, cb);
   }
@@ -61,7 +65,7 @@ export default class {
       method: 'Core.run'
     });
 
-    var typeMethods = [];
+    // let typeMethods = [];
     // typeMethods.push(async.constant([]));
 
     // for (let t in this.types) {
@@ -69,11 +73,17 @@ export default class {
     //   typeMethods.push(this.runType.bind(this, type));
     // }
 
-    this.types.forEach(type => {
-      if (this.plugins[type]) {
-        typeMethods.push(this.runType.bind(this, type));
-      }
-    });
+    // this.types.forEach(type => {
+    //   if (this.plugins[type]) {
+    //     typeMethods.push(this.runType.bind(this, type));
+    //   }
+    // });
+
+    // First we select only plugins of current type,
+    // then create an array of runType methods of this plugins
+    let typeMethods = this.types.filter(type => {
+      return this.plugins[type];
+    }).map(type => this.runType.bind(this, type));
 
     promiseWaterfall(typeMethods)
       .then((result) => console.log(result))
