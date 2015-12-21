@@ -8,9 +8,9 @@ export default class DragDrop extends Plugin {
 
     // set default options
     const defaultOptions = {
-      bla: 'blabla',
+      bla       : 'blabla',
       autoSubmit: true,
-      modal: true
+      modal     : true
     };
 
     // merge default options with the ones set by user
@@ -20,7 +20,7 @@ export default class DragDrop extends Plugin {
     console.log(this.opts);
 
     // get the element where Drag & Drop event will occur
-    this.dropzone = document.querySelectorAll(this.opts.selector)[0];
+    this.dropzone      = document.querySelectorAll(this.opts.selector)[0];
     this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0];
 
     this.status = document.querySelectorAll('.UppyDragDrop-status')[0];
@@ -28,10 +28,10 @@ export default class DragDrop extends Plugin {
     this.isDragDropSupported = this.checkDragDropSupport();
 
     // crazy stuff so that ‘this’ will behave in class
-    this.listenForEvents = this.listenForEvents.bind(this);
-    this.handleDrop = this.handleDrop.bind(this);
+    this.listenForEvents      = this.listenForEvents.bind(this);
+    this.handleDrop           = this.handleDrop.bind(this);
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleInputChange    = this.handleInputChange.bind(this);
   }
 
   /**
