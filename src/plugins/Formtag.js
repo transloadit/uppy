@@ -13,19 +13,22 @@ export default class Formtag extends Plugin {
       results: results
     });
 
-    this.setProgress(this, 0);
+    this.setProgress(0);
 
-    var selected = [];
-    // for (var i in files) {
-    //   var file = files[i];
-    //   this.upload(file);
-    //   this.setProgress(this, (i * 1) + 1);
-    //   selected[i]     = file;
-    //   selected[i].url = this.opts.endpoint + '/selected/' + file.name;
-    // }
-
-    this.setProgress(this, 100);
-
-    return Promise.resolve(selected);
+    var button = document.querySelector(this.opts.doneButtonSelector);
+    var self   = this;
+    button.addEventListener('click', (e) => {
+      alert('hey');
+      var fields   = document.querySelectorAll(self.opts.selector);
+      var files    = [];
+      var selected = [];
+      for (let i in fields) {
+        for (let j in fields[i].files) {
+          selected.push(fields[i].files[j]);
+        }
+      }
+      this.setProgress(100);
+      return Promise.resolve(selected);
+    });
   }
 }

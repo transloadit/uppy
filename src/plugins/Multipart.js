@@ -21,9 +21,16 @@ export default class Multipart extends Plugin {
 
     const files = this.extractFiles(results);
 
-    this.setProgress(this, 0);
+    this.setProgress(0);
     var uploaders = [];
-    uploaders.push(this.upload(files, i, files.length));
+
+    if (this.opts.bundle) {
+      uploaders.push(this.upload(files, 0, files.length));
+    } else {
+      for (let i in files) {
+        uploaders.push(this.upload(files, i, files.length));
+      }
+    }
 
     return Promise.all(uploaders);
   }
@@ -49,7 +56,12 @@ export default class Multipart extends Plugin {
     });
 
     xhr.addEventListener('load', () => {
-      var upload = {file: file};
+      var upload = {};
+      if (this.opts.bundle) {
+        upload = {files: files};
+      } else {
+        upload = {file: files[current]};
+      }
       return Promise.resolve(upload);
     });
 

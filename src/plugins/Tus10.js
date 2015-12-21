@@ -16,7 +16,7 @@ export default class Tus10 extends Plugin {
 
     const files = this.extractFiles(results);
 
-    this.setProgress(this, 0);
+    this.setProgress(0);
     var uploaded  = [];
     var uploaders = [];
     for (var i in files) {

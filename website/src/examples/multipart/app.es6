@@ -1,12 +1,15 @@
 import Uppy from 'uppy/core';
-import { DragDrop, Multipart } from 'uppy/plugins';
+import { Formtag, Multipart } from 'uppy/plugins';
 
 const uppy = new Uppy({wait: false});
 const files = uppy
-  .use(DragDrop, {selector: '#upload-target'})
+  .use(Formtag, {
+    selector: '#myform1 [type="file"],#myform2 [type="file"]',
+    doneButtonSelector: '#myupload'
+  })
   .use(Multipart, {
-    endpoint : '//api2.transloadit.com', 
-    bundle   : true
+    endpoint : '//api2.transloadit.com',
+    bundle   : true,
     fieldName: 'files[]'
   })
   .run();
