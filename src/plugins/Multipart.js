@@ -21,7 +21,7 @@ export default class Multipart extends Plugin {
 
     const files = this.extractFiles(results);
 
-    this.core.setProgress(this, 0);
+    this.setProgress(this, 0);
     var uploaders = [];
     uploaders.push(this.upload(files, i, files.length));
 

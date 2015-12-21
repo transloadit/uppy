@@ -10,15 +10,19 @@ export default class Plugin {
   }
 
   setProgress(percentage, current, total) {
-    var percentageOfTotal = (percentage / total);
-    var progressedAlready = percentageOfTotal;
-    if (current > 0) {
-      progressedAlready = progressedAlready + (100/total*current);
-    } else {
-      progressedAlready = (current * percentage);
+    var finalPercentage = percentage;
+
+    if (current !== undefined && total !== undefined) {
+      var percentageOfTotal = (percentage / total);
+      finalPercentage = percentageOfTotal;
+      if (current > 0) {
+        finalPercentage = percentage + (100/total*current);
+      } else {
+        finalPercentage = (current * percentage);
+      }
     }
 
-    this.core.setProgress(this, progressedAlready);
+    this.core.setProgress(this, finalPercentage);
   }
 
   extractFiles(results) {
