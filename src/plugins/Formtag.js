@@ -16,37 +16,31 @@ export default class Formtag extends Plugin {
     this.setProgress(0);
 
     const button = document.querySelector(this.opts.doneButtonSelector);
-    var self   = this;
+    var self     = this;
 
     return new Promise((resolve, reject) => {
       button.addEventListener('click', (e) => {
-        alert('hey');
-        var fields   = document.querySelectorAll(this.opts.selector);
+        var fields   = document.querySelectorAll(self.opts.selector);
         var files    = [];
         var selected = [];
-        for (let i in fields) {
-          for (let j in fields[i].files) {
-            selected.push(fields[i].files[j]);
+        for (var i in fields) {
+          for (var j in fields[i].files) {
+            var file = fields[i].files.item(j);
+            if (file) {
+              selected.push({
+                from: 'Formtag',
+                file: fields[i].files.item(j)
+              });
+            }
           }
         }
-        this.setProgress(100);
-        // resolve(this.handleDrop.bind(null, e));
-        resolve('yo');
+        self.setProgress(100);
+        console.log({
+          selected:selected,
+          fields  :fields
+        })
+        resolve(selected);
       });
     });
-
-    // button.addEventListener('click', (e) => {
-    //   alert('hey');
-    //   var fields   = document.querySelectorAll(self.opts.selector);
-    //   var files    = [];
-    //   var selected = [];
-    //   for (let i in fields) {
-    //     for (let j in fields[i].files) {
-    //       selected.push(fields[i].files[j]);
-    //     }
-    //   }
-    //   this.setProgress(100);
-    //   return Promise.resolve(selected);
-    // });
   }
 }

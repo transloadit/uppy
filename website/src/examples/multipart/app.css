@@ -1,8 +1,9 @@
-/* Drag & Drop CSS to style the demo itself */
-
-#myform1 {
-  border: 1px dashed blue;
+#myform1, #myform2 {
+  float  : left;
+  width  : 200px;
+  margin : 20px;
 }
-#myform2 {
-  border: 1px dashed blue;
+
+.clearfix {
+  clear: both;
 }
