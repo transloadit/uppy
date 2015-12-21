@@ -69,11 +69,11 @@ export default class DragDrop extends Plugin {
     });
 
     // Toggle is-dragover state when files are dragged over or dropped
-    Utils.addListenerMulti(this.dropzone, 'dragover dragenter', () => {
+    Utils.addListenerMulti(this.dropzone, 'dragover dragenter', (e) => {
       Utils.addClass(this.dropzone, 'is-dragover');
     });
 
-    Utils.addListenerMulti(this.dropzone, 'dragleave dragend drop', () => {
+    Utils.addListenerMulti(this.dropzone, 'dragleave dragend drop', (e) => {
       Utils.removeClass(this.dropzone, 'is-dragover');
     });
 
