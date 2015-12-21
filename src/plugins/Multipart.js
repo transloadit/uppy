@@ -4,6 +4,12 @@ export default class Multipart extends Plugin {
   constructor(core, opts) {
     super(core, opts);
     this.type = 'uploader';
+    if (!this.opts.fieldName === undefined) {
+      this.opts.fieldName = 'files[]';
+    }
+    if (this.opts.bundle === undefined) {
+      this.opts.bundle = true;
+    }
   }
 
   run(results) {
@@ -16,19 +22,23 @@ export default class Multipart extends Plugin {
     const files = this.extractFiles(results);
 
     this.core.setProgress(this, 0);
-    var uploaded  = [];
     var uploaders = [];
-    for (var i in files) {
-      var file = files[i];
-      uploaders.push(this.upload(file, i, files.length));
-    }
+    uploaders.push(this.upload(files, i, files.length));
 
     return Promise.all(uploaders);
   }
 
-  upload(file, current, total) {
+  upload(files, current, total) {
     var formPost = new FormData();
-    formPost.append('file', file);
+
+    // turn file into an array so we can use bundle
+    if (!this.opts.bundle) {
+      files = [files[current]];
+    }
+
+    for (let i in files) {
+      formPost.append(this.opts.fieldName, files[i]);
+    }
 
     var xhr = new XMLHttpRequest();
     xhr.open('POST', this.opts.endpoint, true);
