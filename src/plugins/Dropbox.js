@@ -42,7 +42,7 @@ export default class Dropbox extends Plugin {
       .set('Content-Type', 'application/json')
       .end((err, res) => {
         console.log(res);
-      })
+      });
 
     return this.client.readdir(this.currentDir, (error, entries, stat, statFiles) => {
       if (error) {
@@ -59,9 +59,9 @@ export default class Dropbox extends Plugin {
   render(files) {
     // for each file in the directory, create a list item element
     const elems = files.map((file, i) => {
-      const icon = (file.isFolder) ? 'folder' : 'file'
-      return `<li data-type="${icon}" data-name="${file.name}"><span>${icon} : </span><span> ${file.name}</span></li>`
-    })
+      const icon = (file.isFolder) ? 'folder' : 'file';
+      return `<li data-type="${icon}" data-name="${file.name}"><span>${icon} : </span><span> ${file.name}</span></li>`;
+    });
 
     // appends the list items to the target
     this._target.innerHTML = elems.sort().join('');
@@ -91,12 +91,12 @@ export default class Dropbox extends Plugin {
           if (type === 'folder') {
             this.currentDir = `${this.currentDir}${element.getAttribute('data-name')}/`;
           } else if (type === 'parent') {
-            this.currentDir = `${this.currentDir.split('/').slice(0, length - 2).join('/')}/`
+            this.currentDir = `${this.currentDir.split('/').slice(0, length - 2).join('/')}/`;
           }
           console.log(this.currentDir);
           this.getDirectory();
-        })
+        });
       }
-    })
+    });
   }
 }
