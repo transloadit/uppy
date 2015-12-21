@@ -7,8 +7,11 @@ export default class Formtag extends Plugin {
   }
 
   run(results) {
-    console.log(results);
-    console.log(this.opts);
+    console.log({
+      class  : 'Formtag',
+      method : 'run',
+      results: results
+    });
 
     this.core.setProgress(this, 0);
 

@@ -10,18 +10,18 @@ export default class Plugin {
   }
 
   extractFiles(results) {
+    console.log({
+      class  : 'Plugin',
+      method : 'extractFiles',
+      results: results
+    });
+
     const files = [];
     for (let i in results) {
       for (let j in results[i].files) {
         files.push(results[i].files.item(j));
       }
     }
-
-    console.log({
-      method : 'extractFiles',
-      results: results,
-      files  : files
-    });
 
     return files;
   }

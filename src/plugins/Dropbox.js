@@ -82,7 +82,7 @@ export default class Dropbox extends Plugin {
       if (type === 'file') {
         element.addEventListener('click', () => {
           this.files.push(element.getAttribute('data-name'));
-          console.dir(`files: ${this.files}`);
+          console.log(`files: ${this.files}`);
         });
       } else {
         element.addEventListener('dblclick', () => {

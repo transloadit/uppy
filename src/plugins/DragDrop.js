@@ -17,8 +17,6 @@ export default class DragDrop extends Plugin {
     this.opts = defaultOptions;
     Object.assign(this.opts, opts);
 
-    console.log(this.opts);
-
     // get the element where Drag & Drop event will occur
     this.dropzone      = document.querySelectorAll(this.opts.selector)[0];
     this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0];
@@ -125,14 +123,12 @@ export default class DragDrop extends Plugin {
   }
 
   run(results) {
-    console.log('DragDrop running!');
-    // console.log(results);
+    console.log({
+      class  : 'DragDrop',
+      method : 'run',
+      results: results
+    });
+
     return this.listenForEvents();
-    // this.core.setProgress(this, 0);
-    // var selected = [ {name: 'lolcat.jpeg'} ];
-    // this.core.setProgress(this, 100);
-    // return selected;
-    // done(null, 'done with DragDrop');
-    // return Promise.resolve(files);
   }
 }

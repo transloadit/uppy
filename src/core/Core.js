@@ -44,8 +44,9 @@ export default class {
   // Runs a waterfall of runType plugin packs, like so:
   // All preseters(data) --> All selecters(data) --> All uploaders(data) --> done
   run() {
-    console.dir({
-      method: 'Core.run'
+    console.log({
+      class  : 'Core',
+      method : 'run'
     });
 
     // First we select only plugins of current type,
