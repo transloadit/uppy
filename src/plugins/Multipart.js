@@ -18,13 +18,13 @@ export default class Multipart extends Plugin {
     } catch (e) {}
   }
 
-  run(files) {
-    // console.log(files);
+  run(results) {
+    // console.log(results);
     this.core.setProgress(this, 0);
 
     var uploaded = [];
-    for (var i in files) {
-      var file = files[i];
+    for (var i in results) {
+      var file = results[i];
       this.upload(file);
       this.core.setProgress(this, (i * 1) + 1);
       uploaded[i]     = file;

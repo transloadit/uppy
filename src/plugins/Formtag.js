@@ -6,8 +6,8 @@ export default class Formtag extends Plugin {
     this.type = 'selecter';
   }
 
-  run(files) {
-    console.log(files);
+  run(results) {
+    console.log(results);
     console.log(this.opts);
 
     this.core.setProgress(this, 0);

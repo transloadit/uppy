@@ -52,8 +52,8 @@ export default class Dropbox extends Plugin {
     });
   }
 
-  run() {
-
+  run(results) {
+    
   }
 
   render(files) {

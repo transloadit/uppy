@@ -34,28 +34,11 @@ export default class {
 
   // Runs all plugins of the same type in parallel
   runType(type, files) {
-    console.dir({
-      method: 'Core.runType',
-      type  : type,
-      files : files
-      // cb    : cb
-    });
-
-    // const methods = this.plugins[type].map(
-    //   plugin => {
-    //     return new Promise(function (resolve, reject) {
-    //       plugin.run.call(plugin, files).then(files => resolve(files));
-    //     });
-    //   }
-    // );
-
     const methods = this.plugins[type].map(
       plugin => plugin.run.call(plugin, files)
     );
 
     return Promise.all(methods);
-
-    // async.parallel(methods, cb);
   }
 
   // Runs a waterfall of runType plugin packs, like so:
@@ -64,20 +47,6 @@ export default class {
     console.dir({
       method: 'Core.run'
     });
-
-    // let typeMethods = [];
-    // typeMethods.push(async.constant([]));
-
-    // for (let t in this.types) {
-    //   const type = this.types[t];
-    //   typeMethods.push(this.runType.bind(this, type));
-    // }
-
-    // this.types.forEach(type => {
-    //   if (this.plugins[type]) {
-    //     typeMethods.push(this.runType.bind(this, type));
-    //   }
-    // });
 
     // First we select only plugins of current type,
     // then create an array of runType methods of this plugins
@@ -88,12 +57,5 @@ export default class {
     promiseWaterfall(typeMethods)
       .then((result) => console.log(result))
       .catch((error) => console.error(error));
-
-    // async.waterfall(typeMethods, function (err, finalFiles) {
-    //   console.dir({
-    //     err       : err ,
-    //     finalFiles: finalFiles
-    //   });
-    // });
   }
 }

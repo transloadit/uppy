@@ -102,6 +102,7 @@ export default class DragDrop extends Plugin {
   handleDrop(e) {
     console.log('all right, someone dropped something here...');
     const files = e.dataTransfer.files;
+
     // const formData = new FormData(this.dropzone);
     // console.log('pizza', formData);
 
@@ -110,7 +111,7 @@ export default class DragDrop extends Plugin {
     //   console.log('pizza', files[i]);
     // }
 
-    return Promise.resolve(files);
+    return Promise.resolve({from: 'DragDrop', files: files});
   }
 
   handleInputChange() {
@@ -123,15 +124,9 @@ export default class DragDrop extends Plugin {
     return Promise.resolve(files);
   }
 
-  run(files) {
-    console.dir({
-      method: 'DragDrop.run',
-      files : files
-      // done  : done
-    });
-
+  run(results) {
     console.log('DragDrop running!');
-    // console.log(files);
+    // console.log(results);
     return this.listenForEvents();
     // this.core.setProgress(this, 0);
     // var selected = [ {name: 'lolcat.jpeg'} ];
