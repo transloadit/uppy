@@ -29,6 +29,7 @@ export default class Tus10 extends Plugin {
 
   upload(file, current, total) {
     // Create a new tus upload
+    var self   = this;
     var upload = new tus.Upload(file, {
       endpoint: this.opts.endpoint,
       onError: function (error) {
@@ -36,10 +37,10 @@ export default class Tus10 extends Plugin {
       },
       onProgress: function (bytesUploaded, bytesTotal) {
         var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
-        this.setProgress(percentage, current, total);
+        self.setProgress(percentage, current, total);
       },
       onSuccess: function () {
-        console.log('Download %s from %s', upload.file.name, upload.url);
+        console.log(`Download ${upload.file.name} from ${upload.url}`);
         return Promise.resolve(upload);
       }
     });
