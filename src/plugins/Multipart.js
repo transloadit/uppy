@@ -39,6 +39,7 @@ export default class Multipart extends Plugin {
     });
 
     xhr.addEventListener('load', () => {
+      var upload = {file: file};
       return Promise.resolve(upload);
     });
 
