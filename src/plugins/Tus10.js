@@ -28,7 +28,6 @@ export default class Tus10 extends Plugin {
   }
 
   upload(file, current, total) {
-
     // Create a new tus upload
     var upload = new tus.Upload(file, {
       endpoint: this.opts.endpoint,
@@ -36,16 +35,8 @@ export default class Tus10 extends Plugin {
         return Promise.reject('Failed because: ' + error);
       },
       onProgress: function (bytesUploaded, bytesTotal) {
-        var percentage        = (bytesUploaded / bytesTotal * 100).toFixed(2);
-        var percentageOfTotal = (percentage / total);
-        var progressedAlready = percentageOfTotal;
-        if (current > 0) {
-          progressedAlready = progressedAlready + (100/total*current);
-        } else {
-          progressedAlready = (current * percentage);
-        }
-
-        this.core.setProgress(this, progressedAlready);
+        var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
+        this.setProgress(percentage, current, total);
       },
       onSuccess: function () {
         console.log('Download %s from %s', upload.file.name, upload.url);

@@ -9,6 +9,18 @@ export default class Plugin {
     this.name = this.constructor.name;
   }
 
+  setProgress(percentage, current, total) {
+    var percentageOfTotal = (percentage / total);
+    var progressedAlready = percentageOfTotal;
+    if (current > 0) {
+      progressedAlready = progressedAlready + (100/total*current);
+    } else {
+      progressedAlready = (current * percentage);
+    }
+
+    this.core.setProgress(this, progressedAlready);
+  }
+
   extractFiles(results) {
     console.log({
       class  : 'Plugin',

@@ -4,64 +4,48 @@ export default class Multipart extends Plugin {
   constructor(core, opts) {
     super(core, opts);
     this.type = 'uploader';
-
-    try {
-        if (XMLHttpRequest.prototype.sendAsBinary) return;
-        XMLHttpRequest.prototype.sendAsBinary = function (datastr) {
-            function byteValue(x) {
-                return x.charCodeAt(0) & 0xff;
-            }
-            var ords = Array.prototype.map.call(datastr, byteValue);
-            var ui8a = new Uint8Array(ords);
-            this.send(ui8a.buffer);
-        }
-    } catch (e) {}
   }
 
   run(results) {
-    // console.log(results);
+    console.log({
+      class  : 'Multipart',
+      method : 'run',
+      results: results
+    });
+
+    const files = this.extractFiles(results);
+
     this.core.setProgress(this, 0);
-
-    var uploaded = [];
-    for (var i in results) {
-      var file = results[i];
-      this.upload(file);
-      this.core.setProgress(this, (i * 1) + 1);
-      uploaded[i]     = file;
-      uploaded[i].url = this.opts.endpoint + '/uploaded/' + file.name;
+    var uploaded  = [];
+    var uploaders = [];
+    for (var i in files) {
+      var file = files[i];
+      uploaders.push(this.upload(file, i, files.length));
     }
-    this.core.setProgress(this, 100);
 
-    return Promise.resolve(uploaded);
+    return Promise.all(uploaders);
   }
 
-  upload(file) {
-    const boundary = '---------------------------' + Date.now().toString(16);
-    const request  = new XMLHttpRequest();
+  upload(file, current, total) {
+    var formPost = new FormData();
+    formPost.append('file', file);
 
-    const data = { segments: []};
-    data.segments.push(file);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', this.opts.endpoint, true);
 
-    request.open('POST', 'http://api2.transloadit.com', true);
-    request.setRequestHeader('Content-Type', 'multipart\/form-data; boundary=' + boundary);
-    request.sendAsBinary('--' + boundary + '\r\n' + data.segments.join('--' + boundary + '\r\n') + '--' + boundary + '--\r\n');
-
-    // var request=new XMLHttpRequest();
-    // request.open("POST", domain, true);
-    // request.setRequestHeader("Content-type","multipart/form-data");
-    // var formData = new FormData();
-    // formData.append("data", data_json_string);
-    // request.send(formData);
-
-
-    request.addEventListener('load', () => {
-      console.log('fucking done!');
+    xhr.addEventListener('progress', (e) => {
+      var percentage = (e.loaded / e.total * 100).toFixed(2);
+      this.setProgress(percentage, current, total);
     });
 
-    request.addEventListener('error', () => {
-      console.log('fucking error!');
+    xhr.addEventListener('load', () => {
+      return Promise.resolve(upload);
     });
 
-    request.send();
+    xhr.addEventListener('error', () => {
+      return Promise.reject('fucking error!');
+    });
+
+    xhr.send(formPost);
   }
 }
