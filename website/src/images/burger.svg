@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="18px" height="12px" viewBox="0 0 18 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <g id="burger" sketch:type="MSLayerGroup">
+        <rect id="Rectangle-1" sketch:type="MSShapeGroup" x="0" y="0" width="18" height="2"></rect>
+        <rect id="Rectangle-2" sketch:type="MSShapeGroup" x="0" y="5" width="18" height="2"></rect>
+        <rect id="Rectangle-3" sketch:type="MSShapeGroup" x="0" y="10" width="18" height="2"></rect>
+    </g>
+</svg>
