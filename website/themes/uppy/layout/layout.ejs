@@ -16,31 +16,33 @@
     <%- partial('partials/ga') %>
   </head>
   <body class="<%= isIndex ? 'page-index' : 'page-inner' %>">
-    <nav id="mobile-bar">
-      <a class="menu-button"></a>
-      <a class="logo" href="/"></a>
-    </nav>
-
-    <header id="header" class="MainHeader">
-      <a id="logo" class="MainLogo" href="/">
-        <img src="<%- config.logo_medium %>">
-        <span><%- config.title %></span>
-      </a>
-
-      <nav>
-        <ul id="nav" class="MainMenu">
-          <%- partial('partials/main_menu') %>
-        </ul>
+    <div class="page">
+      <nav id="mobile-bar" class="MobileBar">
+        <button class="menu-button"></button>
+        <a class="logo" href="/"><img src="<%- config.logo_icon %>"></a>
       </nav>
-    </header>
 
-    <main id="main">
-      <%- body %>
-    </main>
+      <header id="header" class="MainHeader">
+        <a id="logo" class="MainLogo" href="/">
+          <img src="<%- config.logo_medium %>">
+          <span><%- config.title %></span>
+        </a>
 
-    <% if (!isIndex) { %>
-      <script src="/js/smooth-scroll.min.js"></script>
-      <script src="/js/common.js"></script>
-    <% } %>
+        <nav>
+          <ul id="nav" class="MainMenu">
+            <%- partial('partials/main_menu') %>
+          </ul>
+        </nav>
+      </header>
+
+      <main id="main">
+        <%- body %>
+      </main>
+
+      <% if (!isIndex) { %>
+        <script src="/js/smooth-scroll.min.js"></script>
+        <script src="/js/common.js"></script>
+      <% } %>
+    </div>
   </body>
 </html>
