@@ -1,7 +1,7 @@
 .page-inner #main {
   position: relative;
   z-index: 1;
-  padding: 0 60px 30px;
+  // padding: 0 60px 30px;
   overflow-x: hidden;
 }
 
@@ -35,7 +35,7 @@
   border-radius: 15px;
   margin-right: 10px;
   transition: border-color .2s ease;
-  background: #fff url(/images/search.png) 8px 5px no-repeat;
+  background: svg('search.svg', '[fill]: #{$color-gray}') 8px 5px no-repeat;
   background-size: 20px;
   &:focus { border-color: $color-primary; }
 }
@@ -56,25 +56,34 @@
   }
 }
 
+.page-index .MobileBar {
+  display: none;
+}
 
-#mobile-bar {
+.MobileBar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 40px;
-  background-color: #fff;
+  background-color: $color-white;
   z-index: 9;
-  display: none;
   box-shadow: 0 0 4px rgba(0,0,0,.25);
 
+  @media #{$screen-medium} {
+    display: none;
+  }
+
   .menu-button {
+    background: none;
+    border: 0;
+
     position: absolute;
     width: 24px;
     height: 24px;
     top: 8px;
     left: 12px;
-    background: url(../images/menu.png) center center no-repeat;
+    background: svg('burger.svg', '[fill]: #{$color-gray}') center center no-repeat;
     background-size: 24px;
   }
 
@@ -82,7 +91,7 @@
     position: absolute;
     width: 30px;
     height: 30px;
-    background: url(../images/cute-puppy-2.png) center center no-repeat;
+    // background: url(../images/cute-puppy-2.png) center center no-repeat;
     top: 5px;
     left: 50%;
     margin-left: -15px;
@@ -189,8 +198,6 @@
     display: inline-block;
     vertical-align: middle;
   }
-
-  img { max-width: 100%; }
 
   span.light {
     color: $color-light;
@@ -308,34 +315,37 @@
   }
 }
 
-@media screen and (max-width: 560px) {
-  #downloads {
-    text-align: center;
-    margin-bottom: 25px;
-
-    .info {
-      margin-top: 5px;
-      margin-left: 0;
-    }
-  }
-
-  iframe { margin: 0 !important; }
-}
-
+// @media screen and (max-width: 560px) {
+//   #downloads {
+//     text-align: center;
+//     margin-bottom: 25px;
+//
+//     .info {
+//       margin-top: 5px;
+//       margin-left: 0;
+//     }
+//   }
+//
+//   iframe { margin: 0 !important; }
+// }
 
 @media screen and (max-width: 720px) {
-  body {
-    -webkit-text-size-adjust: none;
-    font-size: 14px;
-  }
+  // body {
+  //   -webkit-text-size-adjust: none;
+  //   font-size: 14px;
+  // }
 
-  #header {
-    display: none;
-  }
+  // #header {
+  //   display: none;
+  // }
 
-  #logo {
-    display: none;
-  }
+  // #logo {
+  //   display: none;
+  // }
+
+  // #mobile-bar {
+  //   display: block;
+  // }
 
   .nav-link {
     padding-bottom: 1px;
@@ -347,10 +357,6 @@
   #search-query {
     width: 200px;
     margin-bottom: 10px;
-  }
-
-  #mobile-bar {
-    display: block;
   }
 
   #main {

@@ -1,18 +1,13 @@
-// html, body {
-//   height: 100%;
-// }
-
 .page-index .MainMenu {
   text-align: center;
-  // padding: 0;
-  // margin: 0;
 
   li {
     display: inline-block;;
     position: relative;
     line-height: 40px;
+
     &:last-child .nav-link {
-       margin-right: 0;
+      margin-right: 0;
     }
   }
 }
@@ -25,34 +20,10 @@
   display: none;
 }
 
-.nav-link {
-  color: $color-light;
-  padding-bottom: 3px;
-  margin: 0 1.5em;
-
-  &:first-child { margin-left: 0; }
-  &:hover, &.current { border-bottom: 3px solid $color-primary; }
-}
-
-.MainLogo {
-  display: block;
-  margin: 0 auto;
-  width: 150px;
-}
-
 .IndexHero {
   text-align: center;
   position: relative;
-
-  // .warning {
-  //   color: $color-light;
-  // }
 }
-
-// .IndexHero-installBtn {
-//   width: 280px;
-//   margin: .5em;
-// }
 
 .IndexHero-logo {
   margin: 0.5em 0 0.5em;
@@ -102,12 +73,11 @@
   list-style-type: none;
   margin: 3em auto;
   padding: 0;
-  // margin-bottom: 3.5em;
 }
 
 .IndexSocial li {
   display: inline-block;
-  margin: 0 1em;
+  margin: 0 0.7em;
   vertical-align: middle;
 
   &.last { margin-left: -2px; }
@@ -126,14 +96,11 @@
   color: $color-white;
   margin-bottom: 1.5em;
 
-  &:hover {
-    @include zoom;
-  }
+  &:hover { @include zoom; }
 }
 
 .IndexExample {
   text-align: center;
-  // padding: 20px;
   max-width: 1200px;
   margin: 0 auto 3em;
 
@@ -177,79 +144,19 @@
   background-color: $color-codebg;
   border-radius: $size-radius;
   overflow-x: scroll;
-  // box-shadow: 0 1px 2px rgba(0,0,0,.125);
 
-  @media #{$screen-small} {
+  @media #{$screen-medium} {
     width: 43%;
     display: inline-block;
     vertical-align: middle;
   }
 }
 
-#features {
-  padding: 3em 0;
-  text-align: center;
-  background-color: #f9f9f9;
-
-  .cool {
-    font-size: 1.8em;
-    text-align: center;
-    margin-top: 1em;
-    color: $color-light;
-  }
-
-  .feats {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .feat {
-    display: inline-block;
-    text-align: left;
-    vertical-align: top;
-    width: 280px;
-    margin: 40px;
-  }
-
-  h2 {
-    color: $color-medium;
-    line-height: 40px;
-    margin-bottom: 0;
-  }
-
-  p {
-    color: $color-light;
-    padding-left: 52px;
-    margin: .4em 0;
-  }
-
-  a {
-    color: $color-primary;
-    font-weight: 600;
-  }
-
-  .icon {
-    display: inline-block;
-    vertical-align: middle;
-    position: relative;
-    top: -3px;
-    width: 40px;
-    height: 40px;
-    margin-right: 12px;
-    background: url('../images/icons.png');
-    background-size: 240px 40px;
-    &.fast { background-position: -40px 0; }
-    &.compact { background-position: -80px 0; }
-    &.powerful { background-position: -120px 0; }
-    &.composable { background-position: -160px 0; }
-    &.module { background-position: -200px 0; }
-  }
-}
-
 .IndexDesignGoals {
   padding: 4em 0;
   background-color: $color-primary;
-  color: #fff;
+  color: $color-white;
+  overflow: hidden;
 
   h2 {
     margin-top: 0;
@@ -280,55 +187,35 @@
   }
 }
 
-#footer {
-
-  .avatar {
-    width: 100px;
-    border-radius: 100%;
-    margin: 2.5em 0 1em;
-  }
+.IndexFooter {
+  text-align: center;
+  color: $color-white;
+  padding: 4em 0;
+  background-color: darken($color-primary, 15%);
 
   a {
-    color: #fff;
+    color: $color-white;
     text-decoration: underline;
   }
 
   p { margin: .3em 0; }
 }
 
-.IndexFooter {
-  text-align: center;
-  color: $color-white;
-  padding: 4em 0;
-  background-color: darken($color-primary, 15%);
-}
-
 @media screen and (max-width: 480px) {
-  body {
-    font-size: 14px;
-  }
 
-  #nav {
-    margin: 2em 1.8em 0;
-  }
+  // #nav {
+  //   margin: 2em 1.8em 0;
+  // }
 
-  #translations {
-    margin-bottom: 2em;
-  }
+  // .nav-link {
+  //   font-size: .85em;
+  //   margin: 0 .5em;
+  // }
 
-  #logo {
-    width: 120px;
-  }
-
-  .nav-link {
-    font-size: .85em;
-    margin: 0 .5em;
-  }
-
-  .divider {
-    font-size: 1.2em;
-    margin: 2.5em 1em;
-  }
+  // .divider {
+  //   font-size: 1.2em;
+  //   margin: 2.5em 1em;
+  // }
 
   #hero {
     .inner h1 {
@@ -357,7 +244,7 @@
       br { display: none; }
     }
 
-    .down { display: none; }
+    // .down { display: none; }
   }
 
   #social {

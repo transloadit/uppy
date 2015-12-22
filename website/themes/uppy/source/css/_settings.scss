@@ -22,6 +22,7 @@ $color-green      : #42b983;
 $color-border     : #dddddd;
 $color-codebg     : #f8f8f8;
 $color-red        : #ff6666;
+$color-gray       : #7f8c8d;
 $color-darkgray   : #34393A;
 $color-violet     : #492e7c;
 $color-orange     : #e96900;
@@ -37,5 +38,5 @@ $size-headerHeight: 40px;
 // Media queries
 
 // small screen
-$screen-small: 'only screen and (min-width: 480px)';
-$screen-medium: 'only screen and (min-width: 860px)';
+$screen-medium: 'only screen and (min-width: 769px)';
+// $screen-medium: 'only screen and (min-width: 860px)';
