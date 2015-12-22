@@ -17,6 +17,12 @@ export default class {
     this.plugins = {};
   }
 
+  /**
+ * Registers a plugin with Core
+ * @param {Plugin} Plugin object
+ * @param {opts} options object that will be passed to Plugin later
+ * @returns {object} self for chaining
+ */
   use(Plugin, opts) {
     // Instantiate
     var plugin = new Plugin(this, opts);
@@ -26,6 +32,12 @@ export default class {
     return this;
   }
 
+  /**
+ * Sets plugin’s progress, for uploads for example
+ * @param {plugin} plugin that want to set progress
+ * @param {percentage} integer
+ * @returns {object} self for chaining
+ */
   setProgress(plugin, percentage) {
     // Any plugin can call this via `this.core.setProgress(this, precentage)`
     console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage);

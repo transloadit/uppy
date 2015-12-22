@@ -24,7 +24,8 @@
     "web:deploy": "npm run web:install && npm run web:build && ./bin/web-deploy",
     "web:install": "cd website && rm -rf node_modules/hexo-renderer-uppyexamples && npm install",
     "web:preview": "cd website && ./node_modules/.bin/hexo server --debug",
-    "web": "npm run web:install && npm run web:clean && npm run web:build && npm run web:preview"
+    "web": "npm run web:install && npm run web:clean && npm run web:build && npm run web:preview",
+    "docs": "cd website && node documentation.js"
   },
   "repository": {
     "type": "git",

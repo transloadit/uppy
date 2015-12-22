@@ -1,9 +1,3 @@
----
-type: api
-order: 1
-title: "Generated API Docs"
----
-
 ## Core
 
 ### constructor
