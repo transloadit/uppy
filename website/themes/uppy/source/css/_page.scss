@@ -12,7 +12,7 @@
   height: $size-headerHeight;
   line-height: $size-headerHeight;
 
-  .break { display: none; }
+  // .break { display: none; }
 
   li {
     display: inline-block;
@@ -26,7 +26,7 @@
   &:hover, &.current { border-bottom: 3px solid $color-primary; }
 }
 
-#search-query {
+.MainMenu-searchQuery {
   height: 30px;
   line-height: 30px;
   padding: 0 15px 0 30px;
@@ -35,8 +35,8 @@
   border-radius: 15px;
   margin-right: 10px;
   transition: border-color .2s ease;
-  background: svg('search.svg', '[fill]: #{$color-gray}') 8px 5px no-repeat;
-  background-size: 20px;
+  background: svg('search.svg', '[fill]: #{$color-lightgray}') 8px 6px no-repeat;
+  background-size: 18px;
   &:focus { border-color: $color-primary; }
 }
 
@@ -70,14 +70,13 @@
   z-index: 9;
   box-shadow: 0 0 4px rgba(0,0,0,.25);
 
-  @media #{$screen-medium} {
+  @media #{$screen-large} {
     display: none;
   }
 
   .menu-button {
     background: none;
     border: 0;
-
     position: absolute;
     width: 24px;
     height: 24px;
@@ -91,7 +90,6 @@
     position: absolute;
     width: 30px;
     height: 30px;
-    // background: url(../images/cute-puppy-2.png) center center no-repeat;
     top: 5px;
     left: 50%;
     margin-left: -15px;
@@ -329,24 +327,7 @@
 //   iframe { margin: 0 !important; }
 // }
 
-@media screen and (max-width: 720px) {
-  // body {
-  //   -webkit-text-size-adjust: none;
-  //   font-size: 14px;
-  // }
-
-  // #header {
-  //   display: none;
-  // }
-
-  // #logo {
-  //   display: none;
-  // }
-
-  // #mobile-bar {
-  //   display: block;
-  // }
-
+@media screen and (max-width: 860px) {
   .nav-link {
     padding-bottom: 1px;
     &:hover, &.current {

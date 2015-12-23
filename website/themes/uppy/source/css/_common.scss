@@ -23,6 +23,7 @@ body {
 
 .page {
   background-color: $color-white;
+  min-height: 100vh;
 }
 
 a {
@@ -148,9 +149,11 @@ a.button {
   border-top: 6px solid $color-primary;
 }
 
-
- .page-inner .MainHeader {
+  .page-inner .MainHeader {
     display: none;
+    @media #{$screen-large} {
+      display: block;
+    }
   }
 
 .MainMenu {
