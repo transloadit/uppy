@@ -5,11 +5,9 @@ title: "Architecture"
 permalink: api/
 ---
 
-# Uppy File Uploader Architecture
-
 *Work in progress, API not stable. Last update: 2015-12-03*
 
-## The Gist
+### The Gist
 
 ``` javascript
 import Uppy from './src/core';
@@ -22,7 +20,7 @@ const files = uppy
   .run();
 ```
 
-## Core
+### Core
 
 1. Core class `Uppy` accepts object `options` (with general options), and exposes methods `.use` for adding plugins and `.set` for setting options.
 2. We create a new instance of `Uppy` and call `.use` on it, passing the plugins and their options.
@@ -32,7 +30,7 @@ const files = uppy
 
 ![waterfall of parallels](/images/uppy-core-plugins-architecture.jpg)
 
-## Plugins
+### Plugins
 
 1. Plugins are registered like this:
 ```javascript
@@ -68,7 +66,7 @@ uppyDist
 
 6. Would be cool if you could use whatever drag & drop library you wanted (DropZone) with our wrapper.
 
-## References & Inspiration
+### References & Inspiration
 
 1. [PostCSS](https://github.com/postcss/postcss/blob/master/lib/postcss.es6#L19)
 2. [Markdown-It](https://github.com/markdown-it/markdown-it/blob/master/lib/index.js#L459)
