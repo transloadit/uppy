@@ -5,7 +5,7 @@
   var doc = document.documentElement
   var body = document.body
   var header = document.getElementById('header')
-  var menu = document.querySelector('.sidebar')
+  var menu = document.querySelector('.js-sidebar')
   var content = document.querySelector('.content')
   var mobileBar = document.getElementById('mobile-bar')
 

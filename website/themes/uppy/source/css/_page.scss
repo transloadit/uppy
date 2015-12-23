@@ -1,8 +1,12 @@
 .page-inner #main {
   position: relative;
   z-index: 1;
-  // padding: 0 60px 30px;
   overflow-x: hidden;
+  padding: 2em 1.4em 0;
+
+  @media #{$screen-medium} {
+    padding: 0 60px 30px;
+  }
 }
 
 .page-inner #nav {
@@ -11,8 +15,6 @@
   top: 25px;
   height: $size-headerHeight;
   line-height: $size-headerHeight;
-
-  // .break { display: none; }
 
   li {
     display: inline-block;
@@ -35,9 +37,18 @@
   border-radius: 15px;
   margin-right: 10px;
   transition: border-color .2s ease;
-  background: svg('search.svg', '[fill]: #{$color-lightgray}') 8px 6px no-repeat;
+  background: svg('search.svg', '[fill]: #{$color-gray}') 8px 5px no-repeat;
   background-size: 18px;
+  margin-bottom: 10px;
+
   &:focus { border-color: $color-primary; }
+
+  @media #{$screen-medium} {
+    width: auto;
+    width: 200px;
+    margin-bottom: 0;
+  }
+
 }
 
 .MainLogo {
@@ -70,7 +81,7 @@
   z-index: 9;
   box-shadow: 0 0 4px rgba(0,0,0,.25);
 
-  @media #{$screen-large} {
+  @media #{$screen-medium} {
     display: none;
   }
 
@@ -83,7 +94,7 @@
     top: 8px;
     left: 12px;
     background: svg('burger.svg', '[fill]: #{$color-gray}') center center no-repeat;
-    background-size: 24px;
+    background-size: 22px;
   }
 
   .logo {
@@ -97,32 +108,52 @@
   }
 }
 
-.sidebar {
-  position: absolute;
-  z-index: 10;
+.Sidebar {
+  position: fixed;
+  background-color: #f9f9f9;
+  height: 100%;
   top: 0;
-  left: 60px;
-  bottom: 0;
-  padding: 2.2em 0;
-  width: 260px;
-  margin-right: 20px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar { width: 0 !important; }
-  h2 { margin-top: .2em; }
+  left: 0;
+  padding: 60px 30px 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,.2);
+  transition: all .4s cubic-bezier(0.4, 0, 0, 1);
+  transform: translate(-280px, 0);
+  z-index: 10;
+
+  .main-menu {
+    margin-bottom: 20px;
+    display: block;
+    padding-left: 0;
+  }
+
+  &.open { transform: translate(0, 0); }
+
+  @media #{$screen-medium} {
+    position: absolute;
+    top: 0;
+    left: 60px;
+    bottom: 0;
+    padding: 2.2em 0;
+    width: 260px;
+    margin-right: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    transform: none;
+    background-color: transparent;
+    box-shadow: none;
+
+    .main-menu { display: none; }
+    &::-webkit-scrollbar { width: 0 !important; }
+    h2 { margin-top: .2em; }
+  }
 
   ul {
     list-style-type: none;
     margin: 0;
     line-height: 1.8em;
     padding-left: 1em;
-  }
-
-  .version-select {
-    vertical-align: middle;
-    margin-left: 5px;
   }
 
   .menu-root {
@@ -164,18 +195,18 @@
     font-weight: bold;
     color: $color-primary;
   }
-
-  .main-menu {
-    margin-bottom: 20px;
-    display: none;
-    padding-left: 0;
-  }
 }
 
 .content {
   padding: 2.2em 0;
   max-width: 600px;
   margin: 0 auto;
+
+  @media #{$screen-medium} {
+    &.with-sidebar {
+      margin-left: 280px;
+    }
+  }
 
   &.api {
     ul {
@@ -215,6 +246,17 @@
     margin: 2em 0 .8em;
     padding-bottom: .7em;
     border-bottom: 1px solid $color-border;
+    position: relative;
+
+    &:before {
+      content: "#";
+      color: $color-primary;
+      position: absolute;
+      left: -0.7em;
+      top: -4px;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
   }
 
   h3 {
@@ -299,75 +341,4 @@
   padding-top: 2em;
   border-top: 1px solid #e5e5e5;
   font-size: .9em;
-}
-
-@media screen and (min-width: 720px) {
-  #main.fix-sidebar .sidebar {
-    position: fixed;
-  }
-}
-
-@media screen and (max-width: 1200px) {
-  .content.with-sidebar {
-    margin-left: 280px;
-  }
-}
-
-// @media screen and (max-width: 560px) {
-//   #downloads {
-//     text-align: center;
-//     margin-bottom: 25px;
-//
-//     .info {
-//       margin-top: 5px;
-//       margin-left: 0;
-//     }
-//   }
-//
-//   iframe { margin: 0 !important; }
-// }
-
-@media screen and (max-width: 860px) {
-  .nav-link {
-    padding-bottom: 1px;
-    &:hover, &.current {
-      border-bottom: 2px solid $color-primary;
-    }
-  }
-
-  #search-query {
-    width: 200px;
-    margin-bottom: 10px;
-  }
-
-  #main {
-    padding: 2em 1.4em 0;
-  }
-
-  .highlight pre {
-    padding: 1.2em 1em;
-  }
-
-  .sidebar {
-    position: fixed;
-    background-color: #f9f9f9;
-    height: 100%;
-    top: 0;
-    left: 0;
-    padding: 60px 30px 20px;
-    box-shadow: 0 0 10px rgba(0,0,0,.2);
-    transition: all .4s cubic-bezier(0.4, 0, 0, 1);
-    transform: translate(-280px, 0);
-
-    .main-menu { display: block; }
-
-    &.open { transform: translate(0, 0); }
-  }
-
-  .content.with-sidebar { margin-left: 0; }
-
-  .footer {
-    margin-left: 0;
-    text-align: center;
-  }
 }

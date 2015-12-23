@@ -2,7 +2,7 @@
   text-align: center;
 
   li {
-    display: inline-block;;
+    display: inline-block;
     position: relative;
     line-height: 40px;
 
@@ -102,7 +102,11 @@
 .IndexExample {
   text-align: center;
   max-width: 1200px;
-  margin: 0 auto 3em;
+  margin: 0 1em 3em;
+
+  @media #{$screen-medium} {
+    margin: 0 auto 3em;
+  }
 
   code, pre {
     padding: 0;
@@ -140,7 +144,7 @@
 .IndexExample-block {
   padding: 7px;
   text-align: left;
-  height: 250px;
+
   background-color: $color-codebg;
   border-radius: $size-radius;
   overflow-x: scroll;
@@ -149,18 +153,23 @@
     width: 43%;
     display: inline-block;
     vertical-align: middle;
+    height: 250px;
   }
 }
 
 .IndexDesignGoals {
-  padding: 4em 0;
+  padding: 4em 1em;
   background-color: $color-primary;
   color: $color-white;
   overflow: hidden;
 
+  @media #{$screen-medium} {
+    padding: 4em 0;
+  }
+
   h2 {
     margin-top: 0;
-    color: #fff;
+    color: $color-white;
     font-size: 1.5em;
     text-align: center;
   }
@@ -168,30 +177,41 @@
   ul {
     line-height: 1.8em;
     font-size: 1.15em;
-    width: 640px;
+    max-width: 640px;
     margin: 0 auto;
     padding: 0;
     list-style-type: none;
   }
 
-  li:before {
-    content: '';
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    background: url('../images/check.png') center center no-repeat;
+  li {
+    background: svg('check.svg', '[fill]: #{$color-white}') left 5px no-repeat;
     background-size: 24px 24px;
-    margin-right: 10px;
-    position: relative;
-    top: 4px;
+    padding-left: 40px;
+    margin-bottom: 0.5em;
   }
+
+  // li:before {
+  //   content: '';
+  //   display: inline-block;
+  //   width: 24px;
+  //   height: 24px;
+  //   background: svg('check.svg', '[fill]: #{$color-white}') center center no-repeat;
+  //   background-size: 24px 24px;
+  //   margin-right: 10px;
+  //   position: relative;
+  //   top: 4px;
+  // }
 }
 
 .IndexFooter {
   text-align: center;
   color: $color-white;
-  padding: 4em 0;
+  padding: 4em 1em;
   background-color: darken($color-primary, 15%);
+
+  @media #{$screen-medium} {
+    padding: 4em 0;
+  }
 
   a {
     color: $color-white;
@@ -201,98 +221,84 @@
   p { margin: .3em 0; }
 }
 
-@media screen and (max-width: 480px) {
-
-  // #nav {
-  //   margin: 2em 1.8em 0;
-  // }
-
-  // .nav-link {
-  //   font-size: .85em;
-  //   margin: 0 .5em;
-  // }
-
-  // .divider {
-  //   font-size: 1.2em;
-  //   margin: 2.5em 1em;
-  // }
-
-  #hero {
-    .inner h1 {
-      font-size: 2em;
-      font-weight: 400;
-    }
-
-    .buttons {
-      max-width: 300px;
-      margin: 1em auto;
-    }
-
-    a.button {
-      width: 260px;
-      font-size: .8em;
-      margin: .5em 0;
-    }
-
-    .desc {
-      max-width: 300px;
-    }
-
-    .warning, .desc {
-      font-size: .85em;
-      margin: 1em auto;
-      br { display: none; }
-    }
-
-    // .down { display: none; }
-  }
-
-  #social {
-    max-width: 340px;
-    margin: 1.2em auto;
-  }
-
-  .cool { margin-top: 0; }
-
-  #features .feat {
-    font-size: 14px;
-    margin: .8em 0;
-    width: 250px;
-  }
-
-  #design_goals {
-    ul {
-      width: 280px;
-      font-size: 1.1em;
-    }
-
-    h2 {
-      font-size: 1.4em;
-    }
-  }
-}
-
-@media screen and (max-width: 860px) {
-  #features, #hero {
-    font-size: 16px;
-  }
-
-  #example {
-    .block {
-      display: block;
-      width: auto;
-      height: auto;
-    }
-  }
-
-  #demo {
-    padding: 5px 20px 20px;
-  }
-
-  .sign {
-    display: block;
-    height: 1em;
-    line-height: 1em;
-    padding: .5em 0;
-  }
-}
+// @media screen and (max-width: 480px) {
+//
+//   #hero {
+//     .inner h1 {
+//       font-size: 2em;
+//       font-weight: 400;
+//     }
+//
+//     .buttons {
+//       max-width: 300px;
+//       margin: 1em auto;
+//     }
+//
+//     a.button {
+//       width: 260px;
+//       font-size: .8em;
+//       margin: .5em 0;
+//     }
+//
+//     .desc {
+//       max-width: 300px;
+//     }
+//
+//     .warning, .desc {
+//       font-size: .85em;
+//       margin: 1em auto;
+//       br { display: none; }
+//     }
+//
+//     // .down { display: none; }
+//   }
+//
+//   #social {
+//     max-width: 340px;
+//     margin: 1.2em auto;
+//   }
+//
+//   .cool { margin-top: 0; }
+//
+//   #features .feat {
+//     font-size: 14px;
+//     margin: .8em 0;
+//     width: 250px;
+//   }
+//
+//   #design_goals {
+//     ul {
+//       width: 280px;
+//       font-size: 1.1em;
+//     }
+//
+//     h2 {
+//       font-size: 1.4em;
+//     }
+//   }
+// }
+//
+// @media screen and (max-width: 860px) {
+//   #features, #hero {
+//     font-size: 16px;
+//   }
+//
+//   #example {
+//     .block {
+//       display: block;
+//       width: auto;
+//       height: auto;
+//     }
+//   }
+//
+//   #demo {
+//     padding: 5px 20px 20px;
+//   }
+//
+//   .sign {
+//     display: block;
+//     height: 1em;
+//     line-height: 1em;
+//     padding: .5em 0;
+//   }
+// }
