@@ -43,6 +43,22 @@ npm run watch:js
 npm run watch:css
 ```
 
+For example, if you'd like to work on the Multipart Form example, 
+
+Run: `npm run watch` and in new tab: `npm run web`
+
+Then:
+
+```bash
+atom src/core/Core.js \
+  src/plugins/Multipart.js \
+  src/plugins/Formtag.js \
+  src/plugins/Plugin.js \
+  website/src/examples/multipart/app.es6
+```
+
+And open <http://0.0.0.0:4000/examples/multipart/index.html>
+
 ## CSS Guidelines
 
 The CSS standards followed in this project closely resemble those from [Medium's CSS Guidelines](https://gist.github.com/fat/a47b882eb5f84293c4ed). If it's not mentioned here, follow their guidelines.
