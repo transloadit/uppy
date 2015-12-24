@@ -24,8 +24,8 @@ export default class Formtag extends Plugin {
         var files    = [];
         var selected = [];
 
-        [].forEach.call(fields, function(field, i) {
-          [].forEach.call(field.files, function(file, j) {
+        [].forEach.call(fields, (field, i) => {
+          [].forEach.call(field.files, (file, j) => {
             selected.push({
               from: 'Formtag',
               file: file
