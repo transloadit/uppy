@@ -1,12 +1,10 @@
-function promiseWaterfall([resolvedPromise, ...tasks]) {
-    const finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
-        return prevTaskPromise.then(task);
-    }, resolvedPromise(1));  // initial value
+import Utils from '../core/Utils';
 
-    return finalTaskPromise;
-}
-
-export default class {
+/**
+* Main Uppy core
+*
+*/
+export default class Core {
   constructor(opts) {
     // Dictates in what order different plugin types are ran:
     this.types = [ 'presetter', 'selecter', 'uploader' ];
@@ -19,6 +17,7 @@ export default class {
 
   /**
  * Registers a plugin with Core
+ *
  * @param {Plugin} Plugin object
  * @param {opts} options object that will be passed to Plugin later
  * @returns {object} self for chaining
@@ -34,6 +33,7 @@ export default class {
 
   /**
  * Sets plugin’s progress, for uploads for example
+ *
  * @param {plugin} plugin that want to set progress
  * @param {percentage} integer
  * @returns {object} self for chaining
@@ -44,7 +44,9 @@ export default class {
     return this;
   }
 
-  // Runs all plugins of the same type in parallel
+  /**
+ * Runs all plugins of the same type in parallel
+ */
   runType(type, files) {
     const methods = this.plugins[type].map(
       plugin => plugin.run.call(plugin, files)
@@ -53,8 +55,10 @@ export default class {
     return Promise.all(methods);
   }
 
-  // Runs a waterfall of runType plugin packs, like so:
-  // All preseters(data) --> All selecters(data) --> All uploaders(data) --> done
+  /**
+  * Runs a waterfall of runType plugin packs, like so:
+  * All preseters(data) --> All selecters(data) --> All uploaders(data) --> done
+  */
   run() {
     console.log({
       class  : 'Core',
@@ -67,7 +71,7 @@ export default class {
       return this.plugins[type];
     }).map(type => this.runType.bind(this, type));
 
-    promiseWaterfall(typeMethods)
+    Utils.promiseWaterfall(typeMethods)
       .then((result) => console.log(result))
       .catch((error) => console.error(error));
   }

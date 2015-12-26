@@ -1,3 +1,11 @@
+function promiseWaterfall([resolvedPromise, ...tasks]) {
+  const finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
+      return prevTaskPromise.then(task);
+  }, resolvedPromise(1));  // initial value
+
+  return finalTaskPromise;
+}
+
 // This is how we roll $('.element').toggleClass in non-jQuery world
 function toggleClass(el, className) {
   if (el.classList) {
@@ -40,6 +48,7 @@ function addListenerMulti(el, events, func) {
 }
 
 export default {
+  promiseWaterfall,
   toggleClass,
   addClass,
   removeClass,
