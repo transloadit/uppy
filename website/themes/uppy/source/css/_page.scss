@@ -193,7 +193,7 @@
     &:hover { border-bottom: 2px solid $color-primary; }
   }
 
-  .section-link &.active {
+  .section-link.active {
     font-weight: bold;
     color: $color-primary;
   }
