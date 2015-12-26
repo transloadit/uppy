@@ -230,11 +230,11 @@
     vertical-align: middle;
   }
 
-  span.light {
+  .light {
     color: $color-light;
   }
 
-  span.info {
+  .info {
     font-size: .85em;
     display: inline-block;
     vertical-align: middle;
@@ -247,18 +247,18 @@
   h2 {
     margin: 2em 0 .8em;
     padding-bottom: .7em;
-    border-bottom: 1px solid $color-border;
+    // border-bottom: 1px solid $color-border;
     position: relative;
 
-    &:before {
-      content: "#";
-      color: $color-primary;
-      position: absolute;
-      left: -0.7em;
-      top: -4px;
-      font-size: 1.2em;
-      font-weight: bold;
-    }
+    // &:before {
+    //   content: "#";
+    //   color: $color-primary;
+    //   position: absolute;
+    //   left: -0.7em;
+    //   top: -4px;
+    //   font-size: 1.2em;
+    //   font-weight: bold;
+    // }
   }
 
   h3 {
