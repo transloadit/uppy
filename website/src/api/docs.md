@@ -3,7 +3,47 @@ type: api
 order: 1
 title: "Generated API Docs"
 ---
-# setProgress
+
+# Uppy Core & Plugins
+
+## DragDrop
+
+Drag & Drop plugin
+
+**Parameters**
+
+-   `core`  
+-   `opts`  
+
+### checkDragDropSupport
+
+Checks if the browser supports Drag & Drop
+
+Returns **object** true if Drag & Drop is supported, false otherwise
+
+## Core
+
+Main Uppy core
+
+**Parameters**
+
+-   `opts`  
+
+### run
+
+Runs a waterfall of runType plugin packs, like so:
+All preseters(data) --> All selecters(data) --> All uploaders(data) --> done
+
+### runType
+
+Runs all plugins of the same type in parallel
+
+**Parameters**
+
+-   `type`  
+-   `files`  
+
+### setProgress
 
 Sets plugin’s progress, for uploads for example
 
@@ -15,7 +55,7 @@ Sets plugin’s progress, for uploads for example
 
 Returns **object** self for chaining
 
-# use
+### use
 
 Registers a plugin with Core
 

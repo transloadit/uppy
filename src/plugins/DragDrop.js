@@ -1,6 +1,10 @@
 import Utils from '../core/Utils';
 import Plugin from './Plugin';
 
+/**
+* Drag & Drop plugin
+*
+*/
 export default class DragDrop extends Plugin {
   constructor(core, opts) {
     super(core, opts);
@@ -32,9 +36,10 @@ export default class DragDrop extends Plugin {
     this.handleInputChange    = this.handleInputChange.bind(this);
   }
 
-  /**
-   * Checks if the browser supports Drag & Drop
-   */
+   /**
+  * Checks if the browser supports Drag & Drop
+  * @returns {object} true if Drag & Drop is supported, false otherwise
+  */
   checkDragDropSupport() {
     const div = document.createElement('div');
 
