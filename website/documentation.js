@@ -5,7 +5,7 @@ var inject = require('mdast-util-inject');
 var chalk = require('chalk');
 var fs = require('fs');
 
-documentation('../src/index.js', {}, function (err, comments) {
+documentation('../src/index.js', {order: ['Core']}, function (err, comments) {
   if (err) console.log(err);
 
   documentationFormatter(comments, {}, function (err, output) {

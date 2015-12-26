@@ -6,21 +6,6 @@ title: "Generated API Docs"
 
 # Uppy Core & Plugins
 
-## DragDrop
-
-Drag & Drop plugin
-
-**Parameters**
-
--   `core`  
--   `opts`  
-
-### checkDragDropSupport
-
-Checks if the browser supports Drag & Drop
-
-Returns **object** true if Drag & Drop is supported, false otherwise
-
 ## Core
 
 Main Uppy core
@@ -66,3 +51,18 @@ Registers a plugin with Core
 -   `opts`  
 
 Returns **object** self for chaining
+
+## DragDrop
+
+Drag & Drop plugin
+
+**Parameters**
+
+-   `core`  
+-   `opts`  
+
+### checkDragDropSupport
+
+Checks if the browser supports Drag & Drop
+
+Returns **object** true if Drag & Drop is supported, false otherwise
