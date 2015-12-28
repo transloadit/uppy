@@ -59,6 +59,7 @@ export default class DragDrop extends Plugin {
   }
 
   listenForEvents() {
+    console.log(`translation is all like: ${this.core.translate('Choose a file')}` );
     console.log(`waiting for some files to be dropped on ${this.opts.selector}`);
 
     if (this.isDragDropSupported) {
