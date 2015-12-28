@@ -25,7 +25,8 @@
     "web:install": "cd website && rm -rf node_modules/hexo-renderer-uppyexamples && npm install",
     "web:preview": "cd website && ./node_modules/.bin/hexo server --debug",
     "web": "npm run web:install && npm run web:clean && npm run web:build && npm run web:preview",
-    "docs": "cd website && node documentation.js"
+    "docs": "cd website && node documentation.js",
+    "start": "npm run build && npm run web"
   },
   "repository": {
     "type": "git",
@@ -51,6 +52,7 @@
     "node-sass": "^3.4.2",
     "nodemon": "^1.8.1",
     "phantomjs": "^1.9.18",
+    "tape": "^4.4.0",
     "watchify": "^3.6.1",
     "zuul": "^3.7.2"
   },

@@ -6,6 +6,7 @@ import Utils from '../core/Utils';
 */
 export default class Core {
   constructor(opts) {
+
     // Dictates in what order different plugin types are ran:
     this.types = [ 'presetter', 'selecter', 'uploader' ];
 
