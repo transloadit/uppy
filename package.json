@@ -14,6 +14,7 @@
     "server": "browser-sync start --config .browsersync.js",
     "test:phantom": "zuul test/spec/upload.js --phantom",
     "test": "bin/test",
+    "test:unit": "./node_modules/.bin/babel-node test/core.spec.js",
     "watch": "nodemon --watch src --ext scss,js -x \"npm run build && node website/update.js\"",
     "watch:css": "nodemon --watch src --ext scss -x \"npm run build && node website/update.js\"",
     "watch:examples": "cd website && node build-examples.js watch",
