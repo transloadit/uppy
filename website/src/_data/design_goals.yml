@@ -4,6 +4,7 @@
  - "Resumable file uploads via the open tus standard"
  - "Robust: retries for all-the-things, avoid showing ‘weird errors’"
  - "Themable UI with a beautiful default"
+ - "i18n support: Easily switch languages or supply your own copy"
  - "Compatible with React (Native)"
  - "Works great on mobile"
  - "Small core, modular architecture. Everything is a plugin"
