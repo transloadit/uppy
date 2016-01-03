@@ -17,15 +17,12 @@
   </head>
   <body class="<%= isIndex ? 'page-index' : 'page-inner' %>">
     <div class="page">
-      <nav id="mobile-bar" class="MobileBar">
-        <button class="menu-button"></button>
-        <a class="logo" href="/"><img src="<%- config.logo_icon %>"></a>
-      </nav>
+      <header id="header" class="MainHeader js-MainHeader">
+        <button class="MainHeader-menuBtn js-MenuBtn"></button>
 
-      <header id="header" class="MainHeader">
         <a id="logo" class="MainLogo" href="/">
-          <img src="<%- config.logo_medium %>">
-          <span><%- config.title %></span>
+          <img class="MainLogo-img" src="<%- config.logo_medium %>">
+          <span class="MainLogo-text"><%- config.title %></span>
         </a>
 
         <nav>
@@ -35,7 +32,7 @@
         </nav>
       </header>
 
-      <main id="main">
+      <main class="MainContent js-MainContent" id="main">
         <%- body %>
       </main>
 
