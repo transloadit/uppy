@@ -31,23 +31,12 @@ It's recommended to exclude `./website/public/` from your editor if you want eff
 For local previews on http://127.0.0.1:4000 type:
 
 ```bash
-npm run web
+npm run watch:all
 ```
 
-If you want to work on Uppy itself, and see its changes reflected in the website, open a new tab and type:
+This will watch the website, as well as Uppy, as the examples, and rebuild everything and refresh your browser as files change.
 
-```bash
-npm run watch
-# Or if you're only interested in one of these:
-npm run watch:js
-npm run watch:css
-```
-
-For example, if you'd like to work on the Multipart Form example, 
-
-Run: `npm run watch` and in new tab: `npm run web`
-
-Then:
+Then, to work on e.g. the Multipart example, you'd edit the following files:
 
 ```bash
 atom src/core/Core.js \
@@ -57,7 +46,7 @@ atom src/core/Core.js \
   website/src/examples/multipart/app.es6
 ```
 
-And open <http://0.0.0.0:4000/examples/multipart/index.html>
+And open <http://0.0.0.0:4000/examples/multipart/index.html> in your webbrowser.
 
 ## CSS Guidelines
 
