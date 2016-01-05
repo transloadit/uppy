@@ -13,3 +13,5 @@ website/public/
 website/.deploy*/
 website/src/_drafts
 website/themes/uppy/source/js/uppy.js
+
+npm-debug.log*
