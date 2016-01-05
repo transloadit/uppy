@@ -15,7 +15,7 @@
     "test:phantom": "zuul test/spec/upload.js --phantom",
     "test": "bin/test",
     "watch": "nodemon --watch src --ext scss,js -x \"npm run build && node website/update.js\"",
-    "watch:all": "parallelshell \"npm run watch\" \"sleep 1 && npm run web\"",
+    "watch:all": "parallelshell \"npm run watch\" \"npm run web\"",
     "watch:css": "nodemon --watch src --ext scss -x \"npm run build && node website/update.js\"",
     "watch:examples": "cd website && node build-examples.js watch",
     "watch:js": "nodemon --watch src --ext js -x \"npm run build && node website/update.js\"",
