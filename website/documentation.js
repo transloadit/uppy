@@ -21,15 +21,3 @@ documentation('../src/index.js', {order: docOrder}, function (err, comments) {
     console.info(chalk.green('✓ documentation generated'));
   });
 });
-
-// var remark = require('remark');
-// var inputMarkdownContent = fs.readFileSync('src/api/docs.md', 'utf-8');
-// var docjsReadme = require('documentation-readme/lib/plugin');
-// remark().use(docjsReadme, {
-//  section: 'Uppy Core & Plugins', // inject into the ## Usage section of the input doc
-//  documentationArgs: [ '../src/index.js' ]
-// }).process(inputMarkdownContent, function (err, vfile, content) {
-// fs.writeFileSync('src/api/docs.md', content);
-//  // console.log(content);
-//  console.log('documentation generated');
-// });

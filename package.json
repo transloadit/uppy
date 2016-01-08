@@ -16,6 +16,7 @@
     "test": "bin/test",
     "test:unit": "./node_modules/.bin/babel-node test/core.spec.js",
     "watch": "nodemon --watch src --ext scss,js -x \"npm run build && node website/update.js\"",
+    "watch:all": "parallelshell \"npm run watch\" \"npm run web\"",
     "watch:css": "nodemon --watch src --ext scss -x \"npm run build && node website/update.js\"",
     "watch:examples": "cd website && node build-examples.js watch",
     "watch:js": "nodemon --watch src --ext js -x \"npm run build && node website/update.js\"",
@@ -58,6 +59,7 @@
     "zuul": "^3.7.2"
   },
   "dependencies": {
+    "parallelshell": "^2.0.0",
     "superagent": "^1.5.0",
     "tus-js-client": "^1.1.3"
   }

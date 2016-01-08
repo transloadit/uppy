@@ -1,28 +1,28 @@
 (function () {
 
   var each = [].forEach
-  var main = document.getElementById('main')
+
+  var main = document.querySelector('.js-MainContent')
   var doc = document.documentElement
   var body = document.body
-  var header = document.getElementById('header')
-  var menu = document.querySelector('.js-sidebar')
-  var content = document.querySelector('.content')
-  var mobileBar = document.getElementById('mobile-bar')
+  var header = document.querySelector('.js-MainHeader')
+  var menu = document.querySelector('.js-Sidebar')
+  var content = document.querySelector('.js-Content')
 
-  var menuButton = mobileBar.querySelector('.menu-button')
+  var menuButton = document.querySelector('.js-MenuBtn')
   menuButton.addEventListener('click', function () {
-    menu.classList.toggle('open')
+    menu.classList.toggle('is-open')
   })
 
   body.addEventListener('click', function (e) {
     if (e.target !== menuButton && !menu.contains(e.target)) {
-      menu.classList.remove('open')
+      menu.classList.remove('is-open')
     }
   })
 
   // build sidebar
   var currentPageAnchor = menu.querySelector('.sidebar-link.current')
-  var isAPI = document.querySelector('.content').classList.contains('api')
+  var isAPI = document.querySelector('.Content').classList.contains('api')
   if (currentPageAnchor || isAPI) {
     var allLinks = []
     var sectionContainer
@@ -85,9 +85,9 @@
     var top = doc && doc.scrollTop || body.scrollTop
     var headerHeight = header.offsetHeight
     if (top > headerHeight) {
-      main.className = 'fix-sidebar'
+      addClass(main, 'fix-sidebar');
     } else {
-      main.className = ''
+      removeClass(main, 'fix-sidebar');
     }
     if (animating || !allLinks) return
     var last
@@ -160,6 +160,22 @@
     wrapper.appendChild(link)
   }
 
+  function addClass(el, className) {
+    if (el.classList) {
+      el.classList.add(className);
+    } else {
+      el.className += ' ' + className;
+    }
+  }
+
+  function removeClass(el, className) {
+    if (el.classList) {
+      el.classList.remove(className);
+    } else {
+      el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+    }
+  }
+
   // Search with SwiftType
   // @todo get our own swifttype
 
@@ -182,4 +198,4 @@
   //   }
   // })
 
-})()
+})();

@@ -16,7 +16,6 @@ OUTDIR="dist"
 TRANSFORMS="[ babelify ]"
 FLAGS="-t [ babelify ] --standalone Uppy"
 
-rm -rf $OUTDIR
-mkdir $OUTDIR
+mkdir -p "${OUTDIR}"
 
 browserify $SRC $FLAGS > $OUTDIR/$OUT
