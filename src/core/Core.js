@@ -49,10 +49,6 @@ export default class Core {
  * @returns {string} translated string
  */
   translate(string) {
-    // const currentLocale = this.opts.locale;
-    // console.log(currentLocale);
-    // const dictionaryPath = '../locale/en_US.json';
-    // const dictionary = require('../locale/en_US.json');
     const dictionary = this.opts.locale;
 
     // if locale is unspecified, return the original string
@@ -97,6 +93,8 @@ export default class Core {
       class  : 'Core',
       method : 'run'
     });
+
+    console.log(`translation is all like: ${this.translate('Choose a file')}` );
 
     // First we select only plugins of current type,
     // then create an array of runType methods of this plugins

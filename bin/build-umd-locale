@@ -9,12 +9,17 @@ __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 
-SRC="src/index.js"
-OUT="uppy.js"
-OUTDIR="dist"
+SRC="src/locale/ru_RU.js"
+OUT="ru_RU.js"
+OUTDIR="dist/locale"
 
-FLAGS="-t [ babelify ] --standalone Uppy"
+FLAGS="-t [ babelify ]"
 
 mkdir -p "${OUTDIR}"
 
-browserify $SRC $FLAGS > $OUTDIR/$OUT
+for file in ./src/locale/*.js; do
+  # echo "$file";
+  node_modules/.bin/browserify $file $FLAGS > $OUTDIR/${file##*/};
+done
+
+node_modules/.bin/browserify $SRC $FLAGS > $OUTDIR/$OUT

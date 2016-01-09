@@ -1,3 +1,13 @@
+<script src="/uppy/uppy.js"></script>
+<script src="/uppy/locale/ru_RU.js"></script>
+<script>
+var uppy = new Uppy.Core({locale: Uppy.locale.ru_RU});
+uppy.use(Uppy.plugins.Tus10);
+uppy.run();
+
+console.log('Uppy ' + uppy.type + ' loaded from CDN with tus enabled');
+</script>
+
 <!-- Basic Uppy styles -->
 <link rel="stylesheet" href="/css/uppy.css">
 

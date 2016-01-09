@@ -7,7 +7,7 @@
     "build:css": "bin/build-css",
     "build:lib": "babel src -d lib --stage 0",
     "build:umd:min": "./bin/build-umd",
-    "build:umd": "./bin/build-umd",
+    "build:umd": "./bin/build-umd && ./bin/build-umd-locale",
     "build": "npm run build:lib && npm run build:umd && npm run build:umd:min && npm run build:css",
     "clean": "rm -rf lib && rm -rf dist",
     "lint": "eslint src/**/*.js",
