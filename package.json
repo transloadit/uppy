@@ -6,28 +6,31 @@
   "scripts": {
     "build:css": "bin/build-css",
     "build:lib": "babel src -d lib --stage 0",
+    "build:umd:fullpath": "env OUT=uppy-fp.js ./bin/build-umd --full-paths",
     "build:umd:min": "./bin/build-umd",
     "build:umd": "./bin/build-umd",
     "build": "npm run build:lib && npm run build:umd && npm run build:umd:min && npm run build:css",
     "clean": "rm -rf lib && rm -rf dist",
+    "docs": "cd website && node documentation.js",
     "lint": "eslint src/**/*.js",
     "server": "browser-sync start --config .browsersync.js",
+    "start": "npm run build && npm run web",
     "test:phantom": "zuul test/spec/upload.js --phantom",
     "test": "bin/test",
-    "watch": "nodemon --watch src --ext scss,js -x \"npm run build && node website/update.js\"",
     "watch:all": "parallelshell \"npm run watch\" \"npm run web\"",
     "watch:css": "nodemon --watch src --ext scss -x \"npm run build && node website/update.js\"",
     "watch:examples": "cd website && node build-examples.js watch",
     "watch:js": "nodemon --watch src --ext js -x \"npm run build && node website/update.js\"",
-    "web:update-frontpage-code-sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
-    "web:clean": "cd website && ./node_modules/.bin/hexo clean",
+    "watch": "nodemon --watch src --ext scss,js -x \"npm run build && node website/update.js\"",
     "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate",
-    "web:deploy": "npm run web:install && npm run web:build && ./bin/web-deploy",
+    "web:clean": "cd website && ./node_modules/.bin/hexo clean",
+    "web:deploy": "npm run web:install && npm run web:disc && npm run web:build && ./bin/web-deploy",
+    "web:disc": "cd website && npm run disc",
+    "web:disc": "npm run build:umd:fullpath && discify dist/uppy-fp.js --output website/src/disc.html",
     "web:install": "cd website && rm -rf node_modules/hexo-renderer-uppyexamples && npm install",
     "web:preview": "cd website && ./node_modules/.bin/hexo server --debug",
-    "web": "npm run web:install && npm run web:clean && npm run web:build && npm run web:preview",
-    "docs": "cd website && node documentation.js",
-    "start": "npm run build && npm run web"
+    "web:update-frontpage-code-sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
+    "web": "npm run web:install && npm run web:clean && npm run web:build && npm run web:preview"
   },
   "repository": {
     "type": "git",
@@ -58,6 +61,7 @@
     "zuul": "^3.7.2"
   },
   "dependencies": {
+    "disc": "^1.3.2",
     "parallelshell": "^2.0.0",
     "superagent": "^1.5.0",
     "tus-js-client": "^1.1.3"
