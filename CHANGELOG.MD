@@ -10,8 +10,7 @@ happened / is needed, a GitHub issue.
 - [ ] Apply plugins when DOM elements aren't static (#25)
 - [ ] Create a progressbar/spinner/etc plugin (#18)
 - [ ] Create an Uppy logo (@vvolfy)
-- [ ] Make sure acceptance test-suite fails (#23)
-- [ ] Write an acceptance test for the Multipart example via Saucelabs (#2, @hedgerh)
+- [ ] Write an acceptance test for the Multipart example via Saucelabs (#2, #23, @hedgerh)
 
 ## 0.0.2 (Unreleased)
 
