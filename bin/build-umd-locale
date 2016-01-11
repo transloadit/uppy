@@ -21,5 +21,3 @@ for file in ./src/locale/*.js; do
   # echo "$file";
   node_modules/.bin/browserify $file $FLAGS > $OUTDIR/${file##*/};
 done
-
-node_modules/.bin/browserify $SRC $FLAGS > $OUTDIR/$OUT
