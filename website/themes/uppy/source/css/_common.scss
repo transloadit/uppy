@@ -76,7 +76,7 @@ a.button {
 }
 
 .highlight {
-  overflow-x: auto;
+  // overflow-x: auto;
   position: relative;
   padding: 0;
   background-color: $color-codebg;
@@ -95,6 +95,11 @@ a.button {
     margin: 0;
   }
 
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+
   .gutter { width: 1.5em; }
 
   .code pre {
@@ -108,7 +113,7 @@ a.button {
       position: absolute;
       top: 0;
       right: 0;
-      color: #ccc;
+      color: $color-gray;
       text-align: right;
       font-size: .75em;
       padding: 5px 10px 0;
