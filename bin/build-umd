@@ -18,4 +18,4 @@ FLAGS="-t [ babelify ] --standalone Uppy"
 
 mkdir -p "${OUTDIR}"
 
-browserify ${@} $SRC $FLAGS > $OUTDIR/$OUT
+browserify ${@:-} $SRC $FLAGS > $OUTDIR/$OUT
