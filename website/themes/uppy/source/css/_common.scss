@@ -51,6 +51,13 @@ code {
 
 em { color: $color-light; }
 
+hr {
+  border: 0;
+  background: none;
+  border-top: 1px solid $color-gray;
+  margin: 3em 0;
+}
+
 a.button {
   display: inline-block;
   font-family: $fontFamily-code;

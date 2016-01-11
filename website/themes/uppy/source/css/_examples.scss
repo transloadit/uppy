@@ -1,10 +1,15 @@
-#console-log {
-  border     : 1px solid #ccc;
+/**
+* Console
+*/
+
+.Console {
+  border: 1px solid $color-primary;
   font-family: monospace;
-  font-size  : 12px;
-  line-height: 12px;
-  height     : 112px;
-  overflow   : hidden;
-  width      : 100%;
-  display    : none;
+  font-size: 13px;
+  line-height: 1.4;
+  width: 100%;
+  min-height: 150px;
+  // overflow: hidden;
+  display: none;
+  padding: 10px 10px;
 }
