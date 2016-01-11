@@ -6,12 +6,12 @@ order: 1
 ---
 
 {% blockquote %}
-Here you'll see a demo of how you might set Uppy to work with multiple languages.
+Here you'll see a demo of how you might set Uppy to work with language packs (i18n). Actually, two examples: the CDN & Bundled / UMD.
 {% endblockquote %}
 
 <link rel="stylesheet" href="app.css">
 <% include app.html %>
-<script src="123app.js"></script>
+<script src="app.js"></script>
 
 <hr />
 
@@ -20,14 +20,14 @@ Here you'll see a demo of how you might set Uppy to work with multiple languages
 </p>
 
 <p>
-  On this page we're using the following HTML snippet:
+  To load from CDN we're using the following HTML and JavaScript:
 </p>
-{% include_code lang:html dragdrop/app.html %}
+{% include_code lang:html i18n/app.html %}
 
 <p>
-  Along with this JavaScript:
+  Or, if we want the UMD version, this JavaScript:
 </p>
-{% include_code lang:js dragdrop/app.es6 %}
+{% include_code lang:js i18n/app.es6 %}
 
 <p>
   And the following CSS:
