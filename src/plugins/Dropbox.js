@@ -2,58 +2,37 @@ import Plugin from './Plugin'
 import request from 'superagent'
 
 export default class Dropbox extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
-    this.type = 'selecter'
-    this.authenticate = this.authenticate.bind(this)
-    this.connect = this.connect.bind(this)
-    this.render = this.render.bind(this)
-    this.files = []
-    this.currentDir = '/'
+  constructor(core, opts) {
+    super(core, opts);
+    this.type = 'selecter';
+    this.authenticate = this.authenticate.bind(this);
+    this.connect = this.connect.bind(this);
+    this.render = this.render.bind(this);
+    this.files = [];
+    this.currentDirectory = '/';
   }
 
-  connect (target) {
-    this._target = document.getElementById(target)
-
-    this.client = new Dropbox.Client({ key: 'b7dzc9ei5dv5hcv', token: '' })
-    this.client.authDriver(new Dropbox.AuthDriver.Redirect())
-    this.authenticate()
-
-    if (this.client.credentials().token) {
-      this.getDirectory()
-    }
+  connect(target) {
+    this.getDirectory();
   }
 
-  authenticate () {
-    this.client.authenticate()
+  authenticate() {
+    request.get('/')
   }
 
   addFile () {
 
   }
 
-  getDirectory () {
-    request.get(`https://api18.dropbox.com/1/metadata/auto`)
-      .query({
-        client_id: 'b7dzc9ei5dv5hcv',
-        token    : this.client.credentials().token
-      })
+  getDirectory() {
+    var opts = {
+    }
+    request.get('//localhost:3002/dropbox/readdir')
+      .query(opts)
       .set('Content-Type', 'application/json')
       .end((err, res) => {
-        if (err) {
-          console.error(err)
-          // return showError(err)
-        }
-        console.log(res)
+        console.log(res);
       })
-
-    return this.client.readdir(this.currentDir, (error, entries, stat, statFiles) => {
-      if (error) {
-        console.error(error)
-        // return showError(error)  // Something went wrong.
-      }
-      return this.render(statFiles)
-    })
   }
 
   run (results) {
