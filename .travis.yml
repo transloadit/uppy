@@ -9,10 +9,9 @@ addons:
     - g++-4.8
 
 script:
-  - "npm run-script build"
-
-# Automatically deploy website onto gh-pages (if master and not PR)
-after_success:
+  - npm run-script build
+  # Automatically deploy website onto gh-pages (if master and not PR)
+  # Don't do this in `after_success`, because then failures won't bubble up
   - git config --global user.name 'Uppy Bot'
   - git config --global user.email 'uppybot@uppyjs.io'
   - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && npm run web:deploy

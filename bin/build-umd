@@ -10,7 +10,7 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 
 SRC="src/index.js"
-OUT="uppy.js"
+OUT="${OUT:-uppy.js}"
 
 OUTDIR="dist"
 TRANSFORMS="[ babelify ]"
@@ -18,4 +18,4 @@ FLAGS="-t [ babelify ] --standalone Uppy"
 
 mkdir -p "${OUTDIR}"
 
-browserify $SRC $FLAGS > $OUTDIR/$OUT
+browserify ${@:-} $SRC $FLAGS > $OUTDIR/$OUT
