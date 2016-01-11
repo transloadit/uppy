@@ -2201,8 +2201,8 @@ var DragDrop = (function (_Plugin) {
     Object.assign(this.opts, opts);
 
     // get the element where Drag & Drop event will occur
-    this.dropzone = document.querySelectorAll(this.opts.selector)[0];
-    this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0];
+    this.dropzone = document.querySelector(this.opts.selector);
+    this.dropzoneInput = document.querySelector('.UppyDragDrop-input');
 
     this.status = document.querySelectorAll('.UppyDragDrop-status')[0];
 
@@ -2244,7 +2244,6 @@ var DragDrop = (function (_Plugin) {
     value: function listenForEvents() {
       var _this = this;
 
-      console.log('translation is all like: ' + this.core.translate('Choose a file'));
       console.log('waiting for some files to be dropped on ' + this.opts.selector);
 
       if (this.isDragDropSupported) {
@@ -2295,6 +2294,7 @@ var DragDrop = (function (_Plugin) {
     value: function handleDrop(e) {
       console.log('all right, someone dropped something here...');
       var files = e.dataTransfer.files;
+      console.log(files);
 
       // const formData = new FormData(this.dropzone);
       // console.log('pizza', formData);
