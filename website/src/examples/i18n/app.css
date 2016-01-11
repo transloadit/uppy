@@ -1,0 +1,10 @@
+/* Drag & Drop CSS to style the demo itself */
+
+.UppyDragDrop-puppy {
+  max-width: 80px;
+}
+
+.UppyDragDropExample-credit {
+  display: block;
+  margin: 20px 0;
+}
