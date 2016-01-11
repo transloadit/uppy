@@ -23,7 +23,7 @@
     "hexo-tag-emojis": "^2.0.0",
     "hexo-util": "^0.2.1",
     "mkdirp": "^0.5.1",
-    "postcss-svg": "^1.0.4",
+    "postcss-svg": "https://github.com/kvz/postcss-svg/commit/9239b6dd4ab0dc3ef37f41c9cbc0e23d25549c7b",
     "uuid": "^2.0.1"
   },
   "devDependencies": {
