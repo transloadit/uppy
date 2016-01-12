@@ -7,6 +7,15 @@ import Utils from '../core/Utils';
 export default class Core {
   constructor(opts) {
 
+    // set default options
+    const defaultOptions = {
+      // locale: 'en_US'
+    };
+
+    // Merge default options with the ones set by user
+    this.opts = defaultOptions;
+    Object.assign(this.opts, opts);
+
     // Dictates in what order different plugin types are ran:
     this.types = [ 'presetter', 'selecter', 'uploader' ];
 
@@ -30,6 +39,25 @@ export default class Core {
     this.plugins[plugin.type].push(plugin);
 
     return this;
+  }
+
+  /**
+ * Translate a string into the selected language (this.locale).
+ * Return the original string if locale is undefined
+ *
+ * @param {string} string that needs translating
+ * @returns {string} translated string
+ */
+  translate(string) {
+    const dictionary = this.opts.locale;
+
+    // if locale is unspecified, return the original string
+    if (!dictionary) {
+      return string;
+    }
+
+    const translatedString = dictionary[string];
+    return translatedString;
   }
 
   /**
@@ -65,6 +93,8 @@ export default class Core {
       class  : 'Core',
       method : 'run'
     });
+
+    console.log(`translation is all like: ${this.translate('Choose a file')}` );
 
     // First we select only plugins of current type,
     // then create an array of runType methods of this plugins

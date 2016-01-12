@@ -9,9 +9,7 @@ order: 0
 This example showcases sourcing an UMD dist build straight from a CDN.
 {% endblockquote %}
 
-<!-- <link rel="stylesheet" href="app.css"> -->
 <% include app.html %>
-<script src="app.js"></script>
 
 <hr />
 
@@ -20,16 +18,6 @@ This example showcases sourcing an UMD dist build straight from a CDN.
 </p>
 
 <p>
-  On this page we're using the following HTML snippet:
+  On this page we're using the following HTML & JS snippet:
 </p>
 {% include_code lang:html cdn/app.html %}
-
-<p>
-  Along with this JavaScript:
-</p>
-{% include_code lang:js cdn/app.es6 %}
-
-<!-- <p>
-  And the following CSS:
-</p>
-{% include_code lang:css cdn/app.css %} -->

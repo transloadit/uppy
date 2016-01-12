@@ -16,9 +16,9 @@ happened / is needed, a GitHub issue.
 ## 0.0.2 (Unreleased)
 
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
-- [ ] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
 - [ ] core: Find good names for `cdn` vs `npm` builds and rename all-the-things
 - [ ] server: Create a (barely) working uppy-server (#39, @hedgerh)
+- [x] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
 - [x] website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
 
 ## 0.0.1 (December 20, 2015)
