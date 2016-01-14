@@ -32,13 +32,25 @@ export default class Plugin {
       results: results
     });
 
-    const files = [];
-    for (let i in results) {
-      for (let j in results[i].files) {
-        files.push(results[i].files.item(j));
-      }
-    }
+    window.results = results;
 
+    console.log('-------');
+    const files = [];
+    results.forEach(result => {
+      Array.from(result.files).forEach(file => files.push(file));
+    });
+
+    // const files = [];
+    // for (let i in results) {
+    //   // console.log('yo12131');
+    //   // console.log(results[i].files);
+    //   for (let j in results[i].files) {
+    //     console.log(results[i].files.item(j));
+    //     // files.push(results[i].files.item(j));
+    //   }
+    // }
+
+    // return Array.from(fileList);
     return files;
   }
 
