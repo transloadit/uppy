@@ -16,8 +16,10 @@ export default class Tus10 extends Plugin {
 
     const files = this.extractFiles(results);
 
+    // console.log(files);
+
     this.setProgress(0);
-    var uploaded  = [];
+    // var uploaded  = [];
     var uploaders = [];
     for (var i in files) {
       var file = files[i];
@@ -27,16 +29,25 @@ export default class Tus10 extends Plugin {
     return Promise.all(uploaders);
   }
 
+  /**
+ * Create a new Tus upload
+ *
+ * @param {object} file for use with upload
+ * @param {integer} current file in a queue
+ * @param {integer} total number of files in a queue
+ * @returns {Promise}
+ */
   upload(file, current, total) {
     // Create a new tus upload
-    var self   = this;
-    var upload = new tus.Upload(file, {
+    const self = this;
+    const upload = new tus.Upload(file, {
       endpoint: this.opts.endpoint,
       onError: function (error) {
         return Promise.reject('Failed because: ' + error);
       },
       onProgress: function (bytesUploaded, bytesTotal) {
-        var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
+        let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
+        percentage = Math.round(percentage);
         self.setProgress(percentage, current, total);
       },
       onSuccess: function () {

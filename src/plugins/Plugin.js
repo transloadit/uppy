@@ -1,7 +1,14 @@
+/**
+* Boilerplate that all Plugins share - and should not be used
+* directly. It also shows which methods final plugins should implement/override,
+* this deciding on structure.
+*
+* @param {core} main Uppy core object
+* @param {opts} object with plugin options
+* @returns results — an array of files, success or fail message
+*/
 export default class Plugin {
-  // This contains boilerplate that all Plugins share - and should not be used
-  // directly. It also shows which methods final plugins should implement/override,
-  // this deciding on structure.
+
   constructor(core, opts) {
     this.core = core;
     this.opts = opts;
@@ -31,8 +38,6 @@ export default class Plugin {
       method : 'extractFiles',
       results: results
     });
-
-    window.results = results;
 
     console.log('-------');
     const files = [];

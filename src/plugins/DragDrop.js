@@ -59,7 +59,6 @@ export default class DragDrop extends Plugin {
   }
 
   listenForEvents() {
-    console.log(`translation is all like: ${this.core.translate('Choose a file')}` );
     console.log(`waiting for some files to be dropped on ${this.opts.selector}`);
 
     if (this.isDragDropSupported) {
@@ -106,6 +105,7 @@ export default class DragDrop extends Plugin {
   handleDrop(e) {
     console.log('all right, someone dropped something here...');
     const files = e.dataTransfer.files;
+    // files = Array.from(files);
 
     // const formData = new FormData(this.dropzone);
     // console.log('pizza', formData);

@@ -3,6 +3,7 @@ import Utils from '../core/Utils';
 /**
 * Main Uppy core
 *
+* @param {opts} General options, like locale, to show modal or not to show
 */
 export default class Core {
   constructor(opts) {
@@ -34,7 +35,7 @@ export default class Core {
  */
   use(Plugin, opts) {
     // Instantiate
-    var plugin = new Plugin(this, opts);
+    const plugin = new Plugin(this, opts);
     this.plugins[plugin.type] = this.plugins[plugin.type] || [];
     this.plugins[plugin.type].push(plugin);
 
@@ -51,20 +52,20 @@ export default class Core {
   translate(string) {
     const dictionary = this.opts.locale;
 
-    // if locale is unspecified, return the original string
-    if (!dictionary) {
+    // if locale is unspecified, or the translation is missing,
+    // return the original string
+    if (!dictionary || !dictionary[string]) {
       return string;
     }
 
-    const translatedString = dictionary[string];
-    return translatedString;
+    return dictionary[string];
   }
 
   /**
  * Sets plugin’s progress, for uploads for example
  *
- * @param {plugin} plugin that want to set progress
- * @param {percentage} integer
+ * @param {object} plugin that wants to set progress
+ * @param {integer} percentage
  * @returns {object} self for chaining
  */
   setProgress(plugin, percentage) {
@@ -75,6 +76,10 @@ export default class Core {
 
   /**
  * Runs all plugins of the same type in parallel
+ *
+ * @param {string} type that wants to set progress
+ * @param {array} files
+ * @returns {Promise} of all methods
  */
   runType(type, files) {
     const methods = this.plugins[type].map(
