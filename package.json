@@ -58,11 +58,11 @@
     "phantomjs": "1.9.18",
     "tape": "4.4.0",
     "watchify": "3.6.1",
-    "zuul": "3.7.2"
+    "zuul": "3.7.2",
+    "parallelshell": "2.0.0",
+    "disc": "1.3.2"
   },
   "dependencies": {
-    "disc": "1.3.2",
-    "parallelshell": "2.0.0",
     "superagent": "1.5.0",
     "tus-js-client": "1.1.3"
   }
