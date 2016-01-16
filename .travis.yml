@@ -14,7 +14,7 @@ script:
   # Don't do this in `after_success`, because then failures won't bubble up
   - git config --global user.name 'Uppy Bot'
   - git config --global user.email 'uppybot@uppyjs.io'
-  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && npm run web:deploy
+  - if [ "${TRAVIS_PULL_REQUEST}" == "false" ] && [ "${TRAVIS_BRANCH}" == "master" ]; then npm run web:deploy; else echo "Skipping for non-master/prs"; fi
 
 env:
   global:
