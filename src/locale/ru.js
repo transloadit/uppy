@@ -25,5 +25,8 @@ ru.pluralize = function (n) {
   return 2;
 };
 
-Uppy.locale.ru = ru;
+if (typeof Uppy !== 'undefined') {
+  Uppy.locale.ru = ru;
+}
+
 export default ru;
