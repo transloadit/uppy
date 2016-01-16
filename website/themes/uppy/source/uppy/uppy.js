@@ -1902,9 +1902,16 @@ var _coreUtils = require('../core/Utils');
 
 var _coreUtils2 = _interopRequireDefault(_coreUtils);
 
+// import Polyglot from 'node-polyglot';
+
+var _coreTranslator = require('../core/Translator');
+
+var _coreTranslator2 = _interopRequireDefault(_coreTranslator);
+
 /**
 * Main Uppy core
 *
+* @param {object} opts general options, like locale, to show modal or not to show
 */
 
 var Core = (function () {
@@ -1914,6 +1921,8 @@ var Core = (function () {
     // set default options
     var defaultOptions = {
       // locale: 'en_US'
+      // load English as the default locale
+      locale: require('../locale/en_US.js')
     };
 
     // Merge default options with the ones set by user
@@ -1927,14 +1936,23 @@ var Core = (function () {
 
     // Container for different types of plugins
     this.plugins = {};
+
+    // trying out Polyglot
+    // this.polyglot = new Polyglot({locale: 'ru'});
+    // this.polyglot.extend(this.opts.locale);
+    // console.log(this.polyglot.t('files_chosen', {smart_count: 100}));
+
+    // rolling out custom translation
+    this.translator = new _coreTranslator2['default']({ locale: this.opts.locale });
+    console.log(this.translator.t('files_chosen', { smart_count: 3 }));
   }
 
   /**
   * Registers a plugin with Core
   *
-  * @param {Plugin} Plugin object
-  * @param {opts} options object that will be passed to Plugin later
-  * @returns {object} self for chaining
+  * @param {Class} Plugin object
+  * @param {object} options object that will be passed to Plugin later
+  * @return {object} self for chaining
   */
 
   _createClass(Core, [{
@@ -1953,28 +1971,26 @@ var Core = (function () {
     * Return the original string if locale is undefined
     *
     * @param {string} string that needs translating
-    * @returns {string} translated string
+    * @return {string} translated string
     */
-  }, {
-    key: 'translate',
-    value: function translate(string) {
-      var dictionary = this.opts.locale;
-
-      // if locale is unspecified, return the original string
-      if (!dictionary) {
-        return string;
-      }
-
-      var translatedString = dictionary[string];
-      return translatedString;
-    }
+    // translate(key, opts) {
+    //   const dictionary = this.opts.locale;
+    //
+    //   // if locale is unspecified, or the translation is missing,
+    //   // return the original string
+    //   if (!dictionary || !dictionary[string]) {
+    //     return string;
+    //   }
+    //
+    //   return dictionary[string];
+    // }
 
     /**
     * Sets plugin’s progress, for uploads for example
     *
-    * @param {plugin} plugin that want to set progress
-    * @param {percentage} integer
-    * @returns {object} self for chaining
+    * @param {object} plugin that wants to set progress
+    * @param {integer} percentage
+    * @return {object} self for chaining
     */
   }, {
     key: 'setProgress',
@@ -1986,6 +2002,10 @@ var Core = (function () {
 
     /**
     * Runs all plugins of the same type in parallel
+    *
+    * @param {string} type that wants to set progress
+    * @param {array} files
+    * @return {Promise} of all methods
     */
   }, {
     key: 'runType',
@@ -2011,7 +2031,9 @@ var Core = (function () {
         method: 'run'
       });
 
-      console.log('translation is all like: ' + this.translate('Choose a file'));
+      // console.log(
+      //   `translation is all like: ${this.translate('number_of_files_chosen', {number: 5})}`
+      // );
 
       // First we select only plugins of current type,
       // then create an array of runType methods of this plugins
@@ -2035,7 +2057,96 @@ var Core = (function () {
 exports['default'] = Core;
 module.exports = exports['default'];
 
-},{"../core/Utils":6}],6:[function(require,module,exports){
+},{"../core/Translator":6,"../core/Utils":7,"../locale/en_US.js":10}],6:[function(require,module,exports){
+/**
+* Translates strings with interpolation & pluralization support. Extensible with custom dictionaries and pluralization functions.
+* Borrows heavily from and inspired by Polyglot https://github.com/airbnb/polyglot.js. Differences: pluralization functions are not hardcoded and can be easily added among with dictionaries.
+* Usage example: translator.t('files_chosen', {smart_count: 3})
+*
+* @param {opts}
+*/
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var Translator = (function () {
+  function Translator(opts) {
+    _classCallCheck(this, Translator);
+
+    var defaultOptions = {
+      // load English as the default locale
+      // locale: require('../locale/en_US.js')
+    };
+
+    this.opts = defaultOptions;
+    Object.assign(this.opts, opts);
+
+    // console.log('--> and the locale will be...');
+    // console.log(this.opts.locale);
+  }
+
+  /**
+  * Takes a string with placeholder variables like '%{smart_count} file selected' and replaces it with values from options {smart_count: 5}
+  *
+  * @param {string} phrase that needs interpolation, with placeholders
+  * @param {object} options with values that will be used to replace placeholders
+  */
+
+  _createClass(Translator, [{
+    key: 'interpolate',
+    value: function interpolate(phrase, options) {
+      var replace = String.prototype.replace;
+
+      for (var arg in options) {
+        if (arg !== '_' && options.hasOwnProperty(arg)) {
+          // Ensure replacement value is escaped to prevent special $-prefixed
+          // regex replace tokens. the "$$$$" is needed because each "$" needs to
+          // be escaped with "$" itself, and we need two in the resulting output.
+          var replacement = options[arg];
+          if (typeof replacement === 'string') {
+            replacement = replace.call(options[arg], dollarRegex, dollarBillsYall);
+          }
+          // We create a new `RegExp` each time instead of using a more-efficient
+          // string replace so that the same argument can be replaced multiple times
+          // in the same phrase.
+          phrase = replace.call(phrase, new RegExp('%\\{' + arg + '\\}', 'g'), replacement);
+        }
+      }
+      return phrase;
+    }
+
+    /**
+    * Public translate method
+    *
+    * @param {string} key
+    * @param {object} options with values that will be used later to replace placeholders in string
+    * @return {string} translated (and interpolated)
+    */
+  }, {
+    key: 't',
+    value: function t(key, options) {
+      if (options.smart_count) {
+        var plural = this.opts.locale.pluralize(options.smart_count);
+        return this.interpolate(this.opts.locale.strings[key][plural], options);
+      } else {
+        return this.interpolate(this.opts.locale.strings[key], options);
+      }
+    }
+  }]);
+
+  return Translator;
+})();
+
+exports['default'] = Translator;
+module.exports = exports['default'];
+
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2053,7 +2164,7 @@ function promiseWaterfall(_ref) {
 
   var finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
     return prevTaskPromise.then(task);
-  }, resolvedPromise(1)); // initial value
+  }, resolvedPromise([])); // initial value
 
   return finalTaskPromise;
 }
@@ -2108,7 +2219,7 @@ exports['default'] = {
 };
 module.exports = exports['default'];
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2124,7 +2235,7 @@ var _Core2 = _interopRequireDefault(_Core);
 exports['default'] = _Core2['default'];
 module.exports = exports['default'];
 
-},{"./Core":5}],8:[function(require,module,exports){
+},{"./Core":5}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2150,7 +2261,35 @@ exports['default'] = {
 };
 module.exports = exports['default'];
 
-},{"./core":7,"./plugins":16}],9:[function(require,module,exports){
+},{"./core":8,"./plugins":18}],10:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+var en_US = {};
+
+en_US.strings = {
+  'choose_file': 'Choose a file',
+  'or_drag_drop': 'or drag it here',
+  'files_chosen': {
+    0: '%{smart_count} file selected',
+    1: '%{smart_count} files selected'
+  }
+};
+
+en_US.pluralize = function (n) {
+  if (n === 1) {
+    return 0;
+  }
+  return 1;
+};
+
+Uppy.locale.en_US = en_US;
+exports['default'] = en_US;
+module.exports = exports['default'];
+
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2217,7 +2356,7 @@ var DragDrop = (function (_Plugin) {
 
   /**
   * Checks if the browser supports Drag & Drop
-  * @returns {object} true if Drag & Drop is supported, false otherwise
+  * @return {object} true if supported, false otherwise
   */
 
   _createClass(DragDrop, [{
@@ -2244,7 +2383,6 @@ var DragDrop = (function (_Plugin) {
     value: function listenForEvents() {
       var _this = this;
 
-      console.log('translation is all like: ' + this.core.translate('Choose a file'));
       console.log('waiting for some files to be dropped on ' + this.opts.selector);
 
       if (this.isDragDropSupported) {
@@ -2295,6 +2433,7 @@ var DragDrop = (function (_Plugin) {
     value: function handleDrop(e) {
       console.log('all right, someone dropped something here...');
       var files = e.dataTransfer.files;
+      // files = Array.from(files);
 
       // const formData = new FormData(this.dropzone);
       // console.log('pizza', formData);
@@ -2315,7 +2454,7 @@ var DragDrop = (function (_Plugin) {
       console.log('@todo: No support for formData yet', formData);
       var files = [];
 
-      return Promise.resolve(files);
+      return Promise.resolve({ from: 'DragDrop', files: files });
     }
   }, {
     key: 'run',
@@ -2336,7 +2475,7 @@ var DragDrop = (function (_Plugin) {
 exports['default'] = DragDrop;
 module.exports = exports['default'];
 
-},{"../core/Utils":6,"./Plugin":13}],10:[function(require,module,exports){
+},{"../core/Utils":7,"./Plugin":15}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2478,7 +2617,7 @@ var Dropbox = (function (_Plugin) {
 exports['default'] = Dropbox;
 module.exports = exports['default'];
 
-},{"../core/Utils":6,"./Plugin":13,"superagent":1}],11:[function(require,module,exports){
+},{"../core/Utils":7,"./Plugin":15,"superagent":1}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2572,7 +2711,7 @@ var Formtag = (function (_Plugin) {
 exports['default'] = Formtag;
 module.exports = exports['default'];
 
-},{"./Plugin":13}],12:[function(require,module,exports){
+},{"./Plugin":15}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2681,7 +2820,16 @@ var Multipart = (function (_Plugin) {
 exports['default'] = Multipart;
 module.exports = exports['default'];
 
-},{"./Plugin":13}],13:[function(require,module,exports){
+},{"./Plugin":15}],15:[function(require,module,exports){
+/**
+* Boilerplate that all Plugins share - and should not be used
+* directly. It also shows which methods final plugins should implement/override,
+* this deciding on structure.
+*
+* @param {object} main Uppy core object
+* @param {object} object with plugin options
+* @return {array | string} files or success/fail message
+*/
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2693,10 +2841,6 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var Plugin = (function () {
-  // This contains boilerplate that all Plugins share - and should not be used
-  // directly. It also shows which methods final plugins should implement/override,
-  // this deciding on structure.
-
   function Plugin(core, opts) {
     _classCallCheck(this, Plugin);
 
@@ -2733,12 +2877,23 @@ var Plugin = (function () {
       });
 
       var files = [];
-      for (var i in results) {
-        for (var j in results[i].files) {
-          files.push(results[i].files.item(j));
-        }
-      }
+      results.forEach(function (result) {
+        Array.from(result.files).forEach(function (file) {
+          return files.push(file);
+        });
+      });
 
+      // const files = [];
+      // for (let i in results) {
+      //   // console.log('yo12131');
+      //   // console.log(results[i].files);
+      //   for (let j in results[i].files) {
+      //     console.log(results[i].files.item(j));
+      //     // files.push(results[i].files.item(j));
+      //   }
+      // }
+
+      // return Array.from(fileList);
       return files;
     }
   }, {
@@ -2754,7 +2909,7 @@ var Plugin = (function () {
 exports['default'] = Plugin;
 module.exports = exports['default'];
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -2783,7 +2938,7 @@ var TransloaditBasic = (function (_Plugin) {
   return TransloaditBasic;
 })(_Plugin3['default']);
 
-},{"./Plugin":13}],15:[function(require,module,exports){
+},{"./Plugin":15}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2808,6 +2963,11 @@ var _tusJsClient = require('tus-js-client');
 
 var _tusJsClient2 = _interopRequireDefault(_tusJsClient);
 
+/**
+* Tus resumable file uploader
+*
+*/
+
 var Tus10 = (function (_Plugin) {
   _inherits(Tus10, _Plugin);
 
@@ -2829,8 +2989,10 @@ var Tus10 = (function (_Plugin) {
 
       var files = this.extractFiles(results);
 
+      // console.log(files);
+
       this.setProgress(0);
-      var uploaded = [];
+      // var uploaded  = [];
       var uploaders = [];
       for (var i in files) {
         var file = files[i];
@@ -2839,9 +3001,19 @@ var Tus10 = (function (_Plugin) {
 
       return Promise.all(uploaders);
     }
+
+    /**
+    * Create a new Tus upload
+    *
+    * @param {object} file for use with upload
+    * @param {integer} current file in a queue
+    * @param {integer} total number of files in a queue
+    * @returns {Promise}
+    */
   }, {
     key: 'upload',
     value: function upload(file, current, total) {
+      console.log(current, 'of', total);
       // Create a new tus upload
       var self = this;
       var upload = new _tusJsClient2['default'].Upload(file, {
@@ -2851,6 +3023,7 @@ var Tus10 = (function (_Plugin) {
         },
         onProgress: function onProgress(bytesUploaded, bytesTotal) {
           var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
+          percentage = Math.round(percentage);
           self.setProgress(percentage, current, total);
         },
         onSuccess: function onSuccess() {
@@ -2869,7 +3042,7 @@ var Tus10 = (function (_Plugin) {
 exports['default'] = Tus10;
 module.exports = exports['default'];
 
-},{"./Plugin":13,"tus-js-client":4}],16:[function(require,module,exports){
+},{"./Plugin":15,"tus-js-client":4}],18:[function(require,module,exports){
 // Parent
 'use strict';
 
@@ -2924,5 +3097,5 @@ exports['default'] = {
 };
 module.exports = exports['default'];
 
-},{"./DragDrop":9,"./Dropbox":10,"./Formtag":11,"./Multipart":12,"./Plugin":13,"./TransloaditBasic":14,"./Tus10":15}]},{},[8])(8)
+},{"./DragDrop":11,"./Dropbox":12,"./Formtag":13,"./Multipart":14,"./Plugin":15,"./TransloaditBasic":16,"./Tus10":17}]},{},[9])(9)
 });

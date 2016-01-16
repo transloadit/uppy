@@ -178,7 +178,7 @@ a.button {
 .page-index .MainHeader {
   padding-top: 1.5em;
   padding-bottom: 2.5em;
-  border-top: 6px solid $color-primary;
+  border-top: 3px solid $color-primary;
 }
 
 .page-inner .MainHeader {
@@ -199,7 +199,7 @@ a.button {
     box-shadow: none;
     position: relative;
     z-index: 2;
-    border-top: 6px solid $color-primary;
+    border-top: 3px solid $color-primary;
     text-align: left;
   }
 }

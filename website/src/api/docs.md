@@ -12,7 +12,7 @@ Main Uppy core
 
 **Parameters**
 
--   `opts`  
+-   `opts` **object** general options, like locale, to show modal or not to show
 
 ### run
 
@@ -25,8 +25,23 @@ Runs all plugins of the same type in parallel
 
 **Parameters**
 
--   `type`  
--   `files`  
+-   `type` **string** that wants to set progress
+-   `files` **array** 
+
+Returns **Promise** of all methods
+
+### setProgress
+
+Translate a string into the selected language (this.locale).
+Return the original string if locale is undefined
+
+**Parameters**
+
+-   `string` **string** that needs translating
+-   `plugin`  
+-   `percentage`  
+
+Returns **string** translated string
 
 ### setProgress
 
@@ -34,9 +49,8 @@ Sets plugin’s progress, for uploads for example
 
 **Parameters**
 
--   `plugin` **plugin** that want to set progress
--   `integer` **percentage** 
--   `percentage`  
+-   `plugin` **object** that wants to set progress
+-   `percentage` **integer** 
 
 Returns **object** self for chaining
 
@@ -46,11 +60,56 @@ Registers a plugin with Core
 
 **Parameters**
 
--   `Plugin` **Plugin** object
--   `options` **opts** object that will be passed to Plugin later
+-   `Plugin` **Class** object
+-   `options` **object** object that will be passed to Plugin later
 -   `opts`  
 
 Returns **object** self for chaining
+
+## Translator
+
+Translates strings with interpolation & pluralization support. Extensible with custom dictionaries and pluralization functions.
+Borrows heavily from and inspired by Polyglot <https://github.com/airbnb/polyglot.js>. Differences: pluralization functions are not hardcoded and can be easily added among with dictionaries.
+Usage example: translator.t('files\_chosen', {smart\_count: 3})
+
+**Parameters**
+
+-   `opts`  
+
+### interpolate
+
+Takes a string with placeholder variables like '%{smart\_count} file selected' and replaces it with values from options {smart\_count: 5}
+
+**Parameters**
+
+-   `phrase` **string** that needs interpolation, with placeholders
+-   `options` **object** with values that will be used to replace placeholders
+
+### t
+
+Public translate method
+
+**Parameters**
+
+-   `key` **string** 
+-   `options` **object** with values that will be used later to replace placeholders in string
+
+Returns **string** translated (and interpolated)
+
+## Plugin
+
+Boilerplate that all Plugins share - and should not be used
+directly. It also shows which methods final plugins should implement/override,
+this deciding on structure.
+
+**Parameters**
+
+-   `main` **object** Uppy core object
+-   `object` **object** with plugin options
+-   `core`  
+-   `opts`  
+
+Returns **array or string** files or success/fail message
 
 ## DragDrop
 
@@ -65,4 +124,25 @@ Drag & Drop plugin
 
 Checks if the browser supports Drag & Drop
 
-Returns **object** true if Drag & Drop is supported, false otherwise
+Returns **object** true if supported, false otherwise
+
+## Tus10
+
+Tus resumable file uploader
+
+**Parameters**
+
+-   `core`  
+-   `opts`  
+
+### upload
+
+Create a new Tus upload
+
+**Parameters**
+
+-   `file` **object** for use with upload
+-   `current` **integer** file in a queue
+-   `total` **integer** number of files in a queue
+
+Returns **Promise** 
