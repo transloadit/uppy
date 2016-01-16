@@ -3,9 +3,9 @@
 * directly. It also shows which methods final plugins should implement/override,
 * this deciding on structure.
 *
-* @param {core} main Uppy core object
-* @param {opts} object with plugin options
-* @returns results — an array of files, success or fail message
+* @param {object} main Uppy core object
+* @param {object} object with plugin options
+* @return {array | string} files or success/fail message
 */
 export default class Plugin {
 
@@ -39,7 +39,6 @@ export default class Plugin {
       results: results
     });
 
-    console.log('-------');
     const files = [];
     results.forEach(result => {
       Array.from(result.files).forEach(file => files.push(file));

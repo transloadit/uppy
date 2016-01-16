@@ -38,7 +38,7 @@ export default class DragDrop extends Plugin {
 
    /**
   * Checks if the browser supports Drag & Drop
-  * @returns {object} true if Drag & Drop is supported, false otherwise
+  * @return {object} true if supported, false otherwise
   */
   checkDragDropSupport() {
     const div = document.createElement('div');
@@ -80,13 +80,13 @@ export default class DragDrop extends Plugin {
       Utils.removeClass(this.dropzone, 'is-dragover');
     });
 
-    let onDrop = new Promise((resolve, reject) => {
+    const onDrop = new Promise((resolve, reject) => {
       this.dropzone.addEventListener('drop', (e) => {
         resolve(this.handleDrop.bind(null, e));
       });
     });
 
-    let onInput = new Promise((resolve, reject) => {
+    const onInput = new Promise((resolve, reject) => {
       this.dropzoneInput.addEventListener('change', (e) => {
         resolve(this.handleInputChange.bind(null, e));
       });
@@ -125,7 +125,7 @@ export default class DragDrop extends Plugin {
     console.log('@todo: No support for formData yet', formData);
     const files = [];
 
-    return Promise.resolve(files);
+    return Promise.resolve({from: 'DragDrop', files: files});
   }
 
   run(results) {

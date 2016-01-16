@@ -1,6 +1,10 @@
 import Plugin from './Plugin';
 import tus from 'tus-js-client';
 
+/**
+* Tus resumable file uploader
+*
+*/
 export default class Tus10 extends Plugin {
   constructor(core, opts) {
     super(core, opts);
@@ -38,6 +42,7 @@ export default class Tus10 extends Plugin {
  * @returns {Promise}
  */
   upload(file, current, total) {
+    console.log(current, 'of', total);
     // Create a new tus upload
     const self = this;
     const upload = new tus.Upload(file, {

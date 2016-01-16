@@ -1,9 +1,11 @@
 import Utils from '../core/Utils';
+// import Polyglot from 'node-polyglot';
+import Translator from '../core/Translator';
 
 /**
 * Main Uppy core
 *
-* @param {opts} General options, like locale, to show modal or not to show
+* @param {object} opts general options, like locale, to show modal or not to show
 */
 export default class Core {
   constructor(opts) {
@@ -11,6 +13,8 @@ export default class Core {
     // set default options
     const defaultOptions = {
       // locale: 'en_US'
+      // load English as the default locale
+      locale: require('../locale/en_US.js')
     };
 
     // Merge default options with the ones set by user
@@ -24,14 +28,23 @@ export default class Core {
 
     // Container for different types of plugins
     this.plugins = {};
+
+    // trying out Polyglot
+    // this.polyglot = new Polyglot({locale: 'ru'});
+    // this.polyglot.extend(this.opts.locale);
+    // console.log(this.polyglot.t('files_chosen', {smart_count: 100}));
+
+    // rolling out custom translation
+    this.translator = new Translator({locale: this.opts.locale});
+    console.log(this.translator.t('files_chosen', {smart_count: 3}));
   }
 
   /**
  * Registers a plugin with Core
  *
- * @param {Plugin} Plugin object
- * @param {opts} options object that will be passed to Plugin later
- * @returns {object} self for chaining
+ * @param {Class} Plugin object
+ * @param {object} options object that will be passed to Plugin later
+ * @return {object} self for chaining
  */
   use(Plugin, opts) {
     // Instantiate
@@ -47,26 +60,26 @@ export default class Core {
  * Return the original string if locale is undefined
  *
  * @param {string} string that needs translating
- * @returns {string} translated string
+ * @return {string} translated string
  */
-  translate(string) {
-    const dictionary = this.opts.locale;
-
-    // if locale is unspecified, or the translation is missing,
-    // return the original string
-    if (!dictionary || !dictionary[string]) {
-      return string;
-    }
-
-    return dictionary[string];
-  }
+  // translate(key, opts) {
+  //   const dictionary = this.opts.locale;
+  //
+  //   // if locale is unspecified, or the translation is missing,
+  //   // return the original string
+  //   if (!dictionary || !dictionary[string]) {
+  //     return string;
+  //   }
+  //
+  //   return dictionary[string];
+  // }
 
   /**
  * Sets plugin’s progress, for uploads for example
  *
  * @param {object} plugin that wants to set progress
  * @param {integer} percentage
- * @returns {object} self for chaining
+ * @return {object} self for chaining
  */
   setProgress(plugin, percentage) {
     // Any plugin can call this via `this.core.setProgress(this, precentage)`
@@ -79,7 +92,7 @@ export default class Core {
  *
  * @param {string} type that wants to set progress
  * @param {array} files
- * @returns {Promise} of all methods
+ * @return {Promise} of all methods
  */
   runType(type, files) {
     const methods = this.plugins[type].map(
@@ -99,7 +112,9 @@ export default class Core {
       method : 'run'
     });
 
-    console.log(`translation is all like: ${this.translate('Choose a file')}` );
+    // console.log(
+    //   `translation is all like: ${this.translate('number_of_files_chosen', {number: 5})}`
+    // );
 
     // First we select only plugins of current type,
     // then create an array of runType methods of this plugins
