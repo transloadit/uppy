@@ -2285,7 +2285,10 @@ en_US.pluralize = function (n) {
   return 1;
 };
 
-Uppy.locale.en_US = en_US;
+if (typeof Uppy !== 'undefined') {
+  Uppy.locale.en_US = en_US;
+}
+
 exports['default'] = en_US;
 module.exports = exports['default'];
 
@@ -2855,15 +2858,15 @@ var Plugin = (function () {
     value: function setProgress(percentage, current, total) {
       var finalPercentage = percentage;
 
-      if (current !== undefined && total !== undefined) {
-        var percentageOfTotal = percentage / total;
-        finalPercentage = percentageOfTotal;
-        if (current > 0) {
-          finalPercentage = percentage + 100 / total * current;
-        } else {
-          finalPercentage = current * percentage;
-        }
-      }
+      // if (current !== undefined && total !== undefined) {
+      //   var percentageOfTotal = (percentage / total);
+      //   // finalPercentage = percentageOfTotal;
+      //   if (current > 1) {
+      //     finalPercentage = percentage + (100 / (total * current));
+      //   } else {
+      //     finalPercentage = percentage;
+      //   }
+      // }
 
       this.core.setProgress(this, finalPercentage);
     }
@@ -2996,7 +2999,9 @@ var Tus10 = (function (_Plugin) {
       var uploaders = [];
       for (var i in files) {
         var file = files[i];
-        uploaders.push(this.upload(file, i, files.length));
+        var current = parseInt(i) + 1;
+        var total = files.length;
+        uploaders.push(this.upload(file, current, total));
       }
 
       return Promise.all(uploaders);
@@ -3013,7 +3018,7 @@ var Tus10 = (function (_Plugin) {
   }, {
     key: 'upload',
     value: function upload(file, current, total) {
-      console.log(current, 'of', total);
+      console.log('uploading ' + current + ' of ' + total);
       // Create a new tus upload
       var self = this;
       var upload = new _tusJsClient2['default'].Upload(file, {

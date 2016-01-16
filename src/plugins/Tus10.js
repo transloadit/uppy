@@ -24,10 +24,12 @@ export default class Tus10 extends Plugin {
 
     this.setProgress(0);
     // var uploaded  = [];
-    var uploaders = [];
-    for (var i in files) {
-      var file = files[i];
-      uploaders.push(this.upload(file, i, files.length));
+    const uploaders = [];
+    for (let i in files) {
+      const file = files[i];
+      const current = parseInt(i) + 1;
+      const total = files.length;
+      uploaders.push(this.upload(file, current, total));
     }
 
     return Promise.all(uploaders);
@@ -42,7 +44,7 @@ export default class Tus10 extends Plugin {
  * @returns {Promise}
  */
   upload(file, current, total) {
-    console.log(current, 'of', total);
+    console.log(`uploading ${current} of ${total}`);
     // Create a new tus upload
     const self = this;
     const upload = new tus.Upload(file, {
