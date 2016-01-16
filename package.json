@@ -23,7 +23,7 @@
     "watch:examples": "cd website && node build-examples.js watch",
     "watch:js": "nodemon --watch src --ext js -x \"npm run build && node website/update.js\"",
     "watch": "nodemon --watch src --ext scss,js -x \"npm run build:umd && npm run build:css && node website/update.js\"",
-    "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate ",
+    "web:build": "cd website && node update.js && node build-examples.js && ./node_modules/.bin/hexo generate ",
     "web:clean": "cd website && ./node_modules/.bin/hexo clean",
     "web:deploy": "npm run web:install && npm run web:disc && npm run docs && npm run web:build && ./bin/web-deploy",
     "web:disc": "npm run build:umd:fullpath && discify dist/uppy-fp.js --output website/src/_disc.html && echo '---\nlayout: false\n---\n' |cat - website/src/_disc.html > website/src/disc.html && rm website/src/_disc.html",
