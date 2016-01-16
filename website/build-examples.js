@@ -33,8 +33,8 @@ var watchify = require('watchify');
 var webRoot = __dirname;
 var uppyRoot = path.dirname(webRoot);
 
-var srcPattern = webRoot + '/src/examples/**/js/app.es6';
-var dstPattern = webRoot + '/public/examples/**/js/app.js';
+var srcPattern = webRoot + '/src/examples/**/app.es6';
+var dstPattern = webRoot + '/public/examples/**/app.js';
 
 var watchifyEnabled = process.argv[2] === 'watch';
 var browserifyPlugins = [];
@@ -105,7 +105,7 @@ glob(srcPattern, function(err, files) {
         }
       });
 
-      var exampleName = path.basename(path.dirname(path.dirname(file)));
+      var exampleName = path.basename(path.dirname(file));
       var output      = dstPattern.replace('**', exampleName);
       var parentDir   = path.dirname(output);
 
