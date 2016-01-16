@@ -19,7 +19,7 @@
 <script>
   var uppy = new Uppy.Core({locale: Uppy.locale.ru});
   uppy.use(Uppy.plugins.DragDrop, {selector: '#upload-target'});
-  uppy.use(Uppy.plugins.Tus10);
+  uppy.use(Uppy.plugins.Tus10, {endpoint: 'http://master.tus.io:8080/files/'});
   uppy.run();
 
   console.log('--> Uppy CDN version with Tus10, DragDrop & Russian language pack has loaded');
