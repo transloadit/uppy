@@ -18,12 +18,14 @@ Work not started yet
 - [ ] core: Create a progressbar/spinner/etc plugin (#18)
 - [ ] meta: Create an Uppy logo (@vvolfy)
 - [ ] multipart: Write an acceptance test for the Multipart example via Saucelabs (#2, #23, @hedgerh)
+- [ ] core: Integrate eslint in our build procedure and make Travis fail on errors found in our examples, Core and Plugins (such as `> 100` char lines)
 
 ## 0.0.2 (Unreleased, work in progress)
 
+- [ ] core: Decide on good names for `cdn` vs `npm` builds and rename all-the-things
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
-- [ ] core: Find good names for `cdn` vs `npm` builds and rename all-the-things
 - [ ] server: Create a (barely) working uppy-server (#39, @hedgerh)
+- [ ] core: Finalize _i18n support (#47, @arturi)
 - [x] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
 - [x] website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
 
@@ -34,5 +36,5 @@ Work not started yet
 - [x] website: Add CSS Framework (#14)
 - [x] website: Create Hexo site that also contains our playground (#5, #34, #12 #22, #44, #35, #15, #37, #40, #43)
 - [x] core: Individual progress (#24)
-- [x] core: Setup Basic Plugin system (#1, #4, #20)
-- [x] core: Setup Build System (#30, #13, @hedgerh)
+- [x] core: Setup basic Plugin system (#1, #4, #20)
+- [x] core: Setup build System (#30, #13, @hedgerh)
