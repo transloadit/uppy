@@ -58,9 +58,9 @@ export default class Translator {
     if (options.smart_count) {
       var plural = this.opts.locale.pluralize(options.smart_count);
       return this.interpolate(this.opts.locale.strings[key][plural], options);
-    } else {
-      return this.interpolate(this.opts.locale.strings[key], options);
     }
+
+    return this.interpolate(this.opts.locale.strings[key], options);
   }
 
 }
