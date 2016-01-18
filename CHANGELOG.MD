@@ -3,7 +3,7 @@ happened / is needed, a GitHub issue.
 
 Please add your entries in the form of:
 
- - `- [ ] (<plugin name>|website|core|meta): <Present tense verb> <something> \(<list of associated owners/gh-issues>\)`.
+ - `- [ ] (<plugin name>|website|core|meta): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
 
 ## TODO
 
