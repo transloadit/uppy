@@ -1,0 +1,137 @@
+html,
+body {
+  background-color: #ccc;
+  height: 100%;
+  overflow: auto;
+}
+
+.avgrund-popin {
+  position: absolute;
+  background: #fff;
+  padding: 10px;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  top: 50%;
+  left: 50%;
+  z-index: 1000;
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, .5);
+  width: 1200px;
+  height: 600px;
+
+  -webkit-transform: translate(-50%, -50%) scale(0.8);
+  -moz-transform: translate(-50%, -50%) scale(0.8);
+  -ms-transform: translate(-50%, -50%) scale(0.8);
+  -o-transform: translate(-50%, -50%) scale(0.8);
+  transform: translate(-50%, -50%) scale(0.8);
+}
+
+.avgrund-overlay {
+  background: #000;
+  width: 100%;
+  position: relative;
+  top: -1500px;
+  left: 0;
+  z-index: 101;
+  visibility: hidden;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+
+body.avgrund-ready,
+.avgrund-ready .avgrund-overlay {
+  -webkit-transition: 1s all cubic-bezier(.87,.92,.83,.67);
+  -moz-transition: 1s all cubic-bezier(.87,.92,.83,.67);
+  -ms-transition: 1s all cubic-bezier(.87,.92,.83,.67);
+  -o-transition: 1s all cubic-bezier(.87,.92,.83,.67);
+  transition: 0.6s all cubic-bezier(.87,.92,.83,.67);
+}
+
+.avgrund-ready .avgrund-popin {
+  -webkit-transition: 1.5s all ease;
+  -moz-transition: 1.5s all ease;
+  -ms-transition: 1.5s all ease;
+  -o-transition: 1.5s all ease;
+  transition: 1.5s all ease;
+}
+
+body.avgrund-ready,
+.avgrund-ready .avgrund-overlay,
+.avgrund-ready .avgrund-popin {
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+}
+
+body.avgrund-active {
+  -webkit-transform: scale(0.9);
+  -moz-transform: scale(0.9);
+  -ms-transform: scale(0.9);
+  -o-transform: scale(0.9);
+  transform: scale(0.9);
+  overflow: hidden;
+}
+
+.avgrund-active .avgrund-popin {
+  visibility: visible;
+  opacity: 1;
+  filter: alpha(opacity=100);
+
+  -webkit-transform: scale(1.1) translate(-50%, -50%);
+  -moz-transform: scale(1.1) translate(-50%, -50%);
+  -ms-transform: scale(1.1) translate(-50%, -50%);
+  -o-transform: scale(1.1) translate(-50%, -50%);
+  transform: scale(1.1) translate(-50%, -50%);
+
+  -webkit-transition: 0.3s all ease;
+  -moz-transition: 0.3s all ease;
+  -ms-transition: 0.3s all ease;
+  -o-transition: 0.3s all ease;
+  transition: 0.3s all ease;
+}
+
+.avgrund-active .avgrund-overlay {
+  visibility: visible;
+  opacity: .5;
+  filter: alpha(opacity=50);
+  height: 20000px;
+}
+
+.avgrund-popin.stack {
+  -webkit-transform: scale(1.5);
+  -moz-transform: scale(1.5);
+  -ms-transform: scale(1.5);
+  -o-transform: scale(1.5);
+  transform: scale(1.5);
+}
+
+.avgrund-active .avgrund-popin.stack {
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  -o-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+.avgrund-active .avgrund-blur {
+  -webkit-filter: blur(1px);
+  -moz-filter: blur(1px);
+  -ms-filter: blur(1px);
+  -o-filter: blur(1px);
+  filter: blur(1px);
+}
+
+/* Optional close button styles */
+.avgrund-close {
+  display: block;
+  color: #555;
+  font-size: 13px;
+  text-decoration: none;
+  text-transform: uppercase;
+  position: absolute;
+  top: 6px;
+  right: 10px;
+}
