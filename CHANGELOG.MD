@@ -1,9 +1,13 @@
 Our combined changelog and todo. Items can be tagged by owner and optionally, if discussion
 happened / is needed, a GitHub issue.
 
-Please add your entries in the form of `(<plugin name>|website|core|meta): <Present tense verb> <something> \(<list of associated owners/gh-issues>\)`.
+Please add your entries in the form of:
 
-## TODO (Work not started yet)
+ - `- [ ] (<plugin name>|website|core|meta): <Present tense verb> <something> \(<list of associated owners/gh-issues>\)`.
+
+## TODO
+
+Work not started yet
 
 - [ ] modal: Add basic Modal plugin that can be used as a target
 - [ ] google: Add basic Google Drive plugin example
@@ -15,7 +19,7 @@ Please add your entries in the form of `(<plugin name>|website|core|meta): <Pres
 - [ ] meta: Create an Uppy logo (@vvolfy)
 - [ ] multipart: Write an acceptance test for the Multipart example via Saucelabs (#2, #23, @hedgerh)
 
-## 0.0.2 (Unreleased, work is ongoing)
+## 0.0.2 (Unreleased, work in progress)
 
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] core: Find good names for `cdn` vs `npm` builds and rename all-the-things
