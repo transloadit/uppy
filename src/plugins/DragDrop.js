@@ -21,7 +21,7 @@ export default class DragDrop extends Plugin {
     this.opts = defaultOptions;
     Object.assign(this.opts, opts);
 
-    // get the element where Drag & Drop event will occur
+    // get the element where the Drag & Drop event will occur
     this.dropzone      = document.querySelectorAll(this.opts.selector)[0];
     this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0];
 
