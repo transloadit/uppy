@@ -146,7 +146,7 @@
     "key-spacing": [0, { "beforeColon": false, "afterColon": true }],
     "lines-around-comment": 0,
     "max-depth": [0, 4],
-    "max-len": [0, 80, 4],
+    "max-len": [2, 100, 2],
     "max-nested-callbacks": [0, 2],
     "max-params": [0, 3],
     "max-statements": [0, 10],
