@@ -39,8 +39,8 @@ function parseExamplesBrowserify (data, options, callback) {
 
       // @TODO remove this hack
       // once this is resolved: https://github.com/hexojs/hexo/issues/1663
-      bundledJS = bundledJS.replace(/</g, ' < ');
-      // bundledJS = bundledJS.replace(/<(?!=)/g, ' < ');
+      // bundledJS = bundledJS.replace(/</g, ' < ');
+      bundledJS = bundledJS.replace(/<(?!=)/g, ' < ');
 
       callback(null, bundledJS);
     });
@@ -48,4 +48,4 @@ function parseExamplesBrowserify (data, options, callback) {
 }
 
 
-// hexo.extend.renderer.register('es6', 'js', parseExamplesBrowserify);
+hexo.extend.renderer.register('es6', 'js', parseExamplesBrowserify);

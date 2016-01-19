@@ -1,4 +1,195 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Uppy = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+
+/**
+ * Expose `Emitter`.
+ */
+
+module.exports = Emitter;
+
+/**
+ * Initialize a new `Emitter`.
+ *
+ * @api public
+ */
+
+function Emitter(obj) {
+  if (obj) return mixin(obj);
+};
+
+/**
+ * Mixin the emitter properties.
+ *
+ * @param {Object} obj
+ * @return {Object}
+ * @api private
+ */
+
+function mixin(obj) {
+  for (var key in Emitter.prototype) {
+    obj[key] = Emitter.prototype[key];
+  }
+  return obj;
+}
+
+/**
+ * Listen on the given `event` with `fn`.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.on =
+Emitter.prototype.addEventListener = function(event, fn){
+  this._callbacks = this._callbacks || {};
+  (this._callbacks[event] = this._callbacks[event] || [])
+    .push(fn);
+  return this;
+};
+
+/**
+ * Adds an `event` listener that will be invoked a single
+ * time then automatically removed.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.once = function(event, fn){
+  var self = this;
+  this._callbacks = this._callbacks || {};
+
+  function on() {
+    self.off(event, on);
+    fn.apply(this, arguments);
+  }
+
+  on.fn = fn;
+  this.on(event, on);
+  return this;
+};
+
+/**
+ * Remove the given callback for `event` or all
+ * registered callbacks.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.off =
+Emitter.prototype.removeListener =
+Emitter.prototype.removeAllListeners =
+Emitter.prototype.removeEventListener = function(event, fn){
+  this._callbacks = this._callbacks || {};
+
+  // all
+  if (0 == arguments.length) {
+    this._callbacks = {};
+    return this;
+  }
+
+  // specific event
+  var callbacks = this._callbacks[event];
+  if (!callbacks) return this;
+
+  // remove all handlers
+  if (1 == arguments.length) {
+    delete this._callbacks[event];
+    return this;
+  }
+
+  // remove specific handler
+  var cb;
+  for (var i = 0; i < callbacks.length; i++) {
+    cb = callbacks[i];
+    if (cb === fn || cb.fn === fn) {
+      callbacks.splice(i, 1);
+      break;
+    }
+  }
+  return this;
+};
+
+/**
+ * Emit `event` with the given args.
+ *
+ * @param {String} event
+ * @param {Mixed} ...
+ * @return {Emitter}
+ */
+
+Emitter.prototype.emit = function(event){
+  this._callbacks = this._callbacks || {};
+  var args = [].slice.call(arguments, 1)
+    , callbacks = this._callbacks[event];
+
+  if (callbacks) {
+    callbacks = callbacks.slice(0);
+    for (var i = 0, len = callbacks.length; i < len; ++i) {
+      callbacks[i].apply(this, args);
+    }
+  }
+
+  return this;
+};
+
+/**
+ * Return array of callbacks for `event`.
+ *
+ * @param {String} event
+ * @return {Array}
+ * @api public
+ */
+
+Emitter.prototype.listeners = function(event){
+  this._callbacks = this._callbacks || {};
+  return this._callbacks[event] || [];
+};
+
+/**
+ * Check if this emitter has `event` handlers.
+ *
+ * @param {String} event
+ * @return {Boolean}
+ * @api public
+ */
+
+Emitter.prototype.hasListeners = function(event){
+  return !! this.listeners(event).length;
+};
+
+},{}],2:[function(require,module,exports){
+
+/**
+ * Reduce `arr` with `fn`.
+ *
+ * @param {Array} arr
+ * @param {Function} fn
+ * @param {Mixed} initial
+ *
+ * TODO: combatible error handling?
+ */
+
+module.exports = function(arr, fn, initial){  
+  var idx = 0;
+  var len = arr.length;
+  var curr = arguments.length == 3
+    ? initial
+    : arr[idx++];
+
+  while (idx < len) {
+    curr = fn.call(null, curr, arr[idx], ++idx, arr);
+  }
+  
+  return curr;
+};
+},{}],3:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -1181,198 +1372,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":2,"reduce":3}],2:[function(require,module,exports){
-
-/**
- * Expose `Emitter`.
- */
-
-module.exports = Emitter;
-
-/**
- * Initialize a new `Emitter`.
- *
- * @api public
- */
-
-function Emitter(obj) {
-  if (obj) return mixin(obj);
-};
-
-/**
- * Mixin the emitter properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
-
-function mixin(obj) {
-  for (var key in Emitter.prototype) {
-    obj[key] = Emitter.prototype[key];
-  }
-  return obj;
-}
-
-/**
- * Listen on the given `event` with `fn`.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.on =
-Emitter.prototype.addEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-  (this._callbacks[event] = this._callbacks[event] || [])
-    .push(fn);
-  return this;
-};
-
-/**
- * Adds an `event` listener that will be invoked a single
- * time then automatically removed.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.once = function(event, fn){
-  var self = this;
-  this._callbacks = this._callbacks || {};
-
-  function on() {
-    self.off(event, on);
-    fn.apply(this, arguments);
-  }
-
-  on.fn = fn;
-  this.on(event, on);
-  return this;
-};
-
-/**
- * Remove the given callback for `event` or all
- * registered callbacks.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.off =
-Emitter.prototype.removeListener =
-Emitter.prototype.removeAllListeners =
-Emitter.prototype.removeEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-
-  // all
-  if (0 == arguments.length) {
-    this._callbacks = {};
-    return this;
-  }
-
-  // specific event
-  var callbacks = this._callbacks[event];
-  if (!callbacks) return this;
-
-  // remove all handlers
-  if (1 == arguments.length) {
-    delete this._callbacks[event];
-    return this;
-  }
-
-  // remove specific handler
-  var cb;
-  for (var i = 0; i < callbacks.length; i++) {
-    cb = callbacks[i];
-    if (cb === fn || cb.fn === fn) {
-      callbacks.splice(i, 1);
-      break;
-    }
-  }
-  return this;
-};
-
-/**
- * Emit `event` with the given args.
- *
- * @param {String} event
- * @param {Mixed} ...
- * @return {Emitter}
- */
-
-Emitter.prototype.emit = function(event){
-  this._callbacks = this._callbacks || {};
-  var args = [].slice.call(arguments, 1)
-    , callbacks = this._callbacks[event];
-
-  if (callbacks) {
-    callbacks = callbacks.slice(0);
-    for (var i = 0, len = callbacks.length; i < len; ++i) {
-      callbacks[i].apply(this, args);
-    }
-  }
-
-  return this;
-};
-
-/**
- * Return array of callbacks for `event`.
- *
- * @param {String} event
- * @return {Array}
- * @api public
- */
-
-Emitter.prototype.listeners = function(event){
-  this._callbacks = this._callbacks || {};
-  return this._callbacks[event] || [];
-};
-
-/**
- * Check if this emitter has `event` handlers.
- *
- * @param {String} event
- * @return {Boolean}
- * @api public
- */
-
-Emitter.prototype.hasListeners = function(event){
-  return !! this.listeners(event).length;
-};
-
-},{}],3:[function(require,module,exports){
-
-/**
- * Reduce `arr` with `fn`.
- *
- * @param {Array} arr
- * @param {Function} fn
- * @param {Mixed} initial
- *
- * TODO: combatible error handling?
- */
-
-module.exports = function(arr, fn, initial){  
-  var idx = 0;
-  var len = arr.length;
-  var curr = arguments.length == 3
-    ? initial
-    : arr[idx++];
-
-  while (idx < len) {
-    curr = fn.call(null, curr, arr[idx], ++idx, arr);
-  }
-  
-  return curr;
-};
-},{}],4:[function(require,module,exports){
+},{"emitter":1,"reduce":2}],4:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.tus = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 "use strict";
@@ -1902,8 +1902,6 @@ var _coreUtils = require('../core/Utils');
 
 var _coreUtils2 = _interopRequireDefault(_coreUtils);
 
-// import Polyglot from 'node-polyglot';
-
 var _coreTranslator = require('../core/Translator');
 
 var _coreTranslator2 = _interopRequireDefault(_coreTranslator);
@@ -1920,14 +1918,12 @@ var Core = (function () {
 
     // set default options
     var defaultOptions = {
-      // locale: 'en_US'
       // load English as the default locale
       locale: require('../locale/en_US.js')
     };
 
     // Merge default options with the ones set by user
-    this.opts = defaultOptions;
-    Object.assign(this.opts, opts);
+    this.opts = Object.assign({}, defaultOptions, opts);
 
     // Dictates in what order different plugin types are ran:
     this.types = ['presetter', 'selecter', 'uploader'];
@@ -1937,12 +1933,6 @@ var Core = (function () {
     // Container for different types of plugins
     this.plugins = {};
 
-    // trying out Polyglot
-    // this.polyglot = new Polyglot({locale: 'ru'});
-    // this.polyglot.extend(this.opts.locale);
-    // console.log(this.polyglot.t('files_chosen', {smart_count: 100}));
-
-    // rolling out custom translation
     this.translator = new _coreTranslator2['default']({ locale: this.opts.locale });
     console.log(this.translator.t('files_chosen', { smart_count: 3 }));
   }
@@ -1967,26 +1957,7 @@ var Core = (function () {
     }
 
     /**
-    * Translate a string into the selected language (this.locale).
-    * Return the original string if locale is undefined
-    *
-    * @param {string} string that needs translating
-    * @return {string} translated string
-    */
-    // translate(key, opts) {
-    //   const dictionary = this.opts.locale;
-    //
-    //   // if locale is unspecified, or the translation is missing,
-    //   // return the original string
-    //   if (!dictionary || !dictionary[string]) {
-    //     return string;
-    //   }
-    //
-    //   return dictionary[string];
-    // }
-
-    /**
-    * Sets plugin’s progress, for uploads for example
+    * Sets plugin’s progress, like for uploads
     *
     * @param {object} plugin that wants to set progress
     * @param {integer} percentage
@@ -2031,10 +2002,6 @@ var Core = (function () {
         method: 'run'
       });
 
-      // console.log(
-      //   `translation is all like: ${this.translate('number_of_files_chosen', {number: 5})}`
-      // );
-
       // First we select only plugins of current type,
       // then create an array of runType methods of this plugins
       var typeMethods = this.types.filter(function (type) {
@@ -2059,9 +2026,15 @@ module.exports = exports['default'];
 
 },{"../core/Translator":6,"../core/Utils":7,"../locale/en_US.js":10}],6:[function(require,module,exports){
 /**
-* Translates strings with interpolation & pluralization support. Extensible with custom dictionaries and pluralization functions.
-* Borrows heavily from and inspired by Polyglot https://github.com/airbnb/polyglot.js. Differences: pluralization functions are not hardcoded and can be easily added among with dictionaries.
-* Usage example: translator.t('files_chosen', {smart_count: 3})
+* Translates strings with interpolation & pluralization support.Extensible with custom dictionaries
+* and pluralization functions.
+*
+* Borrows heavily from and inspired by Polyglot https://github.com/airbnb/polyglot.js,
+* basically a stripped-down version of it. Differences: pluralization functions are not hardcoded
+* and can be easily added among with dictionaries, nested objects are used for pluralization
+* as opposed to `||||` delimeter
+*
+* Usage example: `translator.t('files_chosen', {smart_count: 3})`
 *
 * @param {opts}
 */
@@ -2079,29 +2052,25 @@ var Translator = (function () {
   function Translator(opts) {
     _classCallCheck(this, Translator);
 
-    var defaultOptions = {
-      // load English as the default locale
-      // locale: require('../locale/en_US.js')
-    };
-
-    this.opts = defaultOptions;
-    Object.assign(this.opts, opts);
-
-    // console.log('--> and the locale will be...');
-    // console.log(this.opts.locale);
+    var defaultOptions = {};
+    this.opts = Object.assign({}, defaultOptions, opts);
   }
 
   /**
-  * Takes a string with placeholder variables like '%{smart_count} file selected' and replaces it with values from options {smart_count: 5}
+  * Takes a string with placeholder variables like `%{smart_count} file selected`
+  * and replaces it with values from options `{smart_count: 5}`
   *
   * @param {string} phrase that needs interpolation, with placeholders
   * @param {object} options with values that will be used to replace placeholders
+  * @return {string} interpolated
   */
 
   _createClass(Translator, [{
     key: 'interpolate',
     value: function interpolate(phrase, options) {
       var replace = String.prototype.replace;
+      var dollarRegex = /\$/g;
+      var dollarBillsYall = '$$$$';
 
       for (var arg in options) {
         if (arg !== '_' && options.hasOwnProperty(arg)) {
@@ -2131,7 +2100,7 @@ var Translator = (function () {
   }, {
     key: 't',
     value: function t(key, options) {
-      if (options.smart_count) {
+      if (options && options.smart_count) {
         var plural = this.opts.locale.pluralize(options.smart_count);
         return this.interpolate(this.opts.locale.strings[key][plural], options);
       } else {
@@ -2147,6 +2116,14 @@ exports['default'] = Translator;
 module.exports = exports['default'];
 
 },{}],7:[function(require,module,exports){
+/**
+* Runs a waterfall of promises: calls each task, passing the result
+* from the previous one as an argument. The first task is run with an empty array.
+*
+* @param {Array} tasks an array of Promises to run waterfall on
+* @return {Promise} of the last task
+*/
+
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2169,7 +2146,14 @@ function promiseWaterfall(_ref) {
   return finalTaskPromise;
 }
 
-// This is how we roll $('.element').toggleClass in non-jQuery world
+/**
+* Toggles a class on a DOM element
+* This is how we roll $('.element').toggleClass in a non-jQuery world
+*
+* @param {String} el selector
+* @param {String} className to toggle
+* @return {String}
+*/
 function toggleClass(el, className) {
   if (el.classList) {
     el.classList.toggle(className);
@@ -2186,6 +2170,13 @@ function toggleClass(el, className) {
   }
 }
 
+/**
+* Adds a class to a DOM element
+*
+* @param {String} el selector
+* @param {String} className to add
+* @return {String}
+*/
 function addClass(el, className) {
   if (el.classList) {
     el.classList.add(className);
@@ -2194,6 +2185,13 @@ function addClass(el, className) {
   }
 }
 
+/**
+* Removes a class to a DOM element
+*
+* @param {String} el selector
+* @param {String} className to remove
+* @return {String}
+*/
 function removeClass(el, className) {
   if (el.classList) {
     el.classList.remove(className);
@@ -2202,11 +2200,19 @@ function removeClass(el, className) {
   }
 }
 
-// $form.on('drag dragstart dragend dragover dragenter dragleave drop');
-function addListenerMulti(el, events, func) {
+/**
+* Adds multiple listeners to to a DOM element
+* Equvalent to jQuery’s `$form.on('drag dragstart dragend dragover dragenter dragleave drop')`.
+*
+* @param {String} el selector
+* @param {String} events to add, like `drag dragstart dragend dragover dragenter dragleave drop`
+* @param {requestCallback} cb
+* @return {String}
+*/
+function addListenerMulti(el, events, cb) {
   var eventsArray = events.split(' ');
   for (var _event in eventsArray) {
-    el.addEventListener(eventsArray[_event], func, false);
+    el.addEventListener(eventsArray[_event], cb, false);
   }
 }
 
@@ -2271,6 +2277,7 @@ var en_US = {};
 
 en_US.strings = {
   'choose_file': 'Choose a file',
+  'you_have_chosen': 'You have chosen: %{file_name}',
   'or_drag_drop': 'or drag it here',
   'files_chosen': {
     0: '%{smart_count} file selected',
@@ -2620,7 +2627,7 @@ var Dropbox = (function (_Plugin) {
 exports['default'] = Dropbox;
 module.exports = exports['default'];
 
-},{"../core/Utils":7,"./Plugin":15,"superagent":1}],13:[function(require,module,exports){
+},{"../core/Utils":7,"./Plugin":15,"superagent":3}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2980,6 +2987,13 @@ var Tus10 = (function (_Plugin) {
     _get(Object.getPrototypeOf(Tus10.prototype), 'constructor', this).call(this, core, opts);
     this.type = 'uploader';
   }
+
+  /**
+  * Add files to an array of `upload()` calles, passing the current and total file count numbers
+  *
+  * @param {array | object} results
+  * @returns {Promise} of parallel uploads `Promise.all(uploaders)`
+  */
 
   _createClass(Tus10, [{
     key: 'run',

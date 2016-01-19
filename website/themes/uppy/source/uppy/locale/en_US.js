@@ -8,6 +8,7 @@ var en_US = {};
 
 en_US.strings = {
   'choose_file': 'Choose a file',
+  'you_have_chosen': 'You have chosen: %{file_name}',
   'or_drag_drop': 'or drag it here',
   'files_chosen': {
     0: '%{smart_count} file selected',
