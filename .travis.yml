@@ -11,7 +11,7 @@ addons:
       - g++-4.8
 
 script:
-  - ./node_modules/.bin/eslint src/
+  - npm run-script lint
   - npm run-script build
   # Automatically deploy website onto gh-pages (if master and not PR)
   # Don't do this in `after_success`, because then failures won't bubble up
