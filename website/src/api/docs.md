@@ -53,6 +53,73 @@ Registers a plugin with Core
 
 Returns **object** self for chaining
 
+## Utils
+
+A collection of small utility functions that help with dom manipulation, adding listeners,
+promises and other good things.
+
+**Parameters**
+
+-   `methods`  
+
+### addClass
+
+Adds a class to a DOM element
+
+**Parameters**
+
+-   `el` **String** selector
+-   `className` **String** to add
+
+Returns **String** 
+
+### addListenerMulti
+
+Adds multiple listeners to to a DOM element
+Equvalent to jQuery’s `$form.on('drag dragstart dragend dragover dragenter dragleave drop')`.
+
+**Parameters**
+
+-   `el` **String** selector
+-   `events` **String** to add, like `drag dragstart dragend dragover dragenter dragleave drop`
+-   `cb` **requestCallback** 
+
+Returns **String** 
+
+### promiseWaterfall
+
+Runs a waterfall of promises: calls each task, passing the result
+from the previous one as an argument. The first task is run with an empty array.
+
+**Parameters**
+
+-   `methods` **array** of Promises to run waterfall on
+
+Returns **Promise** of the final task
+
+### removeClass
+
+Removes a class to a DOM element
+
+**Parameters**
+
+-   `el` **String** selector
+-   `className` **String** to remove
+
+Returns **String** 
+
+### toggleClass
+
+Toggles a class on a DOM element
+This is how we roll $('.element').toggleClass in a non-jQuery world
+
+**Parameters**
+
+-   `el` **String** selector
+-   `className` **String** to toggle
+
+Returns **String** 
+
 ## Translator
 
 Translates strings with interpolation & pluralization support.Extensible with custom dictionaries
@@ -107,30 +174,6 @@ this deciding on structure.
 
 Returns **array or string** files or success/fail message
 
-## addClass
-
-Adds a class to a DOM element
-
-**Parameters**
-
--   `el` **String** selector
--   `className` **String** to add
-
-Returns **String** 
-
-## addListenerMulti
-
-Adds multiple listeners to to a DOM element
-Equvalent to jQuery’s `$form.on('drag dragstart dragend dragover dragenter dragleave drop')`.
-
-**Parameters**
-
--   `el` **String** selector
--   `events` **String** to add, like `drag dragstart dragend dragover dragenter dragleave drop`
--   `cb` **requestCallback** 
-
-Returns **String** 
-
 ## DragDrop
 
 Drag & Drop plugin
@@ -145,28 +188,6 @@ Drag & Drop plugin
 Checks if the browser supports Drag & Drop
 
 Returns **object** true if supported, false otherwise
-
-## promiseWaterfall
-
-Runs a waterfall of promises: calls each task, passing the result
-from the previous one as an argument. The first task is run with an empty array.
-
-**Parameters**
-
--   `methods` **Array** an array of Promises to run waterfall on
-
-Returns **Promise** of the last task
-
-## removeClass
-
-Removes a class to a DOM element
-
-**Parameters**
-
--   `el` **String** selector
--   `className` **String** to remove
-
-Returns **String** 
 
 ## Tus10
 
@@ -198,15 +219,3 @@ Create a new Tus upload
 -   `total` **integer** number of files in a queue
 
 Returns **Promise** 
-
-## toggleClass
-
-Toggles a class on a DOM element
-This is how we roll $('.element').toggleClass in a non-jQuery world
-
-**Parameters**
-
--   `el` **String** selector
--   `className` **String** to toggle
-
-Returns **String** 

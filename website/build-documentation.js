@@ -5,7 +5,7 @@ var inject = require('mdast-util-inject');
 var chalk = require('chalk');
 var fs = require('fs');
 
-var docOrder = ['Core', 'Translator', 'Plugin'];
+var docOrder = ['Core', 'Utils', 'Translator', 'Plugin'];
 
 documentation('../src/index.js', {order: docOrder}, function (err, comments) {
   if (err) console.log(err);
