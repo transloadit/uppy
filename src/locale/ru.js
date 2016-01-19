@@ -4,7 +4,6 @@ ru.strings = {
   'choose_file': 'Выберите файл',
   'or_drag_drop': 'или перенесите его сюда',
   'you_have_chosen': 'Вы выбрали: %{file_name}',
-  // 'files_chosen': 'выбран %{smart_count} файл |||| выбрано %{smart_count} файла |||| выбрано %{smart_count} файлов'
   'files_chosen': {
     0: 'Выбран %{smart_count} файл',
     1: 'Выбрано %{smart_count} файла',

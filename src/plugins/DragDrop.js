@@ -66,7 +66,8 @@ export default class DragDrop extends Plugin {
     }
 
     // prevent default actions for all drag & drop events
-    Utils.addListenerMulti(this.dropzone, 'drag dragstart dragend dragover dragenter dragleave drop', (e) => {
+    const strEvents = 'drag dragstart dragend dragover dragenter dragleave drop'
+    Utils.addListenerMulti(this.dropzone, strEvents, (e) => {
       e.preventDefault()
       e.stopPropagation()
     })

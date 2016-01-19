@@ -53,14 +53,17 @@ export default class Dropbox extends Plugin {
   }
 
   run(results) {
-    
+
   }
 
   render(files) {
     // for each file in the directory, create a list item element
     const elems = files.map((file, i) => {
       const icon = (file.isFolder) ? 'folder' : 'file'
-      return `<li data-type="${icon}" data-name="${file.name}"><span>${icon} : </span><span> ${file.name}</span></li>`
+      return `<li data-type="${icon}" data-name="${file.name}">
+        <span>${icon} : </span>
+        <span> ${file.name}</span>
+      </li>`
     })
 
     // appends the list items to the target
