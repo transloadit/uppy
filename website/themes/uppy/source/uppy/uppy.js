@@ -1933,8 +1933,8 @@ var Core = (function () {
     // Container for different types of plugins
     this.plugins = {};
 
-    this.translator = new _coreTranslator2['default']({ locale: this.opts.locale });
-    console.log(this.translator.t('files_chosen', { smart_count: 3 }));
+    // this.translator = new Translator({locale: this.opts.locale});
+    // console.log(this.translator.t('files_chosen', {smart_count: 3}));
   }
 
   /**
@@ -2036,7 +2036,7 @@ module.exports = exports['default'];
 *
 * Usage example: `translator.t('files_chosen', {smart_count: 3})`
 *
-* @param {opts}
+* @param {object} opts
 */
 'use strict';
 
@@ -2059,6 +2059,9 @@ var Translator = (function () {
   /**
   * Takes a string with placeholder variables like `%{smart_count} file selected`
   * and replaces it with values from options `{smart_count: 5}`
+  *
+  * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
+  * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
   *
   * @param {string} phrase that needs interpolation, with placeholders
   * @param {object} options with values that will be used to replace placeholders
@@ -2116,14 +2119,13 @@ exports['default'] = Translator;
 module.exports = exports['default'];
 
 },{}],7:[function(require,module,exports){
-/**
-* Runs a waterfall of promises: calls each task, passing the result
-* from the previous one as an argument. The first task is run with an empty array.
-*
-* @param {Array} tasks an array of Promises to run waterfall on
-* @return {Promise} of the last task
-*/
-
+// /**
+// * Runs a waterfall of promises: calls each task, passing the result
+// * from the previous one as an argument. The first task is run with an empty array.
+// *
+// * @param {Array} tasks an array of Promises to run waterfall on
+// * @return {Promise} of the last task
+// */
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {

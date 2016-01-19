@@ -9,7 +9,7 @@
 *
 * Usage example: `translator.t('files_chosen', {smart_count: 3})`
 *
-* @param {opts}
+* @param {object} opts
 */
 export default class Translator {
   constructor(opts) {
@@ -21,6 +21,9 @@ export default class Translator {
   /**
   * Takes a string with placeholder variables like `%{smart_count} file selected`
   * and replaces it with values from options `{smart_count: 5}`
+  *
+  * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
+  * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
   *
   * @param {string} phrase that needs interpolation, with placeholders
   * @param {object} options with values that will be used to replace placeholders

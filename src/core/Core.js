@@ -26,8 +26,8 @@ export default class Core {
     // Container for different types of plugins
     this.plugins = {};
 
-    this.translator = new Translator({locale: this.opts.locale});
-    console.log(this.translator.t('files_chosen', {smart_count: 3}));
+    // this.translator = new Translator({locale: this.opts.locale});
+    // console.log(this.translator.t('files_chosen', {smart_count: 3}));
   }
 
   /**
