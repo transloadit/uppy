@@ -1,9 +1,9 @@
-import Uppy from 'uppy/core';
-import { Dropbox } from 'uppy/plugins';
+import Uppy from 'uppy/core'
+import { Dropbox } from 'uppy/plugins'
 
-const uppy = new Uppy({wait: false});
+const uppy = new Uppy({wait: false})
 const files = uppy
   .use(Dropbox, {selector: '#target'})
-  .run();
+  .run()
 
-console.log(uppy.type);
+console.log(uppy.type)
