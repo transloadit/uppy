@@ -11,6 +11,12 @@ export default class Tus10 extends Plugin {
     this.type = 'uploader';
   }
 
+  /**
+ * Add files to an array of `upload()` calles, passing the current and total file count numbers
+ *
+ * @param {array | object} results
+ * @returns {Promise} of parallel uploads `Promise.all(uploaders)`
+ */
   run(results) {
     console.log({
       class  : 'Tus10',

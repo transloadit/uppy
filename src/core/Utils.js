@@ -1,3 +1,11 @@
+/**
+* Runs a waterfall of promises: calls each task, passing the result
+* from the previous one as an argument. The first task is run with an empty array.
+*
+* @param {Array} tasks an array of Promises to run waterfall on
+* @return {Promise} of the last task
+*/
+
 function promiseWaterfall([resolvedPromise, ...tasks]) {
   const finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
     return prevTaskPromise.then(task);
@@ -6,7 +14,14 @@ function promiseWaterfall([resolvedPromise, ...tasks]) {
   return finalTaskPromise;
 }
 
-// This is how we roll $('.element').toggleClass in non-jQuery world
+/**
+* Toggles a class on a DOM element
+* This is how we roll $('.element').toggleClass in a non-jQuery world
+*
+* @param {String} el selector
+* @param {String} className to toggle
+* @return {String}
+*/
 function toggleClass(el, className) {
   if (el.classList) {
     el.classList.toggle(className);
@@ -23,6 +38,13 @@ function toggleClass(el, className) {
   }
 }
 
+/**
+* Adds a class to a DOM element
+*
+* @param {String} el selector
+* @param {String} className to add
+* @return {String}
+*/
 function addClass(el, className) {
   if (el.classList) {
     el.classList.add(className);
@@ -31,6 +53,13 @@ function addClass(el, className) {
   }
 }
 
+/**
+* Removes a class to a DOM element
+*
+* @param {String} el selector
+* @param {String} className to remove
+* @return {String}
+*/
 function removeClass(el, className) {
   if (el.classList) {
     el.classList.remove(className);
@@ -39,11 +68,19 @@ function removeClass(el, className) {
   }
 }
 
-// $form.on('drag dragstart dragend dragover dragenter dragleave drop');
-function addListenerMulti(el, events, func) {
+/**
+* Adds multiple listeners to to a DOM element
+* Equvalent to jQuery’s `$form.on('drag dragstart dragend dragover dragenter dragleave drop')`.
+*
+* @param {String} el selector
+* @param {String} events to add, like `drag dragstart dragend dragover dragenter dragleave drop`
+* @param {requestCallback} cb
+* @return {String}
+*/
+function addListenerMulti(el, events, cb) {
   const eventsArray = events.split(' ');
   for (let event in eventsArray) {
-    el.addEventListener(eventsArray[event], func, false);
+    el.addEventListener(eventsArray[event], cb, false);
   }
 }
 

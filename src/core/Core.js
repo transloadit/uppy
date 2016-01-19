@@ -1,5 +1,4 @@
 import Utils from '../core/Utils';
-// import Polyglot from 'node-polyglot';
 import Translator from '../core/Translator';
 
 /**
@@ -12,14 +11,12 @@ export default class Core {
 
     // set default options
     const defaultOptions = {
-      // locale: 'en_US'
       // load English as the default locale
       locale: require('../locale/en_US.js')
     };
 
     // Merge default options with the ones set by user
-    this.opts = defaultOptions;
-    Object.assign(this.opts, opts);
+    this.opts = Object.assign({}, defaultOptions, opts);
 
     // Dictates in what order different plugin types are ran:
     this.types = [ 'presetter', 'selecter', 'uploader' ];
@@ -29,12 +26,6 @@ export default class Core {
     // Container for different types of plugins
     this.plugins = {};
 
-    // trying out Polyglot
-    // this.polyglot = new Polyglot({locale: 'ru'});
-    // this.polyglot.extend(this.opts.locale);
-    // console.log(this.polyglot.t('files_chosen', {smart_count: 100}));
-
-    // rolling out custom translation
     this.translator = new Translator({locale: this.opts.locale});
     console.log(this.translator.t('files_chosen', {smart_count: 3}));
   }
@@ -56,26 +47,7 @@ export default class Core {
   }
 
   /**
- * Translate a string into the selected language (this.locale).
- * Return the original string if locale is undefined
- *
- * @param {string} string that needs translating
- * @return {string} translated string
- */
-  // translate(key, opts) {
-  //   const dictionary = this.opts.locale;
-  //
-  //   // if locale is unspecified, or the translation is missing,
-  //   // return the original string
-  //   if (!dictionary || !dictionary[string]) {
-  //     return string;
-  //   }
-  //
-  //   return dictionary[string];
-  // }
-
-  /**
- * Sets plugin’s progress, for uploads for example
+ * Sets plugin’s progress, like for uploads
  *
  * @param {object} plugin that wants to set progress
  * @param {integer} percentage
@@ -111,10 +83,6 @@ export default class Core {
       class  : 'Core',
       method : 'run'
     });
-
-    // console.log(
-    //   `translation is all like: ${this.translate('number_of_files_chosen', {number: 5})}`
-    // );
 
     // First we select only plugins of current type,
     // then create an array of runType methods of this plugins
