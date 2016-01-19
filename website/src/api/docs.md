@@ -32,20 +32,7 @@ Returns **Promise** of all methods
 
 ### setProgress
 
-Translate a string into the selected language (this.locale).
-Return the original string if locale is undefined
-
-**Parameters**
-
--   `string` **string** that needs translating
--   `plugin`  
--   `percentage`  
-
-Returns **string** translated string
-
-### setProgress
-
-Sets plugin’s progress, for uploads for example
+Sets plugin’s progress, like for uploads
 
 **Parameters**
 
@@ -68,9 +55,15 @@ Returns **object** self for chaining
 
 ## Translator
 
-Translates strings with interpolation & pluralization support. Extensible with custom dictionaries and pluralization functions.
-Borrows heavily from and inspired by Polyglot <https://github.com/airbnb/polyglot.js>. Differences: pluralization functions are not hardcoded and can be easily added among with dictionaries.
-Usage example: translator.t('files\_chosen', {smart\_count: 3})
+Translates strings with interpolation & pluralization support.Extensible with custom dictionaries
+and pluralization functions.
+
+Borrows heavily from and inspired by Polyglot <https://github.com/airbnb/polyglot.js>,
+basically a stripped-down version of it. Differences: pluralization functions are not hardcoded
+and can be easily added among with dictionaries, nested objects are used for pluralization
+as opposed to `||||` delimeter
+
+Usage example: \`translator.t('files\_chosen', {smart\_count: 3})``
 
 **Parameters**
 
@@ -78,12 +71,15 @@ Usage example: translator.t('files\_chosen', {smart\_count: 3})
 
 ### interpolate
 
-Takes a string with placeholder variables like '%{smart\_count} file selected' and replaces it with values from options {smart\_count: 5}
+Takes a string with placeholder variables like `%{smart_count} file selected`
+and replaces it with values from options `{smart_count: 5}`
 
 **Parameters**
 
 -   `phrase` **string** that needs interpolation, with placeholders
 -   `options` **object** with values that will be used to replace placeholders
+
+Returns **string** interpolated
 
 ### t
 
