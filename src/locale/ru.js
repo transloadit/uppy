@@ -1,4 +1,4 @@
-const ru = {};
+const ru = {}
 
 ru.strings = {
   'choose_file': 'Выберите файл',
@@ -10,22 +10,22 @@ ru.strings = {
     1: 'Выбрано %{smart_count} файла',
     2: 'Выбрано %{smart_count} файлов'
   }
-};
+}
 
 ru.pluralize = function (n) {
   if (n % 10 === 1 && n % 100 !== 11) {
-    return 0;
+    return 0
   }
 
   if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) {
-    return 1;
+    return 1
   }
 
-  return 2;
-};
-
-if (typeof Uppy !== 'undefined') {
-  Uppy.locale.ru = ru;
+  return 2
 }
 
-export default ru;
+if (typeof Uppy !== 'undefined') {
+  Uppy.locale.ru = ru
+}
+
+export default ru

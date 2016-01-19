@@ -10,14 +10,14 @@
 export default class Plugin {
 
   constructor(core, opts) {
-    this.core = core;
-    this.opts = opts;
-    this.type = 'none';
-    this.name = this.constructor.name;
+    this.core = core
+    this.opts = opts
+    this.type = 'none'
+    this.name = this.constructor.name
   }
 
   setProgress(percentage, current, total) {
-    var finalPercentage = percentage;
+    var finalPercentage = percentage
 
     // if (current !== undefined && total !== undefined) {
     //   var percentageOfTotal = (percentage / total);
@@ -29,7 +29,7 @@ export default class Plugin {
     //   }
     // }
 
-    this.core.setProgress(this, finalPercentage);
+    this.core.setProgress(this, finalPercentage)
   }
 
   extractFiles(results) {
@@ -37,12 +37,12 @@ export default class Plugin {
       class  : 'Plugin',
       method : 'extractFiles',
       results: results
-    });
+    })
 
-    const files = [];
+    const files = []
     results.forEach(result => {
-      Array.from(result.files).forEach(file => files.push(file));
-    });
+      Array.from(result.files).forEach(file => files.push(file))
+    })
 
     // const files = [];
     // for (let i in results) {
@@ -55,10 +55,10 @@ export default class Plugin {
     // }
 
     // return Array.from(fileList);
-    return files;
+    return files
   }
 
   run(results) {
-    return results;
+    return results
   }
 }

@@ -1,5 +1,5 @@
-import Plugin from './Plugin';
-import tus from 'tus-js-client';
+import Plugin from './Plugin'
+import tus from 'tus-js-client'
 
 /**
 * Tus resumable file uploader
@@ -7,8 +7,8 @@ import tus from 'tus-js-client';
 */
 export default class Tus10 extends Plugin {
   constructor(core, opts) {
-    super(core, opts);
-    this.type = 'uploader';
+    super(core, opts)
+    this.type = 'uploader'
   }
 
   /**
@@ -22,23 +22,23 @@ export default class Tus10 extends Plugin {
       class  : 'Tus10',
       method : 'run',
       results: results
-    });
+    })
 
-    const files = this.extractFiles(results);
+    const files = this.extractFiles(results)
 
     // console.log(files);
 
-    this.setProgress(0);
+    this.setProgress(0)
     // var uploaded  = [];
-    const uploaders = [];
+    const uploaders = []
     for (let i in files) {
-      const file = files[i];
-      const current = parseInt(i) + 1;
-      const total = files.length;
-      uploaders.push(this.upload(file, current, total));
+      const file = files[i]
+      const current = parseInt(i) + 1
+      const total = files.length
+      uploaders.push(this.upload(file, current, total))
     }
 
-    return Promise.all(uploaders);
+    return Promise.all(uploaders)
   }
 
   /**
@@ -50,25 +50,25 @@ export default class Tus10 extends Plugin {
  * @returns {Promise}
  */
   upload(file, current, total) {
-    console.log(`uploading ${current} of ${total}`);
+    console.log(`uploading ${current} of ${total}`)
     // Create a new tus upload
-    const self = this;
+    const self = this
     const upload = new tus.Upload(file, {
       endpoint: this.opts.endpoint,
       onError: function (error) {
-        return Promise.reject('Failed because: ' + error);
+        return Promise.reject('Failed because: ' + error)
       },
       onProgress: function (bytesUploaded, bytesTotal) {
-        let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
-        percentage = Math.round(percentage);
-        self.setProgress(percentage, current, total);
+        let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
+        percentage = Math.round(percentage)
+        self.setProgress(percentage, current, total)
       },
       onSuccess: function () {
-        console.log(`Download ${upload.file.name} from ${upload.url}`);
-        return Promise.resolve(upload);
+        console.log(`Download ${upload.file.name} from ${upload.url}`)
+        return Promise.resolve(upload)
       }
-    });
+    })
     // Start the upload
-    upload.start();
+    upload.start()
   }
 }

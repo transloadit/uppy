@@ -1,1 +1,1 @@
-export default from './Core';
+export default from './Core'

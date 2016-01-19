@@ -6,12 +6,12 @@
  * @return {Promise} of the final task
  */
 function promiseWaterfall(methods) {
-  const [resolvedPromise, ...tasks] = methods;
+  const [resolvedPromise, ...tasks] = methods
   const finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
-    return prevTaskPromise.then(task);
-  }, resolvedPromise([]));  // initial value
+    return prevTaskPromise.then(task)
+  }, resolvedPromise([]))  // initial value
 
-  return finalTaskPromise;
+  return finalTaskPromise
 }
 
 /**
@@ -24,16 +24,16 @@ function promiseWaterfall(methods) {
  */
 function toggleClass(el, className) {
   if (el.classList) {
-    el.classList.toggle(className);
+    el.classList.toggle(className)
   } else {
-    const classes = el.className.split(' ');
-    const existingIndex = classes.indexOf(className);
+    const classes = el.className.split(' ')
+    const existingIndex = classes.indexOf(className)
 
     if (existingIndex >= 0) {
-      classes.splice(existingIndex, 1);
+      classes.splice(existingIndex, 1)
     } else {
-      classes.push(className);
-      el.className = classes.join(' ');
+      classes.push(className)
+      el.className = classes.join(' ')
     }
   }
 }
@@ -47,9 +47,9 @@ function toggleClass(el, className) {
  */
 function addClass(el, className) {
   if (el.classList) {
-    el.classList.add(className);
+    el.classList.add(className)
   } else {
-    el.className += ' ' + className;
+    el.className += ' ' + className
   }
 }
 
@@ -62,11 +62,11 @@ function addClass(el, className) {
  */
 function removeClass(el, className) {
   if (el.classList) {
-    el.classList.remove(className);
+    el.classList.remove(className)
   } else {
-    const patClasses = className.split(' ').join('|');
-    const pattern    = new RegExp('(^|\\b)' + patClasses + '(\\b|$)', 'gi');
-    el.className     = el.className.replace(pat, ' ');
+    const patClasses = className.split(' ').join('|')
+    const pattern    = new RegExp('(^|\\b)' + patClasses + '(\\b|$)', 'gi')
+    el.className     = el.className.replace(pat, ' ')
   }
 }
 
@@ -80,9 +80,9 @@ function removeClass(el, className) {
  * @return {String}
  */
 function addListenerMulti(el, events, cb) {
-  const eventsArray = events.split(' ');
+  const eventsArray = events.split(' ')
   for (let event in eventsArray) {
-    el.addEventListener(eventsArray[event], cb, false);
+    el.addEventListener(eventsArray[event], cb, false)
   }
 }
 
@@ -92,4 +92,4 @@ export default {
   addClass,
   removeClass,
   addListenerMulti
-};
+}

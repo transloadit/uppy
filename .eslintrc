@@ -170,7 +170,7 @@
     "id-match": 0,
     "require-jsdoc": 0,
     "require-yield": 0,
-    "semi": [2, "always"],
+    "semi": [2, "never"],
     "semi-spacing": [0, {"before": false, "after": true}],
     "sort-vars": 0,
     "space-after-keywords": [2, "always"],

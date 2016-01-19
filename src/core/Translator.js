@@ -14,8 +14,8 @@
 export default class Translator {
   constructor(opts) {
 
-    const defaultOptions = {};
-    this.opts = Object.assign({}, defaultOptions, opts);
+    const defaultOptions = {}
+    this.opts = Object.assign({}, defaultOptions, opts)
   }
 
   /**
@@ -30,26 +30,26 @@ export default class Translator {
   * @return {string} interpolated
   */
   interpolate(phrase, options) {
-    const replace = String.prototype.replace;
-    const dollarRegex = /\$/g;
-    const dollarBillsYall = '$$$$';
+    const replace = String.prototype.replace
+    const dollarRegex = /\$/g
+    const dollarBillsYall = '$$$$'
 
     for (let arg in options) {
       if (arg !== '_' && options.hasOwnProperty(arg)) {
         // Ensure replacement value is escaped to prevent special $-prefixed
         // regex replace tokens. the "$$$$" is needed because each "$" needs to
         // be escaped with "$" itself, and we need two in the resulting output.
-        var replacement = options[arg];
+        var replacement = options[arg]
         if (typeof replacement === 'string') {
-          replacement = replace.call(options[arg], dollarRegex, dollarBillsYall);
+          replacement = replace.call(options[arg], dollarRegex, dollarBillsYall)
         }
         // We create a new `RegExp` each time instead of using a more-efficient
         // string replace so that the same argument can be replaced multiple times
         // in the same phrase.
-        phrase = replace.call(phrase, new RegExp('%\\{'+arg+'\\}', 'g'), replacement);
+        phrase = replace.call(phrase, new RegExp('%\\{'+arg+'\\}', 'g'), replacement)
       }
     }
-    return phrase;
+    return phrase
   }
 
   /**
@@ -61,11 +61,11 @@ export default class Translator {
   */
   t(key, options) {
     if (options && options.smart_count) {
-      var plural = this.opts.locale.pluralize(options.smart_count);
-      return this.interpolate(this.opts.locale.strings[key][plural], options);
+      var plural = this.opts.locale.pluralize(options.smart_count)
+      return this.interpolate(this.opts.locale.strings[key][plural], options)
     }
 
-    return this.interpolate(this.opts.locale.strings[key], options);
+    return this.interpolate(this.opts.locale.strings[key], options)
   }
 
 }

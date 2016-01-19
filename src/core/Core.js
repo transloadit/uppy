@@ -1,5 +1,5 @@
-import Utils from '../core/Utils';
-import Translator from '../core/Translator';
+import Utils from '../core/Utils'
+import Translator from '../core/Translator'
 
 /**
 * Main Uppy core
@@ -13,18 +13,18 @@ export default class Core {
     const defaultOptions = {
       // load English as the default locale
       locale: require('../locale/en_US.js')
-    };
+    }
 
     // Merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts);
+    this.opts = Object.assign({}, defaultOptions, opts)
 
     // Dictates in what order different plugin types are ran:
-    this.types = [ 'presetter', 'selecter', 'uploader' ];
+    this.types = [ 'presetter', 'selecter', 'uploader' ]
 
-    this.type = 'core';
+    this.type = 'core'
 
     // Container for different types of plugins
-    this.plugins = {};
+    this.plugins = {}
 
     // this.translator = new Translator({locale: this.opts.locale});
     // console.log(this.translator.t('files_chosen', {smart_count: 3}));
@@ -39,11 +39,11 @@ export default class Core {
  */
   use(Plugin, opts) {
     // Instantiate
-    const plugin = new Plugin(this, opts);
-    this.plugins[plugin.type] = this.plugins[plugin.type] || [];
-    this.plugins[plugin.type].push(plugin);
+    const plugin = new Plugin(this, opts)
+    this.plugins[plugin.type] = this.plugins[plugin.type] || []
+    this.plugins[plugin.type].push(plugin)
 
-    return this;
+    return this
   }
 
   /**
@@ -55,8 +55,8 @@ export default class Core {
  */
   setProgress(plugin, percentage) {
     // Any plugin can call this via `this.core.setProgress(this, precentage)`
-    console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage);
-    return this;
+    console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage)
+    return this
   }
 
   /**
@@ -69,9 +69,9 @@ export default class Core {
   runType(type, files) {
     const methods = this.plugins[type].map(
       plugin => plugin.run.call(plugin, files)
-    );
+    )
 
-    return Promise.all(methods);
+    return Promise.all(methods)
   }
 
   /**
@@ -82,16 +82,16 @@ export default class Core {
     console.log({
       class  : 'Core',
       method : 'run'
-    });
+    })
 
     // First we select only plugins of current type,
     // then create an array of runType methods of this plugins
     let typeMethods = this.types.filter(type => {
-      return this.plugins[type];
-    }).map(type => this.runType.bind(this, type));
+      return this.plugins[type]
+    }).map(type => this.runType.bind(this, type))
 
     Utils.promiseWaterfall(typeMethods)
       .then((result) => console.log(result))
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error))
   }
 }
