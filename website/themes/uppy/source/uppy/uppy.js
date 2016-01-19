@@ -2123,8 +2123,8 @@ module.exports = exports['default'];
 * Runs a waterfall of promises: calls each task, passing the result
 * from the previous one as an argument. The first task is run with an empty array.
 *
-* @param {Array} methods an array of Promises to run waterfall on
-* @return {Promise} of the last task
+* @param {array} methods of Promises to run waterfall on
+* @return {Promise} of the final task
 */
 'use strict';
 
@@ -2137,8 +2137,9 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 function promiseWaterfall(methods) {
   var _methods = _toArray(methods);
 
-  resolvedPromise = _methods[0];
-  tasks = _methods.slice(1);
+  var resolvedPromise = _methods[0];
+
+  var tasks = _methods.slice(1);
 
   var finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
     return prevTaskPromise.then(task);
