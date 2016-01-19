@@ -18,7 +18,6 @@
     "hexo-renderer-marked": "0.2.4",
     "hexo-renderer-postcss": "https://github.com/arturi/hexo-renderer-postcss#afca2bc12f5816067b15a9d24017c70e077b9f0b",
     "hexo-renderer-scss": "1.0.1",
-    "hexo-renderer-uppyexamples": "file:./private_modules/hexo-renderer-uppyexamples",
     "hexo-server": "0.1.2",
     "hexo-tag-emojis": "2.0.0",
     "hexo-util": "0.2.1",

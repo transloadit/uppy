@@ -48,4 +48,4 @@ function parseExamplesBrowserify (data, options, callback) {
 }
 
 
-// hexo.extend.renderer.register('es6', 'js', parseExamplesBrowserify);
+hexo.extend.renderer.register('es6', 'js', parseExamplesBrowserify);

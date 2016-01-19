@@ -2103,9 +2103,9 @@ var Translator = (function () {
       if (options && options.smart_count) {
         var plural = this.opts.locale.pluralize(options.smart_count);
         return this.interpolate(this.opts.locale.strings[key][plural], options);
-      } else {
-        return this.interpolate(this.opts.locale.strings[key], options);
       }
+
+      return this.interpolate(this.opts.locale.strings[key], options);
     }
   }]);
 
@@ -2349,7 +2349,7 @@ var DragDrop = (function (_Plugin) {
     this.opts = defaultOptions;
     Object.assign(this.opts, opts);
 
-    // get the element where Drag & Drop event will occur
+    // get the element where the Drag & Drop event will occur
     this.dropzone = document.querySelectorAll(this.opts.selector)[0];
     this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0];
 
