@@ -1,11 +1,12 @@
-// /**
-// * Runs a waterfall of promises: calls each task, passing the result
-// * from the previous one as an argument. The first task is run with an empty array.
-// *
-// * @param {Array} tasks an array of Promises to run waterfall on
-// * @return {Promise} of the last task
-// */
-function promiseWaterfall([resolvedPromise, ...tasks]) {
+/**
+* Runs a waterfall of promises: calls each task, passing the result
+* from the previous one as an argument. The first task is run with an empty array.
+*
+* @param {Array} methods an array of Promises to run waterfall on
+* @return {Promise} of the last task
+*/
+function promiseWaterfall(methods) {
+  [resolvedPromise, ...tasks] = methods;
   const finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
     return prevTaskPromise.then(task);
   }, resolvedPromise([]));  // initial value

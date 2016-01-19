@@ -2119,13 +2119,13 @@ exports['default'] = Translator;
 module.exports = exports['default'];
 
 },{}],7:[function(require,module,exports){
-// /**
-// * Runs a waterfall of promises: calls each task, passing the result
-// * from the previous one as an argument. The first task is run with an empty array.
-// *
-// * @param {Array} tasks an array of Promises to run waterfall on
-// * @return {Promise} of the last task
-// */
+/**
+* Runs a waterfall of promises: calls each task, passing the result
+* from the previous one as an argument. The first task is run with an empty array.
+*
+* @param {Array} methods an array of Promises to run waterfall on
+* @return {Promise} of the last task
+*/
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -2134,12 +2134,11 @@ Object.defineProperty(exports, '__esModule', {
 
 function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
-function promiseWaterfall(_ref) {
-  var _ref2 = _toArray(_ref);
+function promiseWaterfall(methods) {
+  var _methods = _toArray(methods);
 
-  var resolvedPromise = _ref2[0];
-
-  var tasks = _ref2.slice(1);
+  resolvedPromise = _methods[0];
+  tasks = _methods.slice(1);
 
   var finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
     return prevTaskPromise.then(task);

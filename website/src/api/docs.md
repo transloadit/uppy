@@ -63,11 +63,11 @@ basically a stripped-down version of it. Differences: pluralization functions ar
 and can be easily added among with dictionaries, nested objects are used for pluralization
 as opposed to `||||` delimeter
 
-Usage example: \`translator.t('files\_chosen', {smart\_count: 3})``
+Usage example: `translator.t('files_chosen', {smart_count: 3})`
 
 **Parameters**
 
--   `opts`  
+-   `opts` **object** 
 
 ### interpolate
 
@@ -107,6 +107,30 @@ this deciding on structure.
 
 Returns **array or string** files or success/fail message
 
+## addClass
+
+Adds a class to a DOM element
+
+**Parameters**
+
+-   `el` **String** selector
+-   `className` **String** to add
+
+Returns **String** 
+
+## addListenerMulti
+
+Adds multiple listeners to to a DOM element
+Equvalent to jQuery’s `$form.on('drag dragstart dragend dragover dragenter dragleave drop')`.
+
+**Parameters**
+
+-   `el` **String** selector
+-   `events` **String** to add, like `drag dragstart dragend dragover dragenter dragleave drop`
+-   `cb` **requestCallback** 
+
+Returns **String** 
+
 ## DragDrop
 
 Drag & Drop plugin
@@ -122,6 +146,28 @@ Checks if the browser supports Drag & Drop
 
 Returns **object** true if supported, false otherwise
 
+## promiseWaterfall
+
+Runs a waterfall of promises: calls each task, passing the result
+from the previous one as an argument. The first task is run with an empty array.
+
+**Parameters**
+
+-   `methods` **Array** an array of Promises to run waterfall on
+
+Returns **Promise** of the last task
+
+## removeClass
+
+Removes a class to a DOM element
+
+**Parameters**
+
+-   `el` **String** selector
+-   `className` **String** to remove
+
+Returns **String** 
+
 ## Tus10
 
 Tus resumable file uploader
@@ -130,6 +176,16 @@ Tus resumable file uploader
 
 -   `core`  
 -   `opts`  
+
+### run
+
+Add files to an array of `upload()` calles, passing the current and total file count numbers
+
+**Parameters**
+
+-   `results` **array or object** 
+
+Returns **Promise** of parallel uploads `Promise.all(uploaders)`
 
 ### upload
 
@@ -142,3 +198,15 @@ Create a new Tus upload
 -   `total` **integer** number of files in a queue
 
 Returns **Promise** 
+
+## toggleClass
+
+Toggles a class on a DOM element
+This is how we roll $('.element').toggleClass in a non-jQuery world
+
+**Parameters**
+
+-   `el` **String** selector
+-   `className` **String** to toggle
+
+Returns **String** 
