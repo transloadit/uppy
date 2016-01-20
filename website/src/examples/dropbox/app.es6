@@ -2,7 +2,7 @@ import Uppy from 'uppy/core'
 import { Dropbox } from 'uppy/plugins'
 
 const uppy = new Uppy({wait: false})
-const files = uppy
+uppy
   .use(Dropbox, {selector: '#target'})
   .run()
 

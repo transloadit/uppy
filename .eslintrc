@@ -9,7 +9,6 @@
   },
   "rules": {
     "key-spacing": [2, { "align": "colon" }],
-    "no-multi-spaces": [2, { "exceptions": { "Property": true, "VariableDeclarator": true, "ImportDeclaration": true}}],
-    "no-unused-vars": 0
+    "no-multi-spaces": [2, { "exceptions": { "Property": true, "VariableDeclarator": true, "ImportDeclaration": true}}]
   }
 }

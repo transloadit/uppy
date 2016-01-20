@@ -21,7 +21,6 @@ export default class Formtag extends Plugin {
     return new Promise((resolve, reject) => {
       button.addEventListener('click', (e) => {
         var fields = document.querySelectorAll(self.opts.selector)
-        var files = []
         var selected = [];
 
         [].forEach.call(fields, (field, i) => {

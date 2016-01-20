@@ -1,4 +1,3 @@
-import Utils from '../core/Utils'
 import Plugin from './Plugin'
 import request from 'superagent'
 
