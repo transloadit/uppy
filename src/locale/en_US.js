@@ -17,8 +17,8 @@ en_US.pluralize = function (n) {
   return 1
 }
 
-if (typeof Uppy !== 'undefined') {
-  Uppy.locale.en_US = en_US
+if (typeof window.Uppy !== 'undefined') {
+  window.Uppy.locale.en_US = en_US
 }
 
 export default en_US
