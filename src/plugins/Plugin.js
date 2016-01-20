@@ -9,14 +9,14 @@
 */
 export default class Plugin {
 
-  constructor(core, opts) {
+  constructor (core, opts) {
     this.core = core
     this.opts = opts
     this.type = 'none'
     this.name = this.constructor.name
   }
 
-  setProgress(percentage, current, total) {
+  setProgress (percentage, current, total) {
     var finalPercentage = percentage
 
     // if (current !== undefined && total !== undefined) {
@@ -32,7 +32,7 @@ export default class Plugin {
     this.core.setProgress(this, finalPercentage)
   }
 
-  extractFiles(results) {
+  extractFiles (results) {
     console.log({
       class  : 'Plugin',
       method : 'extractFiles',
@@ -58,7 +58,7 @@ export default class Plugin {
     return files
   }
 
-  run(results) {
+  run (results) {
     return results
   }
 }

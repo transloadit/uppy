@@ -3,7 +3,7 @@ import Plugin from './Plugin'
 import request from 'superagent'
 
 export default class Dropbox extends Plugin {
-  constructor(core, opts) {
+  constructor (core, opts) {
     super(core, opts)
     this.type = 'selecter'
     this.authenticate = this.authenticate.bind(this)
@@ -13,7 +13,7 @@ export default class Dropbox extends Plugin {
     this.currentDir = '/'
   }
 
-  connect(target) {
+  connect (target) {
     this._target = document.getElementById(target)
 
     this.client = new Dropbox.Client({ key: 'b7dzc9ei5dv5hcv', token: '' })
@@ -25,38 +25,43 @@ export default class Dropbox extends Plugin {
     }
   }
 
-  authenticate() {
+  authenticate () {
     this.client.authenticate()
   }
 
-  addFile() {
+  addFile () {
 
   }
 
-  getDirectory() {
+  getDirectory () {
     request.get(`https://api18.dropbox.com/1/metadata/auto`)
       .query({
         client_id: 'b7dzc9ei5dv5hcv',
-        token: this.client.credentials().token
+        token    : this.client.credentials().token
       })
       .set('Content-Type', 'application/json')
       .end((err, res) => {
+        if (err) {
+          console.err(err)
+          // return showError(err)
+        }
         console.log(res)
       })
 
     return this.client.readdir(this.currentDir, (error, entries, stat, statFiles) => {
       if (error) {
-        return showError(error)  // Something went wrong.
+        console.err(error)
+        // return showError(error)  // Something went wrong.
       }
       return this.render(statFiles)
     })
   }
 
-  run(results) {
+  run (results) {
 
   }
 
-  render(files) {
+  render (files) {
     // for each file in the directory, create a list item element
     const elems = files.map((file, i) => {
       const icon = (file.isFolder) ? 'folder' : 'file'

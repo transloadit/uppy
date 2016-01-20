@@ -6,7 +6,7 @@ import Plugin from './Plugin'
 *
 */
 export default class DragDrop extends Plugin {
-  constructor(core, opts) {
+  constructor (core, opts) {
     super(core, opts)
     this.type = 'selecter'
 
@@ -22,7 +22,7 @@ export default class DragDrop extends Plugin {
     Object.assign(this.opts, opts)
 
     // get the element where the Drag & Drop event will occur
-    this.dropzone      = document.querySelectorAll(this.opts.selector)[0]
+    this.dropzone = document.querySelectorAll(this.opts.selector)[0]
     this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0]
 
     this.status = document.querySelectorAll('.UppyDragDrop-status')[0]
@@ -30,17 +30,17 @@ export default class DragDrop extends Plugin {
     this.isDragDropSupported = this.checkDragDropSupport()
 
     // crazy stuff so that ‘this’ will behave in class
-    this.listenForEvents      = this.listenForEvents.bind(this)
-    this.handleDrop           = this.handleDrop.bind(this)
+    this.listenForEvents = this.listenForEvents.bind(this)
+    this.handleDrop = this.handleDrop.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
-    this.handleInputChange    = this.handleInputChange.bind(this)
+    this.handleInputChange = this.handleInputChange.bind(this)
   }
 
    /**
   * Checks if the browser supports Drag & Drop
   * @return {object} true if supported, false otherwise
   */
-  checkDragDropSupport() {
+  checkDragDropSupport () {
     const div = document.createElement('div')
 
     if (!('draggable' in div) || !('ondragstart' in div && 'ondrop' in div)) {
@@ -58,7 +58,7 @@ export default class DragDrop extends Plugin {
     return true
   }
 
-  listenForEvents() {
+  listenForEvents () {
     console.log(`waiting for some files to be dropped on ${this.opts.selector}`)
 
     if (this.isDragDropSupported) {
@@ -99,11 +99,11 @@ export default class DragDrop extends Plugin {
     // this.dropzoneInput.addEventListener('change', this.handleInputChange);
   }
 
-  displayStatus(status) {
+  displayStatus (status) {
     this.status.innerHTML = status
   }
 
-  handleDrop(e) {
+  handleDrop (e) {
     console.log('all right, someone dropped something here...')
     const files = e.dataTransfer.files
     // files = Array.from(files);
@@ -119,7 +119,7 @@ export default class DragDrop extends Plugin {
     return Promise.resolve({from: 'DragDrop', files: files})
   }
 
-  handleInputChange() {
+  handleInputChange () {
     // const fileInput = document.querySelectorAll('.UppyDragDrop-input')[0];
     const formData = new FormData(this.dropzone)
 
@@ -129,7 +129,7 @@ export default class DragDrop extends Plugin {
     return Promise.resolve({from: 'DragDrop', files: files})
   }
 
-  run(results) {
+  run (results) {
     console.log({
       class  : 'DragDrop',
       method : 'run',

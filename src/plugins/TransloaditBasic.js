@@ -1,7 +1,9 @@
 import Plugin from './Plugin'
+import DragDrop from './DragDrop'
+import Tus10 from './Tus10'
 
 class TransloaditBasic extends Plugin {
-  constructor(core, opts) {
+  constructor (core, opts) {
     super(core, opts)
     this.type = 'presetter'
     this.core

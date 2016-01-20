@@ -1,12 +1,12 @@
 import Plugin from './Plugin'
 
 export default class Formtag extends Plugin {
-  constructor(core, opts) {
+  constructor (core, opts) {
     super(core, opts)
     this.type = 'selecter'
   }
 
-  run(results) {
+  run (results) {
     console.log({
       class  : 'Formtag',
       method : 'run',
@@ -16,12 +16,12 @@ export default class Formtag extends Plugin {
     this.setProgress(0)
 
     const button = document.querySelector(this.opts.doneButtonSelector)
-    var self     = this
+    var self = this
 
     return new Promise((resolve, reject) => {
       button.addEventListener('click', (e) => {
-        var fields   = document.querySelectorAll(self.opts.selector)
-        var files    = []
+        var fields = document.querySelectorAll(self.opts.selector)
+        var files = []
         var selected = [];
 
         [].forEach.call(fields, (field, i) => {
@@ -52,8 +52,8 @@ export default class Formtag extends Plugin {
         // }
         self.setProgress(100)
         console.log({
-          selected:selected,
-          fields  :fields
+          selected: selected,
+          fields  : fields
         })
         resolve(selected)
       })

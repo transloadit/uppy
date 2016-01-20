@@ -13,7 +13,7 @@
  * @param {array} methods of Promises to run waterfall on
  * @return {Promise} of the final task
  */
-function promiseWaterfall(methods) {
+function promiseWaterfall (methods) {
   const [resolvedPromise, ...tasks] = methods
   const finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
     return prevTaskPromise.then(task)
@@ -31,11 +31,11 @@ function promiseWaterfall(methods) {
  * @param {String} className to toggle
  * @return {String}
  */
-function toggleClass(el, className) {
+function toggleClass (el, className) {
   if (el.classList) {
     el.classList.toggle(className)
   } else {
-    const classes = el.className.split(' ')
+    const classes       = el.className.split(' ')
     const existingIndex = classes.indexOf(className)
 
     if (existingIndex >= 0) {
@@ -55,7 +55,7 @@ function toggleClass(el, className) {
  * @param {String} className to add
  * @return {String}
  */
-function addClass(el, className) {
+function addClass (el, className) {
   if (el.classList) {
     el.classList.add(className)
   } else {
@@ -71,13 +71,14 @@ function addClass(el, className) {
  * @param {String} className to remove
  * @return {String}
  */
-function removeClass(el, className) {
+function removeClass (el, className) {
   if (el.classList) {
     el.classList.remove(className)
   } else {
     const patClasses = className.split(' ').join('|')
     const pattern    = new RegExp('(^|\\b)' + patClasses + '(\\b|$)', 'gi')
-    el.className     = el.className.replace(pat, ' ')
+
+    el.className = el.className.replace(pattern, ' ')
   }
 }
 
@@ -91,7 +92,7 @@ function removeClass(el, className) {
  * @param {requestCallback} cb
  * @return {String}
  */
-function addListenerMulti(el, events, cb) {
+function addListenerMulti (el, events, cb) {
   const eventsArray = events.split(' ')
   for (let event in eventsArray) {
     el.addEventListener(eventsArray[event], cb, false)

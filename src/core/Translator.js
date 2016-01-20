@@ -12,8 +12,7 @@
 * @param {object} opts
 */
 export default class Translator {
-  constructor(opts) {
-
+  constructor (opts) {
     const defaultOptions = {}
     this.opts = Object.assign({}, defaultOptions, opts)
   }
@@ -29,7 +28,7 @@ export default class Translator {
   * @param {object} options with values that will be used to replace placeholders
   * @return {string} interpolated
   */
-  interpolate(phrase, options) {
+  interpolate (phrase, options) {
     const replace = String.prototype.replace
     const dollarRegex = /\$/g
     const dollarBillsYall = '$$$$'
@@ -46,7 +45,7 @@ export default class Translator {
         // We create a new `RegExp` each time instead of using a more-efficient
         // string replace so that the same argument can be replaced multiple times
         // in the same phrase.
-        phrase = replace.call(phrase, new RegExp('%\\{'+arg+'\\}', 'g'), replacement)
+        phrase = replace.call(phrase, new RegExp('%\\{' + arg + '\\}', 'g'), replacement)
       }
     }
     return phrase
@@ -59,7 +58,7 @@ export default class Translator {
   * @param {object} options with values that will be used later to replace placeholders in string
   * @return {string} translated (and interpolated)
   */
-  t(key, options) {
+  t (key, options) {
     if (options && options.smart_count) {
       var plural = this.opts.locale.pluralize(options.smart_count)
       return this.interpolate(this.opts.locale.strings[key][plural], options)
@@ -67,5 +66,4 @@ export default class Translator {
 
     return this.interpolate(this.opts.locale.strings[key], options)
   }
-
 }

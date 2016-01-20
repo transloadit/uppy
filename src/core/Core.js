@@ -1,5 +1,5 @@
 import Utils from '../core/Utils'
-import Translator from '../core/Translator'
+// import Translator from '../core/Translator'
 
 /**
 * Main Uppy core
@@ -7,8 +7,7 @@ import Translator from '../core/Translator'
 * @param {object} opts general options, like locale, to show modal or not to show
 */
 export default class Core {
-  constructor(opts) {
-
+  constructor (opts) {
     // set default options
     const defaultOptions = {
       // load English as the default locale
@@ -37,7 +36,7 @@ export default class Core {
  * @param {object} options object that will be passed to Plugin later
  * @return {object} self for chaining
  */
-  use(Plugin, opts) {
+  use (Plugin, opts) {
     // Instantiate
     const plugin = new Plugin(this, opts)
     this.plugins[plugin.type] = this.plugins[plugin.type] || []
@@ -53,7 +52,7 @@ export default class Core {
  * @param {integer} percentage
  * @return {object} self for chaining
  */
-  setProgress(plugin, percentage) {
+  setProgress (plugin, percentage) {
     // Any plugin can call this via `this.core.setProgress(this, precentage)`
     console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage)
     return this
@@ -66,9 +65,9 @@ export default class Core {
  * @param {array} files
  * @return {Promise} of all methods
  */
-  runType(type, files) {
+  runType (type, files) {
     const methods = this.plugins[type].map(
-      plugin => plugin.run.call(plugin, files)
+      plugin => plugin.run(files)
     )
 
     return Promise.all(methods)
@@ -78,10 +77,10 @@ export default class Core {
   * Runs a waterfall of runType plugin packs, like so:
   * All preseters(data) --> All selecters(data) --> All uploaders(data) --> done
   */
-  run() {
+  run () {
     console.log({
-      class  : 'Core',
-      method : 'run'
+      class : 'Core',
+      method: 'run'
     })
 
     // First we select only plugins of current type,

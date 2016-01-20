@@ -1,7 +1,7 @@
 import Plugin from './Plugin'
 
 export default class Multipart extends Plugin {
-  constructor(core, opts) {
+  constructor (core, opts) {
     super(core, opts)
     this.type = 'uploader'
     if (!this.opts.fieldName === undefined) {
@@ -12,7 +12,7 @@ export default class Multipart extends Plugin {
     }
   }
 
-  run(results) {
+  run (results) {
     console.log({
       class  : 'Multipart',
       method : 'run',
@@ -35,7 +35,7 @@ export default class Multipart extends Plugin {
     return Promise.all(uploaders)
   }
 
-  upload(files, current, total) {
+  upload (files, current, total) {
     var formPost = new FormData()
 
     // turn file into an array so we can use bundle

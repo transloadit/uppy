@@ -6,7 +6,7 @@ import tus from 'tus-js-client'
 *
 */
 export default class Tus10 extends Plugin {
-  constructor(core, opts) {
+  constructor (core, opts) {
     super(core, opts)
     this.type = 'uploader'
   }
@@ -17,7 +17,7 @@ export default class Tus10 extends Plugin {
  * @param {array | object} results
  * @returns {Promise} of parallel uploads `Promise.all(uploaders)`
  */
-  run(results) {
+  run (results) {
     console.log({
       class  : 'Tus10',
       method : 'run',
@@ -33,7 +33,7 @@ export default class Tus10 extends Plugin {
     const uploaders = []
     for (let i in files) {
       const file = files[i]
-      const current = parseInt(i) + 1
+      const current = parseInt(i, 10) + 1
       const total = files.length
       uploaders.push(this.upload(file, current, total))
     }
@@ -49,13 +49,13 @@ export default class Tus10 extends Plugin {
  * @param {integer} total number of files in a queue
  * @returns {Promise}
  */
-  upload(file, current, total) {
+  upload (file, current, total) {
     console.log(`uploading ${current} of ${total}`)
     // Create a new tus upload
     const self = this
     const upload = new tus.Upload(file, {
       endpoint: this.opts.endpoint,
-      onError: function (error) {
+      onError : function (error) {
         return Promise.reject('Failed because: ' + error)
       },
       onProgress: function (bytesUploaded, bytesTotal) {

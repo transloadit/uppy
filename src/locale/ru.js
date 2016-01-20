@@ -1,10 +1,10 @@
 const ru = {}
 
 ru.strings = {
-  'choose_file': 'Выберите файл',
-  'or_drag_drop': 'или перенесите его сюда',
+  'choose_file'    : 'Выберите файл',
+  'or_drag_drop'   : 'или перенесите его сюда',
   'you_have_chosen': 'Вы выбрали: %{file_name}',
-  'files_chosen': {
+  'files_chosen'   : {
     0: 'Выбран %{smart_count} файл',
     1: 'Выбрано %{smart_count} файла',
     2: 'Выбрано %{smart_count} файлов'
