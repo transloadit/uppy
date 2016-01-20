@@ -6,6 +6,7 @@ uppy
   .use(Dropbox, {selector: '#target'})
   .run()
 
-const drop = new Dropbox();
+const drop = new Dropbox()
 
-console.log(uppy.type);
+console.log(uppy.type)
+console.dir(drop)
