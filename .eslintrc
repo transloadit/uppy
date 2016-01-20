@@ -2,10 +2,10 @@
   "extends": "standard",
   "env": {
     "browser": true,
-    "node": false,
+    "node": false
   },
   "globals": {
-    "Uppy": true,
+    "window": false
   },
   "rules": {
     "key-spacing": [2, { "align": "colon" }],

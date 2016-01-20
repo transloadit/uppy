@@ -3,15 +3,15 @@
  *
  * @param {Array} blob
  */
-function FakeBlob(blob) {
+function FakeBlob (blob) {
   this._blob = blob
   this.size = blob.length
 }
 
-FakeBlob.prototype.slice = function(start, end) {
+FakeBlob.prototype.slice = function (start, end) {
   return new FakeBlob(this._blob.slice(start, end))
 }
 
-FakeBlob.prototype.stringify = function() {
-  return this._blob.join("")
+FakeBlob.prototype.stringify = function () {
+  return this._blob.join('')
 }

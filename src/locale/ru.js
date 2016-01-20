@@ -23,8 +23,8 @@ ru.pluralize = function (n) {
   return 2
 }
 
-if (typeof Uppy !== 'undefined') {
-  Uppy.locale.ru = ru
+if (typeof window.Uppy !== 'undefined') {
+  window.Uppy.locale.ru = ru
 }
 
 export default ru

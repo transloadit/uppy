@@ -1,7 +1,7 @@
-if (typeof require == "function") {
-  require("../lib/mock-ajax.js")
+if (typeof require === 'function') {
+  require('../lib/mock-ajax.js')
 }
 
-describe("transloadit-client-js", function() {
-
-})
+// describe('transloadit-client-js', function () {
+//
+// })
