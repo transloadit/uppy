@@ -1,5 +1,4 @@
 (function () {
-
   var each = [].forEach
 
   var main = document.querySelector('.js-MainContent')
@@ -69,8 +68,8 @@
     allLinks.forEach(makeLinkClickable)
 
     // init smooth scroll
-    smoothScroll.init({
-      speed: 400,
+    window.smoothScroll.init({
+      speed : 400,
       offset: window.innerWidth > 720
         ? 40
         : 58
@@ -85,9 +84,9 @@
     var top = doc && doc.scrollTop || body.scrollTop
     var headerHeight = header.offsetHeight
     if (top > headerHeight) {
-      addClass(main, 'fix-sidebar');
+      addClass(main, 'fix-sidebar')
     } else {
-      removeClass(main, 'fix-sidebar');
+      removeClass(main, 'fix-sidebar')
     }
     if (animating || !allLinks) return
     var last
@@ -100,8 +99,9 @@
         last = link
       }
     }
-    if (last)
-    setActive(last.id)
+    if (last) {
+      setActive(last.id)
+    }
   }
 
   function makeLink (h) {
@@ -160,19 +160,19 @@
     wrapper.appendChild(link)
   }
 
-  function addClass(el, className) {
+  function addClass (el, className) {
     if (el.classList) {
-      el.classList.add(className);
+      el.classList.add(className)
     } else {
-      el.className += ' ' + className;
+      el.className += ' ' + className
     }
   }
 
-  function removeClass(el, className) {
+  function removeClass (el, className) {
     if (el.classList) {
-      el.classList.remove(className);
+      el.classList.remove(className)
     } else {
-      el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+      el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ')
     }
   }
 
@@ -197,5 +197,4 @@
   //     // TODO when 1.x is out
   //   }
   // })
-
-})();
+})()

@@ -20,49 +20,49 @@
  * before announcing a changed file.  It's removed from
  * the array when it has been bundled.
  */
-var createStream = require('fs').createWriteStream;
-var glob = require('multi-glob').glob;
-var chalk = require('chalk');
-var path = require('path');
-var mkdirp = require('mkdirp');
-var notifier = require('node-notifier');
-var babelify = require('babelify');
-var browserify = require('browserify');
-var watchify = require('watchify');
+var createStream = require('fs').createWriteStream
+var glob = require('multi-glob').glob
+var chalk = require('chalk')
+var path = require('path')
+var mkdirp = require('mkdirp')
+var notifier = require('node-notifier')
+var babelify = require('babelify')
+var browserify = require('browserify')
+var watchify = require('watchify')
 
-var webRoot = __dirname;
-var uppyRoot = path.dirname(webRoot);
+var webRoot = __dirname
+var uppyRoot = path.dirname(webRoot)
 
-var srcPattern = webRoot + '/src/examples/**/app.es6';
-var dstPattern = webRoot + '/public/examples/**/app.js';
+var srcPattern = webRoot + '/src/examples/**/app.es6'
+var dstPattern = webRoot + '/public/examples/**/app.js'
 
-var watchifyEnabled = process.argv[2] === 'watch';
-var browserifyPlugins = [];
+var watchifyEnabled = process.argv[2] === 'watch'
+var browserifyPlugins = []
 if (watchifyEnabled) {
-  browserifyPlugins.push(watchify);
+  browserifyPlugins.push(watchify)
 }
 
 // Instead of 'watch', build-examples.js can also take a path as cli argument.
 // In this case we'll only bundle the specified path/pattern
 if (!watchifyEnabled && process.argv[2]) {
-  srcPattern = process.argv[2];
+  srcPattern = process.argv[2]
   if (process.argv[3]) {
-    dstPattern = process.argv[3];
+    dstPattern = process.argv[3]
   }
 }
 
 // Find each app.es6 file with glob.
-glob(srcPattern, function(err, files) {
-  if (err) throw new Error(err);
+glob(srcPattern, function (err, files) {
+  if (err) throw new Error(err)
 
   if (watchifyEnabled) {
-    console.log('--> Watching examples..');
+    console.log('--> Watching examples..')
   }
 
-  var muted = [];
+  var muted = []
 
   // Create a new watchify instance for each file.
-  files.forEach(function(file) {
+  files.forEach(function (file) {
     var browseFy = browserify(file, {
       cache       : {},
       packageCache: {},
@@ -74,21 +74,21 @@ glob(srcPattern, function(err, files) {
       .require(uppyRoot + '/src/index.js', { expose: 'uppy' })
       .require(uppyRoot + '/src/core/index.js', { expose: 'uppy/core' })
       .require(uppyRoot + '/src/plugins/index.js', { expose: 'uppy/plugins' })
-      .transform(babelify);
+      .transform(babelify)
 
     // Listeners for changes, errors, and completion.
     browseFy
       .on('update', bundle)
       .on('error', onError)
-      .on('file', function(file, id, parent) {
+      .on('file', function (file, id, parent) {
         // When file completes, unmute it.
-        muted = muted.filter(function(mutedId) {
-          return id !== mutedId;
-        });
-      });
+        muted = muted.filter(function (mutedId) {
+          return id !== mutedId
+        })
+      })
 
     // Call bundle() manually to start watch processes.
-    bundle();
+    bundle()
 
     /**
      * Creates bundle and writes it to static and public folders.
@@ -96,43 +96,43 @@ glob(srcPattern, function(err, files) {
      * @param  {[type]} ids [description]
      * @return {[type]}     [description]
      */
-    function bundle(ids) {
-      ids = ids || [];
-      ids.forEach(function(id) {
+    function bundle (ids) {
+      ids = ids || []
+      ids.forEach(function (id) {
         if (!isMuted(id, muted)) {
-          console.info(chalk.cyan('change:'), id);
-          muted.push(id);
+          console.info(chalk.cyan('change:'), id)
+          muted.push(id)
         }
-      });
+      })
 
-      var exampleName = path.basename(path.dirname(file));
-      var output      = dstPattern.replace('**', exampleName);
-      var parentDir   = path.dirname(output);
+      var exampleName = path.basename(path.dirname(file))
+      var output      = dstPattern.replace('**', exampleName)
+      var parentDir   = path.dirname(output)
 
-      mkdirp.sync(parentDir);
+      mkdirp.sync(parentDir)
 
-      console.info(chalk.green('✓ building:'), chalk.green(path.relative(process.cwd(), file)));
+      console.info(chalk.green('✓ building:'), chalk.green(path.relative(process.cwd(), file)))
 
       var bundle = browseFy.bundle()
         .on('error', onError)
 
-      bundle.pipe(createStream(output));
+      bundle.pipe(createStream(output))
     }
-  });
-});
+  })
+})
 
 /**
  * Logs to console and shows desktop notification on error.
  * Calls `this.emit(end)` to stop bundling.
  * @param  {object} err Error object
  */
-function onError(err) {
-  console.error(chalk.red('✗ error:'), chalk.red(err.message));
+function onError (err) {
+  console.error(chalk.red('✗ error:'), chalk.red(err.message))
   notifier.notify({
-    'title': 'Build failed:',
+    'title'  : 'Build failed:',
     'message': err.message
   })
-  this.emit('end');
+  this.emit('end')
 }
 
 /**
@@ -142,8 +142,8 @@ function onError(err) {
  * @param  {Array<string>}  list Muted files array
  * @return {Boolean}      True if file is muted
  */
-function isMuted(id, list) {
-  return list.reduce(function(prev, curr) {
-    return prev || (curr === id);
-  }, false);
+function isMuted (id, list) {
+  return list.reduce(function (prev, curr) {
+    return prev || (curr === id)
+  }, false)
 }
