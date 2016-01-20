@@ -30,7 +30,7 @@
     "web:disc": "npm run build:umd:fullpath && discify dist/uppy-fp.js --output website/src/_disc.html && echo '---\nlayout: false\n---\n' |cat - website/src/_disc.html > website/src/disc.html && rm website/src/_disc.html",
     "web:install": "cd website && rm -rf node_modules/hexo-renderer-uppyexamples && npm install",
     "web:preview": "cd website && ./node_modules/.bin/hexo server --debug & npm run watch:examples",
-    "web:update-frontpage-code-sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
+    "web:update:frontpage:code:sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
     "web": "npm run web:install && npm run web:clean && npm run web:build && npm run web:preview"
   },
   "repository": {
