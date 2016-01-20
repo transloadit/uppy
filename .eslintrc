@@ -5,7 +5,8 @@
     "node": false
   },
   "globals": {
-    "window": false
+    "window": true,
+    "hexo": true
   },
   "rules": {
     "key-spacing": [2, { "align": "colon" }],
