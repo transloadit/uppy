@@ -1,9 +1,10 @@
-import Uppy from 'uppy/core';
-import { Drive } from 'uppy/plugins';
+import Uppy from 'uppy/core'
+import { Drive } from 'uppy/plugins'
 
-const uppy = new Uppy({wait: false});
-const files = uppy
+const uppy = new Uppy({wait: false})
+
+uppy
   .use(Drive, {selector: '#target'})
-  .run();
+  .run()
 
-console.log(uppy.type);
+console.log(uppy.type)
