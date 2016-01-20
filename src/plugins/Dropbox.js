@@ -41,7 +41,7 @@ export default class Dropbox extends Plugin {
       .set('Content-Type', 'application/json')
       .end((err, res) => {
         if (err) {
-          console.err(err)
+          console.error(err)
           // return showError(err)
         }
         console.log(res)
@@ -49,7 +49,7 @@ export default class Dropbox extends Plugin {
 
     return this.client.readdir(this.currentDir, (error, entries, stat, statFiles) => {
       if (error) {
-        console.err(error)
+        console.error(error)
         // return showError(error)  // Something went wrong.
       }
       return this.render(statFiles)
