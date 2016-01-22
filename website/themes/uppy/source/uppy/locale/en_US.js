@@ -7,10 +7,10 @@ Object.defineProperty(exports, '__esModule', {
 var en_US = {};
 
 en_US.strings = {
-  'choose_file': 'Choose a file',
-  'you_have_chosen': 'You have chosen: %{file_name}',
-  'or_drag_drop': 'or drag it here',
-  'files_chosen': {
+  chooseFile: 'Choose a file',
+  youHaveChosen: 'You have chosen: %{fileName}',
+  orDragDrop: 'or drag it here',
+  filesChosen: {
     0: '%{smart_count} file selected',
     1: '%{smart_count} files selected'
   }
@@ -23,8 +23,8 @@ en_US.pluralize = function (n) {
   return 1;
 };
 
-if (typeof Uppy !== 'undefined') {
-  Uppy.locale.en_US = en_US;
+if (typeof window.Uppy !== 'undefined') {
+  window.Uppy.locale.en_US = en_US;
 }
 
 exports['default'] = en_US;
