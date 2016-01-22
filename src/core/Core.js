@@ -1,5 +1,6 @@
 import Utils from '../core/Utils'
-// import Translator from '../core/Translator'
+import fs from 'fs'
+import Translator from '../core/Translator'
 
 /**
 * Main Uppy core
@@ -25,8 +26,8 @@ export default class Core {
     // Container for different types of plugins
     this.plugins = {}
 
-    // this.translator = new Translator({locale: this.opts.locale});
-    // console.log(this.translator.t('files_chosen', {smart_count: 3}));
+    this.translator = new Translator({locale: this.opts.locale})
+    console.log(this.translator.t('filesChosen', {smart_count: 3}))
   }
 
   /**
@@ -71,6 +72,11 @@ export default class Core {
     )
 
     return Promise.all(methods)
+  }
+
+  compileTemplate (templatePath, options) {
+    const template = fs.readFileSync('../templates/' + templatePath, 'utf-8')
+    return ejs.render(template, options)
   }
 
   /**
