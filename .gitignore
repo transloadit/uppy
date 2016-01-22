@@ -13,6 +13,6 @@ website/node_modules/
 website/public/
 website/.deploy*/
 website/src/_drafts
-website/themes/uppy/source/js/uppy.js
+website/themes/uppy/source/uppy/
 
 npm-debug.log*
