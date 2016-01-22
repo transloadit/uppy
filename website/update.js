@@ -33,25 +33,13 @@ fs.writeFileSync(
     })
 )
 
-// Copy latest uppy version into website so the CDN example can use it
-// fs.writeFileSync(
-//   webRoot + '/themes/uppy/source/js/uppy.js',
-//   fs.readFileSync(locations.dev, 'utf-8')
-// );
-// console.info(chalk.green('✓ injected: '), chalk.dim('uppy.js build into site'));
-//
-//
-// fs.writeFileSync(
-//   webRoot + '/themes/uppy/source/css/uppy.css',
-//   fs.readFileSync(locations.css, 'utf-8')
-// );
-// console.info(chalk.green('✓ injected: '), chalk.dim('uppy.css build into site'));
-
-// Copy latest uppy version into website so the CDN example can use it
 var exec = require('child_process').exec
-exec('cp -fR ./dist/. ./website/themes/uppy/source/uppy', function (error, stdout, stderr) {
+exec('cp -fR ' + uppyRoot + '/dist/ ' + webRoot + '/themes/uppy/source/uppy', function (error, stdout, stderr) {
   if (error) {
-    console.error(chalk.red('x failed to inject: '), chalk.dim('uppy umd build into site'))
+    console.error(
+      chalk.red('x failed to inject: '),
+      chalk.dim('uppy umd build into site, because: ' + error)
+    )
     return
   }
   console.info(chalk.green('✓ injected: '), chalk.dim('uppy umd build into site'))
