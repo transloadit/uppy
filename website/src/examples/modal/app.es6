@@ -31,6 +31,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     overlayElem.addEventListener('click', onDocumentClick)
     activate()
+
+    var driveButton = document.getElementById('GoogleDriveTrigger')
+    driveButton.addEventListener('click', function(e) {
+      fetch('http://localhost:3002/drive/auth/authorize', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(function(res) {
+        res.text().then(function(data) {
+          const target = document.querySelector('.UploadContent')
+
+          target.innerHTML = '<a href="' + data + '" target="_blank">Click here to authorize</a>'
+        })
+      })
+
+    })
   })
 })
 
@@ -54,7 +72,7 @@ function activate (e) {
   var popin = document.createElement('div')
   popin.classList.add('avgrund-popin')
   popin.classList.add('ModalWindow')
-  var template = '<div class="ModalTemplate"><nav class="UploadSidebar"><ul class="InputList"><li><button>Dropbox</button></li><li><button>Google Drive</button></li><li><button>Instagram</button></li><li><button>Local</button></li><li><button>Webcam</button></li></ul></nav><main class="UploadContent"><button id="DriveConnect">Connect to Drive</button></main></div>'
+  var template = '<div class="ModalTemplate"><nav class="UploadSidebar"><ul class="InputList"><li><button>Local</button></li><li><button id="GoogleDriveTrigger">Google Drive</button></li><li><button>Instagram</button></li><li><button>Dropbox</button></li><li><button>Webcam</button></li></ul></nav><main class="UploadContent"></main></div>'
   popin.innerHTML = template
   console.log(template)
 
@@ -79,3 +97,5 @@ function deactivate () {
     el.remove()
   }, 500)
 }
+
+
