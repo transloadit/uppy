@@ -16,6 +16,7 @@ Work not started yet
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
 - [ ] core: Create a progressbar/spinner/etc plugin (#18)
+- [ ] core: Implement ejs for templating
 - [ ] meta: Create an Uppy logo (@vvolfy)
 - [ ] multipart: Write an acceptance test for the Multipart example via Saucelabs (#2, #23, @hedgerh)
 
