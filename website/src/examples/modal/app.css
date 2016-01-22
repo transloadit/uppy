@@ -135,3 +135,39 @@ body.avgrund-active {
   top: 6px;
   right: 10px;
 }
+
+
+/* Modal Styles */
+.InputList {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  list-style-type: none;
+  padding: 0;
+}
+
+.InputList li {
+  margin-bottom: 16px;
+}
+
+.InputList li button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  outline: 0;
+}
+
+.ModalTemplate {
+  display: flex;
+  flex-direction: row;
+}
+
+.UploadSidebar {
+  border-right: 1px solid #ccc;
+  height: 600px;
+  text-align: center;
+}
+
+.UploadContent {
+  height: 600px;
+}

@@ -54,9 +54,9 @@ function activate (e) {
   var popin = document.createElement('div')
   popin.classList.add('avgrund-popin')
   popin.classList.add('ModalWindow')
-
-  popin.innerHTML = defaults.template
-  console.log(defaults.template)
+  var template = '<div class="ModalTemplate"><nav class="UploadSidebar"><ul class="InputList"><li><button>Dropbox</button></li><li><button>Google Drive</button></li><li><button>Instagram</button></li><li><button>Local</button></li><li><button>Webcam</button></li></ul></nav><main class="UploadContent"><button id="DriveConnect">Connect to Drive</button></main></div>'
+  popin.innerHTML = template
+  console.log(template)
 
   var a  = document.createElement('a')
   var linkText = document.createTextNode('close')
