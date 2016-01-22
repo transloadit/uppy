@@ -27,6 +27,8 @@ var path = require('path')
 var mkdirp = require('mkdirp')
 var notifier = require('node-notifier')
 var babelify = require('babelify')
+var hbsfy = require('hbsfy')
+var browserifyEjs = require('browserify-ejs')
 var browserify = require('browserify')
 var watchify = require('watchify')
 
@@ -74,6 +76,7 @@ glob(srcPattern, function (err, files) {
       .require(uppyRoot + '/src/index.js', { expose: 'uppy' })
       .require(uppyRoot + '/src/core/index.js', { expose: 'uppy/core' })
       .require(uppyRoot + '/src/plugins/index.js', { expose: 'uppy/plugins' })
+      .transform(hbsfy)
       .transform(babelify)
 
     // Listeners for changes, errors, and completion.

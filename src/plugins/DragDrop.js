@@ -1,5 +1,6 @@
 import Utils from '../core/Utils'
 import Plugin from './Plugin'
+import templateDragDrop from '../templates/dragdrop.hbs'
 
 /**
 * Drag & Drop plugin
@@ -34,11 +35,16 @@ export default class DragDrop extends Plugin {
     this.handleDrop = this.handleDrop.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
+
+    console.log(templateDragDrop({
+      chooseFile: 'smth',
+      orDragDrop: 'going on here'
+    }))
   }
 
    /**
   * Checks if the browser supports Drag & Drop
-  * @return {object} true if supported, false otherwise
+  * @return {Boolean} true if supported, false otherwise
   */
   checkDragDropSupport () {
     const div = document.createElement('div')
