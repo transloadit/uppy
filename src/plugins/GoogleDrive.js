@@ -1,37 +1,47 @@
+// import Utils from '../core/Utils'
 import Plugin from './Plugin'
 import request from 'superagent'
 
-export default class Dropbox extends Plugin {
-  constructor(core, opts) {
-    super(core, opts);
-    this.type = 'selecter';
-    this.authenticate = this.authenticate.bind(this);
-    this.connect = this.connect.bind(this);
-    this.render = this.render.bind(this);
-    this.files = [];
-    this.currentDirectory = '/';
+export default class Drive extends Plugin {
+  constructor (core, opts) {
+    super(core, opts)
+    this.type = 'selecter'
+    this.authenticate = this.authenticate.bind(this)
+    this.connect = this.connect.bind(this)
+    this.render = this.render.bind(this)
+    this.files = []
+    this.currentDir = '/'
   }
 
-  connect(target) {
-    this.getDirectory();
+  connect (target) {
+    this.getDirectory()
   }
 
-  authenticate() {
-    request.get('/')
+  authenticate () {
+    request.get('/drive/authenticate')
+    .query({})
+    .end((err, res) => {
+      if (err) {
+        console.err(err)
+      }
+    })
   }
 
   addFile () {
 
   }
 
-  getDirectory() {
+  getDirectory () {
     var opts = {
+      dir: 'pizza'
     }
     request.get('//localhost:3002/dropbox/readdir')
       .query(opts)
       .set('Content-Type', 'application/json')
       .end((err, res) => {
-        console.log(res);
+        console.log(err)
+        console.log('yo!')
+        console.log(res)
       })
   }
 
@@ -43,10 +53,7 @@ export default class Dropbox extends Plugin {
     // for each file in the directory, create a list item element
     const elems = files.map((file, i) => {
       const icon = (file.isFolder) ? 'folder' : 'file'
-      return `<li data-type="${icon}" data-name="${file.name}">
-        <span>${icon} : </span>
-        <span> ${file.name}</span>
-      </li>`
+      return `<li data-type="${icon}" data-name="${file.name}"><span>${icon} : </span><span> ${file.name}</span></li>`
     })
 
     // appends the list items to the target
