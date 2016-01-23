@@ -1,6 +1,7 @@
 import Utils from '../core/Utils'
 import fs from 'fs'
 import Translator from '../core/Translator'
+import ejs from 'ejs'
 
 /**
 * Main Uppy core

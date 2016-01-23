@@ -28,7 +28,6 @@ var mkdirp = require('mkdirp')
 var notifier = require('node-notifier')
 var babelify = require('babelify')
 var hbsfy = require('hbsfy')
-var browserifyEjs = require('browserify-ejs')
 var browserify = require('browserify')
 var watchify = require('watchify')
 

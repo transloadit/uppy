@@ -68,6 +68,7 @@
     "zuul": "3.7.2"
   },
   "dependencies": {
+    "ejs": "^2.3.4",
     "superagent": "1.5.0",
     "tus-js-client": "1.1.3"
   }
