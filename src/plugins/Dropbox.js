@@ -2,21 +2,21 @@ import Plugin from './Plugin'
 import request from 'superagent'
 
 export default class Dropbox extends Plugin {
-  constructor(core, opts) {
-    super(core, opts);
-    this.type = 'selecter';
-    this.authenticate = this.authenticate.bind(this);
-    this.connect = this.connect.bind(this);
-    this.render = this.render.bind(this);
-    this.files = [];
-    this.currentDirectory = '/';
+  constructor (core, opts) {
+    super(core, opts)
+    this.type = 'selecter'
+    this.authenticate = this.authenticate.bind(this)
+    this.connect = this.connect.bind(this)
+    this.render = this.render.bind(this)
+    this.files = []
+    this.currentDirectory = '/'
   }
 
-  connect(target) {
-    this.getDirectory();
+  connect (target) {
+    this.getDirectory()
   }
 
-  authenticate() {
+  authenticate () {
     request.get('/')
   }
 
@@ -24,14 +24,15 @@ export default class Dropbox extends Plugin {
 
   }
 
-  getDirectory() {
+  getDirectory () {
     var opts = {
     }
     request.get('//localhost:3002/dropbox/readdir')
       .query(opts)
       .set('Content-Type', 'application/json')
       .end((err, res) => {
-        console.log(res);
+        if (err) return new Error(err)
+        console.log(res)
       })
   }
 
