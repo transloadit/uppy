@@ -3,7 +3,7 @@ export default function (strings) {
         method="post"
         action="/"
         enctype="multipart/form-data">
-      <img class="UppyDragDrop-puppy" src="/images/uppy.svg">
+      <img class="UppyDragDrop-puppy" src="/images/uppy.svg" />
       <input class="UppyDragDrop-input"
              type="file"
              name="files[]"

@@ -3,9 +3,9 @@ import Plugin from './Plugin'
 import templateDragDrop from '../templates/dragdrop.hbs'
 
 /**
-* Drag & Drop plugin
-*
-*/
+ * Drag & Drop plugin
+ *
+ */
 export default class DragDrop extends Plugin {
   constructor (core, opts) {
     super(core, opts)
@@ -42,10 +42,10 @@ export default class DragDrop extends Plugin {
     }))
   }
 
-   /**
-  * Checks if the browser supports Drag & Drop
-  * @return {Boolean} true if supported, false otherwise
-  */
+/**
+ * Checks if the browser supports Drag & Drop
+ * @return {Boolean} true if supported, false otherwise
+ */
   checkDragDropSupport () {
     const div = document.createElement('div')
 

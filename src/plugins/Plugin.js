@@ -1,12 +1,12 @@
 /**
-* Boilerplate that all Plugins share - and should not be used
-* directly. It also shows which methods final plugins should implement/override,
-* this deciding on structure.
-*
-* @param {object} main Uppy core object
-* @param {object} object with plugin options
-* @return {array | string} files or success/fail message
-*/
+ * Boilerplate that all Plugins share - and should not be used
+ * directly. It also shows which methods final plugins should implement/override,
+ * this deciding on structure.
+ *
+ * @param {object} main Uppy core object
+ * @param {object} object with plugin options
+ * @return {array | string} files or success/fail message
+ */
 export default class Plugin {
 
   constructor (core, opts) {

@@ -2,16 +2,16 @@ import Plugin from './Plugin'
 import tus from 'tus-js-client'
 
 /**
-* Tus resumable file uploader
-*
-*/
+ * Tus resumable file uploader
+ *
+ */
 export default class Tus10 extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'uploader'
   }
 
-  /**
+/**
  * Add files to an array of `upload()` calles, passing the current and total file count numbers
  *
  * @param {array | object} results
@@ -41,7 +41,7 @@ export default class Tus10 extends Plugin {
     return Promise.all(uploaders)
   }
 
-  /**
+/**
  * Create a new Tus upload
  *
  * @param {object} file for use with upload

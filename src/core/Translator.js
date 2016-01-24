@@ -1,33 +1,33 @@
 /**
-* Translates strings with interpolation & pluralization support.Extensible with custom dictionaries
-* and pluralization functions.
-*
-* Borrows heavily from and inspired by Polyglot https://github.com/airbnb/polyglot.js,
-* basically a stripped-down version of it. Differences: pluralization functions are not hardcoded
-* and can be easily added among with dictionaries, nested objects are used for pluralization
-* as opposed to `||||` delimeter
-*
-* Usage example: `translator.t('files_chosen', {smart_count: 3})`
-*
-* @param {object} opts
-*/
+ * Translates strings with interpolation & pluralization support.Extensible with custom dictionaries
+ * and pluralization functions.
+ *
+ * Borrows heavily from and inspired by Polyglot https://github.com/airbnb/polyglot.js,
+ * basically a stripped-down version of it. Differences: pluralization functions are not hardcoded
+ * and can be easily added among with dictionaries, nested objects are used for pluralization
+ * as opposed to `||||` delimeter
+ *
+ * Usage example: `translator.t('files_chosen', {smart_count: 3})`
+ *
+ * @param {object} opts
+ */
 export default class Translator {
   constructor (opts) {
     const defaultOptions = {}
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
-  /**
-  * Takes a string with placeholder variables like `%{smart_count} file selected`
-  * and replaces it with values from options `{smart_count: 5}`
-  *
-  * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
-  * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
-  *
-  * @param {string} phrase that needs interpolation, with placeholders
-  * @param {object} options with values that will be used to replace placeholders
-  * @return {string} interpolated
-  */
+/**
+ * Takes a string with placeholder variables like `%{smart_count} file selected`
+ * and replaces it with values from options `{smart_count: 5}`
+ *
+ * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
+ * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
+ *
+ * @param {string} phrase that needs interpolation, with placeholders
+ * @param {object} options with values that will be used to replace placeholders
+ * @return {string} interpolated
+ */
   interpolate (phrase, options) {
     const replace = String.prototype.replace
     const dollarRegex = /\$/g
@@ -51,13 +51,13 @@ export default class Translator {
     return phrase
   }
 
-  /**
-  * Public translate method
-  *
-  * @param {string} key
-  * @param {object} options with values that will be used later to replace placeholders in string
-  * @return {string} translated (and interpolated)
-  */
+/**
+ * Public translate method
+ *
+ * @param {string} key
+ * @param {object} options with values that will be used later to replace placeholders in string
+ * @return {string} translated (and interpolated)
+ */
   t (key, options) {
     if (options && options.smart_count) {
       var plural = this.opts.locale.pluralize(options.smart_count)

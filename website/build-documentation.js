@@ -8,10 +8,14 @@ var fs = require('fs')
 var docOrder = ['Core', 'Utils', 'Translator', 'Plugin']
 
 documentation('../src/index.js', {order: docOrder}, function (err, comments) {
-  if (err) console.log(err)
+  if (err) {
+    throw new Error(err)
+  }
 
   documentationFormatter(comments, {}, function (err, output) {
-    if (err) console.log(err)
+    if (err) {
+      throw new Error(err)
+    }
 
     var inputMarkdownContent = remark.parse(fs.readFileSync('src/api/docs.md', 'utf-8'))
     var newStuff = remark.parse(output)

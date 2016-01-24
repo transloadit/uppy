@@ -187,7 +187,7 @@ Drag & Drop plugin
 
 Checks if the browser supports Drag & Drop
 
-Returns **object** true if supported, false otherwise
+Returns **Boolean** true if supported, false otherwise
 
 ## Tus10
 
