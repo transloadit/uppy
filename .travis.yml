@@ -16,7 +16,7 @@ script:
   # Automatically deploy website onto gh-pages (if master and not PR)
   # Don't do this in `after_success`, because then failures won't bubble up
   - git config --global user.name 'Uppy Bot'
-  - git config --global user.email 'uppybot@uppyjs.io'
+  - git config --global user.email 'uppybot@uppy.io'
   - if [ "${TRAVIS_PULL_REQUEST}" == "false" ] && [ "${TRAVIS_BRANCH}" == "master" ]; then npm run web:deploy; else echo "Skipping for non-master/prs"; fi
 
 env:

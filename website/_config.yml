@@ -11,7 +11,7 @@ uppy_gz_size: "121.27"
 
 # Theme
 google_analytics: UA-63083-12
-root_domain: uppyjs.io
+root_domain: uppy.io
 
 # Site
 title: Uppy
@@ -28,12 +28,12 @@ description_secondary: >
   support for adding their uploading and encoding backend, but this is opt-in, and you can just as easily
   roll your own. Uppy is in the early stages of development and should not be used for anything serious yet.
 author: Transloadit
-email: uppybot@uppyjs.io
+email: uppybot@uppy.io
 language: English
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://uppyjs.io
+url: http://uppy.io
 root: /
 permalink: :year/:month/:day/:title/
 tag_dir: tags
