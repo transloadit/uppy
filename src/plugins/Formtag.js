@@ -8,8 +8,8 @@ export default class Formtag extends Plugin {
 
   run (results) {
     console.log({
-      class  : 'Formtag',
-      method : 'run',
+      class: 'Formtag',
+      method: 'run',
       results: results
     })
 
@@ -52,7 +52,7 @@ export default class Formtag extends Plugin {
         self.setProgress(100)
         console.log({
           selected: selected,
-          fields  : fields
+          fields: fields
         })
         resolve(selected)
       })

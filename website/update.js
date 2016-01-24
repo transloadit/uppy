@@ -1,19 +1,19 @@
 var fs = require('fs')
-var path  = require('path')
+var path = require('path')
 var chalk = require('chalk')
 
-var webRoot  = __dirname
+var webRoot = __dirname
 var uppyRoot = path.dirname(__dirname)
 
 var configPath = webRoot + '/_config.yml'
-var config     = fs.readFileSync(configPath, 'utf-8')
-var version    = require(uppyRoot + '/package.json').version
+var config = fs.readFileSync(configPath, 'utf-8')
+var version = require(uppyRoot + '/package.json').version
 
 // Inject current Uppy version and sizes in website's _config.yml
-var sizes     = {}
+var sizes = {}
 var locations = {
   min: uppyRoot + '/dist/uppy.js',
-  gz : uppyRoot + '/dist/uppy.js',
+  gz: uppyRoot + '/dist/uppy.js',
   dev: uppyRoot + '/dist/uppy.js',
   css: uppyRoot + '/dist/uppy.css'
 }

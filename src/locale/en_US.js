@@ -1,10 +1,10 @@
 const en_US = {}
 
 en_US.strings = {
-  chooseFile      : 'Choose a file',
-  youHaveChosen   : 'You have chosen: %{fileName}',
-  orDragDrop      : 'or drag it here',
-  filesChosen     : {
+  chooseFile: 'Choose a file',
+  youHaveChosen: 'You have chosen: %{fileName}',
+  orDragDrop: 'or drag it here',
+  filesChosen: {
     0: '%{smart_count} file selected',
     1: '%{smart_count} files selected'
   }

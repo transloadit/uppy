@@ -69,7 +69,7 @@
 
     // init smooth scroll
     window.smoothScroll.init({
-      speed : 400,
+      speed: 400,
       offset: window.innerWidth > 720
         ? 40
         : 58

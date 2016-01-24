@@ -65,9 +65,9 @@ glob(srcPattern, function (err, files) {
   // Create a new watchify instance for each file.
   files.forEach(function (file) {
     var browseFy = browserify(file, {
-      cache       : {},
+      cache: {},
       packageCache: {},
-      plugin      : browserifyPlugins
+      plugin: browserifyPlugins
     })
 
     // Aliasing for using `require('uppy')`, etc.
@@ -108,8 +108,8 @@ glob(srcPattern, function (err, files) {
       })
 
       var exampleName = path.basename(path.dirname(file))
-      var output      = dstPattern.replace('**', exampleName)
-      var parentDir   = path.dirname(output)
+      var output = dstPattern.replace('**', exampleName)
+      var parentDir = path.dirname(output)
 
       mkdirp.sync(parentDir)
 
@@ -131,7 +131,7 @@ glob(srcPattern, function (err, files) {
 function onError (err) {
   console.error(chalk.red('✗ error:'), chalk.red(err.message))
   notifier.notify({
-    'title'  : 'Build failed:',
+    'title': 'Build failed:',
     'message': err.message
   })
   this.emit('end')

@@ -34,8 +34,8 @@ export default class Plugin {
 
   extractFiles (results) {
     console.log({
-      class  : 'Plugin',
-      method : 'extractFiles',
+      class: 'Plugin',
+      method: 'extractFiles',
       results: results
     })
 

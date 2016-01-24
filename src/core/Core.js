@@ -86,7 +86,7 @@ export default class Core {
   */
   run () {
     console.log({
-      class : 'Core',
+      class: 'Core',
       method: 'run'
     })
 

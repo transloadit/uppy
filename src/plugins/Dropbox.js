@@ -45,7 +45,7 @@ export default class Dropbox extends Plugin {
     const elems = files.map((file, i) => {
       const icon = (file.isFolder) ? 'folder' : 'file'
       return `<li data-type="${icon}" data-name="${file.name}">
-        <span>${icon} : </span>
+        <span>${icon}: </span>
         <span> ${file.name}</span>
       </li>`
     })

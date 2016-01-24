@@ -19,8 +19,8 @@ export default class Tus10 extends Plugin {
  */
   run (results) {
     console.log({
-      class  : 'Tus10',
-      method : 'run',
+      class: 'Tus10',
+      method: 'run',
       results: results
     })
 
@@ -55,7 +55,7 @@ export default class Tus10 extends Plugin {
     const self = this
     const upload = new tus.Upload(file, {
       endpoint: this.opts.endpoint,
-      onError : function (error) {
+      onError: function (error) {
         return Promise.reject('Failed because: ' + error)
       },
       onProgress: function (bytesUploaded, bytesTotal) {

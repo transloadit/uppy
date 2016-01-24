@@ -35,7 +35,7 @@ function toggleClass (el, className) {
   if (el.classList) {
     el.classList.toggle(className)
   } else {
-    const classes       = el.className.split(' ')
+    const classes = el.className.split(' ')
     const existingIndex = classes.indexOf(className)
 
     if (existingIndex >= 0) {
@@ -76,7 +76,7 @@ function removeClass (el, className) {
     el.classList.remove(className)
   } else {
     const patClasses = className.split(' ').join('|')
-    const pattern    = new RegExp('(^|\\b)' + patClasses + '(\\b|$)', 'gi')
+    const pattern = new RegExp('(^|\\b)' + patClasses + '(\\b|$)', 'gi')
 
     el.className = el.className.replace(pattern, ' ')
   }

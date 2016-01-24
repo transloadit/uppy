@@ -13,9 +13,9 @@ export default class DragDrop extends Plugin {
 
     // set default options
     const defaultOptions = {
-      bla       : 'blabla',
+      bla: 'blabla',
       autoSubmit: true,
-      modal     : true
+      modal: true
     }
 
     // merge default options with the ones set by user
@@ -137,8 +137,8 @@ export default class DragDrop extends Plugin {
 
   run (results) {
     console.log({
-      class  : 'DragDrop',
-      method : 'run',
+      class: 'DragDrop',
+      method: 'run',
       results: results
     })
 

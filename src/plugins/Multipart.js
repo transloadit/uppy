@@ -14,8 +14,8 @@ export default class Multipart extends Plugin {
 
   run (results) {
     console.log({
-      class  : 'Multipart',
-      method : 'run',
+      class: 'Multipart',
+      method: 'run',
       results: results
     })
 
