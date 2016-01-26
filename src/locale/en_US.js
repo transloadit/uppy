@@ -7,7 +7,8 @@ en_US.strings = {
   filesChosen: {
     0: '%{smart_count} file selected',
     1: '%{smart_count} files selected'
-  }
+  },
+  upload: 'Upload'
 }
 
 en_US.pluralize = function (n) {

@@ -1,6 +1,6 @@
 import Utils from '../core/Utils'
 import Plugin from './Plugin'
-import templateDragDrop from '../templates/dragdrop.hbs'
+import templateDragDrop from '../templates/dragdrop.ejs'
 
 /**
  * Drag & Drop plugin
@@ -13,33 +13,38 @@ export default class DragDrop extends Plugin {
 
     // set default options
     const defaultOptions = {
-      bla: 'blabla',
-      autoSubmit: true,
-      modal: true
+      autoSubmit: true
     }
 
     // merge default options with the ones set by user
-    this.opts = defaultOptions
-    Object.assign(this.opts, opts)
-
-    // get the element where the Drag & Drop event will occur
-    this.dropzone = document.querySelectorAll(this.opts.selector)[0]
-    this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0]
-
-    this.status = document.querySelectorAll('.UppyDragDrop-status')[0]
+    this.opts = Object.assign({}, defaultOptions, opts)
 
     this.isDragDropSupported = this.checkDragDropSupport()
+    this.initHtml()
 
     // crazy stuff so that ‘this’ will behave in class
     this.listenForEvents = this.listenForEvents.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
+  }
 
-    console.log(templateDragDrop({
-      chooseFile: 'smth',
-      orDragDrop: 'going on here'
-    }))
+  initHtml () {
+    this.dragDropContainer = document.querySelectorAll('.UppyDragDrop')[0]
+
+    this.dragDropContainer.innerHTML = templateDragDrop({
+      endpoint: this.opts.endpoint,
+      chooseFile: this.core.i18n('chooseFile'),
+      orDragDrop: this.core.i18n('orDragDrop'),
+      showUploadBtn: this.opts.autoSubmit,
+      upload: this.core.i18n('upload')
+    })
+
+    // get the element where the Drag & Drop event will occur
+    this.dropzone = document.querySelectorAll(this.opts.target)[0]
+    this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0]
+
+    this.status = document.querySelectorAll('.UppyDragDrop-status')[0]
   }
 
 /**
@@ -65,7 +70,7 @@ export default class DragDrop extends Plugin {
   }
 
   listenForEvents () {
-    console.log(`waiting for some files to be dropped on ${this.opts.selector}`)
+    console.log(`waiting for some files to be dropped on ${this.opts.target}`)
 
     if (this.isDragDropSupported) {
       Utils.addClass(this.dropzone, 'is-dragdrop-supported')

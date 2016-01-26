@@ -1,6 +1,6 @@
 <form class="UppyDragDrop-form"
       method="post"
-      action="/"
+      action="<%= endpoint %>"
       enctype="multipart/form-data">
     <img class="UppyDragDrop-puppy" src="/images/uppy.svg" />
     <input class="UppyDragDrop-input"
@@ -12,6 +12,9 @@
       <strong><%= chooseFile %></strong>
       <span class="UppyDragDrop-dragText"><%= orDragDrop %></span>.
     </label>
-    <button class="UppyDragDrop-btn" type="submit">Upload</button>
+
+    <% if (!showUploadBtn) { %>
+      <button class="UppyDragDrop-uploadBtn" type="submit"><%= upload %></button>
+    <% } %>
   <div class="UppyDragDrop-status"></div>
 </form>

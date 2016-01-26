@@ -1,7 +1,5 @@
 import Utils from '../core/Utils'
-import fs from 'fs'
 import Translator from '../core/Translator'
-import ejs from 'ejs'
 
 /**
  * Main Uppy core
@@ -28,7 +26,8 @@ export default class Core {
     this.plugins = {}
 
     this.translator = new Translator({locale: this.opts.locale})
-    console.log(this.translator.t('filesChosen', {smart_count: 3}))
+    this.i18n = this.translator.translate.bind(this.translator)
+    console.log(this.i18n('filesChosen', {smart_count: 3}))
   }
 
 /**
@@ -63,8 +62,8 @@ export default class Core {
 /**
  * Runs all plugins of the same type in parallel
  *
- * @param {string} type that wants to set progress
- * @param {array} files
+ * @param {String} type that wants to set progress
+ * @param {Array} files
  * @return {Promise} of all methods
  */
   runType (type, files) {
@@ -73,12 +72,9 @@ export default class Core {
     )
 
     return Promise.all(methods)
+      .catch((error) => console.error(error))
   }
 
-  compileTemplate (templatePath, options) {
-    const template = fs.readFileSync('../templates/' + templatePath, 'utf-8')
-    return ejs.render(template, options)
-  }
 
 /**
  * Runs a waterfall of runType plugin packs, like so:

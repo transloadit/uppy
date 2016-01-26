@@ -58,9 +58,10 @@ export default class Translator {
  * @param {object} options with values that will be used later to replace placeholders in string
  * @return {string} translated (and interpolated)
  */
-  t (key, options) {
+  translate (key, options) {
     if (options && options.smart_count) {
       var plural = this.opts.locale.pluralize(options.smart_count)
+      console.log(this)
       return this.interpolate(this.opts.locale.strings[key][plural], options)
     }
 
