@@ -25,6 +25,7 @@ Work not started yet
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] server: Create a (barely) working uppy-server (#39, @hedgerh)
 - [ ] dragdrop: Use templates, autoUpload setting, show progress
+- [X] meta: Implement playground to test things in, templates in this case
 - [X] core: Implement ejs templating (stage 2) (@arturi, @hedgerh)
 - [ ] core: Improve on `_i18n` support, add tests (#47, @arturi)
 - [x] buildsystem: Use parallelshell and tweak browserify to work with templates (@arturi)
