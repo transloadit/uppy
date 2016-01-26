@@ -13,7 +13,7 @@ SRC="src/index.js"
 OUT="${OUT:-uppy.js}"
 OUTDIR="dist"
 
-FLAGS="-t hbsfy -t babelify --standalone Uppy"
+FLAGS="-t ejsify -t babelify --standalone Uppy"
 
 mkdir -p "${OUTDIR}"
 
