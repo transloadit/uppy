@@ -16,7 +16,6 @@ Work not started yet
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
 - [ ] core: Create a progressbar/spinner/etc plugin (#18)
-- [ ] meta: Create an Uppy logo (@vvolfy)
 - [ ] multipart: Write an acceptance test for the Multipart example via Saucelabs (#2, #23, @hedgerh)
 
 ## 0.0.2 (Unreleased, work in progress)
@@ -26,13 +25,14 @@ Work not started yet
 - [ ] server: Create a (barely) working uppy-server (#39, @hedgerh)
 - [ ] dragdrop: Use templates, autoUpload setting, show progress
 - [X] meta: Implement playground to test things in, templates in this case
-- [X] core: Implement ejs templating (stage 2) (@arturi, @hedgerh)
+- [X] core: Implement ejs or es6 templating (@arturi, @hedgerh)
 - [ ] core: Improve on `_i18n` support, add tests (#47, @arturi)
-- [x] buildsystem: Use parallelshell and tweak browserify to work with templates (@arturi)
-- [x] docs: Fix build-documentation.js crashes, add more docs to Utils and Translator
-- [x] core: Integrate eslint in our build procedure and make Travis fail on errors found in our examples, Core and Plugins, such as `> 100` char lines (@kvz)
-- [x] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
-- [x] website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
+- [X] buildsystem: Use parallelshell and tweak browserify to work with templates (@arturi)
+- [X] docs: Fix build-documentation.js crashes, add more docs to Utils and Translator
+- [X] core: Integrate eslint in our build procedure and make Travis fail on errors found in our examples, Core and Plugins, such as `> 100` char lines (@kvz)
+- [X] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
+- [X] website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
+- [ ] meta: Create an Uppy logo (@vvolfy)
 
 ## 0.0.1 (December 20, 2015)
 
