@@ -1,6 +1,6 @@
 import Utils from '../core/Utils'
 import Plugin from './Plugin'
-import templateDragDrop from '../templates/dragdrop.ejs'
+import templateDragDrop from '../templates/dragdrop.js'
 
 /**
  * Drag & Drop plugin
