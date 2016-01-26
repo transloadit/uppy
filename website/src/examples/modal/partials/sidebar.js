@@ -4,7 +4,7 @@ export default (context) => {
   }).join('')
 
   return `
-    <section class="ModalSidebar">
+    <section class='ModalSidebar'>
       <ul>
         ${providers}
       </ul>

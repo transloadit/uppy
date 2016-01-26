@@ -1,5 +1,8 @@
 // import Uppy from 'uppy/core'
 // import { DragDrop, Tus10 } from 'uppy/plugins'
+import { Authorize, Browser, Modal, Sidebar } from './partials'
+console.log('here we go')
+console.log(Modal())
 
 const defaults = {
   width               : 380, // max = 640
