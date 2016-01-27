@@ -130,7 +130,7 @@ basically a stripped-down version of it. Differences: pluralization functions ar
 and can be easily added among with dictionaries, nested objects are used for pluralization
 as opposed to `||||` delimeter
 
-Usage example: `translator.t('files_chosen', {smart_count: 3})`
+Usage example: `translator.translate('files_chosen', {smart_count: 3})`
 
 **Parameters**
 
@@ -148,7 +148,7 @@ and replaces it with values from options `{smart_count: 5}`
 
 Returns **string** interpolated
 
-### t
+### translate
 
 Public translate method
 
