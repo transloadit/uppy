@@ -62,8 +62,8 @@ export default class Core {
 /**
  * Runs all plugins of the same type in parallel
  *
- * @param {String} type that wants to set progress
- * @param {Array} files
+ * @param {string} type that wants to set progress
+ * @param {array} files
  * @return {Promise} of all methods
  */
   runType (type, files) {
@@ -74,7 +74,6 @@ export default class Core {
     return Promise.all(methods)
       .catch((error) => console.error(error))
   }
-
 
 /**
  * Runs a waterfall of runType plugin packs, like so:
