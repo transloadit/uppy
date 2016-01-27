@@ -3,7 +3,7 @@ import { DragDrop, Tus10 } from 'uppy/plugins'
 
 const uppy = new Uppy({wait: false})
 uppy
-  .use(DragDrop, {selector: '#upload-target'})
+  .use(DragDrop, {target: '.UppyDragDrop-form', endpoint: 'http://master.tus.io:8080/files/'})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/'})
   .run()
 
