@@ -27,7 +27,7 @@ body {
   transform: translate(-50%, -50%) scale(0.8);
 }
 
-.avgrund-overlay {
+.UppyModalOverlay {
   background: #000;
   width: 100%;
   position: relative;
@@ -40,7 +40,7 @@ body {
 }
 
 body,
-.avgrund-ready .avgrund-overlay {
+.avgrund-ready .UppyModalOverlay {
   -webkit-transition: 1s all cubic-bezier(.87,.92,.83,.67);
   -moz-transition: 1s all cubic-bezier(.87,.92,.83,.67);
   -ms-transition: 1s all cubic-bezier(.87,.92,.83,.67);
@@ -57,7 +57,7 @@ body,
 }
 
 body.avgrund-ready,
-.avgrund-ready .avgrund-overlay,
+.avgrund-ready .UppyModalOverlay,
 .avgrund-ready .avgrund-popin {
   -webkit-transform-origin: 50% 50%;
   -moz-transform-origin: 50% 50%;
@@ -93,7 +93,7 @@ body.UppyModal--is-open {
   transition: 0.3s all ease;
 }
 
-body.UppyModal--is-open .avgrund-overlay {
+body.UppyModal--is-open .UppyModalOverlay {
   visibility: visible;
   opacity: .5;
   filter: alpha(opacity=50);

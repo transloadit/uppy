@@ -59,7 +59,6 @@ export default class Modal extends Plugin {
 
   openModal () {
     if (this.modal) {
-      console.log(this.modal)
       this.modal.classList.toggle('UppyModal--is-open')
       document.body.classList.toggle('UppyModal--is-open')
     }
@@ -68,7 +67,6 @@ export default class Modal extends Plugin {
   closeModal () {
     document.body.classList.toggle('avgrund-ready')
     document.body.classList.toggle('UppyModal--is-open')
-
     setTimeout(() => this.modal.classList.toggle('UppyModal--is-open'), 500)
   }
 
