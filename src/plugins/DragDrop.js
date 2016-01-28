@@ -1,6 +1,6 @@
 import Utils from '../core/Utils'
 import Plugin from './Plugin'
-import templateDragDrop from '../templates/dragdrop.js'
+import componentDragDrop from '../components/dragdrop.js'
 
 /**
  * Drag & Drop plugin
@@ -30,9 +30,9 @@ export default class DragDrop extends Plugin {
   }
 
   initHtml () {
-    this.dragDropContainer = document.querySelectorAll('.UppyDragDrop')[0]
+    this.dragDropContainer = document.querySelector('.UppyDragDrop')
 
-    this.dragDropContainer.innerHTML = templateDragDrop({
+    this.dragDropContainer.innerHTML = componentDragDrop({
       endpoint: this.opts.endpoint,
       chooseFile: this.core.i18n('chooseFile'),
       orDragDrop: this.core.i18n('orDragDrop'),
@@ -41,10 +41,10 @@ export default class DragDrop extends Plugin {
     })
 
     // get the element where the Drag & Drop event will occur
-    this.dropzone = document.querySelectorAll(this.opts.target)[0]
-    this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0]
+    this.dropzone = document.querySelector(this.opts.target)
+    this.dropzoneInput = document.querySelector('.UppyDragDrop-input')
 
-    this.status = document.querySelectorAll('.UppyDragDrop-status')[0]
+    this.status = document.querySelector('.UppyDragDrop-status')
   }
 
 /**
@@ -105,9 +105,6 @@ export default class DragDrop extends Plugin {
     })
 
     return Promise.race([onDrop, onInput]).then(handler => handler())
-
-    // this.dropzone.addEventListener('drop', this.handleDrop);
-    // this.dropzoneInput.addEventListener('change', this.handleInputChange);
   }
 
   displayStatus (status) {
@@ -115,29 +112,42 @@ export default class DragDrop extends Plugin {
   }
 
   handleDrop (e) {
-    console.log('all right, someone dropped something here...')
+    console.log('all right, someone dropped something...')
     const files = e.dataTransfer.files
-    // files = Array.from(files);
+    // const arrayOfFiles = Array.from(files)
 
-    // const formData = new FormData(this.dropzone);
-    // console.log('pizza', formData);
+    const formData = new FormData(this.dropzone)
 
-    // for (var i = 0; i < files.length; i++) {
-    //   formData.append('file', files[i]);
-    //   console.log('pizza', files[i]);
-    // }
+    Array.from(files).forEach((file, i) => {
+      console.log(`file-${i}`)
+      formData.append(`file-${i}`, file)
+    })
 
-    return Promise.resolve({from: 'DragDrop', files: files})
+    return this.result(files, formData)
   }
 
   handleInputChange () {
-    // const fileInput = document.querySelectorAll('.UppyDragDrop-input')[0];
+    console.log('all right, something selected through input...')
+    const files = this.dropzoneInput.files
     const formData = new FormData(this.dropzone)
 
-    console.log('@todo: No support for formData yet', formData)
-    const files = []
+    return this.result(files, formData)
 
-    return Promise.resolve({from: 'DragDrop', files: files})
+    // return Promise.resolve({from: 'DragDrop', files, formData})
+  }
+
+  result (files, formData) {
+    return new Promise((resolve, reject) => {
+      if (!this.opts.autoSubmit) {
+        this.dropzone.addEventListener('submit', (e) => {
+          e.preventDefault()
+          console.log('yo!')
+          return resolve({from: 'DragDrop', files, formData})
+        })
+      } else {
+        return resolve({from: 'DragDrop', files, formData})
+      }
+    })
   }
 
   run (results) {

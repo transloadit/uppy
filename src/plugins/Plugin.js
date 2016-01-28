@@ -39,6 +39,11 @@ export default class Plugin {
       results: results
     })
 
+    // check if the results array is empty
+    // if (!results || !results.count) {
+    //   return results
+    // }
+
     const files = []
     results.forEach(result => {
       Array.from(result.files).forEach(file => files.push(file))
