@@ -5,7 +5,7 @@ body {
   overflow: auto;
 }
 
-.avgrund-popin {
+#UppyModal {
   position: absolute;
   background: #fff;
   padding: 10px;
@@ -39,7 +39,7 @@ body {
   filter: alpha(opacity=0);
 }
 
-body.avgrund-ready,
+body,
 .avgrund-ready .avgrund-overlay {
   -webkit-transition: 1s all cubic-bezier(.87,.92,.83,.67);
   -moz-transition: 1s all cubic-bezier(.87,.92,.83,.67);
@@ -66,7 +66,7 @@ body.avgrund-ready,
   transform-origin: 50% 50%;
 }
 
-body.avgrund-active {
+body.UppyModal--is-open {
   -webkit-transform: scale(0.9);
   -moz-transform: scale(0.9);
   -ms-transform: scale(0.9);
@@ -75,7 +75,7 @@ body.avgrund-active {
   overflow: hidden;
 }
 
-.avgrund-active .avgrund-popin {
+#UppyModal.UppyModal--is-open {
   visibility: visible;
   opacity: 1;
   filter: alpha(opacity=100);
@@ -93,7 +93,7 @@ body.avgrund-active {
   transition: 0.3s all ease;
 }
 
-.avgrund-active .avgrund-overlay {
+body.UppyModal--is-open .avgrund-overlay {
   visibility: visible;
   opacity: .5;
   filter: alpha(opacity=50);
@@ -125,7 +125,7 @@ body.avgrund-active {
 }
 
 /* Optional close button styles */
-.avgrund-close {
+.UppyModal-closeBtn {
   display: block;
   color: #555;
   font-size: 13px;
