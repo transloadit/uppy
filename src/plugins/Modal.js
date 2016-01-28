@@ -1,5 +1,5 @@
 import Plugin from './Plugin'
-import { ModalTemplate, Authorize, Browser, Sidebar } from './templates'
+import { ModalTemplate } from './templates'
 
 export default class Modal extends Plugin {
   constructor (core, opts) {
@@ -32,11 +32,13 @@ export default class Modal extends Plugin {
   }
 
   initModal () {
+    document.body.classList.add('UppyModal--is-ready')
+
     let overlay = document.createElement('div')
     overlay.classList.add('UppyModalOverlay')
     document.body.appendChild(overlay)
 
-    overlay.addEventListener('click', )
+    overlay.addEventListener('click', this.closeModal)
 
     let modal = document.createElement('div')
     modal.id = 'UppyModal'
@@ -45,7 +47,7 @@ export default class Modal extends Plugin {
 
     modal.innerHTML = ModalTemplate()
 
-    let a  = document.createElement('a')
+    let a = document.createElement('a')
 
     const linkText = document.createTextNode('close')
     a.appendChild(linkText)
@@ -61,16 +63,17 @@ export default class Modal extends Plugin {
     if (this.modal) {
       this.modal.classList.toggle('UppyModal--is-open')
       document.body.classList.toggle('UppyModal--is-open')
+      document.body.classList.toggle('UppyModal--is-ready')
     }
   }
 
   closeModal () {
-    document.body.classList.toggle('avgrund-ready')
     document.body.classList.toggle('UppyModal--is-open')
+    document.body.classList.toggle('UppyModal--is-ready')
     setTimeout(() => this.modal.classList.toggle('UppyModal--is-open'), 500)
   }
 
-  onDocumentClick(e) {
+  onDocumentClick (e) {
     e.preventDefault()
     this.closeModal()
   }

@@ -40,7 +40,7 @@ body {
 }
 
 body,
-.avgrund-ready .UppyModalOverlay {
+.UppyModal--is-ready .UppyModalOverlay {
   -webkit-transition: 1s all cubic-bezier(.87,.92,.83,.67);
   -moz-transition: 1s all cubic-bezier(.87,.92,.83,.67);
   -ms-transition: 1s all cubic-bezier(.87,.92,.83,.67);
@@ -48,17 +48,17 @@ body,
   transition: 0.6s all cubic-bezier(.87,.92,.83,.67);
 }
 
-.avgrund-ready .avgrund-popin {
-  -webkit-transition: 1.5s all ease;
+.UppyModal--is-ready #UppyModal {
+  -webkit-transition: .5s all ease;
   -moz-transition: 1.5s all ease;
   -ms-transition: 1.5s all ease;
   -o-transition: 1.5s all ease;
-  transition: 1.5s all ease;
+  transition: .5s all ease;
 }
 
-body.avgrund-ready,
-.avgrund-ready .UppyModalOverlay,
-.avgrund-ready .avgrund-popin {
+body.UppyModal--is-ready,
+.UppyModal--is-ready .UppyModalOverlay,
+.UppyModal--is-ready #UppyModal {
   -webkit-transform-origin: 50% 50%;
   -moz-transform-origin: 50% 50%;
   -ms-transform-origin: 50% 50%;
@@ -136,9 +136,23 @@ body.UppyModal--is-open .UppyModalOverlay {
   right: 10px;
 }
 
-
 /* Modal Styles */
-.InputList {
+#UppyModal {
+  display: flex;
+  flex-direction: row;
+}
+
+.UppyModalContent {
+  height: 600px;
+}
+
+.UppyModalSidebar {
+  border-right: 1px solid #ccc;
+  height: 600px;
+  text-align: center;
+}
+
+.UppyModalSidebar > ul {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -146,28 +160,13 @@ body.UppyModal--is-open .UppyModalOverlay {
   padding: 0;
 }
 
-.InputList li {
+.UppyModalSidebar li {
   margin-bottom: 16px;
 }
 
-.InputList li button {
+.UppyModalSidebar button {
   background-color: transparent;
   border: none;
   cursor: pointer;
   outline: 0;
-}
-
-.ModalTemplate {
-  display: flex;
-  flex-direction: row;
-}
-
-.UploadSidebar {
-  border-right: 1px solid #ccc;
-  height: 600px;
-  text-align: center;
-}
-
-.UploadContent {
-  height: 600px;
 }
