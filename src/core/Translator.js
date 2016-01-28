@@ -7,7 +7,7 @@
  * and can be easily added among with dictionaries, nested objects are used for pluralization
  * as opposed to `||||` delimeter
  *
- * Usage example: `translator.t('files_chosen', {smart_count: 3})`
+ * Usage example: `translator.translate('files_chosen', {smart_count: 3})`
  *
  * @param {object} opts
  */
@@ -61,7 +61,6 @@ export default class Translator {
   translate (key, options) {
     if (options && options.smart_count) {
       var plural = this.opts.locale.pluralize(options.smart_count)
-      console.log(this)
       return this.interpolate(this.opts.locale.strings[key][plural], options)
     }
 

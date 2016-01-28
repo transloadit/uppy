@@ -17,6 +17,7 @@ Work not started yet
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
 - [ ] core: Create a progressbar/spinner/etc plugin (#18)
 - [ ] multipart: Write an acceptance test for the Multipart example via Saucelabs (#2, #23, @hedgerh)
+- [ ] tests: setup an HTML page with all sorts of crazy styles and resets to see what brakes Uppy 
 
 ## 0.0.2 (Unreleased, work in progress)
 
