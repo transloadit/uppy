@@ -16,3 +16,4 @@ website/src/_drafts
 website/themes/uppy/source/uppy/
 
 npm-debug.log*
+website/themes/uppy/_config.yml

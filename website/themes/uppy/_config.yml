@@ -1,5 +1,0 @@
-node_sass:
-  debug: false
-  outputStyle: compressed
-  precision: 5
-  sourceComments: false
