@@ -11,7 +11,7 @@
     "build:umd": "./bin/build-umd && ./bin/build-umd-locale",
     "build": "npm run build:lib && npm run build:umd && npm run build:umd:min && npm run build:css",
     "clean": "rm -rf lib && rm -rf dist",
-    "docs": "cd website && node_modules/.bin/documentation readme ../src/index.js --readme-file=src/api/docs.md --section \"Uppy Core & Plugins\" -q --github -c doc-order.json",
+    "docs": "cd website && documentation readme ../src/index.js --readme-file=src/api/docs.md --section \"Uppy Core & Plugins\" -q --github -c doc-order.json",
     "lint": "eslint .",
     "fix": "eslint . --fix",
     "server": "browser-sync start --config .browsersync.js",

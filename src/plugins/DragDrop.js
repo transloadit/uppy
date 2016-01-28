@@ -138,6 +138,8 @@ export default class DragDrop extends Plugin {
 
   result (files, formData) {
     return new Promise((resolve, reject) => {
+      // if autoSubmit is false, wait for upload button to be pushed,
+      // otherwise just pass files to uploaders right away
       if (!this.opts.autoSubmit) {
         this.dropzone.addEventListener('submit', (e) => {
           e.preventDefault()
