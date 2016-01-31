@@ -10,4 +10,4 @@ It's nowhere near finished yet, but that also means it's not to late to get invo
 
 into a direction of your liking!
 
-Shoot us a [tweet](https://twitter.com/uppyjs) if you're interested!
+Shoot us a [tweet](https://twitter.com/uppy_io) if you're interested!
