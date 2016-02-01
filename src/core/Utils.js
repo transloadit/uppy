@@ -51,7 +51,7 @@ function toggleClass (el, className) {
  * Adds a class to a DOM element
  *
  * @memberof Utils
- * @param {String} el selector
+ * @param {Object} el selector
  * @param {String} className to add
  * @return {String}
  */

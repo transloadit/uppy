@@ -1,5 +1,5 @@
 export default (context) => {
-  return `<form class="UppyDragDrop-form"
+  return `<form class="UppyDragDrop-inner"
       method="post"
       action="${context.endpoint}"
       enctype="multipart/form-data">

@@ -11,7 +11,8 @@ export default class Core {
     // set default options
     const defaultOptions = {
       // load English as the default locale
-      locale: require('../locale/en_US.js')
+      locale: require('../locale/en_US.js'),
+      autoProceed: false
     }
 
     // Merge default options with the ones set by user
@@ -27,7 +28,7 @@ export default class Core {
 
     this.translator = new Translator({locale: this.opts.locale})
     this.i18n = this.translator.translate.bind(this.translator)
-    console.log(this.i18n('filesChosen', {smart_count: 3}))
+    // console.log(this.i18n('filesChosen', {smart_count: 3}))
   }
 
 /**
@@ -59,6 +60,8 @@ export default class Core {
     return this
   }
 
+  // @todo log function
+
 /**
  * Runs all plugins of the same type in parallel
  *
@@ -84,6 +87,11 @@ export default class Core {
       class: 'Core',
       method: 'run'
     })
+
+    // Forse `autoProceed` option to false if there are multiple selector Plugins active
+    if (this.plugins.selecter && this.plugins.selecter.length > 1) {
+      this.opts.autoProceed = false
+    }
 
     // First we select only plugins of current type,
     // then create an array of runType methods of this plugins

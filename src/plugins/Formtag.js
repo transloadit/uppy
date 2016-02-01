@@ -15,6 +15,14 @@ export default class Formtag extends Plugin {
 
     this.setProgress(0)
 
+    // form FormData
+    // const formData = new FormData(this.dropzone)
+    //
+    // Array.from(files).forEach((file, i) => {
+    //   console.log(`file-${i}`)
+    //   formData.append(`file-${i}`, file)
+    // })
+
     const button = document.querySelector(this.opts.doneButtonSelector)
     var self = this
 

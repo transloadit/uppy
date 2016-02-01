@@ -1,15 +1,33 @@
 /**
 * Drag & Drop CSS to style the plugin
 */
-.UppyDragDrop-form {
-  width: 300px;
-  text-align: center;
-  padding: 100px 10px;
+.UppyDragDrop {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.UppyDragDrop-form.is-dragdrop-supported {
-  border: 2px dashed;
-  border-color: #ccc;
+  .UppyDragDrop.is-dragdrop-supported {
+    border: 2px dashed;
+    border-color: #ccc;
+  }
+
+  .UppyDragDrop.is-dragdrop-supported .UppyDragDrop-dragText {
+    display: inline;
+  }
+
+  .UppyDragDrop.is-dragover {
+    border-color: #d2ecea;
+    background-color: #dbf5f3;
+  }
+
+.UppyDragDrop-inner {
+  // width: 300px;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  // padding: 100px 10px;
 }
 
 /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
@@ -23,6 +41,7 @@
 }
 
 .UppyDragDrop-label {
+  display: block;
   cursor: pointer;
 }
 
@@ -30,19 +49,15 @@
   display: none;
 }
 
-.is-dragdrop-supported .UppyDragDrop-dragText {
-  display: inline;
-}
-
-.UppyDragDrop-form.is-dragover {
-  border-color: #d2ecea;
-  background-color: #dbf5f3;
-}
-
 .UppyDragDrop-uploadBtn {
   display: block;
   margin: auto;
   margin-top: 20px;
+  min-width: 110px;
+  min-height: 30px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   border: 0;
   border: 1px solid #ccc;
   background: none;

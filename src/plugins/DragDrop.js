@@ -12,17 +12,18 @@ export default class DragDrop extends Plugin {
     this.type = 'selecter'
 
     // set default options
-    const defaultOptions = {
-      autoSubmit: true
-    }
+    const defaultOptions = {}
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
+    // check if dragDrop is supported in the browser
     this.isDragDropSupported = this.checkDragDropSupport()
+
+    // initialize dragdrop component, mount it to container DOM node
     this.initHtml()
 
-    // crazy stuff so that ‘this’ will behave in class
+    // bind `this` to class methods
     this.listenForEvents = this.listenForEvents.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
@@ -30,25 +31,30 @@ export default class DragDrop extends Plugin {
   }
 
   initHtml () {
-    this.dragDropContainer = document.querySelector('.UppyDragDrop')
+    this.container = document.querySelector(this.opts.target)
 
-    this.dragDropContainer.innerHTML = componentDragDrop({
+    this.container.innerHTML = componentDragDrop({
       endpoint: this.opts.endpoint,
       chooseFile: this.core.i18n('chooseFile'),
       orDragDrop: this.core.i18n('orDragDrop'),
-      showUploadBtn: this.opts.autoSubmit,
+      showUploadBtn: this.core.opts.autoProceed,
       upload: this.core.i18n('upload')
     })
 
-    // get the element where the Drag & Drop event will occur
-    this.dropzone = document.querySelector(this.opts.target)
-    this.dropzoneInput = document.querySelector('.UppyDragDrop-input')
+    // Set selectors
+    this.dropzone = document.querySelector(`${this.opts.target} .UppyDragDrop-inner`)
+    this.input = document.querySelector(`${this.opts.target} .UppyDragDrop-input`)
+    this.status = document.querySelector(`${this.opts.target} .UppyDragDrop-status`)
 
-    this.status = document.querySelector('.UppyDragDrop-status')
+    Utils.addClass(this.container, 'UppyDragDrop')
+    if (this.isDragDropSupported) {
+      Utils.addClass(this.container, 'is-dragdrop-supported')
+    }
   }
 
 /**
- * Checks if the browser supports Drag & Drop
+ * Checks if the browser supports Drag & Drop,
+ * not supported on mobile devices, for example.
  * @return {Boolean} true if supported, false otherwise
  */
   checkDragDropSupport () {
@@ -72,10 +78,6 @@ export default class DragDrop extends Plugin {
   listenForEvents () {
     console.log(`waiting for some files to be dropped on ${this.opts.target}`)
 
-    if (this.isDragDropSupported) {
-      Utils.addClass(this.dropzone, 'is-dragdrop-supported')
-    }
-
     // prevent default actions for all drag & drop events
     const strEvents = 'drag dragstart dragend dragover dragenter dragleave drop'
     Utils.addListenerMulti(this.dropzone, strEvents, (e) => {
@@ -85,11 +87,11 @@ export default class DragDrop extends Plugin {
 
     // Toggle is-dragover state when files are dragged over or dropped
     Utils.addListenerMulti(this.dropzone, 'dragover dragenter', (e) => {
-      Utils.addClass(this.dropzone, 'is-dragover')
+      Utils.addClass(this.container, 'is-dragover')
     })
 
     Utils.addListenerMulti(this.dropzone, 'dragleave dragend drop', (e) => {
-      Utils.removeClass(this.dropzone, 'is-dragover')
+      Utils.removeClass(this.container, 'is-dragover')
     })
 
     const onDrop = new Promise((resolve, reject) => {
@@ -99,7 +101,7 @@ export default class DragDrop extends Plugin {
     })
 
     const onInput = new Promise((resolve, reject) => {
-      this.dropzoneInput.addEventListener('change', (e) => {
+      this.input.addEventListener('change', (e) => {
         resolve(this.handleInputChange.bind(null, e))
       })
     })
@@ -113,41 +115,32 @@ export default class DragDrop extends Plugin {
 
   handleDrop (e) {
     console.log('all right, someone dropped something...')
+
     const files = e.dataTransfer.files
-    // const arrayOfFiles = Array.from(files)
-
-    const formData = new FormData(this.dropzone)
-
-    Array.from(files).forEach((file, i) => {
-      console.log(`file-${i}`)
-      formData.append(`file-${i}`, file)
-    })
-
-    return this.result(files, formData)
+    return this.result(files)
   }
 
   handleInputChange () {
     console.log('all right, something selected through input...')
-    const files = this.dropzoneInput.files
-    const formData = new FormData(this.dropzone)
 
-    return this.result(files, formData)
+    const files = this.input.files
+    return this.result(files)
 
     // return Promise.resolve({from: 'DragDrop', files, formData})
   }
 
-  result (files, formData) {
+  result (files) {
     return new Promise((resolve, reject) => {
-      // if autoSubmit is false, wait for upload button to be pushed,
+      const result = {from: 'DragDrop', files}
+      // if autoProceed is false, wait for upload button to be pushed,
       // otherwise just pass files to uploaders right away
-      if (!this.opts.autoSubmit) {
+      if (this.core.opts.autoProceed) {
+        return resolve(result)
+      } else {
         this.dropzone.addEventListener('submit', (e) => {
           e.preventDefault()
-          console.log('yo!')
-          return resolve({from: 'DragDrop', files, formData})
+          return resolve(result)
         })
-      } else {
-        return resolve({from: 'DragDrop', files, formData})
       }
     })
   }

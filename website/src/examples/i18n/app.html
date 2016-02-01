@@ -1,26 +1,16 @@
 <!-- Basic Uppy styles -->
-<link rel="stylesheet" href="/css/uppy.css">
+<link rel="stylesheet" href="/uppy/uppy.css">
 
-<form id="upload-target" class="UppyDragDrop" method="post" action="/" enctype="multipart/form-data">
-  <img class="UppyDragDrop-puppy" src="/images/uppy.svg">
-  <div>
-    <input id="UppyDragDrop-input" class="UppyDragDrop-input" type="file" name="files[]" data-multiple-caption="{count} files selected" multiple />
-    <label class="UppyDragDrop-label" for="UppyDragDrop-input">
-      <strong>Choose a file</strong>
-      <span class="UppyDragDrop-dragText"> or drag it here</span>
-    </label>
-  </div>
-  <div class="UppyDragDrop-status"></div>
-</form>
+<div class="UppyDragDrop"></div>
 
 <!-- Load Uppy pre-built bundled version and Russian language pack -->
 <script src="/uppy/uppy.js"></script>
 <script src="/uppy/locale/ru.js"></script>
 <script>
   var uppy = new Uppy.Core({locale: Uppy.locale.ru});
-  uppy.use(Uppy.plugins.DragDrop, {selector: '#upload-target'});
+  uppy.use(Uppy.plugins.DragDrop, {target: '.UppyDragDrop-form'});
   uppy.use(Uppy.plugins.Tus10, {endpoint: 'http://master.tus.io:8080/files/'});
   uppy.run();
 
-  console.log('--> Uppy CDN version with Tus10, DragDrop & Russian language pack has loaded');
+  console.log('--> Uppy pre-built version with Tus10, DragDrop & Russian language pack has loaded');
 </script>
