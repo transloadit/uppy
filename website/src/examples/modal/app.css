@@ -27,6 +27,11 @@ body {
   transform: translate(-50%, -50%) scale(0.8);
 }
 
+.Modal {
+  display: flex;
+  flex-direction: row;
+}
+
 .UppyModalOverlay {
   background: #000;
   width: 100%;
@@ -137,12 +142,12 @@ body.UppyModal--is-open .UppyModalOverlay {
 }
 
 /* Modal Styles */
-#UppyModal {
+#UppyModalDialog {
   display: flex;
   flex-direction: row;
 }
 
-.UppyModalContent {
+#UppyModalContent {
   height: 600px;
 }
 

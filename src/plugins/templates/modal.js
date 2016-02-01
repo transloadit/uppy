@@ -2,7 +2,7 @@ import Sidebar from './sidebar'
 
 export default (opts) => {
   return `
-    <section class='Modal'>
+    <section id='UppyModalDialog'>
       ${Sidebar({
         providers: opts.providers
       })}
