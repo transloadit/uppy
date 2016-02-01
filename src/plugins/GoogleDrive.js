@@ -1,6 +1,5 @@
 // import Utils from '../core/Utils'
 import Plugin from './Plugin'
-import request from 'superagent'
 
 export default class Drive extends Plugin {
   constructor (core, opts) {
@@ -39,7 +38,7 @@ export default class Drive extends Plugin {
 
   }
 
-  renderAuthentication() {
+  renderAuthentication () {
     return `<div><h1>Authenticate With Google Drive</h1><button>Authenticate</button></div>`
   }
 

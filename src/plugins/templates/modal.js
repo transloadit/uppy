@@ -1,5 +1,4 @@
 import Sidebar from './sidebar'
-import Browser from './browser'
 
 export default (opts) => {
   return `
