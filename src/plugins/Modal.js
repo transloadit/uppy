@@ -1,5 +1,6 @@
 import Plugin from './Plugin'
 import { ModalTemplate } from './templates'
+import Drive from './GoogleDrive'
 
 export default class Modal extends Plugin {
   constructor (core, opts) {
@@ -9,7 +10,13 @@ export default class Modal extends Plugin {
     this.render = this.render.bind(this)
     this.initModal = this.initModal.bind(this)
     this.onDocumentClick = this.onDocumentClick.bind(this)
-
+    this.providers = [{
+      name: 'Local'
+    },
+    {
+      name: 'Google Drive',
+      connect: Drive.connect
+    }]
     this.parent = this.opts.parent || document.body
 
     this.initModal()
@@ -80,5 +87,11 @@ export default class Modal extends Plugin {
 
   render (files) {
     this.modal.innerHTML = ModalTemplate()
+    this.providers.forEach(provider => {
+      document.getElementById(`${provider.name.split(' ').join('')}`).addEventListener('click', e => {
+        provider.connect()
+      })
+    })
+
   }
 }

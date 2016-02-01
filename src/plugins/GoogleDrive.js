@@ -11,6 +11,9 @@ export default class Drive extends Plugin {
     this.render = this.render.bind(this)
     this.files = []
     this.currentDir = '/'
+
+    this.isAuthenticated = false
+
   }
 
   connect (target) {
@@ -18,13 +21,6 @@ export default class Drive extends Plugin {
   }
 
   authenticate () {
-    request.get('/drive/authenticate')
-    .query({})
-    .end((err, res) => {
-      if (err) {
-        console.err(err)
-      }
-    })
   }
 
   addFile () {
@@ -32,17 +28,7 @@ export default class Drive extends Plugin {
   }
 
   getDirectory () {
-    var opts = {
-      dir: 'pizza'
-    }
-    request.get('//localhost:3002/dropbox/readdir')
-      .query(opts)
-      .set('Content-Type', 'application/json')
-      .end((err, res) => {
-        console.log(err)
-        console.log('yo!')
-        console.log(res)
-      })
+
   }
 
   run (results) {

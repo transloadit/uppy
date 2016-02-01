@@ -1,16 +1,11 @@
 import Sidebar from './sidebar'
 import Browser from './browser'
 
-export default () => {
+export default (opts) => {
   return `
     <section class='Modal'>
       ${Sidebar({
-        providers: [{
-          name: 'Local'
-        },
-        {
-          name: 'Google Drive'
-        }]
+        providers: opts.providers
       })}
       ${Browser({
         files: [{ image: '123.png', name: '123.png' }],

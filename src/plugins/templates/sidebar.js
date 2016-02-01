@@ -1,6 +1,6 @@
 export default (context) => {
   const providers = context.providers.map(provider => {
-    return `<li>${provider.name}</li>`
+    return `<li id="Uppy-${provider.name.split(' ').join('')}">${provider.name}</li>`
   }).join('')
 
   return `
