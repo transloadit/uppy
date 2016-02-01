@@ -1,0 +1,11 @@
+dist/**
+lib/**
+node_modules/**
+test/lib/**
+playground/**
+website/node_modules/**
+website/private_modules/hexo-renderer-uppyexamples/node_modules/**
+website/public/**
+website/themes/uppy/source/js/smooth-scroll.min.js
+website/themes/uppy/source/js/uppy.js
+website/themes/uppy/source/uppy/**

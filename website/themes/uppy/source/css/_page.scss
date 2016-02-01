@@ -1,0 +1,242 @@
+/**
+* Sidebar
+*/
+
+.Sidebar {
+  position: fixed;
+  background-color: #f9f9f9;
+  height: 100%;
+  top: 0;
+  left: 0;
+  padding: 60px 30px 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,.2);
+  transition: all .4s cubic-bezier(0.4, 0, 0, 1);
+  transform: translate(-280px, 0);
+  z-index: 10;
+
+  .main-menu {
+    margin-bottom: 20px;
+    display: block;
+    padding-left: 0;
+  }
+
+  &.is-open { transform: translate(0, 0); }
+  .fix-sidebar & { position: fixed; }
+
+  @media #{$screen-medium} {
+    position: absolute;
+    top: 0;
+    left: 60px;
+    bottom: 0;
+    padding: 2.2em 0;
+    width: 260px;
+    margin-right: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    transform: none;
+    background-color: transparent;
+    box-shadow: none;
+
+    .main-menu { display: none; }
+    &::-webkit-scrollbar { width: 0 !important; }
+    h2 { margin-top: .2em; }
+  }
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    line-height: 1.8em;
+    padding-left: 1em;
+  }
+
+  .menu-root {
+    padding-left: 0;
+  }
+
+  .menu-sub {
+    font-size: .85em;
+  }
+
+  .sidebar-link {
+    color: $color-light;
+
+    &.current {
+      font-weight: 600;
+      color: $color-primary;
+    }
+
+    &.new &:after {
+      content: 'NEW';
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      background-color: $color-primary;
+      line-height: 14px;
+      padding: 0 4px;
+      border-radius: 3px;
+      margin-left: 5px;
+      vertical-align: middle;
+      position: relative;
+      top: -1px;
+    }
+
+    &:hover { border-bottom: 2px solid $color-primary; }
+  }
+
+  .section-link.active {
+    font-weight: bold;
+    color: $color-primary;
+  }
+}
+
+/**
+* Content
+*/
+.Content {
+  padding: 2.2em 0;
+  max-width: 600px;
+  margin: 0 auto;
+
+  @media #{$screen-medium} {
+    &.with-sidebar {
+      margin-left: 280px;
+    }
+  }
+
+  &.api {
+    ul {
+      padding-left: 1.25em;
+      line-height: 1.4em;
+    }
+
+    ul, p { margin: .6em 0; }
+  }
+
+  a.button {
+    font-size: .9em;
+    color: #fff;
+    margin: .2em 0;
+    width :180px;
+    text-align: center;
+    padding: 12px 24px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .light {
+    color: $color-light;
+  }
+
+  .info {
+    font-size: .85em;
+    display: inline-block;
+    vertical-align: middle;
+    width: 280px;
+    margin-left: 20px;
+  }
+
+  h1 { margin: 0 0 1em; }
+
+  h2 {
+    margin: 2em 0 .8em;
+    padding-bottom: .7em;
+    position: relative;
+    // border-bottom: 1px solid $color-border;
+
+    // &:before {
+    //   content: "#";
+    //   color: $color-primary;
+    //   position: absolute;
+    //   left: -0.7em;
+    //   top: -4px;
+    //   font-size: 1.2em;
+    //   font-weight: bold;
+    // }
+  }
+
+  h3 {
+    margin: 3em 0 1.2em;
+    position: relative;
+    &:before {
+      content: "#";
+      color: $color-primary;
+      position: absolute;
+      left: -0.7em;
+      top: -2px;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+  }
+
+  figure, p, ul, ol {
+    margin: 1.2em 0;
+  }
+
+  p, ul, ol {
+    line-height: 1.6em;
+  }
+
+  ul, ol {
+    padding-left: 1.5em;
+  }
+
+  a {
+    color: $color-primary;
+    font-weight: 600;
+  }
+
+  blockquote {
+    margin: 2em 0;
+    padding-left: 20px;
+    border-left: 4px solid $color-primary;
+    p {
+      font-weight: 600;
+      margin-left: 0;
+    }
+  }
+
+  iframe { margin: 1em 0; }
+
+  p.tip {
+    padding: 12px 24px 12px 30px;
+    margin: 2em 0;
+    border-left: 4px solid $color-red;
+    background-color: $color-codebg;
+    position: relative;
+    border-bottom-right-radius: $size-radius;
+    border-top-right-radius: $size-radius;
+
+    &:before {
+      position: absolute;
+      top: 14px;
+      left: -12px;
+      background-color: $color-red;
+      color: #fff;
+      content: '!';
+      width: 20px;
+      height: 20px;
+      border-radius: 100%;
+      text-align: center;
+      line-height: 20px;
+      font-weight: bold;
+      font-family: $fontFamily-logo;
+      font-size: 14px;
+    }
+  }
+}
+
+.guide-links {
+  margin-top: 2em;
+  height: 1em;
+}
+
+// .footer {
+//   color: $color-light;
+//   margin-top: 2em;
+//   padding-top: 2em;
+//   border-top: 1px solid #e5e5e5;
+//   font-size: .9em;
+// }

@@ -2,31 +2,44 @@
 ## Docs: http://zespia.tw/hexo/docs/configuration.html
 ## Source: https://github.com/tommy351/hexo/
 
+# Uppy versions, auto updated by update.js
+uppy_version: 0.0.1
+
+uppy_dev_size: "90.00"
+uppy_min_size: "90.00"
+uppy_gz_size: "90.00"
+
+# Theme
+google_analytics: UA-63083-12
+root_domain: uppy.io
+
 # Site
 title: Uppy
 subtitle: "Almost as cute as a puppy"
-logo_large: /images/cute-puppy-2.png
-logo_medium: /images/dog-172.png
-logo_icon: /images/emojis/dog.png
-description: >
-  Uppy is (going to be) an uploader written in ES6 JavaScript with a plugin-based architecture, making
-  it very extensible. Out of the box it supports tapping into Dropbox, Instagram, Local files. It
-  has support for resumable file uploads via tus.io, and adding encoding backends.
-  Uppy is brought to you by the people behind Transloadit and as such has first class
-  support for adding their uploading and encoding backend, but this is opt-in.
+logo_large: /images/uppy.svg
+logo_medium: /images/uppy.svg
+logo_icon: /images/uppy.png
+description_primary: >
+  Uppy is (going to be) a JavaScript file uploader that fetches files from Dropbox, Instagram, local disk, remote URLs, and other exciting locations.
+  It has a Plugin-based architecture, first-class support for resumable uploads via <a href="http://tus.io">tus.io</a>
+  and custom encoding backends, making it very extensible and robust.
+description_secondary: >
+  Uppy (almost as cute as a puppy) is brought to you by the people behind <a href="https://transloadit.com">Transloadit</a> and as such has first class
+  support for adding their uploading and encoding backend, but this is opt-in, and you can just as easily
+  roll your own. Uppy is in the early stages of development and should not be used for anything serious yet.
 author: Transloadit
-email: uppybot@uppyjs.io
+email: uppybot@uppy.io
 language: English
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://uppyjs.io
+url: http://uppy.io
 root: /
 permalink: :year/:month/:day/:title/
 tag_dir: tags
 archive_dir: archives
 category_dir: categories
-code_dir: downloads/code
+code_dir: examples
 
 # Directory
 source_dir: src
@@ -105,9 +118,23 @@ markdown:
   smartLists: true
   smartypants: true
 
-# Deployment
-## Docs: https://hexo.io/docs/deployment.html
-# deploy:
-#   type: git
-#   branch: gh-pages
-#   repository: git@github.com:transloadit/uppy.git
+node_sass:
+  debug: false
+  outputStyle: compressed
+  precision: 5
+  sourceComments: false
+
+postcss:
+  plugins:
+    postcss-svg:
+      debug: false
+      paths:
+        - 'src/images'
+      defaults: "[fill]: #000000"
+    autoprefixer:
+      browsers:
+        - 'last 2 versions'
+
+skip_render:
+  - '*.js'
+  - '**/*.js'

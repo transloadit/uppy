@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -o pipefail
+set -o errexit
+set -o nounset
+# set -o xtrace
+
+# Set magic variables for current file & dir
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
+__base="$(basename ${__file} .sh)"
+
+SRC="src/locale/ru_RU.js"
+OUT="ru_RU.js"
+OUTDIR="dist/locale"
+
+FLAGS="-t [ babelify ]"
+
+mkdir -p "${OUTDIR}"
+
+for file in ./src/locale/*.js; do
+  # echo "$file";
+  node_modules/.bin/browserify $file $FLAGS > $OUTDIR/${file##*/};
+done

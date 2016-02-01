@@ -1,1 +1,2 @@
-export default from './Transloadit'
+import Core from './Core'
+export default Core

@@ -1,8 +1,8 @@
 <% if (page.type) { %>
     <%- partial('partials/sidebar', { type: page.type, index: page.index }) %>
 <% } %>
-<div class="content <%- page.type ? page.type + ' with-sidebar' : '' %>">
-    <h1><%- page.title %><%- page.type === 'examples' ? ' Example' : '' %></h1>
+<div class="Content js-Content <%- page.type ? page.type + ' with-sidebar' : '' %>">
+    <h1><%- page.title %></h1>
     <%- page.content %>
     <% if (page.type === 'guide') { %>
       <div class="guide-links">
@@ -14,5 +14,7 @@
         <% }) %>
       </div>
     <% } %>
-    <div class="footer">Caught a mistake or want to contribute to the documentation? <a href="https://github.com/transloadit/uppy" target="_blank">Fork this site on Github</a>!</div>
+    <div class="footer">Caught a mistake or want to contribute to the documentation?
+       <a href="https://github.com/transloadit/uppy/blob/master/website/src/<%- page.source %>" target="_blank">Edit/fork this page directly on Github</a>!
+    </div>
 </div>

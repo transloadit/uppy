@@ -1,0 +1,43 @@
+// font faces
+$fontFamily-body : 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+$fontFamily-logo : 'Poiret One', 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+$fontFamily-code : 'Roboto Mono', Monaco, courier, monospace;
+
+// font sizes
+$fontSize-body : 15px;
+$fontSize-s    : 14px;
+$fontSize-m    : 17px;
+$fontSize-l    : 24px;
+$fontSize-xl   : 28px;
+$fontSize-code : .8em;
+
+// colors
+$color-white      : #fff;
+$color-black      : #000;
+$color-blue       : #345E86;
+$color-dark       : #2c3e50;
+$color-medium     : #34495e;
+$color-light      : #7f8c8d;
+$color-green      : #42b983;
+$color-border     : #dddddd;
+$color-codebg     : #f8f8f8;
+$color-red        : #ff6666;
+$color-gray       : #7f8c8d;
+$color-lightgray  : #adbdbe;
+$color-darkgray   : #34393A;
+$color-violet     : #492e7c;
+$color-orange     : #e96900;
+$color-mint       : #02B1AC;
+$color-yellow     : #ffd12a;
+$color-pink       : #e02177;
+$color-primary    : $color-pink;
+
+// sizes
+$size-radius : 2px;
+$size-headerHeight: 40px;
+
+// Media queries
+
+// small screen
+$screen-medium: 'only screen and (min-width: 1024px)';
+// $screen-large: 'only screen and (min-width: 860px)';

@@ -1,50 +1,34 @@
-SHELL          := /usr/bin/env bash
-ghpages_repo   := "transloadit/uppy"
-ghpages_branch := "gh-pages"
-ghpages_url    := "git@github.com:$(ghpages_repo).git"
+# Licensed under MIT.
+# Copyright (2016) by Kevin van Zonneveld https://twitter.com/kvz
+#
+# This Makefile offers convience shortcuts into any Node.js project that utilizes npm scripts.
+# It functions as a wrapper around the actual listed in `package.json`
+# So instead of typing:
+#
+#  $ npm script build:assets
+#
+# you could also type:
+#
+#  $ make build-assets
+#
+# Notice that colons (:) are replaced by dashes for Makefile compatibility.
+#
+# The benefits of this wrapper are:
+#
+# - You get to keep the the scripts package.json, which is more portable
+#   (Makefiles & Windows are harder to mix)
+# - Offer a polite way into the project for developers coming from different
+#   languages (npm scripts is obviously very Node centric)
+# - Profit from better autocomplete (make <TAB><TAB>) than npm currently offers.
+#   OSX users will have to install bash-completion
+#   (http://davidalger.com/development/bash-completion-on-os-x-with-brew/)
 
-.PHONY: website-install
-website-install:
-	@echo "--> Installing dependencies.."
-	@cd website && npm install
+define npm_script_targets
+TARGETS := $(shell node -e 'for (var k in require("./package.json").scripts) {console.log(k.replace(/:/g, "-"));}')
+$$(TARGETS):
+	npm run $(subst -,:,$(MAKECMDGOALS))
 
-.PHONY: website-build
-website-build: website-install
-	@echo "--> Building site.."
-	@cd website && node update.js
-	@cd website && ./node_modules/.bin/hexo generate
+.PHONY: $$(TARGETS)
+endef
 
-.PHONY: website-preview
-website-preview: website-build
-	@echo "--> Running preview.."
-	@cd website && ./node_modules/.bin/hexo server
-
-.PHONY: website-deploy
-website-deploy: website-build
-	@echo "--> Deploying to GitHub pages.."
-	@mkdir -p /tmp/deploy-$(ghpages_repo)
-
-	# Custom steps
-	@rsync \
-    --archive \
-    --delete \
-    --exclude=.git* \
-    --exclude=node_modules \
-    --exclude=lib \
-    --itemize-changes \
-    --checksum \
-    --no-times \
-    --no-group \
-    --no-motd \
-    --no-owner \
-	./website/public/ /tmp/deploy-$(ghpages_repo)
-
-	@echo 'This branch is just a deploy target. Do not edit. You changes will be lost.' > /tmp/deploy-$(ghpages_repo)/README.md
-
-	@cd /tmp/deploy-$(ghpages_repo) \
-	  && git init && git checkout -B $(ghpages_branch) && git add --all . \
-	  && git commit -nm "Update $(ghpages_repo) website by $${USER}" \
-	  && (git remote add origin $(ghpages_url)|| true)  \
-	  && git push origin $(ghpages_branch):refs/heads/$(ghpages_branch) --force
-
-	@rm -rf /tmp/deploy-$(ghpages_repo)
+$(eval $(call npm_script_targets))

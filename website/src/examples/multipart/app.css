@@ -1,0 +1,9 @@
+#myform1, #myform2 {
+  float  : left;
+  width  : 200px;
+  margin : 20px;
+}
+
+.clearfix {
+  clear: both;
+}

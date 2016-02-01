@@ -1,0 +1,54 @@
+/**
+* Drag & Drop CSS to style the plugin
+*/
+.UppyDragDrop-form {
+  width: 300px;
+  text-align: center;
+  padding: 100px 10px;
+}
+
+.UppyDragDrop-form.is-dragdrop-supported {
+  border: 2px dashed;
+  border-color: #ccc;
+}
+
+/* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
+.UppyDragDrop-input {
+  width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.UppyDragDrop-label {
+  cursor: pointer;
+}
+
+.UppyDragDrop-dragText {
+  display: none;
+}
+
+.is-dragdrop-supported .UppyDragDrop-dragText {
+  display: inline;
+}
+
+.UppyDragDrop-form.is-dragover {
+  border-color: #d2ecea;
+  background-color: #dbf5f3;
+}
+
+.UppyDragDrop-uploadBtn {
+  display: block;
+  margin: auto;
+  margin-top: 20px;
+  border: 0;
+  border: 1px solid #ccc;
+  background: none;
+  cursor: pointer;
+
+  &:hover {
+    background: #ccc;
+  }
+}

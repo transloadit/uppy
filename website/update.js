@@ -1,33 +1,51 @@
-var fs            = require('fs')
-var version       = require('../package.json').version
-var themeconfPath = 'themes/uppy/_config.yml'
-var installPath   = 'src/guide/installation.md'
-var themeconfig   = fs.readFileSync(themeconfPath, 'utf-8')
-var installation  = fs.readFileSync(installPath, 'utf-8')
+var fs = require('fs')
+var path = require('path')
+var chalk = require('chalk')
 
-// fs.writeFileSync('themes/uppy/layout/partials/DESIGNGOALS.md', fs.readFileSync('../DESIGNGOALS.md', 'utf-8'));
+var webRoot = __dirname
+var uppyRoot = path.dirname(__dirname)
 
-fs.writeFileSync(
-  themeconfPath,
-  themeconfig.replace(/uppy_version: .*/, 'uppy_version: ' + version)
-)
-
-var sizes = {
-  // min: 'uppy.min.js',
-  // gz: 'uppy.min.js.gz',
-  dev: './uppy.js'
+var configPath = webRoot + '/themes/uppy/_config.yml'
+var version = require(uppyRoot + '/package.json').version
+var config
+try {
+  config = fs.readFileSync(configPath, 'utf-8')
+} catch (e) {
+  config = '# Uppy versions, auto updated by update.js\nuppy_version: 0.0.1\n\nuppy_dev_size: "0.0"\nuppy_min_size: "0.0"\nuppy_gz_size: "0.0"'
 }
 
-for (var file in sizes) {
-  var filesize = fs.statSync('../dist/' + sizes[file], 'utf-8').size
+// Inject current Uppy version and sizes in website's _config.yml
+var sizes = {}
+var locations = {
+  min: uppyRoot + '/dist/uppy.js',
+  gz: uppyRoot + '/dist/uppy.js',
+  dev: uppyRoot + '/dist/uppy.js',
+  css: uppyRoot + '/dist/uppy.css'
+}
+// @todo: ^-- Refer to actual minified builds in dist:
+
+for (var file in locations) {
+  var filesize = fs.statSync(locations[file], 'utf-8').size
   sizes[file] = (filesize / 1024).toFixed(2)
 }
 
 fs.writeFileSync(
-  installPath,
-  installation
+  configPath,
+  config
     .replace(/uppy_version: .*/, 'uppy_version: ' + version)
-    .replace(/(\w+)_size:.*/g, function (m, p1) {
-      return p1 + '_size: "' + sizes[p1] + '"'
+    .replace(/uppy_(\w+)_size:.*/g, function (m, p1) {
+      return 'uppy_' + p1 + '_size: "' + (sizes[p1] || 99999) + '"'
     })
 )
+
+var exec = require('child_process').exec
+exec('cp -fR ' + uppyRoot + '/dist/ ' + webRoot + '/themes/uppy/source/uppy', function (error, stdout, stderr) {
+  if (error) {
+    console.error(
+      chalk.red('x failed to inject: '),
+      chalk.dim('uppy umd build into site, because: ' + error)
+    )
+    return
+  }
+  console.info(chalk.green('✓ injected: '), chalk.dim('uppy umd build into site'))
+})

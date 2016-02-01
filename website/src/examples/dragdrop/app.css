@@ -1,0 +1,8 @@
+/* Drag & Drop CSS to style the demo itself */
+
+.UppyDragDrop-puppy {
+  display: block;
+  max-width: 80px;
+  margin: auto;
+  margin-bottom: 20px;
+}

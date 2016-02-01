@@ -1,166 +1,164 @@
-import Utils from '../core/Utils';
-import TransloaditPlugin from './TransloaditPlugin';
-// import Tus from 'tus-js-client';
+import Utils from '../core/Utils'
+import Plugin from './Plugin'
+import componentDragDrop from '../components/dragdrop.js'
 
-export default class DragDrop extends TransloaditPlugin {
-  constructor(core, opts) {
-    super(core, opts);
-    this.type = 'selecter';
+/**
+ * Drag & Drop plugin
+ *
+ */
+export default class DragDrop extends Plugin {
+  constructor (core, opts) {
+    super(core, opts)
+    this.type = 'selecter'
 
     // set default options
     const defaultOptions = {
-      bla: 'blabla',
-      autoSubmit: true,
-      modal: true
-    };
+      autoSubmit: true
+    }
 
     // merge default options with the ones set by user
-    this.opts = defaultOptions;
-    Object.assign(this.opts, opts);
+    this.opts = Object.assign({}, defaultOptions, opts)
 
-    console.log(this.opts);
-
-    // get the element where Drag & Drop event will occur
-    this.dropzone = document.querySelectorAll(this.opts.selector)[0];
-    this.dropzoneInput = document.querySelectorAll('.UppyDragDrop-input')[0];
-
-    this.status = document.querySelectorAll('.UppyDragDrop-status')[0];
-
-    this.isDragDropSupported = this.checkDragDropSupport();
+    this.isDragDropSupported = this.checkDragDropSupport()
+    this.initHtml()
 
     // crazy stuff so that ‘this’ will behave in class
-    this.listenForEvents = this.listenForEvents.bind(this);
-    this.handleDrop = this.handleDrop.bind(this);
-    this.checkDragDropSupport = this.checkDragDropSupport.bind(this);
-    this.upload = this.upload.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
+    this.listenForEvents = this.listenForEvents.bind(this)
+    this.handleDrop = this.handleDrop.bind(this)
+    this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
+    this.handleInputChange = this.handleInputChange.bind(this)
   }
 
-  /**
-   * Checks if the browser supports Drag & Drop
-   */
-  checkDragDropSupport() {
-    const div = document.createElement('div');
-    return (('draggable' in div) ||
-           ('ondragstart' in div && 'ondrop' in div)) &&
-           'FormData' in window && 'FileReader' in window;
+  initHtml () {
+    this.dragDropContainer = document.querySelector('.UppyDragDrop')
+
+    this.dragDropContainer.innerHTML = componentDragDrop({
+      endpoint: this.opts.endpoint,
+      chooseFile: this.core.i18n('chooseFile'),
+      orDragDrop: this.core.i18n('orDragDrop'),
+      showUploadBtn: this.opts.autoSubmit,
+      upload: this.core.i18n('upload')
+    })
+
+    // get the element where the Drag & Drop event will occur
+    this.dropzone = document.querySelector(this.opts.target)
+    this.dropzoneInput = document.querySelector('.UppyDragDrop-input')
+
+    this.status = document.querySelector('.UppyDragDrop-status')
   }
 
-  listenForEvents() {
+/**
+ * Checks if the browser supports Drag & Drop
+ * @return {Boolean} true if supported, false otherwise
+ */
+  checkDragDropSupport () {
+    const div = document.createElement('div')
+
+    if (!('draggable' in div) || !('ondragstart' in div && 'ondrop' in div)) {
+      return false
+    }
+
+    if (!('FormData' in window)) {
+      return false
+    }
+
+    if (!('FileReader' in window)) {
+      return false
+    }
+
+    return true
+  }
+
+  listenForEvents () {
+    console.log(`waiting for some files to be dropped on ${this.opts.target}`)
+
     if (this.isDragDropSupported) {
-      Utils.addClass(this.dropzone, 'is-dragdrop-supported');
+      Utils.addClass(this.dropzone, 'is-dragdrop-supported')
     }
 
     // prevent default actions for all drag & drop events
-    Utils.addListenerMulti(this.dropzone, 'drag dragstart dragend dragover dragenter dragleave drop', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    });
+    const strEvents = 'drag dragstart dragend dragover dragenter dragleave drop'
+    Utils.addListenerMulti(this.dropzone, strEvents, (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+    })
 
     // Toggle is-dragover state when files are dragged over or dropped
-    Utils.addListenerMulti(this.dropzone, 'dragover dragenter', () => {
-      Utils.addClass(this.dropzone, 'is-dragover');
-    });
+    Utils.addListenerMulti(this.dropzone, 'dragover dragenter', (e) => {
+      Utils.addClass(this.dropzone, 'is-dragover')
+    })
 
-    Utils.addListenerMulti(this.dropzone, 'dragleave dragend drop', () => {
-      Utils.removeClass(this.dropzone, 'is-dragover');
-    });
+    Utils.addListenerMulti(this.dropzone, 'dragleave dragend drop', (e) => {
+      Utils.removeClass(this.dropzone, 'is-dragover')
+    })
 
-    this.dropzone.addEventListener('drop', this.handleDrop);
+    const onDrop = new Promise((resolve, reject) => {
+      this.dropzone.addEventListener('drop', (e) => {
+        resolve(this.handleDrop.bind(null, e))
+      })
+    })
 
-    this.dropzoneInput.addEventListener('change', this.handleInputChange);
+    const onInput = new Promise((resolve, reject) => {
+      this.dropzoneInput.addEventListener('change', (e) => {
+        resolve(this.handleInputChange.bind(null, e))
+      })
+    })
 
-    console.log(`waiting for some files to be dropped on ${this.opts.selector}`);
+    return Promise.race([onDrop, onInput]).then(handler => handler())
   }
 
-  // Toggle is-dragover state when files are dragged over or dropped
-  // in this case — add/remove 'is-dragover' class
-  // toggleDragoverState(e) {
-  //   toggleClass(this.dropzone, 'is-dragover');
-  // }
-
-  displayStatus(status) {
-    this.status.innerHTML = status;
+  displayStatus (status) {
+    this.status.innerHTML = status
   }
 
-  handleDrop(e) {
-    console.log('all right, someone dropped something here...');
-    const files = e.dataTransfer.files;
-    const formData = new FormData(this.dropzone);
-    // console.log('pizza', formData);
+  handleDrop (e) {
+    console.log('all right, someone dropped something...')
+    const files = e.dataTransfer.files
+    // const arrayOfFiles = Array.from(files)
 
-    for (var i = 0; i < files.length; i++) {
-      formData.append('file', files[i]);
-      console.log('pizza', files[i]);
-    }
+    const formData = new FormData(this.dropzone)
 
-    this.upload(formData);
+    Array.from(files).forEach((file, i) => {
+      console.log(`file-${i}`)
+      formData.append(`file-${i}`, file)
+    })
+
+    return this.result(files, formData)
   }
 
-  handleInputChange() {
-    // const fileInput = document.querySelectorAll('.UppyDragDrop-input')[0];
-    const formData = new FormData(this.dropzone);
-    console.log('pizza', formData);
+  handleInputChange () {
+    console.log('all right, something selected through input...')
+    const files = this.dropzoneInput.files
+    const formData = new FormData(this.dropzone)
 
-    this.upload(formData);
+    return this.result(files, formData)
+
+    // return Promise.resolve({from: 'DragDrop', files, formData})
   }
 
-  upload(data) {
-    this.displayStatus('Uploading...');
-
-    const request = new XMLHttpRequest();
-    request.open('POST', 'http://api2.transloadit.com', true);
-    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-
-    request.addEventListener('load', () => {
-      console.log('fucking done!');
-      this.displayStatus('Done.');
-    });
-
-    request.addEventListener('load', () => {
-      this.displayStatus('Done.');
-    });
-
-    request.addEventListener('error', () => {
-      console.log('fucking error!');
-    });
-
-    request.send(data);
-
-    // Create a new tus upload
-    // const upload = new Tus.Upload(files, {
-    //   endpoint: 'http://master.tus.io:8080',
-    //   onError: function(error) {
-    //     console.log('Failed because: ' + error);
-    //   },
-    //   onProgress: function(bytesUploaded, bytesTotal) {
-    //     var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2);
-    //     console.log(bytesUploaded, bytesTotal, percentage + '%');
-    //   },
-    //   onSuccess: function() {
-    //     console.log('Download %s from %s', upload.file.name, upload.url);
-    //   }
-    // });
-
-    // Start the upload
-    // upload.start();
+  result (files, formData) {
+    return new Promise((resolve, reject) => {
+      // if autoSubmit is false, wait for upload button to be pushed,
+      // otherwise just pass files to uploaders right away
+      if (!this.opts.autoSubmit) {
+        this.dropzone.addEventListener('submit', (e) => {
+          e.preventDefault()
+          console.log('yo!')
+          return resolve({from: 'DragDrop', files, formData})
+        })
+      } else {
+        return resolve({from: 'DragDrop', files, formData})
+      }
+    })
   }
 
-  run(files, done) {
-    console.dir({
-      method: 'DragDrop.run',
-      files : files,
-      done  : done
-    });
+  run (results) {
+    console.log({
+      class: 'DragDrop',
+      method: 'run',
+      results: results
+    })
 
-    console.log('DragDrop running!');
-    // console.log(files);
-    this.listenForEvents();
-    this.core.setProgress(this, 0);
-    var selected = [ {name: 'lolcat.jpeg'} ];
-    this.core.setProgress(this, 100);
-    // return selected;
-    done(null, 'done with DragDrop');
-    // return Promise.resolve('done with DragDrop');
+    return this.listenForEvents()
   }
 }

@@ -1,8 +1,0 @@
-#!/bin/bash
-
-ENTRY=examples/playground/src/js/app.js
-OUTPUT=examples/playground/static/js/app.js
-TRANSFORMS="[ babelify ]"
-
-# Argument should be browserify or watchify
-$1 $ENTRY -o $OUTPUT -t $TRANSFORMS

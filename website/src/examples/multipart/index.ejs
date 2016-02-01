@@ -1,0 +1,38 @@
+---
+title: Multipart Uploads
+layout: example
+type: examples
+order: 3
+---
+
+{% blockquote %}
+Uppy recommends using tus resumable file uploads, but if you want you can also use Multipart (Form) uploads
+{% endblockquote %}
+
+To illustrate Uppy abstracts forms as a means to select a file, and not upload it, here
+we showcase uploading files from 2 different forms in one go:
+
+<link rel="stylesheet" href="app.css">
+<% include app.html %>
+<script src="app.js"></script>
+
+<hr />
+
+<p id="console-wrapper">
+  Console output (latest logs are at the top): <br />
+</p>
+
+<p>
+  On this page we're using the following HTML snippet:
+</p>
+{% include_code lang:html dragdrop/app.html %}
+
+<p>
+  Along with this JavaScript:
+</p>
+{% include_code lang:js dragdrop/app.es6 %}
+
+<p>
+  And the following CSS:
+</p>
+{% include_code lang:css dragdrop/app.css %}

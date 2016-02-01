@@ -1,0 +1,26 @@
+{
+  "name": "templates",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "babelify": "^7.2.0",
+    "brfs": "^1.4.3",
+    "browserify": "^13.0.0",
+    "ejsify": "^1.0.0",
+    "hbsfy": "^2.4.1",
+    "lodash.template": "^4.0.0"
+  },
+  "scripts": {
+    "build:all": "npm run build:es6 && npm run build:es6:string && npm run build:ejs && npm run build:handlebars && npm run build:lodash",
+    "build:lodash": "browserify -t [ babelify --presets [ es2015 ] ] -t brfs src/lodash.js -o build/bundle-lodash.js && stat -f%z build/bundle-lodash.js",
+    "build:es6": "browserify -t [ babelify --presets [ es2015 ] ] src/es6.js -o build/bundle-es6.js && stat -f%z build/bundle-es6.js",
+    "build:es6:string": "browserify -t [ babelify --presets [ es2015 ] ] -t brfs src/es6-string.js -o build/bundle-es6-string.js && stat -f%z build/bundle-es6-string.js",
+    "build:ejs": "browserify -t ejsify -t [ babelify --presets [ es2015 ] ] src/ejs.js -o build/bundle-ejs.js && stat -f%z build/bundle-ejs.js",
+    "build:handlebars": "browserify -t hbsfy -t [ babelify --presets [ es2015 ] ] src/hbs.js -o build/bundle-hbs.js && stat -f%z build/bundle-hbs.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,11 +1,24 @@
-import DragDrop from './DragDrop';
-import TransloaditBasic from './TransloaditBasic';
-import Tus10 from './Tus10';
-import TransloaditPlugin from './TransloaditPlugin';
+// Parent
+import Plugin from './Plugin'
+
+// Selecters
+import DragDrop from './DragDrop'
+import Dropbox from './Dropbox'
+import Formtag from './Formtag'
+
+// Uploaders
+import Tus10 from './Tus10'
+import Multipart from './Multipart'
+
+// Presetters
+import TransloaditBasic from './TransloaditBasic'
 
 export default {
-  TransloaditPlugin,
+  Plugin,
   DragDrop,
-  TransloaditBasic,
-  Tus10
-};
+  Dropbox,
+  Formtag,
+  Tus10,
+  Multipart,
+  TransloaditBasic
+}

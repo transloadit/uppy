@@ -1,28 +1,27 @@
 (function () {
-
   var each = [].forEach
-  var main = document.getElementById('main')
+
+  var main = document.querySelector('.js-MainContent')
   var doc = document.documentElement
   var body = document.body
-  var header = document.getElementById('header')
-  var menu = document.querySelector('.sidebar')
-  var content = document.querySelector('.content')
-  var mobileBar = document.getElementById('mobile-bar')
+  var header = document.querySelector('.js-MainHeader')
+  var menu = document.querySelector('.js-Sidebar')
+  var content = document.querySelector('.js-Content')
 
-  var menuButton = mobileBar.querySelector('.menu-button')
+  var menuButton = document.querySelector('.js-MenuBtn')
   menuButton.addEventListener('click', function () {
-    menu.classList.toggle('open')
+    menu.classList.toggle('is-open')
   })
 
   body.addEventListener('click', function (e) {
     if (e.target !== menuButton && !menu.contains(e.target)) {
-      menu.classList.remove('open')
+      menu.classList.remove('is-open')
     }
   })
 
   // build sidebar
   var currentPageAnchor = menu.querySelector('.sidebar-link.current')
-  var isAPI = document.querySelector('.content').classList.contains('api')
+  var isAPI = document.querySelector('.Content').classList.contains('api')
   if (currentPageAnchor || isAPI) {
     var allLinks = []
     var sectionContainer
@@ -69,7 +68,7 @@
     allLinks.forEach(makeLinkClickable)
 
     // init smooth scroll
-    smoothScroll.init({
+    window.smoothScroll.init({
       speed: 400,
       offset: window.innerWidth > 720
         ? 40
@@ -85,9 +84,9 @@
     var top = doc && doc.scrollTop || body.scrollTop
     var headerHeight = header.offsetHeight
     if (top > headerHeight) {
-      main.className = 'fix-sidebar'
+      addClass(main, 'fix-sidebar')
     } else {
-      main.className = ''
+      removeClass(main, 'fix-sidebar')
     }
     if (animating || !allLinks) return
     var last
@@ -100,8 +99,9 @@
         last = link
       }
     }
-    if (last)
-    setActive(last.id)
+    if (last) {
+      setActive(last.id)
+    }
   }
 
   function makeLink (h) {
@@ -160,25 +160,41 @@
     wrapper.appendChild(link)
   }
 
+  function addClass (el, className) {
+    if (el.classList) {
+      el.classList.add(className)
+    } else {
+      el.className += ' ' + className
+    }
+  }
+
+  function removeClass (el, className) {
+    if (el.classList) {
+      el.classList.remove(className)
+    } else {
+      el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ')
+    }
+  }
+
   // Search with SwiftType
+  // @todo get our own swifttype
 
-  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
-  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
-  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
-  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+  // (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  // (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  // e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  // })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
 
-  _st('install','HgpxvBc7pUaPUWmG9sgv','2.0.0');
+  // _st('install','HgpxvBc7pUaPUWmG9sgv','2.0.0');
 
   // version select
-  document.querySelector('.version-select').addEventListener('change', function (e) {
-    var version = e.target.value
-    if (version.indexOf('1.') !== 0) {
-      version = version.replace('.', '')
-      var section = window.location.pathname.match(/\/(\w+?)\//)[1]
-      window.location.assign('http://' + version + '.uppyjs.io/' + section + '/')
-    } else {
-      // TODO when 1.x is out
-    }
-  })
-
+  // document.querySelector('.version-select').addEventListener('change', function (e) {
+  //   var version = e.target.value
+  //   if (version.indexOf('1.') !== 0) {
+  //     version = version.replace('.', '')
+  //     var section = window.location.pathname.match(/\/(\w+?)\//)[1]
+  //     window.location.assign('http://' + version + '.uppy.io/' + section + '/')
+  //   } else {
+  //     // TODO when 1.x is out
+  //   }
+  // })
 })()

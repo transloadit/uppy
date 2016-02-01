@@ -1,0 +1,304 @@
+.page-index .MainMenu {
+  text-align: center;
+
+  li {
+    display: inline-block;
+    position: relative;
+    line-height: 40px;
+
+    &:last-child .nav-link {
+      margin-right: 0;
+    }
+  }
+}
+
+.page-index .MainLogo {
+  display: none;
+}
+
+.page-index .MainMenu-search {
+  display: none;
+}
+
+.IndexHero {
+  text-align: center;
+  position: relative;
+}
+
+.IndexHero-logo {
+  margin: 0.5em 0 0.5em;
+}
+
+.IndexHero-logoImg {
+  margin-bottom: 1em;
+}
+
+.IndexHero-title {
+  font-family: $fontFamily-logo;
+  font-weight: 400;
+  font-size: 4em;
+  margin: 0;
+  margin-bottom: 0.2em;
+}
+
+.IndexHero-subtitle {
+  font-family: $fontFamily-logo;
+  font-size: 1.6em;
+  font-weight: 400;
+  margin: 0;
+}
+
+.IndexHero-descPrimary {
+  font-size: $fontSize-l;
+  line-height: 1.4;
+  max-width: 950px;
+  padding: 0 20px;
+  text-align: center;
+  margin: 1.5em auto;
+  color: $color-light;
+}
+
+.IndexHero-descSecondary {
+  font-size: 16px;
+  line-height: 1.4;
+  max-width: 800px;
+  padding: 0 20px;
+  text-align: center;
+  margin: 1.5em auto;
+  color: $color-light;
+}
+
+.IndexSocial {
+  text-align: center;
+  list-style-type: none;
+  margin: 3em auto;
+  padding: 0;
+}
+
+.IndexSocial li {
+  display: inline-block;
+  margin: 0 0.7em;
+  vertical-align: middle;
+
+  &.last { margin-left: -2px; }
+}
+
+.GetStartedBtn {
+  font-size: 1.2em;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 12px 40px;
+  border-radius: 25px;
+  transition: all .15s ease;
+  background-color: $color-primary;
+  color: $color-white;
+  margin-bottom: 1.5em;
+
+  &:hover { @include zoom; }
+}
+
+.IndexExample {
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 1em 3em;
+
+  @media #{$screen-medium} {
+    margin: 0 auto 3em;
+  }
+
+  code, pre {
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    white-space: pre;
+    font-family: 'Roboto Mono', Monaco, courier, monospace;
+    font-size: 12px;
+    height: auto;
+    line-height: 18px;
+  }
+
+  figure.highlight {
+    margin: 0;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  .sign {
+    display: inline-block;
+    vertical-align: middle;
+    height: 10em;
+    line-height: 9em;
+    padding: 0 .5em;
+    font-weight: 600;
+    color: $color-light;
+  }
+}
+
+.IndexExample-title {
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+
+.IndexExample-block {
+  padding: 7px;
+  text-align: left;
+
+  background-color: $color-codebg;
+  border-radius: $size-radius;
+  overflow-x: scroll;
+
+  @media #{$screen-medium} {
+    width: 43%;
+    display: inline-block;
+    vertical-align: middle;
+    height: 250px;
+  }
+}
+
+.IndexDesignGoals {
+  padding: 4em 1em;
+  background-color: $color-primary;
+  color: $color-white;
+  overflow: hidden;
+
+  @media #{$screen-medium} {
+    padding: 4em 0;
+  }
+
+  h2 {
+    margin-top: 0;
+    color: $color-white;
+    font-size: 1.5em;
+    text-align: center;
+  }
+
+  ul {
+    line-height: 1.8em;
+    font-size: 1.15em;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  li {
+    background: svg('check.svg', '[fill]: #{$color-white}') left 5px no-repeat;
+    background-size: 24px 24px;
+    padding-left: 40px;
+    margin-bottom: 0.5em;
+  }
+
+  // li:before {
+  //   content: '';
+  //   display: inline-block;
+  //   width: 24px;
+  //   height: 24px;
+  //   background: svg('check.svg', '[fill]: #{$color-white}') center center no-repeat;
+  //   background-size: 24px 24px;
+  //   margin-right: 10px;
+  //   position: relative;
+  //   top: 4px;
+  // }
+}
+
+.IndexFooter {
+  text-align: center;
+  color: $color-white;
+  padding: 4em 1em;
+  background-color: darken($color-primary, 15%);
+
+  @media #{$screen-medium} {
+    padding: 4em 0;
+  }
+
+  a {
+    color: $color-white;
+    text-decoration: underline;
+  }
+
+  p { margin: .3em 0; }
+}
+
+// @media screen and (max-width: 480px) {
+//
+//   #hero {
+//     .inner h1 {
+//       font-size: 2em;
+//       font-weight: 400;
+//     }
+//
+//     .buttons {
+//       max-width: 300px;
+//       margin: 1em auto;
+//     }
+//
+//     a.button {
+//       width: 260px;
+//       font-size: .8em;
+//       margin: .5em 0;
+//     }
+//
+//     .desc {
+//       max-width: 300px;
+//     }
+//
+//     .warning, .desc {
+//       font-size: .85em;
+//       margin: 1em auto;
+//       br { display: none; }
+//     }
+//
+//     // .down { display: none; }
+//   }
+//
+//   #social {
+//     max-width: 340px;
+//     margin: 1.2em auto;
+//   }
+//
+//   .cool { margin-top: 0; }
+//
+//   #features .feat {
+//     font-size: 14px;
+//     margin: .8em 0;
+//     width: 250px;
+//   }
+//
+//   #design_goals {
+//     ul {
+//       width: 280px;
+//       font-size: 1.1em;
+//     }
+//
+//     h2 {
+//       font-size: 1.4em;
+//     }
+//   }
+// }
+//
+// @media screen and (max-width: 860px) {
+//   #features, #hero {
+//     font-size: 16px;
+//   }
+//
+//   #example {
+//     .block {
+//       display: block;
+//       width: auto;
+//       height: auto;
+//     }
+//   }
+//
+//   #demo {
+//     padding: 5px 20px 20px;
+//   }
+//
+//   .sign {
+//     display: block;
+//     height: 1em;
+//     line-height: 1em;
+//     padding: .5em 0;
+//   }
+// }
