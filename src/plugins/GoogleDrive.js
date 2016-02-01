@@ -13,11 +13,15 @@ export default class Drive extends Plugin {
     this.currentDir = '/'
 
     this.isAuthenticated = false
-
   }
 
   connect (target) {
-    this.getDirectory()
+    if (!this.isAuthenticated) {
+      target.innerHTML = this.renderAuthentication()
+    } else {
+      // this.getDirectory()
+      // .then(this.render)
+    }
   }
 
   authenticate () {
@@ -33,6 +37,10 @@ export default class Drive extends Plugin {
 
   run (results) {
 
+  }
+
+  renderAuthentication() {
+    return `<div><h1>Authenticate With Google Drive</h1><button>Authenticate</button></div>`
   }
 
   render (files) {

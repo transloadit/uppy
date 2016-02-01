@@ -7,11 +7,8 @@ export default (opts) => {
       ${Sidebar({
         providers: opts.providers
       })}
-      ${Browser({
-        files: [{ image: '123.png', name: '123.png' }],
-        provider: 'Dropbox',
-        currentDirectory: '/'
-      })}
+      <div id='UppyModalContent'>
+      </div>
     </section>
   `
 }

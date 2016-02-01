@@ -2,23 +2,19 @@ import Plugin from './Plugin'
 import { ModalTemplate } from './templates'
 import Drive from './GoogleDrive'
 
+let GoogleDrive = new Drive()
+
 export default class Modal extends Plugin {
   constructor (core, opts) {
     super(core, opts)
+
+    this.providers = [{ name: 'Local' }, { name: 'Google Drive', connect: GoogleDrive.connect }]
     this.type = 'something'
     this.connect = this.connect.bind(this)
     this.render = this.render.bind(this)
     this.initModal = this.initModal.bind(this)
     this.onDocumentClick = this.onDocumentClick.bind(this)
-    this.providers = [{
-      name: 'Local'
-    },
-    {
-      name: 'Google Drive',
-      connect: Drive.connect
-    }]
     this.parent = this.opts.parent || document.body
-
     this.initModal()
 
     if (this.opts.selector) {
@@ -52,7 +48,7 @@ export default class Modal extends Plugin {
 
     this.parent.appendChild(modal)
 
-    modal.innerHTML = ModalTemplate()
+    modal.innerHTML = ModalTemplate({ providers: this.providers })
 
     let a = document.createElement('a')
 
@@ -64,6 +60,17 @@ export default class Modal extends Plugin {
     modal.appendChild(a)
 
     this.modal = document.getElementById('UppyModal')
+
+    this.providers.forEach(provider => {
+      const elem = document.getElementById(`Uppy-${provider.name.split(' ').join('')}`)
+      if (provider.name !== 'Local') {
+        elem.addEventListener('click', e => {
+          if (provider.name !== 'Local') {
+            provider.connect(document.getElementById('UppyModalContent'))
+          }
+        })
+      }
+    })
   }
 
   openModal () {
@@ -86,12 +93,6 @@ export default class Modal extends Plugin {
   }
 
   render (files) {
-    this.modal.innerHTML = ModalTemplate()
-    this.providers.forEach(provider => {
-      document.getElementById(`${provider.name.split(' ').join('')}`).addEventListener('click', e => {
-        provider.connect()
-      })
-    })
-
+    this.modal.innerHTML = ModalTemplate({ providers: this.providers })
   }
 }
