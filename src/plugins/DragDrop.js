@@ -80,7 +80,8 @@ export default class DragDrop extends Plugin {
   }
 
   listenForEvents () {
-    console.log(`waiting for some files to be dropped on ${this.opts.target}`)
+    this.core.log(`waiting for some files to be dropped on ${this.opts.target}`)
+    // console.log(`waiting for some files to be dropped on ${this.opts.target}`)
 
     // prevent default actions for all drag & drop events
     const strEvents = 'drag dragstart dragend dragover dragenter dragleave drop'
@@ -108,6 +109,11 @@ export default class DragDrop extends Plugin {
       this.input.addEventListener('change', (e) => {
         resolve(this.handleInputChange.bind(null, e))
       })
+    })
+
+    this.container.addEventListener('progress', (e) => {
+      const percentage = e.detail
+      this.setProgress(percentage)
     })
 
     return Promise.race([onDrop, onInput]).then(handler => handler())

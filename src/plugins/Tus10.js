@@ -9,6 +9,12 @@ export default class Tus10 extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'uploader'
+
+    // set default options
+    const defaultOptions = {}
+
+    // merge default options with the ones set by user
+    this.opts = Object.assign({}, defaultOptions, opts)
   }
 
 /**
@@ -62,7 +68,12 @@ export default class Tus10 extends Plugin {
         let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
         percentage = Math.round(percentage)
         // self.setProgress(percentage, current, total)
-        self.setProgress(percentage)
+
+        // Dispatch progress event
+        const progressEvent = new CustomEvent('progress', {'detail': percentage})
+        const progressElement = document.querySelector(self.opts.progress)
+        progressElement.dispatchEvent(progressEvent)
+        // self.setProgress(percentage)
       },
       onSuccess: function () {
         console.log(`Download ${upload.file.name} from ${upload.url}`)

@@ -12,7 +12,8 @@ export default class Core {
     const defaultOptions = {
       // load English as the default locale
       locale: require('../locale/en_US.js'),
-      autoProceed: false
+      autoProceed: false,
+      debug: false
     }
 
     // Merge default options with the ones set by user
@@ -54,13 +55,22 @@ export default class Core {
  * @param {integer} percentage
  * @return {object} self for chaining
  */
-  setProgress (plugin, percentage, element) {
+  setProgress (plugin, percentage) {
     // Any plugin can call this via `this.core.setProgress(this, precentage)`
     console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage)
     return this
   }
 
-  // @todo log function
+/**
+ * Logs stuff to console, only if `debug` is set to true. Silent in production.
+ *
+ * @return {String|Object} to log
+ */
+  log (msg) {
+    if (this.opts.debug) {
+      console.log(`Debug log: ${msg}`)
+    }
+  }
 
 /**
  * Runs all plugins of the same type in parallel

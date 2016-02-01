@@ -69,13 +69,13 @@
 }
 
 .UppyDragDrop-progress {
-  width: 100%;
-  height: 20px;
-  margin-top: 20px;
+  width: 80%;
+  height: 3px;
+  margin: 15px auto;
 }
 
 .UppyDragDrop-progressInner {
-  background-color: green;
+  background-color: $color-pink;
   height: 100%;
   width: 0;
 }
