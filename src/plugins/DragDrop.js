@@ -45,11 +45,15 @@ export default class DragDrop extends Plugin {
     this.dropzone = document.querySelector(`${this.opts.target} .UppyDragDrop-inner`)
     this.input = document.querySelector(`${this.opts.target} .UppyDragDrop-input`)
     this.status = document.querySelector(`${this.opts.target} .UppyDragDrop-status`)
+    this.progress = document.querySelector(`${this.opts.target} .UppyDragDrop-progress`)
 
     Utils.addClass(this.container, 'UppyDragDrop')
     if (this.isDragDropSupported) {
       Utils.addClass(this.container, 'is-dragdrop-supported')
     }
+
+    // this.progress = document.querySelector(`${this.opts.target} .UppyDragDrop-progressInner`)
+    // this.progress.setAttribute('style', 'width: 60%')
   }
 
 /**

@@ -61,7 +61,8 @@ export default class Tus10 extends Plugin {
       onProgress: function (bytesUploaded, bytesTotal) {
         let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
         percentage = Math.round(percentage)
-        self.setProgress(percentage, current, total)
+        // self.setProgress(percentage, current, total)
+        self.setProgress(percentage)
       },
       onSuccess: function () {
         console.log(`Download ${upload.file.name} from ${upload.url}`)

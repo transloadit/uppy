@@ -18,5 +18,6 @@ export default (context) => {
     ? `<button class="UppyDragDrop-uploadBtn" type="submit">${context.upload}</button>`
     : ''}
   <div class="UppyDragDrop-status"></div>
+  <div class="UppyDragDrop-progress"><div class="UppyDragDrop-progressInner"></div></div>
 </form>`
 }

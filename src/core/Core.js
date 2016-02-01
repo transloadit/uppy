@@ -54,7 +54,7 @@ export default class Core {
  * @param {integer} percentage
  * @return {object} self for chaining
  */
-  setProgress (plugin, percentage) {
+  setProgress (plugin, percentage, element) {
     // Any plugin can call this via `this.core.setProgress(this, precentage)`
     console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage)
     return this

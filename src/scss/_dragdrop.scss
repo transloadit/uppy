@@ -67,3 +67,15 @@
     background: #ccc;
   }
 }
+
+.UppyDragDrop-progress {
+  width: 100%;
+  height: 20px;
+  margin-top: 20px;
+}
+
+.UppyDragDrop-progressInner {
+  background-color: green;
+  height: 100%;
+  width: 0;
+}
