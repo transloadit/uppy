@@ -9,30 +9,31 @@ Please add your entries in the form of:
 
 Work not started yet
 
-- [ ] modal: Add basic Modal plugin that can be used as a target
 - [ ] google: Add basic Google Drive plugin example
 - [ ] instagram: Add basic Instagram plugin example (#21)
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
-- [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
-- [ ] core: Create a progressbar/spinner/etc plugin (#18)
 - [ ] multipart: Write an acceptance test for the Multipart example via Saucelabs (#2, #23, @hedgerh)
-- [ ] tests: setup an HTML page with all sorts of crazy styles and resets to see what brakes Uppy 
+- [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy
+- [ ] tus: Improve tus uploading capabilities (#3 @kvz)
 
 ## 0.0.2 (Unreleased, work in progress)
 
 - [ ] core: Decide on good names for `cdn` vs `npm` builds and rename all-the-things
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] server: Create a (barely) working uppy-server (#39, @hedgerh)
-- [ ] dragdrop: Use templates, autoUpload setting, show progress
-- [X] meta: Implement playground to test things in, templates in this case
-- [X] core: Implement ejs or es6 templating (@arturi, @hedgerh)
+- [ ] core: Create a progressbar/spinner/etc plugin (#18)
+- [ ] modal: Add basic Modal plugin that can be used as a target (@hedgerh)
+- [x] tus: Add basic support tus 1.0 uploading capabilities (#3 @kvz)
+- [x] dragdrop: Use templates, autoUpload setting, show progress (@arturi)
+- [x] meta: Implement playground to test things in, templates in this case (@arturi)
+- [x] core: Implement es6 templating (@arturi, @hedgerh)
 - [ ] core: Improve on `_i18n` support, add tests (#47, @arturi)
-- [X] buildsystem: Use parallelshell and tweak browserify to work with templates (@arturi)
-- [X] docs: Fix build-documentation.js crashes, add more docs to Utils and Translator
-- [X] core: Integrate eslint in our build procedure and make Travis fail on errors found in our examples, Core and Plugins, such as `> 100` char lines (@kvz)
-- [X] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
-- [X] website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
+- [x] buildsystem: Use parallelshell and tweak browserify to work with templates (@arturi)
+- [x] docs: Fix build-documentation.js crashes, add more docs to Utils and Translator (@arturi, @kvz)
+- [x] core: Integrate eslint in our build procedure and make Travis fail on errors found in our examples, Core and Plugins, such as `> 100` char lines (@kvz)
+- [x] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
+- [x] website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
 - [ ] meta: Create an Uppy logo (@vvolfy)
 
 ## 0.0.1 (December 20, 2015)
