@@ -1,5 +1,7 @@
 // import Utils from '../core/Utils'
 import Plugin from './Plugin'
+// temporarily using superagent
+import request from 'superagent'
 
 export default class Drive extends Plugin {
   constructor (core, opts) {
@@ -8,8 +10,12 @@ export default class Drive extends Plugin {
     this.authenticate = this.authenticate.bind(this)
     this.connect = this.connect.bind(this)
     this.render = this.render.bind(this)
+    this.renderAuthentication = this.renderAuthentication.bind(this)
+    this.checkAuthentication = this.checkAuthentication.bind(this)
     this.files = []
     this.currentDir = '/'
+
+    this.checkAuthentication()
 
     this.isAuthenticated = false
   }
@@ -21,6 +27,16 @@ export default class Drive extends Plugin {
       // this.getDirectory()
       // .then(this.render)
     }
+  }
+
+  checkAuthentication () {
+    request.get('http://localhost:3002/drive/auth/authorize')
+    .set('Content-Type', 'application/json')
+    .end((err, res) => {
+      if (err) { return new Error(err) }
+      this.isAuthenticated = res.body.isAuthenticated
+      this.authUrl = res.body.authUrl
+    })
   }
 
   authenticate () {
@@ -39,7 +55,7 @@ export default class Drive extends Plugin {
   }
 
   renderAuthentication () {
-    return `<div><h1>Authenticate With Google Drive</h1><button>Authenticate</button></div>`
+    return `<div><h1>Authenticate With Google Drive</h1><a href=${ this.authUrl || '#' }>Authenticate</a></div>`
   }
 
   render (files) {
