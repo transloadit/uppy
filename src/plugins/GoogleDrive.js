@@ -1,7 +1,5 @@
 // import Utils from '../core/Utils'
 import Plugin from './Plugin'
-// temporarily using superagent
-import request from 'superagent'
 
 export default class Drive extends Plugin {
   constructor (core, opts) {
@@ -43,7 +41,7 @@ export default class Drive extends Plugin {
           this.authUrl = data.authUrl
         })
       } else {
-        let error = new Error(response.statusText)
+        let error = new Error(res.statusText)
         error.response = res
         throw error
       }
