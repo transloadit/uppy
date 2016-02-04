@@ -24,7 +24,7 @@ export default class DragDrop extends Plugin {
     this.initHtml()
 
     // bind `this` to class methods
-    this.listenForEvents = this.listenForEvents.bind(this)
+    this.initEvents = this.initEvents.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -79,7 +79,7 @@ export default class DragDrop extends Plugin {
     return true
   }
 
-  listenForEvents () {
+  initEvents () {
     this.core.log(`waiting for some files to be dropped on ${this.opts.target}`)
     // console.log(`waiting for some files to be dropped on ${this.opts.target}`)
 
@@ -162,6 +162,6 @@ export default class DragDrop extends Plugin {
       results: results
     })
 
-    return this.listenForEvents()
+    return this.initEvents()
   }
 }

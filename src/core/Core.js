@@ -1,5 +1,6 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
+import ee from 'event-emitter'
 
 /**
  * Main Uppy core
@@ -30,14 +31,21 @@ export default class Core {
     this.translator = new Translator({locale: this.opts.locale})
     this.i18n = this.translator.translate.bind(this.translator)
     // console.log(this.i18n('filesChosen', {smart_count: 3}))
+
+    // Set up an event EventEmitter
+    this.emitter = ee()
+
+    this.emitter.on('progress', data => {
+      console.log('до чего дошел прогресс: ' + data.percentage)
+    })
   }
 
 /**
  * Registers a plugin with Core
  *
  * @param {Class} Plugin object
- * @param {object} options object that will be passed to Plugin later
- * @return {object} self for chaining
+ * @param {Object} options object that will be passed to Plugin later
+ * @return {Object} self for chaining
  */
   use (Plugin, opts) {
     // Instantiate

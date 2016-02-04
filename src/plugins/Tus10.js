@@ -70,9 +70,9 @@ export default class Tus10 extends Plugin {
         // self.setProgress(percentage, current, total)
 
         // Dispatch progress event
-        const progressEvent = new CustomEvent('progress', {'detail': percentage})
-        const progressElement = document.querySelector(self.opts.progress)
-        progressElement.dispatchEvent(progressEvent)
+        self.core.emitter.emit('progress', {
+          percentage
+        })
         // self.setProgress(percentage)
       },
       onSuccess: function () {
