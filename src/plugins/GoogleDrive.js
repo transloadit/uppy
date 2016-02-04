@@ -16,26 +16,37 @@ export default class Drive extends Plugin {
     this.currentDir = '/'
 
     this.checkAuthentication()
-
-    this.isAuthenticated = false
   }
 
   connect (target) {
     if (!this.isAuthenticated) {
       target.innerHTML = this.renderAuthentication()
     } else {
-      // this.getDirectory()
-      // .then(this.render)
+      this.getDirectory()
+      .then(this.render)
     }
   }
 
   checkAuthentication () {
-    request.get('http://localhost:3002/drive/auth/authorize')
-    .set('Content-Type', 'application/json')
-    .end((err, res) => {
-      if (err) { return new Error(err) }
-      this.isAuthenticated = res.body.isAuthenticated
-      this.authUrl = res.body.authUrl
+    fetch('http://localhost:3002/drive/auth/authorize', {
+      method: 'get',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => {
+      if (res.status >= 200 && res.status <= 300) {
+        return res.json().then(data => {
+          this.isAuthenticated = data.isAuthenticated
+          this.authUrl = data.authUrl
+        })
+      } else {
+        let error = new Error(response.statusText)
+        error.response = res
+        throw error
+      }
     })
   }
 
@@ -47,7 +58,21 @@ export default class Drive extends Plugin {
   }
 
   getDirectory () {
-
+    fetch('http://localhost:3002/drive/get', {
+      method: 'get',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => {
+      if (res.status >= 200 && res.status <= 300) {
+        return res.json().then(data => {
+          console.log(data)
+        })
+      }
+    })
   }
 
   run (results) {
