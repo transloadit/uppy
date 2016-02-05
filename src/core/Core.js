@@ -21,7 +21,7 @@ export default class Core {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Dictates in what order different plugin types are ran:
-    this.types = [ 'presetter', 'selecter', 'uploader' ]
+    this.types = [ 'presetter', 'visualizer', 'selecter', 'uploader' ]
 
     this.type = 'core'
 
@@ -35,9 +35,11 @@ export default class Core {
     // Set up an event EventEmitter
     this.emitter = ee()
 
-    this.emitter.on('progress', data => {
-      console.log('до чего дошел прогресс: ' + data.percentage)
-    })
+    // this.emitter.on('progress', data => {
+    //   console.log('wow, progress: ' + data.percentage)
+    //   const progress = document.querySelector('.UppyDragDrop-progressInner')
+    //   progress.setAttribute('style', `width: ${data.percentage}%`)
+    // })
   }
 
 /**
@@ -93,7 +95,7 @@ export default class Core {
     )
 
     return Promise.all(methods)
-      .catch((error) => console.error(error))
+      .catch(error => console.error(error))
   }
 
 /**
@@ -118,7 +120,7 @@ export default class Core {
     }).map(type => this.runType.bind(this, type))
 
     Utils.promiseWaterfall(typeMethods)
-      .then((result) => console.log(result))
-      .catch((error) => console.error(error))
+      .then(result => console.log(result))
+      .catch(error => console.error(error))
   }
 }

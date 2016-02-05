@@ -15,9 +15,9 @@
  */
 function promiseWaterfall (methods) {
   const [resolvedPromise, ...tasks] = methods
-  const finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
+  const finalTaskPromise = tasks.reduce((prevTaskPromise, task) => {
     return prevTaskPromise.then(task)
-  }, resolvedPromise([]))  // initial value
+  }, resolvedPromise([])) // initial value
 
   return finalTaskPromise
 }

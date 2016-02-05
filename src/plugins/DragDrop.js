@@ -51,9 +51,6 @@ export default class DragDrop extends Plugin {
     if (this.isDragDropSupported) {
       Utils.addClass(this.container, 'is-dragdrop-supported')
     }
-
-    // this.progress = document.querySelector(`${this.opts.target} .UppyDragDrop-progressInner`)
-    // this.progress.setAttribute('style', 'width: 60%')
   }
 
 /**
@@ -142,6 +139,7 @@ export default class DragDrop extends Plugin {
   result (files) {
     return new Promise((resolve, reject) => {
       const result = {from: 'DragDrop', files}
+      // const result = files
       // if autoProceed is false, wait for upload button to be pushed,
       // otherwise just pass files to uploaders right away
       if (this.core.opts.autoProceed) {

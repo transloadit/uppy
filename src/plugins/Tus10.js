@@ -31,10 +31,11 @@ export default class Tus10 extends Plugin {
     })
 
     const files = this.extractFiles(results)
+    // const files = results
 
-    // console.log(files);
+    console.log('tus got this: ')
+    console.log(results)
 
-    this.setProgress(0)
     // var uploaded  = [];
     const uploaders = []
     for (let i in files) {
@@ -57,25 +58,24 @@ export default class Tus10 extends Plugin {
  */
   upload (file, current, total) {
     console.log(`uploading ${current} of ${total}`)
+
     // Create a new tus upload
-    const self = this
     const upload = new tus.Upload(file, {
       endpoint: this.opts.endpoint,
-      onError: function (error) {
+      onError: error => {
         return Promise.reject('Failed because: ' + error)
       },
-      onProgress: function (bytesUploaded, bytesTotal) {
+      onProgress: (bytesUploaded, bytesTotal) => {
         let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
         percentage = Math.round(percentage)
         // self.setProgress(percentage, current, total)
 
         // Dispatch progress event
-        self.core.emitter.emit('progress', {
+        this.core.emitter.emit('progress', {
           percentage
         })
-        // self.setProgress(percentage)
       },
-      onSuccess: function () {
+      onSuccess: () => {
         console.log(`Download ${upload.file.name} from ${upload.url}`)
         return Promise.resolve(upload)
       }

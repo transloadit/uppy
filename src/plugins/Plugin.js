@@ -44,6 +44,9 @@ export default class Plugin {
       results: results
     })
 
+    // console.log(results)
+    // window.results = results
+
     // check if the results array is empty
     // if (!results || !results.count) {
     //   return results
@@ -51,7 +54,15 @@ export default class Plugin {
 
     const files = []
     results.forEach(result => {
-      Array.from(result.files).forEach(file => files.push(file))
+      try {
+        Array.from(result.files).forEach(file => files.push(file))
+      } catch (e) {
+        console.log(e)
+      }
+      // result.forEach(item => {
+      //   files.push(item)
+      //   console.log(item)
+      // })
     })
 
     // const files = [];
@@ -60,7 +71,7 @@ export default class Plugin {
     //   // console.log(results[i].files);
     //   for (let j in results[i].files) {
     //     console.log(results[i].files.item(j));
-    //     // files.push(results[i].files.item(j));
+    //     files.push(results[i].files.item(j));
     //   }
     // }
 
