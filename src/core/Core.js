@@ -21,7 +21,7 @@ export default class Core {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Dictates in what order different plugin types are ran:
-    this.types = [ 'presetter', 'visualizer', 'selecter', 'uploader' ]
+    this.types = [ 'presetter', 'progress', 'selecter', 'uploader' ]
 
     this.type = 'core'
 
@@ -34,12 +34,6 @@ export default class Core {
 
     // Set up an event EventEmitter
     this.emitter = ee()
-
-    // this.emitter.on('progress', data => {
-    //   console.log('wow, progress: ' + data.percentage)
-    //   const progress = document.querySelector('.UppyDragDrop-progressInner')
-    //   progress.setAttribute('style', `width: ${data.percentage}%`)
-    // })
   }
 
 /**
@@ -78,7 +72,7 @@ export default class Core {
  */
   log (msg) {
     if (this.opts.debug) {
-      console.log(`Debug log: ${msg}`)
+      console.log(`DEBUG LOG: ${msg}`)
     }
   }
 
@@ -89,9 +83,9 @@ export default class Core {
  * @param {array} files
  * @return {Promise} of all methods
  */
-  runType (type, files) {
+  runType (type, method, files) {
     const methods = this.plugins[type].map(
-      plugin => plugin.run(files)
+      plugin => plugin[method](files)
     )
 
     return Promise.all(methods)
@@ -113,14 +107,20 @@ export default class Core {
       this.opts.autoProceed = false
     }
 
-    // First we select only plugins of current type,
-    // then create an array of runType methods of this plugins
-    let typeMethods = this.types.filter(type => {
-      return this.plugins[type]
-    }).map(type => this.runType.bind(this, type))
+    // Each Plugin can have `run` and/or `install` methods
+    // `install` adds event listeners and does some non-blocking work, useful for `progress`
+    // `run` waits for the previous step to finish (user selects files) before proceeding
+    ['install', 'run'].forEach(method => {
+      // First we select only plugins of current type,
+      // then create an array of runType methods of this plugins
+      let typeMethods = this.types.filter(type => {
+        return this.plugins[type]
+      }).map(type => this.runType.bind(this, type, method))
 
-    Utils.promiseWaterfall(typeMethods)
-      .then(result => console.log(result))
-      .catch(error => console.error(error))
+      // Run waterfall of typeMethods
+      Utils.promiseWaterfall(typeMethods)
+        .then(result => console.log(result))
+        .catch(error => console.error(error))
+    })
   }
 }
