@@ -8,7 +8,7 @@ import Plugin from './Plugin'
 export default class Progress extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.type = 'visualizer'
+    this.type = 'progress'
 
     // set default options
     const defaultOptions = {}
@@ -31,20 +31,25 @@ export default class Progress extends Plugin {
   initEvents () {
     this.core.emitter.on('progress', data => {
       const percentage = data.percentage
-      console.log('this is what the progress is: ' + percentage)
+      const plugin = data.plugin
+      console.log(`this is what the progress is: ${percentage}, and its set by ${plugin}`)
       this.progressBar(percentage)
     })
   }
 
-  run (results) {
-    console.log({
-      class: 'Progress',
-      method: 'run',
-      results: results
-    })
+  // run (results) {
+  //   console.log({
+  //     class: 'Progress',
+  //     method: 'run',
+  //     results: results
+  //   })
+  //
+  //   this.initEvents()
+  //
+  //   return Promise.resolve(results)
+  // }
 
-    this.initEvents()
-
-    return Promise.resolve(results)
+  install() {
+    return this.initEvents()
   }
 }

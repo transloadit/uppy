@@ -72,7 +72,8 @@ export default class Tus10 extends Plugin {
 
         // Dispatch progress event
         this.core.emitter.emit('progress', {
-          percentage
+          plugin: this,
+          percentage: percentage
         })
       },
       onSuccess: () => {

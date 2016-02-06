@@ -7,7 +7,7 @@ import Dropbox from './Dropbox'
 import Formtag from './Formtag'
 
 // Visualizers
-import Progress from './Progress'
+import Progressbar from './Progressbar'
 
 // Uploaders
 import Tus10 from './Tus10'
@@ -18,7 +18,7 @@ import TransloaditBasic from './TransloaditBasic'
 
 export default {
   Plugin,
-  Progress,
+  Progressbar,
   DragDrop,
   Dropbox,
   Formtag,

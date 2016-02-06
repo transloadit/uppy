@@ -1,11 +1,11 @@
 import Uppy from 'uppy/core'
-import { DragDrop, Progress, Tus10 } from 'uppy/plugins'
+import { DragDrop, Progressbar, Tus10 } from 'uppy/plugins'
 
 const uppyOne = new Uppy({autoProceed: true, debug: true})
 uppyOne
-  .use(Progress)
   .use(DragDrop, {target: '.UppyDragDrop-One'})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/', progress: '#UppyDragDrop-Two'})
+  .use(Progressbar)
   .run()
 
 // const uppyTwo = new Uppy({debug: true})
