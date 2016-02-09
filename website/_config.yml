@@ -135,6 +135,9 @@ postcss:
       browsers:
         - 'last 2 versions'
 
+browsersync:
+  files: 'public/examples/**/*.js'
+
 skip_render:
   - '*.js'
   - '**/*.js'
