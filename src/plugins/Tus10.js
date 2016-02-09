@@ -72,6 +72,8 @@ export default class Tus10 extends Plugin {
     this.core.log('tus got this: ')
     this.core.log(results)
 
+    // this.setProgress(0)
+
     // var uploaded  = [];
     const uploaders = []
     for (let i in files) {

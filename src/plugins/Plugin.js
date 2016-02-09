@@ -32,11 +32,6 @@ export default class Plugin {
   //   this.core.setProgress(this, finalPercentage)
   // }
 
-  setProgress (percentage, el) {
-    const progress = document.querySelector('.UppyDragDrop-progressInner')
-    progress.setAttribute('style', `width: ${percentage}%`)
-  }
-
   extractFiles (results) {
     console.log({
       class: 'Plugin',
@@ -56,16 +51,14 @@ export default class Plugin {
       } catch (e) {
         console.log(e)
       }
-      // result.forEach(item => {
-      //   files.push(item)
-      //   console.log(item)
-      // })
     })
 
     // const files = [];
     // for (let i in results) {
     //   for (let j in results[i].files) {
     //     files.push(results[i].files.item(j));
+    //   for (let j in results[i].files) {
+    //     // files.push(results[i].files.item(j));
     //   }
     // }
 

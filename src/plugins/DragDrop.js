@@ -129,10 +129,6 @@ export default class DragDrop extends Plugin {
     return Promise.race([onDrop, onInput]).then(handler => handler())
   }
 
-  displayStatus (status) {
-    this.status.innerHTML = status
-  }
-
   handleDrop (e) {
     console.log('all right, someone dropped something...')
 

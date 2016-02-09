@@ -4,6 +4,7 @@ ru.strings = {
   chooseFile: 'Выберите файл',
   orDragDrop: 'или перенесите его сюда',
   youHaveChosen: 'Вы выбрали: %{file_name}',
+  orDragDrop: 'Вы выбрали: %{file_name}',
   filesChosen: {
     0: 'Выбран %{smart_count} файл',
     1: 'Выбрано %{smart_count} файла',
