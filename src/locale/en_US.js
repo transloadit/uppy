@@ -18,7 +18,7 @@ en_US.pluralize = function (n) {
   return 1
 }
 
-if (typeof window.Uppy !== 'undefined') {
+if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locale.en_US = en_US
 }
 

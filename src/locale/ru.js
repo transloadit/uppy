@@ -24,7 +24,7 @@ ru.pluralize = function (n) {
   return 2
 }
 
-if (typeof window.Uppy !== 'undefined') {
+if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locale.ru = ru
 }
 
