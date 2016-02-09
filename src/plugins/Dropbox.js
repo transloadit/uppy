@@ -1,5 +1,4 @@
 import Plugin from './Plugin'
-import request from 'superagent'
 
 export default class Dropbox extends Plugin {
   constructor (core, opts) {
@@ -17,7 +16,7 @@ export default class Dropbox extends Plugin {
   }
 
   authenticate () {
-    request.get('/')
+    // request.get('/')
   }
 
   addFile () {
@@ -27,13 +26,13 @@ export default class Dropbox extends Plugin {
   getDirectory () {
     var opts = {
     }
-    request.get('//localhost:3002/dropbox/readdir')
-      .query(opts)
-      .set('Content-Type', 'application/json')
-      .end((err, res) => {
-        if (err) return new Error(err)
-        console.log(res)
-      })
+    // request.get('//localhost:3002/dropbox/readdir')
+    //   .query(opts)
+    //   .set('Content-Type', 'application/json')
+    //   .end((err, res) => {
+    //     if (err) return new Error(err)
+    //     console.log(res)
+    //   })
   }
 
   run (results) {
