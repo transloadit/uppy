@@ -1,6 +1,6 @@
 import Utils from '../core/Utils'
 import Plugin from './Plugin'
-import componentDragDrop from '../components/dragdrop.js'
+// import componentDragDrop from '../components/dragdrop.js'
 
 /**
  * Drag & Drop plugin
@@ -12,7 +12,9 @@ export default class DragDrop extends Plugin {
     this.type = 'selecter'
 
     // set default options
-    const defaultOptions = {}
+    const defaultOptions = {
+      target: '.UppyDragDrop'
+    }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -20,26 +22,9 @@ export default class DragDrop extends Plugin {
     // check if dragDrop is supported in the browser
     this.isDragDropSupported = this.checkDragDropSupport()
 
-    // initialize dragdrop component, mount it to container DOM node
-    this.initHtml()
-
-    // bind `this` to class methods
-    this.initEvents = this.initEvents.bind(this)
-    this.handleDrop = this.handleDrop.bind(this)
-    this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
-    this.handleInputChange = this.handleInputChange.bind(this)
-  }
-
-  initHtml () {
+    // Initialize dragdrop component, mount it to container DOM node
     this.container = document.querySelector(this.opts.target)
-
-    this.container.innerHTML = componentDragDrop({
-      endpoint: this.opts.endpoint,
-      chooseFile: this.core.i18n('chooseFile'),
-      orDragDrop: this.core.i18n('orDragDrop'),
-      showUploadBtn: this.core.opts.autoProceed,
-      upload: this.core.i18n('upload')
-    })
+    this.container.innerHTML = this.render()
 
     // Set selectors
     this.dropzone = document.querySelector(`${this.opts.target} .UppyDragDrop-inner`)
@@ -51,6 +36,35 @@ export default class DragDrop extends Plugin {
     if (this.isDragDropSupported) {
       Utils.addClass(this.container, 'is-dragdrop-supported')
     }
+
+    // Bind `this` to class methods
+    this.initEvents = this.initEvents.bind(this)
+    this.handleDrop = this.handleDrop.bind(this)
+    this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
+    this.handleInputChange = this.handleInputChange.bind(this)
+  }
+
+  render () {
+    return `<form class="UppyDragDrop-inner"
+        method="post"
+        action="${this.opts.endpoint}"
+        enctype="multipart/form-data">
+      <img class="UppyDragDrop-puppy" src="/images/uppy.svg">
+      <input class="UppyDragDrop-input"
+             id="UppyDragDrop-input"
+             type="file"
+             name="files[]"
+             multiple />
+      <label class="UppyDragDrop-label" for="UppyDragDrop-input">
+        <strong>${this.core.i18n('chooseFile')}</strong>
+        <span class="UppyDragDrop-dragText">${this.core.i18n('orDragDrop')}</span>.
+      </label>
+    ${!this.core.opts.autoProceed
+      ? `<button class="UppyDragDrop-uploadBtn" type="submit">${this.core.i18n('upload')}</button>`
+      : ''}
+    <div class="UppyDragDrop-status"></div>
+    <div class="UppyDragDrop-progress"></div>
+  </form>`
   }
 
 /**
@@ -78,7 +92,6 @@ export default class DragDrop extends Plugin {
 
   initEvents () {
     this.core.log(`waiting for some files to be dropped on ${this.opts.target}`)
-    // console.log(`waiting for some files to be dropped on ${this.opts.target}`)
 
     // prevent default actions for all drag & drop events
     const strEvents = 'drag dragstart dragend dragover dragenter dragleave drop'
@@ -132,8 +145,6 @@ export default class DragDrop extends Plugin {
 
     const files = this.input.files
     return this.result(files)
-
-    // return Promise.resolve({from: 'DragDrop', files, formData})
   }
 
   result (files) {
@@ -155,7 +166,7 @@ export default class DragDrop extends Plugin {
 
   run (results) {
     console.log({
-      class: 'DragDrop',
+      class: this.constructor.name,
       method: 'run',
       results: results
     })
