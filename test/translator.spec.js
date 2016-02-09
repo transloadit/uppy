@@ -6,7 +6,7 @@ test('russian translation', function (t) {
   const core = new Core({locale: russian})
 
   t.equal(
-    core.translator.t('chooseFile'),
+    core.translator.translate('chooseFile'),
     'Выберите файл',
     'should return translated string'
   )
@@ -19,7 +19,7 @@ test('interpolation', function (t) {
   const core = new Core({locale: english})
 
   t.equal(
-    core.translator.t('youHaveChosen', {'fileName': 'img.jpg'}),
+    core.translator.translate('youHaveChosen', {'fileName': 'img.jpg'}),
     'You have chosen: img.jpg',
     'should return interpolated string'
   )
@@ -32,7 +32,7 @@ test('pluralization', function (t) {
   const core = new Core({locale: russian})
 
   t.equal(
-    core.translator.t('filesChosen', {'smart_count': '18'}),
+    core.translator.translate('filesChosen', {'smart_count': '18'}),
     'Выбрано 18 файлов',
     'should return interpolated & pluralized string'
   )

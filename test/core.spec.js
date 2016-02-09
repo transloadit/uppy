@@ -1,22 +1,36 @@
 var test = require('tape')
-var Core = require('../src/core/index.js')
+var Uppy = require('../src/core/index.js')
+
+const TestPlugin = require('./mocks/test-plugin.js')
+const uppy = new Uppy({debug: true})
+uppy
+  .use(TestPlugin, {target: '.UppyDragDrop-One'})
+  .run()
 
 test('core object', function (t) {
-  const core = new Core()
-  t.equal(typeof core, 'object', 'new Core() should return an object')
+  const uppy = new Uppy()
+  t.equal(typeof uppy, 'object', 'new Core() should return an object')
   t.end()
 })
 
 test('core type', function (t) {
-  const core = new Core()
-  t.equal(core.type, 'core', 'core.type should equal core')
+  const uppy = new Uppy()
+  t.equal(uppy.type, 'core', 'core.type should equal core')
   t.end()
 })
 
-test('translation', function (t) {
-  const russianDict = require('../src/locale/ru_RU.json')
-  const core = new Core({locale: russianDict})
+test('run one plugin success', function (t) {
+  const TestPlugin = require('./mocks/test-plugin.js')
+  const uppy = new Uppy({debug: true})
+  uppy
+    .use(TestPlugin)
+    .run()
 
-  t.equal(core.translate('Choose a file'), 'Выберите файл', 'should return translated string')
+  t.equal(uppy.then(result => result), [1, 2, 3])
+
+  // setTimeout(function () {
+  //   t.equal(uppy, [1, 2, 3])
+  // }, 4000)
+
   t.end()
 })
