@@ -1,6 +1,8 @@
 // Parent
 import Plugin from './Plugin'
 
+import Modal from './Modal'
+
 // Selecters
 import DragDrop from './DragDrop'
 import Dropbox from './Dropbox'
@@ -24,5 +26,6 @@ export default {
   Formtag,
   Tus10,
   Multipart,
-  TransloaditBasic
+  TransloaditBasic,
+  Modal
 }
