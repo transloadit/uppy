@@ -19,7 +19,6 @@
     "test": "bin/test",
     "test:unit": "node test/index.js",
     "fast:css": "nodemon --watch src -e scss -x 'npm run build:css'",
-    "fast:js:lib": "nodemon --watch src -e js -x 'npm run build:lib'",
     "watch:fast": "parallelshell 'npm run web:fast' 'npm run fast:css'",
     "watch:all": "parallelshell 'npm run watch' 'npm run web'",
     "watch:css": "nodemon --watch src --ext scss -x 'npm run build && node website/update.js'",
