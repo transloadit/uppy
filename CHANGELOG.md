@@ -24,15 +24,16 @@ Work not started yet
 - [ ] core: Decide on good names for `cdn` vs `npm` builds and rename all-the-things
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] server: Create a (barely) working uppy-server (#39, @hedgerh)
-- [ ] dragdrop: Use templates, autoUpload setting, show progress
-- [X] meta: Implement playground to test things in, templates in this case
-- [X] core: Implement ejs or es6 templating (@arturi, @hedgerh)
-- [ ] core: Improve on `_i18n` support, add tests (#47, @arturi)
-- [X] buildsystem: Use parallelshell and tweak browserify to work with templates (@arturi)
-- [X] docs: Fix build-documentation.js crashes, add more docs to Utils and Translator (@arturi, @kvz)
-- [X] core: Integrate eslint in our build procedure and make Travis fail on errors found in our examples, Core and Plugins, such as `> 100` char lines (@kvz)
-- [X] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
-- [X] website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
+- [x] core: implement a non-blocking `install` method (for Progressbar, for example)  (@arturi, @kvz)
+- [x] dragdrop: Use templates, autoProceed setting, show progress (#50, #18, @arturi)
+- [x] meta: Implement playground to test things in, templates in this case
+- [x] core: Implement ejs or es6 templating (@arturi, @hedgerh)
+- [x] core: Improve on `_i18n` support, add tests (#47, @arturi)
+- [x] buildsystem: Use parallelshell and tweak browserify to work with templates (@arturi)
+- [x] docs: Fix build-documentation.js crashes, add more docs to Utils and Translator (@arturi, @kvz)
+- [x] core: Integrate eslint in our build procedure and make Travis fail on errors found in our examples, Core and Plugins, such as `> 100` char lines (@kvz)
+- [x] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
+- [x] website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
 - [ ] meta: Create an Uppy logo (@vvolfy)
 
 ## 0.0.1 (December 20, 2015)
