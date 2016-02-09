@@ -1,4 +1,3 @@
-import Utils from '../core/Utils'
 import Plugin from './Plugin'
 
 /**
@@ -20,36 +19,24 @@ export default class Progress extends Plugin {
   }
 
   progressBar (percentage) {
-    const progressBarElement = document.querySelector('.UppyDragDrop-progressInner')
+    const progressContainer = document.querySelector(this.opts.target)
+    progressContainer.innerHTML = '<div class="UppyProgressBar"></div>'
+    const progressBarElement = document.querySelector(`${this.opts.target} .UppyProgressBar`)
     progressBarElement.setAttribute('style', `width: ${percentage}%`)
-  }
-
-  spinner () {
-    Utils.addClass(this.spinnerElement, 'is-spinning')
   }
 
   initEvents () {
     this.core.emitter.on('progress', data => {
       const percentage = data.percentage
       const plugin = data.plugin
-      console.log(`this is what the progress is: ${percentage}, and its set by ${plugin}`)
+      this.core.log(
+        `this is what the progress is: ${percentage}, and its set by ${plugin.constructor.name}`
+      )
       this.progressBar(percentage)
     })
   }
 
-  // run (results) {
-  //   console.log({
-  //     class: 'Progress',
-  //     method: 'run',
-  //     results: results
-  //   })
-  //
-  //   this.initEvents()
-  //
-  //   return Promise.resolve(results)
-  // }
-
-  install() {
+  install () {
     return this.initEvents()
   }
 }

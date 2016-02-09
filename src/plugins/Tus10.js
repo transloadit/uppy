@@ -18,37 +18,6 @@ export default class Tus10 extends Plugin {
   }
 
 /**
- * Add files to an array of `upload()` calles, passing the current and total file count numbers
- *
- * @param {array | object} results
- * @returns {Promise} of parallel uploads `Promise.all(uploaders)`
- */
-  run (results) {
-    console.log({
-      class: 'Tus10',
-      method: 'run',
-      results: results
-    })
-
-    const files = this.extractFiles(results)
-    // const files = results
-
-    console.log('tus got this: ')
-    console.log(results)
-
-    // var uploaded  = [];
-    const uploaders = []
-    for (let i in files) {
-      const file = files[i]
-      const current = parseInt(i, 10) + 1
-      const total = files.length
-      uploaders.push(this.upload(file, current, total))
-    }
-
-    return Promise.all(uploaders)
-  }
-
-/**
  * Create a new Tus upload
  *
  * @param {object} file for use with upload
@@ -83,5 +52,35 @@ export default class Tus10 extends Plugin {
     })
     // Start the upload
     upload.start()
+  }
+
+/**
+ * Add files to an array of `upload()` calles, passing the current and total file count numbers
+ *
+ * @param {Array | Object} results
+ * @returns {Promise} of parallel uploads `Promise.all(uploaders)`
+ */
+  run (results) {
+    console.log({
+      class: this.constructor.name,
+      method: 'run',
+      results: results
+    })
+
+    const files = this.extractFiles(results)
+
+    this.core.log('tus got this: ')
+    this.core.log(results)
+
+    // var uploaded  = [];
+    const uploaders = []
+    for (let i in files) {
+      const file = files[i]
+      const current = parseInt(i, 10) + 1
+      const total = files.length
+      uploaders.push(this.upload(file, current, total))
+    }
+
+    return Promise.all(uploaders)
   }
 }

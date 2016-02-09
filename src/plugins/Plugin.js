@@ -44,9 +44,6 @@ export default class Plugin {
       results: results
     })
 
-    // console.log(results)
-    // window.results = results
-
     // check if the results array is empty
     // if (!results || !results.count) {
     //   return results
@@ -67,10 +64,7 @@ export default class Plugin {
 
     // const files = [];
     // for (let i in results) {
-    //   // console.log('yo12131');
-    //   // console.log(results[i].files);
     //   for (let j in results[i].files) {
-    //     console.log(results[i].files.item(j));
     //     files.push(results[i].files.item(j));
     //   }
     // }
