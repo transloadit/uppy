@@ -16,21 +16,21 @@ export default class Plugin {
     this.name = this.constructor.name
   }
 
-  setProgress (percentage, current, total) {
-    var finalPercentage = percentage
-
-    // if (current !== undefined && total !== undefined) {
-    //   var percentageOfTotal = (percentage / total);
-    //   // finalPercentage = percentageOfTotal;
-    //   if (current > 1) {
-    //     finalPercentage = percentage + (100 / (total * current));
-    //   } else {
-    //     finalPercentage = percentage;
-    //   }
-    // }
-
-    this.core.setProgress(this, finalPercentage)
-  }
+  // setProgress (percentage, current, total) {
+  //   var finalPercentage = percentage
+  //
+  //   // if (current !== undefined && total !== undefined) {
+  //   //   var percentageOfTotal = (percentage / total);
+  //   //   // finalPercentage = percentageOfTotal;
+  //   //   if (current > 1) {
+  //   //     finalPercentage = percentage + (100 / (total * current));
+  //   //   } else {
+  //   //     finalPercentage = percentage;
+  //   //   }
+  //   // }
+  //
+  //   this.core.setProgress(this, finalPercentage)
+  // }
 
   extractFiles (results) {
     console.log({
@@ -46,15 +46,18 @@ export default class Plugin {
 
     const files = []
     results.forEach(result => {
-      Array.from(result.files).forEach(file => files.push(file))
+      try {
+        Array.from(result.files).forEach(file => files.push(file))
+      } catch (e) {
+        console.log(e)
+      }
     })
 
     // const files = [];
     // for (let i in results) {
-    //   // console.log('yo12131');
-    //   // console.log(results[i].files);
     //   for (let j in results[i].files) {
-    //     console.log(results[i].files.item(j));
+    //     files.push(results[i].files.item(j));
+    //   for (let j in results[i].files) {
     //     // files.push(results[i].files.item(j));
     //   }
     // }
@@ -65,5 +68,9 @@ export default class Plugin {
 
   run (results) {
     return results
+  }
+
+  install () {
+    return
   }
 }

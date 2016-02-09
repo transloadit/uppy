@@ -1,5 +1,6 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
+import ee from 'event-emitter'
 
 /**
  * Main Uppy core
@@ -11,14 +12,16 @@ export default class Core {
     // set default options
     const defaultOptions = {
       // load English as the default locale
-      locale: require('../locale/en_US.js')
+      locale: require('../locale/en_US.js'),
+      autoProceed: false,
+      debug: false
     }
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Dictates in what order different plugin types are ran:
-    this.types = [ 'presetter', 'selecter', 'uploader' ]
+    this.types = [ 'presetter', 'progress', 'selecter', 'uploader' ]
 
     this.type = 'core'
 
@@ -27,15 +30,18 @@ export default class Core {
 
     this.translator = new Translator({locale: this.opts.locale})
     this.i18n = this.translator.translate.bind(this.translator)
-    console.log(this.i18n('filesChosen', {smart_count: 3}))
+    // console.log(this.i18n('filesChosen', {smart_count: 3}))
+
+    // Set up an event EventEmitter
+    this.emitter = ee()
   }
 
 /**
  * Registers a plugin with Core
  *
  * @param {Class} Plugin object
- * @param {object} options object that will be passed to Plugin later
- * @return {object} self for chaining
+ * @param {Object} options object that will be passed to Plugin later
+ * @return {Object} self for chaining
  */
   use (Plugin, opts) {
     // Instantiate
@@ -60,19 +66,30 @@ export default class Core {
   }
 
 /**
+ * Logs stuff to console, only if `debug` is set to true. Silent in production.
+ *
+ * @return {String|Object} to log
+ */
+  log (msg) {
+    if (this.opts.debug) {
+      console.log(`DEBUG LOG: ${msg}`)
+    }
+  }
+
+/**
  * Runs all plugins of the same type in parallel
  *
  * @param {string} type that wants to set progress
  * @param {array} files
  * @return {Promise} of all methods
  */
-  runType (type, files) {
+  runType (type, method, files) {
     const methods = this.plugins[type].map(
-      plugin => plugin.run(files)
+      plugin => plugin[method](files)
     )
 
     return Promise.all(methods)
-      .catch((error) => console.error(error))
+      .catch(error => console.error(error))
   }
 
 /**
@@ -81,18 +98,29 @@ export default class Core {
  */
   run () {
     console.log({
-      class: 'Core',
+      class: this.constructor.name,
       method: 'run'
     })
 
-    // First we select only plugins of current type,
-    // then create an array of runType methods of this plugins
-    let typeMethods = this.types.filter(type => {
-      return this.plugins[type]
-    }).map(type => this.runType.bind(this, type))
+    // Forse `autoProceed` option to false if there are multiple selector Plugins active
+    if (this.plugins.selecter && this.plugins.selecter.length > 1) {
+      this.opts.autoProceed = false
+    }
 
-    Utils.promiseWaterfall(typeMethods)
-      .then((result) => console.log(result))
-      .catch((error) => console.error(error))
+    // Each Plugin can have `run` and/or `install` methods.
+    // `install` adds event listeners and does some non-blocking work, useful for `progress`,
+    // `run` waits for the previous step to finish (user selects files) before proceeding
+    return ['install', 'run'].forEach(method => {
+      // First we select only plugins of current type,
+      // then create an array of runType methods of this plugins
+      const typeMethods = this.types.filter(type => {
+        return this.plugins[type]
+      }).map(type => this.runType.bind(this, type, method))
+
+      // Run waterfall of typeMethods
+      return Utils.promiseWaterfall(typeMethods)
+        .then(result => result)
+        .catch(error => console.error(error))
+    })
   }
 }

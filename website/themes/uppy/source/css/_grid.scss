@@ -1,0 +1,50 @@
+.grid {
+  @include clearfix;
+}
+
+@media #{$screen-medium} {
+
+  // Gaps
+  .grid [class^="column-"],
+  .grid [class*=" column-"] {
+    padding: 4px;
+  }
+
+  .grid.no-gap [class^="column-"],
+  .grid.no-gap [class*=" column-"] {
+    padding: 0;
+  }
+
+  // Remove gaps for the first and last column in row
+  [class^="column-"]:first-child,
+  [class*=" column-"]:first-child {
+    padding-left: 0;
+  }
+
+  [class^="column-"]:last-child,
+  [class*=" column-"]:last-child {
+    padding-right: 0;
+  }
+
+  // Columns
+  [class^="column-"] {
+    float: left;
+  }
+
+  .column-1-2 {
+    width: 50%;
+  }
+
+  .column-1-3 {
+    width: 33.333333%;
+  }
+
+  .column-1-4 {
+    width: 25%;
+  }
+
+  .column-full {
+    width: 100%;
+  }
+
+}

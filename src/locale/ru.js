@@ -2,13 +2,15 @@ const ru = {}
 
 ru.strings = {
   chooseFile: 'Выберите файл',
-  youHaveChosen: 'или перенесите его сюда',
+  orDragDrop: 'или перенесите его сюда',
+  youHaveChosen: 'Вы выбрали: %{file_name}',
   orDragDrop: 'Вы выбрали: %{file_name}',
   filesChosen: {
     0: 'Выбран %{smart_count} файл',
     1: 'Выбрано %{smart_count} файла',
     2: 'Выбрано %{smart_count} файлов'
-  }
+  },
+  upload: 'Загрузить'
 }
 
 ru.pluralize = function (n) {
@@ -23,7 +25,7 @@ ru.pluralize = function (n) {
   return 2
 }
 
-if (typeof window.Uppy !== 'undefined') {
+if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locale.ru = ru
 }
 

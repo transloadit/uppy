@@ -144,7 +144,6 @@
 .IndexExample-block {
   padding: 7px;
   text-align: left;
-
   background-color: $color-codebg;
   border-radius: $size-radius;
   overflow-x: scroll;
@@ -189,18 +188,6 @@
     padding-left: 40px;
     margin-bottom: 0.5em;
   }
-
-  // li:before {
-  //   content: '';
-  //   display: inline-block;
-  //   width: 24px;
-  //   height: 24px;
-  //   background: svg('check.svg', '[fill]: #{$color-white}') center center no-repeat;
-  //   background-size: 24px 24px;
-  //   margin-right: 10px;
-  //   position: relative;
-  //   top: 4px;
-  // }
 }
 
 .IndexFooter {
@@ -220,85 +207,3 @@
 
   p { margin: .3em 0; }
 }
-
-// @media screen and (max-width: 480px) {
-//
-//   #hero {
-//     .inner h1 {
-//       font-size: 2em;
-//       font-weight: 400;
-//     }
-//
-//     .buttons {
-//       max-width: 300px;
-//       margin: 1em auto;
-//     }
-//
-//     a.button {
-//       width: 260px;
-//       font-size: .8em;
-//       margin: .5em 0;
-//     }
-//
-//     .desc {
-//       max-width: 300px;
-//     }
-//
-//     .warning, .desc {
-//       font-size: .85em;
-//       margin: 1em auto;
-//       br { display: none; }
-//     }
-//
-//     // .down { display: none; }
-//   }
-//
-//   #social {
-//     max-width: 340px;
-//     margin: 1.2em auto;
-//   }
-//
-//   .cool { margin-top: 0; }
-//
-//   #features .feat {
-//     font-size: 14px;
-//     margin: .8em 0;
-//     width: 250px;
-//   }
-//
-//   #design_goals {
-//     ul {
-//       width: 280px;
-//       font-size: 1.1em;
-//     }
-//
-//     h2 {
-//       font-size: 1.4em;
-//     }
-//   }
-// }
-//
-// @media screen and (max-width: 860px) {
-//   #features, #hero {
-//     font-size: 16px;
-//   }
-//
-//   #example {
-//     .block {
-//       display: block;
-//       width: auto;
-//       height: auto;
-//     }
-//   }
-//
-//   #demo {
-//     padding: 5px 20px 20px;
-//   }
-//
-//   .sign {
-//     display: block;
-//     height: 1em;
-//     line-height: 1em;
-//     padding: .5em 0;
-//   }
-// }

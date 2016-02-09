@@ -1,4 +1,6 @@
 require('babel/register')({
   stage: 0
 })
-require('./translate.spec.js')
+
+require('./core.spec.js')
+require('./translator.spec.js')

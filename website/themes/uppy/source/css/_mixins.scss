@@ -1,3 +1,11 @@
+@mixin clearfix {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
 @mixin zoom() {
   transform: scale(1.05);
 }

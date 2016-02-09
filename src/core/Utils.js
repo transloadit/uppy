@@ -15,9 +15,9 @@
  */
 function promiseWaterfall (methods) {
   const [resolvedPromise, ...tasks] = methods
-  const finalTaskPromise = tasks.reduce(function (prevTaskPromise, task) {
+  const finalTaskPromise = tasks.reduce((prevTaskPromise, task) => {
     return prevTaskPromise.then(task)
-  }, resolvedPromise([]))  // initial value
+  }, resolvedPromise([])) // initial value
 
   return finalTaskPromise
 }
@@ -51,7 +51,7 @@ function toggleClass (el, className) {
  * Adds a class to a DOM element
  *
  * @memberof Utils
- * @param {String} el selector
+ * @param {Object} el selector
  * @param {String} className to add
  * @return {String}
  */
