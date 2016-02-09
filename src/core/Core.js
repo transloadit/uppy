@@ -98,7 +98,7 @@ export default class Core {
  */
   run () {
     console.log({
-      class: 'Core',
+      class: this.constructor.name,
       method: 'run'
     })
 
@@ -107,19 +107,19 @@ export default class Core {
       this.opts.autoProceed = false
     }
 
-    // Each Plugin can have `run` and/or `install` methods
-    // `install` adds event listeners and does some non-blocking work, useful for `progress`
+    // Each Plugin can have `run` and/or `install` methods.
+    // `install` adds event listeners and does some non-blocking work, useful for `progress`,
     // `run` waits for the previous step to finish (user selects files) before proceeding
-    ['install', 'run'].forEach(method => {
+    return ['install', 'run'].forEach(method => {
       // First we select only plugins of current type,
       // then create an array of runType methods of this plugins
-      let typeMethods = this.types.filter(type => {
+      const typeMethods = this.types.filter(type => {
         return this.plugins[type]
       }).map(type => this.runType.bind(this, type, method))
 
       // Run waterfall of typeMethods
-      Utils.promiseWaterfall(typeMethods)
-        .then(result => console.log(result))
+      return Utils.promiseWaterfall(typeMethods)
+        .then(result => result)
         .catch(error => console.error(error))
     })
   }
