@@ -10,6 +10,7 @@ export default class Drive extends Plugin {
     this.render = this.render.bind(this)
     this.renderAuthentication = this.renderAuthentication.bind(this)
     this.checkAuthentication = this.checkAuthentication.bind(this)
+    this.getDirectory = this.getDirectory.bind(this)
     this.files = []
     this.currentDir = 'root'
 
@@ -17,12 +18,19 @@ export default class Drive extends Plugin {
   }
 
   connect (target) {
+    this.target = target
     if (!this.isAuthenticated) {
       target.innerHTML = this.renderAuthentication()
     } else {
       this.getDirectory()
       .then(data => {
         target.innerHTML = this.render(data)
+
+        const folders = [...document.querySelectorAll('.GoogleDriveFolder')];
+        const files = [...document.querySelectorAll('.GoogleDriveFile')];
+
+        folders.forEach(folder => folder.addEventListener('click', e => this.getDirectory(folder.dataset.id)))
+        files.forEach(file => file.addEventListener('click', e => this.getFile(file.dataset.id)))
       })
     }
   }
@@ -56,7 +64,7 @@ export default class Drive extends Plugin {
   addFile () {
   }
 
-  getDirectory () {
+  getDirectory (folderId) {
     /**
      * Leave this here
      */
@@ -74,6 +82,9 @@ export default class Drive extends Plugin {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
+      },
+      body: {
+        dir: folderId || undefined
       }
     })
     .then(res => {
@@ -98,6 +109,24 @@ export default class Drive extends Plugin {
     })
   }
 
+  getFile(fileId) {
+    console.log(typeof fileId)
+    // if (fileId !== 'string') {
+    //   return console.log('Error: File Id not a string.')
+    // }
+    return fetch('http://localhost:3002/drive/get', {
+      method: 'get',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: {
+        fileId
+      }
+    })
+  }
+
   run (results) {
 
   }
@@ -107,8 +136,8 @@ export default class Drive extends Plugin {
   }
 
   render (data) {
-    const folders = data.folders.map(folder => `<li>Folder${folder.title}</li>`)
-    const files = data.files.map(file => `<li>${file.title}</li>`)
+    const folders = data.folders.map(folder => `<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}">${folder.title}</button></li>`)
+    const files = data.files.map(file => `<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}">${file.title}</button></li>`)
 
     return `<ul>${folders}</ul><ul>${files}</ul>`
   }
