@@ -26,8 +26,8 @@ export default class Drive extends Plugin {
       .then(data => {
         target.innerHTML = this.render(data)
 
-        const folders = [...document.querySelectorAll('.GoogleDriveFolder')];
-        const files = [...document.querySelectorAll('.GoogleDriveFile')];
+        const folders = [...document.querySelectorAll('.GoogleDriveFolder')]
+        const files = [...document.querySelectorAll('.GoogleDriveFile')]
 
         folders.forEach(folder => folder.addEventListener('click', e => this.getDirectory(folder.dataset.id)))
         files.forEach(file => file.addEventListener('click', e => this.getFile(file.dataset.id)))
@@ -109,7 +109,7 @@ export default class Drive extends Plugin {
     })
   }
 
-  getFile(fileId) {
+  getFile (fileId) {
     console.log(typeof fileId)
     // if (fileId !== 'string') {
     //   return console.log('Error: File Id not a string.')
