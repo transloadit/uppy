@@ -71,6 +71,7 @@
   },
   "dependencies": {
     "event-emitter": "^0.3.4",
+    "fakefile": "0.0.5",
     "superagent": "1.5.0",
     "tus-js-client": "1.1.3"
   }

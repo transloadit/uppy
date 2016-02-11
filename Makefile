@@ -1,6 +1,8 @@
 # Licensed under MIT.
 # Copyright (2016) by Kevin van Zonneveld https://twitter.com/kvz
 #
+# https://www.npmjs.com/package/fakefile
+#
 # This Makefile offers convience shortcuts into any Node.js project that utilizes npm scripts.
 # It functions as a wrapper around the actual listed in `package.json`
 # So instead of typing:
@@ -32,3 +34,7 @@ $$(TARGETS):
 endef
 
 $(eval $(call npm_script_targets))
+
+# These npm run scripts are available, without needing to be mentioned in `package.json`
+install:
+	npm run install
