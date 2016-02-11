@@ -11,8 +11,8 @@ addons:
       - g++-4.8
 
 script:
-  - npm run-script lint
-  - npm run-script build
+  - npm run build
+  - npm run test
   # Automatically deploy website onto gh-pages (if master and not PR)
   # Don't do this in `after_success`, because then failures won't bubble up
   - git config --global user.name 'Uppy Bot'

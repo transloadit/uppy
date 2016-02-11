@@ -2,7 +2,7 @@
 set -o pipefail
 set -o errexit
 set -o nounset
-# set -o xtrace
+set -o xtrace
 
 # Set magic variables for current file & dir
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -13,11 +13,11 @@ __base="$(basename ${__file} .sh)"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${DIR}/..
 
-npm run phantom-test -s
-result=$?
+npm run test:phantom
+result=${?}
 if [ "$result" = 0 ]; then
   if [ "${CI}" = "true" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
-    npm run zuul-test -s
+    npm run zuul-test
     result=$?
   else
     echo "Skipping zuul-test as this is not a master CI branch test run"
