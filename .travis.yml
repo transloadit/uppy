@@ -10,6 +10,12 @@ addons:
     packages:
       - g++-4.8
 
+cache:
+  apt: true
+  directories:
+    - node_modules
+    - website/node_modules
+
 script:
   - npm run build
   - npm run test
