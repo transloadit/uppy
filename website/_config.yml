@@ -141,3 +141,5 @@ browsersync:
 skip_render:
   - '*.js'
   - '**/*.js'
+  - '*.es6'
+  - '**/*.es6'
