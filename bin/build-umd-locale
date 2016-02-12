@@ -9,8 +9,6 @@ __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 
-SRC="src/locale/ru_RU.js"
-OUT="ru_RU.js"
 OUTDIR="dist/locale"
 
 FLAGS="-t [ babelify ]"
