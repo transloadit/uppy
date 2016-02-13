@@ -1,38 +1,39 @@
 var test = require('tape')
-var Uppy = require('../src/core/index.js')
+var Uppy = require('../src/core/Core.js')
 
-const TestPlugin = require('./mocks/test-plugin.js')
-const uppy = new Uppy({debug: true})
-uppy
-  .use(TestPlugin, {target: '.UppyDragDrop-One'})
-  .run()
-
-test('core object', function (t) {
+test('core', function (t) {
   const uppy = new Uppy()
-  t.equal(typeof uppy, 'object', 'new Core() should return an object')
+
+  t.equal(typeof uppy, 'object', '`new Core()` should return an `object`')
+  t.equal(uppy instanceof Uppy, true, '`uppy` should be an instance of `Uppy` core')
   t.end()
 })
 
-test('core type', function (t) {
+test('use plugins', function (t) {
+  const SelecterPlugin = require('./mocks/plugin-selecter.js')
   const uppy = new Uppy()
-  t.equal(uppy.type, 'core', 'core.type should equal core')
-  t.end()
-})
-
-test('run one plugin success', function (t) {
-  const TestPlugin = require('./mocks/test-plugin.js')
-  const uppy = new Uppy({debug: true})
   uppy
-    .use(TestPlugin)
+    .use(SelecterPlugin)
+
+  t.equal(Object.keys(uppy.plugins).length, 1, 'should add a plugin to the plugins stack')
+  t.end()
+})
+
+test('autoProceed', function (t) {
+  const SelecterPlugin = require('./mocks/plugin-selecter.js')
+
+  const uppyOneSelecter = new Uppy()
+  uppyOneSelecter
+    .use(SelecterPlugin)
     .run()
 
-  // @todo: TypeError: uppy.then is not a function:
-  // t.equal(uppy.then(result => result), [1, 2, 3])
+  const uppyTwoSelecters = new Uppy()
+  uppyTwoSelecters
+    .use(SelecterPlugin)
+    .use(SelecterPlugin)
+    .run()
 
-  // @todo: But this is not acceptable either:
-  // setTimeout(function () {
-  //   t.equal(uppy, [1, 2, 3])
-  // }, 4000)
-
+  t.equal(uppyOneSelecter.opts.autoProceed, true, 'should autoProceed if only one selecter is used')
+  t.equal(uppyTwoSelecters.opts.autoProceed, false, 'should not autoProceed if more than one selecter is used')
   t.end()
 })
