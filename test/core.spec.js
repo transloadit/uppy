@@ -5,7 +5,7 @@ test('core', function (t) {
   const uppy = new Uppy()
 
   t.equal(typeof uppy, 'object', '`new Core()` should return an `object`')
-  t.equal(uppy instanceof Uppy, true, '`uppy` should be an instance of `Uppy` core')
+  t.ok(uppy instanceof Uppy, '`uppy` should be an instance of `Uppy` core')
   t.end()
 })
 

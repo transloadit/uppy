@@ -1,4 +1,4 @@
-var Plugin = require('../../src/plugins/Plugin.js')
+const Plugin = require('../../src/plugins/Plugin.js')
 
 export default class TestSelector extends Plugin {
   constructor (core, opts) {
@@ -7,7 +7,7 @@ export default class TestSelector extends Plugin {
   }
 
   run (results) {
-    console.log({
+    this.core.log({
       class: this.constructor.name,
       method: 'run',
       results: results
