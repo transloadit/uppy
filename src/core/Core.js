@@ -13,7 +13,7 @@ export default class Core {
     const defaultOptions = {
       // load English as the default locale
       locale: require('../locale/en_US.js'),
-      autoProceed: false,
+      autoProceed: true,
       debug: false
     }
 
@@ -72,6 +72,7 @@ export default class Core {
  */
   log (msg) {
     if (this.opts.debug) {
+      msg = JSON.stringify(msg)
       console.log(`DEBUG LOG: ${msg}`)
     }
   }
@@ -97,7 +98,7 @@ export default class Core {
  * All preseters(data) --> All selecters(data) --> All uploaders(data) --> done
  */
   run () {
-    console.log({
+    this.log({
       class: this.constructor.name,
       method: 'run'
     })
@@ -110,7 +111,7 @@ export default class Core {
     // Each Plugin can have `run` and/or `install` methods.
     // `install` adds event listeners and does some non-blocking work, useful for `progress`,
     // `run` waits for the previous step to finish (user selects files) before proceeding
-    return ['install', 'run'].forEach(method => {
+    ['install', 'run'].forEach(method => {
       // First we select only plugins of current type,
       // then create an array of runType methods of this plugins
       const typeMethods = this.types.filter(type => {
@@ -119,8 +120,9 @@ export default class Core {
 
       // Run waterfall of typeMethods
       return Utils.promiseWaterfall(typeMethods)
-        .then(result => result)
+        .then(result => { return result })
         .catch(error => console.error(error))
     })
+
   }
 }

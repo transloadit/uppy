@@ -1,6 +1,5 @@
 import Utils from '../core/Utils'
 import Plugin from './Plugin'
-// import componentDragDrop from '../components/dragdrop.js'
 
 /**
  * Drag & Drop plugin
@@ -11,15 +10,15 @@ export default class DragDrop extends Plugin {
     super(core, opts)
     this.type = 'selecter'
 
-    // set default options
+    // Default options
     const defaultOptions = {
       target: '.UppyDragDrop'
     }
 
-    // merge default options with the ones set by user
+    // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    // check if dragDrop is supported in the browser
+    // Check for browser dragDrop support
     this.isDragDropSupported = this.checkDragDropSupport()
 
     // Initialize dragdrop component, mount it to container DOM node
@@ -49,7 +48,6 @@ export default class DragDrop extends Plugin {
         method="post"
         action="${this.opts.endpoint}"
         enctype="multipart/form-data">
-      <img class="UppyDragDrop-puppy" src="/images/uppy.svg">
       <input class="UppyDragDrop-input"
              id="UppyDragDrop-input"
              type="file"
@@ -62,8 +60,8 @@ export default class DragDrop extends Plugin {
     ${!this.core.opts.autoProceed
       ? `<button class="UppyDragDrop-uploadBtn" type="submit">${this.core.i18n('upload')}</button>`
       : ''}
-    <div class="UppyDragDrop-status"></div>
-    <div class="UppyDragDrop-progress"></div>
+    <!--div class="UppyDragDrop-status"></div-->
+    <!--div class="UppyDragDrop-progress"></div-->
   </form>`
   }
 
@@ -126,18 +124,22 @@ export default class DragDrop extends Plugin {
       this.setProgress(percentage)
     })
 
+    // document.addEventListener('dragover', (e) => {
+    //   console.log('ну пиздец')
+    // })
+
     return Promise.race([onDrop, onInput]).then(handler => handler())
   }
 
   handleDrop (e) {
-    console.log('all right, someone dropped something...')
+    this.core.log('all right, someone dropped something...')
 
     const files = e.dataTransfer.files
     return this.result(files)
   }
 
   handleInputChange () {
-    console.log('all right, something selected through input...')
+    this.core.log('all right, something selected through input...')
 
     const files = this.input.files
     return this.result(files)
@@ -146,7 +148,7 @@ export default class DragDrop extends Plugin {
   result (files) {
     return new Promise((resolve, reject) => {
       const result = {from: 'DragDrop', files}
-      // const result = files
+
       // if autoProceed is false, wait for upload button to be pushed,
       // otherwise just pass files to uploaders right away
       if (this.core.opts.autoProceed) {
@@ -161,7 +163,7 @@ export default class DragDrop extends Plugin {
   }
 
   run (results) {
-    console.log({
+    this.core.log({
       class: this.constructor.name,
       method: 'run',
       results: results
