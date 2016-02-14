@@ -4,10 +4,5 @@
 
 @import '_variables.scss';
 @import '_dragdrop.scss';
-
-.uppy {
-  font-family: "Comic Sans MS";
-  color: purple;
-  border: 1px dashed pink;
-  font-size: 32px;
-}
+@import '_progressbar.scss';
+@import '_spinner.scss';

@@ -1,7 +1,7 @@
 import Plugin from './Plugin'
 
 /**
- * Progress bar
+ * Spinner
  *
  */
 export default class ProgressBar extends Plugin {
@@ -17,18 +17,17 @@ export default class ProgressBar extends Plugin {
   }
 
   setProgress (percentage) {
-    this.progressBarPercentageEl.innerHTML = percentage
-    this.progressBarInnerEl.setAttribute('style', `width: ${percentage}%`)
+    if (percentage !== 100) {
+      this.spinnerEl.classList.add('is-spinning');
+    } else {
+      this.spinnerEl.classList.remove('is-spinning');
+    }
   }
 
-  initProgressBar () {
-    const progressBarContainerEl = document.querySelector(this.opts.target)
-    progressBarContainerEl.innerHTML = `<div class="UppyProgressBar">
-      <div class="UppyProgressBar-inner"></div>
-      <div class="UppyProgressBar-percentage"></div>
-    </div>`
-    this.progressBarPercentageEl = document.querySelector(`${this.opts.target} .UppyProgressBar-percentage`)
-    this.progressBarInnerEl = document.querySelector(`${this.opts.target} .UppyProgressBar-inner`)
+  initSpinner () {
+    const spinnerContainer = document.querySelector(this.opts.target)
+    spinnerContainer.innerHTML = `<div class="UppySpinner"></div>`
+    this.spinnerEl = document.querySelector(`${this.opts.target} .UppySpinner`)
   }
 
   initEvents () {
@@ -43,7 +42,7 @@ export default class ProgressBar extends Plugin {
   }
 
   install () {
-    this.initProgressBar()
+    this.initSpinner()
     this.initEvents()
     return
   }
