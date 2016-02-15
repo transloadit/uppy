@@ -4,7 +4,7 @@ import Plugin from './Plugin'
  * Spinner
  *
  */
-export default class ProgressBar extends Plugin {
+export default class Spinner extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'progress'
@@ -25,9 +25,9 @@ export default class ProgressBar extends Plugin {
   }
 
   initSpinner () {
-    const spinnerContainer = document.querySelector(this.opts.target)
+    const spinnerContainer = document.querySelector(this.target)
     spinnerContainer.innerHTML = `<div class="UppySpinner"></div>`
-    this.spinnerEl = document.querySelector(`${this.opts.target} .UppySpinner`)
+    this.spinnerEl = document.querySelector(`${this.target} .UppySpinner`)
   }
 
   initEvents () {
@@ -42,6 +42,10 @@ export default class ProgressBar extends Plugin {
   }
 
   install () {
+    console.log(
+      this.getTarget(this.opts.target).spinner
+    )
+    this.target = this.getTarget(this.opts.target).spinner
     this.initSpinner()
     this.initEvents()
     return

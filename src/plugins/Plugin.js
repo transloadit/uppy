@@ -32,6 +32,36 @@ export default class Plugin {
   //   this.core.setProgress(this, finalPercentage)
   // }
 
+  /**
+   * Check if supplied `target` is a `string` or an `object`.
+   * If object (that means its a plugin), search `plugins` for
+   * a plugin with same name and return its target.
+   *
+   * @param {String|Object} target
+   *
+   */
+  getTarget (target) {
+    if (typeof target === 'string') {
+      this.core.log('string is a target')
+      return target
+    } else {
+      this.core.log('plugin is a  target')
+
+      let pluginTargets;
+
+      for (const pluginType in this.core.plugins) {
+        const plugins = this.core.plugins[pluginType]
+        plugins.forEach(plugin => {
+          if (plugin.constructor.name === target.name) {
+            pluginTargets = plugin.targets
+          }
+        })
+      }
+
+      return pluginTargets
+    }
+  }
+
   extractFiles (results) {
     console.log({
       class: 'Plugin',
