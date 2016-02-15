@@ -47,7 +47,7 @@ export default class Plugin {
     } else {
       this.core.log('plugin is a  target')
 
-      let pluginTargets;
+      let pluginTargets
 
       for (const pluginType in this.core.plugins) {
         const plugins = this.core.plugins[pluginType]

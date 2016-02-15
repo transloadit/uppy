@@ -18,9 +18,9 @@ export default class Spinner extends Plugin {
 
   setProgress (percentage) {
     if (percentage !== 100) {
-      this.spinnerEl.classList.add('is-spinning');
+      this.spinnerEl.classList.add('is-spinning')
     } else {
-      this.spinnerEl.classList.remove('is-spinning');
+      this.spinnerEl.classList.remove('is-spinning')
     }
   }
 

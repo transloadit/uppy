@@ -125,6 +125,5 @@ export default class Core {
         .then(result => { return result })
         .catch(error => console.error(error))
     })
-
   }
 }
