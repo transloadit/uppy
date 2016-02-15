@@ -2,10 +2,11 @@
 * Drag & Drop CSS to style the plugin
 */
 .UppyDragDrop {
-  min-height: 300px;
+  min-height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 15px;
 }
 
   .UppyDragDrop.is-dragdrop-supported {
@@ -43,6 +44,7 @@
 .UppyDragDrop-label {
   display: block;
   cursor: pointer;
+  font-size: 1.15em;
 }
 
 .UppyDragDrop-dragText {
@@ -66,16 +68,4 @@
   &:hover {
     background: #ccc;
   }
-}
-
-.UppyDragDrop-progress {
-  width: 80%;
-  height: 3px;
-  margin: 15px auto;
-}
-
-.UppyProgressBar {
-  background-color: $color-pink;
-  height: 100%;
-  width: 0;
 }
