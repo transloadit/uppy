@@ -22,6 +22,7 @@ import TransloaditBasic from './TransloaditBasic'
 export default {
   Plugin,
   ProgressBar,
+  Spinner,
   DragDrop,
   Dropbox,
   Formtag,
