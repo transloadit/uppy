@@ -136,7 +136,7 @@ function onError (err) {
 
   // When running without watch, process.exit(1) on error
   if (!watchifyEnabled) {
-    process.exit(1);
+    process.exit(1)
   }
 }
 
