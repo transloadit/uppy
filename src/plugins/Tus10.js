@@ -28,6 +28,12 @@ export default class Tus10 extends Plugin {
   upload (file, current, total) {
     console.log(`uploading ${current} of ${total}`)
 
+    // Dispatch progress 0 on start
+    this.core.emitter.emit('progress', {
+      plugin: this,
+      percentage: 0
+    })
+
     // Create a new tus upload
     const upload = new tus.Upload(file, {
       endpoint: this.opts.endpoint,

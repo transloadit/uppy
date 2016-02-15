@@ -21,7 +21,7 @@ export default class Core {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Dictates in what order different plugin types are ran:
-    this.types = [ 'presetter', 'progress', 'selecter', 'uploader' ]
+    this.types = [ 'presetter', 'view', 'progress', 'selecter', 'uploader' ]
 
     this.type = 'core'
 
@@ -103,7 +103,9 @@ export default class Core {
       method: 'run'
     })
 
-    // Forse `autoProceed` option to false if there are multiple selector Plugins active
+    // console.dir(this.plugins)
+
+    // Forse set `autoProceed` option to false if there are multiple selector Plugins active
     if (this.plugins.selecter && this.plugins.selecter.length > 1) {
       this.opts.autoProceed = false
     }
