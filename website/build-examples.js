@@ -133,6 +133,11 @@ function onError (err) {
     'message': err.message
   })
   this.emit('end')
+
+  // When running without watch, process.exit(1) on error
+  if (!watchifyEnabled) {
+    process.exit(1);
+  }
 }
 
 /**
