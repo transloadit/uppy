@@ -31,7 +31,7 @@ It's recommended to exclude `./website/public/` from your editor if you want eff
 For local previews on http://127.0.0.1:4000 type:
 
 ```bash
-npm run watch:all
+npm start
 ```
 
 This will watch the website, as well as Uppy, as the examples, and rebuild everything and refresh your browser as files change.
