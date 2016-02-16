@@ -49,14 +49,14 @@ export default class Plugin {
 
       let pluginTargets
 
-      for (const pluginType in this.core.plugins) {
+      Object.keys(this.core.plugins).forEach(pluginType => {
         const plugins = this.core.plugins[pluginType]
         plugins.forEach(plugin => {
           if (plugin.constructor.name === target.name) {
             pluginTargets = plugin.targets
           }
         })
-      }
+      })
 
       return pluginTargets
     }
