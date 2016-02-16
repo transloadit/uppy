@@ -9,7 +9,7 @@ import Dropbox from './Dropbox'
 import Formtag from './Formtag'
 
 // Progress
-import ProgressBar from './HmProgressBar'
+import ProgressBar from './ProgressBar'
 import Spinner from './Spinner'
 
 // Uploaders
