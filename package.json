@@ -4,7 +4,7 @@
   "description": "Almost as cute as a Puppy :dog:",
   "main": "src/index.js",
   "scripts": {
-    "start": "npm run build && npm run web && npm run watch",
+    "start": "parallelshell 'npm run watch' 'npm run start:server' 'npm run web:preview'",
     "start:server": "uppy-server --port 3002",
     "clean": "rm -rf lib && rm -rf dist",
     "docs": "cd website && documentation readme ../src/index.js --readme-file=src/api/docs.md --section 'Uppy Core & Plugins' -q --github -c doc-order.json",
