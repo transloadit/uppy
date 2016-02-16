@@ -21,31 +21,34 @@ Ideas that will be planned into a release at one point
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
-- [ ] core: Try to make Uppy work with React (basic example) to remain aware of possible issues
 - [ ] test: Write an acceptance test for the Multipart example via Saucelabs (#2, #23, @hedgerh)
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
-- [ ] buildsystem: go through it together again, remove unnecessary commands,
-simplify (related to “clean up package.json”). Discuss how contributors might use it,
-add to contributing and/or readme (https://github.com/sapegin/social-likes/blob/next/Contributing.md#building-and-running-tests) (@arturi, @hedgerh, @kvz)
+- [ ] buildsystem: go through it together again, remove unnecessary commands, simplify (related to “clean up package.json”). Discuss how contributors might use it, add to contributing and/or readme (https://github.com/sapegin/social-likes/blob/next/Contributing.md#building-and-running-tests) (@arturi, @hedgerh, @kvz)
 - [ ] buildsystem: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199
+- [ ] buildsystem: sourcemaps for everything (compiled es6->es5 module as well as bundle)
+- [ ] buildsystem: minification of the bundle
+- [ ] buildsystem: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 
 ## 0.0.4 (April 05, 2016)
 
+- [ ] core: Try to make Uppy work with React (basic example) to remain aware of possible issues (@hedgerh)
+- [ ] meta: Create an Uppy logo (@vvolfy)
+- [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 
 ## 0.0.3 (March 01, 2016)
 
 - [ ] test: Fix and enable phantom acceptance test. Write one actual test. Enable it in `npm run test` so it's ran on Travis automatically (@hedgerh)
 - [x] test: Fix and enable commented out `use plugins` & other core unit test (@arturi)
-- [ ] core: Decide on single-noun terminology (npm, umd, dist, package, cdn, module, bundle), and call it that through-out.
-- [ ] modal: Add basic Modal plugin that can be used as a target (#53, #50)
-- [ ] google: Add basic Google Drive plugin example
-- [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there
+- [ ] core: Decide on single-noun terminology (npm, umd, dist, package, cdn, module -> bundler -> bundle), and call it that through-out (@kvz)
+- [ ] modal: Add barely working Modal plugin that can be used as a target (#53, #50, @arturi)
+- [ ] google: Add basic Google Drive plugin example `target: <string>` (@hedgerh)
+- [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [x] core: Create a progressbar/spinner/etc plugin (#18, @arturi)
 - [x] core: Allow users to set DOM elements or other plugins as targets (@arturi)
-- [ ] core: Decide on how we ship default styles: separate css file, inline
-- [ ] meta: Decide on tagline(s)
-- [ ] meta: Create an Uppy logo (@vvolfy)
-- [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
+- [x] core: Decide on how we ship default styles: separate css file, inline (@kvz, @hedgerh, @arturi, @tim-kos)
+- [ ] meta: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
+- [ ] website: Polish taglines (@arturi)
+- [ ] server: `package.json` (@hedgerh)
 
 ## 0.0.2 (February 11, 2016)
 
