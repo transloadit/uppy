@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "npm run build && npm run web && npm run watch",
+    "start:server": "uppy-server --port 3002",
     "clean": "rm -rf lib && rm -rf dist",
     "docs": "cd website && documentation readme ../src/index.js --readme-file=src/api/docs.md --section 'Uppy Core & Plugins' -q --github -c doc-order.json",
     "lint": "eslint .",
@@ -44,6 +45,7 @@
   },
   "homepage": "https://github.com/transloadit/uppy#readme",
   "devDependencies": {
+    "uppy-server": "0.0.1",
     "babel": "5.8.34",
     "babel-eslint": "4.1.5",
     "babelify": "6.4.0",
