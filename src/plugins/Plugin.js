@@ -45,7 +45,7 @@ export default class Plugin {
       this.core.log('string is a target')
       return target
     } else {
-      this.core.log('plugin is a  target')
+      this.core.log('plugin is a target')
 
       let pluginTargets
 
