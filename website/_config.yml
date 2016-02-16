@@ -19,12 +19,12 @@ subtitle: "Almost as cute as a puppy"
 logo_large: /images/uppy.svg
 logo_medium: /images/uppy.svg
 logo_icon: /images/uppy.png
-description_primary: >
+description: >
   Uppy is (going to be) a JavaScript file uploader that fetches files from Dropbox, Instagram, local disk, remote URLs, and other exciting locations.
   It has a Plugin-based architecture, first-class support for resumable uploads via <a href="http://tus.io">tus.io</a>
-  and custom encoding backends, making it very extensible and robust.
-description_secondary: >
-  Uppy (almost as cute as a puppy) is brought to you by the people behind <a href="https://transloadit.com">Transloadit</a> and as such has first class
+  and custom encoding backends, making it very extensible and robust.<br />
+  <br />
+  Uppy is brought to you by the people behind <a href="https://transloadit.com">Transloadit</a> and as such has first class
   support for adding their uploading and encoding backend, but this is opt-in, and you can just as easily
   roll your own. Uppy is in the early stages of development and should not be used for anything serious yet.
 author: Transloadit

@@ -15,6 +15,8 @@ In the current stage we aim to release a new version on the first Tuesday of eve
 
 Ideas that will be planned into a release at one point
 
+- [ ] website: Remove a few of the less favorite taglines. 10-15 items can likely remain.
+- [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
 - [ ] instagram: Add basic Instagram plugin example (#21)
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
