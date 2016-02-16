@@ -79,7 +79,7 @@
 
   // Loop and render
   function looptagLines (taglines) {
-    document.querySelector(".IndexHero-tagline").innerHTML = 'The file uploader that ' + pickRandom(taglines);
+    document.querySelector(".IndexHero-tagline").innerHTML = 'The file uploader that<br />' + pickRandom(taglines);
     setTimeout(looptagLines.bind(this, taglines), 2000);
   }
 
