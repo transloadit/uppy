@@ -48,7 +48,7 @@ Ideas that will be planned into a release at one point
 - [x] core: Decide on how we ship default styles: separate css file, inline (@kvz, @hedgerh, @arturi, @tim-kos)
 - [ ] meta: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
 - [ ] website: Polish taglines (@arturi)
-- [ ] server: `package.json` (@hedgerh)
+- [x] server: `package.json` (@hedgerh)
 
 ## 0.0.2 (February 11, 2016)
 
