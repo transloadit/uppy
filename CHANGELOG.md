@@ -1,4 +1,4 @@
-Our combined changelog and todo.
+Our combined changelog and roadmap. It contains todos as well as dones.
 
 Items can be optionally be tagged tagged by GitHub owner issue if discussion
 happened / is needed.
@@ -14,7 +14,7 @@ and patch levels.
 In the current stage we aim to release a new version on the 
 first Tuesday of every new month.
 
-## TODO
+## Backlog
 
 Ideas that will be planned into a release at one point
 
