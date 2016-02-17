@@ -29,6 +29,10 @@ Ideas that will be planned into a release at one point
 - [ ] buildsystem: minification of the bundle
 - [ ] buildsystem: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 
+## 0.0.5 (May 03, 2016)
+
+- [ ] meta: Consider using https://waffle.io/ instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
+
 ## 0.0.4 (April 05, 2016)
 
 - [ ] core: Try to make Uppy work with React (basic example) to remain aware of possible issues (@hedgerh)
