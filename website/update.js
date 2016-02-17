@@ -43,9 +43,9 @@ exec('cp -fR ' + uppyRoot + '/dist/ ' + webRoot + '/themes/uppy/source/uppy', fu
   if (error) {
     console.error(
       chalk.red('x failed to inject: '),
-      chalk.dim('uppy umd build into site, because: ' + error)
+      chalk.dim('uppy bundle into site, because: ' + error)
     )
     return
   }
-  console.info(chalk.green('✓ injected: '), chalk.dim('uppy umd build into site'))
+  console.info(chalk.green('✓ injected: '), chalk.dim('uppy bundle into site'))
 })

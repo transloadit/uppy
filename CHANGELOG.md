@@ -45,7 +45,6 @@ Ideas that will be planned into a release at one point
 ## 0.0.3 (March 01, 2016)
 
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
-- [ ] core: Decide on single-noun terminology (npm, umd, dist, package, cdn, module -> bundler -> bundle), and call it that through-out (@kvz)
 - [ ] google: Add basic Google Drive plugin example (can just use `target: "<string>"` so long as modal is in the works by @arturi) (@hedgerh)
 - [ ] meta: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
 - [ ] modal: Add barely working Modal plugin that can be used as a target (#53, #50, @arturi)
@@ -54,6 +53,7 @@ Ideas that will be planned into a release at one point
 - [x] core: Allow users to set DOM elements or other plugins as targets (@arturi)
 - [x] core: Create a progressbar/spinner/etc plugin (#18, @arturi)
 - [x] core: Decide on how we ship default styles: separate css file, inline (@kvz, @hedgerh, @arturi, @tim-kos)
+- [x] core: Decide on single-noun terminology (npm, umd, dist, package, cdn, module -> bundler -> bundle), and call it that through-out (@kvz)
 - [x] server: `package.json` (@hedgerh)
 - [x] test: Fix and enable commented out `use plugins` & other core unit test (@arturi)
 

@@ -7,7 +7,8 @@ order: 4
 
 {% blockquote %}
 Here you'll see a demo of how you might set Uppy to work with language packs (i18n).
-Actually, two examples: pre-built bundled version ready to use with &lt;script&gt; tag & module version to be used with tools like Webpack & Browserify.
+Actually, two examples: pre-built bundle version ready to use with a &lt;script&gt; tag
+and the module, that you can bundle yourself with tools like Webpack, Browserify or Rollup.
 {% endblockquote %}
 
 <link rel="stylesheet" href="app.css">
@@ -21,12 +22,12 @@ Actually, two examples: pre-built bundled version ready to use with &lt;script&g
 </p>
 
 <p>
-  To load from CDN we're using the following HTML and JavaScript:
+  To load the pre-build bundle from a CDN we're using the following HTML and JavaScript:
 </p>
 {% include_code lang:html i18n/app.html %}
 
 <p>
-  Or, if we want the UMD version, this JavaScript:
+  Or, if we want this as module that we can bundle ourselves, this JavaScript:
 </p>
 {% include_code lang:js i18n/app.es6 %}
 

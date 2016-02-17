@@ -20,4 +20,4 @@ $ npm install --save uppy
 
 ## Standalone & CDN
 
-{% include_code lang:html cdn/app.html %}
+{% include_code lang:html bundle/app.html %}
