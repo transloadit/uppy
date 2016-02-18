@@ -1,6 +1,6 @@
  - "Lightweight / easy on dependencies"
  - "ES6, with transpiled ES5 versions available"
- - "Usable from CDN, as well as local individual imports"
+ - "Usable as a bundle straight from a CDN, as well as a module to import"
  - "Resumable file uploads via the open tus standard"
  - "Robust: retries for all-the-things, avoid showing ‘weird errors’"
  - "Themable UI with a beautiful default"

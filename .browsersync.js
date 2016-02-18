@@ -18,14 +18,14 @@ module.exports = {
             "port": 8080
         }
     },
-    "files": [ "examples/cdn/*"],
+    "files": [ "examples/bundle/*"],
     "index": "index.html",
     "watchOptions": {},
     "server": true,
     "proxy": false,
     "port": 3000,
     "middleware": false,
-    "serveStatic": ["examples/cdn"],
+    "serveStatic": ["examples/bundle"],
     "ghostMode": {
         "clicks": true,
         "scroll": true,
