@@ -103,6 +103,8 @@ export default class Core {
       method: 'run'
     })
 
+    console.log('yo')
+
     // Forse set `autoProceed` option to false if there are multiple selector Plugins active
     if (this.plugins.selecter && this.plugins.selecter.length > 1) {
       this.opts.autoProceed = false
