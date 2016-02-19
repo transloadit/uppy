@@ -77,7 +77,6 @@ function removeClass (el, className) {
   } else {
     const patClasses = className.split(' ').join('|')
     const pattern = new RegExp('(^|\\b)' + patClasses + '(\\b|$)', 'gi')
-
     el.className = el.className.replace(pattern, ' ')
   }
 }
@@ -99,10 +98,16 @@ function addListenerMulti (el, events, cb) {
   }
 }
 
+function qsa (selector) {
+  var nodeList = document.querySelectorAll(selector)
+  return Array.prototype.slice.call(nodeList, 0);
+}
+
 export default {
   promiseWaterfall,
   toggleClass,
   addClass,
   removeClass,
-  addListenerMulti
+  addListenerMulti,
+  qsa
 }
