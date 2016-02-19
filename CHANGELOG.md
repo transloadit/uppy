@@ -7,11 +7,11 @@ Please add your entries in this format:
 
  - `- [ ] (<plugin name>|website|core|meta|build|test): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
 
-Following [SemVer spec item 4](http://semver.org/#spec-item-4), 
-we're `<1.0.0` and allowing ourselves to make breaking changes in minor 
+Following [SemVer spec item 4](http://semver.org/#spec-item-4),
+we're `<1.0.0` and allowing ourselves to make breaking changes in minor
 and patch levels.
 
-In the current stage we aim to release a new version on the 
+In the current stage we aim to release a new version on the
 first Tuesday of every new month.
 
 ## Backlog
@@ -28,6 +28,7 @@ Ideas that will be planned into a release at one point
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] test: Write an acceptance test for the Multipart example via Saucelabs (#2, #23, @hedgerh)
+- [ ] test: checkout http://www.webpagetest.org, use it sometimes to test our website & Uppy?
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
 - [ ] website: Remove a few of the less favorite taglines. 10-15 items can likely remain.
@@ -38,7 +39,8 @@ Ideas that will be planned into a release at one point
 
 ## 0.0.4 (April 05, 2016)
 
-- [ ] core: Try to make Uppy work with React (basic example) to remain aware of possible issues (@hedgerh)
+- [ ] core: Try to make Uppy work with React (basic example) to remain aware of possible issues (@hedgerh),
+look at https://github.com/akiran/react-slick
 - [ ] meta: Create an Uppy logo (@vvolfy)
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 
