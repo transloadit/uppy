@@ -40,25 +40,28 @@ export default class Plugin {
    * @param {String|Object} target
    *
    */
-  getTarget (target) {
+  getTarget (target, callerPlugin) {
+    // console.log('and the caller is... ')
+    // console.log(callerPlugin);
+
     if (typeof target === 'string') {
       this.core.log('string is a target')
       return target
     } else {
       this.core.log('plugin is a target')
 
-      let pluginTargets
+      let pluginTarget
 
       Object.keys(this.core.plugins).forEach(pluginType => {
         const plugins = this.core.plugins[pluginType]
         plugins.forEach(plugin => {
           if (plugin.constructor.name === target.name) {
-            pluginTargets = plugin.targets
+            pluginTarget = plugin.prepareTarget(callerPlugin)
           }
         })
       })
 
-      return pluginTargets
+      return pluginTarget
     }
   }
 

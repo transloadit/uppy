@@ -1,0 +1,43 @@
+@mixin clearfix {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+.UppyModal * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.UppyModal {
+  width: 900px;
+  height: 600px;
+  background-color: $color-white;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  @include clearfix;
+  box-shadow: 0 0 13px rgba(0, 0, 0, 0.2);
+}
+
+.UppyModal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.UppyModal-tabList {
+  width: 15%;
+  float: left;
+  list-style: none;
+}
+
+.UppyModal-content {
+  width: 85%;
+  float: left;
+}
