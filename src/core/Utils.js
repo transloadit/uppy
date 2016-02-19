@@ -100,7 +100,7 @@ function addListenerMulti (el, events, cb) {
 
 function qsa (selector) {
   var nodeList = document.querySelectorAll(selector)
-  return Array.prototype.slice.call(nodeList, 0);
+  return Array.prototype.slice.call(nodeList, 0)
 }
 
 export default {

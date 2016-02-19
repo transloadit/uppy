@@ -2,7 +2,7 @@ import Plugin from './Plugin'
 import { ModalTemplate } from './templates'
 import Drive from './GoogleDrive'
 
-// let GoogleDrive = new Drive()
+let GoogleDrive = new Drive()
 
 export default class Modal extends Plugin {
   constructor (core, opts) {

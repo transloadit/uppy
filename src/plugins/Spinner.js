@@ -48,7 +48,6 @@ export default class Spinner extends Plugin {
     const caller = this
     this.target = this.getTarget(this.opts.target, caller)
 
-
     this.initSpinner()
     this.initEvents()
     return

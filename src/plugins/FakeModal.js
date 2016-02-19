@@ -1,8 +1,8 @@
 import Plugin from './Plugin'
-import Utils from '../core/Utils'
+// import Utils from '../core/Utils'
 
 function $$ (selector, context) {
-  return Array.prototype.slice.call((context || document).querySelectorAll(selector) || []);
+  return Array.prototype.slice.call((context || document).querySelectorAll(selector) || [])
 }
 
 /**
