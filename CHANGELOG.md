@@ -32,6 +32,10 @@ Ideas that will be planned into a release at one point
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
 
+- [ ] core: Rename “selecter” to “getter” or “acquire”
+- [ ] modal: State: which tab is open? get parameters?
+- [ ] modal: Avoid duplicating event listeners
+
 ## 0.0.5 (May 03, 2016)
 
 - [ ] meta: Consider using <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
