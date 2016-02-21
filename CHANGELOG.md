@@ -31,7 +31,6 @@ Ideas that will be planned into a release at one point
 - [ ] test: checkout http://www.webpagetest.org, use it sometimes to test our website & Uppy?
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
-- [ ] website: Remove a few of the less favorite taglines. 10-15 items can likely remain.
 
 ## 0.0.5 (May 03, 2016)
 
