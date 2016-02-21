@@ -146,16 +146,10 @@ export default class DragDrop extends Plugin {
   }
 
   install () {
-    // Initialize dragdrop component, mount it to container DOM node
-    // this.container = document.querySelector(this.opts.target)
-    // this.container.innerHTML = this.render()
-
     const caller = this
     this.target = this.getTarget(this.opts.target, caller)
     this.container = document.querySelector(this.target)
     this.container.innerHTML = this.render()
-
-    // this.target.innerHTML = this.render()
 
     // Set selectors
     this.dropzone = document.querySelector(`${this.target} .UppyDragDrop-inner`)

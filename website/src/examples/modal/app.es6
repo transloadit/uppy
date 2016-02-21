@@ -7,5 +7,5 @@ const uppy = new Uppy({debug: true})
 uppy
   .use(Modal)
   .use(Dummy, {target: Modal})
-  .use(GoogleDrive, {target: Modal})
+  // .use(GoogleDrive, {target: Modal})
   .run()
