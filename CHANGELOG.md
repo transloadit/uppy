@@ -52,7 +52,7 @@ look at https://github.com/akiran/react-slick
 
 - [ ] modal: Make sure modal renders under one dom node (@arturi)
 - [ ] modal: Make `ProgressBar` work with the new Modal (@kvz)
-- [ ] google: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
+- [x] google: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
 - [ ] modal: Make Modal prettier and accessible using Artur's research (@arturi)
 - [ ] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
 - [ ] modal: Make the Modal look like Harry's sketchup  (@hedgerh)
