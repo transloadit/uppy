@@ -2,12 +2,10 @@ import Plugin from './Plugin'
 import { ModalTemplate } from './templates'
 import Drive from './GoogleDrive'
 
-let GoogleDrive = new Drive()
-
 export default class Modal extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-
+    let GoogleDrive = new Drive()
     this.providers = [{ name: 'Local' }, { name: 'Google Drive', connect: GoogleDrive.connect }]
     this.type = 'something'
     this.connect = this.connect.bind(this)
