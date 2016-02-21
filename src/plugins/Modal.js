@@ -61,7 +61,10 @@ export default class Modal extends Plugin {
 
     this.initEvents()
 
-    return document.querySelector(`#${callerPluginName}`)
+    const target = `#${callerPluginName}`
+
+    // return document.querySelector(`#${callerPluginName}`)
+    return target
   }
 
   render () {
