@@ -47,6 +47,14 @@ export default class Core {
     // Instantiate
     const plugin = new Plugin(this, opts)
     this.plugins[plugin.type] = this.plugins[plugin.type] || []
+
+    if (!plugin.name) {
+      throw new Error('Your plugin must have a name')
+    }
+    if (!plugin.type) {
+      throw new Error('Your plugin must have a type')
+    }
+
     this.plugins[plugin.type].push(plugin)
 
     return this
