@@ -53,6 +53,33 @@ export default class Core {
   }
 
 /**
+ * Find one Plugin by name
+ *
+ * @param string name description
+ */
+  getPlugin (name) {
+    let foundPlugin = false
+    this.core.iteratePlugins(plugin => {
+      if (plugin.constructor.name === name) {
+        foundPlugin = plugin
+        return false
+      }
+    })
+    return foundPlugin
+  }
+
+/**
+ * Iterate through all `use`d plugins
+ *
+ * @param function method description
+ */
+  iteratePlugins (method) {
+    Object.keys(this.plugins).forEach(pluginType => {
+      this.plugins[pluginType].forEach(method)
+    })
+  }
+
+/**
  * Sets plugin’s progress, like for uploads
  *
  * @param {object} plugin that wants to set progress

@@ -50,18 +50,10 @@ export default class Plugin {
     } else {
       this.core.log('plugin is a target')
 
-      let pluginTarget
+      let targetPlugin = this.core.getPlugin(target.name)
+      targetPlugin.prepareTarget(callerPlugin)
 
-      Object.keys(this.core.plugins).forEach(pluginType => {
-        const plugins = this.core.plugins[pluginType]
-        plugins.forEach(plugin => {
-          if (plugin.constructor.name === target.name) {
-            pluginTarget = plugin.prepareTarget(callerPlugin)
-          }
-        })
-      })
-
-      return pluginTarget
+      return targetPlugin
     }
   }
 
