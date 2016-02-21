@@ -28,6 +28,13 @@ export default class FakeModal extends Plugin {
   }
 
   prepareTarget (callerPlugin) {
+    console.log(callerPlugin.type)
+
+    if (callerPlugin.type !== 'selecter' || callerPlugin.type !== 'progress') {
+      this.core.log('Error: Modal can only be used by plugins of type `selecter` or `progress`')
+      return
+    }
+
     const callerPluginName = callerPlugin.constructor.name
 
     // add tab panel
@@ -55,8 +62,6 @@ export default class FakeModal extends Plugin {
          ${callerPluginName}
       </a></li>
     `
-
-    console.log('yoyoyoyoy')
 
     this.initEvents()
 
