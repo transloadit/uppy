@@ -49,7 +49,7 @@ look at https://github.com/akiran/react-slick
 
 ## 0.0.3 (March 01, 2016)
 
-- [ ] core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior (@kvz)
+- [x] core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior (@kvz)
 - [ ] modal: Make sure modal renders under one dom node (@arturi)
 - [ ] modal: Make `ProgressBar` work with the new Modal (@kvz)
 - [ ] google: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)

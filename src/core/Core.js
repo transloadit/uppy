@@ -55,6 +55,15 @@ export default class Core {
       throw new Error('Your plugin must have a type')
     }
 
+    let existsPluginAlready = this.getPlugin(plugin.constructor.name)
+    if (existsPluginAlready) {
+      let msg = 'Uppy is currently limited to running one of every plugin. '
+      msg += 'Share your use case with us over at '
+      msg += 'https://github.com/transloadit/uppy/issues/ '
+      msg += 'if you want us to reconsider. '
+      throw new Error(msg)
+    }
+
     this.plugins[plugin.type].push(plugin)
 
     return this

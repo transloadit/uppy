@@ -10,7 +10,7 @@ test('core', function (t) {
 })
 
 test('use plugins', function (t) {
-  const SelecterPlugin = require('./mocks/plugin-selecter.js')
+  const SelecterPlugin = require('./mocks/plugin-selecter1.js')
   const uppy = new Uppy()
   uppy
     .use(SelecterPlugin)
@@ -19,18 +19,36 @@ test('use plugins', function (t) {
   t.end()
 })
 
+test('noDuplicates', function (t) {
+  const Selecter1Plugin = require('./mocks/plugin-selecter1.js')
+  const uppyTwoSelecters = new Uppy()
+  let err = ''
+  try {
+    uppyTwoSelecters
+    .use(Selecter1Plugin)
+    .use(Selecter1Plugin)
+    .run()
+  } catch (e) {
+    err = e.message
+  }
+
+  t.equal(err, 'Uppy is currently limited to running one of every plugin. Share your use case with us over at https://github.com/transloadit/uppy/issues/ if you want us to reconsider.', 'should throw error on use of duplicate plugin')
+  t.end()
+})
+
 test('autoProceed', function (t) {
-  const SelecterPlugin = require('./mocks/plugin-selecter.js')
+  const Selecter1Plugin = require('./mocks/plugin-selecter1.js')
+  const Selecter2Plugin = require('./mocks/plugin-selecter2.js')
 
   const uppyOneSelecter = new Uppy()
   uppyOneSelecter
-    .use(SelecterPlugin)
+    .use(Selecter1Plugin)
     .run()
 
   const uppyTwoSelecters = new Uppy()
   uppyTwoSelecters
-    .use(SelecterPlugin)
-    .use(SelecterPlugin)
+    .use(Selecter1Plugin)
+    .use(Selecter2Plugin)
     .run()
 
   t.equal(uppyOneSelecter.opts.autoProceed, true, 'should autoProceed if only one selecter is used')
