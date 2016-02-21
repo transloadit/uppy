@@ -116,10 +116,13 @@ export default class Google extends Plugin {
   install () {
     const caller = this
     this.target = this.getTarget(this.opts.target, caller)
+    console.log('this.targetgtsds')
+    console.log(this.target)
     return
   }
 
   renderAuth () {
+    console.log('RenderAuth')
     return `<div><h1>Authenticate With Google Drive</h1><a href=${ this.authUrl || '#' }>Authenticate</a></div>`
   }
 
