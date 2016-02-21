@@ -2,13 +2,6 @@
 ## Docs: http://zespia.tw/hexo/docs/configuration.html
 ## Source: https://github.com/tommy351/hexo/
 
-# Uppy versions, auto updated by update.js
-uppy_version: 0.0.1
-
-uppy_dev_size: "96.88"
-uppy_min_size: "96.88"
-uppy_gz_size: "96.88"
-
 # Theme
 google_analytics: UA-63083-12
 root_domain: uppy.io

@@ -7,11 +7,16 @@ var uppyRoot = path.dirname(__dirname)
 
 var configPath = webRoot + '/themes/uppy/_config.yml'
 var version = require(uppyRoot + '/package.json').version
+var configTemplate = '# Uppy versions, auto updated by update.js\nuppy_version: 0.0.1\n\nuppy_dev_size: "0.0"\nuppy_min_size: "0.0"\nuppy_gz_size: "0.0"'
 var config
 try {
   config = fs.readFileSync(configPath, 'utf-8')
 } catch (e) {
-  config = '# Uppy versions, auto updated by update.js\nuppy_version: 0.0.1\n\nuppy_dev_size: "0.0"\nuppy_min_size: "0.0"\nuppy_gz_size: "0.0"'
+
+}
+
+if (!config || !config.trim()) {
+  config = configTemplate
 }
 
 // Inject current Uppy version and sizes in website's _config.yml

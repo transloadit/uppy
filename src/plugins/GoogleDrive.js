@@ -1,42 +1,34 @@
-// import Utils from '../core/Utils'
+import Utils from '../core/Utils'
 import Plugin from './Plugin'
 
-export default class Drive extends Plugin {
+export default class Google extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'selecter'
-    this.authenticate = this.authenticate.bind(this)
-    this.connect = this.connect.bind(this)
-    this.render = this.render.bind(this)
-    this.renderAuthentication = this.renderAuthentication.bind(this)
-    this.checkAuthentication = this.checkAuthentication.bind(this)
-    this.getDirectory = this.getDirectory.bind(this)
     this.files = []
-    this.currentDir = 'root'
+    this.authUrl = 'http://localhost:3020/connect/google'
+    // set default options
+    const defaultOptions = {}
+
+    // merge default options with the ones set by user
+    this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.currentFolder = 'root'
+    this.isAuthenticated = false
 
     this.checkAuthentication()
   }
 
-  connect (target) {
-    this.target = target
+  focus () {
     if (!this.isAuthenticated) {
-      target.innerHTML = this.renderAuthentication()
+      this.target.innerHTML = this.renderAuth()
     } else {
-      this.getDirectory()
-      .then(data => {
-        target.innerHTML = this.render(data)
-
-        const folders = [...document.querySelectorAll('.GoogleDriveFolder')]
-        const files = [...document.querySelectorAll('.GoogleDriveFile')]
-
-        folders.forEach(folder => folder.addEventListener('click', e => this.getDirectory(folder.dataset.id)))
-        files.forEach(file => file.addEventListener('click', e => this.getFile(file.dataset.id)))
-      })
+      this.renderFolder()
     }
   }
 
   checkAuthentication () {
-    fetch('http://localhost:3002/drive/auth/authorize', {
+    fetch('http://localhost:3020/google/authorize', {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -48,7 +40,6 @@ export default class Drive extends Plugin {
       if (res.status >= 200 && res.status <= 300) {
         return res.json().then(data => {
           this.isAuthenticated = data.isAuthenticated
-          this.authUrl = data.authUrl
         })
       } else {
         let error = new Error(res.statusText)
@@ -58,17 +49,11 @@ export default class Drive extends Plugin {
     })
   }
 
-  authenticate () {
-  }
-
-  addFile () {
-  }
-
-  getDirectory (folderId) {
+  getFolder (folderId = this.currentFolder) {
     /**
      * Leave this here
      */
-    // fetch('http://localhost:3002/drive/logout', {
+    // fetch('http://localhost:3020/google/logout', {
     //   method: 'get',
     //   credentials: 'include',
     //   headers: {
@@ -76,7 +61,7 @@ export default class Drive extends Plugin {
     //     'Content-Type': 'application/json'
     //   }
     // }).then(res => console.log(res))
-    return fetch('http://localhost:3002/drive/list', {
+    return fetch('http://localhost:3020/google/list', {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -111,10 +96,10 @@ export default class Drive extends Plugin {
 
   getFile (fileId) {
     console.log(typeof fileId)
-    // if (fileId !== 'string') {
-    //   return console.log('Error: File Id not a string.')
-    // }
-    return fetch('http://localhost:3002/drive/get', {
+    if (fileId !== 'string') {
+      return console.log('Error: File Id not a string.')
+    }
+    return fetch('http://localhost:3020/google/get', {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -127,18 +112,33 @@ export default class Drive extends Plugin {
     })
   }
 
-  run (results) {
-
+  install () {
+    const caller = this
+    this.target = this.getTarget(this.opts.target, caller)
+    console.log('this.target ===')
+    console.log(this.target)
+    return
   }
 
-  renderAuthentication () {
+  renderAuth () {
     return `<div><h1>Authenticate With Google Drive</h1><a href=${ this.authUrl || '#' }>Authenticate</a></div>`
   }
 
-  render (data) {
+  renderBrowser (data) {
     const folders = data.folders.map(folder => `<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}">${folder.title}</button></li>`)
     const files = data.files.map(file => `<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}">${file.title}</button></li>`)
-
     return `<ul>${folders}</ul><ul>${files}</ul>`
+  }
+
+  renderFolder (folder = this.currentFolder) {
+    this.getFolder(folder)
+    .then(data => {
+      this.target.innerHTML = this.renderBrowser(data)
+      const folders = Utils.qsa('.GoogleDriveFolder')
+      const files = Utils.qsa('.GoogleDriveFile')
+
+      folders.forEach(folder => folder.addEventListener('click', e => this.renderFolder(folder.dataset.id)))
+      files.forEach(file => file.addEventListener('click', e => this.getFile(file.dataset.id)))
+    })
   }
 }
