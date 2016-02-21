@@ -52,15 +52,15 @@ look at https://github.com/akiran/react-slick
 
 - [ ] modal: Make sure modal renders under one dom node (@arturi)
 - [ ] modal: Make Modal prettier and accessible using Artur's research (@arturi)
-- [ ] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
 - [ ] modal: Make the Modal look like Harry's sketchup  (@hedgerh)
-- [x] modal: Make `ProgressBar` work with the new Modal (@kvz)
-- [x] modal: Make `ProgressBar` work with the new Modal (@kvz)
+- [x] modal: Improve Modal API (@arturi, @kvz)
+- [x] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
+- [x] modal: Make `ProgressBar` work with the new Modal (@kvz, @arturi)
 - [x] google: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
 - [x] core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior (@kvz)
 - [x] modal: Rename FakeModal to Modal, deprecating our old one (@kvz)
 
--- 
+--
 
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [ ] google: Add basic Google Drive plugin example (can just use `target: "<string>"` so long as modal is in the works by @arturi) (@hedgerh)
