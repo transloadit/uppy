@@ -1,27 +1,11 @@
-// import Uppy from 'uppy/core'
-// import { DragDrop, Tus10 } from 'uppy/plugins'
-import Uppy from 'uppy/core'
-import { Modal, DragDrop } from 'uppy/plugins'
+import Uppy from '../../../../src/core/Core.js'
+import Dummy from '../../../../src/plugins/Dummy.js'
+import GoogleDrive from '../../../../src/plugins/GoogleDrive.js'
+import Modal from '../../../../src/plugins/Modal.js'
 
-const defaults = {
-  width               : 380, // max = 640
-  height              : 280, // max = 350
-  showClose           : false,
-  showCloseText       : '',
-  closeByEscape       : true,
-  closeByDocument     : true,
-  holderClass         : '',
-  overlayClass        : '',
-  enableStackAnimation: false,
-  onBlurContainer     : '',
-  openOnEvent         : true,
-  setEvent            : 'click',
-  onLoad              : false,
-  onUnload            : false,
-  onClosing           : false,
-  template            : '<p>This is test popin content!</p>'
-}
-
-const uppy = new Uppy({wait: false})
-
-uppy.use(Modal, {selector: '.ModalTrigger'})
+const uppy = new Uppy({debug: true})
+uppy
+  .use(Modal)
+  .use(Dummy, {target: Modal})
+  .use(GoogleDrive, {target: Modal})
+  .run()
