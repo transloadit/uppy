@@ -53,6 +53,9 @@ look at https://github.com/akiran/react-slick
 - [ ] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
 - [ ] modal: Rename FakeModal to Modal, deprecating our old one (@kvz)
 - [ ] modal: Make the Modal look like Harry's sketchup  (@hedgerh)
+
+-- 
+
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [ ] google: Add basic Google Drive plugin example (can just use `target: "<string>"` so long as modal is in the works by @arturi) (@hedgerh)
 - [ ] meta: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
