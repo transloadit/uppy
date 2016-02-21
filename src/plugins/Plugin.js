@@ -51,9 +51,8 @@ export default class Plugin {
       this.core.log('plugin is a target')
 
       let targetPlugin = this.core.getPlugin(target.name)
-      targetPlugin.prepareTarget(callerPlugin)
 
-      return targetPlugin
+      return targetPlugin.prepareTarget(callerPlugin)
     }
   }
 

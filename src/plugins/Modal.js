@@ -20,17 +20,13 @@ export default class Modal extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.targets = {}
-
-    this.targets.spinner = '.UppyDragDrop-One-Spinner'
-
     this.container = document.body
   }
 
   prepareTarget (callerPlugin) {
     console.log(callerPlugin.type)
 
-    if (callerPlugin.type !== 'selecter' || callerPlugin.type !== 'progress') {
+    if (callerPlugin.type !== 'selecter' && callerPlugin.type !== 'progress') {
       this.core.log('Error: Modal can only be used by plugins of type `selecter` or `progress`')
       return
     }
