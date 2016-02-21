@@ -48,7 +48,7 @@ export default class Core {
     const plugin = new Plugin(this, opts)
     this.plugins[plugin.type] = this.plugins[plugin.type] || []
 
-    if (!plugin.name) {
+    if (!plugin.constructor.name) {
       throw new Error('Your plugin must have a name')
     }
     if (!plugin.type) {
@@ -57,7 +57,9 @@ export default class Core {
 
     let existsPluginAlready = this.getPlugin(plugin.constructor.name)
     if (existsPluginAlready) {
-      let msg = 'Uppy is currently limited to running one of every plugin. '
+      let msg = `Already found a plugin named '${existsPluginAlready.name}'. `
+      msg += `Tried to use: '${plugin.constructor.name}'. `
+      msg += 'Uppy is currently limited to running one of every plugin. '
       msg += 'Share your use case with us over at '
       msg += 'https://github.com/transloadit/uppy/issues/ '
       msg += 'if you want us to reconsider. '

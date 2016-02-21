@@ -1,10 +1,10 @@
 const Plugin = require('../../src/plugins/Plugin.js')
 
-export default class TestSelector extends Plugin {
+export default class TestSelector2 extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'selecter'
-    this.name = 'selecter2'
+    this.name = this.constructor.name
   }
 
   run (results) {
