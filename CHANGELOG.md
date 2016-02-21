@@ -24,6 +24,7 @@ Ideas that will be planned into a release at one point
 - [ ] build: minification of the bundle
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle)
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
+- [ ] core: Add polyfill for `fetch`
 - [ ] instagram: Add basic Instagram plugin example (#21)
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
