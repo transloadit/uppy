@@ -102,10 +102,10 @@ export default class DragDrop extends Plugin {
       })
     })
 
-    this.container.addEventListener('progress', (e) => {
-      const percentage = e.detail
-      this.setProgress(percentage)
-    })
+    // this.container.addEventListener('progress', (e) => {
+    //   const percentage = e.detail
+    //   this.setProgress(percentage)
+    // })
 
     // document.addEventListener('dragover', (e) => {
     //   console.log('ну пиздец')

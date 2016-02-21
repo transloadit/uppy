@@ -41,9 +41,6 @@ export default class Plugin {
    *
    */
   getTarget (target, callerPlugin) {
-    // console.log('and the caller is... ')
-    // console.log(callerPlugin);
-
     if (typeof target === 'string') {
       this.core.log('string is a target')
       return target

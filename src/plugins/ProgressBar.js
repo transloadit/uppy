@@ -22,13 +22,16 @@ export default class ProgressBar extends Plugin {
   }
 
   initProgressBar () {
-    const progressBarContainerEl = document.querySelector(this.opts.target)
+    const caller = this
+    this.target = this.getTarget(this.opts.target, caller)
+
+    const progressBarContainerEl = document.querySelector(this.target)
     progressBarContainerEl.innerHTML = `<div class="UppyProgressBar">
       <div class="UppyProgressBar-inner"></div>
       <div class="UppyProgressBar-percentage"></div>
     </div>`
-    this.progressBarPercentageEl = document.querySelector(`${this.opts.target} .UppyProgressBar-percentage`)
-    this.progressBarInnerEl = document.querySelector(`${this.opts.target} .UppyProgressBar-inner`)
+    this.progressBarPercentageEl = document.querySelector(`${this.target} .UppyProgressBar-percentage`)
+    this.progressBarInnerEl = document.querySelector(`${this.target} .UppyProgressBar-inner`)
   }
 
   initEvents () {

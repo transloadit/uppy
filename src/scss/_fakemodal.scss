@@ -8,20 +8,28 @@
 
 .UppyModal * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 .UppyModal {
+  h1, h2, h3, h4, h5, h6, ul, li {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+
+.UppyModal {
+  @include clearfix;
   width: 900px;
   height: 600px;
+  max-width: 90vw;
+  max-height: 90vh;
   background-color: $color-white;
   position: fixed;
   top: 50%;
   left: 50%;
   z-index: 10000;
   transform: translate(-50%, -50%);
-  @include clearfix;
   box-shadow: 0 0 13px rgba(0, 0, 0, 0.2);
 }
 
@@ -40,4 +48,11 @@
 .UppyModal-content {
   width: 85%;
   float: left;
+}
+
+.UppyModal-progressContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }

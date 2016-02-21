@@ -24,14 +24,14 @@ export default class Modal extends Plugin {
   }
 
   prepareTarget (callerPlugin) {
-    console.log(callerPlugin.type)
     const callerPluginName = callerPlugin.constructor.name
 
     switch (callerPlugin.type) {
       case 'progress':
-        return '.UppyModal-progress-container'
+        return '.UppyModal-progressContainer'
       case 'selecter':
-        // add tab panel
+
+        // add tab panel, where plugin will render
         const modalContent = document.querySelector('.UppyModal-content')
         const nodeForPlugin = document.createElement('div')
 
@@ -43,7 +43,7 @@ export default class Modal extends Plugin {
         </div>
         `
 
-        // add tab
+        // add tab switch button
         const modalTabs = document.querySelector('.UppyModal-tabList')
         const modalTab = document.createElement('div')
 
@@ -96,7 +96,7 @@ export default class Modal extends Plugin {
             789
           </div>
         </div>
-        <div class="UppyModal-progress-container">
+        <div class="UppyModal-progressContainer">
           progress here
         </div>
       </div>
