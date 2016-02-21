@@ -42,9 +42,6 @@ export default class Spinner extends Plugin {
   }
 
   install () {
-    // this.core.log('the spinner target is... ' +
-    //   this.getTarget(this.opts.target).spinner
-    // )
     const caller = this
     this.target = this.getTarget(this.opts.target, caller)
 
