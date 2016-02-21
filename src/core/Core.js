@@ -118,8 +118,12 @@ export default class Core {
     if (!this.opts.debug) {
       return
     }
-    msg = JSON.stringify(msg)
-    console.log(`DEBUG LOG: ${msg}`)
+    if (msg === `${msg}`) {
+      console.log(`DEBUG LOG: ${msg}`)
+    } else {
+      console.log(`DEBUG LOG`)
+      console.dir(msg)
+    }
   }
 
 /**
