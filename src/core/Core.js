@@ -76,7 +76,7 @@ export default class Core {
  */
   getPlugin (name) {
     let foundPlugin = false
-    this.core.iteratePlugins(plugin => {
+    this.iteratePlugins(plugin => {
       if (plugin.constructor.name === name) {
         foundPlugin = plugin
         return false
