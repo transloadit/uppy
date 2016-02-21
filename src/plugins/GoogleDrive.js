@@ -116,7 +116,7 @@ export default class Google extends Plugin {
   install () {
     const caller = this
     this.target = this.getTarget(this.opts.target, caller)
-    console.log('this.targetgtsds')
+    console.log('this.target ===')
     console.log(this.target)
     return
   }
