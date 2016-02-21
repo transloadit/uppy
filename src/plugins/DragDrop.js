@@ -21,21 +21,6 @@ export default class DragDrop extends Plugin {
     // Check for browser dragDrop support
     this.isDragDropSupported = this.checkDragDropSupport()
 
-    // Initialize dragdrop component, mount it to container DOM node
-    this.container = document.querySelector(this.opts.target)
-    this.container.innerHTML = this.render()
-
-    // Set selectors
-    this.dropzone = document.querySelector(`${this.opts.target} .UppyDragDrop-inner`)
-    this.input = document.querySelector(`${this.opts.target} .UppyDragDrop-input`)
-    this.status = document.querySelector(`${this.opts.target} .UppyDragDrop-status`)
-    this.progress = document.querySelector(`${this.opts.target} .UppyDragDrop-progress`)
-
-    Utils.addClass(this.container, 'UppyDragDrop')
-    if (this.isDragDropSupported) {
-      Utils.addClass(this.container, 'is-dragdrop-supported')
-    }
-
     // Bind `this` to class methods
     this.initEvents = this.initEvents.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
@@ -60,8 +45,6 @@ export default class DragDrop extends Plugin {
     ${!this.core.opts.autoProceed
       ? `<button class="UppyDragDrop-uploadBtn" type="submit">${this.core.i18n('upload')}</button>`
       : ''}
-    <!--div class="UppyDragDrop-status"></div-->
-    <!--div class="UppyDragDrop-progress"></div-->
   </form>`
   }
 
@@ -89,7 +72,7 @@ export default class DragDrop extends Plugin {
   }
 
   initEvents () {
-    this.core.log(`waiting for some files to be dropped on ${this.opts.target}`)
+    this.core.log(`waiting for some files to be dropped on ${this.target}`)
 
     // prevent default actions for all drag & drop events
     const strEvents = 'drag dragstart dragend dragover dragenter dragleave drop'
@@ -160,6 +143,28 @@ export default class DragDrop extends Plugin {
         })
       }
     })
+  }
+
+  install () {
+    // Initialize dragdrop component, mount it to container DOM node
+    // this.container = document.querySelector(this.opts.target)
+    // this.container.innerHTML = this.render()
+
+    const caller = this
+    this.target = this.getTarget(this.opts.target, caller)
+    this.container = document.querySelector(this.target)
+    this.container.innerHTML = this.render()
+
+    // this.target.innerHTML = this.render()
+
+    // Set selectors
+    this.dropzone = document.querySelector(`${this.target} .UppyDragDrop-inner`)
+    this.input = document.querySelector(`${this.target} .UppyDragDrop-input`)
+
+    Utils.addClass(this.container, 'UppyDragDrop')
+    if (this.isDragDropSupported) {
+      Utils.addClass(this.container, 'is-dragdrop-supported')
+    }
   }
 
   run (results) {

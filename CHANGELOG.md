@@ -24,6 +24,7 @@ Ideas that will be planned into a release at one point
 - [ ] build: minification of the bundle
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle)
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
+- [ ] core: Add polyfill for `fetch`
 - [ ] instagram: Add basic Instagram plugin example (#21)
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
@@ -50,11 +51,12 @@ look at https://github.com/akiran/react-slick
 ## 0.0.3 (March 01, 2016)
 
 - [ ] modal: Make sure modal renders under one dom node (@arturi)
-- [ ] google: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
 - [ ] modal: Make Modal prettier and accessible using Artur's research (@arturi)
 - [ ] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
 - [ ] modal: Make the Modal look like Harry's sketchup  (@hedgerh)
 - [x] modal: Make `ProgressBar` work with the new Modal (@kvz)
+- [x] modal: Make `ProgressBar` work with the new Modal (@kvz)
+- [x] google: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
 - [x] core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior (@kvz)
 - [x] modal: Rename FakeModal to Modal, deprecating our old one (@kvz)
 

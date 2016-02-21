@@ -29,7 +29,7 @@ export default class Modal extends Plugin {
 
     switch (callerPlugin.type) {
       case 'progress':
-        return document.querySelector('.UppyModal-progress-container')
+        return '.UppyModal-progress-container'
       case 'selecter':
         // add tab panel
         const modalContent = document.querySelector('.UppyModal-content')
@@ -59,7 +59,7 @@ export default class Modal extends Plugin {
 
         this.initEvents()
 
-        return document.querySelector(`#${callerPluginName}`)
+        return `#${callerPluginName}`
       default:
         let msg = 'Error: Modal can only be used by plugins of types: selecter, progress'
         this.core.log(msg)

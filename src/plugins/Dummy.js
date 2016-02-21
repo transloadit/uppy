@@ -30,7 +30,8 @@ export default class Dummy extends Plugin {
     // )
     const caller = this
     this.target = this.getTarget(this.opts.target, caller)
-    this.target.innerHTML = this.render()
+    this.targetEl = document.querySelector(this.target)
+    this.targetEl.innerHTML = this.render()
     return
   }
 }
