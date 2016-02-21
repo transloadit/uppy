@@ -98,9 +98,8 @@ function addListenerMulti (el, events, cb) {
   }
 }
 
-function qsa (selector) {
-  var nodeList = document.querySelectorAll(selector)
-  return Array.prototype.slice.call(nodeList, 0)
+function qsa (selector, context) {
+  return Array.prototype.slice.call((context || document).querySelectorAll(selector) || [])
 }
 
 export default {
