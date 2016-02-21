@@ -22,17 +22,11 @@ test('use plugins', function (t) {
 test('noDuplicates', function (t) {
   const Selecter1Plugin = require('./mocks/plugin-selecter1.js')
   const uppyTwoSelecters = new Uppy()
-  let err = ''
-  try {
-    uppyTwoSelecters
-    .use(Selecter1Plugin)
-    .use(Selecter1Plugin)
-    .run()
-  } catch (e) {
-    err = e.message
-  }
 
-  t.equal(err, 'Uppy is currently limited to running one of every plugin. Share your use case with us over at https://github.com/transloadit/uppy/issues/ if you want us to reconsider.', 'should throw error on use of duplicate plugin')
+  uppyTwoSelecters.use(Selecter1Plugin)
+  const fn = uppyTwoSelecters.use.bind(uppyTwoSelecters, Selecter1Plugin)
+
+  t.throws(fn, new RegExp('Uppy is currently limited to running one of every plugin'))
   t.end()
 })
 
