@@ -71,10 +71,11 @@ export default class Core {
  * @return {String|Object} to log
  */
   log (msg) {
-    if (this.opts.debug) {
-      msg = JSON.stringify(msg)
-      console.log(`DEBUG LOG: ${msg}`)
+    if (!this.opts.debug) {
+      return
     }
+    msg = JSON.stringify(msg)
+    console.log(`DEBUG LOG: ${msg}`)
   }
 
 /**
