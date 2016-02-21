@@ -25,43 +25,46 @@ export default class Modal extends Plugin {
 
   prepareTarget (callerPlugin) {
     console.log(callerPlugin.type)
-
-    if (callerPlugin.type !== 'selecter' && callerPlugin.type !== 'progress') {
-      this.core.log('Error: Modal can only be used by plugins of type `selecter` or `progress`')
-      return
-    }
-
     const callerPluginName = callerPlugin.constructor.name
 
-    // add tab panel
-    const modalContent = document.querySelector('.UppyModal-content')
-    const nodeForPlugin = document.createElement('div')
+    switch (callerPlugin.type) {
+      case 'progress':
+        return document.querySelector('.UppyModal-progress-container')
+      case 'selecter':
+        // add tab panel
+        const modalContent = document.querySelector('.UppyModal-content')
+        const nodeForPlugin = document.createElement('div')
 
-    modalContent.appendChild(nodeForPlugin)
-    nodeForPlugin.outerHTML = `
-      <div role="tabpanel"
-           class="UppyModal-panel"
-           id="${callerPluginName}">
-      </div>
-    `
+        modalContent.appendChild(nodeForPlugin)
+        nodeForPlugin.outerHTML = `
+        <div role="tabpanel"
+          class="UppyModal-panel"
+          id="${callerPluginName}">
+        </div>
+        `
 
-    // add tab
-    const modalTabs = document.querySelector('.UppyModal-tabList')
-    const modalTab = document.createElement('div')
+        // add tab
+        const modalTabs = document.querySelector('.UppyModal-tabList')
+        const modalTab = document.createElement('div')
 
-    modalTabs.appendChild(modalTab)
-    modalTab.outerHTML = `
-      <li><a role="tab"
-         aria-controls="${callerPluginName}"
-         class="UppyModal-tab"
-         href="#${callerPluginName}">
-         ${callerPluginName}
-      </a></li>
-    `
+        modalTabs.appendChild(modalTab)
+        modalTab.outerHTML = `
+        <li><a role="tab"
+          aria-controls="${callerPluginName}"
+          class="UppyModal-tab"
+          href="#${callerPluginName}">
+          ${callerPluginName}
+        </a></li>
+        `
 
-    this.initEvents()
+        this.initEvents()
 
-    return document.querySelector(`#${callerPluginName}`)
+        return document.querySelector(`#${callerPluginName}`)
+      default:
+        let msg = 'Error: Modal can only be used by plugins of types: selecter, progress'
+        this.core.log(msg)
+        break
+    }
   }
 
   render () {
@@ -92,6 +95,9 @@ export default class Modal extends Plugin {
           <div role="tabpanel" class="UppyModal-panel" id="instagram">
             789
           </div>
+        </div>
+        <div class="UppyModal-progress-container">
+          progress here
         </div>
       </div>
     `
