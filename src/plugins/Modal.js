@@ -119,6 +119,7 @@ export default class Modal extends Plugin {
       tab.addEventListener('click', event => {
         event.preventDefault()
         console.log(tabId)
+        this.core.getPlugin(tabId.substr(1)).focus()
         this.hideAllTabPanels()
         this.showTabPanel(tabId)
       })
