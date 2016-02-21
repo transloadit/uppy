@@ -45,12 +45,20 @@ look at https://github.com/akiran/react-slick
 
 ## 0.0.3 (March 01, 2016)
 
+- [ ] core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior
+- [ ] modal: Make sure modal renders under one dom node (@arturi)
+- [ ] modal: Make `ProgressBar` work with the new Modal (@kvz)
+- [ ] google: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
+- [ ] modal: Make Modal prettier and accessible using Artur's research (@arturi)
+- [ ] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
+- [ ] modal: Rename FakeModal to Modal, deprecating our old one (@kvz)
+- [ ] modal: Make the Modal look like Harry's sketchup  (@hedgerh)
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [ ] google: Add basic Google Drive plugin example (can just use `target: "<string>"` so long as modal is in the works by @arturi) (@hedgerh)
 - [ ] meta: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
-- [ ] modal: Add barely working Modal plugin that can be used as a target (#53, #50, @arturi)
 - [ ] test: Fix and enable phantom acceptance test. Write one actual test. Enable it in `npm run test` so it's ran on Travis automatically (@hedgerh)
 - [ ] website: Polish taglines (@arturi)
+- [x] modal: Add barely working Modal plugin that can be used as a target (#53, #50, @arturi)
 - [x] core: Allow users to set DOM elements or other plugins as targets (@arturi)
 - [x] core: Create a progressbar/spinner/etc plugin (#18, @arturi)
 - [x] core: Decide on how we ship default styles: separate css file, inline (@kvz, @hedgerh, @arturi, @tim-kos)
