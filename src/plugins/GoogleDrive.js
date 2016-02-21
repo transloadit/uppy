@@ -4,8 +4,15 @@ import Plugin from './Plugin'
 export default class Google extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.type = 'acquire'
+    this.type = 'selecter'
     this.files = []
+
+    // set default options
+    const defaultOptions = {}
+
+    // merge default options with the ones set by user
+    this.opts = Object.assign({}, defaultOptions, opts)
+
     this.currentFolder = 'root'
     this.isAuthenticated = false
 
@@ -21,7 +28,7 @@ export default class Google extends Plugin {
   }
 
   checkAuthentication () {
-    fetch('http://localhost:3002/google/authorize', {
+    fetch('http://localhost:3020/google/authorize', {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -47,7 +54,7 @@ export default class Google extends Plugin {
     /**
      * Leave this here
      */
-    // fetch('http://localhost:3002/drive/logout', {
+    // fetch('http://localhost:3020/google/logout', {
     //   method: 'get',
     //   credentials: 'include',
     //   headers: {
@@ -55,7 +62,7 @@ export default class Google extends Plugin {
     //     'Content-Type': 'application/json'
     //   }
     // }).then(res => console.log(res))
-    return fetch('http://localhost:3002/google/list', {
+    return fetch('http://localhost:3020/google/list', {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -93,7 +100,7 @@ export default class Google extends Plugin {
     if (fileId !== 'string') {
       return console.log('Error: File Id not a string.')
     }
-    return fetch('http://localhost:3002/google/get', {
+    return fetch('http://localhost:3020/google/get', {
       method: 'get',
       credentials: 'include',
       headers: {
