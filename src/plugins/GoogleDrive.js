@@ -6,7 +6,7 @@ export default class Google extends Plugin {
     super(core, opts)
     this.type = 'selecter'
     this.files = []
-
+    this.authUrl = 'http://localhost:3020/connect/google'
     // set default options
     const defaultOptions = {}
 
@@ -40,7 +40,6 @@ export default class Google extends Plugin {
       if (res.status >= 200 && res.status <= 300) {
         return res.json().then(data => {
           this.isAuthenticated = data.isAuthenticated
-          this.authUrl = data.authUrl
         })
       } else {
         let error = new Error(res.statusText)
@@ -122,7 +121,6 @@ export default class Google extends Plugin {
   }
 
   renderAuth () {
-    console.log('RenderAuth')
     return `<div><h1>Authenticate With Google Drive</h1><a href=${ this.authUrl || '#' }>Authenticate</a></div>`
   }
 
