@@ -32,6 +32,10 @@ Ideas that will be planned into a release at one point
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
 
+- [ ] core: Rename “selecter” to “getter” or “acquire”
+- [ ] modal: State: which tab is open? get parameters?
+- [ ] modal: Avoid duplicating event listeners
+
 ## 0.0.5 (May 03, 2016)
 
 - [ ] meta: Consider using <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
@@ -45,7 +49,7 @@ look at https://github.com/akiran/react-slick
 
 ## 0.0.3 (March 01, 2016)
 
-- [ ] core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior
+- [ ] core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior (@kvz)
 - [ ] modal: Make sure modal renders under one dom node (@arturi)
 - [ ] modal: Make `ProgressBar` work with the new Modal (@kvz)
 - [ ] google: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
@@ -53,6 +57,9 @@ look at https://github.com/akiran/react-slick
 - [ ] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
 - [ ] modal: Rename FakeModal to Modal, deprecating our old one (@kvz)
 - [ ] modal: Make the Modal look like Harry's sketchup  (@hedgerh)
+
+-- 
+
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [ ] google: Add basic Google Drive plugin example (can just use `target: "<string>"` so long as modal is in the works by @arturi) (@hedgerh)
 - [ ] meta: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+PATH=$PATH:/usr/local/bin:/usr/local/sbin
+
+npm run test || echo "Tests (or tasks) failed, aborting the commit" && exit 1
+
+echo "All tests passed, committing your changes"
+exit 0
