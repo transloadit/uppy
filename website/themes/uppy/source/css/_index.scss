@@ -58,6 +58,17 @@
   color: $color-light;
 }
 
+.IndexHero-taglineList {
+  display: none;
+}
+
+.js-IndexHero-taglinePart {
+  transition: all 0.7s;
+  opacity: 0;
+
+  &.is-visible { opacity: 1; }
+}
+
 .IndexHero-description {
   font-size: 16px;
   line-height: 1.4;

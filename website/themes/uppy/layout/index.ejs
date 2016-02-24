@@ -7,8 +7,15 @@
     </h3> -->
 
     <p class="IndexHero-tagline">
-      ...
+      The file uploader that<br> <span class="IndexHero-taglinePart js-IndexHero-taglinePart">...</span>
     </p>
+
+    <ul class="IndexHero-taglineList">
+      <% site.data.taglines.forEach(function(tagline) {%>
+        <li class="IndexHero-taglineItem js-IndexHero-taglineItem"><%- tagline %></li>
+      <% }); %>
+    </ul>
+
     <ul class="IndexSocial">
       <li><a href="https://twitter.com/uppy_io" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @uppy_io</a></li>
       <li><iframe src="http://ghbtns.com/github-btn.html?user=transloadit&repo=uppy&type=watch&count=true"
@@ -67,28 +74,3 @@
 
 <!-- Twitter follow button script -->
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-
-
-<!-- Cycle through taglines -->
-<!-- @todo someone put this in the right place and make it pretty please : ) -->
-<script>
-  // Pick random item
-  function pickRandom(items){
-    return items[Math.floor(Math.random() * items.length)];
-  }
-
-  // Loop and render
-  function looptagLines (taglines) {
-    document.querySelector(".IndexHero-tagline").innerHTML = 'The file uploader that<br />' + pickRandom(taglines);
-    setTimeout(looptagLines.bind(this, taglines), 2000);
-  }
-
-  // Build array
-  var taglines = [];
-  <% site.data.taglines.forEach(function(tagline) {%>
-    taglines.push("<%- tagline %>");
-  <% }); %>
-
-  // Start
-  looptagLines(taglines);
-</script>

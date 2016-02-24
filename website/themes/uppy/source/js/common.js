@@ -8,77 +8,89 @@
   var menu = document.querySelector('.js-Sidebar')
   var content = document.querySelector('.js-Content')
 
-  var menuButton = document.querySelector('.js-MenuBtn')
-  menuButton.addEventListener('click', function () {
-    menu.classList.toggle('is-open')
-  })
+  var isIndex = body.classList.contains('page-index')
 
-  body.addEventListener('click', function (e) {
-    if (e.target !== menuButton && !menu.contains(e.target)) {
-      menu.classList.remove('is-open')
-    }
-  })
-
-  // build sidebar
-  var currentPageAnchor = menu.querySelector('.sidebar-link.current')
-  var isAPI = document.querySelector('.Content').classList.contains('api')
-  if (currentPageAnchor || isAPI) {
-    var allLinks = []
-    var sectionContainer
-    if (false && isAPI) {
-      sectionContainer = document.querySelector('.menu-root')
-    } else {
-      sectionContainer = document.createElement('ul')
-      sectionContainer.className = 'menu-sub'
-      currentPageAnchor.parentNode.appendChild(sectionContainer)
-    }
-    var h2s = content.querySelectorAll('h2')
-    if (h2s.length) {
-      each.call(h2s, function (h) {
-        sectionContainer.appendChild(makeLink(h))
-        var h3s = collectH3s(h)
-        allLinks.push(h)
-        allLinks.push.apply(allLinks, h3s)
-        if (h3s.length) {
-          sectionContainer.appendChild(makeSubLinks(h3s, isAPI))
-        }
-      })
-    } else {
-      h2s = content.querySelectorAll('h3')
-      each.call(h2s, function (h) {
-        sectionContainer.appendChild(makeLink(h))
-        allLinks.push(h)
-      })
-    }
-
-    var animating = false
-    sectionContainer.addEventListener('click', function (e) {
-      e.preventDefault()
-      if (e.target.classList.contains('section-link')) {
-        menu.classList.remove('open')
-        setActive(e.target)
-        animating = true
-        setTimeout(function () {
-          animating = false
-        }, 400)
-      }
-    }, true)
-
-    // make links clickable
-    allLinks.forEach(makeLinkClickable)
-
-    // init smooth scroll
-    window.smoothScroll.init({
-      speed: 400,
-      offset: window.innerWidth > 720
-        ? 40
-        : 58
-    })
+  // On index page
+  if (isIndex) {
+    IndexPage()
+  // On inner pages
+  } else {
+    InnerPage()
   }
 
-  // listen for scroll event to do positioning & highlights
-  window.addEventListener('scroll', updateSidebar)
-  window.addEventListener('resize', updateSidebar)
+  function InnerPage () {
+    var menuButton = document.querySelector('.js-MenuBtn')
+    menuButton.addEventListener('click', function () {
+      menu.classList.toggle('is-open')
+    })
+
+    body.addEventListener('click', function (e) {
+      if (e.target !== menuButton && !menu.contains(e.target)) {
+        menu.classList.remove('is-open')
+      }
+    })
+
+    // build sidebar
+    var currentPageAnchor = menu.querySelector('.sidebar-link.current')
+    var isAPI = document.querySelector('.Content').classList.contains('api')
+    if (currentPageAnchor || isAPI) {
+      var allLinks = []
+      var sectionContainer
+      if (false && isAPI) {
+        sectionContainer = document.querySelector('.menu-root')
+      } else {
+        sectionContainer = document.createElement('ul')
+        sectionContainer.className = 'menu-sub'
+        currentPageAnchor.parentNode.appendChild(sectionContainer)
+      }
+      var h2s = content.querySelectorAll('h2')
+      if (h2s.length) {
+        each.call(h2s, function (h) {
+          sectionContainer.appendChild(makeLink(h))
+          var h3s = collectH3s(h)
+          allLinks.push(h)
+          allLinks.push.apply(allLinks, h3s)
+          if (h3s.length) {
+            sectionContainer.appendChild(makeSubLinks(h3s, isAPI))
+          }
+        })
+      } else {
+        h2s = content.querySelectorAll('h3')
+        each.call(h2s, function (h) {
+          sectionContainer.appendChild(makeLink(h))
+          allLinks.push(h)
+        })
+      }
+
+      var animating = false
+      sectionContainer.addEventListener('click', function (e) {
+        e.preventDefault()
+        if (e.target.classList.contains('section-link')) {
+          menu.classList.remove('open')
+          setActive(e.target)
+          animating = true
+          setTimeout(function () {
+            animating = false
+          }, 400)
+        }
+      }, true)
+
+      // make links clickable
+      allLinks.forEach(makeLinkClickable)
+
+      // init smooth scroll
+      window.smoothScroll.init({
+        speed: 400,
+        offset: window.innerWidth > 720
+          ? 40
+          : 58
+      })
+    }
+
+    // listen for scroll event to do positioning & highlights
+    window.addEventListener('scroll', updateSidebar)
+    window.addEventListener('resize', updateSidebar)
+  }
 
   function updateSidebar () {
     var top = doc && doc.scrollTop || body.scrollTop
@@ -174,6 +186,38 @@
     } else {
       el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ')
     }
+  }
+
+  function qsa (selector, context) {
+    return Array.prototype.slice.call((context || document).querySelectorAll(selector) || [])
+  }
+
+  // Index page taglines
+
+  // Pick random item
+  function pickRandom (items) {
+    return items[Math.floor(Math.random() * items.length)]
+  }
+
+  function IndexPage () {
+    looptagLines()
+    setInterval(looptagLines, 4000)
+  }
+
+  // Loop and render
+  function looptagLines () {
+    var taglinePart = document.querySelector('.js-IndexHero-taglinePart')
+    var taglines = qsa('.js-IndexHero-taglineItem')
+
+    taglinePart.classList.remove('is-visible')
+
+    setTimeout(function() {
+      var randomTagline = pickRandom(taglines)
+      var taglineText = randomTagline.textContent
+      taglinePart.innerHTML = taglineText
+
+      taglinePart.classList.add('is-visible')
+    }, 1000)
   }
 
   // Search with SwiftType
