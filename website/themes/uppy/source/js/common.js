@@ -10,6 +10,9 @@
 
   var isIndex = body.classList.contains('page-index')
 
+  var animating = false
+  var allLinks = []
+
   // On index page
   if (isIndex) {
     IndexPage()
@@ -34,7 +37,6 @@
     var currentPageAnchor = menu.querySelector('.sidebar-link.current')
     var isAPI = document.querySelector('.Content').classList.contains('api')
     if (currentPageAnchor || isAPI) {
-      var allLinks = []
       var sectionContainer
       if (false && isAPI) {
         sectionContainer = document.querySelector('.menu-root')
@@ -62,7 +64,6 @@
         })
       }
 
-      var animating = false
       sectionContainer.addEventListener('click', function (e) {
         e.preventDefault()
         if (e.target.classList.contains('section-link')) {
@@ -211,7 +212,7 @@
 
     taglinePart.classList.remove('is-visible')
 
-    setTimeout(function() {
+    setTimeout(function () {
       var randomTagline = pickRandom(taglines)
       var taglineText = randomTagline.textContent
       taglinePart.innerHTML = taglineText
