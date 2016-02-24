@@ -201,7 +201,7 @@
 
   function IndexPage () {
     looptagLines()
-    setInterval(looptagLines, 4000)
+    setInterval(looptagLines, 3800)
   }
 
   // Loop and render
@@ -217,7 +217,7 @@
       taglinePart.innerHTML = taglineText
 
       taglinePart.classList.add('is-visible')
-    }, 1000)
+    }, 800)
   }
 
   // Search with SwiftType

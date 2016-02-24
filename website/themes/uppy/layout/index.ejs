@@ -1,46 +1,55 @@
 <section id="hero" class="IndexHero">
-  <header id="logo-wrap" class="IndexHero-logo">
-    <img id="logo" width="150" class="IndexHero-logoImg emoji dog" title="puppy" alt="uppy" src="<%- config.logo_large %>">
+  <header id="logo-wrap" class="IndexHero-header">
+    <img id="logo" class="IndexHero-logo" title="Uppy" alt="Uppy" src="<%- config.logo_large %>">
     <h1 class="IndexHero-title"><%- config.title %></h1>
-    <!-- <h3 class="IndexHero-subtitle">
-      <%- config.subtitle %> <img align="absmiddle" width="18" height="18" class="emoji dog" title="puppy" src="/images/emojis/dog.png">
-    </h3> -->
 
-    <p class="IndexHero-tagline">
-      The file uploader that<br> <span class="IndexHero-taglinePart js-IndexHero-taglinePart">...</span>
-    </p>
+    <h2 class="IndexHero-tagline">
+      The file uploader that <br>
+      <span class="IndexHero-taglinePart js-IndexHero-taglinePart is-visible">loves to play fetch</span>
+    </h2>
 
     <ul class="IndexHero-taglineList">
       <% site.data.taglines.forEach(function(tagline) {%>
         <li class="IndexHero-taglineItem js-IndexHero-taglineItem"><%- tagline %></li>
       <% }); %>
     </ul>
-
-    <ul class="IndexSocial">
-      <li><a href="https://twitter.com/uppy_io" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @uppy_io</a></li>
-      <li><iframe src="http://ghbtns.com/github-btn.html?user=transloadit&repo=uppy&type=watch&count=true"
-    allowtransparency="true" frameborder="0" scrolling="0" width="100" height="20"></iframe></li>
-     </li>
-      <li class="BuildBadge">
-       <span class="wrapper">
-         <a href="https://travis-ci.org/transloadit/uppy"><img src="https://travis-ci.org/transloadit/uppy.svg" alt="Build Status"></a>
-       </span>
-    </ul>
-    <a class="GetStartedBtn" href="/guide/index.html">Get Started</a>
-    <p class="IndexHero-description">
-      <%- config.description %>
-    </p>
   </header>
+
+  <ul class="IndexSocial">
+    <li><a href="https://twitter.com/uppy_io" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @uppy_io</a></li>
+    <li><iframe src="http://ghbtns.com/github-btn.html?user=transloadit&repo=uppy&type=watch&count=true"
+  allowtransparency="true" frameborder="0" scrolling="0" width="100" height="20"></iframe></li>
+   </li>
+    <li class="BuildBadge">
+     <span class="wrapper">
+       <a href="https://travis-ci.org/transloadit/uppy"><img src="https://travis-ci.org/transloadit/uppy.svg" alt="Build Status"></a>
+     </span>
+  </ul>
+</section>
+
+<section class="IndexAbout">
+  <div class="IndexAbout-item">
+    <img class="IndexAbout-icon" src="/images/traffic-light.svg">
+    <h2 class="IndexSection-title">Work in progress</h2>
+    <p><%- config.description %></p>
+  </div>
+  <div class="IndexAbout-item">
+    <img class="IndexAbout-icon" src="/images/transloadit-logo.png">
+    <h2 class="IndexSection-title">Open Source</h2>
+    <p><%- config.descriptionWho %></p>
+  </div>
 </section>
 
 <section id="example" class="IndexExample">
-  <h2 class="IndexExample-title">Quick Example</h2>
+  <h2 class="IndexSection-title">Quick Example</h2>
 
   <div class="IndexExample-block"><%- partial('partials/frontpage-code-sample') %></div>
 
   <div class="sign">&raquo;</div>
 
   <div class="IndexExample-block"><img src="/images/uppy-dragdrop-screenshot.png"></div>
+
+  <a class="GetStartedBtn" href="/guide/index.html">Get Started</a>
 </section>
 
 <!-- <section id="features">

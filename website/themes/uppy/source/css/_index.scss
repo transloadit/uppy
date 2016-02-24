@@ -23,67 +23,63 @@
 .IndexHero {
   text-align: center;
   position: relative;
+  max-width: 950px;
+  margin: auto;
+  padding: 0 20px;
 }
 
 .IndexHero-logo {
-  margin: 0.5em 0 0.5em;
-}
-
-.IndexHero-logoImg {
-  margin-bottom: 1em;
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 130px;
 }
 
 .IndexHero-title {
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 25px;
+  padding-top: 10px;
   font-family: $fontFamily-logo;
   font-weight: 400;
-  font-size: 4em;
+  font-size: 3.5em;
   margin: 0;
-  margin-bottom: 0.2em;
-}
-
-.IndexHero-subtitle {
-  font-family: $fontFamily-logo;
-  font-size: 1.6em;
-  font-weight: 400;
-  margin: 0;
+  margin-bottom: 20px;
 }
 
 .IndexHero-tagline {
-  font-size: $fontSize-l;
-  line-height: 1.4;
-  max-width: 950px;
-  padding: 0 20px;
+  font-size: $fontSize-m;
+  line-height: 1.3;
+  font-weight: normal;
   text-align: center;
-  margin: 1.5em auto;
+  margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 40px;
   color: $color-light;
+
+  @media #{$screen-medium} {
+    font-size: $fontSize-l;
+    line-height: 1.4;
+  }
 }
 
 .IndexHero-taglineList {
   display: none;
 }
 
-.js-IndexHero-taglinePart {
-  transition: all 0.7s;
+.IndexHero-taglinePart {
+  transition: all ease-in-out 0.6s;
   opacity: 0;
 
   &.is-visible { opacity: 1; }
 }
 
-.IndexHero-description {
-  font-size: 16px;
-  line-height: 1.4;
-  max-width: 800px;
-  padding: 0 20px;
-  text-align: center;
-  margin: 1.5em auto;
-  color: $color-light;
-}
-
 .IndexSocial {
   text-align: center;
   list-style-type: none;
-  margin: 3em auto;
   padding: 0;
+  margin: 0 auto;
+  margin-top: 2em;
+  margin-bottom: 2em;
 }
 
 .IndexSocial li {
@@ -94,6 +90,72 @@
   &.last { margin-left: -2px; }
 }
 
+.IndexAbout {
+  // @include clearfix;
+  max-width: 760px;
+  margin: 3em auto;
+  padding: 0 20px;
+  font-size: 19px;
+  line-height: 1.5;
+  text-align: center;
+
+  @media #{$screen-medium} {
+    text-align: left;
+  }
+
+  a {
+    font-weight: bold;
+    color: rgba($color-black, 0.8);
+
+    &:hover {
+      color: $color-black;
+    }
+  }
+}
+
+.IndexAbout-item {
+  position: relative;
+  margin-bottom: 80px;
+}
+
+.IndexAbout-item:first-child {
+  @media #{$screen-medium} {
+    padding-left: 130px;
+
+    .IndexAbout-icon {
+      top: 20px;
+      left: 0;
+    }
+  }
+}
+
+.IndexAbout-item:nth-child(2) {
+  @media #{$screen-medium} {
+    padding-right: 150px;
+
+    .IndexAbout-icon {
+      top: 20px;
+      right: 0;
+    }
+  }
+}
+
+.IndexAbout-icon {
+  max-width: 90px;
+
+  @media #{$screen-medium} {
+    position: absolute;
+  }
+}
+
+.IndexAbout-item h2 {
+  margin-bottom: 0.1em;
+}
+
+.IndexAbout-item p {
+  margin-top: 0;
+}
+
 .GetStartedBtn {
   font-size: 1.2em;
   text-decoration: none;
@@ -102,10 +164,11 @@
   display: inline-block;
   padding: 12px 40px;
   border-radius: 25px;
-  transition: all .15s ease;
+  transition: all .3s ease;
   background-color: $color-primary;
   color: $color-white;
-  margin-bottom: 1.5em;
+  margin-top: 3em;
+  margin-bottom: 2em;
 
   &:hover { @include zoom; }
 }
@@ -147,8 +210,8 @@
   }
 }
 
-.IndexExample-title {
-  text-align: center;
+.IndexSection-title {
+  font-size: 25px;
   margin-bottom: 1.5em;
 }
 
