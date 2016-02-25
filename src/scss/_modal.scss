@@ -1,58 +1,185 @@
-@mixin clearfix {
-  &:after {
-    content: '';
-    display: table;
-    clear: both;
-  }
+body {
+  margin: 0;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
 }
 
-.UppyModal * {
+* {
   box-sizing: border-box;
 }
 
 .UppyModal {
-  h1, h2, h3, h4, h5, h6, ul, li {
-    margin: 0;
-    padding: 0;
-  }
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(48,48,48,0.7);
+  top: 0;
+  left: 0;
+  z-index: 1000;
 }
 
-
-.UppyModal {
-  @include clearfix;
-  width: 900px;
-  height: 600px;
-  max-width: 90vw;
-  max-height: 90vh;
-  background-color: $color-white;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  z-index: 10000;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 13px rgba(0, 0, 0, 0.2);
+.UppyModal-inner {
+  background-color: #EBEBEB;
+  display: flex;
+  flex-direction: row;
+  height: 80vh;
+  width: 75%;
 }
 
 .UppyModal-close {
-  position: absolute;
-  top: 15px;
-  right: 15px;
+  display: none;
 }
 
-.UppyModal-tabList {
-  width: 15%;
-  float: left;
-  list-style: none;
+.UppyModalContent {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 80vh;
+  justify-content: center;
 }
 
-.UppyModal-content {
-  width: 85%;
-  float: left;
+.UppyModalContent-panel {
+  display: none;
 }
 
-.UppyModal-progressContainer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.UppyModalContent p,
+.UppyModalContent svg {
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.UppyModalContent svg {
+  width: 200px;
+  height: 200px;
+  fill: rgba(120,110,60,0.055);
+}
+
+.UppyModalTabs {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background-color: #525252;
+  display: inline-block;
+  height: 80vh;
+  overflow: hidden;
+  transition: 300ms width;
+  white-space: nowrap;
+  width: 55px;
+}
+
+.UppyModalTabs-tab {
+  margin-bottom: 8px;
+  padding: 12px;
+
+  &:hover {
+    background-color: #78bdf2;
+  }
+}
+
+// .UppyModalDialog {
+//   width: 100%;
+// }
+
+.UppyModalHeader {
+  background-color: #fff;
+  padding: 11px 0;
+  width: 100%;
+}
+
+.UppyModalTabs span {
+  color: #eee;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 400ms 40ms;
+  vertical-align: middle;
+}
+
+.UppyModalTabs:hover span {
+  display: inline;
+  opacity: 1;
+  transition: opacity 300ms 40ms;
+}
+
+.UppyModalTabs:hover {
+  transition: width 300ms ease-out;
+  width: 200px;
+}
+
+.UppyModalTabs-tab {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+  text-align: center;
+}
+
+.UppyModalTabs-tab svg {
+  fill: #eee;
+  margin-right: 8px;
+  width: 28px;
+  vertical-align: middle;
+}
+
+.tab span {
+  display: inline-block;
+}
+
+.UppyModalHeader-logo svg {
+  fill: #eee;
+  width: 20px;
+}
+
+.UppyModalHeader-logo {
+  background-color: #78bdf2;
+  padding: 10px 17px 6px 17px;
+}
+
+.UppyModalHeader-title {
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.UppySidebarTab--instagram svg {
+  width: 26px;
+}
+
+.loader-block {
+  background-color: rgba(102,102,102,1);
+  display: inline-block;
+  height: 10px;
+  margin-right: 2px;
+  opacity: 0;
+  width: 10px;
+  animation: 2.5s fadeIn ease-in-out infinite;
+}
+
+.loader-block:nth-child(2) {
+  -webkit-animation-delay: 500ms;
+  animation-delay: 500ms;
+}
+.loader-block:nth-child(3) {
+  -webkit-animation-delay: 1s;
+  animation-delay: 1s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }

@@ -1,9 +1,5 @@
 import Plugin from './Plugin'
-// import Utils from '../core/Utils'
-
-function $$ (selector, context) {
-  return Array.prototype.slice.call((context || document).querySelectorAll(selector) || [])
-}
+import Utils from '../core/Utils'
 
 /**
  * Modal
@@ -32,29 +28,31 @@ export default class Modal extends Plugin {
       case 'selecter':
 
         // add tab panel, where plugin will render
-        const modalContent = document.querySelector('.UppyModal-content')
+        const modalContent = document.querySelector('.UppyModalСontent')
         const nodeForPlugin = document.createElement('div')
 
         modalContent.appendChild(nodeForPlugin)
         nodeForPlugin.outerHTML = `
-        <div role="tabpanel"
-          class="UppyModal-panel"
-          id="${callerPluginName}">
-        </div>
+          <div class="UppyModalContent-panel"
+               role="tabpanel"
+               id="${callerPluginName}">
+          </div>
         `
 
         // add tab switch button
-        const modalTabs = document.querySelector('.UppyModal-tabList')
+        const modalTabs = document.querySelector('.UppyModalTabs')
         const modalTab = document.createElement('div')
 
         modalTabs.appendChild(modalTab)
         modalTab.outerHTML = `
-        <li><a role="tab"
-          aria-controls="${callerPluginName}"
-          class="UppyModal-tab"
-          href="#${callerPluginName}">
-          ${callerPluginName}
-        </a></li>
+          <li>
+            <button class="UppyModalTabs-tab"
+               role="tab"
+               aria-controls="${callerPluginName}"
+               href="#${callerPluginName}">
+              ${callerPluginName}
+            </button>
+          </li>
         `
 
         this.initEvents()
@@ -71,33 +69,35 @@ export default class Modal extends Plugin {
     // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
     return `
-      <div class="UppyModal"
-           aria-hidden="true"
-           aria-labelledby="modalTitle"
-           aria-describedby="modalDescription"
-           role="dialog">
+      <div class="UppyModal">
+        <div class="UppyModal-inner"
+             aria-hidden="true"
+             aria-labelledby="modalTitle"
+             aria-describedby="modalDescription"
+             role="dialog">
 
-        <button data-modal-hide class="UppyModal-close" title="Close uploader modal">×</button>
+          <button class="UppyModal-close" title="Close uploader modal" data-modal-hide>×</button>
 
-        <ul role="tablist" class="UppyModal-tabList">
-          <li><a role="tab" aria-controls="dragdrop" class="UppyModal-tab" href="#dragdrop">Dizzy</a></li>
-          <li><a role="tab" aria-controls="dropbox" class="UppyModal-tab" href="#dropbox">Ninja</a></li>
-          <li><a role="tab" aria-controls="instagram" class="UppyModal-tab" href="#instagram">Missy</a></li>
-        </ul>
+          <ul class="UppyModalTabs" role="tablist">
+            <li><button class="UppyModalTabs-tab" role="tab" aria-controls="dragdrop" href="#dragdrop">Dizzy</button></li>
+            <li><button class="UppyModalTabs-tab" role="tab" aria-controls="dropbox" href="#dropbox">Ninja</button></li>
+            <li><button class="UppyModalTabs-tab" role="tab" aria-controls="instagram" href="#instagram">Missy</button></li>
+          </ul>
 
-        <div class="UppyModal-content">
-          <div role="tabpanel" class="UppyModal-panel" id="dragdrop">
-            123
+          <div class="UppyModalСontent">
+            <div class="UppyModalContent-panel" role="tabpanel" id="dragdrop">
+              123
+            </div>
+            <div class="UppyModalContent-panel" role="tabpanel" id="dropbox">
+              456
+            </div>
+            <div class="UppyModalContent-panel" role="tabpanel" id="instagram">
+              789
+            </div>
           </div>
-          <div role="tabpanel" class="UppyModal-panel" id="dropbox">
-            456
+          <div class="UppyModal-progressContainer">
+            progress here
           </div>
-          <div role="tabpanel" class="UppyModal-panel" id="instagram">
-            789
-          </div>
-        </div>
-        <div class="UppyModal-progressContainer">
-          progress here
         </div>
       </div>
     `
@@ -115,7 +115,7 @@ export default class Modal extends Plugin {
   }
 
   initEvents () {
-    const tabs = $$('.UppyModal-tab')
+    const tabs = Utils.qsa('.UppyModalTabs-tab')
     this.tabPanels = []
     tabs.forEach(tab => {
       const tabId = tab.getAttribute('href')
