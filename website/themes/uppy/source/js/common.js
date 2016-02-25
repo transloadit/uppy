@@ -173,22 +173,6 @@
     window.addEventListener('resize', updateSidebar)
   }
 
-  // function addClass (el, className) {
-  //   if (el.classList) {
-  //     el.classList.add(className)
-  //   } else {
-  //     el.className += ' ' + className
-  //   }
-  // }
-
-  // function removeClass (el, className) {
-  //   if (el.classList) {
-  //     el.classList.remove(className)
-  //   } else {
-  //     el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ')
-  //   }
-  // }
-
   function IndexPage () {
     var taglinePart = document.querySelector('.js-IndexHero-taglinePart')
     var taglineList = document.querySelector('.js-IndexHero-taglineList')

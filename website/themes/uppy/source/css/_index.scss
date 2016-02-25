@@ -71,15 +71,16 @@
   }
 }
 
-.IndexHero-taglineList {
-  display: none;
-}
-
 .IndexHero-taglinePart {
   transition: all ease-in-out 0.6s;
   opacity: 0;
+  // color: $color-pink;
 
   &.is-visible { opacity: 1; }
+}
+
+.IndexHero-taglineList {
+  display: none;
 }
 
 .IndexSocial {
@@ -104,16 +105,17 @@
 }
 
 .IndexAbout {
-  // @include clearfix;
   max-width: 760px;
   margin: 3em auto;
   padding: 0 20px;
-  font-size: 19px;
-  line-height: 1.5;
+  font-size: 17px;
+  line-height: 1.3;
   text-align: center;
 
   @media #{$screen-medium} {
     text-align: left;
+    font-size: 19px;
+    line-height: 1.5;
   }
 
   a {
