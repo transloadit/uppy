@@ -8,9 +8,9 @@
       <span class="IndexHero-taglinePart js-IndexHero-taglinePart is-visible">loves to play fetch</span>
     </h2>
 
-    <ul class="IndexHero-taglineList">
+    <ul class="IndexHero-taglineList js-IndexHero-taglineList">
       <% site.data.taglines.forEach(function(tagline) {%>
-        <li class="IndexHero-taglineItem js-IndexHero-taglineItem"><%- tagline %></li>
+        <li><%- tagline %></li>
       <% }); %>
     </ul>
   </header>

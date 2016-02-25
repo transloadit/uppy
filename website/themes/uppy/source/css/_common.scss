@@ -158,7 +158,7 @@ a.button {
 
   img {
     vertical-align: middle;
-    margin-right: 6px;
+    // margin-right: 6px;
     width: $size-headerHeight;
     height: $size-headerHeight;
   }
@@ -167,7 +167,8 @@ a.button {
   .MainLogo-text {
     display: none;
     @media #{$screen-medium} {
-      display: inline;
+      display: inline-block;
+      vertical-align: middle;
     }
   }
 

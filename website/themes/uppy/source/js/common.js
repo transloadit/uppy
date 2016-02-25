@@ -1,17 +1,9 @@
 (function () {
   var each = [].forEach
-
-  var main = document.querySelector('.js-MainContent')
   var doc = document.documentElement
   var body = document.body
-  var header = document.querySelector('.js-MainHeader')
-  var menu = document.querySelector('.js-Sidebar')
-  var content = document.querySelector('.js-Content')
 
   var isIndex = body.classList.contains('page-index')
-
-  var animating = false
-  var allLinks = []
 
   // On index page
   if (isIndex) {
@@ -22,7 +14,95 @@
   }
 
   function InnerPage () {
+    var main = document.querySelector('.js-MainContent')
     var menuButton = document.querySelector('.js-MenuBtn')
+    var header = document.querySelector('.js-MainHeader')
+    var menu = document.querySelector('.js-Sidebar')
+    var content = document.querySelector('.js-Content')
+
+    var animating = false
+    var allLinks = []
+
+    function updateSidebar () {
+      var top = doc && doc.scrollTop || body.scrollTop
+      var headerHeight = header.offsetHeight
+      if (top > headerHeight) {
+        main.classList.add('fix-sidebar')
+      } else {
+        main.classList.remove('fix-sidebar')
+      }
+      if (animating || !allLinks) return
+      var last
+      for (var i = 0; i < allLinks.length; i++) {
+        var link = allLinks[i]
+        if (link.offsetTop > top) {
+          if (!last) last = link
+          break
+        } else {
+          last = link
+        }
+      }
+      if (last) {
+        setActive(last.id)
+      }
+    }
+
+    function makeLink (h) {
+      var link = document.createElement('li')
+      var text = h.textContent.replace(/\(.*\)$/, '')
+      // make sure the ids are link-able...
+      h.id = h.id
+        .replace(/\(.*\)$/, '')
+        .replace(/\$/, '')
+      link.innerHTML =
+        '<a class="section-link" data-scroll href="#' + h.id + '">' +
+          text +
+        '</a>'
+      return link
+    }
+
+    function collectH3s (h) {
+      var h3s = []
+      var next = h.nextSibling
+      while (next && next.tagName !== 'H2') {
+        if (next.tagName === 'H3') {
+          h3s.push(next)
+        }
+        next = next.nextSibling
+      }
+      return h3s
+    }
+
+    function makeSubLinks (h3s, small) {
+      var container = document.createElement('ul')
+      if (small) {
+        container.className = 'menu-sub'
+      }
+      h3s.forEach(function (h) {
+        container.appendChild(makeLink(h))
+      })
+      return container
+    }
+
+    function setActive (id) {
+      var previousActive = menu.querySelector('.section-link.active')
+      var currentActive = typeof id === 'string'
+        ? menu.querySelector('.section-link[href="#' + id + '"]')
+        : id
+      if (currentActive !== previousActive) {
+        if (previousActive) previousActive.classList.remove('active')
+        currentActive.classList.add('active')
+      }
+    }
+
+    function makeLinkClickable (link) {
+      var wrapper = document.createElement('a')
+      wrapper.href = '#' + link.id
+      wrapper.setAttribute('data-scroll', '')
+      link.parentNode.insertBefore(wrapper, link)
+      wrapper.appendChild(link)
+    }
+
     menuButton.addEventListener('click', function () {
       menu.classList.toggle('is-open')
     })
@@ -93,132 +173,55 @@
     window.addEventListener('resize', updateSidebar)
   }
 
-  function updateSidebar () {
-    var top = doc && doc.scrollTop || body.scrollTop
-    var headerHeight = header.offsetHeight
-    if (top > headerHeight) {
-      addClass(main, 'fix-sidebar')
-    } else {
-      removeClass(main, 'fix-sidebar')
-    }
-    if (animating || !allLinks) return
-    var last
-    for (var i = 0; i < allLinks.length; i++) {
-      var link = allLinks[i]
-      if (link.offsetTop > top) {
-        if (!last) last = link
-        break
-      } else {
-        last = link
-      }
-    }
-    if (last) {
-      setActive(last.id)
-    }
-  }
+  // function addClass (el, className) {
+  //   if (el.classList) {
+  //     el.classList.add(className)
+  //   } else {
+  //     el.className += ' ' + className
+  //   }
+  // }
 
-  function makeLink (h) {
-    var link = document.createElement('li')
-    var text = h.textContent.replace(/\(.*\)$/, '')
-    // make sure the ids are link-able...
-    h.id = h.id
-      .replace(/\(.*\)$/, '')
-      .replace(/\$/, '')
-    link.innerHTML =
-      '<a class="section-link" data-scroll href="#' + h.id + '">' +
-        text +
-      '</a>'
-    return link
-  }
-
-  function collectH3s (h) {
-    var h3s = []
-    var next = h.nextSibling
-    while (next && next.tagName !== 'H2') {
-      if (next.tagName === 'H3') {
-        h3s.push(next)
-      }
-      next = next.nextSibling
-    }
-    return h3s
-  }
-
-  function makeSubLinks (h3s, small) {
-    var container = document.createElement('ul')
-    if (small) {
-      container.className = 'menu-sub'
-    }
-    h3s.forEach(function (h) {
-      container.appendChild(makeLink(h))
-    })
-    return container
-  }
-
-  function setActive (id) {
-    var previousActive = menu.querySelector('.section-link.active')
-    var currentActive = typeof id === 'string'
-      ? menu.querySelector('.section-link[href="#' + id + '"]')
-      : id
-    if (currentActive !== previousActive) {
-      if (previousActive) previousActive.classList.remove('active')
-      currentActive.classList.add('active')
-    }
-  }
-
-  function makeLinkClickable (link) {
-    var wrapper = document.createElement('a')
-    wrapper.href = '#' + link.id
-    wrapper.setAttribute('data-scroll', '')
-    link.parentNode.insertBefore(wrapper, link)
-    wrapper.appendChild(link)
-  }
-
-  function addClass (el, className) {
-    if (el.classList) {
-      el.classList.add(className)
-    } else {
-      el.className += ' ' + className
-    }
-  }
-
-  function removeClass (el, className) {
-    if (el.classList) {
-      el.classList.remove(className)
-    } else {
-      el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ')
-    }
-  }
-
-  function qsa (selector, context) {
-    return Array.prototype.slice.call((context || document).querySelectorAll(selector) || [])
-  }
-
-  // Index page taglines
-
-  // Pick random item
-  function pickRandom (items) {
-    return items[Math.floor(Math.random() * items.length)]
-  }
+  // function removeClass (el, className) {
+  //   if (el.classList) {
+  //     el.classList.remove(className)
+  //   } else {
+  //     el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ')
+  //   }
+  // }
 
   function IndexPage () {
-    looptagLines()
-    setInterval(looptagLines, 3800)
-  }
-
-  // Loop and render
-  function looptagLines () {
     var taglinePart = document.querySelector('.js-IndexHero-taglinePart')
-    var taglines = qsa('.js-IndexHero-taglineItem')
+    var taglineList = document.querySelector('.js-IndexHero-taglineList')
+    var taglineCounter = taglineList.children.length
 
-    taglinePart.classList.remove('is-visible')
+    function shuffleTaglines () {
+      for (var i = taglineList.children.length; i >= 0; i--) {
+        taglineList.appendChild(taglineList.children[Math.random() * i | 0])
+      }
+    }
 
-    setTimeout(function () {
-      var randomTagline = pickRandom(taglines)
-      var taglineText = randomTagline.textContent
-      taglinePart.innerHTML = taglineText
+    function loopTaglines () {
+      taglineCounter--
+      if (taglineCounter >= 0) {
+        var taglineText = taglineList.children[taglineCounter].textContent
+        showTagline(taglineText)
+        return
+      }
+      taglineCounter = taglineList.children.length
+      loopTaglines()
+    }
 
-      taglinePart.classList.add('is-visible')
-    }, 800)
+    function showTagline (taglineText) {
+      taglinePart.classList.remove('is-visible')
+      setTimeout(function () {
+        taglinePart.innerHTML = taglineText
+        taglinePart.classList.add('is-visible')
+      }, 800)
+    }
+
+    shuffleTaglines()
+    loopTaglines()
+    setInterval(loopTaglines, 4000)
   }
 
   // Search with SwiftType

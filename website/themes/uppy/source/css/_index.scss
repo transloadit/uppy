@@ -31,19 +31,28 @@
 .IndexHero-logo {
   display: inline-block;
   vertical-align: middle;
-  max-width: 130px;
+  max-width: 80px;
+
+  @media #{$screen-medium} {
+    max-width: 130px;
+  }
 }
 
 .IndexHero-title {
   display: inline-block;
   vertical-align: middle;
-  padding-left: 25px;
+  padding-left: 15px;
   padding-top: 10px;
   font-family: $fontFamily-logo;
   font-weight: 400;
-  font-size: 3.5em;
+  font-size: 2.5em;
   margin: 0;
   margin-bottom: 20px;
+
+  @media #{$screen-medium} {
+    padding-left: 20px;
+    font-size: 3.5em;
+  }
 }
 
 .IndexHero-tagline {
@@ -83,11 +92,15 @@
 }
 
 .IndexSocial li {
-  display: inline-block;
-  margin: 0 0.7em;
-  vertical-align: middle;
+  margin: 0.7em 0;
 
-  &.last { margin-left: -2px; }
+  @media #{$screen-medium} {
+    display: inline-block;
+    margin: 0 0.7em;
+    vertical-align: middle;
+
+    &.last { margin-left: -2px; }
+  }
 }
 
 .IndexAbout {
