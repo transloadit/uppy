@@ -14,8 +14,8 @@ logo_medium: /images/uppy.svg
 logo_icon: /images/uppy.png
 description: >
   Uppy is (going to be) a JavaScript file uploader that fetches files from Dropbox, Instagram, local disk, remote URLs, and other exciting locations.
-  It has a plugin-based architecture, first-class support for resumable uploads via <a href="http://tus.io">tus.io</a>
-  and custom encoding backends, making it very extensible and robust. Uppy is in the early stages of development
+  It has a plugin-based architecture, first-class support for resumable uploads according to the open standard: <a href="http://tus.io">tus</a>,
+  and custom encoding backends, making it extensible and robust. Uppy is in the early stages of development
   and should not be used for anything serious yet.
 descriptionWho: >
   Uppy is brought to you by the people
