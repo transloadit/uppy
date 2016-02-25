@@ -45,12 +45,15 @@ export default class Modal extends Plugin {
 
         modalTabs.appendChild(modalTab)
         modalTab.outerHTML = `
-          <li>
-            <button class="UppyModalTabs-tab"
+          <li class="UppyModalTab">
+            <button class="UppyModalTab-btn"
                role="tab"
                aria-controls="${callerPluginName}"
                href="#${callerPluginName}">
-              ${callerPluginName}
+               <svg class="UppyModalTab-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414">
+                 <path d="M2.955 14.93l2.667-4.62H16l-2.667 4.62H2.955zm2.378-4.62l-2.666 4.62L0 10.31l5.19-8.99 2.666 4.62-2.523 4.37zm10.523-.25h-5.333l-5.19-8.99h5.334l5.19 8.99z"></path>
+               </svg>
+              <span class="UppyModalTab-name">${callerPluginName}</span>
             </button>
           </li>
         `
@@ -78,23 +81,10 @@ export default class Modal extends Plugin {
 
           <button class="UppyModal-close" title="Close uploader modal" data-modal-hide>×</button>
 
-          <ul class="UppyModalTabs" role="tablist">
-            <li><button class="UppyModalTabs-tab" role="tab" aria-controls="dragdrop" href="#dragdrop">Dizzy</button></li>
-            <li><button class="UppyModalTabs-tab" role="tab" aria-controls="dropbox" href="#dropbox">Ninja</button></li>
-            <li><button class="UppyModalTabs-tab" role="tab" aria-controls="instagram" href="#instagram">Missy</button></li>
-          </ul>
+          <ul class="UppyModalTabs" role="tablist"></ul>
 
-          <div class="UppyModalСontent">
-            <div class="UppyModalContent-panel" role="tabpanel" id="dragdrop">
-              123
-            </div>
-            <div class="UppyModalContent-panel" role="tabpanel" id="dropbox">
-              456
-            </div>
-            <div class="UppyModalContent-panel" role="tabpanel" id="instagram">
-              789
-            </div>
-          </div>
+          <div class="UppyModalСontent"></div>
+
           <div class="UppyModal-progressContainer">
             progress here
           </div>
@@ -115,7 +105,7 @@ export default class Modal extends Plugin {
   }
 
   initEvents () {
-    const tabs = Utils.qsa('.UppyModalTabs-tab')
+    const tabs = Utils.qsa('.UppyModalTab-btn')
     this.tabPanels = []
     tabs.forEach(tab => {
       const tabId = tab.getAttribute('href')

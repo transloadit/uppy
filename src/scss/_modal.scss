@@ -71,9 +71,45 @@ body {
   transition: 300ms width;
   white-space: nowrap;
   width: 55px;
+
+  &:hover {
+    transition: width 300ms ease-out;
+    width: 200px;
+  }
+
+  &:hover .UppyModalTab-name {
+    display: inline;
+    opacity: 1;
+    transition: opacity 300ms 40ms;
+  }
 }
 
-.UppyModalTabs-tab {
+.UppyModalTab {
+
+}
+
+.UppyModalHeader {
+  background-color: #fff;
+  padding: 11px 0;
+  width: 100%;
+}
+
+.UppyModalTab-name {
+  color: #eee;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 400ms 40ms;
+  vertical-align: middle;
+}
+
+.UppyModalTab-btn {
+  width: 100%;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+  text-align: left;
   margin-bottom: 8px;
   padding: 12px;
 
@@ -82,70 +118,32 @@ body {
   }
 }
 
-// .UppyModalDialog {
-//   width: 100%;
-// }
-
-.UppyModalHeader {
-  background-color: #fff;
-  padding: 11px 0;
-  width: 100%;
-}
-
-.UppyModalTabs span {
-  color: #eee;
-  font-size: 14px;
-  opacity: 0;
-  transition: opacity 400ms 40ms;
-  vertical-align: middle;
-}
-
-.UppyModalTabs:hover span {
-  display: inline;
-  opacity: 1;
-  transition: opacity 300ms 40ms;
-}
-
-.UppyModalTabs:hover {
-  transition: width 300ms ease-out;
-  width: 200px;
-}
-
-.UppyModalTabs-tab {
-  background-color: transparent;
-  border: 0;
-  cursor: pointer;
-  outline: none;
-  padding: 0;
-  text-align: center;
-}
-
-.UppyModalTabs-tab svg {
+.UppyModalTab-icon {
   fill: #eee;
   margin-right: 8px;
   width: 28px;
   vertical-align: middle;
 }
 
-.tab span {
+.UppyModalTab-name {
   display: inline-block;
 }
 
-.UppyModalHeader-logo svg {
-  fill: #eee;
-  width: 20px;
-}
+// .UppyModalHeader-logo svg {
+//   fill: #eee;
+//   width: 20px;
+// }
 
-.UppyModalHeader-logo {
-  background-color: #78bdf2;
-  padding: 10px 17px 6px 17px;
-}
+// .UppyModalHeader-logo {
+//   background-color: #78bdf2;
+//   padding: 10px 17px 6px 17px;
+// }
 
-.UppyModalHeader-title {
-  font-size: 14px;
-  text-align: center;
-  vertical-align: middle;
-}
+// .UppyModalHeader-title {
+//   font-size: 14px;
+//   text-align: center;
+//   vertical-align: middle;
+// }
 
 .UppySidebarTab--instagram svg {
   width: 26px;
