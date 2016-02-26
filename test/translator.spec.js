@@ -1,7 +1,7 @@
 var test = require('tape')
 var Core = require('../src/core/index.js')
 
-test('russian translation', function (t) {
+test('translation', function (t) {
   const russian = require('../src/locale/ru.js')
   const core = new Core({locale: russian})
 

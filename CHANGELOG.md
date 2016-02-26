@@ -32,6 +32,7 @@ Ideas that will be planned into a release at one point
 - [ ] test: checkout http://www.webpagetest.org, use it sometimes to test our website & Uppy?
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
+- [ ] core: Make sure Uppy works well in VR
 
 - [ ] core: Rename “selecter” to “getter” or “acquire”
 - [ ] modal: State: which tab is open? get parameters?
@@ -51,8 +52,9 @@ look at https://github.com/akiran/react-slick
 ## 0.0.3 (March 01, 2016)
 
 - [ ] modal: Make sure modal renders under one dom node (@arturi)
-- [ ] modal: Make Modal prettier and accessible using Artur's research (@arturi)
-- [ ] modal: Make the Modal look like Harry's sketchup  (@hedgerh)
+- [x] modal: Make Modal prettier and accessible using Artur's research (@arturi)
+- [x] modal: Make the Modal look like Harry's sketchup (@hedgerh)
+- [x] modal: use classes instead of IDs and buttons instead of links (@arturi)
 - [x] modal: Improve Modal API (@arturi, @kvz)
 - [x] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
 - [x] modal: Make `ProgressBar` work with the new Modal (@kvz, @arturi)
