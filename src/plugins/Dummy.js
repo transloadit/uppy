@@ -8,6 +8,7 @@ export default class Dummy extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'selecter'
+    this.name = 'Dummy'
 
     // set default options
     const defaultOptions = {}
@@ -25,9 +26,6 @@ export default class Dummy extends Plugin {
   }
 
   install () {
-    // this.core.log('the spinner target is... ' +
-    //   this.getTarget(this.opts.target).spinner
-    // )
     const caller = this
     this.target = this.getTarget(this.opts.target, caller)
     this.targetEl = document.querySelector(this.target)

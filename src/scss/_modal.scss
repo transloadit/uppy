@@ -1,11 +1,7 @@
-body {
-  margin: 0;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  font-weight: 300;
-}
-
-* {
+.UppyModal * {
   box-sizing: border-box;
+  // margin: 0;
+  // padding: 0;
 }
 
 .UppyModal {
@@ -20,7 +16,15 @@ body {
   top: 0;
   left: 0;
   z-index: 1000;
+  font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+  font-weight: 300;
 }
+
+.UppyModal[aria-hidden] {
+  display: none;
+}
+
+.UppyModal-overlay {}
 
 .UppyModal-inner {
   background-color: #EBEBEB;
@@ -28,10 +32,22 @@ body {
   flex-direction: row;
   height: 80vh;
   width: 75%;
+  position: relative;
 }
 
 .UppyModal-close {
-  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background-color: transparent;
+  outline: none;
+  -webkit-appearance: none;
+  font-size: 30px;
+  line-height: 15px;
+  color: #525252;
 }
 
 .UppyModalContent {
@@ -47,18 +63,18 @@ body {
   display: none;
 }
 
-.UppyModalContent p,
-.UppyModalContent svg {
-  display: block;
-  margin: 0 auto;
-  text-align: center;
-}
+// .UppyModalContent p,
+// .UppyModalContent svg {
+//   display: block;
+//   margin: 0 auto;
+//   text-align: center;
+// }
 
-.UppyModalContent svg {
-  width: 200px;
-  height: 200px;
-  fill: rgba(120,110,60,0.055);
-}
+// .UppyModalContent svg {
+//   width: 200px;
+//   height: 200px;
+//   fill: rgba(120,110,60,0.055);
+// }
 
 .UppyModalTabs {
   list-style-type: none;
@@ -84,34 +100,25 @@ body {
   }
 }
 
-.UppyModalTab {
-
-}
-
-.UppyModalHeader {
-  background-color: #fff;
-  padding: 11px 0;
-  width: 100%;
-}
-
 .UppyModalTab-name {
+  display: inline-block;
+  vertical-align: middle;
   color: #eee;
   font-size: 14px;
   opacity: 0;
   transition: opacity 400ms 40ms;
-  vertical-align: middle;
 }
 
 .UppyModalTab-btn {
   width: 100%;
-  background-color: transparent;
-  border: 0;
-  cursor: pointer;
-  outline: none;
-  padding: 0;
   text-align: left;
   margin-bottom: 8px;
   padding: 12px;
+  cursor: pointer;
+  border: 0;
+  background-color: transparent;
+  outline: none;
+  -webkit-appearance: none;
 
   &:hover {
     background-color: #78bdf2;
@@ -122,12 +129,15 @@ body {
   fill: #eee;
   margin-right: 8px;
   width: 28px;
+  height: 28px;
   vertical-align: middle;
 }
 
-.UppyModalTab-name {
-  display: inline-block;
-}
+// .UppyModalHeader {
+//   background-color: #fff;
+//   padding: 11px 0;
+//   width: 100%;
+// }
 
 // .UppyModalHeader-logo svg {
 //   fill: #eee;

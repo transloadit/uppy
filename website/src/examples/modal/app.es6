@@ -8,7 +8,7 @@ import Tus10 from '../../../../src/plugins/Tus10.js'
 
 const uppy = new Uppy({debug: true})
 uppy
-  .use(Modal)
+  .use(Modal, {trigger: '#uppyModalOpener'})
   .use(Dummy, {target: Modal})
   .use(ProgressBar, {target: Modal})
   .use(DragDrop, {target: Modal})
