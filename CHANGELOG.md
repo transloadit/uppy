@@ -16,7 +16,7 @@ first Tuesday of every new month.
 
 ## Backlog
 
-Ideas that will be planned into a release at one point
+Ideas that will be planned and find their way into a release at one point
 
 - [ ] build: go through it together again, remove unnecessary commands, simplify (related to “clean up package.json”). Discuss how contributors might use it, add to contributing and/or readme (https://github.com/sapegin/social-likes/blob/next/Contributing.md#building-and-running-tests) (@arturi, @hedgerh, @kvz)
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199
@@ -28,13 +28,10 @@ Ideas that will be planned into a release at one point
 - [ ] instagram: Add basic Instagram plugin example (#21)
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
-- [ ] test: Write an acceptance test for the Multipart example via Saucelabs (#2, #23, @hedgerh)
 - [ ] test: checkout http://www.webpagetest.org, use it sometimes to test our website & Uppy?
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
 - [ ] core: Make sure Uppy works well in VR
-
-- [ ] core: Rename “selecter” to “getter” or “acquire”
 - [ ] modal: State: which tab is open? get parameters?
 - [ ] modal: Avoid duplicating event listeners
 
@@ -44,36 +41,34 @@ Ideas that will be planned into a release at one point
 
 ## 0.0.4 (April 05, 2016)
 
-- [ ] core: Try to make Uppy work with React (basic example) to remain aware of possible issues (@hedgerh),
+- [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh),
 look at https://github.com/akiran/react-slick
 - [ ] meta: Create an Uppy logo (@vvolfy)
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
+- [ ] core: Rename `selecter` to `getter` or `acquire` (@kvz)
 
 ## 0.0.3 (March 01, 2016)
 
-- [ ] modal: Make sure modal renders under one dom node (@arturi)
-- [x] modal: Make Modal prettier and accessible using Artur's research (@arturi)
-- [x] modal: Make the Modal look like Harry's sketchup (@hedgerh)
-- [x] modal: use classes instead of IDs and buttons instead of links (@arturi)
-- [x] modal: Improve Modal API (@arturi, @kvz)
-- [x] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
-- [x] modal: Make `ProgressBar` work with the new Modal (@kvz, @arturi)
-- [x] google: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
-- [x] core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior (@kvz)
-- [x] modal: Rename FakeModal to Modal, deprecating our old one (@kvz)
-
---
-
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
-- [ ] google: Add basic Google Drive plugin example (can just use `target: "<string>"` so long as modal is in the works by @arturi) (@hedgerh)
+- [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] meta: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
-- [ ] test: Fix and enable phantom acceptance test. Write one actual test. Enable it in `npm run test` so it's ran on Travis automatically (@hedgerh)
+- [ ] modal: Make sure modal renders under one dom node (@arturi)
+- [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
 - [ ] website: Polish taglines (@arturi)
-- [x] modal: Add barely working Modal plugin that can be used as a target (#53, #50, @arturi)
 - [x] core: Allow users to set DOM elements or other plugins as targets (@arturi)
 - [x] core: Create a progressbar/spinner/etc plugin (#18, @arturi)
 - [x] core: Decide on how we ship default styles: separate css file, inline (@kvz, @hedgerh, @arturi, @tim-kos)
 - [x] core: Decide on single-noun terminology (npm, umd, dist, package, cdn, module -> bundler -> bundle), and call it that through-out (@kvz)
+- [x] core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior (@kvz)
+- [x] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
+- [x] google: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
+- [x] modal: Add barely working Modal plugin that can be used as a target (#53, #50, @arturi)
+- [x] modal: Improve Modal API (@arturi, @kvz)
+- [x] modal: Make `ProgressBar` work with the new Modal (@kvz, @arturi)
+- [x] modal: Make Modal prettier and accessible using Artur's research (@arturi)
+- [x] modal: Make the Modal look like Harry's sketchup (@arturi)
+- [x] modal: Rename FakeModal to Modal, deprecating our old one (@kvz)
+- [x] modal: use classes instead of IDs and buttons instead of links (@arturi)
 - [x] server: `package.json` (@hedgerh)
 - [x] test: Fix and enable commented out `use plugins` & other core unit test (@arturi)
 
