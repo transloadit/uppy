@@ -1,7 +1,5 @@
 .UppyProgressBar {
-  background-color: lighten($color-pink, 30%);
-  // width: 80%;
-  height: 5px;
+  height: 20px;
   margin: 0 auto;
 }
 
@@ -13,4 +11,13 @@
 
 .UppyProgressBar-percentage {
   text-align: center;
+  position: relative;
+  bottom: 20px;
+  font-size: 12px;
+  line-height: 20px;
+  color: $color-white;
+
+  &:after {
+    content: ' %';
+  }
 }
