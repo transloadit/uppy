@@ -1,21 +1,8 @@
-ui: jasmine2
-scripts:
-    - "dist/tus.js"
-    - "test/spec/fakeBlob.js"
+ui: tape
 browsers:
-    - name: internet explorer
-      version: 9..latest
-    - name: firefox
-      platform: linux
-      version: 31..latest
-    - name: chrome
-      platform: linux
-      version: 31..latest
-    - name: safari
-      version: 5..latest
-    - name: opera
-      version: 11..latest
-    - name: android
-      version: 4.0..latest
-    - name: iphone
-      version: 5.1..8.4
+  - name: chrome
+    version: 27..latest
+  - name: ie
+    version: latest
+  - name: iphone
+    version: 6.1
