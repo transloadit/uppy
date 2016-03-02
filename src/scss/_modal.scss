@@ -1,38 +1,35 @@
 .UppyModal * {
   box-sizing: border-box;
-  // margin: 0;
-  // padding: 0;
 }
 
 .UppyModal {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  width: 100%;
-  height: 100vh;
-  background-color: rgba(48,48,48,0.7);
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
-  font-weight: 300;
+  z-index: $zIndex-2;
 }
 
 .UppyModal[aria-hidden] {
   display: none;
 }
 
-.UppyModal-overlay {}
+.UppyModal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($color-black, 0.5);
+  z-index: $zIndex-2;
+}
 
 .UppyModal-inner {
+  @include clearfix;
   background-color: #EBEBEB;
-  display: flex;
-  flex-direction: row;
   height: 80vh;
   width: 75%;
-  position: relative;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: $zIndex-3;
 }
 
 .UppyModal-close {
@@ -47,147 +44,107 @@
   -webkit-appearance: none;
   font-size: 30px;
   line-height: 15px;
-  color: #525252;
+  color: $color-asphalt-gray;
+  z-index: $zIndex-3;
 }
 
-.UppyModalContent {
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 80vh;
-  justify-content: center;
-}
-
-.UppyModalContent-panel {
-  display: none;
-}
-
-// .UppyModalContent p,
-// .UppyModalContent svg {
-//   display: block;
-//   margin: 0 auto;
-//   text-align: center;
-// }
-
-// .UppyModalContent svg {
-//   width: 200px;
-//   height: 200px;
-//   fill: rgba(120,110,60,0.055);
-// }
+// Tab bar
 
 .UppyModalTabs {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  background-color: #525252;
-  display: inline-block;
-  height: 80vh;
-  overflow: hidden;
-  transition: 300ms width;
+  background-color: $color-asphalt-gray;
   white-space: nowrap;
   width: 55px;
-
-  &:hover {
-    transition: width 300ms ease-out;
-    width: 200px;
-  }
-
-  &:hover .UppyModalTab-name {
-    display: inline;
-    opacity: 1;
-    transition: opacity 300ms 40ms;
-  }
+  height: 100%;
+  float: left;
 }
 
 .UppyModalTab-name {
-  display: inline-block;
-  vertical-align: middle;
-  color: #eee;
-  font-size: 14px;
+  color: $color-white;
+  font-size: 12px;
   opacity: 0;
-  transition: opacity 400ms 40ms;
+  background-color: darken($color-cornflower-blue, 20%);
+  border-radius: 10px;
+  padding: 4px 10px;
+  position: relative;
+  left: 8px;
+  z-index: $zIndex-3;
+  transition: all 0.3s;
 }
 
 .UppyModalTab-btn {
   width: 100%;
   text-align: left;
-  margin-bottom: 8px;
   padding: 12px;
   cursor: pointer;
   border: 0;
   background-color: transparent;
   outline: none;
   -webkit-appearance: none;
+  overflow: hidden;
+  transition: all 0.3s;
+
+  &.is-selected {
+    background-color: $color-cornflower-blue;
+  }
 
   &:hover {
-    background-color: #78bdf2;
+    background-color: $color-cornflower-blue;
+    overflow: visible;
+  }
+
+  &:hover .UppyModalTab-name {
+    opacity: 1;
   }
 }
 
 .UppyModalTab-icon {
-  fill: #eee;
+  fill: $color-white;
   margin-right: 8px;
   width: 28px;
   height: 28px;
   vertical-align: middle;
 }
 
-// .UppyModalHeader {
-//   background-color: #fff;
-//   padding: 11px 0;
-//   width: 100%;
+// Modal content
+
+.UppyModalContent {
+  height: 100%;
+  margin-left: 55px;
+  padding: 35px;
+  position: relative;
+}
+
+.UppyModalContent-panel {
+  display: none;
+}
+
+// Progress bar placeholder
+
+.UppyModal-progressContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+// .loader-block {
+//   background-color: rgba(102,102,102,1);
+//   display: inline-block;
+//   height: 10px;
+//   margin-right: 2px;
+//   opacity: 0;
+//   width: 10px;
+//   animation: 2.5s fadeIn ease-in-out infinite;
 // }
-
-// .UppyModalHeader-logo svg {
-//   fill: #eee;
-//   width: 20px;
+//
+// .loader-block:nth-child(2) {
+//   -webkit-animation-delay: 500ms;
+//   animation-delay: 500ms;
 // }
-
-// .UppyModalHeader-logo {
-//   background-color: #78bdf2;
-//   padding: 10px 17px 6px 17px;
+// .loader-block:nth-child(3) {
+//   -webkit-animation-delay: 1s;
+//   animation-delay: 1s;
 // }
-
-// .UppyModalHeader-title {
-//   font-size: 14px;
-//   text-align: center;
-//   vertical-align: middle;
-// }
-
-.UppySidebarTab--instagram svg {
-  width: 26px;
-}
-
-.loader-block {
-  background-color: rgba(102,102,102,1);
-  display: inline-block;
-  height: 10px;
-  margin-right: 2px;
-  opacity: 0;
-  width: 10px;
-  animation: 2.5s fadeIn ease-in-out infinite;
-}
-
-.loader-block:nth-child(2) {
-  -webkit-animation-delay: 500ms;
-  animation-delay: 500ms;
-}
-.loader-block:nth-child(3) {
-  -webkit-animation-delay: 1s;
-  animation-delay: 1s;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-
-  25% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}

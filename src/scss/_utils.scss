@@ -1,0 +1,29 @@
+// Utility Mixins
+
+@mixin clearfix() {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin zoom() {
+  transform: scale(1.05);
+}
+
+// Animations
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
