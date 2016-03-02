@@ -100,11 +100,14 @@
   }
 }
 
+// On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
 .UppyModalTab-icon {
   fill: $color-white;
   margin-right: 8px;
-  width: 28px;
-  height: 28px;
+  // width: 28px;
+  // height: 28px;
+  width: 100%;
+  height: 100%;
   vertical-align: middle;
 }
 
