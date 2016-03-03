@@ -39,6 +39,8 @@ export default class Modal extends Plugin {
     switch (callerPlugin.type) {
       case 'progress':
         return '.UppyModal-progressContainer'
+      case 'presenter':
+        return '.UppyModal-presenterContainer'
       case 'selecter':
 
         // add tab panel, where plugin will render
@@ -95,6 +97,7 @@ export default class Modal extends Plugin {
           <ul class="UppyModalTabs" role="tablist"></ul>
           <div class="UppyModalContent">
             <div class="UppyModal-progressContainer">progress here</div>
+            <div class="UppyModal-presenterContainer"></div>
           </div>
         </div>
       </div>
