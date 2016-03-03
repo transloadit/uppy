@@ -45,11 +45,11 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] meta: Create an Uppy logo (@vvolfy)
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] core: Rename `selecter` to `getter` or `acquire` (@kvz)
-- [ ] website: scrollbars on code samples
+- [ ] website: scrollbars on code samples (@arturi)
 - [ ] modal: polish on mobile
-- [ ] dragdrop: (error) handling when you press Upload with no files
-- [ ] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal.
-- [ ] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage
+- [ ] dragdrop: (error) handling when you press Upload with no files (@arturi)
+- [ ] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
+- [ ] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] meta: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
