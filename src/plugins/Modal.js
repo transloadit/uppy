@@ -81,6 +81,10 @@ export default class Modal extends Plugin {
     }
   }
 
+  allDone () {
+    this.hideAllTabPanels()
+  }
+
   render () {
     // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
@@ -118,6 +122,7 @@ export default class Modal extends Plugin {
     this.tabPanels.forEach(tabPanel => {
       tabPanel.style.display = 'none'
     })
+    this.tabs.forEach(tab => tab.classList.remove('is-selected'))
   }
 
   showTabPanel (id) {
@@ -126,20 +131,20 @@ export default class Modal extends Plugin {
   }
 
   initEvents () {
-    const tabs = Utils.qsa('.UppyModalTab-btn')
+    this.tabs = Utils.qsa('.UppyModalTab-btn')
     this.tabPanels = []
-    tabs.forEach(tab => {
+    this.tabs.forEach(tab => {
       const tabId = tab.getAttribute('data-open')
       const tabPanel = document.querySelector(`.${tabId}`)
       this.tabPanels.push(tabPanel)
 
       tab.addEventListener('click', event => {
         event.preventDefault()
-        tabs.forEach(tab => tab.classList.remove('is-selected'))
-        console.log(tabId)
+        // tabs.forEach(tab => tab.classList.remove('is-selected'))
+        this.hideAllTabPanels()
+        this.core.log(tabId)
         tab.classList.add('is-selected')
         // this.core.getPlugin(tabId.substr(1)).focus()
-        this.hideAllTabPanels()
         this.showTabPanel(tabId)
       })
     })
@@ -148,6 +153,10 @@ export default class Modal extends Plugin {
   }
 
   install () {
+    // Listen for allDone event to close all tabs
+    this.core.emitter.on('allDone', () => this.hideAllTabPanels())
+
+    // Close the Modal on esc key press
     document.body.addEventListener('keyup', event => {
       if (event.keyCode === 27) {
         this.hideModal()

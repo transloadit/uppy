@@ -24,6 +24,9 @@ export default class Present extends Plugin {
   }
 
   run () {
+    // Emit allDone event so that, for example, Modal can hide all tabs
+    this.core.emitter.emit('allDone')
+
     const presenter = document.querySelector('.UppyPresenter')
     presenter.innerHTML = `<p>Files have been uploaded, would you like to close the Modal
       or upload something else?</p>`
