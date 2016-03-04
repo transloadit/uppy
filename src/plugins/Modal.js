@@ -20,6 +20,8 @@ export default class Modal extends Plugin {
       panelSelectorPrefix: 'UppyModalContent-panel'
     }
 
+    this.tabPanels = []
+
     this.isModalVisible = false
 
     // merge default options with the ones set by user
@@ -38,9 +40,9 @@ export default class Modal extends Plugin {
 
     switch (callerPlugin.type) {
       case 'progress':
-        return '.UppyModal-progressContainer'
+        return '.UppyModal-progressBarContainer'
       case 'presenter':
-        return '.UppyModal-presenterContainer'
+        return '.UppyModal-presenter'
       case 'selecter':
 
         // add tab panel, where plugin will render
@@ -96,12 +98,15 @@ export default class Modal extends Plugin {
            role="dialog">
         <div class="UppyModal-overlay js-UppyModal-close" tabindex="-1"></div>
         <div class="UppyModal-inner">
-          <button class="UppyModal-close js-UppyModal-close" title="Close uploader modal" data-modal-hide>×</button>
+          <button class="UppyModal-close js-UppyModal-close" title="Close Uppy modal">×</button>
 
           <ul class="UppyModalTabs" role="tablist"></ul>
           <div class="UppyModalContent">
-            <div class="UppyModal-progressContainer">progress here</div>
-            <div class="UppyModal-presenterContainer"></div>
+            <div class="UppyModal-presenter"></div>
+            <div class="UppyModal-progress">
+              <button class="UppyModal-next">Upload</button>
+              <div class="UppyModal-progressBarContainer"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -132,7 +137,6 @@ export default class Modal extends Plugin {
 
   initEvents () {
     this.tabs = Utils.qsa('.UppyModalTab-btn')
-    this.tabPanels = []
     this.tabs.forEach(tab => {
       const tabId = tab.getAttribute('data-open')
       const tabPanel = document.querySelector(`.${tabId}`)

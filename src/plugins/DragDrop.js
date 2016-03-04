@@ -36,10 +36,10 @@ export default class DragDrop extends Plugin {
   }
 
   render () {
-    return `<form class="UppyDragDrop-inner"
-        method="post"
-        action="${this.opts.endpoint}"
-        enctype="multipart/form-data">
+    return `
+    <form class="UppyDragDrop-inner"
+          method="post"
+          enctype="multipart/form-data">
       <input class="UppyDragDrop-input"
              id="UppyDragDrop-input"
              type="file"
@@ -49,10 +49,10 @@ export default class DragDrop extends Plugin {
         <strong>${this.core.i18n('chooseFile')}</strong>
         <span class="UppyDragDrop-dragText">${this.core.i18n('orDragDrop')}</span>.
       </label>
-    ${!this.core.opts.autoProceed
-      ? `<button class="UppyDragDrop-uploadBtn" type="submit">${this.core.i18n('upload')}</button>`
-      : ''}
-  </form>`
+      ${!this.core.opts.autoProceed
+        ? `<button class="UppyDragDrop-uploadBtn" type="submit">${this.core.i18n('upload')}</button>`
+        : ''}
+    </form>`
   }
 
 /**
@@ -138,12 +138,12 @@ export default class DragDrop extends Plugin {
       // otherwise just pass files to uploaders right away
       if (this.core.opts.autoProceed) {
         return resolve(result)
-      } else {
-        this.dropzone.addEventListener('submit', (e) => {
-          e.preventDefault()
-          return resolve(result)
-        })
       }
+
+      this.dropzone.addEventListener('submit', (e) => {
+        e.preventDefault()
+        return resolve(result)
+      })
     })
   }
 

@@ -17,7 +17,8 @@ export default class ProgressBar extends Plugin {
   }
 
   setProgress (percentage) {
-    this.progressBarPercentageEl.innerHTML = percentage
+    this.progressBarContainerEl.classList.add('is-active')
+    this.progressBarPercentageEl.innerHTML = `${percentage}%`
     this.progressBarInnerEl.setAttribute('style', `width: ${percentage}%`)
   }
 
@@ -25,8 +26,8 @@ export default class ProgressBar extends Plugin {
     const caller = this
     this.target = this.getTarget(this.opts.target, caller)
 
-    const progressBarContainerEl = document.querySelector(this.target)
-    progressBarContainerEl.innerHTML = `<div class="UppyProgressBar">
+    this.progressBarContainerEl = document.querySelector(this.target)
+    this.progressBarContainerEl.innerHTML = `<div class="UppyProgressBar">
       <div class="UppyProgressBar-inner"></div>
       <div class="UppyProgressBar-percentage"></div>
     </div>`
