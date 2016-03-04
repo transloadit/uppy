@@ -57,7 +57,7 @@ export default class Tus10 extends Plugin {
       }
     })
     // Start the upload
-    upload.start()
+    return upload.start()
   }
 
 /**

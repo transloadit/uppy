@@ -133,6 +133,9 @@ export default class Modal extends Plugin {
   showTabPanel (id) {
     const tabPanel = document.querySelector(`.${id}`)
     tabPanel.style.display = 'block'
+
+    // Remove `next` buttons provided by plugins, since Modal has it’s own
+    // document.querySelector('.UppyNextBtn').remove()
   }
 
   initEvents () {
@@ -178,6 +181,11 @@ export default class Modal extends Plugin {
 
     hideModalTrigger.forEach(trigger => trigger.addEventListener('click', this.hideModal))
     showModalTrigger.addEventListener('click', this.showModal)
+
+    // When `next` (upload) button is clicked, emit `next` event,
+    // so that plugins can proceed to the next stage
+    const nextButton = document.querySelector('.UppyModal-next')
+    nextButton.addEventListener('click', () => this.core.emitter.emit('next'))
 
     this.initEvents()
   }

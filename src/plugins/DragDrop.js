@@ -36,6 +36,8 @@ export default class DragDrop extends Plugin {
   }
 
   render () {
+    // Another way not to render next/upload button — if Modal is used as a target
+    const target = this.opts.target.name
     return `
     <form class="UppyDragDrop-inner"
           method="post"
@@ -49,8 +51,8 @@ export default class DragDrop extends Plugin {
         <strong>${this.core.i18n('chooseFile')}</strong>
         <span class="UppyDragDrop-dragText">${this.core.i18n('orDragDrop')}</span>.
       </label>
-      ${!this.core.opts.autoProceed
-        ? `<button class="UppyDragDrop-uploadBtn" type="submit">${this.core.i18n('upload')}</button>`
+      ${!this.core.opts.autoProceed && target !== 'Modal'
+        ? `<button class="UppyDragDrop-uploadBtn UppyNextBtn" type="submit">${this.core.i18n('upload')}</button>`
         : ''}
     </form>`
   }
@@ -139,6 +141,10 @@ export default class DragDrop extends Plugin {
       if (this.core.opts.autoProceed) {
         return resolve(result)
       }
+
+      this.core.emitter.on('next', () => {
+        return resolve(result)
+      })
 
       this.dropzone.addEventListener('submit', (e) => {
         e.preventDefault()

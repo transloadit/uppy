@@ -122,6 +122,7 @@
 
 .UppyModalContent-panel {
   display: none;
+  height: 88%;
 }
 
 // Progress bar placeholder
@@ -131,12 +132,16 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 30px;
+  height: 12%;
 }
 
 .UppyModal-progressBarContainer.is-active {
   z-index: $zIndex-4;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .UppyModal-next {
@@ -158,6 +163,7 @@
   line-height: 1;
   padding: 0;
   margin: 0;
+  outline: none;
 
   &:hover {
     background-color: darken($color-cornflower-blue, 20%);
