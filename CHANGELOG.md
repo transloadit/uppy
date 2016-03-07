@@ -46,12 +46,12 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] meta: Create an Uppy logo (@vvolfy)
-- [ ] meta: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
 - [ ] modal: polish on mobile
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
 - [ ] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
 - [ ] tus: Resolve promise when all uploads are done or failed, not earlier (currently you get to see '1 file uploaded' and can close the modal while the upload is in progress) (@arturi)
+- [ ] website: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
 - [ ] website: Polish taglines (@arturi)
 - [ ] website: scrollbars on code samples (@arturi)
 - [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
