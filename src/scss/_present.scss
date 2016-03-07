@@ -11,6 +11,12 @@
   line-height: 1;
   background-color: $color-pink;
   color: $color-white;
-  padding: 8px 20px;
+  padding: 10px 25px;
   cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover,
+  &:focus {
+    @include zoom();
+  }
 }

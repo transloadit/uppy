@@ -26,7 +26,7 @@ export default class Tus10 extends Plugin {
  * @returns {Promise}
  */
   upload (file, current, total) {
-    console.log(`uploading ${current} of ${total}`)
+    this.core.log(`uploading ${current} of ${total}`)
 
     // Dispatch progress 0 on start
     this.core.emitter.emit('progress', {
@@ -52,7 +52,7 @@ export default class Tus10 extends Plugin {
         })
       },
       onSuccess: () => {
-        console.log(`Download ${upload.file.name} from ${upload.url}`)
+        this.core.log(`Download ${upload.file.name} from ${upload.url}`)
         return Promise.resolve(upload)
       }
     })
@@ -67,7 +67,7 @@ export default class Tus10 extends Plugin {
  * @returns {Promise} of parallel uploads `Promise.all(uploaders)`
  */
   run (results) {
-    console.log({
+    this.core.log({
       class: this.constructor.name,
       method: 'run',
       results: results
