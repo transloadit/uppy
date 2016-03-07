@@ -29,6 +29,7 @@
     "watch:js": "nodemon --watch src --ext js -x 'npm run build:bundle && node website/update.js'",
     "watch:css": "nodemon --watch src --ext scss -x 'npm run build:css && node website/update.js'",
     "web": "npm run web:install && npm run web:clean && npm run web:build",
+    "web:kill": "killall -9 node; lsof -n -i4TCP:4000 | awk '/LISTEN/ {print $2}' |xargs kill -9",
     "web:preview": "cd website && parallelshell 'node build-examples.js watch' './node_modules/.bin/hexo server'",
     "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate --silent && node build-examples.js",
     "web:clean": "cd website && ./node_modules/.bin/hexo clean",
