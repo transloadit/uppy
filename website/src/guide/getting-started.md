@@ -9,7 +9,7 @@ permalink: guide/
 
 ## NPM
 
-NPM is the recommended installation method when building large scale apps with Uppy. It pairs nicely with a CommonJS module bundler such as [Webpack](http://webpack.github.io/) or [Browserify](http://browserify.org/).
+NPM is the recommended installation method when building large scale apps with Uppy. It pairs nicely with a CommonJS module bundler such as [webpack](http://webpack.github.io/),  [Browserify](http://browserify.org/) or [rollup.js](http://rollupjs.org/).
 
 ``` bash
 # latest stable
