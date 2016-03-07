@@ -2844,7 +2844,7 @@ var _Plugin = require('./Plugin');
 
 var _Plugin2 = _interopRequireDefault(_Plugin);
 
-// Selecters
+// Acquires
 
 var _DragDrop = require('./DragDrop');
 

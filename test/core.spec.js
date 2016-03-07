@@ -10,42 +10,42 @@ test('core', function (t) {
 })
 
 test('use plugins', function (t) {
-  const SelecterPlugin = require('./mocks/plugin-acquire1.js')
+  const AcquirePlugin = require('./mocks/plugin-acquire1.js')
   const uppy = new Uppy()
   uppy
-    .use(SelecterPlugin)
+    .use(AcquirePlugin)
 
   t.equal(Object.keys(uppy.plugins).length, 1, 'should add a plugin to the plugins stack')
   t.end()
 })
 
 test('noDuplicates', function (t) {
-  const Selecter1Plugin = require('./mocks/plugin-acquire1.js')
-  const uppyTwoSelecters = new Uppy()
+  const Acquire1Plugin = require('./mocks/plugin-acquire1.js')
+  const uppyTwoAcquires = new Uppy()
 
-  uppyTwoSelecters.use(Selecter1Plugin)
-  const fn = uppyTwoSelecters.use.bind(uppyTwoSelecters, Selecter1Plugin)
+  uppyTwoAcquires.use(Acquire1Plugin)
+  const fn = uppyTwoAcquires.use.bind(uppyTwoAcquires, Acquire1Plugin)
 
   t.throws(fn, new RegExp('Uppy is currently limited to running one of every plugin'))
   t.end()
 })
 
 test('autoProceed', function (t) {
-  const Selecter1Plugin = require('./mocks/plugin-acquire1.js')
-  const Selecter2Plugin = require('./mocks/plugin-acquire2.js')
+  const Acquire1Plugin = require('./mocks/plugin-acquire1.js')
+  const Acquire2Plugin = require('./mocks/plugin-acquire2.js')
 
-  const uppyOneSelecter = new Uppy()
-  uppyOneSelecter
-    .use(Selecter1Plugin)
+  const uppyOneAcquire = new Uppy()
+  uppyOneAcquire
+    .use(Acquire1Plugin)
     .run()
 
-  const uppyTwoSelecters = new Uppy()
-  uppyTwoSelecters
-    .use(Selecter1Plugin)
-    .use(Selecter2Plugin)
+  const uppyTwoAcquires = new Uppy()
+  uppyTwoAcquires
+    .use(Acquire1Plugin)
+    .use(Acquire2Plugin)
     .run()
 
-  t.equal(uppyOneSelecter.opts.autoProceed, true, 'should autoProceed if only one acquire is used')
-  t.equal(uppyTwoSelecters.opts.autoProceed, false, 'should not autoProceed if more than one acquire is used')
+  t.equal(uppyOneAcquire.opts.autoProceed, true, 'should autoProceed if only one acquire is used')
+  t.equal(uppyTwoAcquires.opts.autoProceed, false, 'should not autoProceed if more than one acquire is used')
   t.end()
 })
