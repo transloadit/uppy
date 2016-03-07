@@ -4,7 +4,7 @@ import Plugin from './Plugin'
 export default class Google extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.type = 'acquire'
+    this.type = 'acquirer'
     this.files = []
     this.authUrl = 'http://localhost:3020/connect/google'
     // set default options

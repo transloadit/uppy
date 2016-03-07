@@ -8,7 +8,7 @@ import Plugin from './Plugin'
 export default class DragDrop extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.type = 'acquire'
+    this.type = 'acquirer'
     this.name = 'Drag & Drop'
     this.icon = `
       <svg class="UppyModalTab-icon" width="28" height="28" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">

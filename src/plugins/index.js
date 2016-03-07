@@ -3,7 +3,7 @@ import Plugin from './Plugin'
 
 import Modal from './Modal'
 
-// Acquires
+// Acquirers
 import Dummy from './Dummy'
 import DragDrop from './DragDrop'
 import Dropbox from './Dropbox'

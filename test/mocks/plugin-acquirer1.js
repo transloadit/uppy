@@ -3,7 +3,7 @@ const Plugin = require('../../src/plugins/Plugin.js')
 export default class TestSelector1 extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.type = 'acquire'
+    this.type = 'acquirer'
     this.name = this.constructor.name
   }
 

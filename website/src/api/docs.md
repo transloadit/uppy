@@ -21,7 +21,7 @@ Main Uppy core
 [src/core/Core.js:82-97](https://github.com/transloadit/uppy/blob/ec529a2c93080223d5334b1216569da967147da7/src/core/Core.js#L82-L97 "Source code on GitHub")
 
 Runs a waterfall of runType plugin packs, like so:
-All preseters(data) --> All acquires(data) --> All uploaders(data) --> done
+All preseters(data) --> All acquirers(data) --> All uploaders(data) --> done
 
 ### runType
 

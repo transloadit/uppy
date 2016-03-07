@@ -1912,7 +1912,7 @@ var Core = (function () {
     _classCallCheck(this, Core);
 
     // Dictates in what order different plugin types are ran:
-    this.types = ['presetter', 'acquire', 'uploader'];
+    this.types = ['presetter', 'acquirer', 'uploader'];
 
     this.type = 'core';
 
@@ -1969,7 +1969,7 @@ var Core = (function () {
 
     /**
     * Runs a waterfall of runType plugin packs, like so:
-    * All preseters(data) --> All acquires(data) --> All uploaders(data) --> done
+    * All preseters(data) --> All acquirers(data) --> All uploaders(data) --> done
     */
   }, {
     key: 'run',
@@ -2152,7 +2152,7 @@ var DragDrop = (function (_Plugin) {
     _classCallCheck(this, DragDrop);
 
     _get(Object.getPrototypeOf(DragDrop.prototype), 'constructor', this).call(this, core, opts);
-    this.type = 'acquire';
+    this.type = 'acquirer';
 
     // set default options
     var defaultOptions = {
@@ -2336,7 +2336,7 @@ var Dropbox = (function (_Plugin) {
     _classCallCheck(this, Dropbox);
 
     _get(Object.getPrototypeOf(Dropbox.prototype), 'constructor', this).call(this, core, opts);
-    this.type = 'acquire';
+    this.type = 'acquirer';
     this.authenticate = this.authenticate.bind(this);
     this.connect = this.connect.bind(this);
     this.render = this.render.bind(this);
@@ -2467,7 +2467,7 @@ var Formtag = (function (_Plugin) {
     _classCallCheck(this, Formtag);
 
     _get(Object.getPrototypeOf(Formtag.prototype), 'constructor', this).call(this, core, opts);
-    this.type = 'acquire';
+    this.type = 'acquirer';
   }
 
   _createClass(Formtag, [{
@@ -2844,7 +2844,7 @@ var _Plugin = require('./Plugin');
 
 var _Plugin2 = _interopRequireDefault(_Plugin);
 
-// Acquires
+// Acquirers
 
 var _DragDrop = require('./DragDrop');
 

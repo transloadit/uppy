@@ -55,7 +55,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: scrollbars on code samples (@arturi)
 - [x] website: utilize browserify index exposers to rid ourselves of `../../../..` in examples (@kvz)
 - [x] core: Pluralize collections (locales, just l like plugins) (@kvz)
-- [x] core: Rename `selecter` to `acquire` (@kvz)
+- [x] core: Rename `selecter` to `acquirer` (@kvz)
 - [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
 - [x] dragdrop: (error) handling when you press Upload with no files (@arturi)
 - [x] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)

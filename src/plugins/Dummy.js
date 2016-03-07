@@ -7,7 +7,7 @@ import Plugin from './Plugin'
 export default class Dummy extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.type = 'acquire'
+    this.type = 'acquirer'
     this.name = 'Dummy'
 
     // set default options
