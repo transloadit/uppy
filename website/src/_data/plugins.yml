@@ -1,6 +1,6 @@
 dragdrop:
   title      : Drag & Drop
   official   : true
-  type       : selecter
+  type       : acquire
   url        : https://github.com/transloadit/uppy/blob/master/src/plugins/DragDrop.js
   description: The official Drag & Drop plugin for Uppy.

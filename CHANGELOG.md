@@ -42,7 +42,6 @@ Ideas that will be planned and find their way into a release at one point
 
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
-- [ ] core: Rename `selecter` to `getter` or `acquire` (@kvz)
 - [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] meta: Create an Uppy logo (@vvolfy)
@@ -54,6 +53,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
 - [ ] website: Polish taglines (@arturi)
 - [ ] website: scrollbars on code samples (@arturi)
+- [x] core: Rename `selecter` to `getter` or `acquire` (@kvz)
 - [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
 - [x] dragdrop: (error) handling when you press Upload with no files (@arturi)
 - [x] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)

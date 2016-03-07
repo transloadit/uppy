@@ -21,7 +21,7 @@ export default class Core {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Dictates in what order different plugin types are ran:
-    this.types = [ 'presetter', 'view', 'progress', 'selecter', 'uploader', 'presenter' ]
+    this.types = [ 'presetter', 'view', 'progress', 'acquire', 'uploader', 'presenter' ]
 
     this.type = 'core'
 
@@ -146,7 +146,7 @@ export default class Core {
 
 /**
  * Runs a waterfall of runType plugin packs, like so:
- * All preseters(data) --> All selecters(data) --> All uploaders(data) --> done
+ * All preseters(data) --> All acquires(data) --> All uploaders(data) --> done
  */
   run () {
     this.log({
@@ -155,7 +155,7 @@ export default class Core {
     })
 
     // Forse set `autoProceed` option to false if there are multiple selector Plugins active
-    if (this.plugins.selecter && this.plugins.selecter.length > 1) {
+    if (this.plugins.acquire && this.plugins.acquire.length > 1) {
       this.opts.autoProceed = false
     }
 

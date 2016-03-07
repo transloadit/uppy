@@ -3,7 +3,7 @@ import Plugin from './Plugin'
 export default class Formtag extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.type = 'selecter'
+    this.type = 'acquire'
   }
 
   run (results) {

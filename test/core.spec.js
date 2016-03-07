@@ -10,7 +10,7 @@ test('core', function (t) {
 })
 
 test('use plugins', function (t) {
-  const SelecterPlugin = require('./mocks/plugin-selecter1.js')
+  const SelecterPlugin = require('./mocks/plugin-acquire1.js')
   const uppy = new Uppy()
   uppy
     .use(SelecterPlugin)
@@ -20,7 +20,7 @@ test('use plugins', function (t) {
 })
 
 test('noDuplicates', function (t) {
-  const Selecter1Plugin = require('./mocks/plugin-selecter1.js')
+  const Selecter1Plugin = require('./mocks/plugin-acquire1.js')
   const uppyTwoSelecters = new Uppy()
 
   uppyTwoSelecters.use(Selecter1Plugin)
@@ -31,8 +31,8 @@ test('noDuplicates', function (t) {
 })
 
 test('autoProceed', function (t) {
-  const Selecter1Plugin = require('./mocks/plugin-selecter1.js')
-  const Selecter2Plugin = require('./mocks/plugin-selecter2.js')
+  const Selecter1Plugin = require('./mocks/plugin-acquire1.js')
+  const Selecter2Plugin = require('./mocks/plugin-acquire2.js')
 
   const uppyOneSelecter = new Uppy()
   uppyOneSelecter
@@ -45,7 +45,7 @@ test('autoProceed', function (t) {
     .use(Selecter2Plugin)
     .run()
 
-  t.equal(uppyOneSelecter.opts.autoProceed, true, 'should autoProceed if only one selecter is used')
-  t.equal(uppyTwoSelecters.opts.autoProceed, false, 'should not autoProceed if more than one selecter is used')
+  t.equal(uppyOneSelecter.opts.autoProceed, true, 'should autoProceed if only one acquire is used')
+  t.equal(uppyTwoSelecters.opts.autoProceed, false, 'should not autoProceed if more than one acquire is used')
   t.end()
 })
