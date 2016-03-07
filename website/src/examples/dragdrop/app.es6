@@ -1,10 +1,5 @@
-// import Uppy from 'uppy/core'
-// import { DragDrop, Progressbar, Tus10 } from 'uppy/plugins'
-import Uppy from '../../../../src/core/Core.js'
-import DragDrop from '../../../../src/plugins/DragDrop.js'
-import ProgressBar from '../../../../src/plugins/ProgressBar.js'
-import Spinner from '../../../../src/plugins/Spinner.js'
-import Tus10 from '../../../../src/plugins/Tus10.js'
+import Uppy from 'uppy/core'
+import { DragDrop, ProgressBar, Spinner, Tus10 } from 'uppy/plugins'
 
 const uppyOne = new Uppy({debug: true})
 uppyOne

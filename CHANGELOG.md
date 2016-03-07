@@ -53,6 +53,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
 - [ ] website: Polish taglines (@arturi)
 - [ ] website: scrollbars on code samples (@arturi)
+- [x] website: utilize browserify index exposers to rid ourselves of `../../../..` in examples (@kvz)
 - [x] core: Pluralize collections (locales, just l like plugins) (@kvz)
 - [x] core: Rename `selecter` to `getter` or `acquire` (@kvz)
 - [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)

@@ -1,7 +1,7 @@
 import Uppy from 'uppy/core'
 import { Tus10 } from 'uppy/plugins'
+import { ru } from 'uppy/locales'
 
-const ru = require('../../../../src/locale/ru.js')
 const uppy = new Uppy({wait: false, locales: ru})
 
 uppy

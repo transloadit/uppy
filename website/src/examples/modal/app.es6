@@ -1,11 +1,6 @@
-import Uppy from '../../../../src/core/Core.js'
-import Dummy from '../../../../src/plugins/Dummy.js'
-import GoogleDrive from '../../../../src/plugins/GoogleDrive.js'
-import DragDrop from '../../../../src/plugins/DragDrop.js'
-import Modal from '../../../../src/plugins/Modal.js'
-import ProgressBar from '../../../../src/plugins/ProgressBar.js'
-import Present from '../../../../src/plugins/Present.js'
-import Tus10 from '../../../../src/plugins/Tus10.js'
+import Uppy from 'uppy/core'
+import { Dummy, DragDrop, Modal, ProgressBar, Present, Tus10 } from 'uppy/plugins'
+// GoogleDrive,
 
 const uppy = new Uppy({debug: true})
 uppy
