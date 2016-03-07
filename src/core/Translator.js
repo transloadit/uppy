@@ -60,10 +60,10 @@ export default class Translator {
  */
   translate (key, options) {
     if (options && options.smart_count) {
-      var plural = this.opts.locale.pluralize(options.smart_count)
-      return this.interpolate(this.opts.locale.strings[key][plural], options)
+      var plural = this.opts.locales.pluralize(options.smart_count)
+      return this.interpolate(this.opts.locales.strings[key][plural], options)
     }
 
-    return this.interpolate(this.opts.locale.strings[key], options)
+    return this.interpolate(this.opts.locales.strings[key], options)
   }
 }

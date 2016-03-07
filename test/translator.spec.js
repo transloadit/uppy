@@ -2,8 +2,8 @@ var test = require('tape')
 var Core = require('../src/core/index.js')
 
 test('translation', function (t) {
-  const russian = require('../src/locale/ru.js')
-  const core = new Core({locale: russian})
+  const russian = require('../src/locales/ru.js')
+  const core = new Core({locales: russian})
 
   t.equal(
     core.translator.translate('chooseFile'),
@@ -15,8 +15,8 @@ test('translation', function (t) {
 })
 
 test('interpolation', function (t) {
-  const english = require('../src/locale/en_US.js')
-  const core = new Core({locale: english})
+  const english = require('../src/locales/en_US.js')
+  const core = new Core({locales: english})
 
   t.equal(
     core.translator.translate('youHaveChosen', {'fileName': 'img.jpg'}),
@@ -28,8 +28,8 @@ test('interpolation', function (t) {
 })
 
 test('pluralization', function (t) {
-  const russian = require('../src/locale/ru.js')
-  const core = new Core({locale: russian})
+  const russian = require('../src/locales/ru.js')
+  const core = new Core({locales: russian})
 
   t.equal(
     core.translator.translate('filesChosen', {'smart_count': '18'}),

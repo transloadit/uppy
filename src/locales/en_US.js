@@ -24,7 +24,7 @@ en_US.pluralize = function (n) {
 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locale.en_US = en_US
+  window.Uppy.locales.en_US = en_US
 }
 
 export default en_US

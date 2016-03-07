@@ -5,9 +5,9 @@
 
 <!-- Load Uppy pre-built bundled version and Russian language pack -->
 <script src="/uppy/uppy.js"></script>
-<script src="/uppy/locale/ru.js"></script>
+<script src="/uppy/locales/ru.js"></script>
 <script>
-  var uppy = new Uppy.Core({locale: Uppy.locale.ru});
+  var uppy = new Uppy.Core({locales: Uppy.locales.ru});
   uppy.use(Uppy.plugins.DragDrop, {target: '.UppyDragDrop-form'});
   uppy.use(Uppy.plugins.Tus10, {endpoint: 'http://master.tus.io:8080/files/'});
   uppy.run();

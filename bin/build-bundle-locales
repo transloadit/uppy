@@ -9,13 +9,13 @@ __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 
-OUTDIR="dist/locale"
+OUTDIR="dist/locales"
 
 FLAGS="-t [ babelify ]"
 
 mkdir -p "${OUTDIR}"
 
-for file in ./src/locale/*.js; do
+for file in ./src/locales/*.js; do
   # echo "$file";
   node_modules/.bin/browserify $file $FLAGS > $OUTDIR/${file##*/};
 done

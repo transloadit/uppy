@@ -25,7 +25,7 @@ ru.pluralize = function (n) {
 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locale.ru = ru
+  window.Uppy.locales.ru = ru
 }
 
 export default ru

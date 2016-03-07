@@ -5,14 +5,14 @@ import ee from 'event-emitter'
 /**
  * Main Uppy core
  *
- * @param {object} opts general options, like locale, to show modal or not to show
+ * @param {object} opts general options, like locales, to show modal or not to show
  */
 export default class Core {
   constructor (opts) {
     // set default options
     const defaultOptions = {
-      // load English as the default locale
-      locale: require('../locale/en_US.js'),
+      // load English as the default locales
+      locales: require('../locales/en_US.js'),
       autoProceed: true,
       debug: false
     }
@@ -28,7 +28,7 @@ export default class Core {
     // Container for different types of plugins
     this.plugins = {}
 
-    this.translator = new Translator({locale: this.opts.locale})
+    this.translator = new Translator({locales: this.opts.locales})
     this.i18n = this.translator.translate.bind(this.translator)
     // console.log(this.i18n('filesChosen', {smart_count: 3}))
 

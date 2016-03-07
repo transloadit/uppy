@@ -19,7 +19,7 @@
     "build:lib": "babel src -d lib --stage 0",
     "build:bundle:fullpath": "env OUT=uppy-fp.js ./bin/build-bundle --full-paths",
     "build:bundle:min": "./bin/build-bundle",
-    "build:bundle": "./bin/build-bundle && ./bin/build-bundle-locale",
+    "build:bundle": "./bin/build-bundle && ./bin/build-bundle-locales",
     "release": "npm version ${SEMANTIC:-patch} -m \"Release %s\" && git push && git push --tags && npm publish",
     "release:major": "env SEMANTIC=major npm run release",
     "release:minor": "env SEMANTIC=minor npm run release",

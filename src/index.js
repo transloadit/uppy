@@ -1,10 +1,10 @@
 import Core from './core'
 import plugins from './plugins'
 
-const locale = {}
+const locales = {}
 
 export default {
   Core,
   plugins,
-  locale
+  locales
 }

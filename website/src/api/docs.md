@@ -14,7 +14,7 @@ Main Uppy core
 
 **Parameters**
 
--   `opts` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** general options, like locale, to show modal or not to show
+-   `opts` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** general options, like locales, to show modal or not to show
 
 ### run
 
