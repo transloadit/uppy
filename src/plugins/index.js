@@ -4,6 +4,7 @@ import Plugin from './Plugin'
 import Modal from './Modal'
 
 // Selecters
+import Dummy from './Dummy'
 import DragDrop from './DragDrop'
 import Dropbox from './Dropbox'
 import Formtag from './Formtag'
@@ -16,13 +17,18 @@ import Spinner from './Spinner'
 import Tus10 from './Tus10'
 import Multipart from './Multipart'
 
+// Presenters
+import Present from './Present'
+
 // Presetters
 import TransloaditBasic from './TransloaditBasic'
 
 export default {
   Plugin,
+  Dummy,
   ProgressBar,
   Spinner,
+  Present,
   DragDrop,
   Dropbox,
   Formtag,
