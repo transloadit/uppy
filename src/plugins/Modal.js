@@ -8,7 +8,7 @@ import Utils from '../core/Utils'
 export default class Modal extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.type = 'view'
+    this.type = 'orchestrator'
 
     // set default options
     const defaultOptions = {

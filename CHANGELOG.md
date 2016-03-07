@@ -53,6 +53,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
 - [ ] website: Polish taglines (@arturi)
 - [ ] website: scrollbars on code samples (@arturi)
+- [x] core: Rename `view` to `orchestrator` (@kvz)
 - [x] core: Rename `progress` to `progressindicator` (@kvz)
 - [x] website: utilize browserify index exposers to rid ourselves of `../../../..` in examples (@kvz)
 - [x] core: Pluralize collections (locales, just l like plugins) (@kvz)
