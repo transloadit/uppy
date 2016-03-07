@@ -134,7 +134,7 @@ export default class Modal extends Plugin {
     const tabPanel = document.querySelector(`.${id}`)
     tabPanel.style.display = 'block'
 
-    // Remove `next` buttons provided by plugins, since Modal has it’s own
+    // Remove `next` buttons provided by plugins, since Modal has its own
     // document.querySelector('.UppyNextBtn').remove()
   }
 
@@ -176,10 +176,23 @@ export default class Modal extends Plugin {
     this.modalEl = document.querySelector('.UppyModal')
 
     // Add events for opening and closing the modal
-    const hideModalTrigger = Utils.qsa('.js-UppyModal-close')
+    // const hideModalTrigger = Utils.qsa('.js-UppyModal-close')
     const showModalTrigger = document.querySelector(this.opts.trigger)
 
-    hideModalTrigger.forEach(trigger => trigger.addEventListener('click', this.hideModal))
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('js-UppyModal-close')) {
+        this.hideModal()
+      }
+    })
+
+    // hideModalTrigger.forEach(trigger => {
+    //   document.addEventListener('click', (e) => {
+    //     if (e.target === '.js-UppyModal-close') {
+    //       this.hideModal()
+    //     }
+    //   })
+    //   // trigger.addEventListener('click', this.hideModal)
+    // })
     showModalTrigger.addEventListener('click', this.showModal)
 
     // When `next` (upload) button is clicked, emit `next` event,
