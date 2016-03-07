@@ -25,7 +25,7 @@ const files = uppy
 1. Core class `Uppy` accepts object `options` (with general options), and exposes methods `.use` for adding plugins and `.set` for setting options.
 2. We create a new instance of `Uppy` and call `.use` on it, passing the plugins and their options.
 3. Then `run` is called to get things going.
-4. Plugins have types: `presetter`, `acquire` and `uploader` (more could be added in the future). When `use` is called, each plugin’s `run` method is added to an array of corresponding types, `methods`.
+4. Plugins have types: `presetter`, `view`, `progress`, `acquire`, `uploader`, and `presenter` (more could be added in the future). When `use` is called, each plugin’s `run` method is added to an array of corresponding types, `methods`.
 5. Ok, now the tricky part. Core’s method `run` iterates over plugin types in a waterfall manner — each `runTypes`  runs its `method`s in parallel and returns an array of results (files) to the next plugin type in the waterfall. This way we first get all the of files from `DragDrop`, `Dropbox`, `Instagram` and other inputs — then parse them somehow — and then upload:
 
 ![waterfall of parallels](/images/uppy-core-plugins-architecture.jpg)
@@ -39,30 +39,30 @@ uppy
   .use(Tus10, {endpoint: 'http://master.tus.io:8080'})
 ```
 
-Internally, plugins extend from a `UppyPlugin` class, see that for details.
+Internally, plugins extend from a [`Plugin`](https://github.com/transloadit/uppy/blob/master/src/plugins/Plugin.js) class, see that for details.
 
 
 2. Settings and handlers are chainable, set like this:
 ```javascript
 uppy
   .set({ wait: true })
-  .use(transloaditModal, {some: 'config'})
-  .use(dragdrop, {target: transloaditModal})
-  .use(instagram, {some: 'config'})
+  .use(Modal, {target: 'div#mycontainer', some: 'config'})
+  .use(DragDrop, {target: Modal})
+  .use(Instagram, {target: Modal, some: 'config'})
   .on('progress', handleProgress)
   .on('error', handleError);
 ```
 
 3. In `Uppy` everything is a plugin: a `Modal` dialog, `Drag & Drop`, `Instagram`. We borrow general approach from the new Babel and PostCSS — each chunk of functionality exists as separate plugin — easier to pick and choose exactly what you need to get a lightweight solution for production, while also easier to develop and avoid merge conflicts.
 
-4. There will be a simplified version that includes all the necessary plugins and sane defaults.
+4. There will be a simplified preset that strings together many Plugins using sane defaults.
 ```javascript
-uppyDist
-  .set({ wait: true })
+uppy
+  .use(Basic, {target: 'div#mycontainer', endpoint: 'http://master.tus.io:8080'})
   .run();
 ```
 
-5. Users should be able to set themes and style settings in config: `.use(myTheme)`.
+5. Users will be able to rol out themes and style settings via plain CSS .
 
 6. Would be cool if you could use whatever drag & drop library you wanted (DropZone) with our wrapper.
 
