@@ -40,23 +40,23 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.0.4 (April 05, 2016)
 
-- [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
-- [ ] meta: Create an Uppy logo (@vvolfy)
-- [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
-- [ ] core: Rename `selecter` to `getter` or `acquire` (@kvz)
-- [ ] website: scrollbars on code samples (@arturi)
-- [ ] modal: polish on mobile
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
-- [x] dragdrop: (error) handling when you press Upload with no files (@arturi)
-- [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
-- [x] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
-- [x] modal: Make sure modal renders under one dom node (@arturi, @hedgerh) — modal does, should everything else too?
+- [ ] core: Rename `selecter` to `getter` or `acquire` (@kvz)
+- [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
+- [ ] meta: Create an Uppy logo (@vvolfy)
 - [ ] meta: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
+- [ ] modal: polish on mobile
+- [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
-- [ ] website: Polish taglines (@arturi)
 - [ ] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
+- [ ] website: Polish taglines (@arturi)
+- [ ] website: scrollbars on code samples (@arturi)
+- [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
+- [x] dragdrop: (error) handling when you press Upload with no files (@arturi)
+- [x] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)
+- [x] modal: Make sure modal renders under one dom node (@arturi, @hedgerh) — modal does, should everything else too?
 
 ## 0.0.3 (March 01, 2016)
 
