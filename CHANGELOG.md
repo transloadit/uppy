@@ -22,7 +22,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199
 - [ ] build: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 - [ ] build: minification of the bundle
-- [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle)
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
 - [ ] core: Add polyfill for `fetch`
 - [ ] instagram: Add basic Instagram plugin example (#21)
@@ -47,13 +46,14 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: Rename `selecter` to `getter` or `acquire` (@kvz)
 - [ ] website: scrollbars on code samples (@arturi)
 - [ ] modal: polish on mobile
-- [ ] dragdrop: (error) handling when you press Upload with no files (@arturi)
-- [ ] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
-- [ ] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)
+- [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
+- [x] dragdrop: (error) handling when you press Upload with no files (@arturi)
+- [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
+- [x] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
+- [x] modal: Make sure modal renders under one dom node (@arturi, @hedgerh) — modal does, should everything else too?
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] meta: Decide on tagline(s) (@kvz, @hedgerh, @arturi, @tim-kos)
-- [ ] modal: Make sure modal renders under one dom node (@arturi)
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
 - [ ] website: Polish taglines (@arturi)
 - [ ] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
