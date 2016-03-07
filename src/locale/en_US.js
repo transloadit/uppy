@@ -8,6 +8,11 @@ en_US.strings = {
     0: '%{smart_count} file selected',
     1: '%{smart_count} files selected'
   },
+  files: {
+    0: '%{smart_count} file',
+    1: '%{smart_count} files'
+  },
+  closeModal: 'Close Modal',
   upload: 'Upload'
 }
 

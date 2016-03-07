@@ -75,10 +75,8 @@ export default class Tus10 extends Plugin {
 
     const files = this.extractFiles(results)
 
-    this.core.log('tus got this: ')
-    this.core.log(results)
-
-    // this.setProgress(0)
+    // this.core.log('tus got this: ')
+    // this.core.log(results)
 
     // var uploaded  = [];
     const uploaders = []
@@ -89,6 +87,12 @@ export default class Tus10 extends Plugin {
       uploaders.push(this.upload(file, current, total))
     }
 
-    return Promise.all(uploaders)
+    return Promise.all(uploaders).then(() => {
+      return {
+        uploadedCount: files.length
+      }
+    })
+
+    // return Promise.all(uploaders)
   }
 }

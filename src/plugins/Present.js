@@ -11,7 +11,9 @@ export default class Present extends Plugin {
     this.name = 'Present'
 
     // set default options
-    const defaultOptions = {}
+    const defaultOptions = {
+      target: '.UppyPresenter-container'
+    }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -23,13 +25,22 @@ export default class Present extends Plugin {
     `
   }
 
-  run () {
+  run (results) {
+    const uploadedCount = results[0].uploadedCount
+    const target = this.opts.target.name
+
     // Emit allDone event so that, for example, Modal can hide all tabs
     this.core.emitter.emit('allDone')
 
     const presenter = document.querySelector('.UppyPresenter')
-    presenter.innerHTML = `<p>Files have been uploaded, would you like to close the Modal
-      or upload something else?</p>`
+    presenter.innerHTML = `
+      <p>You have successfully uploaded
+        <strong>${this.core.i18n('files', {'smart_count': uploadedCount})}</strong>
+      </p>
+      ${target === 'Modal'
+        ? `<button class="UppyPresenter-modalClose js-UppyModal-close" type="button">${this.core.i18n('closeModal')}</button>`
+        : ''}
+    `
   }
 
   install () {
