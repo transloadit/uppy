@@ -1,6 +1,7 @@
 // Parent
 import Plugin from './Plugin'
 
+// Orchestrators
 import Modal from './Modal'
 
 // Acquirers
@@ -9,7 +10,7 @@ import DragDrop from './DragDrop'
 import Dropbox from './Dropbox'
 import Formtag from './Formtag'
 
-// Progress
+// Progressindicators
 import ProgressBar from './ProgressBar'
 import Spinner from './Spinner'
 
