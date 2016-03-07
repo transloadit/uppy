@@ -61,7 +61,7 @@ Ideas that will be planned and find their way into a release at one point
 ## 0.0.3 (March 01, 2016)
 
 - [ ] core: push out v0.0.3 (@kvz)
-- [ ] build: release-(major|minor|patch): git tag && npm publish (@kvz)
+- [x] build: release-(major|minor|patch): git tag && npm publish (@kvz)
 - [x] core: Allow users to set DOM elements or other plugins as targets (@arturi)
 - [x] core: Create a progressbar/spinner/etc plugin (#18, @arturi)
 - [x] core: Decide on how we ship default styles: separate css file, inline (@kvz, @hedgerh, @arturi, @tim-kos)
