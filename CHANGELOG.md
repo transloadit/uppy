@@ -51,6 +51,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
 - [ ] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
+- [ ] tus: Resolve promise when all uploads are done or failed, not earlier (currently you get to see '1 file uploaded' and can close the modal while the upload is in progress) (@arturi)
 - [ ] website: Polish taglines (@arturi)
 - [ ] website: scrollbars on code samples (@arturi)
 - [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
