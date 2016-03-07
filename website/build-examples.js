@@ -74,6 +74,7 @@ glob(srcPattern, function (err, files) {
       .require(uppyRoot + '/src/index.js', { expose: 'uppy' })
       .require(uppyRoot + '/src/core/index.js', { expose: 'uppy/core' })
       .require(uppyRoot + '/src/plugins/index.js', { expose: 'uppy/plugins' })
+      .require(uppyRoot + '/src/locales/index.js', { expose: 'uppy/locales' })
       .transform(babelify)
 
     // Listeners for changes, errors, and completion.
