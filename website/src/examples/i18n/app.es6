@@ -1,8 +1,8 @@
 import Uppy from 'uppy/core'
 import { Tus10 } from 'uppy/plugins'
-import { ru } from 'uppy/locales'
+import { ru_RU } from 'uppy/locales'
 
-const uppy = new Uppy({wait: false, locales: ru})
+const uppy = new Uppy({wait: false, locales: ru_RU})
 
 uppy
   .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/'})

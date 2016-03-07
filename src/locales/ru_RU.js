@@ -1,6 +1,6 @@
-const ru = {}
+const ru_RU = {}
 
-ru.strings = {
+ru_RU.strings = {
   chooseFile: 'Выберите файл',
   orDragDrop: 'или перенесите его сюда',
   youHaveChosen: 'Вы выбрали: %{file_name}',
@@ -12,7 +12,7 @@ ru.strings = {
   upload: 'Загрузить'
 }
 
-ru.pluralize = function (n) {
+ru_RU.pluralize = function (n) {
   if (n % 10 === 1 && n % 100 !== 11) {
     return 0
   }
@@ -25,7 +25,7 @@ ru.pluralize = function (n) {
 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.ru = ru
+  window.Uppy.locales.ru_RU = ru_RU
 }
 
-export default ru
+export default ru_RU
