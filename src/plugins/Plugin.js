@@ -87,11 +87,16 @@ export default class Plugin {
     return files
   }
 
-  run (results) {
-    return results
+  focus () {
+    console.log('focus pocus!')
+    return
   }
 
   install () {
     return
+  }
+
+  run (results) {
+    return results
   }
 }

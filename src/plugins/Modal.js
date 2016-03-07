@@ -66,7 +66,8 @@ export default class Modal extends Plugin {
             <button class="UppyModalTab-btn"
                     role="tab"
                     aria-controls="${callerPluginId}"
-                    data-open="${this.opts.panelSelectorPrefix}--${callerPluginId}">
+                    data-open="${this.opts.panelSelectorPrefix}--${callerPluginId}"
+                    data-id="${callerPluginId}">
               ${callerPluginIcon}
               <span class="UppyModalTab-name">${callerPluginName}</span>
             </button>
@@ -141,18 +142,19 @@ export default class Modal extends Plugin {
   initEvents () {
     this.tabs = Utils.qsa('.UppyModalTab-btn')
     this.tabs.forEach(tab => {
-      const tabId = tab.getAttribute('data-open')
-      const tabPanel = document.querySelector(`.${tabId}`)
+      const pluginSelector = tab.getAttribute('data-open')
+      const pluginName = tab.getAttribute('data-id')
+      const tabPanel = document.querySelector(`.${pluginSelector}`)
       this.tabPanels.push(tabPanel)
 
       tab.addEventListener('click', event => {
         event.preventDefault()
         // tabs.forEach(tab => tab.classList.remove('is-selected'))
         this.hideAllTabPanels()
-        this.core.log(tabId)
+        this.core.log(pluginName)
         tab.classList.add('is-selected')
-        // this.core.getPlugin(tabId.substr(1)).focus()
-        this.showTabPanel(tabId)
+        this.core.getPlugin(pluginName).focus()
+        this.showTabPanel(pluginSelector)
       })
     })
 
