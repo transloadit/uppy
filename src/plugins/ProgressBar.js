@@ -7,7 +7,7 @@ import Plugin from './Plugin'
 export default class ProgressBar extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.type = 'progress'
+    this.type = 'progressindicator'
 
     // set default options
     const defaultOptions = {}

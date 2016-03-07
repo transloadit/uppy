@@ -21,7 +21,7 @@ export default class Core {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Dictates in what order different plugin types are ran:
-    this.types = [ 'presetter', 'view', 'progress', 'acquirer', 'uploader', 'presenter' ]
+    this.types = [ 'presetter', 'view', 'progressindicator', 'acquirer', 'uploader', 'presenter' ]
 
     this.type = 'core'
 
@@ -160,7 +160,7 @@ export default class Core {
     }
 
     // Each Plugin can have `run` and/or `install` methods.
-    // `install` adds event listeners and does some non-blocking work, useful for `progress`,
+    // `install` adds event listeners and does some non-blocking work, useful for `progressindicator`,
     // `run` waits for the previous step to finish (user selects files) before proceeding
     ['install', 'run'].forEach(method => {
       // First we select only plugins of current type,

@@ -39,7 +39,7 @@ export default class Modal extends Plugin {
     const callerPluginIcon = callerPlugin.icon || this.opts.defaultTabIcon
 
     switch (callerPlugin.type) {
-      case 'progress':
+      case 'progressindicator':
         return '.UppyModal-progressBarContainer'
       case 'presenter':
         return '.UppyModal-presenter'
@@ -77,7 +77,7 @@ export default class Modal extends Plugin {
 
         return `.${this.opts.panelSelectorPrefix}--${callerPluginId}`
       default:
-        let msg = 'Error: Modal can only be used by plugins of types: acquirer, progress'
+        let msg = 'Error: Modal can only be used by plugins of types: acquirer, progressindicator'
         this.core.log(msg)
         break
     }
