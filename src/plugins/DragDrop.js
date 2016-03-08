@@ -90,6 +90,10 @@ export default class DragDrop extends Plugin {
       e.stopPropagation()
     })
 
+    this.dropzone.addEventListener('submit', (e) => {
+      e.preventDefault()
+    })
+
     // Toggle is-dragover state when files are dragged over or dropped
     Utils.addListenerMulti(this.dropzone, 'dragover dragenter', (e) => {
       Utils.addClass(this.container, 'is-dragover')
@@ -147,7 +151,7 @@ export default class DragDrop extends Plugin {
       })
 
       this.dropzone.addEventListener('submit', (e) => {
-        e.preventDefault()
+
         return resolve(result)
       })
     })
