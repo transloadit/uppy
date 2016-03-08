@@ -151,7 +151,6 @@ export default class DragDrop extends Plugin {
       })
 
       this.dropzone.addEventListener('submit', (e) => {
-
         return resolve(result)
       })
     })
