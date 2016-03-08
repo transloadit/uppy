@@ -66,6 +66,7 @@
     "nodemon": "1.8.1",
     "parallelshell": "2.0.0",
     "phantomjs": "1.9.18",
+    "selenium-webdriver": "^2.52.0",
     "tape": "4.4.0",
     "watchify": "3.6.1",
     "zuul": "3.7.2"

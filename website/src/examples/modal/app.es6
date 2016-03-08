@@ -6,6 +6,7 @@ const uppy = new Uppy({debug: true})
 uppy
   .use(Modal, {trigger: '#uppyModalOpener'})
   .use(Dummy, {target: Modal})
+  .use(GoogleDrive, {target: Modal})
   .use(ProgressBar, {target: Modal})
   .use(DragDrop, {target: Modal})
   .use(Present, {target: Modal})

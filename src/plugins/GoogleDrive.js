@@ -6,29 +6,39 @@ export default class Google extends Plugin {
     super(core, opts)
     this.type = 'acquirer'
     this.files = []
+    this.name = 'Google Drive'
+    this.icon = `
+      <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414">
+        <path d="M2.955 14.93l2.667-4.62H16l-2.667 4.62H2.955zm2.378-4.62l-2.666 4.62L0 10.31l5.19-8.99 2.666 4.62-2.523 4.37zm10.523-.25h-5.333l-5.19-8.99h5.334l5.19 8.99z"/>
+      </svg>
+    `
     this.authUrl = 'http://localhost:3020/connect/google'
     // set default options
     const defaultOptions = {}
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
-
     this.currentFolder = 'root'
     this.isAuthenticated = false
-
     this.checkAuthentication()
   }
 
   focus () {
-    if (!this.isAuthenticated) {
-      this.target.innerHTML = this.renderAuth()
-    } else {
-      this.renderFolder()
-    }
+    this.checkAuthentication()
+    .then(res => {
+      if (!this.isAuthenticated) {
+        this.target.innerHTML = this.renderAuth()
+      } else {
+        this.renderFolder()
+      }
+    })
+    .catch(err => {
+      this.target.innerHTML = this.renderError(err)
+    })
   }
 
   checkAuthentication () {
-    fetch('http://localhost:3020/google/authorize', {
+    return fetch('http://localhost:3020/google/authorize', {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -46,6 +56,9 @@ export default class Google extends Plugin {
         error.response = res
         throw error
       }
+    })
+    .catch(err => {
+      this.target.innerHTML = this.renderError(err)
     })
   }
 
@@ -95,7 +108,6 @@ export default class Google extends Plugin {
   }
 
   getFile (fileId) {
-    console.log(typeof fileId)
     if (fileId !== 'string') {
       return console.log('Error: File Id not a string.')
     }
@@ -114,9 +126,7 @@ export default class Google extends Plugin {
 
   install () {
     const caller = this
-    this.target = this.getTarget(this.opts.target, caller)
-    console.log('this.target ===')
-    console.log(this.target)
+    this.target = document.querySelector(this.getTarget(this.opts.target, caller))
     return
   }
 
@@ -130,10 +140,15 @@ export default class Google extends Plugin {
     return `<ul>${folders}</ul><ul>${files}</ul>`
   }
 
+  renderError (err) {
+    return `Something went wrong.  Probably our fault. ${err}`
+  }
+
   renderFolder (folder = this.currentFolder) {
     this.getFolder(folder)
     .then(data => {
       this.target.innerHTML = this.renderBrowser(data)
+      console.log(data)
       const folders = Utils.qsa('.GoogleDriveFolder')
       const files = Utils.qsa('.GoogleDriveFile')
 
