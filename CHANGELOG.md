@@ -43,6 +43,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
+- [ ] dragdrop: Fix 405 Not Allowed (#60, @arturi, thx @hpvd)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] meta: Create an Uppy logo (@vvolfy)
 - [ ] modal: polish on mobile
