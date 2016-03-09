@@ -22,17 +22,21 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199
 - [ ] build: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 - [ ] build: minification of the bundle
-- [ ] core: Apply plugins when DOM elements aren't static (#25)
+- [ ] core: A way to preview files using font-icons (#61, thx @hpvd)
 - [ ] core: Add polyfill for `fetch`
+- [ ] core: Apply plugins when DOM elements aren't static (#25)
+- [ ] core: Make sure Uppy works well in VR
+- [ ] dragdrop: A way to remove files from the selection (#63, thx @hpvd)
 - [ ] instagram: Add basic Instagram plugin example (#21)
+- [ ] modal: An abort/cancel button (#63, thx @hpvd)
+- [ ] modal: Avoid duplicating event listeners
+- [ ] modal: State: which tab is open? get parameters?
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
-- [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
+- [ ] progressbar: Figure out what data to display to keep some users interested. Figure out how to render 0-100% for a wide range of Plugins and multiple individual events inside these Plugins (#62, thx @hpvd)
 - [ ] test: checkout http://www.webpagetest.org, use it sometimes to test our website & Uppy?
+- [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
-- [ ] core: Make sure Uppy works well in VR
-- [ ] modal: State: which tab is open? get parameters?
-- [ ] modal: Avoid duplicating event listeners
 
 ## 0.0.5 (May 03, 2016)
 
