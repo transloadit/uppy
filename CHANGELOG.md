@@ -22,21 +22,17 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199
 - [ ] build: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 - [ ] build: minification of the bundle
-- [ ] core: A way to preview files using font-icons (#61, thx @hpvd)
-- [ ] core: Add polyfill for `fetch`
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
-- [ ] core: Make sure Uppy works well in VR
-- [ ] dragdrop: A way to remove files from the selection (#63, thx @hpvd)
+- [ ] core: Add polyfill for `fetch`
 - [ ] instagram: Add basic Instagram plugin example (#21)
-- [ ] modal: An abort/cancel button (#63, thx @hpvd)
-- [ ] modal: Avoid duplicating event listeners
-- [ ] modal: State: which tab is open? get parameters?
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
-- [ ] progressbar: Figure out what data to display to keep some users interested. Figure out how to render 0-100% for a wide range of Plugins and multiple individual events inside these Plugins (#62, thx @hpvd)
-- [ ] test: checkout http://www.webpagetest.org, use it sometimes to test our website & Uppy?
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
+- [ ] test: checkout http://www.webpagetest.org, use it sometimes to test our website & Uppy?
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
+- [ ] core: Make sure Uppy works well in VR
+- [ ] modal: State: which tab is open? get parameters?
+- [ ] modal: Avoid duplicating event listeners
 
 ## 0.0.5 (May 03, 2016)
 
@@ -47,14 +43,14 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
-- [ ] dragdrop: Fix 405 Not Allowed (#60, @arturi, thx @hpvd)
+- [x] dragdrop: Fix 405 Not Allowed (#60, @arturi, thx @hpvd)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] meta: Create an Uppy logo (@vvolfy)
 - [ ] modal: polish on mobile
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
 - [ ] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
-- [ ] tus: Resolve promise when all uploads are done or failed, not earlier (currently you get to see '1 file uploaded' and can close the modal while the upload is in progress) (@arturi)
+- [x] tus: Resolve promise when all uploads are done or failed, not earlier (currently you get to see '1 file uploaded' and can close the modal while the upload is in progress) (@arturi)
 - [ ] website: Polish taglines (@arturi)
 - [ ] website: scrollbars on code samples (@arturi)
 - [x] website: Filter taglines (@kvz)
