@@ -66,6 +66,7 @@ glob(srcPattern, function (err, files) {
     var browseFy = browserify(file, {
       cache: {},
       packageCache: {},
+      debug: true,
       plugin: browserifyPlugins
     })
 
