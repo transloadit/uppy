@@ -86,9 +86,9 @@
   overflow: hidden;
   transition: all 0.3s;
 
-  &.is-selected {
-    background-color: $color-cornflower-blue;
-  }
+  // &.is-selected {
+  //   background-color: $color-cornflower-blue;
+  // }
 
   &:hover {
     background-color: $color-cornflower-blue;
@@ -98,6 +98,10 @@
   &:hover .UppyModalTab-name {
     opacity: 1;
   }
+}
+
+.UppyModalTab-btn[aria-selected] {
+  background-color: $color-cornflower-blue;
 }
 
 // On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
@@ -121,8 +125,11 @@
 }
 
 .UppyModalContent-panel {
-  display: none;
   height: 88%;
+}
+
+.UppyModalContent-panel[aria-hidden] {
+  display: none;
 }
 
 // Progress bar placeholder

@@ -36,6 +36,7 @@ export default class ProgressBar extends Plugin {
   }
 
   initEvents () {
+    // When there is some progress (uploading), emit this event to adjust progressbar
     this.core.emitter.on('progress', data => {
       const percentage = data.percentage
       const plugin = data.plugin
@@ -43,6 +44,14 @@ export default class ProgressBar extends Plugin {
         `progress is: ${percentage}, set by ${plugin.constructor.name}`
       )
       this.setProgress(percentage)
+    })
+
+    // When files are selected, fire this event to: display there names, progress...
+    this.core.emitter.on('fileSelection', data => {
+      const files = data.filesSelected
+      Object.keys(files).forEach(file => {
+        this.core.log(`These file has been selected: ${files[file]}`)
+      })
     })
   }
 

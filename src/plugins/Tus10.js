@@ -58,30 +58,6 @@ export default class Tus10 extends Plugin {
       })
       upload.start()
     })
-
-    // const upload = new tus.Upload(file, {
-    //   endpoint: this.opts.endpoint,
-    //   onError: error => {
-    //     return Promise.reject('Failed because: ' + error)
-    //   },
-    //   onProgress: (bytesUploaded, bytesTotal) => {
-    //     let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
-    //     percentage = Math.round(percentage)
-    //     // self.setProgress(percentage, current, total)
-    //
-    //     // Dispatch progress event
-    //     this.core.emitter.emit('progress', {
-    //       plugin: this,
-    //       percentage: percentage
-    //     })
-    //   },
-    //   onSuccess: () => {
-    //     this.core.log(`Download ${upload.file.name} from ${upload.url}`)
-    //     return Promise.resolve(upload)
-    //   }
-    // })
-    // // Start the upload
-    // return upload.start()
   }
 
 /**

@@ -126,6 +126,12 @@ export default class DragDrop extends Plugin {
     this.core.log('all right, someone dropped something...')
 
     const files = e.dataTransfer.files
+
+    this.core.emitter.emit('fileSelection', {
+      plugin: this,
+      filesSelected: files
+    })
+
     return this.result(files)
   }
 
@@ -154,6 +160,11 @@ export default class DragDrop extends Plugin {
         return resolve(result)
       })
     })
+  }
+
+  focus () {
+    const inputEl = document.querySelector('.UppyDragDrop-input')
+    inputEl.focus()
   }
 
   install () {
