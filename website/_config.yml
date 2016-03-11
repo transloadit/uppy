@@ -130,8 +130,12 @@ postcss:
       browsers:
         - 'last 2 versions'
 
-# browsersync:
-  # files: 'public/examples/**/*.js'
+browsersync:
+  files: 'public/examples/**/*.js'
+  watchOptions:
+    awaitWriteFinish:
+      - stabilityThreshold: 1000,
+      - pollInterval: 100
 
 skip_render:
   - '*.js'
