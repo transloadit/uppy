@@ -9,6 +9,7 @@ import Dummy from './Dummy'
 import DragDrop from './DragDrop'
 import Dropbox from './Dropbox'
 import Formtag from './Formtag'
+import GoogleDrive from './GoogleDrive'
 
 // Progressindicators
 import ProgressBar from './ProgressBar'
@@ -32,6 +33,7 @@ export default {
   Present,
   DragDrop,
   Dropbox,
+  GoogleDrive,
   Formtag,
   Tus10,
   Multipart,

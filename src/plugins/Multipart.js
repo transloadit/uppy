@@ -21,7 +21,7 @@ export default class Multipart extends Plugin {
 
     const files = this.extractFiles(results)
 
-    this.setProgress(0)
+    // this.setProgress(0)
     var uploaders = []
 
     if (this.opts.bundle) {
@@ -52,7 +52,7 @@ export default class Multipart extends Plugin {
 
     xhr.addEventListener('progress', (e) => {
       var percentage = (e.loaded / e.total * 100).toFixed(2)
-      this.setProgress(percentage, current, total)
+      // this.setProgress(percentage, current, total)
     })
 
     xhr.addEventListener('load', () => {

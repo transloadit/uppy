@@ -137,7 +137,7 @@ export default class Core {
  */
   runType (type, method, files) {
     const methods = this.plugins[type].map(
-      plugin => plugin[method](files)
+      plugin => plugin[method](Utils.flatten(files))
     )
 
     return Promise.all(methods)
@@ -165,13 +165,11 @@ export default class Core {
     ['install', 'run'].forEach(method => {
       // First we select only plugins of current type,
       // then create an array of runType methods of this plugins
-      const typeMethods = this.types.filter(type => {
-        return this.plugins[type]
-      }).map(type => this.runType.bind(this, type, method))
-
+      const typeMethods = this.types.filter(type => this.plugins[type])
+        .map(type => this.runType.bind(this, type, method))
       // Run waterfall of typeMethods
       return Utils.promiseWaterfall(typeMethods)
-        .then(result => { return result })
+        .then(result => result)
         .catch(error => console.error(error))
     })
   }

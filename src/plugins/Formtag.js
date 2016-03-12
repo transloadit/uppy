@@ -13,7 +13,7 @@ export default class Formtag extends Plugin {
       results: results
     })
 
-    this.setProgress(0)
+    // this.setProgress(0)
 
     // form FormData
     // const formData = new FormData(this.dropzone)
@@ -32,11 +32,9 @@ export default class Formtag extends Plugin {
         var selected = [];
 
         [].forEach.call(fields, (field, i) => {
-          [].forEach.call(field.files, (file, j) => {
-            selected.push({
-              from: 'Formtag',
-              file: file
-            })
+          selected.push({
+            from: 'Formtag',
+            files: field.files
           })
         })
 
@@ -57,7 +55,7 @@ export default class Formtag extends Plugin {
         //     }
         //   }
         // }
-        self.setProgress(100)
+        // self.setProgress(100)
         console.log({
           selected: selected,
           fields: fields

@@ -98,6 +98,13 @@ function addListenerMulti (el, events, cb) {
   }
 }
 
+/**
+ * Shallow flatten nested arrays.
+ */
+function flatten (arr) {
+  return [].concat.apply([], arr)
+}
+
 function qsa (selector, context) {
   return Array.prototype.slice.call((context || document).querySelectorAll(selector) || [])
 }
@@ -108,5 +115,6 @@ export default {
   addClass,
   removeClass,
   addListenerMulti,
+  flatten,
   qsa
 }

@@ -148,7 +148,6 @@ export default class Google extends Plugin {
     this.getFolder(folder)
     .then(data => {
       this.target.innerHTML = this.renderBrowser(data)
-      console.log(data)
       const folders = Utils.qsa('.GoogleDriveFolder')
       const files = Utils.qsa('.GoogleDriveFile')
 
