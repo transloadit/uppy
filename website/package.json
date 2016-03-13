@@ -26,7 +26,7 @@
     "uuid": "2.0.1"
   },
   "devDependencies": {
-    "browserify": "12.0.1",
+    "browserify": "13.0.0",
     "chalk": "1.1.1",
     "documentation": "4.0.0-beta",
     "eslint-config-standard": "4.4.0",
@@ -37,6 +37,6 @@
     "multi-glob": "1.0.1",
     "node-notifier": "4.4.0",
     "remark": "3.0.0",
-    "watchify": "3.6.1"
+    "watchify": "3.7.0"
   }
 }

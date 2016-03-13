@@ -115,10 +115,10 @@ glob(srcPattern, function (err, files) {
 
       console.info(chalk.green('✓ building:'), chalk.green(path.relative(process.cwd(), file)))
 
-      var bundle = browseFy.bundle()
+      browseFy
+        .bundle()
         .on('error', onError)
-
-      bundle.pipe(createStream(output))
+        .pipe(createStream(output))
     }
   })
 })
