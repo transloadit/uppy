@@ -51,11 +51,10 @@ export default class Modal extends Plugin {
 
         modalContent.appendChild(nodeForPlugin)
         nodeForPlugin.outerHTML = `
-        <div class="UppyModalContent-panel ${this.opts.panelSelectorPrefix}--${callerPluginId}"
-             role="tabpanel"
-             aria-hidden="true">
-        </div>
-        `
+          <div class="UppyModalContent-panel ${this.opts.panelSelectorPrefix}--${callerPluginId}"
+               role="tabpanel"
+               aria-hidden="true">
+          </div>`
 
         // add tab switch button
         const modalTabs = document.querySelector('.UppyModalTabs')
@@ -71,10 +70,7 @@ export default class Modal extends Plugin {
               ${callerPluginIcon}
               <span class="UppyModalTab-name">${callerPluginName}</span>
             </button>
-          </li>
-        `
-
-        // this.initEvents()
+          </li>`
 
         return `.${this.opts.panelSelectorPrefix}--${callerPluginId}`
       default:
@@ -102,6 +98,7 @@ export default class Modal extends Plugin {
           <button class="UppyModal-close js-UppyModal-close" title="Close Uppy modal">×</button>
 
           <ul class="UppyModalTabs" role="tablist"></ul>
+
           <div class="UppyModalContent">
             <div class="UppyModal-presenter"></div>
             <div class="UppyModal-progress">
@@ -109,6 +106,7 @@ export default class Modal extends Plugin {
               <div class="UppyModal-progressBarContainer"></div>
             </div>
           </div>
+
         </div>
       </div>
     `
@@ -148,7 +146,7 @@ export default class Modal extends Plugin {
 
   initEvents () {
     // Get all tab buttons and loop through them, to determine which
-    // selecter plugin tabPanel they trigger, set events
+    // tabPanel they trigger, set events
     this.tabs = Utils.qsa('.UppyModalTab-btn')
     this.tabs.forEach(tab => {
       const pluginSelector = tab.getAttribute('data-open')
@@ -194,21 +192,11 @@ export default class Modal extends Plugin {
       }
     })
 
-    // hideModalTrigger.forEach(trigger => {
-    //   document.addEventListener('click', (e) => {
-    //     if (e.target === '.js-UppyModal-close') {
-    //       this.hideModal()
-    //     }
-    //   })
-    //   // trigger.addEventListener('click', this.hideModal)
-    // })
     showModalTrigger.addEventListener('click', this.showModal)
 
     // When `next` (upload) button is clicked, emit `next` event,
     // so that plugins can proceed to the next stage
     const nextButton = document.querySelector('.UppyModal-next')
     nextButton.addEventListener('click', () => this.core.emitter.emit('next'))
-
-    // this.initEvents()
   }
 }

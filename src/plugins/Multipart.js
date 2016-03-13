@@ -51,7 +51,8 @@ export default class Multipart extends Plugin {
     xhr.open('POST', this.opts.endpoint, true)
 
     xhr.addEventListener('progress', (e) => {
-      // var percentage = (e.loaded / e.total * 100).toFixed(2)
+      var percentage = (e.loaded / e.total * 100).toFixed(2)
+      this.core.log(percentage)
       // this.setProgress(percentage, current, total)
     })
 

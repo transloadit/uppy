@@ -39,22 +39,21 @@ export default class DragDrop extends Plugin {
     // Another way not to render next/upload button — if Modal is used as a target
     const target = this.opts.target.name
     return `
-    <form class="UppyDragDrop-inner"
-          method="post"
-          enctype="multipart/form-data">
-      <input class="UppyDragDrop-input"
-             id="UppyDragDrop-input"
-             type="file"
-             name="files[]"
-             multiple />
-      <label class="UppyDragDrop-label" for="UppyDragDrop-input">
-        <strong>${this.core.i18n('chooseFile')}</strong>
-        <span class="UppyDragDrop-dragText">${this.core.i18n('orDragDrop')}</span>.
-      </label>
-      ${!this.core.opts.autoProceed && target !== 'Modal'
-        ? `<button class="UppyDragDrop-uploadBtn UppyNextBtn" type="submit">${this.core.i18n('upload')}</button>`
-        : ''}
-    </form>`
+      <form class="UppyDragDrop-inner">
+        <input class="UppyDragDrop-input"
+               id="UppyDragDrop-input"
+               type="file"
+               name="files[]"
+               multiple />
+        <label class="UppyDragDrop-label" for="UppyDragDrop-input">
+          <strong>${this.core.i18n('chooseFile')}</strong>
+          <span class="UppyDragDrop-dragText">${this.core.i18n('orDragDrop')}</span>.
+        </label>
+        ${!this.core.opts.autoProceed && target !== 'Modal'
+          ? `<button class="UppyDragDrop-uploadBtn UppyNextBtn" type="submit">${this.core.i18n('upload')}</button>`
+          : ''}
+      </form>
+    `
   }
 
 /**
@@ -96,11 +95,15 @@ export default class DragDrop extends Plugin {
 
     // Toggle is-dragover state when files are dragged over or dropped
     Utils.addListenerMulti(this.dropzone, 'dragover dragenter', (e) => {
-      Utils.addClass(this.container, 'is-dragover')
+      this.container.classList.add('is-dragover')
     })
 
     Utils.addListenerMulti(this.dropzone, 'dragleave dragend drop', (e) => {
-      Utils.removeClass(this.container, 'is-dragover')
+      this.container.classList.remove('is-dragover')
+    })
+
+    document.addEventListener('dragover', (e) => {
+      this.container.classList.add('is-drop-ready')
     })
 
     const onDrop = new Promise((resolve, reject) => {
@@ -114,10 +117,6 @@ export default class DragDrop extends Plugin {
         resolve(this.handleInputChange.bind(null, e))
       })
     })
-
-    // document.addEventListener('dragover', (e) => {
-    //   console.log('ну пиздец')
-    // })
 
     return Promise.race([onDrop, onInput]).then(handler => handler())
   }
