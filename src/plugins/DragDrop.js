@@ -102,8 +102,12 @@ export default class DragDrop extends Plugin {
       this.container.classList.remove('is-dragover')
     })
 
-    document.addEventListener('dragover', (e) => {
+    document.addEventListener('dragover dragenter', (e) => {
       this.container.classList.add('is-drop-ready')
+    })
+
+    document.addEventListener('dragleave dragend drop', (e) => {
+      this.container.classList.remove('is-drop-ready')
     })
 
     const onDrop = new Promise((resolve, reject) => {
@@ -176,9 +180,9 @@ export default class DragDrop extends Plugin {
     this.dropzone = document.querySelector(`${this.target} .UppyDragDrop-inner`)
     this.input = document.querySelector(`${this.target} .UppyDragDrop-input`)
 
-    Utils.addClass(this.container, 'UppyDragDrop')
+    this.container.classList.add('UppyDragDrop')
     if (this.isDragDropSupported) {
-      Utils.addClass(this.container, 'is-dragdrop-supported')
+      this.container.classList.add('is-dragdrop-supported')
     }
   }
 
