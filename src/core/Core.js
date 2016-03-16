@@ -170,6 +170,7 @@ export default class Core {
       // Run waterfall of typeMethods
       return Utils.promiseWaterfall(typeMethods)
         .then(result => {
+          // If results are empty, don't log upload results. Hasn't run yet.
           if (result[0] !== undefined) {
             this.log(result)
             this.log('Upload result -> success!')
