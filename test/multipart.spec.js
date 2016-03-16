@@ -9,7 +9,7 @@ test('upload two files', function (t) {
 
   driver.get('http://localhost:4000/examples/multipart/')
   driver.findElement(By.id('myfile1')).sendKeys(__dirname + '/image.jpg')
-  driver.findElement(By.id('myfile2')).sendKeys(__dirname + '/dummy.css')
+  driver.findElement(By.id('myfile2')).sendKeys(__dirname + '/image2.jpg')
   driver.findElement(By.id('myupload')).click()
 
   // Our success/fail message will be logged in the console element
