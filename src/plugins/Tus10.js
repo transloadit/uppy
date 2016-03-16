@@ -73,10 +73,8 @@ export default class Tus10 extends Plugin {
       results: results
     })
 
-    const files = this.extractFiles(results)
-
-    // this.core.log('tus got this: ')
-    // this.core.log(results)
+    // const files = this.extractFiles(results)
+    const files = results
 
     // var uploaded  = [];
     const uploaders = []

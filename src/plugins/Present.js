@@ -30,7 +30,6 @@ export default class Present extends Plugin {
   }
 
   showPresenter (target, uploadedCount) {
-    console.log(this.presenter)
     this.presenter.classList.add('is-visible')
     this.presenter.innerHTML = `
       <p>You have successfully uploaded

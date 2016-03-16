@@ -25,11 +25,14 @@ export default class DragDrop extends Plugin {
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
+    // Array of selected files
+    this.files = []
+
     // Check for browser dragDrop support
     this.isDragDropSupported = this.checkDragDropSupport()
 
     // Bind `this` to class methods
-    this.initEvents = this.initEvents.bind(this)
+    this.events = this.events.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -79,7 +82,7 @@ export default class DragDrop extends Plugin {
     return true
   }
 
-  initEvents () {
+  events () {
     this.core.log(`waiting for some files to be dropped on ${this.target}`)
 
     // prevent default actions for all drag & drop events
@@ -110,57 +113,83 @@ export default class DragDrop extends Plugin {
       this.container.classList.remove('is-drop-ready')
     })
 
-    const onDrop = new Promise((resolve, reject) => {
-      this.dropzone.addEventListener('drop', (e) => {
-        resolve(this.handleDrop.bind(null, e))
-      })
+    this.dropzone.addEventListener('drop', (e) => {
+      this.handleDrop(e)
     })
 
-    const onInput = new Promise((resolve, reject) => {
-      this.input.addEventListener('change', (e) => {
-        resolve(this.handleInputChange.bind(null, e))
-      })
+    this.input.addEventListener('change', (e) => {
+      this.handleInputChange(e)
     })
 
-    return Promise.race([onDrop, onInput]).then(handler => handler())
+    // const onDrop = new Promise((resolve, reject) => {
+    //   this.dropzone.addEventListener('drop', (e) => {
+    //     resolve(this.handleDrop.bind(null, e))
+    //   })
+    // })
+    //
+    // const onInput = new Promise((resolve, reject) => {
+    //   this.input.addEventListener('change', (e) => {
+    //     resolve(this.handleInputChange.bind(null, e))
+    //   })
+    // })
+
+    // return Promise.race([onDrop, onInput]).then(handler => handler())
   }
 
   handleDrop (e) {
     this.core.log('all right, someone dropped something...')
 
-    const files = e.dataTransfer.files
+    const newFiles = Array.from(e.dataTransfer.files)
 
     this.core.emitter.emit('fileSelection', {
       plugin: this,
-      filesSelected: files
+      filesSelected: newFiles
     })
 
-    return this.result(files)
+    newFiles.forEach(newFile => {
+      this.files.push(newFile)
+    })
+
+    // return this.result(files)
   }
 
   handleInputChange () {
     this.core.log('all right, something selected through input...')
 
-    const files = this.input.files
-    return this.result(files)
+    const newFiles = Array.from(this.input.files)
+
+    this.core.emitter.emit('fileSelection', {
+      plugin: this,
+      filesSelected: newFiles
+    })
+
+    newFiles.forEach(newFile => {
+      this.files.push(newFile)
+    })
+
+    // return this.result(files)
   }
 
-  result (files) {
+  result () {
     return new Promise((resolve, reject) => {
-      const result = {from: 'DragDrop', files}
-
       // if autoProceed is false, wait for upload button to be pushed,
       // otherwise just pass files to uploaders right away
       if (this.core.opts.autoProceed) {
-        return resolve(result)
+        const files = this.files
+        // const result = {from: 'DragDrop', files}
+        return resolve(files)
       }
 
       this.core.emitter.on('next', () => {
-        return resolve(result)
+        const files = this.files
+        // const result = {from: 'DragDrop', files}
+        return resolve(files)
       })
 
       this.dropzone.addEventListener('submit', (e) => {
-        return resolve(result)
+        const files = this.files
+        // const result = {from: 'DragDrop', files}
+        return resolve(files)
       })
     })
   }
@@ -193,6 +222,7 @@ export default class DragDrop extends Plugin {
       results: results
     })
 
-    return this.initEvents()
+    this.events()
+    return this.result()
   }
 }

@@ -1,5 +1,4 @@
 import Plugin from './Plugin'
-import Utils from '../core/Utils'
 
 /**
  * Progress bar
@@ -15,6 +14,9 @@ export default class ProgressBar extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    // Keep track of number of selected files
+    this.totalSelectedCount = 0
   }
 
   setProgress (percentage) {
@@ -52,10 +54,13 @@ export default class ProgressBar extends Plugin {
     this.core.emitter.on('fileSelection', data => {
       const files = data.filesSelected
 
-      // Display count of selected files
+      // How many files have been selected now
       const selectedCount = files.length
 
-      this.uploadButton.innerHTML = this.core.i18n('uploadFiles', {'smart_count': selectedCount})
+        // How many files have been selected totally
+      this.totalSelectedCount = this.totalSelectedCount + selectedCount
+
+      this.uploadButton.innerHTML = this.core.i18n('uploadFiles', {'smart_count': this.totalSelectedCount})
 
       Object.keys(files).forEach(file => {
         this.core.log(`These file has been selected: ${files[file]}`)

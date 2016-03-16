@@ -158,12 +158,11 @@
   width: 100%;
   height: 100%;
   background: none;
-  background-color: $color-cornflower-blue;
+  background-color: rgba($color-gray, 0.7);
   -webkit-appearance: none;
   border: 0;
   z-index: $zIndex-3;
   transition: background-color 0.5s;
-  cursor: pointer;
   color: $color-white;
   font-family: inherit;
   font-size: 14px;
@@ -171,6 +170,11 @@
   padding: 0;
   margin: 0;
   outline: none;
+}
+
+.UppyModal-next.is-active {
+  cursor: pointer;
+  background-color: $color-cornflower-blue;
 
   &:hover {
     background-color: darken($color-cornflower-blue, 20%);

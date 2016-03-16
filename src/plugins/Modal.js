@@ -27,7 +27,7 @@ export default class Modal extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.initEvents = this.initEvents.bind(this)
+    this.initTabs = this.initTabs.bind(this)
     this.hideModal = this.hideModal.bind(this)
     this.showModal = this.showModal.bind(this)
     this.install = this.install.bind(this)
@@ -121,7 +121,7 @@ export default class Modal extends Plugin {
   showModal () {
     this.isModalVisible = true
     this.modalEl.removeAttribute('aria-hidden')
-    this.initEvents()
+    this.initTabs()
   }
 
   hideAllTabPanels () {
@@ -145,7 +145,31 @@ export default class Modal extends Plugin {
     // document.querySelector('.UppyNextBtn').remove()
   }
 
-  initEvents () {
+  events () {
+    // Listen for allDone event to close all tabs
+    this.core.emitter.on('allDone', () => this.allDone())
+
+    this.core.emitter.on('fileSelection', () => {
+      this.nextButton.classList.add('is-active')
+    })
+    this.core.emitter.on('reset', () => this.nextButton.classList.remove('is-active'))
+
+    // Close the Modal on esc key press
+    document.body.addEventListener('keyup', event => {
+      if (event.keyCode === 27) {
+        this.hideModal()
+      }
+    })
+
+    // Close on click outside modal or close buttons
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('js-UppyModal-close')) {
+        this.hideModal()
+      }
+    })
+  }
+
+  initTabs () {
     // Get all tab buttons and loop through them, to determine which
     // tabPanel they trigger, set events
     this.tabs = Utils.qsa('.UppyModalTab-btn')
@@ -166,16 +190,6 @@ export default class Modal extends Plugin {
   }
 
   install () {
-    // Listen for allDone event to close all tabs
-    this.core.emitter.on('allDone', () => this.allDone())
-
-    // Close the Modal on esc key press
-    document.body.addEventListener('keyup', event => {
-      if (event.keyCode === 27) {
-        this.hideModal()
-      }
-    })
-
     const node = document.createElement('div')
     document.body.appendChild(node)
     node.outerHTML = this.render()
@@ -183,19 +197,14 @@ export default class Modal extends Plugin {
 
     // Add events for opening and closing the modal
     // const hideModalTrigger = Utils.qsa('.js-UppyModal-close')
-    const showModalTrigger = document.querySelector(this.opts.trigger)
-
-    document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('js-UppyModal-close')) {
-        this.hideModal()
-      }
-    })
-
-    showModalTrigger.addEventListener('click', this.showModal)
+    this.showModalTrigger = document.querySelector(this.opts.trigger)
+    this.showModalTrigger.addEventListener('click', this.showModal)
 
     // When `next` (upload) button is clicked, emit `next` event,
     // so that plugins can proceed to the next stage
-    const nextButton = document.querySelector('.UppyModal-next')
-    nextButton.addEventListener('click', () => this.core.emitter.emit('next'))
+    this.nextButton = document.querySelector('.UppyModal-next')
+    this.nextButton.addEventListener('click', () => this.core.emitter.emit('next'))
+
+    this.events()
   }
 }
