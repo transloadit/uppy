@@ -169,8 +169,14 @@ export default class Core {
         .map(type => this.runType.bind(this, type, method))
       // Run waterfall of typeMethods
       return Utils.promiseWaterfall(typeMethods)
-        .then(result => result)
-        .catch(error => console.error(error))
+        .then(result => {
+          if (result[0] !== undefined) {
+            this.log(result)
+            this.log('Upload result -> success!')
+            return result
+          }
+        })
+        .catch(error => this.log('Upload result -> failed:', error))
     })
   }
 }

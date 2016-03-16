@@ -36,40 +36,43 @@ export default class Multipart extends Plugin {
   }
 
   upload (files, current, total) {
-    var formPost = new FormData()
+    return new Promise((resolve, reject) => {
+      var formPost = new FormData()
 
-    // turn file into an array so we can use bundle
-    if (!this.opts.bundle) {
-      files = [files[current]]
-    }
-
-    for (let i in files) {
-      formPost.append(this.opts.fieldName, files[i])
-    }
-
-    var xhr = new XMLHttpRequest()
-    xhr.open('POST', this.opts.endpoint, true)
-
-    xhr.addEventListener('progress', (e) => {
-      var percentage = (e.loaded / e.total * 100).toFixed(2)
-      this.core.log(percentage)
-      // this.setProgress(percentage, current, total)
-    })
-
-    xhr.addEventListener('load', () => {
-      var upload = {}
-      if (this.opts.bundle) {
-        upload = {files: files}
-      } else {
-        upload = {file: files[current]}
+      // turn file into an array so we can use bundle
+      if (!this.opts.bundle) {
+        files = [files[current]]
       }
-      return Promise.resolve(upload)
-    })
 
-    xhr.addEventListener('error', () => {
-      return Promise.reject('fucking error!')
-    })
+      for (let i in files) {
+        formPost.append(this.opts.fieldName, files[i])
+      }
 
-    xhr.send(formPost)
+      var xhr = new XMLHttpRequest()
+      xhr.open('POST', this.opts.endpoint, true)
+
+      xhr.addEventListener('progress', (e) => {
+        var percentage = (e.loaded / e.total * 100).toFixed(2)
+        this.core.log(percentage)
+        // this.setProgress(percentage, current, total)
+      })
+
+      xhr.addEventListener('load', () => {
+        var upload = {}
+        if (this.opts.bundle) {
+          upload = {files: files}
+        } else {
+          upload = {file: files[current]}
+        }
+
+        return resolve(upload)
+      })
+
+      xhr.addEventListener('error', () => {
+        return reject('fucking error!')
+      })
+
+      xhr.send(formPost)
+    })
   }
 }
