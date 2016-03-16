@@ -22,65 +22,6 @@ function promiseWaterfall (methods) {
   return finalTaskPromise
 }
 
-// /**
-//  * Toggles a class on a DOM element
-//  * This is how we roll $('.element').toggleClass in a non-jQuery world
-//  *
-//  * @memberof Utils
-//  * @param {String} el selector
-//  * @param {String} className to toggle
-//  * @return {String}
-//  */
-// function toggleClass (el, className) {
-//   if (el.classList) {
-//     el.classList.toggle(className)
-//   } else {
-//     const classes = el.className.split(' ')
-//     const existingIndex = classes.indexOf(className)
-//
-//     if (existingIndex >= 0) {
-//       classes.splice(existingIndex, 1)
-//     } else {
-//       classes.push(className)
-//       el.className = classes.join(' ')
-//     }
-//   }
-// }
-
-// /**
-//  * Adds a class to a DOM element
-//  *
-//  * @memberof Utils
-//  * @param {Object} el selector
-//  * @param {String} className to add
-//  * @return {String}
-//  */
-// function addClass (el, className) {
-//   if (el.classList) {
-//     el.classList.add(className)
-//   } else {
-//     el.className += ' ' + className
-//   }
-// }
-
-// /**
-//  * Removes a class to a DOM element
-//  *
-//  * @memberof Utils
-//  * @param {String} el selector
-//  * @param {String} className to remove
-//  * @return {String}
-//  */
-// function removeClass (el, className) {
-//   if (el.classList) {
-//     el.classList.remove(className)
-//   } else {
-//     const patClasses = className.split(' ').join('|')
-//     const pattern = new RegExp('(^|\\b)' + patClasses + '(\\b|$)', 'gi')
-//     el.className = el.className.replace(pattern, ' ')
-//   }
-// }
-
 /**
  * Adds multiple listeners to to a DOM element
  * Equvalent to jQuery’s `$form.on('drag dragstart dragend dragover dragenter dragleave drop')`.
