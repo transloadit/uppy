@@ -19,11 +19,13 @@ first Tuesday of every new month.
 Ideas that will be planned and find their way into a release at one point
 
 - [ ] build: go through it together again, remove unnecessary commands, simplify (related to “clean up package.json”). Discuss how contributors might use it, add to contributing and/or readme (https://github.com/sapegin/social-likes/blob/next/Contributing.md#building-and-running-tests) (@arturi, @hedgerh, @kvz)
-- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199
+- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199,
+try https://github.com/nolanlawson/rollupify
 - [ ] build: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 - [ ] build: minification of the bundle
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
 - [ ] core: Add polyfill for `fetch`
+- [ ] core: consider `virtual-dom` + `main-loop` or `yo-yo` for rendering and state management
 - [ ] instagram: Add basic Instagram plugin example (#21)
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
@@ -33,6 +35,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: Make sure Uppy works well in VR
 - [ ] modal: State: which tab is open? get parameters?
 - [ ] modal: Avoid duplicating event listeners
+- [ ] meta: Create an Uppy logo
 
 ## 0.0.5 (May 03, 2016)
 
@@ -41,18 +44,20 @@ Ideas that will be planned and find their way into a release at one point
 ## 0.0.4 (April 05, 2016)
 
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
+- [x] build: sourcemaps for examples (@arturi)
+- [ ] build: try adding rollupify transform to “tree-shake” bundles
+- [x] build: fix browsersync & browserify double reloading issue (@arturi)
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
-- [x] dragdrop: Fix 405 Not Allowed (#60, @arturi, thx @hpvd)
+- [x] dragdrop: Fix 405 Not Allowed, (error) handling when you press Upload with no files (#60, @arturi, thx @hpvd)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
-- [ ] meta: Create an Uppy logo (@vvolfy)
 - [ ] modal: polish on mobile
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
 - [ ] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
 - [x] tus: Resolve promise when all uploads are done or failed, not earlier (currently you get to see '1 file uploaded' and can close the modal while the upload is in progress) (@arturi)
 - [ ] website: Polish taglines (@arturi)
-- [ ] website: scrollbars on code samples (@arturi)
+- [ ] website: scrollbars on code samples [can’t reproduce] (@arturi)
 - [x] website: Filter taglines (@kvz)
 - [x] core: Rename `view` to `orchestrator` (@kvz)
 - [x] core: Rename `progress` to `progressindicator` (@kvz)
@@ -60,7 +65,9 @@ Ideas that will be planned and find their way into a release at one point
 - [x] core: Pluralize collections (locales, just l like plugins) (@kvz)
 - [x] core: Rename `selecter` to `acquirer` (@kvz)
 - [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
-- [x] dragdrop: (error) handling when you press Upload with no files (@arturi)
+- [ ] modal: show selected files, show uploaded files preview in presenter (@arturi)
+- [ ] modal: `focus` on the first input field / button in tab panel (@arturi)
+- [x] modal: refactor and improve (@arturi)
 - [x] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)
 - [x] modal: Make sure modal renders under one dom node (@arturi, @hedgerh) — modal does, should everything else too?
 

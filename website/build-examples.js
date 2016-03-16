@@ -26,6 +26,8 @@ var chalk = require('chalk')
 var path = require('path')
 var mkdirp = require('mkdirp')
 var notifier = require('node-notifier')
+// consider enabling this
+// var rollupify = require('rollupify')
 var babelify = require('babelify')
 var browserify = require('browserify')
 var watchify = require('watchify')
@@ -37,6 +39,7 @@ var srcPattern = webRoot + '/src/examples/**/app.es6'
 var dstPattern = webRoot + '/public/examples/**/app.js'
 
 var watchifyEnabled = process.argv[2] === 'watch'
+
 var browserifyPlugins = []
 if (watchifyEnabled) {
   browserifyPlugins.push(watchify)
@@ -76,6 +79,7 @@ glob(srcPattern, function (err, files) {
       .require(uppyRoot + '/src/core/index.js', { expose: 'uppy/core' })
       .require(uppyRoot + '/src/plugins/index.js', { expose: 'uppy/plugins' })
       .require(uppyRoot + '/src/locales/index.js', { expose: 'uppy/locales' })
+      // .transform(rollupify)
       .transform(babelify)
 
     // Listeners for changes, errors, and completion.
