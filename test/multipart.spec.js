@@ -3,13 +3,18 @@ var webdriver = require('selenium-webdriver')
 var By = webdriver.By
 
 test('upload two files', function (t) {
+  // Create a new webdriver instance
   var driver = new webdriver.Builder()
     .withCapabilities(webdriver.Capabilities.chrome())
     .build()
 
   driver.get('http://localhost:4000/examples/multipart/')
+
+  // Select files to upload
   driver.findElement(By.id('myfile1')).sendKeys(__dirname + '/image.jpg')
   driver.findElement(By.id('myfile2')).sendKeys(__dirname + '/image2.jpg')
+
+  // Click submit button
   driver.findElement(By.id('myupload')).click()
 
   // Our success/fail message will be logged in the console element
