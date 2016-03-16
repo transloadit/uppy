@@ -1,6 +1,11 @@
 .UppyPresenter {
   font-size: 25px;
   text-align: center;
+  display: none;
+}
+
+.UppyPresenter.is-visible {
+  display: block;
 }
 
 .UppyPresenter-modalClose {

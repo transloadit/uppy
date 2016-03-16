@@ -115,6 +115,7 @@ export default class Modal extends Plugin {
   hideModal () {
     this.isModalVisible = false
     this.modalEl.setAttribute('aria-hidden', 'true')
+    this.core.emitter.emit('reset')
   }
 
   showModal () {
@@ -162,8 +163,6 @@ export default class Modal extends Plugin {
 
     // Select first tab right away
     this.tabs[0].click()
-
-    // this.hideAllTabPanels()
   }
 
   install () {

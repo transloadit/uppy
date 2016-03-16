@@ -25,15 +25,14 @@ export default class Present extends Plugin {
     `
   }
 
-  run (results) {
-    const uploadedCount = results[0].uploadedCount
-    const target = this.opts.target.name
+  hidePresenter () {
+    this.presenter.classList.remove('is-visible')
+  }
 
-    // Emit allDone event so that, for example, Modal can hide all tabs
-    this.core.emitter.emit('allDone')
-
-    const presenter = document.querySelector('.UppyPresenter')
-    presenter.innerHTML = `
+  showPresenter (target, uploadedCount) {
+    console.log(this.presenter)
+    this.presenter.classList.add('is-visible')
+    this.presenter.innerHTML = `
       <p>You have successfully uploaded
         <strong>${this.core.i18n('files', {'smart_count': uploadedCount})}</strong>
       </p>
@@ -43,11 +42,29 @@ export default class Present extends Plugin {
     `
   }
 
+  initEvents () {
+    this.core.emitter.on('reset', data => {
+      this.hidePresenter()
+    })
+  }
+
+  run (results) {
+    // Emit allDone event so that, for example, Modal can hide all tabs
+    this.core.emitter.emit('allDone')
+
+    const uploadedCount = results[0].uploadedCount
+    const target = this.opts.target.name
+    this.showPresenter(target, uploadedCount)
+  }
+
   install () {
     const caller = this
     this.target = this.getTarget(this.opts.target, caller)
     this.targetEl = document.querySelector(this.target)
     this.targetEl.innerHTML = this.render()
+    this.initEvents()
+    this.presenter = document.querySelector('.UppyPresenter')
+
     return
   }
 }

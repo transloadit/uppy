@@ -23,20 +23,21 @@ export default class ProgressBar extends Plugin {
     this.progressBarInnerEl.setAttribute('style', `width: ${percentage}%`)
   }
 
-  initProgressBar () {
+  init () {
     const caller = this
     this.target = this.getTarget(this.opts.target, caller)
 
+    this.uploadButton = document.querySelector('.js-UppyModal-next')
     this.progressBarContainerEl = document.querySelector(this.target)
     this.progressBarContainerEl.innerHTML = `<div class="UppyProgressBar">
-      <div class="UppyProgressBar-inner"></div>
-      <div class="UppyProgressBar-percentage"></div>
-    </div>`
+        <div class="UppyProgressBar-inner"></div>
+        <div class="UppyProgressBar-percentage"></div>
+      </div>`
     this.progressBarPercentageEl = document.querySelector(`${this.target} .UppyProgressBar-percentage`)
     this.progressBarInnerEl = document.querySelector(`${this.target} .UppyProgressBar-inner`)
   }
 
-  initEvents () {
+  events () {
     // When there is some progress (uploading), emit this event to adjust progressbar
     this.core.emitter.on('progress', data => {
       const percentage = data.percentage
@@ -53,19 +54,24 @@ export default class ProgressBar extends Plugin {
 
       // Display count of selected files
       const selectedCount = files.length
-      const uploadButton = document.querySelector('.js-UppyModal-next')
 
-      uploadButton.innerHTML = this.core.i18n('uploadFiles', {'smart_count': selectedCount})
+      this.uploadButton.innerHTML = this.core.i18n('uploadFiles', {'smart_count': selectedCount})
 
       Object.keys(files).forEach(file => {
         this.core.log(`These file has been selected: ${files[file]}`)
       })
     })
+
+    this.core.emitter.on('reset', data => {
+      this.progressBarContainerEl.classList.remove('is-active')
+      this.uploadButton.classList.remove('is-active')
+      this.uploadButton.innerHTML = this.core.i18n('upload')
+    })
   }
 
   install () {
-    this.initProgressBar()
-    this.initEvents()
+    this.init()
+    this.events()
     return
   }
 }
