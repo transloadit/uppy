@@ -1,7 +1,7 @@
 import Uppy from 'uppy/core'
 import { Formtag, Multipart } from 'uppy/plugins'
 
-const uppy = new Uppy({wait: false})
+const uppy = new Uppy({debug: true, wait: false})
 
 uppy
   .use(Formtag, {
