@@ -102,7 +102,7 @@ export default class Modal extends Plugin {
           <div class="UppyModalContent">
             <div class="UppyModal-presenter"></div>
             <div class="UppyModal-progress">
-              <button class="UppyModal-next">Upload</button>
+              <button class="UppyModal-next js-UppyModal-next">${this.core.i18n('upload')}</button>
               <div class="UppyModal-progressBarContainer"></div>
             </div>
           </div>

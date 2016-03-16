@@ -1,4 +1,5 @@
 import Plugin from './Plugin'
+import Utils from '../core/Utils'
 
 /**
  * Progress bar
@@ -49,6 +50,13 @@ export default class ProgressBar extends Plugin {
     // When files are selected, fire this event to: display there names, progress...
     this.core.emitter.on('fileSelection', data => {
       const files = data.filesSelected
+
+      // Display count of selected files
+      const selectedCount = files.length
+      const uploadButton = document.querySelector('.js-UppyModal-next')
+
+      uploadButton.innerHTML = this.core.i18n('uploadFiles', {'smart_count': selectedCount})
+
       Object.keys(files).forEach(file => {
         this.core.log(`These file has been selected: ${files[file]}`)
       })
