@@ -1,6 +1,11 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
-import ee from 'event-emitter'
+
+// import ee from 'event-emitter'
+import ee from 'events'
+
+// var EventEmitter = require('events').EventEmitter
+// var bus = new EventEmitter
 
 /**
  * Main Uppy core
@@ -33,7 +38,7 @@ export default class Core {
     // console.log(this.i18n('filesChosen', {smart_count: 3}))
 
     // Set up an event EventEmitter
-    this.emitter = ee()
+    this.emitter = new ee.EventEmitter()
   }
 
 /**

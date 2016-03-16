@@ -69,11 +69,10 @@
     "selenium-webdriver": "^2.52.0",
     "tape": "4.4.0",
     "watchify": "3.6.1",
-    "zuul": "3.7.2"
+    "zuul": "3.7.2",
+    "fakefile": "0.0.5"
   },
   "dependencies": {
-    "event-emitter": "0.3.4",
-    "fakefile": "0.0.5",
     "tus-js-client": "1.1.3"
   }
 }
