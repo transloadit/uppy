@@ -25,7 +25,7 @@ import Present from './Present'
 // Presetters
 import TransloaditBasic from './TransloaditBasic'
 
-export default {
+export {
   Plugin,
   Dummy,
   ProgressBar,
