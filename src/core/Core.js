@@ -39,6 +39,8 @@ export default class Core {
 
     // Set up an event EventEmitter
     this.emitter = new ee.EventEmitter()
+
+    this.totalFilesSelectedCount = 0
   }
 
 /**
