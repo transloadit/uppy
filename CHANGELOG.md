@@ -115,3 +115,24 @@ try https://github.com/nolanlawson/rollupify
 - [x] dropbox: Add basic Dropbox plugin example (#31)
 - [x] website: Add CSS Framework (#14)
 - [x] website: Create Hexo site that also contains our playground (#5, #34, #12 #22, #44, #35, #15, #37, #40, #43)
+
+
+## Component Owners:
+
+Here are the go-to folks for each individual component or area of expertise:
+
+- build ()
+- complete ()
+- core ()
+- docs ()
+- dragdrop ()
+- dropbox ()
+- google ()
+- instagram ()
+- meta ()
+- modal ()
+- presets ()
+- server ()
+- test ()
+- tus ()
+- website ()
