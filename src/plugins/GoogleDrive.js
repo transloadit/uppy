@@ -25,14 +25,14 @@ export default class Google extends Plugin {
 
   focus () {
     this.checkAuthentication()
-    .then(res => {
+    .then((res) => {
       if (!this.isAuthenticated) {
         this.target.innerHTML = this.renderAuth()
       } else {
         this.renderFolder()
       }
     })
-    .catch(err => {
+    .catch((err) => {
       this.target.innerHTML = this.renderError(err)
     })
   }
@@ -46,9 +46,9 @@ export default class Google extends Plugin {
         'Content-Type': 'application/json'
       }
     })
-    .then(res => {
+    .then((res) => {
       if (res.status >= 200 && res.status <= 300) {
-        return res.json().then(data => {
+        return res.json().then((data) => {
           this.isAuthenticated = data.isAuthenticated
         })
       } else {
@@ -57,7 +57,7 @@ export default class Google extends Plugin {
         throw error
       }
     })
-    .catch(err => {
+    .catch((err) => {
       this.target.innerHTML = this.renderError(err)
     })
   }
@@ -85,12 +85,12 @@ export default class Google extends Plugin {
         dir: folderId || undefined
       }
     })
-    .then(res => {
+    .then((res) => {
       if (res.status >= 200 && res.status <= 300) {
-        return res.json().then(data => {
+        return res.json().then((data) => {
           let folders = []
           let files = []
-          data.items.forEach(item => {
+          data.items.forEach((item) => {
             if (item.mimeType === 'application/vnd.google-apps.folder') {
               folders.push(item)
             } else {
@@ -131,12 +131,12 @@ export default class Google extends Plugin {
   }
 
   renderAuth () {
-    return `<div><h1>Authenticate With Google Drive</h1><a href=${ this.authUrl || '#' }>Authenticate</a></div>`
+    return `<div><h1>Authenticate With Google Drive</h1><a href=${this.authUrl || '#'}>Authenticate</a></div>`
   }
 
   renderBrowser (data) {
-    const folders = data.folders.map(folder => `<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}">${folder.title}</button></li>`)
-    const files = data.files.map(file => `<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}">${file.title}</button></li>`)
+    const folders = data.folders.map((folder) => `<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}">${folder.title}</button></li>`)
+    const files = data.files.map((file) => `<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}">${file.title}</button></li>`)
     return `<ul>${folders}</ul><ul>${files}</ul>`
   }
 
@@ -146,13 +146,13 @@ export default class Google extends Plugin {
 
   renderFolder (folder = this.currentFolder) {
     this.getFolder(folder)
-    .then(data => {
+    .then((data) => {
       this.target.innerHTML = this.renderBrowser(data)
       const folders = Utils.qsa('.GoogleDriveFolder')
       const files = Utils.qsa('.GoogleDriveFile')
 
-      folders.forEach(folder => folder.addEventListener('click', e => this.renderFolder(folder.dataset.id)))
-      files.forEach(file => file.addEventListener('click', e => this.getFile(file.dataset.id)))
+      folders.forEach((folder) => folder.addEventListener('click', (e) => this.renderFolder(folder.dataset.id)))
+      files.forEach((file) => file.addEventListener('click', (e) => this.getFile(file.dataset.id)))
     })
   }
 }

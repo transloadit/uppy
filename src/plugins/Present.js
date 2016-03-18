@@ -42,7 +42,7 @@ export default class Present extends Plugin {
   }
 
   initEvents () {
-    this.core.emitter.on('reset', data => {
+    this.core.emitter.on('reset', (data) => {
       this.hidePresenter()
     })
   }

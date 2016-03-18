@@ -66,9 +66,9 @@ export default class Plugin {
     // }
 
     const files = []
-    results.forEach(result => {
+    results.forEach((result) => {
       try {
-        Array.from(result.files).forEach(file => files.push(file))
+        Array.from(result.files).forEach((file) => files.push(file))
       } catch (e) {
         console.log(e)
       }

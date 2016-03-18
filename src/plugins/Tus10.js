@@ -38,7 +38,7 @@ export default class Tus10 extends Plugin {
     return new Promise((resolve, reject) => {
       const upload = new tus.Upload(file, {
         endpoint: this.opts.endpoint,
-        onError: error => {
+        onError: (error) => {
           reject('Failed because: ' + error)
         },
         onProgress: (bytesUploaded, bytesTotal) => {

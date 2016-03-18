@@ -38,7 +38,7 @@ export default class ProgressBar extends Plugin {
 
   events () {
     // When there is some progress (uploading), emit this event to adjust progressbar
-    this.core.emitter.on('progress', data => {
+    this.core.emitter.on('progress', (data) => {
       const percentage = data.percentage
       const plugin = data.plugin
       this.core.log(
@@ -47,7 +47,7 @@ export default class ProgressBar extends Plugin {
       this.setProgress(percentage)
     })
 
-    this.core.emitter.on('reset', data => {
+    this.core.emitter.on('reset', (data) => {
       this.progressBarContainerEl.classList.remove('is-active')
       this.uploadButton.classList.remove('is-active')
       this.uploadButton.innerHTML = this.core.i18n('upload')

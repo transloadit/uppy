@@ -1,4 +1,5 @@
 var test = require('tape')
+var path = require('path')
 var webdriver = require('selenium-webdriver')
 var By = webdriver.By
 
@@ -11,8 +12,8 @@ test('upload two files', function (t) {
   driver.get('http://localhost:4000/examples/multipart/')
 
   // Select files to upload
-  driver.findElement(By.id('myfile1')).sendKeys(__dirname + '/image.jpg')
-  driver.findElement(By.id('myfile2')).sendKeys(__dirname + '/image2.jpg')
+  driver.findElement(By.id('myfile1')).sendKeys(path.join(__dirname, '/image.jpg'))
+  driver.findElement(By.id('myfile2')).sendKeys(path.join(__dirname, '/image2.jpg'))
 
   // Click submit button
   driver.findElement(By.id('myupload')).click()

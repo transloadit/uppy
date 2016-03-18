@@ -60,7 +60,7 @@ export default class Dropbox extends Plugin {
     // add an onClick to each list item
     const fileElems = this._target.querySelectorAll('li')
 
-    Array.prototype.forEach.call(fileElems, element => {
+    Array.prototype.forEach.call(fileElems, (element) => {
       const type = element.getAttribute('data-type')
 
       if (type === 'file') {

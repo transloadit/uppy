@@ -85,7 +85,7 @@ export default class Core {
  */
   getPlugin (name) {
     let foundPlugin = false
-    this.iteratePlugins(plugin => {
+    this.iteratePlugins((plugin) => {
       if (plugin.constructor.name === name) {
         foundPlugin = plugin
         return false
@@ -100,7 +100,7 @@ export default class Core {
  * @param function method description
  */
   iteratePlugins (method) {
-    Object.keys(this.plugins).forEach(pluginType => {
+    Object.keys(this.plugins).forEach((pluginType) => {
       this.plugins[pluginType].forEach(method)
     })
   }
@@ -130,7 +130,7 @@ export default class Core {
     if (msg === `${msg}`) {
       console.log(`DEBUG LOG: ${msg}`)
     } else {
-      console.log(`DEBUG LOG`)
+      console.log('DEBUG LOG')
       console.dir(msg)
     }
   }
@@ -144,11 +144,11 @@ export default class Core {
  */
   runType (type, method, files) {
     const methods = this.plugins[type].map(
-      plugin => plugin[method](Utils.flatten(files))
+      (plugin) => plugin[method](Utils.flatten(files))
     )
 
     return Promise.all(methods)
-      .catch(error => console.error(error))
+      .catch((error) => console.error(error))
   }
 
 /**
@@ -169,14 +169,14 @@ export default class Core {
     // Each Plugin can have `run` and/or `install` methods.
     // `install` adds event listeners and does some non-blocking work, useful for `progressindicator`,
     // `run` waits for the previous step to finish (user selects files) before proceeding
-    ['install', 'run'].forEach(method => {
+    ['install', 'run'].forEach((method) => {
       // First we select only plugins of current type,
       // then create an array of runType methods of this plugins
-      const typeMethods = this.types.filter(type => this.plugins[type])
-        .map(type => this.runType.bind(this, type, method))
+      const typeMethods = this.types.filter((type) => this.plugins[type])
+        .map((type) => this.runType.bind(this, type, method))
       // Run waterfall of typeMethods
       return Utils.promiseWaterfall(typeMethods)
-        .then(result => {
+        .then((result) => {
           // If results are empty, don't log upload results. Hasn't run yet.
           if (result[0] !== undefined) {
             this.log(result)
@@ -184,7 +184,7 @@ export default class Core {
             return result
           }
         })
-        .catch(error => this.log('Upload result -> failed:', error))
+        .catch((error) => this.log('Upload result -> failed:', error))
     })
   }
 }

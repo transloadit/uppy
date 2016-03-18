@@ -26,12 +26,12 @@ export default class Spinner extends Plugin {
 
   initSpinner () {
     const spinnerContainer = document.querySelector(this.target)
-    spinnerContainer.innerHTML = `<div class="UppySpinner"></div>`
+    spinnerContainer.innerHTML = '<div class="UppySpinner"></div>'
     this.spinnerEl = document.querySelector(`${this.target} .UppySpinner`)
   }
 
   initEvents () {
-    this.core.emitter.on('progress', data => {
+    this.core.emitter.on('progress', (data) => {
       const percentage = data.percentage
       const plugin = data.plugin
       this.core.log(

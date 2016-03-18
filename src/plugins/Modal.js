@@ -125,8 +125,8 @@ export default class Modal extends Plugin {
   }
 
   hideAllTabPanels () {
-    this.tabPanels.forEach(tabPanel => tabPanel.setAttribute('aria-hidden', true))
-    this.tabs.forEach(tab => tab.removeAttribute('aria-selected'))
+    this.tabPanels.forEach((tabPanel) => tabPanel.setAttribute('aria-hidden', true))
+    this.tabs.forEach((tab) => tab.removeAttribute('aria-selected'))
   }
 
   showTabPanel (pluginSelector, pluginName) {
@@ -160,7 +160,7 @@ export default class Modal extends Plugin {
 
       this.nextButton.innerHTML = this.core.i18n('uploadFiles', {'smart_count': this.core.totalFilesSelectedCount})
 
-      Object.keys(files).forEach(file => {
+      Object.keys(files).forEach((file) => {
         this.core.log(`These file has been selected: ${files[file]}`)
       })
     })
@@ -168,7 +168,7 @@ export default class Modal extends Plugin {
     this.core.emitter.on('reset', () => this.nextButton.classList.remove('is-active'))
 
     // Close the Modal on esc key press
-    document.body.addEventListener('keyup', event => {
+    document.body.addEventListener('keyup', (event) => {
       if (event.keyCode === 27) {
         this.hideModal()
       }
@@ -186,13 +186,13 @@ export default class Modal extends Plugin {
     // Get all tab buttons and loop through them, to determine which
     // tabPanel they trigger, set events
     this.tabs = Utils.qsa('.UppyModalTab-btn')
-    this.tabs.forEach(tab => {
+    this.tabs.forEach((tab) => {
       const pluginSelector = tab.getAttribute('data-open')
       const pluginName = tab.getAttribute('aria-controls')
       const tabPanel = document.querySelector(`.${pluginSelector}`)
       this.tabPanels.push(tabPanel)
 
-      tab.addEventListener('click', event => {
+      tab.addEventListener('click', (event) => {
         event.preventDefault()
         this.showTabPanel(pluginSelector, pluginName)
       })

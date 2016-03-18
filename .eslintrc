@@ -2,7 +2,7 @@
   "extends": "standard",
   "env": {
     "browser": true,
-    "node": false
+    "node": true
   },
   "globals": {
     "window": true,
