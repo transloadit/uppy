@@ -129,7 +129,7 @@ Here are the go-to folks for each individual component or area of expertise:
 - dropbox ()
 - google ()
 - instagram ()
-- meta ()
+- meta (@kvz)
 - modal ()
 - presets ()
 - server ()
