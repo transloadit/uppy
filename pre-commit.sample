@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+PATH=$PATH:/usr/local/bin:/usr/local/sbin
+
+npm run test
