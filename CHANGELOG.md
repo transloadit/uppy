@@ -23,6 +23,7 @@ Ideas that will be planned and find their way into a release at one point
 try https://github.com/nolanlawson/rollupify
 - [ ] build: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 - [ ] build: minification of the bundle
+- [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
 - [ ] core: Add polyfill for `fetch`
 - [ ] core: consider `virtual-dom` + `main-loop` or `yo-yo` for rendering and state management
@@ -40,18 +41,21 @@ try https://github.com/nolanlawson/rollupify
 ## 0.0.5 (May 03, 2016)
 
 - [ ] meta: Consider using <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
+- [ ] modal: polish on mobile
+- [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 
 ## 0.0.4 (April 05, 2016)
 
-- [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
+- [ ] core: component & event-based state management with `yo-yo` (@arturi, @hedgerh)
+- [ ] core: re-think running architecture: allow for `acquiring` while `uploading`,
+allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
+- [ ] core: come up with standard file format for uploading (@arturi, @hedgerh)
 - [x] build: sourcemaps for examples (@arturi)
 - [ ] build: try adding rollupify transform to “tree-shake” bundles
 - [x] build: fix browsersync & browserify double reloading issue (@arturi)
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
-- [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [x] dragdrop: Fix 405 Not Allowed, (error) handling when you press Upload with no files (#60, @arturi, thx @hpvd)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
-- [ ] modal: polish on mobile
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
 - [ ] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
