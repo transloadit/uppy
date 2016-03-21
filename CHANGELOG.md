@@ -43,6 +43,7 @@ try https://github.com/nolanlawson/rollupify
 - [ ] meta: Consider using <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
 - [ ] modal: polish on mobile
 - [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
+- [ ] build: try adding rollupify transform to “tree-shake” bundles
 
 ## 0.0.4 (April 05, 2016)
 
@@ -50,8 +51,8 @@ try https://github.com/nolanlawson/rollupify
 - [ ] core: re-think running architecture: allow for `acquiring` while `uploading`,
 allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
 - [ ] core: come up with standard file format for uploading (@arturi, @hedgerh)
+- [ ] progressdrawer: show progress for individual files, let user cancel uploads, show previews for images (@arturi) 
 - [x] build: sourcemaps for examples (@arturi)
-- [ ] build: try adding rollupify transform to “tree-shake” bundles
 - [x] build: fix browsersync & browserify double reloading issue (@arturi)
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [x] dragdrop: Fix 405 Not Allowed, (error) handling when you press Upload with no files (#60, @arturi, thx @hpvd)
