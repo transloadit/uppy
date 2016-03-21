@@ -30,28 +30,44 @@ export default class ProgressDrawer extends Plugin {
   }
 
   render (state) {
-    return yo`<div>
-      <h1>My name is ${state.name}</h1>
-      <button type="button" onclick=${this.bla.bind(this)}>Click me!</button>
-      <time>${state.time}</time>
-      <div style="width: 300px; height: 200px; background-color: ${state.color}; overflow: scroll">
-        <p>123This page demonstrates how to make a dialog window as accessible as possible to assistive technology users. Dialog windows are especially problematic for screen reader users. Often times the user is able to “escape” the window and interact with other parts of the page when they should not be able to. This is partially due to the way screen reader software interacts with the browser.</p>
-        <p>To see this in action, you just need to open the dialog window. Once it’s open, you should not be able to interact with other links on the main page like going to the main GitHub page. The focus is said to be “trapped” inside the dialog until the user explicitely decides to leave it.</p>
-      </div>
+    return yo`<div class="UppyProgressDrawer">
+      <ul>
+        ${state.files.map((file, index) => {
+          const remove = (ev) => {
+            this.core.emitter.emit('remove-item', index)
+          }
+
+          return yo`<li>${file.name} <button onclick=${remove}>x</button></li>`
+        })}
+      </ul>
     </div>`
   }
 
   // all actions should be in core, I guess
   events () {
-    this.core.emitter.on('progress', (data) => {
-      this.update({ progress: data })
+    // this.core.emitter.on('progress', (data) => {
+    //   this.update({ progress: data })
+    // })
+
+    this.core.emitter.on('remove-item', (index) => {
+      const fileList = this.state.files.slice()
+      fileList.splice(index, 1)
+      this.update({files: fileList})
+    })
+
+    this.core.emitter.on('file-selection', (files) => {
+      const fileList = this.state.files.slice()
+      files.filesSelected.forEach(file => {
+        fileList.push(file)
+      })
+      this.update({files: fileList})
     })
   }
 
   init () {
-    this.state = {name: 'Artur', color: 'green'}
+    this.state = {files: []}
     this.el = this.render(this.state)
-    document.body.appendChild(this.el)
+    document.querySelector('.UppyModal').appendChild(this.el)
   }
 
   install () {

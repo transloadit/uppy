@@ -16,22 +16,6 @@ export default class Plugin {
     this.name = this.constructor.name
   }
 
-  // setProgress (percentage, current, total) {
-  //   var finalPercentage = percentage
-  //
-  //   // if (current !== undefined && total !== undefined) {
-  //   //   var percentageOfTotal = (percentage / total);
-  //   //   // finalPercentage = percentageOfTotal;
-  //   //   if (current > 1) {
-  //   //     finalPercentage = percentage + (100 / (total * current));
-  //   //   } else {
-  //   //     finalPercentage = percentage;
-  //   //   }
-  //   // }
-  //
-  //   this.core.setProgress(this, finalPercentage)
-  // }
-
   /**
    * Check if supplied `target` is a `string` or an `object`.
    * If object (that means its a plugin), search `plugins` for
@@ -42,10 +26,10 @@ export default class Plugin {
    */
   getTarget (target, callerPlugin) {
     if (typeof target === 'string') {
-      this.core.log('string is a target')
+      // this.core.log('string is a target')
       return target
     } else {
-      this.core.log('plugin is a target')
+      // this.core.log('plugin is a target')
 
       let targetPlugin = this.core.getPlugin(target.name)
 
