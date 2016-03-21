@@ -61,7 +61,7 @@ allow for continuous `acquiring`, even after all plugins have “run” (@arturi
 - [ ] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
 - [x] tus: Resolve promise when all uploads are done or failed, not earlier (currently you get to see '1 file uploaded' and can close the modal while the upload is in progress) (@arturi)
 - [ ] website: Polish taglines (@arturi)
-- [ ] website: scrollbars on code samples [can’t reproduce] (@arturi)
+- [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [x] website: Filter taglines (@kvz)
 - [x] core: Rename `view` to `orchestrator` (@kvz)
 - [x] core: Rename `progress` to `progressindicator` (@kvz)
