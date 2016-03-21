@@ -36,7 +36,6 @@ export default class ProgressDrawer extends Plugin {
           const remove = (ev) => {
             this.core.emitter.emit('remove-item', index)
           }
-
           return yo`<li>${file.name} <button onclick=${remove}>x</button></li>`
         })}
       </ul>
@@ -57,7 +56,7 @@ export default class ProgressDrawer extends Plugin {
 
     this.core.emitter.on('file-selection', (files) => {
       const fileList = this.state.files.slice()
-      files.filesSelected.forEach(file => {
+      files.filesSelected.forEach((file) => {
         fileList.push(file)
       })
       this.update({files: fileList})

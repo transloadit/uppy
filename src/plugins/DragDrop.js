@@ -163,7 +163,7 @@ export default class DragDrop extends Plugin {
       filesSelected: newFiles
     })
 
-    newFiles.forEach(newFile => {
+    newFiles.forEach((newFile) => {
       this.files.push(newFile)
     })
 
