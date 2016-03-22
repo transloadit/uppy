@@ -12,7 +12,7 @@ we're `<1.0.0` and allowing ourselves to make breaking changes in minor
 and patch levels.
 
 In the current stage we aim to release a new version on the
-first Tuesday of every new month.
+first Monday of every new month.
 
 ## Backlog
 
@@ -38,14 +38,14 @@ try https://github.com/nolanlawson/rollupify
 - [ ] modal: Avoid duplicating event listeners
 - [ ] meta: Create an Uppy logo
 
-## 0.0.5 (May 03, 2016)
+## 0.0.5 (May 02, 2016)
 
 - [ ] meta: Consider using <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
 - [ ] modal: polish on mobile
 - [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [ ] build: try adding rollupify transform to “tree-shake” bundles
 
-## 0.0.4 (April 05, 2016)
+## 0.0.4 (April 04, 2016)
 
 - [ ] core: component & event-based state management with `yo-yo` (@arturi, @hedgerh)
 - [ ] core: re-think running architecture: allow for `acquiring` while `uploading`,
