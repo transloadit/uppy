@@ -58,6 +58,8 @@ allow for continuous `acquiring`, even after all plugins have “run” (@arturi
 - [x] dragdrop: Fix 405 Not Allowed, (error) handling when you press Upload with no files (#60, @arturi, thx @hpvd)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
+- [ ] test: Add acceptance tests to Travis so they are run on every change
+- [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
 - [ ] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
 - [x] tus: Resolve promise when all uploads are done or failed, not earlier (currently you get to see '1 file uploaded' and can close the modal while the upload is in progress) (@arturi)
