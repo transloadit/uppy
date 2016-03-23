@@ -149,10 +149,10 @@ export default class Modal extends Plugin {
     // Listen for allDone event to close all tabs
     this.core.emitter.on('allDone', () => this.allDone())
 
-    this.core.emitter.on('fileSelection', (data) => {
+    this.core.emitter.on('file-add', (data) => {
       this.nextButton.classList.add('is-active')
 
-      const files = data.filesSelected
+      const files = Object.keys(data.acquiredFiles)
       const selectedCount = files.length
 
         // How many files have been selected totally
@@ -160,8 +160,8 @@ export default class Modal extends Plugin {
 
       this.nextButton.innerHTML = this.core.i18n('uploadFiles', {'smart_count': this.core.totalFilesSelectedCount})
 
-      Object.keys(files).forEach((file) => {
-        this.core.log(`These file has been selected: ${files[file]}`)
+      files.forEach((file) => {
+        this.core.log(`These files have been selected: ${data.acquiredFiles[file]}`)
       })
     })
 

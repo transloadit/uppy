@@ -31,7 +31,7 @@ export default class Spinner extends Plugin {
   }
 
   initEvents () {
-    this.core.emitter.on('progress', (data) => {
+    this.core.emitter.on('upload-progress', (data) => {
       const percentage = data.percentage
       const plugin = data.plugin
       this.core.log(

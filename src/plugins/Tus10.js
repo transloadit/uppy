@@ -27,16 +27,11 @@ export default class Tus10 extends Plugin {
  */
   upload (file, current, total) {
     this.core.log(`uploading ${current} of ${total}`)
-
-    // Dispatch progress 0 on start
-    this.core.emitter.emit('progress', {
-      plugin: this,
-      percentage: 0
-    })
+    // console.log(file)
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
-      const upload = new tus.Upload(file, {
+      const upload = new tus.Upload(file.data, {
         endpoint: this.opts.endpoint,
         onError: (error) => {
           reject('Failed because: ' + error)
@@ -46,10 +41,13 @@ export default class Tus10 extends Plugin {
           percentage = Math.round(percentage)
 
           // Dispatch progress event
-          this.core.emitter.emit('progress', {
-            plugin: this,
-            percentage: percentage
+          this.core.emitter.emit('upload-progress', {
+            uploader: this,
+            id: file.id,
+            percentage: percentage,
+            done: false
           })
+          this.core.log(file)
         },
         onSuccess: () => {
           this.core.log(`Download ${upload.file.name} from ${upload.url}`)
@@ -57,6 +55,26 @@ export default class Tus10 extends Plugin {
         }
       })
       upload.start()
+    })
+  }
+
+  install () {
+    this.core.emitter.on('new-next', () => {
+      console.log('began uploading!!..')
+      const selectedFiles = this.core.selectedFiles
+      window.selectedFiles = selectedFiles
+      const uploaders = []
+
+      Object.keys(selectedFiles).forEach((fileID, i) => {
+        const file = selectedFiles[fileID]
+        const current = parseInt(i, 10) + 1
+        const total = Object.keys(selectedFiles).length
+        uploaders.push(this.upload(file, current, total))
+      })
+
+      Promise.all(uploaders).then((result) => {
+        console.log('all uploaded!')
+      })
     })
   }
 

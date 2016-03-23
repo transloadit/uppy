@@ -141,14 +141,16 @@ export default class DragDrop extends Plugin {
 
     const newFiles = Array.from(e.dataTransfer.files)
 
-    this.core.emitter.emit('file-selection', {
+    this.core.emitter.emit('file-add', {
       plugin: this,
-      filesSelected: newFiles
+      acquiredFiles: newFiles
     })
 
-    newFiles.forEach((newFile) => {
-      this.files.push(newFile)
-    })
+    this.core.emitter.emit('new-next')
+    //
+    // newFiles.forEach((newFile) => {
+    //   this.files.push(newFile)
+    // })
 
     // return this.result(files)
   }
@@ -158,9 +160,9 @@ export default class DragDrop extends Plugin {
 
     const newFiles = Array.from(this.input.files)
 
-    this.core.emitter.emit('file-selection', {
+    this.core.emitter.emit('file-add', {
       plugin: this,
-      filesSelected: newFiles
+      acquiredFiles: newFiles
     })
 
     newFiles.forEach((newFile) => {
