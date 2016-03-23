@@ -41,6 +41,8 @@ export default class Core {
     this.emitter = new ee.EventEmitter()
 
     this.totalFilesSelectedCount = 0
+
+    this.selectedFiles = {}
   }
 
 /**
