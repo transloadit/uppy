@@ -6,12 +6,25 @@
   width: 350px;
   height: 200px;
   background-color: $color-white;
+  box-shadow: 0 0 20px rgba($color-asphalt-gray, 0.2);
+  overflow: hidden;
+}
+
+.UppyProgressDrawer-status {
+  height: 30px;
+  line-height: 30px;
+  font-size: 12px;
+  background-color: $color-asphalt-gray;
+  color: $color-white;
+  text-align: center;
 }
 
 .UppyProgressDrawer-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  overflow-y: auto;
+  height: 100%;
 }
 
 .UppyProgressDrawer-item {
@@ -21,6 +34,8 @@
   margin: 0;
   padding: 0;
   border-bottom: 1px solid $color-white;
+  position: relative;
+  background-color: $color-cornflower-blue;
 }
 
 .UppyProgressDrawer-item.is-uploaded {
@@ -37,29 +52,12 @@
   }
 }
 
-.UppyProgressDrawer-itemBar {
-  float: left;
-  width: 90%;
-  height: 100%;
-  background-color: lighten($color-cornflower-blue, 10%);
-  position: relative;
-}
-
-.UppyProgressDrawer-itemCheck {
-  display: none;
-  position: absolute;
-  top: 12px;
-  right: 15px;
-  fill: $color-white;
-}
-
 .UppyProgressDrawer-itemProgress {
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   background-color: $color-pink;
-  // z-index: $zIndex-4;
 }
 
 .UppyProgressDrawer-itemName {
@@ -74,18 +72,24 @@
 
 .UppyProgressDrawer-itemRemove {
   @include reset-button;
-  float: left;
-  width: 10%;
+  width: 40px;
   height: 100%;
   padding: 10px;
   font-size: 20px;
   line-height: 20px;
-  background-color: $color-pink;
+  // background-color: $color-pink;
   color: $color-white;
   cursor: pointer;
-  transition: background-color .3s;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: $zIndex-4;
+}
 
-  &:hover {
-    background-color: darken($color-pink, 10%);
-  }
+.UppyProgressDrawer-itemCheck {
+  display: none;
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  fill: $color-white;
 }

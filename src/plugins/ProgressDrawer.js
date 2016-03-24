@@ -24,40 +24,35 @@ export default class ProgressDrawer extends Plugin {
     yo.update(this.el, newEl)
   }
 
-  bla () {
-    console.log('hello!')
-    this.update({name: 'Igor', time: Date.now()})
-  }
-
   render (state) {
     const selectedFiles = state.files
+    const selectedFileCount = Object.keys(selectedFiles).length
 
     const drawerItem = (fileID) => {
+      const isUploaded = selectedFiles[fileID].progress === 100
+
       const remove = (ev) => {
         this.core.emitter.emit('file-remove', fileID)
       }
 
-      const checkIcon = () => {
-        return yo`<svg class="UppyProgressDrawer-itemCheck" width="16" height="16" viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+      const checkIcon = yo`<svg class="UppyProgressDrawer-itemCheck" width="16" height="16" viewBox="0 0 32 32" enable-background="new 0 0 32 32">
           <polygon points="2.836,14.708 5.665,11.878 13.415,19.628 26.334,6.712 29.164,9.54 13.415,25.288 "></polygon>
         </svg>`
-      }
-
-      const isUploaded = selectedFiles[fileID].progress === 100
 
       return yo`<li class="UppyProgressDrawer-item ${isUploaded ? 'is-uploaded' : ''}">
-        <div class="UppyProgressDrawer-itemBar">
-          <span class="UppyProgressDrawer-itemProgress"
-                style="width: ${selectedFiles[fileID].progress}%"></span>
-          <h4 class="UppyProgressDrawer-itemName">
-            ${selectedFiles[fileID].name} (${selectedFiles[fileID].progress})</h4>
-          ${checkIcon()}
-        </div>
+        <span class="UppyProgressDrawer-itemProgress"
+              style="width: ${selectedFiles[fileID].progress}%"></span>
+        <h4 class="UppyProgressDrawer-itemName">
+          ${selectedFiles[fileID].name} (${selectedFiles[fileID].progress})</h4>
+        ${checkIcon}
         <button class="UppyProgressDrawer-itemRemove" onclick=${remove}>×</button>
       </li>`
     }
 
     return yo`<div class="UppyProgressDrawer">
+      <div class="UppyProgressDrawer-status">
+        ${this.core.i18n('uploadFiles', {'smart_count': selectedFileCount})}
+      </div>
       <ul class="UppyProgressDrawer-list">
         ${Object.keys(selectedFiles).map((fileID) => {
           return drawerItem(fileID)
@@ -99,16 +94,16 @@ export default class ProgressDrawer extends Plugin {
   init () {
     this.state = {files: {}}
     this.el = this.render(this.state)
-    document.querySelector('.UppyModal').appendChild(this.el)
+    const caller = this
+    // document.querySelector('.UppyModal').appendChild(this.el)
+
+    this.target = this.getTarget(this.opts.target, caller)
+    document.querySelector(this.target).appendChild(this.el)
   }
 
   install () {
     this.init()
     this.events()
-
-    // setTimeout(() => {
-    //   this.core.emitter.emit('new-next')
-    // }, 8000)
 
     return
   }

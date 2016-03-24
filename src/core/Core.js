@@ -114,11 +114,11 @@ export default class Core {
  * @param {integer} percentage
  * @return {object} self for chaining
  */
-  setProgress (plugin, percentage) {
-    // Any plugin can call this via `this.core.setProgress(this, precentage)`
-    console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage)
-    return this
-  }
+  // setProgress (plugin, percentage) {
+  //   // Any plugin can call this via `this.core.setProgress(this, precentage)`
+  //   console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage)
+  //   return this
+  // }
 
 /**
  * Logs stuff to console, only if `debug` is set to true. Silent in production.

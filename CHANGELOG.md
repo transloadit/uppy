@@ -50,15 +50,16 @@ try https://github.com/nolanlawson/rollupify
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [ ] core: come up with standard file format for uploading (@arturi, @hedgerh)
 - [ ] core: component & event-based state management with `yo-yo` (@arturi, @hedgerh)
-- [ ] core: re-think running architecture: allow for `acquiring` while `uploading`,
+- [ ] core: re-think running architecture: allow for `acquiring` while `uploading`
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] modal: `focus` on the first input field / button in tab panel (@arturi)
 - [ ] modal: show selected files, show uploaded files preview in presenter (@arturi)
-- [ ] progressdrawer: show progress for individual files, let user cancel uploads, show previews for images (@arturi) 
+- [x] progressdrawer: implement basic version, show progress for individual files (@arturi)
+- [ ] progressdrawer: show progress for individual files, let user cancel uploads, show previews for images (@arturi)
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] test: Add acceptance tests to Travis so they are run on every change
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
-- [ ] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
+- [x] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
 - [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
 - [ ] website: Polish taglines (@arturi)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
