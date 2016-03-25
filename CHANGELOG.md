@@ -19,7 +19,7 @@ first Monday of every new month.
 Ideas that will be planned and find their way into a release at one point
 
 - [ ] build: go through it together again, remove unnecessary commands, simplify (related to “clean up package.json”). Discuss how contributors might use it, add to contributing and/or readme (https://github.com/sapegin/social-likes/blob/next/Contributing.md#building-and-running-tests) (@arturi, @hedgerh, @kvz)
-- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199,
+- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
 - [ ] build: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 - [ ] build: minification of the bundle
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
@@ -36,7 +36,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
-try https://github.com/nolanlawson/rollupify
+- [ ] website: Make a gif/video of Uppy modal or DragDrop demo (drag & drop a few files -> upload happens)
 
 ## 0.0.5 (May 02, 2016)
 
@@ -44,13 +44,13 @@ try https://github.com/nolanlawson/rollupify
 - [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [ ] meta: Consider using <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
 - [ ] modal: polish on mobile
+- [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 
 ## 0.0.4 (April 04, 2016)
 
-- [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [ ] core: come up with standard file format for uploading (@arturi, @hedgerh)
 - [ ] core: component & event-based state management with `yo-yo` (@arturi, @hedgerh)
-- [ ] core: re-think running architecture: allow for `acquiring` while `uploading`
+- [x] core: re-think running architecture: allow for `acquiring` while `uploading` (@arturi)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] modal: `focus` on the first input field / button in tab panel (@arturi)
 - [ ] modal: show selected files, show uploaded files preview in presenter (@arturi)
@@ -61,8 +61,7 @@ try https://github.com/nolanlawson/rollupify
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
 - [x] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
 - [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
-- [ ] website: Polish taglines (@arturi)
-- [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
+- [x] build: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [x] build: fix browsersync & browserify double reloading issue (@arturi)
 - [x] build: sourcemaps for examples (@arturi)
 - [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
