@@ -1,13 +1,19 @@
 .UppyProgressDrawer {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: -200px;
+  right: -200px;
   z-index: $zIndex-4;
   width: 350px;
   height: 200px;
   background-color: $color-white;
   box-shadow: 0 0 20px rgba($color-asphalt-gray, 0.2);
   overflow: hidden;
+  transition: all .3s;
+
+  &.is-visible {
+    bottom: 30px;
+    right: 30px;
+  }
 }
 
 .UppyProgressDrawer-status {
@@ -24,7 +30,7 @@
   padding: 0;
   margin: 0;
   overflow-y: auto;
-  height: 100%;
+  height: 130px;
 }
 
 .UppyProgressDrawer-item {
