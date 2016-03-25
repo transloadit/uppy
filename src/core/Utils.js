@@ -46,15 +46,30 @@ function flatten (arr) {
   return [].concat.apply([], arr)
 }
 
+/**
+ * `querySelectorAll` that returns a normal array instead of fileList
+ */
 function qsa (selector, context) {
   return Array.prototype.slice.call((context || document).querySelectorAll(selector) || [])
 }
 
+/**
+ * Takes a fileName and turns it into fileID, by converting to lowercase,
+ * removing extra characters and adding unix timestamp
+ *
+ * @param {String} fileName
+ *
+ */
+function generateFileID (fileName) {
+  let fileID = fileName.toLowerCase()
+  fileID = fileID.replace(/[^A-Z0-9]/ig, '')
+  fileID = fileID + Date.now()
+  return fileID
+}
+
 export default {
   promiseWaterfall,
-  // toggleClass,
-  // addClass,
-  // removeClass,
+  generateFileID,
   addListenerMulti,
   flatten,
   qsa
