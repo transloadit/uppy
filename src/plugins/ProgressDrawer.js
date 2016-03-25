@@ -18,15 +18,16 @@ export default class ProgressDrawer extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
-  update (newState) {
-    Object.assign(this.state, newState)
-    var newEl = this.render(this.state)
+  update (state) {
+    var newEl = this.render(state)
     yo.update(this.el, newEl)
   }
 
   render (state) {
-    const selectedFiles = state.files
+    const selectedFiles = state.selectedFiles
+    // this.core.log(selectedFiles)
     const selectedFileCount = Object.keys(selectedFiles).length
+    const isSomethingSelected = selectedFileCount > 0
 
     const drawerItem = (fileID) => {
       const isUploaded = selectedFiles[fileID].progress === 100
@@ -49,9 +50,9 @@ export default class ProgressDrawer extends Plugin {
       </li>`
     }
 
-    return yo`<div class="UppyProgressDrawer">
+    return yo`<div class="UppyProgressDrawer ${isSomethingSelected ? 'is-visible' : ''}">
       <div class="UppyProgressDrawer-status">
-        ${this.core.i18n('uploadFiles', {'smart_count': selectedFileCount})}
+        ${isSomethingSelected ? this.core.i18n('uploadFiles', {'smart_count': selectedFileCount}) : ''}
       </div>
       <ul class="UppyProgressDrawer-list">
         ${Object.keys(selectedFiles).map((fileID) => {
@@ -61,49 +62,12 @@ export default class ProgressDrawer extends Plugin {
     </div>`
   }
 
-  // TODO all actions should be in core, I guess
-  events () {
-    this.core.emitter.on('upload-progress', (progressData) => {
-      this.core.selectedFiles[progressData.id].progress = progressData.percentage
-      this.update({files: this.core.selectedFiles})
-    })
-
-    this.core.emitter.on('file-remove', (fileID) => {
-      delete this.core.selectedFiles[fileID]
-      this.update({files: this.core.selectedFiles})
-    })
-
-    this.core.emitter.on('file-add', (data) => {
-      data.acquiredFiles.forEach((file) => {
-        const fileName = file.name
-        const fileID = this.generateFileID(fileName)
-
-        this.core.selectedFiles[fileID] = {
-          acquiredBy: data.plugin,
-          id: fileID,
-          name: fileName,
-          data: file,
-          progress: 0
-        }
-      })
-
-      this.update({files: this.core.selectedFiles})
-    })
-  }
-
-  init () {
-    this.state = {files: {}}
-    this.el = this.render(this.state)
+  install () {
+    this.el = this.render(this.core.state)
     const caller = this
-    // document.querySelector('.UppyModal').appendChild(this.el)
 
     this.target = this.getTarget(this.opts.target, caller)
     document.querySelector(this.target).appendChild(this.el)
-  }
-
-  install () {
-    this.init()
-    this.events()
 
     return
   }

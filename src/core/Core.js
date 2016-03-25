@@ -43,6 +43,81 @@ export default class Core {
     this.totalFilesSelectedCount = 0
 
     this.selectedFiles = {}
+
+    this.defaultState = {
+      selectedFiles: {}
+    }
+
+    this.state = Object.assign({}, this.state, this.defaultState)
+  }
+
+  /**
+   * Iterate on all plugins and run `update` on them, called when state changes
+   *
+   */
+  reRenderAll () {
+    Object.keys(this.plugins).forEach((pluginType) => {
+      this.plugins[pluginType].forEach((plugin) => {
+        // console.log(plugin)
+        plugin.update(this.state)
+      })
+    })
+  }
+
+  /**
+   * Reset state to defaultState, used when Modal is closed, for example
+   *
+   */
+  resetState () {
+    this.updateState(this.defaultState)
+  }
+
+  updateState (newState) {
+    this.state = Object.assign({}, this.state, newState)
+    this.reRenderAll()
+  }
+
+  /**
+   * Registeres listeners for all global actions, like:
+   * `file-add`, `file-remove`, `upload-progress`, `reset`
+   *
+   */
+  actions () {
+    this.emitter.on('reset', () => {
+      this.resetState()
+    })
+
+    this.emitter.on('file-add', (data) => {
+      const updatedFiles = Object.assign({}, this.state.selectedFiles)
+
+      data.acquiredFiles.forEach((file) => {
+        const fileName = file.name
+        const fileID = Utils.generateFileID(fileName)
+
+        updatedFiles[fileID] = {
+          acquiredBy: data.plugin,
+          id: fileID,
+          name: fileName,
+          data: file,
+          progress: 0
+        }
+      })
+
+      this.updateState({selectedFiles: updatedFiles})
+    })
+
+    this.emitter.on('upload-progress', (progressData) => {
+      console.log('progress!')
+      const updatedFiles = Object.assign({}, this.state.selectedFiles)
+      updatedFiles[progressData.id].progress = progressData.percentage
+      this.updateState({selectedFiles: updatedFiles})
+    })
+
+    this.emitter.on('file-remove', (fileID) => {
+      const updatedFiles = Object.assign({}, this.state.selectedFiles)
+      delete updatedFiles[fileID]
+      this.updateState({selectedFiles: updatedFiles})
+    })
   }
 
 /**
@@ -162,6 +237,8 @@ export default class Core {
       class: this.constructor.name,
       method: 'run'
     })
+
+    this.actions()
 
     // Forse set `autoProceed` option to false if there are multiple selector Plugins active
     if (this.plugins.acquirer && this.plugins.acquirer.length > 1) {

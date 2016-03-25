@@ -61,7 +61,7 @@ export default class Tus10 extends Plugin {
   install () {
     this.core.emitter.on('new-next', () => {
       console.log('began uploading!!..')
-      const selectedFiles = this.core.selectedFiles
+      const selectedFiles = this.core.state.selectedFiles
       window.selectedFiles = selectedFiles
       const uploaders = []
 
