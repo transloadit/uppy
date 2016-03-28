@@ -36,7 +36,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] tus: Add support tus 1.0 uploading capabilities (#3)
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
-- [ ] website: Make a gif/video of Uppy modal or DragDrop demo (drag & drop a few files -> upload happens)
+- [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 
 ## 0.0.5 (May 02, 2016)
 
@@ -48,14 +48,16 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.0.4 (April 04, 2016)
 
-- [ ] core: come up with standard file format for uploading (@arturi, @hedgerh)
-- [ ] core: component & event-based state management with `yo-yo` (@arturi, @hedgerh)
+- [ ] core: come up with a standard file format for internal file handling (@arturi, @hedgerh)
+- [ ] core: component & event-based state management with `yo-yo` (@arturi)
 - [x] core: re-think running architecture: allow for `acquiring` while `uploading` (@arturi)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
+- [ ] modal: covert to component & event-based state management (@arturi)
 - [ ] modal: `focus` on the first input field / button in tab panel (@arturi)
 - [ ] modal: show selected files, show uploaded files preview in presenter (@arturi)
-- [x] progressdrawer: implement basic version, show progress for individual files (@arturi)
-- [ ] progressdrawer: show progress for individual files, let user cancel uploads, show previews for images (@arturi)
+- [x] progressdrawer: implement basic version, show upload progress for individual files (@arturi)
+- [ ] progressdrawer: show previews for images, file type names/icons for others (@arturi)
+- [ ] progressdrawer: let user cancel uploads
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] test: Add acceptance tests to Travis so they are run on every change
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
