@@ -146,7 +146,7 @@ export default class DragDrop extends Plugin {
       acquiredFiles: newFiles
     })
 
-    this.core.emitter.emit('new-next')
+    // this.core.emitter.emit('next')
     //
     // newFiles.forEach((newFile) => {
     //   this.files.push(newFile)

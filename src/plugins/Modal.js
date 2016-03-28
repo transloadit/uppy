@@ -102,7 +102,6 @@ export default class Modal extends Plugin {
           <div class="UppyModalContent">
             <div class="UppyModal-presenter"></div>
             <div class="UppyModal-progress">
-              <button class="UppyModal-next js-UppyModal-next">${this.core.i18n('upload')}</button>
               <div class="UppyModal-progressBarContainer"></div>
             </div>
           </div>
@@ -140,32 +139,21 @@ export default class Modal extends Plugin {
 
     this.core.log(pluginName)
     this.core.getPlugin(pluginName).focus()
-
-    // Remove `next` buttons provided by plugins, since Modal has its own
-    // document.querySelector('.UppyNextBtn').remove()
   }
 
   events () {
     // Listen for allDone event to close all tabs
     this.core.emitter.on('allDone', () => this.allDone())
 
-    this.core.emitter.on('file-add', (data) => {
-      this.nextButton.classList.add('is-active')
+    // this.core.emitter.on('file-add', (data) => {
+    //   this.nextButton.classList.add('is-active')
+    //
+    //   const files = Object.keys(this.core.state.selectedFiles)
+    //   const selectedFileCount = files.length
+    //   this.nextButton.innerHTML = this.core.i18n('uploadFiles', {'smart_count': selectedFileCount})
+    // })
 
-      const files = Object.keys(data.acquiredFiles)
-      const selectedCount = files.length
-
-        // How many files have been selected totally
-      this.core.totalFilesSelectedCount = this.core.totalFilesSelectedCount + selectedCount
-
-      this.nextButton.innerHTML = this.core.i18n('uploadFiles', {'smart_count': this.core.totalFilesSelectedCount})
-
-      files.forEach((file) => {
-        this.core.log(`These files have been selected: ${data.acquiredFiles[file]}`)
-      })
-    })
-
-    this.core.emitter.on('reset', () => this.nextButton.classList.remove('is-active'))
+    // this.core.emitter.on('reset', () => this.nextButton.classList.remove('is-active'))
 
     // Close the Modal on esc key press
     document.body.addEventListener('keyup', (event) => {
@@ -215,8 +203,8 @@ export default class Modal extends Plugin {
 
     // When `next` (upload) button is clicked, emit `next` event,
     // so that plugins can proceed to the next stage
-    this.nextButton = document.querySelector('.UppyModal-next')
-    this.nextButton.addEventListener('click', () => this.core.emitter.emit('next'))
+    // this.nextButton = document.querySelector('.UppyModal-next')
+    // this.nextButton.addEventListener('click', () => this.core.emitter.emit('next'))
 
     this.events()
   }
