@@ -40,12 +40,9 @@ export default class Core {
     // Set up an event EventEmitter
     this.emitter = new ee.EventEmitter()
 
-    this.totalFilesSelectedCount = 0
-
-    this.selectedFiles = {}
-
     this.defaultState = {
-      selectedFiles: {}
+      selectedFiles: {},
+      uploadedFiles: {}
     }
 
     this.state = Object.assign({}, this.state, this.defaultState)
@@ -73,6 +70,7 @@ export default class Core {
   }
 
   updateState (newState) {
+    console.log('update state!')
     this.state = Object.assign({}, this.state, newState)
     this.reRenderAll()
   }
@@ -83,6 +81,22 @@ export default class Core {
    *
    */
   actions () {
+    const readImgPreview = (file) => {
+      const reader = new FileReader()
+      reader.addEventListener('load', (e) => {
+        var imgSrc = e.target.result
+        console.log('update img!')
+        const updatedFiles = Object.assign({}, this.state.selectedFiles)
+        updatedFiles[file.id].preview = imgSrc
+        this.updateState({selectedFiles: updatedFiles})
+      })
+      reader.addEventListener('error', (err) => {
+        this.core.log('FileReader error' + err)
+      })
+      reader.readAsDataURL(file.data)
+    }
+
+    // `reset` resets state to `defaultState`
     this.emitter.on('reset', () => {
       this.resetState()
     })
@@ -101,18 +115,31 @@ export default class Core {
           data: file,
           progress: 0
         }
+
+        readImgPreview(updatedFiles[fileID])
       })
 
       this.updateState({selectedFiles: updatedFiles})
     })
 
     this.emitter.on('upload-progress', (progressData) => {
-      console.log('progress!')
       const updatedFiles = Object.assign({}, this.state.selectedFiles)
       updatedFiles[progressData.id].progress = progressData.percentage
       this.updateState({selectedFiles: updatedFiles})
     })
 
+    // `upload-success` adds successfully uploaded file to `state.uploadedFiles`
+    // and fires `remove-file` to remove it from `state.selectedFiles`
+    this.emitter.on('upload-success', (file) => {
+      const uploadedFiles = Object.assign({}, this.state.uploadedFiles)
+      uploadedFiles[file.id] = file
+      this.updateState({uploadedFiles: uploadedFiles})
+      this.log(this.state.uploadedFiles)
+      this.emitter.emit('file-remove', file.id)
+    })
+
+    // `remove-file` removes a file from `state.selectedFiles`, after successfull upload
+    // or when a user deicdes not to upload particular file and clicks a button to remove it
     this.emitter.on('file-remove', (fileID) => {
       const updatedFiles = Object.assign({}, this.state.selectedFiles)
       delete updatedFiles[fileID]

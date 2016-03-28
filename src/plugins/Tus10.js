@@ -27,7 +27,6 @@ export default class Tus10 extends Plugin {
  */
   upload (file, current, total) {
     this.core.log(`uploading ${current} of ${total}`)
-    // console.log(file)
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
@@ -50,6 +49,9 @@ export default class Tus10 extends Plugin {
           this.core.log(file)
         },
         onSuccess: () => {
+          // this.core.emitter.emit('file-remove', file.id)
+          this.core.emitter.emit('upload-success', file)
+
           this.core.log(`Download ${upload.file.name} from ${upload.url}`)
           resolve(upload)
         }
@@ -59,8 +61,8 @@ export default class Tus10 extends Plugin {
   }
 
   install () {
-    this.core.emitter.on('new-next', () => {
-      console.log('began uploading!!..')
+    this.core.emitter.on('next', () => {
+      this.core.log('began uploading!!..')
       const selectedFiles = this.core.state.selectedFiles
       window.selectedFiles = selectedFiles
       const uploaders = []
