@@ -25,15 +25,14 @@ export default class ProgressDrawer extends Plugin {
 
   render (state) {
     const selectedFiles = state.selectedFiles
-    // this.core.log(selectedFiles)
     const selectedFileCount = Object.keys(selectedFiles).length
     const isSomethingSelected = selectedFileCount > 0
 
-    const drawerItem = (fileID) => {
-      const isUploaded = selectedFiles[fileID].progress === 100
+    const drawerItem = (file) => {
+      const isUploaded = file.progress === 100
 
       const remove = (ev) => {
-        this.core.emitter.emit('file-remove', fileID)
+        this.core.emitter.emit('file-remove', file.id)
       }
 
       const checkIcon = yo`<svg class="UppyProgressDrawer-itemCheck" width="16" height="16" viewBox="0 0 32 32" enable-background="new 0 0 32 32">
@@ -41,24 +40,34 @@ export default class ProgressDrawer extends Plugin {
         </svg>`
 
       return yo`<li class="UppyProgressDrawer-item ${isUploaded ? 'is-uploaded' : ''}">
-        <span class="UppyProgressDrawer-itemProgress"
-              style="width: ${selectedFiles[fileID].progress}%"></span>
-        <h4 class="UppyProgressDrawer-itemName">
-          ${selectedFiles[fileID].name} (${selectedFiles[fileID].progress})</h4>
-        ${checkIcon}
-        <button class="UppyProgressDrawer-itemRemove" onclick=${remove}>×</button>
+        <img class="UppyProgressDrawer-itemIcon" src="${file.preview}">
+        <div class="UppyProgressDrawer-itemInner">
+          <span class="UppyProgressDrawer-itemProgress"
+                style="width: ${file.progress}%"></span>
+          <h4 class="UppyProgressDrawer-itemName">
+            ${file.name} (${file.progress})</h4>
+          ${checkIcon}
+          <button class="UppyProgressDrawer-itemRemove" onclick=${remove}>×</button>
+        </div>
       </li>`
+    }
+
+    const next = (ev) => {
+      this.core.emitter.emit('next')
     }
 
     return yo`<div class="UppyProgressDrawer ${isSomethingSelected ? 'is-visible' : ''}">
       <div class="UppyProgressDrawer-status">
-        ${isSomethingSelected ? this.core.i18n('uploadFiles', {'smart_count': selectedFileCount}) : ''}
+        ${isSomethingSelected ? this.core.i18n('filesChosen', {'smart_count': selectedFileCount}) : ''}
       </div>
       <ul class="UppyProgressDrawer-list">
         ${Object.keys(selectedFiles).map((fileID) => {
-          return drawerItem(fileID)
+          return drawerItem(selectedFiles[fileID])
         })}
       </ul>
+      <button class="UppyProgressDrawer-upload" type="button" onclick=${next}>
+        ${isSomethingSelected ? this.core.i18n('uploadFiles', {'smart_count': selectedFileCount}) : ''}
+      </button>
     </div>`
   }
 

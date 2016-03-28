@@ -6,7 +6,7 @@
   width: 350px;
   height: 200px;
   background-color: $color-white;
-  box-shadow: 0 0 20px rgba($color-asphalt-gray, 0.2);
+  box-shadow: 0 5px 30px rgba($color-black, 0.25);
   overflow: hidden;
   transition: all .3s;
 
@@ -20,6 +20,7 @@
   height: 30px;
   line-height: 30px;
   font-size: 12px;
+  font-weight: bold;
   background-color: $color-asphalt-gray;
   color: $color-white;
   text-align: center;
@@ -39,7 +40,7 @@
   line-height: 30px;
   margin: 0;
   padding: 0;
-  border-bottom: 1px solid $color-white;
+  margin-bottom: 1px;
   position: relative;
   background-color: $color-cornflower-blue;
 }
@@ -58,10 +59,24 @@
   }
 }
 
+.UppyProgressDrawer-itemIcon {
+  float: left;
+  width: 12%;
+  height: 40px;
+  object-fit: cover;
+}
+
+.UppyProgressDrawer-itemInner {
+  float: left;
+  width: 88%;
+  height: 40px;
+  position: relative;
+}
+
 .UppyProgressDrawer-itemProgress {
   position: absolute;
-  top: 0;
   left: 0;
+  top: 0;
   height: 100%;
   background-color: $color-pink;
 }
@@ -83,7 +98,6 @@
   padding: 10px;
   font-size: 20px;
   line-height: 20px;
-  // background-color: $color-pink;
   color: $color-white;
   cursor: pointer;
   position: absolute;
@@ -98,4 +112,22 @@
   top: 12px;
   right: 15px;
   fill: $color-white;
+}
+
+.UppyProgressDrawer-upload {
+  @include reset-button;
+  width: 100%;
+  height: 40px;
+  transition: background-color 0.5s;
+  color: $color-black;
+  font-weight: bold;
+  // border-top: 1px solid $color-asphalt-gray;
+  cursor: pointer;
+  background-color: darken($color-cornflower-blue, 10%);
+  color: $color-white;
+
+  &:hover {
+    background-color: darken($color-cornflower-blue, 30%);
+    color: $color-white;
+  }
 }
