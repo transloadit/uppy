@@ -45,11 +45,12 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] meta: Consider using <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
 - [ ] modal: polish on mobile
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
+- [ ] progressdrawer: let user cancel uploads in progress (@arturi)
 
 ## 0.0.4 (April 04, 2016)
 
-- [ ] core: come up with a standard file format for internal file handling (@arturi, @hedgerh)
-- [ ] core: component & event-based state management with `yo-yo` (@arturi)
+- [x] core: start on component & event-based state management with `yo-yo` (@arturi)
+- [x] core: come up with a draft standard file format for internal file handling (@arturi)
 - [x] core: re-think running architecture: allow for `acquiring` while `uploading` (@arturi)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] modal: covert to component & event-based state management (@arturi)
@@ -57,7 +58,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] modal: show selected files, show uploaded files preview in presenter (@arturi)
 - [x] progressdrawer: implement basic version, show upload progress for individual files (@arturi)
 - [ ] progressdrawer: show previews for images, file type names/icons for others (@arturi)
-- [ ] progressdrawer: let user cancel uploads
 - [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] test: Add acceptance tests to Travis so they are run on every change
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
