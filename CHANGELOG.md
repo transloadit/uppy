@@ -47,16 +47,17 @@ try https://github.com/nolanlawson/rollupify
 
 ## 0.0.4 (April 04, 2016)
 
+- [ ] allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
 - [ ] core: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [ ] core: come up with standard file format for uploading (@arturi, @hedgerh)
 - [ ] core: component & event-based state management with `yo-yo` (@arturi, @hedgerh)
 - [ ] core: re-think running architecture: allow for `acquiring` while `uploading`,
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
+- [ ] google: make use of server.uppy.io in examples; it's live now via Frey (@hedgerh)
 - [ ] modal: `focus` on the first input field / button in tab panel (@arturi)
 - [ ] modal: show selected files, show uploaded files preview in presenter (@arturi)
 - [ ] progressdrawer: show progress for individual files, let user cancel uploads, show previews for images (@arturi) 
-- [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
-- [ ] test: Add acceptance tests to Travis so they are run on every change
+- [ ] test: Add acceptance tests to Travis so they are run on every change (@hedgerh)
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
 - [ ] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
 - [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
@@ -73,10 +74,10 @@ try https://github.com/nolanlawson/rollupify
 - [x] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)
 - [x] modal: Make sure modal renders under one dom node (@arturi, @hedgerh) — modal does, should everything else too?
 - [x] modal: refactor and improve (@arturi)
+- [x] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [x] tus: Resolve promise when all uploads are done or failed, not earlier (currently you get to see '1 file uploaded' and can close the modal while the upload is in progress) (@arturi)
 - [x] website: Filter taglines (@kvz)
-- [x] website: utilize browserify index exposers to rid ourselves of `../../../..` in examples (@kvz)
-allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
+- [x] website: utilize browserify index exposers to rid ourselves of `../../../..` in examples (@kvz) 
 
 ## 0.0.3 (March 01, 2016)
 
