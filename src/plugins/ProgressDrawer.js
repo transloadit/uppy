@@ -39,8 +39,9 @@ export default class ProgressDrawer extends Plugin {
           <polygon points="2.836,14.708 5.665,11.878 13.415,19.628 26.334,6.712 29.164,9.54 13.415,25.288 "></polygon>
         </svg>`
 
-      return yo`<li class="UppyProgressDrawer-item ${isUploaded ? 'is-uploaded' : ''}">
-        <img class="UppyProgressDrawer-itemIcon" src="${file.preview}">
+      return yo`<li class="UppyProgressDrawer-item ${isUploaded ? 'is-uploaded' : ''}"
+                    title="${file.name}">
+        <img class="UppyProgressDrawer-itemIcon" alt="${file.name}" src="${file.preview}">
         <div class="UppyProgressDrawer-itemInner">
           <span class="UppyProgressDrawer-itemProgress"
                 style="width: ${file.progress}%"></span>

@@ -24,7 +24,7 @@ export default class Plugin {
    * @param {String|Object} target
    *
    */
-  getTarget (target, callerPlugin) {
+  getTarget (target, callerPlugin, el) {
     if (typeof target === 'string') {
       // this.core.log('string is a target')
       return target
@@ -33,7 +33,7 @@ export default class Plugin {
 
       let targetPlugin = this.core.getPlugin(target.name)
 
-      return targetPlugin.prepareTarget(callerPlugin)
+      return targetPlugin.prepareTarget(callerPlugin, el)
     }
   }
 

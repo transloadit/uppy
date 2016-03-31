@@ -42,7 +42,11 @@ export default class Core {
 
     this.defaultState = {
       selectedFiles: {},
-      uploadedFiles: {}
+      uploadedFiles: {},
+      modal: {
+        isVisible: false,
+        targets: {}
+      }
     }
 
     this.state = Object.assign({}, this.state, this.defaultState)
@@ -95,6 +99,39 @@ export default class Core {
       })
       reader.readAsDataURL(file.data)
     }
+
+    // add new acquirer target to Modal
+    this.emitter.on('modal-add-target', (target) => {
+      const modal = Object.assign({}, this.state.modal)
+      modal.targets[target.id] = target
+      this.updateState({modal: modal})
+    })
+
+    this.emitter.on('modal-panel-show', (id) => {
+      const modal = Object.assign({}, this.state.modal)
+
+      // hide all panelSelectorPrefix
+      Object.keys(modal.targets).forEach((target) => {
+        modal.targets[target].isVisible = false
+      })
+
+      // then show this one
+      modal.targets[id].isVisible = true
+
+      this.updateState({modal: modal})
+    })
+
+    this.emitter.on('modal-open', () => {
+      const modal = Object.assign({}, this.state.modal)
+      modal.isVisible = true
+      this.updateState({modal: modal})
+    })
+
+    this.emitter.on('modal-close', () => {
+      const modal = Object.assign({}, this.state.modal)
+      modal.isVisible = false
+      this.updateState({modal: modal})
+    })
 
     // `reset` resets state to `defaultState`
     this.emitter.on('reset', () => {

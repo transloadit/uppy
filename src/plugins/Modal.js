@@ -1,5 +1,6 @@
 import Plugin from './Plugin'
-import Utils from '../core/Utils'
+// import Utils from '../core/Utils'
+import yo from 'yo-yo'
 
 /**
  * Modal
@@ -20,20 +21,19 @@ export default class Modal extends Plugin {
       panelSelectorPrefix: 'UppyModalContent-panel'
     }
 
-    this.tabPanels = []
-
-    this.isModalVisible = false
-
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.initTabs = this.initTabs.bind(this)
     this.hideModal = this.hideModal.bind(this)
     this.showModal = this.showModal.bind(this)
-    this.install = this.install.bind(this)
   }
 
-  prepareTarget (callerPlugin) {
+  update (state) {
+    var newEl = this.render(state)
+    yo.update(this.el, newEl)
+  }
+
+  prepareTarget (callerPlugin, el) {
     const callerPluginId = callerPlugin.constructor.name
     const callerPluginName = callerPlugin.name || callerPluginId
     const callerPluginIcon = callerPlugin.icon || this.opts.defaultTabIcon
@@ -44,35 +44,15 @@ export default class Modal extends Plugin {
       case 'presenter':
         return '.UppyModal-presenter'
       case 'acquirer':
-
-        // add tab panel, where plugin will render
-        const modalContent = document.querySelector('.UppyModalContent')
-        const nodeForPlugin = document.createElement('div')
-
-        modalContent.appendChild(nodeForPlugin)
-        nodeForPlugin.outerHTML = `
-          <div class="UppyModalContent-panel ${this.opts.panelSelectorPrefix}--${callerPluginId}"
-               role="tabpanel"
-               aria-hidden="true">
-          </div>`
-
-        // add tab switch button
-        const modalTabs = document.querySelector('.UppyModalTabs')
-        const modalTab = document.createElement('div')
-
-        modalTabs.appendChild(modalTab)
-        modalTab.outerHTML = `
-          <li class="UppyModalTab">
-            <button class="UppyModalTab-btn"
-                    role="tab"
-                    aria-controls="${callerPluginId}"
-                    data-open="${this.opts.panelSelectorPrefix}--${callerPluginId}">
-              ${callerPluginIcon}
-              <span class="UppyModalTab-name">${callerPluginName}</span>
-            </button>
-          </li>`
-
+        this.core.emitter.emit('modal-add-target', {
+          id: callerPluginId,
+          name: callerPluginName,
+          icon: callerPluginIcon,
+          el: el,
+          isVisible: false
+        })
         return `.${this.opts.panelSelectorPrefix}--${callerPluginId}`
+
       default:
         let msg = 'Error: Modal can only be used by plugins of types: acquirer, progressindicator'
         this.core.log(msg)
@@ -80,70 +60,87 @@ export default class Modal extends Plugin {
     }
   }
 
-  allDone () {
-    this.hideAllTabPanels()
-  }
-
-  render () {
+  render (state) {
     // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
-    return `
-      <div class="UppyModal"
-           aria-hidden="true"
-           aria-labelledby="modalTitle"
-           aria-describedby="modalDescription"
-           role="dialog">
-        <div class="UppyModal-overlay js-UppyModal-close" tabindex="-1"></div>
-        <div class="UppyModal-inner">
-          <button class="UppyModal-close js-UppyModal-close" title="Close Uppy modal">×</button>
+    const modalTargets = state.modal.targets
 
-          <ul class="UppyModalTabs" role="tablist"></ul>
+    return yo`<div class="UppyModal"
+                   ${state.modal.isVisible ? '' : 'aria-hidden'}
+                   aria-labelledby="modalTitle"
+                   aria-describedby="modalDescription"
+                   role="dialog">
+      <div class="UppyModal-overlay js-UppyModal-close" tabindex="-1"></div>
+      <div class="UppyModal-inner">
+        <button class="UppyModal-close js-UppyModal-close" title="Close Uppy modal">×</button>
+        <ul class="UppyModalTabs" role="tablist">
+          ${Object.keys(modalTargets).map((target) => {
+            return yo`<li class="UppyModalTab">
+              <button class="UppyModalTab-btn"
+                      role="tab"
+                      aria-controls="${modalTargets[target].id}"
+                      data-open="${this.opts.panelSelectorPrefix}--${modalTargets[target].id}"
+                      onclick=${() => {
+                        this.showTabPanel(modalTargets[target].id)
+                      }}}>
+                ${modalTargets[target].icon}
+                <span class="UppyModalTab-name">${modalTargets[target].name}</span>
+              </button>
+            </li>`
+          })}
+        </ul>
 
-          <div class="UppyModalContent">
-            <div class="UppyModal-presenter"></div>
-            <div class="UppyModal-progress">
-              <div class="UppyModal-progressBarContainer"></div>
-            </div>
+        <div class="UppyModalContent">
+          <div class="UppyModal-presenter"></div>
+          <div class="UppyModal-progress">
+            <div class="UppyModal-progressBarContainer"></div>
           </div>
-
+          ${Object.keys(modalTargets).map((target) => {
+            return yo`<div class="UppyModalContent-panel ${this.opts.panelSelectorPrefix}--${modalTargets[target].id}"
+                 role="tabpanel"
+                 ${state.modal.isVisible ? '' : 'aria-hidden'}>
+                 ${modalTargets[target].el}
+            </div>`
+          })}
         </div>
+
       </div>
-    `
+    </div>`
+  }
+
+  showTabPanel (id) {
+    this.core.emitter.emit('modal-panel-show', id)
   }
 
   hideModal () {
-    this.isModalVisible = false
-    this.modalEl.setAttribute('aria-hidden', 'true')
-    this.core.emitter.emit('reset')
+    this.core.emitter.emit('modal-close')
   }
 
   showModal () {
-    this.isModalVisible = true
-    this.modalEl.removeAttribute('aria-hidden')
-    this.initTabs()
+    this.core.emitter.emit('modal-open')
   }
-
-  hideAllTabPanels () {
-    this.tabPanels.forEach((tabPanel) => tabPanel.setAttribute('aria-hidden', true))
-    this.tabs.forEach((tab) => tab.removeAttribute('aria-selected'))
-  }
-
-  showTabPanel (pluginSelector, pluginName) {
-    this.hideAllTabPanels()
-
-    const tab = document.querySelector(`[aria-controls="${pluginName}"]`)
-    const tabPanel = document.querySelector(`.${pluginSelector}`)
-
-    tabPanel.removeAttribute('aria-hidden')
-    tab.setAttribute('aria-selected', 'true')
-
-    this.core.log(pluginName)
-    this.core.getPlugin(pluginName).focus()
-  }
+  //
+  // hideAllTabPanels () {
+  //   this.tabPanels.forEach((tabPanel) => tabPanel.setAttribute('aria-hidden', true))
+  //   this.tabs.forEach((tab) => tab.removeAttribute('aria-selected'))
+  // }
+  //
+  // showTabPanel (pluginSelector, pluginName) {
+  //   this.hideAllTabPanels()
+  //
+  //   const tab = document.querySelector(`[aria-controls="${pluginName}"]`)
+  //   const tabPanel = document.querySelector(`.${pluginSelector}`)
+  //
+  //   tabPanel.removeAttribute('aria-hidden')
+  //   tab.setAttribute('aria-selected', 'true')
+  //
+  //   this.core.log(pluginName)
+  //   this.core.getPlugin(pluginName).focus()
+  // }
 
   events () {
     // Listen for allDone event to close all tabs
-    this.core.emitter.on('allDone', () => this.allDone())
+    // this.core.emitter.on('allDone', () => this.allDone())
 
     // this.core.emitter.on('file-add', (data) => {
     //   this.nextButton.classList.add('is-active')
@@ -170,41 +167,34 @@ export default class Modal extends Plugin {
     })
   }
 
-  initTabs () {
-    // Get all tab buttons and loop through them, to determine which
-    // tabPanel they trigger, set events
-    this.tabs = Utils.qsa('.UppyModalTab-btn')
-    this.tabs.forEach((tab) => {
-      const pluginSelector = tab.getAttribute('data-open')
-      const pluginName = tab.getAttribute('aria-controls')
-      const tabPanel = document.querySelector(`.${pluginSelector}`)
-      this.tabPanels.push(tabPanel)
-
-      tab.addEventListener('click', (event) => {
-        event.preventDefault()
-        this.showTabPanel(pluginSelector, pluginName)
-      })
-    })
-
-    // Select first tab right away
-    this.tabs[0].click()
-  }
+  // initTabs () {
+  //   // Get all tab buttons and loop through them, to determine which
+  //   // tabPanel they trigger, set events
+  //   this.tabs = Utils.qsa('.UppyModalTab-btn')
+  //   this.tabs.forEach((tab) => {
+  //     const pluginSelector = tab.getAttribute('data-open')
+  //     const pluginName = tab.getAttribute('aria-controls')
+  //     const tabPanel = document.querySelector(`.${pluginSelector}`)
+  //     this.tabPanels.push(tabPanel)
+  //
+  //     tab.addEventListener('click', (event) => {
+  //       event.preventDefault()
+  //       this.showTabPanel(pluginSelector, pluginName)
+  //     })
+  //   })
+  //
+  //   // Select first tab right away
+  //   this.tabs[0].click()
+  // }
 
   install () {
-    const node = document.createElement('div')
-    document.body.appendChild(node)
-    node.outerHTML = this.render()
-    this.modalEl = document.querySelector('.UppyModal')
+    this.el = this.render(this.core.state)
+    document.body.appendChild(this.el)
 
     // Add events for opening and closing the modal
     // const hideModalTrigger = Utils.qsa('.js-UppyModal-close')
     this.showModalTrigger = document.querySelector(this.opts.trigger)
     this.showModalTrigger.addEventListener('click', this.showModal)
-
-    // When `next` (upload) button is clicked, emit `next` event,
-    // so that plugins can proceed to the next stage
-    // this.nextButton = document.querySelector('.UppyModal-next')
-    // this.nextButton.addEventListener('click', () => this.core.emitter.emit('next'))
 
     this.events()
   }
