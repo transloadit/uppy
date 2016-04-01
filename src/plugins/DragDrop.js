@@ -1,5 +1,6 @@
 import Utils from '../core/Utils'
 import Plugin from './Plugin'
+import dragDrop from 'drag-drop'
 import yo from 'yo-yo'
 
 /**
@@ -37,19 +38,39 @@ export default class DragDrop extends Plugin {
     this.handleDrop = this.handleDrop.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
+
+    this.el = this.render(this.core.state)
   }
 
   update (state) {
-    var newEl = this.render(state)
+    const newEl = this.render(state)
     yo.update(this.el, newEl)
   }
 
   render (state) {
     // Another way not to render next/upload button — if Modal is used as a target
     const target = this.opts.target.name
+
+    const onDragOver = (ev) => {
+      // console.log('драговер, бля!')
+    }
+
+    const onDragLeave = (ev) => {
+      // console.log('драглив, бля!')
+    }
+
+    const onDrop = (ev) => {
+      // ev.preventDefault()
+      // ev.stopPropagation()
+      // console.log('ну дропнул, и че, самый умный что ли')
+    }
+
     return yo`
       <div class="UppyDragDrop ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
-        <form class="UppyDragDrop-inner">
+        <form class="UppyDragDrop-inner"
+              ondragover=${onDragOver}
+              ondragleave=${onDragLeave}
+              ondrop=${onDrop}>
           <input class="UppyDragDrop-input"
                  id="UppyDragDrop-input"
                  type="file"
@@ -128,30 +149,15 @@ export default class DragDrop extends Plugin {
     this.input.addEventListener('change', (e) => {
       this.handleInputChange(e)
     })
-
-    // const onDrop = new Promise((resolve, reject) => {
-    //   this.dropzone.addEventListener('drop', (e) => {
-    //     resolve(this.handleDrop.bind(null, e))
-    //   })
-    // })
-    //
-    // const onInput = new Promise((resolve, reject) => {
-    //   this.input.addEventListener('change', (e) => {
-    //     resolve(this.handleInputChange.bind(null, e))
-    //   })
-    // })
-
-    // return Promise.race([onDrop, onInput]).then(handler => handler())
   }
 
-  handleDrop (e) {
-    this.core.log('all right, someone dropped something...')
-
-    const newFiles = Array.from(e.dataTransfer.files)
+  handleDrop (files) {
+    // this.core.log('all right, someone dropped something...')
+    // const newFiles = Array.from(e.dataTransfer.files)
 
     this.core.emitter.emit('file-add', {
       plugin: this,
-      acquiredFiles: newFiles
+      acquiredFiles: files
     })
   }
 
@@ -164,34 +170,6 @@ export default class DragDrop extends Plugin {
       plugin: this,
       acquiredFiles: newFiles
     })
-
-    // newFiles.forEach((newFile) => {
-    //   this.files.push(newFile)
-    // })
-  }
-
-  result () {
-    return new Promise((resolve, reject) => {
-      // if autoProceed is false, wait for upload button to be pushed,
-      // otherwise just pass files to uploaders right away
-      if (this.core.opts.autoProceed) {
-        const files = this.files
-        // const result = {from: 'DragDrop', files}
-        return resolve(files)
-      }
-
-      this.core.emitter.on('next', () => {
-        const files = this.files
-        // const result = {from: 'DragDrop', files}
-        return resolve(files)
-      })
-
-      this.dropzone.addEventListener('submit', (e) => {
-        const files = this.files
-        // const result = {from: 'DragDrop', files}
-        return resolve(files)
-      })
-    })
   }
 
   focus () {
@@ -200,30 +178,22 @@ export default class DragDrop extends Plugin {
   }
 
   install () {
-    this.el = this.render(this.core.state)
     const caller = this
-
     this.target = this.getTarget(this.opts.target, caller, this.el)
-    document.querySelector(this.target).appendChild(this.el)
 
-    // Set selectors
-    this.dropzone = document.querySelector(`${this.target} .UppyDragDrop-inner`)
-    this.input = document.querySelector(`${this.target} .UppyDragDrop-input`)
-
-    this.container.classList.add('UppyDragDrop')
-    // if (this.isDragDropSupported) {
-    //   this.container.classList.add('is-dragdrop-supported')
-    // }
-  }
-
-  run (results) {
-    this.core.log({
-      class: this.constructor.name,
-      method: 'run',
-      results: results
+    dragDrop('.UppyDragDrop', (files) => {
+      this.handleDrop(files)
+      console.log(files)
     })
-
-    this.events()
-    return this.result()
   }
+
+  // run (results) {
+  //   this.core.log({
+  //     class: this.constructor.name,
+  //     method: 'run',
+  //     results: results
+  //   })
+  //
+  //   return this.result()
+  // }
 }

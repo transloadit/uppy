@@ -2,6 +2,7 @@
 * Drag & Drop CSS to style the plugin
 */
 .UppyDragDrop {
+  height: 100%;
   min-height: 100px;
   display: flex;
   align-items: center;
@@ -19,7 +20,7 @@
     display: inline;
   }
 
-  .UppyDragDrop.is-dragover {
+  .UppyDragDrop.drag {
     border-color: #d2ecea;
     background-color: #dbf5f3;
   }
