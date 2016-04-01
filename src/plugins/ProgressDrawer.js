@@ -16,10 +16,12 @@ export default class ProgressDrawer extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.el = this.render(this.core.state)
   }
 
   update (state) {
-    var newEl = this.render(state)
+    const newEl = this.render(state)
     yo.update(this.el, newEl)
   }
 
@@ -73,11 +75,9 @@ export default class ProgressDrawer extends Plugin {
   }
 
   install () {
-    this.el = this.render(this.core.state)
     const caller = this
-
-    this.target = this.getTarget(this.opts.target, caller)
-    document.querySelector(this.target).appendChild(this.el)
+    this.target = this.getTarget(this.opts.target, caller, this.el)
+    // document.querySelector(this.target).appendChild(this.el)
 
     return
   }

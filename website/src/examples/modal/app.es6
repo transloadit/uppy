@@ -8,7 +8,7 @@ uppy
   // .use(ProgressBar, {target: Modal})
   .use(DragDrop, {target: Modal})
   // .use(GoogleDrive, {target: Modal})
-  // .use(Dummy, {target: Modal})
+  .use(Dummy, {target: Modal})
   // .use(Present, {target: Modal})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/'})
   .use(ProgressDrawer, {target: Modal})

@@ -35,7 +35,6 @@ export default class Core {
 
     this.translator = new Translator({locales: this.opts.locales})
     this.i18n = this.translator.translate.bind(this.translator)
-    // console.log(this.i18n('filesChosen', {smart_count: 3}))
 
     // Set up an event EventEmitter
     this.emitter = new ee.EventEmitter()
@@ -45,7 +44,7 @@ export default class Core {
       uploadedFiles: {},
       modal: {
         isVisible: false,
-        targets: {}
+        targets: []
       }
     }
 
@@ -74,7 +73,7 @@ export default class Core {
   }
 
   updateState (newState) {
-    console.log('update state!')
+    this.log('Update state')
     this.state = Object.assign({}, this.state, newState)
     this.reRenderAll()
   }
@@ -103,27 +102,39 @@ export default class Core {
     // add new acquirer target to Modal
     this.emitter.on('modal-add-target', (target) => {
       const modal = Object.assign({}, this.state.modal)
-      modal.targets[target.id] = target
+      modal.targets.push(target)
       this.updateState({modal: modal})
     })
 
     this.emitter.on('modal-panel-show', (id) => {
       const modal = Object.assign({}, this.state.modal)
 
-      // hide all panelSelectorPrefix
-      Object.keys(modal.targets).forEach((target) => {
-        modal.targets[target].isVisible = false
+      // hide all panels, except the one that matches current id
+      modal.targets.forEach((target) => {
+        if (target.type === 'acquirer') {
+          if (target.id === id) {
+            target.isVisible = true
+            return
+          }
+          target.isVisible = false
+        }
       })
-
-      // then show this one
-      modal.targets[id].isVisible = true
 
       this.updateState({modal: modal})
     })
 
     this.emitter.on('modal-open', () => {
       const modal = Object.assign({}, this.state.modal)
+
       modal.isVisible = true
+
+      modal.targets.some((target) => {
+        if (target.type === 'acquirer') {
+          target.isVisible = true
+          return true
+        }
+      })
+
       this.updateState({modal: modal})
     })
 
@@ -309,25 +320,33 @@ export default class Core {
       this.opts.autoProceed = false
     }
 
+    Object.keys(this.plugins).forEach((pluginType) => {
+      this.plugins[pluginType].forEach((plugin) => {
+        plugin.install()
+      })
+    })
+
+    return
+
     // Each Plugin can have `run` and/or `install` methods.
     // `install` adds event listeners and does some non-blocking work, useful for `progressindicator`,
     // `run` waits for the previous step to finish (user selects files) before proceeding
-    ['install', 'run'].forEach((method) => {
-      // First we select only plugins of current type,
-      // then create an array of runType methods of this plugins
-      const typeMethods = this.types.filter((type) => this.plugins[type])
-        .map((type) => this.runType.bind(this, type, method))
-      // Run waterfall of typeMethods
-      return Utils.promiseWaterfall(typeMethods)
-        .then((result) => {
-          // If results are empty, don't log upload results. Hasn't run yet.
-          if (result[0] !== undefined) {
-            this.log(result)
-            this.log('Upload result -> success!')
-            return result
-          }
-        })
-        .catch((error) => this.log('Upload result -> failed:', error))
-    })
+    // ['install', 'run'].forEach((method) => {
+    //   // First we select only plugins of current type,
+    //   // then create an array of runType methods of this plugins
+    //   const typeMethods = this.types.filter((type) => this.plugins[type])
+    //     .map((type) => this.runType.bind(this, type, method))
+    //   // Run waterfall of typeMethods
+    //   return Utils.promiseWaterfall(typeMethods)
+    //     .then((result) => {
+    //       // If results are empty, don't log upload results. Hasn't run yet.
+    //       if (result[0] !== undefined) {
+    //         this.log(result)
+    //         this.log('Upload result -> success!')
+    //         return result
+    //       }
+    //     })
+    //     .catch((error) => this.log('Upload result -> failed:', error))
+    // })
   }
 }

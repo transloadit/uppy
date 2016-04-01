@@ -27,13 +27,14 @@ export default class Plugin {
   getTarget (target, callerPlugin, el) {
     if (typeof target === 'string') {
       // this.core.log('string is a target')
+      document.querySelector(target).appendChild(el)
       return target
     } else {
       // this.core.log('plugin is a target')
-
       let targetPlugin = this.core.getPlugin(target.name)
+      let selectorTarget = targetPlugin.prepareTarget(callerPlugin, el)
 
-      return targetPlugin.prepareTarget(callerPlugin, el)
+      return selectorTarget
     }
   }
 

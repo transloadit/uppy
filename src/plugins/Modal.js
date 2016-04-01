@@ -1,5 +1,4 @@
 import Plugin from './Plugin'
-// import Utils from '../core/Utils'
 import yo from 'yo-yo'
 
 /**
@@ -13,8 +12,8 @@ export default class Modal extends Plugin {
 
     // set default options
     const defaultOptions = {
-      defaultTabIcon: `
-        <svg class="UppyModalTab-icon" width="28" height="28" viewBox="0 0 101 58" xmlns="http://www.w3.org/2000/svg">
+      defaultTabIcon: yo`
+        <svg class="UppyModalTab-icon" width="28" height="28" viewBox="0 0 101 58">
           <path d="M17.582.3L.915 41.713l32.94 13.295L17.582.3zm83.333 41.414L67.975 55.01 84.25.3l16.665 41.414zm-48.998 5.403L63.443 35.59H38.386l11.527 11.526v5.905l-3.063 3.32 1.474 1.36 2.59-2.806 2.59 2.807 1.475-1.357-3.064-3.32v-5.906zm16.06-26.702c-3.973 0-7.194-3.22-7.194-7.193 0-3.973 3.222-7.193 7.193-7.193 3.974 0 7.193 3.22 7.193 7.19 0 3.974-3.22 7.194-7.195 7.194zM70.48 8.682c-.737 0-1.336.6-1.336 1.337 0 .736.6 1.335 1.337 1.335.738 0 1.338-.598 1.338-1.336 0-.74-.6-1.338-1.338-1.338zM33.855 20.415c-3.973 0-7.193-3.22-7.193-7.193 0-3.973 3.22-7.193 7.195-7.193 3.973 0 7.192 3.22 7.192 7.19 0 3.974-3.22 7.194-7.192 7.194zM36.36 8.682c-.737 0-1.336.6-1.336 1.337 0 .736.6 1.335 1.337 1.335.738 0 1.338-.598 1.338-1.336 0-.74-.598-1.338-1.337-1.338z"/>
         </svg>
       `,
@@ -23,6 +22,8 @@ export default class Modal extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.progressindicators = {}
 
     this.hideModal = this.hideModal.bind(this)
     this.showModal = this.showModal.bind(this)
@@ -37,33 +38,38 @@ export default class Modal extends Plugin {
     const callerPluginId = callerPlugin.constructor.name
     const callerPluginName = callerPlugin.name || callerPluginId
     const callerPluginIcon = callerPlugin.icon || this.opts.defaultTabIcon
+    const callerPluginType = callerPlugin.type
 
-    switch (callerPlugin.type) {
-      case 'progressindicator':
-        return '.UppyModal-progressBarContainer'
-      case 'presenter':
-        return '.UppyModal-presenter'
-      case 'acquirer':
-        this.core.emitter.emit('modal-add-target', {
-          id: callerPluginId,
-          name: callerPluginName,
-          icon: callerPluginIcon,
-          el: el,
-          isVisible: false
-        })
-        return `.${this.opts.panelSelectorPrefix}--${callerPluginId}`
-
-      default:
-        let msg = 'Error: Modal can only be used by plugins of types: acquirer, progressindicator'
-        this.core.log(msg)
-        break
+    if (callerPluginType !== 'acquirer' &&
+        callerPluginType !== 'progressindicator' &&
+        callerPluginType !== 'presenter') {
+      let msg = 'Error: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
+      this.core.log(msg)
+      return
     }
+
+    this.core.emitter.emit('modal-add-target', {
+      id: callerPluginId,
+      name: callerPluginName,
+      icon: callerPluginIcon,
+      type: callerPluginType,
+      el: el,
+      isVisible: false
+    })
   }
 
   render (state) {
     // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
     const modalTargets = state.modal.targets
+
+    const acquirers = modalTargets.filter((target) => {
+      return target.type === 'acquirer'
+    })
+
+    const progressindicators = modalTargets.filter((target) => {
+      return target.type === 'progressindicator'
+    })
 
     return yo`<div class="UppyModal"
                    ${state.modal.isVisible ? '' : 'aria-hidden'}
@@ -74,17 +80,17 @@ export default class Modal extends Plugin {
       <div class="UppyModal-inner">
         <button class="UppyModal-close js-UppyModal-close" title="Close Uppy modal">×</button>
         <ul class="UppyModalTabs" role="tablist">
-          ${Object.keys(modalTargets).map((target) => {
+          ${acquirers.map((target) => {
             return yo`<li class="UppyModalTab">
               <button class="UppyModalTab-btn"
                       role="tab"
-                      aria-controls="${modalTargets[target].id}"
-                      data-open="${this.opts.panelSelectorPrefix}--${modalTargets[target].id}"
+                      aria-controls="${target.id}"
+                      ${target.isVisible ? 'aria-selected' : ''}
                       onclick=${() => {
-                        this.showTabPanel(modalTargets[target].id)
+                        this.showTabPanel(target.id)
                       }}}>
-                ${modalTargets[target].icon}
-                <span class="UppyModalTab-name">${modalTargets[target].name}</span>
+                ${target.icon}
+                <span class="UppyModalTab-name">${target.name}</span>
               </button>
             </li>`
           })}
@@ -92,15 +98,18 @@ export default class Modal extends Plugin {
 
         <div class="UppyModalContent">
           <div class="UppyModal-presenter"></div>
-          <div class="UppyModal-progress">
-            <div class="UppyModal-progressBarContainer"></div>
-          </div>
-          ${Object.keys(modalTargets).map((target) => {
-            return yo`<div class="UppyModalContent-panel ${this.opts.panelSelectorPrefix}--${modalTargets[target].id}"
-                 role="tabpanel"
-                 ${state.modal.isVisible ? '' : 'aria-hidden'}>
-                 ${modalTargets[target].el}
+          ${acquirers.map((target) => {
+            return yo`<div class="UppyModalContent-panel
+                           ${this.opts.panelSelectorPrefix}--${target.id}"
+                           role="tabpanel"
+                           ${target.isVisible ? '' : 'aria-hidden'}>
+                           ${target.el}
             </div>`
+          })}
+        </div>
+        <div class="UppyModal-progressindicators">
+          ${progressindicators.map((target) => {
+            return target.el
           })}
         </div>
 
