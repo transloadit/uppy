@@ -1,11 +1,6 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
-
-// import ee from 'event-emitter'
 import ee from 'events'
-
-// var EventEmitter = require('events').EventEmitter
-// var bus = new EventEmitter
 
 /**
  * Main Uppy core
@@ -52,13 +47,12 @@ export default class Core {
   }
 
   /**
-   * Iterate on all plugins and run `update` on them, called when state changes
+   * Iterate on all plugins and run `update` on them. Called when state changes
    *
    */
-  reRenderAll () {
+  updateAll () {
     Object.keys(this.plugins).forEach((pluginType) => {
       this.plugins[pluginType].forEach((plugin) => {
-        // console.log(plugin)
         plugin.update(this.state)
       })
     })
@@ -69,13 +63,27 @@ export default class Core {
    *
    */
   resetState () {
-    this.updateState(this.defaultState)
+    this.setState(this.defaultState)
   }
 
-  updateState (newState) {
-    this.log('Update state')
+  /**
+   * Updates state
+   *
+   * @param {newState} object
+   */
+  setState (newState) {
+    this.log(`Update state with: ${newState}`)
     this.state = Object.assign({}, this.state, newState)
-    this.reRenderAll()
+    this.updateAll()
+  }
+
+  /**
+   * Gets current state, making sure to make a copy of the state object and pass that,
+   * instead of an actual reference to `this.state`
+   *
+   */
+  getState () {
+    return Object.assign({}, this.state)
   }
 
   /**
@@ -86,68 +94,17 @@ export default class Core {
   actions () {
     const readImgPreview = (file) => {
       const reader = new FileReader()
-      reader.addEventListener('load', (e) => {
-        var imgSrc = e.target.result
-        console.log('update img!')
+      reader.addEventListener('load', (ev) => {
+        const imgSrc = ev.target.result
         const updatedFiles = Object.assign({}, this.state.selectedFiles)
         updatedFiles[file.id].preview = imgSrc
-        this.updateState({selectedFiles: updatedFiles})
+        this.setState({selectedFiles: updatedFiles})
       })
       reader.addEventListener('error', (err) => {
         this.core.log('FileReader error' + err)
       })
       reader.readAsDataURL(file.data)
     }
-
-    // add new acquirer target to Modal
-    this.emitter.on('modal-add-target', (target) => {
-      const modal = Object.assign({}, this.state.modal)
-      modal.targets.push(target)
-      this.updateState({modal: modal})
-    })
-
-    this.emitter.on('modal-panel-show', (id) => {
-      const modal = Object.assign({}, this.state.modal)
-
-      // hide all panels, except the one that matches current id
-      modal.targets.forEach((target) => {
-        if (target.type === 'acquirer') {
-          if (target.id === id) {
-            target.isVisible = true
-            return
-          }
-          target.isVisible = false
-        }
-      })
-
-      this.updateState({modal: modal})
-    })
-
-    this.emitter.on('modal-open', () => {
-      const modal = Object.assign({}, this.state.modal)
-
-      modal.isVisible = true
-
-      modal.targets.some((target) => {
-        if (target.type === 'acquirer') {
-          target.isVisible = true
-          return true
-        }
-      })
-
-      this.updateState({modal: modal})
-    })
-
-    this.emitter.on('modal-close', () => {
-      const modal = Object.assign({}, this.state.modal)
-      modal.isVisible = false
-      this.updateState({modal: modal})
-    })
-
-    // `reset` resets state to `defaultState`
-    this.emitter.on('reset', () => {
-      this.resetState()
-    })
 
     this.emitter.on('file-add', (data) => {
       const updatedFiles = Object.assign({}, this.state.selectedFiles)
@@ -167,23 +124,11 @@ export default class Core {
         readImgPreview(updatedFiles[fileID])
       })
 
-      this.updateState({selectedFiles: updatedFiles})
-    })
+      this.setState({selectedFiles: updatedFiles})
 
-    this.emitter.on('upload-progress', (progressData) => {
-      const updatedFiles = Object.assign({}, this.state.selectedFiles)
-      updatedFiles[progressData.id].progress = progressData.percentage
-      this.updateState({selectedFiles: updatedFiles})
-    })
-
-    // `upload-success` adds successfully uploaded file to `state.uploadedFiles`
-    // and fires `remove-file` to remove it from `state.selectedFiles`
-    this.emitter.on('upload-success', (file) => {
-      const uploadedFiles = Object.assign({}, this.state.uploadedFiles)
-      uploadedFiles[file.id] = file
-      this.updateState({uploadedFiles: uploadedFiles})
-      this.log(this.state.uploadedFiles)
-      this.emitter.emit('file-remove', file.id)
+      if (this.opts.autoProceed) {
+        this.emitter.emit('next')
+      }
     })
 
     // `remove-file` removes a file from `state.selectedFiles`, after successfull upload
@@ -191,8 +136,75 @@ export default class Core {
     this.emitter.on('file-remove', (fileID) => {
       const updatedFiles = Object.assign({}, this.state.selectedFiles)
       delete updatedFiles[fileID]
-      this.updateState({selectedFiles: updatedFiles})
+      this.setState({selectedFiles: updatedFiles})
     })
+
+    this.emitter.on('upload-progress', (progressData) => {
+      const updatedFiles = Object.assign({}, this.state.selectedFiles)
+      updatedFiles[progressData.id].progress = progressData.percentage
+      this.setState({selectedFiles: updatedFiles})
+    })
+
+    // `upload-success` adds successfully uploaded file to `state.uploadedFiles`
+    // and fires `remove-file` to remove it from `state.selectedFiles`
+    this.emitter.on('upload-success', (file) => {
+      const uploadedFiles = Object.assign({}, this.state.uploadedFiles)
+      uploadedFiles[file.id] = file
+      this.setState({uploadedFiles: uploadedFiles})
+      this.log(this.state.uploadedFiles)
+      this.emitter.emit('file-remove', file.id)
+    })
+
+    // `reset` resets state to `defaultState`
+    this.emitter.on('reset', () => {
+      this.resetState()
+    })
+
+    // add new acquirer target to Modal
+    // this.emitter.on('modal-add-target', (target) => {
+    //   const modal = Object.assign({}, this.state.modal)
+    //   modal.targets.push(target)
+    //   this.setState({modal: modal})
+    // })
+
+    // this.emitter.on('modal-panel-show', (id) => {
+    //   const modal = Object.assign({}, this.state.modal)
+    //
+    //   // hide all panels, except the one that matches current id
+    //   modal.targets.forEach((target) => {
+    //     if (target.type === 'acquirer') {
+    //       if (target.id === id) {
+    //         target.isVisible = true
+    //         return
+    //       }
+    //       target.isVisible = false
+    //     }
+    //   })
+    //
+    //   this.setState({modal: modal})
+    // })
+
+    // this.emitter.on('modal-open', () => {
+    //   // const modal = Object.assign({}, this.state.modal)
+    //   const modal = this.getState().modal
+    //   modal.isVisible = true
+    //
+    //   // Show first acquirer plugin when modal is open
+    //   modal.targets.some((target) => {
+    //     if (target.type === 'acquirer') {
+    //       target.isVisible = true
+    //       return true
+    //     }
+    //   })
+    //
+    //   this.setState({modal: modal})
+    // })
+    //
+    // this.emitter.on('modal-close', () => {
+    //   const modal = this.getState().modal
+    //   modal.isVisible = false
+    //   this.setState({modal: modal})
+    // })
   }
 
 /**
@@ -210,18 +222,19 @@ export default class Core {
     if (!plugin.constructor.name) {
       throw new Error('Your plugin must have a name')
     }
+
     if (!plugin.type) {
       throw new Error('Your plugin must have a type')
     }
 
     let existsPluginAlready = this.getPlugin(plugin.constructor.name)
     if (existsPluginAlready) {
-      let msg = `Already found a plugin named '${existsPluginAlready.name}'. `
-      msg += `Tried to use: '${plugin.constructor.name}'. `
-      msg += 'Uppy is currently limited to running one of every plugin. '
-      msg += 'Share your use case with us over at '
-      msg += 'https://github.com/transloadit/uppy/issues/ '
-      msg += 'if you want us to reconsider. '
+      let msg = `Already found a plugin named '${existsPluginAlready.name}'.
+        Tried to use: '${plugin.constructor.name}'.
+        Uppy is currently limited to running one of every plugin.
+        Share your use case with us over at
+        https://github.com/transloadit/uppy/issues/
+        if you want us to reconsider.`
       throw new Error(msg)
     }
 
@@ -256,19 +269,6 @@ export default class Core {
       this.plugins[pluginType].forEach(method)
     })
   }
-
-/**
- * Sets plugin’s progress, like for uploads
- *
- * @param {object} plugin that wants to set progress
- * @param {integer} percentage
- * @return {object} self for chaining
- */
-  // setProgress (plugin, percentage) {
-  //   // Any plugin can call this via `this.core.setProgress(this, precentage)`
-  //   console.log(plugin.type + ' plugin ' + plugin.name + ' set the progress to ' + percentage)
-  //   return this
-  // }
 
 /**
  * Logs stuff to console, only if `debug` is set to true. Silent in production.
@@ -320,6 +320,7 @@ export default class Core {
       this.opts.autoProceed = false
     }
 
+    // Install all plugins
     Object.keys(this.plugins).forEach((pluginType) => {
       this.plugins[pluginType].forEach((plugin) => {
         plugin.install()
