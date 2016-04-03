@@ -32,44 +32,10 @@ export default class Plugin {
     } else {
       // this.core.log('plugin is a target')
       let targetPlugin = this.core.getPlugin(target.name)
-      let selectorTarget = targetPlugin.prepareTarget(callerPlugin, el)
+      let selectorTarget = targetPlugin.addTarget(callerPlugin, el)
 
       return selectorTarget
     }
-  }
-
-  extractFiles (results) {
-    console.log({
-      class: 'Plugin',
-      method: 'extractFiles',
-      results: results
-    })
-
-    // check if the results array is empty
-    // if (!results || !results.count) {
-    //   return results
-    // }
-
-    const files = []
-    results.forEach((result) => {
-      try {
-        Array.from(result.files).forEach((file) => files.push(file))
-      } catch (e) {
-        console.log(e)
-      }
-    })
-
-    // const files = [];
-    // for (let i in results) {
-    //   for (let j in results[i].files) {
-    //     files.push(results[i].files.item(j));
-    //   for (let j in results[i].files) {
-    //     // files.push(results[i].files.item(j));
-    //   }
-    // }
-
-    // return Array.from(fileList);
-    return files
   }
 
   focus () {

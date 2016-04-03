@@ -29,6 +29,7 @@ export default class ProgressDrawer extends Plugin {
     const selectedFiles = state.selectedFiles
     const selectedFileCount = Object.keys(selectedFiles).length
     const isSomethingSelected = selectedFileCount > 0
+    const autoProceed = this.core.opts.autoProceed
 
     const drawerItem = (file) => {
       const isUploaded = file.progress === 100
@@ -41,15 +42,17 @@ export default class ProgressDrawer extends Plugin {
           <polygon points="2.836,14.708 5.665,11.878 13.415,19.628 26.334,6.712 29.164,9.54 13.415,25.288 "></polygon>
         </svg>`
 
-      return yo`<li class="UppyProgressDrawer-item ${isUploaded ? 'is-uploaded' : ''}"
+      return yo`<li class="UppyProgressDrawer-item"
                     title="${file.name}">
-        <img class="UppyProgressDrawer-itemIcon" alt="${file.name}" src="${file.preview}">
+        <div class="UppyProgressDrawer-itemInfo">
+          <img class="UppyProgressDrawer-itemIcon" alt="${file.name}" src="${file.preview}">
+        </div>
         <div class="UppyProgressDrawer-itemInner">
           <span class="UppyProgressDrawer-itemProgress"
                 style="width: ${file.progress}%"></span>
           <h4 class="UppyProgressDrawer-itemName">
             ${file.name} (${file.progress})</h4>
-          ${checkIcon}
+          ${isUploaded ? checkIcon : ''}
           <button class="UppyProgressDrawer-itemRemove" onclick=${remove}>×</button>
         </div>
       </li>`
@@ -68,9 +71,12 @@ export default class ProgressDrawer extends Plugin {
           return drawerItem(selectedFiles[fileID])
         })}
       </ul>
-      <button class="UppyProgressDrawer-upload" type="button" onclick=${next}>
-        ${isSomethingSelected ? this.core.i18n('uploadFiles', {'smart_count': selectedFileCount}) : ''}
-      </button>
+      ${autoProceed
+        ? ''
+        : yo`<button class="UppyProgressDrawer-upload" type="button" onclick=${next}>
+          ${isSomethingSelected ? this.core.i18n('uploadFiles', {'smart_count': selectedFileCount}) : ''}
+        </button>`
+      }
     </div>`
   }
 

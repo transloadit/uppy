@@ -59,10 +59,16 @@
   }
 }
 
-.UppyProgressDrawer-itemIcon {
+.UppyProgressDrawer-itemInfo {
   float: left;
   width: 12%;
   height: 40px;
+  border-right: 1px solid white;
+}
+
+.UppyProgressDrawer-itemIcon {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 

@@ -27,9 +27,6 @@ export default class DragDrop extends Plugin {
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    // Array of selected files
-    this.files = []
-
     // Check for browser dragDrop support
     this.isDragDropSupported = this.checkDragDropSupport()
 

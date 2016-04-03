@@ -2,7 +2,7 @@ import Uppy from 'uppy/core'
 import { Dummy, DragDrop, GoogleDrive, Modal, ProgressBar, Present, Tus10 } from 'uppy/plugins'
 import ProgressDrawer from '../../../../src/plugins/ProgressDrawer.js'
 
-const uppy = new Uppy({debug: true})
+const uppy = new Uppy({debug: true, autoProceed: false})
 uppy
   .use(Modal, {trigger: '#uppyModalOpener'})
   // .use(ProgressBar, {target: Modal})
