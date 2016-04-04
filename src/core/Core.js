@@ -38,7 +38,7 @@ export default class Core {
       selectedFiles: {},
       uploadedFiles: {},
       modal: {
-        isVisible: false,
+        isHidden: true,
         targets: []
       }
     }

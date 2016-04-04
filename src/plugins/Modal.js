@@ -54,72 +54,12 @@ export default class Modal extends Plugin {
       icon: callerPluginIcon,
       type: callerPluginType,
       el: el,
-      isVisible: false
+      isHidden: true
     }
 
     const modal = this.core.getState().modal
     modal.targets.push(target)
     this.core.setState({modal: modal})
-  }
-
-  render (state) {
-    // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
-
-    const modalTargets = state.modal.targets
-
-    const acquirers = modalTargets.filter((target) => {
-      return target.type === 'acquirer'
-    })
-
-    const progressindicators = modalTargets.filter((target) => {
-      return target.type === 'progressindicator'
-    })
-
-    return yo`<div class="UppyModal"
-                   aria-hidden="${state.modal.isVisible ? 'false' : 'true'}"
-                   aria-labelledby="modalTitle"
-                   aria-describedby="modalDescription"
-                   role="dialog">
-      <div class="UppyModal-overlay"
-                  tabindex="-1"
-                  onclick=${this.hideModal}></div>
-      <div class="UppyModal-inner">
-        <button class="UppyModal-close"
-                title="Close Uppy modal"
-                onclick=${this.hideModal}>×</button>
-        <ul class="UppyModalTabs" role="tablist">
-          ${acquirers.map((target) => {
-            return yo`<li class="UppyModalTab">
-              <button class="UppyModalTab-btn"
-                      role="tab"
-                      aria-controls="${target.id}"
-                      aria-selected="${target.isVisible ? 'true' : 'false'}"
-                      onclick=${this.showTabPanel.bind(this, target.id)}>
-                ${target.icon}
-                <span class="UppyModalTab-name">${target.name}</span>
-              </button>
-            </li>`
-          })}
-        </ul>
-
-        <div class="UppyModalContent">
-          <div class="UppyModal-presenter"></div>
-          ${acquirers.map((target) => {
-            return yo`<div class="UppyModalContent-panel
-                           ${this.opts.panelSelectorPrefix}--${target.id}"
-                           role="tabpanel"
-                           aria-hidden="${target.isVisible ? 'false' : 'true'}">
-              ${target.el}
-            </div>`
-          })}
-        </div>
-        <div class="UppyModal-progressindicators">
-          ${progressindicators.map((target) => {
-            return target.el
-          })}
-        </div>
-      </div>
-    </div>`
   }
 
   showTabPanel (id) {
@@ -129,10 +69,10 @@ export default class Modal extends Plugin {
     modal.targets.forEach((target) => {
       if (target.type === 'acquirer') {
         if (target.id === id) {
-          target.isVisible = true
+          target.isHidden = false
           return
         }
-        target.isVisible = false
+        target.isHidden = true
       }
     })
 
@@ -140,10 +80,8 @@ export default class Modal extends Plugin {
   }
 
   hideModal () {
-    // this.core.emitter.emit('modal-close')
-
     const modal = this.core.getState().modal
-    modal.isVisible = false
+    modal.isHidden = true
     this.core.setState({modal: modal})
 
     document.body.style.overflow = 'visible'
@@ -153,12 +91,12 @@ export default class Modal extends Plugin {
     // this.core.emitter.emit('modal-open')
 
     const modal = this.core.getState().modal
-    modal.isVisible = true
+    modal.isHidden = false
 
     // Show first acquirer plugin when modal is open
     modal.targets.some((target) => {
       if (target.type === 'acquirer') {
-        target.isVisible = true
+        target.isHidden = false
         return true
       }
     })
@@ -169,6 +107,10 @@ export default class Modal extends Plugin {
   }
 
   events () {
+    // Modal open button
+    const showModalTrigger = document.querySelector(this.opts.trigger)
+    showModalTrigger.addEventListener('click', this.showModal)
+
     // Close the Modal on esc key press
     document.body.addEventListener('keyup', (event) => {
       if (event.keyCode === 27) {
@@ -188,10 +130,66 @@ export default class Modal extends Plugin {
     this.el = this.render(this.core.state)
     document.body.appendChild(this.el)
 
-    // Add events for opening and closing the modal
-    const showModalTrigger = document.querySelector(this.opts.trigger)
-    showModalTrigger.addEventListener('click', this.showModal)
-
     this.events()
+  }
+
+  render (state) {
+    // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
+
+    const modalTargets = state.modal.targets
+
+    const acquirers = modalTargets.filter((target) => {
+      return target.type === 'acquirer'
+    })
+
+    const progressindicators = modalTargets.filter((target) => {
+      return target.type === 'progressindicator'
+    })
+
+    return yo`<div class="UppyModal"
+                   aria-hidden="${state.modal.isHidden}"
+                   aria-labelledby="modalTitle"
+                   aria-describedby="modalDescription"
+                   role="dialog">
+      <div class="UppyModal-overlay"
+                  tabindex="-1"
+                  onclick=${this.hideModal}></div>
+      <div class="UppyModal-inner">
+        <button class="UppyModal-close"
+                title="Close Uppy modal"
+                onclick=${this.hideModal}>×</button>
+        <ul class="UppyModalTabs" role="tablist">
+          ${acquirers.map((target) => {
+            return yo`<li class="UppyModalTab">
+              <button class="UppyModalTab-btn"
+                      role="tab"
+                      aria-controls="${target.id}"
+                      aria-selected="${target.isHidden ? 'false' : 'true'}"
+                      onclick=${this.showTabPanel.bind(this, target.id)}>
+                ${target.icon}
+                <span class="UppyModalTab-name">${target.name}</span>
+              </button>
+            </li>`
+          })}
+        </ul>
+
+        <div class="UppyModalContent">
+          <div class="UppyModal-presenter"></div>
+          ${acquirers.map((target) => {
+            return yo`<div class="UppyModalContent-panel
+                           ${this.opts.panelSelectorPrefix}--${target.id}"
+                           role="tabpanel"
+                           aria-hidden="${target.isHidden}">
+              ${target.el}
+            </div>`
+          })}
+        </div>
+        <div class="UppyModal-progressindicators">
+          ${progressindicators.map((target) => {
+            return target.el
+          })}
+        </div>
+      </div>
+    </div>`
   }
 }
