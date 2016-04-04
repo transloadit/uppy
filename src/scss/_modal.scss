@@ -6,7 +6,7 @@
   z-index: $zIndex-2;
 }
 
-.UppyModal[aria-hidden] {
+.UppyModal[aria-hidden=true] {
   display: none;
 }
 
@@ -101,7 +101,7 @@
   }
 }
 
-.UppyModalTab-btn[aria-selected] {
+.UppyModalTab-btn[aria-selected=true] {
   background-color: $color-cornflower-blue;
 }
 
@@ -128,7 +128,7 @@
   height: 100%;
 }
 
-.UppyModalContent-panel[aria-hidden] {
+.UppyModalContent-panel[aria-hidden=true] {
   display: none;
 }
 

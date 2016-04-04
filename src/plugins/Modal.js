@@ -60,15 +60,6 @@ export default class Modal extends Plugin {
     const modal = this.core.getState().modal
     modal.targets.push(target)
     this.core.setState({modal: modal})
-
-    // this.core.emitter.emit('modal-add-target', {
-    //   id: callerPluginId,
-    //   name: callerPluginName,
-    //   icon: callerPluginIcon,
-    //   type: callerPluginType,
-    //   el: el,
-    //   isVisible: false
-    // })
   }
 
   render (state) {
@@ -85,7 +76,7 @@ export default class Modal extends Plugin {
     })
 
     return yo`<div class="UppyModal"
-                   ${state.modal.isVisible ? '' : 'aria-hidden'}
+                   aria-hidden="${state.modal.isVisible ? 'false' : 'true'}"
                    aria-labelledby="modalTitle"
                    aria-describedby="modalDescription"
                    role="dialog">
@@ -102,10 +93,8 @@ export default class Modal extends Plugin {
               <button class="UppyModalTab-btn"
                       role="tab"
                       aria-controls="${target.id}"
-                      ${target.isVisible ? 'aria-selected' : ''}
-                      onclick=${() => {
-                        this.showTabPanel(target.id)
-                      }}}>
+                      aria-selected="${target.isVisible ? 'true' : 'false'}"
+                      onclick=${this.showTabPanel.bind(this, target.id)}>
                 ${target.icon}
                 <span class="UppyModalTab-name">${target.name}</span>
               </button>
@@ -119,7 +108,7 @@ export default class Modal extends Plugin {
             return yo`<div class="UppyModalContent-panel
                            ${this.opts.panelSelectorPrefix}--${target.id}"
                            role="tabpanel"
-                           ${target.isVisible ? '' : 'aria-hidden'}>
+                           aria-hidden="${target.isVisible ? 'false' : 'true'}">
               ${target.el}
             </div>`
           })}
@@ -129,7 +118,6 @@ export default class Modal extends Plugin {
             return target.el
           })}
         </div>
-
       </div>
     </div>`
   }
