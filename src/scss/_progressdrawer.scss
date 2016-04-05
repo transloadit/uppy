@@ -1,0 +1,140 @@
+.UppyProgressDrawer {
+  position: fixed;
+  bottom: -200px;
+  right: -200px;
+  z-index: $zIndex-4;
+  width: 350px;
+  height: 200px;
+  background-color: $color-white;
+  box-shadow: 0 5px 30px rgba($color-black, 0.25);
+  overflow: hidden;
+  transition: all .3s;
+
+  &.is-visible {
+    bottom: 30px;
+    right: 30px;
+  }
+}
+
+.UppyProgressDrawer-status {
+  height: 30px;
+  line-height: 30px;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: $color-asphalt-gray;
+  color: $color-white;
+  text-align: center;
+}
+
+.UppyProgressDrawer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  height: 130px;
+}
+
+.UppyProgressDrawer-item {
+  @include clearfix;
+  height: 40px;
+  line-height: 30px;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 1px;
+  position: relative;
+  background-color: $color-cornflower-blue;
+}
+
+.UppyProgressDrawer-item.is-uploaded {
+  .UppyProgressDrawer-itemBar {
+    width: 100%;
+  }
+
+  .UppyProgressDrawer-itemRemove {
+    display: none;
+  }
+
+  .UppyProgressDrawer-itemCheck {
+    display: block;
+  }
+}
+
+.UppyProgressDrawer-itemInfo {
+  float: left;
+  width: 12%;
+  height: 40px;
+  border-right: 1px solid white;
+}
+
+.UppyProgressDrawer-itemIcon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.UppyProgressDrawer-itemInner {
+  float: left;
+  width: 88%;
+  height: 40px;
+  position: relative;
+}
+
+.UppyProgressDrawer-itemProgress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: $color-pink;
+}
+
+.UppyProgressDrawer-itemName {
+  color: $color-white;
+  margin: 0;
+  padding: 0;
+  padding: 5px 15px;
+  font-size: 13px;
+  z-index: $zIndex-4;
+  position: relative;
+}
+
+.UppyProgressDrawer-itemRemove {
+  @include reset-button;
+  width: 40px;
+  height: 100%;
+  padding: 10px;
+  font-size: 20px;
+  line-height: 20px;
+  color: $color-white;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: $zIndex-4;
+}
+
+.UppyProgressDrawer-itemCheck {
+  display: none;
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  fill: $color-white;
+}
+
+.UppyProgressDrawer-upload {
+  @include reset-button;
+  width: 100%;
+  height: 40px;
+  transition: background-color 0.5s;
+  color: $color-black;
+  font-size: 13px;
+  font-weight: bold;
+  // border-top: 1px solid $color-asphalt-gray;
+  cursor: pointer;
+  background-color: darken($color-cornflower-blue, 10%);
+  color: $color-white;
+
+  &:hover {
+    background-color: darken($color-cornflower-blue, 30%);
+    color: $color-white;
+  }
+}

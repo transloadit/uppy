@@ -1,4 +1,5 @@
 import Plugin from './Plugin'
+import yo from 'yo-yo'
 
 /**
  * Dummy
@@ -18,7 +19,7 @@ export default class Dummy extends Plugin {
   }
 
   render () {
-    return `
+    return yo`
       <div class="wow-this-works">
         I am a dummy plugin, look at me, I was rendered in a modal! That’s crazy, I know.
       </div>
@@ -27,9 +28,7 @@ export default class Dummy extends Plugin {
 
   install () {
     const caller = this
-    this.target = this.getTarget(this.opts.target, caller)
-    this.targetEl = document.querySelector(this.target)
-    this.targetEl.innerHTML = this.render()
-    return
+    this.el = this.render(this.core.state)
+    this.target = this.getTarget(this.opts.target, caller, this.el)
   }
 }

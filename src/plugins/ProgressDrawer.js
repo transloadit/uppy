@@ -1,12 +1,5 @@
 import Plugin from './Plugin'
-import vdom from 'virtual-dom'
-import hyperx from 'hyperx'
-import main from 'main-loop'
-
-// should be core methods/members
-const hx = hyperx(vdom.h)
-const loop = main({clickedTimes: 0}, this.render, vdom)
-// require('./actions.js')(bus, loop)
+import yo from 'yo-yo'
 
 /**
  * Progress drawer
@@ -15,6 +8,7 @@ const loop = main({clickedTimes: 0}, this.render, vdom)
 export default class ProgressDrawer extends Plugin {
   constructor (core, opts) {
     super(core, opts)
+    this.name = 'Progress Drawer'
     this.type = 'progressindicator'
 
     // set default options
@@ -22,41 +16,75 @@ export default class ProgressDrawer extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.el = this.render(this.core.state)
+  }
+
+  update (state) {
+    const newEl = this.render(state)
+    yo.update(this.el, newEl)
   }
 
   render (state) {
-    return hx`<div>
-      ${state.bla}
+    const selectedFiles = state.selectedFiles
+    const selectedFileCount = Object.keys(selectedFiles).length
+    const isSomethingSelected = selectedFileCount > 0
+    const autoProceed = this.core.opts.autoProceed
+
+    const drawerItem = (file) => {
+      const isUploaded = file.progress === 100
+
+      const remove = (ev) => {
+        this.core.emitter.emit('file-remove', file.id)
+      }
+
+      const checkIcon = yo`<svg class="UppyProgressDrawer-itemCheck" width="16" height="16" viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+          <polygon points="2.836,14.708 5.665,11.878 13.415,19.628 26.334,6.712 29.164,9.54 13.415,25.288 "></polygon>
+        </svg>`
+
+      return yo`<li class="UppyProgressDrawer-item"
+                    title="${file.name}">
+        <div class="UppyProgressDrawer-itemInfo">
+          <img class="UppyProgressDrawer-itemIcon" alt="${file.name}" src="${file.preview}">
+        </div>
+        <div class="UppyProgressDrawer-itemInner">
+          <span class="UppyProgressDrawer-itemProgress"
+                style="width: ${file.progress}%"></span>
+          <h4 class="UppyProgressDrawer-itemName">
+            ${file.name} (${file.progress})</h4>
+          ${isUploaded ? checkIcon : ''}
+          <button class="UppyProgressDrawer-itemRemove" onclick=${remove}>×</button>
+        </div>
+      </li>`
+    }
+
+    const next = (ev) => {
+      this.core.emitter.emit('next')
+    }
+
+    return yo`<div class="UppyProgressDrawer ${isSomethingSelected ? 'is-visible' : ''}">
+      <div class="UppyProgressDrawer-status">
+        ${isSomethingSelected ? this.core.i18n('filesChosen', {'smart_count': selectedFileCount}) : ''}
+      </div>
+      <ul class="UppyProgressDrawer-list">
+        ${Object.keys(selectedFiles).map((fileID) => {
+          return drawerItem(selectedFiles[fileID])
+        })}
+      </ul>
+      ${autoProceed
+        ? ''
+        : yo`<button class="UppyProgressDrawer-upload" type="button" onclick=${next}>
+          ${isSomethingSelected ? this.core.i18n('uploadFiles', {'smart_count': selectedFileCount}) : ''}
+        </button>`
+      }
     </div>`
   }
 
-  // all actions should be in core, I guess
-  events () {
-    this.core.emitter.on('progress', function () {
-      this.updateState({ progress: loop.state.clickedTimes + 1 })
-    })
-
-    this.core.emitter.on('linkClicked', function () {
-      this.updateState({ linkClicked: 'даааа!' })
-    })
-  }
-
-  // this too should be a common method
-  updateState (updatedState) {
-    loop.update(Object.assign({}, loop.state, updatedState))
-  }
-
-  init () {
-    // const caller = this
-    // this.target = this.getTarget(this.opts.target, caller)
-    // this.targetEl = document.querySelector(this.target)
-    // this.targetEl.innerHTML = this.render()
-    document.querySelector('.UppyModal').appendChild(loop.target)
-  }
-
   install () {
-    this.init()
-    this.events()
+    const caller = this
+    this.target = this.getTarget(this.opts.target, caller, this.el)
+    // document.querySelector(this.target).appendChild(this.el)
+
     return
   }
 }

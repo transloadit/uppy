@@ -2,4 +2,10 @@
 <link rel="stylesheet" href="/uppy/uppy.css">
 
 <!-- Modal trigger -->
-<button id="uppyModalOpener">Open Uppy Modal</button>
+<button id="uppyModalOpener" class="UppyModalOpenerBtn">Open Uppy Modal</button>
+
+<script>
+  window.addEventListener('load', function () {
+    document.querySelector('#uppyModalOpener').click()
+  }, false);
+</script>

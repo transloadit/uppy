@@ -1,6 +1,4 @@
-// Utility Mixins
-
-@mixin clearfix() {
+@mixin clearfix {
   &:after {
     content: '';
     display: table;
@@ -22,20 +20,4 @@
   margin: 0;
   border: 0;
   outline: none;
-}
-
-// Animations
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-
-  25% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
 }

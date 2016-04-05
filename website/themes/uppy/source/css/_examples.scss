@@ -9,7 +9,22 @@
   line-height: 1.4;
   width: 100%;
   min-height: 150px;
-  // overflow: hidden;
   display: none;
   padding: 10px 10px;
+}
+
+.UppyModalOpenerBtn {
+  @include reset-button;
+  padding: 10px 15px;
+  border: 1px solid $color-primary;
+  background-transition: all .3s;
+  font-size: 13px;
+  color: $color-primary;
+  cursor: pointer;
+  border-radius: 15px;
+
+  &:hover {
+    background-color: $color-primary;
+    color: $color-white;
+  }
 }
