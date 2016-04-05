@@ -84,12 +84,10 @@ export default class Modal extends Plugin {
     modal.isHidden = true
     this.core.setState({modal: modal})
 
-    document.body.style.overflow = 'visible'
+    document.body.classList.remove('is-UppyModal-open')
   }
 
   showModal () {
-    // this.core.emitter.emit('modal-open')
-
     const modal = this.core.getState().modal
     modal.isHidden = false
 
@@ -103,7 +101,7 @@ export default class Modal extends Plugin {
 
     this.core.setState({modal: modal})
 
-    document.body.style.overflow = 'hidden'
+    document.body.classList.add('is-UppyModal-open')
   }
 
   events () {

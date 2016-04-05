@@ -6,6 +6,12 @@
   z-index: $zIndex-2;
 }
 
+// Added to body to prevent the page from scrolling when Modal is open
+.is-UppyModal-open {
+  overflow: hidden;
+}
+
+
 .UppyModal[aria-hidden=true] {
   display: none;
 }
