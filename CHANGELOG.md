@@ -49,16 +49,19 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.0.4 (April 04, 2016)
 
+- [x] core: re-think running architecture: allow for `acquiring` while `uploading` (@arturi)
+- [x] allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
 - [x] core: start on component & event-based state management with `yo-yo` (@arturi)
 - [x] core: come up with a draft standard file format for internal file handling (@arturi)
-- [x] core: re-think running architecture: allow for `acquiring` while `uploading` (@arturi)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
-- [ ] modal: covert to component & event-based state management (@arturi)
+- [ ] google: make use of server.uppy.io in examples; it's live now via Frey (@hedgerh)
+- [x] modal: covert to component & event-based state management (@arturi)
 - [ ] modal: `focus` on the first input field / button in tab panel (@arturi)
 - [ ] modal: show selected files, show uploaded files preview in presenter (@arturi)
 - [x] progressdrawer: implement basic version, show upload progress for individual files (@arturi)
-- [ ] progressdrawer: show previews for images, file type names/icons for others (@arturi)
-- [ ] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
+- [x] progressdrawer: show previews for images (@arturi)
+- [ ] progressdrawer: show file type names/icons for non-image files (@arturi)
+- [x] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
 - [ ] test: Add acceptance tests to Travis so they are run on every change
 - [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
 - [x] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
@@ -124,7 +127,6 @@ allow for continuous `acquiring`, even after all plugins have “run” (@arturi
 - [x] dropbox: Add basic Dropbox plugin example (#31)
 - [x] website: Add CSS Framework (#14)
 - [x] website: Create Hexo site that also contains our playground (#5, #34, #12 #22, #44, #35, #15, #37, #40, #43)
-
 
 ## Component Owners:
 
