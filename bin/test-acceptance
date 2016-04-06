@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# How to run:
+#
+# - When using `./bin/test-acceptance handle-servers` this script boots and kills servers too (handy for Travis and quick access)
+# - When using `./bin/test-acceptance` this script assumes you have your own servers on localhost running (handy for going in depth)
+#
+
 set -o pipefail
 set -o errexit
 set -o nounset
