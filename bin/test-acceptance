@@ -45,17 +45,14 @@ function waitForPortOpen () {
   done
 }
 
-function dump_logs_before_exit () {
+function cleanup_servers () {
   echo "--> Killing any server listening on port 4000"
   killProcessListeningOnPort 4000 || true
 
   echo "--> Killing any server listening on port 8080"
   killProcessListeningOnPort 8080 || true
 
-  if [ -f nohup.out ]; then
-    echo "--> Dumping server logs"
-    cat nohup.out
-  fi
+  kill -9 ${tailPid}
 }
 
 if [ "${mode}" = "handle-servers" ]; then
@@ -66,9 +63,12 @@ if [ "${mode}" = "handle-servers" ]; then
 
   echo "--> Start webserver and uppy-server in the background"
   rm -f nohup.out || true
+  touch nohup.out
   nohup npm run start &
+  tail -f nohup.out &
+  tailPid=${!}
 
-  trap dump_logs_before_exit EXIT
+  trap cleanup_servers EXIT
 fi
 
 echo "--> Wait for hexo webserver to be online"
