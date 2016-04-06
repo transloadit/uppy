@@ -29,8 +29,6 @@ else
     wget 'http://chromedriver.storage.googleapis.com/2.21/chromedriver_linux64.zip'
     unzip -o chromedriver_linux64.zip && rm -f chromedriver_linux64.zip
     chmod 755 chromedriver
-    ls -al "${HOME}/bin"
-    export PATH="${PATH}:${HOME}/bin"
   fi
   echo -n "--> Verifying chromedriver: "
   if chromedriver -v >/dev/null 2>&1; then
