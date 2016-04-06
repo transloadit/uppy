@@ -11,7 +11,7 @@ __base="$(basename ${__file} .sh)"
 
 function killProcessListeningOnPort () {
   local port="${1}"
-  lsof -n -i4TCP:${port} | awk '/LISTEN/ {print $2}' |xargs kill -9
+  lsof -n -i4TCP:${port} | awk '/LISTEN/ {print $2}' |xargs --no-run-if-empty kill -9
 }
 
 function waitForPortOpen () {
