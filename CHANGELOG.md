@@ -49,6 +49,7 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.0.4 (April 04, 2016)
 
+- [x] test: Install chromedriver (@kvz)
 - [x] core: re-think running architecture: allow for `acquiring` while `uploading` (@arturi)
 - [x] allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
 - [x] core: start on component & event-based state management with `yo-yo` (@arturi)

@@ -9,12 +9,17 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+      - libnss3-dev
+      - libgconf-2-4
 
 cache:
   apt: true
   directories:
     - node_modules
     - website/node_modules
+
+before_script:
+  - export PATH=${PATH}:${HOME}/bin/
 
 script:
   - npm run build
