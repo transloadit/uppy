@@ -16,7 +16,7 @@ colorReset='\033[0m'
 export PATH="${PATH}:${HOME}/bin"
 
 echo -n "--> Checking for chromedriver: "
-if which chromedriver 2>&1 > /dev/null; then
+if which chromedriver >/dev/null 2>&1; then
   echo -e "${colorGreen}✓${colorReset}"
 else
   echo -e "${colorRed}✗${colorReset}"
@@ -32,7 +32,7 @@ else
     export PATH="${PATH}:${HOME}/bin"
   fi
   echo -n "--> Verifying chromedriver: "
-  if chromedriver -v 2>&1 > /dev/null; then
+  if chromedriver -v >/dev/null 2>&1; then
     echo -e "${colorGreen}✓${colorReset}"
   else
     echo -e "${colorRed}✗${colorReset}"
