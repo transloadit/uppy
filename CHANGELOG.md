@@ -43,6 +43,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [ ] meta: Consider using <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
 - [ ] modal: polish on mobile
+- [ ] modal: focus on the first input field / button in tab panel (@arturi)
+- [ ] presenter: make it work with new components/state (@arturi)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [ ] progressdrawer: let user cancel uploads in progress (@arturi)
 - [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox
@@ -51,8 +53,6 @@ Ideas that will be planned and find their way into a release at one point
 
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
 - [ ] google: make use of http://server.uppy.io in examples; it's live now via Frey (@hedgerh)
-- [ ] modal: `focus` on the first input field / button in tab panel (@arturi)
-- [ ] modal: show selected files, show uploaded files preview in presenter (@arturi)
 - [ ] progressdrawer: show file type names/icons for non-image files (@arturi)
 - [ ] test: Get Firefox acceptance tests up and running both local and on Travis CI. Currently both failing on `StaleElementReferenceError: Element not found in the cache - perhaps the page has changed since it was looked up` https://travis-ci.org/transloadit/uppy/builds/121175389#L478
 - [ ] test: Setup one modal/dragdrop acceptance test (@arturi)

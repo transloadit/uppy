@@ -15,7 +15,7 @@ export UPPYSERVER_GOOGLE_SECRET="***"
 export UPPYSERVER_INSTAGRAM_KEY="***"
 export UPPYSERVER_INSTAGRAM_SECRET="***"
 
-# source env.sh
+# travis encrypt --add GHPAGES_URL=https://secret_access_token@github.com/transloadit/uppy.git
 # travis encrypt --add env.global "UPPYSERVER_DROPBOX_KEY=${UPPYSERVER_DROPBOX_KEY}"
 # travis encrypt --add env.global "UPPYSERVER_DROPBOX_SECRET=${UPPYSERVER_DROPBOX_SECRET}"
 # travis encrypt --add env.global "UPPYSERVER_GOOGLE_KEY=${UPPYSERVER_GOOGLE_KEY}"
