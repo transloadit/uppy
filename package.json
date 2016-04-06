@@ -13,7 +13,7 @@
     "build": "npm run build:lib && npm run build:bundle && npm run build:bundle:min && npm run build:css",
     "clean": "rm -rf lib && rm -rf dist",
     "docs": "cd website && documentation readme ../src/index.js --readme-file=src/api/docs.md --section 'Uppy Core & Plugins' -q --github -c doc-order.json",
-    "install": "npm run web:install && bin/install-chromedriver",
+    "install": "npm run web:install",
     "lint:fix": "eslint . --fix",
     "lint": "eslint .",
     "release:major": "env SEMANTIC=major npm run release",

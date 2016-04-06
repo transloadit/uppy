@@ -15,7 +15,6 @@ cache:
   - node_modules
   - website/node_modules
 before_script:
-- export CHROME_BIN=chromium-browser
 - export PATH=${PATH}:${HOME}/bin
 - export DISPLAY=:99.0
 - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile
