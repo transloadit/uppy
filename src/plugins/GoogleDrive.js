@@ -1,3 +1,4 @@
+import yo from 'yo-yo'
 import Utils from '../core/Utils'
 import Plugin from './Plugin'
 
@@ -130,13 +131,21 @@ export default class Google extends Plugin {
     return
   }
 
+  render (state) {
+    if (state.authenticated) {
+      this.renderBrowser()
+    } else {
+      this.renderAuth(state)
+    }
+  }
+
   renderAuth () {
     return `<div><h1>Authenticate With Google Drive</h1><a href=${this.authUrl || '#'}>Authenticate</a></div>`
   }
 
-  renderBrowser (data) {
-    const folders = data.folders.map((folder) => `<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}">${folder.title}</button></li>`)
-    const files = data.files.map((file) => `<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}">${file.title}</button></li>`)
+  renderBrowser (state) {
+    const folders = state.folders.map((folder) => `<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}">${folder.title}</button></li>`)
+    const files = state.files.map((file) => `<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}">${file.title}</button></li>`)
     return `<ul>${folders}</ul><ul>${files}</ul>`
   }
 
