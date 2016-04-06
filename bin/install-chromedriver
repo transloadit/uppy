@@ -25,6 +25,7 @@ else
     brew install chromedriver
   else
     mkdir -p "${HOME}/bin"
+    cd "${HOME}/bin"
     wget 'http://chromedriver.storage.googleapis.com/2.21/chromedriver_linux64.zip'
     unzip -o chromedriver_linux64.zip && rm -f chromedriver_linux64.zip
     chmod 755 chromedriver
