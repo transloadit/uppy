@@ -71,8 +71,7 @@
     "selenium-webdriver": "^2.52.0",
     "tape": "4.4.0",
     "uppy-server": "0.0.2",
-    "watchify": "3.6.1",
-    "zuul": "3.7.2"
+    "watchify": "3.6.1"
   },
   "dependencies": {
     "drag-drop": "2.11.0",
