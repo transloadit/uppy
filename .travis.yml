@@ -19,7 +19,7 @@ cache:
     - website/node_modules
 
 before_script:
-  - export PATH=${PATH}:${HOME}/bin/
+  - export PATH=${PATH}:${HOME}/bin
 
 script:
   - npm run build

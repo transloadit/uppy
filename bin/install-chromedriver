@@ -13,7 +13,7 @@ colorRed='\033[0;31m'
 colorGreen='\033[0;32m'
 colorReset='\033[0m'
 
-export PATH="${PATH}:${HOME}/bin/"
+export PATH="${PATH}:${HOME}/bin"
 
 echo -n "--> Checking for chromedriver: "
 if which chromedriver 2>&1 > /dev/null; then
@@ -24,10 +24,12 @@ else
   if [[ "${OSTYPE}" == "darwin"* ]]; then
     brew install chromedriver
   else
-    mkdir -p "${HOME}/bin/"
+    mkdir -p "${HOME}/bin"
     wget 'http://chromedriver.storage.googleapis.com/2.21/chromedriver_linux64.zip'
     unzip -o chromedriver_linux64.zip && rm -f chromedriver_linux64.zip
     chmod 755 chromedriver
+    ls -al "${HOME}/bin"
+    export PATH="${PATH}:${HOME}/bin"
   fi
   echo -n "--> Verifying chromedriver: "
   if chromedriver -v 2>&1 > /dev/null; then
