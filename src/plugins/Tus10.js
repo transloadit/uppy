@@ -49,7 +49,6 @@ export default class Tus10 extends Plugin {
           this.core.log(file)
         },
         onSuccess: () => {
-          // this.core.emitter.emit('file-remove', file.id)
           this.core.emitter.emit('upload-success', file)
 
           this.core.log(`Download ${upload.file.name} from ${upload.url}`)
@@ -64,7 +63,6 @@ export default class Tus10 extends Plugin {
     this.core.emitter.on('next', () => {
       this.core.log('began uploading!!..')
       const selectedFiles = this.core.state.selectedFiles
-      window.selectedFiles = selectedFiles
       const uploaders = []
 
       Object.keys(selectedFiles).forEach((fileID, i) => {
@@ -93,7 +91,6 @@ export default class Tus10 extends Plugin {
       results: results
     })
 
-    // const files = this.extractFiles(results)
     const files = results
 
     // var uploaded  = [];
