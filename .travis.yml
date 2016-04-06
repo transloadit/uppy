@@ -1,43 +1,39 @@
 language: node_js
-
 node_js:
-  - 4.2.2
-
+- 4.2.2
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
     packages:
-      - g++-4.8
-      - libnss3-dev
-      - libgconf-2-4
-
+    - g++-4.8
+    - libnss3-dev
+    - libgconf-2-4
 cache:
   apt: true
   directories:
-    - node_modules
-    - website/node_modules
-
+  - node_modules
+  - website/node_modules
 before_script:
-  - export PATH=${PATH}:${HOME}/bin
-
+- export PATH=${PATH}:${HOME}/bin
 script:
-  - npm run build
-  - npm run test
-  # Allow failures until we figure out: StaleElementReferenceError: stale element reference: element is not attached to the page document
-  - npm run test:acceptance || true
-  # Automatically deploy website onto gh-pages (if master and not PR)
-  # Don't do this in `after_success`, because then failures won't bubble up
-  - git config --global user.name 'Uppy Bot'
-  - git config --global user.email 'uppybot@uppy.io'
-  - if [ "${TRAVIS_PULL_REQUEST}" == "false" ] && [ "${TRAVIS_BRANCH}" == "master" ]; then npm run web:deploy --quiet; else echo "Skipping for non-master/prs"; fi
-
+- npm run build
+- npm run test
+- npm run test:acceptance || true
+- git config --global user.name 'Uppy Bot'
+- git config --global user.email 'uppybot@uppy.io'
+- if [ "${TRAVIS_PULL_REQUEST}" == "false" ] && [ "${TRAVIS_BRANCH}" == "master" ];
+  then npm run web:deploy --quiet; else echo "Skipping for non-master/prs"; fi
 env:
   global:
-    - CXX=g++-4.8
-    # travis encrypt GHPAGES_URL=https://secret_access_token@github.com/transloadit/uppy.git
-    - secure: "Z+Twmk8/yo4FbeHqk3TcLVK4fR+KUoevrUxkRM6SLckVeCwlFnoD1kQ4JTVHuS2LbW9r2T4VJ/SC6yDtdjqMRvD/ZtPw//vMw9mKyBEMZN4uxOhmHp4hltkBErqeHbZpgd4eSwSVrqDwliK27Q42wIs+Rjilc3UXqddWEmmw/VuxGR3SRpACILqe2Fqm/g73iX/7PNNASuXwmWi6Vf5ZeBQTGiCfPETblBa4WSCrPpsBv5flUEGNM9uFoXXqjAC2TyZrS4yiFGxJNf5/UPp9xipr+RhoEp8NX2GP0W2jDDfUTHFGfcUyF2lluVJKpkHjYQYrYBknjTFcQHL+aE7GWU7f6kh4g3i6e9qktVFV7yNPPokxuvVG+AxExVhZHK3wBTh2ZWs5vjcd0u5w+IV9+v+d/CZWl/zGRcHDILt2eUW9KZwoGtgrcaPnlVtYPCRBXPpsoD+lE3uOuGGGS/V5lmhBnCLexj+2rzztyb8zhQgZB2rLKF1zQ5JiBE+z0ykjHtZWMECE7r4H8K4hoaeOlIG9suPSgwQgl5HFniFUBzHWXqdsOA/tAwGAtdYSlSNAPrkiMYqXjb+1Je2uhYnfV2roBolufLmgYjmDkpVtaY968Zi3qSYTDX7gkx4NEdkiZDLJK8iXXF5RlcHHaUlno+4ytvcNMpf6V9EpTVeLaIs="
-
+  - CXX=g++-4.8
+  - secure: Z+Twmk8/yo4FbeHqk3TcLVK4fR+KUoevrUxkRM6SLckVeCwlFnoD1kQ4JTVHuS2LbW9r2T4VJ/SC6yDtdjqMRvD/ZtPw//vMw9mKyBEMZN4uxOhmHp4hltkBErqeHbZpgd4eSwSVrqDwliK27Q42wIs+Rjilc3UXqddWEmmw/VuxGR3SRpACILqe2Fqm/g73iX/7PNNASuXwmWi6Vf5ZeBQTGiCfPETblBa4WSCrPpsBv5flUEGNM9uFoXXqjAC2TyZrS4yiFGxJNf5/UPp9xipr+RhoEp8NX2GP0W2jDDfUTHFGfcUyF2lluVJKpkHjYQYrYBknjTFcQHL+aE7GWU7f6kh4g3i6e9qktVFV7yNPPokxuvVG+AxExVhZHK3wBTh2ZWs5vjcd0u5w+IV9+v+d/CZWl/zGRcHDILt2eUW9KZwoGtgrcaPnlVtYPCRBXPpsoD+lE3uOuGGGS/V5lmhBnCLexj+2rzztyb8zhQgZB2rLKF1zQ5JiBE+z0ykjHtZWMECE7r4H8K4hoaeOlIG9suPSgwQgl5HFniFUBzHWXqdsOA/tAwGAtdYSlSNAPrkiMYqXjb+1Je2uhYnfV2roBolufLmgYjmDkpVtaY968Zi3qSYTDX7gkx4NEdkiZDLJK8iXXF5RlcHHaUlno+4ytvcNMpf6V9EpTVeLaIs=
+  - secure: MG4na4E+IeyluJfU0JLox1fuSnRbPACzac6oYV2ohXhm/pKhSHoIC5BWKZk5Jb2l5uLETtykTjo2jNHhfogHcI0UVqnm+421rLV2erTDXD4LZsRm+ullvmv2rjNQxbySGEuxOM2JZ24ecsfOtn+PZ1nohX5tD1IHrbd+sgHBHIhFmRoFHwFsQ9tIwbLyP/IQqs3OKKXEhIMZ2DT8izU6KHTKoFsgbABjKpRSqUfXKb5clnvkO1P7RSnXbWFBBbcFlwLBxEYDdilSSqq4aUsPJnpeG5txu43m7OcvU8Qi89WMDWU3szTAygYB3+OZEe7umULuYGxWpxtNPHakydEcbc7m/i+eo7/ocYyHIbMiogr4HB/2IOdRHutLvvBwQiMAQnJNE53gpAgTPOSOoTCYbDCf5L7WychBUOQFl/mGbNh9Us+4FOINZ8niZdCVGNoyWW9bQ57O/iarJOlWqrJ8LVXMtkKaRFCS2ioVrpMyHlENhL2SszVWZmifpskQk+ZWlD2D3Ad11eMvlBJe5+SFNmCEByIXD8yq8YXrPFhXRJUx5UAy88VmHrMZPKMo37HVI6gqORKbUb8WRKz2pbeGFFdHzEzFVi5rFFdOvP5KOltQeLYfzruNIq3NFKiVMudARUKd+OCT9PHppkHYKqKceLkF0oDoPGaAuhOY8NTteEk=
+  - secure: fvLnj7+YlQ7tgzQp/Lgt019mLsRgrJwoNLT7iLKSG1ToUMc3dBV6AmYevKqfdOirBanHq3m5UsdX6rFK+SD6w9wJ6IV79c0/BDvmWypUi2M/JUqO073nWaE+KlqlVS0AQdExAqLQl/TDowX5U1sx9NjEW08jMV1RakN1sSpxVSn/4RbbWNHZC7/Wu6lPkDuGg/Umw5m3ieo6UuHm77gF5oiG6ouarFCFlw6WxOc1y50OF43zsQrNl4N7Zuz7WA8BGsZTyoOjaVBOB7ZqtmNIsad/fFamHCXlhChg/N+78Yn163u1WXLUSTZmtEiR5wfd8X+EmOWdYl3V8IF0klWe9NNI+0CMMh8cRJGer8GC7K+PWSiZdPo2HtO6y3ZzQctx28xAstrjLpDJsDSfivHUr9+ovokMpo7m80Z19/UgcZqNq7rYjuPdbw6JY+sD/vESOkBFSlexNLFhnaMlVfqJXpfU3UF2s9UAFbzgM2crf4pBdpAB96pLZm/AgsT/1M9EK9cEvoITK+ibkZKiXT98cJVhj+g3MBlCOqDCtjKK8T9SNLziICPVCQjDjKjQ9TY0oW4bff9vQF9fPjJ/ls4BZiltQj063z8lhujTUGYk9VNG53WiXcExocF+khjAyiICKatfOniEflnvz4Hj3BAfOVIyzW5gsMxa86xx1/XmdqY=
+  - secure: AyWs57f/zb4w7KlH5T2vYCKsCElUdXIRVQKeU1jU4d5xnQaR78M0mhIZ6PVoY8apqy+WdxNIt9HlqObjX7qiktHDQqTM1dfxhLdozWHEEiFL8+dVgrQ8mzm29fv+EbMLZyI5BLkJVLeYExsV6W8+pV6diT5TvoTwnBg4MqXoTtm3XORJpwtcyB6tE1IeSEIZGK+jYc6m8dtjGTh4m8/7go7iz2H1oBvJV6qjunm3j3Z9AyWHzfBtLL0qMaIrmRnnJwv6WAFOCbYawEHdT2LXvL6ATg/7Y2PFJFjMZWAfayeF1mSJX2aPu9nocUfNHr0Zs9I8BFp1X1ofo2EfC6ZxS5kzdB+MN/GEOXhGtM3nreE2kvESktZUOYf2aY5MWzYjOfXCbu/NmxUL6cDikxw/DsXD5/DdlTNEZv8Om3cvEBeEgNj8/zUh6lcj8x0DXXaqRjkyRT3a+YI2jGj2e/yFLMI9i67KxhsIxOAOiqh7QabDHvSgJ6JHWJre3NcHxYwDKnCviPDymcCN/QjeG5sX+KqFcAwX4pUNqXL3vcX2Jc8uum5qVtV/CKhC3PcWhsrguzHaCUJUy3PqykCrSdvjKDWAay48B8wfEbKBZQRD5C4o3oBBWbKwdb1qol+2NV+9HXecjZZetV1byXW6QstPXboJ6jX228pd3Fwzj3PZ34A=
+  - secure: HcUaJ0B9+MLcmsbUlFPu5YQNTnUolgPGGN9rKkBmEJRRPZ+vyiZl6zB5lQpXRS20sRqzvGmw36tqww2SIq/0eGlJMt9CrY1BniDvCqwYh7EdisXmUPqXcL3OaIMslvhbf1AfD2lI5nyK/5luBr7CapQQfA2s8/2W7sh2yrKg712M0lUY7ef2cuRBpcs04D85VMJrxPaba1jxirblxt6tbYQwITkzwyN3OQkqxkVb0GaymGpoBp7cUYkzUrhnSsVs2oiQI222hj0PYRNagZayyLNMy9CAMwvrgikgABIRr7R7hinXRTC6yDxDzKpCTGzK9Lv85sWJR3OCXjvZSx8WhvdeJZifuzwfz6C+4w9xfGPAb6JkDrvdQ2ikArATg+xlM4DnWGcqPbxTKeqRhqqNO47BOrq2KS9jT3gXDruSH5XAu/86AVTnBsA3B9p22AwUP9BuPf744HqQlHZ2RG4aBWLIo22HKrbB4NjdTlSOWGN82KKSfVFZd5v77y2lA7DygDWBf5itXvuHFxm6yTP/ugaN4ROlxiKuPtiaKpC310ffVb4oJb2j3O4BfABrSBOUPBLdjZNZue5Ncym6m4Dt6o21WLbhD4YMgCjh+vu8Or1Iwy6BcSeuVBMbIRbp4zZ45/4YmKZ/i2Qj8V1c7vP9EkJbE0n17v9EB1FaBGlyj8M=
+  - secure: eSwYrsHbeSi2aA4qMxJkOY4biS/oVBLDxvpsueu2jdtypGWS7HxkccUhaCcEsjAHxIvflnAYEw9LHIT45sQsQJvXznvIVzVdt/uCAjgOHf+SMttrDX7CGsE3eHISKksCcoXmT1xMTvUuH9Uo03eAsRPqatdJdxdZSG3O1mf+ocBRqHRTuYBHudWO/IHcEK7tknRNHP++pnY7yWF6nc6rQ5d+R5wONYXXH150rP9nQoaY0QHoJ2wXu+TKs2DYGzE/+Q1tHmI94u8TCpMyUxJew89emA+JvcpA6yhQsc4qoxIDefOdToYojwNOiXT5fO8iz6wpylaKxnbJ11LC2zi0RzV4I2P3AWyt3vMwKxbvUX8JuZSKqBeHpR/z2lkdKTnRWVlk95hhgD+fQ9gKZguEhDQtMiKZAiFVqKu97tK3j6af8Xi22SCcDrEt2ItVV+kqxAQpjOaze/ywm68eHN3mK7R6TfZk6JPZv+YXhucKRxGK8c2oQLVfDRV55i3CVno5MKb/bawjrteJ8n01mk6uclTr7qbZKMB3lBIVHBYNVb0rd0GVRiMYUV5A1NAEA7x0hTG9RAbikut8sTdacW9cAdwpwvnB78ilBz23fjZM4o0tvyzY4zO2xL/x0r1GsONv+s5pVo8bROlQacddrlVEa6F9eQYtLQK8qAAJFaBoYgo=
+  - secure: bNN1Ej5KMh9OQM+0Ftivf9XtwSwaEoqTo1LSLWnBGNzgwDQaCMr8ssFDKfPPoymKLUNLR80FusfzbrqKfFOHxcv/3b0rF4pWEI1P21E4xtac6W8SuIGp/rnkr3BUJAAne9M+DCzDru1gkJRw4V1oCN1TKVW5767txmMVSOkDo+yY+uExmygMAnz38dYHwpLaoYIIpmep6j5iV5wRMiREKxQ/o94f4Ko9Q3NBtjAVxmnnUFjxDITf7K/NevV2RcI/SDHb5MeE5boS032MLf3rbmiDx50xD6hAdyZs7AR2AZC2GxyNMAowW4asjbMemy5nwGT7YStkbp7baThGqHszOs0DB03LitOKl4dvNrq1Jy2rgeYy154QNZmolZ+wVWJPeoQFqzjfT5O610uMfJjxl2sZ+x80X5FDZBo64LhujIqFZcjPX88Et6hNERiH2keyFF4Gjx9AKgz8XXiSlzfwo5TLPn/psNIwozWCJ6fU8bY5MxlVJLkrR+TvbVxR7pP+Y9FTNtFBbdKfC2Xu9Ou9hbg6H4R6wWDK/Kz0kOFdkfzWZazr2EFfB3JonWgNvj0aMekQdLytTIizJpYYPGPrgea8Yqj102lCI+fcTKs/KnLjIUhBZu3DalpDPKVjtjZOCP7w6An2USe9panXCxZAvJYp9BoXeAPKf0HpgsTQODA=
 notifications:
   slack:
     secure: L3iQQE8sZ0ik1Z26gPoNMiIam9EOEwYhraHCY60Jk/wmfH6SW/727yKXpgcb/yayx37rUZplvoO7H8e05ISxTJKSepEeqbBUIBQs48S8hr+FHk0VPtpP4HGxqaITRLm+mI1coPRvfISxzrB8d240oup6muhC9Ws4/LXi6v8miyIOs2zoYmGxd56TrUeON3UYlKt6dMava0V4bugARzrafN/tfyI9ccqbHzQLBspQvBI61DzZ5I2vnWpkjfWgIHz9Fl4VzXHqMXwjuTUEu8ibA12b3dHZiJEAoqeb9Oj9QcLPbstPLhlNTZZaOrfiFtwLctI2rFh37slDpAfk5idv3ycxcoG5rbCxgyg5i6dpQqrqHxnyglgHg2/nZ+YA5okeS7nJJNtU/4S6AFRWOUUWMVVY0VBEV+8w+uurl0PDy80RUY3uyK64qAgQ8U0M81/Ys1oyWyn78TqHcbby7V2Ws5I9Yakrq8D+mdfsWYCio8F6LXHSwJ0mt2FanJtdDvpPk9sAwsXZN0n8xhELt5TiRp3bzVIQ0IPUgF54dTG9/zWRvC1P4TFaFU/2fg73ZEUC5aWJoFMnLSZjbZvp5gwpCVd0MjSBk80nF9dHYcavIgJ0wMGI3BMb8Nn6+T11Gw/ycr7OGU4NMkj7i8vSFgKF74piWZyiNW8orkMN6XZgM+o=
