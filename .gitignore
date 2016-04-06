@@ -19,3 +19,5 @@ npm-debug.log*
 website/themes/uppy/_config.yml
 
 config/
+
+nohup.out

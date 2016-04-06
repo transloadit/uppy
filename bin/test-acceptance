@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+set -o pipefail
+set -o errexit
+set -o nounset
+# set -o xtrace
+
+# Set magic variables for current file & dir
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
+__base="$(basename ${__file} .sh)"
+
+function killProcessListeningOnPort () {
+  local port="${1}"
+  lsof -n -i4TCP:${port} | awk '/LISTEN/ {print $2}' |xargs kill -9
+}
+
+function waitForPortOpen () {
+  local port="${1}"
+  local limit="${2:-20}"
+  local attempts=0
+  echo "waiting on port ${port} to open... "
+  while ! echo exit | nc localhost ${port}; do
+    let "attempts = attempts + 1"
+    echo "still waiting on port ${port} to open... (${attempts} / ${limit}) "
+    sleep 1
+    if [ "${attempts}" -ge "${limit}" ]; then
+      echo "--> Port did not open for ${limit} seconds. Aborting. "
+      exit 1
+    fi
+  done
+}
+
+rm -f nohup.out || true
+
+echo "--> Killing any server listening on port 4000"
+killProcessListeningOnPort 4000 || true
+echo "--> Killing any server listening on port 8080"
+killProcessListeningOnPort 8080 || true
+
+echo "--> Start webserver and uppy-server in the background"
+nohup npm run start &
+
+function dump_logs_before_exit () {
+  echo "--> Killing any server listening on port 4000"
+  killProcessListeningOnPort 4000 || true
+
+  echo "--> Killing any server listening on port 8080"
+  killProcessListeningOnPort 8080 || true
+
+  if [ -f nohup.out ]; then
+    echo "--> Dumping server logs"
+    cat nohup.out
+  fi
+}
+trap dump_logs_before_exit EXIT
+
+echo "--> Wait for hexo webserver to come online"
+waitForPortOpen 4000
+
+echo "--> Wait for uppy-server to come online"
+waitForPortOpen 8080
+
+echo "--> Running acceptance tests"
+node test/multipart.spec.js
