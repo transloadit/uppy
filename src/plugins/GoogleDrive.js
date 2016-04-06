@@ -140,13 +140,22 @@ export default class Google extends Plugin {
   }
 
   renderAuth () {
-    return `<div><h1>Authenticate With Google Drive</h1><a href=${this.authUrl || '#'}>Authenticate</a></div>`
+    return yo`
+      <div>
+        <h1>Authenticate With Google Drive</h1>
+        <a href=${this.authUrl || '#'}>Authenticate</a>
+      </div>
+    `
   }
 
   renderBrowser (state) {
     const folders = state.folders.map((folder) => `<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}">${folder.title}</button></li>`)
     const files = state.files.map((file) => `<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}">${file.title}</button></li>`)
-    return `<ul>${folders}</ul><ul>${files}</ul>`
+
+    return yo`
+      <ul>${folders}</ul>
+      <ul>${files}</ul>
+    `
   }
 
   renderError (err) {
