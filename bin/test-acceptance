@@ -16,7 +16,7 @@ function killProcessListeningOnPort () {
 
 function waitForPortOpen () {
   local port="${1}"
-  local limit="${2:-20}"
+  local limit="${2:-60}"
   local attempts=0
   echo "waiting on port ${port} to open... "
   while ! echo exit | nc localhost ${port}; do
