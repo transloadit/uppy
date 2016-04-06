@@ -19,7 +19,6 @@ first Monday of every new month.
 Ideas that will be planned and find their way into a release at one point
 
 - [ ] build: go through it together again, remove unnecessary commands, simplify (related to “clean up package.json”). Discuss how contributors might use it, add to contributing and/or readme (https://github.com/sapegin/social-likes/blob/next/Contributing.md#building-and-running-tests) (@arturi, @hedgerh, @kvz)
-- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
 - [ ] build: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 - [ ] build: minification of the bundle
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
@@ -28,7 +27,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: consider `virtual-dom` + `main-loop` or `yo-yo` for rendering and state management
 - [ ] core: Make sure Uppy works well in VR
 - [ ] instagram: Add basic Instagram plugin example (#21)
-- [ ] meta: Create an Uppy logo
 - [ ] modal: Avoid duplicating event listeners
 - [ ] modal: State: which tab is open? get parameters?
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
@@ -40,24 +38,28 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.0.5 (May 02, 2016)
 
-- [ ] build: try adding rollupify transform to “tree-shake” bundles
+- [ ] meta: Create an Uppy logo (@markstory)
+- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
 - [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [ ] meta: Consider using <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
 - [ ] modal: polish on mobile
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [ ] progressdrawer: let user cancel uploads in progress (@arturi)
+- [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox
 
 ## 0.0.4 (April 04, 2016)
 
-- [ ] allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
+- [ ] core: allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
-- [ ] google: make use of server.uppy.io in examples; it's live now via Frey (@hedgerh)
+- [ ] google: make use of http://server.uppy.io in examples; it's live now via Frey (@hedgerh)
 - [ ] modal: `focus` on the first input field / button in tab panel (@arturi)
 - [ ] modal: show selected files, show uploaded files preview in presenter (@arturi)
 - [ ] progressdrawer: show file type names/icons for non-image files (@arturi)
-- [ ] test: Add acceptance tests to Travis so they are run on every change
-- [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Make it so that it's ran on Travis automatically (#2, #23, @hedgerh)
+- [ ] test: Get Firefox acceptance tests up and running both local and on Travis CI. Currently both failing on `StaleElementReferenceError: Element not found in the cache - perhaps the page has changed since it was looked up` https://travis-ci.org/transloadit/uppy/builds/121175389#L478
 - [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
+- [x] test: Write one actual test (e.g. Multipart) (#2, #23, @hedgerh)
+- [x] test: Switch to using Firefox for acceptable tests as Travis CI supports that (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI) (@kvz)
+- [x] test: Add acceptance tests to Travis so they are run on every change (@kvz)
 - [x] allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
 - [x] build: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [x] build: fix browsersync & browserify double reloading issue (@arturi)
