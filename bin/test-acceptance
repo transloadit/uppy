@@ -19,8 +19,8 @@ if [ "${UPPYSERVER_DROPBOX_KEY:-}" = "" ] || [ "${UPPYSERVER_DROPBOX_KEY:-***}" 
   source "${__root}/env.sh"
 fi
 if [ "${UPPYSERVER_DROPBOX_KEY:-}" = "" ] || [ "${UPPYSERVER_DROPBOX_KEY:-***}" = "***" ]; then
-  echo "Env var UPPYSERVER_DROPBOX_KEY still had the example value '${UPPYSERVER_DROPBOX_KEY:-}'. "
-  echo "Please save the actual secrets in '${__root}/env.sh' and try again"
+  echo "[${__base}] Env var UPPYSERVER_DROPBOX_KEY still had the example value '${UPPYSERVER_DROPBOX_KEY:-}'. "
+  echo "[${__base}] Please save the actual secrets in '${__root}/env.sh' and try again"
   exit 1
 fi
 
@@ -33,35 +33,35 @@ function waitForPortOpen () {
   local port="${1}"
   local limit="${2:-60}"
   local attempts=0
-  echo "waiting on port ${port} to open... "
+  echo "[${__base}] waiting on port ${port} to open... "
   while ! echo exit | nc localhost ${port}; do
     let "attempts = attempts + 1"
-    echo "still waiting on port ${port} to open... (${attempts} / ${limit}) "
+    echo "[${__base}] still waiting on port ${port} to open... (${attempts} / ${limit}) "
     sleep 1
     if [ "${attempts}" -ge "${limit}" ]; then
-      echo "--> Port did not open for ${limit} seconds. Aborting. "
+      echo "[${__base}] --> Port did not open for ${limit} seconds. Aborting. "
       exit 1
     fi
   done
 }
 
 function cleanup_servers () {
-  echo "--> Killing any server listening on port 4000"
+  echo "[${__base}] --> Killing any server listening on port 4000"
   killProcessListeningOnPort 4000 || true
 
-  echo "--> Killing any server listening on port 8080"
+  echo "[${__base}] --> Killing any server listening on port 8080"
   killProcessListeningOnPort 8080 || true
 
   kill -9 ${tailPid}
 }
 
 if [ "${mode}" = "handle-servers" ]; then
-  echo "--> Killing any server listening on port 4000"
+  echo "[${__base}] --> Killing any server listening on port 4000"
   killProcessListeningOnPort 4000 || true
-  echo "--> Killing any server listening on port 8080"
+  echo "[${__base}] --> Killing any server listening on port 8080"
   killProcessListeningOnPort 8080 || true
 
-  echo "--> Start webserver and uppy-server in the background"
+  echo "[${__base}] --> Start webserver and uppy-server in the background"
   rm -f nohup.out || true
   touch nohup.out
   nohup npm run start &
@@ -71,11 +71,15 @@ if [ "${mode}" = "handle-servers" ]; then
   trap cleanup_servers EXIT
 fi
 
-echo "--> Wait for hexo webserver to be online"
+echo "[${__base}] --> Wait for hexo webserver to be online"
 waitForPortOpen 4000
 
-echo "--> Wait for uppy-server to be online"
+echo "[${__base}] --> Wait for uppy-server to be online"
 waitForPortOpen 8080
 
-echo "--> Running acceptance tests"
+echo "[${__base}] --> Sleeping 20s, because the port may be open, but Hexo may still be injecting/building stuff"
+echo "[${__base}] --> and I don't know yet how to check for that"
+sleep 20
+
+echo "[${__base}] --> Running acceptance tests"
 node test/multipart.spec.js
