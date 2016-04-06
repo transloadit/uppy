@@ -10,6 +10,8 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
+mode="${1:-}"
+
 if [ ! -f "${__root}/env.sh" ]; then
   cp "${__root}/env.example.sh" "${__root}/env.sh"
 fi
@@ -43,16 +45,6 @@ function waitForPortOpen () {
   done
 }
 
-rm -f nohup.out || true
-
-echo "--> Killing any server listening on port 4000"
-killProcessListeningOnPort 4000 || true
-echo "--> Killing any server listening on port 8080"
-killProcessListeningOnPort 8080 || true
-
-echo "--> Start webserver and uppy-server in the background"
-nohup npm run start &
-
 function dump_logs_before_exit () {
   echo "--> Killing any server listening on port 4000"
   killProcessListeningOnPort 4000 || true
@@ -65,12 +57,24 @@ function dump_logs_before_exit () {
     cat nohup.out
   fi
 }
-trap dump_logs_before_exit EXIT
 
-echo "--> Wait for hexo webserver to come online"
+if [ "${mode}" = "handle-servers" ]; then
+  echo "--> Killing any server listening on port 4000"
+  killProcessListeningOnPort 4000 || true
+  echo "--> Killing any server listening on port 8080"
+  killProcessListeningOnPort 8080 || true
+
+  echo "--> Start webserver and uppy-server in the background"
+  rm -f nohup.out || true
+  nohup npm run start &
+
+  trap dump_logs_before_exit EXIT
+fi
+
+echo "--> Wait for hexo webserver to be online"
 waitForPortOpen 4000
 
-echo "--> Wait for uppy-server to come online"
+echo "--> Wait for uppy-server to be online"
 waitForPortOpen 8080
 
 echo "--> Running acceptance tests"
