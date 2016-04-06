@@ -19,7 +19,6 @@ first Monday of every new month.
 Ideas that will be planned and find their way into a release at one point
 
 - [ ] build: go through it together again, remove unnecessary commands, simplify (related to “clean up package.json”). Discuss how contributors might use it, add to contributing and/or readme (https://github.com/sapegin/social-likes/blob/next/Contributing.md#building-and-running-tests) (@arturi, @hedgerh, @kvz)
-- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
 - [ ] build: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 - [ ] build: minification of the bundle
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
@@ -28,7 +27,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: consider `virtual-dom` + `main-loop` or `yo-yo` for rendering and state management
 - [ ] core: Make sure Uppy works well in VR
 - [ ] instagram: Add basic Instagram plugin example (#21)
-- [ ] meta: Create an Uppy logo
 - [ ] modal: Avoid duplicating event listeners
 - [ ] modal: State: which tab is open? get parameters?
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
@@ -40,49 +38,53 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.0.5 (May 02, 2016)
 
-- [ ] build: try adding rollupify transform to “tree-shake” bundles
+- [ ] meta: Create an Uppy logo (@markstory)
+- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
 - [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [ ] meta: Consider using <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
 - [ ] modal: polish on mobile
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [ ] progressdrawer: let user cancel uploads in progress (@arturi)
+- [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox
 
 ## 0.0.4 (April 04, 2016)
 
-- [x] core: re-think running architecture: allow for `acquiring` while `uploading` (@arturi)
-- [x] core: allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
-- [x] core: start on component & event-based state management with `yo-yo` (@arturi)
-- [x] core: come up with a draft standard file format for internal file handling (@arturi)
 - [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
-- [ ] google: make use of server.uppy.io in examples; it's live now via Frey (@hedgerh)
-- [x] modal: covert to component & event-based state management (@arturi)
+- [ ] google: make use of http://server.uppy.io in examples; it's live now via Frey (@hedgerh)
 - [ ] modal: `focus` on the first input field / button in tab panel (@arturi)
-- [ ] presenter: show uploaded files with `yo-yo` (@arturi)
+- [ ] modal: show selected files, show uploaded files preview in presenter (@arturi)
 - [ ] progressdrawer: show file type names/icons for non-image files (@arturi)
-- [x] progressdrawer: show selected files (@arturi)
-- [x] progressdrawer: implement basic version, show upload progress for individual files (@arturi)
-- [x] progressdrawer: show previews for images (@arturi)
-- [x] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
-- [ ] test: Add acceptance tests to Travis so they are run on every change
-- [ ] test: Fix and enable Saucelabs acceptance test. Write one actual test (e.g. Multipart). Enable it in `npm run test` so it's ran on Travis automatically (#2, #23, @hedgerh)
-- [x] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
+- [ ] test: Get Firefox acceptance tests up and running both local and on Travis CI. Currently both failing on `StaleElementReferenceError: Element not found in the cache - perhaps the page has changed since it was looked up` https://travis-ci.org/transloadit/uppy/builds/121175389#L478
 - [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
+- [x] test: Write one actual test (e.g. Multipart) (#2, #23, @hedgerh)
+- [x] test: Switch to using Firefox for acceptable tests as Travis CI supports that (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI) (@kvz)
+- [x] test: Add acceptance tests to Travis so they are run on every change (@kvz)
+- [x] allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
 - [x] build: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
 - [x] build: fix browsersync & browserify double reloading issue (@arturi)
 - [x] build: sourcemaps for examples (@arturi)
 - [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
+- [x] core: allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
+- [x] core: come up with a draft standard file format for internal file handling (@arturi)
 - [x] core: Pluralize collections (locales, just l like plugins) (@kvz)
+- [x] core: re-think running architecture: allow for `acquiring` while `uploading` (@arturi)
 - [x] core: Rename `progress` to `progressindicator` (@kvz)
 - [x] core: Rename `selecter` to `acquirer` (@kvz)
 - [x] core: Rename `view` to `orchestrator` (@kvz)
+- [x] core: start on component & event-based state management with `yo-yo` (@arturi)
 - [x] dragdrop: Fix 405 Not Allowed, (error) handling when you press Upload with no files (#60, @arturi, thx @hpvd)
 - [x] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)
-- [x] modal: Make sure modal renders under one dom node (@arturi, @hedgerh) — modal does, should everything else too?
+- [x] modal: covert to component & event-based state management (@arturi)
+- [x] modal: Make sure modal renders under one dom node — modal does, should everything else too? (@arturi, @hedgerh)
 - [x] modal: refactor and improve (@arturi)
+- [x] progressdrawer: implement basic version, show upload progress for individual files (@arturi)
+- [x] progressdrawer: show previews for images (@arturi)
+- [x] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
+- [x] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
+- [x] test: Install chromedriver ()
 - [x] tus: Resolve promise when all uploads are done or failed, not earlier (currently you get to see '1 file uploaded' and can close the modal while the upload is in progress) (@arturi)
 - [x] website: Filter taglines (@kvz)
 - [x] website: utilize browserify index exposers to rid ourselves of `../../../..` in examples (@kvz)
-allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
 
 ## 0.0.3 (March 01, 2016)
 

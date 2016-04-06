@@ -6,7 +6,7 @@ var By = webdriver.By
 test('upload two files', function (t) {
   // Create a new webdriver instance
   var driver = new webdriver.Builder()
-    .withCapabilities(webdriver.Capabilities.chrome())
+    .withCapabilities(webdriver.Capabilities.firefox())
     .build()
 
   driver.get('http://localhost:4000/examples/multipart/')
