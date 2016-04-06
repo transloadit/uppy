@@ -51,11 +51,11 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.0.4 (April 04, 2016)
 
-- [ ] google: Add basic Google Drive plugin example (working both in Modal, as without, via `target: "div#on-my-page"` (@hedgerh)
-- [ ] google: make use of http://server.uppy.io in examples; it's live now via Frey (@hedgerh)
 - [ ] progressdrawer: show file type names/icons for non-image files (@arturi)
-- [ ] test: Get Firefox acceptance tests up and running both local and on Travis CI. Currently both failing on `StaleElementReferenceError: Element not found in the cache - perhaps the page has changed since it was looked up` https://travis-ci.org/transloadit/uppy/builds/121175389#L478
+- [ ] google: Add basic Google Drive plugin acceptance test (without Modal, via e.g. `target: "div#on-my-page"` (@hedgerh)
+- [ ] google: Make sure http://server.uppy.io is targeted in; set localhost is targeted elsewhere (@kvz)
 - [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
+- [x] test: Get Firefox acceptance tests up and running both local and on Travis CI. Currently both failing on `StaleElementReferenceError: Element not found in the cache - perhaps the page has changed since it was looked up` https://travis-ci.org/transloadit/uppy/builds/121175389#L478
 - [x] test: Write one actual test (e.g. Multipart) (#2, #23, @hedgerh)
 - [x] test: Switch to using Firefox for acceptable tests as Travis CI supports that (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI) (@kvz)
 - [x] test: Add acceptance tests to Travis so they are run on every change (@kvz)
