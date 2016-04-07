@@ -28,4 +28,4 @@ if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.ru_RU = ru_RU
 }
 
-export default ru_RU
+module.exports = ru_RU
