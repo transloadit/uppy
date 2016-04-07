@@ -1,6 +1,7 @@
 import yo from 'yo-yo'
 import Utils from '../core/Utils'
 import Plugin from './Plugin'
+var fetch = fetch || require('node-fetch')
 
 export default class Google extends Plugin {
   constructor (core, opts) {
@@ -22,6 +23,9 @@ export default class Google extends Plugin {
     this.currentFolder = 'root'
     this.isAuthenticated = false
     this.checkAuthentication()
+      .then((auth) => {
+        this.isAuthenticated = auth.isAuthenticated
+      })
   }
 
   focus () {
@@ -49,17 +53,18 @@ export default class Google extends Plugin {
     })
     .then((res) => {
       if (res.status >= 200 && res.status <= 300) {
-        return res.json().then((data) => {
-          this.isAuthenticated = data.isAuthenticated
-        })
+        return res.json()
       } else {
         let error = new Error(res.statusText)
         error.response = res
         throw error
       }
     })
+    .then((data) => {
+      return data.isAuthenticated
+    })
     .catch((err) => {
-      this.target.innerHTML = this.renderError(err)
+      return err
     })
   }
 
@@ -109,11 +114,12 @@ export default class Google extends Plugin {
   }
 
   getFile (fileId) {
-    if (fileId !== 'string') {
-      return console.log('Error: File Id not a string.')
+    if (typeof fileId !== 'string') {
+      return new Error('getFile: File ID is not a string.')
     }
+
     return fetch('http://localhost:3020/google/get', {
-      method: 'get',
+      method: 'post',
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
@@ -123,6 +129,11 @@ export default class Google extends Plugin {
         fileId
       }
     })
+    .then((res) => {
+      return res.json()
+        .then((json) => json)
+    })
+    .catch((err) => console.log(err))
   }
 
   install () {
