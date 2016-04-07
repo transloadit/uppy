@@ -1,15 +1,50 @@
+// Docs aren't that great to find. Mostly JAVA based. Here are few helpful resources:
+// - https://github.com/SeleniumHQ/selenium/wiki/WebDriverJs
+// - http://seleniumhq.github.io/selenium/docs/api/javascript/
+// - http://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/firefox/index.html
+
 var test = require('tape')
-// var path = require('path')
+var path = require('path')
+var chalk = require('chalk')
 var webdriver = require('selenium-webdriver')
+var firefox = require('selenium-webdriver/firefox')
 var By = webdriver.By
 
-test('upload two files', function (t) {
-  // Create a new webdriver instance
-  var driver = new webdriver.Builder()
-    .withCapabilities(webdriver.Capabilities.firefox())
-    .build()
+var profile = new firefox.Profile()
+profile.addExtension(path.join(__dirname, 'xpi', 'firebug-2.0.16.xpi'))
+profile.addExtension(path.join(__dirname, 'xpi', 'JSErrorCollector.xpi'))
+profile.setPreference('extensions.firebug.showChromeErrors', true)
 
-  driver.get('http://localhost:4000/examples/i18n/')
+var options = new firefox.Options().setProfile(profile)
+var driver = new firefox.Driver(options)
+
+// A remote driver could look something like this:
+// var driver = new (require('selenium-webdriver')).Builder()
+//   .forBrowser('firefox')
+//   .usingServer('http://127.0.0.1:4444/wd/hub')
+//   .setFirefoxOptions(options)
+//   .build()
+
+var hexoServer = 'http://localhost:4000'
+
+test('make sure Uppy loads with Russion language pack', function (t) {
+  driver.get(hexoServer + '/examples/i18n/')
+
+  // Monitor for errors, and dump them
+  const promise = driver.executeScript('return window.JSErrorCollector_errors.pump()')
+  promise.then(function (errors) {
+    if (!errors || !errors.length) {
+      return
+    }
+    errors.forEach(function (error) {
+      console.error([
+        '[browser-error]',
+        chalk.magenta(error.sourceName),
+        chalk.dim('#' + error.lineNumber),
+        chalk.red(error.errorMessage)
+      ].join(' '))
+    })
+  })
 
   // Our success/fail message will be logged in the console element
   var consoleElement = driver.findElement(By.id('console-log'))
