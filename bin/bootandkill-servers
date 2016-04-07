@@ -85,8 +85,14 @@ waitForPortOpen 8080
 echo "[${__base}] --> Running acceptance tests"
 
 
-echo "[${__base}] --> Sleeping 20s, because the port may be open, but Hexo may still be injecting/building stuff"
+buildWait=20
+if [ "${TRAVIS}" = "true" ]; then
+  buildWait=60
+  echo "Increasing build wait because Travis has no Hexo build cache"
+fi
+
+echo "[${__base}] --> Sleeping ${buildWait}s, because the port may be open, but Hexo may still be injecting/building stuff"
 echo "[${__base}] --> and I don't know yet how to check for that"
-sleep 20
+sleep ${buildWait}
 
 ${@}
