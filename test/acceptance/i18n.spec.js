@@ -49,8 +49,8 @@ test('make sure Uppy loads with Russion language pack', function (t) {
   // Our success/fail message will be logged in the console element
   var consoleElement = driver.findElement(By.id('console-log'))
 
-  // Wait for our upload message to be logged
-  driver.wait(isLoaded.bind(this, consoleElement))
+  // Wait 8 seconds, for our upload message to be logged
+  driver.wait(isLoaded.bind(this, consoleElement), 8000)
 
   // Get the result of our upload and test it
   getElementValue(consoleElement)
