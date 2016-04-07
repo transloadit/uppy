@@ -1,51 +1,58 @@
 var fs = require('fs')
 var path = require('path')
 var chalk = require('chalk')
+var exec = require('child_process').exec
+var YAML = require('js-yaml')
 
 var webRoot = __dirname
 var uppyRoot = path.dirname(__dirname)
 
 var configPath = webRoot + '/themes/uppy/_config.yml'
 var version = require(uppyRoot + '/package.json').version
-var configTemplate = '# Uppy versions, auto updated by update.js\nuppy_version_anchor: "001"\nuppy_version: "0.0.1"\n\nuppy_dev_size: "0.0"\nuppy_min_size: "0.0"\nuppy_gz_size: "0.0"'
-var config
+
+var defaultConfig = {
+  comment: 'Auto updated by update.js',
+  uppy_version_anchor: '001',
+  uppy_version: '0.0.1',
+  uppy_dev_size: '0.0',
+  uppy_min_size: '0.0',
+  config: {}
+}
+
+var loadedConfig
+var buf
 try {
-  config = fs.readFileSync(configPath, 'utf-8')
+  buf = fs.readFileSync(configPath, 'utf-8')
+  loadedConfig = YAML.safeLoad(buf)
 } catch (e) {
 
 }
 
-if (!config || !config.trim()) {
-  config = configTemplate
-}
-
 // Inject current Uppy version and sizes in website's _config.yml
-var sizes = {}
+// @todo: Refer to actual minified builds in dist:
 var locations = {
   min: uppyRoot + '/dist/uppy.js',
   gz: uppyRoot + '/dist/uppy.js',
   dev: uppyRoot + '/dist/uppy.js',
   css: uppyRoot + '/dist/uppy.css'
 }
-// @todo: ^-- Refer to actual minified builds in dist:
 
-for (var file in locations) {
-  var filesize = fs.statSync(locations[file], 'utf-8').size
-  sizes[file] = (filesize / 1024).toFixed(2)
+var scanConfig = {}
+
+for (var type in locations) {
+  var filepath = locations[type]
+  var filesize = fs.statSync(filepath, 'utf-8').size
+  scanConfig['uppy_' + type + '_size'] = (filesize / 1024).toFixed(2)
 }
 
-fs.writeFileSync(
-  configPath,
-  config
-    .replace(/uppy_version_anchor: .*/, 'uppy_version_anchor: "' + version.replace(/[^\d]+/g, '') + '"')
-    .replace(/uppy_version: .*/, 'uppy_version: "' + version + '"')
-    .replace(/uppy_(\w+)_size:.*/g, function (m, p1) {
-      return 'uppy_' + p1 + '_size: "' + (sizes[p1] || 99999) + '"'
-    })
-)
+scanConfig['uppy_version'] = version
+scanConfig['uppy_version_anchor'] = version.replace(/[^\d]+/g, '')
 
-var exec = require('child_process').exec
-exec('cp -fR ' + uppyRoot + '/dist/ ' + webRoot + '/themes/uppy/source/uppy', function (error, stdout, stderr) {
+var saveConfig = Object.assign({}, defaultConfig, loadedConfig, scanConfig)
+fs.writeFileSync(configPath, YAML.safeDump(saveConfig), 'utf-8')
+console.info(chalk.green('✓ rewritten: '), chalk.dim(configPath))
+
+exec('cp -vfR ' + uppyRoot + '/dist/ ' + webRoot + '/themes/uppy/source/uppy', function (error, stdout, stderr) {
   if (error) {
     console.error(
       chalk.red('x failed to inject: '),
@@ -53,5 +60,7 @@ exec('cp -fR ' + uppyRoot + '/dist/ ' + webRoot + '/themes/uppy/source/uppy', fu
     )
     return
   }
-  console.info(chalk.green('✓ injected: '), chalk.dim('uppy bundle into site'))
+  stdout.trim().split('\n').forEach(function (line) {
+    console.info(chalk.green('✓ injected: '), chalk.dim(line))
+  })
 })
