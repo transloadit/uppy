@@ -47,4 +47,10 @@ echo "[${__base}] --> Wait for uppy-server to be online"
 waitForPortOpen 8080
 
 echo "[${__base}] --> Running acceptance tests"
-node test/multipart.spec.js
+
+pushd test
+  for file in $(ls *.spec.js); do
+    echo "[${__base}] --> Running acceptance test: ${file}"
+    node "${file}"
+  done
+popd
