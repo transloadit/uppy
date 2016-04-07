@@ -96,7 +96,7 @@ echo "[${__base}] --> and I don't know yet how to check for that"
 sleep ${buildWait}
 
 echo "[${__base}] --> Showing uppy.js builds and sizes"
-ls -al dist/uppy.js website/public/js/uppy.js website/themes/uppy/source/uppy/uppy.js || true
+ls -al dist/uppy.js website/public/uppy/uppy.js website/themes/uppy/source/uppy/uppy.js || true
 echo ""
 
 url="http://localhost:4000/uppy/uppy.js"
