@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 # How to run:
 #
-# - When using `./bin/test-acceptance handle-servers` this script boots and kills servers too (handy for Travis and quick access)
-# - When using `./bin/test-acceptance` this script assumes you have your own servers on localhost running (handy for going in depth)
+#  ./bootandkill-servers ./test-acceptance
 #
+# this will boot hexo & uppy-server, run the acceptance tests,
+# and tear down the servers.
+#
+# To run just the acceptance tests:
+#
+#  ./test-acceptance
+#
+
 
 set -o pipefail
 set -o errexit
@@ -16,24 +23,6 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
-mode="${1:-}"
-
-if [ ! -f "${__root}/env.sh" ]; then
-  cp "${__root}/env.example.sh" "${__root}/env.sh"
-fi
-if [ "${UPPYSERVER_DROPBOX_KEY:-}" = "" ] || [ "${UPPYSERVER_DROPBOX_KEY:-***}" = "***" ]; then
-  source "${__root}/env.sh"
-fi
-if [ "${UPPYSERVER_DROPBOX_KEY:-}" = "" ] || [ "${UPPYSERVER_DROPBOX_KEY:-***}" = "***" ]; then
-  echo "[${__base}] Env var UPPYSERVER_DROPBOX_KEY still had the example value '${UPPYSERVER_DROPBOX_KEY:-}'. "
-  echo "[${__base}] Please save the actual secrets in '${__root}/env.sh' and try again"
-  exit 1
-fi
-
-function killProcessListeningOnPort () {
-  local port="${1}"
-  lsof -n -i4TCP:${port} | awk '/LISTEN/ {print $2}' |xargs kill -9
-}
 
 function waitForPortOpen () {
   local port="${1}"
@@ -50,32 +39,6 @@ function waitForPortOpen () {
     fi
   done
 }
-
-function cleanup_servers () {
-  echo "[${__base}] --> Killing any server listening on port 4000"
-  killProcessListeningOnPort 4000 || true
-
-  echo "[${__base}] --> Killing any server listening on port 8080"
-  killProcessListeningOnPort 8080 || true
-
-  kill -9 ${tailPid}
-}
-
-if [ "${mode}" = "handle-servers" ]; then
-  echo "[${__base}] --> Killing any server listening on port 4000"
-  killProcessListeningOnPort 4000 || true
-  echo "[${__base}] --> Killing any server listening on port 8080"
-  killProcessListeningOnPort 8080 || true
-
-  echo "[${__base}] --> Start webserver and uppy-server in the background"
-  rm -f nohup.out || true
-  touch nohup.out
-  nohup npm run start &
-  tail -f nohup.out &
-  tailPid=${!}
-
-  trap cleanup_servers EXIT
-fi
 
 echo "[${__base}] --> Wait for hexo webserver to be online"
 waitForPortOpen 4000

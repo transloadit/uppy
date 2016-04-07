@@ -22,7 +22,7 @@ before_script:
 script:
 - npm run build
 - npm run test
-- npm run test:acceptance || true
+- npm run test:acceptance:handleservers || true
 - git config --global user.name 'Uppy Bot'
 - git config --global user.email 'uppybot@uppy.io'
 - if [ "${TRAVIS_PULL_REQUEST}" == "false" ] && [ "${TRAVIS_BRANCH}" == "master" ];

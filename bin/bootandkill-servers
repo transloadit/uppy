@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# How to run:
+#
+#  ./bootandkill-servers ./test-acceptance
+#
+# this will boot hexo & uppy-server, run the script that you provided as an argument,
+# and tear down the servers
+
+set -o pipefail
+set -o errexit
+set -o nounset
+# set -o xtrace
+
+# Set magic variables for current file & dir
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
+__base="$(basename ${__file} .sh)"
+__root="$(cd "$(dirname "${__dir}")" && pwd)"
+
+if [ ! -f "${__root}/env.sh" ]; then
+  cp "${__root}/env.example.sh" "${__root}/env.sh"
+fi
+if [ "${UPPYSERVER_DROPBOX_KEY:-}" = "" ] || [ "${UPPYSERVER_DROPBOX_KEY:-***}" = "***" ]; then
+  source "${__root}/env.sh"
+fi
+if [ "${UPPYSERVER_DROPBOX_KEY:-}" = "" ] || [ "${UPPYSERVER_DROPBOX_KEY:-***}" = "***" ]; then
+  echo "[${__base}] Env var UPPYSERVER_DROPBOX_KEY still had the example value '${UPPYSERVER_DROPBOX_KEY:-}'. "
+  echo "[${__base}] Please save the actual secrets in '${__root}/env.sh' and try again"
+  exit 1
+fi
+
+function killProcessListeningOnPort () {
+  local port="${1}"
+  lsof -n -i4TCP:${port} | awk '/LISTEN/ {print $2}' |xargs kill -9
+}
+
+function cleanup_servers () {
+  echo "[${__base}] --> Killing any server listening on port 4000"
+  killProcessListeningOnPort 4000 || true
+
+  echo "[${__base}] --> Killing any server listening on port 8080"
+  killProcessListeningOnPort 8080 || true
+
+  kill -9 ${tailPid}
+}
+
+echo "[${__base}] --> Killing any server listening on port 4000"
+killProcessListeningOnPort 4000 || true
+echo "[${__base}] --> Killing any server listening on port 8080"
+killProcessListeningOnPort 8080 || true
+
+echo "[${__base}] --> Start webserver and uppy-server in the background"
+rm -f nohup.out || true
+touch nohup.out
+nohup npm run start &
+tail -f nohup.out &
+tailPid=${!}
+
+trap cleanup_servers EXIT
+
+${@}
