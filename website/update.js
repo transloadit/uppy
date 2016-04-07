@@ -52,7 +52,12 @@ var saveConfig = Object.assign({}, defaultConfig, loadedConfig, scanConfig)
 fs.writeFileSync(configPath, YAML.safeDump(saveConfig), 'utf-8')
 console.info(chalk.green('✓ rewritten: '), chalk.dim(configPath))
 
-exec('cp -vfR ' + uppyRoot + '/dist/* ' + webRoot + '/themes/uppy/source/uppy', function (error, stdout, stderr) {
+var cmds = [
+  'mkdir -p ' + webRoot + '/themes/uppy/source/uppy',
+  'cp -vfR ' + uppyRoot + '/dist/* ' + webRoot + '/themes/uppy/source/uppy/'
+].join(' && ')
+
+exec(cmds, function (error, stdout, stderr) {
   if (error) {
     console.error(
       chalk.red('x failed to inject: '),
