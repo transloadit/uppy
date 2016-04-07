@@ -51,6 +51,7 @@ Scheduled to be released: May 02, 2016
 - [ ] progressdrawer: let user cancel uploads in progress (@arturi)
 - [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox
 - [ ] test: Move failing multipart test back from `v0.5.0` dir, make it pass
+- [ ] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504
 
 ## 0.0.4 
 
