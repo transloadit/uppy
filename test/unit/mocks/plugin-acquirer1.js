@@ -1,4 +1,4 @@
-const Plugin = require('../../../src/plugins/Plugin.js')
+import Plugin from '../../../src/plugins/Plugin.js'
 
 export default class TestSelector1 extends Plugin {
   constructor (core, opts) {

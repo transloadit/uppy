@@ -51,14 +51,18 @@
   },
   "homepage": "https://github.com/transloadit/uppy#readme",
   "devDependencies": {
-    "babel": "5.8.34",
-    "babel-eslint": "4.1.5",
-    "babelify": "6.4.0",
+    "babel-core": "6.7.4",
+    "babel-loader": "6.2.4",
+    "babel-preset-es2015": "^6.0.0",
+    "babel-polyfill": "6.7.4",
+    "babel-eslint": "6.0.2",
+    "babel-plugin-transform-object-assign": "6.5.0",
+    "babelify": "7.2.0",
     "browser-sync": "2.10.0",
     "browserify": "12.0.1",
     "chalk": "1.1.1",
     "disc": "1.3.2",
-    "eslint": "2.4.0",
+    "eslint": "2.7.0",
     "eslint-config-standard": "5.1.0",
     "eslint-plugin-promise": "1.1.0",
     "eslint-plugin-standard": "1.3.2",
@@ -74,6 +78,8 @@
     "watchify": "3.6.1"
   },
   "dependencies": {
+    "babel-preset-stage-0": "6.5.0",
+    "babel-register": "6.7.2",
     "drag-drop": "2.11.0",
     "tus-js-client": "1.1.3",
     "yo-yo": "1.1.1"
