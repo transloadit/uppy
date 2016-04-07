@@ -9,7 +9,7 @@
     "build:bundle": "./bin/build-bundle && ./bin/build-bundle-locales",
     "build:css": "bin/build-css",
     "build:js": "npm run build:lib && npm run build:bundle && npm run build:bundle:min",
-    "build:lib": "babel src -d lib",
+    "build:lib": "babel --version && babel src -d lib",
     "build": "npm run build:lib && npm run build:bundle && npm run build:bundle:min && npm run build:css",
     "clean": "rm -rf lib && rm -rf dist",
     "docs": "cd website && documentation readme ../src/index.js --readme-file=src/api/docs.md --section 'Uppy Core & Plugins' -q --github -c doc-order.json",
