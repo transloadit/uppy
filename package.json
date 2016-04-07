@@ -12,7 +12,7 @@
     "build:lib": "babel --version && babel src -d lib",
     "build": "npm run build:lib && npm run build:bundle && npm run build:bundle:min && npm run build:css",
     "clean": "rm -rf lib && rm -rf dist",
-    "docs": "cd website && documentation readme ../src/index.js --readme-file=src/api/docs.md --section 'Uppy Core & Plugins' -q --github -c doc-order.json",
+    "docs": "cd website && node node_modules/documentation/bin/documentation.js readme ../src/index.js --readme-file=src/api/docs.md --section 'Uppy Core & Plugins' -q --github -c doc-order.json",
     "install": "npm run web:install",
     "lint:fix": "eslint src test website/build-examples.js website/update.js website/themes/uppy/source/js/common.js --fix",
     "lint": "eslint src test website/build-examples.js website/update.js website/themes/uppy/source/js/common.js",
