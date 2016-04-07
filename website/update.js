@@ -7,7 +7,7 @@ var uppyRoot = path.dirname(__dirname)
 
 var configPath = webRoot + '/themes/uppy/_config.yml'
 var version = require(uppyRoot + '/package.json').version
-var configTemplate = '# Uppy versions, auto updated by update.js\nuppy_version: 0.0.1\n\nuppy_dev_size: "0.0"\nuppy_min_size: "0.0"\nuppy_gz_size: "0.0"'
+var configTemplate = '# Uppy versions, auto updated by update.js\nuppy_version: "0.0.1"\n\nuppy_dev_size: "0.0"\nuppy_min_size: "0.0"\nuppy_gz_size: "0.0"'
 var config
 try {
   config = fs.readFileSync(configPath, 'utf-8')
@@ -37,7 +37,7 @@ for (var file in locations) {
 fs.writeFileSync(
   configPath,
   config
-    .replace(/uppy_version: .*/, 'uppy_version: ' + version)
+    .replace(/uppy_version: .*/, 'uppy_version: "' + version + '"')
     .replace(/uppy_(\w+)_size:.*/g, function (m, p1) {
       return 'uppy_' + p1 + '_size: "' + (sizes[p1] || 99999) + '"'
     })
