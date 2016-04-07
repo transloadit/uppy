@@ -1,8 +1,8 @@
 var test = require('tape')
-var Core = require('../src/core/index.js')
+var Core = require('../../src/core/index.js')
 
 test('translation', function (t) {
-  const russian = require('../src/locales/ru_RU.js')
+  const russian = require('../../src/locales/ru_RU.js')
   const core = new Core({locales: russian})
 
   t.equal(
@@ -15,7 +15,7 @@ test('translation', function (t) {
 })
 
 test('interpolation', function (t) {
-  const english = require('../src/locales/en_US.js')
+  const english = require('../../src/locales/en_US.js')
   const core = new Core({locales: english})
 
   t.equal(
@@ -28,7 +28,7 @@ test('interpolation', function (t) {
 })
 
 test('pluralization', function (t) {
-  const russian = require('../src/locales/ru_RU.js')
+  const russian = require('../../src/locales/ru_RU.js')
   const core = new Core({locales: russian})
 
   t.equal(

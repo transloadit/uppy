@@ -1,5 +1,5 @@
 var test = require('tape')
-var Uppy = require('../src/core/Core.js')
+var Uppy = require('../../src/core/Core.js')
 
 test('core', function (t) {
   const uppy = new Uppy()
