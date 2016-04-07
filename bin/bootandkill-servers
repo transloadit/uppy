@@ -58,4 +58,8 @@ tailPid=${!}
 
 trap cleanup_servers EXIT
 
+echo "[${__base}] --> Sleeping 20s, because the port may be open, but Hexo may still be injecting/building stuff"
+echo "[${__base}] --> and I don't know yet how to check for that"
+sleep 20
+
 ${@}
