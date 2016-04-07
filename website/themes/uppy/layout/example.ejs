@@ -2,11 +2,26 @@
 <div class="Content js-Content <%- page.type ? page.type + ' with-sidebar' : '' %>">
   <h1><%- page.title %> Example</h1>
 
-  <!--
-  Add textarea already so it's available immediately for logging.
+  <p>
+    Hey there stranger!
+    Uppy
+    <img src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f436.png" width="16">
+    is in the early stages of development and the example section
+    is our playground. Things might not yet work, but we're working hard to improve this.
+    <br />
+
+    We're on a monthly
+    <a href="https://github.com/transloadit/uppy/blob/master/CHANGELOG.md">monthly release cycle</a>
+    and our latest version is v<%- config.uppy_gz_size %>, but the example
+    pages reflect the latest work in our master branch, so here's
+    <a href="https://github.com/transloadit/uppy/compare/v<%- config.uppy_version %>...master">what changed since v<%- config.uppy_version %></a>.
+  </p>
+
+
+  <!-- Add textarea already so it's available immediately for logging.
   It is later made visible, and moved into the #console-wrapper to position it in layout how
-  you see fit.
-  -->
+  you see fit. -->
+
   <textarea id="console-log" class="Console"></textarea>
   <script>
   console.log = (function (old_function, div_log) {
