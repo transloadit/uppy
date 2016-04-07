@@ -1,5 +1,2 @@
-require('babel/register')({
-  stage: 0
-})
-
+require('babel-register')
 require('./i18n.spec.js')
