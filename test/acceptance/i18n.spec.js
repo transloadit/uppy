@@ -2,6 +2,8 @@
 // - https://github.com/SeleniumHQ/selenium/wiki/WebDriverJs
 // - http://seleniumhq.github.io/selenium/docs/api/javascript/
 // - http://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/firefox/index.html
+// - http://selenium.googlecode.com/git/docs/api/javascript/namespace_webdriver_By.html
+// - http://selenium.googlecode.com/git/docs/api/javascript/class_webdriver_WebElement.html
 
 var test = require('tape')
 var path = require('path')
@@ -52,12 +54,10 @@ test('make sure Uppy loads with Russion language pack', function (t) {
   // Wait 8 seconds, for our upload message to be logged
   driver.wait(isLoaded.bind(this, consoleElement), 8000)
 
-  // Get the result of our upload and test it
-  getElementValue(consoleElement)
-    .then(function (value) {
-      var result = value.split('\n')[0]
-      t.equal(result, '--> Uppy Bundled version with Tus10 & Russian language pack has loaded')
-    })
+  driver.findElement(By.css('.UppyDragDrop-label')).getText().then(function (val) {
+    console.dir({val: val})
+    t.equal(val, 'Выберите файл или перенесите его сюда.')
+  })
 
   driver.quit()
 
