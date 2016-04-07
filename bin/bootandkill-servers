@@ -95,15 +95,17 @@ echo "[${__base}] --> Sleeping ${buildWait}s, because the port may be open, but 
 echo "[${__base}] --> and I don't know yet how to check for that"
 sleep ${buildWait}
 
-url="http://localhost:4000/uppy/uppy.js"
+echo "[${__base}] --> Showing uppy.js builds and sizes"
+ls -al dist/uppy.js website/public/js/uppy.js website/themes/uppy/source/uppy/uppy.js || true
+echo ""
 
+url="http://localhost:4000/uppy/uppy.js"
 echo "[${__base}] --> Downloading ${url} headers"
 curl -I "${url}"
+echo ""
 
 echo "[${__base}] --> Downloading ${url} body tail"
 curl "${url}" | tail -n20
-
-echo "[${__base}] --> Showing website/themes/uppy/source/uppy/uppy.js tail"
-cat website/themes/uppy/source/uppy/uppy.js | tail -n20
+echo ""
 
 ${@}
