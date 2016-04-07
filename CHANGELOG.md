@@ -56,6 +56,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] google: Add basic Google Drive plugin acceptance test (without Modal, via e.g. `target: "div#on-my-page"` (@hedgerh)
 - [ ] google: Make sure http://server.uppy.io is targeted in; and localhost is targeted elsewhere (@kvz)
 - [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
+- [ ] test: Make failing acceptance tests fatal (@kvz)
 - [x] test: Add a passing dummy i18n acceptance test, move failing multipart test to `v0.5.0` dir (@kvz)
 - [x] test: Get Firefox acceptance tests up and running both local and on Travis CI. Currently both failing on `StaleElementReferenceError: Element not found in the cache - perhaps the page has changed since it was looked up` https://travis-ci.org/transloadit/uppy/builds/121175389#L478
 - [x] test: Write one actual test (e.g. Multipart) (#2, #23, @hedgerh)
