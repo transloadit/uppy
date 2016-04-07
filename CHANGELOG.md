@@ -36,7 +36,9 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 
-## 0.0.5 (May 02, 2016)
+## 0.0.5 
+
+Scheduled to be released: May 02, 2016
 
 - [ ] meta: Create an Uppy logo (@markstory)
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
@@ -50,7 +52,9 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox
 - [ ] test: Move failing multipart test back from `v0.5.0` dir, make it pass
 
-## 0.0.4 (April 04, 2016)
+## 0.0.4 
+
+Scheduled to be released: April 04, 2016
 
 - [ ] progressdrawer: show file type names/icons for non-image files (@arturi)
 - [ ] google: Add basic Google Drive plugin acceptance test (without Modal, via e.g. `target: "div#on-my-page"` (@hedgerh)
@@ -90,7 +94,9 @@ Ideas that will be planned and find their way into a release at one point
 - [x] website: Filter taglines (@kvz)
 - [x] website: utilize browserify index exposers to rid ourselves of `../../../..` in examples (@kvz)
 
-## 0.0.3 (March 01, 2016)
+## 0.0.3 
+
+Released: March 01, 2016
 
 - [x] core: push out v0.0.3 (@kvz)
 - [x] build: release-(major|minor|patch): git tag && npm publish (@kvz)
@@ -111,7 +117,9 @@ Ideas that will be planned and find their way into a release at one point
 - [x] server: `package.json` (@hedgerh)
 - [x] test: Fix and enable commented out `use plugins` & other core unit test (@arturi)
 
-## 0.0.2 (February 11, 2016)
+## 0.0.2 
+
+Released: February 11, 2016
 
 - [x] build: Use parallelshell and tweak browserify to work with templates (@arturi)
 - [x] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
@@ -125,7 +133,9 @@ Ideas that will be planned and find their way into a release at one point
 - [x] server: Create a (barely) working uppy-server (#39, @hedgerh)
 - [x] website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
 
-## 0.0.1 (December 20, 2015)
+## 0.0.1 
+
+Released: December 20, 2015
 
 - [x] core: Individual progress (#24)
 - [x] core: Setup basic Plugin system (#1, #4, #20)
