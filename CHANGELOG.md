@@ -54,7 +54,7 @@ Scheduled to be released: May 02, 2016
 
 ## 0.0.4 
 
-Scheduled to be released: April 04, 2016
+<a name="next"></a> Scheduled to be released: April 04, 2016
 
 - [ ] google: Add Google Drive plugin unit test (@hedgerh)
 - [ ] google: Add a working Google Drive example (without Modal, via e.g. `target: "div#on-my-page"`) (@hedgerh)
