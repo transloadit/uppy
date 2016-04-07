@@ -37,7 +37,7 @@ for (var file in locations) {
 fs.writeFileSync(
   configPath,
   config
-    .replace(/uppy_version_anchor: .*/, 'uppy_version_anchor: "' + version.replace(/[\d]+/g, '') + '"')
+    .replace(/uppy_version_anchor: .*/, 'uppy_version_anchor: "' + version.replace(/[^\d]+/g, '') + '"')
     .replace(/uppy_version: .*/, 'uppy_version: "' + version + '"')
     .replace(/uppy_(\w+)_size:.*/g, function (m, p1) {
       return 'uppy_' + p1 + '_size: "' + (sizes[p1] || 99999) + '"'
