@@ -22,7 +22,7 @@ before_script:
 script:
 - npm run build
 - npm run test
-- npm run test:acceptance:handleservers || true
+- npm run test:acceptance:handleservers
 - git config --global user.name 'Uppy Bot'
 - git config --global user.email 'uppybot@uppy.io'
 - if [ "${TRAVIS_PULL_REQUEST}" == "false" ] && [ "${TRAVIS_BRANCH}" == "master" ]; then npm run web:deploy --quiet; else echo "Skipping for non-master/prs"; fi
