@@ -31,7 +31,6 @@ export default class DragDrop extends Plugin {
     this.isDragDropSupported = this.checkDragDropSupport()
 
     // Bind `this` to class methods
-    // this.events = this.events.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
