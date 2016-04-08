@@ -29,7 +29,7 @@ var driver = new firefox.Driver(options)
 
 var hexoServer = 'http://localhost:4000'
 
-test('make sure Uppy loads with Russion language pack', function (t) {
+test('make sure Uppy loads with Russian language pack', function (t) {
   driver.get(hexoServer + '/examples/i18n/')
 
   // Monitor for errors, and dump them
@@ -56,7 +56,7 @@ test('make sure Uppy loads with Russion language pack', function (t) {
 
   driver.findElement(By.css('.UppyDragDrop-label')).getText().then(function (val) {
     console.dir({val: val})
-    t.equal(val, 'Выберите файл или перенесите его сюда.')
+    t.equal(val, 'Выберите файл или перенесите его сюда')
   })
 
   driver.quit()
