@@ -31,6 +31,9 @@ export default class Tus10 extends Plugin {
     // Create a new tus upload
     return new Promise((resolve, reject) => {
       const upload = new tus.Upload(file.data, {
+
+        // TODO merge this.opts or this.opts.tus here
+        resume: false,
         endpoint: this.opts.endpoint,
         onError: (error) => {
           reject('Failed because: ' + error)
@@ -61,7 +64,7 @@ export default class Tus10 extends Plugin {
 
   install () {
     this.core.emitter.on('next', () => {
-      this.core.log('began uploading!!..')
+      this.core.log('Tus is uploading..')
       const selectedFiles = this.core.state.selectedFiles
       const uploaders = []
 
@@ -73,7 +76,7 @@ export default class Tus10 extends Plugin {
       })
 
       Promise.all(uploaders).then((result) => {
-        console.log('all uploaded!')
+        this.core.log('Tus has finished uploading!')
       })
     })
   }
