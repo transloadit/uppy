@@ -74,7 +74,7 @@ export default class Google extends Plugin {
     .then((res) => {
       if (res.status >= 200 && res.status <= 300) {
         return res.json().then((data) => {
-          let result = Utils.groupBy(data.items, (item) => item.mimeType)
+          // let result = Utils.groupBy(data.items, (item) => item.mimeType)
 
           let folders = []
           let files = []
@@ -96,7 +96,7 @@ export default class Google extends Plugin {
         throw error
       }
     })
-    .catch(err => {
+    .catch((err) => {
       return err
     })
   }
