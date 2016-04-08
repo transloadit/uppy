@@ -1,4 +1,3 @@
-import Utils from '../core/Utils'
 import Plugin from './Plugin'
 import dragDrop from 'drag-drop'
 import yo from 'yo-yo'
@@ -19,6 +18,7 @@ export default class DragDrop extends Plugin {
         <path d="M.444 16h6.223a.44.44 0 0 0 .444-.444.44.44 0 0 0-.443-.445H.89V4.89a.44.44 0 0 0-.446-.446A.44.44 0 0 0 0 4.89v10.666c0 .248.196.444.444.444z"/>
       </svg>
     `
+
     // Default options
     const defaultOptions = {
       target: '.UppyDragDrop'
@@ -31,7 +31,7 @@ export default class DragDrop extends Plugin {
     this.isDragDropSupported = this.checkDragDropSupport()
 
     // Bind `this` to class methods
-    this.events = this.events.bind(this)
+    // this.events = this.events.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -44,50 +44,8 @@ export default class DragDrop extends Plugin {
     yo.update(this.el, newEl)
   }
 
-  render (state) {
-    // Another way not to render next/upload button — if Modal is used as a target
-    const target = this.opts.target.name
-
-    const onDragOver = (ev) => {
-      // console.log('драговер, бля!')
-    }
-
-    const onDragLeave = (ev) => {
-      // console.log('драглив, бля!')
-    }
-
-    const onDrop = (ev) => {
-      // ev.preventDefault()
-      // ev.stopPropagation()
-      // console.log('ну дропнул, и че, самый умный что ли')
-    }
-
-    return yo`
-      <div class="UppyDragDrop ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
-        <form class="UppyDragDrop-inner"
-              ondragover=${onDragOver}
-              ondragleave=${onDragLeave}
-              ondrop=${onDrop}>
-          <input class="UppyDragDrop-input"
-                 id="UppyDragDrop-input"
-                 type="file"
-                 name="files[]"
-                 multiple="true">
-          <label class="UppyDragDrop-label" for="UppyDragDrop-input">
-            <strong>${this.core.i18n('chooseFile')}</strong>
-            <span class="UppyDragDrop-dragText">${this.core.i18n('orDragDrop')}</span>.
-          </label>
-          ${!this.core.opts.autoProceed && target !== 'Modal'
-            ? `<button class="UppyDragDrop-uploadBtn UppyNextBtn" type="submit">${this.core.i18n('upload')}</button>`
-            : ''}
-        </form>
-      </div>
-    `
-  }
-
 /**
- * Checks if the browser supports Drag & Drop,
- * not supported on mobile devices, for example.
+ * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
  * @return {Boolean} true if supported, false otherwise
  */
   checkDragDropSupport () {
@@ -108,49 +66,8 @@ export default class DragDrop extends Plugin {
     return true
   }
 
-  events () {
-    this.core.log(`waiting for some files to be dropped on ${this.target}`)
-
-    // prevent default actions for all drag & drop events
-    const strEvents = 'drag dragstart dragend dragover dragenter dragleave drop'
-    Utils.addListenerMulti(this.dropzone, strEvents, (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-    })
-
-    this.dropzone.addEventListener('submit', (e) => {
-      e.preventDefault()
-    })
-
-    // Toggle is-dragover state when files are dragged over or dropped
-    Utils.addListenerMulti(this.dropzone, 'dragover dragenter', (e) => {
-      this.container.classList.add('is-dragover')
-    })
-
-    Utils.addListenerMulti(this.dropzone, 'dragleave dragend drop', (e) => {
-      this.container.classList.remove('is-dragover')
-    })
-
-    document.addEventListener('dragover dragenter', (e) => {
-      this.container.classList.add('is-drop-ready')
-    })
-
-    document.addEventListener('dragleave dragend drop', (e) => {
-      this.container.classList.remove('is-drop-ready')
-    })
-
-    this.dropzone.addEventListener('drop', (e) => {
-      this.handleDrop(e)
-    })
-
-    this.input.addEventListener('change', (e) => {
-      this.handleInputChange(e)
-    })
-  }
-
   handleDrop (files) {
-    // this.core.log('all right, someone dropped something...')
-    // const newFiles = Array.from(e.dataTransfer.files)
+    this.core.log('All right, someone dropped something...')
 
     this.core.emitter.emit('file-add', {
       plugin: this,
@@ -159,7 +76,7 @@ export default class DragDrop extends Plugin {
   }
 
   handleInputChange () {
-    this.core.log('all right, something selected through input...')
+    this.core.log('All right, something selected through input...')
 
     const newFiles = Array.from(this.input.files)
 
@@ -170,27 +87,73 @@ export default class DragDrop extends Plugin {
   }
 
   focus () {
-    const inputEl = document.querySelector('.UppyDragDrop-input')
-    inputEl.focus()
+    this.input.focus()
   }
 
   install () {
     const caller = this
     this.target = this.getTarget(this.opts.target, caller, this.el)
+    this.input = document.querySelector(`${this.target} .UppyDragDrop-input`)
 
-    dragDrop('.UppyDragDrop', (files) => {
+    dragDrop(`${this.target} .UppyDragDrop-container`, (files) => {
       this.handleDrop(files)
-      console.log(files)
+      this.core.log(files)
     })
   }
 
-  // run (results) {
-  //   this.core.log({
-  //     class: this.constructor.name,
-  //     method: 'run',
-  //     results: results
-  //   })
-  //
-  //   return this.result()
-  // }
+  render (state) {
+    // Another way not to render next/upload button — if Modal is used as a target
+    const target = this.opts.target.name
+
+    const onDragOver = (ev) => {
+    }
+
+    const onDragLeave = (ev) => {
+    }
+
+    const onDrop = (ev) => {
+      // ev.preventDefault()
+      // ev.stopPropagation()
+    }
+
+    const onSelect = (ev) => {
+      this.input.click()
+    }
+
+    const next = (ev) => {
+      ev.preventDefault()
+      ev.stopPropagation()
+      this.core.emitter.emit('next')
+    }
+
+    const onChange = (ev) => {
+      this.handleInputChange()
+    }
+
+    return yo`
+      <div class="UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
+        <form class="UppyDragDrop-inner"
+              ondragover=${onDragOver}
+              ondragleave=${onDragLeave}
+              ondrop=${onDrop}>
+          <input class="UppyDragDrop-input"
+                 type="file"
+                 name="files[]"
+                 multiple="true"
+                 onchange=${onChange} />
+          <label class="UppyDragDrop-label" onclick=${onSelect}>
+            <strong>${this.core.i18n('chooseFile')}</strong>
+            <span class="UppyDragDrop-dragText">${this.core.i18n('orDragDrop')}</span>
+          </label>
+          ${!this.core.opts.autoProceed && target !== 'Modal'
+            ? yo`<button class="UppyDragDrop-uploadBtn UppyNextBtn"
+                         type="submit"
+                         onclick=${next}>
+                    ${this.core.i18n('upload')}
+              </button>`
+            : ''}
+        </form>
+      </div>
+    `
+  }
 }
