@@ -129,12 +129,17 @@ export default class DragDrop extends Plugin {
       this.handleInputChange()
     }
 
+    const onSubmit = (ev) => {
+      ev.preventDefault()
+    }
+
     return yo`
       <div class="UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
         <form class="UppyDragDrop-inner"
               ondragover=${onDragOver}
               ondragleave=${onDragLeave}
-              ondrop=${onDrop}>
+              ondrop=${onDrop}
+              onsubmit=${onSubmit}>
           <input class="UppyDragDrop-input"
                  type="file"
                  name="files[]"

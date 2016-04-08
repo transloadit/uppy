@@ -86,6 +86,7 @@ export default class Modal extends Plugin {
     const modal = this.core.getState().modal
     modal.isHidden = true
     this.core.setState({modal: modal})
+    // this.core.resetState()
 
     document.body.classList.remove('is-UppyModal-open')
   }
