@@ -49,6 +49,7 @@ Scheduled to be released: May 02, 2016
 - [ ] modal: focus on the first input field / button in tab panel (@arturi)
 - [ ] presenter: make it work with new components/state (@arturi)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
+- [ ] progressbar: make it great again (@arturi)
 - [ ] progressdrawer: let user cancel uploads in progress (@arturi)
 - [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox
 - [ ] test: Move failing multipart test back from `v0.5.0` dir, make it pass
@@ -63,8 +64,8 @@ Scheduled to be released: May 02, 2016
 
 - [ ] google: Add Google Drive plugin unit test (@hedgerh)
 - [ ] google: Add a working Google Drive example (without Modal, via e.g. `target: "div#on-my-page"`) (@hedgerh)
-- [ ] progressbar: make it great again (@arturi)
-- [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
+- [ ] google: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (also see https://github.com/hughsk/envify) (@kvz)
+- [x] test: Setup one modal/dragdrop acceptance test (@arturi)
 - [x] google: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (also see https://github.com/hughsk/envify) (@kvz)
 - [x] website: Add a http://uppy.io/stats page that inlines disc.html as well as displays the different bundle sizes, and an activity feed (@kvz)
 - [x] dragdrop: refactor & improve (@arturi)
