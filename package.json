@@ -80,7 +80,7 @@
     "selenium-webdriver": "^2.52.0",
     "tap-spec": "^4.1.1",
     "tape": "4.4.0",
-    "uppy-server": "0.0.2",
+    "uppy-server": "0.0.3",
     "watchify": "3.6.1"
   },
   "dependencies": {
