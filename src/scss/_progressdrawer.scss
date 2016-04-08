@@ -118,6 +118,11 @@
   position: relative;
 }
 
+.UppyProgressDrawer-itemName a {
+  color: $color-white;
+  text-decoration: underline;
+}
+
 .UppyProgressDrawer-itemRemove {
   @include reset-button;
   width: 40px;

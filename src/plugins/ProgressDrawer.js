@@ -61,7 +61,11 @@ export default class ProgressDrawer extends Plugin {
           <span class="UppyProgressDrawer-itemProgress"
                 style="width: ${file.progress}%"></span>
           <h4 class="UppyProgressDrawer-itemName">
-            ${file.name} (${file.progress})</h4>
+            ${file.uploadURL
+              ? yo`<a href="${file.uploadURL}" target="_blank">${file.name}</a>`
+              : yo`<span>${file.name} (${file.progress})</span>`
+            }
+          </h4>
             ${isUploaded ? checkIcon : ''}
             ${isUploaded
               ? ''
