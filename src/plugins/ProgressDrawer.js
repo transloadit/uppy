@@ -27,8 +27,12 @@ export default class ProgressDrawer extends Plugin {
 
   render (state) {
     const selectedFiles = state.selectedFiles
+    const uploadedFiles = state.uploadedFiles
     const selectedFileCount = Object.keys(selectedFiles).length
+    const uploadedFileCount = Object.keys(uploadedFiles).length
     const isSomethingSelected = selectedFileCount > 0
+    const isSomethingUploaded = uploadedFileCount > 0
+    const isSomethingSelectedOrUploaded = isSomethingSelected || isSomethingUploaded
     const autoProceed = this.core.opts.autoProceed
 
     const drawerItem = (file) => {
@@ -52,8 +56,11 @@ export default class ProgressDrawer extends Plugin {
                 style="width: ${file.progress}%"></span>
           <h4 class="UppyProgressDrawer-itemName">
             ${file.name} (${file.progress})</h4>
-          ${isUploaded ? checkIcon : ''}
-          <button class="UppyProgressDrawer-itemRemove" onclick=${remove}>×</button>
+            ${isUploaded ? checkIcon : ''}
+            ${isUploaded
+              ? ''
+              : yo`<button class="UppyProgressDrawer-itemRemove" onclick=${remove}>×</button>`
+            }
         </div>
       </li>`
     }
@@ -62,19 +69,29 @@ export default class ProgressDrawer extends Plugin {
       this.core.emitter.emit('next')
     }
 
-    return yo`<div class="UppyProgressDrawer ${isSomethingSelected ? 'is-visible' : ''}">
+    return yo`<div class="UppyProgressDrawer ${isSomethingSelectedOrUploaded ? 'is-visible' : ''}">
       <div class="UppyProgressDrawer-status">
         ${isSomethingSelected ? this.core.i18n('filesChosen', {'smart_count': selectedFileCount}) : ''}
+        ${isSomethingSelected && isSomethingUploaded ? ', ' : ''}
+        ${isSomethingUploaded ? this.core.i18n('filesUploaded', {'smart_count': uploadedFileCount}) : ''}
       </div>
       <ul class="UppyProgressDrawer-list">
         ${Object.keys(selectedFiles).map((fileID) => {
           return drawerItem(selectedFiles[fileID])
         })}
+
+        ${Object.keys(uploadedFiles).map((fileID) => {
+          return drawerItem(uploadedFiles[fileID])
+        })}
       </ul>
       ${autoProceed
         ? ''
-        : yo`<button class="UppyProgressDrawer-upload" type="button" onclick=${next}>
-          ${isSomethingSelected ? this.core.i18n('uploadFiles', {'smart_count': selectedFileCount}) : ''}
+        : yo`<button class="UppyProgressDrawer-upload ${isSomethingSelected ? 'is-active' : ''}"
+                     type="button" onclick=${next}>
+          ${isSomethingSelected
+            ? this.core.i18n('uploadFiles', {'smart_count': selectedFileCount})
+            : this.core.i18n('selectToUpload')
+          }
         </button>`
       }
     </div>`

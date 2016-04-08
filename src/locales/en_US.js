@@ -8,6 +8,10 @@ en_US.strings = {
     0: '%{smart_count} file selected',
     1: '%{smart_count} files selected'
   },
+  filesUploaded: {
+    0: '%{smart_count} file uploaded',
+    1: '%{smart_count} files uploaded'
+  },
   files: {
     0: '%{smart_count} file',
     1: '%{smart_count} files'
@@ -16,6 +20,7 @@ en_US.strings = {
     0: 'Upload %{smart_count} file',
     1: 'Upload %{smart_count} files'
   },
+  selectToUpload: 'Select files to upload',
   closeModal: 'Close Modal',
   upload: 'Upload'
 }
