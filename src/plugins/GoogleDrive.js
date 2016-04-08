@@ -1,7 +1,6 @@
 import yo from 'yo-yo'
 import Utils from '../core/Utils'
 import Plugin from './Plugin'
-var fetch = fetch || require('node-fetch')
 
 export default class Google extends Plugin {
   constructor (core, opts) {
@@ -14,7 +13,7 @@ export default class Google extends Plugin {
         <path d="M2.955 14.93l2.667-4.62H16l-2.667 4.62H2.955zm2.378-4.62l-2.666 4.62L0 10.31l5.19-8.99 2.666 4.62-2.523 4.37zm10.523-.25h-5.333l-5.19-8.99h5.334l5.19 8.99z"/>
       </svg>
     `
-    this.authUrl = 'http://localhost:3020/connect/google'
+
     // set default options
     const defaultOptions = {}
 
@@ -22,10 +21,6 @@ export default class Google extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
     this.currentFolder = 'root'
     this.isAuthenticated = false
-    this.checkAuthentication()
-      .then((auth) => {
-        this.isAuthenticated = auth.isAuthenticated
-      })
   }
 
   focus () {
@@ -43,7 +38,7 @@ export default class Google extends Plugin {
   }
 
   checkAuthentication () {
-    return fetch('http://localhost:3020/google/authorize', {
+    return fetch(`${this.opts.host}/google/authorize`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -60,27 +55,12 @@ export default class Google extends Plugin {
         throw error
       }
     })
-    .then((data) => {
-      return data.isAuthenticated
-    })
-    .catch((err) => {
-      return err
-    })
+    .then((data) => data.isAuthenticated)
+    .catch((err) => err)
   }
 
-  getFolder (folderId = this.currentFolder) {
-    /**
-     * Leave this here
-     */
-    // fetch('http://localhost:3020/google/logout', {
-    //   method: 'get',
-    //   credentials: 'include',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json'
-    //   }
-    // }).then(res => console.log(res))
-    return fetch('http://localhost:3020/google/list', {
+  getFolder (folderId = this.core.state.googleDrive.folder) {
+    return fetch(`${this.opts.host}/google/list`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -94,6 +74,8 @@ export default class Google extends Plugin {
     .then((res) => {
       if (res.status >= 200 && res.status <= 300) {
         return res.json().then((data) => {
+          let result = Utils.groupBy(data.items, (item) => item.mimeType)
+
           let folders = []
           let files = []
           data.items.forEach((item) => {
@@ -103,13 +85,19 @@ export default class Google extends Plugin {
               files.push(item)
             }
           })
-
           return {
             folders,
             files
           }
         })
+      } else {
+        let error = new Error(res.statusText)
+        error.response = res
+        throw error
       }
+    })
+    .catch(err => {
+      return err
     })
   }
 
@@ -118,7 +106,7 @@ export default class Google extends Plugin {
       return new Error('getFile: File ID is not a string.')
     }
 
-    return fetch('http://localhost:3020/google/get', {
+    return fetch(`${this.opts.host}/google/get`, {
       method: 'post',
       credentials: 'include',
       headers: {
@@ -133,39 +121,86 @@ export default class Google extends Plugin {
       return res.json()
         .then((json) => json)
     })
-    .catch((err) => console.log(err))
+    .catch((err) => err)
   }
 
   install () {
     const caller = this
-    this.target = document.querySelector(this.getTarget(this.opts.target, caller))
+    this.checkAuthentication()
+      .then((authenticated) => {
+        this.updateState({authenticated})
+
+        if (authenticated) {
+          return this.getFolder()
+        }
+
+        return authenticated
+      })
+      .then((newState) => {
+        this.updateState(newState)
+        this.el = this.render(this.core.state)
+        this.target = this.getTarget(this.opts.target, caller, this.el)
+      })
+
     return
   }
 
+  logout () {
+    /**
+     * Leave this here
+     */
+    // fetch(`${this.opts.host}/google/logout`, {
+    //   method: 'get',
+    //   credentials: 'include',
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json'
+    //   }
+    // }).then(res => console.log(res))
+  }
+
+  update (state) {
+    if (!this.el) {
+      return
+    }
+    const newEl = this.render(state)
+    yo.update(this.el, newEl)
+  }
+
+  updateState (newState) {
+    const {state} = this.core
+    const googleDrive = Object.assign({}, state.googleDrive, newState)
+
+    this.core.setState({googleDrive})
+  }
+
   render (state) {
-    if (state.authenticated) {
-      this.renderBrowser()
+    if (state.googleDrive.authenticated) {
+      return this.renderBrowser(state.googleDrive)
     } else {
-      this.renderAuth(state)
+      return this.renderAuth()
     }
   }
 
   renderAuth () {
+    const link = this.opts.host ? `${this.opts.host}/connect/google` : '#'
     return yo`
       <div>
         <h1>Authenticate With Google Drive</h1>
-        <a href=${this.authUrl || '#'}>Authenticate</a>
+        <a href=${link}>Authenticate</a>
       </div>
     `
   }
 
   renderBrowser (state) {
-    const folders = state.folders.map((folder) => `<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}">${folder.title}</button></li>`)
-    const files = state.files.map((file) => `<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}">${file.title}</button></li>`)
+    const folders = state.folders.map((folder) => yo`<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}">${folder.title}</button></li>`)
+    const files = state.files.map((file) => yo`<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}">${file.title}</button></li>`)
 
     return yo`
-      <ul>${folders}</ul>
-      <ul>${files}</ul>
+      <div>
+        <ul>${folders}</ul>
+        <ul>${files}</ul>
+      </div>
     `
   }
 

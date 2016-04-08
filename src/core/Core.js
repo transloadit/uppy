@@ -40,6 +40,12 @@ export default class Core {
       modal: {
         isHidden: true,
         targets: []
+      },
+      googleDrive: {
+        authenticated: false,
+        files: [],
+        folders: [],
+        directory: '/'
       }
     }
 
