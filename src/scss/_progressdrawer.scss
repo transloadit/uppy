@@ -32,6 +32,17 @@
   margin: 0;
   overflow-y: auto;
   height: 130px;
+  // position: relative;
+  //
+  // &:before {
+  //   content: '';
+  //   position: absolute;
+  //   bottom: 0;
+  //   left: 0;
+  //   right: 0;
+  //   height: 15px;
+  //   background-image: linear-gradient(to bottom, rgba($color-black, 0.65) 0%, rgba($color-black, 0) 100%);
+  // }
 }
 
 .UppyProgressDrawer-item {
@@ -45,19 +56,19 @@
   background-color: $color-cornflower-blue;
 }
 
-.UppyProgressDrawer-item.is-uploaded {
-  .UppyProgressDrawer-itemBar {
-    width: 100%;
-  }
-
-  .UppyProgressDrawer-itemRemove {
-    display: none;
-  }
-
-  .UppyProgressDrawer-itemCheck {
-    display: block;
-  }
-}
+// .UppyProgressDrawer-item.is-uploaded {
+//   .UppyProgressDrawer-itemBar {
+//     width: 100%;
+//   }
+//
+//   .UppyProgressDrawer-itemRemove {
+//     display: block;
+//   }
+//
+//   .UppyProgressDrawer-itemCheck {
+//     display: block;
+//   }
+// }
 
 .UppyProgressDrawer-itemInfo {
   float: left;
@@ -70,6 +81,16 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.UppyProgressDrawer-itemType {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 40px;
+  text-transform: uppercase;
+  text-align: center;
+  color: $color-white;
 }
 
 .UppyProgressDrawer-itemInner {
@@ -97,6 +118,11 @@
   position: relative;
 }
 
+.UppyProgressDrawer-itemName a {
+  color: $color-white;
+  text-decoration: underline;
+}
+
 .UppyProgressDrawer-itemRemove {
   @include reset-button;
   width: 40px;
@@ -113,11 +139,13 @@
 }
 
 .UppyProgressDrawer-itemCheck {
-  display: none;
   position: absolute;
   top: 12px;
   right: 15px;
-  fill: $color-white;
+  fill: darken($color-cornflower-blue, 20%);
+  background-color: $color-white;
+  border-radius: 50%;
+  padding: 2px;
 }
 
 .UppyProgressDrawer-upload {
@@ -128,10 +156,15 @@
   color: $color-black;
   font-size: 13px;
   font-weight: bold;
-  // border-top: 1px solid $color-asphalt-gray;
-  cursor: pointer;
-  background-color: darken($color-cornflower-blue, 10%);
+  background-color: $color-gray;
   color: $color-white;
+  pointer-events: none;
+
+  &.is-active {
+    background-color: darken($color-cornflower-blue, 10%);
+    cursor: pointer;
+    pointer-events: auto;
+  }
 
   &:hover {
     background-color: darken($color-cornflower-blue, 30%);

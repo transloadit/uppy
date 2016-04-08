@@ -36,7 +36,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 
-## 0.0.5 
+## 0.0.5
 
 Scheduled to be released: May 02, 2016
 
@@ -54,17 +54,18 @@ Scheduled to be released: May 02, 2016
 - [ ] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504
 - [ ] website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
 - [ ] website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
-
-## 0.0.4 
+## 0.0.4
 
 <a name="next"></a> Scheduled to be released: April 04, 2016
 
 - [ ] google: Add Google Drive plugin unit test (@hedgerh)
 - [ ] google: Add a working Google Drive example (without Modal, via e.g. `target: "div#on-my-page"`) (@hedgerh)
 - [ ] google: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (@kvz)
-- [ ] progressdrawer: show file type names/icons for non-image files (@arturi)
+- [ ] progressbar: make it great again (@arturi)
 - [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
 - [x] website: Add a http://uppy.io/stats page that inlines disc.html as well as displays the different bundle sizes, and an activity feed (@kvz)
+- [x] dragdrop: refactor & improve (@arturi)
+- [x] website: fix i18n & DragDrop examples (@arturi)
 - [x] website: Provide simple roadmap in examples (#68, @kvz)
 - [x] website: Upgrade Hexo (@kvz)
 - [x] test: Make failing acceptance tests fatal (@kvz)
@@ -85,8 +86,11 @@ Scheduled to be released: May 02, 2016
 - [x] dragdrop: Fix 405 Not Allowed, (error) handling when you press Upload with no files (#60, @arturi, thx @hpvd)
 - [x] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)
 - [x] modal: covert to component & event-based state management (@arturi)
-- [x] modal: Make sure modal renders under one dom node — modal does, should everything else too? (@arturi, @hedgerh)
+- [x] modal: Make sure modal renders under one dom node — should everything else too? (@arturi, @hedgerh)
 - [x] modal: refactor and improve (@arturi)
+- [x] progressdrawer: show link to the uploaded file (@arturi)
+- [x] progressdrawer: show file type names/icons for non-image files (@arturi)
+- [x] progressdrawer: show uploaded files, display uploaded/selected count, disable btn when nothing selected (@arturi)
 - [x] progressdrawer: implement basic version, show upload progress for individual files (@arturi)
 - [x] progressdrawer: show previews for images (@arturi)
 - [x] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
@@ -101,7 +105,7 @@ Scheduled to be released: May 02, 2016
 - [x] website: Filter taglines (@kvz)
 - [x] website: utilize browserify index exposers to rid ourselves of `../../../..` in examples (@kvz)
 
-## 0.0.3 
+## 0.0.3
 
 Released: March 01, 2016
 
@@ -124,7 +128,7 @@ Released: March 01, 2016
 - [x] server: `package.json` (@hedgerh)
 - [x] test: Fix and enable commented out `use plugins` & other core unit test (@arturi)
 
-## 0.0.2 
+## 0.0.2
 
 Released: February 11, 2016
 
@@ -140,7 +144,7 @@ Released: February 11, 2016
 - [x] server: Create a (barely) working uppy-server (#39, @hedgerh)
 - [x] website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
 
-## 0.0.1 
+## 0.0.1
 
 Released: December 20, 2015
 

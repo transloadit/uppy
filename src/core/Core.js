@@ -40,10 +40,16 @@ export default class Core {
       modal: {
         isHidden: true,
         targets: []
+      },
+      googleDrive: {
+        authenticated: false,
+        files: [],
+        folders: [],
+        directory: '/'
       }
     }
 
-    this.state = Object.assign({}, this.state, this.defaultState)
+    this.state = Object.assign({}, this.defaultState)
   }
 
   /**
@@ -63,7 +69,8 @@ export default class Core {
    *
    */
   resetState () {
-    this.setState(this.defaultState)
+    this.state = this.defaultState
+    this.updateAll()
   }
 
   /**
@@ -111,17 +118,26 @@ export default class Core {
 
       data.acquiredFiles.forEach((file) => {
         const fileName = file.name
+        const fileType = file.type.split('/')
+        const fileTypeGeneral = fileType[0]
+        const fileTypeSpecific = fileType[1]
         const fileID = Utils.generateFileID(fileName)
 
         updatedFiles[fileID] = {
           acquiredBy: data.plugin,
           id: fileID,
           name: fileName,
+          type: {
+            general: fileTypeGeneral,
+            specific: fileTypeSpecific
+          },
           data: file,
           progress: 0
         }
 
-        readImgPreview(updatedFiles[fileID])
+        if (fileTypeGeneral === 'image') {
+          readImgPreview(updatedFiles[fileID])
+        }
       })
 
       this.setState({selectedFiles: updatedFiles})
@@ -159,52 +175,6 @@ export default class Core {
     this.emitter.on('reset', () => {
       this.resetState()
     })
-
-    // add new acquirer target to Modal
-    // this.emitter.on('modal-add-target', (target) => {
-    //   const modal = Object.assign({}, this.state.modal)
-    //   modal.targets.push(target)
-    //   this.setState({modal: modal})
-    // })
-
-    // this.emitter.on('modal-panel-show', (id) => {
-    //   const modal = Object.assign({}, this.state.modal)
-    //
-    //   // hide all panels, except the one that matches current id
-    //   modal.targets.forEach((target) => {
-    //     if (target.type === 'acquirer') {
-    //       if (target.id === id) {
-    //         target.isVisible = true
-    //         return
-    //       }
-    //       target.isVisible = false
-    //     }
-    //   })
-    //
-    //   this.setState({modal: modal})
-    // })
-
-    // this.emitter.on('modal-open', () => {
-    //   // const modal = Object.assign({}, this.state.modal)
-    //   const modal = this.getState().modal
-    //   modal.isVisible = true
-    //
-    //   // Show first acquirer plugin when modal is open
-    //   modal.targets.some((target) => {
-    //     if (target.type === 'acquirer') {
-    //       target.isVisible = true
-    //       return true
-    //     }
-    //   })
-    //
-    //   this.setState({modal: modal})
-    // })
-    //
-    // this.emitter.on('modal-close', () => {
-    //   const modal = this.getState().modal
-    //   modal.isVisible = false
-    //   this.setState({modal: modal})
-    // })
   }
 
 /**

@@ -54,6 +54,38 @@ function qsa (selector, context) {
 }
 
 /**
+ * Partition array by a grouping function.
+ * @param  {[type]} array      Input array
+ * @param  {[type]} groupingFn Grouping function
+ * @return {[type]}            Array of arrays
+ */
+function groupBy (array, groupingFn) {
+  return array.reduce((result, item) => {
+    let key = groupingFn(item)
+    let xs = result.get(key) || []
+    xs.push(item)
+    result.set(key, xs)
+    return result
+  }, new Map())
+}
+
+/**
+ * Tests if every array element passes predicate
+ * @param  {Array}  array       Input array
+ * @param  {Object} predicateFn Predicate
+ * @return {bool}               Every element pass
+ */
+function every (array, predicateFn) {
+  return array.reduce((result, item) => {
+    if (!result) {
+      return false
+    }
+
+    return predicateFn(item)
+  }, true)
+}
+
+/**
  * Takes a fileName and turns it into fileID, by converting to lowercase,
  * removing extra characters and adding unix timestamp
  *
@@ -71,6 +103,8 @@ export default {
   promiseWaterfall,
   generateFileID,
   addListenerMulti,
+  every,
   flatten,
+  groupBy,
   qsa
 }
