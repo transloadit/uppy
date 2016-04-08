@@ -24,7 +24,7 @@ export default class Dropbox extends Plugin {
   }
 
   getDirectory () {
-    // request.get('//localhost:8080/dropbox/readdir')
+    // request.get('//localhost:3020/dropbox/readdir')
     //   .query(opts)
     //   .set('Content-Type', 'application/json')
     //   .end((err, res) => {

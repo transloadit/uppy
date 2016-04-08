@@ -2375,7 +2375,7 @@ var Dropbox = (function (_Plugin) {
       var opts = {
         dir: 'pizza'
       };
-      _superagent2['default'].get('//localhost:8080/dropbox/readdir').query(opts).set('Content-Type', 'application/json').end(function (err, res) {
+      _superagent2['default'].get('//localhost:3020/dropbox/readdir').query(opts).set('Content-Type', 'application/json').end(function (err, res) {
         console.log(err);
         console.log('yo!');
         console.log(res);

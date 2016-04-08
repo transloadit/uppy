@@ -38,8 +38,8 @@ function cleanup_servers () {
   echo "[${__base}] --> Killing any server listening on port 4000"
   killProcessListeningOnPort 4000 || true
 
-  echo "[${__base}] --> Killing any server listening on port 8080"
-  killProcessListeningOnPort 8080 || true
+  echo "[${__base}] --> Killing any server listening on port 3020"
+  killProcessListeningOnPort 3020 || true
 
   kill -9 ${tailPid}
 }
@@ -62,8 +62,8 @@ function waitForPortOpen () {
 
 echo "[${__base}] --> Killing any server listening on port 4000"
 killProcessListeningOnPort 4000 || true
-echo "[${__base}] --> Killing any server listening on port 8080"
-killProcessListeningOnPort 8080 || true
+echo "[${__base}] --> Killing any server listening on port 3020"
+killProcessListeningOnPort 3020 || true
 
 echo "[${__base}] --> Start webserver and uppy-server in the background"
 rm -f nohup.out || true
@@ -80,7 +80,7 @@ echo "[${__base}] --> Wait for hexo webserver to be online"
 waitForPortOpen 4000
 
 echo "[${__base}] --> Wait for uppy-server to be online"
-waitForPortOpen 8080
+waitForPortOpen 3020
 
 echo "[${__base}] --> Running acceptance tests"
 
