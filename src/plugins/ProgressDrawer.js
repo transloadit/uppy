@@ -28,11 +28,14 @@ export default class ProgressDrawer extends Plugin {
   render (state) {
     const selectedFiles = state.selectedFiles
     const uploadedFiles = state.uploadedFiles
+
     const selectedFileCount = Object.keys(selectedFiles).length
     const uploadedFileCount = Object.keys(uploadedFiles).length
+
     const isSomethingSelected = selectedFileCount > 0
     const isSomethingUploaded = uploadedFileCount > 0
     const isSomethingSelectedOrUploaded = isSomethingSelected || isSomethingUploaded
+
     const autoProceed = this.core.opts.autoProceed
 
     const drawerItem = (file) => {
@@ -49,7 +52,10 @@ export default class ProgressDrawer extends Plugin {
       return yo`<li class="UppyProgressDrawer-item"
                     title="${file.name}">
         <div class="UppyProgressDrawer-itemInfo">
-          <img class="UppyProgressDrawer-itemIcon" alt="${file.name}" src="${file.preview}">
+          ${file.type.general === 'image'
+            ? yo`<img class="UppyProgressDrawer-itemIcon" alt="${file.name}" src="${file.preview}">`
+            : yo`<span class="UppyProgressDrawer-itemType">${file.type.specific}</span>`
+          }
         </div>
         <div class="UppyProgressDrawer-itemInner">
           <span class="UppyProgressDrawer-itemProgress"

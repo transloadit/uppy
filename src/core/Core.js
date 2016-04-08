@@ -112,17 +112,26 @@ export default class Core {
 
       data.acquiredFiles.forEach((file) => {
         const fileName = file.name
+        const fileType = file.type.split('/')
+        const fileTypeGeneral = fileType[0]
+        const fileTypeSpecific = fileType[1]
         const fileID = Utils.generateFileID(fileName)
 
         updatedFiles[fileID] = {
           acquiredBy: data.plugin,
           id: fileID,
           name: fileName,
+          type: {
+            general: fileTypeGeneral,
+            specific: fileTypeSpecific
+          },
           data: file,
           progress: 0
         }
 
-        readImgPreview(updatedFiles[fileID])
+        if (fileTypeGeneral === 'image') {
+          readImgPreview(updatedFiles[fileID])
+        }
       })
 
       this.setState({selectedFiles: updatedFiles})

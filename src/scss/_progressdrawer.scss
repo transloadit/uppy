@@ -83,6 +83,16 @@
   object-fit: cover;
 }
 
+.UppyProgressDrawer-itemType {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 40px;
+  text-transform: uppercase;
+  text-align: center;
+  color: $color-white;
+}
+
 .UppyProgressDrawer-itemInner {
   float: left;
   width: 88%;
