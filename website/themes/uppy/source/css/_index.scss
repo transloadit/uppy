@@ -83,27 +83,6 @@
   display: none;
 }
 
-.IndexSocial {
-  text-align: center;
-  list-style-type: none;
-  padding: 0;
-  margin: 0 auto;
-  margin-top: 2em;
-  margin-bottom: 2em;
-}
-
-.IndexSocial li {
-  margin: 0.7em 0;
-
-  @media #{$screen-medium} {
-    display: inline-block;
-    margin: 0 0.7em;
-    vertical-align: middle;
-
-    &.last { margin-left: -2px; }
-  }
-}
-
 .IndexAbout {
   max-width: 760px;
   margin: 3em auto;

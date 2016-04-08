@@ -145,6 +145,28 @@ a.button {
   }
 }
 
+
+.Social {
+  text-align: center;
+  list-style-type: none;
+  padding: 0;
+  margin: 0 auto;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+.Social li {
+  margin: 0.7em 0;
+
+  @media #{$screen-medium} {
+    display: inline-block;
+    margin: 0 0.7em;
+    vertical-align: middle;
+
+    &.last { margin-left: -2px; }
+  }
+}
+
 /**
 * MainLogo
 */
@@ -307,4 +329,4 @@ a.button {
 * BuildBadge
 */
 .page-index .BuildBadge { margin-left: -2px !important; }
-.page-inner .BuildBadge { margin-top: 15px; }
+.Sidebar .BuildBadge { margin-top: 15px; }

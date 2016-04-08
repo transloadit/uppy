@@ -15,16 +15,7 @@
     </ul>
   </header>
 
-  <ul class="IndexSocial">
-    <li><a href="https://twitter.com/uppy_io" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @uppy_io</a></li>
-    <li><iframe src="http://ghbtns.com/github-btn.html?user=transloadit&repo=uppy&type=watch&count=true"
-  allowtransparency="true" frameborder="0" scrolling="0" width="100" height="20"></iframe></li>
-   </li>
-    <li class="BuildBadge">
-     <span class="wrapper">
-       <a href="https://travis-ci.org/transloadit/uppy"><img src="https://travis-ci.org/transloadit/uppy.svg" alt="Build Status"></a>
-     </span>
-  </ul>
+  <%- partial('partials/social') %>
 </section>
 
 <section class="IndexAbout">
@@ -80,6 +71,3 @@
   <p>Puppy icon by <a href="https://thenounproject.com/2y2"></a>Jorge Fernandez del Castillo Gomez</a> from the Noun Project.</p>
   <p>© <%- date(Date.now(), 'YYYY') %> <a href="https://transloadit.com" target="_blank">Transloadit</a></p>
 </footer>
-
-<!-- Twitter follow button script -->
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
