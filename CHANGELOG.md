@@ -22,6 +22,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] build: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 - [ ] build: minification of the bundle
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
+- [ ] core: pass custom meta/parameters with upload?
 - [ ] core: Add polyfill for `fetch`
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
 - [ ] core: consider `virtual-dom` + `main-loop` or `yo-yo` for rendering and state management
