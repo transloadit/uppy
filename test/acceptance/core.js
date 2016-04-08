@@ -22,22 +22,21 @@ function monitorErrors (driver) {
   })
 }
 
-var profile = new firefox.Profile()
-profile.addExtension(path.join(__dirname, 'xpi', 'firebug-2.0.16.xpi'))
-profile.addExtension(path.join(__dirname, 'xpi', 'JSErrorCollector.xpi'))
-profile.setPreference('extensions.firebug.showChromeErrors', true)
+function setDriver () {
+  var profile = new firefox.Profile()
+  profile.addExtension(path.join(__dirname, 'xpi', 'firebug-2.0.16.xpi'))
+  profile.addExtension(path.join(__dirname, 'xpi', 'JSErrorCollector.xpi'))
+  profile.setPreference('extensions.firebug.showChromeErrors', true)
 
-var options = new firefox.Options().setProfile(profile)
-var driver = new firefox.Driver(options)
+  var options = new firefox.Options().setProfile(profile)
+  var driver = new firefox.Driver(options)
 
-monitorErrors(driver)
+  monitorErrors(driver)
 
-var consoleElement = driver.findElement(By.id('console-log'))
-var hexoServer = 'http://localhost:4000'
+  return driver
+}
 
 module.exports = {
-  driver,
-  consoleElement,
-  By,
-  hexoServer
+  setDriver,
+  By
 }
