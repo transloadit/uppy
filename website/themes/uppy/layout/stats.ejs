@@ -1,0 +1,59 @@
+<div class="Sidebar js-Sidebar Stats">
+  <strong class="underline">Current pre-built bundle sizes:</strong><br/>
+  <dl>
+    <% for (var type in theme.uppy_bundle_kb_sizes) { %>
+      <% var kb = theme.uppy_bundle_kb_sizes[type]; %>
+      <dt>
+        <% if (kb === 'N/A') { %>
+          <%- type %>
+        <% } else { %>
+          <a href="/uppy/<%- type %>"><%- type %></a>
+        <% }%>
+      </dt>
+      <dd class="
+        <% if (kb > 100) { %>
+          red
+        <% } %>
+        <% if (kb < 50) { %>
+          green
+        <% } %>
+      ">
+        <%- kb %> Kb
+      </dd>
+    <% } %>
+  </dl>
+</div>
+
+<div class="Content js-Content <%- page.type ? page.type + ' with-sidebar' : '' %>">
+  <h1><%- page.title %></h1>
+
+  <p>
+    At this (early) stage, we're allowing ourselves speed of development over
+    lean packaging, but as Uppy matures, we'll be using be using <a href="http://rollupjs.org/">rollup.js</a> for
+    tree-shaking, and in addition we'll be trimming away fat ourselves where we can.
+    The graph below will help us discover low hanging fruit.
+  </p>
+
+  <strong>Current module dependency sizes:</strong><br/>
+
+  <iframe scrolling="no" seamless="seamless" class="Disc" src="/disc.html"></iframe>
+
+  <%- page.content %>
+
+  <h2>Activity feed</h2>
+
+  <div class="on-the-githubs" data-event-source="repos/transloadit/uppy">Loading...</div>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="//kvz.github.io/on-the-githubs/js/jquery.on-the-githubs.min.js"></script>
+  <script type="text/javascript">
+    $('.on-the-githubs').onthegithubs();
+    // If you use bootstrap and want to enable tooltips
+    // $('a[rel]').tooltip();
+  </script>
+
+  <div><br /><br /></div>
+
+  <div class="footer">Caught a mistake or want to contribute to the documentation?
+     <a href="https://github.com/transloadit/uppy/blob/master/website/src/<%- page.source %>" target="_blank">Edit/fork this page directly on Github</a>!
+  </div>
+</div>

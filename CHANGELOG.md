@@ -52,6 +52,8 @@ Scheduled to be released: May 02, 2016
 - [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox
 - [ ] test: Move failing multipart test back from `v0.5.0` dir, make it pass
 - [ ] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504
+- [ ] website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
+- [ ] website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
 
 ## 0.0.4 
 
@@ -62,6 +64,7 @@ Scheduled to be released: May 02, 2016
 - [ ] google: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (@kvz)
 - [ ] progressdrawer: show file type names/icons for non-image files (@arturi)
 - [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
+- [x] website: Add a http://uppy.io/stats page that inlines disc.html as well as displays the different bundle sizes, and an activity feed (@kvz)
 - [x] website: Provide simple roadmap in examples (#68, @kvz)
 - [x] website: Upgrade Hexo (@kvz)
 - [x] test: Make failing acceptance tests fatal (@kvz)

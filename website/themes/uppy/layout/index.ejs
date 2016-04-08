@@ -57,7 +57,7 @@
     <% for (var k in site.data.features) { var v = site.data.features[k]; %>
       <div class="feat">
         <h2><span class="icon <%- v.icon %>"></span><%- v.title %></h2>
-        <p> <%- render(v.description, 'swig', {uppy_gz_size: config.uppy_gz_size}) %></p>
+        <p> <%- render(v.description, 'swig', {size_minjsgz: theme.uppy_bundle_kb_sizes['uppy.min.js.gz']}) %></p>
       </div>
     <% } %>
   </div>

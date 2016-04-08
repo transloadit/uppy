@@ -14,8 +14,9 @@ var defaultConfig = {
   comment: 'Auto updated by update.js',
   uppy_version_anchor: '001',
   uppy_version: '0.0.1',
-  uppy_dev_size: '0.0',
-  uppy_min_size: '0.0',
+  uppy_bundle_kb_sizes: {
+    'uppy.js': 'N/A'
+  },
   config: {}
 }
 
@@ -31,18 +32,30 @@ try {
 // Inject current Uppy version and sizes in website's _config.yml
 // @todo: Refer to actual minified builds in dist:
 var locations = {
-  min: uppyRoot + '/dist/uppy.js',
-  gz: uppyRoot + '/dist/uppy.js',
-  dev: uppyRoot + '/dist/uppy.js',
-  css: uppyRoot + '/dist/uppy.css'
+  'uppy.js': uppyRoot + '/dist/uppy.js',
+  'uppy.js.gz': uppyRoot + '/dist/uppy.js.gz',
+  'uppy.min.js': uppyRoot + '/dist/uppy.min.js',
+  'uppy.min.js.gz': uppyRoot + '/dist/uppy.min.js.gz',
+  'uppy.css': uppyRoot + '/dist/uppy.css',
+  'uppy.css.gz': uppyRoot + '/dist/uppy.css.gz',
+  'uppy.min.css': uppyRoot + '/dist/uppy.min.css',
+  'uppy.min.css.gz': uppyRoot + '/dist/uppy.min.css.gz'
 }
 
 var scanConfig = {}
-
 for (var type in locations) {
   var filepath = locations[type]
-  var filesize = fs.statSync(filepath, 'utf-8').size
-  scanConfig['uppy_' + type + '_size'] = (filesize / 1024).toFixed(2)
+  var filesize = 0
+  try {
+    filesize = fs.statSync(filepath, 'utf-8').size
+    filesize = (filesize / 1024).toFixed(2)
+  } catch (e) {
+    filesize = 'N/A'
+  }
+  if (!scanConfig.uppy_bundle_kb_sizes) {
+    scanConfig.uppy_bundle_kb_sizes = {}
+  }
+  scanConfig.uppy_bundle_kb_sizes[type] = filesize
 }
 
 scanConfig['uppy_version'] = version

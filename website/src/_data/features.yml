@@ -9,7 +9,7 @@
   description: Every feature in Puppy is available as a plugin. It's easy to use some, none, or roll your own.
 - title      : Compact
   icon       : compact
-  description: '{{ uppy_gz_size }} kb min+gzip, no dependencies.'
+  description: '{{ size_minjsgz }} kb min+gzip, no dependencies.'
 - title      : Fast
   icon       : fast
   description: Parallel uploading and handling of files
