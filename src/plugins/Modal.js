@@ -24,8 +24,6 @@ export default class Modal extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.progressindicators = {}
-
     this.hideModal = this.hideModal.bind(this)
     this.showModal = this.showModal.bind(this)
   }
@@ -86,7 +84,6 @@ export default class Modal extends Plugin {
     const modal = this.core.getState().modal
     modal.isHidden = true
     this.core.setState({modal: modal})
-    // this.core.resetState()
 
     document.body.classList.remove('is-UppyModal-open')
   }

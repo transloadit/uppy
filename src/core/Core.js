@@ -50,6 +50,11 @@ export default class Core {
     }
 
     this.state = Object.assign({}, this.defaultState)
+    this.state.book = 'Harry Potter'
+
+    // for debugging
+    global.UppyState = this.state
+    global.UppyDefaultState = this.defaultState
   }
 
   /**
@@ -68,10 +73,10 @@ export default class Core {
    * Reset state to defaultState, used when Modal is closed, for example
    *
    */
-  resetState () {
-    this.state = this.defaultState
-    this.updateAll()
-  }
+  // resetState () {
+  //   this.state = this.defaultState
+  //   this.updateAll()
+  // }
 
   /**
    * Updates state
