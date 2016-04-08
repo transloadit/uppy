@@ -54,6 +54,8 @@ Scheduled to be released: May 02, 2016
 - [ ] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504
 - [ ] website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
 - [ ] website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
+- [ ] core: reduce the monstrous 157.74Kb prebuilt bundle footprint https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png
+
 ## 0.0.4
 
 <a name="next"></a> Scheduled to be released: April 04, 2016
