@@ -62,7 +62,7 @@ Scheduled to be released: May 02, 2016
 
 - [ ] google: Add Google Drive plugin unit test (@hedgerh)
 - [ ] google: Add a working Google Drive example (without Modal, via e.g. `target: "div#on-my-page"`) (@hedgerh)
-- [ ] google: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (@kvz)
+- [ ] google: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (also see https://github.com/hughsk/envify) (@kvz)
 - [ ] progressbar: make it great again (@arturi)
 - [ ] test: Setup one modal/dragdrop acceptance test (@arturi)
 - [x] website: Add a http://uppy.io/stats page that inlines disc.html as well as displays the different bundle sizes, and an activity feed (@kvz)
