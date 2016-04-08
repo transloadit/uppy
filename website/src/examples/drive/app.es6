@@ -1,10 +1,10 @@
 import Uppy from 'uppy/core'
-import { Drive } from 'uppy/plugins'
+import { GoogleDrive } from 'uppy/plugins'
+import ProgressDrawer from '../../../../src/plugins/ProgressDrawer.js'
+import { UPPY_SERVER } from '../env'
+console.log(UPPY_SERVER)
 
-const uppy = new Uppy({wait: false})
-
+const uppy = new Uppy({debug: true, autoProceed: false})
 uppy
-  .use(Drive, {selector: '#target'})
+  .use(GoogleDrive, { target: '#GoogleDriveContainer', host: UPPY_SERVER })
   .run()
-
-console.log(uppy.type)
