@@ -1,7 +1,7 @@
 var test = require('tape')
 var path = require('path')
 var core = require('./core')
-var driver = core.setDriver()
+var browser = core.setDriver()
 var By = core.By
 
 var config = {
@@ -13,17 +13,17 @@ var config = {
 test('make sure Uppy loads with Russian language pack', function (t) {
   t.plan(1)
 
-  driver.get(config.i18nTestUrl)
+  browser.get(config.i18nTestUrl)
 
   // Wait 3 seconds, for the page to load
-  driver.sleep(3000)
+  browser.sleep(3000)
 
-  driver.findElement(By.css(config.dragDropLabelSelector))
+  browser.findElement(By.css(config.dragDropLabelSelector))
     .getText()
     .then(function (val) {
       console.dir({val: val})
       t.equal(val, 'Выберите файл или перенесите его сюда')
-    })
 
-  driver.quit()
+      browser.quit()
+    })
 })
