@@ -10,14 +10,6 @@ test('dragdrop: make sure DragDrop accepts and uploads 1 file via input', functi
       .forBrowser('firefox')
       .build()
 
-  function isUploadSuccessful () {
-    var consoleElement = driver.findElement(By.id('console-log'))
-    return consoleElement.getAttribute('value').then(function (value) {
-      var isFileUploaded = value.indexOf('Download') !== -1
-      return isFileUploaded
-    })
-  }
-
   // Go to the example URL
   driver.get('http://localhost:4000/examples/dragdrop/')
 
@@ -28,12 +20,21 @@ test('dragdrop: make sure DragDrop accepts and uploads 1 file via input', functi
 
   // Get console elements’s value, then check if it has “Download” there somewhere,
   // if it does, then test passes
-  driver.wait(isUploadSuccessful, 5000).then(function (result) {
-    t.equal(result, true)
-  })
-  .catch(function (err) {
-    console.error('Something went wrong\n', err.stack, '\n')
-  })
 
-  driver.quit()
+  driver.sleep(3000)
+
+  driver.findElement(By.id('console-log'))
+        .getAttribute('value')
+        .then(function (value) {
+          var isFileUploaded = value.indexOf('Download') !== -1
+          t.equal(isFileUploaded, true)
+          driver.quit()
+        })
+
+  // driver.wait(isUploadSuccessful, 5000).then(function (result) {
+  //   t.equal(result, true)
+  // })
+  // .catch(function (err) {
+  //   console.error('Something went wrong\n', err.stack, '\n')
+  // })
 })
