@@ -21,7 +21,7 @@ test('dragdrop: make sure DragDrop accepts and uploads 1 file via input', functi
   // Get console elements’s value, then check if it has “Download” there somewhere,
   // if it does, then test passes
 
-  driver.sleep(3000)
+  driver.sleep(10000)
 
   driver.findElement(By.id('console-log'))
         .getAttribute('value')
