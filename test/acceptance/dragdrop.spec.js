@@ -17,24 +17,26 @@ test('dragdrop: make sure DragDrop accepts and uploads 1 file via input', functi
     .findElement(By.css('.UppyDragDrop-One .UppyDragDrop-input'))
     .sendKeys(path.join(__dirname, 'image.jpg'))
 
-  driver.sleep(30000)
-
   // Get console elements’s value, then check if it has “Download” there somewhere,
   // if it does, then test passes
-  driver.findElement(By.id('console-log'))
-        .getAttribute('value')
-        .then(function (value) {
-          var isFileUploaded = value.indexOf('Download') !== -1
-          collectErrors(driver).then(function () {
-            t.equal(isFileUploaded, true)
-            driver.quit()
-          })
-        })
+  function isUploaded () {
+    return driver.findElement(By.id('console-log'))
+      .getAttribute('value')
+      .then(function (value) {
+        var isFileUploaded = value.indexOf('Download image.jpg') !== -1
+        return isFileUploaded
+      })
+  }
 
-  // driver.wait(isUploadSuccessful, 5000).then(function (result) {
-  //   t.equal(result, true)
-  // })
-  // .catch(function (err) {
-  //   console.error('Something went wrong\n', err.stack, '\n')
-  // })
+  driver.wait(isUploaded, 15000, 'File image.jpg should be uploaded within 15 seconds')
+    .then(function (result) {
+      collectErrors(driver).then(function () {
+        t.equal(result, true)
+        driver.quit()
+      })
+    })
+    .catch(function (err) {
+      t.fail(err)
+      driver.quit()
+    })
 })
