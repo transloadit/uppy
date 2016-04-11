@@ -17,7 +17,7 @@ test('dragdrop: make sure DragDrop accepts and uploads 1 file via input', functi
     .findElement(By.css('.UppyDragDrop-One .UppyDragDrop-input'))
     .sendKeys(path.join(__dirname, 'image.jpg'))
 
-  driver.sleep(3000)
+  driver.sleep(30000)
 
   // Get console elements’s value, then check if it has “Download” there somewhere,
   // if it does, then test passes
