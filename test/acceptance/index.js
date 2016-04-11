@@ -6,5 +6,5 @@
 // - http://selenium.googlecode.com/git/docs/api/javascript/class_webdriver_WebElement.html
 
 require('babel-register')
-require('./i18n.spec.js')
-require('./dragdrop.spec.js')
+require('./new-i18n.spec.js')
+require('./new-dragdrop.spec.js')

@@ -1,13 +1,13 @@
 var test = require('tape')
 var path = require('path')
-var core = require('./core')
-var browser = core.setDriver()
-var By = core.By
+var Browser = require('./Browser')
+var browser = Browser.setDriver()
+var By = Browser.By
 
 var config = {
-  dragDropTestUrl: 'http://localhost:4000/examples/dragdrop/',
+  testUrl: 'http://localhost:4000/examples/dragdrop/',
   dragDropInputSelector: '.UppyDragDrop-One .UppyDragDrop-input',
-  imageAbsolutePath: path.join(__dirname, 'image.jpg')
+  imagePath: path.join(__dirname, 'image.jpg')
 }
 
 var consoleElement = browser.findElement(By.id('console-log'))
@@ -16,13 +16,13 @@ test('dragdrop: make sure DragDrop accepts and uploads 1 file via input', functi
   t.plan(1)
 
   // Go to the example URL
-  browser.get(config.dragDropTestUrl)
+  browser.get(config.testUrl)
 
   // Find input by css selector
-  var input = browser.findElement(core.By.css(config.dragDropInputSelector))
+  var input = browser.findElement(By.css(config.dragDropInputSelector))
 
   // Pass absolute image path to the input
-  input.sendKeys(config.imageAbsolutePath)
+  input.sendKeys(config.imagePath)
 
   // Wait for a while for upload to go through
   browser.sleep(3000)
@@ -32,7 +32,6 @@ test('dragdrop: make sure DragDrop accepts and uploads 1 file via input', functi
   consoleElement.getAttribute('value').then(function (value) {
     var isFileUploaded = value.indexOf('Download') !== -1
     t.equal(isFileUploaded, true)
-
     browser.quit()
   })
 })
