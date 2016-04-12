@@ -23,7 +23,7 @@
     "start:server": "uppy-server --port 3020",
     "start": "parallelshell 'npm run watch' 'npm run start:server' 'npm run web:preview'",
     "test:acceptance:handleservers": "bin/bootandkill-servers node test/acceptance/index.js",
-    "test:acceptance": "node test/acceptance/index.js | tap-spec",
+    "test:acceptance": "node test/acceptance/index.js",
     "test:unit": "node test/unit/index.js | tap-spec",
     "test": "npm run lint && npm run test:unit",
     "travis:deletecache": "travis cache --delete",

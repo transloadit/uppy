@@ -77,7 +77,7 @@ export default class DragDrop extends Plugin {
   handleInputChange () {
     this.core.log('All right, something selected through input...')
 
-    const newFiles = Array.from(this.input.files)
+    const newFiles = Object.keys(this.input.files).map((key) => this.input.files[key])
 
     this.core.emitter.emit('file-add', {
       plugin: this,

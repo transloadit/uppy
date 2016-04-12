@@ -1,6 +1,7 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
 import ee from 'events'
+// import freeze from 'deep-freeze'
 
 /**
  * Main Uppy core
@@ -48,6 +49,8 @@ export default class Core {
         directory: '/'
       }
     }
+
+    // freeze(this.defaultState)
 
     this.state = Object.assign({}, this.defaultState)
     this.state.book = 'Harry Potter'
@@ -260,6 +263,8 @@ export default class Core {
       console.log('DEBUG LOG')
       console.dir(msg)
     }
+    global.uppyLog = global.uppyLog || ''
+    global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
   }
 
 /**
