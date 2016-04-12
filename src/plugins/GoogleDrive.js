@@ -21,6 +21,7 @@ export default class Google extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
     this.currentFolder = 'root'
     this.isAuthenticated = false
+    this.el = this.render(this.core.state)
   }
 
   focus () {
@@ -165,6 +166,12 @@ export default class Google extends Plugin {
     }
     const newEl = this.render(state)
     yo.update(this.el, newEl)
+
+    const folders = Utils.qsa('.GoogleDriveFolder')
+    const files = Utils.qsa('.GoogleDriveFile')
+
+    folders.forEach((folder) => folder.addEventListener('click', (e) => this.getFolder(folder.dataset.id)))
+    files.forEach((file) => file.addEventListener('click', (e) => this.getFile(file.dataset.id)))
   }
 
   updateState (newState) {
@@ -175,7 +182,7 @@ export default class Google extends Plugin {
   }
 
   render (state) {
-    if (state.googleDrive.authenticated) {
+    if (!state.googleDrive.authenticated) {
       return this.renderBrowser(state.googleDrive)
     } else {
       return this.renderAuth()
