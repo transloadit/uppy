@@ -39,7 +39,7 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.0.5
 
-Scheduled to be released: May 02, 2016
+<a name="next"></a> Scheduled to be released: May 02, 2016
 
 - [ ] meta: Create an Uppy logo (@markstory)
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
@@ -64,13 +64,14 @@ Scheduled to be released: May 02, 2016
 
 ## 0.0.4
 
-<a name="next"></a> Scheduled to be released: April 08, 2016
+Released: April 13, 2016
 
-- [x] google: Add Google Drive plugin unit test (@hedgerh)
-- [x] google: Add a working Google Drive example (without Modal, via e.g. `target: "div#on-my-page"`) (@hedgerh)
-- [x] google: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (also see https://github.com/hughsk/envify) (@kvz)
+- [x] server: Upgrade to 0.0.4 (@kvz)
+- [x] drive: Add Google Drive plugin unit test (@hedgerh)
+- [x] drive: Add a barely working Google Drive example (without Modal, via e.g. `target: "div#on-my-page"`) (@hedgerh)
+- [x] drive: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (also see https://github.com/hughsk/envify) (@kvz)
 - [x] test: Setup one modal/dragdrop acceptance test (@arturi)
-- [x] google: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (also see https://github.com/hughsk/envify) (@kvz)
+- [x] drive: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (also see https://github.com/hughsk/envify) (@kvz)
 - [x] website: Add a http://uppy.io/stats page that inlines disc.html as well as displays the different bundle sizes, and an activity feed (@kvz)
 - [x] dragdrop: refactor & improve (@arturi)
 - [x] website: fix i18n & DragDrop examples (@arturi)
@@ -125,7 +126,7 @@ Released: March 01, 2016
 - [x] core: Decide on single-noun terminology (npm, umd, dist, package, cdn, module -> bundler -> bundle), and call it that through-out (@kvz)
 - [x] core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior (@kvz)
 - [x] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
-- [x] google: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
+- [x] drive: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
 - [x] modal: Add barely working Modal plugin that can be used as a target (#53, #50, @arturi)
 - [x] modal: Improve Modal API (@arturi, @kvz)
 - [x] modal: Make `ProgressBar` work with the new Modal (@kvz, @arturi)
@@ -174,7 +175,7 @@ Here are the go-to folks for each individual component or area of expertise:
 - docs (@arturi)
 - dragdrop (@arturi)
 - dropbox (@hedgerh)
-- google (@hedgerh)
+- drive (@hedgerh)
 - instagram (@hedgerh)
 - meta (@kvz)
 - modal (@hedgerh)
