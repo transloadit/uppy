@@ -57,6 +57,9 @@ Scheduled to be released: May 02, 2016
 - [ ] website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
 - [ ] website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
 - [ ] core: reduce the monstrous 157.74Kb prebuilt bundle footprint https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png
+- [ ] drive: add breadcrumb navigation (@hedgerh)
+- [ ] drive: write files to filesystem correctly (@hedgerh)
+- [ ] drive: convert google docs to office format (@hedgerh)
 
 ## 0.0.4
 
