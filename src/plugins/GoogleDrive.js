@@ -16,6 +16,7 @@ export default class Google extends Plugin {
 
     this.getFile = this.getFile.bind(this)
     this.getFolder = this.getFolder.bind(this)
+    this.logout = this.logout.bind(this)
     this.renderBrowser = this.renderBrowser.bind(this)
 
     // set default options
@@ -25,7 +26,6 @@ export default class Google extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
     this.currentFolder = 'root'
     this.isAuthenticated = false
-    this.el = this.render(this.core.state)
   }
 
   focus () {
@@ -155,14 +155,28 @@ export default class Google extends Plugin {
     /**
      * Leave this here
      */
-    // fetch(`${this.opts.host}/google/logout`, {
-    //   method: 'get',
-    //   credentials: 'include',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json'
-    //   }
-    // }).then(res => console.log(res))
+    fetch(`${this.opts.host}/google/logout?redirect=${location.href}`, {
+      method: 'get',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.ok) {
+          console.log('ok')
+          const newState = {
+            authenticated: false,
+            files: [],
+            folders: [],
+            directory: 'root'
+          }
+
+          this.updateState(newState)
+        }
+      })
   }
 
   update (state) {
@@ -199,7 +213,7 @@ export default class Google extends Plugin {
   }
 
   renderAuth () {
-    const link = this.opts.host ? `${this.opts.host}/connect/google` : '#'
+    const link = `${this.opts.host}/connect/google?state=${location.href}`
     return yo`
       <div>
         <h1>Authenticate With Google Drive</h1>
@@ -214,6 +228,7 @@ export default class Google extends Plugin {
 
     return yo`
       <div>
+        <button onclick=${this.logout}/>Logout</button>
         <ul>${folders}</ul>
         <ul>${files}</ul>
       </div>
