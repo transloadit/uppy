@@ -60,6 +60,7 @@ Scheduled to be released: May 02, 2016
 - [ ] drive: add breadcrumb navigation (@hedgerh)
 - [ ] drive: write files to filesystem correctly (@hedgerh)
 - [ ] drive: convert google docs to office format (@hedgerh)
+- [ ] drive: possible UI polish (@hedgerh)
 
 ## 0.0.4
 
