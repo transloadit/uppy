@@ -14,6 +14,10 @@ export default class Google extends Plugin {
       </svg>
     `
 
+    this.getFile = this.getFile.bind(this)
+    this.getFolder = this.getFolder.bind(this)
+    this.renderBrowser = this.renderBrowser.bind(this)
+
     // set default options
     const defaultOptions = {}
 
@@ -60,23 +64,19 @@ export default class Google extends Plugin {
     .catch((err) => err)
   }
 
-  getFolder (folderId = this.core.state.googleDrive.folder) {
-    return fetch(`${this.opts.host}/google/list`, {
+  getFolder (id = this.core.state.googleDrive.directory) {
+    return fetch(`${this.opts.host}/google/list?dir=${id}`, {
       method: 'get',
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      },
-      body: {
-        dir: folderId || undefined
       }
     })
     .then((res) => {
       if (res.status >= 200 && res.status <= 300) {
         return res.json().then((data) => {
           // let result = Utils.groupBy(data.items, (item) => item.mimeType)
-
           let folders = []
           let files = []
           data.items.forEach((item) => {
@@ -102,20 +102,25 @@ export default class Google extends Plugin {
     })
   }
 
+  getSubFolder (id) {
+    this.getFolder(id)
+      .then((newState) => {
+        console.log(newState)
+        this.updateState(newState)
+      })
+  }
+
   getFile (fileId) {
     if (typeof fileId !== 'string') {
       return new Error('getFile: File ID is not a string.')
     }
 
-    return fetch(`${this.opts.host}/google/get`, {
-      method: 'post',
+    return fetch(`${this.opts.host}/google/get?fileId=${fileId}`, {
+      method: 'get',
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      },
-      body: {
-        fileId
       }
     })
     .then((res) => {
@@ -167,11 +172,15 @@ export default class Google extends Plugin {
     const newEl = this.render(state)
     yo.update(this.el, newEl)
 
-    const folders = Utils.qsa('.GoogleDriveFolder')
-    const files = Utils.qsa('.GoogleDriveFile')
+    // setTimeout(() => {
+    //   const folders = Utils.qsa('.GoogleDriveFolder')
+    //   const files = Utils.qsa('.GoogleDriveFile')
+    //   console.log(folders)
+    //   console.log(files)
 
-    folders.forEach((folder) => folder.addEventListener('click', (e) => this.getFolder(folder.dataset.id)))
-    files.forEach((file) => file.addEventListener('click', (e) => this.getFile(file.dataset.id)))
+    //   folders.forEach((folder) => folder.addEventListener('click', (e) => this.getFolder(folder.dataset.id)))
+    //   files.forEach((file) => file.addEventListener('click', (e) => this.getFile(file.dataset.id)))
+    // }, 5000)
   }
 
   updateState (newState) {
@@ -182,7 +191,7 @@ export default class Google extends Plugin {
   }
 
   render (state) {
-    if (!state.googleDrive.authenticated) {
+    if (state.googleDrive.authenticated) {
       return this.renderBrowser(state.googleDrive)
     } else {
       return this.renderAuth()
@@ -200,8 +209,8 @@ export default class Google extends Plugin {
   }
 
   renderBrowser (state) {
-    const folders = state.folders.map((folder) => yo`<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}">${folder.title}</button></li>`)
-    const files = state.files.map((file) => yo`<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}">${file.title}</button></li>`)
+    const folders = state.folders.map((folder) => yo`<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}" onclick=${this.getSubFolder.bind(this, folder.id)}>${folder.title}</button></li>`)
+    const files = state.files.map((file) => yo`<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}" onclick=${this.getFile.bind(this, file.id)}>${file.title}</button></li>`)
 
     return yo`
       <div>

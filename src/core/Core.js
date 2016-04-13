@@ -46,7 +46,7 @@ export default class Core {
         authenticated: false,
         files: [],
         folders: [],
-        directory: '/'
+        directory: 'root'
       }
     }
 
