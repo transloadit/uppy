@@ -50,10 +50,7 @@ export default class Core {
       }
     }
 
-    // freeze(this.defaultState)
-
     this.state = Object.assign({}, this.defaultState)
-    this.state.book = 'Harry Potter'
 
     // for debugging
     global.UppyState = this.state

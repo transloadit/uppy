@@ -57,8 +57,12 @@ export default class Modal extends Plugin {
     }
 
     const modal = this.core.getState().modal
-    modal.targets.push(target)
-    this.core.setState({modal: modal})
+
+    this.core.setState({
+      modal: Object.assign({}, modal, {
+        targets: modal.targets.concat([target])
+      })
+    })
 
     return this.opts.target
   }
@@ -67,40 +71,58 @@ export default class Modal extends Plugin {
     const modal = this.core.getState().modal
 
     // hide all panels, except the one that matches current id
-    modal.targets.forEach((target) => {
+    const newTargets = modal.targets.map((target) => {
       if (target.type === 'acquirer') {
         if (target.id === id) {
-          target.isHidden = false
-          return
+          return Object.assign({}, target, {
+            isHidden: false
+          })
         }
-        target.isHidden = true
+        return Object.assign({}, target, {
+          isHidden: true
+        })
       }
+      return target
     })
 
-    this.core.setState({modal: modal})
+    this.core.setState({modal: Object.assign({}, modal, {
+      targets: newTargets
+    })})
   }
 
   hideModal () {
     const modal = this.core.getState().modal
-    modal.isHidden = true
-    this.core.setState({modal: modal})
+    this.core.setState({
+      modal: Object.assign({}, modal, {
+        isHidden: true
+      })
+    })
 
     document.body.classList.remove('is-UppyModal-open')
   }
 
   showModal () {
     const modal = this.core.getState().modal
-    modal.isHidden = false
 
     // Show first acquirer plugin when modal is open
-    modal.targets.some((target) => {
-      if (target.type === 'acquirer') {
-        target.isHidden = false
-        return true
+    let found = false
+    const newTargets = modal.targets.map((target) => {
+      if (target.type === 'acquirer' && !found) {
+        found = true
+
+        return Object.assign({}, target, {
+          isHidden: false
+        })
       }
+      return target
     })
 
-    this.core.setState({modal: modal})
+    this.core.setState({
+      modal: Object.assign({}, modal, {
+        isHidden: false,
+        targets: newTargets
+      })
+    })
 
     document.body.classList.add('is-UppyModal-open')
   }
