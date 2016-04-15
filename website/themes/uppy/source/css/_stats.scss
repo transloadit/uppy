@@ -1,22 +1,36 @@
-.Disc {
-  border: 0 none;
-  width: 100%;
-  min-height: 500px;
-  padding: 0;
-  margin: 0;
-  overflow-y: hidden;
+.Stats-info {
+  @include clearfix;
 }
 
-.Sidebar.Stats {
-  strong.underline {
-    border-bottom: 1px solid #eee;
+.Stats-infoText {
+  max-width: 90%;
+  font-size: 1.3em;
+}
+
+.Stats-bundleSizes {
+  @media #{$screen-large} {
+    max-width: 320px;
+    float: right;
+    margin-right: -320px;
+    padding-left: 50px;
   }
+}
+
+.Stats-bundleSizes {
+  strong.underline {
+    display: inline-block;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 5px;
+  }
+
   dl {
+    @include clearfix;
     width: 100%;
-    overflow: hidden;
     padding: 0;
     margin: 0;
+    line-height: 1.5;
   }
+
   dt {
     float: left;
     width: 50%;
@@ -26,6 +40,7 @@
       color: #e02177;
     }
   }
+
   dd {
     float: left;
     width: 50%;
@@ -40,8 +55,17 @@
   }
 }
 
+.Disc {
+  border: 0 none;
+  width: 100%;
+  min-height: 500px;
+  padding: 0;
+  margin: 0;
+  overflow-y: hidden;
+}
 
-.Content .on-the-githubs {
+
+.on-the-githubs {
   >li {
     list-style-type: none;
     margin: 0;

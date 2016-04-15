@@ -224,6 +224,16 @@
   }
 }
 
+.IndexActivity {
+  max-width: 760px;
+  margin: 3em auto;
+  padding: 0 20px;
+
+  h2 {
+    text-align: center;
+  }
+}
+
 .IndexDesignGoals {
   padding: 4em 1em;
   background-color: $color-primary;

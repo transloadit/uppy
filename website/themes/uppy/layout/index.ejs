@@ -43,17 +43,6 @@
   <a class="GetStartedBtn" href="/guide/index.html">Get Started</a>
 </section>
 
-<!-- <section id="features">
-  <div class="feats">
-    <% for (var k in site.data.features) { var v = site.data.features[k]; %>
-      <div class="feat">
-        <h2><span class="icon <%- v.icon %>"></span><%- v.title %></h2>
-        <p> <%- render(v.description, 'swig', {size_minjsgz: theme.uppy_bundle_kb_sizes['uppy.min.js.gz']}) %></p>
-      </div>
-    <% } %>
-  </div>
-</section> -->
-
 <section class="IndexDesignGoals">
   <h2>Design Goals:</h2>
   <ul>
@@ -63,6 +52,17 @@
     </li>
     <% } %>
   </ul>
+</section>
+
+<section class="IndexActivity">
+  <h2>Activity Feed</h2>
+
+  <div class="on-the-githubs" data-event-source="repos/transloadit/uppy">Loading...</div>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="//kvz.github.io/on-the-githubs/js/jquery.on-the-githubs.min.js"></script>
+  <script type="text/javascript">
+    $('.on-the-githubs').onthegithubs();
+  </script>
 </section>
 
 <footer class="IndexFooter">
