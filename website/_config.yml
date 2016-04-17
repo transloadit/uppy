@@ -134,7 +134,7 @@ browsersync:
   files: 'public/examples/**/*.js'
   watchOptions:
     awaitWriteFinish:
-      - stabilityThreshold: 1000
+      - stabilityThreshold: 3000
       - pollInterval: 100
 
 skip_render:
