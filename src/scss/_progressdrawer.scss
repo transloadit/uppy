@@ -56,20 +56,6 @@
   background-color: $color-cornflower-blue;
 }
 
-// .UppyProgressDrawer-item.is-uploaded {
-//   .UppyProgressDrawer-itemBar {
-//     width: 100%;
-//   }
-//
-//   .UppyProgressDrawer-itemRemove {
-//     display: block;
-//   }
-//
-//   .UppyProgressDrawer-itemCheck {
-//     display: block;
-//   }
-// }
-
 .UppyProgressDrawer-itemInfo {
   float: left;
   width: 12%;
@@ -106,6 +92,8 @@
   top: 0;
   height: 100%;
   background-color: $color-pink;
+  width: 0;
+  transition: width 0.4s ease;
 }
 
 .UppyProgressDrawer-itemName {

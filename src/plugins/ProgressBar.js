@@ -1,4 +1,5 @@
 import Plugin from './Plugin'
+import yo from 'yo-yo'
 
 /**
  * Progress bar
@@ -16,47 +17,23 @@ export default class ProgressBar extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
-  setProgress (percentage) {
-    this.progressBarContainerEl.classList.add('is-active')
-    this.progressBarPercentageEl.innerHTML = `${percentage}%`
-    this.progressBarInnerEl.setAttribute('style', `width: ${percentage}%`)
+  update (state) {
+    const newEl = this.render(state)
+    yo.update(this.el, newEl)
   }
 
-  init () {
-    const caller = this
-    this.target = this.getTarget(this.opts.target, caller)
+  render () {
+    const progress = this.core.getState().totalProgress
 
-    this.uploadButton = document.querySelector('.js-UppyModal-next')
-    this.progressBarContainerEl = document.querySelector(this.target)
-    this.progressBarContainerEl.innerHTML = `<div class="UppyProgressBar">
-        <div class="UppyProgressBar-inner"></div>
-        <div class="UppyProgressBar-percentage"></div>
-      </div>`
-    this.progressBarPercentageEl = document.querySelector(`${this.target} .UppyProgressBar-percentage`)
-    this.progressBarInnerEl = document.querySelector(`${this.target} .UppyProgressBar-inner`)
-  }
-
-  events () {
-    // When there is some progress (uploading), emit this event to adjust progressbar
-    this.core.emitter.on('upload-progress', (data) => {
-      const percentage = data.percentage
-      const uploader = data.uploader
-      this.core.log(
-        `progress is: ${percentage}, set by ${uploader.constructor.name}`
-      )
-      // this.setProgress(percentage)
-    })
-
-    this.core.emitter.on('reset', (data) => {
-      this.progressBarContainerEl.classList.remove('is-active')
-      this.uploadButton.classList.remove('is-active')
-      this.uploadButton.innerHTML = this.core.i18n('upload')
-    })
+    return yo`<div class="UppyProgressBar">
+      <div class="UppyProgressBar-inner" style="width: ${progress}%"></div>
+      <div class="UppyProgressBar-percentage">${progress}</div>
+    </div>`
   }
 
   install () {
-    this.init()
-    this.events()
-    return
+    const caller = this
+    this.el = this.render(this.core.state)
+    this.target = this.getTarget(this.opts.target, caller, this.el)
   }
 }
