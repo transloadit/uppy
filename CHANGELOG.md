@@ -49,14 +49,15 @@ Scheduled to be released: May 02, 2016
 - [ ] modal: focus on the first input field / button in tab panel (@arturi)
 - [ ] presenter: make it work with new components/state (@arturi)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
-- [ ] progressbar: make it great again (@arturi)
+- [ ] progressdrawer: fix multiple file requests (@arturi)
 - [ ] progressdrawer: let user cancel uploads in progress (@arturi)
 - [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox
 - [ ] test: Move failing multipart test back from `v0.5.0` dir, make it pass
 - [ ] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504
-- [ ] website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
-- [ ] website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
 - [ ] core: reduce the monstrous 157.74Kb prebuilt bundle footprint https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png
+- [x] progressbar: make it great again (@arturi)
+- [x] website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
+- [x] website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
 
 ## 0.0.4
 
