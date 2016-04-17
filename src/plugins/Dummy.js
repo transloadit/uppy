@@ -21,6 +21,7 @@ export default class Dummy extends Plugin {
   render () {
     return yo`
       <div class="wow-this-works">
+        <input type="text" value="hello">
         I am a dummy plugin, look at me, I was rendered in a modal! That’s crazy, I know.
       </div>
     `

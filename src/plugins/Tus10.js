@@ -49,7 +49,7 @@ export default class Tus10 extends Plugin {
             percentage: percentage,
             done: false
           })
-          this.core.log(file)
+          // this.core.log(file)
         },
         onSuccess: () => {
           file.uploadURL = upload.url
@@ -66,7 +66,11 @@ export default class Tus10 extends Plugin {
   install () {
     this.core.emitter.on('next', () => {
       this.core.log('Tus is uploading..')
-      const selectedFiles = this.core.state.selectedFiles
+      const selectedFiles = this.core.getState().selectedFiles
+      // this.core.setState({
+      //   inProgress: selectedFiles,
+      //   selectedFiles: {}
+      // })
       const uploaders = []
 
       Object.keys(selectedFiles).forEach((fileID, i) => {
@@ -111,7 +115,5 @@ export default class Tus10 extends Plugin {
         uploadedCount: files.length
       }
     })
-
-    // return Promise.all(uploaders)
   }
 }

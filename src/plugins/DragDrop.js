@@ -104,17 +104,6 @@ export default class DragDrop extends Plugin {
     // Another way not to render next/upload button — if Modal is used as a target
     const target = this.opts.target.name
 
-    const onDragOver = (ev) => {
-    }
-
-    const onDragLeave = (ev) => {
-    }
-
-    const onDrop = (ev) => {
-      // ev.preventDefault()
-      // ev.stopPropagation()
-    }
-
     const onSelect = (ev) => {
       this.input.click()
     }
@@ -136,9 +125,6 @@ export default class DragDrop extends Plugin {
     return yo`
       <div class="UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
         <form class="UppyDragDrop-inner"
-              ondragover=${onDragOver}
-              ondragleave=${onDragLeave}
-              ondrop=${onDrop}
               onsubmit=${onSubmit}>
           <input class="UppyDragDrop-input"
                  type="file"
