@@ -1,7 +1,6 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
 import ee from 'events'
-// import freeze from 'deep-freeze'
 
 /**
  * Main Uppy core
@@ -35,29 +34,18 @@ export default class Core {
     // Set up an event EventEmitter
     this.emitter = new ee.EventEmitter()
 
-    this.defaultState = {
+    this.state = {
       selectedFiles: {},
       uploadedFiles: {},
-      modal: {
-        isHidden: true,
-        targets: []
-      },
-      googleDrive: {
-        authenticated: false,
-        files: [],
-        folders: [],
-        directory: '/'
-      }
+      inProgress: {},
+      totalProgress: 0
     }
-
-    // freeze(this.defaultState)
-
-    this.state = Object.assign({}, this.defaultState)
-    this.state.book = 'Harry Potter'
 
     // for debugging
     global.UppyState = this.state
-    global.UppyDefaultState = this.defaultState
+
+    this.state.book = 'Harry Potter'
+    // global.UppyDefaultState = this.defaultState
   }
 
   /**
@@ -73,21 +61,12 @@ export default class Core {
   }
 
   /**
-   * Reset state to defaultState, used when Modal is closed, for example
-   *
-   */
-  // resetState () {
-  //   this.state = this.defaultState
-  //   this.updateAll()
-  // }
-
-  /**
    * Updates state
    *
    * @param {newState} object
    */
   setState (newState) {
-    this.log(`Update state with: ${newState}`)
+    this.log(`Setting state to: ${newState}`)
     this.state = Object.assign({}, this.state, newState)
     this.updateAll()
   }
@@ -98,7 +77,7 @@ export default class Core {
    *
    */
   getState () {
-    return Object.assign({}, this.state)
+    return this.state
   }
 
   /**
@@ -166,7 +145,21 @@ export default class Core {
     this.emitter.on('upload-progress', (progressData) => {
       const updatedFiles = Object.assign({}, this.state.selectedFiles)
       updatedFiles[progressData.id].progress = progressData.percentage
-      this.setState({selectedFiles: updatedFiles})
+
+      // calculate total progress, using the number of files currently uploading,
+      // multiplied by 100 and the summ of individual progress of each file
+      const progressMax = Object.keys(updatedFiles).length * 100
+      let progressAll = 0
+      Object.keys(updatedFiles).map((file) => {
+        progressAll = progressAll + updatedFiles[file].progress
+      })
+
+      const totalProgress = progressAll * 100 / progressMax
+
+      this.setState({
+        totalProgress: totalProgress,
+        selectedFiles: updatedFiles
+      })
     })
 
     // `upload-success` adds successfully uploaded file to `state.uploadedFiles`
@@ -177,11 +170,6 @@ export default class Core {
       this.setState({uploadedFiles: uploadedFiles})
       this.log(this.state.uploadedFiles)
       this.emitter.emit('file-remove', file.id)
-    })
-
-    // `reset` resets state to `defaultState`
-    this.emitter.on('reset', () => {
-      this.resetState()
     })
   }
 
@@ -258,9 +246,9 @@ export default class Core {
       return
     }
     if (msg === `${msg}`) {
-      console.log(`DEBUG LOG: ${msg}`)
+      console.log(`LOG: ${msg}`)
     } else {
-      console.log('DEBUG LOG')
+      console.log('LOG')
       console.dir(msg)
     }
     global.uppyLog = global.uppyLog || ''

@@ -24,6 +24,12 @@ export default class Modal extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
+    // Set default state for Modal
+    this.core.setState({modal: {
+      isHidden: true,
+      targets: []
+    }})
+
     this.hideModal = this.hideModal.bind(this)
     this.showModal = this.showModal.bind(this)
   }
@@ -81,6 +87,11 @@ export default class Modal extends Plugin {
   }
 
   hideModal () {
+    // Straightforward simple way
+    // this.core.state.modal.isHidden = true
+    // this.core.updateAll()
+
+    // The “right way”
     const modal = this.core.getState().modal
     modal.isHidden = true
     this.core.setState({modal: modal})

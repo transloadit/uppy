@@ -19,6 +19,16 @@ export default class Google extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+
+    // Set default state for Google Drive
+    // this.core.setState({googleDrive: {
+    //   authenticated: false,
+    //   files: [],
+    //   folders: [],
+    //   directory: '/'
+    // }})
+
     this.currentFolder = 'root'
     this.isAuthenticated = false
   }
