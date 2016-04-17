@@ -20,7 +20,9 @@ export default class Google extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-
+    // TODO Enable this after we fix tests — they fail currently
+    // because GDrive is instanciated without Core
+    //
     // Set default state for Google Drive
     // this.core.setState({googleDrive: {
     //   authenticated: false,
