@@ -22,10 +22,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] build: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
 - [ ] build: minification of the bundle
 - [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
-- [ ] core: pass custom meta/parameters with upload?
-- [ ] core: Add polyfill for `fetch`
+- [ ] core: pass custom meta/parameters with upload, like Tus?
 - [ ] core: Apply plugins when DOM elements aren't static (#25)
-- [ ] core: consider `virtual-dom` + `main-loop` or `yo-yo` for rendering and state management
 - [ ] core: Make sure Uppy works well in VR
 - [ ] instagram: Add basic Instagram plugin example (#21)
 - [ ] modal: Avoid duplicating event listeners
@@ -49,12 +47,14 @@ Scheduled to be released: May 02, 2016
 - [ ] modal: focus on the first input field / button in tab panel (@arturi)
 - [ ] presenter: make it work with new components/state (@arturi)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
-- [ ] progressdrawer: fix multiple file requests (@arturi)
+- [ ] progressdrawer: fix multiple file preview requests
 - [ ] progressdrawer: let user cancel uploads in progress (@arturi)
+- [ ] progressdrawer: figure out why the whole list is replaced with every update (dom diff problems) (@arturi)
 - [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox
 - [ ] test: Move failing multipart test back from `v0.5.0` dir, make it pass
-- [ ] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504
-- [ ] core: reduce the monstrous 157.74Kb prebuilt bundle footprint https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png
+- [ ] core: reduce the monstrous 157.74Kb prebuilt bundle footprint
+- [ ] core: Add polyfill for `fetch`
+- [x] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504 https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png (@arturi, @hedgerh)
 - [x] progressbar: make it great again (@arturi)
 - [x] website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
 - [x] website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
