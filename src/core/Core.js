@@ -41,7 +41,7 @@ export default class Core {
     // for debugging
     global.UppyState = this.state
 
-    this.state.book = 'Harry Potter'
+    // this.state.book = 'Harry Potter'
     // global.UppyDefaultState = this.defaultState
   }
 

@@ -14,6 +14,11 @@ export default class Google extends Plugin {
       </svg>
     `
 
+    this.getFile = this.getFile.bind(this)
+    this.getFolder = this.getFolder.bind(this)
+    this.logout = this.logout.bind(this)
+    this.renderBrowser = this.renderBrowser.bind(this)
+
     // set default options
     const defaultOptions = {}
 
@@ -71,23 +76,19 @@ export default class Google extends Plugin {
     .catch((err) => err)
   }
 
-  getFolder (folderId = this.core.state.googleDrive.folder) {
-    return fetch(`${this.opts.host}/google/list`, {
+  getFolder (id = this.core.state.googleDrive.directory) {
+    return fetch(`${this.opts.host}/google/list?dir=${id}`, {
       method: 'get',
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      },
-      body: {
-        dir: folderId || undefined
       }
     })
     .then((res) => {
       if (res.status >= 200 && res.status <= 300) {
         return res.json().then((data) => {
           // let result = Utils.groupBy(data.items, (item) => item.mimeType)
-
           let folders = []
           let files = []
           data.items.forEach((item) => {
@@ -113,20 +114,25 @@ export default class Google extends Plugin {
     })
   }
 
+  getSubFolder (id) {
+    this.getFolder(id)
+      .then((newState) => {
+        console.log(newState)
+        this.updateState(newState)
+      })
+  }
+
   getFile (fileId) {
     if (typeof fileId !== 'string') {
       return new Error('getFile: File ID is not a string.')
     }
 
-    return fetch(`${this.opts.host}/google/get`, {
-      method: 'post',
+    return fetch(`${this.opts.host}/google/get?fileId=${fileId}`, {
+      method: 'get',
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      },
-      body: {
-        fileId
       }
     })
     .then((res) => {
@@ -161,14 +167,28 @@ export default class Google extends Plugin {
     /**
      * Leave this here
      */
-    // fetch(`${this.opts.host}/google/logout`, {
-    //   method: 'get',
-    //   credentials: 'include',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json'
-    //   }
-    // }).then(res => console.log(res))
+    fetch(`${this.opts.host}/google/logout?redirect=${location.href}`, {
+      method: 'get',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.ok) {
+          console.log('ok')
+          const newState = {
+            authenticated: false,
+            files: [],
+            folders: [],
+            directory: 'root'
+          }
+
+          this.updateState(newState)
+        }
+      })
   }
 
   update (state) {
@@ -177,6 +197,16 @@ export default class Google extends Plugin {
     }
     const newEl = this.render(state)
     yo.update(this.el, newEl)
+
+    // setTimeout(() => {
+    //   const folders = Utils.qsa('.GoogleDriveFolder')
+    //   const files = Utils.qsa('.GoogleDriveFile')
+    //   console.log(folders)
+    //   console.log(files)
+
+    //   folders.forEach((folder) => folder.addEventListener('click', (e) => this.getFolder(folder.dataset.id)))
+    //   files.forEach((file) => file.addEventListener('click', (e) => this.getFile(file.dataset.id)))
+    // }, 5000)
   }
 
   updateState (newState) {
@@ -195,7 +225,7 @@ export default class Google extends Plugin {
   }
 
   renderAuth () {
-    const link = this.opts.host ? `${this.opts.host}/connect/google` : '#'
+    const link = `${this.opts.host}/connect/google?state=${location.href}`
     return yo`
       <div>
         <h1>Authenticate With Google Drive</h1>
@@ -205,11 +235,12 @@ export default class Google extends Plugin {
   }
 
   renderBrowser (state) {
-    const folders = state.folders.map((folder) => yo`<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}">${folder.title}</button></li>`)
-    const files = state.files.map((file) => yo`<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}">${file.title}</button></li>`)
+    const folders = state.folders.map((folder) => yo`<li>Folder<button class="GoogleDriveFolder" data-id="${folder.id}" data-title="${folder.title}" onclick=${this.getSubFolder.bind(this, folder.id)}>${folder.title}</button></li>`)
+    const files = state.files.map((file) => yo`<li><button class="GoogleDriveFile" data-id="${file.id}" data-title="${file.title}" onclick=${this.getFile.bind(this, file.id)}>${file.title}</button></li>`)
 
     return yo`
       <div>
+        <button onclick=${this.logout}/>Logout</button>
         <ul>${folders}</ul>
         <ul>${files}</ul>
       </div>
