@@ -30,7 +30,7 @@ export default class Google extends Plugin {
       authenticated: false,
       files: [],
       folders: [],
-      directory: '/'
+      directory: 'root'
     }})
 
     this.currentFolder = 'root'
