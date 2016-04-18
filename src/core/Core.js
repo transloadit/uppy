@@ -35,10 +35,7 @@ export default class Core {
     this.emitter = new ee.EventEmitter()
 
     this.state = {
-      selectedFiles: {},
-      uploadedFiles: {},
-      inProgress: {},
-      totalProgress: 0
+      files: {}
     }
 
     // for debugging
@@ -90,9 +87,9 @@ export default class Core {
       const reader = new FileReader()
       reader.addEventListener('load', (ev) => {
         const imgSrc = ev.target.result
-        const updatedFiles = Object.assign({}, this.state.selectedFiles)
+        const updatedFiles = Object.assign({}, this.state.files)
         updatedFiles[file.id].preview = imgSrc
-        this.setState({selectedFiles: updatedFiles})
+        this.setState({files: updatedFiles})
       })
       reader.addEventListener('error', (err) => {
         this.core.log('FileReader error' + err)
@@ -101,7 +98,7 @@ export default class Core {
     }
 
     this.emitter.on('file-add', (data) => {
-      const updatedFiles = Object.assign({}, this.state.selectedFiles)
+      const updatedFiles = Object.assign({}, this.state.files)
 
       data.acquiredFiles.forEach((file) => {
         const fileName = file.name
@@ -119,7 +116,8 @@ export default class Core {
             specific: fileTypeSpecific
           },
           data: file,
-          progress: 0
+          progress: 0,
+          uploadURL: ''
         }
 
         if (fileTypeGeneral === 'image') {
@@ -127,30 +125,34 @@ export default class Core {
         }
       })
 
-      this.setState({selectedFiles: updatedFiles})
+      this.setState({files: updatedFiles})
 
       if (this.opts.autoProceed) {
         this.emitter.emit('next')
       }
     })
 
-    // `remove-file` removes a file from `state.selectedFiles`, after successfull upload
+    // `remove-file` removes a file from `state.files`, after successfull upload
     // or when a user deicdes not to upload particular file and clicks a button to remove it
     this.emitter.on('file-remove', (fileID) => {
-      const updatedFiles = Object.assign({}, this.state.selectedFiles)
+      const updatedFiles = Object.assign({}, this.state.files)
       delete updatedFiles[fileID]
-      this.setState({selectedFiles: updatedFiles})
+      this.setState({files: updatedFiles})
     })
 
     this.emitter.on('upload-progress', (progressData) => {
-      const updatedFiles = Object.assign({}, this.state.selectedFiles)
+      const updatedFiles = Object.assign({}, this.state.files)
       updatedFiles[progressData.id].progress = progressData.percentage
+
+      const inProgress = Object.keys(updatedFiles).map((file) => {
+        return file.progress !== 0
+      })
 
       // calculate total progress, using the number of files currently uploading,
       // multiplied by 100 and the summ of individual progress of each file
-      const progressMax = Object.keys(updatedFiles).length * 100
+      const progressMax = Object.keys(inProgress).length * 100
       let progressAll = 0
-      Object.keys(updatedFiles).map((file) => {
+      Object.keys(updatedFiles).forEach((file) => {
         progressAll = progressAll + updatedFiles[file].progress
       })
 
@@ -158,18 +160,18 @@ export default class Core {
 
       this.setState({
         totalProgress: totalProgress,
-        selectedFiles: updatedFiles
+        files: updatedFiles
       })
     })
 
     // `upload-success` adds successfully uploaded file to `state.uploadedFiles`
-    // and fires `remove-file` to remove it from `state.selectedFiles`
+    // and fires `remove-file` to remove it from `state.files`
     this.emitter.on('upload-success', (file) => {
-      const uploadedFiles = Object.assign({}, this.state.uploadedFiles)
-      uploadedFiles[file.id] = file
-      this.setState({uploadedFiles: uploadedFiles})
-      this.log(this.state.uploadedFiles)
-      this.emitter.emit('file-remove', file.id)
+      const updatedFiles = Object.assign({}, this.state.files)
+      updatedFiles[file.id] = file
+      this.setState({files: updatedFiles})
+      // this.log(this.state.uploadedFiles)
+      // this.emitter.emit('file-remove', file.id)
     })
   }
 

@@ -46,10 +46,8 @@ export default class Tus10 extends Plugin {
           this.core.emitter.emit('upload-progress', {
             uploader: this,
             id: file.id,
-            percentage: percentage,
-            done: false
+            percentage: percentage
           })
-          // this.core.log(file)
         },
         onSuccess: () => {
           file.uploadURL = upload.url
@@ -66,17 +64,26 @@ export default class Tus10 extends Plugin {
   install () {
     this.core.emitter.on('next', () => {
       this.core.log('Tus is uploading..')
-      const selectedFiles = this.core.getState().selectedFiles
-      // this.core.setState({
-      //   inProgress: selectedFiles,
-      //   selectedFiles: {}
+      const files = this.core.state.files
+
+      // Select only files that haven’t been uploaded or are not in progress yet
+      // const filesForUpload = Object.keys(files).filter((file) => {
+      //   return files[file].progress === 0
       // })
+
+      const filesForUpload = {}
+      Object.keys(files).forEach((file) => {
+        if (files[file].progress === 0) {
+          filesForUpload[file] = files[file]
+        }
+      })
+
       const uploaders = []
 
-      Object.keys(selectedFiles).forEach((fileID, i) => {
-        const file = selectedFiles[fileID]
+      Object.keys(filesForUpload).forEach((fileID, i) => {
+        const file = filesForUpload[fileID]
         const current = parseInt(i, 10) + 1
-        const total = Object.keys(selectedFiles).length
+        const total = Object.keys(filesForUpload).length
         uploaders.push(this.upload(file, current, total))
       })
 

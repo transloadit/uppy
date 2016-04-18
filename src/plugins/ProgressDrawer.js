@@ -63,8 +63,15 @@ export default class ProgressDrawer extends Plugin {
   }
 
   render (state) {
-    const selectedFiles = state.selectedFiles
-    const uploadedFiles = state.uploadedFiles
+    const files = state.files
+
+    const selectedFiles = Object.keys(files).filter((file) => {
+      return files[file].progress !== 100
+    })
+
+    const uploadedFiles = Object.keys(files).filter((file) => {
+      return files[file].progress === 100
+    })
 
     const selectedFileCount = Object.keys(selectedFiles).length
     const uploadedFileCount = Object.keys(uploadedFiles).length
@@ -86,12 +93,8 @@ export default class ProgressDrawer extends Plugin {
         ${isSomethingUploaded ? this.core.i18n('filesUploaded', {'smart_count': uploadedFileCount}) : ''}
       </div>
       <ul class="UppyProgressDrawer-list">
-        ${Object.keys(selectedFiles).map((fileID) => {
-          return this.drawerItem(selectedFiles[fileID])
-        })}
-
-        ${Object.keys(uploadedFiles).map((fileID) => {
-          return this.drawerItem(uploadedFiles[fileID])
+        ${Object.keys(files).map((fileID) => {
+          return this.drawerItem(files[fileID])
         })}
       </ul>
       ${autoProceed
