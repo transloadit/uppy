@@ -12,7 +12,7 @@ same meta information to the endpoint (master.tus.io in this case).
 So it's just a second client.
 
 For a small selection of files: IF:
- - < 2mb
+ - < 2mb AND
  - we have Modification Plugins for this file.mimeType
 
 Then the file is downloaded to Uppy, and the regular flow is used, uppy-server forgets 
