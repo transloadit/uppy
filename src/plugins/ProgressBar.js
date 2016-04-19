@@ -17,13 +17,17 @@ export default class ProgressBar extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
-  update (state) {
-    const newEl = this.render(state)
+  update () {
+    if (typeof this.el === 'undefined') {
+      return
+    }
+
+    const newEl = this.render(this.core.state)
     yo.update(this.el, newEl)
   }
 
-  render () {
-    const progress = this.core.getState().totalProgress
+  render (state) {
+    const progress = state.totalProgress || 0
 
     return yo`<div class="UppyProgressBar">
       <div class="UppyProgressBar-inner" style="width: ${progress}%"></div>
@@ -32,8 +36,7 @@ export default class ProgressBar extends Plugin {
   }
 
   install () {
-    const caller = this
     this.el = this.render(this.core.state)
-    this.target = this.getTarget(this.opts.target, caller, this.el)
+    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
   }
 }

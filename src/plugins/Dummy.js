@@ -18,6 +18,15 @@ export default class Dummy extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
+  update (state) {
+    if (typeof this.el === 'undefined') {
+      return
+    }
+
+    const newEl = this.render(state)
+    yo.update(this.el, newEl)
+  }
+
   render () {
     return yo`
       <div class="wow-this-works">
@@ -27,9 +36,8 @@ export default class Dummy extends Plugin {
     `
   }
 
-  install () {
-    const caller = this
+  install (state) {
     this.el = this.render(this.core.state)
-    this.target = this.getTarget(this.opts.target, caller, this.el)
+    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
   }
 }

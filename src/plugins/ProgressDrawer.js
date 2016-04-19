@@ -16,12 +16,14 @@ export default class ProgressDrawer extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
-
-    this.el = this.render(this.core.state)
   }
 
-  update (state) {
-    const newEl = this.render(state)
+  update () {
+    if (typeof this.el === 'undefined') {
+      return
+    }
+
+    const newEl = this.render(this.core.state)
     yo.update(this.el, newEl)
   }
 
@@ -36,10 +38,10 @@ export default class ProgressDrawer extends Plugin {
         <polygon points="2.836,14.708 5.665,11.878 13.415,19.628 26.334,6.712 29.164,9.54 13.415,25.288 "></polygon>
       </svg>`
 
-    return yo`<li class="UppyProgressDrawer-item"
+    return yo`<li id="${file.id}" class="UppyProgressDrawer-item"
                   title="${file.name}">
       <div class="UppyProgressDrawer-itemInfo">
-        ${file.type.general === 'image'
+        ${file.type.general === 'bla'
           ? yo`<img class="UppyProgressDrawer-itemIcon" alt="${file.name}" src="${file.preview}">`
           : yo`<span class="UppyProgressDrawer-itemType">${file.type.specific}</span>`
         }
@@ -111,7 +113,7 @@ export default class ProgressDrawer extends Plugin {
   }
 
   install () {
-    const caller = this
-    this.target = this.getTarget(this.opts.target, caller, this.el)
+    this.el = this.render(this.core.state)
+    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
   }
 }

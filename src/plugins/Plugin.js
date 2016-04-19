@@ -24,24 +24,22 @@ export default class Plugin {
    * @param {String|Object} target
    *
    */
-  getTarget (target, callerPlugin, el) {
+  getTarget (target, callerPlugin, el, render) {
     if (typeof target === 'string') {
-      // this.core.log('string is a target')
       this.core.log(`Installing ${callerPlugin.name} to ${target}`)
       document.querySelector(target).appendChild(el)
+
       return target
     } else {
-      // this.core.log('plugin is a target')
       this.core.log(`Installing ${callerPlugin.name} to ${target.name}`)
       let targetPlugin = this.core.getPlugin(target.name)
-      let selectorTarget = targetPlugin.addTarget(callerPlugin, el)
+      let selectorTarget = targetPlugin.addTarget(callerPlugin, render)
 
       return selectorTarget
     }
   }
 
   focus () {
-    console.log('focus pocus!')
     return
   }
 

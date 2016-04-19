@@ -8,8 +8,8 @@ export default class Google extends Plugin {
     this.type = 'acquirer'
     this.files = []
     this.name = 'Google Drive'
-    this.icon = `
-      <svg class="UppyModalTab-icon" width="28" height="28" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    this.icon = yo`
+      <svg class="UppyModalTab-icon" width="28" height="28" viewBox="0 0 16 16">
         <path d="M2.955 14.93l2.667-4.62H16l-2.667 4.62H2.955zm2.378-4.62l-2.666 4.62L0 10.31l5.19-8.99 2.666 4.62-2.523 4.37zm10.523-.25h-5.333l-5.19-8.99h5.334l5.19 8.99z"/>
       </svg>
     `
@@ -25,16 +25,34 @@ export default class Google extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    // Set default state for Google Drive
-    this.core.setState({googleDrive: {
-      authenticated: false,
-      files: [],
-      folders: [],
-      directory: 'root'
-    }})
-
     this.currentFolder = 'root'
     this.isAuthenticated = false
+  }
+
+  update (state) {
+    if (typeof this.el === 'undefined') {
+      return
+    }
+
+    const newEl = this.render(this.core.state)
+    yo.update(this.el, newEl)
+
+    // setTimeout(() => {
+    //   const folders = Utils.qsa('.GoogleDriveFolder')
+    //   const files = Utils.qsa('.GoogleDriveFile')
+    //   console.log(folders)
+    //   console.log(files)
+
+    //   folders.forEach((folder) => folder.addEventListener('click', (e) => this.getFolder(folder.dataset.id)))
+    //   files.forEach((file) => file.addEventListener('click', (e) => this.getFile(file.dataset.id)))
+    // }, 5000)
+  }
+
+  updateState (newState) {
+    const {state} = this.core
+    const googleDrive = Object.assign({}, state.googleDrive, newState)
+
+    this.core.setState({googleDrive})
   }
 
   focus () {
@@ -139,27 +157,6 @@ export default class Google extends Plugin {
     .catch((err) => err)
   }
 
-  install () {
-    const caller = this
-    this.checkAuthentication()
-      .then((authenticated) => {
-        this.updateState({authenticated})
-
-        if (authenticated) {
-          return this.getFolder()
-        }
-
-        return authenticated
-      })
-      .then((newState) => {
-        this.updateState(newState)
-        this.el = this.render(this.core.state)
-        this.target = this.getTarget(this.opts.target, caller, this.el)
-      })
-
-    return
-  }
-
   logout () {
     /**
      * Leave this here
@@ -186,39 +183,6 @@ export default class Google extends Plugin {
           this.updateState(newState)
         }
       })
-  }
-
-  update (state) {
-    if (!this.el) {
-      return
-    }
-    const newEl = this.render(state)
-    yo.update(this.el, newEl)
-
-    // setTimeout(() => {
-    //   const folders = Utils.qsa('.GoogleDriveFolder')
-    //   const files = Utils.qsa('.GoogleDriveFile')
-    //   console.log(folders)
-    //   console.log(files)
-
-    //   folders.forEach((folder) => folder.addEventListener('click', (e) => this.getFolder(folder.dataset.id)))
-    //   files.forEach((file) => file.addEventListener('click', (e) => this.getFile(file.dataset.id)))
-    // }, 5000)
-  }
-
-  updateState (newState) {
-    const {state} = this.core
-    const googleDrive = Object.assign({}, state.googleDrive, newState)
-
-    this.core.setState({googleDrive})
-  }
-
-  render (state) {
-    if (state.googleDrive.authenticated) {
-      return this.renderBrowser(state.googleDrive)
-    } else {
-      return this.renderAuth()
-    }
   }
 
   renderAuth () {
@@ -258,5 +222,42 @@ export default class Google extends Plugin {
       folders.forEach((folder) => folder.addEventListener('click', (e) => this.renderFolder(folder.dataset.id)))
       files.forEach((file) => file.addEventListener('click', (e) => this.getFile(file.dataset.id)))
     })
+  }
+
+  install () {
+    // Set default state for Google Drive
+    this.core.setState({googleDrive: {
+      authenticated: false,
+      files: [],
+      folders: [],
+      directory: 'root'
+    }})
+
+    this.el = this.render(this.core.state)
+    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
+
+    this.checkAuthentication()
+      .then((authenticated) => {
+        this.updateState({authenticated})
+
+        if (authenticated) {
+          return this.getFolder()
+        }
+
+        return authenticated
+      })
+      .then((newState) => {
+        this.updateState(newState)
+      })
+
+    return
+  }
+
+  render (state) {
+    if (state.googleDrive.authenticated) {
+      return this.renderBrowser(state.googleDrive)
+    } else {
+      return this.renderAuth()
+    }
   }
 }

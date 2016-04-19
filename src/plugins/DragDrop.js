@@ -34,12 +34,14 @@ export default class DragDrop extends Plugin {
     this.handleDrop = this.handleDrop.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
-
-    this.el = this.render(this.core.state)
   }
 
   update (state) {
-    const newEl = this.render(state)
+    if (typeof this.el === 'undefined') {
+      return
+    }
+
+    const newEl = this.render(this.core.state)
     yo.update(this.el, newEl)
   }
 
@@ -89,17 +91,6 @@ export default class DragDrop extends Plugin {
     this.input.focus()
   }
 
-  install () {
-    const caller = this
-    this.target = this.getTarget(this.opts.target, caller, this.el)
-    this.input = document.querySelector(`${this.target} .UppyDragDrop-input`)
-
-    dragDrop(`${this.target} .UppyDragDrop-container`, (files) => {
-      this.handleDrop(files)
-      this.core.log(files)
-    })
-  }
-
   render (state) {
     // Another way not to render next/upload button — if Modal is used as a target
     const target = this.opts.target.name
@@ -145,5 +136,16 @@ export default class DragDrop extends Plugin {
         </form>
       </div>
     `
+  }
+
+  install () {
+    this.el = this.render(this.core.state)
+    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
+    this.input = document.querySelector(`${this.target} .UppyDragDrop-input`)
+
+    dragDrop(`${this.target} .UppyDragDrop-container`, (files) => {
+      this.handleDrop(files)
+      this.core.log(files)
+    })
   }
 }

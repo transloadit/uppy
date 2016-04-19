@@ -24,22 +24,20 @@ export default class Modal extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    // Set default state for Modal
-    this.core.setState({modal: {
-      isHidden: true,
-      targets: []
-    }})
-
     this.hideModal = this.hideModal.bind(this)
     this.showModal = this.showModal.bind(this)
   }
 
   update (state) {
-    var newEl = this.render(state)
+    if (typeof this.el === 'undefined') {
+      return
+    }
+
+    const newEl = this.render(this.core.state)
     yo.update(this.el, newEl)
   }
 
-  addTarget (callerPlugin, el) {
+  addTarget (callerPlugin, render) {
     const callerPluginId = callerPlugin.constructor.name
     const callerPluginName = callerPlugin.name || callerPluginId
     const callerPluginIcon = callerPlugin.icon || this.opts.defaultTabIcon
@@ -58,7 +56,8 @@ export default class Modal extends Plugin {
       name: callerPluginName,
       icon: callerPluginIcon,
       type: callerPluginType,
-      el: el,
+      // el: el,
+      render: render,
       isHidden: true
     }
 
@@ -158,13 +157,6 @@ export default class Modal extends Plugin {
     })
   }
 
-  install () {
-    this.el = this.render(this.core.state)
-    document.body.appendChild(this.el)
-
-    this.events()
-  }
-
   render (state) {
     // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
@@ -214,16 +206,29 @@ export default class Modal extends Plugin {
                            ${this.opts.panelSelectorPrefix}--${target.id}"
                            role="tabpanel"
                            aria-hidden="${target.isHidden}">
-              ${target.el}
+              ${target.render(state)}
             </div>`
           })}
         </div>
         <div class="UppyModal-progressindicators">
           ${progressindicators.map((target) => {
-            return target.el
+            return target.render(state)
           })}
         </div>
       </div>
     </div>`
+  }
+
+  install () {
+    // Set default state for Modal
+    this.core.setState({modal: {
+      isHidden: true,
+      targets: []
+    }})
+
+    this.el = this.render(this.core.state)
+    document.body.appendChild(this.el)
+
+    this.events()
   }
 }
