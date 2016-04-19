@@ -102,9 +102,16 @@ export default class Modal extends Plugin {
 
     // The “right way”
     const modal = this.core.getState().modal
+
+    const newTargets = modal.targets.map((target) => {
+      target.isHidden = true
+      return target
+    })
+
     this.core.setState({
       modal: Object.assign({}, modal, {
-        isHidden: true
+        isHidden: true,
+        targets: newTargets
       })
     })
 
