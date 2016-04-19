@@ -52,7 +52,7 @@ export default class Core {
   updateAll () {
     Object.keys(this.plugins).forEach((pluginType) => {
       this.plugins[pluginType].forEach((plugin) => {
-        plugin.update(this.state)
+        plugin.update()
       })
     })
   }
@@ -83,19 +83,19 @@ export default class Core {
    *
    */
   actions () {
-    const readImgPreview = (file) => {
-      const reader = new FileReader()
-      reader.addEventListener('load', (ev) => {
-        const imgSrc = ev.target.result
-        const updatedFiles = Object.assign({}, this.state.files)
-        updatedFiles[file.id].preview = imgSrc
-        this.setState({files: updatedFiles})
-      })
-      reader.addEventListener('error', (err) => {
-        this.core.log('FileReader error' + err)
-      })
-      reader.readAsDataURL(file.data)
-    }
+    // const readImgPreview = (file) => {
+    //   const reader = new FileReader()
+    //   reader.addEventListener('load', (ev) => {
+    //     const imgSrc = ev.target.result
+    //     const updatedFiles = Object.assign({}, this.state.files)
+    //     updatedFiles[file.id].preview = imgSrc
+    //     this.setState({files: updatedFiles})
+    //   })
+    //   reader.addEventListener('error', (err) => {
+    //     this.core.log('FileReader error' + err)
+    //   })
+    //   reader.readAsDataURL(file.data)
+    // }
 
     this.emitter.on('file-add', (data) => {
       const updatedFiles = Object.assign({}, this.state.files)
@@ -120,9 +120,11 @@ export default class Core {
           uploadURL: ''
         }
 
-        if (fileTypeGeneral === 'image') {
-          readImgPreview(updatedFiles[fileID])
-        }
+        // TODO figure out if and when we need image preview —
+        // they eat a ton of memory and slow things down subtantially
+        // if (fileTypeGeneral === 'image') {
+        //   readImgPreview(updatedFiles[fileID])
+        // }
       })
 
       this.setState({files: updatedFiles})
