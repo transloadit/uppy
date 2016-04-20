@@ -99,6 +99,10 @@ function generateFileID (fileName) {
   return fileID
 }
 
+function extend (...objs) {
+  return Object.assign.apply(this, [{}].concat(objs))
+}
+
 export default {
   promiseWaterfall,
   generateFileID,
@@ -106,5 +110,6 @@ export default {
   every,
   flatten,
   groupBy,
-  qsa
+  qsa,
+  extend
 }
