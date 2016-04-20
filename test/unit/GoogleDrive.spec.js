@@ -4,17 +4,6 @@ import Core from '../../src/core/Core'
 import Utils from '../../src/core/Utils'
 import Google from '../../src/plugins/GoogleDrive'
 
-var defaultCore = {
-  state: {
-    googleDrive: {
-      authenticated: false,
-      files: [],
-      folders: [],
-      directory: 'root'
-    }
-  }
-}
-
 test('checkAuthentication success', function (t) {
   nock('http://localhost:3020')
     .get('/google/authorize')
