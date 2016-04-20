@@ -18,51 +18,60 @@ first Monday of every new month.
 
 Ideas that will be planned and find their way into a release at one point
 
-- [ ] build: go through it together again, remove unnecessary commands, simplify (related to “clean up package.json”). Discuss how contributors might use it, add to contributing and/or readme (https://github.com/sapegin/social-likes/blob/next/Contributing.md#building-and-running-tests) (@arturi, @hedgerh, @kvz)
-- [ ] build: look into using https://www.npmjs.com/package/npm-run-all instead of parallelshell
-- [ ] build: minification of the bundle
-- [ ] build: sourcemaps for everything (compiled es6->es5 module as well as bundle) (@arturi)
-- [ ] core: pass custom meta/parameters with upload, like Tus?
-- [ ] core: Apply plugins when DOM elements aren't static (#25)
+- [ ] build: browsersync does 3 refreshes, can that be one? should be doable via cooldown/debounce?
+- [ ] build: go over `package.json` togeteher and clean up npm run scripts (@arturi, @hedgerh, @kvz)
+- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
+- [ ] build: revisit sourcemaps for production. can we have them without a mandatory extra request?
+- [ ] core: Decouple rendering from Plugins and try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [ ] core: Make sure Uppy works well in VR
 - [ ] instagram: Add basic Instagram plugin example (#21)
-- [ ] modal: Avoid duplicating event listeners
-- [ ] modal: State: which tab is open? get parameters?
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: checkout http://www.webpagetest.org, use it sometimes to test our website & Uppy?
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
-- [ ] tus: Add support tus 1.0 uploading capabilities (#3)
-- [ ] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth)
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
+
+## 0.0.6
+
+- [ ] meta: Create an Uppy logo (@markstory)
+- [ ] modal: polish on mobile
+- [ ] presenter: make it work with new components/state (@arturi)
+- [ ] server: Implement the `SERVER-PLAN.md` so that Google Drive files are actually uploaded to the endpoint
+- [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
+- [ ] progressdrawer: let user cancel uploads in progress (@arturi)
+- [ ] progressdrawer: preview icons for all (@arturi)
 
 ## 0.0.5
 
+Theme: Acceptance tests and Google Drive Polish
+
 <a name="next"></a> Scheduled to be released: May 02, 2016
 
-- [ ] meta: Create an Uppy logo (@markstory)
-- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
-- [ ] core: Try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
-- [ ] meta: Consider using <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@hedgerh, @arturi, @tim-kos, @kvz)
-- [ ] modal: polish on mobile
-- [ ] modal: focus on the first input field / button in tab panel (@arturi)
-- [ ] presenter: make it work with new components/state (@arturi)
-- [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
-- [ ] progressdrawer: fix multiple file preview requests
-- [ ] progressdrawer: let user cancel uploads in progress (@arturi)
-- [ ] progressdrawer: figure out why the whole list is replaced with every update (dom diff problems) (@arturi)
-- [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox
-- [ ] test: Move failing multipart test back from `v0.5.0` dir, make it pass
-- [ ] core: reduce the monstrous 157.74Kb prebuilt bundle footprint
-- [ ] core: Add polyfill for `fetch`
-- [x] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504 https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png (@arturi, @hedgerh)
-- [x] progressbar: make it great again (@arturi)
-- [x] website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
-- [x] website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
- https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png
+- [ ] build: minification of the bundle (@kvz)
+- [ ] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@kvz)
+- [ ] core: Add polyfill for `fetch` (@hedgerh)
+- [ ] core: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
+- [ ] core: pass custom metadata with tus-upload with tus-js-client (@arturi)
 - [ ] drive: add breadcrumb navigation (@hedgerh)
-- [ ] drive: write files to filesystem correctly (@hedgerh)
 - [ ] drive: convert google docs to office format (@hedgerh)
 - [ ] drive: possible UI polish (@hedgerh)
+- [ ] drive: write files to filesystem correctly (@hedgerh)
+- [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
+- [ ] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
+- [ ] modal: Maybe we need to have URL parameters carrying state as payload, so after returning from google, we're in the same tab again (@hedgerh)
+- [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id), belonging to the `modify` stage (or a different word we'll come up with) (@arturi)
+- [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox (@arturi)
+- [ ] test: Move failing multipart test back from `v0.0.5` dir, make it pass (@arturi)
+- [x] build: sourcemaps for local development (@arturi) <-- Not adding it in production to save the extra request. For local dev, this was added already via Browserify
+- [x] core: Apply plugins when DOM elements aren't static (#25)
+- [x] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504 https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png (@arturi, @hedgerh)
+- [x] core: reduce the monstrous 157.74Kb prebuilt bundle footprint https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png <-- we see no way to optimize at this stage
+- [x] modal: Avoid duplicating event listeners <-- deprecated by yoyo
+- [x] progressbar: make it great again (@arturi)
+- [x] tus: Add support tus 1.0 uploading capabilities (#3) <-- works!
+- [x] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth) (@arturi)
+- [x] website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
+- [x] website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
+- [x] progressdrawer: figure out why the whole list is replaced with every update (dom diff problems) (@arturi)
 
 ## 0.0.4
 
