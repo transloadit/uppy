@@ -1,5 +1,6 @@
 import test from 'tape'
 import nock from 'nock'
+import Core from '../../src/core/Core'
 import Utils from '../../src/core/Utils'
 import Google from '../../src/plugins/GoogleDrive'
 
@@ -21,7 +22,7 @@ test('checkAuthentication success', function (t) {
       isAuthenticated: true
     })
 
-  var core = Object.assign({}, defaultCore)
+  var core = new Core()
 
   var GoogleDrive = new Google(core, {host: 'http://localhost:3020'})
 
@@ -39,7 +40,7 @@ test('checkAuthentication fail', function (t) {
       isAuthenticated: false
     })
 
-  var core = Object.assign({}, defaultCore)
+  var core = new Core()
 
   var GoogleDrive = new Google(core, {host: 'http://localhost:3020'})
 
@@ -58,7 +59,7 @@ test('getFile: success', function (t) {
       id: '12345'
     })
 
-  var core = Object.assign({}, defaultCore)
+  var core = new Core()
 
   var GoogleDrive = new Google(core, {host: 'http://localhost:3020'})
 
@@ -70,7 +71,7 @@ test('getFile: success', function (t) {
 })
 
 test('getFile: fileId not a string', function (t) {
-  var core = Object.assign({}, defaultCore)
+  var core = new Core()
 
   var GoogleDrive = new Google(core, {host: 'http://localhost:3020'})
 
@@ -96,7 +97,7 @@ test('getFolder: success', function (t) {
     }]
   })
 
-  var core = Object.assign({}, defaultCore)
+  var core = new Core()
 
   var GoogleDrive = new Google(core, {host: 'http://localhost:3020'})
 
@@ -120,7 +121,7 @@ test('getFolder: fail', function (t) {
   .get('/google/list')
   .reply(500, 'Not authenticated')
 
-  var core = Object.assign({}, defaultCore)
+  var core = new Core()
 
   var GoogleDrive = new Google(core, {host: 'http://localhost:3020'})
 
