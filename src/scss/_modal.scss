@@ -27,7 +27,7 @@
 
 .UppyModal-inner {
   @include clearfix;
-  background-color: #EBEBEB;
+  background-color: #FAFAFA;
   height: 80vh;
   width: 75%;
   position: fixed;
@@ -124,7 +124,6 @@
 .UppyModalContent {
   height: 100%;
   margin-left: 55px;
-  padding: 35px;
   position: relative;
 }
 
