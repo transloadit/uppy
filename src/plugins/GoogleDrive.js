@@ -220,6 +220,43 @@ export default class Google extends Plugin {
     `
   }
 
+  renderTemp (state) {
+    const breadcrumbs = state.directory.map((dir) => yo`<li><button onclick=${this.getSubFolder.bind(this, dir.id, dir.title)}>${dir.title}</button></li> `)
+    const folders = state.folders.map((folder) => yo`<tr ondblclick=${this.getSubFolder.bind(this, folder.id, folder.title)}><td>[Folder] - ${folder.title}</td><td>Me</td><td>${folder.modifiedByMeDate}</td><td>-</td></tr>`)
+    const files = state.files.map((file) => yo`<tr><td>[File] - ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
+
+    return yo`
+      <div>
+        <ul class="UppyGoogleDrive-sidebar">
+          <li>My Drive</li>
+          <li>Shared with me</li>
+        </ul>
+        <div class="UppyGoogleDrive-header">
+          <ul class="UppyGoogleDrive-breadcrumbs">
+            ${breadcrumbs}
+          </ul>
+        </div>
+        <table class="UppyGoogleDrive-browser">
+          <thead>
+            <tr>
+              <td>Name</td>
+              <td>Owner</td>
+              <td>Last Modified</td>
+              <td>Filesize</td>
+            </tr>
+          </thead>
+          <tbody>
+            ${folders}
+            ${files}
+          </tbody>
+        </table>
+        <div class="UppyGoogleDrive-fileInfo">
+          File active
+        </div>
+      </div>
+    `
+  }
+
   renderError (err) {
     return `Something went wrong.  Probably our fault. ${err}`
   }
@@ -260,7 +297,7 @@ export default class Google extends Plugin {
 
   render (state) {
     if (state.googleDrive.authenticated) {
-      return this.renderBrowser(state.googleDrive)
+      return this.renderTemp(state.googleDrive)
     } else {
       return this.renderAuth()
     }

@@ -1,0 +1,50 @@
+.UppyGoogleDrive-breadcrumbs {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.UppyGoogleDrive-breadcrumbs li {
+  display: inline-block;
+}
+
+.UppyGoogleDrive-breadcrumbs li:after {
+  content: '>';
+}
+
+.UppyGoogleDrive-breadcrumbs li:last-child:after {
+  content: '';
+}
+
+.UppyGoogleDrive-sidebar {
+  background-color: #eee;
+  float: left;
+  height: 100%;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 200px;
+}
+
+.UppyGoogleDrive-sidebar li {
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.UppyGoogleDrive-browser {
+  border: 1px solid #eee;
+  border-collapse: collapse;
+  float: left;
+}
+
+.UppyGoogleDrive-browser td {
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+}
+
+.UppyGoogleDrive-browser thead td {
+  background-color: #eee;
+}
+.UppyGoogleDrive-browser tbody tr:last-child td {
+  border-bottom: 0;
+}
