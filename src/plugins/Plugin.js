@@ -1,3 +1,5 @@
+import yo from 'yo-yo'
+
 /**
  * Boilerplate that all Plugins share - and should not be used
  * directly. It also shows which methods final plugins should implement/override,
@@ -14,6 +16,15 @@ export default class Plugin {
     this.opts = opts
     this.type = 'none'
     this.name = this.constructor.name
+  }
+
+  update () {
+    if (typeof this.el === 'undefined') {
+      return
+    }
+
+    const newEl = this.render(this.core.state)
+    yo.update(this.el, newEl)
   }
 
   /**
@@ -43,15 +54,11 @@ export default class Plugin {
     return
   }
 
-  update () {
-    return
-  }
-
   install () {
     return
   }
 
-  run (results) {
-    return results
+  run () {
+    return
   }
 }

@@ -17,15 +17,6 @@ export default class ProgressBar extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
-  update () {
-    if (typeof this.el === 'undefined') {
-      return
-    }
-
-    const newEl = this.render(this.core.state)
-    yo.update(this.el, newEl)
-  }
-
   render (state) {
     const progress = state.totalProgress || 0
 

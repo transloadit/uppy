@@ -18,15 +18,6 @@ export default class ProgressDrawer extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
-  update () {
-    if (typeof this.el === 'undefined') {
-      return
-    }
-
-    const newEl = this.render(this.core.state)
-    yo.update(this.el, newEl)
-  }
-
   drawerItem (file) {
     const isUploaded = file.progress === 100
 
@@ -52,7 +43,7 @@ export default class ProgressDrawer extends Plugin {
         <h4 class="UppyProgressDrawer-itemName">
           ${file.uploadURL
             ? yo`<a href="${file.uploadURL}" target="_blank">${file.name}</a>`
-            : yo`<span>${file.name} (${file.progress})</span>`
+            : yo`<span>${file.name} (${file.progress}%)</span>`
           }
         </h4>
           ${isUploaded ? checkIcon : ''}
