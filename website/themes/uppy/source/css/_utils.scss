@@ -1,3 +1,7 @@
+.clearfix {
+  clear: both;
+}
+
 @mixin clearfix {
   &:after {
     content: '';
