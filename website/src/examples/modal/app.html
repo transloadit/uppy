@@ -5,9 +5,7 @@
 <button id="uppyModalOpener" class="UppyModalOpenerBtn">Open Uppy Modal</button>
 
 <script>
-
   window.addEventListener('load', function () {
-    // document.querySelector('#uppyModalOpener').click()
     if ( localStorage.getItem('openUppyModalOnLoad') ) {
       document.querySelector('#uppyModalOpener').click()
     }

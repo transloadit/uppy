@@ -18,15 +18,6 @@ export default class Dummy extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
-  update (state) {
-    if (typeof this.el === 'undefined') {
-      return
-    }
-
-    const newEl = this.render(state)
-    yo.update(this.el, newEl)
-  }
-
   render () {
     return yo`
       <div class="wow-this-works">

@@ -92,15 +92,15 @@
   overflow: hidden;
   transition: all 0.3s;
 
-  // &.is-selected {
-  //   background-color: $color-cornflower-blue;
-  // }
-
+  &:focus,
+  &:active,
   &:hover {
     background-color: $color-cornflower-blue;
     overflow: visible;
   }
 
+  &:focus .UppyModalTab-name,
+  &:active .UppyModalTab-name,
   &:hover .UppyModalTab-name {
     opacity: 1;
   }

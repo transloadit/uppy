@@ -66,11 +66,6 @@ export default class Tus10 extends Plugin {
       this.core.log('Tus is uploading..')
       const files = this.core.state.files
 
-      // Select only files that haven’t been uploaded or are not in progress yet
-      // const filesForUpload = Object.keys(files).filter((file) => {
-      //   return files[file].progress === 0
-      // })
-
       const filesForUpload = {}
       Object.keys(files).forEach((file) => {
         if (files[file].progress === 0) {

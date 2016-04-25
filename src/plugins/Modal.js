@@ -196,7 +196,8 @@ export default class Modal extends Plugin {
             return yo`<li class="UppyModalTab">
               <button class="UppyModalTab-btn"
                       role="tab"
-                      aria-controls="${target.id}"
+                      tabindex="0"
+                      aria-controls="${this.opts.panelSelectorPrefix}--${target.id}"
                       aria-selected="${target.isHidden ? 'false' : 'true'}"
                       onclick=${this.showTabPanel.bind(this, target.id)}>
                 ${target.icon}
@@ -209,8 +210,8 @@ export default class Modal extends Plugin {
         <div class="UppyModalContent">
           <div class="UppyModal-presenter"></div>
           ${acquirers.map((target) => {
-            return yo`<div class="UppyModalContent-panel
-                           ${this.opts.panelSelectorPrefix}--${target.id}"
+            return yo`<div class="UppyModalContent-panel"
+                           id="${this.opts.panelSelectorPrefix}--${target.id}"
                            role="tabpanel"
                            aria-hidden="${target.isHidden}">
               ${target.render(state)}
