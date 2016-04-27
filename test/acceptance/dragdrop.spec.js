@@ -20,10 +20,20 @@ test('dragdrop: make sure DragDrop accepts and uploads 1 file via input', functi
   // Get console elements’s value, then check if it has “Download” there somewhere,
   // if it does, then test passes
   function isUploaded () {
-    return driver.findElement(By.id('console-log'))
-      .getAttribute('value')
+    // return driver.findElement(By.id('console-log'))
+    //   .getAttribute('value')
+    //   .then(function (value) {
+    //     var isFileUploaded = value.indexOf('Download image.jpg') !== -1
+    //     return isFileUploaded
+    //   })
+
+    // .getText() only work on visible elements, so we use .getAttribute('textContent'), go figure
+    // http://stackoverflow.com/questions/21994261/gettext-not-working-on-a-select-from-dropdown
+    return driver.findElement(By.css('.UppyDragDrop-One-Progress .UppyProgressBar-percentage'))
+      .getAttribute('textContent')
       .then(function (value) {
-        var isFileUploaded = value.indexOf('Download image.jpg') !== -1
+        var progress = parseInt(value)
+        var isFileUploaded = progress === 100
         return isFileUploaded
       })
   }
