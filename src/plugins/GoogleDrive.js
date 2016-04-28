@@ -223,7 +223,7 @@ export default class Google extends Plugin {
   renderTemp (state) {
     const breadcrumbs = state.directory.map((dir) => yo`<li><button onclick=${this.getSubFolder.bind(this, dir.id, dir.title)}>${dir.title}</button></li> `)
     const folders = state.folders.map((folder) => yo`<tr ondblclick=${this.getSubFolder.bind(this, folder.id, folder.title)}><td>[Folder] - ${folder.title}</td><td>Me</td><td>${folder.modifiedByMeDate}</td><td>-</td></tr>`)
-    const files = state.files.map((file) => yo`<tr><td>[File] - ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
+    const files = state.files.map((file) => yo`<tr onclick=${this.getFile.bind(this, file.id)}><td>[File] - ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
 
     return yo`
       <div>
