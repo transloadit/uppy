@@ -16,6 +16,7 @@ export default class Google extends Plugin {
 
     this.getFile = this.getFile.bind(this)
     this.getFolder = this.getFolder.bind(this)
+    this.handleClick = this.handleClick.bind(this)
     this.logout = this.logout.bind(this)
     this.renderBrowser = this.renderBrowser.bind(this)
 
@@ -220,11 +221,22 @@ export default class Google extends Plugin {
     `
   }
 
-  renderTemp (state) {
-    const breadcrumbs = state.directory.map((dir) => yo`<li><button onclick=${this.getSubFolder.bind(this, dir.id, dir.title)}>${dir.title}</button></li> `)
-    const folders = state.folders.map((folder) => yo`<tr ondblclick=${this.getSubFolder.bind(this, folder.id, folder.title)}><td>[Folder] - ${folder.title}</td><td>Me</td><td>${folder.modifiedByMeDate}</td><td>-</td></tr>`)
-    const files = state.files.map((file) => yo`<tr onclick=${this.getFile.bind(this, file.id)}><td>[File] - ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
+  handleClick (target) {
+    if (this.activeRow && this.activeRow !== target) {
+      this.activeRow.classList.remove('is-active')
+    }
 
+    this.activeRow = target
+    this.activeRow.classList.add('is-active')
+  }
+
+  renderTemp (state) {
+    const self = this
+
+    const breadcrumbs = state.directory.map((dir) => yo`<li><button onclick=${this.getSubFolder.bind(this, dir.id, dir.title)}>${dir.title}</button></li> `)
+    const folders = state.folders.map((folder) => yo`<tr onclick=${function (e) { self.handleClick(this) }} ondblclick=${this.getSubFolder.bind(this, folder.id, folder.title)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${folder.iconLink}/></span> ${folder.title}</td><td>Me</td><td>${folder.modifiedByMeDate}</td><td>-</td></tr>`)
+    const files = state.files.map((file) => yo`<tr onclick=${function (e) { self.handleClick(this) }} ondblclick=${this.getFile.bind(this, file.id)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${file.iconLink}/></span> ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
+    console.log(state.files)
     return yo`
       <div>
         <ul class="UppyGoogleDrive-sidebar">

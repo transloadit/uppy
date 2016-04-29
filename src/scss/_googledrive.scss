@@ -48,3 +48,13 @@
 .UppyGoogleDrive-browser tbody tr:last-child td {
   border-bottom: 0;
 }
+
+.UppyGoogleDrive-browser tbody tr .UppyGoogleDrive-fileIcon {
+  background-color: #fff;
+  border-radius: 50%;
+  padding: 6px 8px 5px 8px;
+}
+.UppyGoogleDrive-browser tbody tr.is-active {
+  background-color: #78BDF2;
+  color: #fff;
+}
