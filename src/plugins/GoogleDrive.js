@@ -14,6 +14,7 @@ export default class Google extends Plugin {
       </svg>
     `
 
+    this.filterQuery = this.filterQuery.bind(this)
     this.getFile = this.getFile.bind(this)
     this.getFolder = this.getFolder.bind(this)
     this.handleClick = this.handleClick.bind(this)
@@ -242,34 +243,50 @@ export default class Google extends Plugin {
     this.updateState(newState)
   }
 
+  filterQuery (e) {
+    const state = this.core.getState().googleDrive
+    this.updateState(Object.assign({}, state, {
+      filterInput: e.target.value
+    }))
+  }
+
   /**
    * Render file browser
    * @param  {Object} state Google Drive state
    */
   renderTemp (state) {
+    let folders = []
+    let files = []
+    if (state.filterInput !== '') {
+      folders = state.folders.filter((folder) => folder.title.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1).map((folder) => yo`<tr class=${(state.active[0] && state.active[0].id === folder.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, folder)} ondblclick=${this.getSubFolder.bind(this, folder.id, folder.title)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${folder.iconLink}/></span> ${folder.title}</td><td>Me</td><td>${folder.modifiedByMeDate}</td><td>-</td></tr>`)
+      files = state.files.filter((file) => file.title.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1).map((file) => yo`<tr class=${(state.active[0] && state.active[0].id === file.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, file)} ondblclick=${this.getFile.bind(this, file.id)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${file.iconLink}/></span> ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
+    } else {
+      folders = state.folders.map((folder) => yo`<tr class=${(state.active[0] && state.active[0].id === folder.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, folder)} ondblclick=${this.getSubFolder.bind(this, folder.id, folder.title)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${folder.iconLink}/></span> ${folder.title}</td><td>Me</td><td>${folder.modifiedByMeDate}</td><td>-</td></tr>`)
+      files = state.files.map((file) => yo`<tr class=${(state.active[0] && state.active[0].id === file.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, file)} ondblclick=${this.getFile.bind(this, file.id)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${file.iconLink}/></span> ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
+    }
+
     const breadcrumbs = state.directory.map((dir) => yo`<li><button onclick=${this.getSubFolder.bind(this, dir.id, dir.title)}>${dir.title}</button></li> `)
-    const folders = state.folders.map((folder) => yo`<tr class=${(state.active[0] && state.active[0].id === folder.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, folder)} ondblclick=${this.getSubFolder.bind(this, folder.id, folder.title)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${folder.iconLink}/></span> ${folder.title}</td><td>Me</td><td>${folder.modifiedByMeDate}</td><td>-</td></tr>`)
-    const files = state.files.map((file) => yo`<tr class=${(state.active[0] && state.active[0].id === file.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, file)} ondblclick=${this.getFile.bind(this, file.id)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${file.iconLink}/></span> ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
     const previewElem = state.active.map((preview) => {
       return yo`
         <div>
           <h1><span class="UppyGoogleDrive-fileIcon"><img src=${preview.iconLink}/></span>${preview.title}</h1>
-          ${preview.thumbnailLink ? yo`<img src=${preview.thumbnailLink}/>` : yo``}
+          ${preview.thumbnailLink ? yo`<img src=${preview.thumbnailLink} class="UppyGoogleDrive-fileThumbnail" />` : yo``}
         </div>
       `
     })
 
     return yo`
       <div>
-        <ul class="UppyGoogleDrive-sidebar">
-          <li>My Drive</li>
-          <li>Shared with me</li>
-        </ul>
         <div class="UppyGoogleDrive-header">
           <ul class="UppyGoogleDrive-breadcrumbs">
             ${breadcrumbs}
           </ul>
         </div>
+        <ul class="UppyGoogleDrive-sidebar">
+          <li><input type='text' onkeyup=${this.filterQuery} value=${state.filterInput}/></li>
+          <li>My Drive</li>
+          <li>Shared with me</li>
+        </ul>
         <table class="UppyGoogleDrive-browser">
           <thead>
             <tr>
@@ -306,7 +323,8 @@ export default class Google extends Plugin {
           title: 'My Drive',
           id: 'root'
         }],
-        active: [{}]
+        active: [{}],
+        filterInput: ''
       }
     })
 

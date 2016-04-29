@@ -1,7 +1,14 @@
 .UppyGoogleDrive-breadcrumbs {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  margin-left: 200px;
+  padding: 8px 0;
+}
+
+.UppyGoogleDrive-breadcrumbs button {
+  background: transparent;
+  border: 0;
+  font-size: 16px;
 }
 
 .UppyGoogleDrive-breadcrumbs li {
@@ -17,7 +24,6 @@
 }
 
 .UppyGoogleDrive-sidebar {
-  background-color: #eee;
   float: left;
   height: 100%;
   list-style-type: none;
@@ -35,6 +41,7 @@
   border: 1px solid #eee;
   border-collapse: collapse;
   float: left;
+  width: 50%;
 }
 
 .UppyGoogleDrive-browser td {
@@ -42,9 +49,6 @@
   padding: 8px;
 }
 
-.UppyGoogleDrive-browser thead td {
-  background-color: #eee;
-}
 .UppyGoogleDrive-browser tbody tr:last-child td {
   border-bottom: 0;
 }
@@ -57,4 +61,17 @@
 .UppyGoogleDrive-browser tbody tr.is-active {
   background-color: #78BDF2;
   color: #fff;
+}
+
+.UppyGoogleDrive-fileInfo {
+  float: left;
+  padding: 0 16px;
+}
+
+.UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileThumbnail {
+  width: 50%;
+}
+
+.UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileIcon {
+  margin-right: 8px;
 }
