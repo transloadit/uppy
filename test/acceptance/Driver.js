@@ -13,21 +13,21 @@ function collectErrors (driver) {
         chalk.magenta(uppyLog)
       ].join(' '))
 
-      return driver.executeScript('return window.JSErrorCollector_errors.pump()')
-        .then(function (errors) {
-          if (!errors || !errors.length) {
-            return
-          }
-          errors.forEach(function (error) {
-            console.error([
-              '[browser-error]',
-              chalk.magenta(error.sourceName),
-              chalk.dim('#' + error.lineNumber),
-              chalk.red(error.errorMessage)
-            ].join(' '))
-          })
-          return
-        })
+      // return driver.executeScript('return window.JSErrorCollector_errors.pump()')
+      //   .then(function (errors) {
+      //     if (!errors || !errors.length) {
+      //       return
+      //     }
+      //     errors.forEach(function (error) {
+      //       console.error([
+      //         '[browser-error]',
+      //         chalk.magenta(error.sourceName),
+      //         chalk.dim('#' + error.lineNumber),
+      //         chalk.red(error.errorMessage)
+      //       ].join(' '))
+      //     })
+      //     return
+      //   })
     })
 }
 

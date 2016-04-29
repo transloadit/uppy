@@ -23,6 +23,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
 - [ ] build: revisit sourcemaps for production. can we have them without a mandatory extra request?
 - [ ] core: Decouple rendering from Plugins and try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
+- [ ] core: test with real screen reader to identify accessibility problems
 - [ ] core: Make sure Uppy works well in VR
 - [ ] instagram: Add basic Instagram plugin example (#21)
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
@@ -51,15 +52,15 @@ Theme: Acceptance tests and Google Drive Polish
 - [ ] core: Add polyfill for `fetch` (@hedgerh)
 - [ ] core: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
 - [ ] core: pass custom metadata with tus-upload with tus-js-client (@arturi)
-- [ ] drive: add breadcrumb navigation (@hedgerh)
-- [ ] drive: convert google docs to office format (@hedgerh)
+- [x] drive: add breadcrumb navigation (@hedgerh)
+- [x] drive: convert google docs to office format (@hedgerh)
 - [ ] drive: possible UI polish (@hedgerh)
 - [ ] drive: write files to filesystem correctly (@hedgerh)
 - [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
 - [ ] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
 - [ ] modal: Maybe we need to have URL parameters carrying state as payload, so after returning from google, we're in the same tab again (@hedgerh)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id), belonging to the `modify` stage (or a different word we'll come up with) (@arturi)
-- [ ] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox (@arturi)
+- [x] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox <-- need to add command to Travis (@arturi)
 - [ ] test: Move failing multipart test back from `v0.0.5` dir, make it pass (@arturi)
 - [x] build: sourcemaps for local development (@arturi) <-- Not adding it in production to save the extra request. For local dev, this was added already via Browserify
 - [x] core: Apply plugins when DOM elements aren't static (#25)
