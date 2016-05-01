@@ -29,22 +29,27 @@ export default class Plugin {
 
   /**
    * Check if supplied `target` is a `string` or an `object`.
-   * If object (that means its a plugin), search `plugins` for
-   * a plugin with same name and return its target.
+   * If it’s an object — target is a plugin, and we search `plugins`
+   * for a plugin with same name and return its target.
    *
    * @param {String|Object} target
    *
    */
-  getTarget (target, callerPlugin, el, render) {
+  getTarget (target, caller, el, render) {
     if (typeof target === 'string') {
-      this.core.log(`Installing ${callerPlugin.name} to ${target}`)
+      this.core.log(`Installing ${caller.name} to ${target}`)
+
+      // clear everything inside the target selector
+      // if (replaceTargetContent) {
+      //   document.querySelector(target).innerHTML = ''
+      // }
       document.querySelector(target).appendChild(el)
 
       return target
     } else {
-      this.core.log(`Installing ${callerPlugin.name} to ${target.name}`)
+      this.core.log(`Installing ${caller.name} to ${target.name}`)
       let targetPlugin = this.core.getPlugin(target.name)
-      let selectorTarget = targetPlugin.addTarget(callerPlugin, render)
+      let selectorTarget = targetPlugin.addTarget(caller, render)
 
       return selectorTarget
     }
