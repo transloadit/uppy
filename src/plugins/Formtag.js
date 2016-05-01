@@ -1,67 +1,86 @@
 import Plugin from './Plugin'
+import yo from 'yo-yo'
 
 export default class Formtag extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
+
+    // Default options
+    const defaultOptions = {
+      target: '.UppyForm',
+      replaceTargetContent: true,
+      multipleFiles: true
+    }
+
+    // Merge default options with the ones set by user
+    this.opts = Object.assign({}, defaultOptions, opts)
   }
 
-  run (results) {
-    console.log({
-      class: 'Formtag',
-      method: 'run',
-      results: results
+  handleInputChange (ev) {
+    this.core.log('All right, something selected through input...')
+
+    const files = Object.keys(ev.target.files).map((key) => {
+      return ev.target.files[key]
     })
 
-    // this.setProgress(0)
-
-    // form FormData
-    // const formData = new FormData(this.dropzone)
-    //
-    // Array.from(files).forEach((file, i) => {
-    //   console.log(`file-${i}`)
-    //   formData.append(`file-${i}`, file)
-    // })
-
-    const button = document.querySelector(this.opts.doneButtonSelector)
-    var self = this
-
-    return new Promise((resolve, reject) => {
-      button.addEventListener('click', (e) => {
-        var fields = document.querySelectorAll(self.opts.selector)
-        var selected = [];
-
-        [].forEach.call(fields, (field, i) => {
-          selected.push({
-            from: 'Formtag',
-            files: field.files
-          })
-        })
-
-        // console.log(fields.length);
-        // for (var i in fields) {
-        //   console.log('i');
-        //   // console.log('i: ', i);
-        //   for (var j in fields[i].files) {
-        //     console.log('j');
-        //     // console.log('i, j', i, j);
-        //     console.log(fields[i].files);
-        //     var file = fields[i].files.item(j);
-        //     if (file) {
-        //       selected.push({
-        //         from: 'Formtag',
-        //         file: fields[i].files.item(j)
-        //       });
-        //     }
-        //   }
-        // }
-        // self.setProgress(100)
-        console.log({
-          selected: selected,
-          fields: fields
-        })
-        resolve(selected)
-      })
+    this.core.emitter.emit('file-add', {
+      plugin: this,
+      acquiredFiles: files
     })
   }
+
+  render (state) {
+    const next = (ev) => {
+      ev.preventDefault()
+      ev.stopPropagation()
+      this.core.emitter.emit('next')
+    }
+
+    return yo`<form class="UppyFormContainer">
+      <input class="UppyForm-input"
+             type="file"
+             name="files[]"
+             onchange=${this.handleInputChange.bind(this)}
+             multiple="${this.opts.multipleFiles ? 'true' : 'false'}">
+      ${!this.core.opts.autoProceed && this.opts.target.name !== 'Modal'
+        ? yo`<button class="UppyForm-uploadBtn UppyNextBtn"
+                     type="submit"
+                     onclick=${next}>
+              ${this.core.i18n('upload')}
+            </button>`
+        : ''}
+    </form>`
+  }
+
+  install () {
+    this.el = this.render(this.core.state)
+    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
+  }
+
+  // run (results) {
+  //   console.log({
+  //     class: 'Formtag',
+  //     method: 'run',
+  //     results: results
+  //   })
+  //
+  //   const button = document.querySelector(this.opts.doneButtonSelector)
+  //   var self = this
+  //
+  //   return new Promise((resolve, reject) => {
+  //     button.addEventListener('click', (e) => {
+  //       var fields = document.querySelectorAll(self.opts.selector)
+  //       var selected = [];
+  //
+  //       [].forEach.call(fields, (field, i) => {
+  //         selected.push({
+  //           from: 'Formtag',
+  //           files: field.files
+  //         })
+  //       })
+  //       resolve(selected)
+  //     })
+  //   })
+  // }
 }
