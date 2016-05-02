@@ -11,7 +11,9 @@ export default class ProgressBar extends Plugin {
     this.type = 'progressindicator'
 
     // set default options
-    const defaultOptions = {}
+    const defaultOptions = {
+      replaceTargetContent: false
+    }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)

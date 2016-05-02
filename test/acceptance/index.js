@@ -25,13 +25,15 @@ var host = isRemoteTest ? 'http://uppi.io' : 'http://localhost:4000'
 // Opera 12 on Linux — didn’t pass
 var platforms = [
   // { browser: 'Opera', version: '12', os: 'Linux' },
+  // { browser: 'iphone', version: '9.2', os: 'OS X 10.10' },
   { browser: 'firefox', version: '34.0', os: 'Windows 7' },
   { browser: 'chrome', version: '48.0', os: 'Windows XP' }
 ]
 
 var tests = [
-  require('./i18n.spec.js'),
-  require('./dragdrop.spec.js')
+  require('./multipart.spec.js')
+  // require('./i18n.spec.js'),
+  // require('./dragdrop.spec.js')
 ]
 
 function buildDriver (platform) {
