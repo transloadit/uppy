@@ -1,6 +1,7 @@
-import yo from 'yo-yo'
 import Utils from '../core/Utils'
 import Plugin from './Plugin'
+import 'whatwg-fetch'
+import yo from 'yo-yo'
 
 export default class Google extends Plugin {
   constructor (core, opts) {
