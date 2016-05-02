@@ -19,7 +19,7 @@ var accessKey = process.env.ACCESS_KEY
 
 // if accessKey is supplied as env variable, this is a remote Saucelabs test
 var isRemoteTest = accessKey ? true : ''
-var host = isRemoteTest ? 'http://uppi.io' : 'http://localhost:4000'
+var host = isRemoteTest ? 'http://uppy.io' : 'http://localhost:4000'
 
 // FYI: old Chrome on Windows XP,
 // Opera 12 on Linux — didn’t pass
@@ -31,8 +31,8 @@ var platforms = [
 ]
 
 var tests = [
-  require('./multipart.spec.js')
-  // require('./i18n.spec.js'),
+  require('./multipart.spec.js'),
+  require('./i18n.spec.js')
   // require('./dragdrop.spec.js')
 ]
 
