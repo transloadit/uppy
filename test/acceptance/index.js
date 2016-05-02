@@ -40,17 +40,17 @@ function buildDriver (platform) {
   var driver
   if (isRemoteTest) {
     driver = new webdriver
-        .Builder()
-        .withCapabilities({
-          'browserName': platform.browser,
-          'platform': platform.os,
-          'version': platform.version,
-          'username': username,
-          'accessKey': accessKey
-        })
-        .usingServer('http://' + username + ':' + accessKey +
-                    '@ondemand.saucelabs.com:80/wd/hub')
-        .build()
+      .Builder()
+      .withCapabilities({
+        'browserName': platform.browser,
+        'platform': platform.os,
+        'version': platform.version,
+        'username': username,
+        'accessKey': accessKey
+      })
+      .usingServer('http://' + username + ':' + accessKey +
+                   '@ondemand.saucelabs.com:80/wd/hub')
+      .build()
     driver.setFileDetector(new remote.FileDetector())
   } else {
     driver = new webdriver

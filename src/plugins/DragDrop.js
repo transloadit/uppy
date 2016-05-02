@@ -76,11 +76,12 @@ export default class DragDrop extends Plugin {
     })
   }
 
-  handleInputChange () {
+  handleInputChange (ev) {
     this.core.log('All right, something selected through input...')
+    const files = ev.target.files
 
-    const newFiles = Object.keys(this.input.files).map((key) => {
-      this.input.files[key]
+    const newFiles = Object.keys(files).map((file) => {
+      return files[file]
     })
 
     this.core.emitter.emit('file-add', {
@@ -108,7 +109,7 @@ export default class DragDrop extends Plugin {
     }
 
     const onChange = (ev) => {
-      this.handleInputChange()
+      this.handleInputChange(ev)
     }
 
     const onSubmit = (ev) => {
