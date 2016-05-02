@@ -14,8 +14,8 @@ require('babel-register')
 var webdriver = require('selenium-webdriver')
 var remote = require('selenium-webdriver/remote')
 
-var username = process.env.USERNAME
-var accessKey = process.env.ACCESS_KEY
+var username = process.env.SAUCELABS_USERNAME
+var accessKey = process.env.SAUCELABS_ACCESS_KEY
 
 // if accessKey is supplied as env variable, this is a remote Saucelabs test
 var isRemoteTest = accessKey ? true : ''
@@ -26,14 +26,14 @@ var host = isRemoteTest ? 'http://uppy.io' : 'http://localhost:4000'
 var platforms = [
   // { browser: 'Opera', version: '12', os: 'Linux' },
   // { browser: 'iphone', version: '9.2', os: 'OS X 10.10' },
-  { browser: 'firefox', version: '34.0', os: 'Windows 7' },
-  { browser: 'chrome', version: '48.0', os: 'Windows XP' }
+  { browser: 'Firefox', version: '34.0', os: 'Windows 7' },
+  { browser: 'Chrome', version: '48.0', os: 'Windows XP' }
 ]
 
 var tests = [
   require('./multipart.spec.js'),
-  require('./i18n.spec.js')
-  // require('./dragdrop.spec.js')
+  require('./i18n.spec.js'),
+  require('./dragdrop.spec.js')
 ]
 
 function buildDriver (platform) {
