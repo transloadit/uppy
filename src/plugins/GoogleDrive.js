@@ -125,7 +125,7 @@ export default class Google extends Plugin {
     this.getFolder(id)
       .then((data) => {
         const state = this.core.getState().googleDrive
-        console.log(id)
+
         const index = state.directory.findIndex((dir) => id === dir.id)
         let directory
 
@@ -205,8 +205,8 @@ export default class Google extends Plugin {
   renderAuth () {
     const link = `${this.opts.host}/connect/google?state=${location.href}`
     return yo`
-      <div>
-        <h1>Authenticate With Google Drive</h1>
+      <div class="UppyGoogleDrive-authenticate">
+        <h1>You need to authenticate with Google before selecting files.</h1>
         <a href=${link}>Authenticate</a>
       </div>
     `
@@ -230,6 +230,19 @@ export default class Google extends Plugin {
     `
   }
 
+  getFileType (file) {
+    const fileTypes = {
+      'application/vnd.google-apps.folder': 'Folder',
+      'application/vnd.google-apps.document': 'Google Docs',
+      'application/vnd.google-apps.spreadsheet': 'Google Sheets',
+      'application/vnd.google-apps.presentation': 'Google Slides',
+      'image/jpeg': 'JPEG Image',
+      'image/png': 'PNG Image'
+    }
+
+    return fileTypes[file.mimeType] ? fileTypes[file.mimeType] : file.fileExtension.toUpperCase()
+  }
+
   /**
    * Used to set active file/folder.
    * @param  {Object} file   Active file/folder
@@ -237,7 +250,7 @@ export default class Google extends Plugin {
   handleClick (file) {
     const state = this.core.getState().googleDrive
     const newState = Object.assign({}, state, {
-      active: [file]
+      active: file
     })
 
     this.updateState(newState)
@@ -257,23 +270,27 @@ export default class Google extends Plugin {
   renderTemp (state) {
     let folders = []
     let files = []
+    let previewElem = ''
+    const isFileSelected = Object.keys(state.active).length !== 0 && JSON.stringify(state.active) !== JSON.stringify({})
+
     if (state.filterInput !== '') {
-      folders = state.folders.filter((folder) => folder.title.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1).map((folder) => yo`<tr class=${(state.active[0] && state.active[0].id === folder.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, folder)} ondblclick=${this.getSubFolder.bind(this, folder.id, folder.title)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${folder.iconLink}/></span> ${folder.title}</td><td>Me</td><td>${folder.modifiedByMeDate}</td><td>-</td></tr>`)
-      files = state.files.filter((file) => file.title.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1).map((file) => yo`<tr class=${(state.active[0] && state.active[0].id === file.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, file)} ondblclick=${this.getFile.bind(this, file.id)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${file.iconLink}/></span> ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
+      folders = state.folders.filter((folder) => folder.title.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1).map((folder) => yo`<tr class=${(isFileSelected && state.active.id === folder.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, folder)} ondblclick=${this.getSubFolder.bind(this, folder.id, folder.title)}><td><span class="UppyGoogleDrive-folderIcon"><img src=${folder.iconLink}/></span> ${folder.title}</td><td>Me</td><td>${folder.modifiedByMeDate}</td><td>-</td></tr>`)
+      files = state.files.filter((file) => file.title.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1).map((file) => yo`<tr class=${(isFileSelected && state.active.id === file.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, file)} ondblclick=${this.getFile.bind(this, file.id)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${file.iconLink}/></span> ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
     } else {
-      folders = state.folders.map((folder) => yo`<tr class=${(state.active[0] && state.active[0].id === folder.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, folder)} ondblclick=${this.getSubFolder.bind(this, folder.id, folder.title)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${folder.iconLink}/></span> ${folder.title}</td><td>Me</td><td>${folder.modifiedByMeDate}</td><td>-</td></tr>`)
-      files = state.files.map((file) => yo`<tr class=${(state.active[0] && state.active[0].id === file.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, file)} ondblclick=${this.getFile.bind(this, file.id)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${file.iconLink}/></span> ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
+      folders = state.folders.map((folder) => yo`<tr class=${(isFileSelected && state.active.id === folder.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, folder)} ondblclick=${this.getSubFolder.bind(this, folder.id, folder.title)}><td><span class="UppyGoogleDrive-folderIcon"><img src=${folder.iconLink}/></span> ${folder.title}</td><td>Me</td><td>${folder.modifiedByMeDate}</td><td>-</td></tr>`)
+      files = state.files.map((file) => yo`<tr class=${(isFileSelected && state.active.id === file.id) ? 'is-active' : ''} onclick=${this.handleClick.bind(this, file)} ondblclick=${this.getFile.bind(this, file.id)}><td><span class="UppyGoogleDrive-fileIcon"><img src=${file.iconLink}/></span> ${file.title}</td><td>Me</td><td>${file.modifiedByMeDate}</td><td>-</td></tr>`)
     }
 
     const breadcrumbs = state.directory.map((dir) => yo`<li><button onclick=${this.getSubFolder.bind(this, dir.id, dir.title)}>${dir.title}</button></li> `)
-    const previewElem = state.active.map((preview) => {
-      return yo`
+    if (isFileSelected) {
+      previewElem = yo`
         <div>
-          <h1><span class="UppyGoogleDrive-fileIcon"><img src=${preview.iconLink}/></span>${preview.title}</h1>
-          ${preview.thumbnailLink ? yo`<img src=${preview.thumbnailLink} class="UppyGoogleDrive-fileThumbnail" />` : yo``}
+          <h1><span class="UppyGoogleDrive-fileIcon"><img src=${state.active.iconLink}/></span>${state.active.title}</h1>
+          ${state.active.thumbnailLink ? yo`<img src=${state.active.thumbnailLink} class="UppyGoogleDrive-fileThumbnail" />` : yo``}
+          <span>Type: ${this.getFileType(state.active)}</span>
         </div>
       `
-    })
+    }
 
     return yo`
       <div>
@@ -323,7 +340,7 @@ export default class Google extends Plugin {
           title: 'My Drive',
           id: 'root'
         }],
-        active: [{}],
+        active: {},
         filterInput: ''
       }
     })

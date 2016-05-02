@@ -1,3 +1,33 @@
+.UppyGoogleDrive-authenticate {
+  align-items: center;
+  display: flex;
+  flex-flow: column wrap;
+  height: 100%;
+  justify-content: center;
+}
+
+.UppyGoogleDrive-authenticate a {
+  background-color: transparent;
+  border: 1px solid #78BDF2;
+  border-radius: 12px;
+  color: darken(#78BDF2, 25%);
+  font-size: 22px;
+  margin-bottom: 88px;
+  padding: 6px 16px;
+  transition: background-color 400ms;
+
+  &:hover {
+    background-color: darken(#78BDF2,10%);
+    color: #fff;
+    transition: background-color 400ms;
+  }
+}
+
+.UppyGoogleDrive-authenticate h1 {
+  font-size: 24px;
+  margin-bottom: 48px;
+}
+
 .UppyGoogleDrive-breadcrumbs {
   list-style-type: none;
   margin: 0;
@@ -58,6 +88,14 @@
   border-radius: 50%;
   padding: 6px 8px 5px 8px;
 }
+
+.UppyGoogleDrive-browser tbody tr .UppyGoogleDrive-folderIcon {
+  background-color: #fff;
+  border-radius: 50%;
+  padding: 6px 8px 5px 8px;
+  margin-top: 2px;
+}
+
 .UppyGoogleDrive-browser tbody tr.is-active {
   background-color: #78BDF2;
   color: #fff;
