@@ -12,7 +12,7 @@ we're `<1.0.0` and allowing ourselves to make breaking changes in minor
 and patch levels.
 
 In the current stage we aim to release a new version on the
-first Monday of every new month.
+first Friday of every new month.
 
 ## Backlog
 
@@ -40,39 +40,44 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [ ] progressdrawer: let user cancel uploads in progress (@arturi)
 - [ ] progressdrawer: preview icons for all (@arturi)
+- [ ] build: minification of the bundle (@kvz)
+- [ ] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@kvz)
+- [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
+- [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
+- [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id), belonging to the `modify` stage (or a different word we'll come up with) (@arturi)
+- [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
+- [ ] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
+- [ ] modal: Maybe we need to have URL parameters carrying state as payload, so after returning from google, we're in the same tab again (@hedgerh)
+- [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (@arturi)
 
 ## 0.0.5
 
 Theme: Acceptance tests and Google Drive Polish
 
-<a name="next"></a> Scheduled to be released: May 02, 2016
+<a name="next"></a> Scheduled to be released: May 06, 2016
 
-- [ ] build: minification of the bundle (@kvz)
-- [ ] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@kvz)
-- [x] core: Add polyfill for `fetch` (@hedgerh)
-- [x] drive: add breadcrumb navigation (@hedgerh)
-- [x] drive: convert google docs to office format (@hedgerh)
 - [ ] drive: possible UI polish (@hedgerh)
 - [ ] drive: write files to filesystem correctly (@hedgerh)
-- [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
-- [ ] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
-- [ ] modal: Maybe we need to have URL parameters carrying state as payload, so after returning from google, we're in the same tab again (@hedgerh)
-- [ ] core: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
-- [ ] core: pass custom metadata with tus-upload with tus-js-client (@arturi)
-- [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id), belonging to the `modify` stage (or a different word we'll come up with) (@arturi)
-- [x] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox <-- need to add command to Travis (@arturi)
-- [x] test: Move failing multipart test back from `v0.0.5` dir, make it pass (@arturi)
+- [ ] test: Fix 15s timeout image.jpg (@arturi)
+- [ ] test: Sign up for Browserstack.com Live account so we can check ourselves what gives and verify saucelabs isn't to blame (@arturi)
+- [ ] test: Get tests to pass Latest version of Internet Explorer (Windows 10), Safari (OSX), Firefox (Linux), Opera (Windows 10) (@arturi)
+- [ ] test: Get saucelabs to show what gives (errors, screenshots, anything) (@arturi)
 - [x] build: sourcemaps for local development (@arturi) <-- Not adding it in production to save the extra request. For local dev, this was added already via Browserify
+- [x] core: Add polyfill for `fetch` (@hedgerh)
 - [x] core: Apply plugins when DOM elements aren't static (#25)
 - [x] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504 https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png (@arturi, @hedgerh)
 - [x] core: reduce the monstrous 157.74Kb prebuilt bundle footprint https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png <-- we see no way to optimize at this stage
+- [x] drive: add breadcrumb navigation (@hedgerh)
+- [x] drive: convert google docs to office format (@hedgerh)
 - [x] modal: Avoid duplicating event listeners <-- deprecated by yoyo
 - [x] progressbar: make it great again (@arturi)
+- [x] progressdrawer: figure out why the whole list is replaced with every update (dom diff problems) (@arturi)
+- [x] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox <-- need to add command to Travis (@arturi)
+- [x] test: Move failing multipart test back from `v0.0.5` dir, make it pass (@arturi)
 - [x] tus: Add support tus 1.0 uploading capabilities (#3) <-- works!
 - [x] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth) (@arturi)
 - [x] website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
 - [x] website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
-- [x] progressdrawer: figure out why the whole list is replaced with every update (dom diff problems) (@arturi)
 
 ## 0.0.4
 
