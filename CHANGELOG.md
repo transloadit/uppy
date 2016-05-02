@@ -49,9 +49,7 @@ Theme: Acceptance tests and Google Drive Polish
 
 - [ ] build: minification of the bundle (@kvz)
 - [ ] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@kvz)
-- [ ] core: Add polyfill for `fetch` (@hedgerh)
-- [ ] core: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
-- [ ] core: pass custom metadata with tus-upload with tus-js-client (@arturi)
+- [x] core: Add polyfill for `fetch` (@hedgerh)
 - [x] drive: add breadcrumb navigation (@hedgerh)
 - [x] drive: convert google docs to office format (@hedgerh)
 - [ ] drive: possible UI polish (@hedgerh)
@@ -59,9 +57,11 @@ Theme: Acceptance tests and Google Drive Polish
 - [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
 - [ ] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
 - [ ] modal: Maybe we need to have URL parameters carrying state as payload, so after returning from google, we're in the same tab again (@hedgerh)
+- [ ] core: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
+- [ ] core: pass custom metadata with tus-upload with tus-js-client (@arturi)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id), belonging to the `modify` stage (or a different word we'll come up with) (@arturi)
 - [x] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox <-- need to add command to Travis (@arturi)
-- [ ] test: Move failing multipart test back from `v0.0.5` dir, make it pass (@arturi)
+- [x] test: Move failing multipart test back from `v0.0.5` dir, make it pass (@arturi)
 - [x] build: sourcemaps for local development (@arturi) <-- Not adding it in production to save the extra request. For local dev, this was added already via Browserify
 - [x] core: Apply plugins when DOM elements aren't static (#25)
 - [x] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504 https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png (@arturi, @hedgerh)
