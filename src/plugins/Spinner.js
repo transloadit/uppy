@@ -8,6 +8,8 @@ export default class Spinner extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'progressindicator'
+    this.id = 'Spinner'
+    this.title = 'Spinner'
 
     // set default options
     const defaultOptions = {}

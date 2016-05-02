@@ -4,6 +4,8 @@ import yo from 'yo-yo'
 export default class Formtag extends Plugin {
   constructor (core, opts) {
     super(core, opts)
+    this.id = 'Formtag'
+    this.title = 'Formtag'
     this.type = 'acquirer'
 
     // Default options

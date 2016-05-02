@@ -9,7 +9,8 @@ export default class Tus10 extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'uploader'
-    this.type = 'Tus'
+    this.id = 'Tus'
+    this.title = 'Tus'
 
     // set default options
     const defaultOptions = {}

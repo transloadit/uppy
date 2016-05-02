@@ -4,7 +4,8 @@ export default class Multipart extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'uploader'
-    this.name = 'Multipart'
+    this.id = 'Multipart'
+    this.title = 'Multipart'
 
     // Default options
     const defaultOptions = {

@@ -15,7 +15,7 @@ export default class Plugin {
     this.core = core
     this.opts = opts
     this.type = 'none'
-    this.name = this.constructor.name
+    // this.name = this.constructor.name
   }
 
   update () {

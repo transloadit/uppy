@@ -189,7 +189,7 @@ export default class Core {
     const plugin = new Plugin(this, opts)
     this.plugins[plugin.type] = this.plugins[plugin.type] || []
 
-    if (!plugin.constructor.name) {
+    if (!plugin.id) {
       throw new Error('Your plugin must have a name')
     }
 
@@ -197,7 +197,7 @@ export default class Core {
       throw new Error('Your plugin must have a type')
     }
 
-    let existsPluginAlready = this.getPlugin(plugin.constructor.name)
+    let existsPluginAlready = this.getPlugin(plugin.id)
     if (existsPluginAlready) {
       let msg = `Already found a plugin named '${existsPluginAlready.name}'.
         Tried to use: '${plugin.constructor.name}'.

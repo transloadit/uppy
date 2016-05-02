@@ -4,6 +4,9 @@ export default class Dropbox extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
+    this.id = 'Dropbox'
+    this.title = 'Dropbox'
+
     this.authenticate = this.authenticate.bind(this)
     this.connect = this.connect.bind(this)
     this.render = this.render.bind(this)

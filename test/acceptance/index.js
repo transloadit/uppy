@@ -26,6 +26,7 @@ var host = isRemoteTest ? 'http://uppy.io' : 'http://localhost:4000'
 var platforms = [
   // { browser: 'Opera', version: '12', os: 'Linux' },
   // { browser: 'iphone', version: '9.2', os: 'OS X 10.10' },
+  { browser: 'Internet Explorer', version: '11.103', os: 'Windows 10' },
   { browser: 'Firefox', version: '34.0', os: 'Windows 7' },
   { browser: 'Chrome', version: '48.0', os: 'Windows XP' }
 ]

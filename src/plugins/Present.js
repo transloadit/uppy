@@ -7,8 +7,9 @@ import Plugin from './Plugin'
 export default class Present extends Plugin {
   constructor (core, opts) {
     super(core, opts)
+    this.id = 'Present'
+    this.title = 'Present'
     this.type = 'presenter'
-    this.name = 'Present'
 
     // set default options
     const defaultOptions = {

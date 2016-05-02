@@ -9,7 +9,8 @@ export default class Dummy extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
-    this.name = 'Dummy'
+    this.id = 'Dummy'
+    this.title = 'Dummy'
 
     // set default options
     const defaultOptions = {}

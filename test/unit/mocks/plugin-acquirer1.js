@@ -4,6 +4,7 @@ export default class TestSelector1 extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
+    this.id = 'TestSelector1'
     this.name = this.constructor.name
   }
 
