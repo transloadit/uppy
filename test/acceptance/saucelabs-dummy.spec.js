@@ -1,10 +1,11 @@
 var webdriver = require('selenium-webdriver')
 var remote = require('selenium-webdriver/remote')
 
-var username = process.env.USERNAME
-var accessKey = process.env.ACCESS_KEY
+var username = process.env.SAUCELABS_USERNAME
+var accessKey = process.env.SAUCELABS_ACCESS_KEY
 
-var platform = { browser: 'firefox', version: '34.0', os: 'Windows 7' }
+// var platform = { browser: 'firefox', version: '34.0', os: 'Windows 7' }
+var platform = { browser: 'Safari', version: '9.0', os: 'OS X 10.11' }
 
 function buildDriver (platform) {
   var driver = new webdriver

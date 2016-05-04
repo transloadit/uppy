@@ -31,7 +31,6 @@ export default class Core {
     this.translator = new Translator({locales: this.opts.locales})
     this.i18n = this.translator.translate.bind(this.translator)
 
-    // Set up an event EventEmitter
     this.emitter = new ee.EventEmitter()
 
     this.state = {
@@ -40,9 +39,6 @@ export default class Core {
 
     // for debugging
     global.UppyState = this.state
-
-    // this.state.book = 'Harry Potter'
-    // global.UppyDefaultState = this.defaultState
   }
 
   /**

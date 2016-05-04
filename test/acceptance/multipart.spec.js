@@ -27,7 +27,7 @@ module.exports = function (driver, platform, host) {
     })
 
     function isUploaded () {
-      // .getText() only work on visible elements, so we use .getAttribute('textContent'), go figure
+      // .getText() only works on visible elements, so we use .getAttribute('textContent'), go figure
       // http://stackoverflow.com/questions/21994261/gettext-not-working-on-a-select-from-dropdown
       return driver.findElement(By.css('.UppyProgressBar .UppyProgressBar-percentage'))
         .getAttribute('textContent')

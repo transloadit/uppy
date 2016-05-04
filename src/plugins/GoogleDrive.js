@@ -7,7 +7,7 @@ export default class Google extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
-    this.id = 'GoogleDriver'
+    this.id = 'GoogleDrive'
     this.titile = 'Google Drive'
     this.icon = yo`
       <svg class="UppyModalTab-icon" width="28" height="28" viewBox="0 0 16 16">
