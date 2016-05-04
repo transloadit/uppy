@@ -287,8 +287,11 @@ export default class Google extends Plugin {
       previewElem = yo`
         <div>
           <h1><span class="UppyGoogleDrive-fileIcon"><img src=${state.active.iconLink}/></span>${state.active.title}</h1>
+          <ul>
+            <li>Type: ${this.getFileType(state.active)}</li>
+            <li>Modified By Me: ${state.active.modifiedByMeDate}</li>
+          </ul>
           ${state.active.thumbnailLink ? yo`<img src=${state.active.thumbnailLink} class="UppyGoogleDrive-fileThumbnail" />` : yo``}
-          <span>Type: ${this.getFileType(state.active)}</span>
         </div>
       `
     }
@@ -301,9 +304,9 @@ export default class Google extends Plugin {
           </ul>
         </div>
         <ul class="UppyGoogleDrive-sidebar">
-          <li><input type='text' onkeyup=${this.filterQuery} value=${state.filterInput}/></li>
-          <li>My Drive</li>
-          <li>Shared with me</li>
+          <li class="UppyGoogleDrive-filter"><label>Search:</label><input type='text' onkeyup=${this.filterQuery} value=${state.filterInput}/></li>
+          <li><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_collection_list_3.png"/> My Drive</li>
+          <li><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_shared_collection_list_1.png"/>Shared with me</li>
         </ul>
         <table class="UppyGoogleDrive-browser">
           <thead>
