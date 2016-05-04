@@ -39,8 +39,14 @@
 .UppyGoogleDrive-sidebar button {
   background: transparent;
   border: 0;
+  cursor: pointer;
   font-size: 16px;
   outline: 0;
+}
+
+.UppyGoogleDrive-sidebar button {
+  font-size: 14px;
+  padding: 0;
 }
 
 .UppyGoogleDrive-breadcrumbs button:focus,
