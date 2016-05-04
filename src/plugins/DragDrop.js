@@ -10,7 +10,8 @@ export default class DragDrop extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
-    this.name = 'Drag & Drop'
+    this.id = 'DragDrop'
+    this.title = 'Drag & Drop'
     this.icon = yo`
       <svg class="UppyModalTab-icon" width="28" height="28" viewBox="0 0 16 16">
         <path d="M15.982 2.97c0-.02 0-.02-.018-.037 0-.017-.017-.035-.035-.053 0 0 0-.018-.02-.018-.017-.018-.034-.053-.052-.07L13.19.123c-.017-.017-.034-.035-.07-.053h-.018c-.018-.017-.035-.017-.053-.034h-.02c-.017 0-.034-.018-.052-.018h-6.31a.415.415 0 0 0-.446.426V11.11c0 .25.196.446.445.446h8.89A.44.44 0 0 0 16 11.11V3.023c-.018-.018-.018-.035-.018-.053zm-2.65-1.46l1.157 1.157h-1.157V1.51zm1.78 9.157h-8V.89h5.332v2.22c0 .25.196.446.445.446h2.22v7.11z"/>
@@ -76,11 +77,12 @@ export default class DragDrop extends Plugin {
     })
   }
 
-  handleInputChange () {
+  handleInputChange (ev) {
     this.core.log('All right, something selected through input...')
+    const files = ev.target.files
 
-    const newFiles = Object.keys(this.input.files).map((key) => {
-      this.input.files[key]
+    const newFiles = Object.keys(files).map((file) => {
+      return files[file]
     })
 
     this.core.emitter.emit('file-add', {
@@ -107,10 +109,6 @@ export default class DragDrop extends Plugin {
       this.core.emitter.emit('next')
     }
 
-    const onChange = (ev) => {
-      this.handleInputChange()
-    }
-
     const onSubmit = (ev) => {
       ev.preventDefault()
     }
@@ -123,7 +121,7 @@ export default class DragDrop extends Plugin {
                  type="file"
                  name="files[]"
                  multiple="true"
-                 onchange=${onChange} />
+                 onchange=${this.handleInputChange.bind(this)} />
           <label class="UppyDragDrop-label" onclick=${onSelect}>
             <strong>${this.core.i18n('chooseFile')}</strong>
             <span class="UppyDragDrop-dragText">${this.core.i18n('orDragDrop')}</span>

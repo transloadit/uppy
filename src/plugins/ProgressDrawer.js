@@ -8,7 +8,8 @@ import yo from 'yo-yo'
 export default class ProgressDrawer extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.name = 'Progress Drawer'
+    this.id = 'ProgressDrawer'
+    this.title = 'Progress Drawer'
     this.type = 'progressindicator'
 
     // set default options

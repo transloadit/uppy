@@ -1,4 +1,5 @@
 import yo from 'yo-yo'
+import Utils from '../core/Utils'
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -15,7 +16,7 @@ export default class Plugin {
     this.core = core
     this.opts = opts
     this.type = 'none'
-    this.name = this.constructor.name
+    // this.name = this.constructor.name
   }
 
   update () {
@@ -36,8 +37,10 @@ export default class Plugin {
    *
    */
   getTarget (target, caller, el, render) {
+    const callerPluginName = Utils.getFnName(caller.constructor)
+
     if (typeof target === 'string') {
-      this.core.log(`Installing ${caller.name} to ${target}`)
+      this.core.log(`Installing ${callerPluginName} to ${target}`)
 
       // clear everything inside the target selector
       // if (replaceTargetContent) {
@@ -47,8 +50,9 @@ export default class Plugin {
 
       return target
     } else {
-      this.core.log(`Installing ${caller.name} to ${target.name}`)
-      let targetPlugin = this.core.getPlugin(target.name)
+      const targetPluginName = Utils.getFnName(target)
+      this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
+      let targetPlugin = this.core.getPlugin(targetPluginName)
       let selectorTarget = targetPlugin.addTarget(caller, render)
 
       return selectorTarget

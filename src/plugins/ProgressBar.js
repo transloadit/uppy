@@ -8,6 +8,8 @@ import yo from 'yo-yo'
 export default class ProgressBar extends Plugin {
   constructor (core, opts) {
     super(core, opts)
+    this.id = 'ProgressBar'
+    this.title = 'Progress Bar'
     this.type = 'progressindicator'
 
     // set default options

@@ -14,8 +14,8 @@ require('babel-register')
 var webdriver = require('selenium-webdriver')
 var remote = require('selenium-webdriver/remote')
 
-var username = process.env.USERNAME
-var accessKey = process.env.ACCESS_KEY
+var username = process.env.SAUCELABS_USERNAME
+var accessKey = process.env.SAUCELABS_ACCESS_KEY
 
 // if accessKey is supplied as env variable, this is a remote Saucelabs test
 var isRemoteTest = accessKey ? true : ''
@@ -24,33 +24,37 @@ var host = isRemoteTest ? 'http://uppy.io' : 'http://localhost:4000'
 // FYI: old Chrome on Windows XP,
 // Opera 12 on Linux — didn’t pass
 var platforms = [
-  // { browser: 'Opera', version: '12', os: 'Linux' },
+  // { browser: 'Opera', version: '12.15', os: 'Linux' },
   // { browser: 'iphone', version: '9.2', os: 'OS X 10.10' },
-  { browser: 'firefox', version: '34.0', os: 'Windows 7' },
-  { browser: 'chrome', version: '48.0', os: 'Windows XP' }
+  // { browser: 'Safari', version: '8.0', os: 'OS X 10.10' },
+  { browser: 'Internet Explorer', version: '10.0', os: 'Windows 8' },
+  { browser: 'Internet Explorer', version: '11.103', os: 'Windows 10' },
+  { browser: 'Firefox', version: '34.0', os: 'Windows 7' },
+  { browser: 'Chrome', version: '48.0', os: 'Windows XP' },
+  { browser: 'Firefox', version: '38.0', os: 'Linux' }
 ]
 
 var tests = [
   require('./multipart.spec.js'),
-  require('./i18n.spec.js')
-  // require('./dragdrop.spec.js')
+  require('./i18n.spec.js'),
+  require('./dragdrop.spec.js')
 ]
 
 function buildDriver (platform) {
   var driver
   if (isRemoteTest) {
     driver = new webdriver
-        .Builder()
-        .withCapabilities({
-          'browserName': platform.browser,
-          'platform': platform.os,
-          'version': platform.version,
-          'username': username,
-          'accessKey': accessKey
-        })
-        .usingServer('http://' + username + ':' + accessKey +
-                    '@ondemand.saucelabs.com:80/wd/hub')
-        .build()
+      .Builder()
+      .withCapabilities({
+        'browserName': platform.browser,
+        'platform': platform.os,
+        'version': platform.version,
+        'username': username,
+        'accessKey': accessKey
+      })
+      .usingServer('http://' + username + ':' + accessKey +
+                   '@ondemand.saucelabs.com:80/wd/hub')
+      .build()
     driver.setFileDetector(new remote.FileDetector())
   } else {
     driver = new webdriver

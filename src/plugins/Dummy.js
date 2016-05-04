@@ -9,7 +9,8 @@ export default class Dummy extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
-    this.name = 'Dummy'
+    this.id = 'Dummy'
+    this.title = 'Dummy'
 
     // set default options
     const defaultOptions = {}
@@ -18,13 +19,18 @@ export default class Dummy extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
-  render () {
+  render (state) {
     return yo`
       <div class="wow-this-works">
         <input type="text" value="hello">
         I am a dummy plugin, look at me, I was rendered in a modal! That’s crazy, I know.
       </div>
     `
+  }
+
+  focus () {
+    const firstInput = document.querySelector(`${this.target} *:input[type!=hidden]:first`)
+    firstInput.focus()
   }
 
   install (state) {

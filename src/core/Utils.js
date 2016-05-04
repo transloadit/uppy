@@ -32,12 +32,12 @@ function promiseWaterfall (methods) {
  * @param {requestCallback} cb
  * @return {String}
  */
-function addListenerMulti (el, events, cb) {
-  const eventsArray = events.split(' ')
-  for (let event in eventsArray) {
-    el.addEventListener(eventsArray[event], cb, false)
-  }
-}
+// function addListenerMulti (el, events, cb) {
+//   const eventsArray = events.split(' ')
+//   for (let event in eventsArray) {
+//     el.addEventListener(eventsArray[event], cb, false)
+//   }
+// }
 
 /**
  * Shallow flatten nested arrays.
@@ -103,10 +103,25 @@ function extend (...objs) {
   return Object.assign.apply(this, [{}].concat(objs))
 }
 
+/**
+ * Takes function or class, returns its name.
+ * Because IE doesn’t support `constructor.name`.
+ * https://gist.github.com/dfkaye/6384439, http://stackoverflow.com/a/15714445
+ *
+ * @param {Object} fn — function
+ *
+ */
+function getFnName (fn) {
+  var f = typeof fn === 'function'
+  var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/))
+  return (!f && 'not a function') || (s && s[1] || 'anonymous')
+}
+
 export default {
   promiseWaterfall,
   generateFileID,
-  addListenerMulti,
+  getFnName,
+  // addListenerMulti,
   every,
   flatten,
   groupBy,

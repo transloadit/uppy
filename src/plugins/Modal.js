@@ -8,6 +8,8 @@ import yo from 'yo-yo'
 export default class Modal extends Plugin {
   constructor (core, opts) {
     super(core, opts)
+    this.id = 'Modal'
+    this.title = 'Modal'
     this.type = 'orchestrator'
 
     // set default options
