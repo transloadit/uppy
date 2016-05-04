@@ -1,4 +1,5 @@
 import Plugin from './Plugin'
+import Utils from '../core/Utils'
 import dragDrop from 'drag-drop'
 import yo from 'yo-yo'
 
@@ -79,15 +80,15 @@ export default class DragDrop extends Plugin {
 
   handleInputChange (ev) {
     this.core.log('All right, something selected through input...')
-    const files = ev.target.files
+    // const files = ev.target.files
 
-    const newFiles = Object.keys(files).map((file) => {
-      return files[file]
-    })
+    // const newFiles = Object.keys(files).map((file) => {
+    //   return files[file]
+    // })
 
     this.core.emitter.emit('file-add', {
       plugin: this,
-      acquiredFiles: newFiles
+      acquiredFiles: Utils.toArray(ev.target.files)
     })
   }
 

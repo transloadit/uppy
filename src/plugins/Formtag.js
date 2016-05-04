@@ -1,4 +1,5 @@
 import Plugin from './Plugin'
+import Utils from '../core/Utils'
 import yo from 'yo-yo'
 
 export default class Formtag extends Plugin {
@@ -22,13 +23,15 @@ export default class Formtag extends Plugin {
   handleInputChange (ev) {
     this.core.log('All right, something selected through input...')
 
-    const files = Object.keys(ev.target.files).map((key) => {
-      return ev.target.files[key]
-    })
+    // this added rubbish keys like “length” to the resulting array
+    //
+    // const files = Object.keys(ev.target.files).map((key) => {
+    //   return ev.target.files[key]
+    // })
 
     this.core.emitter.emit('file-add', {
       plugin: this,
-      acquiredFiles: files
+      acquiredFiles: Utils.toArray(ev.target.files)
     })
   }
 

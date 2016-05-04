@@ -86,6 +86,13 @@ function every (array, predicateFn) {
 }
 
 /**
+ * Converts list into array
+*/
+function toArray (list) {
+  return Array.prototype.slice.call(list || [], 0)
+}
+
+/**
  * Takes a fileName and turns it into fileID, by converting to lowercase,
  * removing extra characters and adding unix timestamp
  *
@@ -122,6 +129,7 @@ export default {
   generateFileID,
   getFnName,
   // addListenerMulti,
+  toArray,
   every,
   flatten,
   groupBy,
