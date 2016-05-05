@@ -25,6 +25,8 @@ export default class Google extends Plugin {
     this.handleClick = this.handleClick.bind(this)
     this.logout = this.logout.bind(this)
     this.renderBrowser = this.renderBrowser.bind(this)
+    this.sortByTitle = this.sortByTitle.bind(this)
+    this.sortByDate = this.sortByDate.bind(this)
 
     // set default options
     const defaultOptions = {}
@@ -291,6 +293,65 @@ export default class Google extends Plugin {
     `
   }
 
+  sortByTitle () {
+    const state = this.core.getState().googleDrive
+    const {files, folders, sorting} = state
+
+    let sortedFiles = files.sort((fileA, fileB) => {
+      if (sorting === 'titleDescending') {
+        return fileB.title.localeCompare(fileA.title)
+      }
+      return fileA.title.localeCompare(fileB.title)
+    })
+
+    let sortedFolders = folders.sort((folderA, folderB) => {
+      if (sorting === 'titleDescending') {
+        return folderB.title.localeCompare(folderA.title)
+      }
+      return folderA.title.localeCompare(folderB.title)
+    })
+
+    this.updateState(Object.assign({}, state, {
+      files: sortedFiles,
+      folders: sortedFolders,
+      sorting: (sorting === 'titleDescending') ? 'titleAscending' : 'titleDescending'
+    }))
+  }
+
+  sortByDate () {
+    const state = this.core.getState().googleDrive
+    const {files, folders, sorting} = state
+
+    let sortedFiles = files.sort((fileA, fileB) => {
+      let a = new Date(fileA.modifiedByMeDate)
+      let b = new Date(fileB.modifiedByMeDate)
+
+      if (sorting === 'dateDescending') {
+        return a > b ? -1 : a < b ? 1 : 0
+      }
+      return a > b ? 1 : a < b ? -1 : 0
+    })
+
+    console.log(sorting)
+
+    let sortedFolders = folders.sort((folderA, folderB) => {
+      let a = new Date(folderA.modifiedByMeDate)
+      let b = new Date(folderB.modifiedByMeDate)
+
+      if (sorting === 'dateDescending') {
+        return a > b ? -1 : a < b ? 1 : 0
+      }
+
+      return a > b ? 1 : a < b ? -1 : 0
+    })
+
+    this.updateState(Object.assign({}, state, {
+      files: sortedFiles,
+      folders: sortedFolders,
+      sorting: (sorting === 'dateDescending') ? 'dateAscending' : 'dateDescending'
+    }))
+  }
+
   /**
    * Render file browser
    * @param  {Object} state Google Drive state
@@ -338,9 +399,9 @@ export default class Google extends Plugin {
         <table class="UppyGoogleDrive-browser">
           <thead>
             <tr>
-              <td>Name</td>
+              <td class="UppyGoogleDrive-sortableHeader" onclick=${this.sortByTitle}>Name</td>
               <td>Owner</td>
-              <td>Last Modified</td>
+              <td class="UppyGoogleDrive-sortableHeader" onclick=${this.sortByDate}>Last Modified</td>
               <td>Filesize</td>
             </tr>
           </thead>
