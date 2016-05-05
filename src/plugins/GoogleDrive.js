@@ -332,8 +332,6 @@ export default class Google extends Plugin {
       return a > b ? 1 : a < b ? -1 : 0
     })
 
-    console.log(sorting)
-
     let sortedFolders = folders.sort((folderA, folderB) => {
       let a = new Date(folderA.modifiedByMeDate)
       let b = new Date(folderB.modifiedByMeDate)
