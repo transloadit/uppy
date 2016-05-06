@@ -1,6 +1,7 @@
 // Docs aren't that great to find. Mostly JAVA based. Here are few helpful resources:
 // - https://www.browserstack.com/automate/node#testing-frameworks
 // - http://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/firefox/index_exports_Driver.html
+// - https://github.com/SeleniumHQ/selenium/blob/8f988e07cc316a48e0ff94d8ff823c95142532e9/javascript/webdriver/webdriver.js
 // - https://github.com/SeleniumHQ/selenium/blob/c10e8a955883f004452cdde18096d70738397788/javascript/node/selenium-webdriver/test/upload_test.js
 //
 // - https://github.com/SeleniumHQ/selenium/wiki/WebDriverJs
@@ -24,14 +25,14 @@ var host = isRemoteTest ? 'http://uppy.io' : 'http://localhost:4000'
 // FYI: old Chrome on Windows XP,
 // Opera 12 on Linux — didn’t pass
 var platforms = [
-  // { browser: 'Opera', version: '12.15', os: 'Linux' },
-  // { browser: 'iphone', version: '9.2', os: 'OS X 10.10' },
   // { browser: 'Safari', version: '8.0', os: 'OS X 10.10' },
+  // { browser: 'MicrosoftEdge', version: '13.10586', os: 'Windows 10' },
   { browser: 'Internet Explorer', version: '10.0', os: 'Windows 8' },
   { browser: 'Internet Explorer', version: '11.103', os: 'Windows 10' },
+  { browser: 'Opera', version: '12.15', os: 'Linux' },
+  { browser: 'Firefox', version: '38.0', os: 'Linux' },
   { browser: 'Firefox', version: '34.0', os: 'Windows 7' },
-  { browser: 'Chrome', version: '48.0', os: 'Windows XP' },
-  { browser: 'Firefox', version: '38.0', os: 'Linux' }
+  { browser: 'Chrome', version: '48.0', os: 'Windows XP' }
 ]
 
 var tests = [
@@ -59,7 +60,7 @@ function buildDriver (platform) {
   } else {
     driver = new webdriver
       .Builder()
-      .forBrowser('firefox')
+      .forBrowser('safari')
       .build()
   }
   return driver

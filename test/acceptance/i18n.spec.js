@@ -1,7 +1,5 @@
 var test = require('tape')
 var chalk = require('chalk')
-var webdriver = require('selenium-webdriver')
-var By = webdriver.By
 var Driver = require('./Driver')
 var collectErrors = Driver.collectErrors
 
@@ -16,7 +14,7 @@ module.exports = function (driver, platform, host) {
     t.plan(1)
 
     function findLabelTextElement () {
-      return driver.findElements(By.css('.UppyDragDrop-label')).then(function (result) {
+      return driver.findElements({css: '.UppyDragDrop-label'}).then(function (result) {
         return result[0]
       })
     }

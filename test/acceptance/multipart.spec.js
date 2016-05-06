@@ -1,8 +1,6 @@
 var test = require('tape')
 var path = require('path')
-var webdriver = require('selenium-webdriver')
 var chalk = require('chalk')
-var By = webdriver.By
 var Driver = require('./Driver')
 var collectErrors = Driver.collectErrors
 
@@ -19,17 +17,19 @@ module.exports = function (driver, platform, host) {
     // Go to the example URL
     driver.get(host + '/examples/multipart/')
 
+    // driver.manage().timeouts().implicitlyWait(5 * 1000)
+
     // Find input by css selector & pass absolute image path to it
-    driver.findElement(By.css('.UppyForm .UppyForm-input')).then(function (el) {
+    driver.findElement({css: '.UppyFormContainer .UppyForm-input'}).then(function (el) {
       el.sendKeys(path.join(__dirname, 'image.jpg'))
       el.sendKeys(path.join(__dirname, 'image2.jpg'))
-      driver.findElement(By.css('.UppyForm-uploadBtn')).click()
+      driver.findElement({css: '.UppyForm-uploadBtn'}).click()
     })
 
     function isUploaded () {
       // .getText() only works on visible elements, so we use .getAttribute('textContent'), go figure
       // http://stackoverflow.com/questions/21994261/gettext-not-working-on-a-select-from-dropdown
-      return driver.findElement(By.css('.UppyProgressBar .UppyProgressBar-percentage'))
+      return driver.findElement({css: '.UppyProgressBar .UppyProgressBar-percentage'})
         .getAttribute('textContent')
         .then(function (value) {
           var progress = parseInt(value)
