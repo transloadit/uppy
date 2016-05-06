@@ -60,7 +60,7 @@ Theme: Acceptance tests and Google Drive Polish
 - [ ] drive: write files to filesystem correctly (@hedgerh)
 - [x] test: Fix 15s timeout image.jpg (@arturi)
 - [x] test: Sign up for Browserstack.com Live account so we can check ourselves what gives and verify saucelabs isn't to blame (@arturi) <-- Turns out, Saucelabs already does that for us
-- [ ] test: Get tests to pass Latest version of Internet Explorer (Windows 10), Safari (OSX), Firefox (Linux), Opera (Windows 10) (@arturi)
+- [x] test: Get tests to pass Latest version of Internet Explorer (Windows 10), Safari (OSX), Firefox (Linux), Opera (Windows 10) (@arturi) <-- IE 10, Chrome, Firefox on Windows and Linux, but not Safari and Microsoft Edge — Selenium issues
 - [x] test: Get saucelabs to show what gives (errors, screenshots, anything) (@arturi)
 - [x] build: sourcemaps for local development (@arturi) <-- Not adding it in production to save the extra request. For local dev, this was added already via Browserify
 - [x] core: Add polyfill for `fetch` (@hedgerh)
