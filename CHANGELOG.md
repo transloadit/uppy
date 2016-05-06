@@ -31,7 +31,15 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 
+## 0.0.7
+
+Scheduled to be released: Not yet
+
 ## 0.0.6
+
+<a name="next"></a> 
+
+Scheduled to be released: June 03, 2016
 
 - [ ] meta: Create an Uppy logo (@markstory)
 - [ ] modal: polish on mobile
@@ -49,15 +57,19 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
 - [ ] modal: Maybe we need to have URL parameters carrying state as payload, so after returning from google, we're in the same tab again (@hedgerh)
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (@arturi)
+- [ ] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png
+- [ ] drive: Show a visual indication that downloading has started after double-clicking. Prevent that 6 clicks = 3 downloads
+- [ ] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433
 
 ## 0.0.5
 
 Theme: Acceptance tests and Google Drive Polish
 
-<a name="next"></a> Scheduled to be released: May 06, 2016
+Scheduled to be released: May 06, 2016
 
-- [ ] drive: possible UI polish (@hedgerh)
-- [ ] drive: write files to filesystem correctly (@hedgerh)
+- [ ] Add `addFile`-hack so we can have acceptance tests on Safari as well as Edge (@arturi)
+- [x] drive: possible UI polish (@hedgerh)
+- [x] drive: write files to filesystem correctly (@hedgerh)
 - [x] test: Fix 15s timeout image.jpg (@arturi)
 - [x] test: Sign up for Browserstack.com Live account so we can check ourselves what gives and verify saucelabs isn't to blame (@arturi) <-- Turns out, Saucelabs already does that for us
 - [x] test: Get tests to pass Latest version of Internet Explorer (Windows 10), Safari (OSX), Firefox (Linux), Opera (Windows 10) (@arturi) <-- IE 10, Chrome, Firefox on Windows and Linux, but not Safari and Microsoft Edge — Selenium issues
