@@ -60,7 +60,7 @@ function buildDriver (platform) {
   } else {
     driver = new webdriver
       .Builder()
-      .forBrowser('safari')
+      .forBrowser('firefox')
       .build()
   }
   return driver
