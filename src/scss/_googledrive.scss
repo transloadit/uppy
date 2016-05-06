@@ -121,6 +121,7 @@
 .UppyGoogleDrive-fileInfo {
   float: left;
   padding: 0 16px;
+  width: 25%;
 }
 
 .UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileThumbnail {
@@ -148,4 +149,15 @@
 .UppyGoogleDrive-sortableHeader:hover {
   background-color: #eee;
   cursor: pointer;
+}
+
+.UppyGoogleDrive-fileInfo ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.UppyGoogleDrive-browserContainer {
+  height: calc(80vh - 40px);
+  overflow: hidden;
+  overflow-y: scroll;
 }

@@ -395,6 +395,7 @@ export default class Google extends Plugin {
           <li><button><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_shared_collection_list_1.png"/> Shared with me</button></li>
           <li><button onclick=${this.logout}>Logout</button></li>
         </ul>
+        <div class="UppyGoogleDrive-browserContainer">
         <table class="UppyGoogleDrive-browser">
           <thead>
             <tr>
@@ -409,6 +410,7 @@ export default class Google extends Plugin {
             ${files}
           </tbody>
         </table>
+        </div>
         <div class="UppyGoogleDrive-fileInfo">
           ${previewElem}
         </div>
