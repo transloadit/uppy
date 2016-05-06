@@ -4,6 +4,15 @@ var By = webdriver.By
 var path = require('path')
 var chalk = require('chalk')
 
+function UppySelectFakeFile () {
+  var blob = new Blob(
+    ['data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='],
+    {type: 'image/svg+xml'}
+  )
+  blob['name'] = 'myDumbSVG'
+  window.UppyAddFiles([blob], 'smth')
+}
+
 // Monitor for errors, and dump them
 function collectErrors (driver) {
   return driver.executeScript('return uppyLog;')
@@ -49,6 +58,7 @@ function setDriver () {
 
 module.exports = {
   setDriver,
+  UppySelectFakeFile,
   collectErrors,
   By
 }

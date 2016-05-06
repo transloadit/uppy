@@ -19,12 +19,24 @@ module.exports = function (driver, platform, host) {
 
     // driver.manage().timeouts().implicitlyWait(5 * 1000)
 
-    // Find input by css selector & pass absolute image path to it
-    driver.findElement({css: '.UppyFormContainer .UppyForm-input'}).then(function (el) {
-      el.sendKeys(path.join(__dirname, 'image.jpg'))
-      el.sendKeys(path.join(__dirname, 'image2.jpg'))
-      driver.findElement({css: '.UppyForm-uploadBtn'}).click()
-    })
+    // If this is Edge or Safari, fake upload a dummy file object
+    var platformBrowser = platform.browser.toLowerCase()
+    if (platformBrowser === 'safari' || platformBrowser === 'microsoftedge') {
+      console.log('fake-selecting a fake file')
+      // driver.executeScript(Driver.UppySelectFakeFile)
+      driver.executeScript(Driver.UppySelectFakeFile).then(function (result) {
+        console.log(result)
+        driver.findElement({css: '.UppyForm-uploadBtn'}).click()
+      })
+    } else {
+      // Find input by css selector & pass absolute image path to it
+      console.log('selecting a real file')
+      driver.findElement({css: '.UppyFormContainer .UppyForm-input'}).then(function (el) {
+        el.sendKeys(path.join(__dirname, 'image.jpg'))
+        el.sendKeys(path.join(__dirname, 'image2.jpg'))
+        driver.findElement({css: '.UppyForm-uploadBtn'}).click()
+      })
+    }
 
     function isUploaded () {
       // .getText() only works on visible elements, so we use .getAttribute('textContent'), go figure

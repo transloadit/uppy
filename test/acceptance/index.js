@@ -18,21 +18,24 @@ var remote = require('selenium-webdriver/remote')
 var username = process.env.SAUCELABS_USERNAME
 var accessKey = process.env.SAUCELABS_ACCESS_KEY
 
+var remoteHost = 'http://b0c83b21.ngrok.io'
+var localHost = 'http://localhost:4000'
+
 // if accessKey is supplied as env variable, this is a remote Saucelabs test
 var isRemoteTest = accessKey ? true : ''
-var host = isRemoteTest ? 'http://uppy.io' : 'http://localhost:4000'
+var host = isRemoteTest ? remoteHost : localHost
 
 // FYI: old Chrome on Windows XP,
 // Opera 12 on Linux — didn’t pass
 var platforms = [
-  // { browser: 'Safari', version: '8.0', os: 'OS X 10.10' },
-  // { browser: 'MicrosoftEdge', version: '13.10586', os: 'Windows 10' },
+  // { browser: 'Safari', version: '9.0', os: 'OS X 10.11' }
+  // { browser: 'MicrosoftEdge', version: '13.10586', os: 'Windows 10' }
+  { browser: 'Firefox', version: '38.0', os: 'Linux' },
   { browser: 'Internet Explorer', version: '10.0', os: 'Windows 8' },
   { browser: 'Internet Explorer', version: '11.103', os: 'Windows 10' },
-  { browser: 'Opera', version: '12.15', os: 'Linux' },
-  { browser: 'Firefox', version: '38.0', os: 'Linux' },
-  { browser: 'Firefox', version: '34.0', os: 'Windows 7' },
-  { browser: 'Chrome', version: '48.0', os: 'Windows XP' }
+  { browser: 'Chrome', version: '48.0', os: 'Windows XP' },
+  { browser: 'Firefox', version: '34.0', os: 'Windows 7' }
+  // { browser: 'Opera', version: '12.15', os: 'Linux' }
 ]
 
 var tests = [

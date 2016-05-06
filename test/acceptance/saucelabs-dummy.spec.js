@@ -27,7 +27,10 @@ function buildDriver (platform) {
 function runTest (driver, platform) {
   console.log('Running dummy test in ' + platform.browser + ' on ' + platform.os)
   driver.get('http://ya.ru')
-  return driver.getTitle().then(function (title) {
+  driver.executeScript('return window').then(function (log) {
+    console.log(log)
+  })
+  driver.getTitle().then(function (title) {
     console.log('title is: ' + title)
     console.log('Finnished running dummy test, I quit!')
     driver.quit()

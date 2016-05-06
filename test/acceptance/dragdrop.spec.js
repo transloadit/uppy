@@ -17,13 +17,19 @@ module.exports = function (driver, platform, host) {
     // Go to the example URL
     driver.get(host + '/examples/dragdrop/')
 
-    // Make file input “visible”
-    driver.executeScript('document.querySelector(".UppyDragDrop-One .UppyDragDrop-input").style.opacity = 1')
-
-    // Find input by css selector & pass absolute image path to it
-    driver
-      .findElement({css: '.UppyDragDrop-One .UppyDragDrop-input'})
-      .sendKeys(path.join(__dirname, 'image.jpg'))
+    var platformBrowser = platform.browser.toLowerCase()
+    if (platformBrowser === 'safari' || platformBrowser === 'microsoftedge') {
+      console.log('fake-selecting a fake file')
+      driver.executeScript(Driver.UppySelectFakeFile)
+    } else {
+      console.log('selecting a real file')
+      // Make file input “visible”
+      driver.executeScript('document.querySelector(".UppyDragDrop-One .UppyDragDrop-input").style.opacity = 1')
+      // Find input by css selector & pass absolute image path to it
+      driver
+        .findElement({css: '.UppyDragDrop-One .UppyDragDrop-input'})
+        .sendKeys(path.join(__dirname, 'image.jpg'))
+    }
 
     function isUploaded () {
       // return driver.findElement(By.id('console-log'))
