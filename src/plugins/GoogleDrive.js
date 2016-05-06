@@ -396,20 +396,20 @@ export default class Google extends Plugin {
           <li><button onclick=${this.logout}>Logout</button></li>
         </ul>
         <div class="UppyGoogleDrive-browserContainer">
-        <table class="UppyGoogleDrive-browser">
-          <thead>
-            <tr>
-              <td class="UppyGoogleDrive-sortableHeader" onclick=${this.sortByTitle}>Name</td>
-              <td>Owner</td>
-              <td class="UppyGoogleDrive-sortableHeader" onclick=${this.sortByDate}>Last Modified</td>
-              <td>Filesize</td>
-            </tr>
-          </thead>
-          <tbody>
-            ${folders}
-            ${files}
-          </tbody>
-        </table>
+          <table class="UppyGoogleDrive-browser">
+            <thead>
+              <tr>
+                <td class="UppyGoogleDrive-sortableHeader" onclick=${this.sortByTitle}>Name</td>
+                <td>Owner</td>
+                <td class="UppyGoogleDrive-sortableHeader" onclick=${this.sortByDate}>Last Modified</td>
+                <td>Filesize</td>
+              </tr>
+            </thead>
+            <tbody>
+              ${folders}
+              ${files}
+            </tbody>
+          </table>
         </div>
         <div class="UppyGoogleDrive-fileInfo">
           ${previewElem}
