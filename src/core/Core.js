@@ -37,8 +37,9 @@ export default class Core {
       files: {}
     }
 
-    // for debugging
+    // for debugging and testing
     global.UppyState = this.state
+    global.UppyAddFiles = this.addFiles.bind(this)
   }
 
   /**
@@ -73,61 +74,67 @@ export default class Core {
     return this.state
   }
 
+  addFiles (files, caller) {
+    const updatedFiles = Object.assign({}, this.state.files)
+
+    files.forEach((file) => {
+      const fileName = file.name
+      const fileType = file.type.split('/')
+      const fileTypeGeneral = fileType[0]
+      const fileTypeSpecific = fileType[1]
+      const fileID = Utils.generateFileID(fileName)
+
+      updatedFiles[fileID] = {
+        acquiredBy: caller,
+        id: fileID,
+        name: fileName,
+        type: {
+          general: fileTypeGeneral,
+          specific: fileTypeSpecific
+        },
+        data: file,
+        progress: 0,
+        uploadURL: ''
+      }
+
+      // TODO figure out if and when we need image preview —
+      // they eat a ton of memory and slow things down subtantially
+
+      // const readImgPreview = (file) => {
+      //   const reader = new FileReader()
+      //   reader.addEventListener('load', (ev) => {
+      //     const imgSrc = ev.target.result
+      //     const updatedFiles = Object.assign({}, this.state.files)
+      //     updatedFiles[file.id].preview = imgSrc
+      //     this.setState({files: updatedFiles})
+      //   })
+      //   reader.addEventListener('error', (err) => {
+      //     this.core.log('FileReader error' + err)
+      //   })
+      //   reader.readAsDataURL(file.data)
+      // }
+
+      // if (fileTypeGeneral === 'image') {
+      //   readImgPreview(updatedFiles[fileID])
+      // }
+    })
+
+    this.setState({files: updatedFiles})
+
+    if (this.opts.autoProceed) {
+      this.emitter.emit('next')
+    }
+  }
+
   /**
    * Registeres listeners for all global actions, like:
    * `file-add`, `file-remove`, `upload-progress`, `reset`
    *
    */
   actions () {
-    // const readImgPreview = (file) => {
-    //   const reader = new FileReader()
-    //   reader.addEventListener('load', (ev) => {
-    //     const imgSrc = ev.target.result
-    //     const updatedFiles = Object.assign({}, this.state.files)
-    //     updatedFiles[file.id].preview = imgSrc
-    //     this.setState({files: updatedFiles})
-    //   })
-    //   reader.addEventListener('error', (err) => {
-    //     this.core.log('FileReader error' + err)
-    //   })
-    //   reader.readAsDataURL(file.data)
-    // }
-
     this.emitter.on('file-add', (data) => {
-      const updatedFiles = Object.assign({}, this.state.files)
-
-      data.acquiredFiles.forEach((file) => {
-        const fileName = file.name
-        const fileType = file.type.split('/')
-        const fileTypeGeneral = fileType[0]
-        const fileTypeSpecific = fileType[1]
-        const fileID = Utils.generateFileID(fileName)
-
-        updatedFiles[fileID] = {
-          acquiredBy: data.plugin,
-          id: fileID,
-          name: fileName,
-          type: {
-            general: fileTypeGeneral,
-            specific: fileTypeSpecific
-          },
-          data: file,
-          progress: 0,
-          uploadURL: ''
-        }
-
-        // TODO figure out if and when we need image preview —
-        // they eat a ton of memory and slow things down subtantially
-        // if (fileTypeGeneral === 'image') {
-        //   readImgPreview(updatedFiles[fileID])
-        // }
-      })
-
-      this.setState({files: updatedFiles})
-
-      if (this.opts.autoProceed) {
-        this.emitter.emit('next')
-      }
+      const { acquiredFiles, plugin } = data
+      this.addFiles(acquiredFiles, plugin)
     })
 
     // `remove-file` removes a file from `state.files`, after successfull upload
