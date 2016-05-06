@@ -393,6 +393,7 @@ export default class Google extends Plugin {
           <li class="UppyGoogleDrive-filter"><input type='text' onkeyup=${this.filterQuery} placeholder="Search.." value=${state.filterInput}/></li>
           <li><button onclick=${this.getSubFolder.bind(this, 'root', 'My Drive')}><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_collection_list_3.png"/> My Drive</button></li>
           <li><button><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_shared_collection_list_1.png"/> Shared with me</button></li>
+          <li><button onclick=${this.logout}>Logout</button></li>
         </ul>
         <table class="UppyGoogleDrive-browser">
           <thead>
