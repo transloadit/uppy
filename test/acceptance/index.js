@@ -77,7 +77,7 @@ function buildDriver (platform) {
       capabilities['tunnel-identifier'] = process.env.TRAVIS_JOB_NUMBER
       capabilities['build'] = process.env.TRAVIS_BUILD_NUMBER
       capabilities['name'] = 'Travis ##' + process.env.TRAVIS_JOB_NUMBER
-      capabilities['tags'] = [process.env.TRAVIS_PYTHON_VERSION, 'CI']
+      capabilities['tags'] = [process.env.TRAVIS_NODE_VERSION, 'CI']
     }
 
     driver = new webdriver
