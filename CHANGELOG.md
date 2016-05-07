@@ -67,7 +67,8 @@ Theme: Acceptance tests and Google Drive Polish
 
 Scheduled to be released: May 06, 2016
 
-- [ ] Add `addFile`-hack so we can have acceptance tests on Safari as well as Edge (@arturi)
+- [ ] Wire saucelabs and travis togeteher, make saucelabsl fails fatal to travis builds
+- [x] Add `addFile`-hack so we can have acceptance tests on Safari as well as Edge (@arturi)
 - [x] drive: possible UI polish (@hedgerh)
 - [x] drive: write files to filesystem correctly (@hedgerh)
 - [x] test: Fix 15s timeout image.jpg (@arturi)
