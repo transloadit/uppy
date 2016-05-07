@@ -1,6 +1,6 @@
 {
   "name": "uppy",
-  "version": "0.0.6",
+  "version": "0.0.5",
   "description": "Almost as cute as a Puppy :dog:",
   "main": "src/index.js",
   "scripts": {
