@@ -33,42 +33,46 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.0.7
 
-Scheduled to be released: Not yet
+Theme: TBD
+
+Scheduled to be released: TBD
 
 ## 0.0.6
 
 <a name="next"></a> 
 
+Theme: TBD
+
 Scheduled to be released: June 03, 2016
 
-- [ ] meta: Create an Uppy logo (@markstory)
-- [ ] modal: polish on mobile
-- [ ] presenter: make it work with new components/state (@arturi)
-- [ ] server: Implement the `SERVER-PLAN.md` so that Google Drive files are actually uploaded to the endpoint
-- [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
-- [ ] progressdrawer: let user cancel uploads in progress (@arturi)
-- [ ] progressdrawer: preview icons for all (@arturi)
 - [ ] build: minification of the bundle (@kvz)
 - [ ] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@kvz)
-- [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
-- [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
-- [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id), belonging to the `modify` stage (or a different word we'll come up with) (@arturi)
+- [ ] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png
+- [ ] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433
+- [ ] drive: Show a visual indication that downloading has started after double-clicking. Prevent that 6 clicks = 3 downloads
+- [ ] meta: Create Uppy logos (@markstory)
 - [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
 - [ ] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
 - [ ] modal: Maybe we need to have URL parameters carrying state as payload, so after returning from google, we're in the same tab again (@hedgerh)
+- [ ] modal: polish on mobile
+- [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id), belonging to the `modify` stage (or a different word we'll come up with) (@arturi)
+- [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
+- [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
+- [ ] presenter: make it work with new components/state (@arturi)
+- [ ] progressdrawer: let user cancel uploads in progress (@arturi)
+- [ ] progressdrawer: preview icons for all (@arturi)
+- [ ] server: Implement the `SERVER-PLAN.md` so that Google Drive files are actually uploaded to the endpoint
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (@arturi)
-- [ ] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png
-- [ ] drive: Show a visual indication that downloading has started after double-clicking. Prevent that 6 clicks = 3 downloads
-- [ ] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433
+- [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 
 ## 0.0.5
 
 Theme: Acceptance tests and Google Drive Polish
 
-Scheduled to be released: May 06, 2016
+Released: May 07, 2016
 
-- [ ] Wire saucelabs and travis togeteher, make saucelabsl fails fatal to travis builds
-- [x] Add `addFile`-hack so we can have acceptance tests on Safari as well as Edge (@arturi)
+- [x] test: Wire saucelabs and travis togeteher, make saucelabsl fails fatal to travis builds
+- [x] test: Add `addFile`-hack so we can have acceptance tests on Safari as well as Edge (@arturi)
 - [x] drive: possible UI polish (@hedgerh)
 - [x] drive: write files to filesystem correctly (@hedgerh)
 - [x] test: Fix 15s timeout image.jpg (@arturi)
