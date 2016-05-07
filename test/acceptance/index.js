@@ -15,15 +15,33 @@ require('babel-register')
 var webdriver = require('selenium-webdriver')
 var remote = require('selenium-webdriver/remote')
 
-var username = process.env.SAUCELABS_USERNAME
-var accessKey = process.env.SAUCELABS_ACCESS_KEY
+// The Travis Sauce Connect addon exports the SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables,
+// and relays connections to the hub URL back to Sauce Labs.
+// See: https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs
+var username = process.env.SAUCE_USERNAME
+var accessKey = process.env.SAUCE_ACCESS_KEY
 
 var remoteHost = 'http://uppy.io'
 var localHost = 'http://localhost:4000'
 
 // if accessKey is supplied as env variable, this is a remote Saucelabs test
-var isRemoteTest = accessKey ? true : ''
-var host = isRemoteTest ? remoteHost : localHost
+var isTravisTest = process.env.TRAVIS === 'true'
+var isRemoteTest = !!accessKey
+
+var host = localHost
+if (isTravisTest) {
+  // We have a tunnel via the saucelabs addon on Travis
+  host = localHost
+} else if (isRemoteTest) {
+  // We're not too sure about a working tunnel otherwise, best just test uppy.io
+  host = remoteHost
+} else {
+  // If we don't have any access keys set, we'll assume you'll be playing around with a local
+  // firefox webdriver.
+  host = localHost
+}
+
+console.log('Acceptance tests will be targetting: ' + host)
 
 // FYI: old Chrome on Windows XP — didn’t pass
 var platforms = [
@@ -45,15 +63,26 @@ var tests = [
 function buildDriver (platform) {
   var driver
   if (isRemoteTest) {
+    var capabilities = {
+      'browserName': platform.browser,
+      'platform': platform.os,
+      'version': platform.version,
+      'username': username,
+      'accessKey': accessKey
+    }
+
+    if (isTravisTest) {
+      // @todo Do we need a hub_url = "%s:%s@localhost:4445" % (username, access_key)
+      // as mentioned in https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs ?
+      capabilities['tunnel-identifier'] = process.env.TRAVIS_JOB_NUMBER
+      capabilities['build'] = process.env.TRAVIS_BUILD_NUMBER
+      capabilities['name'] = 'Travis ##' + process.env.TRAVIS_JOB_NUMBER
+      capabilities['tags'] = [process.env.TRAVIS_NODE_VERSION, 'CI']
+    }
+
     driver = new webdriver
       .Builder()
-      .withCapabilities({
-        'browserName': platform.browser,
-        'platform': platform.os,
-        'version': platform.version,
-        'username': username,
-        'accessKey': accessKey
-      })
+      .withCapabilities(capabilities)
       .usingServer('http://' + username + ':' + accessKey +
                    '@ondemand.saucelabs.com:80/wd/hub')
       .build()
