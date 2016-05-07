@@ -8,8 +8,10 @@ export UPPYSERVER_GOOGLE_KEY="***"
 export UPPYSERVER_GOOGLE_SECRET="***"
 export UPPYSERVER_INSTAGRAM_KEY="***"
 export UPPYSERVER_INSTAGRAM_SECRET="***"
-export SAUCE_ACCESS_KEY="***"
-export SAUCE_USERNAME="***"
+
+# Let's not set this by default, because that will make acceptance tests Always run on Saucelabs
+## export SAUCE_ACCESS_KEY="***"
+## export SAUCE_USERNAME="***"
 
 # travis encrypt --add GHPAGES_URL=https://secret_access_token@github.com/transloadit/uppy.git
 # travis encrypt --add env.global "UPPYSERVER_DROPBOX_KEY=${UPPYSERVER_DROPBOX_KEY}"
