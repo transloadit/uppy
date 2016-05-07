@@ -65,6 +65,8 @@ Scheduled to be released: June 03, 2016
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (@arturi)
 - [ ] test: Make Edge and Safari work via the tunnel so we can test localhost instead of uppy.io, and test the current build, vs the previous deploy that way
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
+- [ ] website: Polish Saucelabs stats (social badge + stats layout) (@arturi)
+- [x] website: Add Saucelabs badges to uppy.io (@kvz)
 
 ## 0.0.5
 
