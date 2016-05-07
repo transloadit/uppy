@@ -13,6 +13,16 @@ function UppySelectFakeFile () {
   window.UppyAddFiles([blob], 'smth')
 }
 
+// function setSauceTestName (name) {
+//
+// }
+//
+// function setSaucetestPassed (passed) {
+//   if (passed) {
+//     return
+//   }
+// }
+
 // Monitor for errors, and dump them
 function collectErrors (driver) {
   return driver.executeScript('return uppyLog;')

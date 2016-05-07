@@ -5,17 +5,28 @@ var Driver = require('./Driver')
 var collectErrors = Driver.collectErrors
 
 module.exports = function (driver, platform, host) {
-  test('multipart: upload two files ' +
-      chalk.underline.yellow('[' +
+  var testName = 'Multipart: upload two files'
+  var platformName = chalk.underline.yellow('[' +
         platform.os + ' ' +
         platform.browser + ' ' +
         platform.version +
-      ']'),
-  function (t) {
+      ']')
+
+  test(testName + ' ' + platformName, function (t) {
     t.plan(1)
 
     // Go to the example URL
     driver.get(host + '/examples/multipart/')
+    driver.manage().window().maximize()
+
+    // TODO: figure out how to properly mark tests as complete in Saucelabs
+    // driver.executeScript('sauce:jpassed=true)
+    // driver.executeScript('sauce:jpassed=false)
+
+    // Set Saucelabs test name
+    driver.executeScript('sauce:job-name=' + testName).catch(function (err) {
+      console.log('local test, so this is ok: ' + err)
+    })
 
     // driver.manage().timeouts().implicitlyWait(5 * 1000)
 
@@ -23,11 +34,8 @@ module.exports = function (driver, platform, host) {
     var platformBrowser = platform.browser.toLowerCase()
     if (platformBrowser === 'safari' || platformBrowser === 'microsoftedge') {
       console.log('fake-selecting a fake file')
-      // driver.executeScript(Driver.UppySelectFakeFile)
-      driver.executeScript(Driver.UppySelectFakeFile).then(function (result) {
-        console.log(result)
-        driver.findElement({css: '.UppyForm-uploadBtn'}).click()
-      })
+      driver.executeScript(Driver.UppySelectFakeFile)
+      driver.findElement({css: '.UppyForm-uploadBtn'}).click()
     } else {
       // Find input by css selector & pass absolute image path to it
       console.log('selecting a real file')

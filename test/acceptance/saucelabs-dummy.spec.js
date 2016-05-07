@@ -24,16 +24,20 @@ function buildDriver (platform) {
   return driver
 }
 
+function getBtnValue () {
+  return document.querySelector('.button__text').textContent
+}
+
 function runTest (driver, platform) {
   console.log('Running dummy test in ' + platform.browser + ' on ' + platform.os)
   driver.get('http://ya.ru')
-  driver.executeScript('return window').then(function (log) {
-    console.log(log)
-  })
-  driver.getTitle().then(function (title) {
-    console.log('title is: ' + title)
-    console.log('Finnished running dummy test, I quit!')
-    driver.quit()
+  driver.executeScript(getBtnValue).then(function (val) {
+    console.log(val)
+    driver.getTitle().then(function (title) {
+      console.log('title is: ' + title)
+      console.log('Finnished running dummy test, I quit!')
+      driver.quit()
+    })
   })
 }
 

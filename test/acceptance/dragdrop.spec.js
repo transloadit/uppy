@@ -5,22 +5,30 @@ var Driver = require('./Driver')
 var collectErrors = Driver.collectErrors
 
 module.exports = function (driver, platform, host) {
-  test('dragdrop: make sure DragDrop accepts and uploads 1 file via input ' +
-      chalk.underline.yellow('[' +
+  var testName = 'DragDrop: upload one file'
+  var platformName = chalk.underline.yellow('[' +
         platform.os + ' ' +
         platform.browser + ' ' +
         platform.version +
-      ']'),
-  function (t) {
+      ']')
+
+  test(testName + ' ' + platformName, function (t) {
     t.plan(1)
 
     // Go to the example URL
     driver.get(host + '/examples/dragdrop/')
+    driver.manage().window().maximize()
+
+    // Set Saucelabs test name
+    driver.executeScript('sauce:job-name=' + testName).catch(function (err) {
+      console.log('local test, so this is ok: ' + err)
+    })
 
     var platformBrowser = platform.browser.toLowerCase()
     if (platformBrowser === 'safari' || platformBrowser === 'microsoftedge') {
       console.log('fake-selecting a fake file')
       driver.executeScript(Driver.UppySelectFakeFile)
+      driver.findElement({css: '#UppyDragDrop-Two .UppyDragDrop-uploadBtn'}).click()
     } else {
       console.log('selecting a real file')
       // Make file input “visible”
@@ -41,7 +49,9 @@ module.exports = function (driver, platform, host) {
 
       // .getText() only work on visible elements, so we use .getAttribute('textContent'), go figure
       // http://stackoverflow.com/questions/21994261/gettext-not-working-on-a-select-from-dropdown
-      return driver.findElement({css: '.UppyDragDrop-One-Progress .UppyProgressBar-percentage'})
+
+      // TODO: figure out how to deal with multiple Uppy instances on the page
+      return driver.findElement({css: '.UppyProgressBar-percentage'})
         .getAttribute('textContent')
         .then(function (value) {
           var progress = parseInt(value)
