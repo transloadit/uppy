@@ -30,8 +30,11 @@ var isRemoteTest = !!accessKey
 
 var host = localHost
 if (isTravisTest) {
-  // We have a tunnel via the saucelabs addon on Travis
-  host = localHost
+  // @todo This should become localhost to utilize the Travis saucelabs addon tunnel
+  // But it seems Edge and Safar fail on that right now, so targeting uppy.io instead.
+  // That is unideal, as we are then testing a previous deploy, and not the current build
+  // host = localHost
+  host = remoteHost
 } else if (isRemoteTest) {
   // We're not too sure about a working tunnel otherwise, best just test uppy.io
   host = remoteHost

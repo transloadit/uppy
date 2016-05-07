@@ -63,6 +63,7 @@ Scheduled to be released: June 03, 2016
 - [ ] progressdrawer: preview icons for all (@arturi)
 - [ ] server: Implement the `SERVER-PLAN.md` so that Google Drive files are actually uploaded to the endpoint
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (@arturi)
+- [ ] test: Make Edge and Safari work via the tunnel so we can test localhost instead of uppy.io, and test the current build, vs the previous deploy that way
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 
 ## 0.0.5
