@@ -23,23 +23,6 @@ function promiseWaterfall (methods) {
 }
 
 /**
- * Adds multiple listeners to to a DOM element
- * Equvalent to jQuery’s `$form.on('drag dragstart dragend dragover dragenter dragleave drop')`.
- *
- * @memberof Utils
- * @param {String} el selector
- * @param {String} events to add, like `drag dragstart dragend dragover dragenter dragleave drop`
- * @param {requestCallback} cb
- * @return {String}
- */
-// function addListenerMulti (el, events, cb) {
-//   const eventsArray = events.split(' ')
-//   for (let event in eventsArray) {
-//     el.addEventListener(eventsArray[event], cb, false)
-//   }
-// }
-
-/**
  * Shallow flatten nested arrays.
  */
 function flatten (arr) {
@@ -128,7 +111,6 @@ export default {
   promiseWaterfall,
   generateFileID,
   getFnName,
-  // addListenerMulti,
   toArray,
   every,
   flatten,
