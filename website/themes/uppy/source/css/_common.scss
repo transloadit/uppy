@@ -258,7 +258,7 @@ a.button {
     height: 24px;
     top: 8px;
     left: 12px;
-    background: svg('burger.svg', '[fill]: #{$color-gray}') center center no-repeat;
+    background: svg-load('burger.svg', fill=#{$color-gray}) center center no-repeat;
     background-size: 22px;
   }
 
@@ -288,7 +288,7 @@ a.button {
     border-radius: 15px;
     margin-right: 10px;
     transition: border-color .2s ease;
-    background: svg('search.svg', '[fill]: #{$color-gray}') 8px 5px no-repeat;
+    background: svg-load('search.svg', fill=#{$color-gray}) 8px 5px no-repeat;
     background-size: 18px;
     margin-bottom: 10px;
 

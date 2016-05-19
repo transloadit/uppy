@@ -261,7 +261,7 @@
   }
 
   li {
-    background: svg('check.svg', '[fill]: #{$color-white}') left 5px no-repeat;
+    background: svg-load('check.svg', fill=#{$color-white}) left 5px no-repeat;
     background-size: 24px 24px;
     padding-left: 40px;
     margin-bottom: 0.5em;

@@ -121,14 +121,12 @@ node_sass:
 
 postcss:
   plugins:
-    postcss-svg:
-      debug: false
-      paths:
-        - 'src/images'
-      defaults: "[fill]: #000000"
+    postcss-inline-svg:
+      path: 'src/images'
     autoprefixer:
       browsers:
         - 'last 2 versions'
+    cssnano:
 
 browsersync:
   files: 'public/examples/**/*.js'

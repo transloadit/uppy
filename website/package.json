@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "autoprefixer": "6.3.6",
+    "cssnano": "3.6.2",
     "hexo": "3.2.0",
     "hexo-browsersync": "0.2.0",
     "hexo-deployer-git": "0.1.0",
@@ -23,7 +24,7 @@
     "hexo-util": "0.5.3",
     "js-yaml": "3.5.5",
     "mkdirp": "0.5.1",
-    "postcss-svg": "https://github.com/kvz/postcss-svg#9239b6dd4ab0dc3ef37f41c9cbc0e23d25549c7b",
+    "postcss-inline-svg": "1.4.0",
     "uuid": "2.0.1"
   },
   "devDependencies": {
