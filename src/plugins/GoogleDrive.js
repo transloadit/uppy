@@ -210,11 +210,15 @@ export default class Google extends Plugin {
    * Render user authentication view
    */
   renderAuth () {
-    const link = `${this.opts.host}/connect/google?state=${location.href}`
+    const state = btoa(JSON.stringify({
+      redirect: location.href
+    }))
+
+    const link = `${this.opts.host}/connect/google?state=${state}`
     return yo`
       <div class="UppyGoogleDrive-authenticate">
         <h1>You need to authenticate with Google before selecting files.</h1>
-        <a href=${link}>Authenticate</a>
+        <a href=${link} target="_blank">Authenticate</a>
       </div>
     `
   }
