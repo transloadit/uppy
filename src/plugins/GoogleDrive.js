@@ -16,7 +16,6 @@ export default class Google extends Plugin {
     `
 
     this.files = []
-
     this.renderBrowserItem = this.renderBrowserItem.bind(this)
     this.filterItems = this.filterItems.bind(this)
     this.filterQuery = this.filterQuery.bind(this)
@@ -211,14 +210,14 @@ export default class Google extends Plugin {
    */
   renderAuth () {
     const state = btoa(JSON.stringify({
-      redirect: location.href
+      redirect: location.href.split('#')[0]
     }))
 
     const link = `${this.opts.host}/connect/google?state=${state}`
     return yo`
       <div class="UppyGoogleDrive-authenticate">
         <h1>You need to authenticate with Google before selecting files.</h1>
-        <a href=${link} target="_blank">Authenticate</a>
+        <a href=${link}>Authenticate</a>
       </div>
     `
   }
