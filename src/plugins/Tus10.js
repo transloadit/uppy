@@ -32,6 +32,9 @@ export default class Tus10 extends Plugin {
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
+      if (file.remote) {
+        this.uploadRemote(file, current, total, resolve, reject)
+      }
       const upload = new tus.Upload(file.data, {
 
         // TODO merge this.opts or this.opts.tus here
@@ -70,24 +73,33 @@ export default class Tus10 extends Plugin {
 
       const filesForUpload = {}
       Object.keys(files).forEach((file) => {
-        if (files[file].progress === 0) {
+        if (files[file].progress === 0 || files[file].remote) {
           filesForUpload[file] = files[file]
         }
       })
 
-      const uploaders = []
-
-      Object.keys(filesForUpload).forEach((fileID, i) => {
-        const file = filesForUpload[fileID]
-        const current = parseInt(i, 10) + 1
-        const total = Object.keys(filesForUpload).length
-        uploaders.push(this.upload(file, current, total))
-      })
-
-      Promise.all(uploaders).then((result) => {
-        this.core.log('Tus has finished uploading!')
-      })
+      this.uploadFiles(filesForUpload)
     })
+  }
+
+  uploadFiles (files) {
+    const uploaders = []
+    for (let i in files) {
+      const file = files[i]
+      const current = parseInt(i, 10) + 1
+      const total = files.length
+      uploaders.push(this.upload(file, current, total))
+    }
+
+    return Promise.all(uploaders).then(() => {
+      return {
+        uploadedCount: files.length
+      }
+    })
+  }
+
+  uploadRemote (file, current, total, resolve, reject) {
+    // do the thang
   }
 
 /**
@@ -103,21 +115,6 @@ export default class Tus10 extends Plugin {
       results: results
     })
 
-    const files = results
-
-    // var uploaded  = [];
-    const uploaders = []
-    for (let i in files) {
-      const file = files[i]
-      const current = parseInt(i, 10) + 1
-      const total = files.length
-      uploaders.push(this.upload(file, current, total))
-    }
-
-    return Promise.all(uploaders).then(() => {
-      return {
-        uploadedCount: files.length
-      }
-    })
+    return this.uploadFiles(results)
   }
 }

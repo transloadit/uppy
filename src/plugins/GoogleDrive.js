@@ -16,11 +16,10 @@ export default class Google extends Plugin {
     `
 
     this.files = []
-
     this.renderBrowserItem = this.renderBrowserItem.bind(this)
     this.filterItems = this.filterItems.bind(this)
     this.filterQuery = this.filterQuery.bind(this)
-    this.getFile = this.getFile.bind(this)
+    this.addFile = this.addFile.bind(this)
     this.getFolder = this.getFolder.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.logout = this.logout.bind(this)
@@ -155,24 +154,15 @@ export default class Google extends Plugin {
    * @param  {String} fileId
    * @return {Promise} Result
    */
-  getFile (fileId) {
-    if (typeof fileId !== 'string') {
-      return new Error('getFile: File ID is not a string.')
-    }
+  addFile (file) {
+    const tagFile = Object.assign({}, file, {
+      remote: true
+    })
 
-    return fetch(`${this.opts.host}/google/get?fileId=${fileId}`, {
-      method: 'get',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
+    this.core.emitter.emit('file-add', {
+      plugin: this,
+      acquiredFiles: [tagFile]
     })
-    .then((res) => {
-      return res.json()
-        .then((json) => json)
-    })
-    .catch((err) => err)
   }
 
   /**
@@ -210,7 +200,11 @@ export default class Google extends Plugin {
    * Render user authentication view
    */
   renderAuth () {
-    const link = `${this.opts.host}/connect/google?state=${location.href}`
+    const state = btoa(JSON.stringify({
+      redirect: location.href.split('#')[0]
+    }))
+
+    const link = `${this.opts.host}/connect/google?state=${state}`
     return yo`
       <div class="UppyGoogleDrive-authenticate">
         <h1>You need to authenticate with Google before selecting files.</h1>
@@ -225,7 +219,7 @@ export default class Google extends Plugin {
   renderBrowser (state) {
     const breadcrumbs = state.directory.map((dir) => yo`<span><button onclick=${this.getSubFolder.bind(this, dir.id, dir.title)}>${dir.title}</button> +</span> `)
     const folders = state.folders.map((folder) => yo`<li>Folder<button class="GoogleDriveFolder" onclick=${this.getSubFolder.bind(this, folder.id, folder.title)}>${folder.title}</button></li>`)
-    const files = state.files.map((file) => yo`<li><button class="GoogleDriveFile" onclick=${this.getFile.bind(this, file.id)}>${file.title}</button></li>`)
+    const files = state.files.map((file) => yo`<li><button class="GoogleDriveFile" onclick=${this.addFile.bind(this, file)}>${file.title}</button></li>`)
 
     return yo`
       <div>
@@ -284,7 +278,7 @@ export default class Google extends Plugin {
     return yo`
       <tr class=${(isAFileSelected && state.active.id === item.id) ? 'is-active' : ''}
         onclick=${this.handleClick.bind(this, item)}
-        ondblclick=${isFolder ? this.getSubFolder.bind(this, item.id, item.title) : this.getFile.bind(this, item.id)}>
+        ondblclick=${isFolder ? this.getSubFolder.bind(this, item.id, item.title) : this.addFile.bind(this, item)}>
         <td><span class="UppyGoogleDrive-folderIcon"><img src=${item.iconLink}/></span> ${item.title}</td>
         <td>Me</td>
         <td>${item.modifiedByMeDate}</td>
@@ -389,30 +383,40 @@ export default class Google extends Plugin {
             ${breadcrumbs}
           </ul>
         </div>
-        <ul class="UppyGoogleDrive-sidebar">
-          <li class="UppyGoogleDrive-filter"><input type='text' onkeyup=${this.filterQuery} placeholder="Search.." value=${state.filterInput}/></li>
-          <li><button onclick=${this.getSubFolder.bind(this, 'root', 'My Drive')}><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_collection_list_3.png"/> My Drive</button></li>
-          <li><button><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_shared_collection_list_1.png"/> Shared with me</button></li>
-          <li><button onclick=${this.logout}>Logout</button></li>
-        </ul>
-        <div class="UppyGoogleDrive-browserContainer">
-          <table class="UppyGoogleDrive-browser">
-            <thead>
-              <tr>
-                <td class="UppyGoogleDrive-sortableHeader" onclick=${this.sortByTitle}>Name</td>
-                <td>Owner</td>
-                <td class="UppyGoogleDrive-sortableHeader" onclick=${this.sortByDate}>Last Modified</td>
-                <td>Filesize</td>
-              </tr>
-            </thead>
-            <tbody>
-              ${folders}
-              ${files}
-            </tbody>
-          </table>
-        </div>
-        <div class="UppyGoogleDrive-fileInfo">
-          ${previewElem}
+        <div class="container-fluid">
+          <div class="row">
+            <div class="hidden-md-down col-lg-3 col-xl-3">
+              <ul class="UppyGoogleDrive-sidebar">
+                <li class="UppyGoogleDrive-filter"><input type='text' onkeyup=${this.filterQuery} placeholder="Search.." value=${state.filterInput}/></li>
+                <li><button onclick=${this.getSubFolder.bind(this, 'root', 'My Drive')}><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_collection_list_3.png"/> My Drive</button></li>
+                <li><button><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_shared_collection_list_1.png"/> Shared with me</button></li>
+                <li><button onclick=${this.logout}>Logout</button></li>
+              </ul>
+            </div>
+            <div class="col-md-12 col-lg-9 col-xl-6">
+              <div class="UppyGoogleDrive-browserContainer">
+                <table class="UppyGoogleDrive-browser">
+                  <thead>
+                    <tr>
+                      <td class="UppyGoogleDrive-sortableHeader" onclick=${this.sortByTitle}>Name</td>
+                      <td>Owner</td>
+                      <td class="UppyGoogleDrive-sortableHeader" onclick=${this.sortByDate}>Last Modified</td>
+                      <td>Filesize</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${folders}
+                    ${files}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="hidden-lg-down col-xl-2">
+              <div class="UppyGoogleDrive-fileInfo">
+                ${previewElem}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     `
