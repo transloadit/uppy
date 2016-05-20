@@ -39,7 +39,7 @@ Scheduled to be released: TBD
 
 ## 0.0.6
 
-<a name="next"></a> 
+<a name="next"></a>
 
 Theme: TBD
 
@@ -50,7 +50,7 @@ Scheduled to be released: June 03, 2016
 - [ ] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png
 - [ ] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433
 - [ ] drive: Show a visual indication that downloading has started after double-clicking. Prevent that 6 clicks = 3 downloads
-- [ ] meta: Create Uppy logos (@markstory)
+- [x] meta: Create Uppy logos (@markstory)
 - [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
 - [ ] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
 - [ ] modal: Maybe we need to have URL parameters carrying state as payload, so after returning from google, we're in the same tab again (@hedgerh)
@@ -60,13 +60,15 @@ Scheduled to be released: June 03, 2016
 - [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
 - [ ] presenter: make it work with new components/state (@arturi)
 - [ ] progressdrawer: let user cancel uploads in progress (@arturi)
-- [ ] progressdrawer: preview icons for all (@arturi)
+- [ ] progressdrawer: improve styles, add preview icons for all (@arturi)
 - [ ] server: Implement the `SERVER-PLAN.md` so that Google Drive files are actually uploaded to the endpoint
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (@arturi)
+- [ ] test: Add pass/fail Saucelabs flag to acceptance tests (@arturi)
 - [ ] test: Make Edge and Safari work via the tunnel so we can test localhost instead of uppy.io, and test the current build, vs the previous deploy that way
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [ ] website: Polish Saucelabs stats (social badge + stats layout) (@arturi)
 - [x] website: Add Saucelabs badges to uppy.io (@kvz)
+- [x] website: fix disappearing icons issue, `postcss-inline-svg` (@arturi)
 
 ## 0.0.5
 
