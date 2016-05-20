@@ -78,23 +78,30 @@ export default class Core {
     const updatedFiles = Object.assign({}, this.state.files)
 
     files.forEach((file) => {
-      const fileName = file.name
-      const fileType = file.type.split('/')
-      const fileTypeGeneral = fileType[0]
-      const fileTypeSpecific = fileType[1]
-      const fileID = Utils.generateFileID(fileName)
+      if (!file.remote) {
+        const fileName = file.name
+        const fileType = file.type.split('/')
+        const fileTypeGeneral = fileType[0]
+        const fileTypeSpecific = fileType[1]
+        const fileID = Utils.generateFileID(fileName)
 
-      updatedFiles[fileID] = {
-        acquiredBy: caller,
-        id: fileID,
-        name: fileName,
-        type: {
-          general: fileTypeGeneral,
-          specific: fileTypeSpecific
-        },
-        data: file,
-        progress: 0,
-        uploadURL: ''
+        updatedFiles[fileID] = {
+          acquiredBy: caller,
+          id: fileID,
+          name: fileName,
+          type: {
+            general: fileTypeGeneral,
+            specific: fileTypeSpecific
+          },
+          data: file,
+          progress: 0,
+          uploadURL: ''
+        }
+      } else {
+        updatedFiles[file.id] = {
+          acquiredBy: caller,
+          data: file
+        }
       }
 
       // TODO figure out if and when we need image preview —
@@ -127,7 +134,7 @@ export default class Core {
   }
 
   /**
-   * Registeres listeners for all global actions, like:
+   * Registers listeners for all global actions, like:
    * `file-add`, `file-remove`, `upload-progress`, `reset`
    *
    */
