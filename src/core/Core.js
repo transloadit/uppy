@@ -43,7 +43,7 @@ export default class Core {
   }
 
   /**
-   * Iterate on all plugins and run `update` on them. Called when state changes
+   * Iterate on all plugins and run `update` on them. Called each time when state changes
    *
    */
   updateAll () {
@@ -74,10 +74,25 @@ export default class Core {
     return this.state
   }
 
+  addImgPreviewToFile (file) {
+    const reader = new FileReader()
+    reader.addEventListener('load', (ev) => {
+      const imgSrc = ev.target.result
+      const updatedFiles = Object.assign({}, this.state.files)
+      updatedFiles[file.id].preview = imgSrc
+      this.setState({files: updatedFiles})
+    })
+    reader.addEventListener('error', (err) => {
+      this.core.log('FileReader error' + err)
+    })
+    reader.readAsDataURL(file.data)
+  }
+
   addFiles (files, caller) {
     const updatedFiles = Object.assign({}, this.state.files)
 
     files.forEach((file) => {
+      console.log(file)
       const fileName = file.name
       const fileType = file.type.split('/')
       const fileTypeGeneral = fileType[0]
@@ -97,26 +112,13 @@ export default class Core {
         uploadURL: ''
       }
 
+      console.log(file.type)
+
       // TODO figure out if and when we need image preview —
-      // they eat a ton of memory and slow things down subtantially
-
-      // const readImgPreview = (file) => {
-      //   const reader = new FileReader()
-      //   reader.addEventListener('load', (ev) => {
-      //     const imgSrc = ev.target.result
-      //     const updatedFiles = Object.assign({}, this.state.files)
-      //     updatedFiles[file.id].preview = imgSrc
-      //     this.setState({files: updatedFiles})
-      //   })
-      //   reader.addEventListener('error', (err) => {
-      //     this.core.log('FileReader error' + err)
-      //   })
-      //   reader.readAsDataURL(file.data)
-      // }
-
-      // if (fileTypeGeneral === 'image') {
-      //   readImgPreview(updatedFiles[fileID])
-      // }
+      // they eat a ton of memory and slow things down substantially
+      if (fileTypeGeneral === 'image') {
+        this.addImgPreviewToFile(updatedFiles[fileID])
+      }
     })
 
     this.setState({files: updatedFiles})
