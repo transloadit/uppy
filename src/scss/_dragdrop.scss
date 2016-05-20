@@ -2,18 +2,16 @@
 * Drag & Drop CSS to style the plugin
 */
 .UppyDragDrop-container {
-  height: 100%;
   min-height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  padding: 15px;
 }
 
   .UppyDragDrop-container.is-dragdrop-supported {
     border: 3px dashed;
-    border-color: #dadada;
+    border-color: lighten($color-gray, 5%);
   }
 
   .UppyDragDrop-container.is-dragdrop-supported .UppyDragDrop-dragText {
@@ -21,8 +19,8 @@
   }
 
   .UppyDragDrop-container.drag {
-    border-color: #d2ecea;
-    background-color: #dbf5f3;
+    border-color: darken($color-gray, 15%);
+    // background-color: #dbf5f3;
   }
 
 /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
@@ -53,12 +51,18 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   border: 0;
-  border: 1px solid #ccc;
+  border: 1px solid $color-gray;
   background: none;
   cursor: pointer;
   margin-top: 15px;
 
   &:hover {
-    background: #ccc;
+    background: $color-gray;
   }
+}
+
+// Modal specific
+.UppyModal .UppyDragDrop-container {
+  margin: 15px;
+  height: calc(100% - 30px);
 }

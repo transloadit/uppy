@@ -17,9 +17,8 @@
 }
 
 .UppyProgressDrawer-status {
-  height: 30px;
-  line-height: 30px;
-  font-size: 12px;
+  line-height: 15px;
+  font-size: 10px;
   font-weight: bold;
   background-color: $color-asphalt-gray;
   color: $color-white;
@@ -31,9 +30,10 @@
   padding: 0;
   margin: 0;
   overflow-y: auto;
-  height: 130px;
+  height: 160px;
+  padding-top: 10px;
   // position: relative;
-  //
+  // TODO: list scroll inner shadow?
   // &:before {
   //   content: '';
   //   position: absolute;
@@ -47,20 +47,20 @@
 
 .UppyProgressDrawer-item {
   @include clearfix;
-  height: 40px;
-  line-height: 30px;
+  // height: 40px;
+  // line-height: 30px;
   margin: 0;
-  padding: 0;
-  margin-bottom: 1px;
+  padding: 0 10px;
   position: relative;
-  background-color: $color-cornflower-blue;
+  margin-bottom: 10px;
+  // background-color: $color-cornflower-blue;
 }
 
 .UppyProgressDrawer-itemInfo {
   float: left;
   width: 12%;
-  height: 40px;
-  border-right: 1px solid white;
+  // height: 40px;
+  // border-right: 1px solid white;
 }
 
 .UppyProgressDrawer-itemIcon {
@@ -76,38 +76,39 @@
   line-height: 40px;
   text-transform: uppercase;
   text-align: center;
-  color: $color-white;
+  // color: $color-white;
 }
 
 .UppyProgressDrawer-itemInner {
   float: left;
   width: 88%;
   height: 40px;
+  padding-left: 10px;
   position: relative;
 }
 
 .UppyProgressDrawer-itemProgress {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  background-color: $color-pink;
+  // position: absolute;
+  // left: 0;
+  // bottom: 0;
+  height: 2px;
+  background-color: $color-cornflower-blue;
   width: 0;
   transition: width 0.4s ease;
 }
 
 .UppyProgressDrawer-itemName {
-  color: $color-white;
   margin: 0;
   padding: 0;
-  padding: 5px 15px;
   font-size: 13px;
   z-index: $zIndex-4;
   position: relative;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .UppyProgressDrawer-itemName a {
-  color: $color-white;
   text-decoration: underline;
 }
 
@@ -118,7 +119,7 @@
   padding: 10px;
   font-size: 20px;
   line-height: 20px;
-  color: $color-white;
+  // color: $color-white;
   cursor: pointer;
   position: absolute;
   top: 0;
