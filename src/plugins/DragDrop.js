@@ -38,15 +38,6 @@ export default class DragDrop extends Plugin {
     this.handleInputChange = this.handleInputChange.bind(this)
   }
 
-  update (state) {
-    if (typeof this.el === 'undefined') {
-      return
-    }
-
-    const newEl = this.render(this.core.state)
-    yo.update(this.el, newEl)
-  }
-
 /**
  * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
  * @return {Boolean} true if supported, false otherwise
@@ -72,10 +63,20 @@ export default class DragDrop extends Plugin {
   handleDrop (files) {
     this.core.log('All right, someone dropped something...')
 
-    this.core.emitter.emit('file-add', {
-      plugin: this,
-      acquiredFiles: files
+    // this.core.emitter.emit('file-add', {
+    //   plugin: this,
+    //   acquiredFiles: files
+    // })
+
+    files.forEach((file) => {
+      const fileName = file.name
+      const fileType = file.type
+      const fileData = file
+      this.core.addFile(fileData, fileName, fileType, this)
     })
+
+    this.core.addMeta({bla: 'bla'})
+    console.log(this.core.getState())
   }
 
   handleInputChange (ev) {

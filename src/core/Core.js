@@ -88,6 +88,43 @@ export default class Core {
     reader.readAsDataURL(file.data)
   }
 
+  addMeta (meta, file) {
+    if (typeof file === 'undefined') {
+      const updatedFiles = Object.assign({}, this.state.files)
+      for (let f in updatedFiles) {
+        updatedFiles[f].meta = meta
+      }
+      this.setState({files: updatedFiles})
+    }
+  }
+
+  addFile (fileData, fileName, fileType, caller) {
+    const updatedFiles = Object.assign({}, this.state.files)
+
+    fileType = fileType.split('/')
+    const fileTypeGeneral = fileType[0]
+    const fileTypeSpecific = fileType[1]
+    const fileID = Utils.generateFileID(fileName)
+
+    updatedFiles[fileID] = {
+      acquiredBy: caller,
+      id: fileID,
+      name: fileName,
+      type: {
+        general: fileTypeGeneral,
+        specific: fileTypeSpecific
+      },
+      data: fileData,
+      progress: 0
+    }
+
+    this.setState({files: updatedFiles})
+
+    if (this.opts.autoProceed) {
+      this.emitter.emit('next')
+    }
+  }
+
   addFiles (files, caller) {
     const updatedFiles = Object.assign({}, this.state.files)
 
