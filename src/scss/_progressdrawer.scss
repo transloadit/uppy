@@ -7,6 +7,7 @@
   height: 200px;
   background-color: $color-white;
   box-shadow: 0 5px 30px rgba($color-black, 0.25);
+  border-radius: 6px;
   overflow: hidden;
   transition: all .3s;
 
@@ -32,7 +33,6 @@
   overflow-y: auto;
   height: 160px;
   padding-top: 10px;
-  // position: relative;
   // TODO: list scroll inner shadow?
   // &:before {
   //   content: '';
@@ -47,20 +47,15 @@
 
 .UppyProgressDrawer-item {
   @include clearfix;
-  // height: 40px;
-  // line-height: 30px;
   margin: 0;
-  padding: 0 10px;
+  padding: 0 15px;
   position: relative;
   margin-bottom: 10px;
-  // background-color: $color-cornflower-blue;
 }
 
 .UppyProgressDrawer-itemInfo {
   float: left;
   width: 12%;
-  // height: 40px;
-  // border-right: 1px solid white;
 }
 
 .UppyProgressDrawer-itemIcon {
@@ -83,33 +78,41 @@
   float: left;
   width: 88%;
   height: 40px;
-  padding-left: 10px;
+  padding-left: 8px;
   position: relative;
 }
 
 .UppyProgressDrawer-itemProgress {
-  // position: absolute;
-  // left: 0;
-  // bottom: 0;
   height: 2px;
   background-color: $color-cornflower-blue;
   width: 0;
-  transition: width 0.4s ease;
+  transition: width 0.3s ease;
 }
 
 .UppyProgressDrawer-itemName {
+  width: 80%;
   margin: 0;
   padding: 0;
-  font-size: 13px;
+  font-size: 12px;
   z-index: $zIndex-4;
   position: relative;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  margin-bottom: 3px;
 }
 
 .UppyProgressDrawer-itemName a {
   text-decoration: underline;
+}
+
+.UppyProgressDrawer-itemStatus {
+  margin: 0;
+  height: 15px;
+  font-weight: normal;
+  line-height: 1;
+  color: $color-gray;
+  margin-bottom: 3px;
 }
 
 .UppyProgressDrawer-itemRemove {
@@ -117,7 +120,7 @@
   width: 40px;
   height: 100%;
   padding: 10px;
-  font-size: 20px;
+  font-size: 24px;
   line-height: 20px;
   // color: $color-white;
   cursor: pointer;
@@ -130,11 +133,10 @@
 .UppyProgressDrawer-itemCheck {
   position: absolute;
   top: 12px;
-  right: 15px;
-  fill: darken($color-cornflower-blue, 20%);
+  right: 0;
+  fill: $color-green;
   background-color: $color-white;
   border-radius: 50%;
-  padding: 2px;
 }
 
 .UppyProgressDrawer-upload {
