@@ -33,6 +33,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: Human should check http://www.webpagetest.org, use it sometimes to test our website & Uppy? Which will show response/loading times and where big delays are
 - [ ] test: Human should test with real screen reader to identify accessibility problems
+- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing
 - [ ] test: Make Edge and Safari work via the tunnel so we can test localhost instead of uppy.io, and test the current build, vs the previous deploy that way
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
