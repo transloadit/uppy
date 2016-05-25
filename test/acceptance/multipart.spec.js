@@ -2,7 +2,8 @@ var test = require('tape')
 var path = require('path')
 var chalk = require('chalk')
 var Driver = require('./Driver')
-var setSauceStatus = Driver.setSauceStatus
+var setSauceTestStatus = Driver.setSauceTestStatus
+var setSauceTestName = Driver.setSauceTestName
 var collectErrors = Driver.collectErrors
 
 module.exports = function (driver, platform, host) {
@@ -20,14 +21,7 @@ module.exports = function (driver, platform, host) {
     driver.get(host + '/examples/multipart/')
     driver.manage().window().maximize()
 
-    // TODO: figure out how to properly mark tests as complete in Saucelabs
-    // driver.executeScript('sauce:jpassed=true)
-    // driver.executeScript('sauce:jpassed=false)
-
-    // Set Saucelabs test name
-    driver.executeScript('sauce:job-name=' + testName).catch(function (err) {
-      console.log('local test, so this is ok: ' + err)
-    })
+    setSauceTestName(driver, testName)
 
     // driver.manage().timeouts().implicitlyWait(5 * 1000)
 
@@ -64,9 +58,9 @@ module.exports = function (driver, platform, host) {
         collectErrors(driver).then(function () {
           t.equal(result, true)
           if (result) {
-            setSauceStatus(driver, true)
+            setSauceTestStatus(driver, true)
           } else {
-            setSauceStatus(driver, false)
+            setSauceTestStatus(driver, false)
           }
           driver.quit()
         })
@@ -74,7 +68,7 @@ module.exports = function (driver, platform, host) {
       .catch(function (err) {
         collectErrors(driver).then(function () {
           t.fail(err)
-          setSauceStatus(driver, false)
+          setSauceTestStatus(driver, false)
           driver.quit()
         })
       })

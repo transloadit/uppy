@@ -16,18 +16,20 @@ function UppySelectFakeFile () {
 // function setSauceTestName (name) {
 //
 // }
-//
-// function setSaucetestPassed (passed) {
-//   if (passed) {
-//     return
-//   }
-// }
 
-function setSauceStatus (driver, passed) {
+// https://wiki.saucelabs.com/display/DOCS/Annotating+Tests+with+Selenium's+JavaScript+Executor
+function setSauceTestStatus (driver, passed) {
   driver
-    .executeScript('sauce:passed=' + passed)
+    .executeScript('sauce:job-result=' + passed)
     .catch(function (err) {
       console.log(err)
+    })
+}
+
+function setSauceTestName (driver, testName) {
+  driver
+    .executeScript('sauce:job-name=' + testName).catch(function (err) {
+      console.log('local test, so this is ok: ' + err)
     })
 }
 
@@ -78,6 +80,7 @@ module.exports = {
   setDriver,
   UppySelectFakeFile,
   collectErrors,
-  setSauceStatus,
+  setSauceTestName,
+  setSauceTestStatus,
   By
 }

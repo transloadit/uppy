@@ -58,8 +58,8 @@ var platforms = [
 ]
 
 var tests = [
-  require('./multipart.spec.js')
-  // require('./i18n.spec.js')
+  require('./multipart.spec.js'),
+  require('./i18n.spec.js')
   // require('./dragdrop.spec.js')
 ]
 

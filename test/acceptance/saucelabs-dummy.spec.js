@@ -30,12 +30,16 @@ function getBtnValue () {
 
 function runTest (driver, platform) {
   console.log('Running dummy test in ' + platform.browser + ' on ' + platform.os)
+  driver.executeScript('sauce:job-name=dummy test')
+
   driver.get('http://ya.ru')
   driver.executeScript(getBtnValue).then(function (val) {
     console.log(val)
     driver.getTitle().then(function (title) {
       console.log('title is: ' + title)
       console.log('Finnished running dummy test, I quit!')
+      driver
+        .executeScript('sauce:job-result=passed')
       driver.quit()
     })
   })
