@@ -88,11 +88,11 @@ export default class Core {
     reader.readAsDataURL(file.data)
   }
 
-  addMeta (meta, file) {
-    if (typeof file === 'undefined') {
+  addMeta (meta, fileID) {
+    if (typeof fileID === 'undefined') {
       const updatedFiles = Object.assign({}, this.state.files)
-      for (let f in updatedFiles) {
-        updatedFiles[f].meta = meta
+      for (let file in updatedFiles) {
+        updatedFiles[file].meta = meta
       }
       this.setState({files: updatedFiles})
     }
@@ -120,11 +120,18 @@ export default class Core {
 
     this.setState({files: updatedFiles})
 
+    // TODO figure out if and when we need image preview —
+    // they eat a ton of memory and slow things down substantially
+    if (fileTypeGeneral === 'image') {
+      this.addImgPreviewToFile(updatedFiles[fileID])
+    }
+
     if (this.opts.autoProceed) {
       this.emitter.emit('next')
     }
   }
 
+  // TODO: deprecated, switch to `addFile` instead
   addFiles (files, caller) {
     const updatedFiles = Object.assign({}, this.state.files)
 
