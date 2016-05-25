@@ -30,15 +30,6 @@ export default class Modal extends Plugin {
     this.showModal = this.showModal.bind(this)
   }
 
-  update (state) {
-    if (typeof this.el === 'undefined') {
-      return
-    }
-
-    const newEl = this.render(this.core.state)
-    yo.update(this.el, newEl)
-  }
-
   addTarget (callerPlugin, render) {
     const callerPluginId = callerPlugin.constructor.name
     const callerPluginName = callerPlugin.name || callerPluginId
@@ -58,7 +49,6 @@ export default class Modal extends Plugin {
       name: callerPluginName,
       icon: callerPluginIcon,
       type: callerPluginType,
-      // el: el,
       render: render,
       isHidden: true
     }
@@ -143,7 +133,10 @@ export default class Modal extends Plugin {
       })
     })
 
+    // add class to body that sets position fixed
     document.body.classList.add('is-UppyModal-open')
+    // focus on modal inner block
+    document.querySelector('*[tabindex="0"]').focus()
   }
 
   events () {
@@ -183,16 +176,11 @@ export default class Modal extends Plugin {
 
     return yo`<div class="${targetClassName}"
                    aria-hidden="${state.modal.isHidden}"
-                   aria-labelledby="modalTitle"
-                   aria-describedby="modalDescription"
+                   aria-label="Uppy Dialog Window (Press escape to close)"
                    role="dialog">
       <div class="UppyModal-overlay"
-                  tabindex="-1"
                   onclick=${this.hideModal}></div>
-      <div class="UppyModal-inner">
-        <button class="UppyModal-close"
-                title="Close Uppy modal"
-                onclick=${this.hideModal}>×</button>
+        <div class="UppyModal-inner" tabindex="0">
         <ul class="UppyModalTabs" role="tablist">
           ${acquirers.map((target) => {
             return yo`<li class="UppyModalTab">
@@ -225,6 +213,9 @@ export default class Modal extends Plugin {
             return target.render(state)
           })}
         </div>
+        <button class="UppyModal-close"
+                title="Close Uppy modal"
+                onclick=${this.hideModal}>×</button>
       </div>
     </div>`
   }

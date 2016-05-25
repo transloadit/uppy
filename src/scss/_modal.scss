@@ -36,6 +36,7 @@
   transform: translate(-50%, -50%);
   overflow: hidden;
   z-index: $zIndex-3;
+  outline: none;
 }
 
 .UppyModal-close {
@@ -46,7 +47,6 @@
   border: 0;
   cursor: pointer;
   background-color: transparent;
-  outline: none;
   -webkit-appearance: none;
   font-size: 30px;
   line-height: 15px;
