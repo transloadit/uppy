@@ -47,6 +47,10 @@ export default class ProgressDrawer extends Plugin {
             ${file.type.specific ? file.type.specific.toUpperCase() : '?'}
           </text>
           </svg>
+          ${file.type.general === 'image'
+            ? yo`<img class="UppyProgressDrawer-itemIcon" alt="${file.name}" src="${file.preview}">`
+            : yo`<span class="UppyProgressDrawer-itemType">${file.type.specific}</span>`
+          }
       </div>
       <div class="UppyProgressDrawer-itemInner">
         <h4 class="UppyProgressDrawer-itemName">
