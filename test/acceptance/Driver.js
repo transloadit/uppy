@@ -23,6 +23,14 @@ function UppySelectFakeFile () {
 //   }
 // }
 
+function setSauceStatus (driver, passed) {
+  driver
+    .executeScript('sauce:passed=' + passed)
+    .catch(function (err) {
+      console.log(err)
+    })
+}
+
 // Monitor for errors, and dump them
 function collectErrors (driver) {
   return driver.executeScript('return uppyLog;')
@@ -70,5 +78,6 @@ module.exports = {
   setDriver,
   UppySelectFakeFile,
   collectErrors,
+  setSauceStatus,
   By
 }

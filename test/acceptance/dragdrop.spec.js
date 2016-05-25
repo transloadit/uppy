@@ -2,6 +2,7 @@ var test = require('tape')
 var path = require('path')
 var chalk = require('chalk')
 var Driver = require('./Driver')
+var setSauceStatus = Driver.setSauceStatus
 var collectErrors = Driver.collectErrors
 
 module.exports = function (driver, platform, host) {
@@ -64,12 +65,18 @@ module.exports = function (driver, platform, host) {
       .then(function (result) {
         collectErrors(driver).then(function () {
           t.equal(result, true)
+          if (result) {
+            setSauceStatus(driver, true)
+          } else {
+            setSauceStatus(driver, false)
+          }
           driver.quit()
         })
       })
       .catch(function (err) {
         collectErrors(driver).then(function () {
           t.fail(err)
+          setSauceStatus(false)
           driver.quit()
         })
       })
