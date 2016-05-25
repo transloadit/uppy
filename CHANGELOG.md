@@ -19,53 +19,56 @@ first Friday of every new month.
 Ideas that will be planned and find their way into a release at one point
 
 - [ ] build: browsersync does 3 refreshes, can that be one? should be doable via cooldown/debounce?
-- [ ] build: go over `package.json` togeteher and clean up npm run scripts (@arturi, @hedgerh, @kvz)
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
 - [ ] build: revisit sourcemaps for production. can we have them without a mandatory extra request?
 - [ ] core: Decouple rendering from Plugins and try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
-- [ ] core: test with real screen reader to identify accessibility problems
+- [ ] core: Have base styles, be explicit about fonts, etc
+- [ ] core: let user cancel uploads in progress (@arturi)
 - [ ] core: Make sure Uppy works well in VR
-- [ ] instagram: Add basic Instagram plugin example (#21)
+- [ ] drive: Show a visual indication that downloading has started after double-clicking. Prevent that 6 clicks = 3 downloads
+- [ ] instagram: Make a barely working Instagram Plugin + example (#21)
+- [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
+- [ ] modal: polish on mobile
+- [ ] presenter: make it work with new components/state (@arturi)
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
-- [ ] test: checkout http://www.webpagetest.org, use it sometimes to test our website & Uppy?
+- [ ] test: Human should check http://www.webpagetest.org, use it sometimes to test our website & Uppy? Which will show response/loading times and where big delays are
+- [ ] test: Human should test with real screen reader to identify accessibility problems
+- [ ] test: Make Edge and Safari work via the tunnel so we can test localhost instead of uppy.io, and test the current build, vs the previous deploy that way
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
+- [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
+- [ ] core: accessibility research
 
 ## 0.0.7
 
-Theme: TBD
+Released: Unreleased
 
-Scheduled to be released: TBD
-
-## 0.0.6
-
-<a name="next"></a>
-
-Theme: TBD
-
-Scheduled to be released: June 03, 2016
-
-- [ ] build: minification of the bundle (@kvz)
-- [ ] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@kvz)
-- [ ] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png
-- [ ] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433
-- [ ] drive: Show a visual indication that downloading has started after double-clicking. Prevent that 6 clicks = 3 downloads
-- [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
-- [ ] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
-- [ ] modal: Maybe we need to have URL parameters carrying state as payload, so after returning from google, we're in the same tab again (@hedgerh)
-- [ ] modal: polish on mobile
+- [ ] build: go over `package.json` together and clean up npm run scripts (@arturi, @hedgerh, @kvz)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id), belonging to the `modify` stage (or a different word we'll come up with) (@arturi)
 - [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
 - [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
-- [ ] presenter: make it work with new components/state (@arturi)
+- [ ] core: Put entire(?) state into oauth redirect urls / LocalStorage with an identifier (@hedgerh) 
+- [ ] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy (@hedgerh)
+- [ ] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
+
+## 0.0.6
+
+Theme: The aim low release
+
+Released: June 03, 2016
+
+- [ ] build: minification of the bundle (@arturi)
+- [ ] build: supply pre-built bundle in npm (@arturi)
+- [ ] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@kvz)
+- [ ] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png (@hedgerh)
+- [ ] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
+- [ ] progressdrawer: figure out crazy rerendering of previews by yoyo (@arturi)
 - [ ] progressdrawer: improve styles, add preview icons for all (@arturi)
-- [ ] progressdrawer: let user cancel uploads in progress (@arturi)
-- [ ] server: Implement the `SERVER-PLAN.md` so that Google Drive files are actually uploaded to the endpoint
+- [ ] server: Start implementing the `SERVER-PLAN.md` so that Google Drive files are actually uploaded to the endpoint (@hedgerh)
 - [ ] test: Add pass/fail Saucelabs flag to acceptance tests (@arturi)
-- [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (@arturi)
-- [ ] test: Make Edge and Safari work via the tunnel so we can test localhost instead of uppy.io, and test the current build, vs the previous deploy that way
+- [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi) 
 - [ ] website: Polish Saucelabs stats (social badge + stats layout) (@arturi)
-- [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
+- [x] drive: Maybe we need to have URL parameters carrying state as payload, so after returning from google, we're in the same tab again (@hedgerh)
 - [x] meta: Create Uppy logos (@markstory)
 - [x] website: Add Saucelabs badges to uppy.io (@kvz)
 - [x] website: fix disappearing icons issue, `postcss-inline-svg` (@arturi)
