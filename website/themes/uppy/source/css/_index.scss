@@ -74,7 +74,6 @@
 .IndexHero-taglinePart {
   transition: all ease-in-out 0.6s;
   opacity: 0;
-  // color: $color-pink;
 
   &.is-visible { opacity: 1; }
 }
@@ -214,7 +213,7 @@
   text-align: left;
   background-color: $color-codebg;
   border-radius: $size-radius;
-  overflow-x: scroll;
+  overflow: hidden;
 
   @media #{$screen-medium} {
     width: 43%;
