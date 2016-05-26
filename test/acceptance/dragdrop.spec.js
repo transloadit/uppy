@@ -28,12 +28,13 @@ module.exports = function (driver, platform, host) {
     var platformBrowser = platform.browser.toLowerCase()
     if (platformBrowser === 'safari' || platformBrowser === 'microsoftedge') {
       console.log('fake-selecting a fake file')
-      driver.executeScript(Driver.UppySelectFakeFile)
+      driver.executeScript(Driver.uppySelectFakeFile)
       driver.findElement({css: '#UppyDragDrop-Two .UppyDragDrop-uploadBtn'}).click()
     } else {
       console.log('selecting a real file')
       // Make file input “visible”
       driver.executeScript('document.querySelector(".UppyDragDrop-One .UppyDragDrop-input").style.opacity = 1')
+
       // Find input by css selector & pass absolute image path to it
       driver
         .findElement({css: '.UppyDragDrop-One .UppyDragDrop-input'})

@@ -2,9 +2,6 @@ var test = require('tape')
 var path = require('path')
 var chalk = require('chalk')
 var Driver = require('./Driver')
-var setSauceTestStatus = Driver.setSauceTestStatus
-var setSauceTestName = Driver.setSauceTestName
-var collectErrors = Driver.collectErrors
 
 module.exports = function (driver, platform, host) {
   var testName = 'Multipart: upload two files'
@@ -21,7 +18,7 @@ module.exports = function (driver, platform, host) {
     driver.get(host + '/examples/multipart/')
     driver.manage().window().maximize()
 
-    setSauceTestName(driver, testName)
+    Driver.setSauceTestName(driver, testName)
 
     // driver.manage().timeouts().implicitlyWait(5 * 1000)
 
@@ -29,7 +26,7 @@ module.exports = function (driver, platform, host) {
     var platformBrowser = platform.browser.toLowerCase()
     if (platformBrowser === 'safari' || platformBrowser === 'microsoftedge') {
       console.log('fake-selecting a fake file')
-      driver.executeScript(Driver.UppySelectFakeFile)
+      driver.executeScript(Driver.uppySelectFakeFile)
       driver.findElement({css: '.UppyForm-uploadBtn'}).click()
     } else {
       // Find input by css selector & pass absolute image path to it
@@ -55,20 +52,22 @@ module.exports = function (driver, platform, host) {
 
     driver.wait(isUploaded, 15000, 'File image.jpg should be uploaded within 15 seconds')
       .then(function (result) {
-        collectErrors(driver).then(function () {
-          t.equal(result, true)
-          if (result) {
-            setSauceTestStatus(driver, true)
-          } else {
-            setSauceTestStatus(driver, false)
-          }
+        Driver.collectErrors(driver).then(function () {
+          Driver.testEqual(driver, t, result)
+          // t.equal(result, true)
+          // if (result) {
+          //   setSauceTestStatus(driver, true)
+          // } else {
+          //   setSauceTestStatus(driver, false)
+          // }
           driver.quit()
         })
       })
       .catch(function (err) {
-        collectErrors(driver).then(function () {
-          t.fail(err)
-          setSauceTestStatus(driver, false)
+        Driver.collectErrors(driver).then(function () {
+          Driver.testFail(driver, t, err)
+          // t.fail(err)
+          // setSauceTestStatus(driver, false)
           driver.quit()
         })
       })

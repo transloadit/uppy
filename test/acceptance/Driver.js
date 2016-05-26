@@ -4,7 +4,7 @@ var By = webdriver.By
 var path = require('path')
 var chalk = require('chalk')
 
-function UppySelectFakeFile () {
+function uppySelectFakeFile () {
   var blob = new Blob(
     ['data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='],
     {type: 'image/svg+xml'}
@@ -13,24 +13,35 @@ function UppySelectFakeFile () {
   window.UppyAddFiles([blob], 'smth')
 }
 
-// function setSauceTestName (name) {
-//
-// }
-
 // https://wiki.saucelabs.com/display/DOCS/Annotating+Tests+with+Selenium's+JavaScript+Executor
 function setSauceTestStatus (driver, passed) {
   driver
     .executeScript('sauce:job-result=' + passed)
     .catch(function (err) {
-      console.log(err)
+      console.log('local test, so this is ok: ' + err)
     })
 }
 
 function setSauceTestName (driver, testName) {
   driver
-    .executeScript('sauce:job-name=' + testName).catch(function (err) {
+    .executeScript('sauce:job-name=' + testName)
+    .catch(function (err) {
       console.log('local test, so this is ok: ' + err)
     })
+}
+
+function testEqual (driver, t, condition) {
+  t.equal(condition, true)
+  if (condition) {
+    setSauceTestStatus(driver, true)
+  } else {
+    setSauceTestStatus(driver, false)
+  }
+}
+
+function testFail (driver, t, err) {
+  t.fail(err)
+  setSauceTestStatus(driver, false)
 }
 
 // Monitor for errors, and dump them
@@ -42,6 +53,7 @@ function collectErrors (driver) {
         chalk.magenta(uppyLog)
       ].join(' '))
 
+      // TODO: maybe figure out a way to get errors from all browsers
       // return driver.executeScript('return window.JSErrorCollector_errors.pump()')
       //   .then(function (errors) {
       //     if (!errors || !errors.length) {
@@ -78,8 +90,10 @@ function setDriver () {
 
 module.exports = {
   setDriver,
-  UppySelectFakeFile,
+  uppySelectFakeFile,
   collectErrors,
+  testEqual,
+  testFail,
   setSauceTestName,
   setSauceTestStatus,
   By
