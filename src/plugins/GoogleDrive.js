@@ -173,6 +173,13 @@ export default class Google extends Plugin {
     })
   }
 
+  handleUploadError (response) {
+    this.checkAuthentication()
+      .then((authenticated) => {
+        this.updateState({authenticated})
+      })
+  }
+
   /**
    * Removes session token on client side.
    */
