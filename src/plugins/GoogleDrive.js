@@ -160,7 +160,10 @@ export default class Google extends Plugin {
       name: file.title,
       type: file.mimeType,
       remote: {
-        url: `${this.opts.host}/google/get?fileId=${file.id}`
+        url: `${this.opts.host}/google/get?fileId=${file.id}`,
+        body: {
+          fileId: file.id
+        }
       }
     }
 

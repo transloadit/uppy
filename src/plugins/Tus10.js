@@ -103,12 +103,15 @@ export default class Tus10 extends Plugin {
   uploadRemote (file, current, total) {
     return new Promise((resolve, reject) => {
       fetch(file.remote.url, {
-        method: 'get',
+        method: 'post',
         credentials: 'include',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify(Object.assign({}, file.remote.body, {
+          target: this.opts.endpoint
+        }))
       })
       .then((res) => {
         if (res.status >= 200 && res.status <= 300) {
