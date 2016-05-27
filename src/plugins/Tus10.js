@@ -32,9 +32,6 @@ export default class Tus10 extends Plugin {
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
-      if (file.remote) {
-        this.uploadRemote(file, current, total, resolve, reject)
-      }
       const upload = new tus.Upload(file.data, {
 
         // TODO merge this.opts or this.opts.tus here
@@ -88,7 +85,12 @@ export default class Tus10 extends Plugin {
       const file = files[i]
       const current = parseInt(i, 10) + 1
       const total = files.length
-      uploaders.push(this.upload(file, current, total))
+
+      if (!files[i].remote) {
+        uploaders.push(this.upload(file, current, total))
+      } else {
+        uploaders.push(this.uploadRemote(file, current, total))
+      }
     }
 
     return Promise.all(uploaders).then(() => {
@@ -98,8 +100,20 @@ export default class Tus10 extends Plugin {
     })
   }
 
-  uploadRemote (file, current, total, resolve, reject) {
-    // do the thang
+  uploadRemote (file, current, total) {
+    return new Promise((resolve, reject) => {
+      fetch(file.remote.url, {
+        method: 'get',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((res) => {
+        console.log(res)
+      })
+    })
   }
 
 /**

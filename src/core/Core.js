@@ -98,7 +98,7 @@ export default class Core {
     }
   }
 
-  addFile (fileData, fileName, fileType, caller) {
+  addFile (fileData, fileName, fileType, caller, remote) {
     const updatedFiles = Object.assign({}, this.state.files)
 
     fileType = fileType.split('/')
@@ -115,7 +115,8 @@ export default class Core {
         specific: fileTypeSpecific
       },
       data: fileData,
-      progress: 0
+      progress: 0,
+      remote: remote
     }
 
     this.setState({files: updatedFiles})
@@ -184,7 +185,10 @@ export default class Core {
   actions () {
     this.emitter.on('file-add', (data) => {
       const { acquiredFiles, plugin } = data
-      this.addFiles(acquiredFiles, plugin)
+      // this.addFiles(acquiredFiles, plugin)
+      acquiredFiles.forEach((file) => {
+        this.addFile(file.data, file.name, file.type, plugin, file.remote)
+      })
     })
 
     // `remove-file` removes a file from `state.files`, after successfull upload

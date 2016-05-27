@@ -155,9 +155,14 @@ export default class Google extends Plugin {
    * @return {Promise} Result
    */
   addFile (file) {
-    const tagFile = Object.assign({}, file, {
-      remote: true
-    })
+    const tagFile = {
+      data: file,
+      name: file.title,
+      type: file.mimeType,
+      remote: {
+        url: `${this.opts.host}/google/get?fileId=${file.id}`
+      }
+    }
 
     this.core.emitter.emit('file-add', {
       plugin: this,
