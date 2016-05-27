@@ -111,7 +111,12 @@ export default class Tus10 extends Plugin {
         }
       })
       .then((res) => {
-        console.log(res)
+        if (res.status >= 200 && res.status <= 300) {
+          this.core.log(`Remote upload of '${file.name}' successful`)
+          return resolve('Success')
+        }
+        this.core.log(`Remote upload of file '${file.name}' failed`)
+        return reject(new Error('Error: ' + res.statusText))
       })
     })
   }
