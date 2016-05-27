@@ -67,12 +67,10 @@
 }
 
 .UppyGoogleDrive-sidebar {
-  float: left;
   height: 100%;
   list-style-type: none;
   margin: 0;
-  padding: 16px 32px;
-  width: 200px;
+  padding: 16px 0 16px 16px;
 }
 
 .UppyGoogleDrive-sidebar li {
@@ -87,8 +85,6 @@
 .UppyGoogleDrive-browser {
   border: 1px solid #eee;
   border-collapse: collapse;
-  float: left;
-  width: 50%;
 }
 
 .UppyGoogleDrive-browser td {
@@ -119,9 +115,7 @@
 }
 
 .UppyGoogleDrive-fileInfo {
-  float: left;
   padding: 0 16px;
-  width: 25%;
 }
 
 .UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileThumbnail {
