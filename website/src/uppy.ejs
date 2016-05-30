@@ -1,0 +1,24 @@
+---
+layout: false
+title: Uppy
+permalink: uppy/
+---
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>uppy</title>
+  </head>
+  <body>
+    <h1>Uppy is here</h1>
+    <link href="uppy.min.css" rel="stylesheet">
+    <script src="uppy.min.js"></script>
+    <script src="locales/ru_RU.min.js"></script>
+    <script>
+      var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true});
+      uppy.use(Uppy.plugins.DragDrop, {target: 'body'});
+      uppy.run();
+    </script>
+  </body>
+</html>
