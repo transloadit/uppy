@@ -85,6 +85,7 @@
     "node-notifier": "4.4.0",
     "node-sass": "3.4.2",
     "nodemon": "1.8.1",
+    "npm-run-all": "2.1.1",
     "parallelshell": "2.0.0",
     "postcss": "5.0.21",
     "selenium-webdriver": "2.52.0",
