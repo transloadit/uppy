@@ -10,7 +10,7 @@
     "build:bundle:fullpath": "env OUT=uppy-fp.js ./bin/build-bundle --full-paths",
     "build:js": "npm-run-all --parallel build:bundle build:lib",
     "build:lib": "babel --version && babel src -d lib",
-    "build": "npm-run-all --parallel new:build:js new:build:css",
+    "build": "npm-run-all --parallel build:js build:css",
     "clean": "rm -rf lib && rm -rf dist",
     "docs": "cd website && node node_modules/documentation/bin/documentation.js readme ../src/index.js --readme-file=src/api/docs.md --section 'Uppy Core & Plugins' -q --github -c doc-order.json",
     "install": "npm run web:install",
