@@ -30,7 +30,7 @@
     "watch:css": "nodemon --watch src --ext scss -x 'npm run build:css && node website/update.js'",
     "watch:fast": "npm-run-all --parallel watch:css web:preview",
     "watch:js": "nodemon --watch src --ext js -x 'npm run build:bundle && node website/update.js'",
-    "watch": "npm-run-all --parallel watch:js watch:css website/update.js",
+    "watch": "npm-run-all --parallel watch:js watch:css node website/update.js",
     "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate --silent && node build-examples.js",
     "web:clean": "cd website && ./node_modules/.bin/hexo clean",
     "web:deploy": "npm run web:install && npm run web:disc && npm run docs && npm run web:build && ./bin/web-deploy",
