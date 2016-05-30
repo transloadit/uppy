@@ -78,6 +78,7 @@
     "fakefile": "0.0.5",
     "glob": "7.0.3",
     "isomorphic-fetch": "2.2.1",
+    "minifyify": "7.3.3",
     "mkdirp": "0.5.1",
     "multi-glob": "1.0.1",
     "nock": "8.0.0",
