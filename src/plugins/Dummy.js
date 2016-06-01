@@ -26,7 +26,6 @@ export default class Dummy extends Plugin {
     return yo`
       <div class="wow-this-works">
         <input type="text" value="hello">
-        I am a dummy plugin, look at me, I was rendered in a modal! That’s crazy, I know.
         ${this.strange}
         ${bla}
       </div>
@@ -40,6 +39,6 @@ export default class Dummy extends Plugin {
 
   install () {
     this.el = this.render()
-    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
+    this.target = this.getTarget(this.opts.target, this, this.el, this.render)
   }
 }

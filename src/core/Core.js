@@ -240,7 +240,7 @@ export default class Core {
   use (Plugin, opts) {
     // Instantiate
     const plugin = new Plugin(this, opts)
-    const pluginName = Utils.getFnName(plugin.constructor)
+    const pluginName = plugin.id
     this.plugins[plugin.type] = this.plugins[plugin.type] || []
 
     if (!pluginName) {
@@ -254,7 +254,7 @@ export default class Core {
     let existsPluginAlready = this.getPlugin(pluginName)
     if (existsPluginAlready) {
       let msg = `Already found a plugin named '${existsPluginAlready.name}'.
-        Tried to use: '${plugin.constructor.name}'.
+        Tried to use: '${pluginName}'.
         Uppy is currently limited to running one of every plugin.
         Share your use case with us over at
         https://github.com/transloadit/uppy/issues/
@@ -275,7 +275,7 @@ export default class Core {
   getPlugin (name) {
     let foundPlugin = false
     this.iteratePlugins((plugin) => {
-      const pluginName = Utils.getFnName(plugin.constructor)
+      const pluginName = plugin.id
       if (pluginName === name) {
         foundPlugin = plugin
         return false

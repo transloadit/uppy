@@ -32,7 +32,7 @@ export default class Modal extends Plugin {
 
   addTarget (callerPlugin, render) {
     const callerPluginId = callerPlugin.constructor.name
-    const callerPluginName = callerPlugin.name || callerPluginId
+    const callerPluginName = callerPlugin.title || callerPluginId
     const callerPluginIcon = callerPlugin.icon || this.opts.defaultTabIcon
     const callerPluginType = callerPlugin.type
 
