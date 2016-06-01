@@ -69,27 +69,30 @@ export default class DragDrop extends Plugin {
     // })
 
     files.forEach((file) => {
-      const fileName = file.name
-      const fileType = file.type
-      const fileData = file
-      this.core.addFile(fileData, fileName, fileType, this)
+      this.core.emitter.emit('file-add', {
+        source: this.id,
+        name: file.name,
+        type: file.type,
+        data: file
+      })
     })
 
     this.core.addMeta({bla: 'bla'})
-    console.log(this.core.getState())
   }
 
   handleInputChange (ev) {
     this.core.log('All right, something selected through input...')
-    // const files = ev.target.files
 
-    // const newFiles = Object.keys(files).map((file) => {
-    //   return files[file]
-    // })
+    const files = Utils.toArray(ev.target.files)
 
-    this.core.emitter.emit('file-add', {
-      plugin: this,
-      acquiredFiles: Utils.toArray(ev.target.files)
+    files.forEach((file) => {
+      console.log(file)
+      this.core.emitter.emit('file-add', {
+        source: this.id,
+        name: file.name,
+        type: file.type,
+        data: file
+      })
     })
   }
 

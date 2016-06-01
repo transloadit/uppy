@@ -39,7 +39,7 @@ export default class Core {
 
     // for debugging and testing
     global.UppyState = this.state
-    global.UppyAddFiles = this.addFiles.bind(this)
+    global.UppyAddFile = this.addFile.bind(this)
   }
 
   /**
@@ -98,79 +98,32 @@ export default class Core {
     }
   }
 
-  addFile (fileData, fileName, fileType, caller, remote) {
+  addFile (file) {
     const updatedFiles = Object.assign({}, this.state.files)
 
-    fileType = fileType.split('/')
+    const fileType = file.type.split('/')
     const fileTypeGeneral = fileType[0]
     const fileTypeSpecific = fileType[1]
-    const fileID = Utils.generateFileID(fileName)
+    const fileID = Utils.generateFileID(file.name)
 
     updatedFiles[fileID] = {
-      acquiredBy: caller,
+      source: file.source,
       id: fileID,
-      name: fileName,
+      name: file.name,
       type: {
         general: fileTypeGeneral,
         specific: fileTypeSpecific
       },
-      data: fileData,
+      data: file.data,
       progress: 0,
-      remote: remote
+      isRemote: file.isRemote
     }
 
     this.setState({files: updatedFiles})
 
-    // TODO figure out if and when we need image preview —
-    // they eat a ton of memory and slow things down substantially
-    if (fileTypeGeneral === 'image') {
-      this.addImgPreviewToFile(updatedFiles[fileID])
-    }
-
-    if (this.opts.autoProceed) {
-      this.emitter.emit('next')
-    }
-  }
-
-  // TODO: deprecated, switch to `addFile` instead
-  addFiles (files, caller) {
-    const updatedFiles = Object.assign({}, this.state.files)
-
-    files.forEach((file) => {
-      if (!file.remote) {
-        const fileName = file.name
-        const fileType = file.type.split('/')
-        const fileTypeGeneral = fileType[0]
-        const fileTypeSpecific = fileType[1]
-        const fileID = Utils.generateFileID(fileName)
-
-        updatedFiles[fileID] = {
-          acquiredBy: caller,
-          id: fileID,
-          name: fileName,
-          type: {
-            general: fileTypeGeneral,
-            specific: fileTypeSpecific
-          },
-          data: file,
-          progress: 0,
-          uploadURL: ''
-        }
-      } else {
-        updatedFiles[file.id] = {
-          acquiredBy: caller,
-          data: file
-        }
-      }
-
-      // TODO figure out if and when we need image preview —
-      // they eat a ton of memory and slow things down substantially
-      // if (fileTypeGeneral === 'image') {
-      //   this.addImgPreviewToFile(updatedFiles[fileID])
-      // }
-    })
-
-    this.setState({files: updatedFiles})
+    // if (fileTypeGeneral === 'image') {
+    //   this.addImgPreviewToFile(updatedFiles[fileID])
+    // }
 
     if (this.opts.autoProceed) {
       this.emitter.emit('next')
@@ -184,15 +137,11 @@ export default class Core {
    */
   actions () {
     this.emitter.on('file-add', (data) => {
-      const { acquiredFiles, plugin } = data
-      // this.addFiles(acquiredFiles, plugin)
-      acquiredFiles.forEach((file) => {
-        this.addFile(file.data, file.name, file.type, plugin, file.remote)
-      })
+      this.addFile(data)
     })
 
-    // `remove-file` removes a file from `state.files`, after successfull upload
-    // or when a user deicdes not to upload particular file and clicks a button to remove it
+    // `remove-file` removes a file from `state.files`, for example when
+    // a user decides not to upload particular file and clicks a button to remove it
     this.emitter.on('file-remove', (fileID) => {
       const updatedFiles = Object.assign({}, this.state.files)
       delete updatedFiles[fileID]
