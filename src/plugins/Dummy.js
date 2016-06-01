@@ -17,13 +17,17 @@ export default class Dummy extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.strange = yo`<h1>this is strange 1</h1>`
   }
 
-  render (state) {
+  render () {
+    const bla = yo`<h1>this is strange 2</h1>`
     return yo`
       <div class="wow-this-works">
         <input type="text" value="hello">
-        I am a dummy plugin, look at me, I was rendered in a modal! That’s crazy, I know.
+        ${this.strange}
+        ${bla}
       </div>
     `
   }
@@ -33,8 +37,8 @@ export default class Dummy extends Plugin {
     firstInput.focus()
   }
 
-  install (state) {
-    this.el = this.render(this.core.state)
-    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
+  install () {
+    this.el = this.render()
+    this.target = this.getTarget(this.opts.target, this, this.el, this.render)
   }
 }

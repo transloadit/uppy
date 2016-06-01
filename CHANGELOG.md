@@ -58,12 +58,12 @@ Theme: The aim low release
 
 Released: June 03, 2016
 
-- [ ] build: minification of the bundle (@arturi)
+- [x] build: minification of the bundle (@arturi)
 - [ ] build: supply pre-built bundle in npm (@arturi)
-- [ ] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@kvz)
+- [x] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@kvz)
 - [ ] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png (@hedgerh)
 - [ ] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
-- [ ] progressdrawer: figure out crazy rerendering of previews by yoyo (@arturi)
+- [ ] progressdrawer: figure out crazy rerendering of previews by yoyo/bel: https://github.com/shama/bel/issues/26 (@arturi)
 - [ ] progressdrawer: improve styles, add preview icons for all (@arturi)
 - [ ] server: Start implementing the `SERVER-PLAN.md` so that Google Drive files are actually uploaded to the endpoint (@hedgerh)
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)

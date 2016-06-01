@@ -1,5 +1,4 @@
 import yo from 'yo-yo'
-import Utils from '../core/Utils'
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -37,7 +36,7 @@ export default class Plugin {
    *
    */
   getTarget (target, caller, el, render) {
-    const callerPluginName = Utils.getFnName(caller.constructor)
+    const callerPluginName = caller.id
 
     if (typeof target === 'string') {
       this.core.log(`Installing ${callerPluginName} to ${target}`)
@@ -50,7 +49,9 @@ export default class Plugin {
 
       return target
     } else {
-      const targetPluginName = Utils.getFnName(target)
+      // TODO: is this the way to roll just to get the plugin name?
+      const Target = target
+      const targetPluginName = new Target().id
       this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
       let targetPlugin = this.core.getPlugin(targetPluginName)
       let selectorTarget = targetPlugin.addTarget(caller, render)
