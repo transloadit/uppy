@@ -40,15 +40,9 @@ export default class Core {
 
     // for debugging and testing
     global.UppyState = this.state
-    global.UppyAddFile = this.addFile.bind(this)
 
-    this.updateAll = this.updateAll.bind(this)
-    this.setState = this.setState.bind(this)
-    this.getState = this.getState.bind(this)
-    this.use = this.use.bind(this)
-    this.actions = this.actions.bind(this)
-    this.run = this.run.bind(this)
-    this.getPlugin = this.getPlugin.bind(this)
+    global.UppyAddFiles = this.addFile.bind(this)
+    global.UppyAddFile = this.addFile.bind(this)
   }
 
   /**

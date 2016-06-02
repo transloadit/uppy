@@ -10,7 +10,7 @@ function uppySelectFakeFile () {
     {type: 'image/svg+xml'}
   )
   blob['name'] = 'myDumbSVG'
-  window.UppyAddFile([blob], 'smth')
+  window.UppyAddFiles([blob], 'smth')
 }
 
 // https://wiki.saucelabs.com/display/DOCS/Annotating+Tests+with+Selenium's+JavaScript+Executor
