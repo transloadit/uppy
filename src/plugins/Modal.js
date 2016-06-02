@@ -28,13 +28,19 @@ export default class Modal extends Plugin {
 
     this.hideModal = this.hideModal.bind(this)
     this.showModal = this.showModal.bind(this)
+
+    this.addTarget = this.addTarget.bind(this)
+    this.showTabPanel = this.showTabPanel.bind(this)
+    this.events = this.events.bind(this)
+    this.render = this.render.bind(this)
+    this.install = this.install.bind(this)
   }
 
-  addTarget (callerPlugin, render) {
-    const callerPluginId = callerPlugin.constructor.name
-    const callerPluginName = callerPlugin.title || callerPluginId
-    const callerPluginIcon = callerPlugin.icon || this.opts.defaultTabIcon
-    const callerPluginType = callerPlugin.type
+  addTarget (plugin) {
+    const callerPluginId = plugin.constructor.name
+    const callerPluginName = plugin.title || callerPluginId
+    const callerPluginIcon = plugin.icon || this.opts.defaultTabIcon
+    const callerPluginType = plugin.type
 
     if (callerPluginType !== 'acquirer' &&
         callerPluginType !== 'progressindicator' &&
@@ -49,7 +55,8 @@ export default class Modal extends Plugin {
       name: callerPluginName,
       icon: callerPluginIcon,
       type: callerPluginType,
-      render: render,
+      focus: plugin.focus,
+      render: plugin.render,
       isHidden: true
     }
 
@@ -71,6 +78,7 @@ export default class Modal extends Plugin {
     const newTargets = modal.targets.map((target) => {
       if (target.type === 'acquirer') {
         if (target.id === id) {
+          target.focus()
           return Object.assign({}, target, {
             isHidden: false
           })
@@ -118,6 +126,7 @@ export default class Modal extends Plugin {
     const newTargets = modal.targets.map((target) => {
       if (target.type === 'acquirer' && !found) {
         found = true
+        target.focus()
 
         return Object.assign({}, target, {
           isHidden: false

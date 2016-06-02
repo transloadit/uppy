@@ -36,6 +36,7 @@ export default class DragDrop extends Plugin {
     this.handleDrop = this.handleDrop.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
+    this.render = this.render.bind(this)
   }
 
 /**
@@ -97,7 +98,13 @@ export default class DragDrop extends Plugin {
   }
 
   focus () {
-    this.input.focus()
+    const firstInput = document.querySelector(`${this.target} .UppyDragDrop-focus`)
+
+    // only works for the first time if wrapped in setTimeout for some reason
+    // firstInput.focus()
+    setTimeout(function () {
+      firstInput.focus()
+    }, 10)
   }
 
   render (state) {
@@ -122,7 +129,7 @@ export default class DragDrop extends Plugin {
       <div class="UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
         <form class="UppyDragDrop-inner"
               onsubmit=${onSubmit}>
-          <input class="UppyDragDrop-input"
+          <input class="UppyDragDrop-input UppyDragDrop-focus"
                  type="file"
                  name="files[]"
                  multiple="true"
@@ -144,9 +151,9 @@ export default class DragDrop extends Plugin {
   }
 
   install () {
-    this.el = this.render(this.core.state)
-    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
-    this.input = document.querySelector(`${this.target} .UppyDragDrop-input`)
+    const target = this.opts.target
+    const plugin = this
+    this.target = this.mount(target, plugin)
 
     dragDrop(`${this.target} .UppyDragDrop-container`, (files) => {
       this.handleDrop(files)

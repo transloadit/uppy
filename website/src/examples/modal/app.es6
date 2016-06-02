@@ -1,4 +1,4 @@
-import Uppy from 'uppy/core'
+import Uppy from '../../../../src/core/Core.js'
 import Dummy from '../../../../src/plugins/Dummy.js'
 import Tus10 from '../../../../src/plugins/Tus10.js'
 import Modal from '../../../../src/plugins/Modal.js'

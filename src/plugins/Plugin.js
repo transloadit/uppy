@@ -15,7 +15,11 @@ export default class Plugin {
     this.core = core
     this.opts = opts
     this.type = 'none'
-    // this.name = this.constructor.name
+
+    this.update = this.update.bind(this)
+    this.mount = this.mount.bind(this)
+    this.focus = this.focus.bind(this)
+    this.install = this.install.bind(this)
   }
 
   update () {
@@ -35,8 +39,8 @@ export default class Plugin {
    * @param {String|Object} target
    *
    */
-  getTarget (target, caller, el, render) {
-    const callerPluginName = caller.id
+  mount (target, plugin) {
+    const callerPluginName = plugin.id
 
     if (typeof target === 'string') {
       this.core.log(`Installing ${callerPluginName} to ${target}`)
@@ -45,16 +49,20 @@ export default class Plugin {
       // if (replaceTargetContent) {
       //   document.querySelector(target).innerHTML = ''
       // }
-      document.querySelector(target).appendChild(el)
+      const element = plugin.render(this.core.state)
+      document.querySelector(target).appendChild(element)
 
       return target
     } else {
-      // TODO: is this the way to roll just to get the plugin name?
+      // TODO: is instantiating the plugin really the way to roll
+      // just to get the plugin name?
       const Target = target
       const targetPluginName = new Target().id
+
       this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
-      let targetPlugin = this.core.getPlugin(targetPluginName)
-      let selectorTarget = targetPlugin.addTarget(caller, render)
+
+      const targetPlugin = this.core.getPlugin(targetPluginName)
+      const selectorTarget = targetPlugin.addTarget(plugin)
 
       return selectorTarget
     }

@@ -31,7 +31,8 @@ export default class ProgressBar extends Plugin {
   }
 
   install () {
-    this.el = this.render(this.core.state)
-    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
+    const target = this.opts.target
+    const plugin = this
+    this.target = this.mount(target, plugin)
   }
 }

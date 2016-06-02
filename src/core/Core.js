@@ -1,5 +1,6 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
+import yo from 'yo-yo'
 import ee from 'events'
 
 /**
@@ -40,6 +41,14 @@ export default class Core {
     // for debugging and testing
     global.UppyState = this.state
     global.UppyAddFile = this.addFile.bind(this)
+
+    this.updateAll = this.updateAll.bind(this)
+    this.setState = this.setState.bind(this)
+    this.getState = this.getState.bind(this)
+    this.use = this.use.bind(this)
+    this.actions = this.actions.bind(this)
+    this.run = this.run.bind(this)
+    this.getPlugin = this.getPlugin.bind(this)
   }
 
   /**
@@ -60,7 +69,8 @@ export default class Core {
    * @param {newState} object
    */
   setState (newState) {
-    this.log(`Setting state to: ${newState}`)
+    this.log('Setting state to: ')
+    this.log(newState)
     this.state = Object.assign({}, this.state, newState)
     this.updateAll()
   }
@@ -80,6 +90,7 @@ export default class Core {
       const imgSrc = ev.target.result
       const updatedFiles = Object.assign({}, this.state.files)
       updatedFiles[file.id].preview = imgSrc
+      updatedFiles[file.id].previewEl = yo`<img alt="${file.name}" src="${imgSrc}">`
       this.setState({files: updatedFiles})
     })
     reader.addEventListener('error', (err) => {
@@ -121,9 +132,9 @@ export default class Core {
 
     this.setState({files: updatedFiles})
 
-    // if (fileTypeGeneral === 'image') {
-    //   this.addImgPreviewToFile(updatedFiles[fileID])
-    // }
+    if (fileTypeGeneral === 'image') {
+      this.addImgPreviewToFile(updatedFiles[fileID])
+    }
 
     if (this.opts.autoProceed) {
       this.emitter.emit('next')
@@ -260,7 +271,7 @@ export default class Core {
     if (msg === `${msg}`) {
       console.log(`LOG: ${msg}`)
     } else {
-      console.log('LOG')
+      console.log('LOG↓')
       console.dir(msg)
     }
     global.uppyLog = global.uppyLog || ''
@@ -288,10 +299,7 @@ export default class Core {
  * All preseters(data) --> All acquirers(data) --> All uploaders(data) --> done
  */
   run () {
-    this.log({
-      class: this.constructor.name,
-      method: 'run'
-    })
+    this.log('Core is run, initializing actions, installing plugins...')
 
     this.actions()
 

@@ -19,13 +19,15 @@ export default class Dummy extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     this.strange = yo`<h1>this is strange 1</h1>`
+    this.render = this.render.bind(this)
+    this.install = this.install.bind(this)
   }
 
   render () {
-    const bla = yo`<h1>this is strange 2</h1>`
+    const bla = yo`<h2>this is strange 2</h2>`
     return yo`
       <div class="wow-this-works">
-        <input type="text" value="hello">
+        <input class="UppyDummy-firstInput" type="text" value="hello">
         ${this.strange}
         ${bla}
       </div>
@@ -33,12 +35,18 @@ export default class Dummy extends Plugin {
   }
 
   focus () {
-    const firstInput = document.querySelector(`${this.target} *:input[type!=hidden]:first`)
-    firstInput.focus()
+    const firstInput = document.querySelector(`${this.target} .UppyDummy-firstInput`)
+
+    // only works for the first time if wrapped in setTimeout for some reason
+    // firstInput.focus()
+    setTimeout(function () {
+      firstInput.focus()
+    }, 10)
   }
 
   install () {
-    this.el = this.render()
-    this.target = this.getTarget(this.opts.target, this, this.el, this.render)
+    const target = this.opts.target
+    const plugin = this
+    this.target = this.mount(target, plugin)
   }
 }

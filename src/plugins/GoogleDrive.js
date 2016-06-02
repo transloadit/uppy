@@ -26,6 +26,7 @@ export default class Google extends Plugin {
     this.renderBrowser = this.renderBrowser.bind(this)
     this.sortByTitle = this.sortByTitle.bind(this)
     this.sortByDate = this.sortByDate.bind(this)
+    this.render = this.render.bind(this)
 
     // set default options
     const defaultOptions = {}
@@ -34,13 +35,14 @@ export default class Google extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
-  update (state) {
-    if (typeof this.el === 'undefined') {
-      return
-    }
+  focus () {
+    const firstInput = document.querySelector(`${this.target} .UppyGoogleDrive-focusInput`)
 
-    const newEl = this.render(this.core.state)
-    yo.update(this.el, newEl)
+    // only works for the first time if wrapped in setTimeout for some reason
+    // firstInput.focus()
+    setTimeout(function () {
+      firstInput.focus()
+    }, 10)
   }
 
   /**
@@ -402,7 +404,7 @@ export default class Google extends Plugin {
           <div class="row">
             <div class="hidden-md-down col-lg-3 col-xl-3">
               <ul class="UppyGoogleDrive-sidebar">
-                <li class="UppyGoogleDrive-filter"><input type='text' onkeyup=${this.filterQuery} placeholder="Search.." value=${state.filterInput}/></li>
+                <li class="UppyGoogleDrive-filter"><input class="UppyGoogleDrive-focusInput" type='text' onkeyup=${this.filterQuery} placeholder="Search.." value=${state.filterInput}/></li>
                 <li><button onclick=${this.getSubFolder.bind(this, 'root', 'My Drive')}><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_collection_list_3.png"/> My Drive</button></li>
                 <li><button><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_shared_collection_list_1.png"/> Shared with me</button></li>
                 <li><button onclick=${this.logout}>Logout</button></li>
@@ -457,8 +459,9 @@ export default class Google extends Plugin {
       }
     })
 
-    this.el = this.render(this.core.state)
-    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
+    const target = this.opts.target
+    const plugin = this
+    this.target = this.mount(target, plugin)
 
     this.checkAuthentication()
       .then((authenticated) => {
