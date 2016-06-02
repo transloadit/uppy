@@ -19,6 +19,8 @@ export default class ProgressBar extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.render = this.render.bind(this)
   }
 
   render (state) {

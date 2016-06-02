@@ -133,6 +133,7 @@ export default class DragDrop extends Plugin {
                  type="file"
                  name="files[]"
                  multiple="true"
+                 value=""
                  onchange=${this.handleInputChange.bind(this)} />
           <label class="UppyDragDrop-label" onclick=${onSelect}>
             <strong>${this.core.i18n('chooseFile')}</strong>

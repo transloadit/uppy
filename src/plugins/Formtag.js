@@ -18,20 +18,27 @@ export default class Formtag extends Plugin {
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.render = this.render.bind(this)
   }
 
   handleInputChange (ev) {
     this.core.log('All right, something selected through input...')
 
     // this added rubbish keys like “length” to the resulting array
-    //
     // const files = Object.keys(ev.target.files).map((key) => {
     //   return ev.target.files[key]
     // })
 
-    this.core.emitter.emit('file-add', {
-      plugin: this,
-      acquiredFiles: Utils.toArray(ev.target.files)
+    const files = Utils.toArray(ev.target.files)
+
+    files.forEach((file) => {
+      this.core.emitter.emit('file-add', {
+        source: this.id,
+        name: file.name,
+        type: file.type,
+        data: file
+      })
     })
   }
 
@@ -47,7 +54,8 @@ export default class Formtag extends Plugin {
              type="file"
              name="files[]"
              onchange=${this.handleInputChange.bind(this)}
-             multiple="${this.opts.multipleFiles ? 'true' : 'false'}">
+             multiple="${this.opts.multipleFiles ? 'true' : 'false'}"
+             value="">
       ${!this.core.opts.autoProceed && this.opts.target.name !== 'Modal'
         ? yo`<button class="UppyForm-uploadBtn UppyNextBtn"
                      type="submit"
@@ -59,8 +67,9 @@ export default class Formtag extends Plugin {
   }
 
   install () {
-    this.el = this.render(this.core.state)
-    this.target = this.getTarget(this.opts.target, this, this.el, this.render.bind(this))
+    const target = this.opts.target
+    const plugin = this
+    this.target = this.mount(target, plugin)
   }
 
   // run (results) {
