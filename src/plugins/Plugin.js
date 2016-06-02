@@ -49,8 +49,8 @@ export default class Plugin {
       // if (replaceTargetContent) {
       //   document.querySelector(target).innerHTML = ''
       // }
-      const element = plugin.render(this.core.state)
-      document.querySelector(target).appendChild(element)
+      this.el = plugin.render(this.core.state)
+      document.querySelector(target).appendChild(this.el)
 
       return target
     } else {
