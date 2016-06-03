@@ -61,7 +61,7 @@ Released: June 03, 2016
 - [x] build: minification of the bundle (@arturi)
 - [ ] build: supply pre-built bundle in npm (@arturi)
 - [x] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@arturi)
-- [ ] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png (@hedgerh)
+- [x] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png (@hedgerh)
 - [x] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
 - [x] progressdrawer: figure out crazy rerendering of previews by yoyo/bel: https://github.com/shama/bel/issues/26, https://github.com/shama/bel/issues/27 (@arturi)
 - [x] core: substantial refactor of mount & rendering (@arturi)
