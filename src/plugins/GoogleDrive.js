@@ -366,8 +366,8 @@ export default class Google extends Plugin {
    * @param  {Object} state Google Drive state
    */
   renderTemp (state) {
-    let folders = []
-    let files = []
+    let folders = state.folders
+    let files = state.files
     let previewElem = ''
     const isFileSelected = Object.keys(state.active).length !== 0 && JSON.stringify(state.active) !== JSON.stringify({})
 
@@ -376,8 +376,8 @@ export default class Google extends Plugin {
       files = this.filterItems(state.files)
     }
 
-    folders = state.folders.map((folder) => this.renderBrowserItem(folder))
-    files = state.files.map((file) => this.renderBrowserItem(file))
+    folders = folders.map((folder) => this.renderBrowserItem(folder))
+    files = files.map((file) => this.renderBrowserItem(file))
 
     const breadcrumbs = state.directory.map((dir) => yo`<li><button onclick=${this.getSubFolder.bind(this, dir.id, dir.title)}>${dir.title}</button></li> `)
     if (isFileSelected) {
