@@ -70,7 +70,7 @@ export default class Tus10 extends Plugin {
 
       const filesForUpload = {}
       Object.keys(files).forEach((file) => {
-        if (files[file].progress === 0 || files[file].remote) {
+        if (files[file].progress === 0 || files[file].isRemote) {
           filesForUpload[file] = files[file]
         }
       })
@@ -86,7 +86,7 @@ export default class Tus10 extends Plugin {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
-      if (!files[i].remote) {
+      if (!files[i].isRemote) {
         uploaders.push(this.upload(file, current, total))
       } else {
         uploaders.push(this.uploadRemote(file, current, total))

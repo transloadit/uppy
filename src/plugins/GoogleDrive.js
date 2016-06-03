@@ -158,9 +158,11 @@ export default class Google extends Plugin {
    */
   addFile (file) {
     const tagFile = {
+      source: this,
       data: file,
       name: file.title,
-      type: file.mimeType,
+      type: this.getFileType(file),
+      isRemote: true,
       remote: {
         url: `${this.opts.host}/google/get?fileId=${file.id}`,
         body: {
@@ -169,10 +171,7 @@ export default class Google extends Plugin {
       }
     }
 
-    this.core.emitter.emit('file-add', {
-      plugin: this,
-      acquiredFiles: [tagFile]
-    })
+    this.core.emitter.emit('file-add', tagFile)
   }
 
   handleUploadError (response) {

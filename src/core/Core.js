@@ -121,7 +121,8 @@ export default class Core {
       },
       data: file.data,
       progress: 0,
-      isRemote: file.isRemote
+      isRemote: file.isRemote,
+      remote: file.remote
     }
 
     this.setState({files: updatedFiles})
