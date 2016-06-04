@@ -18,9 +18,9 @@ first Friday of every new month.
 
 Ideas that will be planned and find their way into a release at one point
 
+- [ ] build: go over `package.json` together and clean up npm run scripts (@arturi, @hedgerh, @kvz)
 - [ ] build: browsersync does 3 refreshes, can that be one? should be doable via cooldown/debounce?
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
-- [ ] build: revisit sourcemaps for production. can we have them without a mandatory extra request?
 - [ ] core: Decouple rendering from Plugins and try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [ ] core: Have base styles, be explicit about fonts, etc
 - [ ] core: let user cancel uploads in progress (@arturi)
@@ -42,18 +42,19 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.0.7
 
-Released: Unreleased
+Theme: The remote + local = friends release
 
-- [ ] core: don’t loose state after auth (@hedgerh @arturi)
+Released: July 1, 2016
+
 - [ ] server: Make Google Drive files to actually upload to the endpoint (@hedgerh)
-- [ ] build: go over `package.json` together and clean up npm run scripts (@arturi, @hedgerh, @kvz)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id), belonging to the `modify` stage (or a different word we'll come up with) (@arturi)
 - [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
 - [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
-- [ ] core: Put entire(?) state into oauth redirect urls / LocalStorage with an identifier (@hedgerh)
-- [ ] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy (@hedgerh)
-- [ ] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
+- [ ] core: don’t loose state after auth: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy, put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh @arturi)
+- [ ] drive: Return `cb` after writing all files (@hedgerh) https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
+- [ ] website: add new logos (@arturi)
+- [x] build: revisit sourcemaps for production. can we have them without a mandatory extra request?
 
 ## 0.0.6
 
@@ -62,6 +63,7 @@ Theme: The aim low release
 Released: June 03, 2016
 
 - [x] build: minification of the bundle (@arturi)
+- [x] build: revisit sourcemaps for production. can we have them without a mandatory extra request? — yes (@arturi)
 - [x] build: supply Uppy es5 and es6 entry points in npm package (@arturi)
 - [x] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@arturi)
 - [x] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png (@hedgerh)
