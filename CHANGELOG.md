@@ -44,6 +44,8 @@ Ideas that will be planned and find their way into a release at one point
 
 Released: Unreleased
 
+- [ ] core: don’t loose state after auth (@hedgerh @arturi)
+- [ ] server: Make Google Drive files to actually upload to the endpoint (@hedgerh)
 - [ ] build: go over `package.json` together and clean up npm run scripts (@arturi, @hedgerh, @kvz)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id), belonging to the `modify` stage (or a different word we'll come up with) (@arturi)
 - [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
@@ -51,6 +53,7 @@ Released: Unreleased
 - [ ] core: Put entire(?) state into oauth redirect urls / LocalStorage with an identifier (@hedgerh)
 - [ ] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy (@hedgerh)
 - [ ] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
+- [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
 
 ## 0.0.6
 
@@ -59,21 +62,19 @@ Theme: The aim low release
 Released: June 03, 2016
 
 - [x] build: minification of the bundle (@arturi)
-- [ ] build: supply pre-built bundle in npm (@arturi)
+- [x] build: supply Uppy es5 and es6 entry points in npm package (@arturi)
 - [x] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@arturi)
 - [x] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png (@hedgerh)
 - [x] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
 - [x] progressdrawer: figure out crazy rerendering of previews by yoyo/bel: https://github.com/shama/bel/issues/26, https://github.com/shama/bel/issues/27 (@arturi)
 - [x] core: substantial refactor of mount & rendering (@arturi)
 - [x] core: better state change logs for better debugging (@arturi)
-- [x] website: fix examples and cleanup (@arturi)
 - [x] progressdrawer: improve styles, add preview icons for all (@arturi)
-- [ ] server: Start implementing the `SERVER-PLAN.md` so that Google Drive files are actually uploaded to the endpoint (@hedgerh)
-- [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
+- [x] server: Start implementing the `SERVER-PLAN.md`, remote files should be added to `state.files` and marked as `remote` (@hedgerh)
 - [x] test: Add pass/fail Saucelabs flag to acceptance tests (@arturi)
 - [x] website: Polish Saucelabs stats (social badge + stats layout) (@arturi)
-- [x] drive: Maybe we need to have URL parameters carrying state as payload, so after returning from google, we're in the same tab again (@hedgerh)
 - [x] meta: Create Uppy logos (@markstory)
+- [x] website: fix examples and cleanup (@arturi)
 - [x] website: Add Saucelabs badges to uppy.io (@kvz)
 - [x] website: fix disappearing icons issue, `postcss-inline-svg` (@arturi)
 
