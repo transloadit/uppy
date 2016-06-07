@@ -109,6 +109,10 @@ export default class Google extends Plugin {
       if (res.status >= 200 && res.status <= 300) {
         return res.json()
       } else {
+        this.updateState({
+          authenticated: false,
+          error: true
+        })
         let error = new Error(res.statusText)
         error.response = res
         throw error
@@ -151,6 +155,7 @@ export default class Google extends Plugin {
           }
         })
       } else {
+        this.handleError(res)
         let error = new Error(res.statusText)
         error.response = res
         throw error
@@ -187,12 +192,6 @@ export default class Google extends Plugin {
       })
   }
 
-  /**
-   * Will soon be replaced by actual Uppy file handling.
-   * Requests the server download the selected file.
-   * @param  {String} fileId
-   * @return {Promise} Result
-   */
   addFile (file) {
     const tagFile = {
       source: this,
@@ -211,7 +210,7 @@ export default class Google extends Plugin {
     this.core.emitter.emit('file-add', tagFile)
   }
 
-  handleUploadError (response) {
+  handleError (response) {
     this.checkAuthentication()
       .then((authenticated) => {
         this.updateState({authenticated})
@@ -458,14 +457,24 @@ export default class Google extends Plugin {
   }
 
   renderError (err) {
-    return `Something went wrong.  Probably our fault. ${err}`
+    return yo`
+      <div>
+        <span>
+          Something went wrong.  Probably our fault. ${err}
+        </span>
+      </div>
+    `
   }
 
   render (state) {
-    if (state.googleDrive.authenticated) {
-      return this.renderBrowser(state.googleDrive)
-    } else {
+    if (state.googleDrive.error) {
+      return this.renderError()
+    }
+
+    if (!state.googleDrive.authenticated) {
       return this.renderAuth()
     }
+
+    return this.renderBrowser(state.googleDrive)
   }
 }
