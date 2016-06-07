@@ -229,24 +229,6 @@ export default class Google extends Plugin {
     `
   }
 
-  /**
-   * Deprecated for now. Old file browser render.
-   */
-  renderBrowser (state) {
-    const breadcrumbs = state.directory.map((dir) => yo`<span><button onclick=${this.getSubFolder.bind(this, dir.id, dir.title)}>${dir.title}</button> +</span> `)
-    const folders = state.folders.map((folder) => yo`<li>Folder<button class="GoogleDriveFolder" onclick=${this.getSubFolder.bind(this, folder.id, folder.title)}>${folder.title}</button></li>`)
-    const files = state.files.map((file) => yo`<li><button class="GoogleDriveFile" onclick=${this.addFile.bind(this, file)}>${file.title}</button></li>`)
-
-    return yo`
-      <div>
-        <button onclick=${this.logout}/>Logout</button>
-        <div>${breadcrumbs}</div>
-        <ul>${folders}</ul>
-        <ul>${files}</ul>
-      </div>
-    `
-  }
-
   getFileType (file) {
     const fileTypes = {
       'application/vnd.google-apps.folder': 'Folder',
@@ -364,7 +346,7 @@ export default class Google extends Plugin {
    * Render file browser
    * @param  {Object} state Google Drive state
    */
-  renderTemp (state) {
+  renderBrowser (state) {
     let folders = state.folders
     let files = state.files
     let previewElem = ''
@@ -481,7 +463,7 @@ export default class Google extends Plugin {
 
   render (state) {
     if (state.googleDrive.authenticated) {
-      return this.renderTemp(state.googleDrive)
+      return this.renderBrowser(state.googleDrive)
     } else {
       return this.renderAuth()
     }
