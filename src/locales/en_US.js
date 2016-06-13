@@ -1,6 +1,6 @@
-var Uppy_locales_en_US = {}
+const en_US = {}
 
-Uppy_locales_en_US.strings = {
+en_US.strings = {
   chooseFile: 'Choose a file',
   youHaveChosen: 'You have chosen: %{fileName}',
   orDragDrop: 'or drag it here',
@@ -25,7 +25,7 @@ Uppy_locales_en_US.strings = {
   upload: 'Upload'
 }
 
-Uppy_locales_en_US.pluralize = function (n) {
+en_US.pluralize = function (n) {
   if (n === 1) {
     return 0
   }
@@ -33,7 +33,7 @@ Uppy_locales_en_US.pluralize = function (n) {
 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.Uppy_locales_en_US = Uppy_locales_en_US
+  window.Uppy.locales.en_US = en_US
 }
 
-module.exports = Uppy_locales_en_US
+module.exports = en_US
