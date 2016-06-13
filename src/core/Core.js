@@ -40,8 +40,8 @@ export default class Core {
 
     // for debugging and testing
     global.UppyState = this.state
-
-    global.UppyAddFiles = this.addFile.bind(this)
+    global.uppyLog = global.uppyLog || ''
+    // global.UppyAddFiles = this.addFile.bind(this)
     global.UppyAddFile = this.addFile.bind(this)
   }
 
@@ -269,7 +269,6 @@ export default class Core {
       console.log('LOG↓')
       console.dir(msg)
     }
-    global.uppyLog = global.uppyLog || ''
     global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
   }
 
