@@ -1,6 +1,6 @@
-const ru_RU = {}
+var Uppy_locales_ru_RU = {}
 
-ru_RU.strings = {
+Uppy_locales_ru_RU.strings = {
   chooseFile: 'Выберите файл',
   orDragDrop: 'или перенесите его сюда',
   youHaveChosen: 'Вы выбрали: %{file_name}',
@@ -12,7 +12,7 @@ ru_RU.strings = {
   upload: 'Загрузить'
 }
 
-ru_RU.pluralize = function (n) {
+Uppy_locales_ru_RU.pluralize = function (n) {
   if (n % 10 === 1 && n % 100 !== 11) {
     return 0
   }
@@ -25,7 +25,7 @@ ru_RU.pluralize = function (n) {
 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.ru_RU = ru_RU
+  window.Uppy.locales.ru_RU = Uppy_locales_ru_RU
 }
 
-module.exports = ru_RU
+module.exports = Uppy_locales_ru_RU

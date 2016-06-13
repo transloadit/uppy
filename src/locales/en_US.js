@@ -1,6 +1,6 @@
-const en_US = {}
+var Uppy_locales_en_US = {}
 
-en_US.strings = {
+Uppy_locales_en_US.strings = {
   chooseFile: 'Choose a file',
   youHaveChosen: 'You have chosen: %{fileName}',
   orDragDrop: 'or drag it here',
@@ -25,7 +25,7 @@ en_US.strings = {
   upload: 'Upload'
 }
 
-en_US.pluralize = function (n) {
+Uppy_locales_en_US.pluralize = function (n) {
   if (n === 1) {
     return 0
   }
@@ -33,7 +33,7 @@ en_US.pluralize = function (n) {
 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.en_US = en_US
+  window.Uppy.locales.Uppy_locales_en_US = Uppy_locales_en_US
 }
 
-module.exports = en_US
+module.exports = Uppy_locales_en_US
