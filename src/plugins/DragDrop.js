@@ -112,7 +112,8 @@ export default class DragDrop extends Plugin {
     const target = this.opts.target.name
 
     const onSelect = (ev) => {
-      this.input.click()
+      const input = document.querySelector(`${this.target} .UppyDragDrop-input`)
+      input.click()
     }
 
     const next = (ev) => {
