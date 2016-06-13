@@ -51,6 +51,21 @@ function buildUppyBundle (minify) {
   })
 }
 
+function copyLocales () {
+  var copyCommand = 'cp -R ' + path.join(srcPath, 'locales/') + ' ' + path.join(distPath, 'locales/')
+  return new Promise(function (resolve, reject) {
+    exec(copyCommand, function (error, stdout, stderr) {
+      if (error) {
+        handleErr(error)
+        reject(error)
+        return
+      }
+      console.info(chalk.green('✓ Copied locales to dist'))
+      resolve()
+    })
+  })
+}
+
 // function buildUppyLocales () {
 //   mkdirp.sync('./dist/locales')
 //   glob('./src/locales/*.js', function (err, files) {
@@ -77,7 +92,7 @@ function buildUppyBundle (minify) {
 
 mkdirp.sync(distPath)
 
-Promise.all([buildUppyBundle(), buildUppyBundle(true)])
+Promise.all([buildUppyBundle(), buildUppyBundle(true), copyLocales()])
   .then(function () {
     console.info(chalk.yellow('✓ JS Bundle 🎉'))
   })
