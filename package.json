@@ -44,7 +44,7 @@
     "web:preview": "cd website && parallelshell 'node build-examples.js watch' './node_modules/.bin/hexo server'",
     "web:update:frontpage:code:sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
     "web": "npm-run-all web:clean web:build",
-    "prepublish": "npm-run-all clean build"
+    "prepublish": "npm install && npm-run-all clean build"
   },
   "repository": {
     "type": "git",
