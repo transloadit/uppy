@@ -60,7 +60,7 @@ Released: July 1, 2016
 - [ ] test: working Uppy example on Require Bin — latest version straight from NPM (@arturi)
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
 
-## 0.6.0
+## 0.6.2
 
 Theme: The aim low release
 
