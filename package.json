@@ -1,6 +1,6 @@
 {
   "name": "uppy",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Almost as cute as a Puppy :dog:",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
