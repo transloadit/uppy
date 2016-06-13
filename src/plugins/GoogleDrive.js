@@ -35,6 +35,43 @@ export default class Google extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
+  install () {
+    // Set default state for Google Drive
+    this.core.setState({
+      googleDrive: {
+        authenticated: false,
+        files: [],
+        folders: [],
+        directory: [{
+          title: 'My Drive',
+          id: 'root'
+        }],
+        active: {},
+        filterInput: ''
+      }
+    })
+
+    const target = this.opts.target
+    const plugin = this
+    this.target = this.mount(target, plugin)
+
+    this.checkAuthentication()
+      .then((authenticated) => {
+        this.updateState({authenticated})
+
+        if (authenticated) {
+          return this.getFolder(this.core.getState().googleDrive.directory.id)
+        }
+
+        return authenticated
+      })
+      .then((newState) => {
+        this.updateState(newState)
+      })
+
+    return
+  }
+
   focus () {
     const firstInput = document.querySelector(`${this.target} .UppyGoogleDrive-focusInput`)
 
@@ -72,6 +109,10 @@ export default class Google extends Plugin {
       if (res.status >= 200 && res.status <= 300) {
         return res.json()
       } else {
+        this.updateState({
+          authenticated: false,
+          error: true
+        })
         let error = new Error(res.statusText)
         error.response = res
         throw error
@@ -114,6 +155,7 @@ export default class Google extends Plugin {
           }
         })
       } else {
+        this.handleError(res)
         let error = new Error(res.statusText)
         error.response = res
         throw error
@@ -150,12 +192,6 @@ export default class Google extends Plugin {
       })
   }
 
-  /**
-   * Will soon be replaced by actual Uppy file handling.
-   * Requests the server download the selected file.
-   * @param  {String} fileId
-   * @return {Promise} Result
-   */
   addFile (file) {
     const tagFile = {
       source: this,
@@ -174,7 +210,7 @@ export default class Google extends Plugin {
     this.core.emitter.emit('file-add', tagFile)
   }
 
-  handleUploadError (response) {
+  handleError (response) {
     this.checkAuthentication()
       .then((authenticated) => {
         this.updateState({authenticated})
@@ -210,41 +246,6 @@ export default class Google extends Plugin {
           this.updateState(newState)
         }
       })
-  }
-
-  /**
-   * Render user authentication view
-   */
-  renderAuth () {
-    const state = btoa(JSON.stringify({
-      redirect: location.href.split('#')[0]
-    }))
-
-    const link = `${this.opts.host}/connect/google?state=${state}`
-    return yo`
-      <div class="UppyGoogleDrive-authenticate">
-        <h1>You need to authenticate with Google before selecting files.</h1>
-        <a href=${link}>Authenticate</a>
-      </div>
-    `
-  }
-
-  /**
-   * Deprecated for now. Old file browser render.
-   */
-  renderBrowser (state) {
-    const breadcrumbs = state.directory.map((dir) => yo`<span><button onclick=${this.getSubFolder.bind(this, dir.id, dir.title)}>${dir.title}</button> +</span> `)
-    const folders = state.folders.map((folder) => yo`<li>Folder<button class="GoogleDriveFolder" onclick=${this.getSubFolder.bind(this, folder.id, folder.title)}>${folder.title}</button></li>`)
-    const files = state.files.map((file) => yo`<li><button class="GoogleDriveFile" onclick=${this.addFile.bind(this, file)}>${file.title}</button></li>`)
-
-    return yo`
-      <div>
-        <button onclick=${this.logout}/>Logout</button>
-        <div>${breadcrumbs}</div>
-        <ul>${folders}</ul>
-        <ul>${files}</ul>
-      </div>
-    `
   }
 
   getFileType (file) {
@@ -285,22 +286,6 @@ export default class Google extends Plugin {
     return items.filter((folder) => {
       return folder.title.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1
     })
-  }
-
-  renderBrowserItem (item) {
-    const state = this.core.getState().googleDrive
-    const isAFileSelected = Object.keys(state.active).length !== 0 && JSON.stringify(state.active) !== JSON.stringify({})
-    const isFolder = item.mimeType === 'application/vnd.google-apps.folder'
-    return yo`
-      <tr class=${(isAFileSelected && state.active.id === item.id) ? 'is-active' : ''}
-        onclick=${this.handleClick.bind(this, item)}
-        ondblclick=${isFolder ? this.getSubFolder.bind(this, item.id, item.title) : this.addFile.bind(this, item)}>
-        <td><span class="UppyGoogleDrive-folderIcon"><img src=${item.iconLink}/></span> ${item.title}</td>
-        <td>Me</td>
-        <td>${item.modifiedByMeDate}</td>
-        <td>-</td>
-      </tr>
-    `
   }
 
   sortByTitle () {
@@ -361,10 +346,27 @@ export default class Google extends Plugin {
   }
 
   /**
+   * Render user authentication view
+   */
+  renderAuth () {
+    const state = btoa(JSON.stringify({
+      redirect: location.href.split('#')[0]
+    }))
+
+    const link = `${this.opts.host}/connect/google?state=${state}`
+    return yo`
+      <div class="UppyGoogleDrive-authenticate">
+        <h1>You need to authenticate with Google before selecting files.</h1>
+        <a href=${link}>Authenticate</a>
+      </div>
+    `
+  }
+
+  /**
    * Render file browser
    * @param  {Object} state Google Drive state
    */
-  renderTemp (state) {
+  renderBrowser (state) {
     let folders = state.folders
     let files = state.files
     let previewElem = ''
@@ -438,52 +440,41 @@ export default class Google extends Plugin {
     `
   }
 
-  renderError (err) {
-    return `Something went wrong.  Probably our fault. ${err}`
+  renderBrowserItem (item) {
+    const state = this.core.getState().googleDrive
+    const isAFileSelected = Object.keys(state.active).length !== 0 && JSON.stringify(state.active) !== JSON.stringify({})
+    const isFolder = item.mimeType === 'application/vnd.google-apps.folder'
+    return yo`
+      <tr class=${(isAFileSelected && state.active.id === item.id) ? 'is-active' : ''}
+        onclick=${this.handleClick.bind(this, item)}
+        ondblclick=${isFolder ? this.getSubFolder.bind(this, item.id, item.title) : this.addFile.bind(this, item)}>
+        <td><span class="UppyGoogleDrive-folderIcon"><img src=${item.iconLink}/></span> ${item.title}</td>
+        <td>Me</td>
+        <td>${item.modifiedByMeDate}</td>
+        <td>-</td>
+      </tr>
+    `
   }
 
-  install () {
-    // Set default state for Google Drive
-    this.core.setState({
-      googleDrive: {
-        authenticated: false,
-        files: [],
-        folders: [],
-        directory: [{
-          title: 'My Drive',
-          id: 'root'
-        }],
-        active: {},
-        filterInput: ''
-      }
-    })
-
-    const target = this.opts.target
-    const plugin = this
-    this.target = this.mount(target, plugin)
-
-    this.checkAuthentication()
-      .then((authenticated) => {
-        this.updateState({authenticated})
-
-        if (authenticated) {
-          return this.getFolder(this.core.getState().googleDrive.directory.id)
-        }
-
-        return authenticated
-      })
-      .then((newState) => {
-        this.updateState(newState)
-      })
-
-    return
+  renderError (err) {
+    return yo`
+      <div>
+        <span>
+          Something went wrong.  Probably our fault. ${err}
+        </span>
+      </div>
+    `
   }
 
   render (state) {
-    if (state.googleDrive.authenticated) {
-      return this.renderTemp(state.googleDrive)
-    } else {
+    if (state.googleDrive.error) {
+      return this.renderError()
+    }
+
+    if (!state.googleDrive.authenticated) {
       return this.renderAuth()
     }
+
+    return this.renderBrowser(state.googleDrive)
   }
 }

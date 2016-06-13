@@ -23,7 +23,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
 - [ ] core: Decouple rendering from Plugins and try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
 - [ ] core: Have base styles, be explicit about fonts, etc
-- [ ] core: let user cancel uploads in progress (@arturi)
 - [ ] core: Make sure Uppy works well in VR
 - [ ] drive: Show a visual indication that downloading has started after double-clicking. Prevent that 6 clicks = 3 downloads
 - [ ] instagram: Make a barely working Instagram Plugin + example (#21)
@@ -40,30 +39,35 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [ ] core: accessibility research
 
-## 0.0.7
+## 0.7.0
 
-Theme: The remote + local = friends release
+Theme: Remote Uploads, Meta Data
 
 Released: July 1, 2016
 
+- [x] build: regular + min + gzipped versions of the bundle (@arturi)
+- [ ] core: let user cancel uploads in progress (@arturi)
+- [ ] server: make uppy-server talk to uppy-client in the browser, use websockets, socket.io or node-nanomsg
 - [ ] server: Make Google Drive files to actually upload to the endpoint (@hedgerh)
-- [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id), belonging to the `modify` stage (or a different word we'll come up with) (@arturi)
-- [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too http://tus.io/protocols/resumable-upload.html (@arturi)
+- [ ] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy; Put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh @arturi)
+- [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
+- [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too
 - [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
-- [ ] core: don’t loose state after auth: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy, put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh @arturi)
-- [ ] drive: Return `cb` after writing all files (@hedgerh) https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
+- [ ] progressdrawer: better icons, style, file types (mime + extension) (@arturi)
+- [x] workspace: interface research for better file selection / progress representation (@arturi)
+- [ ] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
+- [ ] meta: better readme on GitHub and NPM (@arturi)
+- [ ] test: working Uppy example on Require Bin — latest version straight from NPM (@arturi)
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
-- [ ] website: add new logos (@arturi)
-- [x] build: revisit sourcemaps for production. can we have them without a mandatory extra request?
 
-## 0.0.6
+## 0.6.2
 
 Theme: The aim low release
 
 Released: June 03, 2016
 
 - [x] build: minification of the bundle (@arturi)
-- [x] build: revisit sourcemaps for production. can we have them without a mandatory extra request? — yes (@arturi)
+- [x] build: revisit sourcemaps for production. can we have them without a mandatory extra request?
 - [x] build: supply Uppy es5 and es6 entry points in npm package (@arturi)
 - [x] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@arturi)
 - [x] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png (@hedgerh)
@@ -86,7 +90,7 @@ Theme: Acceptance tests and Google Drive Polish
 
 Released: May 07, 2016
 
-- [x] test: Wire saucelabs and travis togeteher, make saucelabsl fails fatal to travis builds
+- [x] test: Wire saucelabs and travis togeteher, make saucelabs fail fatal to travis builds
 - [x] test: Add `addFile`-hack so we can have acceptance tests on Safari as well as Edge (@arturi)
 - [x] drive: possible UI polish (@hedgerh)
 - [x] drive: write files to filesystem correctly (@hedgerh)
