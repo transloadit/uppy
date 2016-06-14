@@ -52,24 +52,27 @@ function collectErrors (driver) {
         '[uppy-log]',
         chalk.magenta(uppyLog)
       ].join(' '))
-
-      // TODO: maybe figure out a way to get errors from all browsers
-      // return driver.executeScript('return window.JSErrorCollector_errors.pump()')
-      //   .then(function (errors) {
-      //     if (!errors || !errors.length) {
-      //       return
-      //     }
-      //     errors.forEach(function (error) {
-      //       console.error([
-      //         '[browser-error]',
-      //         chalk.magenta(error.sourceName),
-      //         chalk.dim('#' + error.lineNumber),
-      //         chalk.red(error.errorMessage)
-      //       ].join(' '))
-      //     })
-      //     return
-      //   })
     })
+    .catch(function (err) {
+      console.log('no uppyLog, that’s fine: ' + err)
+    })
+
+    // TODO: maybe figure out a way to get errors from all browsers
+    // return driver.executeScript('return window.JSErrorCollector_errors.pump()')
+    //   .then(function (errors) {
+    //     if (!errors || !errors.length) {
+    //       return
+    //     }
+    //     errors.forEach(function (error) {
+    //       console.error([
+    //         '[browser-error]',
+    //         chalk.magenta(error.sourceName),
+    //         chalk.dim('#' + error.lineNumber),
+    //         chalk.red(error.errorMessage)
+    //       ].join(' '))
+    //     })
+    //     return
+    //   })
 }
 
 function setDriver () {

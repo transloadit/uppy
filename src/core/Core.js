@@ -38,11 +38,13 @@ export default class Core {
       files: {}
     }
 
-    // for debugging and testing
-    global.UppyState = this.state
-    global.uppyLog = global.uppyLog || ''
-    // global.UppyAddFiles = this.addFile.bind(this)
-    global.UppyAddFile = this.addFile.bind(this)
+    if (this.opts.debug) {
+      // for debugging and testing
+      global.UppyState = this.state
+      global.uppyLog = global.uppyLog || ''
+      // global.UppyAddFiles = this.addFile.bind(this)
+      global.UppyAddFile = this.addFile.bind(this)
+    }
   }
 
   /**
