@@ -41,8 +41,7 @@ export default class Core {
     if (this.opts.debug) {
       // for debugging and testing
       global.UppyState = this.state
-      global.uppyLog = global.uppyLog || ''
-      // global.UppyAddFiles = this.addFile.bind(this)
+      global.uppyLog = ''
       global.UppyAddFile = this.addFile.bind(this)
     }
   }
