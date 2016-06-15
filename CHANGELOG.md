@@ -41,7 +41,7 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.7.0
 
-Theme: Remote Uploads, Meta Data
+Theme: Remote Uploads, UI Design, Meta Data
 
 Released: July 1, 2016
 
