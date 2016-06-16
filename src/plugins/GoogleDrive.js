@@ -171,7 +171,7 @@ export default class Google extends Plugin {
    * @param  {String} id    Folder id
    * @param  {String} title Folder title
    */
-  getSubFolder (id, title) {
+  getNextFolder (id, title) {
     this.getFolder(id)
       .then((data) => {
         const state = this.core.getState().googleDrive
@@ -380,7 +380,7 @@ export default class Google extends Plugin {
     folders = folders.map((folder) => this.renderBrowserItem(folder))
     files = files.map((file) => this.renderBrowserItem(file))
 
-    const breadcrumbs = state.directory.map((dir) => yo`<li><button onclick=${this.getSubFolder.bind(this, dir.id, dir.title)}>${dir.title}</button></li> `)
+    const breadcrumbs = state.directory.map((dir) => yo`<li><button onclick=${this.getNextFolder.bind(this, dir.id, dir.title)}>${dir.title}</button></li> `)
     if (isFileSelected) {
       previewElem = yo`
         <div>
@@ -406,7 +406,7 @@ export default class Google extends Plugin {
             <div class="hidden-md-down col-lg-3 col-xl-3">
               <ul class="UppyGoogleDrive-sidebar">
                 <li class="UppyGoogleDrive-filter"><input class="UppyGoogleDrive-focusInput" type='text' onkeyup=${this.filterQuery} placeholder="Search.." value=${state.filterInput}/></li>
-                <li><button onclick=${this.getSubFolder.bind(this, 'root', 'My Drive')}><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_collection_list_3.png"/> My Drive</button></li>
+                <li><button onclick=${this.getNextFolder.bind(this, 'root', 'My Drive')}><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_collection_list_3.png"/> My Drive</button></li>
                 <li><button><img src="https://ssl.gstatic.com/docs/doclist/images/icon_11_shared_collection_list_1.png"/> Shared with me</button></li>
                 <li><button onclick=${this.logout}>Logout</button></li>
               </ul>
@@ -447,7 +447,7 @@ export default class Google extends Plugin {
     return yo`
       <tr class=${(isAFileSelected && state.active.id === item.id) ? 'is-active' : ''}
         onclick=${this.handleClick.bind(this, item)}
-        ondblclick=${isFolder ? this.getSubFolder.bind(this, item.id, item.title) : this.addFile.bind(this, item)}>
+        ondblclick=${isFolder ? this.getNextFolder.bind(this, item.id, item.title) : this.addFile.bind(this, item)}>
         <td><span class="UppyGoogleDrive-folderIcon"><img src=${item.iconLink}/></span> ${item.title}</td>
         <td>Me</td>
         <td>${item.modifiedByMeDate}</td>

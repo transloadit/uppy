@@ -120,8 +120,8 @@ export default class Tus10 extends Plugin {
         }
         this.core.log(`Remote upload of file '${file.name}' failed`)
 
-        if (file.acquiredBy.handleUploadError) {
-          file.acquiredBy.handleUploadError(res)
+        if (file.acquiredBy.handleError) {
+          file.acquiredBy.handleError(res)
         }
 
         return reject(new Error('Error: ' + res.statusText))
