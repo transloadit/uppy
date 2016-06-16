@@ -45,20 +45,20 @@ Theme: Remote Uploads, UI Design, Meta Data
 
 Released: July 1, 2016
 
-- [x] build: regular + min + gzipped versions of the bundle (@arturi)
-- [ ] core: let user cancel uploads in progress (@arturi)
-- [ ] server: make uppy-server talk to uppy-client in the browser, use websockets, socket.io or node-nanomsg
-- [ ] server: Make Google Drive files to actually upload to the endpoint (@hedgerh)
 - [ ] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy; Put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh @arturi)
+- [ ] core: let user cancel uploads in progress (@arturi)
+- [ ] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
+- [ ] meta: better readme on GitHub and NPM (@arturi)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
 - [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too
 - [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
 - [ ] progressdrawer: better icons, style, file types (mime + extension) (@arturi)
-- [x] workspace: interface research for better file selection / progress representation (@arturi)
-- [ ] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
-- [ ] meta: better readme on GitHub and NPM (@arturi)
-- [ ] test: working Uppy example on Require Bin — latest version straight from NPM (@arturi)
+- [ ] server: Make Google Drive files to actually upload to the endpoint (@hedgerh)
+- [ ] server: make uppy-server talk to uppy-client in the browser, use websockets, socket.io or node-nanomsg
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
+- [ ] test: working Uppy example on Require Bin — latest version straight from NPM (@arturi)
+- [x] build: regular + min + gzipped versions of the bundle (@arturi)
+- [x] workspace: interface research for better file selection / progress representation (@arturi)
 
 ## 0.6.4
 
