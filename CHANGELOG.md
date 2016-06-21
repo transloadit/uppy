@@ -61,7 +61,7 @@ Released: July 1, 2016
 - [ ] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy; Put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh)
 - [ ] core: Rethink UI (@arturi)
 - [ ] server: add tus-js-client when it's node-ready (@hedgerh)
-- [ ] server: make uppy-server talk to uppy-client in the browser, use websockets. (@hedgerh)
+- [ ] server: make uppy-server talk to uppy-client in the browser, use websockets (@hedgerh)
 - [x] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
 - [x] server: Make Google Drive files to actually upload to the endpoint (@hedgerh)
 - [x] build: regular + min + gzipped versions of the bundle (@arturi)
