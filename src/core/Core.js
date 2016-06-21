@@ -113,7 +113,7 @@ export default class Core {
     const fileID = Utils.generateFileID(file.name)
 
     updatedFiles[fileID] = {
-      source: file.source,
+      source: file.source || '',
       id: fileID,
       name: file.name,
       type: {
@@ -122,7 +122,7 @@ export default class Core {
       },
       data: file.data,
       progress: 0,
-      isRemote: file.isRemote,
+      isRemote: file.isRemote || false,
       remote: file.remote
     }
 

@@ -1,5 +1,4 @@
 var test = require('tape')
-var path = require('path')
 var chalk = require('chalk')
 var Driver = require('./Driver')
 
@@ -29,13 +28,16 @@ module.exports = function (driver, platform, host) {
       driver.executeScript(Driver.uppySelectFakeFile)
       driver.findElement({css: '.UppyForm-uploadBtn'}).click()
     } else {
+      console.log('fake-selecting a fake file')
+      driver.executeScript(Driver.uppySelectFakeFile)
+      driver.findElement({css: '.UppyForm-uploadBtn'}).click()
       // Find input by css selector & pass absolute image path to it
-      console.log('selecting a real file')
-      driver.findElement({css: '.UppyFormContainer .UppyForm-input'}).then(function (el) {
-        el.sendKeys(path.join(__dirname, 'image.jpg'))
-        el.sendKeys(path.join(__dirname, 'image2.jpg'))
-        driver.findElement({css: '.UppyForm-uploadBtn'}).click()
-      })
+      // console.log('selecting a real file')
+      // driver.findElement({css: '.UppyFormContainer .UppyForm-input'}).then(function (el) {
+      //   el.sendKeys(path.join(__dirname, 'image.jpg'))
+      //   el.sendKeys(path.join(__dirname, 'image2.jpg'))
+      //   driver.findElement({css: '.UppyForm-uploadBtn'}).click()
+      // })
     }
 
     function isUploaded () {
