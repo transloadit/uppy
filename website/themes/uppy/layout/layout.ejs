@@ -33,7 +33,11 @@
       </header>
 
       <main class="MainContent js-MainContent" id="main">
-        <%- body %>
+        <% if (page.blog_index) { %>
+          <%- partial('partials/blog') %>
+        <% } else { %>
+          <%- body %>
+        <% } %>
       </main>
 
       <% if (!isIndex) { %>
