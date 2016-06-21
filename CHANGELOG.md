@@ -62,6 +62,7 @@ Released: July 1, 2016
 - [ ] core: Rethink UI (@arturi)
 - [ ] server: add tus-js-client when it's node-ready (@hedgerh)
 - [ ] server: make uppy-server talk to uppy-client in the browser, use websockets. (@hedgerh)
+- [x] website: add new logos and blog (@arturi)
 - [x] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
 - [x] server: Make Google Drive files to actually upload to the endpoint (@hedgerh)
 - [x] build: regular + min + gzipped versions of the bundle (@arturi)
