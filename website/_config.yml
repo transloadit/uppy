@@ -11,7 +11,7 @@ title: Uppy
 subtitle: "Almost as cute as a puppy"
 logo_large: /images/logos/uppy-dog-full.svg
 logo_medium: /images/logos/uppy-dog-head-arrow.svg
-logo_icon: /images/logos/super-dog-2-face.png
+logo_icon: /images/logos/uppy-dog-head-arrow.png
 description: >
   Uppy is (going to be) a JavaScript file uploader that fetches files from Dropbox, Instagram, local disk, remote URLs, and other exciting locations.
   It has a plugin-based architecture, first-class support for resumable uploads according to the open standard: <a href="http://tus.io">tus</a>,
