@@ -33,7 +33,7 @@ if (isTravisTest) {
   // @todo This should become localhost to utilize the Travis saucelabs addon tunnel
   // But it seems Edge and Safar fail on that right now, so targeting uppy.io instead.
   // That is unideal, as we are then testing a previous deploy, and not the current build
-  host = localHost
+  host = remoteHost
   // host = remoteHost
 } else if (isRemoteTest) {
   // We're not too sure about a working tunnel otherwise, best just test uppy.io
@@ -48,8 +48,8 @@ console.log('Acceptance tests will be targetting: ' + host)
 
 // FYI: old Chrome on Windows XP — didn’t pass
 var platforms = [
-  // { browser: 'Safari', version: '8.0', os: 'OS X 10.10' },
-  // { browser: 'MicrosoftEdge', version: '13.10586', os: 'Windows 10' },
+  { browser: 'Safari', version: '8.0', os: 'OS X 10.10' },
+  { browser: 'MicrosoftEdge', version: '13.10586', os: 'Windows 10' },
   { browser: 'Firefox', version: '38.0', os: 'Linux' },
   { browser: 'Internet Explorer', version: '10.0', os: 'Windows 8' },
   { browser: 'Internet Explorer', version: '11.103', os: 'Windows 10' },
