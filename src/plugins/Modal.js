@@ -183,7 +183,7 @@ export default class Modal extends Plugin {
 
     const targetClassName = this.opts.target.substring(1)
 
-    return yo`<div class="${targetClassName}"
+    return yo`<div class="Uppy ${targetClassName}"
                    aria-hidden="${state.modal.isHidden}"
                    aria-label="Uppy Dialog Window (Press escape to close)"
                    role="dialog">
