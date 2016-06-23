@@ -6,16 +6,18 @@ import DragDrop from '../../../../src/plugins/DragDrop.js'
 import GoogleDrive from '../../../../src/plugins/GoogleDrive.js'
 import ProgressBar from '../../../../src/plugins/ProgressBar.js'
 import ProgressDrawer from '../../../../src/plugins/ProgressDrawer.js'
+import Dashboard from '../../../../src/plugins/dashboard'
 
 import { UPPY_SERVER } from '../env'
 
 const uppy = new Uppy({debug: true, autoProceed: false})
 uppy
   .use(Modal, {trigger: '#uppyModalOpener'})
+  .use(Dashboard, {target: Modal})
   .use(ProgressBar, {target: 'body'})
   .use(DragDrop, {target: Modal})
   .use(GoogleDrive, {target: Modal, host: UPPY_SERVER})
   .use(Dummy, {target: Modal})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/'})
-  .use(ProgressDrawer, {target: Modal})
+  // .use(ProgressDrawer, {target: Modal})
   .run()
