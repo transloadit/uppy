@@ -1,6 +1,6 @@
 import Plugin from './../Plugin'
 import html from 'yo-yo'
-import dashboardIcon from './dashboard-icon.js'
+import dashboardIcon from './icon.js'
 
 /**
  * Dashboard — shows selected and uploaded files, as well as their progress,
