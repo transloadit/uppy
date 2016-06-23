@@ -41,7 +41,9 @@
     "web:deploy": "npm-run-all web:install web:disc docs web:build && ./bin/web-deploy",
     "web:disc": "npm run build:bundle:fullpath && discify dist/uppy-fp.js --output website/src/_disc.html && echo '---\nlayout: false\n---\n' |cat - website/src/_disc.html > website/src/disc.html && rm website/src/_disc.html",
     "web:install": "cd website && npm install",
-    "web:preview": "cd website && parallelshell 'node build-examples.js watch' './node_modules/.bin/hexo server'",
+    "web:examples:watch": "cd website && node build-examples.js watch",
+    "web:serve": "cd website && ./node_modules/.bin/hexo server",
+    "web:preview": "npm-run-all --parallel web:examples:watch web:serve",
     "web:update:frontpage:code:sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
     "web": "npm-run-all web:clean web:build",
     "prepublish": "npm-run-all clean build"
@@ -57,7 +59,9 @@
   },
   "homepage": "https://github.com/transloadit/uppy#readme",
   "devDependencies": {
+    "postcss": "5.0.21",
     "autoprefixer": "6.3.6",
+    "cssnano": "3.6.2",
     "babel-cli": "6.9.0",
     "babel-core": "6.7.7",
     "babel-eslint": "6.0.2",
@@ -71,9 +75,9 @@
     "babel-register": "6.7.2",
     "babelify": "7.2.0",
     "browser-sync": "2.10.0",
-    "browserify": "12.0.1",
+    "browserify": "13.0.1",
+    "watchify": "3.7.0",
     "chalk": "1.1.1",
-    "cssnano": "3.6.2",
     "disc": "1.3.2",
     "eslint": "2.7.0",
     "eslint-config-standard": "5.1.0",
@@ -92,14 +96,11 @@
     "node-sass": "3.4.2",
     "nodemon": "1.8.1",
     "npm-run-all": "2.1.1",
-    "parallelshell": "2.0.0",
-    "postcss": "5.0.21",
     "sass": "0.5.0",
     "selenium-webdriver": "2.52.0",
     "tap-spec": "4.1.1",
     "tape": "4.4.0",
-    "uppy-server": "0.0.7",
-    "watchify": "3.6.1"
+    "uppy-server": "0.0.7"
   },
   "dependencies": {
     "drag-drop": "2.11.0",
