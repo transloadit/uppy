@@ -107,6 +107,61 @@ function getFnName (fn) {
   return (!f && 'not a function') || (s && s[1] || 'anonymous')
 }
 
+/**
+ * Reads image as data URI from file object,
+ * the one you get from input[type=file] or drag & drop.
+ * This will only read image files, skipping others
+ *
+ * @param {Object} imgObject
+ * @param {Function} cb callback that will be called once the image is read
+ *
+ */
+function readImage (imgObject, cb) {
+  // if (!imgObject.type.match(/image.*/)) {
+  //   console.log('The file is not an image: ', imgObject.type)
+  //   return
+  // }
+
+  var reader = new FileReader()
+  reader.addEventListener('load', function (ev) {
+    var imgSrcBase64 = ev.target.result
+    var img = new Image()
+    img.onload = function () {
+      return cb(img)
+    }
+    img.src = imgSrcBase64
+  })
+  reader.addEventListener('error', function (err) {
+    console.log('FileReader error' + err)
+  })
+  reader.readAsDataURL(imgObject)
+}
+
+/**
+ * Resizes an image to specified width and height, using canvas
+ *
+ * @param {Object} img element
+ * @param {String} width of the resulting image
+ * @param {String} height of the resulting image
+ * @return {String} dataURL of the resized image
+ */
+function resizeImage (img, width, height) {
+  // create an off-screen canvas
+  var canvas = document.createElement('canvas')
+  var ctx = canvas.getContext('2d')
+
+  // set its dimension to target size
+  canvas.width = width
+  canvas.height = height
+
+  // draw source image into the off-screen canvas:
+  ctx.drawImage(img, 0, 0, width, height)
+
+  // encode image to data-uri with base64 version of compressed image
+  // canvas.toDataURL('image/jpeg', quality);  // quality = [0.0, 1.0]
+  return canvas.toDataURL()
+}
+
 export default {
   promiseWaterfall,
   generateFileID,
@@ -116,5 +171,7 @@ export default {
   flatten,
   groupBy,
   qsa,
-  extend
+  extend,
+  readImage,
+  resizeImage
 }

@@ -79,21 +79,6 @@ export default class Core {
     return this.state
   }
 
-  addImgPreviewToFile (file) {
-    const reader = new FileReader()
-    reader.addEventListener('load', (ev) => {
-      const imgSrc = ev.target.result
-      const updatedFiles = Object.assign({}, this.state.files)
-      updatedFiles[file.id].preview = imgSrc
-      updatedFiles[file.id].previewEl = yo`<img alt="${file.name}" src="${imgSrc}">`
-      this.setState({files: updatedFiles})
-    })
-    reader.addEventListener('error', (err) => {
-      this.core.log('FileReader error' + err)
-    })
-    reader.readAsDataURL(file.data)
-  }
-
   addMeta (meta, fileID) {
     if (typeof fileID === 'undefined') {
       const updatedFiles = Object.assign({}, this.state.files)
@@ -129,7 +114,14 @@ export default class Core {
     this.setState({files: updatedFiles})
 
     if (fileTypeGeneral === 'image') {
-      this.addImgPreviewToFile(updatedFiles[fileID])
+      // this.addImgPreviewToFile(updatedFiles[fileID])
+      Utils.readImage(updatedFiles[fileID].data, (imgEl) => {
+        const resizedImgSrc = Utils.resizeImage(imgEl, 100, 100)
+
+        const updatedFiles = Object.assign({}, this.state.files)
+        updatedFiles[fileID].previewEl = yo`<img alt="${file.name}" src="${resizedImgSrc}">`
+        this.setState({files: updatedFiles})
+      })
     }
 
     if (this.opts.autoProceed) {
