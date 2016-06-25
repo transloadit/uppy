@@ -139,6 +139,7 @@ function readImage (imgObject, cb) {
 
 /**
  * Resizes an image to specified width and height, using canvas
+ * See https://davidwalsh.name/resize-image-canvas
  *
  * @param {Object} img element
  * @param {String} width of the resulting image
