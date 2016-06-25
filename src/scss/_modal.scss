@@ -39,7 +39,7 @@
 .UppyModal-close {
   position: absolute;
   top: 10px;
-  right: 10px;
+  right: 15px;
   padding: 0;
   border: 0;
   cursor: pointer;
@@ -57,15 +57,16 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
-  white-space: nowrap;
-  width: 80px;
+  // white-space: nowrap;
+  width: 8%;
   height: 100%;
   float: left;
-  padding-top: 10px;
+  padding-top: 20px;
+  text-align: center;
 }
 
 .UppyModalTab {
-  margin-bottom: 3px;
+  margin-bottom: 25px;
 }
 
 .UppyModalTab-name {
@@ -82,26 +83,18 @@
 }
 
 .UppyModalTab-btn {
-  width: 100%;
-  text-align: left;
-  padding-left: 25px;
-  padding-right: 25px;
-  padding-top: 14px;
-  padding-bottom: 14px;
   cursor: pointer;
   border: 0;
   background-color: transparent;
-  outline: none;
   -webkit-appearance: none;
-  overflow: hidden;
+  outline: none;
   transition: all 0.3s;
   fill: $color-asphalt-gray;
 
   &:focus,
   &:active,
   &:hover {
-    // background-color: $color-cornflower-blue;
-    overflow: visible;
+    fill: darken($color-cornflower-blue, 25%);
   }
 
   &:hover .UppyModalTab-name {
@@ -117,9 +110,9 @@
 // On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
 .UppyModalTab-icon {
   // fill: $color-asphalt-gray;
-  margin-right: 8px;
-  width: 100%;
-  height: 100%;
+  // margin-right: 8px;
+  width: 25px;
+  height: 25px;
   vertical-align: middle;
 }
 
@@ -127,12 +120,13 @@
 
 .UppyModalContent {
   height: 100%;
-  margin-left: 55px;
+  width: 92%;
   position: relative;
+  float: left;
+  // margin-left: 80px;
 }
 
 .UppyModalContent-panel {
-  // height: 88%;
   height: 100%;
 }
 
@@ -189,22 +183,3 @@
     background-color: darken($color-cornflower-blue, 20%);
   }
 }
-
-// .loader-block {
-//   background-color: rgba(102,102,102,1);
-//   display: inline-block;
-//   height: 10px;
-//   margin-right: 2px;
-//   opacity: 0;
-//   width: 10px;
-//   animation: 2.5s fadeIn ease-in-out infinite;
-// }
-//
-// .loader-block:nth-child(2) {
-//   -webkit-animation-delay: 500ms;
-//   animation-delay: 500ms;
-// }
-// .loader-block:nth-child(3) {
-//   -webkit-animation-delay: 1s;
-//   animation-delay: 1s;
-// }
