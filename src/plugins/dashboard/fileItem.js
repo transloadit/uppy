@@ -1,7 +1,7 @@
 import html from 'yo-yo'
 import { fileIcon, checkIcon, removeIcon } from './icons'
 
-module.exports = function drawerItem (bus, file) {
+export default function fileItem (bus, file) {
   const isUploaded = file.progress === 100
 
   const remove = (ev) => {
@@ -30,7 +30,7 @@ module.exports = function drawerItem (bus, file) {
       : html`<button class="UppyDashboardItem-remove"
                      aria-label="Remove this file"
                      onclick=${remove}>
-                ${removeIcon}
+                ${removeIcon()}
              </button>`
     }
     <div class="UppyDashboardItem-progress"
