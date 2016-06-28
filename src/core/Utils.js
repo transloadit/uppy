@@ -137,6 +137,12 @@ function readImage (imgObject, cb) {
   reader.readAsDataURL(imgObject)
 }
 
+function getProportionalImageHeight (img, newWidth) {
+  var aspect = img.width / img.height
+  var newHeight = Math.round(newWidth / aspect)
+  return newHeight
+}
+
 /**
  * Resizes an image to specified width and height, using canvas
  * See https://davidwalsh.name/resize-image-canvas
@@ -174,5 +180,6 @@ export default {
   qsa,
   extend,
   readImage,
-  resizeImage
+  resizeImage,
+  getProportionalImageHeight
 }

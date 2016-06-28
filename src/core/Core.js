@@ -116,7 +116,9 @@ export default class Core {
     if (fileTypeGeneral === 'image') {
       // this.addImgPreviewToFile(updatedFiles[fileID])
       Utils.readImage(updatedFiles[fileID].data, (imgEl) => {
-        const resizedImgSrc = Utils.resizeImage(imgEl, 100, 100)
+        const newImageWidth = 200
+        const newImageHeight = Utils.getProportionalImageHeight(imgEl, newImageWidth)
+        const resizedImgSrc = Utils.resizeImage(imgEl, newImageWidth, newImageHeight)
 
         const updatedFiles = Object.assign({}, this.state.files)
         updatedFiles[fileID].previewEl = yo`<img alt="${file.name}" src="${resizedImgSrc}">`
