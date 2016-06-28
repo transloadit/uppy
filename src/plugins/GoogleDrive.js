@@ -3,6 +3,8 @@ import Plugin from './Plugin'
 import 'whatwg-fetch'
 import yo from 'yo-yo'
 
+import UppySocket from '../core/UppySocket'
+
 export default class Google extends Plugin {
   constructor (core, opts) {
     super(core, opts)
@@ -33,6 +35,32 @@ export default class Google extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+    const socket = new UppySocket({
+      target: 'ws://localhost:9876'
+    })
+
+    if (socket.isOpen) {
+      socket.emit('google:get', {
+        fileId: '1uPumltHjPmC57_Ljc5onxmtpHziDdId7WDKU9biBV7g',
+        target: 'api2.transloadit.com'
+      })
+    }
+    // const socket = new WebSocket('ws://localhost:9876')
+
+    // socket.onopen = (e) => {
+    //   socket.send(JSON.stringify({
+    //     action: 'google:get',
+    //     payload: {
+    //       fileId: '1uPumltHjPmC57_Ljc5onxmtpHziDdId7WDKU9biBV7g',
+    //       target: 'api2.transloadit.com'
+    //     }
+    //   }))
+    //   console.log(socket)
+    // }
+
+    // socket.onmessage = (e) => {
+    //   console.log(e.data)
+    // }
   }
 
   install () {
