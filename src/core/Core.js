@@ -1,5 +1,6 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
+import prettyBytes from 'pretty-bytes'
 import yo from 'yo-yo'
 import ee from 'events'
 
@@ -107,6 +108,8 @@ export default class Core {
       },
       data: file.data,
       progress: 0,
+      totalSize: prettyBytes(file.data.size),
+      uploadedSize: 0,
       isRemote: file.isRemote || false,
       remote: file.remote
     }
@@ -149,9 +152,13 @@ export default class Core {
       this.setState({files: updatedFiles})
     })
 
-    this.emitter.on('upload-progress', (progressData) => {
+    this.emitter.on('upload-progress', (data) => {
+      let percentage = (data.bytesUploaded / data.bytesTotal * 100).toFixed(2)
+      percentage = Math.round(percentage)
+
       const updatedFiles = Object.assign({}, this.state.files)
-      updatedFiles[progressData.id].progress = progressData.percentage
+      updatedFiles[data.id].progress = percentage
+      updatedFiles[data.id].uploadedSize = prettyBytes(data.bytesUploaded)
 
       const inProgress = Object.keys(updatedFiles).map((file) => {
         return file.progress !== 0

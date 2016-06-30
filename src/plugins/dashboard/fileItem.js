@@ -22,6 +22,7 @@ export default function fileItem (bus, file) {
       <br>
     </h4>
     <h5 class="UppyDashboardItem-status">
+      ${file.totalSize}
       ${file.progress > 0 && file.progress < 100 ? 'Uploading… ' + file.progress + '%' : ''}
       ${file.progress === 100 ? 'Completed' : ''}
     </h5>
@@ -33,7 +34,8 @@ export default function fileItem (bus, file) {
                 ${removeIcon()}
              </button>`
     }
-    <div class="UppyDashboardItem-progress"
-         style="width: ${file.progress}%"></div>
+    <div class="UppyDashboardItem-progress">
+      <div class="UppyDashboardItem-progressInner" style="width: ${file.progress}%"></div>
+    </div>
   </li>`
 }

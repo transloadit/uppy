@@ -41,14 +41,12 @@ export default class Tus10 extends Plugin {
           reject('Failed because: ' + error)
         },
         onProgress: (bytesUploaded, bytesTotal) => {
-          let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
-          percentage = Math.round(percentage)
-
           // Dispatch progress event
           this.core.emitter.emit('upload-progress', {
             uploader: this,
             id: file.id,
-            percentage: percentage
+            bytesUploaded: bytesUploaded,
+            bytesTotal: bytesUploaded
           })
         },
         onSuccess: () => {
