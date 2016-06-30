@@ -1,5 +1,5 @@
 import Uppy from '../../../../src/core/Core.js'
-import Dummy from '../../../../src/plugins/Dummy.js'
+import Dummy from '../../../../src/plugins/Dummy'
 import Tus10 from '../../../../src/plugins/Tus10.js'
 import Modal from '../../../../src/plugins/Modal.js'
 import DragDrop from '../../../../src/plugins/DragDrop.js'
@@ -15,8 +15,8 @@ uppy
   .use(Modal, {trigger: '#uppyModalOpener'})
   .use(Dashboard, {target: Modal})
   .use(ProgressBar, {target: 'body'})
-  .use(DragDrop, {target: Modal})
-  .use(GoogleDrive, {target: Modal, host: UPPY_SERVER})
+  // .use(DragDrop, {target: Modal})
+  // .use(GoogleDrive, {target: Modal, host: UPPY_SERVER})
   .use(Dummy, {target: Modal})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/'})
   // .use(ProgressDrawer, {target: Modal})
