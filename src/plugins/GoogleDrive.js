@@ -74,6 +74,11 @@ export default class Google extends Plugin {
       })
     })
 
+    this.socket.on('google.list.fail', (data) => {
+      console.log('google.list.fail')
+      console.log(data)
+    })
+
     this.socket.on('google.auth.fail', () => {
       console.log('google.auth.fail')
       this.updateState({
