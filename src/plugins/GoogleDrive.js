@@ -3,14 +3,12 @@ import Plugin from './Plugin'
 import 'whatwg-fetch'
 import yo from 'yo-yo'
 
-import UppySocket from '../core/UppySocket'
-
 export default class Google extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
     this.id = 'GoogleDrive'
-    this.titile = 'Google Drive'
+    this.title = 'Google Drive'
     this.icon = yo`
       <svg class="UppyModalTab-icon" width="28" height="28" viewBox="0 0 16 16">
         <path d="M2.955 14.93l2.667-4.62H16l-2.667 4.62H2.955zm2.378-4.62l-2.666 4.62L0 10.31l5.19-8.99 2.666 4.62-2.523 4.37zm10.523-.25h-5.333l-5.19-8.99h5.334l5.19 8.99z"/>
@@ -18,13 +16,18 @@ export default class Google extends Plugin {
     `
 
     this.files = []
-    this.renderBrowserItem = this.renderBrowserItem.bind(this)
-    this.filterItems = this.filterItems.bind(this)
-    this.filterQuery = this.filterQuery.bind(this)
+
+    // Logic
     this.addFile = this.addFile.bind(this)
     this.getFolder = this.getFolder.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.logout = this.logout.bind(this)
+
+    // Visual
+    this.renderBrowserItem = this.renderBrowserItem.bind(this)
+    this.filterItems = this.filterItems.bind(this)
+    this.filterQuery = this.filterQuery.bind(this)
+    this.renderAuth = this.renderAuth.bind(this)
     this.renderBrowser = this.renderBrowser.bind(this)
     this.sortByTitle = this.sortByTitle.bind(this)
     this.sortByDate = this.sortByDate.bind(this)
@@ -35,32 +38,38 @@ export default class Google extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
-    const socket = new UppySocket({
-      target: 'ws://localhost:9876'
+
+    this.socket = this.core.initSocket({
+      target: 'ws://localhost:3020/'
     })
 
-    if (socket.isOpen) {
-      socket.emit('google:get', {
-        fileId: '1uPumltHjPmC57_Ljc5onxmtpHziDdId7WDKU9biBV7g',
-        target: 'api2.transloadit.com'
+    this.socket.on('google.auth.pass', () => {
+      this.getFolder(this.core.getState().googleDrive.directory.id)
+    })
+
+    this.socket.on('google.list.ok', (data) => {
+      let folders = []
+      let files = []
+      data.items.forEach((item) => {
+        if (item.mimeType === 'application/vnd.google-apps.folder') {
+          folders.push(item)
+        } else {
+          files.push(item)
+        }
       })
-    }
-    // const socket = new WebSocket('ws://localhost:9876')
 
-    // socket.onopen = (e) => {
-    //   socket.send(JSON.stringify({
-    //     action: 'google:get',
-    //     payload: {
-    //       fileId: '1uPumltHjPmC57_Ljc5onxmtpHziDdId7WDKU9biBV7g',
-    //       target: 'api2.transloadit.com'
-    //     }
-    //   }))
-    //   console.log(socket)
-    // }
+      this.updateState({
+        folders,
+        files,
+        authenticated: true
+      })
+    })
 
-    // socket.onmessage = (e) => {
-    //   console.log(e.data)
-    // }
+    this.socket.on('google.auth.fail', () => {
+      this.updateState({
+        authenticated: false
+      })
+    })
   }
 
   install () {
@@ -84,18 +93,6 @@ export default class Google extends Plugin {
     this.target = this.mount(target, plugin)
 
     this.checkAuthentication()
-      .then((authenticated) => {
-        this.updateState({authenticated})
-
-        if (authenticated) {
-          return this.getFolder(this.core.getState().googleDrive.directory.id)
-        }
-
-        return authenticated
-      })
-      .then((newState) => {
-        this.updateState(newState)
-      })
 
     return
   }
@@ -125,29 +122,7 @@ export default class Google extends Plugin {
    * @return {Promise} authentication status
    */
   checkAuthentication () {
-    return fetch(`${this.opts.host}/google/authorize`, {
-      method: 'get',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    })
-    .then((res) => {
-      if (res.status >= 200 && res.status <= 300) {
-        return res.json()
-      } else {
-        this.updateState({
-          authenticated: false,
-          error: true
-        })
-        let error = new Error(res.statusText)
-        error.response = res
-        throw error
-      }
-    })
-    .then((data) => data.isAuthenticated)
-    .catch((err) => err)
+    this.socket.send('google.auth')
   }
 
   /**
@@ -155,42 +130,9 @@ export default class Google extends Plugin {
    * @param  {String} id Folder id
    * @return {Promise}   Folders/files in folder
    */
-  getFolder (id = 'root') {
-    return fetch(`${this.opts.host}/google/list?dir=${id}`, {
-      method: 'get',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    })
-    .then((res) => {
-      if (res.status >= 200 && res.status <= 300) {
-        return res.json().then((data) => {
-          // let result = Utils.groupBy(data.items, (item) => item.mimeType)
-          let folders = []
-          let files = []
-          data.items.forEach((item) => {
-            if (item.mimeType === 'application/vnd.google-apps.folder') {
-              folders.push(item)
-            } else {
-              files.push(item)
-            }
-          })
-          return {
-            folders,
-            files
-          }
-        })
-      } else {
-        this.handleError(res)
-        let error = new Error(res.statusText)
-        error.response = res
-        throw error
-      }
-    })
-    .catch((err) => {
-      return err
+  getFolder (dir = 'root') {
+    this.socket.send('google.list', {
+      dir
     })
   }
 
@@ -226,11 +168,10 @@ export default class Google extends Plugin {
       data: file,
       name: file.title,
       type: this.getFileType(file),
-      isRemote: true,
       remote: {
-        url: `${this.opts.host}/google/get?fileId=${file.id}`,
-        body: {
-          fileId: file.id
+        action: 'google.get',
+        payload: {
+          id: file.id
         }
       }
     }
@@ -239,41 +180,30 @@ export default class Google extends Plugin {
   }
 
   handleError (response) {
-    this.checkAuthentication()
-      .then((authenticated) => {
-        this.updateState({authenticated})
-      })
+    // this.checkAuthentication()
+    //   .then((authenticated) => {
+    //     this.updateState({authenticated})
+    //   })
   }
 
   /**
    * Removes session token on client side.
    */
   logout () {
-    fetch(`${this.opts.host}/google/logout?redirect=${location.href}`, {
-      method: 'get',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+    this.socket.once('google.logout.ok', () => {
+      const newState = {
+        authenticated: false,
+        files: [],
+        folders: [],
+        directory: [{
+          title: 'My Drive',
+          id: 'root'
+        }]
       }
+      console.log('okie')
+      this.updateState(newState)
     })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.ok) {
-          console.log('ok')
-          const newState = {
-            authenticated: false,
-            files: [],
-            folders: [],
-            directory: {
-              title: 'My Drive',
-              id: 'root'
-            }
-          }
-
-          this.updateState(newState)
-        }
-      })
+    this.socket.send('google.logout')
   }
 
   getFileType (file) {
@@ -377,15 +307,20 @@ export default class Google extends Plugin {
    * Render user authentication view
    */
   renderAuth () {
-    const state = btoa(JSON.stringify({
-      redirect: location.href.split('#')[0]
-    }))
+    const link = `${this.opts.host}/connect/google`
 
-    const link = `${this.opts.host}/connect/google?state=${state}`
+    const handleAuth = (e) => {
+      e.preventDefault()
+      const authWindow = window.open(link)
+      this.socket.once('google.auth.complete', () => {
+        authWindow.close()
+      })
+    }
+
     return yo`
       <div class="UppyGoogleDrive-authenticate">
         <h1>You need to authenticate with Google before selecting files.</h1>
-        <a href=${link}>Authenticate</a>
+        <a href="" onclick=${handleAuth}>Authenticate</a>
       </div>
     `
   }

@@ -1,26 +1,68 @@
+import ee from 'events'
+
 export default class UppySocket {
   constructor (opts) {
+    this.queued = []
     this.isOpen = false
     this.socket = new WebSocket(opts.target)
+    this.emitter = new ee.EventEmitter()
 
     this.socket.onopen = (e) => {
-      this.emit('google:get', {
-        fileId: '1uPumltHjPmC57_Ljc5onxmtpHziDdId7WDKU9biBV7g',
-        target: 'api2.transloadit.com'
-      })
+      this.isOpen = true
+
+      while (this.queued.length > 0 && this.isOpen) {
+        const first = this.queued[0]
+        this.send(first.action, first.payload)
+        this.queued = this.queued.slice(1)
+      }
     }
 
-    this.socket.onmessage = (e) => {
-      console.log(e.data)
+    this.socket.onclose = (e) => {
+      this.isOpen = false
     }
+
+    this._handleMessage = this._handleMessage.bind(this)
+
+    this.socket.onmessage = this._handleMessage
 
     this.emit = this.emit.bind(this)
+    this.on = this.on.bind(this)
+    this.once = this.once.bind(this)
+    this.send = this.send.bind(this)
   }
 
-  emit (action, payload) {
+  send (action, payload) {
+    // attach uuid
+
+    if (!this.isOpen) {
+      this.queued.push({action, payload})
+      return
+    }
+
     this.socket.send(JSON.stringify({
       action,
       payload
     }))
+  }
+
+  on (action, handler) {
+    this.emitter.on(action, handler)
+  }
+
+  emit (action, payload) {
+    this.emitter.emit(action, payload)
+  }
+
+  once (action, handler) {
+    this.emitter.once(action, handler)
+  }
+
+  _handleMessage (e) {
+    try {
+      const message = JSON.parse(e.data)
+      this.emit(message.action, message.payload)
+    } catch (err) {
+      console.log(err)
+    }
   }
 }

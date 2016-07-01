@@ -70,7 +70,7 @@ export default class Tus10 extends Plugin {
 
       const filesForUpload = {}
       Object.keys(files).forEach((file) => {
-        if (files[file].progress === 0 || files[file].isRemote) {
+        if (files[file].progress === 0 || files[file].remote) {
           filesForUpload[file] = files[file]
         }
       })
@@ -86,10 +86,10 @@ export default class Tus10 extends Plugin {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
-      if (!files[i].isRemote) {
-        uploaders.push(this.upload(file, current, total))
-      } else {
+      if (files[i].remote) {
         uploaders.push(this.uploadRemote(file, current, total))
+      } else {
+        uploaders.push(this.upload(file, current, total))
       }
     }
 
@@ -102,30 +102,11 @@ export default class Tus10 extends Plugin {
 
   uploadRemote (file, current, total) {
     return new Promise((resolve, reject) => {
-      fetch(file.remote.url, {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Object.assign({}, file.remote.body, {
-          target: this.opts.endpoint
-        }))
+      const payload = Object.assign({}, file.remote.payload, {
+        target: this.opts.endpoint,
+        protocol: 'tus'
       })
-      .then((res) => {
-        if (res.status >= 200 && res.status <= 300) {
-          this.core.log(`Remote upload of '${file.name}' successful`)
-          return resolve('Success')
-        }
-        this.core.log(`Remote upload of file '${file.name}' failed`)
-
-        if (file.acquiredBy.handleError) {
-          file.acquiredBy.handleError(res)
-        }
-
-        return reject(new Error('Error: ' + res.statusText))
-      })
+      this.core.socket.send(file.remote.action, payload)
     })
   }
 
