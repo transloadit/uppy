@@ -57,12 +57,12 @@ Theme: Remote Uploads, UI Redesign
 
 Released: July 1, 2016
 
-- [ ] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy; Put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh)
+- [x] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy; Put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh)
 - [ ] core: Rethink UI: Part I (@arturi)
 - [x] core: let user cancel uploads in progress (@arturi)
 - [x] core: resize image file previews (to 100x100px) for performance (@arturi)
-- [ ] server: add tus-js-client when it's node-ready (@hedgerh)
-- [ ] server: make uppy-server talk to uppy-client in the browser, use websockets. (@hedgerh)
+- [x] server: add tus-js-client when it's node-ready (@hedgerh)
+- [x] server: make uppy-server talk to uppy-client in the browser, use websockets. (@hedgerh)
 - [x] dashboard: new “workspace” plugin, main area that allows for drag & drop and shows progress/actions on files, inspired by ProgressDrawer
 - [x] website: add new logos and blog (@arturi)
 - [x] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
