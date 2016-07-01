@@ -46,7 +46,7 @@ export default class Tus10 extends Plugin {
             uploader: this,
             id: file.id,
             bytesUploaded: bytesUploaded,
-            bytesTotal: bytesUploaded
+            bytesTotal: bytesTotal
           })
         },
         onSuccess: () => {
@@ -57,19 +57,23 @@ export default class Tus10 extends Plugin {
           resolve(upload)
         }
       })
+      this.core.emitter.on('file-remove', (fileID) => {
+        if (fileID === file.id) {
+          upload.abort()
+        }
+      })
       upload.start()
     })
   }
 
   install () {
     this.core.emitter.on('next', () => {
-      this.core.log('Tus is uploading..')
+      this.core.log('Tus is uploading...')
       const files = this.core.state.files
 
-      const filesForUpload = {}
-      Object.keys(files).forEach((file) => {
+      const filesForUpload = Object.keys(files).map((file) => {
         if (files[file].progress === 0 || files[file].isRemote) {
-          filesForUpload[file] = files[file]
+          return files[file]
         }
       })
 
@@ -79,17 +83,16 @@ export default class Tus10 extends Plugin {
 
   uploadFiles (files) {
     const uploaders = []
-    for (let i in files) {
-      const file = files[i]
-      const current = parseInt(i, 10) + 1
+    files.forEach((file, index) => {
+      const current = parseInt(index, 10) + 1
       const total = files.length
 
-      if (!files[i].isRemote) {
+      if (!file.isRemote) {
         uploaders.push(this.upload(file, current, total))
       } else {
         uploaders.push(this.uploadRemote(file, current, total))
       }
-    }
+    })
 
     return Promise.all(uploaders).then(() => {
       return {
@@ -125,21 +128,5 @@ export default class Tus10 extends Plugin {
         return reject(new Error('Error: ' + res.statusText))
       })
     })
-  }
-
-/**
- * Add files to an array of `upload()` calles, passing the current and total file count numbers
- *
- * @param {Array | Object} results
- * @returns {Promise} of parallel uploads `Promise.all(uploaders)`
- */
-  run (results) {
-    this.core.log({
-      class: this.constructor.name,
-      method: 'run',
-      results: results
-    })
-
-    return this.uploadFiles(results)
   }
 }
