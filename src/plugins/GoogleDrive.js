@@ -39,8 +39,10 @@ export default class Google extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
+    const host = this.opts.host.replace(/^https?:\/\//, '')
+
     this.socket = this.core.initSocket({
-      target: 'ws://localhost:3020/'
+      target: 'ws://' + host
     })
 
     this.socket.on('google.auth.pass', () => {
