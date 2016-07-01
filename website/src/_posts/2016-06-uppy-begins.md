@@ -1,10 +1,8 @@
 ---
-title: Uppy: let’s teach an old dog some new tricks
+title: "Uppy: let’s teach an old dog some new tricks"
 date: 2016-06-28
 author: arturi
 ---
-
-## Uppy: let’s teach an old dog some new tricks
 
 For the past six months, we have been working hard on uppy.io. We feel that it is high time we gave you a look behind the scenes: what are we working on, and why.
 
@@ -12,7 +10,7 @@ The way uploading works has not changed in a meaningful way since the days of ou
 
 We at [Transloadit](https://transloadit.com/) are on a mission to change the way the world does uploading. To accomplish this, our first step has been to develop an open protocol for resumable file uploads, called [‘tus’](http://tus.io/). Finally, that 2GB video upload from your smartphone doesn’t have to start over when your train passes through a tunnel! The protocol got [Hacker News excited](https://news.ycombinator.com/item?id=10591348) on several occasions and is being deployed by, among others, our friends at Vimeo. Now that a stable version 1.0 of ‘tus’ has been released, it is time to put it to the test. A protocol without real-world applications is nothing more than a meaningless document, after all.
 
-We are therefore excited to tell you about Uppy: the file uploader that will certainly fetch more than just your newspaper. 
+We are therefore excited to tell you about Uppy: the file uploader that will certainly fetch more than just your newspaper.
 
 ### Why the need for another file uploader?
 
@@ -31,11 +29,11 @@ All in all, we think there is definitely some ‘trouble at the old mill’ here
 ### Our plans for Uppy
 
 Uppy will be a JavaScript file uploader that allows you to fetch files, not only from your local disk, but also from places like Dropbox, Instagram, Google Drive, webcams and remote URLs. It will have a modular, plugin-based design, making it lightweight and customizable.
-Cute on the outside, the core of Uppy is very robust – thanks to resumability through 'tus'. We are confident that Uppy will be able to send even the biggest of files over the smallest of tubes. 
+Cute on the outside, the core of Uppy is very robust – thanks to resumability through 'tus'. We are confident that Uppy will be able to send even the biggest of files over the smallest of tubes.
 Uppy will also offer first class support for accessing Transloadit’s uploading and encoding backend, making it incredibly versatile. Of course, these are all ultimately just plugins, and Uppy can just as easily be used with your own backend – meaning no need to pay any subscription fees.
 
 We are intent on making the user experience as smooth and satisfying as possible, in terms of both functionality and visual design. Uppy will have a beautiful, themeable UI and it will look – and work – great on mobile platforms as well. While we hope that advanced users will love the customizable nature of Uppy, an ample selection of presets will also be there to make sure that novice users are not going to be lost in the woods.
 
-Lastly, and this is a point of special significance to us, Uppy will be completely open source. When Uppy is finished, you will be free to use it for whatever you like. Until that time, we very much welcome your ideas and contributions. There are still a lot of decisions to be made and this is the perfect time to come and influence the end product. 
+Lastly, and this is a point of special significance to us, Uppy will be completely open source. When Uppy is finished, you will be free to use it for whatever you like. Until that time, we very much welcome your ideas and contributions. There are still a lot of decisions to be made and this is the perfect time to come and influence the end product.
 
 We are going to work hard on bringing you the best file uploader possible and we’ll keep you informed about the development process on [uppy.io](http://uppy.io/). We can’t wait for you to meet Uppy!
