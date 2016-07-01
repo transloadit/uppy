@@ -42,14 +42,21 @@ export default class Google extends Plugin {
     const host = this.opts.host.replace(/^https?:\/\//, '')
 
     this.socket = this.core.initSocket({
-      target: 'ws://' + host
+      target: 'ws://' + host + '/'
     })
 
     this.socket.on('google.auth.pass', () => {
+      console.log('google.auth.pass')
       this.getFolder(this.core.getState().googleDrive.directory.id)
     })
 
+    this.socket.on('uppy.debug', (payload) => {
+      console.log('GOOGLE DEBUG:')
+      console.log(payload)
+    })
+
     this.socket.on('google.list.ok', (data) => {
+      console.log('google.list.ok')
       let folders = []
       let files = []
       data.items.forEach((item) => {
@@ -68,6 +75,7 @@ export default class Google extends Plugin {
     })
 
     this.socket.on('google.auth.fail', () => {
+      console.log('google.auth.fail')
       this.updateState({
         authenticated: false
       })
@@ -315,6 +323,7 @@ export default class Google extends Plugin {
       e.preventDefault()
       const authWindow = window.open(link)
       this.socket.once('google.auth.complete', () => {
+        console.log('google.auth.complete')
         authWindow.close()
       })
     }
@@ -322,7 +331,7 @@ export default class Google extends Plugin {
     return yo`
       <div class="UppyGoogleDrive-authenticate">
         <h1>You need to authenticate with Google before selecting files.</h1>
-        <a href="" onclick=${handleAuth}>Authenticate</a>
+        <a onclick=${handleAuth}>Authenticate</a>
       </div>
     `
   }
