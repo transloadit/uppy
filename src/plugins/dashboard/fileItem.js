@@ -22,18 +22,20 @@ export default function fileItem (bus, file) {
       <br>
     </h4>
     <h5 class="UppyDashboardItem-status">
-      ${file.totalSize}
+      ${file.totalSize}<br>
       ${file.progress > 0 && file.progress < 100 ? 'Uploading… ' + file.progress + '%' : ''}
       ${file.progress === 100 ? 'Completed' : ''}
     </h5>
-    ${isUploaded
-      ? checkIcon
-      : html`<button class="UppyDashboardItem-remove"
-                     aria-label="Remove this file"
-                     onclick=${remove}>
-                ${removeIcon()}
-             </button>`
-    }
+    <div class="UppyDashboardItem-action">
+      ${isUploaded
+        ? checkIcon()
+        : html`<button class="UppyDashboardItem-remove"
+                       aria-label="Remove this file"
+                       onclick=${remove}>
+                  ${removeIcon()}
+               </button>`
+      }
+    </div>
     <div class="UppyDashboardItem-progress">
       <div class="UppyDashboardItem-progressInner" style="width: ${file.progress}%"></div>
     </div>

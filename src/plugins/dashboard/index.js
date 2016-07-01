@@ -1,6 +1,6 @@
 import Plugin from './../Plugin'
 import html from 'yo-yo'
-import { pluginIcon } from './icons'
+import { pluginIcon, uploadIcon } from './icons'
 import fileItem from './fileItem'
 import dragDrop from 'drag-drop'
 
@@ -31,6 +31,18 @@ export default class Dashboard extends Plugin {
     const files = state.files
     const bus = this.core.emitter
 
+    const next = (ev) => {
+      bus.emit('next')
+    }
+
+    const autoProceed = this.core.opts.autoProceed
+
+    const selectedFiles = Object.keys(files).filter((file) => {
+      return files[file].progress !== 100
+    })
+    const selectedFileCount = Object.keys(selectedFiles).length
+    const isSomethingSelected = selectedFileCount > 0
+
     return html`<div class="UppyDashboard">
       <h3 class="UppyDashboard-title">Drag files here or select from</h3>
       <ul class="UppyDashboard-list">
@@ -38,6 +50,15 @@ export default class Dashboard extends Plugin {
           return fileItem(bus, files[fileID])
         })}
       </ul>
+      ${!autoProceed && isSomethingSelected
+        ? html`<button class="UppyDashboard-upload"
+                       type="button"
+                       onclick=${next}>
+                  ${uploadIcon()}
+                  <sup class="UppyDashboard-uploadCount">${selectedFileCount}</sup>
+               </button>`
+        : null
+      }
     </div>`
   }
 

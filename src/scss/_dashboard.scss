@@ -11,7 +11,7 @@
   font-size: 15px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  font-weight: bold;
+  font-weight: normal;
   text-align: center;
   margin: 0;
   padding: 0;
@@ -76,12 +76,14 @@
   font-weight: normal;
 }
 
-
-.UppyDashboardItem-remove {
-  @include reset-button;
+.UppyDashboardItem-action {
   position: absolute;
   top: 10px;
   right: -6px;
+}
+
+.UppyDashboardItem-remove {
+  @include reset-button;
   cursor: pointer;
 }
 
@@ -100,4 +102,33 @@
 .UppyDashboardItem-progressInner {
   height: 4px;
   background-color: $color-cornflower-blue;
+}
+
+.UppyDashboard-upload {
+  @include reset-button;
+  width: 70px;
+  height: 70px;
+  box-shadow: 1px 2px 4px 0px rgba($color-black, 0.3);
+  border-radius: 50%;
+  background-color: $color-cornflower-blue;
+  position: absolute;
+  bottom: 40px;
+  right: 50px;
+  cursor: pointer;
+}
+
+.UppyDashboard-upload .UppyIcon {
+  position: relative;
+  top: 2px;
+}
+
+.UppyDashboard-uploadCount {
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  font-size: 10px;
+  padding: 4px 7px;
+  background-color: $color-green;
+  color: $color-white;
+  border-radius: 50%;
 }
