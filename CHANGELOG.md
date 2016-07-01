@@ -37,6 +37,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [ ] core: accessibility research
+- [ ] test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated 
 
 ## 0.8.0
 
