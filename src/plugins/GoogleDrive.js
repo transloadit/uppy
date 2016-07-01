@@ -53,6 +53,13 @@ export default class Google extends Plugin {
     this.socket.on('uppy.debug', (payload) => {
       console.log('GOOGLE DEBUG:')
       console.log(payload)
+
+      try {
+        const pay = JSON.parse(payload)
+        console.log(pay)
+      } catch (e) {
+        console.log(e)
+      }
     })
 
     this.socket.on('google.list.ok', (data) => {
