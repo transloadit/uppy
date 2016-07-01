@@ -314,7 +314,7 @@ export default class Google extends Plugin {
   }
 
   /**
-   * Render user authentication view
+   *  Render user authentication view
    */
   renderAuth () {
     const link = `${this.opts.host}/connect/google`
