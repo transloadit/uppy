@@ -59,7 +59,7 @@ Theme: Remote Uploads, UI Redesign
 Released: July 1, 2016
 
 - [x] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy; Put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh)
-- [ ] core: Rethink UI: Part I (@arturi)
+- [x] core: Rethink UI: Part I (interface research for better file selection / progress representation) (@arturi)
 - [x] core: let user cancel uploads in progress (@arturi)
 - [x] core: resize image file previews (to 100x100px) for performance (@arturi)
 - [x] server: add tus-js-client when it's node-ready (@hedgerh)
@@ -70,7 +70,7 @@ Released: July 1, 2016
 - [x] server: Make Google Drive files to actually upload to the endpoint (@hedgerh)
 - [x] build: browsersync does 3 refreshes, can that be one? should be doable via cooldown/debounce? -> get rid of require shortcuts (@arturi) 
 - [x] build: regular + min + gzipped versions of the bundle (@arturi)
-- [x] workspace: interface research for better file selection / progress representation (@arturi)
+- [x] build: set up a simple and quick dev workflow — watch:example (@arturi)
 
 ## 0.6.4
 
