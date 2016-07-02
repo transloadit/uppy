@@ -7,14 +7,14 @@
   <body>
     <h1>Uppy is here</h1>
     <button id="uppyModalOpener">Open Modal</button>
-    <link href="../dist/uppy.min.css" rel="stylesheet">
-    <script src="../dist/uppy.min.js"></script>
-    <script src="../dist/locales/ru_RU.min.js"></script>
+    <link href="uppy.min.css" rel="stylesheet">
+    <script src="bundle.js"></script>
     <script>
-      var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true})
-        .use(Uppy.plugins.Modal, {trigger: '#uppyModalOpener'})
-        .use(Uppy.plugins.Dummy, {target: Uppy.plugins.Modal})
-        .run();
+      // var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true})
+      //   .use(Uppy.plugins.Modal, {trigger: '#uppyModalOpener'})
+      //   .use(Uppy.plugins.Dashboard, {target: Uppy.plugins.Modal})
+      //   .use(Uppy.plugins.Dummy, {target: Uppy.plugins.Modal})
+      //   .run();
     </script>
 
     <script>
