@@ -6,7 +6,7 @@ import DragDrop from '../../../../src/plugins/DragDrop.js'
 import GoogleDrive from '../../../../src/plugins/GoogleDrive.js'
 import ProgressBar from '../../../../src/plugins/ProgressBar.js'
 import ProgressDrawer from '../../../../src/plugins/ProgressDrawer.js'
-import Dashboard from '../../../../src/plugins/dashboard'
+import Dashboard from '../../../../src/plugins/Dashboard'
 
 import { UPPY_SERVER } from '../env'
 
