@@ -115,6 +115,12 @@
   bottom: 40px;
   right: 50px;
   cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover,
+  &:focus {
+    background-color: darken($color-cornflower-blue, 10%);
+  }
 }
 
 .UppyDashboard-upload .UppyIcon {
