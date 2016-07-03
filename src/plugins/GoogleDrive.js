@@ -232,7 +232,6 @@ export default class Google extends Plugin {
       })
   }
 
-
   getFileType (file) {
     const fileTypes = {
       'application/vnd.google-apps.folder': 'Folder',
