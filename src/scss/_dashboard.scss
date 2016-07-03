@@ -22,7 +22,7 @@
   @include clearfix;
   border: 2px dashed;
   border-radius: 10px;
-  border-color: lighten($color-gray, 20%);
+  border-color: lighten($color-gray, 30%);
   margin: 0;
   padding: 0;
   position: absolute;
@@ -66,14 +66,21 @@
   font-weight: bold;
   margin: 0;
   padding: 0;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+}
+
+.UppyDashboardItem-name a {
+  text-decoration: underline;
+  color: $color-black;
 }
 
 .UppyDashboardItem-status {
   margin: 0;
   padding: 0;
   font-size: 12px;
+  line-height: 1.45;
   font-weight: normal;
+  color: $color-gray;
 }
 
 .UppyDashboardItem-action {
@@ -116,12 +123,14 @@
   right: 50px;
   cursor: pointer;
   transition: all 0.3s;
+  color: $color-white;
 
   &:hover,
   &:focus {
     background-color: darken($color-cornflower-blue, 10%);
   }
 }
+
 
 .UppyDashboard-upload .UppyIcon {
   position: relative;
@@ -132,9 +141,11 @@
   position: absolute;
   top: -15px;
   right: -10px;
-  font-size: 10px;
-  padding: 4px 7px;
   background-color: $color-green;
   color: $color-white;
   border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  font-size: 9px;
 }

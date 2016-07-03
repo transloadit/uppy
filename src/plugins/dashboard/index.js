@@ -43,7 +43,7 @@ export default class Dashboard extends Plugin {
     const selectedFileCount = Object.keys(selectedFiles).length
     const isSomethingSelected = selectedFileCount > 0
 
-    return html`<div class="UppyDashboard">
+    return html`<div class="UppyTheme--default UppyDashboard">
       <h3 class="UppyDashboard-title">Drag files here or select from</h3>
       <ul class="UppyDashboard-list">
         ${Object.keys(files).map((fileID) => {

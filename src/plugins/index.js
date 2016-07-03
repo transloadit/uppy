@@ -3,7 +3,7 @@ import Plugin from './Plugin'
 
 // Orchestrators
 import Modal from './Modal'
-import Dashboard from './Dashboard'
+import Dashboard from './dashboard'
 
 // Acquirers
 import Dummy from './Dummy'
