@@ -107,6 +107,17 @@ export default class Tus10 extends Plugin {
         protocol: 'tus'
       })
       this.core.socket.send(file.remote.action, payload)
+      this.core.socket.once('upload-success', () => {
+        console.log('success')
+        this.core.emitter.emit('upload-success', file)
+
+        this.core.emitter.emit('upload-progress', {
+          id: file.id,
+          percentage: 100
+        })
+
+        resolve()
+      })
     })
   }
 

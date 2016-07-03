@@ -53,13 +53,6 @@ export default class Google extends Plugin {
     this.socket.on('uppy.debug', (payload) => {
       console.log('GOOGLE DEBUG:')
       console.log(payload)
-
-      try {
-        const pay = JSON.parse(payload)
-        console.log(pay)
-      } catch (e) {
-        console.log(e)
-      }
     })
 
     this.socket.on('google.list.ok', (data) => {
@@ -212,21 +205,33 @@ export default class Google extends Plugin {
    * Removes session token on client side.
    */
   logout () {
-    this.socket.once('google.logout.ok', () => {
-      const newState = {
-        authenticated: false,
-        files: [],
-        folders: [],
-        directory: [{
-          title: 'My Drive',
-          id: 'root'
-        }]
+    fetch(`${this.opts.host}/google/logout?redirect=${location.href}`, {
+      method: 'get',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
       }
-      console.log('okie')
-      this.updateState(newState)
     })
-    this.socket.send('google.logout')
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.ok) {
+          console.log('ok')
+          const newState = {
+            authenticated: false,
+            files: [],
+            folders: [],
+            directory: [{
+              title: 'My Drive',
+              id: 'root'
+            }]
+          }
+
+          this.updateState(newState)
+        }
+      })
   }
+
 
   getFileType (file) {
     const fileTypes = {
