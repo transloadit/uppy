@@ -12,6 +12,8 @@ We at [Transloadit](https://transloadit.com/) are on a mission to change the way
 
 We are therefore excited to tell you about Uppy: the file uploader that will certainly fetch more than just your newspaper.
 
+<!-- more -->
+
 ### Why the need for another file uploader?
 
 It is true, there are indeed already a good few file uploading solutions out there ([Dropzone](http://www.dropzonejs.com/), for instance, is quite good). And – for the most part – they do their job. Nevertheless, they are quite limited in their functionality:
