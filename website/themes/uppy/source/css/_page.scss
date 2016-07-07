@@ -47,8 +47,12 @@
   ul {
     list-style-type: none;
     margin: 0;
-    line-height: 1.8em;
+    line-height: 1.4em;
     padding-left: 1em;
+  }
+
+  li {
+    margin-bottom: 0.6em;
   }
 
   .menu-root {
@@ -57,6 +61,7 @@
 
   .menu-sub {
     font-size: .85em;
+    margin: 0.8em 0;
   }
 
   .sidebar-link {
