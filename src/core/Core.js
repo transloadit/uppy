@@ -3,6 +3,7 @@ import Translator from '../core/Translator'
 import prettyBytes from 'pretty-bytes'
 import yo from 'yo-yo'
 import ee from 'events'
+import UppySocket from './UppySocket'
 
 /**
  * Main Uppy core
@@ -32,6 +33,7 @@ export default class Core {
 
     this.translator = new Translator({locales: this.opts.locales})
     this.i18n = this.translator.translate.bind(this.translator)
+    this.initSocket = this.initSocket.bind(this)
 
     this.emitter = new ee.EventEmitter()
 
@@ -333,5 +335,13 @@ export default class Core {
     //     })
     //     .catch((error) => this.log('Upload result -> failed:', error))
     // })
+  }
+
+  initSocket (opts) {
+    if (!this.socket) {
+      this.socket = new UppySocket(opts)
+    }
+
+    return this.socket
   }
 }

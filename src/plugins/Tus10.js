@@ -90,7 +90,7 @@ export default class Tus10 extends Plugin {
       if (!file.isRemote) {
         uploaders.push(this.upload(file, current, total))
       } else {
-        uploaders.push(this.uploadRemote(file, current, total))
+        uploaders.push(this.upload(file, current, total))
       }
     })
 
@@ -103,29 +103,21 @@ export default class Tus10 extends Plugin {
 
   uploadRemote (file, current, total) {
     return new Promise((resolve, reject) => {
-      fetch(file.remote.url, {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Object.assign({}, file.remote.body, {
-          target: this.opts.endpoint
-        }))
+      const payload = Object.assign({}, file.remote.payload, {
+        target: this.opts.endpoint,
+        protocol: 'tus'
       })
-      .then((res) => {
-        if (res.status >= 200 && res.status <= 300) {
-          this.core.log(`Remote upload of '${file.name}' successful`)
-          return resolve('Success')
-        }
-        this.core.log(`Remote upload of file '${file.name}' failed`)
+      this.core.socket.send(file.remote.action, payload)
+      this.core.socket.once('upload-success', () => {
+        console.log('success')
+        this.core.emitter.emit('upload-success', file)
 
-        if (file.acquiredBy.handleError) {
-          file.acquiredBy.handleError(res)
-        }
+        this.core.emitter.emit('upload-progress', {
+          id: file.id,
+          percentage: 100
+        })
 
-        return reject(new Error('Error: ' + res.statusText))
+        resolve()
       })
     })
   }
