@@ -1,5 +1,5 @@
 ---
-title: "Uppy: let’s teach an old dog some new tricks"
+title: "Uppy: let’s teach an old dog some new tricks"
 date: 2016-06-28
 author: arturi
 ---
