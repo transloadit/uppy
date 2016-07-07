@@ -183,48 +183,51 @@ export default class Modal extends Plugin {
 
     const targetClassName = this.opts.target.substring(1)
 
-    return yo`<div class="${targetClassName}"
+    return yo`<div class="Uppy ${targetClassName}"
                    aria-hidden="${state.modal.isHidden}"
                    aria-label="Uppy Dialog Window (Press escape to close)"
                    role="dialog">
       <div class="UppyModal-overlay"
                   onclick=${this.hideModal}></div>
         <div class="UppyModal-inner" tabindex="0">
-        <ul class="UppyModalTabs" role="tablist">
-          ${acquirers.map((target) => {
-            return yo`<li class="UppyModalTab">
-              <button class="UppyModalTab-btn"
-                      role="tab"
-                      tabindex="0"
-                      aria-controls="${this.opts.panelSelectorPrefix}--${target.id}"
-                      aria-selected="${target.isHidden ? 'false' : 'true'}"
-                      onclick=${this.showTabPanel.bind(this, target.id)}>
-                ${target.icon}
-                <span class="UppyModalTab-name">${target.name}</span>
-              </button>
-            </li>`
-          })}
-        </ul>
+          <ul class="UppyModalTabs" role="tablist">
+            ${acquirers.map((target) => {
+              return yo`<li class="UppyModalTab">
+                <button class="UppyModalTab-btn"
+                        role="tab"
+                        tabindex="0"
+                        aria-controls="${this.opts.panelSelectorPrefix}--${target.id}"
+                        aria-selected="${target.isHidden ? 'false' : 'true'}"
+                        onclick=${this.showTabPanel.bind(this, target.id)}>
+                  ${target.icon}
+                </button>
+              </li>`
+            })}
+          </ul>
 
-        <div class="UppyModalContent">
-          <div class="UppyModal-presenter"></div>
-          ${acquirers.map((target) => {
-            return yo`<div class="UppyModalContent-panel"
-                           id="${this.opts.panelSelectorPrefix}--${target.id}"
-                           role="tabpanel"
-                           aria-hidden="${target.isHidden}">
-              ${target.render(state)}
-            </div>`
-          })}
-        </div>
-        <div class="UppyModal-progressindicators">
-          ${progressindicators.map((target) => {
-            return target.render(state)
-          })}
-        </div>
-        <button class="UppyModal-close"
-                title="Close Uppy modal"
-                onclick=${this.hideModal}>×</button>
+          <div class="UppyModalContent">
+            <div class="UppyModal-presenter"></div>
+            ${acquirers.map((target) => {
+              return yo`<div class="UppyModalContent-panel"
+                             id="${this.opts.panelSelectorPrefix}--${target.id}"
+                             role="tabpanel"
+                             aria-hidden="${target.isHidden}">
+                ${target.render(state)}
+              </div>`
+            })}
+          </div>
+          <div class="UppyModal-progressindicators">
+            ${progressindicators.map((target) => {
+              return target.render(state)
+            })}
+          </div>
+          <button class="UppyModal-close"
+                  title="Close Uppy modal"
+                  onclick=${this.hideModal}>
+                  <svg width="15px" height="15px" viewBox="0 0 17 17">
+                    <polygon stroke="#000000" points="16 1.45229667 15.5477033 1 8.50031987 8.04738346 1.45229667 1 1 1.45229667 8.04738346 8.49968013 1 15.5477033 1.45229667 16 8.50031987 8.95261654 15.5477033 16 16 15.5477033 8.95261654 8.49968013"></polygon>
+                  </svg>
+          </button>
       </div>
     </div>`
   }

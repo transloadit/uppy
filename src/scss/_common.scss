@@ -1,0 +1,17 @@
+/**
+* General Uppy styles that apply to everything inside the .Uppy container
+*/
+
+.Uppy * {
+  box-sizing: border-box;
+}
+
+.UppyIcon {
+  fill: currentColor;
+}
+
+.UppyTheme--default {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}

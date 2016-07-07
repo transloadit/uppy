@@ -10,8 +10,8 @@
 }
 
   .UppyDragDrop-container.is-dragdrop-supported {
-    border: 3px dashed;
-    border-color: lighten($color-gray, 5%);
+    border: 2px dashed;
+    border-color: lighten($color-gray, 20%);
   }
 
   .UppyDragDrop-container.is-dragdrop-supported .UppyDragDrop-dragText {
@@ -19,7 +19,7 @@
   }
 
   .UppyDragDrop-container.drag {
-    border-color: darken($color-gray, 15%);
+    border-color: $color-gray;
     // background-color: #dbf5f3;
   }
 

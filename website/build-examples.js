@@ -33,7 +33,7 @@ var browserify = require('browserify')
 var watchify = require('watchify')
 
 var webRoot = __dirname
-var uppyRoot = path.dirname(webRoot)
+// var uppyRoot = path.dirname(webRoot)
 
 var srcPattern = webRoot + '/src/examples/**/app.es6'
 var dstPattern = webRoot + '/public/examples/**/app.js'
@@ -75,10 +75,10 @@ glob(srcPattern, function (err, files) {
 
     // Aliasing for using `require('uppy')`, etc.
     browseFy
-      .require(uppyRoot + '/src/index.js', { expose: 'uppy' })
-      .require(uppyRoot + '/src/core/index.js', { expose: 'uppy/core' })
-      .require(uppyRoot + '/src/plugins/index.js', { expose: 'uppy/plugins' })
-      .require(uppyRoot + '/src/locales/index.js', { expose: 'uppy/locales' })
+      // .require(uppyRoot + '/src/index.js', { expose: 'uppy' })
+      // .require(uppyRoot + '/src/core/index.js', { expose: 'uppy/core' })
+      // .require(uppyRoot + '/src/plugins/index.js', { expose: 'uppy/plugins' })
+      // .require(uppyRoot + '/src/locales/index.js', { expose: 'uppy/locales' })
       // .transform(rollupify)
       .transform(babelify)
 
