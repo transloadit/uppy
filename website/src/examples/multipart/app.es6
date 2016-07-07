@@ -1,5 +1,10 @@
-import Uppy from 'uppy/core'
-import { Formtag, Multipart, ProgressBar } from 'uppy/plugins'
+import Uppy from '../../../../src/core/Core.js'
+import Formtag from '../../../../src/plugins/Formtag.js'
+import Multipart from '../../../../src/plugins/Multipart.js'
+import ProgressBar from '../../../../src/plugins/ProgressBar.js'
+
+// import Uppy from 'uppy/core'
+// import { Formtag, Multipart, ProgressBar } from 'uppy/plugins'
 
 const uppy = new Uppy({debug: true, autoProceed: false})
 
@@ -13,4 +18,4 @@ uppy
   .use(ProgressBar, {target: 'body'})
   .run()
 
-console.log('Uppy ' + uppy.type + ' loaded')
+console.log('Uppy with Formtag and Multipart is loaded')

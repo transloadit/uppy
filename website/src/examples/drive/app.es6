@@ -1,6 +1,5 @@
-import Uppy from 'uppy/core'
-import { GoogleDrive } from 'uppy/plugins'
-// import ProgressDrawer from '../../../../src/plugins/ProgressDrawer.js'
+import Uppy from '../../../../src/core/Core.js'
+import GoogleDrive from '../../../../src/plugins/GoogleDrive.js'
 import { UPPY_SERVER } from '../env'
 
 const uppy = new Uppy({debug: true, autoProceed: false})
