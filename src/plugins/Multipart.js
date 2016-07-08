@@ -37,15 +37,19 @@ export default class Multipart extends Plugin {
 
       xhr.upload.addEventListener('progress', (ev) => {
         if (ev.lengthComputable) {
-          let percentage = (ev.loaded / ev.total * 100).toFixed(2)
+          const bytesUploaded = ev.loaded
+          const bytesTotal = ev.total
+          let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
           percentage = Math.round(percentage)
-          this.core.log(percentage)
+
+          this.core.log(`File progress: ${percentage}`)
 
           // Dispatch progress event
           this.core.emitter.emit('upload-progress', {
             uploader: this,
             id: file.id,
-            percentage: percentage
+            bytesUploaded: bytesUploaded,
+            bytesTotal: bytesTotal
           })
         }
       })
@@ -71,7 +75,7 @@ export default class Multipart extends Plugin {
       })
 
       xhr.addEventListener('error', (ev) => {
-        return reject('fucking error!')
+        return reject('Upload error')
       })
 
       xhr.open('POST', this.opts.endpoint, true)
@@ -79,9 +83,7 @@ export default class Multipart extends Plugin {
     })
   }
 
-  run () {
-    const files = this.core.state.files
-
+  selectForUpload (files) {
     const filesForUpload = []
     Object.keys(files).forEach((file) => {
       if (files[file].progress === 0) {
@@ -124,7 +126,8 @@ export default class Multipart extends Plugin {
   install () {
     this.core.emitter.on('next', () => {
       this.core.log('Multipart is uploading...')
-      this.run()
+      const files = this.core.state.files
+      this.selectForUpload(files)
     })
   }
 }

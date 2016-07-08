@@ -110,7 +110,7 @@ export default class Core {
       },
       data: file.data,
       progress: 0,
-      totalSize: prettyBytes(file.data.size),
+      totalSize: file.data.size ? prettyBytes(file.data.size) : '?',
       uploadedSize: 0,
       isRemote: file.isRemote || false,
       remote: file.remote
@@ -160,7 +160,7 @@ export default class Core {
 
       const updatedFiles = Object.assign({}, this.state.files)
       updatedFiles[data.id].progress = percentage
-      updatedFiles[data.id].uploadedSize = prettyBytes(data.bytesUploaded)
+      updatedFiles[data.id].uploadedSize = data.bytesUploaded ? prettyBytes(data.bytesUploaded) : '?'
 
       const inProgress = Object.keys(updatedFiles).map((file) => {
         return file.progress !== 0
