@@ -66,21 +66,6 @@ export default class Tus10 extends Plugin {
     })
   }
 
-  install () {
-    this.core.emitter.on('next', () => {
-      this.core.log('Tus is uploading...')
-      const files = this.core.state.files
-
-      const filesForUpload = Object.keys(files).map((file) => {
-        if (files[file].progress === 0 || files[file].isRemote) {
-          return files[file]
-        }
-      })
-
-      this.uploadFiles(filesForUpload)
-    })
-  }
-
   uploadFiles (files) {
     const uploaders = []
     files.forEach((file, index) => {
@@ -119,6 +104,31 @@ export default class Tus10 extends Plugin {
 
         resolve()
       })
+    })
+  }
+
+  selectForUpload (files) {
+    // TODO: replace files[file].isRemote with some logic
+    //
+    // filter files that are now yet being uploaded / haven’t been uploaded
+    // and remote too
+    const filesForUpload = Object.keys(files).filter((file) => {
+      if (files[file].progress === 0 || files[file].isRemote) {
+        return true
+      }
+      return false
+    }).map((file) => {
+      return files[file]
+    })
+
+    this.uploadFiles(filesForUpload)
+  }
+
+  install () {
+    this.core.emitter.on('next', () => {
+      this.core.log('Tus is uploading...')
+      const files = this.core.state.files
+      this.selectForUpload(files)
     })
   }
 }
