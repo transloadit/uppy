@@ -1,6 +1,6 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
-import prettyBytes from 'prettier-bytes'
+import prettyBytes from 'pretty-bytes'
 import yo from 'yo-yo'
 import ee from 'events'
 import UppySocket from './UppySocket'

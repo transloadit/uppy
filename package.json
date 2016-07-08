@@ -109,7 +109,7 @@
   "dependencies": {
     "drag-drop": "2.11.0",
     "es6-promise": "3.1.2",
-    "prettier-bytes": "1.0.3",
+    "pretty-bytes": "^3.0.1",
     "tus-js-client": "1.1.3",
     "whatwg-fetch": "1.0.0",
     "yo-yo": "1.2.0"
