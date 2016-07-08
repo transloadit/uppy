@@ -27,7 +27,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] instagram: Make a barely working Instagram Plugin + example (#21)
 - [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
 - [ ] modal: polish on mobile
-- [ ] presenter: make it work with new components/state (@arturi)
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: Human should check http://www.webpagetest.org, use it sometimes to test our website & Uppy? Which will show response/loading times and where big delays are
 - [ ] test: Human should test with real screen reader to identify accessibility problems
@@ -37,19 +36,22 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [ ] core: accessibility research
-- [ ] test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated
 
 ## 0.8.0
 
-Released: N/A
+To be released: July 29, 2016
 
 - [ ] meta: better readme on GitHub and NPM (@arturi)
+- [ ] meta: release “Uppy Begins” post + minor blog polish (@arturi)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
 - [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too
 - [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
-- [ ] progressdrawer: better icons, style, file types (mime + extension) (@arturi)
+- [ ] progress: better icons, style, file types (mime + extension) (@arturi)
+- [ ] modal: merge modal and dashboard (@arturi)
+- [ ] modal: try a workflow where import from external service slides over and takes up the whole modal screen (@arturi)
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
 - [ ] test: working Uppy example on Require Bin — latest version straight from NPM (@arturi)
+- [ ] test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated
 
 ## 0.7.0
 
