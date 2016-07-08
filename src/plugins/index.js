@@ -2,8 +2,7 @@
 import Plugin from './Plugin'
 
 // Orchestrators
-import Modal from './Modal'
-import Dashboard from './dashboard'
+import Modal from './modal'
 
 // Acquirers
 import Dummy from './Dummy'
@@ -39,6 +38,5 @@ module.exports = {
   Tus10,
   Multipart,
   TransloaditBasic,
-  Modal,
-  Dashboard
+  Modal
 }

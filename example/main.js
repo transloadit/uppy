@@ -1,5 +1,5 @@
 import Uppy from '../src/core/Core.js'
-import Modal from '../src/plugins/Modal'
+import Modal from '../src/plugins/modal'
 // import Dashboard from '../src/plugins/dashboard'
 import Dummy from '../src/plugins/Dummy'
 import DragDrop from '../src/plugins/DragDrop'
