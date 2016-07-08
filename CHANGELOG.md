@@ -37,13 +37,12 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [ ] core: accessibility research
-- [ ] test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated 
+- [ ] test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated
 
 ## 0.8.0
 
 Released: N/A
 
-- [ ] core: let user cancel uploads in progress (@arturi)
 - [ ] meta: better readme on GitHub and NPM (@arturi)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
 - [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too
@@ -68,7 +67,7 @@ Released: July 1, 2016
 - [x] website: add new logos and blog (@arturi)
 - [x] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
 - [x] server: Make Google Drive files to actually upload to the endpoint (@hedgerh)
-- [x] build: browsersync does 3 refreshes, can that be one? should be doable via cooldown/debounce? -> get rid of require shortcuts (@arturi) 
+- [x] build: browsersync does 3 refreshes, can that be one? should be doable via cooldown/debounce? -> get rid of require shortcuts (@arturi)
 - [x] build: regular + min + gzipped versions of the bundle (@arturi)
 - [x] build: set up a simple and quick dev workflow — watch:example (@arturi)
 
