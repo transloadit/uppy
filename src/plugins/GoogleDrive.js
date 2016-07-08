@@ -108,6 +108,18 @@ export default class Google extends Plugin {
     this.target = this.mount(target, plugin)
 
     this.checkAuthentication()
+      .then((authenticated) => {
+        this.updateState({authenticated})
+
+        if (authenticated) {
+          return this.getFolder(this.core.getState().googleDrive.directory.id)
+        }
+
+        return authenticated
+      })
+      .then((newState) => {
+        this.updateState(newState)
+      })
 
     return
   }
@@ -137,7 +149,29 @@ export default class Google extends Plugin {
    * @return {Promise} authentication status
    */
   checkAuthentication () {
-    this.socket.send('google.auth')
+    return fetch(`${this.opts.host}/google/authorize`, {
+      method: 'get',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then((res) => {
+      if (res.status >= 200 && res.status <= 300) {
+        return res.json()
+      } else {
+        this.updateState({
+          authenticated: false,
+          error: true
+        })
+        let error = new Error(res.statusText)
+        error.response = res
+        throw error
+      }
+    })
+    .then((data) => data.isAuthenticated)
+    .catch((err) => err)
   }
 
   /**
@@ -145,9 +179,42 @@ export default class Google extends Plugin {
    * @param  {String} id Folder id
    * @return {Promise}   Folders/files in folder
    */
-  getFolder (dir = 'root') {
-    this.socket.send('google.list', {
-      dir
+  getFolder (id = 'root') {
+    return fetch(`${this.opts.host}/google/list?dir=${id}`, {
+      method: 'get',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then((res) => {
+      if (res.status >= 200 && res.status <= 300) {
+        return res.json().then((data) => {
+          // let result = Utils.groupBy(data.items, (item) => item.mimeType)
+          let folders = []
+          let files = []
+          data.items.forEach((item) => {
+            if (item.mimeType === 'application/vnd.google-apps.folder') {
+              folders.push(item)
+            } else {
+              files.push(item)
+            }
+          })
+          return {
+            folders,
+            files
+          }
+        })
+      } else {
+        this.handleError(res)
+        let error = new Error(res.statusText)
+        error.response = res
+        throw error
+      }
+    })
+    .catch((err) => {
+      return err
     })
   }
 
@@ -195,10 +262,10 @@ export default class Google extends Plugin {
   }
 
   handleError (response) {
-    // this.checkAuthentication()
-    //   .then((authenticated) => {
-    //     this.updateState({authenticated})
-    //   })
+    this.checkAuthentication()
+      .then((authenticated) => {
+        this.updateState({authenticated})
+      })
   }
 
   /**
@@ -330,24 +397,18 @@ export default class Google extends Plugin {
   }
 
   /**
-   *  Render user authentication view
+   * Render user authentication view
    */
   renderAuth () {
-    const link = `${this.opts.host}/connect/google`
+    const state = btoa(JSON.stringify({
+      redirect: location.href.split('#')[0]
+    }))
 
-    const handleAuth = (e) => {
-      e.preventDefault()
-      const authWindow = window.open(link)
-      this.socket.once('google.auth.complete', () => {
-        console.log('google.auth.complete')
-        authWindow.close()
-      })
-    }
-
+    const link = `${this.opts.host}/connect/google?state=${state}`
     return yo`
       <div class="UppyGoogleDrive-authenticate">
         <h1>You need to authenticate with Google before selecting files.</h1>
-        <a onclick=${handleAuth}>Authenticate</a>
+        <a href=${link}>Authenticate</a>
       </div>
     `
   }
