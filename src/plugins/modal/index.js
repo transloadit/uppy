@@ -1,9 +1,11 @@
-import Plugin from './Plugin'
+import Plugin from '../Plugin'
+import Dashboard from './Dashboard.js'
+import { defaultTabIcon, closeIcon } from './icons'
+import dragDrop from 'drag-drop'
 import yo from 'yo-yo'
 
 /**
- * Modal
- *
+ * Modal Dialog & Dashboard
  */
 export default class Modal extends Plugin {
   constructor (core, opts) {
@@ -15,11 +17,7 @@ export default class Modal extends Plugin {
     // set default options
     const defaultOptions = {
       target: '.UppyModal',
-      defaultTabIcon: yo`
-        <svg class="UppyModalTab-icon" width="28" height="28" viewBox="0 0 101 58">
-          <path d="M17.582.3L.915 41.713l32.94 13.295L17.582.3zm83.333 41.414L67.975 55.01 84.25.3l16.665 41.414zm-48.998 5.403L63.443 35.59H38.386l11.527 11.526v5.905l-3.063 3.32 1.474 1.36 2.59-2.806 2.59 2.807 1.475-1.357-3.064-3.32v-5.906zm16.06-26.702c-3.973 0-7.194-3.22-7.194-7.193 0-3.973 3.222-7.193 7.193-7.193 3.974 0 7.193 3.22 7.193 7.19 0 3.974-3.22 7.194-7.195 7.194zM70.48 8.682c-.737 0-1.336.6-1.336 1.337 0 .736.6 1.335 1.337 1.335.738 0 1.338-.598 1.338-1.336 0-.74-.6-1.338-1.338-1.338zM33.855 20.415c-3.973 0-7.193-3.22-7.193-7.193 0-3.973 3.22-7.193 7.195-7.193 3.973 0 7.192 3.22 7.192 7.19 0 3.974-3.22 7.194-7.192 7.194zM36.36 8.682c-.737 0-1.336.6-1.336 1.337 0 .736.6 1.335 1.337 1.335.738 0 1.338-.598 1.338-1.336 0-.74-.598-1.338-1.337-1.338z"/>
-        </svg>
-      `,
+      defaultTabIcon: defaultTabIcon(),
       panelSelectorPrefix: 'UppyModalContent-panel'
     }
 
@@ -168,8 +166,27 @@ export default class Modal extends Plugin {
     })
   }
 
+  handleDrop (files) {
+    this.core.log('All right, someone dropped something...')
+
+    files.forEach((file) => {
+      this.core.emitter.emit('file-add', {
+        source: this.id,
+        name: file.name,
+        type: file.type,
+        data: file
+      })
+    })
+
+    this.core.addMeta({bla: 'bla'})
+  }
+
   render (state) {
     // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
+
+    const autoProceed = this.core.opts.autoProceed
+    const files = state.files
+    const bus = this.core.emitter
 
     const modalTargets = state.modal.targets
 
@@ -181,15 +198,18 @@ export default class Modal extends Plugin {
       return target.type === 'progressindicator'
     })
 
-    const targetClassName = this.opts.target.substring(1)
+    // const targetClassName = this.opts.target.substring(1)
 
-    return yo`<div class="Uppy ${targetClassName}"
+    return yo`<div class="Uppy UppyTheme--default UppyModal"
                    aria-hidden="${state.modal.isHidden}"
                    aria-label="Uppy Dialog Window (Press escape to close)"
                    role="dialog">
       <div class="UppyModal-overlay"
                   onclick=${this.hideModal}></div>
         <div class="UppyModal-inner" tabindex="0">
+          <div class="UppyModal-dashboard">
+            ${Dashboard(files, bus, autoProceed)}
+          </div>
           <ul class="UppyModalTabs" role="tablist">
             ${acquirers.map((target) => {
               return yo`<li class="UppyModalTab">
@@ -206,7 +226,6 @@ export default class Modal extends Plugin {
           </ul>
 
           <div class="UppyModalContent">
-            <div class="UppyModal-presenter"></div>
             ${acquirers.map((target) => {
               return yo`<div class="UppyModalContent-panel"
                              id="${this.opts.panelSelectorPrefix}--${target.id}"
@@ -224,9 +243,7 @@ export default class Modal extends Plugin {
           <button class="UppyModal-close"
                   title="Close Uppy modal"
                   onclick=${this.hideModal}>
-                  <svg width="15px" height="15px" viewBox="0 0 17 17">
-                    <polygon stroke="#000000" points="16 1.45229667 15.5477033 1 8.50031987 8.04738346 1.45229667 1 1 1.45229667 8.04738346 8.49968013 1 15.5477033 1.45229667 16 8.50031987 8.95261654 15.5477033 16 16 15.5477033 8.95261654 8.49968013"></polygon>
-                  </svg>
+                  ${closeIcon()}
           </button>
       </div>
     </div>`
@@ -243,5 +260,10 @@ export default class Modal extends Plugin {
     document.body.appendChild(this.el)
 
     this.events()
+
+    dragDrop(this.opts.target, (files) => {
+      this.handleDrop(files)
+      this.core.log(files)
+    })
   }
 }

@@ -5,17 +5,23 @@
 .UppyDashboard {
   height: 100%;
   position: relative;
+  padding: 0 20px;
+  padding-top: 40px;
 }
 
 .UppyDashboard-title {
-  font-size: 15px;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 2px;
   font-weight: normal;
   text-align: center;
   margin: 0;
   padding: 0;
-  padding-top: 15px;
+  position: absolute;
+  top: 15px;
+  left: 0;
+  width: 100%;
+  text-align: center;
 }
 
 .UppyDashboard-list {
@@ -25,13 +31,14 @@
   border-color: lighten($color-gray, 30%);
   margin: 0;
   padding: 0;
-  position: absolute;
-  top: 50px;
-  bottom: 15px;
-  right: 15px;
-  left: 0;
   overflow: scroll;
-  padding: 15px;
+  height: 100%;
+  // position: absolute;
+  // top: 50px;
+  // bottom: 15px;
+  // right: 15px;
+  // left: 0;
+  // padding: 15px;
 }
 
 .UppyDashboardItem {
@@ -63,6 +70,7 @@
 
 .UppyDashboardItem-name {
   font-size: 13px;
+  line-height: 1.4;
   font-weight: bold;
   margin: 0;
   padding: 0;
