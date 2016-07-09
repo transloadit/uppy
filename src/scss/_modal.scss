@@ -23,7 +23,7 @@
 
 .UppyModal-inner {
   @include clearfix;
-  background-color: #FAFAFA;
+  background-color: darken($color-white, 4%);
   height: 80vh;
   width: 75%;
   position: fixed;
@@ -126,11 +126,27 @@
 // Modal content
 
 .UppyModalContent {
-  height: 100%;
-  // width: 92%;
-  position: relative;
   // float: left;
-  display: none;
+  // width: 92%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translate3d(0, -105%, 0);
+  transition: all 0.4s;
+  background-color: darken($color-white, 4%);
+  box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
+}
+
+.UppyModalContent.is-active {
+  transform: translate3d(0, 0, 0);
+}
+
+.UppyModalContent-back {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .UppyModalContent-panel {

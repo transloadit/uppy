@@ -16,7 +16,7 @@ export default class Modal extends Plugin {
 
     // set default options
     const defaultOptions = {
-      target: '.UppyModal',
+      target: 'body',
       defaultTabIcon: defaultTabIcon(),
       panelSelectorPrefix: 'UppyModalContent-panel'
     }
@@ -27,9 +27,11 @@ export default class Modal extends Plugin {
     this.hideModal = this.hideModal.bind(this)
     this.showModal = this.showModal.bind(this)
 
+    this.hideImportPanel = this.hideImportPanel.bind(this)
+    this.showImportPanel = this.showImportPanel.bind(this)
     this.addTarget = this.addTarget.bind(this)
     this.showTabPanel = this.showTabPanel.bind(this)
-    this.events = this.events.bind(this)
+    this.initEvents = this.initEvents.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -69,7 +71,27 @@ export default class Modal extends Plugin {
     return this.opts.target
   }
 
+  showImportPanel () {
+    const modal = this.core.getState().modal
+    this.core.setState({
+      modal: Object.assign({}, modal, {
+        isImportPanelHidden: false
+      })
+    })
+  }
+
+  hideImportPanel () {
+    const modal = this.core.getState().modal
+    this.core.setState({
+      modal: Object.assign({}, modal, {
+        isImportPanelHidden: true
+      })
+    })
+  }
+
   showTabPanel (id) {
+    this.showImportPanel()
+
     const modal = this.core.getState().modal
 
     // hide all panels, except the one that matches current id
@@ -146,7 +168,7 @@ export default class Modal extends Plugin {
     document.querySelector('*[tabindex="0"]').focus()
   }
 
-  events () {
+  initEvents () {
     // Modal open button
     const showModalTrigger = document.querySelector(this.opts.trigger)
     showModalTrigger.addEventListener('click', this.showModal)
@@ -198,7 +220,7 @@ export default class Modal extends Plugin {
       return target.type === 'progressindicator'
     })
 
-    // const targetClassName = this.opts.target.substring(1)
+    const isImportPanelHidden = state.modal.isImportPanelHidden
 
     return yo`<div class="Uppy UppyTheme--default UppyModal"
                    aria-hidden="${state.modal.isHidden}"
@@ -225,7 +247,9 @@ export default class Modal extends Plugin {
             })}
           </ul>
 
-          <div class="UppyModalContent">
+          <div class="UppyModalContent ${!isImportPanelHidden ? 'is-active' : ''}">
+            <button class="UppyModalContent-back"
+                    onclick=${this.hideImportPanel}>back</button>
             ${acquirers.map((target) => {
               return yo`<div class="UppyModalContent-panel"
                              id="${this.opts.panelSelectorPrefix}--${target.id}"
@@ -253,13 +277,15 @@ export default class Modal extends Plugin {
     // Set default state for Modal
     this.core.setState({modal: {
       isHidden: true,
+      isImportPanelHidden: true,
       targets: []
     }})
 
-    this.el = this.render(this.core.state)
-    document.body.appendChild(this.el)
+    const target = this.opts.target
+    const plugin = this
+    this.target = this.mount(target, plugin)
 
-    this.events()
+    this.initEvents()
 
     dragDrop(this.opts.target, (files) => {
       this.handleDrop(files)
