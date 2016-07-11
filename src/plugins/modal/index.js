@@ -1,6 +1,6 @@
 import Plugin from '../Plugin'
 import Dashboard from './Dashboard.js'
-import { defaultTabIcon, closeIcon } from './icons'
+import { defaultTabIcon, closeIcon, backIcon } from './icons'
 import dragDrop from 'drag-drop'
 import yo from 'yo-yo'
 
@@ -27,10 +27,8 @@ export default class Modal extends Plugin {
     this.hideModal = this.hideModal.bind(this)
     this.showModal = this.showModal.bind(this)
 
-    this.hideImportPanel = this.hideImportPanel.bind(this)
-    this.showImportPanel = this.showImportPanel.bind(this)
     this.addTarget = this.addTarget.bind(this)
-    this.showTabPanel = this.showTabPanel.bind(this)
+    this.toggleTabPanel = this.toggleTabPanel.bind(this)
     this.initEvents = this.initEvents.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
@@ -71,27 +69,7 @@ export default class Modal extends Plugin {
     return this.opts.target
   }
 
-  showImportPanel () {
-    const modal = this.core.getState().modal
-    this.core.setState({
-      modal: Object.assign({}, modal, {
-        isImportPanelHidden: false
-      })
-    })
-  }
-
-  hideImportPanel () {
-    const modal = this.core.getState().modal
-    this.core.setState({
-      modal: Object.assign({}, modal, {
-        isImportPanelHidden: true
-      })
-    })
-  }
-
-  showTabPanel (id) {
-    this.showImportPanel()
-
+  toggleTabPanel (id) {
     const modal = this.core.getState().modal
 
     // hide all panels, except the one that matches current id
@@ -100,7 +78,7 @@ export default class Modal extends Plugin {
         if (target.id === id) {
           target.focus()
           return Object.assign({}, target, {
-            isHidden: false
+            isHidden: target.isHidden !== true
           })
         }
         return Object.assign({}, target, {
@@ -123,15 +101,17 @@ export default class Modal extends Plugin {
     // The “right way”
     const modal = this.core.getState().modal
 
-    const newTargets = modal.targets.map((target) => {
-      target.isHidden = true
-      return target
-    })
+    // const newTargets = modal.targets.map((target) => {
+    //   target.isHidden = true
+    //   return target
+    // })
+
+    this.hideTabPanel()
 
     this.core.setState({
       modal: Object.assign({}, modal, {
-        isHidden: true,
-        targets: newTargets
+        isHidden: true
+        // targets: newTargets
       })
     })
 
@@ -142,23 +122,23 @@ export default class Modal extends Plugin {
     const modal = this.core.getState().modal
 
     // Show first acquirer plugin when modal is open
-    let found = false
-    const newTargets = modal.targets.map((target) => {
-      if (target.type === 'acquirer' && !found) {
-        found = true
-        target.focus()
-
-        return Object.assign({}, target, {
-          isHidden: false
-        })
-      }
-      return target
-    })
+    // let found = false
+    // const newTargets = modal.targets.map((target) => {
+    //   if (target.type === 'acquirer' && !found) {
+    //     found = true
+    //     target.focus()
+    //
+    //     return Object.assign({}, target, {
+    //       isHidden: false
+    //     })
+    //   }
+    //   return target
+    // })
 
     this.core.setState({
       modal: Object.assign({}, modal, {
-        isHidden: false,
-        targets: newTargets
+        isHidden: false
+        // targets: newTargets
       })
     })
 
@@ -220,8 +200,6 @@ export default class Modal extends Plugin {
       return target.type === 'progressindicator'
     })
 
-    const isImportPanelHidden = state.modal.isImportPanelHidden
-
     return yo`<div class="Uppy UppyTheme--default UppyModal"
                    aria-hidden="${state.modal.isHidden}"
                    aria-label="Uppy Dialog Window (Press escape to close)"
@@ -240,25 +218,28 @@ export default class Modal extends Plugin {
                         tabindex="0"
                         aria-controls="${this.opts.panelSelectorPrefix}--${target.id}"
                         aria-selected="${target.isHidden ? 'false' : 'true'}"
-                        onclick=${this.showTabPanel.bind(this, target.id)}>
+                        onclick=${this.toggleTabPanel.bind(this, target.id)}>
                   ${target.icon}
+                  <h5 class="UppyModalTab-name">${target.name}</h5>
                 </button>
               </li>`
             })}
           </ul>
 
-          <div class="UppyModalContent ${!isImportPanelHidden ? 'is-active' : ''}">
-            <button class="UppyModalContent-back"
-                    onclick=${this.hideImportPanel}>back</button>
-            ${acquirers.map((target) => {
-              return yo`<div class="UppyModalContent-panel"
-                             id="${this.opts.panelSelectorPrefix}--${target.id}"
-                             role="tabpanel"
-                             aria-hidden="${target.isHidden}">
-                ${target.render(state)}
-              </div>`
-            })}
-          </div>
+          ${acquirers.map((target) => {
+            return yo`<div class="UppyModalContent-panel"
+                           id="${this.opts.panelSelectorPrefix}--${target.id}"
+                           role="tabpanel"
+                           aria-hidden="${target.isHidden}">
+               <div class="UppyModalContent-bar">
+                 <h2 class="UppyModalContent-title">Import From ${target.name}</h2>
+                 <button class="UppyModalContent-back"
+                         onclick=${this.toggleTabPanel.bind(this, target.id)}>${backIcon()} Back</button>
+               </div>
+              ${target.render(state)}
+            </div>`
+          })}
+
           <div class="UppyModal-progressindicators">
             ${progressindicators.map((target) => {
               return target.render(state)
@@ -266,8 +247,7 @@ export default class Modal extends Plugin {
           </div>
           <button class="UppyModal-close"
                   title="Close Uppy modal"
-                  onclick=${this.hideModal}>
-                  ${closeIcon()}
+                  onclick=${this.hideModal}>${closeIcon()}
           </button>
       </div>
     </div>`
@@ -277,7 +257,6 @@ export default class Modal extends Plugin {
     // Set default state for Modal
     this.core.setState({modal: {
       isHidden: true,
-      isImportPanelHidden: true,
       targets: []
     }})
 

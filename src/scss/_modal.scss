@@ -34,6 +34,7 @@
   z-index: $zIndex-3;
   outline: none;
   box-shadow: 0px 0px 20px 4px rgba($color-black, 0.07);
+  border-radius: 8px;
 }
 
 .UppyModal-close {
@@ -45,10 +46,13 @@
   cursor: pointer;
   background-color: transparent;
   -webkit-appearance: none;
-  font-size: 30px;
-  line-height: 15px;
-  color: $color-asphalt-gray;
+  color: lighten($color-asphalt-gray, 20%);
   z-index: $zIndex-3;
+  transition: all 0.2s;
+
+  &:hover {
+    color: $color-black;
+  }
 }
 
 // Tab bar
@@ -69,21 +73,14 @@
 
 .UppyModalTab {
   margin: 0 5px;
-  width: 40px;
+  width: 100px;
   display: inline-block;
 }
 
 .UppyModalTab-name {
-  color: $color-white;
-  font-size: 12px;
-  opacity: 0;
-  background-color: darken($color-cornflower-blue, 20%);
-  border-radius: 10px;
-  padding: 4px 10px;
-  position: relative;
-  left: 12px;
-  z-index: $zIndex-3;
-  transition: all 0.3s;
+  font-size: 11px;
+  margin: 8px 0;
+  font-weight: normal;
 }
 
 .UppyModalTab-btn {
@@ -93,22 +90,21 @@
   -webkit-appearance: none;
   outline: none;
   transition: all 0.3s;
-  color: $color-asphalt-gray;
 
   &:focus,
   &:active,
   &:hover {
-    color: darken($color-cornflower-blue, 25%);
+    color: $color-cornflower-blue;
   }
 
-  &:hover .UppyModalTab-name {
-    opacity: 1;
-  }
+  // &:hover .UppyModalTab-name {
+  //   opacity: 1;
+  // }
 }
 
-.UppyModalTab-btn[aria-selected=true] {
-  color: $color-cornflower-blue;
-}
+// .UppyModalTab-btn[aria-selected=true] {
+//   color: $color-cornflower-blue;
+// }
 
 // On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
 .UppyModalTab-icon {
@@ -137,24 +133,68 @@
   transition: all 0.4s;
   background-color: darken($color-white, 4%);
   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
+  padding-top: 30px;
 }
 
 .UppyModalContent.is-active {
   transform: translate3d(0, 0, 0);
 }
 
-.UppyModalContent-back {
+.UppyModalContent-bar {
   position: absolute;
   top: 0;
   left: 0;
+  height: 40px;
+  width: 100%;
+  border-bottom: 1px solid rgba($color-gray, 0.3);
+}
+
+.UppyModalContent-title {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 0;
+  font-size: 17px;
+  font-weight: normal;
+}
+
+.UppyModalContent-back {
+  @include reset-button;
+  position: absolute;
+  top: 12px;
+  left: 15px;
+  font-size: 14px;
+  color: $color-cornflower-blue;
+  cursor: pointer;
+}
+
+.UppyModalContent-back .UppyIcon {
+  position: relative;
+  margin-right: 3px;
 }
 
 .UppyModalContent-panel {
-  height: 100%;
+  // height: 100%;
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translate3d(0, 0, 0);
+  transition: all 0.5s;
+  background-color: darken($color-white, 4%);
+  box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
+  padding: 15px;
+  padding-top: 60px;
 }
 
 .UppyModalContent-panel[aria-hidden=true] {
-  display: none;
+  // display: none;
+  // transform: translate3d(0, -105%, 0);
+  transform: translate3d(-105%, 0, 0);
 }
 
 // Progress bar placeholder
