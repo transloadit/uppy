@@ -57,7 +57,7 @@ To be released: July 29, 2016
 
 Theme: Remote Uploads, UI Redesign
 
-Released: July 1, 2016
+Released: July 11, 2016
 
 - [x] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy; Put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh)
 - [x] core: Rethink UI: Part I (interface research for better file selection / progress representation) (@arturi)
