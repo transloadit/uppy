@@ -2,13 +2,13 @@
   z-index: $zIndex-2;
 }
 
+.UppyModal[aria-hidden=true] {
+  display: none;
+}
+
 // Added to body to prevent the page from scrolling when Modal is open
 .is-UppyModal-open {
   overflow: hidden;
-}
-
-.UppyModal[aria-hidden=true] {
-  display: none;
 }
 
 .UppyModal-overlay {
@@ -25,7 +25,7 @@
   @include clearfix;
   background-color: darken($color-white, 4%);
   height: 80vh;
-  width: 75%;
+  width: 65%;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -61,26 +61,17 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
-  // white-space: nowrap;
-  // width: 8%;
   height: 20%;
-  // float: left;
-  // padding-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .UppyModalTab {
-  margin: 0 5px;
+  // margin: 0 5px;
   width: 100px;
   display: inline-block;
-}
-
-.UppyModalTab-name {
-  font-size: 11px;
-  margin: 8px 0;
-  font-weight: normal;
+  text-align: center;
 }
 
 .UppyModalTab-btn {
@@ -90,16 +81,19 @@
   -webkit-appearance: none;
   outline: none;
   transition: all 0.3s;
+  color: darken($color-gray, 25%);
 
   &:focus,
   &:active,
   &:hover {
     color: $color-cornflower-blue;
   }
+}
 
-  // &:hover .UppyModalTab-name {
-  //   opacity: 1;
-  // }
+.UppyModalTab-name {
+  font-size: 10px;
+  margin: 8px 0;
+  font-weight: normal;
 }
 
 // .UppyModalTab-btn[aria-selected=true] {
@@ -121,24 +115,22 @@
 
 // Modal content
 
-.UppyModalContent {
-  // float: left;
-  // width: 92%;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  transform: translate3d(0, -105%, 0);
-  transition: all 0.4s;
-  background-color: darken($color-white, 4%);
-  box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
-  padding-top: 30px;
-}
+// .UppyModalContent {
+//   position: absolute;
+//   top: 0;
+//   bottom: 0;
+//   left: 0;
+//   right: 0;
+//   transform: translate3d(-105%, 0, 0);
+//   transition: all 0.4s;
+//   background-color: darken($color-white, 4%);
+//   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
+//   padding-top: 30px;
+// }
 
-.UppyModalContent.is-active {
-  transform: translate3d(0, 0, 0);
-}
+// .UppyModalContent.is-active {
+//   transform: translate3d(0, 0, 0);
+// }
 
 .UppyModalContent-bar {
   position: absolute;
@@ -156,7 +148,7 @@
   right: 0;
   text-align: center;
   margin: 0;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: normal;
 }
 
@@ -166,7 +158,6 @@
   top: 12px;
   left: 15px;
   font-size: 14px;
-  color: $color-cornflower-blue;
   cursor: pointer;
 }
 
@@ -176,25 +167,22 @@
 }
 
 .UppyModalContent-panel {
-  // height: 100%;
-
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  transform: translate3d(0, 0, 0);
+  transform: translate3d(0, -105%, 0);
   transition: all 0.5s;
   background-color: darken($color-white, 4%);
   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
   padding: 15px;
   padding-top: 60px;
+  overflow: hidden;
 }
 
-.UppyModalContent-panel[aria-hidden=true] {
-  // display: none;
-  // transform: translate3d(0, -105%, 0);
-  transform: translate3d(-105%, 0, 0);
+.UppyModalContent-panel[aria-hidden=false] {
+  transform: translate3d(0, 0, 0);
 }
 
 // Progress bar placeholder

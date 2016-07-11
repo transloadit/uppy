@@ -1,6 +1,6 @@
 import Plugin from '../Plugin'
 import Dashboard from './Dashboard.js'
-import { defaultTabIcon, closeIcon, backIcon } from './icons'
+import { defaultTabIcon, closeIcon } from './icons'
 import dragDrop from 'drag-drop'
 import yo from 'yo-yo'
 
@@ -234,7 +234,7 @@ export default class Modal extends Plugin {
                <div class="UppyModalContent-bar">
                  <h2 class="UppyModalContent-title">Import From ${target.name}</h2>
                  <button class="UppyModalContent-back"
-                         onclick=${this.toggleTabPanel.bind(this, target.id)}>${backIcon()} Back</button>
+                         onclick=${this.toggleTabPanel.bind(this, target.id)}>Back</button>
                </div>
               ${target.render(state)}
             </div>`
