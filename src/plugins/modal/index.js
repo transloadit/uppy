@@ -106,7 +106,7 @@ export default class Modal extends Plugin {
     //   return target
     // })
 
-    this.hideTabPanel()
+    // this.hideTabPanel()
 
     this.core.setState({
       modal: Object.assign({}, modal, {
