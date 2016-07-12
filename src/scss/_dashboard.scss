@@ -6,7 +6,7 @@
   height: 100%;
   position: relative;
   padding: 0 20px;
-  padding-top: 40px;
+  padding-top: 50px;
 }
 
 .UppyDashboard-title {
@@ -18,7 +18,7 @@
   margin: 0;
   padding: 0;
   position: absolute;
-  top: 15px;
+  top: 18px;
   left: 0;
   width: 100%;
   text-align: center;
@@ -33,18 +33,14 @@
   padding: 0;
   overflow: scroll;
   height: 100%;
-  // position: absolute;
-  // top: 50px;
-  // bottom: 15px;
-  // right: 15px;
-  // left: 0;
-  // padding: 15px;
 }
 
 .UppyDashboardItem {
   list-style: none;
   margin: 0;
   width: 140px;
+  height: 200px;
+  overflow: hidden;
   float: left;
   padding-top: 20px;
   margin: 0 15px;
@@ -53,13 +49,14 @@
 }
 
 .UppyDashboardItem-icon {
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   margin: auto;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba($color-black, 0.1);
+  // box-shadow: inset 0 0 0 1px rgba($color-black, 0.1);
   margin-bottom: 10px;
+  color: $color-orange;
 }
 
 .UppyDashboardItem-icon img {
@@ -69,8 +66,8 @@
 }
 
 .UppyDashboardItem-name {
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 12px;
+  line-height: 1.35;
   font-weight: bold;
   margin: 0;
   padding: 0;
@@ -89,12 +86,13 @@
   line-height: 1.45;
   font-weight: normal;
   color: $color-gray;
+  text-transform: uppercase;
 }
 
 .UppyDashboardItem-action {
   position: absolute;
   top: 10px;
-  right: -6px;
+  right: 0;
 }
 
 .UppyDashboardItem-remove {
@@ -106,13 +104,16 @@
   width: 85px;
   height: 4px;
   margin: auto;
-  background-color: lighten($color-cornflower-blue, 50%);
   position: absolute;
-  top: 100px;
+  top: 90px;
   left: 0;
   right: 0;
   border-radius: 8px;
   overflow: hidden;
+}
+
+.UppyDashboardItem-progress.is-active {
+  background-color: lighten($color-cornflower-blue, 50%);
 }
 
 .UppyDashboardItem-progressInner {

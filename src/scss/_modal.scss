@@ -39,7 +39,7 @@
 
 .UppyModal-close {
   position: absolute;
-  top: 10px;
+  top: 15px;
   right: 15px;
   padding: 0;
   border: 0;
@@ -136,14 +136,14 @@
   position: absolute;
   top: 0;
   left: 0;
-  height: 40px;
+  height: 50px;
   width: 100%;
   border-bottom: 1px solid rgba($color-gray, 0.3);
 }
 
 .UppyModalContent-title {
   position: absolute;
-  top: 10px;
+  top: 15px;
   left: 0;
   right: 0;
   text-align: center;
@@ -155,7 +155,7 @@
 .UppyModalContent-back {
   @include reset-button;
   position: absolute;
-  top: 12px;
+  top: 17px;
   left: 15px;
   font-size: 14px;
   cursor: pointer;
@@ -172,8 +172,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  transform: translate3d(0, -105%, 0);
-  transition: all 0.5s;
+  transform: translateY(-105%);
+  transition: all 0.5s ease-in-out;
   background-color: darken($color-white, 4%);
   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
   padding: 15px;
@@ -182,7 +182,7 @@
 }
 
 .UppyModalContent-panel[aria-hidden=false] {
-  transform: translate3d(0, 0, 0);
+  transform: translateY(0);
 }
 
 // Progress bar placeholder
