@@ -33,6 +33,7 @@
   padding: 0;
   overflow: scroll;
   height: 100%;
+  padding-top: 10px;
 }
 
 .UppyDashboardItem {
@@ -71,7 +72,7 @@
   font-weight: bold;
   margin: 0;
   padding: 0;
-  margin-bottom: 8px;
+  margin-bottom: 3px;
 }
 
 .UppyDashboardItem-name a {
@@ -82,7 +83,7 @@
 .UppyDashboardItem-status {
   margin: 0;
   padding: 0;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.45;
   font-weight: normal;
   color: $color-gray;
