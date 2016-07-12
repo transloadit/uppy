@@ -24,8 +24,10 @@
 .UppyModal-inner {
   @include clearfix;
   background-color: darken($color-white, 4%);
-  height: 80vh;
   width: 65%;
+  height: 80vh;
+  max-width: 800px;
+  max-height: 600px;
   position: fixed;
   top: 50%;
   left: 50%;
