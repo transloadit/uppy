@@ -1,5 +1,5 @@
 import Uppy from '../src/core/Core.js'
-import Modal from '../src/plugins/modal'
+import Modal from '../src/plugins/Modal'
 import Dummy from '../src/plugins/Dummy'
 import DragDrop from '../src/plugins/DragDrop'
 import GoogleDrive from '../src/plugins/GoogleDrive'
