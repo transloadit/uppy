@@ -1,6 +1,6 @@
 # Uppy
 
-<img src="http://uppy.io/images/logos/uppy-dog-full.svg" width="100" alt="Uppy logo — a puppy superman">
+<img src="http://uppy.io/images/logos/uppy-dog-full.svg" width="150" alt="Uppy logo — a puppy superman">
 
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/badge/stability-experimental-orange.svg?style=flat-square"></a>
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
@@ -30,7 +30,7 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 
 ## Usage
 
-:warning: **Don’t use Uppy in production yet, we’re working on it**
+:warning: **Don’t use Uppy in production just yet, we’re working on it**
 
 It’s easy to start using Uppy, we recommend installing from npm with `npm install uppy` and then:
 
