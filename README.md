@@ -57,8 +57,10 @@ var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true});
 
 ## Contributors are welcome
 
-Check out:
-
  - Contributor’s guide in [`website/src/guide/contributing.md`](website/src/guide/contributing.md)
  - Architecture in [`website/src/api/architecture.md`](website/src/api/architecture.md)
  - Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
+ 
+## License
+ 
+[The MIT License](LICENSE).
