@@ -5,9 +5,9 @@
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/badge/stability-experimental-orange.svg?style=flat-square"></a>
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
 <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
-<a href="https://saucelabs.com/u/transloadit-uppy"><img src="https://saucelabs.com/buildstatus/transloadit-uppy?style=flat-square" alt="Sauce Test Status"></a>
+<a href="https://saucelabs.com/u/transloadit-uppy"><img src="https://saucelabs.com/buildstatus/transloadit-uppy" alt="Sauce Test Status"></a>
 
-Uppy is (going to be) a cool JavaScript file uploader that fetches files for you from Dropbox, Instagram, local disk, remote URLs, as well as other exciting locations, and then uploads them to wherever you want.
+Uppy is (going to be) a cool JavaScript file uploader that fetches files for you from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to wherever you want. Uppy is being developed by the [Transloadit](https://transloadit.com) team because we want file uploading experience to be better — both for users and developers.
 
 Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 
@@ -34,7 +34,7 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 
 It’s easy to start using Uppy, we recommend installing from npm with `npm install uppy` and then:
 
-```javascript
+``` javascript
 import Uppy from 'uppy/core'
 import { DragDrop, Tus10 } from 'uppy/plugins'
 
@@ -47,7 +47,7 @@ const files = uppy
 
 But if you like, you can also use a pre-built bundle, in that case `Uppy` will attach itself to the global `window` object:
 
-```javascript
+``` javascript
 <script src="uppy.min.js"></script>
 <script>
 var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true});
@@ -57,7 +57,13 @@ var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true});
 </script>
 ```
 
-## Contributors are welcome
+## Browser Support
+
+<a href="https://saucelabs.com/u/transloadit-uppy">
+  <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
+</a> 
+
+## Contributions are welcome
 
  - Contributor’s guide in [`website/src/guide/contributing.md`](website/src/guide/contributing.md)
  - Architecture in [`website/src/api/architecture.md`](website/src/api/architecture.md)
