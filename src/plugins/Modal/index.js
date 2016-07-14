@@ -28,7 +28,9 @@ export default class Modal extends Plugin {
     this.showModal = this.showModal.bind(this)
 
     this.addTarget = this.addTarget.bind(this)
-    this.toggleTabPanel = this.toggleTabPanel.bind(this)
+    this.actions = this.actions.bind(this)
+    this.hideAllPanels = this.hideAllPanels.bind(this)
+    this.showPanel = this.showPanel.bind(this)
     this.initEvents = this.initEvents.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
@@ -69,7 +71,22 @@ export default class Modal extends Plugin {
     return this.opts.target
   }
 
-  toggleTabPanel (id) {
+  hideAllPanels () {
+    const modal = this.core.getState().modal
+    const newModalTargets = modal.targets.slice()
+
+    newModalTargets.forEach((target) => {
+      if (target.type === 'acquirer') {
+        target.isHidden = true
+      }
+    })
+
+    this.core.setState({modal: Object.assign({}, modal, {
+      targets: newModalTargets
+    })})
+  }
+
+  showPanel (id) {
     const modal = this.core.getState().modal
 
     // hide all panels, except the one that matches current id
@@ -78,7 +95,7 @@ export default class Modal extends Plugin {
         if (target.id === id) {
           target.focus()
           return Object.assign({}, target, {
-            isHidden: target.isHidden !== true
+            isHidden: false
           })
         }
         return Object.assign({}, target, {
@@ -168,6 +185,12 @@ export default class Modal extends Plugin {
     })
   }
 
+  actions () {
+    this.core.emitter.on('file-add', () => {
+      this.hideAllPanels()
+    })
+  }
+
   handleDrop (files) {
     this.core.log('All right, someone dropped something...')
 
@@ -218,7 +241,7 @@ export default class Modal extends Plugin {
                         tabindex="0"
                         aria-controls="${this.opts.panelSelectorPrefix}--${target.id}"
                         aria-selected="${target.isHidden ? 'false' : 'true'}"
-                        onclick=${this.toggleTabPanel.bind(this, target.id)}>
+                        onclick=${this.showPanel.bind(this, target.id)}>
                   ${target.icon}
                   <h5 class="UppyModalTab-name">${target.name}</h5>
                 </button>
@@ -234,7 +257,7 @@ export default class Modal extends Plugin {
                <div class="UppyModalContent-bar">
                  <h2 class="UppyModalContent-title">Import From ${target.name}</h2>
                  <button class="UppyModalContent-back"
-                         onclick=${this.toggleTabPanel.bind(this, target.id)}>Back</button>
+                         onclick=${this.hideAllPanels}>Back</button>
                </div>
               ${target.render(state)}
             </div>`
@@ -265,6 +288,7 @@ export default class Modal extends Plugin {
     this.target = this.mount(target, plugin)
 
     this.initEvents()
+    this.actions()
 
     dragDrop(this.opts.target, (files) => {
       this.handleDrop(files)
