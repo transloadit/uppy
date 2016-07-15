@@ -21,6 +21,7 @@
     "docs": "cd website && node node_modules/documentation/bin/documentation.js readme ../src/index.js --readme-file=src/api/docs.md --section 'Uppy Core & Plugins' -q --github -c doc-order.json",
     "lint:fix": "eslint src test website/build-examples.js website/update.js website/themes/uppy/source/js/common.js --fix",
     "lint": "eslint src test website/build-examples.js website/update.js website/themes/uppy/source/js/common.js",
+    "lint-staged": "lint-staged",
     "release:major": "env SEMANTIC=major npm run release",
     "release:minor": "env SEMANTIC=minor npm run release",
     "release:patch": "env SEMANTIC=patch npm run release",
@@ -52,6 +53,8 @@
     "web": "npm-run-all web:clean web:build",
     "prepublish": "npm-run-all clean build"
   },
+  "lint-staged": { "*.js": "lint" },
+  "pre-commit": "lint-staged",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
@@ -63,9 +66,7 @@
   },
   "homepage": "https://github.com/transloadit/uppy#readme",
   "devDependencies": {
-    "postcss": "5.0.21",
     "autoprefixer": "6.3.6",
-    "cssnano": "3.6.2",
     "babel-cli": "6.9.0",
     "babel-core": "6.7.7",
     "babel-eslint": "6.0.2",
@@ -80,8 +81,8 @@
     "babelify": "7.2.0",
     "browser-sync": "2.13.0",
     "browserify": "13.0.1",
-    "watchify": "3.7.0",
     "chalk": "1.1.1",
+    "cssnano": "3.6.2",
     "disc": "1.3.2",
     "eslint": "2.7.0",
     "eslint-config-standard": "5.1.0",
@@ -91,6 +92,7 @@
     "fakefile": "0.0.5",
     "glob": "7.0.3",
     "isomorphic-fetch": "2.2.1",
+    "lint-staged": "2.0.2",
     "minifyify": "7.3.3",
     "mkdirp": "0.5.1",
     "multi-glob": "1.0.1",
@@ -100,11 +102,14 @@
     "node-sass": "3.4.2",
     "nodemon": "1.8.1",
     "npm-run-all": "2.1.1",
+    "postcss": "5.0.21",
+    "pre-commit": "1.1.3",
     "sass": "0.5.0",
     "selenium-webdriver": "2.52.0",
     "tap-spec": "4.1.1",
     "tape": "4.4.0",
-    "uppy-server": "0.0.7"
+    "uppy-server": "0.0.7",
+    "watchify": "3.7.0"
   },
   "dependencies": {
     "drag-drop": "2.11.0",
