@@ -81,12 +81,15 @@
 }
 
 .UppyDashboardItem-status {
-  margin: 0;
-  padding: 0;
+  // margin: 0;
+  // padding: 0;
   font-size: 11px;
   line-height: 1.45;
   font-weight: normal;
   color: $color-gray;
+}
+
+.UppyDashboardItem-statusSize {
   text-transform: uppercase;
 }
 
