@@ -45,8 +45,6 @@ To be released: July 29, 2016. Releasemaster: Artur
 
 - [ ] core: fix bug: no meta information from uppy-server files (@hedgerh)
 - [ ] core: fix bug: uppy-server file is treated as local and directly uploaded (@hedgerh)
-- [x] meta: better readme on GitHub and NPM (@arturi)
-- [ ] meta: release “Uppy Begins” post + blog polish (add post author gravatar) (@arturi)
 - [ ] webcam: initial version: webcam light goes on (@hedgerh)
 - [ ] uppy-server: hammering out websockets/oauth (@hedgerh, @acconut)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
@@ -54,9 +52,13 @@ To be released: July 29, 2016. Releasemaster: Artur
 - [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
 - [ ] progress: better icons, style (@arturi)
 - [ ] core: better mime/type detection (via mime + extension) (@arturi)
-- [ ] test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
 - [ ] test: working Uppy example on Require Bin — latest version straight from NPM (@arturi)
+- [ ] meta: release “Uppy Begins” post (@arturi @kvz)
+- [x] meta: better readme on GitHub and NPM (@arturi)
+- [x] test: try adding pre-commit & lint-staged (@arturi)
+- [x] test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated (@arturi)
+- [x] website: blog polish — add post authors and their gravatars (@arturi)
 - [x] dashboard: try a workflow where import from external service slides over and takes up the whole dashboard screen (@arturi)
 - [x] modal: merge modal and dashboard (@arturi)
 
