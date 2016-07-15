@@ -98,10 +98,6 @@
   font-weight: normal;
 }
 
-// .UppyModalTab-btn[aria-selected=true] {
-//   color: $color-cornflower-blue;
-// }
-
 // On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
 .UppyModalTab-icon {
   width: 25px;
@@ -114,25 +110,6 @@
 .UppyModal-dashboard {
   height: 80%;
 }
-
-// Modal content
-
-// .UppyModalContent {
-//   position: absolute;
-//   top: 0;
-//   bottom: 0;
-//   left: 0;
-//   right: 0;
-//   transform: translate3d(-105%, 0, 0);
-//   transition: all 0.4s;
-//   background-color: darken($color-white, 4%);
-//   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
-//   padding-top: 30px;
-// }
-
-// .UppyModalContent.is-active {
-//   transform: translate3d(0, 0, 0);
-// }
 
 .UppyModalContent-bar {
   position: absolute;
@@ -159,7 +136,9 @@
   position: absolute;
   top: 17px;
   left: 15px;
-  font-size: 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
   cursor: pointer;
 }
 
