@@ -233,6 +233,33 @@
   }
 }
 
+.PostAuthor {
+  position: relative;
+  margin-top: 40px;
+}
+
+.PostAuthor-img {
+  border-radius: 50%;
+  max-width: 50px;
+  position: absolute;
+}
+
+.PostAuthor-name {
+  margin: 0;
+  padding: 0;
+  font-size: 1.2em;
+  padding-left: 70px;
+  padding-top: 3px;
+}
+
+.PostAuthor-tagline {
+  margin: 0;
+  padding: 0;
+  padding-left: 70px;
+  font-size: 0.85em;
+  color: darken($color-gray, 10%);
+}
+
 .guide-links {
   margin-top: 2em;
   height: 1em;
