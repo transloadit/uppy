@@ -35,7 +35,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
-- [ ] core: accessibility research
+- [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 
 ## 0.8.0
 
@@ -45,8 +45,8 @@ To be released: July 29, 2016. Releasemaster: Artur
 
 - [ ] core: fix bug: no meta information from uppy-server files (@hedgerh)
 - [ ] core: fix bug: uppy-server file is treated as local and directly uploaded (@hedgerh)
-- [ ] meta: better readme on GitHub and NPM (@arturi)
-- [ ] meta: release “Uppy Begins” post + minor blog polish (@arturi)
+- [x] meta: better readme on GitHub and NPM (@arturi)
+- [ ] meta: release “Uppy Begins” post + blog polish (add post author gravatar) (@arturi)
 - [ ] webcam: initial version: webcam light goes on (@hedgerh)
 - [ ] uppy-server: hammering out websockets/oauth (@hedgerh, @acconut)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
