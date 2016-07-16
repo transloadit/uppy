@@ -1,3 +1,9 @@
+<div class="Sidebar js-Sidebar is-blog">
+  <ul class="main-menu">
+    <%- partial('partials/main_menu') %>
+  </ul>
+</div>
+
 <div class="Content js-Content">
   <h1 style="text-align: center; margin-bottom:.5em">The <%- config.title %> Blog</h1>
   <% site.posts.sort('date', -1).each(function (post) { %>

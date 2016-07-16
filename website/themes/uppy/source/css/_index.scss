@@ -2,9 +2,14 @@
   text-align: center;
 
   li {
-    display: inline-block;
-    position: relative;
-    line-height: 40px;
+    margin: 0.3em 0;
+
+    @media #{$screen-medium} {
+      display: inline-block;
+      position: relative;
+      line-height: 40px;
+      margin: 0;
+    }
 
     &:last-child .nav-link {
       margin-right: 0;
@@ -214,13 +219,21 @@
   background-color: $color-codebg;
   border-radius: $size-radius;
   overflow: hidden;
+  max-width: 500px;
+  margin: auto;
+  font-size: 1em;
 
   @media #{$screen-medium} {
+    max-width: 100%;
     width: 43%;
     display: inline-block;
     vertical-align: middle;
     height: 250px;
   }
+}
+
+.IndexExample-block img {
+  margin: auto;
 }
 
 .IndexActivity {

@@ -113,6 +113,11 @@ markdown:
   smartLists: true
   smartypants: true
 
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+
 node_sass:
   debug: false
   outputStyle: compressed

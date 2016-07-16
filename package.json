@@ -4,10 +4,7 @@
   "description": "Almost as cute as a Puppy :dog:",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
-  "files": [
-    "src/",
-    "lib/"
-  ],
+  "files": ["src/","lib/"],
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
     "build:css": "node ./bin/build-css.js",

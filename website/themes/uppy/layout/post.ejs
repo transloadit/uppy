@@ -1,7 +1,15 @@
 <div class="Sidebar js-Sidebar is-blog">
+    <ul class="main-menu">
+        <%- partial('partials/main_menu') %>
+    </ul>
     <div class="list">
-        <h2>Recent Posts</h2>
-        <ul>
+        <h2>
+            Recent Posts
+            <a href="/atom.xml" target="_blank" style="vertical-align: middle; margin-left: 5px">
+                <img src="/images/feed.png" style="width:15px;height:15px">
+            </a>
+        </h2>
+        <ul style="padding:0">
         <% site.posts.sort('date', -1).limit(10).each(function (post) { %>
             <li>
                 <a href="/<%- post.path %>" class="sidebar-link<%- page.title === post.title ? ' current' : '' %>"><%- post.title %></a>
@@ -10,6 +18,7 @@
         </ul>
     </div>
 </div>
+
 <div class="Content js-Content with-sidebar">
   <h1><%- page.title %></h1>
   <h4><%- page.date.format('MMM D[,] YYYY') %></h4>
