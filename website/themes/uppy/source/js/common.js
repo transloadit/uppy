@@ -113,64 +113,71 @@
       }
     })
 
-    // build sidebar
-    var currentPageAnchor = menu.querySelector('.sidebar-link.current')
-    var isAPI = document.querySelector('.Content').classList.contains('api')
-    if (currentPageAnchor || isAPI) {
-      var sectionContainer
-      if (false && isAPI) {
-        sectionContainer = document.querySelector('.menu-root')
-      } else {
-        sectionContainer = document.createElement('ul')
-        sectionContainer.className = 'menu-sub'
-        currentPageAnchor.parentNode.appendChild(sectionContainer)
-      }
-      var h2s = content.querySelectorAll('h2')
-      if (h2s.length) {
-        each.call(h2s, function (h) {
-          sectionContainer.appendChild(makeLink(h))
-          var h3s = collectH3s(h)
-          allLinks.push(h)
-          allLinks.push.apply(allLinks, h3s)
-          if (h3s.length) {
-            sectionContainer.appendChild(makeSubLinks(h3s, isAPI))
-          }
-        })
-      } else {
-        h2s = content.querySelectorAll('h3')
-        each.call(h2s, function (h) {
-          sectionContainer.appendChild(makeLink(h))
-          allLinks.push(h)
-        })
-      }
-
-      sectionContainer.addEventListener('click', function (e) {
-        e.preventDefault()
-        if (e.target.classList.contains('section-link')) {
-          menu.classList.remove('open')
-          setActive(e.target)
-          animating = true
-          setTimeout(function () {
-            animating = false
-          }, 400)
+    function initSubHeaders () {
+      // build sidebar
+      var currentPageAnchor = menu.querySelector('.sidebar-link.current')
+      var isAPI = document.querySelector('.Content').classList.contains('api')
+      if (currentPageAnchor || isAPI) {
+        var sectionContainer
+        if (false && isAPI) {
+          sectionContainer = document.querySelector('.menu-root')
+        } else {
+          sectionContainer = document.createElement('ul')
+          sectionContainer.className = 'menu-sub'
+          currentPageAnchor.parentNode.appendChild(sectionContainer)
         }
-      }, true)
+        var h2s = content.querySelectorAll('h2')
+        if (h2s.length) {
+          each.call(h2s, function (h) {
+            sectionContainer.appendChild(makeLink(h))
+            var h3s = collectH3s(h)
+            allLinks.push(h)
+            allLinks.push.apply(allLinks, h3s)
+            if (h3s.length) {
+              sectionContainer.appendChild(makeSubLinks(h3s, isAPI))
+            }
+          })
+        } else {
+          var h3s = content.querySelectorAll('h3')
+          each.call(h3s, function (h) {
+            sectionContainer.appendChild(makeLink(h))
+            allLinks.push(h)
+          })
+        }
 
-      // make links clickable
-      allLinks.forEach(makeLinkClickable)
+        sectionContainer.addEventListener('click', function (e) {
+          e.preventDefault()
+          if (e.target.classList.contains('section-link')) {
+            menu.classList.remove('open')
+            setActive(e.target)
+            animating = true
+            setTimeout(function () {
+              animating = false
+            }, 400)
+          }
+        }, true)
 
-      // init smooth scroll
-      window.smoothScroll.init({
-        speed: 400,
-        offset: window.innerWidth > 720
-          ? 40
-          : 58
-      })
+        // make links clickable
+        allLinks.forEach(makeLinkClickable)
+
+        // init smooth scroll
+        window.smoothScroll.init({
+          speed: 400,
+          offset: window.innerWidth > 720
+            ? 40
+            : 58
+        })
+      }
+
+      // listen for scroll event to do positioning & highlights
+      window.addEventListener('scroll', updateSidebar)
+      window.addEventListener('resize', updateSidebar)
     }
 
-    // listen for scroll event to do positioning & highlights
-    window.addEventListener('scroll', updateSidebar)
-    window.addEventListener('resize', updateSidebar)
+    var isBlog = menu.classList.contains('is-blog')
+    if (!isBlog) {
+      initSubHeaders()
+    }
   }
 
   function IndexPage () {

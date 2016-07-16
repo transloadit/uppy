@@ -14,7 +14,7 @@ We are therefore excited to tell you about Uppy: the file uploader that will cer
 
 <!-- more -->
 
-### Why the need for another file uploader?
+## Why the need for another file uploader?
 
 It is true, there are indeed already a good few file uploading solutions out there ([Dropzone](http://www.dropzonejs.com/), for instance, is quite good). And – for the most part – they do their job. Nevertheless, they are quite limited in their functionality:
 
@@ -28,7 +28,7 @@ It is true, there are indeed already a good few file uploading solutions out the
 
 All in all, we think there is definitely some ‘trouble at the old mill’ here and it’s time to let Uppy take care of that!
 
-### Our plans for Uppy
+## Our plans for Uppy
 
 Uppy will be a JavaScript file uploader that allows you to fetch files, not only from your local disk, but also from places like Dropbox, Instagram, Google Drive, webcams and remote URLs. It will have a modular, plugin-based design, making it lightweight and customizable.
 Cute on the outside, the core of Uppy is very robust – thanks to resumability through 'tus'. We are confident that Uppy will be able to send even the biggest of files over the smallest of tubes.
