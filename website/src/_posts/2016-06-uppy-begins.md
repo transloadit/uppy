@@ -39,3 +39,5 @@ We are intent on making the user experience as smooth and satisfying as possible
 Lastly, and this is a point of special significance to us, Uppy will be completely open source. When Uppy is finished, you will be free to use it for whatever you like. Until that time, we very much welcome your ideas and contributions. There are still a lot of decisions to be made and this is the perfect time to come and influence the end product.
 
 We are going to work hard on bringing you the best file uploader possible and we’ll keep you informed about the development process on [uppy.io](http://uppy.io/). We can’t wait for you to meet Uppy!
+
+> It seems we're on the Hacker News frontpage. [Comments welcome there](https://news.ycombinator.com/item?id=12109410).
