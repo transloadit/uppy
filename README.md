@@ -19,7 +19,7 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 - Uppy speaks multiple languages (i18n support)
 - Works great with file encoding and processing backends, such as [Transloadit](http://transloadit.com)
 - Small core, modular plugin-based architecture.
-- Qute as a puppy :dog:, also accepts cat pictures
+- Cute as a puppy :dog:, also accepts cat pictures
 
 ## Demo
 
