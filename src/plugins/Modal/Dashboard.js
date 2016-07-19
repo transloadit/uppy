@@ -10,11 +10,12 @@ function Dashboard (files, bus, autoProceed) {
   const selectedFiles = Object.keys(files).filter((file) => {
     return files[file].progress !== 100
   })
+  const totalFileCount = Object.keys(files).length
   const selectedFileCount = Object.keys(selectedFiles).length
   const isSomethingSelected = selectedFileCount > 0
 
   return html`<div class="UppyDashboard">
-    ${selectedFileCount === 0
+    ${totalFileCount === 0
       ? html`<div class="UppyDashboard-bgIcon">${dashboardBgIcon()}</div>`
       : ''}
     <ul class="UppyDashboard-list">
