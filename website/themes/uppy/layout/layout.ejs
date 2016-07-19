@@ -11,8 +11,8 @@
     <meta name="twitter:site" content="@uppy_io">
     <meta name="twitter:creator" content="@uppy_io">
     <meta property="og:url" content="<%- url %>">
-    <meta property="og:title" content="<%= page.title ? page.title : config.title %>">
-    <meta name="twitter:title" content="<%= page.title ? page.title : config.title %>">
+    <meta property="og:title" content="<%- page.title ? page.title + ' - ' : '' %><%= config.title %>">
+    <meta name="twitter:title" content="<%- page.title ? page.title + ' - ' : '' %><%= config.title %>">
     <meta name="description" content="<%= config.description %>">
     <meta name="twitter:description" content="<%= config.description %>">
     <meta property="og:image" content="<%- config.url %>/images/uppy-social.jpg">
