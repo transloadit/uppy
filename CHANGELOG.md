@@ -59,6 +59,7 @@ To be released: July 29, 2016. Releasemaster: Artur
 - [x] test: try adding pre-commit & lint-staged (@arturi)
 - [x] test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated (@arturi)
 - [x] website: blog polish — add post authors and their gravatars (@arturi)
+- [x] dashboard: UI revamp, more prototypes, background image, make dashboard nicer (@arturi)
 - [x] dashboard: try a workflow where import from external service slides over and takes up the whole dashboard screen (@arturi)
 - [x] modal: merge modal and dashboard (@arturi)
 
