@@ -1,6 +1,7 @@
 import Plugin from '../Plugin'
 import Dashboard from './Dashboard.js'
-import { defaultTabIcon, closeIcon } from './icons'
+import Utils from '../../core/Utils'
+import { defaultTabIcon, closeIcon, localIcon } from './icons'
 import dragDrop from 'drag-drop'
 import yo from 'yo-yo'
 
@@ -166,6 +167,7 @@ export default class Modal extends Plugin {
   }
 
   initEvents () {
+    const modal = document.querySelector(`${this.opts.target} .UppyModal`)
     // Modal open button
     const showModalTrigger = document.querySelector(this.opts.trigger)
     showModalTrigger.addEventListener('click', this.showModal)
@@ -182,6 +184,33 @@ export default class Modal extends Plugin {
       if (e.target.classList.contains('js-UppyModal-close')) {
         this.hideModal()
       }
+    })
+
+    // Drag Drop
+    dragDrop(`${this.opts.target} .UppyModal`, (files) => {
+      this.handleDrop(files)
+      this.core.log(files)
+    })
+
+    // @TODO Exprimental, work in progress
+    // Paste from clipboard
+    modal.addEventListener('paste', this.handlePaste.bind(this))
+  }
+
+  // @TODO Exprimental, work in progress
+  handlePaste (ev) {
+    // console.log(ev)
+    const files = Array.from(ev.clipboardData.items)
+    // console.log(files)
+    files.shift()
+    files.forEach((file) => {
+      const fileBlob = file.getAsFile()
+      this.core.emitter.emit('file-add', {
+        source: this.id,
+        name: file.name || 'name',
+        type: file.type,
+        data: fileBlob
+      })
     })
   }
 
@@ -206,6 +235,22 @@ export default class Modal extends Plugin {
     this.core.addMeta({bla: 'bla'})
   }
 
+  handleInputChange (ev) {
+    this.core.log('All right, something selected through input...')
+
+    const files = Utils.toArray(ev.target.files)
+
+    files.forEach((file) => {
+      console.log(file)
+      this.core.emitter.emit('file-add', {
+        source: this.id,
+        name: file.name,
+        type: file.type,
+        data: file
+      })
+    })
+  }
+
   render (state) {
     // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
@@ -223,31 +268,67 @@ export default class Modal extends Plugin {
       return target.type === 'progressindicator'
     })
 
-    return yo`<div class="Uppy UppyTheme--default UppyModal"
+    const isTouchDevice = Utils.isTouchDevice()
+
+    const onSelect = (ev) => {
+      const input = document.querySelector(`${this.opts.target} .UppyModal-input`)
+      input.click()
+    }
+
+    return yo`<div class="Uppy UppyTheme--default UppyModal ${isTouchDevice ? 'Uppy--isTouchDevice' : ''}"
                    aria-hidden="${state.modal.isHidden}"
                    aria-label="Uppy Dialog Window (Press escape to close)"
                    role="dialog">
       <div class="UppyModal-overlay"
                   onclick=${this.hideModal}></div>
-        <div class="UppyModal-inner" tabindex="0">
+      <div class="UppyModal-inner" tabindex="0">
+        <div class="UppyModal-bar">
+          <h1 class="UppyModal-title">Upload files</h1>
+        </div>
+        <button class="UppyModal-close"
+                title="Close Uppy modal"
+                onclick=${this.hideModal}>${closeIcon()}
+        </button>
+        <div class="UppyModal-innerWrap">
+          <div class="UppyModalTabs">
+            <h3 class="UppyModalTabs-title">Drop files here, paste or import from</h3>
+            <nav>
+              <ul class="UppyModalTabs-list" role="tablist">
+                <li class="UppyModalTab">
+                  <button class="UppyModalTab-btn UppyModal-focus"
+                          role="tab"
+                          tabindex="0"
+                          onclick=${onSelect}>
+                    ${localIcon()}
+                    <h5 class="UppyModalTab-name">Local Disk</h5>
+                  </button>
+                  <input class="UppyModal-input"
+                         type="file"
+                         name="files[]"
+                         multiple="true"
+                         value=""
+                         onchange=${this.handleInputChange.bind(this)} />
+                </li>
+                ${acquirers.map((target) => {
+                  return yo`<li class="UppyModalTab">
+                    <button class="UppyModalTab-btn"
+                            role="tab"
+                            tabindex="0"
+                            aria-controls="${this.opts.panelSelectorPrefix}--${target.id}"
+                            aria-selected="${target.isHidden ? 'false' : 'true'}"
+                            onclick=${this.showPanel.bind(this, target.id)}>
+                      ${target.icon}
+                      <h5 class="UppyModalTab-name">${target.name}</h5>
+                    </button>
+                  </li>`
+                })}
+              </ul>
+            </nav>
+          </div>
+
           <div class="UppyModal-dashboard">
             ${Dashboard(files, bus, autoProceed)}
           </div>
-          <ul class="UppyModalTabs" role="tablist">
-            ${acquirers.map((target) => {
-              return yo`<li class="UppyModalTab">
-                <button class="UppyModalTab-btn"
-                        role="tab"
-                        tabindex="0"
-                        aria-controls="${this.opts.panelSelectorPrefix}--${target.id}"
-                        aria-selected="${target.isHidden ? 'false' : 'true'}"
-                        onclick=${this.showPanel.bind(this, target.id)}>
-                  ${target.icon}
-                  <h5 class="UppyModalTab-name">${target.name}</h5>
-                </button>
-              </li>`
-            })}
-          </ul>
 
           ${acquirers.map((target) => {
             return yo`<div class="UppyModalContent-panel"
@@ -268,10 +349,7 @@ export default class Modal extends Plugin {
               return target.render(state)
             })}
           </div>
-          <button class="UppyModal-close"
-                  title="Close Uppy modal"
-                  onclick=${this.hideModal}>${closeIcon()}
-          </button>
+        </div>
       </div>
     </div>`
   }
@@ -289,10 +367,5 @@ export default class Modal extends Plugin {
 
     this.initEvents()
     this.actions()
-
-    dragDrop(this.opts.target, (files) => {
-      this.handleDrop(files)
-      this.core.log(files)
-    })
   }
 }

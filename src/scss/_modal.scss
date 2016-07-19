@@ -23,11 +23,14 @@
 
 .UppyModal-inner {
   @include clearfix;
-  background-color: darken($color-white, 4%);
+  background-color: $color-white;
+  padding: 20px;
   width: 65%;
   height: 80vh;
-  max-width: 800px;
+  max-width: 750px;
+  min-width: 500px;
   max-height: 600px;
+  min-height: 400px;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -35,14 +38,60 @@
   overflow: hidden;
   z-index: $zIndex-3;
   outline: none;
-  box-shadow: 0px 0px 20px 4px rgba($color-black, 0.07);
-  border-radius: 8px;
+  box-shadow: 0px 0px 10px 4px rgba($color-black, 0.1);
+  // border-radius: 8px;
+}
+
+  // .UppyModal-inner:before {
+  //   content: '';
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   right: 0;
+  //   bottom: 0;
+  //   z-index: $zIndex-4;
+  //   background-color: rgba($color-black, 0.7);
+  //   border-radius: 8px;
+  //   display: none;
+  // }
+  //
+  // .UppyModal.drag .UppyModal-inner:before {
+  //   display: block;
+  // }
+
+.UppyModal-innerWrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  // border: 2px dashed;
+  // border-radius: 10px;
+  // border-color: lighten($color-gray, 25%);
+}
+
+.UppyModal-bar {
+  @include clearfix;
+  padding: 14px 0;
+  position: relative;
+  display: none;
+}
+
+.UppyModal-title {
+  font-size: 16px;
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+  float: left;
+  color: $color-asphalt-gray;
+  padding-left: 5px;
 }
 
 .UppyModal-close {
   position: absolute;
   top: 15px;
   right: 15px;
+  // float: right;
+  // padding-top: 3px;
+
   padding: 0;
   border: 0;
   cursor: pointer;
@@ -60,10 +109,33 @@
 // Tab bar
 
 .UppyModalTabs {
+  // min-height: 120px;
+  // border: 2px dashed;
+  // border-radius: 10px;
+  // border-color: lighten($color-gray, 25%);
+  // padding: 15px 0;
+  margin-bottom: 15px;
+  transition: all 0.2s;
+}
+
+.UppyModalTabs-title {
+  width: 100%;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 500;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  margin-bottom: 15px;
+  color: $color-asphalt-gray;
+}
+
+.UppyModalTabs-list {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  height: 20%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -71,7 +143,7 @@
 
 .UppyModalTab {
   // margin: 0 5px;
-  width: 100px;
+  width: 85px;
   display: inline-block;
   text-align: center;
 }
@@ -93,23 +165,42 @@
 }
 
 .UppyModalTab-name {
-  font-size: 10px;
+  font-size: 9px;
   margin: 6px 0;
   font-weight: normal;
 }
 
 // On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
 .UppyModalTab-icon {
-  width: 25px;
-  height: 25px;
+  width: 23px;
+  height: 23px;
   vertical-align: middle;
+}
+
+.UppyModal-input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
 
 // Modal Dashboard
 
 .UppyModal-dashboard {
-  height: 80%;
+  flex: 1;
+  border: 2px dashed;
+  border-radius: 10px;
+  border-color: lighten($color-gray, 25%);
+  padding-top: 10px;
+  // overflow-y: auto;
 }
+
+  .UppyModal.drag .UppyModal-dashboard {
+    border-color: lighten($color-gray, 5%);
+    background-color: darken($color-white, 5%)
+  }
 
 .UppyModalContent-bar {
   position: absolute;
