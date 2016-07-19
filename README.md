@@ -61,7 +61,7 @@ var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true});
 ## Browser Support
 
 <a href="https://saucelabs.com/u/transloadit-uppy">
-  <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
+  <img src="https://saucelabs.com/browser-matrix/transloadit-uppy1.svg" alt="Sauce Test Status"/>
 </a> 
 
 ## Contributions are welcome
