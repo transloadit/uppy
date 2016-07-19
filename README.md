@@ -5,7 +5,7 @@
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/badge/stability-experimental-orange.svg?style=flat-square"></a>
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
 <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
-<a href="https://saucelabs.com/u/transloadit-uppy"><img src="https://saucelabs.com/buildstatus/transloadit-uppy1" alt="Sauce Test Status"></a>
+<a href="https://saucelabs.com/u/transloadit-uppy"><img src="https://saucelabs.com/buildstatus/transloadit-uppy" alt="Sauce Test Status"></a>
 
 
 Uppy is (going to be) a cool JavaScript file uploader that fetches files for you from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to wherever you want. Uppy is being developed by the [Transloadit](https://transloadit.com) team because we want file uploading experience to be better — both for users and developers.
