@@ -35,6 +35,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
+- [ ] website: Would one really connect a own google drive or dropbox for testing purpose?
+=> maybe one can give something like a testing account of google drive and dropbox to try uppy
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 
 ## 0.8.0
