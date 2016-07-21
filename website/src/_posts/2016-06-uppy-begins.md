@@ -1,6 +1,6 @@
 ---
 title: "Uppy: let’s teach an old dog some new tricks"
-date: 2016-06-28
+date: 2016-07-15
 author: arturi
 ---
 
@@ -14,7 +14,7 @@ We are therefore excited to tell you about Uppy: the file uploader that will cer
 
 <!-- more -->
 
-### Why the need for another file uploader?
+## Why the need for another file uploader?
 
 It is true, there are indeed already a good few file uploading solutions out there ([Dropzone](http://www.dropzonejs.com/), for instance, is quite good). And – for the most part – they do their job. Nevertheless, they are quite limited in their functionality:
 
@@ -28,7 +28,7 @@ It is true, there are indeed already a good few file uploading solutions out the
 
 All in all, we think there is definitely some ‘trouble at the old mill’ here and it’s time to let Uppy take care of that!
 
-### Our plans for Uppy
+## Our plans for Uppy
 
 Uppy will be a JavaScript file uploader that allows you to fetch files, not only from your local disk, but also from places like Dropbox, Instagram, Google Drive, webcams and remote URLs. It will have a modular, plugin-based design, making it lightweight and customizable.
 Cute on the outside, the core of Uppy is very robust – thanks to resumability through 'tus'. We are confident that Uppy will be able to send even the biggest of files over the smallest of tubes.
@@ -39,3 +39,5 @@ We are intent on making the user experience as smooth and satisfying as possible
 Lastly, and this is a point of special significance to us, Uppy will be completely open source. When Uppy is finished, you will be free to use it for whatever you like. Until that time, we very much welcome your ideas and contributions. There are still a lot of decisions to be made and this is the perfect time to come and influence the end product.
 
 We are going to work hard on bringing you the best file uploader possible and we’ll keep you informed about the development process on [uppy.io](http://uppy.io/). We can’t wait for you to meet Uppy!
+
+> It seems we're on the Hacker News frontpage. [Comments welcome there](https://news.ycombinator.com/item?id=12109410).

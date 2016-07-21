@@ -1,0 +1,10 @@
+arturi:
+  email: 'artur@transloadit.com'
+  name: 'Artur Paikin'
+  id: 'artur'
+  tagline: 'Frontend developer and interface designer'
+hedgerh:
+  email: 'harry@transloadit.com'
+  name: 'Harry Hedger'
+  id: 'harry'
+  tagline: 'Frontend developer'

@@ -5,46 +5,41 @@
 .UppyDashboard {
   height: 100%;
   position: relative;
-  padding: 0 20px;
-  padding-top: 50px;
-}
-
-.UppyDashboard-title {
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: normal;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  top: 18px;
-  left: 0;
-  width: 100%;
-  text-align: center;
 }
 
 .UppyDashboard-list {
   @include clearfix;
-  border: 2px dashed;
-  border-radius: 10px;
-  border-color: lighten($color-gray, 30%);
   margin: 0;
   padding: 0;
-  overflow: scroll;
   height: 100%;
-  padding-top: 10px;
 }
+
+.UppyDashboard-bgIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  opacity: 0.7;
+  transition: all 0.3s;
+}
+
+  .UppyDashboard-bgIcon .UppyIcon {
+    width: 250px;
+  }
+
+  .UppyModal.drag .UppyDashboard-bgIcon {
+    opacity: 1;
+  }
 
 .UppyDashboardItem {
   list-style: none;
   margin: 0;
   width: 140px;
-  height: 200px;
+  height: 180px;
   overflow: hidden;
   float: left;
   padding-top: 20px;
-  margin: 0 15px;
+  margin: 0 10px;
   text-align: center;
   position: relative;
 }
@@ -69,10 +64,12 @@
 .UppyDashboardItem-name {
   font-size: 12px;
   line-height: 1.35;
-  font-weight: bold;
+  font-weight: 500;
   margin: 0;
   padding: 0;
   margin-bottom: 3px;
+  height: 15px;
+  overflow: hidden;
 }
 
 .UppyDashboardItem-name a {
@@ -81,12 +78,15 @@
 }
 
 .UppyDashboardItem-status {
-  margin: 0;
-  padding: 0;
+  // margin: 0;
+  // padding: 0;
   font-size: 11px;
   line-height: 1.45;
   font-weight: normal;
   color: $color-gray;
+}
+
+.UppyDashboardItem-statusSize {
   text-transform: uppercase;
 }
 
@@ -99,7 +99,16 @@
 .UppyDashboardItem-remove {
   @include reset-button;
   cursor: pointer;
+  opacity: 1;
+  transition: all 0.3s;
+  color: $color-gray;
 }
+
+  // .Uppy--isTouchDevice .UppyDashboardItem-remove,
+  .UppyDashboardItem:hover .UppyDashboardItem-remove {
+    // opacity: 1;
+    color: $color-black;
+  }
 
 .UppyDashboardItem-progress {
   width: 85px;
@@ -130,8 +139,8 @@
   border-radius: 50%;
   background-color: $color-cornflower-blue;
   position: absolute;
-  bottom: 40px;
-  right: 50px;
+  bottom: 20px;
+  right: 30px;
   cursor: pointer;
   transition: all 0.3s;
   color: $color-white;

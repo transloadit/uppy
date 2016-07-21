@@ -1,17 +1,34 @@
-<div class="Sidebar">
+<div class="Sidebar js-Sidebar is-blog">
+    <ul class="main-menu">
+        <%- partial('partials/main_menu') %>
+    </ul>
     <div class="list">
-        <h2>Recent Posts</h2>
-        <ul>
+        <h2>
+            Recent Posts
+            <a href="/atom.xml" target="_blank" style="vertical-align: middle; margin-left: 5px">
+                <img src="/images/feed.png" style="width:15px;height:15px">
+            </a>
+        </h2>
+        <ul style="padding:0">
         <% site.posts.sort('date', -1).limit(10).each(function (post) { %>
             <li>
                 <a href="/<%- post.path %>" class="sidebar-link<%- page.title === post.title ? ' current' : '' %>"><%- post.title %></a>
             </li>
         <% }) %>
         </ul>
+        <%- partial('partials/social') %>
     </div>
 </div>
-<div class="Content js-Content">
-    <h1><%- page.title %></h1>
-    <h4><%- page.date.format('MMM D[,] YYYY') %></h4>
-    <%- page.content %>
+
+<div class="Content js-Content with-sidebar">
+  <h1><%- page.title %></h1>
+  <h4><%- page.date.format('MMM D[,] YYYY') %></h4>
+  <%- page.content %>
+  <div class="PostAuthor">
+    <a href="https://transloadit.com/about#<%- site.data.authors[page.author].id %>">
+      <img class="PostAuthor-img" src="<%- gravatar(site.data.authors[page.author].email, 200) %>">
+      <h4 class="PostAuthor-name"><%- site.data.authors[page.author].name %></h4>
+      <h5 class="PostAuthor-tagline"><%- site.data.authors[page.author].tagline %></h5>
+    </a>
+  </div>
 </div>

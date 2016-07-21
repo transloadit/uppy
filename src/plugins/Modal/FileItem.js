@@ -3,7 +3,7 @@ import { fileIcon, checkIcon, removeIcon } from './icons'
 
 export default function fileItem (bus, file) {
   const isUploaded = file.progress === 100
-  const uploadInProgress = file.progress > 0 && file.progress
+  const uploadInProgress = file.progress > 0 && file.progress < 100
 
   const remove = (ev) => {
     bus.emit('file-remove', file.id)
@@ -22,11 +22,11 @@ export default function fileItem (bus, file) {
       }
       <br>
     </h4>
-    <h5 class="UppyDashboardItem-status">
-      ${file.totalSize}<br>
+    <div class="UppyDashboardItem-status">
+      <div class="UppyDashboardItem-statusSize">${file.totalSize}</div>
       ${uploadInProgress ? 'Uploading… ' + file.progress + '%' : ''}
       ${isUploaded ? 'Completed' : ''}
-    </h5>
+    </div>
     <div class="UppyDashboardItem-action">
       ${isUploaded
         ? checkIcon()

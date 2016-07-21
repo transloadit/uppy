@@ -5,6 +5,7 @@
 .Sidebar {
   position: fixed;
   background-color: #f9f9f9;
+  width: 280px;
   height: 100%;
   top: 0;
   left: 0;
@@ -231,6 +232,33 @@
       font-size: 14px;
     }
   }
+}
+
+.PostAuthor {
+  position: relative;
+  margin-top: 40px;
+}
+
+.PostAuthor-img {
+  border-radius: 50%;
+  max-width: 50px;
+  position: absolute;
+}
+
+.PostAuthor-name {
+  margin: 0;
+  padding: 0;
+  font-size: 1.2em;
+  padding-left: 70px;
+  padding-top: 3px;
+}
+
+.PostAuthor-tagline {
+  margin: 0;
+  padding: 0;
+  padding-left: 70px;
+  font-size: 0.85em;
+  color: darken($color-gray, 10%);
 }
 
 .guide-links {

@@ -20,7 +20,7 @@ Ideas that will be planned and find their way into a release at one point
 
 - [ ] build: go over `package.json` together and clean up npm run scripts (@arturi, @hedgerh, @kvz)
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
-- [ ] core: Decouple rendering from Plugins and try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick
+- [ ] core: Decouple rendering from Plugins and try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick, https://github.com/nosir/cleave.js
 - [ ] core: Have base styles, be explicit about fonts, etc
 - [ ] core: Make sure Uppy works well in VR
 - [ ] drive: Show a visual indication that downloading has started after double-clicking. Prevent that 6 clicks = 3 downloads
@@ -35,7 +35,9 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
-- [ ] core: accessibility research
+- [ ] website: Would one really connect a own google drive or dropbox for testing purpose?
+=> maybe one can give something like a testing account of google drive and dropbox to try uppy
+- [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 
 ## 0.8.0
 
@@ -45,8 +47,6 @@ To be released: July 29, 2016. Releasemaster: Artur
 
 - [ ] core: fix bug: no meta information from uppy-server files (@hedgerh)
 - [ ] core: fix bug: uppy-server file is treated as local and directly uploaded (@hedgerh)
-- [ ] meta: better readme on GitHub and NPM (@arturi)
-- [ ] meta: release “Uppy Begins” post + minor blog polish (@arturi)
 - [ ] webcam: initial version: webcam light goes on (@hedgerh)
 - [ ] uppy-server: hammering out websockets/oauth (@hedgerh, @acconut)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
@@ -54,9 +54,14 @@ To be released: July 29, 2016. Releasemaster: Artur
 - [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
 - [ ] progress: better icons, style (@arturi)
 - [ ] core: better mime/type detection (via mime + extension) (@arturi)
-- [ ] test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
 - [ ] test: working Uppy example on Require Bin — latest version straight from NPM (@arturi)
+- [x] meta: release “Uppy Begins” post (@arturi @kvz)
+- [x] meta: better readme on GitHub and NPM (@arturi)
+- [x] test: try adding pre-commit & lint-staged (@arturi)
+- [x] test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated (@arturi)
+- [x] website: blog polish — add post authors and their gravatars (@arturi)
+- [x] dashboard: UI revamp, more prototypes, background image, make dashboard nicer (@arturi)
 - [x] dashboard: try a workflow where import from external service slides over and takes up the whole dashboard screen (@arturi)
 - [x] modal: merge modal and dashboard (@arturi)
 

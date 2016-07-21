@@ -29,6 +29,11 @@ function flatten (arr) {
   return [].concat.apply([], arr)
 }
 
+function isTouchDevice () {
+  return 'ontouchstart' in window || // works on most browsers
+          navigator.maxTouchPoints   // works on IE10/11 and Surface
+};
+
 /**
  * `querySelectorAll` that returns a normal array instead of fileList
  */
@@ -181,5 +186,6 @@ export default {
   extend,
   readImage,
   resizeImage,
-  getProportionalImageHeight
+  getProportionalImageHeight,
+  isTouchDevice
 }

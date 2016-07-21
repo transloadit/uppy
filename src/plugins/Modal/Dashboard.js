@@ -1,6 +1,6 @@
 import html from 'yo-yo'
 import FileItem from './FileItem'
-import { uploadIcon } from './icons'
+import { uploadIcon, dashboardBgIcon } from './icons'
 
 function Dashboard (files, bus, autoProceed) {
   const next = (ev) => {
@@ -10,11 +10,14 @@ function Dashboard (files, bus, autoProceed) {
   const selectedFiles = Object.keys(files).filter((file) => {
     return files[file].progress !== 100
   })
+  const totalFileCount = Object.keys(files).length
   const selectedFileCount = Object.keys(selectedFiles).length
   const isSomethingSelected = selectedFileCount > 0
 
   return html`<div class="UppyDashboard">
-    <h3 class="UppyDashboard-title">Drag files here or select from</h3>
+    ${totalFileCount === 0
+      ? html`<div class="UppyDashboard-bgIcon">${dashboardBgIcon()}</div>`
+      : ''}
     <ul class="UppyDashboard-list">
       ${Object.keys(files).map((fileID) => {
         return FileItem(bus, files[fileID])
