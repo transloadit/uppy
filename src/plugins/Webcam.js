@@ -290,6 +290,8 @@ export default class Webcam extends Plugin {
     setTimeout(function () {
       firstInput.focus()
     }, 10)
+
+    this.startWebcam()
   }
 
   install () {
@@ -302,8 +304,6 @@ export default class Webcam extends Plugin {
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)
-
-    this.startWebcam()
   }
 
   /**
