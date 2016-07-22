@@ -20,7 +20,7 @@ Main Uppy core
 
 [src/core/Core.js:94-208](https://github.com/transloadit/uppy/blob/10b8d51e7c68252c0a6a59daced6e9a647954514/src/core/Core.js#L94-L208 "Source code on GitHub")
 
-Registeres listeners for all global actions, like:
+Registers listeners for all global actions, like:
 `file-add`, `file-remove`, `upload-progress`, `reset`
 
 ### getPlugin
