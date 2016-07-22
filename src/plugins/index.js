@@ -31,7 +31,6 @@ module.exports = {
   Spinner,
   Present,
   DragDrop,
-  Dropbox,
   GoogleDrive,
   Formtag,
   Tus10,

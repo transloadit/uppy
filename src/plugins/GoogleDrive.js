@@ -38,8 +38,6 @@ export default class Google extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
-
-    const host = this.opts.host.replace(/^https?:\/\//, '')
   }
 
   install () {
