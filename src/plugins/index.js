@@ -7,7 +7,6 @@ import Modal from './Modal'
 // Acquirers
 import Dummy from './Dummy'
 import DragDrop from './DragDrop'
-import Dropbox from './Dropbox'
 import Formtag from './Formtag'
 import GoogleDrive from './GoogleDrive'
 
