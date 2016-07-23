@@ -203,10 +203,11 @@ export default class Google extends Plugin {
       data: file,
       name: file.title,
       type: this.getFileType(file),
+      isRemote: true,
       remote: {
-        action: 'google.get',
-        payload: {
-          id: file.id
+        url: `${this.opts.host}/google/get?fileId=${file.id}`,
+        body: {
+          fileId: file.id
         }
       }
     }
