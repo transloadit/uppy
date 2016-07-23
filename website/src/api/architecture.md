@@ -62,7 +62,7 @@ uppy
   .run();
 ```
 
-5. Users will be able to rol out themes and style settings via plain CSS .
+5. Users will be able to roll out themes and style settings via plain CSS .
 
 6. Would be cool if you could use whatever drag & drop library you wanted (DropZone) with our wrapper.
 
