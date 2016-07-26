@@ -23,14 +23,16 @@
 
 .UppyModal-inner {
   @include clearfix;
-  background-color: $color-white;
+  background-color: darken($color-white, 5%);
   padding: 20px;
-  width: 65%;
-  height: 80vh;
-  max-width: 750px;
-  min-width: 500px;
-  max-height: 600px;
-  min-height: 400px;
+  // width: 65%;
+  // height: 80vh;
+  max-width: 100%;
+  max-height: 100%;
+  width: 750px;
+  height: 550px;
+  // min-width: 500px;
+  // min-height: 400px;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -39,25 +41,7 @@
   z-index: $zIndex-3;
   outline: none;
   box-shadow: 0px 0px 10px 4px rgba($color-black, 0.1);
-  // border-radius: 8px;
 }
-
-  // .UppyModal-inner:before {
-  //   content: '';
-  //   position: absolute;
-  //   top: 0;
-  //   left: 0;
-  //   right: 0;
-  //   bottom: 0;
-  //   z-index: $zIndex-4;
-  //   background-color: rgba($color-black, 0.7);
-  //   border-radius: 8px;
-  //   display: none;
-  // }
-  //
-  // .UppyModal.drag .UppyModal-inner:before {
-  //   display: block;
-  // }
 
 .UppyModal-innerWrap {
   display: flex;
@@ -193,7 +177,7 @@
   border: 2px dashed;
   border-radius: 10px;
   border-color: lighten($color-gray, 25%);
-  padding-top: 10px;
+  // padding: 20px 10px;
   // overflow-y: auto;
 }
 
@@ -227,9 +211,9 @@
   position: absolute;
   top: 17px;
   left: 15px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  font-size: 15px;
+  // text-transform: uppercase;
+  // letter-spacing: 2px;
   cursor: pointer;
 }
 
@@ -251,6 +235,7 @@
   padding: 15px;
   padding-top: 60px;
   overflow: hidden;
+  z-index: $zIndex-3;
 }
 
 .UppyModalContent-panel[aria-hidden=false] {

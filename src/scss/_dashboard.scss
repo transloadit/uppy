@@ -34,41 +34,92 @@
 .UppyDashboardItem {
   list-style: none;
   margin: 0;
-  width: 140px;
-  height: 180px;
-  overflow: hidden;
+  width: 135px;
+  height: 170px;
   float: left;
-  padding-top: 20px;
-  margin: 0 10px;
-  text-align: center;
+  margin: 20px;
+  // text-align: center;
+  position: relative;
+  border-radius: 6px;
+  // overflow: hidden;
+  background-color: $color-white;
+  border: 1px solid rgba($color-gray, 0.3);
+  // box-shadow: inset 0 0 0 1px rgba($color-black, 0.1);
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.UppyDashboardItem.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.UppyDashboardItem-preview {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba($color-gray, 0.3);
+  // margin-bottom: 5px;
+  // color: $color-orange;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   position: relative;
 }
 
-.UppyDashboardItem-icon {
-  width: 90px;
-  height: 90px;
-  margin: auto;
-  border-radius: 8px;
-  overflow: hidden;
-  // box-shadow: inset 0 0 0 1px rgba($color-black, 0.1);
-  margin-bottom: 10px;
-  color: $color-orange;
-}
-
-.UppyDashboardItem-icon img {
+.UppyDashboardItem-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+.UppyDashboardItem-previewIcon {
+  height: 75px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.UppyDashboardItem-previewIcon .UppyIcon {
+  width: 35px;
+  max-height: 80%;
+}
+
+.UppyDashboardItem-previewType {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 11px;
+  background-color: $color-pink;
+  height: 25px;
+  line-height: 25px;
+  padding: 0 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: $color-white;
+  // letter-spacing: 1px;
+}
+
+.UppyDashboardItem-info {
+  padding: 5px 15px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  // align-items: center;
+}
+
 .UppyDashboardItem-name {
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.35;
   font-weight: 500;
   margin: 0;
   padding: 0;
   margin-bottom: 3px;
-  height: 15px;
+  max-height: 28px;
   overflow: hidden;
 }
 
@@ -78,12 +129,11 @@
 }
 
 .UppyDashboardItem-status {
-  // margin: 0;
-  // padding: 0;
   font-size: 11px;
   line-height: 1.45;
   font-weight: normal;
   color: $color-gray;
+  // text-transform: uppercase;
 }
 
 .UppyDashboardItem-statusSize {
@@ -92,43 +142,55 @@
 
 .UppyDashboardItem-action {
   position: absolute;
-  top: 10px;
-  right: 0;
+  top: -6px;
+  right: -8px;
 }
 
 .UppyDashboardItem-remove {
   @include reset-button;
   cursor: pointer;
-  opacity: 1;
-  transition: all 0.3s;
-  color: $color-gray;
+  opacity: 0.75;
+  transition: all 0.2s;
+  color: $color-black;
 }
 
   // .Uppy--isTouchDevice .UppyDashboardItem-remove,
   .UppyDashboardItem:hover .UppyDashboardItem-remove {
-    // opacity: 1;
-    color: $color-black;
+    opacity: 1;
+    // color: $color-black;
   }
 
 .UppyDashboardItem-progress {
-  width: 85px;
-  height: 4px;
+  width: 100%;
+  height: 12px;
+  font-size: 10px;
+  text-align: center;
+  line-height: 12px;
+  color: $color-white;
   margin: auto;
   position: absolute;
-  top: 90px;
+  bottom: 0;
   left: 0;
-  right: 0;
-  border-radius: 8px;
   overflow: hidden;
+  display: none;
 }
 
 .UppyDashboardItem-progress.is-active {
-  background-color: lighten($color-cornflower-blue, 50%);
+  display: block;
+  background-color: lighten($color-cornflower-blue, 15%);
+}
+
+.UppyDashboardItem-progressNum {
+  position: relative;
+  z-index: $zIndex-2;
 }
 
 .UppyDashboardItem-progressInner {
-  height: 4px;
+  height: 12px;
   background-color: $color-cornflower-blue;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .UppyDashboard-upload {
