@@ -338,7 +338,7 @@ export default class Modal extends Plugin {
                <div class="UppyModalContent-bar">
                  <h2 class="UppyModalContent-title">Import From ${target.name}</h2>
                  <button class="UppyModalContent-back"
-                         onclick=${this.hideAllPanels}>Back</button>
+                         onclick=${this.hideAllPanels}>Done</button>
                </div>
               ${target.render(state)}
             </div>`

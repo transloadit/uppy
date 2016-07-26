@@ -95,15 +95,18 @@ export default class Core {
   addFile (file) {
     const updatedFiles = Object.assign({}, this.state.files)
 
-    const fileType = file.type.split('/')
+    const fileType = Utils.getFileType(file) ? Utils.getFileType(file).split('/') : ['', '']
     const fileTypeGeneral = fileType[0]
     const fileTypeSpecific = fileType[1]
+    const fileExtension = Utils.getFileNameAndExtension(file.name)[1]
+
     const fileID = Utils.generateFileID(file.name)
 
     updatedFiles[fileID] = {
       source: file.source || '',
       id: fileID,
       name: file.name,
+      extension: fileExtension,
       type: {
         general: fileTypeGeneral,
         specific: fileTypeSpecific
@@ -119,8 +122,10 @@ export default class Core {
     this.setState({files: updatedFiles})
 
     if (fileTypeGeneral === 'image') {
-      // this.addImgPreviewToFile(updatedFiles[fileID])
-      Utils.readImage(updatedFiles[fileID].data, (imgEl) => {
+      Utils.readImage(updatedFiles[fileID].data, (err, imgEl) => {
+        if (err) {
+          return this.log(err)
+        }
         const newImageWidth = 200
         const newImageHeight = Utils.getProportionalImageHeight(imgEl, newImageWidth)
         const resizedImgSrc = Utils.resizeImage(imgEl, newImageWidth, newImageHeight)
@@ -188,8 +193,6 @@ export default class Core {
       const updatedFiles = Object.assign({}, this.state.files)
       updatedFiles[file.id] = file
       this.setState({files: updatedFiles})
-      // this.log(this.state.uploadedFiles)
-      // this.emitter.emit('file-remove', file.id)
     })
   }
 
@@ -314,27 +317,6 @@ export default class Core {
     })
 
     return
-
-    // Each Plugin can have `run` and/or `install` methods.
-    // `install` adds event listeners and does some non-blocking work, useful for `progressindicator`,
-    // `run` waits for the previous step to finish (user selects files) before proceeding
-    // ['install', 'run'].forEach((method) => {
-    //   // First we select only plugins of current type,
-    //   // then create an array of runType methods of this plugins
-    //   const typeMethods = this.types.filter((type) => this.plugins[type])
-    //     .map((type) => this.runType.bind(this, type, method))
-    //   // Run waterfall of typeMethods
-    //   return Utils.promiseWaterfall(typeMethods)
-    //     .then((result) => {
-    //       // If results are empty, don't log upload results. Hasn't run yet.
-    //       if (result[0] !== undefined) {
-    //         this.log(result)
-    //         this.log('Upload result -> success!')
-    //         return result
-    //       }
-    //     })
-    //     .catch((error) => this.log('Upload result -> failed:', error))
-    // })
   }
 
   initSocket (opts) {
