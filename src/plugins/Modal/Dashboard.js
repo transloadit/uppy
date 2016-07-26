@@ -26,6 +26,7 @@ function Dashboard (files, bus, autoProceed) {
     ${!autoProceed && isSomethingSelected
       ? html`<button class="UppyDashboard-upload"
                      type="button"
+                     title="Upload"
                      onclick=${next}>
                 ${uploadIcon()}
                 <sup class="UppyDashboard-uploadCount">${selectedFileCount}</sup>
