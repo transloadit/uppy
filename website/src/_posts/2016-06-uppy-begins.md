@@ -31,7 +31,9 @@ All in all, we think there is definitely some ‘trouble at the old mill’ here
 ## Our plans for Uppy
 
 Uppy will be a JavaScript file uploader that allows you to fetch files, not only from your local disk, but also from places like Dropbox, Instagram, Google Drive, webcams and remote URLs. It will have a modular, plugin-based design, making it lightweight and customizable.
+
 Cute on the outside, the core of Uppy is very robust – thanks to resumability through 'tus'. We are confident that Uppy will be able to send even the biggest of files over the smallest of tubes.
+
 Uppy will also offer first class support for accessing Transloadit’s uploading and encoding backend, making it incredibly versatile. Of course, these are all ultimately just plugins, and Uppy can just as easily be used with your own backend – meaning no need to pay any subscription fees.
 
 We are intent on making the user experience as smooth and satisfying as possible, in terms of both functionality and visual design. Uppy will have a beautiful, themeable UI and it will look – and work – great on mobile platforms as well. While we hope that advanced users will love the customizable nature of Uppy, an ample selection of presets will also be there to make sure that novice users are not going to be lost in the woods.
