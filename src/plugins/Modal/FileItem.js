@@ -18,7 +18,7 @@ export default function fileItem (bus, file) {
   const uploadInProgress = file.progress > 0 && file.progress < 100
 
   function remove (ev) {
-    const el = document.querySelector(`#${file.id}`)
+    const el = document.querySelector(`#uppy_${file.id}`)
     el.classList.add('UppyAnimation-zoomOutLeft')
 
     // this seems to be working in latest Chrome, Firefox and Safari,
@@ -35,7 +35,7 @@ export default function fileItem (bus, file) {
   // <h5 class="UppyDashboardItem-previewType">${file.extension ? '.' + file.extension : '?'}</h5>
 
   return html`<li class="UppyDashboardItem"
-                  id="${file.id}"
+                  id="uppy_${file.id}"
                   title="${file.name}">
       <div class="UppyDashboardItem-preview">
         ${file.previewEl
