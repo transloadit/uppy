@@ -29,8 +29,8 @@ export default function fileItem (bus, file) {
     })
     // bus.emit('file-remove', file.id)
   }
-
-  const truncatedFileName = Utils.truncateString(file.name, 30)
+  const fileName = Utils.getFileNameAndExtension(file.name)[0]
+  const truncatedFileName = Utils.truncateString(fileName, 30)
 
   // <h5 class="UppyDashboardItem-previewType">${file.extension ? '.' + file.extension : '?'}</h5>
 
@@ -50,8 +50,8 @@ export default function fileItem (bus, file) {
     <div class="UppyDashboardItem-info">
       <h4 class="UppyDashboardItem-name">
         ${file.uploadURL
-          ? html`<a href="${file.uploadURL}" target="_blank">${truncatedFileName}</a>`
-          : truncatedFileName
+          ? html`<a href="${file.uploadURL}" target="_blank">${truncatedFileName}.${file.extension}</a>`
+          : `${truncatedFileName}.${file.extension}`
         }
       </h4>
       <div class="UppyDashboardItem-status">

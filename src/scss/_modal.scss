@@ -44,8 +44,8 @@
 }
 
 .UppyModal-innerWrap {
-  display: flex;
-  flex-direction: column;
+  // display: flex;
+  // flex-direction: column;
   height: 100%;
   // border: 2px dashed;
   // border-radius: 10px;
@@ -73,9 +73,6 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  // float: right;
-  // padding-top: 3px;
-
   padding: 0;
   border: 0;
   cursor: pointer;
@@ -93,13 +90,9 @@
 // Tab bar
 
 .UppyModalTabs {
-  // min-height: 120px;
-  // border: 2px dashed;
-  // border-radius: 10px;
-  // border-color: lighten($color-gray, 25%);
-  // padding: 15px 0;
   margin-bottom: 15px;
   transition: all 0.2s;
+  height: 15%;
 }
 
 .UppyModalTabs-title {
@@ -173,12 +166,12 @@
 // Modal Dashboard
 
 .UppyModal-dashboard {
-  flex: 1;
+  // flex: 1;
   border: 2px dashed;
   border-radius: 10px;
   border-color: lighten($color-gray, 25%);
-  // padding: 20px 10px;
-  // overflow-y: auto;
+  height: 82%;
+  // overflow: auto;
 }
 
   .UppyModal.drag .UppyModal-dashboard {

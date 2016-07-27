@@ -12,6 +12,7 @@
   margin: 0;
   padding: 0;
   height: 100%;
+  overflow: auto;
 }
 
 .UppyDashboard-bgIcon {
@@ -59,8 +60,6 @@
   border-top-right-radius: 6px;
   overflow: hidden;
   border-bottom: 1px solid rgba($color-gray, 0.3);
-  // margin-bottom: 5px;
-  // color: $color-orange;
   height: 100px;
   display: flex;
   align-items: center;
