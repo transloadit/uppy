@@ -27,6 +27,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] instagram: Make a barely working Instagram Plugin + example (#21)
 - [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
 - [ ] dashboard: polish on mobile
+- [ ] dashboard: add ability to minimize Modal/Dashboard, while long upload is in progress? Uppy then becomes just a tiny progress indicator
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: Human should check http://www.webpagetest.org, use it sometimes to test our website & Uppy? Which will show response/loading times and where big delays are
 - [ ] test: Human should test with real screen reader to identify accessibility problems
@@ -38,6 +39,11 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: Would one really connect a own google drive or dropbox for testing purpose?
 => maybe one can give something like a testing account of google drive and dropbox to try uppy
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
+- [ ] test: working Uppy example on Require Bin — latest version straight from NPM (should be working, will check again when tus-js-client is updated) (@arturi @account)
+
+## 0.9.0
+
+- [] dashboard: add perfect scrollbar https://github.com/noraesae/perfect-scrollbar
 
 ## 0.8.0
 
@@ -52,10 +58,9 @@ To be released: July 29, 2016. Releasemaster: Artur
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
 - [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too
 - [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
-- [ ] progress: better icons, style (@arturi)
-- [ ] core: better mime/type detection (via mime + extension) (@arturi)
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
-- [ ] test: working Uppy example on Require Bin — latest version straight from NPM (@arturi)
+- [x] progress: better icons, style (@arturi)
+- [x] core: better mime/type detection (via mime + extension) (@arturi)
 - [x] meta: release “Uppy Begins” post (@arturi @kvz)
 - [x] meta: better readme on GitHub and NPM (@arturi)
 - [x] test: try adding pre-commit & lint-staged (@arturi)
