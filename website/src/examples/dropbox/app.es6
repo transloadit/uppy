@@ -1,5 +1,5 @@
 import Uppy from '../../../../src/core/Core.js'
-import Dropbox from '../../../../src/plugins/GoogleDrive.js'
+import Dropbox from '../../../../src/plugins/Dropbox.js'
 
 const uppy = new Uppy({wait: false})
 uppy
