@@ -43,7 +43,15 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.9.0
 
-- [] dashboard: add perfect scrollbar https://github.com/noraesae/perfect-scrollbar
+To be released: August 26, 2016. Releasemaster: Harry
+
+Theme: ?
+
+- [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` api, open modal... (@arturi, @hedgerh) 
+- [ ] core: figure out race conditions with `yo-yo` when file uploads are in progress (@arturi)
+- [ ] dashboard: file name + extension should fit on two lines, truncate in the middle (@arturi)
+- [ ] dashboard: add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
+- [ ] modifier: metadata — the aftermath (@arturi)
 
 ## 0.8.0
 
