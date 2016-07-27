@@ -4,7 +4,10 @@
   "description": "Almost as cute as a Puppy :dog:",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
-  "files": ["src/","lib/"],
+  "files": [
+    "src/",
+    "lib/"
+  ],
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
     "build:css": "node ./bin/build-css.js",
@@ -114,6 +117,7 @@
   "dependencies": {
     "drag-drop": "2.11.0",
     "es6-promise": "3.2.1",
+    "mime-types": "2.1.11",
     "pretty-bytes": "3.0.1",
     "tus-js-client": "1.1.4",
     "whatwg-fetch": "1.0.0",
