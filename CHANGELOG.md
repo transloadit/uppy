@@ -36,8 +36,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
-- [ ] website: Would one really connect a own google drive or dropbox for testing purpose?
-=> maybe one can give something like a testing account of google drive and dropbox to try uppy
+- [ ] website: Would one really connect a own google drive or dropbox for testing purpose? => maybe one can give something like a testing account of google drive and dropbox to try uppy
+- [ ] dependencies: es6-promise --> lie https://github.com/calvinmetcalf/lie ?
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 - [ ] test: working Uppy example on Require Bin — latest version straight from NPM (should be working, will check again when tus-js-client is updated) (@arturi @account)
 
@@ -47,8 +47,10 @@ To be released: August 26, 2016. Releasemaster: Harry
 
 Theme: ?
 
-- [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` api, open modal... (@arturi, @hedgerh) 
+- [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` api, open modal... (@arturi, @hedgerh)
+- [ ] core: how would Uppy work without the UI, if one only wants dragdrop + select from local disk
 - [ ] core: figure out race conditions with `yo-yo` when file uploads are in progress (@arturi)
+- [ ] dashboard: message when all uploads are done? results of the upload — better links to uploaded files? (@arturi)
 - [ ] dashboard: file name + extension should fit on two lines, truncate in the middle (@arturi)
 - [ ] dashboard: add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] modifier: metadata — the aftermath (@arturi)
@@ -61,12 +63,12 @@ To be released: July 29, 2016. Releasemaster: Artur
 
 - [ ] core: fix bug: no meta information from uppy-server files (@hedgerh)
 - [ ] core: fix bug: uppy-server file is treated as local and directly uploaded (@hedgerh)
-- [ ] webcam: initial version: webcam light goes on (@hedgerh)
 - [ ] uppy-server: hammering out websockets/oauth (@hedgerh, @acconut)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
 - [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too
 - [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
+- [x] webcam: initial version: webcam light goes on (@hedgerh)
 - [x] progress: better icons, style (@arturi)
 - [x] core: better mime/type detection (via mime + extension) (@arturi)
 - [x] meta: release “Uppy Begins” post (@arturi @kvz)
