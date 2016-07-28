@@ -9,7 +9,7 @@
                 <img src="/images/feed.png" style="width:15px;height:15px">
             </a>
         </h2>
-        <ul style="padding:0">
+        <ul>
         <% site.posts.sort('date', -1).limit(10).each(function (post) { %>
             <li>
                 <a href="/<%- post.path %>" class="sidebar-link<%- page.title === post.title ? ' current' : '' %>"><%- post.title %></a>
