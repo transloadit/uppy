@@ -115,7 +115,7 @@
     "watchify": "3.7.0"
   },
   "dependencies": {
-    "deep-freeze": "0.0.1",
+    "deep-freeze-strict": "1.1.1",
     "drag-drop": "2.11.0",
     "es6-promise": "3.2.1",
     "mime-types": "2.1.11",

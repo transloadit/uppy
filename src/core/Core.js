@@ -3,7 +3,7 @@ import Translator from '../core/Translator'
 import prettyBytes from 'pretty-bytes'
 import yo from 'yo-yo'
 import ee from 'events'
-import deepFreeze from 'deep-freeze'
+import deepFreeze from 'deep-freeze-strict'
 import UppySocket from './UppySocket'
 
 /**
