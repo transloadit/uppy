@@ -62,9 +62,9 @@ Theme: The Webcam Edition
 
 To be released: July 29, 2016. Releasemaster: Artur
 
-- [ ] core: fix bug: no meta information from uppy-server files (@hedgerh)
-- [ ] core: fix bug: uppy-server file is treated as local and directly uploaded (@hedgerh)
-- [ ] uppy-server: hammering out websockets/oauth (@hedgerh, @acconut)
+- [x] core: fix bug: no meta information from uppy-server files (@hedgerh)
+- [x] core: fix bug: uppy-server file is treated as local and directly uploaded (@hedgerh)
+- [x] uppy-server: hammering out websockets/oauth (@hedgerh, @acconut)
 - [ ] modifier: A plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
 - [ ] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too
 - [ ] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
