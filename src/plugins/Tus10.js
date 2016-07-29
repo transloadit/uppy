@@ -1,6 +1,6 @@
 import Plugin from './Plugin'
 import tus from 'tus-js-client'
-import UppySocket from '../core/UppySocket'
+// import UppySocket from '../core/UppySocket'
 
 /**
  * Tus resumable file uploader
@@ -83,41 +83,46 @@ export default class Tus10 extends Plugin {
         }))
       })
       .then((res) => {
-        if (res.status < 200 && res.status > 300) {
-          return reject(res.statusText)
-        }
-
+        console.log(res)
         res.json()
         .then((data) => {
-          // get the host domain
-          var regex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)/
-          var host = regex.exec(file.remote.host)[1]
-
-          var token = data.token
-          var socket = new UppySocket({
-            target: `ws://${host}:3121/api/${token}`
-          })
-
-          socket.on('progress', (progressData) => {
-            if (progressData.complete) {
-              this.core.log(`Remote upload of '${file.name}' successful`)
-              this.core.emitter.emit('upload-success', file)
-              return resolve('Success')
-            }
-
-            if (progressData.progress) {
-              this.core.log(`Upload progress: ${progressData.progress}`)
-
-              // Dispatch progress event
-              this.core.emitter.emit('upload-progress', {
-                uploader: this,
-                id: file.id,
-                bytesUploaded: progressData.bytesUploaded,
-                bytesTotal: progressData.bytesTotal
-              })
-            }
-          })
+          console.log(data)
         })
+        // if (res.status < 200 && res.status > 300) {
+        //   return reject(res.statusText)
+        // }
+
+        // res.json()
+        // .then((data) => {
+        //   // get the host domain
+        //   var regex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)/
+        //   var host = regex.exec(file.remote.host)[1]
+
+        //   var token = data.token
+        //   var socket = new UppySocket({
+        //     target: `ws://${host}:3121/api/${token}`
+        //   })
+
+        //   socket.on('progress', (progressData) => {
+        //     if (progressData.complete) {
+        //       this.core.log(`Remote upload of '${file.name}' successful`)
+        //       this.core.emitter.emit('upload-success', file)
+        //       return resolve('Success')
+        //     }
+
+        //     if (progressData.progress) {
+        //       this.core.log(`Upload progress: ${progressData.progress}`)
+
+        //       // Dispatch progress event
+        //       this.core.emitter.emit('upload-progress', {
+        //         uploader: this,
+        //         id: file.id,
+        //         bytesUploaded: progressData.bytesUploaded,
+        //         bytesTotal: progressData.bytesTotal
+        //       })
+        //     }
+        //   })
+        // })
       })
     })
   }
