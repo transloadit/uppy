@@ -17,6 +17,7 @@ export default class Google extends Plugin {
 
     this.files = []
 
+    // this.core.socket.on('')
     // Logic
     this.addFile = this.addFile.bind(this)
     this.getFolder = this.getFolder.bind(this)
@@ -205,6 +206,7 @@ export default class Google extends Plugin {
       type: this.getFileType(file),
       isRemote: true,
       remote: {
+        host: this.opts.host,
         url: `${this.opts.host}/google/get?fileId=${file.id}`,
         body: {
           fileId: file.id
