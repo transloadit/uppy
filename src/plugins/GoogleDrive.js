@@ -200,7 +200,7 @@ export default class Google extends Plugin {
 
   addFile (file) {
     const tagFile = {
-      source: this,
+      source: this.id,
       data: file,
       name: file.title,
       type: this.getFileType(file),
