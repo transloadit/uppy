@@ -203,7 +203,7 @@ export default class Google extends Plugin {
       source: this.id,
       data: file,
       name: file.title,
-      type: this.getFileType(file),
+      type: file.mimeType,
       isRemote: true,
       remote: {
         host: this.opts.host,
