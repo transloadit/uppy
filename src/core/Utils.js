@@ -224,7 +224,7 @@ function resizeImage (img, width, height) {
 
   // encode image to data-uri with base64 version of compressed image
   // canvas.toDataURL('image/jpeg', quality);  // quality = [0.0, 1.0]
-  return canvas.toDataURL('image/jpeg', 0.7)
+  return canvas.toDataURL('image/png')
 }
 
 export default {
