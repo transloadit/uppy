@@ -55,7 +55,7 @@
     "prepublish": "npm-run-all clean build"
   },
   "lint-staged": {
-    "*.js": "lint"
+    "*.js": "eslint"
   },
   "pre-commit": "lint-staged",
   "repository": {
