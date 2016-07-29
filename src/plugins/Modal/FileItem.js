@@ -62,8 +62,11 @@ export default function fileItem (file, bus) {
       <div class="UppyDashboardItem-status">
         <span class="UppyDashboardItem-statusSize">${file.totalSize}</span>
       </div>
-      <button class="UppyDashboardItem-edit"
-              onclick=${openFileCard.bind(this, file.id)}>${iconEdit()} Edit</button>
+      ${!uploadInProgressOrComplete
+        ? html`<button class="UppyDashboardItem-edit"
+              onclick=${openFileCard.bind(this, file.id)}>${iconEdit()} Edit</button>`
+        : null
+      }
     </div>
     <div class="UppyDashboardItem-action">
       ${isUploaded

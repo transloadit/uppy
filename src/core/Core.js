@@ -90,6 +90,7 @@ export default class Core {
   }
 
   updateMeta (data, fileID) {
+    // if fileID is not specified, set meta data to all files
     if (typeof fileID === 'undefined') {
       const updatedFiles = Object.assign({}, this.getState().files)
       Object.keys(updatedFiles).forEach((file) => {
@@ -99,6 +100,8 @@ export default class Core {
         })
       })
       this.setState({files: updatedFiles})
+
+    // if fileID is specified, set meta to that file
     } else {
       const updatedFiles = Object.assign({}, this.getState().files)
       const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
@@ -188,8 +191,11 @@ export default class Core {
       percentage = Math.round(percentage)
 
       const updatedFiles = Object.assign({}, this.state.files)
-      updatedFiles[data.id].progress = percentage
-      updatedFiles[data.id].uploadedSize = data.bytesUploaded ? prettyBytes(data.bytesUploaded) : '?'
+      const updatedFile = Object.assign({}, updatedFiles[data.id], {
+        progress: percentage,
+        uploadedSize: data.bytesUploaded ? prettyBytes(data.bytesUploaded) : '?'
+      })
+      updatedFiles[data.id] = updatedFile
 
       const inProgress = Object.keys(updatedFiles).map((file) => {
         return file.progress !== 0
@@ -211,12 +217,10 @@ export default class Core {
       })
     })
 
-    // `upload-success` adds successfully uploaded file to `state.uploadedFiles`
-    // and fires `remove-file` to remove it from `state.files`
     this.emitter.on('upload-success', (file) => {
-      const updatedFiles = Object.assign({}, this.state.files)
-      updatedFiles[file.id] = file
-      this.setState({files: updatedFiles})
+      // const updatedFiles = Object.assign({}, this.state.files)
+      // updatedFiles[file.id] = file
+      // this.setState({files: updatedFiles})
     })
   }
 
