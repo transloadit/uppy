@@ -14,7 +14,7 @@ function Dashboard (files, bus, autoProceed) {
   const selectedFileCount = Object.keys(selectedFiles).length
   const isSomethingSelected = selectedFileCount > 0
 
-  return html`<div class="UppyDashboard">
+  return html`<div class="UppyDashboard-fileContainer">
     ${totalFileCount === 0
       ? html`<div class="UppyDashboard-bgIcon">${dashboardBgIcon()}</div>`
       : ''}
