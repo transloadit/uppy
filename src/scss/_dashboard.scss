@@ -456,10 +456,10 @@
 
 .UppyDashboardItem-progress {
   width: 100%;
-  height: 12px;
+  height: 15px;
   font-size: 10px;
   text-align: center;
-  line-height: 12px;
+  line-height: 15px;
   color: $color-white;
   margin: auto;
   position: absolute;
@@ -467,6 +467,7 @@
   left: 0;
   overflow: hidden;
   display: none;
+  opacity: 0.8;
 }
 
 .UppyDashboardItem-progress.is-active {
@@ -480,7 +481,7 @@
 }
 
 .UppyDashboardItem-progressInner {
-  height: 12px;
+  height: 15px;
   background-color: $color-cornflower-blue;
   position: absolute;
   top: 0;
