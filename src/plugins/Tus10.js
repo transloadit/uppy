@@ -69,6 +69,8 @@ export default class Tus10 extends Plugin {
 
   uploadRemote (file, current, total) {
     return new Promise((resolve, reject) => {
+      console.log('endpoint')
+      console.log(this.opts.endpoint)
       console.log(file.remote.url)
       fetch(file.remote.url, {
         method: 'post',
