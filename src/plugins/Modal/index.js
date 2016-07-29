@@ -4,6 +4,7 @@ import Utils from '../../core/Utils'
 import dragDrop from 'drag-drop'
 import yo from 'yo-yo'
 import FileItem from './FileItem'
+import FileCard from './FileCard'
 import { defaultTabIcon, closeIcon, localIcon, uploadIcon, dashboardBgIcon } from './icons'
 
 /**
@@ -190,8 +191,29 @@ export default class Dashboard extends Plugin {
   }
 
   actions () {
-    this.core.emitter.on('file-add', () => {
+    const emitter = this.core.emitter
+    emitter.on('file-add', () => {
       this.hideAllPanels()
+    })
+
+    emitter.on('file-card-open', (fileId) => {
+      const modal = this.core.getState().modal
+
+      this.core.setState({
+        modal: Object.assign({}, modal, {
+          showFileCard: fileId
+        })
+      })
+    })
+
+    emitter.on('file-card-close', () => {
+      const modal = this.core.getState().modal
+
+      this.core.setState({
+        modal: Object.assign({}, modal, {
+          showFileCard: false
+        })
+      })
     })
   }
 
@@ -207,7 +229,7 @@ export default class Dashboard extends Plugin {
       })
     })
 
-    this.core.addMeta({bla: 'bla'})
+    this.core.updateMeta({bla: 'bla'})
   }
 
   handleInputChange (ev) {
@@ -232,6 +254,9 @@ export default class Dashboard extends Plugin {
     const autoProceed = this.core.opts.autoProceed
     const files = state.files
     const bus = this.core.emitter
+    const updateMeta = this.core.updateMeta
+
+    const showFileCard = state.modal.showFileCard
 
     const modalTargets = state.modal.targets.slice()
 
@@ -313,6 +338,8 @@ export default class Dashboard extends Plugin {
           </nav>
         </div>
 
+        ${showFileCard ? FileCard(state.files[showFileCard], bus, updateMeta) : null}
+
         <div class="UppyDashboard-files">
           <ul class="UppyDashboard-filesInner">
             ${totalFileCount === 0
@@ -320,7 +347,7 @@ export default class Dashboard extends Plugin {
               : ''
             }
             ${Object.keys(files).map((fileID) => {
-              return FileItem(bus, files[fileID])
+              return FileItem(files[fileID], bus)
             })}
           </ul>
           ${!autoProceed && isSomethingSelected
@@ -363,6 +390,7 @@ export default class Dashboard extends Plugin {
     // Set default state for Modal
     this.core.setState({modal: {
       isHidden: true,
+      showFileCard: false,
       targets: []
     }})
 

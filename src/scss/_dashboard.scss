@@ -525,3 +525,37 @@
   line-height: 18px;
   font-size: 9px;
 }
+
+//
+// File Card
+//
+
+.UppyDashboardFileCard {
+  width: 500px;
+  height: 400px;
+  max-width: 100%;
+  max-height: 100%;
+  z-index: $zIndex-4;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0px 0px 10px 4px rgba($color-black, 0.1);
+  background-color: $color-white;
+}
+
+.UppyDashboardFileCard-preview {
+  height: 45%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba($color-gray, 0.3);
+}
+
+.UppyDashboardFileCard-info {
+  padding: 20px;
+}
+
+.UppyDashboardFileCard-input {
+  display: block;
+}

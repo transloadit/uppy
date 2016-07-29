@@ -34,6 +34,8 @@ export default class Core {
 
     this.translator = new Translator({locales: this.opts.locales})
     this.i18n = this.translator.translate.bind(this.translator)
+    this.getState = this.getState.bind(this)
+    this.updateMeta = this.updateMeta.bind(this)
     this.initSocket = this.initSocket.bind(this)
 
     this.emitter = new ee.EventEmitter()
@@ -87,15 +89,21 @@ export default class Core {
     return deepFreeze(this.state)
   }
 
-  addMeta (data, fileID) {
+  updateMeta (data, fileID) {
     if (typeof fileID === 'undefined') {
       const updatedFiles = Object.assign({}, this.getState().files)
       Object.keys(updatedFiles).forEach((file) => {
-        const oldMeta = updatedFiles[file].meta || {}
-        const newMeta = Object.assign({}, oldMeta, data)
+        const newMeta = Object.assign({}, updatedFiles[file].meta, data)
         updatedFiles[file] = Object.assign({}, updatedFiles[file], {
           meta: newMeta
         })
+      })
+      this.setState({files: updatedFiles})
+    } else {
+      const updatedFiles = Object.assign({}, this.getState().files)
+      const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
+      updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
+        meta: newMeta
       })
       this.setState({files: updatedFiles})
     }
@@ -116,6 +124,9 @@ export default class Core {
       id: fileID,
       name: file.name,
       extension: fileExtension,
+      meta: {
+        name: file.name
+      },
       type: {
         general: fileTypeGeneral,
         specific: fileTypeSpecific
@@ -141,7 +152,8 @@ export default class Core {
 
         const updatedFiles = Object.assign({}, this.getState().files)
         const updatedFile = Object.assign({}, updatedFiles[fileID], {
-          previewEl: yo`<img alt="${file.name}" src="${resizedImgSrc}">`
+          previewEl: yo`<img alt="${file.name}" src="${resizedImgSrc}">`,
+          preview: resizedImgSrc
         })
         updatedFiles[fileID] = updatedFile
         this.setState({files: updatedFiles})
