@@ -1,18 +1,309 @@
-/**
-* General Uppy styles that apply to everything inside the .Uppy container
-*/
-
 .UppyDashboard {
-  height: 100%;
+  z-index: $zIndex-2;
+}
+
+.UppyDashboard[aria-hidden=true] {
+  display: none;
+}
+
+// Added to body to prevent the page from scrolling when Modal is open
+.is-UppyDashboard-open {
+  overflow: hidden;
+}
+
+.UppyDashboard-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($color-black, 0.5);
+  z-index: $zIndex-2;
+}
+
+.UppyDashboard-inner {
+  background-color: darken($color-white, 5%);
+  padding: 20px;
+  max-width: 100%;
+  max-height: 100%;
+  width: 750px;
+  height: 550px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  z-index: $zIndex-3;
+  outline: none;
+  box-shadow: 0px 0px 10px 4px rgba($color-black, 0.1);
+}
+
+.UppyDashboard-bar {
+  @include clearfix;
+  padding: 14px 0;
   position: relative;
+  display: none;
+}
+
+.UppyDashboard-title {
+  font-size: 16px;
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+  float: left;
+  color: $color-asphalt-gray;
+  padding-left: 5px;
+}
+
+.UppyDashboard-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background-color: transparent;
+  -webkit-appearance: none;
+  color: lighten($color-asphalt-gray, 20%);
+  z-index: $zIndex-3;
+  transition: all 0.2s;
+
+  &:hover {
+    color: $color-black;
+  }
+}
+
+.UppyDashboard-innerWrap {
+  // display: flex;
+  // flex-direction: column;
+  // height: 100%;
+  // border: 2px dashed;
+  // border-radius: 10px;
+  // border-color: lighten($color-gray, 25%);
+}
+
+.UppyDashboardTabs {
+  // margin-bottom: 15px;
+  // transition: all 0.2s;
+  height: 18%;
+  min-height: 90px;
+}
+
+.UppyDashboardTabs-title {
+  width: 100%;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 500;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  margin-bottom: 15px;
+  color: $color-asphalt-gray;
+}
+
+.UppyDashboardTabs-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.UppyDashboardTab {
+  // margin: 0 5px;
+  width: 85px;
+  display: inline-block;
+  text-align: center;
+}
+
+.UppyDashboardTab-btn {
+  cursor: pointer;
+  border: 0;
+  background-color: transparent;
+  -webkit-appearance: none;
+  outline: none;
+  transition: all 0.3s;
+  color: darken($color-gray, 25%);
+
+  &:focus,
+  &:active,
+  &:hover {
+    color: $color-cornflower-blue;
+  }
+}
+
+.UppyDashboardTab-name {
+  font-size: 9px;
+  margin: 6px 0;
+  font-weight: normal;
+}
+
+// On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
+.UppyDashboardTab .UppyIcon {
+  width: 23px;
+  height: 23px;
+  vertical-align: middle;
+}
+
+.UppyDashboard-input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+// Modal Dashboard
+
+// .UppyDashboard-dashboard {
+//   flex: 1;
+//   border: 2px dashed;
+//   border-radius: 10px;
+//   border-color: lighten($color-gray, 25%);
+//   overflow: hidden;
+//   // height: 82%;
+// }
+
+.UppyDashboardContent-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 50px;
+  width: 100%;
+  border-bottom: 1px solid rgba($color-gray, 0.3);
+}
+
+.UppyDashboardContent-title {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 0;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.UppyDashboardContent-back {
+  @include reset-button;
+  position: absolute;
+  top: 17px;
+  left: 15px;
+  font-size: 15px;
+  // text-transform: uppercase;
+  // letter-spacing: 2px;
+  cursor: pointer;
+}
+
+.UppyDashboardContent-back .UppyIcon {
+  position: relative;
+  margin-right: 3px;
+}
+
+.UppyDashboardContent-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(-105%);
+  transition: all 0.5s ease-in-out;
+  background-color: darken($color-white, 4%);
+  box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
+  padding: 15px;
+  padding-top: 60px;
+  overflow: hidden;
+  z-index: $zIndex-3;
+}
+
+.UppyDashboardContent-panel[aria-hidden=false] {
+  transform: translateY(0);
+}
+
+// Progress bar placeholder
+
+.UppyDashboard-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 12%;
+}
+
+.UppyDashboard-progressBarContainer.is-active {
+  z-index: $zIndex-4;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.UppyDashboard-next {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: none;
+  background-color: rgba($color-gray, 0.7);
+  -webkit-appearance: none;
+  border: 0;
+  z-index: $zIndex-3;
+  transition: background-color 0.5s;
+  color: $color-white;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  cursor: not-allowed;
+}
+
+.UppyDashboard-next.is-active {
+  cursor: pointer;
+  background-color: $color-cornflower-blue;
+
+  &:hover {
+    background-color: darken($color-cornflower-blue, 20%);
+  }
+}
+
+
+.UppyDashboard-files {
+  height: 82%;
+  // flex: 1;
+  position: relative;
+  border: 2px dashed;
+  border-radius: 10px;
+  border-color: lighten($color-gray, 25%);
+}
+
+// border-radius + overflow:scroll leads to performance issues
+// so we are using a wrapper here
+.UppyDashboard-filesInner {
+  height: 100%;
+  overflow-y: scroll;
+  padding: 0;
+  margin: 0;
+}
+
+.UppyModal.drag .UppyDashboard-fileContainer  {
+  border-color: lighten($color-gray, 5%);
+  background-color: darken($color-white, 5%)
 }
 
 .UppyDashboard-list {
   @include clearfix;
   margin: 0;
   padding: 0;
-  height: 100%;
-  overflow: auto;
+  // height: 100%;
+  // overflow: auto;
 }
 
 .UppyDashboard-bgIcon {
@@ -34,25 +325,14 @@
 
 .UppyDashboardItem {
   list-style: none;
-  margin: 0;
   width: 135px;
-  height: 170px;
+  height: 180px;
   float: left;
-  margin: 20px;
-  // text-align: center;
+  margin: 16px 20px;
   position: relative;
   border-radius: 6px;
-  // overflow: hidden;
   background-color: $color-white;
   border: 1px solid rgba($color-gray, 0.3);
-  // box-shadow: inset 0 0 0 1px rgba($color-black, 0.1);
-  transition: 0.6s;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-}
-
-.UppyDashboardItem.is-flipped {
-  transform: rotateY(180deg);
 }
 
 .UppyDashboardItem-preview {
@@ -99,15 +379,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   color: $color-white;
-  // letter-spacing: 1px;
 }
 
 .UppyDashboardItem-info {
   padding: 5px 15px;
   height: 60px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: center;
   // align-items: center;
 }
 
@@ -117,9 +396,9 @@
   font-weight: 500;
   margin: 0;
   padding: 0;
-  margin-bottom: 3px;
   max-height: 28px;
   overflow: hidden;
+  margin-bottom: 5px;
 }
 
 .UppyDashboardItem-name a {
@@ -129,14 +408,31 @@
 
 .UppyDashboardItem-status {
   font-size: 11px;
-  line-height: 1.45;
   font-weight: normal;
   color: $color-gray;
+  margin-bottom: 4px;
+  // flex: 1;
   // text-transform: uppercase;
 }
 
 .UppyDashboardItem-statusSize {
   text-transform: uppercase;
+}
+
+.UppyDashboardItem-edit {
+  @include reset-button;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  // flex: 1;
+  // text-transform: uppercase;
+  // letter-spacing: 1px;
+}
+
+.UppyDashboardItem-edit .UppyIcon-edit {
+  width: 10px;
+  height: 13px;
+  vertical-align: text-bottom;
 }
 
 .UppyDashboardItem-action {
@@ -156,15 +452,14 @@
   // .Uppy--isTouchDevice .UppyDashboardItem-remove,
   .UppyDashboardItem:hover .UppyDashboardItem-remove {
     opacity: 1;
-    // color: $color-black;
   }
 
 .UppyDashboardItem-progress {
   width: 100%;
-  height: 12px;
+  height: 15px;
   font-size: 10px;
   text-align: center;
-  line-height: 12px;
+  line-height: 15px;
   color: $color-white;
   margin: auto;
   position: absolute;
@@ -172,6 +467,7 @@
   left: 0;
   overflow: hidden;
   display: none;
+  opacity: 0.8;
 }
 
 .UppyDashboardItem-progress.is-active {
@@ -185,7 +481,7 @@
 }
 
 .UppyDashboardItem-progressInner {
-  height: 12px;
+  height: 15px;
   background-color: $color-cornflower-blue;
   position: absolute;
   top: 0;
@@ -194,14 +490,14 @@
 
 .UppyDashboard-upload {
   @include reset-button;
-  width: 70px;
-  height: 70px;
+  width: 65px;
+  height: 65px;
   box-shadow: 1px 2px 4px 0px rgba($color-black, 0.3);
   border-radius: 50%;
   background-color: $color-cornflower-blue;
   position: absolute;
-  bottom: 20px;
-  right: 30px;
+  bottom: 30px;
+  right: 25px;
   cursor: pointer;
   transition: all 0.3s;
   color: $color-white;
@@ -212,16 +508,16 @@
   }
 }
 
-
 .UppyDashboard-upload .UppyIcon {
   position: relative;
   top: 2px;
+  width: 50%;
 }
 
 .UppyDashboard-uploadCount {
   position: absolute;
-  top: -15px;
-  right: -10px;
+  top: -10px;
+  right: -8px;
   background-color: $color-green;
   color: $color-white;
   border-radius: 50%;
@@ -229,4 +525,38 @@
   height: 18px;
   line-height: 18px;
   font-size: 9px;
+}
+
+//
+// File Card
+//
+
+.UppyDashboardFileCard {
+  width: 500px;
+  height: 400px;
+  max-width: 100%;
+  max-height: 100%;
+  z-index: $zIndex-4;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0px 0px 10px 4px rgba($color-black, 0.1);
+  background-color: $color-white;
+}
+
+.UppyDashboardFileCard-preview {
+  height: 45%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba($color-gray, 0.3);
+}
+
+.UppyDashboardFileCard-info {
+  padding: 20px;
+}
+
+.UppyDashboardFileCard-input {
+  display: block;
 }

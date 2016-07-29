@@ -52,6 +52,7 @@ Theme: ?
 - [ ] core: figure out race conditions with `yo-yo` when file uploads are in progress (@arturi)
 - [ ] dashboard: message when all uploads are done? results of the upload — better links to uploaded files? (@arturi)
 - [ ] dashboard: file name + extension should fit on two lines, truncate in the middle (@arturi)
+- [ ] dashboard: try to implement a circular progress indicator on top of the fileItem (@arturi)
 - [ ] dashboard: add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] modifier: metadata — the aftermath (@arturi)
 

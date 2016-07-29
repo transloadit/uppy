@@ -22,12 +22,12 @@ export default class Plugin {
     this.install = this.install.bind(this)
   }
 
-  update () {
+  update (state) {
     if (typeof this.el === 'undefined') {
       return
     }
 
-    const newEl = this.render(this.core.state)
+    const newEl = this.render(state)
     yo.update(this.el, newEl)
   }
 
