@@ -12,7 +12,7 @@ function getIconByMime (fileTypeGeneral) {
   }
 }
 
-export default function fileCard (file, bus, updateMeta) {
+export default function fileCard (file, initialMeta, bus, updateMeta) {
   const meta = {}
 
   function tempStoreMeta (ev) {
@@ -26,6 +26,19 @@ export default function fileCard (file, bus, updateMeta) {
     bus.emit('file-card-close')
   }
 
+  function metaFields (file) {
+    initialMeta = initialMeta || []
+    return initialMeta.map((field) => {
+      return html`<input class="UppyDashboardFileCard-input"
+                         name="${field.name}"
+                         type="text"
+                         value="${file.meta[field.name]}"
+                         placeholder="${field.placeholder || ''}"
+                         onkeyup=${tempStoreMeta} />
+      `
+    })
+  }
+
   const previewEl = file.preview ? html`<img alt="${file.name}" src="${file.preview}">` : null
 
   return html`<div class="UppyDashboardFileCard">
@@ -36,7 +49,7 @@ export default function fileCard (file, bus, updateMeta) {
     </div>
     <div class="UppyDashboardFileCard-info">
       <input class="UppyDashboardFileCard-input" name="name" type="text" value="${file.meta.name}" onkeyup=${tempStoreMeta} />
-      <input class="UppyDashboardFileCard-input" name="something" type="text" value="${file.meta.something || ''}" placeholder="something" onkeyup=${tempStoreMeta} />
+      ${metaFields(file)}
       <button onclick=${done}>Done</button>
     </div>
   </div>`

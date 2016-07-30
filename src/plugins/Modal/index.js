@@ -229,7 +229,7 @@ export default class Dashboard extends Plugin {
       })
     })
 
-    this.core.updateMeta({bla: 'bla'})
+    // this.core.updateMeta({bla: 'bla'})
   }
 
   handleInputChange (ev) {
@@ -338,7 +338,7 @@ export default class Dashboard extends Plugin {
           </nav>
         </div>
 
-        ${showFileCard ? FileCard(state.files[showFileCard], bus, updateMeta) : null}
+        ${showFileCard ? FileCard(state.files[showFileCard], state.metaFields, bus, updateMeta) : null}
 
         <div class="UppyDashboard-files">
           <ul class="UppyDashboard-filesInner">
