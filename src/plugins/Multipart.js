@@ -33,6 +33,11 @@ export default class Multipart extends Plugin {
       const formPost = new FormData()
       formPost.append(this.opts.fieldName, file.data)
 
+      Object.keys(file.meta).forEach((item) => {
+        console.log(file.meta, file.meta[item])
+        formPost.append(file.meta, file.meta[item])
+      })
+
       const xhr = new XMLHttpRequest()
 
       xhr.upload.addEventListener('progress', (ev) => {
@@ -57,7 +62,9 @@ export default class Multipart extends Plugin {
       xhr.addEventListener('load', (ev) => {
         if (ev.target.status === 200) {
           const resp = JSON.parse(xhr.response)
-          file.uploadURL = resp[this.opts.responseUrlFieldName]
+          const uploadURL = resp[this.opts.responseUrlFieldName]
+
+          this.core.emitter.emit('upload-success', file.id, uploadURL)
 
           this.core.log(`Download ${file.name} from ${file.uploadURL}`)
           return resolve(file)
