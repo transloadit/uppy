@@ -62,14 +62,6 @@ export function $ (selector, ctx) {
   return (ctx || document).querySelector(selector)
 }
 
-// returns [fileName, fileExt]
-function getFileNameAndExtension (fullFileName) {
-  var re = /(?:\.([^.]+))?$/
-  var fileExt = re.exec(fullFileName)[1]
-  var fileName = fullFileName.replace('.' + fileExt, '')
-  return [fileName, fileExt]
-}
-
 function truncateString (string, length) {
   if (string.length > length) {
     return string.substring(0, length) + '…'
@@ -188,16 +180,18 @@ function getProportionalImageHeight (img, newWidth) {
 }
 
 function getFileType (file) {
-  // if (file.type) {
-  //   const fileType = file.type.split('/')
-  //   return fileType
-  // }
-  // const fileExtension = getFileNameAndExtension(file.name)[1]
-  // return fileExtension
   if (file.type) {
     return file.type
   }
   return mime.lookup(file.name)
+}
+
+// returns [fileName, fileExt]
+function getFileNameAndExtension (fullFileName) {
+  var re = /(?:\.([^.]+))?$/
+  var fileExt = re.exec(fullFileName)[1]
+  var fileName = fullFileName.replace('.' + fileExt, '')
+  return [fileName, fileExt]
 }
 
 /**

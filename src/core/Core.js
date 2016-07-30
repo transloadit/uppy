@@ -59,7 +59,7 @@ export default class Core {
   updateAll (state) {
     Object.keys(this.plugins).forEach((pluginType) => {
       this.plugins[pluginType].forEach((plugin) => {
-        plugin.update(this.state)
+        plugin.update(state)
       })
     })
   }
@@ -125,10 +125,10 @@ export default class Core {
     updatedFiles[fileID] = {
       source: file.source || '',
       id: fileID,
-      name: file.name,
-      extension: fileExtension,
+      name: file.name || 'noname',
+      extension: fileExtension || '',
       meta: {
-        name: file.name
+        name: file.name || 'noname'
       },
       type: {
         general: fileTypeGeneral,
@@ -139,7 +139,7 @@ export default class Core {
       totalSize: file.data.size ? prettyBytes(file.data.size) : '?',
       uploadedSize: 0,
       isRemote: file.isRemote || false,
-      remote: file.remote
+      remote: file.remote || ''
     }
 
     this.setState({files: updatedFiles})
@@ -190,7 +190,7 @@ export default class Core {
       let percentage = (data.bytesUploaded / data.bytesTotal * 100).toFixed(2)
       percentage = Math.round(percentage)
 
-      const updatedFiles = Object.assign({}, this.state.files)
+      const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[data.id], {
         progress: percentage,
         uploadedSize: data.bytesUploaded ? prettyBytes(data.bytesUploaded) : '?'
@@ -217,10 +217,16 @@ export default class Core {
       })
     })
 
-    this.emitter.on('upload-success', (file) => {
-      // const updatedFiles = Object.assign({}, this.state.files)
-      // updatedFiles[file.id] = file
-      // this.setState({files: updatedFiles})
+    this.emitter.on('upload-success', (fileID, uploadURL) => {
+      const updatedFiles = Object.assign({}, this.getState().files)
+      const updatedFile = Object.assign({}, updatedFiles[fileID], {
+        uploadURL: uploadURL
+      })
+      updatedFiles[fileID] = updatedFile
+
+      this.setState({
+        files: updatedFiles
+      })
     })
   }
 
