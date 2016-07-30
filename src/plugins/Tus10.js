@@ -36,6 +36,7 @@ export default class Tus10 extends Plugin {
       const upload = new tus.Upload(file.data, {
 
         // TODO merge this.opts or this.opts.tus here
+        metadata: file.meta,
         resume: false,
         endpoint: this.opts.endpoint,
         onError: (error) => {
@@ -51,8 +52,8 @@ export default class Tus10 extends Plugin {
           })
         },
         onSuccess: () => {
-          file.uploadURL = upload.url
-          this.core.emitter.emit('upload-success', file)
+          // file.uploadURL = upload.url
+          this.core.emitter.emit('upload-success', file.id, upload.url)
 
           this.core.log(`Download ${upload.file.name} from ${upload.url}`)
           resolve(upload)
