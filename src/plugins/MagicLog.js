@@ -10,7 +10,7 @@ import Plugin from './Plugin'
 export default class MagicLog extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.type = 'progressindicator'
+    this.type = 'debugger'
     this.id = 'MagicLog'
     this.title = 'Magic Log'
 

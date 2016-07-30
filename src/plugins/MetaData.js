@@ -8,7 +8,7 @@ import Plugin from './Plugin'
 export default class MetaData extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.type = 'progressindicator'
+    this.type = 'modifier'
     this.id = 'MetaData'
     this.title = 'Meta Data'
 

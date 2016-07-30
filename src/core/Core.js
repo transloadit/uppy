@@ -25,7 +25,8 @@ export default class Core {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Dictates in what order different plugin types are ran:
-    this.types = [ 'presetter', 'orchestrator', 'progressindicator', 'acquirer', 'uploader', 'presenter' ]
+    this.types = [ 'presetter', 'orchestrator', 'progressindicator',
+                    'acquirer', 'modifier', 'uploader', 'presenter', 'debugger']
 
     this.type = 'core'
 
