@@ -90,26 +90,33 @@ export default class Core {
   }
 
   updateMeta (data, fileID) {
-    // if fileID is not specified, set meta data to all files
-    if (typeof fileID === 'undefined') {
-      const updatedFiles = Object.assign({}, this.getState().files)
-      Object.keys(updatedFiles).forEach((file) => {
-        const newMeta = Object.assign({}, updatedFiles[file].meta, data)
-        updatedFiles[file] = Object.assign({}, updatedFiles[file], {
-          meta: newMeta
-        })
-      })
-      this.setState({files: updatedFiles})
+    // // if fileID is not specified, set meta data to all files
+    // if (typeof fileID === 'undefined') {
+    //   const updatedFiles = Object.assign({}, this.getState().files)
+    //   Object.keys(updatedFiles).forEach((file) => {
+    //     const newMeta = Object.assign({}, updatedFiles[file].meta, data)
+    //     updatedFiles[file] = Object.assign({}, updatedFiles[file], {
+    //       meta: newMeta
+    //     })
+    //   })
+    //   this.setState({files: updatedFiles})
+    //
+    // // if fileID is specified, set meta to that file
+    // } else {
+    //   const updatedFiles = Object.assign({}, this.getState().files)
+    //   const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
+    //   updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
+    //     meta: newMeta
+    //   })
+    //   this.setState({files: updatedFiles})
+    // }
 
-    // if fileID is specified, set meta to that file
-    } else {
-      const updatedFiles = Object.assign({}, this.getState().files)
-      const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
-      updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
-        meta: newMeta
-      })
-      this.setState({files: updatedFiles})
-    }
+    const updatedFiles = Object.assign({}, this.getState().files)
+    const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
+    updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
+      meta: newMeta
+    })
+    this.setState({files: updatedFiles})
   }
 
   addFile (file) {
@@ -163,6 +170,8 @@ export default class Core {
         this.setState({files: updatedFiles})
       })
     }
+
+    this.emitter.emit('file-added', fileID)
 
     if (this.opts.autoProceed) {
       this.emitter.emit('next')
