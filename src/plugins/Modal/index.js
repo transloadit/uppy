@@ -183,7 +183,7 @@ export default class Dashboard extends Plugin {
       const fileBlob = file.getAsFile()
       this.core.emitter.emit('file-add', {
         source: this.id,
-        name: file.name || 'name',
+        name: file.name,
         type: file.type,
         data: fileBlob
       })

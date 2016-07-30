@@ -55,8 +55,8 @@ export default function fileItem (file, bus) {
     <div class="UppyDashboardItem-info">
       <h4 class="UppyDashboardItem-name">
         ${file.uploadURL
-          ? html`<a href="${file.uploadURL}" target="_blank">${truncatedFileName}.${file.extension}</a>`
-          : `${truncatedFileName}.${file.extension}`
+          ? html`<a href="${file.uploadURL}" target="_blank">${file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}</a>`
+          : file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName
         }
       </h4>
       <div class="UppyDashboardItem-status">
