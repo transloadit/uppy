@@ -119,6 +119,7 @@ export default class Core {
     const fileTypeGeneral = fileType[0]
     const fileTypeSpecific = fileType[1]
     const fileExtension = Utils.getFileNameAndExtension(file.name)[1]
+    const isRemote = file.isRemote || false
 
     const fileID = Utils.generateFileID(file.name)
 
@@ -138,13 +139,13 @@ export default class Core {
       progress: 0,
       totalSize: file.data.size ? prettyBytes(file.data.size) : '?',
       uploadedSize: 0,
-      isRemote: file.isRemote || false,
+      isRemote: isRemote,
       remote: file.remote || ''
     }
 
     this.setState({files: updatedFiles})
 
-    if (fileTypeGeneral === 'image') {
+    if (fileTypeGeneral === 'image' && !isRemote) {
       Utils.readImage(updatedFiles[fileID].data, (err, imgEl) => {
         if (err) {
           return this.log(err)

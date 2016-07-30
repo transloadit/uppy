@@ -52,7 +52,6 @@ export default class Tus10 extends Plugin {
           })
         },
         onSuccess: () => {
-          // file.uploadURL = upload.url
           this.core.emitter.emit('upload-success', file.id, upload.url)
 
           this.core.log(`Download ${upload.file.name} from ${upload.url}`)
