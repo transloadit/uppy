@@ -1,5 +1,4 @@
 import Plugin from '../Plugin'
-// import Dashboard from './Dashboard.js'
 import Utils from '../../core/Utils'
 import dragDrop from 'drag-drop'
 import yo from 'yo-yo'
@@ -338,7 +337,7 @@ export default class Dashboard extends Plugin {
           </nav>
         </div>
 
-        ${showFileCard ? FileCard(state.files[showFileCard], state.metaFields, bus, updateMeta) : null}
+        ${FileCard(state, showFileCard, state.metaFields, bus, updateMeta)}
 
         <div class="UppyDashboard-files">
           <ul class="UppyDashboard-filesInner">
@@ -385,6 +384,10 @@ export default class Dashboard extends Plugin {
       </div>
     </div>`
   }
+
+  // <div class="UppyDashboard-fileCard" aria-hidden="${showFileCard ? 'false' : 'true'}">
+  //   ${showFileCard ? FileCard(state.files[showFileCard], state.metaFields, bus, updateMeta) : null}
+  // </div>
 
   install () {
     // Set default state for Modal

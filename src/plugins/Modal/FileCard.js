@@ -12,7 +12,8 @@ function getIconByMime (fileTypeGeneral) {
   }
 }
 
-export default function fileCard (file, initialMeta, bus, updateMeta) {
+export default function fileCard (state, showFileCard, initialMeta, bus, updateMeta) {
+  const file = showFileCard ? state.files[showFileCard] : false
   const meta = {}
 
   function tempStoreMeta (ev) {
@@ -34,23 +35,27 @@ export default function fileCard (file, initialMeta, bus, updateMeta) {
                          type="text"
                          value="${file.meta[field.name]}"
                          placeholder="${field.placeholder || ''}"
-                         onkeyup=${tempStoreMeta} />
-      `
+                         onkeyup=${tempStoreMeta} />`
     })
   }
 
   const previewEl = file.preview ? html`<img alt="${file.name}" src="${file.preview}">` : null
 
-  return html`<div class="UppyDashboardFileCard">
-    <div class="UppyDashboardFileCard-preview">
-      ${previewEl ||
-        html`<div class="UppyDashboardItem-previewIcon">${getIconByMime(file.type.general)}</div>`
-      }
-    </div>
-    <div class="UppyDashboardFileCard-info">
-      <input class="UppyDashboardFileCard-input" name="name" type="text" value="${file.meta.name}" onkeyup=${tempStoreMeta} />
-      ${metaFields(file)}
-      <button onclick=${done}>Done</button>
-    </div>
-  </div>`
+  return html`<div class="UppyDashboardFileCard" aria-hidden="${showFileCard ? 'false' : 'true'}">
+    ${showFileCard
+      ? html`<div class="UppyDashboardFileCard-inner">
+          <div class="UppyDashboardFileCard-preview">
+            ${previewEl ||
+              html`<div class="UppyDashboardItem-previewIcon">${getIconByMime(file.type.general)}</div>`
+            }
+          </div>
+          <div class="UppyDashboardFileCard-info">
+            <input class="UppyDashboardFileCard-input" name="name" type="text" value="${file.meta.name}" onkeyup=${tempStoreMeta} />
+            ${metaFields(file)}
+            <button onclick=${done}>Done</button>
+          </div>
+        </div>`
+      : null
+    }
+    </div>`
 }
