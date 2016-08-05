@@ -4,7 +4,7 @@ export default (props) => {
   return yo`
     <div>
       <span>
-        Something went wrong.  Probably our fault. ${props.err}
+        Something went wrong.  Probably our fault. ${props.error}
       </span>
     </div>
   `

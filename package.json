@@ -27,7 +27,7 @@
     "release:patch": "env SEMANTIC=patch npm run release",
     "release": "npm version ${SEMANTIC:-patch} -m \"Release %s\" && git push && git push --tags && npm publish",
     "start:server": "cd ./node_modules/uppy-server && npm run start",
-    "start": "npm-run-all --parallel watch start:server web:preview",
+    "start": "npm-run-all --parallel watch web:preview",
     "test:acceptance:handleservers": "bin/bootandkill-servers node test/acceptance/index.js",
     "test:acceptance": "node test/acceptance/index.js",
     "test:unit": "node test/unit/index.js | tap-spec",

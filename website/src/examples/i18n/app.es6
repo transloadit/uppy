@@ -1,5 +1,5 @@
 import Uppy from '../../../../src/core/Core.js'
-import Tus10 from '../../../../src/plugins/GoogleDrive.js'
+import Tus10 from '../../../../src/plugins/GoogleDrive'
 import ru_RU from '../../../../src/locales/ru_RU'
 // import Uppy from 'uppy/core'
 // import { Tus10 } from 'uppy/plugins'
