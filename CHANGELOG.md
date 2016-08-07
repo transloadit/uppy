@@ -50,14 +50,20 @@ Theme: ?
 
 - [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` api, open modal... (@arturi, @hedgerh)
 - [ ] core: how would Uppy work without the UI, if one only wants dragdrop + select from local disk
-- [ ] core: figure out race conditions with `yo-yo` when file uploads are in progress (@arturi)
+- [ ] core: figure out race conditions with `yo-yo`/`morphdom` when file uploads are in progress https://github.com/shama/bel/issues/26#issuecomment-238004130 (@arturi)
+- [ ] core: refactor to smaller components, as discussed in https://github.com/transloadit/uppy/issues/110 (@arturi, @hedgerh)
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
-- [ ] dashboard: message when all uploads are done? results of the upload — better links to uploaded files? (@arturi)
-- [ ] dashboard: file name + extension should fit on two lines, truncate in the middle (maybe https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText) (@arturi)
-- [ ] dashboard: try to implement a circular progress indicator on top of the fileItem (@arturi)
-- [ ] dashboard: add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
-- [ ] dashboard: see if the dashboard can be optionally rendered inline instead of as a modal (@arturi)
-- [ ] modifier: metadata — the aftermath (@arturi)
+- [ ] dashboard: message when all uploads are done? informer interface (@arturi)
+- [ ] dashboard: results of the upload — green checkmark, better links to uploaded files, copy link button? (http://i.imgur.com/b1Io34n.png) (@arturi)
+- [x] dashboard: file name + extension should fit on two lines, truncate in the middle (maybe https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText) (@arturi)
+- [x] dashboard: implement a circular progress indicator on top of the fileItem with play/pause (@arturi)
+- [x] tus: add ability to pause/resume uploads (@arturi)
+- [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
+- [ ] dashboard: see if Dashboard can be optionally rendered inline instead of as a modal (@arturi)
+- [ ] metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 (@arturi)
+- [x] metadata: the aftermath — better UI (@arturi)
+- [ ] metadata: test that it works, discuss API and features (@arturi, @kvz)
+- [ ] meta: write 0.8 release blog post (@arturi)
 
 ## 0.8.0
 
