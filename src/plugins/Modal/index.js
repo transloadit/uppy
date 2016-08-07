@@ -279,7 +279,8 @@ export default class Dashboard extends Plugin {
     }
 
     const selectedFiles = Object.keys(files).filter((file) => {
-      return files[file].progress !== 100
+      return files[file].progress === 0
+      // return files[file].progress !== 100
     })
     const totalFileCount = Object.keys(files).length
     const selectedFileCount = Object.keys(selectedFiles).length

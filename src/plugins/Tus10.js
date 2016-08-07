@@ -14,10 +14,32 @@ export default class Tus10 extends Plugin {
     this.title = 'Tus'
 
     // set default options
-    const defaultOptions = {}
+    const defaultOptions = {
+      resume: true
+    }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+  }
+
+  pauseUpload (fileID) {
+    const updatedFiles = Object.assign({}, this.core.getState().files)
+    const wasPaused = updatedFiles[fileID].isPaused || false
+    const isPaused = !wasPaused
+    let updatedFile
+    if (wasPaused) {
+      updatedFile = Object.assign({}, updatedFiles[fileID], {
+        isPaused: false
+      })
+    } else {
+      updatedFile = Object.assign({}, updatedFiles[fileID], {
+        isPaused: true
+      })
+    }
+    updatedFiles[fileID] = updatedFile
+    this.core.setState({files: updatedFiles})
+
+    return isPaused
   }
 
 /**
@@ -30,17 +52,22 @@ export default class Tus10 extends Plugin {
  */
   upload (file, current, total) {
     this.core.log(`uploading ${current} of ${total}`)
+    console.log(file.meta)
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
       const upload = new tus.Upload(file.data, {
 
         // TODO merge this.opts or this.opts.tus here
-        metadata: file.meta,
-        resume: false,
+        metadata: {bla: 123, blabla: ''},
+        // metadata: file.meta
+        // metadata: { name: "IMG_9078.jpg", resizeTo: 1200, description: '' },
+        resume: this.opts.resume,
         endpoint: this.opts.endpoint,
-        onError: (error) => {
-          reject('Failed because: ' + error)
+
+        onError: (err) => {
+          this.core.log(err)
+          reject('Failed because: ' + err)
         },
         onProgress: (bytesUploaded, bytesTotal) => {
           // Dispatch progress event
@@ -58,18 +85,29 @@ export default class Tus10 extends Plugin {
           resolve(upload)
         }
       })
+
       this.core.emitter.on('file-remove', (fileID) => {
         if (fileID === file.id) {
           upload.abort()
         }
       })
+
+      this.core.emitter.on('core:upload-pause', (fileID) => {
+        if (fileID === file.id) {
+          const isPaused = this.pauseUpload(fileID)
+          isPaused ? upload.abort() : upload.start()
+        }
+      })
+
+      window.upload = upload
+
       upload.start()
     })
   }
 
   uploadRemote (file, current, total) {
     return new Promise((resolve, reject) => {
-      console.log(file.remote.url)
+      this.core.log(file.remote.url)
       fetch(file.remote.url, {
         method: 'post',
         credentials: 'include',
@@ -162,7 +200,7 @@ export default class Tus10 extends Plugin {
   install () {
     this.core.emitter.on('next', () => {
       this.core.log('Tus is uploading...')
-      const files = this.core.state.files
+      const files = this.core.getState().files
       this.selectForUpload(files)
     })
   }
