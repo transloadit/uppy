@@ -59,9 +59,7 @@ export default class Tus10 extends Plugin {
       const upload = new tus.Upload(file.data, {
 
         // TODO merge this.opts or this.opts.tus here
-        metadata: {bla: 123, blabla: ''},
-        // metadata: file.meta
-        // metadata: { name: "IMG_9078.jpg", resizeTo: 1200, description: '' },
+        metadata: file.meta,
         resume: this.opts.resume,
         endpoint: this.opts.endpoint,
 
