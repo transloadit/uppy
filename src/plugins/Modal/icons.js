@@ -42,9 +42,8 @@ export function pluginIcon () {
 }
 
 export function checkIcon () {
-  return html`<svg class="UppyIcon UppyIcon-check" width="19px" height="18px" viewBox="0 0 18 18">
-    <ellipse fill="#7AC824" cx="8" cy="8" rx="8" ry="8"/>
-    <polygon fill="#FFFFFF" points="6.93333333 12 3.2 8.13104347 4.26659124 7.02575014 6.93333333 9.78917886 11.7189271 4.8 12.8 5.92030049 6.93333333 12"/>
+  return html`<svg class="UppyIcon UppyIcon-check" width="13px" height="9px" viewBox="0 0 13 9">
+    <polygon points="5 7.293 1.354 3.647 0.646 4.354 5 8.707 12.354 1.354 11.646 0.647"></polygon>
   </svg>`
 }
 

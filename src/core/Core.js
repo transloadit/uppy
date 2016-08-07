@@ -225,6 +225,10 @@ export default class Core {
         files: updatedFiles
       })
     })
+
+    this.emitter.on('core:update-meta', (data, fileID) => {
+      this.updateMeta(data, fileID)
+    })
   }
 
 /**

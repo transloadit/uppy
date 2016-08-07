@@ -253,7 +253,6 @@ export default class Dashboard extends Plugin {
     const autoProceed = this.core.opts.autoProceed
     const files = state.files
     const bus = this.core.emitter
-    const updateMeta = this.core.updateMeta
 
     const showFileCard = state.modal.showFileCard
 
@@ -338,7 +337,11 @@ export default class Dashboard extends Plugin {
           </nav>
         </div>
 
-        ${FileCard(state, showFileCard, state.metaFields, bus, updateMeta)}
+        ${FileCard({
+          files: files,
+          showFileCard: showFileCard,
+          metaFields: state.metaFields
+        }, bus)}
 
         <div class="UppyDashboard-files">
           <ul class="UppyDashboard-filesInner">
@@ -351,7 +354,7 @@ export default class Dashboard extends Plugin {
             })}
           </ul>
           ${!autoProceed && isSomethingSelected
-            ? yo`<button class="UppyDashboard-upload"
+            ? yo`<button class="UppyButton--circular UppyDashboard-upload"
                            type="button"
                            title="Upload"
                            onclick=${next}>
