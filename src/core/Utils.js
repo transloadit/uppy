@@ -15,14 +15,14 @@ import mime from 'mime-types'
  * @param {array} methods of Promises to run waterfall on
  * @return {Promise} of the final task
  */
-function promiseWaterfall (methods) {
-  const [resolvedPromise, ...tasks] = methods
-  const finalTaskPromise = tasks.reduce((prevTaskPromise, task) => {
-    return prevTaskPromise.then(task)
-  }, resolvedPromise([])) // initial value
-
-  return finalTaskPromise
-}
+// function promiseWaterfall (methods) {
+//   const [resolvedPromise, ...tasks] = methods
+//   const finalTaskPromise = tasks.reduce((prevTaskPromise, task) => {
+//     return prevTaskPromise.then(task)
+//   }, resolvedPromise([])) // initial value
+//
+//   return finalTaskPromise
+// }
 
 /**
  * Shallow flatten nested arrays.
@@ -34,7 +34,17 @@ function flatten (arr) {
 function isTouchDevice () {
   return 'ontouchstart' in window || // works on most browsers
           navigator.maxTouchPoints   // works on IE10/11 and Surface
-};
+}
+
+/**
+ * Shorter and fast way to select a single node in the DOM
+ * @param   { String } selector - unique dom selector
+ * @param   { Object } ctx - DOM node where the target of our search will is located
+ * @returns { Object } dom node found
+ */
+function $ (selector, ctx) {
+  return (ctx || document).querySelector(selector)
+}
 
 /**
  * Shorter and fast way to select multiple nodes in the DOM
@@ -42,7 +52,7 @@ function isTouchDevice () {
  * @param   { Object } ctx - DOM node where the targets of our search will is located
  * @returns { Object } dom nodes found
  */
-export function $$ (selector, ctx) {
+function $$ (selector, ctx) {
   var els
   if (typeof selector === 'string') {
     els = (ctx || document).querySelectorAll(selector)
@@ -52,21 +62,14 @@ export function $$ (selector, ctx) {
   }
 }
 
-/**
- * Shorter and fast way to select a single node in the DOM
- * @param   { String } selector - unique dom selector
- * @param   { Object } ctx - DOM node where the target of our search will is located
- * @returns { Object } dom node found
- */
-export function $ (selector, ctx) {
-  return (ctx || document).querySelector(selector)
-}
-
-function truncateString (string, length) {
-  if (string.length > length) {
-    return string.substring(0, length) + '…'
+function truncateString (str, length) {
+  if (str.length > length) {
+    return str.substr(0, length / 2) + '...' + str.substr(str.length - length / 4, str.length)
   }
-  return string
+  return str
+
+  // more precise version if needed
+  // http://stackoverflow.com/a/831583
 }
 
 /**
@@ -134,44 +137,11 @@ function extend (...objs) {
  * @param {Object} fn — function
  *
  */
-function getFnName (fn) {
-  var f = typeof fn === 'function'
-  var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/))
-  return (!f && 'not a function') || (s && s[1] || 'anonymous')
-}
-
-/**
- * Reads image as data URI from file object,
- * the one you get from input[type=file] or drag & drop.
- * This will only read image files, skipping others
- *
- * @param {Object} imgObject
- * @param {Function} cb callback that will be called once the image is read
- *
- */
-function readImage (imgObject, cb) {
-  // if (!imgObject.type.match(/image.*/)) {
-  //   console.log('The file is not an image: ', imgObject.type)
-  //   return
-  // }
-
-  var reader = new FileReader()
-  reader.addEventListener('load', function (ev) {
-    var imgSrcBase64 = ev.target.result
-    var img = new Image()
-    img.addEventListener('load', function () {
-      return cb(null, img)
-    })
-    img.addEventListener('error', function (err) {
-      return cb(err)
-    })
-    img.src = imgSrcBase64
-  })
-  reader.addEventListener('error', function (err) {
-    console.log('FileReader error ' + err)
-  })
-  reader.readAsDataURL(imgObject)
-}
+// function getFnName (fn) {
+//   var f = typeof fn === 'function'
+//   var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/))
+//   return (!f && 'not a function') || (s && s[1] || 'anonymous')
+// }
 
 function getProportionalImageHeight (img, newWidth) {
   var aspect = img.width / img.height
@@ -195,36 +165,66 @@ function getFileNameAndExtension (fullFileName) {
 }
 
 /**
+ * Reads file as data URI from file object,
+ * the one you get from input[type=file] or drag & drop.
+ *
+ * @param {Object} file object
+ * @return {Promise} dataURL of the file
+ *
+ */
+function readFile (fileObj) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.addEventListener('load', function (ev) {
+      return resolve(ev.target.result)
+    })
+    reader.readAsDataURL(fileObj)
+  })
+}
+
+/**
  * Resizes an image to specified width and height, using canvas
- * See https://davidwalsh.name/resize-image-canvas
+ * See https://davidwalsh.name/resize-image-canvas,
+ * http://babalan.com/resizing-images-with-javascript/
+ * @TODO see if we need https://github.com/stomita/ios-imagefile-megapixel for iOS
  *
  * @param {Object} img element
  * @param {String} width of the resulting image
  * @param {String} height of the resulting image
  * @return {String} dataURL of the resized image
  */
-function resizeImage (img, width, height) {
-  // create an off-screen canvas
-  var canvas = document.createElement('canvas')
-  var ctx = canvas.getContext('2d')
+function createImageThumbnail (imgURL) {
+  return new Promise((resolve, reject) => {
+    var img = new Image()
+    img.addEventListener('load', () => {
+      const newImageWidth = 200
+      const newImageHeight = getProportionalImageHeight(img, newImageWidth)
 
-  // set its dimension to target size
-  canvas.width = width
-  canvas.height = height
+      // create an off-screen canvas
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
 
-  // draw source image into the off-screen canvas:
-  // ctx.clearRect(0, 0, width, height)
-  ctx.drawImage(img, 0, 0, width, height)
+      // set its dimension to target size
+      canvas.width = newImageWidth
+      canvas.height = newImageHeight
 
-  // encode image to data-uri with base64 version of compressed image
-  // canvas.toDataURL('image/jpeg', quality);  // quality = [0.0, 1.0]
-  return canvas.toDataURL('image/png')
+      // draw source image into the off-screen canvas:
+      // ctx.clearRect(0, 0, width, height)
+      ctx.drawImage(img, 0, 0, newImageWidth, newImageHeight)
+
+      // encode image to data-uri with base64 version of compressed image
+      // canvas.toDataURL('image/jpeg', quality);  // quality = [0.0, 1.0]
+      const thumbnail = canvas.toDataURL('image/png')
+      return resolve(thumbnail)
+    })
+    img.src = imgURL
+  })
 }
 
 export default {
-  promiseWaterfall,
+  // promiseWaterfall,
+  // getFnName,
   generateFileID,
-  getFnName,
   toArray,
   every,
   flatten,
@@ -232,8 +232,8 @@ export default {
   $,
   $$,
   extend,
-  readImage,
-  resizeImage,
+  readFile,
+  createImageThumbnail,
   getProportionalImageHeight,
   isTouchDevice,
   getFileNameAndExtension,

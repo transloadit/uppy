@@ -1,10 +1,10 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
 import prettyBytes from 'pretty-bytes'
-import yo from 'yo-yo'
-import ee from 'events'
+import ee from 'namespace-emitter'
 import deepFreeze from 'deep-freeze-strict'
 import UppySocket from './UppySocket'
+import en_US from '../locales/en_US'
 
 /**
  * Main Uppy core
@@ -16,7 +16,7 @@ export default class Core {
     // set default options
     const defaultOptions = {
       // load English as the default locales
-      locales: require('../locales/en_US.js'),
+      locales: en_US,
       autoProceed: true,
       debug: false
     }
@@ -39,7 +39,7 @@ export default class Core {
     this.updateMeta = this.updateMeta.bind(this)
     this.initSocket = this.initSocket.bind(this)
 
-    this.emitter = new ee.EventEmitter()
+    this.emitter = ee()
 
     this.state = {
       files: {}
@@ -91,27 +91,6 @@ export default class Core {
   }
 
   updateMeta (data, fileID) {
-    // // if fileID is not specified, set meta data to all files
-    // if (typeof fileID === 'undefined') {
-    //   const updatedFiles = Object.assign({}, this.getState().files)
-    //   Object.keys(updatedFiles).forEach((file) => {
-    //     const newMeta = Object.assign({}, updatedFiles[file].meta, data)
-    //     updatedFiles[file] = Object.assign({}, updatedFiles[file], {
-    //       meta: newMeta
-    //     })
-    //   })
-    //   this.setState({files: updatedFiles})
-    //
-    // // if fileID is specified, set meta to that file
-    // } else {
-    //   const updatedFiles = Object.assign({}, this.getState().files)
-    //   const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
-    //   updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
-    //     meta: newMeta
-    //   })
-    //   this.setState({files: updatedFiles})
-    // }
-
     const updatedFiles = Object.assign({}, this.getState().files)
     const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
     updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
@@ -123,21 +102,22 @@ export default class Core {
   addFile (file) {
     const updatedFiles = Object.assign({}, this.state.files)
 
+    const fileName = file.name || 'noname'
     const fileType = Utils.getFileType(file) ? Utils.getFileType(file).split('/') : ['', '']
     const fileTypeGeneral = fileType[0]
     const fileTypeSpecific = fileType[1]
-    const fileExtension = Utils.getFileNameAndExtension(file.name)[1]
+    const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
     const isRemote = file.isRemote || false
 
-    const fileID = Utils.generateFileID(file.name)
+    const fileID = Utils.generateFileID(fileName)
 
-    updatedFiles[fileID] = {
+    const newFile = {
       source: file.source || '',
       id: fileID,
-      name: file.name || 'noname',
+      name: fileName,
       extension: fileExtension || '',
       meta: {
-        name: file.name || 'noname'
+        name: fileName
       },
       type: {
         general: fileTypeGeneral,
@@ -151,32 +131,33 @@ export default class Core {
       remote: file.remote || ''
     }
 
+    updatedFiles[fileID] = newFile
     this.setState({files: updatedFiles})
 
-    if (fileTypeGeneral === 'image' && !isRemote) {
-      Utils.readImage(updatedFiles[fileID].data, (err, imgEl) => {
-        if (err) {
-          return this.log(err)
-        }
-        const newImageWidth = 200
-        const newImageHeight = Utils.getProportionalImageHeight(imgEl, newImageWidth)
-        const resizedImgSrc = Utils.resizeImage(imgEl, newImageWidth, newImageHeight)
-
-        const updatedFiles = Object.assign({}, this.getState().files)
-        const updatedFile = Object.assign({}, updatedFiles[fileID], {
-          previewEl: yo`<img alt="${file.name}" src="${resizedImgSrc}">`,
-          preview: resizedImgSrc
-        })
-        updatedFiles[fileID] = updatedFile
-        this.setState({files: updatedFiles})
-      })
-    }
-
     this.emitter.emit('file-added', fileID)
+
+    if (fileTypeGeneral === 'image' && !isRemote) {
+      this.addFileThumbnail(newFile.id)
+    }
 
     if (this.opts.autoProceed) {
       this.emitter.emit('next')
     }
+  }
+
+  addFileThumbnail (fileID, thumbnail) {
+    const file = this.getState().files[fileID]
+
+    Utils.readFile(file.data)
+      .then(Utils.createImageThumbnail)
+      .then((thumbnail) => {
+        const updatedFiles = Object.assign({}, this.getState().files)
+        const updatedFile = Object.assign({}, updatedFiles[fileID], {
+          preview: thumbnail
+        })
+        updatedFiles[fileID] = updatedFile
+        this.setState({files: updatedFiles})
+      })
   }
 
   /**
@@ -185,6 +166,11 @@ export default class Core {
    *
    */
   actions () {
+    // this.emitter.on('*', (payload) => {
+    //   console.log('emitted: ', this.event)
+    //   console.log('with payload: ', payload)
+    // })
+
     this.emitter.on('file-add', (data) => {
       this.addFile(data)
     })
@@ -325,24 +311,10 @@ export default class Core {
   }
 
 /**
- * Runs all plugins of the same type in parallel
+ * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
  *
- * @param {string} type that wants to set progress
- * @param {array} files
- * @return {Promise} of all methods
- */
-  runType (type, method, files) {
-    const methods = this.plugins[type].map(
-      (plugin) => plugin[method](Utils.flatten(files))
-    )
-
-    return Promise.all(methods)
-      .catch((error) => console.error(error))
-  }
-
-/**
- * Runs a waterfall of runType plugin packs, like so:
- * All preseters(data) --> All acquirers(data) --> All uploaders(data) --> done
+ * (Used to run a waterfall of runType plugin packs, like so:
+ * All preseters(data) --> All acquirers(data) --> All uploaders(data) --> done)
  */
   run () {
     this.log('Core is run, initializing actions, installing plugins...')
