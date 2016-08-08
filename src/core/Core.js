@@ -142,7 +142,7 @@ export default class Core {
     }
 
     if (this.opts.autoProceed) {
-      this.emitter.emit('next')
+      this.emitter.emit('core:upload')
     }
   }
 

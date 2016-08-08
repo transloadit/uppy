@@ -35,10 +35,11 @@ export default function Dashboard (props, bus) {
   }
 
   const next = (ev) => {
-    bus.emit('next')
+    bus.emit('core:upload')
   }
 
   function handleInputChange (ev) {
+    ev.preventDefault()
     log('All right, something selected through input...')
 
     const files = Utils.toArray(ev.target.files)

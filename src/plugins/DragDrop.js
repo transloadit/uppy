@@ -117,7 +117,7 @@ export default class DragDrop extends Plugin {
     const next = (ev) => {
       ev.preventDefault()
       ev.stopPropagation()
-      this.core.emitter.emit('next')
+      this.core.emitter.emit('core:upload')
     }
 
     const onSubmit = (ev) => {

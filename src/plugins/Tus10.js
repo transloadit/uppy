@@ -196,7 +196,8 @@ export default class Tus10 extends Plugin {
   }
 
   install () {
-    this.core.emitter.on('next', () => {
+    const bus = this.core.emitter
+    bus.on('core:upload', () => {
       this.core.log('Tus is uploading...')
       const files = this.core.getState().files
       this.selectForUpload(files)

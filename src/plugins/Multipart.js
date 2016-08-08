@@ -131,7 +131,8 @@ export default class Multipart extends Plugin {
   }
 
   install () {
-    this.core.emitter.on('next', () => {
+    const bus = this.core.emitter
+    bus.on('core:upload', () => {
       this.core.log('Multipart is uploading...')
       const files = this.core.state.files
       this.selectForUpload(files)

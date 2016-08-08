@@ -98,7 +98,7 @@ export default class ProgressDrawer extends Plugin {
     const autoProceed = this.core.opts.autoProceed
 
     const next = (ev) => {
-      this.core.emitter.emit('next')
+      this.core.emitter.emit('core:upload')
     }
 
     return yo`<div class="UppyProgressDrawer ${isSomethingSelectedOrUploaded ? 'is-visible' : ''}">
