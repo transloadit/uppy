@@ -44,6 +44,7 @@
   border: 2px dashed;
   border-radius: 10px;
   border-color: lighten($color-gray, 25%);
+  overflow: hidden;
 }
 
 .UppyDashboard-close {

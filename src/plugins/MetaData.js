@@ -36,7 +36,6 @@ export default class MetaData extends Plugin {
   }
 
   install () {
-    console.log(this.opts.fields)
     this.addInitialMeta()
   }
 }
