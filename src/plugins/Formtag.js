@@ -43,10 +43,10 @@ export default class Formtag extends Plugin {
   }
 
   render (state) {
-    const next = (ev) => {
+    const upload = (ev) => {
       ev.preventDefault()
       ev.stopPropagation()
-      this.core.emitter.emit('next')
+      this.core.emitter.emit('core:upload')
     }
 
     return yo`<form class="UppyFormContainer">
@@ -59,7 +59,7 @@ export default class Formtag extends Plugin {
       ${!this.core.opts.autoProceed && this.opts.target.name !== 'Modal'
         ? yo`<button class="UppyForm-uploadBtn UppyNextBtn"
                      type="submit"
-                     onclick=${next}>
+                     onclick=${upload}>
               ${this.core.i18n('upload')}
             </button>`
         : ''}
