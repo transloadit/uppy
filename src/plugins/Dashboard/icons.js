@@ -22,11 +22,11 @@ export function localIcon () {
   </svg>`
 }
 
-export function backIcon () {
-  return html`<svg class="UppyIcon" width="7px" height="10px" viewBox="0 0 23 45">
-    <polygon points="21.2678133 0.318896058 1.26781326 21.8188961 0.634228199 22.5 1.26781326 23.1811039 21.2678133 44.6811039 22.7321867 43.3188961 2.73218674 21.8188961 2.73218674 23.1811039 22.7321867 1.68110394"></polygon>
-  </svg>`
-}
+// export function backIcon () {
+//   return html`<svg class="UppyIcon" width="7px" height="10px" viewBox="0 0 23 45">
+//     <polygon points="21.2678133 0.318896058 1.26781326 21.8188961 0.634228199 22.5 1.26781326 23.1811039 21.2678133 44.6811039 22.7321867 43.3188961 2.73218674 21.8188961 2.73218674 23.1811039 22.7321867 1.68110394"></polygon>
+//   </svg>`
+// }
 
 export function closeIcon () {
   return html`<svg class="UppyIcon" width="14px" height="14px" viewBox="0 0 19 19">

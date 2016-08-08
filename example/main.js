@@ -1,19 +1,19 @@
 import Uppy from '../src/core/Core.js'
-import Modal from '../src/plugins/Modal'
+import Dashboard from '../src/plugins/Dashboard'
 import Dummy from '../src/plugins/Dummy'
 import GoogleDrive from '../src/plugins/GoogleDrive'
 import ProgressBar from '../src/plugins/ProgressBar'
 import Tus10 from '../src/plugins/Tus10'
 import MetaData from '../src/plugins/MetaData'
 
-import MagicLog from '../src/plugins/MagicLog'
+// import MagicLog from '../src/plugins/MagicLog'
 
-const uppy = new Uppy({debug: true})
-  .use(Modal, {trigger: '#uppyModalOpener'})
-  .use(GoogleDrive, {target: Modal, host: 'http://ya.ru'})
-  .use(Dummy, {target: Modal})
-  .use(ProgressBar, {target: Modal})
-  .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/'})
+const uppy = new Uppy({debug: true, autoProceed: false})
+  .use(Dashboard, {trigger: '#uppyModalOpener'})
+  .use(GoogleDrive, {target: Dashboard, host: 'http://ya.ru'})
+  .use(Dummy, {target: Dashboard})
+  .use(ProgressBar, {target: Dashboard})
+  .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/', resume: false})
   .use(MetaData, {
     fields: [
       {
@@ -28,7 +28,7 @@ const uppy = new Uppy({debug: true})
       }
     ]
   })
-  .use(MagicLog)
+  // .use(MagicLog)
 
 uppy.run()
 

@@ -38,6 +38,7 @@ export default class Core {
     this.getState = this.getState.bind(this)
     this.updateMeta = this.updateMeta.bind(this)
     this.initSocket = this.initSocket.bind(this)
+    this.log = this.log.bind(this)
 
     this.emitter = ee()
 

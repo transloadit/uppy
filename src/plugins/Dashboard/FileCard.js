@@ -1,4 +1,4 @@
-import html from 'yo-yo'
+import html from '../../core/html'
 import { iconText, iconFile, iconAudio, checkIcon } from './icons'
 
 function getIconByMime (fileTypeGeneral) {
@@ -28,7 +28,7 @@ export default function fileCard (props, bus) {
 
   function done () {
     bus.emit('core:update-meta', meta, file.id)
-    bus.emit('file-card-close')
+    bus.emit('dashboard:file-card')
   }
 
   function renderMetaFields (file) {
@@ -58,7 +58,8 @@ export default function fileCard (props, bus) {
             }
           </div>
           <div class="UppyDashboardFileCard-info">
-            <input class="UppyDashboardFileCard-input" name="name" type="text" value="${file.meta.name}" onkeyup=${tempStoreMeta} />
+            <input class="UppyDashboardFileCard-input" name="name" type="text" value="${file.meta.name}"
+                   onkeyup=${tempStoreMeta} />
             ${renderMetaFields(file)}
           </div>
         </div>`

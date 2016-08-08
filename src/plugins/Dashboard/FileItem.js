@@ -1,4 +1,4 @@
-import html from 'yo-yo'
+import html from '../../core/html'
 import Utils from '../../core/Utils'
 import FileItemProgress from './FileItemProgress'
 import { removeIcon, iconText, iconFile, iconAudio, iconEdit } from './icons'
@@ -72,7 +72,7 @@ export default function fileItem (file, bus) {
       </div>
       ${!uploadInProgressOrComplete
         ? html`<button class="UppyDashboardItem-edit"
-              onclick=${(e) => bus.emit('file-card-open', file.id)}>${iconEdit()}</button>`
+              onclick=${(e) => bus.emit('dashboard:file-card', file.id)}>${iconEdit()}</button>`
         : null
       }
     </div>

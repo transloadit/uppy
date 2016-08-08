@@ -1,19 +1,19 @@
 import Uppy from '../../../../src/core/Core.js'
 import Dummy from '../../../../src/plugins/Dummy'
 import Tus10 from '../../../../src/plugins/Tus10.js'
-import Modal from '../../../../src/plugins/Modal'
+import Dashboard from '../../../../src/plugins/Dashboard'
 import GoogleDrive from '../../../../src/plugins/GoogleDrive'
 import ProgressBar from '../../../../src/plugins/ProgressBar.js'
-// import Webcam from '../../../../src/plugins/Webcam.js'
+import Webcam from '../../../../src/plugins/Webcam.js'
 import MetaData from '../../../../src/plugins/MetaData.js'
 import { UPPY_SERVER } from '../env'
 
 const uppy = new Uppy({debug: true, autoProceed: false})
 uppy
-  .use(Modal, {trigger: '#uppyModalOpener'})
-  .use(GoogleDrive, {target: Modal, host: UPPY_SERVER})
-  // .use(Webcam, {target: Modal})
-  .use(Dummy, {target: Modal})
+  .use(Dashboard, {trigger: '#uppyModalOpener'})
+  .use(GoogleDrive, {target: Dashboard, host: UPPY_SERVER})
+  .use(Webcam, {target: Dashboard})
+  .use(Dummy, {target: Dashboard})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/'})
   .use(ProgressBar, {target: 'body'})
   .use(MetaData, {
