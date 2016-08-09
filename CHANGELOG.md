@@ -61,6 +61,7 @@ Theme: ?
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] dashboard: see if Dashboard can be optionally rendered inline instead of as a modal (@arturi)
 - [ ] dashboard: improve file paste (@arturi)
+- [ ] dashboard: show upload remaining time and speed, option to disable (@arturi)
 - [ ] metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 (@arturi)
 - [x] metadata: the aftermath — better UI (@arturi)
 - [ ] metadata: test that it works, discuss API and features (@arturi, @kvz)
