@@ -8,23 +8,6 @@ import mime from 'mime-types'
  */
 
 /**
- * Runs a waterfall of promises: calls each task, passing the result
- * from the previous one as an argument. The first task is run with an empty array.
- *
- * @memberof Utils
- * @param {array} methods of Promises to run waterfall on
- * @return {Promise} of the final task
- */
-// function promiseWaterfall (methods) {
-//   const [resolvedPromise, ...tasks] = methods
-//   const finalTaskPromise = tasks.reduce((prevTaskPromise, task) => {
-//     return prevTaskPromise.then(task)
-//   }, resolvedPromise([])) // initial value
-//
-//   return finalTaskPromise
-// }
-
-/**
  * Shallow flatten nested arrays.
  */
 function flatten (arr) {
@@ -70,6 +53,14 @@ function truncateString (str, length) {
 
   // more precise version if needed
   // http://stackoverflow.com/a/831583
+}
+
+function secondsToTime (rawSeconds) {
+  const hours = Math.floor(rawSeconds / 3600) % 24
+  const minutes = Math.floor(rawSeconds / 60) % 60
+  const seconds = Math.floor(rawSeconds % 60)
+
+  return { hours, minutes, seconds }
 }
 
 /**
@@ -222,8 +213,6 @@ function createImageThumbnail (imgURL) {
 }
 
 export default {
-  // promiseWaterfall,
-  // getFnName,
   generateFileID,
   toArray,
   every,
@@ -238,5 +227,6 @@ export default {
   isTouchDevice,
   getFileNameAndExtension,
   truncateString,
-  getFileType
+  getFileType,
+  secondsToTime
 }
