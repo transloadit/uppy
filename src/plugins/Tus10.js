@@ -52,7 +52,6 @@ export default class Tus10 extends Plugin {
  */
   upload (file, current, total) {
     this.core.log(`uploading ${current} of ${total}`)
-    console.log(file.meta)
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
@@ -97,9 +96,8 @@ export default class Tus10 extends Plugin {
         }
       })
 
-      window.upload = upload
-
       upload.start()
+      this.core.emitter.emit('core:file-upload-started', file.id)
     })
   }
 
@@ -184,7 +182,7 @@ export default class Tus10 extends Plugin {
     // filter files that are now yet being uploaded / haven’t been uploaded
     // and remote too
     const filesForUpload = Object.keys(files).filter((file) => {
-      if (files[file].progress === 0 || files[file].isRemote) {
+      if (files[file].progress.percentage === 0 || files[file].isRemote) {
         return true
       }
       return false

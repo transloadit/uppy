@@ -46,11 +46,12 @@ Ideas that will be planned and find their way into a release at one point
 
 To be released: August 26, 2016. Releasemaster: Harry
 
-Theme: ?
+Theme: Making Progress, Then Pause & Resume
 
 - [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` api, open modal... (@arturi, @hedgerh)
 - [ ] core: how would Uppy work without the UI, if one only wants dragdrop + select from local disk
 - [ ] core: figure out race conditions with `yo-yo`/`morphdom` when file uploads are in progress https://github.com/shama/bel/issues/26#issuecomment-238004130 (@arturi)
+- [x] core: switch to https://github.com/sethvincent/namespace-emitter — smaller, allows for `on('*')` (@arturi)
 - [ ] core: refactor to smaller components, as discussed in https://github.com/transloadit/uppy/issues/110 (@arturi, @hedgerh)
 - [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
 - [ ] dashboard: message when all uploads are done? informer interface (@arturi)
@@ -61,6 +62,7 @@ Theme: ?
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] dashboard: see if Dashboard can be optionally rendered inline instead of as a modal (@arturi)
 - [ ] dashboard: improve file paste (@arturi)
+- [ ] dashboard: show upload remaining time and speed, option to disable (@arturi)
 - [ ] metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 (@arturi)
 - [x] metadata: the aftermath — better UI (@arturi)
 - [ ] metadata: test that it works, discuss API and features (@arturi, @kvz)

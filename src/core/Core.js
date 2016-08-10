@@ -1,6 +1,5 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
-import prettyBytes from 'pretty-bytes'
 import ee from 'namespace-emitter'
 import deepFreeze from 'deep-freeze-strict'
 import UppySocket from './UppySocket'
@@ -125,9 +124,11 @@ export default class Core {
         specific: fileTypeSpecific
       },
       data: file.data,
-      progress: 0,
-      totalSize: file.data.size ? prettyBytes(file.data.size) : '?',
-      uploadedSize: 0,
+      progress: {
+        percentage: 0,
+        uploadStarted: false
+      },
+      size: file.data.size,
       isRemote: isRemote,
       remote: file.remote || ''
     }
@@ -184,27 +185,46 @@ export default class Core {
       this.setState({files: updatedFiles})
     })
 
-    this.emitter.on('upload-progress', (data) => {
-      let percentage = (data.bytesUploaded / data.bytesTotal * 100).toFixed(2)
-      percentage = Math.round(percentage)
-
+    this.emitter.on('core:file-upload-started', (fileID) => {
       const updatedFiles = Object.assign({}, this.getState().files)
-      const updatedFile = Object.assign({}, updatedFiles[data.id], {
-        progress: percentage,
-        uploadedSize: data.bytesUploaded ? prettyBytes(data.bytesUploaded) : '?'
-      })
-      updatedFiles[data.id] = updatedFile
+      const updatedFile = Object.assign({}, updatedFiles[fileID],
+        Object.assign({}, {
+          progress: Object.assign({}, updatedFiles[fileID].progress, {
+            uploadStarted: Date.now()
+          })
+        }
+      ))
+      updatedFiles[fileID] = updatedFile
 
-      const inProgress = Object.keys(updatedFiles).map((file) => {
-        return file.progress !== 0
+      this.setState({
+        files: updatedFiles
       })
+    })
+
+    this.emitter.on('upload-progress', (data) => {
+      const fileID = data.id
+      const updatedFiles = Object.assign({}, this.getState().files)
+
+      const updatedFile = Object.assign({}, updatedFiles[fileID],
+        Object.assign({}, {
+          progress: Object.assign({}, updatedFiles[fileID].progress, {
+            bytesUploaded: data.bytesUploaded,
+            bytesTotal: data.bytesTotal,
+            percentage: Math.round((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
+          })
+        }
+      ))
+      updatedFiles[data.id] = updatedFile
 
       // calculate total progress, using the number of files currently uploading,
       // multiplied by 100 and the summ of individual progress of each file
+      const inProgress = Object.keys(updatedFiles).map((file) => {
+        return file.progress !== 0
+      })
       const progressMax = Object.keys(inProgress).length * 100
       let progressAll = 0
       Object.keys(updatedFiles).forEach((file) => {
-        progressAll = progressAll + updatedFiles[file].progress
+        progressAll = progressAll + updatedFiles[file].progress.percentage
       })
 
       const totalProgress = progressAll * 100 / progressMax
@@ -323,6 +343,10 @@ export default class Core {
  */
   run () {
     this.log('Core is run, initializing actions, installing plugins...')
+
+    // setInterval(() => {
+    //   this.updateAll(this.state)
+    // }, 1000)
 
     this.actions()
 

@@ -217,22 +217,6 @@ export default class DashboardUI extends Plugin {
     })
   }
 
-  // handleInputChange (ev) {
-  //   this.core.log('All right, something selected through input...')
-  //
-  //   const files = Utils.toArray(ev.target.files)
-  //
-  //   files.forEach((file) => {
-  //     this.core.log(file)
-  //     this.core.emitter.emit('file-add', {
-  //       source: this.id,
-  //       name: file.name,
-  //       type: file.type,
-  //       data: file
-  //     })
-  //   })
-  // }
-
   render (state) {
     const bus = this.core.emitter
     return Dashboard({

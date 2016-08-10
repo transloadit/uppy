@@ -42,19 +42,12 @@ export default class Multipart extends Plugin {
 
       xhr.upload.addEventListener('progress', (ev) => {
         if (ev.lengthComputable) {
-          const bytesUploaded = ev.loaded
-          const bytesTotal = ev.total
-          let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
-          percentage = Math.round(percentage)
-
-          this.core.log(`File progress: ${percentage}`)
-
           // Dispatch progress event
           this.core.emitter.emit('upload-progress', {
             uploader: this,
             id: file.id,
-            bytesUploaded: bytesUploaded,
-            bytesTotal: bytesTotal
+            bytesUploaded: ev.loaded,
+            bytesTotal: ev.total
           })
         }
       })
@@ -77,8 +70,6 @@ export default class Multipart extends Plugin {
         // } else {
         //   upload = {file: files[current]}
         // }
-
-        // return resolve(upload)
       })
 
       xhr.addEventListener('error', (ev) => {
@@ -87,13 +78,14 @@ export default class Multipart extends Plugin {
 
       xhr.open('POST', this.opts.endpoint, true)
       xhr.send(formPost)
+      this.core.emitter.emit('core:file-upload-started', file.id)
     })
   }
 
   selectForUpload (files) {
     const filesForUpload = []
     Object.keys(files).forEach((file) => {
-      if (files[file].progress === 0) {
+      if (files[file].progress.percentage === 0) {
         filesForUpload.push(files[file])
       }
     })
@@ -105,20 +97,10 @@ export default class Multipart extends Plugin {
       uploaders.push(this.upload(file, current, total))
     })
 
-    Promise.all(uploaders).then((result) => {
+    return Promise.all(uploaders).then((result) => {
       this.core.log('Multipart has finished uploading!')
     })
 
-    //   console.log({
-    //     class: 'Multipart',
-    //     method: 'run',
-    //     results: results
-    //   })
-    //
-    //   const files = results
-    //
-    //   var uploaders = []
-    //
     //   if (this.opts.bundle) {
     //     uploaders.push(this.upload(files, 0, files.length))
     //   } else {
@@ -126,8 +108,6 @@ export default class Multipart extends Plugin {
     //       uploaders.push(this.upload(files, i, files.length))
     //     }
     //   }
-    //
-    //   return Promise.all(uploaders)
   }
 
   install () {

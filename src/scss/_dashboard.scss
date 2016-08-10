@@ -48,14 +48,11 @@
 }
 
 .UppyDashboard-close {
+  @include reset-button;
   position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 0;
-  border: 0;
+  top: 28px;
+  right: 28px;
   cursor: pointer;
-  background-color: transparent;
-  -webkit-appearance: none;
   color: lighten($color-asphalt-gray, 20%);
   z-index: $zIndex-3;
   transition: all 0.2s;
@@ -333,7 +330,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba($color-black, 0.2);
+    background-color: rgba($color-black, 0.3);
     display: none;
   }
 
@@ -425,21 +422,41 @@
     opacity: 1;
   }
 
-.UppyDashboardItem-progress {}
+.UppyDashboardItem-progress {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: $zIndex-2;
+  color: $color-white;
+  text-align: center;
+  width: 120px;
+}
 
 .UppyDashboardItem-progressBtn {
   @include reset-button;
   width: 60px;
   height: 60px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-left: -30px;
-  margin-top: -30px;
   opacity: 0.9;
   cursor: pointer;
-  z-index: $zIndex-2;
 }
+
+.UppyDashboardItem-progressInfo {
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 500;
+  height: 10px;
+  display: none;
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  text-shadow: 0 1px 0 rgba($color-black, 0.3);
+}
+
+  .UppyDashboardItem.is-inprogress .UppyDashboardItem-progressInfo {
+    display: block;
+  }
 
 .UppyIcon-progressCircle {
   width: 100%;
@@ -531,9 +548,9 @@
 
 .UppyButton--circular {
   @include reset-button;
-  width: 65px;
-  height: 65px;
-  box-shadow: 1px 2px 4px 0px rgba($color-black, 0.3);
+  width: 60px;
+  height: 60px;
+  box-shadow: 1px 2px 4px 0px rgba($color-black, 0.2);
   border-radius: 50%;
   color: $color-white;
   background-color: $color-cornflower-blue;
@@ -561,8 +578,8 @@
 
 .UppyDashboard-uploadCount {
   position: absolute;
-  top: -10px;
-  right: -8px;
+  top: -12px;
+  right: -12px;
   background-color: $color-green;
   color: $color-white;
   border-radius: 50%;

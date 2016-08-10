@@ -19,7 +19,7 @@ uppy
   .use(MetaData, {
     fields: [
       { name: 'resizeTo', value: 1200, placeholder: 'specify future image size' },
-      { name: 'description', value: '', placeholder: 'describe what the file is for' }
+      { name: 'description', value: 'something', placeholder: 'describe what the file is for' }
     ]
   })
   .run()

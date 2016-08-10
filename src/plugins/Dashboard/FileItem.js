@@ -1,5 +1,6 @@
 import html from '../../core/html'
 import Utils from '../../core/Utils'
+import prettyBytes from 'pretty-bytes'
 import FileItemProgress from './FileItemProgress'
 import { removeIcon, iconText, iconFile, iconAudio, iconEdit } from './icons'
 
@@ -14,10 +15,36 @@ function getIconByMime (fileTypeGeneral) {
   }
 }
 
+function getETA (fileProgress) {
+  if (!fileProgress.bytesUploaded) return 0
+
+  const uploadSpeed = getSpeed(fileProgress)
+  const bytesRemaining = fileProgress.bytesTotal - fileProgress.bytesUploaded
+  const secondsRemaining = Math.round(bytesRemaining / uploadSpeed * 10) / 10
+
+  const time = Utils.secondsToTime(secondsRemaining)
+
+  // Only display hours and minutes if they are greater than 0 but always
+  // display minutes if hours is being displayed
+  const hoursStr = time.hours ? time.hours + 'h' : ''
+  const minutesStr = (time.hours || time.minutes) ? time.minutes + 'm' : ''
+  const secondsStr = time.seconds + 's'
+
+  return `${hoursStr} ${minutesStr} ${secondsStr}`
+}
+
+function getSpeed (fileProgress) {
+  if (!fileProgress.bytesUploaded) return 0
+
+  const timeElapsed = (new Date()) - fileProgress.uploadStarted
+  const uploadSpeed = fileProgress.bytesUploaded / (timeElapsed / 1000)
+  return uploadSpeed
+}
+
 export default function fileItem (file, bus) {
-  const isUploaded = file.progress === 100
-  const uploadInProgressOrComplete = file.progress > 0
-  const uploadInProgress = file.progress > 0 && file.progress < 100
+  const isUploaded = file.progress.percentage === 100
+  const uploadInProgressOrComplete = file.progress.percentage > 0
+  const uploadInProgress = file.progress.percentage > 0 && file.progress.percentage < 100
   const isPaused = file.isPaused || false
 
   const fileName = Utils.getFileNameAndExtension(file.meta.name)[0]
@@ -36,10 +63,6 @@ export default function fileItem (file, bus) {
     bus.emit('file-remove', file.id)
   }
 
-  // <h5 class="UppyDashboardItem-previewType">${file.extension ? '.' + file.extension : '?'}</h5>
-  // <div class="UppyDashboardItem-progressNum">${file.progress}%</div>
-  // <div class="UppyDashboardItem-progressInner" style="width: ${file.progress}%"></div>
-
   return html`<li class="UppyDashboardItem ${uploadInProgress ? 'is-inprogress' : ''} ${isUploaded ? 'is-complete' : ''} ${isPaused ? 'is-paused' : ''}"
                   id="uppy_${file.id}"
                   title="${file.meta.name}">
@@ -50,14 +73,14 @@ export default function fileItem (file, bus) {
         }
         <div class="UppyDashboardItem-progress">
           <button class="UppyDashboardItem-progressBtn" onclick=${(e) => {
-            if (file.progress === 100) return
+            if (file.progress.percentage === 100) return
             bus.emit('core:upload-pause', file.id)
           }}>
-            ${FileItemProgress({
-              progress: file.progress,
-              fileID: file.id
-            }, bus)}
+            ${FileItemProgress({progress: file.progress.percentage, fileID: file.id}, bus)}
           </button>
+          <div class="UppyDashboardItem-progressInfo">
+            ${getETA(file.progress)} ・ ↑ ${prettyBytes(getSpeed(file.progress))} / s
+          </div>
         </div>
       </div>
     <div class="UppyDashboardItem-info">
@@ -68,7 +91,7 @@ export default function fileItem (file, bus) {
         }
       </h4>
       <div class="UppyDashboardItem-status">
-        <span class="UppyDashboardItem-statusSize">${file.totalSize}</span>
+        <span class="UppyDashboardItem-statusSize">${file.data.size ? prettyBytes(file.data.size) : '?'}</span>
       </div>
       ${!uploadInProgressOrComplete
         ? html`<button class="UppyDashboardItem-edit"

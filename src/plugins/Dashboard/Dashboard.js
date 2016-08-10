@@ -56,7 +56,7 @@ export default function Dashboard (props, bus) {
   }
 
   const selectedFiles = Object.keys(files).filter((file) => {
-    return files[file].progress === 0
+    return files[file].progress.percentage === 0
     // return files[file].progress !== 100
   })
   const totalFileCount = Object.keys(files).length
