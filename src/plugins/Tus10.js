@@ -133,22 +133,23 @@ export default class Tus10 extends Plugin {
           })
 
           socket.on('progress', (progressData) => {
-            if (progressData.complete) {
-              this.core.log(`Remote upload of '${file.name}' successful`)
-              this.core.emitter.emit('upload-success', file)
-              return resolve('Success')
-            }
+            const {progress, bytesUploaded, bytesTotal} = progressData
 
-            if (progressData.progress) {
-              this.core.log(`Upload progress: ${progressData.progress}`)
+            if (progress) {
+              this.core.log(`Upload progress: ${progress}`)
 
               // Dispatch progress event
               this.core.emitter.emit('upload-progress', {
                 uploader: this,
                 id: file.id,
-                bytesUploaded: progressData.bytesUploaded,
-                bytesTotal: progressData.bytesTotal
+                bytesUploaded: bytesUploaded,
+                bytesTotal: bytesTotal
               })
+
+              if (progress === '100.00') {
+                socket.close()
+                return resolve()
+              }
             }
           })
         })

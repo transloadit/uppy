@@ -25,10 +25,15 @@ export default class UppySocket {
 
     this.socket.onmessage = this._handleMessage
 
+    this.close = this.close.bind(this)
     this.emit = this.emit.bind(this)
     this.on = this.on.bind(this)
     this.once = this.once.bind(this)
     this.send = this.send.bind(this)
+  }
+
+  close () {
+    return this.socket.close()
   }
 
   send (action, payload) {
