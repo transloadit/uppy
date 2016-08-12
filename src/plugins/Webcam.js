@@ -1,5 +1,5 @@
 import Plugin from './Plugin'
-import yo from 'yo-yo'
+import html from '../core/html'
 
 /**
  * Webcam
@@ -10,7 +10,7 @@ export default class Webcam extends Plugin {
     this.type = 'acquirer'
     this.id = 'Webcam'
     this.title = 'Webcam'
-    this.icon = yo`
+    this.icon = html`
       <svg class="UppyIcon UppyModalTab-icon" width="22" height="28" viewBox="0 0 80 100">
         <path d="M50 19.7c1.819 0 3.3-1.48 3.3-3.3s-1.48-3.3-3.3-3.3-3.3 1.48-3.3 3.3 1.481 3.3 3.3 3.3zM50 53.3c7.995 0 14.5-6.504 14.5-14.499s-6.505-14.5-14.5-14.5-14.5 6.505-14.5 14.5S42.005 53.3 50 53.3zm0-25.199c5.9 0 10.699 4.8 10.699 10.7S55.9 49.501 50 49.501c-5.9 0-10.7-4.8-10.7-10.7s4.8-10.7 10.7-10.7z"/>
         <path d="M50 4.7c-18.803 0-34.1 15.298-34.1 34.101 0 9.002 3.479 17.469 9.8 23.865V86.4c0 4.907 3.993 8.899 8.9 8.899h30.8c4.906 0 8.899-3.992 8.899-8.899V62.666c6.321-6.396 9.8-14.863 9.8-23.865C84.1 19.998 68.803 4.7 50 4.7zm0 3.8c16.707 0 30.3 13.593 30.3 30.301 0 16.707-13.593 30.3-30.3 30.3-16.708 0-30.3-13.593-30.3-30.3C19.7 22.093 33.292 8.5 50 8.5zm15.4 83.001H34.6c-2.812 0-5.1-2.288-5.1-5.101V66.058c.99.796 2.062 1.52 3.2 2.158V88.3h34.6V68.202c1.062-.649 2.135-1.386 3.2-2.197V86.4c0 2.813-2.288 5.101-5.1 5.101zm-1.9-7h-27V70.233C40.566 72.004 45.104 72.9 50 72.9c4.773 0 9.311-.899 13.5-2.676v14.277z"/>
@@ -228,7 +228,7 @@ export default class Webcam extends Plugin {
   }
 
   renderMenu (state) {
-    return yo`
+    return html`
       <div>
         <button>Video</button>
         <button>Screenshot</button>
@@ -237,7 +237,7 @@ export default class Webcam extends Plugin {
   }
 
   renderPlayer (state) {
-    return yo`
+    return html`
       <div>
         <video class='UppyWebcam-video' autoplay></video>
         <canvas class='UppyWebcam-canvas'></canvas>
@@ -262,7 +262,7 @@ export default class Webcam extends Plugin {
 
   renderRecordButton (state) {
     if (!state.recording) {
-      return yo`
+      return html`
         <button
           class='UppyWebcam-recordBtn'
           onclick=${this.startRecording}
@@ -272,7 +272,7 @@ export default class Webcam extends Plugin {
       `
     }
 
-    return yo`
+    return html`
       <button
         class='UppyWebcam-stopRecordBtn'
         onclick=${this.stopRecording}

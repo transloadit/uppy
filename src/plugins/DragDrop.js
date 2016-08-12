@@ -1,7 +1,7 @@
 import Plugin from './Plugin'
 import Utils from '../core/Utils'
 import dragDrop from 'drag-drop'
-import yo from 'yo-yo'
+import html from '../core/html'
 
 /**
  * Drag & Drop plugin
@@ -13,7 +13,7 @@ export default class DragDrop extends Plugin {
     this.type = 'acquirer'
     this.id = 'DragDrop'
     this.title = 'Drag & Drop'
-    this.icon = yo`
+    this.icon = html`
       <svg class="UppyIcon" width="28" height="28" viewBox="0 0 16 16">
         <path d="M15.982 2.97c0-.02 0-.02-.018-.037 0-.017-.017-.035-.035-.053 0 0 0-.018-.02-.018-.017-.018-.034-.053-.052-.07L13.19.123c-.017-.017-.034-.035-.07-.053h-.018c-.018-.017-.035-.017-.053-.034h-.02c-.017 0-.034-.018-.052-.018h-6.31a.415.415 0 0 0-.446.426V11.11c0 .25.196.446.445.446h8.89A.44.44 0 0 0 16 11.11V3.023c-.018-.018-.018-.035-.018-.053zm-2.65-1.46l1.157 1.157h-1.157V1.51zm1.78 9.157h-8V.89h5.332v2.22c0 .25.196.446.445.446h2.22v7.11z"/>
         <path d="M9.778 12.89H4V2.666a.44.44 0 0 0-.444-.445.44.44 0 0 0-.445.445v10.666c0 .25.197.445.446.445h6.222a.44.44 0 0 0 .444-.445.44.44 0 0 0-.444-.444z"/>
@@ -124,7 +124,7 @@ export default class DragDrop extends Plugin {
       ev.preventDefault()
     }
 
-    return yo`
+    return html`
       <div class="UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
         <form class="UppyDragDrop-inner"
               onsubmit=${onSubmit}>
@@ -139,7 +139,7 @@ export default class DragDrop extends Plugin {
             <span class="UppyDragDrop-dragText">${this.core.i18n('orDragDrop')}</span>
           </label>
           ${!this.core.opts.autoProceed && target !== 'Modal'
-            ? yo`<button class="UppyDragDrop-uploadBtn UppyNextBtn"
+            ? html`<button class="UppyDragDrop-uploadBtn UppyNextBtn"
                          type="submit"
                          onclick=${next}>
                     ${this.core.i18n('upload')}

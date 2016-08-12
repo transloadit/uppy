@@ -1,4 +1,4 @@
-import yo from 'yo-yo'
+import html from '../../core/html'
 import Breadcrumbs from './Breadcrumbs'
 import Sidebar from './Sidebar'
 import Table from './Table'
@@ -12,7 +12,7 @@ export default (props, bus) => {
     filteredFiles = props.filterItems(props.files)
   }
 
-  return yo`
+  return html`
     <div>
       <div class="UppyGoogleDrive-header">
         <ul class="UppyGoogleDrive-breadcrumbs">

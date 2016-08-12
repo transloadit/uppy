@@ -1,7 +1,7 @@
-import yo from 'yo-yo'
+import html from '../../core/html'
 
 export default (props) => {
-  return yo`
+  return html`
     <div>
       <span>
         Something went wrong.  Probably our fault. ${props.error}

@@ -1,5 +1,5 @@
 import Plugin from './Plugin'
-import yo from 'yo-yo'
+import html from '../core/html'
 
 /**
  * Dummy
@@ -18,14 +18,14 @@ export default class Dummy extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.strange = yo`<h1>this is strange 1</h1>`
+    this.strange = html`<h1>this is strange 1</h1>`
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
 
   render () {
-    const bla = yo`<h2>this is strange 2</h2>`
-    return yo`
+    const bla = html`<h2>this is strange 2</h2>`
+    return html`
       <div class="wow-this-works">
         <input class="UppyDummy-firstInput" type="text" value="hello">
         ${this.strange}

@@ -1,7 +1,7 @@
-import yo from 'yo-yo'
+import html from '../../core/html'
 
 export default (props) => {
-  return yo`
+  return html`
     <li>
       <button onclick=${props.getNextFolder}>${props.title}</button>
     </li>

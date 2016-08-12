@@ -1,7 +1,7 @@
-import yo from 'yo-yo'
+import html from '../../core/html'
 
 export default (props) => {
-  return yo`
+  return html`
     <tr class=${props.active ? 'is-active' : ''}
       onclick=${props.handleClick}
       ondblclick=${props.handleDoubleClick}>

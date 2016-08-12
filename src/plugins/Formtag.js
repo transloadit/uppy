@@ -1,6 +1,6 @@
 import Plugin from './Plugin'
 import Utils from '../core/Utils'
-import yo from 'yo-yo'
+import html from '../core/html'
 
 export default class Formtag extends Plugin {
   constructor (core, opts) {
@@ -49,7 +49,7 @@ export default class Formtag extends Plugin {
       this.core.emitter.emit('core:upload')
     }
 
-    return yo`<form class="UppyFormContainer">
+    return html`<form class="UppyFormContainer">
       <input class="UppyForm-input"
              type="file"
              name="files[]"
@@ -57,7 +57,7 @@ export default class Formtag extends Plugin {
              multiple="${this.opts.multipleFiles ? 'true' : 'false'}"
              value="">
       ${!this.core.opts.autoProceed && this.opts.target.name !== 'Modal'
-        ? yo`<button class="UppyForm-uploadBtn UppyNextBtn"
+        ? html`<button class="UppyForm-uploadBtn UppyNextBtn"
                      type="submit"
                      onclick=${upload}>
               ${this.core.i18n('upload')}

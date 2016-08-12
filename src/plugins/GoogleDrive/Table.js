@@ -1,8 +1,8 @@
-import yo from 'yo-yo'
+import html from '../../core/html'
 import TableRow from './TableRow'
 
 export default (props) => {
-  return yo`
+  return html`
     <table class="UppyGoogleDrive-browser">
       <thead>
         <tr>
