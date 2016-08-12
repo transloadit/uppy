@@ -335,6 +335,14 @@ export default class Core {
     global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
   }
 
+  installAll () {
+    Object.keys(this.plugins).forEach((pluginType) => {
+      this.plugins[pluginType].forEach((plugin) => {
+        plugin.install()
+      })
+    })
+  }
+
 /**
  * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
  *
@@ -356,11 +364,7 @@ export default class Core {
     }
 
     // Install all plugins
-    Object.keys(this.plugins).forEach((pluginType) => {
-      this.plugins[pluginType].forEach((plugin) => {
-        plugin.install()
-      })
-    })
+    this.installAll()
 
     return
   }

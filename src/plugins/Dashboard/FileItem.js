@@ -48,7 +48,7 @@ export default function fileItem (file, bus) {
   const isPaused = file.isPaused || false
 
   const fileName = Utils.getFileNameAndExtension(file.meta.name)[0]
-  const truncatedFileName = Utils.truncateString(fileName, 20)
+  const truncatedFileName = Utils.truncateString(fileName, 15)
 
   function remove (ev) {
     // const el = document.querySelector(`#uppy_${file.id}`)
