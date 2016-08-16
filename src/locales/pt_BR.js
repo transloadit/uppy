@@ -36,4 +36,4 @@ if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.pt_BR = pt_BR
 }
 
-module.exports = pt_BR
+export default pt_BR

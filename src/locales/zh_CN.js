@@ -29,4 +29,4 @@ if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.zh_CN = zh_CN
 }
 
-module.exports = zh_CN
+export default zh_CN
