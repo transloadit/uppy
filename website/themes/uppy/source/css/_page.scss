@@ -1,3 +1,7 @@
+.post {
+  margin-bottom: 5em;
+}
+
 /**
 * Sidebar
 */
@@ -122,6 +126,10 @@
     }
 
     ul, p { margin: .6em 0; }
+  }
+
+  img.border {
+    border: 1px solid rgba($color-gray, 0.3);
   }
 
   a.button {
