@@ -107,6 +107,7 @@
   padding: 2.2em 0;
   max-width: 600px;
   margin: 0 auto;
+  font-size: 18px;
 
   @media #{$screen-medium} {
     &.with-sidebar {
@@ -146,11 +147,12 @@
     margin-left: 20px;
   }
 
-  h1 { margin: 0 0 1em; }
+  h1 { margin: 0 0 0.7em; }
 
   h2 {
-    margin: 2em 0 .8em;
-    padding-bottom: .7em;
+    font-size: 1.3em;
+    margin: 2em 0 .4em 0;
+    padding-bottom: .2em;
     position: relative;
     // border-bottom: 1px solid $color-border;
 
@@ -179,12 +181,25 @@
     }
   }
 
-  figure, p, ul, ol {
+  h4 {
+    font-size: 0.8em;
+  }
+
+  figure, ul, ol {
     margin: 1.2em 0;
   }
 
+  p {
+    margin-top: 0;
+    margin-bottom: 0.8em;
+  }
+
+  li {
+    margin-bottom: 0.5em;
+  }
+
   p, ul, ol {
-    line-height: 1.6em;
+    line-height: 1.5em;
   }
 
   ul, ol {

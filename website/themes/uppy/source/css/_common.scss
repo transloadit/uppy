@@ -80,7 +80,7 @@ a.button {
   position: relative;
   padding: 0;
   background-color: $color-codebg;
-  padding: .8em .8em .4em;
+  padding: .6em .6em .3em;
   line-height: 1.1em;
   border-radius: $size-radius;
 
@@ -102,8 +102,12 @@ a.button {
 
   .gutter { width: 1.5em; }
 
+  .code {
+    font-size: 0.85em;
+  }
+
   .code pre {
-    padding: 1.2em 1.4em;
+    padding: 0.4em 0.2em;
     line-height: 1.5em;
     margin: 0;
   }
