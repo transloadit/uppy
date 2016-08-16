@@ -17,7 +17,8 @@ export default class DashboardUI extends Plugin {
     const defaultOptions = {
       target: 'body',
       defaultTabIcon: defaultTabIcon(),
-      panelSelectorPrefix: 'UppyDashboardContent-panel'
+      panelSelectorPrefix: 'UppyDashboardContent-panel',
+      showProgressDetails: true
     }
 
     // merge default options with the ones set by user
@@ -225,6 +226,7 @@ export default class DashboardUI extends Plugin {
       container: this.opts.target,
       hideModal: this.hideModal,
       panelSelectorPrefix: this.opts.panelSelectorPrefix,
+      showProgressDetails: this.opts.showProgressDetails,
       handleInputChange: this.handleInputChange,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
