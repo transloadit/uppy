@@ -44,6 +44,11 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.10.0
 
+- [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` api, open modal... (@arturi, @hedgerh)
+- [ ] core: how would Uppy work without the UI, if one only wants dragdrop + select from local disk
+- [ ] core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@arturi, @hedgerh)
+- [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
+- [ ] dashboard: see if Dashboard can be optionally rendered inline instead of as a modal (@arturi)
 - [ ] metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 (@arturi)
 
 ## 0.9.0
@@ -52,32 +57,31 @@ To be released: August 26, 2016. Releasemaster: Harry
 
 Theme: Making Progress, Then Pause & Resume
 
-- [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` api, open modal... (@arturi, @hedgerh)
-- [ ] core: how would Uppy work without the UI, if one only wants dragdrop + select from local disk
-- [x] core: figure out race conditions (animations not completing because file div gets re-added to the dom each time) with `yo-yo`/`morphdom` https://github.com/shama/bel/issues/26#issuecomment-238004130 (@arturi)
-- [x] core: try switching to `virtual-dom` (@arturi)
-- [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
-- [x] core: switch to https://github.com/sethvincent/namespace-emitter — smaller, allows for `on('*')` (@arturi)
-- [ ] core: refactor, as discussed in https://github.com/transloadit/uppy/issues/110 (@arturi, @hedgerh)
-- [x] dashboard: refactor to smaller components, as discussed in #110 (@arturi)
-- [x] google drive: refactor to smaller components, as discussed in #110 (@hedgerh)
-- [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
 - [ ] dashboard: add aria-labels and titles everywhere to improve accessibility #114 (@arturi)
-- [ ] dashboard: message when all uploads are done? informer interface (@arturi)
+- [ ] dashboard: global circular progress bar (@arturi)
+- [ ] dashboard: improve file paste (@arturi)
+- [ ] dashboard: informer interface: message when all uploads are "done" (@arturi)
 - [ ] dashboard: results of the upload — green checkmark, better links to uploaded files, copy link button? (http://i.imgur.com/b1Io34n.png) (@arturi)
+- [ ] dashboard: show progress bar/speed/eta for all files ? (@arturi)
+- [ ] meta: reach out to choo author (@arturi)
+- [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
+- [ ] meta: write 0.8 release blog post (@arturi)
+- [ ] meta: write 0.9 release blog post (@hedgerh)
+- [ ] metadata: test that it works, discuss API and features (@arturi, @kvz)
+- [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
+- [ ] webcam: a barely working webcam record & upload (@hedgerh)
+- [x] core: figure out race conditions (animations not completing because file div gets re-added to the dom each time) with `yo-yo`/`morphdom` https://github.com/shama/bel/issues/26#issuecomment-238004130 (@arturi)
+- [x] core: switch to https://github.com/sethvincent/namespace-emitter — smaller, allows for `on('*')` (@arturi)
+- [x] core: try switching to `virtual-dom` (@arturi)
 - [x] dashboard: file name + extension should fit on two lines, truncate in the middle (maybe https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText) (@arturi)
 - [x] dashboard: implement a circular progress indicator on top of the fileItem with play/pause (@arturi)
-- [x] tus: add ability to pause/resume upload (@arturi)
-- [x] tus: add ability to pause/resume all uploads at once (@arturi)
-- [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
-- [ ] dashboard: see if Dashboard can be optionally rendered inline instead of as a modal (@arturi)
-- [ ] dashboard: improve file paste (@arturi)
+- [x] dashboard: refactor to smaller components, as discussed in #110 (@arturi)
 - [x] dashboard: show upload remaining time and speed, option to disable (@arturi)
-- [ ] dashboard: show progress bar/speed/eta for all files ? (@arturi)
-- [x] metadata: the aftermath — better UI (@arturi)
+- [x] google drive: refactor to smaller components, as discussed in #110 (@hedgerh)
 - [x] metadata: add labels to fields in fileCard (@arturi)
-- [ ] metadata: test that it works, discuss API and features (@arturi, @kvz)
-- [ ] meta: write 0.8 release blog post (@arturi)
+- [x] metadata: the aftermath — better UI (@arturi)
+- [x] tus: add ability to pause/resume all uploads at once (@arturi)
+- [x] tus: add ability to pause/resume upload (@arturi)
 
 ## 0.8.0
 
