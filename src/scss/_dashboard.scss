@@ -65,23 +65,23 @@
 .UppyDashboardTabs {
   height: 22%;
   min-height: 100px;
-  padding: 15px 0;
+  padding: 10px 0;
   margin: 0 30px 10px 30px;
   border-bottom: 1px solid lighten($color-gray, 30%);
 }
 
 .UppyDashboardTabs-title {
   width: 100%;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.6;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: 500;
+  // text-transform: uppercase;
+  // letter-spacing: 2px;
+  font-weight: 400;
   text-align: center;
   margin: 0;
   padding: 0;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   color: $color-asphalt-gray;
 }
 
@@ -431,7 +431,13 @@
   color: $color-white;
   text-align: center;
   width: 120px;
+  display: none;
 }
+
+  .UppyDashboardItem.is-inprogress .UppyDashboardItem-progress,
+  .UppyDashboardItem.is-complete .UppyDashboardItem-progress {
+    display: block;
+  }
 
 .UppyDashboardItem-progressBtn {
   @include reset-button;
@@ -446,7 +452,7 @@
   line-height: 1;
   font-weight: 500;
   height: 10px;
-  display: none;
+  // display: none;
   position: absolute;
   bottom: -10px;
   left: 0;
@@ -454,17 +460,13 @@
   text-shadow: 0 1px 0 rgba($color-black, 0.3);
 }
 
-  .UppyDashboardItem.is-inprogress .UppyDashboardItem-progressInfo {
-    display: block;
-  }
-
 .UppyIcon-progressCircle {
   width: 100%;
   height: 100%;
 }
 
 .UppyIcon-progressCircle .bg {
-  stroke: $color-asphalt-gray;
+  stroke: rgba($color-white, 0.4);
   opacity: 0;
   transition: all 0.2s;
 }
@@ -548,13 +550,15 @@
 
 .UppyButton--circular {
   @include reset-button;
-  width: 60px;
-  height: 60px;
   box-shadow: 1px 2px 4px 0px rgba($color-black, 0.2);
   border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.UppyButton--blue {
   color: $color-white;
   background-color: $color-cornflower-blue;
-  cursor: pointer;
 
   &:hover,
   &:focus {
@@ -562,12 +566,55 @@
   }
 }
 
-.UppyDashboard-upload {
-  position: absolute;
-  bottom: 35px;
-  right: 25px;
-  transition: all 0.3s;
+.UppyButton--yellow {
   color: $color-white;
+  background-color: $color-yellow;
+
+  &:hover,
+  &:focus {
+    background-color: darken($color-yellow, 10%);
+  }
+}
+
+.UppyButton--green {
+  color: $color-white;
+  background-color: $color-green;
+
+  &:hover,
+  &:focus {
+    background-color: darken($color-green, 10%);
+  }
+}
+
+.UppyButton--sizeM {
+  width: 60px;
+  height: 60px;
+}
+
+.UppyButton--sizeS {
+  width: 45px;
+  height: 45px;
+}
+
+.UppyDashboard-actions {
+  width: 60px;
+  text-align: center;
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
+}
+
+.UppyDashboard-actions button {
+  margin-bottom: 15px;
+}
+
+.UppyDashboard-pauseResume .UppyIcon {
+  width: 100%;
+  height: 100%;
+}
+
+.UppyDashboard-upload {
+  position: relative;
 }
 
 .UppyDashboard-upload .UppyIcon {
@@ -636,18 +683,36 @@
   padding: 30px 20px 20px 20px;
 }
 
+.UppyDashboardFileCard-fieldset {
+  font-size: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 15px;
+  max-width: 450px;
+  margin: auto;
+  margin-bottom: 15px;
+}
+
+.UppyDashboardFileCard-label {
+  display: inline-block;
+  vertical-align: middle;
+  width: 25%;
+  font-size: 13px;
+  color: $color-asphalt-gray;
+}
+
 .UppyDashboardFileCard-input {
-  display: block;
+  display: inline-block;
+  vertical-align: middle;
+  width: 75%;
   border: 0;
   border-bottom: 1px solid rgba($color-asphalt-gray, 0.3);
   outline: none;
   font-size: 15px;
   line-height: 1.8;
   padding-left: 5px;
-  width: 100%;
-  max-width: 300px;
   margin: auto;
-  margin-bottom: 15px;
 }
 
 .UppyDashboardFileCard-input:focus {
