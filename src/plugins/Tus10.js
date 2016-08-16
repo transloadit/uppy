@@ -15,32 +15,68 @@ export default class Tus10 extends Plugin {
 
     // set default options
     const defaultOptions = {
-      resume: true
+      resume: true,
+      allowPause: true
     }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
   }
 
-  pauseUpload (fileID) {
+  pauseResume (action, fileID) {
     const updatedFiles = Object.assign({}, this.core.getState().files)
-    const wasPaused = updatedFiles[fileID].isPaused || false
-    const isPaused = !wasPaused
-    let updatedFile
-    if (wasPaused) {
-      updatedFile = Object.assign({}, updatedFiles[fileID], {
-        isPaused: false
-      })
-    } else {
-      updatedFile = Object.assign({}, updatedFiles[fileID], {
-        isPaused: true
-      })
-    }
-    updatedFiles[fileID] = updatedFile
-    this.core.setState({files: updatedFiles})
+    const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
+      return !updatedFiles[file].progress.uploadComplete &&
+             updatedFiles[file].progress.uploadStarted
+    })
 
-    return isPaused
+    switch (action) {
+      case 'toggle':
+        const wasPaused = updatedFiles[fileID].isPaused || false
+        const isPaused = !wasPaused
+        let updatedFile
+        if (wasPaused) {
+          updatedFile = Object.assign({}, updatedFiles[fileID], {
+            isPaused: false
+          })
+        } else {
+          updatedFile = Object.assign({}, updatedFiles[fileID], {
+            isPaused: true
+          })
+        }
+        updatedFiles[fileID] = updatedFile
+        this.core.setState({files: updatedFiles})
+        return isPaused
+      case 'pauseAll':
+        inProgressUpdatedFiles.forEach((file) => {
+          const updatedFile = Object.assign({}, updatedFiles[file], {
+            isPaused: true
+          })
+          updatedFiles[file] = updatedFile
+        })
+        this.core.setState({files: updatedFiles})
+        return
+      case 'resumeAll':
+        inProgressUpdatedFiles.forEach((file) => {
+          const updatedFile = Object.assign({}, updatedFiles[file], {
+            isPaused: false
+          })
+          updatedFiles[file] = updatedFile
+        })
+        this.core.setState({files: updatedFiles})
+        return
+    }
   }
+
+  // pauseResumeAll (action) {
+  //   let updatedFiles = Object.assign({}, this.core.getState().files)
+  //   updatedFiles = Object.keys(updatedFiles).map((file) => {
+  //     return Object.assign({}, updatedFiles[file], {
+  //       isPaused: action
+  //     })
+  //   })
+  //   this.core.setState({files: updatedFiles})
+  // }
 
 /**
  * Create a new Tus upload
@@ -85,19 +121,33 @@ export default class Tus10 extends Plugin {
 
       this.core.emitter.on('file-remove', (fileID) => {
         if (fileID === file.id) {
+          console.log('removing file: ', fileID)
           upload.abort()
+          resolve(`upload ${fileID} was removed`)
         }
       })
 
       this.core.emitter.on('core:upload-pause', (fileID) => {
         if (fileID === file.id) {
-          const isPaused = this.pauseUpload(fileID)
+          const isPaused = this.pauseResume('toggle', fileID)
           isPaused ? upload.abort() : upload.start()
         }
       })
 
+      this.core.emitter.on('core:pause-all', () => {
+        const files = this.core.getState().files
+        if (!files[file.id]) return
+        upload.abort()
+      })
+
+      this.core.emitter.on('core:resume-all', () => {
+        const files = this.core.getState().files
+        if (!files[file.id]) return
+        upload.start()
+      })
+
       upload.start()
-      this.core.emitter.emit('core:file-upload-started', file.id)
+      this.core.emitter.emit('core:file-upload-started', file.id, upload)
     })
   }
 
@@ -194,7 +244,19 @@ export default class Tus10 extends Plugin {
     this.uploadFiles(filesForUpload)
   }
 
+  actions () {
+    this.core.emitter.on('core:pause-all', () => {
+      this.pauseResume('pauseAll')
+    })
+
+    this.core.emitter.on('core:resume-all', () => {
+      this.pauseResume('resumeAll')
+    })
+  }
+
   install () {
+    this.actions()
+
     const bus = this.core.emitter
     bus.on('core:upload', () => {
       this.core.log('Tus is uploading...')

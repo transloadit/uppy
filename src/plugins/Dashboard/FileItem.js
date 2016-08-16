@@ -41,10 +41,13 @@ function getSpeed (fileProgress) {
   return uploadSpeed
 }
 
-export default function fileItem (file, bus) {
-  const isUploaded = file.progress.percentage === 100
-  const uploadInProgressOrComplete = file.progress.percentage > 0
-  const uploadInProgress = file.progress.percentage > 0 && file.progress.percentage < 100
+export default function fileItem (props, bus) {
+  const file = props.file
+  const showProgressDetails = props.showProgressDetails
+
+  const isUploaded = file.progress.uploadComplete
+  const uploadInProgressOrComplete = file.progress.uploadStarted
+  const uploadInProgress = file.progress.uploadStarted && !file.progress.uploadComplete
   const isPaused = file.isPaused || false
 
   const fileName = Utils.getFileNameAndExtension(file.meta.name)[0]
@@ -72,19 +75,31 @@ export default function fileItem (file, bus) {
           : getIconByMime(file.type.general)
         }
         <div class="UppyDashboardItem-progress">
-          <button class="UppyDashboardItem-progressBtn" onclick=${(e) => {
-            if (file.progress.percentage === 100) return
-            bus.emit('core:upload-pause', file.id)
-          }}>
+          <button class="UppyDashboardItem-progressBtn"
+                  title="${isUploaded
+                          ? 'upload complete'
+                          : file.isPaused ? 'resume upload' : 'pause upload'}"
+                  onclick=${(e) => {
+                    if (isUploaded) return
+                    bus.emit('core:upload-pause', file.id)
+                  }}>
             ${FileItemProgress({progress: file.progress.percentage, fileID: file.id}, bus)}
           </button>
-          <div class="UppyDashboardItem-progressInfo">
-            ${getETA(file.progress)} ・ ↑ ${prettyBytes(getSpeed(file.progress))} / s
-          </div>
+          ${showProgressDetails
+            ? html`<div class="UppyDashboardItem-progressInfo"
+                   title="File progress: upload speed and ETA"
+                   aria-label="File progress: upload speed and ETA">
+                ${!file.isPaused && !isUploaded
+                  ? html`<span>${getETA(file.progress)} ・ ↑ ${prettyBytes(getSpeed(file.progress))}/s</span>`
+                  : null
+                }
+              </div>`
+            : null
+          }
         </div>
       </div>
     <div class="UppyDashboardItem-info">
-      <h4 class="UppyDashboardItem-name">
+      <h4 class="UppyDashboardItem-name" title="${fileName}">
         ${file.uploadURL
           ? html`<a href="${file.uploadURL}" target="_blank">${file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}</a>`
           : file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName
@@ -95,14 +110,19 @@ export default function fileItem (file, bus) {
       </div>
       ${!uploadInProgressOrComplete
         ? html`<button class="UppyDashboardItem-edit"
-              onclick=${(e) => bus.emit('dashboard:file-card', file.id)}>${iconEdit()}</button>`
+                       aria-label="Edit file"
+                       title="Edit file"
+                       onclick=${(e) => bus.emit('dashboard:file-card', file.id)}>
+                        ${iconEdit()}
+                      </button>`
         : null
       }
     </div>
     <div class="UppyDashboardItem-action">
       ${!isUploaded
         ? html`<button class="UppyDashboardItem-remove"
-                       aria-label="Remove this file"
+                       aria-label="Remove file"
+                       title="Remove file"
                        onclick=${remove}>
                   ${removeIcon()}
                </button>`

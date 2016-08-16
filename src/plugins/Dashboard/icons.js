@@ -9,6 +9,21 @@ export function defaultTabIcon () {
   </svg>`
 }
 
+export function iconResume () {
+  return html`<svg class="UppyIcon" width="25" height="25" viewBox="0 0 44 44">
+    <polygon class="play" transform="translate(6, 5.5)" points="13 21.6666667 13 11 21 16.3333333" />
+  </svg>`
+}
+
+export function iconPause () {
+  return html`<svg class="UppyIcon" width="25px" height="25px" viewBox="0 0 44 44">
+    <g transform="translate(18, 17)" class="pause">
+      <rect x="0" y="0" width="2" height="10" rx="0" />
+      <rect x="6" y="0" width="2" height="10" rx="0" />
+    </g>
+  </svg>`
+}
+
 export function iconEdit () {
   return html`<svg class="UppyIcon UppyIcon-edit" width="28" height="28" viewBox="0 0 28 28">
     <path d="M25.436 2.566a7.98 7.98 0 0 0-2.078-1.51C22.638.703 21.906.5 21.198.5a3 3 0 0 0-1.023.17 2.436 2.436 0 0 0-.893.562L2.292 18.217.5 27.5l9.28-1.796 16.99-16.99c.255-.254.444-.56.562-.888a3 3 0 0 0 .17-1.023c0-.708-.205-1.44-.555-2.16a8 8 0 0 0-1.51-2.077zM9.01 24.252l-4.313.834c0-.03.008-.06.012-.09.007-.944-.74-1.715-1.67-1.723-.04 0-.078.007-.118.01l.83-4.29L17.72 5.024l5.264 5.264L9.01 24.252zm16.84-16.96a.818.818 0 0 1-.194.31l-1.57 1.57-5.26-5.26 1.57-1.57a.82.82 0 0 1 .31-.194 1.45 1.45 0 0 1 .492-.074c.397 0 .917.126 1.468.397.55.27 1.13.678 1.656 1.21.53.53.94 1.11 1.208 1.655.272.55.397 1.07.393 1.468.004.193-.027.358-.074.488z" />
@@ -21,12 +36,6 @@ export function localIcon () {
     <path d="M24.3 5.093c-.218-.76-.54-1.187-1.208-1.187h-4.856l1.018 1.18h3.948l2.043 11.038h-7.193v2.728H9.114v-2.725h-7.36l2.66-11.04h3.33l1.018-1.18H3.907c-.668 0-1.06.46-1.21 1.186L0 16.456v7.062C0 24.338.676 25 1.51 25h23.98c.833 0 1.51-.663 1.51-1.482v-7.062L24.3 5.093z"/>
   </svg>`
 }
-
-// export function backIcon () {
-//   return html`<svg class="UppyIcon" width="7px" height="10px" viewBox="0 0 23 45">
-//     <polygon points="21.2678133 0.318896058 1.26781326 21.8188961 0.634228199 22.5 1.26781326 23.1811039 21.2678133 44.6811039 22.7321867 43.3188961 2.73218674 21.8188961 2.73218674 23.1811039 22.7321867 1.68110394"></polygon>
-//   </svg>`
-// }
 
 export function closeIcon () {
   return html`<svg class="UppyIcon" width="14px" height="14px" viewBox="0 0 19 19">

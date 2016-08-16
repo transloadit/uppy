@@ -2,7 +2,7 @@ import html from '../../core/html'
 import Utils from '../../core/Utils'
 import FileItem from './FileItem'
 import FileCard from './FileCard'
-import { closeIcon, localIcon, uploadIcon, dashboardBgIcon } from './icons'
+import { closeIcon, localIcon, uploadIcon, dashboardBgIcon, iconPause, iconResume } from './icons'
 
 export default function Dashboard (props, bus) {
   // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
@@ -12,12 +12,12 @@ export default function Dashboard (props, bus) {
   const modal = state.modal
   const container = props.container
   const showFileCard = modal.showFileCard
+  const showProgressDetails = props.showProgressDetails
 
   const hideModal = props.hideModal
   const hideAllPanels = props.hideAllPanels
   const showPanel = props.showPanel
   const log = props.log
-  // const handleInputChange = props.handleInputChange
 
   const acquirers = modal.targets.filter((target) => {
     return target.type === 'acquirer'
@@ -55,13 +55,40 @@ export default function Dashboard (props, bus) {
     })
   }
 
-  const selectedFiles = Object.keys(files).filter((file) => {
-    return files[file].progress.percentage === 0
-    // return files[file].progress !== 100
+  const newFiles = Object.keys(files).filter((file) => {
+    return !files[file].progress.uploadStarted
   })
+  const uploadStartedFiles = Object.keys(files).filter((file) => {
+    return files[file].progress.uploadStarted
+  })
+  const completeFiles = Object.keys(files).filter((file) => {
+    return files[file].progress.uploadComplete
+  })
+  const inProgressFiles = Object.keys(files).filter((file) => {
+    return !files[file].progress.uploadComplete &&
+           files[file].progress.uploadStarted &&
+           !files[file].isPaused
+  })
+
+  const uploadStartedFilesCount = Object.keys(uploadStartedFiles).length
+  const completeFilesCount = Object.keys(completeFiles).length
+  const inProgressFilesCount = Object.keys(inProgressFiles).length
   const totalFileCount = Object.keys(files).length
-  const selectedFileCount = Object.keys(selectedFiles).length
-  const isSomethingSelected = selectedFileCount > 0
+  const newFileCount = Object.keys(newFiles).length
+
+  function renderPauseResume () {
+    if (uploadStartedFilesCount > 0) {
+      if (inProgressFilesCount > 0) {
+        return html`<button class="UppyDashboard-pauseResume UppyButton--circular UppyButton--yellow UppyButton--sizeS"
+                            onclick=${() => bus.emit('core:pause-all')}>${iconPause()}</button>`
+      }
+
+      if (uploadStartedFilesCount !== completeFilesCount) {
+        return html`<button class="UppyDashboard-pauseResume UppyButton--circular UppyButton--green UppyButton--sizeS"
+                            onclick=${() => bus.emit('core:resume-all')}>${iconResume()}</button>`
+      }
+    }
+  }
 
   return html`<div class="Uppy UppyTheme--default UppyDashboard ${isTouchDevice ? 'Uppy--isTouchDevice' : ''}"
                  aria-hidden="${modal.isHidden}"
@@ -119,22 +146,31 @@ export default function Dashboard (props, bus) {
           <ul class="UppyDashboard-filesInner">
             ${totalFileCount === 0
               ? html`<div class="UppyDashboard-bgIcon">${dashboardBgIcon()}</div>`
-              : ''
+              : null
             }
             ${Object.keys(files).map((fileID) => {
-              return FileItem(files[fileID], bus)
+              return FileItem(
+                {file: files[fileID], showProgressDetails}, bus
+              )
             })}
           </ul>
-          ${!props.autoProceed && isSomethingSelected
-            ? html`<button class="UppyButton--circular UppyDashboard-upload"
-                           type="button"
-                           title="Upload"
-                           onclick=${next}>
-                      ${uploadIcon()}
-                      <sup class="UppyDashboard-uploadCount">${selectedFileCount}</sup>
-                   </button>`
-            : null
-          }
+          <div class="UppyDashboard-actions">
+            ${renderPauseResume()}
+            ${!props.autoProceed && newFileCount > 0
+              ? html`<button class="UppyButton--circular UppyButton--blue UppyButton--sizeM UppyDashboard-upload"
+                             type="button"
+                             title="Upload all files"
+                             aria-label="Upload all files"
+                             onclick=${next}>
+                        ${uploadIcon()}
+                        <sup class="UppyDashboard-uploadCount"
+                             title="Number of selected files"
+                             aria-label="Number of selected files">
+                              ${newFileCount}</sup>
+                     </button>`
+              : null
+            }
+          </div>
         </div>
 
         ${acquirers.map((target) => {

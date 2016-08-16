@@ -126,6 +126,7 @@ export default class Core {
       data: file.data,
       progress: {
         percentage: 0,
+        uploadComplete: false,
         uploadStarted: false
       },
       size: file.data.size,
@@ -180,15 +181,17 @@ export default class Core {
     // `remove-file` removes a file from `state.files`, for example when
     // a user decides not to upload particular file and clicks a button to remove it
     this.emitter.on('file-remove', (fileID) => {
-      const updatedFiles = Object.assign({}, this.state.files)
+      const updatedFiles = Object.assign({}, this.getState().files)
       delete updatedFiles[fileID]
       this.setState({files: updatedFiles})
     })
 
-    this.emitter.on('core:file-upload-started', (fileID) => {
+    this.emitter.on('core:file-upload-started', (fileID, upload) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID],
         Object.assign({}, {
+          // can’t do that, because immutability. ??
+          // upload: upload,
           progress: Object.assign({}, updatedFiles[fileID].progress, {
             uploadStarted: Date.now()
           })
@@ -196,14 +199,16 @@ export default class Core {
       ))
       updatedFiles[fileID] = updatedFile
 
-      this.setState({
-        files: updatedFiles
-      })
+      this.setState({files: updatedFiles})
     })
 
     this.emitter.on('upload-progress', (data) => {
       const fileID = data.id
       const updatedFiles = Object.assign({}, this.getState().files)
+      if (!updatedFiles[fileID]) {
+        console.error('Trying to set progress for a file that’s not with us anymore: ', fileID)
+        return
+      }
 
       const updatedFile = Object.assign({}, updatedFiles[fileID],
         Object.assign({}, {
@@ -218,12 +223,13 @@ export default class Core {
 
       // calculate total progress, using the number of files currently uploading,
       // multiplied by 100 and the summ of individual progress of each file
-      const inProgress = Object.keys(updatedFiles).map((file) => {
-        return file.progress !== 0
+      const inProgress = Object.keys(updatedFiles).filter((file) => {
+        return !updatedFiles[file].progress.uploadComplete &&
+               updatedFiles[file].progress.uploadStarted
       })
       const progressMax = Object.keys(inProgress).length * 100
       let progressAll = 0
-      Object.keys(updatedFiles).forEach((file) => {
+      inProgress.forEach((file) => {
         progressAll = progressAll + updatedFiles[file].progress.percentage
       })
 
@@ -238,6 +244,9 @@ export default class Core {
     this.emitter.on('upload-success', (fileID, uploadURL) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID], {
+        progress: Object.assign({}, updatedFiles[fileID].progress, {
+          uploadComplete: true
+        }),
         uploadURL: uploadURL
       })
       updatedFiles[fileID] = updatedFile
