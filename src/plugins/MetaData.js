@@ -29,7 +29,7 @@ export default class MetaData extends Plugin {
     this.core.emitter.on('file-added', (fileID) => {
       metaFields.forEach((item) => {
         const obj = {}
-        obj[item.name] = item.value
+        obj[item.id] = item.value
         this.core.updateMeta(obj, fileID)
       })
     })

@@ -18,8 +18,8 @@ uppy
   .use(ProgressBar, {target: 'body'})
   .use(MetaData, {
     fields: [
-      { name: 'resizeTo', value: 1200, placeholder: 'specify future image size' },
-      { name: 'description', value: 'something', placeholder: 'describe what the file is for' }
+      { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
+      { id: 'description', name: 'Description', value: 'something', placeholder: 'describe what the file is for' }
     ]
   })
   .run()

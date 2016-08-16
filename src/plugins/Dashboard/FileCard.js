@@ -34,12 +34,14 @@ export default function fileCard (props, bus) {
   function renderMetaFields (file) {
     metaFields = metaFields || []
     return metaFields.map((field) => {
-      return html`<input class="UppyDashboardFileCard-input"
-                         name="${field.name}"
+      return html`<fieldset class="UppyDashboardFileCard-fieldset">
+        <label class="UppyDashboardFileCard-label">${field.name}</label>
+        <input class="UppyDashboardFileCard-input"
+                         name="${field.id}"
                          type="text"
-                         value="${file.meta[field.name]}"
+                         value="${file.meta[field.id]}"
                          placeholder="${field.placeholder || ''}"
-                         onkeyup=${tempStoreMeta} />`
+                         onkeyup=${tempStoreMeta} /></fieldset>`
     })
   }
 
@@ -58,14 +60,17 @@ export default function fileCard (props, bus) {
             }
           </div>
           <div class="UppyDashboardFileCard-info">
-            <input class="UppyDashboardFileCard-input" name="name" type="text" value="${file.meta.name}"
-                   onkeyup=${tempStoreMeta} />
+            <fieldset class="UppyDashboardFileCard-fieldset">
+              <label class="UppyDashboardFileCard-label">Name</label>
+              <input class="UppyDashboardFileCard-input" name="name" type="text" value="${file.meta.name}"
+                     onkeyup=${tempStoreMeta} />
+            </fieldset>
             ${renderMetaFields(file)}
           </div>
         </div>`
       : null
     }
-    <button class="UppyButton--circular UppyDashboardFileCard-done" type="button"
+    <button class="UppyButton--circular UppyButton--blue UppyButton--sizeM UppyDashboardFileCard-done" type="button"
             title="Finish editing file" onclick=${done}>${checkIcon()}</button>
     </div>`
 }
