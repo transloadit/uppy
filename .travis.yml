@@ -18,6 +18,7 @@ cache:
   - node_modules
   - website/node_modules
 script:
+- npm run web:install
 - npm run build
 - npm run test
 - npm run test:acceptance:handleservers
