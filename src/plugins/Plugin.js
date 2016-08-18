@@ -81,8 +81,4 @@ export default class Plugin {
   install () {
     return
   }
-
-  run () {
-    return
-  }
 }

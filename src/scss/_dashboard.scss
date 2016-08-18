@@ -185,7 +185,9 @@
   left: 0;
   right: 0;
   transform: translateY(-105%);
-  transition: all 0.3s ease-in-out;
+  transition: transform 300ms ease-in;
+  // will-change: transform;
+  // transition: all 0.3s ease-in-out;
   background-color: darken($color-white, 4%);
   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
   padding: 15px;
@@ -195,7 +197,9 @@
 }
 
 .UppyDashboardContent-panel[aria-hidden=false] {
-  transform: translateY(0);
+  // transform: translateY(0);
+  transform: none;
+  transition: transform 300ms ease-out;
 }
 
 // Progress bar placeholder
@@ -572,7 +576,7 @@
 
   &:hover,
   &:focus {
-    background-color: darken($color-yellow, 10%);
+    background-color: darken($color-yellow, 5%);
   }
 }
 

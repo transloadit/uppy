@@ -5,6 +5,7 @@ import GoogleDrive from '../src/plugins/GoogleDrive/index.js'
 import ProgressBar from '../src/plugins/ProgressBar.js'
 import Tus10 from '../src/plugins/Tus10.js'
 import MetaData from '../src/plugins/MetaData.js'
+import Webcam from '../src/plugins/Webcam.js'
 
 // import MagicLog from '../src/plugins/MagicLog'
 
@@ -12,6 +13,7 @@ const uppy = new Uppy({debug: true, autoProceed: false})
   .use(Dashboard, {trigger: '#uppyModalOpener'})
   .use(GoogleDrive, {target: Dashboard, host: 'http://ya.ru'})
   .use(Dummy, {target: Dashboard})
+  .use(Webcam, {target: Dashboard})
   .use(ProgressBar, {target: Dashboard})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/', resume: false})
   .use(MetaData, {
