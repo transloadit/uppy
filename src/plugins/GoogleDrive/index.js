@@ -30,6 +30,7 @@ export default class Google extends Plugin {
     this.getNextFolder = this.getNextFolder.bind(this)
     this.handleRowClick = this.handleRowClick.bind(this)
     this.logout = this.logout.bind(this)
+    this.handleDemoAuth = this.handleDemoAuth.bind(this)
 
     // Visual
     this.render = this.render.bind(this)
@@ -109,6 +110,9 @@ export default class Google extends Plugin {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
+      },
+      body: {
+        demo: this.opts.demo
       }
     })
     .then((res) => {
@@ -140,6 +144,9 @@ export default class Google extends Plugin {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
+      },
+      body: {
+        demo: this.opts.demo
       }
     })
     .then((res) => {
@@ -213,7 +220,8 @@ export default class Google extends Plugin {
         host: this.opts.host,
         url: `${this.opts.host}/google/get?fileId=${file.id}`,
         body: {
-          fileId: file.id
+          fileId: file.id,
+          demo: this.opts.demo
         }
       }
     }
@@ -238,6 +246,9 @@ export default class Google extends Plugin {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
+      },
+      body: {
+        demo: this.opts.demo
       }
     })
       .then((res) => res.json())
@@ -356,6 +367,13 @@ export default class Google extends Plugin {
     }))
   }
 
+  handleDemoAuth () {
+    const state = this.core.getState().googleDrive
+    this.updateState({}, state, {
+      authenticated: true
+    })
+  }
+
   render (state) {
     const { authenticated, error } = state.googleDrive
 
@@ -370,7 +388,11 @@ export default class Google extends Plugin {
 
       const link = `${this.opts.host}/connect/google?state=${authState}`
 
-      return AuthView({ link: link })
+      return AuthView({
+        link: link,
+        demo: this.opts.demo,
+        handleDemoAuth: this.handleDemoAuth
+      })
     }
 
     const browserProps = Object.assign({}, state.googleDrive, {
@@ -379,7 +401,8 @@ export default class Google extends Plugin {
       addFile: this.addFile,
       filterItems: this.filterItems,
       filterQuery: this.filterQuery,
-      handleRowClick: this.handleRowClick
+      handleRowClick: this.handleRowClick,
+      demo: this.opts.demo
     })
 
     return Browser(browserProps)
