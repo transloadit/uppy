@@ -42,7 +42,7 @@
     "watch:example:browsersync": "browser-sync start --server 'example' --port 3452 --serveStatic 'dist' --files 'example/bundle.js, dist/uppy.min.css'",
     "watch:example:js": "watchify -t 'babelify' example/main.js -o example/bundle.js -vd",
     "watch:example": "npm-run-all --parallel watch:example:js watch:css watch:example:browsersync",
-    "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate --silent && node build-examples.js",
+    "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate && node build-examples.js",
     "web:clean": "cd website && ./node_modules/.bin/hexo clean",
     "web:deploy": "npm-run-all web:install web:disc docs web:build && ./bin/web-deploy",
     "web:disc": "npm run build:bundle:fullpath && discify dist/uppy-fp.js --output website/src/_disc.html && echo '---\nlayout: false\n---\n' |cat - website/src/_disc.html > website/src/disc.html && rm website/src/_disc.html",
