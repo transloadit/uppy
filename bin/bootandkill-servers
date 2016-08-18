@@ -68,7 +68,7 @@ killProcessListeningOnPort 3020 || true
 echo "[${__base}] --> Start webserver and uppy-server in the background"
 rm -f nohup.out || true
 touch nohup.out
-nohup npm run start &
+nohup npm run test:serve &
 tail -f nohup.out &
 tailPid=${!}
 
