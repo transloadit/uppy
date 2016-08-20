@@ -2,39 +2,39 @@
 import Plugin from './Plugin'
 
 // Orchestrators
-import Dashboard from './Dashboard'
+import Dashboard from './Dashboard/index.js'
 
 // Acquirers
 import Dummy from './Dummy'
 import DragDrop from './DragDrop'
 import Formtag from './Formtag'
-import GoogleDrive from './GoogleDrive'
+import GoogleDrive from './GoogleDrive/index.js'
 
 // Progressindicators
 import ProgressBar from './ProgressBar'
-import Spinner from './Spinner'
+// import Spinner from './Spinner'
 
 // Uploaders
 import Tus10 from './Tus10'
 import Multipart from './Multipart'
 
 // Presenters
-import Present from './Present'
+// import Present from './Present'
 
 // Presetters
-import TransloaditBasic from './TransloaditBasic'
+// import TransloaditBasic from './TransloaditBasic'
 
-module.exports = {
+export default {
   Plugin,
   Dummy,
   ProgressBar,
-  Spinner,
-  Present,
+  // Spinner,
+  // Present,
   DragDrop,
   GoogleDrive,
   Formtag,
   Tus10,
   Multipart,
-  TransloaditBasic,
+  // TransloaditBasic,
   Dashboard
 }

@@ -1,9 +1,9 @@
-import Core from './core/index'
-import plugins from './plugins/index'
+import Core from './core/index.js'
+import plugins from './plugins/index.js'
 
 const locales = {}
 
-export {
+export default {
   Core,
   plugins,
   locales
