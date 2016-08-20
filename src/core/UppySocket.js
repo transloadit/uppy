@@ -1,4 +1,4 @@
-import ee from 'events'
+import ee from 'namespace-emitter'
 
 export default class UppySocket {
   constructor (opts) {
