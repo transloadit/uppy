@@ -10,11 +10,11 @@ import mime from 'mime-types'
 /**
  * Shallow flatten nested arrays.
  */
-function flatten (arr) {
+export function flatten (arr) {
   return [].concat.apply([], arr)
 }
 
-function isTouchDevice () {
+export function isTouchDevice () {
   return 'ontouchstart' in window || // works on most browsers
           navigator.maxTouchPoints   // works on IE10/11 and Surface
 }
@@ -25,7 +25,7 @@ function isTouchDevice () {
  * @param   { Object } ctx - DOM node where the target of our search will is located
  * @returns { Object } dom node found
  */
-function $ (selector, ctx) {
+export function $ (selector, ctx) {
   return (ctx || document).querySelector(selector)
 }
 
@@ -35,7 +35,7 @@ function $ (selector, ctx) {
  * @param   { Object } ctx - DOM node where the targets of our search will is located
  * @returns { Object } dom nodes found
  */
-function $$ (selector, ctx) {
+export function $$ (selector, ctx) {
   var els
   if (typeof selector === 'string') {
     els = (ctx || document).querySelectorAll(selector)
@@ -45,7 +45,7 @@ function $$ (selector, ctx) {
   }
 }
 
-function truncateString (str, length) {
+export function truncateString (str, length) {
   if (str.length > length) {
     return str.substr(0, length / 2) + '...' + str.substr(str.length - length / 4, str.length)
   }
@@ -55,7 +55,7 @@ function truncateString (str, length) {
   // http://stackoverflow.com/a/831583
 }
 
-function secondsToTime (rawSeconds) {
+export function secondsToTime (rawSeconds) {
   const hours = Math.floor(rawSeconds / 3600) % 24
   const minutes = Math.floor(rawSeconds / 60) % 60
   const seconds = Math.floor(rawSeconds % 60)
@@ -69,7 +69,7 @@ function secondsToTime (rawSeconds) {
  * @param  {[type]} groupingFn Grouping function
  * @return {[type]}            Array of arrays
  */
-function groupBy (array, groupingFn) {
+export function groupBy (array, groupingFn) {
   return array.reduce((result, item) => {
     let key = groupingFn(item)
     let xs = result.get(key) || []
@@ -85,7 +85,7 @@ function groupBy (array, groupingFn) {
  * @param  {Object} predicateFn Predicate
  * @return {bool}               Every element pass
  */
-function every (array, predicateFn) {
+export function every (array, predicateFn) {
   return array.reduce((result, item) => {
     if (!result) {
       return false
@@ -98,7 +98,7 @@ function every (array, predicateFn) {
 /**
  * Converts list into array
 */
-function toArray (list) {
+export function toArray (list) {
   return Array.prototype.slice.call(list || [], 0)
 }
 
@@ -109,14 +109,14 @@ function toArray (list) {
  * @param {String} fileName
  *
  */
-function generateFileID (fileName) {
+export function generateFileID (fileName) {
   let fileID = fileName.toLowerCase()
   fileID = fileID.replace(/[^A-Z0-9]/ig, '')
   fileID = fileID + Date.now()
   return fileID
 }
 
-function extend (...objs) {
+export function extend (...objs) {
   return Object.assign.apply(this, [{}].concat(objs))
 }
 
@@ -134,13 +134,13 @@ function extend (...objs) {
 //   return (!f && 'not a function') || (s && s[1] || 'anonymous')
 // }
 
-function getProportionalImageHeight (img, newWidth) {
+export function getProportionalImageHeight (img, newWidth) {
   var aspect = img.width / img.height
   var newHeight = Math.round(newWidth / aspect)
   return newHeight
 }
 
-function getFileType (file) {
+export function getFileType (file) {
   if (file.type) {
     return file.type
   }
@@ -148,7 +148,7 @@ function getFileType (file) {
 }
 
 // returns [fileName, fileExt]
-function getFileNameAndExtension (fullFileName) {
+export function getFileNameAndExtension (fullFileName) {
   var re = /(?:\.([^.]+))?$/
   var fileExt = re.exec(fullFileName)[1]
   var fileName = fullFileName.replace('.' + fileExt, '')
@@ -163,7 +163,7 @@ function getFileNameAndExtension (fullFileName) {
  * @return {Promise} dataURL of the file
  *
  */
-function readFile (fileObj) {
+export function readFile (fileObj) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.addEventListener('load', function (ev) {
@@ -184,7 +184,7 @@ function readFile (fileObj) {
  * @param {String} height of the resulting image
  * @return {String} dataURL of the resized image
  */
-function createImageThumbnail (imgURL) {
+export function createImageThumbnail (imgURL) {
   return new Promise((resolve, reject) => {
     var img = new Image()
     img.addEventListener('load', () => {
@@ -212,6 +212,36 @@ function createImageThumbnail (imgURL) {
   })
 }
 
+export function dataURItoBlob (dataURI, opts, toFile) {
+  // get the base64 data
+  var data = dataURI.split(',')[1]
+
+  // user may provide mime type, if not get it from data URI
+  var mimeType = opts.mimeType || dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+  // default to plain/text if data URI has no mimeType
+  if (mimeType == null) {
+    mimeType = 'plain/text'
+  }
+
+  var binary = atob(data)
+  var array = []
+  for (var i = 0; i < binary.length; i++) {
+    array.push(binary.charCodeAt(i))
+  }
+
+  // Convert to a File?
+  if (toFile) {
+    return new File([new Uint8Array(array)], opts.name || '', {type: mimeType})
+  }
+
+  return new Blob([new Uint8Array(array)], {type: mimeType})
+}
+
+export function dataURItoFile (dataURI, opts) {
+  return dataURItoBlob(dataURI, opts, true)
+}
+
 export default {
   generateFileID,
   toArray,
@@ -228,5 +258,7 @@ export default {
   getFileNameAndExtension,
   truncateString,
   getFileType,
-  secondsToTime
+  secondsToTime,
+  dataURItoBlob,
+  dataURItoFile
 }
