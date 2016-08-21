@@ -25,6 +25,11 @@ module.exports = function (driver, platform, host) {
 
     driver.findElement({css: '.UppyForm button'}).click()
 
+    // this should solve some mysterious alert error when Travis runs the test
+    driver.switchTo().alert().accept().catch(function (err) {
+      console.log(err)
+    })
+
     function isRedirectedAfterUpload () {
       return driver.getCurrentUrl().then(function (val) {
         console.log('current url is ', val)
