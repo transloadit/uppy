@@ -3,7 +3,7 @@ import plugins from './plugins/index.js'
 
 const locales = {}
 
-export default {
+export {
   Core,
   plugins,
   locales
