@@ -3,9 +3,6 @@ import Formtag from '../../../../src/plugins/Formtag.js'
 import Multipart from '../../../../src/plugins/Multipart.js'
 import ProgressBar from '../../../../src/plugins/ProgressBar.js'
 
-// import Uppy from 'uppy/core'
-// import { Formtag, Multipart, ProgressBar } from 'uppy/plugins'
-
 const uppy = new Uppy({debug: true, autoProceed: false})
 
 uppy
@@ -15,7 +12,13 @@ uppy
     bundle: true,
     fieldName: 'files[]'
   })
-  .use(ProgressBar, {target: 'body'})
+  // by default Uppy removes everything inside target container,
+  // but we surely don’t want to do that in the case of body, so replaceTargetContent: false
+  .use(ProgressBar, {
+    target: 'body',
+    replaceTargetContent: false,
+    fixed: true
+  })
   .run()
 
 console.log('Uppy with Formtag and Multipart is loaded')

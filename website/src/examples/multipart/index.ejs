@@ -9,8 +9,9 @@ order: 3
 Uppy recommends using tus resumable file uploads, but if you want you can also use Multipart (Form) uploads
 {% endblockquote %}
 
-To illustrate Uppy abstracts forms as a means to select a file, and not upload it, here
-we showcase uploading files from 2 different forms in one go:
+Simple form with a file input, mounter to a fallback &lt;form&gt; container — works even
+without JavaScript or when something goes wrong (slow connection, JS errors, old browsers):
+<br><br>
 
 <link rel="stylesheet" href="app.css">
 <% include app.html %>
@@ -31,8 +32,3 @@ we showcase uploading files from 2 different forms in one go:
   Along with this JavaScript:
 </p>
 {% include_code lang:js multipart/app.es6 %}
-
-<p>
-  And the following CSS:
-</p>
-{% include_code lang:css multipart/app.css %}
