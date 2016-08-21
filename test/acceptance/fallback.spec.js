@@ -17,6 +17,11 @@ module.exports = function (driver, platform, host) {
     driver.get(host + '/examples/multipart')
     driver.manage().window().maximize()
 
+    driver.switchTo().alert().dismiss()
+      .catch(function (err) {
+        console.log(err)
+      })
+
     Driver.setSauceTestName(driver, testName)
 
     driver
