@@ -1,11 +1,11 @@
 import Uppy from '../../../../src/core/Core.js'
 import Tus10 from '../../../../src/plugins/GoogleDrive'
-import ru_RU from '../../../../src/locales/ru_RU'
+import russian from '../../../../src/locales/ru_RU'
 // import Uppy from 'uppy/core'
 // import { Tus10 } from 'uppy/plugins'
 // import { ru_RU } from 'uppy/locales'
 
-const uppy = new Uppy({debug: true, wait: false, locales: ru_RU})
+const uppy = new Uppy({debug: true, wait: false, locales: russian})
 
 uppy
   .use(Tus10, {endpoint: 'http://master.tus.io:3020/files/'})
