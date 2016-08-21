@@ -13,8 +13,11 @@ export default class Plugin {
 
   constructor (core, opts) {
     this.core = core
-    this.opts = opts
+    this.opts = opts || {}
     this.type = 'none'
+
+    // clear everything inside the target selector
+    this.opts.replaceTargetContent === this.opts.replaceTargetContent || true
 
     this.update = this.update.bind(this)
     this.mount = this.mount.bind(this)
@@ -51,10 +54,11 @@ export default class Plugin {
     if (typeof target === 'string') {
       this.core.log(`Installing ${callerPluginName} to ${target}`)
 
-      // clear everything inside the target selector
-      // if (replaceTargetContent) {
-      //   document.querySelector(target).innerHTML = ''
-      // }
+      // clear everything inside the target container
+      if (this.opts.replaceTargetContent) {
+        document.querySelector(target).innerHTML = ''
+      }
+
       this.el = plugin.render(this.core.state)
       document.querySelector(target).appendChild(this.el)
 
