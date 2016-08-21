@@ -98,15 +98,15 @@ function buildDriver (platform) {
   return driver
 }
 
-// var customTests = {
-//   fallback: function () {
-//     var ancientPlatform = { browser: 'internet explorer', version: '6.0', os: 'Windows XP' }
-//     var driver = buildDriver({ browser: 'internet explorer', version: '6.0', os: 'Windows XP' })
-//     var test = require('./fallback.spec.js')
-//
-//     test(driver, ancientPlatform, host)
-//   }
-// }
+var customTests = {
+  fallback: function () {
+    var ancientPlatform = { browser: 'internet explorer', version: '6.0', os: 'Windows XP' }
+    var driver = buildDriver({ browser: 'internet explorer', version: '6.0', os: 'Windows XP' })
+    var test = require('./fallback.spec.js')
+
+    test(driver, ancientPlatform, host)
+  }
+}
 
 // RUN TESTS
 
@@ -122,7 +122,7 @@ function runAllTests () {
 
     // run custom platform-specific tests here
     // fallback test
-    // customTests.fallback()
+    customTests.fallback()
   } else {
     // run tests just for local Firefox
     tests.forEach(function (test) {
