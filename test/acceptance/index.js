@@ -33,8 +33,8 @@ if (isTravisTest) {
   // @todo This should become localhost to utilize the Travis saucelabs addon tunnel
   // But it seems Edge and Safari fail on that right now, so targeting uppy.io instead.
   // That is unideal, as we are then testing a previous deploy, and not the current build
-  host = localHost
-  // host = remoteHost
+  // host = localHost
+  host = remoteHost
 } else if (isRemoteTest) {
   // We're not too sure about a working tunnel otherwise, best just test uppy.io
   host = remoteHost
