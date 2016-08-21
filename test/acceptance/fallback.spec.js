@@ -25,12 +25,13 @@ module.exports = function (driver, platform, host) {
 
     driver.findElement({css: '.UppyForm button'}).click()
 
-    // this should solve some mysterious alert error when Travis runs the test
-    driver.switchTo().alert().accept().catch(function (err) {
-      console.log(err)
-    })
-
     function isRedirectedAfterUpload () {
+      // this should close the “Do you want to save this file?” alert when Travis runs the test
+      driver.switchTo().alert().dismiss()
+        .catch(function (err) {
+          console.log(err)
+        })
+
       return driver.getCurrentUrl().then(function (val) {
         console.log('current url is ', val)
         var isPageRedirected = val.indexOf('api2.transloadit.com') !== -1
