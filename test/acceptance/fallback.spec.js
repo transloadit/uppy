@@ -27,10 +27,10 @@ module.exports = function (driver, platform, host) {
 
     function isRedirectedAfterUpload () {
       // this should close the “Do you want to save this file?” alert when Travis runs the test
-      driver.switchTo().alert().dismiss()
-        .catch(function (err) {
-          console.log(err)
-        })
+      // driver.switchTo().alert().dismiss()
+      //   .catch(function (err) {
+      //     console.log(err)
+      //   })
 
       return driver.getCurrentUrl().then(function (val) {
         console.log('current url is ', val)

@@ -70,7 +70,8 @@ function buildDriver (platform) {
       'platform': platform.os,
       'version': platform.version,
       'username': username,
-      'accessKey': accessKey
+      'accessKey': accessKey,
+      'unexpectedAlertBehaviour': 'dismiss'
     }
 
     if (isTravisTest) {
