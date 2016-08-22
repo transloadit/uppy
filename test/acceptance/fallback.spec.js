@@ -14,16 +14,12 @@ module.exports = function (driver, platform, host) {
   test(testName + ' ' + platformName, function (t) {
     t.plan(1)
 
-    console.log('0')
     driver.get(host + '/examples/multipart')
 
-    console.log('1')
     driver.manage().window().maximize()
 
-    console.log('2')
     Driver.setSauceTestName(driver, testName)
 
-    console.log('3')
     driver
       .findElement({css: '.UppyForm input'})
       .sendKeys(path.join(__dirname, 'image.jpg'))
@@ -32,8 +28,6 @@ module.exports = function (driver, platform, host) {
     //   .catch(function (err) {
     //     console.log(err)
     //   })
-
-    console.log('4')
     driver.findElement({css: '.UppyForm button'}).click()
 
     function isRedirectedAfterUpload () {
@@ -41,25 +35,18 @@ module.exports = function (driver, platform, host) {
 
       return driver.getCurrentUrl().then(function (val) {
         console.log('current url is ', val)
-        var isPageRedirected = val.indexOf('api2.transloadit.com') !== -1
+        // temp posttestserver.com/post.php?dir=uppy&status_code=202 for IE compatibility
+        var isPageRedirected = val.indexOf('posttestserver.com') !== -1
         return isPageRedirected
       })
     }
 
-    console.log('5')
     driver.wait(isRedirectedAfterUpload, 12000, 'Browser should navigate to api2.transloadit.com after upload')
       .then(function (isPageRedirected) {
-        console.log('6')
-        driver.switchTo().alert().dismiss()
-          .catch(function (err) {
-            console.log(err)
-          })
-        Driver.testEqual(driver, t, isPageRedirected === true)
-        driver.quit()
-        // Driver.collectErrors(driver).then(function () {
-        //   Driver.testEqual(driver, t, isPageRedirected === true)
-        //   driver.quit()
-        // })
+        Driver.collectErrors(driver).then(function () {
+          Driver.testEqual(driver, t, isPageRedirected === true)
+          driver.quit()
+        })
       })
       .catch(function (err) {
         Driver.collectErrors(driver).then(function () {
