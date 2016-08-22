@@ -36,23 +36,23 @@ module.exports = function (driver, platform, host) {
       return driver.getCurrentUrl().then(function (val) {
         console.log('current url is ', val)
         // temp posttestserver.com/post.php?dir=uppy&status_code=202 for IE compatibility
-        var isPageRedirected = val.indexOf('posttestserver.com') !== -1
+        var isPageRedirected = val.indexOf('api2.transloadit.com') !== -1
         return isPageRedirected
       })
     }
 
     driver.wait(isRedirectedAfterUpload, 12000, 'Browser should navigate to api2.transloadit.com after upload')
       .then(function (isPageRedirected) {
-        Driver.collectErrors(driver).then(function () {
-          Driver.testEqual(driver, t, isPageRedirected === true)
-          driver.quit()
-        })
+        Driver.testEqual(driver, t, isPageRedirected === true)
+        driver.quit()
+        // Driver.collectErrors(driver).then(function () {
+        //   Driver.testEqual(driver, t, isPageRedirected === true)
+        //   driver.quit()
+        // })
       })
       .catch(function (err) {
-        Driver.collectErrors(driver).then(function () {
-          Driver.testFail(driver, t, err)
-          driver.quit()
-        })
+        Driver.testFail(driver, t, err)
+        driver.quit()
       })
   })
 }
