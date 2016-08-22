@@ -49,10 +49,17 @@ module.exports = function (driver, platform, host) {
     console.log('5')
     driver.wait(isRedirectedAfterUpload, 12000, 'Browser should navigate to api2.transloadit.com after upload')
       .then(function (isPageRedirected) {
-        Driver.collectErrors(driver).then(function () {
-          Driver.testEqual(driver, t, isPageRedirected === true)
-          driver.quit()
-        })
+        console.log('6')
+        driver.switchTo().alert().dismiss()
+          .catch(function (err) {
+            console.log(err)
+          })
+        Driver.testEqual(driver, t, isPageRedirected === true)
+        driver.quit()
+        // Driver.collectErrors(driver).then(function () {
+        //   Driver.testEqual(driver, t, isPageRedirected === true)
+        //   driver.quit()
+        // })
       })
       .catch(function (err) {
         Driver.collectErrors(driver).then(function () {
