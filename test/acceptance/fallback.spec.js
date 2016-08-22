@@ -14,7 +14,7 @@ module.exports = function (driver, platform, host) {
   test(testName + ' ' + platformName, function (t) {
     t.plan(1)
 
-    driver.get(host + '/examples/multipart')
+    driver.get(host + '/examples/multipart/index.html')
 
     driver.manage().window().maximize()
 
