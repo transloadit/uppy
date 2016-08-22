@@ -11,12 +11,21 @@ export default class Webcam extends Plugin {
     this.type = 'acquirer'
     this.id = 'Webcam'
     this.title = 'Webcam'
-    this.icon = html`<svg class="UppyIcon UppyModalTab-icon" width="18" height="21" viewBox="0 0 18 21">
-      <g>
-        <path d="M14.8 16.9c1.9-1.7 3.2-4.1 3.2-6.9 0-5-4-9-9-9s-9 4-9 9c0 2.8 1.2 5.2 3.2 6.9C1.9 17.9.5 19.4 0 21h3c1-1.9 11-1.9 12 0h3c-.5-1.6-1.9-3.1-3.2-4.1zM9 4c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6z"/>
-        <path d="M9 14c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zM8 8c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1c0-.5.4-1 1-1z"/>
-      </g>
-    </svg>`
+    this.icon = html`
+      <svg class="UppyIcon UppyModalTab-icon" width="18" height="21" viewBox="0 0 18 21">
+        <g>
+          <path d="M14.8 16.9c1.9-1.7 3.2-4.1 3.2-6.9 0-5-4-9-9-9s-9 4-9 9c0 2.8 1.2 5.2 3.2 6.9C1.9 17.9.5 19.4 0 21h3c1-1.9 11-1.9 12 0h3c-.5-1.6-1.9-3.1-3.2-4.1zM9 4c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6z"/>
+          <path d="M9 14c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zM8 8c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1c0-.5.4-1 1-1z"/>
+        </g>
+      </svg>
+    `
+
+    this.snapshotIcon = html`
+      <svg class="UppyIcon" width="37" height="33" viewBox="0 0 100 96.25">
+        <path d="M50 32c-7.168 0-13 5.832-13 13s5.832 13 13 13 13-5.832 13-13-5.832-13-13-13z"/>
+        <path d="M87 13H72c0-7.18-5.82-13-13-13H41c-7.18 0-13 5.82-13 13H13C5.82 13 0 18.82 0 26v38c0 7.18 5.82 13 13 13h74c7.18 0 13-5.82 13-13V26c0-7.18-5.82-13-13-13zM50 68c-12.683 0-23-10.318-23-23s10.317-23 23-23 23 10.318 23 23-10.317 23-23 23z"/>
+      </svg>
+    `
 
     // set default options
     const defaultOptions = {}
@@ -278,6 +287,8 @@ export default class Webcam extends Plugin {
             title="Take a snapshot"
             aria-label="Take a snapshot"
             onclick=${this.takeSnapshot}>
+            ${this.snapshotIcon}
+          </button>
         </div>
         <canvas class='UppyWebcam-canvas'></canvas>
       </div>
