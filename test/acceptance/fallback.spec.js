@@ -14,38 +14,30 @@ module.exports = function (driver, platform, host) {
   test(testName + ' ' + platformName, function (t) {
     t.plan(1)
 
+    console.log('0')
     driver.get(host + '/examples/multipart')
+
+    console.log('1')
     driver.manage().window().maximize()
 
-    driver.switchTo().alert().dismiss()
-      .catch(function (err) {
-        console.log(err)
-      })
-
+    console.log('2')
     Driver.setSauceTestName(driver, testName)
 
+    console.log('3')
     driver
       .findElement({css: '.UppyForm input'})
       .sendKeys(path.join(__dirname, 'image.jpg'))
 
-    driver.switchTo().alert().dismiss()
-      .catch(function (err) {
-        console.log(err)
-      })
+    // driver.switchTo().alert().dismiss()
+    //   .catch(function (err) {
+    //     console.log(err)
+    //   })
 
+    console.log('4')
     driver.findElement({css: '.UppyForm button'}).click()
-
-    driver.switchTo().alert().dismiss()
-      .catch(function (err) {
-        console.log(err)
-      })
 
     function isRedirectedAfterUpload () {
       // this should close the “Do you want to save this file?” alert when Travis runs the test
-      driver.switchTo().alert().dismiss()
-        .catch(function (err) {
-          console.log(err)
-        })
 
       return driver.getCurrentUrl().then(function (val) {
         console.log('current url is ', val)
@@ -54,6 +46,7 @@ module.exports = function (driver, platform, host) {
       })
     }
 
+    console.log('5')
     driver.wait(isRedirectedAfterUpload, 12000, 'Browser should navigate to api2.transloadit.com after upload')
       .then(function (isPageRedirected) {
         Driver.collectErrors(driver).then(function () {
