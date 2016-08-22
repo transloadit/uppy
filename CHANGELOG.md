@@ -19,7 +19,7 @@ first Friday of every new month.
 Ideas that will be planned and find their way into a release at one point
 
 - [ ] build: go over `package.json` together and clean up npm run scripts (@arturi, @hedgerh, @kvz)
-- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify
+- [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify, https://github.com/nolanlawson/rollup-comparison
 - [ ] core: Decouple rendering from Plugins and try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick, https://github.com/nosir/cleave.js
 - [ ] core: Have base styles, be explicit about fonts, etc
 - [ ] core: Make sure Uppy works well in VR
@@ -57,20 +57,19 @@ To be released: August 26, 2016. Releasemaster: Harry
 
 Theme: Making Progress, Then Pause & Resume
 
-- [ ] dashboard: add aria-labels and titles everywhere to improve accessibility #114 (@arturi)
-- [ ] dashboard: global circular progress bar (@arturi)
+- [x] dashboard: add aria-labels and titles everywhere to improve accessibility #114 (@arturi)
 - [ ] dashboard: improve file paste (@arturi)
 - [ ] dashboard: informer interface: message when all uploads are "done" (@arturi)
 - [ ] dashboard: results of the upload — green checkmark, better links to uploaded files, copy link button? (http://i.imgur.com/b1Io34n.png) (@arturi)
+- [ ] dashboard: global circular progress bar (@arturi)
 - [ ] dashboard: show progress bar/speed/eta for all files ? (@arturi)
-- [ ] meta: reach out to choo author (@arturi)
+- [x] meta: reach out to choo author (@arturi)
 - [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
-- [ ] meta: write 0.8 release blog post (@arturi)
+- [x] meta: write 0.8 release blog post (@arturi)
 - [ ] meta: write 0.9 release blog post (@hedgerh)
 - [ ] metadata: test that it works, discuss API and features (@arturi, @kvz)
-- [ ] test: Get IE4 on windows 3.11 to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
+- [x] test: Get IE6 on Win XP to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
 - [ ] webcam: a barely working webcam record & upload (@hedgerh)
-- [ ] build: get automated document generation working again (@arturi)
 - [x] core: figure out race conditions (animations not completing because file div gets re-added to the dom each time) with `yo-yo`/`morphdom` https://github.com/shama/bel/issues/26#issuecomment-238004130 (@arturi)
 - [x] core: switch to https://github.com/sethvincent/namespace-emitter — smaller, allows for `on('*')` (@arturi)
 - [x] core: experiment with switching to `virtual-dom` in a separate branch (@arturi)
