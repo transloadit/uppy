@@ -33,8 +33,8 @@ if (isTravisTest) {
   // @todo This should become localhost to utilize the Travis saucelabs addon tunnel
   // But it seems Edge and Safari fail on that right now, so targeting uppy.io instead.
   // That is unideal, as we are then testing a previous deploy, and not the current build
-  // host = localHost
-  host = remoteHost
+  // host = remoteHost
+  host = localHost
 } else if (isRemoteTest) {
   // We're not too sure about a working tunnel otherwise, best just test uppy.io
   host = remoteHost
@@ -112,6 +112,10 @@ var specificTests = {
 
 function runAllTests () {
   if (isRemoteTest) {
+    // run custom platform-specific tests here
+    // fallback test
+    specificTests.fallback()
+
     // run all tests for all platforms
     platforms.forEach(function (platform) {
       tests.forEach(function (test) {
@@ -119,10 +123,6 @@ function runAllTests () {
         test(driver, platform, host)
       })
     })
-
-    // run custom platform-specific tests here
-    // fallback test
-    specificTests.fallback()
   } else {
     // run tests just for local Firefox
     tests.forEach(function (test) {
