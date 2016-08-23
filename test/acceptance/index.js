@@ -34,7 +34,7 @@ if (isTravisTest) {
   // But it seems Edge and Safari fail on that right now, so targeting uppy.io instead.
   // That is unideal, as we are then testing a previous deploy, and not the current build
   // host = localHost
-  host = remoteHost
+  host = localHost
 } else if (isRemoteTest) {
   // We're not too sure about a working tunnel otherwise, best just test uppy.io
   host = remoteHost
@@ -51,9 +51,9 @@ var platforms = [
   // { browser: 'MicrosoftEdge', version: '13.10586', os: 'Windows 10' },
   { browser: 'Firefox', version: '38.0', os: 'Linux' },
   { browser: 'Internet Explorer', version: '10.0', os: 'Windows 8' },
-  // { browser: 'Internet Explorer', version: '11.103', os: 'Windows 10' },
-  { browser: 'Chrome', version: '48.0', os: 'Windows XP' }
-  // { browser: 'Firefox', version: '34.0', os: 'Windows 7' }
+  { browser: 'Internet Explorer', version: '11.103', os: 'Windows 10' },
+  { browser: 'Chrome', version: '48.0', os: 'Windows XP' },
+  { browser: 'Firefox', version: '34.0', os: 'Windows 7' }
 ]
 
 var tests = [
@@ -73,14 +73,14 @@ function buildDriver (platform) {
       'accessKey': accessKey
     }
 
-    if (isTravisTest) {
-      // @todo Do we need a hub_url = "%s:%s@localhost:4445" % (username, access_key)
-      // as mentioned in https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs ?
-      capabilities['tunnel-identifier'] = process.env.TRAVIS_JOB_NUMBER
-      capabilities['build'] = process.env.TRAVIS_BUILD_NUMBER
-      capabilities['name'] = 'Travis ##' + process.env.TRAVIS_JOB_NUMBER
-      capabilities['tags'] = [process.env.TRAVIS_NODE_VERSION, 'CI']
-    }
+    // if (isTravisTest) {
+    //   // @todo Do we need a hub_url = "%s:%s@localhost:4445" % (username, access_key)
+    //   // as mentioned in https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs ?
+    //   capabilities['tunnel-identifier'] = process.env.TRAVIS_JOB_NUMBER
+    //   capabilities['build'] = process.env.TRAVIS_BUILD_NUMBER
+    //   capabilities['name'] = 'Travis ##' + process.env.TRAVIS_JOB_NUMBER
+    //   capabilities['tags'] = [process.env.TRAVIS_NODE_VERSION, 'CI']
+    // }
 
     driver = new webdriver
       .Builder()
