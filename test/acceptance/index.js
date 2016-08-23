@@ -112,6 +112,10 @@ var specificTests = {
 
 function runAllTests () {
   if (isRemoteTest) {
+    // run custom platform-specific tests here
+    // fallback test
+    specificTests.fallback()
+
     // run all tests for all platforms
     platforms.forEach(function (platform) {
       tests.forEach(function (test) {
@@ -119,10 +123,6 @@ function runAllTests () {
         test(driver, platform, host)
       })
     })
-
-    // run custom platform-specific tests here
-    // fallback test
-    specificTests.fallback()
   } else {
     // run tests just for local Firefox
     tests.forEach(function (test) {
