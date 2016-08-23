@@ -1,24 +1,18 @@
 var test = require('tape')
 var path = require('path')
-var chalk = require('chalk')
-var Driver = require('./Driver')
+var tools = require('./tools')
 
 module.exports = function (driver, platform, host) {
-  var testName = 'fallback: fall back to regular <form> upload when JS is not working, or not loaded yet, or browser is not supported by Uppy'
-  var platformName = chalk.underline.yellow('[' +
-      platform.os + ' ' +
-      platform.browser + ' ' +
-      platform.version +
-    ']')
+  var testName = 'Fallback: fall back to regular <form> upload when JS is not working, or not loaded yet, or browser is not supported by Uppy'
 
-  test(testName + ' ' + platformName, function (t) {
+  test(tools.prettyTestName(testName, platform), function (t) {
     t.plan(1)
 
     driver.get(host + '/examples/multipart/index.html')
 
     driver.manage().window().maximize()
 
-    Driver.setSauceTestName(driver, testName)
+    tools.setSauceTestName(driver, testName)
 
     driver
       .findElement({css: '.UppyForm input'})
@@ -35,7 +29,6 @@ module.exports = function (driver, platform, host) {
 
       return driver.getCurrentUrl().then(function (val) {
         console.log('current url is ', val)
-        // temp posttestserver.com/post.php?dir=uppy&status_code=202 for IE compatibility
         var isPageRedirected = val.indexOf('api2.transloadit.com') !== -1
         return isPageRedirected
       })
@@ -43,16 +36,14 @@ module.exports = function (driver, platform, host) {
 
     driver.wait(isRedirectedAfterUpload, 12000, 'Browser should navigate to api2.transloadit.com after upload')
       .then(function (isPageRedirected) {
-        Driver.testEqual(driver, t, isPageRedirected === true)
+        tools.testEqual(driver, t, isPageRedirected === true)
         driver.quit()
-        // Driver.collectErrors(driver).then(function () {
-        //   Driver.testEqual(driver, t, isPageRedirected === true)
-        //   driver.quit()
-        // })
       })
       .catch(function (err) {
-        Driver.testFail(driver, t, err)
-        driver.quit()
+        tools.collectErrors(driver).then(function () {
+          tools.testFail(driver, t, err)
+          driver.quit()
+        })
       })
   })
 }

@@ -10,7 +10,7 @@
 // - http://selenium.googlecode.com/git/docs/api/javascript/namespace_webdriver_By.html
 // - http://selenium.googlecode.com/git/docs/api/javascript/class_webdriver_WebElement.html
 
-require('babel-register')
+// require('babel-register')
 
 var webdriver = require('selenium-webdriver')
 var remote = require('selenium-webdriver/remote')
@@ -47,7 +47,7 @@ if (isTravisTest) {
 console.log('Acceptance tests will be targetting: ' + host)
 
 var platforms = [
-  // { browser: 'Safari', version: '8.0', os: 'OS X 10.10' },
+  // { browser: 'Safari', version: '8.0', os: 'OS X 10.10' }
   // { browser: 'MicrosoftEdge', version: '13.10586', os: 'Windows 10' },
   { browser: 'Firefox', version: '38.0', os: 'Linux' },
   { browser: 'Internet Explorer', version: '10.0', os: 'Windows 8' },
@@ -58,8 +58,8 @@ var platforms = [
 
 var tests = [
   require('./multipart.spec.js'),
-  require('./i18n.spec.js')
-  // require('./dragdrop.spec.js')
+  require('./i18n.spec.js'),
+  require('./dragdrop.spec.js')
 ]
 
 function buildDriver (platform) {
@@ -98,7 +98,7 @@ function buildDriver (platform) {
   return driver
 }
 
-var customTests = {
+var specificTests = {
   fallback: function () {
     var ancientPlatform = { browser: 'internet explorer', version: '6.0', os: 'Windows XP' }
     var driver = buildDriver({ browser: 'internet explorer', version: '6.0', os: 'Windows XP' })
@@ -122,7 +122,7 @@ function runAllTests () {
 
     // run custom platform-specific tests here
     // fallback test
-    customTests.fallback()
+    specificTests.fallback()
   } else {
     // run tests just for local Firefox
     tests.forEach(function (test) {

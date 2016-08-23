@@ -1,19 +1,11 @@
 var test = require('tape')
 var path = require('path')
-var chalk = require('chalk')
-var Driver = require('./Driver')
-var setSauceStatus = Driver.setSauceStatus
-var collectErrors = Driver.collectErrors
+var tools = require('./tools')
 
 module.exports = function (driver, platform, host) {
   var testName = 'DragDrop: upload one file'
-  var platformName = chalk.underline.yellow('[' +
-        platform.os + ' ' +
-        platform.browser + ' ' +
-        platform.version +
-      ']')
 
-  test(testName + ' ' + platformName, function (t) {
+  test(tools.prettyTestName(testName, platform), function (t) {
     t.plan(1)
 
     // Go to the example URL
@@ -21,15 +13,16 @@ module.exports = function (driver, platform, host) {
     driver.manage().window().maximize()
 
     // Set Saucelabs test name
-    driver.executeScript('sauce:job-name=' + testName).catch(function (err) {
-      console.log('local test, so this is ok: ' + err)
-    })
+    tools.setSauceTestName(driver, testName)
+
+    driver.executeScript(tools.uppySelectFakeFile)
+    driver.findElement({css: '.UppyDragDrop-uploadBtn'}).click()
 
     var platformBrowser = platform.browser.toLowerCase()
     if (platformBrowser === 'safari' || platformBrowser === 'microsoftedge') {
       console.log('fake-selecting a fake file')
-      driver.executeScript(Driver.uppySelectFakeFile)
-      driver.findElement({css: '#UppyDragDrop-Two .UppyDragDrop-uploadBtn'}).click()
+      driver.executeScript(tools.uppySelectFakeFile)
+      driver.findElement({css: '.UppyDragDrop-uploadBtn'}).click()
     } else {
       console.log('selecting a real file')
       // Make file input “visible”
@@ -53,7 +46,7 @@ module.exports = function (driver, platform, host) {
       // http://stackoverflow.com/questions/21994261/gettext-not-working-on-a-select-from-dropdown
 
       // TODO: figure out how to deal with multiple Uppy instances on the page
-      return driver.findElement({css: '.UppyProgressBar-percentage'})
+      return driver.findElement({css: '.UppyDragDrop-Two-Progress .UppyProgressBar-percentage'})
         .getAttribute('textContent')
         .then(function (value) {
           var progress = parseInt(value)
@@ -62,22 +55,14 @@ module.exports = function (driver, platform, host) {
         })
     }
 
-    driver.wait(isUploaded, 15000, 'File image.jpg should be uploaded within 15 seconds')
+    driver.wait(isUploaded, 12000, 'File image.jpg should be uploaded within 15 seconds')
       .then(function (result) {
-        collectErrors(driver).then(function () {
-          t.equal(result, true)
-          if (result) {
-            setSauceStatus(driver, true)
-          } else {
-            setSauceStatus(driver, false)
-          }
-          driver.quit()
-        })
+        tools.testEqual(driver, t, result)
+        driver.quit()
       })
       .catch(function (err) {
-        collectErrors(driver).then(function () {
-          t.fail(err)
-          setSauceStatus(false)
+        tools.collectErrors(driver).then(function () {
+          tools.testFail(driver, t, err)
           driver.quit()
         })
       })
