@@ -73,14 +73,14 @@ function buildDriver (platform) {
       'accessKey': accessKey
     }
 
-    // if (isTravisTest) {
-    //   // @todo Do we need a hub_url = "%s:%s@localhost:4445" % (username, access_key)
-    //   // as mentioned in https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs ?
-    //   capabilities['tunnel-identifier'] = process.env.TRAVIS_JOB_NUMBER
-    //   capabilities['build'] = process.env.TRAVIS_BUILD_NUMBER
-    //   capabilities['name'] = 'Travis ##' + process.env.TRAVIS_JOB_NUMBER
-    //   capabilities['tags'] = [process.env.TRAVIS_NODE_VERSION, 'CI']
-    // }
+    if (isTravisTest) {
+      // @todo Do we need a hub_url = "%s:%s@localhost:4445" % (username, access_key)
+      // as mentioned in https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs ?
+      capabilities['tunnel-identifier'] = process.env.TRAVIS_JOB_NUMBER
+      capabilities['build'] = process.env.TRAVIS_BUILD_NUMBER
+      capabilities['name'] = 'Travis ##' + process.env.TRAVIS_JOB_NUMBER
+      capabilities['tags'] = [process.env.TRAVIS_NODE_VERSION, 'CI']
+    }
 
     driver = new webdriver
       .Builder()
