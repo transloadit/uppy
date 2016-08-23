@@ -47,13 +47,13 @@ if (isTravisTest) {
 console.log('Acceptance tests will be targetting: ' + host)
 
 var platforms = [
-  { browser: 'Safari', version: '8.0', os: 'OS X 10.10' },
+  // { browser: 'Safari', version: '8.0', os: 'OS X 10.10' },
   // { browser: 'MicrosoftEdge', version: '13.10586', os: 'Windows 10' },
   { browser: 'Firefox', version: '38.0', os: 'Linux' },
   { browser: 'Internet Explorer', version: '10.0', os: 'Windows 8' },
-  { browser: 'Internet Explorer', version: '11.103', os: 'Windows 10' },
-  { browser: 'Chrome', version: '48.0', os: 'Windows XP' },
-  { browser: 'Firefox', version: '34.0', os: 'Windows 7' }
+  // { browser: 'Internet Explorer', version: '11.103', os: 'Windows 10' },
+  { browser: 'Chrome', version: '48.0', os: 'Windows XP' }
+  // { browser: 'Firefox', version: '34.0', os: 'Windows 7' }
 ]
 
 var tests = [
