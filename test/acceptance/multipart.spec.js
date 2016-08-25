@@ -1,43 +1,33 @@
 var test = require('tape')
-var chalk = require('chalk')
-var Driver = require('./Driver')
+var tools = require('./tools')
+var path = require('path')
 
 module.exports = function (driver, platform, host) {
-  var testName = 'Multipart: upload two files'
-  var platformName = chalk.underline.yellow('[' +
-        platform.os + ' ' +
-        platform.browser + ' ' +
-        platform.version +
-      ']')
+  var testName = 'Multipart: upload a file'
 
-  test(testName + ' ' + platformName, function (t) {
+  test(tools.prettyTestName(testName, platform), function (t) {
     t.plan(1)
 
-    // Go to the example URL
     driver.get(host + '/examples/multipart/')
     driver.manage().window().maximize()
 
-    Driver.setSauceTestName(driver, testName)
+    tools.setSauceTestName(driver, testName)
 
     // driver.manage().timeouts().implicitlyWait(5 * 1000)
 
-    // If this is Edge or Safari, fake upload a dummy file object
     var platformBrowser = platform.browser.toLowerCase()
     if (platformBrowser === 'safari' || platformBrowser === 'microsoftedge') {
       console.log('fake-selecting a fake file')
-      driver.executeScript(Driver.uppySelectFakeFile)
+      driver.executeScript(tools.uppySelectFakeFile)
       driver.findElement({css: '.UppyForm-uploadBtn'}).click()
     } else {
-      console.log('fake-selecting a fake file')
-      driver.executeScript(Driver.uppySelectFakeFile)
-      driver.findElement({css: '.UppyForm-uploadBtn'}).click()
+      console.log('selecting a real file')
       // Find input by css selector & pass absolute image path to it
-      // console.log('selecting a real file')
-      // driver.findElement({css: '.UppyFormContainer .UppyForm-input'}).then(function (el) {
-      //   el.sendKeys(path.join(__dirname, 'image.jpg'))
-      //   el.sendKeys(path.join(__dirname, 'image2.jpg'))
-      //   driver.findElement({css: '.UppyForm-uploadBtn'}).click()
-      // })
+      driver.findElement({css: '.UppyFormContainer .UppyForm-input'}).then(function (el) {
+        el.sendKeys(path.join(__dirname, 'image.jpg'))
+        el.sendKeys(path.join(__dirname, 'image2.jpg'))
+        driver.findElement({css: '.UppyForm-uploadBtn'}).click()
+      })
     }
 
     function isUploaded () {
@@ -52,24 +42,14 @@ module.exports = function (driver, platform, host) {
         })
     }
 
-    driver.wait(isUploaded, 15000, 'File image.jpg should be uploaded within 15 seconds')
+    driver.wait(isUploaded, 12000, 'File image.jpg should be uploaded within 15 seconds')
       .then(function (result) {
-        Driver.collectErrors(driver).then(function () {
-          Driver.testEqual(driver, t, result)
-          // t.equal(result, true)
-          // if (result) {
-          //   setSauceTestStatus(driver, true)
-          // } else {
-          //   setSauceTestStatus(driver, false)
-          // }
-          driver.quit()
-        })
+        tools.testEqual(driver, t, result)
+        driver.quit()
       })
       .catch(function (err) {
-        Driver.collectErrors(driver).then(function () {
-          Driver.testFail(driver, t, err)
-          // t.fail(err)
-          // setSauceTestStatus(driver, false)
+        tools.collectErrors(driver).then(function () {
+          tools.testFail(driver, t, err)
           driver.quit()
         })
       })

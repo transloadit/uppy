@@ -1,7 +1,7 @@
 var webdriver = require('selenium-webdriver')
-var firefox = require('selenium-webdriver/firefox')
+// var firefox = require('selenium-webdriver/firefox')
 var By = webdriver.By
-var path = require('path')
+// var path = require('path')
 var chalk = require('chalk')
 
 function uppySelectFakeFile () {
@@ -15,6 +15,16 @@ function uppySelectFakeFile () {
     type: 'image/svg+xml',
     data: blob
   })
+}
+
+function prettyTestName (name, platform) {
+  var testName = chalk.cyan.bold(name)
+  var platformName = chalk.yellow(
+        platform.os + ', ' +
+        platform.browser + ' ' +
+        platform.version
+      )
+  return testName + ' / ' + platformName
 }
 
 // https://wiki.saucelabs.com/display/DOCS/Annotating+Tests+with+Selenium's+JavaScript+Executor
@@ -54,7 +64,7 @@ function collectErrors (driver) {
     .then(function (uppyLog) {
       console.error([
         '[uppy-log]',
-        chalk.magenta(uppyLog)
+        chalk.red(uppyLog)
       ].join(' '))
     })
     .catch(function (err) {
@@ -79,24 +89,25 @@ function collectErrors (driver) {
     //   })
 }
 
-function setDriver () {
-  var profile = new firefox.Profile()
-  profile.addExtension(path.join(__dirname, 'xpi', 'firebug-2.0.16.xpi'))
-  profile.addExtension(path.join(__dirname, 'xpi', 'JSErrorCollector.xpi'))
-  profile.setPreference('extensions.firebug.showChromeErrors', true)
-
-  var options = new firefox.Options().setProfile(profile)
-  var driver = new firefox.Driver(options)
-
-  // var driver = new webdriver.Builder()
-  //     .forBrowser('firefox')
-  //     .build()
-
-  return driver
-}
+// function setDriver () {
+//   var profile = new firefox.Profile()
+//   // profile.addExtension(path.join(__dirname, 'xpi', 'firebug-2.0.16.xpi'))
+//   // profile.addExtension(path.join(__dirname, 'xpi', 'JSErrorCollector.xpi'))
+//   // profile.setPreference('extensions.firebug.showChromeErrors', true)
+//
+//   var options = new firefox.Options().setProfile(profile)
+//   var driver = new firefox.Driver(options)
+//
+//   // var driver = new webdriver.Builder()
+//   //     .forBrowser('firefox')
+//   //     .build()
+//
+//   return driver
+// }
 
 module.exports = {
-  setDriver,
+  // setDriver,
+  prettyTestName,
   uppySelectFakeFile,
   collectErrors,
   testEqual,
