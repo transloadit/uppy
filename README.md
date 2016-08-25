@@ -34,7 +34,7 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 It’s easy to start using Uppy, we recommend installing from npm with `npm install uppy` and then:
 
 ``` javascript
-import Uppy from 'uppy'
+import * as Uppy from 'uppy'
 
 const uppy = new Uppy.Core({wait: false})
 const files = uppy

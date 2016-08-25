@@ -1,6 +1,6 @@
 {
   "name": "uppy",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Almost as cute as a Puppy :dog:",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -122,7 +122,7 @@
     "mime-types": "2.1.11",
     "namespace-emitter": "1.0.0",
     "pretty-bytes": "3.0.1",
-    "tus-js-client": "1.1.4",
+    "tus-js-client": "1.2.1",
     "whatwg-fetch": "1.0.0",
     "yo-yo": "1.2.2"
   }
