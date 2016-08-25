@@ -44,9 +44,12 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.10.0
 
+Theme: Getting together
+
 - [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` api, open modal... (@arturi, @hedgerh)
-- [ ] core: how would Uppy work without the UI, if one only wants dragdrop + select from local disk
+- [ ] core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves (@arturi, @hedgerh)
 - [ ] core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@arturi, @hedgerh)
+- [ ] core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042 (@arturi, @hedgerh)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] dashboard: see if Dashboard can be optionally rendered inline instead of as a modal (@arturi)
 - [ ] metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 (@arturi)
@@ -80,7 +83,7 @@ Theme: Making Progress, Then Pause & Resume
 - [x] meta: write 0.8 release blog post (@arturi)
 - [x] metadata: add labels to fields in fileCard (@arturi)
 - [x] metadata: the aftermath — better UI (@arturi)
-- [x] test: Get IE6 on Win XP to run Uppy and see it fall back to regular form upload (`api2.transloadit.com`) (@arturi)
+- [x] test: Get IE6 on Win XP to run Uppy and see it fall back to regular form upload #108 (@arturi)
 - [x] tus: add ability to pause/resume all uploads at once (@arturi)
 - [x] tus: add ability to pause/resume upload (@arturi)
 
