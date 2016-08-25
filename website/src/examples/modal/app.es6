@@ -4,7 +4,7 @@ import Tus10 from '../../../../src/plugins/Tus10.js'
 import Dashboard from '../../../../src/plugins/Dashboard'
 import GoogleDrive from '../../../../src/plugins/GoogleDrive'
 import ProgressBar from '../../../../src/plugins/ProgressBar.js'
-import Webcam from '../../../../src/plugins/Webcam.js'
+import Webcam from '../../../../src/plugins/Webcam/index.js'
 import MetaData from '../../../../src/plugins/MetaData.js'
 import { UPPY_SERVER } from '../env'
 

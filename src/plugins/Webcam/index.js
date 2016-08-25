@@ -1,8 +1,10 @@
-import Plugin from './Plugin'
-import html from '../core/html'
-import {dataURItoFile} from '../core/Utils'
+import Plugin from '../Plugin'
+import {extend, dataURItoFile} from '../../core/Utils'
 import CameraScreen from './CameraScreen'
 import PermissionsScreen from './PermissionsScreen'
+import WebcamIcon from './WebcamIcon'
+import html from '../../core/html'
+var _userMedia
 
 /**
  * Webcam
@@ -10,27 +12,37 @@ import PermissionsScreen from './PermissionsScreen'
 export default class Webcam extends Plugin {
   constructor (core, opts) {
     super(core, opts)
+    this.userMedia = true
+    this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
+    this.init()
     this.type = 'acquirer'
     this.id = 'Webcam'
     this.title = 'Webcam'
-    this.icon = html`
-      <svg class="UppyIcon UppyModalTab-icon" width="18" height="21" viewBox="0 0 18 21">
-        <g>
-          <path d="M14.8 16.9c1.9-1.7 3.2-4.1 3.2-6.9 0-5-4-9-9-9s-9 4-9 9c0 2.8 1.2 5.2 3.2 6.9C1.9 17.9.5 19.4 0 21h3c1-1.9 11-1.9 12 0h3c-.5-1.6-1.9-3.1-3.2-4.1zM9 4c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6z"/>
-          <path d="M9 14c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zM8 8c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1c0-.5.4-1 1-1z"/>
-        </g>
-      </svg>
-    `
-
-    this.snapshotIcon = html`
-      <svg class="UppyIcon" width="37" height="33" viewBox="0 0 100 96.25">
-        <path d="M50 32c-7.168 0-13 5.832-13 13s5.832 13 13 13 13-5.832 13-13-5.832-13-13-13z"/>
-        <path d="M87 13H72c0-7.18-5.82-13-13-13H41c-7.18 0-13 5.82-13 13H13C5.82 13 0 18.82 0 26v38c0 7.18 5.82 13 13 13h74c7.18 0 13-5.82 13-13V26c0-7.18-5.82-13-13-13zM50 68c-12.683 0-23-10.318-23-23s10.317-23 23-23 23 10.318 23 23-10.317 23-23 23z"/>
-      </svg>
-    `
+    this.icon = WebcamIcon()
 
     // set default options
-    const defaultOptions = {}
+    const defaultOptions = {
+      enableFlash: true
+    }
+
+    this.params = {
+      swfURL: 'webcam.swf',
+      width: 400,
+      height: 300,
+      dest_width: 800,         // size of captured image
+      dest_height: 600,        // these default to width/height
+      image_format: 'jpeg',  // image format (may be jpeg or png)
+      jpeg_quality: 90,      // jpeg image quality from 0 (worst) to 100 (best)
+      enable_flash: true,    // enable flash fallback,
+      force_flash: false,    // force flash mode,
+      flip_horiz: false,     // flip image horiz (mirror mode)
+      fps: 30,               // camera frames per second
+      upload_name: 'webcam', // name of file in upload post data
+      constraints: null,     // custom user media constraints,
+      flashNotDetectedText: 'ERROR: No Adobe Flash Player detected.  Webcam.js relies on Flash for browsers that do not support getUserMedia (like yours).',
+      noInterfaceFoundText: 'No supported webcam interface found.',
+      unfreeze_snap: true    // Whether to unfreeze the camera after snap (defaults to true)
+    }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -41,41 +53,203 @@ export default class Webcam extends Plugin {
     this.render = this.render.bind(this)
 
     // Camera controls
-    this.startWebcam = this.startWebcam.bind(this)
+    this.start = this.start.bind(this)
+    this.init = this.init.bind(this)
     this.stopWebcam = this.stopWebcam.bind(this)
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
     this.takeSnapshot = this.takeSnapshot.bind(this)
     this.generateImage = this.generateImage.bind(this)
-
-    // Stream getting callbacks
-    this.onGotStream = this.onGotStream.bind(this)
-    this.onNoStream = this.onNoStream.bind(this)
+    this.getSWFHTML = this.getSWFHTML.bind(this)
+    this.detectFlash = this.detectFlash.bind(this)
   }
 
   /**
-   * Checks browser support for getting user media,
-   * then initializes a new media capture.
+   * Checks for getUserMedia support
    */
-  startWebcam () {
-    this.video = document.querySelector('.UppyWebcam-video')
-    this.canvas = document.querySelector('.UppyWebcam-canvas')
+  init () {
+    // initialize, check for getUserMedia support
 
-    const { onGotStream, onNoStream } = this
+    // Setup getUserMedia, with polyfill for older browsers
+    // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+    this.mediaDevices = (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
+      ? navigator.mediaDevices : ((navigator.mozGetUserMedia || navigator.webkitGetUserMedia) ? {
+        getUserMedia: function (c) {
+          return new Promise(function (resolve, reject) {
+            (navigator.mozGetUserMedia ||
+            navigator.webkitGetUserMedia).call(navigator, c, resolve, reject)
+          })
+        }
+      } : null)
 
-    if ((typeof window === 'undefined') || (typeof navigator === 'undefined')) {
-      console.log('This page needs a Web browser with the objects window.* and navigator.*!')
-    } else if (!(this.video && this.canvas)) {
-      console.log('HTML context error!')
-    } else {
-      console.log('Get user media…')
-      if (navigator.getUserMedia) navigator.getUserMedia({ video: true }, onGotStream, onNoStream)
-      else if (navigator.oGetUserMedia) navigator.oGetUserMedia({ video: true }, onGotStream, onNoStream)
-      else if (navigator.mozGetUserMedia) navigator.mozGetUserMedia({ video: true }, onGotStream, onNoStream)
-      else if (navigator.webkitGetUserMedia) navigator.webkitGetUserMedia({ video: true }, onGotStream, onNoStream)
-      else if (navigator.msGetUserMedia) navigator.msGetUserMedia({ video: true, audio: false }, onGotStream, onNoStream)
-      else console.log('getUserMedia() not available from your Web browser!')
+    window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL
+    this.userMedia = this.userMedia && !!this.mediaDevices && !!window.URL
+
+    // Older versions of firefox (< 21) apparently claim support but user media does not actually work
+    if (navigator.userAgent.match(/Firefox\D+(\d+)/)) {
+      if (parseInt(RegExp.$1, 10) < 21) this.userMedia = null
     }
+
+    // Make sure media stream is closed when navigating away from page
+    if (this.userMedia) {
+      window.addEventListener('beforeunload', (event) => {
+        this.reset()
+      })
+    }
+  }
+
+  start () {
+    this.userMedia = _userMedia === undefined ? this.userMedia : _userMedia
+
+    if (this.userMedia) {
+      // ask user for access to their camera
+      this.mediaDevices.getUserMedia({
+        audio: false,
+        video: true
+      })
+      .then((stream) => {
+        this.updateState({
+          videoStream: stream,
+          cameraReady: true
+        })
+      })
+      .catch((err) => {
+        if (this.opts.enableFlash && this.detectFlash()) {
+          console.log('up in the error catch')
+          console.log(this.detectFlash())
+          // setTimeout(() => {
+          //   this.opts.forceFlash = 1
+          //   this.attach(elem)
+          // }, 1)
+        } else {
+          console.log('Error:', err)
+        }
+      })
+    } else if (this.opts.enableFlash && this.detectFlash()) {
+      // flash fallback
+      // needed for flash-to-js interface
+      window.Webcam = Webcam
+      this.updateState({
+        useTheFlash: true
+      })
+      // elem.appendChild(div)
+    } else {
+      console.log('There was a problem!')
+      // this.dispatch('error', new WebcamError( this.params.noInterfaceFoundText ))
+    }
+  }
+
+  /**
+   * Detects if browser supports flash
+   * Code snippet borrowed from: https://github.com/swfobject/swfobject
+   *
+   * @return {bool} flash supported
+   */
+  detectFlash () {
+    var SHOCKWAVE_FLASH = 'Shockwave Flash'
+    var SHOCKWAVE_FLASH_AX = 'ShockwaveFlash.ShockwaveFlash'
+    var FLASH_MIME_TYPE = 'application/x-shockwave-flash'
+    var win = window
+    var nav = navigator
+    var hasFlash = false
+
+    if (typeof nav.plugins !== 'undefined' && typeof nav.plugins[SHOCKWAVE_FLASH] === 'object') {
+      var desc = nav.plugins[SHOCKWAVE_FLASH].description
+      if (desc && (typeof nav.mimeTypes !== 'undefined' && nav.mimeTypes[FLASH_MIME_TYPE] && nav.mimeTypes[FLASH_MIME_TYPE].enabledPlugin)) {
+        hasFlash = true
+      }
+    } else if (typeof win.ActiveXObject !== 'undefined') {
+      try {
+        var ax = new win.ActiveXObject(SHOCKWAVE_FLASH_AX)
+        if (ax) {
+          var ver = ax.GetVariable('$version')
+          if (ver) hasFlash = true
+        }
+      } catch (e) {}
+    }
+
+    return hasFlash
+  }
+
+  reset () {
+    // shutdown camera, reset to potentially attach again
+    if (this.preview_active) this.unfreeze()
+
+    if (this.userMedia) {
+      if (this.stream) {
+        if (this.stream.getVideoTracks) {
+          // get video track to call stop on it
+          var tracks = this.stream.getVideoTracks()
+          if (tracks && tracks[0] && tracks[0].stop) tracks[0].stop()
+        } else if (this.stream.stop) {
+          // deprecated, may be removed in future
+          this.stream.stop()
+        }
+      }
+      delete this.stream
+      delete this.video
+    }
+
+    if (this.userMedia !== true) {
+      // call for turn off camera in flash
+      this.getMovie()._releaseCamera()
+    }
+  }
+
+  getSWFHTML () {
+    // Return HTML for embedding flash based webcam capture movie
+    var swfURL = this.params.swfURL
+
+    // make sure we aren't running locally (flash doesn't work)
+    if (location.protocol.match(/file/)) {
+      return '<h3 style="color:red">ERROR: the Webcam.js Flash fallback does not work from local disk.  Please run it from a web server.</h3>'
+    }
+
+    // make sure we have flash
+    if (!this.detectFlash()) {
+      return '<h3 style="color:red">No flash</h3>'
+    }
+
+    // set default swfURL if not explicitly set
+    if (!swfURL) {
+      // find our script tag, and use that base URL
+      var base_url = ''
+      var scpts = document.getElementsByTagName('script')
+      for (var idx = 0, len = scpts.length; idx < len; idx++) {
+        var src = scpts[idx].getAttribute('src')
+        if (src && src.match(/\/webcam(\.min)?\.js/)) {
+          base_url = src.replace(/\/webcam(\.min)?\.js.*$/, '')
+          idx = len
+        }
+      }
+      if (base_url) swfURL = base_url + '/webcam.swf'
+      else swfURL = 'webcam.swf'
+    }
+
+    // // if this is the user's first visit, set flashvar so flash privacy settings panel is shown first
+    // if (window.localStorage && !localStorage.getItem('visited')) {
+    //   // this.params.new_user = 1
+    //   localStorage.setItem('visited', 1)
+    // }
+    // this.params.new_user = 1
+    // construct flashvars string
+    var flashvars = ''
+    for (var key in this.params) {
+      if (flashvars) flashvars += '&'
+      flashvars += key + '=' + escape(this.params[key])
+    }
+
+    // construct object/embed tag
+
+    return html`<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" type="application/x-shockwave-flash" codebase="${this.protocol}://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="${this.params.width}" height="${this.params.height}" id="webcam_movie_obj" align="middle"><param name="wmode" value="opaque" /><param name="allowScriptAccess" value="always" /><param name="allowFullScreen" value="false" /><param name="movie" value="${swfURL}" /><param name="loop" value="false" /><param name="menu" value="false" /><param name="quality" value="best" /><param name="bgcolor" value="#ffffff" /><param name="flashvars" value="${flashvars}"/><embed id="webcam_movie_embed" src="${swfURL}" wmode="opaque" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="${this.params.width}" height="${this.params.height}" name="webcam_movie_embed" align="middle" allowScriptAccess="always" allowFullScreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="${flashvars}"></embed></object>`
+  }
+
+  getMovie () {
+    // get reference to movie object/embed in DOM
+    var movie = document.getElementById('webcam_movie_obj')
+    if (!movie || !movie._snap) movie = document.getElementById('webcam_movie_embed')
+    if (!movie) console.log('getMovie error')
+    return movie
   }
 
   /**
@@ -114,56 +288,35 @@ export default class Webcam extends Plugin {
     this.canvas = document.querySelector('.UppyWebcam-canvas')
   }
 
-  /**
-   * When `startWebcam` successfully captures media,
-   * this callback sets up video playback in the DOM.
-   *
-   * @param  {MediaStream} stream user media stream
-   */
-  onGotStream (stream) {
-    console.log('Got stream!')
-    this.updateState({
-      cameraReady: true
-    })
-    this.videoStream = stream
-    this.mediaRecorder = new window.MediaRecorder(stream)
+  flashNotify (type, msg) {
+    // receive notification from flash about event
+    switch (type) {
+      case 'flashLoadComplete':
+        // movie loaded successfully
+        break
 
-    const video = this.video
+      case 'cameraLive':
+        // camera is live and ready to snap
+        this.live = true
+        break
 
-    console.log('Got stream.')
+      case 'error':
+        // Flash error
+        console.log('There was a flash error', msg)
+        break
 
-    video.onerror = () => {
-      console.log('video.onerror')
-      if (video) {
-        this.stopWebcam()
-      }
+      default:
+        // catch-all event, just in case
+        console.log('webcam flash_notify: ' + type + ': ' + msg)
+        break
     }
-
-    stream.onended = this.onNoStream
-
-    if (window.webkitURL) {
-      video.src = window.webkitURL.createObjectURL(stream)
-    } else if (video.mozSrcObject !== undefined) {
-      video.mozSrcObject = stream
-      video.play()
-    } else if (navigator.mozGetUserMedia) {
-      video.src = stream
-      video.play()
-    } else if (window.URL) {
-      video.src = window.URL.createObjectURL(stream)
-    } else {
-      video.src = stream
-    }
-
-    this.video = document.querySelector('.UppyWebcam-video')
-    this.canvas = document.querySelector('.UppyWebcam-canvas')
   }
 
-  /**
-   * Error callback when capturing user media fails.
-   */
-  onNoStream () {
-    console.log('Access to camera was denied!')
+  configure (panel) {
+    // open flash configuration panel -- specify tab name:
+    // 'camera', 'privacy', 'default', 'localStorage', 'microphone', 'settingsManager'
+    if (!panel) panel = 'camera'
+    this.getMovie()._configure(panel)
   }
 
   /**
@@ -260,13 +413,17 @@ export default class Webcam extends Plugin {
   }
 
   render (state) {
-    if (!state.webcam.cameraReady) {
+    if (!state.webcam.cameraReady && !state.webcam.useTheFlash) {
       return PermissionsScreen(state.webcam)
     }
 
-    return CameraScreen({
-      onSnapshot: this.takeSnapshot
-    })
+    const stream = state.webcam.videoStream ? URL.createObjectURL(state.webcam.videoStream) : null
+
+    return CameraScreen(extend(state.webcam, {
+      onSnapshot: this.takeSnapshot,
+      getSWFHTML: this.getSWFHTML,
+      src: stream
+    }))
   }
 
   focus () {
@@ -277,8 +434,8 @@ export default class Webcam extends Plugin {
     setTimeout(function () {
       firstInput.focus()
     }, 10)
-
-    this.startWebcam()
+    this.start()
+    // this.startWebcam()
   }
 
   install () {

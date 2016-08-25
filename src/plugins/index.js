@@ -9,6 +9,7 @@ import Dummy from './Dummy'
 import DragDrop from './DragDrop'
 import Formtag from './Formtag'
 import GoogleDrive from './GoogleDrive/index.js'
+import Webcam from './Webcam/index.js'
 
 // Progressindicators
 import ProgressBar from './ProgressBar'
@@ -36,5 +37,6 @@ export default {
   Tus10,
   Multipart,
   // TransloaditBasic,
-  Dashboard
+  Dashboard,
+  Webcam
 }
