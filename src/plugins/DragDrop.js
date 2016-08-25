@@ -1,5 +1,5 @@
 import Plugin from './Plugin'
-import { extend, toArray } from '../core/Utils'
+import { toArray } from '../core/Utils'
 import dragDrop from 'drag-drop'
 import html from '../core/html'
 
@@ -27,7 +27,7 @@ export default class DragDrop extends Plugin {
     }
 
     // Merge default options with the ones set by user
-    this.opts = extend(defaultOpts, opts)
+    this.opts = Object.assign({}, defaultOpts, opts)
 
     // Check for browser dragDrop support
     this.isDragDropSupported = this.checkDragDropSupport()
