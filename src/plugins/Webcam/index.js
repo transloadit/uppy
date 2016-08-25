@@ -115,8 +115,6 @@ export default class Webcam extends Plugin {
       })
       .catch((err) => {
         if (this.opts.enableFlash && this.detectFlash()) {
-          console.log('up in the error catch')
-          console.log(this.detectFlash())
           // setTimeout(() => {
           //   this.opts.forceFlash = 1
           //   this.attach(elem)
@@ -135,7 +133,6 @@ export default class Webcam extends Plugin {
       // elem.appendChild(div)
     } else {
       console.log('There was a problem!')
-      // this.dispatch('error', new WebcamError( this.params.noInterfaceFoundText ))
     }
   }
 
@@ -352,7 +349,6 @@ export default class Webcam extends Plugin {
       recording: true
     })
 
-    console.log(this.mediaRecorder.state)
     console.log('recorder started')
   }
 
@@ -394,13 +390,15 @@ export default class Webcam extends Plugin {
   }
 
   takeSnapshot () {
-    const {video, canvas, generateImage} = this
     const opts = {
       name: `webcam-${Date.now()}.jpg`,
       mimeType: 'image/jpeg'
     }
 
-    var image = generateImage(video, canvas, opts)
+    const video = document.querySelector('.UppyWebcam-video')
+    const canvas = document.querySelector('.UppyWebcam-canvas')
+
+    const image = this.generateImage(video, canvas, opts)
 
     const tagFile = {
       source: this.id,
@@ -428,7 +426,6 @@ export default class Webcam extends Plugin {
 
   focus () {
     const firstInput = document.querySelector(`${this.target} .UppyDummy-firstInput`)
-    console.log('focus')
     // only works for the first time if wrapped in setTimeout for some reason
     // firstInput.focus()
     setTimeout(function () {
