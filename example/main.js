@@ -5,7 +5,7 @@ import GoogleDrive from '../src/plugins/GoogleDrive/index.js'
 import ProgressBar from '../src/plugins/ProgressBar.js'
 import Tus10 from '../src/plugins/Tus10.js'
 import MetaData from '../src/plugins/MetaData.js'
-import Webcam from '../src/plugins/Webcam.js'
+import Webcam from '../src/plugins/Webcam/index.js'
 
 // import MagicLog from '../src/plugins/MagicLog'
 
