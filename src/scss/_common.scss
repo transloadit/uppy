@@ -18,3 +18,63 @@
   line-height: 1;
   -webkit-font-smoothing: antialiased;
 }
+
+// Buttons
+
+.UppyButton--circular {
+  @include reset-button;
+  box-shadow: 1px 2px 4px 0px rgba($color-black, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.UppyButton--blue {
+  color: $color-white;
+  background-color: $color-cornflower-blue;
+
+  &:hover,
+  &:focus {
+    background-color: darken($color-cornflower-blue, 10%);
+  }
+}
+
+.UppyButton--yellow {
+  color: $color-white;
+  background-color: $color-yellow;
+
+  &:hover,
+  &:focus {
+    background-color: darken($color-yellow, 5%);
+  }
+}
+
+.UppyButton--green {
+  color: $color-white;
+  background-color: $color-green;
+
+  &:hover,
+  &:focus {
+    background-color: darken($color-green, 10%);
+  }
+}
+
+.UppyButton--red {
+  color: $color-white;
+  background-color: $color-red;
+
+  &:hover,
+  &:focus {
+    background-color: darken($color-red, 10%);
+  }
+}
+
+.UppyButton--sizeM {
+  width: 60px;
+  height: 60px;
+}
+
+.UppyButton--sizeS {
+  width: 45px;
+  height: 45px;
+}
