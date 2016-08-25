@@ -1,10 +1,6 @@
 {
   "name": "uppy",
-<<<<<<< HEAD
   "version": "0.8.2",
-=======
-  "version": "0.8.0",
->>>>>>> parent of 3bd46d8... update package.json
   "description": "Almost as cute as a Puppy :dog:",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
