@@ -1,5 +1,5 @@
 import Plugin from './Plugin'
-import Utils from '../core/Utils'
+import { extend, toArray } from '../core/Utils'
 import dragDrop from 'drag-drop'
 import html from '../core/html'
 
@@ -22,12 +22,12 @@ export default class DragDrop extends Plugin {
     `
 
     // Default options
-    const defaultOptions = {
+    const defaultOpts = {
       target: '.UppyDragDrop'
     }
 
     // Merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = extend(defaultOpts, opts)
 
     // Check for browser dragDrop support
     this.isDragDropSupported = this.checkDragDropSupport()
@@ -82,7 +82,7 @@ export default class DragDrop extends Plugin {
   handleInputChange (ev) {
     this.core.log('All right, something selected through input...')
 
-    const files = Utils.toArray(ev.target.files)
+    const files = toArray(ev.target.files)
 
     files.forEach((file) => {
       console.log(file)

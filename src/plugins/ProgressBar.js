@@ -26,7 +26,7 @@ export default class ProgressBar extends Plugin {
   render (state) {
     const progress = state.totalProgress || 0
 
-    return html`<div class="UppyProgressBar" style="${this.opts.fixed ? 'position: fixed' : null}">
+    return html`<div class="UppyProgressBar" style="${this.opts.fixed ? 'position: fixed' : 'null'}">
       <div class="UppyProgressBar-inner" style="width: ${progress}%"></div>
       <div class="UppyProgressBar-percentage">${progress}</div>
     </div>`
