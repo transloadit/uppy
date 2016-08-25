@@ -34,13 +34,12 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 It’s easy to start using Uppy, we recommend installing from npm with `npm install uppy` and then:
 
 ``` javascript
-import Uppy from 'uppy/core'
-import { DragDrop, Tus10 } from 'uppy/plugins'
+import Uppy from 'uppy'
 
-const uppy = new Uppy({wait: false})
+const uppy = new Uppy.Core({wait: false})
 const files = uppy
-  .use(DragDrop, {target: '#upload-target'})
-  .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/'})
+  .use(Uppy.plugins.DragDrop, {target: '#upload-target'})
+  .use(Uppy.plugins.Tus10, {endpoint: 'http://master.tus.io:8080/files/'})
   .run()
 ```
 
@@ -49,10 +48,10 @@ But if you like, you can also use a pre-built bundle, in that case `Uppy` will a
 ``` javascript
 <script src="uppy.min.js"></script>
 <script>
-var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true});
-  uppy.use(Uppy.plugins.DragDrop, {target: '.UppyDragDrop'});
-  uppy.use(Uppy.plugins.Tus10, {endpoint: 'http://master.tus.io:3020/files/'});
-  uppy.run();
+var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true})
+  uppy.use(Uppy.plugins.DragDrop, {target: '.UppyDragDrop'})
+  uppy.use(Uppy.plugins.Tus10, {endpoint: 'http://master.tus.io:3020/files/'})
+  uppy.run()
 </script>
 ```
 
@@ -60,14 +59,16 @@ var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true});
 
 <a href="https://saucelabs.com/u/transloadit-uppy">
   <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
-</a> 
+</a>
+
+Note: we aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox and Opera. IE6 on the chart above means we recommend setting Uppy to target a `<form>` element, so when Uppy has not yet loaded or is not supported, upload still works. Even on the refrigerator browser. Or, yes, IE6.
 
 ## Contributions are welcome
 
  - Contributor’s guide in [`website/src/guide/contributing.md`](website/src/guide/contributing.md)
  - Architecture in [`website/src/api/architecture.md`](website/src/api/architecture.md)
  - Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
- 
+
 ## License
- 
+
 [The MIT License](LICENSE).
