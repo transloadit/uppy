@@ -402,6 +402,7 @@ export default class Google extends Plugin {
       filterItems: this.filterItems,
       filterQuery: this.filterQuery,
       handleRowClick: this.handleRowClick,
+      logout: this.logout,
       demo: this.opts.demo
     })
 
