@@ -6,7 +6,8 @@
   "jsnext:main": "src/index.js",
   "files": [
     "src/",
-    "lib/"
+    "lib/",
+    "dist/"
   ],
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
