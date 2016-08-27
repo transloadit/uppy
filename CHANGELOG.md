@@ -50,9 +50,12 @@ Theme: Getting together
 - [ ] core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves (@arturi, @hedgerh)
 - [ ] core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@arturi, @hedgerh)
 - [ ] core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042 (@arturi, @hedgerh)
+- [ ] dashboard: add webworkers for thumbnail generation (@arturi)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] dashboard: see if Dashboard can be optionally rendered inline instead of as a modal (@arturi)
-- [ ] metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 (@arturi)
+- [ ] dashboard: global circular progress bar (@arturi)
+- [ ] dashboard: show progress bar/speed/eta for all files ? (@arturi)
+- [ ] dashboard: copy link button (http://i.imgur.com/b1Io34n.png) (@arturi)
 
 ## 0.9.0
 
@@ -60,17 +63,14 @@ To be released: August 26, 2016. Releasemaster: Harry
 
 Theme: Making Progress, Then Pause & Resume
 
-- [ ] dashboard: global circular progress bar (@arturi)
-- [ ] dashboard: improve file paste (@arturi)
-- [ ] dashboard: informer interface: message when all uploads are "done" (@arturi)
-- [ ] dashboard: results of the upload — green checkmark, better links to uploaded files, copy link button? (http://i.imgur.com/b1Io34n.png) (@arturi)
-- [ ] dashboard: show progress bar/speed/eta for all files ? (@arturi)
+- [x] dashboard: informer interface: message when all uploads are "done" (@arturi)
+- [x] dashboard: improve file paste — not really possible — no file names, weird API, Chrome-only http://stackoverflow.com/a/22940020 (@arturi)
 - [ ] meta: add google demo account (@kvz)
 - [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
 - [ ] meta: write 0.9 release blog post (@hedgerh)
-- [ ] metadata: test that it works, discuss API and features (@arturi, @kvz)
 - [ ] webcam: a barely working webcam record & upload (@hedgerh)
-- [x] core: experiment with switching to `virtual-dom` in a separate branch (@arturi)
+- [x] metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 --> tus issue — nailed down, passed to @account (@arturi, @account)
+- [x] core: experiment with switching to `virtual-dom` in a separate branch; experiment with rollup again (@arturi)
 - [x] core: figure out race conditions (animations not completing because file div gets re-added to the dom each time) with `yo-yo`/`morphdom` https://github.com/shama/bel/issues/26#issuecomment-238004130 (@arturi)
 - [x] core: switch to https://github.com/sethvincent/namespace-emitter — smaller, allows for `on('*')` (@arturi)
 - [x] dashboard: add aria-labels and titles everywhere to improve accessibility #114 (@arturi)
@@ -84,6 +84,7 @@ Theme: Making Progress, Then Pause & Resume
 - [x] metadata: add labels to fields in fileCard (@arturi)
 - [x] metadata: the aftermath — better UI (@arturi)
 - [x] test: Get IE6 on Win XP to run Uppy and see it fall back to regular form upload #108 (@arturi)
+- [x] tus: update uppy to tus-js-client@1.2.1 (@arturi)
 - [x] tus: add ability to pause/resume all uploads at once (@arturi)
 - [x] tus: add ability to pause/resume upload (@arturi)
 
