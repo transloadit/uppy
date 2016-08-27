@@ -1,0 +1,31 @@
+.UppyInformer {
+  position: absolute;
+  right: 40px;
+  bottom: 40px;
+  display: flex;
+  align-items: center;
+  max-width: 280px;
+  min-height: 40px;
+  max-height: 60px;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+  padding: 10px 18px;
+  background-color: rgba($color-black, 0.7);
+  color: $color-white;
+  opacity: 1;
+  transform: none;
+  transition: all 400ms ease-in;
+  border-radius: 5px;
+}
+
+  .UppyInformer[aria-hidden=true] {
+    opacity: 0;
+    transform: translateY(200%);
+    transition: all 400ms ease-in;
+  }
+
+.UppyInformer p {
+  margin: 0;
+  padding: 0;
+}

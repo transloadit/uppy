@@ -45,6 +45,12 @@ export default class Dummy extends Plugin {
   }
 
   install () {
+    // const bus = this.core.emitter
+
+    // setTimeout(() => {
+    //   bus.emit('informer', 'hello', 'info', 5000)
+    // }, 1000)
+
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)
