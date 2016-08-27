@@ -211,9 +211,9 @@ export default class DashboardUI extends Plugin {
     bus.on('all-uploads-complete', (uploadedCount) => {
       bus.emit(
         'informer',
-        `${this.core.i18n('files', {'smart_count': uploadedCount})} files have been successfully uploaded, Sir!`,
+        `${this.core.i18n('files', {'smart_count': uploadedCount})} successfully uploaded, Sir!`,
         'info',
-        8000
+        6000
       )
     })
 
