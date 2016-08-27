@@ -17,6 +17,7 @@
   transform: none;
   transition: all 400ms ease-in;
   border-radius: 5px;
+  z-index: $zIndex-4;
 }
 
   .UppyInformer[aria-hidden=true] {
