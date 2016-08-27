@@ -174,19 +174,21 @@ export default class Core {
     //   console.log('with payload: ', payload)
     // })
 
-    this.emitter.on('file-add', (data) => {
+    const bus = this.emitter
+
+    bus.on('file-add', (data) => {
       this.addFile(data)
     })
 
     // `remove-file` removes a file from `state.files`, for example when
     // a user decides not to upload particular file and clicks a button to remove it
-    this.emitter.on('file-remove', (fileID) => {
+    bus.on('file-remove', (fileID) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       delete updatedFiles[fileID]
       this.setState({files: updatedFiles})
     })
 
-    this.emitter.on('core:file-upload-started', (fileID, upload) => {
+    bus.on('core:file-upload-started', (fileID, upload) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID],
         Object.assign({}, {
@@ -202,7 +204,7 @@ export default class Core {
       this.setState({files: updatedFiles})
     })
 
-    this.emitter.on('upload-progress', (data) => {
+    bus.on('upload-progress', (data) => {
       const fileID = data.id
       const updatedFiles = Object.assign({}, this.getState().files)
       if (!updatedFiles[fileID]) {
@@ -235,13 +237,21 @@ export default class Core {
 
       const totalProgress = progressAll * 100 / progressMax
 
+      if (totalProgress === 100) {
+        const completeFiles = Object.keys(updatedFiles).filter((file) => {
+          // this should be `uploadComplete`
+          return updatedFiles[file].progress.percentage === 100
+        })
+        bus.emit('all-uploads-complete', completeFiles.length)
+      }
+
       this.setState({
         totalProgress: totalProgress,
         files: updatedFiles
       })
     })
 
-    this.emitter.on('upload-success', (fileID, uploadURL) => {
+    bus.on('upload-success', (fileID, uploadURL) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID], {
         progress: Object.assign({}, updatedFiles[fileID].progress, {
@@ -256,9 +266,30 @@ export default class Core {
       })
     })
 
-    this.emitter.on('core:update-meta', (data, fileID) => {
+    bus.on('core:update-meta', (data, fileID) => {
       this.updateMeta(data, fileID)
     })
+
+    // show informer if offline
+    window.addEventListener('online', () => this.isOnline(true))
+    window.addEventListener('offline', () => this.isOnline(false))
+    setTimeout(() => this.isOnline(), 3000)
+  }
+
+  isOnline (status) {
+    const bus = this.emitter
+    const online = status || window.navigator.onLine
+    if (!online) {
+      bus.emit('is-offline')
+      bus.emit('informer', 'No internet connection', 'error', 0)
+      this.wasOffline = true
+    } else {
+      bus.emit('is-online')
+      if (this.wasOffline) {
+        bus.emit('informer', 'Connected!', 'success', 3000)
+        this.wasOffline = false
+      }
+    }
   }
 
 /**
