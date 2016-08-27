@@ -171,20 +171,24 @@ export default class DashboardUI extends Plugin {
   }
 
   // @TODO Exprimental, work in progress
+  // no names, weird API, Chrome-only http://stackoverflow.com/a/22940020
   handlePaste (ev) {
-    // console.log(ev)
-    const files = Array.from(ev.clipboardData.items)
-    // console.log(files)
-    files.shift()
-    files.forEach((file) => {
-      const fileBlob = file.getAsFile()
-      this.core.emitter.emit('file-add', {
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: fileBlob
-      })
-    })
+    const files = ev.clipboardData.items
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+
+      if (file.kind === 'file') {
+        const blob = file.getAsFile()
+        console.log(blob)
+        this.core.emitter.emit('file-add', {
+          source: this.id,
+          name: file.name,
+          type: file.type,
+          data: blob
+        })
+      }
+    }
   }
 
   actions () {
@@ -203,6 +207,24 @@ export default class DashboardUI extends Plugin {
         })
       })
     })
+
+    bus.on('all-uploads-complete', (uploadedCount) => {
+      bus.emit(
+        'informer',
+        `${this.core.i18n('files', {'smart_count': uploadedCount})} files have been successfully uploaded, Sir!`,
+        'info',
+        8000
+      )
+    })
+
+    // setInterval(() => {
+    //   const isOnline = navigator.onLine
+    //   if (!isOnline) {
+    //     bus.emit('informer', 'No internet connection', 'error', 0)
+    //   } else {
+    //     bus.emit('informer-hide')
+    //   }
+    // }, 10000)
   }
 
   handleDrop (files) {
