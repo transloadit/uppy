@@ -44,6 +44,8 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.10.0
 
+To be released: Septermber 23, 2016. Releasemaster: Artur
+
 Theme: Getting together
 
 - [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` api, open modal... (@arturi, @hedgerh)
@@ -84,6 +86,7 @@ Theme: Making Progress, Then Pause & Resume
 - [x] metadata: add labels to fields in fileCard (@arturi)
 - [x] metadata: the aftermath — better UI (@arturi)
 - [x] test: Get IE6 on Win XP to run Uppy and see it fall back to regular form upload #108 (@arturi)
+- [x] test: refactor tests, add DragDrop back (@arturi)
 - [x] tus: update uppy to tus-js-client@1.2.1 (@arturi)
 - [x] tus: add ability to pause/resume all uploads at once (@arturi)
 - [x] tus: add ability to pause/resume upload (@arturi)
