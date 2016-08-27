@@ -432,6 +432,8 @@ export default class Webcam extends Plugin {
       firstInput.focus()
     }, 10)
     this.start()
+
+    this.core.emitter.emit('informer', 'Smile!', 'info', 2000)
     // this.startWebcam()
   }
 
