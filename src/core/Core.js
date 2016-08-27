@@ -271,9 +271,11 @@ export default class Core {
     })
 
     // show informer if offline
-    window.addEventListener('online', () => this.isOnline(true))
-    window.addEventListener('offline', () => this.isOnline(false))
-    setTimeout(() => this.isOnline(), 3000)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', () => this.isOnline(true))
+      window.addEventListener('offline', () => this.isOnline(false))
+      setTimeout(() => this.isOnline(), 3000)
+    }
   }
 
   isOnline (status) {
