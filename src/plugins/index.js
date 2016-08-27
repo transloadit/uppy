@@ -12,7 +12,8 @@ import GoogleDrive from './GoogleDrive/index.js'
 import Webcam from './Webcam/index.js'
 
 // Progressindicators
-import ProgressBar from './ProgressBar'
+import ProgressBar from './ProgressBar.js'
+import Informer from './Informer.js'
 // import Spinner from './Spinner'
 
 // Uploaders
@@ -29,8 +30,7 @@ export default {
   Plugin,
   Dummy,
   ProgressBar,
-  // Spinner,
-  // Present,
+  Informer,
   DragDrop,
   GoogleDrive,
   Formtag,
