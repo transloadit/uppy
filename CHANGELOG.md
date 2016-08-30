@@ -58,6 +58,8 @@ Theme: Getting together
 - [ ] dashboard: global circular progress bar (@arturi)
 - [ ] dashboard: show progress bar/speed/eta for all files ? (@arturi)
 - [ ] dashboard: copy link button (http://i.imgur.com/b1Io34n.png) (@arturi)
+- [ ] provider: abstract google drive into provider plugin for reuse (@hedgerh)
+- [ ] google drive: improve UI (@hedgerh)
 
 ## 0.9.0
 
