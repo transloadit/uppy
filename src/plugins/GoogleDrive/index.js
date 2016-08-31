@@ -3,6 +3,8 @@ import Plugin from '../Plugin'
 import 'whatwg-fetch'
 import html from '../../core/html'
 
+import {Provider} from 'uppy-thin'
+
 import AuthView from './AuthView'
 import Browser from './Browser'
 import ErrorView from './Error'
@@ -18,6 +20,11 @@ export default class Google extends Plugin {
         <path d="M2.955 14.93l2.667-4.62H16l-2.667 4.62H2.955zm2.378-4.62l-2.666 4.62L0 10.31l5.19-8.99 2.666 4.62-2.523 4.37zm10.523-.25h-5.333l-5.19-8.99h5.334l5.19 8.99z"/>
       </svg>
     `
+
+    this.GoogleDrive = new Provider({
+      host: this.opts.host,
+      provider: 'google'
+    })
 
     this.files = []
 
@@ -138,45 +145,35 @@ export default class Google extends Plugin {
    * @return {Promise}   Folders/files in folder
    */
   getFolder (id = 'root') {
-    return fetch(`${this.opts.host}/google/list?dir=${id}`, {
-      method: 'get',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: {
-        demo: this.opts.demo
-      }
-    })
-    .then((res) => {
-      if (res.status >= 200 && res.status <= 300) {
-        return res.json().then((data) => {
-          // let result = Utils.groupBy(data.items, (item) => item.mimeType)
-          let folders = []
-          let files = []
-          data.items.forEach((item) => {
-            if (item.mimeType === 'application/vnd.google-apps.folder') {
-              folders.push(item)
-            } else {
-              files.push(item)
+    return this.GoogleDrive.list(id)
+      .then((res) => {
+        if (res.status >= 200 && res.status <= 300) {
+          return res.json().then((data) => {
+            // let result = Utils.groupBy(data.items, (item) => item.mimeType)
+            let folders = []
+            let files = []
+            data.items.forEach((item) => {
+              if (item.mimeType === 'application/vnd.google-apps.folder') {
+                folders.push(item)
+              } else {
+                files.push(item)
+              }
+            })
+            return {
+              folders,
+              files
             }
           })
-          return {
-            folders,
-            files
-          }
-        })
-      } else {
-        this.handleError(res)
-        let error = new Error(res.statusText)
-        error.response = res
-        throw error
-      }
-    })
-    .catch((err) => {
-      return err
-    })
+        } else {
+          this.handleError(res)
+          let error = new Error(res.statusText)
+          error.response = res
+          throw error
+        }
+      })
+      .catch((err) => {
+        return err
+      })
   }
 
   /**
@@ -185,8 +182,6 @@ export default class Google extends Plugin {
    * @param  {String} title Folder title
    */
   getNextFolder (id, title) {
-    console.log(id)
-    console.log(title)
     this.getFolder(id)
       .then((data) => {
         const state = this.core.getState().googleDrive
@@ -240,17 +235,7 @@ export default class Google extends Plugin {
    * Removes session token on client side.
    */
   logout () {
-    fetch(`${this.opts.host}/google/logout?redirect=${location.href}`, {
-      method: 'get',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: {
-        demo: this.opts.demo
-      }
-    })
+    this.GoogleDrive.logout(location.href)
       .then((res) => res.json())
       .then((res) => {
         if (res.ok) {
