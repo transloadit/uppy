@@ -4,20 +4,21 @@ import FileItem from './FileItem'
 import FileCard from './FileCard'
 import { closeIcon, localIcon, uploadIcon, dashboardBgIcon, iconPause, iconResume } from './icons'
 
-export default function Dashboard (props, bus) {
+export default function Dashboard (props) {
   // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
-  const state = props.state
+  const { bus,
+          // log,
+          state,
+          container,
+          showProgressDetails,
+          hideModal,
+          hideAllPanels,
+          showPanel } = props
+
   const files = state.files
   const modal = state.modal
-  const container = props.container
   const showFileCard = modal.showFileCard
-  const showProgressDetails = props.showProgressDetails
-
-  const hideModal = props.hideModal
-  const hideAllPanels = props.hideAllPanels
-  const showPanel = props.showPanel
-  const log = props.log
 
   const acquirers = modal.targets.filter((target) => {
     return target.type === 'acquirer'
@@ -38,16 +39,16 @@ export default function Dashboard (props, bus) {
     bus.emit('core:upload')
   }
 
-  function handleInputChange (ev) {
+  const handleInputChange = (ev) => {
     ev.preventDefault()
-    log('All right, something selected through input...')
+    // log('All right, something selected through input...')
 
     const files = Utils.toArray(ev.target.files)
 
     files.forEach((file) => {
-      log(file)
+      // log(file)
       bus.emit('file-add', {
-        source: this.id,
+        source: props.id,
         name: file.name,
         type: file.type,
         data: file
@@ -79,31 +80,39 @@ export default function Dashboard (props, bus) {
   function renderPauseResume () {
     if (uploadStartedFilesCount > 0) {
       if (inProgressFilesCount > 0) {
-        return html`<button class="UppyDashboard-pauseResume UppyButton--circular UppyButton--yellow UppyButton--sizeS"
+        return html`<button class="UppyDashboard-pauseResume
+                                   UppyButton--circular
+                                   UppyButton--yellow
+                                   UppyButton--sizeS"
                             onclick=${() => bus.emit('core:pause-all')}>${iconPause()}</button>`
       }
 
       if (uploadStartedFilesCount !== completeFilesCount) {
-        return html`<button class="UppyDashboard-pauseResume UppyButton--circular UppyButton--green UppyButton--sizeS"
+        return html`<button class="UppyDashboard-pauseResume
+                                   UppyButton--circular
+                                   UppyButton--green
+                                   UppyButton--sizeS"
                             onclick=${() => bus.emit('core:resume-all')}>${iconResume()}</button>`
       }
     }
   }
 
-  return html`<div class="Uppy UppyTheme--default UppyDashboard ${isTouchDevice ? 'Uppy--isTouchDevice' : ''}"
-                 aria-hidden="${modal.isHidden}"
-                 aria-label="Uppy Dialog Window (Press escape to close)"
-                 role="dialog">
+  return html`<div class="Uppy UppyTheme--default UppyDashboard
+                          ${isTouchDevice ? 'Uppy--isTouchDevice' : ''}
+                          ${!props.inline ? 'UppyDashboard--modal' : ''}"
+                   aria-hidden="${props.inline ? 'false' : modal.isHidden}"
+                   aria-label="Uppy Dialog Window (Press escape to close)"
+                   role="dialog">
 
     <div class="UppyDashboard-overlay"
-                onclick=${hideModal}></div>
+         onclick=${hideModal}></div>
+
+    <button class="UppyDashboard-close"
+            title="Close Uppy modal"
+            onclick=${hideModal}>${closeIcon()}</button>
 
     <div class="UppyDashboard-inner" tabindex="0">
       <div class="UppyDashboard-innerWrap">
-
-        <button class="UppyDashboard-close" title="Close Uppy modal"
-                onclick=${hideModal}>${closeIcon()}</button>
-
         <div class="UppyDashboardTabs">
           <h3 class="UppyDashboardTabs-title">Drop files here, paste or import from</h3>
           <nav>
@@ -139,8 +148,9 @@ export default function Dashboard (props, bus) {
         ${FileCard({
           files: files,
           showFileCard: showFileCard,
-          metaFields: state.metaFields
-        }, bus)}
+          metaFields: state.metaFields,
+          bus: bus
+        })}
 
         <div class="UppyDashboard-files">
           <ul class="UppyDashboard-filesInner">
@@ -149,9 +159,11 @@ export default function Dashboard (props, bus) {
               : null
             }
             ${Object.keys(files).map((fileID) => {
-              return FileItem(
-                {file: files[fileID], showProgressDetails}, bus
-              )
+              return FileItem({
+                file: files[fileID],
+                showProgressDetails: showProgressDetails,
+                bus: bus
+              })
             })}
           </ul>
           <div class="UppyDashboard-actions">

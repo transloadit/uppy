@@ -12,8 +12,8 @@ function getIconByMime (fileTypeGeneral) {
   }
 }
 
-export default function fileCard (props, bus) {
-  const files = props.files
+export default function fileCard (props) {
+  const { bus, files } = props
   const showFileCard = props.showFileCard
   let metaFields = props.metaFields
 

@@ -16,6 +16,7 @@ export default class DashboardUI extends Plugin {
     // set default options
     const defaultOptions = {
       target: 'body',
+      inline: false,
       defaultTabIcon: defaultTabIcon(),
       panelSelectorPrefix: 'UppyDashboardContent-panel',
       showProgressDetails: true
@@ -192,7 +193,7 @@ export default class DashboardUI extends Plugin {
   }
 
   actions () {
-    const bus = this.core.emitter
+    const bus = this.core.bus
 
     bus.on('file-add', () => {
       this.hideAllPanels()
@@ -208,7 +209,7 @@ export default class DashboardUI extends Plugin {
       })
     })
 
-    bus.on('all-uploads-complete', (uploadedCount) => {
+    bus.on('success', (uploadedCount) => {
       bus.emit(
         'informer',
         `${this.core.i18n('files', {'smart_count': uploadedCount})} successfully uploaded, Sir!`,
@@ -216,22 +217,13 @@ export default class DashboardUI extends Plugin {
         6000
       )
     })
-
-    // setInterval(() => {
-    //   const isOnline = navigator.onLine
-    //   if (!isOnline) {
-    //     bus.emit('informer', 'No internet connection', 'error', 0)
-    //   } else {
-    //     bus.emit('informer-hide')
-    //   }
-    // }, 10000)
   }
 
   handleDrop (files) {
     this.core.log('All right, someone dropped something...')
 
     files.forEach((file) => {
-      this.core.emitter.emit('file-add', {
+      this.core.bus.emit('file-add', {
         source: this.id,
         name: file.name,
         type: file.type,
@@ -241,19 +233,21 @@ export default class DashboardUI extends Plugin {
   }
 
   render (state) {
-    const bus = this.core.emitter
     return Dashboard({
       state: state,
       autoProceed: this.core.opts.autoProceed,
+      id: this.id,
       container: this.opts.target,
       hideModal: this.hideModal,
       panelSelectorPrefix: this.opts.panelSelectorPrefix,
       showProgressDetails: this.opts.showProgressDetails,
+      inline: this.opts.inline,
       handleInputChange: this.handleInputChange,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
-      log: this.core.log
-    }, bus)
+      log: this.core.log,
+      bus: this.core.emitter
+    })
   }
 
   install () {

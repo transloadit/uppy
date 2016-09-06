@@ -41,9 +41,8 @@ function getSpeed (fileProgress) {
   return uploadSpeed
 }
 
-export default function fileItem (props, bus) {
-  const file = props.file
-  const showProgressDetails = props.showProgressDetails
+export default function fileItem (props) {
+  const { bus, file, showProgressDetails } = props
 
   const isUploaded = file.progress.uploadComplete
   const uploadInProgressOrComplete = file.progress.uploadStarted
@@ -53,7 +52,7 @@ export default function fileItem (props, bus) {
   const fileName = Utils.getFileNameAndExtension(file.meta.name)[0]
   const truncatedFileName = Utils.truncateString(fileName, 15)
 
-  function remove (ev) {
+  const remove = (ev) => {
     // const el = document.querySelector(`#uppy_${file.id}`)
     // el.classList.add('UppyAnimation-zoomOutLeft')
 
