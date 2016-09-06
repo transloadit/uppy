@@ -1,6 +1,8 @@
-/**
-* Drag & Drop CSS to style the plugin
-*/
+@import '_variables.scss';
+@import '_utils.scss';
+@import '_animation.scss';
+@import '_common.scss';
+
 .UppyDragDrop-container {
   min-height: 100px;
   display: flex;

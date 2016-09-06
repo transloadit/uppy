@@ -1,3 +1,9 @@
+@import '_variables.scss';
+@import '_utils.scss';
+@import '_animation.scss';
+@import '_common.scss';
+@import 'vendor/bootstrap/bootstrap-grid';
+
 .UppyGoogleDrive-authenticate {
   align-items: center;
   display: flex;

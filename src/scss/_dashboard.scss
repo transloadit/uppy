@@ -1,8 +1,13 @@
-.UppyDashboard {
+@import '_variables.scss';
+@import '_utils.scss';
+@import '_animation.scss';
+@import '_common.scss';
+
+.UppyDashboard--modal {
   z-index: $zIndex-2;
 }
 
-.UppyDashboard[aria-hidden=true] {
+.UppyDashboard--modal[aria-hidden=true] {
   display: none;
 }
 
@@ -11,7 +16,7 @@
   overflow: hidden;
 }
 
-.UppyDashboard-overlay {
+.UppyDashboard--modal .UppyDashboard-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -22,20 +27,26 @@
 }
 
 .UppyDashboard-inner {
+  position: relative;
   background-color: darken($color-white, 5%);
   padding: 15px;
   max-width: 100%;
   max-height: 100%;
   width: 750px;
   height: 550px;
+  overflow: hidden;
+  z-index: $zIndex-3;
+  outline: none;
+  border: 1px solid rgba($color-gray, 0.25);
+}
+
+.UppyDashboard--modal .UppyDashboard-inner {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  overflow: hidden;
-  z-index: $zIndex-3;
-  outline: none;
   box-shadow: 0px 0px 10px 4px rgba($color-black, 0.1);
+  border: none;
 }
 
 .UppyDashboard-innerWrap {
@@ -50,17 +61,24 @@
 .UppyDashboard-close {
   @include reset-button;
   position: absolute;
-  top: 28px;
-  right: 28px;
+  top: 16px;
+  right: 16px;
   cursor: pointer;
-  color: lighten($color-asphalt-gray, 20%);
+  // color: lighten($color-asphalt-gray, 20%);
+  color: $color-white;
   z-index: $zIndex-3;
   transition: all 0.2s;
 
   &:hover {
     color: $color-black;
+    // color: rgba($color-white, 0.8);
   }
 }
+
+  .UppyDashboard-close .UppyIcon {
+    width: 18px;
+    height: 18px;
+  }
 
 .UppyDashboardTabs {
   height: 22%;
