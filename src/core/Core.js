@@ -39,7 +39,9 @@ export default class Core {
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
 
-    this.emitter = ee()
+    this.bus = this.emitter = ee()
+    this.on = this.bus.on.bind(this.bus)
+    this.emit = this.bus.emit.bind(this.bus)
 
     this.state = {
       files: {}
@@ -50,6 +52,7 @@ export default class Core {
       global.UppyState = this.state
       global.uppyLog = ''
       global.UppyAddFile = this.addFile.bind(this)
+      global._Uppy = this
     }
   }
 
@@ -72,7 +75,7 @@ export default class Core {
    */
   setState (stateUpdate) {
     const newState = Object.assign({}, this.state, stateUpdate)
-    this.emitter.emit('state-update', this.state, newState, stateUpdate)
+    this.bus.emit('state-update', this.state, newState, stateUpdate)
 
     this.state = newState
     this.updateAll(this.state)
@@ -137,14 +140,14 @@ export default class Core {
     updatedFiles[fileID] = newFile
     this.setState({files: updatedFiles})
 
-    this.emitter.emit('file-added', fileID)
+    this.bus.emit('file-added', fileID)
 
     if (fileTypeGeneral === 'image' && !isRemote) {
       this.addFileThumbnail(newFile.id)
     }
 
     if (this.opts.autoProceed) {
-      this.emitter.emit('core:upload')
+      this.bus.emit('core:upload')
     }
   }
 
@@ -169,26 +172,26 @@ export default class Core {
    *
    */
   actions () {
-    // this.emitter.on('*', (payload) => {
+    // this.bus.on('*', (payload) => {
     //   console.log('emitted: ', this.event)
     //   console.log('with payload: ', payload)
     // })
 
-    const bus = this.emitter
+    // const bus = this.bus
 
-    bus.on('file-add', (data) => {
+    this.on('file-add', (data) => {
       this.addFile(data)
     })
 
     // `remove-file` removes a file from `state.files`, for example when
     // a user decides not to upload particular file and clicks a button to remove it
-    bus.on('file-remove', (fileID) => {
+    this.on('file-remove', (fileID) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       delete updatedFiles[fileID]
       this.setState({files: updatedFiles})
     })
 
-    bus.on('core:file-upload-started', (fileID, upload) => {
+    this.on('core:file-upload-started', (fileID, upload) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID],
         Object.assign({}, {
@@ -204,7 +207,7 @@ export default class Core {
       this.setState({files: updatedFiles})
     })
 
-    bus.on('upload-progress', (data) => {
+    this.on('upload-progress', (data) => {
       const fileID = data.id
       const updatedFiles = Object.assign({}, this.getState().files)
       if (!updatedFiles[fileID]) {
@@ -242,7 +245,7 @@ export default class Core {
           // this should be `uploadComplete`
           return updatedFiles[file].progress.percentage === 100
         })
-        bus.emit('all-uploads-complete', completeFiles.length)
+        this.emit('success', completeFiles.length)
       }
 
       this.setState({
@@ -251,7 +254,7 @@ export default class Core {
       })
     })
 
-    bus.on('upload-success', (fileID, uploadURL) => {
+    this.on('upload-success', (fileID, uploadURL) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID], {
         progress: Object.assign({}, updatedFiles[fileID].progress, {
@@ -266,7 +269,7 @@ export default class Core {
       })
     })
 
-    bus.on('core:update-meta', (data, fileID) => {
+    this.on('core:update-meta', (data, fileID) => {
       this.updateMeta(data, fileID)
     })
 
@@ -279,16 +282,16 @@ export default class Core {
   }
 
   isOnline (status) {
-    const bus = this.emitter
+    // const bus = this.bus
     const online = status || window.navigator.onLine
     if (!online) {
-      bus.emit('is-offline')
-      bus.emit('informer', 'No internet connection', 'error', 0)
+      this.emit('is-offline')
+      this.emit('informer', 'No internet connection', 'error', 0)
       this.wasOffline = true
     } else {
-      bus.emit('is-online')
+      this.emit('is-online')
       if (this.wasOffline) {
-        bus.emit('informer', 'Connected!', 'success', 3000)
+        this.emit('informer', 'Connected!', 'success', 3000)
         this.wasOffline = false
       }
     }
@@ -302,8 +305,18 @@ export default class Core {
  * @return {Object} self for chaining
  */
   use (Plugin, opts) {
+    // Prepare props to pass to plugins
+    const props = {
+      getState: this.getState.bind(this),
+      setState: this.setState.bind(this),
+      updateMeta: this.updateMeta.bind(this),
+      addFile: this.addFile.bind(this),
+      i18n: this.i18n.bind(this),
+      bus: this.ee,
+      log: this.log.bind(this)
+    }
     // Instantiate
-    const plugin = new Plugin(this, opts)
+    const plugin = new Plugin(this, opts, props)
     const pluginName = plugin.id
     this.plugins[plugin.type] = this.plugins[plugin.type] || []
 
@@ -371,10 +384,17 @@ export default class Core {
     if (msg === `${msg}`) {
       console.log(`LOG: ${msg}`)
     } else {
-      // console.log('LOG↓')
       console.dir(msg)
     }
     global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
+  }
+
+  initSocket (opts) {
+    if (!this.socket) {
+      this.socket = new UppySocket(opts)
+    }
+
+    return this.socket
   }
 
   installAll () {
@@ -388,7 +408,7 @@ export default class Core {
 /**
  * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
  *
- * (Used to run a waterfall of runType plugin packs, like so:
+ * (In the past was used to run a waterfall of runType plugin packs, like so:
  * All preseters(data) --> All acquirers(data) --> All uploaders(data) --> done)
  */
   run () {
@@ -409,13 +429,5 @@ export default class Core {
     this.installAll()
 
     return
-  }
-
-  initSocket (opts) {
-    if (!this.socket) {
-      this.socket = new UppySocket(opts)
-    }
-
-    return this.socket
   }
 }
