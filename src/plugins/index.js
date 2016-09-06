@@ -6,7 +6,7 @@ import Dashboard from './Dashboard/index.js'
 
 // Acquirers
 import Dummy from './Dummy'
-import DragDrop from './DragDrop'
+import DragDrop from './DragDrop/index.js'
 import Formtag from './Formtag'
 import GoogleDrive from './GoogleDrive/index.js'
 import Webcam from './Webcam/index.js'

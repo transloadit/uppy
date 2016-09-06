@@ -10,7 +10,7 @@ import Dashboard from './plugins/Dashboard/index.js'
 
 // Acquirers
 import Dummy from './plugins/Dummy'
-import DragDrop from './plugins/DragDrop/DragDrop.js'
+import DragDrop from './plugins/DragDrop/index.js'
 import Formtag from './plugins/Formtag'
 import GoogleDrive from './plugins/GoogleDrive/index.js'
 import Webcam from './plugins/Webcam/index.js'

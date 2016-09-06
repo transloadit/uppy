@@ -1,5 +1,5 @@
 import Uppy from '../../../../src/core/Core.js'
-import DragDrop from '../../../../src/plugins/DragDrop.js'
+import DragDrop from '../../../../src/plugins/DragDrop/index.js'
 import ProgressBar from '../../../../src/plugins/ProgressBar.js'
 import Tus10 from '../../../../src/plugins/Tus10.js'
 
