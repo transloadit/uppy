@@ -433,7 +433,9 @@ export default class Webcam extends Plugin {
     }, 10)
     this.start()
 
-    this.core.emitter.emit('informer', 'Smile!', 'info', 2000)
+    setTimeout(() => {
+      this.core.emitter.emit('informer', 'Smile!', 'info', 3500)
+    }, 1000)
     // this.startWebcam()
   }
 
