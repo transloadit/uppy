@@ -79,7 +79,7 @@
     "namespace-emitter": "1.0.0",
     "pretty-bytes": "3.0.1",
     "tus-js-client": "1.2.1",
-    "uppy-thin": "git+https://github.com/hedgerh/uppy-thin.git",
+    "uppy-base": "git+https://github.com/hedgerh/uppy-base.git",
     "whatwg-fetch": "1.0.0",
     "yo-yo": "1.2.2"
   },
