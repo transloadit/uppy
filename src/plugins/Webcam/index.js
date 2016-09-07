@@ -1,5 +1,5 @@
 import Plugin from '../Plugin'
-import { Webcam as WebcamProvider } from 'uppy-thin'
+import { Webcam as WebcamProvider } from 'uppy-base'
 import { extend } from '../../core/Utils'
 import WebcamIcon from './WebcamIcon'
 import CameraScreen from './CameraScreen'

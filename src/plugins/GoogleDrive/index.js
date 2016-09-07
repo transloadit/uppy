@@ -3,7 +3,7 @@ import Plugin from '../Plugin'
 import 'whatwg-fetch'
 import html from '../../core/html'
 
-import {Provider} from 'uppy-thin'
+import {Provider} from 'uppy-base'
 
 import AuthView from './AuthView'
 import Browser from './Browser'
