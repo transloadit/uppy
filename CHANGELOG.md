@@ -51,15 +51,19 @@ Theme: Getting together
 - [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` api, open modal... (@arturi, @hedgerh)
 - [ ] core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves (@arturi, @hedgerh)
 - [ ] core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@arturi, @hedgerh)
-- [ ] core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042 (@arturi, @hedgerh)
+- [ ] core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042, try https://github.com/rtsao/csjs (@arturi, @hedgerh)
 - [ ] dashboard: add webworkers for thumbnail generation (@arturi)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
-- [ ] dashboard: see if Dashboard can be optionally rendered inline instead of as a modal (@arturi)
+- [x] dashboard: option to render Dashboard inline instead of a modal dialog (@arturi)
 - [ ] dashboard: global circular progress bar (@arturi)
-- [ ] dashboard: show progress bar/speed/eta for all files ? (@arturi)
-- [ ] dashboard: copy link button (http://i.imgur.com/b1Io34n.png) (@arturi)
+- [ ] dashboard: show speed/eta for all files ? (@arturi)
+- [x] dashboard: copy link button (http://i.imgur.com/b1Io34n.png) (@arturi)
+- [ ] dashboard: improve file paste the best we can http://stackoverflow.com/a/22940020 (@arturi)
+- [ ] formtag: pretty input element #93 (@arturi)
+- [ ] webcam: stop using the webcam when the picture is taken / tab is shown (do we need mount/unmount maybe?) (@hedgerh)
 - [ ] provider: abstract google drive into provider plugin for reuse (@hedgerh)
 - [ ] google drive: improve UI (@hedgerh)
+- [ ] meta: update docs, add unpkg CDN links (https://unpkg.com/uppy@0.9.0/dist/uppy.min.css) (@arturi)
 
 ## 0.9.0
 
@@ -68,7 +72,6 @@ To be released: August 26, 2016. Releasemaster: Harry
 Theme: Making Progress, Then Pause & Resume
 
 - [x] dashboard: informer interface: message when all uploads are "done" (@arturi)
-- [x] dashboard: improve file paste — not really possible — no file names, weird API, Chrome-only http://stackoverflow.com/a/22940020 (@arturi)
 - [ ] meta: add google demo account (@kvz)
 - [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
 - [ ] meta: write 0.9 release blog post (@hedgerh)
