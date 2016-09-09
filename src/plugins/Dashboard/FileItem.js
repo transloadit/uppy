@@ -1,8 +1,11 @@
 import html from '../../core/html'
-import Utils from '../../core/Utils'
+import { secondsToTime,
+         getFileNameAndExtension,
+         truncateString,
+         copyToClipboard } from '../../core/Utils'
 import prettyBytes from 'pretty-bytes'
 import FileItemProgress from './FileItemProgress'
-import { removeIcon, iconText, iconFile, iconAudio, iconEdit } from './icons'
+import { removeIcon, iconText, iconFile, iconAudio, iconEdit, iconCopy } from './icons'
 
 function getIconByMime (fileTypeGeneral) {
   switch (fileTypeGeneral) {
@@ -22,7 +25,7 @@ function getETA (fileProgress) {
   const bytesRemaining = fileProgress.bytesTotal - fileProgress.bytesUploaded
   const secondsRemaining = Math.round(bytesRemaining / uploadSpeed * 10) / 10
 
-  const time = Utils.secondsToTime(secondsRemaining)
+  const time = secondsToTime(secondsRemaining)
 
   // Only display hours and minutes if they are greater than 0 but always
   // display minutes if hours is being displayed
@@ -49,8 +52,8 @@ export default function fileItem (props) {
   const uploadInProgress = file.progress.uploadStarted && !file.progress.uploadComplete
   const isPaused = file.isPaused || false
 
-  const fileName = Utils.getFileNameAndExtension(file.meta.name)[0]
-  const truncatedFileName = Utils.truncateString(fileName, 15)
+  const fileName = getFileNameAndExtension(file.meta.name)[0]
+  const truncatedFileName = truncateString(fileName, 15)
 
   const remove = (ev) => {
     // const el = document.querySelector(`#uppy_${file.id}`)
@@ -65,7 +68,10 @@ export default function fileItem (props) {
     bus.emit('file-remove', file.id)
   }
 
-  return html`<li class="UppyDashboardItem ${uploadInProgress ? 'is-inprogress' : ''} ${isUploaded ? 'is-complete' : ''} ${isPaused ? 'is-paused' : ''}"
+  return html`<li class="UppyDashboardItem
+                        ${uploadInProgress ? 'is-inprogress' : ''}
+                        ${isUploaded ? 'is-complete' : ''}
+                        ${isPaused ? 'is-paused' : ''}"
                   id="uppy_${file.id}"
                   title="${file.meta.name}">
       <div class="UppyDashboardItem-preview">
@@ -100,7 +106,9 @@ export default function fileItem (props) {
     <div class="UppyDashboardItem-info">
       <h4 class="UppyDashboardItem-name" title="${fileName}">
         ${file.uploadURL
-          ? html`<a href="${file.uploadURL}" target="_blank">${file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}</a>`
+          ? html`<a href="${file.uploadURL}" target="_blank">
+              ${file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}
+            </a>`
           : file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName
         }
       </h4>
@@ -112,8 +120,23 @@ export default function fileItem (props) {
                        aria-label="Edit file"
                        title="Edit file"
                        onclick=${(e) => bus.emit('dashboard:file-card', file.id)}>
-                        ${iconEdit()}
-                      </button>`
+                        ${iconEdit()}</button>`
+        : null
+      }
+      ${file.uploadURL
+        ? html`<button class="UppyDashboardItem-copyLink"
+                       aria-label="Copy link"
+                       title="Copy link"
+                       onclick=${() => {
+                         copyToClipboard(file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
+                          .then(() => {
+                            props.log('Link copied to clipboard.')
+                            bus.emit('informer', props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
+                          })
+                          .catch((err) => {
+                            props.log(err)
+                          })
+                       }}>${iconCopy()}</button>`
         : null
       }
     </div>

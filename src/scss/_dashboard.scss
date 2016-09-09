@@ -407,7 +407,8 @@
   text-transform: uppercase;
 }
 
-.UppyDashboardItem-edit {
+.UppyDashboardItem-edit,
+.UppyDashboardItem-copyLink {
   @include reset-button;
   font-size: 12px;
   text-align: left;
@@ -417,11 +418,16 @@
   right: 10px;
 }
 
-.UppyDashboardItem-edit .UppyIcon-edit {
+.UppyDashboardItem-edit .UppyIcon {
   width: 13px;
   height: 13px;
   color: $color-asphalt-gray;
-  // vertical-align: text-bottom;
+}
+
+.UppyDashboardItem-copyLink .UppyIcon {
+  width: 13px;
+  height: 13px;
+  color: $color-asphalt-gray;
 }
 
 .UppyDashboardItem-action {

@@ -7,14 +7,7 @@ import { closeIcon, localIcon, uploadIcon, dashboardBgIcon, iconPause, iconResum
 export default function Dashboard (props) {
   // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
-  const { bus,
-          // log,
-          state,
-          container,
-          showProgressDetails,
-          hideModal,
-          hideAllPanels,
-          showPanel } = props
+  const state = props.state
 
   const files = state.files
   const modal = state.modal
@@ -31,12 +24,12 @@ export default function Dashboard (props) {
   const isTouchDevice = Utils.isTouchDevice()
 
   const onSelect = (ev) => {
-    const input = document.querySelector(`${container} .UppyDashboard-input`)
+    const input = document.querySelector(`${props.container} .UppyDashboard-input`)
     input.click()
   }
 
   const next = (ev) => {
-    bus.emit('core:upload')
+    props.bus.emit('core:upload')
   }
 
   const handleInputChange = (ev) => {
@@ -47,7 +40,7 @@ export default function Dashboard (props) {
 
     files.forEach((file) => {
       // log(file)
-      bus.emit('file-add', {
+      props.bus.emit('file-add', {
         source: props.id,
         name: file.name,
         type: file.type,
@@ -84,7 +77,7 @@ export default function Dashboard (props) {
                                    UppyButton--circular
                                    UppyButton--yellow
                                    UppyButton--sizeS"
-                            onclick=${() => bus.emit('core:pause-all')}>${iconPause()}</button>`
+                            onclick=${() => props.bus.emit('core:pause-all')}>${iconPause()}</button>`
       }
 
       if (uploadStartedFilesCount !== completeFilesCount) {
@@ -92,7 +85,7 @@ export default function Dashboard (props) {
                                    UppyButton--circular
                                    UppyButton--green
                                    UppyButton--sizeS"
-                            onclick=${() => bus.emit('core:resume-all')}>${iconResume()}</button>`
+                            onclick=${() => props.bus.emit('core:resume-all')}>${iconResume()}</button>`
       }
     }
   }
@@ -105,11 +98,11 @@ export default function Dashboard (props) {
                    role="dialog">
 
     <div class="UppyDashboard-overlay"
-         onclick=${hideModal}></div>
+         onclick=${props.hideModal}></div>
 
     <button class="UppyDashboard-close"
             title="Close Uppy modal"
-            onclick=${hideModal}>${closeIcon()}</button>
+            onclick=${props.hideModal}>${closeIcon()}</button>
 
     <div class="UppyDashboard-inner" tabindex="0">
       <div class="UppyDashboard-innerWrap">
@@ -135,7 +128,7 @@ export default function Dashboard (props) {
                           tabindex="0"
                           aria-controls="${props.panelSelectorPrefix}--${target.id}"
                           aria-selected="${target.isHidden ? 'false' : 'true'}"
-                          onclick=${showPanel.bind(this, target.id)}>
+                          onclick=${() => props.showPanel(target.id)}>
                     ${target.icon}
                     <h5 class="UppyDashboardTab-name">${target.name}</h5>
                   </button>
@@ -149,7 +142,8 @@ export default function Dashboard (props) {
           files: files,
           showFileCard: showFileCard,
           metaFields: state.metaFields,
-          bus: bus
+          bus: props.bus,
+          log: props.log
         })}
 
         <div class="UppyDashboard-files">
@@ -161,8 +155,10 @@ export default function Dashboard (props) {
             ${Object.keys(files).map((fileID) => {
               return FileItem({
                 file: files[fileID],
-                showProgressDetails: showProgressDetails,
-                bus: bus
+                showProgressDetails: props.showProgressDetails,
+                bus: props.bus,
+                log: props.log,
+                i18n: props.i18n
               })
             })}
           </ul>
@@ -193,7 +189,7 @@ export default function Dashboard (props) {
              <div class="UppyDashboardContent-bar">
                <h2 class="UppyDashboardContent-title">Import From ${target.name}</h2>
                <button class="UppyDashboardContent-back"
-                       onclick=${hideAllPanels}>Done</button>
+                       onclick=${props.hideAllPanels}>Done</button>
              </div>
             ${target.render(state)}
           </div>`

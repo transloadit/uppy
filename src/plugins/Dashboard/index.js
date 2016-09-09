@@ -209,7 +209,7 @@ export default class DashboardUI extends Plugin {
       })
     })
 
-    bus.on('success', (uploadedCount) => {
+    bus.on('core:success', (uploadedCount) => {
       bus.emit(
         'informer',
         `${this.core.i18n('files', {'smart_count': uploadedCount})} successfully uploaded, Sir!`,
@@ -246,7 +246,8 @@ export default class DashboardUI extends Plugin {
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
       log: this.core.log,
-      bus: this.core.emitter
+      bus: this.core.emitter,
+      i18n: this.core.i18n
     })
   }
 

@@ -75,7 +75,7 @@ export default class Core {
    */
   setState (stateUpdate) {
     const newState = Object.assign({}, this.state, stateUpdate)
-    this.bus.emit('state-update', this.state, newState, stateUpdate)
+    this.bus.emit('core:state-update', this.state, newState, stateUpdate)
 
     this.state = newState
     this.updateAll(this.state)
@@ -151,7 +151,7 @@ export default class Core {
     }
   }
 
-  addFileThumbnail (fileID, thumbnail) {
+  addFileThumbnail (fileID) {
     const file = this.getState().files[fileID]
 
     Utils.readFile(file.data)
@@ -245,7 +245,7 @@ export default class Core {
           // this should be `uploadComplete`
           return updatedFiles[file].progress.percentage === 100
         })
-        this.emit('success', completeFiles.length)
+        this.emit('core:success', completeFiles.length)
       }
 
       this.setState({

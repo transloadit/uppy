@@ -22,7 +22,9 @@ en_US.strings = {
   },
   selectToUpload: 'Select files to upload',
   closeModal: 'Close Modal',
-  upload: 'Upload'
+  upload: 'Upload',
+  copyLinkToClipboardSuccess: 'Link copied to clipboard.',
+  copyLinkToClipboardFallback: 'Copy the URL below'
 }
 
 en_US.pluralize = function (n) {
