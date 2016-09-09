@@ -1,6 +1,6 @@
 # Uppy
 
-<img src="http://uppy.io/images/logos/uppy-dog-full.svg" width="150" alt="Uppy logo — a puppy superman">
+<img src="http://uppy.io/images/logos/uppy-dog-full.svg" width="120" alt="Uppy logo — a puppy superman">
 
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/badge/stability-experimental-orange.svg?style=flat-square"></a>
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
