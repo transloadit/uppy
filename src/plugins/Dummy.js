@@ -1,14 +1,8 @@
 import Plugin from './Plugin'
 import csjs from 'csjs'
+import styles from './dummyStyles.js'
 import insertCss from 'insert-css'
 import html from '../core/html'
-
-const styles = csjs`
-  .title {
-    font-size: 30px;
-    color: blue;
-  }
-`
 
 /**
  * Dummy
@@ -49,7 +43,7 @@ export default class Dummy extends Plugin {
   }
 
   render () {
-    const bla = html`<h2>this is strange 2</h2>`
+    const bla = html`<h2 class="${styles.secondTitle}">this is strange 2</h2>`
     return html`
       <div class="wow-this-works">
         <input class="UppyDummy-firstInput" type="text" value="hello">
@@ -75,12 +69,6 @@ export default class Dummy extends Plugin {
   }
 
   install () {
-    // const bus = this.core.emitter
-
-    // setTimeout(() => {
-    //   bus.emit('informer', 'hello', 'info', 5000)
-    // }, 1000)
-
     insertCss(csjs.getCss(styles))
 
     const target = this.opts.target
