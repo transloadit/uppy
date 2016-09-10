@@ -45,7 +45,7 @@ function getSpeed (fileProgress) {
 }
 
 export default function fileItem (props) {
-  const { bus, file, showProgressDetails } = props
+  const file = props.file
 
   const isUploaded = file.progress.uploadComplete
   const uploadInProgressOrComplete = file.progress.uploadStarted
@@ -54,19 +54,6 @@ export default function fileItem (props) {
 
   const fileName = getFileNameAndExtension(file.meta.name)[0]
   const truncatedFileName = truncateString(fileName, 15)
-
-  const remove = (ev) => {
-    // const el = document.querySelector(`#uppy_${file.id}`)
-    // el.classList.add('UppyAnimation-zoomOutLeft')
-
-    // this seems to be working in latest Chrome, Firefox and Safari,
-    // but might not be 100% cross-browser, needs testing
-    // https://davidwalsh.name/css-animation-callback
-    // el.addEventListener('animationend', () => {
-    //   bus.emit('file-remove', file.id)
-    // })
-    bus.emit('file-remove', file.id)
-  }
 
   return html`<li class="UppyDashboardItem
                         ${uploadInProgress ? 'is-inprogress' : ''}
@@ -84,13 +71,16 @@ export default function fileItem (props) {
                   title="${isUploaded
                           ? 'upload complete'
                           : file.isPaused ? 'resume upload' : 'pause upload'}"
-                  onclick=${(e) => {
+                  onclick=${(ev) => {
                     if (isUploaded) return
-                    bus.emit('core:upload-pause', file.id)
+                    props.pauseUpload(file.id)
                   }}>
-            ${FileItemProgress({progress: file.progress.percentage, fileID: file.id}, bus)}
+            ${FileItemProgress({
+              progress: file.progress.percentage,
+              fileID: file.id
+            })}
           </button>
-          ${showProgressDetails
+          ${props.showProgressDetails
             ? html`<div class="UppyDashboardItem-progressInfo"
                    title="File progress: upload speed and ETA"
                    aria-label="File progress: upload speed and ETA">
@@ -119,7 +109,7 @@ export default function fileItem (props) {
         ? html`<button class="UppyDashboardItem-edit"
                        aria-label="Edit file"
                        title="Edit file"
-                       onclick=${(e) => bus.emit('dashboard:file-card', file.id)}>
+                       onclick=${(e) => props.showFileCard(file.id)}>
                         ${iconEdit()}</button>`
         : null
       }
@@ -131,11 +121,9 @@ export default function fileItem (props) {
                          copyToClipboard(file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
                           .then(() => {
                             props.log('Link copied to clipboard.')
-                            bus.emit('informer', props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
+                            props.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
                           })
-                          .catch((err) => {
-                            props.log(err)
-                          })
+                          .catch(props.log)
                        }}>${iconCopy()}</button>`
         : null
       }
@@ -145,7 +133,7 @@ export default function fileItem (props) {
         ? html`<button class="UppyDashboardItem-remove"
                        aria-label="Remove file"
                        title="Remove file"
-                       onclick=${remove}>
+                       onclick=${() => props.removeFile(file.id)}>
                   ${removeIcon()}
                </button>`
         : null

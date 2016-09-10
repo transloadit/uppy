@@ -71,7 +71,7 @@ export default class Informer extends Plugin {
       }
     })
 
-    const bus = this.core.emitter
+    const bus = this.core.bus
 
     bus.on('informer', (msg, type, duration) => {
       this.showInformer(msg, type, duration)

@@ -13,11 +13,9 @@ function getIconByMime (fileTypeGeneral) {
 }
 
 export default function fileCard (props) {
-  const { bus, files } = props
-  const showFileCard = props.showFileCard
-  let metaFields = props.metaFields
+  // const { bus } = props
 
-  const file = showFileCard ? files[showFileCard] : false
+  const file = props.fileCardFor ? props.files[props.fileCardFor] : false
   const meta = {}
 
   function tempStoreMeta (ev) {
@@ -26,13 +24,13 @@ export default function fileCard (props) {
     meta[name] = value
   }
 
-  function done () {
-    bus.emit('core:update-meta', meta, file.id)
-    bus.emit('dashboard:file-card')
-  }
+  // function done () {
+  //   bus.emit('core:update-meta', meta, file.id)
+  //   bus.emit('dashboard:file-card')
+  // }
 
   function renderMetaFields (file) {
-    metaFields = metaFields || []
+    const metaFields = props.metaFields || []
     return metaFields.map((field) => {
       return html`<fieldset class="UppyDashboardFileCard-fieldset">
         <label class="UppyDashboardFileCard-label">${field.name}</label>
@@ -45,13 +43,13 @@ export default function fileCard (props) {
     })
   }
 
-  return html`<div class="UppyDashboardFileCard" aria-hidden="${showFileCard ? 'false' : 'true'}">
+  return html`<div class="UppyDashboardFileCard" aria-hidden="${props.fileCardFor ? 'false' : 'true'}">
     <div class="UppyDashboardContent-bar">
       <h2 class="UppyDashboardContent-title">Editing <span class="UppyDashboardContent-titleFile">${file.meta ? file.meta.name : file.name}</span></h2>
       <button class="UppyDashboardContent-back" title="Finish editing file"
-              onclick=${done}>Done</button>
+              onclick=${() => props.done(meta, file.id)}>Done</button>
     </div>
-    ${showFileCard
+    ${props.fileCardFor
       ? html`<div class="UppyDashboardFileCard-inner">
           <div class="UppyDashboardFileCard-preview">
             ${file.preview
@@ -71,6 +69,6 @@ export default function fileCard (props) {
       : null
     }
     <button class="UppyButton--circular UppyButton--blue UppyButton--sizeM UppyDashboardFileCard-done" type="button"
-            title="Finish editing file" onclick=${done}>${checkIcon()}</button>
+            title="Finish editing file" onclick=${() => props.done(meta, file.id)}>${checkIcon()}</button>
     </div>`
 }

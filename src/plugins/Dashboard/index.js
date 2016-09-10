@@ -33,6 +33,8 @@ export default class DashboardUI extends Plugin {
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
     this.initEvents = this.initEvents.bind(this)
+    this.pauseAll = this.pauseAll.bind(this)
+    this.resumeAll = this.resumeAll.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -204,7 +206,7 @@ export default class DashboardUI extends Plugin {
 
       this.core.setState({
         modal: Object.assign({}, modal, {
-          showFileCard: fileId || false
+          fileCardFor: fileId || false
         })
       })
     })
@@ -232,6 +234,14 @@ export default class DashboardUI extends Plugin {
     })
   }
 
+  pauseAll () {
+    this.core.bus.emit('core:pause-all')
+  }
+
+  resumeAll () {
+    this.core.bus.emit('core:resume-all')
+  }
+
   render (state) {
     return Dashboard({
       state: state,
@@ -247,7 +257,9 @@ export default class DashboardUI extends Plugin {
       hideAllPanels: this.hideAllPanels,
       log: this.core.log,
       bus: this.core.emitter,
-      i18n: this.core.i18n
+      i18n: this.core.i18n,
+      pauseAll: this.pauseAll,
+      resumeAll: this.resumeAll
     })
   }
 

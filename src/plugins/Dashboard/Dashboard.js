@@ -1,8 +1,9 @@
 import html from '../../core/html'
-import Utils from '../../core/Utils'
-import FileItem from './FileItem'
+import { isTouchDevice, toArray } from '../../core/Utils'
+import FileList from './FileList'
+import Tabs from './Tabs'
 import FileCard from './FileCard'
-import { closeIcon, localIcon, uploadIcon, dashboardBgIcon, iconPause, iconResume } from './icons'
+import { closeIcon } from './icons'
 
 export default function Dashboard (props) {
   // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
@@ -11,7 +12,6 @@ export default function Dashboard (props) {
 
   const files = state.files
   const modal = state.modal
-  const showFileCard = modal.showFileCard
 
   const acquirers = modal.targets.filter((target) => {
     return target.type === 'acquirer'
@@ -21,22 +21,41 @@ export default function Dashboard (props) {
     return target.type === 'progressindicator'
   })
 
-  const isTouchDevice = Utils.isTouchDevice()
-
-  const onSelect = (ev) => {
-    const input = document.querySelector(`${props.container} .UppyDashboard-input`)
-    input.click()
+  const removeFile = (fileID) => {
+    // this seems to be working in latest Chrome, Firefox and Safari,
+    //   // but might not be 100% cross-browser, needs testing
+    //   // https://davidwalsh.name/css-animation-callback
+    //   // el.addEventListener('animationend', () => {
+    //   //   bus.emit('file-remove', file.id)
+    //   // })
+    props.bus.emit('file-remove', fileID)
   }
 
-  const next = (ev) => {
+  const startUpload = (ev) => {
     props.bus.emit('core:upload')
   }
 
-  const handleInputChange = (ev) => {
-    ev.preventDefault()
-    // log('All right, something selected through input...')
+  const pauseUpload = (fileID) => {
+    props.bus.emit('core:upload-pause', fileID)
+  }
 
-    const files = Utils.toArray(ev.target.files)
+  const showFileCard = (fileID) => {
+    props.bus.emit('dashboard:file-card', fileID)
+  }
+
+  const fileCardDone = (meta, fileID) => {
+    props.bus.emit('core:update-meta', meta, fileID)
+    props.bus.emit('dashboard:file-card')
+  }
+
+  const info = (text, type, duration) => {
+    props.bus.emit('informer', text, type, duration)
+  }
+
+  const localInputChange = (ev) => {
+    ev.preventDefault()
+
+    const files = toArray(ev.target.files)
 
     files.forEach((file) => {
       // log(file)
@@ -49,49 +68,8 @@ export default function Dashboard (props) {
     })
   }
 
-  const newFiles = Object.keys(files).filter((file) => {
-    return !files[file].progress.uploadStarted
-  })
-  const uploadStartedFiles = Object.keys(files).filter((file) => {
-    return files[file].progress.uploadStarted
-  })
-  const completeFiles = Object.keys(files).filter((file) => {
-    return files[file].progress.uploadComplete
-  })
-  const inProgressFiles = Object.keys(files).filter((file) => {
-    return !files[file].progress.uploadComplete &&
-           files[file].progress.uploadStarted &&
-           !files[file].isPaused
-  })
-
-  const uploadStartedFilesCount = Object.keys(uploadStartedFiles).length
-  const completeFilesCount = Object.keys(completeFiles).length
-  const inProgressFilesCount = Object.keys(inProgressFiles).length
-  const totalFileCount = Object.keys(files).length
-  const newFileCount = Object.keys(newFiles).length
-
-  function renderPauseResume () {
-    if (uploadStartedFilesCount > 0) {
-      if (inProgressFilesCount > 0) {
-        return html`<button class="UppyDashboard-pauseResume
-                                   UppyButton--circular
-                                   UppyButton--yellow
-                                   UppyButton--sizeS"
-                            onclick=${() => props.bus.emit('core:pause-all')}>${iconPause()}</button>`
-      }
-
-      if (uploadStartedFilesCount !== completeFilesCount) {
-        return html`<button class="UppyDashboard-pauseResume
-                                   UppyButton--circular
-                                   UppyButton--green
-                                   UppyButton--sizeS"
-                            onclick=${() => props.bus.emit('core:resume-all')}>${iconResume()}</button>`
-      }
-    }
-  }
-
   return html`<div class="Uppy UppyTheme--default UppyDashboard
-                          ${isTouchDevice ? 'Uppy--isTouchDevice' : ''}
+                          ${isTouchDevice() ? 'Uppy--isTouchDevice' : ''}
                           ${!props.inline ? 'UppyDashboard--modal' : ''}"
                    aria-hidden="${props.inline ? 'false' : modal.isHidden}"
                    aria-label="Uppy Dialog Window (Press escape to close)"
@@ -101,85 +79,42 @@ export default function Dashboard (props) {
          onclick=${props.hideModal}></div>
 
     <button class="UppyDashboard-close"
+            aria-label="Close Uppy modal"
             title="Close Uppy modal"
             onclick=${props.hideModal}>${closeIcon()}</button>
 
     <div class="UppyDashboard-inner" tabindex="0">
       <div class="UppyDashboard-innerWrap">
-        <div class="UppyDashboardTabs">
-          <h3 class="UppyDashboardTabs-title">Drop files here, paste or import from</h3>
-          <nav>
-            <ul class="UppyDashboardTabs-list" role="tablist">
-              <li class="UppyDashboardTab">
-                <button class="UppyDashboardTab-btn UppyDashboard-focus"
-                        role="tab"
-                        tabindex="0"
-                        onclick=${onSelect}>
-                  ${localIcon()}
-                  <h5 class="UppyDashboardTab-name">Local Disk</h5>
-                </button>
-                <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
-                       onchange=${handleInputChange} />
-              </li>
-              ${acquirers.map((target) => {
-                return html`<li class="UppyDashboardTab">
-                  <button class="UppyDashboardTab-btn"
-                          role="tab"
-                          tabindex="0"
-                          aria-controls="${props.panelSelectorPrefix}--${target.id}"
-                          aria-selected="${target.isHidden ? 'false' : 'true'}"
-                          onclick=${() => props.showPanel(target.id)}>
-                    ${target.icon}
-                    <h5 class="UppyDashboardTab-name">${target.name}</h5>
-                  </button>
-                </li>`
-              })}
-            </ul>
-          </nav>
-        </div>
+
+        ${Tabs({
+          localInputChange: localInputChange,
+          acquirers: acquirers,
+          container: props.container,
+          panelSelectorPrefix: props.panelSelectorPrefix,
+          showPanel: props.showPanel
+        })}
 
         ${FileCard({
           files: files,
-          showFileCard: showFileCard,
+          fileCardFor: modal.fileCardFor,
+          done: fileCardDone,
           metaFields: state.metaFields,
-          bus: props.bus,
+          pauseUpload: pauseUpload,
           log: props.log
         })}
 
-        <div class="UppyDashboard-files">
-          <ul class="UppyDashboard-filesInner">
-            ${totalFileCount === 0
-              ? html`<div class="UppyDashboard-bgIcon">${dashboardBgIcon()}</div>`
-              : null
-            }
-            ${Object.keys(files).map((fileID) => {
-              return FileItem({
-                file: files[fileID],
-                showProgressDetails: props.showProgressDetails,
-                bus: props.bus,
-                log: props.log,
-                i18n: props.i18n
-              })
-            })}
-          </ul>
-          <div class="UppyDashboard-actions">
-            ${renderPauseResume()}
-            ${!props.autoProceed && newFileCount > 0
-              ? html`<button class="UppyButton--circular UppyButton--blue UppyButton--sizeM UppyDashboard-upload"
-                             type="button"
-                             title="Upload all files"
-                             aria-label="Upload all files"
-                             onclick=${next}>
-                        ${uploadIcon()}
-                        <sup class="UppyDashboard-uploadCount"
-                             title="Number of selected files"
-                             aria-label="Number of selected files">
-                              ${newFileCount}</sup>
-                     </button>`
-              : null
-            }
-          </div>
-        </div>
+        ${FileList({
+          files: files,
+          showFileCard: showFileCard,
+          showProgressDetails: props.showProgressDetails,
+          info: info,
+          i18n: props.i18n,
+          log: props.log,
+          removeFile: removeFile,
+          pauseAll: props.pauseAll,
+          resumeAll: props.resumeAll,
+          startUpload: startUpload
+        })}
 
         ${acquirers.map((target) => {
           return html`<div class="UppyDashboardContent-panel"
