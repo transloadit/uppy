@@ -32,6 +32,8 @@ export default class Tus10 extends Plugin {
 
     switch (action) {
       case 'toggle':
+        if (updatedFiles[fileID].uploadComplete) return
+
         const wasPaused = updatedFiles[fileID].isPaused || false
         const isPaused = !wasPaused
         let updatedFile
