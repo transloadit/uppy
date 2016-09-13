@@ -1,3 +1,5 @@
+import en_US from '../locales/en_US'
+
 /**
  * Translates strings with interpolation & pluralization support.Extensible with custom dictionaries
  * and pluralization functions.
@@ -13,8 +15,13 @@
  */
 export default class Translator {
   constructor (opts) {
-    const defaultOptions = {}
+    const defaultOptions = {
+      locales: en_US
+    }
     this.opts = Object.assign({}, defaultOptions, opts)
+    this.locales = this.opts.locales
+    this.locales.strings = Object.assign({}, en_US.strings, this.opts.locales.strings)
+    console.log(this.locales)
   }
 
 /**
@@ -60,7 +67,7 @@ export default class Translator {
  */
   translate (key, options) {
     if (options && options.smart_count) {
-      var plural = this.opts.locales.pluralize(options.smart_count)
+      var plural = this.locales.pluralize(options.smart_count)
       return this.interpolate(this.opts.locales.strings[key][plural], options)
     }
 
