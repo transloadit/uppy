@@ -68,6 +68,16 @@ export default class Tus10 extends Plugin {
     }
   }
 
+  // pauseResumeAll (action) {
+  //   let updatedFiles = Object.assign({}, this.core.getState().files)
+  //   updatedFiles = Object.keys(updatedFiles).map((file) => {
+  //     return Object.assign({}, updatedFiles[file], {
+  //       isPaused: action
+  //     })
+  //   })
+  //   this.core.setState({files: updatedFiles})
+  // }
+
 /**
  * Create a new Tus upload
  *
@@ -210,15 +220,11 @@ export default class Tus10 extends Plugin {
       }
     })
 
-    return Promise.all(uploaders)
-      .then(() => {
-        return {
-          uploadedCount: files.length
-        }
-      })
-      .catch(() => {
-        this.core.log('All files uploaded')
-      })
+    return Promise.all(uploaders).then(() => {
+      return {
+        uploadedCount: files.length
+      }
+    })
   }
 
   selectForUpload (files) {
@@ -246,24 +252,16 @@ export default class Tus10 extends Plugin {
     this.core.emitter.on('core:resume-all', () => {
       this.pauseResume('resumeAll')
     })
+  }
 
-    this.core.emitter.on('core:upload', () => {
+  install () {
+    this.actions()
+
+    const bus = this.core.emitter
+    bus.on('core:upload', () => {
       this.core.log('Tus is uploading...')
       const files = this.core.getState().files
       this.selectForUpload(files)
     })
-  }
-
-  addResumableUploadsCapabilityFlag () {
-    const newCapabilities = Object.assign({}, this.core.getState().capabilities)
-    newCapabilities.resumableUploads = true
-    this.core.setState({
-      capabilities: newCapabilities
-    })
-  }
-
-  install () {
-    this.addResumableUploadsCapabilityFlag()
-    this.actions()
   }
 }
