@@ -30,7 +30,7 @@ en_US.strings = {
   copyLinkToClipboardFallback: 'Copy the URL below',
   done: 'Done',
   localDisk: 'Local Disk',
-  dropPasteImport: 'Drop files here, paste or import from',
+  dropPasteImport: 'Drop files here, paste or import from:',
   fileProgress: 'File progress: upload speed and ETA',
   numberOfSelectedFiles: 'Number of selected files',
   uploadAllNewFiles: 'Upload all new files'

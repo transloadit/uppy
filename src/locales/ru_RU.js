@@ -9,7 +9,9 @@ ru_RU.strings = {
     1: 'Выбрано %{smart_count} файла',
     2: 'Выбрано %{smart_count} файлов'
   },
-  upload: 'Загрузить'
+  upload: 'Загрузить',
+  localDisk: 'Диск',
+  dropPasteImport: 'Перенесите файлы сюда, вставьте из буфера обмена или импортируйте:'
 }
 
 ru_RU.pluralize = function (n) {

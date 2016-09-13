@@ -1,15 +1,15 @@
 import html from '../../core/html'
-import { isTouchDevice, toArray } from '../../core/Utils'
 import FileList from './FileList'
 import Tabs from './Tabs'
 import FileCard from './FileCard'
+import { isTouchDevice, toArray } from '../../core/Utils'
 import { closeIcon } from './icons'
 
 export default function Dashboard (props) {
   // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
   const state = props.state
-
+  const totalProgress = state.totalProgress
   const files = state.files
   const modal = state.modal
 
@@ -58,7 +58,6 @@ export default function Dashboard (props) {
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      // log(file)
       props.bus.emit('file-add', {
         source: props.id,
         name: file.name,
@@ -72,15 +71,19 @@ export default function Dashboard (props) {
                           ${isTouchDevice() ? 'Uppy--isTouchDevice' : ''}
                           ${!props.inline ? 'UppyDashboard--modal' : ''}"
                    aria-hidden="${props.inline ? 'false' : modal.isHidden}"
-                   aria-label="Uppy Dialog Window (Press escape to close)"
-                   role="dialog">
+                   aria-label="${!props.inline
+                                 ? props.i18n('dashboardWindowTitle')
+                                 : props.i18n('dashboardTitle')
+                               }"
+                   role="dialog"
+                   onpaste=${props.onPaste}>
 
     <div class="UppyDashboard-overlay"
          onclick=${props.hideModal}></div>
 
     <button class="UppyDashboard-close"
-            aria-label="Close Uppy modal"
-            title="Close Uppy modal"
+            aria-label="${props.i18n('closeModal')}"
+            title="${props.i18n('closeModal')}"
             onclick=${props.hideModal}>${closeIcon()}</button>
 
     <div class="UppyDashboard-inner" tabindex="0">
@@ -91,7 +94,8 @@ export default function Dashboard (props) {
           acquirers: acquirers,
           container: props.container,
           panelSelectorPrefix: props.panelSelectorPrefix,
-          showPanel: props.showPanel
+          showPanel: props.showPanel,
+          i18n: props.i18n
         })}
 
         ${FileCard({
@@ -99,32 +103,34 @@ export default function Dashboard (props) {
           fileCardFor: modal.fileCardFor,
           done: fileCardDone,
           metaFields: state.metaFields,
-          pauseUpload: pauseUpload,
-          log: props.log
+          log: props.log,
+          i18n: props.i18n
         })}
 
         ${FileList({
           files: files,
           showFileCard: showFileCard,
           showProgressDetails: props.showProgressDetails,
+          totalProgress: totalProgress,
           info: info,
           i18n: props.i18n,
           log: props.log,
           removeFile: removeFile,
           pauseAll: props.pauseAll,
           resumeAll: props.resumeAll,
+          pauseUpload: pauseUpload,
           startUpload: startUpload
         })}
 
         ${acquirers.map((target) => {
           return html`<div class="UppyDashboardContent-panel"
-                         id="${props.panelSelectorPrefix}--${target.id}"
-                         role="tabpanel"
-                         aria-hidden="${target.isHidden}">
+                           id="${props.panelSelectorPrefix}--${target.id}"
+                           role="tabpanel"
+                           aria-hidden="${target.isHidden}">
              <div class="UppyDashboardContent-bar">
-               <h2 class="UppyDashboardContent-title">Import From ${target.name}</h2>
+               <h2 class="UppyDashboardContent-title">${props.i18n('importFrom')} ${target.name}</h2>
                <button class="UppyDashboardContent-back"
-                       onclick=${props.hideAllPanels}>Done</button>
+                       onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
              </div>
             ${target.render(state)}
           </div>`

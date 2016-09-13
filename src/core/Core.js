@@ -38,6 +38,7 @@ export default class Core {
     this.updateMeta = this.updateMeta.bind(this)
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
+    this.addFile = this.addFile.bind(this)
 
     this.bus = this.emitter = ee()
     this.on = this.bus.on.bind(this.bus)

@@ -33,6 +33,9 @@ export default class DashboardUI extends Plugin {
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
     this.initEvents = this.initEvents.bind(this)
+    this.handlePaste = this.handlePaste.bind(this)
+    // this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleDrop = this.handleDrop.bind(this)
     this.pauseAll = this.pauseAll.bind(this)
     this.resumeAll = this.resumeAll.bind(this)
     this.render = this.render.bind(this)
@@ -143,7 +146,7 @@ export default class DashboardUI extends Plugin {
   }
 
   initEvents () {
-    const modal = document.querySelector(`${this.opts.target} .UppyDashboard`)
+    // const dashboardEl = document.querySelector(`${this.opts.target} .UppyDashboard`)
     // Modal open button
     const showModalTrigger = document.querySelector(this.opts.trigger)
     showModalTrigger.addEventListener('click', this.showModal)
@@ -156,21 +159,20 @@ export default class DashboardUI extends Plugin {
     })
 
     // Close on click outside modal or close buttons
-    document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('js-UppyDashboard-close')) {
-        this.hideModal()
-      }
-    })
+    // document.addEventListener('click', (e) => {
+    //   if (e.target.classList.contains('js-UppyDashboard-close')) {
+    //     this.hideModal()
+    //   }
+    // })
 
     // Drag Drop
-    dragDrop(`${this.opts.target} .UppyDashboard`, (files) => {
+    dragDrop(this.el, (files) => {
       this.handleDrop(files)
-      this.core.log(files)
     })
 
     // @TODO Exprimental, work in progress
     // Paste from clipboard
-    modal.addEventListener('paste', this.handlePaste.bind(this))
+    // dashboardEl.addEventListener('paste', this.handlePaste.bind(this))
   }
 
   // @TODO Exprimental, work in progress
@@ -252,7 +254,8 @@ export default class DashboardUI extends Plugin {
       panelSelectorPrefix: this.opts.panelSelectorPrefix,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
-      handleInputChange: this.handleInputChange,
+      // onInputChange: this.handleInputChange,
+      onPaste: this.handlePaste,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
       log: this.core.log,

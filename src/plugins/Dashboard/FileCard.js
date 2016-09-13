@@ -24,11 +24,6 @@ export default function fileCard (props) {
     meta[name] = value
   }
 
-  // function done () {
-  //   bus.emit('core:update-meta', meta, file.id)
-  //   bus.emit('dashboard:file-card')
-  // }
-
   function renderMetaFields (file) {
     const metaFields = props.metaFields || []
     return metaFields.map((field) => {

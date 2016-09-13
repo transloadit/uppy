@@ -287,22 +287,16 @@
 
 .UppyDashboard.drag .UppyDashboard-innerWrap  {
   border-color: lighten($color-gray, 5%);
-  background-color: darken($color-white, 5%)
+  background-color: darken($color-white, 10%)
 }
 
 .UppyDashboard-list {
   @include clearfix;
   margin: 0;
   padding: 0;
-  // height: 100%;
-  // overflow: auto;
 }
 
 .UppyDashboard-bgIcon {
-  // display: flex;
-  // align-items: center;
-  // justify-content: center;
-  // height: 100%;
   width: 250px;
   position: absolute;
   top: 50%;
@@ -469,8 +463,8 @@
 
 .UppyDashboardItem-progressBtn {
   @include reset-button;
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   opacity: 0.9;
   cursor: pointer;
 }
@@ -563,6 +557,92 @@
   }
 }
 
+
+
+
+.UppyTotalProgress {
+  @include reset-button;
+  width: 70px;
+  height: 70px;
+  cursor: pointer;
+}
+
+.UppyTotalProgress .UppyIcon {
+  width: 100%;
+  height: 100%;
+}
+
+.UppyTotalProgress .bg {
+  stroke: rgba($color-cornflower-blue, 0.3);
+  transition: all 0.2s;
+  opacity: 1;
+}
+
+.UppyTotalProgress .progress {
+  stroke: $color-cornflower-blue;
+  transition: stroke-dashoffset .5s ease-out;
+  opacity: 1;
+}
+
+.UppyTotalProgress .play {
+  stroke: $color-cornflower-blue;
+  fill: $color-cornflower-blue;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.UppyTotalProgress .pause {
+  stroke: $color-cornflower-blue;
+  fill: $color-cornflower-blue;
+  transition: all 0.2s;
+  opacity: 1;
+}
+
+.UppyTotalProgress .check {
+  fill: $color-white;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.UppyTotalProgress--is-paused {
+  .pause {
+    opacity: 0;
+  }
+  .play {
+    opacity: 1;
+  }
+}
+
+.UppyTotalProgress--is-complete {
+  cursor: default;
+
+  .pause, .play {
+    opacity: 0;
+  }
+
+  .bg {
+    stroke: $color-green;
+    opacity: 1;
+  }
+
+  .progress {
+    stroke: $color-green;
+    fill: $color-green;
+    opacity: 1;
+  }
+  .check {
+    opacity: 1;
+  }
+}
+
+.UppyTotalProgress-info {
+  font-size: 10px;
+  color: $color-asphalt-gray;
+}
+
+
+
+
 .UppyDashboardItem-progressNum {
   position: relative;
   z-index: $zIndex-2;
@@ -577,14 +657,14 @@
 }
 
 .UppyDashboard-actions {
-  width: 60px;
+  width: 70px;
   text-align: center;
   position: absolute;
   bottom: 25px;
   right: 25px;
 }
 
-.UppyDashboard-actions button {
+.UppyDashboard-actionsItem {
   margin-bottom: 15px;
 }
 
@@ -599,7 +679,7 @@
 
 .UppyDashboard-upload .UppyIcon {
   position: relative;
-  top: 2px;
+  top: 1px;
   width: 50%;
 }
 

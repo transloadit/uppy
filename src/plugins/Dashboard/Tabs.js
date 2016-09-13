@@ -3,7 +3,7 @@ import { localIcon } from './icons'
 
 export default (props) => {
   return html`<div class="UppyDashboardTabs">
-    <h3 class="UppyDashboardTabs-title">Drop files here, paste or import from</h3>
+    <h3 class="UppyDashboardTabs-title">${props.i18n('dropPasteImport')}</h3>
     <nav>
       <ul class="UppyDashboardTabs-list" role="tablist">
         <li class="UppyDashboardTab">
@@ -15,7 +15,7 @@ export default (props) => {
                     input.click()
                   }}>
             ${localIcon()}
-            <h5 class="UppyDashboardTab-name">Local Disk</h5>
+            <h5 class="UppyDashboardTab-name">${props.i18n('localDisk')}</h5>
           </button>
           <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
                  onchange=${props.localInputChange} />

@@ -82,8 +82,8 @@ export default function fileItem (props) {
           </button>
           ${props.showProgressDetails
             ? html`<div class="UppyDashboardItem-progressInfo"
-                   title="File progress: upload speed and ETA"
-                   aria-label="File progress: upload speed and ETA">
+                   title="${props.i18n('localDisk')}"
+                   aria-label="${props.i18n('localDisk')}">
                 ${!file.isPaused && !isUploaded
                   ? html`<span>${getETA(file.progress)} ・ ↑ ${prettyBytes(getSpeed(file.progress))}/s</span>`
                   : null
