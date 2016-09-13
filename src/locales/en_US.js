@@ -23,8 +23,17 @@ en_US.strings = {
   selectToUpload: 'Select files to upload',
   closeModal: 'Close Modal',
   upload: 'Upload',
+  importFrom: 'Import From',
+  dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
+  dashboardTitle: 'Uppy Dashboard',
   copyLinkToClipboardSuccess: 'Link copied to clipboard.',
-  copyLinkToClipboardFallback: 'Copy the URL below'
+  copyLinkToClipboardFallback: 'Copy the URL below',
+  done: 'Done',
+  localDisk: 'Local Disk',
+  dropPasteImport: 'Drop files here, paste or import from',
+  fileProgress: 'File progress: upload speed and ETA',
+  numberOfSelectedFiles: 'Number of selected files',
+  uploadAllNewFiles: 'Upload all new files'
 }
 
 en_US.pluralize = function (n) {
