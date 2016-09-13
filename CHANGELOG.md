@@ -26,7 +26,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] drive: Show a visual indication that downloading has started after double-clicking. Prevent that 6 clicks = 3 downloads
 - [ ] instagram: Make a barely working Instagram Plugin + example (#21)
 - [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
-- [ ] dashboard: polish on mobile
 - [ ] dashboard: add ability to minimize Modal/Dashboard, while long upload is in progress? Uppy then becomes just a tiny progress indicator
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: Human should check http://www.webpagetest.org, use it sometimes to test our website & Uppy? Which will show response/loading times and where big delays are
@@ -39,8 +38,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: Would one really connect a own google drive or dropbox for testing purpose? => maybe one can give something like a testing account of google drive and dropbox to try uppy
 - [ ] dependencies: es6-promise --> lie https://github.com/calvinmetcalf/lie ?
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
-- [ ] test: working Uppy example on Require Bin — latest version straight from NPM (should be working, will check again when tus-js-client is updated) (@arturi @account)
-- [ ] meta: add cdn.rawgit.com bundled version to readme
+- [ ] core: retry failed uploads
+- [ ] core: restrictions — by file type, size, number of files
 
 ## 0.10.0
 
@@ -52,18 +51,24 @@ Theme: Getting together
 - [ ] core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves (@arturi, @hedgerh)
 - [ ] core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@arturi, @hedgerh)
 - [ ] core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042, try https://github.com/rtsao/csjs (@arturi, @hedgerh)
-- [ ] dashboard: add webworkers for thumbnail generation (@arturi)
+- [x] core: i18n strings should extend default en_US dictionary — if a certain string in not available in German, English should be displayed (@arturi)
+- [ ] dashboard: see if it’s possible to add webworkers for thumbnail generation (@arturi)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
+- [x] dashboard: refactor to smaller components, pass props down (@arturi)
 - [x] dashboard: option to render Dashboard inline instead of a modal dialog (@arturi)
-- [ ] dashboard: global circular progress bar (@arturi)
+- [x] dashboard: global circular progress bar (@arturi)
 - [ ] dashboard: show speed/eta for all files ? (@arturi)
-- [x] dashboard: copy link button (http://i.imgur.com/b1Io34n.png) (@arturi)
+- [ ] dashboard: polish on mobile (@arturi)
+- [x] dashboard: copy link to uploaded file button, cross-browser (http://i.imgur.com/b1Io34n.png) (@arturi)
 - [ ] dashboard: improve file paste the best we can http://stackoverflow.com/a/22940020 (@arturi)
 - [ ] formtag: pretty input element #93 (@arturi)
-- [ ] webcam: stop using the webcam when the picture is taken / tab is shown (do we need mount/unmount maybe?) (@hedgerh)
+- [ ] webcam: stop using the webcam after the picture is taken and tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
 - [ ] provider: abstract google drive into provider plugin for reuse (@hedgerh)
 - [ ] google drive: improve UI (@hedgerh)
 - [ ] meta: update docs, add unpkg CDN links (https://unpkg.com/uppy@0.9.0/dist/uppy.min.css) (@arturi)
+- [ ] tus: only show pause/resume when tus is used — add `resumable` capability flag (@arturi)
+- [ ] tus: fix pause/resume issues and race conditions (@arturi)
+- [ ] test: working Uppy example on Require Bin — latest version straight from NPM (@arturi @account)
 
 ## 0.9.0
 
