@@ -44,7 +44,8 @@ export default class Core {
     this.emit = this.bus.emit.bind(this.bus)
 
     this.state = {
-      files: {}
+      files: {},
+      capabilities: {}
     }
 
     if (this.opts.debug) {
