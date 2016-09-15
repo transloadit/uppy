@@ -3,7 +3,7 @@ import Plugin from '../Plugin'
 import 'whatwg-fetch'
 import html from '../../core/html'
 
-import {Provider} from 'uppy-base'
+import Provider from '../../uppy-base/src/plugins/Provider'
 
 import AuthView from './AuthView'
 import Browser from './Browser'
@@ -87,13 +87,6 @@ export default class Google extends Plugin {
   }
 
   focus () {
-    const firstInput = document.querySelector(`${this.target} .UppyGoogleDrive-focusInput`)
-
-    // only works for the first time if wrapped in setTimeout for some reason
-    // firstInput.focus()
-    setTimeout(function () {
-      firstInput.focus()
-    }, 10)
   }
 
   /**
@@ -147,28 +140,19 @@ export default class Google extends Plugin {
   getFolder (id = 'root') {
     return this.GoogleDrive.list(id)
       .then((res) => {
-        if (res.status >= 200 && res.status <= 300) {
-          return res.json().then((data) => {
-            // let result = Utils.groupBy(data.items, (item) => item.mimeType)
-            let folders = []
-            let files = []
-            data.items.forEach((item) => {
-              if (item.mimeType === 'application/vnd.google-apps.folder') {
-                folders.push(item)
-              } else {
-                files.push(item)
-              }
-            })
-            return {
-              folders,
-              files
-            }
-          })
-        } else {
-          this.handleError(res)
-          let error = new Error(res.statusText)
-          error.response = res
-          throw error
+        // let result = Utils.groupBy(data.items, (item) => item.mimeType)
+        let folders = []
+        let files = []
+        res.items.forEach((item) => {
+          if (item.mimeType === 'application/vnd.google-apps.folder') {
+            folders.push(item)
+          } else {
+            files.push(item)
+          }
+        })
+        return {
+          folders,
+          files
         }
       })
       .catch((err) => {
@@ -211,13 +195,8 @@ export default class Google extends Plugin {
       name: file.title,
       type: file.mimeType,
       isRemote: true,
-      remote: {
-        host: this.opts.host,
-        url: `${this.opts.host}/google/get?fileId=${file.id}`,
-        body: {
-          fileId: file.id,
-          demo: this.opts.demo
-        }
+      body: {
+        fileId: file.id
       }
     }
 

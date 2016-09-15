@@ -1,5 +1,5 @@
 import Plugin from '../Plugin'
-import { Webcam as WebcamProvider } from 'uppy-base'
+import WebcamProvider from '../../uppy-base/src/plugins/Webcam'
 import { extend } from '../../core/Utils'
 import WebcamIcon from './WebcamIcon'
 import CameraScreen from './CameraScreen'
@@ -107,7 +107,7 @@ export default class Webcam extends Plugin {
   }
 
   focus () {
-    const firstInput = document.querySelector(`${this.target} .UppyDummy-firstInput`)
+    const firstInput = document.querySelector('.UppyWebcam-stopRecordBtn')
     // only works for the first time if wrapped in setTimeout for some reason
     // firstInput.focus()
     if (firstInput) {
@@ -121,7 +121,6 @@ export default class Webcam extends Plugin {
     setTimeout(() => {
       this.core.emitter.emit('informer', 'Smile!', 'info', 3500)
     }, 1000)
-    // this.startWebcam()
   }
 
   install () {
