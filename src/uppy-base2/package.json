@@ -1,0 +1,37 @@
+{
+  "name": "uppy-base",
+  "version": "0.0.1",
+  "description": "Base module for building Uppy wrappers and abstractions.  Can also be used as-is for a barebones Uppy experience.",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy-base.git"
+  },
+  "contributors": [
+    "Artur Paikin <artur@arturpaikin.com> (http://arturpaikin.com)",
+    "Harry Hedger <hedgerh@gmail.com> (http://github.com/hedgerh)",
+    "Kevin van Zonneveld <kevin@transloadit.com> (http://github.com/kvz)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy-base/issues"
+  },
+  "homepage": "https://github.com/transloadit/uppy-base#readme",
+  "dependencies": {
+    "events": "^1.1.1",
+    "namespace-emitter": "^1.0.0",
+    "tus-js-client": "^1.2.1",
+    "uppy-utils": "git+https://github.com/transloadit/uppy-utils"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-preset-es2015": "^6.3.13",
+    "chokidar-cli": "^1.2.0"
+  },
+  "scripts": {
+    "build": "babel src -d lib",
+    "build:sourcemaps": "babel src --source-maps -d lib",
+    "start": "npm run build:sourcemaps && chokidar 'src/**/*.js' -c 'npm run build:sourcemaps'",
+    "test": "echo 'Error: no test specified' && exit 1"
+  }
+}
