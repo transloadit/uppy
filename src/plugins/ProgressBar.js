@@ -14,7 +14,8 @@ export default class ProgressBar extends Plugin {
 
     // set default options
     const defaultOptions = {
-      replaceTargetContent: false
+      replaceTargetContent: false,
+      fixed: false
     }
 
     // merge default options with the ones set by user
