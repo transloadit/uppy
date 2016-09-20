@@ -1,7 +1,4 @@
 import Plugin from './Plugin'
-import csjs from 'csjs'
-import styles from './dummyStyles.js'
-import insertCss from 'insert-css'
 import html from '../core/html'
 
 /**
@@ -22,7 +19,7 @@ export default class Dummy extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.strange = html`<h1 class="${styles.title}">this is strange 1</h1>`
+    this.strange = html`<h1>this is strange 1</h1>`
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -43,7 +40,7 @@ export default class Dummy extends Plugin {
   }
 
   render () {
-    const bla = html`<h2 class="${styles.secondTitle}">this is strange 2</h2>`
+    const bla = html`<h2>this is strange 2</h2>`
     return html`
       <div class="wow-this-works">
         <input class="UppyDummy-firstInput" type="text" value="hello">
@@ -69,8 +66,6 @@ export default class Dummy extends Plugin {
   }
 
   install () {
-    insertCss(csjs.getCss(styles))
-
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)

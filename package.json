@@ -70,11 +70,9 @@
     "watchify": "3.7.0"
   },
   "dependencies": {
-    "csjs": "1.0.6",
     "deep-freeze-strict": "1.1.1",
     "drag-drop": "2.11.0",
     "es6-promise": "3.2.1",
-    "insert-css": "1.0.0",
     "mime-types": "2.1.11",
     "namespace-emitter": "1.0.0",
     "pretty-bytes": "3.0.1",
