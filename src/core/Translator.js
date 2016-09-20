@@ -21,7 +21,6 @@ export default class Translator {
     this.opts = Object.assign({}, defaultOptions, opts)
     this.locales = this.opts.locales
     this.locales.strings = Object.assign({}, en_US.strings, this.opts.locales.strings)
-    console.log(this.locales)
   }
 
 /**
