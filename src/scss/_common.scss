@@ -39,6 +39,17 @@
   }
 }
 
+.UppyButton--white {
+  color: $color-asphalt-gray;
+  background-color: $color-white;
+
+  &:hover,
+  &:focus {
+    color: $color-white;
+    background-color: darken($color-cornflower-blue, 10%);
+  }
+}
+
 .UppyButton--yellow {
   color: $color-white;
   background-color: $color-yellow;
