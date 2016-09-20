@@ -40,6 +40,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 - [ ] core: retry failed uploads
 - [ ] core: restrictions — by file type, size, number of files
+- [ ] meta: add google demo account (@kvz)
+- [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
 
 ## 0.10.0
 
@@ -47,17 +49,17 @@ To be released: Septermber 23, 2016. Releasemaster: Artur
 
 Theme: Getting together
 
-- [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` api, open modal... (@arturi, @hedgerh)
-- [ ] core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves (@arturi, @hedgerh)
+- [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` (or `parseFile`), open modal... (@arturi, @hedgerh)
+- [ ] core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves #116 (@arturi, @hedgerh)
 - [ ] core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@arturi, @hedgerh)
-- [ ] core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042, try https://github.com/rtsao/csjs (@arturi, @hedgerh)
+- [x] core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042, try https://github.com/rtsao/csjs — verdict: not yet, try again later (@arturi, @hedgerh)
 - [x] core: i18n strings should extend default en_US dictionary — if a certain string in not available in German, English should be displayed (@arturi)
 - [ ] dashboard: see if it’s possible to add webworkers for thumbnail generation (@arturi)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [x] dashboard: refactor to smaller components, pass props down (@arturi)
 - [x] dashboard: option to render Dashboard inline instead of a modal dialog (@arturi)
 - [x] dashboard: global circular progress bar (@arturi)
-- [ ] dashboard: show speed/eta for all files ? (@arturi)
+- [x] dashboard: show upload speed and ETA for all files (@arturi)
 - [ ] dashboard: polish on mobile (@arturi)
 - [x] dashboard: copy link to uploaded file button, cross-browser (http://i.imgur.com/b1Io34n.png) (@arturi)
 - [ ] dashboard: improve file paste the best we can http://stackoverflow.com/a/22940020 (@arturi)
@@ -77,10 +79,8 @@ To be released: August 26, 2016. Releasemaster: Harry
 Theme: Making Progress, Then Pause & Resume
 
 - [x] dashboard: informer interface: message when all uploads are "done" (@arturi)
-- [ ] meta: add google demo account (@kvz)
-- [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
-- [ ] meta: write 0.9 release blog post (@hedgerh)
-- [ ] webcam: a barely working webcam record & upload (@hedgerh)
+- [x] meta: write 0.9 release blog post (@hedgerh)
+- [x] webcam: a barely working webcam record & upload (@hedgerh)
 - [x] metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 --> tus issue — nailed down, passed to @account (@arturi, @account)
 - [x] core: experiment with switching to `virtual-dom` in a separate branch; experiment with rollup again (@arturi)
 - [x] core: figure out race conditions (animations not completing because file div gets re-added to the dom each time) with `yo-yo`/`morphdom` https://github.com/shama/bel/issues/26#issuecomment-238004130 (@arturi)
