@@ -199,7 +199,7 @@ export default class DashboardUI extends Plugin {
   actions () {
     const bus = this.core.bus
 
-    bus.on('file-add', () => {
+    bus.on('core:file-add', () => {
       this.hideAllPanels()
     })
 
@@ -227,7 +227,7 @@ export default class DashboardUI extends Plugin {
     this.core.log('All right, someone dropped something...')
 
     files.forEach((file) => {
-      this.core.bus.emit('file-add', {
+      this.core.bus.emit('core:file-add', {
         source: this.id,
         name: file.name,
         type: file.type,
@@ -254,7 +254,6 @@ export default class DashboardUI extends Plugin {
       panelSelectorPrefix: this.opts.panelSelectorPrefix,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
-      // onInputChange: this.handleInputChange,
       onPaste: this.handlePaste,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,

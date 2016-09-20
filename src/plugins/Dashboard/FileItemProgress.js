@@ -5,16 +5,16 @@ import html from '../../core/html'
 
 export default function (props) {
   return html`
-      <svg class="UppyIcon UppyIcon-progressCircle" width="25" height="25" viewBox="0 0 44 44">
-        <g class="progress-group">
-          <circle class="bg" r="15" cx="22" cy="22" stroke-width="3" fill="none" />
-          <circle class="progress" r="15" cx="22" cy="22" transform="rotate(-90, 22, 22)" stroke-width="3" fill="none" stroke-dasharray="100" stroke-dashoffset="${100 - props.progress}" />
-        </g>
-        <polygon class="play" transform="translate(6, 5.5)" points="13 21.6666667 13 11 21 16.3333333" />
-        <g transform="translate(18, 17)" class="pause">
-          <rect x="0" y="0" width="2" height="10" rx="0" />
-          <rect x="6" y="0" width="2" height="10" rx="0" />
-        </g>
-        <polygon class="check" transform="translate(6, 7)" points="14 22.5 7 15.2457065 8.99985857 13.1732815 14 18.3547104 22.9729883 9 25 11.1005634" />
-    </svg>`
+    <svg width="70" height="70" viewBox="0 0 36 36" class="UppyIcon UppyIcon-progressCircle">
+      <g class="progress-group">
+        <circle r="15" cx="18" cy="18" stroke-width="2" fill="none" class="bg"/>
+        <circle r="15" cx="18" cy="18" transform="rotate(-90, 18, 18)" stroke-width="2" fill="none" stroke-dasharray="100" stroke-dashoffset="${100 - props.progress || 100}" class="progress"/>
+      </g>
+      <polygon transform="translate(3, 3)" points="12 20 12 10 20 15" class="play"/>
+      <g transform="translate(14.5, 13)" class="pause">
+        <rect x="0" y="0" width="2" height="10" rx="0" />
+        <rect x="5" y="0" width="2" height="10" rx="0" />
+      </g>
+      <polygon transform="translate(2, 3)" points="14 22.5 7 15.2457065 8.99985857 13.1732815 14 18.3547104 22.9729883 9 25 11.1005634" class="check"/>
+  </svg>`
 }

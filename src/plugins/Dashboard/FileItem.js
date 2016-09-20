@@ -1,5 +1,7 @@
 import html from '../../core/html'
-import { secondsToTime,
+import { getETA,
+         getSpeed,
+         prettyETA,
          getFileNameAndExtension,
          truncateString,
          copyToClipboard } from '../../core/Utils'
@@ -16,32 +18,6 @@ function getIconByMime (fileTypeGeneral) {
     default:
       return iconFile()
   }
-}
-
-function getETA (fileProgress) {
-  if (!fileProgress.bytesUploaded) return 0
-
-  const uploadSpeed = getSpeed(fileProgress)
-  const bytesRemaining = fileProgress.bytesTotal - fileProgress.bytesUploaded
-  const secondsRemaining = Math.round(bytesRemaining / uploadSpeed * 10) / 10
-
-  const time = secondsToTime(secondsRemaining)
-
-  // Only display hours and minutes if they are greater than 0 but always
-  // display minutes if hours is being displayed
-  const hoursStr = time.hours ? time.hours + 'h' : ''
-  const minutesStr = (time.hours || time.minutes) ? time.minutes + 'm' : ''
-  const secondsStr = time.seconds + 's'
-
-  return `${hoursStr} ${minutesStr} ${secondsStr}`
-}
-
-function getSpeed (fileProgress) {
-  if (!fileProgress.bytesUploaded) return 0
-
-  const timeElapsed = (new Date()) - fileProgress.uploadStarted
-  const uploadSpeed = fileProgress.bytesUploaded / (timeElapsed / 1000)
-  return uploadSpeed
 }
 
 export default function fileItem (props) {
@@ -85,7 +61,7 @@ export default function fileItem (props) {
                    title="${props.i18n('localDisk')}"
                    aria-label="${props.i18n('localDisk')}">
                 ${!file.isPaused && !isUploaded
-                  ? html`<span>${getETA(file.progress)} ・ ↑ ${prettyBytes(getSpeed(file.progress))}/s</span>`
+                  ? html`<span>${prettyETA(getETA(file.progress))} ・ ↑ ${prettyBytes(getSpeed(file.progress))}/s</span>`
                   : null
                 }
               </div>`
