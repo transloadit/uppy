@@ -174,21 +174,20 @@ export function readFile (fileObj) {
 }
 
 /**
- * Resizes an image to specified width and height, using canvas
+ * Resizes an image to specified width and proportional height, using canvas
  * See https://davidwalsh.name/resize-image-canvas,
  * http://babalan.com/resizing-images-with-javascript/
  * @TODO see if we need https://github.com/stomita/ios-imagefile-megapixel for iOS
  *
- * @param {Object} img element
+ * @param {String} Data URI of the original image
  * @param {String} width of the resulting image
- * @param {String} height of the resulting image
- * @return {String} dataURL of the resized image
+ * @return {String} Data URI of the resized image
  */
-export function createImageThumbnail (imgURL) {
+export function createImageThumbnail (imgDataURI, newWidth) {
   return new Promise((resolve, reject) => {
-    var img = new Image()
+    const img = new Image()
     img.addEventListener('load', () => {
-      const newImageWidth = 200
+      const newImageWidth = newWidth
       const newImageHeight = getProportionalImageHeight(img, newImageWidth)
 
       // create an off-screen canvas
@@ -208,7 +207,7 @@ export function createImageThumbnail (imgURL) {
       const thumbnail = canvas.toDataURL('image/png')
       return resolve(thumbnail)
     })
-    img.src = imgURL
+    img.src = imgDataURI
   })
 }
 
@@ -294,6 +293,52 @@ export function copyToClipboard (textToCopy, fallbackString) {
   })
 }
 
+export function getSpeed (fileProgress) {
+  if (!fileProgress.bytesUploaded) return 0
+
+  const timeElapsed = (new Date()) - fileProgress.uploadStarted
+  const uploadSpeed = fileProgress.bytesUploaded / (timeElapsed / 1000)
+  return uploadSpeed
+}
+
+export function getETA (fileProgress) {
+  if (!fileProgress.bytesUploaded) return 0
+
+  const uploadSpeed = getSpeed(fileProgress)
+  const bytesRemaining = fileProgress.bytesTotal - fileProgress.bytesUploaded
+  const secondsRemaining = Math.round(bytesRemaining / uploadSpeed * 10) / 10
+
+  return secondsRemaining
+
+  // const time = secondsToTime(secondsRemaining)
+
+  // Only display hours and minutes if they are greater than 0 but always
+  // display minutes if hours is being displayed
+  // const hoursStr = time.hours ? time.hours + 'h' : ''
+  // const minutesStr = (time.hours || time.minutes) ? time.minutes + 'm' : ''
+  // const secondsStr = time.seconds + 's'
+
+  // return `${hoursStr} ${minutesStr} ${secondsStr}`
+
+  // return {
+  //   hours: time.hours,
+  //   minutes: time.minutes,
+  //   seconds: time.seconds
+  // }
+}
+
+export function prettyETA (seconds) {
+  const time = secondsToTime(seconds)
+
+  // Only display hours and minutes if they are greater than 0 but always
+  // display minutes if hours is being displayed
+  const hoursStr = time.hours ? time.hours + 'h' : ''
+  const minutesStr = (time.hours || time.minutes) ? time.minutes + 'm' : ''
+  const secondsStr = time.seconds + 's'
+
+  return `${hoursStr} ${minutesStr} ${secondsStr}`
+}
+
 export default {
   generateFileID,
   toArray,
@@ -312,5 +357,6 @@ export default {
   getFileType,
   secondsToTime,
   dataURItoBlob,
-  dataURItoFile
+  dataURItoFile,
+  getSpeed
 }
