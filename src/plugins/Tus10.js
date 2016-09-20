@@ -96,7 +96,7 @@ export default class Tus10 extends Plugin {
         },
         onProgress: (bytesUploaded, bytesTotal) => {
           // Dispatch progress event
-          this.core.emitter.emit('upload-progress', {
+          this.core.emitter.emit('core:upload-progress', {
             uploader: this,
             id: file.id,
             bytesUploaded: bytesUploaded,
@@ -104,14 +104,14 @@ export default class Tus10 extends Plugin {
           })
         },
         onSuccess: () => {
-          this.core.emitter.emit('upload-success', file.id, upload.url)
+          this.core.emitter.emit('core:upload-success', file.id, upload.url)
 
           this.core.log(`Download ${upload.file.name} from ${upload.url}`)
           resolve(upload)
         }
       })
 
-      this.core.emitter.on('file-remove', (fileID) => {
+      this.core.emitter.on('core:file-remove', (fileID) => {
         if (fileID === file.id) {
           console.log('removing file: ', fileID)
           upload.abort()
@@ -139,7 +139,7 @@ export default class Tus10 extends Plugin {
       })
 
       upload.start()
-      this.core.emitter.emit('core:file-upload-started', file.id, upload)
+      this.core.emitter.emit('core:upload-started', file.id, upload)
     })
   }
 
@@ -181,7 +181,7 @@ export default class Tus10 extends Plugin {
               this.core.log(`Upload progress: ${progress}`)
 
               // Dispatch progress event
-              this.core.emitter.emit('upload-progress', {
+              this.core.emitter.emit('core:upload-progress', {
                 uploader: this,
                 id: file.id,
                 bytesUploaded: bytesUploaded,
@@ -214,12 +214,11 @@ export default class Tus10 extends Plugin {
 
     return Promise.all(uploaders)
       .then(() => {
-        return {
-          uploadedCount: files.length
-        }
-      })
-      .catch(() => {
         this.core.log('All files uploaded')
+        return { uploadedCount: files.length }
+      })
+      .catch((err) => {
+        this.core.log('Upload error: ' + err)
       })
   }
 

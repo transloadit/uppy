@@ -87,8 +87,7 @@ export default class DragDrop extends Plugin {
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      console.log(file)
-      this.core.emitter.emit('file-add', {
+      this.core.emitter.emit('core:file-add', {
         source: this.id,
         name: file.name,
         type: file.type,
@@ -101,7 +100,6 @@ export default class DragDrop extends Plugin {
     const firstInput = document.querySelector(`${this.target} .UppyDragDrop-focus`)
 
     // only works for the first time if wrapped in setTimeout for some reason
-    // firstInput.focus()
     setTimeout(function () {
       firstInput.focus()
     }, 10)

@@ -89,7 +89,7 @@ export default class Webcam extends Plugin {
       type: opts.mimeType
     }
 
-    this.core.emitter.emit('file-add', tagFile)
+    this.core.emitter.emit('core:file-add', tagFile)
   }
 
   render (state) {

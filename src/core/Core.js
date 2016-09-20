@@ -145,7 +145,7 @@ export default class Core {
     this.bus.emit('file-added', fileID)
 
     if (fileTypeGeneral === 'image' && !isRemote) {
-      this.addFileThumbnail(newFile.id)
+      this.addThumbnail(newFile.id)
     }
 
     if (this.opts.autoProceed) {
@@ -153,11 +153,17 @@ export default class Core {
     }
   }
 
-  addFileThumbnail (fileID) {
+  removeFile (fileID) {
+    const updatedFiles = Object.assign({}, this.getState().files)
+    delete updatedFiles[fileID]
+    this.setState({files: updatedFiles})
+  }
+
+  addThumbnail (fileID) {
     const file = this.getState().files[fileID]
 
     Utils.readFile(file.data)
-      .then(Utils.createImageThumbnail)
+      .then((imgDataURI) => Utils.createImageThumbnail(imgDataURI, 200))
       .then((thumbnail) => {
         const updatedFiles = Object.assign({}, this.getState().files)
         const updatedFile = Object.assign({}, updatedFiles[fileID], {
@@ -181,24 +187,20 @@ export default class Core {
 
     // const bus = this.bus
 
-    this.on('file-add', (data) => {
+    this.on('core:file-add', (data) => {
       this.addFile(data)
     })
 
     // `remove-file` removes a file from `state.files`, for example when
     // a user decides not to upload particular file and clicks a button to remove it
-    this.on('file-remove', (fileID) => {
-      const updatedFiles = Object.assign({}, this.getState().files)
-      delete updatedFiles[fileID]
-      this.setState({files: updatedFiles})
+    this.on('core:file-remove', (fileID) => {
+      this.removeFile(fileID)
     })
 
-    this.on('core:file-upload-started', (fileID, upload) => {
+    this.on('core:upload-started', (fileID, upload) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID],
         Object.assign({}, {
-          // can’t do that, because immutability. ??
-          // upload: upload,
           progress: Object.assign({}, updatedFiles[fileID].progress, {
             uploadStarted: Date.now()
           })
@@ -209,7 +211,8 @@ export default class Core {
       this.setState({files: updatedFiles})
     })
 
-    this.on('upload-progress', (data) => {
+    this.on('core:upload-progress', (data) => {
+      console.log(data)
       const fileID = data.id
       const updatedFiles = Object.assign({}, this.getState().files)
       if (!updatedFiles[fileID]) {
@@ -231,16 +234,15 @@ export default class Core {
       // calculate total progress, using the number of files currently uploading,
       // multiplied by 100 and the summ of individual progress of each file
       const inProgress = Object.keys(updatedFiles).filter((file) => {
-        return !updatedFiles[file].progress.uploadComplete &&
-               updatedFiles[file].progress.uploadStarted
+        return updatedFiles[file].progress.uploadStarted
       })
-      const progressMax = Object.keys(inProgress).length * 100
+      const progressMax = inProgress.length * 100
       let progressAll = 0
       inProgress.forEach((file) => {
         progressAll = progressAll + updatedFiles[file].progress.percentage
       })
 
-      const totalProgress = progressAll * 100 / progressMax
+      const totalProgress = Math.round((progressAll * 100 / progressMax).toFixed(2))
 
       if (totalProgress === 100) {
         const completeFiles = Object.keys(updatedFiles).filter((file) => {
@@ -256,7 +258,7 @@ export default class Core {
       })
     })
 
-    this.on('upload-success', (fileID, uploadURL) => {
+    this.on('core:upload-success', (fileID, uploadURL) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID], {
         progress: Object.assign({}, updatedFiles[fileID].progress, {
@@ -284,7 +286,6 @@ export default class Core {
   }
 
   isOnline (status) {
-    // const bus = this.bus
     const online = status || window.navigator.onLine
     if (!online) {
       this.emit('is-offline')

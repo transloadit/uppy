@@ -22,13 +22,7 @@ export default function Dashboard (props) {
   })
 
   const removeFile = (fileID) => {
-    // this seems to be working in latest Chrome, Firefox and Safari,
-    //   // but might not be 100% cross-browser, needs testing
-    //   // https://davidwalsh.name/css-animation-callback
-    //   // el.addEventListener('animationend', () => {
-    //   //   bus.emit('file-remove', file.id)
-    //   // })
-    props.bus.emit('file-remove', fileID)
+    props.bus.emit('core:file-remove', fileID)
   }
 
   const startUpload = (ev) => {
@@ -58,7 +52,7 @@ export default function Dashboard (props) {
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      props.bus.emit('file-add', {
+      props.bus.emit('core:file-add', {
         source: props.id,
         name: file.name,
         type: file.type,
@@ -73,8 +67,7 @@ export default function Dashboard (props) {
                    aria-hidden="${props.inline ? 'false' : modal.isHidden}"
                    aria-label="${!props.inline
                                  ? props.i18n('dashboardWindowTitle')
-                                 : props.i18n('dashboardTitle')
-                               }"
+                                 : props.i18n('dashboardTitle')}"
                    role="dialog"
                    onpaste=${props.onPaste}>
 
