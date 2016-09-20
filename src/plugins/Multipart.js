@@ -43,7 +43,7 @@ export default class Multipart extends Plugin {
       xhr.upload.addEventListener('progress', (ev) => {
         if (ev.lengthComputable) {
           // Dispatch progress event
-          this.core.emitter.emit('upload-progress', {
+          this.core.emitter.emit('core:upload-progress', {
             uploader: this,
             id: file.id,
             bytesUploaded: ev.loaded,
@@ -57,7 +57,7 @@ export default class Multipart extends Plugin {
           const resp = JSON.parse(xhr.response)
           const uploadURL = resp[this.opts.responseUrlFieldName]
 
-          this.core.emitter.emit('upload-success', file.id, uploadURL)
+          this.core.emitter.emit('core:upload-success', file.id, uploadURL)
 
           this.core.log(`Download ${file.name} from ${file.uploadURL}`)
           return resolve(file)
@@ -78,11 +78,16 @@ export default class Multipart extends Plugin {
 
       xhr.open('POST', this.opts.endpoint, true)
       xhr.send(formPost)
-      this.core.emitter.emit('core:file-upload-started', file.id)
+      this.core.emitter.emit('core:upload-started', file.id)
     })
   }
 
   selectForUpload (files) {
+    if (Object.keys(files).length === 0) {
+      this.core.log('no files to upload!')
+      return
+    }
+
     const filesForUpload = []
     Object.keys(files).forEach((file) => {
       if (files[file].progress.percentage === 0) {
@@ -114,7 +119,7 @@ export default class Multipart extends Plugin {
     const bus = this.core.emitter
     bus.on('core:upload', () => {
       this.core.log('Multipart is uploading...')
-      const files = this.core.state.files
+      const files = this.core.getState().files
       this.selectForUpload(files)
     })
   }

@@ -200,6 +200,11 @@ export default class Tus10 extends Plugin {
   }
 
   uploadFiles (files) {
+    if (Object.keys(files).length === 0) {
+      this.core.log('no files to upload!')
+      return
+    }
+
     const uploaders = []
     files.forEach((file, index) => {
       const current = parseInt(index, 10) + 1

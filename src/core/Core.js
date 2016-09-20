@@ -212,7 +212,6 @@ export default class Core {
     })
 
     this.on('core:upload-progress', (data) => {
-      console.log(data)
       const fileID = data.id
       const updatedFiles = Object.assign({}, this.getState().files)
       if (!updatedFiles[fileID]) {

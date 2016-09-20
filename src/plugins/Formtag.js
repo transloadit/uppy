@@ -33,7 +33,7 @@ export default class Formtag extends Plugin {
     const files = Utils.toArray(ev.target.files)
 
     files.forEach((file) => {
-      this.core.emitter.emit('file-add', {
+      this.core.emitter.emit('core:file-add', {
         source: this.id,
         name: file.name,
         type: file.type,
