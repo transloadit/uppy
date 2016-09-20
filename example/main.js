@@ -12,7 +12,7 @@ import { Core,
 
 const uppy = new Core({debug: true, autoProceed: false})
   .use(Dashboard, {trigger: '#uppyModalOpener', inline: false})
-  .use(GoogleDrive, {target: Dashboard, host: 'http://ya.ru'})
+  .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dummy, {target: Dashboard})
   .use(Webcam, {target: Dashboard})
   // .use(ProgressBar, {target: Dashboard})
