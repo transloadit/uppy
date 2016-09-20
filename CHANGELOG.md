@@ -54,6 +54,7 @@ Theme: Getting together
 - [ ] core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@arturi, @hedgerh)
 - [x] core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042, try https://github.com/rtsao/csjs — verdict: not yet, try again later (@arturi, @hedgerh)
 - [x] core: i18n strings should extend default en_US dictionary — if a certain string in not available in German, English should be displayed (@arturi)
+- [ ] core: option to throw error in addition to just logging (@arturi)
 - [ ] dashboard: see if it’s possible to add webworkers for thumbnail generation (@arturi)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [x] dashboard: refactor to smaller components, pass props down (@arturi)
