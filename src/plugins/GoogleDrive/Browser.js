@@ -1,5 +1,4 @@
 import html from '../../core/html'
-import Breadcrumbs from './Breadcrumbs'
 import Sidebar from './Sidebar'
 import Table from './Table'
 
@@ -14,17 +13,9 @@ export default (props, bus) => {
 
   return html`
     <div>
-      <div class="UppyGoogleDrive-header">
-        <ul class="UppyGoogleDrive-breadcrumbs">
-          ${Breadcrumbs({
-            getNextFolder: props.getNextFolder,
-            directories: props.directories
-          })}
-        </ul>
-      </div>
       <div class="container-fluid">
         <div class="row">
-          <div class="hidden-md-down col-lg-3 col-xl-3">
+          <div class="hidden-md-down col-lg-12 col-xl-12">
             ${Sidebar({
               getRootDirectory: () => props.getNextFolder('root', 'Google Drive'),
               logout: props.logout,
@@ -32,7 +23,7 @@ export default (props, bus) => {
               filterInput: props.filterInput
             })}
           </div>
-          <div class="col-md-12 col-lg-9 col-xl-6">
+          <div class="col-md-12 col-lg-12 col-xl-12">
             <div class="UppyGoogleDrive-browserContainer">
               ${Table({
                 folders: filteredFolders,

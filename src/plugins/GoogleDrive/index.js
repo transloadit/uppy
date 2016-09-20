@@ -38,6 +38,8 @@ export default class Google extends Plugin {
     this.handleRowClick = this.handleRowClick.bind(this)
     this.logout = this.logout.bind(this)
     this.handleDemoAuth = this.handleDemoAuth.bind(this)
+    this.sortByTitle = this.sortByTitle.bind(this)
+    this.sortByDate = this.sortByDate.bind(this)
 
     // Visual
     this.render = this.render.bind(this)
@@ -72,6 +74,9 @@ export default class Google extends Plugin {
     this.checkAuthentication()
       .then((authenticated) => {
         this.updateState({authenticated})
+
+        console.log('are we authenticated?')
+        console.log(authenticated)
 
         if (authenticated) {
           return this.getFolder('root')
@@ -110,15 +115,11 @@ export default class Google extends Plugin {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      },
-      body: {
-        demo: this.opts.demo
       }
     })
     .then((res) => {
-      if (res.status >= 200 && res.status <= 300) {
-        return res.json()
-      } else {
+      console.log(res.status)
+      if (res.status < 200 || res.status > 300) {
         this.updateState({
           authenticated: false,
           error: true
@@ -127,6 +128,8 @@ export default class Google extends Plugin {
         error.response = res
         throw error
       }
+
+      return res.json()
     })
     .then((data) => data.isAuthenticated)
     .catch((err) => err)
@@ -275,7 +278,7 @@ export default class Google extends Plugin {
   }
 
   sortByTitle () {
-    const state = this.core.getState().googleDrive
+    const state = Object.assign({}, this.core.getState().googleDrive)
     const {files, folders, sorting} = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
@@ -300,7 +303,7 @@ export default class Google extends Plugin {
   }
 
   sortByDate () {
-    const state = this.core.getState().googleDrive
+    const state = Object.assign({}, this.core.getState().googleDrive)
     const {files, folders, sorting} = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
@@ -366,6 +369,8 @@ export default class Google extends Plugin {
       filterItems: this.filterItems,
       filterQuery: this.filterQuery,
       handleRowClick: this.handleRowClick,
+      sortByTitle: this.sortByTitle,
+      sortByDate: this.sortByDate,
       logout: this.logout,
       demo: this.opts.demo
     })
