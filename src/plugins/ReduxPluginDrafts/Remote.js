@@ -13,7 +13,7 @@ class Remote extends RemoteBase {
   reducer (state = this.getInitialState(), action) {
     const { payload, type } = action
 
-    // if this isn't the calling plugin, return
+    // if this isn't the right Remote plugin, just return state
     if (payload.source !== this.id) {
       return state
     }

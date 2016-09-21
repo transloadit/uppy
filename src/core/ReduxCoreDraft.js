@@ -10,12 +10,10 @@ export default class Core {
   }
 
   use (Plugin, opts) {
-    const plugin = new Plugin(opts)
-
     // ... is same thing as using Object.assign
     this.reducers = combineReducers({
-      [plugin.id]: plugin.reducer,
-      ...this.reducers
+    //   [plugin.id]: plugin.reducer,
+    //   ...this.reducers
     })
   }
 

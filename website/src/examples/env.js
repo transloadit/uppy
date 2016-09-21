@@ -1,7 +1,7 @@
 let uppyServerEndpoint = 'http://localhost:3020'
 
 if (location.hostname === 'uppy.io') {
-  uppyServerEndpoint = 'http://server.uppy.io:3020'
+  uppyServerEndpoint = 'https://server.uppy.io:3020'
 }
 
 // uppyServerEndpoint = 'http://server.uppy.io:3020'
