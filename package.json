@@ -76,6 +76,7 @@
     "mime-types": "2.1.11",
     "namespace-emitter": "1.0.0",
     "pretty-bytes": "3.0.1",
+    "redux": "^3.6.0",
     "tus-js-client": "1.2.1",
     "uppy-base": "git+https://github.com/hedgerh/uppy-base.git",
     "whatwg-fetch": "1.0.0",
