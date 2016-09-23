@@ -1,6 +1,8 @@
 import Plugin from '../Plugin'
 import dragDrop from 'drag-drop'
 import Dashboard from './Dashboard'
+import { getSpeed, getETA, prettyETA } from '../../core/Utils'
+import prettyBytes from 'pretty-bytes'
 import { defaultTabIcon } from './icons'
 
 /**
@@ -17,6 +19,7 @@ export default class DashboardUI extends Plugin {
     const defaultOptions = {
       target: 'body',
       inline: false,
+      semiTransparent: false,
       defaultTabIcon: defaultTabIcon(),
       panelSelectorPrefix: 'UppyDashboardContent-panel',
       showProgressDetails: true
@@ -33,8 +36,6 @@ export default class DashboardUI extends Plugin {
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
     this.initEvents = this.initEvents.bind(this)
-    this.handlePaste = this.handlePaste.bind(this)
-    // this.handleInputChange = this.handleInputChange.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.pauseAll = this.pauseAll.bind(this)
     this.resumeAll = this.resumeAll.bind(this)
@@ -83,9 +84,8 @@ export default class DashboardUI extends Plugin {
     const modal = this.core.getState().modal
 
     const newTargets = modal.targets.map((target) => {
-      const isAcquirer = target.type === 'acquirer'
       return Object.assign({}, target, {
-        isHidden: isAcquirer
+        isHidden: true
       })
     })
 
@@ -142,7 +142,7 @@ export default class DashboardUI extends Plugin {
     // add class to body that sets position fixed
     document.body.classList.add('is-UppyDashboard-open')
     // focus on modal inner block
-    document.querySelector('*[tabindex="0"]').focus()
+    document.querySelector('.UppyDashboard-inner').focus()
   }
 
   initEvents () {
@@ -158,42 +158,10 @@ export default class DashboardUI extends Plugin {
       }
     })
 
-    // Close on click outside modal or close buttons
-    // document.addEventListener('click', (e) => {
-    //   if (e.target.classList.contains('js-UppyDashboard-close')) {
-    //     this.hideModal()
-    //   }
-    // })
-
     // Drag Drop
     dragDrop(this.el, (files) => {
       this.handleDrop(files)
     })
-
-    // @TODO Exprimental, work in progress
-    // Paste from clipboard
-    // dashboardEl.addEventListener('paste', this.handlePaste.bind(this))
-  }
-
-  // @TODO Exprimental, work in progress
-  // no names, weird API, Chrome-only http://stackoverflow.com/a/22940020
-  handlePaste (ev) {
-    const files = ev.clipboardData.items
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i]
-
-      if (file.kind === 'file') {
-        const blob = file.getAsFile()
-        console.log(blob)
-        this.core.emitter.emit('file-add', {
-          source: this.id,
-          name: file.name,
-          type: file.type,
-          data: blob
-        })
-      }
-    }
   }
 
   actions () {
@@ -244,9 +212,108 @@ export default class DashboardUI extends Plugin {
     this.core.bus.emit('core:resume-all')
   }
 
+  getTotalSpeed (files) {
+    let totalSpeed = 0
+    files.forEach((file) => {
+      totalSpeed = totalSpeed + getSpeed(file.progress)
+    })
+    return totalSpeed
+  }
+
+  getTotalETA (files) {
+    let totalSeconds = 0
+
+    files.forEach((file) => {
+      totalSeconds = totalSeconds + getETA(file.progress)
+    })
+
+    return totalSeconds
+  }
+
   render (state) {
+    const files = state.files
+
+    const newFiles = Object.keys(files).filter((file) => {
+      return !files[file].progress.uploadStarted
+    })
+    const uploadStartedFiles = Object.keys(files).filter((file) => {
+      return files[file].progress.uploadStarted
+    })
+    const completeFiles = Object.keys(files).filter((file) => {
+      return files[file].progress.uploadComplete
+    })
+    const inProgressFiles = Object.keys(files).filter((file) => {
+      return !files[file].progress.uploadComplete &&
+             files[file].progress.uploadStarted &&
+             !files[file].isPaused
+    })
+
+    let inProgressFilesArray = []
+    inProgressFiles.forEach((file) => {
+      inProgressFilesArray.push(files[file])
+    })
+
+    const totalSpeed = prettyBytes(this.getTotalSpeed(inProgressFilesArray))
+    const totalETA = prettyETA(this.getTotalETA(inProgressFilesArray))
+
+    const isAllComplete = state.totalProgress === 100
+    const isAllPaused = inProgressFiles.length === 0 && !isAllComplete
+
+    const acquirers = state.modal.targets.filter((target) => {
+      return target.type === 'acquirer'
+    })
+
+    const progressindicators = state.modal.targets.filter((target) => {
+      return target.type === 'progressindicator'
+    })
+
+    const addFile = (file) => {
+      this.core.emitter.emit('core:file-add', file)
+    }
+
+    const removeFile = (fileID) => {
+      this.core.emitter.emit('core:file-remove', fileID)
+    }
+
+    const startUpload = (ev) => {
+      this.core.emitter.emit('core:upload')
+    }
+
+    const pauseUpload = (fileID) => {
+      this.core.emitter.emit('core:upload-pause', fileID)
+    }
+
+    const showFileCard = (fileID) => {
+      this.core.emitter.emit('dashboard:file-card', fileID)
+    }
+
+    const fileCardDone = (meta, fileID) => {
+      // console.log(meta, fileID)
+      // console.log('ФАЙЛ КАРД СОХРАНЯЮ, НАХУЙ')
+      this.core.emitter.emit('core:update-meta', meta, fileID)
+      this.core.emitter.emit('dashboard:file-card')
+    }
+
+    const info = (text, type, duration) => {
+      this.core.emitter.emit('informer', text, type, duration)
+    }
+
     return Dashboard({
       state: state,
+      modal: state.modal,
+      newFiles: newFiles,
+      files: files,
+      totalFileCount: Object.keys(files).length,
+      uploadStartedFiles: uploadStartedFiles,
+      completeFiles: completeFiles,
+      inProgressFiles: inProgressFiles,
+      totalSpeed: totalSpeed,
+      totalETA: totalETA,
+      totalProgress: state.totalProgress,
+      isAllComplete: isAllComplete,
+      isAllPaused: isAllPaused,
+      acquirers: acquirers,
+      progressindicators: progressindicators,
       autoProceed: this.core.opts.autoProceed,
       id: this.id,
       container: this.opts.target,
@@ -254,6 +321,7 @@ export default class DashboardUI extends Plugin {
       panelSelectorPrefix: this.opts.panelSelectorPrefix,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
+      semiTransparent: this.opts.semiTransparent,
       onPaste: this.handlePaste,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
@@ -261,7 +329,16 @@ export default class DashboardUI extends Plugin {
       bus: this.core.emitter,
       i18n: this.core.i18n,
       pauseAll: this.pauseAll,
-      resumeAll: this.resumeAll
+      resumeAll: this.resumeAll,
+      addFile: addFile,
+      removeFile: removeFile,
+      info: info,
+      metaFields: state.metaFields,
+      startUpload: startUpload,
+      pauseUpload: pauseUpload,
+      fileCardFor: state.modal.fileCardFor,
+      showFileCard: showFileCard,
+      fileCardDone: fileCardDone
     })
   }
 

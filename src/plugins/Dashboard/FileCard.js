@@ -13,8 +13,6 @@ function getIconByMime (fileTypeGeneral) {
 }
 
 export default function fileCard (props) {
-  // const { bus } = props
-
   const file = props.fileCardFor ? props.files[props.fileCardFor] : false
   const meta = {}
 
@@ -38,7 +36,7 @@ export default function fileCard (props) {
     })
   }
 
-  return html`<div class="UppyDashboardFileCard" aria-hidden="${props.fileCardFor ? 'false' : 'true'}">
+  return html`<div class="UppyDashboardFileCard" aria-hidden="${!props.fileCardFor}">
     <div class="UppyDashboardContent-bar">
       <h2 class="UppyDashboardContent-title">Editing <span class="UppyDashboardContent-titleFile">${file.meta ? file.meta.name : file.name}</span></h2>
       <button class="UppyDashboardContent-back" title="Finish editing file"

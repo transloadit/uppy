@@ -1,5 +1,6 @@
 import Plugin from './Plugin'
 import html from '../core/html'
+// import { createInlineWorker } from '../core/Utils'
 
 /**
  * Dummy
@@ -69,5 +70,24 @@ export default class Dummy extends Plugin {
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)
+    //
+    // function workerFunc () {
+    //   self.addEventListener('message', (e) => {
+    //     const file = e.data.file
+    //     const reader = new FileReaderSync()
+    //     const dataURL = reader.readAsDataURL(file)
+    //     postMessage({file: dataURL})
+    //   })
+    // }
+    //
+    // const worker = createInlineWorker(workerFunc)
+    // const testFileBlob = new Blob(
+    //   ['data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='],
+    //   {type: 'image/svg+xml'}
+    // )
+    // worker.postMessage({file: testFileBlob})
+    // worker.addEventListener('message', (e) => {
+    //   console.log(e)
+    // })
   }
 }

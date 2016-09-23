@@ -3,12 +3,22 @@ import html from '../../core/html'
 export default (props) => {
   props = props || {}
 
+  const togglePauseResume = () => {
+    if (props.isAllComplete) return
+
+    if (props.isAllPaused) {
+      return props.resumeAll()
+    }
+
+    return props.pauseAll()
+  }
+
   return html`
     <div class="UppyDashboard-actionsItem">
       <button class="UppyTotalProgress
                     ${props.isAllPaused ? 'UppyTotalProgress--is-paused' : ''}
                     ${props.isAllComplete ? 'UppyTotalProgress--is-complete' : ''}"
-              onclick=${props.togglePauseResume}>
+              onclick=${togglePauseResume}>
           <svg width="70" height="70" viewBox="0 0 36 36" class="UppyIcon">
             <g class="progress-group">
               <circle r="15" cx="18" cy="18" stroke-width="2" fill="none" class="bg"/>

@@ -3,9 +3,8 @@ import html from '../../core/html'
 // https://css-tricks.com/creating-svg-icon-system-react/
 
 export function defaultTabIcon () {
-  return html`<svg class="UppyIcon" width="224" height="224" viewBox="0 0 224 224">
-    <path d="M112 224c61.856 0 112-50.144 112-112S173.856 0 112 0 0 50.144 0 112s50.144 112 112 112zm0-12c55.228 0 100-44.772 100-100S167.228 12 112 12 12 56.772 12 112s44.772 100 100 100z"/>
-    <path d="M147.67 132.24v57.43H77v-57.43H29.79l82.38-103.71 82.37 103.71h-46.87z" fill="#FFF"/>
+  return html`<svg class="UppyIcon" width="30" height="30" viewBox="0 0 30 30">
+    <path d="M15 30c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15C6.716 0 0 6.716 0 15c0 8.284 6.716 15 15 15zm4.258-12.676v6.846h-8.426v-6.846H5.204l9.82-12.364 9.82 12.364H19.26z" />
   </svg>`
 }
 
@@ -82,10 +81,10 @@ export function iconText () {
 }
 
 export function removeIcon () {
-  return html `<svg width="19" height="18" viewBox="0 0 16 15">
-    <ellipse cx="7.662" cy="7.396" rx="7.662" ry="7.396"/>
-    <path fill="#FFF" d="M10.89 4.078l-.348-.335-.347.335-2.88 2.78h.695l-2.88-2.78-.348-.335-.347.335-.185.18-.373.358.373.36 2.88 2.78v-.72l-2.88 2.78-.373.36.373.36.185.18.347.334.347-.335 2.88-2.78h-.695l2.88 2.78.347.335.348-.335.185-.18.372-.358-.372-.36-2.88-2.78v.72l2.88-2.78.372-.36-.372-.36z"/>
-    </svg>`
+  return html `<svg width="22" height="21" viewBox="0 0 18 17">
+    <ellipse fill="#000" cx="8.62" cy="8.383" rx="8.62" ry="8.383"/>
+    <path stroke="#FFF" fill="#FFF" d="M11 6.147L10.85 6 8.5 8.284 6.15 6 6 6.147 8.35 8.43 6 10.717l.15.146L8.5 8.578l2.35 2.284.15-.146L8.65 8.43z"/>
+  </svg>`
 }
 
 export function uploadIcon () {

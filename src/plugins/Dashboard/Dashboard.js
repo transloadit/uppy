@@ -2,57 +2,27 @@ import html from '../../core/html'
 import FileList from './FileList'
 import Tabs from './Tabs'
 import FileCard from './FileCard'
+import UploadBtn from './UploadBtn'
+import ProgressCircle from './ProgressCircle'
+import StatusBar from './StatusBar'
 import { isTouchDevice, toArray } from '../../core/Utils'
 import { closeIcon } from './icons'
 
 export default function Dashboard (props) {
   // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
-  const state = props.state
-  const totalProgress = state.totalProgress
-  const files = state.files
-  const modal = state.modal
+  // const uploadStartedFilesCount = uploadStartedFiles.length
+  // const completeFilesCount = completeFiles.length
+  // const inProgressFilesCount = inProgressFiles.length
+  // const totalFileCount = Object.keys(files).length
+  // const newFileCount = newFiles.length
 
-  const acquirers = modal.targets.filter((target) => {
-    return target.type === 'acquirer'
-  })
-
-  const progressindicators = modal.targets.filter((target) => {
-    return target.type === 'progressindicator'
-  })
-
-  const removeFile = (fileID) => {
-    props.bus.emit('core:file-remove', fileID)
-  }
-
-  const startUpload = (ev) => {
-    props.bus.emit('core:upload')
-  }
-
-  const pauseUpload = (fileID) => {
-    props.bus.emit('core:upload-pause', fileID)
-  }
-
-  const showFileCard = (fileID) => {
-    props.bus.emit('dashboard:file-card', fileID)
-  }
-
-  const fileCardDone = (meta, fileID) => {
-    props.bus.emit('core:update-meta', meta, fileID)
-    props.bus.emit('dashboard:file-card')
-  }
-
-  const info = (text, type, duration) => {
-    props.bus.emit('informer', text, type, duration)
-  }
-
-  const localInputChange = (ev) => {
+  const handleInputChange = (ev) => {
     ev.preventDefault()
-
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      props.bus.emit('core:file-add', {
+      props.addFile({
         source: props.id,
         name: file.name,
         type: file.type,
@@ -61,15 +31,38 @@ export default function Dashboard (props) {
     })
   }
 
+  // @TODO Exprimental, work in progress
+  // no names, weird API, Chrome-only http://stackoverflow.com/a/22940020
+  const handlePaste = (ev) => {
+    ev.preventDefault()
+
+    const files = toArray(ev.clipboardData.items)
+    files.forEach((file) => {
+      if (file.kind !== 'file') return
+
+      const blob = file.getAsFile()
+      // console.log(blob)
+      // console.log(blob.size)
+      props.log('File pasted')
+      props.addFile({
+        source: props.id,
+        name: file.name,
+        type: file.type,
+        data: blob
+      })
+    })
+  }
+
   return html`<div class="Uppy UppyTheme--default UppyDashboard
                           ${isTouchDevice() ? 'Uppy--isTouchDevice' : ''}
+                          ${props.semiTransparent ? 'UppyDashboard--semiTransparent' : ''}
                           ${!props.inline ? 'UppyDashboard--modal' : ''}"
-                   aria-hidden="${props.inline ? 'false' : modal.isHidden}"
+                   aria-hidden="${props.inline ? 'false' : props.modal.isHidden}"
                    aria-label="${!props.inline
                                  ? props.i18n('dashboardWindowTitle')
                                  : props.i18n('dashboardTitle')}"
                    role="dialog"
-                   onpaste=${props.onPaste}>
+                   onpaste=${handlePaste}>
 
     <div class="UppyDashboard-overlay"
          onclick=${props.hideModal}></div>
@@ -83,8 +76,8 @@ export default function Dashboard (props) {
       <div class="UppyDashboard-innerWrap">
 
         ${Tabs({
-          localInputChange: localInputChange,
-          acquirers: acquirers,
+          handleInputChange: handleInputChange,
+          acquirers: props.acquirers,
           container: props.container,
           panelSelectorPrefix: props.panelSelectorPrefix,
           showPanel: props.showPanel,
@@ -92,30 +85,66 @@ export default function Dashboard (props) {
         })}
 
         ${FileCard({
-          files: files,
-          fileCardFor: modal.fileCardFor,
-          done: fileCardDone,
-          metaFields: state.metaFields,
+          files: props.files,
+          fileCardFor: props.fileCardFor,
+          done: props.fileCardDone,
+          metaFields: props.metaFields,
           log: props.log,
           i18n: props.i18n
         })}
 
         ${FileList({
-          files: files,
-          showFileCard: showFileCard,
+          files: props.files,
+          showFileCard: props.showFileCard,
           showProgressDetails: props.showProgressDetails,
-          totalProgress: totalProgress,
-          info: info,
+          totalProgress: props.totalProgress,
+          totalFileCount: props.totalFileCount,
+          info: props.info,
           i18n: props.i18n,
           log: props.log,
-          removeFile: removeFile,
+          removeFile: props.removeFile,
           pauseAll: props.pauseAll,
           resumeAll: props.resumeAll,
-          pauseUpload: pauseUpload,
-          startUpload: startUpload
+          pauseUpload: props.pauseUpload,
+          startUpload: props.startUpload
         })}
 
-        ${acquirers.map((target) => {
+        <div class="UppyDashboard-actions">
+          ${!props.autoProceed && props.newFiles.length > 0
+            ? UploadBtn({
+              i18n: props.i18n,
+              startUpload: props.startUpload,
+              newFileCount: props.newFiles.length
+            })
+            : null
+          }
+
+          ${props.uploadStartedFiles.length > 0
+            ? ProgressCircle({
+              totalProgress: props.totalProgress,
+              isAllPaused: props.isAllPaused,
+              isAllComplete: props.isAllComplete,
+              pauseAll: props.pauseAll,
+              resumeAll: props.resumeAll
+            })
+            : null
+          }
+        </div>
+
+        ${props.uploadStartedFiles.length > 0
+          ? StatusBar({
+            totalProgress: props.totalProgress,
+            isAllComplete: props.isAllComplete,
+            isAllPaused: props.isAllPaused,
+            complete: props.completeFiles.length,
+            inProgress: props.uploadStartedFiles.length,
+            totalSpeed: props.totalSpeed,
+            totalETA: props.totalETA
+          })
+          : null
+        }
+
+        ${props.acquirers.map((target) => {
           return html`<div class="UppyDashboardContent-panel"
                            id="${props.panelSelectorPrefix}--${target.id}"
                            role="tabpanel"
@@ -125,13 +154,13 @@ export default function Dashboard (props) {
                <button class="UppyDashboardContent-back"
                        onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
              </div>
-            ${target.render(state)}
+            ${target.render(props.state)}
           </div>`
         })}
 
         <div class="UppyDashboard-progressindicators">
-          ${progressindicators.map((target) => {
-            return target.render(state)
+          ${props.progressindicators.map((target) => {
+            return target.render(props.state)
           })}
         </div>
 

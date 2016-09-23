@@ -29,7 +29,7 @@
 .UppyDashboard-inner {
   position: relative;
   background-color: darken($color-white, 2%);
-  padding: 15px;
+  // padding: 15px;
   max-width: 100%;
   max-height: 100%;
   width: 750px;
@@ -37,8 +37,25 @@
   overflow: hidden;
   z-index: $zIndex-3;
   outline: none;
-  border: 1px solid rgba($color-gray, 0.25);
+  // border: 2px solid rgba($color-gray, 0.25);
   border-radius: 5px;
+}
+
+.UppyDashboard-innerWrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  // min-height: 400px;
+  // border: 2px dashed;
+  // border-radius: 10px;
+  // border-color: lighten($color-gray, 15%);
+  // border-color: #E4E4E4;
+  overflow: hidden;
+}
+
+.UppyDashboard--semiTransparent .UppyDashboard-inner {
+  background-color: rgba($color-white, 0.8);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 
 .UppyDashboard--modal .UppyDashboard-inner {
@@ -48,15 +65,6 @@
   transform: translate(-50%, -50%);
   box-shadow: 0px 0px 10px 4px rgba($color-black, 0.1);
   border: none;
-}
-
-.UppyDashboard-innerWrap {
-  height: 100%;
-  min-height: 400px;
-  border: 2px dashed;
-  border-radius: 10px;
-  border-color: lighten($color-gray, 25%);
-  overflow: hidden;
 }
 
 .UppyDashboard-close {
@@ -82,11 +90,13 @@
   }
 
 .UppyDashboardTabs {
-  height: 22%;
-  min-height: 100px;
-  padding: 10px 0;
-  margin: 0 30px 10px 30px;
-  border-bottom: 1px solid lighten($color-gray, 30%);
+  // height: 22%;
+  // min-height: 100px;
+  padding-top: 8px;
+  padding-bottom: 15px;
+  // margin: 0 10px;
+  // border-bottom: 1px solid lighten($color-gray, 15%);
+  // border-bottom: 1px solid #E2E2E2;
 }
 
 .UppyDashboardTabs-title {
@@ -100,7 +110,7 @@
   margin: 0;
   padding: 0;
   text-align: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   color: $color-asphalt-gray;
 }
 
@@ -137,7 +147,8 @@
 
 .UppyDashboardTab-name {
   font-size: 9px;
-  margin: 6px 0;
+  margin-top: 6px;
+  margin-bottom: 0;
   font-weight: normal;
 }
 
@@ -205,7 +216,7 @@
   right: 0;
   transform: translateY(-105%);
   transition: transform 300ms ease-in;
-  // will-change: transform;
+  will-change: transform;
   // transition: all 0.3s ease-in-out;
   background-color: darken($color-white, 4%);
   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
@@ -216,7 +227,6 @@
 }
 
 .UppyDashboardContent-panel[aria-hidden=false] {
-  // transform: translateY(0);
   transform: none;
   transition: transform 300ms ease-out;
 }
@@ -273,28 +283,47 @@
 
 
 .UppyDashboard-files {
-  height: 78%;
+  // height: 78%;
+  // flex: 1;
+  // overflow: hidden;
+  @include clearfix;
   position: relative;
+  overflow-y: auto;
+  margin: 0;
+  // display: flex;
+  // flex-flow: row wrap;
+  padding: 5px 10px;
+  flex: 1;
+  // border: 2px dashed rgba($color-gray, 0.2);
+  // border-radius: 10px;
+  border-top: 1px solid #E2E2E2;
+}
+
+.UppyDashboard-files--noFiles {
+  border: 2px dashed #E4E4E4;
+  border-radius: 10px;
+  margin: 0 15px 15px 15px;
 }
 
 // border-radius + overflow:scroll leads to performance issues
 // so we are using a wrapper here
-.UppyDashboard-filesInner {
-  height: 100%;
-  overflow-y: auto;
-  padding: 0;
-  margin: 0;
-}
+// .UppyDashboard-filesInner {
+//   // position: absolute;
+//   // top: 0;
+//   // left: 0;
+//   // right: 0;
+//   // bottom: 0;
+//   @include clearfix;
+//   overflow-y: auto;
+//   margin: 0;
+//   display: flex;
+//   flex-flow: row wrap;
+//   padding: 5px 10px;
+// }
 
 .UppyDashboard.drag .UppyDashboard-innerWrap  {
   border-color: lighten($color-gray, 5%);
   background-color: darken($color-white, 10%)
-}
-
-.UppyDashboard-list {
-  @include clearfix;
-  margin: 0;
-  padding: 0;
 }
 
 .UppyDashboard-bgIcon {
@@ -316,11 +345,11 @@
   }
 
 .UppyDashboardItem {
+  float: left;
   list-style: none;
   width: 140px;
   height: 170px;
-  float: left;
-  margin: 14px 18px;
+  margin: 15px 21px;
   position: relative;
   border-radius: 6px;
   background-color: $color-white;
@@ -427,16 +456,16 @@
 
 .UppyDashboardItem-action {
   position: absolute;
-  top: -6px;
-  right: -8px;
+  top: -8px;
+  right: -9px;
 }
 
 .UppyDashboardItem-remove {
   @include reset-button;
   cursor: pointer;
-  opacity: 0.75;
-  transition: all 0.2s;
-  transform: translateZ(0);
+  // opacity: 0.75;
+  // transition: all 0.2s;
+  // transform: translateZ(0);
   color: $color-black;
 }
 
@@ -662,8 +691,8 @@
   width: 70px;
   text-align: center;
   position: absolute;
-  bottom: 35px;
-  right: 25px;
+  bottom: 20px;
+  right: 20px;
 }
 
 .UppyDashboard-actionsItem {
