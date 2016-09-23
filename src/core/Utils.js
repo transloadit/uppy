@@ -1,4 +1,5 @@
 import mime from 'mime-types'
+// import pica from 'pica'
 
 /**
  * A collection of small utility functions that help with dom manipulation, adding listeners,
@@ -170,6 +171,28 @@ export function readFile (fileObj) {
       return resolve(ev.target.result)
     })
     reader.readAsDataURL(fileObj)
+
+    // function workerScript () {
+    //   self.addEventListener('message', (e) => {
+    //     const file = e.data.file
+    //     try {
+    //       const reader = new FileReaderSync()
+    //       postMessage({
+    //         file: reader.readAsDataURL(file)
+    //       })
+    //     } catch (err) {
+    //       console.log(err)
+    //     }
+    //   })
+    // }
+    //
+    // const worker = makeWorker(workerScript)
+    // worker.postMessage({file: fileObj})
+    // worker.addEventListener('message', (e) => {
+    //   const fileDataURL = e.data.file
+    //   console.log('FILE _ DATA _ URL')
+    //   return resolve(fileDataURL)
+    // })
   })
 }
 
@@ -201,6 +224,12 @@ export function createImageThumbnail (imgDataURI, newWidth) {
       // draw source image into the off-screen canvas:
       // ctx.clearRect(0, 0, width, height)
       ctx.drawImage(img, 0, 0, newImageWidth, newImageHeight)
+
+      // pica.resizeCanvas(img, canvas, (err) => {
+      //   if (err) console.log(err)
+      //   const thumbnail = canvas.toDataURL('image/png')
+      //   return resolve(thumbnail)
+      // })
 
       // encode image to data-uri with base64 version of compressed image
       // canvas.toDataURL('image/jpeg', quality);  // quality = [0.0, 1.0]
@@ -293,6 +322,33 @@ export function copyToClipboard (textToCopy, fallbackString) {
   })
 }
 
+// export function createInlineWorker (workerFunction) {
+//   let code = workerFunction.toString()
+//   code = code.substring(code.indexOf('{') + 1, code.lastIndexOf('}'))
+//
+//   const blob = new Blob([code], {type: 'application/javascript'})
+//   const worker = new Worker(URL.createObjectURL(blob))
+//
+//   return worker
+// }
+
+export function makeWorker (script) {
+  var URL = window.URL || window.webkitURL
+  var Blob = window.Blob
+  var Worker = window.Worker
+
+  if (!URL || !Blob || !Worker || !script) {
+    return null
+  }
+
+  let code = script.toString()
+  code = code.substring(code.indexOf('{') + 1, code.lastIndexOf('}'))
+
+  var blob = new Blob([code])
+  var worker = new Worker(URL.createObjectURL(blob))
+  return worker
+}
+
 export function getSpeed (fileProgress) {
   if (!fileProgress.bytesUploaded) return 0
 
@@ -309,22 +365,6 @@ export function getETA (fileProgress) {
   const secondsRemaining = Math.round(bytesRemaining / uploadSpeed * 10) / 10
 
   return secondsRemaining
-
-  // const time = secondsToTime(secondsRemaining)
-
-  // Only display hours and minutes if they are greater than 0 but always
-  // display minutes if hours is being displayed
-  // const hoursStr = time.hours ? time.hours + 'h' : ''
-  // const minutesStr = (time.hours || time.minutes) ? time.minutes + 'm' : ''
-  // const secondsStr = time.seconds + 's'
-
-  // return `${hoursStr} ${minutesStr} ${secondsStr}`
-
-  // return {
-  //   hours: time.hours,
-  //   minutes: time.minutes,
-  //   seconds: time.seconds
-  // }
 }
 
 export function prettyETA (seconds) {
@@ -358,5 +398,7 @@ export default {
   secondsToTime,
   dataURItoBlob,
   dataURItoFile,
-  getSpeed
+  getSpeed,
+  getETA,
+  makeWorker
 }
