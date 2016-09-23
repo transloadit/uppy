@@ -23,7 +23,7 @@ en_US.strings = {
   selectToUpload: 'Select files to upload',
   closeModal: 'Close Modal',
   upload: 'Upload',
-  importFrom: 'Import From',
+  importFrom: 'Import files from',
   dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
   dashboardTitle: 'Uppy Dashboard',
   copyLinkToClipboardSuccess: 'Link copied to clipboard.',
