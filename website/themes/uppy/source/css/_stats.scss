@@ -8,6 +8,8 @@
 }
 
 .Stats-bundleSizes {
+  margin-bottom: 1em;
+
   @media #{$screen-large} {
     max-width: 320px;
     float: right;
