@@ -40,8 +40,15 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 - [ ] core: retry failed uploads
 - [ ] core: restrictions — by file type, size, number of files
+- [ ] core: see if it’s possible to add webworkers or use pica for thumbnail generation (@arturi)
 - [ ] meta: add google demo account (@kvz)
 - [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
+- [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
+
+## 0.11.0
+
+- [ ] dashboard: basic responsive version (@arturi)
+- [ ] tus: only show pause/resume when tus is used (@arturi)
 
 ## 0.10.0
 
@@ -50,28 +57,28 @@ To be released: Septermber 23, 2016. Releasemaster: Artur
 Theme: Getting together
 
 - [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` (or `parseFile`), open modal... (@arturi, @hedgerh)
-- [ ] core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves #116 (@arturi, @hedgerh)
-- [ ] core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@arturi, @hedgerh)
+- [x] core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves #116 — discussion Part 1 (@arturi, @hedgerh)
+- [x] core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@hedgerh)
 - [x] core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042, try https://github.com/rtsao/csjs — verdict: not yet, try again later (@arturi, @hedgerh)
+- [x] core: try Web Workers and FileReaderSync for image resizing again — still slow, probably message payload between webworker and regular thread is huge (@arturi)
 - [x] core: i18n strings should extend default en_US dictionary — if a certain string in not available in German, English should be displayed (@arturi)
 - [ ] core: option to throw error in addition to just logging (@arturi)
-- [ ] dashboard: see if it’s possible to add webworkers for thumbnail generation (@arturi)
-- [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [x] dashboard: refactor to smaller components, pass props down (@arturi)
 - [x] dashboard: option to render Dashboard inline instead of a modal dialog (@arturi)
-- [x] dashboard: global circular progress bar (@arturi)
-- [x] dashboard: show upload speed and ETA for all files (@arturi)
-- [ ] dashboard: polish on mobile (@arturi)
-- [x] dashboard: copy link to uploaded file button, cross-browser (http://i.imgur.com/b1Io34n.png) (@arturi)
-- [ ] dashboard: improve file paste the best we can http://stackoverflow.com/a/22940020 (@arturi)
+- [x] dashboard: global circular progress bar, try out different designs for total upload speed and ETA  (@arturi)
+- [x] dashboard: show total upload speed and ETA, for all files (@arturi)
+- [x] dashboard: copy link to uploaded file button, cross-browser (@arturi) (http://i.imgur.com/b1Io34n.png) (@arturi)
+- [x] dashobard: refreshed design and grand refactor (@arturi)
+- [x] dashboard: improve file paste the best we can http://stackoverflow.com/a/22940020 (@arturi)
 - [ ] formtag: pretty input element #93 (@arturi)
 - [ ] webcam: stop using the webcam after the picture is taken and tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
 - [ ] provider: abstract google drive into provider plugin for reuse (@hedgerh)
 - [ ] google drive: improve UI (@hedgerh)
-- [ ] meta: update docs, add unpkg CDN links (https://unpkg.com/uppy@0.9.0/dist/uppy.min.css) (@arturi)
-- [ ] tus: only show pause/resume when tus is used — add `resumable` capability flag (@arturi)
-- [ ] tus: fix pause/resume issues and race conditions (@arturi)
+- [x] tus: add `resumable` capability flag (@arturi)
+- [x] tus: start fixing pause/resume issues and race conditions (@arturi)
 - [ ] test: working Uppy example on Require Bin — latest version straight from NPM (@arturi @account)
+- [ ] meta: update docs, add unpkg CDN links (https://unpkg.com/uppy@0.9.0/dist/uppy.min.css) (@arturi)
+- [ ] meta: write 0.10 release blog post (@arturi)
 
 ## 0.9.0
 
