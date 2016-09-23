@@ -1,7 +1,7 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
 import ee from 'namespace-emitter'
-import deepFreeze from 'deep-freeze-strict'
+// import deepFreeze from 'deep-freeze-strict'
 import UppySocket from './UppySocket'
 import en_US from '../locales/en_US'
 
@@ -82,8 +82,8 @@ export default class Core {
     this.state = newState
     this.updateAll(this.state)
 
-    this.log('Updating state with: ')
-    this.log(newState)
+    // this.log('Updating state with: ')
+    // this.log(newState)
   }
 
   /**
@@ -92,7 +92,8 @@ export default class Core {
    *
    */
   getState () {
-    return deepFreeze(this.state)
+    // return deepFreeze(this.state)
+    return this.state
   }
 
   updateMeta (data, fileID) {
@@ -134,7 +135,7 @@ export default class Core {
         uploadComplete: false,
         uploadStarted: false
       },
-      size: file.data.size,
+      size: file.data.size || 0,
       isRemote: isRemote,
       remote: file.remote || ''
     }
@@ -143,6 +144,7 @@ export default class Core {
     this.setState({files: updatedFiles})
 
     this.bus.emit('file-added', fileID)
+    this.log(`Added file: ${fileName}, ${fileID}`)
 
     if (fileTypeGeneral === 'image' && !isRemote) {
       this.addThumbnail(newFile.id)
