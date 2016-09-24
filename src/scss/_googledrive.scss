@@ -171,3 +171,121 @@
   white-space: nowrap;
   width: 25%;
 }
+
+
+/** NEW GOOGLE BROWSER STYLES */
+// @import 'https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i';
+
+body {
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+.Browser {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-weight: 400;
+  height: 580px;
+  width: 850px;
+}
+
+.Browser header {
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: row;
+  height: 65px;
+}
+
+.Browser-body {
+  display: flex;
+  flex: 1;
+}
+
+.Browser-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.Browser-search {
+  background-color: #f5f5f5;
+  border: 0;
+  font-size: 15px;
+  font-weight: 400;
+  margin-left: 128px;
+  height: 48px;
+  outline: 0;
+  padding-left: 74px;
+  width: 600px;
+}
+
+::-webkit-input-placeholder {
+   color: rgba(119,119,119,0.75);
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: rgba(119,119,119,0.75);
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: rgba(119,119,119,0.75);
+}
+
+:-ms-input-placeholder {
+   color: rgba(119,119,119,0.75);
+}
+
+.Browser-subHeader {
+  align-items: center;
+  background-color: #fafafa;
+  display: flex;
+  flex-direction: row;
+  height: 55px;
+-webkit-box-shadow: 0px 3px 3px 0px rgba(121,121,121,0.25);
+  -moz-box-shadow: 0px 3px 3px 0px rgba(121,121,121,0.25);
+  box-shadow: 0px 3px 3px 0px rgba(121,121,121,0.25);
+  z-index: 1000;
+}
+
+.Browser-breadcrumbs span {
+  font-size: 16px;
+  margin-left: 32px;
+}
+
+.Browser-breadcrumbs span.active {
+  color: #666;
+  flex: 1;
+  font-weight: 500;
+}
+
+.BrowserTable {
+  background-color: white;
+  flex: 1;
+}
+
+.BrowserTable-row {
+  border-bottom: 1px solid #eee;
+  height: 50px;
+}
+
+.BrowserTable-header {
+  border-bottom: 1px solid #eee;
+}
+
+.BrowserTable-column {
+  color: #666;
+  font-weight: bold;
+  padding: 18px;
+}
+
+.BrowserTable-header {
+  background-color: #fafafa;
+}
+
+.nav-active {
+  font-weight: bold;
+}
