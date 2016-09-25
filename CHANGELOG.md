@@ -52,6 +52,7 @@ To be released: October ?, 2016. Releasemaster: Harry
 - [ ] dashboard: basic responsive version (@arturi)
 - [ ] tus: only show pause/resume when tus is used (@arturi)
 - [ ] formtag: pretty input element? #93 (@arturi)
+- [ ] webcam: stop using the webcam after the picture is taken and tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
 
 ## 0.10.0
 
@@ -72,13 +73,12 @@ Theme: Getting together
 - [x] dashboard: copy link to uploaded file button, cross-browser (@arturi) (http://i.imgur.com/b1Io34n.png) (@arturi)
 - [x] dashobard: refreshed design and grand refactor (@arturi)
 - [x] dashboard: improve file paste the best we can http://stackoverflow.com/a/22940020 (@arturi)
-- [ ] webcam: stop using the webcam after the picture is taken and tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
-- [ ] provider: abstract google drive into provider plugin for reuse (@hedgerh)
-- [ ] google drive: improve UI (@hedgerh)
+- [x] provider: abstract google drive into provider plugin for reuse (@hedgerh)
+- [x] google drive: improve UI (@hedgerh)
 - [x] tus: add `resumable` capability flag (@arturi)
 - [x] tus: start fixing pause/resume issues and race conditions (@arturi)
-- [ ] test: working Uppy example on Require Bin — latest version straight from NPM (@arturi @account)
-- [ ] meta: update docs, add unpkg CDN links (https://unpkg.com/uppy@0.9.0/dist/uppy.min.css) (@arturi)
+- [x] test: working Uppy example on Require Bin — latest version straight from NPM http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105 (@arturi @account)
+- [x] meta: update readme docs, add unpkg CDN links (https://unpkg.com/uppy@0.9.0/dist/uppy.min.css) (@arturi)
 - [ ] meta: write 0.10 release blog post (@arturi)
 
 ## 0.9.0
