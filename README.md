@@ -77,12 +77,12 @@ But if you like, you can also use a pre-built bundle, for example from [unpkg CD
 
 1\. Add a script to your the bottom of your HTML’s `<body>`:
 
-```
+``` html
 <script src="https://unpkg.com/uppy/dist/uppy.min.js"></script>
 ```
 
 2\. Add CSS to your HTML’s `<head>`:
-```
+``` html
 <link href="https://unpkg.com/uppy/dist/uppy.min.css" rel="stylesheet">
 ```
 
