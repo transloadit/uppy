@@ -189,6 +189,7 @@ export default class Tus10 extends Plugin {
               })
 
               if (progress === '100.00') {
+                this.core.emitter.emit('core:upload-success', file.id)
                 socket.close()
                 return resolve()
               }
