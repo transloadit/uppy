@@ -46,7 +46,8 @@ export default class Core {
 
     this.state = {
       files: {},
-      capabilities: {}
+      capabilities: {},
+      totalProgress: 0
     }
 
     if (this.opts.debug) {
