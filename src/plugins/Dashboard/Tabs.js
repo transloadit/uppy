@@ -18,7 +18,7 @@ export default (props) => {
             <h5 class="UppyDashboardTab-name">${props.i18n('localDisk')}</h5>
           </button>
           <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
-                 onchange=${props.localInputChange} />
+                 onchange=${props.handleInputChange} />
         </li>
         ${props.acquirers.map((target) => {
           return html`<li class="UppyDashboardTab">
