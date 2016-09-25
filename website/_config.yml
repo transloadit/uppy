@@ -19,7 +19,7 @@ description: >
   and should not be used for anything serious yet.
 descriptionWho: >
   Uppy is brought to you by the people
-  behind <a href="https://transloadit.com">Transloadit</a> and as such has first class support
+  behind <a href="https://transloadit.com">Transloadit</a> and as such will have first class support
   for adding their uploading and encoding backend, but this is opt-in,
   and you can just as easily roll your own.
 author: Transloadit
