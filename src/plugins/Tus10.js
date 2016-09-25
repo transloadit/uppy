@@ -92,6 +92,7 @@ export default class Tus10 extends Plugin {
 
         onError: (err) => {
           this.core.log(err)
+          this.core.emitter.emit('core:upload-error', file.id)
           reject('Failed because: ' + err)
         },
         onProgress: (bytesUploaded, bytesTotal) => {

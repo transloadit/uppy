@@ -73,6 +73,7 @@ export default class Multipart extends Plugin {
       })
 
       xhr.addEventListener('error', (ev) => {
+        this.core.emitter.emit('core:upload-error', file.id)
         return reject('Upload error')
       })
 
