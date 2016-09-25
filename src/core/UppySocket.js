@@ -5,7 +5,7 @@ export default class UppySocket {
     this.queued = []
     this.isOpen = false
     this.socket = new WebSocket(opts.target)
-    this.emitter = new ee.EventEmitter()
+    this.emitter = ee()
 
     this.socket.onopen = (e) => {
       this.isOpen = true

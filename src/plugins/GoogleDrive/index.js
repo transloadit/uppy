@@ -200,10 +200,17 @@ export default class Google extends Plugin {
       isRemote: true,
       body: {
         fileId: file.id
+      },
+      remote: {
+        host: this.opts.host,
+        url: `${this.opts.host}/google/get?fileId=${file.id}`,
+        body: {
+          fileId: file.id
+        }
       }
     }
     console.log('adding file')
-    this.core.emitter.emit('file-add', tagFile)
+    this.core.emitter.emit('core:file-add', tagFile)
   }
 
   handleError (response) {
