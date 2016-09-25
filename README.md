@@ -35,7 +35,9 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 ### Installing from NPM
 
 It’s easy to start using Uppy, we recommend installing from npm:
-`npm install uppy --save`
+```
+npm install uppy --save
+```
 
 and then use a bundler like Browserify or Webpack:
 
@@ -48,9 +50,13 @@ const files = uppy
   .use(DragDrop, {target: 'body'})
   .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/'})
   .run()
+```
 
+or
+
+``` javascript
 // ES5
-// :warning: bundling with `require` will include the whole Uppy package, with all plugins. 
+// warning: bundling with `require` will currently include the whole Uppy package, with all plugins. 
 // If you want to pick and choose, use `import`)
 var Uppy = require('uppy')
 
