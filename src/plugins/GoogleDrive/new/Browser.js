@@ -1,4 +1,5 @@
 import html from '../../../core/html'
+import Breadcrumbs from './Breadcrumbs'
 import Table from './Table'
 
 export default (props) => {
@@ -13,12 +14,18 @@ export default (props) => {
   return html`
     <div class="Browser">
       <header>
-        <input type="text" class="Browser-search" placeholder="Search Drive"/>
+        <input
+          type="text"
+          class="Browser-search"
+          placeholder="Search Drive"
+          onkeyup=${props.filterQuery}
+          value=${props.filterInput}/>
       </header>
       <div class="Browser-subHeader">
-        <div class="Browser-breadcrumbs">
-          <span class="active">My Drive</span>
-        </div>
+        ${Breadcrumbs({
+          getNextFolder: props.getNextFolder,
+          directories: props.directories
+        })}
       </div>
       <div class="Browser-body">
         <main class="Browser-content">
@@ -26,18 +33,6 @@ export default (props) => {
             columns: [{
               name: 'Name',
               key: 'title'
-            },
-            {
-              name: 'Owner',
-              key: 'owner'
-            },
-            {
-              name: 'Last modified',
-              key: 'modifiedDate'
-            },
-            {
-              name: 'File size',
-              key: 'fileSize'
             }],
             folders: filteredFolders,
             files: filteredFiles,

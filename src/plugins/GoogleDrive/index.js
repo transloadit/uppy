@@ -6,7 +6,7 @@ import html from '../../core/html'
 import Provider from '../../uppy-base/src/plugins/Provider'
 
 import AuthView from './AuthView'
-import Browser from './Browser'
+import Browser from './new/Browser'
 import ErrorView from './Error'
 
 export default class Google extends Plugin {
@@ -202,7 +202,7 @@ export default class Google extends Plugin {
         fileId: file.id
       }
     }
-
+    console.log('adding file')
     this.core.emitter.emit('file-add', tagFile)
   }
 

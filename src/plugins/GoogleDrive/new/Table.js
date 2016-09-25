@@ -4,7 +4,7 @@ import Row from './TableRow'
 export default (props) => {
   const headers = props.columns.map((column) => {
     return html`
-      <th class="BrowserTable-headerColumn BrowserTable-column">
+      <th class="BrowserTable-headerColumn BrowserTable-column" onclick=${props.sortByTitle}>
         ${column.name}
       </th>
     `
@@ -26,8 +26,7 @@ export default (props) => {
             modifiedByMeDate: folder.modifiedByMeDate,
             handleClick: () => props.handleRowClick(folder.id),
             handleDoubleClick: () => props.handleFolderDoubleClick(folder.id, folder.title),
-            columns: props.columns,
-            owner: 'Joe Mama'
+            columns: props.columns
           })
         })}
         ${props.files.map((file) => {

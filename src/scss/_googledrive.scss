@@ -35,9 +35,11 @@
 }
 
 .UppyGoogleDrive-breadcrumbs {
+  color: #222;
+  font-size: 12px;
   list-style-type: none;
   margin: 0;
-  margin-left: 200px;
+  margin-left: 16px;
   padding: 8px 0;
 }
 
@@ -46,8 +48,12 @@
   background: transparent;
   border: 0;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   outline: 0;
+}
+
+.UppyGoogleDrive-breadcrumbs button:hover {
+  text-decoration: underline;
 }
 
 .UppyGoogleDrive-sidebar button {
@@ -188,8 +194,9 @@ body {
   flex-direction: column;
   font-size: 13px;
   font-weight: 400;
-  height: 580px;
-  width: 850px;
+  height: 475px;
+  overflow: hidden;
+  width: 718px;
 }
 
 .Browser header {
@@ -216,11 +223,11 @@ body {
   border: 0;
   font-size: 15px;
   font-weight: 400;
-  margin-left: 128px;
   height: 48px;
+  margin: 0 16px;
   outline: 0;
-  padding-left: 74px;
-  width: 600px;
+  padding: 0 16px;
+  width: 100%;
 }
 
 ::-webkit-input-placeholder {
@@ -267,6 +274,17 @@ body {
   flex: 1;
 }
 
+.BrowserTable tbody {
+  display: block;
+  height: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.BrowserTable td {
+  cursor: default;
+}
+
 .BrowserTable-row {
   border-bottom: 1px solid #eee;
   height: 50px;
@@ -276,14 +294,32 @@ body {
   border-bottom: 1px solid #eee;
 }
 
+.BrowserTable-header:hover {
+  background-color: #eee;
+}
+
 .BrowserTable-column {
   color: #666;
   font-weight: bold;
   padding: 18px;
 }
 
+.BrowserTable-headerColumn {
+  cursor: pointer;
+  text-align: left;
+}
+
+.BrowserTable-row.is-active {
+  background-color: #eee;
+}
+
 .BrowserTable-header {
   background-color: #fafafa;
+}
+
+.BrowserTable-rowColumn.BrowserTable-column {
+  display: block;
+  width: 708px;
 }
 
 .nav-active {
