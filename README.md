@@ -1,6 +1,6 @@
 # Uppy
 
-<img src="http://uppy.io/images/logos/uppy-dog-full.svg" width="120" alt="Uppy logo — a puppy superman">
+<img src="http://uppy.io/images/logos/uppy-dog-full.svg" width="120" alt="Uppy logo — a superman puppy in a pink suit" align="right">
 
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/badge/stability-experimental-orange.svg?style=flat-square"></a>
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
@@ -10,7 +10,7 @@ Uppy is (going to be) a cool JavaScript file uploader that fetches files for you
 
 Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 
-## Features
+## Features (some in development)
 
 - Lightweight / easy on dependencies
 - Usable as a bundle straight from a CDN as well as a module to import
@@ -18,7 +18,7 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 - Uppy speaks multiple languages (i18n support)
 - Built with accessibility in mind
 - Works great with file encoding and processing backends, such as [Transloadit](http://transloadit.com)
-- Small core, modular plugin-based architecture.
+- Small core, modular plugin-based architecture
 - Cute as a puppy :dog:, also accepts cat pictures
 
 ## Demo
@@ -50,7 +50,8 @@ const files = uppy
   .run()
 
 // ES5
-// :warning: bundling with `require` will include the whole Uppy package, with all plugins. If you want to pick and choose, use `import`):
+// :warning: bundling with `require` will include the whole Uppy package, with all plugins. 
+// If you want to pick and choose, use `import`)
 var Uppy = require('uppy')
 
 var uppy = new Uppy.Core({wait: false})
