@@ -23,9 +23,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: Decouple rendering from Plugins and try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick, https://github.com/nosir/cleave.js
 - [ ] core: Have base styles, be explicit about fonts, etc
 - [ ] core: Make sure Uppy works well in VR
-- [ ] drive: Show a visual indication that downloading has started after double-clicking. Prevent that 6 clicks = 3 downloads
 - [ ] instagram: Make a barely working Instagram Plugin + example (#21)
-- [ ] meta: Use <waffle.io> instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
+- [ ] meta: Use <waffle.io> or GitHub Projects instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
 - [ ] dashboard: add ability to minimize Modal/Dashboard, while long upload is in progress? Uppy then becomes just a tiny progress indicator
 - [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: Human should check http://www.webpagetest.org, use it sometimes to test our website & Uppy? Which will show response/loading times and where big delays are
@@ -44,11 +43,15 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] meta: add google demo account (@kvz)
 - [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
+- [ ] core: log — option to throw error in addition to just logging (@arturi)
 
 ## 0.11.0
 
+To be released: October ?, 2016. Releasemaster: Harry
+
 - [ ] dashboard: basic responsive version (@arturi)
 - [ ] tus: only show pause/resume when tus is used (@arturi)
+- [ ] formtag: pretty input element? #93 (@arturi)
 
 ## 0.10.0
 
@@ -56,21 +59,19 @@ To be released: Septermber 23, 2016. Releasemaster: Artur
 
 Theme: Getting together
 
-- [ ] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` (or `parseFile`), open modal... (@arturi, @hedgerh)
+- [x] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` (or `parseFile`), open modal... (@arturi, @hedgerh)
 - [x] core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves #116 — discussion Part 1 (@arturi, @hedgerh)
 - [x] core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@hedgerh)
 - [x] core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042, try https://github.com/rtsao/csjs — verdict: not yet, try again later (@arturi, @hedgerh)
 - [x] core: try Web Workers and FileReaderSync for image resizing again — still slow, probably message payload between webworker and regular thread is huge (@arturi)
 - [x] core: i18n strings should extend default en_US dictionary — if a certain string in not available in German, English should be displayed (@arturi)
-- [ ] core: option to throw error in addition to just logging (@arturi)
 - [x] dashboard: refactor to smaller components, pass props down (@arturi)
 - [x] dashboard: option to render Dashboard inline instead of a modal dialog (@arturi)
-- [x] dashboard: global circular progress bar, try out different designs for total upload speed and ETA  (@arturi)
+- [x] dashboard: global circular progress bar, try out different designs for total upload speed and ETA (@arturi)
 - [x] dashboard: show total upload speed and ETA, for all files (@arturi)
 - [x] dashboard: copy link to uploaded file button, cross-browser (@arturi) (http://i.imgur.com/b1Io34n.png) (@arturi)
 - [x] dashobard: refreshed design and grand refactor (@arturi)
 - [x] dashboard: improve file paste the best we can http://stackoverflow.com/a/22940020 (@arturi)
-- [ ] formtag: pretty input element #93 (@arturi)
 - [ ] webcam: stop using the webcam after the picture is taken and tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
 - [ ] provider: abstract google drive into provider plugin for reuse (@hedgerh)
 - [ ] google drive: improve UI (@hedgerh)
