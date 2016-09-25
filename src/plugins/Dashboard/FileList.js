@@ -6,7 +6,10 @@ export default (props) => {
   return html`<ul class="UppyDashboard-files
                          ${props.totalFileCount === 0 ? 'UppyDashboard-files--noFiles' : ''}">
       ${props.totalFileCount === 0
-       ? html`<div class="UppyDashboard-bgIcon">${dashboardBgIcon()}</div>`
+       ? html`<div class="UppyDashboard-bgIcon">
+        ${dashboardBgIcon()}
+        <h4 class="UppyDashboard-dropFilesTitle">Drop or paste files here</h4>
+       </div>`
        : null
       }
       ${Object.keys(props.files).map((fileID) => {
