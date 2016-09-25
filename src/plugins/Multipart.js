@@ -61,6 +61,9 @@ export default class Multipart extends Plugin {
 
           this.core.log(`Download ${file.name} from ${file.uploadURL}`)
           return resolve(file)
+        } else {
+          this.core.emitter.emit('core:upload-error', file.id)
+          return reject('Upload error')
         }
 
         // var upload = {}
