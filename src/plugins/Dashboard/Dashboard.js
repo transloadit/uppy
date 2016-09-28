@@ -65,12 +65,12 @@ export default function Dashboard (props) {
                    onpaste=${handlePaste}>
 
     <div class="UppyDashboard-overlay"
-         onclick=${props.hideModal}></div>
-
-    <button class="UppyDashboard-close"
-            aria-label="${props.i18n('closeModal')}"
-            title="${props.i18n('closeModal')}"
-            onclick=${props.hideModal}>${closeIcon()}</button>
+         onclick=${props.hideModal}>
+      <button class="UppyDashboard-close"
+              aria-label="${props.i18n('closeModal')}"
+              title="${props.i18n('closeModal')}"
+              onclick=${props.hideModal}>${closeIcon()}</button>
+    </div>
 
     <div class="UppyDashboard-inner" tabindex="0">
       <div class="UppyDashboard-innerWrap">
