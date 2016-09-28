@@ -56,7 +56,7 @@ or
 
 ``` javascript
 // ES5
-// warning: bundling with `require` will currently include the whole Uppy package, with all plugins. 
+// warning: bundling with `require` will currently include the whole Uppy package, with all plugins.
 // If you want to pick and choose, use `import`)
 var Uppy = require('uppy')
 
@@ -101,7 +101,15 @@ But if you like, you can also use a pre-built bundle, for example from [unpkg CD
 
 Uppy exposes events that you can subscribe to in your app:
 
-### `core:upload-success` when one upload is complete:
+### Event `core:upload-progress` when file upload progress is available
+
+``` javascript
+uppy.on('core:upload-progress', (data) => {
+  console.log(data.id, data.bytesUploaded, data.bytesTotal)
+})
+```
+
+### Event `core:upload-success` when one upload is complete
 
 ``` javascript
 uppy.on('core:upload-success', (fileId, url) => {
@@ -114,13 +122,14 @@ uppy.on('core:upload-success', (fileId, url) => {
 })
 ```
 
-### `core:success` when all uploads are complete:
+### Event `core:success` when all uploads are complete
 
 ``` javascript
 uppy.on('core:success', (fileCount) => {
   console.log(fileCount)
 })
 ```
+
 
 ## Browser Support
 

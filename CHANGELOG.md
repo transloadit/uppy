@@ -47,9 +47,10 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.11.0
 
-To be released: October ?, 2016. Releasemaster: Harry
+To be released: October 21, 2016. Releasemaster: Harry
 
 - [ ] dashboard: basic responsive version (@arturi)
+- [ ] dashboard: make trigger optional — not needed when rendering inline (@arturi)
 - [ ] tus: only show pause/resume when tus is used (@arturi)
 - [ ] formtag: pretty input element? #93 (@arturi)
 - [ ] webcam: stop using the webcam after the picture is taken and tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
@@ -78,8 +79,8 @@ Theme: Getting together
 - [x] tus: add `resumable` capability flag (@arturi)
 - [x] tus: start fixing pause/resume issues and race conditions (@arturi)
 - [x] test: working Uppy example on Require Bin — latest version straight from NPM http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105 (@arturi @account)
-- [x] meta: update readme docs, add unpkg CDN links (https://unpkg.com/uppy@0.9.0/dist/uppy.min.css) (@arturi)
-- [ ] meta: write 0.10 release blog post (@arturi)
+- [x] meta: update readme docs, add unpkg CDN links (https://unpkg.com/uppy/dist/uppy.min.css) (@arturi)
+- [x] meta: write 0.10 release blog post (@arturi)
 
 ## 0.9.0
 
