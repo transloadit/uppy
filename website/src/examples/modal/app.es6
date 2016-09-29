@@ -13,7 +13,7 @@ uppy
   .use(Dashboard, {trigger: '#uppyModalOpener'})
   .use(GoogleDrive, {target: Dashboard, host: UPPY_SERVER})
   .use(Webcam, {target: Dashboard})
-  .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/', resume: false})
+  .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/', resume: true})
   .use(Informer, {target: Dashboard})
   .use(MetaData, {
     fields: [
