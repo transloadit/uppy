@@ -43,17 +43,19 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] meta: add google demo account (@kvz)
 - [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
-- [ ] core: log — option to throw error in addition to just logging (@arturi)
 
 ## 0.11.0
 
-To be released: October 21, 2016. Releasemaster: Harry
+To be released: October 21, 2016 (or November, 4?). Releasemaster: Harry
 
 - [ ] dashboard: basic responsive version (@arturi)
 - [ ] dashboard: make trigger optional — not needed when rendering inline (@arturi)
-- [ ] tus: only show pause/resume when tus is used (@arturi)
+- [ ] core: log method should have an option to throw error in addition to just logging (@arturi)
+- [ ] tus: only show pause/resume when tus is used, something else for multipart (@arturi)
 - [ ] formtag: pretty input element? #93 (@arturi)
-- [ ] webcam: stop using the webcam after the picture is taken and tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
+- [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
+- [ ] website: finish https upgrade, set asset paths to // instead of http://
+- [ ] website: see about updating guide and API docs, main page example to match current actual API
 
 ## 0.10.0
 
