@@ -62,12 +62,7 @@ export default class Multipart extends Plugin {
           this.core.log(`Download ${file.name} from ${file.uploadURL}`)
           return resolve(file)
         } else {
-          // OPTION 1: return the full XHR object
-          this.core.emitter.emit('core:upload-error', file.id, xhr);
-
-          // OPTION 2: return the payload of the XHR object
-          this.core.emitter.emit('core:upload-error', file.id, xhr.response);
-
+          this.core.emitter.emit('core:upload-error', file.id, xhr)
           return reject('Upload error')
         }
 
