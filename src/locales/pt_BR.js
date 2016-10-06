@@ -17,12 +17,23 @@ pt_BR.strings = {
     1: '%{smart_count} arquivos'
   },
   uploadFiles: {
-    0: 'Upload %{smart_count} arquivo',
-    1: 'Upload %{smart_count} arquivos'
+    0: 'Enviar %{smart_count} arquivo',
+    1: 'Enviar %{smart_count} arquivos'
   },
   selectToUpload: 'Selecione arquivos para enviar',
   closeModal: 'Fechar Modal',
-  upload: 'Enviar'
+  upload: 'Enviar',
+  importFrom: 'Importar arquivos de',
+  dashboardWindowTitle: 'Painel do Uppy (Aperte Esc para fechar)',
+  dashboardTitle: 'Painel do Uppy',
+  copyLinkToClipboardSuccess: 'Link copiado para área de transferência.',
+  copyLinkToClipboardFallback: 'Copie a URL abaixo',
+  done: 'Finalizado',
+  localDisk: 'Disco Local',
+  dropPasteImport: 'Arraste arquivos até aqui, cole-os ou importe de:',
+  fileProgress: 'Progresso de Arquivo: velocidade de envio e estimativas',
+  numberOfSelectedFiles: 'Números de arquivos selecionados',
+  uploadAllNewFiles: 'Enviar todos os arquivos novos'
 }
 
 pt_BR.pluralize = function (n) {
