@@ -21,7 +21,7 @@ script:
 - npm run web:install
 - npm run build
 - npm run test
-- npm run test:acceptance:handleservers
+- [ "${TRAVIS_PULL_REQUEST}" = "false" ] && npm run test:acceptance:handleservers
 env:
   global:
   - CXX=g++-4.8
