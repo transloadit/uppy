@@ -12,7 +12,7 @@ we're `<1.0.0` and allowing ourselves to make breaking changes in minor
 and patch levels.
 
 In the current stage we aim to release a new version on the
-first Friday of every new month.
+last Friday of every new month.
 
 ## Backlog
 
@@ -46,7 +46,7 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.11.0
 
-To be released: October 21, 2016 (or November, 4?). Releasemaster: Harry
+To be released: October 28, 2016. Releasemaster: Harry
 
 - [ ] dashboard: basic responsive version (@arturi)
 - [ ] dashboard: make trigger optional — not needed when rendering inline (@arturi)
