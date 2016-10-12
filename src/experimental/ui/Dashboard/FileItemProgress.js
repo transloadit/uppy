@@ -16,5 +16,6 @@ export default function (props) {
         <rect x="5" y="0" width="2" height="10" rx="0" />
       </g>
       <polygon transform="translate(2, 3)" points="14 22.5 7 15.2457065 8.99985857 13.1732815 14 18.3547104 22.9729883 9 25 11.1005634" class="check"/>
-  </svg>`
+    </svg>
+  `
 }

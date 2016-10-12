@@ -70,6 +70,7 @@
     "watchify": "3.7.0"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "deep-freeze-strict": "1.1.1",
     "drag-drop": "2.11.0",
     "es6-promise": "3.2.1",
