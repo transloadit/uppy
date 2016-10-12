@@ -35,11 +35,11 @@ Core is very lean (at least should be), and acts as a glue that ties together al
 
 Returns current state.
 
-#### setState()
+#### setState({itemToUpdate: data})
 
-Updates state with new state and runs `updateAll`.
+Updates state with new state (Object.assign({}, this.state, newState)) and runs `updateAll()`.
 
-#### updateAll`
+#### updateAll()
 
 Iterates over all `plugins` and runs `update` on each of them.
 
@@ -70,7 +70,7 @@ Core (or plugins) check and set capabilities, like: `resumable: true`, `touch: f
 
 Logs stuff to console only if user specified `debug: true`, silent in production.
 
-#### core.on, core.emit, core.emitter
+#### core.on('event', action), core.emit('event'), core.emitter
 
 An event emitter embedded into Core that is passed to plugins and can be used directly on the instance. Event emitter is used for plugins to communicate with other plugins and Core.
 
@@ -89,7 +89,7 @@ Plugins extend the functionality of Core (which itself is very much barebones, d
 
 Each plugin extends `Plugin` class with default methods that can be overwritten:
 
-#### update
+#### update()
 
 Gets called when state is changes and `updateAll()` is called from Core. Checks if a DOM element (tree) has been created with a reference for it stored in plugin’s `this.el`. If so, crates a new element (tree) `const newEl = this.render(currentState)` on current plugin and then calls `yo.update(this.el, newEl)` to effectively update the existing element to match the new one (morphdom is behind that).
 
@@ -120,11 +120,11 @@ const selectorTarget = targetPlugin.addTarget(plugin)
 
 *This should probably be replaced: we should explicitly pass targets to the target plugin, like so: `.use(Dashboard, {children: [DragDrop, Webcam]})`*.
 
-#### focus
+#### focus()
 
 Called when plugin is in focus, like when that plugin’s tab is selected in the Dashboard.
 
-#### install
+#### install()
 
 Called by Core when it instantiates new plugins. In `install`
 a plugin can extend global state with its own state (like `modal: hidden`), or do anything needed on initialization, including `mount`.
@@ -133,16 +133,16 @@ a plugin can extend global state with its own state (like `modal: hidden`), or d
 
 #### acquirer
 
-- **DragDrop**
-- **GoogleDrive**
+- **DragDrop** — simple DragDrop, once file is dropped on a target, it gets added to state.files. “click here to select” too
+- **GoogleDrive** — GoogleDrive UI, uses uppy-server component. Files are downloaded from Google Drive to uppy-server, without having to go through the client, saving bandwidth and space
 - **Formtag** — simple input[type=file] element
-- **Webcam**
+- **Webcam** — allows to take pictures with your webcam, works in most browsers, except Safari. Flash (ugh) is used for fallback
 
 #### orchestrator
 
 Should probably be called UI.
 
-- **Dashboard** — the full-featured interface for interacting with Uppy. Supports Drag&Dropping files, provides UI for Google Drive, Webcam and any other plugins.
+- **Dashboard** — the full-featured interface for interacting with Uppy. Supports drag & dropping files, provides UI for Google Drive, Webcam and any other plugin, shows selected files, shows progress on them.
 
 #### progressindicator
 
@@ -150,7 +150,7 @@ Should probably be called UI.
 
 #### uploader
 
-- **Tus10** — tus resumable file uploads
+- **Tus10** — tus resumable file uploads, see http://tus.io
 - **Multipart** — regular form/multipart/xhr uploads
 
 #### modifier
@@ -175,7 +175,8 @@ Issues with that approach:
 
 C. Another approach is to create a separate version of Uppy for React, uppy-react, not use Core in it, re-create Core in form of UppyContainer, manage state manually (allow for Redux, Mobx or whatever else someone is using), while re-using some parts of current Uppy. This has been explored here: https://github.com/hedgerh/uppy-react.
 
-2. Yo-Yo (Bel) has some issues:
+Also, Yo-Yo (Bel) has some issues:
+
   - local network requests from `<img src="">` are made on each state update
   - webcam currently flashes when state is updated (morphdom issue?)
   - When using template strings it might be harder to re-use UI components in React, where JSX is a standard
