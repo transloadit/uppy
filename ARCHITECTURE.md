@@ -19,8 +19,7 @@ uppy.on('core:success', (fileCount) => {
 
 ## Core
 
-Core module orchestrates everything in Uppy. Plugins are added to it via `.use(DragDrop, {target: 'body'})` API. Core instances plugins with `new Plugin(this, opts)`, passing options to them, then places them in `plugins` object, nested by plugin’s type:
-`uploader`, `progressindicator`, `acquirer`, etc.
+Core module orchestrates everything in Uppy. Plugins are added to it via `.use(DragDrop, {target: 'body'})` API. Core instances plugins with `new Plugin(this, opts)`, passing options to them, then places them in `plugins` object, nested by plugin’s type: `uploader`, `progressindicator`, `acquirer`, etc.
 
 Core then iterates over its internal `plugins` object and calls `install` on each plugin. In its `install`
 method a plugin can extend global state with its state, or do anything needed on initialization.
