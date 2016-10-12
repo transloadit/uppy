@@ -19,14 +19,14 @@ uppy.on('core:success', (fileCount) => {
 
 ## Core
 
-Core module orchestrates everything in Uppy. Plugins are added to it via `.use(DragDrop, {target: 'body'})` API. Core instances plugins with `new Plugin(this, opts)`, passing options to them, then places them in `plugins` object, nested by plugin’s type: `uploader`, `progressindicator`, `acquirer`, etc.
+Core module orchestrates everything in Uppy. Plugins are added to it via `.use(Plugin, opts)` API, like `.use(DragDrop, {target: 'body'})`. Core instantiates plugins with `new Plugin(this, opts)`, passing options to them, then places them in `plugins` object, nested by type: `uploader`, `progressindicator`, `acquirer`, etc.
 
-Core then iterates over its internal `plugins` object and calls `install` on each plugin. In its `install`
-method a plugin can extend global state with its state, or do anything needed on initialization.
+Core then iterates over `plugins` object and calls `install` on each plugin. In its `install`
+method a plugin can extend global state with its state, set event listeners to react to events happening in Uppy (upload progress, file has been removed), or do anything else needed on init.
 
-Then, each time `state` is updated, Core runs `updateAll` that re-renders all of the plugins (components) that have been mounted in the dom somewhere, using the new state.
+Each time `state` is updated with `setState(stateAddition)`, Core runs `updateAll()` that re-renders all of the plugins (components) that have been mounted in the dom somewhere, using the new state.
 
-Core is very lean (at least should be), and acts as a glue that ties together all the plugins with shared data and functionality together. It keeps `state` with `files`, `capabilities` and UI stuff, plus exposes a few methods that can be used by plugins.
+Core is very lean (at least should be), and acts as a glue that ties together all the plugins, shared data and functionality together. It keeps `state` with `files`, `capabilities`, plus exposes a few methods that are called by plugins to update state — adding files, adding preview Thumbnails to images, updating progress for each file and total progress, etc.
 
 *Comment: There is a discussion that these methods could in theory all live in Utils or be standalone modules used by plugins and the user directly, see https://github.com/transloadit/uppy/issues/116#issuecomment-247695921.*
 
@@ -36,22 +36,22 @@ Returns current state.
 
 #### setState({itemToUpdate: data})
 
-Updates state with new state (Object.assign({}, this.state, newState)) and runs `updateAll()`.
+Updates state with new state (Object.assign({}, this.state, newState)) and then runs `updateAll()`.
 
 #### updateAll()
 
-Iterates over all `plugins` and runs `update` on each of them.
+Iterates over all `plugins` and runs `update()` on each of them.
 
 #### updateMeta(data, fileID)
 
-Given `{size: 1200}` adds that metadata to a file.
+Given `{ size: 1200 }` adds that metadata to a file.
 
 #### addFile(file)
 
-Adds a new file to `state`, method used by `acquirer` plugins like Drag & Drop and Google Drive,
-or can be called by the user on uppy instance directly.
+Adds a new file to `state`. This method is used by `acquirer` plugins like Drag & Drop, Webcam and Google Drive,
+or can be called by the user on uppy instance directly: `uppy.addFile(myFile)`.
 
-Normalizes that file: tries to figure out file type by extension if mime is missing, use noname if name is missing and so on.
+Normalizes that file too: tries to figure out file type by extension if mime is missing, use noname if name is missing, sets progress: 0  and so on.
 
 #### removeFile(fileID)
 
@@ -59,11 +59,11 @@ Removes file from `state`.
 
 #### addThumbnail(fileID)
 
-Reads image from file’s data object in base64 and resizes that, using canvas. Then `state` is updated with a file that has thumbnail it it. Thumbnails are used for file previews by plugins like Dashboard.
+Reads image from file’s data object in base64 and resizes that, using canvas. Then `state` is updated with a file that has thumbnail in it. Thumbnails are used for file previews by plugins like Dashboard.
 
 #### state.capabilities
 
-Core (or plugins) check and set capabilities, like: `resumable: true`, `touch: false`, `dragdrop: true` that could possibly be used by all plugins.
+Core (or plugins) check and set capabilities, like: `resumable: true` (this is set by Tus Plugin), `touch: false`, `dragdrop: true`, that could possibly be used by all plugins.
 
 #### log(msg)
 
@@ -71,26 +71,30 @@ Logs stuff to console only if user specified `debug: true`, silent in production
 
 #### core.on('event', action), core.emit('event'), core.emitter
 
-An event emitter embedded into Core that is passed to plugins and can be used directly on the instance. Event emitter is used for plugins to communicate with other plugins and Core.
+An event emitter embedded into Core that is passed to Plugins, and can be used directly on the instance. Used by Plugins for communicating with other Plugins and Core.
 
 For example:
 
-- Core listens for `core:upload-progress` event and calculates speed and ETA for one file, that the event was about, and for all files currently in progress.
+- Core listens for `core:upload-progress` event and calculates speed & ETA for all files currently in progress. *Uploader plugins could just call core.updateProgress().*
 - Core checks if browser in offline or online and emits `core:is-offline` or `core:is-online` that other plugins can listen to.
-- Any plugin can emit `informer` event that `Informer` plugin can use to display info bubbles. Currently only used in the Dashboard plugin. Example: `core.emitter.emit('informer', 'Connected!', 'success', 3000)`. (Should this be a Core method instead of plugin?).
-- Uploader plugins listen to `core:upload` event (can be emitted after a file has been added or when upload button has been pressed), get files via `core.getState().files`, filter those that are not marked as complete and upload them, emitting progress events.
+- Any plugin can emit `informer` event that `Informer` plugin can use to display info bubbles. Currently only used in the Dashboard plugin. Example: `core.emitter.emit('informer', 'Connected!', 'success', 3000)`. (Should this be a Core method instead of Plugin?). *Could be replaced by core.inform(info) method that will just update state with info.*
+- Uploader plugins listen to `core:upload` event (can be emitted after a file has been added or when upload button has been pressed), get files via `core.getState().files`, filter those that are not marked as complete and upload them, emitting progress events. *This could be replaced by core.upload() method that will loop through all `uploaders` and run `upload()` on them, or we could only allow one uploader.*
+
+*Should most or all of the events from the above be replaced with method calls? Should event-emitter be used for internal communication or just for the user to hook on to, like `uppy.on(core:upload:complete, doStuff)`? Right now its both, same event-emitter serves as a communication bus inside Uppy + its exposed to the user outside. Inspiration for using it as a bus came from Substack’s example here https://github.com/substack/training/blob/3041b1e4e3908d4df1b26cf578c34cd4df8fe9b7/web-dev-whirlwind/example/arch/bus/actions.js, and somewhat from Redux and Choo’s send https://github.com/yoshuawuyts/choo/#views.*
 
 *See discussion about Core and Event Emitter: https://github.com/transloadit/uppy/issues/116#issuecomment-247695921*
 
 ## Plugins
 
-Plugins extend the functionality of Core (which itself is very much barebones, does almost nothing).
+Plugins extend the functionality of Core (which itself is very much barebones, does almost nothing). Plugins actually do the work — select files, modify and upload them, and show the UI.
 
-Each plugin extends `Plugin` class with default methods that can be overwritten:
+Plugins that have some UI can be mounted anywhere in the dom. With current design you can have a Drag & Drop area in `#dragdrop` and Progressbar in `body`. Plugins can also be mounted into other plugins that support that, like Dashboard.
+
+Each plugin extends `Plugin` class with default methods that can be overridden:
 
 #### update()
 
-Gets called when state is changes and `updateAll()` is called from Core. Checks if a DOM element (tree) has been created with a reference for it stored in plugin’s `this.el`. If so, crates a new element (tree) `const newEl = this.render(currentState)` on current plugin and then calls `yo.update(this.el, newEl)` to effectively update the existing element to match the new one (morphdom is behind that).
+Gets called when state changes and `updateAll()` is called from Core. Checks if a DOM element (tree) has been created with a reference for it stored in plugin’s `this.el`. If so, crates a new element (tree) `const newEl = this.render(currentState)` for current plugin and then calls `yo.update(this.el, newEl)` to effectively update the existing element to match the new one (morphdom is behind that).
 
 All together now:
 
@@ -101,32 +105,34 @@ yo.update(this.el, newEl)
 
 #### mount(target, plugin)
 
-Called by the plugin itself if it is a UI plugin that needs to do something in DOM. A `target` is passed as an argument, and then a plugin object itself. There are two possible scenarios for mounting:
+Called by the plugin itself, if it is a UI plugin that needs to do something in DOM. A `target` is passed as an argument. There are two possible scenarios for mounting:
 
-1\. If `typeof target === string`, then the element (tree) is rendered and gets mounted to the DOM:
+1\. If `typeof target === 'string'`, then the element (tree) is rendered and gets mounted to the DOM:
 
 ``` javascript
 this.el = plugin.render(this.core.state)
 document.querySelector(target).appendChild(this.el)
 ```
 
-2\. If `typeof target === object`, then that plugin is found is plugins object of Core and `addTarget()` is called on that plugin.
+2\. If `typeof target === 'object'`, then that plugin is found in `plugins` object of Core and `addTarget()` is called on that plugin.
 
 ``` javascript
 const targetPlugin = this.core.getPlugin(targetPluginName)
 const selectorTarget = targetPlugin.addTarget(plugin)
 ```
 
-*This should probably be replaced: we should explicitly pass targets to the target plugin, like so: `.use(Dashboard, {children: [DragDrop, Webcam]})`*.
+*This should probably be replaced: we could explicitly pass targets to the target plugin, like so: `.use(Dashboard, {children: [DragDrop, Webcam]})`*.
 
 #### focus()
 
 Called when plugin is in focus, like when that plugin’s tab is selected in the Dashboard.
 
+*We should also leverage onload/onunload or componentDidMount/componentWillUnmount*
+
 #### install()
 
 Called by Core when it instantiates new plugins. In `install`
-a plugin can extend global state with its own state (like `modal: hidden`), or do anything needed on initialization, including `mount`.
+a plugin can extend global state with its own state (like `{ modal: { isHidden: true } }`), or do anything needed on initialization, including `mount()`.
 
 ### Plugins are currently of the following types:
 
@@ -139,7 +145,7 @@ a plugin can extend global state with its own state (like `modal: hidden`), or d
 
 #### orchestrator
 
-Should probably be called UI.
+*Should probably be called UI.*
 
 - **Dashboard** — the full-featured interface for interacting with Uppy. Supports drag & dropping files, provides UI for Google Drive, Webcam and any other plugin, shows selected files, shows progress on them.
 
@@ -156,28 +162,34 @@ Should probably be called UI.
 
 - **Metadata** — allows adding custom metadata fields, data from each field is then added to a file
 
+---
+
 ## Questions about the future
 
 Things work the way they are. Not everything is optimal, though. We would like to improve our architecture and APIs to solve a few issues:
 
-We want Uppy to work well with React and React Native (and other frameworks, like Angular, Ember, Vue, Choo). Currently state and view rendering are tied with Core and Plugins, which is a problem for React. There are few options:
+We want Uppy to work well with React and React Native (and other frameworks, like Angular, Ember, Vue, Choo). Currently state and view rendering are all tied together in Core and Plugins, which is a problem for React or other libs that handle views. There are few options:
 
-A. The simplest is to go “Black Hole way” and just tell React users to wrap Uppy in a dumb component with `shouldComponentUpdate: false`, and give them no control, but that’s not a good way — they can’t alter anything, this is like a band-aid.
+A. The simplest is to go the “Black Hole way” and just tell React users to wrap Uppy in a dumb component with `shouldComponentUpdate: false`, and give them no control, but that’s not a good way — they can’t alter anything, this feels like a band-aid solution.
 
-B. Leave things as they are, keep Core. Treat Uppy as an external uploading library, where you subscribe to events and manage React state yourself: `uppy.on('core:progress', updateMyReactState)`. Example: http://codepen.io/arturi/pen/yaZEzz/. So we only use logic parts of Uppy (see uppy-base https://github.com/hedgerh/uppy-base/tree/master/src) and re-create UI components, or optimize and abstract the ones we have, , perhaps by switching to JSX and even more env agnostic props. So that our UI like DragDrop, Dashboard and Google Drive views can be used in React.
+B. Leave things as they are, keep Core. Treat Uppy as an external uploading library, where you subscribe to events and manage React (or other) state yourself: `uppy.on('core:progress', updateMyReactState)`. Simple example: http://codepen.io/arturi/pen/yaZEzz/. Maybe come up with some state-sync solution that will update Redux state in your app, when Uppy’s internal state is updated. Then we only use logic parts of Uppy (see uppy-base https://github.com/hedgerh/uppy-base/tree/master/src) and re-create UI components for each environment. Or optimize and abstract the ones we have, perhaps by switching to JSX and even more environment agnostic props. Then our UI plugins/views like DragDrop, Dashboard and Google Drive can be used in React.
 
-Issues with that approach:
+Issues with this approach:
 
-* That leaves state in Core (files are still added to it), and means state will be kept in multiple places — Uppy’s Core + Redux or React component’s internal state. Might lead to state getting out of sync — you removed file from Uppy `uppy.removeFile(fileID)`, but forgot to remove from your Redux state, or something like that.
+* It leaves state in Core (files are still added to it, progress gets updated, previews generated — all inside), and that means state will be kept in multiple places — Uppy’s Core + Redux or React component’s internal state. Might lead to state getting out of sync — if you removed file from Uppy `uppy.removeFile(fileID)`, but forgot to remove it from your Redux state, or something like that. *Unless we solve this by providing some subscription interface or a way to tell Uppy to use your Redux state somehow.*
 
-* Some stuff from Core won’t be used in React, `updateAll` for example.
+* Some stuff from Core won’t be used in React (or won’t be needed by all users), `updateAll()` for example, that is tied to current UI rendering implementation. *Might not be an issue if it’s just a few methods.*
 
-C. Another approach is to create a separate version of Uppy for React, uppy-react, not use Core in it, re-create Core in form of UppyContainer, manage state manually (allow for Redux, Mobx or whatever else someone is using), while re-using some parts of current Uppy. This has been explored here: https://github.com/hedgerh/uppy-react.
+C. Another approach is to create a separate version of Uppy for React, uppy-react, not use Core in it, re-create Core in form of UppyContainer, manage state in that (and possibly allow for Redux, Mobx or whatever else someone is using), while re-using some parts of current Uppy. This has been explored here: https://github.com/hedgerh/uppy-react.
+
+Ideally we would like to not end up with two separate versions — regular Uppy and React Uppy — that needs to be maintained and both updated each time. Though sometimes that’s exactly what lib authors are doing — creating separate React versions.
+
+---
 
 Also, Yo-Yo (Bel) has some issues:
 
-  - local network requests from `<img src="">` are made on each state update
-  - webcam currently flashes when state is updated (morphdom issue?)
-  - When using template strings it might be harder to re-use UI components in React, where JSX is a standard
+- Local network requests from `<img src="">` are made on each state update. Not a big deal, but annoying and does not happing with vdom solutions, like Preact.
+- Webcam currently flashes when state is updated (morphdom issue?).
+- When using template strings it might be harder to re-use UI components in React, where JSX is a standard.
 
 We are thinking about trying Preact for more stability and React compatibility, but not sure if it’s worth it.
