@@ -56,6 +56,9 @@ To be released: October 28, 2016. Releasemaster: Harry
 - [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
 - [ ] website: finish https upgrade, set asset paths to // instead of http://
 - [ ] website: see about updating guide and API docs, main page example to match current actual API
+- [x] uppy-server: Make uppy server have dynamic controllers (@hedgerh)
+- [ ] uppy-server: Make uppy server standalone CLI (@hedgerh)
+- [ ] experimental: create a Dashboard UI for Redux refactor (@hedgerh)
 
 ## 0.10.0
 
