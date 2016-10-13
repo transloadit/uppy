@@ -94,7 +94,7 @@ Each plugin extends `Plugin` class with default methods that can be overridden:
 
 #### update()
 
-Gets called when state changes and `updateAll()` is called from Core. Checks if a DOM element (tree) has been created with a reference for it stored in plugin’s `this.el`. If so, crates a new element (tree) `const newEl = this.render(currentState)` for current plugin and then calls `yo.update(this.el, newEl)` to effectively update the existing element to match the new one (morphdom is behind that).
+Gets called when state changes and `updateAll()` is called from Core. Checks if a DOM element (tree) has been created with a reference for it stored in plugin’s `this.el`. If so, creates a new element (tree) `const newEl = this.render(currentState)` for current plugin and then calls `yo.update(this.el, newEl)` to effectively update the existing element to match the new one (morphdom is behind that).
 
 All together now:
 
@@ -170,13 +170,13 @@ Things work the way they are. Not everything is optimal, though. We would like t
 
 We want Uppy to work well with React and React Native (and other frameworks, like Angular, Ember, Vue, Choo). Currently state and view rendering are all tied together in Core and Plugins, which is a problem for React or other libs that handle views. There are few options:
 
-A. The simplest is to go the “Black Hole way” and just tell React users to wrap Uppy in a dumb component with `shouldComponentUpdate: false`, and give them no control, but that’s not a good way — they can’t alter anything, this feels like a band-aid solution.
+A. The simplest is to go the “Black Hole way” and just tell React users to wrap Uppy in a dumb component with `shouldComponentUpdate: false`, and give them no control, but that’s not a good way — they can’t alter anything or use time travel, this feels like a band-aid solution.
 
 B. Leave things as they are, keep Core. Treat Uppy as an external uploading library, where you subscribe to events and manage React (or other) state yourself: `uppy.on('core:progress', updateMyReactState)`. Simple example: http://codepen.io/arturi/pen/yaZEzz/. Maybe come up with some state-sync solution that will update Redux state in your app, when Uppy’s internal state is updated. Then we only use logic parts of Uppy (see uppy-base https://github.com/hedgerh/uppy-base/tree/master/src) and re-create UI components for each environment. Or optimize and abstract the ones we have, perhaps by switching to JSX and even more environment agnostic props. Then our UI plugins/views like DragDrop, Dashboard and Google Drive can be used in React.
 
 Issues with this approach:
 
-* It leaves state in Core (files are still added to it, progress gets updated, previews generated — all inside), and that means state will be kept in multiple places — Uppy’s Core + Redux or React component’s internal state. Might lead to state getting out of sync — if you removed file from Uppy `uppy.removeFile(fileID)`, but forgot to remove it from your Redux state, or something like that. *Unless we solve this by providing some subscription interface or a way to tell Uppy to use your Redux state somehow.*
+* It leaves state in Core (files are still added to it, progress gets updated, previews generated — all inside), and that means state will be kept in multiple places — Uppy’s Core + Redux or React component’s internal state. Might lead to state getting out of sync — if you removed file from Uppy `uppy.removeFile(fileID)`, but forgot to remove it from your Redux state, or something like that. *Unless we solve this by providing some subscription interface or a way to tell Uppy to use your Redux state somehow. A variant might be possible where state-handling is hot-swappable. We'd have a Redux compatible state machine inside Uppy by default, but React/Native users could inject an instance of their own Redux, making Uppy store & subscribe there, instead. This would prevent state syncing, there only ever would be one source of truth. It would by default live inside Uppy, but can live inside the developers app, to profit from debugging/extending/timetravel*
 
 * Some stuff from Core won’t be used in React (or won’t be needed by all users), `updateAll()` for example, that is tied to current UI rendering implementation. *Might not be an issue if it’s just a few methods.*
 
