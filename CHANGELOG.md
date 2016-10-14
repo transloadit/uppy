@@ -43,6 +43,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] meta: add google demo account (@kvz)
 - [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
+- [ ] google drive: show error view for things like not being able to connect to uppy server (@hedgerh)
 
 ## 0.11.0
 
