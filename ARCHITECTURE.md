@@ -180,12 +180,6 @@ Issues with this approach:
 
 * Some stuff from Core won’t be used in React (or won’t be needed by all users), `updateAll()` for example, that is tied to current UI rendering implementation. *Might not be an issue if it’s just a few methods.*
 
-C. Another approach is to create a separate version of Uppy for React, uppy-react, not use Core in it, re-create Core in form of UppyContainer, manage state in that (and possibly allow for Redux, Mobx or whatever else someone is using), while re-using some parts of current Uppy. This has been explored here: https://github.com/hedgerh/uppy-react.
-
-Ideally we would like to not end up with two separate versions — regular Uppy and React Uppy — that needs to be maintained and both updated each time. Though sometimes that’s exactly what lib authors are doing — creating separate React versions.
-
----
-
 Also, Yo-Yo (Bel) has some issues:
 
 - Local network requests from `<img src="">` are made on each state update. Not a big deal, but annoying and does not happing with vdom solutions, like Preact.
@@ -193,3 +187,73 @@ Also, Yo-Yo (Bel) has some issues:
 - When using template strings it might be harder to re-use UI components in React, where JSX is a standard.
 
 We are thinking about trying Preact for more stability and React compatibility, but not sure if it’s worth it.
+
+
+## Harry's Proposal
+---
+My proposal for Uppy's architecture and API address two use cases separately:
+
+1. Uppy when its used without React and state is managed internally
+
+2. Uppy when it's used with React, and the user manages their own state (or we provide a React container component that takes care of it for them.)  I'll refer to them as the "vanilla/yo-yo" and "React" use cases, respectively.
+
+### Vanilla (using yo-yo) with managed state
+
+So we have a problem. When we decouple rendering from Uppy, and a user is able to make their own custom UI, they'll need to be able to call on plugin methods to do things, like fetch a list of files from Google Drive, for example.  In our current setup, the core creates and holds an instance of every plugin, and outside UIs don't have direct access to these plugin instances.  To get around this, one idea we was to expose a bus/event emitter, and they could emit something like `bus.emit('google-drive:list-files', { directory: 'root' })` when they wanted to fetch a list of files.
+
+I'm not a big fan of this.  The user becomes responsible for knowing the names of every single plugin event, which is prone to typos, and, in my opinion, it's a better pattern to be able to call functions directly to make these things happen vs. emitting events.
+
+My current proposal is to use Redux, or at least take a Redux-like approach, and have each plugin define a reducer and some action creators as an interface.  The core combines each reducer into a single one and holds it, along with a Redux store.
+
+Uppy would then pass down the Redux state, some core methods, and the dispatcher as "props" to the component, and the component would decide what to do with it all.
+
+The user code would look something like:
+
+```js
+import Uppy, { Remote, Uploader } from 'uppy'
+import DriveBrowser from 'uppy-ui'
+
+const uppy = new Uppy(someOptions)
+uppy.use(Remote, { source: 'drive' })
+uppy.use(Uploader)
+
+uppy.render(DriveBrowser, document.getElementById('root'))
+```
+
+The DriveBrowser component might look like:
+
+```js
+import { Remote } from 'uppy'
+const googleDrive = new Remote({ source: 'drive' })
+const { actions } = googleDrive
+
+const DriveBrowser = (props) => {
+  return html`
+    <div>
+      <button onclick=${props.dispatch(actions.list('root'))}>Get list of files</button>
+      /* ... */
+    </div>
+  `
+}
+```
+
+Here is an example of what the plugin itself may look like: https://github.com/transloadit/uppy/blob/master/src/experimental/plugins/Remote.js
+
+Some things to note here:
+1. `Remote` is a generic plugin to interface with any remote provider, like Google Drive, Dropbox, Instagram, etc.
+
+2. Another one of the benefits to this approach is that we do away with all of the boilerplate methods that we currently have: `install`, `focus`, `update`, and `mount`.
+
+3. The `Remote` plugin example linked above extends `Remote` from a module I created called `uppy-base`. I created `uppy-base` while trying to figure out how to make Uppy work with React.  I took the bare functionality of Uppy that could be used universally (vanilla, React, Angular, anywhere) and put it into its own module.  The `uppy-base` plugins are stateless and not concerned with the UI.  Here is the `Remote` plugin from `uppy-base`: https://github.com/hedgerh/uppy-base/blob/master/src/plugins/Remote.js
+
+## React
+I'd like to give React users the freedom to manage their own Uppy state, whether they use internal state, or a state management lib like Redux.  The proposed solution of syncing the user's state to Uppy's internal state via event listeners, ie. `uppy.on('file-added', (file) => this.props.dispatch({ type: 'ADD_FILE', payload: file }))` is problematic because it violates the "single source of truth" principal, in that our state exists in two separate locations.  If we add a file, then roll back the add file action with time-travel debugging, the file will be removed from Redux's state, but still present in Uppy's state, causing de-synchronization between the two.
+
+The easiest solution I've found is to just use the `uppy-base` plugins directly in React, without Uppy's core.  Here is a comparison of core vs. no core: https://gist.github.com/hedgerh/9ad63f467ce816246044f3f9e83bd7e7
+
+For ease of use, we'd write a React container/wrapper component that abstracted away all of that from the user.  I've started on something like that here (bear in mind it's a bit messy):  https://github.com/hedgerh/uppy-react/blob/master/src/containers/UppyContainer.js
+
+and started on an example usage here: https://github.com/hedgerh/uppy-react/tree/master/examples/modal
+
+
+
