@@ -35,7 +35,7 @@ export default class Multipart extends Plugin {
 
       Object.keys(file.meta).forEach((item) => {
         console.log(file.meta, file.meta[item])
-        formPost.append(file.meta, file.meta[item])
+        formPost.append(item, file.meta[item])
       })
 
       const xhr = new XMLHttpRequest()
