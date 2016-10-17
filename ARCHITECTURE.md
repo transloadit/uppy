@@ -1,6 +1,6 @@
 # Architecture
 
-Uppy has a lean Core module and Plugins that extend its functionality. Here’s how its currently used:
+Uppy has a lean [Core](https://github.com/transloadit/uppy/blob/master/src/core/Core.js) module and [Plugins](https://github.com/transloadit/uppy/tree/master/src/plugins) (see simple [Input](https://github.com/transloadit/uppy/blob/master/src/plugins/Formtag.js) as an example) that extend its functionality. Here’s how it’s currently used:
 
 ``` javascript
 import { Core, DragDrop, ProgressBar, Tus10 } from 'uppy'
@@ -254,6 +254,3 @@ Another solution I've found, that is not as ideal, is to just use the `uppy-base
 For ease of use, we'd write a React container/wrapper component that abstracted away all of that from the user.  I've started on something like that here (bear in mind it's a bit messy):  https://github.com/hedgerh/uppy-react/blob/master/src/containers/UppyContainer.js
 
 and started on an example usage here: https://github.com/hedgerh/uppy-react/tree/master/examples/modal
-
-
-
