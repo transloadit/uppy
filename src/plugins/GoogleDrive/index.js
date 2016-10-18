@@ -23,7 +23,7 @@ export default class Google extends Plugin {
 
     this.GoogleDrive = new Provider({
       host: this.opts.host,
-      provider: 'google'
+      provider: 'drive'
     })
 
     this.files = []
@@ -109,7 +109,7 @@ export default class Google extends Plugin {
    * @return {Promise} authentication status
    */
   checkAuthentication () {
-    return fetch(`${this.opts.host}/google/authorize`, {
+    return fetch(`${this.opts.host}/drive/authorize`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -131,7 +131,7 @@ export default class Google extends Plugin {
 
       return res.json()
     })
-    .then((data) => data.isAuthenticated)
+    .then((data) => data.authed)
     .catch((err) => err)
   }
 
