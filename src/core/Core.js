@@ -426,9 +426,9 @@ export default class Core {
     this.actions()
 
     // Forse set `autoProceed` option to false if there are multiple selector Plugins active
-    if (this.plugins.acquirer && this.plugins.acquirer.length > 1) {
-      this.opts.autoProceed = false
-    }
+    // if (this.plugins.acquirer && this.plugins.acquirer.length > 1) {
+    //   this.opts.autoProceed = false
+    // }
 
     // Install all plugins
     this.installAll()
