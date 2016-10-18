@@ -235,7 +235,7 @@ export default class Tus10 extends Plugin {
     // filter files that are now yet being uploaded / haven’t been uploaded
     // and remote too
     const filesForUpload = Object.keys(files).filter((file) => {
-      if (files[file].progress.percentage === 0 || files[file].isRemote) {
+      if (!files[file].progress.uploadStarted || files[file].isRemote) {
         return true
       }
       return false

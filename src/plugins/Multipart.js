@@ -94,7 +94,7 @@ export default class Multipart extends Plugin {
 
     const filesForUpload = []
     Object.keys(files).forEach((file) => {
-      if (files[file].progress.percentage === 0) {
+      if (!files[file].progress.uploadStarted || files[file].isRemote) {
         filesForUpload.push(files[file])
       }
     })
