@@ -1,6 +1,6 @@
 {
   "name": "uppy",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "Almost as cute as a Puppy :dog:",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -81,7 +81,7 @@
     "tus-js-client": "1.2.1",
     "uppy-base": "git+https://github.com/hedgerh/uppy-base.git",
     "whatwg-fetch": "1.0.0",
-    "yo-yo": "1.3.0"
+    "yo-yo": "1.3.1"
   },
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
