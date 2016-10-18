@@ -97,12 +97,16 @@ export default class Webcam extends Plugin {
       return PermissionsScreen(state.webcam)
     }
 
-    const stream = state.webcam.videoStream ? URL.createObjectURL(state.webcam.videoStream) : null
+    if (!this.stream) {
+      this.stream = state.webcam.videoStream ? URL.createObjectURL(state.webcam.videoStream) : null
+    }
+
+    // const stream = state.webcam.videoStream ? URL.createObjectURL(state.webcam.videoStream) : null
 
     return CameraScreen(extend(state.webcam, {
       onSnapshot: this.takeSnapshot,
       getSWFHTML: this.webcam.getSWFHTML,
-      src: stream
+      src: this.stream
     }))
   }
 
