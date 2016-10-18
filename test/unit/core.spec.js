@@ -1,7 +1,7 @@
 import test from 'tape'
 import Core from '../../src/core/Core.js'
 import Acquirer1Plugin from './mocks/plugin-acquirer1.js'
-import Acquirer2Plugin from './mocks/plugin-acquirer2.js'
+// import Acquirer2Plugin from './mocks/plugin-acquirer2.js'
 
 test('core', function (t) {
   const uppy = new Core()
@@ -30,19 +30,19 @@ test('noDuplicates', function (t) {
   t.end()
 })
 
-test('autoProceed', function (t) {
-  const uppyOneAcquirer = new Core()
-  uppyOneAcquirer
-    .use(Acquirer1Plugin)
-    .run()
-
-  const uppyTwoAcquirers = new Core()
-  uppyTwoAcquirers
-    .use(Acquirer1Plugin)
-    .use(Acquirer2Plugin)
-    .run()
-
-  t.equal(uppyOneAcquirer.opts.autoProceed, true, 'should autoProceed if only one acquirer is used')
-  t.equal(uppyTwoAcquirers.opts.autoProceed, false, 'should not autoProceed if more than one acquirer is used')
-  t.end()
-})
+// test('autoProceed', function (t) {
+//   const uppyOneAcquirer = new Core()
+//   uppyOneAcquirer
+//     .use(Acquirer1Plugin)
+//     .run()
+//
+//   const uppyTwoAcquirers = new Core()
+//   uppyTwoAcquirers
+//     .use(Acquirer1Plugin)
+//     .use(Acquirer2Plugin)
+//     .run()
+//
+//   t.equal(uppyOneAcquirer.opts.autoProceed, true, 'should autoProceed if only one acquirer is used')
+//   t.equal(uppyTwoAcquirers.opts.autoProceed, false, 'should not autoProceed if more than one acquirer is used')
+//   t.end()
+// })
