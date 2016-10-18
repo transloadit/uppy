@@ -92,7 +92,7 @@
 .UppyDashboardTabs {
   // height: 22%;
   // min-height: 100px;
-  padding-top: 8px;
+  padding-top: 20px;
   padding-bottom: 15px;
   // margin: 0 10px;
   // border-bottom: 1px solid lighten($color-gray, 15%);
@@ -315,7 +315,7 @@
 }
 
 .UppyDashboard-bgIcon {
-  width: 250px;
+  max-width: 330px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -326,8 +326,8 @@
 
 .UppyDashboard-dropFilesTitle {
   text-align: center;
-  font-size: 20px;
-  line-height: 1.3;
+  font-size: 19px;
+  line-height: 1.4;
   font-weight: normal;
   color: $color-asphalt-gray;
   margin: 0;

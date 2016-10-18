@@ -3,7 +3,6 @@ import { localIcon } from './icons'
 
 export default (props) => {
   return html`<div class="UppyDashboardTabs">
-    <h3 class="UppyDashboardTabs-title">${props.i18n('importFrom')}:</h3>
     <nav>
       <ul class="UppyDashboardTabs-list" role="tablist">
         <li class="UppyDashboardTab">
