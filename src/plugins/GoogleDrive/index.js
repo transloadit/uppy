@@ -109,7 +109,7 @@ export default class Google extends Plugin {
    * @return {Promise} authentication status
    */
   checkAuthentication () {
-    return fetch(`${this.opts.host}/drive/authorize`, {
+    return fetch(`${this.opts.host}/drive/auth`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -131,7 +131,7 @@ export default class Google extends Plugin {
 
       return res.json()
     })
-    .then((data) => data.authed)
+    .then((data) => data.authenticated)
     .catch((err) => err)
   }
 
@@ -203,7 +203,7 @@ export default class Google extends Plugin {
       },
       remote: {
         host: this.opts.host,
-        url: `${this.opts.host}/google/get?fileId=${file.id}`,
+        url: `${this.opts.host}/drive/get?fileId=${file.id}`,
         body: {
           fileId: file.id
         }
