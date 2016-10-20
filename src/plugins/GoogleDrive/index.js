@@ -203,7 +203,7 @@ export default class Google extends Plugin {
       },
       remote: {
         host: this.opts.host,
-        url: `${this.opts.host}/drive/get?fileId=${file.id}`,
+        url: `${this.opts.host}/drive/get/${file.id}`,
         body: {
           fileId: file.id
         }
