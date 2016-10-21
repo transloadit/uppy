@@ -35,8 +35,8 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 ### Installing from NPM
 
 It’s easy to start using Uppy, we recommend installing from npm:
-```
-npm install uppy --save
+``` bash
+$ npm install uppy --save
 ```
 
 and then use a bundler like Browserify or Webpack:
@@ -57,7 +57,7 @@ or
 ``` javascript
 // ES5
 // warning: bundling with `require` will currently include the whole Uppy package, with all plugins.
-// If you want to pick and choose, use `import`)
+// If you want to pick and choose, use `import`
 var Uppy = require('uppy')
 
 var uppy = new Uppy.Core({wait: false})
@@ -69,7 +69,7 @@ var files = uppy
 
 Add CSS [uppy.min.css](https://unpkg.com/uppy/dist/uppy.min.css), either to `head` of your HTML or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
-Give it a spin on RequireBin: http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105
+Give Uppy a spin [on RequireBin](http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105).
 
 ### Installing from CDN
 
@@ -92,7 +92,7 @@ But if you like, you can also use a pre-built bundle, for example from [unpkg CD
 <script>
   var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true})
   uppy.use(Uppy.DragDrop, {target: '.UppyDragDrop'})
-  uppy.use(Uppy.Tus10, {endpoint: 'http://master.tus.io:3020/files/'})
+  uppy.use(Uppy.Tus10, {endpoint: '//tusd.tus.io/files/'})
   uppy.run()
 </script>
 ```
@@ -129,7 +129,6 @@ uppy.on('core:success', (fileCount) => {
   console.log(fileCount)
 })
 ```
-
 
 ## Browser Support
 
