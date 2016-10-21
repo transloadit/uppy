@@ -1,12 +1,12 @@
 import { Core, DragDrop, ProgressBar, Tus10 } from 'uppy'
-
-const uppy = new Core({wait: false})
+ 
+const uppy = new Core({autoProceed: false})
 uppy
   .use(DragDrop, {target: '#drop-target'})
   .use(ProgressBar, {target: 'body'})
   .use(Tus10, {endpoint: '//tusd.tus.io/files'})
   .run()
-
+ 
 uppy.on('core:success', (fileCount) => {
   console.log(`Upload complete. We uploaded ${fileCount} files!`)
 })
