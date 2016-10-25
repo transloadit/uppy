@@ -147,9 +147,14 @@ export default class DashboardUI extends Plugin {
 
   initEvents () {
     // const dashboardEl = document.querySelector(`${this.opts.target} .UppyDashboard`)
+
     // Modal open button
     const showModalTrigger = document.querySelector(this.opts.trigger)
-    showModalTrigger.addEventListener('click', this.showModal)
+    if (!this.opts.inline && showModalTrigger) {
+      showModalTrigger.addEventListener('click', this.showModal)
+    } else {
+      this.core.log('Modal trigger wasn’t found')
+    }
 
     // Close the Modal on esc key press
     document.body.addEventListener('keyup', (event) => {
