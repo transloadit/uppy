@@ -51,16 +51,16 @@ To be released: October 28, 2016. Releasemaster: Harry
 
 - [ ] dashboard: basic responsive version (@arturi)
 - [ ] dashboard: more icons for file types? (@arturi)
-- [ ] dashboard: make trigger optional — not needed when rendering inline (@arturi)
+- [x] dashboard: make trigger optional — not needed when rendering inline (@arturi)
 - [ ] core: log method should have an option to throw error in addition to just logging (@arturi)
 - [ ] tus: only show pause/resume when tus is used, something else for multipart (@arturi)
 - [ ] formtag: pretty input element? #93 (@arturi)
 - [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
 - [x] website: finish https upgrade for uppy.io, uppy-server and tus, set up pingdom notifications (@arturi, @kvz, @hedgerh)
-- [ ] website: add inline dashboard example (@arturi)
-- [ ] website: update guide, API docs and main page example to match current actual API (@arturi)
+- [x] website: and ability to toggle options in Dashboard example: inline/modal, autoProceed, which plugins are enabled (@arturi)
+- [x] website: update guide, API docs and main page example to match current actual API (@arturi)
 - [x] meta: document current Uppy architecture and question about the future (@arturi, @hedgerh)
-- [ ] test: see about adding tests for autoProceed: true 
+- [ ] test: see about adding tests for autoProceed: true
 - [x] uppy-server: Make uppy server have dynamic controllers (@hedgerh)
 - [ ] uppy-server: Make uppy server standalone CLI (@hedgerh)
 - [ ] experimental: create a Dashboard UI for Redux refactor (@hedgerh)
