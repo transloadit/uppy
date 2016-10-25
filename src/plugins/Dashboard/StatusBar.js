@@ -8,7 +8,7 @@ export default (props) => {
       ${!props.isAllComplete
         ? !props.isAllPaused
           ? `Uploading... ${props.complete} / ${props.inProgress}・${props.totalProgress || 0}%・${props.totalETA}・↑ ${props.totalSpeed}/s`
-          : `Paused ・${props.totalProgress}%`
+          : `Paused・${props.totalProgress}%`
         : null
       }
     </div>`
