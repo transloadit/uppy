@@ -1,8 +1,7 @@
 ---
-title: Getting Started
+title: "Getting Started"
 type: guide
-order: 0
-permalink: guide/
+order: 2
 ---
 
 *Uppy is in development, some features are unavailable and things may break.*

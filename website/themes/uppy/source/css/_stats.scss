@@ -3,7 +3,9 @@
 }
 
 .Stats-infoText {
-  max-width: 90%;
+  @media #{$screen-large} {
+    padding-right: 1em;
+  }
   font-size: 1.1em;
 }
 

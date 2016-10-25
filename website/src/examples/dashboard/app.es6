@@ -7,8 +7,6 @@ import { Core,
          Informer } from '../../../../src/index.js'
 import { UPPY_SERVER } from '../env'
 
-let uppy
-
 function uppyInit () {
   const opts = window.uppyOptions
   const dashboardEl = document.querySelector('.UppyDashboard')
@@ -17,7 +15,7 @@ function uppyInit () {
     dashboardElParent.removeChild(dashboardEl)
   }
 
-  uppy = new Core({debug: true, autoProceed: opts.autoProceed})
+  const uppy = new Core({debug: true, autoProceed: opts.autoProceed})
   uppy.use(Dashboard, {
     trigger: '.UppyModalOpenerBtn',
     inline: opts.DashboardInline,

@@ -9,7 +9,11 @@ pre {
   .constant {
     color: #0092db;
   }
-    
+
+  .line {
+    min-height: 1em;
+  }
+
   .keyword,
   .attribute {
     color: #e96900;

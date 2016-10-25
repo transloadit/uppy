@@ -1,7 +1,7 @@
 ---
-type: guide
-order: 20
 title: "Contributing Guidelines"
+type: guide
+order: 4
 ---
 
 ## Uppy Development
@@ -54,7 +54,7 @@ The CSS standards followed in this project closely resemble those from [Medium's
 
 ### Naming Conventions
 
-This project uses naming conventions adopted from the SUIT CSS framework. 
+This project uses naming conventions adopted from the SUIT CSS framework.
 [Read about them here](https://github.com/suitcss/suit/blob/master/doc/naming-conventions.md).
 
 To quickly summarize:

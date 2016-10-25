@@ -22,9 +22,17 @@
   color: $color-primary;
   cursor: pointer;
   border-radius: 15px;
+  margin-bottom: 1.5em;
 
   &:hover {
     background-color: $color-primary;
     color: $color-white;
   }
+}
+
+.DashboardOptions {
+  margin-bottom: 1.5em;
+  font-size: 0.8em;
+
+  label { margin-right: 10px; }
 }

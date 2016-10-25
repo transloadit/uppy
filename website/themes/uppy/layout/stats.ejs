@@ -1,72 +1,63 @@
 <%- partial('partials/sidebar', { type: page.type, index: page.index }) %>
 
 <div class="Content js-Content <%- page.type ? page.type + ' with-sidebar' : '' %>">
-  <div class="Stats">
-      <h1><%- page.title %></h1>
+  <h1><%- page.title %></h1>
+  <div class="Stats-bundleSizes">
+    <strong class="underline">Bundle Sizes</strong>
+    <dl>
+      <% for (var type in theme.uppy_bundle_kb_sizes) { %>
+        <% var kb = theme.uppy_bundle_kb_sizes[type]; %>
+        <dt>
+          <% if (kb === 'N/A') { %>
+            <%- type %>
+          <% } else { %>
+            <a href="/uppy/<%- type %>"><%- type %></a>
+          <% }%>
+        </dt>
+        <dd class="
+          <% if (kb > 100) { %>
+            red
+          <% } %>
+          <% if (kb < 50) { %>
+            green
+          <% } %>
+        ">
 
-      <div class="Stats-info">
-        <div class="Stats-bundleSizes">
-          <strong class="underline">Bundle Sizes</strong>
-          <dl>
-            <% for (var type in theme.uppy_bundle_kb_sizes) { %>
-              <% var kb = theme.uppy_bundle_kb_sizes[type]; %>
-              <dt>
-                <% if (kb === 'N/A') { %>
-                  <%- type %>
-                <% } else { %>
-                  <a href="/uppy/<%- type %>"><%- type %></a>
-                <% }%>
-              </dt>
-              <dd class="
-                <% if (kb > 100) { %>
-                  red
-                <% } %>
-                <% if (kb < 50) { %>
-                  green
-                <% } %>
-              ">
+          <% if (kb === 'N/A') { %>
+            <%- kb %>
+          <% } else { %>
+            <%- kb %> Kb
+          <% }%>
+        </dd>
+      <% } %>
+    </dl>
+  </div>
 
-                <% if (kb === 'N/A') { %>
-                  <%- kb %>
-                <% } else { %>
-                  <%- kb %> Kb
-                <% }%>
-              </dd>
-            <% } %>
-          </dl>
-        </div>
+  <p class="Stats-infoText">
+    At this (early) stage, we’re allowing ourselves speed of development over
+    lean packaging, but as Uppy matures, we’ll be using be using
+    <a href="http://rollupjs.org/">rollup.js</a> for tree-shaking, and in addition
+    we’ll be trimming away fat ourselves where we can.
+    The graph below will help us discover low hanging fruit:
+  </p>
 
-        <p class="Stats-infoText">
-          At this (early) stage, we’re allowing ourselves speed of development over
-          lean packaging, but as Uppy matures, we’ll be using be using
-          <a href="http://rollupjs.org/">rollup.js</a> for tree-shaking, and in addition
-          we’ll be trimming away fat ourselves where we can.
-          The graph below will help us discover low hanging fruit:
-        </p>
-      </div>
+  <iframe scrolling="no" seamless="seamless" class="Disc" src="/disc.html"></iframe>
+  This graph is built with
+  <a href="https://twitter.com/hughskennedy">Hugh Kennedy</a>’s excellent
+  <a href="http://hughsk.io/disc/">disc</a>.
+  <hr />
 
-      <iframe scrolling="no" seamless="seamless" class="Disc" src="/disc.html"></iframe>
-      This graph is built with
-      <a href="https://twitter.com/hughskennedy">Hugh Kennedy</a>’s excellent
-      <a href="http://hughsk.io/disc/">disc</a>.
+  <h2>Browser support</h2>
 
-      <hr />
+  <p>This reflects the current state of Uppy and is updated with every change.</p>
 
-      <h2>Browser support</h2>
+  <a href="https://saucelabs.com/u/transloadit-uppy">
+    <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status" width="100%">
+  </a>
 
-      <p>
-        This reflects the current state of Uppy and is updated with every change.
-      </p>
-
-      <a href="https://saucelabs.com/u/transloadit-uppy">
-        <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status" width="100%">
-      </a>
-
-      <div class="footer">Caught a mistake or want to contribute to the documentation?
-        <a href="https://github.com/transloadit/uppy/blob/master/website/src/<%- page.source %>" target="_blank">
-          Edit/fork this page directly on Github
-        </a>!
-      </div>
-
+  <div class="footer">Caught a mistake or want to contribute to the documentation?
+    <a href="https://github.com/transloadit/uppy/blob/master/website/src/<%- page.source %>" target="_blank">
+      Edit/fork this page directly on Github
+    </a>!
   </div>
 </div>

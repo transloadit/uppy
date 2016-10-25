@@ -155,9 +155,9 @@
     margin-left: 20px;
   }
 
-  h1 { margin: 0 0 0.7em; }
+  > h1 { margin: 0 0 0.7em; }
 
-  h2 {
+  > h2 {
     font-size: 1.3em;
     margin: 2em 0 .4em 0;
     padding-bottom: .2em;
@@ -175,7 +175,7 @@
     // }
   }
 
-  h3 {
+  > h3 {
     margin: 3em 0 1.2em;
     position: relative;
     &:before {
@@ -189,37 +189,37 @@
     }
   }
 
-  h4 {
+  > h4 {
     font-size: 0.8em;
   }
 
-  figure, ul, ol {
+  > figure, > ul, > ol {
     margin: 1.2em 0;
   }
 
-  p {
+  > p {
     margin-top: 0;
     margin-bottom: 0.8em;
   }
 
-  li {
+  > li {
     margin-bottom: 0.5em;
   }
 
-  p, ul, ol {
+  > p, > ul, > ol {
     line-height: 1.5em;
   }
 
-  ul, ol {
+  > ul, > ol {
     padding-left: 1.5em;
   }
 
   a {
     color: $color-primary;
-    font-weight: 600;
+    // font-weight: 600;
   }
 
-  blockquote {
+  > blockquote {
     margin: 2em 0;
     padding-left: 20px;
     border-left: 4px solid $color-primary;
@@ -229,7 +229,7 @@
     }
   }
 
-  iframe { margin: 1em 0; }
+  iframe { margin: 0.7em 0; }
 
   p.tip {
     padding: 12px 24px 12px 30px;
