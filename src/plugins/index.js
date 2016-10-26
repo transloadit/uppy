@@ -7,7 +7,7 @@ import Dashboard from './Dashboard/index.js'
 // Acquirers
 import Dummy from './Dummy'
 import DragDrop from './DragDrop/index.js'
-import Formtag from './Formtag'
+import FileInput from './FileInput'
 import GoogleDrive from './GoogleDrive/index.js'
 import Webcam from './Webcam/index.js'
 
@@ -33,7 +33,7 @@ export default {
   Informer,
   DragDrop,
   GoogleDrive,
-  Formtag,
+  FileInput,
   Tus10,
   Multipart,
   // TransloaditBasic,
