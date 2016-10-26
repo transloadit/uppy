@@ -177,6 +177,10 @@ export default class Core {
       })
   }
 
+  startUpload () {
+    this.emit('core:upload')
+  }
+
   /**
    * Registers listeners for all global actions, like:
    * `file-add`, `file-remove`, `upload-progress`, `reset`
