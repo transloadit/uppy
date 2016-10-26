@@ -19,14 +19,14 @@ module.exports = function (driver, platform, host) {
     if (platformBrowser === 'safari' || platformBrowser === 'microsoftedge') {
       console.log('fake-selecting a fake file')
       driver.executeScript(tools.uppySelectFakeFile)
-      driver.findElement({css: '.UppyForm-uploadBtn'}).click()
+      // driver.findElement({css: '.UppyForm-uploadBtn'}).click()
     } else {
       console.log('selecting a real file')
       // Find input by css selector & pass absolute image path to it
-      driver.findElement({css: '.UppyFormContainer .UppyForm-input'}).then(function (el) {
+      driver.findElement({css: '.uppy-FileInput-input'}).then(function (el) {
         el.sendKeys(path.join(__dirname, 'image.jpg'))
-        el.sendKeys(path.join(__dirname, 'image2.jpg'))
-        driver.findElement({css: '.UppyForm-uploadBtn'}).click()
+        // el.sendKeys(path.join(__dirname, 'image2.jpg'))
+        // driver.findElement({css: '.UppyForm-uploadBtn'}).click()
       })
     }
 

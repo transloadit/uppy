@@ -1,12 +1,12 @@
 import Uppy from '../../../../src/core/Core.js'
-import Formtag from '../../../../src/plugins/Formtag.js'
+import FileInput from '../../../../src/plugins/FileInput.js'
 import Multipart from '../../../../src/plugins/Multipart.js'
 import ProgressBar from '../../../../src/plugins/ProgressBar.js'
 
-const uppy = new Uppy({debug: true, autoProceed: false})
+const uppy = new Uppy({debug: true, autoProceed: true})
 
 uppy
-  .use(Formtag)
+  .use(FileInput)
   .use(Multipart, {
     endpoint: '//api2.transloadit.com',
     bundle: true,
