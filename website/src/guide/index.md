@@ -1,14 +1,14 @@
 ---
 title: "Getting Started"
 type: guide
-order: 2
+order: 0
 ---
 
 *Uppy is in development, some features are unavailable and things may break.*
 
 ## Installing from NPM
 
-NPM is the recommended installation method when building large scale apps with Uppy. It pairs nicely with a CommonJS module bundler such as [webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [rollup.js](http://rollupjs.org/).
+NPM is the recommended installation method when building large scale apps with Uppy. It pairs nicely with a CommonJS module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
 ``` bash
 $ npm install uppy --save
@@ -61,7 +61,7 @@ But if you like, you can also use a pre-built bundle, for example from [unpkg CD
 
 3\. Initialize:
 
-``` javascript
+``` html
 <script>
   var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true})
   uppy.use(Uppy.DragDrop, {target: '.UppyDragDrop'})

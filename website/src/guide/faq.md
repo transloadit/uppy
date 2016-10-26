@@ -1,7 +1,7 @@
 ---
 title: "FAQ"
 type: guide
-order: 3
+order: 2
 ---
 
 ## Why does your site look like vuejs.org?

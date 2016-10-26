@@ -1,7 +1,7 @@
 ---
 title: "Contributing Guidelines"
 type: guide
-order: 4
+order: 3
 ---
 
 ## Uppy Development
