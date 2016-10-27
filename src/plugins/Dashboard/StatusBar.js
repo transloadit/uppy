@@ -7,22 +7,16 @@ let cachedEl
 function cacheElement (el, time) {
   console.log('throttleElement')
 
-  function wrapper () {
-    console.log(Date.now())
-    console.log(lastUpdate)
-    if (Date.now() - lastUpdate < time) {
-      console.log('cached!')
-      return cachedEl
-    }
-
-    console.log('updating progress')
-    cachedEl = el
-    lastUpdate = Date.now()
-
-    return el
+  if (Date.now() - lastUpdate < time) {
+    console.log('returning cached!')
+    return cachedEl
   }
 
-  return wrapper()
+  console.log('returning new!')
+  cachedEl = el
+  lastUpdate = Date.now()
+
+  return el
 }
 
 export default (props) => {
