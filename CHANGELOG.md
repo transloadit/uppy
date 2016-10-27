@@ -45,6 +45,13 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] google drive: show error view for things like not being able to connect to uppy server (@hedgerh)
 
+## 0.12.0
+
+To be released: November 26, 2016.
+
+- [] meta: create a demo GIF, showcasing Uppy Dashboard for the main page (@arturi)
+- [] dashboard: maybe don’t keep hidden panels in DOM (@arturi)
+
 ## 0.11.0
 
 To be released: October 28, 2016. Releasemaster: Harry
