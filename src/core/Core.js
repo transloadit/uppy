@@ -4,6 +4,7 @@ import ee from 'namespace-emitter'
 // import deepFreeze from 'deep-freeze-strict'
 import UppySocket from './UppySocket'
 import en_US from '../locales/en_US'
+// import throttle from 'throttle-debounce/throttle'
 
 /**
  * Main Uppy core
@@ -57,6 +58,8 @@ export default class Core {
       global.UppyAddFile = this.addFile.bind(this)
       global._Uppy = this
     }
+
+    // setInterval(() => this.updateAll(this.state), 1000)
   }
 
   /**
@@ -88,8 +91,7 @@ export default class Core {
   }
 
   /**
-   * Gets current state, making sure to make a copy of the state object and pass that,
-   * instead of an actual reference to `this.state`
+   * Returns current state
    *
    */
   getState () {
@@ -181,6 +183,52 @@ export default class Core {
     this.emit('core:upload')
   }
 
+  calculateProgress (data) {
+    const fileID = data.id
+    const updatedFiles = Object.assign({}, this.getState().files)
+    if (!updatedFiles[fileID]) {
+      console.error('Trying to set progress for a file that’s not with us anymore: ', fileID)
+      return
+    }
+
+    const updatedFile = Object.assign({}, updatedFiles[fileID],
+      Object.assign({}, {
+        progress: Object.assign({}, updatedFiles[fileID].progress, {
+          bytesUploaded: data.bytesUploaded,
+          bytesTotal: data.bytesTotal,
+          percentage: Math.round((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
+        })
+      }
+    ))
+    updatedFiles[data.id] = updatedFile
+
+    // calculate total progress, using the number of files currently uploading,
+    // multiplied by 100 and the summ of individual progress of each file
+    const inProgress = Object.keys(updatedFiles).filter((file) => {
+      return updatedFiles[file].progress.uploadStarted
+    })
+    const progressMax = inProgress.length * 100
+    let progressAll = 0
+    inProgress.forEach((file) => {
+      progressAll = progressAll + updatedFiles[file].progress.percentage
+    })
+
+    const totalProgress = Math.round((progressAll * 100 / progressMax).toFixed(2))
+
+    // if (totalProgress === 100) {
+    //   const completeFiles = Object.keys(updatedFiles).filter((file) => {
+    //     // this should be `uploadComplete`
+    //     return updatedFiles[file].progress.percentage === 100
+    //   })
+    //   this.emit('core:success', completeFiles.length)
+    // }
+
+    this.setState({
+      totalProgress: totalProgress,
+      files: updatedFiles
+    })
+  }
+
   /**
    * Registers listeners for all global actions, like:
    * `file-add`, `file-remove`, `upload-progress`, `reset`
@@ -218,50 +266,11 @@ export default class Core {
       this.setState({files: updatedFiles})
     })
 
+    // const throttledCalculateProgress = throttle(1000, (data) => this.calculateProgress(data))
+
     this.on('core:upload-progress', (data) => {
-      const fileID = data.id
-      const updatedFiles = Object.assign({}, this.getState().files)
-      if (!updatedFiles[fileID]) {
-        console.error('Trying to set progress for a file that’s not with us anymore: ', fileID)
-        return
-      }
-
-      const updatedFile = Object.assign({}, updatedFiles[fileID],
-        Object.assign({}, {
-          progress: Object.assign({}, updatedFiles[fileID].progress, {
-            bytesUploaded: data.bytesUploaded,
-            bytesTotal: data.bytesTotal,
-            percentage: Math.round((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
-          })
-        }
-      ))
-      updatedFiles[data.id] = updatedFile
-
-      // calculate total progress, using the number of files currently uploading,
-      // multiplied by 100 and the summ of individual progress of each file
-      const inProgress = Object.keys(updatedFiles).filter((file) => {
-        return updatedFiles[file].progress.uploadStarted
-      })
-      const progressMax = inProgress.length * 100
-      let progressAll = 0
-      inProgress.forEach((file) => {
-        progressAll = progressAll + updatedFiles[file].progress.percentage
-      })
-
-      const totalProgress = Math.round((progressAll * 100 / progressMax).toFixed(2))
-
-      if (totalProgress === 100) {
-        const completeFiles = Object.keys(updatedFiles).filter((file) => {
-          // this should be `uploadComplete`
-          return updatedFiles[file].progress.percentage === 100
-        })
-        this.emit('core:success', completeFiles.length)
-      }
-
-      this.setState({
-        totalProgress: totalProgress,
-        files: updatedFiles
-      })
+      this.calculateProgress(data)
+      // throttledCalculateProgress(data)
     })
 
     this.on('core:upload-success', (fileID, uploadURL) => {
@@ -273,6 +282,16 @@ export default class Core {
         uploadURL: uploadURL
       })
       updatedFiles[fileID] = updatedFile
+
+      console.log(this.getState().totalProgress)
+
+      if (this.getState().totalProgress === 100) {
+        const completeFiles = Object.keys(updatedFiles).filter((file) => {
+          // this should be `uploadComplete`
+          return updatedFiles[file].progress.uploadComplete
+        })
+        this.emit('core:success', completeFiles.length)
+      }
 
       this.setState({
         files: updatedFiles
