@@ -25,7 +25,7 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 
 <img width="600" alt="Uppy UI Demo: modal dialog with a few selected files and an upload button" src="screenshot.jpg">
 
-- [Full featured UI](http://uppy.io/examples/modal)
+- [Full featured UI](http://uppy.io/examples/dashboard)
 - [Simple Drag & Drop](http://uppy.io/examples/dragdrop)
 
 ## Usage
