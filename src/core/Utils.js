@@ -379,6 +379,22 @@ export function prettyETA (seconds) {
   return `${hoursStr} ${minutesStr} ${secondsStr}`
 }
 
+export function makeCachingFunction () {
+  let cachedEl = null
+  let lastUpdate = Date.now()
+
+  return function cacheElement (el, time) {
+    if (Date.now() - lastUpdate < time) {
+      return cachedEl
+    }
+
+    cachedEl = el
+    lastUpdate = Date.now()
+
+    return el
+  }
+}
+
 export default {
   generateFileID,
   toArray,
@@ -400,5 +416,6 @@ export default {
   dataURItoFile,
   getSpeed,
   getETA,
-  makeWorker
+  makeWorker,
+  makeCachingFunction
 }
