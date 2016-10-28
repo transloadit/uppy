@@ -58,8 +58,8 @@ export default function fileItem (props) {
           </button>
           ${props.showProgressDetails
             ? html`<div class="UppyDashboardItem-progressInfo"
-                   title="${props.i18n('localDisk')}"
-                   aria-label="${props.i18n('localDisk')}">
+                        title="${props.i18n('localDisk')}"
+                        aria-label="${props.i18n('localDisk')}">
                 ${!file.isPaused && !isUploaded
                   ? html`<span>${prettyETA(getETA(file.progress))} ・ ↑ ${prettyBytes(getSpeed(file.progress))}/s</span>`
                   : null
@@ -110,8 +110,8 @@ export default function fileItem (props) {
                        aria-label="Remove file"
                        title="Remove file"
                        onclick=${() => props.removeFile(file.id)}>
-                 <svg width="22" height="21" viewBox="0 0 18 17">
-                   <ellipse fill="#000" cx="8.62" cy="8.383" rx="8.62" ry="8.383"/>
+                 <svg class="UppyIcon" width="22" height="21" viewBox="0 0 18 17">
+                   <ellipse fill="#424242" cx="8.62" cy="8.383" rx="8.62" ry="8.383"/>
                    <path stroke="#FFF" fill="#FFF" d="M11 6.147L10.85 6 8.5 8.284 6.15 6 6 6.147 8.35 8.43 6 10.717l.15.146L8.5 8.578l2.35 2.284.15-.146L8.65 8.43z"/>
                  </svg>
                </button>`

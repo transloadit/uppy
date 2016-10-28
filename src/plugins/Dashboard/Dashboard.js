@@ -119,7 +119,7 @@ export default function Dashboard (props) {
             : null
           }
 
-          ${props.uploadStartedFiles.length > 0
+          ${false && props.uploadStartedFiles.length > 0
             ? ProgressCircle({
               totalProgress: props.totalProgress,
               isAllPaused: props.isAllPaused,
@@ -131,11 +131,13 @@ export default function Dashboard (props) {
           }
         </div>
 
-        ${props.uploadStartedFiles.length > 0
+        ${props.uploadStartedFiles.length > 0 && !props.isAllComplete
           ? StatusBar({
             totalProgress: props.totalProgress,
             isAllComplete: props.isAllComplete,
             isAllPaused: props.isAllPaused,
+            pauseAll: props.pauseAll,
+            resumeAll: props.resumeAll,
             complete: props.completeFiles.length,
             inProgress: props.uploadStartedFiles.length,
             totalSpeed: props.totalSpeed,
