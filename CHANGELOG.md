@@ -51,7 +51,7 @@ Ideas that will be planned and find their way into a release at one point
 
 To be released: November 26, 2016.
 
-- [] meta: create a demo GIF, showcasing Uppy Dashboard for the main page (@arturi)
+- [] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
 - [] dashboard: maybe don’t keep hidden panels in DOM (@arturi)
 
 ## 0.11.0

@@ -13,8 +13,7 @@ Uppy has a lean [Core](https://github.com/transloadit/uppy/blob/master/src/core/
 
 Core module orchestrates everything in Uppy. Plugins are added to it via `.use(Plugin, opts)` API, like `.use(DragDrop, {target: 'body'})`. Core instantiates plugins with `new Plugin(this, opts)`, passing options to them, then places them in `plugins` object, nested by type: `uploader`, `progressindicator`, `acquirer`, etc.
 
-Core then iterates over `plugins` object and calls `install` on each plugin. In its `install`
-method a plugin can extend global state with its state, set event listeners to react to events happening in Uppy (upload progress, file has been removed), or do anything else needed on init.
+Core then iterates over `plugins` object and calls `install` on each plugin. In its `install` method a plugin can extend global state with its state, set event listeners to react to events happening in Uppy (upload progress, file has been removed), or do anything else needed on init.
 
 Each time `state` is updated with `setState(stateAddition)`, Core runs `updateAll()` that re-renders all of the plugins (components) that have been mounted in the dom somewhere, using the new state.
 
