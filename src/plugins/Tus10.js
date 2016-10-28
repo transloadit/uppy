@@ -155,7 +155,7 @@ export default class Tus10 extends Plugin {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(Object.assign({}, file.remote.body, {
-          target: this.opts.endpoint,
+          endpoint: this.opts.endpoint,
           protocol: 'tus'
         }))
       })

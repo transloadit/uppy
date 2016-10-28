@@ -16,7 +16,7 @@ const uppy = new Core({debug: true, autoProceed: false})
   .use(Dummy, {target: Dashboard})
   .use(Webcam, {target: Dashboard})
   // .use(ProgressBar, {target: Dashboard})
-  .use(Tus10, {endpoint: '//tusd.tus.io/files/', resume: true})
+  .use(Tus10, {endpoint: 'https://tusd.tus.io/files/', resume: true})
   .use(Informer, {target: Dashboard})
   .use(MetaData, {
     fields: [
