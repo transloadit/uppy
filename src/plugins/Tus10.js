@@ -97,6 +97,7 @@ export default class Tus10 extends Plugin {
         },
         onProgress: (bytesUploaded, bytesTotal) => {
           // Dispatch progress event
+          console.log(bytesUploaded, bytesTotal)
           this.core.emitter.emit('core:upload-progress', {
             uploader: this,
             id: file.id,
