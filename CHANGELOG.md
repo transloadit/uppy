@@ -61,6 +61,7 @@ To be released: October 28, 2016. Releasemaster: Artur
 - [ ] core: log method should have an option to throw error in addition to just logging (@arturi)
 - [ ] dashboard: basic responsive version (@arturi)
 - [ ] dashboard: more icons for file types? (@arturi)
+- [x] dashboard: implement new StatusBar with progress and pause/resume buttons https://github.com/transloadit/uppy/issues/96#issuecomment-249401532 (@arturi)
 - [ ] experimental: create a Dashboard UI for Redux refactor (@hedgerh)
 - [ ] tus: only show pause/resume when tus is used, something else for multipart (@arturi)
 - [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
