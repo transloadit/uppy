@@ -11,11 +11,12 @@ import { Core,
 // import MagicLog from '../src/plugins/MagicLog'
 
 const uppy = new Core({debug: true, autoProceed: false})
+  // .use(FileInput, {text: 'Выбрать файл', pretty: true})
   .use(Dashboard, {trigger: '#uppyModalOpener', inline: false})
   .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dummy, {target: Dashboard})
   .use(Webcam, {target: Dashboard})
-  // .use(ProgressBar, {target: Dashboard})
+  // // .use(ProgressBar, {target: Dashboard})
   .use(Tus10, {endpoint: '//tusd.tus.io/files/', resume: true})
   .use(Informer, {target: Dashboard})
   .use(MetaData, {
@@ -25,9 +26,11 @@ const uppy = new Core({debug: true, autoProceed: false})
     ]
   })
 uppy.run()
-// uppy.emit('informer', 'Smile!', 'info', 2000)
+
 uppy.on('core:success', (fileCount) => {
   console.log(fileCount)
 })
+
+// uppy.emit('informer', 'Smile!', 'info', 2000)
 
 document.querySelector('#uppyModalOpener').click()
