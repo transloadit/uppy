@@ -837,7 +837,7 @@
   width: 400px;
   height: 35px;
   line-height: 35px;
-  border-radius: 5px;
+  border-radius: 4px;
   font-size: 13px;
   font-weight: 500;
   color: $color-white;
@@ -852,6 +852,7 @@
   height: 100%;
   position: absolute;
   z-index: $zIndex-2;
+  transition: width .3s ease-out;
 }
 
 .UppyDashboard-statusBarText {
@@ -859,7 +860,7 @@
   // max-width: 300px;
   position: relative;
   z-index: $zIndex-3;
-  padding-left: 45px;
+  padding-left: 40px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
