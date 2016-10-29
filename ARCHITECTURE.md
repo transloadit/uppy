@@ -170,7 +170,9 @@ Things work the way they are. Not everything is optimal, though. We would like t
 
 We want Uppy to work well with React and React Native (and other frameworks, like Angular, Ember, Vue, Choo). Currently state and view rendering are all tied together in Core and Plugins, which is a problem for React or other libs that handle views. There are few options:
 
-A. The simplest is to go the “Black Hole way” and just tell React users to wrap Uppy in a dumb component with `shouldComponentUpdate: false`, and give them no control, but that’s not a good way — they can’t alter anything or use time travel, this feels like a band-aid solution.
+A. The simplest is to go the “Black Hole” or “Portal” and just tell React users to wrap Uppy in a dumb component with `shouldComponentUpdate: false`, and give them no control, but that’s not a good way — they can’t alter anything or use time travel, this feels like a band-aid solution.
+
+Although some say this is the way to go, because it’s the most simple way: https://github.com/ryanflorence/react-training/blob/gh-pages/lessons/05-wrapping-dom-libs.md. And here is the example of how that could be implemented: http://codepen.io/anon/pen/qaGGdw?editors=0010.
 
 B. Leave things as they are, keep Core. Treat Uppy as an external uploading library, where you subscribe to events and manage React (or other) state yourself: `uppy.on('core:progress', updateMyReactState)`. Simple example: http://codepen.io/arturi/pen/yaZEzz/. Maybe come up with some state-sync solution that will update Redux state in your app, when Uppy’s internal state is updated. Then we only use logic parts of Uppy (see uppy-base https://github.com/hedgerh/uppy-base/tree/master/src) and re-create UI components for each environment. Or optimize and abstract the ones we have, perhaps by switching to JSX and even more environment agnostic props. Then our UI plugins/views like DragDrop, Dashboard and Google Drive can be used in React.
 
@@ -183,14 +185,13 @@ Issues with this approach:
 Also, Yo-Yo (Bel) has some issues:
 
 - Local network requests from `<img src="">` are made on each state update. Not a big deal, but annoying and does not happing with vdom solutions, like Preact.
-- Webcam currently flashes when state is updated (morphdom issue?).
 - When using template strings it might be harder to re-use UI components in React, where JSX is a standard.
 
-We are thinking about trying Preact for more stability and React compatibility, but not sure if it’s worth it.
+We are thinking about trying Preact for more stability and React compatibility, but not sure if it’s worth it. Here is an example of using same component written in bel/yo-yo and JSX with Preact: http://www.webpackbin.com/NJymHWsJf.
 
 
 ## Harry's Proposal
----
+
 My proposal for Uppy's architecture and API address two use cases separately:
 
 1. Uppy when its used without React and state is managed internally
@@ -247,10 +248,11 @@ Some things to note here:
 3. The `Remote` plugin example linked above extends `Remote` from a module I created called `uppy-base`. I created `uppy-base` while trying to figure out how to make Uppy work with React.  I took the bare functionality of Uppy that could be used universally (vanilla, React, Angular, anywhere) and put it into its own module.  The `uppy-base` plugins are stateless and not concerned with the UI.  Here is the `Remote` plugin from `uppy-base`: https://github.com/hedgerh/uppy-base/blob/master/src/plugins/Remote.js
 
 ## React
-I'd like to give React users the freedom to manage their own Uppy state, whether they use internal state, or a state management lib like Redux.  The proposed solution of syncing the user's state to Uppy's internal state via event listeners, ie. `uppy.on('file-added', (file) => this.props.dispatch({ type: 'ADD_FILE', payload: file }))` is problematic because it violates the "single source of truth" principal, in that our state exists in two separate locations.  If we add a file, then roll back the add file action with time-travel debugging, the file will be removed from Redux's state, but still present in Uppy's state, causing de-synchronization between the two.  We have discussed to get around this is allowing the user to pass their Redux store instance into Uppy.  I think this is a possible solution to the issue.
 
-Another solution I've found, that is not as ideal, is to just use the `uppy-base` plugins directly in React, without Uppy's core, and have the user manage their own state.  Here is a comparison of core vs. no core: https://gist.github.com/hedgerh/9ad63f467ce816246044f3f9e83bd7e7
+I'd like to give React users the freedom to manage their own Uppy state, whether they use internal state, or a state management lib like Redux. The proposed solution of syncing the user's state to Uppy's internal state via event listeners, ie. `uppy.on('file-added', (file) => this.props.dispatch({ type: 'ADD_FILE', payload: file }))` is problematic because it violates the "single source of truth" principal, in that our state exists in two separate locations. If we add a file, then roll back the add file action with time-travel debugging, the file will be removed from Redux's state, but still present in Uppy's state, causing de-synchronization between the two.  We have discussed to get around this is allowing the user to pass their Redux store instance into Uppy. I think this is a possible solution to the issue.
 
-For ease of use, we'd write a React container/wrapper component that abstracted away all of that from the user.  I've started on something like that here (bear in mind it's a bit messy):  https://github.com/hedgerh/uppy-react/blob/master/src/containers/UppyContainer.js
+Another solution I've found, that is not as ideal, is to just use the `uppy-base` plugins directly in React, without Uppy's core, and have the user manage their own state. Here is a comparison of core vs. no core: https://gist.github.com/hedgerh/9ad63f467ce816246044f3f9e83bd7e7
+
+For ease of use, we'd write a React container/wrapper component that abstracted away all of that from the user. I've started on something like that here (bear in mind it's a bit messy): https://github.com/hedgerh/uppy-react/blob/master/src/containers/UppyContainer.js
 
 and started on an example usage here: https://github.com/hedgerh/uppy-react/tree/master/examples/modal
