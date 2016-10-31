@@ -59,6 +59,7 @@ To be released: November 26, 2016.
 To be released: October 28, 2016. Releasemaster: Artur
 
 - [ ] core: log method should have an option to throw error in addition to just logging (@arturi)
+- [x] experimental: PersistentState plugin that saves state to localStorage — useful for development (@arturi)
 - [ ] dashboard: basic responsive version (@arturi)
 - [ ] dashboard: more icons for file types? (@arturi)
 - [x] dashboard: implement new StatusBar with progress and pause/resume buttons https://github.com/transloadit/uppy/issues/96#issuecomment-249401532 (@arturi)
