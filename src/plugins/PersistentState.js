@@ -34,8 +34,12 @@ export default class PersistentState extends Plugin {
   install () {
     this.loadSavedState()
 
-    this.core.on('core:state-update', (prev, state, patch) => {
-      localStorage.setItem('uppyState', JSON.stringify(state))
-    })
+    window.onbeforeunload = (ev) => {
+      localStorage.setItem('uppyState', JSON.stringify(this.core.state))
+    }
+
+    // this.core.on('core:state-update', (prev, state, patch) => {
+    //   localStorage.setItem('uppyState', JSON.stringify(state))
+    // })
   }
 }
