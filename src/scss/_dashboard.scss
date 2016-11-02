@@ -215,9 +215,8 @@
   left: 0;
   right: 0;
   transform: translateY(-105%);
-  transition: transform 300ms ease-in;
-  will-change: transform;
-  // transition: all 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
+  // will-change: transform;
   background-color: darken($color-white, 4%);
   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
   padding: 15px;
@@ -852,7 +851,7 @@
   height: 100%;
   position: absolute;
   z-index: $zIndex-2;
-  transition: width .3s ease-out;
+  // transition: width .3s ease-out;
 }
 
 .UppyDashboard-statusBarText {

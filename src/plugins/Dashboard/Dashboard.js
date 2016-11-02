@@ -8,15 +8,9 @@ import StatusBar from './StatusBar'
 import { isTouchDevice, toArray } from '../../core/Utils'
 import { closeIcon } from './icons'
 
+// http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
+
 export default function Dashboard (props) {
-  // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
-
-  // const uploadStartedFilesCount = uploadStartedFiles.length
-  // const completeFilesCount = completeFiles.length
-  // const inProgressFilesCount = inProgressFiles.length
-  // const totalFileCount = Object.keys(files).length
-  // const newFileCount = newFiles.length
-
   const handleInputChange = (ev) => {
     ev.preventDefault()
     const files = toArray(ev.target.files)
@@ -41,8 +35,6 @@ export default function Dashboard (props) {
       if (file.kind !== 'file') return
 
       const blob = file.getAsFile()
-      // console.log(blob)
-      // console.log(blob.size)
       props.log('File pasted')
       props.addFile({
         source: props.id,
@@ -53,16 +45,17 @@ export default function Dashboard (props) {
     })
   }
 
-  return html`<div class="Uppy UppyTheme--default UppyDashboard
+  return html`
+    <div class="Uppy UppyTheme--default UppyDashboard
                           ${isTouchDevice() ? 'Uppy--isTouchDevice' : ''}
                           ${props.semiTransparent ? 'UppyDashboard--semiTransparent' : ''}
                           ${!props.inline ? 'UppyDashboard--modal' : ''}"
-                   aria-hidden="${props.inline ? 'false' : props.modal.isHidden}"
-                   aria-label="${!props.inline
-                                 ? props.i18n('dashboardWindowTitle')
-                                 : props.i18n('dashboardTitle')}"
-                   role="dialog"
-                   onpaste=${handlePaste}>
+          aria-hidden="${props.inline ? 'false' : props.modal.isHidden}"
+          aria-label="${!props.inline
+                       ? props.i18n('dashboardWindowTitle')
+                       : props.i18n('dashboardTitle')}"
+          role="dialog"
+          onpaste=${handlePaste}>
 
     <div class="UppyDashboard-overlay"
          onclick=${props.hideModal}>
@@ -131,36 +124,35 @@ export default function Dashboard (props) {
           }
         </div>
 
-        ${props.uploadStartedFiles.length > 0 && !props.isAllComplete
-          ? StatusBar({
-            totalProgress: props.totalProgress,
-            isAllComplete: props.isAllComplete,
-            isAllPaused: props.isAllPaused,
-            pauseAll: props.pauseAll,
-            resumeAll: props.resumeAll,
-            complete: props.completeFiles.length,
-            inProgress: props.uploadStartedFiles.length,
-            totalSpeed: props.totalSpeed,
-            totalETA: props.totalETA
-          })
-          : null
-        }
-
         <div class="UppyDashboardContent-panel"
              role="tabpanel"
-             aria-hidden="${props.activeAcquirer ? props.activeAcquirer.isHidden : 'true'}">
+             aria-hidden="${props.activePanel ? 'false' : 'true'}">
           <div class="UppyDashboardContent-bar">
             <h2 class="UppyDashboardContent-title">
-              ${props.i18n('importFrom')} ${props.activeAcquirer ? props.activeAcquirer.name : null}
+              ${props.i18n('importFrom')} ${props.activePanel ? props.activePanel.name : null}
             </h2>
             <button class="UppyDashboardContent-back"
                     onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
-             </div>
-            ${props.activeAcquirer ? props.activeAcquirer.render(props.state) : null}
           </div>
+          ${props.activePanel ? props.activePanel.render(props.state) : ''}
         </div>
 
         <div class="UppyDashboard-progressindicators">
+          ${props.uploadStartedFiles.length > 0 && !props.isAllComplete
+            ? StatusBar({
+              totalProgress: props.totalProgress,
+              isAllComplete: props.isAllComplete,
+              isAllPaused: props.isAllPaused,
+              pauseAll: props.pauseAll,
+              resumeAll: props.resumeAll,
+              complete: props.completeFiles.length,
+              inProgress: props.uploadStartedFiles.length,
+              totalSpeed: props.totalSpeed,
+              totalETA: props.totalETA
+            })
+            : null
+          }
+
           ${props.progressindicators.map((target) => {
             return target.render(props.state)
           })}
@@ -168,5 +160,6 @@ export default function Dashboard (props) {
 
       </div>
     </div>
-  </div>`
+  </div>
+  `
 }

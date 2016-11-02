@@ -83,38 +83,20 @@ export default class DashboardUI extends Plugin {
   hideAllPanels () {
     const modal = this.core.getState().modal
 
-    const newTargets = modal.targets.map((target) => {
-      return Object.assign({}, target, {
-        isHidden: true
-      })
-    })
-
     this.core.setState({modal: Object.assign({}, modal, {
-      targets: newTargets
+      activePanel: false
     })})
   }
 
   showPanel (id) {
     const modal = this.core.getState().modal
 
-    // hide all panels, except the one that matches current id
-    const newTargets = modal.targets.map((target) => {
-      if (target.type === 'acquirer') {
-        if (target.id === id) {
-          // target.focus()
-          return Object.assign({}, target, {
-            isHidden: false
-          })
-        }
-        return Object.assign({}, target, {
-          isHidden: true
-        })
-      }
-      return target
-    })
+    const activePanel = modal.targets.filter((target) => {
+      return target.type === 'acquirer' && target.id === id
+    })[0]
 
     this.core.setState({modal: Object.assign({}, modal, {
-      targets: newTargets
+      activePanel: activePanel
     })})
   }
 
@@ -268,13 +250,9 @@ export default class DashboardUI extends Plugin {
       return target.type === 'acquirer'
     })
 
-    let activeAcquirer = acquirers.filter((acquirer) => {
-      return !acquirer.isHidden
-    })[0]
-
-    if (typeof activeAcquirer === 'undefined') {
-      activeAcquirer = false
-    }
+    // let activeAcquirer = acquirers.filter((acquirer) => {
+    //   return !acquirer.isHidden
+    // })[0]
 
     const progressindicators = state.modal.targets.filter((target) => {
       return target.type === 'progressindicator'
@@ -324,7 +302,7 @@ export default class DashboardUI extends Plugin {
       isAllComplete: isAllComplete,
       isAllPaused: isAllPaused,
       acquirers: acquirers,
-      activeAcquirer: activeAcquirer,
+      activePanel: state.modal.activePanel,
       progressindicators: progressindicators,
       autoProceed: this.core.opts.autoProceed,
       id: this.id,
@@ -359,6 +337,7 @@ export default class DashboardUI extends Plugin {
     this.core.setState({modal: {
       isHidden: true,
       showFileCard: false,
+      activePanel: false,
       targets: []
     }})
 
