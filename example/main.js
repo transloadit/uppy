@@ -9,9 +9,11 @@ import { Core,
 
 // import ru_RU from '../src/locales/ru_RU.js'
 // import MagicLog from '../src/plugins/MagicLog'
+// import PersistentState from '../src/plugins/PersistentState'
 
 const uppy = new Core({debug: true, autoProceed: false})
   // .use(FileInput, {text: 'Выбрать файл', pretty: true})
+  // .use(PersistentState)
   .use(Dashboard, {trigger: '#uppyModalOpener', inline: false})
   .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dummy, {target: Dashboard})
