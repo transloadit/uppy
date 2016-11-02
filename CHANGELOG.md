@@ -66,6 +66,7 @@ To be released: October 28, 2016. Releasemaster: Artur
 - [x] core: log method should have an option to throw error in addition to just logging (@arturi)
 - [x] experimental: PersistentState plugin that saves state to localStorage — useful for development (@arturi)
 - [x] dashboard: implement new StatusBar with progress and pause/resume buttons https://github.com/transloadit/uppy/issues/96#issuecomment-249401532 (@arturi)
+- [x] dashboard: attempt to throttle StatusBar, so it doesnt re-render too often (@arturi)
 - [x] dashboard: refactor — only load one acquire panel at a time (activeAcquirer or empty), change focus behavior, utilize onload/onunload
 - [x] experimental: create a Dashboard UI for Redux refactor (@hedgerh)
 - [x] dashboard: make trigger optional — not needed when rendering inline (@arturi)
