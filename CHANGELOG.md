@@ -44,7 +44,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] google drive: show error view for things like not being able to connect to uppy server (@hedgerh)
-- [x] uppy-server: Make uppy server have dynamic controllers (@hedgerh)
 - [ ] uppy-server: Make uppy server standalone CLI (@hedgerh)
 
 ## 0.12.0
@@ -66,7 +65,7 @@ To be released: October 28, 2016. Releasemaster: Artur
 - [x] core: log method should have an option to throw error in addition to just logging (@arturi)
 - [x] experimental: PersistentState plugin that saves state to localStorage — useful for development (@arturi)
 - [x] dashboard: implement new StatusBar with progress and pause/resume buttons https://github.com/transloadit/uppy/issues/96#issuecomment-249401532 (@arturi)
-- [x] dashboard: attempt to throttle StatusBar, so it doesnt re-render too often (@arturi)
+- [x] dashboard: attempt to throttle StatusBar, so it doesn’t re-render too often (@arturi)
 - [x] dashboard: refactor — only load one acquire panel at a time (activeAcquirer or empty), change focus behavior, utilize onload/onunload
 - [x] experimental: create a Dashboard UI for Redux refactor (@hedgerh)
 - [x] dashboard: make trigger optional — not needed when rendering inline (@arturi)
@@ -76,6 +75,7 @@ To be released: October 28, 2016. Releasemaster: Artur
 - [x] website: and ability to toggle options in Dashboard example: inline/modal, autoProceed, which plugins are enabled #89 (@arturi)
 - [x] website: finish https upgrade for uppy.io, uppy-server and tus, set up pingdom notifications (@arturi, @kvz, @hedgerh)
 - [x] website: update guide, API docs and main page example to match current actual API (@arturi)
+- [x] uppy-server: Make uppy server have dynamic controllers (@hedgerh)
 
 ## 0.10.0
 
