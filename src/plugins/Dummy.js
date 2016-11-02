@@ -44,33 +44,38 @@ export default class Dummy extends Plugin {
     const bla = html`<h2>this is strange 2</h2>`
     return html`
       <div class="wow-this-works">
-        <input class="UppyDummy-firstInput" type="text" value="hello">
+        <input class="UppyDummy-firstInput" type="text" value="hello" onload=${(el) => {
+          el.focus()
+        }} />
         ${this.strange}
         ${bla}
       </div>
     `
   }
 
-  focus () {
-    const firstInput = document.querySelector(`${this.target} .UppyDummy-firstInput`)
-
-    // only works for the first time if wrapped in setTimeout for some reason
-    // firstInput.focus()
-    setTimeout(function () {
-      firstInput.focus()
-    }, 10)
-
-    setTimeout(() => {
-      this.core.emit('informer', 'Hello! I’m a test Informer message', 'info', 4500)
-      this.addFakeFileJustToTest()
-    }, 1000)
-  }
+  // focus () {
+  //   return
+  //   console.log(`${this.target} .UppyDummy-firstInput`)
+  //
+  //   const firstInput = document.querySelector(`${this.target} .UppyDummy-firstInput`)
+  //
+  //   // only works for the first time if wrapped in setTimeout for some reason
+  //   // firstInput.focus()
+  //   setTimeout(function () {
+  //     firstInput.focus()
+  //   }, 10)
+  //
+  //   setTimeout(() => {
+  //     this.core.emit('informer', 'Hello! I’m a test Informer message', 'info', 4500)
+  //     this.addFakeFileJustToTest()
+  //   }, 1000)
+  // }
 
   install () {
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)
-    //
+
     // function workerFunc () {
     //   self.addEventListener('message', (e) => {
     //     const file = e.data.file

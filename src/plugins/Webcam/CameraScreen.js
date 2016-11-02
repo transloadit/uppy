@@ -11,7 +11,10 @@ export default (props) => {
   }
 
   return html`
-    <div class="UppyWebcam-container">
+    <div class="UppyWebcam-container" onload=${(el) => {
+      props.focus()
+      document.querySelector('.UppyWebcam-stopRecordBtn').focus()
+    }}>
       <div class='UppyWebcam-videoContainer'>
         ${video}
       </div>

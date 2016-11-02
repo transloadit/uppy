@@ -101,7 +101,7 @@ export default class DashboardUI extends Plugin {
     const newTargets = modal.targets.map((target) => {
       if (target.type === 'acquirer') {
         if (target.id === id) {
-          target.focus()
+          // target.focus()
           return Object.assign({}, target, {
             isHidden: false
           })
@@ -268,6 +268,14 @@ export default class DashboardUI extends Plugin {
       return target.type === 'acquirer'
     })
 
+    let activeAcquirer = acquirers.filter((acquirer) => {
+      return !acquirer.isHidden
+    })[0]
+
+    if (typeof activeAcquirer === 'undefined') {
+      activeAcquirer = false
+    }
+
     const progressindicators = state.modal.targets.filter((target) => {
       return target.type === 'progressindicator'
     })
@@ -318,6 +326,7 @@ export default class DashboardUI extends Plugin {
       isAllComplete: isAllComplete,
       isAllPaused: isAllPaused,
       acquirers: acquirers,
+      activeAcquirer: activeAcquirer,
       progressindicators: progressindicators,
       autoProceed: this.core.opts.autoProceed,
       id: this.id,

@@ -93,6 +93,8 @@ export default class Webcam extends Plugin {
   }
 
   render (state) {
+    this.start()
+
     if (!state.webcam.cameraReady && !state.webcam.useTheFlash) {
       return PermissionsScreen(state.webcam)
     }
@@ -105,23 +107,13 @@ export default class Webcam extends Plugin {
 
     return CameraScreen(extend(state.webcam, {
       onSnapshot: this.takeSnapshot,
+      focus: this.focus,
       getSWFHTML: this.webcam.getSWFHTML,
       src: this.stream
     }))
   }
 
   focus () {
-    const firstInput = document.querySelector('.UppyWebcam-stopRecordBtn')
-    // only works for the first time if wrapped in setTimeout for some reason
-    // firstInput.focus()
-    if (firstInput) {
-      setTimeout(function () {
-        firstInput.focus()
-      }, 10)
-    }
-
-    this.start()
-
     setTimeout(() => {
       this.core.emitter.emit('informer', 'Smile!', 'info', 3500)
     }, 1000)

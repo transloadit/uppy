@@ -146,19 +146,19 @@ export default function Dashboard (props) {
           : null
         }
 
-        ${props.acquirers.map((target) => {
-          return html`<div class="UppyDashboardContent-panel"
-                           id="${props.panelSelectorPrefix}--${target.id}"
-                           role="tabpanel"
-                           aria-hidden="${target.isHidden}">
-             <div class="UppyDashboardContent-bar">
-               <h2 class="UppyDashboardContent-title">${props.i18n('importFrom')} ${target.name}</h2>
-               <button class="UppyDashboardContent-back"
-                       onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
+        <div class="UppyDashboardContent-panel"
+             role="tabpanel"
+             aria-hidden="${props.activeAcquirer ? props.activeAcquirer.isHidden : 'true'}">
+          <div class="UppyDashboardContent-bar">
+            <h2 class="UppyDashboardContent-title">
+              ${props.i18n('importFrom')} ${props.activeAcquirer ? props.activeAcquirer.name : null}
+            </h2>
+            <button class="UppyDashboardContent-back"
+                    onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
              </div>
-            ${target.render(props.state)}
-          </div>`
-        })}
+            ${props.activeAcquirer ? props.activeAcquirer.render(props.state) : null}
+          </div>
+        </div>
 
         <div class="UppyDashboard-progressindicators">
           ${props.progressindicators.map((target) => {
