@@ -53,19 +53,21 @@ To be released: November 26, 2016.
 
 - [] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
 - [] dashboard: maybe don’t keep hidden panels in DOM (@arturi)
+- [] dashboard: more icons for file types? (@arturi)
+- [] dashboard: basic responsive version (@arturi)
+- [] core: what to do with mime-types? maybe ask Marius for advice (@arturi)
+- [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?)
+- [ ] tus: only show pause/resume when tus is used, something else for multipart (@arturi)
 
 ## 0.11.0
 
 To be released: October 28, 2016. Releasemaster: Artur
 
-- [ ] core: log method should have an option to throw error in addition to just logging (@arturi)
+- [x] core: log method should have an option to throw error in addition to just logging (@arturi)
 - [x] experimental: PersistentState plugin that saves state to localStorage — useful for development (@arturi)
-- [ ] dashboard: basic responsive version (@arturi)
-- [ ] dashboard: more icons for file types? (@arturi)
 - [x] dashboard: implement new StatusBar with progress and pause/resume buttons https://github.com/transloadit/uppy/issues/96#issuecomment-249401532 (@arturi)
-- [ ] experimental: create a Dashboard UI for Redux refactor (@hedgerh)
-- [ ] tus: only show pause/resume when tus is used, something else for multipart (@arturi)
-- [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?) (@hedgerh)
+- [x] dashboard: refactor — only load one acquire panel at a time (activeAcquirer or empty), change focus behavior, utilize onload/onunload
+- [x] experimental: create a Dashboard UI for Redux refactor (@hedgerh)
 - [x] dashboard: make trigger optional — not needed when rendering inline (@arturi)
 - [x] fileinput: pretty input element? #93 (@arturi)
 - [x] meta: document current Uppy architecture and question about the future (@arturi, @hedgerh)
