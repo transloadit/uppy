@@ -58,8 +58,6 @@ export default class Core {
       global.UppyAddFile = this.addFile.bind(this)
       global._Uppy = this
     }
-
-    // setInterval(() => this.updateAll(this.state), 1000)
   }
 
   /**
@@ -81,7 +79,7 @@ export default class Core {
    */
   setState (stateUpdate) {
     const newState = Object.assign({}, this.state, stateUpdate)
-    this.bus.emit('core:state-update', this.state, newState, stateUpdate)
+    this.emit('core:state-update', this.state, newState, stateUpdate)
 
     this.state = newState
     this.updateAll(this.state)
@@ -283,7 +281,7 @@ export default class Core {
       })
       updatedFiles[fileID] = updatedFile
 
-      console.log(this.getState().totalProgress)
+      // console.log(this.getState().totalProgress)
 
       if (this.getState().totalProgress === 100) {
         const completeFiles = Object.keys(updatedFiles).filter((file) => {
@@ -405,7 +403,7 @@ export default class Core {
  *
  * @return {String|Object} to log
  */
-  log (msg) {
+  log (msg, type) {
     if (!this.opts.debug) {
       return
     }
@@ -414,6 +412,11 @@ export default class Core {
     } else {
       console.dir(msg)
     }
+
+    if (type === 'error') {
+      console.error(`LOG: ${msg}`)
+    }
+
     global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
   }
 

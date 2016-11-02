@@ -301,8 +301,6 @@ export default class DashboardUI extends Plugin {
     }
 
     const fileCardDone = (meta, fileID) => {
-      // console.log(meta, fileID)
-      // console.log('ФАЙЛ КАРД СОХРАНЯЮ, НАХУЙ')
       this.core.emitter.emit('core:update-meta', meta, fileID)
       this.core.emitter.emit('dashboard:file-card')
     }
