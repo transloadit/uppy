@@ -50,17 +50,18 @@ Ideas that will be planned and find their way into a release at one point
 
 To be released: November 26, 2016.
 
-- [] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
-- [] dashboard: maybe don’t keep hidden panels in DOM (@arturi)
-- [] dashboard: more icons for file types? (@arturi)
-- [] dashboard: basic responsive version (@arturi)
-- [] core: what to do with mime-types? maybe ask Marius for advice (@arturi)
+- [ ] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
+- [x] dashboard: maybe don’t keep hidden panels in DOM (@arturi)
+- [ ] dashboard: more icons for file types? (@arturi)
+- [ ] dashboard: basic responsive version (@arturi)
+- [ ] core: what to do with mime-types? maybe ask Marius for advice (@arturi)
 - [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?)
 - [ ] tus: only show pause/resume when tus is used, something else for multipart (@arturi)
+- [ ] api: consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab (@arturi, @kvz)
 
 ## 0.11.0
 
-To be released: October 28, 2016. Releasemaster: Artur
+To be released: November 1, 2016. Releasemaster: Artur
 
 - [x] core: log method should have an option to throw error in addition to just logging (@arturi)
 - [x] experimental: PersistentState plugin that saves state to localStorage — useful for development (@arturi)
