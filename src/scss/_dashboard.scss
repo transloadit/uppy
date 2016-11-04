@@ -215,8 +215,8 @@
   left: 0;
   right: 0;
   transform: translateY(-105%);
-  transition: transform 0.3s ease-in-out;
-  // will-change: transform;
+  transition: transform 0.25s ease-in-out;
+  will-change: transform;
   background-color: darken($color-white, 4%);
   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
   padding: 15px;
@@ -227,7 +227,6 @@
 
 .UppyDashboardContent-panel[aria-hidden=false] {
   transform: none;
-  transition: transform 300ms ease-out;
 }
 
 // Progress bar placeholder
@@ -739,7 +738,7 @@
 
 .UppyDashboardFileCard {
   transform: translateY(0);
-  transition: all 0.3s ease-in-out;
+  transition: all 0.25s ease-in-out;
   width: 100%;
   height: 100%;
   position: absolute;
