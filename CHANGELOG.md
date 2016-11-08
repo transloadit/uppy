@@ -53,11 +53,13 @@ To be released: November 26, 2016.
 - [ ] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
 - [x] dashboard: maybe don’t keep hidden panels in DOM (@arturi)
 - [ ] dashboard: more icons for file types? (@arturi)
+- [ ] core: replace mime-types with a more lightweight alternative http://stackoverflow.com/a/29672957 (@arturi)
 - [ ] dashboard: basic responsive version (@arturi)
-- [ ] core: what to do with mime-types? maybe ask Marius for advice (@arturi)
 - [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?)
 - [ ] tus: only show pause/resume when tus is used, something else for multipart (@arturi)
+
 - [ ] api: consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab (@arturi, @kvz)
+- [ ] core: figure out import/require for core and plugins
 
 ## 0.11.0
 
