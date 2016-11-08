@@ -89,10 +89,15 @@
     }
 
     abbr {
-      position: absolute;
-      right: 0;
-      float: left;
-      text-align: right;
+      display: block;
+      margin-bottom: 5px;
+
+      @media #{$screen-medium} {
+        display: inline;
+        float: right;
+        text-align: right;
+        margin-bottom: 0;
+      }
     }
 
     a {
