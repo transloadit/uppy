@@ -11,6 +11,10 @@
   border-radius: 10px;
 }
 
+.UppyDragDrop-inner {
+  margin: 0;
+}
+
   .UppyDragDrop-container.is-dragdrop-supported {
     border: 2px dashed;
     border-color: lighten($color-gray, 20%);
@@ -61,10 +65,4 @@
   &:hover {
     background: $color-gray;
   }
-}
-
-// Modal specific
-.UppyModal .UppyDragDrop-container {
-  margin: 15px;
-  height: calc(100% - 30px);
 }

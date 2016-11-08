@@ -125,7 +125,7 @@ export default class DragDrop extends Plugin {
     }
 
     return html`
-      <div class="UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
+      <div class="Uppy UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
         <form class="UppyDragDrop-inner"
               onsubmit=${onSubmit}>
           <input class="UppyDragDrop-input UppyDragDrop-focus"
