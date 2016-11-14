@@ -7,6 +7,9 @@ import { Core,
          Informer } from '../../../../src/index.js'
 import { UPPY_SERVER } from '../env'
 
+const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
+const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
+
 function uppyInit () {
   const opts = window.uppyOptions
   const dashboardEl = document.querySelector('.UppyDashboard')
@@ -30,7 +33,7 @@ function uppyInit () {
     uppy.use(Webcam, {target: Dashboard})
   }
 
-  uppy.use(Tus10, {endpoint: '//tusd.tus.io/files/', resume: true})
+  uppy.use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
   uppy.use(Informer, {target: Dashboard})
   uppy.use(MetaData, {
     fields: [
