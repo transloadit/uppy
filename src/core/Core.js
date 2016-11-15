@@ -1,10 +1,8 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
 import ee from 'namespace-emitter'
-// import deepFreeze from 'deep-freeze-strict'
 import UppySocket from './UppySocket'
 import en_US from '../locales/en_US'
-// import throttle from 'throttle-debounce/throttle'
 
 /**
  * Main Uppy core
@@ -15,8 +13,8 @@ export default class Core {
   constructor (opts) {
     // set default options
     const defaultOptions = {
-      // load English as the default locales
-      locales: en_US,
+      // load English as the default locale
+      locale: en_US,
       autoProceed: true,
       debug: false
     }
@@ -24,16 +22,14 @@ export default class Core {
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    // Dictates in what order different plugin types are ran:
-    this.types = [ 'presetter', 'orchestrator', 'progressindicator',
-                    'acquirer', 'modifier', 'uploader', 'presenter', 'debugger']
-
-    this.type = 'core'
+    // // Dictates in what order different plugin types are ran:
+    // this.types = [ 'presetter', 'orchestrator', 'progressindicator',
+    //                 'acquirer', 'modifier', 'uploader', 'presenter', 'debugger']
 
     // Container for different types of plugins
     this.plugins = {}
 
-    this.translator = new Translator({locales: this.opts.locales})
+    this.translator = new Translator({locale: this.opts.locale})
     this.i18n = this.translator.translate.bind(this.translator)
     this.getState = this.getState.bind(this)
     this.updateMeta = this.updateMeta.bind(this)
@@ -61,7 +57,7 @@ export default class Core {
   }
 
   /**
-   * Iterate on all plugins and run `update` on them. Called each time when state changes
+   * Iterate on all plugins and run `update` on them. Called each time state changes
    *
    */
   updateAll (state) {
@@ -83,9 +79,6 @@ export default class Core {
 
     this.state = newState
     this.updateAll(this.state)
-
-    // this.log('Updating state with: ')
-    // this.log(newState)
   }
 
   /**
@@ -439,15 +432,9 @@ export default class Core {
 /**
  * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
  *
- * (In the past was used to run a waterfall of runType plugin packs, like so:
- * All preseters(data) --> All acquirers(data) --> All uploaders(data) --> done)
  */
   run () {
     this.log('Core is run, initializing actions, installing plugins...')
-
-    // setInterval(() => {
-    //   this.updateAll(this.state)
-    // }, 1000)
 
     this.actions()
 
