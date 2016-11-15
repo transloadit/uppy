@@ -6,7 +6,7 @@ import html from '../core/html'
  * Dummy
  *
  */
-export default class Dummy extends Plugin {
+class Dummy extends Plugin {
   constructor (core, opts, props) {
     super(core, opts)
     this.type = 'acquirer'
@@ -94,5 +94,11 @@ export default class Dummy extends Plugin {
     // worker.addEventListener('message', (e) => {
     //   console.log(e)
     // })
+  }
+}
+
+export default function (core, opts, props) {
+  if (!(this instanceof Dummy)) {
+    return new Dummy(core, opts, props)
   }
 }
