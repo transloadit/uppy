@@ -26,44 +26,46 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] instagram: Make a barely working Instagram Plugin + example (#21)
 - [ ] meta: Use <waffle.io> or GitHub Projects instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
 - [ ] dashboard: add ability to minimize Modal/Dashboard, while long upload is in progress? Uppy then becomes just a tiny progress indicator
-- [ ] presets: Add basic preset that mimics Transloadit's jQuery plugin (#28)
 - [ ] test: Human should check http://www.webpagetest.org, use it sometimes to test our website & Uppy? Which will show response/loading times and where big delays are
 - [ ] test: Human should test with real screen reader to identify accessibility problems
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing
 - [ ] test: Make Edge and Safari work via the tunnel so we can test localhost instead of uppy.io, and test the current build, vs the previous deploy that way
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
-- [ ] website: Make a gif/video of Uppy Modal or DragDrop demo (drag & drop a few files -> upload happens)
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
-- [ ] website: Would one really connect a own google drive or dropbox for testing purpose? => maybe one can give something like a testing account of google drive and dropbox to try uppy
 - [ ] dependencies: es6-promise --> lie https://github.com/calvinmetcalf/lie ?
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 - [ ] core: retry failed uploads
 - [ ] core: restrictions — by file type, size, number of files
 - [ ] core: see if it’s possible to add webworkers or use pica for thumbnail generation (@arturi)
+- [ ] website: Would one really connect a own google drive or dropbox for testing purpose? => maybe one can give something like a testing account of google drive and dropbox to try uppy
 - [ ] meta: add google demo account (@kvz)
 - [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] google drive: show error view for things like not being able to connect to uppy server (@hedgerh)
 - [ ] uppy-server: Make uppy server standalone CLI (@hedgerh)
 
+## 0.13.0
+
+- [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28)
+
 ## 0.12.0
 
 To be released: November 26, 2016.
 
 - [ ] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
-- [x] dashboard: maybe don’t keep hidden panels in DOM (@arturi)
 - [ ] dashboard: more icons for file types? (@arturi)
 - [ ] core: replace mime-types with a more lightweight alternative http://stackoverflow.com/a/29672957 (@arturi)
-- [ ] dashboard: basic responsive version (@arturi)
+- [ ] dashboard: responsive design — stage 1 (@arturi)
 - [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?)
-- [ ] tus: only show pause/resume when tus is used, something else for multipart (@arturi)
-
-- [ ] api: consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab (@arturi, @kvz)
-- [ ] core: figure out import/require for core and plugins
+- [ ] dashboard: only show pause/resume when tus is used, something else for multipart (@arturi)
+- [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
+- [x] meta: write 0.11 release blog post (@arturi)
+- [x] core: api — consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab, come up with follow up questions (@arturi)
+- [ ] core: figure out import/require for core and plugins (@arturi)
 
 ## 0.11.0
 
-To be released: November 1, 2016. Releasemaster: Artur
+Released: November 1, 2016. Releasemaster: Artur
 
 - [x] core: log method should have an option to throw error in addition to just logging (@arturi)
 - [x] experimental: PersistentState plugin that saves state to localStorage — useful for development (@arturi)
@@ -72,7 +74,7 @@ To be released: November 1, 2016. Releasemaster: Artur
 - [x] dashboard: refactor — only load one acquire panel at a time (activeAcquirer or empty), change focus behavior, utilize onload/onunload
 - [x] experimental: create a Dashboard UI for Redux refactor (@hedgerh)
 - [x] dashboard: make trigger optional — not needed when rendering inline (@arturi)
-- [x] fileinput: pretty input element? #93 (@arturi)
+- [x] fileinput: pretty input element #93 (@arturi)
 - [x] meta: document current Uppy architecture and question about the future (@arturi, @hedgerh)
 - [x] test: see about adding tests for autoProceed: true (@arturi)
 - [x] website: and ability to toggle options in Dashboard example: inline/modal, autoProceed, which plugins are enabled #89 (@arturi)
