@@ -170,10 +170,11 @@ export default class Tus10 extends Plugin {
           // get the host domain
           var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^\/\n]+)/
           var host = regex.exec(file.remote.host)[1]
+          var socketProtocol = location.protocol === 'https:' ? 'wss' : 'ws'
 
           var token = data.token
           var socket = new UppySocket({
-            target: `wss://${host}/api/${token}`
+            target: socketProtocol + `://${host}/api/${token}`
           })
 
           socket.on('progress', (progressData) => {
