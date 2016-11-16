@@ -173,7 +173,7 @@ export default class Tus10 extends Plugin {
 
           var token = data.token
           var socket = new UppySocket({
-            target: `ws://${host}/api/${token}`
+            target: `wss://${host}/api/${token}`
           })
 
           socket.on('progress', (progressData) => {
