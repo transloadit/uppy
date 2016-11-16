@@ -168,7 +168,7 @@ export default class Tus10 extends Plugin {
         res.json()
         .then((data) => {
           // get the host domain
-          var regex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)/
+          var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)/
           var host = regex.exec(file.remote.host)[1]
 
           var token = data.token
