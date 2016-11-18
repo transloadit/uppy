@@ -62,6 +62,7 @@ To be released: November 26, 2016.
 - [x] meta: write 0.11 release blog post (@arturi)
 - [x] core: api — consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab, come up with follow up questions (@arturi)
 - [ ] core: figure out import/require for core and plugins (@arturi)
+- [ ] server: add pre-commit and lint-staged (@arturi)
 
 ## 0.11.0
 
