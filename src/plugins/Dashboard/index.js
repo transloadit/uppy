@@ -168,14 +168,14 @@ export default class DashboardUI extends Plugin {
       })
     })
 
-    bus.on('core:success', (uploadedCount) => {
-      bus.emit(
-        'informer',
-        `${this.core.i18n('files', {'smart_count': uploadedCount})} successfully uploaded, Sir!`,
-        'info',
-        6000
-      )
-    })
+    // bus.on('core:success', (uploadedCount) => {
+    //   bus.emit(
+    //     'informer',
+    //     `${this.core.i18n('files', {'smart_count': uploadedCount})} successfully uploaded, Sir!`,
+    //     'info',
+    //     6000
+    //   )
+    // })
   }
 
   handleDrop (files) {
@@ -244,15 +244,12 @@ export default class DashboardUI extends Plugin {
     const totalETA = prettyETA(this.getTotalETA(inProgressFilesArray))
 
     const isAllComplete = state.totalProgress === 100
-    const isAllPaused = inProgressFiles.length === 0 && !isAllComplete
+    const isAllPaused = inProgressFiles.length === 0 && !isAllComplete && uploadStartedFiles.length > 0
+    const isUploadStarted = uploadStartedFiles.length > 0
 
     const acquirers = state.modal.targets.filter((target) => {
       return target.type === 'acquirer'
     })
-
-    // let activeAcquirer = acquirers.filter((acquirer) => {
-    //   return !acquirer.isHidden
-    // })[0]
 
     const progressindicators = state.modal.targets.filter((target) => {
       return target.type === 'progressindicator'
@@ -293,7 +290,8 @@ export default class DashboardUI extends Plugin {
       newFiles: newFiles,
       files: files,
       totalFileCount: Object.keys(files).length,
-      uploadStartedFiles: uploadStartedFiles,
+      isUploadStarted: isUploadStarted,
+      inProgress: uploadStartedFiles.length,
       completeFiles: completeFiles,
       inProgressFiles: inProgressFiles,
       totalSpeed: totalSpeed,
@@ -324,6 +322,7 @@ export default class DashboardUI extends Plugin {
       removeFile: removeFile,
       info: info,
       metaFields: state.metaFields,
+      resumableUploads: this.core.getState().capabilities.resumableUploads || false,
       startUpload: startUpload,
       pauseUpload: pauseUpload,
       fileCardFor: state.modal.fileCardFor,

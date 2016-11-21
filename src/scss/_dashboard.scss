@@ -106,28 +106,32 @@
 }
 
 .UppyDashboardTabs {
-  // height: 22%;
-  // min-height: 100px;
-  padding-top: 15px;
+  min-height: 40px;
+  padding-top: 10px;
   padding-bottom: 10px;
-  // margin: 0 10px;
-  // border-bottom: 1px solid lighten($color-gray, 15%);
-  // border-bottom: 1px solid #E2E2E2;
+  border-bottom: 1px dashed lighten($color-gray, 15%);
+}
+
+.UppyDashboardTabs[aria-hidden=true] {
+  display: none;
 }
 
 .UppyDashboardTabs-title {
-  width: 100%;
-  font-size: 15px;
-  line-height: 1.6;
-  // text-transform: uppercase;
-  // letter-spacing: 2px;
+  font-size: 17px;
+  line-height: 40px;
   font-weight: 400;
   text-align: center;
   margin: 0;
   padding: 0;
   text-align: center;
-  margin-bottom: 8px;
+  // margin-bottom: 8px;
   color: $color-asphalt-gray;
+}
+
+.UppyDashboard-browse {
+  @include reset-button;
+  cursor: pointer;
+  color: $color-cornflower-blue;
 }
 
 .UppyDashboardTabs-list {
@@ -295,22 +299,23 @@
   }
 }
 
-
-.UppyDashboard-files {
-  // height: 78%;
-  // flex: 1;
-  // overflow: hidden;
+.UppyDashboard-filesContainer {
   @include clearfix;
   position: relative;
-  overflow-y: auto;
+  overflow-y: hidden;
   margin: 0;
-  // display: flex;
-  // flex-flow: row wrap;
-  padding: 10px 10px;
   flex: 1;
-  // border: 2px dashed rgba($color-gray, 0.2);
-  // border-radius: 10px;
-  border-top: 1px dashed lighten($color-gray, 15%);
+}
+
+.UppyDashboard-files {
+  margin: 0;
+  padding: 10px;
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .UppyDashboard-files--noFiles {
@@ -329,6 +334,7 @@
 }
 
 .UppyDashboard-bgIcon {
+  width: 330px;
   max-width: 330px;
   position: absolute;
   top: 50%;
@@ -341,7 +347,6 @@
 .UppyDashboard-bgIcon .UppyIcon {
   width: 100%;
   height: 110px;
-  margin-bottom: 25px;
   fill: none;
   stroke: $color-asphalt-gray;
 }
@@ -357,6 +362,7 @@
   font-weight: normal;
   color: $color-asphalt-gray;
   margin: 0;
+  margin-top: 25px;
 }
 
 .UppyDashboardItem {
@@ -537,7 +543,7 @@
 .UppyIcon-progressCircle .bg {
   stroke: rgba($color-white, 0.4);
   opacity: 0;
-  transition: all 0.2s;
+  // transition: all 0.2s;
 }
 
 .UppyIcon-progressCircle .progress {
@@ -551,13 +557,19 @@
   fill: $color-white;
   opacity: 0;
   transition: all 0.2s;
+  display: none;
 }
 
-.UppyIcon-progressCircle .pause {
+.UppyDashboardItem .pause {
   stroke: $color-white;
   fill: $color-white;
   opacity: 0;
   transition: all 0.2s;
+  display: none;
+}
+
+.UppyDashboardItem.is-resumable {
+  .pause, .play { display: block; }
 }
 
 .UppyIcon-progressCircle .check {
@@ -599,6 +611,7 @@
     fill: $color-green;
     opacity: 1;
   }
+
   .check {
     opacity: 1;
   }
@@ -712,13 +725,9 @@
   right: 20px;
 }
 
-.UppyDashboard-actions button:nth-child(2) {
-  margin-top: 10px;
-}
-
-.UppyDashboard-actionsItem {
-  // margin-bottom: 15px;
-}
+// .UppyDashboard-actions button:nth-child(2) {
+//   margin-top: 10px;
+// }
 
 .UppyDashboard-pauseResume .UppyIcon {
   width: 100%;
@@ -845,27 +854,41 @@
 }
 
 .UppyDashboard-statusBar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 35px;
-  line-height: 35px;
-  font-size: 13px;
+  // position: absolute;
+  // bottom: 0;
+  // left: 0;
+  // right: 0;
+  position: relative;
+  height: 40px;
+  line-height: 40px;
+  font-size: 14px;
   font-weight: 500;
   color: $color-white;
   background-color: rgba($color-black, 0.6);
   box-shadow: 1px 1px 4px 0 rgba($color-asphalt-gray, 0.3);
   overflow: hidden;
-  cursor: pointer;
+  z-index: $zIndex-2;
+  transition: height .35s;
 
   @media #{$screen-medium} {
-    left: 50%;
-    bottom: 20px;
-    margin-left: -200px;
-    width: 400px;
-    border-radius: 4px;
+    // left: 50%;
+    // bottom: 20px;
+    // margin-left: -200px;
+    // width: 400px;
+    // border-radius: 4px;
   }
+}
+
+.UppyDashboard-statusBar[aria-hidden=true] {
+  height: 0;
+}
+
+.UppyDashboard-statusBar.is-complete .UppyDashboard-statusBarProgress {
+  background-color: $color-green;
+}
+
+.UppyDashboard-statusBar.is-complete .UppyDashboard-statusBarContent {
+  text-align: center;
 }
 
 .UppyDashboard-statusBarProgress {
@@ -873,22 +896,29 @@
   height: 100%;
   position: absolute;
   z-index: $zIndex-2;
-  // transition: width .3s ease-out;
+  transition: all .3s ease-out;
 }
 
-.UppyDashboard-statusBarText {
+.UppyDashboard-statusBarContent {
   font-weight: 600;
   position: relative;
   z-index: $zIndex-3;
-  padding-left: 40px;
+  padding-left: 15px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
+.UppyDashboard-statusBarContent .UppyIcon {
+  margin-right: 10px;
+}
+
 .UppyDashboard-statusBarAction {
-  position: absolute;
-  left: 14px;
-  top: 9px;
-  z-index: $zIndex-3;
+  @include reset-button;
+  // position: absolute;
+  // left: 14px;
+  // top: 12px;
+  // z-index: $zIndex-4;
+  color: $color-white;
+  cursor: pointer;
 }

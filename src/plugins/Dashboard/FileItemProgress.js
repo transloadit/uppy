@@ -8,7 +8,7 @@ export default function (props) {
     <svg width="70" height="70" viewBox="0 0 36 36" class="UppyIcon UppyIcon-progressCircle">
       <g class="progress-group">
         <circle r="15" cx="18" cy="18" stroke-width="2" fill="none" class="bg"/>
-        <circle r="15" cx="18" cy="18" transform="rotate(-90, 18, 18)" stroke-width="2" fill="none" stroke-dasharray="100" stroke-dashoffset="${100 - props.progress || 100}" class="progress"/>
+        <circle r="15" cx="18" cy="18" transform="rotate(-90, 18, 18)" stroke-width="2" fill="none" stroke-dasharray="100" stroke-dashoffset="${100 - props.progress}" class="progress"/>
       </g>
       <polygon transform="translate(3, 3)" points="12 20 12 10 20 15" class="play"/>
       <g transform="translate(14.5, 13)" class="pause">
