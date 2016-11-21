@@ -9,7 +9,7 @@ import en_US from '../locales/en_US'
  *
  * @param {object} opts general options, like locales, to show modal or not to show
  */
-export default class Core {
+class Uppy {
   constructor (opts) {
     // set default options
     const defaultOptions = {
@@ -325,17 +325,18 @@ export default class Core {
  */
   use (Plugin, opts) {
     // Prepare props to pass to plugins
-    const props = {
-      getState: this.getState.bind(this),
-      setState: this.setState.bind(this),
-      updateMeta: this.updateMeta.bind(this),
-      addFile: this.addFile.bind(this),
-      i18n: this.i18n.bind(this),
-      bus: this.ee,
-      log: this.log.bind(this)
-    }
+    // const props = {
+    //   getState: this.getState.bind(this),
+    //   setState: this.setState.bind(this),
+    //   updateMeta: this.updateMeta.bind(this),
+    //   addFile: this.addFile.bind(this),
+    //   i18n: this.i18n.bind(this),
+    //   bus: this.ee,
+    //   log: this.log.bind(this)
+    // }
+
     // Instantiate
-    const plugin = new Plugin(this, opts, props)
+    const plugin = new Plugin(this, opts)
     const pluginName = plugin.id
     this.plugins[plugin.type] = this.plugins[plugin.type] || []
 
@@ -359,6 +360,7 @@ export default class Core {
     }
 
     this.plugins[plugin.type].push(plugin)
+    plugin.install()
 
     return this
   }
@@ -421,13 +423,13 @@ export default class Core {
     return this.socket
   }
 
-  installAll () {
-    Object.keys(this.plugins).forEach((pluginType) => {
-      this.plugins[pluginType].forEach((plugin) => {
-        plugin.install()
-      })
-    })
-  }
+  // installAll () {
+  //   Object.keys(this.plugins).forEach((pluginType) => {
+  //     this.plugins[pluginType].forEach((plugin) => {
+  //       plugin.install(this)
+  //     })
+  //   })
+  // }
 
 /**
  * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
@@ -444,8 +446,14 @@ export default class Core {
     // }
 
     // Install all plugins
-    this.installAll()
+    // this.installAll()
 
     return
+  }
+}
+
+export default function (opts) {
+  if (!(this instanceof Uppy)) {
+    return new Uppy(opts)
   }
 }
