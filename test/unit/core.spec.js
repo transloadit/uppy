@@ -1,18 +1,17 @@
 import test from 'tape'
-import Core from '../../src/core/Core.js'
+import Uppy from '../../src/core/Core.js'
 import Acquirer1Plugin from './mocks/plugin-acquirer1.js'
 // import Acquirer2Plugin from './mocks/plugin-acquirer2.js'
 
 test('core', function (t) {
-  const uppy = new Core()
-
-  t.equal(typeof uppy, 'object', '`new Core()` should return an `object`')
-  t.ok(uppy instanceof Core, '`uppy` should be an instance of `Core` core')
+  t.equal(typeof new Uppy(), 'object', '`new Uppy()` should return an `object`')
+  t.equal(typeof Uppy(), 'object', '`Uppy()` without `new` should also return an `object`')
+  // t.ok(uppy instanceof Uppy, '`uppy` should be an instance of `Core` core')
   t.end()
 })
 
 test('use plugins', function (t) {
-  const uppy = new Core()
+  const uppy = new Uppy()
   uppy
     .use(Acquirer1Plugin)
 
@@ -21,7 +20,7 @@ test('use plugins', function (t) {
 })
 
 test('noDuplicates', function (t) {
-  const uppyTwoAcquirers = new Core()
+  const uppyTwoAcquirers = new Uppy()
 
   uppyTwoAcquirers.use(Acquirer1Plugin)
   const fn = uppyTwoAcquirers.use.bind(uppyTwoAcquirers, Acquirer1Plugin)
