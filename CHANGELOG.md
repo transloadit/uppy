@@ -59,6 +59,7 @@ To be released: November 26, 2016.
 - [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?)
 - [ ] dashboard: only show pause/resume when tus is used, something else for multipart (@arturi)
 - [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
+- [x] dashboard: local mode — no acquire plugins / external services, just DnD (@arturi)
 - [x] meta: write 0.11 release blog post (@arturi)
 - [x] core: api — consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab, come up with follow up questions (@arturi)
 - [ ] core: figure out import/require for core and plugins (@arturi)
