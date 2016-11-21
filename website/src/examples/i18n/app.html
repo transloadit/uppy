@@ -7,7 +7,7 @@
 <script src="/uppy/uppy.min.js"></script>
 <script src="/uppy/locales/ru_RU.js"></script>
 <script>
-  var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true});
+  var uppy = new Uppy.Core({locale: Uppy.locales.ru_RU, debug: true});
   uppy.use(Uppy.DragDrop, {target: '.UppyDragDrop'});
   uppy.use(Uppy.Tus10, {endpoint: 'http://master.tus.io:3020/files/'});
   uppy.run();
