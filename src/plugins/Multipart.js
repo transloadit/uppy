@@ -89,6 +89,12 @@ export default class Multipart extends Plugin {
         }
       })
 
+      this.core.emitter.on('core:cancel-all', () => {
+        // const files = this.core.getState().files
+        // if (!files[file.id]) return
+        xhr.abort()
+      })
+
       this.core.emitter.emit('core:upload-started', file.id)
     })
   }

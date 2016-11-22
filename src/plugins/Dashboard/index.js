@@ -39,6 +39,7 @@ export default class DashboardUI extends Plugin {
     this.handleDrop = this.handleDrop.bind(this)
     this.pauseAll = this.pauseAll.bind(this)
     this.resumeAll = this.resumeAll.bind(this)
+    this.cancelAll = this.cancelAll.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -191,6 +192,10 @@ export default class DashboardUI extends Plugin {
     })
   }
 
+  cancelAll () {
+    this.core.bus.emit('core:cancel-all')
+  }
+
   pauseAll () {
     this.core.bus.emit('core:pause-all')
   }
@@ -323,6 +328,7 @@ export default class DashboardUI extends Plugin {
       i18n: this.core.i18n,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
+      cancelAll: this.cancelAll,
       addFile: addFile,
       removeFile: removeFile,
       info: info,

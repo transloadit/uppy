@@ -244,6 +244,13 @@ class Uppy {
       this.removeFile(fileID)
     })
 
+    this.on('core:cancel-all', () => {
+      const files = this.getState().files
+      Object.keys(files).forEach((file) => {
+        this.removeFile(files[file].id)
+      })
+    })
+
     this.on('core:upload-started', (fileID, upload) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID],

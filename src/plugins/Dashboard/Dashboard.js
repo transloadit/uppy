@@ -147,6 +147,7 @@ export default function Dashboard (props) {
             isUploadStarted: props.isUploadStarted,
             pauseAll: props.pauseAll,
             resumeAll: props.resumeAll,
+            cancelAll: props.cancelAll,
             complete: props.completeFiles.length,
             inProgress: props.inProgress,
             totalSpeed: props.totalSpeed,
