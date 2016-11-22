@@ -47,8 +47,8 @@ class Uppy {
       totalProgress: 0
     }
 
+    // for debugging and testing
     if (this.opts.debug) {
-      // for debugging and testing
       global.UppyState = this.state
       global.uppyLog = ''
       global.UppyAddFile = this.addFile.bind(this)
@@ -153,6 +153,7 @@ class Uppy {
     const updatedFiles = Object.assign({}, this.getState().files)
     delete updatedFiles[fileID]
     this.setState({files: updatedFiles})
+    this.log(`Removed file: ${fileID}`)
   }
 
   addThumbnail (fileID) {

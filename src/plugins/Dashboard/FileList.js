@@ -32,6 +32,7 @@ export default (props) => {
           i18n: props.i18n,
           removeFile: props.removeFile,
           pauseUpload: props.pauseUpload,
+          cancelUpload: props.cancelUpload,
           resumableUploads: props.resumableUploads
         })
       })}

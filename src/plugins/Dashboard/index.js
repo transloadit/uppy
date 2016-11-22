@@ -271,6 +271,11 @@ export default class DashboardUI extends Plugin {
       this.core.emitter.emit('core:upload-pause', fileID)
     }
 
+    const cancelUpload = (fileID) => {
+      this.core.emitter.emit('core:upload-cancel', fileID)
+      this.core.emitter.emit('core:file-remove', fileID)
+    }
+
     const showFileCard = (fileID) => {
       this.core.emitter.emit('dashboard:file-card', fileID)
     }
@@ -325,6 +330,7 @@ export default class DashboardUI extends Plugin {
       resumableUploads: this.core.getState().capabilities.resumableUploads || false,
       startUpload: startUpload,
       pauseUpload: pauseUpload,
+      cancelUpload: cancelUpload,
       fileCardFor: state.modal.fileCardFor,
       showFileCard: showFileCard,
       fileCardDone: fileCardDone

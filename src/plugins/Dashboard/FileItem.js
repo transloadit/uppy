@@ -47,10 +47,19 @@ export default function fileItem (props) {
           <button class="UppyDashboardItem-progressBtn"
                   title="${isUploaded
                           ? 'upload complete'
-                          : file.isPaused ? 'resume upload' : 'pause upload'}"
+                          : props.resumableUploads
+                            ? file.isPaused
+                              ? 'resume upload'
+                              : 'pause upload'
+                            : 'cancel upload'
+                        }"
                   onclick=${(ev) => {
                     if (isUploaded) return
-                    props.pauseUpload(file.id)
+                    if (props.resumableUploads) {
+                      props.pauseUpload(file.id)
+                    } else {
+                      props.cancelUpload(file.id)
+                    }
                   }}>
             ${FileItemProgress({
               progress: file.progress.percentage,

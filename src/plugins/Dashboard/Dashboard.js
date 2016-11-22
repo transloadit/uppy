@@ -107,6 +107,7 @@ export default function Dashboard (props) {
             resumeAll: props.resumeAll,
             pauseUpload: props.pauseUpload,
             startUpload: props.startUpload,
+            cancelUpload: props.cancelUpload,
             resumableUploads: props.resumableUploads
           })}
 
