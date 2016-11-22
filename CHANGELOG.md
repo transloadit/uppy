@@ -43,30 +43,37 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] google drive: show error view for things like not being able to connect to uppy server (@hedgerh)
 - [ ] uppy-server: Make uppy server standalone CLI (@hedgerh)
+- [ ] core: try file-type module for setting correct mime-types if needed, example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957
 
 ## 0.13.0
 
+To be released: December 23, 2016.
+
 - [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28)
+- [ ] dashboard: “list” view in addition to current “grid” view (@arturi)
 
 ## 0.12.0
 
-To be released: November 26, 2016.
+To be released: November 25, 2016.
+Theme: Responsive. Cancel. Feedback.
 
 - [ ] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
 - [ ] dashboard: more icons for file types? (@arturi)
-- [ ] core: replace mime-types with a more lightweight alternative http://stackoverflow.com/a/29672957 (@arturi)
-- [ ] dashboard: responsive design — stage 1 (@arturi)
+- [x] dashboard: responsive design — stage 1 (@arturi)
 - [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?)
-- [ ] dashboard: only show pause/resume when tus is used, something else for multipart (@arturi)
 - [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
+- [x] dashboard: only show pause/resume when tus is used, something else for multipart (@arturi)
+- [x] dashboard: local mode — no acquire plugins / external services, just DnD (@arturi)
 - [x] meta: write 0.11 release blog post (@arturi)
 - [x] core: api — consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab, come up with follow up questions (@arturi)
 - [ ] core: figure out import/require for core and plugins (@arturi)
+- [x] core: allow usage without `new`, start renaming `Core()` to `Uppy()` in examples (@arturi)
 - [ ] server: add pre-commit and lint-staged (@arturi)
 
 ## 0.11.0
 
 Released: November 1, 2016. Releasemaster: Artur
+Theme: StatusBar and API docs
 
 - [x] core: log method should have an option to throw error in addition to just logging (@arturi)
 - [x] experimental: PersistentState plugin that saves state to localStorage — useful for development (@arturi)
@@ -85,8 +92,7 @@ Released: November 1, 2016. Releasemaster: Artur
 
 ## 0.10.0
 
-To be released: Septermber 23, 2016. Releasemaster: Artur
-
+Released: Septermber 23, 2016. Releasemaster: Artur
 Theme: Getting together
 
 - [x] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` (or `parseFile`), open modal... (@arturi, @hedgerh)
@@ -112,7 +118,7 @@ Theme: Getting together
 
 ## 0.9.0
 
-To be released: August 26, 2016. Releasemaster: Harry
+Released: August 26, 2016. Releasemaster: Harry
 
 Theme: Making Progress, Then Pause & Resume
 
@@ -141,9 +147,9 @@ Theme: Making Progress, Then Pause & Resume
 
 ## 0.8.0
 
-Theme: The Webcam Edition
+Released: July 29, 2016. Releasemaster: Artur
 
-To be released: July 29, 2016. Releasemaster: Artur
+Theme: The Webcam Edition
 
 - [x] core: fix bug: no meta information from uppy-server files (@hedgerh)
 - [x] core: fix bug: uppy-server file is treated as local and directly uploaded (@hedgerh)
