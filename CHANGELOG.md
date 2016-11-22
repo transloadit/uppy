@@ -57,18 +57,18 @@ To be released: December 23, 2016.
 To be released: November 25, 2016.
 Theme: Responsive. Cancel. Feedback.
 
-- [ ] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
-- [ ] dashboard: more icons for file types? (@arturi)
-- [x] dashboard: responsive design — stage 1 (@arturi)
-- [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?)
-- [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
-- [x] dashboard: only show pause/resume when tus is used, something else for multipart (@arturi)
-- [x] dashboard: local mode — no acquire plugins / external services, just DnD (@arturi)
-- [x] meta: write 0.11 release blog post (@arturi)
-- [x] core: api — consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab, come up with follow up questions (@arturi)
 - [ ] core: figure out import/require for core and plugins (@arturi)
-- [x] core: allow usage without `new`, start renaming `Core()` to `Uppy()` in examples (@arturi)
+- [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
+- [ ] dashboard: more icons for file types? (@arturi)
+- [ ] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
 - [ ] server: add pre-commit and lint-staged (@arturi)
+- [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?)
+- [x] core: allow usage without `new`, start renaming `Core()` to `Uppy()` in examples (@arturi)
+- [x] core: api — consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab, come up with follow up questions (@arturi)
+- [x] dashboard: local mode — no acquire plugins / external services, just DnD (@arturi)
+- [x] dashboard: only show pause/resume when tus is used, something else for multipart (@arturi)
+- [x] dashboard: responsive design — stage 1 (@arturi)
+- [x] meta: write 0.11 release blog post (@arturi)
 
 ## 0.11.0
 
