@@ -51,17 +51,24 @@ To be released: December 23, 2016.
 
 - [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28)
 - [ ] dashboard: “list” view in addition to current “grid” view (@arturi)
+- [ ] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
 
 ## 0.12.0
 
 To be released: November 25, 2016.
-Theme: Responsive. Cancel. Feedback.
+Theme: Responsive. Cancel. Feedback. ES6 Server
 
+- [ ] meta: Write 0.12 release blog post (@arturi)
 - [ ] core: figure out import/require for core and plugins (@arturi)
 - [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
 - [ ] dashboard: more icons for file types? (@arturi)
 - [ ] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
 - [ ] server: add pre-commit and lint-staged (@arturi)
+- [ ] server: re-do build setup: building at `deploy` and `prepublish` when typing `npm run release:patch` 0.0.1 -> 0.0.2 (@ifedapoolarewaju)
+- [ ] server: re-do build setup: es6 `src` -> es5 `lib` (use plugin packs from Uppy)
+- [ ] server: re-do build setup: `eslint --fix ./src` via http://standardjs.com (@ifedapoolarewaju)
+- [ ] server: re-do build setup: es5 -> es6 via http://lebab.io. use `const` when we can. Also template literals. Not `imports` so we can use Node 7. (@ifedapoolarewaju)
+- [ ] server: re-do build setup: `babel-node` or `babel-require` could do realtime transpiling for development (how does that hook in with e.g. `nodemon`?) (@ifedapoolarewaju)
 - [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?)
 - [x] core: allow usage without `new`, start renaming `Core()` to `Uppy()` in examples (@arturi)
 - [x] core: api — consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab, come up with follow up questions (@arturi)
@@ -364,7 +371,7 @@ Here are the go-to folks for each individual component or area of expertise:
 - instagram (@hedgerh)
 - meta (@kvz)
 - presets (@arturi)
-- server (@hedgerh)
+- server (@ifedapoolarewaju)
 - test (@arturi)
 - tus (@arturi)
 - website (@arturi)
