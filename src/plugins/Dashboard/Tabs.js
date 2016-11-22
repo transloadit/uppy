@@ -1,4 +1,5 @@
 import html from '../../core/html'
+import ActionBrowseTagline from './ActionBrowseTagline'
 import { localIcon } from './icons'
 
 export default (props) => {
@@ -8,16 +9,13 @@ export default (props) => {
     return html`
       <div class="UppyDashboardTabs" aria-hidden="${isHidden}">
         <h3 class="UppyDashboardTabs-title">
-          Drop files here or
-          <button type="button"
-                  class="UppyDashboard-browse"
-                  onclick=${(ev) => {
-                    const input = document.querySelector(`${props.container} .UppyDashboard-input`)
-                    input.click()
-                  }}>browse</button>
+        ${ActionBrowseTagline({
+          acquirers: props.acquirers,
+          container: props.container,
+          handleInputChange: props.handleInputChange,
+          i18n: props.i18n
+        })}
         </h3>
-        <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
-               onchange=${props.handleInputChange} />
       </div>
     `
   }
