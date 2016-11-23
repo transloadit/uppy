@@ -51,6 +51,7 @@ To be released: December 23, 2016.
 
 - [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28)
 - [ ] dashboard: “list” view in addition to current “grid” view (@arturi)
+- [ ] core: i18n for plugins as strings in options (@arturi) 
 - [ ] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
 
 ## 0.12.0
