@@ -1,11 +1,15 @@
-import { Core,
-         Dashboard,
-         GoogleDrive,
-         Webcam,
-         Tus10,
-         MetaData,
-         Informer } from '../../../../src/index.js'
+import Uppy from '../../../../src/core'
+import Dashboard from '../../../../src/plugins/Dashboard'
+import GoogleDrive from '../../../../src/plugins/GoogleDrive'
+import Webcam from '../../../../src/plugins/Webcam'
+import Tus10 from '../../../../src/plugins/Tus10'
+import MetaData from '../../../../src/plugins/MetaData'
+import Informer from '../../../../src/plugins/Informer'
+
 import { UPPY_SERVER } from '../env'
+
+const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
+const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 
 function uppyInit () {
   const opts = window.uppyOptions
@@ -15,7 +19,7 @@ function uppyInit () {
     dashboardElParent.removeChild(dashboardEl)
   }
 
-  const uppy = new Core({debug: true, autoProceed: opts.autoProceed})
+  const uppy = Uppy({debug: true, autoProceed: opts.autoProceed})
   uppy.use(Dashboard, {
     trigger: '.UppyModalOpenerBtn',
     inline: opts.DashboardInline,
@@ -30,7 +34,7 @@ function uppyInit () {
     uppy.use(Webcam, {target: Dashboard})
   }
 
-  uppy.use(Tus10, {endpoint: '//master.tus.io/files/', resume: true})
+  uppy.use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
   uppy.use(Informer, {target: Dashboard})
   uppy.use(MetaData, {
     fields: [
