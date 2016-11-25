@@ -6,16 +6,16 @@
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
 <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
 
-Uppy is (going to be) a sleek, modular file uploader that that integrates seemlessly with any framework. It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to the final destination. It's fast, easy to use and let's you worry about more important problems than building a file uploader.
+Uppy is (going to be) a sleek, modular file uploader that integrates seemlessly with any framework. It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to the final destination. It’s fast, easy to use and let's you worry about more important problems than building a file uploader.
 
-Uppy is being developed by the [Transloadit](https://transloadit.com) team.
+Uppy is developed by the [Transloadit](https://transloadit.com) team.
 
 Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 
 ## Features (some in development)
 
 - Lightweight, modular plugin-based architecture, easy on dependencies :zap:
-- Usable as a bundle straight from a CDN as well as a module to import
+- Use from a CDN or as a module to import
 - Resumable file uploads via the open [tus](http://tus.io/) standard
 - Speaks multiple languages (i18n support) :earth_africa:
 - Built with accessibility in mind
@@ -35,12 +35,11 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 
 ### Installing from NPM
 
-It’s easy to start using Uppy, we recommend installing from npm:
 ``` bash
 $ npm install uppy --save
 ```
 
-and then use a bundler like Browserify or Webpack:
+Bundle with Browserify or Webpack:
 
 ``` javascript
 import Uppy from 'uppy/lib/core'

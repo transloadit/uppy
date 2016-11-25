@@ -54,6 +54,7 @@ To be released: December 23, 2016.
 - [ ] core: i18n for plugins as strings in options (@arturi)
 - [ ] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
 - [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
+- [ ] multipart: return upload result? options for that?
 
 ## 0.12.0
 
