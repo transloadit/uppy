@@ -3,6 +3,7 @@ import Translator from '../core/Translator'
 import ee from 'namespace-emitter'
 import UppySocket from './UppySocket'
 import en_US from '../locales/en_US'
+// import deepFreeze from 'deep-freeze-strict'
 
 /**
  * Main Uppy core
@@ -86,6 +87,7 @@ class Uppy {
    *
    */
   getState () {
+    // use deepFreeze for debugging
     // return deepFreeze(this.state)
     return this.state
   }
