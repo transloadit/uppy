@@ -6,24 +6,25 @@
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
 <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
 
-Uppy is (going to be) a cool JavaScript file uploader that fetches files for you from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to wherever you want. Uppy is being developed by the [Transloadit](https://transloadit.com) team because we want file uploading experience to be better — both for users and developers.
+Uppy is (going to be) a sleek, modular file uploader that that integrates seemlessly with any framework. It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to the final destination. It's fast, easy to use and let's you worry about more important problems than building a file uploader.
+
+Uppy is being developed by the [Transloadit](https://transloadit.com) team.
 
 Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 
 ## Features (some in development)
 
-- Lightweight / easy on dependencies
+- Lightweight, modular plugin-based architecture, easy on dependencies :zap:
 - Usable as a bundle straight from a CDN as well as a module to import
 - Resumable file uploads via the open [tus](http://tus.io/) standard
-- Uppy speaks multiple languages (i18n support)
+- Speaks multiple languages (i18n support) :earth_africa:
 - Built with accessibility in mind
 - Works great with file encoding and processing backends, such as [Transloadit](http://transloadit.com)
-- Small core, modular plugin-based architecture
-- Cute as a puppy :dog:, also accepts cat pictures
+- Cute as a puppy, also accepts cat pictures :dog:
 
 ## Demo
 
-<img width="600" alt="Uppy UI Demo: modal dialog with a few selected files and an upload button" src="screenshot.jpg">
+<img width="700" alt="Uppy UI Demo: modal dialog with a few selected files and an upload button" src="screenshot.jpg">
 
 - [Full featured UI](http://uppy.io/examples/dashboard)
 - [Simple Drag & Drop](http://uppy.io/examples/dragdrop)
@@ -42,32 +43,18 @@ $ npm install uppy --save
 and then use a bundler like Browserify or Webpack:
 
 ``` javascript
-// ES6
-import { Core, DragDrop, Tus10 } from 'uppy'
+import Uppy from 'uppy/lib/core'
+import DnD from 'uppy/lib/plugins/DragDrop'
+import Tus10 from 'uppy/lib/plugins/Tus10'
 
-const uppy = new Core({wait: false})
-const files = uppy
+const uppy = Uppy()
+uppy
   .use(DragDrop, {target: 'body'})
-  .use(Tus10, {endpoint: 'http://master.tus.io:8080/files/'})
+  .use(Tus10, {endpoint: '//master.tus.io/files/'})
   .run()
 ```
 
-or
-
-``` javascript
-// ES5
-// warning: bundling with `require` will currently include the whole Uppy package, with all plugins.
-// If you want to pick and choose, use `import`
-var Uppy = require('uppy')
-
-var uppy = new Uppy.Core({wait: false})
-var files = uppy
-  .use(Uppy.DragDrop, {target: 'body'})
-  .use(Uppy.Tus10, {endpoint: 'http://master.tus.io:8080/files/'})
-  .run()
-```
-
-Add CSS [uppy.min.css](https://unpkg.com/uppy/dist/uppy.min.css), either to `head` of your HTML or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
+Add CSS [uppy.min.css](https://unpkg.com/uppy/dist/uppy.min.css), either to `<head>` of your HTML page or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
 Give Uppy a spin [on RequireBin](http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105).
 
