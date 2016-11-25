@@ -32,13 +32,17 @@
 </section>
 
 <section id="example" class="IndexExample">
-  <h2 class="IndexSection-title">Quick Example</h2>
+  <h2 class="IndexSection-title">Demo</h2>
 
-  <div class="IndexExample-block"><%- partial('partials/frontpage-code-sample') %></div>
+  <div class="IndexExample-block">
+    <video class="IndexExample-video"
+           src="/images/uppy-demo.mp4"
+           autoplay loop muted></video>
+  </div>
 
-  <div class="sign">&raquo;</div>
-
-  <div class="IndexExample-block"><img src="/images/uppy-dragdrop-screenshot.png"></div>
+  <div class="IndexExample-block">
+    <%- partial('partials/frontpage-code-sample') %>
+  </div>
 
   <a class="GetStartedBtn" href="/guide/index.html">Get Started</a>
 </section>

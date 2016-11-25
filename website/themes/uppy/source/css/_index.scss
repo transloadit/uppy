@@ -165,7 +165,7 @@
   transition: all .3s ease;
   background-color: $color-primary;
   color: $color-white;
-  margin-top: 3em;
+  margin-top: 1.2em;
   margin-bottom: 2em;
 
   &:hover { @include zoom; }
@@ -210,14 +210,14 @@
 
 .IndexSection-title {
   font-size: 25px;
-  margin-bottom: 1.5em;
+  margin-bottom: 0.7em;
 }
 
 .IndexExample-block {
-  padding: 7px;
+  // padding: 7px;
   text-align: left;
-  background-color: $color-codebg;
-  border-radius: $size-radius;
+  // background-color: $color-codebg;
+  // border-radius: $size-radius;
   overflow: hidden;
   max-width: 500px;
   margin: auto;
@@ -225,11 +225,15 @@
 
   @media #{$screen-medium} {
     max-width: 100%;
-    width: 43%;
+    width: 47%;
     display: inline-block;
     vertical-align: middle;
-    height: 250px;
+    // height: 250px;
   }
+}
+
+.IndexExample-video {
+  max-width: 100%;
 }
 
 .IndexExample-block img {
