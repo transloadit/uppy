@@ -49,29 +49,21 @@ Ideas that will be planned and find their way into a release at one point
 
 To be released: December 23, 2016.
 
-- [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28)
+- [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28) (@arturi, @kvz)
 - [ ] dashboard: “list” view in addition to current “grid” view (@arturi)
-<<<<<<< HEAD
 - [ ] core: i18n for plugins as strings in options (@arturi)
-=======
-- [ ] core: i18n for plugins as strings in options (@arturi) 
->>>>>>> master
 - [ ] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
+- [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
 
 ## 0.12.0
 
 To be released: November 25, 2016.
 Theme: Responsive. Cancel. Feedback. ES6 Server
 
-- [ ] meta: Write 0.12 release blog post (@arturi)
+- [ ] meta: write 0.12 release blog post (@arturi)
 - [ ] core: figure out import/require for core and plugins (@arturi)
-- [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
 - [ ] dashboard: more icons for file types? (@arturi)
-<<<<<<< HEAD
 - [x] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
-=======
-- [ ] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
->>>>>>> master
 - [ ] server: add pre-commit and lint-staged (@arturi)
 - [ ] server: re-do build setup: building at `deploy` and `prepublish` when typing `npm run release:patch` 0.0.1 -> 0.0.2 (@ifedapoolarewaju)
 - [ ] server: re-do build setup: es6 `src` -> es5 `lib` (use plugin packs from Uppy)
@@ -84,14 +76,9 @@ Theme: Responsive. Cancel. Feedback. ES6 Server
 - [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?)
 - [x] core: allow usage without `new`, start renaming `Core()` to `Uppy()` in examples (@arturi)
 - [x] core: api — consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab, come up with follow up questions (@arturi)
-<<<<<<< HEAD
 - [x] dashboard: local mode — no acquire plugins / external services, just DnD — ActionBrowseTagline (@arturi)
 - [x] dashboard: only show pause/resume when tus is used (@arturi)
 - [x] dashboard: cancel uploads button for multipart (@arturi)
-=======
-- [x] dashboard: local mode — no acquire plugins / external services, just DnD (@arturi)
-- [x] dashboard: only show pause/resume when tus is used, something else for multipart (@arturi)
->>>>>>> master
 - [x] dashboard: responsive design — stage 1 (@arturi)
 - [x] meta: write 0.11 release blog post (@arturi)
 
