@@ -16,11 +16,11 @@ import en_US from '../locales/en_US'
 export default class Translator {
   constructor (opts) {
     const defaultOptions = {
-      locales: en_US
+      locale: en_US
     }
     this.opts = Object.assign({}, defaultOptions, opts)
-    this.locales = this.opts.locales
-    this.locales.strings = Object.assign({}, en_US.strings, this.opts.locales.strings)
+    this.locale = this.opts.locale
+    this.locale.strings = Object.assign({}, en_US.strings, this.opts.locale.strings)
   }
 
 /**
@@ -66,10 +66,10 @@ export default class Translator {
  */
   translate (key, options) {
     if (options && options.smart_count) {
-      var plural = this.locales.pluralize(options.smart_count)
-      return this.interpolate(this.opts.locales.strings[key][plural], options)
+      var plural = this.locale.pluralize(options.smart_count)
+      return this.interpolate(this.opts.locale.strings[key][plural], options)
     }
 
-    return this.interpolate(this.opts.locales.strings[key], options)
+    return this.interpolate(this.opts.locale.strings[key], options)
   }
 }

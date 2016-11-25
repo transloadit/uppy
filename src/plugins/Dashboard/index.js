@@ -39,6 +39,7 @@ export default class DashboardUI extends Plugin {
     this.handleDrop = this.handleDrop.bind(this)
     this.pauseAll = this.pauseAll.bind(this)
     this.resumeAll = this.resumeAll.bind(this)
+    this.cancelAll = this.cancelAll.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -168,14 +169,14 @@ export default class DashboardUI extends Plugin {
       })
     })
 
-    bus.on('core:success', (uploadedCount) => {
-      bus.emit(
-        'informer',
-        `${this.core.i18n('files', {'smart_count': uploadedCount})} successfully uploaded, Sir!`,
-        'info',
-        6000
-      )
-    })
+    // bus.on('core:success', (uploadedCount) => {
+    //   bus.emit(
+    //     'informer',
+    //     `${this.core.i18n('files', {'smart_count': uploadedCount})} successfully uploaded, Sir!`,
+    //     'info',
+    //     6000
+    //   )
+    // })
   }
 
   handleDrop (files) {
@@ -189,6 +190,10 @@ export default class DashboardUI extends Plugin {
         data: file
       })
     })
+  }
+
+  cancelAll () {
+    this.core.bus.emit('core:cancel-all')
   }
 
   pauseAll () {
@@ -244,15 +249,12 @@ export default class DashboardUI extends Plugin {
     const totalETA = prettyETA(this.getTotalETA(inProgressFilesArray))
 
     const isAllComplete = state.totalProgress === 100
-    const isAllPaused = inProgressFiles.length === 0 && !isAllComplete
+    const isAllPaused = inProgressFiles.length === 0 && !isAllComplete && uploadStartedFiles.length > 0
+    const isUploadStarted = uploadStartedFiles.length > 0
 
     const acquirers = state.modal.targets.filter((target) => {
       return target.type === 'acquirer'
     })
-
-    // let activeAcquirer = acquirers.filter((acquirer) => {
-    //   return !acquirer.isHidden
-    // })[0]
 
     const progressindicators = state.modal.targets.filter((target) => {
       return target.type === 'progressindicator'
@@ -274,6 +276,11 @@ export default class DashboardUI extends Plugin {
       this.core.emitter.emit('core:upload-pause', fileID)
     }
 
+    const cancelUpload = (fileID) => {
+      this.core.emitter.emit('core:upload-cancel', fileID)
+      this.core.emitter.emit('core:file-remove', fileID)
+    }
+
     const showFileCard = (fileID) => {
       this.core.emitter.emit('dashboard:file-card', fileID)
     }
@@ -293,7 +300,8 @@ export default class DashboardUI extends Plugin {
       newFiles: newFiles,
       files: files,
       totalFileCount: Object.keys(files).length,
-      uploadStartedFiles: uploadStartedFiles,
+      isUploadStarted: isUploadStarted,
+      inProgress: uploadStartedFiles.length,
       completeFiles: completeFiles,
       inProgressFiles: inProgressFiles,
       totalSpeed: totalSpeed,
@@ -320,12 +328,15 @@ export default class DashboardUI extends Plugin {
       i18n: this.core.i18n,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
+      cancelAll: this.cancelAll,
       addFile: addFile,
       removeFile: removeFile,
       info: info,
       metaFields: state.metaFields,
+      resumableUploads: this.core.getState().capabilities.resumableUploads || false,
       startUpload: startUpload,
       pauseUpload: pauseUpload,
+      cancelUpload: cancelUpload,
       fileCardFor: state.modal.fileCardFor,
       showFileCard: showFileCard,
       fileCardDone: fileCardDone

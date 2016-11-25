@@ -6,13 +6,13 @@ import html from '../core/html'
  * Dummy
  *
  */
-export default class Dummy extends Plugin {
-  constructor (core, opts, props) {
+class Dummy extends Plugin {
+  constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
     this.id = 'Dummy'
     this.title = 'Mr. Plugin'
-    this.props = props
+    // this.props = props
 
     // set default options
     const defaultOptions = {}
@@ -40,7 +40,7 @@ export default class Dummy extends Plugin {
     this.props.addFile(file)
   }
 
-  render () {
+  render (state) {
     const bla = html`<h2>this is strange 2</h2>`
     return html`
       <div class="wow-this-works">
@@ -49,50 +49,26 @@ export default class Dummy extends Plugin {
         }} />
         ${this.strange}
         ${bla}
+        ${state.dummy.text}
       </div>
     `
   }
 
-  // focus () {
-  //   return
-  //   console.log(`${this.target} .UppyDummy-firstInput`)
-  //
-  //   const firstInput = document.querySelector(`${this.target} .UppyDummy-firstInput`)
-  //
-  //   // only works for the first time if wrapped in setTimeout for some reason
-  //   // firstInput.focus()
-  //   setTimeout(function () {
-  //     firstInput.focus()
-  //   }, 10)
-  //
-  //   setTimeout(() => {
-  //     this.core.emit('informer', 'Hello! I’m a test Informer message', 'info', 4500)
-  //     this.addFakeFileJustToTest()
-  //   }, 1000)
-  // }
-
   install () {
+    this.core.setState({dummy: {text: '123'}})
+
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)
 
-    // function workerFunc () {
-    //   self.addEventListener('message', (e) => {
-    //     const file = e.data.file
-    //     const reader = new FileReaderSync()
-    //     const dataURL = reader.readAsDataURL(file)
-    //     postMessage({file: dataURL})
-    //   })
-    // }
-    //
-    // const worker = createInlineWorker(workerFunc)
-    // const testFileBlob = new Blob(
-    //   ['data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='],
-    //   {type: 'image/svg+xml'}
-    // )
-    // worker.postMessage({file: testFileBlob})
-    // worker.addEventListener('message', (e) => {
-    //   console.log(e)
-    // })
+    setTimeout(() => {
+      this.core.setState({dummy: {text: '!!!'}})
+    }, 2000)
+  }
+}
+
+export default function (core, opts) {
+  if (!(this instanceof Dummy)) {
+    return new Dummy(core, opts)
   }
 }

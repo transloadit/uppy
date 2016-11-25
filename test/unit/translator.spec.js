@@ -4,7 +4,7 @@ import russian from '../../src/locales/ru_RU.js'
 import english from '../../src/locales/en_US.js'
 
 test('translation', function (t) {
-  const core = new Core({locales: russian})
+  const core = new Core({locale: russian})
 
   t.equal(
     core.translator.translate('chooseFile'),
@@ -16,7 +16,7 @@ test('translation', function (t) {
 })
 
 test('interpolation', function (t) {
-  const core = new Core({locales: english})
+  const core = new Core({locale: english})
 
   t.equal(
     core.translator.translate('youHaveChosen', {'fileName': 'img.jpg'}),
@@ -28,7 +28,7 @@ test('interpolation', function (t) {
 })
 
 test('pluralization', function (t) {
-  const core = new Core({locales: russian})
+  const core = new Core({locale: russian})
 
   t.equal(
     core.translator.translate('filesChosen', {'smart_count': '18'}),

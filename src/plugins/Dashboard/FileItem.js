@@ -34,7 +34,8 @@ export default function fileItem (props) {
   return html`<li class="UppyDashboardItem
                         ${uploadInProgress ? 'is-inprogress' : ''}
                         ${isUploaded ? 'is-complete' : ''}
-                        ${isPaused ? 'is-paused' : ''}"
+                        ${isPaused ? 'is-paused' : ''}
+                        ${props.resumableUploads ? 'is-resumable' : ''}"
                   id="uppy_${file.id}"
                   title="${file.meta.name}">
       <div class="UppyDashboardItem-preview">
@@ -46,10 +47,19 @@ export default function fileItem (props) {
           <button class="UppyDashboardItem-progressBtn"
                   title="${isUploaded
                           ? 'upload complete'
-                          : file.isPaused ? 'resume upload' : 'pause upload'}"
+                          : props.resumableUploads
+                            ? file.isPaused
+                              ? 'resume upload'
+                              : 'pause upload'
+                            : 'cancel upload'
+                        }"
                   onclick=${(ev) => {
                     if (isUploaded) return
-                    props.pauseUpload(file.id)
+                    if (props.resumableUploads) {
+                      props.pauseUpload(file.id)
+                    } else {
+                      props.cancelUpload(file.id)
+                    }
                   }}>
             ${FileItemProgress({
               progress: file.progress.percentage,
@@ -58,8 +68,8 @@ export default function fileItem (props) {
           </button>
           ${props.showProgressDetails
             ? html`<div class="UppyDashboardItem-progressInfo"
-                        title="${props.i18n('localDisk')}"
-                        aria-label="${props.i18n('localDisk')}">
+                        title="${props.i18n('fileProgress')}"
+                        aria-label="${props.i18n('fileProgress')}">
                 ${!file.isPaused && !isUploaded
                   ? html`<span>${prettyETA(getETA(file.progress))} ・ ↑ ${prettyBytes(getSpeed(file.progress))}/s</span>`
                   : null

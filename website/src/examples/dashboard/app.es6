@@ -1,10 +1,11 @@
-import { Core,
-         Dashboard,
-         GoogleDrive,
-         Webcam,
-         Tus10,
-         MetaData,
-         Informer } from '../../../../src/index.js'
+import Uppy from '../../../../src/core'
+import Dashboard from '../../../../src/plugins/Dashboard'
+import GoogleDrive from '../../../../src/plugins/GoogleDrive'
+import Webcam from '../../../../src/plugins/Webcam'
+import Tus10 from '../../../../src/plugins/Tus10'
+import MetaData from '../../../../src/plugins/MetaData'
+import Informer from '../../../../src/plugins/Informer'
+
 import { UPPY_SERVER } from '../env'
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
@@ -18,7 +19,7 @@ function uppyInit () {
     dashboardElParent.removeChild(dashboardEl)
   }
 
-  const uppy = new Core({debug: true, autoProceed: opts.autoProceed})
+  const uppy = Uppy({debug: true, autoProceed: opts.autoProceed})
   uppy.use(Dashboard, {
     trigger: '.UppyModalOpenerBtn',
     inline: opts.DashboardInline,

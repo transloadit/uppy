@@ -1,22 +1,21 @@
 import Utils from '../core/Utils'
 import Translator from '../core/Translator'
 import ee from 'namespace-emitter'
-// import deepFreeze from 'deep-freeze-strict'
 import UppySocket from './UppySocket'
 import en_US from '../locales/en_US'
-// import throttle from 'throttle-debounce/throttle'
+// import deepFreeze from 'deep-freeze-strict'
 
 /**
  * Main Uppy core
  *
  * @param {object} opts general options, like locales, to show modal or not to show
  */
-export default class Core {
+class Uppy {
   constructor (opts) {
     // set default options
     const defaultOptions = {
-      // load English as the default locales
-      locales: en_US,
+      // load English as the default locale
+      locale: en_US,
       autoProceed: true,
       debug: false
     }
@@ -24,16 +23,14 @@ export default class Core {
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    // Dictates in what order different plugin types are ran:
-    this.types = [ 'presetter', 'orchestrator', 'progressindicator',
-                    'acquirer', 'modifier', 'uploader', 'presenter', 'debugger']
-
-    this.type = 'core'
+    // // Dictates in what order different plugin types are ran:
+    // this.types = [ 'presetter', 'orchestrator', 'progressindicator',
+    //                 'acquirer', 'modifier', 'uploader', 'presenter', 'debugger']
 
     // Container for different types of plugins
     this.plugins = {}
 
-    this.translator = new Translator({locales: this.opts.locales})
+    this.translator = new Translator({locale: this.opts.locale})
     this.i18n = this.translator.translate.bind(this.translator)
     this.getState = this.getState.bind(this)
     this.updateMeta = this.updateMeta.bind(this)
@@ -51,8 +48,8 @@ export default class Core {
       totalProgress: 0
     }
 
+    // for debugging and testing
     if (this.opts.debug) {
-      // for debugging and testing
       global.UppyState = this.state
       global.uppyLog = ''
       global.UppyAddFile = this.addFile.bind(this)
@@ -61,7 +58,7 @@ export default class Core {
   }
 
   /**
-   * Iterate on all plugins and run `update` on them. Called each time when state changes
+   * Iterate on all plugins and run `update` on them. Called each time state changes
    *
    */
   updateAll (state) {
@@ -83,9 +80,6 @@ export default class Core {
 
     this.state = newState
     this.updateAll(this.state)
-
-    // this.log('Updating state with: ')
-    // this.log(newState)
   }
 
   /**
@@ -93,6 +87,7 @@ export default class Core {
    *
    */
   getState () {
+    // use deepFreeze for debugging
     // return deepFreeze(this.state)
     return this.state
   }
@@ -160,6 +155,7 @@ export default class Core {
     const updatedFiles = Object.assign({}, this.getState().files)
     delete updatedFiles[fileID]
     this.setState({files: updatedFiles})
+    this.log(`Removed file: ${fileID}`)
   }
 
   addThumbnail (fileID) {
@@ -250,6 +246,13 @@ export default class Core {
       this.removeFile(fileID)
     })
 
+    this.on('core:cancel-all', () => {
+      const files = this.getState().files
+      Object.keys(files).forEach((file) => {
+        this.removeFile(files[file].id)
+      })
+    })
+
     this.on('core:upload-started', (fileID, upload) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID],
@@ -332,17 +335,18 @@ export default class Core {
  */
   use (Plugin, opts) {
     // Prepare props to pass to plugins
-    const props = {
-      getState: this.getState.bind(this),
-      setState: this.setState.bind(this),
-      updateMeta: this.updateMeta.bind(this),
-      addFile: this.addFile.bind(this),
-      i18n: this.i18n.bind(this),
-      bus: this.ee,
-      log: this.log.bind(this)
-    }
+    // const props = {
+    //   getState: this.getState.bind(this),
+    //   setState: this.setState.bind(this),
+    //   updateMeta: this.updateMeta.bind(this),
+    //   addFile: this.addFile.bind(this),
+    //   i18n: this.i18n.bind(this),
+    //   bus: this.ee,
+    //   log: this.log.bind(this)
+    // }
+
     // Instantiate
-    const plugin = new Plugin(this, opts, props)
+    const plugin = new Plugin(this, opts)
     const pluginName = plugin.id
     this.plugins[plugin.type] = this.plugins[plugin.type] || []
 
@@ -366,6 +370,7 @@ export default class Core {
     }
 
     this.plugins[plugin.type].push(plugin)
+    plugin.install()
 
     return this
   }
@@ -428,26 +433,20 @@ export default class Core {
     return this.socket
   }
 
-  installAll () {
-    Object.keys(this.plugins).forEach((pluginType) => {
-      this.plugins[pluginType].forEach((plugin) => {
-        plugin.install()
-      })
-    })
-  }
+  // installAll () {
+  //   Object.keys(this.plugins).forEach((pluginType) => {
+  //     this.plugins[pluginType].forEach((plugin) => {
+  //       plugin.install(this)
+  //     })
+  //   })
+  // }
 
 /**
  * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
  *
- * (In the past was used to run a waterfall of runType plugin packs, like so:
- * All preseters(data) --> All acquirers(data) --> All uploaders(data) --> done)
  */
   run () {
     this.log('Core is run, initializing actions, installing plugins...')
-
-    // setInterval(() => {
-    //   this.updateAll(this.state)
-    // }, 1000)
 
     this.actions()
 
@@ -457,8 +456,14 @@ export default class Core {
     // }
 
     // Install all plugins
-    this.installAll()
+    // this.installAll()
 
     return
+  }
+}
+
+export default function (opts) {
+  if (!(this instanceof Uppy)) {
+    return new Uppy(opts)
   }
 }

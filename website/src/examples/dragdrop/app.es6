@@ -6,7 +6,7 @@ import Tus10 from '../../../../src/plugins/Tus10.js'
 const uppyOne = new Uppy({debug: true})
 uppyOne
   .use(DragDrop, {target: '.UppyDragDrop-One'})
-  .use(Tus10, {endpoint: '//tusd.tus.io/files/'})
+  .use(Tus10, {endpoint: '//master.tus.io/files/'})
   .use(ProgressBar, {target: '.UppyDragDrop-One-Progress'})
   .run()
 

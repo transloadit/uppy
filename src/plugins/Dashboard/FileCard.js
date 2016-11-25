@@ -61,7 +61,11 @@ export default function fileCard (props) {
         </div>`
       : null
     }
-    <button class="UppyButton--circular UppyButton--blue UppyButton--sizeM UppyDashboardFileCard-done" type="button"
-            title="Finish editing file" onclick=${() => props.done(meta, file.id)}>${checkIcon()}</button>
+    <div class="UppyDashboard-actions">
+      <button class="UppyButton--circular UppyButton--blue UppyButton--sizeM UppyDashboardFileCard-done"
+              type="button"
+              title="Finish editing file"
+              onclick=${() => props.done(meta, file.id)}>${checkIcon()}</button>
+    </div>
     </div>`
 }

@@ -3,7 +3,7 @@ import FileList from './FileList'
 import Tabs from './Tabs'
 import FileCard from './FileCard'
 import UploadBtn from './UploadBtn'
-import ProgressCircle from './ProgressCircle'
+// import ProgressCircle from './ProgressCircle'
 import StatusBar from './StatusBar'
 import { isTouchDevice, toArray } from '../../core/Utils'
 import { closeIcon } from './icons'
@@ -57,18 +57,20 @@ export default function Dashboard (props) {
           role="dialog"
           onpaste=${handlePaste}>
 
+    <button class="UppyDashboard-close"
+            aria-label="${props.i18n('closeModal')}"
+            title="${props.i18n('closeModal')}"
+            onclick=${props.hideModal}>${closeIcon()}</button>
+
     <div class="UppyDashboard-overlay"
          onclick=${props.hideModal}>
-      <button class="UppyDashboard-close"
-              aria-label="${props.i18n('closeModal')}"
-              title="${props.i18n('closeModal')}"
-              onclick=${props.hideModal}>${closeIcon()}</button>
     </div>
 
     <div class="UppyDashboard-inner" tabindex="0">
       <div class="UppyDashboard-innerWrap">
 
         ${Tabs({
+          files: props.files,
           handleInputChange: handleInputChange,
           acquirers: props.acquirers,
           container: props.container,
@@ -86,42 +88,40 @@ export default function Dashboard (props) {
           i18n: props.i18n
         })}
 
-        ${FileList({
-          files: props.files,
-          showFileCard: props.showFileCard,
-          showProgressDetails: props.showProgressDetails,
-          totalProgress: props.totalProgress,
-          totalFileCount: props.totalFileCount,
-          info: props.info,
-          i18n: props.i18n,
-          log: props.log,
-          removeFile: props.removeFile,
-          pauseAll: props.pauseAll,
-          resumeAll: props.resumeAll,
-          pauseUpload: props.pauseUpload,
-          startUpload: props.startUpload
-        })}
+        <div class="UppyDashboard-filesContainer">
 
-        <div class="UppyDashboard-actions">
-          ${!props.autoProceed && props.newFiles.length > 0
-            ? UploadBtn({
-              i18n: props.i18n,
-              startUpload: props.startUpload,
-              newFileCount: props.newFiles.length
-            })
-            : null
-          }
+          ${FileList({
+            acquirers: props.acquirers,
+            files: props.files,
+            handleInputChange: handleInputChange,
+            container: props.container,
+            showFileCard: props.showFileCard,
+            showProgressDetails: props.showProgressDetails,
+            totalProgress: props.totalProgress,
+            totalFileCount: props.totalFileCount,
+            info: props.info,
+            i18n: props.i18n,
+            log: props.log,
+            removeFile: props.removeFile,
+            pauseAll: props.pauseAll,
+            resumeAll: props.resumeAll,
+            pauseUpload: props.pauseUpload,
+            startUpload: props.startUpload,
+            cancelUpload: props.cancelUpload,
+            resumableUploads: props.resumableUploads
+          })}
 
-          ${false && props.uploadStartedFiles.length > 0
-            ? ProgressCircle({
-              totalProgress: props.totalProgress,
-              isAllPaused: props.isAllPaused,
-              isAllComplete: props.isAllComplete,
-              pauseAll: props.pauseAll,
-              resumeAll: props.resumeAll
-            })
-            : null
-          }
+          <div class="UppyDashboard-actions">
+            ${!props.autoProceed && props.newFiles.length > 0
+              ? UploadBtn({
+                i18n: props.i18n,
+                startUpload: props.startUpload,
+                newFileCount: props.newFiles.length
+              })
+              : null
+            }
+          </div>
+
         </div>
 
         <div class="UppyDashboardContent-panel"
@@ -138,20 +138,25 @@ export default function Dashboard (props) {
         </div>
 
         <div class="UppyDashboard-progressindicators">
-          ${props.uploadStartedFiles.length > 0 && !props.isAllComplete
-            ? StatusBar({
-              totalProgress: props.totalProgress,
-              isAllComplete: props.isAllComplete,
-              isAllPaused: props.isAllPaused,
-              pauseAll: props.pauseAll,
-              resumeAll: props.resumeAll,
-              complete: props.completeFiles.length,
-              inProgress: props.uploadStartedFiles.length,
-              totalSpeed: props.totalSpeed,
-              totalETA: props.totalETA
-            })
-            : null
-          }
+          ${StatusBar({
+            totalProgress: props.totalProgress,
+            totalFileCount: props.totalFileCount,
+            uploadStartedFiles: props.uploadStartedFiles,
+            isAllComplete: props.isAllComplete,
+            isAllPaused: props.isAllPaused,
+            isUploadStarted: props.isUploadStarted,
+            pauseAll: props.pauseAll,
+            resumeAll: props.resumeAll,
+            cancelAll: props.cancelAll,
+            complete: props.completeFiles.length,
+            inProgress: props.inProgress,
+            totalSpeed: props.totalSpeed,
+            totalETA: props.totalETA,
+            startUpload: props.startUpload,
+            newFileCount: props.newFiles.length,
+            i18n: props.i18n,
+            resumableUploads: props.resumableUploads
+          })}
 
           ${props.progressindicators.map((target) => {
             return target.render(props.state)

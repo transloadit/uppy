@@ -82,6 +82,19 @@ export default class Multipart extends Plugin {
 
       xhr.open('POST', this.opts.endpoint, true)
       xhr.send(formPost)
+
+      this.core.emitter.on('core:upload-cancel', (fileID) => {
+        if (fileID === file.id) {
+          xhr.abort()
+        }
+      })
+
+      this.core.emitter.on('core:cancel-all', () => {
+        // const files = this.core.getState().files
+        // if (!files[file.id]) return
+        xhr.abort()
+      })
+
       this.core.emitter.emit('core:upload-started', file.id)
     })
   }
