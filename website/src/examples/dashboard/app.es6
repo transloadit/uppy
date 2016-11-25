@@ -30,7 +30,7 @@ function uppyInit () {
     uppy.use(Webcam, {target: Dashboard})
   }
 
-  uppy.use(Tus10, {endpoint: '//tusd.tus.io/files/', resume: true})
+  uppy.use(Tus10, {endpoint: '//master.tus.io/files/', resume: true})
   uppy.use(Informer, {target: Dashboard})
   uppy.use(MetaData, {
     fields: [

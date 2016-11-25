@@ -9,7 +9,7 @@
 <script>
   var uppy = new Uppy.Core({locale: Uppy.locales.ru_RU, debug: true});
   uppy.use(Uppy.DragDrop, {target: '.UppyDragDrop'});
-  uppy.use(Uppy.Tus10, {endpoint: 'http://master.tus.io:3020/files/'});
+  uppy.use(Uppy.Tus10, {endpoint: '//master.tus.io/files/'});
   uppy.run();
 
   console.log('--> Uppy pre-built version with Tus10, DragDrop & Russian language pack has loaded');
