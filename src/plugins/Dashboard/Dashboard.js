@@ -154,7 +154,8 @@ export default function Dashboard (props) {
             totalETA: props.totalETA,
             startUpload: props.startUpload,
             newFileCount: props.newFiles.length,
-            i18n: props.i18n
+            i18n: props.i18n,
+            resumableUploads: props.resumableUploads
           })}
 
           ${props.progressindicators.map((target) => {
