@@ -448,7 +448,7 @@ class Uppy {
  *
  */
   run () {
-    this.log('Core is run, initializing actions, installing plugins...')
+    this.log('Core is run, initializing actions...')
 
     this.actions()
 
