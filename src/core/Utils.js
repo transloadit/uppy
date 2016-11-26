@@ -1,4 +1,4 @@
-import mime from 'mime-types'
+// import mime from 'mime-types'
 // import pica from 'pica'
 
 /**
@@ -145,7 +145,8 @@ export function getFileType (file) {
   if (file.type) {
     return file.type
   }
-  return mime.lookup(file.name)
+  return ''
+  // return mime.lookup(file.name)
 }
 
 // returns [fileName, fileExt]
