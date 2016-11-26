@@ -64,11 +64,11 @@ export default class Webcam extends Plugin {
 
     this.webcam.start()
       .then((stream) => {
+        this.stream = stream
         this.updateState({
           // videoStream: stream,
           cameraReady: true
         })
-        this.stream = stream
       })
       .catch((err) => {
         this.updateState({
