@@ -44,7 +44,9 @@ class Uppy {
 
     this.state = {
       files: {},
-      capabilities: {},
+      capabilities: {
+        resumableUploads: false
+      },
       totalProgress: 0
     }
 
