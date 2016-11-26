@@ -54,7 +54,8 @@ To be released: December 23, 2016.
 - [ ] core: i18n for plugins as strings in options (@arturi)
 - [ ] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
 - [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
-- [ ] multipart: return upload result? options for that?
+- [ ] uploaders: return upload result in multipart? options for that?
+- [ ] dashboard: more icons for file types? (@arturi)
 
 ## 0.12.0
 
@@ -62,10 +63,10 @@ To be released: November 25, 2016.
 Theme: Responsive. Cancel. Feedback. ES6 Server
 
 - [ ] meta: write 0.12 release blog post (@arturi)
-- [ ] core: figure out import/require for core and plugins (@arturi)
-- [ ] dashboard: more icons for file types? (@arturi)
+- [x] core: figure out import/require for core and plugins — just don’t use spread for plugins (@arturi)
 - [x] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
-- [ ] server: add pre-commit and lint-staged (@arturi)
+- [x] meta: update Readme, update screenshot (@arturi)
+- [x] server: add pre-commit and lint-staged (@arturi)
 - [ ] server: re-do build setup: building at `deploy` and `prepublish` when typing `npm run release:patch` 0.0.1 -> 0.0.2 (@ifedapoolarewaju)
 - [ ] server: re-do build setup: es6 `src` -> es5 `lib` (use plugin packs from Uppy)
 - [ ] server: re-do build setup: `eslint --fix ./src` via http://standardjs.com (@ifedapoolarewaju)
@@ -74,7 +75,7 @@ Theme: Responsive. Cancel. Feedback. ES6 Server
 - [x] server: refacor: remove/reduce file redundancy (@ifedapoolarewaju)
 - [x] server: error handling: 404 and 401 error handler (@ifedapoolarewaju)
 - [x] server: bug fix: failing google drive (@ifedapoolarewaju)
-- [ ] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (do we need mount/unmount maybe?)
+- [x] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (@arturi)
 - [x] core: allow usage without `new`, start renaming `Core()` to `Uppy()` in examples (@arturi)
 - [x] core: api — consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab, come up with follow up questions (@arturi)
 - [x] dashboard: local mode — no acquire plugins / external services, just DnD — ActionBrowseTagline (@arturi)
