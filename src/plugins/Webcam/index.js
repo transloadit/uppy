@@ -52,24 +52,36 @@ export default class Webcam extends Plugin {
 
     // Camera controls
     this.start = this.start.bind(this)
+    this.stop = this.stop.bind(this)
     this.takeSnapshot = this.takeSnapshot.bind(this)
 
     this.webcam = new WebcamProvider(this.opts, this.params)
+    this.webcamActive = false
   }
 
   start () {
+    this.webcamActive = true
+
     this.webcam.start()
-    .then((stream) => {
-      this.updateState({
-        videoStream: stream,
-        cameraReady: true
+      .then((stream) => {
+        this.updateState({
+          // videoStream: stream,
+          cameraReady: true
+        })
+        this.stream = stream
       })
-    })
-    .catch((err) => {
-      this.updateState({
-        cameraError: err
+      .catch((err) => {
+        this.updateState({
+          cameraError: err
+        })
       })
-    })
+  }
+
+  stop () {
+    this.stream.getVideoTracks()[0].stop()
+    this.webcamActive = false
+    this.stream = null
+    this.streamSrc = null
   }
 
   takeSnapshot () {
@@ -93,29 +105,30 @@ export default class Webcam extends Plugin {
   }
 
   render (state) {
-    this.start()
+    if (!this.webcamActive) {
+      this.start()
+    }
 
     if (!state.webcam.cameraReady && !state.webcam.useTheFlash) {
       return PermissionsScreen(state.webcam)
     }
 
-    if (!this.stream) {
-      this.stream = state.webcam.videoStream ? URL.createObjectURL(state.webcam.videoStream) : null
+    if (!this.streamSrc) {
+      this.streamSrc = this.stream ? URL.createObjectURL(this.stream) : null
     }
-
-    // const stream = state.webcam.videoStream ? URL.createObjectURL(state.webcam.videoStream) : null
 
     return CameraScreen(extend(state.webcam, {
       onSnapshot: this.takeSnapshot,
-      focus: this.focus,
+      onFocus: this.focus,
+      onStop: this.stop,
       getSWFHTML: this.webcam.getSWFHTML,
-      src: this.stream
+      src: this.streamSrc
     }))
   }
 
   focus () {
     setTimeout(() => {
-      this.core.emitter.emit('informer', 'Smile!', 'info', 3500)
+      this.core.emitter.emit('informer', 'Smile!', 'info', 2000)
     }, 1000)
   }
 

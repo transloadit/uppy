@@ -2,18 +2,21 @@ import html from '../../core/html'
 import CameraIcon from './CameraIcon'
 
 export default (props) => {
+  const src = props.src || ''
   let video
 
   if (props.useTheFlash) {
     video = props.getSWFHTML()
   } else {
-    video = html`<video class="UppyWebcam-video" autoplay src="${props.src}"></video>`
+    video = html`<video class="UppyWebcam-video" autoplay src="${src}"></video>`
   }
 
   return html`
     <div class="UppyWebcam-container" onload=${(el) => {
-      props.focus()
+      props.onFocus()
       document.querySelector('.UppyWebcam-stopRecordBtn').focus()
+    }} onunload=${(el) => {
+      props.onStop()
     }}>
       <div class='UppyWebcam-videoContainer'>
         ${video}
