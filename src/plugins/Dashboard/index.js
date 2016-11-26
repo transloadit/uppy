@@ -294,6 +294,8 @@ export default class DashboardUI extends Plugin {
       this.core.emitter.emit('informer', text, type, duration)
     }
 
+    const resumableUploads = this.core.getState().capabilities.resumableUploads || false
+
     return Dashboard({
       state: state,
       modal: state.modal,
@@ -333,7 +335,7 @@ export default class DashboardUI extends Plugin {
       removeFile: removeFile,
       info: info,
       metaFields: state.metaFields,
-      resumableUploads: this.core.getState().capabilities.resumableUploads || false,
+      resumableUploads: resumableUploads,
       startUpload: startUpload,
       pauseUpload: pauseUpload,
       cancelUpload: cancelUpload,
