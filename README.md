@@ -35,15 +35,15 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 
 ### Installing from NPM
 
-``` bash
+```sh
 $ npm install uppy --save
 ```
 
 Bundle with Browserify or Webpack:
 
-``` javascript
+```js
 import Uppy from 'uppy/lib/core'
-import DnD from 'uppy/lib/plugins/DragDrop'
+import DragDrop from 'uppy/lib/plugins/DragDrop'
 import Tus10 from 'uppy/lib/plugins/Tus10'
 
 const uppy = Uppy()
@@ -63,18 +63,18 @@ But if you like, you can also use a pre-built bundle, for example from [unpkg CD
 
 1\. Add a script to your the bottom of your HTML’s `<body>`:
 
-``` html
+```html
 <script src="https://unpkg.com/uppy/dist/uppy.min.js"></script>
 ```
 
 2\. Add CSS to your HTML’s `<head>`:
-``` html
+```html
 <link href="https://unpkg.com/uppy/dist/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize:
 
-``` javascript
+```js
 <script>
   var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true})
   uppy.use(Uppy.DragDrop, {target: '.UppyDragDrop'})
@@ -89,7 +89,7 @@ Uppy exposes events that you can subscribe to in your app:
 
 ### Event `core:upload-progress` when file upload progress is available
 
-``` javascript
+```js
 uppy.on('core:upload-progress', (data) => {
   console.log(data.id, data.bytesUploaded, data.bytesTotal)
 })
@@ -97,7 +97,7 @@ uppy.on('core:upload-progress', (data) => {
 
 ### Event `core:upload-success` when one upload is complete
 
-``` javascript
+```js
 uppy.on('core:upload-success', (fileId, url) => {
   console.log(url)
   var img = new Image()
@@ -110,7 +110,7 @@ uppy.on('core:upload-success', (fileId, url) => {
 
 ### Event `core:success` when all uploads are complete
 
-``` javascript
+```js
 uppy.on('core:success', (fileCount) => {
   console.log(fileCount)
 })
