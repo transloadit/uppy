@@ -45,6 +45,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy-server: Make uppy server standalone CLI (@hedgerh)
 - [ ] core: try file-type module for setting correct mime-types if needed, example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957
 - [ ] uppy/uppy-server: review webscoket connection flow during remote upload. In a situation where a client has a slow internet connection, the uppy-server may complete an upload before the client connects to the websocket, hence no feedback would be sent to the client and the client remains unaware of the upload status.
+- [ ] uppy-server: pluggable custom providers; Maybe we use a config file or make it similar to how uppy adds plugins (@ifedapoolarewaju)
 
 ## 0.13.0
 
