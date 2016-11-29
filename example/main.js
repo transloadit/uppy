@@ -2,7 +2,7 @@ import Uppy from '../src/core/index.js'
 // import Dummy from '../src/plugins/Dummy.js'
 import Dashboard from '../src/plugins/Dashboard'
 // import GoogleDrive from '../src/plugins/GoogleDrive'
-// import Webcam from '../src/plugins/Webcam'
+import Webcam from '../src/plugins/Webcam'
 import Tus10 from '../src/plugins/Tus10'
 import MetaData from '../src/plugins/MetaData'
 import Informer from '../src/plugins/Informer'
@@ -22,7 +22,7 @@ const uppy = Uppy({debug: true, autoProceed: false})
   // .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   // .use(Dummy, {target: Dashboard})
   // .use(dummy)
-  // .use(Webcam, {target: Dashboard})
+  .use(Webcam, {target: Dashboard})
   // .use(Multipart, {endpoint: '//api2.transloadit.com'})
   .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
   // .use(Multipart)
