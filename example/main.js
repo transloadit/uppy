@@ -1,4 +1,4 @@
-import Uppy from '../src/core/index.js'
+// import Uppy from '../src/core'
 // import Dummy from '../src/plugins/Dummy.js'
 import Dashboard from '../src/plugins/Dashboard'
 // import GoogleDrive from '../src/plugins/GoogleDrive'
@@ -7,6 +7,14 @@ import Tus10 from '../src/plugins/Tus10'
 import MetaData from '../src/plugins/MetaData'
 import Informer from '../src/plugins/Informer'
 // import Multipart from '../src/plugins/Multipart'
+
+const Uppy = require('../src/core')
+// const Dashboard = require('../src/plugins/Dashboard')
+// const Webcam = require('../src/plugins/Webcam')
+// const Tus10 = require('../src/plugins/Tus10')
+// const MetaData = require('../src/plugins/MetaData')
+// const Informer = require('../src/plugins/Informer')
+// const Dummy = require('../src/plugins/Dummy')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
 const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
