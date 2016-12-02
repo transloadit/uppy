@@ -464,6 +464,12 @@ class Uppy {
   }
 }
 
+// module.exports = function (opts) {
+//   if (!(this instanceof Uppy)) {
+//     return new Uppy(opts)
+//   }
+// }
+
 export default function (opts) {
   if (!(this instanceof Uppy)) {
     return new Uppy(opts)
