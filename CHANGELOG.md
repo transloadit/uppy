@@ -54,11 +54,12 @@ To be released: December 23, 2016.
 
 - [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28) (@arturi, @kvz)
 - [ ] dashboard: “list” view in addition to current “grid” view (@arturi)
-- [ ] core: i18n for plugins as strings in options (@arturi)
+- [ ] dashboard: React component (@arturi)
+- [ ] dashboard: more icons for file types? (@arturi)
+- [ ] core: i18n for each plugin in options (@arturi)
 - [ ] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
 - [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
 - [ ] uploaders: return upload result in multipart? options for that?
-- [ ] dashboard: more icons for file types? (@arturi)
 
 ## 0.12.0
 
