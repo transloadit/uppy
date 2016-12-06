@@ -60,15 +60,16 @@ To be released: December 23, 2016.
 - [ ] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
 - [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
 - [ ] uploaders: return upload result in multipart? options for that?
+- [x] core: fix support for both ES6 module import and CommonJS requires with `add-module-exports` babel plugin (@arturi)
 
 ## 0.12.0
 
 To be released: November 25, 2016.
 Theme: Responsive. Cancel. Feedback. ES6 Server
 
-- [ ] meta: write 0.12 release blog post (@arturi)
+- [x] meta: write 0.12 release blog post (@arturi)
 - [x] core: figure out import/require for core and plugins — just don’t use spread for plugins (@arturi)
-- [x] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
+- [x] meta: create a demo video, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
 - [x] meta: update Readme, update screenshot (@arturi)
 - [x] server: add pre-commit and lint-staged (@arturi)
 - [x] server: re-do build setup: building at `deploy` and `prepublish` when typing `npm run release:patch` 0.0.1 -> 0.0.2 (@ifedapoolarewaju)
