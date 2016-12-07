@@ -140,6 +140,17 @@ export default class Tus10 extends Plugin {
         upload.start()
       })
 
+      this.core.emitter.on('core:retry-started', () => {
+        const files = this.core.getState().files
+        if (files[file.id].progress.uploadComplete ||
+          !files[file.id].progress.uploadStarted ||
+          files[file.id].isPaused
+            ) {
+          return
+        }
+        upload.start()
+      })
+
       upload.start()
       this.core.emitter.emit('core:upload-started', file.id, upload)
     })
@@ -261,6 +272,10 @@ export default class Tus10 extends Plugin {
       this.core.log('Tus is uploading...')
       const files = this.core.getState().files
       this.selectForUpload(files)
+    })
+
+    this.core.emitter.on('back-online', () => {
+      this.core.emitter.emit('core:retry-started')
     })
   }
 
