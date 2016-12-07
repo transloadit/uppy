@@ -373,11 +373,11 @@ export function prettyETA (seconds) {
 
   // Only display hours and minutes if they are greater than 0 but always
   // display minutes if hours is being displayed
-  const hoursStr = time.hours ? time.hours + 'h' : ''
-  const minutesStr = (time.hours || time.minutes) ? time.minutes + 'm' : ''
+  const hoursStr = time.hours ? time.hours + 'h ' : ''
+  const minutesStr = (time.hours || time.minutes) ? time.minutes + 'm ' : ''
   const secondsStr = time.seconds + 's'
 
-  return `${hoursStr} ${minutesStr} ${secondsStr}`
+  return `${hoursStr}${minutesStr}${secondsStr}`
 }
 
 export function makeCachingFunction () {
