@@ -16,7 +16,8 @@ export default class Tus10 extends Plugin {
     // set default options
     const defaultOptions = {
       resume: true,
-      allowPause: true
+      allowPause: true,
+      autoRetry: true
     }
 
     // merge default options with the ones set by user
@@ -274,9 +275,11 @@ export default class Tus10 extends Plugin {
       this.selectForUpload(files)
     })
 
-    this.core.emitter.on('back-online', () => {
-      this.core.emitter.emit('core:retry-started')
-    })
+    if (this.opts.autoRetry) {
+      this.core.emitter.on('back-online', () => {
+        this.core.emitter.emit('core:retry-started')
+      })
+    }
   }
 
   addResumableUploadsCapabilityFlag () {
