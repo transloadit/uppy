@@ -132,6 +132,13 @@
     border: 1px solid rgba($color-gray, 0.3);
   }
 
+  figure.wide {
+    @media #{$screen-large} {
+      max-width: 135%;
+      img { max-width: 135%; }
+    }
+  }
+
   a.button {
     font-size: .9em;
     color: #fff;
@@ -156,7 +163,10 @@
   }
 
   .post h1,
-  > h1 { margin: 0 0 0.7em; }
+  > h1 {
+    font-size: 1.6em;
+    margin: 0 0 0.7em;
+  }
 
   .post h2,
   > h2 {
@@ -209,6 +219,7 @@
   }
 
   .post li,
+  > ul li,
   > li {
     margin-bottom: 0.5em;
   }
