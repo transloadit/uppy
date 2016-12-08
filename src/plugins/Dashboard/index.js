@@ -19,9 +19,10 @@ export default class DashboardUI extends Plugin {
     const defaultOptions = {
       target: 'body',
       inline: false,
+      width: 750,
+      height: 550,
       semiTransparent: false,
       defaultTabIcon: defaultTabIcon(),
-      panelSelectorPrefix: 'UppyDashboardContent-panel',
       showProgressDetails: true
     }
 
@@ -40,6 +41,7 @@ export default class DashboardUI extends Plugin {
     this.pauseAll = this.pauseAll.bind(this)
     this.resumeAll = this.resumeAll.bind(this)
     this.cancelAll = this.cancelAll.bind(this)
+    this.updateDashboardElWidth = this.updateDashboardElWidth.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -169,6 +171,8 @@ export default class DashboardUI extends Plugin {
       })
     })
 
+    window.addEventListener('resize', (ev) => this.updateDashboardElWidth())
+
     // bus.on('core:success', (uploadedCount) => {
     //   bus.emit(
     //     'informer',
@@ -177,6 +181,17 @@ export default class DashboardUI extends Plugin {
     //     6000
     //   )
     // })
+  }
+
+  updateDashboardElWidth () {
+    const dashboardEl = document.querySelector('.UppyDashboard-inner')
+
+    const modal = this.core.getState().modal
+    this.core.setState({
+      modal: Object.assign({}, modal, {
+        containerWidth: dashboardEl.offsetWidth
+      })
+    })
   }
 
   handleDrop (files) {
@@ -318,7 +333,6 @@ export default class DashboardUI extends Plugin {
       id: this.id,
       container: this.opts.target,
       hideModal: this.hideModal,
-      panelSelectorPrefix: this.opts.panelSelectorPrefix,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
       semiTransparent: this.opts.semiTransparent,
@@ -341,7 +355,12 @@ export default class DashboardUI extends Plugin {
       cancelUpload: cancelUpload,
       fileCardFor: state.modal.fileCardFor,
       showFileCard: showFileCard,
-      fileCardDone: fileCardDone
+      fileCardDone: fileCardDone,
+      updateDashboardElWidth: this.updateDashboardElWidth,
+      maxWidth: this.opts.maxWidth,
+      maxHeight: this.opts.maxHeight,
+      currentWidth: state.modal.containerWidth,
+      isWide: state.modal.containerWidth > 400
     })
   }
 

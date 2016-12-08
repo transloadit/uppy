@@ -36,6 +36,7 @@
   overflow: hidden;
   z-index: $zIndex-3;
   outline: none;
+  border: 1px solid rgba($color-gray, 0.2);
 
   @media #{$screen-medium} {
     width: 750px;
@@ -48,11 +49,6 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  // min-height: 400px;
-  // border: 2px dashed;
-  // border-radius: 10px;
-  // border-color: lighten($color-gray, 15%);
-  // border-color: #E4E4E4;
   overflow: hidden;
 }
 
@@ -98,6 +94,7 @@
   .UppyIcon {
     width: 14px;
     height: 14px;
+
     @media #{$screen-medium} {
       width: 18px;
       height: 18px;
@@ -106,9 +103,8 @@
 }
 
 .UppyDashboardTabs {
-  min-height: 40px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 7px;
+  padding-bottom: 7px;
   border-bottom: 1px dashed lighten($color-gray, 15%);
 }
 
@@ -124,7 +120,6 @@
   margin: 0;
   padding: 0;
   text-align: center;
-  // margin-bottom: 8px;
   color: $color-asphalt-gray;
 }
 
@@ -144,7 +139,8 @@
 }
 
 .UppyDashboardTab {
-  width: 80px;
+  // width: 80px;
+  margin: 0 5px;
   display: inline-block;
   text-align: center;
 }
@@ -167,7 +163,7 @@
 
 .UppyDashboardTab-name {
   font-size: 9px;
-  margin-top: 6px;
+  margin-top: 5px;
   margin-bottom: 0;
   font-weight: normal;
 }
@@ -177,6 +173,11 @@
   width: 23px;
   height: 23px;
   vertical-align: middle;
+
+  .UppyDashboard--wide & {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .UppyDashboard-input {
@@ -209,7 +210,17 @@
 }
 
 .UppyDashboardContent-titleFile {
+  max-width: 200px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   text-decoration: underline;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: text-bottom;
+
+  .UppyDashboard--wide & {
+    max-width: 350px;
+  }
 }
 
 .UppyDashboardContent-back {
@@ -318,13 +329,6 @@
   bottom: 0;
 }
 
-.UppyDashboard-files--noFiles {
-  // border: 2px dashed;
-  // border-color: #E4E4E4;
-  // border-radius: 10px;
-  // margin: 0 15px 15px 15px;
-}
-
 .UppyDashboard.drag .UppyDashboard-innerWrap  {
   background-color: darken($color-white, 10%)
 }
@@ -342,6 +346,10 @@
   transform: translate(-50%, -50%);
   opacity: 0.7;
   transition: all 0.3s;
+
+  .UppyDashboard--wide & {
+    padding: 0 20px;
+  }
 }
 
 .UppyDashboard-bgIcon .UppyIcon {
@@ -363,31 +371,46 @@
   color: $color-asphalt-gray;
   margin: 0;
   margin-top: 25px;
+
+  .UppyDashboard--wide & {
+    font-size: 16px;
+  }
 }
 
 .UppyDashboardItem {
-  float: left;
   list-style: none;
-  width: 140px;
-  height: 170px;
-  margin: 15px 21px;
+  margin: 15px 0;
   position: relative;
-  border-radius: 6px;
   background-color: $color-white;
   border: 1px solid rgba($color-gray, 0.2);
+  display: flex;
+
+  .UppyDashboard--wide & {
+    float: left;
+    width: 140px;
+    height: 170px;
+    margin: 15px 21px;
+    border-radius: 6px;
+  }
 }
 
 .UppyDashboardItem-preview {
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
   overflow: hidden;
-  border-bottom: 1px solid rgba($color-gray, 0.2);
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+  width: 60px;
+  height: 60px;
+  border-bottom: 0;
   position: relative;
+
+  .UppyDashboard--wide & {
+    height: 100px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom: 1px solid rgba($color-gray, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
 }
 
   .UppyDashboardItem-preview:after {

@@ -3,7 +3,6 @@ import FileList from './FileList'
 import Tabs from './Tabs'
 import FileCard from './FileCard'
 import UploadBtn from './UploadBtn'
-// import ProgressCircle from './ProgressCircle'
 import StatusBar from './StatusBar'
 import { isTouchDevice, toArray } from '../../core/Utils'
 import { closeIcon } from './icons'
@@ -45,17 +44,23 @@ export default function Dashboard (props) {
     })
   }
 
+  const dashboardSize = props.inline ? `max-width: ${props.maxWidth}px; max-height: ${props.maxHeight}px;` : ''
+
+  console.log(props.isWide)
+
   return html`
     <div class="Uppy UppyTheme--default UppyDashboard
                           ${isTouchDevice() ? 'Uppy--isTouchDevice' : ''}
                           ${props.semiTransparent ? 'UppyDashboard--semiTransparent' : ''}
-                          ${!props.inline ? 'UppyDashboard--modal' : ''}"
+                          ${!props.inline ? 'UppyDashboard--modal' : ''}
+                          ${props.isWide ? 'UppyDashboard--wide' : ''}"
           aria-hidden="${props.inline ? 'false' : props.modal.isHidden}"
           aria-label="${!props.inline
                        ? props.i18n('dashboardWindowTitle')
                        : props.i18n('dashboardTitle')}"
           role="dialog"
-          onpaste=${handlePaste}>
+          onpaste=${handlePaste}
+          onload=${() => props.updateDashboardElWidth()}>
 
     <button class="UppyDashboard-close"
             aria-label="${props.i18n('closeModal')}"
@@ -66,7 +71,9 @@ export default function Dashboard (props) {
          onclick=${props.hideModal}>
     </div>
 
-    <div class="UppyDashboard-inner" tabindex="0">
+    <div class="UppyDashboard-inner"
+         tabindex="0"
+         style="${dashboardSize}">
       <div class="UppyDashboard-innerWrap">
 
         ${Tabs({
