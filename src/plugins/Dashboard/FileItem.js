@@ -29,7 +29,7 @@ export default function fileItem (props) {
   const isPaused = file.isPaused || false
 
   const fileName = getFileNameAndExtension(file.meta.name)[0]
-  const truncatedFileName = truncateString(fileName, 15)
+  const truncatedFileName = props.isWide ? truncateString(fileName, 15) : fileName
 
   return html`<li class="UppyDashboardItem
                         ${uploadInProgress ? 'is-inprogress' : ''}

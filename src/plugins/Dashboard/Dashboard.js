@@ -44,9 +44,7 @@ export default function Dashboard (props) {
     })
   }
 
-  const dashboardSize = props.inline ? `max-width: ${props.maxWidth}px; max-height: ${props.maxHeight}px;` : ''
-
-  console.log(props.isWide)
+  const dashboardSize = props.inline ? `width: ${props.maxWidth}px; height: ${props.maxHeight}px;` : ''
 
   return html`
     <div class="Uppy UppyTheme--default UppyDashboard
@@ -115,7 +113,8 @@ export default function Dashboard (props) {
             pauseUpload: props.pauseUpload,
             startUpload: props.startUpload,
             cancelUpload: props.cancelUpload,
-            resumableUploads: props.resumableUploads
+            resumableUploads: props.resumableUploads,
+            isWide: props.isWide
           })}
 
           <div class="UppyDashboard-actions">
