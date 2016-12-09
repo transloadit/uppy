@@ -14,7 +14,7 @@ export default (props) => {
       <div class="UppyDashboard-statusBarContent">
         ${props.isUploadStarted && !props.isAllComplete
           ? !props.isAllPaused
-            ? html`<span>${pauseResumeButtons(props)} Uploading... ${props.complete} / ${props.inProgress}・${props.totalProgress || 0}%・${props.totalETA}・↑ ${props.totalSpeed}/s</span>`
+            ? html`<span>${pauseResumeButtons(props)} Uploading... ${props.totalProgress || 0}%・${props.complete} / ${props.inProgress}・${props.totalETA}・↑ ${props.totalSpeed}/s</span>`
             : html`<span>${pauseResumeButtons(props)} Paused・${props.totalProgress}%</span>`
           : null
           }
