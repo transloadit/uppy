@@ -6,7 +6,6 @@ export default (props) => {
 
   return html`<button class="UppyButton--circular
                    UppyButton--blue
-                   UppyButton--sizeM
                    UppyDashboard-upload"
                  type="button"
                  title="${props.i18n('uploadAllNewFiles')}"
