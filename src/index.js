@@ -13,6 +13,7 @@ import Dummy from './plugins/Dummy'
 import DragDrop from './plugins/DragDrop/index.js'
 import FileInput from './plugins/FileInput.js'
 import GoogleDrive from './plugins/GoogleDrive/index.js'
+import Dropbox from './plugins/Dropbox/index.js'
 import Webcam from './plugins/Webcam/index.js'
 
 // Progressindicators
@@ -35,6 +36,7 @@ export default {
   Informer,
   DragDrop,
   GoogleDrive,
+  Dropbox,
   FileInput,
   Tus10,
   Multipart,
@@ -52,6 +54,7 @@ export {
   Informer,
   DragDrop,
   GoogleDrive,
+  Dropbox,
   FileInput,
   Tus10,
   Multipart,

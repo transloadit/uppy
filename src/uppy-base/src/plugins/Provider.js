@@ -29,8 +29,8 @@ export default class Provider {
     })
   }
 
-  list (directory = 'root') {
-    return fetch(`${this.opts.host}/${this.provider}/list/${directory}`, {
+  list (directory) {
+    return fetch(`${this.opts.host}/${this.provider}/list/${directory || ''}`, {
       method: 'get',
       credentials: 'include',
       headers: {

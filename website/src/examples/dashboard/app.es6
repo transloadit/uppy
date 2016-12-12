@@ -1,6 +1,7 @@
 import Uppy from '../../../../src/core'
 import Dashboard from '../../../../src/plugins/Dashboard'
 import GoogleDrive from '../../../../src/plugins/GoogleDrive'
+import Dropbox from '../../../../src/plugins/Dropbox'
 import Webcam from '../../../../src/plugins/Webcam'
 import Tus10 from '../../../../src/plugins/Tus10'
 import MetaData from '../../../../src/plugins/MetaData'
@@ -28,6 +29,10 @@ function uppyInit () {
 
   if (opts.GoogleDrive) {
     uppy.use(GoogleDrive, {target: Dashboard, host: UPPY_SERVER})
+  }
+
+  if (opts.Dropbox) {
+    uppy.use(Dropbox, {target: Dashboard, host: UPPY_SERVER})
   }
 
   if (opts.Webcam) {
