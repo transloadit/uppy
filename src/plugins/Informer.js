@@ -14,6 +14,7 @@ export default class Informer extends Plugin {
     this.type = 'progressindicator'
     this.id = 'Informer'
     this.title = 'Informer'
+    this.timeoutID = undefined
 
     // set default options
     const defaultOptions = {}
@@ -30,10 +31,14 @@ export default class Informer extends Plugin {
       }
     })
 
-    if (duration === 0) return
+    window.clearTimeout(this.timeoutID)
+    if (duration === 0) {
+      this.timeoutID = undefined
+      return
+    }
 
     // hide the informer after `duration` milliseconds
-    setTimeout(() => {
+    this.timeoutID = setTimeout(() => {
       const newInformer = Object.assign({}, this.core.getState().informer, {
         isHidden: true
       })
