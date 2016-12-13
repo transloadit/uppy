@@ -41,7 +41,9 @@ export default function fileItem (props) {
       <div class="UppyDashboardItem-preview">
         ${file.preview
           ? html`<img alt="${file.name}" src="${file.preview}">`
-          : getIconByMime(file.type.general)
+          : html`<div class="UppyDashboardItem-previewIcon">
+              ${getIconByMime(file.type.general)}
+            </div>`
         }
         <div class="UppyDashboardItem-progress">
           <button class="UppyDashboardItem-progressBtn"

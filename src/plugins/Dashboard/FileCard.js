@@ -28,11 +28,11 @@ export default function fileCard (props) {
       return html`<fieldset class="UppyDashboardFileCard-fieldset">
         <label class="UppyDashboardFileCard-label">${field.name}</label>
         <input class="UppyDashboardFileCard-input"
-                         name="${field.id}"
-                         type="text"
-                         value="${file.meta[field.id]}"
-                         placeholder="${field.placeholder || ''}"
-                         onkeyup=${tempStoreMeta} /></fieldset>`
+               name="${field.id}"
+               type="text"
+               value="${file.meta[field.id]}"
+               placeholder="${field.placeholder || ''}"
+               onkeyup=${tempStoreMeta} /></fieldset>`
     })
   }
 

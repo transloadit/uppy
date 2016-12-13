@@ -116,14 +116,19 @@
 }
 
 .UppyDashboardTabs-title {
-  font-size: 17px;
-  line-height: 40px;
+  font-size: 15px;
+  line-height: 30px;
   font-weight: 400;
   text-align: center;
   margin: 0;
   padding: 0;
   text-align: center;
   color: $color-asphalt-gray;
+
+  .UppyDashboard--wide & {
+    font-size: 17px;
+    line-height: 40px;
+  }
 }
 
 .UppyDashboard-browse {
@@ -436,6 +441,9 @@
   height: 60px;
   border-bottom: 0;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .UppyDashboard--wide & {
     width: 100%;
@@ -453,13 +461,9 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba($color-black, 0.3);
+    background-color: rgba($color-black, 0.5);
     display: none;
   }
-
-// .UppyDashboardItem-preview .UppyIcon {
-//   height: 50px;
-// }
 
 .UppyDashboardItem-preview img {
   width: 100%;
@@ -467,12 +471,17 @@
   object-fit: cover;
 }
 
-// .UppyDashboardItem-previewIcon {
-//   height: 75px;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-// }
+.UppyDashboardItem-previewIcon {
+  height: 65%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.UppyDashboardItem-previewIcon .UppyIcon {
+  width: 100%;
+  height: 100%;
+}
 
 .UppyDashboardItem-info {
   padding: 8px 32px 8px 10px;
@@ -1033,7 +1042,6 @@
 }
 
 .UppyDashboard-statusBarContent .UppyIcon {
-  margin-right: 10px;
   width: 15px;
   height: 15px;
 
@@ -1047,9 +1055,5 @@
   @include reset-button;
   color: $color-white;
   cursor: pointer;
-
-  .UppyDashboard--wide & {
-    width: 17px;
-    height: 17px;
-  }
+  margin-right: 8px;
 }

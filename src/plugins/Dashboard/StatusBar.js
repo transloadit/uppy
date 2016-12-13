@@ -19,7 +19,7 @@ export default (props) => {
           : null
           }
         ${props.isAllComplete
-          ? html`<span><svg class="UppyIcon" width="18" height="17" viewBox="0 0 23 17">
+          ? html`<span><svg class="UppyDashboard-statusBarAction UppyIcon" width="18" height="17" viewBox="0 0 23 17">
               <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
             </svg>Upload complete・${props.totalProgress}%</span>`
           : null
@@ -28,22 +28,6 @@ export default (props) => {
     </div>
   `
 }
-
-// ${!props.autoProceed && props.newFileCount > 0
-//   ? startUpload(props)
-//   : null
-// }
-
-// const startUpload = (props) => {
-//   return html`<button type="button" onclick=${props.startUpload}>
-//     Upload
-//     <sup class="UppyDashboard-uploadCountf"
-//          title="${props.i18n('numberOfSelectedFiles')}"
-//          aria-label="${props.i18n('numberOfSelectedFiles')}">
-//       ${props.newFileCount}
-//     </sup>
-//   </button>`
-// }
 
 const pauseResumeButtons = (props) => {
   console.log(props.resumableUploads)
