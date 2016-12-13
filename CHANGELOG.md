@@ -51,13 +51,17 @@ Ideas that will be planned and find their way into a release at one point
 ## 0.13.0
 
 To be released: December 23, 2016.
+Theme: Mobile Dashboard, Grid and List
 
 - [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28) (@arturi, @kvz)
-- [ ] dashboard: “list” view in addition to current “grid” view (@arturi)
-- [ ] dashboard: React component (@arturi)
-- [ ] dashboard: more icons for file types? (@arturi)
-- [ ] core: i18n for each plugin in options (@arturi)
+- [x] dashboard: use `isWide` instead of media queries, so that compact/mobile version can be used in bigger screens too (@arturi)
+- [x] dashboard: basic “list” view in addition to current “grid” view (@arturi)
+- [ ] dashboard: basic React component (@arturi)
+- [ ] dashboard: more icons for file types (@arturi)
+- [ ] dashboard: figure out where to place Informer, accounting for StatusBar (@arturi)
+- [x] core: i18n for each plugin in options (@arturi)
 - [ ] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
+- [ ] tus: fix upload progress from uppy-server (@arturi)
 - [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
 - [ ] uploaders: return upload result in multipart? options for that?
 - [x] core: fix support for both ES6 module import and CommonJS requires with `add-module-exports` babel plugin (@arturi)
