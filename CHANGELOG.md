@@ -48,6 +48,10 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy-server: pluggable custom providers; Maybe we use a config file or make it similar to how uppy adds plugins (@ifedapoolarewaju)
 - [ ] uppy-server: begin to write automated tests (@ifedapoolarewaju)
 
+## 0.14.0
+
+- [ ] server: loading indicator while the GoogleDrive/Dropbox files are loading (@arturi, @ifedapoolarewaju)
+
 ## 0.13.0
 
 To be released: December 23, 2016.
