@@ -163,6 +163,10 @@ export default class Google extends Plugin {
       })
   }
 
+  isFolder (item) {
+    return item.mimeType === 'application/vnd.google-apps.folder'
+  }
+
   /**
    * Fetches new folder and adds to breadcrumb nav
    * @param  {String} id    Folder id

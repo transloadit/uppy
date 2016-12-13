@@ -13,7 +13,7 @@ export default class Provider {
   }
 
   auth () {
-    return fetch(`${this.opts.host}/${this.provider}/authorize`, {
+    return fetch(`${this.opts.host}/${this.provider}/auth`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -24,7 +24,7 @@ export default class Provider {
     .then((res) => {
       return res.json()
       .then((payload) => {
-        return payload.isAuthenticated
+        return payload.authenticated
       })
     })
   }
