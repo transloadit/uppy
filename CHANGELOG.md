@@ -51,6 +51,7 @@ Ideas that will be planned and find their way into a release at one point
 ## 0.14.0
 
 - [ ] server: loading indicator while the GoogleDrive/Dropbox files are loading (@arturi, @ifedapoolarewaju)
+- [ ] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
 
 ## 0.13.0
 
