@@ -30,7 +30,7 @@ It's recommended to exclude `./website/public/` from your editor if you want eff
 
 To install the required node modules, type:
 ```bash
-npm install && cd website && npm install cd ..
+npm install && cd website && npm install && cd ..
 ```
 
 For local previews on http://127.0.0.1:4000 type:
