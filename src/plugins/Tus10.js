@@ -161,12 +161,14 @@ export default class Tus10 extends Plugin {
         }))
       })
       .then((res) => {
+        console.log(res)
         if (res.status < 200 && res.status > 300) {
           return reject(res.statusText)
         }
 
         res.json()
         .then((data) => {
+          console.log(data)
           // get the host domain
           var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^\/\n]+)/
           var host = regex.exec(file.remote.host)[1]
@@ -200,6 +202,9 @@ export default class Tus10 extends Plugin {
             }
           })
         })
+      })
+      .catch((err) => {
+        console.log(err)
       })
     })
   }
