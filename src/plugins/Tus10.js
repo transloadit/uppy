@@ -178,6 +178,7 @@ export default class Tus10 extends Plugin {
           })
 
           socket.on('progress', (progressData) => {
+            console.log(progressData)
             const {progress, bytesUploaded, bytesTotal} = progressData
 
             if (progress) {
