@@ -1,4 +1,5 @@
 import Plugin from './../Plugin'
+import Translator from '../../core/Translator'
 import { toArray } from '../../core/Utils'
 import dragDrop from 'drag-drop'
 import html from '../../core/html'
@@ -21,16 +22,37 @@ export default class DragDrop extends Plugin {
       </svg>
     `
 
+    const defaultLocale = {
+      strings: {
+        chooseFile: 'Choose a file',
+        orDragDrop: 'or drop it here',
+        upload: 'Upload'
+      },
+
+      pluralize: function (n) {
+        if (n === 1) {
+          return 0
+        }
+        return 1
+      }
+    }
+
     // Default options
     const defaultOpts = {
-      target: '.UppyDragDrop'
+      target: '.UppyDragDrop',
+      locale: defaultLocale
     }
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOpts, opts)
+    this.opts.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
     // Check for browser dragDrop support
     this.isDragDropSupported = this.checkDragDropSupport()
+
+    // i18n
+    this.translator = new Translator({locale: this.opts.locale})
+    this.i18n = this.translator.translate.bind(this.translator)
 
     // Bind `this` to class methods
     this.handleDrop = this.handleDrop.bind(this)
@@ -71,12 +93,6 @@ export default class DragDrop extends Plugin {
         type: file.type,
         data: file
       })
-      // this.core.emitter.emit('file-add', {
-      //   source: this.id,
-      //   name: file.name,
-      //   type: file.type,
-      //   data: file
-      // })
     })
   }
 
@@ -95,15 +111,6 @@ export default class DragDrop extends Plugin {
     })
   }
 
-  focus () {
-    const firstInput = document.querySelector(`${this.target} .UppyDragDrop-focus`)
-
-    // only works for the first time if wrapped in setTimeout for some reason
-    setTimeout(function () {
-      firstInput.focus()
-    }, 10)
-  }
-
   render (state) {
     // Another way not to render next/upload button — if Modal is used as a target
     const target = this.opts.target.name
@@ -119,14 +126,14 @@ export default class DragDrop extends Plugin {
       this.core.emitter.emit('core:upload')
     }
 
-    const onSubmit = (ev) => {
-      ev.preventDefault()
-    }
-
     return html`
-      <div class="Uppy UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
+      <div class="Uppy UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}"
+           onload=${(ev) => {
+             const firstInput = document.querySelector(`${this.target} .UppyDragDrop-focus`)
+             firstInput.focus()
+           }}>
         <form class="UppyDragDrop-inner"
-              onsubmit=${onSubmit}>
+              onsubmit=${(ev) => ev.preventDefault()}>
           <input class="UppyDragDrop-input UppyDragDrop-focus"
                  type="file"
                  name="files[]"
@@ -134,14 +141,14 @@ export default class DragDrop extends Plugin {
                  value=""
                  onchange=${this.handleInputChange.bind(this)} />
           <label class="UppyDragDrop-label" onclick=${onSelect}>
-            <strong>${this.core.i18n('chooseFile')}</strong>
-            <span class="UppyDragDrop-dragText">${this.core.i18n('orDragDrop')}</span>
+            <strong>${this.i18n('chooseFile')}</strong>
+            <span class="UppyDragDrop-dragText">${this.i18n('orDragDrop')}</span>
           </label>
           ${!this.core.opts.autoProceed && target !== 'Dashboard'
             ? html`<button class="UppyDragDrop-uploadBtn UppyNextBtn"
                          type="submit"
                          onclick=${next}>
-                    ${this.core.i18n('upload')}
+                    ${this.i18n('upload')}
               </button>`
             : ''}
         </form>

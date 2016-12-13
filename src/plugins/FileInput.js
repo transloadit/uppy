@@ -1,5 +1,6 @@
 import Plugin from './Plugin'
 import Utils from '../core/Utils'
+import Translator from '../core/Translator'
 import html from '../core/html'
 
 export default class FileInput extends Plugin {
@@ -9,28 +10,40 @@ export default class FileInput extends Plugin {
     this.title = 'FileInput'
     this.type = 'acquirer'
 
+    const defaultLocale = {
+      strings: {
+        selectToUpload: 'Select to upload'
+      },
+
+      pluralize: function (n) {
+        if (n === 1) {
+          return 0
+        }
+        return 1
+      }
+    }
+
     // Default options
     const defaultOptions = {
       target: '.UppyForm',
       replaceTargetContent: true,
       multipleFiles: true,
-      text: this.core.i18n('selectToUpload'),
-      pretty: true
+      pretty: true,
+      locale: defaultLocale
     }
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    // i18n
+    this.translator = new Translator({locale: this.opts.locale})
+    this.i18n = this.translator.translate.bind(this.translator)
 
     this.render = this.render.bind(this)
   }
 
   handleInputChange (ev) {
     this.core.log('All right, something selected through input...')
-
-    // this added rubbish keys like “length” to the resulting array
-    // const files = Object.keys(ev.target.files).map((key) => {
-    //   return ev.target.files[key]
-    // })
 
     const files = Utils.toArray(ev.target.files)
 
@@ -45,12 +58,6 @@ export default class FileInput extends Plugin {
   }
 
   render (state) {
-    // const upload = (ev) => {
-    //   ev.preventDefault()
-    //   ev.stopPropagation()
-    //   this.core.emitter.emit('core:upload')
-    // }
-
     const hiddenInputStyle = 'width: 0.1px; height: 0.1px; opacity: 0; overflow: hidden; position: absolute; z-index: -1;'
 
     const input = html`<input class="uppy-FileInput-input"
@@ -61,12 +68,12 @@ export default class FileInput extends Plugin {
            multiple="${this.opts.multipleFiles ? 'true' : 'false'}"
            value="">`
 
-    return html`<form class="uppy-FileInput-form">
+    return html`<form class="Uppy uppy-FileInput-form">
       ${input}
 
       ${this.opts.pretty
         ? html`<button class="uppy-FileInput-btn" type="button" onclick=${() => input.click()}>
-          ${this.opts.text}
+          ${this.i18n('selectToUpload')}
         </button>`
        : null
      }
