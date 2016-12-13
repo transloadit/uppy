@@ -161,14 +161,13 @@ export default class Tus10 extends Plugin {
         }))
       })
       .then((res) => {
-        console.log(res)
         if (res.status < 200 && res.status > 300) {
           return reject(res.statusText)
         }
 
-        res.json()
-        .then((data) => {
-          console.log(data)
+        this.core.emitter.emit('core:upload-started', file.id)
+
+        res.json().then((data) => {
           // get the host domain
           var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^\/\n]+)/
           var host = regex.exec(file.remote.host)[1]
@@ -180,13 +179,12 @@ export default class Tus10 extends Plugin {
           })
 
           socket.on('progress', (progressData) => {
-            console.log(progressData)
             const {progress, bytesUploaded, bytesTotal} = progressData
 
             if (progress) {
               this.core.log(`Upload progress: ${progress}`)
+              console.log(file.id)
 
-              // Dispatch progress event
               this.core.emitter.emit('core:upload-progress', {
                 uploader: this,
                 id: file.id,
@@ -202,9 +200,6 @@ export default class Tus10 extends Plugin {
             }
           })
         })
-      })
-      .catch((err) => {
-        console.log(err)
       })
     })
   }
