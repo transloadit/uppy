@@ -3,29 +3,13 @@
 @import '_animation.scss';
 @import '_common.scss';
 
-// .UppyInformer-container {
-//   text-align: center;
-//   position: absolute;
-//   width: 100%;
-//   bottom: 40px;
-//   left: 0;
-//   display: flex;
-//   align-items: center;
-// }
-
 .UppyInformer {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  // left: 15px;
-  // bottom: 50px;
   text-align: center;
-  // max-width: 280px;
-  // min-height: 40px;
-  // max-height: 60px;
   font-size: 12px;
-  // line-height: 1.3;
   font-weight: 500;
   padding: 8px 15px;
   background-color: rgba($color-black, 0.7);
@@ -33,13 +17,12 @@
   opacity: 1;
   transform: none;
   transition: all 300ms ease-in;
-  // border-radius: 5px;
   z-index: $zIndex-4;
 }
 
   .UppyInformer[aria-hidden=true] {
     opacity: 0;
-    transform: translateY(-200%);
+    transform: translateY(200%);
     transition: all 300ms ease-in;
   }
 
