@@ -28,6 +28,16 @@ export default class View {
   }
 
   /**
+   * Little shorthand to update the state with my new state
+   */
+  updateState (newState) {
+    let stateId = this.plugin.stateId
+    const {state} = this.plugin.core
+
+    this.plugin.core.setState({[stateId]: Object.assign({}, state[stateId], newState)})
+  }
+
+  /**
    * Based on folder ID, fetch a new folder
    * @param  {String} id Folder id
    * @return {Promise}   Folders/files in folder
@@ -37,17 +47,26 @@ export default class View {
       .then((res) => {
         let folders = []
         let files = []
-        res.contents.forEach((item) => {
+        let updatedDirectories
+
+        const state = this.plugin.core.getState()[this.plugin.stateId]
+        const index = state.directories.findIndex((dir) => id === dir.id)
+
+        if (index !== -1) {
+          updatedDirectories = state.directories.slice(0, index + 1)
+        } else {
+          updatedDirectories = state.directories.concat([{id, title: this.plugin.getItemName(res)}])
+        }
+
+        this.plugin.getItemSubList(res).forEach((item) => {
           if (this.plugin.isFolder(item)) {
             folders.push(item)
           } else {
             files.push(item)
           }
         })
-        return {
-          folders,
-          files
-        }
+
+        this.updateState({folders, files, directories: updatedDirectories})
       })
       .catch((err) => {
         return err
@@ -60,41 +79,25 @@ export default class View {
    * @param  {String} title Folder title
    */
   getNextFolder (folder) {
-    let id = this.plugin.getFileRequestPath(folder)
+    let id = this.plugin.getItemRequestPath(folder)
     this.getFolder(id)
-      .then((data) => {
-        const state = this.plugin.core.getState()[this.plugin.stateId]
-
-        const index = state.directories.findIndex((dir) => id === dir.id)
-        let updatedDirectories
-
-        if (index !== -1) {
-          updatedDirectories = state.directories.slice(0, index + 1)
-        } else {
-          updatedDirectories = state.directories.concat([{id, title: this.plugin.getFileName(folder)}])
-        }
-
-        this.plugin.updateState(Utils.extend(data, {
-          directories: updatedDirectories
-        }))
-      })
   }
 
   addFile (file) {
     const tagFile = {
       source: this.plugin.id,
-      data: this.plugin.getFileData(file),
-      name: this.plugin.getFileName(file),
+      data: this.plugin.getItemData(file),
+      name: this.plugin.getItemName(file),
       type: this.plugin.getMimeType(file),
       isRemote: true,
       body: {
-        fileId: this.plugin.getFileId(file)
+        fileId: this.plugin.getItemId(file)
       },
       remote: {
         host: this.plugin.opts.host,
-        url: `${this.plugin.opts.host}/${this.Provider.id}/get/${this.plugin.getFileRequestPath(file)}`,
+        url: `${this.plugin.opts.host}/${this.Provider.id}/get/${this.plugin.getItemRequestPath(file)}`,
         body: {
-          fileId: this.plugin.getFileId(file)
+          fileId: this.plugin.getItemId(file)
         }
       }
     }
@@ -114,13 +117,9 @@ export default class View {
             authenticated: false,
             files: [],
             folders: [],
-            directories: [{
-              title: 'My Dropbox',
-              id: 'auto'
-            }]
+            directories: []
           }
-
-          this.plugin.updateState(newState)
+          this.updateState(newState)
         }
       })
   }
@@ -132,15 +131,15 @@ export default class View {
   handleRowClick (file) {
     const state = this.plugin.core.getState()[this.plugin.stateId]
     const newState = Object.assign({}, state, {
-      activeRow: this.plugin.getFileId(file)
+      activeRow: this.plugin.getItemId(file)
     })
 
-    this.plugin.updateState(newState)
+    this.updateState(newState)
   }
 
   filterQuery (e) {
     const state = this.plugin.core.getState()[this.plugin.stateId]
-    this.plugin.updateState(Object.assign({}, state, {
+    this.updateState(Object.assign({}, state, {
       filterInput: e.target.value
     }))
   }
@@ -148,7 +147,7 @@ export default class View {
   filterItems (items) {
     const state = this.plugin.core.getState()[this.plugin.stateId]
     return items.filter((folder) => {
-      return folder.title.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1
+      return this.plugin.getItemName(folder).toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1
     })
   }
 
@@ -158,19 +157,19 @@ export default class View {
 
     let sortedFiles = files.sort((fileA, fileB) => {
       if (sorting === 'titleDescending') {
-        return this.plugin.getFileName(fileB).localeCompare(this.plugin.getFileName(fileA))
+        return this.plugin.getItemName(fileB).localeCompare(this.plugin.getItemName(fileA))
       }
-      return this.plugin.getFileName(fileA).localeCompare(this.plugin.getFileName(fileB))
+      return this.plugin.getItemName(fileA).localeCompare(this.plugin.getItemName(fileB))
     })
 
     let sortedFolders = folders.sort((folderA, folderB) => {
       if (sorting === 'titleDescending') {
-        return this.plugin.getFileName(folderB).localeCompare(this.plugin.getFileName(folderA))
+        return this.plugin.getItemName(folderB).localeCompare(this.plugin.getItemName(folderA))
       }
-      return this.plugin.getFileName(folderA).localeCompare(this.plugin.getFileName(folderB))
+      return this.plugin.getItemName(folderA).localeCompare(this.plugin.getItemName(folderB))
     })
 
-    this.plugin.updateState(Object.assign({}, state, {
+    this.updateState(Object.assign({}, state, {
       files: sortedFiles,
       folders: sortedFolders,
       sorting: (sorting === 'titleDescending') ? 'titleAscending' : 'titleDescending'
@@ -182,8 +181,8 @@ export default class View {
     const {files, folders, sorting} = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
-      let a = new Date(this.plugin.getFileModifiedDate(fileA))
-      let b = new Date(this.plugin.getFileModifiedDate(fileB))
+      let a = new Date(this.plugin.getItemModifiedDate(fileA))
+      let b = new Date(this.plugin.getItemModifiedDate(fileB))
 
       if (sorting === 'dateDescending') {
         return a > b ? -1 : a < b ? 1 : 0
@@ -192,8 +191,8 @@ export default class View {
     })
 
     let sortedFolders = folders.sort((folderA, folderB) => {
-      let a = new Date(this.plugin.getFileModifiedDate(folderA))
-      let b = new Date(this.plugin.getFileModifiedDate(folderB))
+      let a = new Date(this.plugin.getItemModifiedDate(folderA))
+      let b = new Date(this.plugin.getItemModifiedDate(folderB))
 
       if (sorting === 'dateDescending') {
         return a > b ? -1 : a < b ? 1 : 0
@@ -202,7 +201,7 @@ export default class View {
       return a > b ? 1 : a < b ? -1 : 0
     })
 
-    this.plugin.updateState(Object.assign({}, state, {
+    this.updateState(Object.assign({}, state, {
       files: sortedFiles,
       folders: sortedFolders,
       sorting: (sorting === 'dateDescending') ? 'dateAscending' : 'dateDescending'
@@ -210,12 +209,12 @@ export default class View {
   }
 
   isActiveRow (file) {
-    return this.plugin.core.getState()[this.plugin.stateId].activeRow === this.plugin.getFileId(file)
+    return this.plugin.core.getState()[this.plugin.stateId].activeRow === this.plugin.getItemId(file)
   }
 
   handleDemoAuth () {
     const state = this.plugin.core.getState()[this.plugin.stateId]
-    this.plugin.updateState({}, state, {
+    this.updateState({}, state, {
       authenticated: true
     })
   }
@@ -232,7 +231,7 @@ export default class View {
         redirect: location.href.split('#')[0]
       }))
 
-      const link = `${this.plugin.opts.host}/connect/${this.Provider.id}?state=${authState}`
+      const link = `${this.plugin.opts.host}/connect/${this.Provider.provider}?state=${authState}`
 
       return AuthView({
         link: link,
@@ -253,7 +252,8 @@ export default class View {
       logout: this.logout,
       demo: this.plugin.opts.demo,
       isActiveRow: this.isActiveRow,
-      getFileName: this.plugin.getFileName
+      getItemName: this.plugin.getItemName,
+      getItemIcon: this.plugin.getItemIcon
     })
 
     return Browser(browserProps)

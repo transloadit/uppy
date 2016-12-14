@@ -6,7 +6,7 @@ export default (props) => {
   return html`
     <tr onclick=${props.handleClick} ondblclick=${props.handleDoubleClick} class=${classes}>
       ${Column({
-        icon: props.icon,
+        getItemIcon: props.getItemIcon,
         value: props.title
       })}
     </tr>

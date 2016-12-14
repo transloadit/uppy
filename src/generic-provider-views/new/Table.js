@@ -20,9 +20,9 @@ export default (props) => {
       <tbody>
         ${props.folders.map((folder) => {
           return Row({
-            title: props.getFileName(folder),
+            title: props.getItemName(folder),
             active: props.activeRow(folder),
-            icon: folder.icon,
+            getItemIcon: () => props.getItemIcon(folder),
             handleClick: () => props.handleRowClick(folder),
             handleDoubleClick: () => props.handleFolderDoubleClick(folder),
             columns: props.columns
@@ -30,13 +30,12 @@ export default (props) => {
         })}
         ${props.files.map((file) => {
           return Row({
-            title: props.getFileName(file),
+            title: props.getItemName(file),
             active: props.activeRow(file),
-            icon: file.icon,
+            getItemIcon: () => props.getItemIcon(file),
             handleClick: () => props.handleRowClick(file),
             handleDoubleClick: () => props.handleFileDoubleClick(file),
             columns: props.columns,
-            owner: 'Joe Mama'
           })
         })}
       </tbody>

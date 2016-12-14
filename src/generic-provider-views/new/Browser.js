@@ -23,7 +23,7 @@ export default (props) => {
       </header>
       <div class="Browser-subHeader">
         ${Breadcrumbs({
-          getNextFolder: props.getNextFolder,
+          getFolder: props.getFolder,
           directories: props.directories
         })}
       </div>
@@ -42,7 +42,8 @@ export default (props) => {
             handleRowClick: props.handleRowClick,
             handleFileDoubleClick: props.addFile,
             handleFolderDoubleClick: props.getNextFolder,
-            getFileName: props.getFileName
+            getItemName: props.getItemName,
+            getItemIcon: props.getItemIcon
           })}
         </main>
       </div>

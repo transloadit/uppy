@@ -5,6 +5,7 @@ import html from '../../core/html'
 import Provider from '../../uppy-base/src/plugins/Provider'
 
 import View from '../../generic-provider-views/index'
+import icons from './icons'
 
 export default class Dropbox extends Plugin {
   constructor (core, opts) {
@@ -14,12 +15,23 @@ export default class Dropbox extends Plugin {
     this.title = 'Dropbox'
     this.stateId = 'dropbox'
     this.icon = html`
-      <svg class="UppyIcon UppyModalTab-icon" width="28" height="28" viewBox="0 0 16 16">
-        <path d="M2.955 14.93l2.667-4.62H16l-2.667 4.62H2.955zm2.378-4.62l-2.666 4.62L0 10.31l5.19-8.99 2.666 4.62-2.523 4.37zm10.523-.25h-5.333l-5.19-8.99h5.334l5.19 8.99z"/>
-      </svg>
-    `
+      <svg class="UppyIcon UppyModalTab-icon" viewBox="0 0 225.000000 225.000000">
+        <g transform="translate(0.000000,225.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+        <path d="M633 1646 c-112 -72 -203 -134 -203 -137 0 -3 61 -54 135 -113 74 -59 135 -111 135 -116 0 -5 -61 -57
+        -135 -116 -74 -59 -135 -110 -135 -113 1 -7 391 -261 403 -262 5 -1 72 52 149 116 l141 118 -54 33 c-30 18 -123 75
+        -206 126 -84 51 -153 95 -153 98 0 3 69 47 153 98 83 51 176 108 206 126 l53 33 -123 103 c-68 57 -133 111 -144
+        121 -19 16 -27 12 -222 -115z"/>
+        <path d="M1271 1657 l-143 -120 53 -33 c30 -18 123 -75 206 -126 84 -51 153 -95 153 -98 0 -3 -69 -47 -153 -98 -83
+        -51 -176 -108 -206 -126 l-54 -33 139 -116 c77 -64 142 -117 145 -119 8 -3 408 254 409 263 0 3 -61 54 -135 113 -74
+        59 -135 111 -135 116 0 5 61 57 135 116 74 59 135 110 135 113 0 3 -51 39 -113 78 -61 40 -153 99 -202 132 l-91 58
+        -143 -120z"/>
+        <path d="M981 849 c-159 -132 -141 -127 -228 -67 l-43 29 0 -44 0 -45 207 -123 c114 -68 210 -123 213 -122 4 1 98 57
+        209 123 l201 121 0 45 0 45 -61 -41 c-52 -36 -62 -40 -77 -28 -9 7 -69 56 -132 108 -63 52 -122 100 -130 107
+        -13 10 -40 -9 -159 -108z"/>
+        </g>
+      </svg>`
 
-    this.Dropbox = new Provider({
+    this[this.id] = new Provider({
       host: this.opts.host,
       provider: 'dropbox'
     })
@@ -38,16 +50,13 @@ export default class Dropbox extends Plugin {
 
   install () {
     this.view = new View(this)
-    // Set default state for Google Drive
+    // Set default state
     this.core.setState({
-      dropbox: {
+      [this.stateId]: {
         authenticated: false,
         files: [],
         folders: [],
-        directories: [{
-          title: 'My Drive',
-          id: 'auto'
-        }],
+        directories: [],
         activeRow: -1,
         filterInput: ''
       }
@@ -59,80 +68,58 @@ export default class Dropbox extends Plugin {
 
     this.Dropbox.auth()
       .then((authenticated) => {
-        this.updateState({authenticated})
+        this.view.updateState({authenticated})
         if (authenticated) {
-          return this.view.getFolder()
+          this.view.getFolder()
         }
-
-        return authenticated
-      })
-      .then((newState) => {
-        this.updateState(newState)
       })
 
     return
-  }
-
-  /**
-   * Little shorthand to update the state with my new state
-   */
-  updateState (newState) {
-    const {state} = this.core
-    const dropbox = Object.assign({}, state.dropbox, newState)
-
-    this.core.setState({dropbox})
   }
 
   isFolder (item) {
     return item.is_dir
   }
 
-  getFileData (file) {
-    return Object.assign({}, file, {size: file.bytes})
+  getItemData (item) {
+    return Object.assign({}, item, {size: item.bytes})
   }
 
-  getFileName (file) {
-    return file.path.substring(1)
+  getItemIcon (item) {
+    var icon = icons[item.icon] 
+
+    if (!icon) {
+      if (name.startsWith('folder')) {
+        icon = icons['folder']
+      } else {
+        icon = icons['page_white']
+      }
+    }
+    return icon()
   }
 
-  getMimeType (file) {
-    return file.mime_type
+  getItemSubList(item) {
+    return item.contents
   }
 
-  getFileId (file) {
-    return file.rev
+  getItemName (item) {
+    return item.path.length > 1 ? item.path.substring(1) : item.path
   }
 
-  getFileRequestPath (file) {
-    return encodeURIComponent(this.getFileName(file))
+  getMimeType (item) {
+    return item.mime_type
   }
 
-  getFileModifiedDate (file) {
-    return file.modified
+  getItemId (item) {
+    return item.rev
   }
 
-  /**
-   * Removes session token on client side.
-   */
-  logout () {
-    this.Dropbox.logout(location.href)
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.ok) {
-          console.log('ok')
-          const newState = {
-            authenticated: false,
-            files: [],
-            folders: [],
-            directories: [{
-              title: 'My Drive',
-              id: 'auto'
-            }]
-          }
+  getItemRequestPath (item) {
+    return encodeURIComponent(this.getItemName(item))
+  }
 
-          this.updateState(newState)
-        }
-      })
+  getItemModifiedDate (item) {
+    return item.modified
   }
 
   render (state) {

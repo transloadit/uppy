@@ -3,11 +3,11 @@ import Breadcrumb from './Breadcrumb'
 
 export default (props) => {
   return html`
-    <ul class="UppyGoogleDrive-breadcrumbs">
+    <ul class="UppyPlugin-breadcrumbs">
       ${
         props.directories.map((directory) => {
           return Breadcrumb({
-            getNextFolder: () => props.getNextFolder(directory.id, directory.title),
+            getFolder: () => props.getFolder(directory.id),
             title: directory.title
           })
         })

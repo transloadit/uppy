@@ -8,12 +8,12 @@ export default class Provider {
   constructor (opts) {
     this.opts = opts
     this.provider = opts.provider
-    this.id = this.provider
+    this.id = opts.id || this.provider
     this.name = this.opts.name || _getName(this.id)
   }
 
   auth () {
-    return fetch(`${this.opts.host}/${this.provider}/auth`, {
+    return fetch(`${this.opts.host}/${this.id}/auth`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -30,7 +30,7 @@ export default class Provider {
   }
 
   list (directory) {
-    return fetch(`${this.opts.host}/${this.provider}/list/${directory || ''}`, {
+    return fetch(`${this.opts.host}/${this.id}/list/${directory || ''}`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -42,7 +42,7 @@ export default class Provider {
   }
 
   logout (redirect = location.href) {
-    return fetch(`${this.opts.host}/${this.provider}/logout?redirect=${redirect}`, {
+    return fetch(`${this.opts.host}/${this.id}/logout?redirect=${redirect}`, {
       method: 'get',
       credentials: 'include',
       headers: {
