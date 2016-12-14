@@ -3,7 +3,7 @@ import html from '../../core/html'
 // https://css-tricks.com/creating-svg-icon-system-react/
 
 export default {
-  folder: ()=>
+  folder: () =>
     html`<svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"
     preserveAspectRatio="xMidYMid meet">
     <g transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)"
@@ -27,7 +27,7 @@ export default {
     <path d="M268 203 c6 -2 18 -2 25 0 6 3 1 5 -13 5 -14 0 -19 -2 -12 -5z"/>
     </g>
     </svg>`,
-  music: ()=>
+  music: () =>
     html`<svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"
     preserveAspectRatio="xMidYMid meet">
     <g transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)"
@@ -60,7 +60,7 @@ export default {
     <path d="M243 13 c15 -2 39 -2 55 0 15 2 2 4 -28 4 -30 0 -43 -2 -27 -4z"/>
     </g>
     </svg>`,
-  page_white_picture: ()=>
+  page_white_picture: () =>
     html`
     <svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 36.000000"
     preserveAspectRatio="xMidYMid meet">
@@ -95,7 +95,7 @@ export default {
     -3z"/>
     </g>
     </svg>`,
-  word: ()=>
+  word: () =>
     html`<svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"
     preserveAspectRatio="xMidYMid meet">
     <g transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)"
@@ -130,7 +130,7 @@ export default {
     -73 0 -90 -3 -90 -15z"/>
     </g>
     </svg>`,
-  powerpoint: ()=>
+  powerpoint: () =>
     html`<svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 16.000000 16.000000"
     preserveAspectRatio="xMidYMid meet">
     <g transform="translate(0.000000,144.000000) scale(0.100000,-0.100000)"
@@ -191,7 +191,7 @@ export default {
     <path d="M304 205 c0 -66 1 -92 3 -57 2 34 2 88 0 120 -2 31 -3 3 -3 -63z"/>
     </g>
     </svg>`,
-  page_white: ()=>
+  page_white: () =>
     html`<svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"
     preserveAspectRatio="xMidYMid meet">
     <g transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)"

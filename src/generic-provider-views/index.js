@@ -1,4 +1,3 @@
-import Utils from '../core/Utils'
 import 'whatwg-fetch'
 
 import AuthView from './AuthView'

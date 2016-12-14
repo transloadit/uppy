@@ -35,7 +35,7 @@ export default (props) => {
             getItemIcon: () => props.getItemIcon(file),
             handleClick: () => props.handleRowClick(file),
             handleDoubleClick: () => props.handleFileDoubleClick(file),
-            columns: props.columns,
+            columns: props.columns
           })
         })}
       </tbody>

@@ -78,7 +78,7 @@ export default class Google extends Plugin {
     return html`<img src=${item.iconLink}/>`
   }
 
-  getItemSubList(item) {
+  getItemSubList (item) {
     return item.items
   }
 

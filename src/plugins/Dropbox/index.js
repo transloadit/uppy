@@ -86,7 +86,7 @@ export default class Dropbox extends Plugin {
   }
 
   getItemIcon (item) {
-    var icon = icons[item.icon] 
+    var icon = icons[item.icon]
 
     if (!icon) {
       if (name.startsWith('folder')) {
@@ -98,7 +98,7 @@ export default class Dropbox extends Plugin {
     return icon()
   }
 
-  getItemSubList(item) {
+  getItemSubList (item) {
     return item.contents
   }
 
