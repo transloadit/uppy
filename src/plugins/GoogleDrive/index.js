@@ -41,7 +41,7 @@ export default class Google extends Plugin {
     this.view = new View(this)
     // Set default state for Google Drive
     this.core.setState({
-      googleDrive: {
+      [this.stateId]: {
         authenticated: false,
         files: [],
         folders: [],
@@ -55,7 +55,7 @@ export default class Google extends Plugin {
     const plugin = this
     this.target = this.mount(target, plugin)
 
-    this.GoogleDrive.auth()
+    this[this.id].auth()
       .then((authenticated) => {
         this.view.updateState({authenticated})
         if (authenticated) {

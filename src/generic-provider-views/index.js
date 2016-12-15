@@ -1,10 +1,42 @@
-import 'whatwg-fetch'
-
 import AuthView from './AuthView'
 import Browser from './new/Browser'
 import ErrorView from './Error'
 
+/**
+ * Class to easily generate generic views for plugins
+ *
+ * This class expects the plugin using to have the following attributes
+ *
+ * stateId {String} object key of which the plugin state is stored
+ *
+ * This class also expects the plugin instance using it to have the following
+ * accessor methods.
+ * Each method takes the item whose property is to be accessed
+ * as a param
+ *
+ * isFolder
+ *    @return {Boolean} for if the item is a folder or not
+ * getItemData
+ *    @return {Object} that is format ready for uppy upload/download
+ * getItemIcon
+ *    @return {Object} html instance of the item's icon
+ * getItemSubList
+ *    @return {Array} sub-items in the item. e.g a folder may contain sub-items
+ * getItemName
+ *    @return {String} display friendly name of the item
+ * getMimeType
+ *    @return {String} mime type of the item
+ * getItemId
+ *    @return {String} unique id of the item
+ * getItemRequestPath
+ *    @return {String} unique request path of the item when making calls to uppy server
+ * getItemModifiedDate
+ *    @return {object} or {String} date of when last the item was modified
+ */
 export default class View {
+  /**
+   * @param {object} instance of the plugin
+   */
   constructor (plugin) {
     this.plugin = plugin
     this.Provider = plugin[plugin.id]
@@ -27,7 +59,7 @@ export default class View {
   }
 
   /**
-   * Little shorthand to update the state with my new state
+   * Little shorthand to update the state with the plugin's state
    */
   updateState (newState) {
     let stateId = this.plugin.stateId
@@ -37,7 +69,7 @@ export default class View {
   }
 
   /**
-   * Based on folder ID, fetch a new folder
+   * Based on folder ID, fetch a new folder and update it to state
    * @param  {String} id Folder id
    * @return {Promise}   Folders/files in folder
    */
@@ -65,7 +97,10 @@ export default class View {
           }
         })
 
-        this.updateState({folders, files, directories: updatedDirectories})
+        let data = {folders, files, directories: updatedDirectories}
+        this.updateState(data)
+
+        return data
       })
       .catch((err) => {
         return err
@@ -73,8 +108,8 @@ export default class View {
   }
 
   /**
-   * Fetches new folder and adds to breadcrumb nav
-   * @param  {String} id    Folder id
+   * Fetches new folder
+   * @param  {Object} Folder
    * @param  {String} title Folder title
    */
   getNextFolder (folder) {

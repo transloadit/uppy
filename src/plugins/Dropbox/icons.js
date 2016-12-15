@@ -1,7 +1,5 @@
 import html from '../../core/html'
 
-// https://css-tricks.com/creating-svg-icon-system-react/
-
 export default {
   folder: () =>
     html`<svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"

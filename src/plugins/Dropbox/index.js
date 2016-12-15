@@ -66,7 +66,7 @@ export default class Dropbox extends Plugin {
     const plugin = this
     this.target = this.mount(target, plugin)
 
-    this.Dropbox.auth()
+    this[this.id].auth()
       .then((authenticated) => {
         this.view.updateState({authenticated})
         if (authenticated) {
