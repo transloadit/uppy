@@ -126,12 +126,13 @@ export default class DragDrop extends Plugin {
       this.core.emitter.emit('core:upload')
     }
 
+    // onload=${(ev) => {
+    //   const firstInput = document.querySelector(`${this.target} .UppyDragDrop-focus`)
+    //   firstInput.focus()
+    // }}
+
     return html`
-      <div class="Uppy UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}"
-           onload=${(ev) => {
-             const firstInput = document.querySelector(`${this.target} .UppyDragDrop-focus`)
-             firstInput.focus()
-           }}>
+      <div class="Uppy UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
         <form class="UppyDragDrop-inner"
               onsubmit=${(ev) => ev.preventDefault()}>
           <input class="UppyDragDrop-input UppyDragDrop-focus"
