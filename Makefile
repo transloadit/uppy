@@ -37,4 +37,4 @@ $(eval $(call npm_script_targets))
 
 # These npm run scripts are available, without needing to be mentioned in `package.json`
 install:
-	npm run install
+	npm install

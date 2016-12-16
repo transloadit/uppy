@@ -48,6 +48,11 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy-server: pluggable custom providers; Maybe we use a config file or make it similar to how uppy adds plugins (@ifedapoolarewaju)
 - [ ] uppy-server: begin to write automated tests (@ifedapoolarewaju)
 
+## 0.14.0
+
+- [ ] server: loading indicator while the GoogleDrive/Dropbox files are loading (@arturi, @ifedapoolarewaju)
+- [ ] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
+
 ## 0.13.0
 
 To be released: December 23, 2016.
@@ -59,9 +64,12 @@ Theme: Mobile Dashboard, Grid and List
 - [ ] dashboard: basic React component (@arturi)
 - [ ] dashboard: more icons for file types (@arturi)
 - [ ] dashboard: figure out where to place Informer, accounting for StatusBar (@arturi)
+- [ ] dragdrop: show number of selected files (@arturi)
 - [x] core: i18n for each plugin in options (@arturi)
 - [ ] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
-- [ ] tus: fix upload progress from uppy-server (@arturi)
+- [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
+- [ ] server: smooth authentication: after auth you are back in your app where you left, no page reloads (@ifedapoolarewaju)
+- [ ] tus: fix upload progress from uppy-server (@arturi, @ifedapoolarewaju)
 - [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
 - [ ] uploaders: return upload result in multipart? options for that?
 - [x] core: fix support for both ES6 module import and CommonJS requires with `add-module-exports` babel plugin (@arturi)
