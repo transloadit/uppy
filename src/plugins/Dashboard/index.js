@@ -1,4 +1,5 @@
 import Plugin from '../Plugin'
+import Translator from '../../core/Translator'
 import dragDrop from 'drag-drop'
 import Dashboard from './Dashboard'
 import { getSpeed, getETA, prettyETA } from '../../core/Utils'
@@ -15,18 +16,62 @@ export default class DashboardUI extends Plugin {
     this.title = 'Dashboard UI'
     this.type = 'orchestrator'
 
+    const defaultLocale = {
+      strings: {
+        // filesChosen: {
+        //   0: '%{smart_count} file selected',
+        //   1: '%{smart_count} files selected'
+        // },
+        // filesUploaded: {
+        //   0: '%{smart_count} file uploaded',
+        //   1: '%{smart_count} files uploaded'
+        // },
+        // files: {
+        //   0: '%{smart_count} file',
+        //   1: '%{smart_count} files'
+        // },
+        // uploadFiles: {
+        //   0: 'Upload %{smart_count} file',
+        //   1: 'Upload %{smart_count} files'
+        // },
+        selectToUpload: 'Select files to upload',
+        closeModal: 'Close Modal',
+        upload: 'Upload',
+        importFrom: 'Import files from',
+        dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
+        dashboardTitle: 'Uppy Dashboard',
+        copyLinkToClipboardSuccess: 'Link copied to clipboard.',
+        copyLinkToClipboardFallback: 'Copy the URL below',
+        done: 'Done',
+        localDisk: 'Local Disk',
+        dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
+        dropPaste: 'Drop files here, paste or',
+        browse: 'browse',
+        fileProgress: 'File progress: upload speed and ETA',
+        numberOfSelectedFiles: 'Number of selected files',
+        uploadAllNewFiles: 'Upload all new files'
+      }
+    }
+
     // set default options
     const defaultOptions = {
       target: 'body',
       inline: false,
+      width: 750,
+      height: 550,
       semiTransparent: false,
       defaultTabIcon: defaultTabIcon(),
-      panelSelectorPrefix: 'UppyDashboardContent-panel',
-      showProgressDetails: true
+      showProgressDetails: true,
+      locale: defaultLocale
     }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    // containerWidth
+    this.translator = new Translator({locale: this.opts.locale})
+    this.containerWidth = this.translator.translate.bind(this.translator)
 
     this.hideModal = this.hideModal.bind(this)
     this.showModal = this.showModal.bind(this)
@@ -40,6 +85,7 @@ export default class DashboardUI extends Plugin {
     this.pauseAll = this.pauseAll.bind(this)
     this.resumeAll = this.resumeAll.bind(this)
     this.cancelAll = this.cancelAll.bind(this)
+    this.updateDashboardElWidth = this.updateDashboardElWidth.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -169,6 +215,8 @@ export default class DashboardUI extends Plugin {
       })
     })
 
+    window.addEventListener('resize', (ev) => this.updateDashboardElWidth())
+
     // bus.on('core:success', (uploadedCount) => {
     //   bus.emit(
     //     'informer',
@@ -177,6 +225,17 @@ export default class DashboardUI extends Plugin {
     //     6000
     //   )
     // })
+  }
+
+  updateDashboardElWidth () {
+    const dashboardEl = document.querySelector('.UppyDashboard-inner')
+
+    const modal = this.core.getState().modal
+    this.core.setState({
+      modal: Object.assign({}, modal, {
+        containerWidth: dashboardEl.offsetWidth
+      })
+    })
   }
 
   handleDrop (files) {
@@ -318,7 +377,6 @@ export default class DashboardUI extends Plugin {
       id: this.id,
       container: this.opts.target,
       hideModal: this.hideModal,
-      panelSelectorPrefix: this.opts.panelSelectorPrefix,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
       semiTransparent: this.opts.semiTransparent,
@@ -327,7 +385,7 @@ export default class DashboardUI extends Plugin {
       hideAllPanels: this.hideAllPanels,
       log: this.core.log,
       bus: this.core.emitter,
-      i18n: this.core.i18n,
+      i18n: this.containerWidth,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
       cancelAll: this.cancelAll,
@@ -341,7 +399,12 @@ export default class DashboardUI extends Plugin {
       cancelUpload: cancelUpload,
       fileCardFor: state.modal.fileCardFor,
       showFileCard: showFileCard,
-      fileCardDone: fileCardDone
+      fileCardDone: fileCardDone,
+      updateDashboardElWidth: this.updateDashboardElWidth,
+      maxWidth: this.opts.maxWidth,
+      maxHeight: this.opts.maxHeight,
+      currentWidth: state.modal.containerWidth,
+      isWide: state.modal.containerWidth > 400
     })
   }
 

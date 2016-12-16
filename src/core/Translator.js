@@ -1,4 +1,4 @@
-import en_US from '../locales/en_US'
+// import en_US from '../locales/en_US'
 
 /**
  * Translates strings with interpolation & pluralization support.Extensible with custom dictionaries
@@ -16,11 +16,11 @@ import en_US from '../locales/en_US'
 export default class Translator {
   constructor (opts) {
     const defaultOptions = {
-      locale: en_US
+      // locale: en_US
     }
     this.opts = Object.assign({}, defaultOptions, opts)
     this.locale = this.opts.locale
-    this.locale.strings = Object.assign({}, en_US.strings, this.opts.locale.strings)
+    // this.locale.strings = Object.assign({}, en_US.strings, this.opts.locale.strings)
   }
 
 /**

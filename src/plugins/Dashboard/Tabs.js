@@ -42,7 +42,7 @@ export default (props) => {
             <button class="UppyDashboardTab-btn"
                     role="tab"
                     tabindex="0"
-                    aria-controls="${props.panelSelectorPrefix}--${target.id}"
+                    aria-controls="UppyDashboardContent-panel--${target.id}"
                     aria-selected="${target.isHidden ? 'false' : 'true'}"
                     onclick=${() => props.showPanel(target.id)}>
               ${target.icon}
