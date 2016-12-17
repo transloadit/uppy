@@ -24,9 +24,9 @@ const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 const uppy = Uppy({debug: true, autoProceed: false})
   .use(Dashboard, {
     trigger: '#uppyModalOpener',
-    maxWidth: 350,
-    maxHeight: 400,
-    inline: true,
+    // maxWidth: 350,
+    // maxHeight: 400,
+    // inline: false,
     target: 'body',
     locale: {
       strings: {browse: 'wow'}
