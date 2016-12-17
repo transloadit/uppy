@@ -172,6 +172,8 @@ export default class DashboardUI extends Plugin {
     document.body.classList.add('is-UppyDashboard-open')
     // focus on modal inner block
     document.querySelector('.UppyDashboard-inner').focus()
+
+    this.updateDashboardElWidth()
   }
 
   initEvents () {
