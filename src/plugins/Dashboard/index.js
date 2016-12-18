@@ -1,15 +1,17 @@
-import Plugin from '../Plugin'
-import Translator from '../../core/Translator'
-import dragDrop from 'drag-drop'
-import Dashboard from './Dashboard'
-import { getSpeed, getETA, prettyETA } from '../../core/Utils'
-import prettyBytes from 'pretty-bytes'
-import { defaultTabIcon } from './icons'
+const Plugin = '../Plugin'
+const Translator = '../../core/Translator'
+const dragDrop = 'drag-drop'
+const Dashboard = './Dashboard'
+const getSpeed = require('../../core/Utils').getSpeed
+const getETA = require('../../core/Utils').getETA
+const prettyETA = require('../../core/Utils').prettyETA
+const prettyBytes = 'pretty-bytes'
+const defaultTabIcon = require('./icons').defaultTabIcon
 
 /**
  * Modal Dialog & Dashboard
  */
-export default class DashboardUI extends Plugin {
+module.exports = class DashboardUI extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.id = 'DashboardUI'

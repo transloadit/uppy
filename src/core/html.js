@@ -1,2 +1,2 @@
-import yo from 'yo-yo'
-export default yo
+const yo = require('yo-yo')
+module.exports = yo
