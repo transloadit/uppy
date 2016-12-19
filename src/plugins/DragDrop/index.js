@@ -26,14 +26,11 @@ export default class DragDrop extends Plugin {
       strings: {
         chooseFile: 'Choose a file',
         orDragDrop: 'or drop it here',
-        upload: 'Upload'
-      },
-
-      pluralize: function (n) {
-        if (n === 1) {
-          return 0
+        upload: 'Upload',
+        selectedFiles: {
+          0: '%{smart_count} file selected',
+          1: '%{smart_count} files selected'
         }
-        return 1
       }
     }
 
@@ -112,27 +109,34 @@ export default class DragDrop extends Plugin {
   }
 
   render (state) {
-    // Another way not to render next/upload button — if Modal is used as a target
-    const target = this.opts.target.name
-
     const onSelect = (ev) => {
       const input = document.querySelector(`${this.target} .UppyDragDrop-input`)
       input.click()
     }
 
-    const next = (ev) => {
-      ev.preventDefault()
-      ev.stopPropagation()
-      this.core.emitter.emit('core:upload')
-    }
+    // const next = (ev) => {
+    //   ev.preventDefault()
+    //   ev.stopPropagation()
+    //   this.core.emitter.emit('core:upload')
+    // }
 
     // onload=${(ev) => {
     //   const firstInput = document.querySelector(`${this.target} .UppyDragDrop-focus`)
     //   firstInput.focus()
     // }}
 
+    // ${!this.core.opts.autoProceed
+    //   ? html`<button class="UppyDragDrop-uploadBtn UppyNextBtn"
+    //                  type="submit"
+    //                  onclick=${next}>
+    //           ${this.i18n('upload')}
+    //     </button>`
+    //   : ''}
+
+    const selectedFilesCount = Object.keys(state.files).length
+
     return html`
-      <div class="Uppy UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
+      <div class="Uppy UppyTheme--default UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
         <form class="UppyDragDrop-inner"
               onsubmit=${(ev) => ev.preventDefault()}>
           <input class="UppyDragDrop-input UppyDragDrop-focus"
@@ -145,12 +149,10 @@ export default class DragDrop extends Plugin {
             <strong>${this.i18n('chooseFile')}</strong>
             <span class="UppyDragDrop-dragText">${this.i18n('orDragDrop')}</span>
           </label>
-          ${!this.core.opts.autoProceed && target !== 'Dashboard'
-            ? html`<button class="UppyDragDrop-uploadBtn UppyNextBtn"
-                         type="submit"
-                         onclick=${next}>
-                    ${this.i18n('upload')}
-              </button>`
+          ${selectedFilesCount > 0
+            ? html`<div class="UppyDragDrop-selectedCount">
+                ${this.i18n('selectedFiles', {'smart_count': selectedFilesCount})}
+              </div>`
             : ''}
         </form>
       </div>
