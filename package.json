@@ -68,7 +68,8 @@
     "tap-spec": "4.1.1",
     "tape": "4.6.2",
     "uppy-server": "0.0.7",
-    "watchify": "3.7.0"
+    "watchify": "3.7.0",
+    "yo-yoify": "3.5.0"
   },
   "dependencies": {
     "drag-drop": "2.11.0",
