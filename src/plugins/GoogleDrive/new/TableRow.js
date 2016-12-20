@@ -1,7 +1,7 @@
-import html from '../../../core/html'
-import Column from './TableColumn'
+const html = require('yo-yo')
+const Column = require('./TableColumn')
 
-export default (props) => {
+module.exports = (props) => {
   const classes = props.active ? 'BrowserTable-row is-active' : 'BrowserTable-row'
   return html`
     <tr onclick=${props.handleClick} ondblclick=${props.handleDoubleClick} class=${classes}>

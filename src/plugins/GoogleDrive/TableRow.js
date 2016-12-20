@@ -1,6 +1,6 @@
-import html from '../../core/html'
+const html = require('yo-yo')
 
-export default (props) => {
+module.exports = (props) => {
   return html`
     <tr class=${props.active ? 'is-active' : ''}
       onclick=${props.handleClick}

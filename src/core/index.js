@@ -1,2 +1,2 @@
-import Core from './Core'
-export default Core
+const Core = require('./Core')
+module.exports = Core

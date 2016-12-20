@@ -24,6 +24,6 @@ function dataURItoBlob (dataURI, opts, toFile) {
   return new Blob([new Uint8Array(array)], {type: mimeType})
 }
 
-export default function (dataURI, opts) {
+module.exports = function (dataURI, opts) {
   return dataURItoBlob(dataURI, opts, true)
 }

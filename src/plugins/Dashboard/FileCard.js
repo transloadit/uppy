@@ -1,5 +1,5 @@
-import html from '../../core/html'
-import { iconText, iconFile, iconAudio, checkIcon } from './icons'
+const html = require('yo-yo')
+const { iconText, iconFile, iconAudio, checkIcon } = require('./icons')
 
 function getIconByMime (fileTypeGeneral) {
   switch (fileTypeGeneral) {
@@ -12,7 +12,7 @@ function getIconByMime (fileTypeGeneral) {
   }
 }
 
-export default function fileCard (props) {
+module.exports = function fileCard (props) {
   const file = props.fileCardFor ? props.files[props.fileCardFor] : false
   const meta = {}
 

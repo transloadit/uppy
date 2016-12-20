@@ -1,8 +1,8 @@
-import html from '../../../core/html'
-import Breadcrumbs from './Breadcrumbs'
-import Table from './Table'
+const html = require('yo-yo')
+const Breadcrumbs = require('./Breadcrumbs')
+const Table = require('./Table')
 
-export default (props) => {
+module.exports = (props) => {
   let filteredFolders = props.folders
   let filteredFiles = props.files
 

@@ -1,7 +1,7 @@
-import html from '../../core/html'
-import { uploadIcon } from './icons'
+const html = require('yo-yo')
+const { uploadIcon } = require('./icons')
 
-export default (props) => {
+module.exports = (props) => {
   props = props || {}
 
   return html`<button class="UppyButton--circular

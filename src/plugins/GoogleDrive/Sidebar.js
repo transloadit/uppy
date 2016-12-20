@@ -1,6 +1,6 @@
-import html from '../../core/html'
+const html = require('yo-yo')
 
-export default (props) => {
+module.exports = (props) => {
   return html`
     <ul class="UppyGoogleDrive-sidebar">
       <li class="UppyGoogleDrive-filter"><input class="UppyGoogleDrive-focusInput" type='text' onkeyup=${props.filterQuery} placeholder="Search.." value=${props.filterInput}/></li>

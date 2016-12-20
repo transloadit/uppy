@@ -1,15 +1,15 @@
-import html from '../../core/html'
-import FileList from './FileList'
-import Tabs from './Tabs'
-import FileCard from './FileCard'
-import UploadBtn from './UploadBtn'
-import StatusBar from './StatusBar'
-import { isTouchDevice, toArray } from '../../core/Utils'
-import { closeIcon } from './icons'
+const html = require('yo-yo')
+const FileList = require('./FileList')
+const Tabs = require('./Tabs')
+const FileCard = require('./FileCard')
+const UploadBtn = require('./UploadBtn')
+const StatusBar = require('./StatusBar')
+const { isTouchDevice, toArray } = require('../../core/Utils')
+const { closeIcon } = require('./icons')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
-export default function Dashboard (props) {
+module.exports = function Dashboard (props) {
   const handleInputChange = (ev) => {
     ev.preventDefault()
     const files = toArray(ev.target.files)

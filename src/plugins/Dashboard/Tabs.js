@@ -1,8 +1,8 @@
-import html from '../../core/html'
-import ActionBrowseTagline from './ActionBrowseTagline'
-import { localIcon } from './icons'
+const html = require('yo-yo')
+const ActionBrowseTagline = require('./ActionBrowseTagline')
+const { localIcon } = require('./icons')
 
-export default (props) => {
+module.exports = (props) => {
   const isHidden = Object.keys(props.files).length === 0
 
   if (props.acquirers.length === 0) {

@@ -1,7 +1,7 @@
-import html from '../../../core/html'
-import Row from './TableRow'
+const html = require('yo-yo')
+const Row = require('./TableRow')
 
-export default (props) => {
+module.exports = (props) => {
   const headers = props.columns.map((column) => {
     return html`
       <th class="BrowserTable-headerColumn BrowserTable-column" onclick=${props.sortByTitle}>

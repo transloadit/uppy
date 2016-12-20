@@ -1,12 +1,12 @@
-const Plugin = '../Plugin'
-const Translator = '../../core/Translator'
-const dragDrop = 'drag-drop'
-const Dashboard = './Dashboard'
-const getSpeed = require('../../core/Utils').getSpeed
-const getETA = require('../../core/Utils').getETA
-const prettyETA = require('../../core/Utils').prettyETA
-const prettyBytes = 'pretty-bytes'
-const defaultTabIcon = require('./icons').defaultTabIcon
+const Plugin = require('../Plugin')
+const Translator = require('../../core/Translator')
+const dragDrop = require('drag-drop')
+const Dashboard = require('./Dashboard')
+const { getSpeed } = require('../../core/Utils')
+const { getETA } = require('../../core/Utils')
+const { prettyETA } = require('../../core/Utils')
+const prettyBytes = require('pretty-bytes')
+const { defaultTabIcon } = require('./icons')
 
 /**
  * Modal Dialog & Dashboard
@@ -20,22 +20,6 @@ module.exports = class DashboardUI extends Plugin {
 
     const defaultLocale = {
       strings: {
-        // filesChosen: {
-        //   0: '%{smart_count} file selected',
-        //   1: '%{smart_count} files selected'
-        // },
-        // filesUploaded: {
-        //   0: '%{smart_count} file uploaded',
-        //   1: '%{smart_count} files uploaded'
-        // },
-        // files: {
-        //   0: '%{smart_count} file',
-        //   1: '%{smart_count} files'
-        // },
-        // uploadFiles: {
-        //   0: 'Upload %{smart_count} file',
-        //   1: 'Upload %{smart_count} files'
-        // },
         selectToUpload: 'Select files to upload',
         closeModal: 'Close Modal',
         upload: 'Upload',

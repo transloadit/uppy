@@ -1,6 +1,6 @@
 const Plugin = require('./../Plugin')
 const Translator = require('../../core/Translator')
-const toArray = require('../../core/Utils').toArray
+const { toArray } = require('../../core/Utils')
 const dragDrop = require('drag-drop')
 const html = require('yo-yo')
 
@@ -27,13 +27,6 @@ module.exports = class DragDrop extends Plugin {
         chooseFile: 'Choose a file',
         orDragDrop: 'or drop it here',
         upload: 'Upload'
-      },
-
-      pluralize: function (n) {
-        if (n === 1) {
-          return 0
-        }
-        return 1
       }
     }
 

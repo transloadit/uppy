@@ -1,7 +1,7 @@
-import html from '../../core/html'
-import Breadcrumb from './Breadcrumb'
+const html = require('yo-yo')
+const Breadcrumb = require('./Breadcrumb')
 
-export default (props) => {
+module.exports = (props) => {
   console.log(props.directories)
   return html`
     <ul class="UppyGoogleDrive-breadcrumbs">

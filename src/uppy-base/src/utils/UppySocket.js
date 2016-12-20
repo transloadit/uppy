@@ -1,6 +1,6 @@
-import ee from 'namespace-emitter'
+const ee = require('namespace-emitter')
 
-export default class UppySocket {
+module.exports = class UppySocket {
   constructor (opts) {
     this.queued = []
     this.isOpen = false

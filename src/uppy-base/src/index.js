@@ -1,9 +1,9 @@
-import Multipart from './plugins/Multipart'
-import Provider from './plugins/Provider'
-import Tus10 from './plugins/Tus10'
-import Webcam from './plugins/Webcam'
+const Multipart = require('./plugins/Multipart')
+const Provider = require('./plugins/Provider')
+const Tus10 = require('./plugins/Tus10')
+const Webcam = require('./plugins/Webcam')
 
-export {
+module.exports = {
   Multipart,
   Provider,
   Tus10,

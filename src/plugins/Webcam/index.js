@@ -1,14 +1,14 @@
-import Plugin from '../Plugin'
-import WebcamProvider from '../../uppy-base/src/plugins/Webcam'
-import { extend } from '../../core/Utils'
-import WebcamIcon from './WebcamIcon'
-import CameraScreen from './CameraScreen'
-import PermissionsScreen from './PermissionsScreen'
+const Plugin = require('../Plugin')
+const WebcamProvider = require('../../uppy-base/src/plugins/Webcam')
+const { extend } = require('../../core/Utils')
+const WebcamIcon = require('./WebcamIcon')
+const CameraScreen = require('./CameraScreen')
+const PermissionsScreen = require('./PermissionsScreen')
 
 /**
  * Webcam
  */
-export default class Webcam extends Plugin {
+module.exports = class Webcam extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.userMedia = true

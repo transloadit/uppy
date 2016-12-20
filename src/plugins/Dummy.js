@@ -6,7 +6,7 @@ const html = require('yo-yo')
  * Dummy
  *
  */
-class Dummy extends Plugin {
+module.exports = class Dummy extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
@@ -66,8 +66,8 @@ class Dummy extends Plugin {
   }
 }
 
-module.exports = function (core, opts) {
-  if (!(this instanceof Dummy)) {
-    return new Dummy(core, opts)
-  }
-}
+// module.exports = function (core, opts) {
+//   if (!(this instanceof Dummy)) {
+//     return new Dummy(core, opts)
+//   }
+// }

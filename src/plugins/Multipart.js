@@ -1,6 +1,6 @@
-import Plugin from './Plugin'
+const Plugin = require('./Plugin')
 
-export default class Multipart extends Plugin {
+module.exports = class Multipart extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'uploader'

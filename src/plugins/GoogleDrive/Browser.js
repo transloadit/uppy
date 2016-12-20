@@ -1,8 +1,8 @@
-import html from '../../core/html'
-import Sidebar from './Sidebar'
-import Table from './Table'
+const html = require('yo-yo')
+const Sidebar = require('./Sidebar')
+const Table = require('./Table')
 
-export default (props, bus) => {
+module.exports = (props, bus) => {
   let filteredFolders = props.folders
   let filteredFiles = props.files
 
