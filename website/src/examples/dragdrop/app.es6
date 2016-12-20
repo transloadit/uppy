@@ -16,3 +16,8 @@ uppyTwo
   .use(Tus10, {endpoint: '//tusd.tus.io/files/'})
   .use(ProgressBar, {target: '.UppyDragDrop-Two-Progress'})
   .run()
+
+var uploadBtn = document.querySelector('.UppyDragDrop-Two-Upload')
+uploadBtn.addEventListener('click', function () {
+  uppyTwo.startUpload()
+})

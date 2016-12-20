@@ -18,8 +18,17 @@ module.exports = class Translator {
     const defaultOptions = {
       // locale: en_US
     }
+
+    const defaultPluralize = function (n) {
+      if (n === 1) {
+        return 0
+      }
+      return 1
+    }
+
     this.opts = Object.assign({}, defaultOptions, opts)
     this.locale = this.opts.locale
+    this.locale.pluralize = this.opts.locale.pluralize || defaultPluralize
     // this.locale.strings = Object.assign({}, en_US.strings, this.opts.locale.strings)
   }
 

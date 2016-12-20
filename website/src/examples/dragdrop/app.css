@@ -4,3 +4,21 @@
 .UppyDragDrop-Two-Progress {
   position: relative;
 }
+
+.UppyDragDrop-Two-Upload {
+  display: block;
+  margin: auto;
+  padding: 5px 15px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 0;
+  border: 1px solid gray;
+  background: none;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.UppyDragDrop-Two-Upload:hover {
+  background: gray;
+}
