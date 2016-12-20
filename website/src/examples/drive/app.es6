@@ -1,6 +1,6 @@
-import Uppy from '../../../../src/core/Core.js'
-import GoogleDrive from '../../../../src/plugins/GoogleDrive'
-import { UPPY_SERVER } from '../env'
+const Uppy = require('../../../../src/core/Core.js')
+const GoogleDrive = require('../../../../src/plugins/GoogleDrive')
+const { UPPY_SERVER } = require('../env')
 
 const uppy = new Uppy({debug: true, autoProceed: false})
 uppy
