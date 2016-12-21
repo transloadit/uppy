@@ -1,12 +1,12 @@
-import Plugin from './Plugin'
-import tus from 'tus-js-client'
-import UppySocket from '../core/UppySocket'
+const Plugin = require('./Plugin')
+const tus = require('tus-js-client')
+const UppySocket = require('../core/UppySocket')
 
 /**
  * Tus resumable file uploader
  *
  */
-export default class Tus10 extends Plugin {
+module.exports = class Tus10 extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'uploader'

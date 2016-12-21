@@ -4,5 +4,5 @@ if (location.hostname === 'uppy.io') {
   uppyServerEndpoint = '//server.uppy.io'
 }
 
-// uppyServerEndpoint = 'http://server.uppy.io:3020'
-export const UPPY_SERVER = uppyServerEndpoint
+const UPPY_SERVER = uppyServerEndpoint
+module.exports = UPPY_SERVER

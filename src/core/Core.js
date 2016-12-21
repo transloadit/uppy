@@ -1,8 +1,8 @@
-import Utils from '../core/Utils'
-import Translator from '../core/Translator'
-import ee from 'namespace-emitter'
-import UppySocket from './UppySocket'
-import en_US from '../locales/en_US'
+const Utils = require('../core/Utils')
+const Translator = require('../core/Translator')
+const ee = require('namespace-emitter')
+const UppySocket = require('./UppySocket')
+// const en_US = require('../locales/en_US')
 // import deepFreeze from 'deep-freeze-strict'
 
 /**
@@ -15,7 +15,7 @@ class Uppy {
     // set default options
     const defaultOptions = {
       // load English as the default locale
-      locale: en_US,
+      // locale: en_US,
       autoProceed: true,
       debug: false
     }
@@ -470,7 +470,7 @@ class Uppy {
 //   }
 // }
 
-export default function (opts) {
+module.exports = function (opts) {
   if (!(this instanceof Uppy)) {
     return new Uppy(opts)
   }

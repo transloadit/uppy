@@ -1,9 +1,9 @@
-import Plugin from './Plugin'
-import Utils from '../core/Utils'
-import Translator from '../core/Translator'
-import html from '../core/html'
+const Plugin = require('./Plugin')
+const Utils = require('../core/Utils')
+const Translator = require('../core/Translator')
+const html = require('yo-yo')
 
-export default class FileInput extends Plugin {
+module.exports = class FileInput extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.id = 'FileInput'
@@ -66,14 +66,12 @@ export default class FileInput extends Plugin {
 
     return html`<form class="Uppy uppy-FileInput-form">
       ${input}
-
       ${this.opts.pretty
         ? html`<button class="uppy-FileInput-btn" type="button" onclick=${() => input.click()}>
           ${this.i18n('selectToUpload')}
         </button>`
        : null
      }
-
     </form>`
   }
 

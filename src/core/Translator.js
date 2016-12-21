@@ -11,7 +11,7 @@
  *
  * @param {object} opts
  */
-export default class Translator {
+module.exports = class Translator {
   constructor (opts) {
     const defaultOptions = {
       locale: {

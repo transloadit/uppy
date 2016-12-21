@@ -68,7 +68,8 @@
     "tap-spec": "4.1.1",
     "tape": "4.6.2",
     "uppy-server": "0.0.7",
-    "watchify": "3.7.0"
+    "watchify": "3.7.0",
+    "yo-yoify": "3.5.0"
   },
   "dependencies": {
     "drag-drop": "2.11.0",
@@ -111,7 +112,7 @@
     "watch": "npm-run-all --parallel watch:js watch:css",
     "watch:fast": "npm-run-all --parallel watch:css web:preview",
     "watch:example:browsersync": "browser-sync start --server example --port 3452 --serveStatic dist --files \"example/bundle.js, dist/uppy.min.css\"",
-    "watch:example:js": "watchify -t babelify example/main.js -o example/bundle.js -vd",
+    "watch:example:js": "watchify -t yo-yoify -t babelify example/main.js -o example/bundle.js -vd",
     "watch:example": "npm-run-all --parallel watch:example:js watch:css watch:example:browsersync",
     "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate --silent && node build-examples.js",
     "web:clean": "cd website && ./node_modules/.bin/hexo clean",

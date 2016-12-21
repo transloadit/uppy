@@ -1,4 +1,4 @@
-import Plugin from './Plugin'
+const Plugin = require('./Plugin')
 // import deepDiff from 'deep-diff'
 
 /**
@@ -9,7 +9,7 @@ import Plugin from './Plugin'
  * in your localStorage, using the devTools
  *
  */
-export default class PersistentState extends Plugin {
+module.exports = class PersistentState extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'debugger'

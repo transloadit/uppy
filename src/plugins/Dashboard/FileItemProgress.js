@@ -1,9 +1,9 @@
-import html from '../../core/html'
+const html = require('yo-yo')
 
 // http://codepen.io/Harkko/pen/rVxvNM
 // https://gist.github.com/eswak/ad4ea57bcd5ff7aa5d42
 
-export default function (props) {
+module.exports = (props) => {
   return html`
     <svg width="70" height="70" viewBox="0 0 36 36" class="UppyIcon UppyIcon-progressCircle">
       <g class="progress-group">

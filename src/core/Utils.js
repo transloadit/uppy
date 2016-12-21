@@ -11,11 +11,11 @@
 /**
  * Shallow flatten nested arrays.
  */
-export function flatten (arr) {
+function flatten (arr) {
   return [].concat.apply([], arr)
 }
 
-export function isTouchDevice () {
+function isTouchDevice () {
   return 'ontouchstart' in window || // works on most browsers
           navigator.maxTouchPoints   // works on IE10/11 and Surface
 }
@@ -26,7 +26,7 @@ export function isTouchDevice () {
  * @param   { Object } ctx - DOM node where the target of our search will is located
  * @returns { Object } dom node found
  */
-export function $ (selector, ctx) {
+function $ (selector, ctx) {
   return (ctx || document).querySelector(selector)
 }
 
@@ -36,7 +36,7 @@ export function $ (selector, ctx) {
  * @param   { Object } ctx - DOM node where the targets of our search will is located
  * @returns { Object } dom nodes found
  */
-export function $$ (selector, ctx) {
+function $$ (selector, ctx) {
   var els
   if (typeof selector === 'string') {
     els = (ctx || document).querySelectorAll(selector)
@@ -46,7 +46,7 @@ export function $$ (selector, ctx) {
   }
 }
 
-export function truncateString (str, length) {
+function truncateString (str, length) {
   if (str.length > length) {
     return str.substr(0, length / 2) + '...' + str.substr(str.length - length / 4, str.length)
   }
@@ -56,7 +56,7 @@ export function truncateString (str, length) {
   // http://stackoverflow.com/a/831583
 }
 
-export function secondsToTime (rawSeconds) {
+function secondsToTime (rawSeconds) {
   const hours = Math.floor(rawSeconds / 3600) % 24
   const minutes = Math.floor(rawSeconds / 60) % 60
   const seconds = Math.floor(rawSeconds % 60)
@@ -70,7 +70,7 @@ export function secondsToTime (rawSeconds) {
  * @param  {[type]} groupingFn Grouping function
  * @return {[type]}            Array of arrays
  */
-export function groupBy (array, groupingFn) {
+function groupBy (array, groupingFn) {
   return array.reduce((result, item) => {
     let key = groupingFn(item)
     let xs = result.get(key) || []
@@ -86,7 +86,7 @@ export function groupBy (array, groupingFn) {
  * @param  {Object} predicateFn Predicate
  * @return {bool}               Every element pass
  */
-export function every (array, predicateFn) {
+function every (array, predicateFn) {
   return array.reduce((result, item) => {
     if (!result) {
       return false
@@ -99,7 +99,7 @@ export function every (array, predicateFn) {
 /**
  * Converts list into array
 */
-export function toArray (list) {
+function toArray (list) {
   return Array.prototype.slice.call(list || [], 0)
 }
 
@@ -110,14 +110,14 @@ export function toArray (list) {
  * @param {String} fileName
  *
  */
-export function generateFileID (fileName) {
+function generateFileID (fileName) {
   let fileID = fileName.toLowerCase()
   fileID = fileID.replace(/[^A-Z0-9]/ig, '')
   fileID = fileID + Date.now()
   return fileID
 }
 
-export function extend (...objs) {
+function extend (...objs) {
   return Object.assign.apply(this, [{}].concat(objs))
 }
 
@@ -135,13 +135,13 @@ export function extend (...objs) {
 //   return (!f && 'not a function') || (s && s[1] || 'anonymous')
 // }
 
-export function getProportionalImageHeight (img, newWidth) {
+function getProportionalImageHeight (img, newWidth) {
   var aspect = img.width / img.height
   var newHeight = Math.round(newWidth / aspect)
   return newHeight
 }
 
-export function getFileType (file) {
+function getFileType (file) {
   if (file.type) {
     return file.type
   }
@@ -150,7 +150,7 @@ export function getFileType (file) {
 }
 
 // returns [fileName, fileExt]
-export function getFileNameAndExtension (fullFileName) {
+function getFileNameAndExtension (fullFileName) {
   var re = /(?:\.([^.]+))?$/
   var fileExt = re.exec(fullFileName)[1]
   var fileName = fullFileName.replace('.' + fileExt, '')
@@ -165,7 +165,7 @@ export function getFileNameAndExtension (fullFileName) {
  * @return {Promise} dataURL of the file
  *
  */
-export function readFile (fileObj) {
+function readFile (fileObj) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.addEventListener('load', function (ev) {
@@ -207,7 +207,7 @@ export function readFile (fileObj) {
  * @param {String} width of the resulting image
  * @return {String} Data URI of the resized image
  */
-export function createImageThumbnail (imgDataURI, newWidth) {
+function createImageThumbnail (imgDataURI, newWidth) {
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.addEventListener('load', () => {
@@ -241,7 +241,7 @@ export function createImageThumbnail (imgDataURI, newWidth) {
   })
 }
 
-export function dataURItoBlob (dataURI, opts, toFile) {
+function dataURItoBlob (dataURI, opts, toFile) {
   // get the base64 data
   var data = dataURI.split(',')[1]
 
@@ -267,7 +267,7 @@ export function dataURItoBlob (dataURI, opts, toFile) {
   return new Blob([new Uint8Array(array)], {type: mimeType})
 }
 
-export function dataURItoFile (dataURI, opts) {
+function dataURItoFile (dataURI, opts) {
   return dataURItoBlob(dataURI, opts, true)
 }
 
@@ -281,7 +281,7 @@ export function dataURItoFile (dataURI, opts) {
  * @param {String} fallbackString
  * @return {Promise}
  */
-export function copyToClipboard (textToCopy, fallbackString) {
+function copyToClipboard (textToCopy, fallbackString) {
   fallbackString = fallbackString || 'Copy the URL below'
 
   return new Promise((resolve, reject) => {
@@ -323,7 +323,7 @@ export function copyToClipboard (textToCopy, fallbackString) {
   })
 }
 
-// export function createInlineWorker (workerFunction) {
+// function createInlineWorker (workerFunction) {
 //   let code = workerFunction.toString()
 //   code = code.substring(code.indexOf('{') + 1, code.lastIndexOf('}'))
 //
@@ -333,24 +333,24 @@ export function copyToClipboard (textToCopy, fallbackString) {
 //   return worker
 // }
 
-export function makeWorker (script) {
-  var URL = window.URL || window.webkitURL
-  var Blob = window.Blob
-  var Worker = window.Worker
+// function makeWorker (script) {
+//   var URL = window.URL || window.webkitURL
+//   var Blob = window.Blob
+//   var Worker = window.Worker
+//
+//   if (!URL || !Blob || !Worker || !script) {
+//     return null
+//   }
+//
+//   let code = script.toString()
+//   code = code.substring(code.indexOf('{') + 1, code.lastIndexOf('}'))
+//
+//   var blob = new Blob([code])
+//   var worker = new Worker(URL.createObjectURL(blob))
+//   return worker
+// }
 
-  if (!URL || !Blob || !Worker || !script) {
-    return null
-  }
-
-  let code = script.toString()
-  code = code.substring(code.indexOf('{') + 1, code.lastIndexOf('}'))
-
-  var blob = new Blob([code])
-  var worker = new Worker(URL.createObjectURL(blob))
-  return worker
-}
-
-export function getSpeed (fileProgress) {
+function getSpeed (fileProgress) {
   if (!fileProgress.bytesUploaded) return 0
 
   const timeElapsed = (new Date()) - fileProgress.uploadStarted
@@ -358,7 +358,7 @@ export function getSpeed (fileProgress) {
   return uploadSpeed
 }
 
-export function getETA (fileProgress) {
+function getETA (fileProgress) {
   if (!fileProgress.bytesUploaded) return 0
 
   const uploadSpeed = getSpeed(fileProgress)
@@ -368,7 +368,7 @@ export function getETA (fileProgress) {
   return secondsRemaining
 }
 
-export function prettyETA (seconds) {
+function prettyETA (seconds) {
   const time = secondsToTime(seconds)
 
   // Only display hours and minutes if they are greater than 0 but always
@@ -383,23 +383,23 @@ export function prettyETA (seconds) {
   return `${hoursStr}${minutesStr}${secondsStr}`
 }
 
-export function makeCachingFunction () {
-  let cachedEl = null
-  let lastUpdate = Date.now()
+// function makeCachingFunction () {
+//   let cachedEl = null
+//   let lastUpdate = Date.now()
+//
+//   return function cacheElement (el, time) {
+//     if (Date.now() - lastUpdate < time) {
+//       return cachedEl
+//     }
+//
+//     cachedEl = el
+//     lastUpdate = Date.now()
+//
+//     return el
+//   }
+// }
 
-  return function cacheElement (el, time) {
-    if (Date.now() - lastUpdate < time) {
-      return cachedEl
-    }
-
-    cachedEl = el
-    lastUpdate = Date.now()
-
-    return el
-  }
-}
-
-export default {
+module.exports = {
   generateFileID,
   toArray,
   every,
@@ -420,6 +420,8 @@ export default {
   dataURItoFile,
   getSpeed,
   getETA,
-  makeWorker,
-  makeCachingFunction
+  // makeWorker,
+  // makeCachingFunction,
+  copyToClipboard,
+  prettyETA
 }

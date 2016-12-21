@@ -1,4 +1,4 @@
-import Plugin from './Plugin'
+const Plugin = require('./Plugin')
 // import deepDiff from 'deep-diff'
 
 /**
@@ -7,7 +7,7 @@ import Plugin from './Plugin'
  * inspired by https://github.com/yoshuawuyts/choo-log
  *
  */
-export default class MagicLog extends Plugin {
+module.exports = class MagicLog extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'debugger'

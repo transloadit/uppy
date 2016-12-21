@@ -1,7 +1,7 @@
-import Uppy from '../../../../src/core/Core.js'
-import FileInput from '../../../../src/plugins/FileInput.js'
-import Multipart from '../../../../src/plugins/Multipart.js'
-import ProgressBar from '../../../../src/plugins/ProgressBar.js'
+const Uppy = require('../../../../src/core/Core.js')
+const FileInput = require('../../../../src/plugins/FileInput.js')
+const Multipart = require('../../../../src/plugins/Multipart.js')
+const ProgressBar = require('../../../../src/plugins/ProgressBar.js')
 
 const uppy = new Uppy({debug: true, autoProceed: true})
 

@@ -1,18 +1,17 @@
-import Plugin from './Plugin'
-import html from '../core/html'
-// import { createInlineWorker } from '../core/Utils'
+const Plugin = require('./Plugin')
+const html = require('yo-yo')
+// const yo = require('yo-yo')
 
 /**
  * Dummy
  *
  */
-class Dummy extends Plugin {
+module.exports = class Dummy extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
     this.id = 'Dummy'
     this.title = 'Mr. Plugin'
-    // this.props = props
 
     // set default options
     const defaultOptions = {}
@@ -67,8 +66,8 @@ class Dummy extends Plugin {
   }
 }
 
-export default function (core, opts) {
-  if (!(this instanceof Dummy)) {
-    return new Dummy(core, opts)
-  }
-}
+// module.exports = function (core, opts) {
+//   if (!(this instanceof Dummy)) {
+//     return new Dummy(core, opts)
+//   }
+// }

@@ -1,15 +1,15 @@
-import Utils from '../../core/Utils'
-import Plugin from '../Plugin'
-import 'whatwg-fetch'
-import html from '../../core/html'
+const html = require('yo-yo')
+require('whatwg-fetch')
+const Utils = require('../../core/Utils')
+const Plugin = require('../Plugin')
 
-import Provider from '../../uppy-base/src/plugins/Provider'
+const Provider = require('../../uppy-base/src/plugins/Provider')
 
-import AuthView from './AuthView'
-import Browser from './new/Browser'
-import ErrorView from './Error'
+const AuthView = require('./AuthView')
+const Browser = require('./new/Browser')
+const ErrorView = require('./Error')
 
-export default class Google extends Plugin {
+module.exports = class Google extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'

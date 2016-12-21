@@ -1,6 +1,6 @@
-import html from '../../core/html'
+const html = require('yo-yo')
 
-export default (props) => {
+module.exports = (props) => {
   const demoLink = props.demo ? html`<a onclick=${props.handleDemoAuth}>Proceed with Demo Account</a>` : null
   return html`
     <div class="UppyGoogleDrive-authenticate">

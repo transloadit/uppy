@@ -1,14 +1,14 @@
-import Plugin from './../Plugin'
-import Translator from '../../core/Translator'
-import { toArray } from '../../core/Utils'
-import dragDrop from 'drag-drop'
-import html from '../../core/html'
+const Plugin = require('./../Plugin')
+const Translator = require('../../core/Translator')
+const { toArray } = require('../../core/Utils')
+const dragDrop = require('drag-drop')
+const html = require('yo-yo')
 
 /**
  * Drag & Drop plugin
  *
  */
-export default class DragDrop extends Plugin {
+module.exports = class DragDrop extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'

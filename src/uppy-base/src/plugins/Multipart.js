@@ -1,8 +1,8 @@
 'use strict'
 
-import EventEmitter from 'events'
+const EventEmitter = require('events')
 
-export default class Multipart extends EventEmitter {
+module.exports = class Multipart extends EventEmitter {
   constructor (core, opts) {
     super()
 

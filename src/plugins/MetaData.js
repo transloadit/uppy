@@ -1,11 +1,11 @@
-import Plugin from './Plugin'
+const Plugin = require('./Plugin')
 
 /**
  * Meta Data
  * Adds metadata fields to Uppy
  *
  */
-export default class MetaData extends Plugin {
+module.exports = class MetaData extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'modifier'

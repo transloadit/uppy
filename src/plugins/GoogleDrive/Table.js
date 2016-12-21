@@ -1,7 +1,7 @@
-import html from '../../core/html'
-import TableRow from './TableRow'
+const html = require('yo-yo')
+const TableRow = require('./TableRow')
 
-export default (props) => {
+module.exports = (props) => {
   return html`
     <table class="UppyGoogleDrive-browser">
       <thead>

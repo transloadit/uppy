@@ -1,7 +1,7 @@
-import html from '../../core/html'
-import CameraIcon from './CameraIcon'
+const html = require('yo-yo')
+const CameraIcon = require('./CameraIcon')
 
-export default (props) => {
+module.exports = (props) => {
   const src = props.src || ''
   let video
 

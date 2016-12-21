@@ -1,17 +1,17 @@
 // import Uppy from '../src/core'
 // import Dummy from '../src/plugins/Dummy.js'
-import Dashboard from '../src/plugins/Dashboard'
-import GoogleDrive from '../src/plugins/GoogleDrive'
-import Webcam from '../src/plugins/Webcam'
-import Tus10 from '../src/plugins/Tus10'
-import MetaData from '../src/plugins/MetaData'
-import Informer from '../src/plugins/Informer'
+const Dashboard = require('../src/plugins/Dashboard')
+const GoogleDrive = require('../src/plugins/GoogleDrive')
+const Webcam = require('../src/plugins/Webcam')
+const Tus10 = require('../src/plugins/Tus10')
+const MetaData = require('../src/plugins/MetaData')
+const Informer = require('../src/plugins/Informer')
 // import Dummy from '../src/plugins/Dummy'
 // import ProgressBar from '../src/plugins/ProgressBar'
 // import DragDrop from '../src/plugins/DragDrop'
 // import FileInput from '../src/plugins/FileInput'
 
-const Uppy = require('../src/core')
+const Uppy = require('../src/core/Core.js')
 // const Dashboard = require('../src/plugins/Dashboard')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
