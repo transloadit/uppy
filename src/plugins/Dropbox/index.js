@@ -80,7 +80,7 @@ export default class Dropbox extends Plugin {
     var icon = icons[item.icon]
 
     if (!icon) {
-      if (name.startsWith('folder')) {
+      if (item.icon.startsWith('folder')) {
         icon = icons['folder']
       } else {
         icon = icons['page_white']
