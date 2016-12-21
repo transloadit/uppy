@@ -18,22 +18,6 @@ export default class DashboardUI extends Plugin {
 
     const defaultLocale = {
       strings: {
-        // filesChosen: {
-        //   0: '%{smart_count} file selected',
-        //   1: '%{smart_count} files selected'
-        // },
-        // filesUploaded: {
-        //   0: '%{smart_count} file uploaded',
-        //   1: '%{smart_count} files uploaded'
-        // },
-        // files: {
-        //   0: '%{smart_count} file',
-        //   1: '%{smart_count} files'
-        // },
-        // uploadFiles: {
-        //   0: 'Upload %{smart_count} file',
-        //   1: 'Upload %{smart_count} files'
-        // },
         selectToUpload: 'Select files to upload',
         closeModal: 'Close Modal',
         upload: 'Upload',
@@ -67,10 +51,11 @@ export default class DashboardUI extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
-    this.opts.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
-    // containerWidth
-    this.translator = new Translator({locale: this.opts.locale})
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    this.translator = new Translator({locale: this.locale})
     this.containerWidth = this.translator.translate.bind(this.translator)
 
     this.hideModal = this.hideModal.bind(this)
