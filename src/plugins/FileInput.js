@@ -28,8 +28,11 @@ module.exports = class FileInput extends Plugin {
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
     // i18n
-    this.translator = new Translator({locale: this.opts.locale})
+    this.translator = new Translator({locale: this.locale})
     this.i18n = this.translator.translate.bind(this.translator)
 
     this.render = this.render.bind(this)

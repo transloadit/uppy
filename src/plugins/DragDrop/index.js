@@ -42,13 +42,16 @@ module.exports = class DragDrop extends Plugin {
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOpts, opts)
-    this.opts.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+    console.log(this.locale.strings)
 
     // Check for browser dragDrop support
     this.isDragDropSupported = this.checkDragDropSupport()
 
     // i18n
-    this.translator = new Translator({locale: this.opts.locale})
+    this.translator = new Translator({locale: this.locale})
     this.i18n = this.translator.translate.bind(this.translator)
 
     // Bind `this` to class methods
