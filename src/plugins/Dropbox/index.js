@@ -22,7 +22,9 @@ export default class Dropbox extends Plugin {
         </g>
       </svg>`
 
-    this[this.id] = new Provider({
+    // writing out the key explicitly for readability the key used to store
+    // the provider instance must be equal to this.id.
+    this.Dropbox = new Provider({
       host: this.opts.host,
       provider: 'dropbox'
     })
@@ -43,7 +45,9 @@ export default class Dropbox extends Plugin {
     this.view = new View(this)
     // Set default state
     this.core.setState({
-      [this.stateId]: {
+      // writing out the key explicitly for readability the key used to store
+      // the plugin state must be equal to this.stateId.
+      dropbox: {
         authenticated: false,
         files: [],
         folders: [],

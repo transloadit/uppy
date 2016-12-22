@@ -8,7 +8,8 @@ export default class Provider {
   constructor (opts) {
     this.opts = opts
     this.provider = opts.provider
-    this.id = opts.id || this.provider
+    this.id = this.provider
+    this.authProvider = opts.authProvider || this.provider
     this.name = this.opts.name || _getName(this.id)
   }
 

@@ -19,10 +19,12 @@ export default class Google extends Plugin {
       </svg>
     `
 
-    this[this.id] = new Provider({
+    // writing out the key explicitly for readability the key used to store
+    // the provider instance must be equal to this.id.
+    this.GoogleDrive = new Provider({
       host: this.opts.host,
-      provider: 'google',
-      id: 'drive'
+      provider: 'drive',
+      authProvider: 'google'
     })
 
     this.files = []
@@ -41,7 +43,9 @@ export default class Google extends Plugin {
     this.view = new View(this)
     // Set default state for Google Drive
     this.core.setState({
-      [this.stateId]: {
+      // writing out the key explicitly for readability the key used to store
+      // the plugin state must be equal to this.stateId.
+      googleDrive: {
         authenticated: false,
         files: [],
         folders: [],

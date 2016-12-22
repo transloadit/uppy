@@ -4,7 +4,7 @@
 @import '_common.scss';
 @import 'vendor/bootstrap/bootstrap-grid';
 
-.UppyPlugin-authenticate {
+.UppyProvider-authenticate {
   align-items: center;
   display: flex;
   flex-flow: column wrap;
@@ -12,7 +12,7 @@
   justify-content: center;
 }
 
-.UppyPlugin-authenticate a {
+.UppyProvider-authenticate a {
   background-color: transparent;
   border: 1px solid #78BDF2;
   border-radius: 12px;
@@ -29,12 +29,12 @@
   }
 }
 
-.UppyPlugin-authenticate h1 {
+.UppyProvider-authenticate h1 {
   font-size: 24px;
   margin-bottom: 48px;
 }
 
-.UppyPlugin-breadcrumbs {
+.UppyProvider-breadcrumbs {
   color: #222;
   font-size: 12px;
   list-style-type: none;
@@ -43,7 +43,7 @@
   padding: 8px 0;
 }
 
-.UppyPlugin-breadcrumbs button,
+.UppyProvider-breadcrumbs button,
 .UppyGoogleDrive-sidebar button {
   background: transparent;
   border: 0;
@@ -52,7 +52,7 @@
   outline: 0;
 }
 
-.UppyPlugin-breadcrumbs button:hover {
+.UppyProvider-breadcrumbs button:hover {
   text-decoration: underline;
 }
 
@@ -61,20 +61,20 @@
   padding: 0;
 }
 
-.UppyPlugin-breadcrumbs button:focus,
+.UppyProvider-breadcrumbs button:focus,
 .UppyGoogleDrive-sidebar button:focus {
   outline: 1px dotted #aaa;
 }
 
-.UppyPlugin-breadcrumbs li {
+.UppyProvider-breadcrumbs li {
   display: inline-block;
 }
 
-.UppyPlugin-breadcrumbs li:after {
+.UppyProvider-breadcrumbs li:after {
   content: '>';
 }
 
-.UppyPlugin-breadcrumbs li:last-child:after {
+.UppyProvider-breadcrumbs li:last-child:after {
   content: '';
 }
 

@@ -265,9 +265,10 @@ export default class View {
         redirect: location.href.split('#')[0]
       }))
 
-      const link = `${this.plugin.opts.host}/connect/${this.Provider.provider}?state=${authState}`
+      const link = `${this.plugin.opts.host}/connect/${this.Provider.authProvider}?state=${authState}`
 
       return AuthView({
+        pluginName: this.plugin.title,
         link: link,
         demo: this.plugin.opts.demo,
         handleDemoAuth: this.handleDemoAuth

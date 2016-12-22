@@ -3,7 +3,7 @@ import Breadcrumb from './Breadcrumb'
 
 export default (props) => {
   return html`
-    <ul class="UppyPlugin-breadcrumbs">
+    <ul class="UppyProvider-breadcrumbs">
       ${
         props.directories.map((directory) => {
           return Breadcrumb({
