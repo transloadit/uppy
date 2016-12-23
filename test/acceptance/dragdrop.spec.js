@@ -16,13 +16,13 @@ module.exports = function (driver, platform, host) {
     tools.setSauceTestName(driver, testName)
 
     driver.executeScript(tools.uppySelectFakeFile)
-    driver.findElement({css: '.UppyDragDrop-uploadBtn'}).click()
+    driver.findElement({css: '.UppyDragDrop-Two-Upload'}).click()
 
     var platformBrowser = platform.browser.toLowerCase()
     if (platformBrowser === 'safari' || platformBrowser === 'microsoftedge') {
       console.log('fake-selecting a fake file')
       driver.executeScript(tools.uppySelectFakeFile)
-      driver.findElement({css: '.UppyDragDrop-uploadBtn'}).click()
+      driver.findElement({css: '.UppyDragDrop-Two-Upload'}).click()
     } else {
       console.log('selecting a real file')
       // Make file input “visible”

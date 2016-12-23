@@ -1,16 +1,15 @@
-import html from '../../core/html'
-import FileList from './FileList'
-import Tabs from './Tabs'
-import FileCard from './FileCard'
-import UploadBtn from './UploadBtn'
-// import ProgressCircle from './ProgressCircle'
-import StatusBar from './StatusBar'
-import { isTouchDevice, toArray } from '../../core/Utils'
-import { closeIcon } from './icons'
+const html = require('yo-yo')
+const FileList = require('./FileList')
+const Tabs = require('./Tabs')
+const FileCard = require('./FileCard')
+const UploadBtn = require('./UploadBtn')
+const StatusBar = require('./StatusBar')
+const { isTouchDevice, toArray } = require('../../core/Utils')
+const { closeIcon } = require('./icons')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
-export default function Dashboard (props) {
+module.exports = function Dashboard (props) {
   const handleInputChange = (ev) => {
     ev.preventDefault()
     const files = toArray(ev.target.files)
@@ -45,17 +44,21 @@ export default function Dashboard (props) {
     })
   }
 
+  const dashboardSize = props.inline ? `width: ${props.maxWidth}px; height: ${props.maxHeight}px;` : ''
+
   return html`
     <div class="Uppy UppyTheme--default UppyDashboard
                           ${isTouchDevice() ? 'Uppy--isTouchDevice' : ''}
                           ${props.semiTransparent ? 'UppyDashboard--semiTransparent' : ''}
-                          ${!props.inline ? 'UppyDashboard--modal' : ''}"
+                          ${!props.inline ? 'UppyDashboard--modal' : ''}
+                          ${props.isWide ? 'UppyDashboard--wide' : ''}"
           aria-hidden="${props.inline ? 'false' : props.modal.isHidden}"
           aria-label="${!props.inline
                        ? props.i18n('dashboardWindowTitle')
                        : props.i18n('dashboardTitle')}"
           role="dialog"
-          onpaste=${handlePaste}>
+          onpaste=${handlePaste}
+          onload=${() => props.updateDashboardElWidth()}>
 
     <button class="UppyDashboard-close"
             aria-label="${props.i18n('closeModal')}"
@@ -66,7 +69,9 @@ export default function Dashboard (props) {
          onclick=${props.hideModal}>
     </div>
 
-    <div class="UppyDashboard-inner" tabindex="0">
+    <div class="UppyDashboard-inner"
+         tabindex="0"
+         style="${dashboardSize}">
       <div class="UppyDashboard-innerWrap">
 
         ${Tabs({
@@ -108,7 +113,8 @@ export default function Dashboard (props) {
             pauseUpload: props.pauseUpload,
             startUpload: props.startUpload,
             cancelUpload: props.cancelUpload,
-            resumableUploads: props.resumableUploads
+            resumableUploads: props.resumableUploads,
+            isWide: props.isWide
           })}
 
           <div class="UppyDashboard-actions">

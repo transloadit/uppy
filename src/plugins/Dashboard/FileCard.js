@@ -1,5 +1,5 @@
-import html from '../../core/html'
-import { iconText, iconFile, iconAudio, checkIcon } from './icons'
+const html = require('yo-yo')
+const { iconText, iconFile, iconAudio, checkIcon } = require('./icons')
 
 function getIconByMime (fileTypeGeneral) {
   switch (fileTypeGeneral) {
@@ -12,7 +12,7 @@ function getIconByMime (fileTypeGeneral) {
   }
 }
 
-export default function fileCard (props) {
+module.exports = function fileCard (props) {
   const file = props.fileCardFor ? props.files[props.fileCardFor] : false
   const meta = {}
 
@@ -28,11 +28,11 @@ export default function fileCard (props) {
       return html`<fieldset class="UppyDashboardFileCard-fieldset">
         <label class="UppyDashboardFileCard-label">${field.name}</label>
         <input class="UppyDashboardFileCard-input"
-                         name="${field.id}"
-                         type="text"
-                         value="${file.meta[field.id]}"
-                         placeholder="${field.placeholder || ''}"
-                         onkeyup=${tempStoreMeta} /></fieldset>`
+               name="${field.id}"
+               type="text"
+               value="${file.meta[field.id]}"
+               placeholder="${field.placeholder || ''}"
+               onkeyup=${tempStoreMeta} /></fieldset>`
     })
   }
 
@@ -62,7 +62,7 @@ export default function fileCard (props) {
       : null
     }
     <div class="UppyDashboard-actions">
-      <button class="UppyButton--circular UppyButton--blue UppyButton--sizeM UppyDashboardFileCard-done"
+      <button class="UppyButton--circular UppyButton--blue UppyDashboardFileCard-done"
               type="button"
               title="Finish editing file"
               onclick=${() => props.done(meta, file.id)}>${checkIcon()}</button>

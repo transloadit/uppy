@@ -1,12 +1,12 @@
-import Plugin from './Plugin'
-import tus from 'tus-js-client'
-import UppySocket from '../core/UppySocket'
+const Plugin = require('./Plugin')
+const tus = require('tus-js-client')
+const UppySocket = require('../core/UppySocket')
 
 /**
  * Tus resumable file uploader
  *
  */
-export default class Tus10 extends Plugin {
+module.exports = class Tus10 extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'uploader'
@@ -165,8 +165,9 @@ export default class Tus10 extends Plugin {
           return reject(res.statusText)
         }
 
-        res.json()
-        .then((data) => {
+        this.core.emitter.emit('core:upload-started', file.id)
+
+        res.json().then((data) => {
           // get the host domain
           var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^\/\n]+)/
           var host = regex.exec(file.remote.host)[1]
@@ -182,8 +183,8 @@ export default class Tus10 extends Plugin {
 
             if (progress) {
               this.core.log(`Upload progress: ${progress}`)
+              console.log(file.id)
 
-              // Dispatch progress event
               this.core.emitter.emit('core:upload-progress', {
                 uploader: this,
                 id: file.id,

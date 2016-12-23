@@ -1,36 +1,45 @@
-import Plugin from './Plugin'
-import Utils from '../core/Utils'
-import html from '../core/html'
+const Plugin = require('./Plugin')
+const Utils = require('../core/Utils')
+const Translator = require('../core/Translator')
+const html = require('yo-yo')
 
-export default class FileInput extends Plugin {
+module.exports = class FileInput extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.id = 'FileInput'
     this.title = 'FileInput'
     this.type = 'acquirer'
 
+    const defaultLocale = {
+      strings: {
+        selectToUpload: 'Select to upload'
+      }
+    }
+
     // Default options
     const defaultOptions = {
       target: '.UppyForm',
       replaceTargetContent: true,
       multipleFiles: true,
-      text: this.core.i18n('selectToUpload'),
-      pretty: true
+      pretty: true,
+      locale: defaultLocale
     }
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    // i18n
+    this.translator = new Translator({locale: this.locale})
+    this.i18n = this.translator.translate.bind(this.translator)
 
     this.render = this.render.bind(this)
   }
 
   handleInputChange (ev) {
     this.core.log('All right, something selected through input...')
-
-    // this added rubbish keys like “length” to the resulting array
-    // const files = Object.keys(ev.target.files).map((key) => {
-    //   return ev.target.files[key]
-    // })
 
     const files = Utils.toArray(ev.target.files)
 
@@ -45,12 +54,6 @@ export default class FileInput extends Plugin {
   }
 
   render (state) {
-    // const upload = (ev) => {
-    //   ev.preventDefault()
-    //   ev.stopPropagation()
-    //   this.core.emitter.emit('core:upload')
-    // }
-
     const hiddenInputStyle = 'width: 0.1px; height: 0.1px; opacity: 0; overflow: hidden; position: absolute; z-index: -1;'
 
     const input = html`<input class="uppy-FileInput-input"
@@ -61,16 +64,14 @@ export default class FileInput extends Plugin {
            multiple="${this.opts.multipleFiles ? 'true' : 'false'}"
            value="">`
 
-    return html`<form class="uppy-FileInput-form">
+    return html`<form class="Uppy uppy-FileInput-form">
       ${input}
-
       ${this.opts.pretty
         ? html`<button class="uppy-FileInput-btn" type="button" onclick=${() => input.click()}>
-          ${this.opts.text}
+          ${this.i18n('selectToUpload')}
         </button>`
        : null
      }
-
     </form>`
   }
 

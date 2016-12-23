@@ -48,26 +48,51 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy-server: pluggable custom providers; Maybe we use a config file or make it similar to how uppy adds plugins (@ifedapoolarewaju)
 - [ ] uppy-server: begin to write automated tests (@ifedapoolarewaju)
 
+## 0.15.0
+
+To be released: TBA
+Theme: TBA
+
+- [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28) (@arturi, @kvz)
+- [ ] server: loading indicator while the GoogleDrive/Dropbox files are loading (@arturi, @ifedapoolarewaju)
+- [ ] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
+
+## 0.14.0
+
+To be released: January 27, 2017.
+Theme: The new 13: Mobile Dashboard, Grid and List
+
+- [x] dashboard: use `isWide` instead of media queries, so that compact/mobile version can be used in bigger screens too (@arturi)
+- [x] dashboard: basic “list” view in addition to current “grid” view (@arturi)
+- [ ] dashboard: basic React component (@arturi)
+- [ ] dashboard: more icons for file types (@arturi)
+- [ ] dashboard: figure out where to place Informer, accounting for StatusBar (@arturi)
+- [x] dragdrop: show number of selected files, remove upload btn (@arturi)
+- [x] build: exclude locales from build (@arturi)
+- [x] core: i18n for each plugin in options — local instead of global (@arturi)
+- [x] core: add default pluralization (can be overrinden in plugin options) to Translator (@arturi)
+- [x] core: use yo-yoify to solve [Function.caller / strict mode issue](https://github.com/shama/bel#note) and make our app faster/smaller by transforming template strings into pure and fast document calls (@arturi)
+- [ ] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
+- [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
+- [ ] server: smooth authentication: after auth you are back in your app where you left, no page reloads (@ifedapoolarewaju)
+- [ ] tus: fix upload progress from uppy-server (@arturi, @ifedapoolarewaju)
+- [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
+- [ ] uploaders: return upload result in multipart? options for that?
+- [x] core: fix support for both ES6 module import and CommonJS requires with `add-module-exports` babel plugin (@arturi)
+
 ## 0.13.0
 
 To be released: December 23, 2016.
-
-- [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28) (@arturi, @kvz)
-- [ ] dashboard: “list” view in addition to current “grid” view (@arturi)
-- [ ] core: i18n for plugins as strings in options (@arturi)
-- [ ] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
-- [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
-- [ ] uploaders: return upload result in multipart? options for that?
-- [ ] dashboard: more icons for file types? (@arturi)
+Theme: The release that wasn't.
 
 ## 0.12.0
 
 To be released: November 25, 2016.
 Theme: Responsive. Cancel. Feedback. ES6 Server
 
-- [ ] meta: write 0.12 release blog post (@arturi)
+- [x] meta: write 0.12 release blog post (@arturi)
 - [x] core: figure out import/require for core and plugins — just don’t use spread for plugins (@arturi)
-- [x] meta: create a demo GIF, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
+- [x] meta: create a demo video, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
 - [x] meta: update Readme, update screenshot (@arturi)
 - [x] server: add pre-commit and lint-staged (@arturi)
 - [x] server: re-do build setup: building at `deploy` and `prepublish` when typing `npm run release:patch` 0.0.1 -> 0.0.2 (@ifedapoolarewaju)

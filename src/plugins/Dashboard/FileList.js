@@ -1,9 +1,9 @@
-import html from '../../core/html'
-import FileItem from './FileItem'
-import ActionBrowseTagline from './ActionBrowseTagline'
-import { dashboardBgIcon } from './icons'
+const html = require('yo-yo')
+const FileItem = require('./FileItem')
+const ActionBrowseTagline = require('./ActionBrowseTagline')
+const { dashboardBgIcon } = require('./icons')
 
-export default (props) => {
+module.exports = (props) => {
   return html`<ul class="UppyDashboard-files
                          ${props.totalFileCount === 0 ? 'UppyDashboard-files--noFiles' : ''}">
       ${props.totalFileCount === 0

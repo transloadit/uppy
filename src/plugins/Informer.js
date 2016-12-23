@@ -1,5 +1,5 @@
-import Plugin from './Plugin'
-import html from '../core/html'
+const Plugin = require('./Plugin')
+const html = require('yo-yo')
 
 /**
  * Informer
@@ -8,12 +8,13 @@ import html from '../core/html'
  * or for errors: `bus.emit('informer', 'Error uploading img.jpg', 'error', 5000)`
  *
  */
-export default class Informer extends Plugin {
+module.exports = class Informer extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'progressindicator'
     this.id = 'Informer'
     this.title = 'Informer'
+    this.timeoutID = undefined
 
     // set default options
     const defaultOptions = {}
@@ -30,10 +31,14 @@ export default class Informer extends Plugin {
       }
     })
 
-    if (duration === 0) return
+    window.clearTimeout(this.timeoutID)
+    if (duration === 0) {
+      this.timeoutID = undefined
+      return
+    }
 
     // hide the informer after `duration` milliseconds
-    setTimeout(() => {
+    this.timeoutID = setTimeout(() => {
       const newInformer = Object.assign({}, this.core.getState().informer, {
         isHidden: true
       })
@@ -77,7 +82,7 @@ export default class Informer extends Plugin {
       this.showInformer(msg, type, duration)
     })
 
-    bus.on('informer-hide', () => {
+    bus.on('informer:hide', () => {
       this.hideInformer()
     })
 

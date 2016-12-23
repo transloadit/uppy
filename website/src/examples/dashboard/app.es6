@@ -1,13 +1,13 @@
-import Uppy from '../../../../src/core'
-import Dashboard from '../../../../src/plugins/Dashboard'
-import GoogleDrive from '../../../../src/plugins/GoogleDrive'
-import Dropbox from '../../../../src/plugins/Dropbox'
-import Webcam from '../../../../src/plugins/Webcam'
-import Tus10 from '../../../../src/plugins/Tus10'
-import MetaData from '../../../../src/plugins/MetaData'
-import Informer from '../../../../src/plugins/Informer'
+const Uppy = require('../../../../src/core')
+const Dashboard = require('../../../../src/plugins/Dashboard')
+const GoogleDrive = require('../../../../src/plugins/GoogleDrive')
+const Dropbox = require('../../../../src/plugins/Dropbox')
+const Webcam = require('../../../../src/plugins/Webcam')
+const Tus10 = require('../../../../src/plugins/Tus10')
+const MetaData = require('../../../../src/plugins/MetaData')
+const Informer = require('../../../../src/plugins/Informer')
 
-import { UPPY_SERVER } from '../env'
+const { UPPY_SERVER } = require('../env')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
 const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'

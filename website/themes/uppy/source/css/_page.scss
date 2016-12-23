@@ -34,7 +34,7 @@
     left: 60px;
     bottom: 0;
     padding: 2.2em 0;
-    width: 260px;
+    width: 230px;
     margin-right: 20px;
     overflow-x: hidden;
     overflow-y: auto;
@@ -132,6 +132,13 @@
     border: 1px solid rgba($color-gray, 0.3);
   }
 
+  figure.wide {
+    @media #{$screen-large} {
+      max-width: 135%;
+      img { max-width: 135%; }
+    }
+  }
+
   a.button {
     font-size: .9em;
     color: #fff;
@@ -155,11 +162,16 @@
     margin-left: 20px;
   }
 
-  > h1 { margin: 0 0 0.7em; }
+  .post h1,
+  > h1 {
+    font-size: 1.6em;
+    margin: 0 0 0.7em;
+  }
 
+  .post h2,
   > h2 {
     font-size: 1.3em;
-    margin: 2em 0 .4em 0;
+    margin: 1.6em 0 .4em 0;
     padding-bottom: .2em;
     position: relative;
     // border-bottom: 1px solid $color-border;
@@ -175,6 +187,7 @@
     // }
   }
 
+  .post h3,
   > h3 {
     margin: 3em 0 1.2em;
     position: relative;
@@ -189,27 +202,34 @@
     }
   }
 
+  .post h4,
   > h4 {
     font-size: 0.8em;
   }
 
+  .post figure, .post ul, .post ol,
   > figure, > ul, > ol {
     margin: 1.2em 0;
   }
 
+  .post p,
   > p {
     margin-top: 0;
     margin-bottom: 0.8em;
   }
 
+  .post li,
+  > ul li,
   > li {
     margin-bottom: 0.5em;
   }
 
+  .post p, .post ul, .post ol,
   > p, > ul, > ol {
     line-height: 1.5em;
   }
 
+  .post ul, .post ol,
   > ul, > ol {
     padding-left: 1.5em;
   }
@@ -219,6 +239,7 @@
     // font-weight: 600;
   }
 
+  .post blockquote,
   > blockquote {
     margin: 1.6em 0;
     padding-left: 15px;

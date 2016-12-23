@@ -1,13 +1,13 @@
 'use strict'
 
-import tus from 'tus-js-client'
-import UppySocket from '../utils/UppySocket'
-import EventEmitter from 'events'
+const tus = require('tus-js-client')
+const UppySocket = require('../utils/UppySocket')
+const EventEmitter = require('events')
 
 /**
  * Tus resumable file uploader
  */
-export default class Tus10 extends EventEmitter {
+module.exports = class Tus10 extends EventEmitter {
   constructor (opts) {
     super()
 

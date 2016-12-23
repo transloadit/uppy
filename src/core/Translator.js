@@ -1,8 +1,6 @@
-import en_US from '../locales/en_US'
-
 /**
- * Translates strings with interpolation & pluralization support.Extensible with custom dictionaries
- * and pluralization functions.
+ * Translates strings with interpolation & pluralization support.
+ * Extensible with custom dictionaries and pluralization functions.
  *
  * Borrows heavily from and inspired by Polyglot https://github.com/airbnb/polyglot.js,
  * basically a stripped-down version of it. Differences: pluralization functions are not hardcoded
@@ -13,14 +11,27 @@ import en_US from '../locales/en_US'
  *
  * @param {object} opts
  */
-export default class Translator {
+module.exports = class Translator {
   constructor (opts) {
     const defaultOptions = {
-      locale: en_US
+      locale: {
+        strings: {},
+        pluralize: function (n) {
+          if (n === 1) {
+            return 0
+          }
+          return 1
+        }
+      }
     }
+
     this.opts = Object.assign({}, defaultOptions, opts)
-    this.locale = this.opts.locale
-    this.locale.strings = Object.assign({}, en_US.strings, this.opts.locale.strings)
+    this.locale = Object.assign({}, defaultOptions.locale, opts.locale)
+
+    console.log(this.opts.locale)
+
+    // this.locale.pluralize = this.locale ? this.locale.pluralize : defaultPluralize
+    // this.locale.strings = Object.assign({}, en_US.strings, this.opts.locale.strings)
   }
 
 /**

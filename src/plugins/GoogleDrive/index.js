@@ -1,12 +1,12 @@
-import Plugin from '../Plugin'
-import 'whatwg-fetch'
-import html from '../../core/html'
+const html = require('yo-yo')
+require('whatwg-fetch')
+const Plugin = require('../Plugin')
 
-import Provider from '../../uppy-base/src/plugins/Provider'
+const Provider = require('../../uppy-base/src/plugins/Provider')
 
-import View from '../../generic-provider-views/index'
+const View = require('../../generic-provider-views/index')
 
-export default class Google extends Plugin {
+module.exports = class Google extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'

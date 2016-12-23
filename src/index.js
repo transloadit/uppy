@@ -1,54 +1,33 @@
-import Core from './core/index.js'
+const Core = require('./core/index.js')
 
 // Parent
-import Plugin from './plugins/Plugin'
-
-const locales = {}
+const Plugin = require('./plugins/Plugin')
 
 // Orchestrators
-import Dashboard from './plugins/Dashboard/index.js'
+const Dashboard = require('./plugins/Dashboard/index.js')
 
 // Acquirers
-import Dummy from './plugins/Dummy'
-import DragDrop from './plugins/DragDrop/index.js'
-import FileInput from './plugins/FileInput.js'
-import GoogleDrive from './plugins/GoogleDrive/index.js'
-import Dropbox from './plugins/Dropbox/index.js'
-import Webcam from './plugins/Webcam/index.js'
+const Dummy = require('./plugins/Dummy')
+const DragDrop = require('./plugins/DragDrop/index.js')
+const FileInput = require('./plugins/FileInput.js')
+const GoogleDrive = require('./plugins/GoogleDrive/index.js')
+const Dropbox = require('./plugins/Dropbox/index.js')
+const Webcam = require('./plugins/Webcam/index.js')
 
 // Progressindicators
-import ProgressBar from './plugins/ProgressBar.js'
-import Informer from './plugins/Informer.js'
+const ProgressBar = require('./plugins/ProgressBar.js')
+const Informer = require('./plugins/Informer.js')
 
 // Modifiers
-import MetaData from './plugins/MetaData.js'
+const MetaData = require('./plugins/MetaData.js')
 
 // Uploaders
-import Tus10 from './plugins/Tus10'
-import Multipart from './plugins/Multipart'
+const Tus10 = require('./plugins/Tus10')
+const Multipart = require('./plugins/Multipart')
 
-export default {
+module.exports = {
   Core,
   Plugin,
-  locales,
-  Dummy,
-  ProgressBar,
-  Informer,
-  DragDrop,
-  GoogleDrive,
-  Dropbox,
-  FileInput,
-  Tus10,
-  Multipart,
-  Dashboard,
-  MetaData,
-  Webcam
-}
-
-export {
-  Core,
-  Plugin,
-  locales,
   Dummy,
   ProgressBar,
   Informer,

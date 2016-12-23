@@ -4,7 +4,7 @@ const _getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
-export default class Provider {
+module.exports = class Provider {
   constructor (opts) {
     this.opts = opts
     this.provider = opts.provider

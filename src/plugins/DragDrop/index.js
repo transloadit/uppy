@@ -1,13 +1,14 @@
-import Plugin from './../Plugin'
-import { toArray } from '../../core/Utils'
-import dragDrop from 'drag-drop'
-import html from '../../core/html'
+const Plugin = require('./../Plugin')
+const Translator = require('../../core/Translator')
+const { toArray } = require('../../core/Utils')
+const dragDrop = require('drag-drop')
+const html = require('yo-yo')
 
 /**
  * Drag & Drop plugin
  *
  */
-export default class DragDrop extends Plugin {
+module.exports = class DragDrop extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
@@ -21,16 +22,37 @@ export default class DragDrop extends Plugin {
       </svg>
     `
 
+    const defaultLocale = {
+      strings: {
+        chooseFile: 'Choose a file',
+        orDragDrop: 'or drop it here',
+        upload: 'Upload',
+        selectedFiles: {
+          0: '%{smart_count} file selected',
+          1: '%{smart_count} files selected'
+        }
+      }
+    }
+
     // Default options
     const defaultOpts = {
-      target: '.UppyDragDrop'
+      target: '.UppyDragDrop',
+      locale: defaultLocale
     }
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOpts, opts)
 
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+    console.log(this.locale.strings)
+
     // Check for browser dragDrop support
     this.isDragDropSupported = this.checkDragDropSupport()
+
+    // i18n
+    this.translator = new Translator({locale: this.locale})
+    this.i18n = this.translator.translate.bind(this.translator)
 
     // Bind `this` to class methods
     this.handleDrop = this.handleDrop.bind(this)
@@ -71,12 +93,6 @@ export default class DragDrop extends Plugin {
         type: file.type,
         data: file
       })
-      // this.core.emitter.emit('file-add', {
-      //   source: this.id,
-      //   name: file.name,
-      //   type: file.type,
-      //   data: file
-      // })
     })
   }
 
@@ -95,38 +111,37 @@ export default class DragDrop extends Plugin {
     })
   }
 
-  focus () {
-    const firstInput = document.querySelector(`${this.target} .UppyDragDrop-focus`)
-
-    // only works for the first time if wrapped in setTimeout for some reason
-    setTimeout(function () {
-      firstInput.focus()
-    }, 10)
-  }
-
   render (state) {
-    // Another way not to render next/upload button — if Modal is used as a target
-    const target = this.opts.target.name
-
     const onSelect = (ev) => {
       const input = document.querySelector(`${this.target} .UppyDragDrop-input`)
       input.click()
     }
 
-    const next = (ev) => {
-      ev.preventDefault()
-      ev.stopPropagation()
-      this.core.emitter.emit('core:upload')
-    }
+    // const next = (ev) => {
+    //   ev.preventDefault()
+    //   ev.stopPropagation()
+    //   this.core.emitter.emit('core:upload')
+    // }
 
-    const onSubmit = (ev) => {
-      ev.preventDefault()
-    }
+    // onload=${(ev) => {
+    //   const firstInput = document.querySelector(`${this.target} .UppyDragDrop-focus`)
+    //   firstInput.focus()
+    // }}
+
+    // ${!this.core.opts.autoProceed
+    //   ? html`<button class="UppyDragDrop-uploadBtn UppyNextBtn"
+    //                  type="submit"
+    //                  onclick=${next}>
+    //           ${this.i18n('upload')}
+    //     </button>`
+    //   : ''}
+
+    const selectedFilesCount = Object.keys(state.files).length
 
     return html`
-      <div class="Uppy UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
+      <div class="Uppy UppyTheme--default UppyDragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}">
         <form class="UppyDragDrop-inner"
-              onsubmit=${onSubmit}>
+              onsubmit=${(ev) => ev.preventDefault()}>
           <input class="UppyDragDrop-input UppyDragDrop-focus"
                  type="file"
                  name="files[]"
@@ -134,15 +149,13 @@ export default class DragDrop extends Plugin {
                  value=""
                  onchange=${this.handleInputChange.bind(this)} />
           <label class="UppyDragDrop-label" onclick=${onSelect}>
-            <strong>${this.core.i18n('chooseFile')}</strong>
-            <span class="UppyDragDrop-dragText">${this.core.i18n('orDragDrop')}</span>
+            <strong>${this.i18n('chooseFile')}</strong>
+            <span class="UppyDragDrop-dragText">${this.i18n('orDragDrop')}</span>
           </label>
-          ${!this.core.opts.autoProceed && target !== 'Dashboard'
-            ? html`<button class="UppyDragDrop-uploadBtn UppyNextBtn"
-                         type="submit"
-                         onclick=${next}>
-                    ${this.core.i18n('upload')}
-              </button>`
+          ${selectedFilesCount > 0
+            ? html`<div class="UppyDragDrop-selectedCount">
+                ${this.i18n('selectedFiles', {'smart_count': selectedFilesCount})}
+              </div>`
             : ''}
         </form>
       </div>

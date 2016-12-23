@@ -1,4 +1,4 @@
-import yo from 'yo-yo'
+const yo = require('yo-yo')
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -9,7 +9,7 @@ import yo from 'yo-yo'
  * @param {object} object with plugin options
  * @return {array | string} files or success/fail message
  */
-export default class Plugin {
+module.exports = class Plugin {
 
   constructor (core, opts) {
     this.core = core

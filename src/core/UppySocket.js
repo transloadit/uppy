@@ -1,6 +1,6 @@
-import ee from 'namespace-emitter'
+const ee = require('namespace-emitter')
 
-export default class UppySocket {
+module.exports = class UppySocket {
   constructor (opts) {
     this.queued = []
     this.isOpen = false
@@ -51,10 +51,12 @@ export default class UppySocket {
   }
 
   on (action, handler) {
+    console.log(action)
     this.emitter.on(action, handler)
   }
 
   emit (action, payload) {
+    console.log(action)
     this.emitter.emit(action, payload)
   }
 
@@ -65,6 +67,7 @@ export default class UppySocket {
   _handleMessage (e) {
     try {
       const message = JSON.parse(e.data)
+      console.log(message)
       this.emit(message.action, message.payload)
     } catch (err) {
       console.log(err)

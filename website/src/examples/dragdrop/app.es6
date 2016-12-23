@@ -1,7 +1,7 @@
-import Uppy from '../../../../src/core/Core.js'
-import DragDrop from '../../../../src/plugins/DragDrop/index.js'
-import ProgressBar from '../../../../src/plugins/ProgressBar.js'
-import Tus10 from '../../../../src/plugins/Tus10.js'
+const Uppy = require('../../../../src/core/Core.js')
+const DragDrop = require('../../../../src/plugins/DragDrop/index.js')
+const ProgressBar = require('../../../../src/plugins/ProgressBar.js')
+const Tus10 = require('../../../../src/plugins/Tus10.js')
 
 const uppyOne = new Uppy({debug: true})
 uppyOne
@@ -16,3 +16,8 @@ uppyTwo
   .use(Tus10, {endpoint: '//tusd.tus.io/files/'})
   .use(ProgressBar, {target: '.UppyDragDrop-Two-Progress'})
   .run()
+
+var uploadBtn = document.querySelector('.UppyDragDrop-Two-Upload')
+uploadBtn.addEventListener('click', function () {
+  uppyTwo.startUpload()
+})

@@ -1,6 +1,6 @@
-import html from '../../core/html'
+const html = require('yo-yo')
 
-export default (props) => {
+module.exports = (props) => {
   return html`
     <td class="BrowserTable-rowColumn BrowserTable-column">
       ${props.getItemIcon()} ${props.value}

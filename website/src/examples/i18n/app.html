@@ -5,10 +5,19 @@
 
 <!-- Load Uppy pre-built bundled version and Russian language pack -->
 <script src="/uppy/uppy.min.js"></script>
-<script src="/uppy/locales/ru_RU.js"></script>
+<!--script src="/uppy/locales/ru_RU.js"></script-->
 <script>
-  var uppy = new Uppy.Core({locale: Uppy.locales.ru_RU, debug: true});
-  uppy.use(Uppy.DragDrop, {target: '.UppyDragDrop'});
+  var uppy = new Uppy.Core({debug: true});
+  uppy.use(Uppy.DragDrop, {
+    target: '.UppyDragDrop',
+    locale: {
+      strings: {
+        chooseFile: 'Выберите файл',
+        orDragDrop: 'или перенесите его сюда',
+        upload: 'Загрузить'
+      }
+    }
+  });
   uppy.use(Uppy.Tus10, {endpoint: '//master.tus.io/files/'});
   uppy.run();
 

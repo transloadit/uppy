@@ -3,11 +3,11 @@ const Breadcrumb = require('./Breadcrumb')
 
 module.exports = (props) => {
   return html`
-    <ul class="UppyProvider-breadcrumbs">
+    <ul class="UppyGoogleDrive-breadcrumbs">
       ${
         props.directories.map((directory) => {
           return Breadcrumb({
-            getFolder: () => props.getFolder(directory.id),
+            getNextFolder: () => props.getNextFolder(directory.id, directory.title),
             title: directory.title
           })
         })

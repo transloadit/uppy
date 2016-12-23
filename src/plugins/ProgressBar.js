@@ -1,11 +1,11 @@
-import Plugin from './Plugin'
-import html from '../core/html'
+const Plugin = require('./Plugin')
+const html = require('yo-yo')
 
 /**
  * Progress bar
  *
  */
-export default class ProgressBar extends Plugin {
+module.exports = class ProgressBar extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.id = 'ProgressBar'

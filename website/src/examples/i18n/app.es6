@@ -1,8 +1,7 @@
-import Uppy from '../../../../src/core/Core.js'
-import Tus10 from '../../../../src/plugins/GoogleDrive'
-import russian from '../../../../src/locales/ru_RU'
+const Uppy = require('../../../../src/core/Core.js')
+const Tus10 = require('../../../../src/plugins/GoogleDrive')
 
-const uppy = new Uppy({debug: true, autoProceed: false, locale: russian})
+const uppy = new Uppy({debug: true, autoProceed: false})
 
 uppy
   .use(Tus10, {endpoint: '//master.tus.io/files/'})
