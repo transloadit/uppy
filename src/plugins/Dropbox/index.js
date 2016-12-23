@@ -1,13 +1,12 @@
-import Plugin from '../Plugin'
-import 'whatwg-fetch'
-import html from '../../core/html'
+const html = require('yo-yo')
+const Plugin = require('../Plugin')
 
-import Provider from '../../uppy-base/src/plugins/Provider'
+const Provider = require('../../uppy-base/src/plugins/Provider')
 
-import View from '../../generic-provider-views/index'
-import icons from './icons'
+const View = require('../../generic-provider-views/index')
+const icons = require('./icons')
 
-export default class Dropbox extends Plugin {
+module.exports = class Dropbox extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
@@ -16,11 +15,11 @@ export default class Dropbox extends Plugin {
     this.stateId = 'dropbox'
     this.icon = html`
       <svg class="UppyIcon" width="128" height="118" viewBox="0 0 128 118">
-        <g><path d="M38.145.777L1.108 24.96l25.608 20.507 37.344-23.06z"/>
+        <path d="M38.145.777L1.108 24.96l25.608 20.507 37.344-23.06z"/>
         <path d="M1.108 65.975l37.037 24.183L64.06 68.525l-37.343-23.06zM64.06 68.525l25.917 21.633 37.036-24.183-25.61-20.51z"/>
         <path d="M127.014 24.96L89.977.776 64.06 22.407l37.345 23.06zM64.136 73.18l-25.99 21.567-11.122-7.262v8.142l37.112 22.256 37.114-22.256v-8.142l-11.12 7.262z"/>
-        </g>
-      </svg>`
+      </svg>
+    `
 
     // writing out the key explicitly for readability the key used to store
     // the provider instance must be equal to this.id.

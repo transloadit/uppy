@@ -9,6 +9,7 @@ const Dummy = require('./Dummy')
 const DragDrop = require('./DragDrop/index.js')
 const FileInput = require('./FileInput')
 const GoogleDrive = require('./GoogleDrive/index.js')
+const Dropbox = require('./Dropbox/index.js')
 const Webcam = require('./Webcam/index.js')
 
 // Progressindicators
@@ -32,6 +33,7 @@ module.exports = {
   Informer,
   DragDrop,
   GoogleDrive,
+  Dropbox,
   FileInput,
   Tus10,
   Multipart,

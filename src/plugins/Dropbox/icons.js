@@ -1,6 +1,6 @@
-import html from '../../core/html'
+const html = require('yo-yo')
 
-export default {
+module.exports = {
   folder: () =>
     html`<svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"
     preserveAspectRatio="xMidYMid meet">

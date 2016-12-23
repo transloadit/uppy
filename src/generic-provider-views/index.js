@@ -1,6 +1,6 @@
-import AuthView from './AuthView'
-import Browser from './new/Browser'
-import ErrorView from './Error'
+const AuthView = require('./AuthView')
+const Browser = require('./new/Browser')
+const ErrorView = require('./Error')
 
 /**
  * Class to easily generate generic views for plugins
@@ -33,7 +33,7 @@ import ErrorView from './Error'
  * getItemModifiedDate
  *    @return {object} or {String} date of when last the item was modified
  */
-export default class View {
+module.exports = class View {
   /**
    * @param {object} instance of the plugin
    */

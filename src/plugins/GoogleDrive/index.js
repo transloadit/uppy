@@ -1,5 +1,4 @@
 const html = require('yo-yo')
-require('whatwg-fetch')
 const Plugin = require('../Plugin')
 
 const Provider = require('../../uppy-base/src/plugins/Provider')

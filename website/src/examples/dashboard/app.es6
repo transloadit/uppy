@@ -7,7 +7,7 @@ const Tus10 = require('../../../../src/plugins/Tus10')
 const MetaData = require('../../../../src/plugins/MetaData')
 const Informer = require('../../../../src/plugins/Informer')
 
-const { UPPY_SERVER } = require('../env')
+const UPPY_SERVER = require('../env')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
 const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
