@@ -31,7 +31,7 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 
 ## Usage
 
-:warning: **Don’t use Uppy in production just yet, we’re working on it**
+:warning: :construction: **Don’t use Uppy in production just yet, we’re working on it**
 
 ### Installing from NPM
 
