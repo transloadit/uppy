@@ -83,7 +83,7 @@ Theme: The new 13: Mobile Dashboard, Grid and List
 ## 0.13.0
 
 To be released: December 23, 2016.
-Theme: The release that wasn't.
+Theme: The release that wasn't 🎄  
 
 ## 0.12.0
 
