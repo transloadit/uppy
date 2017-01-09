@@ -45,7 +45,6 @@ module.exports = class DragDrop extends Plugin {
 
     this.locale = Object.assign({}, defaultLocale, this.opts.locale)
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
-    console.log(this.locale.strings)
 
     // Check for browser dragDrop support
     this.isDragDropSupported = this.checkDragDropSupport()
