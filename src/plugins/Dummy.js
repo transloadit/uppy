@@ -4,7 +4,7 @@ const html = require('yo-yo')
 
 /**
  * Dummy
- *
+ * A test plugin, does nothing useful
  */
 module.exports = class Dummy extends Plugin {
   constructor (core, opts) {
