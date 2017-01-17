@@ -8,7 +8,6 @@ module.exports = class UppySocket {
     this.emitter = ee()
 
     this.socket.onopen = (e) => {
-      console.log('socket connection successfully opened.')
       this.isOpen = true
 
       while (this.queued.length > 0 && this.isOpen) {
