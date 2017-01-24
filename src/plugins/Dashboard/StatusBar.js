@@ -9,7 +9,7 @@ module.exports = (props) => {
     <div class="UppyDashboard-statusBar
                 ${props.isAllComplete ? 'is-complete' : ''}"
                 aria-hidden="${isHidden}">
-
+      <progress style="display: none;" min="0" max="100" value="${props.totalProgress}"></progress>
       <div class="UppyDashboard-statusBarProgress" style="width: ${props.totalProgress}%"></div>
       <div class="UppyDashboard-statusBarContent">
         ${props.isUploadStarted && !props.isAllComplete
@@ -30,7 +30,6 @@ module.exports = (props) => {
 }
 
 const pauseResumeButtons = (props) => {
-  console.log(props.resumableUploads)
   return html`<button class="UppyDashboard-statusBarAction" type="button" onclick=${() => togglePauseResume(props)}>
     ${props.resumableUploads
       ? props.isAllPaused
