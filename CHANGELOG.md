@@ -57,6 +57,9 @@ Theme: TBA
 - [ ] server: loading indicator while the GoogleDrive/Dropbox files are loading (@arturi, @ifedapoolarewaju)
 - [ ] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
 - [ ] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
+- [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
+- [ ] server: return uploaded file urls from Google Drive / Dropbox ? (@ifedapoolarewaju)
+- [ ] uploaders: return upload result in multipart? options for that? (@arturi, @ifedapoolarewaju)
 
 ## 0.14.0
 
@@ -76,10 +79,8 @@ Theme: The new 13: Mobile Dashboard, Grid and List
 - [x] core: use yo-yoify to solve [Function.caller / strict mode issue](https://github.com/shama/bel#note) and make our app faster/smaller by transforming template strings into pure and fast document calls (@arturi)
 - [x] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
 - [x] server: Integrate dropbox plugin (@ifedapoolarewaju)
-- [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
 - [ ] server: smooth authentication: after auth you are back in your app where you left, no page reloads (@ifedapoolarewaju)
-- [ ] tus: fix upload progress from uppy-server (@arturi, @ifedapoolarewaju)
-- [ ] uploaders: return upload result in multipart? options for that?
+- [x] tus: fix upload progress from uppy-server (@arturi, @ifedapoolarewaju)
 - [x] core: fix support for both ES6 module import and CommonJS requires with `add-module-exports` babel plugin (@arturi)
 
 ## 0.13.0
