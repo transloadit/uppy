@@ -56,6 +56,7 @@ Theme: TBA
 - [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28) (@arturi, @kvz)
 - [ ] server: loading indicator while the GoogleDrive/Dropbox files are loading (@arturi, @ifedapoolarewaju)
 - [ ] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
+- [ ] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
 
 ## 0.14.0
 
@@ -67,6 +68,7 @@ Theme: The new 13: Mobile Dashboard, Grid and List
 - [ ] dashboard: basic React component (@arturi)
 - [ ] dashboard: more icons for file types (@arturi)
 - [ ] dashboard: figure out where to place Informer, accounting for StatusBar (@arturi)
+- [x] dashboard: add `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/. Added hidden for now, for semantics/accessibility (@arturi)
 - [x] dragdrop: show number of selected files, remove upload btn (@arturi)
 - [x] build: exclude locales from build (@arturi)
 - [x] core: i18n for each plugin in options — local instead of global (@arturi)
@@ -77,7 +79,6 @@ Theme: The new 13: Mobile Dashboard, Grid and List
 - [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
 - [ ] server: smooth authentication: after auth you are back in your app where you left, no page reloads (@ifedapoolarewaju)
 - [ ] tus: fix upload progress from uppy-server (@arturi, @ifedapoolarewaju)
-- [ ] dashboard: consider `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/ (@arturi)
 - [ ] uploaders: return upload result in multipart? options for that?
 - [x] core: fix support for both ES6 module import and CommonJS requires with `add-module-exports` babel plugin (@arturi)
 
