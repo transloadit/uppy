@@ -4,7 +4,7 @@
 @import '_common.scss';
 @import 'vendor/bootstrap/bootstrap-grid';
 
-.UppyProvider-authenticate {
+.UppyProvider-auth {
   align-items: center;
   display: flex;
   flex-flow: column wrap;
@@ -12,26 +12,37 @@
   justify-content: center;
 }
 
-.UppyProvider-authenticate a {
-  background-color: transparent;
-  border: 1px solid #78BDF2;
-  border-radius: 12px;
-  color: darken(#78BDF2, 25%);
+.UppyProvider-authTitle {
   font-size: 22px;
-  margin-bottom: 88px;
-  padding: 6px 16px;
-  transition: background-color 400ms;
-
-  &:hover {
-    background-color: darken(#78BDF2,10%);
-    color: #fff;
-    transition: background-color 400ms;
-  }
+  line-height: 1.35;
+  font-weight: 300;
+  margin-bottom: 30px;
+  padding: 0 15px;
+  max-width: 500px;
+  text-align: center;
 }
 
-.UppyProvider-authenticate h1 {
-  font-size: 24px;
-  margin-bottom: 48px;
+.UppyProvider-authTitleName {
+  // color: $color-cornflower-blue;
+}
+
+.UppyProvider-authBtn {
+  // background-color: transparent;
+  // border: 1px solid $color-cornflower-blue;
+  border-radius: 6px;
+  background-color: $color-cornflower-blue;
+  color: $color-white;
+  // color: $color-cornflower-blue;
+  font-size: 20px;
+  padding: 12px 46px;
+  transition: background-color 0.3s;
+  text-decoration: none;
+  margin-bottom: 20px;
+
+  &:hover {
+    background-color: darken($color-cornflower-blue, 10%);
+    color: $color-white;
+  }
 }
 
 .UppyProvider-breadcrumbs {
