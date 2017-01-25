@@ -49,6 +49,7 @@ module.exports = class View {
     this.getNextFolder = this.getNextFolder.bind(this)
     this.handleRowClick = this.handleRowClick.bind(this)
     this.logout = this.logout.bind(this)
+    this.handleAuth = this.handleAuth.bind(this)
     this.handleDemoAuth = this.handleDemoAuth.bind(this)
     this.sortByTitle = this.sortByTitle.bind(this)
     this.sortByDate = this.sortByDate.bind(this)
@@ -253,6 +254,27 @@ module.exports = class View {
     })
   }
 
+  handleAuth () {
+    let urlId = Math.floor(Math.random() * 999999) + 1
+    let redirect = `${location.href}${location.search ? '&' : '?'}id=${urlId}`
+
+    const authState = btoa(JSON.stringify({ redirect }))
+    const link = `${this.plugin.opts.host}/connect/${this.Provider.authProvider}?state=${authState}`
+
+    let authWindow = window.open(link, '_blank')
+
+    let checkAuth = () => {
+      if (authWindow.location && authWindow.location.href === redirect) {
+        authWindow.close()
+        this.Provider.auth().then(this.plugin.onAuth)
+      } else {
+        setTimeout(checkAuth, 100)
+      }
+    }
+
+    checkAuth()
+  }
+
   render (state) {
     const { authenticated, error } = state[this.plugin.stateId]
 
@@ -261,16 +283,10 @@ module.exports = class View {
     }
 
     if (!authenticated) {
-      const authState = btoa(JSON.stringify({
-        redirect: location.href.split('#')[0]
-      }))
-
-      const link = `${this.plugin.opts.host}/connect/${this.Provider.authProvider}?state=${authState}`
-
       return AuthView({
         pluginName: this.plugin.title,
-        link: link,
         demo: this.plugin.opts.demo,
+        handleAuth: this.handleAuth,
         handleDemoAuth: this.handleDemoAuth
       })
     }

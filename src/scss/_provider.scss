@@ -38,6 +38,7 @@
   transition: background-color 0.3s;
   text-decoration: none;
   margin-bottom: 20px;
+  cursor: pointer;
 
   &:hover {
     background-color: darken($color-cornflower-blue, 10%);
