@@ -145,6 +145,8 @@ module.exports = function Dashboard (props) {
           ${StatusBar({
             totalProgress: props.totalProgress,
             totalFileCount: props.totalFileCount,
+            totalSize: props.totalSize,
+            totalUploadedSize: props.totalUploadedSize,
             uploadStartedFiles: props.uploadStartedFiles,
             isAllComplete: props.isAllComplete,
             isAllPaused: props.isAllPaused,

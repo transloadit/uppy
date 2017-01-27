@@ -296,6 +296,17 @@ module.exports = class DashboardUI extends Plugin {
     const totalSpeed = prettyBytes(this.getTotalSpeed(inProgressFilesArray))
     const totalETA = prettyETA(this.getTotalETA(inProgressFilesArray))
 
+    // total size and uploaded size
+    let totalSize = 0
+    let totalUploadedSize = 0
+    inProgressFilesArray.forEach((file) => {
+      console.log(file)
+      totalSize = totalSize + file.progress.bytesTotal
+      totalUploadedSize = totalUploadedSize + file.progress.bytesUploaded
+    })
+    totalSize = prettyBytes(totalSize)
+    totalUploadedSize = prettyBytes(totalUploadedSize)
+
     const isAllComplete = state.totalProgress === 100
     const isAllPaused = inProgressFiles.length === 0 && !isAllComplete && uploadStartedFiles.length > 0
     const isUploadStarted = uploadStartedFiles.length > 0
@@ -357,6 +368,8 @@ module.exports = class DashboardUI extends Plugin {
       totalSpeed: totalSpeed,
       totalETA: totalETA,
       totalProgress: state.totalProgress,
+      totalSize: totalSize,
+      totalUploadedSize: totalUploadedSize,
       isAllComplete: isAllComplete,
       isAllPaused: isAllPaused,
       acquirers: acquirers,
