@@ -60,6 +60,11 @@ Theme: TBA
 - [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
 - [ ] server: return uploaded file urls from Google Drive / Dropbox ? (@ifedapoolarewaju)
 - [ ] uploaders: return upload result in multipart? options for that? (@arturi, @ifedapoolarewaju)
+- [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected (@arturi, @ifedapoolarewaju)
+- [ ] core: image previews for remote files ?
+- [ ] core: important styles to be immune to any environment. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important (@arturi)
+- [ ] core: file type detection: archives, markdown (@arturi)
+- [ ] dashboard: basic React component (@arturi)
 
 ## 0.14.0
 
@@ -68,9 +73,9 @@ Theme: The new 13: Mobile Dashboard, Grid and List
 
 - [x] dashboard: use `isWide` instead of media queries, so that compact/mobile version can be used in bigger screens too (@arturi)
 - [x] dashboard: basic “list” view in addition to current “grid” view (@arturi)
-- [ ] dashboard: basic React component (@arturi)
-- [ ] dashboard: more icons for file types (@arturi)
-- [ ] dashboard: figure out where to place Informer, accounting for StatusBar (@arturi)
+- [x] dashboard: more icons for file types (@arturi)
+- [x] dashboard: add totalSize and totalUploadedSize to StatusBar (@arturi)
+- [x] dashboard: figure out where to place Informer, accounting for StatusBar — over the StatusBar for now (@arturi)
 - [x] dashboard: add `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/. Added hidden for now, for semantics/accessibility (@arturi)
 - [x] dragdrop: show number of selected files, remove upload btn (@arturi)
 - [x] build: exclude locales from build (@arturi)
@@ -81,6 +86,7 @@ Theme: The new 13: Mobile Dashboard, Grid and List
 - [x] server: Integrate dropbox plugin (@ifedapoolarewaju)
 - [ ] server: smooth authentication: after auth you are back in your app where you left, no page reloads (@ifedapoolarewaju)
 - [x] tus: fix upload progress from uppy-server (@arturi, @ifedapoolarewaju)
+- [x] core: basic React component — DnD (@arturi)
 - [x] core: fix support for both ES6 module import and CommonJS requires with `add-module-exports` babel plugin (@arturi)
 
 ## 0.13.0
