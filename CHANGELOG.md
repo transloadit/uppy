@@ -24,7 +24,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: Have base styles, be explicit about fonts, etc
 - [ ] core: Make sure Uppy works well in VR
 - [ ] instagram: Make a barely working Instagram Plugin + example (#21)
-- [ ] meta: Use <waffle.io> or GitHub Projects instead of Markdown task tracking. Some discussion [here](https://transloadit.slack.com/archives/general/p1455693654000062) (@kvz)
 - [ ] dashboard: add ability to minimize Modal/Dashboard, while long upload is in progress? Uppy then becomes just a tiny progress indicator
 - [ ] test: Human should check http://www.webpagetest.org, use it sometimes to test our website & Uppy? Which will show response/loading times and where big delays are
 - [ ] test: Human should test with real screen reader to identify accessibility problems
@@ -34,44 +33,42 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [ ] dependencies: es6-promise --> lie https://github.com/calvinmetcalf/lie ?
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
-- [ ] core: retry failed uploads
 - [ ] core: restrictions — by file type, size, number of files
 - [ ] core: see if it’s possible to add webworkers or use pica for thumbnail generation (@arturi)
 - [ ] website: Would one really connect a own google drive or dropbox for testing purpose? => maybe one can give something like a testing account of google drive and dropbox to try uppy
-- [ ] meta: add google demo account (@kvz)
 - [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
-- [ ] google drive: show error view for things like not being able to connect to uppy server (@hedgerh)
-- [ ] uppy-server: Make uppy server standalone CLI (@hedgerh)
 - [ ] core: try file-type module for setting correct mime-types if needed, example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957
 - [ ] uppy/uppy-server: review webscoket connection flow during remote upload. In a situation where a client has a slow internet connection, the uppy-server may complete an upload before the client connects to the websocket, hence no feedback would be sent to the client and the client remains unaware of the upload status.
 - [ ] uppy-server: pluggable custom providers; Maybe we use a config file or make it similar to how uppy adds plugins (@ifedapoolarewaju)
-- [ ] uppy-server: begin to write automated tests (@ifedapoolarewaju)
 
 ## 0.15.0
 
-To be released: TBA
+To be released: February 24, 2017
 Theme: TBA
 
 - [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28) (@arturi, @kvz)
-- [ ] server: loading indicator while the GoogleDrive/Dropbox files are loading (@arturi, @ifedapoolarewaju)
+- [ ] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
+- [ ] provider: show error view for things like not being able to connect to uppy server
 - [ ] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
+- [ ] server: begin adding automated tests (@ifedapoolarewaju)
 - [ ] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
 - [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
 - [ ] server: return uploaded file urls from Google Drive / Dropbox ? (@ifedapoolarewaju)
 - [ ] uploaders: return upload result in multipart? options for that? (@arturi, @ifedapoolarewaju)
 - [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected (@arturi, @ifedapoolarewaju)
-- [ ] core: image previews for remote files ?
-- [ ] core: important styles to be immune to any environment. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important (@arturi)
+- [ ] core: retry failed uploads
+- [ ] core: add image previews for remote files ?
+- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important (@arturi)
 - [ ] core: file type detection: archives, markdown (@arturi)
 - [ ] dashboard: basic React component (@arturi)
 
 ## 0.14.0
 
 To be released: January 27, 2017.
-Theme: The new 13: Mobile Dashboard, Grid and List
+Theme: The new 13: Responsive Dashboard, Grid and List
 
-- [x] dashboard: use `isWide` instead of media queries, so that compact/mobile version can be used in bigger screens too (@arturi)
+- [x] dashboard: use `isWide` prop/class instead of media queries, so that compact/mobile version can be used in bigger screens too (@arturi)
 - [x] dashboard: basic “list” view in addition to current “grid” view (@arturi)
 - [x] dashboard: more icons for file types (@arturi)
 - [x] dashboard: add totalSize and totalUploadedSize to StatusBar (@arturi)
@@ -82,7 +79,8 @@ Theme: The new 13: Mobile Dashboard, Grid and List
 - [x] core: i18n for each plugin in options — local instead of global (@arturi)
 - [x] core: add default pluralization (can be overrinden in plugin options) to Translator (@arturi)
 - [x] core: use yo-yoify to solve [Function.caller / strict mode issue](https://github.com/shama/bel#note) and make our app faster/smaller by transforming template strings into pure and fast document calls (@arturi)
-- [x] server: investigate a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
+- [x] server: a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
+- [x] server: standalone uppy-server (@ifedapoolarewaju)
 - [x] server: Integrate dropbox plugin (@ifedapoolarewaju)
 - [ ] server: smooth authentication: after auth you are back in your app where you left, no page reloads (@ifedapoolarewaju)
 - [x] tus: fix upload progress from uppy-server (@arturi, @ifedapoolarewaju)
