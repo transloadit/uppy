@@ -33,7 +33,8 @@ module.exports = (props) => {
           removeFile: props.removeFile,
           pauseUpload: props.pauseUpload,
           cancelUpload: props.cancelUpload,
-          resumableUploads: props.resumableUploads
+          resumableUploads: props.resumableUploads,
+          isWide: props.isWide
         })
       })}
     </ul>`
