@@ -11,13 +11,21 @@
   text-align: center;
   font-size: 12px;
   font-weight: 500;
-  padding: 8px 15px;
-  background-color: rgba($color-black, 0.7);
+  padding: 0 15px;
+  height: 30px;
+  line-height: 30px;
+  background-color: rgba($color-black, 0.8);
   color: $color-white;
   opacity: 1;
   transform: none;
   transition: all 300ms ease-in;
   z-index: $zIndex-4;
+
+  .UppyDashboard--wide & {
+    height: 40px;
+    line-height: 40px;
+    font-size: 13px;
+  }
 }
 
   .UppyInformer[aria-hidden=true] {
