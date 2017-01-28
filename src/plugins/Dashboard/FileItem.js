@@ -7,18 +7,19 @@ const { getETA,
          copyToClipboard } = require('../../core/Utils')
 const prettyBytes = require('pretty-bytes')
 const FileItemProgress = require('./FileItemProgress')
-const { iconText, iconFile, iconAudio, iconEdit, iconCopy } = require('./icons')
+const getFileTypeIcon = require('./getFileTypeIcon')
+const { iconEdit, iconCopy } = require('./icons')
 
-function getIconByMime (fileTypeGeneral) {
-  switch (fileTypeGeneral) {
-    case 'text':
-      return iconText()
-    case 'audio':
-      return iconAudio()
-    default:
-      return iconFile()
-  }
-}
+// function getIconByMime (fileTypeGeneral) {
+//   switch (fileTypeGeneral) {
+//     case 'text':
+//       return iconText()
+//     case 'audio':
+//       return iconAudio()
+//     default:
+//       return iconFile()
+//   }
+// }
 
 module.exports = function fileItem (props) {
   const file = props.file
@@ -41,8 +42,8 @@ module.exports = function fileItem (props) {
       <div class="UppyDashboardItem-preview">
         ${file.preview
           ? html`<img alt="${file.name}" src="${file.preview}">`
-          : html`<div class="UppyDashboardItem-previewIcon">
-              ${getIconByMime(file.type.general)}
+          : html`<div class="UppyDashboardItem-previewIcon" style="color: ${getFileTypeIcon(file.type.general, file.type.specific).color}">
+              ${getFileTypeIcon(file.type.general, file.type.specific).icon}
             </div>`
         }
         <div class="UppyDashboardItem-progress">

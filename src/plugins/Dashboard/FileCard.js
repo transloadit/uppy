@@ -1,16 +1,17 @@
 const html = require('yo-yo')
-const { iconText, iconFile, iconAudio, checkIcon } = require('./icons')
+const getFileTypeIcon = require('./getFileTypeIcon')
+const { checkIcon } = require('./icons')
 
-function getIconByMime (fileTypeGeneral) {
-  switch (fileTypeGeneral) {
-    case 'text':
-      return iconText()
-    case 'audio':
-      return iconAudio()
-    default:
-      return iconFile()
-  }
-}
+// function getIconByMime (fileTypeGeneral) {
+//   switch (fileTypeGeneral) {
+//     case 'text':
+//       return iconText()
+//     case 'audio':
+//       return iconAudio()
+//     default:
+//       return iconFile()
+//   }
+// }
 
 module.exports = function fileCard (props) {
   const file = props.fileCardFor ? props.files[props.fileCardFor] : false
@@ -47,7 +48,9 @@ module.exports = function fileCard (props) {
           <div class="UppyDashboardFileCard-preview">
             ${file.preview
               ? html`<img alt="${file.name}" src="${file.preview}">`
-              : html`<div class="UppyDashboardItem-previewIcon">${getIconByMime(file.type.general)}</div>`
+              : html`<div class="UppyDashboardItem-previewIcon" style="color: ${getFileTypeIcon(file.type.general, file.type.specific).color}">
+                  ${getFileTypeIcon(file.type.general, file.type.specific).icon}
+                </div>`
             }
           </div>
           <div class="UppyDashboardFileCard-info">
