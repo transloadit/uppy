@@ -90,7 +90,7 @@
   }
 
   .UppyDashboard--wide & {
-    color: $color-white;
+    color: $color-asphalt-gray;
     top: 16px;
     right: 16px;
 
@@ -472,7 +472,7 @@
 }
 
 .UppyDashboardItem-previewIcon {
-  height: 65%;
+  height: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -536,7 +536,7 @@
   text-align: left;
   cursor: pointer;
   position: absolute;
-  top: 8px;
+  top: 10px;
   right: 8px;
 }
 
@@ -1053,8 +1053,11 @@
 }
 
 .UppyDashboard-statusBarAction {
-  @include reset-button;
   color: $color-white;
-  cursor: pointer;
   margin-right: 8px;
+}
+
+button.UppyDashboard-statusBarAction {
+  @include reset-button;
+  cursor: pointer;
 }
