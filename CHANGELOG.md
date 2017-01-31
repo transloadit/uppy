@@ -41,25 +41,28 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: try file-type module for setting correct mime-types if needed, example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957
 - [ ] uppy/uppy-server: review webscoket connection flow during remote upload. In a situation where a client has a slow internet connection, the uppy-server may complete an upload before the client connects to the websocket, hence no feedback would be sent to the client and the client remains unaware of the upload status.
 - [ ] uppy-server: pluggable custom providers; Maybe we use a config file or make it similar to how uppy adds plugins (@ifedapoolarewaju)
+- [ ] dashboard: add service logo / name to the selected file in file list (@arturi)
+
+## 0.16.0
 
 ## 0.15.0
 
 To be released: February 24, 2017
 Theme: TBA
 
-- [ ] presets: Add basic preset or plugin that mimics Transloadit’s jQuery plugin (#28) (@arturi, @kvz)
+- [ ] presets: Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
+- [ ] provider: show error view for things like not being able to connect to uppy server (@arturi, @ifedapoolarewaju)
 - [ ] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
-- [ ] provider: show error view for things like not being able to connect to uppy server
 - [ ] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
-- [ ] server: begin adding automated tests (@ifedapoolarewaju)
+- [ ] server: begin adding automated tests, try https://facebook.github.io/jest (@ifedapoolarewaju)
 - [ ] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
-- [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
+- [ ] server: add image preview / thumbnail for remote files, if its in the API ? (@ifedapoolarewaju)
 - [ ] server: return uploaded file urls from Google Drive / Dropbox ? (@ifedapoolarewaju)
+- [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
 - [ ] uploaders: return upload result in multipart? options for that? (@arturi, @ifedapoolarewaju)
 - [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected (@arturi, @ifedapoolarewaju)
 - [ ] core: retry failed uploads
-- [ ] core: add image previews for remote files ?
-- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important (@arturi)
+- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: file type detection: archives, markdown (@arturi)
 - [ ] dashboard: basic React component (@arturi)
 
