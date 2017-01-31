@@ -66,7 +66,7 @@ Theme: TBA
 ## 0.14.0
 
 To be released: January 27, 2017.
-Theme: The new 13: Responsive Dashboard, Grid and List
+Theme: The new 13: Responsive Dashboard, Standalone & Pluggable Server, Dropbox
 
 - [x] dashboard: use `isWide` prop/class instead of media queries, so that compact/mobile version can be used in bigger screens too (@arturi)
 - [x] dashboard: basic “list” view in addition to current “grid” view (@arturi)
