@@ -23,7 +23,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: Decouple rendering from Plugins and try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick, https://github.com/nosir/cleave.js
 - [ ] core: Have base styles, be explicit about fonts, etc
 - [ ] core: Make sure Uppy works well in VR
-- [ ] instagram: Make a barely working Instagram Plugin + example (#21)
 - [ ] dashboard: add ability to minimize Modal/Dashboard, while long upload is in progress? Uppy then becomes just a tiny progress indicator
 - [ ] test: Human should check http://www.webpagetest.org, use it sometimes to test our website & Uppy? Which will show response/loading times and where big delays are
 - [ ] test: Human should test with real screen reader to identify accessibility problems
@@ -39,11 +38,13 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] core: try file-type module for setting correct mime-types if needed, example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957
-- [ ] uppy/uppy-server: review webscoket connection flow during remote upload. In a situation where a client has a slow internet connection, the uppy-server may complete an upload before the client connects to the websocket, hence no feedback would be sent to the client and the client remains unaware of the upload status.
 - [ ] uppy-server: pluggable custom providers; Maybe we use a config file or make it similar to how uppy adds plugins (@ifedapoolarewaju)
-- [ ] dashboard: add service logo / name to the selected file in file list (@arturi)
 
 ## 0.16.0
+
+- [ ] instagram: Make a barely working Instagram Plugin + example (#21)
+- [ ] dashboard: add service logo / name to the selected file in file list (@arturi)
+- [ ] uppy/uppy-server: review webscoket connection flow during remote upload. In a situation where a client has a slow internet connection, the uppy-server may complete an upload before the client connects to the websocket, hence no feedback would be sent to the client and the client remains unaware of the upload status.
 
 ## 0.15.0
 
@@ -404,18 +405,11 @@ Released: December 20, 2015
 
 Here are the go-to folks for each individual component or area of expertise:
 
-- build (@hedgerh)
-- complete (@hedgerh)
+- build (@arturi)
 - core (@arturi)
-- dashboard (/modal) (@hedgerh)
+- dashboard (@arturi)
 - docs (@arturi)
 - dragdrop (@arturi)
-- drive (@hedgerh)
-- dropbox (@hedgerh)
-- instagram (@hedgerh)
-- meta (@kvz)
-- presets (@arturi)
-- server (@ifedapoolarewaju)
-- test (@arturi)
+- server and providers: gdrive, dropbox (@ifedapoolarewaju)
 - tus (@arturi)
 - website (@arturi)
