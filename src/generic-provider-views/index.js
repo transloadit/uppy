@@ -255,16 +255,26 @@ module.exports = class View {
   }
 
   handleAuth () {
-    let urlId = Math.floor(Math.random() * 999999) + 1
-    let redirect = `${location.href}${location.search ? '&' : '?'}id=${urlId}`
+    const urlId = Math.floor(Math.random() * 999999) + 1
+    const redirect = `${location.href}${location.search ? '&' : '?'}id=${urlId}`
 
     const authState = btoa(JSON.stringify({ redirect }))
     const link = `${this.plugin.opts.host}/connect/${this.Provider.authProvider}?state=${authState}`
 
-    let authWindow = window.open(link, '_blank')
+    const authWindow = window.open(link, '_blank')
+    const checkAuth = () => {
+      let authWindowUrl
 
-    let checkAuth = () => {
-      if (authWindow.location && authWindow.location.href === redirect) {
+      try {
+        authWindowUrl = authWindow.location.href
+      } catch (e) {
+        if (e instanceof DOMException || e instanceof TypeError) {
+          return setTimeout(checkAuth, 100)
+        } else throw e
+      }
+
+      // split url because chrome adds '#' to redirects
+      if (authWindowUrl.split('#')[0] === redirect) {
         authWindow.close()
         this.Provider.auth().then(this.plugin.onAuth)
       } else {
