@@ -262,7 +262,7 @@ module.exports = class View {
     const link = `${this.plugin.opts.host}/connect/${this.Provider.authProvider}?state=${authState}`
 
     const authWindow = window.open(link, '_blank')
-    const checkAuth = () => {
+    const checkAuth = function () {
       let authWindowUrl
 
       try {
