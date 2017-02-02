@@ -42,4 +42,5 @@ Lastly, and this is a point of special significance to us, Uppy will be complete
 
 We are going to work hard on bringing you the best file uploader possible and we’ll keep you informed about the development process on [uppy.io](http://uppy.io/). We can’t wait for you to meet Uppy!
 
-> It seems we're on the Hacker News frontpage. [Comments welcome there](https://news.ycombinator.com/item?id=12109410).
+> We were on the [Hacker News](https://news.ycombinator.com/item?id=12109410) and [Product Hunt](https://www.producthunt.com/posts/uppy) frontpages. Comments welcome there.
+
