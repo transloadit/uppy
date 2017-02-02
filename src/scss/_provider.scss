@@ -27,6 +27,7 @@
 }
 
 .UppyProvider-authBtn {
+  @include reset-button;
   // background-color: transparent;
   // border: 1px solid $color-cornflower-blue;
   border-radius: 6px;
