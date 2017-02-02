@@ -30,6 +30,7 @@ module.exports = class Dropbox extends Plugin {
 
     this.files = []
 
+    this.onAuth = this.onAuth.bind(this)
     // Visual
     this.render = this.render.bind(this)
 
@@ -60,15 +61,16 @@ module.exports = class Dropbox extends Plugin {
     const plugin = this
     this.target = this.mount(target, plugin)
 
-    this[this.id].auth()
-      .then((authenticated) => {
-        this.view.updateState({authenticated})
-        if (authenticated) {
-          this.view.getFolder()
-        }
-      })
+    this[this.id].auth().then(this.onAuth)
 
     return
+  }
+
+  onAuth (authenticated) {
+    this.view.updateState({authenticated})
+    if (authenticated) {
+      this.view.getFolder()
+    }
   }
 
   isFolder (item) {

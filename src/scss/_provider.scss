@@ -27,6 +27,7 @@
 }
 
 .UppyProvider-authBtn {
+  @include reset-button;
   // background-color: transparent;
   // border: 1px solid $color-cornflower-blue;
   border-radius: 6px;
@@ -38,6 +39,7 @@
   transition: background-color 0.3s;
   text-decoration: none;
   margin-bottom: 20px;
+  cursor: pointer;
 
   &:hover {
     background-color: darken($color-cornflower-blue, 10%);

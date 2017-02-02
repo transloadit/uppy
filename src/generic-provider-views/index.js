@@ -49,6 +49,7 @@ module.exports = class View {
     this.getNextFolder = this.getNextFolder.bind(this)
     this.handleRowClick = this.handleRowClick.bind(this)
     this.logout = this.logout.bind(this)
+    this.handleAuth = this.handleAuth.bind(this)
     this.handleDemoAuth = this.handleDemoAuth.bind(this)
     this.sortByTitle = this.sortByTitle.bind(this)
     this.sortByDate = this.sortByDate.bind(this)
@@ -253,6 +254,37 @@ module.exports = class View {
     })
   }
 
+  handleAuth () {
+    const urlId = Math.floor(Math.random() * 999999) + 1
+    const redirect = `${location.href}${location.search ? '&' : '?'}id=${urlId}`
+
+    const authState = btoa(JSON.stringify({ redirect }))
+    const link = `${this.plugin.opts.host}/connect/${this.Provider.authProvider}?state=${authState}`
+
+    const authWindow = window.open(link, '_blank')
+    const checkAuth = () => {
+      let authWindowUrl
+
+      try {
+        authWindowUrl = authWindow.location.href
+      } catch (e) {
+        if (e instanceof DOMException || e instanceof TypeError) {
+          return setTimeout(checkAuth, 100)
+        } else throw e
+      }
+
+      // split url because chrome adds '#' to redirects
+      if (authWindowUrl.split('#')[0] === redirect) {
+        authWindow.close()
+        this.Provider.auth().then(this.plugin.onAuth)
+      } else {
+        setTimeout(checkAuth, 100)
+      }
+    }
+
+    checkAuth()
+  }
+
   render (state) {
     const { authenticated, error } = state[this.plugin.stateId]
 
@@ -261,16 +293,10 @@ module.exports = class View {
     }
 
     if (!authenticated) {
-      const authState = btoa(JSON.stringify({
-        redirect: location.href.split('#')[0]
-      }))
-
-      const link = `${this.plugin.opts.host}/connect/${this.Provider.authProvider}?state=${authState}`
-
       return AuthView({
         pluginName: this.plugin.title,
-        link: link,
         demo: this.plugin.opts.demo,
+        handleAuth: this.handleAuth,
         handleDemoAuth: this.handleDemoAuth
       })
     }
