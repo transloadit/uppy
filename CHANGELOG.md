@@ -42,7 +42,7 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.16.0
 
-- [ ] instagram: Make a barely working Instagram Plugin + example (#21)
+- [ ] instagram: Make a barely working Instagram Plugin (#21)
 - [ ] dashboard: add service logo / name to the selected file in file list (@arturi)
 - [ ] uppy/uppy-server: review webscoket connection flow during remote upload. In a situation where a client has a slow internet connection, the uppy-server may complete an upload before the client connects to the websocket, hence no feedback would be sent to the client and the client remains unaware of the upload status.
 
@@ -57,11 +57,12 @@ Theme: TBA
 - [ ] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
 - [ ] server: begin adding automated tests, try https://facebook.github.io/jest (@ifedapoolarewaju)
 - [ ] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
-- [ ] server: add image preview / thumbnail for remote files, if its in the API ? (@ifedapoolarewaju)
+- [ ] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
 - [ ] server: return uploaded file urls from Google Drive / Dropbox ? (@ifedapoolarewaju)
 - [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
 - [ ] uploaders: return upload result in multipart? options for that? (@arturi, @ifedapoolarewaju)
 - [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected (@arturi, @ifedapoolarewaju)
+- [ ] uploaders: retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi)
 - [ ] core: retry failed uploads
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: file type detection: archives, markdown (@arturi)
@@ -86,7 +87,7 @@ Theme: The new 13: Responsive Dashboard, Standalone & Pluggable Server, Dropbox
 - [x] server: a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
 - [x] server: standalone uppy-server (@ifedapoolarewaju)
 - [x] server: Integrate dropbox plugin (@ifedapoolarewaju)
-- [ ] server: smooth authentication: after auth you are back in your app where you left, no page reloads (@ifedapoolarewaju)
+- [x] server: smooth authentication: after auth you are back in your app where you left, no page reloads (@ifedapoolarewaju)
 - [x] tus: fix upload progress from uppy-server (@arturi, @ifedapoolarewaju)
 - [x] core: basic React component — DnD (@arturi)
 - [x] core: fix support for both ES6 module import and CommonJS requires with `add-module-exports` babel plugin (@arturi)
