@@ -300,9 +300,8 @@ module.exports = class DashboardUI extends Plugin {
     let totalSize = 0
     let totalUploadedSize = 0
     inProgressFilesArray.forEach((file) => {
-      console.log(file)
-      totalSize = totalSize + file.progress.bytesTotal
-      totalUploadedSize = totalUploadedSize + file.progress.bytesUploaded
+      totalSize = totalSize + (file.progress.bytesTotal || 0)
+      totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
     })
     totalSize = prettyBytes(totalSize)
     totalUploadedSize = prettyBytes(totalUploadedSize)
