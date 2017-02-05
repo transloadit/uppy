@@ -78,7 +78,7 @@
   top: 12px;
   right: 12px;
   cursor: pointer;
-  color: lighten($color-asphalt-gray, 20%);
+  color: lighten($color-asphalt-gray, 25%);
   z-index: $zIndex-4;
   transition: all 0.2s;
 
@@ -1059,5 +1059,6 @@
 
 button.UppyDashboard-statusBarAction {
   @include reset-button;
+  margin-right: 8px;
   cursor: pointer;
 }
