@@ -142,7 +142,7 @@ class Uppy {
     this.setState({files: updatedFiles})
 
     this.bus.emit('file-added', fileID)
-    this.log(`Added file: ${fileName}, ${fileID}`)
+    this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
 
     if (fileTypeGeneral === 'image' && !isRemote) {
       this.addThumbnail(newFile.id)
