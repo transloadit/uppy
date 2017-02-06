@@ -95,8 +95,8 @@
     right: 16px;
 
     .UppyIcon {
-      width: 18px;
-      height: 18px;
+      width: 17px;
+      height: 17px;
     }
   }
 
@@ -444,6 +444,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  border-right: 1px solid rgba($color-gray, 0.2);
 
   .UppyDashboard--wide & {
     width: 100%;
@@ -451,6 +452,7 @@
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     border-bottom: 1px solid rgba($color-gray, 0.2);
+    border-right: 0;
   }
 }
 
@@ -461,7 +463,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba($color-black, 0.5);
+    background-color: rgba($color-black, 0.65);
     display: none;
   }
 
@@ -536,26 +538,41 @@
   text-align: left;
   cursor: pointer;
   position: absolute;
-  top: 10px;
-  right: 8px;
+  top: 9px;
+  right: 10px;
+
+  .UppyDashboard--wide & {
+    top: 8px;
+    right: 8px;
+  }
 }
 
 .UppyDashboardItem-edit .UppyIcon {
-  width: 13px;
-  height: 13px;
+  width: 11px;
+  height: 11px;
   color: $color-asphalt-gray;
+
+  .UppyDashboard--wide & {
+    width: 12px;
+    height: 12px;
+  }
 }
 
 .UppyDashboardItem-copyLink .UppyIcon {
-  width: 13px;
-  height: 13px;
+  width: 11px;
+  height: 11px;
   color: $color-asphalt-gray;
+
+  .UppyDashboard--wide & {
+    width: 13px;
+    height: 13px;
+  }
 }
 
 .UppyDashboardItem-action {
   position: absolute;
-  top: 18px;
-  right: 7px;
+  top: 8px;
+  right: 5px;
 
   .UppyDashboard--wide & {
     top: -8px;
@@ -566,8 +583,13 @@
 .UppyDashboardItem-remove {
   @include reset-button;
   cursor: pointer;
-  color: $color-asphalt-gray;
-  width: 20px;
+  color: rgba($color-asphalt-gray, 0.6);
+  width: 16px;
+
+  .UppyDashboard--wide & {
+    width: 20px;
+    color: $color-asphalt-gray;
+  }
 }
 
   .UppyDashboardItem.is-inprogress:not(.is-resumable) {

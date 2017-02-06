@@ -10,17 +10,6 @@ const FileItemProgress = require('./FileItemProgress')
 const getFileTypeIcon = require('./getFileTypeIcon')
 const { iconEdit, iconCopy } = require('./icons')
 
-// function getIconByMime (fileTypeGeneral) {
-//   switch (fileTypeGeneral) {
-//     case 'text':
-//       return iconText()
-//     case 'audio':
-//       return iconAudio()
-//     default:
-//       return iconFile()
-//   }
-// }
-
 module.exports = function fileItem (props) {
   const file = props.file
 
@@ -124,7 +113,7 @@ module.exports = function fileItem (props) {
                        title="Remove file"
                        onclick=${() => props.removeFile(file.id)}>
                  <svg class="UppyIcon" width="22" height="21" viewBox="0 0 18 17">
-                   <ellipse fill="#424242" cx="8.62" cy="8.383" rx="8.62" ry="8.383"/>
+                   <ellipse cx="8.62" cy="8.383" rx="8.62" ry="8.383"/>
                    <path stroke="#FFF" fill="#FFF" d="M11 6.147L10.85 6 8.5 8.284 6.15 6 6 6.147 8.35 8.43 6 10.717l.15.146L8.5 8.578l2.35 2.284.15-.146L8.65 8.43z"/>
                  </svg>
                </button>`
