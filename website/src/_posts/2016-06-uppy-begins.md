@@ -6,6 +6,8 @@ author: arturi
 
 For the past six months, we have been working hard on uppy.io. We feel that it is high time we gave you a look behind the scenes: what are we working on, and why.
 
+<img src="/images/blog/uppy-begins/uppy-dashboard.jpg">
+
 The way uploading works has not changed in a meaningful way since the days of our trusty old 56 kbit/s modems. Of course, files have gotten bigger and speeds have increased, but that is more or less all there is to say. If it were up to us – and we hope it is – that is all about to change.
 
 We at [Transloadit](https://transloadit.com/) are on a mission to change the way the world does uploading. To accomplish this, our first step has been to develop an open protocol for resumable file uploads, called [‘tus’](http://tus.io/). Finally, that 2GB video upload from your smartphone doesn’t have to start over when your train passes through a tunnel! The protocol got [Hacker News excited](https://news.ycombinator.com/item?id=10591348) on several occasions and is being deployed by, among others, our friends at Vimeo. Now that a stable version 1.0 of ‘tus’ has been released, it is time to put it to the test. A protocol without real-world applications is nothing more than a meaningless document, after all.
@@ -43,4 +45,3 @@ Lastly, and this is a point of special significance to us, Uppy will be complete
 We are going to work hard on bringing you the best file uploader possible and we’ll keep you informed about the development process on [uppy.io](http://uppy.io/). We can’t wait for you to meet Uppy!
 
 > We were on the [Hacker News](https://news.ycombinator.com/item?id=12109410) and [Product Hunt](https://www.producthunt.com/posts/uppy) frontpages. Comments welcome there.
-
