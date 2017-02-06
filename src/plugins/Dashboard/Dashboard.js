@@ -44,8 +44,6 @@ module.exports = function Dashboard (props) {
     })
   }
 
-  const dashboardSize = props.inline ? `max-width: ${props.maxWidth}px; max-height: ${props.maxHeight}px;` : ''
-
   return html`
     <div class="Uppy UppyTheme--default UppyDashboard
                           ${isTouchDevice() ? 'Uppy--isTouchDevice' : ''}
@@ -69,7 +67,10 @@ module.exports = function Dashboard (props) {
 
     <div class="UppyDashboard-inner"
          tabindex="0"
-         style="${dashboardSize}">
+         style="
+          ${props.inline && props.maxWidth ? `max-width: ${props.maxWidth}px;` : ''}
+          ${props.inline && props.maxHeight ? `max-height: ${props.maxHeight}px;` : ''}
+         ">
       <div class="UppyDashboard-innerWrap">
 
         ${Tabs({
