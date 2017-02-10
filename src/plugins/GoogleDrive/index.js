@@ -76,7 +76,7 @@ module.exports = class Google extends Plugin {
   }
 
   getItemData (item) {
-    return item
+    return Object.assign({}, item, {size: parseFloat(item.fileSize)})
   }
 
   getItemIcon (item) {

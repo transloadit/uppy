@@ -191,13 +191,13 @@ module.exports = class Tus10 extends Plugin {
                 bytesUploaded: bytesUploaded,
                 bytesTotal: bytesTotal
               })
-
-              if (progress === '100.00') {
-                this.core.emitter.emit('core:upload-success', file.id)
-                socket.close()
-                return resolve()
-              }
             }
+          })
+
+          socket.on('success', (data) => {
+            this.core.emitter.emit('core:upload-success', file.id, data.url)
+            socket.close()
+            return resolve()
           })
         })
       })
