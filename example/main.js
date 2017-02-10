@@ -2,6 +2,7 @@
 // import Dummy from '../src/plugins/Dummy.js'
 const Dashboard = require('../src/plugins/Dashboard')
 const GoogleDrive = require('../src/plugins/GoogleDrive')
+const Dropbox = require('../src/plugins/Dropbox')
 const Webcam = require('../src/plugins/Webcam')
 const Tus10 = require('../src/plugins/Tus10')
 const MetaData = require('../src/plugins/MetaData')
@@ -33,6 +34,7 @@ const uppy = Uppy({debug: true, autoProceed: false})
     }
   })
   .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
+  .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   // .use(FileInput, {target: '.Uppy', locale: {
   //   strings: {selectToUpload: 'хуй'}
   // }})
