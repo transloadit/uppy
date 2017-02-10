@@ -59,6 +59,7 @@ module.exports = class Google extends Plugin {
     const plugin = this
     this.target = this.mount(target, plugin)
 
+    // catch error here.
     this[this.id].auth().then(this.onAuth)
     return
   }
@@ -87,7 +88,7 @@ module.exports = class Google extends Plugin {
   }
 
   getItemName (item) {
-    return item.title
+    return item.title ? item.title : '/'
   }
 
   getMimeType (item) {

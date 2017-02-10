@@ -74,7 +74,7 @@ module.exports = class View {
    * @param  {String} id Folder id
    * @return {Promise}   Folders/files in folder
    */
-  getFolder (id) {
+  getFolder (id, name) {
     return this.Provider.list(id)
       .then((res) => {
         let folders = []
@@ -87,7 +87,7 @@ module.exports = class View {
         if (index !== -1) {
           updatedDirectories = state.directories.slice(0, index + 1)
         } else {
-          updatedDirectories = state.directories.concat([{id, title: this.plugin.getItemName(res)}])
+          updatedDirectories = state.directories.concat([{id, title: name || this.plugin.getItemName(res)}])
         }
 
         this.plugin.getItemSubList(res).forEach((item) => {
@@ -115,7 +115,7 @@ module.exports = class View {
    */
   getNextFolder (folder) {
     let id = this.plugin.getItemRequestPath(folder)
-    this.getFolder(id)
+    this.getFolder(id, this.plugin.getItemName(folder))
   }
 
   addFile (file) {
