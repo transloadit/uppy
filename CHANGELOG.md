@@ -72,7 +72,7 @@ Theme: TBA
 - [ ] uploaders: retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi)
 - [ ] core: retry failed uploads
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
-- [ ] core: file type detection: archives, markdown (@arturi)
+- [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
 - [ ] dashboard: basic React component (@arturi)
 
 ## 0.14.0
