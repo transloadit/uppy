@@ -20,31 +20,31 @@ function isTouchDevice () {
           navigator.maxTouchPoints   // works on IE10/11 and Surface
 }
 
-/**
- * Shorter and fast way to select a single node in the DOM
- * @param   { String } selector - unique dom selector
- * @param   { Object } ctx - DOM node where the target of our search will is located
- * @returns { Object } dom node found
- */
-function $ (selector, ctx) {
-  return (ctx || document).querySelector(selector)
-}
+// /**
+//  * Shorter and fast way to select a single node in the DOM
+//  * @param   { String } selector - unique dom selector
+//  * @param   { Object } ctx - DOM node where the target of our search will is located
+//  * @returns { Object } dom node found
+//  */
+// function $ (selector, ctx) {
+//   return (ctx || document).querySelector(selector)
+// }
 
-/**
- * Shorter and fast way to select multiple nodes in the DOM
- * @param   { String|Array } selector - DOM selector or nodes list
- * @param   { Object } ctx - DOM node where the targets of our search will is located
- * @returns { Object } dom nodes found
- */
-function $$ (selector, ctx) {
-  var els
-  if (typeof selector === 'string') {
-    els = (ctx || document).querySelectorAll(selector)
-  } else {
-    els = selector
-    return Array.prototype.slice.call(els)
-  }
-}
+// /**
+//  * Shorter and fast way to select multiple nodes in the DOM
+//  * @param   { String|Array } selector - DOM selector or nodes list
+//  * @param   { Object } ctx - DOM node where the targets of our search will is located
+//  * @returns { Object } dom nodes found
+//  */
+// function $$ (selector, ctx) {
+//   var els
+//   if (typeof selector === 'string') {
+//     els = (ctx || document).querySelectorAll(selector)
+//   } else {
+//     els = selector
+//     return Array.prototype.slice.call(els)
+//   }
+// }
 
 function truncateString (str, length) {
   if (str.length > length) {
@@ -405,8 +405,8 @@ module.exports = {
   every,
   flatten,
   groupBy,
-  $,
-  $$,
+  // $,
+  // $$,
   extend,
   readFile,
   createImageThumbnail,
