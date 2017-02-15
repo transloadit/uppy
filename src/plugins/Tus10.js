@@ -113,30 +113,21 @@ module.exports = class Tus10 extends Plugin {
         }
       })
 
-      this.core.emitter.on('core:file-remove', (fileID) => {
-        if (fileID === file.id) {
-          console.log('removing file: ', fileID)
-          upload.abort()
-          resolve(`upload ${fileID} was removed`)
-        }
+      this.onFileRemove(file.id, () => {
+        console.log('removing file: ', file.id)
+        upload.abort()
+        resolve(`upload ${file.id} was removed`)
       })
 
-      this.core.emitter.on('core:upload-pause', (fileID) => {
-        if (fileID === file.id) {
-          const isPaused = this.pauseResume('toggle', fileID)
-          isPaused ? upload.abort() : upload.start()
-        }
+      this.onPause(file.id, (isPaused) => {
+        isPaused ? upload.abort() : upload.start()
       })
 
-      this.core.emitter.on('core:pause-all', () => {
-        const files = this.core.getState().files
-        if (!files[file.id]) return
+      this.onPauseAll(file.id, () => {
         upload.abort()
       })
 
-      this.core.emitter.on('core:resume-all', () => {
-        const files = this.core.getState().files
-        if (!files[file.id]) return
+      this.onResumeAll(file.id, () => {
         upload.start()
       })
 
@@ -178,6 +169,23 @@ module.exports = class Tus10 extends Plugin {
             target: socketProtocol + `://${host}/api/${token}`
           })
 
+          this.onFileRemove(file.id, () => {
+            socket.send('pause', {})
+            resolve(`upload ${file.id} was removed`)
+          })
+
+          this.onPause(file.id, (isPaused) => {
+            isPaused ? socket.send('pause', {}) : socket.send('resume', {})
+          })
+
+          this.onPauseAll(file.id, () => {
+            socket.send('pause', {})
+          })
+
+          this.onResumeAll(file.id, () => {
+            socket.send('resume', {})
+          })
+
           socket.on('progress', (progressData) => {
             const {progress, bytesUploaded, bytesTotal} = progressData
 
@@ -201,6 +209,37 @@ module.exports = class Tus10 extends Plugin {
           })
         })
       })
+    })
+  }
+
+  onFileRemove (fileID, cb) {
+    this.core.emitter.on('core:file-remove', (targetFileID) => {
+      if (fileID === targetFileID) cb()
+    })
+  }
+
+  onPause (fileID, cb) {
+    this.core.emitter.on('core:upload-pause', (targetFileID) => {
+      if (fileID === targetFileID) {
+        const isPaused = this.pauseResume('toggle', fileID)
+        cb(isPaused)
+      }
+    })
+  }
+
+  onPauseAll (fileID, cb) {
+    this.core.emitter.on('core:pause-all', () => {
+      const files = this.core.getState().files
+      if (!files[fileID]) return
+      cb()
+    })
+  }
+
+  onResumeAll (fileID, cb) {
+    this.core.emitter.on('core:resume-all', () => {
+      const files = this.core.getState().files
+      if (!files[fileID]) return
+      cb()
     })
   }
 
