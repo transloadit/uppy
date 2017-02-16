@@ -273,6 +273,7 @@ class Uppy {
 
     this.on('core:upload-progress', (data) => {
       this.calculateProgress(data)
+      console.log('signal triggered!')
       // throttledCalculateProgress(data)
     })
 
