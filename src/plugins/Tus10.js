@@ -200,7 +200,7 @@ module.exports = class Tus10 extends Plugin {
                   bytesUploaded: bytesUploaded,
                   bytesTotal: bytesTotal
                 })
-              }, 100)
+              })
             }
           })
 
