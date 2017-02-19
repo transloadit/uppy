@@ -193,13 +193,11 @@ module.exports = class Tus10 extends Plugin {
               this.core.log(`Upload progress: ${progress}`)
               console.log(file.id)
 
-              setTimeout(() => {
-                this.core.emitter.emit('core:upload-progress', {
-                  uploader: this,
-                  id: file.id,
-                  bytesUploaded: bytesUploaded,
-                  bytesTotal: bytesTotal
-                })
+              this.core.emitter.emit('core:upload-progress', {
+                uploader: this,
+                id: file.id,
+                bytesUploaded: bytesUploaded,
+                bytesTotal: bytesTotal
               })
             }
           })
