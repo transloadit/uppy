@@ -28,7 +28,7 @@ module.exports = class Translator {
     this.opts = Object.assign({}, defaultOptions, opts)
     this.locale = Object.assign({}, defaultOptions.locale, opts.locale)
 
-    console.log(this.opts.locale)
+    // console.log(this.opts.locale)
 
     // this.locale.pluralize = this.locale ? this.locale.pluralize : defaultPluralize
     // this.locale.strings = Object.assign({}, en_US.strings, this.opts.locale.strings)
