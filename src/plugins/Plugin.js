@@ -33,7 +33,7 @@ module.exports = class Plugin {
     const newEl = this.render(state)
     yo.update(this.el, newEl)
     console.log('plugin update')
-    console.log(newEl)
+    console.log(state)
     // optimizes performance?
     // requestAnimationFrame(() => {
     //   const newEl = this.render(state)
