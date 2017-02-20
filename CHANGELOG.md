@@ -24,7 +24,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: Have base styles, be explicit about fonts, etc
 - [ ] core: Make sure Uppy works well in VR
 - [ ] dashboard: add ability to minimize Modal/Dashboard, while long upload is in progress? Uppy then becomes just a tiny progress indicator
-- [ ] test: Human should check http://www.webpagetest.org, use it sometimes to test our website & Uppy? Which will show response/loading times and where big delays are
+- [ ] test: Human should check http://www.webpagetest.org and https://developers.google.com/web/tools/lighthouse/, use it sometimes to test website and Uppy. Will show response/loading times and other issues
 - [ ] test: Human should test with real screen reader to identify accessibility problems
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing
 - [ ] test: Make Edge and Safari work via the tunnel so we can test localhost instead of uppy.io, and test the current build, vs the previous deploy that way
@@ -49,6 +49,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
+- [ ] provider: show error view for things like not being able to connect to uppy-server. should this be happening when uppy-server is unavailable http://i.imgur.com/cYJakc9.png? (@arturi, @ifedapoolarewaju)
+- [ ] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
 
 ## 0.15.0
 
@@ -56,8 +58,6 @@ To be released: February 24, 2017
 Theme: TBA
 
 - [ ] presets: Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
-- [ ] provider: show error view for things like not being able to connect to uppy server (@arturi, @ifedapoolarewaju)
-- [ ] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
 - [ ] provider: logout link/button? (@arturi, @ifedapoolarewaju)
 - [x] provider: fix breadcrumbs (@ifedapoolarewaju)
 - [ ] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
@@ -74,6 +74,9 @@ Theme: TBA
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
 - [ ] dashboard: basic React component (@arturi)
+- [x] website: blog post and images cleanup (@arturi)
+- [ ] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi #150)
+- [ ] website: different meta description for pages and post (@arturi)
 
 ## 0.14.0
 
