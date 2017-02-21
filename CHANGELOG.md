@@ -51,6 +51,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
 - [ ] provider: show error view for things like not being able to connect to uppy-server. should this be happening when uppy-server is unavailable http://i.imgur.com/cYJakc9.png? (@arturi, @ifedapoolarewaju)
 - [ ] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
+- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 
 ## 0.15.0
 
