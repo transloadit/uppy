@@ -30,14 +30,14 @@ module.exports = class Plugin {
       return
     }
 
-    const newEl = this.render(state)
-    yo.update(this.el, newEl)
+    // const newEl = this.render(state)
+    // yo.update(this.el, newEl)
 
     // optimizes performance?
-    // requestAnimationFrame(() => {
-    //   const newEl = this.render(state)
-    //   yo.update(this.el, newEl)
-    // })
+    requestAnimationFrame(() => {
+      const newEl = this.render(state)
+      yo.update(this.el, newEl)
+    })
   }
 
   /**
