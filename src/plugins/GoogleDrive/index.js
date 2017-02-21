@@ -60,7 +60,7 @@ module.exports = class Google extends Plugin {
     this.target = this.mount(target, plugin)
 
     // catch error here.
-    this[this.id].auth().then(this.onAuth)
+    this[this.id].auth().then(this.onAuth).catch(this.view.handleError)
     return
   }
 

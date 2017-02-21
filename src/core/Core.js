@@ -223,8 +223,6 @@ class Uppy {
       totalProgress: totalProgress,
       files: updatedFiles
     })
-
-    console.log(this.getState().totalProgress)
   }
 
   /**
