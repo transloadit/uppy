@@ -49,6 +49,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
+- [ ] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
 
 ## 0.15.0
 
@@ -56,12 +57,11 @@ To be released: February 24, 2017
 Theme: TBA
 
 - [ ] presets: Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
-- [ ] provider: show error view for things like not being able to connect to uppy server (@arturi, @ifedapoolarewaju)
+- [x] provider: show error view for things like not being able to connect to uppy server (@arturi, @ifedapoolarewaju)
 - [ ] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
 - [ ] provider: logout link/button? (@arturi, @ifedapoolarewaju)
 - [x] provider: fix breadcrumbs (@ifedapoolarewaju)
 - [ ] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
-- [ ] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
 - [x] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
 - [ ] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
 - [x] server: return uploaded file urls (from Google Drive / Dropbox) ? (@ifedapoolarewaju)
