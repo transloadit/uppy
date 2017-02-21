@@ -1,5 +1,5 @@
 const AuthView = require('./AuthView')
-const Browser = require('./new/Browser')
+const Browser = require('./Browser')
 const ErrorView = require('./Error')
 
 /**
@@ -54,6 +54,7 @@ module.exports = class View {
     this.sortByTitle = this.sortByTitle.bind(this)
     this.sortByDate = this.sortByDate.bind(this)
     this.isActiveRow = this.isActiveRow.bind(this)
+    this.handleError = this.handleError.bind(this)
 
     // Visual
     this.render = this.render.bind(this)
@@ -103,9 +104,7 @@ module.exports = class View {
 
         return data
       })
-      .catch((err) => {
-        return err
-      })
+      .catch(this.handleError)
   }
 
   /**
@@ -156,7 +155,7 @@ module.exports = class View {
           }
           this.updateState(newState)
         }
-      })
+      }).catch(this.handleError)
   }
 
   /**
@@ -276,7 +275,7 @@ module.exports = class View {
       // split url because chrome adds '#' to redirects
       if (authWindowUrl.split('#')[0] === redirect) {
         authWindow.close()
-        this.Provider.auth().then(this.plugin.onAuth)
+        this.Provider.auth().then(this.plugin.onAuth).catch(this.handleError)
       } else {
         setTimeout(checkAuth, 100)
       }
@@ -285,10 +284,15 @@ module.exports = class View {
     checkAuth()
   }
 
+  handleError (error) {
+    this.updateState({ error })
+  }
+
   render (state) {
     const { authenticated, error } = state[this.plugin.stateId]
 
     if (error) {
+      this.updateState({ error: undefined })
       return ErrorView({ error: error })
     }
 
