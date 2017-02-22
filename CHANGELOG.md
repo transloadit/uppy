@@ -52,6 +52,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
+- [ ] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
 
 ## 0.15.0
 
@@ -65,7 +66,6 @@ Theme: TBA
 - [x] provider: fix breadcrumbs (@ifedapoolarewaju)
 - [ ] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
 - [x] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
-- [ ] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
 - [x] server: return uploaded file urls (from Google Drive / Dropbox) ? (@ifedapoolarewaju)
 - [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
