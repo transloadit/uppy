@@ -1,6 +1,7 @@
 const Plugin = require('./Plugin')
 const tus = require('tus-js-client')
 const UppySocket = require('../core/UppySocket')
+const throttle = require('lodash.throttle')
 
 /**
  * Tus resumable file uploader
@@ -114,7 +115,7 @@ module.exports = class Tus10 extends Plugin {
       })
 
       this.onFileRemove(file.id, () => {
-        console.log('removing file: ', file.id)
+        this.core.log('removing file:', file.id)
         upload.abort()
         resolve(`upload ${file.id} was removed`)
       })
@@ -186,7 +187,7 @@ module.exports = class Tus10 extends Plugin {
             socket.send('resume', {})
           })
 
-          socket.on('progress', (progressData) => {
+          const emitProgress = (progressData) => {
             const {progress, bytesUploaded, bytesTotal} = progressData
 
             if (progress) {
@@ -200,7 +201,10 @@ module.exports = class Tus10 extends Plugin {
                 bytesTotal: bytesTotal
               })
             }
-          })
+          }
+
+          const throttledEmitProgress = throttle(emitProgress, 100, false)
+          socket.on('progress', throttledEmitProgress)
 
           socket.on('success', (data) => {
             this.core.emitter.emit('core:upload-success', file.id, data.url)
