@@ -13,6 +13,9 @@ module.exports = (props) => {
 
   return html`
     <div class="Browser">
+      <div>
+        <button onclick=${props.logout} class="UppyDashboardTab-btn">Sign out</button>
+      </div>
       <header>
         <input
           type="text"
