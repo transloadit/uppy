@@ -4,7 +4,7 @@
 @import '_common.scss';
 @import 'vendor/bootstrap/bootstrap-grid';
 
-.UppyProvider-auth, .UppyProvider-error {
+.UppyProvider-auth, .UppyProvider-error, .UppyProvider-loading {
   align-items: center;
   display: flex;
   flex-flow: column wrap;

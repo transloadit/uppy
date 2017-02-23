@@ -1,6 +1,7 @@
 const AuthView = require('./AuthView')
 const Browser = require('./Browser')
 const ErrorView = require('./Error')
+const LoaderView = require('./Loader')
 
 /**
  * Class to easily generate generic views for plugins
@@ -76,8 +77,9 @@ module.exports = class View {
    * @return {Promise}   Folders/files in folder
    */
   getFolder (id, name) {
-    return this.Provider.list(id)
-      .then((res) => {
+    return this._loaderWrapper(
+      this.Provider.list(id),
+      (res) => {
         let folders = []
         let files = []
         let updatedDirectories
@@ -103,8 +105,8 @@ module.exports = class View {
         this.updateState(data)
 
         return data
-      })
-      .catch(this.handleError)
+      },
+      this.handleError)
   }
 
   /**
@@ -275,7 +277,7 @@ module.exports = class View {
       // split url because chrome adds '#' to redirects
       if (authWindowUrl.split('#')[0] === redirect) {
         authWindow.close()
-        this.Provider.auth().then(this.plugin.onAuth).catch(this.handleError)
+        this._loaderWrapper(this.Provider.auth(), this.plugin.onAuth, this.handleError)
       } else {
         setTimeout(checkAuth, 100)
       }
@@ -288,12 +290,30 @@ module.exports = class View {
     this.updateState({ error })
   }
 
+  // displays loader view while asynchronous request is being made.
+  _loaderWrapper (promise, then, catch_) {
+    promise
+      .then((result) => {
+        this.updateState({ loading: false })
+        then(result)
+      })
+      .catch((err) => {
+        this.updateState({ loading: false })
+        catch_(err)
+      })
+    this.updateState({ loading: true })
+  }
+
   render (state) {
-    const { authenticated, error } = state[this.plugin.stateId]
+    const { authenticated, error, loading } = state[this.plugin.stateId]
 
     if (error) {
       this.updateState({ error: undefined })
       return ErrorView({ error: error })
+    }
+
+    if (loading) {
+      return LoaderView()
     }
 
     if (!authenticated) {
