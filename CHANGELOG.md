@@ -53,6 +53,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
 - [ ] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
+- [ ] uppy/uppy-server: allow google drive/dropbox non-tus(i.e multipart) remote uploads
 
 ## 0.15.0
 
