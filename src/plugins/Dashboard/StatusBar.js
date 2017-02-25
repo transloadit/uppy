@@ -1,4 +1,17 @@
 const html = require('yo-yo')
+const throttle = require('lodash.throttle')
+
+function progressBarWidth (props) {
+  return props.totalProgress
+}
+
+function progressDetails (props) {
+  // console.log(Date.now())
+  return html`<span>${props.totalProgress || 0}%・${props.complete} / ${props.inProgress}・${props.totalUploadedSize} / ${props.totalSize}・↑ ${props.totalSpeed}/s・${props.totalETA}</span>`
+}
+
+const throttledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
+// const throttledProgressBarWidth = throttle(progressBarWidth, 300, {leading: true, trailing: true})
 
 module.exports = (props) => {
   props = props || {}
@@ -8,18 +21,19 @@ module.exports = (props) => {
   return html`
     <div class="UppyDashboard-statusBar
                 ${props.isAllComplete ? 'is-complete' : ''}"
-                aria-hidden="${isHidden}">
+                aria-hidden="${isHidden}"
+                title="">
       <progress style="display: none;" min="0" max="100" value="${props.totalProgress}"></progress>
-      <div class="UppyDashboard-statusBarProgress" style="width: ${props.totalProgress}%"></div>
+      <div class="UppyDashboard-statusBarProgress" style="width: ${progressBarWidth(props)}%"></div>
       <div class="UppyDashboard-statusBarContent">
         ${props.isUploadStarted && !props.isAllComplete
           ? !props.isAllPaused
-            ? html`<span>${pauseResumeButtons(props)} Uploading... ${props.totalProgress || 0}%・${props.complete} / ${props.inProgress}・${props.totalUploadedSize} / ${props.totalSize}・↑ ${props.totalSpeed}/s・${props.totalETA}</span>`
-            : html`<span>${pauseResumeButtons(props)} Paused・${props.totalProgress}%</span>`
+            ? html`<span title="Uploading">${pauseResumeButtons(props)} Uploading... ${throttledProgressDetails(props)}</span>`
+            : html`<span title="Paused">${pauseResumeButtons(props)} Paused・${props.totalProgress}%</span>`
           : null
           }
         ${props.isAllComplete
-          ? html`<span><svg class="UppyDashboard-statusBarAction UppyIcon" width="18" height="17" viewBox="0 0 23 17">
+          ? html`<span title="Complete"><svg class="UppyDashboard-statusBarAction UppyIcon" width="18" height="17" viewBox="0 0 23 17">
               <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
             </svg>Upload complete・${props.totalProgress}%</span>`
           : null
@@ -30,7 +44,13 @@ module.exports = (props) => {
 }
 
 const pauseResumeButtons = (props) => {
-  return html`<button class="UppyDashboard-statusBarAction" type="button" onclick=${() => togglePauseResume(props)}>
+  const title = props.resumableUploads
+                ? props.isAllPaused
+                  ? 'resume upload'
+                  : 'pause upload'
+                : 'cancel upload'
+
+  return html`<button title="${title}" class="UppyDashboard-statusBarAction" type="button" onclick=${() => togglePauseResume(props)}>
     ${props.resumableUploads
       ? props.isAllPaused
         ? html`<svg class="UppyIcon" width="15" height="17" viewBox="0 0 11 13">
