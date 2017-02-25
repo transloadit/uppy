@@ -1,8 +1,6 @@
 const yo = require('yo-yo')
 // const nanoraf = require('nanoraf')
 
-window.updateNum = 0
-
 /**
  * Boilerplate that all Plugins share - and should not be used
  * directly. It also shows which methods final plugins should implement/override,
@@ -47,7 +45,7 @@ module.exports = class Plugin {
     // console.log('attempting an update...', Date.now())
     // this.frame(state, prev)
 
-    this.core.log('update number: ' + window.updateNum++)
+    this.core.log('update number: ' + this.core.updateNum++)
 
     const newEl = this.render(state)
     yo.update(this.el, newEl)

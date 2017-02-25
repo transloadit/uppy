@@ -53,6 +53,7 @@ class Uppy {
     }
 
     // for debugging and testing
+    this.updateNum = 0
     if (this.opts.debug) {
       global.UppyState = this.state
       global.uppyLog = ''
