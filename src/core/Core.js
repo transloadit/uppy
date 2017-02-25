@@ -1,9 +1,10 @@
 const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
-const ee = require('namespace-emitter')
 const UppySocket = require('./UppySocket')
+const ee = require('namespace-emitter')
+// const throttle = require('lodash.throttle')
 // const en_US = require('../locales/en_US')
-// import deepFreeze from 'deep-freeze-strict'
+// const deepFreeze = require('deep-freeze-strict')
 
 /**
  * Main Uppy core
@@ -37,6 +38,7 @@ class Uppy {
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
     this.addFile = this.addFile.bind(this)
+    this.calculateProgress = this.calculateProgress.bind(this)
 
     this.bus = this.emitter = ee()
     this.on = this.bus.on.bind(this.bus)
@@ -157,6 +159,7 @@ class Uppy {
     const updatedFiles = Object.assign({}, this.getState().files)
     delete updatedFiles[fileID]
     this.setState({files: updatedFiles})
+    this.calculateTotalProgress()
     this.log(`Removed file: ${fileID}`)
   }
 
@@ -192,24 +195,38 @@ class Uppy {
         progress: Object.assign({}, updatedFiles[fileID].progress, {
           bytesUploaded: data.bytesUploaded,
           bytesTotal: data.bytesTotal,
-          percentage: Math.round((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
+          percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
         })
       }
     ))
     updatedFiles[data.id] = updatedFile
 
+    this.setState({
+      files: updatedFiles
+    })
+
+    this.calculateTotalProgress()
+  }
+
+  calculateTotalProgress () {
     // calculate total progress, using the number of files currently uploading,
     // multiplied by 100 and the summ of individual progress of each file
-    const inProgress = Object.keys(updatedFiles).filter((file) => {
-      return updatedFiles[file].progress.uploadStarted
+    const files = Object.assign({}, this.getState().files)
+
+    const inProgress = Object.keys(files).filter((file) => {
+      return files[file].progress.uploadStarted
     })
     const progressMax = inProgress.length * 100
     let progressAll = 0
     inProgress.forEach((file) => {
-      progressAll = progressAll + updatedFiles[file].progress.percentage
+      progressAll = progressAll + files[file].progress.percentage
     })
 
-    const totalProgress = Math.round((progressAll * 100 / progressMax).toFixed(2))
+    const totalProgress = Math.floor((progressAll * 100 / progressMax).toFixed(2))
+
+    this.setState({
+      totalProgress: totalProgress
+    })
 
     // if (totalProgress === 100) {
     //   const completeFiles = Object.keys(updatedFiles).filter((file) => {
@@ -218,11 +235,6 @@ class Uppy {
     //   })
     //   this.emit('core:success', completeFiles.length)
     // }
-
-    this.setState({
-      totalProgress: totalProgress,
-      files: updatedFiles
-    })
   }
 
   /**
@@ -269,28 +281,29 @@ class Uppy {
       this.setState({files: updatedFiles})
     })
 
-    // const throttledCalculateProgress = throttle(1000, (data) => this.calculateProgress(data))
+    // const throttledCalculateProgress = throttle(this.calculateProgress, 300, {leading: true, trailing: true})
 
     this.on('core:upload-progress', (data) => {
       this.calculateProgress(data)
       // throttledCalculateProgress(data)
     })
 
-    this.on('core:upload-success', (fileID, uploadURL) => {
+    this.on('core:upload-success', (fileID, uploadResp, uploadURL) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID], {
         progress: Object.assign({}, updatedFiles[fileID].progress, {
-          uploadComplete: true
+          uploadComplete: true,
+          // good or bad idea???
+          percentage: 100
         }),
         uploadURL: uploadURL
       })
       updatedFiles[fileID] = updatedFile
 
-      // console.log(this.getState().totalProgress)
+      this.calculateTotalProgress()
 
       if (this.getState().totalProgress === 100) {
         const completeFiles = Object.keys(updatedFiles).filter((file) => {
-          // this should be `uploadComplete`
           return updatedFiles[file].progress.uploadComplete
         })
         this.emit('core:success', completeFiles.length)
