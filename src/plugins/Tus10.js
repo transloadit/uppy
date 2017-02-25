@@ -2,6 +2,7 @@ const Plugin = require('./Plugin')
 const tus = require('tus-js-client')
 const UppySocket = require('../core/UppySocket')
 const throttle = require('lodash.throttle')
+require('whatwg-fetch')
 
 /**
  * Tus resumable file uploader
@@ -93,12 +94,10 @@ module.exports = class Tus10 extends Plugin {
 
         onError: (err) => {
           this.core.log(err)
-          this.core.emitter.emit('core:upload-error', file.id)
+          this.core.emitter.emit('core:upload-error', file.id, err)
           reject('Failed because: ' + err)
         },
         onProgress: (bytesUploaded, bytesTotal) => {
-          // Dispatch progress event
-          // console.log(bytesUploaded, bytesTotal)
           this.core.emitter.emit('core:upload-progress', {
             uploader: this,
             id: file.id,
@@ -107,9 +106,12 @@ module.exports = class Tus10 extends Plugin {
           })
         },
         onSuccess: () => {
-          this.core.emitter.emit('core:upload-success', file.id, upload.url)
+          this.core.emitter.emit('core:upload-success', file.id, upload, upload.url)
 
-          this.core.log(`Download ${upload.file.name} from ${upload.url}`)
+          if (upload.url) {
+            this.core.log(`Download ${upload.file.name} from ${upload.url}`)
+          }
+
           resolve(upload)
         }
       })
@@ -203,11 +205,11 @@ module.exports = class Tus10 extends Plugin {
             }
           }
 
-          const throttledEmitProgress = throttle(emitProgress, 100, false)
+          const throttledEmitProgress = throttle(emitProgress, 300, {leading: true, trailing: true})
           socket.on('progress', throttledEmitProgress)
 
           socket.on('success', (data) => {
-            this.core.emitter.emit('core:upload-success', file.id, data.url)
+            this.core.emitter.emit('core:upload-success', file.id, data, data.url)
             socket.close()
             return resolve()
           })
