@@ -2,7 +2,7 @@ const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
 const UppySocket = require('./UppySocket')
 const ee = require('namespace-emitter')
-// const throttle = require('lodash.throttle')
+const throttle = require('lodash.throttle')
 // const en_US = require('../locales/en_US')
 // const deepFreeze = require('deep-freeze-strict')
 
@@ -185,8 +185,10 @@ class Uppy {
   calculateProgress (data) {
     const fileID = data.id
     const updatedFiles = Object.assign({}, this.getState().files)
+
+    // skip progress event for a file that’s been removed
     if (!updatedFiles[fileID]) {
-      console.error('Trying to set progress for a file that’s not with us anymore: ', fileID)
+      this.log('Trying to set progress for a file that’s not with us anymore: ', fileID)
       return
     }
 
@@ -281,11 +283,11 @@ class Uppy {
       this.setState({files: updatedFiles})
     })
 
-    // const throttledCalculateProgress = throttle(this.calculateProgress, 300, {leading: true, trailing: true})
+    const throttledCalculateProgress = throttle(this.calculateProgress, 300)
 
     this.on('core:upload-progress', (data) => {
-      this.calculateProgress(data)
-      // throttledCalculateProgress(data)
+      // this.calculateProgress(data)
+      throttledCalculateProgress(data)
     })
 
     this.on('core:upload-success', (fileID, uploadResp, uploadURL) => {
@@ -293,12 +295,17 @@ class Uppy {
       const updatedFile = Object.assign({}, updatedFiles[fileID], {
         progress: Object.assign({}, updatedFiles[fileID].progress, {
           uploadComplete: true,
-          // good or bad idea???
+          // good or bad idea? setting the percentage to 100 if upload is successful,
+          // so that if we lost some progress events on the way, its still marked “compete”?
           percentage: 100
         }),
         uploadURL: uploadURL
       })
       updatedFiles[fileID] = updatedFile
+
+      this.setState({
+        files: updatedFiles
+      })
 
       this.calculateTotalProgress()
 
@@ -308,10 +315,6 @@ class Uppy {
         })
         this.emit('core:success', completeFiles.length)
       }
-
-      this.setState({
-        files: updatedFiles
-      })
     })
 
     this.on('core:update-meta', (data, fileID) => {
@@ -349,17 +352,6 @@ class Uppy {
  * @return {Object} self for chaining
  */
   use (Plugin, opts) {
-    // Prepare props to pass to plugins
-    // const props = {
-    //   getState: this.getState.bind(this),
-    //   setState: this.setState.bind(this),
-    //   updateMeta: this.updateMeta.bind(this),
-    //   addFile: this.addFile.bind(this),
-    //   i18n: this.i18n.bind(this),
-    //   bus: this.ee,
-    //   log: this.log.bind(this)
-    // }
-
     // Instantiate
     const plugin = new Plugin(this, opts)
     const pluginName = plugin.id
@@ -476,12 +468,6 @@ class Uppy {
     return
   }
 }
-
-// module.exports = function (opts) {
-//   if (!(this instanceof Uppy)) {
-//     return new Uppy(opts)
-//   }
-// }
 
 module.exports = function (opts) {
   if (!(this instanceof Uppy)) {
