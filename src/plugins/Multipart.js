@@ -52,7 +52,7 @@ module.exports = class Multipart extends Plugin {
       })
 
       xhr.addEventListener('load', (ev) => {
-        if (ev.target.status >= 200) {
+        if (ev.target.status >= 200 && ev.target.status < 300) {
           const resp = JSON.parse(xhr.response)
           const uploadURL = resp[this.opts.responseUrlFieldName]
 
