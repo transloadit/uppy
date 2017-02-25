@@ -47,7 +47,7 @@ module.exports = class DashboardUI extends Plugin {
       height: 550,
       semiTransparent: false,
       defaultTabIcon: defaultTabIcon(),
-      showProgressDetails: true,
+      showProgressDetails: false,
       locale: defaultLocale
     }
 
