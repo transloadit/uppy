@@ -5,7 +5,7 @@ const Dashboard = require('./Dashboard')
 const { getSpeed } = require('../../core/Utils')
 const { getETA } = require('../../core/Utils')
 const { prettyETA } = require('../../core/Utils')
-const prettyBytes = require('pretty-bytes')
+const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
 
 /**
