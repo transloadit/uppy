@@ -5,7 +5,7 @@ const { getETA,
          getFileNameAndExtension,
          truncateString,
          copyToClipboard } = require('../../core/Utils')
-const prettyBytes = require('pretty-bytes')
+const prettyBytes = require('prettier-bytes')
 const FileItemProgress = require('./FileItemProgress')
 const getFileTypeIcon = require('./getFileTypeIcon')
 const { iconEdit, iconCopy } = require('./icons')
