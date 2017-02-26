@@ -161,6 +161,8 @@ module.exports = class DashboardUI extends Plugin {
     document.querySelector('.UppyDashboard-inner').focus()
 
     this.updateDashboardElWidth()
+    // to be sure, sometimes when the function runs, container size is still 0
+    setTimeout(this.updateDashboardElWidth, 300)
   }
 
   initEvents () {
@@ -204,7 +206,7 @@ module.exports = class DashboardUI extends Plugin {
       })
     })
 
-    window.addEventListener('resize', (ev) => this.updateDashboardElWidth())
+    window.addEventListener('resize', this.updateDashboardElWidth)
 
     // bus.on('core:success', (uploadedCount) => {
     //   bus.emit(
