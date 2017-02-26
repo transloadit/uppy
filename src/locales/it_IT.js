@@ -1,3 +1,5 @@
+/* eslint camelcase: 0 */
+
 const it_IT = {}
 
 it_IT.strings = {
@@ -49,4 +51,4 @@ if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.it_IT = it_IT
 }
 
-export default it_IT
+module.exports = it_IT

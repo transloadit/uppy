@@ -1,3 +1,5 @@
+/* eslint camelcase: 0 */
+
 const en_US = {}
 
 en_US.strings = {
@@ -49,4 +51,4 @@ if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.en_US = en_US
 }
 
-export default en_US
+module.exports = en_US

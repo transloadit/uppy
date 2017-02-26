@@ -1,3 +1,5 @@
+/* eslint camelcase: 0 */
+
 const pt_BR = {}
 
 pt_BR.strings = {
@@ -47,4 +49,4 @@ if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.pt_BR = pt_BR
 }
 
-export default pt_BR
+module.exports = pt_BR

@@ -1,3 +1,5 @@
+/* eslint camelcase: 0 */
+
 const ru_RU = {}
 
 ru_RU.strings = {
@@ -30,4 +32,4 @@ if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.ru_RU = ru_RU
 }
 
-export default ru_RU
+module.exports = ru_RU
