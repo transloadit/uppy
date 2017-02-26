@@ -196,16 +196,16 @@ module.exports = class Webcam {
     // set default swfURL if not explicitly set
     if (!swfURL) {
       // find our script tag, and use that base URL
-      var base_url = ''
+      var baseUrl = ''
       var scpts = document.getElementsByTagName('script')
       for (var idx = 0, len = scpts.length; idx < len; idx++) {
         var src = scpts[idx].getAttribute('src')
         if (src && src.match(/\/webcam(\.min)?\.js/)) {
-          base_url = src.replace(/\/webcam(\.min)?\.js.*$/, '')
+          baseUrl = src.replace(/\/webcam(\.min)?\.js.*$/, '')
           idx = len
         }
       }
-      if (base_url) swfURL = base_url + '/webcam.swf'
+      if (baseUrl) swfURL = baseUrl + '/webcam.swf'
       else swfURL = 'webcam.swf'
     }
 

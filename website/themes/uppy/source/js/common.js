@@ -119,13 +119,19 @@
       var isAPI = document.querySelector('.Content').classList.contains('api')
       if (currentPageAnchor || isAPI) {
         var sectionContainer
-        if (false && isAPI) {
-          sectionContainer = document.querySelector('.menu-root')
-        } else {
-          sectionContainer = document.createElement('ul')
-          sectionContainer.className = 'menu-sub'
-          currentPageAnchor.parentNode.appendChild(sectionContainer)
-        }
+
+        // if (false && isAPI) {
+        //   sectionContainer = document.querySelector('.menu-root')
+        // } else {
+        //   sectionContainer = document.createElement('ul')
+        //   sectionContainer.className = 'menu-sub'
+        //   currentPageAnchor.parentNode.appendChild(sectionContainer)
+        // }
+
+        sectionContainer = document.createElement('ul')
+        sectionContainer.className = 'menu-sub'
+        currentPageAnchor.parentNode.appendChild(sectionContainer)
+
         var h2s = content.querySelectorAll('h2')
         if (h2s.length) {
           each.call(h2s, function (h) {

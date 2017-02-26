@@ -136,7 +136,8 @@ module.exports = class Tus10 extends EventEmitter {
         res.json()
         .then((data) => {
           // get the host domain
-          var regex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)/
+          // var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^\/\n]+)/
+          var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\n]+@)?(?:www\.)?([^\n]+)/
           var host = regex.exec(remoteHost)[1]
 
           var token = data.token
