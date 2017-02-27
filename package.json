@@ -33,7 +33,7 @@
     "babel-plugin-es6-promise": "1.0.0",
     "babel-plugin-transform-object-assign": "6.8.0",
     "babel-plugin-transform-proto-to-assign": "6.9.0",
-    "babel-plugin-yo-yoify": "0.3.1",
+    "babel-plugin-yo-yoify": "arturi/babel-plugin-yo-yoify#patch-3",
     "babel-polyfill": "6.9.1",
     "babel-preset-es2015": "6.13.2",
     "babel-preset-es2015-loose": "7.0.0",
