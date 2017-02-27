@@ -40,9 +40,11 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: try file-type module for setting correct mime-types if needed, example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957
 - [ ] uppy-server: pluggable custom providers; Maybe we use a config file or make it similar to how uppy adds plugins (@ifedapoolarewaju)
 - [ ] ui: do we want https://github.com/kazzkiq/balloon.css ?
+- [ ] core: consider adding nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@arturi)
 
 ## 0.16.0
 
+- [ ] presets: Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
 - [ ] instagram: Make a barely working Instagram Plugin (#21)
 - [ ] dashboard: add service logo / name to the selected file in file list (@arturi)
 - [ ] uppy/uppy-server: review webscoket connection flow during remote upload. In a situation where a client has a slow internet connection, the uppy-server may complete an upload before the client connects to the websocket, hence no feedback would be sent to the client and the client remains unaware of the upload status.
@@ -60,7 +62,8 @@ Ideas that will be planned and find their way into a release at one point
 To be released: February 24, 2017
 Theme: TBA
 
-- [ ] presets: Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
+- [x] build: update dependencies and eslint-plugin-standard, nodemon --> onchange, because simpler and better options (@arturi)
+- [ ] build: fix `Function.caller` issue in `lib` which gets published to NPM package (@arturi #158 #163)
 - [x] provider: show error view for things like not being able to connect to uppy server  should this be happening when uppy-server is unavailable http://i.imgur.com/cYJakc9.png (@arturi, @ifedapoolarewaju)
 - [ ] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
 - [ ] provider: logout link/button? (@arturi, @ifedapoolarewaju)
@@ -77,6 +80,16 @@ Theme: TBA
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
 - [ ] dashboard: basic React component (@arturi)
+- [x] core: experiment with `nanoraf` and `requestAnimationFrame` (@arturi)
+- [x] core: add throttling of progress updates (@arturi)
+- [x] dashobard: fix Missing `file.progress.bytesTotal` property  (@arturi #152)
+- [x] dashboard: switch to prettier-bytes for more user-friendly progress updates (@arturi)
+- [x] dashboard: fix `updateDashboardElWidth()` not firing in time, causing container width to be 0 (@arturi)
+- [x] multipart: treat all 2xx responses as successful, return xhr object in `core:upload-success` (@arturi #156 #154)
+- [x] dashboard: throttle StatusBar numbers, so they update only once a second (@arturi, @acconut)
+- [x] dashboard: add titles to pause/resume/cancel in StatusBar (@arturi)
+- [x] dashboard: precise `circleLength` and `stroke-dasharray/stroke-dashoffset` calculation for progress circles on FileItem (@arturi)
+- [x] dashboard: don’t show per-file detailed progress by default — too much noise (@arturi)
 - [x] website: blog post and images cleanup (@arturi)
 - [ ] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi #150)
 - [ ] website: different meta description for pages and post (@arturi)
@@ -178,7 +191,7 @@ Theme: Getting together
 - [x] google drive: improve UI (@hedgerh)
 - [x] tus: add `resumable` capability flag (@arturi)
 - [x] tus: start fixing pause/resume issues and race conditions (@arturi)
-- [x] test: working Uppy example on Require Bin — latest version straight from NPM http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105 (@arturi @account)
+- [x] test: working Uppy example on Require Bin — latest version straight from NPM http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105 (@arturi @acconut)
 - [x] meta: update readme docs, add unpkg CDN links (https://unpkg.com/uppy/dist/uppy.min.css) (@arturi)
 - [x] meta: write 0.10 release blog post (@arturi)
 
@@ -191,7 +204,7 @@ Theme: Making Progress, Then Pause & Resume
 - [x] dashboard: informer interface: message when all uploads are "done" (@arturi)
 - [x] meta: write 0.9 release blog post (@hedgerh)
 - [x] webcam: a barely working webcam record & upload (@hedgerh)
-- [x] metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 --> tus issue — nailed down, passed to @account (@arturi, @account)
+- [x] metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 --> tus issue — nailed down, passed to @acconut (@arturi, @acconut)
 - [x] core: experiment with switching to `virtual-dom` in a separate branch; experiment with rollup again (@arturi)
 - [x] core: figure out race conditions (animations not completing because file div gets re-added to the dom each time) with `yo-yo`/`morphdom` https://github.com/shama/bel/issues/26#issuecomment-238004130 (@arturi)
 - [x] core: switch to https://github.com/sethvincent/namespace-emitter — smaller, allows for `on('*')` (@arturi)
