@@ -77,6 +77,7 @@
     "es6-promise": "3.2.1",
     "lodash.throttle": "4.1.1",
     "namespace-emitter": "1.0.0",
+    "on-load": "^3.2.0",
     "prettier-bytes": "1.0.3",
     "tus-js-client": "1.4.3",
     "whatwg-fetch": "1.0.0",
