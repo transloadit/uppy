@@ -6,6 +6,7 @@ node_modules
 
 dist/
 lib/
+lib.yoyoified/
 
 website/db.json
 website/*.log
