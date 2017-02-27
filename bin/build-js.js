@@ -4,7 +4,7 @@ var chalk = require('chalk')
 var mkdirp = require('mkdirp')
 // var glob = require('glob')
 var babelify = require('babelify')
-var yoyoify = require('yo-yoify')
+// var yoyoify = require('yo-yoify')
 var browserify = require('browserify')
 // var exec = require('child_process').exec
 var exorcist = require('exorcist')
@@ -27,7 +27,7 @@ function buildUppyBundle (minify) {
       output: path.join(distPath, bundleFile + '.map')
     })
   }
-  b.transform(yoyoify)
+  // b.transform(yoyoify)
   b.transform(babelify)
   b.on('error', handleErr)
 

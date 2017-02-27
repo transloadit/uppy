@@ -33,6 +33,7 @@
     "babel-plugin-es6-promise": "1.0.0",
     "babel-plugin-transform-object-assign": "6.8.0",
     "babel-plugin-transform-proto-to-assign": "6.9.0",
+    "babel-plugin-yo-yoify": "0.3.1",
     "babel-polyfill": "6.9.1",
     "babel-preset-es2015": "6.13.2",
     "babel-preset-es2015-loose": "7.0.0",
@@ -69,8 +70,7 @@
     "tap-spec": "4.1.1",
     "tape": "4.6.3",
     "uppy-server": "0.0.7",
-    "watchify": "3.7.0",
-    "yo-yoify": "arturi/yo-yoify#6bf1e0d84c09c01d4a89ee9cb4da680e4aca8da6"
+    "watchify": "3.7.0"
   },
   "dependencies": {
     "drag-drop": "2.13.2",
@@ -114,7 +114,7 @@
     "watch": "npm-run-all --parallel watch:js watch:css",
     "watch:fast": "npm-run-all --parallel watch:css web:preview",
     "watch:example:browsersync": "browser-sync start --server example --port 3452 --serveStatic dist --files \"example/bundle.js, dist/uppy.min.css\"",
-    "watch:example:js": "watchify -t yo-yoify -t babelify example/main.js -o example/bundle.js -vd",
+    "watch:example:js": "watchify -t babelify example/main.js -o example/bundle.js -vd",
     "watch:example": "npm-run-all --parallel watch:example:js watch:css watch:example:browsersync",
     "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate --silent && node build-examples.js",
     "web:clean": "cd website && ./node_modules/.bin/hexo clean",
