@@ -13,7 +13,7 @@ uppyOne
 const uppyTwo = new Uppy({debug: true, autoProceed: false})
 uppyTwo
   .use(DragDrop, {target: '#UppyDragDrop-Two'})
-  .use(Tus10, {endpoint: '://master.tus.io/files/'})
+  .use(Tus10, {endpoint: '//master.tus.io/files/'})
   .use(ProgressBar, {target: '.UppyDragDrop-Two-Progress'})
   .run()
 
