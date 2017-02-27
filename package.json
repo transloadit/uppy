@@ -81,7 +81,8 @@
     "prettier-bytes": "1.0.3",
     "tus-js-client": "1.4.3",
     "whatwg-fetch": "1.0.0",
-    "yo-yo": "1.4.0"
+    "yo-yo": "1.4.0",
+    "yo-yoify": "^3.5.0"
   },
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
