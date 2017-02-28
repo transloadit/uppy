@@ -70,7 +70,8 @@
     "tape": "4.6.3",
     "uppy-server": "0.0.7",
     "watchify": "3.7.0",
-    "yo-yoify": "arturi/yo-yoify#6bf1e0d84c09c01d4a89ee9cb4da680e4aca8da6"
+    "yo-yoify": "arturi/yo-yoify#6bf1e0d84c09c01d4a89ee9cb4da680e4aca8da6",
+    "yo-yoify-standalone": "0.1.0"
   },
   "dependencies": {
     "drag-drop": "2.13.2",
@@ -88,8 +89,9 @@
     "build:gzip": "node ./bin/gzip.js",
     "size": "echo 'JS Bundle mingz:' && cat ./dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./dist/uppy.min.css | gzip | wc -c",
     "build:bundle:fullpath": "env OUT=uppy-fp.js ./bin/build-bundle --full-paths",
-    "build:js": "npm-run-all build:bundle build:lib",
+    "build:js": "npm-run-all build:bundle build:lib:yoyoified",
     "build:lib": "babel --version && babel src --source-maps -d lib",
+    "build:lib:yoyoified": "babel --version && node bin/build-yoyoified-lib.js && babel lib.yoyoified --source-maps -d lib",
     "build": "npm-run-all --parallel build:js build:css --serial build:gzip size",
     "clean": "rm -rf lib && rm -rf dist",
     "docs": "cd website && node node_modules/documentation/bin/documentation.js readme ../src/index.js --readme-file=src/api/docs.md --section 'Uppy Core & Plugins' -q --github -c doc-order.json",
