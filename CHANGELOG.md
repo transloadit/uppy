@@ -67,7 +67,8 @@ To be released: March 31, 2017
 - [ ] server: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] server: throttle progress updates sent through websockets, sometimes it can get overwhelming when uploads are fast (@ifedapoolarewaju)
 - [ ] server: research parallelizing downloading/uploading remote files: start uploading chunks right away, while still storing the file on disk (@ifedapoolarewaju)
-- [ ] dashboard: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi) 
+- [ ] dashboard: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
+- [ ] server: delete file from local disk after upload is successful (@ifedapoolarewaju)
 
 ## 0.15.0
 
@@ -75,7 +76,7 @@ To be released: February 24, 2017
 Theme: Speeding and cleaning
 
 - [x] build: update dependencies and eslint-plugin-standard, nodemon --> onchange, because simpler and better options (@arturi)
-- [x] build: fix `Function.caller` issue in `lib` which gets published to NPM package (@arturi #158 #163)
+- [x] build: fix `Function.caller` issue in `lib` which gets published to NPM package, add babel-plugin-yo-yoify (@arturi #158 #163)
 - [x] provider: show error view for things like not being able to connect to uppy server  should this be happening when uppy-server is unavailable http://i.imgur.com/cYJakc9.png (@arturi, @ifedapoolarewaju)
 - [x] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
 - [x] provider: logout link/button? (@arturi, @ifedapoolarewaju)
