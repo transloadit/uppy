@@ -43,6 +43,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: consider adding nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@arturi)
 
 ## 0.16.0
+To be released: March 31, 2017
 
 - [ ] presets: Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
 - [ ] instagram: Make a barely working Instagram Plugin (#21)
@@ -55,15 +56,26 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
 - [ ] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
-- [ ] uppy/uppy-server: allow google drive/dropbox non-tus(i.e multipart) remote uploads
+- [ ] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads
+- [ ] dashboard: see if transitions can be fixed in Firefox (@arturi)
+- [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected (@arturi, @ifedapoolarewaju)
+- [ ] uploaders: retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi)
+- [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
+- [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
+- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
+- [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
+- [ ] server: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
+- [ ] server: throttle progress updates sent through websockets, sometimes it can get overwhelming when uploads are fast (@ifedapoolarewaju)
+- [ ] server: research parallelizing downloading/uploading remote files: start uploading chunks right away, while still storing the file on disk (@ifedapoolarewaju)
+- [ ] dashboard: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi) 
 
 ## 0.15.0
 
 To be released: February 24, 2017
-Theme: TBA
+Theme: Speeding and cleaning
 
 - [x] build: update dependencies and eslint-plugin-standard, nodemon --> onchange, because simpler and better options (@arturi)
-- [ ] build: fix `Function.caller` issue in `lib` which gets published to NPM package (@arturi #158 #163)
+- [x] build: fix `Function.caller` issue in `lib` which gets published to NPM package (@arturi #158 #163)
 - [x] provider: show error view for things like not being able to connect to uppy server  should this be happening when uppy-server is unavailable http://i.imgur.com/cYJakc9.png (@arturi, @ifedapoolarewaju)
 - [x] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
 - [x] provider: logout link/button? (@arturi, @ifedapoolarewaju)
@@ -71,14 +83,6 @@ Theme: TBA
 - [x] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
 - [x] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
 - [x] server: return uploaded file urls (from Google Drive / Dropbox) ? (@ifedapoolarewaju)
-- [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
-- [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
-- [ ] uploaders: return upload result in multipart? options for that? (@arturi, @ifedapoolarewaju)
-- [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected (@arturi, @ifedapoolarewaju)
-- [ ] uploaders: retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi)
-- [ ] core: retry failed uploads
-- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
-- [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
 - [ ] dashboard: basic React component (@arturi)
 - [x] core: experiment with `nanoraf` and `requestAnimationFrame` (@arturi)
 - [x] core: add throttling of progress updates (@arturi)
