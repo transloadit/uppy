@@ -70,18 +70,19 @@
     "tap-spec": "4.1.1",
     "tape": "4.6.3",
     "uppy-server": "0.0.7",
-    "watchify": "3.7.0",
-    "yo-yoify": "3.5.0"
+    "watchify": "3.7.0"
   },
   "dependencies": {
     "drag-drop": "2.13.2",
     "es6-promise": "3.2.1",
     "lodash.throttle": "4.1.1",
     "namespace-emitter": "1.0.0",
+    "on-load": "3.2.0",
     "prettier-bytes": "1.0.3",
     "tus-js-client": "1.4.3",
     "whatwg-fetch": "1.0.0",
-    "yo-yo": "1.4.0"
+    "yo-yo": "1.4.0",
+    "yo-yoify": "3.5.0"
   },
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
