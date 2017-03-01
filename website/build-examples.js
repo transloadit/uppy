@@ -28,7 +28,7 @@ var mkdirp = require('mkdirp')
 var notifier = require('node-notifier')
 // consider enabling this
 // var rollupify = require('rollupify')
-var yoyoify = require('yo-yoify')
+// var yoyoify = require('yo-yoify')
 var babelify = require('babelify')
 var browserify = require('browserify')
 var watchify = require('watchify')
@@ -81,7 +81,7 @@ glob(srcPattern, function (err, files) {
       // .require(uppyRoot + '/src/plugins/index.js', { expose: 'uppy/plugins' })
       // .require(uppyRoot + '/src/locales/index.js', { expose: 'uppy/locales' })
       // .transform(rollupify)
-      .transform(yoyoify)
+      // .transform(yoyoify)
       .transform(babelify)
 
     // Listeners for changes, errors, and completion.
