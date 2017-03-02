@@ -17,16 +17,34 @@ module.exports = class Informer extends Plugin {
     this.timeoutID = undefined
 
     // set default options
-    const defaultOptions = {}
+    const defaultOptions = {
+      typeColors: {
+        info: {
+          text: '#fff',
+          bg: '#000'
+        },
+        error: {
+          text: '#fff',
+          bg: '#F6A623'
+        },
+        success: {
+          text: '#fff',
+          bg: '#7ac824'
+        }
+      }
+    }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.render = this.render.bind(this)
   }
 
   showInformer (msg, type, duration) {
     this.core.setState({
       informer: {
         isHidden: false,
+        type: type,
         msg: msg
       }
     })
@@ -58,11 +76,13 @@ module.exports = class Informer extends Plugin {
   }
 
   render (state) {
-    const msg = state.informer.msg
     const isHidden = state.informer.isHidden
+    const msg = state.informer.msg
+    const type = state.informer.type || 'info'
+    const style = `background-color: ${this.opts.typeColors[type].bg}; color: ${this.opts.typeColors[type].text};`
 
     // @TODO add aria-live for screen-readers
-    return html`<div class="UppyInformer" aria-hidden="${isHidden}">
+    return html`<div class="UppyInformer" style="${style}" aria-hidden="${isHidden}">
       <p>${msg}</p>
     </div>`
   }
@@ -72,17 +92,16 @@ module.exports = class Informer extends Plugin {
     this.core.setState({
       informer: {
         isHidden: true,
+        type: '',
         msg: ''
       }
     })
 
-    const bus = this.core.bus
-
-    bus.on('informer', (msg, type, duration) => {
+    this.core.on('informer', (msg, type, duration) => {
       this.showInformer(msg, type, duration)
     })
 
-    bus.on('informer:hide', () => {
+    this.core.on('informer:hide', () => {
       this.hideInformer()
     })
 
