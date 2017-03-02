@@ -251,7 +251,10 @@ class Uppy {
     //   console.log('with payload: ', payload)
     // })
 
-    // const bus = this.bus
+    // stress-test re-rendering
+    // setInterval(() => {
+    //   this.setState({bla: 'bla'})
+    // }, 20)
 
     this.on('core:file-add', (data) => {
       this.addFile(data)
