@@ -17,8 +17,11 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 - Lightweight, modular plugin-based architecture, easy on dependencies :zap:
 - Use from a CDN or as a module to import
 - Resumable file uploads via the open [tus](http://tus.io/) standard
-- Speaks multiple languages (i18n support) :earth_africa:
+- Supports picking files from sources like: Webcam, Dropbox, Facebook, bypassing the user's device where possible, syncing between servers directly via [uppy-server](https://github.com/transloadit/uppy-server)
+- A nice user interface :sparkles:
+- Speaks multiple languages (i18n) :earth_africa:
 - Built with accessibility in mind
+- Free for the world, forever (as in beer 🍺, pizza 🍕, and liberty 🗽)
 - Works great with file encoding and processing backends, such as [Transloadit](http://transloadit.com)
 - Cute as a puppy, also accepts cat pictures :dog:
 
@@ -76,9 +79,9 @@ But if you like, you can also use a pre-built bundle, for example from [unpkg CD
 
 ```js
 <script>
-  var uppy = new Uppy.Core({locales: Uppy.locales.ru_RU, debug: true})
+  var uppy = new Uppy.Core({autoProceed: false, debug: true})
   uppy.use(Uppy.DragDrop, {target: '.UppyDragDrop'})
-  uppy.use(Uppy.Tus10, {endpoint: '//tusd.tus.io/files/'})
+  uppy.use(Uppy.Tus10, {endpoint: '//master.tus.io/files/'})
   uppy.run()
 </script>
 ```
@@ -98,12 +101,12 @@ uppy.on('core:upload-progress', (data) => {
 ### Event `core:upload-success` when one upload is complete
 
 ```js
-uppy.on('core:upload-success', (fileId, url) => {
-  console.log(url)
+uppy.on('core:upload-success', (fileId, response) => {
+  console.log(response.url)
   var img = new Image()
   img.width = 300
   img.alt = fileId
-  img.src = url
+  img.src = response.url
   document.body.appendChild(img)
 })
 ```
