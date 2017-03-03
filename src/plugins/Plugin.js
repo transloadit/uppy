@@ -45,7 +45,7 @@ module.exports = class Plugin {
     // console.log('attempting an update...', Date.now())
     // this.frame(state, prev)
 
-    this.core.log('update number: ' + this.core.updateNum++)
+    // this.core.log('update number: ' + this.core.updateNum++)
 
     const newEl = this.render(state)
     yo.update(this.el, newEl)
