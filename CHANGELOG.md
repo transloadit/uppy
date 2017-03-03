@@ -69,10 +69,12 @@ To be released: March 31, 2017
 - [ ] server: research parallelizing downloading/uploading remote files: start uploading chunks right away, while still storing the file on disk (@ifedapoolarewaju)
 - [ ] dashboard: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
 - [ ] server: delete file from local disk after upload is successful (@ifedapoolarewaju)
+- [ ] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi #150)
+- [ ] website: different meta description for pages and post (@arturi)
 
 ## 0.15.0
 
-To be released: February 24, 2017
+Released: March 2, 2017
 Theme: Speeding and cleaning
 
 - [x] build: update dependencies and eslint-plugin-standard, nodemon --> onchange, because simpler and better options (@arturi)
@@ -84,7 +86,7 @@ Theme: Speeding and cleaning
 - [x] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
 - [x] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
 - [x] server: return uploaded file urls (from Google Drive / Dropbox) ? (@ifedapoolarewaju)
-- [ ] dashboard: basic React component (@arturi)
+- [x] dashboard: basic React component (@arturi)
 - [x] core: experiment with `nanoraf` and `requestAnimationFrame` (@arturi)
 - [x] core: add throttling of progress updates (@arturi)
 - [x] dashobard: fix Missing `file.progress.bytesTotal` property  (@arturi #152)
@@ -96,8 +98,6 @@ Theme: Speeding and cleaning
 - [x] dashboard: precise `circleLength` and `stroke-dasharray/stroke-dashoffset` calculation for progress circles on FileItem (@arturi)
 - [x] dashboard: don’t show per-file detailed progress by default — too much noise (@arturi)
 - [x] website: blog post and images cleanup (@arturi)
-- [ ] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi #150)
-- [ ] website: different meta description for pages and post (@arturi)
 
 ## 0.14.0
 
