@@ -71,6 +71,7 @@ To be released: March 31, 2017
 - [ ] server: delete file from local disk after upload is successful (@ifedapoolarewaju)
 - [ ] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi #150)
 - [ ] website: different meta description for pages and post (@arturi)
+- [ ] server: well documented README (@ifedapoolarewaju)
 
 ## 0.15.0
 
