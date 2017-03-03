@@ -1,19 +1,13 @@
-// import Uppy from '../src/core'
-// import Dummy from '../src/plugins/Dummy.js'
+const Uppy = require('../src/core/Core.js')
 const Dashboard = require('../src/plugins/Dashboard')
 const GoogleDrive = require('../src/plugins/GoogleDrive')
 const Dropbox = require('../src/plugins/Dropbox')
 const Webcam = require('../src/plugins/Webcam')
 const Tus10 = require('../src/plugins/Tus10')
+// const Multipart = require('../src/plugins/Multipart')
 const MetaData = require('../src/plugins/MetaData')
 const Informer = require('../src/plugins/Informer')
-// import Dummy from '../src/plugins/Dummy'
-// import ProgressBar from '../src/plugins/ProgressBar'
-// import DragDrop from '../src/plugins/DragDrop'
-// import FileInput from '../src/plugins/FileInput'
-
-const Uppy = require('../src/core/Core.js')
-// const Dashboard = require('../src/plugins/Dashboard')
+// const DragDrop = require('../src/plugins/DragDrop')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
 const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
@@ -33,7 +27,7 @@ const uppy = Uppy({debug: true, autoProceed: false})
       strings: {browse: 'wow'}
     }
   })
-  .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
+  .use(GoogleDrive, {target: Dashboard, host: 'https://server.uppy.io'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   // .use(FileInput, {target: '.Uppy', locale: {
   //   strings: {selectToUpload: 'хуй'}
@@ -46,7 +40,6 @@ const uppy = Uppy({debug: true, autoProceed: false})
   .use(Webcam, {target: Dashboard})
   // .use(Multipart, {endpoint: '//api2.transloadit.com'})
   .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
-  // .use(Multipart)
   .use(Informer, {target: Dashboard})
   .use(MetaData, {
     fields: [
@@ -57,6 +50,7 @@ const uppy = Uppy({debug: true, autoProceed: false})
 uppy.run()
 
 uppy.on('core:success', (fileCount) => {
+  console.log('бля!')
   console.log(fileCount)
 })
 
