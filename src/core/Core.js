@@ -287,7 +287,11 @@ class Uppy {
       this.setState({files: updatedFiles})
     })
 
-    const throttledCalculateProgress = throttle(this.calculateProgress, 300)
+    // upload progress events can occur frequently, especially when you have a good
+    // connection to the remote server. Therefore, we are throtteling them to
+    // prevent accessive function calls.
+    // see also: https://github.com/tus/tus-js-client/commit/9940f27b2361fd7e10ba58b09b60d82422183bbb
+    const throttledCalculateProgress = throttle(this.calculateProgress, 100, {leading: true, trailing: false})
 
     this.on('core:upload-progress', (data) => {
       // this.calculateProgress(data)
