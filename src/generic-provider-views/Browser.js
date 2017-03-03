@@ -13,9 +13,6 @@ module.exports = (props) => {
 
   return html`
     <div class="Browser">
-      <div>
-        <button onclick=${props.logout} class="UppyDashboardTab-btn">Sign out</button>
-      </div>
       <header>
         <input
           type="text"
@@ -29,6 +26,7 @@ module.exports = (props) => {
           getFolder: props.getFolder,
           directories: props.directories
         })}
+        <button onclick=${props.logout} class="Browser-userLogout">Log out</button>
       </div>
       <div class="Browser-body">
         <main class="Browser-content">
