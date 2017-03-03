@@ -74,8 +74,9 @@ To be released: March 31, 2017
 
 ## 0.15.0
 
-Released: March 2, 2017
-Theme: Speeding and cleaning
+Released: March 2, 2017.
+Theme: Speeding and cleaning.
+Favorite Uppy Server version: 0.4.0.
 
 - [x] build: update dependencies and eslint-plugin-standard, nodemon --> onchange, because simpler and better options (@arturi)
 - [x] build: fix `Function.caller` issue in `lib` which gets published to NPM package, add babel-plugin-yo-yoify (@arturi #158 #163)
@@ -102,7 +103,7 @@ Theme: Speeding and cleaning
 ## 0.14.0
 
 To be released: January 27, 2017.
-Theme: The new 13: Responsive Dashboard, Standalone & Pluggable Server, Dropbox
+Theme: The new 13: Responsive Dashboard, Standalone & Pluggable Server, Dropbox.
 
 - [x] dashboard: use `isWide` prop/class instead of media queries, so that compact/mobile version can be used in bigger screens too (@arturi)
 - [x] dashboard: basic “list” view in addition to current “grid” view (@arturi)
@@ -126,12 +127,12 @@ Theme: The new 13: Responsive Dashboard, Standalone & Pluggable Server, Dropbox
 ## 0.13.0
 
 To be released: December 23, 2016.
-Theme: The release that wasn't 🎄  
+Theme: The release that wasn't 🎄.
 
 ## 0.12.0
 
 To be released: November 25, 2016.
-Theme: Responsive. Cancel. Feedback. ES6 Server
+Theme: Responsive. Cancel. Feedback. ES6 Server.
 
 - [x] meta: write 0.12 release blog post (@arturi)
 - [x] core: figure out import/require for core and plugins — just don’t use spread for plugins (@arturi)
@@ -156,8 +157,8 @@ Theme: Responsive. Cancel. Feedback. ES6 Server
 
 ## 0.11.0
 
-Released: November 1, 2016. Releasemaster: Artur
-Theme: StatusBar and API docs
+Released: November 1, 2016. Releasemaster: Artur.
+Theme: StatusBar and API docs.
 
 - [x] core: log method should have an option to throw error in addition to just logging (@arturi)
 - [x] experimental: PersistentState plugin that saves state to localStorage — useful for development (@arturi)
@@ -176,8 +177,8 @@ Theme: StatusBar and API docs
 
 ## 0.10.0
 
-Released: Septermber 23, 2016. Releasemaster: Artur
-Theme: Getting together
+Released: Septermber 23, 2016. Releasemaster: Artur.
+Theme: Getting together.
 
 - [x] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` (or `parseFile`), open modal... (@arturi, @hedgerh)
 - [x] core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves #116 — discussion Part 1 (@arturi, @hedgerh)
@@ -202,9 +203,9 @@ Theme: Getting together
 
 ## 0.9.0
 
-Released: August 26, 2016. Releasemaster: Harry
+Released: August 26, 2016. Releasemaster: Harry.
 
-Theme: Making Progress, Then Pause & Resume
+Theme: Making Progress, Then Pause & Resume.
 
 - [x] dashboard: informer interface: message when all uploads are "done" (@arturi)
 - [x] meta: write 0.9 release blog post (@hedgerh)
@@ -231,9 +232,8 @@ Theme: Making Progress, Then Pause & Resume
 
 ## 0.8.0
 
-Released: July 29, 2016. Releasemaster: Artur
-
-Theme: The Webcam Edition
+Released: July 29, 2016. Releasemaster: Artur.
+Theme: The Webcam Edition.
 
 - [x] core: fix bug: no meta information from uppy-server files (@hedgerh)
 - [x] core: fix bug: uppy-server file is treated as local and directly uploaded (@hedgerh)
@@ -257,9 +257,8 @@ Theme: The Webcam Edition
 
 ## 0.7.0
 
-Theme: Remote Uploads, UI Redesign
-
-Released: July 11, 2016
+Theme: Remote Uploads, UI Redesign.
+Released: July 11, 2016.
 
 - [x] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy; Put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh)
 - [x] core: Rethink UI: Part I (interface research for better file selection / progress representation) (@arturi)
@@ -277,9 +276,8 @@ Released: July 11, 2016
 
 ## 0.6.4
 
-Theme: The aim low release
-
-Released: June 03, 2016
+Theme: The aim low release.
+Released: June 03, 2016.
 
 - [x] build: minification of the bundle (@arturi)
 - [x] build: revisit sourcemaps for production. can we have them without a mandatory extra request?
@@ -301,9 +299,8 @@ Released: June 03, 2016
 
 ## 0.0.5
 
-Theme: Acceptance tests and Google Drive Polish
-
-Released: May 07, 2016
+Theme: Acceptance tests and Google Drive Polish.
+Released: May 07, 2016.
 
 - [x] test: Wire saucelabs and travis togeteher, make saucelabs fail fatal to travis builds
 - [x] test: Add `addFile`-hack so we can have acceptance tests on Safari as well as Edge (@arturi)
@@ -332,7 +329,7 @@ Released: May 07, 2016
 
 ## 0.0.4
 
-Released: April 13, 2016
+Released: April 13, 2016.
 
 - [x] server: Upgrade to 0.0.4 (@kvz)
 - [x] drive: Add Google Drive plugin unit test (@hedgerh)
@@ -384,7 +381,7 @@ Released: April 13, 2016
 
 ## 0.0.3
 
-Released: March 01, 2016
+Released: March 01, 2016.
 
 - [x] core: push out v0.0.3 (@kvz)
 - [x] build: release-(major|minor|patch): git tag && npm publish (@kvz)
@@ -407,7 +404,7 @@ Released: March 01, 2016
 
 ## 0.0.2
 
-Released: February 11, 2016
+Released: February 11, 2016.
 
 - [x] build: Use parallelshell and tweak browserify to work with templates (@arturi)
 - [x] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
@@ -423,7 +420,7 @@ Released: February 11, 2016
 
 ## 0.0.1
 
-Released: December 20, 2015
+Released: December 20, 2015.
 
 - [x] core: Individual progress (#24)
 - [x] core: Setup basic Plugin system (#1, #4, #20)
