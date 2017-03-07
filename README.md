@@ -22,7 +22,7 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 - Speaks multiple languages (i18n) :earth_africa:
 - Built with accessibility in mind
 - Free for the world, forever (as in beer 🍺, pizza 🍕, and liberty 🗽)
-- Works great with file encoding and processing backends, such as [Transloadit](http://transloadit.com)
+- Works great with file encoding and processing backends, such as [Transloadit](http://transloadit.com), works great without (just roll your own Apache/Nginx/Node/etc backend)
 - Cute as a puppy, also accepts cat pictures :dog:
 
 ## Demo
