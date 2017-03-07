@@ -105,6 +105,7 @@ Favorite Uppy Server version: 0.4.0.
 
 To be released: January 27, 2017.
 Theme: The new 13: Responsive Dashboard, Standalone & Pluggable Server, Dropbox.
+Uppy Server version: 0.3.0.
 
 - [x] dashboard: use `isWide` prop/class instead of media queries, so that compact/mobile version can be used in bigger screens too (@arturi)
 - [x] dashboard: basic “list” view in addition to current “grid” view (@arturi)
@@ -134,6 +135,7 @@ Theme: The release that wasn't 🎄.
 
 To be released: November 25, 2016.
 Theme: Responsive. Cancel. Feedback. ES6 Server.
+Uppy Server version: 0.2.0.
 
 - [x] meta: write 0.12 release blog post (@arturi)
 - [x] core: figure out import/require for core and plugins — just don’t use spread for plugins (@arturi)
