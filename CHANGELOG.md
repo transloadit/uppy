@@ -43,33 +43,32 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: consider adding nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@arturi)
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
 
+## 0.17.0
+
+- [ ] instagram: Make a barely working Instagram Plugin (#21)
+- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
+- [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
+- [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
+- [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
+- [ ] dashboard: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
+
 ## 0.16.0
 To be released: March 31, 2017
 
 - [ ] presets: Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
-- [ ] instagram: Make a barely working Instagram Plugin (#21)
 - [ ] dashboard: add service logo / name to the selected file in file list (@arturi)
-- [ ] uppy/uppy-server: review webscoket connection flow during remote upload. In a situation where a client has a slow internet connection, the uppy-server may complete an upload before the client connects to the websocket, hence no feedback would be sent to the client and the client remains unaware of the upload status.
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
-- [ ] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
-- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
 - [ ] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
-- [ ] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads
+- [ ] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju)
 - [ ] dashboard: see if transitions can be fixed in Firefox (@arturi)
-- [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected (@arturi, @ifedapoolarewaju)
-- [ ] uploaders: retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi)
-- [ ] server: research having less permissions, smaller auth expiration time for security ? (@ifedapoolarewaju)
-- [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
-- [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
 - [ ] core: allow target to be DOM node, like `document.body` (@arturi)
-- [ ] server: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
-- [ ] server: throttle progress updates sent through websockets, sometimes it can get overwhelming when uploads are fast (@ifedapoolarewaju)
+- [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected, retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi, @ifedapoolarewaju)
+- [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
 - [ ] server: research parallelizing downloading/uploading remote files: start uploading chunks right away, while still storing the file on disk (@ifedapoolarewaju)
-- [ ] dashboard: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
 - [ ] server: delete file from local disk after upload is successful (@ifedapoolarewaju)
 - [ ] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi #150)
 - [ ] website: different meta description for pages and post (@arturi)
@@ -88,8 +87,10 @@ Favorite Uppy Server version: 0.4.0.
 - [x] provider: logout link/button? (@arturi, @ifedapoolarewaju)
 - [x] provider: fix breadcrumbs (@ifedapoolarewaju)
 - [x] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
+- [ ] server: throttle progress updates sent through websockets, sometimes it can get overwhelming when uploads are fast (@ifedapoolarewaju)
 - [x] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
 - [x] server: return uploaded file urls (from Google Drive / Dropbox) ? (@ifedapoolarewaju)
+- [x] server: research having less permissions, smaller auth expiration time for security (@ifedapoolarewaju)
 - [x] dashboard: basic React component (@arturi)
 - [x] core: experiment with `nanoraf` and `requestAnimationFrame` (@arturi)
 - [x] core: add throttling of progress updates (@arturi)
