@@ -111,7 +111,7 @@ module.exports = class DashboardUI extends Plugin {
       })
     })
 
-    return this.opts.target
+    return this.target
   }
 
   hideAllPanels () {
