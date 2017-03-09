@@ -12,7 +12,6 @@ module.exports = (props) => {
           <h3 class="UppyDashboard-dropFilesTitle">
             ${ActionBrowseTagline({
               acquirers: props.acquirers,
-              container: props.container,
               handleInputChange: props.handleInputChange,
               i18n: props.i18n
             })}

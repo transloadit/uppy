@@ -1,6 +1,11 @@
 const html = require('yo-yo')
 
 module.exports = (props) => {
+  const input = html`
+    <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
+           onchange=${props.handleInputChange} />
+  `
+
   return html`
     <span>
       ${props.acquirers.length === 0
@@ -10,11 +15,9 @@ module.exports = (props) => {
       <button type="button"
               class="UppyDashboard-browse"
               onclick=${(ev) => {
-                const input = document.querySelector(`${props.container} .UppyDashboard-input`)
                 input.click()
               }}>${props.i18n('browse')}</button>
-      <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
-             onchange=${props.handleInputChange} />
+      ${input}
     </span>
   `
 }

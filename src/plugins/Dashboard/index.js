@@ -380,7 +380,6 @@ module.exports = class DashboardUI extends Plugin {
       progressindicators: progressindicators,
       autoProceed: this.core.opts.autoProceed,
       id: this.id,
-      container: this.opts.target,
       hideModal: this.hideModal,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,

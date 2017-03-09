@@ -112,7 +112,7 @@ module.exports = class DragDrop extends Plugin {
 
   render (state) {
     const onSelect = (ev) => {
-      const input = document.querySelector(`${this.target} .UppyDragDrop-input`)
+      const input = this.target.querySelector('.UppyDragDrop-input')
       input.click()
     }
 
@@ -166,7 +166,7 @@ module.exports = class DragDrop extends Plugin {
     const plugin = this
     this.target = this.mount(target, plugin)
 
-    dragDrop(`${this.target} .UppyDragDrop-container`, (files) => {
+    dragDrop(this.target.querySelector('.UppyDragDrop-container'), (files) => {
       this.handleDrop(files)
       this.core.log(files)
     })

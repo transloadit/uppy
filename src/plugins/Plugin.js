@@ -95,7 +95,7 @@ module.exports = class Plugin {
       this.el = plugin.render(this.core.state)
       targetElement.appendChild(this.el)
 
-      return target
+      return targetElement
     } else {
       // TODO: is instantiating the plugin really the way to roll
       // just to get the plugin name?

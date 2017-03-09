@@ -77,7 +77,6 @@ module.exports = function Dashboard (props) {
           files: props.files,
           handleInputChange: handleInputChange,
           acquirers: props.acquirers,
-          container: props.container,
           panelSelectorPrefix: props.panelSelectorPrefix,
           showPanel: props.showPanel,
           i18n: props.i18n
@@ -98,7 +97,6 @@ module.exports = function Dashboard (props) {
             acquirers: props.acquirers,
             files: props.files,
             handleInputChange: handleInputChange,
-            container: props.container,
             showFileCard: props.showFileCard,
             showProgressDetails: props.showProgressDetails,
             totalProgress: props.totalProgress,
