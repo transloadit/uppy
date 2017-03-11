@@ -53,6 +53,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] dashboard: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
 
 ## 0.16.0
+
 To be released: March 31, 2017
 
 - [ ] presets: Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
@@ -87,7 +88,7 @@ Favorite Uppy Server version: 0.4.0.
 - [x] provider: logout link/button? (@arturi, @ifedapoolarewaju)
 - [x] provider: fix breadcrumbs (@ifedapoolarewaju)
 - [x] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
-- [ ] server: throttle progress updates sent through websockets, sometimes it can get overwhelming when uploads are fast (@ifedapoolarewaju)
+- [x] server: throttle progress updates sent through websockets, sometimes it can get overwhelming when uploads are fast (@ifedapoolarewaju)
 - [x] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
 - [x] server: return uploaded file urls (from Google Drive / Dropbox) ? (@ifedapoolarewaju)
 - [x] server: research having less permissions, smaller auth expiration time for security (@ifedapoolarewaju)
