@@ -34,13 +34,16 @@
   </div>
 
   <p class="Stats-infoText">
-    At this (early) stage, we’re allowing ourselves speed of development over
-    lean packaging, but as Uppy matures, we’ll be using be using
-    <a href="http://rollupjs.org/">rollup.js</a> for tree-shaking, and in addition
-    we’ll be trimming away fat ourselves where we can.
-    The graph below will help us discover low hanging fruit:
-  </p>
+    To keep Uppy lightweight, we’re aiming to carefully select what packages we include.
+    The graph below will help us discover low hanging fruit. Sizes and dependencies shown here
+    are for the bundled version of Uppy, which includes all plugins we offer. In production,
+    when you <a href="https://github.com/transloadit/uppy#usage">pick and choose just the ones you need</a>, the size will be much smaller:
 
+    <ul>
+      <li>Drag & Drop + Multipart uploads ≈ <code>18 Kb mingz</code></li>
+      <li>Full-featured Dashboard with image previews and progress indicators + tus resumable uploader ≈ <code>36 Kb mingz</code></li>
+    </ul>
+  </p>
   <iframe scrolling="no" seamless="seamless" class="Disc" src="/disc.html"></iframe>
   This graph is built with
   <a href="https://twitter.com/hughskennedy">Hugh Kennedy</a>’s excellent
