@@ -239,6 +239,10 @@
     // font-weight: 600;
   }
 
+  a:hover {
+    text-decoration: underline;
+  }
+
   .post blockquote,
   > blockquote {
     margin: 1.6em 0;
