@@ -5,6 +5,7 @@ const Dashboard = require('./Dashboard')
 const { getSpeed } = require('../../core/Utils')
 const { getETA } = require('../../core/Utils')
 const { prettyETA } = require('../../core/Utils')
+const { findDOMElement } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
 
@@ -111,7 +112,7 @@ module.exports = class DashboardUI extends Plugin {
       })
     })
 
-    return this.opts.target
+    return this.target
   }
 
   hideAllPanels () {
@@ -169,7 +170,7 @@ module.exports = class DashboardUI extends Plugin {
     // const dashboardEl = document.querySelector(`${this.opts.target} .UppyDashboard`)
 
     // Modal open button
-    const showModalTrigger = document.querySelector(this.opts.trigger)
+    const showModalTrigger = findDOMElement(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
       showModalTrigger.addEventListener('click', this.showModal)
     } else {
@@ -380,7 +381,6 @@ module.exports = class DashboardUI extends Plugin {
       progressindicators: progressindicators,
       autoProceed: this.core.opts.autoProceed,
       id: this.id,
-      container: this.opts.target,
       hideModal: this.hideModal,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,

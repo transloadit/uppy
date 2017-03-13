@@ -11,7 +11,6 @@ module.exports = (props) => {
         <h3 class="UppyDashboardTabs-title">
         ${ActionBrowseTagline({
           acquirers: props.acquirers,
-          container: props.container,
           handleInputChange: props.handleInputChange,
           i18n: props.i18n
         })}
@@ -19,6 +18,11 @@ module.exports = (props) => {
       </div>
     `
   }
+
+  const input = html`
+    <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
+           onchange=${props.handleInputChange} />
+  `
 
   return html`<div class="UppyDashboardTabs">
     <nav>
@@ -28,14 +32,12 @@ module.exports = (props) => {
                   role="tab"
                   tabindex="0"
                   onclick=${(ev) => {
-                    const input = document.querySelector(`${props.container} .UppyDashboard-input`)
                     input.click()
                   }}>
             ${localIcon()}
             <h5 class="UppyDashboardTab-name">${props.i18n('localDisk')}</h5>
           </button>
-          <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
-                 onchange=${props.handleInputChange} />
+          ${input}
         </li>
         ${props.acquirers.map((target) => {
           return html`<li class="UppyDashboardTab">
