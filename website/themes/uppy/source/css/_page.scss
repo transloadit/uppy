@@ -236,11 +236,13 @@
 
   a {
     color: $color-primary;
+    transition: all .2s;
     // font-weight: 600;
   }
 
   a:hover {
-    text-decoration: underline;
+    color: darken($color-primary, 10%);
+    // text-decoration: underline;
   }
 
   .post blockquote,
@@ -248,6 +250,7 @@
     margin: 1.6em 0;
     padding-left: 15px;
     border-left: 4px solid $color-primary;
+
     p {
       font-weight: 600;
       margin-left: 0;
