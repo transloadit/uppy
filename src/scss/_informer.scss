@@ -37,4 +37,11 @@
 .UppyInformer p {
   margin: 0;
   padding: 0;
+  height: 30px;
+  line-height: 30px;
+
+  .UppyDashboard--wide & {
+    height: 40px;
+    line-height: 40px;
+  }
 }

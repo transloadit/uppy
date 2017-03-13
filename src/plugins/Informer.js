@@ -23,9 +23,13 @@ module.exports = class Informer extends Plugin {
           text: '#fff',
           bg: '#000'
         },
-        error: {
+        warning: {
           text: '#fff',
           bg: '#F6A623'
+        },
+        error: {
+          text: '#fff',
+          bg: '#e74c3c'
         },
         success: {
           text: '#fff',
@@ -82,7 +86,7 @@ module.exports = class Informer extends Plugin {
     const style = `background-color: ${this.opts.typeColors[type].bg}; color: ${this.opts.typeColors[type].text};`
 
     // @TODO add aria-live for screen-readers
-    return html`<div class="UppyInformer" style="${style}" aria-hidden="${isHidden}">
+    return html`<div class="Uppy UppyTheme--default UppyInformer" style="${style}" aria-hidden="${isHidden}">
       <p>${msg}</p>
     </div>`
   }
