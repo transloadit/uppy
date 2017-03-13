@@ -399,6 +399,31 @@ function prettyETA (seconds) {
 //   }
 // }
 
+/**
+ * Check if an object is a DOM element. Duck-typing based on `nodeType`.
+ *
+ * @param {*} obj
+ */
+function isDOMElement (obj) {
+  return obj && typeof obj === 'object' && obj.nodeType === Node.ELEMENT_NODE
+}
+
+/**
+ * Find a DOM element.
+ *
+ * @param {Node|string} element
+ * @return {Node|null}
+ */
+function findDOMElement (element) {
+  if (typeof element === 'string') {
+    return document.querySelector(element)
+  }
+
+  if (typeof element === 'object' && isDOMElement(element)) {
+    return element
+  }
+}
+
 module.exports = {
   generateFileID,
   toArray,
@@ -423,5 +448,6 @@ module.exports = {
   // makeWorker,
   // makeCachingFunction,
   copyToClipboard,
-  prettyETA
+  prettyETA,
+  findDOMElement
 }

@@ -1,14 +1,6 @@
 const yo = require('yo-yo')
 // const nanoraf = require('nanoraf')
-
-/**
- * Check if an object is a DOM element. Duck-typing based on `nodeType`.
- *
- * @param {*} obj
- */
-function isDOMElement (obj) {
-  return obj && typeof obj === 'object' && obj.nodeType === Node.ELEMENT_NODE
-}
+const { findDOMElement } = require('../core/Utils')
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -67,7 +59,7 @@ module.exports = class Plugin {
   }
 
   /**
-   * Check if supplied `target` is a `string` or an `object`.
+   * Check if supplied `target` is a DOM element or an `object`.
    * If it’s an object — target is a plugin, and we search `plugins`
    * for a plugin with same name and return its target.
    *
@@ -77,16 +69,11 @@ module.exports = class Plugin {
   mount (target, plugin) {
     const callerPluginName = plugin.id
 
-    let targetElement
-    if (isDOMElement(target)) {
-      this.core.log(`Installing ${callerPluginName} to a DOM element`)
-      targetElement = target
-    } else if (typeof target === 'string') {
-      this.core.log(`Installing ${callerPluginName} to ${target}`)
-      targetElement = document.querySelector(target)
-    }
+    const targetElement = findDOMElement(target)
 
     if (targetElement) {
+      this.core.log(`Installing ${callerPluginName} to a DOM element`)
+
       // clear everything inside the target container
       if (this.opts.replaceTargetContent) {
         targetElement.innerHTML = ''
