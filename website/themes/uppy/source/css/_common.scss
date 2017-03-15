@@ -213,9 +213,12 @@ a.button {
 * MainHeader
 */
 
+.MainHeader {
+  position: relative;
+}
+
 .page-index .MainHeader {
-  padding-top: 1.5em;
-  padding-bottom: 1.5em;
+  padding: 1em 0;
   border-top: 3px solid $color-primary;
 }
 
@@ -233,7 +236,7 @@ a.button {
   @media #{$screen-medium} {
     position: static;
     height: auto;
-    padding: 25px 60px;
+    padding: 10px 60px;
     box-shadow: none;
     position: relative;
     z-index: 2;
@@ -274,7 +277,6 @@ a.button {
   text-transform: uppercase;
   letter-spacing: 2px;
   list-style-type: none;
-  // margin: 2em 1.8em 0;
   padding: 0;
   font-size: $fontSize-s;
 
@@ -309,14 +311,14 @@ a.button {
     display: none;
     position: absolute;
     right: 60px;
-    top: 25px;
+    top: 15px;
     height: $size-headerHeight;
     line-height: $size-headerHeight;
 
     li {
       display: inline-block;
       position: relative;
-      margin: 0 .6em;
+      margin: 0 0.6em;
     }
 
     @media #{$screen-medium} {
