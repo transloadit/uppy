@@ -131,7 +131,19 @@ Note: we aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firef
 
 ### React support?
 
-Yep. It’s in the works.
+Yep. Uppy-React component is in the works, in the meantime you can just use it as any other lib with React, [see here](https://github.com/transloadit/uppy/tree/uppy-react/src/uppy-react).
+
+### Can I use it with Rails/Node/Go/PHP?
+
+Yes, whatever you want on the backend will work with `Multipart` plugin, since it just does a `POST` request. If you want resumability, use [one of tus implementations](http://tus.io/implementations.html) 👌🏼
+
+### Do I need to install special service/server for it?
+
+No, as mentioned previosely, `Multipart` plugin is old-school and just works with everything. However, you need `[uppy-server](https://github.com/transloadit/uppy-server)` if you want your users to be able to pick files from Google Drive or Dropbox (more services coming too), and you can add [tus](http://tus.io) is you want resumability in your uploads.
+
+### Does it support S3 direct upload?
+
+Not at the moment, but you can write a plugin and send us a PR. That would be awesome :)
 
 ## Contributions are welcome
 
