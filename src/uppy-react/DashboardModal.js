@@ -4,7 +4,12 @@ const ReactDashboardPlugin = require('./bridge/ReactDashboardPlugin')
 
 const h = React.createElement
 
-class Dashboard extends React.Component {
+/**
+ * React Component that renders a Dashboard for an Uppy instance in a Modal
+ * dialog. Visibility of the Modal is toggled using the `open` prop.
+ */
+
+class DashboardModal extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
     uppy.use(ReactDashboardPlugin, {
@@ -35,9 +40,9 @@ class Dashboard extends React.Component {
   }
 }
 
-Dashboard.propTypes = {
+DashboardModal.propTypes = {
   uppy: React.PropTypes.instanceOf(UppyCore).isRequired,
   onRequestClose: React.PropTypes.func
 }
 
-module.exports = Dashboard
+module.exports = DashboardModal

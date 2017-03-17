@@ -4,6 +4,11 @@ const DashboardPlugin = require('../plugins/Dashboard')
 
 const h = React.createElement
 
+/**
+ * React Component that renders a Dashboard for an Uppy instance. This component
+ * renders the Dashboard inline, so you can put it anywhere you want.
+ */
+
 class Dashboard extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
