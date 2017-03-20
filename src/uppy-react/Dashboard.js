@@ -28,6 +28,20 @@ class Dashboard extends React.Component {
     this.plugin = uppy.getPlugin('DashboardUI')
   }
 
+  componentWillUnmount () {
+    // EXPERIMENTAL!
+    // If we add a method like this to Uppy core, unmounting and remounting
+    // works fine.
+    const uppy = this.props.uppy
+    const plugins = uppy.plugins[this.plugin.type]
+    this.plugin.uninstall()
+
+    const i = plugins.indexOf(this.plugin)
+    if (i !== -1) {
+      plugins.splice(i, 1)
+    }
+  }
+
   render () {
     return h('div', {
       ref: (container) => {
