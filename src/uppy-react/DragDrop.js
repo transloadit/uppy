@@ -13,7 +13,8 @@ class DragDrop extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
     uppy.use(DragDropPlugin, {
-      target: this.container
+      target: this.container,
+      locale: this.props.locale
     })
   }
 
@@ -27,7 +28,12 @@ class DragDrop extends React.Component {
 }
 
 DragDrop.propTypes = {
-  uppy: React.PropTypes.instanceOf(UppyCore).isRequired
+  uppy: React.PropTypes.instanceOf(UppyCore).isRequired,
+  locale: React.PropTypes.object
+}
+
+DragDrop.defaultProps = {
+  locale: {}
 }
 
 module.exports = DragDrop

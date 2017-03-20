@@ -14,6 +14,7 @@ class DashboardModal extends React.Component {
     const uppy = this.props.uppy
     uppy.use(ReactDashboardPlugin, {
       target: this.container,
+      locale: this.props.locale,
       maxWidth: this.props.maxWidth,
       maxHeight: this.props.maxHeight,
       semiTransparent: this.props.semiTransparent,
@@ -54,7 +55,12 @@ DashboardModal.propTypes = {
   semiTransparent: React.PropTypes.bool,
   defaultTabIcon: React.PropTypes.node,
   showProgressDetails: React.PropTypes.bool,
-  onRequestClose: React.PropTypes.func
+  onRequestClose: React.PropTypes.func,
+  locale: React.PropTypes.object
+}
+
+DashboardModal.defaultProps = {
+  locale: {}
 }
 
 module.exports = DashboardModal
