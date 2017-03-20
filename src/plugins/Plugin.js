@@ -98,6 +98,12 @@ module.exports = class Plugin {
     }
   }
 
+  unmount () {
+    if (this.el && this.el.parentNode) {
+      this.el.parentNode.removeChild(this.el)
+    }
+  }
+
   focus () {
     return
   }

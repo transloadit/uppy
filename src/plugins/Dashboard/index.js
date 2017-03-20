@@ -69,6 +69,8 @@ module.exports = class DashboardUI extends Plugin {
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
     this.initEvents = this.initEvents.bind(this)
+    this.handleEscapeKeyPress = this.handleEscapeKeyPress.bind(this)
+    this.handleFileCard = this.handleFileCard.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.pauseAll = this.pauseAll.bind(this)
     this.resumeAll = this.resumeAll.bind(this)
@@ -166,6 +168,13 @@ module.exports = class DashboardUI extends Plugin {
     setTimeout(this.updateDashboardElWidth, 300)
   }
 
+  // Close the Modal on esc key press
+  handleEscapeKeyPress (event) {
+    if (event.keyCode === 27) {
+      this.hideModal()
+    }
+  }
+
   initEvents () {
     // const dashboardEl = document.querySelector(`${this.opts.target} .UppyDashboard`)
 
@@ -177,35 +186,29 @@ module.exports = class DashboardUI extends Plugin {
       this.core.log('Modal trigger wasn’t found')
     }
 
-    // Close the Modal on esc key press
-    document.body.addEventListener('keyup', (event) => {
-      if (event.keyCode === 27) {
-        this.hideModal()
-      }
-    })
+    document.body.addEventListener('keyup', this.handleEscapeKeyPress)
 
     // Drag Drop
-    dragDrop(this.el, (files) => {
+    this.removeDragDropListener = dragDrop(this.el, (files) => {
       this.handleDrop(files)
     })
+  }
+
+  removeEvents () {
+    const showModalTrigger = findDOMElement(this.opts.trigger)
+    if (!this.opts.inline && showModalTrigger) {
+      showModalTrigger.removeEventListener('click', this.showModal)
+    }
+
+    this.removeDragDropListener()
+    document.body.removeEventListener('keyup', this.handleEscapeKeyPress)
   }
 
   actions () {
     const bus = this.core.bus
 
-    bus.on('core:file-add', () => {
-      this.hideAllPanels()
-    })
-
-    bus.on('dashboard:file-card', (fileId) => {
-      const modal = this.core.getState().modal
-
-      this.core.setState({
-        modal: Object.assign({}, modal, {
-          fileCardFor: fileId || false
-        })
-      })
-    })
+    bus.on('core:file-add', this.hideAllPanels)
+    bus.on('dashboard:file-card', this.handleFileCard)
 
     window.addEventListener('resize', this.updateDashboardElWidth)
 
@@ -219,6 +222,15 @@ module.exports = class DashboardUI extends Plugin {
     // })
   }
 
+  removeActions () {
+    const bus = this.core.bus
+
+    window.removeEventListener('resize', this.updateDashboardElWidth)
+
+    bus.off('core:file-add', this.hideAllPanels)
+    bus.off('dashboard:file-card', this.handleFileCard)
+  }
+
   updateDashboardElWidth () {
     const dashboardEl = document.querySelector('.UppyDashboard-inner')
     const containerWidth = dashboardEl.offsetWidth
@@ -228,6 +240,16 @@ module.exports = class DashboardUI extends Plugin {
     this.core.setState({
       modal: Object.assign({}, modal, {
         containerWidth: dashboardEl.offsetWidth
+      })
+    })
+  }
+
+  handleFileCard (fileId) {
+    const modal = this.core.getState().modal
+
+    this.core.setState({
+      modal: Object.assign({}, modal, {
+        fileCardFor: fileId || false
       })
     })
   }
@@ -431,5 +453,11 @@ module.exports = class DashboardUI extends Plugin {
 
     this.initEvents()
     this.actions()
+  }
+
+  uninstall () {
+    this.unmount()
+    this.removeActions()
+    this.removeEvents()
   }
 }
