@@ -151,7 +151,8 @@ module.exports = class Tus10 extends Plugin {
         },
         body: JSON.stringify(Object.assign({}, file.remote.body, {
           endpoint: this.opts.endpoint,
-          protocol: 'tus'
+          protocol: 'tus',
+          size: file.data.size
         }))
       })
       .then((res) => {

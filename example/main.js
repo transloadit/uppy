@@ -27,7 +27,7 @@ const uppy = Uppy({debug: true, autoProceed: false})
       strings: {browse: 'wow'}
     }
   })
-  .use(GoogleDrive, {target: Dashboard, host: 'https://server.uppy.io'})
+  .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   // .use(FileInput, {target: '.Uppy', locale: {
   //   strings: {selectToUpload: 'хуй'}
