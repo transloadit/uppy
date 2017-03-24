@@ -69,7 +69,7 @@ To be released: March 31, 2017
 - [x] core: allow `target` and `trigger` to be DOM node, like `document.body` (@goto-bus-stop)
 - [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected, retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi, @ifedapoolarewaju)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
-- [ ] server: research parallelizing downloading/uploading remote files: start uploading chunks right away, while still storing the file on disk (@ifedapoolarewaju)
+- [x] server: research parallelizing downloading/uploading remote files: start uploading chunks right away, while still storing the file on disk (@ifedapoolarewaju)
 - [x] server: delete file from local disk after upload is successful (@ifedapoolarewaju)
 - [x] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi #150)
 - [x] website: different meta description for pages and post (@arturi)
