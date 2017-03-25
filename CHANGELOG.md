@@ -51,6 +51,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] dashboard: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
+- [ ] uppy: I couldn't test google drive uploads from my mobile phone
+- [ ] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that?
 
 ## 0.16.0
 
