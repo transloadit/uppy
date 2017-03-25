@@ -63,7 +63,7 @@ To be released: March 31, 2017
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
-- [ ] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
+- [x] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
 - [ ] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
 - [ ] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju)
 - [ ] dashboard: see if transitions can be fixed in Firefox (@arturi)
