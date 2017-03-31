@@ -74,7 +74,7 @@
 .UppyDashboard-close {
   @include reset-button;
   display: none;
-  position: absolute;
+  position: fixed;
   top: 12px;
   right: 12px;
   cursor: pointer;
