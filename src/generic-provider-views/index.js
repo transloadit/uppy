@@ -2,6 +2,7 @@ const AuthView = require('./AuthView')
 const Browser = require('./Browser')
 const ErrorView = require('./Error')
 const LoaderView = require('./Loader')
+const Utils = require('../core/Utils')
 
 /**
  * Class to easily generate generic views for plugins
@@ -136,6 +137,10 @@ module.exports = class View {
           fileId: this.plugin.getItemId(file)
         }
       }
+    }
+
+    if (Utils.getFileType(tagFile)[0] === 'image') {
+      tagFile.preview = `${this.plugin.opts.host}/${this.Provider.id}/thumbnail/${this.plugin.getItemRequestPath(file)}`
     }
     console.log('adding file')
     this.plugin.core.emitter.emit('core:file-add', tagFile)

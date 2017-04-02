@@ -142,10 +142,7 @@ function getProportionalImageHeight (img, newWidth) {
 }
 
 function getFileType (file) {
-  if (file.type) {
-    return file.type
-  }
-  return ''
+  return file.type ? file.type.split('/') : ['', '']
   // return mime.lookup(file.name)
 }
 

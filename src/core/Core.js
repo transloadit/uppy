@@ -110,7 +110,7 @@ class Uppy {
     const updatedFiles = Object.assign({}, this.state.files)
 
     const fileName = file.name || 'noname'
-    const fileType = Utils.getFileType(file) ? Utils.getFileType(file).split('/') : ['', '']
+    const fileType = Utils.getFileType(file)
     const fileTypeGeneral = fileType[0]
     const fileTypeSpecific = fileType[1]
     const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
@@ -138,7 +138,8 @@ class Uppy {
       },
       size: file.data.size || 'N/A',
       isRemote: isRemote,
-      remote: file.remote || ''
+      remote: file.remote || '',
+      preview: file.preview
     }
 
     updatedFiles[fileID] = newFile
