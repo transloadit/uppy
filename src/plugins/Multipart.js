@@ -114,15 +114,10 @@ module.exports = class Multipart extends Plugin {
       }
     })
 
-    const uploaders = []
     filesForUpload.forEach((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = filesForUpload.length
-      uploaders.push(this.upload(file, current, total))
-    })
-
-    return Promise.all(uploaders).then((result) => {
-      this.core.log('Multipart has finished uploading!')
+      this.upload(file, current, total)
     })
 
     //   if (this.opts.bundle) {
