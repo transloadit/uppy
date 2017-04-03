@@ -140,7 +140,7 @@ module.exports = class Webcam extends Plugin {
       mimeType: 'image/jpeg'
     }
 
-    const video = document.querySelector('.UppyWebcam-video')
+    const video = this.target.querySelector('.UppyWebcam-video')
 
     const image = this.webcam.getImage(video, opts)
 
