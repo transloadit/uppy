@@ -20,7 +20,9 @@ module.exports = class Webcam extends Plugin {
 
     // set default options
     const defaultOptions = {
-      enableFlash: true
+      enableFlash: true,
+      audio: true,
+      video: true
     }
 
     this.params = {
@@ -78,7 +80,12 @@ module.exports = class Webcam extends Plugin {
   }
 
   stop () {
-    this.stream.getVideoTracks()[0].stop()
+    this.stream.getAudioTracks().forEach((track) => {
+      track.stop()
+    })
+    this.stream.getVideoTracks().forEach((track) => {
+      track.stop()
+    })
     this.webcamActive = false
     this.stream = null
     this.streamSrc = null

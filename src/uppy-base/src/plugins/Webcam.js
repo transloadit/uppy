@@ -13,7 +13,9 @@ module.exports = class Webcam {
 
     // set default options
     const defaultOptions = {
-      enableFlash: true
+      enableFlash: true,
+      audio: true,
+      video: true
     }
 
     const defaultParams = {
@@ -109,8 +111,8 @@ module.exports = class Webcam {
       if (this.userMedia) {
         // ask user for access to their camera
         this.mediaDevices.getUserMedia({
-          audio: false,
-          video: true
+          audio: this.opts.audio,
+          video: this.opts.video
         })
         .then((stream) => {
           return resolve(stream)
