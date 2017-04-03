@@ -1,6 +1,6 @@
 const Plugin = require('../Plugin')
 const WebcamProvider = require('../../uppy-base/src/plugins/Webcam')
-const { extend } = require('../../core/Utils')
+const { extend, getFileTypeExtension } = require('../../core/Utils')
 const WebcamIcon = require('./WebcamIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
@@ -77,6 +77,49 @@ module.exports = class Webcam extends Plugin {
           cameraError: err
         })
       })
+  }
+
+  startRecording () {
+    // TODO We can check here if any of the mime types listed in the
+    // mimeToExtensions map in Utils.js are supported, and prefer to use one of
+    // those.
+    // Right now we let the browser pick a type that it deems appropriate.
+    this.recorder = new MediaRecorder(this.stream)
+    this.recordingChunks = []
+    this.recorder.addEventListener('dataavailable', (event) => {
+      this.recordingChunks.push(event.data)
+    })
+    this.recorder.start()
+  }
+
+  stopRecording () {
+    return new Promise((resolve, reject) => {
+      this.recorder.addEventListener('stop', () => {
+        const mimeType = this.recordingChunks[0].type
+        const fileExtension = getFileTypeExtension(mimeType)
+
+        if (!fileExtension) {
+          reject(new Error(`Could not upload file: Unsupported media type "${mimeType}"`))
+          return
+        }
+
+        const file = {
+          source: this.id,
+          name: `webcam-${Date.now()}.${fileExtension}`,
+          type: mimeType,
+          data: new Blob(this.recordingChunks, { type: mimeType })
+        }
+
+        this.core.emitter.emit('core:file-add', file)
+
+        this.recordingChunks = null
+        this.recorder = null
+
+        resolve()
+      })
+
+      this.recorder.stop()
+    })
   }
 
   stop () {
