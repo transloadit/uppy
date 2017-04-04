@@ -92,11 +92,19 @@ module.exports = class Webcam extends Plugin {
       this.recordingChunks.push(event.data)
     })
     this.recorder.start()
+
+    this.updateState({
+      isRecording: true
+    })
   }
 
   stopRecording () {
     return new Promise((resolve, reject) => {
       this.recorder.addEventListener('stop', () => {
+        this.updateState({
+          isRecording: false
+        })
+
         const mimeType = this.recordingChunks[0].type
         const fileExtension = getFileTypeExtension(mimeType)
 
@@ -122,13 +130,6 @@ module.exports = class Webcam extends Plugin {
 
       this.recorder.stop()
     })
-  }
-
-  isRecording () {
-    if (!this.recorder) {
-      return false
-    }
-    return this.recorder.state === 'recording'
   }
 
   stop () {
@@ -182,7 +183,7 @@ module.exports = class Webcam extends Plugin {
       onStopRecording: this.stopRecording,
       onFocus: this.focus,
       onStop: this.stop,
-      recording: this.isRecording(),
+      recording: state.webcam.isRecording,
       getSWFHTML: this.webcam.getSWFHTML,
       src: this.streamSrc
     }))
