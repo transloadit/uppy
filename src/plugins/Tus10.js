@@ -257,26 +257,16 @@ module.exports = class Tus10 extends Plugin {
       return
     }
 
-    const uploaders = []
     files.forEach((file, index) => {
       const current = parseInt(index, 10) + 1
       const total = files.length
 
       if (!file.isRemote) {
-        uploaders.push(this.upload(file, current, total))
+        this.upload(file, current, total)
       } else {
-        uploaders.push(this.uploadRemote(file, current, total))
+        this.uploadRemote(file, current, total)
       }
     })
-
-    return Promise.all(uploaders)
-      .then(() => {
-        this.core.log('All files uploaded')
-        return { uploadedCount: files.length }
-      })
-      .catch((err) => {
-        this.core.log('Upload error: ' + err)
-      })
   }
 
   selectForUpload (files) {
