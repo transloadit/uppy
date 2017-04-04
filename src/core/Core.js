@@ -342,12 +342,12 @@ class Uppy {
     const online = status || window.navigator.onLine
     if (!online) {
       this.emit('is-offline')
-      this.emit('informer', 'No internet connection', 'error', 0)
+      this.emit('informer', '⚠️ No internet connection', 'error', 0)
       this.wasOffline = true
     } else {
       this.emit('is-online')
       if (this.wasOffline) {
-        this.emit('informer', 'Connected!', 'success', 3000)
+        this.emit('informer', 'Connected 👌🏼', 'success', 3000)
         this.wasOffline = false
       }
     }
