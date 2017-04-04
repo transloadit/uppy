@@ -56,6 +56,8 @@ module.exports = class Webcam extends Plugin {
     this.start = this.start.bind(this)
     this.stop = this.stop.bind(this)
     this.takeSnapshot = this.takeSnapshot.bind(this)
+    this.startRecording = this.startRecording.bind(this)
+    this.stopRecording = this.stopRecording.bind(this)
 
     this.webcam = new WebcamProvider(this.opts, this.params)
     this.webcamActive = false
@@ -122,6 +124,13 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
+  isRecording () {
+    if (!this.recorder) {
+      return false
+    }
+    return this.recorder.state === 'recording'
+  }
+
   stop () {
     this.stream.getAudioTracks().forEach((track) => {
       track.stop()
@@ -169,8 +178,11 @@ module.exports = class Webcam extends Plugin {
 
     return CameraScreen(extend(state.webcam, {
       onSnapshot: this.takeSnapshot,
+      onStartRecording: this.startRecording,
+      onStopRecording: this.stopRecording,
       onFocus: this.focus,
       onStop: this.stop,
+      recording: this.isRecording(),
       getSWFHTML: this.webcam.getSWFHTML,
       src: this.streamSrc
     }))

@@ -1,5 +1,31 @@
 const html = require('yo-yo')
 const CameraIcon = require('./CameraIcon')
+const RecordStartIcon = require('./RecordStartIcon')
+const RecordStopIcon = require('./RecordStopIcon')
+
+function RecordButton ({ recording, onStartRecording, onStopRecording }) {
+  if (recording) {
+    return html`
+      <button class="UppyButton--circular UppyButton--red UppyButton--sizeM UppyWebcam-recordButton"
+        type="button"
+        title="Stop Recording"
+        aria-label="Stop Recording"
+        onclick=${onStopRecording}>
+        ${RecordStopIcon()}
+      </button>
+    `
+  }
+
+  return html`
+    <button class="UppyButton--circular UppyButton--red UppyButton--sizeM UppyWebcam-recordButton"
+      type="button"
+      title="Begin Recording"
+      aria-label="Begin Recording"
+      onclick=${onStartRecording}>
+      ${RecordStartIcon()}
+    </button>
+  `
+}
 
 module.exports = (props) => {
   const src = props.src || ''
@@ -14,7 +40,7 @@ module.exports = (props) => {
   return html`
     <div class="UppyWebcam-container" onload=${(el) => {
       props.onFocus()
-      document.querySelector('.UppyWebcam-stopRecordBtn').focus()
+      document.querySelector('.UppyWebcam-recordButton').focus()
     }} onunload=${(el) => {
       props.onStop()
     }}>
@@ -22,7 +48,8 @@ module.exports = (props) => {
         ${video}
       </div>
       <div class='UppyWebcam-buttonContainer'>
-        <button class="UppyButton--circular UppyButton--red UppyButton--sizeM UppyWebcam-stopRecordBtn"
+        ${RecordButton(props)}
+        <button class="UppyButton--circular UppyButton--red UppyButton--sizeM UppyWebcam-recordButton"
           type="button"
           title="Take a snapshot"
           aria-label="Take a snapshot"
