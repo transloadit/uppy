@@ -13,7 +13,7 @@ module.exports = class Dropbox extends Plugin {
     this.id = 'Dropbox'
     this.title = 'Dropbox'
     this.stateId = 'dropbox'
-    this.icon = html`
+    this.icon = () => html`
       <svg class="UppyIcon" width="128" height="118" viewBox="0 0 128 118">
         <path d="M38.145.777L1.108 24.96l25.608 20.507 37.344-23.06z"/>
         <path d="M1.108 65.975l37.037 24.183L64.06 68.525l-37.343-23.06zM64.06 68.525l25.917 21.633 37.036-24.183-25.61-20.51z"/>

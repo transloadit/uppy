@@ -12,6 +12,7 @@ const { iconEdit, iconCopy } = require('./icons')
 
 module.exports = function fileItem (props) {
   const file = props.file
+  const acquirers = props.acquirers
 
   const isUploaded = file.progress.uploadComplete
   const uploadInProgressOrComplete = file.progress.uploadStarted
@@ -29,6 +30,14 @@ module.exports = function fileItem (props) {
                   id="uppy_${file.id}"
                   title="${file.meta.name}">
       <div class="UppyDashboardItem-preview">
+        ${file.source
+          ? html`<div class="UppyDashboardItem-sourceIcon">
+            ${acquirers.map(acquirer => {
+              if (acquirer.id === file.source) return html`<span title="${acquirer.name}">${acquirer.icon()}</span>`
+            })}
+          </div>`
+          : ''
+        }
         ${file.preview
           ? html`<img alt="${file.name}" src="${file.preview}">`
           : html`<div class="UppyDashboardItem-previewIcon" style="color: ${getFileTypeIcon(file.type.general, file.type.specific).color}">

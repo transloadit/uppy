@@ -47,7 +47,7 @@ module.exports = (props) => {
                     aria-controls="UppyDashboardContent-panel--${target.id}"
                     aria-selected="${target.isHidden ? 'false' : 'true'}"
                     onclick=${() => props.showPanel(target.id)}>
-              ${target.icon}
+              ${target.icon()}
               <h5 class="UppyDashboardTab-name">${target.name}</h5>
             </button>
           </li>`

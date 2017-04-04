@@ -16,7 +16,7 @@ module.exports = class Webcam extends Plugin {
     this.type = 'acquirer'
     this.id = 'Webcam'
     this.title = 'Webcam'
-    this.icon = WebcamIcon()
+    this.icon = WebcamIcon
 
     // set default options
     const defaultOptions = {
@@ -128,7 +128,7 @@ module.exports = class Webcam extends Plugin {
 
   focus () {
     setTimeout(() => {
-      this.core.emitter.emit('informer', 'Smile!', 'info', 2000)
+      this.core.emitter.emit('informer', 'Smile! 📸', 'info', 2000)
     }, 1000)
   }
 

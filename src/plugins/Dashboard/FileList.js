@@ -23,6 +23,7 @@ module.exports = (props) => {
       }
       ${Object.keys(props.files).map((fileID) => {
         return FileItem({
+          acquirers: props.acquirers,
           file: props.files[fileID],
           showFileCard: props.showFileCard,
           showProgressDetails: props.showProgressDetails,
