@@ -139,7 +139,7 @@ Yes, whatever you want on the backend will work with `Multipart` plugin, since i
 
 ### Do I need to install special service/server for it?
 
-No, as mentioned previosely, `Multipart` plugin is old-school and just works with everything. However, you need `[uppy-server](https://github.com/transloadit/uppy-server)` if you want your users to be able to pick files from Google Drive or Dropbox (more services coming too), and you can add [tus](http://tus.io) is you want resumability in your uploads.
+No, as mentioned previously, `Multipart` plugin is old-school and just works with everything. However, you need [`uppy-server`](https://github.com/transloadit/uppy-server) if you’d like your users to be able to pick files from Google Drive or Dropbox (more services coming). And you can add [tus](http://tus.io) if you want resumability.
 
 ### Does it support S3 direct upload?
 
