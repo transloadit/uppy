@@ -42,9 +42,11 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] ui: do we want https://github.com/kazzkiq/balloon.css ?
 - [ ] core: consider adding nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@arturi)
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
+- [ ] dashboard: see if transitions can be fixed in Firefox — seem to be working fine, let’s check again someday (@arturi)
 
 ## 0.17.0
 
+- [ ] Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
 - [ ] instagram: Make a barely working Instagram Plugin (#21)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
@@ -58,16 +60,15 @@ Ideas that will be planned and find their way into a release at one point
 
 To be released: March 31, 2017
 
-- [ ] presets: Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
-- [ ] dashboard: add service logo / name to the selected file in file list (@arturi)
+- [x] dashboard: add service logo / name to the selected file in file list (@arturi)
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
 - [x] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
 - [x] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
 - [ ] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju)
-- [ ] dashboard: see if transitions can be fixed in Firefox (@arturi)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
+- [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi @goto-bus-stop)
 - [x] core: allow `target` and `trigger` to be DOM node, like `document.body` (@goto-bus-stop)
 - [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected, retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi, @ifedapoolarewaju)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
