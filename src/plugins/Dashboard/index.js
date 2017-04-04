@@ -79,7 +79,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   addTarget (plugin) {
-    const callerPluginId = plugin.constructor.name
+    const callerPluginId = plugin.id || plugin.constructor.name
     const callerPluginName = plugin.title || callerPluginId
     const callerPluginIcon = plugin.icon || this.opts.defaultTabIcon
     const callerPluginType = plugin.type
