@@ -1,4 +1,13 @@
 {
-  "presets": ["es2015-loose"],
-  "plugins": ["add-module-exports", "transform-object-assign", "es6-promise", "yo-yoify"]
+  "presets": [
+    ["es2015", {
+      "loose": true
+    }]
+  ],
+  "plugins": [
+    "add-module-exports",
+    "transform-object-assign",
+    "es6-promise",
+    "yo-yoify"
+  ]
 }
