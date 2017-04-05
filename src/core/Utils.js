@@ -255,6 +255,11 @@ function createImageThumbnail (imgDataURI, newWidth) {
   })
 }
 
+function supportsMediaRecorder () {
+  return typeof MediaRecorder === 'function' && !!MediaRecorder.prototype &&
+    typeof MediaRecorder.prototype.start === 'function'
+}
+
 function dataURItoBlob (dataURI, opts, toFile) {
   // get the base64 data
   var data = dataURI.split(',')[1]
@@ -450,6 +455,7 @@ module.exports = {
   readFile,
   createImageThumbnail,
   getProportionalImageHeight,
+  supportsMediaRecorder,
   isTouchDevice,
   getFileNameAndExtension,
   truncateString,

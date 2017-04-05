@@ -1,6 +1,8 @@
 const Plugin = require('../Plugin')
 const WebcamProvider = require('../../uppy-base/src/plugins/Webcam')
-const { extend, getFileTypeExtension } = require('../../core/Utils')
+const { extend,
+        getFileTypeExtension,
+        supportsMediaRecorder } = require('../../core/Utils')
 const WebcamIcon = require('./WebcamIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
@@ -183,6 +185,7 @@ module.exports = class Webcam extends Plugin {
       onStopRecording: this.stopRecording,
       onFocus: this.focus,
       onStop: this.stop,
+      supportsRecording: supportsMediaRecorder(),
       recording: state.webcam.isRecording,
       getSWFHTML: this.webcam.getSWFHTML,
       src: this.streamSrc

@@ -48,7 +48,7 @@ module.exports = (props) => {
         ${video}
       </div>
       <div class='UppyWebcam-buttonContainer'>
-        ${RecordButton(props)}
+        ${props.supportsRecording ? RecordButton(props) : null}
         <button class="UppyButton--circular UppyButton--red UppyButton--sizeM UppyWebcam-recordButton"
           type="button"
           title="Take a snapshot"
