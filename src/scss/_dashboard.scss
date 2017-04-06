@@ -470,15 +470,14 @@
 .UppyDashboardItem-sourceIcon {
   color: rgba($color-white, 0.8);
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
   width: 15px;
   height: 15px;
 }
 
 .UppyDashboardItem-sourceIcon .UppyIcon {
-  // box-shadow: 0 1px 2px 0 rgba($color-black,.2);
-  filter: drop-shadow(0px 0px 1px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 0 1px rgba(0,0,0,.4));
 }
 
 .UppyDashboardItem-preview img {
