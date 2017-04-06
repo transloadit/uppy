@@ -1,30 +1,9 @@
 const html = require('yo-yo')
-const CameraIcon = require('./CameraIcon')
-const RecordStartIcon = require('./RecordStartIcon')
-const RecordStopIcon = require('./RecordStopIcon')
+const SnapshotButton = require('./SnapshotButton')
+const RecordButton = require('./RecordButton')
 
-function RecordButton ({ recording, onStartRecording, onStopRecording }) {
-  if (recording) {
-    return html`
-      <button class="UppyButton--circular UppyButton--red UppyButton--sizeM UppyWebcam-recordButton"
-        type="button"
-        title="Stop Recording"
-        aria-label="Stop Recording"
-        onclick=${onStopRecording}>
-        ${RecordStopIcon()}
-      </button>
-    `
-  }
-
-  return html`
-    <button class="UppyButton--circular UppyButton--red UppyButton--sizeM UppyWebcam-recordButton"
-      type="button"
-      title="Begin Recording"
-      aria-label="Begin Recording"
-      onclick=${onStartRecording}>
-      ${RecordStartIcon()}
-    </button>
-  `
+function isModeAvailable (modes, mode) {
+  return modes.indexOf(mode) !== -1
 }
 
 module.exports = (props) => {
@@ -37,6 +16,14 @@ module.exports = (props) => {
     video = html`<video class="UppyWebcam-video" autoplay src="${src}"></video>`
   }
 
+  const shouldShowRecordButton = props.supportsRecording && (
+    isModeAvailable(props.modes, 'video-only') ||
+    isModeAvailable(props.modes, 'audio-only') ||
+    isModeAvailable(props.modes, 'video-audio')
+  )
+
+  const shouldShowSnapshotButton = isModeAvailable(props.modes, 'picture')
+
   return html`
     <div class="UppyWebcam-container" onload=${(el) => {
       props.onFocus()
@@ -48,14 +35,8 @@ module.exports = (props) => {
         ${video}
       </div>
       <div class='UppyWebcam-buttonContainer'>
-        ${props.supportsRecording ? RecordButton(props) : null}
-        <button class="UppyButton--circular UppyButton--red UppyButton--sizeM UppyWebcam-recordButton"
-          type="button"
-          title="Take a snapshot"
-          aria-label="Take a snapshot"
-          onclick=${props.onSnapshot}>
-          ${CameraIcon()}
-        </button>
+        ${shouldShowRecordButton ? RecordButton(props) : null}
+        ${shouldShowSnapshotButton ? SnapshotButton(props) : null}
       </div>
       <canvas class="UppyWebcam-canvas" style="display: none;"></canvas>
     </div>

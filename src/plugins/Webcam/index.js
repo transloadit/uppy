@@ -23,8 +23,12 @@ module.exports = class Webcam extends Plugin {
     // set default options
     const defaultOptions = {
       enableFlash: true,
-      audio: true,
-      video: true
+      modes: [
+        'video-audio',
+        'video-only',
+        'audio-only',
+        'picture'
+      ]
     }
 
     this.params = {
@@ -185,6 +189,7 @@ module.exports = class Webcam extends Plugin {
       onStopRecording: this.stopRecording,
       onFocus: this.focus,
       onStop: this.stop,
+      modes: this.opts.modes,
       supportsRecording: supportsMediaRecorder(),
       recording: state.webcam.isRecording,
       getSWFHTML: this.webcam.getSWFHTML,
