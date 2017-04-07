@@ -22,7 +22,8 @@ module.exports = class Transloadit extends Plugin {
         'You can find your Transloadit API key at https://transloadit.com/accounts/credentials.')
     }
     if (!this.opts.templateId) {
-      throw new Error('Transloadit: The `templateId` option is required.')
+      throw new Error('Transloadit: The `templateId` option is required. ' +
+        'You can find your template\'s ID at https://transloadit.com/templates.')
     }
 
     this.client = new Client({
