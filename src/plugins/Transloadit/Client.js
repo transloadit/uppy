@@ -1,0 +1,51 @@
+module.exports = class Client {
+  constructor (opts) {
+    this.apiUrl = 'https://api2.transloadit.com'
+    this.opts = opts
+  }
+
+  /**
+   * Create a new assembly.
+   *
+   * @param {object} options
+   */
+  createAssembly ({ templateId, expectedFiles }) {
+    const data = new FormData()
+    data.append('params', JSON.stringify({
+      template_id: templateId,
+      auth: { key: this.opts.key }
+    }))
+    data.append('fields', JSON.stringify({
+      // Nothing yet.
+    }))
+    data.append('tus_num_expected_upload_files', expectedFiles)
+
+    return fetch(`${this.apiUrl}/assemblies`, {
+      method: 'post',
+      body: data
+    }).then((response) => response.json()).then((assembly) => {
+      if (assembly.error) {
+        const error = new Error(assembly.message)
+        error.code = assembly.error
+        error.status = assembly
+        throw error
+      }
+
+      return this.getAssemblyStatus(assembly.status_endpoint)
+    })
+  }
+
+  /**
+   * Get the current status for an assembly.
+   *
+   * @param {string} url The status endpoint of the assembly.
+   */
+  getAssemblyStatus (url) {
+    return fetch(url)
+      .then((response) => response.json())
+  }
+
+  getTusEndpoint () {
+    return `${this.apiUrl}/resumable/files/`
+  }
+}
