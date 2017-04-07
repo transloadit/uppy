@@ -24,6 +24,7 @@ const MetaData = require('./plugins/MetaData.js')
 // Uploaders
 const Tus10 = require('./plugins/Tus10')
 const Multipart = require('./plugins/Multipart')
+const Transloadit = require('./plugins/Transloadit')
 
 module.exports = {
   Core,
@@ -37,6 +38,7 @@ module.exports = {
   FileInput,
   Tus10,
   Multipart,
+  Transloadit,
   Dashboard,
   MetaData,
   Webcam
