@@ -41,6 +41,10 @@ module.exports = class Tus10 extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.handlePauseAll = this.handlePauseAll.bind(this)
+    this.handleResumeAll = this.handleResumeAll.bind(this)
+    this.handleUpload = this.handleUpload.bind(this)
   }
 
   pauseResume (action, fileID) {
@@ -90,14 +94,22 @@ module.exports = class Tus10 extends Plugin {
     }
   }
 
-/**
- * Create a new Tus upload
- *
- * @param {object} file for use with upload
- * @param {integer} current file in a queue
- * @param {integer} total number of files in a queue
- * @returns {Promise}
- */
+  handlePauseAll () {
+    this.pauseResume('pauseAll')
+  }
+
+  handleResumeAll () {
+    this.pauseResume('resumeAll')
+  }
+
+  /**
+   * Create a new Tus upload
+   *
+   * @param {object} file for use with upload
+   * @param {integer} current file in a queue
+   * @param {integer} total number of files in a queue
+   * @returns {Promise}
+   */
   upload (file, current, total) {
     this.core.log(`uploading ${current} of ${total}`)
 
@@ -303,20 +315,16 @@ module.exports = class Tus10 extends Plugin {
     this.uploadFiles(filesForUpload)
   }
 
+  handleUpload () {
+    this.core.log('Tus is uploading...')
+    const files = this.core.getState().files
+    this.selectForUpload(files)
+  }
+
   actions () {
-    this.core.emitter.on('core:pause-all', () => {
-      this.pauseResume('pauseAll')
-    })
-
-    this.core.emitter.on('core:resume-all', () => {
-      this.pauseResume('resumeAll')
-    })
-
-    this.core.emitter.on('core:upload', () => {
-      this.core.log('Tus is uploading...')
-      const files = this.core.getState().files
-      this.selectForUpload(files)
-    })
+    this.core.emitter.on('core:pause-all', this.handlePauseAll)
+    this.core.emitter.on('core:resume-all', this.handleResumeAll)
+    this.core.emitter.on('core:upload', this.handleUpload)
   }
 
   addResumableUploadsCapabilityFlag () {
@@ -330,5 +338,11 @@ module.exports = class Tus10 extends Plugin {
   install () {
     this.addResumableUploadsCapabilityFlag()
     this.actions()
+  }
+
+  uninstall () {
+    this.core.emitter.off('core:pause-all', this.handlePauseAll)
+    this.core.emitter.off('core:resume-all', this.handleResumeAll)
+    this.core.emitter.off('core:upload', this.handleUpload)
   }
 }
