@@ -332,7 +332,7 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     const startUpload = (ev) => {
-      this.core.emitter.emit('core:upload')
+      this.core.upload()
     }
 
     const pauseUpload = (fileID) => {

@@ -16,6 +16,8 @@ module.exports = class Multipart extends Plugin {
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.handleUpload = this.handleUpload.bind(this)
   }
 
   upload (file, current, total) {
@@ -129,12 +131,22 @@ module.exports = class Multipart extends Plugin {
     //   }
   }
 
-  install () {
-    const bus = this.core.emitter
-    bus.on('core:upload', () => {
-      this.core.log('Multipart is uploading...')
-      const files = this.core.getState().files
-      this.selectForUpload(files)
+  handleUpload () {
+    this.core.log('Multipart is uploading...')
+    const files = this.core.getState().files
+
+    this.selectForUpload(files)
+
+    return new Promise((resolve) => {
+      this.core.bus.once('core:upload-complete', resolve)
     })
+  }
+
+  install () {
+    this.core.addUploader(this.handleUpload)
+  }
+
+  uninstall () {
+    this.core.removeUploader(this.handleUpload)
   }
 }
