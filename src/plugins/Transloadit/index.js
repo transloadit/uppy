@@ -70,7 +70,7 @@ module.exports = class Transloadit extends Plugin {
 
   uploadFiles () {
     this.core.log(`Transloadit: upload files for ${this.state.assembly.assembly_ssl_url}`)
-    const endpoint = this.client.getTusEndpoint()
+    const endpoint = this.state.assembly.tus_url
 
     // Eh. I think we'll change this later? This is a bit fragile! 😅
     // We probably want to be able to set some meta properties, maybe on the

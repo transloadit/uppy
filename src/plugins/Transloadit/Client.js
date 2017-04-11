@@ -44,8 +44,4 @@ module.exports = class Client {
     return fetch(url)
       .then((response) => response.json())
   }
-
-  getTusEndpoint () {
-    return `${this.apiUrl}/resumable/files/`
-  }
 }
