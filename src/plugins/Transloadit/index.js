@@ -1,5 +1,4 @@
 const Plugin = require('../Plugin')
-const Tus10Plugin = require('../Tus10')
 const Client = require('./Client')
 
 module.exports = class Transloadit extends Plugin {
@@ -16,6 +15,8 @@ module.exports = class Transloadit extends Plugin {
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.prepareUpload = this.prepareUpload.bind(this)
 
     if (!this.opts.key) {
       throw new Error('Transloadit: The `key` option is required. ' +
@@ -46,10 +47,14 @@ module.exports = class Transloadit extends Plugin {
           filename: file.name,
           fieldname: 'file'
         })
+        // Add assembly-specific Tus endpoint.
+        const tus = Object.assign({}, file.tus, {
+          endpoint: assembly.tus_url
+        })
         return Object.assign(
           {},
           file,
-          { meta }
+          { meta, tus }
         )
       }
 
@@ -68,35 +73,19 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  uploadFiles () {
-    this.core.log(`Transloadit: upload files for ${this.state.assembly.assembly_ssl_url}`)
-    const endpoint = this.state.assembly.tus_url
-
-    // Eh. I think we'll change this later? This is a bit fragile! 😅
-    // We probably want to be able to set some meta properties, maybe on the
-    // files, or in global state, to tell Tus where (and when) to upload.
-    this.uploader = new Tus10Plugin(this.core, {
-      endpoint,
-      resume: this.opts.resume,
-      allowPause: this.opts.allowPause
-    })
-    this.uploader.install()
-
-    const files = Object.keys(this.core.state.files)
-      .map((id) => this.core.state.files[id])
-    this.uploader.uploadFiles(files)
-
-    this.core.emitter.once('core:success', () => {
-      this.uploader.uninstall()
+  prepareUpload () {
+    this.core.emit('informer', '🔄 Preparing upload...', 'info', 0)
+    return this.createAssembly().then(() => {
+      this.core.emit('informer:hide')
     })
   }
 
   install () {
-    const bus = this.core.emitter
-    bus.on('core:upload', () => {
-      this.createAssembly()
-        .then(() => this.uploadFiles())
-    })
+    this.core.addPreProcessor(this.prepareUpload)
+  }
+
+  uninstall () {
+    this.core.removePreProcessor(this.prepareUpload)
   }
 
   get state () {
