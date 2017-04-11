@@ -1,5 +1,6 @@
 const Plugin = require('../Plugin')
 const Client = require('./Client')
+const StatusSocket = require('./Socket')
 
 module.exports = class Transloadit extends Plugin {
   constructor (core, opts) {
@@ -10,13 +11,13 @@ module.exports = class Transloadit extends Plugin {
 
     const defaultOptions = {
       templateId: null,
-      resume: true,
-      allowPause: true
+      wait: false
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
 
     this.prepareUpload = this.prepareUpload.bind(this)
+    this.afterUpload = this.afterUpload.bind(this)
 
     if (!this.opts.key) {
       throw new Error('Transloadit: The `key` option is required. ' +
@@ -65,11 +66,32 @@ module.exports = class Transloadit extends Plugin {
       })
 
       this.core.setState({ files })
+
+      if (this.opts.wait) {
+        return this.beginWaiting()
+      }
     }).catch((err) => {
       this.core.emit('informer', '⚠️ Transloadit: Could not create assembly', 'error', 0)
 
       // Reject the promise.
       throw err
+    })
+  }
+
+  beginWaiting () {
+    this.socket = new StatusSocket(
+      this.state.assembly.websocket_url,
+      this.state.assembly
+    )
+
+    this.assemblyReady = new Promise((resolve, reject) => {
+      this.socket.on('finished', resolve)
+      this.socket.on('error', reject)
+    })
+
+    return new Promise((resolve, reject) => {
+      this.socket.on('connect', resolve)
+      this.socket.on('error', reject)
     })
   }
 
@@ -80,12 +102,25 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
+  afterUpload () {
+    this.core.emit('informer', '🔄 Encoding...', 'info', 0)
+    return this.assemblyReady.then(() => {
+      this.core.emit('informer:hide')
+    })
+  }
+
   install () {
     this.core.addPreProcessor(this.prepareUpload)
+    if (this.opts.wait) {
+      this.core.addPostProcessor(this.afterUpload)
+    }
   }
 
   uninstall () {
     this.core.removePreProcessor(this.prepareUpload)
+    if (this.opts.wait) {
+      this.core.removePostProcessor(this.afterUpload)
+    }
   }
 
   get state () {
