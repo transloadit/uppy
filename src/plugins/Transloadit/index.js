@@ -11,7 +11,8 @@ module.exports = class Transloadit extends Plugin {
 
     const defaultOptions = {
       templateId: null,
-      wait: false
+      waitForEncoding: false,
+      waitForMetadata: false
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -67,7 +68,7 @@ module.exports = class Transloadit extends Plugin {
 
       this.core.setState({ files })
 
-      if (this.opts.wait) {
+      if (this.opts.waitForEncoding || this.opts.waitForMetadata) {
         return this.beginWaiting()
       }
     }).catch((err) => {
@@ -85,7 +86,11 @@ module.exports = class Transloadit extends Plugin {
     )
 
     this.assemblyReady = new Promise((resolve, reject) => {
-      this.socket.on('finished', resolve)
+      if (this.opts.waitForEncoding) {
+        this.socket.on('finished', resolve)
+      } else if (this.opts.waitForMetadata) {
+        this.socket.on('metadata', resolve)
+      }
       this.socket.on('error', reject)
     })
 

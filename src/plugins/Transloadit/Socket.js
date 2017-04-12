@@ -33,6 +33,10 @@ module.exports = class TransloaditSocket {
 
       this.close()
     })
+
+    this.socket.on('assembly_upload_meta_data_extracted', () => {
+      this.emit('metadata')
+    })
   }
 
   close () {
