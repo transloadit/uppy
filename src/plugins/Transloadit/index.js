@@ -39,6 +39,7 @@ module.exports = class Transloadit extends Plugin {
 
     return this.client.createAssembly({
       templateId: this.opts.templateId,
+      params: this.opts.params,
       expectedFiles: Object.keys(this.core.state.files).length
     }).then((assembly) => {
       this.updateState({ assembly })

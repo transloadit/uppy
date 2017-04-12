@@ -9,12 +9,13 @@ module.exports = class Client {
    *
    * @param {object} options
    */
-  createAssembly ({ templateId, expectedFiles }) {
+  createAssembly ({ templateId, params, expectedFiles }) {
     const data = new FormData()
-    data.append('params', JSON.stringify({
+    const finalParams = Object.assign({}, params, {
       template_id: templateId,
       auth: { key: this.opts.key }
-    }))
+    })
+    data.append('params', JSON.stringify(finalParams))
     data.append('fields', JSON.stringify({
       // Nothing yet.
     }))
