@@ -23,7 +23,14 @@ module.exports = class Transloadit extends Plugin {
 
     let params = this.opts.params
     if (typeof params === 'string') {
-      params = JSON.parse(params)
+      try {
+        params = JSON.parse(params)
+      } catch (err) {
+        // Tell the user that this is not an Uppy bug!
+        err.message = 'Transloadit: The `params` option is a malformed JSON string: ' +
+          err.message
+        throw err
+      }
     }
 
     if (!params) {
