@@ -16,7 +16,8 @@ module.exports = class Transloadit extends Plugin {
     const defaultOptions = {
       templateId: null,
       waitForEncoding: false,
-      waitForMetadata: false
+      waitForMetadata: false,
+      signature: null
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -45,7 +46,8 @@ module.exports = class Transloadit extends Plugin {
     return this.client.createAssembly({
       templateId: this.opts.templateId,
       params: this.opts.params,
-      expectedFiles: Object.keys(this.core.state.files).length
+      expectedFiles: Object.keys(this.core.state.files).length,
+      signature: this.opts.signature
     }).then((assembly) => {
       this.updateState({ assembly })
 

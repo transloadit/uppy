@@ -9,7 +9,7 @@ module.exports = class Client {
    *
    * @param {object} options
    */
-  createAssembly ({ templateId, params, expectedFiles }) {
+  createAssembly ({ templateId, params, signature, expectedFiles }) {
     const data = new FormData()
     const finalParams = Object.assign({}, params, {
       // `params.auth` may already be specified, especially if signature
@@ -23,6 +23,10 @@ module.exports = class Client {
       finalParams.template_id = templateId
     }
     data.append('params', JSON.stringify(finalParams))
+    if (signature) {
+      data.append('signature', signature)
+    }
+
     data.append('fields', JSON.stringify({
       // Nothing yet.
     }))
