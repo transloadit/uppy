@@ -21,6 +21,10 @@ module.exports = class Transloadit extends Plugin {
     this.prepareUpload = this.prepareUpload.bind(this)
     this.afterUpload = this.afterUpload.bind(this)
 
+    if (!this.opts.params) {
+      throw new Error('Transloadit: The `params` option is required.')
+    }
+
     let params = this.opts.params
     if (typeof params === 'string') {
       try {
@@ -33,9 +37,6 @@ module.exports = class Transloadit extends Plugin {
       }
     }
 
-    if (!params) {
-      throw new Error('Transloadit: The `params` option is required.')
-    }
     if (!params.auth || !params.auth.key) {
       throw new Error('Transloadit: The `params.auth.key` option is required.' +
         'You can find your Transloadit API key at https://transloadit.com/accounts/credentials.')
