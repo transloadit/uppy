@@ -4,6 +4,24 @@ const UppySocket = require('../core/UppySocket')
 const throttle = require('lodash.throttle')
 require('whatwg-fetch')
 
+// Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
+// excepted we removed 'fingerprint' key to avoid adding more dependencies
+const tusDefaultOptions = {
+  endpoint: '',
+  resume: true,
+  onProgress: null,
+  onChunkComplete: null,
+  onSuccess: null,
+  onError: null,
+  headers: {},
+  chunkSize: Infinity,
+  withCredentials: false,
+  uploadUrl: null,
+  uploadSize: null,
+  overridePatchMethod: false,
+  retryDelays: null
+}
+
 /**
  * Tus resumable file uploader
  *
@@ -85,36 +103,35 @@ module.exports = class Tus10 extends Plugin {
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
-      const upload = new tus.Upload(file.data, {
+      var optsTus = Object.assign({}, tusDefaultOptions, this.opts)
 
-        // TODO merge this.opts or this.opts.tus here
-        metadata: file.meta,
-        resume: this.opts.resume,
-        endpoint: this.opts.endpoint,
+      optsTus.onError = (err) => {
+        this.core.log(err)
+        this.core.emitter.emit('core:upload-error', file.id, err)
+        reject('Failed because: ' + err)
+      }
 
-        onError: (err) => {
-          this.core.log(err)
-          this.core.emitter.emit('core:upload-error', file.id, err)
-          reject('Failed because: ' + err)
-        },
-        onProgress: (bytesUploaded, bytesTotal) => {
-          this.core.emitter.emit('core:upload-progress', {
-            uploader: this,
-            id: file.id,
-            bytesUploaded: bytesUploaded,
-            bytesTotal: bytesTotal
-          })
-        },
-        onSuccess: () => {
-          this.core.emitter.emit('core:upload-success', file.id, upload, upload.url)
+      optsTus.onProgress = (bytesUploaded, bytesTotal) => {
+        this.core.emitter.emit('core:upload-progress', {
+          uploader: this,
+          id: file.id,
+          bytesUploaded: bytesUploaded,
+          bytesTotal: bytesTotal
+        })
+      }
 
-          if (upload.url) {
-            this.core.log(`Download ${upload.file.name} from ${upload.url}`)
-          }
+      optsTus.onSuccess = () => {
+        this.core.emitter.emit('core:upload-success', file.id, upload, upload.url)
 
-          resolve(upload)
+        if (upload.url) {
+          this.core.log('Download ' + upload.file.name + ' from ' + upload.url)
         }
-      })
+
+        resolve(upload)
+      }
+      optsTus.metadata = file.meta
+
+      const upload = new tus.Upload(file.data, optsTus)
 
       this.onFileRemove(file.id, () => {
         this.core.log('removing file:', file.id)
