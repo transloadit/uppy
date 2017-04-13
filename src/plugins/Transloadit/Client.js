@@ -1,5 +1,5 @@
 module.exports = class Client {
-  constructor (opts) {
+  constructor (opts = {}) {
     this.apiUrl = 'https://api2.transloadit.com'
     this.opts = opts
   }
@@ -11,18 +11,9 @@ module.exports = class Client {
    */
   createAssembly ({ templateId, params, signature, expectedFiles }) {
     const data = new FormData()
-    const finalParams = Object.assign({}, params, {
-      // `params.auth` may already be specified, especially if signature
-      // authentication is used. In that case we use it.
-      // TODO this logic is the inverse of what happens in the `new Client` in
-      // index.js. There, `opts.key` is preferred to `params.auth.key`. It
-      // should perhaps `throw` instead if both are given.
-      auth: params.auth || { key: this.opts.key }
-    })
-    if (templateId) {
-      finalParams.template_id = templateId
-    }
-    data.append('params', JSON.stringify(finalParams))
+    data.append('params', typeof params === 'string'
+      ? params
+      : JSON.stringify(params))
     if (signature) {
       data.append('signature', signature)
     }

@@ -2,10 +2,6 @@ const Plugin = require('../Plugin')
 const Client = require('./Client')
 const StatusSocket = require('./Socket')
 
-function paramsHasAuthKey (params) {
-  return Boolean(params && params.auth && params.auth.key)
-}
-
 module.exports = class Transloadit extends Plugin {
   constructor (core, opts) {
     super(core, opts)
@@ -14,10 +10,10 @@ module.exports = class Transloadit extends Plugin {
     this.title = 'Transloadit'
 
     const defaultOptions = {
-      templateId: null,
       waitForEncoding: false,
       waitForMetadata: false,
-      signature: null
+      signature: null,
+      params: null
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -25,26 +21,26 @@ module.exports = class Transloadit extends Plugin {
     this.prepareUpload = this.prepareUpload.bind(this)
     this.afterUpload = this.afterUpload.bind(this)
 
-    if (!this.opts.key && !paramsHasAuthKey(this.opts.params)) {
-      throw new Error('Transloadit: The `key` option is required. ' +
-        'You can find your Transloadit API key at https://transloadit.com/accounts/credentials.')
-    }
-    if (!this.opts.templateId && !this.opts.params) {
-      throw new Error('Transloadit: At least one of the `templateId` and `params` ' +
-        'options is required. Please configure `params` or find your template\'s ' +
-        'ID at https://transloadit.com/templates.')
+    let params = this.opts.params
+    if (typeof params === 'string') {
+      params = JSON.parse(params)
     }
 
-    this.client = new Client({
-      key: this.opts.key || this.opts.params.auth.key
-    })
+    if (!params) {
+      throw new Error('Transloadit: The `params` option is required.')
+    }
+    if (!params.auth || !params.auth.key) {
+      throw new Error('Transloadit: The `params.auth.key` option is required.' +
+        'You can find your Transloadit API key at https://transloadit.com/accounts/credentials.')
+    }
+
+    this.client = new Client()
   }
 
   createAssembly () {
     this.core.log('Transloadit: create assembly')
 
     return this.client.createAssembly({
-      templateId: this.opts.templateId,
       params: this.opts.params,
       expectedFiles: Object.keys(this.core.state.files).length,
       signature: this.opts.signature
