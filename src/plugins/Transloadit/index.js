@@ -135,6 +135,14 @@ module.exports = class Transloadit extends Plugin {
   afterUpload () {
     this.core.emit('informer', '🔄 Encoding...', 'info', 0)
     return this.assemblyReady.then(() => {
+      return this.client.getAssemblyStatus(this.state.assembly.status_endpoint)
+    }).then((assembly) => {
+      this.updateState({ assembly })
+
+      // TODO set the `file.uploadURL` to a result?
+      // We will probably need an option here so the plugin user can tell us
+      // which result to pick…?
+
       this.core.emit('informer:hide')
     })
   }
