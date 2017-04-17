@@ -34,7 +34,7 @@ module.exports = class Client {
         throw error
       }
 
-      return this.getAssemblyStatus(assembly.status_endpoint)
+      return assembly
     })
   }
 
