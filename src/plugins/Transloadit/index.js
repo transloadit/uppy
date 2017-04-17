@@ -88,6 +88,8 @@ module.exports = class Transloadit extends Plugin {
       if (this.shouldWait()) {
         return this.beginWaiting()
       }
+    }).then(() => {
+      this.core.log('Transloadit: Created assembly')
     }).catch((err) => {
       this.core.emit('informer', '⚠️ Transloadit: Could not create assembly', 'error', 0)
 
@@ -118,6 +120,8 @@ module.exports = class Transloadit extends Plugin {
     return new Promise((resolve, reject) => {
       this.socket.on('connect', resolve)
       this.socket.on('error', reject)
+    }).then(() => {
+      this.core.log('Transloadit: Socket is ready')
     })
   }
 
