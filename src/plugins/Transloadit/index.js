@@ -85,7 +85,7 @@ module.exports = class Transloadit extends Plugin {
 
       this.core.setState({ files })
 
-      if (this.opts.waitForEncoding || this.opts.waitForMetadata) {
+      if (this.shouldWait()) {
         return this.beginWaiting()
       }
     }).catch((err) => {
@@ -94,6 +94,10 @@ module.exports = class Transloadit extends Plugin {
       // Reject the promise.
       throw err
     })
+  }
+
+  shouldWait () {
+    return this.opts.waitForEncoding || this.opts.waitForMetadata
   }
 
   beginWaiting () {
@@ -133,14 +137,14 @@ module.exports = class Transloadit extends Plugin {
 
   install () {
     this.core.addPreProcessor(this.prepareUpload)
-    if (this.opts.wait) {
+    if (this.shouldWait()) {
       this.core.addPostProcessor(this.afterUpload)
     }
   }
 
   uninstall () {
     this.core.removePreProcessor(this.prepareUpload)
-    if (this.opts.wait) {
+    if (this.shouldWait()) {
       this.core.removePostProcessor(this.afterUpload)
     }
   }
