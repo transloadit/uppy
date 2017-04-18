@@ -13,7 +13,8 @@ module.exports = class Transloadit extends Plugin {
       waitForEncoding: false,
       waitForMetadata: false,
       signature: null,
-      params: null
+      params: null,
+      fields: {}
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -50,6 +51,7 @@ module.exports = class Transloadit extends Plugin {
 
     return this.client.createAssembly({
       params: this.opts.params,
+      fields: this.opts.fields,
       expectedFiles: Object.keys(this.core.state.files).length,
       signature: this.opts.signature
     }).then((assembly) => {

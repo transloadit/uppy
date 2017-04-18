@@ -9,7 +9,13 @@ module.exports = class Client {
    *
    * @param {object} options
    */
-  createAssembly ({ templateId, params, signature, expectedFiles }) {
+  createAssembly ({
+    templateId,
+    params,
+    fields,
+    signature,
+    expectedFiles
+  }) {
     const data = new FormData()
     data.append('params', typeof params === 'string'
       ? params
@@ -18,9 +24,7 @@ module.exports = class Client {
       data.append('signature', signature)
     }
 
-    data.append('fields', JSON.stringify({
-      // Nothing yet.
-    }))
+    data.append('fields', JSON.stringify(fields))
     data.append('tus_num_expected_upload_files', expectedFiles)
 
     return fetch(`${this.apiUrl}/assemblies`, {
