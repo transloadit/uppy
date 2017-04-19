@@ -103,7 +103,7 @@ module.exports = class Tus10 extends Plugin {
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
-      var optsTus = Object.assign({}, tusDefaultOptions, this.opts)
+      const optsTus = Object.assign({}, tusDefaultOptions, this.opts)
 
       optsTus.onError = (err) => {
         this.core.log(err)
