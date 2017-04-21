@@ -108,6 +108,12 @@ module.exports = class Transloadit extends Plugin {
       this.state.assembly
     )
 
+    if (this.opts.waitForEncoding) {
+      this.socket.on('result', (stepName, result) => {
+        this.core.bus.emit('transloadit:result', stepName, result)
+      })
+    }
+
     this.assemblyReady = new Promise((resolve, reject) => {
       if (this.opts.waitForEncoding) {
         this.socket.on('finished', resolve)
