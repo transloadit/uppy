@@ -87,9 +87,7 @@ module.exports = class Transloadit extends Plugin {
 
       this.core.setState({ files })
 
-      if (this.shouldWait()) {
-        return this.beginWaiting()
-      }
+      return this.connectSocket()
     }).then(() => {
       this.core.log('Transloadit: Created assembly')
     }).catch((err) => {
@@ -104,7 +102,7 @@ module.exports = class Transloadit extends Plugin {
     return this.opts.waitForEncoding || this.opts.waitForMetadata
   }
 
-  beginWaiting () {
+  connectSocket () {
     this.socket = new StatusSocket(
       this.state.assembly.websocket_url,
       this.state.assembly
@@ -135,6 +133,13 @@ module.exports = class Transloadit extends Plugin {
   }
 
   afterUpload () {
+    // If we don't have to wait for encoding metadata or results, we can close
+    // the socket immediately and finish the upload.
+    if (!this.shouldWait()) {
+      this.socket.close()
+      return
+    }
+
     this.core.emit('informer', '🔄 Encoding...', 'info', 0)
     return this.assemblyReady.then(() => {
       return this.client.getAssemblyStatus(this.state.assembly.status_endpoint)
@@ -151,16 +156,12 @@ module.exports = class Transloadit extends Plugin {
 
   install () {
     this.core.addPreProcessor(this.prepareUpload)
-    if (this.shouldWait()) {
-      this.core.addPostProcessor(this.afterUpload)
-    }
+    this.core.addPostProcessor(this.afterUpload)
   }
 
   uninstall () {
     this.core.removePreProcessor(this.prepareUpload)
-    if (this.shouldWait()) {
-      this.core.removePostProcessor(this.afterUpload)
-    }
+    this.core.removePostProcessor(this.afterUpload)
   }
 
   get state () {
