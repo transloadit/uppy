@@ -2,6 +2,9 @@ const Plugin = require('../Plugin')
 const Client = require('./Client')
 const StatusSocket = require('./Socket')
 
+/**
+ * Upload files to Transloadit using Tus.
+ */
 module.exports = class Transloadit extends Plugin {
   constructor (core, opts) {
     super(core, opts)

@@ -2,6 +2,9 @@ const io = require('socket.io-client')
 const Emitter = require('namespace-emitter')
 const parseUrl = require('url-parse')
 
+/**
+ * WebSocket status API client for Transloadit.
+ */
 module.exports = class TransloaditSocket {
   constructor (url, assembly) {
     const emitter = Emitter()

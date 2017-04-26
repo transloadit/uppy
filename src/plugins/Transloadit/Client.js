@@ -1,3 +1,6 @@
+/**
+ * A Barebones HTTP API client for Transloadit.
+ */
 module.exports = class Client {
   constructor (opts = {}) {
     this.apiUrl = 'https://api2.transloadit.com'
