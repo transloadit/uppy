@@ -44,6 +44,10 @@ class Uppy {
     this.on = this.bus.on.bind(this.bus)
     this.emit = this.bus.emit.bind(this.bus)
 
+    this.preProcessors = []
+    this.uploaders = []
+    this.postProcessors = []
+
     this.state = {
       files: {},
       capabilities: {
@@ -95,6 +99,39 @@ class Uppy {
     // use deepFreeze for debugging
     // return deepFreeze(this.state)
     return this.state
+  }
+
+  addPreProcessor (fn) {
+    this.preProcessors.push(fn)
+  }
+
+  removePreProcessor (fn) {
+    const i = this.preProcessors.indexOf(fn)
+    if (i !== -1) {
+      this.preProcessors.splice(i, 1)
+    }
+  }
+
+  addPostProcessor (fn) {
+    this.postProcessors.push(fn)
+  }
+
+  removePostProcessor (fn) {
+    const i = this.postProcessors.indexOf(fn)
+    if (i !== -1) {
+      this.postProcessors.splice(i, 1)
+    }
+  }
+
+  addUploader (fn) {
+    this.uploaders.push(fn)
+  }
+
+  removeUploader (fn) {
+    const i = this.uploaders.indexOf(fn)
+    if (i !== -1) {
+      this.uploaders.splice(i, 1)
+    }
   }
 
   updateMeta (data, fileID) {
@@ -178,10 +215,6 @@ class Uppy {
         updatedFiles[fileID] = updatedFile
         this.setState({files: updatedFiles})
       })
-  }
-
-  startUpload () {
-    this.emit('core:upload')
   }
 
   calculateProgress (data) {
@@ -322,7 +355,7 @@ class Uppy {
         const completeFiles = Object.keys(updatedFiles).filter((file) => {
           return updatedFiles[file].progress.uploadComplete
         })
-        this.emit('core:success', completeFiles.length)
+        this.emit('core:upload-complete', completeFiles.length)
       }
     })
 
@@ -475,6 +508,24 @@ class Uppy {
     // this.installAll()
 
     return
+  }
+
+  upload () {
+    let promise = Promise.resolve()
+
+    this.emit('core:upload')
+
+    ;[].concat(
+      this.preProcessors,
+      this.uploaders,
+      this.postProcessors
+    ).forEach((fn) => {
+      promise = promise.then(() => fn())
+    })
+
+    return promise.then(() => {
+      this.emit('core:success')
+    })
   }
 }
 
