@@ -13,7 +13,8 @@ module.exports = class Webcam {
 
     // set default options
     const defaultOptions = {
-      enableFlash: true
+      enableFlash: true,
+      modes: []
     }
 
     const defaultParams = {
@@ -107,10 +108,16 @@ module.exports = class Webcam {
     this.userMedia = this._userMedia === undefined ? this.userMedia : this._userMedia
     return new Promise((resolve, reject) => {
       if (this.userMedia) {
+        const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1 ||
+          this.opts.modes.indexOf('audio-only') !== -1
+        const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1 ||
+          this.opts.modes.indexOf('video-only') !== -1 ||
+          this.opts.modes.indexOf('picture') !== -1
+
         // ask user for access to their camera
         this.mediaDevices.getUserMedia({
-          audio: false,
-          video: true
+          audio: acceptsAudio,
+          video: acceptsVideo
         })
         .then((stream) => {
           return resolve(stream)

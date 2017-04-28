@@ -1,6 +1,8 @@
 const Plugin = require('../Plugin')
 const WebcamProvider = require('../../uppy-base/src/plugins/Webcam')
-const { extend } = require('../../core/Utils')
+const { extend,
+        getFileTypeExtension,
+        supportsMediaRecorder } = require('../../core/Utils')
 const WebcamIcon = require('./WebcamIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
@@ -20,7 +22,13 @@ module.exports = class Webcam extends Plugin {
 
     // set default options
     const defaultOptions = {
-      enableFlash: true
+      enableFlash: true,
+      modes: [
+        'video-audio',
+        'video-only',
+        'audio-only',
+        'picture'
+      ]
     }
 
     this.params = {
@@ -54,6 +62,8 @@ module.exports = class Webcam extends Plugin {
     this.start = this.start.bind(this)
     this.stop = this.stop.bind(this)
     this.takeSnapshot = this.takeSnapshot.bind(this)
+    this.startRecording = this.startRecording.bind(this)
+    this.stopRecording = this.stopRecording.bind(this)
 
     this.webcam = new WebcamProvider(this.opts, this.params)
     this.webcamActive = false
@@ -77,8 +87,64 @@ module.exports = class Webcam extends Plugin {
       })
   }
 
+  startRecording () {
+    // TODO We can check here if any of the mime types listed in the
+    // mimeToExtensions map in Utils.js are supported, and prefer to use one of
+    // those.
+    // Right now we let the browser pick a type that it deems appropriate.
+    this.recorder = new MediaRecorder(this.stream)
+    this.recordingChunks = []
+    this.recorder.addEventListener('dataavailable', (event) => {
+      this.recordingChunks.push(event.data)
+    })
+    this.recorder.start()
+
+    this.updateState({
+      isRecording: true
+    })
+  }
+
+  stopRecording () {
+    return new Promise((resolve, reject) => {
+      this.recorder.addEventListener('stop', () => {
+        this.updateState({
+          isRecording: false
+        })
+
+        const mimeType = this.recordingChunks[0].type
+        const fileExtension = getFileTypeExtension(mimeType)
+
+        if (!fileExtension) {
+          reject(new Error(`Could not upload file: Unsupported media type "${mimeType}"`))
+          return
+        }
+
+        const file = {
+          source: this.id,
+          name: `webcam-${Date.now()}.${fileExtension}`,
+          type: mimeType,
+          data: new Blob(this.recordingChunks, { type: mimeType })
+        }
+
+        this.core.emitter.emit('core:file-add', file)
+
+        this.recordingChunks = null
+        this.recorder = null
+
+        resolve()
+      })
+
+      this.recorder.stop()
+    })
+  }
+
   stop () {
-    this.stream.getVideoTracks()[0].stop()
+    this.stream.getAudioTracks().forEach((track) => {
+      track.stop()
+    })
+    this.stream.getVideoTracks().forEach((track) => {
+      track.stop()
+    })
     this.webcamActive = false
     this.stream = null
     this.streamSrc = null
@@ -90,7 +156,7 @@ module.exports = class Webcam extends Plugin {
       mimeType: 'image/jpeg'
     }
 
-    const video = document.querySelector('.UppyWebcam-video')
+    const video = this.target.querySelector('.UppyWebcam-video')
 
     const image = this.webcam.getImage(video, opts)
 
@@ -119,8 +185,13 @@ module.exports = class Webcam extends Plugin {
 
     return CameraScreen(extend(state.webcam, {
       onSnapshot: this.takeSnapshot,
+      onStartRecording: this.startRecording,
+      onStopRecording: this.stopRecording,
       onFocus: this.focus,
       onStop: this.stop,
+      modes: this.opts.modes,
+      supportsRecording: supportsMediaRecorder(),
+      recording: state.webcam.isRecording,
       getSWFHTML: this.webcam.getSWFHTML,
       src: this.streamSrc
     }))

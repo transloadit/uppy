@@ -146,6 +146,23 @@ function getFileType (file) {
   // return mime.lookup(file.name)
 }
 
+// TODO Check which types are actually supported in browsers. Chrome likes webm
+// from my testing, but we may need more.
+// We could use a library but they tend to contain dozens of KBs of mappings,
+// most of which will go unused, so not sure if that's worth it.
+const mimeToExtensions = {
+  'video/ogg': 'ogv',
+  'audio/ogg': 'ogg',
+  'video/webm': 'webm',
+  'audio/webm': 'webm',
+  'video/mp4': 'mp4',
+  'audio/mp3': 'mp3'
+}
+
+function getFileTypeExtension (mimeType) {
+  return mimeToExtensions[mimeType] || null
+}
+
 // returns [fileName, fileExt]
 function getFileNameAndExtension (fullFileName) {
   var re = /(?:\.([^.]+))?$/
@@ -236,6 +253,11 @@ function createImageThumbnail (imgDataURI, newWidth) {
     })
     img.src = imgDataURI
   })
+}
+
+function supportsMediaRecorder () {
+  return typeof MediaRecorder === 'function' && !!MediaRecorder.prototype &&
+    typeof MediaRecorder.prototype.start === 'function'
 }
 
 function dataURItoBlob (dataURI, opts, toFile) {
@@ -433,9 +455,11 @@ module.exports = {
   readFile,
   createImageThumbnail,
   getProportionalImageHeight,
+  supportsMediaRecorder,
   isTouchDevice,
   getFileNameAndExtension,
   truncateString,
+  getFileTypeExtension,
   getFileType,
   secondsToTime,
   dataURItoBlob,
