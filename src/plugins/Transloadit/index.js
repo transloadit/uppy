@@ -42,7 +42,7 @@ module.exports = class Transloadit extends Plugin {
     }
 
     if (!params.auth || !params.auth.key) {
-      throw new Error('Transloadit: The `params.auth.key` option is required.' +
+      throw new Error('Transloadit: The `params.auth.key` option is required. ' +
         'You can find your Transloadit API key at https://transloadit.com/accounts/credentials.')
     }
 
