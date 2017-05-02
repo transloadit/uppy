@@ -216,6 +216,11 @@ module.exports = class Webcam extends Plugin {
     this.target = this.mount(target, plugin)
   }
 
+  uninstall () {
+    this.webcam.reset()
+    this.unmount()
+  }
+
   /**
    * Little shorthand to update the state with my new state
    */
