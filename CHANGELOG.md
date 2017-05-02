@@ -46,6 +46,8 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.17.0
 
+To be released: ?
+
 - [ ] Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
 - [ ] instagram: Make a barely working Instagram Plugin (#21)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
@@ -58,7 +60,7 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.16.0
 
-To be released: March 31, 2017
+To be released: ?
 
 - [x] dashboard: add service logo / name to the selected file in file list (@arturi)
 - [ ] provider: improve UI: add icons for file types (@arturi)
