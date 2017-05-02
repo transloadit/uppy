@@ -17,6 +17,18 @@ module.exports = class MetaData extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.handleFileAdded = this.handleFileAdded.bind(this)
+  }
+
+  handleFileAdded (fileID) {
+    const metaFields = this.opts.fields
+
+    metaFields.forEach((item) => {
+      const obj = {}
+      obj[item.id] = item.value
+      this.core.updateMeta(obj, fileID)
+    })
   }
 
   addInitialMeta () {
@@ -26,16 +38,14 @@ module.exports = class MetaData extends Plugin {
       metaFields: metaFields
     })
 
-    this.core.emitter.on('file-added', (fileID) => {
-      metaFields.forEach((item) => {
-        const obj = {}
-        obj[item.id] = item.value
-        this.core.updateMeta(obj, fileID)
-      })
-    })
+    this.core.emitter.on('file-added', this.handleFileAdded)
   }
 
   install () {
     this.addInitialMeta()
+  }
+
+  uninstall () {
+    this.core.emitter.off('file-added', this.handleFileAdded)
   }
 }
