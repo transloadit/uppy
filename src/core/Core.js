@@ -190,7 +190,11 @@ class Uppy {
     }
 
     if (this.opts.autoProceed) {
-      this.bus.emit('core:upload')
+      this.upload()
+        .catch((err) => {
+          console.error(err.stack || err.message)
+        })
+      // this.bus.emit('core:upload')
     }
   }
 
