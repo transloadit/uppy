@@ -46,7 +46,7 @@ module.exports = function (driver, platform, host) {
       // http://stackoverflow.com/questions/21994261/gettext-not-working-on-a-select-from-dropdown
 
       // TODO: figure out how to deal with multiple Uppy instances on the page
-      return driver.findElement({css: '.UppyDragDrop-Two-Progress .UppyProgressBar-percentage'})
+      return driver.findElement({css: '.UppyDragDrop-One-Progress .UppyProgressBar-percentage'})
         .getAttribute('textContent')
         .then(function (value) {
           var progress = parseInt(value)
