@@ -159,7 +159,7 @@ module.exports = class DashboardUI extends Plugin {
     // add class to body that sets position fixed
     document.body.classList.add('is-UppyDashboard-open')
     // focus on modal inner block
-    document.querySelector('.UppyDashboard-inner').focus()
+    this.target.querySelector('.UppyDashboard-inner').focus()
 
     this.updateDashboardElWidth()
     // to be sure, sometimes when the function runs, container size is still 0
@@ -167,7 +167,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   initEvents () {
-    // const dashboardEl = document.querySelector(`${this.opts.target} .UppyDashboard`)
+    // const dashboardEl = this.target.querySelector(`${this.opts.target} .UppyDashboard`)
 
     // Modal open button
     const showModalTrigger = findDOMElement(this.opts.trigger)
@@ -220,7 +220,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   updateDashboardElWidth () {
-    const dashboardEl = document.querySelector('.UppyDashboard-inner')
+    const dashboardEl = this.target.querySelector('.UppyDashboard-inner')
     const containerWidth = dashboardEl.offsetWidth
     console.log(containerWidth)
 
