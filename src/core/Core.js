@@ -527,6 +527,12 @@ class Uppy {
       promise = promise.then(() => fn())
     })
 
+    // Not returning the `catch`ed promise, because we still want to return a rejected
+    // promise from this method if the upload failed.
+    promise.catch((err) => {
+      this.emit('core:error', err)
+    })
+
     return promise.then(() => {
       this.emit('core:success')
     })
