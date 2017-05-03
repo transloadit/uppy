@@ -44,6 +44,10 @@ module.exports = class TransloaditSocket {
     this.socket.on('assembly_result_finished', (stepName, result) => {
       this.emit('result', stepName, result)
     })
+
+    this.socket.on('assembly_error', (err) => {
+      this.emit('error', Object.assign(new Error(err.message), err))
+    })
   }
 
   close () {
