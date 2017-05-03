@@ -52,10 +52,18 @@ module.exports = class Transloadit extends Plugin {
   createAssembly () {
     this.core.log('Transloadit: create assembly')
 
+    const files = this.core.state.files
+    const expectedFiles = Object.keys(files).reduce((count, fileID) => {
+      if (!files[fileID].progress.uploadStarted || files[fileID].isRemote) {
+        return count + 1
+      }
+      return count
+    }, 0)
+
     return this.client.createAssembly({
       params: this.opts.params,
       fields: this.opts.fields,
-      expectedFiles: Object.keys(this.core.state.files).length,
+      expectedFiles,
       signature: this.opts.signature
     }).then((assembly) => {
       this.updateState({ assembly })
