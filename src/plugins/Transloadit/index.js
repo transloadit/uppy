@@ -160,6 +160,11 @@ module.exports = class Transloadit extends Plugin {
       // which result to pick…?
 
       this.core.emit('informer:hide')
+    }).catch((err) => {
+      // Always hide the Informer
+      this.core.emit('informer:hide')
+
+      throw err
     })
   }
 
