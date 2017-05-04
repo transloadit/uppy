@@ -50,6 +50,7 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  min-height: 300px;
 }
 
 .UppyDashboard--semiTransparent .UppyDashboard-inner {
@@ -385,17 +386,17 @@
   opacity: 0.7;
   transition: all 0.3s;
   padding: 0 20px;
-
-  // .UppyDashboard--wide & {
-  //   max-width: 330px;
-  // }
 }
 
 .UppyDashboard-bgIcon .UppyIcon {
   width: 100%;
-  height: 110px;
+  height: 80px;
   fill: none;
   stroke: $color-asphalt-gray;
+
+  .UppyDashboard--wide & {
+    height: 110px;
+  }
 }
 
 .UppyDashboard.drag .UppyDashboard-bgIcon {
