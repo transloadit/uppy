@@ -27,7 +27,8 @@ module.exports = (props) => {
   return html`
     <div class="UppyWebcam-container" onload=${(el) => {
       props.onFocus()
-      document.querySelector('.UppyWebcam-recordButton').focus()
+      const recordButton = el.querySelector('.UppyWebcam-recordButton')
+      if (recordButton) recordButton.focus()
     }} onunload=${(el) => {
       props.onStop()
     }}>

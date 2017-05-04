@@ -177,7 +177,6 @@ module.exports = class Webcam {
         }
       }
       delete this.stream
-      delete this.video
     }
 
     if (this.userMedia !== true) {
@@ -246,7 +245,7 @@ module.exports = class Webcam {
    * Stops the webcam capture and video playback.
    */
   stop () {
-    let { video, videoStream } = this
+    let { videoStream } = this
 
     this.updateState({
       cameraReady: false
@@ -262,20 +261,6 @@ module.exports = class Webcam {
       videoStream.onended = null
       videoStream = null
     }
-
-    if (video) {
-      video.onerror = null
-      video.pause()
-
-      if (video.mozSrcObject) {
-        video.mozSrcObject = null
-      }
-
-      video.src = ''
-    }
-
-    this.video = document.querySelector('.UppyWebcam-video')
-    this.canvas = document.querySelector('.UppyWebcam-canvas')
   }
 
   flashNotify (type, msg) {
