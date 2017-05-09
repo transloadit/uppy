@@ -48,7 +48,6 @@ Ideas that will be planned and find their way into a release at one point
 
 To be released: ?
 
-- [ ] Add basic version of Transloadit plugin (#28) (@arturi, @kvz)
 - [ ] instagram: Make a barely working Instagram Plugin (#21)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
@@ -57,33 +56,43 @@ To be released: ?
 - [ ] dashboard: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
 - [ ] uppy: I couldn't test google drive uploads from my mobile phone
 - [ ] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that?
-
-## 0.16.0
-
-To be released: ?
-
-- [x] dashboard: add service logo / name to the selected file in file list (@arturi)
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
-- [x] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
-- [x] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
 - [ ] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi @goto-bus-stop)
-- [x] core: allow `target` and `trigger` to be DOM node, like `document.body` (@goto-bus-stop)
-- [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected, retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi, @ifedapoolarewaju)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
+- [ ] website: new demo video / gif (@arturi)
+
+## 0.16.0
+
+To be released: 2017-05-12
+Theme: Transloadit integration beta, getting things in order
+Favorite Uppy Server version: 0.5.0.
+
+- [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected, retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi, @ifedapoolarewaju)
+- [x] Add basic (beta) version of Transloadit plugin (#28) (@goto-bus-stop, @kvz, @tim-kos)
+- [x] Implement reading audio+video from Webcam (#175) (@goto-bus-stop)
+- [x] Merge tus client options with uppy. Hence, enable custom headers support (@goto-bus-stop)
+- [x] multipart/tus: Remove Promise.all() calls with unused results (#121) (@goto-bus-stop)
+- [x] Fix Dashboard modal close button position (#171) (@goto-bus-stop)
+- [x] core: Pass through errors (#185) (@goto-bus-stop)
+- [x] Accept a DOM element in `target:` option (#169) (@goto-bus-stop)
+- [x] Fix dashboard width when multiple instances exist (#184) (@goto-bus-stop)
+- [x] dashboard: add service logo / name to the selected file in file list (@arturi)
+- [x] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
+- [x] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
+- [x] core: allow `target` and `trigger` to be DOM node, like `document.body` (@goto-bus-stop)
 - [x] server: research parallelizing downloading/uploading remote files: start uploading chunks right away, while still storing the file on disk (@ifedapoolarewaju)
 - [x] server: delete file from local disk after upload is successful (@ifedapoolarewaju)
 - [x] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi #150)
 - [x] website: different meta description for pages and post (@arturi)
-- [ ] website: new demo video / gif (@arturi)
 - [ ] server: well documented README (@ifedapoolarewaju)
 
 ## 0.15.0
 
-Released: March 2, 2017.
+Released: 2017-03-02
 Theme: Speeding and cleaning.
 Favorite Uppy Server version: 0.4.0.
 
