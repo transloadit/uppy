@@ -14,9 +14,9 @@
   padding: 0 15px;
   height: 30px;
   line-height: 30px;
-  background-color: rgba($color-black, 0.8);
+  background-color: $color-black;
   color: $color-white;
-  opacity: 1;
+  opacity: 0.9;
   transform: none;
   transition: all 300ms ease-in;
   z-index: $zIndex-4;
