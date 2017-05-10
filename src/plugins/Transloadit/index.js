@@ -119,6 +119,11 @@ module.exports = class Transloadit extends Plugin {
       this.state.assembly
     )
 
+    this.socket.on('upload', (file) => {
+      // TODO associate uploaded files with the files in our `state`
+      this.core.bus.emit('transloadit:upload', file)
+    })
+
     if (this.opts.waitForEncoding) {
       this.socket.on('result', (stepName, result) => {
         this.core.bus.emit('transloadit:result', stepName, result)
