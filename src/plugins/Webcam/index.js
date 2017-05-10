@@ -199,7 +199,7 @@ module.exports = class Webcam extends Plugin {
 
   focus () {
     setTimeout(() => {
-      this.core.emitter.emit('informer', 'Smile! 📸', 'info', 2000)
+      this.core.emitter.emit('informer', 'Smile!', 'warning', 2000)
     }, 1000)
   }
 

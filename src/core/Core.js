@@ -209,6 +209,14 @@ class Uppy {
   addThumbnail (fileID) {
     const file = this.getState().files[fileID]
 
+    // const thumbnail = URL.createObjectURL(file.data)
+    // const updatedFiles = Object.assign({}, this.getState().files)
+    // const updatedFile = Object.assign({}, updatedFiles[fileID], {
+    //   preview: thumbnail
+    // })
+    // updatedFiles[fileID] = updatedFile
+    // this.setState({files: updatedFiles})
+
     Utils.readFile(file.data)
       .then((imgDataURI) => Utils.createImageThumbnail(imgDataURI, 200))
       .then((thumbnail) => {
@@ -379,12 +387,12 @@ class Uppy {
     const online = status || window.navigator.onLine
     if (!online) {
       this.emit('is-offline')
-      this.emit('informer', '⚠️ No internet connection', 'error', 0)
+      this.emit('informer', 'No internet connection', 'error', 0)
       this.wasOffline = true
     } else {
       this.emit('is-online')
       if (this.wasOffline) {
-        this.emit('informer', 'Connected 👌🏼', 'success', 3000)
+        this.emit('informer', 'Connected', 'success', 3000)
         this.wasOffline = false
       }
     }
