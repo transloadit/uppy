@@ -113,21 +113,50 @@ module.exports = class Transloadit extends Plugin {
     return this.opts.waitForEncoding || this.opts.waitForMetadata
   }
 
+  findFile ({ name, size }) {
+    const files = this.core.state.files
+    for (const id in files) {
+      if (!files.hasOwnProperty(id)) {
+        continue
+      }
+      if (files[id].name === name && files[id].size === size) {
+        return files[id]
+      }
+    }
+  }
+
+  onFileUploadComplete (uploadedFile) {
+    const file = this.findFile(uploadedFile)
+    this.updateState({
+      files: Object.assign({}, this.state.files, {
+        [uploadedFile.id]: {
+          id: file.id,
+          uploadedFile
+        }
+      })
+    })
+    this.core.bus.emit('transloadit:upload', uploadedFile)
+  }
+
+  onResult (stepName, result) {
+    const file = this.state.files[result.original_id]
+    result.localId = file.id
+    this.updateState({
+      results: this.state.results.concat(result)
+    })
+    this.core.bus.emit('transloadit:result', stepName, result)
+  }
+
   connectSocket () {
     this.socket = new StatusSocket(
       this.state.assembly.websocket_url,
       this.state.assembly
     )
 
-    this.socket.on('upload', (file) => {
-      // TODO associate uploaded files with the files in our `state`
-      this.core.bus.emit('transloadit:upload', file)
-    })
+    this.socket.on('upload', this.onFileUploadComplete.bind(this))
 
     if (this.opts.waitForEncoding) {
-      this.socket.on('result', (stepName, result) => {
-        this.core.bus.emit('transloadit:result', stepName, result)
-      })
+      this.socket.on('result', this.onResult.bind(this))
     }
 
     this.assemblyReady = new Promise((resolve, reject) => {
@@ -184,6 +213,12 @@ module.exports = class Transloadit extends Plugin {
   install () {
     this.core.addPreProcessor(this.prepareUpload)
     this.core.addPostProcessor(this.afterUpload)
+
+    this.updateState({
+      assembly: null,
+      files: {},
+      results: []
+    })
   }
 
   uninstall () {
