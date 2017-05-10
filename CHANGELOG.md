@@ -88,7 +88,7 @@ Favorite Uppy Server version: 0.5.0.
 - [x] server: delete file from local disk after upload is successful (@ifedapoolarewaju)
 - [x] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi #150)
 - [x] website: different meta description for pages and post (@arturi)
-- [ ] server: well documented README (@ifedapoolarewaju)
+- [x] server: well documented README (@ifedapoolarewaju)
 
 ## 0.15.0
 
