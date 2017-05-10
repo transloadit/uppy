@@ -113,6 +113,9 @@ module.exports = class Transloadit extends Plugin {
     return this.opts.waitForEncoding || this.opts.waitForMetadata
   }
 
+  // TODO if/when the transloadit API returns tus upload metadata in the
+  // file objects in the assembly status, change this to use a unique ID
+  // instead of checking the file name and size.
   findFile ({ name, size }) {
     const files = this.core.state.files
     for (const id in files) {
