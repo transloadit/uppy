@@ -177,6 +177,11 @@ module.exports = class Tus10 extends Plugin {
   uploadRemote (file, current, total) {
     return new Promise((resolve, reject) => {
       this.core.log(file.remote.url)
+      let endpoint = this.opts.endpoint
+      if (file.tus && file.tus.endpoint) {
+        endpoint = file.tus.endpoint
+      }
+
       fetch(file.remote.url, {
         method: 'post',
         credentials: 'include',
@@ -185,9 +190,10 @@ module.exports = class Tus10 extends Plugin {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(Object.assign({}, file.remote.body, {
-          endpoint: this.opts.endpoint,
+          endpoint,
           protocol: 'tus',
           size: file.data.size
+          // TODO add `file.meta` as tus metadata here
         }))
       })
       .then((res) => {
