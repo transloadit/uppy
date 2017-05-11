@@ -123,7 +123,7 @@ module.exports = class DragDrop extends Plugin {
     // }
 
     // onload=${(ev) => {
-    //   const firstInput = document.querySelector(`${this.target} .UppyDragDrop-focus`)
+    //   const firstInput = this.target.querySelector('.UppyDragDrop-focus')
     //   firstInput.focus()
     // }}
 
