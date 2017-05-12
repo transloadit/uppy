@@ -227,6 +227,7 @@ class Uppy {
         updatedFiles[fileID] = updatedFile
         this.setState({files: updatedFiles})
       })
+      .catch((err) => this.log(err))
   }
 
   calculateProgress (data) {
