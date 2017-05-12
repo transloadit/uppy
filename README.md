@@ -34,8 +34,6 @@ Check out [uppy.io](http://uppy.io/) for docs, API, examples and stats.
 
 ## Usage
 
-:warning: :construction: **Don’t use Uppy in production just yet, we’re working on it**
-
 ### Installing from NPM
 
 ```sh
@@ -87,6 +85,8 @@ But if you like, you can also use a pre-built bundle, for example from [unpkg CD
 ```
 
 ## API
+
+:warning: :construction: API is unstable and is subject to breaking changes
 
 Uppy exposes events that you can subscribe to in your app:
 
