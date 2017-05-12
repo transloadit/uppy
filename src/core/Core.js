@@ -465,6 +465,37 @@ class Uppy {
     })
   }
 
+  /**
+   * Uninstall and remove a plugin.
+   *
+   * @param {Plugin} instance The plugin instance to remove.
+   */
+  removePlugin (instance) {
+    const list = this.plugins[instance.type]
+
+    if (instance.uninstall) {
+      instance.uninstall()
+    }
+
+    const index = list.indexOf(instance)
+    if (index !== -1) {
+      list.splice(index, 1)
+    }
+  }
+
+  /**
+   * Uninstall all plugins and close down this Uppy instance.
+   */
+  close () {
+    this.iteratePlugins((plugin) => {
+      plugin.uninstall()
+    })
+
+    if (this.socket) {
+      this.socket.close()
+    }
+  }
+
 /**
  * Logs stuff to console, only if `debug` is set to true. Silent in production.
  *

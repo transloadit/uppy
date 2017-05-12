@@ -66,6 +66,10 @@ module.exports = class Dropbox extends Plugin {
     return
   }
 
+  uninstall () {
+    this.unmount()
+  }
+
   onAuth (authenticated) {
     this.view.updateState({authenticated})
     if (authenticated) {
