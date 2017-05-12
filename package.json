@@ -32,7 +32,7 @@
     "babel-core": "6.13.2",
     "babel-eslint": "6.1.2",
     "babel-plugin-add-module-exports": "0.2.1",
-    "babel-plugin-es6-promise": "1.1.1",
+    "babel-plugin-es6-promise": "1.0.0",
     "babel-plugin-transform-object-assign": "6.8.0",
     "babel-plugin-transform-proto-to-assign": "6.9.0",
     "babel-plugin-yo-yoify": "0.4.0",
@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "drag-drop": "2.13.2",
-    "es6-promise": "4.1.0",
+    "es6-promise": "3.2.1",
     "lodash.throttle": "4.1.1",
     "namespace-emitter": "1.0.0",
     "on-load": "3.2.0",
