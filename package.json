@@ -75,17 +75,17 @@
   },
   "dependencies": {
     "drag-drop": "2.13.2",
-    "es6-promise": "3.2.1",
+    "es6-promise": "4.1.0",
     "lodash.throttle": "4.1.1",
     "namespace-emitter": "1.0.0",
     "on-load": "3.2.0",
     "prettier-bytes": "1.0.3",
-    "socket.io-client": "^2.0.1",
+    "socket.io-client": "2.0.1",
     "tus-js-client": "1.4.3",
-    "url-parse": "^1.1.8",
-    "whatwg-fetch": "1.0.0",
+    "url-parse": "1.1.9",
+    "whatwg-fetch": "2.0.3",
     "yo-yo": "1.4.0",
-    "yo-yoify": "3.5.0"
+    "yo-yoify": "3.7.3"
   },
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
