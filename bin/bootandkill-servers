@@ -31,7 +31,7 @@ fi
 
 function killProcessListeningOnPort () {
   local port="${1}"
-  lsof -n -i4TCP:${port} | awk '/LISTEN/ {print $2}' |xargs --no-run-if-empty kill -9
+  lsof -n -i4TCP:${port} | awk '/LISTEN/ {print $2}' |xargs --no-run-if-empty kill -9 || true
 }
 
 function cleanup_servers () {
