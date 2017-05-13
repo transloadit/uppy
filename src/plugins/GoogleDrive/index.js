@@ -64,6 +64,10 @@ module.exports = class Google extends Plugin {
     return
   }
 
+  uninstall () {
+    this.unmount()
+  }
+
   onAuth (authenticated) {
     this.view.updateState({authenticated})
     if (authenticated) {

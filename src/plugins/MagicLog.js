@@ -19,16 +19,24 @@ module.exports = class MagicLog extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.handleStateUpdate = this.handleStateUpdate.bind(this)
+  }
+
+  handleStateUpdate (prev, state, patch) {
+    console.group('State')
+    console.log('Prev', prev)
+    console.log('Next', state)
+    console.log('Patch', patch)
+    console.groupEnd()
   }
 
   install () {
     const uppy = this.core.emitter
-    uppy.on('state-update', (prev, state, patch) => {
-      console.group('State')
-      console.log('Prev', prev)
-      console.log('Next', state)
-      console.log('Patch', patch)
-      console.groupEnd()
-    })
+    uppy.on('state-update', this.handleStateUpdate)
+  }
+
+  uninstall () {
+    this.core.emitter.off('state-update', this.handleStateUpdate)
   }
 }

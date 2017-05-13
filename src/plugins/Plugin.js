@@ -25,6 +25,7 @@ module.exports = class Plugin {
     this.mount = this.mount.bind(this)
     this.focus = this.focus.bind(this)
     this.install = this.install.bind(this)
+    this.uninstall = this.uninstall.bind(this)
 
     // this.frame = null
   }
@@ -98,11 +99,21 @@ module.exports = class Plugin {
     }
   }
 
+  unmount () {
+    if (this.el && this.el.parentNode) {
+      this.el.parentNode.removeChild(this.el)
+    }
+  }
+
   focus () {
     return
   }
 
   install () {
+    return
+  }
+
+  uninstall () {
     return
   }
 }

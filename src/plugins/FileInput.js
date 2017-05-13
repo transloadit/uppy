@@ -80,4 +80,8 @@ module.exports = class FileInput extends Plugin {
     const plugin = this
     this.target = this.mount(target, plugin)
   }
+
+  uninstall () {
+    this.unmount()
+  }
 }

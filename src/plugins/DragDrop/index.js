@@ -165,9 +165,15 @@ module.exports = class DragDrop extends Plugin {
     const plugin = this
     this.target = this.mount(target, plugin)
 
-    dragDrop(this.target.querySelector('.UppyDragDrop-container'), (files) => {
+    const dndContainer = this.target.querySelector('.UppyDragDrop-container')
+    this.removeDragDropListener = dragDrop(dndContainer, (files) => {
       this.handleDrop(files)
       this.core.log(files)
     })
+  }
+
+  uninstall () {
+    this.removeDragDropListener()
+    this.unmount()
   }
 }

@@ -113,4 +113,8 @@ module.exports = class Informer extends Plugin {
     const plugin = this
     this.target = this.mount(target, plugin)
   }
+
+  uninstall () {
+    this.unmount()
+  }
 }
