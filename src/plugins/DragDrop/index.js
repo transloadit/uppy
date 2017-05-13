@@ -148,8 +148,7 @@ module.exports = class DragDrop extends Plugin {
                  value=""
                  onchange=${this.handleInputChange.bind(this)} />
           <label class="UppyDragDrop-label" onclick=${onSelect}>
-            <strong>${this.i18n('chooseFile')}</strong>
-            <span class="UppyDragDrop-dragText">${this.i18n('orDragDrop')}</span>
+            <strong>${this.i18n('chooseFile')}</strong> <span class="UppyDragDrop-dragText">${this.i18n('orDragDrop')}</span>
           </label>
           ${selectedFilesCount > 0
             ? html`<div class="UppyDragDrop-selectedCount">
