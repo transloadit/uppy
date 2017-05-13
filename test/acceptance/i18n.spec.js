@@ -24,7 +24,9 @@ module.exports = function (driver, platform, host) {
           // why trim? Microsoft Edge:
           // expected: 'Выберите файл или перенесите его сюда'
           // actual:   'Выберите файл или перенесите его сюда '
-          tools.testEqual(driver, t, value.trim() === 'Выберите файл или перенесите его сюда')
+          var expectedValue = 'Выберите файл или перенесите его сюда'
+          console.log(value, '/', expectedValue)
+          tools.testEqual(driver, t, value.trim() === expectedValue)
           driver.quit()
         })
       })
