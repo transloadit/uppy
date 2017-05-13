@@ -66,6 +66,7 @@ To be released: ?
 - [ ] website: new demo video / gif (@arturi)
 - [ ] core: add options for upload retrying/resumability as discussed in #135 (@goto-bus-stop ?)
 - [ ] webcam: look into simplifying /improving webcam plugin
+- [ ] core: add `uppy.reset()` as discussed in #179 (@arturi)
 
 ## 0.16.0
 
