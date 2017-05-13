@@ -2,9 +2,12 @@
 * General Uppy styles that apply to everything inside the .Uppy container
 */
 
-.Uppy,
-.Uppy * {
+.Uppy {
   box-sizing: border-box;
+}
+
+.Uppy *, .Uppy *:before, .Uppy *:after {
+  box-sizing: inherit;
 }
 
 .UppyIcon {
