@@ -46,7 +46,7 @@ Ideas that will be planned and find their way into a release at one point
 
 ## 0.17.0
 
-To be released: ?
+To be released: 2017-06-30
 
 - [ ] instagram: Make a barely working Instagram Plugin (#21)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
@@ -68,9 +68,15 @@ To be released: ?
 - [ ] webcam: look into simplifying /improving webcam plugin
 - [ ] core: add `uppy.reset()` as discussed in #179 (@arturi)
 
+## 0.16.1
+
+Released: 2017-05-13
+
+- [x] temporarily downgrade yo-yoify, until shama/yo-yoify#45 is resolved (@arturi / https://github.com/transloadit/uppy/commit/6292b96)
+
 ## 0.16.0
 
-To be released: 2017-05-12
+Released: 2017-05-12
 Theme: Transloadit integration, getting things in order
 Favorite Uppy Server version: 0.5.0.
 
