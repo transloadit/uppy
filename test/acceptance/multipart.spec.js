@@ -22,12 +22,17 @@ module.exports = function (driver, platform, host) {
       // driver.findElement({css: '.UppyForm-uploadBtn'}).click()
     } else {
       console.log('selecting a real file')
+      driver.executeScript('document.querySelector(".uppy-FileInput-input").style.opacity = 1')
       // Find input by css selector & pass absolute image path to it
-      driver.findElement({css: '.uppy-FileInput-input'}).then(function (el) {
-        el.sendKeys(path.join(__dirname, 'image.jpg'))
-        // el.sendKeys(path.join(__dirname, 'image2.jpg'))
-        // driver.findElement({css: '.UppyForm-uploadBtn'}).click()
-      })
+      driver.findElement({css: '.uppy-FileInput-input'})
+        .then(function (el) {
+          el.sendKeys(path.join(__dirname, 'image.jpg'))
+          // el.sendKeys(path.join(__dirname, 'image2.jpg'))
+          // driver.findElement({css: '.UppyForm-uploadBtn'}).click()
+        })
+        .catch(function (err) {
+          throw err
+        })
     }
 
     function isUploaded () {
@@ -39,6 +44,9 @@ module.exports = function (driver, platform, host) {
           var progress = parseInt(value)
           var isFileUploaded = progress === 100
           return isFileUploaded
+        })
+        .catch(function (err) {
+          console.log(err)
         })
     }
 
