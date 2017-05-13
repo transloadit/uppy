@@ -64,31 +64,39 @@ To be released: ?
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi @goto-bus-stop)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
 - [ ] website: new demo video / gif (@arturi)
+- [ ] core: add options for upload retrying/resumability as discussed in #135 (@goto-bus-stop ?)
+- [ ] webcam: look into simplifying /improving webcam plugin
 
 ## 0.16.0
 
 To be released: 2017-05-12
-Theme: Transloadit integration beta, getting things in order
+Theme: Transloadit integration, getting things in order
 Favorite Uppy Server version: 0.5.0.
 
-- [ ] uploaders: make sure uploads retry/resume if started when offline or disconnected, retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi, @ifedapoolarewaju)
-- [x] transloadit: add basic (beta) version of Transloadit plugin (#28) (@goto-bus-stop, @kvz, @tim-kos)
-- [x] webcam: implement reading audio+video from Webcam (#175) (@goto-bus-stop)
+- [x] uploaders: make sure uploads retry/resume if started when offline or disconnected, retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi, @ifedapoolarewaju)
+- [x] transloadit: add basic (beta) version of Transloadit plugin (@goto-bus-stop, @kvz, @tim-kos / #28)
+- [x] transloadit: emit an upload event w/ tl data when a file upload is complete (#191 @goto-bus-stop)
+- [x] webcam: implement reading audio+video from Webcam (@goto-bus-stop / #175)
+- [x] webcam: Make the webcam video fill the available space as much as possible (@goto-bus-stop / #190)
 - [x] tus: Merge tus-js-client options with uppy-tus. Hence, enable custom headers support (@goto-bus-stop)
-- [x] multipart/tus: Remove Promise.all() calls with unused results (#121) (@goto-bus-stop)
-- [x] dashboard: fix Dashboard modal close button position (#171) (@goto-bus-stop)
-- [x] core: pass through errors (#185) (@goto-bus-stop)
-- [x] core: accept a DOM element in `target:` option (#169) (@goto-bus-stop)
-- [x] dashboard: Fix dashboard width when multiple instances exist (#184) (@goto-bus-stop)
+- [x] multipart/tus: Remove Promise.all() calls with unused results (@goto-bus-stop / #121)
+- [x] dashboard: fix Dashboard modal close button position (@goto-bus-stop / #171)
+- [x] core: pass through errors (@goto-bus-stop / #185)
+- [x] core: accept a DOM element in `target:` option (@goto-bus-stop / #169)
+- [x] core: Remove the last few potentially buggy uses of `document.querySelector` (@goto-bus-stop)
+- [x] dashboard: Fix dashboard width when multiple instances exist (@goto-bus-stop / #184)
 - [x] dashboard: add service logo / name to the selected file in file list (@arturi)
 - [x] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
 - [x] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
-- [x] core: allow `target` and `trigger` to be DOM node, like `document.body` (@goto-bus-stop)
+- [x] core: allow `target` and `trigger` to be DOM node, like `document.body` (@goto-bus-stop / 169)
 - [x] server: research parallelizing downloading/uploading remote files: start uploading chunks right away, while still storing the file on disk (@ifedapoolarewaju)
 - [x] server: delete file from local disk after upload is successful (@ifedapoolarewaju)
-- [x] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi #150)
+- [x] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi / #150)
 - [x] website: different meta description for pages and post (@arturi)
 - [x] server: well documented README (@ifedapoolarewaju)
+- [x] react: [WIP] High-level React Components (@goto-bus-stop / #170)
+- [x] core: add `uppy.close()` for tearing down an Uppy instance (@goto-bus-stop / #182)
+- [x] core: replace `babel-preset-es2015-loose` by standard es2015 preset with `loose` option (@goto-bus-stop / #174)
 
 ## 0.15.0
 
