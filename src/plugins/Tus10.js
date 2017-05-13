@@ -36,7 +36,8 @@ module.exports = class Tus10 extends Plugin {
     // set default options
     const defaultOptions = {
       resume: true,
-      allowPause: true
+      allowPause: true,
+      autoRetry: true
     }
 
     // merge default options with the ones set by user
@@ -166,6 +167,17 @@ module.exports = class Tus10 extends Plugin {
       })
 
       this.onResumeAll(file.id, () => {
+        upload.start()
+      })
+
+      this.core.on('core:retry-started', () => {
+        const files = this.core.getState().files
+        if (files[file.id].progress.uploadComplete ||
+          !files[file.id].progress.uploadStarted ||
+          files[file.id].isPaused
+            ) {
+          return
+        }
         upload.start()
       })
 
@@ -341,6 +353,12 @@ module.exports = class Tus10 extends Plugin {
   actions () {
     this.core.emitter.on('core:pause-all', this.handlePauseAll)
     this.core.emitter.on('core:resume-all', this.handleResumeAll)
+
+    if (this.opts.autoRetry) {
+      this.core.emitter.on('back-online', () => {
+        this.core.emitter.emit('core:retry-started')
+      })
+    }
   }
 
   addResumableUploadsCapabilityFlag () {

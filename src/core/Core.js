@@ -393,7 +393,8 @@ class Uppy {
     } else {
       this.emit('is-online')
       if (this.wasOffline) {
-        this.emit('informer', 'Connected', 'success', 3000)
+        this.emit('back-online')
+        this.emit('informer', 'Connected!', 'success', 3000)
         this.wasOffline = false
       }
     }
