@@ -85,7 +85,7 @@
     "url-parse": "1.1.9",
     "whatwg-fetch": "2.0.3",
     "yo-yo": "1.4.0",
-    "yo-yoify": "3.7.3"
+    "yo-yoify": "3.7.2"
   },
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
