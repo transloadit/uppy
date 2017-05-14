@@ -13,7 +13,7 @@ module.exports = (props) => {
   if (props.useTheFlash) {
     video = props.getSWFHTML()
   } else {
-    video = html`<video class="UppyWebcam-video" autoplay src="${src}"></video>`
+    video = html`<video class="UppyWebcam-video" autoplay muted src="${src}"></video>`
   }
 
   const shouldShowRecordButton = props.supportsRecording && (
