@@ -3,7 +3,7 @@ const Translator = require('../../core/Translator')
 const dragDrop = require('drag-drop')
 const Dashboard = require('./Dashboard')
 const { getSpeed } = require('../../core/Utils')
-const { getETA } = require('../../core/Utils')
+const { getBytesRemaining } = require('../../core/Utils')
 const { prettyETA } = require('../../core/Utils')
 const { findDOMElement } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
@@ -288,13 +288,16 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   getTotalETA (files) {
-    let totalSeconds = 0
+    const totalSpeed = this.getTotalSpeed(files)
+    if (totalSpeed === 0) {
+      return 0
+    }
 
-    files.forEach((file) => {
-      totalSeconds = totalSeconds + getETA(file.progress)
-    })
+    const totalBytesRemaining = files.reduce((total, file) => {
+      return total + getBytesRemaining(file.progress)
+    }, 0)
 
-    return totalSeconds
+    return Math.round(totalBytesRemaining / totalSpeed * 10) / 10
   }
 
   render (state) {
