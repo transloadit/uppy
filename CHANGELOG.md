@@ -95,7 +95,6 @@ Favorite Uppy Server version: 0.5.0.
 - [x] dashboard: add service logo / name to the selected file in file list (@arturi)
 - [x] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
 - [x] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
-- [x] core: allow `target` and `trigger` to be DOM node, like `document.body` (@goto-bus-stop / 169)
 - [x] server: research parallelizing downloading/uploading remote files: start uploading chunks right away, while still storing the file on disk (@ifedapoolarewaju)
 - [x] server: delete file from local disk after upload is successful (@ifedapoolarewaju)
 - [x] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi / #150)
