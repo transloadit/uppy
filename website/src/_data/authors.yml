@@ -3,6 +3,16 @@ arturi:
   name: 'Artur Paikin'
   id: 'artur'
   tagline: 'Frontend developer and interface designer'
+ife:
+  email: 'ifedapo@transloadit.com'
+  name: 'Ifedapo Olarewaju'
+  id: 'ife'
+  tagline: 'Developer'
+renee:
+  email: ''
+  name: 'Renée Kooi'
+  id: 'renee'
+  tagline: 'Developer'
 hedgerh:
   email: 'harry@transloadit.com'
   name: 'Harry Hedger'
