@@ -209,25 +209,13 @@ class Uppy {
   addThumbnail (fileID) {
     const file = this.getState().files[fileID]
 
-    // const thumbnail = URL.createObjectURL(file.data)
-    // const updatedFiles = Object.assign({}, this.getState().files)
-    // const updatedFile = Object.assign({}, updatedFiles[fileID], {
-    //   preview: thumbnail
-    // })
-    // updatedFiles[fileID] = updatedFile
-    // this.setState({files: updatedFiles})
-
-    Utils.readFile(file.data)
-      .then((imgDataURI) => Utils.createImageThumbnail(imgDataURI, 200))
-      .then((thumbnail) => {
-        const updatedFiles = Object.assign({}, this.getState().files)
-        const updatedFile = Object.assign({}, updatedFiles[fileID], {
-          preview: thumbnail
-        })
-        updatedFiles[fileID] = updatedFile
-        this.setState({files: updatedFiles})
-      })
-      .catch((err) => this.log(err))
+    const thumbnail = URL.createObjectURL(file.data)
+    const updatedFiles = Object.assign({}, this.getState().files)
+    const updatedFile = Object.assign({}, updatedFiles[fileID], {
+      preview: thumbnail
+    })
+    updatedFiles[fileID] = updatedFile
+    this.setState({files: updatedFiles})
   }
 
   calculateProgress (data) {
