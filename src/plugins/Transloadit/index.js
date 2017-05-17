@@ -12,15 +12,27 @@ module.exports = class Transloadit extends Plugin {
     this.id = 'Transloadit'
     this.title = 'Transloadit'
 
+    const defaultLocale = {
+      strings: {
+        creatingAssembly: 'Preparing upload...',
+        creatingAssemblyFailed: 'Transloadit: Could not create assembly',
+        encoding: 'Encoding...'
+      }
+    }
+
     const defaultOptions = {
       waitForEncoding: false,
       waitForMetadata: false,
       signature: null,
       params: null,
-      fields: {}
+      fields: {},
+      locale: defaultLocale
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
     this.prepareUpload = this.prepareUpload.bind(this)
     this.afterUpload = this.afterUpload.bind(this)
@@ -102,7 +114,7 @@ module.exports = class Transloadit extends Plugin {
     }).then(() => {
       this.core.log('Transloadit: Created assembly')
     }).catch((err) => {
-      this.core.emit('informer', '⚠️ Transloadit: Could not create assembly', 'error', 0)
+      this.core.emit('informer', this.opts.locale.strings.creatingAssemblyFailed, 'error', 0)
 
       // Reject the promise.
       throw err
@@ -180,7 +192,7 @@ module.exports = class Transloadit extends Plugin {
   }
 
   prepareUpload () {
-    this.core.emit('informer', '🔄 Preparing upload...', 'info', 0)
+    this.core.emit('informer', this.opts.locale.strings.creatingAssembly, 'info', 0)
     return this.createAssembly().then(() => {
       this.core.emit('informer:hide')
     })
@@ -194,7 +206,7 @@ module.exports = class Transloadit extends Plugin {
       return
     }
 
-    this.core.emit('informer', '🔄 Encoding...', 'info', 0)
+    this.core.emit('informer', this.opts.locale.strings.encoding, 'info', 0)
     return this.assemblyReady.then(() => {
       return this.client.getAssemblyStatus(this.state.assembly.status_endpoint)
     }).then((assembly) => {
