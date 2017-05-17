@@ -135,12 +135,6 @@ function extend (...objs) {
 //   return (!f && 'not a function') || (s && s[1] || 'anonymous')
 // }
 
-function getProportionalImageHeight (img, newWidth) {
-  var aspect = img.width / img.height
-  var newHeight = Math.round(newWidth / aspect)
-  return newHeight
-}
-
 function getFileType (file) {
   return file.type ? file.type.split('/') : ['', '']
   // return mime.lookup(file.name)
@@ -169,90 +163,6 @@ function getFileNameAndExtension (fullFileName) {
   var fileExt = re.exec(fullFileName)[1]
   var fileName = fullFileName.replace('.' + fileExt, '')
   return [fileName, fileExt]
-}
-
-/**
- * Reads file as data URI from file object,
- * the one you get from input[type=file] or drag & drop.
- *
- * @param {Object} file object
- * @return {Promise} dataURL of the file
- *
- */
-function readFile (fileObj) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.addEventListener('load', function (ev) {
-      return resolve(ev.target.result)
-    })
-    reader.readAsDataURL(fileObj)
-
-    // function workerScript () {
-    //   self.addEventListener('message', (e) => {
-    //     const file = e.data.file
-    //     try {
-    //       const reader = new FileReaderSync()
-    //       postMessage({
-    //         file: reader.readAsDataURL(file)
-    //       })
-    //     } catch (err) {
-    //       console.log(err)
-    //     }
-    //   })
-    // }
-    //
-    // const worker = makeWorker(workerScript)
-    // worker.postMessage({file: fileObj})
-    // worker.addEventListener('message', (e) => {
-    //   const fileDataURL = e.data.file
-    //   console.log('FILE _ DATA _ URL')
-    //   return resolve(fileDataURL)
-    // })
-  })
-}
-
-/**
- * Resizes an image to specified width and proportional height, using canvas
- * See https://davidwalsh.name/resize-image-canvas,
- * http://babalan.com/resizing-images-with-javascript/
- * @TODO see if we need https://github.com/stomita/ios-imagefile-megapixel for iOS
- *
- * @param {String} Data URI of the original image
- * @param {String} width of the resulting image
- * @return {String} Data URI of the resized image
- */
-function createImageThumbnail (imgDataURI, newWidth) {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    img.addEventListener('load', () => {
-      const newImageWidth = newWidth
-      const newImageHeight = getProportionalImageHeight(img, newImageWidth)
-
-      // create an off-screen canvas
-      const canvas = document.createElement('canvas')
-      const ctx = canvas.getContext('2d')
-
-      // set its dimension to target size
-      canvas.width = newImageWidth
-      canvas.height = newImageHeight
-
-      // draw source image into the off-screen canvas:
-      // ctx.clearRect(0, 0, width, height)
-      ctx.drawImage(img, 0, 0, newImageWidth, newImageHeight)
-
-      // pica.resizeCanvas(img, canvas, (err) => {
-      //   if (err) console.log(err)
-      //   const thumbnail = canvas.toDataURL('image/png')
-      //   return resolve(thumbnail)
-      // })
-
-      // encode image to data-uri with base64 version of compressed image
-      // canvas.toDataURL('image/jpeg', quality);  // quality = [0.0, 1.0]
-      const thumbnail = canvas.toDataURL('image/png')
-      return resolve(thumbnail)
-    })
-    img.src = imgDataURI
-  })
 }
 
 function supportsMediaRecorder () {
@@ -452,9 +362,6 @@ module.exports = {
   // $,
   // $$,
   extend,
-  readFile,
-  createImageThumbnail,
-  getProportionalImageHeight,
   supportsMediaRecorder,
   isTouchDevice,
   getFileNameAndExtension,
