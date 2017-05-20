@@ -1,7 +1,7 @@
 const html = require('yo-yo')
 const throttle = require('lodash.throttle')
 
-function progressBarWidth (props) {
+function getProgressBarWidth (props) {
   return props.totalProgress
 }
 
@@ -16,15 +16,43 @@ const throttledProgressDetails = throttle(progressDetails, 1000, {leading: true,
 module.exports = (props) => {
   props = props || {}
 
-  const isHidden = props.totalFileCount === 0 || !props.isUploadStarted
+  const isHidden = props.progress.state === 'waiting' // props.totalFileCount === 0 || !props.isUploadStarted
 
-  return html`
-    <div class="UppyDashboard-statusBar
-                ${props.isAllComplete ? 'is-complete' : ''}"
-                aria-hidden="${isHidden}"
-                title="">
-      <progress style="display: none;" min="0" max="100" value="${props.totalProgress}"></progress>
-      <div class="UppyDashboard-statusBarProgress" style="width: ${progressBarWidth(props)}%"></div>
+  let progressValue
+  let progressBarWidth
+  let progressBarContent
+  if (props.progress.state === 'preprocessing' || props.progress.state === 'postprocessing') {
+    const { mode, value, message } = props.progress
+    if (mode === 'indeterminate') {
+      progressValue = undefined
+      progressBarWidth = 100
+    } else {
+      progressValue = value * 100
+      progressBarWidth = value * 100
+    }
+    progressBarContent = html`
+      <div class="UppyDashboard-statusBarContent">
+        ${mode === 'determinate' ? `${progressValue}%・` : ''}
+        ${message}
+      </div>
+    `
+  } else if (props.progress.state === 'completed') {
+    progressValue = 100
+    progressBarWidth = 100
+    progressBarContent = html`
+      <div class="UppyDashboard-statusBarContent">
+        <span title="Complete">
+          <svg class="UppyDashboard-statusBarAction UppyIcon" width="18" height="17" viewBox="0 0 23 17">
+            <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
+          </svg>
+          Upload complete・${props.totalProgress}%
+        </span>
+      </div>
+    `
+  } else {
+    progressValue = props.totalProgress
+    progressBarWidth = getProgressBarWidth(props)
+    progressBarContent = html`
       <div class="UppyDashboard-statusBarContent">
         ${props.isUploadStarted && !props.isAllComplete
           ? !props.isAllPaused
@@ -32,13 +60,19 @@ module.exports = (props) => {
             : html`<span title="Paused">${pauseResumeButtons(props)} Paused・${props.totalProgress}%</span>`
           : null
           }
-        ${props.isAllComplete
-          ? html`<span title="Complete"><svg class="UppyDashboard-statusBarAction UppyIcon" width="18" height="17" viewBox="0 0 23 17">
-              <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
-            </svg>Upload complete・${props.totalProgress}%</span>`
-          : null
-        }
       </div>
+    `
+  }
+
+  return html`
+    <div class="UppyDashboard-statusBar
+                ${props.progress.state === 'completed' ? 'is-complete' : ''}"
+                aria-hidden="${isHidden}"
+                title="">
+      <progress style="display: none;" min="0" max="100" value="${progressValue}"></progress>
+      <div class="UppyDashboard-statusBarProgress ${props.progress.mode ? `is-${props.progress.mode}` : ''}"
+           style="width: ${progressBarWidth}%"></div>
+      ${progressBarContent}
     </div>
   `
 }

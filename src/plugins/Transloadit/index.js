@@ -64,6 +64,11 @@ module.exports = class Transloadit extends Plugin {
   createAssembly (filesToUpload) {
     this.core.log('Transloadit: create assembly')
 
+    this.core.emit('preprocess:progress', {
+      mode: 'indefinite',
+      message: ''
+    })
+
     return this.client.createAssembly({
       params: this.opts.params,
       fields: this.opts.fields,
@@ -200,8 +205,15 @@ module.exports = class Transloadit extends Plugin {
       return map
     }
 
+    this.core.emit('preprocessor:progress', {
+      mode: 'indeterminate',
+      message: this.opts.locale.strings.creatingAssembly
+    })
     return this.createAssembly(filesToUpload).then(() => {
-      this.core.emit('informer:hide')
+      this.core.emit('preprocessor:progress', {
+        mode: 'determinate',
+        value: 1
+      })
     })
   }
 
@@ -217,7 +229,11 @@ module.exports = class Transloadit extends Plugin {
     const fileID = fileIDs[0]
     const file = this.core.state.files[fileID]
 
-    this.core.emit('informer', this.opts.locale.strings.encoding, 'info', 0)
+    this.core.emit('postprocessor:progress', {
+      mode: 'indeterminate',
+      message: this.opts.locale.strings.encoding
+    })
+
     const onAssemblyFinished = (assembly) => {
       // An assembly for a different upload just finished. We can ignore it.
       if (assembly.assembly_id !== file.transloadit.assembly) {

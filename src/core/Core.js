@@ -53,6 +53,9 @@ class Uppy {
       capabilities: {
         resumableUploads: false
       },
+      progress: {
+        state: 'waiting'
+      },
       totalProgress: 0
     }
 
@@ -352,6 +355,46 @@ class Uppy {
       this.updateMeta(data, fileID)
     })
 
+    this.on('core:preprocessing', () => {
+      this.setState({
+        progress: { state: 'preprocessing' }
+      })
+    })
+    this.on('preprocessor:progress', (progress) => {
+      if (this.state.progress.state !== 'preprocessing') {
+        return
+      }
+
+      this.setState({
+        progress: Object.assign({}, this.state.progress, progress)
+      })
+    })
+    this.on('core:uploading', () => {
+      this.setState({
+        progress: { state: 'uploading' }
+      })
+    })
+    this.on('core:postprocessing', () => {
+      this.setState({
+        progress: { state: 'postprocessing' }
+      })
+    })
+    this.on('postprocessor:progress', (progress) => {
+      if (this.state.progress.state !== 'postprocessing') {
+        return
+      }
+
+      this.setState({
+        progress: Object.assign({}, this.state.progress, progress)
+      })
+    })
+    this.on('core:success', () => {
+      console.log('core:success')
+      this.setState({
+        progress: { state: 'completed' }
+      })
+    })
+
     // show informer if offline
     if (typeof window !== 'undefined') {
       window.addEventListener('online', () => this.isOnline(true))
@@ -555,8 +598,11 @@ class Uppy {
     }
 
     ;[].concat(
+      () => this.emit('core:preprocessing'),
       this.preProcessors,
+      () => this.emit('core:uploading'),
       this.uploaders,
+      () => this.emit('core:postprocessing'),
       this.postProcessors
     ).forEach((fn) => {
       promise = promise.then(() => fn(waitingFileIDs))

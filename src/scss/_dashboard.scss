@@ -1047,6 +1047,8 @@
   }
 }
 
+
+
 .UppyDashboard-statusBar[aria-hidden=true] {
   height: 0;
 }
@@ -1065,7 +1067,19 @@
   height: 100%;
   position: absolute;
   z-index: $zIndex-2;
-  transition: all .3s ease-out;
+  transition: background-color, width .3s ease-out;
+
+  &.is-indeterminate {
+    $stripe-color: darken($color-cornflower-blue, 10%);
+    background-size: 64px 64px;
+    background-image: linear-gradient(45deg, $stripe-color 25%, transparent 25%, transparent 50%, $stripe-color 50%, $stripe-color 75%, transparent 75%, transparent);
+    animation: statusBarProgressStripes 1s linear infinite;
+  }
+}
+
+@keyframes statusBarProgressStripes {
+  from { background-position: 64px 0; }
+  to { background-position: 0 0; }
 }
 
 .UppyDashboard-statusBarContent {

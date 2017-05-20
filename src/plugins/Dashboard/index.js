@@ -389,6 +389,7 @@ module.exports = class DashboardUI extends Plugin {
 
     return Dashboard({
       state: state,
+      progress: state.progress,
       modal: state.modal,
       newFiles: newFiles,
       files: files,
