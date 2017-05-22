@@ -172,14 +172,15 @@ module.exports = class Transloadit extends Plugin {
       this.socket.on('result', this.onResult.bind(this))
     }
 
-    this.assemblyReady = new Promise((resolve, reject) => {
-      if (this.opts.waitForEncoding) {
-        this.socket.on('finished', resolve)
-      } else if (this.opts.waitForMetadata) {
-        this.socket.on('metadata', resolve)
-      }
-      this.socket.on('error', reject)
-    })
+    if (this.opts.waitForEncoding) {
+      this.socket.on('finished', () => {
+        this.core.emit('transloadit:complete', assembly)
+      })
+    } else if (this.opts.waitForMetadata) {
+      this.socket.on('metadata', () => {
+        this.core.emit('transloadit:complete', assembly)
+      })
+    }
 
     return new Promise((resolve, reject) => {
       this.socket.on('connect', resolve)
@@ -213,31 +214,41 @@ module.exports = class Transloadit extends Plugin {
       return
     }
 
+    // Pick a file that is part of this assembly...
     const fileID = fileIDs[0]
     const file = this.core.state.files[fileID]
-    const assembly = this.state.assemblies[file.assembly]
 
     this.core.emit('informer', this.opts.locale.strings.encoding, 'info', 0)
-    return this.assemblyReady.then(() => {
-      return this.client.getAssemblyStatus(assembly.status_endpoint)
-    }).then((assembly) => {
-      this.updateState({
-        assemblies: Object.assign({}, this.state.assemblies, {
-          [assembly.assembly_id]: assembly
+
+    const onAssemblyFinished = (assembly) => {
+      // An assembly for a different upload just finished. We can ignore it.
+      if (assembly.assembly_id !== file.transloadit.assembly) {
+        return
+      }
+      // Remove this handler once we find the assembly we needed.
+      this.core.emitter.off('transloadit:complete', onAssemblyFinished)
+
+      return this.client.getAssemblyStatus(assembly.status_endpoint).then((assembly) => {
+        this.updateState({
+          assemblies: Object.assign({}, this.state.assemblies, {
+            [assembly.assembly_id]: assembly
+          })
         })
+
+        // TODO set the `file.uploadURL` to a result?
+        // We will probably need an option here so the plugin user can tell us
+        // which result to pick…?
+
+        this.core.emit('informer:hide')
+      }).catch((err) => {
+        // Always hide the Informer
+        this.core.emit('informer:hide')
+
+        throw err
       })
+    }
 
-      // TODO set the `file.uploadURL` to a result?
-      // We will probably need an option here so the plugin user can tell us
-      // which result to pick…?
-
-      this.core.emit('informer:hide')
-    }).catch((err) => {
-      // Always hide the Informer
-      this.core.emit('informer:hide')
-
-      throw err
-    })
+    this.core.on('transloadit:complete', onAssemblyFinished)
   }
 
   install () {
