@@ -10,7 +10,7 @@ const throttledProgressDetails = throttle(progressDetails, 1000, {leading: true,
 module.exports = (props) => {
   props = props || {}
 
-  const isHidden = props.progress.state === 'waiting' // props.totalFileCount === 0 || !props.isUploadStarted
+  const isHidden = props.progress.state === 'waiting'
 
   let progressBarContent
   let progressValue
@@ -37,7 +37,7 @@ module.exports = (props) => {
         </span>
       </div>
     `
-  } else {
+  } else if (props.progress.state === 'uploading') {
     progressValue = props.totalProgress
     progressBarContent = html`
       <div class="UppyDashboard-statusBarContent">
