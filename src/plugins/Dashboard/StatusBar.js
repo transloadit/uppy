@@ -25,7 +25,7 @@ module.exports = (props) => {
         ${message}
       </div>
     `
-  } else if (props.progress.state === 'completed') {
+  } else if (props.progress.state === 'complete') {
     progressValue = 100
     progressBarContent = html`
       <div class="UppyDashboard-statusBarContent">
@@ -54,8 +54,7 @@ module.exports = (props) => {
   const width = typeof progressValue === 'number' ? progressValue : 100
 
   return html`
-    <div class="UppyDashboard-statusBar
-                ${props.progress.state === 'completed' ? 'is-complete' : ''}"
+    <div class="UppyDashboard-statusBar is-${props.progress.state}"
                 aria-hidden="${isHidden}"
                 title="">
       <progress style="display: none;" min="0" max="100" value=${progressValue}></progress>

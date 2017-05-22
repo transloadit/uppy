@@ -391,7 +391,7 @@ class Uppy {
     this.on('core:success', () => {
       console.log('core:success')
       this.setState({
-        progress: { state: 'completed' }
+        progress: { state: 'complete' }
       })
     })
 
