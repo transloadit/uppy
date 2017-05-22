@@ -65,7 +65,7 @@ module.exports = class Transloadit extends Plugin {
     this.core.log('Transloadit: create assembly')
 
     this.core.emit('preprocess:progress', {
-      mode: 'indefinite',
+      mode: 'indeterminate',
       message: ''
     })
 
