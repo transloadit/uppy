@@ -15,40 +15,16 @@ module.exports = (props) => {
   let progressBarContent
   let progressValue
   if (props.progress.state === 'preprocessing' || props.progress.state === 'postprocessing') {
-    const { mode, value, message } = props.progress
-    if (mode === 'determinate') {
-      progressValue = value * 100
+    if (props.progress.mode === 'determinate') {
+      progressValue = props.progress.value * 100
     }
-    progressBarContent = html`
-      <div class="UppyDashboard-statusBarContent">
-        ${mode === 'determinate' ? `${progressValue}%・` : ''}
-        ${message}
-      </div>
-    `
+    progressBarContent = ProgressBarProcessing(props.progress)
   } else if (props.progress.state === 'complete') {
     progressValue = 100
-    progressBarContent = html`
-      <div class="UppyDashboard-statusBarContent">
-        <span title="Complete">
-          <svg class="UppyDashboard-statusBarAction UppyIcon" width="18" height="17" viewBox="0 0 23 17">
-            <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
-          </svg>
-          Upload complete・${props.totalProgress}%
-        </span>
-      </div>
-    `
+    progressBarContent = ProgressBarComplete(props)
   } else if (props.progress.state === 'uploading') {
     progressValue = props.totalProgress
-    progressBarContent = html`
-      <div class="UppyDashboard-statusBarContent">
-        ${props.isUploadStarted && !props.isAllComplete
-          ? !props.isAllPaused
-            ? html`<span title="Uploading">${pauseResumeButtons(props)} Uploading... ${throttledProgressDetails(props)}</span>`
-            : html`<span title="Paused">${pauseResumeButtons(props)} Paused・${props.totalProgress}%</span>`
-          : null
-          }
-      </div>
-    `
+    progressBarContent = ProgressBarUploading(props)
   }
 
   const width = typeof progressValue === 'number' ? progressValue : 100
@@ -61,6 +37,41 @@ module.exports = (props) => {
       <div class="UppyDashboard-statusBarProgress ${props.progress.mode ? `is-${props.progress.mode}` : ''}"
            style="width: ${width}%"></div>
       ${progressBarContent}
+    </div>
+  `
+}
+
+const ProgressBarProcessing = ({ mode, message, value }) => {
+  return html`
+    <div class="UppyDashboard-statusBarContent">
+      ${mode === 'determinate' ? `${value * 100}%・` : ''}
+      ${message}
+    </div>
+  `
+}
+
+const ProgressBarUploading = (props) => {
+  return html`
+    <div class="UppyDashboard-statusBarContent">
+      ${props.isUploadStarted && !props.isAllComplete
+        ? !props.isAllPaused
+          ? html`<span title="Uploading">${pauseResumeButtons(props)} Uploading... ${throttledProgressDetails(props)}</span>`
+          : html`<span title="Paused">${pauseResumeButtons(props)} Paused・${props.totalProgress}%</span>`
+        : null
+        }
+    </div>
+  `
+}
+
+const ProgressBarComplete = ({ totalProgress }) => {
+  return html`
+    <div class="UppyDashboard-statusBarContent">
+      <span title="Complete">
+        <svg class="UppyDashboard-statusBarAction UppyIcon" width="18" height="17" viewBox="0 0 23 17">
+          <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
+        </svg>
+        Upload complete・${totalProgress}%
+      </span>
     </div>
   `
 }
