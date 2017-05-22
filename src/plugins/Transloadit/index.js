@@ -61,24 +61,20 @@ module.exports = class Transloadit extends Plugin {
     this.client = new Client()
   }
 
-  createAssembly () {
+  createAssembly (filesToUpload) {
     this.core.log('Transloadit: create assembly')
-
-    const files = this.core.state.files
-    const expectedFiles = Object.keys(files).reduce((count, fileID) => {
-      if (!files[fileID].progress.uploadStarted || files[fileID].isRemote) {
-        return count + 1
-      }
-      return count
-    }, 0)
 
     return this.client.createAssembly({
       params: this.opts.params,
       fields: this.opts.fields,
-      expectedFiles,
+      expectedFiles: Object.keys(filesToUpload).length,
       signature: this.opts.signature
     }).then((assembly) => {
-      this.updateState({ assembly })
+      this.updateState({
+        assemblies: Object.assign(this.state.assemblies, {
+          [assembly.assembly_id]: assembly
+        })
+      })
 
       function attachAssemblyMetadata (file, assembly) {
         // Attach meta parameters for the Tus plugin. See:
@@ -95,22 +91,24 @@ module.exports = class Transloadit extends Plugin {
         const tus = Object.assign({}, file.tus, {
           endpoint: assembly.tus_url
         })
+        const transloadit = {
+          assembly: assembly.assembly_id
+        }
         return Object.assign(
           {},
           file,
-          { meta, tus }
+          { meta, tus, transloadit }
         )
       }
 
-      const filesObj = this.core.state.files
-      const files = {}
-      Object.keys(filesObj).forEach((id) => {
-        files[id] = attachAssemblyMetadata(filesObj[id], assembly)
+      const files = Object.assign({}, this.core.state.files)
+      Object.keys(filesToUpload).forEach((id) => {
+        files[id] = attachAssemblyMetadata(files[id], assembly)
       })
 
       this.core.setState({ files })
 
-      return this.connectSocket()
+      return this.connectSocket(assembly)
     }).then(() => {
       this.core.log('Transloadit: Created assembly')
     }).catch((err) => {
@@ -161,10 +159,10 @@ module.exports = class Transloadit extends Plugin {
     this.core.bus.emit('transloadit:result', stepName, result)
   }
 
-  connectSocket () {
+  connectSocket (assembly) {
     this.socket = new StatusSocket(
-      this.state.assembly.websocket_url,
-      this.state.assembly
+      assembly.websocket_url,
+      assembly
     )
 
     this.socket.on('upload', this.onFileUploadComplete.bind(this))
@@ -190,14 +188,23 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  prepareUpload () {
+  prepareUpload (fileIDs) {
     this.core.emit('informer', this.opts.locale.strings.creatingAssembly, 'info', 0)
-    return this.createAssembly().then(() => {
+    const filesToUpload = fileIDs.map(getFile, this).reduce(intoFileMap, {})
+    function getFile (fileID) {
+      return this.core.state.files[fileID]
+    }
+    function intoFileMap (map, file) {
+      map[file.id] = file
+      return map
+    }
+
+    return this.createAssembly(filesToUpload).then(() => {
       this.core.emit('informer:hide')
     })
   }
 
-  afterUpload () {
+  afterUpload (fileIDs) {
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
     if (!this.shouldWait()) {
@@ -205,11 +212,19 @@ module.exports = class Transloadit extends Plugin {
       return
     }
 
+    const fileID = fileIDs[0]
+    const file = this.core.state.files[fileID]
+    const assembly = this.state.assemblies[file.assembly]
+
     this.core.emit('informer', this.opts.locale.strings.encoding, 'info', 0)
     return this.assemblyReady.then(() => {
-      return this.client.getAssemblyStatus(this.state.assembly.assembly_ssl_url)
+      return this.client.getAssemblyStatus(assembly.assembly_ssl_url)
     }).then((assembly) => {
-      this.updateState({ assembly })
+      this.updateState({
+        assemblies: Object.assign({}, this.state.assemblies, {
+          [assembly.assembly_id]: assembly
+        })
+      })
 
       // TODO set the `file.uploadURL` to a result?
       // We will probably need an option here so the plugin user can tell us
@@ -229,7 +244,7 @@ module.exports = class Transloadit extends Plugin {
     this.core.addPostProcessor(this.afterUpload)
 
     this.updateState({
-      assembly: null,
+      assemblies: {},
       files: {},
       results: []
     })

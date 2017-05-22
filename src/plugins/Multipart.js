@@ -150,16 +150,9 @@ module.exports = class Multipart extends Plugin {
       return
     }
 
-    const filesForUpload = []
-    Object.keys(files).forEach((file) => {
-      if (!files[file].progress.uploadStarted || files[file].isRemote) {
-        filesForUpload.push(files[file])
-      }
-    })
-
-    filesForUpload.forEach((file, i) => {
+    files.forEach((file, i) => {
       const current = parseInt(i, 10) + 1
-      const total = filesForUpload.length
+      const total = files.length
 
       if (file.isRemote) {
         this.uploadRemote(file, current, total)
@@ -177,9 +170,12 @@ module.exports = class Multipart extends Plugin {
     //   }
   }
 
-  handleUpload () {
+  handleUpload (fileIDs) {
     this.core.log('Multipart is uploading...')
-    const files = this.core.getState().files
+    const files = fileIDs.map(getFile, this)
+    function getFile (fileID) {
+      return this.core.state.files[fileID]
+    }
 
     this.selectForUpload(files)
 
