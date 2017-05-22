@@ -1,34 +1,23 @@
 const html = require('yo-yo')
 const throttle = require('lodash.throttle')
 
-function getProgressBarWidth (props) {
-  return props.totalProgress
-}
-
 function progressDetails (props) {
-  // console.log(Date.now())
   return html`<span>${props.totalProgress || 0}%・${props.complete} / ${props.inProgress}・${props.totalUploadedSize} / ${props.totalSize}・↑ ${props.totalSpeed}/s・${props.totalETA}</span>`
 }
 
 const throttledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
-// const throttledProgressBarWidth = throttle(progressBarWidth, 300, {leading: true, trailing: true})
 
 module.exports = (props) => {
   props = props || {}
 
   const isHidden = props.progress.state === 'waiting' // props.totalFileCount === 0 || !props.isUploadStarted
 
-  let progressValue
-  let progressBarWidth
   let progressBarContent
+  let progressValue
   if (props.progress.state === 'preprocessing' || props.progress.state === 'postprocessing') {
     const { mode, value, message } = props.progress
-    if (mode === 'indeterminate') {
-      progressValue = undefined
-      progressBarWidth = 100
-    } else {
+    if (mode === 'determinate') {
       progressValue = value * 100
-      progressBarWidth = value * 100
     }
     progressBarContent = html`
       <div class="UppyDashboard-statusBarContent">
@@ -38,7 +27,6 @@ module.exports = (props) => {
     `
   } else if (props.progress.state === 'completed') {
     progressValue = 100
-    progressBarWidth = 100
     progressBarContent = html`
       <div class="UppyDashboard-statusBarContent">
         <span title="Complete">
@@ -51,7 +39,6 @@ module.exports = (props) => {
     `
   } else {
     progressValue = props.totalProgress
-    progressBarWidth = getProgressBarWidth(props)
     progressBarContent = html`
       <div class="UppyDashboard-statusBarContent">
         ${props.isUploadStarted && !props.isAllComplete
@@ -64,14 +51,16 @@ module.exports = (props) => {
     `
   }
 
+  const width = typeof progressValue === 'number' ? progressValue : 100
+
   return html`
     <div class="UppyDashboard-statusBar
                 ${props.progress.state === 'completed' ? 'is-complete' : ''}"
                 aria-hidden="${isHidden}"
                 title="">
-      <progress style="display: none;" min="0" max="100" value="${progressValue}"></progress>
+      <progress style="display: none;" min="0" max="100" value=${progressValue}></progress>
       <div class="UppyDashboard-statusBarProgress ${props.progress.mode ? `is-${props.progress.mode}` : ''}"
-           style="width: ${progressBarWidth}%"></div>
+           style="width: ${width}%"></div>
       ${progressBarContent}
     </div>
   `
