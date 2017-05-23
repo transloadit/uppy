@@ -192,12 +192,15 @@ class Uppy {
     this.bus.emit('file-added', fileID)
     this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
 
-    if (this.opts.autoProceed) {
-      this.upload()
-        .catch((err) => {
-          console.error(err.stack || err.message)
-        })
-      // this.bus.emit('core:upload')
+    if (this.opts.autoProceed && !this.scheduledAutoProceed) {
+      this.scheduledAutoProceed = setTimeout(() => {
+        this.scheduledAutoProceed = null
+        this.upload()
+          .catch((err) => {
+            console.error(err.stack || err.message)
+          })
+        // this.bus.emit('core:upload')
+      }, 4)
     }
   }
 
