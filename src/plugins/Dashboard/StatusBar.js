@@ -7,41 +7,88 @@ function progressDetails (props) {
 
 const throttledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
 
+const STATE_WAITING = 0
+const STATE_PREPROCESSING = 1
+const STATE_UPLOADING = 2
+const STATE_POSTPROCESSING = 3
+const STATE_COMPLETE = 4
+function getUploadingState (props, files) {
+  // If ALL files have been completed, show the completed state.
+  if (props.isAllComplete) {
+    return STATE_COMPLETE
+  }
+
+  let state = STATE_WAITING
+  const fileIDs = Object.keys(files)
+  for (let i = 0; i < fileIDs.length; i++) {
+    const progress = files[fileIDs[i]].progress
+    // If ANY files are being uploaded right now, show the uploading state.
+    if (progress.uploadStarted && !progress.uploadComplete) {
+      return STATE_UPLOADING
+    }
+    // If files are being preprocessed AND postprocessed at this time, we show the
+    // preprocess state. If any files are being uploaded we show uploading.
+    if (progress.preprocess && state !== STATE_UPLOADING) {
+      state = STATE_PREPROCESSING
+    }
+    // If NO files are being preprocessed or uploaded right now, but some files are
+    // being postprocessed, show the postprocess state.
+    if (progress.postprocess && state !== STATE_UPLOADING && state !== STATE_PREPROCESSING) {
+      state = STATE_POSTPROCESSING
+    }
+  }
+  return state
+}
+
+function getUploadStateName (state) {
+  return [
+    null,
+    'preprocessing',
+    'uploading',
+    'postprocessing',
+    'complete'
+  ][state] || 'waiting'
+}
+
 module.exports = (props) => {
   props = props || {}
 
-  const isHidden = props.progress.state === 'waiting'
+  const uploadState = getUploadingState(props, props.files || {})
 
+  const isHidden = props.totalFileCount === 0 || !props.isUploadStarted
+
+  let progressValue = props.totalProgress
+  let progressMode
   let progressBarContent
-  let progressValue
-  if (props.progress.state === 'preprocessing' || props.progress.state === 'postprocessing') {
-    if (props.progress.mode === 'determinate') {
-      progressValue = props.progress.value * 100
-    }
-    progressBarContent = ProgressBarProcessing(props.progress)
-  } else if (props.progress.state === 'complete') {
-    progressValue = 100
+  if (uploadState === STATE_PREPROCESSING || uploadState === STATE_POSTPROCESSING) {
+    // TODO set progressValue and progressMode depending on the actual pre/postprocess
+    // progress state
+    progressMode = 'indeterminate'
+    progressValue = undefined
+
+    progressBarContent = ProgressBarProcessing(props)
+  } else if (uploadState === STATE_COMPLETE) {
     progressBarContent = ProgressBarComplete(props)
-  } else if (props.progress.state === 'uploading') {
-    progressValue = props.totalProgress
+  } else if (uploadState === STATE_UPLOADING) {
     progressBarContent = ProgressBarUploading(props)
   }
 
   const width = typeof progressValue === 'number' ? progressValue : 100
 
   return html`
-    <div class="UppyDashboard-statusBar is-${props.progress.state}"
+    <div class="UppyDashboard-statusBar is-${getUploadStateName(uploadState)}"
                 aria-hidden="${isHidden}"
                 title="">
       <progress style="display: none;" min="0" max="100" value=${progressValue}></progress>
-      <div class="UppyDashboard-statusBarProgress ${props.progress.mode ? `is-${props.progress.mode}` : ''}"
+      <div class="UppyDashboard-statusBarProgress ${progressMode ? `is-${progressMode}` : ''}"
            style="width: ${width}%"></div>
       ${progressBarContent}
     </div>
   `
 }
 
-const ProgressBarProcessing = ({ mode, message, value }) => {
+const ProgressBarProcessing = (props) => {
+  const { mode, message, value } = props.progress
   return html`
     <div class="UppyDashboard-statusBarContent">
       ${mode === 'determinate' ? `${value * 100}%・` : ''}

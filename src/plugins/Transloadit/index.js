@@ -64,11 +64,6 @@ module.exports = class Transloadit extends Plugin {
   createAssembly (filesToUpload) {
     this.core.log('Transloadit: create assembly')
 
-    this.core.emit('preprocess:progress', {
-      mode: 'indeterminate',
-      message: ''
-    })
-
     return this.client.createAssembly({
       params: this.opts.params,
       fields: this.opts.fields,
@@ -195,7 +190,6 @@ module.exports = class Transloadit extends Plugin {
   }
 
   prepareUpload (fileIDs) {
-    this.core.emit('informer', this.opts.locale.strings.creatingAssembly, 'info', 0)
     const filesToUpload = fileIDs.map(getFile, this).reduce(intoFileMap, {})
     function getFile (fileID) {
       return this.core.state.files[fileID]
@@ -205,16 +199,13 @@ module.exports = class Transloadit extends Plugin {
       return map
     }
 
-    this.core.emit('preprocessor:progress', {
-      mode: 'indeterminate',
-      message: this.opts.locale.strings.creatingAssembly
-    })
-    return this.createAssembly(filesToUpload).then(() => {
-      this.core.emit('preprocessor:progress', {
-        mode: 'determinate',
-        value: 1
+    fileIDs.forEach((fileID) => {
+      this.core.emit('core:preprocess-progress', fileID, {
+        mode: 'indeterminate',
+        message: this.opts.locale.strings.creatingAssembly
       })
     })
+    return this.createAssembly(filesToUpload)
   }
 
   afterUpload (fileIDs) {
@@ -229,9 +220,11 @@ module.exports = class Transloadit extends Plugin {
     const fileID = fileIDs[0]
     const file = this.core.state.files[fileID]
 
-    this.core.emit('postprocessor:progress', {
-      mode: 'indeterminate',
-      message: this.opts.locale.strings.encoding
+    fileIDs.forEach((fileID) => {
+      this.core.emit('core:postprocess-progress', fileID, {
+        mode: 'indeterminate',
+        message: this.opts.locale.strings.encoding
+      })
     })
 
     const onAssemblyFinished = (assembly) => {
@@ -252,13 +245,6 @@ module.exports = class Transloadit extends Plugin {
         // TODO set the `file.uploadURL` to a result?
         // We will probably need an option here so the plugin user can tell us
         // which result to pick…?
-
-        this.core.emit('informer:hide')
-      }).catch((err) => {
-        // Always hide the Informer
-        this.core.emit('informer:hide')
-
-        throw err
       })
     }
 

@@ -313,6 +313,11 @@ class Uppy {
       ))
       updatedFiles[fileID] = updatedFile
 
+      // Preprocessing should be complete by now.
+      if (updatedFile.progress.preprocess) {
+        delete updatedFile.progress.preprocess
+      }
+
       this.setState({files: updatedFiles})
     })
 
@@ -358,43 +363,28 @@ class Uppy {
       this.updateMeta(data, fileID)
     })
 
-    this.on('core:preprocessing', () => {
-      this.setState({
-        progress: { state: 'preprocessing' }
+    this.on('core:preprocess-progress', (fileID, progress) => {
+      const files = Object.assign({}, this.getState().files)
+      files[fileID] = Object.assign({}, files[fileID], {
+        progress: Object.assign({}, files[fileID].progress, {
+          preprocess: progress
+        })
       })
-    })
-    this.on('preprocessor:progress', (progress) => {
-      if (this.state.progress.state !== 'preprocessing') {
-        return
-      }
 
       this.setState({
-        progress: Object.assign({}, this.state.progress, progress)
+        files: files
       })
     })
-    this.on('core:uploading', () => {
-      this.setState({
-        progress: { state: 'uploading' }
+    this.on('core:postprocess-progress', (fileID, progress) => {
+      const files = Object.assign({}, this.getState().files)
+      files[fileID] = Object.assign({}, files[fileID], {
+        progress: Object.assign({}, files[fileID].progress, {
+          postprocess: progress
+        })
       })
-    })
-    this.on('core:postprocessing', () => {
-      this.setState({
-        progress: { state: 'postprocessing' }
-      })
-    })
-    this.on('postprocessor:progress', (progress) => {
-      if (this.state.progress.state !== 'postprocessing') {
-        return
-      }
 
       this.setState({
-        progress: Object.assign({}, this.state.progress, progress)
-      })
-    })
-    this.on('core:success', () => {
-      console.log('core:success')
-      this.setState({
-        progress: { state: 'complete' }
+        files: files
       })
     })
 
