@@ -310,7 +310,7 @@ module.exports = class DashboardUI extends Plugin {
       return files[file].progress.uploadStarted
     })
     const completeFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadComplete
+      return files[file].progress.complete
     })
     const inProgressFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadComplete &&
@@ -336,7 +336,7 @@ module.exports = class DashboardUI extends Plugin {
     totalSize = prettyBytes(totalSize)
     totalUploadedSize = prettyBytes(totalUploadedSize)
 
-    const isAllComplete = state.totalProgress === 100
+    const isAllComplete = state.totalProgress === 100 && completeFiles.length === Object.keys(files).length
     const isAllPaused = inProgressFiles.length === 0 && !isAllComplete && uploadStartedFiles.length > 0
     const isUploadStarted = uploadStartedFiles.length > 0
 

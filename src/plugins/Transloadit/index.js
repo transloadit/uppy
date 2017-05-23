@@ -205,7 +205,11 @@ module.exports = class Transloadit extends Plugin {
         message: this.opts.locale.strings.creatingAssembly
       })
     })
-    return this.createAssembly(filesToUpload)
+    return this.createAssembly(filesToUpload).then(() => {
+      fileIDs.forEach((fileID) => {
+        this.core.emit('core:preprocess-complete', fileID)
+      })
+    })
   }
 
   afterUpload (fileIDs) {
@@ -245,6 +249,10 @@ module.exports = class Transloadit extends Plugin {
         // TODO set the `file.uploadURL` to a result?
         // We will probably need an option here so the plugin user can tell us
         // which result to pick…?
+
+        fileIDs.forEach((fileID) => {
+          this.core.emit('core:postprocess-complete', fileID)
+        })
       })
     }
 

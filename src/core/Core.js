@@ -371,9 +371,16 @@ class Uppy {
         })
       })
 
-      this.setState({
-        files: files
+      this.setState({ files: files })
+    })
+    this.on('core:preprocess-complete', (fileID) => {
+      const files = Object.assign({}, this.getState().files)
+      files[fileID] = Object.assign({}, files[fileID], {
+        progress: Object.assign({}, files[fileID].progress)
       })
+      delete files[fileID].progress.preprocess
+
+      this.setState({ files: files })
     })
     this.on('core:postprocess-progress', (fileID, progress) => {
       const files = Object.assign({}, this.getState().files)
@@ -383,9 +390,18 @@ class Uppy {
         })
       })
 
-      this.setState({
-        files: files
+      this.setState({ files: files })
+    })
+    this.on('core:postprocess-complete', (fileID) => {
+      const files = Object.assign({}, this.getState().files)
+      files[fileID] = Object.assign({}, files[fileID], {
+        progress: Object.assign({}, files[fileID].progress, {
+          complete: true
+        })
       })
+      delete files[fileID].progress.postprocess
+
+      this.setState({ files: files })
     })
 
     // show informer if offline
@@ -591,11 +607,8 @@ class Uppy {
     }
 
     ;[].concat(
-      () => this.emit('core:preprocessing'),
       this.preProcessors,
-      () => this.emit('core:uploading'),
       this.uploaders,
-      () => this.emit('core:postprocessing'),
       this.postProcessors
     ).forEach((fn) => {
       promise = promise.then(() => fn(waitingFileIDs))
