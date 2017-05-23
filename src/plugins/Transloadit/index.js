@@ -59,6 +59,7 @@ module.exports = class Transloadit extends Plugin {
     }
 
     this.client = new Client()
+    this.sockets = {}
   }
 
   createAssembly (filesToUpload) {
@@ -160,30 +161,31 @@ module.exports = class Transloadit extends Plugin {
   }
 
   connectSocket (assembly) {
-    this.socket = new StatusSocket(
+    const socket = new StatusSocket(
       assembly.websocket_url,
       assembly
     )
+    this.sockets[assembly.assembly_id] = socket
 
-    this.socket.on('upload', this.onFileUploadComplete.bind(this))
+    socket.on('upload', this.onFileUploadComplete.bind(this))
 
     if (this.opts.waitForEncoding) {
-      this.socket.on('result', this.onResult.bind(this))
+      socket.on('result', this.onResult.bind(this))
     }
 
     if (this.opts.waitForEncoding) {
-      this.socket.on('finished', () => {
+      socket.on('finished', () => {
         this.core.emit('transloadit:complete', assembly)
       })
     } else if (this.opts.waitForMetadata) {
-      this.socket.on('metadata', () => {
+      socket.on('metadata', () => {
         this.core.emit('transloadit:complete', assembly)
       })
     }
 
     return new Promise((resolve, reject) => {
-      this.socket.on('connect', resolve)
-      this.socket.on('error', reject)
+      socket.on('connect', resolve)
+      socket.on('error', reject)
     }).then(() => {
       this.core.log('Transloadit: Socket is ready')
     })
@@ -213,16 +215,17 @@ module.exports = class Transloadit extends Plugin {
   }
 
   afterUpload (fileIDs) {
+    // A file ID that is part of this assembly...
+    const fileID = fileIDs[0]
+
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
     if (!this.shouldWait()) {
-      this.socket.close()
+      const file = this.core.getState().files[fileID]
+      const socket = this.socket[file.assembly]
+      socket.close()
       return
     }
-
-    // Pick a file that is part of this assembly...
-    const fileID = fileIDs[0]
-    const file = this.core.state.files[fileID]
 
     fileIDs.forEach((fileID) => {
       this.core.emit('core:postprocess-progress', fileID, {
@@ -232,6 +235,7 @@ module.exports = class Transloadit extends Plugin {
     })
 
     const onAssemblyFinished = (assembly) => {
+      const file = this.core.state.files[fileID]
       // An assembly for a different upload just finished. We can ignore it.
       if (assembly.assembly_id !== file.transloadit.assembly) {
         return
