@@ -12,6 +12,7 @@ const STATE_PREPROCESSING = 1
 const STATE_UPLOADING = 2
 const STATE_POSTPROCESSING = 3
 const STATE_COMPLETE = 4
+
 function getUploadingState (props, files) {
   // If ALL files have been completed, show the completed state.
   if (props.isAllComplete) {
@@ -42,20 +43,18 @@ function getUploadingState (props, files) {
 
 function getUploadStateName (state) {
   return [
-    null,
+    'waiting',
     'preprocessing',
     'uploading',
     'postprocessing',
     'complete'
-  ][state] || 'waiting'
+  ][state]
 }
 
 module.exports = (props) => {
   props = props || {}
 
   const uploadState = getUploadingState(props, props.files || {})
-
-  const isHidden = props.totalFileCount === 0 || !props.isUploadStarted
 
   let progressValue = props.totalProgress
   let progressMode
@@ -77,7 +76,7 @@ module.exports = (props) => {
 
   return html`
     <div class="UppyDashboard-statusBar is-${getUploadStateName(uploadState)}"
-                aria-hidden="${isHidden}"
+                aria-hidden="${uploadState === STATE_WAITING}"
                 title="">
       <progress style="display: none;" min="0" max="100" value=${progressValue}></progress>
       <div class="UppyDashboard-statusBarProgress ${progressMode ? `is-${progressMode}` : ''}"
@@ -88,7 +87,25 @@ module.exports = (props) => {
 }
 
 const ProgressBarProcessing = (props) => {
-  const { mode, message, value } = props.progress
+  const progresses = Object.keys(props.files)
+    .map(getProgress)
+    .filter(Boolean)
+  function getProgress (fileID) {
+    const progress = props.files[fileID].progress
+    // Return preprocessing or postprocessing progress.
+    return progress.preprocess || progress.postprocess
+  }
+
+  // In the future we should probably do this differently. For now we'll take the
+  // mode and message from the first file…
+  const { mode, message } = progresses[0]
+  const value = progresses.filter(isDeterminate).reduce((total, progress, all) => {
+    return total + progress.value / all.length
+  }, 0)
+  function isDeterminate (progress) {
+    return progress.mode === 'determinate'
+  }
+
   return html`
     <div class="UppyDashboard-statusBarContent">
       ${mode === 'determinate' ? `${value * 100}%・` : ''}
