@@ -1,4 +1,6 @@
 const Plugin = require('./Plugin')
+const UppySocket = require('../core/UppySocket')
+const Utils = require('../core/Utils')
 
 module.exports = class Multipart extends Plugin {
   constructor (core, opts) {
@@ -103,6 +105,45 @@ module.exports = class Multipart extends Plugin {
     })
   }
 
+  uploadRemote (file, current, total) {
+    return new Promise((resolve, reject) => {
+      fetch(file.remote.url, {
+        method: 'post',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(Object.assign({}, file.remote.body, {
+          endpoint: this.opts.endpoint,
+          size: file.data.size,
+          fieldname: this.opts.fieldName
+        }))
+      })
+      .then((res) => {
+        if (res.status < 200 && res.status > 300) {
+          return reject(res.statusText)
+        }
+
+        this.core.emitter.emit('core:upload-started', file.id)
+
+        res.json().then((data) => {
+          const token = data.token
+          const host = Utils.getSocketHost(file.remote.host)
+          const socket = new UppySocket({ target: `${host}/api/${token}` })
+
+          socket.on('progress', (progressData) => Utils.emitSocketProgress(this, progressData, file))
+
+          socket.on('success', (data) => {
+            this.core.emitter.emit('core:upload-success', file.id, data)
+            socket.close()
+            return resolve()
+          })
+        })
+      })
+    })
+  }
+
   selectForUpload (files) {
     if (Object.keys(files).length === 0) {
       this.core.log('no files to upload!')
@@ -119,7 +160,7 @@ module.exports = class Multipart extends Plugin {
     filesForUpload.forEach((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = filesForUpload.length
-      this.upload(file, current, total)
+      file.isRemote ? this.uploadRemote(file, current, total) : this.upload(file, current, total)
     })
 
     //   if (this.opts.bundle) {
