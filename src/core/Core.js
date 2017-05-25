@@ -548,12 +548,30 @@ class Uppy {
 
     this.emit('core:upload')
 
+    const waitingFileIDs = Object.keys(this.state.files)
+      .map(getFile, this)
+      .filter(isFileWaiting)
+      .map(toFileID)
+    function getFile (fileID) {
+      return this.state.files[fileID]
+    }
+    function isFileWaiting (file) {
+      // TODO: replace files[file].isRemote with some logic
+      //
+      // filter files that are now yet being uploaded / haven’t been uploaded
+      // and remote too
+      return !file.progress.uploadStarted || file.isRemote
+    }
+    function toFileID (file) {
+      return file.id
+    }
+
     ;[].concat(
       this.preProcessors,
       this.uploaders,
       this.postProcessors
     ).forEach((fn) => {
-      promise = promise.then(() => fn())
+      promise = promise.then(() => fn(waitingFileIDs))
     })
 
     // Not returning the `catch`ed promise, because we still want to return a rejected

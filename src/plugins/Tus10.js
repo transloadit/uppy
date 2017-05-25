@@ -322,28 +322,14 @@ module.exports = class Tus10 extends Plugin {
     })
   }
 
-  selectForUpload (files) {
-    // TODO: replace files[file].isRemote with some logic
-    //
-    // filter files that are now yet being uploaded / haven’t been uploaded
-    // and remote too
-    const filesForUpload = Object.keys(files).filter((file) => {
-      if (!files[file].progress.uploadStarted || files[file].isRemote) {
-        return true
-      }
-      return false
-    }).map((file) => {
-      return files[file]
-    })
-
-    this.uploadFiles(filesForUpload)
-  }
-
-  handleUpload () {
+  handleUpload (fileIDs) {
     this.core.log('Tus is uploading...')
-    const files = this.core.getState().files
+    const filesToUpload = fileIDs.map(getFile, this)
+    function getFile (fileID) {
+      return this.core.state.files[fileID]
+    }
 
-    this.selectForUpload(files)
+    this.uploadFiles(filesToUpload)
 
     return new Promise((resolve) => {
       this.core.bus.once('core:upload-complete', resolve)
