@@ -211,7 +211,7 @@ module.exports = class Transloadit extends Plugin {
 
     this.core.emit('informer', this.opts.locale.strings.encoding, 'info', 0)
     return this.assemblyReady.then(() => {
-      return this.client.getAssemblyStatus(this.state.assembly.status_endpoint)
+      return this.client.getAssemblyStatus(this.state.assembly.assembly_ssl_url)
     }).then((assembly) => {
       this.updateState({ assembly })
 
