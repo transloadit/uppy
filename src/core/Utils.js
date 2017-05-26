@@ -363,12 +363,12 @@ function getSocketHost (url) {
   return `${socketProtocol}://${host}`
 }
 
-function _emitSocketProgress (uppyInstance, progressData, file) {
+function _emitSocketProgress (uploader, progressData, file) {
   const {progress, bytesUploaded, bytesTotal} = progressData
   if (progress) {
-    uppyInstance.core.log(`Upload progress: ${progress}`)
-    uppyInstance.core.emitter.emit('core:upload-progress', {
-      uploader: uppyInstance,
+    uploader.core.log(`Upload progress: ${progress}`)
+    uploader.core.emitter.emit('core:upload-progress', {
+      uploader,
       id: file.id,
       bytesUploaded: bytesUploaded,
       bytesTotal: bytesTotal

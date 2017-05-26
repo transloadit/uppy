@@ -160,7 +160,12 @@ module.exports = class Multipart extends Plugin {
     filesForUpload.forEach((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = filesForUpload.length
-      file.isRemote ? this.uploadRemote(file, current, total) : this.upload(file, current, total)
+
+      if (file.isRemote) {
+        this.uploadRemote(file, current, total)
+      } else {
+        this.upload(file, current, total)
+      }
     })
 
     //   if (this.opts.bundle) {
