@@ -156,9 +156,8 @@ module.exports = class Transloadit extends Plugin {
   onResult (stepName, result) {
     const file = this.state.files[result.original_id]
     // The `file` may not exist if an import robot was used instead of a file upload.
-    if (!file) return
+    result.localId = file ? file.id : null
 
-    result.localId = file.id
     this.updateState({
       results: this.state.results.concat(result)
     })
