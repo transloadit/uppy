@@ -1,3 +1,4 @@
+const throttle = require('lodash.throttle')
 // import mime from 'mime-types'
 // import pica from 'pica'
 
@@ -353,6 +354,30 @@ function findDOMElement (element) {
   }
 }
 
+function getSocketHost (url) {
+  // get the host domain
+  var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\n]+@)?(?:www\.)?([^\n]+)/
+  var host = regex.exec(url)[1]
+  var socketProtocol = location.protocol === 'https:' ? 'wss' : 'ws'
+
+  return `${socketProtocol}://${host}`
+}
+
+function _emitSocketProgress (uploader, progressData, file) {
+  const {progress, bytesUploaded, bytesTotal} = progressData
+  if (progress) {
+    uploader.core.log(`Upload progress: ${progress}`)
+    uploader.core.emitter.emit('core:upload-progress', {
+      uploader,
+      id: file.id,
+      bytesUploaded: bytesUploaded,
+      bytesTotal: bytesTotal
+    })
+  }
+}
+
+const emitSocketProgress = throttle(_emitSocketProgress, 300, {leading: true, trailing: true})
+
 module.exports = {
   generateFileID,
   toArray,
@@ -377,5 +402,7 @@ module.exports = {
   // makeCachingFunction,
   copyToClipboard,
   prettyETA,
-  findDOMElement
+  findDOMElement,
+  getSocketHost,
+  emitSocketProgress
 }

@@ -1,7 +1,7 @@
 const Plugin = require('./Plugin')
 const tus = require('tus-js-client')
 const UppySocket = require('../core/UppySocket')
-const throttle = require('lodash.throttle')
+const Utils = require('../core/Utils')
 require('whatwg-fetch')
 
 // Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
@@ -216,16 +216,9 @@ module.exports = class Tus10 extends Plugin {
         this.core.emitter.emit('core:upload-started', file.id)
 
         res.json().then((data) => {
-          // get the host domain
-          // var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^\/\n]+)/
-          var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\n]+@)?(?:www\.)?([^\n]+)/
-          var host = regex.exec(file.remote.host)[1]
-          var socketProtocol = location.protocol === 'https:' ? 'wss' : 'ws'
-
-          var token = data.token
-          var socket = new UppySocket({
-            target: socketProtocol + `://${host}/api/${token}`
-          })
+          const token = data.token
+          const host = Utils.getSocketHost(file.remote.host)
+          const socket = new UppySocket({ target: `${host}/api/${token}` })
 
           this.onFileRemove(file.id, () => {
             socket.send('pause', {})
@@ -244,24 +237,7 @@ module.exports = class Tus10 extends Plugin {
             socket.send('resume', {})
           })
 
-          const emitProgress = (progressData) => {
-            const {progress, bytesUploaded, bytesTotal} = progressData
-
-            if (progress) {
-              this.core.log(`Upload progress: ${progress}`)
-              console.log(file.id)
-
-              this.core.emitter.emit('core:upload-progress', {
-                uploader: this,
-                id: file.id,
-                bytesUploaded: bytesUploaded,
-                bytesTotal: bytesTotal
-              })
-            }
-          }
-
-          const throttledEmitProgress = throttle(emitProgress, 300, {leading: true, trailing: true})
-          socket.on('progress', throttledEmitProgress)
+          socket.on('progress', (progressData) => Utils.emitSocketProgress(this, progressData, file))
 
           socket.on('success', (data) => {
             this.core.emitter.emit('core:upload-success', file.id, data, data.url)
