@@ -53,9 +53,6 @@ class Uppy {
       capabilities: {
         resumableUploads: false
       },
-      progress: {
-        state: 'waiting'
-      },
       totalProgress: 0
     }
 
@@ -195,11 +192,9 @@ class Uppy {
     if (this.opts.autoProceed && !this.scheduledAutoProceed) {
       this.scheduledAutoProceed = setTimeout(() => {
         this.scheduledAutoProceed = null
-        this.upload()
-          .catch((err) => {
-            console.error(err.stack || err.message)
-          })
-        // this.bus.emit('core:upload')
+        this.upload().catch((err) => {
+          console.error(err.stack || err.message)
+        })
       }, 4)
     }
   }
