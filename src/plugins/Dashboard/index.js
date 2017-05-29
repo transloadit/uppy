@@ -317,6 +317,9 @@ module.exports = class DashboardUI extends Plugin {
              files[file].progress.uploadStarted &&
              !files[file].isPaused
     })
+    const processingFiles = Object.keys(files).filter((file) => {
+      return files[file].progress.preprocess || files[file].progress.postprocess
+    })
 
     let inProgressFilesArray = []
     inProgressFiles.forEach((file) => {
@@ -336,7 +339,9 @@ module.exports = class DashboardUI extends Plugin {
     totalSize = prettyBytes(totalSize)
     totalUploadedSize = prettyBytes(totalUploadedSize)
 
-    const isAllComplete = state.totalProgress === 100 && completeFiles.length === Object.keys(files).length
+    const isAllComplete = state.totalProgress === 100 &&
+      completeFiles.length === Object.keys(files).length &&
+      processingFiles.length === 0
     const isAllPaused = inProgressFiles.length === 0 && !isAllComplete && uploadStartedFiles.length > 0
     const isUploadStarted = uploadStartedFiles.length > 0
 
