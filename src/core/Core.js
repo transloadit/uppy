@@ -389,7 +389,9 @@ class Uppy {
     })
     this.on('core:postprocess-complete', (fileID) => {
       const files = Object.assign({}, this.getState().files)
-      files[fileID] = Object.assign({}, files[fileID])
+      files[fileID] = Object.assign({}, files[fileID], {
+        progress: Object.assign({}, files[fileID].progress)
+      })
       delete files[fileID].progress.postprocess
       // TODO should we set some kind of `fullyComplete` property on the file object
       // so it's easier to see that the file is upload…fully complete…rather than
