@@ -1,5 +1,5 @@
 const yo = require('yo-yo')
-// const nanoraf = require('nanoraf')
+const nanoraf = require('nanoraf')
 const { findDOMElement } = require('../core/Utils')
 
 /**
@@ -26,8 +26,6 @@ module.exports = class Plugin {
     this.focus = this.focus.bind(this)
     this.install = this.install.bind(this)
     this.uninstall = this.uninstall.bind(this)
-
-    // this.frame = null
   }
 
   update (state) {
@@ -35,28 +33,9 @@ module.exports = class Plugin {
       return
     }
 
-    // const prev = {}
-    // if (!this.frame) {
-    //   console.log('creating frame')
-    //   this.frame = nanoraf((state, prev) => {
-    //     console.log('updating!', Date.now())
-    //     const newEl = this.render(state)
-    //     this.el = yo.update(this.el, newEl)
-    //   })
-    // }
-    // console.log('attempting an update...', Date.now())
-    // this.frame(state, prev)
-
-    // this.core.log('update number: ' + this.core.updateNum++)
-
-    const newEl = this.render(state)
-    yo.update(this.el, newEl)
-
-    // optimizes performance?
-    // requestAnimationFrame(() => {
-    //   const newEl = this.render(state)
-    //   yo.update(this.el, newEl)
-    // })
+    if (this.updateUI) {
+      this.updateUI(state)
+    }
   }
 
   /**
@@ -71,6 +50,11 @@ module.exports = class Plugin {
     const callerPluginName = plugin.id
 
     const targetElement = findDOMElement(target)
+
+    // Set up nanoraf.
+    this.updateUI = nanoraf((state) => {
+      this.el = yo.update(this.el, this.render(state))
+    })
 
     if (targetElement) {
       this.core.log(`Installing ${callerPluginName} to a DOM element`)
