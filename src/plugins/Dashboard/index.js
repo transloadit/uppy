@@ -310,7 +310,7 @@ module.exports = class DashboardUI extends Plugin {
       return files[file].progress.uploadStarted
     })
     const completeFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.complete
+      return files[file].progress.uploadComplete
     })
     const inProgressFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadComplete &&
