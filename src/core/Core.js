@@ -179,15 +179,15 @@ class Uppy {
       preview: file.preview
     }
 
+    if (fileTypeGeneral === 'image' && !isRemote) {
+      newFile.preview = Utils.getThumbnail(file)
+    }
+
     updatedFiles[fileID] = newFile
     this.setState({files: updatedFiles})
 
     this.bus.emit('file-added', fileID)
     this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
-
-    if (fileTypeGeneral === 'image' && !isRemote) {
-      this.addThumbnail(newFile.id)
-    }
 
     if (this.opts.autoProceed) {
       this.upload()
@@ -204,18 +204,6 @@ class Uppy {
     this.setState({files: updatedFiles})
     this.calculateTotalProgress()
     this.log(`Removed file: ${fileID}`)
-  }
-
-  addThumbnail (fileID) {
-    const file = this.getState().files[fileID]
-
-    const thumbnail = URL.createObjectURL(file.data)
-    const updatedFiles = Object.assign({}, this.getState().files)
-    const updatedFile = Object.assign({}, updatedFiles[fileID], {
-      preview: thumbnail
-    })
-    updatedFiles[fileID] = updatedFile
-    this.setState({files: updatedFiles})
   }
 
   calculateProgress (data) {

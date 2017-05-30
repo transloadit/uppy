@@ -166,6 +166,10 @@ function getFileNameAndExtension (fullFileName) {
   return [fileName, fileExt]
 }
 
+function getThumbnail (file) {
+  return URL.createObjectURL(file.data)
+}
+
 function supportsMediaRecorder () {
   return typeof MediaRecorder === 'function' && !!MediaRecorder.prototype &&
     typeof MediaRecorder.prototype.start === 'function'
@@ -397,6 +401,7 @@ module.exports = {
   truncateString,
   getFileTypeExtension,
   getFileType,
+  getThumbnail,
   secondsToTime,
   dataURItoBlob,
   dataURItoFile,
