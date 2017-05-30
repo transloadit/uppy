@@ -204,8 +204,8 @@ module.exports = class Tus10 extends Plugin {
         body: JSON.stringify(Object.assign({}, file.remote.body, {
           endpoint,
           protocol: 'tus',
-          size: file.data.size
-          // TODO add `file.meta` as tus metadata here
+          size: file.data.size,
+          metadata: file.meta
         }))
       })
       .then((res) => {
