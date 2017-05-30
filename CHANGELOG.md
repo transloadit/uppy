@@ -68,6 +68,15 @@ To be released: 2017-06-30
 - [ ] webcam: look into simplifying /improving webcam plugin
 - [ ] core: add `uppy.reset()` as discussed in #179 (@arturi)
 - [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
+- [ ] dashboard: Fix ETA when multiple files are being uploaded (@goto-bus-stop, #197)
+- [ ] dashboard: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
+- [ ] tus: Support metadata in remote tus uploads (@goto-bus-stop / #210)
+- [x] webcam: Mute audio in realtime playback (@goto-bus-stop / #196)
+- [x] transloadit: move user-facing strings into locale option (@goto-bus-stop / https://github.com/transloadit/uppy/commit/87a22e7ee37b6fa3754fa34868516a6700306b60)
+- [x] core: use URL.createObjectURL instead of resizing thumbnails (@arturi, @goto-bus-stop / #199)
+- [x] transloadit: Use the `tus_upload_url` to reliably link assembly results with their input files (@goto-bus-stop / #207)
+- [x] transloadit: Fix receiving assembly results that are not related to an input file (@arturi, @goto-bus-stop / #201)
+- [x] multipart: Add support for remote multipart uploads (@ifedapoolarewaju, #205)
 
 ## 0.16.1
 
