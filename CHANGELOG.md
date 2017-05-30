@@ -59,7 +59,7 @@ To be released: 2017-06-30
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
-- [ ] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju)
+- [x] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi @goto-bus-stop)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
