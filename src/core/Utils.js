@@ -288,11 +288,15 @@ function getSpeed (fileProgress) {
   return uploadSpeed
 }
 
+function getBytesRemaining (fileProgress) {
+  return fileProgress.bytesTotal - fileProgress.bytesUploaded
+}
+
 function getETA (fileProgress) {
   if (!fileProgress.bytesUploaded) return 0
 
   const uploadSpeed = getSpeed(fileProgress)
-  const bytesRemaining = fileProgress.bytesTotal - fileProgress.bytesUploaded
+  const bytesRemaining = getBytesRemaining(fileProgress)
   const secondsRemaining = Math.round(bytesRemaining / uploadSpeed * 10) / 10
 
   return secondsRemaining
@@ -397,6 +401,7 @@ module.exports = {
   dataURItoBlob,
   dataURItoFile,
   getSpeed,
+  getBytesRemaining,
   getETA,
   // makeWorker,
   // makeCachingFunction,
