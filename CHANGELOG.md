@@ -43,12 +43,12 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: consider adding nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@arturi)
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
 - [ ] dashboard: see if transitions can be fixed in Firefox — seem to be working fine, let’s check again someday (@arturi)
+- [ ] instagram: Make a barely working Instagram Plugin (#21)
 
 ## 0.17.0
 
 To be released: 2017-06-30
 
-- [ ] instagram: Make a barely working Instagram Plugin (#21)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
 - [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
@@ -67,6 +67,7 @@ To be released: 2017-06-30
 - [ ] core: add options for upload retrying/resumability as discussed in #135 (@goto-bus-stop ?)
 - [ ] webcam: look into simplifying /improving webcam plugin
 - [ ] core: add `uppy.reset()` as discussed in #179 (@arturi)
+- [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
 
 ## 0.16.1
 
