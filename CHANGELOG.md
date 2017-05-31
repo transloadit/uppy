@@ -72,6 +72,10 @@ To be released: 2017-06-30
 - [ ] dashboard: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
 - [ ] tus: Support metadata in remote tus uploads (@goto-bus-stop / #210)
 - [ ] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi)
+
+## 0.16.2 - 2017-05-31
+
+- [x] update prettier-bytes to fix the IE support issue https://github.com/Flet/prettier-bytes/issues/3 (@arturi)
 - [x] webcam: Mute audio in realtime playback (@goto-bus-stop / #196)
 - [x] transloadit: move user-facing strings into locale option (@goto-bus-stop / https://github.com/transloadit/uppy/commit/87a22e7ee37b6fa3754fa34868516a6700306b60)
 - [x] core: use URL.createObjectURL instead of resizing thumbnails (@arturi, @goto-bus-stop / #199)
@@ -79,9 +83,7 @@ To be released: 2017-06-30
 - [x] transloadit: Fix receiving assembly results that are not related to an input file (@arturi, @goto-bus-stop / #201)
 - [x] multipart: Add support for remote multipart uploads (@ifedapoolarewaju, #205)
 
-## 0.16.1
-
-Released: 2017-05-13
+## 0.16.1 - 2017-05-13
 
 - [x] temporarily downgrade yo-yoify, until shama/yo-yoify#45 is resolved (@arturi / https://github.com/transloadit/uppy/commit/6292b96)
 
