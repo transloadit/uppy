@@ -71,6 +71,7 @@ To be released: 2017-06-30
 - [ ] dashboard: Fix ETA when multiple files are being uploaded (@goto-bus-stop, #197)
 - [ ] dashboard: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
 - [ ] tus: Support metadata in remote tus uploads (@goto-bus-stop / #210)
+- [ ] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi)
 - [x] webcam: Mute audio in realtime playback (@goto-bus-stop / #196)
 - [x] transloadit: move user-facing strings into locale option (@goto-bus-stop / https://github.com/transloadit/uppy/commit/87a22e7ee37b6fa3754fa34868516a6700306b60)
 - [x] core: use URL.createObjectURL instead of resizing thumbnails (@arturi, @goto-bus-stop / #199)
