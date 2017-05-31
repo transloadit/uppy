@@ -19,5 +19,5 @@ uppyTwo
 
 var uploadBtn = document.querySelector('.UppyDragDrop-Two-Upload')
 uploadBtn.addEventListener('click', function () {
-  uppyTwo.startUpload()
+  uppyTwo.upload()
 })
