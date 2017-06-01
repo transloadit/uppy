@@ -233,8 +233,8 @@ module.exports = class DashboardUI extends Plugin {
 
   updateDashboardElWidth () {
     const dashboardEl = this.target.querySelector('.UppyDashboard-inner')
-    const containerWidth = dashboardEl.offsetWidth
-    console.log(containerWidth)
+    // const containerWidth = dashboardEl.offsetWidth
+    // console.log(containerWidth)
 
     const modal = this.core.getState().modal
     this.core.setState({
