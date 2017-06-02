@@ -54,7 +54,7 @@ To be released: 2017-06-30
 - [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] dashboard: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
-- [ ] uppy: I couldn't test google drive uploads from my mobile phone
+- [ ] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
 - [ ] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that?
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
@@ -68,7 +68,6 @@ To be released: 2017-06-30
 - [ ] webcam: look into simplifying /improving webcam plugin
 - [ ] core: add `uppy.reset()` as discussed in #179 (@arturi)
 - [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
-- [ ] dashboard: Fix ETA when multiple files are being uploaded (@goto-bus-stop, #197)
 - [ ] dashboard: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
 - [ ] tus: Support metadata in remote tus uploads (@goto-bus-stop / #210)
 - [ ] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi)
@@ -76,6 +75,7 @@ To be released: 2017-06-30
 ## 0.16.2 - 2017-05-31
 
 - [x] update prettier-bytes to fix the IE support issue https://github.com/Flet/prettier-bytes/issues/3 (@arturi)
+- [x] dashboard: Fix ETA when multiple files are being uploaded (@goto-bus-stop, #197)
 - [x] webcam: Mute audio in realtime playback (@goto-bus-stop / #196)
 - [x] transloadit: move user-facing strings into locale option (@goto-bus-stop / https://github.com/transloadit/uppy/commit/87a22e7ee37b6fa3754fa34868516a6700306b60)
 - [x] core: use URL.createObjectURL instead of resizing thumbnails (@arturi, @goto-bus-stop / #199)
