@@ -122,6 +122,7 @@
     "watch:example:browsersync": "browser-sync start --server example --port 3452 --serveStatic dist --files \"example/bundle.js, dist/uppy.min.css\"",
     "watch:example:js": "watchify -t babelify example/main.js -o example/bundle.js -vd",
     "watch:example": "npm-run-all --parallel watch:example:js watch:css watch:example:browsersync",
+    "dev": "npm-run-all --parallel watch:example:js watch:css watch:example:browsersync",
     "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate --silent && node build-examples.js",
     "web:clean": "cd website && ./node_modules/.bin/hexo clean",
     "web:deploy": "npm-run-all web:install web:disc docs web:build && ./bin/web-deploy",
