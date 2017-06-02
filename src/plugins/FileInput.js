@@ -22,7 +22,8 @@ module.exports = class FileInput extends Plugin {
       replaceTargetContent: true,
       multipleFiles: true,
       pretty: true,
-      locale: defaultLocale
+      locale: defaultLocale,
+      inputName: 'files[]'
     }
 
     // Merge default options with the ones set by user
@@ -59,7 +60,7 @@ module.exports = class FileInput extends Plugin {
     const input = html`<input class="uppy-FileInput-input"
            style="${this.opts.pretty ? hiddenInputStyle : ''}"
            type="file"
-           name="files[]"
+           name=${this.opts.inputName}
            onchange=${this.handleInputChange.bind(this)}
            multiple="${this.opts.multipleFiles ? 'true' : 'false'}"
            value="">`
