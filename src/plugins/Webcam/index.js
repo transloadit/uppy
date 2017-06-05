@@ -19,6 +19,7 @@ module.exports = class Webcam extends Plugin {
     this.id = 'Webcam'
     this.title = 'Webcam'
     this.icon = WebcamIcon
+    this.focus = this.focus.bind(this)
 
     // set default options
     const defaultOptions = {
