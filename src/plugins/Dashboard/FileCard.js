@@ -45,12 +45,13 @@ module.exports = function fileCard (props) {
     </div>
     ${props.fileCardFor
       ? html`<div class="UppyDashboardFileCard-inner">
-          <div class="UppyDashboardFileCard-preview">
+          <div class="UppyDashboardFileCard-preview" style="background-color: ${getFileTypeIcon(file.type.general, file.type.specific).color}">
             ${file.preview
               ? html`<img alt="${file.name}" src="${file.preview}">`
-              : html`<div class="UppyDashboardItem-previewIcon" style="color: ${getFileTypeIcon(file.type.general, file.type.specific).color}">
-                  ${getFileTypeIcon(file.type.general, file.type.specific).icon}
-                </div>`
+              : html`<div class="UppyDashboardItem-previewIconWrap">
+                <span class="UppyDashboardItem-previewIcon" style="color: ${getFileTypeIcon(file.type.general, file.type.specific).color}">${getFileTypeIcon(file.type.general, file.type.specific).icon}</span>
+                <svg class="UppyDashboardItem-previewIconBg" width="72" height="93" viewBox="0 0 72 93"><g><path d="M24.08 5h38.922A2.997 2.997 0 0 1 66 8.003v74.994A2.997 2.997 0 0 1 63.004 86H8.996A2.998 2.998 0 0 1 6 83.01V22.234L24.08 5z" fill="#FFF"/><path d="M24 5L6 22.248h15.007A2.995 2.995 0 0 0 24 19.244V5z" fill="#E4E4E4"/></g></svg>
+              </div>`
             }
           </div>
           <div class="UppyDashboardFileCard-info">

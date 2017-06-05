@@ -29,8 +29,15 @@ module.exports = function getIconByMime (fileTypeGeneral, fileTypeSpecific) {
     }
   }
 
+  if (fileTypeGeneral === 'image') {
+    return {
+      color: '#f2f2f2',
+      icon: ''
+    }
+  }
+
   return {
-    color: '#ccc',
+    color: '#cbcbcb',
     icon: ''
   }
 }
