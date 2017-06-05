@@ -308,11 +308,6 @@ class Uppy {
       ))
       updatedFiles[fileID] = updatedFile
 
-      // Preprocessing should be complete by now.
-      if (updatedFile.progress.preprocess) {
-        delete updatedFile.progress.preprocess
-      }
-
       this.setState({files: updatedFiles})
     })
 
