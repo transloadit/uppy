@@ -23,7 +23,7 @@ module.exports = class Plugin {
 
     this.update = this.update.bind(this)
     this.mount = this.mount.bind(this)
-    this.focus = this.focus.bind(this)
+    // this.focus = this.focus.bind(this)
     this.install = this.install.bind(this)
     this.uninstall = this.uninstall.bind(this)
   }
@@ -89,9 +89,9 @@ module.exports = class Plugin {
     }
   }
 
-  focus () {
-    return
-  }
+  // focus () {
+  //   return
+  // }
 
   install () {
     return
