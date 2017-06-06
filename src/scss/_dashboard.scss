@@ -456,11 +456,18 @@
 .UppyDashboardItem-sourceIcon {
   color: rgba($color-white, 0.95);
   position: absolute;
-  top: 8px;
+  top: 4px;
+  left: 4px;
+  width: 10px;
+  height: 10px;
+  z-index: $zIndex-3;
+
+  .UppyDashboard--wide & {
+    top: 8px;
   left: 8px;
   width: 15px;
   height: 15px;
-  z-index: $zIndex-3;
+  }
 }
 
 .UppyDashboardItem-previewInnerWrap {
