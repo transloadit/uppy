@@ -59,7 +59,7 @@ To be released: 2017-06-30
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
-- [x] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju)
+- [x] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju / #205)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi @goto-bus-stop)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
@@ -69,7 +69,7 @@ To be released: 2017-06-30
 - [ ] core: add `uppy.reset()` as discussed in #179 (@arturi)
 - [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
 - [ ] dashboard: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
-- [ ] tus: Support metadata in remote tus uploads (@goto-bus-stop / #210)
+- [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
 - [ ] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi)
 
 ## 0.16.2 - 2017-05-31
@@ -81,7 +81,6 @@ To be released: 2017-06-30
 - [x] core: use URL.createObjectURL instead of resizing thumbnails (@arturi, @goto-bus-stop / #199)
 - [x] transloadit: Use the `tus_upload_url` to reliably link assembly results with their input files (@goto-bus-stop / #207)
 - [x] transloadit: Fix receiving assembly results that are not related to an input file (@arturi, @goto-bus-stop / #201)
-- [x] multipart: Add support for remote multipart uploads (@ifedapoolarewaju, #205)
 
 ## 0.16.1 - 2017-05-13
 
