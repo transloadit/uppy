@@ -51,11 +51,8 @@ To be released: 2017-06-30
 
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
-- [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
-- [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
-- [ ] dashboard: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
 - [ ] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
-- [ ] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that?
+- [ ] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
@@ -63,14 +60,20 @@ To be released: 2017-06-30
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi @goto-bus-stop)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
+- [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] website: new demo video / gif (@arturi)
-- [ ] core: add options for upload retrying/resumability as discussed in #135 (@goto-bus-stop ?)
-- [ ] webcam: look into simplifying /improving webcam plugin
+- [ ] webcam: look into simplifying / improving webcam plugin (@arturi)
 - [ ] core: add `uppy.reset()` as discussed in #179 (@arturi)
 - [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
-- [ ] dashboard: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
+- [ ] core: add error in file progress state? (@arturi)
+- [ ] informer: display on `core:error` (@arturi)
+- [ ] statusbar: work towards extracting StatusBar to a separate plugin (@goto-bus-stop, @arturi)
+- [ ] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
+- [ ] statusbar: also show major errors, add “error” state (@goto-bus-stop)
+- [ ] statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
 - [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
-- [ ] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi)
+- [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
+- [x] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi, @nqst / #215)
 
 ## 0.16.2 - 2017-05-31
 
