@@ -464,10 +464,14 @@
 
   .UppyDashboard--wide & {
     top: 8px;
-  left: 8px;
-  width: 15px;
-  height: 15px;
+    left: 8px;
+    width: 15px;
+    height: 15px;
   }
+}
+
+.UppyDashboardItem-sourceIcon .UppyIcon {
+  filter: drop-shadow(0 0 1px rgba(0,0,0,.15));
 }
 
 .UppyDashboardItem-previewInnerWrap {
@@ -497,10 +501,6 @@
     display: none;
     z-index: $zIndex-2;
   }
-
-.UppyDashboardItem-sourceIcon .UppyIcon {
-  filter: drop-shadow(0 0 1px rgba(0,0,0,.4));
-}
 
 
 .UppyDashboardItem-preview img {
