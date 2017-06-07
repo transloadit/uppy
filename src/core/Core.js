@@ -575,8 +575,6 @@ class Uppy {
   }
 
   upload () {
-    let promise = Promise.resolve()
-
     this.emit('core:upload')
 
     const waitingFileIDs = Object.keys(this.state.files)
@@ -597,13 +595,10 @@ class Uppy {
       return file.id
     }
 
-    ;[].concat(
-      this.preProcessors,
-      this.uploaders,
-      this.postProcessors
-    ).forEach((fn) => {
-      promise = promise.then(() => fn(waitingFileIDs))
-    })
+    const promise = Utils.runPromiseSequence(
+      [...this.preProcessors, ...this.uploaders, ...this.postProcessors],
+      waitingFileIDs
+    )
 
     // Not returning the `catch`ed promise, because we still want to return a rejected
     // promise from this method if the upload failed.

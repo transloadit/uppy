@@ -123,6 +123,17 @@ function extend (...objs) {
 }
 
 /**
+ * Runs an array of promise-returning functions in sequence.
+ */
+function runPromiseSequence (functions, ...args) {
+  let promise = Promise.resolve()
+  functions.forEach((func) => {
+    promise = promise.then(() => func(...args))
+  })
+  return promise
+}
+
+/**
  * Takes function or class, returns its name.
  * Because IE doesn’t support `constructor.name`.
  * https://gist.github.com/dfkaye/6384439, http://stackoverflow.com/a/15714445
@@ -395,6 +406,7 @@ module.exports = {
   // $,
   // $$,
   extend,
+  runPromiseSequence,
   supportsMediaRecorder,
   isTouchDevice,
   getFileNameAndExtension,
