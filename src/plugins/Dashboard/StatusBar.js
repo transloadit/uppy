@@ -77,14 +77,17 @@ module.exports = (props) => {
 }
 
 const ProgressBarProcessing = (props) => {
-  const progresses = Object.keys(props.files)
-    .map(getProgress)
-    .filter(Boolean)
-  function getProgress (fileID) {
-    const progress = props.files[fileID].progress
-    // Return preprocessing or postprocessing progress.
-    return progress.preprocess || progress.postprocess
-  }
+  // Collect pre or postprocessing progress states.
+  const progresses = []
+  Object.keys(props.files).forEach((fileID) => {
+    const { progress } = props.files[fileID]
+    if (progress.preprocess) {
+      progresses.push(progress.preprocess)
+    }
+    if (progress.postprocess) {
+      progresses.push(progress.postprocess)
+    }
+  })
 
   // In the future we should probably do this differently. For now we'll take the
   // mode and message from the first file…

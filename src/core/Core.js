@@ -577,23 +577,17 @@ class Uppy {
   upload () {
     this.emit('core:upload')
 
-    const waitingFileIDs = Object.keys(this.state.files)
-      .map(getFile, this)
-      .filter(isFileWaiting)
-      .map(toFileID)
-    function getFile (fileID) {
-      return this.state.files[fileID]
-    }
-    function isFileWaiting (file) {
+    const waitingFileIDs = []
+    Object.keys(this.state.files).forEach((fileID) => {
+      const file = this.state.files[fileID]
       // TODO: replace files[file].isRemote with some logic
       //
       // filter files that are now yet being uploaded / haven’t been uploaded
       // and remote too
-      return !file.progress.uploadStarted || file.isRemote
-    }
-    function toFileID (file) {
-      return file.id
-    }
+      if (!file.progress.uploadStarted || file.isRemote) {
+        waitingFileIDs.push(file.id)
+      }
+    })
 
     const promise = Utils.runPromiseSequence(
       [...this.preProcessors, ...this.uploaders, ...this.postProcessors],
