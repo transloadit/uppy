@@ -168,6 +168,9 @@ module.exports = class Transloadit extends Plugin {
     this.sockets[assembly.assembly_id] = socket
 
     socket.on('upload', this.onFileUploadComplete.bind(this))
+    socket.on('error', (error) => {
+      this.core.emit('transloadit:assembly-error', assembly, error)
+    })
 
     if (this.opts.waitForEncoding) {
       socket.on('result', this.onResult.bind(this))
@@ -227,40 +230,56 @@ module.exports = class Transloadit extends Plugin {
       return
     }
 
-    fileIDs.forEach((fileID) => {
-      this.core.emit('core:postprocess-progress', fileID, {
-        mode: 'indeterminate',
-        message: this.opts.locale.strings.encoding
+    return new Promise((resolve, reject) => {
+      fileIDs.forEach((fileID) => {
+        this.core.emit('core:postprocess-progress', fileID, {
+          mode: 'indeterminate',
+          message: this.opts.locale.strings.encoding
+        })
       })
-    })
 
-    const onAssemblyFinished = (assembly) => {
-      const file = this.core.state.files[fileID]
-      // An assembly for a different upload just finished. We can ignore it.
-      if (assembly.assembly_id !== file.transloadit.assembly) {
-        return
-      }
-      // Remove this handler once we find the assembly we needed.
-      this.core.emitter.off('transloadit:complete', onAssemblyFinished)
+      const onAssemblyFinished = (assembly) => {
+        const file = this.core.state.files[fileID]
+        // An assembly for a different upload just finished. We can ignore it.
+        if (assembly.assembly_id !== file.transloadit.assembly) {
+          return
+        }
+        // Remove this handler once we find the assembly we needed.
+        this.core.emitter.off('transloadit:complete', onAssemblyFinished)
 
-      return this.client.getAssemblyStatus(assembly.assembly_ssl_url).then((assembly) => {
-        this.updateState({
-          assemblies: Object.assign({}, this.state.assemblies, {
-            [assembly.assembly_id]: assembly
+        this.client.getAssemblyStatus(assembly.assembly_ssl_url).then((assembly) => {
+          this.updateState({
+            assemblies: Object.assign({}, this.state.assemblies, {
+              [assembly.assembly_id]: assembly
+            })
           })
-        })
 
-        // TODO set the `file.uploadURL` to a result?
-        // We will probably need an option here so the plugin user can tell us
-        // which result to pick…?
+          // TODO set the `file.uploadURL` to a result?
+          // We will probably need an option here so the plugin user can tell us
+          // which result to pick…?
 
-        fileIDs.forEach((fileID) => {
-          this.core.emit('core:postprocess-complete', fileID)
-        })
-      })
-    }
+          fileIDs.forEach((fileID) => {
+            this.core.emit('core:postprocess-complete', fileID)
+          })
+        }).then(resolve, reject)
+      }
 
-    this.core.on('transloadit:complete', onAssemblyFinished)
+      const onAssemblyError = (assembly, error) => {
+        const file = this.core.state.files[fileID]
+        // An assembly for a different upload just errored. We can ignore it.
+        if (assembly.assembly_id !== file.transloadit.assembly) {
+          return
+        }
+        // Remove this handler once we find the assembly we needed.
+        this.core.emitter.off('transloadit:assembly-error', onAssemblyError)
+
+        // Reject the `afterUpload()` promise.
+        reject(error)
+      }
+
+      this.core.on('transloadit:complete', onAssemblyFinished)
+      this.core.on('transloadit:assembly-error', onAssemblyError)
+    })
   }
 
   install () {
