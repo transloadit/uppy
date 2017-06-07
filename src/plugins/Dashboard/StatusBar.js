@@ -7,11 +7,11 @@ function progressDetails (props) {
 
 const throttledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
 
-const STATE_WAITING = 0
-const STATE_PREPROCESSING = 1
-const STATE_UPLOADING = 2
-const STATE_POSTPROCESSING = 3
-const STATE_COMPLETE = 4
+const STATE_WAITING = 'waiting'
+const STATE_PREPROCESSING = 'preprocessing'
+const STATE_UPLOADING = 'uploading'
+const STATE_POSTPROCESSING = 'postprocessing'
+const STATE_COMPLETE = 'complete'
 
 function getUploadingState (props, files) {
   // If ALL files have been completed, show the completed state.
@@ -41,16 +41,6 @@ function getUploadingState (props, files) {
   return state
 }
 
-function getUploadStateName (state) {
-  return [
-    'waiting',
-    'preprocessing',
-    'uploading',
-    'postprocessing',
-    'complete'
-  ][state]
-}
-
 module.exports = (props) => {
   props = props || {}
 
@@ -75,7 +65,7 @@ module.exports = (props) => {
   const width = typeof progressValue === 'number' ? progressValue : 100
 
   return html`
-    <div class="UppyDashboard-statusBar is-${getUploadStateName(uploadState)}"
+    <div class="UppyDashboard-statusBar is-${uploadState}"
                 aria-hidden="${uploadState === STATE_WAITING}"
                 title="">
       <progress style="display: none;" min="0" max="100" value=${progressValue}></progress>
