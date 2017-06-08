@@ -4,5 +4,6 @@ require('./core.spec.js')
 require('./translator.spec.js')
 require('./Transloadit.spec.js')
 require('./plugins/FileInput.spec.js')
+require('./plugins/Redux.spec.js')
 // TODO: enable once getFile error is fixed
 // require('./GoogleDrive.spec.js')
