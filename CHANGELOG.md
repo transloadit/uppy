@@ -70,7 +70,7 @@ To be released: 2017-06-30
 - [ ] statusbar: work towards extracting StatusBar to a separate plugin (@goto-bus-stop, @arturi)
 - [ ] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
 - [ ] statusbar: also show major errors, add “error” state (@goto-bus-stop)
-- [ ] statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
+- [x] statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
 - [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
 - [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
 - [x] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi, @nqst / #215)
