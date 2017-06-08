@@ -1123,6 +1123,10 @@
   background-color: $color-green;
 }
 
+.UppyDashboard-statusBar.is-error .UppyDashboard-statusBarProgress {
+  background-color: $color-red;
+}
+
 .UppyDashboard-statusBar.is-complete .UppyDashboard-statusBarContent {
   text-align: center;
   padding-left: 0;

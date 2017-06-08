@@ -142,6 +142,7 @@ module.exports = function Dashboard (props) {
 
         <div class="UppyDashboard-progressindicators">
           ${StatusBar({
+            error: props.state.error,
             totalProgress: props.totalProgress,
             totalFileCount: props.totalFileCount,
             totalSize: props.totalSize,
