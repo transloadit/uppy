@@ -3,7 +3,7 @@ const FileList = require('./FileList')
 const Tabs = require('./Tabs')
 const FileCard = require('./FileCard')
 const UploadBtn = require('./UploadBtn')
-const StatusBar = require('./StatusBar')
+const StatusBar = require('../StatusBar/StatusBar')
 const { isTouchDevice, toArray } = require('../../core/Utils')
 const { closeIcon } = require('./icons')
 

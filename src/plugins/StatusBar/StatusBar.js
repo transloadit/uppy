@@ -66,17 +66,18 @@ module.exports = (props) => {
   } else if (uploadState === STATE_UPLOADING) {
     progressBarContent = ProgressBarUploading(props)
   } else if (uploadState === STATE_ERROR) {
+    progressValue = undefined
     progressBarContent = ProgressBarError(props)
   }
 
   const width = typeof progressValue === 'number' ? progressValue : 100
 
   return html`
-    <div class="UppyDashboard-statusBar is-${uploadState}"
+    <div class="UppyStatusBar is-${uploadState}"
                 aria-hidden="${uploadState === STATE_WAITING}"
                 title="">
       <progress style="display: none;" min="0" max="100" value=${progressValue}></progress>
-      <div class="UppyDashboard-statusBarProgress ${progressMode ? `is-${progressMode}` : ''}"
+      <div class="UppyStatusBar-progress ${progressMode ? `is-${progressMode}` : ''}"
            style="width: ${width}%"></div>
       ${progressBarContent}
     </div>
@@ -107,7 +108,7 @@ const ProgressBarProcessing = (props) => {
   }
 
   return html`
-    <div class="UppyDashboard-statusBarContent">
+    <div class="UppyStatusBar-content">
       ${mode === 'determinate' ? `${value * 100}%・` : ''}
       ${message}
     </div>
@@ -116,7 +117,7 @@ const ProgressBarProcessing = (props) => {
 
 const ProgressBarUploading = (props) => {
   return html`
-    <div class="UppyDashboard-statusBarContent">
+    <div class="UppyStatusBar-content">
       ${props.isUploadStarted && !props.isAllComplete
         ? !props.isAllPaused
           ? html`<span title="Uploading">${pauseResumeButtons(props)} Uploading... ${throttledProgressDetails(props)}</span>`
@@ -129,9 +130,9 @@ const ProgressBarUploading = (props) => {
 
 const ProgressBarComplete = ({ totalProgress }) => {
   return html`
-    <div class="UppyDashboard-statusBarContent">
+    <div class="UppyStatusBar-content">
       <span title="Complete">
-        <svg class="UppyDashboard-statusBarAction UppyIcon" width="18" height="17" viewBox="0 0 23 17">
+        <svg class="UppyStatusBar-action UppyIcon" width="18" height="17" viewBox="0 0 23 17">
           <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
         </svg>
         Upload complete・${totalProgress}%
@@ -142,7 +143,7 @@ const ProgressBarComplete = ({ totalProgress }) => {
 
 const ProgressBarError = ({ error }) => {
   return html`
-    <div class="UppyDashboard-statusBarContent">
+    <div class="UppyStatusBar-content">
       <span>
         ${error.message}
       </span>
@@ -157,7 +158,7 @@ const pauseResumeButtons = (props) => {
                   : 'pause upload'
                 : 'cancel upload'
 
-  return html`<button title="${title}" class="UppyDashboard-statusBarAction" type="button" onclick=${() => togglePauseResume(props)}>
+  return html`<button title="${title}" class="UppyStatusBar-action" type="button" onclick=${() => togglePauseResume(props)}>
     ${props.resumableUploads
       ? props.isAllPaused
         ? html`<svg class="UppyIcon" width="15" height="17" viewBox="0 0 11 13">
