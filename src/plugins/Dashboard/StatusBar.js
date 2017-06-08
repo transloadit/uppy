@@ -1,44 +1,134 @@
 const html = require('yo-yo')
 const throttle = require('lodash.throttle')
 
-function progressBarWidth (props) {
-  return props.totalProgress
-}
-
 function progressDetails (props) {
-  // console.log(Date.now())
   return html`<span>${props.totalProgress || 0}%・${props.complete} / ${props.inProgress}・${props.totalUploadedSize} / ${props.totalSize}・↑ ${props.totalSpeed}/s・${props.totalETA}</span>`
 }
 
 const throttledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
-// const throttledProgressBarWidth = throttle(progressBarWidth, 300, {leading: true, trailing: true})
+
+const STATE_WAITING = 'waiting'
+const STATE_PREPROCESSING = 'preprocessing'
+const STATE_UPLOADING = 'uploading'
+const STATE_POSTPROCESSING = 'postprocessing'
+const STATE_COMPLETE = 'complete'
+
+function getUploadingState (props, files) {
+  // If ALL files have been completed, show the completed state.
+  if (props.isAllComplete) {
+    return STATE_COMPLETE
+  }
+
+  let state = STATE_WAITING
+  const fileIDs = Object.keys(files)
+  for (let i = 0; i < fileIDs.length; i++) {
+    const progress = files[fileIDs[i]].progress
+    // If ANY files are being uploaded right now, show the uploading state.
+    if (progress.uploadStarted && !progress.uploadComplete) {
+      return STATE_UPLOADING
+    }
+    // If files are being preprocessed AND postprocessed at this time, we show the
+    // preprocess state. If any files are being uploaded we show uploading.
+    if (progress.preprocess && state !== STATE_UPLOADING) {
+      state = STATE_PREPROCESSING
+    }
+    // If NO files are being preprocessed or uploaded right now, but some files are
+    // being postprocessed, show the postprocess state.
+    if (progress.postprocess && state !== STATE_UPLOADING && state !== STATE_PREPROCESSING) {
+      state = STATE_POSTPROCESSING
+    }
+  }
+  return state
+}
 
 module.exports = (props) => {
   props = props || {}
 
-  const isHidden = props.totalFileCount === 0 || !props.isUploadStarted
+  const uploadState = getUploadingState(props, props.files || {})
+
+  let progressValue = props.totalProgress
+  let progressMode
+  let progressBarContent
+  if (uploadState === STATE_PREPROCESSING || uploadState === STATE_POSTPROCESSING) {
+    // TODO set progressValue and progressMode depending on the actual pre/postprocess
+    // progress state
+    progressMode = 'indeterminate'
+    progressValue = undefined
+
+    progressBarContent = ProgressBarProcessing(props)
+  } else if (uploadState === STATE_COMPLETE) {
+    progressBarContent = ProgressBarComplete(props)
+  } else if (uploadState === STATE_UPLOADING) {
+    progressBarContent = ProgressBarUploading(props)
+  }
+
+  const width = typeof progressValue === 'number' ? progressValue : 100
 
   return html`
-    <div class="UppyDashboard-statusBar
-                ${props.isAllComplete ? 'is-complete' : ''}"
-                aria-hidden="${isHidden}"
+    <div class="UppyDashboard-statusBar is-${uploadState}"
+                aria-hidden="${uploadState === STATE_WAITING}"
                 title="">
-      <progress style="display: none;" min="0" max="100" value="${props.totalProgress}"></progress>
-      <div class="UppyDashboard-statusBarProgress" style="width: ${progressBarWidth(props)}%"></div>
-      <div class="UppyDashboard-statusBarContent">
-        ${props.isUploadStarted && !props.isAllComplete
-          ? !props.isAllPaused
-            ? html`<span title="Uploading">${pauseResumeButtons(props)} Uploading... ${throttledProgressDetails(props)}</span>`
-            : html`<span title="Paused">${pauseResumeButtons(props)} Paused・${props.totalProgress}%</span>`
-          : null
-          }
-        ${props.isAllComplete
-          ? html`<span title="Complete"><svg class="UppyDashboard-statusBarAction UppyIcon" width="18" height="17" viewBox="0 0 23 17">
-              <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
-            </svg>Upload complete・${props.totalProgress}%</span>`
-          : null
+      <progress style="display: none;" min="0" max="100" value=${progressValue}></progress>
+      <div class="UppyDashboard-statusBarProgress ${progressMode ? `is-${progressMode}` : ''}"
+           style="width: ${width}%"></div>
+      ${progressBarContent}
+    </div>
+  `
+}
+
+const ProgressBarProcessing = (props) => {
+  // Collect pre or postprocessing progress states.
+  const progresses = []
+  Object.keys(props.files).forEach((fileID) => {
+    const { progress } = props.files[fileID]
+    if (progress.preprocess) {
+      progresses.push(progress.preprocess)
+    }
+    if (progress.postprocess) {
+      progresses.push(progress.postprocess)
+    }
+  })
+
+  // In the future we should probably do this differently. For now we'll take the
+  // mode and message from the first file…
+  const { mode, message } = progresses[0]
+  const value = progresses.filter(isDeterminate).reduce((total, progress, all) => {
+    return total + progress.value / all.length
+  }, 0)
+  function isDeterminate (progress) {
+    return progress.mode === 'determinate'
+  }
+
+  return html`
+    <div class="UppyDashboard-statusBarContent">
+      ${mode === 'determinate' ? `${value * 100}%・` : ''}
+      ${message}
+    </div>
+  `
+}
+
+const ProgressBarUploading = (props) => {
+  return html`
+    <div class="UppyDashboard-statusBarContent">
+      ${props.isUploadStarted && !props.isAllComplete
+        ? !props.isAllPaused
+          ? html`<span title="Uploading">${pauseResumeButtons(props)} Uploading... ${throttledProgressDetails(props)}</span>`
+          : html`<span title="Paused">${pauseResumeButtons(props)} Paused・${props.totalProgress}%</span>`
+        : null
         }
-      </div>
+    </div>
+  `
+}
+
+const ProgressBarComplete = ({ totalProgress }) => {
+  return html`
+    <div class="UppyDashboard-statusBarContent">
+      <span title="Complete">
+        <svg class="UppyDashboard-statusBarAction UppyIcon" width="18" height="17" viewBox="0 0 23 17">
+          <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
+        </svg>
+        Upload complete・${totalProgress}%
+      </span>
     </div>
   `
 }

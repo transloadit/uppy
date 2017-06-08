@@ -159,6 +159,7 @@ module.exports = function Dashboard (props) {
             totalETA: props.totalETA,
             startUpload: props.startUpload,
             newFileCount: props.newFiles.length,
+            files: props.files,
             i18n: props.i18n,
             resumableUploads: props.resumableUploads
           })}

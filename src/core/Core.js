@@ -189,12 +189,13 @@ class Uppy {
     this.bus.emit('file-added', fileID)
     this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
 
-    if (this.opts.autoProceed) {
-      this.upload()
-        .catch((err) => {
+    if (this.opts.autoProceed && !this.scheduledAutoProceed) {
+      this.scheduledAutoProceed = setTimeout(() => {
+        this.scheduledAutoProceed = null
+        this.upload().catch((err) => {
           console.error(err.stack || err.message)
         })
-      // this.bus.emit('core:upload')
+      }, 4)
     }
   }
 
@@ -350,6 +351,48 @@ class Uppy {
 
     this.on('core:update-meta', (data, fileID) => {
       this.updateMeta(data, fileID)
+    })
+
+    this.on('core:preprocess-progress', (fileID, progress) => {
+      const files = Object.assign({}, this.getState().files)
+      files[fileID] = Object.assign({}, files[fileID], {
+        progress: Object.assign({}, files[fileID].progress, {
+          preprocess: progress
+        })
+      })
+
+      this.setState({ files: files })
+    })
+    this.on('core:preprocess-complete', (fileID) => {
+      const files = Object.assign({}, this.getState().files)
+      files[fileID] = Object.assign({}, files[fileID], {
+        progress: Object.assign({}, files[fileID].progress)
+      })
+      delete files[fileID].progress.preprocess
+
+      this.setState({ files: files })
+    })
+    this.on('core:postprocess-progress', (fileID, progress) => {
+      const files = Object.assign({}, this.getState().files)
+      files[fileID] = Object.assign({}, files[fileID], {
+        progress: Object.assign({}, files[fileID].progress, {
+          postprocess: progress
+        })
+      })
+
+      this.setState({ files: files })
+    })
+    this.on('core:postprocess-complete', (fileID) => {
+      const files = Object.assign({}, this.getState().files)
+      files[fileID] = Object.assign({}, files[fileID], {
+        progress: Object.assign({}, files[fileID].progress)
+      })
+      delete files[fileID].progress.postprocess
+      // TODO should we set some kind of `fullyComplete` property on the file object
+      // so it's easier to see that the file is upload…fully complete…rather than
+      // what we have to do now (`uploadComplete && !postprocess`)
+
+      this.setState({ files: files })
     })
 
     // show informer if offline
@@ -532,17 +575,24 @@ class Uppy {
   }
 
   upload () {
-    let promise = Promise.resolve()
-
     this.emit('core:upload')
 
-    ;[].concat(
-      this.preProcessors,
-      this.uploaders,
-      this.postProcessors
-    ).forEach((fn) => {
-      promise = promise.then(() => fn())
+    const waitingFileIDs = []
+    Object.keys(this.state.files).forEach((fileID) => {
+      const file = this.state.files[fileID]
+      // TODO: replace files[file].isRemote with some logic
+      //
+      // filter files that are now yet being uploaded / haven’t been uploaded
+      // and remote too
+      if (!file.progress.uploadStarted || file.isRemote) {
+        waitingFileIDs.push(file.id)
+      }
     })
+
+    const promise = Utils.runPromiseSequence(
+      [...this.preProcessors, ...this.uploaders, ...this.postProcessors],
+      waitingFileIDs
+    )
 
     // Not returning the `catch`ed promise, because we still want to return a rejected
     // promise from this method if the upload failed.

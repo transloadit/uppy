@@ -59,26 +59,23 @@ module.exports = class Transloadit extends Plugin {
     }
 
     this.client = new Client()
+    this.sockets = {}
   }
 
-  createAssembly () {
+  createAssembly (filesToUpload) {
     this.core.log('Transloadit: create assembly')
-
-    const files = this.core.state.files
-    const expectedFiles = Object.keys(files).reduce((count, fileID) => {
-      if (!files[fileID].progress.uploadStarted || files[fileID].isRemote) {
-        return count + 1
-      }
-      return count
-    }, 0)
 
     return this.client.createAssembly({
       params: this.opts.params,
       fields: this.opts.fields,
-      expectedFiles,
+      expectedFiles: Object.keys(filesToUpload).length,
       signature: this.opts.signature
     }).then((assembly) => {
-      this.updateState({ assembly })
+      this.updateState({
+        assemblies: Object.assign(this.state.assemblies, {
+          [assembly.assembly_id]: assembly
+        })
+      })
 
       function attachAssemblyMetadata (file, assembly) {
         // Attach meta parameters for the Tus plugin. See:
@@ -95,22 +92,24 @@ module.exports = class Transloadit extends Plugin {
         const tus = Object.assign({}, file.tus, {
           endpoint: assembly.tus_url
         })
+        const transloadit = {
+          assembly: assembly.assembly_id
+        }
         return Object.assign(
           {},
           file,
-          { meta, tus }
+          { meta, tus, transloadit }
         )
       }
 
-      const filesObj = this.core.state.files
-      const files = {}
-      Object.keys(filesObj).forEach((id) => {
-        files[id] = attachAssemblyMetadata(filesObj[id], assembly)
+      const files = Object.assign({}, this.core.state.files)
+      Object.keys(filesToUpload).forEach((id) => {
+        files[id] = attachAssemblyMetadata(files[id], assembly)
       })
 
       this.core.setState({ files })
 
-      return this.connectSocket()
+      return this.connectSocket(assembly)
     }).then(() => {
       this.core.log('Transloadit: Created assembly')
     }).catch((err) => {
@@ -161,66 +160,125 @@ module.exports = class Transloadit extends Plugin {
     this.core.bus.emit('transloadit:result', stepName, result)
   }
 
-  connectSocket () {
-    this.socket = new StatusSocket(
-      this.state.assembly.websocket_url,
-      this.state.assembly
+  connectSocket (assembly) {
+    const socket = new StatusSocket(
+      assembly.websocket_url,
+      assembly
     )
+    this.sockets[assembly.assembly_id] = socket
 
-    this.socket.on('upload', this.onFileUploadComplete.bind(this))
-
-    if (this.opts.waitForEncoding) {
-      this.socket.on('result', this.onResult.bind(this))
-    }
-
-    this.assemblyReady = new Promise((resolve, reject) => {
-      if (this.opts.waitForEncoding) {
-        this.socket.on('finished', resolve)
-      } else if (this.opts.waitForMetadata) {
-        this.socket.on('metadata', resolve)
-      }
-      this.socket.on('error', reject)
+    socket.on('upload', this.onFileUploadComplete.bind(this))
+    socket.on('error', (error) => {
+      this.core.emit('transloadit:assembly-error', assembly, error)
     })
 
+    if (this.opts.waitForEncoding) {
+      socket.on('result', this.onResult.bind(this))
+    }
+
+    if (this.opts.waitForEncoding) {
+      socket.on('finished', () => {
+        this.core.emit('transloadit:complete', assembly)
+      })
+    } else if (this.opts.waitForMetadata) {
+      socket.on('metadata', () => {
+        this.core.emit('transloadit:complete', assembly)
+      })
+    }
+
     return new Promise((resolve, reject) => {
-      this.socket.on('connect', resolve)
-      this.socket.on('error', reject)
+      socket.on('connect', resolve)
+      socket.on('error', reject)
     }).then(() => {
       this.core.log('Transloadit: Socket is ready')
     })
   }
 
-  prepareUpload () {
-    this.core.emit('informer', this.opts.locale.strings.creatingAssembly, 'info', 0)
-    return this.createAssembly().then(() => {
-      this.core.emit('informer:hide')
+  prepareUpload (fileIDs) {
+    const filesToUpload = fileIDs.map(getFile, this).reduce(intoFileMap, {})
+    function getFile (fileID) {
+      return this.core.state.files[fileID]
+    }
+    function intoFileMap (map, file) {
+      map[file.id] = file
+      return map
+    }
+
+    fileIDs.forEach((fileID) => {
+      this.core.emit('core:preprocess-progress', fileID, {
+        mode: 'indeterminate',
+        message: this.opts.locale.strings.creatingAssembly
+      })
+    })
+    return this.createAssembly(filesToUpload).then(() => {
+      fileIDs.forEach((fileID) => {
+        this.core.emit('core:preprocess-complete', fileID)
+      })
     })
   }
 
-  afterUpload () {
+  afterUpload (fileIDs) {
+    // A file ID that is part of this assembly...
+    const fileID = fileIDs[0]
+
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
     if (!this.shouldWait()) {
-      this.socket.close()
+      const file = this.core.getState().files[fileID]
+      const socket = this.socket[file.assembly]
+      socket.close()
       return
     }
 
-    this.core.emit('informer', this.opts.locale.strings.encoding, 'info', 0)
-    return this.assemblyReady.then(() => {
-      return this.client.getAssemblyStatus(this.state.assembly.assembly_ssl_url)
-    }).then((assembly) => {
-      this.updateState({ assembly })
+    return new Promise((resolve, reject) => {
+      fileIDs.forEach((fileID) => {
+        this.core.emit('core:postprocess-progress', fileID, {
+          mode: 'indeterminate',
+          message: this.opts.locale.strings.encoding
+        })
+      })
 
-      // TODO set the `file.uploadURL` to a result?
-      // We will probably need an option here so the plugin user can tell us
-      // which result to pick…?
+      const onAssemblyFinished = (assembly) => {
+        const file = this.core.state.files[fileID]
+        // An assembly for a different upload just finished. We can ignore it.
+        if (assembly.assembly_id !== file.transloadit.assembly) {
+          return
+        }
+        // Remove this handler once we find the assembly we needed.
+        this.core.emitter.off('transloadit:complete', onAssemblyFinished)
 
-      this.core.emit('informer:hide')
-    }).catch((err) => {
-      // Always hide the Informer
-      this.core.emit('informer:hide')
+        this.client.getAssemblyStatus(assembly.assembly_ssl_url).then((assembly) => {
+          this.updateState({
+            assemblies: Object.assign({}, this.state.assemblies, {
+              [assembly.assembly_id]: assembly
+            })
+          })
 
-      throw err
+          // TODO set the `file.uploadURL` to a result?
+          // We will probably need an option here so the plugin user can tell us
+          // which result to pick…?
+
+          fileIDs.forEach((fileID) => {
+            this.core.emit('core:postprocess-complete', fileID)
+          })
+        }).then(resolve, reject)
+      }
+
+      const onAssemblyError = (assembly, error) => {
+        const file = this.core.state.files[fileID]
+        // An assembly for a different upload just errored. We can ignore it.
+        if (assembly.assembly_id !== file.transloadit.assembly) {
+          return
+        }
+        // Remove this handler once we find the assembly we needed.
+        this.core.emitter.off('transloadit:assembly-error', onAssemblyError)
+
+        // Reject the `afterUpload()` promise.
+        reject(error)
+      }
+
+      this.core.on('transloadit:complete', onAssemblyFinished)
+      this.core.on('transloadit:assembly-error', onAssemblyError)
     })
   }
 
@@ -229,7 +287,7 @@ module.exports = class Transloadit extends Plugin {
     this.core.addPostProcessor(this.afterUpload)
 
     this.updateState({
-      assembly: null,
+      assemblies: {},
       files: {},
       results: []
     })
