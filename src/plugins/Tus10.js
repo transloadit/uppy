@@ -281,11 +281,6 @@ module.exports = class Tus10 extends Plugin {
   }
 
   uploadFiles (files) {
-    if (Object.keys(files).length === 0) {
-      this.core.log('no files to upload!')
-      return
-    }
-
     files.forEach((file, index) => {
       const current = parseInt(index, 10) + 1
       const total = files.length
@@ -299,6 +294,11 @@ module.exports = class Tus10 extends Plugin {
   }
 
   handleUpload (fileIDs) {
+    if (fileIDs.length === 0) {
+      this.core.log('Tus: no files to upload!')
+      return Promise.resolve()
+    }
+
     this.core.log('Tus is uploading...')
     const filesToUpload = fileIDs.map(getFile, this)
     function getFile (fileID) {
