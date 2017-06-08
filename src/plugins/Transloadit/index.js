@@ -273,6 +273,11 @@ module.exports = class Transloadit extends Plugin {
         // Remove this handler once we find the assembly we needed.
         this.core.emitter.off('transloadit:assembly-error', onAssemblyError)
 
+        // Clear postprocessing state for all our files.
+        fileIDs.forEach((fileID) => {
+          this.core.emit('core:postprocess-complete', fileID)
+        })
+
         // Reject the `afterUpload()` promise.
         reject(error)
       }

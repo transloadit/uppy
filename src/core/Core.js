@@ -280,6 +280,13 @@ class Uppy {
     //   this.setState({bla: 'bla'})
     // }, 20)
 
+    this.on('core:error', (error) => {
+      this.setState({ error })
+    })
+    this.on('core:upload', () => {
+      this.setState({ error: null })
+    })
+
     this.on('core:file-add', (data) => {
       this.addFile(data)
     })

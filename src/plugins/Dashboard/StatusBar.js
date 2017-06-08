@@ -7,6 +7,7 @@ function progressDetails (props) {
 
 const throttledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
 
+const STATE_ERROR = 'error'
 const STATE_WAITING = 'waiting'
 const STATE_PREPROCESSING = 'preprocessing'
 const STATE_UPLOADING = 'uploading'
@@ -14,6 +15,10 @@ const STATE_POSTPROCESSING = 'postprocessing'
 const STATE_COMPLETE = 'complete'
 
 function getUploadingState (props, files) {
+  if (props.error) {
+    return STATE_ERROR
+  }
+
   // If ALL files have been completed, show the completed state.
   if (props.isAllComplete) {
     return STATE_COMPLETE
@@ -60,6 +65,8 @@ module.exports = (props) => {
     progressBarContent = ProgressBarComplete(props)
   } else if (uploadState === STATE_UPLOADING) {
     progressBarContent = ProgressBarUploading(props)
+  } else if (uploadState === STATE_ERROR) {
+    progressBarContent = ProgressBarError(props)
   }
 
   const width = typeof progressValue === 'number' ? progressValue : 100
@@ -128,6 +135,16 @@ const ProgressBarComplete = ({ totalProgress }) => {
           <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
         </svg>
         Upload complete・${totalProgress}%
+      </span>
+    </div>
+  `
+}
+
+const ProgressBarError = ({ error }) => {
+  return html`
+    <div class="UppyDashboard-statusBarContent">
+      <span>
+        ${error.message}
       </span>
     </div>
   `
