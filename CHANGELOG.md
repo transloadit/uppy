@@ -75,6 +75,7 @@ To be released: 2017-06-30
 - [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
 - [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
 - [x] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi, @nqst / #215)
+- [x] server: support for custom providers (@ifedapoolarewaju)
 
 ## 0.16.2 - 2017-05-31
 
