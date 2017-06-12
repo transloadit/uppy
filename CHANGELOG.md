@@ -44,6 +44,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
 - [ ] dashboard: see if transitions can be fixed in Firefox — seem to be working fine, let’s check again someday (@arturi)
 - [ ] instagram: Make a barely working Instagram Plugin (#21)
+- [ ] uppy/uppy-server: Transfer files between providers (from instagram to Google drive for example).
 
 ## 0.17.0
 
