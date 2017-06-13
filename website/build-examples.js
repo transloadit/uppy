@@ -30,6 +30,7 @@ var notifier = require('node-notifier')
 // var rollupify = require('rollupify')
 // var yoyoify = require('yo-yoify')
 var babelify = require('babelify')
+var aliasify = require('aliasify')
 var browserify = require('browserify')
 var watchify = require('watchify')
 
@@ -76,13 +77,12 @@ glob(srcPattern, function (err, files) {
 
     // Aliasing for using `require('uppy')`, etc.
     browseFy
-      // .require(uppyRoot + '/src/index.js', { expose: 'uppy' })
-      // .require(uppyRoot + '/src/core/index.js', { expose: 'uppy/core' })
-      // .require(uppyRoot + '/src/plugins/index.js', { expose: 'uppy/plugins' })
-      // .require(uppyRoot + '/src/locales/index.js', { expose: 'uppy/locales' })
-      // .transform(rollupify)
-      // .transform(yoyoify)
       .transform(babelify)
+      .transform(aliasify, {
+        replacements: {
+          '^uppy/lib/(.*?)$': path.join(__dirname, '../src/$1')
+        }
+      })
 
     // Listeners for changes, errors, and completion.
     browseFy

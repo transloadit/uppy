@@ -1,5 +1,5 @@
-const Uppy = require('../../../../src/core/Core.js')
-const Tus10 = require('../../../../src/plugins/GoogleDrive')
+const Uppy = require('uppy/lib/core/Core')
+const Tus10 = require('uppy/lib/plugins/GoogleDrive')
 
 const uppy = new Uppy({debug: true, autoProceed: false})
 

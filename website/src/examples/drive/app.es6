@@ -1,5 +1,5 @@
-const Uppy = require('../../../../src/core/Core.js')
-const GoogleDrive = require('../../../../src/plugins/GoogleDrive')
+const Uppy = require('uppy/lib/core/Core')
+const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 const UPPY_SERVER = require('../env')
 
 const uppy = new Uppy({debug: true, autoProceed: false})
