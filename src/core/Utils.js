@@ -148,7 +148,7 @@ function runPromiseSequence (functions, ...args) {
 
 function isPreviewReady (fileTypeSpecific) {
   // list of images that browsers can preview
-  if (/^(jpeg|gif|png|svg|bmp)$/.test(fileTypeSpecific)) {
+  if (/^(jpeg|gif|png|svg|svg\+xml|bmp)$/.test(fileTypeSpecific)) {
     return true
   }
   return false
@@ -172,21 +172,24 @@ function getArrayBuffer (file) {
 }
 
 function getFileType (file) {
+  const emptyFileType = ['', '']
   if (file.type) {
     return Promise.resolve(file.type.split('/'))
   }
 
-  return getArrayBuffer(file).then((buffer) => {
-    const type = fileType(buffer)
-    if (type && type.mime) {
-      return type.mime.split('/')
-    }
-    return ['', '']
-  })
-
+  return getArrayBuffer(file)
+    .then((buffer) => {
+      const type = fileType(buffer)
+      if (type && type.mime) {
+        return type.mime.split('/')
+      }
+      return emptyFileType
+    })
+    .catch(() => {
+      return emptyFileType
+    })
   // return mime.lookup(file.name)
   // return file.type ? file.type.split('/') : ['', '']
-  // return mime.lookup(file.name)
 }
 
 // TODO Check which types are actually supported in browsers. Chrome likes webm

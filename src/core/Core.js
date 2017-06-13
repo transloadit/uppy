@@ -188,10 +188,6 @@ class Uppy {
       this.bus.emit('file-added', fileID)
       this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
 
-      if (!fileType) {
-        console.log('well, yeah, file type is fucking empty')
-      }
-
       if (this.opts.autoProceed && !this.scheduledAutoProceed) {
         this.scheduledAutoProceed = setTimeout(() => {
           this.scheduledAutoProceed = null
