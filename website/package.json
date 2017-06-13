@@ -19,7 +19,7 @@
     "hexo-renderer-ejs": "0.2.0",
     "hexo-renderer-marked": "0.2.11",
     "hexo-renderer-postcss": "https://github.com/arturi/hexo-renderer-postcss#afca2bc12f5816067b15a9d24017c70e077b9f0b",
-    "hexo-renderer-scss": "1.0.2",
+    "hexo-renderer-sass": "^0.3.1",
     "hexo-server": "0.2.0",
     "hexo-tag-emojis": "2.0.1",
     "hexo-util": "0.6.0",
