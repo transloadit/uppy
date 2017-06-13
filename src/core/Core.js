@@ -147,56 +147,66 @@ class Uppy {
     const updatedFiles = Object.assign({}, this.state.files)
 
     const fileName = file.name || 'noname'
-    const fileType = Utils.getFileType(file)
-    const fileTypeGeneral = fileType[0]
-    const fileTypeSpecific = fileType[1]
     const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
     const isRemote = file.isRemote || false
 
     const fileID = Utils.generateFileID(fileName)
 
-    const newFile = {
-      source: file.source || '',
-      id: fileID,
-      name: fileName,
-      extension: fileExtension || '',
-      meta: {
-        name: fileName
-      },
-      type: {
-        general: fileTypeGeneral,
-        specific: fileTypeSpecific
-      },
-      data: file.data,
-      progress: {
-        percentage: 0,
-        uploadComplete: false,
-        uploadStarted: false
-      },
-      size: file.data.size || 'N/A',
-      isRemote: isRemote,
-      remote: file.remote || '',
-      preview: file.preview
-    }
+    // const fileType = Utils.getFileType(file)
+    // const fileTypeGeneral = fileType[0]
+    // const fileTypeSpecific = fileType[1]
 
-    if (fileTypeGeneral === 'image' && !isRemote) {
-      newFile.preview = Utils.getThumbnail(file)
-    }
+    Utils.getFileType(file).then((fileType) => {
+      const fileTypeGeneral = fileType[0]
+      const fileTypeSpecific = fileType[1]
 
-    updatedFiles[fileID] = newFile
-    this.setState({files: updatedFiles})
+      const newFile = {
+        source: file.source || '',
+        id: fileID,
+        name: fileName,
+        extension: fileExtension || '',
+        meta: {
+          name: fileName
+        },
+        type: {
+          general: fileTypeGeneral,
+          specific: fileTypeSpecific
+        },
+        data: file.data,
+        progress: {
+          percentage: 0,
+          uploadComplete: false,
+          uploadStarted: false
+        },
+        size: file.data.size || 'N/A',
+        isRemote: isRemote,
+        remote: file.remote || '',
+        preview: file.preview
+      }
 
-    this.bus.emit('file-added', fileID)
-    this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
+      if (Utils.isPreviewReady(fileTypeSpecific) && !isRemote) {
+        newFile.preview = Utils.getThumbnail(file)
+      }
 
-    if (this.opts.autoProceed && !this.scheduledAutoProceed) {
-      this.scheduledAutoProceed = setTimeout(() => {
-        this.scheduledAutoProceed = null
-        this.upload().catch((err) => {
-          console.error(err.stack || err.message)
-        })
-      }, 4)
-    }
+      updatedFiles[fileID] = newFile
+      this.setState({files: updatedFiles})
+
+      this.bus.emit('file-added', fileID)
+      this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
+
+      if (!fileType) {
+        console.log('well, yeah, file type is fucking empty')
+      }
+
+      if (this.opts.autoProceed && !this.scheduledAutoProceed) {
+        this.scheduledAutoProceed = setTimeout(() => {
+          this.scheduledAutoProceed = null
+          this.upload().catch((err) => {
+            console.error(err.stack || err.message)
+          })
+        }, 4)
+      }
+    })
   }
 
   removeFile (fileID) {
@@ -254,14 +264,6 @@ class Uppy {
     this.setState({
       totalProgress: totalProgress
     })
-
-    // if (totalProgress === 100) {
-    //   const completeFiles = Object.keys(updatedFiles).filter((file) => {
-    //     // this should be `uploadComplete`
-    //     return updatedFiles[file].progress.percentage === 100
-    //   })
-    //   this.emit('core:success', completeFiles.length)
-    // }
   }
 
   /**
@@ -552,14 +554,6 @@ class Uppy {
 
     return this.socket
   }
-
-  // installAll () {
-  //   Object.keys(this.plugins).forEach((pluginType) => {
-  //     this.plugins[pluginType].forEach((plugin) => {
-  //       plugin.install(this)
-  //     })
-  //   })
-  // }
 
 /**
  * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options

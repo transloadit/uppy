@@ -1,6 +1,5 @@
 const throttle = require('lodash.throttle')
-// import mime from 'mime-types'
-// import pica from 'pica'
+const fileType = require('file-type')
 
 /**
  * A collection of small utility functions that help with dom manipulation, adding listeners,
@@ -147,8 +146,46 @@ function runPromiseSequence (functions, ...args) {
 //   return (!f && 'not a function') || (s && s[1] || 'anonymous')
 // }
 
+function isPreviewReady (fileTypeSpecific) {
+  // list of images that browsers can preview
+  if (/^(jpeg|gif|png|svg|bmp)$/.test(fileTypeSpecific)) {
+    return true
+  }
+  return false
+}
+
+function getArrayBuffer (file) {
+  return new Promise(function (resolve, reject) {
+    var reader = new FileReader()
+    reader.addEventListener('load', function (e) {
+      // e.target.result is an ArrayBuffer
+      var arr = new Uint8Array(e.target.result)
+      resolve(arr)
+    })
+    reader.addEventListener('error', function (err) {
+      console.error('FileReader error' + err)
+      reject(err)
+    })
+    const chunk = file.data.slice(0, 4100)
+    reader.readAsArrayBuffer(chunk)
+  })
+}
+
 function getFileType (file) {
-  return file.type ? file.type.split('/') : ['', '']
+  if (file.type) {
+    return Promise.resolve(file.type.split('/'))
+  }
+
+  return getArrayBuffer(file).then((buffer) => {
+    const type = fileType(buffer)
+    if (type && type.mime) {
+      return type.mime.split('/')
+    }
+    return ['', '']
+  })
+
+  // return mime.lookup(file.name)
+  // return file.type ? file.type.split('/') : ['', '']
   // return mime.lookup(file.name)
 }
 
@@ -403,8 +440,6 @@ module.exports = {
   every,
   flatten,
   groupBy,
-  // $,
-  // $$,
   extend,
   runPromiseSequence,
   supportsMediaRecorder,
@@ -413,6 +448,8 @@ module.exports = {
   truncateString,
   getFileTypeExtension,
   getFileType,
+  getArrayBuffer,
+  isPreviewReady,
   getThumbnail,
   secondsToTime,
   dataURItoBlob,
@@ -420,8 +457,6 @@ module.exports = {
   getSpeed,
   getBytesRemaining,
   getETA,
-  // makeWorker,
-  // makeCachingFunction,
   copyToClipboard,
   prettyETA,
   findDOMElement,
