@@ -144,19 +144,13 @@ class Uppy {
   }
 
   addFile (file) {
-    const updatedFiles = Object.assign({}, this.state.files)
-
-    const fileName = file.name || 'noname'
-    const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
-    const isRemote = file.isRemote || false
-
-    const fileID = Utils.generateFileID(fileName)
-
-    // const fileType = Utils.getFileType(file)
-    // const fileTypeGeneral = fileType[0]
-    // const fileTypeSpecific = fileType[1]
-
     Utils.getFileType(file).then((fileType) => {
+      const updatedFiles = Object.assign({}, this.state.files)
+      const fileName = file.name || 'noname'
+      const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
+      const isRemote = file.isRemote || false
+
+      const fileID = Utils.generateFileID(fileName)
       const fileTypeGeneral = fileType[0]
       const fileTypeSpecific = fileType[1]
 
