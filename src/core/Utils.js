@@ -176,23 +176,46 @@ function getArrayBuffer (file) {
 
 function getFileType (file) {
   const emptyFileType = ['', '']
-  if (file.type) {
-    return Promise.resolve(file.type.split('/'))
+  const extensionsToMime = {
+    'md': 'text/markdown',
+    'markdown': 'text/markdown',
+    'mp4': 'video/mp4',
+    'mp3': 'audio/mp3'
   }
 
+  const fileExtension = getFileNameAndExtension(file.name)[1]
+
+  // 1. try to determine file type from magic bytes with file-type module
+  // this should be the most trustworthy way
   return getArrayBuffer(file)
     .then((buffer) => {
       const type = fileType(buffer)
       if (type && type.mime) {
         return type.mime.split('/')
       }
-      return emptyFileType
+
+      // 2. if that’s no good, check if mime type is set in the file object
+      if (file.type) {
+        return Promise.resolve(file.type.split('/'))
+      }
+
+      // 3. if that’s no good, see if we can map extension to a mime type
+      if (extensionsToMime[fileExtension]) {
+        return Promise.resolve(extensionsToMime[fileExtension].split('/'))
+      }
+
+      // if all fails, well, return empty
+      return Promise.resolve(emptyFileType)
     })
     .catch(() => {
-      return emptyFileType
+      return Promise.resolve(emptyFileType)
     })
-  // return mime.lookup(file.name)
-  // return file.type ? file.type.split('/') : ['', '']
+
+    // if (file.type) {
+    //   return Promise.resolve(file.type.split('/'))
+    // }
+    // return mime.lookup(file.name)
+    // return file.type ? file.type.split('/') : ['', '']
 }
 
 // TODO Check which types are actually supported in browsers. Chrome likes webm
