@@ -300,7 +300,11 @@ class Uppy {
         }
 
         if (Utils.isPreviewSupported(fileTypeSpecific) && !isRemote) {
-          newFile.preview = Utils.getThumbnail(file.data)
+          Utils.createThumbnail(file, 200).then((thumbnail) => {
+            this.setPreviewURL(fileID, thumbnail)
+          }).catch((err) => {
+            console.warn(err.stack || err.message)
+          })
         }
 
         const isFileAllowed = this.checkRestrictions(false, newFile, fileType)
@@ -333,12 +337,34 @@ class Uppy {
     return this.getState().files[fileID]
   }
 
+  /**
+   * Set the preview URL for a file.
+   */
+  setPreviewURL (fileID, preview) {
+    const { files } = this.state
+    this.setState({
+      files: Object.assign({}, files, {
+        [fileID]: Object.assign({}, files[fileID], {
+          preview: preview
+        })
+      })
+    })
+  }
+
   removeFile (fileID) {
     const updatedFiles = Object.assign({}, this.getState().files)
+    const removedFile = updatedFiles[fileID]
     delete updatedFiles[fileID]
+
     this.setState({files: updatedFiles})
     this.calculateTotalProgress()
     this.emit('core:file-removed', fileID)
+
+    // Clean up object URLs.
+    if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
+      URL.revokeObjectURL(removedFile.preview)
+    }
+
     this.log(`Removed file: ${fileID}`)
   }
 

@@ -3,6 +3,7 @@ const throttle = require('lodash.throttle')
 // because of this https://github.com/sindresorhus/file-type/issues/78
 // and https://github.com/sindresorhus/copy-text-to-clipboard/issues/5
 const fileType = require('../vendor/file-type')
+const html = require('yo-yo')
 
 /**
  * A collection of small utility functions that help with dom manipulation, adding listeners,
@@ -249,13 +250,81 @@ function getFileNameAndExtension (fullFileName) {
   return [fileName, fileExt]
 }
 
-function getThumbnail (fileData) {
-  return URL.createObjectURL(fileData)
-}
-
 function supportsMediaRecorder () {
   return typeof MediaRecorder === 'function' && !!MediaRecorder.prototype &&
     typeof MediaRecorder.prototype.start === 'function'
+}
+
+/**
+ * Check if a URL string is an object URL from `URL.createObjectURL`.
+ *
+ * @param {string} url
+ * @return {boolean}
+ */
+function isObjectURL (url) {
+  return url.indexOf('blob:') === 0
+}
+
+function getProportionalHeight (img, width) {
+  const aspect = img.width / img.height
+  return Math.round(width / aspect)
+}
+
+/**
+ * Create a thumbnail for the given Uppy file object.
+ *
+ * @param {{data: Blob}} file
+ * @param {number} width
+ * @return {Promise}
+ */
+function createThumbnail (file, width) {
+  const originalUrl = URL.createObjectURL(file.data)
+
+  const onload = new Promise((resolve, reject) => {
+    const image = new Image()
+    image.src = originalUrl
+    image.onload = () => {
+      URL.revokeObjectURL(originalUrl)
+      resolve(image)
+    }
+    image.onerror = () => {
+      // The onerror event is totally useless unfortunately, as far as I know
+      URL.revokeObjectURL(originalUrl)
+      reject(new Error('Could not create thumbnail'))
+    }
+  })
+
+  return onload.then((image) => {
+    const height = getProportionalHeight(image, width)
+
+    const canvas = html`<canvas></canvas>`
+    canvas.width = width
+    canvas.height = height
+
+    const context = canvas.getContext('2d')
+    context.drawImage(image, 0, 0, width, height)
+
+    return canvasToBlob(canvas)
+  }).then((blob) => {
+    return URL.createObjectURL(blob)
+  })
+}
+
+/**
+ * Save a <canvas> element's content to a Blob object.
+ *
+ * @param {HTMLCanvasElement} canvas
+ * @return {Promise}
+ */
+function canvasToBlob (canvas) {
+  if (canvas.toBlob) {
+    return new Promise((resolve) => {
+      canvas.toBlob(resolve)
+    })
+  }
+  return Promise.resolve().then(() => {
+    return dataURItoBlob(canvas.toDataURL(), {})
+  })
 }
 
 function dataURItoBlob (dataURI, opts, toFile) {
@@ -442,7 +511,8 @@ module.exports = {
   getFileType,
   getArrayBuffer,
   isPreviewSupported,
-  getThumbnail,
+  isObjectURL,
+  createThumbnail,
   secondsToTime,
   dataURItoBlob,
   dataURItoFile,
