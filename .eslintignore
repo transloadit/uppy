@@ -1,5 +1,6 @@
 dist/**
 lib/**
+src/vendor/**
 node_modules/**
 test/lib/**
 playground/**

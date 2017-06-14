@@ -178,7 +178,7 @@ class Uppy {
         preview: file.preview
       }
 
-      if (Utils.isPreviewReady(fileTypeSpecific) && !isRemote) {
+      if (Utils.isPreviewSupported(fileTypeSpecific) && !isRemote) {
         newFile.preview = Utils.getThumbnail(file)
       }
 

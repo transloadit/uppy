@@ -1,5 +1,8 @@
 const throttle = require('lodash.throttle')
-const fileType = require('file-type')
+// we inline file-type module, as opposed to using the NPM version,
+// because of this https://github.com/sindresorhus/file-type/issues/78
+// and https://github.com/sindresorhus/copy-text-to-clipboard/issues/5
+const fileType = require('../vendor/file-type')
 
 /**
  * A collection of small utility functions that help with dom manipulation, adding listeners,
@@ -146,7 +149,7 @@ function runPromiseSequence (functions, ...args) {
 //   return (!f && 'not a function') || (s && s[1] || 'anonymous')
 // }
 
-function isPreviewReady (fileTypeSpecific) {
+function isPreviewSupported (fileTypeSpecific) {
   // list of images that browsers can preview
   if (/^(jpeg|gif|png|svg|svg\+xml|bmp)$/.test(fileTypeSpecific)) {
     return true
@@ -159,13 +162,13 @@ function getArrayBuffer (file) {
     var reader = new FileReader()
     reader.addEventListener('load', function (e) {
       // e.target.result is an ArrayBuffer
-      var arr = new Uint8Array(e.target.result)
-      resolve(arr)
+      resolve(e.target.result)
     })
     reader.addEventListener('error', function (err) {
       console.error('FileReader error' + err)
       reject(err)
     })
+    // file-type only needs the first 4100 bytes
     const chunk = file.data.slice(0, 4100)
     reader.readAsArrayBuffer(chunk)
   })
@@ -452,7 +455,7 @@ module.exports = {
   getFileTypeExtension,
   getFileType,
   getArrayBuffer,
-  isPreviewReady,
+  isPreviewSupported,
   getThumbnail,
   secondsToTime,
   dataURItoBlob,

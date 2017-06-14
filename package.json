@@ -76,7 +76,6 @@
   "dependencies": {
     "drag-drop": "2.13.2",
     "es6-promise": "3.2.1",
-    "file-type": "^5.1.1",
     "lodash.throttle": "4.1.1",
     "namespace-emitter": "1.0.0",
     "nanoraf": "3.0.1",
