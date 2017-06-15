@@ -31,10 +31,10 @@ const uppy = Uppy({debug: true, autoProceed: false})
   .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   // .use(FileInput, {target: '.Uppy', locale: {
-  //   strings: {selectToUpload: 'хуй'}
+  //   strings: {selectToUpload: 'Выберите файл для загрузки'}
   // }})
   // .use(DragDrop, {target: 'body', locale: {
-  //   strings: {chooseFile: 'hmm'}
+  //   strings: {chooseFile: 'Выберите файл'}
   // }})
   // .use(ProgressBar, {target: 'body'})
   // .use(dummy)
@@ -42,9 +42,7 @@ const uppy = Uppy({debug: true, autoProceed: false})
   // .use(Multipart, {endpoint: '//api2.transloadit.com'})
   .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
   .use(Informer, {target: Dashboard})
-  .use(StatusBar, {
-    target: Dashboard
-  })
+  .use(StatusBar, {target: Dashboard})
   .use(MetaData, {
     fields: [
       { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
@@ -54,7 +52,7 @@ const uppy = Uppy({debug: true, autoProceed: false})
 uppy.run()
 
 uppy.on('core:success', (fileCount) => {
-  console.log('бля!')
+  console.log('UPLOAD SUCCESSFUL, YES')
   console.log(fileCount)
 })
 
