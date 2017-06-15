@@ -1,6 +1,5 @@
 const Uppy = require('uppy/lib/core')
 const Dashboard = require('uppy/lib/plugins/Dashboard')
-const StatusBar = require('uppy/lib/plugins/StatusBar')
 const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 const Dropbox = require('uppy/lib/plugins/Dropbox')
 const Webcam = require('uppy/lib/plugins/Webcam')
@@ -27,7 +26,6 @@ function uppyInit () {
     inline: opts.DashboardInline,
     target: opts.DashboardInline ? '.DashboardContainer' : 'body'
   })
-  uppy.use(StatusBar, {target: Dashboard})
 
   if (opts.GoogleDrive) {
     uppy.use(GoogleDrive, {target: Dashboard, host: UPPY_SERVER})
