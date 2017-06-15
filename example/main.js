@@ -7,6 +7,7 @@ const Tus10 = require('../src/plugins/Tus10')
 // const Multipart = require('../src/plugins/Multipart')
 const MetaData = require('../src/plugins/MetaData')
 const Informer = require('../src/plugins/Informer')
+const StatusBar = require('../src/plugins/StatusBar')
 // const DragDrop = require('../src/plugins/DragDrop')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
@@ -41,6 +42,9 @@ const uppy = Uppy({debug: true, autoProceed: false})
   // .use(Multipart, {endpoint: '//api2.transloadit.com'})
   .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
   .use(Informer, {target: Dashboard})
+  .use(StatusBar, {
+    target: Dashboard
+  })
   .use(MetaData, {
     fields: [
       { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },

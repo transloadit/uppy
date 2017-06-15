@@ -1,7 +1,7 @@
-const Uppy = require('../../../../src/core/Core.js')
-const DragDrop = require('../../../../src/plugins/DragDrop/index.js')
-const ProgressBar = require('../../../../src/plugins/ProgressBar.js')
-const Tus10 = require('../../../../src/plugins/Tus10.js')
+const Uppy = require('uppy/lib/core/Core')
+const DragDrop = require('uppy/lib/plugins/DragDrop')
+const ProgressBar = require('uppy/lib/plugins/ProgressBar')
+const Tus10 = require('uppy/lib/plugins/Tus10')
 
 const uppyOne = new Uppy({debug: true})
 uppyOne

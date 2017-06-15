@@ -1,11 +1,12 @@
-const Uppy = require('../../../../src/core')
-const Dashboard = require('../../../../src/plugins/Dashboard')
-const GoogleDrive = require('../../../../src/plugins/GoogleDrive')
-const Dropbox = require('../../../../src/plugins/Dropbox')
-const Webcam = require('../../../../src/plugins/Webcam')
-const Tus10 = require('../../../../src/plugins/Tus10')
-const MetaData = require('../../../../src/plugins/MetaData')
-const Informer = require('../../../../src/plugins/Informer')
+const Uppy = require('uppy/lib/core')
+const Dashboard = require('uppy/lib/plugins/Dashboard')
+const StatusBar = require('uppy/lib/plugins/StatusBar')
+const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
+const Dropbox = require('uppy/lib/plugins/Dropbox')
+const Webcam = require('uppy/lib/plugins/Webcam')
+const Tus10 = require('uppy/lib/plugins/Tus10')
+const MetaData = require('uppy/lib/plugins/MetaData')
+const Informer = require('uppy/lib/plugins/Informer')
 
 const UPPY_SERVER = require('../env')
 
@@ -26,6 +27,7 @@ function uppyInit () {
     inline: opts.DashboardInline,
     target: opts.DashboardInline ? '.DashboardContainer' : 'body'
   })
+  uppy.use(StatusBar, {target: Dashboard})
 
   if (opts.GoogleDrive) {
     uppy.use(GoogleDrive, {target: Dashboard, host: UPPY_SERVER})

@@ -1,7 +1,7 @@
-const Uppy = require('../../../../src/core/Core.js')
-const FileInput = require('../../../../src/plugins/FileInput.js')
-const Multipart = require('../../../../src/plugins/Multipart.js')
-const ProgressBar = require('../../../../src/plugins/ProgressBar.js')
+const Uppy = require('uppy/lib/core/Core')
+const FileInput = require('uppy/lib/plugins/FileInput')
+const Multipart = require('uppy/lib/plugins/Multipart')
+const ProgressBar = require('uppy/lib/plugins/ProgressBar')
 
 const uppy = new Uppy({debug: true, autoProceed: true})
 

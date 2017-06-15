@@ -3,7 +3,6 @@ const FileList = require('./FileList')
 const Tabs = require('./Tabs')
 const FileCard = require('./FileCard')
 const UploadBtn = require('./UploadBtn')
-const StatusBar = require('./StatusBar')
 const { isTouchDevice, toArray } = require('../../core/Utils')
 const { closeIcon } = require('./icons')
 
@@ -141,30 +140,6 @@ module.exports = function Dashboard (props) {
         </div>
 
         <div class="UppyDashboard-progressindicators">
-          ${StatusBar({
-            error: props.state.error,
-            totalProgress: props.totalProgress,
-            totalFileCount: props.totalFileCount,
-            totalSize: props.totalSize,
-            totalUploadedSize: props.totalUploadedSize,
-            uploadStartedFiles: props.uploadStartedFiles,
-            isAllComplete: props.isAllComplete,
-            isAllPaused: props.isAllPaused,
-            isUploadStarted: props.isUploadStarted,
-            pauseAll: props.pauseAll,
-            resumeAll: props.resumeAll,
-            cancelAll: props.cancelAll,
-            complete: props.completeFiles.length,
-            inProgress: props.inProgress,
-            totalSpeed: props.totalSpeed,
-            totalETA: props.totalETA,
-            startUpload: props.startUpload,
-            newFileCount: props.newFiles.length,
-            files: props.files,
-            i18n: props.i18n,
-            resumableUploads: props.resumableUploads
-          })}
-
           ${props.progressindicators.map((target) => {
             return target.render(props.state)
           })}

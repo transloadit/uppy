@@ -2,9 +2,6 @@ const Plugin = require('../Plugin')
 const Translator = require('../../core/Translator')
 const dragDrop = require('drag-drop')
 const Dashboard = require('./Dashboard')
-const { getSpeed } = require('../../core/Utils')
-const { getBytesRemaining } = require('../../core/Utils')
-const { prettyETA } = require('../../core/Utils')
 const { findDOMElement } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
@@ -279,55 +276,22 @@ module.exports = class DashboardUI extends Plugin {
     this.core.bus.emit('core:resume-all')
   }
 
-  getTotalSpeed (files) {
-    let totalSpeed = 0
-    files.forEach((file) => {
-      totalSpeed = totalSpeed + getSpeed(file.progress)
-    })
-    return totalSpeed
-  }
-
-  getTotalETA (files) {
-    const totalSpeed = this.getTotalSpeed(files)
-    if (totalSpeed === 0) {
-      return 0
-    }
-
-    const totalBytesRemaining = files.reduce((total, file) => {
-      return total + getBytesRemaining(file.progress)
-    }, 0)
-
-    return Math.round(totalBytesRemaining / totalSpeed * 10) / 10
-  }
-
   render (state) {
     const files = state.files
 
     const newFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadStarted
     })
-    const uploadStartedFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadStarted
-    })
-    const completeFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadComplete
-    })
     const inProgressFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadComplete &&
              files[file].progress.uploadStarted &&
              !files[file].isPaused
-    })
-    const processingFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.preprocess || files[file].progress.postprocess
     })
 
     let inProgressFilesArray = []
     inProgressFiles.forEach((file) => {
       inProgressFilesArray.push(files[file])
     })
-
-    const totalSpeed = prettyBytes(this.getTotalSpeed(inProgressFilesArray))
-    const totalETA = prettyETA(this.getTotalETA(inProgressFilesArray))
 
     // total size and uploaded size
     let totalSize = 0
@@ -338,12 +302,6 @@ module.exports = class DashboardUI extends Plugin {
     })
     totalSize = prettyBytes(totalSize)
     totalUploadedSize = prettyBytes(totalUploadedSize)
-
-    const isAllComplete = state.totalProgress === 100 &&
-      completeFiles.length === Object.keys(files).length &&
-      processingFiles.length === 0
-    const isAllPaused = inProgressFiles.length === 0 && !isAllComplete && uploadStartedFiles.length > 0
-    const isUploadStarted = uploadStartedFiles.length > 0
 
     const acquirers = state.modal.targets.filter((target) => {
       return target.type === 'acquirer'
@@ -398,17 +356,7 @@ module.exports = class DashboardUI extends Plugin {
       newFiles: newFiles,
       files: files,
       totalFileCount: Object.keys(files).length,
-      isUploadStarted: isUploadStarted,
-      inProgress: uploadStartedFiles.length,
-      completeFiles: completeFiles,
-      inProgressFiles: inProgressFiles,
-      totalSpeed: totalSpeed,
-      totalETA: totalETA,
       totalProgress: state.totalProgress,
-      totalSize: totalSize,
-      totalUploadedSize: totalUploadedSize,
-      isAllComplete: isAllComplete,
-      isAllPaused: isAllPaused,
       acquirers: acquirers,
       activePanel: state.modal.activePanel,
       progressindicators: progressindicators,
@@ -418,15 +366,12 @@ module.exports = class DashboardUI extends Plugin {
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
       semiTransparent: this.opts.semiTransparent,
-      onPaste: this.handlePaste,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
       log: this.core.log,
-      bus: this.core.emitter,
       i18n: this.containerWidth,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
-      cancelAll: this.cancelAll,
       addFile: addFile,
       removeFile: removeFile,
       info: info,
