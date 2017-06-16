@@ -43,11 +43,11 @@ module.exports = class DragDrop extends Plugin {
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOpts, opts)
 
+        // Check for browser dragDrop support
+    this.isDragDropSupported = this.checkDragDropSupport()
+
     this.locale = Object.assign({}, defaultLocale, this.opts.locale)
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
-
-    // Check for browser dragDrop support
-    this.isDragDropSupported = this.checkDragDropSupport()
 
     // i18n
     this.translator = new Translator({locale: this.locale})
@@ -115,25 +115,6 @@ module.exports = class DragDrop extends Plugin {
       const input = this.target.querySelector('.UppyDragDrop-input')
       input.click()
     }
-
-    // const next = (ev) => {
-    //   ev.preventDefault()
-    //   ev.stopPropagation()
-    //   this.core.emitter.emit('core:upload')
-    // }
-
-    // onload=${(ev) => {
-    //   const firstInput = this.target.querySelector('.UppyDragDrop-focus')
-    //   firstInput.focus()
-    // }}
-
-    // ${!this.core.opts.autoProceed
-    //   ? html`<button class="UppyDragDrop-uploadBtn UppyNextBtn"
-    //                  type="submit"
-    //                  onclick=${next}>
-    //           ${this.i18n('upload')}
-    //     </button>`
-    //   : ''}
 
     const selectedFilesCount = Object.keys(state.files).length
 
