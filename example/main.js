@@ -17,7 +17,13 @@ const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 // import MagicLog from '../src/plugins/MagicLog'
 // import PersistentState from '../src/plugins/PersistentState'
 
-const uppy = Uppy({debug: true, autoProceed: false})
+const uppy = Uppy({
+  debug: true,
+  autoProceed: false,
+  maxFileSize: 300000,
+  maxNumberOfFiles: 1,
+  allowedFileTypes: ['image', 'video']
+})
   .use(Dashboard, {
     trigger: '#uppyModalOpener',
     // maxWidth: 350,

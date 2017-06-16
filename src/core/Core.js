@@ -3,6 +3,7 @@ const Translator = require('../core/Translator')
 const UppySocket = require('./UppySocket')
 const ee = require('namespace-emitter')
 const throttle = require('lodash.throttle')
+const prettyBytes = require('prettier-bytes')
 // const en_US = require('../locales/en_US')
 // const deepFreeze = require('deep-freeze-strict')
 
@@ -13,12 +14,27 @@ const throttle = require('lodash.throttle')
  */
 class Uppy {
   constructor (opts) {
+    const defaultLocale = {
+      strings: {
+        youCanOnlyUploadX: {
+          0: 'You can only upload %{smart_count} file',
+          1: 'You can only upload %{smart_count} files'
+        },
+        exceedsSize: 'This file exceeds maximum allowed size of',
+        youCanOnlyUploadFileTypes: 'You can only upload:'
+      }
+    }
+
     // set default options
     const defaultOptions = {
       // load English as the default locale
       // locale: en_US,
       autoProceed: true,
-      debug: false
+      debug: false,
+      maxFileSize: false,
+      maxNumberOfFiles: false,
+      allowedFileTypes: false,
+      locale: defaultLocale
     }
 
     // Merge default options with the ones set by user
@@ -27,6 +43,13 @@ class Uppy {
     // // Dictates in what order different plugin types are ran:
     // this.types = [ 'presetter', 'orchestrator', 'progressindicator',
     //                 'acquirer', 'modifier', 'uploader', 'presenter', 'debugger']
+
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    // i18n
+    this.translator = new Translator({locale: this.locale})
+    this.i18n = this.translator.translate.bind(this.translator)
 
     // Container for different types of plugins
     this.plugins = {}
@@ -143,11 +166,49 @@ class Uppy {
     this.setState({files: updatedFiles})
   }
 
+  checkRestrictions (file, fileType) {
+    const {maxFileSize, maxNumberOfFiles, allowedFileTypes} = this.opts
+
+    if (maxNumberOfFiles) {
+      if (Object.keys(this.state.files).length + 1 > maxNumberOfFiles) {
+        this.emit('informer', `${this.i18n('youCanOnlyUploadX', {smart_count: maxNumberOfFiles})}`, 'error', 5000)
+        return false
+      }
+    }
+
+    if (allowedFileTypes) {
+      if (allowedFileTypes.indexOf(fileType[0]) >= 0) return true
+      // allowedFileTypes.forEach(type => {
+      //   console.log(fileType[0], '', type)
+      //   if (fileType[0] === type) return true
+      // })
+      const allowedFileTypesString = allowedFileTypes.join(', ')
+      this.emit('informer', `${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
+      return false
+    }
+
+    if (maxFileSize) {
+      if (file.data.size > maxFileSize) {
+        this.emit('informer', `${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`, 'error', 5000)
+        return false
+      }
+    }
+
+    return true
+  }
+
   addFile (file) {
     const updatedFiles = Object.assign({}, this.state.files)
 
     const fileName = file.name || 'noname'
     const fileType = Utils.getFileType(file)
+
+    const isFileAllowed = this.checkRestrictions(file, fileType)
+    if (!isFileAllowed) {
+      // this.emit('informer', 'This file cannot be added', 'error', 3000)
+      return
+    }
+
     const fileTypeGeneral = fileType[0]
     const fileTypeSpecific = fileType[1]
     const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
