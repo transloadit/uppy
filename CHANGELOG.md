@@ -26,54 +26,70 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] dashboard: add ability to minimize Modal/Dashboard, while long upload is in progress? Uppy then becomes just a tiny progress indicator
 - [ ] test: Human should check http://www.webpagetest.org and https://developers.google.com/web/tools/lighthouse/, use it sometimes to test website and Uppy. Will show response/loading times and other issues
 - [ ] test: Human should test with real screen reader to identify accessibility problems
-- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing
 - [ ] test: Make Edge and Safari work via the tunnel so we can test localhost instead of uppy.io, and test the current build, vs the previous deploy that way
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
-- [ ] website: scrollbars on code samples (can’t reproduce!) (@arturi)
 - [ ] dependencies: es6-promise --> lie https://github.com/calvinmetcalf/lie ?
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
-- [ ] core: restrictions — by file type, size, number of files
 - [ ] core: see if it’s possible to add webworkers or use pica for thumbnail generation (@arturi)
 - [ ] website: Would one really connect a own google drive or dropbox for testing purpose? => maybe one can give something like a testing account of google drive and dropbox to try uppy
-- [ ] meta: Set up a Google testing account that people can use to try the demo (@hedgerh)
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
-- [ ] core: try file-type module for setting correct mime-types if needed, example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957
-- [ ] uppy-server: pluggable custom providers; Maybe we use a config file or make it similar to how uppy adds plugins (@ifedapoolarewaju)
 - [ ] ui: do we want https://github.com/kazzkiq/balloon.css ?
-- [ ] core: consider adding nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@arturi)
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
 - [ ] dashboard: see if transitions can be fixed in Firefox — seem to be working fine, let’s check again someday (@arturi)
-- [ ] instagram: Make a barely working Instagram Plugin (#21)
 - [ ] uppy/uppy-server: Transfer files between providers (from instagram to Google drive for example).
+- [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
+- [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
+
+## 1.0.0 Goals
+
+What we need to do to release Uppy 1.0
+
+- [ ] feature: restrictions: by size, number of files, file type [in progress]
+- [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
+- [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment
+- [ ] QA: test uppy server with multiple connections, different setups, large files
+- [ ] QA: test in multiple browsers and mobile devices, fix bugs
+- [ ] QA: test with real screen reader to identify accessibility problems
+- [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
+- [ ] refactoring: possibly add CSS-in-JS
+- [ ] refactoring: possibly switch from Yo-Yo to Preact, because its more stable, solves a few issues we are struggling with (like onload/onunload being weird in yo-yo) and mature, “new standard”, larger community
+- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say Tus plugin doesn’t include rendering stuff
+- [ ] refactoring: webcam plugin
+- [ ] refactoring: clean up code everywhere
+- [ ] docs: on using plugins, all options, list of plugins, i18n
+
+## 0.18.0
+
+- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 
 ## 0.17.0
 
 To be released: 2017-06-30
 
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
-- [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
 - [ ] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
 - [ ] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
+- [ ] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
 - [x] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju / #205)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
-- [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi @goto-bus-stop)
+- [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
-- [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] website: new demo video / gif (@arturi)
-- [ ] webcam: look into simplifying / improving webcam plugin (@arturi)
+- [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
 - [ ] core: add `uppy.reset()` as discussed in #179 (@arturi)
+- [x] core: add nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@goto-bus-stop, @arturi)
 - [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
 - [ ] core: add error in file progress state? (@arturi)
-- [ ] informer: display on `core:error` (@arturi)
-- [ ] statusbar: work towards extracting StatusBar to a separate plugin (@goto-bus-stop, @arturi)
+- [x] statusbar: work towards extracting StatusBar to a separate plugin, bundle that with Dashboard? (@goto-bus-stop, @arturi)
 - [ ] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
-- [ ] statusbar: also show major errors, add “error” state (@goto-bus-stop)
+- [x] statusbar: also show major errors, add “error” state (@goto-bus-stop)
 - [x] statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
 - [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
-- [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) (@arturi)
+- [ ] core: restrictions — by file type, size, number of files
+- [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957 (@arturi)
 - [x] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi, @nqst / #215)
 - [x] server: support for custom providers (@ifedapoolarewaju)
 
