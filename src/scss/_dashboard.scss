@@ -903,9 +903,6 @@
   color: $color-asphalt-gray;
 }
 
-
-
-
 .UppyDashboardItem-progressNum {
   position: relative;
   z-index: $zIndex-2;
@@ -1093,4 +1090,17 @@
     width: 30px;
     height: 30px;
   }
+}
+
+// StatusBar
+
+.UppyDashboard--wide .UppyStatusBar-content {
+  width: 17px;
+  height: 17px;
+}
+
+.UppyDashboard--wide .UppyStatusBar {
+  height: 40px;
+  line-height: 40px;
+  font-size: 14px;
 }
