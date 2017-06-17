@@ -196,19 +196,19 @@ function getFileType (file) {
 
       // 2. if that’s no good, check if mime type is set in the file object
       if (file.type) {
-        return Promise.resolve(file.type.split('/'))
+        return file.type.split('/')
       }
 
       // 3. if that’s no good, see if we can map extension to a mime type
       if (extensionsToMime[fileExtension]) {
-        return Promise.resolve(extensionsToMime[fileExtension].split('/'))
+        return extensionsToMime[fileExtension].split('/')
       }
 
       // if all fails, well, return empty
-      return Promise.resolve(emptyFileType)
+      return emptyFileType
     })
     .catch(() => {
-      return Promise.resolve(emptyFileType)
+      return emptyFileType
     })
 
     // if (file.type) {
