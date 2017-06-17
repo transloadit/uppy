@@ -47,11 +47,12 @@ What we need to do to release Uppy 1.0
 
 - [ ] feature: restrictions: by size, number of files, file type [in progress]
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
+- [ ] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment
 - [ ] QA: test uppy server with multiple connections, different setups, large files
 - [ ] QA: test in multiple browsers and mobile devices, fix bugs
 - [ ] QA: test with real screen reader to identify accessibility problems
-- [ ] ui: refine UI, neat things up
+- [ ] ui: refine UI, neat things up (if that’s even a word)
 - [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
 - [ ] refactoring: possibly add CSS-in-JS
 - [ ] refactoring: possibly switch from Yo-Yo to Preact, because its more stable, solves a few issues we are struggling with (like onload/onunload being weird in yo-yo) and mature, “new standard”, larger community
@@ -59,6 +60,8 @@ What we need to do to release Uppy 1.0
 - [ ] refactoring: webcam plugin
 - [ ] refactoring: clean up code everywhere
 - [ ] docs: on using plugins, all options, list of plugins, i18n
+- [ ] add uppy-server to main API service to scale it horizontally
+- [ ] add uppy-server metrics to Librato
 
 ## 0.18.0
 
@@ -87,7 +90,8 @@ To be released: 2017-06-30
 - [ ] core: add error in file progress state? (@arturi)
 - [x] statusbar: work towards extracting StatusBar to a separate plugin, bundle that with Dashboard? (@goto-bus-stop, @arturi)
 - [ ] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
-- [ ] fileinput: allowing retriving fields/options from form (@arturi #153)
+- [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit (@goto-bus-stop)
+- [ ] fileinput: allow retriving fields/options from form (@arturi #153)
 - [x] statusbar: also show major errors, add “error” state (@goto-bus-stop)
 - [x] statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
 - [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
