@@ -157,7 +157,7 @@ function isPreviewSupported (fileTypeSpecific) {
   return false
 }
 
-function getArrayBuffer (file) {
+function getArrayBuffer (chunk) {
   return new Promise(function (resolve, reject) {
     var reader = new FileReader()
     reader.addEventListener('load', function (e) {
@@ -169,7 +169,6 @@ function getArrayBuffer (file) {
       reject(err)
     })
     // file-type only needs the first 4100 bytes
-    const chunk = file.data.slice(0, 4100)
     reader.readAsArrayBuffer(chunk)
   })
 }
@@ -187,7 +186,8 @@ function getFileType (file) {
 
   // 1. try to determine file type from magic bytes with file-type module
   // this should be the most trustworthy way
-  return getArrayBuffer(file)
+  const chunk = file.data.slice(0, 4100)
+  return getArrayBuffer(chunk)
     .then((buffer) => {
       const type = fileType(buffer)
       if (type && type.mime) {
@@ -334,33 +334,6 @@ function copyToClipboard (textToCopy, fallbackString) {
   })
 }
 
-// function createInlineWorker (workerFunction) {
-//   let code = workerFunction.toString()
-//   code = code.substring(code.indexOf('{') + 1, code.lastIndexOf('}'))
-//
-//   const blob = new Blob([code], {type: 'application/javascript'})
-//   const worker = new Worker(URL.createObjectURL(blob))
-//
-//   return worker
-// }
-
-// function makeWorker (script) {
-//   var URL = window.URL || window.webkitURL
-//   var Blob = window.Blob
-//   var Worker = window.Worker
-//
-//   if (!URL || !Blob || !Worker || !script) {
-//     return null
-//   }
-//
-//   let code = script.toString()
-//   code = code.substring(code.indexOf('{') + 1, code.lastIndexOf('}'))
-//
-//   var blob = new Blob([code])
-//   var worker = new Worker(URL.createObjectURL(blob))
-//   return worker
-// }
-
 function getSpeed (fileProgress) {
   if (!fileProgress.bytesUploaded) return 0
 
@@ -397,22 +370,6 @@ function prettyETA (seconds) {
 
   return `${hoursStr}${minutesStr}${secondsStr}`
 }
-
-// function makeCachingFunction () {
-//   let cachedEl = null
-//   let lastUpdate = Date.now()
-//
-//   return function cacheElement (el, time) {
-//     if (Date.now() - lastUpdate < time) {
-//       return cachedEl
-//     }
-//
-//     cachedEl = el
-//     lastUpdate = Date.now()
-//
-//     return el
-//   }
-// }
 
 /**
  * Check if an object is a DOM element. Duck-typing based on `nodeType`.
