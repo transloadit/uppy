@@ -1,6 +1,8 @@
 const throttle = require('lodash.throttle')
-// import mime from 'mime-types'
-// import pica from 'pica'
+// we inline file-type module, as opposed to using the NPM version,
+// because of this https://github.com/sindresorhus/file-type/issues/78
+// and https://github.com/sindresorhus/copy-text-to-clipboard/issues/5
+const fileType = require('../vendor/file-type')
 
 /**
  * A collection of small utility functions that help with dom manipulation, adding listeners,
@@ -147,9 +149,73 @@ function runPromiseSequence (functions, ...args) {
 //   return (!f && 'not a function') || (s && s[1] || 'anonymous')
 // }
 
+function isPreviewSupported (fileTypeSpecific) {
+  // list of images that browsers can preview
+  if (/^(jpeg|gif|png|svg|svg\+xml|bmp)$/.test(fileTypeSpecific)) {
+    return true
+  }
+  return false
+}
+
+function getArrayBuffer (chunk) {
+  return new Promise(function (resolve, reject) {
+    var reader = new FileReader()
+    reader.addEventListener('load', function (e) {
+      // e.target.result is an ArrayBuffer
+      resolve(e.target.result)
+    })
+    reader.addEventListener('error', function (err) {
+      console.error('FileReader error' + err)
+      reject(err)
+    })
+    // file-type only needs the first 4100 bytes
+    reader.readAsArrayBuffer(chunk)
+  })
+}
+
 function getFileType (file) {
-  return file.type ? file.type.split('/') : ['', '']
-  // return mime.lookup(file.name)
+  const emptyFileType = ['', '']
+  const extensionsToMime = {
+    'md': 'text/markdown',
+    'markdown': 'text/markdown',
+    'mp4': 'video/mp4',
+    'mp3': 'audio/mp3'
+  }
+
+  const fileExtension = getFileNameAndExtension(file.name)[1]
+
+  // 1. try to determine file type from magic bytes with file-type module
+  // this should be the most trustworthy way
+  const chunk = file.data.slice(0, 4100)
+  return getArrayBuffer(chunk)
+    .then((buffer) => {
+      const type = fileType(buffer)
+      if (type && type.mime) {
+        return type.mime.split('/')
+      }
+
+      // 2. if that’s no good, check if mime type is set in the file object
+      if (file.type) {
+        return file.type.split('/')
+      }
+
+      // 3. if that’s no good, see if we can map extension to a mime type
+      if (extensionsToMime[fileExtension]) {
+        return extensionsToMime[fileExtension].split('/')
+      }
+
+      // if all fails, well, return empty
+      return emptyFileType
+    })
+    .catch(() => {
+      return emptyFileType
+    })
+
+    // if (file.type) {
+    //   return Promise.resolve(file.type.split('/'))
+    // }
+    // return mime.lookup(file.name)
+    // return file.type ? file.type.split('/') : ['', '']
 }
 
 // TODO Check which types are actually supported in browsers. Chrome likes webm
@@ -268,33 +334,6 @@ function copyToClipboard (textToCopy, fallbackString) {
   })
 }
 
-// function createInlineWorker (workerFunction) {
-//   let code = workerFunction.toString()
-//   code = code.substring(code.indexOf('{') + 1, code.lastIndexOf('}'))
-//
-//   const blob = new Blob([code], {type: 'application/javascript'})
-//   const worker = new Worker(URL.createObjectURL(blob))
-//
-//   return worker
-// }
-
-// function makeWorker (script) {
-//   var URL = window.URL || window.webkitURL
-//   var Blob = window.Blob
-//   var Worker = window.Worker
-//
-//   if (!URL || !Blob || !Worker || !script) {
-//     return null
-//   }
-//
-//   let code = script.toString()
-//   code = code.substring(code.indexOf('{') + 1, code.lastIndexOf('}'))
-//
-//   var blob = new Blob([code])
-//   var worker = new Worker(URL.createObjectURL(blob))
-//   return worker
-// }
-
 function getSpeed (fileProgress) {
   if (!fileProgress.bytesUploaded) return 0
 
@@ -331,22 +370,6 @@ function prettyETA (seconds) {
 
   return `${hoursStr}${minutesStr}${secondsStr}`
 }
-
-// function makeCachingFunction () {
-//   let cachedEl = null
-//   let lastUpdate = Date.now()
-//
-//   return function cacheElement (el, time) {
-//     if (Date.now() - lastUpdate < time) {
-//       return cachedEl
-//     }
-//
-//     cachedEl = el
-//     lastUpdate = Date.now()
-//
-//     return el
-//   }
-// }
 
 /**
  * Check if an object is a DOM element. Duck-typing based on `nodeType`.
@@ -403,8 +426,6 @@ module.exports = {
   every,
   flatten,
   groupBy,
-  // $,
-  // $$,
   extend,
   runPromiseSequence,
   supportsMediaRecorder,
@@ -413,6 +434,8 @@ module.exports = {
   truncateString,
   getFileTypeExtension,
   getFileType,
+  getArrayBuffer,
+  isPreviewSupported,
   getThumbnail,
   secondsToTime,
   dataURItoBlob,
@@ -420,8 +443,6 @@ module.exports = {
   getSpeed,
   getBytesRemaining,
   getETA,
-  // makeWorker,
-  // makeCachingFunction,
   copyToClipboard,
   prettyETA,
   findDOMElement,
