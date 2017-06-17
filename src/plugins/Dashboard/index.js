@@ -396,13 +396,17 @@ module.exports = class DashboardUI extends Plugin {
     const plugin = this
     this.target = this.mount(target, plugin)
 
-    this.core.use(StatusBar, {
-      target: DashboardUI
-    })
+    if (!this.opts.disableStatusBar) {
+      this.core.use(StatusBar, {
+        target: DashboardUI
+      })
+    }
 
-    this.core.use(Informer, {
-      target: DashboardUI
-    })
+    if (!this.opts.disableInformer) {
+      this.core.use(Informer, {
+        target: DashboardUI
+      })
+    }
 
     this.initEvents()
     this.actions()
