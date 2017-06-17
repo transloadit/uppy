@@ -40,7 +40,7 @@ function uppyInit () {
   }
 
   uppy.use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
-  uppy.use(Informer, {target: Dashboard})
+  // uppy.use(Informer, {target: Dashboard})
   uppy.use(MetaData, {
     fields: [
       { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
