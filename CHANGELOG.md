@@ -39,6 +39,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy/uppy-server: Transfer files between providers (from instagram to Google drive for example).
 - [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
+- [ ] image cropping on the client (#151)
 
 ## 1.0.0 Goals
 
@@ -50,6 +51,7 @@ What we need to do to release Uppy 1.0
 - [ ] QA: test uppy server with multiple connections, different setups, large files
 - [ ] QA: test in multiple browsers and mobile devices, fix bugs
 - [ ] QA: test with real screen reader to identify accessibility problems
+- [ ] ui: refine UI, neat things up
 - [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
 - [ ] refactoring: possibly add CSS-in-JS
 - [ ] refactoring: possibly switch from Yo-Yo to Preact, because its more stable, solves a few issues we are struggling with (like onload/onunload being weird in yo-yo) and mature, “new standard”, larger community
@@ -85,11 +87,12 @@ To be released: 2017-06-30
 - [ ] core: add error in file progress state? (@arturi)
 - [x] statusbar: work towards extracting StatusBar to a separate plugin, bundle that with Dashboard? (@goto-bus-stop, @arturi)
 - [ ] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
+- [ ] fileinput: allowing retriving fields/options from form (@arturi #153)
 - [x] statusbar: also show major errors, add “error” state (@goto-bus-stop)
 - [x] statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
 - [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
-- [ ] core: restrictions — by file type, size, number of files
-- [ ] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957 (@arturi)
+- [ ] core: restrictions — by file type, size, number of files (@arturi)
+- [x] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957 (@arturi)
 - [x] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi, @nqst / #215)
 - [x] server: support for custom providers (@ifedapoolarewaju)
 
