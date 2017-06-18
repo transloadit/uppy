@@ -34,6 +34,8 @@ const Utils = require('../core/Utils')
  *    @return {String} unique request path of the item when making calls to uppy server
  * getItemModifiedDate
  *    @return {object} or {String} date of when last the item was modified
+ * getItemThumbnailUrl
+ *    @return {String}
  */
 module.exports = class View {
   /**
@@ -141,7 +143,7 @@ module.exports = class View {
 
     Utils.getFileType(tagFile).then(fileType => {
       if (Utils.isPreviewSupported(fileType[1])) {
-        tagFile.preview = `${this.plugin.opts.host}/${this.Provider.id}/thumbnail/${this.plugin.getItemRequestPath(file)}`
+        tagFile.preview = this.plugin.getItemThumbnailUrl(file)
       }
       this.plugin.core.log('Adding remote file')
       this.plugin.core.emitter.emit('core:file-add', tagFile)

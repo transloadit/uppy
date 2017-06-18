@@ -113,6 +113,10 @@ module.exports = class Google extends Plugin {
     return item.modifiedByMeDate
   }
 
+  getItemThumbnailUrl (item) {
+    return `${this.opts.host}/${this.GoogleDrive.id}/thumbnail/${this.getItemRequestPath(item)}`
+  }
+
   render (state) {
     return this.view.render(state)
   }
