@@ -49,7 +49,7 @@ module.exports = class View {
     this.filterQuery = this.filterQuery.bind(this)
     this.getFolder = this.getFolder.bind(this)
     this.getNextFolder = this.getNextFolder.bind(this)
-    this.handleRowClick = this.handleRowClick.bind(this)
+    // this.handleRowClick = this.handleRowClick.bind(this)
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleDemoAuth = this.handleDemoAuth.bind(this)
@@ -139,11 +139,13 @@ module.exports = class View {
       }
     }
 
-    if (Utils.getFileType(tagFile)[0] === 'image') {
-      tagFile.preview = `${this.plugin.opts.host}/${this.Provider.id}/thumbnail/${this.plugin.getItemRequestPath(file)}`
-    }
-    console.log('adding file')
-    this.plugin.core.emitter.emit('core:file-add', tagFile)
+    Utils.getFileType(tagFile).then(fileType => {
+      if (Utils.isPreviewSupported(fileType[1])) {
+        tagFile.preview = `${this.plugin.opts.host}/${this.Provider.id}/thumbnail/${this.plugin.getItemRequestPath(file)}`
+      }
+      this.plugin.core.log('Adding remote file')
+      this.plugin.core.emitter.emit('core:file-add', tagFile)
+    })
   }
 
   /**
@@ -169,14 +171,14 @@ module.exports = class View {
    * Used to set active file/folder.
    * @param  {Object} file   Active file/folder
    */
-  handleRowClick (file) {
-    const state = this.plugin.core.getState()[this.plugin.stateId]
-    const newState = Object.assign({}, state, {
-      activeRow: this.plugin.getItemId(file)
-    })
+  // handleRowClick (file) {
+  //   const state = this.plugin.core.getState()[this.plugin.stateId]
+  //   const newState = Object.assign({}, state, {
+  //     activeRow: this.plugin.getItemId(file)
+  //   })
 
-    this.updateState(newState)
-  }
+  //   this.updateState(newState)
+  // }
 
   filterQuery (e) {
     const state = this.plugin.core.getState()[this.plugin.stateId]
