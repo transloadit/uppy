@@ -24,15 +24,17 @@ module.exports = class Multipart extends Plugin {
   }
 
   upload (file, current, total) {
+    const opts = Object.assign({}, this.opts, file.multipart || {})
+
     this.core.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
       // turn file into an array so we can use bundle
-      // if (!this.opts.bundle) {
+      // if (!opts.bundle) {
       //   files = [files[current]]
       // }
 
       // for (let i in files) {
-      //   formPost.append(this.opts.fieldName, files[i])
+      //   formPost.append(opts.fieldName, files[i])
       // }
 
       const formPost = new FormData()
@@ -41,7 +43,7 @@ module.exports = class Multipart extends Plugin {
         formPost.append(item, file.meta[item])
       })
 
-      formPost.append(this.opts.fieldName, file.data)
+      formPost.append(opts.fieldName, file.data)
 
       const xhr = new XMLHttpRequest()
 
@@ -59,7 +61,7 @@ module.exports = class Multipart extends Plugin {
       xhr.addEventListener('load', (ev) => {
         if (ev.target.status >= 200 && ev.target.status < 300) {
           const resp = JSON.parse(xhr.response)
-          const uploadURL = resp[this.opts.responseUrlFieldName]
+          const uploadURL = resp[opts.responseUrlFieldName]
 
           this.core.emitter.emit('core:upload-success', file.id, resp, uploadURL)
 
@@ -75,7 +77,7 @@ module.exports = class Multipart extends Plugin {
 
         // var upload = {}
         //
-        // if (this.opts.bundle) {
+        // if (opts.bundle) {
         //   upload = {files: files}
         // } else {
         //   upload = {file: files[current]}
@@ -87,10 +89,10 @@ module.exports = class Multipart extends Plugin {
         return reject('Upload error')
       })
 
-      xhr.open('POST', this.opts.endpoint, true)
+      xhr.open('POST', opts.endpoint, true)
 
-      Object.keys(this.opts.headers).forEach((header) => {
-        xhr.setRequestHeader(header, this.opts.headers[header])
+      Object.keys(opts.headers).forEach((header) => {
+        xhr.setRequestHeader(header, opts.headers[header])
       })
 
       xhr.send(formPost)
@@ -112,6 +114,7 @@ module.exports = class Multipart extends Plugin {
   }
 
   uploadRemote (file, current, total) {
+    const opts = Object.assign({}, this.opts, file.multipart || {})
     return new Promise((resolve, reject) => {
       this.core.emitter.emit('core:upload-started', file.id)
 
@@ -123,9 +126,9 @@ module.exports = class Multipart extends Plugin {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(Object.assign({}, file.remote.body, {
-          endpoint: this.opts.endpoint,
+          endpoint: opts.endpoint,
           size: file.data.size,
-          fieldname: this.opts.fieldName
+          fieldname: opts.fieldName
         }))
       })
       .then((res) => {
