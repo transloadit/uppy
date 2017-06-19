@@ -74,6 +74,7 @@
     "watchify": "3.7.0"
   },
   "dependencies": {
+    "aliasify": "^2.1.0",
     "drag-drop": "2.13.2",
     "es6-promise": "3.2.1",
     "lodash.throttle": "4.1.1",
