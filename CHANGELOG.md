@@ -60,55 +60,57 @@ What we need to do to release Uppy 1.0
 - [ ] refactoring: webcam plugin
 - [ ] refactoring: clean up code everywhere
 - [ ] docs: on using plugins, all options, list of plugins, i18n
-- [ ] add uppy-server to main API service to scale it horizontally
-- [ ] add uppy-server metrics to Librato
+- [ ] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
+- [ ] uppy-server: add uppy-server metrics to Librato
+- [ ] uppy-server: Better error handling
+- [ ] uppy-server: General cleanup (remove unused code. etc)
 
 ## 0.18.0
 
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
+- [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
+- [ ] core: add error in file progress state? (@arturi)
 
 ## 0.17.0
 
 To be released: 2017-06-30
 
-- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
-- [ ] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
-- [ ] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
-- [ ] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
+- [ ] core: add `uppy.reset()` as discussed in #179 (@arturi)
+- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
+- [ ] core: restrictions — by file type, size, number of files (@arturi)
+- [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
+- [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
+- [ ] fileinput: allow retriving fields/options from form (@arturi #153)
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
-- [x] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju / #205)
-- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
-- [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
-- [ ] website: new demo video / gif (@arturi)
-- [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
-- [ ] core: add `uppy.reset()` as discussed in #179 (@arturi)
-- [x] core: add nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@goto-bus-stop, @arturi)
-- [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
-- [ ] core: add error in file progress state? (@arturi)
-- [x] statusbar: work towards extracting StatusBar to a separate plugin, bundle that with Dashboard? (@goto-bus-stop, @arturi)
 - [ ] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
+- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit (@goto-bus-stop)
-- [ ] fileinput: allow retriving fields/options from form (@arturi #153)
-- [x] statusbar: also show major errors, add “error” state (@goto-bus-stop)
-- [x] statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
-- [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
-- [ ] core: restrictions — by file type, size, number of files (@arturi)
+- [ ] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
+- [ ] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
+- [ ] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
+- [ ] website: new demo video / gif (@arturi)
+- [x] core: add nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@goto-bus-stop, @arturi)
 - [x] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957 (@arturi)
 - [x] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi, @nqst / #215)
 - [x] server: support for custom providers (@ifedapoolarewaju)
+- [x] statusbar: also show major errors, add “error” state (@goto-bus-stop)
+- [x] statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
+- [x] statusbar: work towards extracting StatusBar to a separate plugin, bundle that with Dashboard? (@goto-bus-stop, @arturi)
+- [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
+- [x] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju / #205)
 
 ## 0.16.2 - 2017-05-31
 
-- [x] update prettier-bytes to fix the IE support issue https://github.com/Flet/prettier-bytes/issues/3 (@arturi)
-- [x] dashboard: Fix ETA when multiple files are being uploaded (@goto-bus-stop, #197)
-- [x] webcam: Mute audio in realtime playback (@goto-bus-stop / #196)
-- [x] transloadit: move user-facing strings into locale option (@goto-bus-stop / https://github.com/transloadit/uppy/commit/87a22e7ee37b6fa3754fa34868516a6700306b60)
+- [x] core: update prettier-bytes to fix the IE support issue https://github.com/Flet/prettier-bytes/issues/3 (@arturi)
 - [x] core: use URL.createObjectURL instead of resizing thumbnails (@arturi, @goto-bus-stop / #199)
-- [x] transloadit: Use the `tus_upload_url` to reliably link assembly results with their input files (@goto-bus-stop / #207)
+- [x] dashboard: Fix ETA when multiple files are being uploaded (@goto-bus-stop, #197)
 - [x] transloadit: Fix receiving assembly results that are not related to an input file (@arturi, @goto-bus-stop / #201)
+- [x] transloadit: Use the `tus_upload_url` to reliably link assembly results with their input files (@goto-bus-stop / #207)
+- [x] transloadit: move user-facing strings into locale option (@goto-bus-stop / https://github.com/transloadit/uppy/commit/87a22e7ee37b6fa3754fa34868516a6700306b60)
+- [x] webcam: Mute audio in realtime playback (@goto-bus-stop / #196)
 
 ## 0.16.1 - 2017-05-13
 
