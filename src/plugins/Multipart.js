@@ -13,7 +13,8 @@ module.exports = class Multipart extends Plugin {
     const defaultOptions = {
       fieldName: 'files[]',
       responseUrlFieldName: 'url',
-      bundle: true
+      bundle: true,
+      headers: {}
     }
 
     // Merge default options with the ones set by user
@@ -87,6 +88,11 @@ module.exports = class Multipart extends Plugin {
       })
 
       xhr.open('POST', this.opts.endpoint, true)
+
+      Object.keys(this.opts.headers).forEach((header) => {
+        xhr.setRequestHeader(header, this.opts.headers[header])
+      })
+
       xhr.send(formPost)
 
       this.core.emitter.on('core:upload-cancel', (fileID) => {
