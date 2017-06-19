@@ -36,12 +36,12 @@ module.exports = class Multipart extends Plugin {
       // }
 
       const formPost = new FormData()
-      formPost.append(this.opts.fieldName, file.data)
 
       Object.keys(file.meta).forEach((item) => {
-        // console.log(file.meta, file.meta[item])
         formPost.append(item, file.meta[item])
       })
+
+      formPost.append(this.opts.fieldName, file.data)
 
       const xhr = new XMLHttpRequest()
 
