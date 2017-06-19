@@ -6,8 +6,8 @@ const Webcam = require('../src/plugins/Webcam')
 const Tus10 = require('../src/plugins/Tus10')
 // const Multipart = require('../src/plugins/Multipart')
 const MetaData = require('../src/plugins/MetaData')
-const Informer = require('../src/plugins/Informer')
-const StatusBar = require('../src/plugins/StatusBar')
+// const Informer = require('../src/plugins/Informer')
+// const StatusBar = require('../src/plugins/StatusBar')
 // const DragDrop = require('../src/plugins/DragDrop')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
@@ -23,6 +23,8 @@ const uppy = Uppy({debug: true, autoProceed: false})
     // maxWidth: 350,
     // maxHeight: 400,
     // inline: false,
+    // disableStatusBar: true,
+    // disableInformer: true,
     target: 'body',
     locale: {
       strings: {browse: 'wow'}
@@ -41,8 +43,8 @@ const uppy = Uppy({debug: true, autoProceed: false})
   .use(Webcam, {target: Dashboard})
   // .use(Multipart, {endpoint: '//api2.transloadit.com'})
   .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
-  .use(Informer, {target: Dashboard})
-  .use(StatusBar, {target: Dashboard})
+  // .use(Informer, {target: Dashboard})
+  // .use(StatusBar, {target: Dashboard})
   .use(MetaData, {
     fields: [
       { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
@@ -52,7 +54,7 @@ const uppy = Uppy({debug: true, autoProceed: false})
 uppy.run()
 
 uppy.on('core:success', (fileCount) => {
-  console.log('UPLOAD SUCCESSFUL, YES')
+  console.log('UPLOAD SUCCESSFUL!!!')
   console.log(fileCount)
 })
 
