@@ -20,4 +20,4 @@ npm-debug.log*
 config/
 nohup.out
 
-example/bundle.js
+examples/bundled-example/bundle.js

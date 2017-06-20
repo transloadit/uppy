@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://unpkg.com/uppy/dist/uppy.min.css" rel="stylesheet"> 
+  </head>
+  <body>
+    <button id="uppyModalOpener">Open Modal</button>
+    <script src="https://unpkg.com/uppy/dist/uppy.min.js"></script>
+    <script>
+      const Dashboard = Uppy.Dashboard
+      const Webcam = Uppy.Webcam
+      const Tus10 = Uppy.Tus10
+      const Informer = Uppy.Informer
+
+      const uppy = Uppy.Core({debug: true, autoProceed: false})
+      .use(Uppy.Dashboard, {
+        trigger: '#uppyModalOpener',
+        target: 'body'
+      })
+      .use(Webcam, {target: Dashboard})
+      .use(Tus10, {endpoint: 'http://master.tus.io/files/', resume: true})
+      .use(Informer, {target: Dashboard})
+
+      uppy.run()
+
+      uppy.on('core:success', (fileCount) => {
+        console.log(`${fileCount} files uploaded`)
+      })
+
+      document.querySelector('#uppyModalOpener').click()
+    </script>
+  </body>
+</html>

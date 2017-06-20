@@ -10,7 +10,7 @@
     "dist/",
     "test/",
     "bin/",
-    "example/"
+    "examples/"
   ],
   "lint-staged": {
     "*.js": "eslint"
@@ -120,8 +120,8 @@
     "watch:js": "onchange 'src/**/*.js' --initial --verbose -- npm run build:bundle",
     "watch": "npm-run-all --parallel watch:js watch:css",
     "watch:fast": "npm-run-all --parallel watch:css web:preview",
-    "watch:example:browsersync": "browser-sync start --server example --port 3452 --serveStatic dist --files \"example/bundle.js, dist/uppy.min.css\"",
-    "watch:example:js": "watchify -t babelify example/main.js -o example/bundle.js -vd",
+    "watch:example:browsersync": "browser-sync start --server examples/bundled-example --port 3452 --serveStatic dist --files \"examples/bundled-example/bundle.js, dist/uppy.min.css\"",
+    "watch:example:js": "watchify -t babelify examples/bundled-example/main.js -o examples/bundled-example/bundle.js -vd",
     "watch:example": "npm-run-all --parallel watch:example:js watch:css watch:example:browsersync",
     "dev": "npm-run-all --parallel watch:example:js watch:css watch:example:browsersync",
     "web:build": "cd website && node update.js && ./node_modules/.bin/hexo generate --silent && node build-examples.js",
