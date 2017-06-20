@@ -101,6 +101,13 @@ class Uppy {
     return this.state
   }
 
+  reset () {
+    this.setState({
+      files: {},
+      totalProgress: 0
+    })
+  }
+
   addPreProcessor (fn) {
     this.preProcessors.push(fn)
   }
