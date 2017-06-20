@@ -40,9 +40,9 @@ module.exports = (props) => {
             activeRow: props.isActiveRow,
             sortByTitle: props.sortByTitle,
             sortByDate: props.sortByDate,
-            handleRowClick: props.handleRowClick,
-            handleFileDoubleClick: props.addFile,
-            handleFolderDoubleClick: props.getNextFolder,
+            // handleRowClick: props.handleRowClick,
+            handleFileClick: props.addFile,
+            handleFolderClick: props.getNextFolder,
             getItemName: props.getItemName,
             getItemIcon: props.getItemIcon
           })}

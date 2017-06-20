@@ -182,6 +182,11 @@ function getFileType (file) {
     'mp3': 'audio/mp3'
   }
 
+  // no smart detection for remote files, just trust the provider
+  if (file.isRemote) {
+    return Promise.resolve(file.type.split('/'))
+  }
+
   const fileExtension = getFileNameAndExtension(file.name)[1]
 
   // 1. try to determine file type from magic bytes with file-type module
