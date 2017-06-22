@@ -100,7 +100,7 @@ module.exports = class Instagram extends Plugin {
   }
 
   getMimeType (item) {
-    return item.type === 'video' ? 'video/mp4' : 'image/jpg'
+    return item.type === 'video' ? 'video/mp4' : 'image/jpeg'
   }
 
   getItemId (item) {
@@ -117,6 +117,11 @@ module.exports = class Instagram extends Plugin {
 
   getItemThumbnailUrl (item) {
     return item.images.thumbnail.url
+  }
+
+  getNextPagePath () {
+    const { files } = this.core.getState()[this.stateId]
+    return `recent?max_id=${this.getItemId(files[files.length - 1])}`
   }
 
   render (state) {

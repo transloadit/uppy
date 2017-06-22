@@ -59,6 +59,7 @@ module.exports = class View {
     this.sortByDate = this.sortByDate.bind(this)
     this.isActiveRow = this.isActiveRow.bind(this)
     this.handleError = this.handleError.bind(this)
+    this.handleScroll = this.handleScroll.bind(this)
 
     // Visual
     this.render = this.render.bind(this)
@@ -72,6 +73,18 @@ module.exports = class View {
     const {state} = this.plugin.core
 
     this.plugin.core.setState({[stateId]: Object.assign({}, state[stateId], newState)})
+  }
+
+  _updateFilesAndFolders (res, files, folders) {
+    this.plugin.getItemSubList(res).forEach((item) => {
+      if (this.plugin.isFolder(item)) {
+        folders.push(item)
+      } else {
+        files.push(item)
+      }
+    })
+
+    this.updateState({ folders, files })
   }
 
   /**
@@ -96,18 +109,8 @@ module.exports = class View {
           updatedDirectories = state.directories.concat([{id, title: name || this.plugin.getItemName(res)}])
         }
 
-        this.plugin.getItemSubList(res).forEach((item) => {
-          if (this.plugin.isFolder(item)) {
-            folders.push(item)
-          } else {
-            files.push(item)
-          }
-        })
-
-        let data = {folders, files, directories: updatedDirectories}
-        this.updateState(data)
-
-        return data
+        this._updateFilesAndFolders(res, files, folders)
+        this.updateState({ directories: updatedDirectories })
       },
       this.handleError)
   }
@@ -168,19 +171,6 @@ module.exports = class View {
         }
       }).catch(this.handleError)
   }
-
-  /**
-   * Used to set active file/folder.
-   * @param  {Object} file   Active file/folder
-   */
-  // handleRowClick (file) {
-  //   const state = this.plugin.core.getState()[this.plugin.stateId]
-  //   const newState = Object.assign({}, state, {
-  //     activeRow: this.plugin.getItemId(file)
-  //   })
-
-  //   this.updateState(newState)
-  // }
 
   filterQuery (e) {
     const state = this.plugin.core.getState()[this.plugin.stateId]
@@ -299,6 +289,18 @@ module.exports = class View {
     this.updateState({ error })
   }
 
+  handleScroll (e) {
+    const scrollPos = e.target.scrollHeight - (e.target.scrollTop + e.target.offsetHeight)
+    const path = this.plugin.getNextPagePath()
+    if (scrollPos < 50 && path) {
+      this.Provider.list(path)
+        .then((res) => {
+          const { files, folders } = this.plugin.core.getState()[this.plugin.stateId]
+          this._updateFilesAndFolders(res, files, folders)
+        })
+    }
+  }
+
   // displays loader view while asynchronous request is being made.
   _loaderWrapper (promise, then, catch_) {
     promise
@@ -347,7 +349,8 @@ module.exports = class View {
       demo: this.plugin.opts.demo,
       isActiveRow: this.isActiveRow,
       getItemName: this.plugin.getItemName,
-      getItemIcon: this.plugin.getItemIcon
+      getItemIcon: this.plugin.getItemIcon,
+      handleScroll: this.handleScroll
     })
 
     return Browser(browserProps)

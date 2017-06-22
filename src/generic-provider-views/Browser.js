@@ -40,11 +40,11 @@ module.exports = (props) => {
             activeRow: props.isActiveRow,
             sortByTitle: props.sortByTitle,
             sortByDate: props.sortByDate,
-            // handleRowClick: props.handleRowClick,
             handleFileClick: props.addFile,
             handleFolderClick: props.getNextFolder,
             getItemName: props.getItemName,
-            getItemIcon: props.getItemIcon
+            getItemIcon: props.getItemIcon,
+            handleScroll: props.handleScroll
           })}
         </main>
       </div>
