@@ -96,6 +96,7 @@ To be released: 2017-06-30
 - [x] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957 (@arturi)
 - [x] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi, @nqst / #215)
 - [x] server: support for custom providers (@ifedapoolarewaju)
+- [x] server: configurable server port
 - [x] statusbar: also show major errors, add “error” state (@goto-bus-stop)
 - [x] statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
 - [x] statusbar: work towards extracting StatusBar to a separate plugin, bundle that with Dashboard? (@goto-bus-stop, @arturi)
