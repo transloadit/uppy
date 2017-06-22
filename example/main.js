@@ -21,7 +21,8 @@ const uppy = Uppy({
   debug: true,
   autoProceed: false,
   maxFileSize: 300000,
-  maxNumberOfFiles: 1,
+  maxNumberOfFiles: 5,
+  minNumberOfFiles: 2,
   allowedFileTypes: ['image', 'video']
 })
   .use(Dashboard, {

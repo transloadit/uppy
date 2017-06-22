@@ -20,6 +20,10 @@ class Uppy {
           0: 'You can only upload %{smart_count} file',
           1: 'You can only upload %{smart_count} files'
         },
+        youHaveToAtLeastSelectX: {
+          0: 'You have to select at least %{smart_count} file',
+          1: 'You have to select at least %{smart_count} files'
+        },
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload:'
       }
@@ -33,6 +37,7 @@ class Uppy {
       debug: false,
       maxFileSize: false,
       maxNumberOfFiles: false,
+      minNumberOfFiles: false,
       allowedFileTypes: false,
       locale: defaultLocale
     }
@@ -166,8 +171,17 @@ class Uppy {
     this.setState({files: updatedFiles})
   }
 
-  checkRestrictions (file, fileType) {
-    const {maxFileSize, maxNumberOfFiles, allowedFileTypes} = this.opts
+  checkRestrictions (checkMinNumberOfFiles, file, fileType) {
+    const {maxFileSize, maxNumberOfFiles, minNumberOfFiles, allowedFileTypes} = this.opts
+
+    if (checkMinNumberOfFiles && minNumberOfFiles) {
+      console.log(Object.keys(this.state.files).length)
+      if (Object.keys(this.state.files).length < minNumberOfFiles) {
+        this.emit('informer', `${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
+        return false
+      }
+      return true
+    }
 
     if (maxNumberOfFiles) {
       if (Object.keys(this.state.files).length + 1 > maxNumberOfFiles) {
@@ -176,12 +190,7 @@ class Uppy {
       }
     }
 
-    if (allowedFileTypes) {
-      if (allowedFileTypes.indexOf(fileType[0]) >= 0) return true
-      // allowedFileTypes.forEach(type => {
-      //   console.log(fileType[0], '', type)
-      //   if (fileType[0] === type) return true
-      // })
+    if (allowedFileTypes && allowedFileTypes.indexOf(fileType[0]) < 0) {
       const allowedFileTypesString = allowedFileTypes.join(', ')
       this.emit('informer', `${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
       return false
@@ -199,6 +208,9 @@ class Uppy {
 
   addFile (file) {
     Utils.getFileType(file).then((fileType) => {
+      const isFileAllowed = this.checkRestrictions(false, file, fileType)
+      if (!isFileAllowed) return
+
       const updatedFiles = Object.assign({}, this.state.files)
       const fileName = file.name || 'noname'
       const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
@@ -620,6 +632,9 @@ class Uppy {
   }
 
   upload () {
+    const isMinNumberOfFilesReached = this.checkRestrictions(true)
+    if (!isMinNumberOfFilesReached) return Promise.resolve()
+
     this.emit('core:upload')
 
     const waitingFileIDs = []
@@ -646,7 +661,8 @@ class Uppy {
     })
 
     return promise.then(() => {
-      this.emit('core:success')
+      // return number of uploaded files
+      this.emit('core:success', waitingFileIDs)
     })
   }
 }
