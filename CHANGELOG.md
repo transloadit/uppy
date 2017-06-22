@@ -48,28 +48,33 @@ What we need to do to release Uppy 1.0
 - [ ] feature: restrictions: by size, number of files, file type [in progress]
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
 - [ ] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
-- [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment
-- [ ] QA: test uppy server with multiple connections, different setups, large files
+- [ ] feature: Uppy should work well with React/Redux. React (Native)
+- [ ] feature: preset for Transloadit that mimics jQuery SDK
+- [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
+- [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files. add metrics to Librato
+- [ ] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
 - [ ] QA: test in multiple browsers and mobile devices, fix bugs
 - [ ] QA: test with real screen reader to identify accessibility problems
 - [ ] ui: refine UI, neat things up (if that’s even a word)
 - [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
 - [ ] refactoring: possibly add CSS-in-JS
 - [ ] refactoring: possibly switch from Yo-Yo to Preact, because its more stable, solves a few issues we are struggling with (like onload/onunload being weird in yo-yo) and mature, “new standard”, larger community
-- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say Tus plugin doesn’t include rendering stuff
 - [ ] refactoring: webcam plugin
 - [ ] refactoring: clean up code everywhere
 - [ ] docs: on using plugins, all options, list of plugins, i18n
-- [ ] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
-- [ ] uppy-server: add uppy-server metrics to Librato
-- [ ] uppy-server: Better error handling
-- [ ] uppy-server: General cleanup (remove unused code. etc)
+- [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
+- [ ] uppy-server: security audit
+
+maybe later:
+
+- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say Tus plugin doesn’t include rendering stuff
 
 ## 0.18.0
 
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
 - [ ] core: add error in file progress state? (@arturi)
+- [ ] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju)
 
 ## 0.17.0
 
