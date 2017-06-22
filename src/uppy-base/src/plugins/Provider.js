@@ -21,7 +21,7 @@ module.exports = class Provider {
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application.json'
+        'Content-Type': 'application/json'
       }
     })
     .then((res) => {
