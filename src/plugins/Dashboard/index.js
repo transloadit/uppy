@@ -2,6 +2,8 @@ const Plugin = require('../Plugin')
 const Translator = require('../../core/Translator')
 const dragDrop = require('drag-drop')
 const Dashboard = require('./Dashboard')
+const StatusBar = require('../StatusBar')
+const Informer = require('../Informer')
 const { findDOMElement } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
@@ -208,15 +210,6 @@ module.exports = class DashboardUI extends Plugin {
     bus.on('dashboard:file-card', this.handleFileCard)
 
     window.addEventListener('resize', this.updateDashboardElWidth)
-
-    // bus.on('core:success', (uploadedCount) => {
-    //   bus.emit(
-    //     'informer',
-    //     `${this.core.i18n('files', {'smart_count': uploadedCount})} successfully uploaded, Sir!`,
-    //     'info',
-    //     6000
-    //   )
-    // })
   }
 
   removeActions () {
@@ -230,8 +223,7 @@ module.exports = class DashboardUI extends Plugin {
 
   updateDashboardElWidth () {
     const dashboardEl = this.target.querySelector('.UppyDashboard-inner')
-    // const containerWidth = dashboardEl.offsetWidth
-    // console.log(containerWidth)
+    // console.log(dashboardEl.offsetWidth)
 
     const modal = this.core.getState().modal
     this.core.setState({
@@ -403,6 +395,18 @@ module.exports = class DashboardUI extends Plugin {
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)
+
+    if (!this.opts.disableStatusBar) {
+      this.core.use(StatusBar, {
+        target: DashboardUI
+      })
+    }
+
+    if (!this.opts.disableInformer) {
+      this.core.use(Informer, {
+        target: DashboardUI
+      })
+    }
 
     this.initEvents()
     this.actions()

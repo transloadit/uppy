@@ -2,17 +2,6 @@ const html = require('yo-yo')
 const getFileTypeIcon = require('./getFileTypeIcon')
 const { checkIcon } = require('./icons')
 
-// function getIconByMime (fileTypeGeneral) {
-//   switch (fileTypeGeneral) {
-//     case 'text':
-//       return iconText()
-//     case 'audio':
-//       return iconAudio()
-//     default:
-//       return iconFile()
-//   }
-// }
-
 module.exports = function fileCard (props) {
   const file = props.fileCardFor ? props.files[props.fileCardFor] : false
   const meta = {}

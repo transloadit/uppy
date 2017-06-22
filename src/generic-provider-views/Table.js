@@ -23,8 +23,8 @@ module.exports = (props) => {
             title: props.getItemName(folder),
             active: props.activeRow(folder),
             getItemIcon: () => props.getItemIcon(folder),
-            handleClick: () => props.handleRowClick(folder),
-            handleDoubleClick: () => props.handleFolderDoubleClick(folder),
+            // handleClick: () => props.handleRowClick(folder),
+            handleClick: () => props.handleFolderClick(folder),
             columns: props.columns
           })
         })}
@@ -33,8 +33,8 @@ module.exports = (props) => {
             title: props.getItemName(file),
             active: props.activeRow(file),
             getItemIcon: () => props.getItemIcon(file),
-            handleClick: () => props.handleRowClick(file),
-            handleDoubleClick: () => props.handleFileDoubleClick(file),
+            // handleClick: () => props.handleRowClick(file),
+            handleClick: () => props.handleFileClick(file),
             columns: props.columns
           })
         })}

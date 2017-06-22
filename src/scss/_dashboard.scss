@@ -471,7 +471,7 @@
 }
 
 .UppyDashboardItem-sourceIcon .UppyIcon {
-  filter: drop-shadow(0 0 1px rgba(0,0,0,.15));
+  filter: drop-shadow(0 0 1px rgba(0,0,0,0.3));
 }
 
 .UppyDashboardItem-previewInnerWrap {
@@ -676,8 +676,8 @@
 
   .UppyDashboardItem.is-complete .UppyDashboardItem-progress {
     transform: initial;
-    top: -10px;
-    right: -10px;
+    top: -7px;
+    right: -7px;
     left: initial;
     width: auto;
   }
@@ -702,8 +702,8 @@
 }
 
   .UppyDashboardItem.is-complete .UppyDashboardItem-progressBtn {
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
     opacity: 1;
 
     .UppyDashboard--wide & {
@@ -1094,7 +1094,7 @@
 
 // StatusBar
 
-.UppyDashboard--wide .UppyStatusBar-content {
+.UppyDashboard--wide .UppyStatusBar-content .UppyIcon {
   width: 17px;
   height: 17px;
 }
