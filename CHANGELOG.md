@@ -90,7 +90,7 @@ To be released: 2017-06-30
 - [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit (@goto-bus-stop)
 - [ ] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
 - [ ] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
-- [ ] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
+- [x] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
 - [ ] website: new demo video / gif (@arturi)
 - [x] core: add nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@goto-bus-stop, @arturi)
 - [x] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957 (@arturi)
