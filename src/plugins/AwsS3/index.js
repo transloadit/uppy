@@ -8,6 +8,7 @@ module.exports = class AwsS3 extends Plugin {
     this.title = 'AWS S3'
 
     const defaultOptions = {
+      getUploadParameters: this.getUploadParameters.bind(this)
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -19,8 +20,10 @@ module.exports = class AwsS3 extends Plugin {
     return this.core.getState().files[id]
   }
 
-  getCredentials (fileID) {
-    const file = this.getFile(fileID)
+  getUploadParameters (file) {
+    if (!this.opts.host) {
+      throw new Error('Expected a `host` option containing an uppy-server address.')
+    }
 
     const filename = encodeURIComponent(file.name)
     const type = encodeURIComponent(`${file.type.general}/${file.type.specific}`)
@@ -41,16 +44,17 @@ module.exports = class AwsS3 extends Plugin {
 
     return Promise.all(
       fileIDs.map((id) => {
-        return this.getCredentials(id).then((credentials) => {
-          this.core.emit('core:preprocess-progress', id, { value: 1 })
-          return credentials
+        const file = this.getFile(id)
+        return this.opts.getUploadParameters(file).then((params) => {
+          this.core.emit('core:preprocess-progress', file.id, { value: 1 })
+          return params
         })
       })
-    ).then((credentials) => {
+    ).then((responses) => {
       const updatedFiles = {}
       fileIDs.forEach((id, index) => {
         const file = this.getFile(id)
-        const { endpoint, params } = credentials[index]
+        const { endpoint, params } = responses[index]
         const updatedFile = Object.assign({}, file, {
           meta: Object.assign({}, file.meta, params),
           multipart: {
