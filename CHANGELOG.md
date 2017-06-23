@@ -40,6 +40,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] image cropping on the client (#151)
+- [ ] transloadit: function option for file-dependent `params` (@goto-bus-stop)
 
 ## 1.0.0 Goals
 
