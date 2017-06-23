@@ -39,10 +39,18 @@ module.exports = class AwsS3 extends Plugin {
         const file = this.getFile(id)
         const { endpoint, params } = credentials[index]
         const updatedFile = Object.assign({}, file, {
-          meta: Object.assign({}, file.meta, params),
+          // TODO maybe move this into a parameter in the `multipart` object.
+          // `meta` may contain other important data, but S3 will reject the request
+          // if it contains any parameters it does not know.
+          // Perhaps a `fieldsOverride` option in the Multipart plugin, idk.
+          meta: params,
           multipart: {
             endpoint,
-            fieldName: 'file'
+            fieldName: 'file',
+            getUploadUrl (xhr) {
+              const locationEl = xhr.responseXML.querySelector('Location')
+              return locationEl.textContent
+            }
           }
         })
 
