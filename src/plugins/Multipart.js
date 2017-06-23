@@ -12,6 +12,7 @@ module.exports = class Multipart extends Plugin {
     // Default options
     const defaultOptions = {
       fieldName: 'files[]',
+      metaFields: null,
       responseUrlFieldName: 'url',
       bundle: true,
       headers: {},
@@ -43,7 +44,11 @@ module.exports = class Multipart extends Plugin {
 
       const formPost = new FormData()
 
-      Object.keys(file.meta).forEach((item) => {
+      const metaFields = Array.isArray(opts.metaFields)
+        ? opts.metaFields
+        // Send along all fields by default.
+        : Object.keys(file.meta)
+      metaFields.forEach((item) => {
         formPost.append(item, file.meta[item])
       })
 
