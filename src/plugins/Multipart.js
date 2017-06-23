@@ -14,7 +14,11 @@ module.exports = class Multipart extends Plugin {
       fieldName: 'files[]',
       responseUrlFieldName: 'url',
       bundle: true,
-      headers: {}
+      headers: {},
+      getUploadUrl (xhr) {
+        const resp = JSON.parse(xhr.response)
+        return resp[this.responseUrlFieldName]
+      }
     }
 
     // Merge default options with the ones set by user
@@ -60,10 +64,9 @@ module.exports = class Multipart extends Plugin {
 
       xhr.addEventListener('load', (ev) => {
         if (ev.target.status >= 200 && ev.target.status < 300) {
-          const resp = JSON.parse(xhr.response)
-          const uploadURL = resp[opts.responseUrlFieldName]
+          const uploadURL = opts.getUploadUrl(xhr)
 
-          this.core.emitter.emit('core:upload-success', file.id, resp, uploadURL)
+          this.core.emitter.emit('core:upload-success', file.id, uploadURL)
 
           if (uploadURL) {
             this.core.log(`Download ${file.name} from ${file.uploadURL}`)
@@ -144,7 +147,7 @@ module.exports = class Multipart extends Plugin {
           socket.on('progress', (progressData) => Utils.emitSocketProgress(this, progressData, file))
 
           socket.on('success', (data) => {
-            this.core.emitter.emit('core:upload-success', file.id, data)
+            this.core.emitter.emit('core:upload-success', file.id, data.url)
             socket.close()
             return resolve()
           })
