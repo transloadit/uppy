@@ -100,7 +100,7 @@ const ProgressBarProcessing = (props) => {
   // In the future we should probably do this differently. For now we'll take the
   // mode and message from the first file…
   const { mode, message } = progresses[0]
-  const value = progresses.filter(isDeterminate).reduce((total, progress, all) => {
+  const value = progresses.filter(isDeterminate).reduce((total, progress, index, all) => {
     return total + progress.value / all.length
   }, 0)
   function isDeterminate (progress) {
@@ -109,7 +109,7 @@ const ProgressBarProcessing = (props) => {
 
   return html`
     <div class="UppyStatusBar-content">
-      ${mode === 'determinate' ? `${value * 100}%・` : ''}
+      ${mode === 'determinate' ? `${Math.round(value * 100)}%・` : ''}
       ${message}
     </div>
   `
