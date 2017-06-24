@@ -27,7 +27,7 @@ module.exports = class AwsS3 extends Plugin {
 
     const filename = encodeURIComponent(file.name)
     const type = encodeURIComponent(`${file.type.general}/${file.type.specific}`)
-    return fetch(`${this.opts.host}/s3/credentials?filename=${filename}&type=${type}`, {
+    return fetch(`${this.opts.host}/s3/params?filename=${filename}&type=${type}`, {
       method: 'get',
       headers: { accept: 'application/json' }
     }).then((response) => response.json())
