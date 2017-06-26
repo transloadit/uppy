@@ -46,6 +46,36 @@ function getUploadingState (props, files) {
   return state
 }
 
+function calculateProcessingProgress (files) {
+  // Collect pre or postprocessing progress states.
+  const progresses = []
+  Object.keys(files).forEach((fileID) => {
+    const { progress } = files[fileID]
+    if (progress.preprocess) {
+      progresses.push(progress.preprocess)
+    }
+    if (progress.postprocess) {
+      progresses.push(progress.postprocess)
+    }
+  })
+
+  // In the future we should probably do this differently. For now we'll take the
+  // mode and message from the first file…
+  const { mode, message } = progresses[0]
+  const value = progresses.filter(isDeterminate).reduce((total, progress, index, all) => {
+    return total + progress.value / all.length
+  }, 0)
+  function isDeterminate (progress) {
+    return progress.mode === 'determinate'
+  }
+
+  return {
+    mode,
+    message,
+    value
+  }
+}
+
 module.exports = (props) => {
   props = props || {}
 
@@ -55,12 +85,13 @@ module.exports = (props) => {
   let progressMode
   let progressBarContent
   if (uploadState === STATE_PREPROCESSING || uploadState === STATE_POSTPROCESSING) {
-    // TODO set progressValue and progressMode depending on the actual pre/postprocess
-    // progress state
-    progressMode = 'indeterminate'
-    progressValue = undefined
+    const progress = calculateProcessingProgress(props.files)
+    progressMode = progress.mode
+    if (progressMode === 'determinate') {
+      progressValue = progress.value * 100
+    }
 
-    progressBarContent = ProgressBarProcessing(props)
+    progressBarContent = ProgressBarProcessing(progress)
   } else if (uploadState === STATE_COMPLETE) {
     progressBarContent = ProgressBarComplete(props)
   } else if (uploadState === STATE_UPLOADING) {
@@ -85,32 +116,10 @@ module.exports = (props) => {
 }
 
 const ProgressBarProcessing = (props) => {
-  // Collect pre or postprocessing progress states.
-  const progresses = []
-  Object.keys(props.files).forEach((fileID) => {
-    const { progress } = props.files[fileID]
-    if (progress.preprocess) {
-      progresses.push(progress.preprocess)
-    }
-    if (progress.postprocess) {
-      progresses.push(progress.postprocess)
-    }
-  })
-
-  // In the future we should probably do this differently. For now we'll take the
-  // mode and message from the first file…
-  const { mode, message } = progresses[0]
-  const value = progresses.filter(isDeterminate).reduce((total, progress, all) => {
-    return total + progress.value / all.length
-  }, 0)
-  function isDeterminate (progress) {
-    return progress.mode === 'determinate'
-  }
-
   return html`
     <div class="UppyStatusBar-content">
-      ${mode === 'determinate' ? `${value * 100}%・` : ''}
-      ${message}
+      ${props.mode === 'determinate' ? `${Math.round(props.value * 100)}%・` : ''}
+      ${props.message}
     </div>
   `
 }
