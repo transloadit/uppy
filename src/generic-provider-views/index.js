@@ -51,7 +51,6 @@ module.exports = class View {
     this.filterQuery = this.filterQuery.bind(this)
     this.getFolder = this.getFolder.bind(this)
     this.getNextFolder = this.getNextFolder.bind(this)
-    // this.handleRowClick = this.handleRowClick.bind(this)
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleDemoAuth = this.handleDemoAuth.bind(this)
@@ -291,27 +290,25 @@ module.exports = class View {
 
   handleScroll (e) {
     const scrollPos = e.target.scrollHeight - (e.target.scrollTop + e.target.offsetHeight)
-    const path = this.plugin.getNextPagePath()
-    if (scrollPos < 50 && path) {
+    const path = this.plugin.getNextPagePath ? this.plugin.getNextPagePath() : null
+
+    if (scrollPos < 50 && path && !this._isHandlingScroll) {
       this.Provider.list(path)
         .then((res) => {
           const { files, folders } = this.plugin.core.getState()[this.plugin.stateId]
           this._updateFilesAndFolders(res, files, folders)
-        })
+        }).catch(this.handleError)
+        .then(() => { this._isHandlingScroll = false }) // always called
+
+      this._isHandlingScroll = true
     }
   }
 
   // displays loader view while asynchronous request is being made.
   _loaderWrapper (promise, then, catch_) {
     promise
-      .then((result) => {
-        this.updateState({ loading: false })
-        then(result)
-      })
-      .catch((err) => {
-        this.updateState({ loading: false })
-        catch_(err)
-      })
+      .then(then).catch(catch_)
+      .then(() => this.updateState({ loading: false })) // always called.
     this.updateState({ loading: true })
   }
 
@@ -342,7 +339,6 @@ module.exports = class View {
       addFile: this.addFile,
       filterItems: this.filterItems,
       filterQuery: this.filterQuery,
-      handleRowClick: this.handleRowClick,
       sortByTitle: this.sortByTitle,
       sortByDate: this.sortByDate,
       logout: this.logout,
