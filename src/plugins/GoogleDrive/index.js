@@ -88,7 +88,9 @@ module.exports = class Google extends Plugin {
   }
 
   getItemSubList (item) {
-    return item.items
+    return item.items.filter((i) => {
+      return this.isFolder(i) || !i.mimeType.startsWith('application/vnd.google')
+    })
   }
 
   getItemName (item) {

@@ -235,6 +235,8 @@ class Uppy {
         data: file.data,
         progress: {
           percentage: 0,
+          bytesUploaded: 0,
+          bytesTotal: file.data.size || 0,
           uploadComplete: false,
           uploadStarted: false
         },

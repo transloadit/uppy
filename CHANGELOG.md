@@ -40,6 +40,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] image cropping on the client (#151)
+- [ ] transloadit: function option for file-dependent `params` (@goto-bus-stop)
 
 ## 1.0.0 Goals
 
@@ -48,28 +49,35 @@ What we need to do to release Uppy 1.0
 - [ ] feature: restrictions: by size, number of files, file type [in progress]
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
 - [ ] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
-- [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment
-- [ ] QA: test uppy server with multiple connections, different setups, large files
+- [ ] feature: Uppy should work well with React/Redux. React (Native)
+- [ ] feature: preset for Transloadit that mimics jQuery SDK
+- [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
+- [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files. add metrics to Librato
+- [ ] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
 - [ ] QA: test in multiple browsers and mobile devices, fix bugs
 - [ ] QA: test with real screen reader to identify accessibility problems
 - [ ] ui: refine UI, neat things up (if that’s even a word)
 - [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
 - [ ] refactoring: possibly add CSS-in-JS
 - [ ] refactoring: possibly switch from Yo-Yo to Preact, because its more stable, solves a few issues we are struggling with (like onload/onunload being weird in yo-yo) and mature, “new standard”, larger community
-- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say Tus plugin doesn’t include rendering stuff
 - [ ] refactoring: webcam plugin
 - [ ] refactoring: clean up code everywhere
 - [ ] docs: on using plugins, all options, list of plugins, i18n
-- [ ] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
-- [ ] uppy-server: add uppy-server metrics to Librato
-- [ ] uppy-server: Better error handling
-- [ ] uppy-server: General cleanup (remove unused code. etc)
+- [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
+- [ ] uppy-server: security audit
+
+maybe later:
+
+- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say Tus plugin doesn’t include rendering stuff
 
 ## 0.18.0
 
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
 - [ ] core: add error in file progress state? (@arturi)
+- [ ] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju)
+- [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
+- [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 2, release (@goto-bus-stop)
 
 ## 0.17.0
 
@@ -79,18 +87,17 @@ To be released: 2017-06-30
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: restrictions — by file type, size, number of files (@arturi)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
 - [ ] fileinput: allow retriving fields/options from form (@arturi #153)
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
-- [ ] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
+- [x] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
-- [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit (@goto-bus-stop)
+- [x] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 1, WIP (@goto-bus-stop)
 - [ ] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
-- [ ] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
-- [ ] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
+- [x] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
+- [x] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
 - [ ] website: new demo video / gif (@arturi)
 - [x] core: add nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@goto-bus-stop, @arturi)
 - [x] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957 (@arturi)
@@ -101,6 +108,7 @@ To be released: 2017-06-30
 - [x] statusbar: work towards extracting StatusBar to a separate plugin, bundle that with Dashboard? (@goto-bus-stop, @arturi)
 - [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
 - [x] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju / #205)
+- [x] server: configurable server port (@ifedapoolarewaju)
 
 ## 0.16.2 - 2017-05-31
 

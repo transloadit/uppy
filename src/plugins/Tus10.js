@@ -194,6 +194,8 @@ module.exports = class Tus10 extends Plugin {
         endpoint = file.tus.endpoint
       }
 
+      this.core.emitter.emit('core:upload-started', file.id)
+
       fetch(file.remote.url, {
         method: 'post',
         credentials: 'include',
@@ -212,8 +214,6 @@ module.exports = class Tus10 extends Plugin {
         if (res.status < 200 && res.status > 300) {
           return reject(res.statusText)
         }
-
-        this.core.emitter.emit('core:upload-started', file.id)
 
         res.json().then((data) => {
           const token = data.token

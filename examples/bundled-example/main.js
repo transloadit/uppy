@@ -1,21 +1,21 @@
-const Uppy = require('../src/core/Core.js')
-const Dashboard = require('../src/plugins/Dashboard')
-const GoogleDrive = require('../src/plugins/GoogleDrive')
-const Dropbox = require('../src/plugins/Dropbox')
-const Webcam = require('../src/plugins/Webcam')
-const Tus10 = require('../src/plugins/Tus10')
-// const Multipart = require('../src/plugins/Multipart')
-const MetaData = require('../src/plugins/MetaData')
-// const Informer = require('../src/plugins/Informer')
-// const StatusBar = require('../src/plugins/StatusBar')
-// const DragDrop = require('../src/plugins/DragDrop')
+const Uppy = require('../../src/core/Core.js')
+const Dashboard = require('../../src/plugins/Dashboard')
+const GoogleDrive = require('../../src/plugins/GoogleDrive')
+const Dropbox = require('../../src/plugins/Dropbox')
+const Webcam = require('../../src/plugins/Webcam')
+const Tus10 = require('../../src/plugins/Tus10')
+// const Multipart = require('../../src/plugins/Multipart')
+const MetaData = require('../../src/plugins/MetaData')
+// const Informer = require('../../src/plugins/Informer')
+// const StatusBar = require('../../src/plugins/StatusBar')
+// const DragDrop = require('../../src/plugins/DragDrop')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
 const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 
-// import ru_RU from '../src/locales/ru_RU.js'
-// import MagicLog from '../src/plugins/MagicLog'
-// import PersistentState from '../src/plugins/PersistentState'
+// import ru_RU from '../../src/locales/ru_RU.js'
+// import MagicLog from '../../src/plugins/MagicLog'
+// import PersistentState from '../../src/plugins/PersistentState'
 
 const uppy = Uppy({
   debug: true,
