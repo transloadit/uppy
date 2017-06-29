@@ -21,7 +21,7 @@
         target: 'body'
       })
       .use(Webcam, {target: Dashboard})
-      .use(Tus10, {endpoint: 'http://master.tus.io/files/', resume: true})
+      .use(Tus10, {endpoint: 'https://master.tus.io/files/', resume: true})
       .use(Informer, {target: Dashboard})
 
       uppy.run()
