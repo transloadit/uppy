@@ -1,5 +1,5 @@
 const Plugin = require('./Plugin')
-const Utils = require('../core/Utils')
+const { toArray } = require('../core/Utils')
 const Translator = require('../core/Translator')
 const html = require('yo-yo')
 
@@ -19,12 +19,12 @@ module.exports = class FileInput extends Plugin {
     // Default options
     const defaultOptions = {
       target: '.UppyForm',
+      getMetaDataFromForm: true,
       replaceTargetContent: true,
       multipleFiles: true,
       pretty: true,
       locale: defaultLocale,
-      inputName: 'files[]',
-      getMetaDataFromForm: false
+      inputName: 'files[]'
     }
 
     // Merge default options with the ones set by user
@@ -43,7 +43,7 @@ module.exports = class FileInput extends Plugin {
   handleInputChange (ev) {
     this.core.log('All right, something selected through input...')
 
-    const files = Utils.toArray(ev.target.files)
+    const files = toArray(ev.target.files)
 
     files.forEach((file) => {
       this.core.emitter.emit('core:file-add', {
@@ -78,10 +78,6 @@ module.exports = class FileInput extends Plugin {
   }
 
   install () {
-    if (this.opts.setMetaFromTargetForm) {
-      this.setMetaFromTargetForm()
-    }
-
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)

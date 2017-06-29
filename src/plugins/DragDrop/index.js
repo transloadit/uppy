@@ -144,10 +144,6 @@ module.exports = class DragDrop extends Plugin {
   }
 
   install () {
-    if (this.opts.setMetaFromTargetForm) {
-      this.setMetaFromTargetForm()
-    }
-
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)

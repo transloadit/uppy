@@ -393,10 +393,6 @@ module.exports = class DashboardUI extends Plugin {
       targets: []
     }})
 
-    if (this.opts.setMetaFromTargetForm) {
-      this.setMetaFromTargetForm()
-    }
-
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)

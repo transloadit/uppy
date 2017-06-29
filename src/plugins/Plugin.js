@@ -1,6 +1,7 @@
 const yo = require('yo-yo')
 const nanoraf = require('nanoraf')
-const { findDOMElement, getMetaFromForm } = require('../core/Utils')
+const { findDOMElement } = require('../core/Utils')
+const getFormData = require('get-form-data')
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -23,7 +24,6 @@ module.exports = class Plugin {
 
     this.update = this.update.bind(this)
     this.mount = this.mount.bind(this)
-    // this.focus = this.focus.bind(this)
     this.install = this.install.bind(this)
     this.uninstall = this.uninstall.bind(this)
   }
@@ -59,6 +59,13 @@ module.exports = class Plugin {
     if (targetElement) {
       this.core.log(`Installing ${callerPluginName} to a DOM element`)
 
+      // attempt to extract meta from form element
+      if (this.opts.getMetaDataFromForm && targetElement.nodeName === 'FORM') {
+        const formMeta = getFormData(targetElement)
+        this.core.log('Adding metadata from form')
+        this.core.log(formMeta)
+      }
+
       // clear everything inside the target container
       if (this.opts.replaceTargetContent) {
         targetElement.innerHTML = ''
@@ -88,22 +95,6 @@ module.exports = class Plugin {
       this.el.parentNode.removeChild(this.el)
     }
   }
-
-  setMetaFromTargetForm () {
-    const el = findDOMElement(this.opts.target)
-    const formMetaData = getMetaFromForm(el)
-    if (formMetaData) {
-      this.core.log('Adding metadata from form:')
-      this.core.log(formMetaData)
-      this.core.setMeta(formMetaData)
-    } else {
-      this.core.log('Couldn’t extract metadata from form')
-    }
-  }
-
-  // focus () {
-  //   return
-  // }
 
   install () {
     return

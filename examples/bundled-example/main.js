@@ -43,8 +43,7 @@ const uppy = Uppy({
   // .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   .use(FileInput, {
     target: '.MyForm',
-    replaceTargetContent: false,
-    setMetaFromTargetForm: true,
+    // replaceTargetContent: false,
     locale: {
       strings: { selectToUpload: 'Выберите файл для загрузки' }
     }})

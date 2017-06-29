@@ -165,7 +165,7 @@ class Uppy {
         id: fileID,
         name: fileName,
         extension: fileExtension || '',
-        meta: Object.assign({}, this.getState().metaData),
+        meta: Object.assign({}, this.getState().meta),
         type: {
           general: fileTypeGeneral,
           specific: fileTypeSpecific
