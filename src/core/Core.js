@@ -102,8 +102,9 @@ class Uppy {
   }
 
   reset () {
+    this.emit('core:pause-all')
+    this.emit('core:cancel-all')
     this.setState({
-      files: {},
       totalProgress: 0
     })
   }
@@ -297,10 +298,9 @@ class Uppy {
     })
 
     this.on('core:cancel-all', () => {
-      const files = this.getState().files
-      Object.keys(files).forEach((file) => {
-        this.removeFile(files[file].id)
-      })
+      let updatedFiles = this.getState().files
+      updatedFiles = {}
+      this.setState({files: updatedFiles})
     })
 
     this.on('core:upload-started', (fileID, upload) => {
@@ -513,6 +513,8 @@ class Uppy {
    * Uninstall all plugins and close down this Uppy instance.
    */
   close () {
+    this.reset()
+
     this.iteratePlugins((plugin) => {
       plugin.uninstall()
     })
