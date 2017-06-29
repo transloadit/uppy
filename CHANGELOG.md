@@ -83,8 +83,8 @@ maybe later:
 
 To be released: 2017-06-30
 
-- [ ] core: add `uppy.reset()` as discussed in #179 (@arturi)
-- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
+- [x] core: add `uppy.reset()` as discussed in #179 (@arturi)
+- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: restrictions — by file type, size, number of files (@arturi)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] fileinput: allow retriving fields/options from form (@arturi #153)
@@ -96,7 +96,7 @@ To be released: 2017-06-30
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [x] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
 - [x] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 1, WIP (@goto-bus-stop)
-- [ ] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
+- [x] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
 - [x] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
 - [x] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
 - [ ] website: new demo video / gif (@arturi)
