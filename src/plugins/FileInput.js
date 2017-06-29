@@ -7,7 +7,7 @@ module.exports = class FileInput extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.id = 'FileInput'
-    this.title = 'FileInput'
+    this.title = 'File Input'
     this.type = 'acquirer'
 
     const defaultLocale = {
@@ -23,7 +23,8 @@ module.exports = class FileInput extends Plugin {
       multipleFiles: true,
       pretty: true,
       locale: defaultLocale,
-      inputName: 'files[]'
+      inputName: 'files[]',
+      getMetaDataFromForm: false
     }
 
     // Merge default options with the ones set by user
@@ -77,6 +78,10 @@ module.exports = class FileInput extends Plugin {
   }
 
   install () {
+    if (this.opts.setMetaFromTargetForm) {
+      this.setMetaFromTargetForm()
+    }
+
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)

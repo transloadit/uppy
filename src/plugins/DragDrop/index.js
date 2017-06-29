@@ -37,6 +37,7 @@ module.exports = class DragDrop extends Plugin {
     // Default options
     const defaultOpts = {
       target: '.UppyDragDrop',
+      setMetaFromTargetForm: false,
       locale: defaultLocale
     }
 
@@ -143,6 +144,10 @@ module.exports = class DragDrop extends Plugin {
   }
 
   install () {
+    if (this.opts.setMetaFromTargetForm) {
+      this.setMetaFromTargetForm()
+    }
+
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)

@@ -53,7 +53,8 @@ class Uppy {
       capabilities: {
         resumableUploads: false
       },
-      totalProgress: 0
+      totalProgress: 0,
+      meta: Object.assign({}, this.opts.meta)
     }
 
     // for debugging and testing
@@ -134,6 +135,11 @@ class Uppy {
     }
   }
 
+  setMeta (data) {
+    const newMeta = Object.assign({}, this.getState().meta, data)
+    this.setState({meta: newMeta})
+  }
+
   updateMeta (data, fileID) {
     const updatedFiles = Object.assign({}, this.getState().files)
     const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
@@ -159,9 +165,7 @@ class Uppy {
         id: fileID,
         name: fileName,
         extension: fileExtension || '',
-        meta: {
-          name: fileName
-        },
+        meta: Object.assign({}, this.getState().metaData),
         type: {
           general: fileTypeGeneral,
           specific: fileTypeSpecific
@@ -187,7 +191,7 @@ class Uppy {
       updatedFiles[fileID] = newFile
       this.setState({files: updatedFiles})
 
-      this.bus.emit('file-added', fileID)
+      this.bus.emit('core:file-added', fileID)
       this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
 
       if (this.opts.autoProceed && !this.scheduledAutoProceed) {
@@ -526,14 +530,16 @@ class Uppy {
     if (!this.opts.debug) {
       return
     }
+
+    if (type === 'error') {
+      console.error(`LOG: ${msg}`)
+      return
+    }
+
     if (msg === `${msg}`) {
       console.log(`LOG: ${msg}`)
     } else {
       console.dir(msg)
-    }
-
-    if (type === 'error') {
-      console.error(`LOG: ${msg}`)
     }
 
     global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg

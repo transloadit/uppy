@@ -1,6 +1,6 @@
 const yo = require('yo-yo')
 const nanoraf = require('nanoraf')
-const { findDOMElement } = require('../core/Utils')
+const { findDOMElement, getMetaFromForm } = require('../core/Utils')
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -86,6 +86,18 @@ module.exports = class Plugin {
   unmount () {
     if (this.el && this.el.parentNode) {
       this.el.parentNode.removeChild(this.el)
+    }
+  }
+
+  setMetaFromTargetForm () {
+    const el = findDOMElement(this.opts.target)
+    const formMetaData = getMetaFromForm(el)
+    if (formMetaData) {
+      this.core.log('Adding metadata from form:')
+      this.core.log(formMetaData)
+      this.core.setMeta(formMetaData)
+    } else {
+      this.core.log('Couldn’t extract metadata from form')
     }
   }
 

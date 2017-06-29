@@ -401,6 +401,27 @@ function findDOMElement (element) {
   }
 }
 
+/**
+* Get metadata object from a form element
+*
+* @param {Node|string} element
+* @return {Object|null}
+*/
+
+function getMetaFromForm (element) {
+  if (!element || element.tagName !== 'FORM') {
+    console.error('Metadata can only be extracted from form elements')
+    return null
+  }
+
+  var formData = new FormData(element)
+  var result = {}
+  for (var entry of formData.entries()) {
+    result[entry[0]] = entry[1]
+  }
+  return result
+}
+
 function getSocketHost (url) {
   // get the host domain
   var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\n]+@)?(?:www\.)?([^\n]+)/
@@ -451,6 +472,7 @@ module.exports = {
   copyToClipboard,
   prettyETA,
   findDOMElement,
+  getMetaFromForm,
   getSocketHost,
   emitSocketProgress
 }

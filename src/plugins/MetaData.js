@@ -38,7 +38,7 @@ module.exports = class MetaData extends Plugin {
       metaFields: metaFields
     })
 
-    this.core.emitter.on('file-added', this.handleFileAdded)
+    this.core.emitter.on('core:file-added', this.handleFileAdded)
   }
 
   install () {
@@ -46,6 +46,6 @@ module.exports = class MetaData extends Plugin {
   }
 
   uninstall () {
-    this.core.emitter.off('file-added', this.handleFileAdded)
+    this.core.emitter.off('core:file-added', this.handleFileAdded)
   }
 }
