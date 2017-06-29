@@ -82,6 +82,7 @@
     "on-load": "3.2.0",
     "prettier-bytes": "1.0.4",
     "socket.io-client": "2.0.1",
+    "template-css": "github:arturi/template-css",
     "tus-js-client": "1.4.3",
     "url-parse": "1.1.9",
     "whatwg-fetch": "2.0.3",

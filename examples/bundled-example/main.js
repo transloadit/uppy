@@ -1,14 +1,14 @@
 const Uppy = require('../../src/core/Core.js')
-const Dashboard = require('../../src/plugins/Dashboard')
-const GoogleDrive = require('../../src/plugins/GoogleDrive')
-const Dropbox = require('../../src/plugins/Dropbox')
-const Webcam = require('../../src/plugins/Webcam')
+// const Dashboard = require('../../src/plugins/Dashboard')
+// const GoogleDrive = require('../../src/plugins/GoogleDrive')
+// const Dropbox = require('../../src/plugins/Dropbox')
+// const Webcam = require('../../src/plugins/Webcam')
 const Tus10 = require('../../src/plugins/Tus10')
 // const Multipart = require('../../src/plugins/Multipart')
 const MetaData = require('../../src/plugins/MetaData')
 // const Informer = require('../../src/plugins/Informer')
 // const StatusBar = require('../../src/plugins/StatusBar')
-// const DragDrop = require('../../src/plugins/DragDrop')
+const DragDrop = require('../../src/plugins/DragDrop')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
 const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
@@ -18,29 +18,32 @@ const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 // import PersistentState from '../../src/plugins/PersistentState'
 
 const uppy = Uppy({debug: true, autoProceed: false})
-  .use(Dashboard, {
-    trigger: '#uppyModalOpener',
-    // maxWidth: 350,
-    // maxHeight: 400,
-    // inline: false,
-    // disableStatusBar: true,
-    // disableInformer: true,
-    target: 'body',
-    locale: {
-      strings: {browse: 'wow'}
-    }
-  })
-  .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
-  .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
+  // .use(Dashboard, {
+  //   trigger: '#uppyModalOpener',
+  //   // maxWidth: 350,
+  //   // maxHeight: 400,
+  //   // inline: false,
+  //   // disableStatusBar: true,
+  //   // disableInformer: true,
+  //   target: 'body',
+  //   locale: {
+  //     strings: {browse: 'wow'}
+  //   }
+  // })
+  // .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
+  // .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   // .use(FileInput, {target: '.Uppy', locale: {
   //   strings: {selectToUpload: 'Выберите файл для загрузки'}
   // }})
-  // .use(DragDrop, {target: 'body', locale: {
-  //   strings: {chooseFile: 'Выберите файл'}
-  // }})
+  .use(DragDrop, {
+    target: 'body',
+    locale: {
+      strings: {chooseFile: 'Выберите файл'}
+    }
+  })
   // .use(ProgressBar, {target: 'body'})
   // .use(dummy)
-  .use(Webcam, {target: Dashboard})
+  // .use(Webcam, {target: Dashboard})
   // .use(Multipart, {endpoint: '//api2.transloadit.com'})
   .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
   // .use(Informer, {target: Dashboard})

@@ -3,6 +3,7 @@ const Translator = require('../../core/Translator')
 const { toArray } = require('../../core/Utils')
 const dragDrop = require('drag-drop')
 const html = require('yo-yo')
+const css = require('template-css')
 
 /**
  * Drag & Drop plugin
@@ -110,6 +111,74 @@ module.exports = class DragDrop extends Plugin {
     })
   }
 
+  style () {
+    // these will be global styles variables,
+    // with an option to override them to support themes
+    const settings = {
+      fontSizes: {
+        normal: '1.2em'
+      },
+      colors: {
+        gray: '#ccc'
+      }
+    }
+
+    css`
+      .UppyDragDrop-container {
+        min-height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+      }
+
+      .UppyDragDrop-inner {
+        margin: 0;
+      }
+
+        .UppyDragDrop-container.is-dragdrop-supported {
+          border: 2px dashed;
+          border-color: ${settings.colors.gray};
+        }
+
+        .UppyDragDrop-container.is-dragdrop-supported .UppyDragDrop-dragText {
+          display: inline;
+        }
+
+        .UppyDragDrop-container.drag {
+          border-color: ${settings.colors.gray};
+        }
+
+      /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
+      .UppyDragDrop-input {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+      }
+
+      .UppyDragDrop-label {
+        display: block;
+        cursor: pointer;
+        font-size: ${settings.fontSizes.normal};
+      }
+
+      .UppyDragDrop-selectedCount {
+        text-align: center;
+        font-size: 0.75em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 10px;
+      }
+
+      .UppyDragDrop-dragText {
+        display: none;
+      }
+    `
+  }
+
   render (state) {
     const onSelect = (ev) => {
       const input = this.target.querySelector('.UppyDragDrop-input')
@@ -143,6 +212,8 @@ module.exports = class DragDrop extends Plugin {
   }
 
   install () {
+    this.style()
+
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)
