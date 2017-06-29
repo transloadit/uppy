@@ -76,6 +76,8 @@ maybe later:
 - [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
 - [ ] core: add error in file progress state? (@arturi)
 - [ ] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju)
+- [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
+- [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 2, release (@goto-bus-stop)
 
 ## 0.17.0
 
@@ -85,16 +87,16 @@ To be released: 2017-06-30
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like https://www.npmjs.com/package/postcss-safe-important. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: restrictions — by file type, size, number of files (@arturi)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
 - [ ] fileinput: allow retriving fields/options from form (@arturi #153)
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
 - [ ] provider: improve UI: steps towards making it responsive (@arturi)
 - [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
-- [ ] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
+- [x] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
-- [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit (@goto-bus-stop)
 - [x] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
+- [x] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 1, WIP (@goto-bus-stop)
+- [ ] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
 - [x] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
 - [x] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
 - [ ] website: new demo video / gif (@arturi)
