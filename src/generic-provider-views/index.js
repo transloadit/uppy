@@ -128,7 +128,7 @@ module.exports = class View {
     const tagFile = {
       source: this.plugin.id,
       data: this.plugin.getItemData(file),
-      name: this.plugin.getItemName(file),
+      name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
       type: this.plugin.getMimeType(file),
       isRemote: true,
       body: {
