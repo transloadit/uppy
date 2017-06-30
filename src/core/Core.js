@@ -277,7 +277,7 @@ class Uppy {
     })
     .catch((err) => {
       this.emit('informer', err, 'error', 5000)
-      Promise.reject(`onBeforeFileAdded: ${err}`)
+      return Promise.reject(`onBeforeFileAdded: ${err}`)
     })
   }
 
@@ -684,7 +684,10 @@ class Uppy {
         this.emit('core:success', waitingFileIDs)
       })
     })
-    .catch((err) => Promise.reject(`onBeforeUpload: ${err}`))
+    .catch((err) => {
+      this.emit('informer', err, 'error', 5000)
+      return Promise.reject(`onBeforeUpload: ${err}`)
+    })
   }
 }
 
