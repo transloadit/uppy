@@ -58,13 +58,13 @@ module.exports = class AwsS3 extends Plugin {
       const updatedFiles = {}
       fileIDs.forEach((id, index) => {
         const file = this.getFile(id)
-        const { endpoint, params } = responses[index]
+        const { url, fields } = responses[index]
         const updatedFile = Object.assign({}, file, {
-          meta: Object.assign({}, file.meta, params),
+          meta: Object.assign({}, file.meta, fields),
           multipart: {
-            endpoint,
+            endpoint: url,
             fieldName: 'file',
-            metaFields: Object.keys(params),
+            metaFields: Object.keys(fields),
             getUploadUrl (xhr) {
               const locationEl = xhr.responseXML.querySelector('Location')
               return locationEl.textContent
