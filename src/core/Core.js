@@ -4,6 +4,7 @@ const UppySocket = require('./UppySocket')
 const ee = require('namespace-emitter')
 const throttle = require('lodash.throttle')
 const prettyBytes = require('prettier-bytes')
+const match = require('mime-match')
 // const en_US = require('../locales/en_US')
 // const deepFreeze = require('deep-freeze-strict')
 
@@ -35,10 +36,14 @@ class Uppy {
       // locale: en_US,
       autoProceed: true,
       debug: false,
-      maxFileSize: false,
-      maxNumberOfFiles: false,
-      minNumberOfFiles: false,
-      allowedFileTypes: false,
+      restrictions: {
+        maxFileSize: false,
+        maxNumberOfFiles: false,
+        minNumberOfFiles: false,
+        allowedFileTypes: false
+      },
+      onBeforeFileAdded: (currentFile, files, done) => done(),
+      onBeforeUpload: (files, done) => done(),
       locale: defaultLocale
     }
 
@@ -172,7 +177,7 @@ class Uppy {
   }
 
   checkRestrictions (checkMinNumberOfFiles, file, fileType) {
-    const {maxFileSize, maxNumberOfFiles, minNumberOfFiles, allowedFileTypes} = this.opts
+    const {maxFileSize, maxNumberOfFiles, minNumberOfFiles, allowedFileTypes} = this.opts.restrictions
 
     if (checkMinNumberOfFiles && minNumberOfFiles) {
       console.log(Object.keys(this.state.files).length)
@@ -190,10 +195,13 @@ class Uppy {
       }
     }
 
-    if (allowedFileTypes && allowedFileTypes.indexOf(fileType[0]) < 0) {
-      const allowedFileTypesString = allowedFileTypes.join(', ')
-      this.emit('informer', `${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
-      return false
+    if (allowedFileTypes) {
+      const isCorrectFileType = allowedFileTypes.filter(match(fileType.join('/'))).length > 0
+      if (!isCorrectFileType) {
+        const allowedFileTypesString = allowedFileTypes.join(', ')
+        this.emit('informer', `${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
+        return false
+      }
     }
 
     if (maxFileSize) {
@@ -207,63 +215,70 @@ class Uppy {
   }
 
   addFile (file) {
-    Utils.getFileType(file).then((fileType) => {
-      const isFileAllowed = this.checkRestrictions(false, file, fileType)
-      if (!isFileAllowed) return
-
-      const updatedFiles = Object.assign({}, this.state.files)
-      const fileName = file.name || 'noname'
-      const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
-      const isRemote = file.isRemote || false
-
-      const fileID = Utils.generateFileID(fileName)
-      const fileTypeGeneral = fileType[0]
-      const fileTypeSpecific = fileType[1]
-
-      const newFile = {
-        source: file.source || '',
-        id: fileID,
-        name: fileName,
-        extension: fileExtension || '',
-        meta: {
-          name: fileName
-        },
-        type: {
-          general: fileTypeGeneral,
-          specific: fileTypeSpecific
-        },
-        data: file.data,
-        progress: {
-          percentage: 0,
-          bytesUploaded: 0,
-          bytesTotal: file.data.size || 0,
-          uploadComplete: false,
-          uploadStarted: false
-        },
-        size: file.data.size || 'N/A',
-        isRemote: isRemote,
-        remote: file.remote || '',
-        preview: file.preview
+    this.opts.onBeforeFileAdded(file, this.getState().files, (err) => {
+      if (err) {
+        this.emit('informer', err, 'error', 5000)
+        return
       }
 
-      if (Utils.isPreviewSupported(fileTypeSpecific) && !isRemote) {
-        newFile.preview = Utils.getThumbnail(file)
-      }
+      Utils.getFileType(file).then((fileType) => {
+        const updatedFiles = Object.assign({}, this.state.files)
+        const fileName = file.name || 'noname'
+        const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
+        const isRemote = file.isRemote || false
 
-      updatedFiles[fileID] = newFile
-      this.setState({files: updatedFiles})
+        const fileID = Utils.generateFileID(fileName)
+        const fileTypeGeneral = fileType[0]
+        const fileTypeSpecific = fileType[1]
 
-      this.bus.emit('file-added', fileID)
-      this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
+        const newFile = {
+          source: file.source || '',
+          id: fileID,
+          name: fileName,
+          extension: fileExtension || '',
+          meta: {
+            name: fileName
+          },
+          type: {
+            general: fileTypeGeneral,
+            specific: fileTypeSpecific
+          },
+          data: file.data,
+          progress: {
+            percentage: 0,
+            bytesUploaded: 0,
+            bytesTotal: file.data.size || 0,
+            uploadComplete: false,
+            uploadStarted: false
+          },
+          size: file.data.size || 'N/A',
+          isRemote: isRemote,
+          remote: file.remote || '',
+          preview: file.preview
+        }
 
-      if (this.opts.autoProceed && !this.scheduledAutoProceed) {
-        this.scheduledAutoProceed = setTimeout(() => {
-          this.scheduledAutoProceed = null
-          this.upload().catch((err) => {
-            console.error(err.stack || err.message)
-          })
-        }, 4)
-      }
+        if (Utils.isPreviewSupported(fileTypeSpecific) && !isRemote) {
+          newFile.preview = Utils.getThumbnail(file)
+        }
+
+        const isFileAllowed = this.checkRestrictions(false, newFile, fileType)
+        if (!isFileAllowed) return
+
+        updatedFiles[fileID] = newFile
+        this.setState({files: updatedFiles})
+
+        this.bus.emit('file-added', fileID)
+        this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
+
+        if (this.opts.autoProceed && !this.scheduledAutoProceed) {
+          this.scheduledAutoProceed = setTimeout(() => {
+            this.scheduledAutoProceed = null
+            this.upload().catch((err) => {
+              console.error(err.stack || err.message)
+            })
+          }, 4)
+        }
+      })
     })
   }
 
@@ -635,36 +650,45 @@ class Uppy {
 
   upload () {
     const isMinNumberOfFilesReached = this.checkRestrictions(true)
-    if (!isMinNumberOfFilesReached) return Promise.resolve()
+    if (!isMinNumberOfFilesReached) {
+      return Promise.reject('Minimum number of files has not been reached')
+    }
 
-    this.emit('core:upload')
-
-    const waitingFileIDs = []
-    Object.keys(this.state.files).forEach((fileID) => {
-      const file = this.state.files[fileID]
-      // TODO: replace files[file].isRemote with some logic
-      //
-      // filter files that are now yet being uploaded / haven’t been uploaded
-      // and remote too
-      if (!file.progress.uploadStarted || file.isRemote) {
-        waitingFileIDs.push(file.id)
+    return this.opts.onBeforeUpload(this.getState().files, (err) => {
+      if (err) {
+        this.emit('informer', err, 'error', 5000)
+        return Promise.reject(`onBeforeUpload: ${err}`)
       }
-    })
 
-    const promise = Utils.runPromiseSequence(
-      [...this.preProcessors, ...this.uploaders, ...this.postProcessors],
-      waitingFileIDs
-    )
+      this.emit('core:upload')
 
-    // Not returning the `catch`ed promise, because we still want to return a rejected
-    // promise from this method if the upload failed.
-    promise.catch((err) => {
-      this.emit('core:error', err)
-    })
+      const waitingFileIDs = []
+      Object.keys(this.state.files).forEach((fileID) => {
+        const file = this.state.files[fileID]
+        // TODO: replace files[file].isRemote with some logic
+        //
+        // filter files that are now yet being uploaded / haven’t been uploaded
+        // and remote too
+        if (!file.progress.uploadStarted || file.isRemote) {
+          waitingFileIDs.push(file.id)
+        }
+      })
 
-    return promise.then(() => {
-      // return number of uploaded files
-      this.emit('core:success', waitingFileIDs)
+      const promise = Utils.runPromiseSequence(
+        [...this.preProcessors, ...this.uploaders, ...this.postProcessors],
+        waitingFileIDs
+      )
+
+      // Not returning the `catch`ed promise, because we still want to return a rejected
+      // promise from this method if the upload failed.
+      promise.catch((err) => {
+        this.emit('core:error', err)
+      })
+
+      return promise.then(() => {
+        // return number of uploaded files
+        this.emit('core:success', waitingFileIDs)
+      })
     })
   }
 }

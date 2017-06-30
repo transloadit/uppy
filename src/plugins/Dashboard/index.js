@@ -314,7 +314,7 @@ module.exports = class DashboardUI extends Plugin {
     const startUpload = (ev) => {
       this.core.upload().catch((err) => {
         // Log error.
-        console.error(err.stack || err.message)
+        console.error(err.stack || err.message || err)
       })
     }
 

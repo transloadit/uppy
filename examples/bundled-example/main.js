@@ -20,10 +20,24 @@ const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 const uppy = Uppy({
   debug: true,
   autoProceed: false,
-  maxFileSize: 300000,
-  maxNumberOfFiles: 5,
-  minNumberOfFiles: 2,
-  allowedFileTypes: ['image', 'video']
+  // restrictions: {
+  //   maxFileSize: 300000,
+  //   maxNumberOfFiles: 5,
+  //   minNumberOfFiles: 2,
+  //   allowedFileTypes: ['image/*', 'video/*']
+  // },
+  onBeforeFileAdded: (currentFile, files, done) => {
+    if (currentFile.name === 'pitercss-IMG_0616.jpg') {
+      return done()
+    }
+    return done('this is not the file I was looking for')
+  },
+  onBeforeUpload: (files, done) => {
+    if (Object.keys(files).length < 2) {
+      return done('too few files')
+    }
+    done()
+  }
 })
   .use(Dashboard, {
     trigger: '#uppyModalOpener',
