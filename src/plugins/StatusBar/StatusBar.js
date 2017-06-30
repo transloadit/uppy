@@ -1,11 +1,8 @@
 const html = require('yo-yo')
-const throttle = require('lodash.throttle')
 
 function progressDetails (props) {
   return html`<span>${props.totalProgress || 0}%・${props.complete} / ${props.inProgress}・${props.totalUploadedSize} / ${props.totalSize}・↑ ${props.totalSpeed}/s・${props.totalETA}</span>`
 }
-
-const throttledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
 
 const STATE_ERROR = 'error'
 const STATE_WAITING = 'waiting'
@@ -129,7 +126,7 @@ const ProgressBarUploading = (props) => {
     <div class="UppyStatusBar-content">
       ${props.isUploadStarted && !props.isAllComplete
         ? !props.isAllPaused
-          ? html`<span title="Uploading">${pauseResumeButtons(props)} Uploading... ${throttledProgressDetails(props)}</span>`
+          ? html`<span title="Uploading">${pauseResumeButtons(props)} Uploading... ${progressDetails(props)}</span>`
           : html`<span title="Paused">${pauseResumeButtons(props)} Paused・${props.totalProgress}%</span>`
         : null
         }
