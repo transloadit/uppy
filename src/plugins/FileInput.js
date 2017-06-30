@@ -19,7 +19,7 @@ module.exports = class FileInput extends Plugin {
     // Default options
     const defaultOptions = {
       target: '.UppyForm',
-      getMetaDataFromForm: true,
+      getMetaFromForm: true,
       replaceTargetContent: true,
       multipleFiles: true,
       pretty: true,

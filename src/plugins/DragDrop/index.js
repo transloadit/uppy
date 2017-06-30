@@ -37,7 +37,7 @@ module.exports = class DragDrop extends Plugin {
     // Default options
     const defaultOpts = {
       target: '.UppyDragDrop',
-      setMetaFromTargetForm: false,
+      getMetaFromForm: true,
       locale: defaultLocale
     }
 

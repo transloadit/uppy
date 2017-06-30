@@ -60,10 +60,9 @@ module.exports = class Plugin {
       this.core.log(`Installing ${callerPluginName} to a DOM element`)
 
       // attempt to extract meta from form element
-      if (this.opts.getMetaDataFromForm && targetElement.nodeName === 'FORM') {
+      if (this.opts.getMetaFromForm && targetElement.nodeName === 'FORM') {
         const formMeta = getFormData(targetElement)
-        this.core.log('Adding metadata from form')
-        this.core.log(formMeta)
+        this.core.setMeta(formMeta)
       }
 
       // clear everything inside the target container

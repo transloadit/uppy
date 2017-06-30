@@ -137,6 +137,8 @@ class Uppy {
 
   setMeta (data) {
     const newMeta = Object.assign({}, this.getState().meta, data)
+    this.log('Adding metadata:')
+    this.log(data)
     this.setState({meta: newMeta})
   }
 

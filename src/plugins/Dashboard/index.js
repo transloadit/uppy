@@ -42,13 +42,14 @@ module.exports = class DashboardUI extends Plugin {
     // set default options
     const defaultOptions = {
       target: 'body',
+      getMetaFromForm: true,
       inline: false,
       width: 750,
       height: 550,
       semiTransparent: false,
       defaultTabIcon: defaultTabIcon(),
       showProgressDetails: false,
-      setMetaFromTargetForm: false,
+      setMetaFromTargetForm: true,
       locale: defaultLocale
     }
 
@@ -183,7 +184,7 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     if (!this.opts.inline && !showModalTrigger) {
-      console.error('Dashboard modal trigger not found, you won’t be able to select files. Make sure `trigger` is set correctly in Dashboard options')
+      this.core.log('Dashboard modal trigger not found, you won’t be able to select files. Make sure `trigger` is set correctly in Dashboard options', 'error')
     }
 
     document.body.addEventListener('keyup', this.handleEscapeKeyPress)
