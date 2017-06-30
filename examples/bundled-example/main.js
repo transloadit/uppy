@@ -26,17 +26,17 @@ const uppy = Uppy({
   //   minNumberOfFiles: 2,
   //   allowedFileTypes: ['image/*', 'video/*']
   // },
-  onBeforeFileAdded: (currentFile, files, done) => {
+  onBeforeFileAdded: (currentFile, files) => {
     if (currentFile.name === 'pitercss-IMG_0616.jpg') {
-      return done()
+      return Promise.resolve()
     }
-    return done('this is not the file I was looking for')
+    return Promise.reject('this is not the file I was looking for')
   },
-  onBeforeUpload: (files, done) => {
+  onBeforeUpload: (files) => {
     if (Object.keys(files).length < 2) {
-      return done('too few files')
+      return Promise.reject('too few files')
     }
-    done()
+    return Promise.resolve()
   }
 })
   .use(Dashboard, {

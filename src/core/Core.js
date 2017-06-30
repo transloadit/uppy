@@ -42,8 +42,8 @@ class Uppy {
         minNumberOfFiles: false,
         allowedFileTypes: false
       },
-      onBeforeFileAdded: (currentFile, files, done) => done(),
-      onBeforeUpload: (files, done) => done(),
+      onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
+      onBeforeUpload: (files, done) => Promise.resolve(),
       locale: defaultLocale
     }
 
@@ -215,13 +215,8 @@ class Uppy {
   }
 
   addFile (file) {
-    this.opts.onBeforeFileAdded(file, this.getState().files, (err) => {
-      if (err) {
-        this.emit('informer', err, 'error', 5000)
-        return
-      }
-
-      Utils.getFileType(file).then((fileType) => {
+    return this.opts.onBeforeFileAdded(file, this.getState().files).then(() => {
+      return Utils.getFileType(file).then((fileType) => {
         const updatedFiles = Object.assign({}, this.state.files)
         const fileName = file.name || 'noname'
         const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
@@ -279,6 +274,10 @@ class Uppy {
           }, 4)
         }
       })
+    })
+    .catch((err) => {
+      this.emit('informer', err, 'error', 5000)
+      Promise.reject(`onBeforeFileAdded: ${err}`)
     })
   }
 
@@ -654,12 +653,7 @@ class Uppy {
       return Promise.reject('Minimum number of files has not been reached')
     }
 
-    return this.opts.onBeforeUpload(this.getState().files, (err) => {
-      if (err) {
-        this.emit('informer', err, 'error', 5000)
-        return Promise.reject(`onBeforeUpload: ${err}`)
-      }
-
+    return this.opts.onBeforeUpload(this.getState().files).then(() => {
       this.emit('core:upload')
 
       const waitingFileIDs = []
@@ -690,6 +684,7 @@ class Uppy {
         this.emit('core:success', waitingFileIDs)
       })
     })
+    .catch((err) => Promise.reject(`onBeforeUpload: ${err}`))
   }
 }
 
