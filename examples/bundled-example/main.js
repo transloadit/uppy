@@ -6,6 +6,8 @@ const Instagram = require('../../src/plugins/Instagram')
 const Webcam = require('../../src/plugins/Webcam')
 const Tus10 = require('../../src/plugins/Tus10')
 // const Multipart = require('../../src/plugins/Multipart')
+// const DragDrop = require('../../src/plugins/FileInput')
+const FileInput = require('../../src/plugins/FileInput')
 const MetaData = require('../../src/plugins/MetaData')
 // const Informer = require('../../src/plugins/Informer')
 // const StatusBar = require('../../src/plugins/StatusBar')
@@ -18,19 +20,28 @@ const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 // import MagicLog from '../../src/plugins/MagicLog'
 // import PersistentState from '../../src/plugins/PersistentState'
 
-const uppy = Uppy({debug: true, autoProceed: false})
+const uppy = Uppy({
+  debug: true,
+  autoProceed: true,
+  meta: {
+    username: 'John'
+  }
+})
   .use(Dashboard, {
     trigger: '#uppyModalOpener',
     // maxWidth: 350,
     // maxHeight: 400,
-    // inline: false,
+    inline: false,
     // disableStatusBar: true,
     // disableInformer: true,
-    target: 'body',
+    setMetaFromTargetForm: true,
+    target: '.MyForm',
     locale: {
-      strings: {browse: 'wow'}
+      strings: { browse: 'wow' }
     }
   })
+  .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
+  .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
@@ -41,8 +52,7 @@ const uppy = Uppy({debug: true, autoProceed: false})
   //   strings: {chooseFile: 'Выберите файл'}
   // }})
   // .use(ProgressBar, {target: 'body'})
-  // .use(dummy)
-  .use(Webcam, {target: Dashboard})
+  // .use(Webcam, {target: Dashboard})
   // .use(Multipart, {endpoint: '//api2.transloadit.com'})
   .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
   // .use(Informer, {target: Dashboard})
