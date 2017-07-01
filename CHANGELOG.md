@@ -72,44 +72,46 @@ maybe later:
 
 ## 0.18.0
 
+To be released: 2017-07-28
+
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
 - [ ] core: add error in file progress state? (@arturi)
+- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju)
 - [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
 - [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 2, release (@goto-bus-stop)
+- [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
+- [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
+- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
+- [ ] provider: improve UI: add icons for file types (@arturi)
 
 ## 0.17.0
 
 To be released: 2017-06-30
 
-- [x] core: add `uppy.reset()` as discussed in #179 (@arturi)
-- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] core: restrictions — by file type, size, number of files (@arturi)
-- [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [ ] fileinput: allow retriving fields/options from form (@arturi #153)
-- [ ] provider: improve UI: add icons for file types (@arturi)
-- [ ] provider: improve UI: improve overall look, breadcrumbs (@arturi)
-- [ ] provider: improve UI: steps towards making it responsive (@arturi)
-- [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
-- [x] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
-- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
-- [x] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
-- [x] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 1, WIP (@goto-bus-stop)
-- [x] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
-- [x] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
-- [x] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
+- [ ] provider: improve UI: improve overall look, breadcrumbs, more responsive (@arturi)
 - [ ] website: new demo video / gif (@arturi)
+- [x] core: css-in-js demos, try template-css (@arturi @goto-bus-stop #239)
+- [x] core: add `uppy.reset()` as discussed in #179 (@arturi)
 - [x] core: add nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@goto-bus-stop, @arturi)
 - [x] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957 (@arturi)
 - [x] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi, @nqst / #215)
+- [x] fileinput: allow retriving fields/options from form (@arturi #153)
+- [x] server: configurable server port (@ifedapoolarewaju)
 - [x] server: support for custom providers (@ifedapoolarewaju)
 - [x] statusbar: also show major errors, add “error” state (@goto-bus-stop)
 - [x] statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
+- [x] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
 - [x] statusbar: work towards extracting StatusBar to a separate plugin, bundle that with Dashboard? (@goto-bus-stop, @arturi)
 - [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
+- [x] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 1, WIP (@goto-bus-stop)
+- [x] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
+- [x] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
 - [x] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju / #205)
-- [x] server: configurable server port (@ifedapoolarewaju)
+- [x] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
+- [x] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
 
 ## 0.16.2 - 2017-05-31
 
