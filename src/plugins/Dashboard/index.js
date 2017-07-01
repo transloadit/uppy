@@ -48,6 +48,7 @@ module.exports = class DashboardUI extends Plugin {
       semiTransparent: false,
       defaultTabIcon: defaultTabIcon(),
       showProgressDetails: false,
+      note: false,
       locale: defaultLocale
     }
 
@@ -367,6 +368,7 @@ module.exports = class DashboardUI extends Plugin {
       addFile: addFile,
       removeFile: removeFile,
       info: info,
+      note: this.opts.note,
       metaFields: state.metaFields,
       resumableUploads: resumableUploads,
       startUpload: startUpload,

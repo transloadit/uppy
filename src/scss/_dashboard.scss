@@ -417,6 +417,18 @@
   }
 }
 
+.UppyDashboard-note {
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: center;
+  margin-top: 20px;
+  color: $color-asphalt-gray;
+
+  .UppyDashboard--wide & {
+    font-size: 13px;
+  }
+}
+
 .UppyDashboardItem {
   list-style: none;
   margin: 10px 0;
@@ -550,7 +562,6 @@
     border-bottom-right-radius: 6px;
     border: 1px solid rgba($color-gray, 0.2);
     border-top: 0;
-    // height: 60px;
   }
 }
 
