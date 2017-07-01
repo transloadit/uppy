@@ -1,8 +1,9 @@
 const Uppy = require('../../src/core/Core.js')
-// const Dashboard = require('../../src/plugins/Dashboard')
-// const GoogleDrive = require('../../src/plugins/GoogleDrive')
-// const Dropbox = require('../../src/plugins/Dropbox')
-// const Webcam = require('../../src/plugins/Webcam')
+const Dashboard = require('../../src/plugins/Dashboard')
+const GoogleDrive = require('../../src/plugins/GoogleDrive')
+const Dropbox = require('../../src/plugins/Dropbox')
+const Instagram = require('../../src/plugins/Instagram')
+const Webcam = require('../../src/plugins/Webcam')
 const Tus10 = require('../../src/plugins/Tus10')
 // const Multipart = require('../../src/plugins/Multipart')
 // const DragDrop = require('../../src/plugins/FileInput')
@@ -23,37 +24,33 @@ const uppy = Uppy({
   debug: true,
   autoProceed: true,
   meta: {
-    username: 'Artur'
+    username: 'John'
   }
 })
-  // .use(Dashboard, {
-  //   trigger: '#uppyModalOpener',
-  //   // maxWidth: 350,
-  //   // maxHeight: 400,
-  //   inline: false,
-  //   // disableStatusBar: true,
-  //   // disableInformer: true,
-  //   setMetaFromTargetForm: true,
-  //   target: '.MyForm',
-  //   locale: {
-  //     strings: { browse: 'wow' }
-  //   }
-  // })
-  // .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
-  // .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
-  .use(FileInput, {
+  .use(Dashboard, {
+    trigger: '#uppyModalOpener',
+    // maxWidth: 350,
+    // maxHeight: 400,
+    inline: false,
+    // disableStatusBar: true,
+    // disableInformer: true,
+    setMetaFromTargetForm: true,
     target: '.MyForm',
-    // replaceTargetContent: false,
     locale: {
-      strings: { selectToUpload: 'Выберите файл для загрузки' }
-    }})
-  // .use(DragDrop, {
-  //   target: '.MyForm',
-  //   locale: {
-  //     strings: {chooseFile: 'Выберите файл'}
-  //   },
-  //   setMetaFromTargetForm: true
-  // })
+      strings: { browse: 'wow' }
+    }
+  })
+  .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
+  .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
+  .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
+  .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
+  .use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
+  // .use(FileInput, {target: '.Uppy', locale: {
+  //   strings: {selectToUpload: 'Выберите файл для загрузки'}
+  // }})
+  // .use(DragDrop, {target: 'body', locale: {
+  //   strings: {chooseFile: 'Выберите файл'}
+  // }})
   // .use(ProgressBar, {target: 'body'})
   // .use(Webcam, {target: Dashboard})
   // .use(Multipart, {endpoint: '//api2.transloadit.com'})

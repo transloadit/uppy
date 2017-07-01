@@ -122,6 +122,10 @@ module.exports = class Dropbox extends Plugin {
     return item.modified
   }
 
+  getItemThumbnailUrl (item) {
+    return `${this.opts.host}/${this.Dropbox.id}/thumbnail/${this.getItemRequestPath(item)}`
+  }
+
   render (state) {
     return this.view.render(state)
   }

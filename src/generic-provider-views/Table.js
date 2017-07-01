@@ -17,13 +17,12 @@ module.exports = (props) => {
           ${headers}
         </tr>
       </thead>
-      <tbody>
+      <tbody onscroll=${props.handleScroll}>
         ${props.folders.map((folder) => {
           return Row({
             title: props.getItemName(folder),
             active: props.activeRow(folder),
             getItemIcon: () => props.getItemIcon(folder),
-            // handleClick: () => props.handleRowClick(folder),
             handleClick: () => props.handleFolderClick(folder),
             columns: props.columns
           })
@@ -33,7 +32,6 @@ module.exports = (props) => {
             title: props.getItemName(file),
             active: props.activeRow(file),
             getItemIcon: () => props.getItemIcon(file),
-            // handleClick: () => props.handleRowClick(file),
             handleClick: () => props.handleFileClick(file),
             columns: props.columns
           })
