@@ -3,11 +3,11 @@ const Dashboard = require('../../src/plugins/Dashboard')
 const GoogleDrive = require('../../src/plugins/GoogleDrive')
 const Dropbox = require('../../src/plugins/Dropbox')
 const Instagram = require('../../src/plugins/Instagram')
-const Webcam = require('../../src/plugins/Webcam')
+// const Webcam = require('../../src/plugins/Webcam')
 const Tus10 = require('../../src/plugins/Tus10')
 // const Multipart = require('../../src/plugins/Multipart')
 // const DragDrop = require('../../src/plugins/FileInput')
-const FileInput = require('../../src/plugins/FileInput')
+// const FileInput = require('../../src/plugins/FileInput')
 const MetaData = require('../../src/plugins/MetaData')
 // const Informer = require('../../src/plugins/Informer')
 // const StatusBar = require('../../src/plugins/StatusBar')
@@ -22,7 +22,7 @@ const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 
 const uppy = Uppy({
   debug: true,
-  autoProceed: true,
+  autoProceed: false,
   meta: {
     username: 'John'
   }
@@ -35,13 +35,12 @@ const uppy = Uppy({
     // disableStatusBar: true,
     // disableInformer: true,
     setMetaFromTargetForm: true,
+    // replaceTargetContent: true,
     target: '.MyForm',
     locale: {
       strings: { browse: 'wow' }
     }
   })
-  .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
-  .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
