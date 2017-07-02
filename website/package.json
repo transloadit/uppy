@@ -3,12 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "hexo": {
-    "version": "3.2.2"
+    "version": "3.3.7"
   },
   "dependencies": {
     "autoprefixer": "6.4.0",
     "cssnano": "3.7.3",
-    "hexo": "3.2.2",
+    "hexo": "^3.3.7",
     "hexo-browsersync": "0.2.0",
     "hexo-deployer-git": "0.2.0",
     "hexo-generator-archive": "0.1.4",
@@ -20,7 +20,7 @@
     "hexo-renderer-marked": "0.2.11",
     "hexo-renderer-postcss": "https://github.com/arturi/hexo-renderer-postcss#afca2bc12f5816067b15a9d24017c70e077b9f0b",
     "hexo-renderer-scss": "1.0.2",
-    "hexo-server": "0.2.0",
+    "hexo-server": "^0.2.1",
     "hexo-tag-emojis": "2.0.1",
     "hexo-util": "0.6.0",
     "js-yaml": "3.6.1",
