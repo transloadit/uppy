@@ -247,9 +247,7 @@ class Uppy {
           id: fileID,
           name: fileName,
           extension: fileExtension || '',
-          meta: {
-            name: fileName
-          },
+          meta: Object.assign({}, { name: fileName }, this.getState().meta),
           type: {
             general: fileTypeGeneral,
             specific: fileTypeSpecific
@@ -278,14 +276,14 @@ class Uppy {
         updatedFiles[fileID] = newFile
         this.setState({files: updatedFiles})
 
-        this.bus.emit('file-added', fileID)
+        this.emit('core:file-added', fileID)
         this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
 
         if (this.opts.autoProceed && !this.scheduledAutoProceed) {
           this.scheduledAutoProceed = setTimeout(() => {
             this.scheduledAutoProceed = null
             this.upload().catch((err) => {
-              console.error(err.stack || err.message)
+              console.error(err.stack || err.message || err)
             })
           }, 4)
         }

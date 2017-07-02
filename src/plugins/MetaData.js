@@ -27,6 +27,7 @@ module.exports = class MetaData extends Plugin {
     metaFields.forEach((item) => {
       const obj = {}
       obj[item.id] = item.value
+      console.log(obj)
       this.core.updateMeta(obj, fileID)
     })
   }
@@ -38,7 +39,7 @@ module.exports = class MetaData extends Plugin {
       metaFields: metaFields
     })
 
-    this.core.emitter.on('core:file-added', this.handleFileAdded)
+    this.core.on('core:file-added', this.handleFileAdded)
   }
 
   install () {
@@ -46,6 +47,6 @@ module.exports = class MetaData extends Plugin {
   }
 
   uninstall () {
-    this.core.emitter.off('core:file-added', this.handleFileAdded)
+    this.core.off('core:file-added', this.handleFileAdded)
   }
 }

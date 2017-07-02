@@ -23,6 +23,9 @@ const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 const uppy = Uppy({
   debug: true,
   autoProceed: false,
+  meta: {
+    username: 'John'
+  },
   restrictions: {
     maxFileSize: 300000,
     maxNumberOfFiles: 5,
