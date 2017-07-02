@@ -87,7 +87,7 @@ echo "[${__base}] --> Running acceptance tests"
 
 buildWait=20
 if [ "${TRAVIS:-}" = "true" ]; then
-  buildWait=60
+  buildWait=80
   echo "Increasing build wait because Travis has no Hexo build cache"
 fi
 
