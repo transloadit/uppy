@@ -90,8 +90,8 @@ To be released: 2017-07-28
 
 To be released: 2017-06-30
 
-- [ ] core: restrictions — by file type, size, number of files (@arturi)
-- [ ] provider: improve UI: improve overall look, breadcrumbs, more responsive (@arturi)
+- [x] core: restrictions — by file type, size, number of files (@arturi)
+- [x] provider: improve UI: improve overall look, breadcrumbs, more responsive (@arturi)
 - [ ] website: new demo video / gif (@arturi)
 - [x] core: css-in-js demos, try template-css (@arturi @goto-bus-stop #239)
 - [x] core: add `uppy.reset()` as discussed in #179 (@arturi)
