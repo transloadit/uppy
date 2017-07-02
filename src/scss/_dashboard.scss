@@ -218,6 +218,8 @@
   height: 40px;
   width: 100%;
   border-bottom: 1px solid rgba($color-gray, 0.3);
+  z-index: $zIndex-4;
+  background-color: darken($color-white, 4%);
 
   .UppyDashboard--wide & {
     height: 50px;
@@ -289,10 +291,14 @@
   will-change: transform;
   background-color: darken($color-white, 4%);
   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
-  padding: 15px;
-  padding-top: 60px;
+  // padding: 15px;
+  padding-top: 40px;
   overflow: hidden;
   z-index: $zIndex-3;
+
+  .UppyDashboard--wide & {
+    padding-top: 50px;
+  }
 }
 
 .UppyDashboardContent-panel[aria-hidden=false] {

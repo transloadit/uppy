@@ -7,7 +7,7 @@ module.exports = (props) => {
       <h1 class="UppyProvider-authTitle">
         Please authenticate with <span class="UppyProvider-authTitleName">${props.pluginName}</span><br> to select files
       </h1>
-      <button class="UppyProvider-authBtn" onclick=${props.handleAuth}>Authenticate</button>
+      <button type="button" class="UppyProvider-authBtn" onclick=${props.handleAuth}>Authenticate</button>
       ${demoLink}
     </div>
   `

@@ -94,7 +94,7 @@ module.exports = function fileItem (props) {
         }
       </h4>
       <div class="UppyDashboardItem-status">
-        <span class="UppyDashboardItem-statusSize">${file.data.size ? prettyBytes(file.data.size) : '?'}</span>
+        <span class="UppyDashboardItem-statusSize">${file.data.size ? prettyBytes(file.data.size) : ''}</span>
       </div>
       ${!uploadInProgressOrComplete
         ? html`<button class="UppyDashboardItem-edit"

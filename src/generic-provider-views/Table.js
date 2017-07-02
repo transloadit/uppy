@@ -2,21 +2,20 @@ const html = require('yo-yo')
 const Row = require('./TableRow')
 
 module.exports = (props) => {
-  const headers = props.columns.map((column) => {
-    return html`
-      <th class="BrowserTable-headerColumn BrowserTable-column" onclick=${props.sortByTitle}>
-        ${column.name}
-      </th>
-    `
-  })
+  // const headers = props.columns.map((column) => {
+  //   return html`
+  //     <th class="BrowserTable-headerColumn BrowserTable-column" onclick=${props.sortByTitle}>
+  //       ${column.name}
+  //     </th>
+  //   `
+  // })
+
+  // <thead class="BrowserTable-header">
+  //   <tr>${headers}</tr>
+  // </thead>
 
   return html`
     <table class="BrowserTable">
-      <thead class="BrowserTable-header">
-        <tr>
-          ${headers}
-        </tr>
-      </thead>
       <tbody onscroll=${props.handleScroll}>
         ${props.folders.map((folder) => {
           return Row({

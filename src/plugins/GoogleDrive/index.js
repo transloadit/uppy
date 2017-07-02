@@ -51,7 +51,8 @@ module.exports = class Google extends Plugin {
         folders: [],
         directories: [],
         activeRow: -1,
-        filterInput: ''
+        filterInput: '',
+        isSearchVisible: false
       }
     })
 

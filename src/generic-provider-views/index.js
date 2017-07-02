@@ -41,14 +41,23 @@ module.exports = class View {
   /**
    * @param {object} instance of the plugin
    */
-  constructor (plugin) {
+  constructor (plugin, opts) {
     this.plugin = plugin
     this.Provider = plugin[plugin.id]
+
+    // set default options
+    const defaultOptions = {
+      defaultViewType: 'list'
+    }
+
+    // merge default options with the ones set by user
+    this.opts = Object.assign({}, defaultOptions, opts)
 
     // Logic
     this.addFile = this.addFile.bind(this)
     this.filterItems = this.filterItems.bind(this)
     this.filterQuery = this.filterQuery.bind(this)
+    this.toggleSearch = this.toggleSearch.bind(this)
     this.getFolder = this.getFolder.bind(this)
     this.getNextFolder = this.getNextFolder.bind(this)
     this.logout = this.logout.bind(this)
@@ -150,6 +159,12 @@ module.exports = class View {
       this.plugin.core.log('Adding remote file')
       this.plugin.core.emitter.emit('core:file-add', tagFile)
     })
+
+    // feels like a hack
+    // this.updateState({
+    //   filterInput: '',
+    //   isSearchVisible: false
+    // })
   }
 
   /**
@@ -176,6 +191,21 @@ module.exports = class View {
     this.updateState(Object.assign({}, state, {
       filterInput: e.target.value
     }))
+  }
+
+  toggleSearch () {
+    const state = this.plugin.core.getState()[this.plugin.stateId]
+    const searchInputEl = document.querySelector('.Browser-searchInput')
+
+    this.updateState(Object.assign({}, state, {
+      isSearchVisible: !state.isSearchVisible,
+      filterInput: ''
+    }))
+
+    searchInputEl.value = ''
+    if (!state.isSearchVisible) {
+      searchInputEl.focus()
+    }
   }
 
   filterItems (items) {
@@ -339,6 +369,7 @@ module.exports = class View {
       addFile: this.addFile,
       filterItems: this.filterItems,
       filterQuery: this.filterQuery,
+      toggleSearch: this.toggleSearch,
       sortByTitle: this.sortByTitle,
       sortByDate: this.sortByDate,
       logout: this.logout,
@@ -346,7 +377,9 @@ module.exports = class View {
       isActiveRow: this.isActiveRow,
       getItemName: this.plugin.getItemName,
       getItemIcon: this.plugin.getItemIcon,
-      handleScroll: this.handleScroll
+      handleScroll: this.handleScroll,
+      title: this.plugin.title,
+      defaultViewType: this.opts.defaultViewType
     })
 
     return Browser(browserProps)

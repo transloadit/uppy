@@ -5,11 +5,11 @@
 // @import 'vendor/bootstrap/bootstrap-grid';
 
 .UppyProvider-auth, .UppyProvider-error, .UppyProvider-loading {
-  align-items: center;
   display: flex;
+  align-items: center;
+  justify-content: center;
   flex-flow: column wrap;
   height: 100%;
-  justify-content: center;
 }
 
 .UppyProvider-authTitle {
@@ -28,12 +28,9 @@
 
 .UppyProvider-authBtn {
   @include reset-button;
-  // background-color: transparent;
-  // border: 1px solid $color-cornflower-blue;
   border-radius: 6px;
   background-color: $color-cornflower-blue;
   color: $color-white;
-  // color: $color-cornflower-blue;
   font-size: 20px;
   padding: 12px 46px;
   transition: background-color 0.3s;
@@ -47,22 +44,21 @@
   }
 }
 
-.UppyProvider-breadcrumbs {
-  color: #222;
-  font-size: 12px;
-  list-style-type: none;
-  margin: 0;
-  margin-left: 16px;
-  padding: 8px 0;
-}
+// .UppyProvider-breadcrumbs {
+//   color: $color-black;
+//   font-size: 12px;
+//   line-height: 40px;
+//   list-style-type: none;
+//   margin: 0;
+//   margin-left: 16px;
+//   // padding: 15px 0;
+// }
 
 .UppyProvider-breadcrumbs button,
 .UppyGoogleDrive-sidebar button {
-  background: transparent;
-  border: 0;
+  @include reset-button;
   cursor: pointer;
   font-size: 14px;
-  outline: 0;
 }
 
 .UppyProvider-breadcrumbs button:hover {
@@ -81,174 +77,138 @@
 
 .UppyProvider-breadcrumbs li {
   display: inline-block;
-}
-
-.UppyProvider-breadcrumbs li:after {
-  content: '>';
-}
-
-.UppyProvider-breadcrumbs li:last-child:after {
-  content: '';
-}
-
-.UppyGoogleDrive-sidebar {
-  height: 100%;
-  list-style-type: none;
   margin: 0;
-  padding: 16px 0 16px 16px;
+  margin-right: 6px;
 }
 
-.UppyGoogleDrive-sidebar li {
-  margin: 0 auto 16px;
-  padding: 0;
+.UppyProvider-breadcrumbs li:not(:last-child):after {
+  content: '/';
 }
 
-.UppyGoogleDrive-sidebar img {
-  margin-right: 8px;
-}
+// .UppyGoogleDrive-sidebar {
+//   height: 100%;
+//   list-style-type: none;
+//   margin: 0;
+//   padding: 16px 0 16px 16px;
+// }
 
-.UppyGoogleDrive-browser {
-  border: 1px solid #eee;
-  border-collapse: collapse;
-}
+// .UppyGoogleDrive-sidebar li {
+//   margin: 0 auto 16px;
+//   padding: 0;
+// }
 
-.UppyGoogleDrive-browser td {
-  border-bottom: 1px solid #eee;
-  padding: 8px;
-}
+// .UppyGoogleDrive-sidebar img {
+//   margin-right: 8px;
+// }
 
-.UppyGoogleDrive-browser tbody tr:last-child td {
-  border-bottom: 0;
-}
+// .UppyGoogleDrive-browser {
+//   border: 1px solid #eee;
+//   border-collapse: collapse;
+// }
 
-.UppyGoogleDrive-browser tbody tr .UppyGoogleDrive-fileIcon {
-  background-color: #fff;
-  border-radius: 50%;
-  padding: 6px 8px 5px 8px;
-}
+// .UppyGoogleDrive-browser td {
+//   border-bottom: 1px solid #eee;
+//   padding: 8px;
+// }
 
-.UppyGoogleDrive-browser tbody tr .UppyGoogleDrive-folderIcon {
-  background-color: #fff;
-  border-radius: 50%;
-  padding: 6px 8px 5px 8px;
-  margin-top: 2px;
-}
+// .UppyGoogleDrive-browser tbody tr:last-child td {
+//   border-bottom: 0;
+// }
 
-.UppyGoogleDrive-browser tbody tr.is-active {
-  background-color: #78BDF2;
-  color: #fff;
-}
+// .UppyGoogleDrive-browser tbody tr .UppyGoogleDrive-fileIcon {
+//   background-color: #fff;
+//   border-radius: 50%;
+//   padding: 6px 8px 5px 8px;
+// }
 
-.UppyGoogleDrive-fileInfo {
-  padding: 0 16px;
-}
+// .UppyGoogleDrive-browser tbody tr .UppyGoogleDrive-folderIcon {
+//   background-color: #fff;
+//   border-radius: 50%;
+//   padding: 6px 8px 5px 8px;
+//   margin-top: 2px;
+// }
 
-.UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileThumbnail {
-  width: 50%;
-}
+// .UppyGoogleDrive-browser tbody tr.is-active {
+//   background-color: #78BDF2;
+//   color: #fff;
+// }
 
-.UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileIcon {
-  margin-right: 8px;
-}
+// .UppyGoogleDrive-fileInfo {
+//   padding: 0 16px;
+// }
 
-.UppyGoogleDrive-sidebar label {
-  display: block;
-  margin-bottom: 8px;
-}
+// .UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileThumbnail {
+//   width: 50%;
+// }
 
-.UppyGoogleDrive-sidebar input {
-  margin-bottom: 8px;
-  padding: 4px;
-}
+// .UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileIcon {
+//   margin-right: 8px;
+// }
 
-.UppyGoogleDrive-filter {
-  border: 1px solid #eee;
-}
+// .UppyGoogleDrive-sidebar label {
+//   display: block;
+//   margin-bottom: 8px;
+// }
 
-.UppyGoogleDrive-sortableHeader:hover {
-  background-color: #eee;
-  cursor: pointer;
-}
+// .UppyGoogleDrive-sidebar input {
+//   margin-bottom: 8px;
+//   padding: 4px;
+// }
 
-.UppyGoogleDrive-fileInfo ul {
-  list-style-type: none;
-  padding: 0;
-}
+// .UppyGoogleDrive-filter {
+//   border: 1px solid #eee;
+// }
 
-.UppyGoogleDrive-browserContainer {
-  height: calc(80vh - 40px);
-  overflow: hidden;
-  overflow-y: scroll;
-}
+// .UppyGoogleDrive-sortableHeader:hover {
+//   background-color: #eee;
+//   cursor: pointer;
+// }
 
-.UppyGoogleDrive-browser td {
-  cursor: default;
-  max-width: 25%;
-  padding-right: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 25%;
-}
+// .UppyGoogleDrive-fileInfo ul {
+//   list-style-type: none;
+//   padding: 0;
+// }
+
+// .UppyGoogleDrive-browserContainer {
+//   height: calc(80vh - 40px);
+//   overflow: hidden;
+//   overflow-y: scroll;
+// }
+
+// .UppyGoogleDrive-browser td {
+//   cursor: default;
+//   max-width: 25%;
+//   padding-right: 8px;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   white-space: nowrap;
+//   width: 25%;
+// }
 
 
 /** NEW PLUGIN BROWSER STYLES */
 
 .Browser {
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  // border: 1px solid #ddd;
+  // border-radius: 5px;
   display: flex;
   flex-direction: column;
   font-size: 13px;
   font-weight: 400;
-  height: 475px;
-  overflow: hidden;
-  width: 718px;
+  height: 100%;
+  // height: 475px;
+  // overflow: hidden;
+  // width: 718px;
 }
 
 .Browser-user {
   margin: 16px 0;
 }
 
-.Browser-userLogout {
-  @include reset-button();
-  margin-right: 16px;
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.Browser header {
-  align-items: center;
+.Browser-header {
+  z-index: 1000;
   border-bottom: 1px solid #e5e5e5;
-  display: flex;
-  flex-direction: row;
-  height: 65px;
-}
-
-.Browser-body {
-  display: flex;
-  flex: 1;
-}
-
-.Browser-content {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-}
-
-.Browser-search {
-  background-color: #f5f5f5;
-  border: 0;
-  font-size: 15px;
-  font-weight: 400;
-  height: 48px;
-  margin: 0 16px;
-  outline: 0;
-  // padding: 0 16px;
-  width: 100%;
+  position: relative;
 }
 
 ::-webkit-input-placeholder {
@@ -267,17 +227,88 @@
    color: rgba(119,119,119,0.75);
 }
 
-.Browser-subHeader {
-  justify-content: space-between;
-  align-items: center;
-  background-color: #fafafa;
+.Browser-headerBar {
+  height: 50px;
+  line-height: 50px;
   display: flex;
-  flex-direction: row;
-  height: 55px;
-  // -webkit-box-shadow: 0px 3px 3px 0px rgba(121,121,121,0.25);
-  // -moz-box-shadow: 0px 3px 3px 0px rgba(121,121,121,0.25);
-  box-shadow: 0px 3px 3px 0px rgba(121,121,121,0.25);
-  z-index: 1000;
+  align-items: center;
+  padding-left: 16px;
+}
+
+.Browser-search {
+  height: 50px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: $zIndex-3;
+  background-color: lighten($color-gray, 40%);
+  transform: translate(0, -50px);
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+}
+
+  .Browser-search[aria-hidden=false] {
+    transform: translate(0, 0);
+  }
+
+.Browser-search input {
+  flex: 1;
+  background-color: transparent;
+  outline: 0;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 50px;
+  border: 0;
+  padding: 0 16px;
+}
+
+
+.Browser-searchToggle {
+  @include reset-button();
+  width: 15px;
+  cursor: pointer;
+  color: $color-gray;
+  transition: all .2s;
+
+  &:hover {
+    color: $color-black;
+  }
+}
+
+.Browser-searchClose {
+  @include reset-button();
+  cursor: pointer;
+  width: 12px;
+  color: $color-gray;
+  transition: all .2s;
+  margin-right: 16px;
+
+  &:hover {
+    color: $color-black;
+  }
+}
+
+.Browser-userLogout {
+  @include reset-button();
+  margin-right: 16px;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.UppyProvider-breadcrumbs {
+  flex: 1;
+  color: $color-black;
+  font-size: 12px;
+  // line-height: 40px;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  margin-left: 16px;
 }
 
 .Browser-breadcrumbs span {
@@ -291,39 +322,76 @@
   font-weight: 500;
 }
 
-.BrowserTable {
-  background-color: white;
+// .Browser-subHeader {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   // background-color: #fafafa;
+//   // flex-direction: row;
+//   // height: 55px;
+//   // box-shadow: 0px 3px 3px 0px rgba(121,121,121,0.25);
+//   z-index: 1000;
+// }
+
+.Browser-body {
   flex: 1;
+}
+
+.BrowserTable {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  border-spacing: 0;
+  position: relative;
+}
+
+.Browser-viewType--grid {
+  .BrowserTable tbody {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
 }
 
 .BrowserTable tbody {
   display: block;
-  height: 300px;
   overflow-x: hidden;
   overflow-y: auto;
-}
-
-.BrowserTable td {
-  cursor: default;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .BrowserTable-row {
-  border-bottom: 1px solid #eee;
-  height: 50px;
+  // border-bottom: 1px solid #eee;
+  display: block;
+  cursor: pointer;
+  // height: 50px;
 }
 
 .BrowserTable-header {
-  border-bottom: 1px solid #eee;
+  display: block;
+  // border-bottom: 1px solid #eee;
 }
 
-.BrowserTable-header:hover {
-  background-color: #eee;
-}
+  .BrowserTable-header:hover {
+    background-color: $color-gray;
+  }
 
 .BrowserTable-column {
-  color: #666;
+  color: $color-asphalt-gray;
+  line-height: 1.2;
   font-weight: bold;
-  padding: 18px;
+  padding: 17px 16px;
+}
+
+.BrowserTable-column img {
+  vertical-align: text-top;
+  margin-right: 3px;
 }
 
 .BrowserTable-headerColumn {
@@ -339,10 +407,10 @@
   background-color: #fafafa;
 }
 
-.BrowserTable-rowColumn.BrowserTable-column {
-  display: block;
-  width: 708px;
-}
+// .BrowserTable-rowColumn.BrowserTable-column {
+//   display: block;
+//   // width: 708px;
+// }
 
 .nav-active {
   font-weight: bold;
