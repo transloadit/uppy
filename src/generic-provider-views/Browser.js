@@ -47,7 +47,6 @@ module.exports = (props) => {
           }],
           folders: filteredFolders,
           files: filteredFiles,
-          isGrid: false,
           activeRow: props.isActiveRow,
           sortByTitle: props.sortByTitle,
           sortByDate: props.sortByDate,
