@@ -3,6 +3,8 @@ const Translator = require('../core/Translator')
 const UppySocket = require('./UppySocket')
 const ee = require('namespace-emitter')
 const throttle = require('lodash.throttle')
+const prettyBytes = require('prettier-bytes')
+const match = require('mime-match')
 // const en_US = require('../locales/en_US')
 // const deepFreeze = require('deep-freeze-strict')
 
@@ -13,12 +15,36 @@ const throttle = require('lodash.throttle')
  */
 class Uppy {
   constructor (opts) {
+    const defaultLocale = {
+      strings: {
+        youCanOnlyUploadX: {
+          0: 'You can only upload %{smart_count} file',
+          1: 'You can only upload %{smart_count} files'
+        },
+        youHaveToAtLeastSelectX: {
+          0: 'You have to select at least %{smart_count} file',
+          1: 'You have to select at least %{smart_count} files'
+        },
+        exceedsSize: 'This file exceeds maximum allowed size of',
+        youCanOnlyUploadFileTypes: 'You can only upload:'
+      }
+    }
+
     // set default options
     const defaultOptions = {
       // load English as the default locale
       // locale: en_US,
       autoProceed: true,
-      debug: false
+      debug: false,
+      restrictions: {
+        maxFileSize: false,
+        maxNumberOfFiles: false,
+        minNumberOfFiles: false,
+        allowedFileTypes: false
+      },
+      onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
+      onBeforeUpload: (files, done) => Promise.resolve(),
+      locale: defaultLocale
     }
 
     // Merge default options with the ones set by user
@@ -27,6 +53,13 @@ class Uppy {
     // // Dictates in what order different plugin types are ran:
     // this.types = [ 'presetter', 'orchestrator', 'progressindicator',
     //                 'acquirer', 'modifier', 'uploader', 'presenter', 'debugger']
+
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    // i18n
+    this.translator = new Translator({locale: this.locale})
+    this.i18n = this.translator.translate.bind(this.translator)
 
     // Container for different types of plugins
     this.plugins = {}
@@ -159,59 +192,108 @@ class Uppy {
     this.setState({files: updatedFiles})
   }
 
+  checkRestrictions (checkMinNumberOfFiles, file, fileType) {
+    const {maxFileSize, maxNumberOfFiles, minNumberOfFiles, allowedFileTypes} = this.opts.restrictions
+
+    if (checkMinNumberOfFiles && minNumberOfFiles) {
+      console.log(Object.keys(this.state.files).length)
+      if (Object.keys(this.state.files).length < minNumberOfFiles) {
+        this.emit('informer', `${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
+        return false
+      }
+      return true
+    }
+
+    if (maxNumberOfFiles) {
+      if (Object.keys(this.state.files).length + 1 > maxNumberOfFiles) {
+        this.emit('informer', `${this.i18n('youCanOnlyUploadX', {smart_count: maxNumberOfFiles})}`, 'error', 5000)
+        return false
+      }
+    }
+
+    if (allowedFileTypes) {
+      const isCorrectFileType = allowedFileTypes.filter(match(fileType.join('/'))).length > 0
+      if (!isCorrectFileType) {
+        const allowedFileTypesString = allowedFileTypes.join(', ')
+        this.emit('informer', `${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
+        return false
+      }
+    }
+
+    if (maxFileSize) {
+      if (file.data.size > maxFileSize) {
+        this.emit('informer', `${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`, 'error', 5000)
+        return false
+      }
+    }
+
+    return true
+  }
+
   addFile (file) {
-    Utils.getFileType(file).then((fileType) => {
-      const updatedFiles = Object.assign({}, this.state.files)
-      const fileName = file.name || 'noname'
-      const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
-      const isRemote = file.isRemote || false
+    return this.opts.onBeforeFileAdded(file, this.getState().files).then(() => {
+      return Utils.getFileType(file).then((fileType) => {
+        const updatedFiles = Object.assign({}, this.state.files)
+        const fileName = file.name || 'noname'
+        const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
+        const isRemote = file.isRemote || false
 
-      const fileID = Utils.generateFileID(fileName)
-      const fileTypeGeneral = fileType[0]
-      const fileTypeSpecific = fileType[1]
+        const fileID = Utils.generateFileID(fileName)
+        const fileTypeGeneral = fileType[0]
+        const fileTypeSpecific = fileType[1]
 
-      const newFile = {
-        source: file.source || '',
-        id: fileID,
-        name: fileName,
-        extension: fileExtension || '',
-        meta: Object.assign({}, { name: fileName }, this.getState().meta),
-        type: {
-          general: fileTypeGeneral,
-          specific: fileTypeSpecific
-        },
-        data: file.data,
-        progress: {
-          percentage: 0,
-          bytesUploaded: 0,
-          bytesTotal: file.data.size || 0,
-          uploadComplete: false,
-          uploadStarted: false
-        },
-        size: file.data.size || 'N/A',
-        isRemote: isRemote,
-        remote: file.remote || '',
-        preview: file.preview
-      }
+        const newFile = {
+          source: file.source || '',
+          id: fileID,
+          name: fileName,
+          extension: fileExtension || '',
+          meta: {
+            name: fileName
+          },
+          type: {
+            general: fileTypeGeneral,
+            specific: fileTypeSpecific
+          },
+          data: file.data,
+          progress: {
+            percentage: 0,
+            bytesUploaded: 0,
+            bytesTotal: file.data.size || 0,
+            uploadComplete: false,
+            uploadStarted: false
+          },
+          size: file.data.size || 'N/A',
+          isRemote: isRemote,
+          remote: file.remote || '',
+          preview: file.preview
+        }
 
-      if (Utils.isPreviewSupported(fileTypeSpecific) && !isRemote) {
-        newFile.preview = Utils.getThumbnail(file)
-      }
+        if (Utils.isPreviewSupported(fileTypeSpecific) && !isRemote) {
+          newFile.preview = Utils.getThumbnail(file)
+        }
 
-      updatedFiles[fileID] = newFile
-      this.setState({files: updatedFiles})
+        const isFileAllowed = this.checkRestrictions(false, newFile, fileType)
+        if (!isFileAllowed) return
 
-      this.bus.emit('core:file-added', fileID)
-      this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
+        updatedFiles[fileID] = newFile
+        this.setState({files: updatedFiles})
 
-      if (this.opts.autoProceed && !this.scheduledAutoProceed) {
-        this.scheduledAutoProceed = setTimeout(() => {
-          this.scheduledAutoProceed = null
-          this.upload().catch((err) => {
-            console.error(err.stack || err.message)
-          })
-        }, 4)
-      }
+        this.bus.emit('file-added', fileID)
+        this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
+
+        if (this.opts.autoProceed && !this.scheduledAutoProceed) {
+          this.scheduledAutoProceed = setTimeout(() => {
+            this.scheduledAutoProceed = null
+            this.upload().catch((err) => {
+              console.error(err.stack || err.message)
+            })
+          }, 4)
+        }
+      })
+    })
+    .catch((err) => {
+      this.emit('informer', err, 'error', 5000)
+      return Promise.reject(`onBeforeFileAdded: ${err}`)
     })
   }
 
@@ -585,33 +667,45 @@ class Uppy {
   }
 
   upload () {
-    this.emit('core:upload')
+    const isMinNumberOfFilesReached = this.checkRestrictions(true)
+    if (!isMinNumberOfFilesReached) {
+      return Promise.reject('Minimum number of files has not been reached')
+    }
 
-    const waitingFileIDs = []
-    Object.keys(this.state.files).forEach((fileID) => {
-      const file = this.state.files[fileID]
-      // TODO: replace files[file].isRemote with some logic
-      //
-      // filter files that are now yet being uploaded / haven’t been uploaded
-      // and remote too
-      if (!file.progress.uploadStarted || file.isRemote) {
-        waitingFileIDs.push(file.id)
-      }
+    return this.opts.onBeforeUpload(this.getState().files).then(() => {
+      this.emit('core:upload')
+
+      const waitingFileIDs = []
+      Object.keys(this.state.files).forEach((fileID) => {
+        const file = this.state.files[fileID]
+        // TODO: replace files[file].isRemote with some logic
+        //
+        // filter files that are now yet being uploaded / haven’t been uploaded
+        // and remote too
+        if (!file.progress.uploadStarted || file.isRemote) {
+          waitingFileIDs.push(file.id)
+        }
+      })
+
+      const promise = Utils.runPromiseSequence(
+        [...this.preProcessors, ...this.uploaders, ...this.postProcessors],
+        waitingFileIDs
+      )
+
+      // Not returning the `catch`ed promise, because we still want to return a rejected
+      // promise from this method if the upload failed.
+      promise.catch((err) => {
+        this.emit('core:error', err)
+      })
+
+      return promise.then(() => {
+        // return number of uploaded files
+        this.emit('core:success', waitingFileIDs)
+      })
     })
-
-    const promise = Utils.runPromiseSequence(
-      [...this.preProcessors, ...this.uploaders, ...this.postProcessors],
-      waitingFileIDs
-    )
-
-    // Not returning the `catch`ed promise, because we still want to return a rejected
-    // promise from this method if the upload failed.
-    promise.catch((err) => {
-      this.emit('core:error', err)
-    })
-
-    return promise.then(() => {
-      this.emit('core:success')
+    .catch((err) => {
+      this.emit('informer', err, 'error', 5000)
+      return Promise.reject(`onBeforeUpload: ${err}`)
     })
   }
 }

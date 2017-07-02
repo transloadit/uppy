@@ -16,6 +16,10 @@ module.exports = (props) => {
               i18n: props.i18n
             })}
           </h3>
+          ${props.note
+            ? html`<p class="UppyDashboard-note">${props.note}</p>`
+            : ''
+          }
           <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
                  onchange=${props.handleInputChange} />
          </div>`

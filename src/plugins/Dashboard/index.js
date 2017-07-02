@@ -49,7 +49,7 @@ module.exports = class DashboardUI extends Plugin {
       semiTransparent: false,
       defaultTabIcon: defaultTabIcon(),
       showProgressDetails: false,
-      setMetaFromTargetForm: true,
+      note: false,
       locale: defaultLocale
     }
 
@@ -316,7 +316,7 @@ module.exports = class DashboardUI extends Plugin {
     const startUpload = (ev) => {
       this.core.upload().catch((err) => {
         // Log error.
-        console.error(err.stack || err.message)
+        console.error(err.stack || err.message || err)
       })
     }
 
@@ -369,6 +369,7 @@ module.exports = class DashboardUI extends Plugin {
       addFile: this.core.addFile,
       removeFile: removeFile,
       info: info,
+      note: this.opts.note,
       metaFields: state.metaFields,
       resumableUploads: resumableUploads,
       startUpload: startUpload,

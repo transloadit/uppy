@@ -102,6 +102,7 @@ module.exports = function Dashboard (props) {
             totalProgress: props.totalProgress,
             totalFileCount: props.totalFileCount,
             info: props.info,
+            note: props.note,
             i18n: props.i18n,
             log: props.log,
             removeFile: props.removeFile,

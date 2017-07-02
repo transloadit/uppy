@@ -23,8 +23,23 @@ const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 const uppy = Uppy({
   debug: true,
   autoProceed: false,
-  meta: {
-    username: 'John'
+  restrictions: {
+    maxFileSize: 300000,
+    maxNumberOfFiles: 5,
+    minNumberOfFiles: 2,
+    allowedFileTypes: ['image/*', 'video/*']
+  },
+  onBeforeFileAdded: (currentFile, files) => {
+    if (currentFile.name === 'pitercss-IMG_0616.jpg') {
+      return Promise.resolve()
+    }
+    return Promise.reject('this is not the file I was looking for')
+  },
+  onBeforeUpload: (files) => {
+    if (Object.keys(files).length < 2) {
+      return Promise.reject('too few files')
+    }
+    return Promise.resolve()
   }
 })
   .use(Dashboard, {
@@ -38,8 +53,9 @@ const uppy = Uppy({
     // replaceTargetContent: true,
     target: '.MyForm',
     locale: {
-      strings: { browse: 'wow' }
-    }
+      strings: {browse: 'wow'}
+    },
+    note: 'Images and video only, 300kb or less'
   })
   .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})

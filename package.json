@@ -78,6 +78,7 @@
     "es6-promise": "3.2.1",
     "get-form-data": "^1.2.5",
     "lodash.throttle": "4.1.1",
+    "mime-match": "^1.0.2",
     "namespace-emitter": "1.0.0",
     "nanoraf": "3.0.1",
     "on-load": "3.2.0",
