@@ -29,7 +29,7 @@ module.exports = function fileCard (props) {
   return html`<div class="UppyDashboardFileCard" aria-hidden="${!props.fileCardFor}">
     <div class="UppyDashboardContent-bar">
       <h2 class="UppyDashboardContent-title">Editing <span class="UppyDashboardContent-titleFile">${file.meta ? file.meta.name : file.name}</span></h2>
-      <button class="UppyDashboardContent-back" title="Finish editing file"
+      <button class="UppyDashboardContent-back" type="button" title="Finish editing file"
               onclick=${() => props.done(meta, file.id)}>Done</button>
     </div>
     ${props.fileCardFor

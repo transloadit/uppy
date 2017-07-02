@@ -42,6 +42,7 @@ module.exports = class DashboardUI extends Plugin {
     // set default options
     const defaultOptions = {
       target: 'body',
+      getMetaFromForm: true,
       inline: false,
       width: 750,
       height: 550,
@@ -89,7 +90,7 @@ module.exports = class DashboardUI extends Plugin {
     if (callerPluginType !== 'acquirer' &&
         callerPluginType !== 'progressindicator' &&
         callerPluginType !== 'presenter') {
-      let msg = 'Error: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
+      let msg = 'Dashboard: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
       this.core.log(msg)
       return
     }
@@ -163,9 +164,9 @@ module.exports = class DashboardUI extends Plugin {
     // focus on modal inner block
     this.target.querySelector('.UppyDashboard-inner').focus()
 
-    this.updateDashboardElWidth()
+    // this.updateDashboardElWidth()
     // to be sure, sometimes when the function runs, container size is still 0
-    setTimeout(this.updateDashboardElWidth, 300)
+    setTimeout(this.updateDashboardElWidth, 500)
   }
 
   // Close the Modal on esc key press
@@ -176,14 +177,14 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   initEvents () {
-    // const dashboardEl = this.target.querySelector(`${this.opts.target} .UppyDashboard`)
-
     // Modal open button
     const showModalTrigger = findDOMElement(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
       showModalTrigger.addEventListener('click', this.showModal)
-    } else {
-      this.core.log('Modal trigger wasn’t found')
+    }
+
+    if (!this.opts.inline && !showModalTrigger) {
+      this.core.log('Dashboard modal trigger not found, you won’t be able to select files. Make sure `trigger` is set correctly in Dashboard options', 'error')
     }
 
     document.body.addEventListener('keyup', this.handleEscapeKeyPress)
@@ -224,7 +225,7 @@ module.exports = class DashboardUI extends Plugin {
 
   updateDashboardElWidth () {
     const dashboardEl = this.target.querySelector('.UppyDashboard-inner')
-    // console.log(dashboardEl.offsetWidth)
+    this.core.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
     const modal = this.core.getState().modal
     this.core.setState({
@@ -304,9 +305,9 @@ module.exports = class DashboardUI extends Plugin {
       return target.type === 'progressindicator'
     })
 
-    const addFile = (file) => {
-      this.core.emitter.emit('core:file-add', file)
-    }
+    // const addFile = (file) => {
+    //   this.core.emitter.emit('core:file-add', file)
+    // }
 
     const removeFile = (fileID) => {
       this.core.emitter.emit('core:file-remove', fileID)
@@ -365,7 +366,7 @@ module.exports = class DashboardUI extends Plugin {
       i18n: this.containerWidth,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
-      addFile: addFile,
+      addFile: this.core.addFile,
       removeFile: removeFile,
       info: info,
       note: this.opts.note,

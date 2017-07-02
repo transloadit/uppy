@@ -58,6 +58,7 @@ module.exports = function Dashboard (props) {
           onload=${() => props.updateDashboardElWidth()}>
 
     <button class="UppyDashboard-close"
+            type="button"
             aria-label="${props.i18n('closeModal')}"
             title="${props.i18n('closeModal')}"
             onclick=${props.hideModal}>${closeIcon()}</button>
@@ -135,6 +136,7 @@ module.exports = function Dashboard (props) {
               ${props.i18n('importFrom')} ${props.activePanel ? props.activePanel.name : null}
             </h2>
             <button class="UppyDashboardContent-back"
+                    type="button"
                     onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
           </div>
           ${props.activePanel ? props.activePanel.render(props.state) : ''}

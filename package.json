@@ -76,6 +76,7 @@
   "dependencies": {
     "drag-drop": "2.13.2",
     "es6-promise": "3.2.1",
+    "get-form-data": "^1.2.5",
     "lodash.throttle": "4.1.1",
     "mime-match": "^1.0.2",
     "namespace-emitter": "1.0.0",

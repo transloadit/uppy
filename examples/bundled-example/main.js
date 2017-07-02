@@ -2,9 +2,12 @@ const Uppy = require('../../src/core/Core.js')
 const Dashboard = require('../../src/plugins/Dashboard')
 const GoogleDrive = require('../../src/plugins/GoogleDrive')
 const Dropbox = require('../../src/plugins/Dropbox')
-const Webcam = require('../../src/plugins/Webcam')
+const Instagram = require('../../src/plugins/Instagram')
+// const Webcam = require('../../src/plugins/Webcam')
 const Tus10 = require('../../src/plugins/Tus10')
 // const Multipart = require('../../src/plugins/Multipart')
+// const DragDrop = require('../../src/plugins/FileInput')
+// const FileInput = require('../../src/plugins/FileInput')
 const MetaData = require('../../src/plugins/MetaData')
 // const Informer = require('../../src/plugins/Informer')
 // const StatusBar = require('../../src/plugins/StatusBar')
@@ -43,10 +46,12 @@ const uppy = Uppy({
     trigger: '#uppyModalOpener',
     // maxWidth: 350,
     // maxHeight: 400,
-    // inline: false,
+    inline: false,
     // disableStatusBar: true,
     // disableInformer: true,
-    target: 'body',
+    setMetaFromTargetForm: true,
+    // replaceTargetContent: true,
+    target: '.MyForm',
     locale: {
       strings: {browse: 'wow'}
     },
@@ -54,6 +59,7 @@ const uppy = Uppy({
   })
   .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
+  .use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
   // .use(FileInput, {target: '.Uppy', locale: {
   //   strings: {selectToUpload: 'Выберите файл для загрузки'}
   // }})
@@ -61,8 +67,7 @@ const uppy = Uppy({
   //   strings: {chooseFile: 'Выберите файл'}
   // }})
   // .use(ProgressBar, {target: 'body'})
-  // .use(dummy)
-  .use(Webcam, {target: Dashboard})
+  // .use(Webcam, {target: Dashboard})
   // .use(Multipart, {endpoint: '//api2.transloadit.com'})
   .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
   // .use(Informer, {target: Dashboard})

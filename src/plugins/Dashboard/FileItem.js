@@ -49,6 +49,7 @@ module.exports = function fileItem (props) {
         </div>
         <div class="UppyDashboardItem-progress">
           <button class="UppyDashboardItem-progressBtn"
+                  type="button"
                   title="${isUploaded
                           ? 'upload complete'
                           : props.resumableUploads
@@ -97,6 +98,7 @@ module.exports = function fileItem (props) {
       </div>
       ${!uploadInProgressOrComplete
         ? html`<button class="UppyDashboardItem-edit"
+                       type="button"
                        aria-label="Edit file"
                        title="Edit file"
                        onclick=${(e) => props.showFileCard(file.id)}>
@@ -105,6 +107,7 @@ module.exports = function fileItem (props) {
       }
       ${file.uploadURL
         ? html`<button class="UppyDashboardItem-copyLink"
+                       type="button"
                        aria-label="Copy link"
                        title="Copy link"
                        onclick=${() => {
@@ -121,6 +124,7 @@ module.exports = function fileItem (props) {
     <div class="UppyDashboardItem-action">
       ${!isUploaded
         ? html`<button class="UppyDashboardItem-remove"
+                       type="button"
                        aria-label="Remove file"
                        title="Remove file"
                        onclick=${() => props.removeFile(file.id)}>

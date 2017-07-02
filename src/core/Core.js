@@ -86,7 +86,8 @@ class Uppy {
       capabilities: {
         resumableUploads: false
       },
-      totalProgress: 0
+      totalProgress: 0,
+      meta: Object.assign({}, this.opts.meta)
     }
 
     // for debugging and testing
@@ -134,6 +135,14 @@ class Uppy {
     return this.state
   }
 
+  reset () {
+    this.emit('core:pause-all')
+    this.emit('core:cancel-all')
+    this.setState({
+      totalProgress: 0
+    })
+  }
+
   addPreProcessor (fn) {
     this.preProcessors.push(fn)
   }
@@ -165,6 +174,13 @@ class Uppy {
     if (i !== -1) {
       this.uploaders.splice(i, 1)
     }
+  }
+
+  setMeta (data) {
+    const newMeta = Object.assign({}, this.getState().meta, data)
+    this.log('Adding metadata:')
+    this.log(data)
+    this.setState({meta: newMeta})
   }
 
   updateMeta (data, fileID) {
@@ -372,10 +388,9 @@ class Uppy {
     })
 
     this.on('core:cancel-all', () => {
-      const files = this.getState().files
-      Object.keys(files).forEach((file) => {
-        this.removeFile(files[file].id)
-      })
+      let updatedFiles = this.getState().files
+      updatedFiles = {}
+      this.setState({files: updatedFiles})
     })
 
     this.on('core:upload-started', (fileID, upload) => {
@@ -588,6 +603,8 @@ class Uppy {
    * Uninstall all plugins and close down this Uppy instance.
    */
   close () {
+    this.reset()
+
     this.iteratePlugins((plugin) => {
       plugin.uninstall()
     })
@@ -606,14 +623,16 @@ class Uppy {
     if (!this.opts.debug) {
       return
     }
+
+    if (type === 'error') {
+      console.error(`LOG: ${msg}`)
+      return
+    }
+
     if (msg === `${msg}`) {
       console.log(`LOG: ${msg}`)
     } else {
       console.dir(msg)
-    }
-
-    if (type === 'error') {
-      console.error(`LOG: ${msg}`)
     }
 
     global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
