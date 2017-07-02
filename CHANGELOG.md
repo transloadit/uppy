@@ -72,7 +72,7 @@ maybe later:
 
 ## 0.18.0
 
-To be released: 2017-07-28
+To be released: 2017-07-28.
 
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
@@ -88,7 +88,7 @@ To be released: 2017-07-28
 
 ## 0.17.0
 
-To be released: 2017-06-30
+To be released: 2017-06-30.
 
 - [x] core: restrictions — by file type, size, number of files (@arturi)
 - [x] provider: improve UI: improve overall look, breadcrumbs, more responsive (@arturi)
@@ -129,8 +129,8 @@ To be released: 2017-06-30
 
 ## 0.16.0
 
-Released: 2017-05-12
-Theme: Transloadit integration, getting things in order
+Released: 2017-05-12.
+Theme: Transloadit integration, getting things in order.
 Favorite Uppy Server version: 0.5.0.
 
 - [x] uploaders: make sure uploads retry/resume if started when offline or disconnected, retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi, @ifedapoolarewaju)
@@ -159,7 +159,7 @@ Favorite Uppy Server version: 0.5.0.
 
 ## 0.15.0
 
-Released: 2017-03-02
+Released: 2017-03-02.
 Theme: Speeding and cleaning.
 Favorite Uppy Server version: 0.4.0.
 
@@ -189,7 +189,7 @@ Favorite Uppy Server version: 0.4.0.
 
 ## 0.14.0
 
-To be released: January 27, 2017.
+Released: January 27, 2017.
 Theme: The new 13: Responsive Dashboard, Standalone & Pluggable Server, Dropbox.
 Uppy Server version: 0.3.0.
 
@@ -219,7 +219,7 @@ Theme: The release that wasn't 🎄.
 
 ## 0.12.0
 
-To be released: November 25, 2016.
+Released: November 25, 2016.
 Theme: Responsive. Cancel. Feedback. ES6 Server.
 Uppy Server version: 0.2.0.
 
@@ -346,8 +346,8 @@ Theme: The Webcam Edition.
 
 ## 0.7.0
 
-Theme: Remote Uploads, UI Redesign.
 Released: July 11, 2016.
+Theme: Remote Uploads, UI Redesign.
 
 - [x] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy; Put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh)
 - [x] core: Rethink UI: Part I (interface research for better file selection / progress representation) (@arturi)
@@ -365,8 +365,8 @@ Released: July 11, 2016.
 
 ## 0.6.4
 
-Theme: The aim low release.
 Released: June 03, 2016.
+Theme: The aim low release.
 
 - [x] build: minification of the bundle (@arturi)
 - [x] build: revisit sourcemaps for production. can we have them without a mandatory extra request?
@@ -388,8 +388,8 @@ Released: June 03, 2016.
 
 ## 0.0.5
 
-Theme: Acceptance tests and Google Drive Polish.
 Released: May 07, 2016.
+Theme: Acceptance tests and Google Drive Polish.
 
 - [x] test: Wire saucelabs and travis togeteher, make saucelabs fail fatal to travis builds
 - [x] test: Add `addFile`-hack so we can have acceptance tests on Safari as well as Edge (@arturi)
@@ -518,16 +518,3 @@ Released: December 20, 2015.
 - [x] dropbox: Add basic Dropbox plugin example (#31)
 - [x] website: Add CSS Framework (#14)
 - [x] website: Create Hexo site that also contains our playground (#5, #34, #12 #22, #44, #35, #15, #37, #40, #43)
-
-## Component Owners:
-
-Here are the go-to folks for each individual component or area of expertise:
-
-- build (@arturi)
-- core (@arturi)
-- dashboard (@arturi)
-- docs (@arturi)
-- dragdrop (@arturi)
-- server and providers: gdrive, dropbox (@ifedapoolarewaju)
-- tus (@arturi)
-- website (@arturi)
