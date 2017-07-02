@@ -46,7 +46,7 @@ function cleanup_servers () {
 
 function waitForPortOpen () {
   local port="${1}"
-  local limit="${2:-60}"
+  local limit="${2:-100}"
   local attempts=0
   echo "[${__base}] waiting on port ${port} to open... "
   while ! echo exit | nc localhost ${port}; do
@@ -87,7 +87,7 @@ echo "[${__base}] --> Running acceptance tests"
 
 buildWait=20
 if [ "${TRAVIS:-}" = "true" ]; then
-  buildWait=80
+  buildWait=60
   echo "Increasing build wait because Travis has no Hexo build cache"
 fi
 
