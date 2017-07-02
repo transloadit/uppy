@@ -42,6 +42,7 @@ module.exports = (props) => {
         ${props.acquirers.map((target) => {
           return html`<li class="UppyDashboardTab">
             <button class="UppyDashboardTab-btn"
+                    type="button"
                     role="tab"
                     tabindex="0"
                     aria-controls="UppyDashboardContent-panel--${target.id}"

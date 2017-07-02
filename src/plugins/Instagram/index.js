@@ -44,7 +44,9 @@ module.exports = class Instagram extends Plugin {
   }
 
   install () {
-    this.view = new View(this)
+    this.view = new View(this, {
+      defaultViewType: 'grid'
+    })
     // Set default state for Google Drive
     this.core.setState({
       // writing out the key explicitly for readability the key used to store
@@ -55,7 +57,8 @@ module.exports = class Instagram extends Plugin {
         folders: [],
         directories: [],
         activeRow: -1,
-        filterInput: ''
+        filterInput: '',
+        isSearchVisible: false
       }
     })
 

@@ -53,7 +53,8 @@ module.exports = class Dropbox extends Plugin {
         folders: [],
         directories: [],
         activeRow: -1,
-        filterInput: ''
+        filterInput: '',
+        isSearchVisible: false
       }
     })
 
