@@ -15,8 +15,8 @@ module.exports = (props) => {
   // </thead>
 
   return html`
-    <table class="BrowserTable">
-      <tbody onscroll=${props.handleScroll}>
+    <table class="BrowserTable" onscroll=${props.handleScroll}>
+      <tbody>
         ${props.folders.map((folder) => {
           return Row({
             title: props.getItemName(folder),

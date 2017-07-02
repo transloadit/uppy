@@ -45,7 +45,7 @@ module.exports = class Instagram extends Plugin {
 
   install () {
     this.view = new View(this, {
-      defaultViewType: 'grid'
+      viewType: 'grid'
     })
     // Set default state for Google Drive
     this.core.setState({

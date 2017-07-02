@@ -12,7 +12,7 @@ module.exports = (props) => {
   }
 
   return html`
-    <div class="Browser Browser-viewType--${props.defaultViewType}">
+    <div class="Browser Browser-viewType--${props.viewType}">
       <header class="Browser-header">
         <div class="Browser-search" aria-hidden="${!props.isSearchVisible}">
           <input type="text" class="Browser-searchInput" placeholder="Search"

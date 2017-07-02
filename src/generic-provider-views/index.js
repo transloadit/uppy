@@ -47,7 +47,7 @@ module.exports = class View {
 
     // set default options
     const defaultOptions = {
-      defaultViewType: 'list'
+      viewType: 'list'
     }
 
     // merge default options with the ones set by user
@@ -379,7 +379,7 @@ module.exports = class View {
       getItemIcon: this.plugin.getItemIcon,
       handleScroll: this.handleScroll,
       title: this.plugin.title,
-      defaultViewType: this.opts.defaultViewType
+      viewType: this.opts.viewType
     })
 
     return Browser(browserProps)
