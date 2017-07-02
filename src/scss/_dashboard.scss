@@ -5,6 +5,7 @@
 
 .UppyDashboard--modal {
   z-index: $zIndex-2;
+  // -webkit-overflow-scrolling: touch;
 }
 
 .UppyDashboard--modal[aria-hidden=true] {
@@ -13,7 +14,9 @@
 
 // Added to body to prevent the page from scrolling when Modal is open
 .is-UppyDashboard-open {
+  width: 100%;
   overflow: hidden;
+  position: fixed;
 }
 
 .UppyDashboard--modal .UppyDashboard-overlay {
@@ -148,14 +151,14 @@
 }
 
 .UppyDashboardTab {
-  width: 62px;
+  width: 70px;
   margin: 0 2px;
   display: inline-block;
   text-align: center;
 
   .UppyDashboard--wide & {
-    margin: 0 5px;
     width: 75px;
+    margin: 0 5px;
   }
 }
 

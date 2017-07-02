@@ -148,6 +148,8 @@ module.exports = class DashboardUI extends Plugin {
     })
 
     document.body.classList.remove('is-UppyDashboard-open')
+
+    window.scrollTo(0, this.savedDocumentScrollPosition)
   }
 
   showModal () {
@@ -159,8 +161,12 @@ module.exports = class DashboardUI extends Plugin {
       })
     })
 
+    // save scroll position
+    this.savedDocumentScrollPosition = window.scrollY
+
     // add class to body that sets position fixed
     document.body.classList.add('is-UppyDashboard-open')
+    document.body.style.top = `-${this.savedDocumentScrollPosition}px`
     // focus on modal inner block
     this.target.querySelector('.UppyDashboard-inner').focus()
 
