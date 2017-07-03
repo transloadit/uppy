@@ -58,10 +58,15 @@ module.exports = class AwsS3 extends Plugin {
       const updatedFiles = {}
       fileIDs.forEach((id, index) => {
         const file = this.getFile(id)
-        const { url, fields } = responses[index]
+        const {
+          method = 'post',
+          url,
+          fields
+        } = responses[index]
         const updatedFile = Object.assign({}, file, {
           meta: Object.assign({}, file.meta, fields),
           multipart: {
+            method,
             endpoint: url,
             fieldName: 'file',
             metaFields: Object.keys(fields),
