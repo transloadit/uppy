@@ -114,8 +114,8 @@ uppy.on('core:upload-success', (fileId, response) => {
 ### Event `core:success` when all uploads are complete
 
 ```js
-uppy.on('core:success', (fileCount) => {
-  console.log(fileCount)
+uppy.on('core:success', (fileList) => {
+  console.log(fileList)
 })
 ```
 
