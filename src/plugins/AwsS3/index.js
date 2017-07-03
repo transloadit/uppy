@@ -66,6 +66,11 @@ module.exports = class AwsS3 extends Plugin {
             fieldName: 'file',
             metaFields: Object.keys(fields),
             getUploadUrl (xhr) {
+              // If no response, we've hopefully done a PUT request to the file
+              // in the bucket on its full URL.
+              if (!xhr.responseXML) {
+                return url.split('?')[0]
+              }
               const locationEl = xhr.responseXML.querySelector('Location')
               return locationEl.textContent
             }
