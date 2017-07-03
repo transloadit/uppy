@@ -20,7 +20,19 @@ function uppyInit () {
     dashboardElParent.removeChild(dashboardEl)
   }
 
-  const uppy = Uppy({debug: true, autoProceed: opts.autoProceed})
+  const restrictions = {
+    maxFileSize: 1000000,
+    maxNumberOfFiles: 3,
+    minNumberOfFiles: 2,
+    allowedFileTypes: ['image/*', 'video/*']
+  }
+
+  const uppy = Uppy({
+    debug: true,
+    autoProceed: opts.autoProceed,
+    restrictions: opts.restrictions ? restrictions : ''
+  })
+
   uppy.use(Dashboard, {
     trigger: '.UppyModalOpenerBtn',
     inline: opts.DashboardInline,
@@ -44,7 +56,6 @@ function uppyInit () {
   }
 
   uppy.use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
-  // uppy.use(Informer, {target: Dashboard})
   uppy.use(MetaData, {
     fields: [
       { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
@@ -53,8 +64,9 @@ function uppyInit () {
   })
   uppy.run()
 
-  uppy.on('core:success', (fileCount) => {
-    console.log('Yo, uploaded: ' + fileCount)
+  uppy.on('core:success', (fileList) => {
+    console.log('Yo, uploaded: ')
+    console.log(fileList)
   })
 }
 

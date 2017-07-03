@@ -4,6 +4,7 @@
 <div class="DashboardOptions">
   <input type="checkbox" id="opts-DashboardInline" checked/><label for="opts-DashboardInline">Display inline</label>
   <input type="checkbox" id="opts-autoProceed" checked/><label for="opts-autoProceed">Autoproceed</label>
+  <input type="checkbox" id="opts-restrictions" checked/><label for="opts-restrictions">Restrictions</label>
   <input type="checkbox" id="opts-Webcam" checked/><label for="opts-Webcam">Webcam</label>
   <input type="checkbox" id="opts-GoogleDrive" checked/><label for="opts-GoogleDrive">Google Drive</label>
   <input type="checkbox" id="opts-Dropbox" checked/><label for="opts-Dropbox">Dropbox</label>
@@ -26,7 +27,8 @@
     GoogleDrive: document.querySelector('#opts-GoogleDrive'),
     Dropbox: document.querySelector('#opts-Dropbox'),
     Instagram: document.querySelector('#opts-Instagram'),
-    autoProceed: document.querySelector('#opts-autoProceed')
+    autoProceed: document.querySelector('#opts-autoProceed'),
+    restrictions: document.querySelector('#opts-restrictions')
   }
 
   var defaultOpts = {
@@ -35,7 +37,8 @@
     GoogleDrive: true,
     Instagram: true,
     Dropbox: false,
-    autoProceed: false
+    autoProceed: false,
+    restrictions: false
   }
 
   // try to get options from localStorage, if its empty, set to defaultOpts
@@ -69,8 +72,4 @@
   })
 
   toggleModalBtn()
-
-  // window.addEventListener('load', function () {
-  //
-  // }, false)
 </script>
