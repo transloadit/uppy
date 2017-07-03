@@ -28,22 +28,22 @@ const uppy = Uppy({
   },
   restrictions: {
     maxFileSize: 300000,
-    maxNumberOfFiles: 5,
+    maxNumberOfFiles: 10,
     minNumberOfFiles: 2,
     allowedFileTypes: ['image/*', 'video/*']
-  },
-  onBeforeFileAdded: (currentFile, files) => {
-    if (currentFile.name === 'pitercss-IMG_0616.jpg') {
-      return Promise.resolve()
-    }
-    return Promise.reject('this is not the file I was looking for')
-  },
-  onBeforeUpload: (files) => {
-    if (Object.keys(files).length < 2) {
-      return Promise.reject('too few files')
-    }
-    return Promise.resolve()
   }
+  // onBeforeFileAdded: (currentFile, files) => {
+  //   if (currentFile.name === 'pitercss-IMG_0616.jpg') {
+  //     return Promise.resolve()
+  //   }
+  //   return Promise.reject('this is not the file I was looking for')
+  // },
+  // onBeforeUpload: (files) => {
+  //   if (Object.keys(files).length < 2) {
+  //     return Promise.reject('too few files')
+  //   }
+  //   return Promise.resolve()
+  // }
 })
   .use(Dashboard, {
     trigger: '#uppyModalOpener',
@@ -83,9 +83,9 @@ const uppy = Uppy({
   })
 uppy.run()
 
-uppy.on('core:success', (fileCount) => {
+uppy.on('core:success', (fileList) => {
   console.log('UPLOAD SUCCESSFUL!!!')
-  console.log(fileCount)
+  console.log(fileList)
 })
 
 // uppy.emit('informer', 'Smile!', 'info', 2000)
