@@ -40,7 +40,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] image cropping on the client (#151)
-- [ ] transloadit: function option for file-dependent `params` (@goto-bus-stop)
 
 ## 1.0.0 Goals
 
@@ -88,7 +87,8 @@ To be released: 2017-07-28.
 - [ ] provider: improve UI: add icons for file types (@arturi)
 - [ ] uppy: flag to upload all files, even `uploadComplete` ones (@arturi)
 - [ ] transloadit: emit an event when an assembly is created (@goto-bus-stop)
-- [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi) 
+- [ ] transloadit: function option for file-dependent `params` (@goto-bus-stop)
+- [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
 
 ## 0.17.0 - 2017-07-02
 
