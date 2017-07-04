@@ -86,9 +86,7 @@ To be released: 2017-07-28.
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] provider: improve UI: add icons for file types (@arturi)
 
-## 0.17.0
-
-To be released: 2017-06-30.
+## 0.17.0 - 2017-07-02
 
 - [x] core: restrictions — by file type, size, number of files (@arturi)
 - [x] provider: improve UI: improve overall look, breadcrumbs, more responsive (@arturi)

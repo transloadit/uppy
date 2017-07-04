@@ -264,7 +264,7 @@
   @include reset-button;
   position: absolute;
   top: 0;
-  right: 15px;
+  left: 15px;
   font-size: 14px;
   line-height: 40px;
   font-weight: 500;
@@ -1078,14 +1078,14 @@
   border: 0;
   border-bottom: 1px solid rgba($color-asphalt-gray, 0.3);
   outline: none;
-  font-size: 12px;
+  font-size: 16px;
   line-height: 1.8;
   padding-left: 5px;
   margin: auto;
 
-  .UppyDashboard--wide & {
-    font-size: 15px;
-  }
+  // .UppyDashboard--wide & {
+  //   font-size: 15px;
+  // }
 }
 
 .UppyDashboardFileCard-input:focus {
