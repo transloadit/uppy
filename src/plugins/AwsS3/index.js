@@ -65,8 +65,9 @@ module.exports = class AwsS3 extends Plugin {
         } = responses[index]
         const updatedFile = Object.assign({}, file, {
           meta: Object.assign({}, file.meta, fields),
-          multipart: {
+          xhrUpload: {
             method,
+            formData: method.toLowerCase() === 'post',
             endpoint: url,
             fieldName: 'file',
             metaFields: Object.keys(fields),
