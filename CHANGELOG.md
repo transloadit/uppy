@@ -70,6 +70,7 @@ maybe later:
 
 - [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say Tus plugin doesn’t include rendering stuff
 
+# next
 ## 0.18.0
 
 To be released: 2017-07-28.
@@ -85,6 +86,9 @@ To be released: 2017-07-28.
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] provider: improve UI: add icons for file types (@arturi)
+- [ ] uppy: flag to upload all files, even `uploadComplete` ones (@arturi)
+- [ ] transloadit: emit an event when an assembly is created (@goto-bus-stop)
+- [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi) 
 
 ## 0.17.0 - 2017-07-02
 
