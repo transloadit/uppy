@@ -26,6 +26,13 @@ module.exports = class Transloadit extends Plugin {
       signature: null,
       params: null,
       fields: {},
+      getAssemblyOptions (file, options) {
+        return {
+          params: options.params,
+          signature: options.signature,
+          fields: options.fields
+        }
+      },
       locale: defaultLocale
     }
 
@@ -62,14 +69,44 @@ module.exports = class Transloadit extends Plugin {
     this.sockets = {}
   }
 
-  createAssembly (filesToUpload) {
+  getAssemblyOptions (fileIDs) {
+    const options = this.opts
+    return Promise.all(
+      fileIDs.map((fileID) => {
+        const file = this.getFile(fileID)
+        return Promise.resolve(options.getAssemblyOptions(file, options)).then((assemblyOptions) => ({
+          fileIDs: [fileID],
+          options: assemblyOptions
+        }))
+      })
+    )
+  }
+
+  dedupeAssemblyOptions (list) {
+    const dedupeMap = Object.create(null)
+    list.forEach(({ fileIDs, options }) => {
+      const id = JSON.stringify(options)
+      if (dedupeMap[id]) {
+        dedupeMap[id].fileIDs.push(...fileIDs)
+      } else {
+        dedupeMap[id] = {
+          options,
+          fileIDs: [...fileIDs]
+        }
+      }
+    })
+
+    return Object.keys(dedupeMap).map((id) => dedupeMap[id])
+  }
+
+  createAssembly (fileIDs, options) {
     this.core.log('Transloadit: create assembly')
 
     return this.client.createAssembly({
-      params: this.opts.params,
-      fields: this.opts.fields,
-      expectedFiles: Object.keys(filesToUpload).length,
-      signature: this.opts.signature
+      params: options.params,
+      fields: options.fields,
+      expectedFiles: fileIDs.length,
+      signature: options.signature
     }).then((assembly) => {
       this.updateState({
         assemblies: Object.assign(this.state.assemblies, {
@@ -103,13 +140,13 @@ module.exports = class Transloadit extends Plugin {
       }
 
       const files = Object.assign({}, this.core.state.files)
-      Object.keys(filesToUpload).forEach((id) => {
+      fileIDs.forEach((id) => {
         files[id] = attachAssemblyMetadata(files[id], assembly)
       })
 
       this.core.setState({ files })
 
-      this.core.emit('transloadit:assembly', assembly, Object.keys(filesToUpload))
+      this.core.emit('transloadit:assembly', assembly, fileIDs)
 
       return this.connectSocket(assembly)
     }).then(() => {
@@ -208,27 +245,31 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  prepareUpload (fileIDs) {
-    const filesToUpload = fileIDs.map(getFile, this).reduce(intoFileMap, {})
-    function getFile (fileID) {
-      return this.core.state.files[fileID]
-    }
-    function intoFileMap (map, file) {
-      map[file.id] = file
-      return map
-    }
+  getFile (fileID) {
+    return this.core.state.files[fileID]
+  }
 
+  prepareUpload (fileIDs) {
     fileIDs.forEach((fileID) => {
       this.core.emit('core:preprocess-progress', fileID, {
         mode: 'indeterminate',
         message: this.opts.locale.strings.creatingAssembly
       })
     })
-    return this.createAssembly(filesToUpload).then(() => {
-      fileIDs.forEach((fileID) => {
-        this.core.emit('core:preprocess-complete', fileID)
+
+    const createAssembly = ({ fileIDs, options }) => {
+      return this.createAssembly(fileIDs, options).then(() => {
+        fileIDs.forEach((fileID) => {
+          this.core.emit('core:preprocess-complete', fileID)
+        })
       })
-    })
+    }
+
+    return this.getAssemblyOptions(fileIDs)
+      .then((allOptions) => this.dedupeAssemblyOptions(allOptions))
+      .then((assemblies) => Promise.all(
+        assemblies.map(createAssembly)
+      ))
   }
 
   afterUpload (fileIDs) {
@@ -238,7 +279,7 @@ module.exports = class Transloadit extends Plugin {
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
     if (!this.shouldWait()) {
-      const file = this.core.getState().files[fileID]
+      const file = this.getFile(fileID)
       const socket = this.socket[file.assembly]
       socket.close()
       return
@@ -253,7 +294,7 @@ module.exports = class Transloadit extends Plugin {
       })
 
       const onAssemblyFinished = (assembly) => {
-        const file = this.core.state.files[fileID]
+        const file = this.getFile(fileID)
         // An assembly for a different upload just finished. We can ignore it.
         if (assembly.assembly_id !== file.transloadit.assembly) {
           return
@@ -273,7 +314,7 @@ module.exports = class Transloadit extends Plugin {
       }
 
       const onAssemblyError = (assembly, error) => {
-        const file = this.core.state.files[fileID]
+        const file = this.getFile(fileID)
         // An assembly for a different upload just errored. We can ignore it.
         if (assembly.assembly_id !== file.transloadit.assembly) {
           return
