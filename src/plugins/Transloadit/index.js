@@ -44,11 +44,19 @@ module.exports = class Transloadit extends Plugin {
     this.prepareUpload = this.prepareUpload.bind(this)
     this.afterUpload = this.afterUpload.bind(this)
 
-    if (!this.opts.params) {
+    if (this.opts.params) {
+      this.validateParams(this.opts.params)
+    }
+
+    this.client = new Client()
+    this.sockets = {}
+  }
+
+  validateParams (params) {
+    if (!params) {
       throw new Error('Transloadit: The `params` option is required.')
     }
 
-    let params = this.opts.params
     if (typeof params === 'string') {
       try {
         params = JSON.parse(params)
@@ -64,9 +72,6 @@ module.exports = class Transloadit extends Plugin {
       throw new Error('Transloadit: The `params.auth.key` option is required. ' +
         'You can find your Transloadit API key at https://transloadit.com/accounts/credentials.')
     }
-
-    this.client = new Client()
-    this.sockets = {}
   }
 
   getAssemblyOptions (fileIDs) {
@@ -74,10 +79,15 @@ module.exports = class Transloadit extends Plugin {
     return Promise.all(
       fileIDs.map((fileID) => {
         const file = this.getFile(fileID)
-        return Promise.resolve(options.getAssemblyOptions(file, options)).then((assemblyOptions) => ({
-          fileIDs: [fileID],
-          options: assemblyOptions
-        }))
+        const promise = Promise.resolve(options.getAssemblyOptions(file, options))
+        return promise.then((assemblyOptions) => {
+          this.validateParams(assemblyOptions.params)
+
+          return {
+            fileIDs: [fileID],
+            options: assemblyOptions
+          }
+        })
       })
     )
   }
