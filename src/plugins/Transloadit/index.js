@@ -24,6 +24,7 @@ module.exports = class Transloadit extends Plugin {
       waitForEncoding: false,
       waitForMetadata: false,
       alwaysRunAssembly: false, // TODO name
+      importFromUploadURLs: false,
       signature: null,
       params: null,
       fields: {},
@@ -44,6 +45,7 @@ module.exports = class Transloadit extends Plugin {
 
     this.prepareUpload = this.prepareUpload.bind(this)
     this.afterUpload = this.afterUpload.bind(this)
+    this.onFileUploaded = this.onFileUploaded.bind(this)
 
     if (this.opts.params) {
       this.validateParams(this.opts.params)
@@ -145,7 +147,8 @@ module.exports = class Transloadit extends Plugin {
         })
         // Add assembly-specific Tus endpoint.
         const tus = Object.assign({}, file.tus, {
-          endpoint: assembly.tus_url
+          endpoint: assembly.tus_url,
+          metaFields: ['assembly_url', 'filename', 'fieldname']
         })
         const transloadit = {
           assembly: assembly.assembly_id
@@ -181,6 +184,19 @@ module.exports = class Transloadit extends Plugin {
 
   shouldWait () {
     return this.opts.waitForEncoding || this.opts.waitForMetadata
+  }
+
+  onFileUploaded (fileID) {
+    const file = this.core.getState().files[fileID]
+    if (!file || !file.transloadit || !file.transloadit.assembly) {
+      return
+    }
+
+    const assembly = this.state.assemblies[file.transloadit.assembly]
+
+    this.client.addFile(assembly, file).catch((err) => {
+      console.error('ignoring', err)
+    })
   }
 
   findFile (uploadedFile) {
@@ -274,7 +290,14 @@ module.exports = class Transloadit extends Plugin {
     })
 
     const createAssembly = ({ fileIDs, options }) => {
-      return this.createAssembly(fileIDs, uploadID, options).then(() => {
+      return this.createAssembly(fileIDs, uploadID, options).then((assembly) => {
+        if (this.opts.importFromUploadURLs) {
+          return Promise.all(fileIDs.map((fileID) => {
+            const file = this.core.getFile(fileID)
+            return this.client.reserveFile(assembly, file)
+          }))
+        }
+      }).then(() => {
         fileIDs.forEach((fileID) => {
           this.core.emit('core:preprocess-complete', fileID)
         })
@@ -402,6 +425,10 @@ module.exports = class Transloadit extends Plugin {
   install () {
     this.core.addPreProcessor(this.prepareUpload)
     this.core.addPostProcessor(this.afterUpload)
+
+    if (this.opts.importFromUploadURLs) {
+      this.core.on('file:upload-success', this.onFileUploaded)
+    }
 
     this.updateState({
       // Contains assembly status objects, indexed by their ID.

@@ -47,6 +47,24 @@ module.exports = class Client {
     })
   }
 
+  reserveFile (assembly, file) {
+    const size = encodeURIComponent(file.size)
+    return fetch(`${assembly.assembly_ssl_url}/reserve_file?size=${size}`)
+      .then((response) => response.json())
+  }
+
+  addFile (assembly, file) {
+    if (!file.uploadURL) {
+      return Promise.reject(new Error('File does not have an `uploadURL`.'))
+    }
+    const size = encodeURIComponent(file.size)
+    const url = encodeURIComponent(file.uploadURL)
+    const filename = encodeURIComponent(file.name)
+    const fieldname = 'file'
+    return fetch(`${assembly.assembly_ssl_url}/add_file?size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${url}`)
+      .then((response) => response.json())
+  }
+
   /**
    * Get the current status for an assembly.
    *
