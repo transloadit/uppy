@@ -669,7 +669,10 @@ class Uppy {
       return Promise.reject('Minimum number of files has not been reached')
     }
 
-    return this.opts.onBeforeUpload(this.getState().files).then(() => {
+    return this.opts.onBeforeUpload(this.getState().files).catch((err) => {
+      this.emit('informer', err, 'error', 5000)
+      return Promise.reject(`onBeforeUpload: ${err}`)
+    }).then(() => {
       this.emit('core:upload')
 
       const waitingFileIDs = []
@@ -699,10 +702,6 @@ class Uppy {
         // return number of uploaded files
         this.emit('core:success', waitingFileIDs)
       })
-    })
-    .catch((err) => {
-      this.emit('informer', err, 'error', 5000)
-      return Promise.reject(`onBeforeUpload: ${err}`)
     })
   }
 }
