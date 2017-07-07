@@ -138,7 +138,7 @@ module.exports = class Transloadit extends Plugin {
     }
   }
 
-  onFileUploadComplete (uploadedFile) {
+  onFileUploadComplete (assemblyId, uploadedFile) {
     const file = this.findFile(uploadedFile)
     this.updateState({
       files: Object.assign({}, this.state.files, {
@@ -148,10 +148,10 @@ module.exports = class Transloadit extends Plugin {
         }
       })
     })
-    this.core.bus.emit('transloadit:upload', uploadedFile)
+    this.core.bus.emit('transloadit:upload', uploadedFile, this.getAssembly(assemblyId))
   }
 
-  onResult (stepName, result) {
+  onResult (assemblyId, stepName, result) {
     const file = this.state.files[result.original_id]
     // The `file` may not exist if an import robot was used instead of a file upload.
     result.localId = file ? file.id : null
@@ -159,7 +159,7 @@ module.exports = class Transloadit extends Plugin {
     this.updateState({
       results: this.state.results.concat(result)
     })
-    this.core.bus.emit('transloadit:result', stepName, result)
+    this.core.bus.emit('transloadit:result', stepName, result, this.getAssembly(assemblyId))
   }
 
   connectSocket (assembly) {
@@ -169,13 +169,13 @@ module.exports = class Transloadit extends Plugin {
     )
     this.sockets[assembly.assembly_id] = socket
 
-    socket.on('upload', this.onFileUploadComplete.bind(this))
+    socket.on('upload', this.onFileUploadComplete.bind(this, assembly.assembly_id))
     socket.on('error', (error) => {
       this.core.emit('transloadit:assembly-error', assembly, error)
     })
 
     if (this.opts.waitForEncoding) {
-      socket.on('result', this.onResult.bind(this))
+      socket.on('result', this.onResult.bind(this, assembly.assembly_id))
     }
 
     if (this.opts.waitForEncoding) {
@@ -303,6 +303,10 @@ module.exports = class Transloadit extends Plugin {
   uninstall () {
     this.core.removePreProcessor(this.prepareUpload)
     this.core.removePostProcessor(this.afterUpload)
+  }
+
+  getAssembly (id) {
+    return this.state.assemblies[id]
   }
 
   get state () {
