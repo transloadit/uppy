@@ -109,6 +109,8 @@ module.exports = class Transloadit extends Plugin {
 
       this.core.setState({ files })
 
+      this.core.emit('transloadit:assembly', assembly, Object.keys(filesToUpload))
+
       return this.connectSocket(assembly)
     }).then(() => {
       this.core.log('Transloadit: Created assembly')
