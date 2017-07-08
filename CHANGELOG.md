@@ -41,11 +41,11 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] image cropping on the client (#151)
 
-## 1.0.0 Goals
+## 1.0 Goals
 
 What we need to do to release Uppy 1.0
 
-- [ ] feature: restrictions: by size, number of files, file type [in progress]
+- [x] feature: restrictions: by size, number of files, file type [in progress]
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
 - [ ] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
 - [ ] feature: Uppy should work well with React/Redux. React (Native)
@@ -59,17 +59,15 @@ What we need to do to release Uppy 1.0
 - [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
 - [ ] refactoring: possibly add CSS-in-JS
 - [ ] refactoring: possibly switch from Yo-Yo to Preact, because its more stable, solves a few issues we are struggling with (like onload/onunload being weird in yo-yo) and mature, “new standard”, larger community
+- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say Tus plugin doesn’t include rendering stuff
 - [ ] refactoring: webcam plugin
 - [ ] refactoring: clean up code everywhere
 - [ ] docs: on using plugins, all options, list of plugins, i18n
 - [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
 - [ ] uppy-server: security audit
 
-maybe later:
-
-- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say Tus plugin doesn’t include rendering stuff
-
 # next
+
 ## 0.18.0
 
 To be released: 2017-07-28.
@@ -91,8 +89,11 @@ To be released: 2017-07-28.
 - [ ] webcam: add 1, 2, 3, smile! to webcam (@arturi #187)
 - [ ] transloadit: function option for file-dependent `params` (@goto-bus-stop)
 - [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
+- [ ] docs: on using plugins, all options, list of plugins, i18n (@arturi, @goto-bus-stop, @ifedapoolarewaju)
 
-## 0.17.0 - 2017-07-02
+## 0.17.0
+
+Released: 2017-07-02
 
 - [x] core: restrictions — by file type, size, number of files (@arturi)
 - [x] provider: improve UI: improve overall look, breadcrumbs, more responsive (@arturi)
