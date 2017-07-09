@@ -230,7 +230,10 @@ class Uppy {
   }
 
   addFile (file) {
-    return this.opts.onBeforeFileAdded(file, this.getState().files).then(() => {
+    return this.opts.onBeforeFileAdded(file, this.getState().files).catch((err) => {
+      this.emit('informer', err, 'error', 5000)
+      return Promise.reject(`onBeforeFileAdded: ${err}`)
+    }).then(() => {
       return Utils.getFileType(file).then((fileType) => {
         const updatedFiles = Object.assign({}, this.state.files)
         const fileName = file.name || 'noname'
@@ -287,10 +290,6 @@ class Uppy {
           }, 4)
         }
       })
-    })
-    .catch((err) => {
-      this.emit('informer', err, 'error', 5000)
-      return Promise.reject(`onBeforeFileAdded: ${err}`)
     })
   }
 
