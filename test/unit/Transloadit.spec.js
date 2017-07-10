@@ -6,10 +6,6 @@ test('Transloadit: Throws errors if options are missing', (t) => {
   const uppy = new Core()
 
   t.throws(() => {
-    uppy.use(Transloadit, {})
-  }, /The `params` option is required/)
-
-  t.throws(() => {
     uppy.use(Transloadit, { params: {} })
   }, /The `params\.auth\.key` option is required/)
 
@@ -37,4 +33,29 @@ test('Transloadit: Accepts a JSON string as `params` for signature authenticatio
   }, /The `params\.auth\.key` option is required/)
 
   t.end()
+})
+
+test('Transloadit: Validates response from getAssemblyOptions()', (t) => {
+  const uppy = new Core({ autoProceed: false })
+
+  uppy.use(Transloadit, {
+    getAssemblyOptions: (file) => {
+      t.equal(file.name, 'testfile')
+      return {
+        params: '{"some":"json"}'
+      }
+    }
+  })
+
+  const data = Buffer.alloc(4000)
+  data.size = data.byteLength
+  uppy.addFile({
+    name: 'testfile',
+    data
+  }).then(() => {
+    uppy.upload().then(t.fail, (err) => {
+      t.ok(/The `params\.auth\.key` option is required/.test(err.message), 'should reject invalid dynamic params')
+      t.end()
+    })
+  }, t.fail)
 })
