@@ -216,7 +216,8 @@ module.exports = class DashboardUI extends Plugin {
   actions () {
     const bus = this.core.bus
 
-    bus.on('core:file-add', this.hideAllPanels)
+    // bus.on('core:file-add', this.hideAllPanels)
+    bus.on('core:file-added', this.hideAllPanels)
     bus.on('dashboard:file-card', this.handleFileCard)
 
     window.addEventListener('resize', this.updateDashboardElWidth)

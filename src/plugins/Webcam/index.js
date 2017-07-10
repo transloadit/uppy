@@ -24,6 +24,8 @@ module.exports = class Webcam extends Plugin {
     // set default options
     const defaultOptions = {
       enableFlash: true,
+      onBeforeSnapshot: () => Promise.resolve(),
+      oneTwoThreeSmile: false,
       modes: [
         'video-audio',
         'video-only',
@@ -65,9 +67,14 @@ module.exports = class Webcam extends Plugin {
     this.takeSnapshot = this.takeSnapshot.bind(this)
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
+    this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
 
     this.webcam = new WebcamProvider(this.opts, this.params)
     this.webcamActive = false
+
+    if (this.opts.oneTwoThreeSmile === true) {
+      this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
+    }
   }
 
   start () {
@@ -151,24 +158,39 @@ module.exports = class Webcam extends Plugin {
     this.streamSrc = null
   }
 
+  oneTwoThreeSmile () {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => this.core.emit('informer', '1...', 'warning', 1000), 100)
+      setTimeout(() => this.core.emit('informer', '2...', 'warning', 1000), 1000)
+      setTimeout(() => this.core.emit('informer', '3...', 'warning', 1000), 2000)
+      setTimeout(() => this.core.emit('informer', 'Smile!', 'success', 1000), 3000)
+      setTimeout(() => resolve(), 4000)
+    })
+  }
+
   takeSnapshot () {
     const opts = {
       name: `webcam-${Date.now()}.jpg`,
       mimeType: 'image/jpeg'
     }
 
-    const video = this.target.querySelector('.UppyWebcam-video')
+    this.opts.onBeforeSnapshot().catch((err) => {
+      this.emit('informer', err, 'error', 5000)
+      return Promise.reject(`onBeforeSnapshot: ${err}`)
+    }).then(() => {
+      const video = this.target.querySelector('.UppyWebcam-video')
+      const image = this.webcam.getImage(video, opts)
 
-    const image = this.webcam.getImage(video, opts)
+      const tagFile = {
+        source: this.id,
+        name: opts.name,
+        data: image.data,
+        type: opts.mimeType
+      }
 
-    const tagFile = {
-      source: this.id,
-      name: opts.name,
-      data: image.data,
-      type: opts.mimeType
-    }
-
-    this.core.emitter.emit('core:file-add', tagFile)
+      // this.core.emitter.emit('core:file-add', tagFile)
+      this.core.addFile(tagFile)
+    })
   }
 
   render (state) {
@@ -199,9 +221,10 @@ module.exports = class Webcam extends Plugin {
   }
 
   focus () {
-    setTimeout(() => {
-      this.core.emitter.emit('informer', 'Smile!', 'warning', 2000)
-    }, 1000)
+    // if (this.opts.oneTwoThreeSmile) return
+    // setTimeout(() => {
+    //   this.core.emitter.emit('informer', 'Smile!', 'success', 2000)
+    // }, 1000)
   }
 
   install () {
