@@ -36,7 +36,8 @@ function uppyInit () {
   uppy.use(Dashboard, {
     trigger: '.UppyModalOpenerBtn',
     inline: opts.DashboardInline,
-    target: opts.DashboardInline ? '.DashboardContainer' : 'body'
+    target: opts.DashboardInline ? '.DashboardContainer' : 'body',
+    note: opts.restrictions ? 'Images and video only, 300kb or less' : ''
   })
 
   if (opts.GoogleDrive) {
