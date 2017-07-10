@@ -45,7 +45,7 @@ Ideas that will be planned and find their way into a release at one point
 
 What we need to do to release Uppy 1.0
 
-- [x] feature: restrictions: by size, number of files, file type [in progress]
+- [x] feature: restrictions: by size, number of files, file type
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
 - [ ] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
 - [ ] feature: Uppy should work well with React/Redux. React (Native)
@@ -90,6 +90,7 @@ To be released: 2017-07-28.
 - [ ] transloadit: function option for file-dependent `params` (@goto-bus-stop)
 - [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
 - [ ] docs: on using plugins, all options, list of plugins, i18n (@arturi, @goto-bus-stop, @ifedapoolarewaju)
+- [ ] website: new demo video / gif (@arturi)
 
 ## 0.17.0
 
@@ -97,7 +98,6 @@ Released: 2017-07-02
 
 - [x] core: restrictions — by file type, size, number of files (@arturi)
 - [x] provider: improve UI: improve overall look, breadcrumbs, more responsive (@arturi)
-- [ ] website: new demo video / gif (@arturi)
 - [x] core: css-in-js demos, try template-css (@arturi @goto-bus-stop #239)
 - [x] core: add `uppy.reset()` as discussed in #179 (@arturi)
 - [x] core: add nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@goto-bus-stop, @arturi)
