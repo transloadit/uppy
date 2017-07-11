@@ -151,11 +151,6 @@ module.exports = class Multipart extends Plugin {
   }
 
   selectForUpload (files) {
-    if (Object.keys(files).length === 0) {
-      this.core.log('no files to upload!')
-      return
-    }
-
     files.forEach((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
@@ -177,6 +172,11 @@ module.exports = class Multipart extends Plugin {
   }
 
   handleUpload (fileIDs) {
+    if (fileIDs.length === 0) {
+      this.core.log('Multipart: no files to upload!')
+      return Promise.resolve()
+    }
+
     this.core.log('Multipart is uploading...')
     const files = fileIDs.map(getFile, this)
     function getFile (fileID) {
