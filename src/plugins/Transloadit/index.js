@@ -162,6 +162,17 @@ module.exports = class Transloadit extends Plugin {
     this.core.bus.emit('transloadit:result', stepName, result, this.getAssembly(assemblyId))
   }
 
+  onAssemblyFinished (url) {
+    this.client.getAssemblyStatus(url).then((assembly) => {
+      this.updateState({
+        assemblies: Object.assign({}, this.state.assemblies, {
+          [assembly.assembly_id]: assembly
+        })
+      })
+      this.core.emit('transloadit:complete', assembly)
+    })
+  }
+
   connectSocket (assembly) {
     const socket = new StatusSocket(
       assembly.websocket_url,
@@ -180,10 +191,11 @@ module.exports = class Transloadit extends Plugin {
 
     if (this.opts.waitForEncoding) {
       socket.on('finished', () => {
-        this.core.emit('transloadit:complete', assembly)
+        this.onAssemblyFinished(assembly.assembly_ssl_url)
       })
     } else if (this.opts.waitForMetadata) {
       socket.on('metadata', () => {
+        this.onAssemblyFinished(assembly.assembly_ssl_url)
         this.core.emit('transloadit:complete', assembly)
       })
     }
@@ -249,21 +261,15 @@ module.exports = class Transloadit extends Plugin {
         // Remove this handler once we find the assembly we needed.
         this.core.emitter.off('transloadit:complete', onAssemblyFinished)
 
-        this.client.getAssemblyStatus(assembly.assembly_ssl_url).then((assembly) => {
-          this.updateState({
-            assemblies: Object.assign({}, this.state.assemblies, {
-              [assembly.assembly_id]: assembly
-            })
-          })
+        // TODO set the `file.uploadURL` to a result?
+        // We will probably need an option here so the plugin user can tell us
+        // which result to pick…?
 
-          // TODO set the `file.uploadURL` to a result?
-          // We will probably need an option here so the plugin user can tell us
-          // which result to pick…?
+        fileIDs.forEach((fileID) => {
+          this.core.emit('core:postprocess-complete', fileID)
+        })
 
-          fileIDs.forEach((fileID) => {
-            this.core.emit('core:postprocess-complete', fileID)
-          })
-        }).then(resolve, reject)
+        resolve()
       }
 
       const onAssemblyError = (assembly, error) => {
