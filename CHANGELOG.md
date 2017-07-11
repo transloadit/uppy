@@ -79,7 +79,7 @@ To be released: 2017-07-28.
 - [ ] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju)
 - [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
 - [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 2, release (@goto-bus-stop)
-- [ ] server: what if smth changed in GDrive while it was open in Uppy? refresh file list? (@ifedapoolarewaju)
+- [ ] provider: file size sorting (@ifedapoolarewaju)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] provider: improve UI: add icons for file types? (@arturi)
@@ -91,6 +91,7 @@ To be released: 2017-07-28.
 - [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
 - [ ] docs: on using plugins, all options, list of plugins, i18n (@arturi, @goto-bus-stop, @ifedapoolarewaju)
 - [ ] website: new demo video / gif (@arturi)
+- [ ] DnD Bar (@arturi)
 
 ## 0.17.0
 
