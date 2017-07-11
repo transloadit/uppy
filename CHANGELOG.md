@@ -84,7 +84,7 @@ To be released: 2017-07-28.
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] provider: improve UI: add icons for file types? (@arturi)
 - [ ] uppy: flag to upload all files, even `uploadComplete` ones (@arturi)
-- [ ] transloadit: emit an event when an assembly is created (@goto-bus-stop)
+- [x] transloadit: emit an event when an assembly is created (@goto-bus-stop / #244)
 - [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
 - [ ] webcam: add 1, 2, 3, smile! to webcam (@arturi #187)
 - [ ] transloadit: function option for file-dependent `params` (@goto-bus-stop)
