@@ -1,5 +1,6 @@
 const Plugin = require('../Plugin')
 const WebcamProvider = require('../../uppy-base/src/plugins/Webcam')
+const Translator = require('../../core/Translator')
 const { extend,
         getFileTypeExtension,
         supportsMediaRecorder } = require('../../core/Utils')
@@ -21,11 +22,18 @@ module.exports = class Webcam extends Plugin {
     this.icon = WebcamIcon
     this.focus = this.focus.bind(this)
 
+    const defaultLocale = {
+      strings: {
+        smile: 'Smile!'
+      }
+    }
+
     // set default options
     const defaultOptions = {
       enableFlash: true,
       onBeforeSnapshot: () => Promise.resolve(),
-      oneTwoThreeSmile: false,
+      countdown: false,
+      locale: defaultLocale,
       modes: [
         'video-audio',
         'video-only',
@@ -56,6 +64,13 @@ module.exports = class Webcam extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    // i18n
+    this.translator = new Translator({locale: this.locale})
+    this.i18n = this.translator.translate.bind(this.translator)
+
     this.install = this.install.bind(this)
     this.updateState = this.updateState.bind(this)
 
@@ -72,7 +87,7 @@ module.exports = class Webcam extends Plugin {
     this.webcam = new WebcamProvider(this.opts, this.params)
     this.webcamActive = false
 
-    if (this.opts.oneTwoThreeSmile === true) {
+    if (this.opts.countdown) {
       this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
     }
   }
@@ -160,11 +175,18 @@ module.exports = class Webcam extends Plugin {
 
   oneTwoThreeSmile () {
     return new Promise((resolve, reject) => {
-      setTimeout(() => this.core.emit('informer', '1...', 'warning', 1000), 100)
-      setTimeout(() => this.core.emit('informer', '2...', 'warning', 1000), 1000)
-      setTimeout(() => this.core.emit('informer', '3...', 'warning', 1000), 2000)
-      setTimeout(() => this.core.emit('informer', 'Smile!', 'success', 1000), 3000)
-      setTimeout(() => resolve(), 4000)
+      let count = this.opts.countdown
+
+      let a = setInterval(() => {
+        if (count > 0) {
+          this.core.emit('informer', `${count}...`, 'warning', 800)
+          count--
+        } else {
+          clearInterval(a)
+          this.core.emit('informer', this.i18n('smile'), 'success', 1500)
+          setTimeout(() => resolve(), 1500)
+        }
+      }, 1000)
     })
   }
 

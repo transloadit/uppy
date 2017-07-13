@@ -70,7 +70,13 @@ const uppy = Uppy({
   //   strings: {chooseFile: 'Выберите файл'}
   // }})
   // .use(ProgressBar, {target: 'body'})
-  .use(Webcam, {target: Dashboard, oneTwoThreeSmile: false})
+  .use(Webcam, {
+    target: Dashboard,
+    countdown: 5,
+    locale: {
+      strings: {smile: 'Улыбочку!'}
+    }
+  })
   // .use(Multipart, {endpoint: '//api2.transloadit.com'})
   .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
   // .use(Informer, {target: Dashboard})
