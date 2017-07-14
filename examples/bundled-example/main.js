@@ -74,7 +74,7 @@ const uppy = Uppy({
     target: Dashboard,
     countdown: 5,
     locale: {
-      strings: {smile: 'Улыбочку!'}
+      strings: { smile: 'Улыбочку!' }
     }
   })
   // .use(Multipart, {endpoint: '//api2.transloadit.com'})

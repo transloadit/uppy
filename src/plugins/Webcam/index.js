@@ -83,12 +83,17 @@ module.exports = class Webcam extends Plugin {
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
     this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
+    this.justSmile = this.justSmile.bind(this)
 
     this.webcam = new WebcamProvider(this.opts, this.params)
     this.webcamActive = false
 
-    if (this.opts.countdown) {
-      this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
+    if (typeof opts.onBeforeSnapshot === 'undefined' || !this.opts.onBeforeSnapshot) {
+      if (this.opts.countdown) {
+        this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
+      } else {
+        this.opts.onBeforeSnapshot = this.justSmile
+      }
     }
   }
 
@@ -177,16 +182,29 @@ module.exports = class Webcam extends Plugin {
     return new Promise((resolve, reject) => {
       let count = this.opts.countdown
 
-      let a = setInterval(() => {
+      let countDown = setInterval(() => {
+        if (!this.webcamActive) {
+          clearInterval(countDown)
+          this.captureInProgress = false
+          return Promise.reject('Webcam is not active')
+        }
+
         if (count > 0) {
           this.core.emit('informer', `${count}...`, 'warning', 800)
           count--
         } else {
-          clearInterval(a)
+          clearInterval(countDown)
           this.core.emit('informer', this.i18n('smile'), 'success', 1500)
           setTimeout(() => resolve(), 1500)
         }
       }, 1000)
+    })
+  }
+
+  justSmile () {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => this.core.emit('informer', this.i18n('smile'), 'success', 1000), 1500)
+      setTimeout(() => resolve(), 2000)
     })
   }
 
@@ -196,11 +214,18 @@ module.exports = class Webcam extends Plugin {
       mimeType: 'image/jpeg'
     }
 
+    this.videoEl = this.target.querySelector('.UppyWebcam-video')
+
+    if (this.captureInProgress) return
+    this.captureInProgress = true
+
     this.opts.onBeforeSnapshot().catch((err) => {
       this.emit('informer', err, 'error', 5000)
       return Promise.reject(`onBeforeSnapshot: ${err}`)
     }).then(() => {
       const video = this.target.querySelector('.UppyWebcam-video')
+      if (!video) return Promise.reject('No video element found, likely due to the Webcam tab being closed.')
+
       const image = this.webcam.getImage(video, opts)
 
       const tagFile = {
@@ -210,7 +235,7 @@ module.exports = class Webcam extends Plugin {
         type: opts.mimeType
       }
 
-      // this.core.emitter.emit('core:file-add', tagFile)
+      this.captureInProgress = false
       this.core.addFile(tagFile)
     })
   }
