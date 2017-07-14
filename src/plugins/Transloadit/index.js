@@ -153,11 +153,13 @@ module.exports = class Transloadit extends Plugin {
         const transloadit = {
           assembly: assembly.assembly_id
         }
-        return Object.assign(
-          {},
-          file,
-          { meta, tus, transloadit }
-        )
+
+        const newFile = Object.assign({}, file, { transloadit })
+        // Only configure the Tus plugin if we are uploading straight to Transloadit (the default).
+        if (!opts.importFromUploadURLs) {
+          Object.assign(newFile, { meta, tus })
+        }
+        return newFile
       }
 
       const files = Object.assign({}, this.core.state.files)
@@ -427,7 +429,7 @@ module.exports = class Transloadit extends Plugin {
     this.core.addPostProcessor(this.afterUpload)
 
     if (this.opts.importFromUploadURLs) {
-      this.core.on('file:upload-success', this.onFileUploaded)
+      this.core.on('core:upload-success', this.onFileUploaded)
     }
 
     this.updateState({
