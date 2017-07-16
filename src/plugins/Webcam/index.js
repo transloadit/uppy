@@ -83,18 +83,32 @@ module.exports = class Webcam extends Plugin {
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
     this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
-    this.justSmile = this.justSmile.bind(this)
+    // this.justSmile = this.justSmile.bind(this)
 
     this.webcam = new WebcamProvider(this.opts, this.params)
     this.webcamActive = false
 
-    if (typeof opts.onBeforeSnapshot === 'undefined' || !this.opts.onBeforeSnapshot) {
-      if (this.opts.countdown) {
-        this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
-      } else {
-        this.opts.onBeforeSnapshot = this.justSmile
-      }
+    if (this.opts.countdown) {
+      this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
     }
+
+    // if (typeof opts.onBeforeSnapshot === 'undefined' || !this.opts.onBeforeSnapshot) {
+    //   if (this.opts.countdown) {
+    //     this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
+    //   } else {
+    //     this.opts.onBeforeSnapshot = this.justSmile
+    //   }
+    // }
+  }
+
+  /**
+   * Little shorthand to update the state with my new state
+   */
+  updateState (newState) {
+    const {state} = this.core
+    const webcam = Object.assign({}, state.webcam, newState)
+
+    this.core.setState({webcam})
   }
 
   start () {
@@ -186,7 +200,7 @@ module.exports = class Webcam extends Plugin {
         if (!this.webcamActive) {
           clearInterval(countDown)
           this.captureInProgress = false
-          return Promise.reject('Webcam is not active')
+          return reject('Webcam is not active')
         }
 
         if (count > 0) {
@@ -201,12 +215,12 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  justSmile () {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => this.core.emit('informer', this.i18n('smile'), 'success', 1000), 1500)
-      setTimeout(() => resolve(), 2000)
-    })
-  }
+  // justSmile () {
+  //   return new Promise((resolve, reject) => {
+  //     setTimeout(() => this.core.emit('informer', this.i18n('smile'), 'success', 1000), 1500)
+  //     setTimeout(() => resolve(), 2000)
+  //   })
+  // }
 
   takeSnapshot () {
     const opts = {
@@ -224,7 +238,10 @@ module.exports = class Webcam extends Plugin {
       return Promise.reject(`onBeforeSnapshot: ${err}`)
     }).then(() => {
       const video = this.target.querySelector('.UppyWebcam-video')
-      if (!video) return Promise.reject('No video element found, likely due to the Webcam tab being closed.')
+      if (!video) {
+        this.captureInProgress = false
+        return Promise.reject('No video element found, likely due to the Webcam tab being closed.')
+      }
 
       const image = this.webcam.getImage(video, opts)
 
@@ -238,6 +255,13 @@ module.exports = class Webcam extends Plugin {
       this.captureInProgress = false
       this.core.addFile(tagFile)
     })
+  }
+
+  focus () {
+    if (this.opts.countdown) return
+    setTimeout(() => {
+      this.core.emit('informer', this.i18n('smile'), 'success', 1500)
+    }, 1000)
   }
 
   render (state) {
@@ -267,13 +291,6 @@ module.exports = class Webcam extends Plugin {
     }))
   }
 
-  focus () {
-    // if (this.opts.oneTwoThreeSmile) return
-    // setTimeout(() => {
-    //   this.core.emitter.emit('informer', 'Smile!', 'success', 2000)
-    // }, 1000)
-  }
-
   install () {
     this.webcam.init()
     this.core.setState({
@@ -290,15 +307,5 @@ module.exports = class Webcam extends Plugin {
   uninstall () {
     this.webcam.reset()
     this.unmount()
-  }
-
-  /**
-   * Little shorthand to update the state with my new state
-   */
-  updateState (newState) {
-    const {state} = this.core
-    const webcam = Object.assign({}, state.webcam, newState)
-
-    this.core.setState({webcam})
   }
 }

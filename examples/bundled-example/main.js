@@ -72,7 +72,7 @@ const uppy = Uppy({
   // .use(ProgressBar, {target: 'body'})
   .use(Webcam, {
     target: Dashboard,
-    countdown: 5,
+    // countdown: 5,
     locale: {
       strings: { smile: 'Улыбочку!' }
     }
