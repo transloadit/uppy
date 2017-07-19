@@ -90,6 +90,7 @@ To be released: 2017-07-28.
 - [ ] transloadit: function option for file-dependent `params` (@goto-bus-stop)
 - [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
 - [ ] docs: on using plugins, all options, list of plugins, i18n (@arturi, @goto-bus-stop, @ifedapoolarewaju)
+- [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 - [ ] website: new demo video / gif (@arturi)
 - [ ] DnD Bar (@arturi)
 
