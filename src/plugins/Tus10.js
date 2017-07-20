@@ -266,16 +266,14 @@ module.exports = class Tus10 extends Plugin {
 
   onPauseAll (fileID, cb) {
     this.core.emitter.on('core:pause-all', () => {
-      const files = this.core.getState().files
-      if (!files[fileID]) return
+      if (!this.core.getFile(fileID)) return
       cb()
     })
   }
 
   onResumeAll (fileID, cb) {
     this.core.emitter.on('core:resume-all', () => {
-      const files = this.core.getState().files
-      if (!files[fileID]) return
+      if (!this.core.getFile(fileID)) return
       cb()
     })
   }
@@ -300,10 +298,7 @@ module.exports = class Tus10 extends Plugin {
     }
 
     this.core.log('Tus is uploading...')
-    const filesToUpload = fileIDs.map(getFile, this)
-    function getFile (fileID) {
-      return this.core.state.files[fileID]
-    }
+    const filesToUpload = fileIDs.map((fileID) => this.core.getFile(fileID))
 
     this.uploadFiles(filesToUpload)
 
