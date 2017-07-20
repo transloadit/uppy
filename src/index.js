@@ -24,7 +24,7 @@ const MetaData = require('./plugins/MetaData.js')
 
 // Uploaders
 const Tus10 = require('./plugins/Tus10')
-const Multipart = require('./plugins/Multipart')
+const XHRUpload = require('./plugins/XHRUpload')
 const Transloadit = require('./plugins/Transloadit')
 
 module.exports = {
@@ -39,7 +39,7 @@ module.exports = {
   Instagram,
   FileInput,
   Tus10,
-  Multipart,
+  XHRUpload,
   Transloadit,
   Dashboard,
   MetaData,
