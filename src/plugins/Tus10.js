@@ -131,6 +131,7 @@ module.exports = class Tus10 extends Plugin {
       }
 
       optsTus.onProgress = (bytesUploaded, bytesTotal) => {
+        this.onReceiveUploadUrl(file, upload.url)
         this.core.emitter.emit('core:upload-progress', {
           uploader: this,
           id: file.id,
@@ -247,6 +248,26 @@ module.exports = class Tus10 extends Plugin {
         })
       })
     })
+  }
+
+  getFile (fileID) {
+    return this.core.state.files[fileID]
+  }
+
+  onReceiveUploadUrl (file, uploadURL) {
+    const currentFile = this.getFile(file.id)
+    // Only do the update if we didn't have an upload URL yet.
+    if (!currentFile.tus || currentFile.tus.uploadUrl !== uploadURL) {
+      const newFile = Object.assign({}, currentFile, {
+        tus: Object.assign({}, currentFile.tus, {
+          uploadUrl: uploadURL
+        })
+      })
+      const files = Object.assign({}, this.core.state.files, {
+        [currentFile.id]: newFile
+      })
+      this.core.setState({ files })
+    }
   }
 
   onFileRemove (fileID, cb) {
