@@ -49,7 +49,11 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   upload (file, current, total) {
-    const opts = Object.assign({}, this.opts, file.xhrUpload || {})
+    const opts = Object.assign({},
+      this.opts,
+      this.core.state.xhrUpload || {},
+      file.xhrUpload || {}
+    )
 
     this.core.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
