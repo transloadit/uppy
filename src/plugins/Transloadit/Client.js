@@ -27,7 +27,9 @@ module.exports = class Client {
       data.append('signature', signature)
     }
 
-    data.append('fields', JSON.stringify(fields))
+    Object.keys(fields).forEach((key) => {
+      data.append(key, fields[key])
+    })
     data.append('tus_num_expected_upload_files', expectedFiles)
 
     return fetch(`${this.apiUrl}/assemblies`, {
