@@ -171,6 +171,33 @@
   &:hover { @include zoom; }
 }
 
+.TryMe-line {
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  top: -20px;
+}
+
+.TryMe-btn {
+  @include reset-button();
+  font-size: 12px;
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 25px;
+  transition: all .3s ease;
+  background-color: $color-primary;
+  color: $color-white;
+  cursor: pointer;
+  margin-left: 5px;
+
+  &:hover { background-color: darken($color-primary, 5%); }
+}
+
 .IndexExample {
   text-align: center;
   max-width: 1200px;

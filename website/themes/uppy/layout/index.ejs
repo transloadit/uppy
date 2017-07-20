@@ -25,6 +25,10 @@
     <video class="IndexExample-video"
            src="/images/uppy-demo.mp4"
            autoplay loop muted></video>
+    <form id="upload-form">
+      <input type="file">
+    </form>
+    <p class="TryMe-line">Try me: <button id="select-files" class="TryMe-btn">Select Files</button></p>
   </div>
 
   <div class="IndexExample-block">
@@ -74,3 +78,26 @@
   <p>This site borrows heavily from Evan You's excellent <a href="https://github.com/vuejs/vuejs.org">Vue.js</a> (<a href="https://github.com/transloadit/uppy/blob/master/website/VUEORG_LICENSE">LICENSE</a>) (he <a href="https://twitter.com/youyuxi/status/672441843183960067">approves</a>)</p>
   <p>© <%- date(Date.now(), 'YYYY') %> <a href="https://transloadit.com" target="_blank">Transloadit</a></p>
 </footer>
+
+<link href="https://unpkg.com/uppy/dist/uppy.min.css" rel="stylesheet">
+<script src="https://unpkg.com/uppy/dist/uppy.min.js"></script>
+
+<script>
+  var PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
+  var TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
+  
+  var uppy = Uppy.Core({debug: true, autoProceed: false})
+  uppy.use(Uppy.Dashboard, {trigger: '#select-files', target: '#upload-form', replaceTargetContent: true})
+  uppy.use(Uppy.Tus10, {endpoint: TUS_ENDPOINT})
+  uppy.use(Uppy.MetaData, {
+      fields: [
+        { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
+        { id: 'description', name: 'Description', value: 'none', placeholder: 'describe what the file is for' }
+      ]
+    })
+  uppy.run()
+
+  uppy.on('core:success', (files) => {
+    console.log(`Upload complete! We’ve uploaded these files: ${files}`)
+  })
+</script>

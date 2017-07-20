@@ -1,21 +1,19 @@
 import Uppy from 'uppy/lib/core'
 import Dashboard from 'uppy/lib/plugins/Dashboard'
 import Tus10 from 'uppy/lib/plugins/Tus10'
-import Informer from 'uppy/lib/plugins/Informer'
 import MetaData from 'uppy/lib/plugins/MetaData'
  
 const uppy = Uppy({autoProceed: false})
-  .use(Dashboard, {trigger: '#select-files'})
-  .use(Informer, {target: Dashboard})
-  .use(Tus10, {endpoint: '://master.tus.io/files/'})
-  .use(MetaData, {
+uppy.use(Dashboard, {trigger: '#select-files', target: '#upload-form', replaceTargetContent: true})
+uppy.use(Tus10, {endpoint: '://master.tus.io/files/'})
+uppy.use(MetaData, {
     fields: [
       { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
       { id: 'description', name: 'Description', value: 'none', placeholder: 'describe what the file is for' }
     ]
   })
-  .run()
+uppy.run()
  
-uppy.on('core:success', (fileCount) => {
-  console.log(`Upload complete. We uploaded ${fileCount} files!`)
+uppy.on('core:success', (files) => {
+  console.log(`Upload complete! We’ve uploaded these files: ${files}`)
 })
