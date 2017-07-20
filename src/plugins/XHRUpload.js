@@ -17,9 +17,8 @@ module.exports = class XHRUpload extends Plugin {
       responseUrlFieldName: 'url',
       bundle: true,
       headers: {},
-      getUploadUrl (xhr) {
-        const resp = JSON.parse(xhr.response)
-        return resp[this.responseUrlFieldName]
+      getResponseData (xhr) {
+        return JSON.parse(xhr.response)
       }
     }
 
@@ -73,9 +72,10 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.addEventListener('load', (ev) => {
         if (ev.target.status >= 200 && ev.target.status < 300) {
-          const uploadURL = opts.getUploadUrl(xhr)
+          const resp = opts.getResponseData(xhr)
+          const uploadURL = resp[this.responseUrlFieldName]
 
-          this.core.emitter.emit('core:upload-success', file.id, uploadURL)
+          this.core.emitter.emit('core:upload-success', file.id, resp, uploadURL)
 
           if (uploadURL) {
             this.core.log(`Download ${file.name} from ${file.uploadURL}`)
@@ -156,7 +156,7 @@ module.exports = class XHRUpload extends Plugin {
           socket.on('progress', (progressData) => Utils.emitSocketProgress(this, progressData, file))
 
           socket.on('success', (data) => {
-            this.core.emitter.emit('core:upload-success', file.id, data.url)
+            this.core.emitter.emit('core:upload-success', file.id, data, data.url)
             socket.close()
             return resolve()
           })

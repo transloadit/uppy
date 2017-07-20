@@ -414,7 +414,7 @@ class Uppy {
       throttledCalculateProgress(data)
     })
 
-    this.on('core:upload-success', (fileID, uploadURL) => {
+    this.on('core:upload-success', (fileID, data, uploadURL) => {
       const updatedFiles = Object.assign({}, this.getState().files)
       const updatedFile = Object.assign({}, updatedFiles[fileID], {
         progress: Object.assign({}, updatedFiles[fileID].progress, {

@@ -140,7 +140,7 @@ module.exports = class Tus10 extends Plugin {
       }
 
       optsTus.onSuccess = () => {
-        this.core.emitter.emit('core:upload-success', file.id, upload.url)
+        this.core.emitter.emit('core:upload-success', file.id, upload, upload.url)
 
         if (upload.url) {
           this.core.log('Download ' + upload.file.name + ' from ' + upload.url)
@@ -240,7 +240,7 @@ module.exports = class Tus10 extends Plugin {
           socket.on('progress', (progressData) => Utils.emitSocketProgress(this, progressData, file))
 
           socket.on('success', (data) => {
-            this.core.emitter.emit('core:upload-success', file.id, data.url)
+            this.core.emitter.emit('core:upload-success', file.id, data, data.url)
             socket.close()
             return resolve()
           })
