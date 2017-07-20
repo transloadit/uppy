@@ -42,6 +42,29 @@ module.exports = class AwsS3 extends Plugin {
       })
     })
 
+    this.core.setState({
+      xhrUpload: Object.assign({}, this.core.state.xhrUpload, {
+        responseUrlFieldName: 'location',
+        getResponseData (xhr) {
+          // If no response, we've hopefully done a PUT request to the file
+          // in the bucket on its full URL.
+          if (!xhr.responseXML) {
+            return { location: xhr.responseURL }
+          }
+          function getValue (key) {
+            const el = xhr.responseXML.querySelector(key)
+            return el ? el.textContent : ''
+          }
+          return {
+            location: getValue('Location'),
+            bucket: getValue('Bucket'),
+            key: getValue('Key'),
+            etag: getValue('ETag')
+          }
+        }
+      })
+    })
+
     return Promise.all(
       fileIDs.map((id) => {
         const file = this.getFile(id)
@@ -70,16 +93,7 @@ module.exports = class AwsS3 extends Plugin {
             formData: method.toLowerCase() === 'post',
             endpoint: url,
             fieldName: 'file',
-            metaFields: Object.keys(fields),
-            getUploadUrl (xhr) {
-              // If no response, we've hopefully done a PUT request to the file
-              // in the bucket on its full URL.
-              if (!xhr.responseXML) {
-                return url.split('?')[0]
-              }
-              const locationEl = xhr.responseXML.querySelector('Location')
-              return locationEl.textContent
-            }
+            metaFields: Object.keys(fields)
           }
         })
 
