@@ -1,5 +1,6 @@
 const Plugin = require('../Plugin')
 const WebcamProvider = require('../../uppy-base/src/plugins/Webcam')
+const Translator = require('../../core/Translator')
 const { extend,
         getFileTypeExtension,
         supportsMediaRecorder } = require('../../core/Utils')
@@ -21,9 +22,18 @@ module.exports = class Webcam extends Plugin {
     this.icon = WebcamIcon
     this.focus = this.focus.bind(this)
 
+    const defaultLocale = {
+      strings: {
+        smile: 'Smile!'
+      }
+    }
+
     // set default options
     const defaultOptions = {
       enableFlash: true,
+      onBeforeSnapshot: () => Promise.resolve(),
+      countdown: false,
+      locale: defaultLocale,
       modes: [
         'video-audio',
         'video-only',
@@ -54,6 +64,13 @@ module.exports = class Webcam extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    // i18n
+    this.translator = new Translator({locale: this.locale})
+    this.i18n = this.translator.translate.bind(this.translator)
+
     this.install = this.install.bind(this)
     this.updateState = this.updateState.bind(this)
 
@@ -65,9 +82,33 @@ module.exports = class Webcam extends Plugin {
     this.takeSnapshot = this.takeSnapshot.bind(this)
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
+    this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
+    // this.justSmile = this.justSmile.bind(this)
 
     this.webcam = new WebcamProvider(this.opts, this.params)
     this.webcamActive = false
+
+    if (this.opts.countdown) {
+      this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
+    }
+
+    // if (typeof opts.onBeforeSnapshot === 'undefined' || !this.opts.onBeforeSnapshot) {
+    //   if (this.opts.countdown) {
+    //     this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
+    //   } else {
+    //     this.opts.onBeforeSnapshot = this.justSmile
+    //   }
+    // }
+  }
+
+  /**
+   * Little shorthand to update the state with my new state
+   */
+  updateState (newState) {
+    const {state} = this.core
+    const webcam = Object.assign({}, state.webcam, newState)
+
+    this.core.setState({webcam})
   }
 
   start () {
@@ -151,24 +192,76 @@ module.exports = class Webcam extends Plugin {
     this.streamSrc = null
   }
 
+  oneTwoThreeSmile () {
+    return new Promise((resolve, reject) => {
+      let count = this.opts.countdown
+
+      let countDown = setInterval(() => {
+        if (!this.webcamActive) {
+          clearInterval(countDown)
+          this.captureInProgress = false
+          return reject('Webcam is not active')
+        }
+
+        if (count > 0) {
+          this.core.emit('informer', `${count}...`, 'warning', 800)
+          count--
+        } else {
+          clearInterval(countDown)
+          this.core.emit('informer', this.i18n('smile'), 'success', 1500)
+          setTimeout(() => resolve(), 1500)
+        }
+      }, 1000)
+    })
+  }
+
+  // justSmile () {
+  //   return new Promise((resolve, reject) => {
+  //     setTimeout(() => this.core.emit('informer', this.i18n('smile'), 'success', 1000), 1500)
+  //     setTimeout(() => resolve(), 2000)
+  //   })
+  // }
+
   takeSnapshot () {
     const opts = {
       name: `webcam-${Date.now()}.jpg`,
       mimeType: 'image/jpeg'
     }
 
-    const video = this.target.querySelector('.UppyWebcam-video')
+    this.videoEl = this.target.querySelector('.UppyWebcam-video')
 
-    const image = this.webcam.getImage(video, opts)
+    if (this.captureInProgress) return
+    this.captureInProgress = true
 
-    const tagFile = {
-      source: this.id,
-      name: opts.name,
-      data: image.data,
-      type: opts.mimeType
-    }
+    this.opts.onBeforeSnapshot().catch((err) => {
+      this.emit('informer', err, 'error', 5000)
+      return Promise.reject(`onBeforeSnapshot: ${err}`)
+    }).then(() => {
+      const video = this.target.querySelector('.UppyWebcam-video')
+      if (!video) {
+        this.captureInProgress = false
+        return Promise.reject('No video element found, likely due to the Webcam tab being closed.')
+      }
 
-    this.core.emitter.emit('core:file-add', tagFile)
+      const image = this.webcam.getImage(video, opts)
+
+      const tagFile = {
+        source: this.id,
+        name: opts.name,
+        data: image.data,
+        type: opts.mimeType
+      }
+
+      this.captureInProgress = false
+      this.core.addFile(tagFile)
+    })
+  }
+
+  focus () {
+    if (this.opts.countdown) return
+    setTimeout(() => {
+      this.core.emit('informer', this.i18n('smile'), 'success', 1500)
+    }, 1000)
   }
 
   render (state) {
@@ -198,12 +291,6 @@ module.exports = class Webcam extends Plugin {
     }))
   }
 
-  focus () {
-    setTimeout(() => {
-      this.core.emitter.emit('informer', 'Smile!', 'warning', 2000)
-    }, 1000)
-  }
-
   install () {
     this.webcam.init()
     this.core.setState({
@@ -220,15 +307,5 @@ module.exports = class Webcam extends Plugin {
   uninstall () {
     this.webcam.reset()
     this.unmount()
-  }
-
-  /**
-   * Little shorthand to update the state with my new state
-   */
-  updateState (newState) {
-    const {state} = this.core
-    const webcam = Object.assign({}, state.webcam, newState)
-
-    this.core.setState({webcam})
   }
 }
