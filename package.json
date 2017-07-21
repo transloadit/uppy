@@ -21,7 +21,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"
   },
