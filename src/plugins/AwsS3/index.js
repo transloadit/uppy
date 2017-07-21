@@ -7,11 +7,20 @@ module.exports = class AwsS3 extends Plugin {
     this.id = 'AwsS3'
     this.title = 'AWS S3'
 
+    const defaultLocale = {
+      strings: {
+        preparingUpload: 'Preparing upload...'
+      }
+    }
+
     const defaultOptions = {
-      getUploadParameters: this.getUploadParameters.bind(this)
+      getUploadParameters: this.getUploadParameters.bind(this),
+      locale: defaultLocale
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
     this.prepareUpload = this.prepareUpload.bind(this)
   }
@@ -33,7 +42,7 @@ module.exports = class AwsS3 extends Plugin {
     fileIDs.forEach((id) => {
       this.core.emit('core:preprocess-progress', id, {
         mode: 'determinate',
-        message: 'Preparing upload...',
+        message: this.locale.strings.preparingUpload,
         value: 0
       })
     })
@@ -67,7 +76,7 @@ module.exports = class AwsS3 extends Plugin {
         return this.opts.getUploadParameters(file).then((params) => {
           this.core.emit('core:preprocess-progress', file.id, {
             mode: 'determinate',
-            message: 'Preparing upload...',
+            message: this.locale.strings.preparingUpload,
             value: 1
           })
           return params
