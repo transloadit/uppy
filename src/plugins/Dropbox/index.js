@@ -61,10 +61,6 @@ module.exports = class Dropbox extends Plugin {
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)
-
-    this[this.id].auth().then(this.onAuth).catch(this.view.handleError)
-
-    return
   }
 
   uninstall () {

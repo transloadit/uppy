@@ -65,10 +65,6 @@ module.exports = class Instagram extends Plugin {
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)
-
-    // catch error here.
-    this[this.id].auth().then(this.onAuth).catch(this.view.handleError)
-    return
   }
 
   uninstall () {
