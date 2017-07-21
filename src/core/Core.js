@@ -240,7 +240,7 @@ class Uppy {
         const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
         const isRemote = file.isRemote || false
 
-        const fileID = Utils.generateFileID(fileName)
+        const fileID = Utils.generateFileID(file)
         const fileTypeGeneral = fileType[0]
         const fileTypeSpecific = fileType[1]
 
@@ -269,7 +269,7 @@ class Uppy {
         }
 
         if (Utils.isPreviewSupported(fileTypeSpecific) && !isRemote) {
-          newFile.preview = Utils.getThumbnail(file)
+          newFile.preview = Utils.getThumbnail(file.data)
         }
 
         const isFileAllowed = this.checkRestrictions(false, newFile, fileType)
@@ -278,7 +278,7 @@ class Uppy {
         updatedFiles[fileID] = newFile
         this.setState({files: updatedFiles})
 
-        this.emit('core:file-added', fileID)
+        this.emit('core:file-added', newFile)
         this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
 
         if (this.opts.autoProceed && !this.scheduledAutoProceed) {
@@ -307,6 +307,7 @@ class Uppy {
     delete updatedFiles[fileID]
     this.setState({files: updatedFiles})
     this.calculateTotalProgress()
+    this.emit('core:file-removed', fileID)
     this.log(`Removed file: ${fileID}`)
   }
 
@@ -378,6 +379,7 @@ class Uppy {
     this.on('core:error', (error) => {
       this.setState({ error })
     })
+
     this.on('core:upload', () => {
       this.setState({ error: null })
     })
@@ -671,13 +673,13 @@ class Uppy {
     return this
   }
 
-  upload () {
+  upload (restored) {
     const isMinNumberOfFilesReached = this.checkRestrictions(true)
     if (!isMinNumberOfFilesReached) {
       return Promise.reject('Minimum number of files has not been reached')
     }
 
-    return this.opts.onBeforeUpload(this.getState().files).catch((err) => {
+    return this.opts.onBeforeUpload(this.state.files).catch((err) => {
       this.emit('informer', err, 'error', 5000)
       return Promise.reject(`onBeforeUpload: ${err}`)
     }).then(() => {
@@ -686,12 +688,21 @@ class Uppy {
       const waitingFileIDs = []
       Object.keys(this.state.files).forEach((fileID) => {
         const file = this.getFile(fileID)
-        // TODO: replace files[file].isRemote with some logic
-        //
-        // filter files that are now yet being uploaded / haven’t been uploaded
-        // and remote too
-        if (!file.progress.uploadStarted || file.isRemote) {
-          waitingFileIDs.push(file.id)
+
+        // this accomodates for `RestoreFiles`’s `core:restored` event:
+        // start uploading restored files if upload has been started before restore
+        if (restored) {
+          if (file.isRestored && file.progress.uploadStarted) {
+            waitingFileIDs.push(file.id)
+          }
+        } else {
+          // TODO: replace files[file].isRemote with some logic
+          //
+          // filter files that are now yet being uploaded / haven’t been uploaded
+          // and remote too
+          if (!file.progress.uploadStarted || file.isRemote) {
+            waitingFileIDs.push(file.id)
+          }
         }
       })
 

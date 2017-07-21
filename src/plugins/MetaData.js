@@ -21,13 +21,13 @@ module.exports = class MetaData extends Plugin {
     this.handleFileAdded = this.handleFileAdded.bind(this)
   }
 
-  handleFileAdded (fileID) {
+  handleFileAdded (file) {
     const metaFields = this.opts.fields
 
     metaFields.forEach((item) => {
       const obj = {}
       obj[item.id] = item.value
-      this.core.updateMeta(obj, fileID)
+      this.core.updateMeta(obj, file.id)
     })
   }
 

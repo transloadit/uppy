@@ -6,18 +6,32 @@
     <title>uppy</title>
   </head>
   <body>
-    <h1>Uppy is here</h1>
-    <button id="uppyModalOpener">Choose Files</button>
+    <style>
+      main {
+        padding-top: 100px;
+        text-align: center;
+      }
 
-    <div class="Uppy">
-      <form class="MyForm" action="/">
-        <input type="file" />
-        <input type="hidden" name="bla" value="12333">
-        <input type="text" name="yo" value="1">
-        <button type="submit">Upload</button>
-        <input type="submit">
-      </form>
-    </div>
+      .MyForm {
+        max-width: 400px;
+        margin: auto;
+        text-align: initial;
+      }
+    </style>
+    <main>
+      <h1>Uppy is here</h1>
+      <button id="uppyModalOpener">Choose Files</button>
+
+      <div class="Uppy">
+        <form class="MyForm" action="/">
+          <input type="file" />
+          <input type="hidden" name="bla" value="12333">
+          <input type="text" name="yo" value="1">
+          <button type="submit">Upload</button>
+          <input type="submit">
+        </form>
+      </div>
+    </main>
 
     <link href="uppy.min.css" rel="stylesheet">
     <script src="bundle.js"></script>

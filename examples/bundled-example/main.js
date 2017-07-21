@@ -1,17 +1,17 @@
 const Uppy = require('../../src/core/Core.js')
 const Dashboard = require('../../src/plugins/Dashboard')
-const GoogleDrive = require('../../src/plugins/GoogleDrive')
+// const GoogleDrive = require('../../src/plugins/GoogleDrive')
 const Dropbox = require('../../src/plugins/Dropbox')
 const Instagram = require('../../src/plugins/Instagram')
-const Webcam = require('../../src/plugins/Webcam')
+// const Webcam = require('../../src/plugins/Webcam')
 const Tus10 = require('../../src/plugins/Tus10')
 // const Multipart = require('../../src/plugins/Multipart')
-// const DragDrop = require('../../src/plugins/FileInput')
 // const FileInput = require('../../src/plugins/FileInput')
 const MetaData = require('../../src/plugins/MetaData')
 // const Informer = require('../../src/plugins/Informer')
 // const StatusBar = require('../../src/plugins/StatusBar')
 // const DragDrop = require('../../src/plugins/DragDrop')
+const RestoreFiles = require('../../src/plugins/RestoreFiles')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
 const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
@@ -25,13 +25,13 @@ const uppy = Uppy({
   autoProceed: false,
   meta: {
     username: 'John'
-  },
-  restrictions: {
-    maxFileSize: 300000,
-    maxNumberOfFiles: 10,
-    minNumberOfFiles: 2,
-    allowedFileTypes: ['image/*', 'video/*']
   }
+  // restrictions: {
+  //   maxFileSize: 300000,
+  //   maxNumberOfFiles: 10,
+  //   minNumberOfFiles: 2,
+  //   allowedFileTypes: ['image/*', 'video/*']
+  // }
   // onBeforeFileAdded: (currentFile, files) => {
   //   if (currentFile.name === 'pitercss-IMG_0616.jpg') {
   //     return Promise.resolve()
@@ -56,43 +56,47 @@ const uppy = Uppy({
     // replaceTargetContent: true,
     target: '.MyForm',
     locale: {
-      strings: {browse: 'wow'}
-    },
-    note: 'Images and video only, 300kb or less'
+      strings: {browse: 'browse'}
+    }
+    // note: 'Images and video only, 300kb or less'
   })
-  .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
+  // .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
-  // .use(FileInput, {target: '.Uppy', locale: {
-  //   strings: {selectToUpload: 'Выберите файл для загрузки'}
-  // }})
-  // .use(DragDrop, {target: 'body', locale: {
-  //   strings: {chooseFile: 'Выберите файл'}
-  // }})
-  // .use(ProgressBar, {target: 'body'})
-  .use(Webcam, {
-    target: Dashboard,
-    // countdown: 5,
-    locale: {
-      strings: { smile: 'Улыбочку!' }
-    }
-  })
-  // .use(Multipart, {endpoint: '//api2.transloadit.com'})
-  .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
-  // .use(Informer, {target: Dashboard})
-  // .use(StatusBar, {target: Dashboard})
+  .use(Tus10, {endpoint: TUS_ENDPOINT, resume: false})
   .use(MetaData, {
     fields: [
       { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
       { id: 'description', name: 'Description', value: 'none', placeholder: 'describe what the file is for' }
     ]
   })
-uppy.run()
+  .use(RestoreFiles)
+  .run()
 
 uppy.on('core:success', (fileList) => {
   console.log('UPLOAD SUCCESSFUL!!!')
   console.log(fileList)
 })
+
+const isServiceWorkerControllerReady = new Promise(resolve => {
+  if (navigator.serviceWorker.controller) return resolve()
+  navigator.serviceWorker.addEventListener('controllerchange', e => resolve())
+})
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('/sw.js')
+    .then((registration) => {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope)
+      return isServiceWorkerControllerReady
+    })
+    .then(() => {
+      uppy.emit('core:file-sw-ready')
+    })
+    .catch((error) => {
+      console.log('Registration failed with ' + error)
+    })
+}
 
 // uppy.emit('informer', 'Smile!', 'info', 2000)
 
