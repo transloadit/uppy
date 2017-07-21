@@ -16,10 +16,6 @@ module.exports = class AwsS3 extends Plugin {
     this.prepareUpload = this.prepareUpload.bind(this)
   }
 
-  getFile (id) {
-    return this.core.getState().files[id]
-  }
-
   getUploadParameters (file) {
     if (!this.opts.host) {
       throw new Error('Expected a `host` option containing an uppy-server address.')
@@ -67,7 +63,7 @@ module.exports = class AwsS3 extends Plugin {
 
     return Promise.all(
       fileIDs.map((id) => {
-        const file = this.getFile(id)
+        const file = this.core.getFile(id)
         return this.opts.getUploadParameters(file).then((params) => {
           this.core.emit('core:preprocess-progress', file.id, {
             mode: 'determinate',
@@ -80,7 +76,7 @@ module.exports = class AwsS3 extends Plugin {
     ).then((responses) => {
       const updatedFiles = {}
       fileIDs.forEach((id, index) => {
-        const file = this.getFile(id)
+        const file = this.core.getFile(id)
         const {
           method = 'post',
           url,
