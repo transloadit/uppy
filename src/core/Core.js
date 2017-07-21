@@ -668,7 +668,7 @@ class Uppy {
     // Install all plugins
     // this.installAll()
 
-    return
+    return this
   }
 
   upload () {
