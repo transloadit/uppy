@@ -44,7 +44,7 @@ module.exports = class PersistentState extends Plugin {
               data: cachedData,
               isRestored: true
             }
-            if (Utils.isPreviewSupported(this.core.state.files[fileID].type.specific)) {
+            if (this.core.state.files[fileID] && Utils.isPreviewSupported(this.core.state.files[fileID].type.specific)) {
               updatedFileData.preview = Utils.getThumbnail(cachedData)
             }
             const updatedFile = Object.assign({}, updatedFiles[fileID],
