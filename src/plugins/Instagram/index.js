@@ -24,7 +24,7 @@ module.exports = class Instagram extends Plugin {
 
     // writing out the key explicitly for readability the key used to store
     // the provider instance must be equal to this.id.
-    this.Instagram = new Provider({
+    this.Instagram = new Provider(core, {
       host: this.opts.host,
       provider: 'instagram',
       authProvider: 'instagram'

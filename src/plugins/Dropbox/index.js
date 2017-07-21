@@ -23,7 +23,7 @@ module.exports = class Dropbox extends Plugin {
 
     // writing out the key explicitly for readability the key used to store
     // the provider instance must be equal to this.id.
-    this.Dropbox = new Provider({
+    this.Dropbox = new Provider(core, {
       host: this.opts.host,
       provider: 'dropbox'
     })

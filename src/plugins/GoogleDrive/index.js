@@ -20,7 +20,7 @@ module.exports = class Google extends Plugin {
 
     // writing out the key explicitly for readability the key used to store
     // the provider instance must be equal to this.id.
-    this.GoogleDrive = new Provider({
+    this.GoogleDrive = new Provider(core, {
       host: this.opts.host,
       provider: 'drive',
       authProvider: 'google'
