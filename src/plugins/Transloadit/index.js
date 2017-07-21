@@ -156,7 +156,7 @@ module.exports = class Transloadit extends Plugin {
 
       this.core.setState({ files })
 
-      this.core.emit('transloadit:assembly', assembly, fileIDs)
+      this.core.emit('transloadit:assembly-created', assembly, fileIDs)
 
       return this.connectSocket(assembly)
     }).then(() => {
