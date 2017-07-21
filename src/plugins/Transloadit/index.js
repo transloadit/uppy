@@ -78,7 +78,7 @@ module.exports = class Transloadit extends Plugin {
     const options = this.opts
     return Promise.all(
       fileIDs.map((fileID) => {
-        const file = this.getFile(fileID)
+        const file = this.core.getFile(fileID)
         const promise = Promise.resolve(options.getAssemblyOptions(file, options))
         return promise.then((assemblyOptions) => {
           this.validateParams(assemblyOptions.params)
@@ -255,10 +255,6 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  getFile (fileID) {
-    return this.core.state.files[fileID]
-  }
-
   prepareUpload (fileIDs) {
     fileIDs.forEach((fileID) => {
       this.core.emit('core:preprocess-progress', fileID, {
@@ -289,7 +285,7 @@ module.exports = class Transloadit extends Plugin {
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
     if (!this.shouldWait()) {
-      const file = this.getFile(fileID)
+      const file = this.core.getFile(fileID)
       const socket = this.socket[file.assembly]
       socket.close()
       return
@@ -304,7 +300,7 @@ module.exports = class Transloadit extends Plugin {
       })
 
       const onAssemblyFinished = (assembly) => {
-        const file = this.getFile(fileID)
+        const file = this.core.getFile(fileID)
         // An assembly for a different upload just finished. We can ignore it.
         if (assembly.assembly_id !== file.transloadit.assembly) {
           return
@@ -324,7 +320,7 @@ module.exports = class Transloadit extends Plugin {
       }
 
       const onAssemblyError = (assembly, error) => {
-        const file = this.getFile(fileID)
+        const file = this.core.getFile(fileID)
         // An assembly for a different upload just errored. We can ignore it.
         if (assembly.assembly_id !== file.transloadit.assembly) {
           return

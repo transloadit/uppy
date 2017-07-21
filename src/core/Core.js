@@ -293,6 +293,15 @@ class Uppy {
     })
   }
 
+  /**
+   * Get a file object.
+   *
+   * @param {string} fileID The ID of the file object to return.
+   */
+  getFile (fileID) {
+    return this.getState().files[fileID]
+  }
+
   removeFile (fileID) {
     const updatedFiles = Object.assign({}, this.getState().files)
     delete updatedFiles[fileID]
@@ -676,7 +685,7 @@ class Uppy {
 
       const waitingFileIDs = []
       Object.keys(this.state.files).forEach((fileID) => {
-        const file = this.state.files[fileID]
+        const file = this.getFile(fileID)
         // TODO: replace files[file].isRemote with some logic
         //
         // filter files that are now yet being uploaded / haven’t been uploaded

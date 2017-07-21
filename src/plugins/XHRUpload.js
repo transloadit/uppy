@@ -2,19 +2,24 @@ const Plugin = require('./Plugin')
 const UppySocket = require('../core/UppySocket')
 const Utils = require('../core/Utils')
 
-module.exports = class Multipart extends Plugin {
+module.exports = class XHRUpload extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'uploader'
-    this.id = 'Multipart'
-    this.title = 'Multipart'
+    this.id = 'XHRUpload'
+    this.title = 'XHRUpload'
 
     // Default options
     const defaultOptions = {
+      formData: true,
       fieldName: 'files[]',
+      metaFields: null,
       responseUrlFieldName: 'url',
       bundle: true,
-      headers: {}
+      headers: {},
+      getResponseData (xhr) {
+        return JSON.parse(xhr.response)
+      }
     }
 
     // Merge default options with the ones set by user
@@ -23,25 +28,38 @@ module.exports = class Multipart extends Plugin {
     this.handleUpload = this.handleUpload.bind(this)
   }
 
+  createFormDataUpload (file, opts) {
+    const formPost = new FormData()
+
+    const metaFields = Array.isArray(opts.metaFields)
+      ? opts.metaFields
+      // Send along all fields by default.
+      : Object.keys(file.meta)
+    metaFields.forEach((item) => {
+      formPost.append(item, file.meta[item])
+    })
+
+    formPost.append(opts.fieldName, file.data)
+
+    return formPost
+  }
+
+  createBareUpload (file, opts) {
+    return file.data
+  }
+
   upload (file, current, total) {
+    const opts = Object.assign({},
+      this.opts,
+      this.core.state.xhrUpload || {},
+      file.xhrUpload || {}
+    )
+
     this.core.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
-      // turn file into an array so we can use bundle
-      // if (!this.opts.bundle) {
-      //   files = [files[current]]
-      // }
-
-      // for (let i in files) {
-      //   formPost.append(this.opts.fieldName, files[i])
-      // }
-
-      const formPost = new FormData()
-      formPost.append(this.opts.fieldName, file.data)
-
-      Object.keys(file.meta).forEach((item) => {
-        // console.log(file.meta, file.meta[item])
-        formPost.append(item, file.meta[item])
-      })
+      const data = opts.formData
+        ? this.createFormDataUpload(file, opts)
+        : this.createBareUpload(file, opts)
 
       const xhr = new XMLHttpRequest()
 
@@ -58,8 +76,8 @@ module.exports = class Multipart extends Plugin {
 
       xhr.addEventListener('load', (ev) => {
         if (ev.target.status >= 200 && ev.target.status < 300) {
-          const resp = JSON.parse(xhr.response)
-          const uploadURL = resp[this.opts.responseUrlFieldName]
+          const resp = opts.getResponseData(xhr)
+          const uploadURL = resp[opts.responseUrlFieldName]
 
           this.core.emitter.emit('core:upload-success', file.id, resp, uploadURL)
 
@@ -75,7 +93,7 @@ module.exports = class Multipart extends Plugin {
 
         // var upload = {}
         //
-        // if (this.opts.bundle) {
+        // if (opts.bundle) {
         //   upload = {files: files}
         // } else {
         //   upload = {file: files[current]}
@@ -87,13 +105,13 @@ module.exports = class Multipart extends Plugin {
         return reject('Upload error')
       })
 
-      xhr.open('POST', this.opts.endpoint, true)
+      xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
 
-      Object.keys(this.opts.headers).forEach((header) => {
-        xhr.setRequestHeader(header, this.opts.headers[header])
+      Object.keys(opts.headers).forEach((header) => {
+        xhr.setRequestHeader(header, opts.headers[header])
       })
 
-      xhr.send(formPost)
+      xhr.send(data)
 
       this.core.emitter.on('core:upload-cancel', (fileID) => {
         if (fileID === file.id) {
@@ -112,6 +130,7 @@ module.exports = class Multipart extends Plugin {
   }
 
   uploadRemote (file, current, total) {
+    const opts = Object.assign({}, this.opts, file.xhrUpload || {})
     return new Promise((resolve, reject) => {
       this.core.emitter.emit('core:upload-started', file.id)
 
@@ -123,9 +142,9 @@ module.exports = class Multipart extends Plugin {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(Object.assign({}, file.remote.body, {
-          endpoint: this.opts.endpoint,
+          endpoint: opts.endpoint,
           size: file.data.size,
-          fieldname: this.opts.fieldName
+          fieldname: opts.fieldName
         }))
       })
       .then((res) => {
@@ -141,7 +160,7 @@ module.exports = class Multipart extends Plugin {
           socket.on('progress', (progressData) => Utils.emitSocketProgress(this, progressData, file))
 
           socket.on('success', (data) => {
-            this.core.emitter.emit('core:upload-success', file.id, data)
+            this.core.emitter.emit('core:upload-success', file.id, data, data.url)
             socket.close()
             return resolve()
           })
@@ -173,11 +192,11 @@ module.exports = class Multipart extends Plugin {
 
   handleUpload (fileIDs) {
     if (fileIDs.length === 0) {
-      this.core.log('Multipart: no files to upload!')
+      this.core.log('XHRUpload: no files to upload!')
       return Promise.resolve()
     }
 
-    this.core.log('Multipart is uploading...')
+    this.core.log('XHRUpload is uploading...')
     const files = fileIDs.map(getFile, this)
     function getFile (fileID) {
       return this.core.state.files[fileID]
