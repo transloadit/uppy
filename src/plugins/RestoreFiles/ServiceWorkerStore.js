@@ -3,6 +3,12 @@ const isSupported = 'serviceWorker' in navigator
 class ServiceWorkerStore {
   constructor (core) {
     this.core = core
+    this.ready = new Promise((resolve, reject) => {
+      // service worker stuff
+      this.core.on('core:file-sw-ready', () => {
+        resolve()
+      })
+    })
   }
 
   list () {
@@ -21,29 +27,36 @@ class ServiceWorkerStore {
           break
       }
     }
-    navigator.serviceWorker.addEventListener('message', onMessage)
 
-    navigator.serviceWorker.controller.postMessage({
-      type: 'GET_FILES'
+    this.ready.then(() => {
+      navigator.serviceWorker.addEventListener('message', onMessage)
+
+      navigator.serviceWorker.controller.postMessage({
+        type: 'GET_FILES'
+      })
     })
 
     return promise
   }
 
   put (file) {
-    navigator.serviceWorker.controller.postMessage({
-      type: 'ADD_FILE',
-      data: {
-        id: file.id,
-        data: file.data
-      }
+    return this.ready.then(() => {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'ADD_FILE',
+        data: {
+          id: file.id,
+          data: file.data
+        }
+      })
     })
   }
 
   delete (fileID) {
-    navigator.serviceWorker.controller.postMessage({
-      type: 'REMOVE_FILE',
-      data: fileID
+    return this.ready.then(() => {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'REMOVE_FILE',
+        data: fileID
+      })
     })
   }
 }

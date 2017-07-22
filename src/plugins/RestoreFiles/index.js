@@ -1,6 +1,7 @@
 const Plugin = require('../Plugin')
 const Utils = require('../../core/Utils')
 const ServiceWorkerStore = require('./ServiceWorkerStore')
+const IndexedDBStore = require('./IndexedDBStore')
 
 /**
  * Persistent State
@@ -23,7 +24,8 @@ module.exports = class RestoreFiles extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.store = new ServiceWorkerStore(core)
+    const Store = this.opts.serviceWorker ? ServiceWorkerStore : IndexedDBStore
+    this.store = new Store(core)
 
     this.saveFilesStateToLocalStorage = this.saveFilesStateToLocalStorage.bind(this)
     this.loadFilesStateFromLocalStorage = this.loadFilesStateFromLocalStorage.bind(this)
@@ -71,17 +73,14 @@ module.exports = class RestoreFiles extends Plugin {
     this.loadFilesStateFromLocalStorage()
     this.core.on('core:state-update', this.saveFilesStateToLocalStorage)
 
-    // service worker stuff
-    this.core.on('core:file-sw-ready', () => {
-      this.store.list().then(this.onBlobsLoaded)
+    this.store.list().then(this.onBlobsLoaded)
 
-      this.core.on('core:file-added', (file) => {
-        if (!file.isRemote) this.store.put(file)
-      })
+    this.core.on('core:file-added', (file) => {
+      if (!file.isRemote) this.store.put(file)
+    })
 
-      this.core.on('core:file-removed', (fileID) => {
-        this.store.delete(fileID)
-      })
+    this.core.on('core:file-removed', (fileID) => {
+      this.store.delete(fileID)
     })
 
     this.core.on('core:restored', () => {
