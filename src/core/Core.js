@@ -2,6 +2,7 @@ const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
 const UppySocket = require('./UppySocket')
 const ee = require('namespace-emitter')
+const cuid = require('cuid')
 const throttle = require('lodash.throttle')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
@@ -673,7 +674,66 @@ class Uppy {
     return this
   }
 
-  upload (restored) {
+  /**
+   * Restore an upload by its ID.
+   */
+  restore (uploadID) {
+    this.log(`Core: attempting to restore upload "${uploadID}"`)
+
+    if (!this.state.currentUploads[uploadID]) {
+      this.removeUpload(uploadID)
+      return Promise.reject(new Error('Nonexistent upload'))
+    }
+
+    return this.runUpload(uploadID)
+  }
+
+  /**
+   * Create an upload for a bunch of files.
+   *
+   * @param {Array<string>} fileIDs File IDs to include in this upload.
+   * @return {string} ID of this upload.
+   */
+  createUpload (fileIDs) {
+    const uploadID = cuid()
+
+    this.emit('core:upload', {
+      id: uploadID,
+      fileIDs: fileIDs
+    })
+
+    this.setState({
+      currentUploads: Object.assign({}, this.state.currentUploads, {
+        [uploadID]: {
+          fileIDs: fileIDs,
+          step: 0
+        }
+      })
+    })
+
+    return uploadID
+  }
+
+  /**
+   * Remove an upload, eg. if it has been canceled or completed.
+   *
+   * @param {string} uploadID The ID of the upload.
+   */
+  removeUpload (uploadID) {
+    const currentUploads = Object.assign({}, this.state.currentUploads)
+    delete currentUploads[uploadID]
+
+    this.setState({
+      currentUploads: currentUploads
+    })
+  }
+
+  /**
+   * Start an upload for all the files that are not currently being uploaded.
+   *
+   * @return {Promise}
+   */
+  upload () {
     const isMinNumberOfFilesReached = this.checkRestrictions(true)
     if (!isMinNumberOfFilesReached) {
       return Promise.reject('Minimum number of files has not been reached')
@@ -683,44 +743,72 @@ class Uppy {
       this.emit('informer', err, 'error', 5000)
       return Promise.reject(`onBeforeUpload: ${err}`)
     }).then(() => {
-      this.emit('core:upload')
-
       const waitingFileIDs = []
       Object.keys(this.state.files).forEach((fileID) => {
         const file = this.getFile(fileID)
 
-        // this accomodates for `RestoreFiles`’s `core:restored` event:
-        // start uploading restored files if upload has been started before restore
-        if (restored) {
-          if (file.isRestored && file.progress.uploadStarted) {
-            waitingFileIDs.push(file.id)
-          }
-        } else {
-          // TODO: replace files[file].isRemote with some logic
-          //
-          // filter files that are now yet being uploaded / haven’t been uploaded
-          // and remote too
-          if (!file.progress.uploadStarted || file.isRemote) {
-            waitingFileIDs.push(file.id)
-          }
+        // TODO: replace files[file].isRemote with some logic
+        //
+        // filter files that are now yet being uploaded / haven’t been uploaded
+        // and remote too
+        if (!file.progress.uploadStarted || file.isRemote) {
+          waitingFileIDs.push(file.id)
         }
       })
 
-      const promise = Utils.runPromiseSequence(
-        [...this.preProcessors, ...this.uploaders, ...this.postProcessors],
-        waitingFileIDs
-      )
+      const uploadID = this.createUpload(waitingFileIDs)
+      return this.runUpload(uploadID)
+    })
+  }
 
-      // Not returning the `catch`ed promise, because we still want to return a rejected
-      // promise from this method if the upload failed.
-      promise.catch((err) => {
-        this.emit('core:error', err)
-      })
+  /**
+   * Run an upload. This picks up where it left off in case the upload is being restored.
+   *
+   * @private
+   */
+  runUpload (uploadID) {
+    const uploadData = this.state.currentUploads[uploadID]
+    const fileIDs = uploadData.fileIDs
+    const restoreStep = uploadData.step
 
-      return promise.then(() => {
-        // return number of uploaded files
-        this.emit('core:success', waitingFileIDs)
+    const steps = [
+      ...this.preProcessors,
+      ...this.uploaders,
+      ...this.postProcessors
+    ]
+    let lastStep = Promise.resolve()
+    steps.forEach((fn, step) => {
+      // Skip this step if we are restoring and have already completed this step before.
+      if (step < restoreStep) {
+        return
+      }
+
+      lastStep = lastStep.then(() => {
+        const currentUpload = Object.assign({}, this.state.currentUploads[uploadID], {
+          step: step
+        })
+        this.setState({
+          currentUploads: Object.assign({}, this.state.currentUploads, {
+            [uploadID]: currentUpload
+          })
+        })
+        return fn(fileIDs)
       })
+    })
+
+    // Not returning the `catch`ed promise, because we still want to return a rejected
+    // promise from this method if the upload failed.
+    lastStep.catch((err) => {
+      this.emit('core:error', err)
+
+      this.removeUpload(uploadID)
+    })
+
+    return lastStep.then(() => {
+      // return number of uploaded files
+      this.emit('core:success', fileIDs)
+
+      this.removeUpload(uploadID)
     })
   }
 }

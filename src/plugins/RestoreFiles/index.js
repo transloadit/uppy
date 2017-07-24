@@ -41,7 +41,10 @@ module.exports = class RestoreFiles extends Plugin {
   }
 
   saveFilesStateToLocalStorage () {
-    const files = JSON.stringify({files: this.core.state.files})
+    const files = JSON.stringify({
+      currentUploads: this.core.state.currentUploads,
+      files: this.core.state.files
+    })
     localStorage.setItem('uppyState', files)
   }
 
@@ -85,7 +88,12 @@ module.exports = class RestoreFiles extends Plugin {
 
     this.core.on('core:restored', () => {
       // start all uploads again when file blobs are restored
-      this.core.upload(true)
+      const { currentUploads } = this.core.getState()
+      if (currentUploads) {
+        Object.keys(currentUploads).forEach((uploadId) => {
+          this.core.restore(uploadId, currentUploads[uploadId])
+        })
+      }
     })
 
     // this.loadLocalStorageState()
