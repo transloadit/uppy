@@ -40,6 +40,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] image cropping on the client (#151)
+- [ ] uppy-server: what happens if access token expires amid an upload/download process.
 
 ## 1.0 Goals
 
