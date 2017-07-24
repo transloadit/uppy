@@ -40,6 +40,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] image cropping on the client (#151)
+- [ ] maybe restrict system file picking dialog too https://github.com/transloadit/uppy/issues/253
 
 ## 1.0 Goals
 
@@ -66,14 +67,19 @@ What we need to do to release Uppy 1.0
 - [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
 - [ ] uppy-server: security audit
 
+## 0.19.0
+
+- [ ] allow minimizing the Dashboard during upload (@arturi)
+- [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
+
 # next
 
 ## 0.18.0
 
 To be released: 2017-07-28.
+Theme: Dogumentation.
 
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
-- [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
 - [ ] core: add error in file progress state? (@arturi)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju)
@@ -86,13 +92,15 @@ To be released: 2017-07-28.
 - [ ] uppy: flag to upload all files, even `uploadComplete` ones (@arturi)
 - [x] transloadit: emit an event when an assembly is created (@goto-bus-stop / #244)
 - [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
-- [ ] webcam: add 1, 2, 3, smile! to webcam (@arturi #187)
+- [x] webcam: add 1, 2, 3, smile! to webcam (@arturi #187)
 - [ ] transloadit: function option for file-dependent `params` (@goto-bus-stop)
-- [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
 - [ ] docs: on using plugins, all options, list of plugins, i18n (@arturi, @goto-bus-stop, @ifedapoolarewaju)
 - [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
-- [ ] website: new demo video / gif (@arturi)
+- [x] website: live example on the homepage, “try me” (@arturi)
 - [ ] DnD Bar (@arturi)
+- [ ] handle error when upload can’t start (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
+- [ ] improve docs (@arturi @goto-bus-stop)
+- [ ] GoldenRetriver: recover selected or in progress files after a browser crash or closed tab (@arturi @goto-bus-stop @nqst #268)
 
 ## 0.17.0
 
