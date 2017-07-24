@@ -41,6 +41,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
 - [ ] image cropping on the client (#151)
 - [ ] maybe restrict system file picking dialog too https://github.com/transloadit/uppy/issues/253
+- [ ] uppy-server: what happens if access token expires amid an upload/download process.
 
 ## 1.0 Goals
 
