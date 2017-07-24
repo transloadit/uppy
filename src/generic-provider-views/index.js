@@ -157,7 +157,8 @@ module.exports = class View {
         tagFile.preview = this.plugin.getItemThumbnailUrl(file)
       }
       this.plugin.core.log('Adding remote file')
-      this.plugin.core.emitter.emit('core:file-add', tagFile)
+      // this.plugin.core.emitter.emit('core:file-add', tagFile)
+      this.plugin.core.addFile(tagFile)
     })
 
     // feels like a hack

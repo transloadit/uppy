@@ -46,7 +46,7 @@ module.exports = class FileInput extends Plugin {
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      this.core.emitter.emit('core:file-add', {
+      this.core.addFile({
         source: this.id,
         name: file.name,
         type: file.type,

@@ -214,22 +214,17 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   actions () {
-    const bus = this.core.bus
-
-    // bus.on('core:file-add', this.hideAllPanels)
-    bus.on('core:file-added', this.hideAllPanels)
-    bus.on('dashboard:file-card', this.handleFileCard)
+    this.core.on('core:file-added', this.hideAllPanels)
+    this.core.on('dashboard:file-card', this.handleFileCard)
 
     window.addEventListener('resize', this.updateDashboardElWidth)
   }
 
   removeActions () {
-    const bus = this.core.bus
-
     window.removeEventListener('resize', this.updateDashboardElWidth)
 
-    bus.off('core:file-add', this.hideAllPanels)
-    bus.off('dashboard:file-card', this.handleFileCard)
+    this.core.off('core:file-added', this.hideAllPanels)
+    this.core.off('dashboard:file-card', this.handleFileCard)
   }
 
   updateDashboardElWidth () {
@@ -258,7 +253,7 @@ module.exports = class DashboardUI extends Plugin {
     this.core.log('All right, someone dropped something...')
 
     files.forEach((file) => {
-      this.core.bus.emit('core:file-add', {
+      this.core.addFile({
         source: this.id,
         name: file.name,
         type: file.type,
@@ -268,15 +263,15 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   cancelAll () {
-    this.core.bus.emit('core:cancel-all')
+    this.core.emit('core:cancel-all')
   }
 
   pauseAll () {
-    this.core.bus.emit('core:pause-all')
+    this.core.emit('core:pause-all')
   }
 
   resumeAll () {
-    this.core.bus.emit('core:resume-all')
+    this.core.emit('core:resume-all')
   }
 
   render (state) {
@@ -348,7 +343,7 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     const info = (text, type, duration) => {
-      this.core.emitter.emit('informer', text, type, duration)
+      this.core.info(text, type, duration)
     }
 
     const resumableUploads = this.core.getState().capabilities.resumableUploads || false

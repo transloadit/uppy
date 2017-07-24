@@ -168,7 +168,7 @@ module.exports = class Webcam extends Plugin {
           data: new Blob(this.recordingChunks, { type: mimeType })
         }
 
-        this.core.emitter.emit('core:file-add', file)
+        this.core.addfile(file)
 
         this.recordingChunks = null
         this.recorder = null
@@ -204,11 +204,11 @@ module.exports = class Webcam extends Plugin {
         }
 
         if (count > 0) {
-          this.core.emit('informer', `${count}...`, 'warning', 800)
+          this.core.info(`${count}...`, 'warning', 800)
           count--
         } else {
           clearInterval(countDown)
-          this.core.emit('informer', this.i18n('smile'), 'success', 1500)
+          this.core.info(this.i18n('smile'), 'success', 1500)
           setTimeout(() => resolve(), 1500)
         }
       }, 1000)
@@ -217,7 +217,7 @@ module.exports = class Webcam extends Plugin {
 
   // justSmile () {
   //   return new Promise((resolve, reject) => {
-  //     setTimeout(() => this.core.emit('informer', this.i18n('smile'), 'success', 1000), 1500)
+  //     setTimeout(() => this.core.info(this.i18n('smile'), 'success', 1000), 1500)
   //     setTimeout(() => resolve(), 2000)
   //   })
   // }
@@ -234,7 +234,7 @@ module.exports = class Webcam extends Plugin {
     this.captureInProgress = true
 
     this.opts.onBeforeSnapshot().catch((err) => {
-      this.emit('informer', err, 'error', 5000)
+      this.core.info(err, 'error', 5000)
       return Promise.reject(`onBeforeSnapshot: ${err}`)
     }).then(() => {
       const video = this.target.querySelector('.UppyWebcam-video')
@@ -260,7 +260,7 @@ module.exports = class Webcam extends Plugin {
   focus () {
     if (this.opts.countdown) return
     setTimeout(() => {
-      this.core.emit('informer', this.i18n('smile'), 'success', 1500)
+      this.core.info(this.i18n('smile'), 'success', 1500)
     }, 1000)
   }
 
