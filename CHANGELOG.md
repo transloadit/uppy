@@ -93,6 +93,7 @@ To be released: 2017-07-28.
 - [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 - [ ] website: new demo video / gif (@arturi)
 - [ ] DnD Bar (@arturi)
+- [x] provider: use informer to display errors (@ifedapoolarewaju)
 
 ## 0.17.0
 
