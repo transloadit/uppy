@@ -96,7 +96,7 @@ Theme: Dogumentation.
 - [x] transloadit: emit an event when an assembly is created (@goto-bus-stop / #244)
 - [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
 - [x] webcam: add 1, 2, 3, smile! to webcam (@arturi #187)
-- [ ] transloadit: function option for file-dependent `params` (@goto-bus-stop)
+- [x] transloadit: function option for file-dependent `params` (@goto-bus-stop / #250)
 - [ ] docs: on using plugins, all options, list of plugins, i18n (@arturi, @goto-bus-stop, @ifedapoolarewaju)
 - [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 - [x] website: live example on the homepage, “try me” (@arturi)
