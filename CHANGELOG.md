@@ -42,6 +42,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] image cropping on the client (#151)
 - [ ] maybe restrict system file picking dialog too https://github.com/transloadit/uppy/issues/253
 - [ ] uppy-server: what happens if access token expires amid an upload/download process.
+- [ ] good way to change plugin options at runtime—maybe `this.state.options`?
+- [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
 
 ## 1.0 Goals
 
