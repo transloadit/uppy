@@ -131,6 +131,7 @@ module.exports = class Tus10 extends Plugin {
       }
 
       optsTus.onProgress = (bytesUploaded, bytesTotal) => {
+        this.onReceiveUploadUrl(file, upload.url)
         this.core.emitter.emit('core:upload-progress', {
           uploader: this,
           id: file.id,
@@ -249,6 +250,26 @@ module.exports = class Tus10 extends Plugin {
     })
   }
 
+  getFile (fileID) {
+    return this.core.state.files[fileID]
+  }
+
+  onReceiveUploadUrl (file, uploadURL) {
+    const currentFile = this.getFile(file.id)
+    // Only do the update if we didn't have an upload URL yet.
+    if (!currentFile.tus || currentFile.tus.uploadUrl !== uploadURL) {
+      const newFile = Object.assign({}, currentFile, {
+        tus: Object.assign({}, currentFile.tus, {
+          uploadUrl: uploadURL
+        })
+      })
+      const files = Object.assign({}, this.core.state.files, {
+        [currentFile.id]: newFile
+      })
+      this.core.setState({ files })
+    }
+  }
+
   onFileRemove (fileID, cb) {
     this.core.emitter.on('core:file-remove', (targetFileID) => {
       if (fileID === targetFileID) cb()
@@ -266,16 +287,14 @@ module.exports = class Tus10 extends Plugin {
 
   onPauseAll (fileID, cb) {
     this.core.emitter.on('core:pause-all', () => {
-      const files = this.core.getState().files
-      if (!files[fileID]) return
+      if (!this.core.getFile(fileID)) return
       cb()
     })
   }
 
   onResumeAll (fileID, cb) {
     this.core.emitter.on('core:resume-all', () => {
-      const files = this.core.getState().files
-      if (!files[fileID]) return
+      if (!this.core.getFile(fileID)) return
       cb()
     })
   }
@@ -300,10 +319,7 @@ module.exports = class Tus10 extends Plugin {
     }
 
     this.core.log('Tus is uploading...')
-    const filesToUpload = fileIDs.map(getFile, this)
-    function getFile (fileID) {
-      return this.core.state.files[fileID]
-    }
+    const filesToUpload = fileIDs.map((fileID) => this.core.getFile(fileID))
 
     this.uploadFiles(filesToUpload)
 
