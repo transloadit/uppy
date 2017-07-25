@@ -101,6 +101,7 @@ Theme: Dogumentation.
 - [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 - [x] website: live example on the homepage, “try me” (@arturi)
 - [ ] DnD Bar (@arturi)
+- [x] provider: use informer to display errors (@ifedapoolarewaju)
 - [ ] handle error when upload can’t start (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
 - [ ] improve docs (@arturi @goto-bus-stop)
 - [ ] GoldenRetriver: recover selected or in progress files after a browser crash or closed tab (@arturi @goto-bus-stop @nqst #268)
