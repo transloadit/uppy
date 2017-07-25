@@ -79,7 +79,11 @@ module.exports = class RestoreFiles extends Plugin {
     this.store.list().then(this.onBlobsLoaded)
 
     this.core.on('core:file-added', (file) => {
-      if (!file.isRemote) this.store.put(file)
+      if (file.isRemote) return
+      this.store.put(file).catch((err) => {
+        console.error('Could not store file')
+        console.error(err)
+      })
     })
 
     this.core.on('core:file-removed', (fileID) => {
