@@ -1,6 +1,5 @@
 const AuthView = require('./AuthView')
 const Browser = require('./Browser')
-const ErrorView = require('./Error')
 const LoaderView = require('./Loader')
 const Utils = require('../core/Utils')
 
@@ -159,12 +158,6 @@ module.exports = class View {
       this.plugin.core.log('Adding remote file')
       this.plugin.core.emitter.emit('core:file-add', tagFile)
     })
-
-    // feels like a hack
-    // this.updateState({
-    //   filterInput: '',
-    //   isSearchVisible: false
-    // })
   }
 
   /**
@@ -315,7 +308,9 @@ module.exports = class View {
   }
 
   handleError (error) {
-    this.updateState({ error })
+    const core = this.plugin.core
+    const message = core.debug ? error.toString() : core.i18n('uppyServerError')
+    core.emit('informer', message, 'error', 5000)
   }
 
   handleScroll (e) {
@@ -343,12 +338,7 @@ module.exports = class View {
   }
 
   render (state) {
-    const { authenticated, error, loading } = state[this.plugin.stateId]
-
-    if (error) {
-      this.updateState({ error: undefined })
-      return ErrorView({ error: error })
-    }
+    const { authenticated, loading } = state[this.plugin.stateId]
 
     if (loading) {
       return LoaderView()

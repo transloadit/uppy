@@ -26,7 +26,8 @@ class Uppy {
           1: 'You have to select at least %{smart_count} files'
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
-        youCanOnlyUploadFileTypes: 'You can only upload:'
+        youCanOnlyUploadFileTypes: 'You can only upload:',
+        uppyServerError: 'Connection with Uppy server failed'
       }
     }
 
