@@ -5,7 +5,6 @@ author: arturi
 published: false
 ---
 
-Don’t you just hate it when you're about to share the perfect images from your trip to Iceland, and halfway through your cat jumps on the keyboard and trashes your browser? Or the battery in your laptop dies? Or you accidentally close the tab or navigate away? We hate that too!
 Don’t you just hate it when you're about to share the perfect photos from your trip to Iceland, and halfway through your cat jumps on the keyboard and trashes your browser? Or the battery in your laptop dies? Or you accidentally close the tab or navigate away? We hate that too!
 
 If action games have had checkpoints since 1687 - why can't file uploaders? Well, it turns out, they can! We found a way to get those Iceland pics in the hands of your loved ones with near-zero frustration levels, even after a Blue screens of death! (if that is still a thing) 
