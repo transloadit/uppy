@@ -2,7 +2,7 @@
   "name": "uppy",
   "version": "0.17.0",
   "description": "Almost as cute as a Puppy :dog:",
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "jsnext:main": "src/index.js",
   "files": [
     "src/",
