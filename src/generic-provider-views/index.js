@@ -309,7 +309,7 @@ module.exports = class View {
 
   handleError (error) {
     const core = this.plugin.core
-    const message = core.debug ? error.toString() : core.i18n('uppyServerError')
+    const message = core.opts.debug ? error.toString() : core.i18n('uppyServerError')
     core.emit('informer', message, 'error', 5000)
   }
 
