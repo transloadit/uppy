@@ -1,5 +1,5 @@
 ---
-title: "The Golden Retriever: Uploads that survive a browser crash"
+title: "The Golden Retriever: Browser-crash-surviving Uploads"
 date: 2017-07-28
 author: arturi
 published: false
