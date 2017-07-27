@@ -3,7 +3,6 @@ const throttle = require('lodash.throttle')
 // because of this https://github.com/sindresorhus/file-type/issues/78
 // and https://github.com/sindresorhus/copy-text-to-clipboard/issues/5
 const fileType = require('../vendor/file-type')
-const html = require('yo-yo')
 
 /**
  * A collection of small utility functions that help with dom manipulation, adding listeners,
@@ -297,7 +296,7 @@ function createThumbnail (file, width) {
   return onload.then((image) => {
     const height = getProportionalHeight(image, width)
 
-    const canvas = html`<canvas></canvas>`
+    const canvas = document.createElement('canvas')
     canvas.width = width
     canvas.height = height
 
