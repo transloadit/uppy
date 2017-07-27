@@ -15,6 +15,10 @@ First off, let's show you a demo of Uppy surviving a browser crash and picking u
 
 [insert video]
 
+<video alt="Demo video showing the Golden Retriever file restoring plugin in action">
+  <source src="/images/blog/golden-retriever/uppy-golden-retriever-crash-demo.mp4" type="video/mp4">
+</video>
+
 ## Uppy?
 
 For those new here, Uppy is the next-gen open source file uploader for the web. It's made by Transloadit as hence works great with their uploading & encoding platform, but it also works great without. Just add Uppy JavaScript to your website, deploy your own tusd/Apache/Nginx server, and be on your way. Uppy's focus is on the modern web, and we go through extreme lengths to achieve the smoothest of user experiences, and the most durable of reliabilities 🙃
