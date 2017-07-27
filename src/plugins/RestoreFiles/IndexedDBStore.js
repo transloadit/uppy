@@ -83,7 +83,7 @@ class IndexedDBStore {
       const request = transaction.objectStore(this.name).openCursor()
       return new Promise((resolve, reject) => {
         let size = 0
-        request.onsuccess = () => {
+        request.onsuccess = (event) => {
           const cursor = event.target.result
           if (cursor) {
             size += cursor.value.data.size
