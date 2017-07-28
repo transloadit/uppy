@@ -51,7 +51,7 @@ If you really want to know...
 
 Because we cannot access the actual files that we were uploading from disk, we cache them inside the browser.
 
-It all started with a [a prototype](https://github.com/transloadit/uppy/issues/237) by [Richard Willars](https://github.com/richardwillars), which used a Service Worker to store files and states. Service Workers are great for when you close a tab, but when the browser dies, so does the Service Worker. Also: iOS does not support it. So, we looked at Local Storage, which is almost universally available and _can_ survive a browser crash, but can't be used to store blobs. We also considered IndexedDB, which _can_ store blobs, but is less available and has severe limits on how much you can or should store in it.
+It all started with [a prototype](https://github.com/transloadit/uppy/issues/237) by [Richard Willars](https://github.com/richardwillars), which used a Service Worker to store files and states. Service Workers are great for when you close a tab, but when the browser dies, so does the Service Worker. Also: iOS does not support it. So, we looked at Local Storage, which is almost universally available and _can_ survive a browser crash, but can't be used to store blobs. We also considered IndexedDB, which _can_ store blobs, but is less available and has severe limits on how much you can or should store in it.
 
 Since all of these technologies came with specific drawbacks, which one should we pick?
 
