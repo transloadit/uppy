@@ -42,6 +42,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] image cropping on the client (#151)
 - [ ] maybe restrict system file picking dialog too https://github.com/transloadit/uppy/issues/253
 - [ ] uppy-server: what happens if access token expires amid an upload/download process.
+- [ ] s3+transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
 
 ## 1.0 Goals
 
@@ -85,7 +86,7 @@ Theme: Dogumentation.
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju)
 - [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
-- [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 2, release (@goto-bus-stop)
+- [x] uploaders: add direct-to-s3 upload plugin (@goto-bus-stop)
 - [ ] provider: file size sorting (@ifedapoolarewaju)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
