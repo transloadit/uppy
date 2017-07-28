@@ -73,9 +73,7 @@ For the remaining cases, if an upload was already in progress before the crash/r
 
 ## 🚦 Give it a try in alpha
 
-Golden Retriever already works - tail awagging - and feels like magic :sparkles:, but it is also unstable, and hasn’t been tested on all the different devices yet. We encourage you to try it out and give your feedback in the [#268](https://github.com/transloadit/uppy/pull/268) PR. :tada:
-
-Here's how you go about it. First you:
+Golden Retriever already works - tail awagging - and feels like magic :sparkles:, but it is also unstable, and hasn’t been tested on all the different devices yet. We encourage you to try it out:
 
 ```sh
 git clone https://github.com/transloadit/uppy.git
@@ -84,8 +82,6 @@ npm install
 npm run dev
 ```
 
-and then enable the plugin:
-
-Enjoy, and do let us know in that [PR](https://github.com/transloadit/uppy/pull/268) how it turned out for you!
+And give your feedback in the [#268](https://github.com/transloadit/uppy/pull/268) PR. :tada: Enjoy!
 
 The Uppy Team
