@@ -7,13 +7,13 @@ published: false
 
 Don’t you just hate it when you’re about to share the perfect photos from your trip to Iceland, and halfway through, your cat jumps on the keyboard and trashes your browser? Or the battery in your laptop dies? Or you accidentally close the tab or navigate away? We hate that too!
 
-If action games have had checkpoints since 1687 — why can’t file uploaders? Well, as it turns out, they can! We found a way to get those Iceland pics into the hands of your loved ones with near-zero levels of frustration, even after a dreaded Blue Screen of Death! (for those of you who still deal with that in 2017 ;) )
+If action games have had checkpoints since 1687 — why can’t file uploaders? Well, as it turns out, they can! We found a way to get those Iceland pics into the hands of your loved ones with near-zero levels of frustration, even after a dreaded Blue Screen of Death! (if that is still a thing ;)
 
 <!-- more -->
 
 First off, let’s show you a demo 📹 of Uppy surviving a browser crash and picking up right where we left it:
 
-<figure class="wide"><video alt="Demo video showing the Golden Retriever file restoring plugin in action" controls><source src="/images/blog/golden-retriever/uppy-golden-retriever-crash-demo.mp4" type="video/mp4">If your browser does not support the video tag, you can <a href="/images/blog/golden-retriever/uppy-golden-retriever-crash-demo.mp4">download the video</a> to watch it.</video></figure>
+<figure class="wide"><video alt="Demo video showing the Golden Retriever file restoring plugin in action" controls><source src="/images/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4" type="video/mp4">Your browser does not support the video tag, you can <a href="/images/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4">download the video</a> to watch it.</video></figure>
 
 ## Uppy?
 
@@ -21,9 +21,9 @@ For those of you who are new here, Uppy is the next-gen open source file uploade
 
 ## Hacking trip
 
-Our core team is spread across three continents and five cities, and most of us have never met in person, with the majority of communication happening in GitHub and Slack. Just last week, we got together in Berlin for a crazy week of pink limo rides, Indian food and Mario Kart 64. More on that will be coming soon on the [Transloadit blog](https://transloadit.com/blog/).
+Our core team is spread across three continents and five cities, and most of us have never met in person, with the majority of communication happening in GitHub and Slack. Just last week, we got together in Berlin for a crazy week of pink limo rides, Indian food and Mario Kart 64. More on that coming soon on the [Transloadit blog](https://transloadit.com/blog/).
 
-<figure class="wide"><img src="/images/blog/golden-retriever/team-mario-kart.jpg"></figure>
+<figure class="wide"><img src="/images/blog/golden-retriever/uppy-team-kong.jpg"></figure>
 
 While enjoying some world-famous-in-Germany “Flammkuchen”, we were thinking about even more ways to make file uploading better (yes, we really can’t stop thinking about that). We then sat together in one room for a few days of hacking and came up with something neat. 
 
@@ -41,7 +41,7 @@ But wait, we can hear you think, didn't [tus.io](https://tus.io) already make re
 
 For those cases, our Golden Retriever now comes to the rescue! The Golden Retriever saves its memory (state) in browser cache with every move you make. This means that when Uppy suddenly crashes for whatever reason, our plugin will be able to retrieve this memory upon restart, and offer to resume where you left off. Sounds simple enough right? So why hasn't anybody attempted this before?
 
-As it turns out, it was quite tricky. For one thing, no other competing file uploader uses tusm, and resuming uploads without standardized and scrutinized components is really leaving you with more problems than you're trying to solve in the first place. But with tus, we are standing on the shoulders of a giant and need not worry about the resumability aspect of the transmission.
+As it turns out, it’s tricky. For one thing, no other competing file uploader uses tus, and resuming uploads without standardized and scrutinized components is really leaving you with more problems than you’re trying to solve in the first place. But with tus, we are standing on the shoulders of a giant and need not worry about the resumability aspect of the transmission.
 
 So then it becomes all about remembering what was going on with file selection and uploading right before the crash. One of the big issues here is that because of security reasons, Uppy is no longer allowed to access the selected files on your harddisk after a crash. Reasonable of course, but this meant that we had to deploy a number of workarounds that - while it may cause our inner purist some upset - combined, now amount to a pretty sweet user experience for the majority of cases. And in the end, that is what Uppy is all about: pleasing and delighting its users.
 
@@ -49,7 +49,7 @@ So then it becomes all about remembering what was going on with file selection a
 
 If you really want to know...
 
-Because we cannot access the actual files that we were uploading from disk, we cache them inside the browser.
+Because we cannot access the files that we were uploading from disk, we cache them inside the browser.
 
 It all started with [a prototype](https://github.com/transloadit/uppy/issues/237) by [Richard Willars](https://github.com/richardwillars), which used a Service Worker to store files and states. Service Workers are great for when you close a tab, but when the browser dies, so does the Service Worker. Also: iOS does not support it. So, we looked at Local Storage, which is almost universally available and _can_ survive a browser crash, but can't be used to store blobs. We also considered IndexedDB, which _can_ store blobs, but is less available and has severe limits on how much you can or should store in it.
 
@@ -77,15 +77,14 @@ Golden Retriever already works - tail awagging - and feels like magic :sparkles:
 
 Here's how you go about it. First you:
 
-[insert instructions for getting your hands on the latest build]
+```sh
+git clone https://github.com/transloadit/uppy.git
+git checkout feature/restore-files
+npm install
+npm run dev
+```
 
 and then enable the plugin:
-
-```js
-const GoldenRetriever = require('uppy/lib/plugins/GoldenRetriever')
-// [don't we need to also require our service worker here somehow?]
-uppy.use(GoldenRetriever)
-```
 
 Enjoy, and do let us know in that [PR](https://github.com/transloadit/uppy/pull/268) how it turned out for you!
 
