@@ -74,6 +74,7 @@ What we need to do to release Uppy 1.0
 
 - [ ] allow minimizing the Dashboard during upload (@arturi)
 - [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
+- [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
 
 # next
 
