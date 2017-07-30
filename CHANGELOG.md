@@ -110,6 +110,7 @@ Theme: Dogumentation.
 - [x] server: store downloaded files based on uuids (@ifedapoolarewaju)
 - [x] server: store upload state in session (@ifedapoolarewaju)
 - [x] server: add uppy-server url as `i-am` header (@ifedapoolarewaju)
+- [x] server: whitelist multiple uppy clients (@ifedapoolarewaju)
 - [x] server: make uppy client whitelisting optional. You may use wildcard instead (@ifedapoolarewaju)
 - [x] server: options support for redis session storage on standalone server (@ifedapoolarewaju)
 - [x] server: disable socket channel from restarting an already completed file download (@ifedapoolarewaju)
