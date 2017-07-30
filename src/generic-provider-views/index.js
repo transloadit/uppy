@@ -145,7 +145,7 @@ module.exports = class View {
       },
       remote: {
         host: this.plugin.opts.host,
-        url: `${this.plugin.opts.host}/${this.Provider.id}/get/${this.plugin.getItemRequestPath(file)}`,
+        url: `${this.Provider.fileUrl(this.plugin.getItemRequestPath(file))}`,
         body: {
           fileId: this.plugin.getItemId(file)
         }
@@ -288,7 +288,7 @@ module.exports = class View {
     const redirect = `${location.href}${location.search ? '&' : '?'}id=${urlId}`
 
     const authState = btoa(JSON.stringify({ redirect }))
-    const link = `${this.plugin.opts.host}/connect/${this.Provider.authProvider}?state=${authState}`
+    const link = `${this.Provider.authUrl()}?state=${authState}`
 
     const authWindow = window.open(link, '_blank')
     const checkAuth = () => {
@@ -305,7 +305,7 @@ module.exports = class View {
       // split url because chrome adds '#' to redirects
       if (authWindowUrl.split('#')[0] === redirect) {
         authWindow.close()
-        this._loaderWrapper(this.Provider.auth(), this.plugin.onAuth, this.handleError)
+        this._loaderWrapper(this.Provider.checkAuth(), this.plugin.onAuth, this.handleError)
       } else {
         setTimeout(checkAuth, 100)
       }
