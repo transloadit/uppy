@@ -86,7 +86,7 @@ Theme: Dogumentation.
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] core: add error in file progress state? (@arturi)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
-- [ ] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju)
+- [x] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju @kiloreux)
 - [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
 - [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 2, release (@goto-bus-stop)
 - [ ] provider: file size sorting (@ifedapoolarewaju)
@@ -107,6 +107,12 @@ Theme: Dogumentation.
 - [ ] improve docs (@arturi @goto-bus-stop)
 - [ ] GoldenRetriver: recover selected or in progress files after a browser crash or closed tab (@arturi @goto-bus-stop @nqst #268)
 - [x] server: master oauth redirect uri for multiple uppy-server instances
+- [x] server: store downloaded files based on uuids (@ifedapoolarewaju)
+- [x] server: store upload state in session (@ifedapoolarewaju)
+- [x] server: add uppy-server url as `i-am` header (@ifedapoolarewaju)
+- [x] server: make uppy client whitelisting optional. You may use wildcard instead (@ifedapoolarewaju)
+- [x] server: options support for redis session storage on standalone server (@ifedapoolarewaju)
+- [x] server: disable socket channel from restarting an already completed file download (@ifedapoolarewaju)
 
 ## 0.17.0
 
