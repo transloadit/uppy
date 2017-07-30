@@ -16,7 +16,7 @@ module.exports = class Provider {
   }
 
   checkAuth () {
-    return fetch(`${this.opts.host}/${this.id}/auth`, {
+    return fetch(`${this.opts.host}/${this.id}/authorized`, {
       method: 'get',
       credentials: 'include',
       headers: {
