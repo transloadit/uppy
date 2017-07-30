@@ -105,6 +105,7 @@ Theme: Dogumentation.
 - [ ] handle error when upload can’t start (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
 - [ ] improve docs (@arturi @goto-bus-stop)
 - [ ] GoldenRetriver: recover selected or in progress files after a browser crash or closed tab (@arturi @goto-bus-stop @nqst #268)
+- [x] server: master oauth redirect uri for multiple uppy-server instances
 
 ## 0.17.0
 

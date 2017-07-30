@@ -15,7 +15,7 @@ module.exports = class Provider {
     this.name = this.opts.name || _getName(this.id)
   }
 
-  auth () {
+  checkAuth () {
     return fetch(`${this.opts.host}/${this.id}/auth`, {
       method: 'get',
       credentials: 'include',
@@ -30,6 +30,14 @@ module.exports = class Provider {
         return payload.authenticated
       })
     })
+  }
+
+  authUrl () {
+    return `${this.opts.host}/${this.authProvider}/connect`
+  }
+
+  fileUrl (id) {
+    return `${this.opts.host}/${this.id}/get/${id}`
   }
 
   list (directory) {
