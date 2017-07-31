@@ -82,8 +82,6 @@ npm install
 npm run dev
 ```
 
-> A new browser tab with Uppy + Golden Retriever should open in a moment after the last command from above. The app entry point is in `examples/bundled-example/main.js` it rebuilds on change.
-
-Give your feedback in the [#268](https://github.com/transloadit/uppy/pull/268) PR. :tada: Enjoy!
+A new browser tab with Uppy + Golden Retriever should open in a moment after the last command from above. The app entry point is in `examples/bundled-example/main.js`, it rebuilds on change. Enjoy! And please give your feedback in the [#268](https://github.com/transloadit/uppy/pull/268) PR. :tada: 
 
 The Uppy Team
