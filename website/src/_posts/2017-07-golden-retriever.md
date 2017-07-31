@@ -18,7 +18,7 @@ First off, let’s show you a demo 📹 of Uppy surviving a browser crash and pi
 
 ## Uppy?
 
-For those of you who are new here, Uppy is the next-gen open source file uploader for the web. It is made by Transloadit and thus it works great with their uploading & encoding platform - but it also works great without! Simply add Uppy JavaScript to your website, deploy your own tusd/Node.js/Apache/Nginx server, and be on your way. Add [uppy-server](https://github.com/transloadit/uppy-server), and your users will be able to pick files from remote sources like Dropbox and Instagram. Uppy’s focus is on the modern web, and we go through extreme lengths to achieve the smoothest of user experiences, and the most durable of reliabilities. 🙃
+For those of you who are new here, Uppy is the next-gen open source file uploader for the web. It is made by Transloadit and thus it works great with their uploading & encoding platform — but it also works great without! Simply add Uppy JavaScript to your website, deploy your own tusd/Node.js/Apache/Nginx server, and be on your way. Add [uppy-server](https://github.com/transloadit/uppy-server), and your users will be able to pick files from remote sources like Dropbox and Instagram. Uppy’s focus is on the modern web, and we go through extreme lengths to achieve the smoothest of user experiences, and the most durable of reliabilities. 🙃
 
 ## Hacking trip
 
@@ -44,7 +44,7 @@ For those cases, our Golden Retriever now comes to the rescue! It saves Uppy’s
 
 As it turns out, it’s tricky. For one thing, no other competing file uploader uses tus, and resuming uploads without standardized and scrutinized components is really leaving you with more problems than you’re trying to solve in the first place. But with tus, we are standing on the shoulders of a giant and need not worry about the resumability aspect of the transmission.
 
-So then it becomes all about remembering what was going on with file selection and uploading right before the crash. One of the big issues here is that because of security reasons, Uppy is no longer allowed to access the selected files on your disk after a crash. Reasonable of course, but this meant that we had to deploy a number of workarounds that - while it may cause our inner purist some upset - combined, now amount to a pretty sweet user experience for the majority of cases. And in the end, that is what Uppy is all about: pleasing and delighting its users.
+So then it becomes all about remembering what was going on with file selection and uploading right before the crash. One of the big issues here is that because of security reasons, Uppy is no longer allowed to access the selected files on your disk after a crash. Reasonable of course, but this meant that we had to deploy a number of workarounds that — while it may cause our inner purist some upset - combined, now amount to a pretty sweet user experience for the majority of cases. And in the end, that is what Uppy is all about: pleasing and delighting its users.
 
 ## 👻 How it works
 
@@ -74,7 +74,7 @@ For the remaining cases, if an upload was already in progress before the crash/r
 
 ## 🚦 Give it a try in alpha
 
-Golden Retriever already works - tail awagging - and feels like magic :sparkles:, but it is also unstable, and hasn’t been tested on all the different devices yet. We encourage you to try it out though:
+Golden Retriever already works — tail awagging — and feels like magic :sparkles:, but it is also unstable, and hasn’t been tested on all the different devices yet. We encourage you to try it out though:
 
 ```sh
 git clone https://github.com/transloadit/uppy.git
