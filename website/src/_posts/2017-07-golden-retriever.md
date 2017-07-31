@@ -1,5 +1,5 @@
 ---
-title: "The Golden Retriever: Browser-crash-surviving Uploads"
+title: "The Golden Retriever: Making uploads survive browser crashes"
 date: 2017-07-31
 author: arturi
 published: true
@@ -17,7 +17,7 @@ First off, let’s show you a demo 📹 of Uppy surviving a browser crash and pi
 
 ## Uppy?
 
-For those of you who are new here, Uppy is the next-gen open source file uploader for the web. It is made by Transloadit and thus it works great with their uploading & encoding platform - but it also works great without! Simply add Uppy JavaScript to your website, deploy your own tusd/node/Apache/Nginx server, and be on your way. Add [uppy-server](https://github.com/transloadit/uppy-server), and your users will be able to pick files from remote sources like Dropbox and Instagram. Uppy’s focus is on the modern web, and we go through extreme lengths to achieve the smoothest of user experiences, and the most durable of reliabilities. 🙃
+For those of you who are new here, Uppy is the next-gen open source file uploader for the web. It is made by Transloadit and thus it works great with their uploading & encoding platform - but it also works great without! Simply add Uppy JavaScript to your website, deploy your own tusd/Node.js/Apache/Nginx server, and be on your way. Add [uppy-server](https://github.com/transloadit/uppy-server), and your users will be able to pick files from remote sources like Dropbox and Instagram. Uppy’s focus is on the modern web, and we go through extreme lengths to achieve the smoothest of user experiences, and the most durable of reliabilities. 🙃
 
 ## Hacking trip
 
@@ -35,7 +35,7 @@ Uppy has a new friend to play with. Meet the Golden Retriever, our file recovery
 
 As you can see, we’re not yet fully done with training her, but we’re getting there! 😄
 
-But wait, we can hear you think, didn't [tus.io](https://tus.io) already make resumable uploads possible? Yes indeed, and it does an awesome job at recovering from poor network conditions. However, if your browser suddenly decided to crash, Uppy would be clueless about what it was doing before, and you would have to re-select and edit your files all over. 
+But wait, we can hear you think, didn't [tus.io](https://tus.io) already make resumable uploads possible? Yes indeed, and it does an awesome job at recovering from poor network conditions. However, if your browser suddenly decided to crash, Uppy would have no idea about what it was doing before, and you would have to re-select and edit your files all over. 
 
 <center><img src="/images/blog/golden-retriever/no-idea-dog-3.gif" alt="Dog has no idea what he is doing" title="Keep trying, buddy!"></center>
 
@@ -55,7 +55,7 @@ It all started with [a prototype](https://github.com/transloadit/uppy/issues/237
 
 Since all of these technologies came with specific drawbacks, which one should we pick?
 
-Why, all of them, of course! By combining the three, they cover each other’s shortcomings with their own features. Here's what goes where: 
+Why, all of them, of course! By combining the three, they cover each other’s disadvantages with their own advantages. Here's what goes where: 
 
 - Local Storage stores all files state, without blobs (the actual data of the file), and restores this meta information on boot.
 - Service Worker stores references to all file blobs in memory. This should persist when navigating away from a page or closing the browser tab, but will likely get destroyed after a browser crash / quit.
@@ -65,7 +65,7 @@ Now when Uppy starts, we restore all meta information from Local Storage to get 
 
 In some cases (very large files or a complete browser crash), we won’t be able to recover the file, but we do have valuable information about it, such as the name and a preview.
 
-Our current idea is that we could present the user with “ghost files” and ask them to re-add these files. Here’s an early mockup, but we would love more feedback on this:
+Our current idea is that we could present the user with “ghost files” for these edge cases, and ask them to re-add such files. Here’s an early mockup, but we would love more feedback on this:
 
 <img src="/images/blog/golden-retriever/desktop-ghost.png" alt="Design mockup with ghosts" title="Design mockup with ghosts">
 
