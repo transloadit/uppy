@@ -67,7 +67,7 @@ module.exports = class Instagram extends Plugin {
     this.target = this.mount(target, plugin)
 
     // catch error here.
-    this[this.id].auth().then(this.onAuth).catch(this.view.handleError)
+    this[this.id].checkAuth().then(this.onAuth).catch(this.view.handleError)
     return
   }
 
