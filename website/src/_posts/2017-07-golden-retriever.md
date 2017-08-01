@@ -6,15 +6,23 @@ image: "http://uppy.io/images/blog/golden-retriever/uppy-team-kong.jpg"
 published: true
 ---
 
+**TLDR;** We're on a mission to improve file uploading on the web. We released [tus](https://tus.io): the open protocol for resumable file uploads, as well as Uppy: the next open source file uploader for web browsers. Uppy uses tus which makes it resilient to poor network conditions and crashing servers. Today we're launching an Uppy feature that also makes it resilient to browser crashes, which we believe is  an industry first. We're sharing a quick [demo](#demo) video, a bit of [background](#uppy), [how](#how) we exactly achieved this, and how you can [try](#try) it yourself.
+
 Don’t you just hate it when you’re about to share the perfect photos from your trip to Iceland, and halfway through, your cat jumps on the keyboard and trashes your browser? Or the battery in your laptop dies? Or you accidentally close the tab or navigate away? We hate that too!
 
 If action games have had checkpoints since 1687 — why can’t file uploaders? Well, as it turns out, they can! We found a way to get those Iceland pics into the hands of your loved ones with near-zero levels of frustration, even after a dreaded Blue Screen of Death! (if that is still a thing ;)
+
+<!-- more -->
+
+<a name="demo"></a>
+
+## Demo
 
 First off, let’s show you a demo 📹 of Uppy surviving a browser crash and picking up right where we left it:
 
 <figure class="wide"><video alt="Demo video showing the Golden Retriever file restoring plugin in action" controls><source src="/images/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4" type="video/mp4">Your browser does not support the video tag, you can <a href="/images/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4">download the video</a> to watch it.</video></figure>
 
-<!-- more -->
+<a name="uppy"></a>
 
 ## Uppy?
 
@@ -46,6 +54,8 @@ As it turns out, it’s tricky. For one thing, no other competing file uploader 
 
 So then it becomes all about remembering what was going on with file selection and uploading right before the crash. One of the big issues here is that because of security reasons, Uppy is no longer allowed to access the selected files on your disk after a crash. Reasonable of course, but this meant that we had to deploy a number of workarounds that — while it may cause our inner purist some upset - combined, now amount to a pretty sweet user experience for the majority of cases. And in the end, that is what Uppy is all about: pleasing and delighting its users.
 
+<a name="how"></a>
+
 ## 👻 How it works
 
 If you really want to know...
@@ -71,6 +81,8 @@ Our current idea is that we could present the user with “ghost files” for th
 <img src="/images/blog/golden-retriever/desktop-ghost.png" alt="Design mockup with ghosts" title="Design mockup with ghosts">
 
 For the remaining cases, if an upload was already in progress before the crash/refresh, and especially if it was resumable (via [tus](https://tus.io), for example), Golden Retriever just picks up from where it all went south. Our Golden Retriever will also clean up after herself: when files are successfully uploaded, or you decide to delete them, they will be removed from all “permanent” storages.
+
+<a name="try"></a>
 
 ## 🚦 Give it a try in alpha
 
