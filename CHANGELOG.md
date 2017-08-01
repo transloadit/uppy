@@ -75,12 +75,14 @@ What we need to do to release Uppy 1.0
 - [ ] allow minimizing the Dashboard during upload (@arturi)
 - [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
 - [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
+- [ ] DnD Bar (@arturi)
+- [ ] provider: improve UI: add icons for file types? (@arturi)
 
 # next
 
 ## 0.18.0
 
-To be released: 2017-07-28.
+To be released: 2017-08-10.
 Theme: Dogumentation.
 
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
@@ -92,20 +94,22 @@ Theme: Dogumentation.
 - [ ] provider: file size sorting (@ifedapoolarewaju)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
-- [ ] provider: improve UI: add icons for file types? (@arturi)
 - [ ] uppy: flag to upload all files, even `uploadComplete` ones (@arturi)
 - [x] transloadit: emit an event when an assembly is created (@goto-bus-stop / #244)
 - [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
-- [x] webcam: add 1, 2, 3, smile! to webcam (@arturi #187)
+- [x] webcam: add 1, 2, 3, smile! to webcam, onBeforeSnapshothook (@arturi, #187, #248)
 - [x] transloadit: function option for file-dependent `params` (@goto-bus-stop / #250)
 - [ ] docs: on using plugins, all options, list of plugins, i18n (@arturi, @goto-bus-stop, @ifedapoolarewaju)
 - [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
+- [x] core: add getFile method (@goto-bus-stop, #263)
 - [x] website: live example on the homepage, “try me” (@arturi)
-- [ ] DnD Bar (@arturi)
 - [x] provider: use informer to display errors (@ifedapoolarewaju)
 - [ ] handle error when upload can’t start (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
-- [ ] improve docs (@arturi @goto-bus-stop)
-- [ ] GoldenRetriver: recover selected or in progress files after a browser crash or closed tab (@arturi @goto-bus-stop @nqst #268)
+- [x] GoldenRetriver: recover selected or in progress files after a browser crash or closed tab: alpha-version, add LocalStorage, Service Worker and IndexedDB (@arturi @goto-bus-stop @nqst #268)
+- [ ] GoldenRetriver: add file limits, figure out what restores from where, add “ghost” files, add throttling for localStorage state sync (@goto-bus-stop @arturi)
+- [x] XHRUpload: a successor to Multipart, more flexible (@goto-bus-stop #242)
+- [x] tus: Save upload URL early on (@goto-bus-stop #261)
+- [x] tus: return immediately if no files are selected (@goto-bus-stop #245)
 - [x] server: master oauth redirect uri for multiple uppy-server instances
 - [x] server: store downloaded files based on uuids (@ifedapoolarewaju)
 - [x] server: store upload state in session (@ifedapoolarewaju)
@@ -114,6 +118,7 @@ Theme: Dogumentation.
 - [x] server: make uppy client whitelisting optional. You may use wildcard instead (@ifedapoolarewaju)
 - [x] server: options support for redis session storage on standalone server (@ifedapoolarewaju)
 - [x] server: disable socket channel from restarting an already completed file download (@ifedapoolarewaju)
+- [x] server: use uppy informer for server errors (@ifedapoolarewaju, #272)
 
 ## 0.17.0
 
