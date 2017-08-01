@@ -42,6 +42,7 @@ const uppy = Uppy({
     minNumberOfFiles: false,
     allowedFileTypes: false
   },
+  meta: {},
   onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
   onBeforeUpload: (files, done) => Promise.resolve(),
   locale: defaultLocale
@@ -55,6 +56,18 @@ Starts upload automatically after first file is selected.
 ### `restrictions`
 
 Allows you to provide rules and conditions for which files can be selected.
+
+### `meta`
+
+Metadata object, pass things like public keys, usernames, tags or whatever:
+
+```js
+meta: {
+  username: 'John'
+}
+```
+
+Can be altered with `.setMeta({username: 'Peter'})`.
 
 ## `onBeforeFileAdded`
 
@@ -134,7 +147,7 @@ locale: {
 We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/master/index.js#L37-L60).
 
 
-## Uppy Methods
+## Methods
 
 ### `uppy.use(plugin, opts)`
 
@@ -145,22 +158,70 @@ const Uppy = require('uppy/lib/core')
 const DragDrop = require('uppy/lib/plugins/DragDrop')
 
 const uppy = Uppy()
-uppy.use(DragDrop)
+uppy.use(DragDrop, {target: 'body'})
 ```
 
 ### `uppy.run()`
 
-Initializes everything after setup.
+Initializes everything after setup. Must be called before calling `.upload()` or using Uppy in any meaningful way.
 
-### uppy.on('event', action)
+### `uppy.addFile(file)`
 
-Subscribe to an event.
+```js
+uppy.addFile({
+  name: 'my-file.jpg', // file name
+  type: 'image/jpeg', // file type
+  data: fileBlob, // file blob
+  source: 'Local', // optional, sets what added the file, for example, Instagram
+  isRemote: false // optional, set to true if actual file is not in the browser, but on some remote server, like when using uppy-server + Instagram, for example
+})
+```
+
+### `uppy.setState(patch)`
+
+Update Uppy’s internal state. ...
+
+```js
+uppy.setState({})
+```
+
+### `uppy.setMeta(data)`
+
+Alters global `meta` object is state, the one that can be set in Uppy options and gets merged with all newly added files.
+
+```js
+uppy.setMeta({resize: 1500})
+```
+
+### `uppy.updateMeta(data, fileID)`
+
+Updated metadata for a specific file.
+
+```js
+uppy.updateMeta('myfileID', {resize: 1500})
+```
+
+### `uppy.reset()`
+
+Stop all uploads in progress and clear file selection, set progress to 0. Basically, return things to the way they were before any user input. 
+
+### `uppy.close()`
+
+Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
+
+### `uppy.upload()`
+
+Start uploading selected files.
+
+### `uppy.on('event', action)`
+
+Subscribe to an uppy-event. See full list of events below.
 
 ## Events
 
 Uppy exposes events that you can subscribe to in your app:
 
-### core:upload-progress
+### `core:upload-progress`
 
 Fired each time file upload progress is available, `data` object looks like this:
 
