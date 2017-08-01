@@ -33,7 +33,7 @@ module.exports = class Provider {
   }
 
   authUrl () {
-    return `${this.opts.host}/${this.authProvider}/connect`
+    return `${this.opts.host}/${this.id}/connect`
   }
 
   fileUrl (id) {
