@@ -1,8 +1,9 @@
 ---
 type: api
-order: 0
+order: 10
 title: "Architecture"
 permalink: api/architecture
+published: false
 ---
 
 Uppy file uploader consists of a lean [Core](https://github.com/transloadit/uppy/blob/master/src/core/Core.js) module and [Plugins](https://github.com/transloadit/uppy/tree/master/src/plugins) (see simple [Input](https://github.com/transloadit/uppy/blob/master/src/plugins/Formtag.js) as an example) that extend it’s functionality. Like this:

@@ -111,6 +111,7 @@ markdown:
   breaks: true
   smartLists: true
   smartypants: true
+  modifyAnchors: 1
 
 feed:
   type: atom

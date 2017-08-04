@@ -1,37 +1,11 @@
 ---
-type: api
-order: 0
-title: "API"
-permalink: api/
+type: docs
+order: 1
+title: "Uppy"
+permalink: docs/uppy
 ---
 
-## The Gist
-
-Uppy file uploader consists of a Core module and a bunch of Plugins that extend it’s functionality. Like this:
-
-```js
-const Uppy = require('uppy/lib/core')
-const Dashboard = require('uppy/lib/plugins/Dashboard')
-const Tus10 = require('uppy/lib/plugins/Tus10')
- 
-const uppy = Uppy({ autoProceed: false })
-  .use(Dashboard, {
-    trigger: '#select-files', 
-    replaceTargetContent: true
-  })
-  .use(Tus10, {endpoint: '://master.tus.io/files/'})
-  .run()
- 
-uppy.on('core:success', (files) => {
-  console.log(`Upload complete! We’ve uploaded these files: ${files}`)
-})
-```
-
-Check out the [full list of Uppy options](#uppy-options).
-
-Uppy is not very useful just by itself. To add a nice UI for selecting files, manipulating them and even uploading, we use [various plugins](#plugins).
-
-## Uppy Options
+## Options
 
 ```js
 const uppy = Uppy({
@@ -67,9 +41,9 @@ meta: {
 }
 ```
 
-Can be altered with `.setMeta({username: 'Peter'})`.
+Can be altered with `uppy.setMeta({username: 'Peter'})` method.
 
-## `onBeforeFileAdded`
+### `onBeforeFileAdded`
 
 A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this function to run any number of custom checks on the selected file, or manipulating it, like optimizing a file name, for example.
 
@@ -82,7 +56,7 @@ onBeforeFileAdded: (currentFile, files) => {
 }
 ```
 
-## `onBeforeUpload`
+### `onBeforeUpload`
 
 A function run before an upload begins. Gets passed `files` object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
 
@@ -95,7 +69,7 @@ onBeforeUpload: (files) => {
 }
 ```
 
-## `locale`
+### `locale`
 
 Same deal as in plugins, this allows you to override language strings:
 
@@ -118,40 +92,21 @@ locale: {
 
 As well as the pluralization function, which is used to determin which string will be used for the provided `smart_count` number.
 
-For Russian language:
+For example, for Icelandic language the pluralization function will be:
 
-```js
-locale: {
-  pluralize: (n) => {
-    if (n % 10 === 1 && n % 100 !== 11) {
-      return 0
-    }
-
-    if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) {
-      return 1
-    }
-
-    return 2
-  }
-}
-```
-
-Icelandic:
-
-```js
+``` js
 locale: {
   pluralize: (n) => (n % 10 !== 1 || n % 100 === 11) ? 1 : 0
 }
-``` 
+```
 
 We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/master/index.js#L37-L60).
-
 
 ## Methods
 
 ### `uppy.use(plugin, opts)`
 
-Add a plugin to Uppy.
+Add a plugin to Uppy, with an optional plugin options object.
 
 ```js
 const Uppy = require('uppy/lib/core')
@@ -165,7 +120,9 @@ uppy.use(DragDrop, {target: 'body'})
 
 Initializes everything after setup. Must be called before calling `.upload()` or using Uppy in any meaningful way.
 
-### `uppy.addFile(file)`
+### `uppy.addFile(fileObject)`
+
+Add a new file to Uppy’s internal state.
 
 ```js
 uppy.addFile({
@@ -177,13 +134,66 @@ uppy.addFile({
 })
 ```
 
-### `uppy.setState(patch)`
+`addFile` attemps to determine file type by [magic bytes](https://github.com/sindresorhus/file-type) + the provided `type` + extension; then checks if the file can be added, considering `uppy.opts.restrictions`, sets metadata and generates a preview, if it’s an image.
 
-Update Uppy’s internal state. ...
+If `uppy.opts.autoProceed === true`, Uppy will begin uploading after the first file is added.
+
+### `uppy.getFile(fileID)`
+
+A shortcut method that returns a specific file object from `uppy.state` by its `fileID`.
 
 ```js
-uppy.setState({})
+const file = uppy.getFile('uppyteamkongjpg1501851828779')
+const img = document.createElement('img')
+img.src = file.preivew
+document.body.appendChild(img)
 ```
+
+### `uppy.setState(patch)`
+
+Update `uppy.state`. Usually this method is called internally, but in some cases it might be useful to alter something in `uppy.state` directly.
+
+Uppy’s default state on initialization:
+
+```js
+this.state = {
+  files: {},
+  capabilities: {
+    resumableUploads: false
+  },
+  totalProgress: 0,
+  meta: Object.assign({}, this.opts.meta)
+}
+```
+
+Updating state:
+
+```js
+uppy.setState({
+  smth: true
+})
+```
+
+We don’t mutate `uppy.state`, so internally `setState` creates a new copy of state and replaces uppy.state with it. However, when updating values, it’s your responsibility to not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here’s an example from Uppy.Core that updates progress for a particular file in state:
+
+```js
+const updatedFiles = Object.assign({}, uppy.getState().files)
+const updatedFile = Object.assign({}, updatedFiles[fileID],
+  Object.assign({}, {
+    progress: Object.assign({}, updatedFiles[fileID].progress, {
+      bytesUploaded: data.bytesUploaded,
+      bytesTotal: data.bytesTotal,
+      percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
+    })
+  }
+))
+updatedFiles[data.id] = updatedFile
+uppy.setState({files: updatedFiles})
+```
+
+### `uppy.getState()`
+
+Returns `uppy.state`, which you can also use directly.
 
 ### `uppy.setMeta(data)`
 
@@ -208,6 +218,10 @@ Stop all uploads in progress and clear file selection, set progress to 0. Basica
 ### `uppy.close()`
 
 Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
+
+### `uppy.log(msgString)`
+
+Logs stuff to console, only if `uppy.opts.debug` is set to true. Silent in production.
 
 ### `uppy.upload()`
 
