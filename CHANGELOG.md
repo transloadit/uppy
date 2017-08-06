@@ -119,6 +119,7 @@ Theme: Dogumentation.
 - [x] server: options support for redis session storage on standalone server (@ifedapoolarewaju)
 - [x] server: disable socket channel from restarting an already completed file download (@ifedapoolarewaju)
 - [x] server: use uppy informer for server errors (@ifedapoolarewaju, #272)
+- [x] server: start uppy-server as binary `uppy-server` (@ifedapoolarewaju)
 
 ## 0.17.0
 
