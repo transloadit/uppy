@@ -49,6 +49,7 @@ module.exports = class DashboardUI extends Plugin {
       semiTransparent: false,
       defaultTabIcon: defaultTabIcon(),
       showProgressDetails: false,
+      hideUploadButton: false,
       note: false,
       locale: defaultLocale
     }
@@ -359,6 +360,7 @@ module.exports = class DashboardUI extends Plugin {
       activePanel: state.modal.activePanel,
       progressindicators: progressindicators,
       autoProceed: this.core.opts.autoProceed,
+      hideUploadButton: this.opts.hideUploadButton,
       id: this.id,
       hideModal: this.hideModal,
       showProgressDetails: this.opts.showProgressDetails,

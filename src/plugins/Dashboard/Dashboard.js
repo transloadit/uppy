@@ -116,7 +116,7 @@ module.exports = function Dashboard (props) {
           })}
 
           <div class="UppyDashboard-actions">
-            ${!props.autoProceed && props.newFiles.length > 0
+            ${!props.hideUploadButton && !props.autoProceed && props.newFiles.length > 0
               ? UploadBtn({
                 i18n: props.i18n,
                 startUpload: props.startUpload,
