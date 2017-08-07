@@ -9,7 +9,7 @@ function uppySelectFakeFile () {
     ['data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='],
     {type: 'image/svg+xml'}
   )
-  window.UppyAddFile({
+  window._uppy.addFile({
     source: 'acceptance-test',
     name: 'test-file',
     type: 'image/svg+xml',
