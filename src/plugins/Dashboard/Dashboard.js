@@ -57,13 +57,9 @@ module.exports = function Dashboard (props) {
           onpaste=${handlePaste}
           onload=${() => props.updateDashboardElWidth()}>
 
-    <button class="UppyDashboard-close"
-            type="button"
-            aria-label="${props.i18n('closeModal')}"
-            title="${props.i18n('closeModal')}"
-            onclick=${props.hideModal}>${closeIcon()}</button>
-
-    <div class="UppyDashboard-overlay" onclick=${props.hideModal}></div>
+    <div class="UppyDashboard-overlay" onclick=${() => {
+      // props.hideModal
+    }}></div>
 
     <div class="UppyDashboard-inner"
          tabindex="0"
@@ -71,6 +67,12 @@ module.exports = function Dashboard (props) {
           ${props.inline && props.maxWidth ? `max-width: ${props.maxWidth}px;` : ''}
           ${props.inline && props.maxHeight ? `max-height: ${props.maxHeight}px;` : ''}
          ">
+      <button class="UppyDashboard-close"
+              type="button"
+              aria-label="${props.i18n('closeModal')}"
+              title="${props.i18n('closeModal')}"
+              onclick=${props.hideModal}>${closeIcon()}</button>
+
       <div class="UppyDashboard-innerWrap">
 
         ${Tabs({
