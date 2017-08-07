@@ -40,6 +40,7 @@ class Uppy {
         minNumberOfFiles: false,
         allowedFileTypes: false
       },
+      forceUploadComplete: false,
       onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
       onBeforeUpload: (files, done) => Promise.resolve(),
       locale: defaultLocale
@@ -743,7 +744,10 @@ class Uppy {
         //
         // filter files that are now yet being uploaded / haven’t been uploaded
         // and remote too
-        if (!file.progress.uploadStarted || file.isRemote) {
+
+        if (this.opts.forceUploadComplete) {
+          waitingFileIDs.push(file.id)
+        } else if (!file.progress.uploadStarted || file.isRemote) {
           waitingFileIDs.push(file.id)
         }
       })
