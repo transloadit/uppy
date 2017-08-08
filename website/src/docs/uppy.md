@@ -2,7 +2,7 @@
 type: docs
 order: 1
 title: "Uppy"
-permalink: docs/uppy
+permalink: docs/uppy/
 ---
 
 ## Options
@@ -23,15 +23,15 @@ const uppy = Uppy({
 })
 ```
 
-### `autoProceed`
+### `autoProceed: true`
 
-Starts upload automatically after first file is selected.
+Starts upload automatically after the first file is selected.
 
-### `restrictions`
+### `restrictions: {}`
 
 Allows you to provide rules and conditions for which files can be selected.
 
-### `meta`
+### `meta: {}`
 
 Metadata object, pass things like public keys, usernames, tags or whatever:
 
@@ -43,7 +43,7 @@ meta: {
 
 Can be altered with `uppy.setMeta({username: 'Peter'})` method.
 
-### `onBeforeFileAdded`
+### `onBeforeFileAdded: (currentFile, files) => Promise.resolve()`
 
 A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this function to run any number of custom checks on the selected file, or manipulating it, like optimizing a file name, for example.
 
@@ -56,7 +56,7 @@ onBeforeFileAdded: (currentFile, files) => {
 }
 ```
 
-### `onBeforeUpload`
+### `onBeforeUpload: (files, done) => Promise.resolve()`
 
 A function run before an upload begins. Gets passed `files` object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
 
@@ -69,7 +69,7 @@ onBeforeUpload: (files) => {
 }
 ```
 
-### `locale`
+### `locale: {}`
 
 Same deal as in plugins, this allows you to override language strings:
 

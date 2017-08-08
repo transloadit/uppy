@@ -2,7 +2,7 @@
 type: api
 order: 10
 title: "Architecture"
-permalink: api/architecture
+permalink: api/architecture/
 published: false
 ---
 

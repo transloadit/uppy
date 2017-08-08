@@ -1,17 +1,17 @@
 ---
 title: "Plugins"
 type: docs
-permalink: docs/plugins
+permalink: docs/plugins/
 order: 2
 ---
 
-Plugins are what make Uppy useful, they help select, manipulate and upload files.
+Plugins are what make Uppy useful: they help select, manipulate and upload files.
 
 **Acquirers**
 - Dashboard
 - DragDrop
 - FileInput
-- Provider Plugins
+- [Provider Plugins](#Provider-Plugins) (remote sources that work with `uppy-server`)
   - Instagram
   - GoogleDrive
   - Dropbox
@@ -22,7 +22,9 @@ Plugins are what make Uppy useful, they help select, manipulate and upload files
 - S3
 
 **Progress**
-
+- ProgressBar
+- StatusBar
+- Informer
 
 **Helpers**
 - GoldenRetriever
@@ -61,6 +63,16 @@ In the example above the `Dashboard` gets rendered into an element with ID `uppy
 ### `endpoint`
 
 Used by uploader plugins, such as Tus and XHRUpload. Expects a `string` with a url that will be used for file uploading.
+
+### `host`
+
+Used by remote provider plugins, such as Google Drive, Instagram or Dropbox. Specifies the url to your running `uppy-server`. This allows uppy to know what server to connect to when server related operations are required by the provider plugin.
+
+```js
+// for Google Drive
+const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
+uppy.use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
+```
 
 ### `setMetaFromTargetForm`
 
@@ -123,13 +135,11 @@ See plugin documentation below for other plugin-specific options.
 
 ## Provider Plugins
 
-The Provider plugins help you connect to your accounts with remote file providers such as [Dropbox](https://dropbox.com),
-[Google Drive](https://drive.google.com), [Instagram](https://instagram.com). Because this requires server to server communication, they work tightly with
-[uppy-server](https://github.com/transloadit/uppy-server) to manage the server to server authroization for your account. Virtually most of the communication(file download/upload) is done on the server-to-server end, so this saves you the stress of data consumption.
+The Provider plugins help you connect to your accounts with remote file providers such as [Dropbox](https://dropbox.com), [Google Drive](https://drive.google.com), [Instagram](https://instagram.com). Because this requires server to server communication, they work tightly with [uppy-server](https://github.com/transloadit/uppy-server) to manage the server to server authroization for your account. Virtually most of the communication (file download/upload) is done on the server-to-server end, so this saves you the stress of data consumption on the client.
 
-As of now the supported providers are **Dropbox**, **GoogleDrive**, and **Instagram**.
+As of now, the supported providers are **Dropbox**, **GoogleDrive**, and **Instagram**.
 
-Usage of the Provider plugins is not so different from any other *acquirer* plugin, except that it takes an extra option `host`, which specifies the url to your running `uppy-server`. This allows uppy to know what server to connect to when server related operations are required by the provider plugin. Here's a quick example.
+Usage of the Provider plugins is not that different from any other *acquirer* plugin, except that it takes an extra option `host`, which specifies the url to your running `uppy-server`. This allows Uppy to know what server to connect to when server related operations are required by the provider plugin. Here's a quick example.
 
 ```js
 const Uppy = require('uppy/lib/core')
