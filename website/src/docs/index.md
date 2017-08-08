@@ -67,7 +67,7 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
 
 - [Uppy](/docs/uppy.html) — full list of options, methods and events.
 - [Plugins](/docs/plugins.html) — list of Uppy plugins and their options.
-- Server — setting up and running an uppy-server instance, which adds support for Instagram, Dropbox, Google Drive and other remote sources.
+- [Server](https://github.com/transloadit/uppy-server) — setting up and running an uppy-server instance, which adds support for Instagram, Dropbox, Google Drive and other remote sources.
 - Making a plugin — how to write a plugin for Uppy.
 
 ## Browser Support

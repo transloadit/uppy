@@ -11,6 +11,10 @@ Plugins are what make Uppy useful, they help select, manipulate and upload files
 - Dashboard
 - DragDrop
 - FileInput
+- Provider Plugins
+  - Instagram
+  - GoogleDrive
+  - Dropbox
 
 **Uploaders**
 - Tus
@@ -117,4 +121,34 @@ See plugin documentation below for other plugin-specific options.
 
 ## XHRUpload
 
-## Instagram
+## Provider Plugins
+
+The Provider plugins help you connect to your accounts with remote file providers such as [Dropbox](https://dropbox.com),
+[Google Drive](https://drive.google.com), [Instagram](https://instagram.com). Because this requires server to server communication, they work tightly with
+[uppy-server](https://github.com/transloadit/uppy-server) to manage the server to server authroization for your account. Virtually most of the communication(file download/upload) is done on the server-to-server end, so this saves you the stress of data consumption.
+
+As of now the supported providers are **Dropbox**, **GoogleDrive**, and **Instagram**.
+
+Usage of the Provider plugins is not so different from any other *acquirer* plugin, except that it takes an extra option `host`, which specifies the url to your running `uppy-server`. This allows uppy to know what server to connect to when server related operations are required by the provider plugin. Here's a quick example.
+
+```js
+const Uppy = require('uppy/lib/core')
+const DragDrop = require('uppy/lib/plugins/Dashboard')
+const uppy = Uppy()
+uppy.use(Dashboard, {
+  trigger: '#uppyModalOpener',
+  target: '#uppy',
+})
+
+// for Google Drive
+const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
+uppy.use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
+
+// for Dropbox
+const Dropbox = require('uppy/lib/plugins/Dropbox')
+uppy.use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
+
+// for Instagram
+const Instagram = require('uppy/lib/plugins/Instagram')
+uppy.use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
+```
