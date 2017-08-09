@@ -96,7 +96,7 @@ module.exports = class View {
   }
 
   checkAuth () {
-    this.Provider.auth()
+    this.Provider.checkAuth()
       .then(this.plugin.onAuth)
       .catch(this.handleError)
   }
