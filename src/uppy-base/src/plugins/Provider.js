@@ -39,7 +39,7 @@ module.exports = class Provider {
     return response
   }
 
-  auth () {
+  checkAuth () {
     return fetch(`${this.hostname}/${this.id}/authorized`, {
       method: 'get',
       credentials: 'include',
