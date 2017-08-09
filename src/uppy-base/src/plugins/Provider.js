@@ -39,8 +39,8 @@ module.exports = class Provider {
     return response
   }
 
-  auth () {
-    return fetch(`${this.hostname}/${this.id}/auth`, {
+  checkAuth () {
+    return fetch(`${this.hostname}/${this.id}/authorized`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -55,6 +55,14 @@ module.exports = class Provider {
         return payload.authenticated
       })
     })
+  }
+
+  authUrl () {
+    return `${this.opts.host}/${this.id}/connect`
+  }
+
+  fileUrl (id) {
+    return `${this.opts.host}/${this.id}/get/${id}`
   }
 
   list (directory) {

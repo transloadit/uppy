@@ -26,7 +26,8 @@ class Uppy {
           1: 'You have to select at least %{smart_count} files'
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
-        youCanOnlyUploadFileTypes: 'You can only upload:'
+        youCanOnlyUploadFileTypes: 'You can only upload:',
+        uppyServerError: 'Connection with Uppy server failed'
       }
     }
 
@@ -95,8 +96,8 @@ class Uppy {
     if (this.opts.debug) {
       global.UppyState = this.state
       global.uppyLog = ''
-      global.UppyAddFile = this.addFile.bind(this)
-      global._Uppy = this
+      // global.UppyAddFile = this.addFile.bind(this)
+      global._uppy = this
     }
   }
 
@@ -668,7 +669,7 @@ class Uppy {
     // Install all plugins
     // this.installAll()
 
-    return
+    return this
   }
 
   upload () {

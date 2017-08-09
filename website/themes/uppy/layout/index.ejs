@@ -87,15 +87,15 @@
   var TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
   
   var uppy = Uppy.Core({debug: true, autoProceed: false})
-  uppy.use(Uppy.Dashboard, {trigger: '#select-files', target: '#upload-form', replaceTargetContent: true})
-  uppy.use(Uppy.Tus10, {endpoint: TUS_ENDPOINT})
-  uppy.use(Uppy.MetaData, {
+  .use(Uppy.Dashboard, {trigger: '#select-files', target: '#upload-form', replaceTargetContent: true})
+  .use(Uppy.Tus10, {endpoint: TUS_ENDPOINT})
+  .use(Uppy.MetaData, {
       fields: [
         { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
         { id: 'description', name: 'Description', value: 'none', placeholder: 'describe what the file is for' }
       ]
     })
-  uppy.run()
+  .run()
 
   uppy.on('core:success', (files) => {
     console.log(`Upload complete! We’ve uploaded these files: ${files}`)

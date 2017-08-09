@@ -13,6 +13,7 @@ module.exports = class XHRUpload extends Plugin {
     const defaultOptions = {
       formData: true,
       fieldName: 'files[]',
+      method: 'post',
       metaFields: null,
       responseUrlFieldName: 'url',
       bundle: true,
@@ -77,7 +78,7 @@ module.exports = class XHRUpload extends Plugin {
       xhr.addEventListener('load', (ev) => {
         if (ev.target.status >= 200 && ev.target.status < 300) {
           const resp = opts.getResponseData(xhr)
-          const uploadURL = resp[this.responseUrlFieldName]
+          const uploadURL = resp[opts.responseUrlFieldName]
 
           this.core.emitter.emit('core:upload-success', file.id, resp, uploadURL)
 
