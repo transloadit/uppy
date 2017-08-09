@@ -7,16 +7,40 @@ const _getName = (id) => {
 }
 
 module.exports = class Provider {
-  constructor (opts) {
+  constructor (core, opts) {
+    this.core = core
     this.opts = opts
     this.provider = opts.provider
     this.id = this.provider
     this.authProvider = opts.authProvider || this.provider
     this.name = this.opts.name || _getName(this.id)
+
+    this.onReceiveResponse = this.onReceiveResponse.bind(this)
+  }
+
+  get hostname () {
+    const uppyServer = this.core.state.uppyServer || {}
+    const host = this.opts.host
+    return uppyServer[host] || host
+  }
+
+  onReceiveResponse (response) {
+    const uppyServer = this.core.state.uppyServer || {}
+    const host = this.opts.host
+    const headers = response.headers
+    // Store the self-identified domain name for the uppy-server we just hit.
+    if (headers.has('i-am') && headers.get('i-am') !== uppyServer[host]) {
+      this.core.setState({
+        uppyServer: Object.assign({}, uppyServer, {
+          [host]: headers.get('i-am')
+        })
+      })
+    }
+    return response
   }
 
   checkAuth () {
-    return fetch(`${this.opts.host}/${this.id}/authorized`, {
+    return fetch(`${this.hostname}/${this.id}/authorized`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -24,6 +48,7 @@ module.exports = class Provider {
         'Content-Type': 'application/json'
       }
     })
+    .then(this.onReceiveResponse)
     .then((res) => {
       return res.json()
       .then((payload) => {
@@ -41,7 +66,7 @@ module.exports = class Provider {
   }
 
   list (directory) {
-    return fetch(`${this.opts.host}/${this.id}/list/${directory || ''}`, {
+    return fetch(`${this.hostname}/${this.id}/list/${directory || ''}`, {
       method: 'get',
       credentials: 'include',
       headers: {
@@ -49,11 +74,12 @@ module.exports = class Provider {
         'Content-Type': 'application/json'
       }
     })
+    .then(this.onReceiveResponse)
     .then((res) => res.json())
   }
 
   logout (redirect = location.href) {
-    return fetch(`${this.opts.host}/${this.id}/logout?redirect=${redirect}`, {
+    return fetch(`${this.hostname}/${this.id}/logout?redirect=${redirect}`, {
       method: 'get',
       credentials: 'include',
       headers: {

@@ -60,6 +60,7 @@ module.exports = class View {
     this.getFolder = this.getFolder.bind(this)
     this.getNextFolder = this.getNextFolder.bind(this)
     this.logout = this.logout.bind(this)
+    this.checkAuth = this.checkAuth.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleDemoAuth = this.handleDemoAuth.bind(this)
     this.sortByTitle = this.sortByTitle.bind(this)
@@ -92,6 +93,12 @@ module.exports = class View {
     })
 
     this.updateState({ folders, files })
+  }
+
+  checkAuth () {
+    this.Provider.auth()
+      .then(this.plugin.onAuth)
+      .catch(this.handleError)
   }
 
   /**
@@ -348,6 +355,7 @@ module.exports = class View {
       return AuthView({
         pluginName: this.plugin.title,
         demo: this.plugin.opts.demo,
+        checkAuth: this.checkAuth,
         handleAuth: this.handleAuth,
         handleDemoAuth: this.handleDemoAuth
       })
