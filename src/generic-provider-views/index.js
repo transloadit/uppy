@@ -303,7 +303,7 @@ module.exports = class View {
       }
 
       // split url because chrome adds '#' to redirects
-      if (authWindowUrl.split('#')[0] === redirect) {
+      if (authWindowUrl && authWindowUrl.split('#')[0] === redirect) {
         authWindow.close()
         this._loaderWrapper(this.Provider.checkAuth(), this.plugin.onAuth, this.handleError)
       } else {
@@ -316,7 +316,8 @@ module.exports = class View {
 
   handleError (error) {
     const core = this.plugin.core
-    const message = core.opts.debug ? error.toString() : core.i18n('uppyServerError')
+    const message = core.i18n('uppyServerError')
+    core.log(error.toString())
     core.emit('informer', message, 'error', 5000)
   }
 
