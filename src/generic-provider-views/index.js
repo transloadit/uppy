@@ -96,9 +96,16 @@ module.exports = class View {
   }
 
   checkAuth () {
+    this.updateState({ checkAuthInProgress: true })
     this.Provider.checkAuth()
-      .then(this.plugin.onAuth)
-      .catch(this.handleError)
+      .then((authenticated) => {
+        this.updateState({ checkAuthInProgress: false })
+        this.plugin.onAuth(authenticated)
+      })
+      .catch((err) => {
+        this.updateState({ checkAuthInProgress: false })
+        this.handleError(err)
+      })
   }
 
   /**
@@ -163,7 +170,7 @@ module.exports = class View {
         tagFile.preview = this.plugin.getItemThumbnailUrl(file)
       }
       this.plugin.core.log('Adding remote file')
-      this.plugin.core.emitter.emit('core:file-add', tagFile)
+      this.plugin.core.addFile(tagFile)
     })
   }
 
@@ -346,7 +353,7 @@ module.exports = class View {
   }
 
   render (state) {
-    const { authenticated, loading } = state[this.plugin.stateId]
+    const { authenticated, checkAuthInProgress, loading } = state[this.plugin.stateId]
 
     if (loading) {
       return LoaderView()
@@ -358,7 +365,8 @@ module.exports = class View {
         demo: this.plugin.opts.demo,
         checkAuth: this.checkAuth,
         handleAuth: this.handleAuth,
-        handleDemoAuth: this.handleDemoAuth
+        handleDemoAuth: this.handleDemoAuth,
+        checkAuthInProgress: checkAuthInProgress
       })
     }
 
