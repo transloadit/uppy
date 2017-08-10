@@ -5,7 +5,6 @@
 
 <!-- Load Uppy pre-built bundled version and Russian language pack -->
 <script src="/uppy/uppy.min.js"></script>
-<!--script src="/uppy/locales/ru_RU.js"></script-->
 <script>
   var uppy = new Uppy.Core({debug: true});
   uppy.use(Uppy.DragDrop, {
@@ -13,11 +12,11 @@
     locale: {
       strings: {
         chooseFile: 'Выберите файл',
-        orDragDrop: 'или перенесите его сюда',
-        upload: 'Загрузить'
+        orDragDrop: 'или перенесите его сюда'      
       }
     }
   });
+  uppy.use(Uppy.ProgressBar, {target: 'body', fixed: true})
   uppy.use(Uppy.Tus10, {endpoint: '//master.tus.io/files/'});
   uppy.run();
 
