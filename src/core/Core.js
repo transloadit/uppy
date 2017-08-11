@@ -40,7 +40,6 @@ class Uppy {
         minNumberOfFiles: false,
         allowedFileTypes: false
       },
-      forceUploadComplete: false,
       onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
       onBeforeUpload: (files, done) => Promise.resolve(),
       locale: defaultLocale
@@ -72,6 +71,7 @@ class Uppy {
     this.log = this.log.bind(this)
     this.addFile = this.addFile.bind(this)
     this.calculateProgress = this.calculateProgress.bind(this)
+    this.resetProgress = this.resetProgress.bind(this)
 
     // this.bus = this.emitter = ee()
     this.emitter = ee()
@@ -147,6 +147,27 @@ class Uppy {
     this.emit('core:pause-all')
     this.emit('core:cancel-all')
     this.setState({
+      totalProgress: 0
+    })
+  }
+
+  resetProgress () {
+    const defaultProgress = {
+      percentage: 0,
+      bytesUploaded: 0,
+      uploadComplete: false,
+      uploadStarted: false
+    }
+    const files = Object.assign({}, this.state.files)
+    const updatedFiles = {}
+    Object.keys(files).forEach(fileID => {
+      const updatedFile = Object.assign({}, files[fileID])
+      updatedFile.progress = Object.assign({}, updatedFile.progress, defaultProgress)
+      updatedFiles[fileID] = updatedFile
+    })
+    console.log(updatedFiles)
+    this.setState({
+      files: updatedFiles,
       totalProgress: 0
     })
   }
@@ -401,9 +422,9 @@ class Uppy {
     })
 
     this.on('core:cancel-all', () => {
-      let updatedFiles = this.getState().files
-      updatedFiles = {}
-      this.setState({files: updatedFiles})
+      // let updatedFiles = this.getState().files
+      // updatedFiles = {}
+      this.setState({files: {}})
     })
 
     this.on('core:upload-started', (fileID, upload) => {
@@ -725,7 +746,7 @@ class Uppy {
     return this
   }
 
-  upload () {
+  upload (forceUpload) {
     const isMinNumberOfFilesReached = this.checkRestrictions(true)
     if (!isMinNumberOfFilesReached) {
       return Promise.reject('Minimum number of files has not been reached')
@@ -745,7 +766,8 @@ class Uppy {
         // filter files that are now yet being uploaded / haven’t been uploaded
         // and remote too
 
-        if (this.opts.forceUploadComplete) {
+        if (forceUpload) {
+          this.resetProgress()
           waitingFileIDs.push(file.id)
         } else if (!file.progress.uploadStarted || file.isRemote) {
           waitingFileIDs.push(file.id)
