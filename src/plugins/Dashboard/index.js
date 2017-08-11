@@ -30,6 +30,7 @@ module.exports = class DashboardUI extends Plugin {
         copyLinkToClipboardFallback: 'Copy the URL below',
         done: 'Done',
         localDisk: 'Local Disk',
+        myDevice: 'My Device',
         dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
         dropPaste: 'Drop files here, paste or',
         browse: 'browse',

@@ -37,7 +37,8 @@ module.exports = class Tus10 extends Plugin {
     const defaultOptions = {
       resume: true,
       allowPause: true,
-      autoRetry: true
+      autoRetry: true,
+      retryDelays: [0, 1000, 3000, 5000]
     }
 
     // merge default options with the ones set by user

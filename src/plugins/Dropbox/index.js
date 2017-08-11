@@ -23,7 +23,7 @@ module.exports = class Dropbox extends Plugin {
 
     // writing out the key explicitly for readability the key used to store
     // the provider instance must be equal to this.id.
-    this.Dropbox = new Provider({
+    this.Dropbox = new Provider(core, {
       host: this.opts.host,
       provider: 'dropbox'
     })
@@ -61,10 +61,6 @@ module.exports = class Dropbox extends Plugin {
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)
-
-    this[this.id].auth().then(this.onAuth).catch(this.view.handleError)
-
-    return
   }
 
   uninstall () {
