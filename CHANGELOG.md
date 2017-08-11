@@ -95,7 +95,7 @@ Theme: Dogumentation.
 - [ ] docs: first stage — on using plugins, all options, list of plugins, i18n (@arturi, @goto-bus-stop, @ifedapoolarewaju)
 - [ ] core: retry or show error when upload can’t start (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
 - [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
-- [ ] provider: file size sorting (@ifedapoolarewaju)
+- [x] provider: file size sorting (@ifedapoolarewaju)
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 2, release (@goto-bus-stop)
@@ -111,7 +111,7 @@ Theme: Dogumentation.
 - [x] server: options support for redis session storage on standalone server (@ifedapoolarewaju)
 - [x] server: start uppy-server as binary `uppy-server` (@ifedapoolarewaju)
 - [x] server: store downloaded files based on uuids (@ifedapoolarewaju)
-- [x] server: store upload state in session (@ifedapoolarewaju)
+- [x] server: store upload state on redis (@ifedapoolarewaju)
 - [x] server: use uppy informer for server errors (@ifedapoolarewaju, #272)
 - [x] server: whitelist multiple uppy clients (@ifedapoolarewaju)
 - [x] transloadit: emit an event when an assembly is created (@goto-bus-stop / #244)
