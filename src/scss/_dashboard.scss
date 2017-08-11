@@ -474,25 +474,24 @@
 }
 
 .UppyDashboardItem-sourceIcon {
-  color: rgba($color-white, 0.95);
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 10px;
-  height: 10px;
-  z-index: $zIndex-3;
+  // color: rgba($color-white, 0.95);
+  position: relative;
+  left: 3px;
+  display: inline-block;
+  vertical-align: middle;
+  width: 7px;
+  height: 7px;
+  opacity: 0.7;
 
   .UppyDashboard--wide & {
-    top: 8px;
-    left: 8px;
-    width: 15px;
-    height: 15px;
+    width: 10px;
+    height: 10px;
   }
 }
 
-.UppyDashboardItem-sourceIcon .UppyIcon {
-  filter: drop-shadow(0 0 1px rgba(0,0,0,0.3));
-}
+// .UppyDashboardItem-sourceIcon .UppyIcon {
+//   filter: drop-shadow(0 0 1px rgba(0,0,0,0.3));
+// }
 
 .UppyDashboardItem-previewInnerWrap {
   width: 100%;
@@ -605,6 +604,8 @@
 }
 
 .UppyDashboardItem-statusSize {
+  display: inline-block;
+  vertical-align: middle;
   text-transform: uppercase;
 }
 
