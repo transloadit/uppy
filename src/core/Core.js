@@ -666,14 +666,14 @@ class Uppy {
 
     this.emit('core:info-visible')
 
-    window.clearTimeout(this.info.timeoutID)
+    window.clearTimeout(this.infoTimeoutID)
     if (duration === 0) {
-      this.info.timeoutID = undefined
+      this.infoTimeoutID = undefined
       return
     }
 
     // hide the informer after `duration` milliseconds
-    this.info.timeoutID = setTimeout(() => {
+    this.infoTimeoutID = setTimeout(() => {
       const newInformer = Object.assign({}, this.state.info, {
         isHidden: true
       })
