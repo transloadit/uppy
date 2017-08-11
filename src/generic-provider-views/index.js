@@ -272,6 +272,31 @@ module.exports = class View {
     }))
   }
 
+  sortBySize () {
+    const state = Object.assign({}, this.plugin.core.getState()[this.plugin.stateId])
+    const {files, sorting} = state
+
+    // check that plugin supports file sizes
+    if (!files.length || !this.plugin.getItemData(files[0]).size) {
+      return
+    }
+
+    let sortedFiles = files.sort((fileA, fileB) => {
+      let a = this.plugin.getItemData(fileA).size
+      let b = this.plugin.getItemData(fileB).size
+
+      if (sorting === 'sizeDescending') {
+        return a > b ? -1 : a < b ? 1 : 0
+      }
+      return a > b ? 1 : a < b ? -1 : 0
+    })
+
+    this.updateState(Object.assign({}, state, {
+      files: sortedFiles,
+      sorting: (sorting === 'sizeDescending') ? 'sizeAscending' : 'sizeDescending'
+    }))
+  }
+
   isActiveRow (file) {
     return this.plugin.core.getState()[this.plugin.stateId].activeRow === this.plugin.getItemId(file)
   }
