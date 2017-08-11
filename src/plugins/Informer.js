@@ -44,41 +44,6 @@ module.exports = class Informer extends Plugin {
     this.render = this.render.bind(this)
   }
 
-  // showInformer (msg, type, duration) {
-  //   this.core.setState({
-  //     informer: {
-  //       isHidden: false,
-  //       type: type,
-  //       msg: msg
-  //     }
-  //   })
-
-  //   window.clearTimeout(this.timeoutID)
-  //   if (duration === 0) {
-  //     this.timeoutID = undefined
-  //     return
-  //   }
-
-  //   // hide the informer after `duration` milliseconds
-  //   this.timeoutID = setTimeout(() => {
-  //     const newInformer = Object.assign({}, this.core.getState().informer, {
-  //       isHidden: true
-  //     })
-  //     this.core.setState({
-  //       informer: newInformer
-  //     })
-  //   }, duration)
-  // }
-
-  // hideInformer () {
-  //   const newInformer = Object.assign({}, this.core.getState().informer, {
-  //     isHidden: true
-  //   })
-  //   this.core.setState({
-  //     informer: newInformer
-  //   })
-  // }
-
   render (state) {
     const isHidden = state.info.isHidden
     const msg = state.info.msg
@@ -92,22 +57,6 @@ module.exports = class Informer extends Plugin {
   }
 
   install () {
-    // this.core.setState({
-    //   informer: {
-    //     isHidden: true,
-    //     type: '',
-    //     msg: ''
-    //   }
-    // })
-
-    // this.core.on('informer', (msg, type, duration) => {
-    //   this.showInformer(msg, type, duration)
-    // })
-
-    // this.core.on('informer:hide', () => {
-    //   this.hideInformer()
-    // })
-
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)
