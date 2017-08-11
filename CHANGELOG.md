@@ -121,6 +121,7 @@ Theme: Dogumentation.
 - [x] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju @kiloreux)
 - [x] webcam: add 1, 2, 3, smile! to webcam, onBeforeSnapshothook (@arturi, #187, #248)
 - [x] website: live example on the homepage, “try me” (@arturi)
+- [x] provider: flatten instagram carousels  #234 (@ifedapoolarewaju)
 
 ## 0.17.0
 
