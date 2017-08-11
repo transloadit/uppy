@@ -91,7 +91,20 @@ module.exports = class Instagram extends Plugin {
   }
 
   getItemSubList (item) {
-    return item.data
+    const subItems = []
+    item.data.forEach((subItem) => {
+      if (subItem.carousel_media) {
+        subItem.carousel_media.forEach((i, index) => {
+          const { id, created_time } = subItem
+          const newSubItem = Object.assign({}, i, { id, created_time })
+          newSubItem.carousel_id = index
+          subItems.push(newSubItem)
+        })
+      } else {
+        subItems.push(subItem)
+      }
+    })
+    return subItems
   }
 
   getItemName (item) {
@@ -103,11 +116,12 @@ module.exports = class Instagram extends Plugin {
   }
 
   getItemId (item) {
-    return item.id
+    return `${item.id}${item.carousel_id || ''}`
   }
 
   getItemRequestPath (item) {
-    return this.getItemId(item)
+    const suffix = isNaN(item.carousel_id) ? '' : `?carousel_id=${item.carousel_id}`
+    return `${item.id}${suffix}`
   }
 
   getItemModifiedDate (item) {
