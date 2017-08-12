@@ -120,6 +120,8 @@ class Uppy {
       this.updateAll(nextState)
     })
 
+    this.addFilePromises = []
+
     // for debugging and testing
     // this.updateNum = 0
     if (this.opts.debug) {
@@ -337,7 +339,7 @@ class Uppy {
   * @param {object} file object to add
   */
   addFile (file) {
-    return Promise.resolve()
+    const promise = Promise.resolve()
       // Wrap this in a Promise `.then()` handler so errors will reject the Promise
       // instead of throwing.
       .then(() => this.opts.onBeforeFileAdded(file, this.getState().files))
@@ -404,6 +406,34 @@ class Uppy {
         this.info(message, 'error', 5000)
         return Promise.reject(typeof err === 'object' ? err : new Error(err))
       })
+
+    this.addFilePromises.push(promise)
+    const removePromise = () => {
+      const i = this.addFilePromises.indexOf(promise)
+      if (i !== -1) {
+        this.addFilePromises.splice(i, 1)
+      }
+    }
+    promise.then(removePromise, removePromise)
+
+    return promise
+  }
+
+  waitForAddFilePromises () {
+    const promises = this.addFilePromises
+    this.addFilePromises = []
+
+    function noop () {
+      // No result value
+    }
+
+    return Promise.all(promises.map(concluded)).then(noop)
+
+    // Just wait for a Promise to conclude in some way, whether it's resolution
+    // or rejection. We don't care about the contents.
+    function concluded (promise) {
+      return promise.then(noop, noop)
+    }
   }
 
   removeFile (fileID) {
@@ -1113,7 +1143,7 @@ class Uppy {
       this.log('No uploader type plugins are used', 'warning')
     }
 
-    return Promise.resolve()
+    return this.waitForAddFilePromises()
       .then(() => this.opts.onBeforeUpload(this.getState().files))
       .then(() => this._checkMinNumberOfFiles())
       .then(() => {
