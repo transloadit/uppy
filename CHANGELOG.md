@@ -104,6 +104,7 @@ Theme: Dogumentation.
 - [x] xhrupload: add XHRUpload a more flexible successor to Multipart, so that S3 plugin can depend on it (@goto-bus-stop #242)
 - [x] core: add getFile method (@goto-bus-stop, #263)
 - [x] provider: use informer to display errors (@ifedapoolarewaju)
+- [x] provider: flatten instagram carousels #234 (@ifedapoolarewaju)
 - [x] server: add uppy-server url as `i-am` header (@ifedapoolarewaju)
 - [x] server: disable socket channel from restarting an already completed file download (@ifedapoolarewaju)
 - [x] server: make uppy client whitelisting optional. You may use wildcard instead (@ifedapoolarewaju)
@@ -120,8 +121,7 @@ Theme: Dogumentation.
 - [x] tus: return immediately if no files are selected (@goto-bus-stop #245)
 - [x] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju @kiloreux)
 - [x] webcam: add 1, 2, 3, smile! to webcam, onBeforeSnapshothook (@arturi, #187, #248)
-- [x] website: live example on the homepage, “try me” (@arturi)
-- [x] website: improve examples a little (@arturi)
+- [x] website: live example on the homepage, “try me” button, improve /examples (@arturi)
 
 ## 0.17.0
 
