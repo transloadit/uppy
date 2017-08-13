@@ -32,15 +32,15 @@ module.exports = class StatusBarUI extends Plugin {
   }
 
   cancelAll () {
-    this.core.bus.emit('core:cancel-all')
+    this.core.emit('core:cancel-all')
   }
 
   pauseAll () {
-    this.core.bus.emit('core:pause-all')
+    this.core.emit('core:pause-all')
   }
 
   resumeAll () {
-    this.core.bus.emit('core:resume-all')
+    this.core.emit('core:resume-all')
   }
 
   getTotalSpeed (files) {

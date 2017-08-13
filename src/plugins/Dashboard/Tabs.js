@@ -35,7 +35,7 @@ module.exports = (props) => {
                     input.click()
                   }}>
             ${localIcon()}
-            <h5 class="UppyDashboardTab-name">${props.i18n('localDisk')}</h5>
+            <h5 class="UppyDashboardTab-name">${props.i18n('myDevice')}</h5>
           </button>
           ${input}
         </li>
