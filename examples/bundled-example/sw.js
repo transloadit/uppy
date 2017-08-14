@@ -32,10 +32,11 @@ function removeFile (fileID) {
 }
 
 function getFiles () {
-  console.log(Object.keys(fileCache))
-  if (Object.keys(fileCache).length > 0) {
-    sendMessageToAllClients({ type: 'ALL_FILES', files: fileCache })
-  }
+  // console.log(Object.keys(fileCache))
+  sendMessageToAllClients({ type: 'ALL_FILES', files: fileCache })
+  // if (Object.keys(fileCache).length > 0) {
+  //   sendMessageToAllClients({ type: 'ALL_FILES', files: fileCache })
+  // }
 }
 
 self.addEventListener('message', (event) => {
