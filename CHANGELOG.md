@@ -39,6 +39,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] image cropping on the client (#151)
 - [ ] maybe restrict system file picking dialog too https://github.com/transloadit/uppy/issues/253
 - [ ] uppy-server: what happens if access token expires amid an upload/download process.
+- [ ] s3+transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
 - [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
 
@@ -79,6 +80,7 @@ What we need to do to release Uppy 1.0
 - [ ] core: add error in file progress state? (@arturi)
 - [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
+- [ ] s3+transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
 
 # next
 
@@ -98,7 +100,7 @@ Theme: Dogumentation.
 - [x] provider: show loading screen when checking auth too (@arturi)
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
-- [ ] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 2, release (@goto-bus-stop)
+- [x] uploaders: add direct-to-s3 upload plugin (@goto-bus-stop)
 - [x] core: ability to re-upload all files, even `uploadComplete` ones, reset progress (@arturi)
 - [x] goldenretriver: recover selected or in progress files after a browser crash or closed tab: alpha-version, add LocalStorage, Service Worker and IndexedDB (@arturi @goto-bus-stop @nqst #268)
 - [x] xhrupload: add XHRUpload a more flexible successor to Multipart, so that S3 plugin can depend on it (@goto-bus-stop #242)
