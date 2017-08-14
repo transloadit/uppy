@@ -18,12 +18,10 @@ last Friday of every new month.
 
 Ideas that will be planned and find their way into a release at one point
 
-- [ ] build: go over `package.json` together and clean up npm run scripts (@arturi, @hedgerh, @kvz)
 - [ ] build: investigate Rollup someday, for tree-shaking and smaller dist https://github.com/substack/node-browserify/issues/1379#issuecomment-183383199, https://github.com/nolanlawson/rollupify, https://github.com/nolanlawson/rollup-comparison
 - [ ] core: Decouple rendering from Plugins and try to make Uppy work with React (add basic example) to remain aware of possible issues (@hedgerh), look at https://github.com/akiran/react-slick, https://github.com/nosir/cleave.js
 - [ ] core: Have base styles, be explicit about fonts, etc
 - [ ] core: Make sure Uppy works well in VR
-- [ ] dashboard: add ability to minimize Modal/Dashboard, while long upload is in progress? Uppy then becomes just a tiny progress indicator
 - [ ] test: Human should check http://www.webpagetest.org and https://developers.google.com/web/tools/lighthouse/, use it sometimes to test website and Uppy. Will show response/loading times and other issues
 - [ ] test: Human should test with real screen reader to identify accessibility problems
 - [ ] test: Make Edge and Safari work via the tunnel so we can test localhost instead of uppy.io, and test the current build, vs the previous deploy that way
@@ -35,7 +33,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] ui: do we want https://github.com/kazzkiq/balloon.css ?
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
-- [ ] dashboard: see if transitions can be fixed in Firefox — seem to be working fine, let’s check again someday (@arturi)
 - [ ] uppy/uppy-server: Transfer files between providers (from instagram to Google drive for example).
 - [ ] uppy/uppy-server: review websocket connection and throttling progress events (@arturi, @ifedapoolarewaju)
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
@@ -43,15 +40,18 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] maybe restrict system file picking dialog too https://github.com/transloadit/uppy/issues/253
 - [ ] uppy-server: what happens if access token expires amid an upload/download process.
 - [ ] s3+transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
+- [ ] good way to change plugin options at runtime—maybe `this.state.options`?
+- [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
 
 ## 1.0 Goals
 
 What we need to do to release Uppy 1.0
 
 - [x] feature: restrictions: by size, number of files, file type
+- [ ] feature: beta file recovering after closed tab / browser crash
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
 - [ ] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
-- [ ] feature: Uppy should work well with React/Redux. React (Native)
+- [ ] feature: Uppy should work well with React/Redux and React Native
 - [ ] feature: preset for Transloadit that mimics jQuery SDK
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
 - [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files. add metrics to Librato
@@ -61,7 +61,7 @@ What we need to do to release Uppy 1.0
 - [ ] ui: refine UI, neat things up (if that’s even a word)
 - [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
 - [ ] refactoring: possibly add CSS-in-JS
-- [ ] refactoring: possibly switch from Yo-Yo to Preact, because its more stable, solves a few issues we are struggling with (like onload/onunload being weird in yo-yo) and mature, “new standard”, larger community
+- [ ] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (like onload/onunload being weird in yo-yo) and mature, “new standard”, larger community
 - [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say Tus plugin doesn’t include rendering stuff
 - [ ] refactoring: webcam plugin
 - [ ] refactoring: clean up code everywhere
@@ -71,38 +71,59 @@ What we need to do to release Uppy 1.0
 
 ## 0.19.0
 
-- [ ] allow minimizing the Dashboard during upload (@arturi)
+- [ ] allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
+- [ ] DnD Bar ? (@arturi)
+- [ ] provider: improve UI: add icons for file types? (@arturi)
+- [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
+- [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
+- [ ] core: add error in file progress state? (@arturi)
+- [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
+- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
+- [ ] s3+transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
 
 # next
 
 ## 0.18.0
 
-To be released: 2017-07-28.
+To be released: 2017-08-14.
 Theme: Dogumentation.
 
+- [ ] goldenretriver: add file limits, figure out what restores from where, add “ghost” files, add throttling for localStorage state sync (@goto-bus-stop @arturi)
+- [x] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
+- [x] dashboard: place close btn inside the Dashboard, don’t close on click outside, place source icon near the file size
+- [x] core: informer becomes a core API, `uppy.info('Smile! 📸', 'warning', 5000)` so its more concise with `uppy.log('my msg')` and supports different UI implementations (@arturi, #271)
+- [ ] docs: first stage — on using plugins, all options, list of plugins, i18n (@arturi, @goto-bus-stop, @ifedapoolarewaju)
+- [ ] core: retry or show error when upload can’t start (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
+- [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
+- [x] provider: file size sorting (@ifedapoolarewaju)
+- [x] provider: show loading screen when checking auth too (@arturi)
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
-- [ ] core: add error in file progress state? (@arturi)
-- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
-- [ ] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju)
-- [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
-- [x] uploaders: add direct-to-s3 upload plugin (@goto-bus-stop)
-- [ ] provider: file size sorting (@ifedapoolarewaju)
-- [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
-- [ ] provider: improve UI: add icons for file types? (@arturi)
-- [ ] uppy: flag to upload all files, even `uploadComplete` ones (@arturi)
+- [x] uploaders: add direct-to-s3 upload plugin (@goto-bus-stop)
+- [x] core: ability to re-upload all files, even `uploadComplete` ones, reset progress (@arturi)
+- [x] goldenretriver: recover selected or in progress files after a browser crash or closed tab: alpha-version, add LocalStorage, Service Worker and IndexedDB (@arturi @goto-bus-stop @nqst #268)
+- [x] xhrupload: add XHRUpload a more flexible successor to Multipart, so that S3 plugin can depend on it (@goto-bus-stop #242)
+- [x] core: add getFile method (@goto-bus-stop, #263)
+- [x] provider: use informer to display errors (@ifedapoolarewaju)
+- [x] provider: flatten instagram carousels #234 (@ifedapoolarewaju)
+- [x] server: add uppy-server url as `i-am` header (@ifedapoolarewaju)
+- [x] server: disable socket channel from restarting an already completed file download (@ifedapoolarewaju)
+- [x] server: make uppy client whitelisting optional. You may use wildcard instead (@ifedapoolarewaju)
+- [x] server: master oauth redirect uri for multiple uppy-server instances
+- [x] server: options support for redis session storage on standalone server (@ifedapoolarewaju)
+- [x] server: start uppy-server as binary `uppy-server` (@ifedapoolarewaju)
+- [x] server: store downloaded files based on uuids (@ifedapoolarewaju)
+- [x] server: store upload state on redis (@ifedapoolarewaju)
+- [x] server: use uppy informer for server errors (@ifedapoolarewaju, #272)
+- [x] server: whitelist multiple uppy clients (@ifedapoolarewaju)
 - [x] transloadit: emit an event when an assembly is created (@goto-bus-stop / #244)
-- [ ] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
-- [x] webcam: add 1, 2, 3, smile! to webcam (@arturi #187)
-- [ ] transloadit: function option for file-dependent `params` (@goto-bus-stop)
-- [ ] docs: on using plugins, all options, list of plugins, i18n (@arturi, @goto-bus-stop, @ifedapoolarewaju)
-- [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
-- [x] website: live example on the homepage, “try me” (@arturi)
-- [ ] DnD Bar (@arturi)
-- [ ] handle error when upload can’t start (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
-- [ ] improve docs (@arturi @goto-bus-stop)
-- [ ] GoldenRetriver: recover selected or in progress files after a browser crash or closed tab (@arturi @goto-bus-stop @nqst #268)
+- [x] transloadit: function option for file-dependent `params` (@goto-bus-stop / #250)
+- [x] tus: Save upload URL early on (@goto-bus-stop #261)
+- [x] tus: return immediately if no files are selected (@goto-bus-stop #245)
+- [x] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju @kiloreux)
+- [x] webcam: add 1, 2, 3, smile! to webcam, onBeforeSnapshothook (@arturi, #187, #248)
+- [x] website: live example on the homepage, “try me” button, improve /examples (@arturi)
 
 ## 0.17.0
 

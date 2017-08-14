@@ -100,6 +100,6 @@ module.exports = class Plugin {
   }
 
   uninstall () {
-    return
+    this.unmount()
   }
 }
