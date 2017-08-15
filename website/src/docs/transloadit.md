@@ -11,9 +11,10 @@ The Transloadit plugin uses the Tus plugin for the uploading itself.
 To upload files to Transloadit directly, both the Tus and Transloadit plugins must be used:
 
 ```js
-// No options have to be provided to the Tus plugin,
-// the Transloadit plugin will configure it.
-uppy.use(Tus10)
+// The `resume: false` option _must_ be provided to the Tus plugin.
+uppy.use(Tus10, {
+  resume: false
+})
 uppy.use(Transloadit, {
   // Transloadit plugin options
 })
