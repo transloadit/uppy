@@ -70,7 +70,7 @@ const uppy = Uppy({
       { id: 'description', name: 'Description', value: 'none', placeholder: 'describe what the file is for' }
     ]
   })
-  .use(RestoreFiles)
+  .use(RestoreFiles, {serviceWorker: true})
   .run()
 
 uppy.on('core:success', (fileList) => {

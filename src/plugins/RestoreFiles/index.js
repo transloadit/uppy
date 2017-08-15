@@ -83,7 +83,6 @@ module.exports = class RestoreFiles extends Plugin {
   }
 
   onBlobsLoaded (blobs) {
-    window.myblobs = blobs
     const updatedFiles = Object.assign({}, this.core.state.files)
     Object.keys(blobs).forEach((fileID) => {
       const cachedData = blobs[fileID].data
@@ -107,7 +106,6 @@ module.exports = class RestoreFiles extends Plugin {
   }
 
   install () {
-    // local storage stuff
     this.loadFilesStateFromLocalStorage()
 
     if (Object.keys(this.core.state.files).length > 0) {
@@ -119,8 +117,6 @@ module.exports = class RestoreFiles extends Plugin {
         this.loadFileBlobsFromIndexedDB()
       }
     }
-
-    // this.store.list().then(this.onBlobsLoaded)
 
     this.core.on('core:file-added', (file) => {
       if (file.isRemote) return
