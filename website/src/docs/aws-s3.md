@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 4
-title: "AwsS3 Plugin"
+title: "AwsS3"
 permalink: docs/aws-s3/
 ---
 
