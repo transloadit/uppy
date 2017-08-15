@@ -25,6 +25,13 @@ uppy.use(AwsS3, {
 
 When using [uppy-server][uppy-server docs] to sign S3 uploads, set this option to the root URL of the uppy-server.
 
+```js
+uppy.use(XHRUpload)
+uppy.use(AwsS3, {
+  host: 'https://uppy-server.my-app.com/'
+})
+```
+
 ### `getUploadParameters(file)`
 
 > Note: When using [uppy-server][uppy-server docs] to sign S3 uploads, do not define this option.
@@ -41,6 +48,81 @@ When using a POST upload with a policy document, this should be the root URL of 
 
 The `fields` field is an object with form fields to send along with the upload request.
 For presigned PUT uploads, this should be empty.
+
+## S3 Bucket configuration
+
+S3 buckets do not allow public uploads by default.
+In order to allow Uppy to upload to a bucket directly, its CORS permissions need to be configured.
+
+CORS permissions can be found in the [S3 Management Console](https://console.aws.amazon.com/s3/home).
+Click the bucket that will receive the uploads, then go into the "Permissions" tab and select the "CORS configuration" button.
+An XML document will be shown that contains the CORS configuration.
+
+Good practice is to use two CORS rules: one for viewing the uploaded files, and one for uploading files.
+
+Depending on which settings were enabled during bucket creation, AWS S3 may have defined a CORS rule that allows public reading already.
+This rule looks like:
+
+```xml
+<CORSRule>
+  <AllowedOrigin>*</AllowedOrigin>
+  <AllowedMethod>GET</AllowedMethod>
+  <MaxAgeSeconds>3000</MaxAgeSeconds>
+</CORSRule>
+```
+
+If uploaded files should be publically viewable, but a rule like this is not present, add it.
+
+A different `<CORSRule>` is necessary to allow uploading.
+This rule should come _before_ the existing rule, because S3 uses the first rule that matches the origin of the request.
+
+At minimum, the domain from which the uploads will happen must be whitelisted:
+
+```xml
+<AllowedOrigin>https://my-app.com</AllowedOrigin>
+```
+
+When using uppy-server, which generates a POST policy document, the following permissions must be granted:
+
+```xml
+<AllowedMethod>POST</AllowedMethod>
+<AllowedHeader>Authorization</AllowedHeader>
+<AllowedHeader>x-amz-date</AllowedHeader>
+<AllowedHeader>x-amz-content-sha256</AllowedHeader>
+<AllowedHeader>content-type</AllowedHeader>
+```
+
+When using a presigned upload URL, the following permissions must be granted:
+
+```xml
+<AllowedMethod>PUT</AllowedMethod>
+```
+
+The final configuration should look something like the below:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  <CORSRule>
+    <AllowedMethod>POST</AllowedMethod>
+    <AllowedHeader>Authorization</AllowedHeader>
+    <AllowedHeader>x-amz-date</AllowedHeader>
+    <AllowedHeader>x-amz-content-sha256</AllowedHeader>
+    <AllowedHeader>content-type</AllowedHeader>
+  </CORSRule>
+  <CORSRule>
+    <AllowedOrigin>*</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+    <MaxAgeSeconds>3000</MaxAgeSeconds>
+  </CORSRule>
+</CORSConfiguration>
+```
+
+In-depth documentation about CORS rules is available on the [AWS documentation site](https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html).
+
+## Examples
+
+### Generating a presigned upload URL server-side
 
 The `getUploadParameters` function can return a Promise, so upload parameters can be prepared server-side.
 That way, no private keys to the S3 bucket need to be shared on the client.
