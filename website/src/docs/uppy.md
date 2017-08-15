@@ -5,6 +5,8 @@ title: "Uppy"
 permalink: docs/uppy/
 ---
 
+Core module that orchistrated everything in Uppy, exposing `state`, `events` and `methods`.
+
 ## Options
 
 ```js
@@ -29,7 +31,14 @@ Starts upload automatically after the first file is selected.
 
 ### `restrictions: {}`
 
-Allows you to provide rules and conditions for which files can be selected.
+Optionally provide rules and conditions for which files can be selected.
+
+#### Parameters
+
+- **maxFileSize** *number*
+- **maxNumberOfFiles** *number*
+- **minNumberOfFiles** *number*
+- **allowedFileTypes** *array* of wildcards or exact mime types, like `image/*`
 
 ### `meta: {}`
 
@@ -222,6 +231,18 @@ Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()
 ### `uppy.log(msgString)`
 
 Logs stuff to console, only if `uppy.opts.debug` is set to true. Silent in production.
+
+### `uppy.info()`
+
+```js
+this.info('Oh my, something good happened!', 'success', 5000)
+```
+
+#### Parameters
+
+- **message** *string*
+- **type** *string* `info`, `warning`, `success` or `error`
+- **duration** *number* in milliseconds
 
 ### `uppy.upload()`
 

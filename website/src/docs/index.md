@@ -5,7 +5,9 @@ permalink: docs/
 order: 0
 ---
 
-Uppy file uploader consists of a core module and [various plugins](/docs/plugins/) for  selecting, manipulating and uploading files. Here’s how it works:
+Uppy is a sleek, modular file uploader that integrates seemlessly with any framework. It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to the final destination. It’s fast, easy to use and let's you worry about more important problems than building a file uploader.
+
+Uppy consists of a core module and [various plugins](/docs/plugins/) for selecting, manipulating and uploading files. Here’s how it works:
 
 ```js
 const Uppy = require('uppy/lib/core')
@@ -27,15 +29,17 @@ uppy.on('core:success', (files) => {
 
 [Try it live](/examples/dashboard/)
 
-Drag and Drop, Webcam, basic file manipulation (adding metadata, for example) and uploading via tus resumable uploads or XHR/Multipart is all possible using just the `uppy` client module. However, if you add [uppy-server](https://github.com/transloadit/uppy-server) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your mobile data plan), and then uploaded to the final distanation. Files are removed from uppy-server after an upload is complete, or after a resonable timeout. Access tokens also don’t stick around for long, for security.
+Drag and Drop, Webcam, basic file manipulation (adding metadata), uploading via tus resumable uploads or XHR/Multipart is all possible using just the uppy client module. 
+
+Adding [Uppy Server](/docs/server/) to the mix enables remote sources, such as Instagram, Google Drive and Dropbox. Uploads from remote sources are handled server-to-serber,(so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Uppy Server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
 
 ## Installation
-
-NPM is the recommended installation method when building large scale apps with Uppy. It pairs nicely with a CommonJS module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/). 
 
 ``` bash
 $ npm install uppy
 ```
+
+We recommend installing from NPM and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/). 
 
 If you like, you can also use a pre-built bundle, for example from [unpkg CDN](https://unpkg.com/uppy/). In that case `Uppy` will attach itself to the global `window.Uppy` object. 
 
@@ -65,10 +69,10 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
 
 ## Documentation
 
-- [Uppy](/docs/uppy.html) — full list of options, methods and events.
-- [Plugins](/docs/plugins.html) — list of Uppy plugins and their options.
-- [Server](https://github.com/transloadit/uppy-server) — setting up and running an uppy-server instance, which adds support for Instagram, Dropbox, Google Drive and other remote sources.
-- Making a plugin — how to write a plugin for Uppy.
+- [Uppy](/docs/uppy/) — full list of options, methods and events.
+- [Plugins](/docs/plugins/) — list of Uppy plugins and their options.
+- [Server](/docs/server/) — setting up and running an uppy-server instance, which adds support for Instagram, Dropbox, Google Drive and other remote sources.
+- Architecture & Making a Plugin — how to write a plugin for Uppy [documentation in progress].
 
 ## Browser Support
 

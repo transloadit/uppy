@@ -5,37 +5,24 @@ permalink: docs/plugins/
 order: 2
 ---
 
-Plugins are what make Uppy useful: they help select, manipulate and upload files.
+Plugins are what makes Uppy useful: they help select, manipulate and upload files.
 
-**Acquirers**
-- Dashboard
-- DragDrop
-- FileInput
-- [Provider Plugins](#Provider-Plugins) (remote sources that work with `uppy-server`)
-  - Instagram
-  - GoogleDrive
-  - Dropbox
-
-**Uploaders**
-- Tus
-- XHRUpload
-- S3
-
-**Progress**
-- ProgressBar
-- StatusBar
-- Informer
-
-**Helpers**
-- GoldenRetriever
+- **Acquirers (neat UIs for picking files):** 
+  - [Dashboard](/docs/dashboard) — full featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more
+  - [DragDrop](/docs/dragdrop) — plain and simple drag and drop area
+  - FileInput — even more plain and simple, just a button
+  - [Provider Plugins](#Provider-Plugins) (remote sources that work through [Uppy Server](/docs/uppy-server/)): Instagram, GoogleDrive, Dropbox
+- **Uploaders:** Tus10, XHRUpload, S3
+- **Progress:** ProgressBar, StatusBar, Informer
+- **Helpers:** GoldenRetriever
 
 ## Common Options
 
-Each plugin can have any number of options, but these are shared between some:
+Each plugin can have any number of options (please see specific plugin for details), but these are shared between some:
 
 ### `target`
 
-Can be a `string` or an `object`, referencing another plugin. Consider the following example, where `DragDrop` plugin will be rendered to `body` element:
+Can be a `string` or an `object`, referencing another plugin. Consider the following example, where `DragDrop` plugin will be rendered into a `body` element:
 
 ```js
 const Uppy = require('uppy/lib/core')
@@ -110,7 +97,11 @@ state = {
 }
 ```
 
-### `locale`
+### `replaceTargetContent: false`
+
+By default Uppy will append any UI to a DOM element, if such element is specified as a `target`. This default is the least dangerous option. However, you might want to provide fallback `<form>` with `<button type="submit">` that will be shown if Uppy or JavaScript in not loaded/supported on the page. Set `replaceTargetContent: true` to clear the `target` before appending, that way all your fallback elements will be removed if Uppy is actually functioning.
+
+### `locale: {}`
 
 Same as with Uppy.Core’s setting from above, this allows you to override plugin’s local string, so that instead of `Select files` in English, your users will see `Выберите файлы` in Russian. Example:
 
@@ -123,15 +114,7 @@ Same as with Uppy.Core’s setting from above, this allows you to override plugi
 })
 ```
 
-See plugin documentation below for other plugin-specific options.
-
-## Dashboard
-
-## Webcam
-
-## Tus
-
-## XHRUpload
+See plugin documentation pages for other plugin-specific options.
 
 ## Provider Plugins
 

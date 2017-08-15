@@ -1,7 +1,7 @@
 ---
 type: docs
-order: 4
-title: "Transloadit Plugin"
+order: 9
+title: "Transloadit"
 permalink: docs/transloadit/
 ---
 
