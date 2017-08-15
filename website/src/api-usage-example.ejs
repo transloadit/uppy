@@ -6,7 +6,7 @@ import MetaData from 'uppy/lib/plugins/MetaData'
 const uppy = Uppy({autoProceed: false})
   .use(Dashboard, {trigger: '#select-files', target: '#upload-form', replaceTargetContent: true})
   .use(Tus10, {endpoint: '://master.tus.io/files/'})
-  uppy.use(MetaData, {
+  .use(MetaData, {
     fields: [
       { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
       { id: 'description', name: 'Description', value: 'none', placeholder: 'describe what the file is for' }

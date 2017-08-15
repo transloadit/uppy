@@ -55,6 +55,7 @@ const uppy = Uppy({
     setMetaFromTargetForm: true,
     // replaceTargetContent: true,
     target: '.MyForm',
+    hideUploadButton: true,
     locale: {
       strings: {browse: 'browse'}
     }

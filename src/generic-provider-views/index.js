@@ -1,6 +1,5 @@
 const AuthView = require('./AuthView')
 const Browser = require('./Browser')
-const ErrorView = require('./Error')
 const LoaderView = require('./Loader')
 const Utils = require('../core/Utils')
 
@@ -61,6 +60,7 @@ module.exports = class View {
     this.getFolder = this.getFolder.bind(this)
     this.getNextFolder = this.getNextFolder.bind(this)
     this.logout = this.logout.bind(this)
+    this.checkAuth = this.checkAuth.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleDemoAuth = this.handleDemoAuth.bind(this)
     this.sortByTitle = this.sortByTitle.bind(this)
@@ -93,6 +93,19 @@ module.exports = class View {
     })
 
     this.updateState({ folders, files })
+  }
+
+  checkAuth () {
+    this.updateState({ checkAuthInProgress: true })
+    this.Provider.checkAuth()
+      .then((authenticated) => {
+        this.updateState({ checkAuthInProgress: false })
+        this.plugin.onAuth(authenticated)
+      })
+      .catch((err) => {
+        this.updateState({ checkAuthInProgress: false })
+        this.handleError(err)
+      })
   }
 
   /**
@@ -157,14 +170,8 @@ module.exports = class View {
         tagFile.preview = this.plugin.getItemThumbnailUrl(file)
       }
       this.plugin.core.log('Adding remote file')
-      this.plugin.core.emitter.emit('core:file-add', tagFile)
+      this.plugin.core.addFile(tagFile)
     })
-
-    // feels like a hack
-    // this.updateState({
-    //   filterInput: '',
-    //   isSearchVisible: false
-    // })
   }
 
   /**
@@ -272,6 +279,31 @@ module.exports = class View {
     }))
   }
 
+  sortBySize () {
+    const state = Object.assign({}, this.plugin.core.getState()[this.plugin.stateId])
+    const {files, sorting} = state
+
+    // check that plugin supports file sizes
+    if (!files.length || !this.plugin.getItemData(files[0]).size) {
+      return
+    }
+
+    let sortedFiles = files.sort((fileA, fileB) => {
+      let a = this.plugin.getItemData(fileA).size
+      let b = this.plugin.getItemData(fileB).size
+
+      if (sorting === 'sizeDescending') {
+        return a > b ? -1 : a < b ? 1 : 0
+      }
+      return a > b ? 1 : a < b ? -1 : 0
+    })
+
+    this.updateState(Object.assign({}, state, {
+      files: sortedFiles,
+      sorting: (sorting === 'sizeDescending') ? 'sizeAscending' : 'sizeDescending'
+    }))
+  }
+
   isActiveRow (file) {
     return this.plugin.core.getState()[this.plugin.stateId].activeRow === this.plugin.getItemId(file)
   }
@@ -303,7 +335,7 @@ module.exports = class View {
       }
 
       // split url because chrome adds '#' to redirects
-      if (authWindowUrl.split('#')[0] === redirect) {
+      if (authWindowUrl && authWindowUrl.split('#')[0] === redirect) {
         authWindow.close()
         this._loaderWrapper(this.Provider.checkAuth(), this.plugin.onAuth, this.handleError)
       } else {
@@ -315,7 +347,10 @@ module.exports = class View {
   }
 
   handleError (error) {
-    this.updateState({ error })
+    const core = this.plugin.core
+    const message = core.i18n('uppyServerError')
+    core.log(error.toString())
+    core.emit('informer', message, 'error', 5000)
   }
 
   handleScroll (e) {
@@ -343,12 +378,7 @@ module.exports = class View {
   }
 
   render (state) {
-    const { authenticated, error, loading } = state[this.plugin.stateId]
-
-    if (error) {
-      this.updateState({ error: undefined })
-      return ErrorView({ error: error })
-    }
+    const { authenticated, checkAuthInProgress, loading } = state[this.plugin.stateId]
 
     if (loading) {
       return LoaderView()
@@ -358,8 +388,10 @@ module.exports = class View {
       return AuthView({
         pluginName: this.plugin.title,
         demo: this.plugin.opts.demo,
+        checkAuth: this.checkAuth,
         handleAuth: this.handleAuth,
-        handleDemoAuth: this.handleDemoAuth
+        handleDemoAuth: this.handleDemoAuth,
+        checkAuthInProgress: checkAuthInProgress
       })
     }
 

@@ -27,14 +27,13 @@ class Uppy {
           1: 'You have to select at least %{smart_count} files'
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
-        youCanOnlyUploadFileTypes: 'You can only upload:'
+        youCanOnlyUploadFileTypes: 'You can only upload:',
+        uppyServerError: 'Connection with Uppy server failed'
       }
     }
 
     // set default options
     const defaultOptions = {
-      // load English as the default locale
-      // locale: en_US,
       autoProceed: true,
       debug: false,
       restrictions: {
@@ -65,6 +64,7 @@ class Uppy {
     // Container for different types of plugins
     this.plugins = {}
 
+    // @TODO maybe bindall
     this.translator = new Translator({locale: this.opts.locale})
     this.i18n = this.translator.translate.bind(this.translator)
     this.getState = this.getState.bind(this)
@@ -73,10 +73,14 @@ class Uppy {
     this.log = this.log.bind(this)
     this.addFile = this.addFile.bind(this)
     this.calculateProgress = this.calculateProgress.bind(this)
+    this.resetProgress = this.resetProgress.bind(this)
 
-    this.bus = this.emitter = ee()
-    this.on = this.bus.on.bind(this.bus)
-    this.emit = this.bus.emit.bind(this.bus)
+    // this.bus = this.emitter = ee()
+    this.emitter = ee()
+    this.on = this.emitter.on.bind(this.emitter)
+    this.off = this.emitter.off.bind(this.emitter)
+    this.once = this.emitter.once.bind(this.emitter)
+    this.emit = this.emitter.emit.bind(this.emitter)
 
     this.preProcessors = []
     this.uploaders = []
@@ -88,7 +92,12 @@ class Uppy {
         resumableUploads: false
       },
       totalProgress: 0,
-      meta: Object.assign({}, this.opts.meta)
+      meta: Object.assign({}, this.opts.meta),
+      info: {
+        isHidden: true,
+        type: '',
+        msg: ''
+      }
     }
 
     // for debugging and testing
@@ -96,8 +105,8 @@ class Uppy {
     if (this.opts.debug) {
       global.UppyState = this.state
       global.uppyLog = ''
-      global.UppyAddFile = this.addFile.bind(this)
-      global._Uppy = this
+      // global.UppyAddFile = this.addFile.bind(this)
+      global._uppy = this
     }
   }
 
@@ -140,6 +149,27 @@ class Uppy {
     this.emit('core:pause-all')
     this.emit('core:cancel-all')
     this.setState({
+      totalProgress: 0
+    })
+  }
+
+  resetProgress () {
+    const defaultProgress = {
+      percentage: 0,
+      bytesUploaded: 0,
+      uploadComplete: false,
+      uploadStarted: false
+    }
+    const files = Object.assign({}, this.state.files)
+    const updatedFiles = {}
+    Object.keys(files).forEach(fileID => {
+      const updatedFile = Object.assign({}, files[fileID])
+      updatedFile.progress = Object.assign({}, updatedFile.progress, defaultProgress)
+      updatedFiles[fileID] = updatedFile
+    })
+    console.log(updatedFiles)
+    this.setState({
+      files: updatedFiles,
       totalProgress: 0
     })
   }
@@ -198,7 +228,7 @@ class Uppy {
 
     if (checkMinNumberOfFiles && minNumberOfFiles) {
       if (Object.keys(this.state.files).length < minNumberOfFiles) {
-        this.emit('informer', `${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
+        this.info(`${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
         return false
       }
       return true
@@ -206,7 +236,7 @@ class Uppy {
 
     if (maxNumberOfFiles) {
       if (Object.keys(this.state.files).length + 1 > maxNumberOfFiles) {
-        this.emit('informer', `${this.i18n('youCanOnlyUploadX', {smart_count: maxNumberOfFiles})}`, 'error', 5000)
+        this.info(`${this.i18n('youCanOnlyUploadX', {smart_count: maxNumberOfFiles})}`, 'error', 5000)
         return false
       }
     }
@@ -215,14 +245,14 @@ class Uppy {
       const isCorrectFileType = allowedFileTypes.filter(match(fileType.join('/'))).length > 0
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
-        this.emit('informer', `${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
+        this.info(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
         return false
       }
     }
 
     if (maxFileSize) {
       if (file.data.size > maxFileSize) {
-        this.emit('informer', `${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`, 'error', 5000)
+        this.info(`${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`, 'error', 5000)
         return false
       }
     }
@@ -232,7 +262,7 @@ class Uppy {
 
   addFile (file) {
     return this.opts.onBeforeFileAdded(file, this.getState().files).catch((err) => {
-      this.emit('informer', err, 'error', 5000)
+      this.info(err, 'error', 5000)
       return Promise.reject(`onBeforeFileAdded: ${err}`)
     }).then(() => {
       return Utils.getFileType(file).then((fileType) => {
@@ -274,7 +304,7 @@ class Uppy {
         }
 
         const isFileAllowed = this.checkRestrictions(false, newFile, fileType)
-        if (!isFileAllowed) return
+        if (!isFileAllowed) return Promise.reject('File not allowed')
 
         updatedFiles[fileID] = newFile
         this.setState({files: updatedFiles})
@@ -396,9 +426,9 @@ class Uppy {
     })
 
     this.on('core:cancel-all', () => {
-      let updatedFiles = this.getState().files
-      updatedFiles = {}
-      this.setState({files: updatedFiles})
+      // let updatedFiles = this.getState().files
+      // updatedFiles = {}
+      this.setState({files: {}})
     })
 
     this.on('core:upload-started', (fileID, upload) => {
@@ -511,13 +541,13 @@ class Uppy {
     const online = status || window.navigator.onLine
     if (!online) {
       this.emit('is-offline')
-      this.emit('informer', 'No internet connection', 'error', 0)
+      this.info('No internet connection', 'error', 0)
       this.wasOffline = true
     } else {
       this.emit('is-online')
       if (this.wasOffline) {
         this.emit('back-online')
-        this.emit('informer', 'Connected!', 'success', 3000)
+        this.info('Connected!', 'success', 3000)
         this.wasOffline = false
       }
     }
@@ -622,11 +652,57 @@ class Uppy {
     }
   }
 
-/**
- * Logs stuff to console, only if `debug` is set to true. Silent in production.
- *
- * @return {String|Object} to log
- */
+  /**
+  * Set info message in `state.info`, so that UI plugins like `Informer`
+  * can display the message
+  *
+  * @param {string} msg Message to be displayed by the informer
+  */
+
+  info (msg, type, duration) {
+    this.setState({
+      info: {
+        isHidden: false,
+        type: type,
+        msg: msg
+      }
+    })
+
+    this.emit('core:info-visible')
+
+    window.clearTimeout(this.infoTimeoutID)
+    if (duration === 0) {
+      this.infoTimeoutID = undefined
+      return
+    }
+
+    // hide the informer after `duration` milliseconds
+    this.infoTimeoutID = setTimeout(() => {
+      const newInformer = Object.assign({}, this.state.info, {
+        isHidden: true
+      })
+      this.setState({
+        info: newInformer
+      })
+      this.emit('core:info-hidden')
+    }, duration)
+  }
+
+  hideInfo () {
+    const newInfo = Object.assign({}, this.core.state.info, {
+      isHidden: true
+    })
+    this.setState({
+      info: newInfo
+    })
+    this.emit('core:info-hidden')
+  }
+
+  /**
+   * Logs stuff to console, only if `debug` is set to true. Silent in production.
+   *
+   * @return {String|Object} to log
+   */
   log (msg, type) {
     if (!this.opts.debug) {
       return
@@ -729,39 +805,6 @@ class Uppy {
   }
 
   /**
-   * Start an upload for all the files that are not currently being uploaded.
-   *
-   * @return {Promise}
-   */
-  upload () {
-    const isMinNumberOfFilesReached = this.checkRestrictions(true)
-    if (!isMinNumberOfFilesReached) {
-      return Promise.reject('Minimum number of files has not been reached')
-    }
-
-    return this.opts.onBeforeUpload(this.state.files).catch((err) => {
-      this.emit('informer', err, 'error', 5000)
-      return Promise.reject(`onBeforeUpload: ${err}`)
-    }).then(() => {
-      const waitingFileIDs = []
-      Object.keys(this.state.files).forEach((fileID) => {
-        const file = this.getFile(fileID)
-
-        // TODO: replace files[file].isRemote with some logic
-        //
-        // filter files that are now yet being uploaded / haven’t been uploaded
-        // and remote too
-        if (!file.progress.uploadStarted || file.isRemote) {
-          waitingFileIDs.push(file.id)
-        }
-      })
-
-      const uploadID = this.createUpload(waitingFileIDs)
-      return this.runUpload(uploadID)
-    })
-  }
-
-  /**
    * Run an upload. This picks up where it left off in case the upload is being restored.
    *
    * @private
@@ -809,6 +852,43 @@ class Uppy {
       this.emit('core:success', fileIDs)
 
       this.removeUpload(uploadID)
+    })
+  }
+  
+    /**
+   * Start an upload for all the files that are not currently being uploaded.
+   *
+   * @return {Promise}
+   */
+  upload (forceUpload) {
+    const isMinNumberOfFilesReached = this.checkRestrictions(true)
+    if (!isMinNumberOfFilesReached) {
+      return Promise.reject('Minimum number of files has not been reached')
+    }
+
+    return this.opts.onBeforeUpload(this.state.files).catch((err) => {
+      this.info(err, 'error', 5000)
+      return Promise.reject(`onBeforeUpload: ${err}`)
+    }).then(() => {
+      const waitingFileIDs = []
+      Object.keys(this.state.files).forEach((fileID) => {
+        const file = this.getFile(fileID)
+
+        // TODO: replace files[file].isRemote with some logic
+        //
+        // filter files that are now yet being uploaded / haven’t been uploaded
+        // and remote too
+
+        if (forceUpload) {
+          this.resetProgress()
+          waitingFileIDs.push(file.id)
+        } else if (!file.progress.uploadStarted || file.isRemote) {
+          waitingFileIDs.push(file.id)
+        }
+      })
+
+      const uploadID = this.createUpload(waitingFileIDs)
+      return this.runUpload(uploadID)
     })
   }
 }

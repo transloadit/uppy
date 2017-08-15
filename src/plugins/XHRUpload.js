@@ -13,6 +13,7 @@ module.exports = class XHRUpload extends Plugin {
     const defaultOptions = {
       formData: true,
       fieldName: 'files[]',
+      method: 'post',
       metaFields: null,
       responseUrlFieldName: 'url',
       bundle: true,
@@ -65,7 +66,7 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.upload.addEventListener('progress', (ev) => {
         if (ev.lengthComputable) {
-          this.core.emitter.emit('core:upload-progress', {
+          this.core.emit('core:upload-progress', {
             uploader: this,
             id: file.id,
             bytesUploaded: ev.loaded,
@@ -79,7 +80,7 @@ module.exports = class XHRUpload extends Plugin {
           const resp = opts.getResponseData(xhr)
           const uploadURL = resp[opts.responseUrlFieldName]
 
-          this.core.emitter.emit('core:upload-success', file.id, resp, uploadURL)
+          this.core.emit('core:upload-success', file.id, resp, uploadURL)
 
           if (uploadURL) {
             this.core.log(`Download ${file.name} from ${file.uploadURL}`)
@@ -87,7 +88,7 @@ module.exports = class XHRUpload extends Plugin {
 
           return resolve(file)
         } else {
-          this.core.emitter.emit('core:upload-error', file.id, xhr)
+          this.core.emit('core:upload-error', file.id, xhr)
           return reject('Upload error')
         }
 
@@ -101,7 +102,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.addEventListener('error', (ev) => {
-        this.core.emitter.emit('core:upload-error', file.id)
+        this.core.emit('core:upload-error', file.id)
         return reject('Upload error')
       })
 
@@ -113,26 +114,26 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.send(data)
 
-      this.core.emitter.on('core:upload-cancel', (fileID) => {
+      this.core.on('core:upload-cancel', (fileID) => {
         if (fileID === file.id) {
           xhr.abort()
         }
       })
 
-      this.core.emitter.on('core:cancel-all', () => {
+      this.core.on('core:cancel-all', () => {
         // const files = this.core.getState().files
         // if (!files[file.id]) return
         xhr.abort()
       })
 
-      this.core.emitter.emit('core:upload-started', file.id)
+      this.core.emit('core:upload-started', file.id)
     })
   }
 
   uploadRemote (file, current, total) {
     const opts = Object.assign({}, this.opts, file.xhrUpload || {})
     return new Promise((resolve, reject) => {
-      this.core.emitter.emit('core:upload-started', file.id)
+      this.core.emit('core:upload-started', file.id)
 
       fetch(file.remote.url, {
         method: 'post',
@@ -160,7 +161,7 @@ module.exports = class XHRUpload extends Plugin {
           socket.on('progress', (progressData) => Utils.emitSocketProgress(this, progressData, file))
 
           socket.on('success', (data) => {
-            this.core.emitter.emit('core:upload-success', file.id, data, data.url)
+            this.core.emit('core:upload-success', file.id, data, data.url)
             socket.close()
             return resolve()
           })
@@ -205,7 +206,7 @@ module.exports = class XHRUpload extends Plugin {
     this.selectForUpload(files)
 
     return new Promise((resolve) => {
-      this.core.bus.once('core:upload-complete', resolve)
+      this.core.once('core:upload-complete', resolve)
     })
   }
 
