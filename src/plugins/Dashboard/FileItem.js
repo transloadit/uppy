@@ -30,14 +30,6 @@ module.exports = function fileItem (props) {
                   id="uppy_${file.id}"
                   title="${file.meta.name}">
       <div class="UppyDashboardItem-preview">
-        ${file.source
-          ? html`<div class="UppyDashboardItem-sourceIcon">
-            ${acquirers.map(acquirer => {
-              if (acquirer.id === file.source) return html`<span title="${acquirer.name}">${acquirer.icon()}</span>`
-            })}
-          </div>`
-          : ''
-        }
         <div class="UppyDashboardItem-previewInnerWrap" style="background-color: ${getFileTypeIcon(file.type.general, file.type.specific).color}">
           ${file.preview
             ? html`<img alt="${file.name}" src="${file.preview}">`
@@ -94,7 +86,15 @@ module.exports = function fileItem (props) {
         }
       </h4>
       <div class="UppyDashboardItem-status">
-        <span class="UppyDashboardItem-statusSize">${file.data.size ? prettyBytes(file.data.size) : ''}</span>
+        <div class="UppyDashboardItem-statusSize">${file.data.size ? prettyBytes(file.data.size) : ''}</div>
+        ${file.source
+          ? html`<div class="UppyDashboardItem-sourceIcon">
+            ${acquirers.map(acquirer => {
+              if (acquirer.id === file.source) return html`<span title="${acquirer.name}">${acquirer.icon()}</span>`
+            })}
+          </div>`
+          : ''
+        }
       </div>
       ${!uploadInProgressOrComplete
         ? html`<button class="UppyDashboardItem-edit"
