@@ -76,30 +76,31 @@ What we need to do to release Uppy 1.0
 - [ ] DnD Bar ? (@arturi)
 - [ ] provider: improve UI: add icons for file types? (@arturi)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [ ] dashboard: error UI, question mark button, `core:error` (@arturi)
-- [ ] core: add error in file progress state? (@arturi)
+- [ ] core: add error in file progress state? error UI, question mark button, `core:error` (@arturi)
 - [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] s3+transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
+- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
+- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
+- [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
+- [ ] dashboard: cancel button for any kind of uploads? (@arturi)
+- [ ] core: retry or show error when upload can’t start (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
+- [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
 
 # next
 
 ## 0.18.0
 
 To be released: 2017-08-14.
-Theme: Dogumentation.
+Theme: Dogumentation and The Golden Retriver.
 
-- [ ] goldenretriver: add file limits, figure out what restores from where, add “ghost” files, add throttling for localStorage state sync (@goto-bus-stop @arturi)
+- [ ] goldenretriver: use Service Woker first, then IndexedDB, add file limits for IndexedDB, figure out what restores from where, add throttling for localStorage state sync (@goto-bus-stop @arturi)
 - [x] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
 - [x] dashboard: place close btn inside the Dashboard, don’t close on click outside, place source icon near the file size
 - [x] core: informer becomes a core API, `uppy.info('Smile! 📸', 'warning', 5000)` so its more concise with `uppy.log('my msg')` and supports different UI implementations (@arturi, #271)
-- [ ] docs: first stage — on using plugins, all options, list of plugins, i18n (@arturi, @goto-bus-stop, @ifedapoolarewaju)
-- [ ] core: retry or show error when upload can’t start (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
-- [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
+- [ ] docs: first stage — on using plugins, all options, list of plugins, i18n, uppy-server (@arturi, @goto-bus-stop, @ifedapoolarewaju)
 - [x] provider: file size sorting (@ifedapoolarewaju)
 - [x] provider: show loading screen when checking auth too (@arturi)
-- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
-- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [x] uploaders: add direct-to-s3 upload plugin (@goto-bus-stop)
 - [x] core: ability to re-upload all files, even `uploadComplete` ones, reset progress (@arturi)
 - [x] goldenretriver: recover selected or in progress files after a browser crash or closed tab: alpha-version, add LocalStorage, Service Worker and IndexedDB (@arturi @goto-bus-stop @nqst #268)
