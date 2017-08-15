@@ -70,7 +70,12 @@ What we need to do to release Uppy 1.0
 - [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
 - [ ] uppy-server: security audit
 
+# next
+
 ## 0.19.0
+
+To be released: 2017-09-01.
+Theme: React and Retry
 
 - [ ] allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
@@ -88,11 +93,9 @@ What we need to do to release Uppy 1.0
 - [ ] core: show error or retry when one file fails (@arturi @goto-bus-stop)
 - [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
 
-# next
-
 ## 0.18.0
 
-To be released: 2017-08-15.
+Released: 2017-08-15.
 Theme: Dogumentation and The Golden Retriver.
 
 - [x] goldenretriver: use Service Woker first, then IndexedDB, add file limits for IndexedDB, figure out what restores from where, add throttling for localStorage state sync (@goto-bus-stop @arturi)
