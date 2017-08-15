@@ -854,7 +854,7 @@ class Uppy {
       this.removeUpload(uploadID)
     })
   }
-  
+
     /**
    * Start an upload for all the files that are not currently being uploaded.
    *
