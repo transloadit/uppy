@@ -33,12 +33,12 @@ Starts upload automatically after the first file is selected.
 
 Optionally provide rules and conditions for which files can be selected.
 
-#### Parameters
+**Parameters**
 
-- **maxFileSize** *number*
-- **maxNumberOfFiles** *number*
-- **minNumberOfFiles** *number*
-- **allowedFileTypes** *array* of wildcards or exact mime types, like `image/*`
+- `maxFileSize` *number*
+- `maxNumberOfFiles` *number*
+- `minNumberOfFiles` *number*
+- `allowedFileTypes` *array* of wildcards or exact mime types, like `image/*`
 
 ### `meta: {}`
 
