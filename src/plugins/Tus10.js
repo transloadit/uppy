@@ -191,68 +191,79 @@ module.exports = class Tus10 extends Plugin {
   uploadRemote (file, current, total) {
     return new Promise((resolve, reject) => {
       this.core.log(file.remote.url)
-      let endpoint = this.opts.endpoint
-      if (file.tus && file.tus.endpoint) {
-        endpoint = file.tus.endpoint
-      }
-
-      this.core.emit('core:upload-started', file.id)
-
-      fetch(file.remote.url, {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Object.assign({}, file.remote.body, {
-          endpoint,
-          protocol: 'tus',
-          size: file.data.size,
-          metadata: file.meta
-        }))
-      })
-      .then((res) => {
-        if (res.status < 200 && res.status > 300) {
-          return reject(res.statusText)
+      if (file.serverToken) {
+        this.connectToServerSocket(file)
+      } else {
+        let endpoint = this.opts.endpoint
+        if (file.tus && file.tus.endpoint) {
+          endpoint = file.tus.endpoint
         }
 
-        res.json().then((data) => {
-          const token = data.token
-          const host = Utils.getSocketHost(file.remote.host)
-          const socket = new UppySocket({ target: `${host}/api/${token}` })
+        this.core.emitter.emit('core:upload-started', file.id)
 
-          this.onFileRemove(file.id, (targetFileID) => {
-            socket.send('pause', {})
-            resolve(`upload ${targetFileID} was removed`)
-          })
+        fetch(file.remote.url, {
+          method: 'post',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(Object.assign({}, file.remote.body, {
+            endpoint,
+            protocol: 'tus',
+            size: file.data.size,
+            metadata: file.meta
+          }))
+        })
+        .then((res) => {
+          if (res.status < 200 && res.status > 300) {
+            return reject(res.statusText)
+          }
 
-          this.onPause(file.id, (isPaused) => {
-            isPaused ? socket.send('pause', {}) : socket.send('resume', {})
-          })
-
-          this.onPauseAll(file.id, () => {
-            socket.send('pause', {})
-          })
-
-          this.onResumeAll(file.id, () => {
-            socket.send('resume', {})
-          })
-
-          socket.on('progress', (progressData) => Utils.emitSocketProgress(this, progressData, file))
-
-          socket.on('success', (data) => {
-            this.core.emit('core:upload-success', file.id, data, data.url)
-            socket.close()
-            return resolve()
+          res.json().then((data) => {
+            const token = data.token
+            file = this.getFile(file.id)
+            file.serverToken = token
+            this.updateFile(file)
+            this.connectToServerSocket(file)
+            resolve()
           })
         })
-      })
+      }
+    })
+  }
+
+  connectToServerSocket (file) {
+    const token = file.serverToken
+    const host = Utils.getSocketHost(file.remote.host)
+    const socket = new UppySocket({ target: `${host}/api/${token}` })
+
+    this.onFileRemove(file.id, () => socket.send('pause', {}))
+
+    this.onPause(file.id, (isPaused) => {
+      isPaused ? socket.send('pause', {}) : socket.send('resume', {})
+    })
+
+    this.onPauseAll(file.id, () => socket.send('pause', {}))
+    this.onResumeAll(file.id, () => socket.send('resume', {}))
+
+    socket.on('progress', (progressData) => Utils.emitSocketProgress(this, progressData, file))
+
+    socket.on('success', (data) => {
+      this.core.emitter.emit('core:upload-success', file.id, data, data.url)
+      socket.close()
     })
   }
 
   getFile (fileID) {
     return this.core.state.files[fileID]
+  }
+
+  updateFile (file) {
+    const files = Object.assign({}, this.core.state.files, {
+      [file.id]: file
+    })
+    this.core.setState({ files })
   }
 
   onReceiveUploadUrl (file, uploadURL) {
@@ -265,10 +276,7 @@ module.exports = class Tus10 extends Plugin {
           uploadUrl: uploadURL
         })
       })
-      const files = Object.assign({}, this.core.state.files, {
-        [currentFile.id]: newFile
-      })
-      this.core.setState({ files })
+      this.updateFile(newFile)
     }
   }
 

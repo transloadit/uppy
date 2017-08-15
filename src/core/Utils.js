@@ -113,10 +113,11 @@ function toArray (list) {
  * @param {String} fileName
  *
  */
-function generateFileID (fileName) {
-  let fileID = fileName.toLowerCase()
+function generateFileID (file) {
+  console.log(file)
+  let fileID = file.name.toLowerCase()
   fileID = fileID.replace(/[^A-Z0-9]/ig, '')
-  fileID = fileID + Date.now()
+  fileID = fileID + file.data.lastModified
   return fileID
 }
 
@@ -248,8 +249,8 @@ function getFileNameAndExtension (fullFileName) {
   return [fileName, fileExt]
 }
 
-function getThumbnail (file) {
-  return URL.createObjectURL(file.data)
+function getThumbnail (fileData) {
+  return URL.createObjectURL(fileData)
 }
 
 function supportsMediaRecorder () {
