@@ -74,12 +74,14 @@ This rule looks like:
 If uploaded files should be publically viewable, but a rule like this is not present, add it.
 
 A different `<CORSRule>` is necessary to allow uploading.
-This rule should come _before_ the existing rule, because S3 uses the first rule that matches the origin of the request.
+This rule should come _before_ the existing rule, because S3 only uses the first rule that matches the origin of the request.
 
-At minimum, the domain from which the uploads will happen must be whitelisted:
+At minimum, the domain from which the uploads will happen must be whitelisted, and the definitions from the previous rule must be added:
 
 ```xml
 <AllowedOrigin>https://my-app.com</AllowedOrigin>
+<AllowedMethod>GET</AllowedMethod>
+<MaxAgeSeconds>3000</MaxAgeSeconds>
 ```
 
 When using uppy-server, which generates a POST policy document, the following permissions must be granted:
@@ -104,7 +106,10 @@ The final configuration should look something like the below:
 <?xml version="1.0" encoding="UTF-8"?>
 <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
   <CORSRule>
+    <AllowedOrigin>https://my-app.com</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
     <AllowedMethod>POST</AllowedMethod>
+    <MaxAgeSeconds>3000</MaxAgeSeconds>
     <AllowedHeader>Authorization</AllowedHeader>
     <AllowedHeader>x-amz-date</AllowedHeader>
     <AllowedHeader>x-amz-content-sha256</AllowedHeader>

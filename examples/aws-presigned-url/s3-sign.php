@@ -16,11 +16,10 @@ $s3 = new Aws\S3\S3Client([
   'region' => $awsRegion,
 ]);
 
-// Retrieve data about the file to be uploaded from the query string.
-list(
-  'filename' => $filename,
-  'content-type' => $contentType,
-) = $_GET;
+// Retrieve data about the file to be uploaded from the request body.
+$body = json_decode(file_get_contents('php://input'));
+$filename = $body->filename;
+$contentType = $body->contentType;
 
 // Prepare a PutObject command.
 $command = $s3->getCommand('putObject', [
