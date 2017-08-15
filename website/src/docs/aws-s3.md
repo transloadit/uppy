@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 4
+order: 10
 title: "AwsS3"
 permalink: docs/aws-s3/
 ---
