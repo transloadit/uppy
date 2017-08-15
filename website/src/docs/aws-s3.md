@@ -23,11 +23,11 @@ uppy.use(AwsS3, {
 
 ### `host`
 
-When using [uppy-server](/docs/uppy-server) to sign S3 uploads, set this option to the
+When using [uppy-server][uppy-server docs] to sign S3 uploads, set this option to the root URL of the uppy-server.
 
 ### `getUploadParameters(file)`
 
-> Note: When using [uppy-server][] to sign S3 uploads, do not define this option.
+> Note: When using [uppy-server][uppy-server docs] to sign S3 uploads, do not define this option.
 
 A function returning upload parameters for a file.
 Parameters should be returned as an object, or a Promise for an object, with keys `{ method, url, fields }`.
@@ -79,3 +79,5 @@ uppy
 ```
 
 See the [aws-presigned-url example in the uppy repository](https://github.com/transloadit/uppy/tree/master/examples/aws-presigned-url) for a small example that implements both the server-side and the client-side.
+
+[uppy-server docs]: /docs/server/index.html
