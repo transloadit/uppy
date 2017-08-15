@@ -42,6 +42,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] s3+transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
 - [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
+- [ ] DnD Bar ? (@arturi)
 
 ## 1.0 Goals
 
@@ -73,7 +74,6 @@ What we need to do to release Uppy 1.0
 
 - [ ] allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
-- [ ] DnD Bar ? (@arturi)
 - [ ] provider: improve UI: add icons for file types? (@arturi)
 - [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: add error in file progress state? error UI, question mark button, `core:error` (@arturi)
@@ -85,20 +85,21 @@ What we need to do to release Uppy 1.0
 - [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
 - [ ] dashboard: cancel button for any kind of uploads? (@arturi)
 - [ ] core: retry or show error when upload can’t start (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
+- [ ] core: show error or retry when one file fails (@arturi @goto-bus-stop)
 - [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
 
 # next
 
 ## 0.18.0
 
-To be released: 2017-08-14.
+To be released: 2017-08-15.
 Theme: Dogumentation and The Golden Retriver.
 
-- [ ] goldenretriver: use Service Woker first, then IndexedDB, add file limits for IndexedDB, figure out what restores from where, add throttling for localStorage state sync (@goto-bus-stop @arturi)
+- [x] goldenretriver: use Service Woker first, then IndexedDB, add file limits for IndexedDB, figure out what restores from where, add throttling for localStorage state sync (@goto-bus-stop @arturi)
 - [x] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
 - [x] dashboard: place close btn inside the Dashboard, don’t close on click outside, place source icon near the file size
 - [x] core: informer becomes a core API, `uppy.info('Smile! 📸', 'warning', 5000)` so its more concise with `uppy.log('my msg')` and supports different UI implementations (@arturi, #271)
-- [ ] docs: first stage — on using plugins, all options, list of plugins, i18n, uppy-server (@arturi, @goto-bus-stop, @ifedapoolarewaju)
+- [x] docs: first stage — on using plugins, all options, list of plugins, i18n, uppy-server (@arturi, @goto-bus-stop, @ifedapoolarewaju)
 - [x] provider: file size sorting (@ifedapoolarewaju)
 - [x] provider: show loading screen when checking auth too (@arturi)
 - [x] uploaders: add direct-to-s3 upload plugin (@goto-bus-stop)
