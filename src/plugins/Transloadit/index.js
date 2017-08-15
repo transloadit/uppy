@@ -286,9 +286,9 @@ module.exports = class Transloadit extends Plugin {
     // the socket immediately and finish the upload.
     if (!this.shouldWait()) {
       const file = this.core.getFile(fileID)
-      const socket = this.socket[file.assembly]
+      const socket = this.sockets[file.transloadit.assembly]
       socket.close()
-      return
+      return Promise.resolve()
     }
 
     return new Promise((resolve, reject) => {
