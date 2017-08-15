@@ -100,7 +100,7 @@
     "build:lib": "babel --version && babel src --source-maps -d lib",
     "build": "npm-run-all --parallel build:js build:css --serial build:gzip size",
     "clean": "rm -rf lib && rm -rf dist",
-    "docs": "cd website && node node_modules/documentation/bin/documentation.js readme ../src/index.js --readme-file=src/api/docs.md --section 'Uppy Core & Plugins' -q --github -c doc-order.json",
+    "docs": "cd website && node node_modules/documentation/bin/documentation.js readme ../src/index.js --readme-file=src/docs/generated.md --section 'Uppy Core & Plugins' -q --github -c doc-order.json",
     "lint:fix": "eslint src test website/build-examples.js website/update.js website/themes/uppy/source/js/common.js --fix",
     "lint": "eslint src test website/build-examples.js website/update.js website/themes/uppy/source/js/common.js",
     "lint-staged": "lint-staged",

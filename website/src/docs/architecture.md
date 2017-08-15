@@ -1,23 +1,24 @@
 ---
 type: api
-order: 0
+order: 10
 title: "Architecture"
-permalink: api/architecture
+permalink: api/architecture/
+published: false
 ---
 
-Uppy has a lean [Core](https://github.com/transloadit/uppy/blob/master/src/core/Core.js) module and [Plugins](https://github.com/transloadit/uppy/tree/master/src/plugins) (see simple [Input](https://github.com/transloadit/uppy/blob/master/src/plugins/Formtag.js) as an example) that extend its functionality. Here’s how it’s currently used:
+Uppy file uploader consists of a lean [Core](https://github.com/transloadit/uppy/blob/master/src/core/Core.js) module and [Plugins](https://github.com/transloadit/uppy/tree/master/src/plugins) (see simple [Input](https://github.com/transloadit/uppy/blob/master/src/plugins/Formtag.js) as an example) that extend it’s functionality. Like this:
 
 {% include_code lang:js ../api-usage-example.ejs %}
 
 ## Core
 
-Core module orchestrates everything in Uppy. Plugins are added to it via `.use(Plugin, opts)` API, like `.use(DragDrop, {target: 'body'})`. Core instantiates plugins with `new Plugin(this, opts)`, passing options to them, then places them in `plugins` object, nested by type: `uploader`, `progressindicator`, `acquirer`, etc.
+1. Core module orchestrates Uppy plugins, stores `state` with `files`, and exposes useful methods like `addFile`, `setState`, `upload` to the user and plugins. Plugins are added to Uppy with `.use(Plugin, opts)` API, like so: `.use(DragDrop, {target: 'body'})`. 
 
-Core then iterates over `plugins` object and calls `install` on each plugin. In its `install` method a plugin can extend global state with its state, set event listeners to react to events happening in Uppy (upload progress, file has been removed), or do anything else needed on init.
+2. Internally Core then instantiates plugins via `new Plugin(this, opts)`, passing options to them, then places them in `plugins` object, nested by type: `uploader`, `progressindicator`, `acquirer`, etc. Core then iterates over `plugins` and calls `install` on each of them. In it’s `install` method a plugin can set event listeners to react to things happening in Uppy (upload progress, file was removed), or do anything else needed on init.
 
-Each time `state` is updated with `setState(stateAddition)`, Core runs `updateAll()` that re-renders all of the plugins (components) that have been mounted in the dom somewhere, using the new state.
+3. Each time `state` is updated with `setState(statePatch)`, Core runs `updateAll()` method that re-renders all of the view plugins (components) that have been mounted in the DOM somewhere, passing the new state to each of them.
 
-Core is very lean (at least should be), and acts as a glue that ties together all the plugins, shared data and functionality together. It keeps `state` with `files`, `capabilities`, plus exposes a few methods that are called by plugins to update state — adding files, adding preview Thumbnails to images, updating progress for each file and total progress, etc.
+Core is very lean (at least we try to keep it sobe), and acts as a glue that ties together all the plugins, shared data and functionality together. It keeps `state` with `files`, `capabilities`, plus exposes a few methods that are called by plugins to update state — adding files, adding preview thumbnails to images, updating progress for each file and total progress, etc.
 
 *Comment: There is a discussion that these methods could in theory all live in Utils or be standalone modules used by plugins and the user directly, see https://github.com/transloadit/uppy/issues/116#issuecomment-247695921.*
 
@@ -64,7 +65,7 @@ Logs stuff to console only if user specified `debug: true`, silent in production
 
 An event emitter embedded into Core that is passed to Plugins, and can be used directly on the instance. Used by Plugins for communicating with other Plugins and Core.
 
-For example:
+## Events
 
 - Core listens for `core:upload-progress` event and calculates speed & ETA for all files currently in progress. *Uploader plugins could just call core.updateProgress().*
 - Core checks if browser in offline or online and emits `core:is-offline` or `core:is-online` that other plugins can listen to.

@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "uppy-aws-php-example",
+  "scripts": {
+    "start": "node ./serve.js"
+  },
+  "devDependencies": {
+    "aliasify": "^2.1.0",
+    "babelify": "^7.3.0",
+    "browserify": "^14.4.0",
+    "fs-write-stream-atomic": "^1.0.10"
+  }
+}

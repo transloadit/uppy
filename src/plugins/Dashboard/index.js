@@ -44,6 +44,7 @@ module.exports = class DashboardUI extends Plugin {
     const defaultOptions = {
       target: 'body',
       getMetaFromForm: true,
+      trigger: '#uppy-select-files',
       inline: false,
       width: 750,
       height: 550,
