@@ -18,6 +18,7 @@
   transition: all .4s cubic-bezier(0.4, 0, 0, 1);
   transform: translate(-280px, 0);
   z-index: 10;
+  overflow-y: scroll;
 
   .main-menu {
     margin-bottom: 20px;
