@@ -60,7 +60,7 @@ const options = {
 app.use(uppy.app(options))
 
 ```
-[See](#options) for valid configuration options.
+[See](#Options) for valid configuration options.
 
 To enable uppy socket for realtime feed to the client while upload is going on, you call the `socket` method like so.
 
@@ -73,7 +73,7 @@ uppy.socket(server, options)
 ```
 
 ### Run as standalone server
-Please ensure that the required env varaibles are set before runnning/using uppy-server as a standalone server. [See](#configure-standalone).
+Please ensure that the required env varaibles are set before runnning/using uppy-server as a standalone server. [See](#Configure-Standalone).
 
 ```bash
 $ uppy-server
@@ -176,7 +176,7 @@ export UPPYSERVER_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
 
 2. **redisUrl(optional)** - URL to running redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
 
-3. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please [see](#supported-providers) for supported providers.
+3. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please [see](#Supported-Providers) for supported providers.
 
 4. **server(optional)** - An object with details mainly used to carry out oauth authentication from any of the enable providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set
 
@@ -188,7 +188,7 @@ export UPPYSERVER_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
 
 5. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attributes is that, when set, it adds the value as the `i-am` header of every request response.
 
-6. **customProviders(optional)** - This option enables you add custom providers along with the already supported providers. [See](#adding-custom-providers) for more.
+6. **customProviders(optional)** - This option enables you add custom providers along with the already supported providers. [See](#Adding-Custom-Providers) for more.
 
 ### Adding Custom Providers
 
