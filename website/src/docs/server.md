@@ -2,7 +2,7 @@
 title: "Uppy Server"
 type: docs
 permalink: docs/server/
-order: 5
+order: 2
 ---
 
 Drag and Drop, Webcam, basic file manipulation (adding metadata, for example) and uploading via tus resumable uploads or XHR/Multipart are all possible using just the uppy client module. 

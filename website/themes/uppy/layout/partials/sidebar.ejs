@@ -5,14 +5,25 @@
   <div class="list">
     <h2>
       <% if (page.type) { %>
-        <%- type === 'api' ? 'API' : (type.charAt(0).toUpperCase() + type.slice(1)) %>
+        <a href="/<%- type %>"><%- type === 'api' ? 'API' : (type.charAt(0).toUpperCase() + type.slice(1)) %></a>
       <% } %>
     </h2>
     <ul class="menu-root">
       <% site.pages.find({type: type}).sort('order').each(function (p) { %>
-        <li>
-          <a href="/<%- p.path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
-        </li>
+        <% var path = p.path.replace(/index\.html$/, ''); %>
+        <% // https://github.com/vuejs/vuejs.org/blob/master/themes/vue/layout/partials/toc.ejs %>
+        <% if (path === 'docs/plugins/') { %>
+          <li>
+            <h3><a href="/docs/plugins/">Plugins</a></h3>
+          </li>
+          <li>
+            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
+          </li>
+        <% } else { %>
+          <li>
+            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
+          </li>
+        <% } %>
       <% }) %>
     </ul>
     <%- partial('partials/social') %>

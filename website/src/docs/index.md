@@ -2,6 +2,7 @@
 title: "Getting Started"
 type: docs
 permalink: docs/
+alias: api/
 order: 0
 ---
 

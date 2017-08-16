@@ -1,8 +1,8 @@
 ---
-title: "Plugins"
+title: "List & Common Options"
 type: docs
 permalink: docs/plugins/
-order: 2
+order: 3
 ---
 
 Plugins are what makes Uppy useful: they help select, manipulate and upload files.
