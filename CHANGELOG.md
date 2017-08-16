@@ -100,7 +100,7 @@ Theme: Dogumentation and The Golden Retriver.
 
 - [x] goldenretriver: use Service Woker first, then IndexedDB, add file limits for IndexedDB, figure out what restores from where, add throttling for localStorage state sync (@goto-bus-stop @arturi)
 - [x] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
-- [x] dashboard: place close btn inside the Dashboard, don’t close on click outside, place source icon near the file size
+- [x] dashboard: place close btn inside the Dashboard, don’t close on click outside, place source icon near the file size (@arturi)
 - [x] core: informer becomes a core API, `uppy.info('Smile! 📸', 'warning', 5000)` so its more concise with `uppy.log('my msg')` and supports different UI implementations (@arturi, #271)
 - [x] docs: first stage — on using plugins, all options, list of plugins, i18n, uppy-server (@arturi, @goto-bus-stop, @ifedapoolarewaju)
 - [x] provider: file size sorting (@ifedapoolarewaju)
