@@ -58,11 +58,11 @@ module.exports = class Provider {
   }
 
   authUrl () {
-    return `${this.opts.host}/${this.id}/connect`
+    return `${this.hostname}/${this.id}/connect`
   }
 
   fileUrl (id) {
-    return `${this.opts.host}/${this.id}/get/${id}`
+    return `${this.hostname}/${this.id}/get/${id}`
   }
 
   list (directory) {
