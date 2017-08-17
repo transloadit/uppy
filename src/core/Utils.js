@@ -114,7 +114,6 @@ function toArray (list) {
  *
  */
 function generateFileID (file) {
-  console.log(file)
   let fileID = file.name.toLowerCase()
   fileID = fileID.replace(/[^A-Z0-9]/ig, '')
   fileID = fileID + file.data.lastModified
@@ -276,7 +275,7 @@ function getProportionalHeight (img, width) {
  * @param {number} width
  * @return {Promise}
  */
-function createThumbnail (file, width) {
+function createThumbnail (file, targetWidth) {
   const originalUrl = URL.createObjectURL(file.data)
 
   const onload = new Promise((resolve, reject) => {
@@ -294,19 +293,65 @@ function createThumbnail (file, width) {
   })
 
   return onload.then((image) => {
-    const height = getProportionalHeight(image, width)
+    const targetHeight = getProportionalHeight(image, targetWidth)
+    let sourceWidth = image.width
+    let sourceHeight = image.height
+
+    if (targetHeight < image.height / 2) {
+      const steps = Math.floor(Math.log(image.width / targetWidth) / Math.log(2))
+      ;({
+        image,
+        sourceWidth,
+        sourceHeight
+      } = downScaleInSteps(image, steps))
+    }
 
     const canvas = document.createElement('canvas')
-    canvas.width = width
-    canvas.height = height
+    canvas.width = targetWidth
+    canvas.height = targetHeight
 
     const context = canvas.getContext('2d')
-    context.drawImage(image, 0, 0, width, height)
+    context.drawImage(image,
+      0, 0, sourceWidth, sourceHeight,
+      0, 0, targetWidth, targetHeight)
 
     return canvasToBlob(canvas)
   }).then((blob) => {
     return URL.createObjectURL(blob)
   })
+}
+
+/**
+ * Downscale an image by 50% `steps` times.
+ */
+function downScaleInSteps (image, steps) {
+  let source = image
+  let currentWidth = source.width
+  let currentHeight = source.height
+
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+  canvas.width = currentWidth / 2
+  canvas.height = currentHeight / 2
+
+  for (let i = 0; i < steps; i += 1) {
+    context.drawImage(source,
+      // The entire source image. We pass width and height here,
+      // because we reuse this canvas, and should only scale down
+      // the part of the canvas that contains the previous scale step.
+      0, 0, currentWidth, currentHeight,
+      // Draw to 50% size
+      0, 0, currentWidth / 2, currentHeight / 2)
+    currentWidth /= 2
+    currentHeight /= 2
+    source = canvas
+  }
+
+  return {
+    image: canvas,
+    sourceWidth: currentWidth,
+    sourceHeight: currentHeight
+  }
 }
 
 /**
