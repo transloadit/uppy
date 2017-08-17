@@ -63,14 +63,13 @@ uppy.use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
 
 ### `setMetaFromTargetForm`
 
-If `setMetaFromTargetForm === true`, UI acquire type plugins, like Dashboard, FileInput and DragDrop, before mounting themselves or doing anything else, will extract FormData
-from the target `<form>` element (it must be a form currently), and merge the object with the global `uppy.state.meta`.
+If `setMetaFromTargetForm === true`, UI acquire type plugins, like Dashboard, FileInput and DragDrop, before mounting themselves or doing anything else, will extract FormData from the target `<form>` element (it must be a form currently), and merge the object with the global `uppy.state.meta`.
 
 If you have a form like this one:
 
 ```html
 <form class="MyForm" action="/">
-  <input type="file" />
+  <input type="file">
   <input type="hidden" name="bla" value="12333">
   <input type="text" name="yo" value="1">
   <button type="submit">Upload</button>
