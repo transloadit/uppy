@@ -299,14 +299,6 @@ class Uppy {
           preview: file.preview
         }
 
-        if (Utils.isPreviewSupported(fileTypeSpecific) && !isRemote) {
-          Utils.createThumbnail(file, 200).then((thumbnail) => {
-            this.setPreviewURL(fileID, thumbnail)
-          }).catch((err) => {
-            console.warn(err.stack || err.message)
-          })
-        }
-
         const isFileAllowed = this.checkRestrictions(false, newFile, fileType)
         if (!isFileAllowed) return Promise.reject('File not allowed')
 
@@ -443,6 +435,16 @@ class Uppy {
 
     this.on('core:file-add', (data) => {
       this.addFile(data)
+    })
+
+    this.on('core:file-added', (file) => {
+      if (Utils.isPreviewSupported(file.type.specific) && !file.isRemote) {
+        Utils.createThumbnail(file, 200).then((thumbnail) => {
+          this.setPreviewURL(file.id, thumbnail)
+        }).catch((err) => {
+          console.warn(err.stack || err.message)
+        })
+      }
     })
 
     // `remove-file` removes a file from `state.files`, for example when
