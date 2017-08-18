@@ -49,7 +49,7 @@ Ideas that will be planned and find their way into a release at one point
 What we need to do to release Uppy 1.0
 
 - [x] feature: restrictions: by size, number of files, file type
-- [ ] feature: beta file recovering after closed tab / browser crash
+- [x] feature: beta file recovering after closed tab / browser crash
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
 - [ ] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
 - [ ] feature: Uppy should work well with React/Redux and React Native
@@ -70,6 +70,15 @@ What we need to do to release Uppy 1.0
 - [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
 - [ ] uppy-server: security audit
 
+## 0.20.0
+
+- [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
+- [ ] provider: improve UI: add icons for file types? (@arturi)
+- [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
+- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
+- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
+- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
+
 # next
 
 ## 0.19.0
@@ -78,20 +87,15 @@ To be released: 2017-09-01.
 Theme: React and Retry
 
 - [ ] allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
-- [ ] provider: improve UI: add icons for file types? (@arturi)
-- [ ] core: see if we can figure out css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: add error in file progress state? error UI, question mark button, `core:error` (@arturi)
+- [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
 - [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
-- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] s3+transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
-- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
-- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
+- [x] core: gradually resize image previews #275 (@goto-bus-stop)
 - [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
-- [ ] dashboard: cancel button for any kind of uploads? (@arturi)
-- [ ] core: retry or show error when upload can’t start (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
-- [ ] core: show error or retry when one file fails (@arturi @goto-bus-stop)
+- [ ] dashboard: cancel button for any kind of uploads? currently resume-only for tus (@arturi)
 - [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
+- [x] website: group plugin docs together in the sidebar (@arturi)
 
 ## 0.18.0
 
