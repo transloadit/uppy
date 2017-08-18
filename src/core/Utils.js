@@ -294,31 +294,40 @@ function createThumbnail (file, targetWidth) {
 
   return onload.then((image) => {
     const targetHeight = getProportionalHeight(image, targetWidth)
-    let sourceWidth = image.width
-    let sourceHeight = image.height
-
-    if (targetHeight < image.height / 2) {
-      const steps = Math.floor(Math.log(image.width / targetWidth) / Math.log(2))
-      ;({
-        image,
-        sourceWidth,
-        sourceHeight
-      } = downScaleInSteps(image, steps))
-    }
-
-    const canvas = document.createElement('canvas')
-    canvas.width = targetWidth
-    canvas.height = targetHeight
-
-    const context = canvas.getContext('2d')
-    context.drawImage(image,
-      0, 0, sourceWidth, sourceHeight,
-      0, 0, targetWidth, targetHeight)
-
+    const canvas = resizeImage(image, targetWidth, targetHeight)
     return canvasToBlob(canvas)
   }).then((blob) => {
     return URL.createObjectURL(blob)
   })
+}
+
+/**
+ * Resize an image to the target `width` and `height`.
+ *
+ * Returns a Canvas with the resized image on it.
+ */
+function resizeImage (image, targetWidth, targetHeight) {
+  let sourceWidth = image.width
+  let sourceHeight = image.height
+
+  if (targetHeight < image.height / 2) {
+    const steps = Math.floor(Math.log(image.width / targetWidth) / Math.log(2))
+    const stepScaled = downScaleInSteps(image, steps)
+    image = stepScaled.image
+    sourceWidth = stepScaled.sourceWidth
+    sourceHeight = stepScaled.sourceHeight
+  }
+
+  const canvas = document.createElement('canvas')
+  canvas.width = targetWidth
+  canvas.height = targetHeight
+
+  const context = canvas.getContext('2d')
+  context.drawImage(image,
+    0, 0, sourceWidth, sourceHeight,
+    0, 0, targetWidth, targetHeight)
+
+  return canvas
 }
 
 /**
