@@ -1,5 +1,4 @@
 const Plugin = require('../Plugin')
-const Utils = require('../../core/Utils')
 const ServiceWorkerStore = require('./ServiceWorkerStore')
 const IndexedDBStore = require('./IndexedDBStore')
 
@@ -91,13 +90,12 @@ module.exports = class RestoreFiles extends Plugin {
         data: cachedData,
         isRestored: true
       }
-      if (this.core.state.files[fileID] && Utils.isPreviewSupported(this.core.state.files[fileID].type.specific)) {
-        updatedFileData.preview = Utils.getThumbnail(cachedData)
-      }
       const updatedFile = Object.assign({}, updatedFiles[fileID],
         Object.assign({}, updatedFileData)
       )
       updatedFiles[fileID] = updatedFile
+
+      this.core.generatePreview(updatedFile)
     })
     this.core.setState({
       files: updatedFiles
