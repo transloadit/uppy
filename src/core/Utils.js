@@ -295,7 +295,7 @@ function createThumbnail (file, targetWidth) {
   return onload.then((image) => {
     const targetHeight = getProportionalHeight(image, targetWidth)
     const canvas = resizeImage(image, targetWidth, targetHeight)
-    return canvasToBlob(canvas)
+    return canvasToBlob(canvas, 'image/jpeg')
   }).then((blob) => {
     return URL.createObjectURL(blob)
   })
@@ -369,14 +369,14 @@ function downScaleInSteps (image, steps) {
  * @param {HTMLCanvasElement} canvas
  * @return {Promise}
  */
-function canvasToBlob (canvas) {
+function canvasToBlob (canvas, type, quality) {
   if (canvas.toBlob) {
     return new Promise((resolve) => {
-      canvas.toBlob(resolve)
+      canvas.toBlob(resolve, type, quality)
     })
   }
   return Promise.resolve().then(() => {
-    return dataURItoBlob(canvas.toDataURL(), {})
+    return dataURItoBlob(canvas.toDataURL(type, quality), {})
   })
 }
 
