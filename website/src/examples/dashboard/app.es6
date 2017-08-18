@@ -59,8 +59,8 @@ function uppyInit () {
   uppy.use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
   uppy.use(MetaData, {
     fields: [
-      { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
-      { id: 'description', name: 'Description', value: 'none', placeholder: 'describe what the file is for' }
+      { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
+      { id: 'caption', name: 'Caption', value: 'none', placeholder: 'describe what the image is about' }
     ]
   })
   uppy.run()
