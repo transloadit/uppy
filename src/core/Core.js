@@ -438,6 +438,10 @@ class Uppy {
     })
 
     this.on('core:file-added', (file) => {
+      this.emit('core:generate-preview', file)
+    })
+
+    this.on('core:generate-preview', (file) => {
       if (Utils.isPreviewSupported(file.type.specific) && !file.isRemote) {
         Utils.createThumbnail(file, 200).then((thumbnail) => {
           this.setPreviewURL(file.id, thumbnail)
