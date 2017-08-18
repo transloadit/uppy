@@ -330,6 +330,19 @@ class Uppy {
   }
 
   /**
+   * Generate a preview image for the given file, if possible.
+   */
+  generatePreview (file) {
+    if (Utils.isPreviewSupported(file.type.specific) && !file.isRemote) {
+      Utils.createThumbnail(file, 200).then((thumbnail) => {
+        this.setPreviewURL(file.id, thumbnail)
+      }).catch((err) => {
+        console.warn(err.stack || err.message)
+      })
+    }
+  }
+
+  /**
    * Set the preview URL for a file.
    */
   setPreviewURL (fileID, preview) {
@@ -438,17 +451,7 @@ class Uppy {
     })
 
     this.on('core:file-added', (file) => {
-      this.emit('core:generate-preview', file)
-    })
-
-    this.on('core:generate-preview', (file) => {
-      if (Utils.isPreviewSupported(file.type.specific) && !file.isRemote) {
-        Utils.createThumbnail(file, 200).then((thumbnail) => {
-          this.setPreviewURL(file.id, thumbnail)
-        }).catch((err) => {
-          console.warn(err.stack || err.message)
-        })
-      }
+      this.generatePreview(file)
     })
 
     // `remove-file` removes a file from `state.files`, for example when

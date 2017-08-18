@@ -95,7 +95,7 @@ module.exports = class RestoreFiles extends Plugin {
       )
       updatedFiles[fileID] = updatedFile
 
-      this.core.emit('core:generate-preview', updatedFile)
+      this.core.generatePreview(updatedFile)
     })
     this.core.setState({
       files: updatedFiles
