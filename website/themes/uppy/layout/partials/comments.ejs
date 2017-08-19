@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
   DiscourseEmbed = { discourseUrl: 'https://community.transloadit.com/',
-                     discourseEmbedUrl: '<%- site.url %><%- page.url %>' };
+                     discourseEmbedUrl: '<%- site.url ? site.url : "https://uppy.io" %>/<%- page.path %>' };
 
   (function() {
     var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;
