@@ -96,6 +96,7 @@ Theme: React and Retry
 - [ ] dashboard: cancel button for any kind of uploads? currently resume-only for tus (@arturi)
 - [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
 - [x] website: group plugin docs together in the sidebar (@arturi)
+- [x] server: option to define valid upload urls (@ifedapoolarewaju)
 
 ## 0.18.0
 
