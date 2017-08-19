@@ -64,7 +64,7 @@ app.use(uppy.app(options))
 ```
 [See](#Options) for valid configuration options.
 
-To enable uppy socket for realtime feed to the client while upload is going on, you call the `socket` method like so. This takes your `server` instance and your uppy [options](#Options) as parameters.
+To enable uppy socket for realtime feed to the client while upload is going on, you call the `socket` method like so.
 
 ```javascript
 ...
@@ -73,6 +73,7 @@ var server = app.listen(PORT)
 uppy.socket(server, options)
 
 ```
+This takes your `server` instance and your uppy [options](#Options) as parameters.
 
 ### Run as standalone server
 Please ensure that the required env varaibles are set before runnning/using uppy-server as a standalone server. [See](#Configure-Standalone).
