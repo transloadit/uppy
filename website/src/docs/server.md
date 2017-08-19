@@ -87,57 +87,72 @@ npm run start:production
 ```
 
 #### Configure Standalone
-To run uppy-server as a standalone server, you are required to set your uppy options via environment variables
+To run uppy-server as a standalone server, you are required to set your uppy [options](#Options) via environment variables
 
 ```bash
 ####### Mandatory variables ###########
+
+# any long set of random characters for the server session
+export UPPYSERVER_SECRET="shh!Issa Secret!"
+# corresponds to the server.host option
 export UPPYSERVER_DOMAIN="YOUR SERVER DOMAIN"
+# corresponds to the filePath option
 export UPPYSERVER_DATADIR="PATH/TO/DOWNLOAD/DIRECTORY"
 
 ###### Optionional variables ##########
-export UPPYSERVER_PROTOCOL="YOUR SERVER PROTOCOL" # defaults to http
-export UPPYSERVER_PORT="YOUR SERVER PORT" # defaults to 3020
-export UPPYSERVER_PATH="/SERVER/PATH/TO/WHERE/UPPY-SERVER/LIVES" # defaults to ''
+
+# corresponds to the server.protocol option. defaults to http
+export UPPYSERVER_PROTOCOL="YOUR SERVER PROTOCOL"
+# the port to start the server on. defaults to 3020
+export UPPYSERVER_PORT="YOUR SERVER PORT"
+# corresponds to the server.port option. defaults to ''
+export UPPYSERVER_PATH="/SERVER/PATH/TO/WHERE/UPPY-SERVER/LIVES"
 
 # use this in place of UPPYSERVER_PATH if the server path should not be
 # handled by the express.js app but maybe by an external server configuration
 # instead (e.g Nginx).
 export UPPYSERVER_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
 
-# camma separated client hosts to whitlelist by the server
+# comma separated client hosts to whitlelist by the server
 # if not specified, the server would allow any host
 export UPPY_ENDPOINTS="localhost:3452,uppy.io"
 
-# To enable redis session storage
-# and enable upload progress storage
+# corresponds to the redisUrl option
+# This also enables redis session storage if set
 export UPPYSERVER_REDIS_URL="REDIS URL" 
 
-# If used with Dropbox
+# to enable Dropbox
 export UPPYSERVER_DROPBOX_KEY="YOUR DROPBOX KEY"
 export UPPYSERVER_DROPBOX_SECRET="YOUR DROPBOX SECRET"
 
-# If used with Google Drive
+# to enable Google Drive
 export UPPYSERVER_GOOGLE_KEY="YOUR GOOGLE KEY"
 export UPPYSERVER_GOOGLE_SECRET="YOUR GOOGLE SECRET"
 
-# If used with Instagram Drive
+# to enable Instagram
 export UPPYSERVER_INSTAGRAM_KEY="YOUR INSTAGRAM KEY"
 export UPPYSERVER_INSTAGRAM_SECRET="YOUR INSTAGRAM SECRET"
 
-# If used with s3
+# to enable s3
 export UPPYSERVER_AWS_KEY="YOUR AWS KEY"
 export UPPYSERVER_AWS_SECRET="YOUR AWS SECRET"
 export UPPYSERVER_AWS_BUCKET="YOUR AWS S3 BUCKET"
 export UPPYSERVER_AWS_REGION="AWS REGION"
 
-# for multiple server instances with multiple subdomains
+# corresponds to the server.oauthDomain option
 export UPPYSERVER_OAUTH_DOMAIN="sub.domain.com"
+# corresponds to the server.validHosts option
 export UPPYSERVER_DOMAINS="sub1.domain.com,sub2.domain.com,sub3.domain.com"
 
-# Only set this variable if you want uppy server to set the "i-am" header
-# in every response.
+# corresponds to the sendSelfEndpoint option
 export UPPYSERVER_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
+
+# comma separated urls
+# corresponds to the uploadUrls option
+export UPPYSERVER_UPLOAD_URLS="http://master.tus.io/files/,https://master.tus.io/files/"
 ```
+
+See [env.example.sh](https://github.com/transloadit/uppy-server/blob/master/env.example.sh) for an example environment variables script.
 
 ### Options
 
@@ -189,6 +204,8 @@ export UPPYSERVER_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
 5. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attributes is that, when set, it adds the value as the `i-am` header of every request response.
 
 6. **customProviders(optional)** - This option enables you add custom providers along with the already supported providers. [See](#Adding-Custom-Providers) for more.
+
+7. **uploadUrls(optional)** - An array of urls (full path), which uppy-server should only upload to.
 
 ### Adding Custom Providers
 
