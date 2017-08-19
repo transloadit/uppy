@@ -33,6 +33,8 @@ Uppy-server may either be used as pluggable express app, which you plug to your 
 
 ### Plug to already existing server
 
+To plug uppy-server to an existing server, simply call on it's `.app` method, passing in an [options](#Options) object as parameter.
+
 ```javascript
 
 var express = require('express')
@@ -62,7 +64,7 @@ app.use(uppy.app(options))
 ```
 [See](#Options) for valid configuration options.
 
-To enable uppy socket for realtime feed to the client while upload is going on, you call the `socket` method like so.
+To enable uppy socket for realtime feed to the client while upload is going on, you call the `socket` method like so. This takes your `server` instance and your uppy [options](#Options) as parameters.
 
 ```javascript
 ...
