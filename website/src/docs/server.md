@@ -152,7 +152,7 @@ export UPPYSERVER_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
 export UPPYSERVER_UPLOAD_URLS="http://master.tus.io/files/,https://master.tus.io/files/"
 ```
 
-See [env.example.sh](https://github.com/transloadit/uppy-server/blob/master/env.example.sh) for an example environment variables script.
+See [env.example.sh](https://github.com/transloadit/uppy-server/blob/master/env.example.sh) for an example configuration script.
 
 ### Options
 
