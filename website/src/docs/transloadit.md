@@ -20,6 +20,8 @@ uppy.use(Transloadit, {
 })
 ```
 
+NB: It is not required to use the `Tus10` plugin if [importFromUploadURLs](#importFromUploadURLs) is enabled.
+
 ## Options
 
 ### `waitForEncoding`
@@ -30,6 +32,35 @@ Whether to wait for all assemblies to complete before completing the upload.
 
 Whether to wait for metadata to be extracted from uploaded files before completing the upload.
 If `waitForEncoding` is enabled, this has no effect.
+
+### `importFromUploadURLs`
+
+Instead of uploading to Transloadit's servers directly, allow another plugin to upload files, and then import those files into the Transloadit assembly.
+Default `false`.
+
+When enabling this option, Transloadit will *not* configure the Tus plugin to upload to Transloadit.
+Instead, a separate upload plugin must be used.
+Once the upload completes, the Transloadit plugin adds the uploaded file to the assembly.
+
+For example, to upload files to an S3 bucket and then transcode them:
+
+```js
+uppy.use(AwsS3, {
+  getUploadParameters (file) {
+    return { /* upload parameters */ }
+  }
+})
+uppy.use(Transloadit, {
+  importFromUploadURLs: true,
+  params: {
+    auth: { key: /* secret */ },
+    template_id: /* secret */
+  }
+})
+```
+
+In order for this to work, the upload plugin must assign a publically accessible `uploadURL` property to the uploaded file object.
+The Tus and S3 plugins both do this—for the XHRUpload plugin, you may have to specify a custom `getUploadResponse` function.
 
 ### `params`
 
