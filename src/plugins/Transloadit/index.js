@@ -140,17 +140,17 @@ module.exports = class Transloadit extends Plugin {
         // Attach meta parameters for the Tus plugin. See:
         // https://github.com/tus/tusd/wiki/Uploading-to-Transloadit-using-tus#uploading-using-tus
         // TODO Should this `meta` be moved to a `tus.meta` property instead?
-        // If the MetaData plugin can add eg. resize parameters, it doesn't
-        // make much sense to set those as upload-metadata for tus.
-        const meta = Object.assign({}, file.meta, {
+        const tlMeta = {
           assembly_url: assembly.assembly_url,
           filename: file.name,
           fieldname: 'file'
-        })
+        }
+        const meta = Object.assign({}, file.meta, tlMeta)
         // Add assembly-specific Tus endpoint.
         const tus = Object.assign({}, file.tus, {
           endpoint: assembly.tus_url,
-          metaFields: ['assembly_url', 'filename', 'fieldname']
+          // Only send assembly metadata to the tus endpoint.
+          metaFields: Object.keys(tlMeta)
         })
         const transloadit = {
           assembly: assembly.assembly_id
