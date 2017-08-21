@@ -45,7 +45,7 @@ module.exports = class Transloadit extends Plugin {
 
     this.prepareUpload = this.prepareUpload.bind(this)
     this.afterUpload = this.afterUpload.bind(this)
-    this.onFileUploaded = this.onFileUploaded.bind(this)
+    this.onFileUploadURLAvailable = this.onFileUploadURLAvailable.bind(this)
 
     if (this.opts.params) {
       this.validateParams(this.opts.params)
@@ -190,7 +190,22 @@ module.exports = class Transloadit extends Plugin {
     return this.opts.waitForEncoding || this.opts.waitForMetadata
   }
 
-  onFileUploaded (fileID) {
+  /**
+   * Used when `importFromUploadURLs` is enabled: reserves all files in
+   * the assembly.
+   */
+  reserveFiles (assembly, fileIDs) {
+    return Promise.all(fileIDs.map((fileID) => {
+      const file = this.core.getFile(fileID)
+      return this.client.reserveFile(assembly, file)
+    }))
+  }
+
+  /**
+   * Used when `importFromUploadURLs` is enabled: adds files to the assembly
+   * once they have been fully uploaded.
+   */
+  onFileUploadURLAvailable (fileID) {
     const file = this.core.getState().files[fileID]
     if (!file || !file.transloadit || !file.transloadit.assembly) {
       return
@@ -297,10 +312,7 @@ module.exports = class Transloadit extends Plugin {
     const createAssembly = ({ fileIDs, options }) => {
       return this.createAssembly(fileIDs, uploadID, options).then((assembly) => {
         if (this.opts.importFromUploadURLs) {
-          return Promise.all(fileIDs.map((fileID) => {
-            const file = this.core.getFile(fileID)
-            return this.client.reserveFile(assembly, file)
-          }))
+          return this.reserveFiles(assembly, fileIDs)
         }
       }).then(() => {
         fileIDs.forEach((fileID) => {
@@ -432,7 +444,7 @@ module.exports = class Transloadit extends Plugin {
     this.core.addPostProcessor(this.afterUpload)
 
     if (this.opts.importFromUploadURLs) {
-      this.core.on('core:upload-success', this.onFileUploaded)
+      this.core.on('core:upload-success', this.onFileUploadURLAvailable)
     }
 
     this.updateState({
