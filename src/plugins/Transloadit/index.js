@@ -113,6 +113,8 @@ module.exports = class Transloadit extends Plugin {
   }
 
   createAssembly (fileIDs, uploadID, options) {
+    const pluginOptions = this.opts
+
     this.core.log('Transloadit: create assembly')
 
     return this.client.createAssembly({
@@ -156,7 +158,7 @@ module.exports = class Transloadit extends Plugin {
 
         const newFile = Object.assign({}, file, { transloadit })
         // Only configure the Tus plugin if we are uploading straight to Transloadit (the default).
-        if (!opts.importFromUploadURLs) {
+        if (!pluginOptions.importFromUploadURLs) {
           Object.assign(newFile, { meta, tus })
         }
         return newFile
@@ -177,7 +179,7 @@ module.exports = class Transloadit extends Plugin {
       this.core.log('Transloadit: Created assembly')
       return assembly
     }).catch((err) => {
-      this.core.info(this.opts.locale.strings.creatingAssemblyFailed, 'error', 0)
+      this.core.info(pluginOptions.locale.strings.creatingAssemblyFailed, 'error', 0)
 
       // Reject the promise.
       throw err
