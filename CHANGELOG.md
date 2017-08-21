@@ -41,6 +41,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy-server: what happens if access token expires amid an upload/download process.
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
 - [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
+- [ ] uppy-server/s3: make s3 endpoint more configurable (@goto-bus-stop)
 - [ ] DnD Bar ? (@arturi)
 
 ## 1.0 Goals
