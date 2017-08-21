@@ -199,7 +199,8 @@ module.exports = class Transloadit extends Plugin {
     const assembly = this.state.assemblies[file.transloadit.assembly]
 
     this.client.addFile(assembly, file).catch((err) => {
-      console.error('ignoring', err)
+      this.core.log(err)
+      this.core.emit('core:upload-error', file.id, err)
     })
   }
 
