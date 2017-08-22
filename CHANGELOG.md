@@ -39,9 +39,9 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] image cropping on the client (#151)
 - [ ] maybe restrict system file picking dialog too https://github.com/transloadit/uppy/issues/253
 - [ ] uppy-server: what happens if access token expires amid an upload/download process.
-- [ ] s3+transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
 - [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
+- [ ] uppy-server/s3: make s3 endpoint more configurable (@goto-bus-stop)
 - [ ] DnD Bar ? (@arturi)
 - [ ] possibility to work on already uploaded / in progress files #112, #113
 - [ ] possibility to edit/delete more than one file at once #118, #97
@@ -89,17 +89,18 @@ What we need to do to release Uppy 1.0
 To be released: 2017-09-01.
 Theme: React and Retry
 
-- [ ] allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
+- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] core: add error in file progress state? error UI, question mark button, `core:error` (@arturi)
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
 - [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
-- [ ] s3+transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
+- [ ] core: React / Redux PRs (@arturi @goto-bus-stop)
+- [ ] transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
 - [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume-only for tus (@arturi)
 - [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
 - [x] core: gradually resize image previews #275 (@goto-bus-stop)
 - [x] website: group plugin docs together in the sidebar (@arturi)
-- [ ] core: React / Redux PRs (@arturi @goto-bus-stop)
+- [x] server: option to define valid upload urls (@ifedapoolarewaju)
 
 ## 0.18.0
 

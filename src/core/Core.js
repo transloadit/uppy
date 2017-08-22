@@ -299,10 +299,6 @@ class Uppy {
           preview: file.preview
         }
 
-        if (Utils.isPreviewSupported(fileTypeSpecific) && !isRemote) {
-          newFile.preview = Utils.getThumbnail(file.data)
-        }
-
         const isFileAllowed = this.checkRestrictions(false, newFile, fileType)
         if (!isFileAllowed) return Promise.reject('File not allowed')
 
@@ -333,12 +329,47 @@ class Uppy {
     return this.getState().files[fileID]
   }
 
+  /**
+   * Generate a preview image for the given file, if possible.
+   */
+  generatePreview (file) {
+    if (Utils.isPreviewSupported(file.type.specific) && !file.isRemote) {
+      Utils.createThumbnail(file, 200).then((thumbnail) => {
+        this.setPreviewURL(file.id, thumbnail)
+      }).catch((err) => {
+        console.warn(err.stack || err.message)
+      })
+    }
+  }
+
+  /**
+   * Set the preview URL for a file.
+   */
+  setPreviewURL (fileID, preview) {
+    const { files } = this.state
+    this.setState({
+      files: Object.assign({}, files, {
+        [fileID]: Object.assign({}, files[fileID], {
+          preview: preview
+        })
+      })
+    })
+  }
+
   removeFile (fileID) {
     const updatedFiles = Object.assign({}, this.getState().files)
+    const removedFile = updatedFiles[fileID]
     delete updatedFiles[fileID]
+
     this.setState({files: updatedFiles})
     this.calculateTotalProgress()
     this.emit('core:file-removed', fileID)
+
+    // Clean up object URLs.
+    if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
+      URL.revokeObjectURL(removedFile.preview)
+    }
+
     this.log(`Removed file: ${fileID}`)
   }
 
@@ -417,6 +448,10 @@ class Uppy {
 
     this.on('core:file-add', (data) => {
       this.addFile(data)
+    })
+
+    this.on('core:file-added', (file) => {
+      this.generatePreview(file)
     })
 
     // `remove-file` removes a file from `state.files`, for example when

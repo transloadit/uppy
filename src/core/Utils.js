@@ -114,7 +114,6 @@ function toArray (list) {
  *
  */
 function generateFileID (file) {
-  console.log(file)
   let fileID = file.name.toLowerCase()
   fileID = fileID.replace(/[^A-Z0-9]/ig, '')
   fileID = fileID + file.data.lastModified
@@ -249,13 +248,136 @@ function getFileNameAndExtension (fullFileName) {
   return [fileName, fileExt]
 }
 
-function getThumbnail (fileData) {
-  return URL.createObjectURL(fileData)
-}
-
 function supportsMediaRecorder () {
   return typeof MediaRecorder === 'function' && !!MediaRecorder.prototype &&
     typeof MediaRecorder.prototype.start === 'function'
+}
+
+/**
+ * Check if a URL string is an object URL from `URL.createObjectURL`.
+ *
+ * @param {string} url
+ * @return {boolean}
+ */
+function isObjectURL (url) {
+  return url.indexOf('blob:') === 0
+}
+
+function getProportionalHeight (img, width) {
+  const aspect = img.width / img.height
+  return Math.round(width / aspect)
+}
+
+/**
+ * Create a thumbnail for the given Uppy file object.
+ *
+ * @param {{data: Blob}} file
+ * @param {number} width
+ * @return {Promise}
+ */
+function createThumbnail (file, targetWidth) {
+  const originalUrl = URL.createObjectURL(file.data)
+
+  const onload = new Promise((resolve, reject) => {
+    const image = new Image()
+    image.src = originalUrl
+    image.onload = () => {
+      URL.revokeObjectURL(originalUrl)
+      resolve(image)
+    }
+    image.onerror = () => {
+      // The onerror event is totally useless unfortunately, as far as I know
+      URL.revokeObjectURL(originalUrl)
+      reject(new Error('Could not create thumbnail'))
+    }
+  })
+
+  return onload.then((image) => {
+    const targetHeight = getProportionalHeight(image, targetWidth)
+    const canvas = resizeImage(image, targetWidth, targetHeight)
+    return canvasToBlob(canvas, 'image/jpeg')
+  }).then((blob) => {
+    return URL.createObjectURL(blob)
+  })
+}
+
+/**
+ * Resize an image to the target `width` and `height`.
+ *
+ * Returns a Canvas with the resized image on it.
+ */
+function resizeImage (image, targetWidth, targetHeight) {
+  let sourceWidth = image.width
+  let sourceHeight = image.height
+
+  if (targetHeight < image.height / 2) {
+    const steps = Math.floor(Math.log(image.width / targetWidth) / Math.log(2))
+    const stepScaled = downScaleInSteps(image, steps)
+    image = stepScaled.image
+    sourceWidth = stepScaled.sourceWidth
+    sourceHeight = stepScaled.sourceHeight
+  }
+
+  const canvas = document.createElement('canvas')
+  canvas.width = targetWidth
+  canvas.height = targetHeight
+
+  const context = canvas.getContext('2d')
+  context.drawImage(image,
+    0, 0, sourceWidth, sourceHeight,
+    0, 0, targetWidth, targetHeight)
+
+  return canvas
+}
+
+/**
+ * Downscale an image by 50% `steps` times.
+ */
+function downScaleInSteps (image, steps) {
+  let source = image
+  let currentWidth = source.width
+  let currentHeight = source.height
+
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+  canvas.width = currentWidth / 2
+  canvas.height = currentHeight / 2
+
+  for (let i = 0; i < steps; i += 1) {
+    context.drawImage(source,
+      // The entire source image. We pass width and height here,
+      // because we reuse this canvas, and should only scale down
+      // the part of the canvas that contains the previous scale step.
+      0, 0, currentWidth, currentHeight,
+      // Draw to 50% size
+      0, 0, currentWidth / 2, currentHeight / 2)
+    currentWidth /= 2
+    currentHeight /= 2
+    source = canvas
+  }
+
+  return {
+    image: canvas,
+    sourceWidth: currentWidth,
+    sourceHeight: currentHeight
+  }
+}
+
+/**
+ * Save a <canvas> element's content to a Blob object.
+ *
+ * @param {HTMLCanvasElement} canvas
+ * @return {Promise}
+ */
+function canvasToBlob (canvas, type, quality) {
+  if (canvas.toBlob) {
+    return new Promise((resolve) => {
+      canvas.toBlob(resolve, type, quality)
+    })
+  }
+  return Promise.resolve().then(() => {
+    return dataURItoBlob(canvas.toDataURL(type, quality), {})
+  })
 }
 
 function dataURItoBlob (dataURI, opts, toFile) {
@@ -442,7 +564,8 @@ module.exports = {
   getFileType,
   getArrayBuffer,
   isPreviewSupported,
-  getThumbnail,
+  isObjectURL,
+  createThumbnail,
   secondsToTime,
   dataURItoBlob,
   dataURItoFile,
