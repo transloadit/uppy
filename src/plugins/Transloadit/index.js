@@ -282,6 +282,10 @@ module.exports = class Transloadit extends Plugin {
     // A file ID that is part of this assembly...
     const fileID = fileIDs[0]
 
+    if (!fileID) {
+      return Promise.resolve()
+    }
+
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
     if (!this.shouldWait()) {
