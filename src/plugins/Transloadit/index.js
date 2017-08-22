@@ -195,7 +195,7 @@ module.exports = class Transloadit extends Plugin {
         }
       })
     })
-    this.core.bus.emit('transloadit:upload', uploadedFile, this.getAssembly(assemblyId))
+    this.core.emit('transloadit:upload', uploadedFile, this.getAssembly(assemblyId))
   }
 
   onResult (assemblyId, stepName, result) {
@@ -206,7 +206,7 @@ module.exports = class Transloadit extends Plugin {
     this.updateState({
       results: this.state.results.concat(result)
     })
-    this.core.bus.emit('transloadit:result', stepName, result, this.getAssembly(assemblyId))
+    this.core.emit('transloadit:result', stepName, result, this.getAssembly(assemblyId))
   }
 
   onAssemblyFinished (url) {
