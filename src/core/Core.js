@@ -870,7 +870,9 @@ class Uppy {
             [uploadID]: currentUpload
           })
         })
-        return fn(fileIDs)
+        // TODO give this the `currentUpload` object as its only parameter maybe?
+        // Otherwise when more metadata may be added to the upload this would keep getting more parameters
+        return fn(fileIDs, uploadID)
       })
     })
 

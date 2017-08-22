@@ -23,6 +23,7 @@ module.exports = class Transloadit extends Plugin {
     const defaultOptions = {
       waitForEncoding: false,
       waitForMetadata: false,
+      alwaysRunAssembly: false, // TODO name
       signature: null,
       params: null,
       fields: {},
@@ -109,7 +110,7 @@ module.exports = class Transloadit extends Plugin {
     return Object.keys(dedupeMap).map((id) => dedupeMap[id])
   }
 
-  createAssembly (fileIDs, options) {
+  createAssembly (fileIDs, uploadID, options) {
     this.core.log('Transloadit: create assembly')
 
     return this.client.createAssembly({
@@ -118,10 +119,15 @@ module.exports = class Transloadit extends Plugin {
       expectedFiles: fileIDs.length,
       signature: options.signature
     }).then((assembly) => {
+      // Store the list of assemblies related to this upload.
+      const uploadsAssemblies = Object.assign({}, this.state.uploadsAssemblies)
+      uploadsAssemblies[uploadID] = (uploadsAssemblies[uploadID] || []).concat([ assembly.assembly_id ])
+
       this.updateState({
         assemblies: Object.assign(this.state.assemblies, {
           [assembly.assembly_id]: assembly
-        })
+        }),
+        uploadsAssemblies
       })
 
       function attachAssemblyMetadata (file, assembly) {
@@ -255,7 +261,7 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  prepareUpload (fileIDs) {
+  prepareUpload (fileIDs, uploadID) {
     fileIDs.forEach((fileID) => {
       this.core.emit('core:preprocess-progress', fileID, {
         mode: 'indeterminate',
@@ -264,36 +270,50 @@ module.exports = class Transloadit extends Plugin {
     })
 
     const createAssembly = ({ fileIDs, options }) => {
-      return this.createAssembly(fileIDs, options).then(() => {
+      return this.createAssembly(fileIDs, uploadID, options).then(() => {
         fileIDs.forEach((fileID) => {
           this.core.emit('core:preprocess-complete', fileID)
         })
       })
     }
 
-    return this.getAssemblyOptions(fileIDs)
-      .then((allOptions) => this.dedupeAssemblyOptions(allOptions))
-      .then((assemblies) => Promise.all(
-        assemblies.map(createAssembly)
-      ))
-  }
-
-  afterUpload (fileIDs) {
-    // A file ID that is part of this assembly...
-    const fileID = fileIDs[0]
-
-    if (!fileID) {
+    let optionsPromise
+    if (fileIDs.length > 0) {
+      optionsPromise = this.getAssemblyOptions(fileIDs)
+        .then((allOptions) => this.dedupeAssemblyOptions(allOptions))
+    } else if (this.opts.alwaysRunAssembly) {
+      optionsPromise = Promise.resolve().then(() => {
+        const options = this.opts.getAssemblyOptions(null, this.opts)
+        this.validateParams(options.params)
+        return [
+          { fileIDs, options }
+        ]
+      })
+    } else {
+      // If there are no files and we do not `alwaysRunAssembly`,
+      // don't do anything.
       return Promise.resolve()
     }
+
+    return optionsPromise.then((assemblies) => Promise.all(
+      assemblies.map(createAssembly)
+    ))
+  }
+
+  afterUpload (fileIDs, uploadID) {
+    const assemblyIDs = this.state.uploadsAssemblies[uploadID]
 
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
     if (!this.shouldWait()) {
-      const file = this.core.getFile(fileID)
-      const socket = this.sockets[file.transloadit.assembly]
-      socket.close()
+      assemblyIDs.forEach((assemblyID) => {
+        const socket = this.sockets[assemblyID]
+        socket.close()
+      })
       return Promise.resolve()
     }
+
+    let finishedAssemblies = 0
 
     return new Promise((resolve, reject) => {
       fileIDs.forEach((fileID) => {
@@ -304,45 +324,62 @@ module.exports = class Transloadit extends Plugin {
       })
 
       const onAssemblyFinished = (assembly) => {
-        const file = this.core.getFile(fileID)
         // An assembly for a different upload just finished. We can ignore it.
-        if (assembly.assembly_id !== file.transloadit.assembly) {
+        if (assemblyIDs.indexOf(assembly.assembly_id) === -1) {
           return
         }
-        // Remove this handler once we find the assembly we needed.
-        this.core.emitter.off('transloadit:complete', onAssemblyFinished)
 
         // TODO set the `file.uploadURL` to a result?
         // We will probably need an option here so the plugin user can tell us
         // which result to pick…?
 
-        fileIDs.forEach((fileID) => {
-          this.core.emit('core:postprocess-complete', fileID)
+        const files = this.getAssemblyFiles(assembly.assembly_id)
+        files.forEach((file) => {
+          this.core.emit('core:postprocess-complete', file.id)
         })
 
-        resolve()
+        finishedAssemblies += 1
+        if (finishedAssemblies === assemblyIDs.length) {
+          // We're done, these listeners can be removed
+          removeListeners()
+          resolve()
+        }
       }
 
       const onAssemblyError = (assembly, error) => {
-        const file = this.core.getFile(fileID)
-        // An assembly for a different upload just errored. We can ignore it.
-        if (assembly.assembly_id !== file.transloadit.assembly) {
+        // An assembly for a different upload just finished. We can ignore it.
+        if (assemblyIDs.indexOf(assembly.assembly_id) === -1) {
           return
         }
-        // Remove this handler once we find the assembly we needed.
-        this.core.emitter.off('transloadit:assembly-error', onAssemblyError)
 
         // Clear postprocessing state for all our files.
-        fileIDs.forEach((fileID) => {
-          this.core.emit('core:postprocess-complete', fileID)
+        const files = this.getAssemblyFiles(assembly.assembly_id)
+        files.forEach((file) => {
+          this.core.emit('core:postprocess-complete', file.id)
         })
+
+        // Should we remove the listeners here or should we keep handling finished
+        // assemblies?
+        // Doing this for now so that it's not possible to receive more postprocessing
+        // events once the upload has failed.
+        removeListeners()
 
         // Reject the `afterUpload()` promise.
         reject(error)
       }
 
+      const removeListeners = () => {
+        this.core.off('transloadit:complete', onAssemblyFinished)
+        this.core.off('transloadit:assembly-error', onAssemblyError)
+      }
+
       this.core.on('transloadit:complete', onAssemblyFinished)
       this.core.on('transloadit:assembly-error', onAssemblyError)
+    }).then(() => {
+      // Clean up uploadID → assemblyIDs, they're no longer going to be used anywhere.
+      const uploadsAssemblies = Object.assign({}, this.state.uploadsAssemblies)
+      delete uploadsAssemblies[uploadID]
+      this.updateState({ uploadsAssemblies })
     })
   }
 
@@ -351,8 +388,13 @@ module.exports = class Transloadit extends Plugin {
     this.core.addPostProcessor(this.afterUpload)
 
     this.updateState({
+      // Contains assembly status objects, indexed by their ID.
       assemblies: {},
+      // Contains arrays of assembly IDs, indexed by the upload ID that they belong to.
+      uploadsAssemblies: {},
+      // Contains file data from Transloadit, indexed by their Transloadit-assigned ID.
       files: {},
+      // Contains result data from Transloadit.
       results: []
     })
   }
@@ -364,6 +406,15 @@ module.exports = class Transloadit extends Plugin {
 
   getAssembly (id) {
     return this.state.assemblies[id]
+  }
+
+  getAssemblyFiles (assemblyID) {
+    const fileIDs = Object.keys(this.core.state.files)
+    return fileIDs.map((fileID) => {
+      return this.core.getFile(fileID)
+    }).filter((file) => {
+      return file && file.transloadit && file.transloadit.assembly === assemblyID
+    })
   }
 
   get state () {
