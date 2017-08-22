@@ -27,7 +27,7 @@ language: English
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://uppy.io
+url: https://uppy.io
 root: /
 permalink: blog/:year/:month/:title/
 tag_dir: tags
