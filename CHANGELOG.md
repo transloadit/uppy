@@ -43,6 +43,9 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
 - [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
 - [ ] DnD Bar ? (@arturi)
+- [ ] possibility to work on already uploaded / in progress files #112, #113
+- [ ] possibility to edit/delete more than one file at once #118, #97
+- [ ] optimize problematic filenames #72
 
 ## 1.0 Goals
 
@@ -91,11 +94,12 @@ Theme: React and Retry
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
 - [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 - [ ] s3+transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
-- [x] core: gradually resize image previews #275 (@goto-bus-stop)
 - [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume-only for tus (@arturi)
 - [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
+- [x] core: gradually resize image previews #275 (@goto-bus-stop)
 - [x] website: group plugin docs together in the sidebar (@arturi)
+- [ ] core: React / Redux PRs (@arturi @goto-bus-stop)
 
 ## 0.18.0
 
