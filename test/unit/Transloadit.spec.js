@@ -149,3 +149,19 @@ test('Transloadit: Should merge files with same parameters into one assembly', (
     })
   }, t.fail)
 })
+
+test('Does not create an assembly if no files are being uploaded', (t) => {
+  t.plan(0)
+
+  const uppy = new Core()
+  uppy.use(Transloadit, {
+    getAssemblyOptions () {
+      t.fail('should not create assembly')
+    }
+  })
+  uppy.run()
+
+  uppy.upload().then(() => {
+    t.end()
+  }).catch(t.fail)
+})
