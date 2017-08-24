@@ -76,6 +76,7 @@ uppy.socket(server, options)
 This takes your `server` instance and your uppy [options](#Options) as parameters.
 
 ### Run as standalone server
+
 Please ensure that the required env varaibles are set before runnning/using uppy-server as a standalone server. [See](#Configure-Standalone).
 
 ```bash
@@ -90,6 +91,7 @@ npm run start:production
 ```
 
 #### Configure Standalone
+
 To run uppy-server as a standalone server, you are required to set your uppy [options](#Options) via environment variables
 
 ```bash
@@ -235,8 +237,7 @@ let options = {
 uppy.app(options)
 ```
 
-The `customProviders` option should be an object containing each custom provider.
-Each custom provider would in turn be an object with two keys, `config` and `module`. The `config` option would contain Oauth API settings, while the `module` would point to the provider module.
+The `customProviders` option should be an object containing each custom provider. Each custom provider would in turn be an object with two keys, `config` and `module`. The `config` option would contain Oauth API settings, while the `module` would point to the provider module.
 
 To work well with uppy server, the **Module** must be a class with the following methods.
 
@@ -255,22 +256,20 @@ To work well with uppy server, the **Module** must be a class with the following
 
 ## Development
 
-1. To setup uppy-server for local development, please clone the repo and install like so:
+1\. To setup uppy-server for local development, please clone the repo and install like so:
 
 ```bash
 git clone https://github.com/transloadit/uppy-server && cd uppy-server && npm install
 ```
 
-
-2. Configure your enviorment variables by copying the `env.example.sh` file to `env.sh` and edit it to its correct values.
+2\. Configure your enviorment variables by copying the `env.example.sh` file to `env.sh` and edit it to its correct values.
 
 ```bash
 cp env.example.sh env.sh
 $EDITOR env.sh
 ```
 
-
-3. To start the server, simply run:
+3\. To start the server, simply run:
 
 ```bash
 npm run start
