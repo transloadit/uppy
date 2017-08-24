@@ -75,7 +75,7 @@ What we need to do to release Uppy 1.0
 
 ## 0.20.0
 
-- [ ] webcam: look into simplifying / improving webcam plugin (@arturi, @goto-bus-stop)
+- [ ] webcam: look into simplifying / improving webcam plugin, only showing the tab when webcam is available (@arturi, @goto-bus-stop)
 - [ ] provider: improve UI: add icons for file types? (@arturi)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
