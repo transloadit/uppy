@@ -120,8 +120,10 @@ module.exports = class Transloadit extends Plugin {
       signature: options.signature
     }).then((assembly) => {
       // Store the list of assemblies related to this upload.
-      const uploadsAssemblies = Object.assign({}, this.state.uploadsAssemblies)
-      uploadsAssemblies[uploadID] = (uploadsAssemblies[uploadID] || []).concat([ assembly.assembly_id ])
+      const assemblyList = this.state.uploadsAssemblies[uploadID]
+      const uploadsAssemblies = Object.assign({}, this.state.uploadsAssemblies, {
+        [uploadID]: assemblyList.concat([ assembly.assembly_id ])
+      })
 
       this.updateState({
         assemblies: Object.assign(this.state.assemblies, {
@@ -276,6 +278,11 @@ module.exports = class Transloadit extends Plugin {
         })
       })
     }
+
+    const uploadsAssemblies = Object.assign({},
+      this.state.uploadsAssemblies,
+      { [uploadID]: [] })
+    this.updateState({ uploadsAssemblies })
 
     let optionsPromise
     if (fileIDs.length > 0) {
