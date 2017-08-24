@@ -18,4 +18,48 @@ Dashboard is the full-featured UI for Uppy that shows nice file previews and up
 
 <p>On this page we're using the following JavaScript snippet:</p>
 
+{% codeblock lang:js %}
+const Uppy = require('uppy/lib/core')
+const Dashboard = require('uppy/lib/plugins/Dashboard')
+const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
+const Dropbox = require('uppy/lib/plugins/Dropbox')
+const Instagram = require('uppy/lib/plugins/Instagram')
+const Webcam = require('uppy/lib/plugins/Webcam')
+const Tus = require('uppy/lib/plugins/Tus10')
+const MetaData = require('uppy/lib/plugins/MetaData')
+
+const uppy = Uppy({
+  debug: true,
+  autoProceed: false,
+  restrictions: {
+    maxFileSize: 1000000,
+    maxNumberOfFiles: 3,
+    minNumberOfFiles: 2,
+    allowedFileTypes: ['image/*', 'video/*']
+  }
+})
+.use(Dashboard, {
+  trigger: '.UppyModalOpenerBtn',
+  inline: opts.DashboardInline,
+  target: opts.DashboardInline ? '.DashboardContainer' : 'body',
+  note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : ''
+})
+.use(GoogleDrive, {target: Dashboard, host: 'https://server.uppy.io'})
+.use(Dropbox, {target: Dashboard, host: 'https://server.uppy.io'})
+.use(Instagram, {target: Dashboard, host: 'https://server.uppy.io'})
+.use(Webcam, {target: Dashboard})
+.use(Tus, {endpoint: 'https://master.tus.io/files/'})
+.use(MetaData, {
+  fields: [
+    { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
+    { id: 'caption', name: 'Caption', value: 'none', placeholder: 'describe what the image is about' }
+  ]
+})
+.run()
+
+uppy.on('core:success', (fileList) => {
+  console.log('Successfully uploaded:', fileList)
+})
+{% endcodeblock %}
+
 {% include_code lang:js dashboard/app.es6 %}

@@ -2,6 +2,8 @@
 <div class="Content js-Content <%- page.type ? page.type + ' with-sidebar' : '' %>">
   <h1><%- page.title %> Example</h1>
 
+  <%- page.content %>
+
   <p>Hey there stranger! Uppy <img src="/images/emojis/dog.png" width="14" align="absmiddle">
     is in the early stages of development and the example section
     is our playground. Things might not yet work, but we're working hard to improve this.</p>
@@ -12,11 +14,12 @@
     in terms of commits, while the CHANGELOG
     provides a higher level view of this things planned for our
     <a href="https://github.com/transloadit/uppy/blob/master/CHANGELOG.md#next">next release</a>.</p>
-  <p><img src="/images/emojis/ok_hand.png" width="14" align="absmiddle"> Files from the examples are uploaded to our test servers and deleted daily.</p>
 
   <!-- Add textarea already so it's available immediately for logging.
   It is later made visible, and moved into the #console-wrapper to position it in layout how
   you see fit. -->
+
+  <blockquote>Files from the examples are uploaded to our test servers and deleted daily.</blockquote>
 
   <textarea id="console-log" class="Console"></textarea>
   <script>
@@ -32,8 +35,6 @@
     };
   } (console.log.bind(console), document.getElementById("console-log")));
   </script>
-
-  <%- page.content %>
 
   <script>
     // #console-log textarea is declared earlier so it's available immediately for logging.
