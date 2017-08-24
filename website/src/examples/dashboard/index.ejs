@@ -40,9 +40,9 @@ const uppy = Uppy({
 })
 .use(Dashboard, {
   trigger: '.UppyModalOpenerBtn',
-  inline: opts.DashboardInline,
-  target: opts.DashboardInline ? '.DashboardContainer' : 'body',
-  note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : ''
+  inline: true,
+  target: '.DashboardContainer'
+  note: 'Images and video only, 2–3 files, up to 1 MB'
 })
 .use(GoogleDrive, {target: Dashboard, host: 'https://server.uppy.io'})
 .use(Dropbox, {target: Dashboard, host: 'https://server.uppy.io'})
