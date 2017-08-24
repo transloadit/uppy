@@ -14,6 +14,7 @@ module.exports = class ProgressBar extends Plugin {
 
     // set default options
     const defaultOptions = {
+      target: 'body',
       replaceTargetContent: false,
       fixed: false
     }
