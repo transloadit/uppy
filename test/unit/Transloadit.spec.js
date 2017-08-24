@@ -165,3 +165,22 @@ test('Does not create an assembly if no files are being uploaded', (t) => {
     t.end()
   }).catch(t.fail)
 })
+
+test('Creates an assembly if no files are being uploaded but `alwaysRunAssembly` is enabled', (t) => {
+  t.plan(1)
+
+  const uppy = new Core()
+  uppy.use(Transloadit, {
+    alwaysRunAssembly: true,
+    getAssemblyOptions (file) {
+      t.equal(file, null, 'should call getAssemblyOptions with `null`')
+      return Promise.reject()
+    }
+  })
+
+  uppy.upload().then(() => {
+    t.fail('should be rejected by `getAssemblyOptions`')
+  }, () => {
+    t.end()
+  })
+})

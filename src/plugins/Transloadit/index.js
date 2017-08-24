@@ -289,8 +289,9 @@ module.exports = class Transloadit extends Plugin {
       optionsPromise = this.getAssemblyOptions(fileIDs)
         .then((allOptions) => this.dedupeAssemblyOptions(allOptions))
     } else if (this.opts.alwaysRunAssembly) {
-      optionsPromise = Promise.resolve().then(() => {
-        const options = this.opts.getAssemblyOptions(null, this.opts)
+      optionsPromise = Promise.resolve(
+        this.opts.getAssemblyOptions(null, this.opts)
+      ).then((options) => {
         this.validateParams(options.params)
         return [
           { fileIDs, options }
