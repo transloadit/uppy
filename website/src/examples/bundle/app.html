@@ -1,9 +1,14 @@
 <link rel="stylesheet" href="/uppy/uppy.min.css">
 
+<div id="uppy-dnd"></div>
+
 <script src="/uppy/uppy.min.js"></script>
 <script>
-  var uppy = new Uppy.Core();
-  uppy.use(Uppy.Tus10);
+  var uppy = Uppy.Core({debug: true});
+  uppy.use(Uppy.Tus10, {endpoint: '//master.tus.io/files/'});
+  uppy.use(Uppy.DragDrop, {target: '#uppy-dnd'});
+  uppy.use(Uppy.ProgressBar);
+  uppy.run();
 
   console.log('Uppy loaded from CDN with tus enabled');
 </script>

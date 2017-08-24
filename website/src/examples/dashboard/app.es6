@@ -13,7 +13,7 @@ const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
 const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 
 function uppyInit () {
-  const opts = window.uppyOptions
+  const opts = window.uppyOptions2
   const dashboardEl = document.querySelector('.UppyDashboard')
   if (dashboardEl) {
     const dashboardElParent = dashboardEl.parentNode

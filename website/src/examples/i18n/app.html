@@ -1,12 +1,12 @@
-<!-- Basic Uppy styles -->
+<!-- Basic Uppy styles. You can use a CDN: https://unpkg.com/uppy/dist/uppy.min.css -->
 <link rel="stylesheet" href="/uppy/uppy.min.css">
 
 <div class="UppyDragDrop"></div>
 
-<!-- Load Uppy pre-built bundled version and Russian language pack -->
+<!-- Load Uppy pre-built bundled version. You can use a CDN: https://unpkg.com/uppy/dist/uppy.min.js -->
 <script src="/uppy/uppy.min.js"></script>
 <script>
-  var uppy = new Uppy.Core({debug: true});
+  var uppy = Uppy.Core({debug: true});
   uppy.use(Uppy.DragDrop, {
     target: '.UppyDragDrop',
     locale: {

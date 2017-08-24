@@ -1,17 +1,16 @@
 ---
-title: i18n
+title: Bundle & i18n
 layout: example
 type: examples
 order: 4
 ---
 
 {% blockquote %}
-Here you'll see a demo of how you might set Uppy to work with language packs (i18n). Actually, two examples: pre-built bundle version ready to use with a &lt;script&gt; tag, and the module, that you can bundle yourself with tools like <a href="http://webpack.github.io/">webpack</a>, <a href="http://browserify.org/">Browserify</a> or <a href="http://rollupjs.org/">rollup.js</a>.
+Here you’ll see a demo of how you might use internationalization (i18n) in Uppy, as well as how to load Uppy using a pre-bundled version (CDN).
 {% endblockquote %}
 
 <link rel="stylesheet" href="app.css">
 <% include app.html %>
-<!--script src="app.js"></script-->
 
 <hr />
 
@@ -20,11 +19,6 @@ Here you'll see a demo of how you might set Uppy to work with language packs (i1
 </p>
 
 <p>
-  To load the pre-built bundle from a CDN we're using the following HTML and JavaScript:
+  To load the pre-built bundle (from a CDN) we’re using the following HTML and JavaScript:
 </p>
 {% include_code lang:html i18n/app.html %}
-
-<p>
-  Or, if we want this as module that we can bundle ourselves, this JavaScript:
-</p>
-{% include_code lang:js i18n/app.es6 %}
