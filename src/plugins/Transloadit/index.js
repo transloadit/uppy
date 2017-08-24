@@ -120,8 +120,10 @@ module.exports = class Transloadit extends Plugin {
       signature: options.signature
     }).then((assembly) => {
       // Store the list of assemblies related to this upload.
-      const uploadsAssemblies = Object.assign({}, this.state.uploadsAssemblies)
-      uploadsAssemblies[uploadID] = (uploadsAssemblies[uploadID] || []).concat([ assembly.assembly_id ])
+      const assemblyList = this.state.uploadsAssemblies[uploadID]
+      const uploadsAssemblies = Object.assign({}, this.state.uploadsAssemblies, {
+        [uploadID]: assemblyList.concat([ assembly.assembly_id ])
+      })
 
       this.updateState({
         assemblies: Object.assign(this.state.assemblies, {
@@ -277,13 +279,19 @@ module.exports = class Transloadit extends Plugin {
       })
     }
 
+    const uploadsAssemblies = Object.assign({},
+      this.state.uploadsAssemblies,
+      { [uploadID]: [] })
+    this.updateState({ uploadsAssemblies })
+
     let optionsPromise
     if (fileIDs.length > 0) {
       optionsPromise = this.getAssemblyOptions(fileIDs)
         .then((allOptions) => this.dedupeAssemblyOptions(allOptions))
     } else if (this.opts.alwaysRunAssembly) {
-      optionsPromise = Promise.resolve().then(() => {
-        const options = this.opts.getAssemblyOptions(null, this.opts)
+      optionsPromise = Promise.resolve(
+        this.opts.getAssemblyOptions(null, this.opts)
+      ).then((options) => {
         this.validateParams(options.params)
         return [
           { fileIDs, options }
@@ -310,6 +318,12 @@ module.exports = class Transloadit extends Plugin {
         const socket = this.sockets[assemblyID]
         socket.close()
       })
+      return Promise.resolve()
+    }
+
+    // If no assemblies were created for this upload, we also do not have to wait.
+    // There's also no sockets or anything to close, so just return immediately.
+    if (assemblyIDs.length === 0) {
       return Promise.resolve()
     }
 
