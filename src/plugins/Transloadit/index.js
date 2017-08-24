@@ -321,6 +321,12 @@ module.exports = class Transloadit extends Plugin {
       return Promise.resolve()
     }
 
+    // If no assemblies were created for this upload, we also do not have to wait.
+    // There's also no sockets or anything to close, so just return immediately.
+    if (assemblyIDs.length === 0) {
+      return Promise.resolve()
+    }
+
     let finishedAssemblies = 0
 
     return new Promise((resolve, reject) => {
