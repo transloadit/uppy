@@ -170,7 +170,7 @@ module.exports = class Transloadit extends Plugin {
     }).then(() => {
       this.core.log('Transloadit: Created assembly')
     }).catch((err) => {
-      this.core.emit('informer', this.opts.locale.strings.creatingAssemblyFailed, 'error', 0)
+      this.core.info(this.opts.locale.strings.creatingAssemblyFailed, 'error', 0)
 
       // Reject the promise.
       throw err

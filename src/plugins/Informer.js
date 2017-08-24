@@ -4,8 +4,8 @@ const html = require('yo-yo')
 /**
  * Informer
  * Shows rad message bubbles
- * used like this: `core.emit('informer', 'hello world', 'info', 5000)`
- * or for errors: `core.emit('informer', 'Error uploading img.jpg', 'error', 5000)`
+ * used like this: `uppy.info('hello world', 'info', 5000)`
+ * or for errors: `uppy.info('Error uploading img.jpg', 'error', 5000)`
  *
  */
 module.exports = class Informer extends Plugin {

@@ -60,7 +60,7 @@ module.exports = class RestoreFiles extends Plugin {
       const numberOfFilesTryingToRecover = Object.keys(this.core.state.files).length
       if (numberOfFilesRecovered === numberOfFilesTryingToRecover) {
         this.core.log(`Successfully recovered ${numberOfFilesRecovered} blobs from Service Worker!`)
-        this.core.emit('informer', `Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
+        this.core.info(`Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
         this.onBlobsLoaded(blobs)
       } else {
         this.core.log('Failed to recover blobs from Service Worker, trying IndexedDB now...')
@@ -74,7 +74,7 @@ module.exports = class RestoreFiles extends Plugin {
       const numberOfFilesRecovered = Object.keys(blobs).length
       if (numberOfFilesRecovered > 0) {
         this.core.log(`Successfully recovered ${numberOfFilesRecovered} blobs from Indexed DB!`)
-        this.core.emit('informer', `Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
+        this.core.info(`Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
         return this.onBlobsLoaded(blobs)
       }
       this.core.log('Couldn’t recover anything from IndexedDB :(')
