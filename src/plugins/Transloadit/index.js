@@ -167,8 +167,10 @@ module.exports = class Transloadit extends Plugin {
       this.core.emit('transloadit:assembly-created', assembly, fileIDs)
 
       return this.connectSocket(assembly)
-    }).then(() => {
+        .then(() => assembly)
+    }).then((assembly) => {
       this.core.log('Transloadit: Created assembly')
+      return assembly
     }).catch((err) => {
       this.core.info(this.opts.locale.strings.creatingAssemblyFailed, 'error', 0)
 
