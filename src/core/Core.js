@@ -28,7 +28,7 @@ class Uppy {
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload:',
-        uppyServerError: 'Connection with Uppy server failed'
+        uppyServerError: 'Connection with Uppy Server failed'
       }
     }
 
