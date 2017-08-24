@@ -11,14 +11,10 @@ const MetaData = require('../../src/plugins/MetaData')
 // const Informer = require('../../src/plugins/Informer')
 // const StatusBar = require('../../src/plugins/StatusBar')
 // const DragDrop = require('../../src/plugins/DragDrop')
-const RestoreFiles = require('../../src/plugins/RestoreFiles')
+// const RestoreFiles = require('../../src/plugins/RestoreFiles')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
 const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
-
-// import ru_RU from '../../src/locales/ru_RU.js'
-// import MagicLog from '../../src/plugins/MagicLog'
-// import PersistentState from '../../src/plugins/PersistentState'
 
 const uppy = Uppy({
   debug: true,
@@ -50,12 +46,12 @@ const uppy = Uppy({
     // maxWidth: 350,
     // maxHeight: 400,
     inline: false,
-    // disableStatusBar: true,
-    // disableInformer: true,
+    disableStatusBar: false,
+    disableInformer: false,
     setMetaFromTargetForm: true,
-    // replaceTargetContent: true,
+    replaceTargetContent: true,
     target: '.MyForm',
-    hideUploadButton: true,
+    hideUploadButton: false,
     locale: {
       strings: {browse: 'browse'}
     }
@@ -64,14 +60,14 @@ const uppy = Uppy({
   // .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
-  .use(Tus10, {endpoint: TUS_ENDPOINT, resume: false})
+  .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
   .use(MetaData, {
     fields: [
       { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', value: 'none', placeholder: 'describe what the image is about' }
     ]
   })
-  .use(RestoreFiles, {serviceWorker: true})
+  // .use(RestoreFiles, {serviceWorker: true})
   .run()
 
 uppy.on('core:success', (fileList) => {
