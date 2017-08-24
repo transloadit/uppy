@@ -116,8 +116,11 @@
     function initSubHeaders () {
       // build sidebar
       var currentPageAnchor = menu.querySelector('.sidebar-link.current')
-      var isAPI = document.querySelector('.Content').classList.contains('api')
-      if (currentPageAnchor || isAPI) {
+      var isDocs = content.classList.contains('docs')
+
+      if (!isDocs) return
+
+      if (currentPageAnchor) {
         var sectionContainer
 
         // if (false && isAPI) {
@@ -133,6 +136,7 @@
         currentPageAnchor.parentNode.appendChild(sectionContainer)
 
         var h2s = content.querySelectorAll('h2')
+
         if (h2s.length) {
           each.call(h2s, function (h) {
             sectionContainer.appendChild(makeLink(h))
@@ -140,7 +144,7 @@
             allLinks.push(h)
             allLinks.push.apply(allLinks, h3s)
             if (h3s.length) {
-              sectionContainer.appendChild(makeSubLinks(h3s, isAPI))
+              sectionContainer.appendChild(makeSubLinks(h3s, isDocs))
             }
           })
         } else {
