@@ -95,7 +95,7 @@ class Uppy {
       meta: Object.assign({}, this.opts.meta),
       info: {
         isHidden: true,
-        type: '',
+        type: 'info',
         msg: ''
       }
     }
@@ -699,12 +699,15 @@ class Uppy {
   * @param {string} msg Message to be displayed by the informer
   */
 
-  info (msg, type, duration) {
+  info (message, type, duration) {
+    const isComplexMessage = typeof message === 'object'
+
     this.setState({
       info: {
         isHidden: false,
-        type: type,
-        msg: msg
+        type: type || 'info',
+        message: isComplexMessage ? message.msg : message,
+        details: isComplexMessage ? message.details : null
       }
     })
 
