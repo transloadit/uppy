@@ -1,7 +1,7 @@
-const yo = require('yo-yo')
-const nanoraf = require('nanoraf')
 const { findDOMElement } = require('../core/Utils')
 const getFormData = require('get-form-data')
+
+const { patch } = require('picodom')
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -52,9 +52,14 @@ module.exports = class Plugin {
     const targetElement = findDOMElement(target)
 
     // Set up nanoraf.
-    this.updateUI = nanoraf((state) => {
-      this.el = yo.update(this.el, this.render(state))
-    })
+    // this.updateUI = nanoraf((state) => {
+    //   this.el = yo.update(this.el, this.render(state))
+    // })
+
+    this.updateUI = function (state) {
+      const node = this.render(state)
+      this.el = patch(this.oldNode, (this.oldNode = node), this.el, targetElement)
+    }
 
     if (targetElement) {
       this.core.log(`Installing ${callerPluginName} to a DOM element`)
@@ -70,8 +75,9 @@ module.exports = class Plugin {
         targetElement.innerHTML = ''
       }
 
-      this.el = plugin.render(this.core.state)
-      targetElement.appendChild(this.el)
+      this.updateUI(this.core.state)
+      // console.log(this.node)
+      // targetElement.appendChild(this.el)
 
       return targetElement
     } else {
