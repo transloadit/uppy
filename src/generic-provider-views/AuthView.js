@@ -1,5 +1,10 @@
-const html = require('yo-yo')
-const onload = require('on-load')
+// const html = require('yo-yo')
+
+const { h } = require('picodom')
+const hyperx = require('hyperx')
+const html = hyperx(h, {attrToProp: false})
+
+// const onload = require('on-load')
 const LoaderView = require('./Loader')
 
 module.exports = (props) => {
@@ -11,11 +16,20 @@ module.exports = (props) => {
       ${demoLink}
     </div>
   `
-  return onload(html`
-    <div style="height: 100%;">
+
+  return html`
+    <div style=${{height: '100%'}} oncreate=${props.checkAuth}>
       ${props.checkAuthInProgress
         ? LoaderView()
         : AuthBlock()
       }
-    </div>`, props.checkAuth, null, `auth${props.pluginName}`)
+    </div>
+  `
+  // return onload(html`
+  //   <div style="height: 100%;">
+  //     ${props.checkAuthInProgress
+  //       ? LoaderView()
+  //       : AuthBlock()
+  //     }
+  //   </div>`, props.checkAuth, null, `auth${props.pluginName}`)
 }

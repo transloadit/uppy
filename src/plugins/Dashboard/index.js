@@ -230,8 +230,9 @@ module.exports = class DashboardUI extends Plugin {
     this.core.off('dashboard:file-card', this.handleFileCard)
   }
 
-  updateDashboardElWidth () {
-    const dashboardEl = this.target.querySelector('.UppyDashboard-inner')
+  updateDashboardElWidth (event, el) {
+    const dashboardEl = el || this.target.querySelector('.UppyDashboard-inner')
+    console.log(dashboardEl)
     this.core.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
     const modal = this.core.getState().modal

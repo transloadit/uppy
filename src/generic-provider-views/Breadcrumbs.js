@@ -1,4 +1,9 @@
-const html = require('yo-yo')
+// const html = require('yo-yo')
+
+const { h } = require('picodom')
+const hyperx = require('hyperx')
+const html = hyperx(h, {attrToProp: false})
+
 const Breadcrumb = require('./Breadcrumb')
 
 module.exports = (props) => {

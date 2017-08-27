@@ -2,7 +2,11 @@ const Plugin = require('./../Plugin')
 const Translator = require('../../core/Translator')
 const { toArray } = require('../../core/Utils')
 const dragDrop = require('drag-drop')
-const html = require('yo-yo')
+// const html = require('yo-yo')
+
+const { h } = require('picodom')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 /**
  * Drag & Drop plugin

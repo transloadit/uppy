@@ -1,4 +1,7 @@
-const html = require('yo-yo')
+const { h } = require('picodom')
+const hyperx = require('hyperx')
+const html = hyperx(h, {attrToProp: false})
+
 const throttle = require('lodash.throttle')
 
 function progressDetails (props) {

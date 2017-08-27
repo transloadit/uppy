@@ -1,4 +1,8 @@
-const html = require('yo-yo')
+// const html = require('yo-yo')
+
+const { h } = require('picodom')
+const hyperx = require('hyperx')
+const html = hyperx(h, {attrToProp: false})
 
 // http://codepen.io/Harkko/pen/rVxvNM
 // https://css-tricks.com/svg-line-animation-works/
