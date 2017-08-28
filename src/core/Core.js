@@ -96,7 +96,7 @@ class Uppy {
       info: {
         isHidden: true,
         type: 'info',
-        msg: ''
+        message: ''
       }
     }
 
@@ -706,7 +706,7 @@ class Uppy {
       info: {
         isHidden: false,
         type: type || 'info',
-        message: isComplexMessage ? message.msg : message,
+        message: isComplexMessage ? message.message : message,
         details: isComplexMessage ? message.details : null
       }
     })
