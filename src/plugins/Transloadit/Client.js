@@ -32,7 +32,7 @@ module.exports = class Client {
     })
     data.append('tus_num_expected_upload_files', expectedFiles)
 
-    return fetch(`${this.apiUrl}/assemblies`, {
+    return fetch(`${this.apiUrl}/assemblies?redirect=false`, {
       method: 'post',
       body: data
     }).then((response) => response.json()).then((assembly) => {
