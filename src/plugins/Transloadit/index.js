@@ -477,6 +477,10 @@ module.exports = class Transloadit extends Plugin {
   uninstall () {
     this.core.removePreProcessor(this.prepareUpload)
     this.core.removePostProcessor(this.afterUpload)
+
+    if (this.opts.importFromUploadURLs) {
+      this.core.off('core:upload-success', this.onFileUploadURLAvailable)
+    }
   }
 
   getAssembly (id) {
