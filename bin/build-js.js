@@ -4,6 +4,8 @@ var chalk = require('chalk')
 var mkdirp = require('mkdirp')
 // var glob = require('glob')
 var babelify = require('babelify')
+var commonShakeify = require('common-shakeify')
+var packFlat = require('browser-pack-flat/plugin')
 // var yoyoify = require('yo-yoify')
 var browserify = require('browserify')
 // var exec = require('child_process').exec
@@ -21,13 +23,23 @@ function buildUppyBundle (minify) {
   var bundleFile = minify ? 'uppy.min.js' : 'uppy.js'
 
   var b = browserify(src, { debug: true, standalone: 'Uppy' })
+  b.plugin(commonShakeify)
+  b.plugin(packFlat)
   if (minify) {
     b.plugin('minifyify', {
       map: bundleFile + '.map',
-      output: path.join(distPath, bundleFile + '.map')
+      output: path.join(distPath, bundleFile + '.map'),
+      uglify: {
+        mangle: {
+          eval: true,
+          toplevel: true
+        },
+        compress: {
+          toplevel: true
+        }
+      }
     })
   }
-  // b.transform(yoyoify)
   b.transform(babelify)
   b.on('error', handleErr)
 
