@@ -1,4 +1,5 @@
 const React = require('react')
+const PropTypes = require('prop-types')
 const UppyCore = require('../core/Core').Uppy
 const ReactDashboardPlugin = require('./bridge/ReactDashboardPlugin')
 const StatusBarPlugin = require('../plugins/StatusBar')
@@ -63,14 +64,14 @@ class DashboardModal extends React.Component {
 }
 
 DashboardModal.propTypes = {
-  uppy: React.PropTypes.instanceOf(UppyCore).isRequired,
-  maxWidth: React.PropTypes.number,
-  maxHeight: React.PropTypes.number,
-  semiTransparent: React.PropTypes.bool,
-  defaultTabIcon: React.PropTypes.node,
-  showProgressDetails: React.PropTypes.bool,
-  onRequestClose: React.PropTypes.func,
-  locale: React.PropTypes.object
+  uppy: PropTypes.instanceOf(UppyCore).isRequired,
+  maxWidth: PropTypes.number,
+  maxHeight: PropTypes.number,
+  semiTransparent: PropTypes.bool,
+  defaultTabIcon: PropTypes.node,
+  showProgressDetails: PropTypes.bool,
+  onRequestClose: PropTypes.func,
+  locale: PropTypes.object
 }
 
 DashboardModal.defaultProps = {

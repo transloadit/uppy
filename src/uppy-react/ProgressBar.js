@@ -1,4 +1,5 @@
 const React = require('react')
+const PropTypes = require('prop-types')
 const UppyCore = require('../core/Core').Uppy
 const ProgressBarPlugin = require('../plugins/ProgressBar')
 
@@ -28,8 +29,8 @@ class ProgressBar extends React.Component {
 }
 
 ProgressBar.propTypes = {
-  uppy: React.PropTypes.instanceOf(UppyCore).isRequired,
-  locale: React.PropTypes.object
+  uppy: PropTypes.instanceOf(UppyCore).isRequired,
+  locale: PropTypes.object
 }
 
 ProgressBar.defaultProps = {
