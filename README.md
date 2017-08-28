@@ -36,11 +36,11 @@ Check out docs and examples on [uppy.io](http://uppy.io).
 $ npm install uppy
 ```
 
-We recommend installing from NPM and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/). 
+We recommend installing from NPM and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
 Add CSS [uppy.min.css](https://unpkg.com/uppy/dist/uppy.min.css), either to `<head>` of your HTML page or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
-If you like, you can also use a pre-built bundle, for example from [unpkg CDN](https://unpkg.com/uppy/). In that case `Uppy` will attach itself to the global `window.Uppy` object. 
+If you like, you can also use a pre-built bundle, for example from [unpkg CDN](https://unpkg.com/uppy/). In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
 > ⚠️ The bundle currently consists of most Uppy plugins, so this method is not  recommended for production, as your users will have to download all plugins, even if you are using just a few.
 
@@ -89,15 +89,15 @@ Yep. Uppy-React component is in the works, in the meantime you can just use it a
 
 ### Can I use it with Rails/Node/Go/PHP?
 
-Yes, whatever you want on the backend will work with `Multipart` plugin, since it just does a `POST` request. If you want resumability, use [one of tus implementations](http://tus.io/implementations.html) 👌🏼
+Yes, whatever you want on the backend will work with `XHRUpload` plugin, since it just does a `POST` or `PUT` request. If you want resumability, use [one of tus implementations](http://tus.io/implementations.html) 👌🏼
 
 ### Do I need to install special service/server for it?
 
-No, as mentioned previously, `Multipart` plugin is old-school and just works with everything. However, you need [`uppy-server`](https://github.com/transloadit/uppy-server) if you’d like your users to be able to pick files from Google Drive or Dropbox (more services coming). And you can add [tus](http://tus.io) if you want resumability.
+No, as mentioned previously, `XHRUpload` plugin is old-school and just works with everything. However, you need [`uppy-server`](https://github.com/transloadit/uppy-server) if you’d like your users to be able to pick files from Google Drive or Dropbox (more services coming). And you can add [tus](http://tus.io) if you want resumability.
 
 ### Does Uppy support S3 uploads?
 
-Yes, since 0.18, there is an S3 plugin. Check out the docs for more information.
+Yes, since 0.18, there is an S3 plugin. Check out the [docs](https://uppy.io/docs/aws-s3/) for more information.
 
 ## Contributions are welcome
 
