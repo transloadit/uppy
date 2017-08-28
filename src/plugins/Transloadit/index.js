@@ -206,7 +206,7 @@ module.exports = class Transloadit extends Plugin {
    * once they have been fully uploaded.
    */
   onFileUploadURLAvailable (fileID) {
-    const file = this.core.getState().files[fileID]
+    const file = this.core.getFile(fileID)
     if (!file || !file.transloadit || !file.transloadit.assembly) {
       return
     }
@@ -215,7 +215,7 @@ module.exports = class Transloadit extends Plugin {
 
     this.client.addFile(assembly, file).catch((err) => {
       this.core.log(err)
-      this.core.emit('core:upload-error', file.id, err)
+      this.core.emit('transloadit:import-error', assembly, file.id, err)
     })
   }
 
@@ -424,13 +424,28 @@ module.exports = class Transloadit extends Plugin {
         reject(error)
       }
 
+      const onImportError = (assembly, fileID, error) => {
+        if (assemblyIDs.indexOf(assembly.assembly_id) === -1) {
+          return
+        }
+
+        // Not sure if we should be doing something when it's just one file failing.
+        // ATM, the only options are 1) ignoring or 2) failing the entire upload.
+        // I think failing the upload is better than silently ignoring.
+        // In the future we should maybe have a way to resolve uploads with some failures,
+        // like returning an object with `{ successful, failed }` uploads.
+        onAssemblyError(assembly, error)
+      }
+
       const removeListeners = () => {
         this.core.off('transloadit:complete', onAssemblyFinished)
         this.core.off('transloadit:assembly-error', onAssemblyError)
+        this.core.off('transloadit:import-error', onImportError)
       }
 
       this.core.on('transloadit:complete', onAssemblyFinished)
       this.core.on('transloadit:assembly-error', onAssemblyError)
+      this.core.on('transloadit:import-error', onImportError)
     }).then(() => {
       // Clean up uploadID → assemblyIDs, they're no longer going to be used anywhere.
       const uploadsAssemblies = Object.assign({}, this.state.uploadsAssemblies)
