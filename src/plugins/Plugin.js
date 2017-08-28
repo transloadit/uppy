@@ -78,7 +78,7 @@ module.exports = class Plugin {
       // this.el = plugin.render(this.core.state)
       this.el = render(this.render(this.core.state), targetElement, this.el)
 
-      targetElement.appendChild(this.el)
+      // targetElement.appendChild(this.el)
 
       return targetElement
     } else {

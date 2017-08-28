@@ -1,4 +1,7 @@
-const html = require('yo-yo')
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h, {attrToProp: false})
+
 const Column = require('./TableColumn')
 
 module.exports = (props) => {

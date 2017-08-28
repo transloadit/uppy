@@ -2,7 +2,8 @@
 
 const { h } = require('preact')
 const hyperx = require('hyperx')
-const html = hyperx(h, {attrToProp: false})
+// const html = hyperx(h, {attrToProp: false})
+const html = hyperx((tag, props, kids) => h(tag, props, ...kids))
 
 // https://css-tricks.com/creating-svg-icon-system-react/
 
