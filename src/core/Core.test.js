@@ -710,6 +710,43 @@ describe('src/Core', () => {
         expect(result).toMatchSnapshot()
       })
     })
+
+    it('should wait for addFile() promises to resolve before starting the upload', () => {
+      const resolves = []
+      const onBeforeUpload = jest.fn(() => {
+        expect(resolves.length).toBe(0)
+        return Promise.resolve()
+      })
+      const uppy = new Core({
+        autoProceed: false,
+        onBeforeFileAdded () {
+          // Queue `addFile` promises to be resolved _after_
+          // calling `upload()`.
+          return new Promise((resolve) => {
+            resolves.push(resolve)
+          })
+        },
+        onBeforeUpload
+      })
+
+      uppy.addFile({ name: 'a', data: Buffer.from('a') })
+      uppy.addFile({ name: 'b', data: Buffer.from('b') })
+
+      return Promise.resolve().then(() => {
+        expect(resolves.length).toBe(2)
+
+        const promise = uppy.upload()
+
+        let resolve
+        while ((resolve = resolves.pop())) {
+          resolve()
+        }
+
+        return promise
+      }).then(() => {
+        expect(onBeforeUpload).toHaveBeenCalled()
+      })
+    })
   })
 
   describe('removing a file', () => {

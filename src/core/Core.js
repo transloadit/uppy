@@ -1,5 +1,6 @@
 const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
+const PromiseWaiter = require('./PromiseWaiter')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
 const throttle = require('lodash.throttle')
@@ -120,7 +121,7 @@ class Uppy {
       this.updateAll(nextState)
     })
 
-    this.addFilePromises = []
+    this.addFilePromises = new PromiseWaiter()
 
     // for debugging and testing
     // this.updateNum = 0
@@ -407,33 +408,9 @@ class Uppy {
         return Promise.reject(typeof err === 'object' ? err : new Error(err))
       })
 
-    this.addFilePromises.push(promise)
-    const removePromise = () => {
-      const i = this.addFilePromises.indexOf(promise)
-      if (i !== -1) {
-        this.addFilePromises.splice(i, 1)
-      }
-    }
-    promise.then(removePromise, removePromise)
+    this.addFilePromises.add(promise)
 
     return promise
-  }
-
-  waitForAddFilePromises () {
-    const promises = this.addFilePromises
-    this.addFilePromises = []
-
-    function noop () {
-      // No result value
-    }
-
-    return Promise.all(promises.map(concluded)).then(noop)
-
-    // Just wait for a Promise to conclude in some way, whether it's resolution
-    // or rejection. We don't care about the contents.
-    function concluded (promise) {
-      return promise.then(noop, noop)
-    }
   }
 
   removeFile (fileID) {
@@ -1143,7 +1120,7 @@ class Uppy {
       this.log('No uploader type plugins are used', 'warning')
     }
 
-    return this.waitForAddFilePromises()
+    return this.addFilePromises.wait()
       .then(() => this.opts.onBeforeUpload(this.getState().files))
       .then(() => this._checkMinNumberOfFiles())
       .then(() => {
