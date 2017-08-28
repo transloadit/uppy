@@ -52,7 +52,7 @@ module.exports = class Informer extends Plugin {
     return html`<div class="Uppy UppyTheme--default UppyInformer" style="${style}" aria-hidden="${isHidden}">
       <p>
         ${message} 
-        ${details ? html`<span style="color: ${this.opts.typeColors[type].bg}" data-balloon="${details}" data-balloon-pos="up" data-balloon-length="medium">?</span>` : null}
+        ${details ? html`<span style="color: ${this.opts.typeColors[type].bg}" data-balloon="${details}" data-balloon-pos="up" data-balloon-length="large">?</span>` : null}
       </p>
     </div>`
   }
