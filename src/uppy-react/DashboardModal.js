@@ -1,6 +1,8 @@
 const React = require('react')
 const UppyCore = require('../core/Core').Uppy
 const ReactDashboardPlugin = require('./bridge/ReactDashboardPlugin')
+const StatusBarPlugin = require('../plugins/StatusBar')
+const InformerPlugin = require('../plugins/Informer')
 
 const h = React.createElement
 
@@ -24,8 +26,12 @@ class DashboardModal extends React.Component {
       // defaultTabIcon: this.props.defaultTabIcon,
       onRequestClose: this.props.onRequestClose
     })
+    uppy.use(StatusBarPlugin, { target: ReactDashboardPlugin })
+    uppy.use(InformerPlugin, { target: ReactDashboardPlugin })
 
     this.plugin = uppy.getPlugin('ReactDashboard')
+    this.statusBar = uppy.getPlugin('StatusBarUI')
+    this.informer = uppy.getPlugin('Informer')
     if (this.props.open) {
       this.plugin.showModalInternal()
     }
@@ -37,6 +43,14 @@ class DashboardModal extends React.Component {
     } else if (!this.props.open && nextProps.open) {
       this.plugin.showModalInternal()
     }
+  }
+
+  componentWillUnmount () {
+    const uppy = this.props.uppy
+
+    uppy.removePlugin(this.informer)
+    uppy.removePlugin(this.statusBar)
+    uppy.removePlugin(this.plugin)
   }
 
   render () {

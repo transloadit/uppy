@@ -1,6 +1,8 @@
 const React = require('react')
 const UppyCore = require('../core/Core').Uppy
 const DashboardPlugin = require('../plugins/Dashboard')
+const StatusBarPlugin = require('../plugins/StatusBar')
+const InformerPlugin = require('../plugins/Informer')
 
 const h = React.createElement
 
@@ -14,6 +16,8 @@ class Dashboard extends React.Component {
     const uppy = this.props.uppy
     uppy.use(DashboardPlugin, {
       target: this.container,
+      disableInformer: true,
+      disableStatusBar: true,
       locale: this.props.locale,
       maxWidth: this.props.maxWidth,
       maxHeight: this.props.maxHeight,
@@ -24,22 +28,20 @@ class Dashboard extends React.Component {
       // defaultTabIcon: this.props.defaultTabIcon,
       inline: true
     })
+    uppy.use(StatusBarPlugin, { target: DashboardPlugin })
+    uppy.use(InformerPlugin, { target: DashboardPlugin })
 
     this.plugin = uppy.getPlugin('DashboardUI')
+    this.statusBar = uppy.getPlugin('StatusBarUI')
+    this.informer = uppy.getPlugin('Informer')
   }
 
   componentWillUnmount () {
-    // EXPERIMENTAL!
-    // If we add a method like this to Uppy core, unmounting and remounting
-    // works fine.
     const uppy = this.props.uppy
-    const plugins = uppy.plugins[this.plugin.type]
-    this.plugin.uninstall()
 
-    const i = plugins.indexOf(this.plugin)
-    if (i !== -1) {
-      plugins.splice(i, 1)
-    }
+    uppy.removePlugin(this.informer)
+    uppy.removePlugin(this.statusBar)
+    uppy.removePlugin(this.plugin)
   }
 
   render () {
