@@ -53,6 +53,7 @@ module.exports = class DashboardUI extends Plugin {
       showProgressDetails: false,
       hideUploadButton: false,
       note: false,
+      closeModalOnClickOutside: false,
       locale: defaultLocale
     }
 
@@ -74,6 +75,7 @@ module.exports = class DashboardUI extends Plugin {
     this.showPanel = this.showPanel.bind(this)
     this.initEvents = this.initEvents.bind(this)
     this.handleEscapeKeyPress = this.handleEscapeKeyPress.bind(this)
+    this.handleClickOutside = this.handleClickOutside.bind(this)
     this.handleFileCard = this.handleFileCard.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.pauseAll = this.pauseAll.bind(this)
@@ -185,6 +187,10 @@ module.exports = class DashboardUI extends Plugin {
     if (event.keyCode === 27) {
       this.hideModal()
     }
+  }
+
+  handleClickOutside () {
+    if (this.opts.closeModalOnClickOutside) this.hideModal()
   }
 
   initEvents () {
@@ -365,6 +371,7 @@ module.exports = class DashboardUI extends Plugin {
       hideUploadButton: this.opts.hideUploadButton,
       id: this.id,
       hideModal: this.hideModal,
+      handleClickOutside: this.handleClickOutside,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
       semiTransparent: this.opts.semiTransparent,

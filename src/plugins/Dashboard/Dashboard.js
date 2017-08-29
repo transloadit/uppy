@@ -57,9 +57,7 @@ module.exports = function Dashboard (props) {
           onpaste=${handlePaste}
           onload=${() => props.updateDashboardElWidth()}>
 
-    <div class="UppyDashboard-overlay" onclick=${() => {
-      // props.hideModal
-    }}></div>
+    <div class="UppyDashboard-overlay" onclick=${props.handleClickOutside}></div>
 
     <div class="UppyDashboard-inner"
          tabindex="0"
