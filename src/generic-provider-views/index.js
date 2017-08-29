@@ -350,7 +350,7 @@ module.exports = class View {
     const core = this.plugin.core
     const message = core.i18n('uppyServerError')
     core.log(error.toString())
-    core.info(message, 'error', 5000)
+    core.info({message: message, details: error.toString()}, 'error', 5000)
   }
 
   handleScroll (e) {
