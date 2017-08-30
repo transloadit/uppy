@@ -32,7 +32,7 @@ For those of you who are new here, Uppy is the next-gen open source file uploade
 
 ## Hacking trip
 
-Our core team is spread across three continents and five cities, and most of us have never met in person, with the majority of communication happening in GitHub and Slack. Just last week, we got together in Berlin for a crazy week of pink limo rides, Indian food and Mario Kart 64. More on that coming soon on the [Transloadit blog](https://transloadit.com/blog/).
+Our core team is spread across three continents and five cities, and most of us have never met in person, with the majority of communication happening in GitHub and Slack. Just last week, we got together in Berlin for a crazy week of pink limo rides, Indian food and Mario Kart 64. More on that on the [Transloadit blog](https://transloadit.com/blog/2017/08/team-meetup-2017/).
 
 <figure class="wide"><img src="/images/blog/golden-retriever/uppy-team-kong.jpg"></figure>
 
