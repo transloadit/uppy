@@ -26,6 +26,7 @@ const MetaData = require('./plugins/MetaData.js')
 const Tus10 = require('./plugins/Tus10')
 const XHRUpload = require('./plugins/XHRUpload')
 const Transloadit = require('./plugins/Transloadit')
+const AwsS3 = require('./plugins/AwsS3')
 
 module.exports = {
   Core,
@@ -41,6 +42,7 @@ module.exports = {
   Tus10,
   XHRUpload,
   Transloadit,
+  AwsS3,
   Dashboard,
   MetaData,
   Webcam
