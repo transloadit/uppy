@@ -601,6 +601,12 @@ class Uppy {
  * @return {Object} self for chaining
  */
   use (Plugin, opts) {
+    if (typeof Plugin !== 'function') {
+      let msg = `Expected a plugin class, but got ${Plugin === null ? 'null' : typeof Plugin}.` +
+        ' Please verify that the plugin was imported and spelled correctly.'
+      throw new TypeError(msg)
+    }
+
     // Instantiate
     const plugin = new Plugin(this, opts)
     const pluginName = plugin.id
