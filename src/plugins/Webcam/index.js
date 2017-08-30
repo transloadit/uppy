@@ -168,7 +168,7 @@ module.exports = class Webcam extends Plugin {
           data: new Blob(this.recordingChunks, { type: mimeType })
         }
 
-        this.core.addfile(file)
+        this.core.addFile(file)
 
         this.recordingChunks = null
         this.recorder = null
