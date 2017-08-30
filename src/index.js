@@ -16,6 +16,7 @@ const Instagram = require('./plugins/Instagram/index.js')
 const Webcam = require('./plugins/Webcam/index.js')
 
 // Progressindicators
+const StatusBar = require('./plugins/StatusBar')
 const ProgressBar = require('./plugins/ProgressBar.js')
 const Informer = require('./plugins/Informer.js')
 
@@ -26,11 +27,16 @@ const MetaData = require('./plugins/MetaData.js')
 const Tus10 = require('./plugins/Tus10')
 const XHRUpload = require('./plugins/XHRUpload')
 const Transloadit = require('./plugins/Transloadit')
+const AwsS3 = require('./plugins/AwsS3')
+
+// Other?
+const RestoreFiles = require('./plugins/RestoreFiles')
 
 module.exports = {
   Core,
   Plugin,
   Dummy,
+  StatusBar,
   ProgressBar,
   Informer,
   DragDrop,
@@ -41,7 +47,9 @@ module.exports = {
   Tus10,
   XHRUpload,
   Transloadit,
+  AwsS3,
   Dashboard,
   MetaData,
-  Webcam
+  Webcam,
+  RestoreFiles
 }
