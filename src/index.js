@@ -29,6 +29,9 @@ const XHRUpload = require('./plugins/XHRUpload')
 const Transloadit = require('./plugins/Transloadit')
 const AwsS3 = require('./plugins/AwsS3')
 
+// Other?
+const RestoreFiles = require('./plugins/RestoreFiles')
+
 module.exports = {
   Core,
   Plugin,
@@ -47,5 +50,6 @@ module.exports = {
   AwsS3,
   Dashboard,
   MetaData,
-  Webcam
+  Webcam,
+  RestoreFiles
 }
