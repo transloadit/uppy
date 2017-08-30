@@ -16,6 +16,7 @@ const Instagram = require('./plugins/Instagram/index.js')
 const Webcam = require('./plugins/Webcam/index.js')
 
 // Progressindicators
+const StatusBar = require('./plugins/StatusBar')
 const ProgressBar = require('./plugins/ProgressBar.js')
 const Informer = require('./plugins/Informer.js')
 
@@ -32,6 +33,7 @@ module.exports = {
   Core,
   Plugin,
   Dummy,
+  StatusBar,
   ProgressBar,
   Informer,
   DragDrop,
