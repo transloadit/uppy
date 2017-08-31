@@ -8,12 +8,17 @@ const meta = {}
 
 module.exports = function fileCard (props) {
   file = props.fileCardFor ? props.files[props.fileCardFor] : false
-  // const meta = {}
 
   const handleEnterKey = (ev) => {
-    if (event.keyCode === 13) {
+    if (file && event.keyCode === 13) {
       props.done(meta, file.id)
     }
+  }
+
+  if (file) {
+    document.body.addEventListener('keyup', handleEnterKey)
+  } else {
+    document.body.removeEventListener('keyup', handleEnterKey)
   }
 
   const tempStoreMeta = (ev) => {
@@ -73,8 +78,8 @@ module.exports = function fileCard (props) {
   </div>`
 
   return onload(html`<div>${fileCardEl()}</div>`,
-    () => document.body.addEventListener('keyup', handleEnterKey),
-    () => document.body.removeEventListener('keyup', handleEnterKey),
+    null,
+    null,
     `uppy${file.id}`
   )
 }
