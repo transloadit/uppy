@@ -326,21 +326,22 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     const pauseUpload = (fileID) => {
-      this.core.emitter.emit('core:upload-pause', fileID)
+      this.core.emit.emit('core:upload-pause', fileID)
     }
 
     const cancelUpload = (fileID) => {
-      this.core.emitter.emit('core:upload-cancel', fileID)
-      this.core.emitter.emit('core:file-remove', fileID)
+      this.core.emit('core:upload-cancel', fileID)
+      this.core.emit('core:file-remove', fileID)
     }
 
     const showFileCard = (fileID) => {
-      this.core.emitter.emit('dashboard:file-card', fileID)
+      this.core.emit('dashboard:file-card', fileID)
     }
 
     const fileCardDone = (meta, fileID) => {
-      this.core.emitter.emit('core:update-meta', meta, fileID)
-      this.core.emitter.emit('dashboard:file-card')
+      console.log(meta)
+      this.core.emit('core:update-meta', meta, fileID)
+      this.core.emit('dashboard:file-card')
     }
 
     const info = (text, type, duration) => {

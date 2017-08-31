@@ -36,7 +36,7 @@ module.exports = function fileCard (props) {
     })
   }
 
-  const fileCardEl = html`<div class="UppyDashboardFileCard" aria-hidden="${!props.fileCardFor}">
+  const fileCardEl = () => html`<div class="UppyDashboardFileCard" aria-hidden="${!props.fileCardFor}">
     <div class="UppyDashboardContent-bar">
       <h2 class="UppyDashboardContent-title">Editing <span class="UppyDashboardContent-titleFile">${file.meta ? file.meta.name : file.name}</span></h2>
       <button class="UppyDashboardContent-back" type="button" title="Finish editing file"
@@ -56,7 +56,7 @@ module.exports = function fileCard (props) {
           <div class="UppyDashboardFileCard-info">
             <fieldset class="UppyDashboardFileCard-fieldset">
               <label class="UppyDashboardFileCard-label">Name</label>
-              <input class="UppyDashboardFileCard-input" name="name" type="text" value="${file.meta.name}"
+              <input class="UppyDashboardFileCard-input" data-name="name" type="text" value="${file.meta.name}"
                      onkeyup=${tempStoreMeta} />
             </fieldset>
             ${renderMetaFields(file)}
@@ -70,10 +70,11 @@ module.exports = function fileCard (props) {
               title="Finish editing file"
               onclick=${() => props.done(meta, file.id)}>${checkIcon()}</button>
     </div>
-    </div>`
+  </div>`
 
-  return onload(html`<div>${fileCardEl}</div>`,
+  return onload(html`<div>${fileCardEl()}</div>`,
     () => document.body.addEventListener('keyup', handleEnterKey),
-    () => document.body.removeEventListener('keyup', handleEnterKey)
+    () => document.body.removeEventListener('keyup', handleEnterKey),
+    `uppy${file.id}`
   )
 }
