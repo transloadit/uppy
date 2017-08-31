@@ -1,4 +1,4 @@
-import Plugin from '../../../src/plugins/Plugin.js'
+import Plugin from '../../src/plugins/Plugin.js'
 
 export default class TestSelector1 extends Plugin {
   constructor (core, opts) {
@@ -6,6 +6,12 @@ export default class TestSelector1 extends Plugin {
     this.type = 'acquirer'
     this.id = 'TestSelector1'
     this.name = this.constructor.name
+
+    this.mocks = {
+      run: jest.fn(),
+      update: jest.fn(),
+      uninstall: jest.fn()
+    }
   }
 
   run (results) {
@@ -14,7 +20,15 @@ export default class TestSelector1 extends Plugin {
       method: 'run',
       results: results
     })
-
+    this.mocks.run(results)
     return Promise.resolve('success')
+  }
+
+  update (state) {
+    this.mocks.update(state)
+  }
+
+  uninstall () {
+    this.mocks.uninstall()
   }
 }

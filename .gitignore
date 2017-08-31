@@ -6,6 +6,7 @@ node_modules
 
 dist/
 lib/
+coverage/
 
 website/db.json
 website/*.log

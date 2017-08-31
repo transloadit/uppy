@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`src/Core plugins should not be able to add a plugin that has no id 1`] = `"Your plugin must have an id"`;
+
+exports[`src/Core plugins should not be able to add a plugin that has no type 1`] = `"Your plugin must have a type"`;
+
+exports[`src/Core plugins should not be able to add an invalid plugin 1`] = `"Expected a plugin class, but got object. Please verify that the plugin was imported and spelled correctly."`;
+
+exports[`src/Core plugins should prevent the same plugin from being added more than once 1`] = `
+"Already found a plugin named 'TestSelector1'.
+        Tried to use: 'TestSelector1'.
+        Uppy is currently limited to running one of every plugin.
+        Share your use case with us over at
+        https://github.com/transloadit/uppy/issues/
+        if you want us to reconsider."
+`;
