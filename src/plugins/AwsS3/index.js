@@ -66,6 +66,14 @@ module.exports = class AwsS3 extends Plugin {
             key: getValue('Key'),
             etag: getValue('ETag')
           }
+        },
+        getResponseError (xhr) {
+          // If no response, we don't have a specific error message, use the default.
+          if (!xhr.responseXML) {
+            return
+          }
+          const error = xhr.responseXML.querySelector('Error > Message')
+          return new Error(error.textContent)
         }
       })
     })
