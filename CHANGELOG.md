@@ -82,6 +82,9 @@ What we need to do to release Uppy 1.0
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
+- [ ] core: Uppy ID per instance
+- [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
+- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 
 # next
 
@@ -90,15 +93,14 @@ What we need to do to release Uppy 1.0
 To be released: 2017-09-01.
 Theme: React and Retry
 
-- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] core: add error in file progress state? error UI, question mark button, `core:error` (@arturi)
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
 - [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 - [ ] core: React / Redux PRs (@arturi @goto-bus-stop)
 - [ ] transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
 - [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
-- [ ] dashboard: cancel button for any kind of uploads? currently resume-only for tus (@arturi)
-- [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
+- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi @goto-bus-stop)
+- [x] informer: support “explanations”, a (?) button that shows more info on hover / click
 - [x] core: gradually resize image previews #275 (@goto-bus-stop)
 - [x] website: simplify examples and code samples, prevent sidebar subheading links anywhere but in docs (@arturi)
 - [x] website: group plugin docs together in the sidebar (@arturi)
