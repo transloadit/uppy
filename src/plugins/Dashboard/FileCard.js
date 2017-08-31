@@ -8,7 +8,7 @@ module.exports = function fileCard (props) {
 
   function tempStoreMeta (ev) {
     const value = ev.target.value
-    const name = ev.target.attributes.name.value
+    const name = ev.target.dataset.name
     meta[name] = value
   }
 
@@ -18,8 +18,8 @@ module.exports = function fileCard (props) {
       return html`<fieldset class="UppyDashboardFileCard-fieldset">
         <label class="UppyDashboardFileCard-label">${field.name}</label>
         <input class="UppyDashboardFileCard-input"
-               name="${field.id}"
                type="text"
+               data-name="${field.id}"
                value="${file.meta[field.id]}"
                placeholder="${field.placeholder || ''}"
                onkeyup=${tempStoreMeta} /></fieldset>`
