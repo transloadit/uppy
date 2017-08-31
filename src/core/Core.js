@@ -72,6 +72,7 @@ class Uppy {
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
     this.addFile = this.addFile.bind(this)
+    this.removeFile = this.removeFile.bind(this)
     this.calculateProgress = this.calculateProgress.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
 

@@ -249,7 +249,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   handleFileCard (fileId) {
-    const modal = this.core.getState().modal
+    const modal = this.core.state.modal
 
     this.core.setState({
       modal: Object.assign({}, modal, {
@@ -318,18 +318,10 @@ module.exports = class DashboardUI extends Plugin {
       return target.type === 'progressindicator'
     })
 
-    // const addFile = (file) => {
-    //   this.core.emitter.emit('core:file-add', file)
-    // }
-
-    const removeFile = (fileID) => {
-      this.core.emitter.emit('core:file-remove', fileID)
-    }
-
     const startUpload = (ev) => {
       this.core.upload().catch((err) => {
         // Log error.
-        console.error(err.stack || err.message || err)
+        this.core.log(err.stack || err.message || err)
       })
     }
 
@@ -355,7 +347,7 @@ module.exports = class DashboardUI extends Plugin {
       this.core.info(text, type, duration)
     }
 
-    const resumableUploads = this.core.getState().capabilities.resumableUploads || false
+    const resumableUploads = this.core.state.capabilities.resumableUploads || false
 
     return Dashboard({
       state: state,
@@ -382,7 +374,7 @@ module.exports = class DashboardUI extends Plugin {
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
       addFile: this.core.addFile,
-      removeFile: removeFile,
+      removeFile: this.core.removeFile,
       info: info,
       note: this.opts.note,
       metaFields: state.metaFields,
