@@ -111,6 +111,7 @@ module.exports = function Dashboard (props) {
             pauseUpload: props.pauseUpload,
             startUpload: props.startUpload,
             cancelUpload: props.cancelUpload,
+            retryUpload: props.retryUpload,
             resumableUploads: props.resumableUploads,
             isWide: props.isWide
           })}

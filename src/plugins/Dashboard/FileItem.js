@@ -8,7 +8,7 @@ const { getETA,
 const prettyBytes = require('prettier-bytes')
 const FileItemProgress = require('./FileItemProgress')
 const getFileTypeIcon = require('./getFileTypeIcon')
-const { iconEdit, iconCopy } = require('./icons')
+const { iconEdit, iconCopy, iconRetry } = require('./icons')
 
 module.exports = function fileItem (props) {
   const file = props.file
@@ -18,6 +18,7 @@ module.exports = function fileItem (props) {
   const uploadInProgressOrComplete = file.progress.uploadStarted
   const uploadInProgress = file.progress.uploadStarted && !file.progress.uploadComplete
   const isPaused = file.isPaused || false
+  const error = file.error || false
 
   const fileName = getFileNameAndExtension(file.meta.name)[0]
   const truncatedFileName = props.isWide ? truncateString(fileName, 15) : fileName
@@ -26,6 +27,7 @@ module.exports = function fileItem (props) {
                         ${uploadInProgress ? 'is-inprogress' : ''}
                         ${isUploaded ? 'is-complete' : ''}
                         ${isPaused ? 'is-paused' : ''}
+                        ${error ? 'is-error' : ''}
                         ${props.resumableUploads ? 'is-resumable' : ''}"
                   id="uppy_${file.id}"
                   title="${file.meta.name}">
@@ -52,16 +54,23 @@ module.exports = function fileItem (props) {
                         }"
                   onclick=${(ev) => {
                     if (isUploaded) return
+                    if (error) {
+                      props.retryUpload(file.id)
+                      return
+                    }
                     if (props.resumableUploads) {
                       props.pauseUpload(file.id)
                     } else {
                       props.cancelUpload(file.id)
                     }
                   }}>
-            ${FileItemProgress({
-              progress: file.progress.percentage,
-              fileID: file.id
-            })}
+            ${props.file.error
+              ? iconRetry()
+              : FileItemProgress({
+                progress: file.progress.percentage,
+                fileID: file.id
+              })
+            }
           </button>
           ${props.showProgressDetails
             ? html`<div class="UppyDashboardItem-progressInfo"

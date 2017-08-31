@@ -712,6 +712,7 @@
   width: 38px;
   height: 38px;
   opacity: 0.9;
+  // color: $color-white;
   cursor: pointer;
   transition: all .35s ease;
 
@@ -720,6 +721,16 @@
     height: 55px;
   }
 }
+
+  .UppyDashboardItem.is-error .UppyDashboardItem-progressBtn {
+    width: 18px;
+    height: 18px;
+
+    .UppyDashboard--wide & {
+      width: 25px;
+      height: 25px;
+    }
+  }
 
   .UppyDashboardItem.is-complete .UppyDashboardItem-progressBtn {
     width: 18px;
@@ -787,6 +798,10 @@
   opacity: 0;
   transition: all 0.2s;
   display: none;
+}
+
+.UppyDashboardItem.is-error .retry {
+  fill: $color-white;
 }
 
 .UppyDashboardItem.is-resumable {

@@ -155,13 +155,17 @@ module.exports = class Tus10 extends Plugin {
       const upload = new tus.Upload(file.data, optsTus)
 
       this.onFileRemove(file.id, (targetFileID) => {
-        // this.core.log(`removing file: ${targetFileID}`)
         upload.abort()
         resolve(`upload ${targetFileID} was removed`)
       })
 
       this.onPause(file.id, (isPaused) => {
         isPaused ? upload.abort() : upload.start()
+      })
+
+      this.onRetry(file.id, () => {
+        upload.abort()
+        upload.start()
       })
 
       this.onPauseAll(file.id, () => {
@@ -291,6 +295,14 @@ module.exports = class Tus10 extends Plugin {
       if (fileID === targetFileID) {
         const isPaused = this.pauseResume('toggle', fileID)
         cb(isPaused)
+      }
+    })
+  }
+
+  onRetry (fileID, cb) {
+    this.core.on('core:upload-retry', (targetFileID) => {
+      if (fileID === targetFileID) {
+        cb()
       }
     })
   }

@@ -49,6 +49,7 @@ module.exports = class Informer extends Plugin {
     const style = `background-color: ${this.opts.typeColors[type].bg}; color: ${this.opts.typeColors[type].text};`
 
     // @TODO add aria-live for screen-readers
+    // maybe details.length < N to set bubble size
     return html`<div class="Uppy UppyTheme--default UppyInformer" style="${style}" aria-hidden="${isHidden}">
       <p>
         ${message} 

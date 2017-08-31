@@ -319,11 +319,11 @@ module.exports = class DashboardUI extends Plugin {
     })
 
     // const addFile = (file) => {
-    //   this.core.emitter.emit('core:file-add', file)
+    //   this.core.emit('core:file-add', file)
     // }
 
     const removeFile = (fileID) => {
-      this.core.emitter.emit('core:file-remove', fileID)
+      this.core.emit('core:file-remove', fileID)
     }
 
     const startUpload = (ev) => {
@@ -334,21 +334,25 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     const pauseUpload = (fileID) => {
-      this.core.emitter.emit('core:upload-pause', fileID)
+      this.core.emit('core:upload-pause', fileID)
+    }
+
+    const retryUpload = (fileID) => {
+      this.core.emit('core:upload-retry', fileID)
     }
 
     const cancelUpload = (fileID) => {
-      this.core.emitter.emit('core:upload-cancel', fileID)
-      this.core.emitter.emit('core:file-remove', fileID)
+      this.core.emit('core:upload-cancel', fileID)
+      this.core.emit('core:file-remove', fileID)
     }
 
     const showFileCard = (fileID) => {
-      this.core.emitter.emit('dashboard:file-card', fileID)
+      this.core.emit('dashboard:file-card', fileID)
     }
 
     const fileCardDone = (meta, fileID) => {
-      this.core.emitter.emit('core:update-meta', meta, fileID)
-      this.core.emitter.emit('dashboard:file-card')
+      this.core.emit('core:update-meta', meta, fileID)
+      this.core.emit('dashboard:file-card')
     }
 
     const info = (text, type, duration) => {
@@ -389,6 +393,7 @@ module.exports = class DashboardUI extends Plugin {
       resumableUploads: resumableUploads,
       startUpload: startUpload,
       pauseUpload: pauseUpload,
+      retryUpload: retryUpload,
       cancelUpload: cancelUpload,
       fileCardFor: state.modal.fileCardFor,
       showFileCard: showFileCard,

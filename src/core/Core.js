@@ -208,14 +208,18 @@ class Uppy {
   }
 
   setMeta (data) {
-    const newMeta = Object.assign({}, this.getState().meta, data)
+    const newMeta = Object.assign({}, this.state.meta, data)
     this.log('Adding metadata:')
     this.log(data)
     this.setState({meta: newMeta})
   }
 
   updateMeta (data, fileID) {
-    const updatedFiles = Object.assign({}, this.getState().files)
+    const updatedFiles = Object.assign({}, this.state.files)
+    if (!updatedFiles[fileID]) {
+      this.log('Was trying to set metadata for a file that’s not with us anymore: ', fileID)
+      return
+    }
     const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
     updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
       meta: newMeta
@@ -389,7 +393,9 @@ class Uppy {
           bytesUploaded: data.bytesUploaded,
           bytesTotal: data.bytesTotal,
           percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
-        })
+        }),
+        isPaused: false,
+        error: null
       }
     ))
     updatedFiles[data.id] = updatedFile
@@ -443,8 +449,24 @@ class Uppy {
     })
 
     this.on('core:upload-error', (fileID, error) => {
+      const updatedFiles = Object.assign({}, this.state.files)
+      const updatedFile = Object.assign({}, updatedFiles[fileID],
+        { error: error, isPaused: true }
+      )
+      updatedFiles[fileID] = updatedFile
+      this.setState({files: updatedFiles})
+
       const fileName = this.state.files[fileID].name
-      this.info(`Failed to upload: ${fileName}`, 'error', 5000)
+      this.info({ message: `Failed to upload: ${fileName}`, details: error }, 'error', 5000)
+    })
+
+    this.on('core:upload-retry', (fileID) => {
+      const updatedFiles = Object.assign({}, this.state.files)
+      const updatedFile = Object.assign({}, updatedFiles[fileID],
+        { error: null, isPaused: false }
+      )
+      updatedFiles[fileID] = updatedFile
+      this.setState({files: updatedFiles})
     })
 
     this.on('core:upload', () => {
@@ -505,7 +527,8 @@ class Uppy {
           // so that if we lost some progress events on the way, its still marked “compete”?
           percentage: 100
         }),
-        uploadURL: uploadURL
+        uploadURL: uploadURL,
+        isPaused: false
       })
       updatedFiles[fileID] = updatedFile
 

@@ -37,6 +37,7 @@ module.exports = (props) => {
           removeFile: props.removeFile,
           pauseUpload: props.pauseUpload,
           cancelUpload: props.cancelUpload,
+          retryUpload: props.retryUpload,
           resumableUploads: props.resumableUploads,
           isWide: props.isWide
         })
