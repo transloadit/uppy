@@ -46,6 +46,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] possibility to work on already uploaded / in progress files #112, #113
 - [ ] possibility to edit/delete more than one file at once #118, #97
 - [ ] optimize problematic filenames #72
+- [ ] an uploader plugin to receive files in a callback instead of uploading them
 
 ## 1.0 Goals
 
