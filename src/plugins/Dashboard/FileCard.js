@@ -6,7 +6,11 @@ module.exports = function fileCard (props) {
   const file = props.fileCardFor ? props.files[props.fileCardFor] : false
   const meta = {}
 
-  function tempStoreMeta (ev) {
+  const tempStoreMetaOrSubmit = (ev) => {
+    if (ev.keyCode === 13) {
+      props.done(meta, file.id)
+    }
+
     const value = ev.target.value
     const name = ev.target.dataset.name
     meta[name] = value
@@ -22,7 +26,7 @@ module.exports = function fileCard (props) {
                data-name="${field.id}"
                value="${file.meta[field.id]}"
                placeholder="${field.placeholder || ''}"
-               onkeyup=${tempStoreMeta} /></fieldset>`
+               onkeyup=${tempStoreMetaOrSubmit} /></fieldset>`
     })
   }
 
@@ -46,8 +50,8 @@ module.exports = function fileCard (props) {
           <div class="UppyDashboardFileCard-info">
             <fieldset class="UppyDashboardFileCard-fieldset">
               <label class="UppyDashboardFileCard-label">Name</label>
-              <input class="UppyDashboardFileCard-input" name="name" type="text" value="${file.meta.name}"
-                     onkeyup=${tempStoreMeta} />
+              <input class="UppyDashboardFileCard-input" data-name="name" type="text" value="${file.meta.name}"
+                     onkeyup=${tempStoreMetaOrSubmit} />
             </fieldset>
             ${renderMetaFields(file)}
           </div>
@@ -60,5 +64,5 @@ module.exports = function fileCard (props) {
               title="Finish editing file"
               onclick=${() => props.done(meta, file.id)}>${checkIcon()}</button>
     </div>
-    </div>`
+  </div>`
 }

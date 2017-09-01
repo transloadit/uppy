@@ -249,7 +249,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   handleFileCard (fileId) {
-    const modal = this.core.getState().modal
+    const modal = this.core.state.modal
 
     this.core.setState({
       modal: Object.assign({}, modal, {
@@ -318,44 +318,36 @@ module.exports = class DashboardUI extends Plugin {
       return target.type === 'progressindicator'
     })
 
-    // const addFile = (file) => {
-    //   this.core.emitter.emit('core:file-add', file)
-    // }
-
-    const removeFile = (fileID) => {
-      this.core.emitter.emit('core:file-remove', fileID)
-    }
-
     const startUpload = (ev) => {
       this.core.upload().catch((err) => {
         // Log error.
-        console.error(err.stack || err.message || err)
+        this.core.log(err.stack || err.message || err)
       })
     }
 
     const pauseUpload = (fileID) => {
-      this.core.emitter.emit('core:upload-pause', fileID)
+      this.core.emit.emit('core:upload-pause', fileID)
     }
 
     const cancelUpload = (fileID) => {
-      this.core.emitter.emit('core:upload-cancel', fileID)
-      this.core.emitter.emit('core:file-remove', fileID)
+      this.core.emit('core:upload-cancel', fileID)
+      this.core.emit('core:file-remove', fileID)
     }
 
     const showFileCard = (fileID) => {
-      this.core.emitter.emit('dashboard:file-card', fileID)
+      this.core.emit('dashboard:file-card', fileID)
     }
 
     const fileCardDone = (meta, fileID) => {
-      this.core.emitter.emit('core:update-meta', meta, fileID)
-      this.core.emitter.emit('dashboard:file-card')
+      this.core.emit('core:update-meta', meta, fileID)
+      this.core.emit('dashboard:file-card')
     }
 
     const info = (text, type, duration) => {
       this.core.info(text, type, duration)
     }
 
-    const resumableUploads = this.core.getState().capabilities.resumableUploads || false
+    const resumableUploads = this.core.state.capabilities.resumableUploads || false
 
     return Dashboard({
       state: state,
@@ -382,7 +374,7 @@ module.exports = class DashboardUI extends Plugin {
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
       addFile: this.core.addFile,
-      removeFile: removeFile,
+      removeFile: this.core.removeFile,
       info: info,
       note: this.opts.note,
       metaFields: state.metaFields,
