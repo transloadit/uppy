@@ -17,7 +17,6 @@ module.exports = class Plugin {
   constructor (core, opts) {
     this.core = core
     this.opts = opts || {}
-    this.type = 'none'
 
     // clear everything inside the target selector
     this.opts.replaceTargetContent === this.opts.replaceTargetContent || true
