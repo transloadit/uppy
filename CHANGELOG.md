@@ -47,6 +47,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] possibility to edit/delete more than one file at once #118, #97
 - [ ] optimize problematic filenames #72
 - [ ] an uploader plugin to receive files in a callback instead of uploading them
+- [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 
 ## 1.0 Goals
 
@@ -95,7 +96,6 @@ Theme: React and Retry
 
 - [ ] core: add error in file progress state? error UI, question mark button, `core:error` (@arturi)
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
-- [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 - [ ] core: React / Redux PRs (@arturi @goto-bus-stop)
 - [x] transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
 - [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
