@@ -115,10 +115,8 @@ class Uppy {
    *
    */
   updateAll (state) {
-    Object.keys(this.plugins).forEach((pluginType) => {
-      this.plugins[pluginType].forEach((plugin) => {
-        plugin.update(state)
-      })
+    this.iteratePlugins(plugin => {
+      plugin.update(state)
     })
   }
 
