@@ -25,7 +25,7 @@ class ServiceWorkerStore {
         return
       }
       switch (event.data.type) {
-        case 'ALL_FILES':
+        case 'uppy/ALL_FILES':
           defer.resolve(event.data.files)
           navigator.serviceWorker.removeEventListener('message', onMessage)
           break
@@ -36,7 +36,7 @@ class ServiceWorkerStore {
       navigator.serviceWorker.addEventListener('message', onMessage)
 
       navigator.serviceWorker.controller.postMessage({
-        type: 'GET_FILES',
+        type: 'uppy/GET_FILES',
         data: { store: this.name }
       })
     })
@@ -47,7 +47,7 @@ class ServiceWorkerStore {
   put (file) {
     return this.ready.then(() => {
       navigator.serviceWorker.controller.postMessage({
-        type: 'ADD_FILE',
+        type: 'uppy/ADD_FILE',
         data: {
           store: this.name,
           id: file.id,
@@ -60,7 +60,7 @@ class ServiceWorkerStore {
   delete (fileID) {
     return this.ready.then(() => {
       navigator.serviceWorker.controller.postMessage({
-        type: 'REMOVE_FILE',
+        type: 'uppy/REMOVE_FILE',
         store: this.name,
         data: fileID
       })

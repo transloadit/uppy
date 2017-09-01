@@ -40,7 +40,7 @@ function removeFile (store, fileID) {
 
 function getFiles (store) {
   sendMessageToAllClients({
-    type: 'ALL_FILES',
+    type: 'uppy/ALL_FILES',
     store,
     files: getCache(store)
   })
@@ -48,13 +48,13 @@ function getFiles (store) {
 
 self.addEventListener('message', (event) => {
   switch (event.data.type) {
-    case 'ADD_FILE':
+    case 'uppy/ADD_FILE':
       addFile(event.data.store, event.data.data)
       break
-    case 'REMOVE_FILE':
+    case 'uppy/REMOVE_FILE':
       removeFile(event.data.store, event.data.data)
       break
-    case 'GET_FILES':
+    case 'uppy/GET_FILES':
       getFiles(event.data.store)
       break
   }
