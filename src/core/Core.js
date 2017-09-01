@@ -616,7 +616,7 @@ class Uppy {
       throw new Error('Your plugin must have an id')
     }
 
-    if (!plugin.type || plugin.type === 'none') {
+    if (!plugin.type) {
       throw new Error('Your plugin must have a type')
     }
 
