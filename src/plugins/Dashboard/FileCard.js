@@ -1,26 +1,10 @@
 const html = require('yo-yo')
 const getFileTypeIcon = require('./getFileTypeIcon')
-const onload = require('on-load')
 const { checkIcon } = require('./icons')
-
-// let file
-// const meta = {}
 
 module.exports = function fileCard (props) {
   const file = props.fileCardFor ? props.files[props.fileCardFor] : false
   const meta = {}
-
-  // const handleEnterKey = (ev) => {
-  //   if (event.keyCode === 13) {
-  //     props.done(meta, file.id)
-  //   }
-  // }
-
-  // if (file) {
-  //   document.body.addEventListener('keyup', handleEnterKey)
-  // } else {
-  //   document.body.removeEventListener('keyup', handleEnterKey)
-  // }
 
   const tempStoreMetaOrSubmit = (ev) => {
     if (ev.keyCode === 13) {
@@ -46,7 +30,7 @@ module.exports = function fileCard (props) {
     })
   }
 
-  const fileCardEl = () => html`<div class="UppyDashboardFileCard" aria-hidden="${!props.fileCardFor}">
+  return html`<div class="UppyDashboardFileCard" aria-hidden="${!props.fileCardFor}">
     <div class="UppyDashboardContent-bar">
       <h2 class="UppyDashboardContent-title">Editing <span class="UppyDashboardContent-titleFile">${file.meta ? file.meta.name : file.name}</span></h2>
       <button class="UppyDashboardContent-back" type="button" title="Finish editing file"
@@ -81,10 +65,4 @@ module.exports = function fileCard (props) {
               onclick=${() => props.done(meta, file.id)}>${checkIcon()}</button>
     </div>
   </div>`
-
-  return onload(html`<div>${fileCardEl()}</div>`,
-    null,
-    null,
-    `uppy${file.id}`
-  )
 }
