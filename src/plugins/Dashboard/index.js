@@ -339,7 +339,6 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     const fileCardDone = (meta, fileID) => {
-      console.log(meta)
       this.core.emit('core:update-meta', meta, fileID)
       this.core.emit('dashboard:file-card')
     }

@@ -3,25 +3,30 @@ const getFileTypeIcon = require('./getFileTypeIcon')
 const onload = require('on-load')
 const { checkIcon } = require('./icons')
 
-let file
-const meta = {}
+// let file
+// const meta = {}
 
 module.exports = function fileCard (props) {
-  file = props.fileCardFor ? props.files[props.fileCardFor] : false
+  const file = props.fileCardFor ? props.files[props.fileCardFor] : false
+  const meta = {}
 
-  const handleEnterKey = (ev) => {
-    if (file && event.keyCode === 13) {
+  // const handleEnterKey = (ev) => {
+  //   if (event.keyCode === 13) {
+  //     props.done(meta, file.id)
+  //   }
+  // }
+
+  // if (file) {
+  //   document.body.addEventListener('keyup', handleEnterKey)
+  // } else {
+  //   document.body.removeEventListener('keyup', handleEnterKey)
+  // }
+
+  const tempStoreMetaOrSubmit = (ev) => {
+    if (ev.keyCode === 13) {
       props.done(meta, file.id)
     }
-  }
 
-  if (file) {
-    document.body.addEventListener('keyup', handleEnterKey)
-  } else {
-    document.body.removeEventListener('keyup', handleEnterKey)
-  }
-
-  const tempStoreMeta = (ev) => {
     const value = ev.target.value
     const name = ev.target.dataset.name
     meta[name] = value
@@ -37,7 +42,7 @@ module.exports = function fileCard (props) {
                data-name="${field.id}"
                value="${file.meta[field.id]}"
                placeholder="${field.placeholder || ''}"
-               onkeyup=${tempStoreMeta} /></fieldset>`
+               onkeyup=${tempStoreMetaOrSubmit} /></fieldset>`
     })
   }
 
@@ -62,7 +67,7 @@ module.exports = function fileCard (props) {
             <fieldset class="UppyDashboardFileCard-fieldset">
               <label class="UppyDashboardFileCard-label">Name</label>
               <input class="UppyDashboardFileCard-input" data-name="name" type="text" value="${file.meta.name}"
-                     onkeyup=${tempStoreMeta} />
+                     onkeyup=${tempStoreMetaOrSubmit} />
             </fieldset>
             ${renderMetaFields(file)}
           </div>
