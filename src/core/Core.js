@@ -444,7 +444,11 @@ class Uppy {
 
     this.on('core:upload-error', (fileID, error) => {
       const fileName = this.state.files[fileID].name
-      this.info(`Failed to upload: ${fileName}`, 'error', 5000)
+      let message = `Failed to upload ${fileName}`
+      if (typeof error === 'object' && error.message) {
+        message = `${message}: ${error.message}`
+      }
+      this.info(message, 'error', 5000)
     })
 
     this.on('core:upload', () => {

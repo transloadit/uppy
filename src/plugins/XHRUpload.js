@@ -20,6 +20,9 @@ module.exports = class XHRUpload extends Plugin {
       headers: {},
       getResponseData (xhr) {
         return JSON.parse(xhr.response)
+      },
+      getResponseError (xhr) {
+        return new Error('Upload error')
       }
     }
 
@@ -88,8 +91,10 @@ module.exports = class XHRUpload extends Plugin {
 
           return resolve(file)
         } else {
-          this.core.emit('core:upload-error', file.id, xhr)
-          return reject('Upload error')
+          const error = opts.getResponseError(xhr) || new Error('Upload error')
+          error.request = xhr
+          this.core.emit('core:upload-error', file.id, error)
+          return reject(error)
         }
 
         // var upload = {}
@@ -103,7 +108,7 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.addEventListener('error', (ev) => {
         this.core.emit('core:upload-error', file.id)
-        return reject('Upload error')
+        return reject(new Error('Upload error'))
       })
 
       xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
