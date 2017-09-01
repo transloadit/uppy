@@ -50,7 +50,7 @@ function closeIcon () {
 }
 
 function iconRetry () {
-  return html`<svg class="UppyIcon retry" width="25" height="28" viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+  return html`<svg class="UppyIcon retry" width="28" height="31" viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
     <path d="M16 11a8 8 0 1 1-8-8v2a6 6 0 1 0 6 6h2z"/>
     <path d="M7.9 3H10v2H7.9z"/><path d="M8.536.5l3.535 3.536-1.414 1.414L7.12 1.914z"/><path d="M10.657 2.621l1.414 1.415L8.536 7.57 7.12 6.157z"/>
   </svg>`
