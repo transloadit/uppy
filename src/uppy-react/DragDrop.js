@@ -1,6 +1,6 @@
 const React = require('react')
 const PropTypes = require('prop-types')
-const UppyCore = require('../core/Core').Uppy
+const UppyCore = require('../core/Core')
 const DragDropPlugin = require('../plugins/DragDrop')
 
 const h = React.createElement

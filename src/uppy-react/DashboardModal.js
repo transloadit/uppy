@@ -1,6 +1,6 @@
 const React = require('react')
 const PropTypes = require('prop-types')
-const UppyCore = require('../core/Core').Uppy
+const UppyCore = require('../core/Core')
 const ReactDashboardPlugin = require('./bridge/ReactDashboardPlugin')
 const StatusBarPlugin = require('../plugins/StatusBar')
 const InformerPlugin = require('../plugins/Informer')
