@@ -72,6 +72,7 @@ class Uppy {
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
     this.addFile = this.addFile.bind(this)
+    this.removeFile = this.removeFile.bind(this)
     this.calculateProgress = this.calculateProgress.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
 
@@ -115,10 +116,8 @@ class Uppy {
    *
    */
   updateAll (state) {
-    Object.keys(this.plugins).forEach((pluginType) => {
-      this.plugins[pluginType].forEach((plugin) => {
-        plugin.update(state)
-      })
+    this.iteratePlugins(plugin => {
+      plugin.update(state)
     })
   }
 
@@ -444,7 +443,11 @@ class Uppy {
 
     this.on('core:upload-error', (fileID, error) => {
       const fileName = this.state.files[fileID].name
-      this.info(`Failed to upload: ${fileName}`, 'error', 5000)
+      let message = `Failed to upload ${fileName}`
+      if (typeof error === 'object' && error.message) {
+        message = `${message}: ${error.message}`
+      }
+      this.info(message, 'error', 5000)
     })
 
     this.on('core:upload', () => {
@@ -609,21 +612,21 @@ class Uppy {
 
     // Instantiate
     const plugin = new Plugin(this, opts)
-    const pluginName = plugin.id
+    const pluginId = plugin.id
     this.plugins[plugin.type] = this.plugins[plugin.type] || []
 
-    if (!pluginName) {
-      throw new Error('Your plugin must have a name')
+    if (!pluginId) {
+      throw new Error('Your plugin must have an id')
     }
 
     if (!plugin.type) {
       throw new Error('Your plugin must have a type')
     }
 
-    let existsPluginAlready = this.getPlugin(pluginName)
+    let existsPluginAlready = this.getPlugin(pluginId)
     if (existsPluginAlready) {
-      let msg = `Already found a plugin named '${existsPluginAlready.name}'.
-        Tried to use: '${pluginName}'.
+      let msg = `Already found a plugin named '${existsPluginAlready.id}'.
+        Tried to use: '${pluginId}'.
         Uppy is currently limited to running one of every plugin.
         Share your use case with us over at
         https://github.com/transloadit/uppy/issues/

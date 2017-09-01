@@ -47,6 +47,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] possibility to edit/delete more than one file at once #118, #97
 - [ ] optimize problematic filenames #72
 - [ ] an uploader plugin to receive files in a callback instead of uploading them
+- [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 
 ## 1.0 Goals
 
@@ -55,7 +56,7 @@ What we need to do to release Uppy 1.0
 - [x] feature: restrictions: by size, number of files, file type
 - [x] feature: beta file recovering after closed tab / browser crash
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
-- [ ] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
+- [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
 - [ ] feature: Uppy should work well with React/Redux and React Native
 - [ ] feature: preset for Transloadit that mimics jQuery SDK
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
@@ -95,9 +96,8 @@ Theme: React and Retry
 
 - [ ] core: add error in file progress state? error UI, question mark button, `core:error` (@arturi)
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
-- [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
 - [ ] core: React / Redux PRs (@arturi @goto-bus-stop)
-- [ ] transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
+- [x] transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
 - [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi @goto-bus-stop)
 - [x] informer: support “explanations”, a (?) button that shows more info on hover / click
