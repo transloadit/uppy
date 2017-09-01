@@ -609,21 +609,21 @@ class Uppy {
 
     // Instantiate
     const plugin = new Plugin(this, opts)
-    const pluginName = plugin.id
+    const pluginId = plugin.id
     this.plugins[plugin.type] = this.plugins[plugin.type] || []
 
-    if (!pluginName) {
-      throw new Error('Your plugin must have a name')
+    if (!pluginId) {
+      throw new Error('Your plugin must have an id')
     }
 
-    if (!plugin.type) {
+    if (!plugin.type || plugin.type === 'none') {
       throw new Error('Your plugin must have a type')
     }
 
-    let existsPluginAlready = this.getPlugin(pluginName)
+    let existsPluginAlready = this.getPlugin(pluginId)
     if (existsPluginAlready) {
-      let msg = `Already found a plugin named '${existsPluginAlready.name}'.
-        Tried to use: '${pluginName}'.
+      let msg = `Already found a plugin named '${existsPluginAlready.id}'.
+        Tried to use: '${pluginId}'.
         Uppy is currently limited to running one of every plugin.
         Share your use case with us over at
         https://github.com/transloadit/uppy/issues/
