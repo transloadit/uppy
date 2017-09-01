@@ -20,10 +20,15 @@ module.exports = class App extends React.Component {
     this.uppy = new Uppy({ autoProceed: false })
       .use(Tus10, { endpoint: 'https://master.tus.io/files' })
       .run()
+
+    this.uppy2 = new Uppy({ autoProceed: false })
+      .use(Tus10, { endpoint: 'https://master.tus.io/files' })
+      .run()
   }
 
   componentWillUnmount () {
     this.uppy.close()
+    this.uppy2.close()
   }
 
   handleModalClick () {
@@ -61,7 +66,7 @@ module.exports = class App extends React.Component {
             {this.state.open ? 'Close dashboard' : 'Open dashboard'}
           </button>
           <DashboardModal
-            uppy={this.uppy}
+            uppy={this.uppy2}
             open={this.state.open}
             onRequestClose={() => this.setState({ open: false })}
           />
