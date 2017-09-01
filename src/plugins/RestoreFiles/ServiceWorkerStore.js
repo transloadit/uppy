@@ -1,7 +1,7 @@
 const isSupported = 'serviceWorker' in navigator
 
 class ServiceWorkerStore {
-  constructor (core) {
+  constructor (core, opts) {
     this.core = core
     this.ready = new Promise((resolve, reject) => {
       // service worker stuff
@@ -9,6 +9,7 @@ class ServiceWorkerStore {
         resolve()
       })
     })
+    this.name = opts.storeName
   }
 
   list () {
@@ -20,6 +21,9 @@ class ServiceWorkerStore {
 
     console.log('Loading stored blobs from Service Worker')
     const onMessage = (event) => {
+      if (event.data.store !== this.name) {
+        return
+      }
       switch (event.data.type) {
         case 'ALL_FILES':
           defer.resolve(event.data.files)
@@ -32,7 +36,8 @@ class ServiceWorkerStore {
       navigator.serviceWorker.addEventListener('message', onMessage)
 
       navigator.serviceWorker.controller.postMessage({
-        type: 'GET_FILES'
+        type: 'GET_FILES',
+        data: { store: this.name }
       })
     })
 
@@ -44,6 +49,7 @@ class ServiceWorkerStore {
       navigator.serviceWorker.controller.postMessage({
         type: 'ADD_FILE',
         data: {
+          store: this.name,
           id: file.id,
           data: file.data
         }
@@ -55,6 +61,7 @@ class ServiceWorkerStore {
     return this.ready.then(() => {
       navigator.serviceWorker.controller.postMessage({
         type: 'REMOVE_FILE',
+        store: this.name,
         data: fileID
       })
     })

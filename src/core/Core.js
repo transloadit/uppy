@@ -34,6 +34,7 @@ class Uppy {
 
     // set default options
     const defaultOptions = {
+      id: 'uppy',
       autoProceed: true,
       debug: false,
       restrictions: {
