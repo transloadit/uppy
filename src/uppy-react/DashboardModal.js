@@ -17,6 +17,8 @@ class DashboardModal extends React.Component {
     const uppy = this.props.uppy
     uppy.use(ReactDashboardPlugin, {
       target: this.container,
+      disableInformer: true,
+      disableStatusBar: true,
       locale: this.props.locale,
       maxWidth: this.props.maxWidth,
       maxHeight: this.props.maxHeight,
