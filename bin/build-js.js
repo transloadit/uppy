@@ -2,13 +2,11 @@ var path = require('path')
 var fs = require('fs')
 var chalk = require('chalk')
 var mkdirp = require('mkdirp')
-// var glob = require('glob')
 var babelify = require('babelify')
 var commonShakeify = require('common-shakeify')
 var packFlat = require('browser-pack-flat/plugin')
-// var yoyoify = require('yo-yoify')
 var browserify = require('browserify')
-// var exec = require('child_process').exec
+var uglify = require('minify-stream')
 var exorcist = require('exorcist')
 
 var distPath = './dist'
@@ -25,27 +23,14 @@ function buildUppyBundle (minify) {
   var b = browserify(src, { debug: true, standalone: 'Uppy' })
   b.plugin(commonShakeify)
   b.plugin(packFlat)
-  if (minify) {
-    b.plugin('minifyify', {
-      map: bundleFile + '.map',
-      output: path.join(distPath, bundleFile + '.map'),
-      uglify: {
-        mangle: {
-          eval: true,
-          toplevel: true
-        },
-        compress: {
-          toplevel: true
-        }
-      }
-    })
-  }
   b.transform(babelify)
   b.on('error', handleErr)
 
   return new Promise(function (resolve, reject) {
     if (minify) {
       b.bundle()
+      .pipe(uglify())
+      .pipe(exorcist(path.join(distPath, bundleFile + '.map')))
       .pipe(fs.createWriteStream(path.join(distPath, bundleFile), 'utf8'))
       .on('error', handleErr)
       .on('finish', function () {
@@ -54,7 +39,7 @@ function buildUppyBundle (minify) {
       })
     } else {
       b.bundle()
-      .pipe(exorcist(path.join(distPath, 'uppy.js.map')))
+      .pipe(exorcist(path.join(distPath, bundleFile + '.map')))
       .pipe(fs.createWriteStream(path.join(distPath, bundleFile), 'utf8'))
       .on('error', handleErr)
       .on('finish', function () {
