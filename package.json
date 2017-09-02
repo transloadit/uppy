@@ -4,6 +4,7 @@
   "description": "Almost as cute as a Puppy :dog:",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
+  "unpkg": "dist/uppy.min.js",
   "files": [
     "src/",
     "lib/",

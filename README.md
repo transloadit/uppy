@@ -47,7 +47,7 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
 1\. Add a script to the bottom of `<body>`:
 
 ``` html
-<script src="https://unpkg.com/uppy/dist/uppy.min.js"></script>
+<script src="https://unpkg.com/uppy"></script>
 ```
 
 2\. Add CSS to `<head>`:
