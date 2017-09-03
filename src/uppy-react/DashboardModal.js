@@ -1,7 +1,7 @@
 const React = require('react')
 const PropTypes = require('prop-types')
 const UppyCore = require('../core/Core')
-const ReactDashboardPlugin = require('./bridge/ReactDashboardPlugin')
+const DashboardPlugin = require('../plugins/Dashboard')
 const StatusBarPlugin = require('../plugins/StatusBar')
 const InformerPlugin = require('../plugins/Informer')
 
@@ -15,7 +15,7 @@ const h = React.createElement
 class DashboardModal extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
-    uppy.use(ReactDashboardPlugin, {
+    uppy.use(DashboardPlugin, {
       target: this.container,
       disableInformer: true,
       disableStatusBar: true,
@@ -27,24 +27,24 @@ class DashboardModal extends React.Component {
       // TODO Accept a React node here and render it so we can pass a DOM
       // element to this option.
       // defaultTabIcon: this.props.defaultTabIcon,
-      onRequestClose: this.props.onRequestClose
+      onRequestHideModal: this.props.onRequestClose
     })
-    uppy.use(StatusBarPlugin, { target: ReactDashboardPlugin })
-    uppy.use(InformerPlugin, { target: ReactDashboardPlugin })
+    uppy.use(StatusBarPlugin, { target: DashboardPlugin })
+    uppy.use(InformerPlugin, { target: DashboardPlugin })
 
-    this.plugin = uppy.getPlugin('ReactDashboard')
+    this.plugin = uppy.getPlugin('DashboardUI')
     this.statusBar = uppy.getPlugin('StatusBarUI')
     this.informer = uppy.getPlugin('Informer')
     if (this.props.open) {
-      this.plugin.showModalInternal()
+      this.plugin.showModal()
     }
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.open && !nextProps.open) {
-      this.plugin.hideModalInternal()
+      this.plugin.hideModal()
     } else if (!this.props.open && nextProps.open) {
-      this.plugin.showModalInternal()
+      this.plugin.showModal()
     }
   }
 

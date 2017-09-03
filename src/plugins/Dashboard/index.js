@@ -55,7 +55,8 @@ module.exports = class DashboardUI extends Plugin {
       hideUploadButton: false,
       note: false,
       closeModalOnClickOutside: false,
-      locale: defaultLocale
+      locale: defaultLocale,
+      onRequestCloseModal: () => this.closeModal()
     }
 
     // merge default options with the ones set by user
@@ -68,6 +69,7 @@ module.exports = class DashboardUI extends Plugin {
     this.containerWidth = this.translator.translate.bind(this.translator)
 
     this.closeModal = this.closeModal.bind(this)
+    this.requestCloseModal = this.requestCloseModal.bind(this)
     this.openModal = this.openModal.bind(this)
     this.isModalOpen = this.isModalOpen.bind(this)
 
@@ -145,6 +147,14 @@ module.exports = class DashboardUI extends Plugin {
     })})
   }
 
+  requestCloseModal () {
+    if (this.opts.onRequestCloseModal) {
+      return this.opts.onRequestCloseModal()
+    } else {
+      this.closeModal()
+    }
+  }
+
   openModal () {
     const modal = this.core.getState().modal
 
@@ -191,12 +201,12 @@ module.exports = class DashboardUI extends Plugin {
   // Close the Modal on esc key press
   handleEscapeKeyPress (event) {
     if (event.keyCode === 27) {
-      this.closeModal()
+      this.requestCloseModal()
     }
   }
 
   handleClickOutside () {
-    if (this.opts.closeModalOnClickOutside) this.closeModal()
+    if (this.opts.closeModalOnClickOutside) this.requestCloseModal()
   }
 
   initEvents () {
@@ -361,7 +371,7 @@ module.exports = class DashboardUI extends Plugin {
       autoProceed: this.core.opts.autoProceed,
       hideUploadButton: this.opts.hideUploadButton,
       id: this.id,
-      closeModal: this.closeModal,
+      closeModal: this.requestCloseModal,
       handleClickOutside: this.handleClickOutside,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
