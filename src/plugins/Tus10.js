@@ -46,6 +46,7 @@ module.exports = class Tus10 extends Plugin {
 
     this.handlePauseAll = this.handlePauseAll.bind(this)
     this.handleResumeAll = this.handleResumeAll.bind(this)
+    this.handleResetProgress = this.handleResetProgress.bind(this)
     this.handleUpload = this.handleUpload.bind(this)
   }
 
@@ -102,6 +103,20 @@ module.exports = class Tus10 extends Plugin {
 
   handleResumeAll () {
     this.pauseResume('resumeAll')
+  }
+
+  handleResetProgress () {
+    const files = Object.assign({}, this.core.state.files)
+    Object.keys(files).forEach((fileID) => {
+      // Only clone the file object if it has a Tus `uploadUrl` attached.
+      if (files[fileID].tus && files[fileID].tus.uploadUrl) {
+        const tusState = Object.assign({}, files[fileID].tus)
+        delete tusState.uploadUrl
+        files[fileID] = Object.assign({}, files[fileID], { tus: tusState })
+      }
+    })
+
+    this.core.setState({ files })
   }
 
   /**
@@ -341,6 +356,7 @@ module.exports = class Tus10 extends Plugin {
   actions () {
     this.core.on('core:pause-all', this.handlePauseAll)
     this.core.on('core:resume-all', this.handleResumeAll)
+    this.core.on('core:reset-progress', this.handleResetProgress)
 
     if (this.opts.autoRetry) {
       this.core.on('back-online', () => {
