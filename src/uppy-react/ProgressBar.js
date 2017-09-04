@@ -13,10 +13,11 @@ const h = React.createElement
 class ProgressBar extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
-    uppy.use(ProgressBarPlugin, {
-      target: this.container,
-      locale: this.props.locale
+    const options = Object.assign({}, this.props, {
+      target: this.container
     })
+    delete options.uppy
+    uppy.use(ProgressBarPlugin, options)
   }
 
   render () {

@@ -15,20 +15,14 @@ const h = React.createElement
 class Dashboard extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
-    uppy.use(DashboardPlugin, {
+    const options = Object.assign({}, this.props, {
       target: this.container,
       disableInformer: true,
       disableStatusBar: true,
-      locale: this.props.locale,
-      maxWidth: this.props.maxWidth,
-      maxHeight: this.props.maxHeight,
-      semiTransparent: this.props.semiTransparent,
-      showProgressDetails: this.props.showProgressDetails,
-      // TODO Accept a React node here and render it so we can pass a DOM
-      // element to this option.
-      // defaultTabIcon: this.props.defaultTabIcon,
       inline: true
     })
+    delete options.uppy
+    uppy.use(DashboardPlugin, options)
     uppy.use(StatusBarPlugin, { target: DashboardPlugin })
     uppy.use(InformerPlugin, { target: DashboardPlugin })
 
