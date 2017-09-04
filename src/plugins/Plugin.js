@@ -74,14 +74,19 @@ module.exports = class Plugin {
 
       return targetElement
     } else {
-      // TODO: is instantiating the plugin really the way to roll
-      // just to get the plugin name?
       const Target = target
-      const targetPluginName = new Target().id
+      // Find the target plugin instance.
+      let targetPlugin
+      this.core.iteratePlugins((plugin) => {
+        if (plugin instanceof Target) {
+          targetPlugin = plugin
+          return false
+        }
+      })
+      const targetPluginName = targetPlugin.id
 
       this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
 
-      const targetPlugin = this.core.getPlugin(targetPluginName)
       const selectorTarget = targetPlugin.addTarget(plugin)
 
       return selectorTarget
