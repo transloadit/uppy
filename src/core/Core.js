@@ -166,11 +166,14 @@ class Uppy {
       updatedFile.progress = Object.assign({}, updatedFile.progress, defaultProgress)
       updatedFiles[fileID] = updatedFile
     })
-    console.log(updatedFiles)
+
     this.setState({
       files: updatedFiles,
       totalProgress: 0
     })
+
+    // TODO Document on the website
+    this.emit('core:reset-progress')
   }
 
   addPreProcessor (fn) {
