@@ -2,6 +2,8 @@
 const React = require('react')
 const Uppy = require('uppy/lib/core')
 const Tus10 = require('uppy/lib/plugins/Tus10')
+const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
+const DashboardPlugin = require('uppy/lib/plugins/Dashboard')
 const { Dashboard, DashboardModal, DragDrop, ProgressBar } = require('uppy/lib/uppy-react')
 
 module.exports = class App extends React.Component {
@@ -19,6 +21,7 @@ module.exports = class App extends React.Component {
   componentWillMount () {
     this.uppy = new Uppy({ autoProceed: false })
       .use(Tus10, { endpoint: 'https://master.tus.io/files' })
+      .use(GoogleDrive, { target: DashboardPlugin, host: 'https://server.uppy.io' })
       .run()
 
     this.uppy2 = new Uppy({ autoProceed: false })

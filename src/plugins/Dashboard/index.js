@@ -402,6 +402,14 @@ module.exports = class DashboardUI extends Plugin {
     })
   }
 
+  discoverProviderPlugins () {
+    this.core.iteratePlugins((plugin) => {
+      if (plugin && !plugin.target && plugin.opts && plugin.opts.target === this.constructor) {
+        this.addTarget(plugin)
+      }
+    })
+  }
+
   install () {
     // Set default state for Modal
     this.core.setState({modal: {
@@ -426,6 +434,8 @@ module.exports = class DashboardUI extends Plugin {
         target: this.constructor
       })
     }
+
+    this.discoverProviderPlugins()
 
     this.initEvents()
     this.actions()
