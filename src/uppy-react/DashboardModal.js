@@ -2,8 +2,6 @@ const React = require('react')
 const PropTypes = require('prop-types')
 const UppyCore = require('../core/Core')
 const DashboardPlugin = require('../plugins/Dashboard')
-const StatusBarPlugin = require('../plugins/StatusBar')
-const InformerPlugin = require('../plugins/Informer')
 
 const h = React.createElement
 
@@ -17,18 +15,12 @@ class DashboardModal extends React.Component {
     const uppy = this.props.uppy
     const options = Object.assign({}, this.props, {
       target: this.container,
-      disableInformer: true,
-      disableStatusBar: true,
       onRequestHideModal: this.props.onRequestClose
     })
     delete options.uppy
     uppy.use(DashboardPlugin, options)
-    uppy.use(StatusBarPlugin, { target: DashboardPlugin })
-    uppy.use(InformerPlugin, { target: DashboardPlugin })
 
     this.plugin = uppy.getPlugin('DashboardUI')
-    this.statusBar = uppy.getPlugin('StatusBarUI')
-    this.informer = uppy.getPlugin('Informer')
     if (this.props.open) {
       this.plugin.showModal()
     }
@@ -45,8 +37,6 @@ class DashboardModal extends React.Component {
   componentWillUnmount () {
     const uppy = this.props.uppy
 
-    uppy.removePlugin(this.informer)
-    uppy.removePlugin(this.statusBar)
     uppy.removePlugin(this.plugin)
   }
 

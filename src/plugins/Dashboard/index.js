@@ -442,6 +442,18 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   uninstall () {
+    if (!this.opts.disableInformer) {
+      const informer = this.core.getPlugin('Informer')
+      if (informer) this.core.removePlugin(informer)
+    }
+
+    if (!this.opts.disableStatusBar) {
+      const statusBar = this.core.getPlugin('StatusBarUI')
+      // Checking if this plugin exists, in case it was removed by uppy-core
+      // before the Dashboard was.
+      if (statusBar) this.core.removePlugin(statusBar)
+    }
+
     this.unmount()
     this.removeActions()
     this.removeEvents()
