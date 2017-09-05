@@ -96,13 +96,27 @@ To be released: 2017-09-10.
 Theme: React and Retry
 
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (@arturi @goto-bus-stop)
-- [x] transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
 - [ ] core: improve and merge in the React PR (@arturi @goto-bus-stop)
 - [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi @goto-bus-stop)
-- [x] fix webcam video recording (@goto-bus-stop)
-- [x] informer: support “explanations”, a (?) button that shows more info on hover / click
+
+## 0.18.1
+
+Released: 2017-09-05
+Note: this version was released as a `@next` npm tag to unblock some users.
+
 - [x] core: gradually resize image previews #275 (@goto-bus-stop)
+- [x] informer: support “explanations”, a (?) button that shows more info on hover / click (@arturi)
+- [x] fix webcam video recording (@goto-bus-stop)
+- [x] bundle: add missing plugins (s3, statusbar, restoreFiles) to unpkg bundle (#301 / @goto-bus-stop)
+- [x] xhrupload: Use error messages from the endpoint (#305 / @goto-bus-stop)
+- [x] dashboard: prevent submitting outer form when pressing enter key while editing metadata (#306 / @goto-bus-stop)
+- [x] dashboard: save metadata edits when pressing enter key (#308 / @arturi)
+- [x] transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (#280 / @goto-bus-stop)
+- [x] transloadit: add `alwaysRunAssembly` option to run assemblies when no files are uploaded (#290 / @goto-bus-stop)
+- [x] core: use `iteratePlugins` inside `updateAll` (#312 / @richardwillars)
+- [x] core: improve error when plugin does not have ID (#309 / @richardwillars)
+- [x] tus: Clear stored `uploadUrl` on `uppy.resetProgress()` call (#314 / @goto-bus-stop)
 - [x] website: simplify examples and code samples, prevent sidebar subheading links anywhere but in docs (@arturi)
 - [x] website: group plugin docs together in the sidebar (@arturi)
 - [x] server: option to define valid upload urls (@ifedapoolarewaju)
