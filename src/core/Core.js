@@ -905,7 +905,6 @@ class Uppy {
     })
 
     return lastStep.then(() => {
-      // return number of uploaded files
       this.emit('core:success', fileIDs)
 
       this.removeUpload(uploadID)
