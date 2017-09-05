@@ -950,7 +950,5 @@ class Uppy {
 }
 
 module.exports = function (opts) {
-  if (!(this instanceof Uppy)) {
-    return new Uppy(opts)
-  }
+  return new Uppy(opts)
 }
