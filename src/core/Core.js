@@ -263,7 +263,12 @@ class Uppy {
   }
 
   addFile (file) {
-    return this.opts.onBeforeFileAdded(file, this.getState().files).catch((err) => {
+    // Wrap this in a Promise `.then()` handler so errors will reject the Promise
+    // instead of throwing.
+    const beforeFileAdded = Promise.resolve()
+      .then(() => this.opts.onBeforeFileAdded(file, this.getState().files))
+
+    return beforeFileAdded.catch((err) => {
       this.info(err, 'error', 5000)
       return Promise.reject(`onBeforeFileAdded: ${err}`)
     }).then(() => {
@@ -923,7 +928,10 @@ class Uppy {
       return Promise.reject('Minimum number of files has not been reached')
     }
 
-    return this.opts.onBeforeUpload(this.state.files).catch((err) => {
+    const beforeUpload = Promise.resolve()
+      .then(() => this.opts.onBeforeUpload(this.state.files))
+
+    return beforeUpload.catch((err) => {
       this.info(err, 'error', 5000)
       return Promise.reject(`onBeforeUpload: ${err}`)
     }).then(() => {
