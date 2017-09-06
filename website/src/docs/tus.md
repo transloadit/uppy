@@ -1,5 +1,6 @@
 ---
-order: 7
+type: docs
+order: 8
 title: "Tus"
 permalink: docs/tus/
 ---
