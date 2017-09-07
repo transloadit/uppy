@@ -141,7 +141,7 @@ class Uppy {
   getState () {
     // use deepFreeze for debugging
     // return deepFreeze(this.state)
-    return this.state
+    return Object.assign({}, this.state)
   }
 
   reset () {
