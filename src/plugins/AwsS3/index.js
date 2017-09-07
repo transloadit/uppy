@@ -81,7 +81,9 @@ module.exports = class AwsS3 extends Plugin {
     return Promise.all(
       fileIDs.map((id) => {
         const file = this.core.getFile(id)
-        return this.opts.getUploadParameters(file).then((params) => {
+        const paramsPromise = Promise.resolve()
+          .then(() => this.opts.getUploadParameters(file))
+        return paramsPromise.then((params) => {
           this.core.emit('core:preprocess-progress', file.id, {
             mode: 'determinate',
             message: this.locale.strings.preparingUpload,

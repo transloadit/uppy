@@ -82,7 +82,8 @@ module.exports = class Transloadit extends Plugin {
     return Promise.all(
       fileIDs.map((fileID) => {
         const file = this.core.getFile(fileID)
-        const promise = Promise.resolve(options.getAssemblyOptions(file, options))
+        const promise = Promise.resolve()
+          .then(() => options.getAssemblyOptions(file, options))
         return promise.then((assemblyOptions) => {
           this.validateParams(assemblyOptions.params)
 
