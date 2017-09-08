@@ -109,7 +109,6 @@ module.exports = class DashboardUI extends Plugin {
       name: callerPluginName,
       icon: callerPluginIcon,
       type: callerPluginType,
-      focus: plugin.focus,
       render: plugin.render,
       isHidden: true
     }

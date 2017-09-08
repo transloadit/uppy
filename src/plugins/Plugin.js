@@ -102,10 +102,6 @@ module.exports = class Plugin {
     }
   }
 
-  focus () {
-    return
-  }
-
   install () {
     return
   }
