@@ -604,13 +604,13 @@ class Uppy {
     }
   }
 
-/**
- * Registers a plugin with Core
- *
- * @param {Class} Plugin object
- * @param {Object} options object that will be passed to Plugin later
- * @return {Object} self for chaining
- */
+  /**
+   * Registers a plugin with Core
+   *
+   * @param {Class} Plugin object
+   * @param {Object} options object that will be passed to Plugin later
+   * @return {Object} self for chaining
+   */
   use (Plugin, opts) {
     if (typeof Plugin !== 'function') {
       let msg = `Expected a plugin class, but got ${Plugin === null ? 'null' : typeof Plugin}.` +
@@ -648,11 +648,11 @@ class Uppy {
     return this
   }
 
-/**
- * Find one Plugin by name
- *
- * @param string name description
- */
+  /**
+   * Find one Plugin by name
+   *
+   * @param string name description
+   */
   getPlugin (name) {
     let foundPlugin = false
     this.iteratePlugins((plugin) => {
@@ -665,11 +665,11 @@ class Uppy {
     return foundPlugin
   }
 
-/**
- * Iterate through all `use`d plugins
- *
- * @param function method description
- */
+  /**
+   * Iterate through all `use`d plugins
+   *
+   * @param function method description
+   */
   iteratePlugins (method) {
     Object.keys(this.plugins).forEach((pluginType) => {
       this.plugins[pluginType].forEach(method)
@@ -790,10 +790,10 @@ class Uppy {
     return this.socket
   }
 
-/**
- * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
- *
- */
+  /**
+   * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
+   *
+   */
   run () {
     this.log('Core is run, initializing actions...')
 
