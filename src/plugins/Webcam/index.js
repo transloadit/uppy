@@ -72,7 +72,7 @@ module.exports = class Webcam extends Plugin {
     this.i18n = this.translator.translate.bind(this.translator)
 
     this.install = this.install.bind(this)
-    this.updateState = this.updateState.bind(this)
+    this.setPluginState = this.setPluginState.bind(this)
 
     this.render = this.render.bind(this)
 
@@ -104,7 +104,7 @@ module.exports = class Webcam extends Plugin {
   /**
    * Little shorthand to update the state with my new state
    */
-  updateState (newState) {
+  setPluginState (newState) {
     const {state} = this.core
     const webcam = Object.assign({}, state.webcam, newState)
 
@@ -117,13 +117,13 @@ module.exports = class Webcam extends Plugin {
     this.webcam.start()
       .then((stream) => {
         this.stream = stream
-        this.updateState({
+        this.setPluginState({
           // videoStream: stream,
           cameraReady: true
         })
       })
       .catch((err) => {
-        this.updateState({
+        this.setPluginState({
           cameraError: err
         })
       })
@@ -141,7 +141,7 @@ module.exports = class Webcam extends Plugin {
     })
     this.recorder.start()
 
-    this.updateState({
+    this.setPluginState({
       isRecording: true
     })
   }
@@ -149,7 +149,7 @@ module.exports = class Webcam extends Plugin {
   stopRecording () {
     return new Promise((resolve, reject) => {
       this.recorder.addEventListener('stop', () => {
-        this.updateState({
+        this.setPluginState({
           isRecording: false
         })
 
