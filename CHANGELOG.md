@@ -75,7 +75,7 @@ What we need to do to release Uppy 1.0
 - [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
 - [ ] uppy-server: security audit
 - [ ] uppy-server: storing tokens in user’s browser only
-- [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe
+- [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 
 
 ## 0.20.0
