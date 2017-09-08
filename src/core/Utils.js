@@ -516,7 +516,12 @@ function isDOMElement (obj) {
  */
 function findDOMElement (element) {
   if (typeof element === 'string') {
-    return document.querySelector(element)
+    const elements = [].slice.call(document.querySelectorAll(element))
+    if (elements.length > 1) {
+      return elements
+    }
+    return elements[0]
+    // return document.querySelector(element)
   }
 
   if (typeof element === 'object' && isDOMElement(element)) {
