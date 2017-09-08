@@ -176,16 +176,16 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   selectForUpload (files) {
-    files.forEach((file, i) => {
+    return Promise.all(files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
       if (file.isRemote) {
-        this.uploadRemote(file, current, total)
+        return this.uploadRemote(file, current, total)
       } else {
-        this.upload(file, current, total)
+        return this.upload(file, current, total)
       }
-    })
+    }))
 
     //   if (this.opts.bundle) {
     //     uploaders.push(this.upload(files, 0, files.length))
@@ -208,11 +208,7 @@ module.exports = class XHRUpload extends Plugin {
       return this.core.state.files[fileID]
     }
 
-    this.selectForUpload(files)
-
-    return new Promise((resolve) => {
-      this.core.once('core:upload-complete', resolve)
-    })
+    return this.selectForUpload(files).then(() => null)
   }
 
   install () {

@@ -324,16 +324,16 @@ module.exports = class Tus10 extends Plugin {
   }
 
   uploadFiles (files) {
-    files.forEach((file, index) => {
+    return Promise.all(files.map((file, index) => {
       const current = parseInt(index, 10) + 1
       const total = files.length
 
       if (!file.isRemote) {
-        this.upload(file, current, total)
+        return this.upload(file, current, total)
       } else {
-        this.uploadRemote(file, current, total)
+        return this.uploadRemote(file, current, total)
       }
-    })
+    }))
   }
 
   handleUpload (fileIDs) {
@@ -345,11 +345,7 @@ module.exports = class Tus10 extends Plugin {
     this.core.log('Tus is uploading...')
     const filesToUpload = fileIDs.map((fileID) => this.core.getFile(fileID))
 
-    this.uploadFiles(filesToUpload)
-
-    return new Promise((resolve) => {
-      this.core.once('core:upload-complete', resolve)
-    })
+    return this.uploadFiles(filesToUpload)
   }
 
   actions () {
