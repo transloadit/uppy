@@ -47,7 +47,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] possibility to edit/delete more than one file at once #118, #97
 - [ ] optimize problematic filenames #72
 - [ ] an uploader plugin to receive files in a callback instead of uploading them
-- [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
+- [ ] consider iframe / more security for Transloadit/Uppy integration widget
 
 ## 1.0 Goals
 
@@ -74,6 +74,9 @@ What we need to do to release Uppy 1.0
 - [ ] docs: on using plugins, all options, list of plugins, i18n
 - [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
 - [ ] uppy-server: security audit
+- [ ] uppy-server: storing tokens in user’s browser only
+- [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe
+
 
 ## 0.20.0
 
@@ -87,6 +90,8 @@ What we need to do to release Uppy 1.0
 - [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] Redux PR (@arturi, @goto-bus-stop)
+- [ ] GoldenRetriever: Ability to clear upload history or set expiry date #324 (@arturi)
+- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi @goto-bus-stop)
 
 # next
 
@@ -98,7 +103,7 @@ Theme: React and Retry
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (@arturi @goto-bus-stop)
 - [ ] core: improve and merge in the React PR (@arturi @goto-bus-stop)
 - [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
-- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi @goto-bus-stop)
+- [ ] dashboard: expose/document show/hide/isOpen API (@arturi)
 
 ## 0.18.1
 
@@ -106,7 +111,7 @@ Released: 2017-09-05
 Note: this version was released as a `@next` npm tag to unblock some users.
 
 - [x] core: gradually resize image previews #275 (@goto-bus-stop)
-- [x] informer: support “explanations”, a (?) button that shows more info on hover / click (@arturi)
+- [x] informer: support “explanations”, a (?) button that shows more info on hover / click (#292 / @arturi)
 - [x] fix webcam video recording (@goto-bus-stop)
 - [x] bundle: add missing plugins (s3, statusbar, restoreFiles) to unpkg bundle (#301 / @goto-bus-stop)
 - [x] xhrupload: Use error messages from the endpoint (#305 / @goto-bus-stop)
