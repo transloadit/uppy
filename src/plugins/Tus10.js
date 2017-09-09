@@ -1,5 +1,6 @@
 const Plugin = require('./Plugin')
 const tus = require('tus-js-client')
+const settle = require('promise-settle')
 const UppySocket = require('../core/UppySocket')
 const Utils = require('../core/Utils')
 require('whatwg-fetch')
@@ -324,7 +325,7 @@ module.exports = class Tus10 extends Plugin {
   }
 
   uploadFiles (files) {
-    return Promise.all(files.map((file, index) => {
+    return settle(files.map((file, index) => {
       const current = parseInt(index, 10) + 1
       const total = files.length
 

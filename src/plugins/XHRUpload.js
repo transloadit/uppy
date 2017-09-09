@@ -1,4 +1,5 @@
 const Plugin = require('./Plugin')
+const settle = require('promise-settle')
 const UppySocket = require('../core/UppySocket')
 const Utils = require('../core/Utils')
 
@@ -176,7 +177,7 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   selectForUpload (files) {
-    return Promise.all(files.map((file, i) => {
+    return settle(files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
