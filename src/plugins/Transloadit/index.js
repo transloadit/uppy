@@ -125,13 +125,14 @@ module.exports = class Transloadit extends Plugin {
       signature: options.signature
     }).then((assembly) => {
       // Store the list of assemblies related to this upload.
-      const assemblyList = this.state.uploadsAssemblies[uploadID]
-      const uploadsAssemblies = Object.assign({}, this.state.uploadsAssemblies, {
+      const state = this.core.state.transloadit
+      const assemblyList = state.uploadsAssemblies[uploadID]
+      const uploadsAssemblies = Object.assign({}, state.uploadsAssemblies, {
         [uploadID]: assemblyList.concat([ assembly.assembly_id ])
       })
 
-      this.updateState({
-        assemblies: Object.assign(this.state.assemblies, {
+      this.setPluginState({
+        assemblies: Object.assign(state.assemblies, {
           [assembly.assembly_id]: assembly
         }),
         uploadsAssemblies
@@ -212,7 +213,8 @@ module.exports = class Transloadit extends Plugin {
       return
     }
 
-    const assembly = this.state.assemblies[file.transloadit.assembly]
+    const state = this.core.state.transloadit
+    const assembly = state.assemblies[file.transloadit.assembly]
 
     this.client.addFile(assembly, file).catch((err) => {
       this.core.log(err)
@@ -233,9 +235,10 @@ module.exports = class Transloadit extends Plugin {
   }
 
   onFileUploadComplete (assemblyId, uploadedFile) {
+    const state = this.core.state.transloadit
     const file = this.findFile(uploadedFile)
-    this.updateState({
-      files: Object.assign({}, this.state.files, {
+    this.setPluginState({
+      files: Object.assign({}, state.files, {
         [uploadedFile.id]: {
           id: file.id,
           uploadedFile
@@ -246,20 +249,22 @@ module.exports = class Transloadit extends Plugin {
   }
 
   onResult (assemblyId, stepName, result) {
-    const file = this.state.files[result.original_id]
+    const state = this.core.state.transloadit
+    const file = state.files[result.original_id]
     // The `file` may not exist if an import robot was used instead of a file upload.
     result.localId = file ? file.id : null
 
-    this.updateState({
-      results: this.state.results.concat(result)
+    this.setPluginState({
+      results: state.results.concat(result)
     })
     this.core.emit('transloadit:result', stepName, result, this.getAssembly(assemblyId))
   }
 
   onAssemblyFinished (url) {
     this.client.getAssemblyStatus(url).then((assembly) => {
-      this.updateState({
-        assemblies: Object.assign({}, this.state.assemblies, {
+      const state = this.core.state.transloadit
+      this.setPluginState({
+        assemblies: Object.assign({}, state.assemblies, {
           [assembly.assembly_id]: assembly
         })
       })
@@ -322,10 +327,11 @@ module.exports = class Transloadit extends Plugin {
       })
     }
 
+    const state = this.core.state.transloadit
     const uploadsAssemblies = Object.assign({},
-      this.state.uploadsAssemblies,
+      state.uploadsAssemblies,
       { [uploadID]: [] })
-    this.updateState({ uploadsAssemblies })
+    this.setPluginState({ uploadsAssemblies })
 
     let optionsPromise
     if (fileIDs.length > 0) {
@@ -352,7 +358,8 @@ module.exports = class Transloadit extends Plugin {
   }
 
   afterUpload (fileIDs, uploadID) {
-    const assemblyIDs = this.state.uploadsAssemblies[uploadID]
+    const state = this.core.state.transloadit
+    const assemblyIDs = state.uploadsAssemblies[uploadID]
 
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
@@ -449,9 +456,10 @@ module.exports = class Transloadit extends Plugin {
       this.core.on('transloadit:import-error', onImportError)
     }).then(() => {
       // Clean up uploadID → assemblyIDs, they're no longer going to be used anywhere.
-      const uploadsAssemblies = Object.assign({}, this.state.uploadsAssemblies)
+      const state = this.core.state.transloadit
+      const uploadsAssemblies = Object.assign({}, state.uploadsAssemblies)
       delete uploadsAssemblies[uploadID]
-      this.updateState({ uploadsAssemblies })
+      this.setPluginState({ uploadsAssemblies })
     })
   }
 
@@ -463,7 +471,7 @@ module.exports = class Transloadit extends Plugin {
       this.core.on('core:upload-success', this.onFileUploadURLAvailable)
     }
 
-    this.updateState({
+    this.setPluginState({
       // Contains assembly status objects, indexed by their ID.
       assemblies: {},
       // Contains arrays of assembly IDs, indexed by the upload ID that they belong to.
@@ -485,7 +493,8 @@ module.exports = class Transloadit extends Plugin {
   }
 
   getAssembly (id) {
-    return this.state.assemblies[id]
+    const state = this.core.state.transloadit
+    return state.assemblies[id]
   }
 
   getAssemblyFiles (assemblyID) {
@@ -497,12 +506,8 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  get state () {
-    return this.core.state.transloadit || {}
-  }
-
-  updateState (newState) {
-    const transloadit = Object.assign({}, this.state, newState)
+  setPluginState (newState) {
+    const transloadit = Object.assign({}, this.core.state.transloadit, newState)
 
     this.core.setState({ transloadit })
   }
