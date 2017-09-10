@@ -28,6 +28,7 @@ module.exports = class DashboardUI extends Plugin {
         dashboardTitle: 'Uppy Dashboard',
         copyLinkToClipboardSuccess: 'Link copied to clipboard.',
         copyLinkToClipboardFallback: 'Copy the URL below',
+        fileSource: 'File source',
         done: 'Done',
         localDisk: 'Local Disk',
         myDevice: 'My Device',

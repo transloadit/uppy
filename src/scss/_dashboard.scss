@@ -474,9 +474,8 @@
 }
 
 .UppyDashboardItem-sourceIcon {
-  // color: rgba($color-white, 0.95);
-  position: relative;
-  left: 3px;
+  // position: relative;
+  // left: 3px;
   display: inline-block;
   vertical-align: middle;
   width: 7px;
@@ -605,8 +604,9 @@
 
 .UppyDashboardItem-statusSize {
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: bottom;
   text-transform: uppercase;
+  margin-right: 3px;
 }
 
 .UppyDashboardItem-edit,
