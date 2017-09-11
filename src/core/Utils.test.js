@@ -10,13 +10,13 @@ describe('core/utils', () => {
         name: 'fOo0Fi@£$.jpg',
         type: 'image/jpeg',
         data: {
-          lastModified: '2017-08-31T00:00:00.000Z',
+          lastModified: 1498510508000,
           size: 2271173
         }
       }
 
       expect(utils.generateFileID(fileObj)).toEqual(
-        'uppy-foo0fijpg-image/jpeg-2271173-2017-08-31T00:00:00.000Z'
+        'uppy-foo0fijpg-image/jpeg-2271173-1498510508000'
       )
     })
   })
