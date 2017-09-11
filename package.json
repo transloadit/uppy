@@ -88,7 +88,7 @@
     "prettier-bytes": "1.0.4",
     "promise-settle": "^0.3.0",
     "socket.io-client": "2.0.1",
-    "tus-js-client": "1.4.3",
+    "tus-js-client": "^1.4.4",
     "url-parse": "1.1.9",
     "whatwg-fetch": "2.0.3",
     "yo-yo": "1.4.0",
