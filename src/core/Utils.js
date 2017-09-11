@@ -120,7 +120,6 @@ function generateFileID (file) {
     'uppy',
     file.name ? file.name.toLowerCase().replace(/[^A-Z0-9]/ig, '') : '',
     file.type,
-    file.hui,
     file.data.size,
     file.data.lastModified
   ].filter(val => val).join('-')
