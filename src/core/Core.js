@@ -598,6 +598,10 @@ class Uppy {
     }
   }
 
+  getID () {
+    return this.opts.id
+  }
+
   /**
    * Registers a plugin with Core
    *

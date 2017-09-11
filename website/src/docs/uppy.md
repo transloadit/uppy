@@ -144,6 +144,10 @@ uppy.use(DragDrop, {target: 'body'})
 
 Initializes everything after setup. Must be called before calling `.upload()` or using Uppy in any meaningful way.
 
+### `uppy.getID()`
+
+Get the uppy instance ID, see the [`id` option](#id-39-uppy-39).
+
 ### `uppy.addFile(fileObject)`
 
 Add a new file to Uppy’s internal state.
