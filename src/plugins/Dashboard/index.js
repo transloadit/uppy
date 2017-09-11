@@ -4,7 +4,7 @@ const dragDrop = require('drag-drop')
 const Dashboard = require('./Dashboard')
 const StatusBar = require('../StatusBar')
 const Informer = require('../Informer')
-const { findDOMElement } = require('../../core/Utils')
+const { findAllDOMElements } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
 
@@ -199,7 +199,7 @@ module.exports = class DashboardUI extends Plugin {
 
   initEvents () {
     // Modal open button
-    const showModalTrigger = findDOMElement(this.opts.trigger)
+    const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
       if (Array.isArray(showModalTrigger)) {
         showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.show))
@@ -221,7 +221,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   removeEvents () {
-    const showModalTrigger = findDOMElement(this.opts.trigger)
+    const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
       if (Array.isArray(showModalTrigger)) {
         showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.show))
@@ -271,7 +271,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   handleDrop (files) {
-    this.core.log('[Dashboard] Files were droppeded')
+    this.core.log('[Dashboard] Files were dropped')
 
     files.forEach((file) => {
       this.core.addFile({

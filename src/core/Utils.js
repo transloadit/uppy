@@ -516,17 +516,23 @@ function isDOMElement (obj) {
  */
 function findDOMElement (element) {
   if (typeof element === 'string') {
-    const elements = [].slice.call(document.querySelectorAll(element))
-    if (elements.length > 1) {
-      return elements
-    }
-    return elements[0]
-    // return document.querySelector(element)
+    return document.querySelector(element)
   }
 
   if (typeof element === 'object' && isDOMElement(element)) {
     return element
   }
+}
+
+/**
+ * Find one or more DOM elements.
+ *
+ * @param {string} selector
+ * @return {Array|null}
+ */
+function findAllDOMElements (selector) {
+  const elements = [].slice.call(document.querySelectorAll(selector))
+  return elements.length > 0 ? elements : null
 }
 
 function getSocketHost (url) {
@@ -580,6 +586,7 @@ module.exports = {
   copyToClipboard,
   prettyETA,
   findDOMElement,
+  findAllDOMElements,
   getSocketHost,
   emitSocketProgress
 }
