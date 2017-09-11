@@ -525,13 +525,6 @@ class Uppy {
       })
 
       this.calculateTotalProgress()
-
-      if (this.getState().totalProgress === 100) {
-        const completeFiles = Object.keys(updatedFiles).filter((file) => {
-          return updatedFiles[file].progress.uploadComplete
-        })
-        this.emit('core:upload-complete', completeFiles.length)
-      }
     })
 
     this.on('core:update-meta', (data, fileID) => {
