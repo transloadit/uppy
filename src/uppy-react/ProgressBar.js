@@ -1,7 +1,7 @@
 const React = require('react')
 const PropTypes = require('prop-types')
 const UppyCore = require('../core/Core')
-const ProgressBarPlugin = require('../plugins/ProgressBar')
+const UppyWrapper = require('./Wrapper')
 
 const h = React.createElement
 
@@ -10,32 +10,14 @@ const h = React.createElement
  * uploaded.
  */
 
-class ProgressBar extends React.Component {
-  componentDidMount () {
-    const uppy = this.props.uppy
-    const options = Object.assign({}, this.props, {
-      target: this.container
-    })
-    delete options.uppy
-    uppy.use(ProgressBarPlugin, options)
-  }
-
-  render () {
-    return h('div', {
-      ref: (container) => {
-        this.container = container
-      }
-    })
-  }
-}
+const ProgressBar = (props) =>
+  h(UppyWrapper, props)
 
 ProgressBar.propTypes = {
-  uppy: PropTypes.instanceOf(UppyCore).isRequired,
-  locale: PropTypes.object
+  uppy: PropTypes.instanceOf(UppyCore).isRequired
 }
-
 ProgressBar.defaultProps = {
-  locale: {}
+  plugin: 'ProgressBar'
 }
 
 module.exports = ProgressBar

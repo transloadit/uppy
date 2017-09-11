@@ -36,7 +36,7 @@ module.exports = class DragDrop extends Plugin {
 
     // Default options
     const defaultOpts = {
-      target: '.UppyDragDrop',
+      target: null,
       getMetaFromForm: true,
       locale: defaultLocale
     }
@@ -146,7 +146,13 @@ module.exports = class DragDrop extends Plugin {
   install () {
     const target = this.opts.target
     const plugin = this
-    this.target = this.mount(target, plugin)
+    if (target) {
+      this.mount(target, plugin)
+    }
+  }
+
+  mount (...args) {
+    super.mount(...args)
 
     const dndContainer = this.target.querySelector('.UppyDragDrop-container')
     this.removeDragDropListener = dragDrop(dndContainer, (files) => {
@@ -155,8 +161,13 @@ module.exports = class DragDrop extends Plugin {
     })
   }
 
-  uninstall () {
+  unmount (...args) {
     this.removeDragDropListener()
+
+    super.unmount(...args)
+  }
+
+  uninstall () {
     this.unmount()
   }
 }

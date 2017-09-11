@@ -13,7 +13,6 @@ const getFormData = require('get-form-data')
  * @return {array | string} files or success/fail message
  */
 module.exports = class Plugin {
-
   constructor (core, opts) {
     this.core = core
     this.opts = opts || {}
@@ -72,34 +71,39 @@ module.exports = class Plugin {
       this.el = plugin.render(this.core.state)
       targetElement.appendChild(this.el)
 
+      this.target = targetElement
+
       return targetElement
     }
 
-    const Target = target
-    // Find the target plugin instance.
-    let targetPlugin
-    this.core.iteratePlugins((plugin) => {
-      if (plugin instanceof Target) {
-        targetPlugin = plugin
-        return false
-      }
-    })
+    if (typeof target === 'function') {
+      const Target = target
+      // Find the target plugin instance.
+      let targetPlugin
+      this.core.iteratePlugins((plugin) => {
+        if (plugin instanceof Target) {
+          targetPlugin = plugin
+          return false
+        }
+      })
 
-    if (targetPlugin) {
-      const targetPluginName = targetPlugin.id
-      this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
-      return targetPlugin.addTarget(plugin)
+      if (targetPlugin) {
+        const targetPluginName = targetPlugin.id
+        this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
+        this.target = targetPlugin
+        return targetPlugin.addTarget(plugin)
+      }
     }
 
     this.core.log(`Not installing ${callerPluginName}`)
-
-    return null
+    throw new Error(`Invalid target option given to ${callerPluginName}`)
   }
 
   unmount () {
     if (this.el && this.el.parentNode) {
       this.el.parentNode.removeChild(this.el)
     }
+    this.target = null
   }
 
   install () {

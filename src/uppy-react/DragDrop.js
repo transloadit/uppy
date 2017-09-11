@@ -1,7 +1,7 @@
 const React = require('react')
 const PropTypes = require('prop-types')
-const UppyCore = require('../core/Core')
-const DragDropPlugin = require('../plugins/DragDrop')
+const UppyCore = require('../core')
+const UppyWrapper = require('./Wrapper')
 
 const h = React.createElement
 
@@ -10,32 +10,14 @@ const h = React.createElement
  * uploaded.
  */
 
-class DragDrop extends React.Component {
-  componentDidMount () {
-    const uppy = this.props.uppy
-    const options = Object.assign({}, this.props, {
-      target: this.container
-    })
-    delete options.uppy
-    uppy.use(DragDropPlugin, options)
-  }
-
-  render () {
-    return h('div', {
-      ref: (container) => {
-        this.container = container
-      }
-    })
-  }
-}
+const DragDrop = (props) =>
+  h(UppyWrapper, props)
 
 DragDrop.propTypes = {
-  uppy: PropTypes.instanceOf(UppyCore).isRequired,
-  locale: PropTypes.object
+  uppy: PropTypes.instanceOf(UppyCore).isRequired
 }
-
 DragDrop.defaultProps = {
-  locale: {}
+  plugin: 'DragDrop'
 }
 
 module.exports = DragDrop

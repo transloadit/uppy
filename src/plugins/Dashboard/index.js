@@ -419,8 +419,10 @@ module.exports = class DashboardUI extends Plugin {
     }})
 
     const target = this.opts.target
-    const plugin = this
-    this.target = this.mount(target, plugin)
+
+    if (target) {
+      this.mount(target, this)
+    }
 
     if (!this.opts.disableStatusBar) {
       this.core.use(StatusBar, {
