@@ -32,7 +32,7 @@ A site-wide unique ID for the instance.
 If multiple Uppy instances are being used, for example on two different pages, an `id` should be specified.
 This allows Uppy to store information in `localStorage` without colliding with other Uppy instances.
 
-Note that this ID should be persistent across page reloads and navigation--it shouldn't be a random number that's different every time Uppy is loaded.
+Note that this ID should be persistent across page reloads and navigation—it shouldn't be a random number that's different every time Uppy is loaded.
 For example, if one Uppy instance is used to upload user avatars, and another to add photos to a blog post, you might use:
 
 ```js
