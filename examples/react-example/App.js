@@ -4,6 +4,8 @@ const Uppy = require('uppy/lib/core')
 const Tus10 = require('uppy/lib/plugins/Tus10')
 const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 const DashboardPlugin = require('uppy/lib/plugins/Dashboard')
+const DragDropPlugin = require('uppy/lib/plugins/DragDrop')
+const ProgressBarPlugin = require('uppy/lib/plugins/ProgressBar')
 const { Dashboard, DashboardModal, DragDrop, ProgressBar } = require('uppy/lib/uppy-react')
 
 module.exports = class App extends React.Component {
@@ -21,11 +23,22 @@ module.exports = class App extends React.Component {
   componentWillMount () {
     this.uppy = new Uppy({ autoProceed: false })
       .use(Tus10, { endpoint: 'https://master.tus.io/files' })
+      .use(DashboardPlugin, { inline: true })
+      .use(DragDropPlugin, {
+        locale: {
+          strings: {
+            chooseFile: 'Boop a file',
+            orDragDrop: 'or yoink it here'
+          }
+        }
+      })
+      .use(ProgressBarPlugin)
       .use(GoogleDrive, { target: DashboardPlugin, host: 'https://server.uppy.io' })
       .run()
 
     this.uppy2 = new Uppy({ autoProceed: false })
       .use(Tus10, { endpoint: 'https://master.tus.io/files' })
+      .use(DashboardPlugin)
       .run()
   }
 
@@ -76,15 +89,7 @@ module.exports = class App extends React.Component {
         </div>
 
         <h2>Drag Drop Area</h2>
-        <DragDrop
-          uppy={this.uppy}
-          locale={{
-            strings: {
-              chooseFile: 'Boop a file',
-              orDragDrop: 'or yoink it here'
-            }
-          }}
-        />
+        <DragDrop uppy={this.uppy} />
 
         <h2>Progress Bar</h2>
         <ProgressBar uppy={this.uppy} />
