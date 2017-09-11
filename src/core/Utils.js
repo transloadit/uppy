@@ -537,7 +537,7 @@ function findAllDOMElements (element) {
   }
 
   if (typeof element === 'object' && isDOMElement(element)) {
-    return element
+    return [element]
   }
 }
 
