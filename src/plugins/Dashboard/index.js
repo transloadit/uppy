@@ -66,8 +66,9 @@ module.exports = class DashboardUI extends Plugin {
     this.translator = new Translator({locale: this.locale})
     this.containerWidth = this.translator.translate.bind(this.translator)
 
-    this.hide = this.hide.bind(this)
-    this.show = this.show.bind(this)
+    this.closeModal = this.closeModal.bind(this)
+    this.openModal = this.openModal.bind(this)
+    this.isModalOpen = this.isModalOpen.bind(this)
 
     this.addTarget = this.addTarget.bind(this)
     this.actions = this.actions.bind(this)
@@ -143,25 +144,7 @@ module.exports = class DashboardUI extends Plugin {
     })})
   }
 
-  isOpen () {
-    return !this.core.getState().modal.isHidden || false
-  }
-
-  hide () {
-    const modal = this.core.getState().modal
-
-    this.core.setState({
-      modal: Object.assign({}, modal, {
-        isHidden: true
-      })
-    })
-
-    document.body.classList.remove('is-UppyDashboard-open')
-
-    window.scrollTo(0, this.savedDocumentScrollPosition)
-  }
-
-  show () {
+  openModal () {
     const modal = this.core.getState().modal
 
     this.core.setState({
@@ -186,26 +169,41 @@ module.exports = class DashboardUI extends Plugin {
     setTimeout(this.updateDashboardElWidth, 500)
   }
 
+  closeModal () {
+    const modal = this.core.getState().modal
+
+    this.core.setState({
+      modal: Object.assign({}, modal, {
+        isHidden: true
+      })
+    })
+
+    document.body.classList.remove('is-UppyDashboard-open')
+
+    window.scrollTo(0, this.savedDocumentScrollPosition)
+  }
+
+  isModalOpen () {
+    return !this.core.getState().modal.isHidden || false
+  }
+
   // Close the Modal on esc key press
   handleEscapeKeyPress (event) {
     if (event.keyCode === 27) {
-      this.hide()
+      this.closeModal()
     }
   }
 
   handleClickOutside () {
-    if (this.opts.closeModalOnClickOutside) this.hide()
+    if (this.opts.closeModalOnClickOutside) this.closeModal()
   }
 
   initEvents () {
     // Modal open button
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
+    console.log(showModalTrigger)
     if (!this.opts.inline && showModalTrigger) {
-      if (Array.isArray(showModalTrigger)) {
-        showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.show))
-      } else {
-        showModalTrigger.addEventListener('click', this.show)
-      }
+      showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.openModal))
     }
 
     if (!this.opts.inline && !showModalTrigger) {
@@ -223,11 +221,7 @@ module.exports = class DashboardUI extends Plugin {
   removeEvents () {
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
-      if (Array.isArray(showModalTrigger)) {
-        showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.show))
-      } else {
-        showModalTrigger.removeEventListener('click', this.show)
-      }
+      showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.openModal))
     }
 
     this.removeDragDropListener()
@@ -354,12 +348,6 @@ module.exports = class DashboardUI extends Plugin {
       this.core.emit('dashboard:file-card')
     }
 
-    // const info = (text, type, duration) => {
-    //   this.core.info(text, type, duration)
-    // }
-
-    const resumableUploads = this.core.state.capabilities.resumableUploads || false
-
     return Dashboard({
       state: state,
       modal: state.modal,
@@ -373,7 +361,7 @@ module.exports = class DashboardUI extends Plugin {
       autoProceed: this.core.opts.autoProceed,
       hideUploadButton: this.opts.hideUploadButton,
       id: this.id,
-      hide: this.hide,
+      closeModal: this.closeModal,
       handleClickOutside: this.handleClickOutside,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
@@ -389,7 +377,7 @@ module.exports = class DashboardUI extends Plugin {
       info: this.core.info,
       note: this.opts.note,
       metaFields: state.metaFields,
-      resumableUploads: resumableUploads,
+      resumableUploads: this.core.state.capabilities.resumableUploads || false,
       startUpload: startUpload,
       pauseUpload: pauseUpload,
       cancelUpload: cancelUpload,
