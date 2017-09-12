@@ -576,14 +576,17 @@ class Uppy {
 
     // show informer if offline
     if (typeof window !== 'undefined') {
-      window.addEventListener('online', () => this.isOnline(true))
-      window.addEventListener('offline', () => this.isOnline(false))
-      setTimeout(() => this.isOnline(), 3000)
+      window.addEventListener('online', () => this.updateOnlineStatus())
+      window.addEventListener('offline', () => this.updateOnlineStatus())
+      setTimeout(() => this.updateOnlineStatus(), 3000)
     }
   }
 
-  isOnline (status) {
-    const online = status || window.navigator.onLine
+  updateOnlineStatus () {
+    const online =
+      typeof window.navigator.onLine !== 'undefined'
+        ? window.navigator.onLine
+        : true
     if (!online) {
       this.emit('is-offline')
       this.info('No internet connection', 'error', 0)
