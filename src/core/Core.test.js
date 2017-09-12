@@ -385,8 +385,9 @@ describe('src/Core', () => {
         .then(() => core.upload())
         .then(() => {
           expect(postprocessor1.mock.calls.length).toEqual(1)
-          const lastModifiedTime = new Date()
-          const fileId = 'foojpg' + lastModifiedTime.getTime()
+          // const lastModifiedTime = new Date()
+          // const fileId = 'foojpg' + lastModifiedTime.getTime()
+          const fileId = 'uppy-foojpg-image'
 
           expect(postprocessor1.mock.calls[0][0].length).toEqual(1)
           expect(postprocessor1.mock.calls[0][0][0].substring(0, 17)).toEqual(
