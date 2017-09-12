@@ -839,7 +839,25 @@ describe('src/Core', () => {
   })
 
   describe('createUpload', () => {
-    xit('should assign the specified files to a new upload', () => {})
+    it('should assign the specified files to a new upload', () => {
+      const core = new Core()
+      core.run()
+      return core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpg',
+        data: utils.dataURItoFile(sampleImageDataURI, {})
+      }).then(() => {
+        core.createUpload(Object.keys(core.state.files))
+        const uploadId = Object.keys(core.state.currentUploads)[0]
+        const currentUploadsState = {}
+        currentUploadsState[uploadId] = {
+          fileIDs: Object.keys(core.state.files),
+          step: 0
+        }
+        expect(core.state.currentUploads).toEqual(currentUploadsState)
+      })
+    })
   })
 
   describe('removeUpload', () => {
