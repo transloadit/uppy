@@ -316,9 +316,9 @@ class Uppy {
         this.emit('core:file-added', newFile)
         this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
 
-        if (this.opts.autoProceed && !this.scheduledAutoProceed) {
+        if (this.opts.autoProceed) {
+          clearTimeout(this.scheduledAutoProceed)
           this.scheduledAutoProceed = setTimeout(() => {
-            this.scheduledAutoProceed = null
             this.upload().catch((err) => {
               console.error(err.stack || err.message || err)
             })
