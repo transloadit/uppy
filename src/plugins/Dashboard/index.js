@@ -4,7 +4,7 @@ const dragDrop = require('drag-drop')
 const Dashboard = require('./Dashboard')
 const StatusBar = require('../StatusBar')
 const Informer = require('../Informer')
-const { findDOMElement } = require('../../core/Utils')
+const { findAllDOMElements } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
 
@@ -14,8 +14,8 @@ const { defaultTabIcon } = require('./icons')
 module.exports = class DashboardUI extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.id = 'DashboardUI'
-    this.title = 'Dashboard UI'
+    this.id = 'Dashboard'
+    this.title = 'Dashboard'
     this.type = 'orchestrator'
 
     const defaultLocale = {
@@ -67,8 +67,9 @@ module.exports = class DashboardUI extends Plugin {
     this.translator = new Translator({locale: this.locale})
     this.containerWidth = this.translator.translate.bind(this.translator)
 
-    this.hideModal = this.hideModal.bind(this)
-    this.showModal = this.showModal.bind(this)
+    this.closeModal = this.closeModal.bind(this)
+    this.openModal = this.openModal.bind(this)
+    this.isModalOpen = this.isModalOpen.bind(this)
 
     this.addTarget = this.addTarget.bind(this)
     this.actions = this.actions.bind(this)
@@ -144,21 +145,7 @@ module.exports = class DashboardUI extends Plugin {
     })})
   }
 
-  hideModal () {
-    const modal = this.core.getState().modal
-
-    this.core.setState({
-      modal: Object.assign({}, modal, {
-        isHidden: true
-      })
-    })
-
-    document.body.classList.remove('is-UppyDashboard-open')
-
-    window.scrollTo(0, this.savedDocumentScrollPosition)
-  }
-
-  showModal () {
+  openModal () {
     const modal = this.core.getState().modal
 
     this.core.setState({
@@ -183,22 +170,41 @@ module.exports = class DashboardUI extends Plugin {
     setTimeout(this.updateDashboardElWidth, 500)
   }
 
+  closeModal () {
+    const modal = this.core.getState().modal
+
+    this.core.setState({
+      modal: Object.assign({}, modal, {
+        isHidden: true
+      })
+    })
+
+    document.body.classList.remove('is-UppyDashboard-open')
+
+    window.scrollTo(0, this.savedDocumentScrollPosition)
+  }
+
+  isModalOpen () {
+    return !this.core.getState().modal.isHidden || false
+  }
+
   // Close the Modal on esc key press
   handleEscapeKeyPress (event) {
     if (event.keyCode === 27) {
-      this.hideModal()
+      this.closeModal()
     }
   }
 
   handleClickOutside () {
-    if (this.opts.closeModalOnClickOutside) this.hideModal()
+    if (this.opts.closeModalOnClickOutside) this.closeModal()
   }
 
   initEvents () {
     // Modal open button
-    const showModalTrigger = findDOMElement(this.opts.trigger)
+    const showModalTrigger = findAllDOMElements(this.opts.trigger)
+    console.log(showModalTrigger)
     if (!this.opts.inline && showModalTrigger) {
-      showModalTrigger.addEventListener('click', this.showModal)
+      showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.openModal))
     }
 
     if (!this.opts.inline && !showModalTrigger) {
@@ -214,9 +220,9 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   removeEvents () {
-    const showModalTrigger = findDOMElement(this.opts.trigger)
+    const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
-      showModalTrigger.removeEventListener('click', this.showModal)
+      showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.openModal))
     }
 
     this.removeDragDropListener()
@@ -260,7 +266,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   handleDrop (files) {
-    this.core.log('All right, someone dropped something...')
+    this.core.log('[Dashboard] Files were dropped')
 
     files.forEach((file) => {
       this.core.addFile({
@@ -301,7 +307,6 @@ module.exports = class DashboardUI extends Plugin {
       inProgressFilesArray.push(files[file])
     })
 
-    // total size and uploaded size
     let totalSize = 0
     let totalUploadedSize = 0
     inProgressFilesArray.forEach((file) => {
@@ -327,7 +332,7 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     const pauseUpload = (fileID) => {
-      this.core.emit.emit('core:upload-pause', fileID)
+      this.core.emit('core:upload-pause', fileID)
     }
 
     const cancelUpload = (fileID) => {
@@ -344,12 +349,6 @@ module.exports = class DashboardUI extends Plugin {
       this.core.emit('dashboard:file-card')
     }
 
-    const info = (text, type, duration) => {
-      this.core.info(text, type, duration)
-    }
-
-    const resumableUploads = this.core.state.capabilities.resumableUploads || false
-
     return Dashboard({
       state: state,
       modal: state.modal,
@@ -363,7 +362,7 @@ module.exports = class DashboardUI extends Plugin {
       autoProceed: this.core.opts.autoProceed,
       hideUploadButton: this.opts.hideUploadButton,
       id: this.id,
-      hideModal: this.hideModal,
+      closeModal: this.closeModal,
       handleClickOutside: this.handleClickOutside,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
@@ -376,10 +375,10 @@ module.exports = class DashboardUI extends Plugin {
       resumeAll: this.resumeAll,
       addFile: this.core.addFile,
       removeFile: this.core.removeFile,
-      info: info,
+      info: this.core.info,
       note: this.opts.note,
       metaFields: state.metaFields,
-      resumableUploads: resumableUploads,
+      resumableUploads: this.core.state.capabilities.resumableUploads || false,
       startUpload: startUpload,
       pauseUpload: pauseUpload,
       cancelUpload: cancelUpload,
