@@ -752,9 +752,90 @@ describe('src/Core', () => {
   })
 
   describe('info', () => {
-    xit('should set an info message to be displayed', () => {})
+    it('should set a string based message to be displayed infinitely', () => {
+      const infoVisibleEvent = jest.fn()
+      const core = new Core()
+      core.run()
+      core.on('core:info-visible', infoVisibleEvent)
 
-    xit('should hide an info message', () => {})
+      core.info('This is the message', 'info', 0)
+      expect(core.state.info).toEqual({
+        isHidden: false,
+        type: 'info',
+        message: 'This is the message',
+        details: null
+      })
+      expect(infoVisibleEvent.mock.calls.length).toEqual(1)
+      expect(typeof core.infoTimeoutID).toEqual('undefined')
+    })
+
+    it('should set a object based message to be displayed infinitely', () => {
+      const infoVisibleEvent = jest.fn()
+      const core = new Core()
+      core.run()
+      core.on('core:info-visible', infoVisibleEvent)
+
+      core.info({
+        message: 'This is the message',
+        details: {
+          foo: 'bar'
+        }
+      }, 'warning', 0)
+      expect(core.state.info).toEqual({
+        isHidden: false,
+        type: 'warning',
+        message: 'This is the message',
+        details: {
+          foo: 'bar'
+        }
+      })
+      expect(infoVisibleEvent.mock.calls.length).toEqual(1)
+      expect(typeof core.infoTimeoutID).toEqual('undefined')
+    })
+
+    it('should set an info message to be displayed for a period of time before hiding', (done) => {
+      const infoVisibleEvent = jest.fn()
+      const infoHiddenEvent = jest.fn()
+      const core = new Core()
+      core.run()
+      core.on('core:info-visible', infoVisibleEvent)
+      core.on('core:info-hidden', infoHiddenEvent)
+
+      core.info('This is the message', 'info', 100)
+      expect(typeof core.infoTimeoutID).toEqual('number')
+      expect(infoHiddenEvent.mock.calls.length).toEqual(0)
+      setTimeout(() => {
+        expect(infoHiddenEvent.mock.calls.length).toEqual(1)
+        expect(core.state.info).toEqual({
+          isHidden: true,
+          type: 'info',
+          message: 'This is the message',
+          details: null
+        })
+        done()
+      }, 110)
+    })
+
+    it('should hide an info message', () => {
+      const infoVisibleEvent = jest.fn()
+      const infoHiddenEvent = jest.fn()
+      const core = new Core()
+      core.run()
+      core.on('core:info-visible', infoVisibleEvent)
+      core.on('core:info-hidden', infoHiddenEvent)
+
+      core.info('This is the message', 'info', 0)
+      expect(typeof core.infoTimeoutID).toEqual('undefined')
+      expect(infoHiddenEvent.mock.calls.length).toEqual(0)
+      core.hideInfo()
+      expect(infoHiddenEvent.mock.calls.length).toEqual(1)
+      expect(core.state.info).toEqual({
+        isHidden: true,
+        type: 'info',
+        message: 'This is the message',
+        details: null
+      })
+    })
   })
 
   describe('createUpload', () => {

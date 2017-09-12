@@ -743,7 +743,7 @@ class Uppy {
   }
 
   hideInfo () {
-    const newInfo = Object.assign({}, this.core.state.info, {
+    const newInfo = Object.assign({}, this.state.info, {
       isHidden: true
     })
     this.setState({
