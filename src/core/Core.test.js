@@ -843,6 +843,31 @@ describe('src/Core', () => {
   })
 
   describe('removeUpload', () => {
-    xit('should remove all files from the specified upload', () => {})
+    it('should remove all files from the specified upload', () => {
+      // this uploader will run once the upload has started
+      const uploader = () => {
+        return Promise.resolve().then(() => {
+          const uploadId = Object.keys(core.state.currentUploads)[0]
+          expect(typeof core.state.currentUploads[uploadId]).toEqual('object')
+          expect(core.state.currentUploads[uploadId].fileIDs.length).toEqual(1)
+          core.removeUpload(uploadId)
+          expect(typeof core.state.currentUploads[uploadId]).toEqual('undefined')
+        })
+      }
+
+      const core = new Core()
+      core.run()
+      core.addUploader(uploader)
+      return core
+        .addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpg',
+          data: utils.dataURItoFile(sampleImageDataURI, {})
+        })
+        .then(() => {
+          return core.upload(true)
+        })
+    })
   })
 })
