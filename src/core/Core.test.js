@@ -708,13 +708,68 @@ describe('src/Core', () => {
   })
 
   describe('checkRestrictions', () => {
+    it('should enforce the maxNumberOfFiles rule', () => {
+      const core = new Core({
+        autoProceed: false,
+        restrictions: {
+          maxNumberOfFiles: 1
+        }
+      })
+
+      // add 2 files
+      core.addFile({
+        source: 'jest',
+        name: 'foo1.jpg',
+        type: 'image/jpg',
+        data: utils.dataURItoFile(sampleImageDataURI, {})
+      })
+      expect(core.addFile({
+        source: 'jest',
+        name: 'foo2.jpg',
+        type: 'image/jpg',
+        data: utils.dataURItoFile(sampleImageDataURI, {})
+      })).rejects.toMatch('File not allowed').then(() => {
+        expect(core.state.info.message).toEqual('You can only upload 1 file')
+      })
+    })
+
     xit('should enforce the minNumberOfFiles rule', () => {})
 
-    xit('should enforce the maxNumberOfFiles rule', () => {})
+    it('should enfore the allowedFileTypes rule', () => {
+      const core = new Core({
+        autoProceed: false,
+        restrictions: {
+          allowedFileTypes: ['image/gif', 'image/png']
+        }
+      })
 
-    xit('should enfore the allowedFileTypes rule', () => {})
+      expect(core.addFile({
+        source: 'jest',
+        name: 'foo2.jpg',
+        type: 'image/jpg',
+        data: utils.dataURItoFile(sampleImageDataURI, {})
+      })).rejects.toMatch('File not allowed').then(() => {
+        expect(core.state.info.message).toEqual('You can only upload: image/gif, image/png')
+      })
+    })
 
-    xit('should enforce the maxFileSize rule', () => {})
+    it('should enforce the maxFileSize rule', () => {
+      const core = new Core({
+        autoProceed: false,
+        restrictions: {
+          maxFileSize: 1234
+        }
+      })
+
+      expect(core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpg',
+        data: utils.dataURItoFile(sampleImageDataURI, {})
+      })).rejects.toMatch('File not allowed').then(() => {
+        expect(core.state.info.message).toEqual('This file exceeds maximum allowed size of 1.2 KB')
+      })
+    })
   })
 
   describe('actions', () => {})
