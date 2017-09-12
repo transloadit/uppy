@@ -684,11 +684,147 @@ describe('src/Core', () => {
   })
 
   describe('progress', () => {
-    xit('should reset the progress', () => {})
+    it('should calculate the progress of a file upload', () => {
+      const core = new Core()
+      return core
+        .addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpg',
+          data: utils.dataURItoFile(sampleImageDataURI, {})
+        })
+        .then(() => {
+          const fileId = Object.keys(core.state.files)[0]
+          core.calculateProgress({
+            id: fileId,
+            bytesUploaded: 12345,
+            bytesTotal: 17175
+          })
+          expect(core.state.files[fileId].progress).toEqual({
+            percentage: 71,
+            bytesUploaded: 12345,
+            bytesTotal: 17175,
+            uploadComplete: false,
+            uploadStarted: false
+          })
 
-    xit('should calculate the progress of a file upload', () => {})
+          core.calculateProgress({
+            id: fileId,
+            bytesUploaded: 17175,
+            bytesTotal: 17175
+          })
+          expect(core.state.files[fileId].progress).toEqual({
+            percentage: 100,
+            bytesUploaded: 17175,
+            bytesTotal: 17175,
+            uploadComplete: false,
+            uploadStarted: false
+          })
+        })
+    })
 
-    xit('should calculate the total progress of all file uploads', () => {})
+    it('should calculate the total progress of all file uploads', () => {
+      const core = new Core()
+      return core
+        .addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpg',
+          data: utils.dataURItoFile(sampleImageDataURI, {})
+        })
+        .then(() => {
+          return core
+            .addFile({
+              source: 'jest',
+              name: 'foo2.jpg',
+              type: 'image/jpg',
+              data: utils.dataURItoFile(sampleImageDataURI, {})
+            })
+        }).then(() => {
+          const fileId1 = Object.keys(core.state.files)[0]
+          const fileId2 = Object.keys(core.state.files)[1]
+          core.state.files[fileId1].progress.uploadStarted = new Date()
+          core.state.files[fileId2].progress.uploadStarted = new Date()
+
+          core.calculateProgress({
+            id: fileId1,
+            bytesUploaded: 12345,
+            bytesTotal: 17175
+          })
+
+          core.calculateProgress({
+            id: fileId2,
+            bytesUploaded: 10201,
+            bytesTotal: 17175
+          })
+
+          core.calculateTotalProgress()
+          expect(core.state.totalProgress).toEqual(65)
+        })
+    })
+
+    it('should reset the progress', () => {
+      const resetProgressEvent = jest.fn()
+      const core = new Core()
+      core.run()
+      core.on('core:reset-progress', resetProgressEvent)
+      return core
+        .addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpg',
+          data: utils.dataURItoFile(sampleImageDataURI, {})
+        })
+        .then(() => {
+          return core
+            .addFile({
+              source: 'jest',
+              name: 'foo2.jpg',
+              type: 'image/jpg',
+              data: utils.dataURItoFile(sampleImageDataURI, {})
+            })
+        }).then(() => {
+          const fileId1 = Object.keys(core.state.files)[0]
+          const fileId2 = Object.keys(core.state.files)[1]
+          core.state.files[fileId1].progress.uploadStarted = new Date()
+          core.state.files[fileId2].progress.uploadStarted = new Date()
+
+          core.calculateProgress({
+            id: fileId1,
+            bytesUploaded: 12345,
+            bytesTotal: 17175
+          })
+
+          core.calculateProgress({
+            id: fileId2,
+            bytesUploaded: 10201,
+            bytesTotal: 17175
+          })
+
+          core.calculateTotalProgress()
+
+          expect(core.state.totalProgress).toEqual(65)
+
+          core.resetProgress()
+
+          expect(core.state.files[fileId1].progress).toEqual({
+            percentage: 0,
+            bytesUploaded: 0,
+            bytesTotal: 17175,
+            uploadComplete: false,
+            uploadStarted: false
+          })
+          expect(core.state.files[fileId2].progress).toEqual({
+            percentage: 0,
+            bytesUploaded: 0,
+            bytesTotal: 17175,
+            uploadComplete: false,
+            uploadStarted: false
+          })
+          expect(core.state.totalProgress).toEqual(0)
+          expect(resetProgressEvent.mock.calls.length).toEqual(1)
+        })
+    })
   })
 
   describe('checkRestrictions', () => {
