@@ -8,6 +8,7 @@
     "add-module-exports",
     "transform-object-assign",
     "es6-promise",
-    "yo-yoify"
+    "yo-yoify",
+    "transform-object-rest-spread"
   ]
 }

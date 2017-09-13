@@ -6,6 +6,8 @@ const cuid = require('cuid')
 const throttle = require('lodash.throttle')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
+const Store = require('./Store')
+const actions = require('./Actions')
 // const en_US = require('../locales/en_US')
 // const deepFreeze = require('deep-freeze-strict')
 
@@ -68,7 +70,6 @@ class Uppy {
     this.translator = new Translator({locale: this.opts.locale})
     this.i18n = this.translator.translate.bind(this.translator)
     this.getState = this.getState.bind(this)
-    this.updateMeta = this.updateMeta.bind(this)
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
     this.info = this.info.bind(this)
@@ -88,20 +89,6 @@ class Uppy {
     this.uploaders = []
     this.postProcessors = []
 
-    this.state = {
-      files: {},
-      capabilities: {
-        resumableUploads: false
-      },
-      totalProgress: 0,
-      meta: Object.assign({}, this.opts.meta),
-      info: {
-        isHidden: true,
-        type: 'info',
-        message: ''
-      }
-    }
-
     // for debugging and testing
     this.updateNum = 0
     if (this.opts.debug) {
@@ -110,29 +97,27 @@ class Uppy {
       // global.UppyAddFile = this.addFile.bind(this)
       global._uppy = this
     }
+
+    // setup a redux store
+    this.store = Store.init()
+    // if there's global metadata, add it
+    if (this.opts.meta) {
+      this.store.dispatch(actions.setMeta(this.opts.meta))
+    }
   }
 
-  /**
-   * Iterate on all plugins and run `update` on them. Called each time state changes
-   *
-   */
-  updateAll (state) {
-    this.iteratePlugins(plugin => {
-      plugin.update(state)
+  getActions () {
+    return actions
+  }
+
+  dispatch (action) {
+    this.store.dispatch(action)
+  }
+
+  subscribeToStore (fn) {
+    this.store.subscribe(() => {
+      fn(this.store.getState())
     })
-  }
-
-  /**
-   * Updates state
-   *
-   * @param {newState} object
-   */
-  setState (stateUpdate) {
-    const newState = Object.assign({}, this.state, stateUpdate)
-    this.emit('core:state-update', this.state, newState, stateUpdate)
-
-    this.state = newState
-    this.updateAll(this.state)
   }
 
   /**
@@ -142,7 +127,7 @@ class Uppy {
   getState () {
     // use deepFreeze for debugging
     // return deepFreeze(this.state)
-    return this.state
+    return this.store.getState()
   }
 
   reset () {
@@ -208,22 +193,6 @@ class Uppy {
     if (i !== -1) {
       this.uploaders.splice(i, 1)
     }
-  }
-
-  setMeta (data) {
-    const newMeta = Object.assign({}, this.getState().meta, data)
-    this.log('Adding metadata:')
-    this.log(data)
-    this.setState({meta: newMeta})
-  }
-
-  updateMeta (data, fileID) {
-    const updatedFiles = Object.assign({}, this.getState().files)
-    const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
-    updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
-      meta: newMeta
-    })
-    this.setState({files: updatedFiles})
   }
 
   checkRestrictions (checkMinNumberOfFiles, file, fileType) {
