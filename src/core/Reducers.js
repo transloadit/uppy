@@ -1,4 +1,4 @@
-import { SET_META, SET_FILE_META, CUSTOM_PLUGIN_DATA } from './Actions'
+import { SET_META, SET_FILE_META, CUSTOM_PLUGIN_DATA, SET_CAPABILITIES } from './Actions'
 
 const setMeta = (state, action) => {
   return {
@@ -28,6 +28,13 @@ const customPluginData = (state, action) => {
   }
 }
 
+const setCapabilities = (state, action) => {
+  return {
+    ...state,
+    capabilities: Object.assign(state.capabilities, action.data)
+  }
+}
+
 function reducers (
     state = {},
     action
@@ -39,6 +46,8 @@ function reducers (
       return setFileMeta(state, action)
     case CUSTOM_PLUGIN_DATA:
       return customPluginData(state, action)
+    case SET_CAPABILITIES:
+      return setCapabilities(state, action)
     default:
       return state
   }

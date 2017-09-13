@@ -26,8 +26,9 @@ module.exports = class Plugin {
     this.install = this.install.bind(this)
     this.uninstall = this.uninstall.bind(this)
     this.update = this.update.bind(this)
-    console.log(this)
-    this.core.subscribeToStore(this.update)
+    if (this.core) {
+      this.core.subscribeToStore(this.update)
+    }
   }
 
   update (state) {
@@ -80,8 +81,8 @@ module.exports = class Plugin {
       // TODO: is instantiating the plugin really the way to roll
       // just to get the plugin name?
       const Target = target
-      const targetPluginName = new Target().id
 
+      const targetPluginName = new Target().id
       this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
 
       const targetPlugin = this.core.getPlugin(targetPluginName)

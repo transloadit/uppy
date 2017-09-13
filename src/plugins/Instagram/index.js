@@ -4,6 +4,7 @@ const Plugin = require('../Plugin')
 const Provider = require('../../uppy-base/src/plugins/Provider')
 
 const View = require('../../generic-provider-views/index')
+import { customPluginData } from '../../core/Actions'
 
 module.exports = class Instagram extends Plugin {
   constructor (core, opts) {
@@ -47,20 +48,16 @@ module.exports = class Instagram extends Plugin {
     this.view = new View(this, {
       viewType: 'grid'
     })
-    // Set default state for Google Drive
-    this.core.setState({
-      // writing out the key explicitly for readability the key used to store
-      // the plugin state must be equal to this.stateId.
-      instagram: {
-        authenticated: false,
-        files: [],
-        folders: [],
-        directories: [],
-        activeRow: -1,
-        filterInput: '',
-        isSearchVisible: false
-      }
-    })
+
+    this.core.dispatch(customPluginData(this.id, {
+      authenticated: false,
+      files: [],
+      folders: [],
+      directories: [],
+      activeRow: -1,
+      filterInput: '',
+      isSearchVisible: false
+    }))
 
     const target = this.opts.target
     const plugin = this

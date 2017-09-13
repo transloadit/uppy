@@ -610,7 +610,6 @@ class Uppy {
 
     this.plugins[plugin.type].push(plugin)
     plugin.install()
-
     return this
   }
 
