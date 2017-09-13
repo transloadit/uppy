@@ -426,13 +426,13 @@ module.exports = class DashboardUI extends Plugin {
 
     if (!this.opts.disableStatusBar) {
       this.core.use(StatusBar, {
-        target: this.constructor
+        target: this
       })
     }
 
     if (!this.opts.disableInformer) {
       this.core.use(Informer, {
-        target: this.constructor
+        target: this
       })
     }
 

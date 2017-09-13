@@ -76,23 +76,27 @@ module.exports = class Plugin {
       return targetElement
     }
 
-    if (typeof target === 'function') {
+    let targetPlugin
+    if (typeof target === 'object' && target instanceof Plugin) {
+      // Targeting a plugin *instance*
+      targetPlugin = target
+    } else if (typeof target === 'function') {
+      // Targeting a plugin type
       const Target = target
       // Find the target plugin instance.
-      let targetPlugin
       this.core.iteratePlugins((plugin) => {
         if (plugin instanceof Target) {
           targetPlugin = plugin
           return false
         }
       })
+    }
 
-      if (targetPlugin) {
-        const targetPluginName = targetPlugin.id
-        this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
-        this.target = targetPlugin
-        return targetPlugin.addTarget(plugin)
-      }
+    if (targetPlugin) {
+      const targetPluginName = targetPlugin.id
+      this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
+      this.target = targetPlugin
+      return targetPlugin.addTarget(plugin)
     }
 
     this.core.log(`Not installing ${callerPluginName}`)

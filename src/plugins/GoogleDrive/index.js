@@ -57,8 +57,9 @@ module.exports = class Google extends Plugin {
     })
 
     const target = this.opts.target
-    const plugin = this
-    this.target = this.mount(target, plugin)
+    if (target) {
+      this.mount(target, this)
+    }
   }
 
   uninstall () {
