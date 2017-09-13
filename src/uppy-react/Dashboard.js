@@ -41,8 +41,15 @@ class Dashboard extends React.Component {
 
 Dashboard.propTypes = {
   uppy: PropTypes.instanceOf(UppyCore).isRequired,
+  plugins: PropTypes.arrayOf(PropTypes.string),
   inline: PropTypes.bool,
-  plugins: PropTypes.arrayOf(PropTypes.string)
+  width: PropTypes.number,
+  height: PropTypes.number,
+  semiTransparent: PropTypes.bool,
+  showProgressDetails: PropTypes.bool,
+  hideUploadButton: PropTypes.bool,
+  note: PropTypes.string,
+  locale: PropTypes.object
 }
 Dashboard.defaultProps = {
   inline: true
