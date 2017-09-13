@@ -424,6 +424,12 @@ module.exports = class DashboardUI extends Plugin {
       this.mount(target, this)
     }
 
+    const plugins = this.opts.plugins || []
+    plugins.forEach((pluginID) => {
+      const plugin = this.core.getPlugin(pluginID)
+      if (plugin) plugin.mount(this, plugin)
+    })
+
     if (!this.opts.disableStatusBar) {
       this.core.use(StatusBar, {
         target: this
@@ -454,6 +460,12 @@ module.exports = class DashboardUI extends Plugin {
       // before the Dashboard was.
       if (statusBar) this.core.removePlugin(statusBar)
     }
+
+    const plugins = this.opts.plugins || []
+    plugins.forEach((pluginID) => {
+      const plugin = this.core.getPlugin(pluginID)
+      if (plugin) plugin.unmount()
+    })
 
     this.unmount()
     this.removeActions()

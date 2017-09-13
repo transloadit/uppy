@@ -23,7 +23,6 @@ module.exports = class App extends React.Component {
   componentWillMount () {
     this.uppy = new Uppy({ autoProceed: false })
       .use(Tus10, { endpoint: 'https://master.tus.io/files' })
-      .use(DashboardPlugin, { inline: true })
       .use(DragDropPlugin, {
         locale: {
           strings: {
@@ -33,7 +32,7 @@ module.exports = class App extends React.Component {
         }
       })
       .use(ProgressBarPlugin)
-      .use(GoogleDrive, { target: DashboardPlugin, host: 'https://server.uppy.io' })
+      .use(GoogleDrive, { host: 'https://server.uppy.io' })
       .run()
 
     this.uppy2 = new Uppy({ autoProceed: false })
@@ -73,7 +72,10 @@ module.exports = class App extends React.Component {
           Show Dashboard
         </label>
         {showInlineDashboard && (
-          <Dashboard uppy={this.uppy} />
+          <Dashboard
+            uppy={this.uppy}
+            plugins={['GoogleDrive']}
+          />
         )}
 
         <h2>Modal Dashboard</h2>
