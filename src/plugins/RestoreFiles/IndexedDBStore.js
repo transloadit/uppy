@@ -3,14 +3,16 @@ const indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexe
 const isSupported = !!indexedDB
 
 const DB_NAME = 'uppy-blobs'
-const DB_VERSION = 1
+const STORE_NAME = 'files' // maybe have a thumbnail store in the future
+const DB_VERSION = 2
 
-function connect (dbName, name) {
+function connect (dbName) {
   const request = indexedDB.open(dbName, DB_VERSION)
   return new Promise((resolve, reject) => {
     request.onupgradeneeded = (event) => {
       const db = event.target.result
-      const store = db.createObjectStore(name, { keyPath: 'id' })
+      const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' })
+      store.createIndex('store', 'store', { unique: false })
       store.transaction.oncomplete = () => {
         resolve(db)
       }
@@ -41,7 +43,11 @@ class IndexedDBStore {
     }, opts)
 
     this.name = this.opts.storeName
-    this.ready = connect(this.opts.dbName, this.opts.storeName)
+    this.ready = connect(this.opts.dbName)
+  }
+
+  key (fileID) {
+    return `${this.name}!${fileID}`
   }
 
   /**
@@ -49,13 +55,18 @@ class IndexedDBStore {
    */
   list () {
     return this.ready.then((db) => {
-      const transaction = db.transaction([this.name], 'readonly')
-      const request = transaction.objectStore(this.name).getAll()
+      const transaction = db.transaction([STORE_NAME], 'readonly')
+      const store = transaction.objectStore(STORE_NAME)
+      const request = store.index('store')
+        .getAll(IDBKeyRange.only(this.name))
       return waitForRequest(request)
     }).then((files) => {
       const result = {}
       files.forEach((file) => {
-        result[file.id] = file
+        result[file.fileID] = {
+          id: file.fileID,
+          data: file.data
+        }
       })
       return result
     })
@@ -66,10 +77,14 @@ class IndexedDBStore {
    */
   get (fileID) {
     return this.ready.then((db) => {
-      const transaction = db.transaction([this.name], 'readonly')
-      const request = transaction.objectStore(this.name).get(fileID)
+      const transaction = db.transaction([STORE_NAME], 'readonly')
+      const request = transaction.objectStore(STORE_NAME)
+        .get(this.key(fileID))
       return waitForRequest(request)
-    }).then((result) => result.data)
+    }).then((result) => ({
+      id: result.data.fileID,
+      data: result.data.data
+    }))
   }
 
   /**
@@ -79,8 +94,10 @@ class IndexedDBStore {
    */
   getSize () {
     return this.ready.then((db) => {
-      const transaction = db.transaction([this.name], 'readonly')
-      const request = transaction.objectStore(this.name).openCursor()
+      const transaction = db.transaction([STORE_NAME], 'readonly')
+      const store = transaction.objectStore(STORE_NAME)
+      const request = store.index('store')
+        .openCursor(IDBKeyRange.only(this.name))
       return new Promise((resolve, reject) => {
         let size = 0
         request.onsuccess = (event) => {
@@ -112,9 +129,11 @@ class IndexedDBStore {
       }
       return this.ready
     }).then((db) => {
-      const transaction = db.transaction([this.name], 'readwrite')
-      const request = transaction.objectStore(this.name).add({
-        id: file.id,
+      const transaction = db.transaction([STORE_NAME], 'readwrite')
+      const request = transaction.objectStore(STORE_NAME).add({
+        id: this.key(file.id),
+        fileID: file.id,
+        store: this.name,
         data: file.data
       })
       return waitForRequest(request)
@@ -126,8 +145,9 @@ class IndexedDBStore {
    */
   delete (fileID) {
     return this.ready.then((db) => {
-      const transaction = db.transaction([this.name], 'readwrite')
-      const request = transaction.objectStore(this.name).delete(fileID)
+      const transaction = db.transaction([STORE_NAME], 'readwrite')
+      const request = transaction.objectStore(STORE_NAME)
+        .delete(this.key(fileID))
       return waitForRequest(request)
     })
   }
