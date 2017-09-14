@@ -69,7 +69,7 @@ module.exports = function Dashboard (props) {
               type="button"
               aria-label="${props.i18n('closeModal')}"
               title="${props.i18n('closeModal')}"
-              onclick=${props.hideModal}>${closeIcon()}</button>
+              onclick=${props.closeModal}>${closeIcon()}</button>
 
       <div class="UppyDashboard-innerWrap">
 

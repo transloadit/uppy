@@ -1,0 +1,19 @@
+import Plugin from '../../src/plugins/Plugin.js'
+
+export default class InvalidPluginWithoutType extends Plugin {
+  constructor (core, opts) {
+    super(core, opts)
+    this.id = 'InvalidPluginWithoutType'
+    this.name = this.constructor.name
+  }
+
+  run (results) {
+    this.core.log({
+      class: this.constructor.name,
+      method: 'run',
+      results: results
+    })
+
+    return Promise.resolve('success')
+  }
+}

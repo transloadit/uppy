@@ -71,7 +71,10 @@ class Uppy {
     this.updateMeta = this.updateMeta.bind(this)
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
+    this.info = this.info.bind(this)
+    this.hideInfo = this.hideInfo.bind(this)
     this.addFile = this.addFile.bind(this)
+    this.removeFile = this.removeFile.bind(this)
     this.calculateProgress = this.calculateProgress.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
 
@@ -115,10 +118,8 @@ class Uppy {
    *
    */
   updateAll (state) {
-    Object.keys(this.plugins).forEach((pluginType) => {
-      this.plugins[pluginType].forEach((plugin) => {
-        plugin.update(state)
-      })
+    this.iteratePlugins(plugin => {
+      plugin.update(state)
     })
   }
 
@@ -167,11 +168,14 @@ class Uppy {
       updatedFile.progress = Object.assign({}, updatedFile.progress, defaultProgress)
       updatedFiles[fileID] = updatedFile
     })
-    console.log(updatedFiles)
+
     this.setState({
       files: updatedFiles,
       totalProgress: 0
     })
+
+    // TODO Document on the website
+    this.emit('core:reset-progress')
   }
 
   addPreProcessor (fn) {
@@ -265,7 +269,12 @@ class Uppy {
   }
 
   addFile (file) {
-    return this.opts.onBeforeFileAdded(file, this.getState().files).catch((err) => {
+    // Wrap this in a Promise `.then()` handler so errors will reject the Promise
+    // instead of throwing.
+    const beforeFileAdded = Promise.resolve()
+      .then(() => this.opts.onBeforeFileAdded(file, this.getState().files))
+
+    return beforeFileAdded.catch((err) => {
       this.info(err, 'error', 5000)
       return Promise.reject(`onBeforeFileAdded: ${err}`)
     }).then(() => {
@@ -421,7 +430,7 @@ class Uppy {
       progressAll = progressAll + files[file].progress.percentage
     })
 
-    const totalProgress = Math.floor((progressAll * 100 / progressMax).toFixed(2))
+    const totalProgress = progressMax === 0 ? 0 : Math.floor((progressAll * 100 / progressMax).toFixed(2))
 
     this.setState({
       totalProgress: totalProgress
@@ -457,7 +466,12 @@ class Uppy {
       this.setState({files: updatedFiles})
 
       const fileName = this.state.files[fileID].name
-      this.info({ message: `Failed to upload: ${fileName}`, details: error }, 'error', 5000)
+      let message = `Failed to upload ${fileName}`
+      if (typeof error === 'object' && error.message) {
+        message = { message: message, details: error.message }
+        this.info({ message: message, details: error.message }, 'error', 5000)
+      }
+      this.info(message, 'error', 5000)
     })
 
     this.on('core:upload-retry', (fileID) => {
@@ -537,13 +551,6 @@ class Uppy {
       })
 
       this.calculateTotalProgress()
-
-      if (this.getState().totalProgress === 100) {
-        const completeFiles = Object.keys(updatedFiles).filter((file) => {
-          return updatedFiles[file].progress.uploadComplete
-        })
-        this.emit('core:upload-complete', completeFiles.length)
-      }
     })
 
     this.on('core:update-meta', (data, fileID) => {
@@ -594,14 +601,17 @@ class Uppy {
 
     // show informer if offline
     if (typeof window !== 'undefined') {
-      window.addEventListener('online', () => this.isOnline(true))
-      window.addEventListener('offline', () => this.isOnline(false))
-      setTimeout(() => this.isOnline(), 3000)
+      window.addEventListener('online', () => this.updateOnlineStatus())
+      window.addEventListener('offline', () => this.updateOnlineStatus())
+      setTimeout(() => this.updateOnlineStatus(), 3000)
     }
   }
 
-  isOnline (status) {
-    const online = status || window.navigator.onLine
+  updateOnlineStatus () {
+    const online =
+      typeof window.navigator.onLine !== 'undefined'
+        ? window.navigator.onLine
+        : true
     if (!online) {
       this.emit('is-offline')
       this.info('No internet connection', 'error', 0)
@@ -616,13 +626,13 @@ class Uppy {
     }
   }
 
-/**
- * Registers a plugin with Core
- *
- * @param {Class} Plugin object
- * @param {Object} options object that will be passed to Plugin later
- * @return {Object} self for chaining
- */
+  /**
+   * Registers a plugin with Core
+   *
+   * @param {Class} Plugin object
+   * @param {Object} options object that will be passed to Plugin later
+   * @return {Object} self for chaining
+   */
   use (Plugin, opts) {
     if (typeof Plugin !== 'function') {
       let msg = `Expected a plugin class, but got ${Plugin === null ? 'null' : typeof Plugin}.` +
@@ -632,21 +642,21 @@ class Uppy {
 
     // Instantiate
     const plugin = new Plugin(this, opts)
-    const pluginName = plugin.id
+    const pluginId = plugin.id
     this.plugins[plugin.type] = this.plugins[plugin.type] || []
 
-    if (!pluginName) {
-      throw new Error('Your plugin must have a name')
+    if (!pluginId) {
+      throw new Error('Your plugin must have an id')
     }
 
     if (!plugin.type) {
       throw new Error('Your plugin must have a type')
     }
 
-    let existsPluginAlready = this.getPlugin(pluginName)
+    let existsPluginAlready = this.getPlugin(pluginId)
     if (existsPluginAlready) {
-      let msg = `Already found a plugin named '${existsPluginAlready.name}'.
-        Tried to use: '${pluginName}'.
+      let msg = `Already found a plugin named '${existsPluginAlready.id}'.
+        Tried to use: '${pluginId}'.
         Uppy is currently limited to running one of every plugin.
         Share your use case with us over at
         https://github.com/transloadit/uppy/issues/
@@ -660,11 +670,11 @@ class Uppy {
     return this
   }
 
-/**
- * Find one Plugin by name
- *
- * @param string name description
- */
+  /**
+   * Find one Plugin by name
+   *
+   * @param string name description
+   */
   getPlugin (name) {
     let foundPlugin = false
     this.iteratePlugins((plugin) => {
@@ -677,11 +687,11 @@ class Uppy {
     return foundPlugin
   }
 
-/**
- * Iterate through all `use`d plugins
- *
- * @param function method description
- */
+  /**
+   * Iterate through all `use`d plugins
+   *
+   * @param function method description
+   */
   iteratePlugins (method) {
     Object.keys(this.plugins).forEach((pluginType) => {
       this.plugins[pluginType].forEach(method)
@@ -749,19 +759,11 @@ class Uppy {
     }
 
     // hide the informer after `duration` milliseconds
-    this.infoTimeoutID = setTimeout(() => {
-      const newInformer = Object.assign({}, this.state.info, {
-        isHidden: true
-      })
-      this.setState({
-        info: newInformer
-      })
-      this.emit('core:info-hidden')
-    }, duration)
+    this.infoTimeoutID = setTimeout(this.hideInfo, duration)
   }
 
   hideInfo () {
-    const newInfo = Object.assign({}, this.core.state.info, {
+    const newInfo = Object.assign({}, this.state.info, {
       isHidden: true
     })
     this.setState({
@@ -802,10 +804,10 @@ class Uppy {
     return this.socket
   }
 
-/**
- * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
- *
- */
+  /**
+   * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
+   *
+   */
   run () {
     this.log('Core is run, initializing actions...')
 
@@ -922,7 +924,6 @@ class Uppy {
     })
 
     return lastStep.then(() => {
-      // return number of uploaded files
       this.emit('core:success', fileIDs)
 
       this.removeUpload(uploadID)
@@ -940,7 +941,10 @@ class Uppy {
       return Promise.reject('Minimum number of files has not been reached')
     }
 
-    return this.opts.onBeforeUpload(this.state.files).catch((err) => {
+    const beforeUpload = Promise.resolve()
+      .then(() => this.opts.onBeforeUpload(this.state.files))
+
+    return beforeUpload.catch((err) => {
       this.info(err, 'error', 5000)
       return Promise.reject(`onBeforeUpload: ${err}`)
     }).then(() => {
@@ -968,7 +972,5 @@ class Uppy {
 }
 
 module.exports = function (opts) {
-  if (!(this instanceof Uppy)) {
-    return new Uppy(opts)
-  }
+  return new Uppy(opts)
 }

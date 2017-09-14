@@ -46,6 +46,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] possibility to work on already uploaded / in progress files #112, #113
 - [ ] possibility to edit/delete more than one file at once #118, #97
 - [ ] optimize problematic filenames #72
+- [ ] an uploader plugin to receive files in a callback instead of uploading them
+- [ ] consider iframe / more security for Transloadit/Uppy integration widget
 
 ## 1.0 Goals
 
@@ -54,7 +56,7 @@ What we need to do to release Uppy 1.0
 - [x] feature: restrictions: by size, number of files, file type
 - [x] feature: beta file recovering after closed tab / browser crash
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
-- [ ] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
+- [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
 - [ ] feature: Uppy should work well with React/Redux and React Native
 - [ ] feature: preset for Transloadit that mimics jQuery SDK
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
@@ -72,33 +74,62 @@ What we need to do to release Uppy 1.0
 - [ ] docs: on using plugins, all options, list of plugins, i18n
 - [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
 - [ ] uppy-server: security audit
+- [ ] uppy-server: storing tokens in user’s browser only
+- [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
+
 
 ## 0.20.0
 
 - [ ] webcam: look into simplifying / improving webcam plugin, only showing the tab when webcam is available (@arturi, @goto-bus-stop)
-- [ ] provider: improve UI: add icons for file types? (@arturi)
+- [ ] provider: improve UI, add icons for file types? (@arturi)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
+- [ ] core: Uppy ID per instance
+- [ ] core: allow setting custom `id` for plugins: https://github.com/transloadit/uppy/pull/328#issuecomment-328242214 (@arturi)
+- [ ] core: move `setPluginState` to Plugin class ? (@goto-bus-stop)
+- [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
+- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
+- [ ] Redux PR (@arturi, @goto-bus-stop)
+- [ ] GoldenRetriever: Ability to clear upload history or set expiry date #324 (@arturi)
+- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi @goto-bus-stop)
 
 # next
 
 ## 0.19.0
 
-To be released: 2017-09-01.
+To be released: 2017-09-11.
 Theme: React and Retry
 
-- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] core: add error in file progress state? error UI, question mark button, `core:error` (@arturi)
-- [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there (@arturi @goto-bus-stop)
-- [ ] core: calling `upload` immediately after `addFile` does not upload all files (#249 @goto-bus-stop)
-- [ ] core: React / Redux PRs (@arturi @goto-bus-stop)
-- [ ] transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (@goto-bus-stop)
+- [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (@arturi @goto-bus-stop)
+- [ ] core: improve and merge in the React PR (@arturi @goto-bus-stop)
 - [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
-- [ ] dashboard: cancel button for any kind of uploads? currently resume-only for tus (@arturi)
-- [ ] informer: support “explanations”, a (?) button that shows more info on hover / click
+- [ ] core: remove unused bootstrap styles (#329 / @arturi)
+- [x] core: experiment with yo-yo --> preact and picodom (#297 / @arturi)
+- [x] dashboard: fix FileItem source icon position and copy (@arturi)
+- [x] dashboard: expose and document the show/hide/isOpen API (@arturi)
+- [x] dashboard: allow multiple `triggers` of the same class `.open-uppy` (@arturi)
+- [x] core: Handle sync returns and throws in possibly-async function options (#315 / @goto-bus-stop)
+- [x] core: switch to Jest tests, add more tests for Core and Utils (@richardwillars)
+
+## 0.18.1
+
+Released: 2017-09-05
+Note: this version was released as a `@next` npm tag to unblock some users.
+
 - [x] core: gradually resize image previews #275 (@goto-bus-stop)
+- [x] informer: support “explanations”, a (?) button that shows more info on hover / click (#292 / @arturi)
+- [x] fix webcam video recording (@goto-bus-stop)
+- [x] bundle: add missing plugins (s3, statusbar, restoreFiles) to unpkg bundle (#301 / @goto-bus-stop)
+- [x] xhrupload: Use error messages from the endpoint (#305 / @goto-bus-stop)
+- [x] dashboard: prevent submitting outer form when pressing enter key while editing metadata (#306 / @goto-bus-stop)
+- [x] dashboard: save metadata edits when pressing enter key (#308 / @arturi)
+- [x] transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (#280 / @goto-bus-stop)
+- [x] transloadit: add `alwaysRunAssembly` option to run assemblies when no files are uploaded (#290 / @goto-bus-stop)
+- [x] core: use `iteratePlugins` inside `updateAll` (#312 / @richardwillars)
+- [x] core: improve error when plugin does not have ID (#309 / @richardwillars)
+- [x] tus: Clear stored `uploadUrl` on `uppy.resetProgress()` call (#314 / @goto-bus-stop)
 - [x] website: simplify examples and code samples, prevent sidebar subheading links anywhere but in docs (@arturi)
 - [x] website: group plugin docs together in the sidebar (@arturi)
 - [x] server: option to define valid upload urls (@ifedapoolarewaju)

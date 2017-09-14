@@ -1,5 +1,6 @@
 const Plugin = require('./Plugin')
 const tus = require('tus-js-client')
+const settle = require('promise-settle')
 const UppySocket = require('../core/UppySocket')
 const Utils = require('../core/Utils')
 require('whatwg-fetch')
@@ -36,7 +37,6 @@ module.exports = class Tus10 extends Plugin {
     // set default options
     const defaultOptions = {
       resume: true,
-      allowPause: true,
       autoRetry: true,
       retryDelays: [0, 1000, 3000, 5000]
     }
@@ -46,6 +46,7 @@ module.exports = class Tus10 extends Plugin {
 
     this.handlePauseAll = this.handlePauseAll.bind(this)
     this.handleResumeAll = this.handleResumeAll.bind(this)
+    this.handleResetProgress = this.handleResetProgress.bind(this)
     this.handleUpload = this.handleUpload.bind(this)
   }
 
@@ -102,6 +103,20 @@ module.exports = class Tus10 extends Plugin {
 
   handleResumeAll () {
     this.pauseResume('resumeAll')
+  }
+
+  handleResetProgress () {
+    const files = Object.assign({}, this.core.state.files)
+    Object.keys(files).forEach((fileID) => {
+      // Only clone the file object if it has a Tus `uploadUrl` attached.
+      if (files[fileID].tus && files[fileID].tus.uploadUrl) {
+        const tusState = Object.assign({}, files[fileID].tus)
+        delete tusState.uploadUrl
+        files[fileID] = Object.assign({}, files[fileID], { tus: tusState })
+      }
+    })
+
+    this.core.setState({ files })
   }
 
   /**
@@ -322,16 +337,16 @@ module.exports = class Tus10 extends Plugin {
   }
 
   uploadFiles (files) {
-    files.forEach((file, index) => {
+    return settle(files.map((file, index) => {
       const current = parseInt(index, 10) + 1
       const total = files.length
 
       if (!file.isRemote) {
-        this.upload(file, current, total)
+        return this.upload(file, current, total)
       } else {
-        this.uploadRemote(file, current, total)
+        return this.uploadRemote(file, current, total)
       }
-    })
+    }))
   }
 
   handleUpload (fileIDs) {
@@ -343,16 +358,13 @@ module.exports = class Tus10 extends Plugin {
     this.core.log('Tus is uploading...')
     const filesToUpload = fileIDs.map((fileID) => this.core.getFile(fileID))
 
-    this.uploadFiles(filesToUpload)
-
-    return new Promise((resolve) => {
-      this.core.once('core:upload-complete', resolve)
-    })
+    return this.uploadFiles(filesToUpload)
   }
 
   actions () {
     this.core.on('core:pause-all', this.handlePauseAll)
     this.core.on('core:resume-all', this.handleResumeAll)
+    this.core.on('core:reset-progress', this.handleResetProgress)
 
     if (this.opts.autoRetry) {
       this.core.on('back-online', () => {

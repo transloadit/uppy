@@ -22,13 +22,14 @@ Each plugin can have any number of options (please see specific plugin for detai
 
 ### `target`
 
-Can be a `string` or an `object`, referencing another plugin. Consider the following example, where `DragDrop` plugin will be rendered into a `body` element:
+Can be a `string` CSS selector, a DOM element, or a Plugin class. Consider the following example, where `DragDrop` plugin will be rendered into a `body` element:
 
 ```js
 const Uppy = require('uppy/lib/core')
 const DragDrop = require('uppy/lib/plugins/DragDrop')
 const uppy = Uppy()
 uppy.use(DragDrop, {target: 'body'})
+// or: uppy.use(DragDrop, {target: document.body})
 ```
 
 While in this one, we are using the `Dashboard` plugin, which can act as a host target for other plugins:

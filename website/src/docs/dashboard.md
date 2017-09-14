@@ -21,12 +21,14 @@ Dashboard is a universal UI plugin for Uppy:
 uppy.use(Dashboard, {
   target: 'body',
   getMetaFromForm: true,
+  trigger: '#uppy-select-files',
   inline: false,
   width: 750,
   height: 550,
+  showProgressDetails: false,
+  hideUploadButton: false,
   note: false,
-  disableStatusBar: false,
-  disableInformer: false,
+  closeModalOnClickOutside: false,
   locale: {
     strings: {
       selectToUpload: 'Select files to upload',
@@ -60,7 +62,7 @@ By default Dashboard will be rendered as a modal, which is opened via clicking o
 
 ### `trigger: '#uppy-select-files'`
 
-String with a CSS selector for a button that will trigger opening Dashboard modal.
+String with a CSS selector for a button that will trigger opening Dashboard modal. Multiple buttons or links can be used, if it’s a class selector (`.uppy-choose`, for example).
 
 ### `width: 750`
 
@@ -89,3 +91,28 @@ See [general plugin options](/docs/plugins).
 ### `locale`
 
 See [general plugin options](/docs/plugins).
+
+## Methods
+
+### `openModal()`
+
+Shows the Dashboard modal. Use it like this:
+
+`uppy.getPlugin('Dashboard').openModal()`
+
+### `closeModal()`
+
+Hides the Dashboard modal. Use it like this:
+
+`uppy.getPlugin('Dashboard').closeModal()`
+
+### `isModalOpen()`
+
+Returns `true` if the Dashboard modal is open, `false` otherwise.
+
+```js
+const dashboard = uppy.getPlugin('Dashboard')
+if ( dashboard.isModalOpen() ) {
+  dashboard.closeModal()
+}
+```

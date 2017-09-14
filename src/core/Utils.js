@@ -107,17 +107,22 @@ function toArray (list) {
 }
 
 /**
- * Takes a fileName and turns it into fileID, by converting to lowercase,
- * removing extra characters and adding unix timestamp
+ * Takes a file object and turns it into fileID, by converting file.name to lowercase,
+ * removing extra characters and adding type, size and lastModified
  *
- * @param {String} fileName
+ * @param {Object} file
+ * @return {String} the fileID
  *
  */
 function generateFileID (file) {
-  let fileID = file.name.toLowerCase()
-  fileID = fileID.replace(/[^A-Z0-9]/ig, '')
-  fileID = fileID + file.data.lastModified
-  return fileID
+  // filter is needed to not join empty values with `-`
+  return [
+    'uppy',
+    file.name ? file.name.toLowerCase().replace(/[^A-Z0-9]/ig, '') : '',
+    file.type,
+    file.data.size,
+    file.data.lastModified
+  ].filter(val => val).join('-')
 }
 
 function extend (...objs) {
@@ -524,6 +529,23 @@ function findDOMElement (element) {
   }
 }
 
+/**
+ * Find one or more DOM elements.
+ *
+ * @param {string} element
+ * @return {Array|null}
+ */
+function findAllDOMElements (element) {
+  if (typeof element === 'string') {
+    const elements = [].slice.call(document.querySelectorAll(element))
+    return elements.length > 0 ? elements : null
+  }
+
+  if (typeof element === 'object' && isDOMElement(element)) {
+    return [element]
+  }
+}
+
 function getSocketHost (url) {
   // get the host domain
   var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\n]+@)?(?:www\.)?([^\n]+)/
@@ -575,6 +597,7 @@ module.exports = {
   copyToClipboard,
   prettyETA,
   findDOMElement,
+  findAllDOMElements,
   getSocketHost,
   emitSocketProgress
 }

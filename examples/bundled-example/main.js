@@ -52,6 +52,7 @@ const uppy = Uppy({
     replaceTargetContent: true,
     target: '.MyForm',
     hideUploadButton: false,
+    closeModalOnClickOutside: false,
     locale: {
       strings: {browse: 'browse'}
     }

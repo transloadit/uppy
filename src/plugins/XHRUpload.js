@@ -1,4 +1,5 @@
 const Plugin = require('./Plugin')
+const settle = require('promise-settle')
 const UppySocket = require('../core/UppySocket')
 const Utils = require('../core/Utils')
 
@@ -20,6 +21,9 @@ module.exports = class XHRUpload extends Plugin {
       headers: {},
       getResponseData (xhr) {
         return JSON.parse(xhr.response)
+      },
+      getResponseError (xhr) {
+        return new Error('Upload error')
       }
     }
 
@@ -88,8 +92,10 @@ module.exports = class XHRUpload extends Plugin {
 
           return resolve(file)
         } else {
-          this.core.emit('core:upload-error', file.id, xhr)
-          return reject('Upload error')
+          const error = opts.getResponseError(xhr) || new Error('Upload error')
+          error.request = xhr
+          this.core.emit('core:upload-error', file.id, error)
+          return reject(error)
         }
 
         // var upload = {}
@@ -103,7 +109,7 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.addEventListener('error', (ev) => {
         this.core.emit('core:upload-error', file.id)
-        return reject('Upload error')
+        return reject(new Error('Upload error'))
       })
 
       xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
@@ -171,16 +177,16 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   selectForUpload (files) {
-    files.forEach((file, i) => {
+    return settle(files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
       if (file.isRemote) {
-        this.uploadRemote(file, current, total)
+        return this.uploadRemote(file, current, total)
       } else {
-        this.upload(file, current, total)
+        return this.upload(file, current, total)
       }
-    })
+    }))
 
     //   if (this.opts.bundle) {
     //     uploaders.push(this.upload(files, 0, files.length))
@@ -203,11 +209,7 @@ module.exports = class XHRUpload extends Plugin {
       return this.core.state.files[fileID]
     }
 
-    this.selectForUpload(files)
-
-    return new Promise((resolve) => {
-      this.core.once('core:upload-complete', resolve)
-    })
+    return this.selectForUpload(files).then(() => null)
   }
 
   install () {

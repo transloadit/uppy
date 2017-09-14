@@ -95,14 +95,12 @@ module.exports = function fileItem (props) {
         }
       </h4>
       <div class="UppyDashboardItem-status">
-        <div class="UppyDashboardItem-statusSize">${file.data.size ? prettyBytes(file.data.size) : ''}</div>
-        ${file.source
-          ? html`<div class="UppyDashboardItem-sourceIcon">
+        ${file.data.size && html`<div class="UppyDashboardItem-statusSize">${prettyBytes(file.data.size)}</div>`}
+        ${file.source && html`<div class="UppyDashboardItem-sourceIcon">
             ${acquirers.map(acquirer => {
-              if (acquirer.id === file.source) return html`<span title="${acquirer.name}">${acquirer.icon()}</span>`
+              if (acquirer.id === file.source) return html`<span title="${props.i18n('fileSource')}: ${acquirer.name}">${acquirer.icon()}</span>`
             })}
           </div>`
-          : ''
         }
       </div>
       ${!uploadInProgressOrComplete
