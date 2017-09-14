@@ -5,6 +5,7 @@ const Provider = require('../../uppy-base/src/plugins/Provider')
 
 const View = require('../../generic-provider-views/index')
 const icons = require('./icons')
+import { customPluginData } from '../../core/Actions'
 
 module.exports = class Dropbox extends Plugin {
   constructor (core, opts) {
@@ -44,19 +45,15 @@ module.exports = class Dropbox extends Plugin {
   install () {
     this.view = new View(this)
     // Set default state
-    this.core.setState({
-      // writing out the key explicitly for readability the key used to store
-      // the plugin state must be equal to this.stateId.
-      dropbox: {
-        authenticated: false,
-        files: [],
-        folders: [],
-        directories: [],
-        activeRow: -1,
-        filterInput: '',
-        isSearchVisible: false
-      }
-    })
+    this.core.dispatch(customPluginData(this.id, {
+      authenticated: false,
+      files: [],
+      folders: [],
+      directories: [],
+      activeRow: -1,
+      filterInput: '',
+      isSearchVisible: false
+    }))
 
     const target = this.opts.target
     const plugin = this

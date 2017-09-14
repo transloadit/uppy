@@ -2,6 +2,7 @@ const yo = require('yo-yo')
 const nanoraf = require('nanoraf')
 const { findDOMElement } = require('../core/Utils')
 const getFormData = require('get-form-data')
+import { setMeta } from '../core/Actions'
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -21,10 +22,13 @@ module.exports = class Plugin {
     // clear everything inside the target selector
     this.opts.replaceTargetContent === this.opts.replaceTargetContent || true
 
-    this.update = this.update.bind(this)
     this.mount = this.mount.bind(this)
     this.install = this.install.bind(this)
     this.uninstall = this.uninstall.bind(this)
+    this.update = this.update.bind(this)
+    if (this.core) {
+      this.core.subscribeToStore(this.update)
+    }
   }
 
   update (state) {
@@ -61,7 +65,7 @@ module.exports = class Plugin {
       // attempt to extract meta from form element
       if (this.opts.getMetaFromForm && targetElement.nodeName === 'FORM') {
         const formMeta = getFormData(targetElement)
-        this.core.setMeta(formMeta)
+        this.core.dispatch(setMeta(formMeta))
       }
 
       // clear everything inside the target container
@@ -69,7 +73,7 @@ module.exports = class Plugin {
         targetElement.innerHTML = ''
       }
 
-      this.el = plugin.render(this.core.state)
+      this.el = plugin.render(this.core.getState())
       targetElement.appendChild(this.el)
 
       return targetElement
@@ -77,8 +81,8 @@ module.exports = class Plugin {
       // TODO: is instantiating the plugin really the way to roll
       // just to get the plugin name?
       const Target = target
-      const targetPluginName = new Target().id
 
+      const targetPluginName = new Target().id
       this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
 
       const targetPlugin = this.core.getPlugin(targetPluginName)

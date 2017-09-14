@@ -130,6 +130,7 @@ module.exports = class StatusBarUI extends Plugin {
   }
 
   install () {
+    console.log('statusbar', this)
     const target = this.opts.target
     const plugin = this
     this.target = this.mount(target, plugin)

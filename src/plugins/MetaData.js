@@ -1,4 +1,5 @@
 const Plugin = require('./Plugin')
+const actions = require('../core/Actions')
 
 /**
  * Meta Data
@@ -34,9 +35,7 @@ module.exports = class MetaData extends Plugin {
   addInitialMeta () {
     const metaFields = this.opts.fields
 
-    this.core.setState({
-      metaFields: metaFields
-    })
+    this.core.dispatch(actions.setMeta({ metaFields }))
 
     this.core.on('core:file-added', this.handleFileAdded)
   }
