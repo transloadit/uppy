@@ -227,16 +227,17 @@ class Uppy {
     this.setState({files: updatedFiles})
   }
 
-  checkRestrictions (checkMinNumberOfFiles, file, fileType) {
-    const {maxFileSize, maxNumberOfFiles, minNumberOfFiles, allowedFileTypes} = this.opts.restrictions
-
-    if (checkMinNumberOfFiles) {
-      if (Object.keys(this.state.files).length < minNumberOfFiles) {
-        this.info(`${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
-        return false
-      }
-      return true
+  checkMinNumberOfFiles () {
+    const {minNumberOfFiles} = this.opts.restrictions
+    if (Object.keys(this.state.files).length < minNumberOfFiles) {
+      this.info(`${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
+      return false
     }
+    return true
+  }
+
+  checkRestrictions (checkMinNumberOfFiles, file, fileType) {
+    const {maxFileSize, maxNumberOfFiles, allowedFileTypes} = this.opts.restrictions
 
     if (maxNumberOfFiles) {
       if (Object.keys(this.state.files).length + 1 > maxNumberOfFiles) {
@@ -912,7 +913,7 @@ class Uppy {
    * @return {Promise}
    */
   upload (forceUpload) {
-    const isMinNumberOfFilesReached = this.checkRestrictions(true)
+    const isMinNumberOfFilesReached = this.checkMinNumberOfFiles()
     if (!isMinNumberOfFilesReached) {
       return Promise.reject('Minimum number of files has not been reached')
     }
