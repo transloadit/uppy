@@ -230,7 +230,7 @@ class Uppy {
   checkRestrictions (checkMinNumberOfFiles, file, fileType) {
     const {maxFileSize, maxNumberOfFiles, minNumberOfFiles, allowedFileTypes} = this.opts.restrictions
 
-    if (checkMinNumberOfFiles && minNumberOfFiles) {
+    if (checkMinNumberOfFiles) {
       if (Object.keys(this.state.files).length < minNumberOfFiles) {
         this.info(`${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
         return false
