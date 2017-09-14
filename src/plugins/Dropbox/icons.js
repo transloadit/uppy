@@ -2,11 +2,11 @@ const html = require('yo-yo')
 
 module.exports = {
   folder: () =>
-    html`<svg class="UppyIcon" style="width:16px;margin-right:3px" viewBox="0 0 276.157 276.157">
+    html`<svg aria-hidden="true" class="UppyIcon" style="width:16px;margin-right:3px" viewBox="0 0 276.157 276.157">
       <path d="M273.08 101.378c-3.3-4.65-8.86-7.32-15.254-7.32h-24.34V67.59c0-10.2-8.3-18.5-18.5-18.5h-85.322c-3.63 0-9.295-2.875-11.436-5.805l-6.386-8.735c-4.982-6.814-15.104-11.954-23.546-11.954H58.73c-9.292 0-18.638 6.608-21.737 15.372l-2.033 5.752c-.958 2.71-4.72 5.37-7.596 5.37H18.5C8.3 49.09 0 57.39 0 67.59v167.07c0 .886.16 1.73.443 2.52.152 3.306 1.18 6.424 3.053 9.064 3.3 4.652 8.86 7.32 15.255 7.32h188.487c11.395 0 23.27-8.425 27.035-19.18l40.677-116.188c2.11-6.035 1.43-12.164-1.87-16.816zM18.5 64.088h8.864c9.295 0 18.64-6.607 21.738-15.37l2.032-5.75c.96-2.712 4.722-5.373 7.597-5.373h29.565c3.63 0 9.295 2.876 11.437 5.806l6.386 8.735c4.982 6.815 15.104 11.954 23.546 11.954h85.322c1.898 0 3.5 1.602 3.5 3.5v26.47H69.34c-11.395 0-23.27 8.423-27.035 19.178L15 191.23V67.59c0-1.898 1.603-3.5 3.5-3.5zm242.29 49.15l-40.676 116.188c-1.674 4.78-7.812 9.135-12.877 9.135H18.75c-1.447 0-2.576-.372-3.02-.997-.442-.625-.422-1.814.057-3.18l40.677-116.19c1.674-4.78 7.812-9.134 12.877-9.134h188.487c1.448 0 2.577.372 3.02.997.443.625.423 1.814-.056 3.18z"/>
   </svg>`,
   music: () =>
-    html`<svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"
+    html`<svg aria-hidden="true" class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"
     preserveAspectRatio="xMidYMid meet">
     <g transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)"
     fill="#525050" stroke="none">
@@ -40,7 +40,7 @@ module.exports = {
     </svg>`,
   page_white_picture: () =>
     html`
-    <svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 36.000000"
+    <svg aria-hidden="true" class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 36.000000"
     preserveAspectRatio="xMidYMid meet">
     <g transform="translate(0.000000,36.000000) scale(0.100000,-0.100000)"
     fill="#565555" stroke="none">
@@ -74,7 +74,7 @@ module.exports = {
     </g>
     </svg>`,
   word: () =>
-    html`<svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"
+    html`<svg aria-hidden="true" class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"
     preserveAspectRatio="xMidYMid meet">
     <g transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)"
     fill="#423d3d" stroke="none">
@@ -109,7 +109,7 @@ module.exports = {
     </g>
     </svg>`,
   powerpoint: () =>
-    html`<svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 16.000000 16.000000"
+    html`<svg aria-hidden="true" class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 16.000000 16.000000"
     preserveAspectRatio="xMidYMid meet">
     <g transform="translate(0.000000,144.000000) scale(0.100000,-0.100000)"
     fill="#494747" stroke="none">
@@ -170,7 +170,7 @@ module.exports = {
     </g>
     </svg>`,
   page_white: () =>
-    html`<svg class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"
+    html`<svg aria-hidden="true" class="UppyIcon" width="16.000000pt" height="16.000000pt" viewBox="0 0 48.000000 48.000000"
     preserveAspectRatio="xMidYMid meet">
     <g transform="translate(0.000000,48.000000) scale(0.100000,-0.100000)"
     fill="#000000" stroke="none">

@@ -202,7 +202,6 @@ module.exports = class DashboardUI extends Plugin {
   initEvents () {
     // Modal open button
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
-    console.log(showModalTrigger)
     if (!this.opts.inline && showModalTrigger) {
       showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.openModal))
     }
