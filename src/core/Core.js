@@ -72,6 +72,7 @@ class Uppy {
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
     this.info = this.info.bind(this)
+    this.hideInfo = this.hideInfo.bind(this)
     this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
     this.calculateProgress = this.calculateProgress.bind(this)
@@ -423,7 +424,7 @@ class Uppy {
       progressAll = progressAll + files[file].progress.percentage
     })
 
-    const totalProgress = Math.floor((progressAll * 100 / progressMax).toFixed(2))
+    const totalProgress = progressMax === 0 ? 0 : Math.floor((progressAll * 100 / progressMax).toFixed(2))
 
     this.setState({
       totalProgress: totalProgress
@@ -734,15 +735,7 @@ class Uppy {
     }
 
     // hide the informer after `duration` milliseconds
-    this.infoTimeoutID = setTimeout(() => {
-      const newInformer = Object.assign({}, this.state.info, {
-        isHidden: true
-      })
-      this.setState({
-        info: newInformer
-      })
-      this.emit('core:info-hidden')
-    }, duration)
+    this.infoTimeoutID = setTimeout(this.hideInfo, duration)
   }
 
   hideInfo () {
