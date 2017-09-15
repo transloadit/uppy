@@ -34,6 +34,7 @@ class Uppy {
 
     // set default options
     const defaultOptions = {
+      id: 'uppy',
       autoProceed: true,
       debug: false,
       restrictions: {
@@ -623,6 +624,10 @@ class Uppy {
         this.wasOffline = false
       }
     }
+  }
+
+  getID () {
+    return this.opts.id
   }
 
   /**
