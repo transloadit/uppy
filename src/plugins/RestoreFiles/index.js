@@ -29,7 +29,9 @@ module.exports = class RestoreFiles extends Plugin {
     if (this.opts.serviceWorker) {
       this.ServiceWorkerStore = new ServiceWorkerStore(core, { storeName: core.getID() })
     }
-    this.IndexedDBStore = new IndexedDBStore(core, { storeName: core.getID() })
+    this.IndexedDBStore = new IndexedDBStore(core, Object.assign({},
+      opts.indexedDB || {},
+      { storeName: core.getID() }))
 
     this.saveFilesStateToLocalStorage = this.saveFilesStateToLocalStorage.bind(this)
     this.loadFilesStateFromLocalStorage = this.loadFilesStateFromLocalStorage.bind(this)
