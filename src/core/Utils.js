@@ -487,6 +487,20 @@ function _emitSocketProgress (uploader, progressData, file) {
 
 const emitSocketProgress = throttle(_emitSocketProgress, 300, {leading: true, trailing: true})
 
+function rejectIfAllRejected (promiseArray) {
+  const rejections = []
+  promiseArray.forEach((result) => {
+    if (!result.isFulfilled()) {
+      rejections.push(result.reason())
+    }
+  })
+
+  if (rejections.length > 0) {
+    return Promise.reject(rejections[0])
+  }
+  return promiseArray
+}
+
 module.exports = {
   generateFileID,
   toArray,
@@ -512,5 +526,6 @@ module.exports = {
   findDOMElement,
   findAllDOMElements,
   getSocketHost,
-  emitSocketProgress
+  emitSocketProgress,
+  rejectIfAllRejected
 }

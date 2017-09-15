@@ -1,7 +1,11 @@
 const Plugin = require('./Plugin')
 const settle = require('promise-settle')
 const UppySocket = require('../core/UppySocket')
-const Utils = require('../core/Utils')
+const {
+  emitSocketProgress,
+  getSocketHost,
+  rejectIfAllRejected
+} = require('../core/Utils')
 
 module.exports = class XHRUpload extends Plugin {
   constructor (core, opts) {
@@ -161,10 +165,10 @@ module.exports = class XHRUpload extends Plugin {
 
         res.json().then((data) => {
           const token = data.token
-          const host = Utils.getSocketHost(file.remote.host)
+          const host = getSocketHost(file.remote.host)
           const socket = new UppySocket({ target: `${host}/api/${token}` })
 
-          socket.on('progress', (progressData) => Utils.emitSocketProgress(this, progressData, file))
+          socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
           socket.on('success', (data) => {
             this.core.emit('core:upload-success', file.id, data, data.url)
@@ -176,8 +180,8 @@ module.exports = class XHRUpload extends Plugin {
     })
   }
 
-  selectForUpload (files) {
-    return settle(files.map((file, i) => {
+  uploadFiles (files) {
+    const promises = files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
@@ -186,15 +190,9 @@ module.exports = class XHRUpload extends Plugin {
       } else {
         return this.upload(file, current, total)
       }
-    }))
+    })
 
-    //   if (this.opts.bundle) {
-    //     uploaders.push(this.upload(files, 0, files.length))
-    //   } else {
-    //     for (let i in files) {
-    //       uploaders.push(this.upload(files, i, files.length))
-    //     }
-    //   }
+    return settle(promises).then(rejectIfAllRejected)
   }
 
   handleUpload (fileIDs) {
@@ -209,7 +207,7 @@ module.exports = class XHRUpload extends Plugin {
       return this.core.state.files[fileID]
     }
 
-    return this.selectForUpload(files).then(() => null)
+    return this.uploadFiles(files).then(() => null)
   }
 
   install () {
