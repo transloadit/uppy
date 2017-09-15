@@ -349,6 +349,7 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     return Dashboard({
+      dispatch: this.core.dispatch,
       state: state,
       modal: state.plugins[this.id].modal,
       newFiles: newFiles,

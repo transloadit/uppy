@@ -1,5 +1,5 @@
 const Plugin = require('./Plugin')
-const actions = require('../core/Actions')
+import { setFileMeta, setMeta } from '../core/Actions'
 
 /**
  * Meta Data
@@ -22,20 +22,19 @@ module.exports = class MetaData extends Plugin {
     this.handleFileAdded = this.handleFileAdded.bind(this)
   }
 
-  handleFileAdded (file) {
+  handleFileAdded (fileId) {
     const metaFields = this.opts.fields
-
     metaFields.forEach((item) => {
       const obj = {}
       obj[item.id] = item.value
-      this.core.updateMeta(obj, file.id)
+      this.core.dispatch(setFileMeta(fileId, obj))
     })
   }
 
   addInitialMeta () {
     const metaFields = this.opts.fields
 
-    this.core.dispatch(actions.setMeta({ metaFields }))
+    this.core.dispatch(setMeta({ metaFields }))
 
     this.core.on('core:file-added', this.handleFileAdded)
   }

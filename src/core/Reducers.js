@@ -1,4 +1,4 @@
-import { SET_META, SET_FILE_META, CUSTOM_PLUGIN_DATA, SET_CAPABILITIES } from './Actions'
+import { SET_META, SET_FILE_META, CUSTOM_PLUGIN_DATA, SET_CAPABILITIES, ADD_FILE, SHOW_INFO, HIDE_INFO, SET_PREVIEW_URL } from './Actions'
 
 const setMeta = (state, action) => {
   return {
@@ -35,6 +35,68 @@ const setCapabilities = (state, action) => {
   }
 }
 
+const addFile = (state, action) => {
+  const newFile = {
+    source: action.file.source || '',
+    id: action.fileId,
+    name: action.fileName,
+    extension: action.fileExtension || '',
+    meta: Object.assign({}, { name: action.fileName }, state.meta),
+    type: {
+      general: action.fileTypeGeneral,
+      specific: action.fileTypeSpecific
+    },
+    data: action.file.data,
+    progress: {
+      percentage: 0,
+      bytesUploaded: 0,
+      bytesTotal: action.file.data.size || 0,
+      uploadComplete: false,
+      uploadStarted: false
+    },
+    size: action.file.data.size || 'N/A',
+    isRemote: action.file.isRemote || false,
+    remote: action.file.remote || '',
+    preview: action.file.preview
+  }
+  const newFiles = {}
+  newFiles[action.fileId] = newFile
+  return {
+    ...state,
+    files: Object.assign(state.files, newFiles)
+  }
+}
+
+const showInfo = (state, action) => {
+  return {
+    ...state,
+    info: {
+      isHidden: action.isHidden,
+      type: action.infoType,
+      message: action.message,
+      details: action.details
+    }
+  }
+}
+
+const hideInfo = (state, action) => {
+  return {
+    ...state,
+    info: Object.assign(state.info, { isHidden: true })
+  }
+}
+
+const setPreviewUrl = (state, action) => {
+  return {
+    ...state,
+    files: Object.assign({}, state.files, {
+      [action.fileId]: Object.assign({}, state.files[action.fileId], {
+        preview: action.preview
+      })
+    })
+  }
+}
+
 function reducers (
     state = {},
     action
@@ -48,6 +110,14 @@ function reducers (
       return customPluginData(state, action)
     case SET_CAPABILITIES:
       return setCapabilities(state, action)
+    case ADD_FILE:
+      return addFile(state, action)
+    case SHOW_INFO:
+      return showInfo(state, action)
+    case HIDE_INFO:
+      return hideInfo(state, action)
+    case SET_PREVIEW_URL:
+      return setPreviewUrl(state, action)
     default:
       return state
   }

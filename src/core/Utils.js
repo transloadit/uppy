@@ -1,4 +1,6 @@
 const throttle = require('lodash.throttle')
+const match = require('mime-match')
+const prettyBytes = require('prettier-bytes')
 // we inline file-type module, as opposed to using the NPM version,
 // because of this https://github.com/sindresorhus/file-type/issues/78
 // and https://github.com/sindresorhus/copy-text-to-clipboard/issues/5
@@ -568,6 +570,71 @@ function _emitSocketProgress (uploader, progressData, file) {
   }
 }
 
+function checkRestrictions (restrictions, checkMinNumberOfFiles, fileData, fileType, files) {
+  const {maxFileSize, maxNumberOfFiles, minNumberOfFiles, allowedFileTypes} = restrictions
+
+  if (checkMinNumberOfFiles && minNumberOfFiles) {
+    if (Object.keys(files).length < minNumberOfFiles) {
+      return {
+        info: {
+          message: `${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`,
+          type: 'error',
+          duration: 5000
+        },
+        status: false
+      }
+    }
+    return {
+      status: true
+    }
+  }
+
+  if (maxNumberOfFiles) {
+    if (Object.keys(files).length + 1 > maxNumberOfFiles) {
+      return {
+        info: {
+          message: `${this.i18n('youCanOnlyUploadX', {smart_count: maxNumberOfFiles})}`,
+          type: 'error',
+          duration: 5000
+        },
+        status: false
+      }
+    }
+  }
+
+  if (allowedFileTypes) {
+    const isCorrectFileType = allowedFileTypes.filter(match(fileType.join('/'))).length > 0
+    if (!isCorrectFileType) {
+      const allowedFileTypesString = allowedFileTypes.join(', ')
+      return {
+        info: {
+          message: `${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`,
+          type: 'error',
+          duration: 5000
+        },
+        status: false
+      }
+    }
+  }
+
+  if (maxFileSize) {
+    if (fileData.size > maxFileSize) {
+      return {
+        info: {
+          message: `${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`,
+          type: 'error',
+          duration: 5000
+        },
+        status: false
+      }
+    }
+  }
+
+  return {
+    status: true
+  }
+}
+
 const emitSocketProgress = throttle(_emitSocketProgress, 300, {leading: true, trailing: true})
 
 module.exports = {
@@ -599,5 +666,6 @@ module.exports = {
   findDOMElement,
   findAllDOMElements,
   getSocketHost,
-  emitSocketProgress
+  emitSocketProgress,
+  checkRestrictions
 }

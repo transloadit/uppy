@@ -4,8 +4,6 @@ const UppySocket = require('./UppySocket')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
 const throttle = require('lodash.throttle')
-const prettyBytes = require('prettier-bytes')
-const match = require('mime-match')
 const Store = require('./Store')
 const actions = require('./Actions')
 // const en_US = require('../locales/en_US')
@@ -18,6 +16,8 @@ const actions = require('./Actions')
  */
 class Uppy {
   constructor (opts) {
+    this.dispatch = this.dispatch.bind(this)
+
     const defaultLocale = {
       strings: {
         youCanOnlyUploadX: {
@@ -72,8 +72,6 @@ class Uppy {
     this.getState = this.getState.bind(this)
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
-    this.info = this.info.bind(this)
-    this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
     this.calculateProgress = this.calculateProgress.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
@@ -92,14 +90,11 @@ class Uppy {
     // for debugging and testing
     this.updateNum = 0
     if (this.opts.debug) {
-      global.UppyState = this.state
       global.uppyLog = ''
-      // global.UppyAddFile = this.addFile.bind(this)
       global._uppy = this
     }
-
     // setup a redux store
-    this.store = Store.init()
+    this.store = Store.init(this)
     // if there's global metadata, add it
     if (this.opts.meta) {
       this.store.dispatch(actions.setMeta(this.opts.meta))
@@ -126,7 +121,7 @@ class Uppy {
    */
   getState () {
     // use deepFreeze for debugging
-    // return deepFreeze(this.state)
+    // return deepFreeze(this.store.state())
     return this.store.getState()
   }
 
@@ -145,7 +140,7 @@ class Uppy {
       uploadComplete: false,
       uploadStarted: false
     }
-    const files = Object.assign({}, this.state.files)
+    const files = Object.assign({}, this.getState().files)
     const updatedFiles = {}
     Object.keys(files).forEach(fileID => {
       const updatedFile = Object.assign({}, files[fileID])
@@ -195,108 +190,6 @@ class Uppy {
     }
   }
 
-  checkRestrictions (checkMinNumberOfFiles, file, fileType) {
-    const {maxFileSize, maxNumberOfFiles, minNumberOfFiles, allowedFileTypes} = this.opts.restrictions
-
-    if (checkMinNumberOfFiles && minNumberOfFiles) {
-      if (Object.keys(this.state.files).length < minNumberOfFiles) {
-        this.info(`${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
-        return false
-      }
-      return true
-    }
-
-    if (maxNumberOfFiles) {
-      if (Object.keys(this.state.files).length + 1 > maxNumberOfFiles) {
-        this.info(`${this.i18n('youCanOnlyUploadX', {smart_count: maxNumberOfFiles})}`, 'error', 5000)
-        return false
-      }
-    }
-
-    if (allowedFileTypes) {
-      const isCorrectFileType = allowedFileTypes.filter(match(fileType.join('/'))).length > 0
-      if (!isCorrectFileType) {
-        const allowedFileTypesString = allowedFileTypes.join(', ')
-        this.info(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
-        return false
-      }
-    }
-
-    if (maxFileSize) {
-      if (file.data.size > maxFileSize) {
-        this.info(`${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`, 'error', 5000)
-        return false
-      }
-    }
-
-    return true
-  }
-
-  addFile (file) {
-    // Wrap this in a Promise `.then()` handler so errors will reject the Promise
-    // instead of throwing.
-    const beforeFileAdded = Promise.resolve()
-      .then(() => this.opts.onBeforeFileAdded(file, this.getState().files))
-
-    return beforeFileAdded.catch((err) => {
-      this.info(err, 'error', 5000)
-      return Promise.reject(`onBeforeFileAdded: ${err}`)
-    }).then(() => {
-      return Utils.getFileType(file).then((fileType) => {
-        const updatedFiles = Object.assign({}, this.state.files)
-        const fileName = file.name || 'noname'
-        const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
-        const isRemote = file.isRemote || false
-
-        const fileID = Utils.generateFileID(file)
-        const fileTypeGeneral = fileType[0]
-        const fileTypeSpecific = fileType[1]
-
-        const newFile = {
-          source: file.source || '',
-          id: fileID,
-          name: fileName,
-          extension: fileExtension || '',
-          meta: Object.assign({}, { name: fileName }, this.getState().meta),
-          type: {
-            general: fileTypeGeneral,
-            specific: fileTypeSpecific
-          },
-          data: file.data,
-          progress: {
-            percentage: 0,
-            bytesUploaded: 0,
-            bytesTotal: file.data.size || 0,
-            uploadComplete: false,
-            uploadStarted: false
-          },
-          size: file.data.size || 'N/A',
-          isRemote: isRemote,
-          remote: file.remote || '',
-          preview: file.preview
-        }
-
-        const isFileAllowed = this.checkRestrictions(false, newFile, fileType)
-        if (!isFileAllowed) return Promise.reject('File not allowed')
-
-        updatedFiles[fileID] = newFile
-        this.setState({files: updatedFiles})
-
-        this.emit('core:file-added', newFile)
-        this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
-
-        if (this.opts.autoProceed && !this.scheduledAutoProceed) {
-          this.scheduledAutoProceed = setTimeout(() => {
-            this.scheduledAutoProceed = null
-            this.upload().catch((err) => {
-              console.error(err.stack || err.message || err)
-            })
-          }, 4)
-        }
-      })
-    })
-  }
-
   /**
    * Get a file object.
    *
@@ -304,33 +197,6 @@ class Uppy {
    */
   getFile (fileID) {
     return this.getState().files[fileID]
-  }
-
-  /**
-   * Generate a preview image for the given file, if possible.
-   */
-  generatePreview (file) {
-    if (Utils.isPreviewSupported(file.type.specific) && !file.isRemote) {
-      Utils.createThumbnail(file, 200).then((thumbnail) => {
-        this.setPreviewURL(file.id, thumbnail)
-      }).catch((err) => {
-        console.warn(err.stack || err.message)
-      })
-    }
-  }
-
-  /**
-   * Set the preview URL for a file.
-   */
-  setPreviewURL (fileID, preview) {
-    const { files } = this.state
-    this.setState({
-      files: Object.assign({}, files, {
-        [fileID]: Object.assign({}, files[fileID], {
-          preview: preview
-        })
-      })
-    })
   }
 
   removeFile (fileID) {
@@ -420,7 +286,7 @@ class Uppy {
     })
 
     this.on('core:upload-error', (fileID, error) => {
-      const fileName = this.state.files[fileID].name
+      const fileName = this.getState().files[fileID].name
       let message = `Failed to upload ${fileName}`
       if (typeof error === 'object' && error.message) {
         message = `${message}: ${error.message}`
@@ -430,14 +296,6 @@ class Uppy {
 
     this.on('core:upload', () => {
       this.setState({ error: null })
-    })
-
-    this.on('core:file-add', (data) => {
-      this.addFile(data)
-    })
-
-    this.on('core:file-added', (file) => {
-      this.generatePreview(file)
     })
 
     // `remove-file` removes a file from `state.files`, for example when
@@ -675,55 +533,6 @@ class Uppy {
   }
 
   /**
-  * Set info message in `state.info`, so that UI plugins like `Informer`
-  * can display the message
-  *
-  * @param {string} msg Message to be displayed by the informer
-  */
-
-  info (message, type, duration) {
-    const isComplexMessage = typeof message === 'object'
-
-    this.setState({
-      info: {
-        isHidden: false,
-        type: type || 'info',
-        message: isComplexMessage ? message.message : message,
-        details: isComplexMessage ? message.details : null
-      }
-    })
-
-    this.emit('core:info-visible')
-
-    window.clearTimeout(this.infoTimeoutID)
-    if (duration === 0) {
-      this.infoTimeoutID = undefined
-      return
-    }
-
-    // hide the informer after `duration` milliseconds
-    this.infoTimeoutID = setTimeout(() => {
-      const newInformer = Object.assign({}, this.state.info, {
-        isHidden: true
-      })
-      this.setState({
-        info: newInformer
-      })
-      this.emit('core:info-hidden')
-    }, duration)
-  }
-
-  hideInfo () {
-    const newInfo = Object.assign({}, this.state.info, {
-      isHidden: true
-    })
-    this.setState({
-      info: newInfo
-    })
-    this.emit('core:info-hidden')
-  }
-
-  /**
    * Logs stuff to console, only if `debug` is set to true. Silent in production.
    *
    * @return {String|Object} to log
@@ -781,7 +590,7 @@ class Uppy {
   restore (uploadID) {
     this.log(`Core: attempting to restore upload "${uploadID}"`)
 
-    if (!this.state.currentUploads[uploadID]) {
+    if (!this.getState().currentUploads[uploadID]) {
       this.removeUpload(uploadID)
       return Promise.reject(new Error('Nonexistent upload'))
     }
@@ -804,7 +613,7 @@ class Uppy {
     })
 
     this.setState({
-      currentUploads: Object.assign({}, this.state.currentUploads, {
+      currentUploads: Object.assign({}, this.getState().currentUploads, {
         [uploadID]: {
           fileIDs: fileIDs,
           step: 0
@@ -821,7 +630,7 @@ class Uppy {
    * @param {string} uploadID The ID of the upload.
    */
   removeUpload (uploadID) {
-    const currentUploads = Object.assign({}, this.state.currentUploads)
+    const currentUploads = Object.assign({}, this.getState().currentUploads)
     delete currentUploads[uploadID]
 
     this.setState({
@@ -835,7 +644,7 @@ class Uppy {
    * @private
    */
   runUpload (uploadID) {
-    const uploadData = this.state.currentUploads[uploadID]
+    const uploadData = this.getState().currentUploads[uploadID]
     const fileIDs = uploadData.fileIDs
     const restoreStep = uploadData.step
 
@@ -852,11 +661,11 @@ class Uppy {
       }
 
       lastStep = lastStep.then(() => {
-        const currentUpload = Object.assign({}, this.state.currentUploads[uploadID], {
+        const currentUpload = Object.assign({}, this.getState().currentUploads[uploadID], {
           step: step
         })
         this.setState({
-          currentUploads: Object.assign({}, this.state.currentUploads, {
+          currentUploads: Object.assign({}, this.getState().currentUploads, {
             [uploadID]: currentUpload
           })
         })
@@ -893,14 +702,14 @@ class Uppy {
     }
 
     const beforeUpload = Promise.resolve()
-      .then(() => this.opts.onBeforeUpload(this.state.files))
+      .then(() => this.opts.onBeforeUpload(this.getState().files))
 
     return beforeUpload.catch((err) => {
       this.info(err, 'error', 5000)
       return Promise.reject(`onBeforeUpload: ${err}`)
     }).then(() => {
       const waitingFileIDs = []
-      Object.keys(this.state.files).forEach((fileID) => {
+      Object.keys(this.getState().files).forEach((fileID) => {
         const file = this.getFile(fileID)
 
         // TODO: replace files[file].isRemote with some logic
