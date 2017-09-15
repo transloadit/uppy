@@ -1,10 +1,9 @@
 const Plugin = require('./Plugin')
-const settle = require('promise-settle')
 const UppySocket = require('../core/UppySocket')
 const {
   emitSocketProgress,
   getSocketHost,
-  rejectIfAllRejected
+  settle
 } = require('../core/Utils')
 
 module.exports = class XHRUpload extends Plugin {
@@ -192,7 +191,7 @@ module.exports = class XHRUpload extends Plugin {
       }
     })
 
-    return settle(promises).then(rejectIfAllRejected)
+    return settle(promises)
   }
 
   handleUpload (fileIDs) {

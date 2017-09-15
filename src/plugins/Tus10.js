@@ -1,11 +1,10 @@
 const Plugin = require('./Plugin')
 const tus = require('tus-js-client')
-const settle = require('promise-settle')
 const UppySocket = require('../core/UppySocket')
 const {
   emitSocketProgress,
   getSocketHost,
-  rejectIfAllRejected
+  settle
 } = require('../core/Utils')
 require('whatwg-fetch')
 
@@ -340,7 +339,7 @@ module.exports = class Tus10 extends Plugin {
       }
     })
 
-    return settle(promises).then(rejectIfAllRejected)
+    return settle(promises)
   }
 
   handleUpload (fileIDs) {
