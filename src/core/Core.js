@@ -227,6 +227,12 @@ class Uppy {
     this.setState({files: updatedFiles})
   }
 
+  /**
+  * Check if minNumberOfFiles restriction is reached before uploading
+  *
+  * @return {boolean}
+  * @private
+  */
   checkMinNumberOfFiles () {
     const {minNumberOfFiles} = this.opts.restrictions
     if (Object.keys(this.state.files).length < minNumberOfFiles) {
@@ -236,7 +242,15 @@ class Uppy {
     return true
   }
 
-  checkRestrictions (checkMinNumberOfFiles, file, fileType) {
+  /**
+  * Check if file passes a set of restrictions set in options: maxFileSize,
+  * maxNumberOfFiles and allowedFileTypes
+  *
+  * @param {object} file object to check
+  * @return {boolean}
+  * @private
+  */
+  checkRestrictions (file) {
     const {maxFileSize, maxNumberOfFiles, allowedFileTypes} = this.opts.restrictions
 
     if (maxNumberOfFiles) {
@@ -247,7 +261,7 @@ class Uppy {
     }
 
     if (allowedFileTypes) {
-      const isCorrectFileType = allowedFileTypes.filter(match(fileType.join('/'))).length > 0
+      const isCorrectFileType = allowedFileTypes.filter(match(file.type.mime)).length > 0
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
         this.info(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
@@ -265,6 +279,13 @@ class Uppy {
     return true
   }
 
+  /**
+  * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
+  * try to guess file type in a clever way, check file against restrictions,
+  * and start an upload if `autoProceed === true`.
+  *
+  * @param {object} file object to add
+  */
   addFile (file) {
     // Wrap this in a Promise `.then()` handler so errors will reject the Promise
     // instead of throwing.
@@ -293,7 +314,8 @@ class Uppy {
           meta: Object.assign({}, { name: fileName }, this.getState().meta),
           type: {
             general: fileTypeGeneral,
-            specific: fileTypeSpecific
+            specific: fileTypeSpecific,
+            mime: fileType.join('/')
           },
           data: file.data,
           progress: {
@@ -309,7 +331,7 @@ class Uppy {
           preview: file.preview
         }
 
-        const isFileAllowed = this.checkRestrictions(false, newFile, fileType)
+        const isFileAllowed = this.checkRestrictions(newFile)
         if (!isFileAllowed) return Promise.reject('File not allowed')
 
         updatedFiles[fileID] = newFile
@@ -787,16 +809,7 @@ class Uppy {
    */
   run () {
     this.log('Core is run, initializing actions...')
-
     this.actions()
-
-    // Forse set `autoProceed` option to false if there are multiple selector Plugins active
-    // if (this.plugins.acquirer && this.plugins.acquirer.length > 1) {
-    //   this.opts.autoProceed = false
-    // }
-
-    // Install all plugins
-    // this.installAll()
 
     return this
   }
