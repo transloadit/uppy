@@ -11,6 +11,7 @@ Core module that orchistrated everything in Uppy, exposing `state`, `events` and
 
 ```js
 const uppy = Uppy({
+  id: 'uppy',
   autoProceed: true,
   restrictions: {
     maxFileSize: false,
@@ -23,6 +24,20 @@ const uppy = Uppy({
   onBeforeUpload: (files, done) => Promise.resolve(),
   locale: defaultLocale
 })
+```
+
+### `id: 'uppy'`
+
+A site-wide unique ID for the instance.
+If multiple Uppy instances are being used, for example on two different pages, an `id` should be specified.
+This allows Uppy to store information in `localStorage` without colliding with other Uppy instances.
+
+Note that this ID should be persistent across page reloads and navigation—it shouldn't be a random number that's different every time Uppy is loaded.
+For example, if one Uppy instance is used to upload user avatars, and another to add photos to a blog post, you might use:
+
+```js
+const avatarUploader = Uppy({ id: 'avatar' })
+const photoUploader = Uppy({ id: 'post' })
 ```
 
 ### `autoProceed: true`
@@ -129,6 +144,10 @@ uppy.use(DragDrop, {target: 'body'})
 
 Initializes everything after setup. Must be called before calling `.upload()` or using Uppy in any meaningful way.
 
+### `uppy.getID()`
+
+Get the uppy instance ID, see the [`id` option](#id-39-uppy-39).
+
 ### `uppy.addFile(fileObject)`
 
 Add a new file to Uppy’s internal state.
@@ -222,7 +241,7 @@ uppy.updateMeta('myfileID', {resize: 1500})
 
 ### `uppy.reset()`
 
-Stop all uploads in progress and clear file selection, set progress to 0. Basically, return things to the way they were before any user input. 
+Stop all uploads in progress and clear file selection, set progress to 0. Basically, return things to the way they were before any user input.
 
 ### `uppy.close()`
 

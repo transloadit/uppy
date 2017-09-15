@@ -86,7 +86,7 @@ What we need to do to release Uppy 1.0
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
-- [ ] core: Uppy ID per instance
+- [x] core: Uppy ID per instance (@goto-bus-stop)
 - [ ] core: allow setting custom `id` for plugins: https://github.com/transloadit/uppy/pull/328#issuecomment-328242214 (@arturi)
 - [ ] core: move `setPluginState` to Plugin class ? (@goto-bus-stop)
 - [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
@@ -105,7 +105,13 @@ Theme: React and Retry
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (@arturi @goto-bus-stop)
 - [ ] core: improve and merge in the React PR (@arturi @goto-bus-stop)
 - [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
-- [ ] dashboard: expose/document show/hide/isOpen API (@arturi)
+- [ ] core: remove unused bootstrap styles (#329 / @arturi)
+- [x] core: experiment with yo-yo --> preact and picodom (#297 / @arturi)
+- [x] dashboard: fix FileItem source icon position and copy (@arturi)
+- [x] dashboard: expose and document the show/hide/isOpen API (@arturi)
+- [x] dashboard: allow multiple `triggers` of the same class `.open-uppy` (@arturi)
+- [x] core: Handle sync returns and throws in possibly-async function options (#315 / @goto-bus-stop)
+- [x] core: switch to Jest tests, add more tests for Core and Utils (@richardwillars)
 
 ## 0.18.1
 

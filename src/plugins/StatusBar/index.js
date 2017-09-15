@@ -11,8 +11,8 @@ const prettyBytes = require('prettier-bytes')
 module.exports = class StatusBarUI extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.id = 'StatusBarUI'
-    this.title = 'StatusBar UI'
+    this.id = 'StatusBar'
+    this.title = 'StatusBar'
     this.type = 'progressindicator'
 
     // set default options

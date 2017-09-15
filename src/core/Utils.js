@@ -529,6 +529,23 @@ function findDOMElement (element) {
   }
 }
 
+/**
+ * Find one or more DOM elements.
+ *
+ * @param {string} element
+ * @return {Array|null}
+ */
+function findAllDOMElements (element) {
+  if (typeof element === 'string') {
+    const elements = [].slice.call(document.querySelectorAll(element))
+    return elements.length > 0 ? elements : null
+  }
+
+  if (typeof element === 'object' && isDOMElement(element)) {
+    return [element]
+  }
+}
+
 function getSocketHost (url) {
   // get the host domain
   var regex = /^(?:https?:\/\/|\/\/)?(?:[^@\n]+@)?(?:www\.)?([^\n]+)/
@@ -580,6 +597,7 @@ module.exports = {
   copyToClipboard,
   prettyETA,
   findDOMElement,
+  findAllDOMElements,
   getSocketHost,
   emitSocketProgress
 }
