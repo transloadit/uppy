@@ -5,6 +5,7 @@ export const SET_FILE_META = 'UPPY_SET_FILE_META'
 export const CUSTOM_PLUGIN_DATA = 'UPPY_CUSTOM_PLUGIN_DATA'
 export const SET_CAPABILITIES = 'UPPY_SET_CAPABILITIES'
 export const ADD_FILE = 'UPPY_ADD_FILE'
+export const REMOVE_FILE = 'UPPY_REMOVE_FILE'
 export const SHOW_INFO = 'UPPY_SHOW_INFO'
 export const HIDE_INFO = 'UPPY_HIDE_INFO'
 export const SET_PREVIEW_URL = 'UPPY_SET_PREVIEW_URL'
@@ -122,6 +123,30 @@ export const addFile = (source, name, type, data) => {
         }
       })
     })
+  }
+}
+
+export const removeFileAction = (fileId) => {
+  return {
+    type: REMOVE_FILE,
+    fileId
+  }
+}
+
+export const removeFile = (fileId) => {
+  return (dispatch, getState, { uppy }) => {
+    const currentState = getState()
+
+    dispatch(removeFileAction(fileId))
+    // this.calculateTotalProgress()
+    uppy.emit('core:file-removed', fileId)
+
+    // Clean up object URLs.
+    if (currentState.files[fileId].preview && Utils.isObjectURL(currentState.files[fileId].preview)) {
+      URL.revokeObjectURL(currentState.files[fileId].preview)
+    }
+
+    uppy.log(`Removed file: ${fileId}`)
   }
 }
 

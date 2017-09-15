@@ -1,10 +1,10 @@
-const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
 const UppySocket = require('./UppySocket')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
 const throttle = require('lodash.throttle')
 const Store = require('./Store')
+import { bindActionCreators } from 'redux'
 const actions = require('./Actions')
 // const en_US = require('../locales/en_US')
 // const deepFreeze = require('deep-freeze-strict')
@@ -16,8 +16,6 @@ const actions = require('./Actions')
  */
 class Uppy {
   constructor (opts) {
-    this.dispatch = this.dispatch.bind(this)
-
     const defaultLocale = {
       strings: {
         youCanOnlyUploadX: {
@@ -72,7 +70,6 @@ class Uppy {
     this.getState = this.getState.bind(this)
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
-    this.removeFile = this.removeFile.bind(this)
     this.calculateProgress = this.calculateProgress.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
 
@@ -95,18 +92,11 @@ class Uppy {
     }
     // setup a redux store
     this.store = Store.init(this)
+    this.actions = bindActionCreators(actions, this.store.dispatch)
     // if there's global metadata, add it
     if (this.opts.meta) {
-      this.store.dispatch(actions.setMeta(this.opts.meta))
+      this.actions.setMeta(this.opts.meta)
     }
-  }
-
-  getActions () {
-    return actions
-  }
-
-  dispatch (action) {
-    this.store.dispatch(action)
   }
 
   subscribeToStore (fn) {
@@ -199,23 +189,6 @@ class Uppy {
     return this.getState().files[fileID]
   }
 
-  removeFile (fileID) {
-    const updatedFiles = Object.assign({}, this.getState().files)
-    const removedFile = updatedFiles[fileID]
-    delete updatedFiles[fileID]
-
-    this.setState({files: updatedFiles})
-    this.calculateTotalProgress()
-    this.emit('core:file-removed', fileID)
-
-    // Clean up object URLs.
-    if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
-      URL.revokeObjectURL(removedFile.preview)
-    }
-
-    this.log(`Removed file: ${fileID}`)
-  }
-
   calculateProgress (data) {
     const fileID = data.id
     const updatedFiles = Object.assign({}, this.getState().files)
@@ -270,7 +243,7 @@ class Uppy {
    * `file-add`, `file-remove`, `upload-progress`, `reset`
    *
    */
-  actions () {
+  listeners () {
     // this.bus.on('*', (payload) => {
     //   console.log('emitted: ', this.event)
     //   console.log('with payload: ', payload)
@@ -296,12 +269,6 @@ class Uppy {
 
     this.on('core:upload', () => {
       this.setState({ error: null })
-    })
-
-    // `remove-file` removes a file from `state.files`, for example when
-    // a user decides not to upload particular file and clicks a button to remove it
-    this.on('core:file-remove', (fileID) => {
-      this.removeFile(fileID)
     })
 
     this.on('core:cancel-all', () => {
@@ -565,13 +532,13 @@ class Uppy {
   }
 
   /**
-   * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
+   * Initializes listeners, installs all plugins (by iterating on them and calling `install`), sets options
    *
    */
   run () {
-    this.log('Core is run, initializing actions...')
+    this.log('Core is run, initializing listeners...')
 
-    this.actions()
+    this.listeners()
 
     // Forse set `autoProceed` option to false if there are multiple selector Plugins active
     // if (this.plugins.acquirer && this.plugins.acquirer.length > 1) {

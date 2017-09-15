@@ -4,7 +4,6 @@ const Plugin = require('../Plugin')
 const Provider = require('../../uppy-base/src/plugins/Provider')
 
 const View = require('../../generic-provider-views/index')
-import { customPluginData } from '../../core/Actions'
 
 module.exports = class Instagram extends Plugin {
   constructor (core, opts) {
@@ -49,7 +48,7 @@ module.exports = class Instagram extends Plugin {
       viewType: 'grid'
     })
 
-    this.core.dispatch(customPluginData(this.id, {
+    this.core.actions.customPluginData(this.id, {
       authenticated: false,
       files: [],
       folders: [],
@@ -57,7 +56,7 @@ module.exports = class Instagram extends Plugin {
       activeRow: -1,
       filterInput: '',
       isSearchVisible: false
-    }))
+    })
 
     const target = this.opts.target
     const plugin = this

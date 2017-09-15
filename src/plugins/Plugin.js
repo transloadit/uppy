@@ -2,7 +2,6 @@ const yo = require('yo-yo')
 const nanoraf = require('nanoraf')
 const { findDOMElement } = require('../core/Utils')
 const getFormData = require('get-form-data')
-import { setMeta } from '../core/Actions'
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -65,7 +64,7 @@ module.exports = class Plugin {
       // attempt to extract meta from form element
       if (this.opts.getMetaFromForm && targetElement.nodeName === 'FORM') {
         const formMeta = getFormData(targetElement)
-        this.core.dispatch(setMeta(formMeta))
+        this.core.actions.setMeta(formMeta)
       }
 
       // clear everything inside the target container

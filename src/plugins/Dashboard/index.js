@@ -7,7 +7,6 @@ const Informer = require('../Informer')
 const { findAllDOMElements } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
-import { customPluginData } from '../../core/Actions'
 
 /**
  * Modal Dialog & Dashboard
@@ -116,22 +115,22 @@ module.exports = class DashboardUI extends Plugin {
     const modal = this.core.getState().plugins[this.id].modal
     const newTargets = modal.targets.slice()
     newTargets.push(target)
-    this.core.dispatch(customPluginData(this.id, {
+    this.core.actions.customPluginData(this.id, {
       modal: Object.assign({}, modal, {
         targets: newTargets
       })
-    }))
+    })
 
     return this.target
   }
 
   hideAllPanels () {
     const modal = this.core.getState().plugins[this.id].modal
-    this.core.dispatch(customPluginData(this.id, {
+    this.core.actions.customPluginData(this.id, {
       modal: Object.assign({}, modal, {
         activePanel: false
       })
-    }))
+    })
   }
 
   showPanel (id) {
@@ -140,20 +139,20 @@ module.exports = class DashboardUI extends Plugin {
     const activePanel = modal.targets.filter((target) => {
       return target.type === 'acquirer' && target.id === id
     })[0]
-    this.core.dispatch(customPluginData(this.id, {
+    this.core.actions.customPluginData(this.id, {
       modal: Object.assign({}, modal, {
         activePanel: activePanel
       })
-    }))
+    })
   }
 
   openModal () {
     const modal = this.core.getState().plugins[this.id].modal
-    this.core.dispatch(customPluginData(this.id, {
+    this.core.actions.customPluginData(this.id, {
       modal: Object.assign({}, modal, {
         isHidden: false
       })
-    }))
+    })
 
     // save scroll position
     this.savedDocumentScrollPosition = window.scrollY
@@ -173,11 +172,11 @@ module.exports = class DashboardUI extends Plugin {
 
   closeModal () {
     const modal = this.core.getState().plugins[this.id].modal
-    this.core.dispatch(customPluginData(this.id, {
+    this.core.actions.customPluginData(this.id, {
       modal: Object.assign({}, modal, {
         isHidden: true
       })
-    }))
+    })
 
     document.body.classList.remove('is-UppyDashboard-open')
 
@@ -248,32 +247,27 @@ module.exports = class DashboardUI extends Plugin {
     this.core.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
     const modal = this.core.getState().plugins[this.id].modal
-    this.core.dispatch(customPluginData(this.id, {
+    this.core.actions.customPluginData(this.id, {
       modal: Object.assign({}, modal, {
         containerWidth: dashboardEl.offsetWidth
       })
-    }))
+    })
   }
 
   handleFileCard (fileId) {
     const modal = this.core.getState().plugins[this.id].modal
-    this.core.dispatch(customPluginData(this.id, {
+    this.core.actions.customPluginData(this.id, {
       modal: Object.assign({}, modal, {
         fileCardFor: fileId || false
       })
-    }))
+    })
   }
 
   handleDrop (files) {
     this.core.log('[Dashboard] Files were dropped')
 
     files.forEach((file) => {
-      this.core.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file
-      })
+      this.core.actions.addFile(this.id, file.name, file.type, file)
     })
   }
 
@@ -349,7 +343,6 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     return Dashboard({
-      dispatch: this.core.dispatch,
       state: state,
       modal: state.plugins[this.id].modal,
       newFiles: newFiles,
@@ -373,8 +366,8 @@ module.exports = class DashboardUI extends Plugin {
       i18n: this.containerWidth,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
-      addFile: this.core.addFile,
-      removeFile: this.core.removeFile,
+      addFile: this.core.actions.addFile,
+      removeFile: this.core.actions.removeFile,
       info: this.core.info,
       note: this.opts.note,
       metaFields: state.metaFields,
@@ -395,14 +388,14 @@ module.exports = class DashboardUI extends Plugin {
 
   install () {
     // Set default state for Modal
-    this.core.dispatch(customPluginData(this.id, {
+    this.core.actions.customPluginData(this.id, {
       modal: {
         isHidden: true,
         showFileCard: false,
         activePanel: false,
         targets: []
       }
-    }))
+    })
 
     const target = this.opts.target
     const plugin = this

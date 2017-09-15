@@ -3,7 +3,6 @@ const tus = require('tus-js-client')
 const settle = require('promise-settle')
 const UppySocket = require('../core/UppySocket')
 const Utils = require('../core/Utils')
-import { setCapabilities } from '../core/Actions'
 require('whatwg-fetch')
 
 // Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
@@ -363,7 +362,7 @@ module.exports = class Tus10 extends Plugin {
   }
 
   addResumableUploadsCapabilityFlag () {
-    this.core.dispatch(setCapabilities({resumableUploads: true}))
+    this.core.actions.setCapabilities({resumableUploads: true})
   }
 
   install () {

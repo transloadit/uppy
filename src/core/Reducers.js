@@ -1,4 +1,4 @@
-import { SET_META, SET_FILE_META, CUSTOM_PLUGIN_DATA, SET_CAPABILITIES, ADD_FILE, SHOW_INFO, HIDE_INFO, SET_PREVIEW_URL } from './Actions'
+import { SET_META, SET_FILE_META, CUSTOM_PLUGIN_DATA, SET_CAPABILITIES, ADD_FILE, REMOVE_FILE, SHOW_INFO, HIDE_INFO, SET_PREVIEW_URL } from './Actions'
 
 const setMeta = (state, action) => {
   return {
@@ -67,6 +67,15 @@ const addFile = (state, action) => {
   }
 }
 
+const removeFile = (state, action) => {
+  const updatedFiles = Object.assign({}, state.files)
+  delete updatedFiles[action.fileId]
+  return {
+    ...state,
+    files: updatedFiles
+  }
+}
+
 const showInfo = (state, action) => {
   return {
     ...state,
@@ -112,6 +121,8 @@ function reducers (
       return setCapabilities(state, action)
     case ADD_FILE:
       return addFile(state, action)
+    case REMOVE_FILE:
+      return removeFile(state, action)
     case SHOW_INFO:
       return showInfo(state, action)
     case HIDE_INFO:

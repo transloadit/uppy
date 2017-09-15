@@ -4,7 +4,7 @@ const Tabs = require('./Tabs')
 const FileCard = require('./FileCard')
 const UploadBtn = require('./UploadBtn')
 const { isTouchDevice, toArray } = require('../../core/Utils')
-import { addFile } from '../../core/Actions'
+
 const { closeIcon } = require('./icons')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
@@ -15,7 +15,7 @@ module.exports = function Dashboard (props) {
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      props.dispatch(addFile(props.id, file.name, file.type, file))
+      props.addFile(props.id, file.name, file.type, file)
     })
   }
 
@@ -30,7 +30,7 @@ module.exports = function Dashboard (props) {
 
       const blob = file.getAsFile()
       props.log('File pasted')
-      props.dispatch(addFile(props.id, file.name, file.type, blob))
+      props.addFile(props.id, file.name, file.type, blob)
     })
   }
 
