@@ -567,7 +567,7 @@ describe('src/Core', () => {
   describe('uploading a file', () => {})
 
   describe('removing a file', () => {
-    xit('should remove the file', () => {
+    it('should remove the file', () => {
       const fileRemovedEventMock = jest.fn()
 
       const core = new Core()
@@ -583,7 +583,6 @@ describe('src/Core', () => {
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
           expect(Object.keys(core.state.files).length).toEqual(1)
-          console.log(core.state.totalProgress)
           core.setState({
             totalProgress: 50
           })
@@ -892,7 +891,32 @@ describe('src/Core', () => {
     })
   })
 
-  describe('actions', () => {})
+  describe('actions', () => {
+    it('should update the state when receiving the core:error event', () => {
+      const core = new Core()
+      core.run()
+      core.emit('core:error', { foo: 'bar' })
+      expect(core.state.error).toEqual({foo: 'bar'})
+    })
+
+    it('should update the state when receiving the core:upload-error event', () => {
+      const core = new Core()
+      core.run()
+      core.state.files['fileId'] = {
+        name: 'filename'
+      }
+      core.emit('core:upload-error', 'fileId', { message: 'this is the error' })
+      expect(core.state.info).toEqual({'details': null, 'isHidden': false, 'message': 'Failed to upload filename: this is the error', 'type': 'error'})
+    })
+
+    it('should reset the error state when receiving the core:upload event', () => {
+      const core = new Core()
+      core.run()
+      core.emit('core:error', { foo: 'bar' })
+      core.emit('core:upload')
+      expect(core.state.error).toEqual(null)
+    })
+  })
 
   describe('updateOnlineStatus', () => {
     const RealNavigatorOnline = global.window.navigator.onLine
