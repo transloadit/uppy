@@ -72,6 +72,7 @@ class Uppy {
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
     this.info = this.info.bind(this)
+    this.hideInfo = this.hideInfo.bind(this)
     this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
     this.calculateProgress = this.calculateProgress.bind(this)
@@ -226,16 +227,31 @@ class Uppy {
     this.setState({files: updatedFiles})
   }
 
-  checkRestrictions (checkMinNumberOfFiles, file, fileType) {
-    const {maxFileSize, maxNumberOfFiles, minNumberOfFiles, allowedFileTypes} = this.opts.restrictions
-
-    if (checkMinNumberOfFiles && minNumberOfFiles) {
-      if (Object.keys(this.state.files).length < minNumberOfFiles) {
-        this.info(`${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
-        return false
-      }
-      return true
+  /**
+  * Check if minNumberOfFiles restriction is reached before uploading
+  *
+  * @return {boolean}
+  * @private
+  */
+  checkMinNumberOfFiles () {
+    const {minNumberOfFiles} = this.opts.restrictions
+    if (Object.keys(this.state.files).length < minNumberOfFiles) {
+      this.info(`${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
+      return false
     }
+    return true
+  }
+
+  /**
+  * Check if file passes a set of restrictions set in options: maxFileSize,
+  * maxNumberOfFiles and allowedFileTypes
+  *
+  * @param {object} file object to check
+  * @return {boolean}
+  * @private
+  */
+  checkRestrictions (file) {
+    const {maxFileSize, maxNumberOfFiles, allowedFileTypes} = this.opts.restrictions
 
     if (maxNumberOfFiles) {
       if (Object.keys(this.state.files).length + 1 > maxNumberOfFiles) {
@@ -245,7 +261,7 @@ class Uppy {
     }
 
     if (allowedFileTypes) {
-      const isCorrectFileType = allowedFileTypes.filter(match(fileType.join('/'))).length > 0
+      const isCorrectFileType = allowedFileTypes.filter(match(file.type.mime)).length > 0
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
         this.info(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
@@ -263,6 +279,13 @@ class Uppy {
     return true
   }
 
+  /**
+  * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
+  * try to guess file type in a clever way, check file against restrictions,
+  * and start an upload if `autoProceed === true`.
+  *
+  * @param {object} file object to add
+  */
   addFile (file) {
     // Wrap this in a Promise `.then()` handler so errors will reject the Promise
     // instead of throwing.
@@ -291,7 +314,8 @@ class Uppy {
           meta: Object.assign({}, { name: fileName }, this.getState().meta),
           type: {
             general: fileTypeGeneral,
-            specific: fileTypeSpecific
+            specific: fileTypeSpecific,
+            mime: fileType.join('/')
           },
           data: file.data,
           progress: {
@@ -307,7 +331,7 @@ class Uppy {
           preview: file.preview
         }
 
-        const isFileAllowed = this.checkRestrictions(false, newFile, fileType)
+        const isFileAllowed = this.checkRestrictions(newFile)
         if (!isFileAllowed) return Promise.reject('File not allowed')
 
         updatedFiles[fileID] = newFile
@@ -423,7 +447,7 @@ class Uppy {
       progressAll = progressAll + files[file].progress.percentage
     })
 
-    const totalProgress = Math.floor((progressAll * 100 / progressMax).toFixed(2))
+    const totalProgress = progressMax === 0 ? 0 : Math.floor((progressAll * 100 / progressMax).toFixed(2))
 
     this.setState({
       totalProgress: totalProgress
@@ -734,15 +758,7 @@ class Uppy {
     }
 
     // hide the informer after `duration` milliseconds
-    this.infoTimeoutID = setTimeout(() => {
-      const newInformer = Object.assign({}, this.state.info, {
-        isHidden: true
-      })
-      this.setState({
-        info: newInformer
-      })
-      this.emit('core:info-hidden')
-    }, duration)
+    this.infoTimeoutID = setTimeout(this.hideInfo, duration)
   }
 
   hideInfo () {
@@ -793,16 +809,7 @@ class Uppy {
    */
   run () {
     this.log('Core is run, initializing actions...')
-
     this.actions()
-
-    // Forse set `autoProceed` option to false if there are multiple selector Plugins active
-    // if (this.plugins.acquirer && this.plugins.acquirer.length > 1) {
-    //   this.opts.autoProceed = false
-    // }
-
-    // Install all plugins
-    // this.installAll()
 
     return this
   }
@@ -919,7 +926,7 @@ class Uppy {
    * @return {Promise}
    */
   upload (forceUpload) {
-    const isMinNumberOfFilesReached = this.checkRestrictions(true)
+    const isMinNumberOfFilesReached = this.checkMinNumberOfFiles()
     if (!isMinNumberOfFilesReached) {
       return Promise.reject('Minimum number of files has not been reached')
     }

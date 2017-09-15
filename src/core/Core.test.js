@@ -534,7 +534,7 @@ describe('src/Core', () => {
             remote: '',
             size: 17175,
             source: 'jest',
-            type: { general: 'image', specific: 'jpeg' }
+            type: { general: 'image', specific: 'jpeg', mime: 'image/jpeg' }
           }
           expect(core.state.files[fileId]).toEqual(newFile)
           newFile.preview = undefined // not sure why this happens.. needs further investigation
