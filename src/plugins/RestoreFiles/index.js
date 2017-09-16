@@ -25,9 +25,13 @@ module.exports = class RestoreFiles extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    // const Store = this.opts.serviceWorker ? ServiceWorkerStore : IndexedDBStore
-    this.ServiceWorkerStore = this.opts.serviceWorker ? new ServiceWorkerStore(core) : false
-    this.IndexedDBStore = new IndexedDBStore(core)
+    this.ServiceWorkerStore = null
+    if (this.opts.serviceWorker) {
+      this.ServiceWorkerStore = new ServiceWorkerStore(core, { storeName: core.getID() })
+    }
+    this.IndexedDBStore = new IndexedDBStore(core, Object.assign({},
+      opts.indexedDB || {},
+      { storeName: core.getID() }))
 
     this.saveFilesStateToLocalStorage = this.saveFilesStateToLocalStorage.bind(this)
     this.loadFilesStateFromLocalStorage = this.loadFilesStateFromLocalStorage.bind(this)
@@ -37,7 +41,7 @@ module.exports = class RestoreFiles extends Plugin {
   }
 
   loadFilesStateFromLocalStorage () {
-    const savedState = localStorage.getItem('uppyState')
+    const savedState = localStorage.getItem(`uppyState:${this.core.opts.id}`)
 
     if (savedState) {
       this.core.log('Recovered some state from Local Storage')
@@ -50,7 +54,7 @@ module.exports = class RestoreFiles extends Plugin {
       currentUploads: this.core.state.currentUploads,
       files: this.core.state.files
     })
-    localStorage.setItem('uppyState', files)
+    localStorage.setItem(`uppyState:${this.core.opts.id}`, files)
   }
 
   loadFileBlobsFromServiceWorker () {

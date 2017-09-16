@@ -25,6 +25,14 @@ describe('src/Core', () => {
     expect(core.constructor.name).toEqual('Uppy')
   })
 
+  it('should have a string `id` option that defaults to "uppy"', () => {
+    const core = Core()
+    expect(core.getID()).toEqual('uppy')
+
+    const core2 = Core({ id: 'profile' })
+    expect(core2.getID()).toEqual('profile')
+  })
+
   describe('plugins', () => {
     it('should add a plugin to the plugin stack', () => {
       const core = Core()

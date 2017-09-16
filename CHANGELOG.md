@@ -76,7 +76,7 @@ What we need to do to release Uppy 1.0
 - [ ] uppy-server: storing tokens in user’s browser only
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 
-# ## 0.21.0
+## 0.21.0
 
 To be released: 2017-10-27
 
@@ -113,7 +113,7 @@ Released: 2017-09-15.
 Theme: Tests and better APIs
 
 - [x] goldenretriver: allow passing options to `IndexedDbStore` (#339 / sunil-shrestha)
-- [x] core: add Uppy instance ID options, namespace serviceWorker action types, add example using multiple Uppy instances with GoldenRetriver (#333 / @goto-bus-stop)
+- [x] core: add Uppy instance ID option, namespace serviceWorker action types, add example using multiple Uppy instances with GoldenRetriver (#333 / @goto-bus-stop)
 - [x] core: fix `calculateTotalProgress` - NaN (#342 / @arturi)
 - [x] core: fix and refactor restrictions (#345 / @arturi)
 - [x] core: Better `generateFileID` (#330 / @arturi)
