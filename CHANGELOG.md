@@ -28,9 +28,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] dependencies: es6-promise --> lie https://github.com/calvinmetcalf/lie ?
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
-- [ ] core: see if it’s possible to add webworkers or use pica for thumbnail generation (@arturi)
+- [ ] core: see if it’s possible to add webworkers for thumbnail generation (@arturi, @goto-bus-stop)
 - [ ] website: Would one really connect a own google drive or dropbox for testing purpose? => maybe one can give something like a testing account of google drive and dropbox to try uppy
-- [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] ui: do we want https://github.com/kazzkiq/balloon.css ?
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
 - [ ] uppy/uppy-server: Transfer files between providers (from instagram to Google drive for example).
@@ -42,7 +41,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
 - [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
 - [ ] uppy-server/s3: make s3 endpoint more configurable (@goto-bus-stop)
-- [ ] DnD Bar ? (@arturi)
+- [ ] DnD Bar: drag and drop + statusbar or progressbar ? (@arturi)
 - [ ] possibility to work on already uploaded / in progress files #112, #113
 - [ ] possibility to edit/delete more than one file at once #118, #97
 - [ ] optimize problematic filenames #72
@@ -77,8 +76,9 @@ What we need to do to release Uppy 1.0
 - [ ] uppy-server: storing tokens in user’s browser only
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 
+# ## 0.21.0
 
-## 0.20.0
+To be released: 2017-10-27
 
 - [ ] webcam: look into simplifying / improving webcam plugin, only showing the tab when webcam is available (@arturi, @goto-bus-stop)
 - [ ] provider: improve UI, add icons for file types? (@arturi)
@@ -86,36 +86,52 @@ What we need to do to release Uppy 1.0
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
-- [ ] core: Uppy ID per instance
 - [ ] core: allow setting custom `id` for plugins: https://github.com/transloadit/uppy/pull/328#issuecomment-328242214 (@arturi)
 - [ ] core: move `setPluginState` to Plugin class ? (@goto-bus-stop)
 - [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] Redux PR (@arturi, @goto-bus-stop)
-- [ ] GoldenRetriever: Ability to clear upload history or set expiry date #324 (@arturi)
-- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi @goto-bus-stop)
+- [ ] goldenretriver: Ability to clear upload history or set expiry date (#324 / @arturi)
 
 # next
 
-## 0.19.0
+## 0.20.0
 
-To be released: 2017-09-11.
+To be released: 2017-09-29.
 Theme: React and Retry
 
-- [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (@arturi @goto-bus-stop)
-- [ ] core: improve and merge in the React PR (@arturi @goto-bus-stop)
-- [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
-- [ ] core: remove unused bootstrap styles (#329 / @arturi)
+- [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
+- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
+- [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
+- [ ] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
+- [ ] goldenretriver: add “ghost” files (@arturi)
+- [ ] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
+- [ ] core: set the newState before emiting "core:state-update"
+
+## 0.19.0
+
+Released: 2017-09-15.
+Theme: Tests and better APIs
+
+- [x] goldenretriver: allow passing options to `IndexedDbStore` (#339 / sunil-shrestha)
+- [x] core: add Uppy instance ID options, namespace serviceWorker action types, add example using multiple Uppy instances with GoldenRetriver (#333 / @goto-bus-stop)
+- [x] core: fix `calculateTotalProgress` - NaN (#342 / @arturi)
+- [x] core: fix and refactor restrictions (#345 / @arturi)
+- [x] core: Better `generateFileID` (#330 / @arturi)
+- [x] core: improve `isOnline()` (#319 / @richardwillars)
+- [x] core: remove unused bootstrap styles (#329 / @arturi)
 - [x] core: experiment with yo-yo --> preact and picodom (#297 / @arturi)
 - [x] dashboard: fix FileItem source icon position and copy (@arturi)
 - [x] dashboard: expose and document the show/hide/isOpen API (@arturi)
-- [x] dashboard: allow multiple `triggers` of the same class `.open-uppy` (@arturi)
+- [x] dashboard: allow multiple `triggers` of the same class `.open-uppy` (#328 / @arturi)
+- [x] plugins: add `aria-hidden` to all SVG icons for accessibility (#4e808ca3d26f06499c58bb77abbf1c3c2b510b4d / @arturi)
 - [x] core: Handle sync returns and throws in possibly-async function options (#315 / @goto-bus-stop)
-- [x] core: switch to Jest tests, add more tests for Core and Utils (@richardwillars)
+- [x] core: switch to Jest tests, add more tests for Core and Utils (#310 / @richardwillars)
+- [x] website: Minify bundle for `disc` (#332 / @goto-bus-stop)
+- [x] transloadit: remove `this.state` getter (#331 / @goto-bus-stop)
 
 ## 0.18.1
 
-Released: 2017-09-05
+Released: 2017-09-05.
 Note: this version was released as a `@next` npm tag to unblock some users.
 
 - [x] core: gradually resize image previews #275 (@goto-bus-stop)
