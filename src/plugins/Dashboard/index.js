@@ -53,7 +53,7 @@ module.exports = class DashboardUI extends Plugin {
       defaultTabIcon: defaultTabIcon(),
       showProgressDetails: false,
       hideUploadButton: false,
-      note: false,
+      note: null,
       closeModalOnClickOutside: false,
       locale: defaultLocale,
       onRequestCloseModal: () => this.closeModal()
