@@ -6,7 +6,7 @@ const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 const DashboardPlugin = require('uppy/lib/plugins/Dashboard')
 const DragDropPlugin = require('uppy/lib/plugins/DragDrop')
 const ProgressBarPlugin = require('uppy/lib/plugins/ProgressBar')
-const { Dashboard, DashboardModal, DragDrop, ProgressBar } = require('uppy/lib/uppy-react')
+const { Dashboard, DashboardModal, DragDrop, ProgressBar } = require('uppy/lib/react')
 
 module.exports = class App extends React.Component {
   constructor (props) {
