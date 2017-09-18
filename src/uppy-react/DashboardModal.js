@@ -1,7 +1,7 @@
 const React = require('react')
 const PropTypes = require('prop-types')
 const UppyCore = require('../core/Core')
-const UppyWrapper = require('./Wrapper')
+const DashboardPlugin = require('../plugins/Dashboard')
 
 const h = React.createElement
 
@@ -13,34 +13,55 @@ const h = React.createElement
 class DashboardModal extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
+    const options = Object.assign(
+      {},
+      this.props,
+      {
+        target: this.container,
+        onRequestHideModal: this.props.onRequestClose
+      }
+    )
+    delete options.uppy
+    uppy.use(DashboardPlugin, options)
 
     this.plugin = uppy.getPlugin(this.props.plugin)
     if (this.props.open) {
-      this.plugin.showModal()
+      this.plugin.openModal()
     }
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.open && !nextProps.open) {
-      this.plugin.hideModal()
+      this.plugin.closeModal()
     } else if (!this.props.open && nextProps.open) {
-      this.plugin.showModal()
+      this.plugin.openModal()
     }
   }
 
   render () {
-    return h(UppyWrapper, this.props)
+    return h('div', {
+      ref: (container) => {
+        this.container = container
+      }
+    })
   }
 }
 
 DashboardModal.propTypes = {
   uppy: PropTypes.instanceOf(UppyCore).isRequired,
   open: PropTypes.bool,
-  onRequestClose: PropTypes.func
+  onRequestClose: PropTypes.func,
+  plugins: PropTypes.arrayOf(PropTypes.string),
+  width: PropTypes.number,
+  height: PropTypes.number,
+  semiTransparent: PropTypes.bool,
+  showProgressDetails: PropTypes.bool,
+  hideUploadButton: PropTypes.bool,
+  note: PropTypes.string,
+  locale: PropTypes.object
 }
 
 DashboardModal.defaultProps = {
-  plugin: 'DashboardUI'
 }
 
 module.exports = DashboardModal
