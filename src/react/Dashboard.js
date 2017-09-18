@@ -21,7 +21,7 @@ class Dashboard extends React.Component {
     delete options.uppy
     uppy.use(DashboardPlugin, options)
 
-    this.plugin = uppy.getPlugin('DashboardUI')
+    this.plugin = uppy.getPlugin('Dashboard')
   }
 
   componentWillUnmount () {

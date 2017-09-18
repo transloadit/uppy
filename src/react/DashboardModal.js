@@ -24,10 +24,16 @@ class DashboardModal extends React.Component {
     delete options.uppy
     uppy.use(DashboardPlugin, options)
 
-    this.plugin = uppy.getPlugin(this.props.plugin)
+    this.plugin = uppy.getPlugin('Dashboard')
     if (this.props.open) {
       this.plugin.openModal()
     }
+  }
+
+  componentWillUnmount () {
+    const uppy = this.props.uppy
+
+    uppy.removePlugin(this.plugin)
   }
 
   componentWillReceiveProps (nextProps) {
