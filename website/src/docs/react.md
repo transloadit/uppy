@@ -53,13 +53,15 @@ const AvatarPicker = ({ currentAvatar }) => {
 The plugins that are available as React component wrappers are:
 
  - [Dashboard][]
+ - [DashboardModal][]
  - [DragDrop][]
  - [ProgressBar][]
- - [DashboardModal][]
+ - [StatusBar][]
 
 [React]: https://facebook.github.io/react
 [Preact]: https://preact.js.org/
 [Dashboard]: /docs/dashboard
 [DragDrop]: /docs/dragdrop
 [ProgressBar]: /docs/progressbar
+[ProgressBar]: /docs/statusbar
 [DashboardModal]: /docs/react/dashboard-modal
