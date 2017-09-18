@@ -455,7 +455,7 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     if (!this.opts.disableStatusBar) {
-      const statusBar = this.core.getPlugin('StatusBarUI')
+      const statusBar = this.core.getPlugin('StatusBar')
       // Checking if this plugin exists, in case it was removed by uppy-core
       // before the Dashboard was.
       if (statusBar) this.core.removePlugin(statusBar)
