@@ -3,13 +3,12 @@ const ServiceWorkerStore = require('./ServiceWorkerStore')
 const IndexedDBStore = require('./IndexedDBStore')
 
 /**
- * Persistent State
- *
- * Helps debug Uppy: loads saved state from localStorage, so when you restart the page,
- * your state is right where you left off. If something goes wrong, clear uppyState
- * in your localStorage, using the devTools
- *
- */
+* Restore Files plugin — restores selected files and resumes uploads
+* after a closed tab or a browser crash!
+*
+* Uses localStorage, IndexedDB and ServiceWorker to do its magic, read more:
+* https://uppy.io/blog/2017/07/golden-retriever/
+*/
 module.exports = class RestoreFiles extends Plugin {
   constructor (core, opts) {
     super(core, opts)
@@ -17,12 +16,10 @@ module.exports = class RestoreFiles extends Plugin {
     this.id = 'RestoreFiles'
     this.title = 'Restore Files'
 
-    // set default options
     const defaultOptions = {
       serviceWorker: false
     }
 
-    // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
     this.ServiceWorkerStore = null
@@ -59,7 +56,6 @@ module.exports = class RestoreFiles extends Plugin {
 
   loadFileBlobsFromServiceWorker () {
     this.ServiceWorkerStore.list().then((blobs) => {
-      console.log(blobs)
       const numberOfFilesRecovered = Object.keys(blobs).length
       const numberOfFilesTryingToRecover = Object.keys(this.core.state.files).length
       if (numberOfFilesRecovered === numberOfFilesTryingToRecover) {
@@ -76,6 +72,7 @@ module.exports = class RestoreFiles extends Plugin {
   loadFileBlobsFromIndexedDB () {
     this.IndexedDBStore.list().then((blobs) => {
       const numberOfFilesRecovered = Object.keys(blobs).length
+
       if (numberOfFilesRecovered > 0) {
         this.core.log(`Successfully recovered ${numberOfFilesRecovered} blobs from Indexed DB!`)
         this.core.info(`Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
@@ -88,7 +85,7 @@ module.exports = class RestoreFiles extends Plugin {
   onBlobsLoaded (blobs) {
     const updatedFiles = Object.assign({}, this.core.state.files)
     Object.keys(blobs).forEach((fileID) => {
-      const cachedData = blobs[fileID].data
+      const cachedData = blobs[fileID]
 
       const updatedFileData = {
         data: cachedData,
