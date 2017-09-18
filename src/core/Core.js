@@ -6,7 +6,6 @@ const cuid = require('cuid')
 const throttle = require('lodash.throttle')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
-// const en_US = require('../locales/en_US')
 // const deepFreeze = require('deep-freeze-strict')
 
 /**
@@ -43,6 +42,7 @@ class Uppy {
         minNumberOfFiles: false,
         allowedFileTypes: false
       },
+      meta: {},
       onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
       onBeforeUpload: (files, done) => Promise.resolve(),
       locale: defaultLocale
@@ -127,13 +127,15 @@ class Uppy {
   /**
    * Updates state
    *
-   * @param {newState} object
+   * @param {patch} object
    */
-  setState (stateUpdate) {
-    const newState = Object.assign({}, this.state, stateUpdate)
+  setState (patch) {
+    const prevState = Object.assign({}, this.state)
+    const nextState = Object.assign({}, this.state, patch)
 
-    this.state = newState
-    this.emit('core:state-update', this.state, newState, stateUpdate)
+    this.state = nextState
+    this.emit('core:state-update', prevState, nextState, patch)
+
     this.updateAll(this.state)
   }
 
