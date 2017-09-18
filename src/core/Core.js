@@ -131,9 +131,9 @@ class Uppy {
    */
   setState (stateUpdate) {
     const newState = Object.assign({}, this.state, stateUpdate)
-    this.emit('core:state-update', this.state, newState, stateUpdate)
 
     this.state = newState
+    this.emit('core:state-update', this.state, newState, stateUpdate)
     this.updateAll(this.state)
   }
 
