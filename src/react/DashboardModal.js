@@ -18,7 +18,7 @@ class DashboardModal extends React.Component {
       this.props,
       {
         target: this.container,
-        onRequestHideModal: this.props.onRequestClose
+        onRequestCloseModal: this.props.onRequestClose
       }
     )
     delete options.uppy
