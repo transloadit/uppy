@@ -128,6 +128,8 @@ Theme: Tests and better APIs
 - [x] core: switch to Jest tests, add more tests for Core and Utils (#310 / @richardwillars)
 - [x] website: Minify bundle for `disc` (#332 / @goto-bus-stop)
 - [x] transloadit: remove `this.state` getter (#331 / @goto-bus-stop)
+- [x] server: option to define valid upload urls (@ifedapoolarewaju)
+- [x] server: more automated tests (@ifedapoolarewaju)
 
 ## 0.18.1
 
@@ -148,7 +150,6 @@ Note: this version was released as a `@next` npm tag to unblock some users.
 - [x] tus: Clear stored `uploadUrl` on `uppy.resetProgress()` call (#314 / @goto-bus-stop)
 - [x] website: simplify examples and code samples, prevent sidebar subheading links anywhere but in docs (@arturi)
 - [x] website: group plugin docs together in the sidebar (@arturi)
-- [x] server: option to define valid upload urls (@ifedapoolarewaju)
 
 ## 0.18.0
 
