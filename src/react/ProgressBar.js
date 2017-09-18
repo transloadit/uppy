@@ -1,7 +1,7 @@
 const React = require('react')
 const PropTypes = require('prop-types')
 const UppyCore = require('../core')
-const DragDropPlugin = require('../plugins/ProgressBar')
+const ProgressBarPlugin = require('../plugins/ProgressBar')
 
 const h = React.createElement
 
@@ -19,7 +19,7 @@ class ProgressBar extends React.Component {
     )
     delete options.uppy
 
-    uppy.use(DragDropPlugin, options)
+    uppy.use(ProgressBarPlugin, options)
 
     this.plugin = uppy.getPlugin('ProgressBar')
   }
