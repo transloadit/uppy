@@ -63,10 +63,7 @@ class IndexedDBStore {
     }).then((files) => {
       const result = {}
       files.forEach((file) => {
-        result[file.fileID] = {
-          id: file.fileID,
-          data: file.data
-        }
+        result[file.fileID] = file.data
       })
       return result
     })
