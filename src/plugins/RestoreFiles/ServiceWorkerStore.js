@@ -4,7 +4,6 @@ class ServiceWorkerStore {
   constructor (core, opts) {
     this.core = core
     this.ready = new Promise((resolve, reject) => {
-      // service worker stuff
       this.core.on('core:file-sw-ready', () => {
         resolve()
       })
@@ -37,7 +36,7 @@ class ServiceWorkerStore {
 
       navigator.serviceWorker.controller.postMessage({
         type: 'uppy/GET_FILES',
-        data: { store: this.name }
+        store: this.name
       })
     })
 
@@ -48,11 +47,8 @@ class ServiceWorkerStore {
     return this.ready.then(() => {
       navigator.serviceWorker.controller.postMessage({
         type: 'uppy/ADD_FILE',
-        data: {
-          store: this.name,
-          id: file.id,
-          data: file.data
-        }
+        store: this.name,
+        file: file
       })
     })
   }
@@ -62,7 +58,7 @@ class ServiceWorkerStore {
       navigator.serviceWorker.controller.postMessage({
         type: 'uppy/REMOVE_FILE',
         store: this.name,
-        data: fileID
+        fileID: fileID
       })
     })
   }

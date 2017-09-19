@@ -29,19 +29,19 @@ function sendMessageToAllClients (msg) {
 }
 
 function addFile (store, file) {
-  getCache(store)[file.id] = file
-  console.log('Added file to service worker cache:', file)
+  getCache(store)[file.id] = file.data
+  console.log('Added file blob to service worker cache:', file.data)
 }
 
 function removeFile (store, fileID) {
   delete getCache(store)[fileID]
-  console.log('Removed file from service worker cache:', fileID)
+  console.log('Removed file blob from service worker cache:', fileID)
 }
 
 function getFiles (store) {
   sendMessageToAllClients({
     type: 'uppy/ALL_FILES',
-    store,
+    store: store,
     files: getCache(store)
   })
 }
@@ -49,10 +49,10 @@ function getFiles (store) {
 self.addEventListener('message', (event) => {
   switch (event.data.type) {
     case 'uppy/ADD_FILE':
-      addFile(event.data.store, event.data.data)
+      addFile(event.data.store, event.data.file)
       break
     case 'uppy/REMOVE_FILE':
-      removeFile(event.data.store, event.data.data)
+      removeFile(event.data.store, event.data.fileID)
       break
     case 'uppy/GET_FILES':
       getFiles(event.data.store)
