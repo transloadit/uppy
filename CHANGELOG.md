@@ -104,8 +104,10 @@ Theme: React and Retry
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
 - [ ] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
 - [ ] goldenretriver: add “ghost” files (@arturi)
+- [ ] goldenretriver: fix what was broken
 - [ ] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
-- [ ] core: set the newState before emiting "core:state-update"
+- [x] core: set the newState before emiting `core:state-update`
+- [ ] core: refactor `uppy-base`
 
 ## 0.19.0
 
