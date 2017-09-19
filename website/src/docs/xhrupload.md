@@ -28,6 +28,7 @@ HTTP method to use for the upload.
 ### `formData: true`
 
 Whether to use a multipart form upload, using [FormData][].
+This works similarly to using a `<form>` element with an `<input type="file">` for uploads.
 When `true`, file metadata is also sent to the endpoint as separate form fields.
 When `false`, only the file contents are sent.
 
@@ -53,5 +54,50 @@ headers: {
   'authorization': `Bearer ${window.getCurrentUserToken()}`
 }
 ```
+
+### `getResponseData(xhr)`
+
+When an upload has completed, Uppy will extract response data from the upload endpoint and send it back in the `core:upload-success` event.
+By default, Uppy assumes the endpoint will return JSON. So, if `POST /upload` responds with:
+
+```json
+{
+  "url": "https://public.url/to/file",
+  "whatever": "beep boop"
+}
+```
+
+That object will be emitted in the `core:upload-success` event.
+
+Not all endpoints respond with JSON. Providing a `getResponseData` function overrides this behavior.
+The `xhr` parameter is the `XMLHttpRequest` instance used to upload the file.
+
+For example, an endpoint that responds with an XML document:
+
+```js
+getResponseData (xhr) {
+  return {
+    url: xhr.responseXML.querySelector('Location').textContent
+  }
+}
+```
+
+### `getResponseError(xhr)`
+
+If the upload endpoint responds with a non-2xx status code, the upload is assumed to have failed.
+The endpoint might have responded with some information about the error, though.
+Pass in a `getResponseError` function to extract error data from the `XMLHttpRequest` instance used for the upload.
+
+For example, if the endpoint responds with a JSON object containing a `{ message }` property, this would show that message to the user:
+
+```js
+getResponseError (xhr) {
+  return new Error(JSON.parse(xhr.response).message)
+}
+```
+
+### `responseUrlFieldName: 'url'`
+
+The field name containing a publically accessible location of the uploaded file in the response data returned by `getResponseData(xhr)`.
 
 [FormData]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
