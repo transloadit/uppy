@@ -19,7 +19,7 @@ module.exports = class Plugin {
     this.opts = opts || {}
 
     // clear everything inside the target selector
-    this.opts.replaceTargetContent === this.opts.replaceTargetContent || true
+    this.opts.replaceTargetContent = this.opts.replaceTargetContent !== undefined ? this.opts.replaceTargetContent : true
 
     this.update = this.update.bind(this)
     this.mount = this.mount.bind(this)
