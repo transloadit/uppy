@@ -12,11 +12,11 @@ Uppy is a sleek, modular file uploader that integrates seemlessly with any appli
 - **Preview** and edit metadata with a nice interface;
 - **Upload** to the final destination, optionally processing/encoding on the way;
 
-<img width="700" alt="Uppy UI Demo: modal dialog with a few selected files and an upload button" src="https://github.com/transloadit/uppy/raw/master/uppy-screenshot.jpg">
-
 **[Try Uppy](http://uppy.io/examples/dashboard/)** | **[Read the docs](http://uppy.io/docs)**
 
-*Uppy is being developed by the [Transloadit](https://transloadit.com) team.*
+<img width="700" alt="Uppy UI Demo: modal dialog with a few selected files and an upload button" src="https://github.com/transloadit/uppy/raw/master/uppy-screenshot.jpg">
+
+Uppy is being developed by the [Transloadit](https://transloadit.com) team.
 
 ## Features
 
