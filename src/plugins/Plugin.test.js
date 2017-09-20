@@ -37,15 +37,15 @@ describe('Plugin', () => {
     expect(typeof plugin.opts).toBe('object')
   })
 
-  it('sets `replaceTargetContent` based on options argument', () => {
-    plugin = new Plugin(null, { replaceTargetContent: false })
-    expect(plugin.opts.replaceTargetContent).toBe(false)
-  })
+  // it('sets `replaceTargetContent` based on options argument', () => {
+  //   plugin = new Plugin(null, { replaceTargetContent: false })
+  //   expect(plugin.opts.replaceTargetContent).toBe(false)
+  // })
 
-  it('defaults `replaceTargetContent` to true when not passed as an option', () => {
-    plugin = new Plugin()
-    expect(plugin.opts.replaceTargetContent).toBe(true)
-  })
+  // it('defaults `replaceTargetContent` to true when not passed as an option', () => {
+  //   plugin = new Plugin()
+  //   expect(plugin.opts.replaceTargetContent).toBe(true)
+  // })
 
   describe('.update', () => {
     beforeEach(() => {
@@ -185,16 +185,18 @@ describe('Plugin', () => {
         expect(mockCore.setMeta.mock.calls.length).toBe(0)
       })
 
-      it('removes content from target when `replaceTargetContent` is set', () => {
-        plugin.mount(mockTarget, mockPlugin)
-        expect(mockElement.innerHTML).toBe('')
-      })
-
       it('does not remove content from target when `replaceTargetContent` is not set', () => {
-        plugin = new Plugin(mockCore, { replaceTargetContent: false })
+        plugin = new Plugin(mockCore)
         plugin.render = () => {}
         plugin.mount(mockTarget, mockPlugin)
         expect(mockElement.innerHTML).toBe('foo')
+      })
+
+      it('removes content from target when `replaceTargetContent` is set', () => {
+        plugin = new Plugin(mockCore, {replaceTargetContent: true})
+        plugin.render = () => {}
+        plugin.mount(mockTarget, mockPlugin)
+        expect(mockElement.innerHTML).toBe('')
       })
 
       it('sets `el` to plugin rendered with state', () => {
@@ -209,6 +211,8 @@ describe('Plugin', () => {
       })
 
       it('returns the target DOM element', () => {
+        plugin = new Plugin(mockCore, {replaceTargetContent: true})
+        plugin.render = () => {}
         const target = plugin.mount(mockTarget, mockPlugin)
         expect(target).toEqual({
           nodeName: 'FORM',
