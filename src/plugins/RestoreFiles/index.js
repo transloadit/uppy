@@ -83,17 +83,22 @@ module.exports = class RestoreFiles extends Plugin {
   }
 
   onBlobsLoaded (blobs) {
+    const obsoleteBlobs = []
     const updatedFiles = Object.assign({}, this.core.state.files)
     Object.keys(blobs).forEach((fileID) => {
+      const originalFile = this.core.getFile(fileID)
+      if (!originalFile) {
+        obsoleteBlobs.push(fileID)
+        return
+      }
+
       const cachedData = blobs[fileID]
 
       const updatedFileData = {
         data: cachedData,
         isRestored: true
       }
-      const updatedFile = Object.assign({}, updatedFiles[fileID],
-        Object.assign({}, updatedFileData)
-      )
+      const updatedFile = Object.assign({}, originalFile, updatedFileData)
       updatedFiles[fileID] = updatedFile
 
       this.core.generatePreview(updatedFile)
@@ -102,6 +107,25 @@ module.exports = class RestoreFiles extends Plugin {
       files: updatedFiles
     })
     this.core.emit('core:restored')
+
+    if (obsoleteBlobs.length) {
+      this.deleteBlobs(obsoleteBlobs).then(() => {
+        this.core.log(`RestoreFiles: cleaned up ${obsoleteBlobs.length} old files`)
+      })
+    }
+  }
+
+  deleteBlobs (fileIDs) {
+    const promises = []
+    fileIDs.forEach((id) => {
+      if (this.ServiceWorkerStore) {
+        promises.push(this.ServiceWorkerStore.delete(id))
+      }
+      if (this.IndexedDBStore) {
+        promises.push(this.IndexedDBStore.delete(id))
+      }
+    })
+    return Promise.all(promises)
   }
 
   install () {
