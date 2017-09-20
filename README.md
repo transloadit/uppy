@@ -39,20 +39,24 @@ $ npm install uppy
 
 We recommend installing from NPM and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Add CSS [uppy.min.css](https://unpkg.com/uppy/dist/uppy.min.css), either to `<head>` of your HTML page or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
+Add CSS [uppy.min.css](https://cdn.jsdelivr.net/npm/uppy/dist/uppy.min.css), either to `<head>` of your HTML page or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
-If you like, you can also use a pre-built bundle, for example from [unpkg CDN](https://unpkg.com/uppy/). In that case `Uppy` will attach itself to the global `window.Uppy` object.
+If you like, you can also use a pre-built bundle, from [jsDelivr](https://www.jsdelivr.com/package/npm/uppy) or [unpkg CDN](https://unpkg.com/uppy/). In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
 > ⚠️ The bundle currently consists of most Uppy plugins, so this method is not  recommended for production, as your users will have to download all plugins, even if you are using just a few.
 
 1\. Add a script to the bottom of `<body>`:
 
 ``` html
+<script src="https://cdn.jsdelivr.net/npm/uppy/dist/uppy.min.js"></script>
+or
 <script src="https://unpkg.com/uppy"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
+<link href="https://cdn.jsdelivr.net/npm/uppy/dist/uppy.min.css" rel="stylesheet">
+or
 <link href="https://unpkg.com/uppy/dist/uppy.min.css" rel="stylesheet">
 ```
 

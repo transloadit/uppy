@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
   "unpkg": "dist/uppy.min.js",
+  "jsdelivr": "dist/uppy.min.js",
   "files": [
     "src/",
     "lib/",
