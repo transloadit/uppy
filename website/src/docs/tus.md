@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 8
+order: 30
 title: "Tus10"
 permalink: docs/tus/
 ---

@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 8
+order: 22
 title: "StatusBar"
 permalink: docs/statusbar/
 ---

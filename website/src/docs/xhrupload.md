@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 8
+order: 31
 title: "XHRUpload"
 permalink: docs/xhrupload/
 ---

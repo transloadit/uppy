@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 10
+order: 33
 title: "Transloadit"
 permalink: docs/transloadit/
 ---
