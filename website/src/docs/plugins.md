@@ -108,7 +108,7 @@ state = {
 
 ### `replaceTargetContent: false`
 
-By default Uppy will append any UI to a DOM element, if such element is specified as a `target`. This default is the least dangerous option. However, you might want to provide fallback `<form>` with `<button type="submit">` that will be shown if Uppy or JavaScript in not loaded/supported on the page. Set `replaceTargetContent: true` to clear the `target` before appending, that way all your fallback elements will be removed if Uppy is actually functioning.
+By default Uppy will append any UI to a DOM element, if such element is specified as a `target`. This default is the least dangerous option. However, you might want to provide fallback `<form>` with `<button type="submit">` that will be shown if Uppy or JavaScript is not loaded/supported on the page. Set `replaceTargetContent: true` to clear the `target` before appending, that way all your fallback elements will be removed if Uppy is actually functioning.
 
 ### `locale: {}`
 
