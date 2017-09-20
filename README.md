@@ -78,12 +78,13 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
 
 - `Tus` — resumable uploads via [tus.io](http://tus.io) open standard
 - `XHRUpload` — regular uploads for any backend out there
-- `Dashboard` — universal UI with previews, progress bars and the cool stuff
+- `Transloadit` — support for [Transloadit](http://transloadit.com)’s robust file encoding and processing backend
+- `Dashboard` — universal UI with previews, progress bars, metadata editor and all the cool stuff
 - `DragDrop` — plain and simple drag and drop area
 - `FileInput` — even more plain “select files” button
-- `ProgressBar` — plain progress bar that fills itself when upload progresses
+- `ProgressBar` — minimal progress bar that fills itself when upload progresses
 - `StatusBar` — more detailed progress, pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included by default with `Dashboard`)
-- `Informer` — send notifications: “smile” before taking a selfie, “upload failed” when all is lost (also included by default with `Dashboard`)
+- `Informer` — send notifications like “smile” before taking a selfie or “upload failed” when all is lost (also included by default with `Dashboard`)
 - `RestoreFiles` — restores files after a browser crash, like it’s nothing
 - `GoogleDrive` — select files from [Google Drive](https://www.google.com/drive/)
 - `Dropbox` — select files from [Dropbox](https://www.dropbox.com/)
