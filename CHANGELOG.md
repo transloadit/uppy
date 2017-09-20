@@ -106,11 +106,19 @@ Theme: React and Retry
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
 - [ ] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
 - [ ] goldenretriver: add “ghost” files (@arturi)
-- [x] goldenretriver: fix what was broken
 - [ ] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
 - [ ] uploaders: issue warning when no uploading plugins are used
-- [x] core: set the newState before emiting `core:state-update`
 - [ ] core: refactor `uppy-base`
+- [x] core: fix `replaceTargetContent` and add tests for `Plugin` (#354 / @gavboulton)
+
+## 0.19.1
+
+Released: 2017-09-20.
+
+- [x] goldenretriver: fix restorefiles with id (#351 / @arturi)
+- [x] goldenretriver: Clean up blobs that are not related to a file in state (#349 / @goto-bus-stop)
+- [x] core: set the newState before emiting `core:state-update` (#341 / @sunil-shrestha, @arturi)
+- [x] docs: Document StatusBar plugin (#350 / @goto-bus-stop)
 
 ## 0.19.0
 
