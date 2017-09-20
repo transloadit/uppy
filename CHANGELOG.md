@@ -59,6 +59,7 @@ What we need to do to release Uppy 1.0
 - [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
 - [ ] feature: Uppy should work well with React/Redux and React Native
 - [ ] feature: preset for Transloadit that mimics jQuery SDK
+- [ ] QA: tests for everything
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
 - [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files. add metrics to Librato
 - [ ] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
@@ -67,8 +68,8 @@ What we need to do to release Uppy 1.0
 - [ ] ui: refine UI, neat things up (if that’s even a word)
 - [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
 - [ ] refactoring: possibly add CSS-in-JS
-- [ ] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (like onload/onunload being weird in yo-yo) and mature, “new standard”, larger community
-- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say Tus plugin doesn’t include rendering stuff
+- [ ] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
+- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say uploading plugins don’t include rendering stuff
 - [ ] refactoring: webcam plugin
 - [ ] refactoring: clean up code everywhere
 - [ ] docs: on using plugins, all options, list of plugins, i18n
@@ -105,8 +106,9 @@ Theme: React and Retry
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
 - [ ] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
 - [ ] goldenretriver: add “ghost” files (@arturi)
-- [ ] goldenretriver: fix what was broken
+- [x] goldenretriver: fix what was broken
 - [ ] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
+- [ ] uploaders: issue warning when no uploading plugins are used
 - [x] core: set the newState before emiting `core:state-update`
 - [ ] core: refactor `uppy-base`
 
@@ -217,7 +219,9 @@ Released: 2017-07-02
 - [x] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
 - [x] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
 
-## 0.16.2 - 2017-05-31
+## 0.16.2
+
+Released: 2017-05-31.
 
 - [x] core: update prettier-bytes to fix the IE support issue https://github.com/Flet/prettier-bytes/issues/3 (@arturi)
 - [x] core: use URL.createObjectURL instead of resizing thumbnails (@arturi, @goto-bus-stop / #199)
@@ -227,7 +231,9 @@ Released: 2017-07-02
 - [x] transloadit: move user-facing strings into locale option (@goto-bus-stop / https://github.com/transloadit/uppy/commit/87a22e7ee37b6fa3754fa34868516a6700306b60)
 - [x] webcam: Mute audio in realtime playback (@goto-bus-stop / #196)
 
-## 0.16.1 - 2017-05-13
+## 0.16.1
+
+Released: 2017-05-13
 
 - [x] temporarily downgrade yo-yoify, until shama/yo-yoify#45 is resolved (@arturi / https://github.com/transloadit/uppy/commit/6292b96)
 
