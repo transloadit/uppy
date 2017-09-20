@@ -8,7 +8,7 @@
 
 Uppy is a sleek, modular file uploader that integrates seemlessly with any application. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
 
-- **Fetch** files from local disk, Google Drive, Dropbox, Instagram, or take selfies and videos with a camera;
+- **Fetch** files from local disk, Google Drive, Dropbox, Instagram, or snap and record selfies with a camera;
 - **Preview** and edit metadata with a nice interface;
 - **Upload** to the final destination, optionally processing/encoding on the way;
 
