@@ -207,6 +207,12 @@ module.exports = class RestoreFiles extends Plugin {
       this.IndexedDBStore.delete(fileID)
     })
 
+    this.core.on('core:success', (fileIDs) => {
+      this.deleteBlobs(fileIDs).then(() => {
+        this.core.log(`RestoreFiles: removed ${fileIDs.length} files that finished uploading`)
+      })
+    })
+
     this.core.on('core:state-update', this.saveFilesStateToLocalStorage)
 
     this.core.on('core:restored', () => {
