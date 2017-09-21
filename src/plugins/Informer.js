@@ -1,5 +1,9 @@
 const Plugin = require('./Plugin')
-const html = require('yo-yo')
+// const html = require('yo-yo')
+
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h, {attrToProp: false})
 
 /**
  * Informer

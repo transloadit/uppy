@@ -3,6 +3,10 @@ const Browser = require('./Browser')
 const LoaderView = require('./Loader')
 const Utils = require('../core/Utils')
 
+const { h } = require('preact')
+// const hyperx = require('hyperx')
+// const html = hyperx(h, {attrToProp: false})
+
 /**
  * Class to easily generate generic views for plugins
  *
@@ -385,7 +389,7 @@ module.exports = class View {
     }
 
     if (!authenticated) {
-      return AuthView({
+      return h(AuthView, {
         pluginName: this.plugin.title,
         demo: this.plugin.opts.demo,
         checkAuth: this.checkAuth,
@@ -393,6 +397,14 @@ module.exports = class View {
         handleDemoAuth: this.handleDemoAuth,
         checkAuthInProgress: checkAuthInProgress
       })
+      // return AuthView({
+      //   pluginName: this.plugin.title,
+      //   demo: this.plugin.opts.demo,
+      //   checkAuth: this.checkAuth,
+      //   handleAuth: this.handleAuth,
+      //   handleDemoAuth: this.handleDemoAuth,
+      //   checkAuthInProgress: checkAuthInProgress
+      // })
     }
 
     const browserProps = Object.assign({}, state[this.plugin.stateId], {

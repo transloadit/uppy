@@ -1,4 +1,7 @@
-const html = require('yo-yo')
+const { h, Component } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h, {attrToProp: false})
+
 const SnapshotButton = require('./SnapshotButton')
 const RecordButton = require('./RecordButton')
 
@@ -6,40 +9,51 @@ function isModeAvailable (modes, mode) {
   return modes.indexOf(mode) !== -1
 }
 
-module.exports = (props) => {
-  const src = props.src || ''
-  let video
-
-  if (props.useTheFlash) {
-    video = props.getSWFHTML()
-  } else {
-    video = html`<video class="UppyWebcam-video" autoplay muted src="${src}"></video>`
+class CameraScreen extends Component {
+  componentDidMount () {
+    this.props.onFocus()
+    const recordButton = this.webcamContainer.querySelector('.UppyWebcam-recordButton')
+    if (recordButton) recordButton.focus()
   }
 
-  const shouldShowRecordButton = props.supportsRecording && (
-    isModeAvailable(props.modes, 'video-only') ||
-    isModeAvailable(props.modes, 'audio-only') ||
-    isModeAvailable(props.modes, 'video-audio')
-  )
+  componentWillUnmount () {
+    this.props.onStop()
+  }
 
-  const shouldShowSnapshotButton = isModeAvailable(props.modes, 'picture')
+  render () {
+    const src = this.props.src || ''
+    let video
 
-  return html`
-    <div class="UppyWebcam-container" onload=${(el) => {
-      props.onFocus()
-      const recordButton = el.querySelector('.UppyWebcam-recordButton')
-      if (recordButton) recordButton.focus()
-    }} onunload=${(el) => {
-      props.onStop()
-    }}>
-      <div class='UppyWebcam-videoContainer'>
-        ${video}
+    if (this.props.useTheFlash) {
+      video = this.props.getSWFHTML()
+    } else {
+      video = html`<video class="UppyWebcam-video" autoplay muted src="${src}"></video>`
+    }
+
+    const shouldShowRecordButton = this.props.supportsRecording && (
+      isModeAvailable(this.props.modes, 'video-only') ||
+      isModeAvailable(this.props.modes, 'audio-only') ||
+      isModeAvailable(this.props.modes, 'video-audio')
+    )
+
+    const shouldShowSnapshotButton = isModeAvailable(this.props.modes, 'picture')
+
+    return html`
+      <div class="UppyWebcam-container" ref=${(el) => {
+        console.log(el)
+        this.webcamContainer = el
+      }}>
+        <div class='UppyWebcam-videoContainer'>
+          ${video}
+        </div>
+        <div class='UppyWebcam-buttonContainer'>
+          ${shouldShowRecordButton ? RecordButton(this.props) : null}
+          ${shouldShowSnapshotButton ? SnapshotButton(this.props) : null}
+        </div>
+        <canvas class="UppyWebcam-canvas" style="display: none;"></canvas>
       </div>
-      <div class='UppyWebcam-buttonContainer'>
-        ${shouldShowRecordButton ? RecordButton(props) : null}
-        ${shouldShowSnapshotButton ? SnapshotButton(props) : null}
-      </div>
-      <canvas class="UppyWebcam-canvas" style="display: none;"></canvas>
-    </div>
-  `
+    `
+  }
 }
+
+module.exports = CameraScreen

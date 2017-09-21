@@ -8,6 +8,8 @@ const WebcamIcon = require('./WebcamIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
 
+const { h } = require('preact')
+
 /**
  * Webcam
  */
@@ -277,7 +279,7 @@ module.exports = class Webcam extends Plugin {
       this.streamSrc = this.stream ? URL.createObjectURL(this.stream) : null
     }
 
-    return CameraScreen(extend(state.webcam, {
+    return h(CameraScreen, extend(state.webcam, {
       onSnapshot: this.takeSnapshot,
       onStartRecording: this.startRecording,
       onStopRecording: this.stopRecording,

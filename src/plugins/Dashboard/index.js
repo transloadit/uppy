@@ -134,6 +134,8 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   showPanel (id) {
+    console.log('show panel')
+
     const modal = this.core.getState().modal
 
     const activePanel = modal.targets.filter((target) => {

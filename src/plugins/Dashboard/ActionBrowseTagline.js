@@ -1,11 +1,10 @@
-const html = require('yo-yo')
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h, {attrToProp: false})
+
+let inputEl
 
 module.exports = (props) => {
-  const input = html`
-    <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
-           onchange=${props.handleInputChange} />
-  `
-
   return html`
     <span>
       ${props.acquirers.length === 0
@@ -15,9 +14,11 @@ module.exports = (props) => {
       <button type="button"
               class="UppyDashboard-browse"
               onclick=${(ev) => {
-                input.click()
+                inputEl.click()
               }}>${props.i18n('browse')}</button>
-      ${input}
+      <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
+             ref=${(el) => { inputEl = el }}
+             onchange=${props.handleInputChange} />
     </span>
   `
 }
