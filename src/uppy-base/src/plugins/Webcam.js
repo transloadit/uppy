@@ -1,6 +1,6 @@
 'use strict'
 
-const dataURItoFile = require('../utils/dataURItoFile')
+const { dataURItoFile } = require('../../../core/Utils')
 
 /**
  * Webcam Plugin

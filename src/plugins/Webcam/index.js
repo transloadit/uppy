@@ -1,8 +1,7 @@
 const Plugin = require('../Plugin')
 const WebcamProvider = require('../../uppy-base/src/plugins/Webcam')
 const Translator = require('../../core/Translator')
-const { extend,
-        getFileTypeExtension,
+const { getFileTypeExtension,
         supportsMediaRecorder } = require('../../core/Utils')
 const WebcamIcon = require('./WebcamIcon')
 const CameraScreen = require('./CameraScreen')
@@ -277,7 +276,7 @@ module.exports = class Webcam extends Plugin {
       this.streamSrc = this.stream ? URL.createObjectURL(this.stream) : null
     }
 
-    return CameraScreen(extend(state.webcam, {
+    return CameraScreen(Object.assign({}, state.webcam, {
       onSnapshot: this.takeSnapshot,
       onStartRecording: this.startRecording,
       onStopRecording: this.stopRecording,
