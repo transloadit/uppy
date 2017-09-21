@@ -46,12 +46,57 @@ module.exports = class RestoreFiles extends Plugin {
     }
   }
 
-  saveFilesStateToLocalStorage () {
-    const files = JSON.stringify({
-      currentUploads: this.core.state.currentUploads,
-      files: this.core.state.files
+  /**
+   * Get file objects that are currently waiting: they've been selected,
+   * but aren't yet being uploaded.
+   */
+  getWaitingFiles () {
+    const waitingFiles = {}
+
+    const allFiles = this.core.state.files
+    Object.keys(allFiles).forEach((fileID) => {
+      const file = this.core.getFile(fileID)
+      if (!file.progress || !file.progress.uploadStarted) {
+        waitingFiles[fileID] = file
+      }
     })
-    localStorage.setItem(`uppyState:${this.core.opts.id}`, files)
+
+    return waitingFiles
+  }
+
+  /**
+   * Get file objects that are currently being uploaded. If a file has finished
+   * uploading, but the other files in the same batch have not, the finished
+   * file is also returned.
+   */
+  getUploadingFiles () {
+    const uploadingFiles = {}
+
+    const { currentUploads } = this.core.state
+    if (currentUploads) {
+      const uploadIDs = Object.keys(currentUploads)
+      uploadIDs.forEach((uploadID) => {
+        const filesInUpload = currentUploads[uploadID].fileIDs
+        filesInUpload.forEach((fileID) => {
+          uploadingFiles[fileID] = this.core.getFile(fileID)
+        })
+      })
+    }
+
+    return uploadingFiles
+  }
+
+  saveFilesStateToLocalStorage () {
+    const filesToSave = Object.assign(
+      this.getWaitingFiles(),
+      this.getUploadingFiles()
+    )
+
+    const state = JSON.stringify({
+      currentUploads: this.core.state.currentUploads,
+      files: filesToSave
+    })
+    localStorage.setItem(`uppyState:${this.core.opts.id}`, state)
   }
 
   loadFileBlobsFromServiceWorker () {
