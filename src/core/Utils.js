@@ -367,7 +367,7 @@ function copyToClipboard (textToCopy, fallbackString) {
     const magicCopyFailed = (err) => {
       document.body.removeChild(textArea)
       window.prompt(fallbackString, textToCopy)
-      return reject('Oops, unable to copy displayed fallback prompt: ' + err)
+      return reject(new Error('Oops, unable to copy displayed fallback prompt: ' + err))
     }
 
     try {

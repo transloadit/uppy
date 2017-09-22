@@ -296,8 +296,8 @@ class Uppy {
       .then(() => this.opts.onBeforeFileAdded(file, this.getState().files))
 
     return beforeFileAdded.catch((err) => {
-      this.info(err, 'error', 5000)
-      return Promise.reject(`onBeforeFileAdded: ${err}`)
+      this.info(err.message, 'error', 5000)
+      return Promise.reject(new Error(`onBeforeFileAdded: ${err}`))
     }).then(() => {
       return Utils.getFileType(file).then((fileType) => {
         const updatedFiles = Object.assign({}, this.state.files)
@@ -335,7 +335,7 @@ class Uppy {
         }
 
         const isFileAllowed = this.checkRestrictions(newFile)
-        if (!isFileAllowed) return Promise.reject('File not allowed')
+        if (!isFileAllowed) return Promise.reject(new Error('File not allowed'))
 
         updatedFiles[fileID] = newFile
         this.setState({files: updatedFiles})
@@ -935,15 +935,15 @@ class Uppy {
   upload (forceUpload) {
     const isMinNumberOfFilesReached = this.checkMinNumberOfFiles()
     if (!isMinNumberOfFilesReached) {
-      return Promise.reject('Minimum number of files has not been reached')
+      return Promise.reject(new Error('Minimum number of files has not been reached'))
     }
 
     const beforeUpload = Promise.resolve()
       .then(() => this.opts.onBeforeUpload(this.state.files))
 
     return beforeUpload.catch((err) => {
-      this.info(err, 'error', 5000)
-      return Promise.reject(`onBeforeUpload: ${err}`)
+      this.info(err.message, 'error', 5000)
+      return Promise.reject(new Error(`onBeforeUpload: ${err}`))
     }).then(() => {
       const waitingFileIDs = []
       Object.keys(this.state.files).forEach((fileID) => {

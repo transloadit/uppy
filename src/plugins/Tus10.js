@@ -143,7 +143,7 @@ module.exports = class Tus10 extends Plugin {
       optsTus.onError = (err) => {
         this.core.log(err)
         this.core.emit('core:upload-error', file.id, err)
-        reject('Failed because: ' + err)
+        reject(new Error('Failed because: ' + err))
       }
 
       optsTus.onProgress = (bytesUploaded, bytesTotal) => {
