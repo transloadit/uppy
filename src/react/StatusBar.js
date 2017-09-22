@@ -47,4 +47,3 @@ StatusBar.defaultProps = {
 }
 
 module.exports = StatusBar
-
