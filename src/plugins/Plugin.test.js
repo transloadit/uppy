@@ -13,7 +13,7 @@ jest.mock('../core/Utils', () => ({
 
 getFormData.mockImplementation(() => ({ foo: 'bar' }))
 nanoraf.mockImplementation(cb => {
-  cb({ some: 'state' })
+  cb({ some: 'state' }) // eslint-disable-line standard/no-callback-literal
   return () => {}
 })
 

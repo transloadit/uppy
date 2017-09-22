@@ -93,7 +93,6 @@ module.exports = class Tus10 extends Plugin {
           updatedFiles[file] = updatedFile
         })
         this.core.setState({files: updatedFiles})
-        return
     }
   }
 
