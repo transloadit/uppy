@@ -63,5 +63,5 @@ The plugins that are available as React component wrappers are:
 [Dashboard]: /docs/dashboard
 [DragDrop]: /docs/dragdrop
 [ProgressBar]: /docs/progressbar
-[ProgressBar]: /docs/statusbar
+[StatusBar]: /docs/statusbar
 [DashboardModal]: /docs/react/dashboard-modal
