@@ -715,7 +715,7 @@ describe('src/Core', () => {
         type: 'image/jpg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
       })
-      expect(core.addFile({
+      return expect(core.addFile({
         source: 'jest',
         name: 'foo2.jpg',
         type: 'image/jpg',
@@ -735,7 +735,7 @@ describe('src/Core', () => {
         }
       })
 
-      expect(core.addFile({
+      return expect(core.addFile({
         source: 'jest',
         name: 'foo2.jpg',
         type: 'image/jpg',
@@ -753,7 +753,7 @@ describe('src/Core', () => {
         }
       })
 
-      expect(core.addFile({
+      return expect(core.addFile({
         source: 'jest',
         name: 'foo.jpg',
         type: 'image/jpg',
