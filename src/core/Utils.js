@@ -345,7 +345,7 @@ function dataURItoFile (dataURI, opts) {
 function copyToClipboard (textToCopy, fallbackString) {
   fallbackString = fallbackString || 'Copy the URL below'
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const textArea = document.createElement('textarea')
     textArea.setAttribute('style', {
       position: 'fixed',
@@ -364,10 +364,10 @@ function copyToClipboard (textToCopy, fallbackString) {
     document.body.appendChild(textArea)
     textArea.select()
 
-    const magicCopyFailed = (err) => {
+    const magicCopyFailed = () => {
       document.body.removeChild(textArea)
       window.prompt(fallbackString, textToCopy)
-      return reject(new Error('Oops, unable to copy displayed fallback prompt: ' + err))
+      resolve()
     }
 
     try {
