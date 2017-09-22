@@ -233,8 +233,9 @@ module.exports = class Webcam extends Plugin {
     this.captureInProgress = true
 
     this.opts.onBeforeSnapshot().catch((err) => {
-      this.core.info(err, 'error', 5000)
-      return Promise.reject(new Error(`onBeforeSnapshot: ${err}`))
+      const message = typeof err === 'object' ? err.message : err
+      this.core.info(message, 'error', 5000)
+      return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
     }).then(() => {
       const video = this.target.querySelector('.UppyWebcam-video')
       if (!video) {

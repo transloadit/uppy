@@ -296,8 +296,9 @@ class Uppy {
       .then(() => this.opts.onBeforeFileAdded(file, this.getState().files))
 
     return beforeFileAdded.catch((err) => {
-      this.info(err.message, 'error', 5000)
-      return Promise.reject(new Error(`onBeforeFileAdded: ${err}`))
+      const message = typeof err === 'object' ? err.message : err
+      this.info(message, 'error', 5000)
+      return Promise.reject(new Error(`onBeforeFileAdded: ${message}`))
     }).then(() => {
       return Utils.getFileType(file).then((fileType) => {
         const updatedFiles = Object.assign({}, this.state.files)
@@ -942,8 +943,9 @@ class Uppy {
       .then(() => this.opts.onBeforeUpload(this.state.files))
 
     return beforeUpload.catch((err) => {
-      this.info(err.message, 'error', 5000)
-      return Promise.reject(new Error(`onBeforeUpload: ${err}`))
+      const message = typeof err === 'object' ? err.message : err
+      this.info(message, 'error', 5000)
+      return Promise.reject(new Error(`onBeforeUpload: ${message}`))
     }).then(() => {
       const waitingFileIDs = []
       Object.keys(this.state.files).forEach((fileID) => {

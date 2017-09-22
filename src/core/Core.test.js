@@ -570,6 +570,20 @@ describe('src/Core', () => {
           expect(e.message).toEqual('File not allowed')
         })
     })
+
+    it('should work with restriction errors that are not Error class instances', () => {
+      const core = new Core({
+        onBeforeFileAdded () {
+          return Promise.reject('a plain string') // eslint-disable-line prefer-promise-reject-errors
+        }
+      })
+      return expect(core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpg',
+        data: null
+      })).rejects.toMatchObject({ message: 'onBeforeFileAdded: a plain string' })
+    })
   })
 
   describe('uploading a file', () => {})
