@@ -199,7 +199,7 @@ module.exports = class Webcam extends Plugin {
         if (!this.webcamActive) {
           clearInterval(countDown)
           this.captureInProgress = false
-          return reject('Webcam is not active')
+          return reject(new Error('Webcam is not active'))
         }
 
         if (count > 0) {
@@ -233,13 +233,14 @@ module.exports = class Webcam extends Plugin {
     this.captureInProgress = true
 
     this.opts.onBeforeSnapshot().catch((err) => {
-      this.core.info(err, 'error', 5000)
-      return Promise.reject(`onBeforeSnapshot: ${err}`)
+      const message = typeof err === 'object' ? err.message : err
+      this.core.info(message, 'error', 5000)
+      return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
     }).then(() => {
       const video = this.target.querySelector('.UppyWebcam-video')
       if (!video) {
         this.captureInProgress = false
-        return Promise.reject('No video element found, likely due to the Webcam tab being closed.')
+        return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
       }
 
       const image = this.webcam.getImage(video, opts)

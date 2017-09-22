@@ -567,8 +567,22 @@ describe('src/Core', () => {
           throw new Error('File was allowed through')
         })
         .catch(e => {
-          expect(e).toEqual('File not allowed')
+          expect(e.message).toEqual('File not allowed')
         })
+    })
+
+    it('should work with restriction errors that are not Error class instances', () => {
+      const core = new Core({
+        onBeforeFileAdded () {
+          return Promise.reject('a plain string') // eslint-disable-line prefer-promise-reject-errors
+        }
+      })
+      return expect(core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpg',
+        data: null
+      })).rejects.toMatchObject({ message: 'onBeforeFileAdded: a plain string' })
     })
   })
 
@@ -715,12 +729,12 @@ describe('src/Core', () => {
         type: 'image/jpg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
       })
-      expect(core.addFile({
+      return expect(core.addFile({
         source: 'jest',
         name: 'foo2.jpg',
         type: 'image/jpg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
-      })).rejects.toMatch('File not allowed').then(() => {
+      })).rejects.toMatchObject({ message: 'File not allowed' }).then(() => {
         expect(core.state.info.message).toEqual('You can only upload 1 file')
       })
     })
@@ -735,12 +749,12 @@ describe('src/Core', () => {
         }
       })
 
-      expect(core.addFile({
+      return expect(core.addFile({
         source: 'jest',
         name: 'foo2.jpg',
         type: 'image/jpg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
-      })).rejects.toMatch('File not allowed').then(() => {
+      })).rejects.toMatchObject({ message: 'File not allowed' }).then(() => {
         expect(core.state.info.message).toEqual('You can only upload: image/gif, image/png')
       })
     })
@@ -753,12 +767,12 @@ describe('src/Core', () => {
         }
       })
 
-      expect(core.addFile({
+      return expect(core.addFile({
         source: 'jest',
         name: 'foo.jpg',
         type: 'image/jpg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
-      })).rejects.toMatch('File not allowed').then(() => {
+      })).rejects.toMatchObject({ message: 'File not allowed' }).then(() => {
         expect(core.state.info.message).toEqual('This file exceeds maximum allowed size of 1.2 KB')
       })
     })

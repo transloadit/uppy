@@ -119,7 +119,7 @@ module.exports = class Plugin {
   }
 
   install () {
-    return
+
   }
 
   uninstall () {
