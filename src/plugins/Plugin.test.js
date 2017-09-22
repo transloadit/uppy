@@ -84,9 +84,9 @@ describe('Plugin', () => {
   describe('.mount', () => {
     const addTarget = jest.fn(() => 'body')
     const mockCore = {
-      getPlugin: jest.fn(() => ({
-        addTarget
-      })),
+      iteratePlugins: (cb) => {
+        cb(new mockTarget()) // eslint-disable-line new-cap
+      },
       log: jest.fn(),
       setMeta: jest.fn(),
       state: 'default'
@@ -96,6 +96,7 @@ describe('Plugin', () => {
     }
     const mockTarget = function () {
       this.id = 'tID'
+      this.addTarget = addTarget
     }
 
     let yoUpdateSpy
@@ -227,11 +228,6 @@ describe('Plugin', () => {
         plugin.mount(mockTarget, mockPlugin)
         expect(mockCore.log.mock.calls.length).toBe(1)
         expect(/tID/.test(mockCore.log.mock.calls[0][0])).toBe(true)
-      })
-
-      it('retrieves plugin from core using `id`', () => {
-        plugin.mount(mockTarget, mockPlugin)
-        expect(mockCore.getPlugin.mock.calls[0][0]).toBe('tID')
       })
 
       it('adds plugin to target', () => {
