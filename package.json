@@ -88,6 +88,7 @@
     "on-load": "3.2.0",
     "prettier-bytes": "1.0.4",
     "promise-settle": "^0.3.0",
+    "prop-types": "^15.5.10",
     "socket.io-client": "2.0.1",
     "tus-js-client": "^1.4.4",
     "url-parse": "1.1.9",

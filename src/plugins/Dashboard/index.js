@@ -53,9 +53,10 @@ module.exports = class DashboardUI extends Plugin {
       defaultTabIcon: defaultTabIcon(),
       showProgressDetails: false,
       hideUploadButton: false,
-      note: false,
+      note: null,
       closeModalOnClickOutside: false,
-      locale: defaultLocale
+      locale: defaultLocale,
+      onRequestCloseModal: () => this.closeModal()
     }
 
     // merge default options with the ones set by user
@@ -68,6 +69,7 @@ module.exports = class DashboardUI extends Plugin {
     this.containerWidth = this.translator.translate.bind(this.translator)
 
     this.closeModal = this.closeModal.bind(this)
+    this.requestCloseModal = this.requestCloseModal.bind(this)
     this.openModal = this.openModal.bind(this)
     this.isModalOpen = this.isModalOpen.bind(this)
 
@@ -107,7 +109,6 @@ module.exports = class DashboardUI extends Plugin {
       name: callerPluginName,
       icon: callerPluginIcon,
       type: callerPluginType,
-      focus: plugin.focus,
       render: plugin.render,
       isHidden: true
     }
@@ -143,6 +144,14 @@ module.exports = class DashboardUI extends Plugin {
     this.core.setState({modal: Object.assign({}, modal, {
       activePanel: activePanel
     })})
+  }
+
+  requestCloseModal () {
+    if (this.opts.onRequestCloseModal) {
+      return this.opts.onRequestCloseModal()
+    } else {
+      this.closeModal()
+    }
   }
 
   openModal () {
@@ -191,12 +200,12 @@ module.exports = class DashboardUI extends Plugin {
   // Close the Modal on esc key press
   handleEscapeKeyPress (event) {
     if (event.keyCode === 27) {
-      this.closeModal()
+      this.requestCloseModal()
     }
   }
 
   handleClickOutside () {
-    if (this.opts.closeModalOnClickOutside) this.closeModal()
+    if (this.opts.closeModalOnClickOutside) this.requestCloseModal()
   }
 
   initEvents () {
@@ -361,7 +370,7 @@ module.exports = class DashboardUI extends Plugin {
       autoProceed: this.core.opts.autoProceed,
       hideUploadButton: this.opts.hideUploadButton,
       id: this.id,
-      closeModal: this.closeModal,
+      closeModal: this.requestCloseModal,
       handleClickOutside: this.handleClickOutside,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
@@ -392,6 +401,14 @@ module.exports = class DashboardUI extends Plugin {
     })
   }
 
+  discoverProviderPlugins () {
+    this.core.iteratePlugins((plugin) => {
+      if (plugin && !plugin.target && plugin.opts && plugin.opts.target === this.constructor) {
+        this.addTarget(plugin)
+      }
+    })
+  }
+
   install () {
     // Set default state for Modal
     this.core.setState({modal: {
@@ -402,26 +419,54 @@ module.exports = class DashboardUI extends Plugin {
     }})
 
     const target = this.opts.target
-    const plugin = this
-    this.target = this.mount(target, plugin)
+
+    if (target) {
+      this.mount(target, this)
+    }
+
+    const plugins = this.opts.plugins || []
+    plugins.forEach((pluginID) => {
+      const plugin = this.core.getPlugin(pluginID)
+      if (plugin) plugin.mount(this, plugin)
+    })
 
     if (!this.opts.disableStatusBar) {
       this.core.use(StatusBar, {
-        target: DashboardUI
+        target: this
       })
     }
 
     if (!this.opts.disableInformer) {
       this.core.use(Informer, {
-        target: DashboardUI
+        target: this
       })
     }
+
+    this.discoverProviderPlugins()
 
     this.initEvents()
     this.actions()
   }
 
   uninstall () {
+    if (!this.opts.disableInformer) {
+      const informer = this.core.getPlugin('Informer')
+      if (informer) this.core.removePlugin(informer)
+    }
+
+    if (!this.opts.disableStatusBar) {
+      const statusBar = this.core.getPlugin('StatusBar')
+      // Checking if this plugin exists, in case it was removed by uppy-core
+      // before the Dashboard was.
+      if (statusBar) this.core.removePlugin(statusBar)
+    }
+
+    const plugins = this.opts.plugins || []
+    plugins.forEach((pluginID) => {
+      const plugin = this.core.getPlugin(pluginID)
+      if (plugin) plugin.unmount()
+    })
+
     this.unmount()
     this.removeActions()
     this.removeEvents()
