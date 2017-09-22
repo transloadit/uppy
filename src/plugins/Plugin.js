@@ -88,6 +88,14 @@ module.exports = class Plugin {
     }
   }
 
+  render (state) {
+    throw (new Error('Extend the render method to add your plugin to a DOM element'))
+  }
+
+  addTarget (plugin) {
+    throw (new Error('Extend the addTarget method to add your plugin to another plugin\'s target'))
+  }
+
   unmount () {
     if (this.el && this.el.parentNode) {
       this.el.parentNode.removeChild(this.el)

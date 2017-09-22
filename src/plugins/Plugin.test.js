@@ -246,6 +246,42 @@ describe('Plugin', () => {
     })
   })
 
+  describe('.render', () => {
+    beforeEach(() => {
+      plugin = new Plugin()
+    })
+
+    it('is a function', () => {
+      expect(typeof Plugin.prototype.render).toBe('function')
+    })
+
+    it('accepts one parameter', () => {
+      expect(Plugin.prototype.render.length).toBe(1)
+    })
+
+    it('throws by default', () => {
+      expect(() => plugin.render()).toThrow()
+    })
+  })
+
+  describe('.addTarget', () => {
+    beforeEach(() => {
+      plugin = new Plugin()
+    })
+
+    it('is a function', () => {
+      expect(typeof Plugin.prototype.addTarget).toBe('function')
+    })
+
+    it('accepts one parameter', () => {
+      expect(Plugin.prototype.addTarget.length).toBe(1)
+    })
+
+    it('throws by default', () => {
+      expect(() => plugin.addTarget()).toThrow()
+    })
+  })
+
   describe('.unmount', () => {
     beforeEach(() => {
       plugin = new Plugin()
