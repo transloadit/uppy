@@ -17,8 +17,7 @@ const Tus10 = require('uppy/lib/plugins/Tus10')
  
 const uppy = Uppy({ autoProceed: false })
   .use(Dashboard, {
-    trigger: '#select-files',
-    replaceTargetContent: true
+    trigger: '#select-files'
   })
   .use(Tus10, {endpoint: '//master.tus.io/files/'})
   .run()
@@ -61,7 +60,7 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
 
 ``` html
 <script>
-  var uppy = Uppy.Core()
+  var uppy = Uppy.Core({ autoProceed: false })
   uppy.use(Uppy.DragDrop, {target: '.UppyDragDrop'})
   uppy.use(Uppy.Tus10, {endpoint: '//master.tus.io/files/'})
   uppy.run()
