@@ -104,9 +104,9 @@ Theme: React and Retry
 - [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
-- [ ] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
+- [x] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
 - [ ] goldenretriver: add “ghost” files (@arturi)
-- [ ] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
+- [x] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
 - [ ] uploaders: issue warning when no uploading plugins are used
 - [ ] core: refactor `uppy-base`
 - [x] core: fix `replaceTargetContent` and add tests for `Plugin` (#354 / @gavboulton)
