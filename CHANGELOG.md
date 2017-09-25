@@ -92,7 +92,7 @@ To be released: 2017-10-27
 - [ ] core: move `setPluginState` to Plugin class ? (@goto-bus-stop)
 - [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] goldenretriver: Ability to clear upload history or set expiry date (#324 / @arturi)
+- [ ] goldenretriever: Ability to clear upload history or set expiry date (#324 / @arturi)
 
 # next
 
@@ -105,7 +105,7 @@ Theme: React and Retry
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
 - [x] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
-- [ ] goldenretriver: add “ghost” files (@arturi)
+- [ ] goldenretriever: add “ghost” files (@arturi)
 - [x] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
 - [ ] uploaders: issue warning when no uploading plugins are used
 - [ ] core: refactor `uppy-base`
@@ -115,8 +115,8 @@ Theme: React and Retry
 
 Released: 2017-09-20.
 
-- [x] goldenretriver: fix restorefiles with id (#351 / @arturi)
-- [x] goldenretriver: Clean up blobs that are not related to a file in state (#349 / @goto-bus-stop)
+- [x] goldenretriever: fix restorefiles with id (#351 / @arturi)
+- [x] goldenretriever: Clean up blobs that are not related to a file in state (#349 / @goto-bus-stop)
 - [x] core: set the newState before emiting `core:state-update` (#341 / @sunil-shrestha, @arturi)
 - [x] docs: Document StatusBar plugin (#350 / @goto-bus-stop)
 
@@ -125,8 +125,8 @@ Released: 2017-09-20.
 Released: 2017-09-15.
 Theme: Tests and better APIs
 
-- [x] goldenretriver: allow passing options to `IndexedDbStore` (#339 / sunil-shrestha)
-- [x] core: add Uppy instance ID option, namespace serviceWorker action types, add example using multiple Uppy instances with GoldenRetriver (#333 / @goto-bus-stop)
+- [x] goldenretriever: allow passing options to `IndexedDbStore` (#339 / sunil-shrestha)
+- [x] core: add Uppy instance ID option, namespace serviceWorker action types, add example using multiple Uppy instances with Goldenretriever (#333 / @goto-bus-stop)
 - [x] core: fix `calculateTotalProgress` - NaN (#342 / @arturi)
 - [x] core: fix and refactor restrictions (#345 / @arturi)
 - [x] core: Better `generateFileID` (#330 / @arturi)
@@ -167,9 +167,9 @@ Note: this version was released as a `@next` npm tag to unblock some users.
 ## 0.18.0
 
 Released: 2017-08-15.
-Theme: Dogumentation and The Golden Retriver.
+Theme: Dogumentation and The Golden retriever.
 
-- [x] goldenretriver: use Service Woker first, then IndexedDB, add file limits for IndexedDB, figure out what restores from where, add throttling for localStorage state sync (@goto-bus-stop @arturi)
+- [x] goldenretriever: use Service Woker first, then IndexedDB, add file limits for IndexedDB, figure out what restores from where, add throttling for localStorage state sync (@goto-bus-stop @arturi)
 - [x] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
 - [x] dashboard: place close btn inside the Dashboard, don’t close on click outside, place source icon near the file size (@arturi)
 - [x] core: informer becomes a core API, `uppy.info('Smile! 📸', 'warning', 5000)` so its more concise with `uppy.log('my msg')` and supports different UI implementations (@arturi, #271)
@@ -178,7 +178,7 @@ Theme: Dogumentation and The Golden Retriver.
 - [x] provider: show loading screen when checking auth too (@arturi)
 - [x] uploaders: add direct-to-s3 upload plugin (@goto-bus-stop)
 - [x] core: ability to re-upload all files, even `uploadComplete` ones, reset progress (@arturi)
-- [x] goldenretriver: recover selected or in progress files after a browser crash or closed tab: alpha-version, add LocalStorage, Service Worker and IndexedDB (@arturi @goto-bus-stop @nqst #268)
+- [x] goldenretriever: recover selected or in progress files after a browser crash or closed tab: alpha-version, add LocalStorage, Service Worker and IndexedDB (@arturi @goto-bus-stop @nqst #268)
 - [x] xhrupload: add XHRUpload a more flexible successor to Multipart, so that S3 plugin can depend on it (@goto-bus-stop #242)
 - [x] core: add getFile method (@goto-bus-stop, #263)
 - [x] provider: use informer to display errors (@ifedapoolarewaju)
