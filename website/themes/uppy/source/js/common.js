@@ -24,7 +24,7 @@
     var allLinks = []
 
     function updateSidebar () {
-      var top = doc && doc.scrollTop || body.scrollTop
+      var top = (doc && doc.scrollTop) || body.scrollTop
       var headerHeight = header.offsetHeight
       if (top > headerHeight) {
         main.classList.add('fix-sidebar')

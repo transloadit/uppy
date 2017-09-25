@@ -42,58 +42,6 @@ describe('core/utils', () => {
     })
   })
 
-  describe('every', () => {
-    it('should return true if every array element passes predicate', () => {
-      const arr = ['foo', 'bar', 'boo', 'moo']
-      const predicateFn = jest.fn().mockReturnValue(true)
-
-      expect(utils.every(arr, predicateFn)).toEqual(true)
-    })
-
-    it('should return false if one or more array elements fails predicate', () => {
-      const arr = ['foo', 'bar', 'boo', 'moo']
-      const predicateFn = jest
-        .fn()
-        .mockReturnValue(true)
-        .mockReturnValueOnce(false)
-        .mockReturnValueOnce(true)
-        .mockReturnValueOnce(true)
-
-      expect(utils.every(arr, predicateFn)).toEqual(false)
-    })
-  })
-
-  describe('flatten', () => {
-    it('should flatten nested arrays', () => {
-      const nestedArrays = [['a', 'b', 'c'], ['d', 'e']]
-      expect(utils.flatten(nestedArrays)).toEqual(['a', 'b', 'c', 'd', 'e'])
-    })
-  })
-
-  describe('groupBy', () => {
-    it('should partiton an array by a grouping function, returning a map', () => {
-      const arr = [0, 10, 3, 20, 2, 4, 9]
-      const groupingFn = val => {
-        return val < 5
-      }
-      expect(utils.groupBy(arr, groupingFn)).toEqual(
-        new Map([[true, [0, 3, 2, 4]], [false, [10, 20, 9]]])
-      )
-    })
-  })
-
-  describe('extend', () => {
-    it('should merge the passed in objects', () => {
-      const obj1 = { foo: 'bar', boo: 'moo' }
-      const obj2 = { root: 'toot' }
-      expect(utils.extend(obj1, obj2)).toEqual({
-        foo: 'bar',
-        boo: 'moo',
-        root: 'toot'
-      })
-    })
-  })
-
   describe('runPromiseSequence', () => {
     it('should run an array of promise-returning functions in sequence', () => {
       const promiseFn1 = jest.fn().mockReturnValue(Promise.resolve)
@@ -412,6 +360,32 @@ describe('core/utils', () => {
       expect(
         utils.getSocketHost('https://foo.bar/a/b/cd?e=fghi&l=k&m=n')
       ).toEqual('ws://foo.bar/a/b/cd?e=fghi&l=k&m=n')
+    })
+  })
+
+  describe('settle', () => {
+    it('should reject if all input promises reject', () => {
+      return expect(
+        utils.settle([
+          Promise.reject(new Error('oops')),
+          Promise.reject(new Error('this went wrong'))
+        ])
+      ).rejects.toMatchObject({
+        message: 'oops'
+      })
+    })
+
+    it('should resolve with an object if some input promises resolve', () => {
+      return expect(
+        utils.settle([
+          Promise.reject(new Error('rejected')),
+          Promise.resolve('resolved'),
+          Promise.resolve('also-resolved')
+        ])
+      ).resolves.toMatchObject({
+        successful: ['resolved', 'also-resolved'],
+        failed: [{ message: 'rejected' }]
+      })
     })
   })
 })

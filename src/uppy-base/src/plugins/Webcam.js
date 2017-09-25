@@ -1,13 +1,12 @@
 'use strict'
 
-const dataURItoFile = require('../utils/dataURItoFile')
+const { dataURItoFile } = require('../../../core/Utils')
 
 /**
  * Webcam Plugin
  */
 module.exports = class Webcam {
   constructor (opts = {}, params = {}) {
-    this._userMedia
     this.userMedia = true
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
 

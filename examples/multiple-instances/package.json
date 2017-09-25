@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "uppy-multiple-instances-example",
+  "scripts": {
+    "css": "cp ../../dist/uppy.min.css .",
+    "start": "npm run css && budo main.js:bundle.js -- -t babelify -g aliasify"
+  },
+  "aliasify": "./aliasify.js",
+  "dependencies": {},
+  "devDependencies": {
+    "aliasify": "^2.1.0",
+    "babelify": "^7.3.0",
+    "budo": "^10.0.4"
+  }
+}

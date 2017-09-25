@@ -37,7 +37,9 @@ module.exports = class ProgressBar extends Plugin {
   install () {
     const target = this.opts.target
     const plugin = this
-    this.target = this.mount(target, plugin)
+    if (target) {
+      this.mount(target, plugin)
+    }
   }
 
   uninstall () {

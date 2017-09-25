@@ -11,43 +11,10 @@ const fileType = require('../vendor/file-type')
  * @module Utils
  */
 
-/**
- * Shallow flatten nested arrays.
- */
-function flatten (arr) {
-  return [].concat.apply([], arr)
-}
-
 function isTouchDevice () {
   return 'ontouchstart' in window || // works on most browsers
           navigator.maxTouchPoints   // works on IE10/11 and Surface
 }
-
-// /**
-//  * Shorter and fast way to select a single node in the DOM
-//  * @param   { String } selector - unique dom selector
-//  * @param   { Object } ctx - DOM node where the target of our search will is located
-//  * @returns { Object } dom node found
-//  */
-// function $ (selector, ctx) {
-//   return (ctx || document).querySelector(selector)
-// }
-
-// /**
-//  * Shorter and fast way to select multiple nodes in the DOM
-//  * @param   { String|Array } selector - DOM selector or nodes list
-//  * @param   { Object } ctx - DOM node where the targets of our search will is located
-//  * @returns { Object } dom nodes found
-//  */
-// function $$ (selector, ctx) {
-//   var els
-//   if (typeof selector === 'string') {
-//     els = (ctx || document).querySelectorAll(selector)
-//   } else {
-//     els = selector
-//     return Array.prototype.slice.call(els)
-//   }
-// }
 
 function truncateString (str, length) {
   if (str.length > length) {
@@ -65,38 +32,6 @@ function secondsToTime (rawSeconds) {
   const seconds = Math.floor(rawSeconds % 60)
 
   return { hours, minutes, seconds }
-}
-
-/**
- * Partition array by a grouping function.
- * @param  {[type]} array      Input array
- * @param  {[type]} groupingFn Grouping function
- * @return {[type]}            Array of arrays
- */
-function groupBy (array, groupingFn) {
-  return array.reduce((result, item) => {
-    let key = groupingFn(item)
-    let xs = result.get(key) || []
-    xs.push(item)
-    result.set(key, xs)
-    return result
-  }, new Map())
-}
-
-/**
- * Tests if every array element passes predicate
- * @param  {Array}  array       Input array
- * @param  {Object} predicateFn Predicate
- * @return {bool}               Every element pass
- */
-function every (array, predicateFn) {
-  return array.reduce((result, item) => {
-    if (!result) {
-      return false
-    }
-
-    return predicateFn(item)
-  }, true)
 }
 
 /**
@@ -125,10 +60,6 @@ function generateFileID (file) {
   ].filter(val => val).join('-')
 }
 
-function extend (...objs) {
-  return Object.assign.apply(this, [{}].concat(objs))
-}
-
 /**
  * Runs an array of promise-returning functions in sequence.
  */
@@ -139,20 +70,6 @@ function runPromiseSequence (functions, ...args) {
   })
   return promise
 }
-
-/**
- * Takes function or class, returns its name.
- * Because IE doesn’t support `constructor.name`.
- * https://gist.github.com/dfkaye/6384439, http://stackoverflow.com/a/15714445
- *
- * @param {Object} fn — function
- *
- */
-// function getFnName (fn) {
-//   var f = typeof fn === 'function'
-//   var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/))
-//   return (!f && 'not a function') || (s && s[1] || 'anonymous')
-// }
 
 function isPreviewSupported (fileTypeSpecific) {
   // list of images that browsers can preview
@@ -428,7 +345,7 @@ function dataURItoFile (dataURI, opts) {
 function copyToClipboard (textToCopy, fallbackString) {
   fallbackString = fallbackString || 'Copy the URL below'
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const textArea = document.createElement('textarea')
     textArea.setAttribute('style', {
       position: 'fixed',
@@ -447,10 +364,10 @@ function copyToClipboard (textToCopy, fallbackString) {
     document.body.appendChild(textArea)
     textArea.select()
 
-    const magicCopyFailed = (err) => {
+    const magicCopyFailed = () => {
       document.body.removeChild(textArea)
       window.prompt(fallbackString, textToCopy)
-      return reject('Oops, unable to copy displayed fallback prompt: ' + err)
+      resolve()
     }
 
     try {
@@ -570,13 +487,38 @@ function _emitSocketProgress (uploader, progressData, file) {
 
 const emitSocketProgress = throttle(_emitSocketProgress, 300, {leading: true, trailing: true})
 
+function settle (promises) {
+  const resolutions = []
+  const rejections = []
+  function resolved (value) {
+    resolutions.push(value)
+  }
+  function rejected (error) {
+    rejections.push(error)
+  }
+
+  const wait = Promise.all(
+    promises.map((promise) => promise.then(resolved, rejected))
+  )
+
+  return wait.then(() => {
+    if (rejections.length === promises.length) {
+      // Very ad-hoc multiple-error reporting, should wrap this in a
+      // CombinedError or whatever kind of error class instead.
+      const error = rejections[0]
+      error.errors = rejections
+      return Promise.reject(error)
+    }
+    return {
+      successful: resolutions,
+      failed: rejections
+    }
+  })
+}
+
 module.exports = {
   generateFileID,
   toArray,
-  every,
-  flatten,
-  groupBy,
-  extend,
   runPromiseSequence,
   supportsMediaRecorder,
   isTouchDevice,
@@ -599,5 +541,6 @@ module.exports = {
   findDOMElement,
   findAllDOMElements,
   getSocketHost,
-  emitSocketProgress
+  emitSocketProgress,
+  settle
 }

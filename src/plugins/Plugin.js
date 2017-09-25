@@ -13,13 +13,12 @@ const getFormData = require('get-form-data')
  * @return {array | string} files or success/fail message
  */
 module.exports = class Plugin {
-
   constructor (core, opts) {
     this.core = core
     this.opts = opts || {}
 
     // clear everything inside the target selector
-    this.opts.replaceTargetContent === this.opts.replaceTargetContent || true
+    // this.opts.replaceTargetContent = this.opts.replaceTargetContent !== undefined ? this.opts.replaceTargetContent : true
 
     this.update = this.update.bind(this)
     this.mount = this.mount.bind(this)
@@ -72,30 +71,55 @@ module.exports = class Plugin {
       this.el = plugin.render(this.core.state)
       targetElement.appendChild(this.el)
 
+      this.target = targetElement
+
       return targetElement
-    } else {
-      // TODO: is instantiating the plugin really the way to roll
-      // just to get the plugin name?
-      const Target = target
-      const targetPluginName = new Target().id
-
-      this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
-
-      const targetPlugin = this.core.getPlugin(targetPluginName)
-      const selectorTarget = targetPlugin.addTarget(plugin)
-
-      return selectorTarget
     }
+
+    let targetPlugin
+    if (typeof target === 'object' && target instanceof Plugin) {
+      // Targeting a plugin *instance*
+      targetPlugin = target
+    } else if (typeof target === 'function') {
+      // Targeting a plugin type
+      const Target = target
+      // Find the target plugin instance.
+      this.core.iteratePlugins((plugin) => {
+        if (plugin instanceof Target) {
+          targetPlugin = plugin
+          return false
+        }
+      })
+    }
+
+    if (targetPlugin) {
+      const targetPluginName = targetPlugin.id
+      this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
+      this.target = targetPlugin
+      return targetPlugin.addTarget(plugin)
+    }
+
+    this.core.log(`Not installing ${callerPluginName}`)
+    throw new Error(`Invalid target option given to ${callerPluginName}`)
+  }
+
+  render (state) {
+    throw (new Error('Extend the render method to add your plugin to a DOM element'))
+  }
+
+  addTarget (plugin) {
+    throw (new Error('Extend the addTarget method to add your plugin to another plugin\'s target'))
   }
 
   unmount () {
     if (this.el && this.el.parentNode) {
       this.el.parentNode.removeChild(this.el)
     }
+    this.target = null
   }
 
   install () {
-    return
+
   }
 
   uninstall () {

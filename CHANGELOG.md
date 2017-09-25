@@ -28,9 +28,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] dependencies: es6-promise --> lie https://github.com/calvinmetcalf/lie ?
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
-- [ ] core: see if it’s possible to add webworkers or use pica for thumbnail generation (@arturi)
+- [ ] core: see if it’s possible to add webworkers for thumbnail generation (@arturi, @goto-bus-stop)
 - [ ] website: Would one really connect a own google drive or dropbox for testing purpose? => maybe one can give something like a testing account of google drive and dropbox to try uppy
-- [ ] dashboard: maybe add perfect scrollbar https://github.com/noraesae/perfect-scrollbar (@arturi)
 - [ ] ui: do we want https://github.com/kazzkiq/balloon.css ?
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
 - [ ] uppy/uppy-server: Transfer files between providers (from instagram to Google drive for example).
@@ -42,12 +41,13 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
 - [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
 - [ ] uppy-server/s3: make s3 endpoint more configurable (@goto-bus-stop)
-- [ ] DnD Bar ? (@arturi)
+- [ ] DnD Bar: drag and drop + statusbar or progressbar ? (@arturi)
 - [ ] possibility to work on already uploaded / in progress files #112, #113
 - [ ] possibility to edit/delete more than one file at once #118, #97
 - [ ] optimize problematic filenames #72
 - [ ] an uploader plugin to receive files in a callback instead of uploading them
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget
+- [ ] statusbar: add option to always show
 
 ## 1.0 Goals
 
@@ -59,6 +59,7 @@ What we need to do to release Uppy 1.0
 - [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
 - [ ] feature: Uppy should work well with React/Redux and React Native
 - [ ] feature: preset for Transloadit that mimics jQuery SDK
+- [ ] QA: tests for everything
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
 - [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files. add metrics to Librato
 - [ ] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
@@ -67,8 +68,8 @@ What we need to do to release Uppy 1.0
 - [ ] ui: refine UI, neat things up (if that’s even a word)
 - [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
 - [ ] refactoring: possibly add CSS-in-JS
-- [ ] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (like onload/onunload being weird in yo-yo) and mature, “new standard”, larger community
-- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say Tus plugin doesn’t include rendering stuff
+- [ ] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
+- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say uploading plugins don’t include rendering stuff
 - [ ] refactoring: webcam plugin
 - [ ] refactoring: clean up code everywhere
 - [ ] docs: on using plugins, all options, list of plugins, i18n
@@ -77,8 +78,9 @@ What we need to do to release Uppy 1.0
 - [ ] uppy-server: storing tokens in user’s browser only
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 
+## 0.21.0
 
-## 0.20.0
+To be released: 2017-10-27
 
 - [ ] webcam: look into simplifying / improving webcam plugin, only showing the tab when webcam is available (@arturi, @goto-bus-stop)
 - [ ] provider: improve UI, add icons for file types? (@arturi)
@@ -86,36 +88,70 @@ What we need to do to release Uppy 1.0
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
-- [ ] core: Uppy ID per instance
 - [ ] core: allow setting custom `id` for plugins: https://github.com/transloadit/uppy/pull/328#issuecomment-328242214 (@arturi)
 - [ ] core: move `setPluginState` to Plugin class ? (@goto-bus-stop)
 - [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] Redux PR (@arturi, @goto-bus-stop)
-- [ ] GoldenRetriever: Ability to clear upload history or set expiry date #324 (@arturi)
-- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi @goto-bus-stop)
+- [ ] goldenretriever: Ability to clear upload history or set expiry date (#324 / @arturi)
+- [ ] core: return `{ successful, failed }` from `uppy.upload()`
 
 # next
 
-## 0.19.0
+## 0.20.0
 
-To be released: 2017-09-11.
+To be released: 2017-09-29.
 Theme: React and Retry
 
-- [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (@arturi @goto-bus-stop)
-- [ ] core: improve and merge in the React PR (@arturi @goto-bus-stop)
-- [ ] goldenretriver: add “ghost” files (@arturi @goto-bus-stop)
-- [ ] core: remove unused bootstrap styles (#329 / @arturi)
+- [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
+- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
+- [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
+- [x] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
+- [ ] goldenretriever: add “ghost” files (@arturi)
+- [x] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
+- [ ] uploaders: issue warning when no uploading plugins are used
+- [ ] core: refactor `uppy-base`
+- [x] core: fix `replaceTargetContent` and add tests for `Plugin` (#354 / @gavboulton)
+- [x] goldenretriever: Omit completed uploads from saved file state—previously, when an upload was finished and the user refreshed the page, all the finished files would still be there because we saved the entire list of files. Changed this to only store files that are part of an in-progress upload, or that have yet to be uploaded (#358, #324 / @goto-bus-stop)
+- [x] goldenretriever: Remove files from cache when upload finished—this uses the deleteBlobs function when core:success fires (#358, #324 / @goto-bus-stop)
+- [ ] goldenretriever: add a timestamp to cached blobs, and to delete old blobs on boot (#358, #324 / @goto-bus-stop)
+
+
+## 0.19.1
+
+Released: 2017-09-20.
+
+- [x] goldenretriever: fix restorefiles with id (#351 / @arturi)
+- [x] goldenretriever: Clean up blobs that are not related to a file in state (#349 / @goto-bus-stop)
+- [x] core: set the newState before emiting `core:state-update` (#341 / @sunil-shrestha, @arturi)
+- [x] docs: Document StatusBar plugin (#350 / @goto-bus-stop)
+
+## 0.19.0
+
+Released: 2017-09-15.
+Theme: Tests and better APIs
+
+- [x] goldenretriever: allow passing options to `IndexedDbStore` (#339 / sunil-shrestha)
+- [x] core: add Uppy instance ID option, namespace serviceWorker action types, add example using multiple Uppy instances with Goldenretriever (#333 / @goto-bus-stop)
+- [x] core: fix `calculateTotalProgress` - NaN (#342 / @arturi)
+- [x] core: fix and refactor restrictions (#345 / @arturi)
+- [x] core: Better `generateFileID` (#330 / @arturi)
+- [x] core: improve `isOnline()` (#319 / @richardwillars)
+- [x] core: remove unused bootstrap styles (#329 / @arturi)
 - [x] core: experiment with yo-yo --> preact and picodom (#297 / @arturi)
 - [x] dashboard: fix FileItem source icon position and copy (@arturi)
 - [x] dashboard: expose and document the show/hide/isOpen API (@arturi)
-- [x] dashboard: allow multiple `triggers` of the same class `.open-uppy` (@arturi)
+- [x] dashboard: allow multiple `triggers` of the same class `.open-uppy` (#328 / @arturi)
+- [x] plugins: add `aria-hidden` to all SVG icons for accessibility (#4e808ca3d26f06499c58bb77abbf1c3c2b510b4d / @arturi)
 - [x] core: Handle sync returns and throws in possibly-async function options (#315 / @goto-bus-stop)
-- [x] core: switch to Jest tests, add more tests for Core and Utils (@richardwillars)
+- [x] core: switch to Jest tests, add more tests for Core and Utils (#310 / @richardwillars)
+- [x] website: Minify bundle for `disc` (#332 / @goto-bus-stop)
+- [x] transloadit: remove `this.state` getter (#331 / @goto-bus-stop)
+- [x] server: option to define valid upload urls (@ifedapoolarewaju)
+- [x] server: more automated tests (@ifedapoolarewaju)
 
 ## 0.18.1
 
-Released: 2017-09-05
+Released: 2017-09-05.
 Note: this version was released as a `@next` npm tag to unblock some users.
 
 - [x] core: gradually resize image previews #275 (@goto-bus-stop)
@@ -132,14 +168,13 @@ Note: this version was released as a `@next` npm tag to unblock some users.
 - [x] tus: Clear stored `uploadUrl` on `uppy.resetProgress()` call (#314 / @goto-bus-stop)
 - [x] website: simplify examples and code samples, prevent sidebar subheading links anywhere but in docs (@arturi)
 - [x] website: group plugin docs together in the sidebar (@arturi)
-- [x] server: option to define valid upload urls (@ifedapoolarewaju)
 
 ## 0.18.0
 
 Released: 2017-08-15.
-Theme: Dogumentation and The Golden Retriver.
+Theme: Dogumentation and The Golden retriever.
 
-- [x] goldenretriver: use Service Woker first, then IndexedDB, add file limits for IndexedDB, figure out what restores from where, add throttling for localStorage state sync (@goto-bus-stop @arturi)
+- [x] goldenretriever: use Service Woker first, then IndexedDB, add file limits for IndexedDB, figure out what restores from where, add throttling for localStorage state sync (@goto-bus-stop @arturi)
 - [x] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
 - [x] dashboard: place close btn inside the Dashboard, don’t close on click outside, place source icon near the file size (@arturi)
 - [x] core: informer becomes a core API, `uppy.info('Smile! 📸', 'warning', 5000)` so its more concise with `uppy.log('my msg')` and supports different UI implementations (@arturi, #271)
@@ -148,7 +183,7 @@ Theme: Dogumentation and The Golden Retriver.
 - [x] provider: show loading screen when checking auth too (@arturi)
 - [x] uploaders: add direct-to-s3 upload plugin (@goto-bus-stop)
 - [x] core: ability to re-upload all files, even `uploadComplete` ones, reset progress (@arturi)
-- [x] goldenretriver: recover selected or in progress files after a browser crash or closed tab: alpha-version, add LocalStorage, Service Worker and IndexedDB (@arturi @goto-bus-stop @nqst #268)
+- [x] goldenretriever: recover selected or in progress files after a browser crash or closed tab: alpha-version, add LocalStorage, Service Worker and IndexedDB (@arturi @goto-bus-stop @nqst #268)
 - [x] xhrupload: add XHRUpload a more flexible successor to Multipart, so that S3 plugin can depend on it (@goto-bus-stop #242)
 - [x] core: add getFile method (@goto-bus-stop, #263)
 - [x] provider: use informer to display errors (@ifedapoolarewaju)
@@ -197,7 +232,9 @@ Released: 2017-07-02
 - [x] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
 - [x] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
 
-## 0.16.2 - 2017-05-31
+## 0.16.2
+
+Released: 2017-05-31.
 
 - [x] core: update prettier-bytes to fix the IE support issue https://github.com/Flet/prettier-bytes/issues/3 (@arturi)
 - [x] core: use URL.createObjectURL instead of resizing thumbnails (@arturi, @goto-bus-stop / #199)
@@ -207,7 +244,9 @@ Released: 2017-07-02
 - [x] transloadit: move user-facing strings into locale option (@goto-bus-stop / https://github.com/transloadit/uppy/commit/87a22e7ee37b6fa3754fa34868516a6700306b60)
 - [x] webcam: Mute audio in realtime playback (@goto-bus-stop / #196)
 
-## 0.16.1 - 2017-05-13
+## 0.16.1
+
+Released: 2017-05-13
 
 - [x] temporarily downgrade yo-yoify, until shama/yo-yoify#45 is resolved (@arturi / https://github.com/transloadit/uppy/commit/6292b96)
 

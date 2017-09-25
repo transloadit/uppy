@@ -27,7 +27,7 @@ uppy.use(Dashboard, {
   height: 550,
   showProgressDetails: false,
   hideUploadButton: false,
-  note: false,
+  note: null,
   closeModalOnClickOutside: false,
   locale: {
     strings: {
@@ -72,9 +72,17 @@ Maximum width of the Dashboard in pixels. Used when `inline: true`.
 
 Maximum height of the Dashboard in pixels. Used when `inline: true`.
 
-### `note: false`
+### `hideUploadButton: false`
 
-Optinally specify a string of text that explains something about the upload for the user. This is a place to explain `restrictions` that are put in place. For example: `'Images and video only, 2–3 files, up to 1 MB'`.
+Hide the upload button. Use this if you are providing a custom upload button somewhere on the page using the `uppy.upload()` API.
+
+### `note: null`
+
+Optionally specify a string of text that explains something about the upload for the user. This is a place to explain `restrictions` that are put in place. For example: `'Images and video only, 2–3 files, up to 1 MB'`.
+
+### `closeModalOnClickOutside: false`
+
+Set to true to automatically close the modal when the user clicks outside it.
 
 ### `disableStatusBar: false`
 

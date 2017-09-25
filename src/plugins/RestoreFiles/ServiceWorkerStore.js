@@ -1,14 +1,14 @@
 const isSupported = 'serviceWorker' in navigator
 
 class ServiceWorkerStore {
-  constructor (core) {
+  constructor (core, opts) {
     this.core = core
     this.ready = new Promise((resolve, reject) => {
-      // service worker stuff
       this.core.on('core:file-sw-ready', () => {
         resolve()
       })
     })
+    this.name = opts.storeName
   }
 
   list () {
@@ -20,8 +20,11 @@ class ServiceWorkerStore {
 
     console.log('Loading stored blobs from Service Worker')
     const onMessage = (event) => {
+      if (event.data.store !== this.name) {
+        return
+      }
       switch (event.data.type) {
-        case 'ALL_FILES':
+        case 'uppy/ALL_FILES':
           defer.resolve(event.data.files)
           navigator.serviceWorker.removeEventListener('message', onMessage)
           break
@@ -32,7 +35,8 @@ class ServiceWorkerStore {
       navigator.serviceWorker.addEventListener('message', onMessage)
 
       navigator.serviceWorker.controller.postMessage({
-        type: 'GET_FILES'
+        type: 'uppy/GET_FILES',
+        store: this.name
       })
     })
 
@@ -42,11 +46,9 @@ class ServiceWorkerStore {
   put (file) {
     return this.ready.then(() => {
       navigator.serviceWorker.controller.postMessage({
-        type: 'ADD_FILE',
-        data: {
-          id: file.id,
-          data: file.data
-        }
+        type: 'uppy/ADD_FILE',
+        store: this.name,
+        file: file
       })
     })
   }
@@ -54,8 +56,9 @@ class ServiceWorkerStore {
   delete (fileID) {
     return this.ready.then(() => {
       navigator.serviceWorker.controller.postMessage({
-        type: 'REMOVE_FILE',
-        data: fileID
+        type: 'uppy/REMOVE_FILE',
+        store: this.name,
+        fileID: fileID
       })
     })
   }

@@ -1,8 +1,11 @@
 const Plugin = require('./Plugin')
 const tus = require('tus-js-client')
-const settle = require('promise-settle')
 const UppySocket = require('../core/UppySocket')
-const Utils = require('../core/Utils')
+const {
+  emitSocketProgress,
+  getSocketHost,
+  settle
+} = require('../core/Utils')
 require('whatwg-fetch')
 
 // Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
@@ -93,7 +96,6 @@ module.exports = class Tus10 extends Plugin {
           updatedFiles[file] = updatedFile
         })
         this.core.setState({files: updatedFiles})
-        return
     }
   }
 
@@ -143,7 +145,8 @@ module.exports = class Tus10 extends Plugin {
       optsTus.onError = (err) => {
         this.core.log(err)
         this.core.emit('core:upload-error', file.id, err)
-        reject('Failed because: ' + err)
+        err.message = `Failed because: ${err.message}`
+        reject(err)
       }
 
       optsTus.onProgress = (bytesUploaded, bytesTotal) => {
@@ -254,7 +257,7 @@ module.exports = class Tus10 extends Plugin {
 
   connectToServerSocket (file) {
     const token = file.serverToken
-    const host = Utils.getSocketHost(file.remote.host)
+    const host = getSocketHost(file.remote.host)
     const socket = new UppySocket({ target: `${host}/api/${token}` })
 
     this.onFileRemove(file.id, () => socket.send('pause', {}))
@@ -266,7 +269,7 @@ module.exports = class Tus10 extends Plugin {
     this.onPauseAll(file.id, () => socket.send('pause', {}))
     this.onResumeAll(file.id, () => socket.send('resume', {}))
 
-    socket.on('progress', (progressData) => Utils.emitSocketProgress(this, progressData, file))
+    socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
     socket.on('success', (data) => {
       this.core.emitter.emit('core:upload-success', file.id, data, data.url)
@@ -337,7 +340,7 @@ module.exports = class Tus10 extends Plugin {
   }
 
   uploadFiles (files) {
-    return settle(files.map((file, index) => {
+    const promises = files.map((file, index) => {
       const current = parseInt(index, 10) + 1
       const total = files.length
 
@@ -346,7 +349,9 @@ module.exports = class Tus10 extends Plugin {
       } else {
         return this.uploadRemote(file, current, total)
       }
-    }))
+    })
+
+    return settle(promises)
   }
 
   handleUpload (fileIDs) {

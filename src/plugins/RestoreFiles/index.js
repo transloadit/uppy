@@ -3,13 +3,12 @@ const ServiceWorkerStore = require('./ServiceWorkerStore')
 const IndexedDBStore = require('./IndexedDBStore')
 
 /**
- * Persistent State
- *
- * Helps debug Uppy: loads saved state from localStorage, so when you restart the page,
- * your state is right where you left off. If something goes wrong, clear uppyState
- * in your localStorage, using the devTools
- *
- */
+* Restore Files plugin — restores selected files and resumes uploads
+* after a closed tab or a browser crash!
+*
+* Uses localStorage, IndexedDB and ServiceWorker to do its magic, read more:
+* https://uppy.io/blog/2017/07/golden-retriever/
+*/
 module.exports = class RestoreFiles extends Plugin {
   constructor (core, opts) {
     super(core, opts)
@@ -17,17 +16,19 @@ module.exports = class RestoreFiles extends Plugin {
     this.id = 'RestoreFiles'
     this.title = 'Restore Files'
 
-    // set default options
     const defaultOptions = {
       serviceWorker: false
     }
 
-    // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    // const Store = this.opts.serviceWorker ? ServiceWorkerStore : IndexedDBStore
-    this.ServiceWorkerStore = this.opts.serviceWorker ? new ServiceWorkerStore(core) : false
-    this.IndexedDBStore = new IndexedDBStore(core)
+    this.ServiceWorkerStore = null
+    if (this.opts.serviceWorker) {
+      this.ServiceWorkerStore = new ServiceWorkerStore(core, { storeName: core.getID() })
+    }
+    this.IndexedDBStore = new IndexedDBStore(core, Object.assign({},
+      opts.indexedDB || {},
+      { storeName: core.getID() }))
 
     this.saveFilesStateToLocalStorage = this.saveFilesStateToLocalStorage.bind(this)
     this.loadFilesStateFromLocalStorage = this.loadFilesStateFromLocalStorage.bind(this)
@@ -37,7 +38,7 @@ module.exports = class RestoreFiles extends Plugin {
   }
 
   loadFilesStateFromLocalStorage () {
-    const savedState = localStorage.getItem('uppyState')
+    const savedState = localStorage.getItem(`uppyState:${this.core.opts.id}`)
 
     if (savedState) {
       this.core.log('Recovered some state from Local Storage')
@@ -45,17 +46,61 @@ module.exports = class RestoreFiles extends Plugin {
     }
   }
 
-  saveFilesStateToLocalStorage () {
-    const files = JSON.stringify({
-      currentUploads: this.core.state.currentUploads,
-      files: this.core.state.files
+  /**
+   * Get file objects that are currently waiting: they've been selected,
+   * but aren't yet being uploaded.
+   */
+  getWaitingFiles () {
+    const waitingFiles = {}
+
+    const allFiles = this.core.state.files
+    Object.keys(allFiles).forEach((fileID) => {
+      const file = this.core.getFile(fileID)
+      if (!file.progress || !file.progress.uploadStarted) {
+        waitingFiles[fileID] = file
+      }
     })
-    localStorage.setItem('uppyState', files)
+
+    return waitingFiles
+  }
+
+  /**
+   * Get file objects that are currently being uploaded. If a file has finished
+   * uploading, but the other files in the same batch have not, the finished
+   * file is also returned.
+   */
+  getUploadingFiles () {
+    const uploadingFiles = {}
+
+    const { currentUploads } = this.core.state
+    if (currentUploads) {
+      const uploadIDs = Object.keys(currentUploads)
+      uploadIDs.forEach((uploadID) => {
+        const filesInUpload = currentUploads[uploadID].fileIDs
+        filesInUpload.forEach((fileID) => {
+          uploadingFiles[fileID] = this.core.getFile(fileID)
+        })
+      })
+    }
+
+    return uploadingFiles
+  }
+
+  saveFilesStateToLocalStorage () {
+    const filesToSave = Object.assign(
+      this.getWaitingFiles(),
+      this.getUploadingFiles()
+    )
+
+    const state = JSON.stringify({
+      currentUploads: this.core.state.currentUploads,
+      files: filesToSave
+    })
+    localStorage.setItem(`uppyState:${this.core.opts.id}`, state)
   }
 
   loadFileBlobsFromServiceWorker () {
     this.ServiceWorkerStore.list().then((blobs) => {
-      console.log(blobs)
       const numberOfFilesRecovered = Object.keys(blobs).length
       const numberOfFilesTryingToRecover = Object.keys(this.core.state.files).length
       if (numberOfFilesRecovered === numberOfFilesTryingToRecover) {
@@ -72,6 +117,7 @@ module.exports = class RestoreFiles extends Plugin {
   loadFileBlobsFromIndexedDB () {
     this.IndexedDBStore.list().then((blobs) => {
       const numberOfFilesRecovered = Object.keys(blobs).length
+
       if (numberOfFilesRecovered > 0) {
         this.core.log(`Successfully recovered ${numberOfFilesRecovered} blobs from Indexed DB!`)
         this.core.info(`Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
@@ -82,17 +128,22 @@ module.exports = class RestoreFiles extends Plugin {
   }
 
   onBlobsLoaded (blobs) {
+    const obsoleteBlobs = []
     const updatedFiles = Object.assign({}, this.core.state.files)
     Object.keys(blobs).forEach((fileID) => {
-      const cachedData = blobs[fileID].data
+      const originalFile = this.core.getFile(fileID)
+      if (!originalFile) {
+        obsoleteBlobs.push(fileID)
+        return
+      }
+
+      const cachedData = blobs[fileID]
 
       const updatedFileData = {
         data: cachedData,
         isRestored: true
       }
-      const updatedFile = Object.assign({}, updatedFiles[fileID],
-        Object.assign({}, updatedFileData)
-      )
+      const updatedFile = Object.assign({}, originalFile, updatedFileData)
       updatedFiles[fileID] = updatedFile
 
       this.core.generatePreview(updatedFile)
@@ -101,6 +152,25 @@ module.exports = class RestoreFiles extends Plugin {
       files: updatedFiles
     })
     this.core.emit('core:restored')
+
+    if (obsoleteBlobs.length) {
+      this.deleteBlobs(obsoleteBlobs).then(() => {
+        this.core.log(`RestoreFiles: cleaned up ${obsoleteBlobs.length} old files`)
+      })
+    }
+  }
+
+  deleteBlobs (fileIDs) {
+    const promises = []
+    fileIDs.forEach((id) => {
+      if (this.ServiceWorkerStore) {
+        promises.push(this.ServiceWorkerStore.delete(id))
+      }
+      if (this.IndexedDBStore) {
+        promises.push(this.IndexedDBStore.delete(id))
+      }
+    })
+    return Promise.all(promises)
   }
 
   install () {
@@ -135,6 +205,12 @@ module.exports = class RestoreFiles extends Plugin {
     this.core.on('core:file-removed', (fileID) => {
       if (this.ServiceWorkerStore) this.ServiceWorkerStore.delete(fileID)
       this.IndexedDBStore.delete(fileID)
+    })
+
+    this.core.on('core:success', (fileIDs) => {
+      this.deleteBlobs(fileIDs).then(() => {
+        this.core.log(`RestoreFiles: removed ${fileIDs.length} files that finished uploading`)
+      })
     })
 
     this.core.on('core:state-update', this.saveFilesStateToLocalStorage)
