@@ -94,6 +94,7 @@ To be released: 2017-10-27
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] goldenretriever: Ability to clear upload history or set expiry date (#324 / @arturi)
 - [ ] core: return `{ successful, failed }` from `uppy.upload()`
+- [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
 
 # next
 
