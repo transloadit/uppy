@@ -93,6 +93,7 @@ To be released: 2017-10-27
 - [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] goldenretriever: Ability to clear upload history or set expiry date (#324 / @arturi)
+- [ ] core: return `{ successful, failed }` from `uppy.upload()`
 
 # next
 
