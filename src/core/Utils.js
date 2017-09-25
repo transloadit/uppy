@@ -487,6 +487,35 @@ function _emitSocketProgress (uploader, progressData, file) {
 
 const emitSocketProgress = throttle(_emitSocketProgress, 300, {leading: true, trailing: true})
 
+function settle (promises) {
+  const resolutions = []
+  const rejections = []
+  function resolved (value) {
+    resolutions.push(value)
+  }
+  function rejected (error) {
+    rejections.push(error)
+  }
+
+  const wait = Promise.all(
+    promises.map((promise) => promise.then(resolved, rejected))
+  )
+
+  return wait.then(() => {
+    if (rejections.length === promises.length) {
+      // Very ad-hoc multiple-error reporting, should wrap this in a
+      // CombinedError or whatever kind of error class instead.
+      const error = rejections[0]
+      error.errors = rejections
+      return Promise.reject(error)
+    }
+    return {
+      successful: resolutions,
+      failed: rejections
+    }
+  })
+}
+
 module.exports = {
   generateFileID,
   toArray,
@@ -512,5 +541,6 @@ module.exports = {
   findDOMElement,
   findAllDOMElements,
   getSocketHost,
-  emitSocketProgress
+  emitSocketProgress,
+  settle
 }

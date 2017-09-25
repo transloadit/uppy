@@ -362,4 +362,30 @@ describe('core/utils', () => {
       ).toEqual('ws://foo.bar/a/b/cd?e=fghi&l=k&m=n')
     })
   })
+
+  describe('settle', () => {
+    it('should reject if all input promises reject', () => {
+      return expect(
+        utils.settle([
+          Promise.reject(new Error('oops')),
+          Promise.reject(new Error('this went wrong'))
+        ])
+      ).rejects.toMatchObject({
+        message: 'oops'
+      })
+    })
+
+    it('should resolve with an object if some input promises resolve', () => {
+      return expect(
+        utils.settle([
+          Promise.reject(new Error('rejected')),
+          Promise.resolve('resolved'),
+          Promise.resolve('also-resolved')
+        ])
+      ).resolves.toMatchObject({
+        successful: ['resolved', 'also-resolved'],
+        failed: [{ message: 'rejected' }]
+      })
+    })
+  })
 })
