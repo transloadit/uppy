@@ -110,6 +110,10 @@ Theme: React and Retry
 - [ ] uploaders: issue warning when no uploading plugins are used
 - [ ] core: refactor `uppy-base`
 - [x] core: fix `replaceTargetContent` and add tests for `Plugin` (#354 / @gavboulton)
+- [x] goldenretriever: Omit completed uploads from saved file state—previously, when an upload was finished and the user refreshed the page, all the finished files would still be there because we saved the entire list of files. Changed this to only store files that are part of an in-progress upload, or that have yet to be uploaded (#358, #324 / @goto-bus-stop)
+- [x] goldenretriever: Remove files from cache when upload finished—this uses the deleteBlobs function when core:success fires (#358, #324 / @goto-bus-stop)
+- [ ] goldenretriever: add a timestamp to cached blobs, and to delete old blobs on boot (#358, #324 / @goto-bus-stop)
+
 
 ## 0.19.1
 
