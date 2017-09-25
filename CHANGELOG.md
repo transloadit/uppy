@@ -77,6 +77,7 @@ What we need to do to release Uppy 1.0
 - [ ] uppy-server: security audit
 - [ ] uppy-server: storing tokens in user’s browser only
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
+- [ ] automatically host releases on edgly and use that as our main CDN
 
 ## 0.21.0
 
