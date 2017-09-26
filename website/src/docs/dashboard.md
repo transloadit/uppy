@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 6
+order: 20
 title: "Dashboard"
 permalink: docs/dashboard/
 ---
