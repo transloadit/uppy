@@ -37,6 +37,53 @@ describe('Plugin', () => {
     expect(typeof plugin.opts).toBe('object')
   })
 
+  describe('plugin state', () => {
+    class MockPlugin extends Plugin {
+      constructor (core, opts) {
+        super(core, opts)
+        this.id = 'MockPlugin'
+      }
+    }
+    it('returns plugin state from `getPluginState()`', () => {
+      const mockState = {}
+      plugin = new MockPlugin({
+        state: {
+          plugins: {
+            MockPlugin: mockState
+          }
+        }
+      })
+
+      expect(plugin.getPluginState()).toBe(mockState)
+    })
+
+    it('merges plugin state using `setPluginState()`', () => {
+      const initialState = {
+        plugins: {
+          MockPlugin: {
+            hello: 'world',
+            asdf: 'quux'
+          }
+        }
+      }
+
+      plugin = new MockPlugin({
+        setState (patch) {
+          this.state = Object.assign({}, this.state, patch)
+        },
+        state: initialState
+      })
+
+      plugin.setPluginState({ hello: 'friends' })
+
+      expect(plugin.core.state).not.toBe(initialState)
+      expect(plugin.getPluginState()).toEqual({
+        hello: 'friends',
+        asdf: 'quux'
+      })
+    })
+  })
+
   // it('sets `replaceTargetContent` based on options argument', () => {
   //   plugin = new Plugin(null, { replaceTargetContent: false })
   //   expect(plugin.opts.replaceTargetContent).toBe(false)
