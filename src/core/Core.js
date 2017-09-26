@@ -91,6 +91,7 @@ class Uppy {
     this.postProcessors = []
 
     this.state = {
+      plugins: {},
       files: {},
       capabilities: {
         resumableUploads: false

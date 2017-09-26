@@ -26,6 +26,19 @@ module.exports = class Plugin {
     this.uninstall = this.uninstall.bind(this)
   }
 
+  getPluginState () {
+    return this.core.state.plugins[this.id]
+  }
+
+  setPluginState (update) {
+    const plugins = Object.assign({}, this.core.state.plugins)
+    plugins[this.id] = Object.assign({}, plugins[this.id], update)
+
+    this.core.setState({
+      plugins: plugins
+    })
+  }
+
   update (state) {
     if (typeof this.el === 'undefined') {
       return
