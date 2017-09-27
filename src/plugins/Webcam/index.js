@@ -100,16 +100,6 @@ module.exports = class Webcam extends Plugin {
     // }
   }
 
-  /**
-   * Little shorthand to update the state with my new state
-   */
-  setPluginState (newState) {
-    const {state} = this.core
-    const webcam = Object.assign({}, state.webcam, newState)
-
-    this.core.setState({webcam})
-  }
-
   start () {
     this.webcamActive = true
 
@@ -269,15 +259,17 @@ module.exports = class Webcam extends Plugin {
       this.start()
     }
 
-    if (!state.webcam.cameraReady && !state.webcam.useTheFlash) {
-      return PermissionsScreen(state.webcam)
+    const webcamState = this.getPluginState()
+
+    if (!webcamState.cameraReady && !webcamState.useTheFlash) {
+      return PermissionsScreen(webcamState)
     }
 
     if (!this.streamSrc) {
       this.streamSrc = this.stream ? URL.createObjectURL(this.stream) : null
     }
 
-    return CameraScreen(Object.assign({}, state.webcam, {
+    return CameraScreen(Object.assign({}, webcamState, {
       onSnapshot: this.takeSnapshot,
       onStartRecording: this.startRecording,
       onStopRecording: this.stopRecording,
@@ -285,7 +277,7 @@ module.exports = class Webcam extends Plugin {
       onStop: this.stop,
       modes: this.opts.modes,
       supportsRecording: supportsMediaRecorder(),
-      recording: state.webcam.isRecording,
+      recording: webcamState.isRecording,
       getSWFHTML: this.webcam.getSWFHTML,
       src: this.streamSrc
     }))
@@ -293,10 +285,8 @@ module.exports = class Webcam extends Plugin {
 
   install () {
     this.webcam.init()
-    this.core.setState({
-      webcam: {
-        cameraReady: false
-      }
+    this.setPluginState({
+      cameraReady: false
     })
 
     const target = this.opts.target

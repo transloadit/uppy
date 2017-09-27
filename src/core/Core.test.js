@@ -147,6 +147,7 @@ describe('src/Core', () => {
         foo: 'baar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
+        plugins: {},
         totalProgress: 0
       }
 
@@ -168,6 +169,7 @@ describe('src/Core', () => {
         foo: 'bar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
+        plugins: {},
         totalProgress: 0
       })
       // new state
@@ -178,6 +180,7 @@ describe('src/Core', () => {
         foo: 'baar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
+        plugins: {},
         totalProgress: 0
       })
     })
@@ -193,6 +196,7 @@ describe('src/Core', () => {
         foo: 'bar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
+        plugins: {},
         totalProgress: 0
       })
     })
@@ -219,6 +223,7 @@ describe('src/Core', () => {
       foo: 'bar',
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
+      plugins: {},
       totalProgress: 0
     })
   })
@@ -244,6 +249,7 @@ describe('src/Core', () => {
       files: {},
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
+      plugins: {},
       totalProgress: 0
     })
     expect(core.plugins.acquirer[0].mocks.uninstall.mock.calls.length).toEqual(
