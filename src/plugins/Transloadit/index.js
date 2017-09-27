@@ -50,6 +50,7 @@ module.exports = class Transloadit extends Plugin {
     this.prepareUpload = this.prepareUpload.bind(this)
     this.afterUpload = this.afterUpload.bind(this)
     this.onFileUploadURLAvailable = this.onFileUploadURLAvailable.bind(this)
+    this.onRestored = this.onRestored.bind(this)
 
     if (this.opts.params) {
       this.validateParams(this.opts.params)
@@ -281,6 +282,119 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
+  onRestored () {
+    // Fetch up-to-date assembly statuses.
+    const loadAssemblies = () => {
+      const fileIDs = Object.keys(this.core.state.files)
+      const assemblyIDs = []
+      fileIDs.forEach((fileID) => {
+        const file = this.core.getFile(fileID)
+        const assemblyID = file && file.transloadit && file.transloadit.assembly
+        if (assemblyID && assemblyIDs.indexOf(assemblyID) === -1) {
+          assemblyIDs.push(file.transloadit.assembly)
+        }
+      })
+
+      return Promise.all(
+        assemblyIDs.map((assemblyID) => {
+          const url = `https://api2.transloadit.com/assemblies/${assemblyID}`
+          return this.client.getAssemblyStatus(url)
+        })
+      )
+    }
+
+    const reconnectSockets = (assemblies) => {
+      return Promise.all(assemblies.map((assembly) => {
+        return this.connectSocket(assembly)
+      }))
+    }
+
+    // Recover uploads / assemblies links based on the stored assembly ID
+    // on files.
+    const recoverUploadAssemblies = () => {
+      const uploadsAssemblies = {}
+      const uploads = this.core.state.currentUploads
+      Object.keys(uploads).forEach((uploadID) => {
+        const files = uploads[uploadID].fileIDs
+          .map((fileID) => this.core.getFile(fileID))
+        const assemblyIDs = []
+
+        files.forEach((file) => {
+          const assemblyID = file && file.transloadit && file.transloadit.assembly
+          if (assemblyID && assemblyIDs.indexOf(assemblyID) === -1) {
+            assemblyIDs.push(file.transloadit.assembly)
+          }
+        })
+
+        uploadsAssemblies[uploadID] = assemblyIDs
+      })
+
+      return uploadsAssemblies
+    }
+
+    // Convert loaded assembly statuses to a Transloadit plugin state object.
+    const restoreState = (assemblies) => {
+      const assembliesById = {}
+      const files = {}
+      const results = []
+      assemblies.forEach((assembly) => {
+        assembliesById[assembly.assembly_id] = assembly
+
+        assembly.uploads.forEach((uploadedFile) => {
+          const file = this.findFile(uploadedFile)
+          files[uploadedFile.id] = {
+            id: file.id,
+            uploadedFile
+          }
+        })
+
+        const state = this.getPluginState()
+        Object.keys(assembly.results).forEach((stepName) => {
+          assembly.results[stepName].forEach((result) => {
+            const file = state.files[result.original_id]
+            result.localId = file ? file.id : null
+            results.push(result)
+          })
+        })
+      })
+
+      const uploadsAssemblies = recoverUploadAssemblies()
+
+      console.info('Transloadit: RESTORED:')
+      console.info({
+        assemblies: assembliesById,
+        files: files,
+        results: results,
+        uploadsAssemblies: uploadsAssemblies
+      })
+
+      this.setPluginState({
+        assemblies: assembliesById,
+        files: files,
+        results: results,
+        uploadsAssemblies: uploadsAssemblies
+      })
+    }
+
+    const emitMissedEvents = () => {
+      // TODO: Emit events for completed uploads, completed results,
+      // completed assemblies, that we've missed while we were away.
+    }
+
+    // Restore all assembly state.
+    this.restored = Promise.resolve()
+      .then(loadAssemblies)
+      .then((assemblies) => {
+        restoreState(assemblies)
+        return reconnectSockets(assemblies)
+      })
+      .then(emitMissedEvents)
+
+    this.restored.then(() => {
+      this.restored = null
+    })
+  }
+
   connectSocket (assembly) {
     const socket = new StatusSocket(
       assembly.websocket_url,
@@ -374,6 +488,14 @@ module.exports = class Transloadit extends Plugin {
     fileIDs = fileIDs.filter((file) => !file.error)
 
     const state = this.getPluginState()
+    // const state = this.getPluginState()
+    // If we're still restoring state, wait for that to be done.
+    if (this.restored) {
+      return this.restored.then(() => {
+        this.afterUpload(fileIDs, uploadID)
+      })
+    }
+
     const assemblyIDs = state.uploadsAssemblies[uploadID]
 
     // If we don't have to wait for encoding metadata or results, we can close
@@ -485,6 +607,8 @@ module.exports = class Transloadit extends Plugin {
     if (this.opts.importFromUploadURLs) {
       this.uppy.on('upload-success', this.onFileUploadURLAvailable)
     }
+
+    this.core.on('core:restored', this.onRestored)
 
     this.setPluginState({
       // Contains assembly status objects, indexed by their ID.
