@@ -105,7 +105,7 @@ Theme: React and Retry
 
 - [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
-- [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
+- [ ] core: show error and offer retry when upload can’t start and/or fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
 - [x] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [x] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
@@ -116,7 +116,7 @@ Theme: React and Retry
 - [x] goldenretriever: Remove files from cache when upload finished—this uses the deleteBlobs function when core:success fires (#358, #324 / @goto-bus-stop)
 - [ ] goldenretriever: add a timestamp to cached blobs, and to delete old blobs on boot (#358, #324 / @goto-bus-stop)
 - [ ] s3: have some way to configure content-disposition for uploads, see #243 (@goto-bus-stop)
-- [x] core: move `setPluginState` to Plugin class ? (@goto-bus-stop)
+- [x] core: move `setPluginState` and add `getPluginState` to `Plugin` class (#363 / @goto-bus-stop)
 
 ## 0.19.1
 
