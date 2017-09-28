@@ -36,6 +36,24 @@ module.exports = class XHRUpload extends Plugin {
     this.handleUpload = this.handleUpload.bind(this)
   }
 
+  getOptions (file) {
+    const opts = Object.assign({},
+      this.opts,
+      this.core.state.xhrUpload || {},
+      file.xhrUpload || {}
+    )
+    opts.headers = {}
+    Object.assign(opts.headers, this.opts.headers)
+    if (this.core.state.xhrUpload) {
+      Object.assign(opts.headers, this.core.state.xhrUpload.headers)
+    }
+    if (file.xhrUpload) {
+      Object.assign(opts.headers, file.xhrUpload.headers)
+    }
+
+    return opts
+  }
+
   createFormDataUpload (file, opts) {
     const formPost = new FormData()
 
@@ -57,19 +75,7 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   upload (file, current, total) {
-    const opts = Object.assign({},
-      this.opts,
-      this.core.state.xhrUpload || {},
-      file.xhrUpload || {}
-    )
-    opts.headers = {}
-    Object.assign(opts.headers, this.opts.headers)
-    if (this.core.state.xhrUpload) {
-      Object.assign(opts.headers, this.core.state.xhrUpload.headers)
-    }
-    if (file.xhrUpload) {
-      Object.assign(opts.headers, file.xhrUpload.headers)
-    }
+    const opts = this.getOptions(file)
 
     this.core.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
@@ -140,7 +146,7 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   uploadRemote (file, current, total) {
-    const opts = Object.assign({}, this.opts, file.xhrUpload || {})
+    const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
       this.core.emit('core:upload-started', file.id)
 
