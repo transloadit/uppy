@@ -1,3 +1,4 @@
+const prettyBytes = require('prettier-bytes')
 const indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB
 
 const isSupported = !!indexedDB
@@ -173,6 +174,38 @@ class IndexedDBStore {
       const request = transaction.objectStore(STORE_NAME)
         .delete(this.key(fileID))
       return waitForRequest(request)
+    })
+  }
+
+  /**
+   * Delete all stored blobs that have an expiry date that is before Date.now().
+   * This is a static method because it deletes expired blobs from _all_ Uppy instances.
+   */
+  static cleanup () {
+    return connect(DB_NAME).then((db) => {
+      const transaction = db.transaction([STORE_NAME], 'readwrite')
+      const store = transaction.objectStore(STORE_NAME)
+      const request = store.index('expires')
+        .openCursor(IDBKeyRange.upperBound(Date.now()))
+      return new Promise((resolve, reject) => {
+        request.onsuccess = (event) => {
+          const cursor = event.target.result
+          if (cursor) {
+            const entry = cursor.value
+            console.log(
+              '[IndexedDBStore] Deleting record', entry.fileID,
+              'of size', prettyBytes(entry.data.size),
+              '- expired on', new Date(entry.expires))
+            cursor.delete() // Ignoring return value … it's not terrible if this goes wrong.
+            cursor.continue()
+          } else {
+            resolve()
+          }
+        }
+        request.onerror = reject
+      })
+    }).then((db) => {
+      db.close()
     })
   }
 }
