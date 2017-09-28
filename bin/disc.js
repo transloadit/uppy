@@ -3,18 +3,26 @@ const path = require('path')
 const { PassThrough } = require('stream')
 const browserify = require('browserify')
 const babelify = require('babelify')
-const minifyify = require('minifyify')
+const minify = require('minify-stream')
 const disc = require('disc')
 
 const outputPath = path.join(__dirname, '../website/src/disc.html')
+
+function minifyify () {
+  return minify({
+    sourceMap: false,
+    toplevel: true,
+    compress: { unsafe: true }
+  })
+}
 
 const bundler = browserify(path.join(__dirname, '../src/index.js'), {
   fullPaths: true,
   standalone: 'Uppy'
 })
 
-bundler.plugin(minifyify, { map: false })
 bundler.transform(babelify)
+bundler.transform(minifyify, { global: true })
 
 bundler.bundle()
   .pipe(disc())
