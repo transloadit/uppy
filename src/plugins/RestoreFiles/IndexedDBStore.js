@@ -62,7 +62,7 @@ function waitForRequest (request) {
 
 let cleanedUp = false
 class IndexedDBStore {
-  constructor (core, opts) {
+  constructor (opts) {
     this.opts = Object.assign({
       dbName: DB_NAME,
       storeName: 'default',

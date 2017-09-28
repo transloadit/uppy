@@ -16,7 +16,7 @@ function waitForServiceWorker () {
 }
 
 class ServiceWorkerStore {
-  constructor (core, opts) {
+  constructor (opts) {
     this.ready = waitForServiceWorker()
     this.name = opts.storeName
   }

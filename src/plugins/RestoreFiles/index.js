@@ -25,9 +25,9 @@ module.exports = class RestoreFiles extends Plugin {
 
     this.ServiceWorkerStore = null
     if (this.opts.serviceWorker) {
-      this.ServiceWorkerStore = new ServiceWorkerStore(core, { storeName: core.getID() })
+      this.ServiceWorkerStore = new ServiceWorkerStore({ storeName: core.getID() })
     }
-    this.IndexedDBStore = new IndexedDBStore(core, Object.assign(
+    this.IndexedDBStore = new IndexedDBStore(Object.assign(
       { expires: this.opts.expires },
       opts.indexedDB || {},
       { storeName: core.getID() }))
