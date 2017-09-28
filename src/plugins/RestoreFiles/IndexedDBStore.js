@@ -4,16 +4,42 @@ const isSupported = !!indexedDB
 
 const DB_NAME = 'uppy-blobs'
 const STORE_NAME = 'files' // maybe have a thumbnail store in the future
-const DB_VERSION = 2
+const DEFAULT_EXPIRY = 24 * 60 * 60 * 1000 // 1 day
+const DB_VERSION = 3
+
+// Set default `expires` dates on existing stored blobs.
+function migrateExpiration (store) {
+  const request = store.openCursor()
+  request.onsuccess = (event) => {
+    const cursor = event.target.result
+    const entry = cursor.value
+    entry.expires = Date.now() + DEFAULT_EXPIRY
+    cursor.update(entry)
+  }
+}
 
 function connect (dbName) {
   const request = indexedDB.open(dbName, DB_VERSION)
   return new Promise((resolve, reject) => {
     request.onupgradeneeded = (event) => {
       const db = event.target.result
-      const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' })
-      store.createIndex('store', 'store', { unique: false })
-      store.transaction.oncomplete = () => {
+      const transaction = event.currentTarget.transaction
+
+      if (event.oldVersion < 2) {
+        // Added in v2: DB structure changed to a single shared object store
+        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' })
+        store.createIndex('store', 'store', { unique: false })
+      }
+
+      if (event.oldVersion < 3) {
+        // Added in v3
+        const store = transaction.objectStore(STORE_NAME)
+        store.createIndex('expires', 'expires', { unique: false })
+
+        migrateExpiration(store)
+      }
+
+      transaction.oncomplete = () => {
         resolve(db)
       }
     }
@@ -131,6 +157,7 @@ class IndexedDBStore {
         id: this.key(file.id),
         fileID: file.id,
         store: this.name,
+        expires: Date.now() + DEFAULT_EXPIRY,
         data: file.data
       })
       return waitForRequest(request)
