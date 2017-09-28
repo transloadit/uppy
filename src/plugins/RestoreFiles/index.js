@@ -17,6 +17,7 @@ module.exports = class RestoreFiles extends Plugin {
     this.title = 'Restore Files'
 
     const defaultOptions = {
+      expires: 24 * 60 * 60 * 1000, // 24 hours
       serviceWorker: false
     }
 
@@ -26,7 +27,8 @@ module.exports = class RestoreFiles extends Plugin {
     if (this.opts.serviceWorker) {
       this.ServiceWorkerStore = new ServiceWorkerStore(core, { storeName: core.getID() })
     }
-    this.IndexedDBStore = new IndexedDBStore(core, Object.assign({},
+    this.IndexedDBStore = new IndexedDBStore(core, Object.assign(
+      { expires: this.opts.expires },
       opts.indexedDB || {},
       { storeName: core.getID() }))
 
