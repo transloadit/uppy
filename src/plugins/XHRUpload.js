@@ -62,6 +62,14 @@ module.exports = class XHRUpload extends Plugin {
       this.core.state.xhrUpload || {},
       file.xhrUpload || {}
     )
+    opts.headers = {}
+    Object.assign(opts.headers, this.opts.headers)
+    if (this.core.state.xhrUpload) {
+      Object.assign(opts.headers, this.core.state.xhrUpload.headers)
+    }
+    if (file.xhrUpload) {
+      Object.assign(opts.headers, file.xhrUpload.headers)
+    }
 
     this.core.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
@@ -100,14 +108,6 @@ module.exports = class XHRUpload extends Plugin {
           this.core.emit('core:upload-error', file.id, error)
           return reject(error)
         }
-
-        // var upload = {}
-        //
-        // if (opts.bundle) {
-        //   upload = {files: files}
-        // } else {
-        //   upload = {file: files[current]}
-        // }
       })
 
       xhr.addEventListener('error', (ev) => {
