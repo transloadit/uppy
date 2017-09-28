@@ -60,6 +60,7 @@ function waitForRequest (request) {
   })
 }
 
+let cleanedUp = false
 class IndexedDBStore {
   constructor (core, opts) {
     this.opts = Object.assign({
@@ -70,7 +71,18 @@ class IndexedDBStore {
     }, opts)
 
     this.name = this.opts.storeName
-    this.ready = connect(this.opts.dbName)
+
+    const createConnection = () => {
+      return connect(this.opts.dbName)
+    }
+
+    if (!cleanedUp) {
+      cleanedUp = true
+      this.ready = IndexedDBStore.cleanup()
+        .then(createConnection, createConnection)
+    } else {
+      this.ready = createConnection
+    }
   }
 
   key (fileID) {
