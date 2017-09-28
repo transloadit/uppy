@@ -5,7 +5,7 @@ const isSupported = !!indexedDB
 
 const DB_NAME = 'uppy-blobs'
 const STORE_NAME = 'files' // maybe have a thumbnail store in the future
-const DEFAULT_EXPIRY = 24 * 60 * 60 * 1000 // 1 day
+const DEFAULT_EXPIRY = 24 * 60 * 60 * 1000 // 24 hours
 const DB_VERSION = 3
 
 // Set default `expires` dates on existing stored blobs.
@@ -66,6 +66,7 @@ class IndexedDBStore {
     this.opts = Object.assign({
       dbName: DB_NAME,
       storeName: 'default',
+      expires: DEFAULT_EXPIRY, // 24 hours
       maxFileSize: 10 * 1024 * 1024, // 10 MB
       maxTotalSize: 300 * 1024 * 1024 // 300 MB
     }, opts)
@@ -170,7 +171,7 @@ class IndexedDBStore {
         id: this.key(file.id),
         fileID: file.id,
         store: this.name,
-        expires: Date.now() + DEFAULT_EXPIRY,
+        expires: Date.now() + this.opts.expires,
         data: file.data
       })
       return waitForRequest(request)
