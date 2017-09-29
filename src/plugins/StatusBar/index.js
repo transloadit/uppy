@@ -26,6 +26,7 @@ module.exports = class StatusBarUI extends Plugin {
 
     this.pauseAll = this.pauseAll.bind(this)
     this.resumeAll = this.resumeAll.bind(this)
+    this.retryAll = this.retryAll.bind(this)
     this.cancelAll = this.cancelAll.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
@@ -41,6 +42,10 @@ module.exports = class StatusBarUI extends Plugin {
 
   resumeAll () {
     this.core.emit('core:resume-all')
+  }
+
+  retryAll () {
+    this.core.emit('core:retry-all')
   }
 
   getTotalSpeed (files) {
@@ -73,6 +78,9 @@ module.exports = class StatusBarUI extends Plugin {
     const completeFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadComplete
     })
+    const erroredFiles = Object.keys(files).filter((file) => {
+      return files[file].error
+    })
     const inProgressFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadComplete &&
              files[file].progress.uploadStarted &&
@@ -100,11 +108,19 @@ module.exports = class StatusBarUI extends Plugin {
     totalSize = prettyBytes(totalSize)
     totalUploadedSize = prettyBytes(totalUploadedSize)
 
+    const isUploadStarted = uploadStartedFiles.length > 0
+
     const isAllComplete = state.totalProgress === 100 &&
       completeFiles.length === Object.keys(files).length &&
       processingFiles.length === 0
-    const isAllPaused = inProgressFiles.length === 0 && !isAllComplete && uploadStartedFiles.length > 0
-    const isUploadStarted = uploadStartedFiles.length > 0
+
+    const isAllErrored = isUploadStarted &&
+      erroredFiles.length === uploadStartedFiles.length
+
+    const isAllPaused = inProgressFiles.length === 0 &&
+      !isAllComplete &&
+      !isAllErrored &&
+      uploadStartedFiles.length > 0
 
     const resumableUploads = this.core.getState().capabilities.resumableUploads || false
 
@@ -116,9 +132,11 @@ module.exports = class StatusBarUI extends Plugin {
       uploadStartedFiles: uploadStartedFiles,
       isAllComplete: isAllComplete,
       isAllPaused: isAllPaused,
+      isAllErrored: isAllErrored,
       isUploadStarted: isUploadStarted,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
+      retryAll: this.retryAll,
       cancelAll: this.cancelAll,
       complete: completeFiles.length,
       inProgress: uploadStartedFiles.length,

@@ -15,7 +15,11 @@ const STATE_POSTPROCESSING = 'postprocessing'
 const STATE_COMPLETE = 'complete'
 
 function getUploadingState (props, files) {
-  if (props.error) {
+  // if (props.error) {
+  //   return STATE_ERROR
+  // }
+
+  if (props.isAllErrored) {
     return STATE_ERROR
   }
 
@@ -129,8 +133,8 @@ const ProgressBarUploading = (props) => {
     <div class="UppyStatusBar-content">
       ${props.isUploadStarted && !props.isAllComplete
         ? !props.isAllPaused
-          ? html`<span title="Uploading">${pauseResumeButtons(props)} Uploading... ${throttledProgressDetails(props)}</span>`
-          : html`<span title="Paused">${pauseResumeButtons(props)} Paused・${props.totalProgress}%</span>`
+          ? html`<div title="Uploading">${pauseResumeButtons(props)} Uploading... ${throttledProgressDetails(props)}</div>`
+          : html`<div title="Paused">${pauseResumeButtons(props)} Paused・${props.totalProgress}%</div>`
         : null
         }
     </div>
@@ -150,12 +154,22 @@ const ProgressBarComplete = ({ totalProgress }) => {
   `
 }
 
-const ProgressBarError = ({ error }) => {
+const ProgressBarError = (props) => {
+  // const { error } = props
   return html`
     <div class="UppyStatusBar-content">
-      <span>
-        ${error.message}
-      </span>
+      <div title="Error">
+        <button title="Retry upload" aria-label="Retry upload" class="UppyStatusBar-action" type="button" onclick=${props.retryAll}>
+          <svg class="UppyIcon" width="28" height="31" viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 11a8 8 0 1 1-8-8v2a6 6 0 1 0 6 6h2z"/>
+            <path d="M7.9 3H10v2H7.9z"/><path d="M8.536.5l3.535 3.536-1.414 1.414L7.12 1.914z"/><path d="M10.657 2.621l1.414 1.415L8.536 7.57 7.12 6.157z"/>
+          </svg>
+        </button>
+        Upload failed. 
+        <button class="UppyStatusBar-button" type="button" onclick=${props.retryAll}>
+          <strong>Retry?</strong>
+        </button>
+      </div>
     </div>
   `
 }
