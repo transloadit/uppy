@@ -783,25 +783,33 @@ class Uppy {
   /**
    * Logs stuff to console, only if `debug` is set to true. Silent in production.
    *
-   * @return {String|Object} to log
+   * @param {String|Object} msg to log
+   * @param {String} type optional `error` or `warning`
    */
   log (msg, type) {
+    let message = `[Uppy] [${Utils.getTimeStamp()}] ${msg}`
+
+    global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
+
     if (!this.opts.debug) {
       return
     }
 
     if (type === 'error') {
-      console.error(`LOG: ${msg}`)
+      console.error(message)
+      return
+    }
+
+    if (type === 'warning') {
+      console.warn(message)
       return
     }
 
     if (msg === `${msg}`) {
-      console.log(`LOG: ${msg}`)
+      console.log(message)
     } else {
-      console.dir(msg)
+      console.dir(message)
     }
-
-    global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
   }
 
   initSocket (opts) {
@@ -934,7 +942,15 @@ class Uppy {
    *
    * @return {Promise}
    */
-  upload (forceUpload) {
+  upload () {
+    if (!this.plugins.uploader) {
+      this.log('No uploader type plugins are used', 'warning')
+    }
+
+    if (Object.keys(this.state.files).length === 0) {
+      this.log('No files have been added', 'warning')
+    }
+
     const isMinNumberOfFilesReached = this.checkMinNumberOfFiles()
     if (!isMinNumberOfFilesReached) {
       return Promise.reject(new Error('Minimum number of files has not been reached'))
@@ -952,15 +968,7 @@ class Uppy {
       Object.keys(this.state.files).forEach((fileID) => {
         const file = this.getFile(fileID)
 
-        // TODO: replace files[file].isRemote with some logic
-        //
-        // filter files that are now yet being uploaded / haven’t been uploaded
-        // and remote too
-
-        if (forceUpload) {
-          this.resetProgress()
-          waitingFileIDs.push(file.id)
-        } else if (!file.progress.uploadStarted || file.isRemote) {
+        if (!file.progress.uploadStarted || file.isRemote) {
           waitingFileIDs.push(file.id)
         }
       })
