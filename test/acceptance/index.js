@@ -100,8 +100,8 @@ function buildDriver (platform) {
 
 var specificTests = {
   fallback: function () {
-    var ancientPlatform = { browser: 'internet explorer', version: '6.0', os: 'Windows XP' }
-    var driver = buildDriver({ browser: 'internet explorer', version: '6.0', os: 'Windows XP' })
+    var ancientPlatform = { browser: 'internet explorer', version: '8.0', os: 'Windows 7' }
+    var driver = buildDriver({ browser: 'internet explorer', version: '8.0', os: 'Windows 7' })
     var test = require('./fallback.spec.js')
 
     test(driver, ancientPlatform, host)
@@ -113,7 +113,7 @@ var specificTests = {
 function runAllTests () {
   if (isRemoteTest) {
     // run custom platform-specific tests here
-    // fallback test
+    // <form> fallback test
     specificTests.fallback()
 
     // run all tests for all platforms
