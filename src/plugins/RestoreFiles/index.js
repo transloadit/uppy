@@ -1,6 +1,7 @@
 const Plugin = require('../Plugin')
 const ServiceWorkerStore = require('./ServiceWorkerStore')
 const IndexedDBStore = require('./IndexedDBStore')
+const MetaDataStore = require('./MetaDataStore')
 
 /**
 * Restore Files plugin — restores selected files and resumes uploads
@@ -23,6 +24,10 @@ module.exports = class RestoreFiles extends Plugin {
 
     this.opts = Object.assign({}, defaultOptions, opts)
 
+    this.MetaDataStore = new MetaDataStore({
+      expires: this.opts.expires,
+      storeName: core.getID()
+    })
     this.ServiceWorkerStore = null
     if (this.opts.serviceWorker) {
       this.ServiceWorkerStore = new ServiceWorkerStore({ storeName: core.getID() })
@@ -40,11 +45,11 @@ module.exports = class RestoreFiles extends Plugin {
   }
 
   loadFilesStateFromLocalStorage () {
-    const savedState = localStorage.getItem(`uppyState:${this.core.opts.id}`)
+    const savedState = this.MetaDataStore.load()
 
     if (savedState) {
       this.core.log('Recovered some state from Local Storage')
-      this.core.setState(JSON.parse(savedState))
+      this.core.setState(savedState)
     }
   }
 
@@ -94,11 +99,10 @@ module.exports = class RestoreFiles extends Plugin {
       this.getUploadingFiles()
     )
 
-    const state = JSON.stringify({
+    this.MetaDataStore.save({
       currentUploads: this.core.state.currentUploads,
       files: filesToSave
     })
-    localStorage.setItem(`uppyState:${this.core.opts.id}`, state)
   }
 
   loadFileBlobsFromServiceWorker () {
