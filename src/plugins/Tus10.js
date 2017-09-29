@@ -49,6 +49,7 @@ module.exports = class Tus10 extends Plugin {
 
     this.handlePauseAll = this.handlePauseAll.bind(this)
     this.handleResumeAll = this.handleResumeAll.bind(this)
+    this.handleRetryAll = this.handleRetryAll.bind(this)
     this.handleResetProgress = this.handleResetProgress.bind(this)
     this.handleUpload = this.handleUpload.bind(this)
   }
@@ -96,6 +97,16 @@ module.exports = class Tus10 extends Plugin {
           updatedFiles[file] = updatedFile
         })
         this.core.setState({files: updatedFiles})
+        return
+      case 'retryAll':
+        inProgressUpdatedFiles.forEach((file) => {
+          const updatedFile = Object.assign({}, updatedFiles[file], {
+            isPaused: false,
+            error: null
+          })
+          updatedFiles[file] = updatedFile
+        })
+        this.core.setState({files: updatedFiles})
     }
   }
 
@@ -105,6 +116,10 @@ module.exports = class Tus10 extends Plugin {
 
   handleResumeAll () {
     this.pauseResume('resumeAll')
+  }
+
+  handleRetryAll () {
+    this.pauseResume('retryAll')
   }
 
   handleResetProgress () {
@@ -186,6 +201,11 @@ module.exports = class Tus10 extends Plugin {
         upload.start()
       })
 
+      this.onRetryAll(file.id, () => {
+        upload.abort()
+        upload.start()
+      })
+
       this.onPauseAll(file.id, () => {
         upload.abort()
       })
@@ -194,16 +214,16 @@ module.exports = class Tus10 extends Plugin {
         upload.start()
       })
 
-      this.core.on('core:retry-started', () => {
-        const files = this.core.getState().files
-        if (files[file.id].progress.uploadComplete ||
-          !files[file.id].progress.uploadStarted ||
-          files[file.id].isPaused
-            ) {
-          return
-        }
-        upload.start()
-      })
+      // this.core.on('core:retry-started', () => {
+      //   const files = this.core.getState().files
+      //   if (files[file.id].progress.uploadComplete ||
+      //     !files[file.id].progress.uploadStarted ||
+      //     files[file.id].isPaused
+      //       ) {
+      //     return
+      //   }
+      //   upload.start()
+      // })
 
       upload.start()
       this.core.emit('core:upload-started', file.id, upload)
@@ -325,6 +345,13 @@ module.exports = class Tus10 extends Plugin {
     })
   }
 
+  onRetryAll (fileID, cb) {
+    this.core.on('core:retry-all', () => {
+      if (!this.core.getFile(fileID)) return
+      cb()
+    })
+  }
+
   onPauseAll (fileID, cb) {
     this.core.on('core:pause-all', () => {
       if (!this.core.getFile(fileID)) return
@@ -369,11 +396,13 @@ module.exports = class Tus10 extends Plugin {
   actions () {
     this.core.on('core:pause-all', this.handlePauseAll)
     this.core.on('core:resume-all', this.handleResumeAll)
+    this.core.on('core:retry-all', this.handleRetryAll)
     this.core.on('core:reset-progress', this.handleResetProgress)
 
     if (this.opts.autoRetry) {
       this.core.on('back-online', () => {
-        this.core.emit('core:retry-started')
+        // this.core.emit('core:retry-started')
+        this.core.emit('core:retry-all')
       })
     }
   }
@@ -396,5 +425,6 @@ module.exports = class Tus10 extends Plugin {
     this.core.removeUploader(this.handleUpload)
     this.core.off('core:pause-all', this.handlePauseAll)
     this.core.off('core:resume-all', this.handleResumeAll)
+    this.core.off('core:retry-all', this.handleRetryAll)
   }
 }
