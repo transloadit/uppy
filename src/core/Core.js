@@ -76,6 +76,7 @@ class Uppy {
     this.hideInfo = this.hideInfo.bind(this)
     this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
+    this.pauseResume = this.pauseResume.bind(this)
     this.calculateProgress = this.calculateProgress.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
 
@@ -360,6 +361,23 @@ class Uppy {
     })
   }
 
+  removeFile (fileID) {
+    const updatedFiles = Object.assign({}, this.getState().files)
+    const removedFile = updatedFiles[fileID]
+    delete updatedFiles[fileID]
+
+    this.setState({files: updatedFiles})
+    this.calculateTotalProgress()
+    this.emit('core:file-removed', fileID)
+
+    // Clean up object URLs.
+    if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
+      URL.revokeObjectURL(removedFile.preview)
+    }
+
+    this.log(`Removed file: ${fileID}`)
+  }
+
   /**
    * Get a file object.
    *
@@ -396,21 +414,61 @@ class Uppy {
     })
   }
 
-  removeFile (fileID) {
+  pauseResume (action, fileID) {
     const updatedFiles = Object.assign({}, this.getState().files)
-    const removedFile = updatedFiles[fileID]
-    delete updatedFiles[fileID]
+    const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
+      return !updatedFiles[file].progress.uploadComplete &&
+             updatedFiles[file].progress.uploadStarted
+    })
 
-    this.setState({files: updatedFiles})
-    this.calculateTotalProgress()
-    this.emit('core:file-removed', fileID)
+    switch (action) {
+      case 'toggle':
+        if (updatedFiles[fileID].uploadComplete) return
 
-    // Clean up object URLs.
-    if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
-      URL.revokeObjectURL(removedFile.preview)
+        const wasPaused = updatedFiles[fileID].isPaused || false
+        const isPaused = !wasPaused
+        let updatedFile
+        if (wasPaused) {
+          updatedFile = Object.assign({}, updatedFiles[fileID], {
+            isPaused: false
+          })
+        } else {
+          updatedFile = Object.assign({}, updatedFiles[fileID], {
+            isPaused: true
+          })
+        }
+        updatedFiles[fileID] = updatedFile
+        this.setState({files: updatedFiles})
+        return isPaused
+      case 'pauseAll':
+        inProgressUpdatedFiles.forEach((file) => {
+          const updatedFile = Object.assign({}, updatedFiles[file], {
+            isPaused: true
+          })
+          updatedFiles[file] = updatedFile
+        })
+        this.setState({files: updatedFiles})
+        return
+      case 'resumeAll':
+        inProgressUpdatedFiles.forEach((file) => {
+          const updatedFile = Object.assign({}, updatedFiles[file], {
+            isPaused: false,
+            error: null
+          })
+          updatedFiles[file] = updatedFile
+        })
+        this.setState({files: updatedFiles})
+        return
+      case 'retryAll':
+        inProgressUpdatedFiles.forEach((file) => {
+          const updatedFile = Object.assign({}, updatedFiles[file], {
+            isPaused: false,
+            error: null
+          })
+          updatedFiles[file] = updatedFile
+        })
+        this.setState({files: updatedFiles})
     }
-
-    this.log(`Removed file: ${fileID}`)
   }
 
   calculateProgress (data) {

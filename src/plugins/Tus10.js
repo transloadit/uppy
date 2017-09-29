@@ -54,72 +54,16 @@ module.exports = class Tus10 extends Plugin {
     this.handleUpload = this.handleUpload.bind(this)
   }
 
-  pauseResume (action, fileID) {
-    const updatedFiles = Object.assign({}, this.core.getState().files)
-    const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
-      return !updatedFiles[file].progress.uploadComplete &&
-             updatedFiles[file].progress.uploadStarted
-    })
-
-    switch (action) {
-      case 'toggle':
-        if (updatedFiles[fileID].uploadComplete) return
-
-        const wasPaused = updatedFiles[fileID].isPaused || false
-        const isPaused = !wasPaused
-        let updatedFile
-        if (wasPaused) {
-          updatedFile = Object.assign({}, updatedFiles[fileID], {
-            isPaused: false
-          })
-        } else {
-          updatedFile = Object.assign({}, updatedFiles[fileID], {
-            isPaused: true
-          })
-        }
-        updatedFiles[fileID] = updatedFile
-        this.core.setState({files: updatedFiles})
-        return isPaused
-      case 'pauseAll':
-        inProgressUpdatedFiles.forEach((file) => {
-          const updatedFile = Object.assign({}, updatedFiles[file], {
-            isPaused: true
-          })
-          updatedFiles[file] = updatedFile
-        })
-        this.core.setState({files: updatedFiles})
-        return
-      case 'resumeAll':
-        inProgressUpdatedFiles.forEach((file) => {
-          const updatedFile = Object.assign({}, updatedFiles[file], {
-            isPaused: false
-          })
-          updatedFiles[file] = updatedFile
-        })
-        this.core.setState({files: updatedFiles})
-        return
-      case 'retryAll':
-        inProgressUpdatedFiles.forEach((file) => {
-          const updatedFile = Object.assign({}, updatedFiles[file], {
-            isPaused: false,
-            error: null
-          })
-          updatedFiles[file] = updatedFile
-        })
-        this.core.setState({files: updatedFiles})
-    }
-  }
-
   handlePauseAll () {
-    this.pauseResume('pauseAll')
+    this.core.pauseResume('pauseAll')
   }
 
   handleResumeAll () {
-    this.pauseResume('resumeAll')
+    this.core.pauseResume('resumeAll')
   }
 
   handleRetryAll () {
-    this.pauseResume('retryAll')
+    this.core.pauseResume('retryAll')
   }
 
   handleResetProgress () {
@@ -211,6 +155,9 @@ module.exports = class Tus10 extends Plugin {
       })
 
       this.onResumeAll(file.id, () => {
+        if (file.error) {
+          upload.abort()
+        }
         upload.start()
       })
 
@@ -287,7 +234,23 @@ module.exports = class Tus10 extends Plugin {
     })
 
     this.onPauseAll(file.id, () => socket.send('pause', {}))
-    this.onResumeAll(file.id, () => socket.send('resume', {}))
+
+    this.onResumeAll(file.id, () => {
+      if (file.error) {
+        socket.send('pause', {})
+      }
+      socket.send('resume', {})
+    })
+
+    this.onRetry(file.id, () => {
+      socket.send('pause', {})
+      socket.send('resume', {})
+    })
+
+    this.onRetryAll(file.id, () => {
+      socket.send('pause', {})
+      socket.send('resume', {})
+    })
 
     socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
@@ -331,7 +294,7 @@ module.exports = class Tus10 extends Plugin {
   onPause (fileID, cb) {
     this.core.on('core:upload-pause', (targetFileID) => {
       if (fileID === targetFileID) {
-        const isPaused = this.pauseResume('toggle', fileID)
+        const isPaused = this.core.pauseResume('toggle', fileID)
         cb(isPaused)
       }
     })
