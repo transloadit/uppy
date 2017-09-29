@@ -77,6 +77,7 @@ What we need to do to release Uppy 1.0
 - [ ] uppy-server: security audit
 - [ ] uppy-server: storing tokens in user’s browser only
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
+- [ ] automatically host releases on edgly and use that as our main CDN
 
 ## 0.21.0
 
@@ -89,11 +90,11 @@ To be released: 2017-10-27
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] core: allow setting custom `id` for plugins: https://github.com/transloadit/uppy/pull/328#issuecomment-328242214 (@arturi)
-- [ ] core: move `setPluginState` to Plugin class ? (@goto-bus-stop)
 - [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] goldenretriever: Ability to clear upload history or set expiry date (#324 / @arturi)
 - [ ] core: return `{ successful, failed }` from `uppy.upload()`
+- [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
 
 # next
 
@@ -104,7 +105,7 @@ Theme: React and Retry
 
 - [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
-- [ ] core: retry or show error when upload can’t start / fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
+- [ ] core: show error and offer retry when upload can’t start and/or fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
 - [x] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [x] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
@@ -114,7 +115,8 @@ Theme: React and Retry
 - [x] goldenretriever: Omit completed uploads from saved file state—previously, when an upload was finished and the user refreshed the page, all the finished files would still be there because we saved the entire list of files. Changed this to only store files that are part of an in-progress upload, or that have yet to be uploaded (#358, #324 / @goto-bus-stop)
 - [x] goldenretriever: Remove files from cache when upload finished—this uses the deleteBlobs function when core:success fires (#358, #324 / @goto-bus-stop)
 - [ ] goldenretriever: add a timestamp to cached blobs, and to delete old blobs on boot (#358, #324 / @goto-bus-stop)
-
+- [ ] s3: have some way to configure content-disposition for uploads, see #243 (@goto-bus-stop)
+- [x] core: move `setPluginState` and add `getPluginState` to `Plugin` class (#363 / @goto-bus-stop)
 
 ## 0.19.1
 

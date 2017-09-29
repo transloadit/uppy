@@ -2,7 +2,7 @@
 title: "List & Common Options"
 type: docs
 permalink: docs/plugins/
-order: 4
+order: 10
 ---
 
 Plugins are what makes Uppy useful: they help select, manipulate and upload files.
@@ -116,7 +116,7 @@ Same as with Uppy.Core’s setting from above, this allows you to override plugi
 
 ```js
 .use(FileInput, {
-  target: 'body', 
+  target: 'body',
   locale: {
     strings: { selectToUpload: 'Выберите файл для загрузки' }
   }

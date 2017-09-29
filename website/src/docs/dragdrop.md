@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 7
+order: 21
 title: "DragDrop"
 permalink: docs/dragdrop/
 ---

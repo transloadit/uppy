@@ -113,37 +113,33 @@ module.exports = class DashboardUI extends Plugin {
       isHidden: true
     }
 
-    const modal = this.core.getState().modal
-    const newTargets = modal.targets.slice()
+    const state = this.getPluginState()
+    const newTargets = state.targets.slice()
     newTargets.push(target)
 
-    this.core.setState({
-      modal: Object.assign({}, modal, {
-        targets: newTargets
-      })
+    this.setPluginState({
+      targets: newTargets
     })
 
     return this.target
   }
 
   hideAllPanels () {
-    const modal = this.core.getState().modal
-
-    this.core.setState({modal: Object.assign({}, modal, {
+    this.setPluginState({
       activePanel: false
-    })})
+    })
   }
 
   showPanel (id) {
-    const modal = this.core.getState().modal
+    const { targets } = this.getPluginState()
 
-    const activePanel = modal.targets.filter((target) => {
+    const activePanel = targets.filter((target) => {
       return target.type === 'acquirer' && target.id === id
     })[0]
 
-    this.core.setState({modal: Object.assign({}, modal, {
+    this.setPluginState({
       activePanel: activePanel
-    })})
+    })
   }
 
   requestCloseModal () {
@@ -155,12 +151,8 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   openModal () {
-    const modal = this.core.getState().modal
-
-    this.core.setState({
-      modal: Object.assign({}, modal, {
-        isHidden: false
-      })
+    this.setPluginState({
+      isHidden: false
     })
 
     // save scroll position
@@ -180,12 +172,8 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   closeModal () {
-    const modal = this.core.getState().modal
-
-    this.core.setState({
-      modal: Object.assign({}, modal, {
-        isHidden: true
-      })
+    this.setPluginState({
+      isHidden: true
     })
 
     document.body.classList.remove('is-UppyDashboard-open')
@@ -194,7 +182,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   isModalOpen () {
-    return !this.core.getState().modal.isHidden || false
+    return !this.getPluginState().isHidden || false
   }
 
   // Close the Modal on esc key press
@@ -255,21 +243,14 @@ module.exports = class DashboardUI extends Plugin {
     const dashboardEl = this.target.querySelector('.UppyDashboard-inner')
     this.core.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
-    const modal = this.core.getState().modal
-    this.core.setState({
-      modal: Object.assign({}, modal, {
-        containerWidth: dashboardEl.offsetWidth
-      })
+    this.setPluginState({
+      containerWidth: dashboardEl.offsetWidth
     })
   }
 
   handleFileCard (fileId) {
-    const modal = this.core.state.modal
-
-    this.core.setState({
-      modal: Object.assign({}, modal, {
-        fileCardFor: fileId || false
-      })
+    this.setPluginState({
+      fileCardFor: fileId || false
     })
   }
 
@@ -299,6 +280,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   render (state) {
+    const pluginState = this.getPluginState()
     const files = state.files
 
     const newFiles = Object.keys(files).filter((file) => {
@@ -324,11 +306,11 @@ module.exports = class DashboardUI extends Plugin {
     totalSize = prettyBytes(totalSize)
     totalUploadedSize = prettyBytes(totalUploadedSize)
 
-    const acquirers = state.modal.targets.filter((target) => {
+    const acquirers = pluginState.targets.filter((target) => {
       return target.type === 'acquirer'
     })
 
-    const progressindicators = state.modal.targets.filter((target) => {
+    const progressindicators = pluginState.targets.filter((target) => {
       return target.type === 'progressindicator'
     })
 
@@ -363,13 +345,13 @@ module.exports = class DashboardUI extends Plugin {
 
     return Dashboard({
       state: state,
-      modal: state.modal,
+      modal: pluginState,
       newFiles: newFiles,
       files: files,
       totalFileCount: Object.keys(files).length,
       totalProgress: state.totalProgress,
       acquirers: acquirers,
-      activePanel: state.modal.activePanel,
+      activePanel: pluginState.activePanel,
       progressindicators: progressindicators,
       autoProceed: this.core.opts.autoProceed,
       hideUploadButton: this.opts.hideUploadButton,
@@ -395,14 +377,14 @@ module.exports = class DashboardUI extends Plugin {
       pauseUpload: pauseUpload,
       retryUpload: retryUpload,
       cancelUpload: cancelUpload,
-      fileCardFor: state.modal.fileCardFor,
+      fileCardFor: pluginState.fileCardFor,
       showFileCard: showFileCard,
       fileCardDone: fileCardDone,
       updateDashboardElWidth: this.updateDashboardElWidth,
       maxWidth: this.opts.maxWidth,
       maxHeight: this.opts.maxHeight,
-      currentWidth: state.modal.containerWidth,
-      isWide: state.modal.containerWidth > 400
+      currentWidth: pluginState.containerWidth,
+      isWide: pluginState.containerWidth > 400
     })
   }
 
@@ -416,12 +398,12 @@ module.exports = class DashboardUI extends Plugin {
 
   install () {
     // Set default state for Modal
-    this.core.setState({modal: {
+    this.setPluginState({
       isHidden: true,
       showFileCard: false,
       activePanel: false,
       targets: []
-    }})
+    })
 
     const target = this.opts.target
 

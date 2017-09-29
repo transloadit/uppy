@@ -147,6 +147,7 @@ describe('src/Core', () => {
         foo: 'baar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
+        plugins: {},
         totalProgress: 0
       }
 
@@ -168,6 +169,7 @@ describe('src/Core', () => {
         foo: 'bar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
+        plugins: {},
         totalProgress: 0
       })
       // new state
@@ -178,6 +180,7 @@ describe('src/Core', () => {
         foo: 'baar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
+        plugins: {},
         totalProgress: 0
       })
     })
@@ -193,6 +196,7 @@ describe('src/Core', () => {
         foo: 'bar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
+        plugins: {},
         totalProgress: 0
       })
     })
@@ -219,6 +223,7 @@ describe('src/Core', () => {
       foo: 'bar',
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
+      plugins: {},
       totalProgress: 0
     })
   })
@@ -244,6 +249,7 @@ describe('src/Core', () => {
       files: {},
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
+      plugins: {},
       totalProgress: 0
     })
     expect(core.plugins.acquirer[0].mocks.uninstall.mock.calls.length).toEqual(
@@ -589,7 +595,7 @@ describe('src/Core', () => {
   describe('uploading a file', () => {})
 
   describe('removing a file', () => {
-    xit('should remove the file', () => {
+    it('should remove the file', () => {
       const fileRemovedEventMock = jest.fn()
 
       const core = new Core()
@@ -605,7 +611,6 @@ describe('src/Core', () => {
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
           expect(Object.keys(core.state.files).length).toEqual(1)
-          console.log(core.state.totalProgress)
           core.setState({
             totalProgress: 50
           })
@@ -706,11 +711,147 @@ describe('src/Core', () => {
   })
 
   describe('progress', () => {
-    xit('should reset the progress', () => {})
+    it('should calculate the progress of a file upload', () => {
+      const core = new Core()
+      return core
+        .addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpg',
+          data: utils.dataURItoFile(sampleImageDataURI, {})
+        })
+        .then(() => {
+          const fileId = Object.keys(core.state.files)[0]
+          core.calculateProgress({
+            id: fileId,
+            bytesUploaded: 12345,
+            bytesTotal: 17175
+          })
+          expect(core.state.files[fileId].progress).toEqual({
+            percentage: 71,
+            bytesUploaded: 12345,
+            bytesTotal: 17175,
+            uploadComplete: false,
+            uploadStarted: false
+          })
 
-    xit('should calculate the progress of a file upload', () => {})
+          core.calculateProgress({
+            id: fileId,
+            bytesUploaded: 17175,
+            bytesTotal: 17175
+          })
+          expect(core.state.files[fileId].progress).toEqual({
+            percentage: 100,
+            bytesUploaded: 17175,
+            bytesTotal: 17175,
+            uploadComplete: false,
+            uploadStarted: false
+          })
+        })
+    })
 
-    xit('should calculate the total progress of all file uploads', () => {})
+    it('should calculate the total progress of all file uploads', () => {
+      const core = new Core()
+      return core
+        .addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpg',
+          data: utils.dataURItoFile(sampleImageDataURI, {})
+        })
+        .then(() => {
+          return core
+            .addFile({
+              source: 'jest',
+              name: 'foo2.jpg',
+              type: 'image/jpg',
+              data: utils.dataURItoFile(sampleImageDataURI, {})
+            })
+        }).then(() => {
+          const fileId1 = Object.keys(core.state.files)[0]
+          const fileId2 = Object.keys(core.state.files)[1]
+          core.state.files[fileId1].progress.uploadStarted = new Date()
+          core.state.files[fileId2].progress.uploadStarted = new Date()
+
+          core.calculateProgress({
+            id: fileId1,
+            bytesUploaded: 12345,
+            bytesTotal: 17175
+          })
+
+          core.calculateProgress({
+            id: fileId2,
+            bytesUploaded: 10201,
+            bytesTotal: 17175
+          })
+
+          core.calculateTotalProgress()
+          expect(core.state.totalProgress).toEqual(65)
+        })
+    })
+
+    it('should reset the progress', () => {
+      const resetProgressEvent = jest.fn()
+      const core = new Core()
+      core.run()
+      core.on('core:reset-progress', resetProgressEvent)
+      return core
+        .addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpg',
+          data: utils.dataURItoFile(sampleImageDataURI, {})
+        })
+        .then(() => {
+          return core
+            .addFile({
+              source: 'jest',
+              name: 'foo2.jpg',
+              type: 'image/jpg',
+              data: utils.dataURItoFile(sampleImageDataURI, {})
+            })
+        }).then(() => {
+          const fileId1 = Object.keys(core.state.files)[0]
+          const fileId2 = Object.keys(core.state.files)[1]
+          core.state.files[fileId1].progress.uploadStarted = new Date()
+          core.state.files[fileId2].progress.uploadStarted = new Date()
+
+          core.calculateProgress({
+            id: fileId1,
+            bytesUploaded: 12345,
+            bytesTotal: 17175
+          })
+
+          core.calculateProgress({
+            id: fileId2,
+            bytesUploaded: 10201,
+            bytesTotal: 17175
+          })
+
+          core.calculateTotalProgress()
+
+          expect(core.state.totalProgress).toEqual(65)
+
+          core.resetProgress()
+
+          expect(core.state.files[fileId1].progress).toEqual({
+            percentage: 0,
+            bytesUploaded: 0,
+            bytesTotal: 17175,
+            uploadComplete: false,
+            uploadStarted: false
+          })
+          expect(core.state.files[fileId2].progress).toEqual({
+            percentage: 0,
+            bytesUploaded: 0,
+            bytesTotal: 17175,
+            uploadComplete: false,
+            uploadStarted: false
+          })
+          expect(core.state.totalProgress).toEqual(0)
+          expect(resetProgressEvent.mock.calls.length).toEqual(1)
+        })
+    })
   })
 
   describe('checkRestrictions', () => {
@@ -778,7 +919,32 @@ describe('src/Core', () => {
     })
   })
 
-  describe('actions', () => {})
+  describe('actions', () => {
+    it('should update the state when receiving the core:error event', () => {
+      const core = new Core()
+      core.run()
+      core.emit('core:error', { foo: 'bar' })
+      expect(core.state.error).toEqual({foo: 'bar'})
+    })
+
+    it('should update the state when receiving the core:upload-error event', () => {
+      const core = new Core()
+      core.run()
+      core.state.files['fileId'] = {
+        name: 'filename'
+      }
+      core.emit('core:upload-error', 'fileId', { message: 'this is the error' })
+      expect(core.state.info).toEqual({'details': null, 'isHidden': false, 'message': 'Failed to upload filename: this is the error', 'type': 'error'})
+    })
+
+    it('should reset the error state when receiving the core:upload event', () => {
+      const core = new Core()
+      core.run()
+      core.emit('core:error', { foo: 'bar' })
+      core.emit('core:upload')
+      expect(core.state.error).toEqual(null)
+    })
+  })
 
   describe('updateOnlineStatus', () => {
     const RealNavigatorOnline = global.window.navigator.onLine
