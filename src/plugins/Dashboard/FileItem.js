@@ -64,7 +64,7 @@ module.exports = function fileItem (props) {
                       props.cancelUpload(file.id)
                     }
                   }}>
-            ${props.file.error
+            ${error
               ? iconRetry()
               : FileItemProgress({
                 progress: file.progress.percentage,
