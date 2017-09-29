@@ -546,7 +546,7 @@ class Uppy {
         { error: error, isPaused: true }
       )
       updatedFiles[fileID] = updatedFile
-      this.setState({files: updatedFiles})
+      this.setState({ files: updatedFiles, error: error })
 
       const fileName = this.state.files[fileID].name
       let message = `Failed to upload ${fileName}`

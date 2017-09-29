@@ -141,49 +141,50 @@ const ProgressBarUploading = (props) => {
   `
 }
 
-const ProgressBarComplete = ({ totalProgress }) => {
+const ProgressBarComplete = ({ totalProgress, i18n }) => {
   return html`
     <div class="UppyStatusBar-content">
       <span title="Complete">
         <svg aria-hidden="true" class="UppyStatusBar-action UppyIcon" width="18" height="17" viewBox="0 0 23 17">
           <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
         </svg>
-        Upload complete・${totalProgress}%
+        ${i18n('uploadComplete')}・${totalProgress}%
       </span>
     </div>
   `
 }
 
-const ProgressBarError = (props) => {
-  // const { error } = props
+const ProgressBarError = ({ error, retryAll, i18n }) => {
   return html`
     <div class="UppyStatusBar-content">
-      <div title="Error">
-        <button title="Retry upload" aria-label="Retry upload" class="UppyStatusBar-action" type="button" onclick=${props.retryAll}>
+      <div title="${i18n('error')}">
+        <button title="${i18n('retryUpload')}" aria-label="${i18n('retryUpload')}" class="UppyStatusBar-action" type="button" onclick=${retryAll}>
           <svg class="UppyIcon" width="28" height="31" viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
             <path d="M16 11a8 8 0 1 1-8-8v2a6 6 0 1 0 6 6h2z"/>
             <path d="M7.9 3H10v2H7.9z"/><path d="M8.536.5l3.535 3.536-1.414 1.414L7.12 1.914z"/><path d="M10.657 2.621l1.414 1.415L8.536 7.57 7.12 6.157z"/>
           </svg>
         </button>
-        Upload failed. 
-        <button class="UppyStatusBar-button" type="button" onclick=${props.retryAll}>
-          <strong>Retry?</strong>
+        ${i18n('uploadFailed')}. 
+        <button class="UppyStatusBar-button" type="button" onclick=${retryAll}>
+          <strong>${i18n('retry')}?</strong>
         </button>
+        <span class="UppyStatusBar-details" data-balloon="${error}" data-balloon-pos="up" data-balloon-length="large">?</span>
       </div>
     </div>
   `
 }
 
 const pauseResumeButtons = (props) => {
-  const title = props.resumableUploads
-                ? props.isAllPaused
-                  ? 'resume upload'
-                  : 'pause upload'
-                : 'cancel upload'
+  const { resumableUploads, isAllPaused, i18n } = props
+  const title = resumableUploads
+                ? isAllPaused
+                  ? i18n('resumeUpload')
+                  : i18n('pauseUpload')
+                : i18n('cancelUpload')
 
   return html`<button title="${title}" class="UppyStatusBar-action" type="button" onclick=${() => togglePauseResume(props)}>
-    ${props.resumableUploads
-      ? props.isAllPaused
+    ${resumableUploads
+      ? isAllPaused
         ? html`<svg aria-hidden="true" class="UppyIcon" width="15" height="17" viewBox="0 0 11 13">
           <path d="M1.26 12.534a.67.67 0 0 1-.674.012.67.67 0 0 1-.336-.583v-11C.25.724.38.5.586.382a.658.658 0 0 1 .673.012l9.165 5.5a.66.66 0 0 1 .325.57.66.66 0 0 1-.325.573l-9.166 5.5z" />
         </svg>`

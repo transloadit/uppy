@@ -1,4 +1,5 @@
 const Plugin = require('../Plugin')
+const Translator = require('../../core/Translator')
 const StatusBar = require('./StatusBar')
 const { getSpeed } = require('../../core/Utils')
 const { getBytesRemaining } = require('../../core/Utils')
@@ -15,14 +16,36 @@ module.exports = class StatusBarUI extends Plugin {
     this.title = 'StatusBar'
     this.type = 'progressindicator'
 
+    const defaultLocale = {
+      strings: {
+        uploading: 'Uploading',
+        uploadComplete: 'Upload complete',
+        uploadFailed: 'Upload failed',
+        paused: 'Paused',
+        error: 'Error',
+        retry: 'Retry',
+        retryUpload: 'Retry upload',
+        resumeUpload: 'Resume upload',
+        cancelUpload: 'Cancel upload',
+        pauseUpload: 'Pause upload'
+      }
+    }
+
     // set default options
     const defaultOptions = {
       target: 'body',
-      showProgressDetails: false
+      showProgressDetails: false,
+      locale: defaultLocale
     }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    this.translator = new Translator({locale: this.locale})
+    this.i18n = this.translator.translate.bind(this.translator)
 
     this.pauseAll = this.pauseAll.bind(this)
     this.resumeAll = this.resumeAll.bind(this)
@@ -134,6 +157,7 @@ module.exports = class StatusBarUI extends Plugin {
       isAllPaused: isAllPaused,
       isAllErrored: isAllErrored,
       isUploadStarted: isUploadStarted,
+      i18n: this.i18n,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
       retryAll: this.retryAll,
