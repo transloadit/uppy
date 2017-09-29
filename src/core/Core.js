@@ -429,9 +429,7 @@ class Uppy {
           bytesUploaded: data.bytesUploaded,
           bytesTotal: data.bytesTotal,
           percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
-        }),
-        isPaused: false,
-        error: null
+        })
       }
     ))
     updatedFiles[data.id] = updatedFile
@@ -496,7 +494,6 @@ class Uppy {
       let message = `Failed to upload ${fileName}`
       if (typeof error === 'object' && error.message) {
         message = { message: message, details: error.message }
-        this.info({ message: message, details: error.message }, 'error', 5000)
       }
       this.info(message, 'error', 5000)
     })
@@ -508,6 +505,10 @@ class Uppy {
       )
       updatedFiles[fileID] = updatedFile
       this.setState({files: updatedFiles})
+    })
+
+    this.on('core:retry-all', () => {
+      this.setState({ error: null })
     })
 
     this.on('core:upload', () => {
@@ -522,16 +523,12 @@ class Uppy {
       this.generatePreview(file)
     })
 
-    // `remove-file` removes a file from `state.files`, for example when
-    // a user decides not to upload particular file and clicks a button to remove it
     this.on('core:file-remove', (fileID) => {
       this.removeFile(fileID)
     })
 
     this.on('core:cancel-all', () => {
-      // let updatedFiles = this.getState().files
-      // updatedFiles = {}
-      this.setState({files: {}})
+      this.setState({ files: {} })
     })
 
     this.on('core:upload-started', (fileID, upload) => {
