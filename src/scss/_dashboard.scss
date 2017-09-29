@@ -526,6 +526,10 @@
     z-index: $zIndex-2;
   }
 
+  .UppyDashboardItem.is-error .UppyDashboardItem-previewInnerWrap:after {
+    background-color: rgba($color-red, 0.85);
+  }
+
 
 .UppyDashboardItem-preview img {
   width: 100%;
@@ -844,10 +848,6 @@
   .UppyDashboardItem-progressBtn {
     cursor: default;
   }
-
-  // .UppyDashboardItem-previewInnerWrap:after {
-  //   display: block;
-  // }
 
   .progress {
     stroke: $color-green;
