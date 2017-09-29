@@ -23,6 +23,19 @@ module.exports = function fileItem (props) {
   const fileName = getFileNameAndExtension(file.meta.name)[0]
   const truncatedFileName = props.isWide ? truncateString(fileName, 15) : fileName
 
+  const onPauseResumeCancelRetry = (ev) => {
+    if (isUploaded) return
+    if (error) {
+      props.retryUpload(file.id)
+      return
+    }
+    if (props.resumableUploads) {
+      props.pauseUpload(file.id)
+    } else {
+      props.cancelUpload(file.id)
+    }
+  }
+
   return html`<li class="UppyDashboardItem
                         ${uploadInProgress ? 'is-inprogress' : ''}
                         ${isUploaded ? 'is-complete' : ''}
@@ -52,18 +65,7 @@ module.exports = function fileItem (props) {
                               : 'pause upload'
                             : 'cancel upload'
                         }"
-                  onclick=${(ev) => {
-                    if (isUploaded) return
-                    if (error) {
-                      props.retryUpload(file.id)
-                      return
-                    }
-                    if (props.resumableUploads) {
-                      props.pauseUpload(file.id)
-                    } else {
-                      props.cancelUpload(file.id)
-                    }
-                  }}>
+                  onclick=${onPauseResumeCancelRetry}>
             ${error
               ? iconRetry()
               : FileItemProgress({
