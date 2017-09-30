@@ -106,7 +106,23 @@ class Uppy {
     }
 
     // for debugging and testing
-    this.updateNum = 0
+
+    this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
+
+    if (this.withDevTools) {
+      this.devTools = window.devToolsExtension.connect()
+      this.devToolsUnsubscribe = this.devTools.subscribe((message) => {
+        // Implement monitors actions. For example time traveling:
+        if (message.type === 'DISPATCH' && message.payload.type === 'JUMP_TO_STATE') {
+          const state = JSON.parse(message.state)
+          // this.setState(state)
+          this.state = Object.assign({}, this.state, state)
+          this.updateAll(this.state)
+        }
+      })
+    }
+
+    // this.updateNum = 0
     if (this.opts.debug) {
       global.UppyState = this.state
       global.uppyLog = ''
@@ -475,6 +491,12 @@ class Uppy {
     //   this.setState({bla: 'bla'})
     // }, 20)
 
+    this.on('core:state-update', (prevState, nextState, patch) => {
+      if (this.withDevTools) {
+        this.devTools.send('UPPY_STATE_UPDATE', nextState)
+      }
+    })
+
     this.on('core:error', (error) => {
       this.setState({ error })
     })
@@ -729,6 +751,10 @@ class Uppy {
    */
   close () {
     this.reset()
+
+    if (this.withDevTools) {
+      this.devToolsUnsubscribe()
+    }
 
     this.iteratePlugins((plugin) => {
       plugin.uninstall()
