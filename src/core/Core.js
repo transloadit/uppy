@@ -65,10 +65,10 @@ class Uppy {
     // Container for different types of plugins
     this.plugins = {}
 
-    // @TODO maybe bindall
     this.translator = new Translator({locale: this.opts.locale})
     this.i18n = this.translator.translate.bind(this.translator)
     this.getState = this.getState.bind(this)
+    this.getPlugin = this.getPlugin.bind(this)
     this.updateMeta = this.updateMeta.bind(this)
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
@@ -106,21 +106,33 @@ class Uppy {
     }
 
     // for debugging and testing
-
-    this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
-
-    if (this.withDevTools) {
-      this.devTools = window.devToolsExtension.connect()
-      this.devToolsUnsubscribe = this.devTools.subscribe((message) => {
-        // Implement monitors actions. For example time traveling:
-        if (message.type === 'DISPATCH' && message.payload.type === 'JUMP_TO_STATE') {
-          const state = JSON.parse(message.state)
-          // this.setState(state)
-          this.state = Object.assign({}, this.state, state)
-          this.updateAll(this.state)
-        }
-      })
-    }
+    // // Implement monitors actions.
+    // // See https://medium.com/@zalmoxis/redux-devtools-without-redux-or-how-to-have-a-predictable-state-with-any-architecture-61c5f5a7716f
+    // // and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
+    // this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
+    // if (this.withDevTools) {
+    //   this.devTools = window.devToolsExtension.connect()
+    //   this.devToolsUnsubscribe = this.devTools.subscribe((message) => {
+    //     if (message.type === 'DISPATCH') {
+    //       console.log(message.payload.type)
+    //       switch (message.payload.type) {
+    //         case 'RESET':
+    //           this.reset()
+    //           return
+    //         case 'IMPORT_STATE':
+    //           const computedStates = message.payload.nextLiftedState.computedStates
+    //           this.state = Object.assign({}, this.state, computedStates[computedStates.length - 1].state)
+    //           this.updateAll(this.state)
+    //           return
+    //         case 'JUMP_TO_STATE':
+    //         case 'JUMP_TO_ACTION':
+    //           // this.setState(state)
+    //           this.state = Object.assign({}, this.state, JSON.parse(message.state))
+    //           this.updateAll(this.state)
+    //       }
+    //     }
+    //   })
+    // }
 
     // this.updateNum = 0
     if (this.opts.debug) {
@@ -491,11 +503,11 @@ class Uppy {
     //   this.setState({bla: 'bla'})
     // }, 20)
 
-    this.on('core:state-update', (prevState, nextState, patch) => {
-      if (this.withDevTools) {
-        this.devTools.send('UPPY_STATE_UPDATE', nextState)
-      }
-    })
+    // this.on('core:state-update', (prevState, nextState, patch) => {
+    //   if (this.withDevTools) {
+    //     this.devTools.send('UPPY_STATE_UPDATE', nextState)
+    //   }
+    // })
 
     this.on('core:error', (error) => {
       this.setState({ error })
@@ -555,7 +567,6 @@ class Uppy {
     const throttledCalculateProgress = throttle(this.calculateProgress, 100, {leading: true, trailing: false})
 
     this.on('core:upload-progress', (data) => {
-      // this.calculateProgress(data)
       throttledCalculateProgress(data)
     })
 
@@ -564,8 +575,6 @@ class Uppy {
       const updatedFile = Object.assign({}, updatedFiles[fileID], {
         progress: Object.assign({}, updatedFiles[fileID].progress, {
           uploadComplete: true,
-          // good or bad idea? setting the percentage to 100 if upload is successful,
-          // so that if we lost some progress events on the way, its still marked “compete”?
           percentage: 100
         }),
         uploadURL: uploadURL
