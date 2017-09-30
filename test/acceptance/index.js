@@ -52,7 +52,7 @@ var platforms = [
   { browser: 'Firefox', version: '38.0', os: 'Linux' },
   { browser: 'Internet Explorer', version: '10.0', os: 'Windows 8' },
   { browser: 'Internet Explorer', version: '11.103', os: 'Windows 10' },
-  { browser: 'Chrome', version: '48.0', os: 'Windows XP' },
+  { browser: 'Chrome', version: '48.0', os: 'Windows 7' },
   { browser: 'Firefox', version: '34.0', os: 'Windows 7' }
 ]
 
