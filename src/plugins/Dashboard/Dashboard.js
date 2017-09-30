@@ -139,12 +139,12 @@ module.exports = function Dashboard (props) {
                     type="button"
                     onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
           </div>
-          ${props.activePanel ? props.activePanel.render(props.state) : ''}
+          ${props.activePanel ? props.getPlugin(props.activePanel.id).render(props.state) : ''}
         </div>
 
         <div class="UppyDashboard-progressindicators">
           ${props.progressindicators.map((target) => {
-            return target.render(props.state)
+            return props.getPlugin(target.id).render(props.state)
           })}
         </div>
 

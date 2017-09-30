@@ -313,7 +313,7 @@ module.exports = class DashboardUI extends Plugin {
       return target.type === 'acquirer'
     })
 
-    const progressindicators = pluginState.targets.filter((target) => {
+    const progressindicators = pluginState.targets.filter(target => {
       const plugin = this.core.getPlugin(target.id)
       target.icon = plugin.icon || this.opts.defaultTabIcon
       target.render = plugin.render
@@ -354,6 +354,7 @@ module.exports = class DashboardUI extends Plugin {
       totalProgress: state.totalProgress,
       acquirers: acquirers,
       activePanel: pluginState.activePanel,
+      getPlugin: this.core.getPlugin,
       progressindicators: progressindicators,
       autoProceed: this.core.opts.autoProceed,
       hideUploadButton: this.opts.hideUploadButton,
