@@ -1,14 +1,17 @@
 const Plugin = require('./Plugin')
 
 /**
+ * Add Redux DevTools support to Uppy
  *
+ * See https://medium.com/@zalmoxis/redux-devtools-without-redux-or-how-to-have-a-predictable-state-with-any-architecture-61c5f5a7716f
+ * and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  */
 module.exports = class ReduxDevTools extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'debugger'
     this.id = 'ReduxDevTools'
-    this.title = 'Redux Dev Tools'
+    this.title = 'Redux DevTools'
 
     // set default options
     const defaultOptions = {}
@@ -29,6 +32,8 @@ module.exports = class ReduxDevTools extends Plugin {
     this.devToolsUnsubscribe = this.devTools.subscribe((message) => {
       if (message.type === 'DISPATCH') {
         console.log(message.payload.type)
+
+        // Implement monitors actions
         switch (message.payload.type) {
           case 'RESET':
             this.core.reset()
@@ -49,9 +54,6 @@ module.exports = class ReduxDevTools extends Plugin {
   }
 
   install () {
-    // Implement monitors actions.
-    // See https://medium.com/@zalmoxis/redux-devtools-without-redux-or-how-to-have-a-predictable-state-with-any-architecture-61c5f5a7716f
-    // and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
     this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
     if (this.withDevTools) {
       this.initDevTools()
