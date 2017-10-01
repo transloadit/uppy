@@ -947,10 +947,6 @@ class Uppy {
       this.log('No uploader type plugins are used', 'warning')
     }
 
-    if (Object.keys(this.state.files).length === 0) {
-      this.log('No files have been added', 'warning')
-    }
-
     const isMinNumberOfFilesReached = this.checkMinNumberOfFiles()
     if (!isMinNumberOfFilesReached) {
       return Promise.reject(new Error('Minimum number of files has not been reached'))
