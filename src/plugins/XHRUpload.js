@@ -150,6 +150,16 @@ module.exports = class XHRUpload extends Plugin {
     return new Promise((resolve, reject) => {
       this.core.emit('core:upload-started', file.id)
 
+      const fields = {}
+      const metaFields = Array.isArray(opts.metaFields)
+        ? opts.metaFields
+        // Send along all fields by default.
+        : Object.keys(file.meta)
+
+      metaFields.forEach((name) => {
+        fields[name] = file.meta.name
+      })
+
       fetch(file.remote.url, {
         method: 'post',
         credentials: 'include',
@@ -160,7 +170,9 @@ module.exports = class XHRUpload extends Plugin {
         body: JSON.stringify(Object.assign({}, file.remote.body, {
           endpoint: opts.endpoint,
           size: file.data.size,
-          fieldname: opts.fieldName
+          fieldname: opts.fieldName,
+          fields,
+          headers: opts.headers
         }))
       })
       .then((res) => {
