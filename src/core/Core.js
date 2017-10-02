@@ -787,13 +787,13 @@ class Uppy {
    * @param {String} type optional `error` or `warning`
    */
   log (msg, type) {
-    let message = `[Uppy] [${Utils.getTimeStamp()}] ${msg}`
-
-    global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
-
     if (!this.opts.debug) {
       return
     }
+
+    let message = `[Uppy] [${Utils.getTimeStamp()}] ${msg}`
+
+    global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
 
     if (type === 'error') {
       console.error(message)
