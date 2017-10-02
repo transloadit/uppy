@@ -24,6 +24,7 @@ module.exports = class StatusBarUI extends Plugin {
         paused: 'Paused',
         error: 'Error',
         retry: 'Retry',
+        pressToRetry: 'Press to retry',
         retryUpload: 'Retry upload',
         resumeUpload: 'Resume upload',
         cancelUpload: 'Cancel upload',

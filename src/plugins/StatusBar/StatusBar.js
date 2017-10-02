@@ -157,20 +157,27 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
 const ProgressBarError = ({ error, retryAll, i18n }) => {
   return html`
     <div class="UppyStatusBar-content">
-      <div title="${i18n('error')}">
-        <button title="${i18n('retryUpload')}" aria-label="${i18n('retryUpload')}" class="UppyStatusBar-action" type="button" onclick=${retryAll}>
-          <svg class="UppyIcon" width="28" height="31" viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16 11a8 8 0 1 1-8-8v2a6 6 0 1 0 6 6h2z"/>
-            <path d="M7.9 3H10v2H7.9z"/><path d="M8.536.5l3.535 3.536-1.414 1.414L7.12 1.914z"/><path d="M10.657 2.621l1.414 1.415L8.536 7.57 7.12 6.157z"/>
-          </svg>
-        </button>
+        <button class="UppyStatusBar-action" 
+                title="${i18n('retryUpload')}" 
+                aria-label="${i18n('retryUpload')}" 
+                type="button" 
+                onclick=${retryAll}>
+            <svg class="UppyIcon" width="28" height="31" viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 11a8 8 0 1 1-8-8v2a6 6 0 1 0 6 6h2z"/>
+              <path d="M7.9 3H10v2H7.9z"/><path d="M8.536.5l3.535 3.536-1.414 1.414L7.12 1.914z"/><path d="M10.657 2.621l1.414 1.415L8.536 7.57 7.12 6.157z"/>
+            </svg></button>
         ${i18n('uploadFailed')}. 
-        <button class="UppyStatusBar-button" type="button" onclick=${retryAll}>
-          <strong>${i18n('retry')}?</strong>
-        </button>
-        <span class="UppyStatusBar-details" data-balloon="${error}" data-balloon-pos="up" data-balloon-length="large">?</span>
+        <button class="UppyStatusBar-retryBtn" 
+            title="${i18n('retryUpload')}" 
+            aria-label="${i18n('retryUpload')}" 
+            type="button" 
+            onclick=${retryAll}>
+          ${i18n('retry')}</button>
+        <span class="UppyStatusBar-details" 
+              data-balloon="${error}" 
+              data-balloon-pos="up" 
+              data-balloon-length="large">?</span>
       </div>
-    </div>
   `
 }
 
