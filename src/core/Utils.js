@@ -42,6 +42,24 @@ function toArray (list) {
 }
 
 /**
+ * Returns a timestamp in the format of `hours:minutes:seconds`
+*/
+function getTimeStamp () {
+  var date = new Date()
+  var hours = pad(date.getHours().toString())
+  var minutes = pad(date.getMinutes().toString())
+  var seconds = pad(date.getSeconds().toString())
+  return hours + ':' + minutes + ':' + seconds
+}
+
+/**
+ * Adds zero to strings shorter than two characters
+*/
+function pad (str) {
+  return str.length !== 2 ? 0 + str : str
+}
+
+/**
  * Takes a file object and turns it into fileID, by converting file.name to lowercase,
  * removing extra characters and adding type, size and lastModified
  *
@@ -519,6 +537,7 @@ function settle (promises) {
 module.exports = {
   generateFileID,
   toArray,
+  getTimeStamp,
   runPromiseSequence,
   supportsMediaRecorder,
   isTouchDevice,
