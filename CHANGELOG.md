@@ -98,6 +98,7 @@ To be released: 2017-10-27
 - [ ] core: return `{ successful, failed }` from `uppy.upload()` (@goto-bus-stop)
 - [ ] core: refactor `uppy-base` (@arturi)
 - [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
+- [ ] plugins: add tabindex="0" to buttons and tabs?
 
 # next
 
