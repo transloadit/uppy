@@ -212,7 +212,7 @@ class IndexedDBStore {
             cursor.delete() // Ignoring return value … it's not terrible if this goes wrong.
             cursor.continue()
           } else {
-            resolve()
+            resolve(db)
           }
         }
         request.onerror = reject
