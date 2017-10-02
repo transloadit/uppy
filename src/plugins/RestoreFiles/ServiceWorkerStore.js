@@ -1,5 +1,26 @@
 const isSupported = 'serviceWorker' in navigator
 
+function isUppyServiceWorker () {
+  navigator.serviceWorker.controller.postMessage({
+    type: 'uppy/PROBE'
+  })
+  return new Promise((resolve, reject) => {
+    const onNoResponse = () => {
+      reject(new Error('Not an Uppy Service Worker'))
+      navigator.serviceWorker.removeEventListener('message', onResponse)
+    }
+    const timer = setTimeout(onNoResponse, 1000)
+
+    const onResponse = (event) => {
+      if (event.data && event.data.type === 'uppy/HERE_I_AM') {
+        resolve()
+        clearTimeout(timer)
+      }
+    }
+    navigator.serviceWorker.addEventListener('message', onResponse)
+  })
+}
+
 function waitForServiceWorker () {
   return new Promise((resolve, reject) => {
     if (!('serviceWorker' in navigator)) {
@@ -12,6 +33,8 @@ function waitForServiceWorker () {
         resolve()
       })
     }
+  }).then(() => {
+    return isUppyServiceWorker()
   })
 }
 

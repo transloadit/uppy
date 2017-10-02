@@ -46,8 +46,17 @@ function getFiles (store) {
   })
 }
 
+function probe (event) {
+  sendMessageToAllClients({
+    type: 'uppy/HERE_I_AM'
+  })
+}
+
 self.addEventListener('message', (event) => {
   switch (event.data.type) {
+    case 'uppy/PROBE':
+      probe()
+      break
     case 'uppy/ADD_FILE':
       addFile(event.data.store, event.data.file)
       break
