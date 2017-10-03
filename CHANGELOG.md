@@ -79,6 +79,12 @@ What we need to do to release Uppy 1.0
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 - [ ] automatically host releases on edgly and use that as our main CDN
 
+## 0.22.0
+
+- [ ] core: improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (@goto-bus-stop, @arturi)
+
+# next
+
 ## 0.21.0
 
 To be released: 2017-10-27
@@ -94,20 +100,17 @@ To be released: 2017-10-27
 - [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
-- [ ] goldenretriever: Ability to clear upload history or set expiry date (#324 / @arturi)
 - [ ] core: return `{ successful, failed }` from `uppy.upload()` (@goto-bus-stop)
 - [ ] core: refactor `uppy-base` (@arturi)
 - [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
-- [ ] plugins: add tabindex="0" to buttons and tabs?
+- [ ] plugins: add tabindex="0" to buttons and tabs? (@arturi)
 - [ ] goldenretriever: add “ghost” files (@arturi)
-- [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network
+- [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network (@goto-bus-stop)
 - [ ] goldenretriever: add expiration to ServiceWorkerStore (@goto-bus-stop)
-
-# next
 
 ## 0.20.0
 
-To be released: 2017-10-03.
+Released: 2017-10-03.
 Theme: React and Retry
 
 - [x] core: retry/error when upload can’t start or fails (offline, connection lost, wrong endpoint); add error in file progress state, UI, question mark button (#307 / @arturi)
@@ -116,6 +119,7 @@ Theme: React and Retry
 - [x] core: Add support for Redux DevTools via a plugin (#373 / @arturi)
 - [x] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
 - [x] core: improve core.log method, add timestamps (#372 / @arturi)
+- [x] dragdrop: redesign, add note, width/height options, arrow icon (#374 / @arturi)
 - [x] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
 - [x] uploaders: issue warning when no uploading plugins are used (#372 / @arturi)
 - [x] core: fix `replaceTargetContent` and add tests for `Plugin` (#354 / @gavboulton)
