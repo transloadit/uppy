@@ -100,17 +100,18 @@ To be released: 2017-10-27
 - [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
 - [ ] plugins: add tabindex="0" to buttons and tabs?
 - [ ] goldenretriever: add “ghost” files (@arturi)
+- [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network
 
 # next
 
 ## 0.20.0
 
-To be released: 2017-10-02.
+To be released: 2017-10-03.
 Theme: React and Retry
 
-- [ ] core: retry/error when upload can’t start or fails (offline, connection lost, wrong endpoint); add error in file progress state, UI, question mark button (#307 / @arturi)
-- [ ] core: support for retry in Tus plugin (#307 / @arturi)
-- [ ] core: support for retry in XHRUpload plugin (#307 / @arturi)
+- [x] core: retry/error when upload can’t start or fails (offline, connection lost, wrong endpoint); add error in file progress state, UI, question mark button (#307 / @arturi)
+- [x] core: support for retry in Tus plugin (#307 / @arturi)
+- [x] core: support for retry in XHRUpload plugin (#307 / @arturi)
 - [x] core: Add support for Redux DevTools via a plugin (#373 / @arturi)
 - [x] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
 - [x] core: improve core.log method, add timestamps (#372 / @arturi)
