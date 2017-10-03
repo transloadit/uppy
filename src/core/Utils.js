@@ -546,6 +546,7 @@ module.exports = {
   secondsToTime,
   dataURItoBlob,
   dataURItoFile,
+  canvasToBlob,
   getSpeed,
   getBytesRemaining,
   getETA,

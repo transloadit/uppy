@@ -1,11 +1,34 @@
 const Plugin = require('../Plugin')
-const WebcamProvider = require('../../uppy-base/src/plugins/Webcam')
 const Translator = require('../../core/Translator')
-const { getFileTypeExtension } = require('../../core/Utils')
+const {
+  getFileTypeExtension,
+  canvasToBlob
+} = require('../../core/Utils')
 const supportsMediaRecorder = require('./supportsMediaRecorder')
 const WebcamIcon = require('./WebcamIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
+
+// Setup getUserMedia, with polyfill for older browsers
+// Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+function getMediaDevices () {
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    return navigator.mediaDevices
+  }
+
+  let getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia
+  if (!getUserMedia) {
+    return null
+  }
+
+  return {
+    getUserMedia (opts) {
+      return new Promise((resolve, reject) => {
+        getUserMedia.call(navigator, opts, resolve, reject)
+      })
+    }
+  }
+}
 
 /**
  * Webcam
@@ -13,7 +36,8 @@ const PermissionsScreen = require('./PermissionsScreen')
 module.exports = class Webcam extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.userMedia = true
+    this.mediaDevices = getMediaDevices()
+    this.supportsUserMedia = !!this.mediaDevices
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.type = 'acquirer'
     this.id = 'Webcam'
@@ -63,7 +87,6 @@ module.exports = class Webcam extends Plugin {
     this.stopRecording = this.stopRecording.bind(this)
     this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
 
-    this.webcam = new WebcamProvider(this.opts)
     this.webcamActive = false
 
     if (this.opts.countdown) {
@@ -72,9 +95,24 @@ module.exports = class Webcam extends Plugin {
   }
 
   start () {
+    if (!this.mediaDevices) {
+      return Promise.reject(new Error('Webcam access not supported'))
+    }
+
     this.webcamActive = true
 
-    this.webcam.start()
+    const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1 ||
+      this.opts.modes.indexOf('audio-only') !== -1
+    const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1 ||
+      this.opts.modes.indexOf('video-only') !== -1 ||
+      this.opts.modes.indexOf('picture') !== -1
+
+    // ask user for access to their camera
+    return this.mediaDevices
+      .getUserMedia({
+        audio: acceptsAudio,
+        video: acceptsVideo
+      })
       .then((stream) => {
         this.stream = stream
         this.streamSrc = URL.createObjectURL(this.stream)
@@ -152,6 +190,10 @@ module.exports = class Webcam extends Plugin {
     this.streamSrc = null
   }
 
+  getVideoElement () {
+    return this.target.querySelector('.UppyWebcam-video')
+  }
+
   oneTwoThreeSmile () {
     return new Promise((resolve, reject) => {
       let count = this.opts.countdown
@@ -181,8 +223,6 @@ module.exports = class Webcam extends Plugin {
       mimeType: 'image/jpeg'
     }
 
-    this.videoEl = this.target.querySelector('.UppyWebcam-video')
-
     if (this.captureInProgress) return
     this.captureInProgress = true
 
@@ -191,23 +231,36 @@ module.exports = class Webcam extends Plugin {
       this.core.info(message, 'error', 5000)
       return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
     }).then(() => {
-      const video = this.target.querySelector('.UppyWebcam-video')
-      if (!video) {
-        this.captureInProgress = false
-        return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
-      }
-
-      const image = this.webcam.getImage(video, opts)
-
-      const tagFile = {
-        source: this.id,
-        name: opts.name,
-        data: image.data,
-        type: opts.mimeType
-      }
-
+      return this.getImage(opts)
+    }).then((tagFile) => {
       this.captureInProgress = false
       this.core.addFile(tagFile)
+    }, (error) => {
+      this.captureInProgress = false
+      throw error
+    })
+  }
+
+  getImage (opts) {
+    const video = this.getVideoElement()
+    if (!video) {
+      return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
+    }
+
+    const canvas = document.createElement('canvas')
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    canvas.getContext('2d').drawImage(video, 0, 0)
+
+    return canvasToBlob(canvas, opts.mimeType).then((blob) => {
+      return {
+        source: this.id,
+        name: opts.name,
+        data: new File([blob], opts.name, {
+          type: opts.mimeType
+        }),
+        type: opts.mimeType
+      }
     })
   }
 
@@ -243,7 +296,6 @@ module.exports = class Webcam extends Plugin {
   }
 
   install () {
-    this.webcam.init()
     this.setPluginState({
       cameraReady: false
     })
@@ -254,7 +306,11 @@ module.exports = class Webcam extends Plugin {
   }
 
   uninstall () {
-    this.webcam.reset()
+    if (this.stream) {
+      this.stop()
+    }
+    this.stream = null
+
     this.unmount()
   }
 }
