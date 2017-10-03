@@ -22,6 +22,7 @@ module.exports = class XHRUpload extends Plugin {
       responseUrlFieldName: 'url',
       bundle: true,
       headers: {},
+      timeout: 30 * 1000,
       getResponseData (xhr) {
         return JSON.parse(xhr.response)
       },
@@ -83,9 +84,25 @@ module.exports = class XHRUpload extends Plugin {
         ? this.createFormDataUpload(file, opts)
         : this.createBareUpload(file, opts)
 
+      let aliveTimer
+      const isAlive = () => {
+        clearTimeout(aliveTimer)
+        aliveTimer = setTimeout(() => {
+          xhr.abort()
+          const error = new Error(`No progress for ${Math.ceil(opts.timeout / 1000)} seconds, aborting`)
+          this.core.emit('core:upload-error', file.id, error)
+          reject(error)
+        }, opts.timeout)
+      }
+
       const xhr = new XMLHttpRequest()
 
       xhr.upload.addEventListener('progress', (ev) => {
+        if (opts.timeout > 0) {
+          // Do connection timeout checks.
+          isAlive()
+        }
+
         if (ev.lengthComputable) {
           this.core.emit('core:upload-progress', {
             uploader: this,
@@ -97,6 +114,8 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.addEventListener('load', (ev) => {
+        clearTimeout(aliveTimer)
+
         if (ev.target.status >= 200 && ev.target.status < 300) {
           const resp = opts.getResponseData(xhr)
           const uploadURL = resp[opts.responseUrlFieldName]
@@ -117,9 +136,11 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.addEventListener('error', (ev) => {
+        clearTimeout(aliveTimer)
+
         const error = opts.getResponseError(xhr) || new Error('Upload error')
         this.core.emit('core:upload-error', file.id, error)
-        return reject(new Error('Upload error'))
+        return reject(error)
       })
 
       xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
