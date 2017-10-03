@@ -36,6 +36,24 @@ module.exports = class XHRUpload extends Plugin {
     this.handleUpload = this.handleUpload.bind(this)
   }
 
+  getOptions (file) {
+    const opts = Object.assign({},
+      this.opts,
+      this.core.state.xhrUpload || {},
+      file.xhrUpload || {}
+    )
+    opts.headers = {}
+    Object.assign(opts.headers, this.opts.headers)
+    if (this.core.state.xhrUpload) {
+      Object.assign(opts.headers, this.core.state.xhrUpload.headers)
+    }
+    if (file.xhrUpload) {
+      Object.assign(opts.headers, file.xhrUpload.headers)
+    }
+
+    return opts
+  }
+
   createFormDataUpload (file, opts) {
     const formPost = new FormData()
 
@@ -57,11 +75,7 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   upload (file, current, total) {
-    const opts = Object.assign({},
-      this.opts,
-      this.core.state.xhrUpload || {},
-      file.xhrUpload || {}
-    )
+    const opts = this.getOptions(file)
 
     this.core.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
@@ -100,14 +114,6 @@ module.exports = class XHRUpload extends Plugin {
           this.core.emit('core:upload-error', file.id, error)
           return reject(error)
         }
-
-        // var upload = {}
-        //
-        // if (opts.bundle) {
-        //   upload = {files: files}
-        // } else {
-        //   upload = {file: files[current]}
-        // }
       })
 
       xhr.addEventListener('error', (ev) => {
@@ -140,9 +146,19 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   uploadRemote (file, current, total) {
-    const opts = Object.assign({}, this.opts, file.xhrUpload || {})
+    const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
       this.core.emit('core:upload-started', file.id)
+
+      const fields = {}
+      const metaFields = Array.isArray(opts.metaFields)
+        ? opts.metaFields
+        // Send along all fields by default.
+        : Object.keys(file.meta)
+
+      metaFields.forEach((name) => {
+        fields[name] = file.meta.name
+      })
 
       fetch(file.remote.url, {
         method: 'post',
@@ -154,7 +170,9 @@ module.exports = class XHRUpload extends Plugin {
         body: JSON.stringify(Object.assign({}, file.remote.body, {
           endpoint: opts.endpoint,
           size: file.data.size,
-          fieldname: opts.fieldName
+          fieldname: opts.fieldName,
+          fields,
+          headers: opts.headers
         }))
       })
       .then((res) => {

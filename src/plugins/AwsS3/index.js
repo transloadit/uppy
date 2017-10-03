@@ -99,17 +99,24 @@ module.exports = class AwsS3 extends Plugin {
         const {
           method = 'post',
           url,
-          fields
+          fields,
+          headers
         } = responses[index]
+        const xhrOpts = {
+          method,
+          formData: method.toLowerCase() === 'post',
+          endpoint: url,
+          fieldName: 'file',
+          metaFields: Object.keys(fields)
+        }
+
+        if (headers) {
+          xhrOpts.headers = headers
+        }
+
         const updatedFile = Object.assign({}, file, {
           meta: Object.assign({}, file.meta, fields),
-          xhrUpload: {
-            method,
-            formData: method.toLowerCase() === 'post',
-            endpoint: url,
-            fieldName: 'file',
-            metaFields: Object.keys(fields)
-          }
+          xhrUpload: xhrOpts
         })
 
         updatedFiles[id] = updatedFile
