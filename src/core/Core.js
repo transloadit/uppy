@@ -458,16 +458,10 @@ class Uppy {
     const wasPaused = updatedFiles[fileID].isPaused || false
     const isPaused = !wasPaused
 
-    let updatedFile
-    if (wasPaused) {
-      updatedFile = Object.assign({}, updatedFiles[fileID], {
-        isPaused: false
-      })
-    } else {
-      updatedFile = Object.assign({}, updatedFiles[fileID], {
-        isPaused: true
-      })
-    }
+    const updatedFile = Object.assign({}, updatedFiles[fileID], {
+      isPaused: isPaused
+    })
+
     updatedFiles[fileID] = updatedFile
     this.setState({files: updatedFiles})
 
