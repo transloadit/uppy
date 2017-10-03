@@ -145,36 +145,27 @@ module.exports = class Webcam extends Plugin {
   }
 
   stopRecording () {
-    return new Promise((resolve, reject) => {
+    const stopped = new Promise((resolve, reject) => {
       this.recorder.addEventListener('stop', () => {
-        this.setPluginState({
-          isRecording: false
-        })
-
-        const mimeType = this.recordingChunks[0].type
-        const fileExtension = getFileTypeExtension(mimeType)
-
-        if (!fileExtension) {
-          reject(new Error(`Could not upload file: Unsupported media type "${mimeType}"`))
-          return
-        }
-
-        const file = {
-          source: this.id,
-          name: `webcam-${Date.now()}.${fileExtension}`,
-          type: mimeType,
-          data: new Blob(this.recordingChunks, { type: mimeType })
-        }
-
-        this.core.addFile(file)
-
-        this.recordingChunks = null
-        this.recorder = null
-
         resolve()
       })
-
       this.recorder.stop()
+    })
+
+    return stopped.then(() => {
+      this.setPluginState({
+        isRecording: false
+      })
+      return this.getVideo()
+    }).then((file) => {
+      return this.core.addFile(file)
+    }).then(() => {
+      this.recordingChunks = null
+      this.recorder = null
+    }, (error) => {
+      this.recordingChunks = null
+      this.recorder = null
+      throw error
     })
   }
 
@@ -218,11 +209,6 @@ module.exports = class Webcam extends Plugin {
   }
 
   takeSnapshot () {
-    const opts = {
-      name: `webcam-${Date.now()}.jpg`,
-      mimeType: 'image/jpeg'
-    }
-
     if (this.captureInProgress) return
     this.captureInProgress = true
 
@@ -231,7 +217,7 @@ module.exports = class Webcam extends Plugin {
       this.core.info(message, 'error', 5000)
       return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
     }).then(() => {
-      return this.getImage(opts)
+      return this.getImage()
     }).then((tagFile) => {
       this.captureInProgress = false
       this.core.addFile(tagFile)
@@ -241,27 +227,48 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  getImage (opts) {
+  getImage () {
     const video = this.getVideoElement()
     if (!video) {
       return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
     }
+
+    const name = `webcam-${Date.now()}.jpg`
+    const mimeType = 'image/jpeg'
 
     const canvas = document.createElement('canvas')
     canvas.width = video.videoWidth
     canvas.height = video.videoHeight
     canvas.getContext('2d').drawImage(video, 0, 0)
 
-    return canvasToBlob(canvas, opts.mimeType).then((blob) => {
+    return canvasToBlob(canvas, mimeType).then((blob) => {
       return {
         source: this.id,
-        name: opts.name,
-        data: new File([blob], opts.name, {
-          type: opts.mimeType
-        }),
-        type: opts.mimeType
+        name: name,
+        data: new File([blob], name, { type: mimeType }),
+        type: mimeType
       }
     })
+  }
+
+  getVideo () {
+    const mimeType = this.recordingChunks[0].type
+    const fileExtension = getFileTypeExtension(mimeType)
+
+    if (!fileExtension) {
+      return Promise.reject(new Error(`Could not retrieve recording: Unsupported media type "${mimeType}"`))
+    }
+
+    const name = `webcam-${Date.now()}.${fileExtension}`
+    const blob = new Blob(this.recordingChunks, { type: mimeType })
+    const file = {
+      source: this.id,
+      name: name,
+      data: new File([blob], name, { type: mimeType }),
+      type: mimeType
+    }
+
+    return Promise.resolve(file)
   }
 
   focus () {
