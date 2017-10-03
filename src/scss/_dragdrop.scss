@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: 7px;
     background-color: $color-white;
   }
   
@@ -18,7 +18,7 @@
     width: 60px;
     height: 60px;
     fill: lighten($color-gray, 30%);
-    margin-bottom: 25px;
+    margin-bottom: 20px;
   }
   
     .uppy-DragDrop-container.is-dragdrop-supported {
