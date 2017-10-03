@@ -76,8 +76,14 @@ class Uppy {
     this.hideInfo = this.hideInfo.bind(this)
     this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
+    this.pauseResume = this.pauseResume.bind(this)
     this.calculateProgress = this.calculateProgress.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
+
+    this.pauseAll = this.pauseAll.bind(this)
+    this.resumeAll = this.resumeAll.bind(this)
+    this.retryAll = this.retryAll.bind(this)
+    this.cancelAll = this.cancelAll.bind(this)
 
     // this.bus = this.emitter = ee()
     this.emitter = ee()
@@ -106,34 +112,6 @@ class Uppy {
     }
 
     // for debugging and testing
-    // // Implement monitors actions.
-    // // See https://medium.com/@zalmoxis/redux-devtools-without-redux-or-how-to-have-a-predictable-state-with-any-architecture-61c5f5a7716f
-    // // and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
-    // this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
-    // if (this.withDevTools) {
-    //   this.devTools = window.devToolsExtension.connect()
-    //   this.devToolsUnsubscribe = this.devTools.subscribe((message) => {
-    //     if (message.type === 'DISPATCH') {
-    //       console.log(message.payload.type)
-    //       switch (message.payload.type) {
-    //         case 'RESET':
-    //           this.reset()
-    //           return
-    //         case 'IMPORT_STATE':
-    //           const computedStates = message.payload.nextLiftedState.computedStates
-    //           this.state = Object.assign({}, this.state, computedStates[computedStates.length - 1].state)
-    //           this.updateAll(this.state)
-    //           return
-    //         case 'JUMP_TO_STATE':
-    //         case 'JUMP_TO_ACTION':
-    //           // this.setState(state)
-    //           this.state = Object.assign({}, this.state, JSON.parse(message.state))
-    //           this.updateAll(this.state)
-    //       }
-    //     }
-    //   })
-    // }
-
     // this.updateNum = 0
     if (this.opts.debug) {
       global.UppyState = this.state
@@ -159,6 +137,7 @@ class Uppy {
    * @param {patch} object
    */
   setState (patch) {
+    console.log('STATE')
     const prevState = Object.assign({}, this.state)
     const nextState = Object.assign({}, this.state, patch)
 
@@ -176,14 +155,6 @@ class Uppy {
     // use deepFreeze for debugging
     // return deepFreeze(this.state)
     return this.state
-  }
-
-  reset () {
-    this.emit('core:pause-all')
-    this.emit('core:cancel-all')
-    this.setState({
-      totalProgress: 0
-    })
   }
 
   resetProgress () {
@@ -244,14 +215,18 @@ class Uppy {
   }
 
   setMeta (data) {
-    const newMeta = Object.assign({}, this.getState().meta, data)
+    const newMeta = Object.assign({}, this.state.meta, data)
     this.log('Adding metadata:')
     this.log(data)
     this.setState({meta: newMeta})
   }
 
   updateMeta (data, fileID) {
-    const updatedFiles = Object.assign({}, this.getState().files)
+    const updatedFiles = Object.assign({}, this.state.files)
+    if (!updatedFiles[fileID]) {
+      this.log('Was trying to set metadata for a file that’s not with us anymore: ', fileID)
+      return
+    }
     const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
     updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
       meta: newMeta
@@ -385,6 +360,23 @@ class Uppy {
     })
   }
 
+  removeFile (fileID) {
+    const updatedFiles = Object.assign({}, this.getState().files)
+    const removedFile = updatedFiles[fileID]
+    delete updatedFiles[fileID]
+
+    this.setState({files: updatedFiles})
+    this.calculateTotalProgress()
+    this.emit('core:file-removed', fileID)
+
+    // Clean up object URLs.
+    if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
+      URL.revokeObjectURL(removedFile.preview)
+    }
+
+    this.log(`Removed file: ${fileID}`)
+  }
+
   /**
    * Get a file object.
    *
@@ -421,21 +413,95 @@ class Uppy {
     })
   }
 
-  removeFile (fileID) {
+  pauseResume (fileID) {
     const updatedFiles = Object.assign({}, this.getState().files)
-    const removedFile = updatedFiles[fileID]
-    delete updatedFiles[fileID]
 
+    if (updatedFiles[fileID].uploadComplete) return
+
+    const wasPaused = updatedFiles[fileID].isPaused || false
+    const isPaused = !wasPaused
+
+    const updatedFile = Object.assign({}, updatedFiles[fileID], {
+      isPaused: isPaused
+    })
+
+    updatedFiles[fileID] = updatedFile
     this.setState({files: updatedFiles})
-    this.calculateTotalProgress()
-    this.emit('core:file-removed', fileID)
 
-    // Clean up object URLs.
-    if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
-      URL.revokeObjectURL(removedFile.preview)
-    }
+    this.emit('core:upload-pause', fileID, isPaused)
 
-    this.log(`Removed file: ${fileID}`)
+    return isPaused
+  }
+
+  pauseAll () {
+    const updatedFiles = Object.assign({}, this.getState().files)
+    const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
+      return !updatedFiles[file].progress.uploadComplete &&
+             updatedFiles[file].progress.uploadStarted
+    })
+
+    inProgressUpdatedFiles.forEach((file) => {
+      const updatedFile = Object.assign({}, updatedFiles[file], {
+        isPaused: true
+      })
+      updatedFiles[file] = updatedFile
+    })
+    this.setState({files: updatedFiles})
+
+    this.emit('core:pause-all')
+  }
+
+  resumeAll () {
+    const updatedFiles = Object.assign({}, this.getState().files)
+    const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
+      return !updatedFiles[file].progress.uploadComplete &&
+             updatedFiles[file].progress.uploadStarted
+    })
+
+    inProgressUpdatedFiles.forEach((file) => {
+      const updatedFile = Object.assign({}, updatedFiles[file], {
+        isPaused: false,
+        error: null
+      })
+      updatedFiles[file] = updatedFile
+    })
+    this.setState({files: updatedFiles})
+
+    this.emit('core:resume-all')
+  }
+
+  retryAll () {
+    const updatedFiles = Object.assign({}, this.getState().files)
+    // const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
+    //   return !updatedFiles[file].progress.uploadComplete &&
+    //          updatedFiles[file].progress.uploadStarted
+    // })
+    const filesToRetry = Object.keys(updatedFiles).filter(file => {
+      return updatedFiles[file].error
+    })
+
+    filesToRetry.forEach((file) => {
+      const updatedFile = Object.assign({}, updatedFiles[file], {
+        isPaused: false,
+        error: null
+      })
+      updatedFiles[file] = updatedFile
+    })
+    this.setState({files: updatedFiles})
+
+    this.emit('core:retry-all', filesToRetry)
+  }
+
+  reset () {
+    this.cancelAll()
+    // this.pauseAll()
+    // this.emit('core:pause-all')
+    // this.emit('core:cancel-all')
+  }
+
+  cancelAll () {
+    this.emit('core:cancel-all')
+    this.setState({ files: {}, totalProgress: 0 })
   }
 
   calculateProgress (data) {
@@ -514,12 +580,32 @@ class Uppy {
     })
 
     this.on('core:upload-error', (fileID, error) => {
+      const updatedFiles = Object.assign({}, this.state.files)
+      const updatedFile = Object.assign({}, updatedFiles[fileID],
+        { error: error }
+      )
+      updatedFiles[fileID] = updatedFile
+      this.setState({ files: updatedFiles, error: error })
+
       const fileName = this.state.files[fileID].name
       let message = `Failed to upload ${fileName}`
       if (typeof error === 'object' && error.message) {
-        message = `${message}: ${error.message}`
+        message = { message: message, details: error.message }
       }
       this.info(message, 'error', 5000)
+    })
+
+    this.on('core:upload-retry', (fileID) => {
+      const updatedFiles = Object.assign({}, this.state.files)
+      const updatedFile = Object.assign({}, updatedFiles[fileID],
+        { error: null, isPaused: false }
+      )
+      updatedFiles[fileID] = updatedFile
+      this.setState({files: updatedFiles})
+    })
+
+    this.on('core:retry-all', () => {
+      this.setState({ error: null })
     })
 
     this.on('core:upload', () => {
@@ -534,16 +620,8 @@ class Uppy {
       this.generatePreview(file)
     })
 
-    // `remove-file` removes a file from `state.files`, for example when
-    // a user decides not to upload particular file and clicks a button to remove it
     this.on('core:file-remove', (fileID) => {
       this.removeFile(fileID)
-    })
-
-    this.on('core:cancel-all', () => {
-      // let updatedFiles = this.getState().files
-      // updatedFiles = {}
-      this.setState({files: {}})
     })
 
     this.on('core:upload-started', (fileID, upload) => {
@@ -577,7 +655,8 @@ class Uppy {
           uploadComplete: true,
           percentage: 100
         }),
-        uploadURL: uploadURL
+        uploadURL: uploadURL,
+        isPaused: false
       })
       updatedFiles[fileID] = updatedFile
 

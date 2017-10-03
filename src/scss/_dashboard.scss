@@ -526,6 +526,10 @@
     z-index: $zIndex-2;
   }
 
+  .UppyDashboardItem.is-error .UppyDashboardItem-previewInnerWrap:after {
+    background-color: rgba($color-red, 0.85);
+  }
+
 
 .UppyDashboardItem-preview img {
   width: 100%;
@@ -718,6 +722,7 @@
   width: 38px;
   height: 38px;
   opacity: 0.9;
+  // color: $color-white;
   cursor: pointer;
   transition: all .35s ease;
 
@@ -726,6 +731,16 @@
     height: 55px;
   }
 }
+
+  .UppyDashboardItem.is-error .UppyDashboardItem-progressBtn {
+    width: 18px;
+    height: 18px;
+
+    .UppyDashboard--wide & {
+      width: 28px;
+      height: 28px;
+    }
+  }
 
   .UppyDashboardItem.is-complete .UppyDashboardItem-progressBtn {
     width: 18px;
@@ -795,6 +810,10 @@
   display: none;
 }
 
+.UppyDashboardItem.is-error .retry {
+  fill: $color-white;
+}
+
 .UppyDashboardItem.is-resumable {
   .pause, .play { display: block; }
   .cancel { display: none; }
@@ -829,10 +848,6 @@
   .UppyDashboardItem-progressBtn {
     cursor: default;
   }
-
-  // .UppyDashboardItem-previewInnerWrap:after {
-  //   display: block;
-  // }
 
   .progress {
     stroke: $color-green;

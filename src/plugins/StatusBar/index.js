@@ -1,4 +1,5 @@
 const Plugin = require('../Plugin')
+const Translator = require('../../core/Translator')
 const StatusBar = require('./StatusBar')
 const { getSpeed } = require('../../core/Utils')
 const { getBytesRemaining } = require('../../core/Utils')
@@ -15,32 +16,40 @@ module.exports = class StatusBarUI extends Plugin {
     this.title = 'StatusBar'
     this.type = 'progressindicator'
 
+    const defaultLocale = {
+      strings: {
+        uploading: 'Uploading',
+        uploadComplete: 'Upload complete',
+        uploadFailed: 'Upload failed',
+        paused: 'Paused',
+        error: 'Error',
+        retry: 'Retry',
+        pressToRetry: 'Press to retry',
+        retryUpload: 'Retry upload',
+        resumeUpload: 'Resume upload',
+        cancelUpload: 'Cancel upload',
+        pauseUpload: 'Pause upload'
+      }
+    }
+
     // set default options
     const defaultOptions = {
       target: 'body',
-      showProgressDetails: false
+      showProgressDetails: false,
+      locale: defaultLocale
     }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.pauseAll = this.pauseAll.bind(this)
-    this.resumeAll = this.resumeAll.bind(this)
-    this.cancelAll = this.cancelAll.bind(this)
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    this.translator = new Translator({locale: this.locale})
+    this.i18n = this.translator.translate.bind(this.translator)
+
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
-  }
-
-  cancelAll () {
-    this.core.emit('core:cancel-all')
-  }
-
-  pauseAll () {
-    this.core.emit('core:pause-all')
-  }
-
-  resumeAll () {
-    this.core.emit('core:resume-all')
   }
 
   getTotalSpeed (files) {
@@ -73,6 +82,9 @@ module.exports = class StatusBarUI extends Plugin {
     const completeFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadComplete
     })
+    const erroredFiles = Object.keys(files).filter((file) => {
+      return files[file].error
+    })
     const inProgressFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadComplete &&
              files[file].progress.uploadStarted &&
@@ -100,11 +112,19 @@ module.exports = class StatusBarUI extends Plugin {
     totalSize = prettyBytes(totalSize)
     totalUploadedSize = prettyBytes(totalUploadedSize)
 
+    const isUploadStarted = uploadStartedFiles.length > 0
+
     const isAllComplete = state.totalProgress === 100 &&
       completeFiles.length === Object.keys(files).length &&
       processingFiles.length === 0
-    const isAllPaused = inProgressFiles.length === 0 && !isAllComplete && uploadStartedFiles.length > 0
-    const isUploadStarted = uploadStartedFiles.length > 0
+
+    const isAllErrored = isUploadStarted &&
+      erroredFiles.length === uploadStartedFiles.length
+
+    const isAllPaused = inProgressFiles.length === 0 &&
+      !isAllComplete &&
+      !isAllErrored &&
+      uploadStartedFiles.length > 0
 
     const resumableUploads = this.core.getState().capabilities.resumableUploads || false
 
@@ -116,10 +136,13 @@ module.exports = class StatusBarUI extends Plugin {
       uploadStartedFiles: uploadStartedFiles,
       isAllComplete: isAllComplete,
       isAllPaused: isAllPaused,
+      isAllErrored: isAllErrored,
       isUploadStarted: isUploadStarted,
-      pauseAll: this.pauseAll,
-      resumeAll: this.resumeAll,
-      cancelAll: this.cancelAll,
+      i18n: this.i18n,
+      pauseAll: this.core.pauseAll,
+      resumeAll: this.core.resumeAll,
+      retryAll: this.core.retryAll,
+      cancelAll: this.core.cancelAll,
       complete: completeFiles.length,
       inProgress: uploadStartedFiles.length,
       totalSpeed: totalSpeed,

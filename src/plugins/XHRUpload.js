@@ -34,6 +34,8 @@ module.exports = class XHRUpload extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     this.handleUpload = this.handleUpload.bind(this)
+    this.handleRetry = this.handleRetry.bind(this)
+    this.handleRetryAll = this.handleRetryAll.bind(this)
   }
 
   getOptions (file) {
@@ -117,7 +119,8 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.addEventListener('error', (ev) => {
-        this.core.emit('core:upload-error', file.id)
+        const error = opts.getResponseError(xhr) || new Error('Upload error')
+        this.core.emit('core:upload-error', file.id, error)
         return reject(new Error('Upload error'))
       })
 
@@ -214,11 +217,11 @@ module.exports = class XHRUpload extends Plugin {
 
   handleUpload (fileIDs) {
     if (fileIDs.length === 0) {
-      this.core.log('XHRUpload: no files to upload!')
+      this.core.log('[XHRUpload] No files to upload!')
       return Promise.resolve()
     }
 
-    this.core.log('XHRUpload is uploading...')
+    this.core.log('[XHRUpload] Uploading...')
     const files = fileIDs.map(getFile, this)
     function getFile (fileID) {
       return this.core.state.files[fileID]
@@ -227,11 +230,25 @@ module.exports = class XHRUpload extends Plugin {
     return this.uploadFiles(files).then(() => null)
   }
 
+  handleRetry (targetFileID) {
+    this.handleUpload([targetFileID])
+  }
+
+  handleRetryAll (filesToRetry) {
+    this.handleUpload(filesToRetry)
+  }
+
   install () {
     this.core.addUploader(this.handleUpload)
+
+    this.core.on('core:upload-retry', this.handleRetry)
+    this.core.on('core:retry-all', this.handleRetryAll)
   }
 
   uninstall () {
     this.core.removeUploader(this.handleUpload)
+
+    this.core.off('core:upload-retry', this.handleRetry)
+    this.core.off('core:retry-all', this.handleRetryAll)
   }
 }
