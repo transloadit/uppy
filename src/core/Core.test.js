@@ -204,17 +204,16 @@ describe('src/Core', () => {
 
   it('should reset when the reset method is called', () => {
     const core = new Core()
-    const corePauseEventMock = jest.fn()
+    // const corePauseEventMock = jest.fn()
     const coreCancelEventMock = jest.fn()
     const coreStateUpdateEventMock = jest.fn()
-    core.on('core:pause-all', corePauseEventMock)
     core.on('core:cancel-all', coreCancelEventMock)
     core.on('core:state-update', coreStateUpdateEventMock)
     core.setState({ foo: 'bar', totalProgress: 30 })
 
     core.reset()
 
-    expect(corePauseEventMock.mock.calls.length).toEqual(1)
+    // expect(corePauseEventMock.mock.calls.length).toEqual(1)
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
     expect(coreStateUpdateEventMock.mock.calls[1][1]).toEqual({
@@ -232,16 +231,16 @@ describe('src/Core', () => {
     const core = new Core()
     core.use(AcquirerPlugin1)
 
-    const corePauseEventMock = jest.fn()
+    // const corePauseEventMock = jest.fn()
     const coreCancelEventMock = jest.fn()
     const coreStateUpdateEventMock = jest.fn()
-    core.on('core:pause-all', corePauseEventMock)
+    // core.on('core:pause-all', corePauseEventMock)
     core.on('core:cancel-all', coreCancelEventMock)
     core.on('core:state-update', coreStateUpdateEventMock)
 
     core.close()
 
-    expect(corePauseEventMock.mock.calls.length).toEqual(1)
+    // expect(corePauseEventMock.mock.calls.length).toEqual(1)
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls[0][1]).toEqual({
@@ -934,7 +933,7 @@ describe('src/Core', () => {
         name: 'filename'
       }
       core.emit('core:upload-error', 'fileId', { message: 'this is the error' })
-      expect(core.state.info).toEqual({'details': null, 'isHidden': false, 'message': 'Failed to upload filename: this is the error', 'type': 'error'})
+      expect(core.state.info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
     })
 
     it('should reset the error state when receiving the core:upload event', () => {
