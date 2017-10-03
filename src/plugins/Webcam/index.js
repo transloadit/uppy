@@ -62,7 +62,6 @@ module.exports = class Webcam extends Plugin {
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
     this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
-    // this.justSmile = this.justSmile.bind(this)
 
     this.webcam = new WebcamProvider(this.opts)
     this.webcamActive = false
@@ -78,8 +77,8 @@ module.exports = class Webcam extends Plugin {
     this.webcam.start()
       .then((stream) => {
         this.stream = stream
+        this.streamSrc = URL.createObjectURL(this.stream)
         this.setPluginState({
-          // videoStream: stream,
           cameraReady: true
         })
       })
@@ -176,13 +175,6 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  // justSmile () {
-  //   return new Promise((resolve, reject) => {
-  //     setTimeout(() => this.core.info(this.i18n('smile'), 'success', 1000), 1500)
-  //     setTimeout(() => resolve(), 2000)
-  //   })
-  // }
-
   takeSnapshot () {
     const opts = {
       name: `webcam-${Date.now()}.jpg`,
@@ -235,10 +227,6 @@ module.exports = class Webcam extends Plugin {
 
     if (!webcamState.cameraReady) {
       return PermissionsScreen(webcamState)
-    }
-
-    if (!this.streamSrc) {
-      this.streamSrc = this.stream ? URL.createObjectURL(this.stream) : null
     }
 
     return CameraScreen(Object.assign({}, webcamState, {
