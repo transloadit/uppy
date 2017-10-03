@@ -23,12 +23,18 @@ function maybeParse (str) {
   }
 }
 
+let cleanedUp = false
 module.exports = class MetaDataStore {
   constructor (opts) {
     this.opts = Object.assign({
       expires: 24 * 60 * 60 * 1000 // 24 hours
     }, opts)
     this.name = `uppyState:${opts.storeName}`
+
+    if (!cleanedUp) {
+      cleanedUp = true
+      MetaDataStore.cleanup()
+    }
   }
 
   /**
