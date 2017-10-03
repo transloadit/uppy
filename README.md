@@ -12,15 +12,13 @@ Uppy is a sleek, modular file uploader that integrates seemlessly with any appli
 - **Preview** and edit metadata with a nice interface;
 - **Upload** to the final destination, optionally processing/encoding on the way;
 
-**[Read the docs](http://uppy.io/docs)**
+**[Read the docs](http://uppy.io/docs)** | **[Try Uppy](http://uppy.io/examples/dashboard/)**
 
 Uppy is being developed by the [Transloadit](https://transloadit.com) team.
 
 ## Example
 
 <img width="700" alt="Uppy UI Demo: modal dialog with a few selected files and an upload button" src="https://github.com/transloadit/uppy/raw/master/uppy-screenshot.jpg">
-
-**[Try Uppy](http://uppy.io/examples/dashboard/)**
 
 ```js
 const Uppy = require('uppy/lib/core')
@@ -38,7 +36,7 @@ const uppy = Uppy({ autoProceed: false })
   .on('core:success', files => console.log(`Successfully uploaded these files: ${files}`))
 ```
 
-Please refer to the [the documentation](http://uppy.io/docs) for details on how to use Uppy and its plugins.
+**[Try it online](http://uppy.io/examples/dashboard/)** or **[read the docs](http://uppy.io/docs)**  for details on how to use Uppy and its plugins.
 
 ## Features
 
