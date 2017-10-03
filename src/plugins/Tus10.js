@@ -139,6 +139,10 @@ module.exports = class Tus10 extends Plugin {
         upload.abort()
       })
 
+      this.onCancelAll(file.id, () => {
+        upload.abort()
+      })
+
       this.onResumeAll(file.id, () => {
         if (file.error) {
           upload.abort()
@@ -208,6 +212,8 @@ module.exports = class Tus10 extends Plugin {
     })
 
     this.onPauseAll(file.id, () => socket.send('pause', {}))
+
+    this.onCancelAll(file.id, () => socket.send('pause', {}))
 
     this.onResumeAll(file.id, () => {
       if (file.error) {
@@ -291,6 +297,13 @@ module.exports = class Tus10 extends Plugin {
 
   onPauseAll (fileID, cb) {
     this.core.on('core:pause-all', () => {
+      if (!this.core.getFile(fileID)) return
+      cb()
+    })
+  }
+
+  onCancelAll (fileID, cb) {
+    this.core.on('core:cancel-all', () => {
       if (!this.core.getFile(fileID)) return
       cb()
     })

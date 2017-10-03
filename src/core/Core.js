@@ -112,34 +112,6 @@ class Uppy {
     }
 
     // for debugging and testing
-    // // Implement monitors actions.
-    // // See https://medium.com/@zalmoxis/redux-devtools-without-redux-or-how-to-have-a-predictable-state-with-any-architecture-61c5f5a7716f
-    // // and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
-    // this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
-    // if (this.withDevTools) {
-    //   this.devTools = window.devToolsExtension.connect()
-    //   this.devToolsUnsubscribe = this.devTools.subscribe((message) => {
-    //     if (message.type === 'DISPATCH') {
-    //       console.log(message.payload.type)
-    //       switch (message.payload.type) {
-    //         case 'RESET':
-    //           this.reset()
-    //           return
-    //         case 'IMPORT_STATE':
-    //           const computedStates = message.payload.nextLiftedState.computedStates
-    //           this.state = Object.assign({}, this.state, computedStates[computedStates.length - 1].state)
-    //           this.updateAll(this.state)
-    //           return
-    //         case 'JUMP_TO_STATE':
-    //         case 'JUMP_TO_ACTION':
-    //           // this.setState(state)
-    //           this.state = Object.assign({}, this.state, JSON.parse(message.state))
-    //           this.updateAll(this.state)
-    //       }
-    //     }
-    //   })
-    // }
-
     // this.updateNum = 0
     if (this.opts.debug) {
       global.UppyState = this.state
@@ -165,6 +137,7 @@ class Uppy {
    * @param {patch} object
    */
   setState (patch) {
+    console.log('STATE')
     const prevState = Object.assign({}, this.state)
     const nextState = Object.assign({}, this.state, patch)
 
@@ -182,16 +155,6 @@ class Uppy {
     // use deepFreeze for debugging
     // return deepFreeze(this.state)
     return this.state
-  }
-
-  reset () {
-    this.pauseAll()
-    this.cancelAll()
-    // this.emit('core:pause-all')
-    // this.emit('core:cancel-all')
-    this.setState({
-      totalProgress: 0
-    })
   }
 
   resetProgress () {
@@ -529,8 +492,16 @@ class Uppy {
     this.emit('core:retry-all', filesToRetry)
   }
 
+  reset () {
+    this.cancelAll()
+    // this.pauseAll()
+    // this.emit('core:pause-all')
+    // this.emit('core:cancel-all')
+  }
+
   cancelAll () {
     this.emit('core:cancel-all')
+    this.setState({ files: {}, totalProgress: 0 })
   }
 
   calculateProgress (data) {
@@ -651,10 +622,6 @@ class Uppy {
 
     this.on('core:file-remove', (fileID) => {
       this.removeFile(fileID)
-    })
-
-    this.on('core:cancel-all', () => {
-      this.setState({ files: {} })
     })
 
     this.on('core:upload-started', (fileID, upload) => {
