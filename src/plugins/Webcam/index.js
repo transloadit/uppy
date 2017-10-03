@@ -316,7 +316,6 @@ module.exports = class Webcam extends Plugin {
     if (this.stream) {
       this.stop()
     }
-    this.stream = null
 
     this.unmount()
   }
