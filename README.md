@@ -25,10 +25,14 @@ Uppy is being developed by the [Transloadit](https://transloadit.com) team.
 ```js
 const Uppy = require('uppy/lib/core')
 const Dashboard = require('uppy/lib/plugins/Dashboard')
+const Webcam = require('uppy/lib/plugins/Webcam')
+const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 const Tus10 = require('uppy/lib/plugins/Tus10')
  
 const uppy = Uppy({ autoProceed: false })
-  .use(Dashboard, { trigger: '#select-files', replaceTargetContent: true })
+  .use(Dashboard, { trigger: '#select-files' })
+  .use(Webcam, { target: Dashboard })
+  .use(GoogleDrive, { target: Dashboard, host: 'https://server.uppy.io' })
   .use(Tus10, { endpoint: '://master.tus.io/files/' })
   .run()
   .on('core:success', files => console.log(`Successfully uploaded these files: ${files}`))
