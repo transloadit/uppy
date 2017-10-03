@@ -843,7 +843,9 @@ class Uppy {
     if (msg === `${msg}`) {
       console.log(message)
     } else {
-      console.dir(message)
+      message = `[Uppy] [${Utils.getTimeStamp()}]`
+      console.log(message)
+      console.dir(msg)
     }
   }
 
