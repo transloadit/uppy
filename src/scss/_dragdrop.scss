@@ -1,76 +1,76 @@
-// @import '_variables.scss';
-// @import '_utils.scss';
-// @import '_animation.scss';
-// @import '_common.scss';
+// .Uppy {
 
-.UppyDragDrop-container {
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-}
+  .uppy-DragDrop-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: $color-white;
+  }
+  
+  .uppy-DragDrop-inner {
+    margin: 0;
+    text-align: center;
+    padding: 80px 0;
+  }
+  
+  .uppy-DragDrop-arrow {
+    width: 60px;
+    height: 60px;
+    fill: lighten($color-gray, 30%);
+    margin-bottom: 25px;
+  }
+  
+    .uppy-DragDrop-container.is-dragdrop-supported {
+      border: 2px dashed;
+      border-color: lighten($color-gray, 10%);
+    }
+  
+    // .uppy-DragDrop-container.is-dragdrop-supported .uppy-DragDrop-dragText {
+    //   display: inline;
+    // }
+  
+    .uppy-DragDrop-container.drag {
+      border-color: $color-gray;
+      background-color: darken($color-white, 10%);
+    }
 
-.UppyDragDrop-inner {
-  margin: 0;
-}
-
-  .UppyDragDrop-container.is-dragdrop-supported {
-    border: 2px dashed;
-    border-color: lighten($color-gray, 20%);
+    .uppy-DragDrop-container.drag .uppy-DragDrop-arrow {
+      fill: $color-gray;
+    }
+  
+  /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
+  .uppy-DragDrop-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+  
+  .uppy-DragDrop-label {
+    display: block;
+    cursor: pointer;
+    font-size: 1.15em;
+    margin-bottom: 10px;
   }
 
-  .UppyDragDrop-container.is-dragdrop-supported .UppyDragDrop-dragText {
-    display: inline;
+  .uppy-DragDrop-note {
+    font-size: 1em;
+    color: lighten($color-gray, 10%);
+  }
+  
+  // .uppy-DragDrop-selectedCount {
+  //   text-align: center;
+  //   font-size: 0.75em;
+  //   text-transform: uppercase;
+  //   letter-spacing: 1px;
+  //   margin-top: 10px;
+  // }
+  
+  .uppy-DragDrop-dragText {
+    color: $color-cornflower-blue;
   }
 
-  .UppyDragDrop-container.drag {
-    border-color: $color-gray;
-    // background-color: #dbf5f3;
-  }
-
-/* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
-.UppyDragDrop-input {
-  width: 0.1px;
-	height: 0.1px;
-	opacity: 0;
-	overflow: hidden;
-	position: absolute;
-	z-index: -1;
-}
-
-.UppyDragDrop-label {
-  display: block;
-  cursor: pointer;
-  font-size: 1.2em;
-}
-
-.UppyDragDrop-selectedCount {
-  text-align: center;
-  font-size: 0.75em;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 10px;
-}
-
-.UppyDragDrop-dragText {
-  display: none;
-}
-
-// .UppyDragDrop-uploadBtn {
-//   display: block;
-//   margin: auto;
-//   padding: 5px 15px;
-//   font-size: 12px;
-//   text-transform: uppercase;
-//   letter-spacing: 1px;
-//   border: 0;
-//   border: 1px solid $color-gray;
-//   background: none;
-//   cursor: pointer;
-//   margin-top: 15px;
-//
-//   &:hover {
-//     background: $color-gray;
-//   }
 // }
