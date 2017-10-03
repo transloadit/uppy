@@ -13,7 +13,7 @@ module.exports = function (driver, platform, host) {
     tools.setSauceTestName(driver, testName)
 
     function findLabelTextElement () {
-      return driver.findElements({css: '.UppyDragDrop-label'}).then(function (result) {
+      return driver.findElements({css: '.uppy-DragDrop-label'}).then(function (result) {
         return result[0]
       })
     }
