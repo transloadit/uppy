@@ -83,7 +83,7 @@ What we need to do to release Uppy 1.0
 
 To be released: 2017-10-27
 
-- [ ] webcam: look into simplifying / improving webcam plugin, only showing the tab when webcam is available (@arturi, @goto-bus-stop)
+- [ ] webcam: look into simplifying / improving webcam plugin (probably good to do modern browsers only), only showing the tab when webcam is available (@arturi, @goto-bus-stop)
 - [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
 - [ ] provider: improve UI, add icons for file types (@arturi)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
@@ -99,6 +99,7 @@ To be released: 2017-10-27
 - [ ] core: refactor `uppy-base` (@arturi)
 - [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
 - [ ] plugins: add tabindex="0" to buttons and tabs?
+- [ ] goldenretriever: add “ghost” files (@arturi)
 
 # next
 
@@ -108,10 +109,13 @@ To be released: 2017-10-02.
 Theme: React and Retry
 
 - [ ] core: retry/error when upload can’t start or fails (offline, connection lost, wrong endpoint); add error in file progress state, UI, question mark button (#307 / @arturi)
+- [ ] core: support for retry in Tus plugin (#307 / @arturi)
+- [ ] core: support for retry in XHRUpload plugin (#307 / @arturi)
+- [x] core: Add support for Redux DevTools via a plugin (#373 / @arturi)
 - [x] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
-- [ ] goldenretriever: add “ghost” files (@arturi)
+- [x] core: improve core.log method, add timestamps (#372 / @arturi)
 - [x] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
-- [ ] uploaders: issue warning when no uploading plugins are used (@arturi)
+- [x] uploaders: issue warning when no uploading plugins are used (#372 / @arturi)
 - [x] core: fix `replaceTargetContent` and add tests for `Plugin` (#354 / @gavboulton)
 - [x] goldenretriever: Omit completed uploads from saved file state—previously, when an upload was finished and the user refreshed the page, all the finished files would still be there because we saved the entire list of files. Changed this to only store files that are part of an in-progress upload, or that have yet to be uploaded (#358, #324 / @goto-bus-stop)
 - [x] goldenretriever: Remove files from cache when upload finished—this uses the deleteBlobs function when core:success fires (#358, #324 / @goto-bus-stop)
