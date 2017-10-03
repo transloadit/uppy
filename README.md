@@ -107,6 +107,7 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
 - `StatusBar` — more detailed progress, pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included by default with `Dashboard`)
 - `Informer` — send notifications like “smile” before taking a selfie or “upload failed” when all is lost (also included by default with `Dashboard`)
 - `RestoreFiles` — restores files after a browser crash, like it’s nothing
+- `ReduxDevTools` — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
 - `GoogleDrive` — select files from [Google Drive](https://www.google.com/drive/)
 - `Dropbox` — select files from [Dropbox](https://www.dropbox.com/)
 - `Instagram` — you guessed right — select files from [Instagram](https://www.instagram.com/)
