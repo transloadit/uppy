@@ -137,7 +137,6 @@ class Uppy {
    * @param {patch} object
    */
   setState (patch) {
-    console.log('STATE')
     const prevState = Object.assign({}, this.state)
     const nextState = Object.assign({}, this.state, patch)
 

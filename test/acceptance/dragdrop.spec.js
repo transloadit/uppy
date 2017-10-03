@@ -26,11 +26,11 @@ module.exports = function (driver, platform, host) {
     } else {
       console.log('selecting a real file')
       // Make file input “visible”
-      driver.executeScript('document.querySelector(".UppyDragDrop-One .UppyDragDrop-input").style.opacity = 1')
+      driver.executeScript('document.querySelector(".UppyDragDrop-One .uppy-DragDrop-input").style.opacity = 1')
 
       // Find input by css selector & pass absolute image path to it
       driver
-        .findElement({css: '.UppyDragDrop-One .UppyDragDrop-input'})
+        .findElement({css: '.UppyDragDrop-One .uppy-DragDrop-input'})
         .sendKeys(path.join(__dirname, 'image.jpg'))
     }
 
