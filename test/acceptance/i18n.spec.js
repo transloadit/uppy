@@ -2,7 +2,7 @@ var test = require('tape')
 var tools = require('./tools')
 
 module.exports = function (driver, platform, host) {
-  var testName = 'i18n: load with Russian language pack'
+  var testName = 'i18n: load DragDrop with Russian localization strings'
 
   test(tools.prettyTestName(testName, platform), function (t) {
     t.plan(1)
@@ -24,7 +24,7 @@ module.exports = function (driver, platform, host) {
           // why trim? Microsoft Edge:
           // expected: 'Выберите файл или перенесите его сюда'
           // actual:   'Выберите файл или перенесите его сюда '
-          var expectedValue = 'Выберите файл или перенесите его сюда'
+          var expectedValue = 'Перенесите файлы сюда или выберите'
           console.log(value, '/', expectedValue)
           tools.testEqual(driver, t, value.trim() === expectedValue)
           driver.quit()
