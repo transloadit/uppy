@@ -12,11 +12,27 @@ Uppy is a sleek, modular file uploader that integrates seemlessly with any appli
 - **Preview** and edit metadata with a nice interface;
 - **Upload** to the final destination, optionally processing/encoding on the way;
 
-**[Try Uppy](http://uppy.io/examples/dashboard/)** | **[Read the docs](http://uppy.io/docs)**
+**[Read the docs](http://uppy.io/docs)**
+
+Uppy is being developed by the [Transloadit](https://transloadit.com) team.
+
+## Example
 
 <img width="700" alt="Uppy UI Demo: modal dialog with a few selected files and an upload button" src="https://github.com/transloadit/uppy/raw/master/uppy-screenshot.jpg">
 
-Uppy is being developed by the [Transloadit](https://transloadit.com) team.
+**[Try Uppy](http://uppy.io/examples/dashboard/)**
+
+```js
+const Uppy = require('uppy/lib/core')
+const Dashboard = require('uppy/lib/plugins/Dashboard')
+const Tus10 = require('uppy/lib/plugins/Tus10')
+ 
+const uppy = Uppy({ autoProceed: false })
+  .use(Dashboard, { trigger: '#select-files', replaceTargetContent: true })
+  .use(Tus10, { endpoint: '://master.tus.io/files/' })
+  .run()
+  .on('core:success', files => console.log(`Successfully uploaded these files: ${files}`))
+```
 
 ## Features
 
@@ -34,7 +50,7 @@ Uppy is being developed by the [Transloadit](https://transloadit.com) team.
 ## Installation
 
 ``` bash
-$ npm install uppy
+$ npm install uppy --save
 ```
 
 We recommend installing from NPM and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
@@ -43,7 +59,7 @@ Add CSS [uppy.min.css](https://unpkg.com/uppy/dist/uppy.min.css), either to `<he
 
 If you like, you can also use a pre-built bundle, for example from [unpkg CDN](https://unpkg.com/uppy/). In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
-> ⚠️ The bundle currently consists of most Uppy plugins, so this method is not  recommended for production, as your users will have to download all plugins, even if you are using just a few.
+> ⚠️ The bundle currently consists of most Uppy plugins, so this method is not recommended for production, as your users will have to download all plugins, when you are likely using just a few.
 
 1\. Add a script to the bottom of `<body>`:
 
