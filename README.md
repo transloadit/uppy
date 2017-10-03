@@ -38,6 +38,8 @@ const uppy = Uppy({ autoProceed: false })
   .on('core:success', files => console.log(`Successfully uploaded these files: ${files}`))
 ```
 
+Please refer to the [the documentation](http://uppy.io/docs) for details on how to use Uppy and its plugins.
+
 ## Features
 
 - Lightweight, modular plugin-based architecture, easy on dependencies :zap:
