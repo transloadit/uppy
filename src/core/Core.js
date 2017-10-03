@@ -80,6 +80,11 @@ class Uppy {
     this.calculateProgress = this.calculateProgress.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
 
+    this.pauseAll = this.pauseAll.bind(this)
+    this.resumeAll = this.resumeAll.bind(this)
+    this.retryAll = this.retryAll.bind(this)
+    this.cancelAll = this.cancelAll.bind(this)
+
     // this.bus = this.emitter = ee()
     this.emitter = ee()
     this.on = this.emitter.on.bind(this.emitter)
@@ -152,8 +157,10 @@ class Uppy {
   }
 
   reset () {
-    this.emit('core:pause-all')
-    this.emit('core:cancel-all')
+    this.pauseAll()
+    this.cancelAll()
+    // this.emit('core:pause-all')
+    // this.emit('core:cancel-all')
     this.setState({
       totalProgress: 0
     })
@@ -415,61 +422,93 @@ class Uppy {
     })
   }
 
-  pauseResume (action, fileID) {
+  pauseResume (fileID) {
+    const updatedFiles = Object.assign({}, this.getState().files)
+
+    if (updatedFiles[fileID].uploadComplete) return
+
+    const wasPaused = updatedFiles[fileID].isPaused || false
+    const isPaused = !wasPaused
+
+    let updatedFile
+    if (wasPaused) {
+      updatedFile = Object.assign({}, updatedFiles[fileID], {
+        isPaused: false
+      })
+    } else {
+      updatedFile = Object.assign({}, updatedFiles[fileID], {
+        isPaused: true
+      })
+    }
+    updatedFiles[fileID] = updatedFile
+    this.setState({files: updatedFiles})
+
+    this.emit('core:upload-pause', fileID, isPaused)
+
+    return isPaused
+  }
+
+  pauseAll () {
     const updatedFiles = Object.assign({}, this.getState().files)
     const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
       return !updatedFiles[file].progress.uploadComplete &&
              updatedFiles[file].progress.uploadStarted
     })
 
-    switch (action) {
-      case 'toggle':
-        if (updatedFiles[fileID].uploadComplete) return
+    inProgressUpdatedFiles.forEach((file) => {
+      const updatedFile = Object.assign({}, updatedFiles[file], {
+        isPaused: true
+      })
+      updatedFiles[file] = updatedFile
+    })
+    this.setState({files: updatedFiles})
 
-        const wasPaused = updatedFiles[fileID].isPaused || false
-        const isPaused = !wasPaused
-        let updatedFile
-        if (wasPaused) {
-          updatedFile = Object.assign({}, updatedFiles[fileID], {
-            isPaused: false
-          })
-        } else {
-          updatedFile = Object.assign({}, updatedFiles[fileID], {
-            isPaused: true
-          })
-        }
-        updatedFiles[fileID] = updatedFile
-        this.setState({files: updatedFiles})
-        return isPaused
-      case 'pauseAll':
-        inProgressUpdatedFiles.forEach((file) => {
-          const updatedFile = Object.assign({}, updatedFiles[file], {
-            isPaused: true
-          })
-          updatedFiles[file] = updatedFile
-        })
-        this.setState({files: updatedFiles})
-        return
-      case 'resumeAll':
-        inProgressUpdatedFiles.forEach((file) => {
-          const updatedFile = Object.assign({}, updatedFiles[file], {
-            isPaused: false,
-            error: null
-          })
-          updatedFiles[file] = updatedFile
-        })
-        this.setState({files: updatedFiles})
-        return
-      case 'retryAll':
-        inProgressUpdatedFiles.forEach((file) => {
-          const updatedFile = Object.assign({}, updatedFiles[file], {
-            isPaused: false,
-            error: null
-          })
-          updatedFiles[file] = updatedFile
-        })
-        this.setState({files: updatedFiles})
-    }
+    this.emit('core:pause-all')
+  }
+
+  resumeAll () {
+    const updatedFiles = Object.assign({}, this.getState().files)
+    const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
+      return !updatedFiles[file].progress.uploadComplete &&
+             updatedFiles[file].progress.uploadStarted
+    })
+
+    inProgressUpdatedFiles.forEach((file) => {
+      const updatedFile = Object.assign({}, updatedFiles[file], {
+        isPaused: false,
+        error: null
+      })
+      updatedFiles[file] = updatedFile
+    })
+    this.setState({files: updatedFiles})
+
+    this.emit('core:resume-all')
+  }
+
+  retryAll () {
+    const updatedFiles = Object.assign({}, this.getState().files)
+    // const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
+    //   return !updatedFiles[file].progress.uploadComplete &&
+    //          updatedFiles[file].progress.uploadStarted
+    // })
+    const filesToRetry = Object.keys(updatedFiles).filter(file => {
+      return updatedFiles[file].error
+    })
+
+    filesToRetry.forEach((file) => {
+      const updatedFile = Object.assign({}, updatedFiles[file], {
+        isPaused: false,
+        error: null
+      })
+      updatedFiles[file] = updatedFile
+    })
+    this.setState({files: updatedFiles})
+
+    this.emit('core:retry-all', filesToRetry)
+  }
+
+  cancelAll () {
+    this.emit('core:cancel-all')
   }
 
   calculateProgress (data) {
@@ -544,7 +583,7 @@ class Uppy {
     this.on('core:upload-error', (fileID, error) => {
       const updatedFiles = Object.assign({}, this.state.files)
       const updatedFile = Object.assign({}, updatedFiles[fileID],
-        { error: error, isPaused: true }
+        { error: error }
       )
       updatedFiles[fileID] = updatedFile
       this.setState({ files: updatedFiles, error: error })

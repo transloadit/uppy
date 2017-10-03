@@ -321,10 +321,6 @@ module.exports = class DashboardUI extends Plugin {
       })
     }
 
-    const pauseUpload = (fileID) => {
-      this.core.emit('core:upload-pause', fileID)
-    }
-
     const retryUpload = (fileID) => {
       this.core.emit('core:upload-retry', fileID)
     }
@@ -374,7 +370,7 @@ module.exports = class DashboardUI extends Plugin {
       metaFields: state.metaFields,
       resumableUploads: this.core.state.capabilities.resumableUploads || false,
       startUpload: startUpload,
-      pauseUpload: pauseUpload,
+      pauseUpload: this.core.pauseResume,
       retryUpload: retryUpload,
       cancelUpload: cancelUpload,
       fileCardFor: pluginState.fileCardFor,

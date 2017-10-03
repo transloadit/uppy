@@ -48,28 +48,8 @@ module.exports = class StatusBarUI extends Plugin {
     this.translator = new Translator({locale: this.locale})
     this.i18n = this.translator.translate.bind(this.translator)
 
-    this.pauseAll = this.pauseAll.bind(this)
-    this.resumeAll = this.resumeAll.bind(this)
-    this.retryAll = this.retryAll.bind(this)
-    this.cancelAll = this.cancelAll.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
-  }
-
-  cancelAll () {
-    this.core.emit('core:cancel-all')
-  }
-
-  pauseAll () {
-    this.core.emit('core:pause-all')
-  }
-
-  resumeAll () {
-    this.core.emit('core:resume-all')
-  }
-
-  retryAll () {
-    this.core.emit('core:retry-all')
   }
 
   getTotalSpeed (files) {
@@ -159,10 +139,10 @@ module.exports = class StatusBarUI extends Plugin {
       isAllErrored: isAllErrored,
       isUploadStarted: isUploadStarted,
       i18n: this.i18n,
-      pauseAll: this.pauseAll,
-      resumeAll: this.resumeAll,
-      retryAll: this.retryAll,
-      cancelAll: this.cancelAll,
+      pauseAll: this.core.pauseAll,
+      resumeAll: this.core.resumeAll,
+      retryAll: this.core.retryAll,
+      cancelAll: this.core.cancelAll,
       complete: completeFiles.length,
       inProgress: uploadStartedFiles.length,
       totalSpeed: totalSpeed,
