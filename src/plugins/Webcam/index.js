@@ -1,8 +1,8 @@
 const Plugin = require('../Plugin')
 const WebcamProvider = require('../../uppy-base/src/plugins/Webcam')
 const Translator = require('../../core/Translator')
-const { getFileTypeExtension,
-        supportsMediaRecorder } = require('../../core/Utils')
+const { getFileTypeExtension } = require('../../core/Utils')
+const supportsMediaRecorder = require('./supportsMediaRecorder')
 const WebcamIcon = require('./WebcamIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')

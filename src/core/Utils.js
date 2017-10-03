@@ -188,11 +188,6 @@ function getFileNameAndExtension (fullFileName) {
   return [fileName, fileExt]
 }
 
-function supportsMediaRecorder () {
-  return typeof MediaRecorder === 'function' && !!MediaRecorder.prototype &&
-    typeof MediaRecorder.prototype.start === 'function'
-}
-
 /**
  * Check if a URL string is an object URL from `URL.createObjectURL`.
  *
@@ -539,7 +534,6 @@ module.exports = {
   toArray,
   getTimeStamp,
   runPromiseSequence,
-  supportsMediaRecorder,
   isTouchDevice,
   getFileNameAndExtension,
   truncateString,
