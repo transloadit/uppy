@@ -23,20 +23,11 @@ require('uppy/lib/GoldenRetriever/ServiceWorker.js')
 uppy.use(RestoreFiles, {serviceWorker: true})
 uppy.run()
 
-const isServiceWorkerControllerReady = new Promise(resolve => {
-  if (navigator.serviceWorker.controller) return resolve()
-  navigator.serviceWorker.addEventListener('controllerchange', e => resolve())
-})
-
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
     .register('/sw.js') // path to your bundled service worker with Golden Retriever service worker
     .then((registration) => {
       console.log('ServiceWorker registration successful with scope: ', registration.scope)
-      return isServiceWorkerControllerReady
-    })
-    .then(() => {
-      uppy.emit('core:file-sw-ready')
     })
     .catch((error) => {
       console.log('Registration failed with ' + error)

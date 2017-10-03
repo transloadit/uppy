@@ -1,13 +1,23 @@
 const isSupported = 'serviceWorker' in navigator
 
-class ServiceWorkerStore {
-  constructor (core, opts) {
-    this.core = core
-    this.ready = new Promise((resolve, reject) => {
-      this.core.on('core:file-sw-ready', () => {
+function waitForServiceWorker () {
+  return new Promise((resolve, reject) => {
+    if (!('serviceWorker' in navigator)) {
+      reject(new Error('Unsupported'))
+    } else if (navigator.serviceWorker.controller) {
+      // A serviceWorker is already registered and active.
+      resolve()
+    } else {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
         resolve()
       })
-    })
+    }
+  })
+}
+
+class ServiceWorkerStore {
+  constructor (opts) {
+    this.ready = waitForServiceWorker()
     this.name = opts.storeName
   }
 
