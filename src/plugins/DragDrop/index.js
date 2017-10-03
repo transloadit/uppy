@@ -24,8 +24,8 @@ module.exports = class DragDrop extends Plugin {
 
     const defaultLocale = {
       strings: {
-        dropHere: 'Drop files here',
-        orBrowse: 'or browse'
+        dropHereOr: 'Drop files here or',
+        browse: 'browse'
         // selectedFiles: {
         //   0: '%{smart_count} file selected',
         //   1: '%{smart_count} files selected'
@@ -135,8 +135,8 @@ module.exports = class DragDrop extends Plugin {
                  value=""
                  onchange=${this.handleInputChange.bind(this)} />
           <label class="uppy-DragDrop-label" onclick=${onSelect}>
-            ${this.i18n('dropHere')}
-            <span class="uppy-DragDrop-dragText">${this.i18n('orBrowse')}</span>
+            ${this.i18n('dropHereOr')}
+            <span class="uppy-DragDrop-dragText">${this.i18n('browse')}</span>
           </label>
           <span class="uppy-DragDrop-note">${this.opts.note}</span>
         </form>
