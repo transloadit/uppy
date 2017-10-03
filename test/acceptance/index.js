@@ -107,14 +107,14 @@ var specificTests = {
     test(driver, ancientPlatform, host)
   }
 }
-
 // RUN TESTS
 
 function runAllTests () {
   if (isRemoteTest) {
     // run custom platform-specific tests here
     // <form> fallback test
-    specificTests.fallback()
+    console.log('Skipping the fallback test', specificTests.fallback)
+    // specificTests.fallback()
 
     // run all tests for all platforms
     platforms.forEach(function (platform) {
