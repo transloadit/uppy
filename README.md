@@ -12,11 +12,31 @@ Uppy is a sleek, modular file uploader that integrates seemlessly with any appli
 - **Preview** and edit metadata with a nice interface;
 - **Upload** to the final destination, optionally processing/encoding on the way;
 
-**[Try Uppy](http://uppy.io/examples/dashboard/)** | **[Read the docs](http://uppy.io/docs)**
+**[Read the docs](http://uppy.io/docs)** | **[Try Uppy](http://uppy.io/examples/dashboard/)**
+
+Uppy is being developed by the [Transloadit](https://transloadit.com) team.
+
+## Example
 
 <img width="700" alt="Uppy UI Demo: modal dialog with a few selected files and an upload button" src="https://github.com/transloadit/uppy/raw/master/uppy-screenshot.jpg">
 
-Uppy is being developed by the [Transloadit](https://transloadit.com) team.
+```js
+const Uppy = require('uppy/lib/core')
+const Dashboard = require('uppy/lib/plugins/Dashboard')
+const Webcam = require('uppy/lib/plugins/Webcam')
+const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
+const Tus10 = require('uppy/lib/plugins/Tus10')
+ 
+const uppy = Uppy({ autoProceed: false })
+  .use(Dashboard, { trigger: '#select-files' })
+  .use(Webcam, { target: Dashboard })
+  .use(GoogleDrive, { target: Dashboard, host: 'https://server.uppy.io' })
+  .use(Tus10, { endpoint: '://master.tus.io/files/' })
+  .run()
+  .on('core:success', files => console.log(`Successfully uploaded these files: ${files}`))
+```
+
+**[Try it online](http://uppy.io/examples/dashboard/)** or **[read the docs](http://uppy.io/docs)**  for details on how to use Uppy and its plugins.
 
 ## Features
 
@@ -34,7 +54,7 @@ Uppy is being developed by the [Transloadit](https://transloadit.com) team.
 ## Installation
 
 ``` bash
-$ npm install uppy
+$ npm install uppy --save
 ```
 
 We recommend installing from NPM and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
@@ -43,7 +63,7 @@ Add CSS [uppy.min.css](https://unpkg.com/uppy/dist/uppy.min.css), either to `<he
 
 If you like, you can also use a pre-built bundle, for example from [unpkg CDN](https://unpkg.com/uppy/). In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
-> ⚠️ The bundle currently consists of most Uppy plugins, so this method is not  recommended for production, as your users will have to download all plugins, even if you are using just a few.
+> ⚠️ The bundle currently consists of most Uppy plugins, so this method is not recommended for production, as your users will have to download all plugins, when you are likely using just a few.
 
 1\. Add a script to the bottom of `<body>`:
 
@@ -87,6 +107,7 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
 - `StatusBar` — more detailed progress, pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included by default with `Dashboard`)
 - `Informer` — send notifications like “smile” before taking a selfie or “upload failed” when all is lost (also included by default with `Dashboard`)
 - `RestoreFiles` — restores files after a browser crash, like it’s nothing
+- `ReduxDevTools` — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
 - `GoogleDrive` — select files from [Google Drive](https://www.google.com/drive/)
 - `Dropbox` — select files from [Dropbox](https://www.dropbox.com/)
 - `Instagram` — you guessed right — select files from [Instagram](https://www.instagram.com/)
