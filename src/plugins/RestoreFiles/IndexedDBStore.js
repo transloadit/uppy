@@ -13,6 +13,9 @@ function migrateExpiration (store) {
   const request = store.openCursor()
   request.onsuccess = (event) => {
     const cursor = event.target.result
+    if (!cursor) {
+      return
+    }
     const entry = cursor.value
     entry.expires = Date.now() + DEFAULT_EXPIRY
     cursor.update(entry)
