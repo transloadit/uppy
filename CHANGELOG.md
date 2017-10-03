@@ -83,8 +83,9 @@ What we need to do to release Uppy 1.0
 
 To be released: 2017-10-27
 
-- [ ] webcam: look into simplifying / improving webcam plugin, only showing the tab when webcam is available (@arturi, @goto-bus-stop)
-- [ ] provider: improve UI, add icons for file types? (@arturi)
+- [ ] webcam: look into simplifying / improving webcam plugin (probably good to do modern browsers only), only showing the tab when webcam is available (@arturi, @goto-bus-stop)
+- [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
+- [ ] provider: improve UI, add icons for file types (@arturi)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
@@ -92,30 +93,34 @@ To be released: 2017-10-27
 - [ ] core: allow setting custom `id` for plugins: https://github.com/transloadit/uppy/pull/328#issuecomment-328242214 (@arturi)
 - [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
+- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] goldenretriever: Ability to clear upload history or set expiry date (#324 / @arturi)
-- [ ] core: return `{ successful, failed }` from `uppy.upload()`
+- [ ] core: return `{ successful, failed }` from `uppy.upload()` (@goto-bus-stop)
+- [ ] core: refactor `uppy-base` (@arturi)
 - [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
+- [ ] plugins: add tabindex="0" to buttons and tabs?
+- [ ] goldenretriever: add “ghost” files (@arturi)
 
 # next
 
 ## 0.20.0
 
-To be released: 2017-09-29.
+To be released: 2017-10-02.
 Theme: React and Retry
 
-- [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
-- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
-- [ ] core: show error and offer retry when upload can’t start and/or fails (offline, wrong endpoint) — now it just sits there; add error in file progress state, UI, question mark button (#307 / @arturi)
+- [ ] core: retry/error when upload can’t start or fails (offline, connection lost, wrong endpoint); add error in file progress state, UI, question mark button (#307 / @arturi)
+- [ ] core: support for retry in Tus plugin (#307 / @arturi)
+- [ ] core: support for retry in XHRUpload plugin (#307 / @arturi)
+- [x] core: Add support for Redux DevTools via a plugin (#373 / @arturi)
 - [x] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
-- [ ] goldenretriever: add “ghost” files (@arturi)
+- [x] core: improve core.log method, add timestamps (#372 / @arturi)
 - [x] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
-- [ ] uploaders: issue warning when no uploading plugins are used
-- [ ] core: refactor `uppy-base`
+- [x] uploaders: issue warning when no uploading plugins are used (#372 / @arturi)
 - [x] core: fix `replaceTargetContent` and add tests for `Plugin` (#354 / @gavboulton)
 - [x] goldenretriever: Omit completed uploads from saved file state—previously, when an upload was finished and the user refreshed the page, all the finished files would still be there because we saved the entire list of files. Changed this to only store files that are part of an in-progress upload, or that have yet to be uploaded (#358, #324 / @goto-bus-stop)
 - [x] goldenretriever: Remove files from cache when upload finished—this uses the deleteBlobs function when core:success fires (#358, #324 / @goto-bus-stop)
 - [ ] goldenretriever: add a timestamp to cached blobs, and to delete old blobs on boot (#358, #324 / @goto-bus-stop)
-- [ ] s3: have some way to configure content-disposition for uploads, see #243 (@goto-bus-stop)
+- [x] s3: have some way to configure content-disposition for uploads, see #243 (@goto-bus-stop)
 - [x] core: move `setPluginState` and add `getPluginState` to `Plugin` class (#363 / @goto-bus-stop)
 
 ## 0.19.1

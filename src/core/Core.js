@@ -65,10 +65,10 @@ class Uppy {
     // Container for different types of plugins
     this.plugins = {}
 
-    // @TODO maybe bindall
     this.translator = new Translator({locale: this.opts.locale})
     this.i18n = this.translator.translate.bind(this.translator)
     this.getState = this.getState.bind(this)
+    this.getPlugin = this.getPlugin.bind(this)
     this.updateMeta = this.updateMeta.bind(this)
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
@@ -112,7 +112,35 @@ class Uppy {
     }
 
     // for debugging and testing
-    this.updateNum = 0
+    // // Implement monitors actions.
+    // // See https://medium.com/@zalmoxis/redux-devtools-without-redux-or-how-to-have-a-predictable-state-with-any-architecture-61c5f5a7716f
+    // // and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
+    // this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
+    // if (this.withDevTools) {
+    //   this.devTools = window.devToolsExtension.connect()
+    //   this.devToolsUnsubscribe = this.devTools.subscribe((message) => {
+    //     if (message.type === 'DISPATCH') {
+    //       console.log(message.payload.type)
+    //       switch (message.payload.type) {
+    //         case 'RESET':
+    //           this.reset()
+    //           return
+    //         case 'IMPORT_STATE':
+    //           const computedStates = message.payload.nextLiftedState.computedStates
+    //           this.state = Object.assign({}, this.state, computedStates[computedStates.length - 1].state)
+    //           this.updateAll(this.state)
+    //           return
+    //         case 'JUMP_TO_STATE':
+    //         case 'JUMP_TO_ACTION':
+    //           // this.setState(state)
+    //           this.state = Object.assign({}, this.state, JSON.parse(message.state))
+    //           this.updateAll(this.state)
+    //       }
+    //     }
+    //   })
+    // }
+
+    // this.updateNum = 0
     if (this.opts.debug) {
       global.UppyState = this.state
       global.uppyLog = ''
@@ -576,6 +604,12 @@ class Uppy {
     //   this.setState({bla: 'bla'})
     // }, 20)
 
+    // this.on('core:state-update', (prevState, nextState, patch) => {
+    //   if (this.withDevTools) {
+    //     this.devTools.send('UPPY_STATE_UPDATE', nextState)
+    //   }
+    // })
+
     this.on('core:error', (error) => {
       this.setState({ error })
     })
@@ -650,7 +684,6 @@ class Uppy {
     const throttledCalculateProgress = throttle(this.calculateProgress, 100, {leading: true, trailing: false})
 
     this.on('core:upload-progress', (data) => {
-      // this.calculateProgress(data)
       throttledCalculateProgress(data)
     })
 
@@ -659,8 +692,6 @@ class Uppy {
       const updatedFile = Object.assign({}, updatedFiles[fileID], {
         progress: Object.assign({}, updatedFiles[fileID].progress, {
           uploadComplete: true,
-          // good or bad idea? setting the percentage to 100 if upload is successful,
-          // so that if we lost some progress events on the way, its still marked “compete”?
           percentage: 100
         }),
         uploadURL: uploadURL,
@@ -848,6 +879,10 @@ class Uppy {
   close () {
     this.reset()
 
+    if (this.withDevTools) {
+      this.devToolsUnsubscribe()
+    }
+
     this.iteratePlugins((plugin) => {
       plugin.uninstall()
     })
@@ -901,25 +936,35 @@ class Uppy {
   /**
    * Logs stuff to console, only if `debug` is set to true. Silent in production.
    *
-   * @return {String|Object} to log
+   * @param {String|Object} msg to log
+   * @param {String} type optional `error` or `warning`
    */
   log (msg, type) {
     if (!this.opts.debug) {
       return
     }
 
+    let message = `[Uppy] [${Utils.getTimeStamp()}] ${msg}`
+
+    global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
+
     if (type === 'error') {
-      console.error(`LOG: ${msg}`)
+      console.error(message)
+      return
+    }
+
+    if (type === 'warning') {
+      console.warn(message)
       return
     }
 
     if (msg === `${msg}`) {
-      console.log(`LOG: ${msg}`)
+      console.log(message)
     } else {
+      message = `[Uppy] [${Utils.getTimeStamp()}]`
+      console.log(message)
       console.dir(msg)
     }
-
-    global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
   }
 
   initSocket (opts) {
@@ -1052,7 +1097,11 @@ class Uppy {
    *
    * @return {Promise}
    */
-  upload (forceUpload) {
+  upload () {
+    if (!this.plugins.uploader) {
+      this.log('No uploader type plugins are used', 'warning')
+    }
+
     const isMinNumberOfFilesReached = this.checkMinNumberOfFiles()
     if (!isMinNumberOfFilesReached) {
       return Promise.reject(new Error('Minimum number of files has not been reached'))
@@ -1070,15 +1119,7 @@ class Uppy {
       Object.keys(this.state.files).forEach((fileID) => {
         const file = this.getFile(fileID)
 
-        // TODO: replace files[file].isRemote with some logic
-        //
-        // filter files that are now yet being uploaded / haven’t been uploaded
-        // and remote too
-
-        if (forceUpload) {
-          this.resetProgress()
-          waitingFileIDs.push(file.id)
-        } else if (!file.progress.uploadStarted || file.isRemote) {
+        if (!file.progress.uploadStarted || file.isRemote) {
           waitingFileIDs.push(file.id)
         }
       })
