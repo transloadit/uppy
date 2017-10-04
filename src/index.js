@@ -31,6 +31,7 @@ const AwsS3 = require('./plugins/AwsS3')
 
 // Other?
 const RestoreFiles = require('./plugins/RestoreFiles')
+const ReduxDevTools = require('./plugins/ReduxDevTools')
 
 module.exports = {
   Core,
@@ -51,5 +52,6 @@ module.exports = {
   Dashboard,
   MetaData,
   Webcam,
-  RestoreFiles
+  RestoreFiles,
+  ReduxDevTools
 }
