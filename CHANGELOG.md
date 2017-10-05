@@ -48,6 +48,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] an uploader plugin to receive files in a callback instead of uploading them
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget
 - [ ] statusbar: add option to always show
+- [ ] tus: Rename Tus10 → Tus
 
 ## 1.0 Goals
 
