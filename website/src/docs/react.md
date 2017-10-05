@@ -24,14 +24,18 @@ const uppy = Uppy({
   restrictions: { maxNumberOfFiles: 1 },
   autoProceed: true
 })
-  .use(Tus10, { endpoint: '/upload' })
-  .on('core:success', (fileIDs) => {
-    const url = uppy.getFile(fileIDs[0]).uploadURL
-    store.dispatch({
-      type: SET_USER_AVATAR_URL,
-      payload: { url: url }
-    })
+
+uppy.use(Tus10, { endpoint: '/upload' })
+
+uppy.on('core:success', (fileIDs) => {
+  const url = uppy.getFile(fileIDs[0]).uploadURL
+  store.dispatch({
+    type: SET_USER_AVATAR_URL,
+    payload: { url: url }
   })
+})
+
+uppy.run()
 
 const AvatarPicker = ({ currentAvatar }) => {
   return (
