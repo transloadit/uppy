@@ -109,6 +109,12 @@ To be released: 2017-10-27
 - [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network (@goto-bus-stop)
 - [ ] goldenretriever: add expiration to ServiceWorkerStore (@goto-bus-stop)
 
+## 0.20.1
+
+Released: 2017-10-05.
+
+- [x] redux: add plugin for syncing uppy state with a Redux store (#376 / @richardwillars)
+
 ## 0.20.0
 
 Released: 2017-10-03.
