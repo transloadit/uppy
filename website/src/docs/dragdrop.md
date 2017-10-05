@@ -13,25 +13,17 @@ DragDrop renders a simple Drag and Drop area for file selection. Useful when you
 
 ```js
 uppy.use(DragDrop, {
-  target: '.UppyDragDrop',
+  target: null,
   getMetaFromForm: true,
+  width: '100%',
+  height: '100%',
+  note: '',
   locale: {
     strings: {
-      chooseFile: 'Choose a file',
-      orDragDrop: 'or drop it here',
-      upload: 'Upload',
-      selectedFiles: {
-        0: '%{smart_count} file selected',
-        1: '%{smart_count} files selected'
-      }
+      dropHereOr: 'Drop files here or',
+      browse: 'browse'
     }
   }
 })
 ```
-
-### `target: '.UppyDragDrop'`
-
-### `getMetaFromForm: true`
-
-### `locale`
 
