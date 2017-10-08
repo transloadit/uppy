@@ -48,7 +48,7 @@ const uppy = Uppy({
     inline: false,
     disableStatusBar: false,
     disableInformer: false,
-    setMetaFromTargetForm: true,
+    getMetaFromForm: true,
     replaceTargetContent: true,
     target: '.MyForm',
     hideUploadButton: false,
