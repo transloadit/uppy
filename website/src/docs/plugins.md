@@ -71,9 +71,9 @@ const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 uppy.use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
 ```
 
-### `setMetaFromTargetForm`
+### `getMetaFromForm: false`
 
-If `setMetaFromTargetForm === true`, UI acquire type plugins, like Dashboard, FileInput and DragDrop, before mounting themselves or doing anything else, will extract FormData from the target `<form>` element (it must be a form currently), and merge the object with the global `uppy.state.meta`.
+If `getMetaFromForm === true`, UI acquire type plugins, like `Dashboard`, `FileInput` and `DragDrop`, before mounting themselves or doing anything else, will extract FormData from the target `<form>` element (it must be a form currently), and merge the object with the global `uppy.state.meta`.
 
 If you have a form like this one:
 
@@ -91,7 +91,7 @@ And then do:
 ```js
 uppy.use(DragDrop, {
   target: '.MyForm',
-  setMetaFromTargetForm: true
+  getMetaFromForm: true
 })
 ```
 
