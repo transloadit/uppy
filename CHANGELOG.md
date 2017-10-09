@@ -108,6 +108,7 @@ To be released: 2017-10-27
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network (@goto-bus-stop)
 - [ ] goldenretriever: add expiration to ServiceWorkerStore (@goto-bus-stop)
+- [x] core: fix generating thumbnails for images with transparent background (#380 / @goto-bus-stop)
 
 ## 0.20.1
 
