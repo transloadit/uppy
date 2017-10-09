@@ -80,7 +80,7 @@ What we need to do to release Uppy 1.0
 - [ ] refactoring: clean up code everywhere
 - [ ] docs: on using plugins, all options, list of plugins, i18n
 - [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
-- [ ] uppy-server: security audit 
+- [ ] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 - [ ] automatically host releases on edgly and use that as our main CDN
@@ -112,7 +112,7 @@ To be released: 2017-11-10
 - [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
 - [ ] plugins: add tabindex="0" to buttons and tabs (@arturi)
 - [ ] goldenretriever: add “ghost” files (@arturi)
-- [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network (#378 / @goto-bus-stop)
+- [x] xhrupload: set a timeout in the onprogress event handler to detect stale network (#378 / @goto-bus-stop)
 - [ ] tus: Review b3cc48130e292f08c2a09f2f0adf6b6332bf7692
 - [x] tus: Rename Tus10 → Tus
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
