@@ -97,9 +97,15 @@ module.exports = class XHRUpload extends Plugin {
 
       const xhr = new XMLHttpRequest()
 
+      xhr.upload.addEventListener('loadstart', (ev) => {
+        if (opts.timeout > 0) {
+          // Begin checking for timeouts when loading starts.
+          isAlive()
+        }
+      })
+
       xhr.upload.addEventListener('progress', (ev) => {
         if (opts.timeout > 0) {
-          // Do connection timeout checks.
           isAlive()
         }
 
