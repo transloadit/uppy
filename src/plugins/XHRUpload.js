@@ -84,15 +84,16 @@ module.exports = class XHRUpload extends Plugin {
         ? this.createFormDataUpload(file, opts)
         : this.createBareUpload(file, opts)
 
+      const onTimedOut = () => {
+        xhr.abort()
+        const error = new Error(`No progress for ${Math.ceil(opts.timeout / 1000)} seconds, aborting`)
+        this.core.emit('core:upload-error', file.id, error)
+        reject(error)
+      }
       let aliveTimer
       const isAlive = () => {
         clearTimeout(aliveTimer)
-        aliveTimer = setTimeout(() => {
-          xhr.abort()
-          const error = new Error(`No progress for ${Math.ceil(opts.timeout / 1000)} seconds, aborting`)
-          this.core.emit('core:upload-error', file.id, error)
-          reject(error)
-        }, opts.timeout)
+        aliveTimer = setTimeout(onTimedOut, opts.timeout)
       }
 
       const xhr = new XMLHttpRequest()
