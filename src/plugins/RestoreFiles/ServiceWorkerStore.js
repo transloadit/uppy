@@ -1,8 +1,8 @@
-const isSupported = 'serviceWorker' in navigator
+const isSupported = typeof navigator !== 'undefined' && 'serviceWorker' in navigator
 
 function waitForServiceWorker () {
   return new Promise((resolve, reject) => {
-    if (!('serviceWorker' in navigator)) {
+    if (!isSupported) {
       reject(new Error('Unsupported'))
     } else if (navigator.serviceWorker.controller) {
       // A serviceWorker is already registered and active.
