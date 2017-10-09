@@ -1,4 +1,5 @@
 const Plugin = require('./Plugin')
+const Translator = require('../core/Translator')
 const UppySocket = require('../core/UppySocket')
 const {
   emitSocketProgress,
@@ -13,6 +14,12 @@ module.exports = class XHRUpload extends Plugin {
     this.id = 'XHRUpload'
     this.title = 'XHRUpload'
 
+    const defaultLocale = {
+      strings: {
+        timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
+      }
+    }
+
     // Default options
     const defaultOptions = {
       formData: true,
@@ -22,6 +29,7 @@ module.exports = class XHRUpload extends Plugin {
       responseUrlFieldName: 'url',
       bundle: true,
       headers: {},
+      locale: defaultLocale,
       timeout: 30 * 1000,
       getResponseData (xhr) {
         return JSON.parse(xhr.response)
@@ -33,6 +41,12 @@ module.exports = class XHRUpload extends Plugin {
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    // i18n
+    this.translator = new Translator({ locale: this.locale })
+    this.i18n = this.translator.translate.bind(this.translator)
 
     this.handleUpload = this.handleUpload.bind(this)
   }
@@ -86,7 +100,7 @@ module.exports = class XHRUpload extends Plugin {
 
       const onTimedOut = () => {
         xhr.abort()
-        const error = new Error(`No progress for ${Math.ceil(opts.timeout / 1000)} seconds, aborting`)
+        const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
         this.core.emit('core:upload-error', file.id, error)
         reject(error)
       }
