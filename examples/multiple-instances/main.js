@@ -1,8 +1,8 @@
 const Uppy = require('uppy/lib/core')
 const Dashboard = require('uppy/lib/plugins/Dashboard')
-const RestoreFiles = require('uppy/lib/plugins/RestoreFiles')
+const GoldenRetriever = require('uppy/lib/plugins/GoldenRetriever')
 
-// Initialise two Uppy instances with the RestoreFiles plugin,
+// Initialise two Uppy instances with the GoldenRetriever plugin,
 // but with different `id`s.
 const a = Uppy({
   id: 'a',
@@ -13,7 +13,7 @@ const a = Uppy({
     inline: true,
     maxWidth: 400
   })
-  .use(RestoreFiles, { serviceWorker: false })
+  .use(GoldenRetriever, { serviceWorker: false })
   .run()
 
 const b = Uppy({
@@ -25,7 +25,7 @@ const b = Uppy({
     inline: true,
     maxWidth: 400
   })
-  .use(RestoreFiles, { serviceWorker: false })
+  .use(GoldenRetriever, { serviceWorker: false })
   .run()
 
 window.a = a

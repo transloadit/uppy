@@ -30,7 +30,7 @@ const Transloadit = require('./plugins/Transloadit')
 const AwsS3 = require('./plugins/AwsS3')
 
 // Other?
-const RestoreFiles = require('./plugins/RestoreFiles')
+const GoldenRetriever = require('./plugins/GoldenRetriever')
 const ReduxDevTools = require('./plugins/ReduxDevTools')
 const ReduxStore = require('./plugins/Redux')
 
@@ -53,7 +53,22 @@ module.exports = {
   Dashboard,
   MetaData,
   Webcam,
-  RestoreFiles,
+  GoldenRetriever,
   ReduxDevTools,
   ReduxStore
 }
+
+Object.defineProperty(module.exports, 'RestoreFiles', {
+  enumerable: true,
+  configurable: true,
+  get: () => {
+    console.warn('Uppy.RestoreFiles is deprecated and will be removed in v0.22. Use Uppy.GoldenRetriever instead.')
+    Object.defineProperty(module.exports, 'RestoreFiles', {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: GoldenRetriever
+    })
+    return GoldenRetriever
+  }
+})

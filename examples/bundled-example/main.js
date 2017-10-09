@@ -1,17 +1,17 @@
-const Uppy = require('../../src/core/Core.js')
+const Uppy = require('../../src/core')
 const Dashboard = require('../../src/plugins/Dashboard')
 // const GoogleDrive = require('../../src/plugins/GoogleDrive')
 const Dropbox = require('../../src/plugins/Dropbox')
 const Instagram = require('../../src/plugins/Instagram')
 // const Webcam = require('../../src/plugins/Webcam')
 const Tus10 = require('../../src/plugins/Tus10')
-// const Multipart = require('../../src/plugins/Multipart')
+// const XHRUpload = require('../../src/plugins/XHRUpload')
 // const FileInput = require('../../src/plugins/FileInput')
 const MetaData = require('../../src/plugins/MetaData')
 // const Informer = require('../../src/plugins/Informer')
 // const StatusBar = require('../../src/plugins/StatusBar')
 // const DragDrop = require('../../src/plugins/DragDrop')
-// const RestoreFiles = require('../../src/plugins/RestoreFiles')
+// const GoldenRetriever = require('../../src/plugins/GoldenRetriever')
 
 const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
 const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
@@ -68,7 +68,7 @@ const uppy = Uppy({
       { id: 'caption', name: 'Caption', value: 'none', placeholder: 'describe what the image is about' }
     ]
   })
-  // .use(RestoreFiles, {serviceWorker: true})
+  // .use(GoldenRetriever, {serviceWorker: true})
   .run()
 
 uppy.on('core:success', (fileList) => {
