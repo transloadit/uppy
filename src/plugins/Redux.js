@@ -1,6 +1,6 @@
 const Plugin = require('./Plugin')
 
-export default class Redux extends Plugin {
+module.exports = class Redux extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'state-sync'
