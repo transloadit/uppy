@@ -1,5 +1,6 @@
 const prettyBytes = require('prettier-bytes')
-const indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB
+const indexedDB = typeof window !== 'undefined' &&
+  (window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB)
 
 const isSupported = !!indexedDB
 
