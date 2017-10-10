@@ -235,7 +235,7 @@ function createThumbnail (file, targetWidth) {
   return onload.then((image) => {
     const targetHeight = getProportionalHeight(image, targetWidth)
     const canvas = resizeImage(image, targetWidth, targetHeight)
-    return canvasToBlob(canvas, 'image/jpeg')
+    return canvasToBlob(canvas, 'image/png')
   }).then((blob) => {
     return URL.createObjectURL(blob)
   })
@@ -278,12 +278,11 @@ function downScaleInSteps (image, steps) {
   let currentWidth = source.width
   let currentHeight = source.height
 
-  const canvas = document.createElement('canvas')
-  const context = canvas.getContext('2d')
-  canvas.width = currentWidth / 2
-  canvas.height = currentHeight / 2
-
   for (let i = 0; i < steps; i += 1) {
+    const canvas = document.createElement('canvas')
+    const context = canvas.getContext('2d')
+    canvas.width = currentWidth / 2
+    canvas.height = currentHeight / 2
     context.drawImage(source,
       // The entire source image. We pass width and height here,
       // because we reuse this canvas, and should only scale down
@@ -297,7 +296,7 @@ function downScaleInSteps (image, steps) {
   }
 
   return {
-    image: canvas,
+    image: source,
     sourceWidth: currentWidth,
     sourceHeight: currentHeight
   }
