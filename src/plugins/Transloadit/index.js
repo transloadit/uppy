@@ -1,3 +1,4 @@
+const Translator = require('../../core/Translator')
 const Plugin = require('../Plugin')
 const Client = require('./Client')
 const StatusSocket = require('./Socket')
@@ -42,6 +43,9 @@ module.exports = class Transloadit extends Plugin {
 
     this.locale = Object.assign({}, defaultLocale, this.opts.locale)
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    this.translator = new Translator({ locale: this.locale })
+    this.i18n = this.translator.translate.bind(this.translator)
 
     this.prepareUpload = this.prepareUpload.bind(this)
     this.afterUpload = this.afterUpload.bind(this)
@@ -181,7 +185,7 @@ module.exports = class Transloadit extends Plugin {
       this.core.log('Transloadit: Created assembly')
       return assembly
     }).catch((err) => {
-      this.core.info(pluginOptions.locale.strings.creatingAssemblyFailed, 'error', 0)
+      this.core.info(this.i18n('creatingAssemblyFailed'), 'error', 0)
 
       // Reject the promise.
       throw err
@@ -311,7 +315,7 @@ module.exports = class Transloadit extends Plugin {
     fileIDs.forEach((fileID) => {
       this.core.emit('core:preprocess-progress', fileID, {
         mode: 'indeterminate',
-        message: this.opts.locale.strings.creatingAssembly
+        message: this.i18n('creatingAssembly')
       })
     })
 
@@ -383,7 +387,7 @@ module.exports = class Transloadit extends Plugin {
       fileIDs.forEach((fileID) => {
         this.core.emit('core:postprocess-progress', fileID, {
           mode: 'indeterminate',
-          message: this.opts.locale.strings.encoding
+          message: this.i18n('encoding')
         })
       })
 
