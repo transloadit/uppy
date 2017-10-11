@@ -108,7 +108,15 @@ To be released: 2017-10-27
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network (@goto-bus-stop)
 - [ ] goldenretriever: add expiration to ServiceWorkerStore (@goto-bus-stop)
+
+## 0.20.2
+
+Released: 2017-10-11.
+
+- [x] docs: fix `getMetaFromForm` documentation (@arturi)
 - [x] core: fix generating thumbnails for images with transparent background (#380 / @goto-bus-stop)
+- [x] transloadit: use Translator class for localised strings (#383 / @goto-bus-stop)
+- [x] goldenretriever: don't crash when required server-side (#384 / @goto-bus-stop)
 
 ## 0.20.1
 
