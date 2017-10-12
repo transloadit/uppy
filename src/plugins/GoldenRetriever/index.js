@@ -49,7 +49,12 @@ module.exports = class GoldenRetriever extends Plugin {
 
     if (savedState) {
       this.uppy.log('Recovered some state from Local Storage')
-      this.uppy.setState(savedState)
+      this.uppy.setState({
+        currentUploads: savedState.currentUploads || {},
+        files: savedState.files || {}
+      })
+
+      this.savedPluginData = savedState.pluginData
     }
   }
 
@@ -99,9 +104,15 @@ module.exports = class GoldenRetriever extends Plugin {
       this.getUploadingFiles()
     )
 
+    const pluginData = {}
+    this.uppy.emit('restore:get-data', (data) => {
+      Object.assign(pluginData, data)
+    })
+
     this.MetaDataStore.save({
       currentUploads: this.uppy.state.currentUploads,
-      files: filesToSave
+      files: filesToSave,
+      pluginData: pluginData
     })
   }
 
@@ -157,7 +168,7 @@ module.exports = class GoldenRetriever extends Plugin {
     this.uppy.setState({
       files: updatedFiles
     })
-    this.uppy.emit('restored')
+    this.uppy.emit('restored', this.savedPluginData)
 
     if (obsoleteBlobs.length) {
       this.deleteBlobs(obsoleteBlobs).then(() => {
