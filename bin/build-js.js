@@ -3,10 +3,8 @@ var fs = require('fs')
 var chalk = require('chalk')
 var mkdirp = require('mkdirp')
 var babelify = require('babelify')
-var commonShakeify = require('common-shakeify')
-var packFlat = require('browser-pack-flat/plugin')
+var tinyify = require('tinyify')
 var browserify = require('browserify')
-var uglify = require('minify-stream')
 var exorcist = require('exorcist')
 
 var distPath = './dist'
@@ -21,32 +19,25 @@ function buildUppyBundle (minify) {
   var bundleFile = minify ? 'uppy.min.js' : 'uppy.js'
 
   var b = browserify(src, { debug: true, standalone: 'Uppy' })
-  b.plugin(commonShakeify)
-  b.plugin(packFlat)
+  if (minify) {
+    b.plugin(tinyify)
+  }
   b.transform(babelify)
   b.on('error', handleErr)
 
   return new Promise(function (resolve, reject) {
-    if (minify) {
-      b.bundle()
-      .pipe(uglify())
+    b.bundle()
       .pipe(exorcist(path.join(distPath, bundleFile + '.map')))
       .pipe(fs.createWriteStream(path.join(distPath, bundleFile), 'utf8'))
       .on('error', handleErr)
       .on('finish', function () {
-        console.info(chalk.green('✓ Built Minified Bundle:'), chalk.magenta(bundleFile))
+        if (minify) {
+          console.info(chalk.green('✓ Built Minified Bundle:'), chalk.magenta(bundleFile))
+        } else {
+          console.info(chalk.green('✓ Built Bundle:'), chalk.magenta(bundleFile))
+        }
         resolve()
       })
-    } else {
-      b.bundle()
-      .pipe(exorcist(path.join(distPath, bundleFile + '.map')))
-      .pipe(fs.createWriteStream(path.join(distPath, bundleFile), 'utf8'))
-      .on('error', handleErr)
-      .on('finish', function () {
-        console.info(chalk.green('✓ Built Bundle:'), chalk.magenta(bundleFile))
-        resolve()
-      })
-    }
   })
 }
 
