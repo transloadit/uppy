@@ -499,7 +499,6 @@ module.exports = class Transloadit extends Plugin {
     } else if (this.opts.waitForMetadata) {
       socket.on('metadata', () => {
         this.onAssemblyFinished(assembly.assembly_ssl_url)
-        this.uppy.emit('transloadit:complete', assembly)
       })
     }
 
