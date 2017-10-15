@@ -96,6 +96,7 @@ module.exports = class Dropbox extends Plugin {
   }
 
   getMimeType (item) {
+    // mime types aren't supported.
     return null
   }
 
