@@ -168,6 +168,10 @@ module.exports = class GoldenRetriever extends Plugin {
     this.uppy.setState({
       files: updatedFiles
     })
+
+    // Files have changed--make sure the progress is accurate.
+    this.uppy.calculateTotalProgress()
+
     this.uppy.emit('restored', this.savedPluginData)
 
     if (obsoleteBlobs.length) {
