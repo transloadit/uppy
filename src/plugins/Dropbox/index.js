@@ -76,48 +76,39 @@ module.exports = class Dropbox extends Plugin {
   }
 
   isFolder (item) {
-    return item.is_dir
+    return item['.tag'] === 'folder'
   }
 
   getItemData (item) {
-    return Object.assign({}, item, {size: item.bytes})
+    return item
   }
 
   getItemIcon (item) {
-    var icon = icons[item.icon]
-
-    if (!icon) {
-      if (item.icon.startsWith('folder')) {
-        icon = icons['folder']
-      } else {
-        icon = icons['page_white']
-      }
-    }
-    return icon()
+    return icons[item['.tag']]()
   }
 
   getItemSubList (item) {
-    return item.contents
+    return item.entries
   }
 
   getItemName (item) {
-    return item.path.length > 1 ? item.path.substring(1) : item.path
+    return item.name || ''
   }
 
   getMimeType (item) {
-    return item.mime_type
+    return null
   }
 
   getItemId (item) {
-    return item.rev
+    return item.id
   }
 
   getItemRequestPath (item) {
-    return encodeURIComponent(this.getItemName(item))
+    return encodeURIComponent(item.path_lower)
   }
 
   getItemModifiedDate (item) {
-    return item.modified
+    return item.server_modified
   }
 
   getItemThumbnailUrl (item) {
