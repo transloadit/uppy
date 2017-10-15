@@ -1,7 +1,7 @@
 /* eslint-disable */
 const React = require('react')
 const Uppy = require('uppy/lib/core')
-const Tus10 = require('uppy/lib/plugins/Tus10')
+const Tus = require('uppy/lib/plugins/Tus')
 const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 const { Dashboard, DashboardModal, DragDrop, ProgressBar } = require('uppy/lib/react')
 
@@ -19,12 +19,12 @@ module.exports = class App extends React.Component {
 
   componentWillMount () {
     this.uppy = new Uppy({ autoProceed: false })
-      .use(Tus10, { endpoint: 'https://master.tus.io/files/' })
+      .use(Tus, { endpoint: 'https://master.tus.io/files/' })
       .use(GoogleDrive, { host: 'https://server.uppy.io' })
       .run()
 
     this.uppy2 = new Uppy({ autoProceed: false })
-      .use(Tus10, { endpoint: 'https://master.tus.io/files/' })
+      .use(Tus, { endpoint: 'https://master.tus.io/files/' })
       .run()
   }
 

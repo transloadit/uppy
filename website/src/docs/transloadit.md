@@ -7,12 +7,12 @@ permalink: docs/transloadit/
 
 The Transloadit plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and more](https://transloadit.com/services/).
 
-The Transloadit plugin uses the Tus plugin for the uploading itself.
+The Transloadit plugin uses the [Tus plugin](/docs/tus) for the uploading itself.
 To upload files to Transloadit directly, both the Tus and Transloadit plugins must be used:
 
 ```js
 // The `resume: false` option _must_ be provided to the Tus plugin.
-uppy.use(Tus10, {
+uppy.use(Tus, {
   resume: false
 })
 uppy.use(Transloadit, {
@@ -20,7 +20,7 @@ uppy.use(Transloadit, {
 })
 ```
 
-NB: It is not required to use the `Tus10` plugin if [importFromUploadURLs](#importFromUploadURLs) is enabled.
+NB: It is not required to use the `Tus` plugin if [importFromUploadURLs](#importFromUploadURLs) is enabled.
 
 ## Options
 

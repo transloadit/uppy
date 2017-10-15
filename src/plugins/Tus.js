@@ -49,7 +49,7 @@ function createEventTracker (emitter) {
  * Tus resumable file uploader
  *
  */
-module.exports = class Tus10 extends Plugin {
+module.exports = class Tus extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'uploader'

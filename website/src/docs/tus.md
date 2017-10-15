@@ -1,14 +1,14 @@
 ---
 type: docs
 order: 30
-title: "Tus10"
+title: "Tus"
 permalink: docs/tus/
 ---
 
-The Tus10 plugin brings [tus.io](http://tus.io) resumable file uploading to Uppy by wrapping the [tus-js-client][].
+The Tus plugin brings [tus.io](http://tus.io) resumable file uploading to Uppy by wrapping the [tus-js-client][].
 
 ```js
-uppy.use(Tus10, {
+uppy.use(Tus, {
   resume: true,
   autoRetry: true,
   retryDelays: [0, 1000, 3000, 5000]
@@ -17,7 +17,7 @@ uppy.use(Tus10, {
 
 ## Options
 
-The Tus10 plugin supports all of [tus-js-client][]'s options.
+The Tus plugin supports all of [tus-js-client][]'s options.
 Additionally:
 
 ### `autoRetry: true`

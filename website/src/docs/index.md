@@ -13,13 +13,13 @@ Uppy consists of a core module and [various plugins](/docs/plugins/) for selecti
 ```js
 const Uppy = require('uppy/lib/core')
 const Dashboard = require('uppy/lib/plugins/Dashboard')
-const Tus10 = require('uppy/lib/plugins/Tus10')
+const Tus = require('uppy/lib/plugins/Tus')
  
 const uppy = Uppy({ autoProceed: false })
   .use(Dashboard, {
     trigger: '#select-files'
   })
-  .use(Tus10, {endpoint: '//master.tus.io/files/'})
+  .use(Tus, {endpoint: '//master.tus.io/files/'})
   .run()
  
 uppy.on('core:success', (files) => {
@@ -62,7 +62,7 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
 <script>
   var uppy = Uppy.Core({ autoProceed: false })
   uppy.use(Uppy.DragDrop, {target: '.UppyDragDrop'})
-  uppy.use(Uppy.Tus10, {endpoint: '//master.tus.io/files/'})
+  uppy.use(Uppy.Tus, {endpoint: '//master.tus.io/files/'})
   uppy.run()
 </script>
 ```

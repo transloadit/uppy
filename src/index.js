@@ -24,7 +24,7 @@ const Informer = require('./plugins/Informer.js')
 const MetaData = require('./plugins/MetaData.js')
 
 // Uploaders
-const Tus10 = require('./plugins/Tus10')
+const Tus = require('./plugins/Tus')
 const XHRUpload = require('./plugins/XHRUpload')
 const Transloadit = require('./plugins/Transloadit')
 const AwsS3 = require('./plugins/AwsS3')
@@ -46,7 +46,7 @@ module.exports = {
   Dropbox,
   Instagram,
   FileInput,
-  Tus10,
+  Tus,
   XHRUpload,
   Transloadit,
   AwsS3,
@@ -70,5 +70,20 @@ Object.defineProperty(module.exports, 'RestoreFiles', {
       value: GoldenRetriever
     })
     return GoldenRetriever
+  }
+})
+
+Object.defineProperty(module.exports, 'Tus10', {
+  enumerable: true,
+  configurable: true,
+  get: () => {
+    console.warn('Uppy.Tus10 is deprecated and will be removed in v0.22. Use Uppy.Tus instead.')
+    Object.defineProperty(module.exports, 'Tus10', {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: Tus
+    })
+    return Tus
   }
 })

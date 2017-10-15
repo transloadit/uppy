@@ -4,7 +4,7 @@ const Dashboard = require('../../src/plugins/Dashboard')
 const Dropbox = require('../../src/plugins/Dropbox')
 const Instagram = require('../../src/plugins/Instagram')
 // const Webcam = require('../../src/plugins/Webcam')
-const Tus10 = require('../../src/plugins/Tus10')
+const Tus = require('../../src/plugins/Tus')
 // const XHRUpload = require('../../src/plugins/XHRUpload')
 // const FileInput = require('../../src/plugins/FileInput')
 const MetaData = require('../../src/plugins/MetaData')
@@ -61,7 +61,7 @@ const uppy = Uppy({
   // .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
-  .use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
+  .use(Tus, {endpoint: TUS_ENDPOINT, resume: true})
   .use(MetaData, {
     fields: [
       { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
