@@ -299,6 +299,8 @@ module.exports = class Transloadit extends Plugin {
   }
 
   onRestored (pluginData) {
+    const opts = this.opts
+
     const knownUploads = pluginData[this.id].files || []
     const knownResults = pluginData[this.id].results || []
     const previousAssemblies = pluginData[this.id].assemblies || {}
@@ -445,10 +447,15 @@ module.exports = class Transloadit extends Plugin {
     // Emit events for assemblies that have completed or errored while we were away.
     const diffAssemblyStatus = (prev, next) => {
       console.log('[Transloadit] Diff assemblies', prev, next)
-      if (next.ok === 'ASSEMBLY_COMPLETED' && prev.ok !== 'ASSEMBLY_COMPLETED') {
+
+      if (opts.waitForEncoding && next.ok === 'ASSEMBLY_COMPLETED' && prev.ok !== 'ASSEMBLY_COMPLETED') {
         console.log('  Emitting transloadit:complete for', next.assembly_id, next)
         this.core.emit('transloadit:complete', next)
+      } else if (opts.waitForMetadata && next.upload_meta_data_extracted && !prev.upload_meta_data_extracted) {
+        console.log('  Emitting transloadit:complete after metadata extraction for', next.assembly_id, next)
+        this.core.emit('transloadit:complete', next)
       }
+
       if (next.error && !prev.error) {
         console.log('  !!! Emitting transloadit:assembly-error for', next.assembly_id, next)
         this.core.emit('transloadit:assembly-error', next, new Error(next.message))
