@@ -173,7 +173,7 @@ A shortcut method that returns a specific file object from `uppy.state` by its `
 ```js
 const file = uppy.getFile('uppyteamkongjpg1501851828779')
 const img = document.createElement('img')
-img.src = file.preivew
+img.src = file.preview
 document.body.appendChild(img)
 ```
 
