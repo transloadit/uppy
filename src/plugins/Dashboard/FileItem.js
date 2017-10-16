@@ -14,9 +14,10 @@ module.exports = function fileItem (props) {
   const file = props.file
   const acquirers = props.acquirers
 
-  const isUploaded = file.progress.uploadComplete
-  const uploadInProgressOrComplete = file.progress.uploadStarted
-  const uploadInProgress = file.progress.uploadStarted && !file.progress.uploadComplete
+  const isProcessing = file.progress.preprocess || file.progress.postprocess
+  const isUploaded = file.progress.uploadComplete && !isProcessing && !file.error
+  const uploadInProgressOrComplete = file.progress.uploadStarted || isProcessing
+  const uploadInProgress = (file.progress.uploadStarted && !file.progress.uploadComplete) || isProcessing
   const isPaused = file.isPaused || false
   const error = file.error || false
 
@@ -38,6 +39,7 @@ module.exports = function fileItem (props) {
 
   return html`<li class="UppyDashboardItem
                         ${uploadInProgress ? 'is-inprogress' : ''}
+                        ${isProcessing ? 'is-processing' : ''}
                         ${isUploaded ? 'is-complete' : ''}
                         ${isPaused ? 'is-paused' : ''}
                         ${error ? 'is-error' : ''}
