@@ -568,7 +568,7 @@ module.exports = class Transloadit extends Plugin {
     fileIDs = fileIDs.filter((file) => !file.error)
 
     const state = this.getPluginState()
-    // const state = this.getPluginState()
+
     // If we're still restoring state, wait for that to be done.
     if (this.restored) {
       return this.restored.then(() => {
