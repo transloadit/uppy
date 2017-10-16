@@ -122,7 +122,7 @@ module.exports = class Transloadit extends Plugin {
   createAssembly (fileIDs, uploadID, options) {
     const pluginOptions = this.opts
 
-    this.uppy.log('Transloadit: create assembly')
+    this.uppy.log('[Transloadit] create assembly')
 
     return this.client.createAssembly({
       params: options.params,
@@ -189,7 +189,7 @@ module.exports = class Transloadit extends Plugin {
       return this.connectSocket(assembly)
         .then(() => assembly)
     }).then((assembly) => {
-      this.uppy.log('Transloadit: Created assembly')
+      this.uppy.log('[Transloadit] Created assembly')
       return assembly
     }).catch((err) => {
       this.uppy.info(this.i18n('creatingAssemblyFailed'), 'error', 0)
@@ -310,10 +310,10 @@ module.exports = class Transloadit extends Plugin {
 
     // Fetch up-to-date assembly statuses.
     const loadAssemblies = () => {
-      const fileIDs = Object.keys(this.core.state.files)
+      const fileIDs = Object.keys(this.uppy.state.files)
       const assemblyIDs = []
       fileIDs.forEach((fileID) => {
-        const file = this.core.getFile(fileID)
+        const file = this.uppy.getFile(fileID)
         const assemblyID = file && file.transloadit && file.transloadit.assembly
         if (assemblyID && assemblyIDs.indexOf(assemblyID) === -1) {
           assemblyIDs.push(file.transloadit.assembly)
@@ -342,10 +342,10 @@ module.exports = class Transloadit extends Plugin {
     // on files.
     const recoverUploadAssemblies = () => {
       const uploadsAssemblies = {}
-      const uploads = this.core.state.currentUploads
+      const uploads = this.uppy.state.currentUploads
       Object.keys(uploads).forEach((uploadID) => {
         const files = uploads[uploadID].fileIDs
-          .map((fileID) => this.core.getFile(fileID))
+          .map((fileID) => this.uppy.getFile(fileID))
         const assemblyIDs = []
 
         files.forEach((file) => {
@@ -424,20 +424,20 @@ module.exports = class Transloadit extends Plugin {
         return knownResults.indexOf(result.result.id) === -1
       })
 
-      console.log('[Transloadit] New fully uploaded files since restore:', newUploads)
+      this.uppy.log('[Transloadit] New fully uploaded files since restore:', newUploads)
       newUploads.forEach(({ assembly, uploadedFile }) => {
-        console.log('  emitting transloadit:upload', uploadedFile.id)
-        this.core.emit('transloadit:upload', uploadedFile, this.getAssembly(assembly))
+        this.uppy.log('[Transloadit]  emitting transloadit:upload', uploadedFile.id)
+        this.uppy.emit('transloadit:upload', uploadedFile, this.getAssembly(assembly))
       })
-      console.log('[Transloadit] New results since restore:', newResults)
+      this.uppy.log('[Transloadit] New results since restore:', newResults)
       newResults.forEach(({ assembly, stepName, result }) => {
-        console.log('  emitting transloadit:result', stepName, result.id)
-        this.core.emit('transloadit:result', stepName, result, this.getAssembly(assembly))
+        this.uppy.log('[Transloadit]  emitting transloadit:result', stepName, result.id)
+        this.uppy.emit('transloadit:result', stepName, result, this.getAssembly(assembly))
       })
 
       const newAssemblies = this.getPluginState().assemblies
-      console.log('[Transloadit] Current assembly status after restore', newAssemblies)
-      console.log('[Transloadit] Assembly status before restore', previousAssemblies)
+      this.uppy.log('[Transloadit] Current assembly status after restore', newAssemblies)
+      this.uppy.log('[Transloadit] Assembly status before restore', previousAssemblies)
       Object.keys(newAssemblies).forEach((assemblyId) => {
         const oldAssembly = previousAssemblies[assemblyId]
         diffAssemblyStatus(oldAssembly, newAssemblies[assemblyId])
@@ -446,19 +446,19 @@ module.exports = class Transloadit extends Plugin {
 
     // Emit events for assemblies that have completed or errored while we were away.
     const diffAssemblyStatus = (prev, next) => {
-      console.log('[Transloadit] Diff assemblies', prev, next)
+      this.uppy.log('[Transloadit] Diff assemblies', prev, next)
 
       if (opts.waitForEncoding && next.ok === 'ASSEMBLY_COMPLETED' && prev.ok !== 'ASSEMBLY_COMPLETED') {
-        console.log('  Emitting transloadit:complete for', next.assembly_id, next)
-        this.core.emit('transloadit:complete', next)
+        this.uppy.log('[Transloadit]  Emitting transloadit:complete for', next.assembly_id, next)
+        this.uppy.emit('transloadit:complete', next)
       } else if (opts.waitForMetadata && next.upload_meta_data_extracted && !prev.upload_meta_data_extracted) {
-        console.log('  Emitting transloadit:complete after metadata extraction for', next.assembly_id, next)
-        this.core.emit('transloadit:complete', next)
+        this.uppy.log('[Transloadit]  Emitting transloadit:complete after metadata extraction for', next.assembly_id, next)
+        this.uppy.emit('transloadit:complete', next)
       }
 
       if (next.error && !prev.error) {
-        console.log('  !!! Emitting transloadit:assembly-error for', next.assembly_id, next)
-        this.core.emit('transloadit:assembly-error', next, new Error(next.message))
+        this.uppy.log('[Transloadit]  !!! Emitting transloadit:assembly-error for', next.assembly_id, next)
+        this.uppy.emit('transloadit:assembly-error', next, new Error(next.message))
       }
     }
 
@@ -513,7 +513,7 @@ module.exports = class Transloadit extends Plugin {
       socket.on('connect', resolve)
       socket.on('error', reject)
     }).then(() => {
-      this.uppy.log('Transloadit: Socket is ready')
+      this.uppy.log('[Transloadit] Socket is ready')
     })
   }
 
@@ -614,10 +614,10 @@ module.exports = class Transloadit extends Plugin {
       const onAssemblyFinished = (assembly) => {
         // An assembly for a different upload just finished. We can ignore it.
         if (assemblyIDs.indexOf(assembly.assembly_id) === -1) {
-          console.log('[Transloadit] afterUpload(): Ignoring finished assembly', assembly.assembly_id)
+          this.uppy.log('[Transloadit] afterUpload(): Ignoring finished assembly', assembly.assembly_id)
           return
         }
-        console.log('[Transloadit] afterUpload(): Got assembly finish', assembly.assembly_id)
+        this.uppy.log('[Transloadit] afterUpload(): Got assembly finish', assembly.assembly_id)
 
         // TODO set the `file.uploadURL` to a result?
         // We will probably need an option here so the plugin user can tell us
@@ -634,10 +634,10 @@ module.exports = class Transloadit extends Plugin {
       const onAssemblyError = (assembly, error) => {
         // An assembly for a different upload just errored. We can ignore it.
         if (assemblyIDs.indexOf(assembly.assembly_id) === -1) {
-          console.log('[Transloadit] afterUpload(): Ignoring errored assembly', assembly.assembly_id)
+          this.uppy.log('[Transloadit] afterUpload(): Ignoring errored assembly', assembly.assembly_id)
           return
         }
-        console.log('[Transloadit] afterUpload(): Got assembly error', assembly.assembly_id, error)
+        this.uppy.log('[Transloadit] afterUpload(): Got assembly error', assembly.assembly_id, error)
 
         // Clear postprocessing state for all our files.
         const files = this.getAssemblyFiles(assembly.assembly_id)
@@ -699,8 +699,8 @@ module.exports = class Transloadit extends Plugin {
       this.uppy.on('upload-success', this.onFileUploadURLAvailable)
     }
 
-    this.core.on('restore:get-data', this.getPersistentData)
-    this.core.on('core:restored', this.onRestored)
+    this.uppy.on('restore:get-data', this.getPersistentData)
+    this.uppy.on('restored', this.onRestored)
 
     this.setPluginState({
       // Contains assembly status objects, indexed by their ID.
