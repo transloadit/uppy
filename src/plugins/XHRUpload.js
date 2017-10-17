@@ -34,8 +34,6 @@ module.exports = class XHRUpload extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     this.handleUpload = this.handleUpload.bind(this)
-    this.handleRetry = this.handleRetry.bind(this)
-    this.handleRetryAll = this.handleRetryAll.bind(this)
   }
 
   getOptions (file) {
@@ -230,25 +228,11 @@ module.exports = class XHRUpload extends Plugin {
     return this.uploadFiles(files).then(() => null)
   }
 
-  handleRetry (targetFileID) {
-    this.handleUpload([targetFileID])
-  }
-
-  handleRetryAll (filesToRetry) {
-    this.handleUpload(filesToRetry)
-  }
-
   install () {
     this.core.addUploader(this.handleUpload)
-
-    this.core.on('core:upload-retry', this.handleRetry)
-    this.core.on('core:retry-all', this.handleRetryAll)
   }
 
   uninstall () {
     this.core.removeUploader(this.handleUpload)
-
-    this.core.off('core:upload-retry', this.handleRetry)
-    this.core.off('core:retry-all', this.handleRetryAll)
   }
 }
