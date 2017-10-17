@@ -423,6 +423,9 @@ module.exports = class Transloadit extends Plugin {
         // Clear postprocessing state for all our files.
         const files = this.getAssemblyFiles(assembly.assembly_id)
         files.forEach((file) => {
+          // TODO Maybe make a postprocess-error event here?
+          this.core.emit('core:upload-error', file.id, error)
+
           this.core.emit('core:postprocess-complete', file.id)
         })
 
