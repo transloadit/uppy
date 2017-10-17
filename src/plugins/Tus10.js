@@ -126,13 +126,11 @@ module.exports = class Tus10 extends Plugin {
       })
 
       this.onRetry(file.id, () => {
-        upload.abort()
-        upload.start()
+        this.removeUploadURL(file.id)
       })
 
       this.onRetryAll(file.id, () => {
-        upload.abort()
-        upload.start()
+        this.removeUploadURL(file.id)
       })
 
       this.onPauseAll(file.id, () => {
@@ -141,6 +139,7 @@ module.exports = class Tus10 extends Plugin {
 
       this.onCancelAll(file.id, () => {
         upload.abort()
+        this.removeUploadURL(file.id)
       })
 
       this.onResumeAll(file.id, () => {
@@ -263,6 +262,19 @@ module.exports = class Tus10 extends Plugin {
       })
       this.updateFile(newFile)
     }
+  }
+
+  removeUploadURL (fileID) {
+    const file = this.core.getFile(fileID)
+
+    // No need to change state if we didn't have an `uploadUrl`.
+    if (!file || !file.tus || !file.tus.uploadUrl) return
+
+    this.updateFile(Object.assign({}, file, {
+      tus: Object.assign({}, file.tus, {
+        uploadUrl: null
+      })
+    }))
   }
 
   onFileRemove (fileID, cb) {
