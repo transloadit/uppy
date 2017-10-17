@@ -713,7 +713,8 @@
   }
 
   .UppyDashboardItem.is-inprogress .UppyDashboardItem-progress,
-  .UppyDashboardItem.is-complete .UppyDashboardItem-progress {
+  .UppyDashboardItem.is-complete .UppyDashboardItem-progress,
+  .UppyDashboardItem.is-error .UppyDashboardItem-progress {
     display: block;
   }
 
@@ -835,6 +836,12 @@
   }
 }
 
+.UppyDashboardItem.is-error {
+  .UppyDashboardItem-previewInnerWrap:after {
+    display: block;
+  }
+}
+
 .UppyDashboardItem.is-paused {
   .pause {
     opacity: 0;
@@ -859,9 +866,6 @@
     opacity: 1;
   }
 }
-
-
-
 
 .UppyTotalProgress {
   @include reset-button;
