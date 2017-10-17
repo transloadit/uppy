@@ -84,6 +84,7 @@ class Uppy {
     this.resumeAll = this.resumeAll.bind(this)
     this.retryAll = this.retryAll.bind(this)
     this.cancelAll = this.cancelAll.bind(this)
+    this.retryUpload = this.retryUpload.bind(this)
 
     // this.bus = this.emitter = ee()
     this.emitter = ee()
@@ -471,10 +472,6 @@ class Uppy {
 
   retryAll () {
     const updatedFiles = Object.assign({}, this.getState().files)
-    // const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
-    //   return !updatedFiles[file].progress.uploadComplete &&
-    //          updatedFiles[file].progress.uploadStarted
-    // })
     const filesToRetry = Object.keys(updatedFiles).filter(file => {
       return updatedFiles[file].error
     })
@@ -486,16 +483,36 @@ class Uppy {
       })
       updatedFiles[file] = updatedFile
     })
-    this.setState({files: updatedFiles})
+    this.setState({
+      files: updatedFiles,
+      error: null
+    })
 
     this.emit('core:retry-all', filesToRetry)
+
+    const uploadID = this.createUpload(filesToRetry)
+    return this.runUpload(uploadID)
+  }
+
+  retryUpload (fileID) {
+    const updatedFiles = Object.assign({}, this.state.files)
+    const updatedFile = Object.assign({}, updatedFiles[fileID],
+      { error: null, isPaused: false }
+    )
+    updatedFiles[fileID] = updatedFile
+    this.setState({
+      files: updatedFiles
+    })
+
+    this.emit('core:upload-retry', fileID)
+
+    const uploadID = this.createUpload([ fileID ])
+    return this.runUpload(uploadID)
   }
 
   reset () {
     this.cancelAll()
     // this.pauseAll()
-    // this.emit('core:pause-all')
-    // this.emit('core:cancel-all')
   }
 
   cancelAll () {
@@ -592,19 +609,6 @@ class Uppy {
         message = { message: message, details: error.message }
       }
       this.info(message, 'error', 5000)
-    })
-
-    this.on('core:upload-retry', (fileID) => {
-      const updatedFiles = Object.assign({}, this.state.files)
-      const updatedFile = Object.assign({}, updatedFiles[fileID],
-        { error: null, isPaused: false }
-      )
-      updatedFiles[fileID] = updatedFile
-      this.setState({files: updatedFiles})
-    })
-
-    this.on('core:retry-all', () => {
-      this.setState({ error: null })
     })
 
     this.on('core:upload', () => {
