@@ -512,7 +512,6 @@ class Uppy {
 
   reset () {
     this.cancelAll()
-    // this.pauseAll()
   }
 
   cancelAll () {
