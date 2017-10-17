@@ -628,7 +628,10 @@ class Uppy {
       const updatedFile = Object.assign({}, updatedFiles[fileID],
         Object.assign({}, {
           progress: Object.assign({}, updatedFiles[fileID].progress, {
-            uploadStarted: Date.now()
+            uploadStarted: Date.now(),
+            uploadComplete: false,
+            percentage: 0,
+            bytesUploaded: 0
           })
         }
       ))
