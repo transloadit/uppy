@@ -125,14 +125,6 @@ module.exports = class Tus10 extends Plugin {
         isPaused ? upload.abort() : upload.start()
       })
 
-      this.onRetry(file.id, () => {
-        this.removeUploadURL(file.id)
-      })
-
-      this.onRetryAll(file.id, () => {
-        this.removeUploadURL(file.id)
-      })
-
       this.onPauseAll(file.id, () => {
         upload.abort()
       })

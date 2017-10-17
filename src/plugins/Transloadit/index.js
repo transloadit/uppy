@@ -156,7 +156,9 @@ module.exports = class Transloadit extends Plugin {
         const tus = Object.assign({}, file.tus, {
           endpoint: assembly.tus_url,
           // Only send assembly metadata to the tus endpoint.
-          metaFields: Object.keys(tlMeta)
+          metaFields: Object.keys(tlMeta),
+          // Make sure tus doesn't resume a previous upload.
+          uploadUrl: null
         })
         const transloadit = {
           assembly: assembly.assembly_id
