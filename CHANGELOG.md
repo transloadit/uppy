@@ -49,6 +49,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget
 - [ ] statusbar: add option to always show
 - [ ] tus: Rename Tus10 → Tus
+- [ ] have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
 
 ## 1.0 Goals
 
