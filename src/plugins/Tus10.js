@@ -27,6 +27,25 @@ const tusDefaultOptions = {
 }
 
 /**
+ * Create a wrapper around an event emitter with a `remove` method to remove
+ * all events that were added using the wrapped emitter.
+ */
+function createEventTracker (emitter) {
+  const events = []
+  return {
+    on (event, fn) {
+      events.push([ event, fn ])
+      return emitter.on(event, fn)
+    },
+    remove () {
+      events.forEach(([ event, fn ]) => {
+        emitter.off(event, fn)
+      })
+    }
+  }
+}
+
+/**
  * Tus resumable file uploader
  *
  */
@@ -47,6 +66,10 @@ module.exports = class Tus10 extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
+    this.uploaders = Object.create(null)
+    this.uploaderEvents = Object.create(null)
+    this.uploaderSockets = Object.create(null)
+
     this.handleResetProgress = this.handleResetProgress.bind(this)
     this.handleUpload = this.handleUpload.bind(this)
   }
@@ -66,6 +89,25 @@ module.exports = class Tus10 extends Plugin {
   }
 
   /**
+   * Clean up all references for a file's upload: the tus.Upload instance,
+   * any events related to the file, and the uppy-server WebSocket connection.
+   */
+  resetUploaderReferences (fileID) {
+    if (this.uploaders[fileID]) {
+      this.uploaders[fileID].abort()
+      this.uploaders[fileID] = null
+    }
+    if (this.uploaderEvents[fileID]) {
+      this.uploaderEvents[fileID].remove()
+      this.uploaderEvents[fileID] = null
+    }
+    if (this.uploaderSockets[fileID]) {
+      this.uploaderSockets[fileID].close()
+      this.uploaderSockets[fileID] = null
+    }
+  }
+
+  /**
    * Create a new Tus upload
    *
    * @param {object} file for use with upload
@@ -75,6 +117,8 @@ module.exports = class Tus10 extends Plugin {
    */
   upload (file, current, total) {
     this.core.log(`uploading ${current} of ${total}`)
+
+    this.resetUploaderReferences(file.id)
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
@@ -90,6 +134,8 @@ module.exports = class Tus10 extends Plugin {
         this.core.log(err)
         this.core.emit('core:upload-error', file.id, err)
         err.message = `Failed because: ${err.message}`
+
+        this.resetUploaderReferences(file.id)
         reject(err)
       }
 
@@ -110,14 +156,17 @@ module.exports = class Tus10 extends Plugin {
           this.core.log('Download ' + upload.file.name + ' from ' + upload.url)
         }
 
+        this.resetUploaderReferences(file.id)
         resolve(upload)
       }
       optsTus.metadata = file.meta
 
       const upload = new tus.Upload(file.data, optsTus)
+      this.uploaders[file.id] = upload
+      this.uploaderEvents[file.id] = createEventTracker(this.core)
 
       this.onFileRemove(file.id, (targetFileID) => {
-        upload.abort()
+        this.resetUploaderReferences(file.id)
         resolve(`upload ${targetFileID} was removed`)
       })
 
@@ -125,22 +174,12 @@ module.exports = class Tus10 extends Plugin {
         isPaused ? upload.abort() : upload.start()
       })
 
-      this.onRetry(file.id, () => {
-        upload.abort()
-        upload.start()
-      })
-
-      this.onRetryAll(file.id, () => {
-        upload.abort()
-        upload.start()
-      })
-
       this.onPauseAll(file.id, () => {
         upload.abort()
       })
 
       this.onCancelAll(file.id, () => {
-        upload.abort()
+        this.resetUploaderReferences(file.id)
       })
 
       this.onResumeAll(file.id, () => {
@@ -156,6 +195,8 @@ module.exports = class Tus10 extends Plugin {
   }
 
   uploadRemote (file, current, total) {
+    this.resetUploaderReferences(file.id)
+
     return new Promise((resolve, reject) => {
       this.core.log(file.remote.url)
       if (file.serverToken) {
@@ -204,6 +245,8 @@ module.exports = class Tus10 extends Plugin {
     const token = file.serverToken
     const host = getSocketHost(file.remote.host)
     const socket = new UppySocket({ target: `${host}/api/${token}` })
+    this.uploaderSockets[file.id] = socket
+    this.uploaderEvents[file.id] = createEventTracker(this.core)
 
     this.onFileRemove(file.id, () => socket.send('pause', {}))
 
@@ -236,7 +279,7 @@ module.exports = class Tus10 extends Plugin {
 
     socket.on('success', (data) => {
       this.core.emitter.emit('core:upload-success', file.id, data, data.url)
-      socket.close()
+      this.resetUploaderReferences(file.id)
     })
   }
 
@@ -266,13 +309,13 @@ module.exports = class Tus10 extends Plugin {
   }
 
   onFileRemove (fileID, cb) {
-    this.core.on('core:file-removed', (targetFileID) => {
+    this.uploaderEvents[fileID].on('core:file-removed', (targetFileID) => {
       if (fileID === targetFileID) cb(targetFileID)
     })
   }
 
   onPause (fileID, cb) {
-    this.core.on('core:upload-pause', (targetFileID, isPaused) => {
+    this.uploaderEvents[fileID].on('core:upload-pause', (targetFileID, isPaused) => {
       if (fileID === targetFileID) {
         // const isPaused = this.core.pauseResume(fileID)
         cb(isPaused)
@@ -281,7 +324,7 @@ module.exports = class Tus10 extends Plugin {
   }
 
   onRetry (fileID, cb) {
-    this.core.on('core:upload-retry', (targetFileID) => {
+    this.uploaderEvents[fileID].on('core:upload-retry', (targetFileID) => {
       if (fileID === targetFileID) {
         cb()
       }
@@ -289,28 +332,28 @@ module.exports = class Tus10 extends Plugin {
   }
 
   onRetryAll (fileID, cb) {
-    this.core.on('core:retry-all', (filesToRetry) => {
+    this.uploaderEvents[fileID].on('core:retry-all', (filesToRetry) => {
       if (!this.core.getFile(fileID)) return
       cb()
     })
   }
 
   onPauseAll (fileID, cb) {
-    this.core.on('core:pause-all', () => {
+    this.uploaderEvents[fileID].on('core:pause-all', () => {
       if (!this.core.getFile(fileID)) return
       cb()
     })
   }
 
   onCancelAll (fileID, cb) {
-    this.core.on('core:cancel-all', () => {
+    this.uploaderEvents[fileID].on('core:cancel-all', () => {
       if (!this.core.getFile(fileID)) return
       cb()
     })
   }
 
   onResumeAll (fileID, cb) {
-    this.core.on('core:resume-all', () => {
+    this.uploaderEvents[fileID].on('core:resume-all', () => {
       if (!this.core.getFile(fileID)) return
       cb()
     })
