@@ -109,6 +109,17 @@ To be released: 2017-10-27
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network (@goto-bus-stop)
 - [ ] goldenretriever: add expiration to ServiceWorkerStore (@goto-bus-stop)
+- [ ] tus: Review b3cc48130e292f08c2a09f2f0adf6b6332bf7692
+
+## 0.20.3
+
+Released: 2017-10-18.
+
+- [x] Start a completely new upload when retrying. (#390 / @goto-bus-stop)
+- [x] dashboard: Show errors that occurred during processing on the file items. (#391 / @goto-bus-stop)
+- [x] transloadit: Mark files as having errored if their assembly fails. (#392 / @goto-bus-stop)
+- [x] core: Clear file upload progress when an upload starts. (#393 / @goto-bus-stop)
+- [x] tus: Clean up `tus.Upload` instance and events when an upload starts, finishes, or fails. (#390 / @goto-bus-stop)
 
 ## 0.20.2
 
