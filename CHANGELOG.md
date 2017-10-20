@@ -108,7 +108,6 @@ To be released: 2017-10-27
 - [ ] plugins: add tabindex="0" to buttons and tabs? (@arturi)
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network (@goto-bus-stop)
-- [ ] goldenretriever: add expiration to ServiceWorkerStore (@goto-bus-stop)
 - [ ] tus: Review b3cc48130e292f08c2a09f2f0adf6b6332bf7692
 
 ## 0.20.3
