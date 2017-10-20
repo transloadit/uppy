@@ -301,9 +301,10 @@ module.exports = class Transloadit extends Plugin {
   onRestored (pluginData) {
     const opts = this.opts
 
-    const knownUploads = pluginData[this.id].files || []
-    const knownResults = pluginData[this.id].results || []
-    const previousAssemblies = pluginData[this.id].assemblies || {}
+    const savedState = pluginData && pluginData[this.id] ? pluginData[this.id] : {}
+    const knownUploads = savedState.files || []
+    const knownResults = savedState.results || []
+    const previousAssemblies = savedState.assemblies || {}
 
     const allUploads = []
     const allResults = []
@@ -342,7 +343,7 @@ module.exports = class Transloadit extends Plugin {
     // on files.
     const recoverUploadAssemblies = () => {
       const uploadsAssemblies = {}
-      const uploads = this.uppy.state.currentUploads
+      const uploads = this.uppy.state.currentUploads || {}
       Object.keys(uploads).forEach((uploadID) => {
         const files = uploads[uploadID].fileIDs
           .map((fileID) => this.uppy.getFile(fileID))
