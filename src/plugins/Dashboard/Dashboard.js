@@ -33,7 +33,12 @@ module.exports = function Dashboard (props) {
       if (file.kind !== 'file') return
 
       const blob = file.getAsFile()
-      props.log('File pasted')
+      if (!blob) {
+        props.log('[Dashboard] File pasted, but the file blob is empty')
+        props.info('Error pasting file', 'error')
+        return
+      }
+      props.log('[Dashboard] File pasted')
       props.addFile({
         source: props.id,
         name: file.name,
