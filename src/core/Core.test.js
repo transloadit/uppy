@@ -152,6 +152,7 @@ describe('src/Core', () => {
         bee: 'boo',
         capabilities: { resumableUploads: false },
         files: {},
+        currentUploads: {},
         foo: 'baar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -174,6 +175,7 @@ describe('src/Core', () => {
         bee: 'boo',
         capabilities: { resumableUploads: false },
         files: {},
+        currentUploads: {},
         foo: 'bar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -185,6 +187,7 @@ describe('src/Core', () => {
         bee: 'boo',
         capabilities: { resumableUploads: false },
         files: {},
+        currentUploads: {},
         foo: 'baar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -201,6 +204,7 @@ describe('src/Core', () => {
       expect(core.getState()).toEqual({
         capabilities: { resumableUploads: false },
         files: {},
+        currentUploads: {},
         foo: 'bar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -227,6 +231,7 @@ describe('src/Core', () => {
     expect(coreStateUpdateEventMock.mock.calls[1][1]).toEqual({
       capabilities: { resumableUploads: false },
       files: {},
+      currentUploads: {},
       foo: 'bar',
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
@@ -254,6 +259,7 @@ describe('src/Core', () => {
     expect(coreStateUpdateEventMock.mock.calls[0][1]).toEqual({
       capabilities: { resumableUploads: false },
       files: {},
+      currentUploads: {},
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
       plugins: {},
