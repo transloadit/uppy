@@ -48,7 +48,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] an uploader plugin to receive files in a callback instead of uploading them
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget
 - [ ] statusbar: add option to always show
-- [ ] tus: Rename Tus10 → Tus
 - [ ] have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
 
 ## 1.0 Goals
@@ -109,6 +108,7 @@ To be released: 2017-10-27
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network (@goto-bus-stop)
 - [ ] tus: Review b3cc48130e292f08c2a09f2f0adf6b6332bf7692
+- [x] tus: Rename Tus10 → Tus
 
 ## 0.20.3
 

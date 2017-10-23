@@ -4,7 +4,7 @@ const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 const Dropbox = require('uppy/lib/plugins/Dropbox')
 const Instagram = require('uppy/lib/plugins/Instagram')
 const Webcam = require('uppy/lib/plugins/Webcam')
-const Tus10 = require('uppy/lib/plugins/Tus10')
+const Tus = require('uppy/lib/plugins/Tus')
 const MetaData = require('uppy/lib/plugins/MetaData')
 
 const UPPY_SERVER = require('../env')
@@ -56,7 +56,7 @@ function uppyInit () {
     uppy.use(Webcam, {target: Dashboard})
   }
 
-  uppy.use(Tus10, {endpoint: TUS_ENDPOINT, resume: true})
+  uppy.use(Tus, {endpoint: TUS_ENDPOINT, resume: true})
   uppy.use(MetaData, {
     fields: [
       { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },

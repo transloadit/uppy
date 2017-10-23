@@ -13,7 +13,7 @@ Plugins are what makes Uppy useful: they help select, manipulate and upload file
   - FileInput — even more plain and simple, just a button
   - [Provider Plugins](#Provider-Plugins) (remote sources that work through [Uppy Server](/docs/uppy-server/)): Instagram, GoogleDrive, Dropbox
 - **Uploaders:**
-  - Tus10 — uploads using the tus resumable upload protocol
+  - Tus — uploads using the tus resumable upload protocol
   - XHRUpload — classic multipart form uploads or binary uploads using XMLHTTPRequest
   - [AwsS3](/docs/aws-s3) — uploader for AWS S3
 - **Progress:**

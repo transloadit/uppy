@@ -25,13 +25,13 @@ const Uppy = require('uppy/lib/core')
 const Dashboard = require('uppy/lib/plugins/Dashboard')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
-const Tus10 = require('uppy/lib/plugins/Tus10')
- 
+const Tus = require('uppy/lib/plugins/Tus')
+
 const uppy = Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })
   .use(Webcam, { target: Dashboard })
   .use(GoogleDrive, { target: Dashboard, host: 'https://server.uppy.io' })
-  .use(Tus10, { endpoint: '://master.tus.io/files/' })
+  .use(Tus, { endpoint: '://master.tus.io/files/' })
   .run()
   .on('core:success', files => console.log(`Successfully uploaded these files: ${files}`))
 ```
@@ -82,7 +82,7 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
 <script>
   var uppy = Uppy.Core()
   uppy.use(Uppy.DragDrop, {target: '.UppyDragDrop'})
-  uppy.use(Uppy.Tus10, {endpoint: '//master.tus.io/files/'})
+  uppy.use(Uppy.Tus, {endpoint: '//master.tus.io/files/'})
   uppy.run()
 </script>
 ```
@@ -106,7 +106,7 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
 - `ProgressBar` — minimal progress bar that fills itself when upload progresses
 - `StatusBar` — more detailed progress, pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included by default with `Dashboard`)
 - `Informer` — send notifications like “smile” before taking a selfie or “upload failed” when all is lost (also included by default with `Dashboard`)
-- `RestoreFiles` — restores files after a browser crash, like it’s nothing
+- `GoldenRetriever` — restores files after a browser crash, like it’s nothing
 - `ReduxDevTools` — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
 - `GoogleDrive` — select files from [Google Drive](https://www.google.com/drive/)
 - `Dropbox` — select files from [Dropbox](https://www.dropbox.com/)

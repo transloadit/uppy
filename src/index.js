@@ -24,13 +24,13 @@ const Informer = require('./plugins/Informer.js')
 const MetaData = require('./plugins/MetaData.js')
 
 // Uploaders
-const Tus10 = require('./plugins/Tus10')
+const Tus = require('./plugins/Tus')
 const XHRUpload = require('./plugins/XHRUpload')
 const Transloadit = require('./plugins/Transloadit')
 const AwsS3 = require('./plugins/AwsS3')
 
 // Other?
-const RestoreFiles = require('./plugins/RestoreFiles')
+const GoldenRetriever = require('./plugins/GoldenRetriever')
 const ReduxDevTools = require('./plugins/ReduxDevTools')
 const ReduxStore = require('./plugins/Redux')
 
@@ -46,14 +46,44 @@ module.exports = {
   Dropbox,
   Instagram,
   FileInput,
-  Tus10,
+  Tus,
   XHRUpload,
   Transloadit,
   AwsS3,
   Dashboard,
   MetaData,
   Webcam,
-  RestoreFiles,
+  GoldenRetriever,
   ReduxDevTools,
   ReduxStore
 }
+
+Object.defineProperty(module.exports, 'RestoreFiles', {
+  enumerable: true,
+  configurable: true,
+  get: () => {
+    console.warn('Uppy.RestoreFiles is deprecated and will be removed in v0.22. Use Uppy.GoldenRetriever instead.')
+    Object.defineProperty(module.exports, 'RestoreFiles', {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: GoldenRetriever
+    })
+    return GoldenRetriever
+  }
+})
+
+Object.defineProperty(module.exports, 'Tus10', {
+  enumerable: true,
+  configurable: true,
+  get: () => {
+    console.warn('Uppy.Tus10 is deprecated and will be removed in v0.22. Use Uppy.Tus instead.')
+    Object.defineProperty(module.exports, 'Tus10', {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: Tus
+    })
+    return Tus
+  }
+})

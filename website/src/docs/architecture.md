@@ -12,7 +12,7 @@ Uppy file uploader consists of a lean [Core](https://github.com/transloadit/uppy
 
 ## Core
 
-1. Core module orchestrates Uppy plugins, stores `state` with `files`, and exposes useful methods like `addFile`, `setState`, `upload` to the user and plugins. Plugins are added to Uppy with `.use(Plugin, opts)` API, like so: `.use(DragDrop, {target: 'body'})`. 
+1. Core module orchestrates Uppy plugins, stores `state` with `files`, and exposes useful methods like `addFile`, `setState`, `upload` to the user and plugins. Plugins are added to Uppy with `.use(Plugin, opts)` API, like so: `.use(DragDrop, {target: 'body'})`.
 
 2. Internally Core then instantiates plugins via `new Plugin(this, opts)`, passing options to them, then places them in `plugins` object, nested by type: `uploader`, `progressindicator`, `acquirer`, etc. Core then iterates over `plugins` and calls `install` on each of them. In it’s `install` method a plugin can set event listeners to react to things happening in Uppy (upload progress, file was removed), or do anything else needed on init.
 
@@ -141,7 +141,7 @@ a plugin can extend global state with its own state (like `{ modal: { isHidden: 
 
 ### uploader
 
-- **Tus10** — tus resumable file uploads, see http://tus.io
+- **Tus** — tus resumable file uploads, see http://tus.io
 - **Multipart** — regular form/multipart/xhr uploads
 
 ### modifier

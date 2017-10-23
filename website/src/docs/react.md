@@ -16,7 +16,7 @@ All other props are passed as options to the plugin.
 
 ```js
 const Uppy = require('uppy/lib/core')
-const Tus10 = require('uppy/lib/plugins/Tus10')
+const Tus = require('uppy/lib/plugins/Tus')
 const DragDrop = require('uppy/lib/react/DragDrop')
 
 const uppy = Uppy({
@@ -25,7 +25,7 @@ const uppy = Uppy({
   autoProceed: true
 })
 
-uppy.use(Tus10, { endpoint: '/upload' })
+uppy.use(Tus, { endpoint: '/upload' })
 
 uppy.on('core:success', (fileIDs) => {
   const url = uppy.getFile(fileIDs[0]).uploadURL

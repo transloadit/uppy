@@ -4,7 +4,7 @@
     <title></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://unpkg.com/uppy/dist/uppy.min.css" rel="stylesheet"> 
+    <link href="https://unpkg.com/uppy/dist/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <button id="uppyModalOpener">Open Modal</button>
@@ -12,7 +12,7 @@
     <script>
       const Dashboard = Uppy.Dashboard
       const Webcam = Uppy.Webcam
-      const Tus10 = Uppy.Tus10
+      const Tus = Uppy.Tus
       const Informer = Uppy.Informer
 
       const uppy = Uppy.Core({debug: true, autoProceed: false})
@@ -21,7 +21,7 @@
         target: 'body'
       })
       .use(Webcam, {target: Dashboard})
-      .use(Tus10, {endpoint: 'https://master.tus.io/files/', resume: true})
+      .use(Tus, {endpoint: 'https://master.tus.io/files/', resume: true})
       .use(Informer, {target: Dashboard})
 
       uppy.run()
