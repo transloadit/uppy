@@ -119,14 +119,15 @@ function getFileType (file) {
     'md': 'text/markdown',
     'markdown': 'text/markdown',
     'mp4': 'video/mp4',
-    'mp3': 'audio/mp3'
+    'mp3': 'audio/mp3',
+    'svg': 'image/svg+xml'
   }
 
-  const fileExtension = getFileNameAndExtension(file.name)[1]
+  const fileExtension = file.name ? getFileNameAndExtension(file.name)[1] : null
 
   if (file.isRemote) {
-    // some providers do not support for file types
-    let mime = file.type ? file.type : extensionsToMime[fileExtension]
+    // some remote providers do not support file types
+    const mime = file.type ? file.type : extensionsToMime[fileExtension]
     const type = mime ? mime.split('/') : emptyFileType
     return Promise.resolve(type)
   }
@@ -147,7 +148,7 @@ function getFileType (file) {
       }
 
       // 3. if that’s no good, see if we can map extension to a mime type
-      if (extensionsToMime[fileExtension]) {
+      if (fileExtension && extensionsToMime[fileExtension]) {
         return extensionsToMime[fileExtension].split('/')
       }
 
@@ -157,12 +158,6 @@ function getFileType (file) {
     .catch(() => {
       return emptyFileType
     })
-
-    // if (file.type) {
-    //   return Promise.resolve(file.type.split('/'))
-    // }
-    // return mime.lookup(file.name)
-    // return file.type ? file.type.split('/') : ['', '']
 }
 
 // TODO Check which types are actually supported in browsers. Chrome likes webm
@@ -182,8 +177,14 @@ function getFileTypeExtension (mimeType) {
   return mimeToExtensions[mimeType] || null
 }
 
-// returns [fileName, fileExt]
+/**
+* Takes a full filename string and returns an array of [fileName, fileExt]
+*
+* @param {string} fullFileName
+* @return {array} [fileName, fileExt]
+*/
 function getFileNameAndExtension (fullFileName) {
+  if (!fullFileName) return
   var re = /(?:\.([^.]+))?$/
   var fileExt = re.exec(fullFileName)[1]
   var fileName = fullFileName.replace('.' + fileExt, '')
