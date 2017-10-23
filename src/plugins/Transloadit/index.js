@@ -239,7 +239,7 @@ module.exports = class Transloadit extends Plugin {
       if (!files.hasOwnProperty(id)) {
         continue
       }
-      if (files[id].uploadURL === uploadedFile.tus_upload_url) {
+      if (files[id].uploadURL === uploadedFile.tus_upload_url || (files[id].tus && files[id].tus.uploadUrl === uploadedFile.tus_upload_url)) {
         return files[id]
       }
     }
