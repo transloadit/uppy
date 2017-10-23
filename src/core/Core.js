@@ -101,6 +101,7 @@ class Uppy {
     this.setState({
       plugins: {},
       files: {},
+      currentUploads: {},
       capabilities: {
         resumableUploads: false
       },
@@ -393,7 +394,7 @@ class Uppy {
     // Remove this file from its `currentUpload`.
     const updatedUploads = Object.assign({}, currentUploads)
     const removeUploads = []
-    Object.keys(currentUploads).forEach((uploadID) => {
+    Object.keys(updatedUploads).forEach((uploadID) => {
       const newFileIDs = currentUploads[uploadID].fileIDs.filter((uploadFileID) => uploadFileID !== fileID)
       // Remove the upload if no files are associated with it anymore.
       if (newFileIDs.length === 0) {
