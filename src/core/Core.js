@@ -867,6 +867,7 @@ class Uppy {
 
   info (message, type, duration) {
     const isComplexMessage = typeof message === 'object'
+    duration = typeof duration === 'undefined' ? 3000 : duration
 
     this.setState({
       info: {
