@@ -865,14 +865,13 @@ class Uppy {
   * @param {string} msg Message to be displayed by the informer
   */
 
-  info (message, type, duration) {
+  info (message, type = 'info', duration = 3000) {
     const isComplexMessage = typeof message === 'object'
-    duration = typeof duration === 'undefined' ? 3000 : duration
 
     this.setState({
       info: {
         isHidden: false,
-        type: type || 'info',
+        type: type,
         message: isComplexMessage ? message.message : message,
         details: isComplexMessage ? message.details : null
       }
