@@ -89,7 +89,9 @@ function runPromiseSequence (functions, ...args) {
   return promise
 }
 
-function isPreviewSupported (fileTypeSpecific) {
+function isPreviewSupported (fileType) {
+  if (!fileType) return false
+  const fileTypeSpecific = fileType.split('/')[1]
   // list of images that browsers can preview
   if (/^(jpeg|gif|png|svg|svg\+xml|bmp)$/.test(fileTypeSpecific)) {
     return true
@@ -114,7 +116,6 @@ function getArrayBuffer (chunk) {
 }
 
 function getFileType (file) {
-  const emptyFileType = ['', '']
   const extensionsToMime = {
     'md': 'text/markdown',
     'markdown': 'text/markdown',
@@ -128,8 +129,7 @@ function getFileType (file) {
   if (file.isRemote) {
     // some remote providers do not support file types
     const mime = file.type ? file.type : extensionsToMime[fileExtension]
-    const type = mime ? mime.split('/') : emptyFileType
-    return Promise.resolve(type)
+    return Promise.resolve(mime)
   }
 
   // 1. try to determine file type from magic bytes with file-type module
@@ -139,24 +139,24 @@ function getFileType (file) {
     .then((buffer) => {
       const type = fileType(buffer)
       if (type && type.mime) {
-        return type.mime.split('/')
+        return type.mime
       }
 
       // 2. if that’s no good, check if mime type is set in the file object
       if (file.type) {
-        return file.type.split('/')
+        return file.type
       }
 
       // 3. if that’s no good, see if we can map extension to a mime type
       if (fileExtension && extensionsToMime[fileExtension]) {
-        return extensionsToMime[fileExtension].split('/')
+        return extensionsToMime[fileExtension]
       }
 
       // if all fails, well, return empty
-      return emptyFileType
+      return null
     })
     .catch(() => {
-      return emptyFileType
+      return null
     })
 }
 

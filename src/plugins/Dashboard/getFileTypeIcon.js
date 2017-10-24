@@ -1,6 +1,16 @@
 const { iconText, iconAudio, iconVideo, iconPDF } = require('./icons')
 
-module.exports = function getIconByMime (fileTypeGeneral, fileTypeSpecific) {
+module.exports = function getIconByMime (fileType) {
+  const defaultChoise = {
+    color: '#cbcbcb',
+    icon: ''
+  }
+
+  if (!fileType) return defaultChoise
+
+  const fileTypeGeneral = fileType.split('/')[0]
+  const fileTypeSpecific = fileType.split('/')[1]
+
   if (fileTypeGeneral === 'text') {
     return {
       color: '#000',
@@ -36,8 +46,5 @@ module.exports = function getIconByMime (fileTypeGeneral, fileTypeSpecific) {
     }
   }
 
-  return {
-    color: '#cbcbcb',
-    icon: ''
-  }
+  return defaultChoise
 }

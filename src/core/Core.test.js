@@ -288,7 +288,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => core.upload())
@@ -311,7 +311,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -339,7 +339,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -392,7 +392,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => core.upload())
@@ -421,7 +421,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -449,7 +449,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -504,7 +504,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -524,7 +524,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: fileData
         })
         .then(() => {
@@ -533,7 +533,7 @@ describe('src/Core', () => {
             extension: 'jpg',
             id: fileId,
             isRemote: false,
-            meta: { name: 'foo.jpg' },
+            meta: { name: 'foo.jpg', type: 'image/jpeg' },
             name: 'foo.jpg',
             preview: sampleImageDataURI,
             data: fileData,
@@ -547,7 +547,7 @@ describe('src/Core', () => {
             remote: '',
             size: 17175,
             source: 'jest',
-            type: { general: 'image', specific: 'jpeg', mime: 'image/jpeg' }
+            type: 'image/jpeg'
           }
           expect(core.state.files[fileId]).toEqual(newFile)
           newFile.preview = undefined // not sure why this happens.. needs further investigation
@@ -565,7 +565,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -585,7 +585,7 @@ describe('src/Core', () => {
       return expect(core.addFile({
         source: 'jest',
         name: 'foo.jpg',
-        type: 'image/jpg',
+        type: 'image/jpeg',
         data: null
       })).rejects.toMatchObject({ message: 'onBeforeFileAdded: a plain string' })
     })
@@ -604,7 +604,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -636,7 +636,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -669,7 +669,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -678,6 +678,7 @@ describe('src/Core', () => {
           core.updateMeta({ boo: 'moo', bur: 'fur' }, fileId)
           expect(core.state.files[fileId].meta).toEqual({
             name: 'foo.jpg',
+            type: 'image/jpeg',
             foo: 'bar',
             bur: 'fur',
             boo: 'moo'
@@ -692,7 +693,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -701,6 +702,7 @@ describe('src/Core', () => {
           core.emit('core:update-meta', { boo: 'moo', bur: 'fur' }, fileId)
           expect(core.state.files[fileId].meta).toEqual({
             name: 'foo.jpg',
+            type: 'image/jpeg',
             foo: 'bar',
             bur: 'fur',
             boo: 'moo'
@@ -716,7 +718,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -755,7 +757,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -763,7 +765,7 @@ describe('src/Core', () => {
             .addFile({
               source: 'jest',
               name: 'foo2.jpg',
-              type: 'image/jpg',
+              type: 'image/jpeg',
               data: utils.dataURItoFile(sampleImageDataURI, {})
             })
         }).then(() => {
@@ -798,7 +800,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
@@ -806,7 +808,7 @@ describe('src/Core', () => {
             .addFile({
               source: 'jest',
               name: 'foo2.jpg',
-              type: 'image/jpg',
+              type: 'image/jpeg',
               data: utils.dataURItoFile(sampleImageDataURI, {})
             })
         }).then(() => {
@@ -866,13 +868,13 @@ describe('src/Core', () => {
       core.addFile({
         source: 'jest',
         name: 'foo1.jpg',
-        type: 'image/jpg',
+        type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
       })
       return expect(core.addFile({
         source: 'jest',
         name: 'foo2.jpg',
-        type: 'image/jpg',
+        type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
       })).rejects.toMatchObject({ message: 'File not allowed' }).then(() => {
         expect(core.state.info.message).toEqual('You can only upload 1 file')
@@ -892,7 +894,7 @@ describe('src/Core', () => {
       return expect(core.addFile({
         source: 'jest',
         name: 'foo2.jpg',
-        type: 'image/jpg',
+        type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
       })).rejects.toMatchObject({ message: 'File not allowed' }).then(() => {
         expect(core.state.info.message).toEqual('You can only upload: image/gif, image/png')
@@ -910,7 +912,7 @@ describe('src/Core', () => {
       return expect(core.addFile({
         source: 'jest',
         name: 'foo.jpg',
-        type: 'image/jpg',
+        type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
       })).rejects.toMatchObject({ message: 'File not allowed' }).then(() => {
         expect(core.state.info.message).toEqual('This file exceeds maximum allowed size of 1.2 KB')
@@ -1086,7 +1088,7 @@ describe('src/Core', () => {
       return core.addFile({
         source: 'jest',
         name: 'foo.jpg',
-        type: 'image/jpg',
+        type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
       }).then(() => {
         core.createUpload(Object.keys(core.state.files))
@@ -1121,7 +1123,7 @@ describe('src/Core', () => {
         .addFile({
           source: 'jest',
           name: 'foo.jpg',
-          type: 'image/jpg',
+          type: 'image/jpeg',
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {

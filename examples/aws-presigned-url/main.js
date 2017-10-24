@@ -25,7 +25,7 @@ uppy.use(AwsS3, {
       },
       body: JSON.stringify({
         filename: file.name,
-        contentType: `${file.type.general}/${file.type.specific}`
+        contentType: file.type
       })
     }).then((response) => {
       // Parse the JSON response.
