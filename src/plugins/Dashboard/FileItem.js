@@ -21,7 +21,7 @@ module.exports = function fileItem (props) {
   const isPaused = file.isPaused || false
   const error = file.error || false
 
-  const fileName = getFileNameAndExtension(file.meta.name)[0]
+  const fileName = getFileNameAndExtension(file.meta.name).name
   const truncatedFileName = props.isWide ? truncateString(fileName, 15) : fileName
 
   const onPauseResumeCancelRetry = (ev) => {

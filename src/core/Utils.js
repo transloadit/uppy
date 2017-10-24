@@ -123,7 +123,7 @@ function getFileType (file) {
     'svg': 'image/svg+xml'
   }
 
-  const fileExtension = file.name ? getFileNameAndExtension(file.name)[1] : null
+  const fileExtension = file.name ? getFileNameAndExtension(file.name).extension : null
 
   if (file.isRemote) {
     // some remote providers do not support file types
@@ -178,17 +178,19 @@ function getFileTypeExtension (mimeType) {
 }
 
 /**
-* Takes a full filename string and returns an array of [fileName, fileExt]
+* Takes a full filename string and returns an object {name, extension}
 *
 * @param {string} fullFileName
-* @return {array} [fileName, fileExt]
+* @return {object} {name, extension}
 */
 function getFileNameAndExtension (fullFileName) {
-  if (!fullFileName) return
   var re = /(?:\.([^.]+))?$/
   var fileExt = re.exec(fullFileName)[1]
   var fileName = fullFileName.replace('.' + fileExt, '')
-  return [fileName, fileExt]
+  return {
+    name: fileName,
+    extension: fileExt
+  }
 }
 
 function supportsMediaRecorder () {
