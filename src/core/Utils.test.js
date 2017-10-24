@@ -100,17 +100,17 @@ describe('core/utils', () => {
 
   describe('getFileNameAndExtension', () => {
     it('should return the filename and extension as an array', () => {
-      expect(utils.getFileNameAndExtension('fsdfjodsuf23rfw.jpg')).toEqual([
-        'fsdfjodsuf23rfw',
-        'jpg'
-      ])
+      expect(utils.getFileNameAndExtension('fsdfjodsuf23rfw.jpg')).toEqual({
+        name: 'fsdfjodsuf23rfw',
+        extension: 'jpg'
+      })
     })
 
     it('should handle invalid filenames', () => {
-      expect(utils.getFileNameAndExtension('fsdfjodsuf23rfw')).toEqual([
-        'fsdfjodsuf23rfw',
-        undefined
-      ])
+      expect(utils.getFileNameAndExtension('fsdfjodsuf23rfw')).toEqual({
+        name: 'fsdfjodsuf23rfw',
+        extension: undefined
+      })
     })
   })
 
