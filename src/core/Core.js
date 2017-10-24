@@ -306,8 +306,11 @@ class Uppy {
     }).then(() => {
       return Utils.getFileType(file).then((fileType) => {
         const updatedFiles = Object.assign({}, this.state.files)
-        const fileName = file.name || 'noname'
-        const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
+        let fileName = file.name || 'noname'
+        if (!file.name && fileType[0] === 'image') {
+          fileName = fileType[0] + '.' + fileType[1]
+        }
+        const fileExtension = Utils.getFileNameAndExtension(fileName).extension
         const isRemote = file.isRemote || false
 
         const fileID = Utils.generateFileID(file)
