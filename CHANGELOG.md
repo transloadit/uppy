@@ -49,6 +49,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget
 - [ ] statusbar: add option to always show
 - [ ] have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
+- [ ] “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no uppy-server required #362
+- [ ] WordPress plugin
 
 ## 1.0 Goals
 
@@ -58,25 +60,28 @@ What we need to do to release Uppy 1.0
 - [x] feature: beta file recovering after closed tab / browser crash
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
 - [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
-- [ ] feature: Uppy should work well with React/Redux and React Native
+- [x] feature: easy integration with React (UppyReact components)
+- [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
+- [ ] feature: React Native support
 - [ ] feature: preset for Transloadit that mimics jQuery SDK
-- [ ] QA: tests for everything
+- [x] QA: tests for core and utils
+- [ ] QA: tests for plugins
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
 - [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files. add metrics to Librato
-- [ ] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
 - [ ] QA: test in multiple browsers and mobile devices, fix bugs
 - [ ] QA: test with real screen reader to identify accessibility problems
+- [x] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
 - [ ] ui: refine UI, neat things up (if that’s even a word)
 - [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
 - [ ] refactoring: possibly add CSS-in-JS
 - [ ] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
 - [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say uploading plugins don’t include rendering stuff
-- [ ] refactoring: webcam plugin
+- [x] refactoring: webcam plugin
 - [ ] refactoring: clean up code everywhere
 - [ ] docs: on using plugins, all options, list of plugins, i18n
 - [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
-- [ ] uppy-server: security audit
-- [ ] uppy-server: storing tokens in user’s browser only
+- [ ] uppy-server: security audit 
+- [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 - [ ] automatically host releases on edgly and use that as our main CDN
 
@@ -88,7 +93,7 @@ What we need to do to release Uppy 1.0
 
 ## 0.21.0
 
-To be released: 2017-10-27
+To be released: 2017-11-10
 
 - [ ] webcam: look into simplifying / improving webcam plugin (probably good to do modern browsers only), only showing the tab when webcam is available (@arturi, @goto-bus-stop)
 - [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
@@ -98,17 +103,18 @@ To be released: 2017-10-27
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
 - [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
 - [ ] core: allow setting custom `id` for plugins: https://github.com/transloadit/uppy/pull/328#issuecomment-328242214 (@arturi)
-- [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think)
+- [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think) (@arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] core: return `{ successful, failed }` from `uppy.upload()` (@goto-bus-stop)
-- [ ] core: refactor `uppy-base` (@arturi)
+- [ ] core: refactor `uppy-base` (@goto-bus-stop)
 - [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
-- [ ] plugins: add tabindex="0" to buttons and tabs? (@arturi)
+- [ ] plugins: add tabindex="0" to buttons and tabs (@arturi)
 - [ ] goldenretriever: add “ghost” files (@arturi)
-- [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network (@goto-bus-stop)
+- [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network (#378 / @goto-bus-stop)
 - [ ] tus: Review b3cc48130e292f08c2a09f2f0adf6b6332bf7692
 - [x] tus: Rename Tus10 → Tus
+- [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 
 ## 0.20.3
 
