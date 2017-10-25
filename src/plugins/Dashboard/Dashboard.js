@@ -9,6 +9,8 @@ const { closeIcon } = require('./icons')
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 
 module.exports = function Dashboard (props) {
+  const activePanelPlugin = props.activePanel ? props.getPlugin(props.activePanel.id) : null
+
   function handleInputChange (ev) {
     ev.preventDefault()
     const files = toArray(ev.target.files)
@@ -140,12 +142,13 @@ module.exports = function Dashboard (props) {
                     type="button"
                     onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
           </div>
-          ${props.activePanel ? props.getPlugin(props.activePanel.id).render(props.state) : ''}
+          ${activePanelPlugin ? activePanelPlugin.render(props.state) : null}
         </div>
 
         <div class="UppyDashboard-progressindicators">
           ${props.progressindicators.map((target) => {
-            return props.getPlugin(target.id).render(props.state)
+            const progressIndicatorPlugin = props.getPlugin(target.id)
+            return progressIndicatorPlugin ? progressIndicatorPlugin.render(props.state) : null
           })}
         </div>
 
