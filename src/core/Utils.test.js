@@ -57,25 +57,6 @@ describe('core/utils', () => {
     })
   })
 
-  describe('supportsMediaRecorder', () => {
-    it('should return true if MediaRecorder is supported', () => {
-      global.MediaRecorder = () => {}
-      global.MediaRecorder.prototype.start = () => {}
-      expect(utils.supportsMediaRecorder()).toEqual(true)
-    })
-
-    it('should return false if MediaRecorder is not supported', () => {
-      global.MediaRecorder = undefined
-      expect(utils.supportsMediaRecorder()).toEqual(false)
-
-      global.MediaRecorder = () => {}
-      expect(utils.supportsMediaRecorder()).toEqual(false)
-
-      global.MediaRecorder.prototype.foo = () => {}
-      expect(utils.supportsMediaRecorder()).toEqual(false)
-    })
-  })
-
   describe('isTouchDevice', () => {
     const RealTouchStart = global.window.ontouchstart
     const RealMaxTouchPoints = global.navigator.maxTouchPoints

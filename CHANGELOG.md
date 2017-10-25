@@ -90,7 +90,8 @@ What we need to do to release Uppy 1.0
 
 To be released: 2017-10-27
 
-- [ ] webcam: look into simplifying / improving webcam plugin (probably good to do modern browsers only), only showing the tab when webcam is available (@arturi, @goto-bus-stop)
+- [x] webcam: look into simplifying / improving webcam plugin (probably good to do modern browsers only) (#382 / @goto-bus-stop)
+- [ ] webcam: only show the webcam tab when browser support is available (@arturi, @goto-bus-stop)
 - [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
 - [ ] provider: improve UI, add icons for file types (@arturi)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
@@ -102,7 +103,7 @@ To be released: 2017-10-27
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] core: return `{ successful, failed }` from `uppy.upload()` (@goto-bus-stop)
-- [ ] core: refactor `uppy-base` (@arturi)
+- [x] core: refactor `uppy-base` (#382 / @goto-bus-stop)
 - [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
 - [ ] plugins: add tabindex="0" to buttons and tabs? (@arturi)
 - [ ] goldenretriever: add “ghost” files (@arturi)

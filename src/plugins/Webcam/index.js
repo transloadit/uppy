@@ -1,11 +1,34 @@
 const Plugin = require('../Plugin')
-const WebcamProvider = require('../../uppy-base/src/plugins/Webcam')
 const Translator = require('../../core/Translator')
-const { getFileTypeExtension,
-        supportsMediaRecorder } = require('../../core/Utils')
+const {
+  getFileTypeExtension,
+  canvasToBlob
+} = require('../../core/Utils')
+const supportsMediaRecorder = require('./supportsMediaRecorder')
 const WebcamIcon = require('./WebcamIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
+
+// Setup getUserMedia, with polyfill for older browsers
+// Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+function getMediaDevices () {
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    return navigator.mediaDevices
+  }
+
+  let getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia
+  if (!getUserMedia) {
+    return null
+  }
+
+  return {
+    getUserMedia (opts) {
+      return new Promise((resolve, reject) => {
+        getUserMedia.call(navigator, opts, resolve, reject)
+      })
+    }
+  }
+}
 
 /**
  * Webcam
@@ -13,7 +36,8 @@ const PermissionsScreen = require('./PermissionsScreen')
 module.exports = class Webcam extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.userMedia = true
+    this.mediaDevices = getMediaDevices()
+    this.supportsUserMedia = !!this.mediaDevices
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.type = 'acquirer'
     this.id = 'Webcam'
@@ -29,7 +53,6 @@ module.exports = class Webcam extends Plugin {
 
     // set default options
     const defaultOptions = {
-      enableFlash: true,
       onBeforeSnapshot: () => Promise.resolve(),
       countdown: false,
       locale: defaultLocale,
@@ -39,25 +62,6 @@ module.exports = class Webcam extends Plugin {
         'audio-only',
         'picture'
       ]
-    }
-
-    this.params = {
-      swfURL: 'webcam.swf',
-      width: 400,
-      height: 300,
-      dest_width: 800,         // size of captured image
-      dest_height: 600,        // these default to width/height
-      image_format: 'jpeg',  // image format (may be jpeg or png)
-      jpeg_quality: 90,      // jpeg image quality from 0 (worst) to 100 (best)
-      enable_flash: true,    // enable flash fallback,
-      force_flash: false,    // force flash mode,
-      flip_horiz: false,     // flip image horiz (mirror mode)
-      fps: 30,               // camera frames per second
-      upload_name: 'webcam', // name of file in upload post data
-      constraints: null,     // custom user media constraints,
-      flashNotDetectedText: 'ERROR: No Adobe Flash Player detected.  Webcam.js relies on Flash for browsers that do not support getUserMedia (like yours).',
-      noInterfaceFoundText: 'No supported webcam interface found.',
-      unfreeze_snap: true    // Whether to unfreeze the camera after snap (defaults to true)
     }
 
     // merge default options with the ones set by user
@@ -82,32 +86,37 @@ module.exports = class Webcam extends Plugin {
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
     this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
-    // this.justSmile = this.justSmile.bind(this)
 
-    this.webcam = new WebcamProvider(this.opts, this.params)
     this.webcamActive = false
 
     if (this.opts.countdown) {
       this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
     }
-
-    // if (typeof opts.onBeforeSnapshot === 'undefined' || !this.opts.onBeforeSnapshot) {
-    //   if (this.opts.countdown) {
-    //     this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
-    //   } else {
-    //     this.opts.onBeforeSnapshot = this.justSmile
-    //   }
-    // }
   }
 
   start () {
+    if (!this.mediaDevices) {
+      return Promise.reject(new Error('Webcam access not supported'))
+    }
+
     this.webcamActive = true
 
-    this.webcam.start()
+    const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1 ||
+      this.opts.modes.indexOf('audio-only') !== -1
+    const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1 ||
+      this.opts.modes.indexOf('video-only') !== -1 ||
+      this.opts.modes.indexOf('picture') !== -1
+
+    // ask user for access to their camera
+    return this.mediaDevices
+      .getUserMedia({
+        audio: acceptsAudio,
+        video: acceptsVideo
+      })
       .then((stream) => {
         this.stream = stream
+        this.streamSrc = URL.createObjectURL(this.stream)
         this.setPluginState({
-          // videoStream: stream,
           cameraReady: true
         })
       })
@@ -136,36 +145,27 @@ module.exports = class Webcam extends Plugin {
   }
 
   stopRecording () {
-    return new Promise((resolve, reject) => {
+    const stopped = new Promise((resolve, reject) => {
       this.recorder.addEventListener('stop', () => {
-        this.setPluginState({
-          isRecording: false
-        })
-
-        const mimeType = this.recordingChunks[0].type
-        const fileExtension = getFileTypeExtension(mimeType)
-
-        if (!fileExtension) {
-          reject(new Error(`Could not upload file: Unsupported media type "${mimeType}"`))
-          return
-        }
-
-        const file = {
-          source: this.id,
-          name: `webcam-${Date.now()}.${fileExtension}`,
-          type: mimeType,
-          data: new Blob(this.recordingChunks, { type: mimeType })
-        }
-
-        this.core.addFile(file)
-
-        this.recordingChunks = null
-        this.recorder = null
-
         resolve()
       })
-
       this.recorder.stop()
+    })
+
+    return stopped.then(() => {
+      this.setPluginState({
+        isRecording: false
+      })
+      return this.getVideo()
+    }).then((file) => {
+      return this.core.addFile(file)
+    }).then(() => {
+      this.recordingChunks = null
+      this.recorder = null
+    }, (error) => {
+      this.recordingChunks = null
+      this.recorder = null
+      throw error
     })
   }
 
@@ -179,6 +179,10 @@ module.exports = class Webcam extends Plugin {
     this.webcamActive = false
     this.stream = null
     this.streamSrc = null
+  }
+
+  getVideoElement () {
+    return this.target.querySelector('.UppyWebcam-video')
   }
 
   oneTwoThreeSmile () {
@@ -204,21 +208,7 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  // justSmile () {
-  //   return new Promise((resolve, reject) => {
-  //     setTimeout(() => this.core.info(this.i18n('smile'), 'success', 1000), 1500)
-  //     setTimeout(() => resolve(), 2000)
-  //   })
-  // }
-
   takeSnapshot () {
-    const opts = {
-      name: `webcam-${Date.now()}.jpg`,
-      mimeType: 'image/jpeg'
-    }
-
-    this.videoEl = this.target.querySelector('.UppyWebcam-video')
-
     if (this.captureInProgress) return
     this.captureInProgress = true
 
@@ -227,24 +217,58 @@ module.exports = class Webcam extends Plugin {
       this.core.info(message, 'error', 5000)
       return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
     }).then(() => {
-      const video = this.target.querySelector('.UppyWebcam-video')
-      if (!video) {
-        this.captureInProgress = false
-        return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
-      }
-
-      const image = this.webcam.getImage(video, opts)
-
-      const tagFile = {
-        source: this.id,
-        name: opts.name,
-        data: image.data,
-        type: opts.mimeType
-      }
-
+      return this.getImage()
+    }).then((tagFile) => {
       this.captureInProgress = false
       this.core.addFile(tagFile)
+    }, (error) => {
+      this.captureInProgress = false
+      throw error
     })
+  }
+
+  getImage () {
+    const video = this.getVideoElement()
+    if (!video) {
+      return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
+    }
+
+    const name = `webcam-${Date.now()}.jpg`
+    const mimeType = 'image/jpeg'
+
+    const canvas = document.createElement('canvas')
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    canvas.getContext('2d').drawImage(video, 0, 0)
+
+    return canvasToBlob(canvas, mimeType).then((blob) => {
+      return {
+        source: this.id,
+        name: name,
+        data: new File([blob], name, { type: mimeType }),
+        type: mimeType
+      }
+    })
+  }
+
+  getVideo () {
+    const mimeType = this.recordingChunks[0].type
+    const fileExtension = getFileTypeExtension(mimeType)
+
+    if (!fileExtension) {
+      return Promise.reject(new Error(`Could not retrieve recording: Unsupported media type "${mimeType}"`))
+    }
+
+    const name = `webcam-${Date.now()}.${fileExtension}`
+    const blob = new Blob(this.recordingChunks, { type: mimeType })
+    const file = {
+      source: this.id,
+      name: name,
+      data: new File([blob], name, { type: mimeType }),
+      type: mimeType
+    }
+
+    return Promise.resolve(file)
   }
 
   focus () {
@@ -261,12 +285,8 @@ module.exports = class Webcam extends Plugin {
 
     const webcamState = this.getPluginState()
 
-    if (!webcamState.cameraReady && !webcamState.useTheFlash) {
+    if (!webcamState.cameraReady) {
       return PermissionsScreen(webcamState)
-    }
-
-    if (!this.streamSrc) {
-      this.streamSrc = this.stream ? URL.createObjectURL(this.stream) : null
     }
 
     return CameraScreen(Object.assign({}, webcamState, {
@@ -278,13 +298,11 @@ module.exports = class Webcam extends Plugin {
       modes: this.opts.modes,
       supportsRecording: supportsMediaRecorder(),
       recording: webcamState.isRecording,
-      getSWFHTML: this.webcam.getSWFHTML,
       src: this.streamSrc
     }))
   }
 
   install () {
-    this.webcam.init()
     this.setPluginState({
       cameraReady: false
     })
@@ -295,7 +313,10 @@ module.exports = class Webcam extends Plugin {
   }
 
   uninstall () {
-    this.webcam.reset()
+    if (this.stream) {
+      this.stop()
+    }
+
     this.unmount()
   }
 }

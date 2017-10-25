@@ -1,11 +1,11 @@
 const html = require('yo-yo')
 const Plugin = require('../Plugin')
 
-const Provider = require('../../uppy-base/src/plugins/Provider')
+const Provider = require('../../Provider')
 
-const View = require('../../generic-provider-views/index')
+const View = require('../../generic-provider-views')
 
-module.exports = class Google extends Plugin {
+module.exports = class GoogleDrive extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
