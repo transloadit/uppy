@@ -3,7 +3,7 @@ const Dashboard = require('../../src/plugins/Dashboard')
 // const GoogleDrive = require('../../src/plugins/GoogleDrive')
 const Dropbox = require('../../src/plugins/Dropbox')
 const Instagram = require('../../src/plugins/Instagram')
-// const Webcam = require('../../src/plugins/Webcam')
+const Webcam = require('../../src/plugins/Webcam')
 const Tus = require('../../src/plugins/Tus')
 // const XHRUpload = require('../../src/plugins/XHRUpload')
 // const FileInput = require('../../src/plugins/FileInput')
@@ -61,6 +61,7 @@ const uppy = Uppy({
   // .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
+  .use(Webcam, {target: Dashboard})
   .use(Tus, {endpoint: TUS_ENDPOINT, resume: true})
   .use(MetaData, {
     fields: [

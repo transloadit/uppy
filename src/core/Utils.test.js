@@ -81,17 +81,17 @@ describe('core/utils', () => {
 
   describe('getFileNameAndExtension', () => {
     it('should return the filename and extension as an array', () => {
-      expect(utils.getFileNameAndExtension('fsdfjodsuf23rfw.jpg')).toEqual([
-        'fsdfjodsuf23rfw',
-        'jpg'
-      ])
+      expect(utils.getFileNameAndExtension('fsdfjodsuf23rfw.jpg')).toEqual({
+        name: 'fsdfjodsuf23rfw',
+        extension: 'jpg'
+      })
     })
 
     it('should handle invalid filenames', () => {
-      expect(utils.getFileNameAndExtension('fsdfjodsuf23rfw')).toEqual([
-        'fsdfjodsuf23rfw',
-        undefined
-      ])
+      expect(utils.getFileNameAndExtension('fsdfjodsuf23rfw')).toEqual({
+        name: 'fsdfjodsuf23rfw',
+        extension: undefined
+      })
     })
   })
 
@@ -176,7 +176,7 @@ describe('core/utils', () => {
         name: 'foo.webm'
       }
       return utils.getFileType(file).then(r => {
-        expect(r).toEqual(['audio', 'webm'])
+        expect(r).toEqual('audio/webm')
       })
     })
 
@@ -187,7 +187,7 @@ describe('core/utils', () => {
         data: 'sdfsdfhq9efbicw'
       }
       return utils.getFileType(file).then(r => {
-        expect(r).toEqual(['audio', 'webm'])
+        expect(r).toEqual('audio/webm')
       })
     })
 
@@ -197,7 +197,7 @@ describe('core/utils', () => {
         data: 'sdfsfhfh329fhwihs'
       }
       return utils.getFileType(file).then(r => {
-        expect(r).toEqual(['audio', 'mp3'])
+        expect(r).toEqual('audio/mp3')
       })
     })
 
@@ -207,7 +207,7 @@ describe('core/utils', () => {
         data: 'sdfsfhfh329fhwihs'
       }
       return utils.getFileType(file).then(r => {
-        expect(r).toEqual(['', ''])
+        expect(r).toEqual(null)
       })
     })
   })
@@ -243,7 +243,7 @@ describe('core/utils', () => {
 
   describe('isPreviewSupported', () => {
     it('should return true for any filetypes that browsers can preview', () => {
-      const supported = ['jpeg', 'gif', 'png', 'svg', 'svg+xml', 'bmp']
+      const supported = ['image/jpeg', 'image/gif', 'image/png', 'image/svg', 'image/svg+xml', 'image/bmp']
       supported.forEach(ext => {
         expect(utils.isPreviewSupported(ext)).toEqual(true)
       })

@@ -268,7 +268,7 @@ class Uppy {
     }
 
     if (allowedFileTypes) {
-      const isCorrectFileType = allowedFileTypes.filter(match(file.type.mime)).length > 0
+      const isCorrectFileType = allowedFileTypes.filter(match(file.type)).length > 0
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
         this.info(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
@@ -306,25 +306,29 @@ class Uppy {
     }).then(() => {
       return Utils.getFileType(file).then((fileType) => {
         const updatedFiles = Object.assign({}, this.state.files)
-        const fileName = file.name || 'noname'
-        const fileExtension = Utils.getFileNameAndExtension(fileName)[1]
+        let fileName
+        if (file.name) {
+          fileName = file.name
+        } else if (fileType.split('/')[0] === 'image') {
+          fileName = fileType.split('/')[0] + '.' + fileType.split('/')[1]
+        } else {
+          fileName = 'noname'
+        }
+        const fileExtension = Utils.getFileNameAndExtension(fileName).extension
         const isRemote = file.isRemote || false
 
         const fileID = Utils.generateFileID(file)
-        const fileTypeGeneral = fileType[0]
-        const fileTypeSpecific = fileType[1]
 
         const newFile = {
           source: file.source || '',
           id: fileID,
           name: fileName,
           extension: fileExtension || '',
-          meta: Object.assign({}, { name: fileName }, this.getState().meta),
-          type: {
-            general: fileTypeGeneral,
-            specific: fileTypeSpecific,
-            mime: fileType.join('/')
-          },
+          meta: Object.assign({}, this.getState().meta, {
+            name: fileName,
+            type: fileType
+          }),
+          type: fileType,
           data: file.data,
           progress: {
             percentage: 0,
@@ -390,7 +394,7 @@ class Uppy {
    * Generate a preview image for the given file, if possible.
    */
   generatePreview (file) {
-    if (Utils.isPreviewSupported(file.type.specific) && !file.isRemote) {
+    if (Utils.isPreviewSupported(file.type) && !file.isRemote) {
       Utils.createThumbnail(file, 200).then((thumbnail) => {
         this.setPreviewURL(file.id, thumbnail)
       }).catch((err) => {
@@ -865,13 +869,13 @@ class Uppy {
   * @param {string} msg Message to be displayed by the informer
   */
 
-  info (message, type, duration) {
+  info (message, type = 'info', duration = 3000) {
     const isComplexMessage = typeof message === 'object'
 
     this.setState({
       info: {
         isHidden: false,
-        type: type || 'info',
+        type: type,
         message: isComplexMessage ? message.message : message,
         details: isComplexMessage ? message.details : null
       }
