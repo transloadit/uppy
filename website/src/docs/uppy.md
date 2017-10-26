@@ -236,7 +236,7 @@ uppy.setMeta({resize: 1500})
 Updated metadata for a specific file.
 
 ```js
-uppy.updateMeta('myfileID', {resize: 1500})
+uppy.updateMeta({resize: 1500}, 'myfileID')
 ```
 
 ### `uppy.reset()`
