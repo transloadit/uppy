@@ -595,16 +595,16 @@ class Uppy {
     // })
 
     this.on('core:error', (error) => {
-      this.setState({ error })
+      this.setState({ error: error.message })
     })
 
     this.on('core:upload-error', (fileID, error) => {
       const updatedFiles = Object.assign({}, this.state.files)
       const updatedFile = Object.assign({}, updatedFiles[fileID],
-        { error: error }
+        { error: error.message }
       )
       updatedFiles[fileID] = updatedFile
-      this.setState({ files: updatedFiles, error: error })
+      this.setState({ files: updatedFiles, error: error.message })
 
       const fileName = this.state.files[fileID].name
       let message = `Failed to upload ${fileName}`
