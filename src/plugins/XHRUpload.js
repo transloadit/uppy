@@ -1,4 +1,5 @@
 const Plugin = require('./Plugin')
+const cuid = require('cuid')
 const Translator = require('../core/Translator')
 const UppySocket = require('../core/UppySocket')
 const {
@@ -100,6 +101,7 @@ module.exports = class XHRUpload extends Plugin {
 
       const onTimedOut = () => {
         xhr.abort()
+        this.core.log(`[XHRUpload] ${id} timed out`)
         const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
         this.core.emit('core:upload-error', file.id, error)
         reject(error)
@@ -111,8 +113,10 @@ module.exports = class XHRUpload extends Plugin {
       }
 
       const xhr = new XMLHttpRequest()
+      const id = cuid()
 
       xhr.upload.addEventListener('loadstart', (ev) => {
+        this.core.log(`[XHRUpload] ${id} started`)
         if (opts.timeout > 0) {
           // Begin checking for timeouts when loading starts.
           isAlive()
@@ -120,6 +124,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.upload.addEventListener('progress', (ev) => {
+        this.core.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`)
         if (opts.timeout > 0) {
           isAlive()
         }
@@ -135,6 +140,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.addEventListener('load', (ev) => {
+        this.core.log(`[XHRUpload] ${id} finished`)
         clearTimeout(aliveTimer)
 
         if (ev.target.status >= 200 && ev.target.status < 300) {
@@ -157,6 +163,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.addEventListener('error', (ev) => {
+        this.core.log(`[XHRUpload] ${id} errored`)
         clearTimeout(aliveTimer)
 
         const error = opts.getResponseError(xhr) || new Error('Upload error')
