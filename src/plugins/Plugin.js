@@ -2,7 +2,7 @@
 // const nanoraf = require('nanoraf')
 const { findDOMElement } = require('../core/Utils')
 const getFormData = require('get-form-data')
-const { render } = require('preact')
+// const preact = require('preact')
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -29,15 +29,17 @@ module.exports = class Plugin {
     this.uninstall = this.uninstall.bind(this)
   }
 
-  update (state) {
-    if (typeof this.el === 'undefined') {
-      return
-    }
+  // update (state) {
+  //   if (typeof this.el === 'undefined') {
+  //     return
+  //   }
 
-    if (this.updateUI) {
-      this.updateUI(state)
-    }
-  }
+  //   if (this.updateUI) {
+  //     this.updateUI(state)
+  //   }
+  // }
+
+  update () {}
 
   /**
    * Check if supplied `target` is a DOM element or an `object`.
@@ -57,9 +59,9 @@ module.exports = class Plugin {
     //   // this.el = yo.update(this.el, this.render(state))
     //   render(this.render(state), targetElement, this.el)
     // })
-    this.updateUI = (state) => {
-      render(this.render(state), targetElement, this.el)
-    }
+    // this.updateUI = (state) => {
+    //   render(this.render(state), targetElement, this.el)
+    // }
 
     if (targetElement) {
       this.core.log(`Installing ${callerPluginName} to a DOM element`)
@@ -76,7 +78,7 @@ module.exports = class Plugin {
       }
 
       // this.el = plugin.render(this.core.state)
-      this.el = render(this.render(this.core.state), targetElement, this.el)
+      // this.el = render(this.render(this.core.state), targetElement, this.el)
 
       // targetElement.appendChild(this.el)
 
@@ -97,14 +99,12 @@ module.exports = class Plugin {
   }
 
   unmount () {
-    if (this.el && this.el.parentNode) {
-      this.el.parentNode.removeChild(this.el)
+    if (this.root && this.root.parentNode) {
+      this.root.parentNode.removeChild(this.root)
     }
   }
 
-  install () {
-    return
-  }
+  install () {}
 
   uninstall () {
     this.unmount()

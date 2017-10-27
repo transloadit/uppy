@@ -83,7 +83,7 @@
     "namespace-emitter": "^2.0.0",
     "nanoraf": "3.0.1",
     "on-load": "3.2.0",
-    "preact": "^8.2.4",
+    "preact": "^8.2.6",
     "prettier-bytes": "1.0.4",
     "socket.io-client": "2.0.1",
     "tus-js-client": "1.4.3",

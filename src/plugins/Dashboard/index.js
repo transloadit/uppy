@@ -7,6 +7,7 @@ const Informer = require('../Informer')
 const { findDOMElement } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
+const preact = require('preact')
 
 /**
  * Modal Dialog & Dashboard
@@ -203,7 +204,7 @@ module.exports = class DashboardUI extends Plugin {
     document.body.addEventListener('keyup', this.handleEscapeKeyPress)
 
     // Drag Drop
-    this.removeDragDropListener = dragDrop(this.el, (files) => {
+    this.removeDragDropListener = dragDrop(this.root, (files) => {
       this.handleDrop(files)
     })
   }
@@ -277,6 +278,11 @@ module.exports = class DashboardUI extends Plugin {
 
   resumeAll () {
     this.core.emit('core:resume-all')
+  }
+
+  update (state) {
+    if (typeof this.root === 'undefined') return
+    preact.render(this.render(state), this.target, this.root)
   }
 
   render (state) {
@@ -407,7 +413,11 @@ module.exports = class DashboardUI extends Plugin {
 
     const target = this.opts.target
     const plugin = this
-    this.target = this.mount(target, plugin)
+
+    if (target) {
+      this.target = this.mount(target, plugin)
+      this.root = preact.render(this.render(this.core.state), this.target)
+    }
 
     if (!this.opts.disableStatusBar) {
       this.core.use(StatusBar, {
