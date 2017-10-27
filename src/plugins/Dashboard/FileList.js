@@ -20,7 +20,7 @@ module.exports = (props) => {
             ? html`<p class="UppyDashboard-note">${props.note}</p>`
             : ''
           }
-          <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
+          <input class="UppyDashboard-input" aria-hidden="true" type="file" name="files[]" multiple="true"
                  onchange=${props.handleInputChange} />
          </div>`
        : null

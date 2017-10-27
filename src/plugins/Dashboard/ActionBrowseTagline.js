@@ -2,7 +2,7 @@ const html = require('yo-yo')
 
 module.exports = (props) => {
   const input = html`
-    <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
+    <input class="UppyDashboard-input" aria-hidden="true" type="file" name="files[]" multiple="true"
            onchange=${props.handleInputChange} />
   `
 

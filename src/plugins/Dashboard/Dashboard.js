@@ -58,18 +58,17 @@ module.exports = function Dashboard (props) {
           aria-label="${!props.inline
                        ? props.i18n('dashboardWindowTitle')
                        : props.i18n('dashboardTitle')}"
-          role="dialog"
-          onpaste=${handlePaste}
-          onload=${() => props.updateDashboardElWidth()}>
+          onpaste=${handlePaste}>
 
-    <div class="UppyDashboard-overlay" onclick=${props.handleClickOutside}></div>
+    <div class="UppyDashboard-overlay" tabindex="-1" onclick=${props.handleClickOutside}></div>
 
     <div class="UppyDashboard-inner"
-         tabindex="0"
+         aria-modal="true"
+         role="dialog"
          style="
           ${props.inline && props.maxWidth ? `max-width: ${props.maxWidth}px;` : ''}
-          ${props.inline && props.maxHeight ? `max-height: ${props.maxHeight}px;` : ''}
-         ">
+          ${props.inline && props.maxHeight ? `max-height: ${props.maxHeight}px;` : ''}"
+         onload=${() => props.updateDashboardElWidth()}>
       <button class="UppyDashboard-close"
               type="button"
               aria-label="${props.i18n('closeModal')}"

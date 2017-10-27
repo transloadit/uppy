@@ -8,6 +8,20 @@ const { findAllDOMElements } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
 
+const FOCUSABLE_ELEMENTS = [
+  'a[href]',
+  'area[href]',
+  'input:not([disabled]):not([type="hidden"])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  'button:not([disabled])',
+  'iframe',
+  'object',
+  'embed',
+  '[contenteditable]',
+  '[tabindex]:not([tabindex^="-"])'
+]
+
 /**
  * Modal Dialog & Dashboard
  */
@@ -77,6 +91,10 @@ module.exports = class DashboardUI extends Plugin {
     this.actions = this.actions.bind(this)
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
+    this.getFocusableNodes = this.getFocusableNodes.bind(this)
+    this.setFocusToFirstNode = this.setFocusToFirstNode.bind(this)
+    this.maintainFocus = this.maintainFocus.bind(this)
+
     this.initEvents = this.initEvents.bind(this)
     this.handleEscapeKeyPress = this.handleEscapeKeyPress.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
@@ -142,11 +160,41 @@ module.exports = class DashboardUI extends Plugin {
     })
   }
 
+  // setModalElement (element) {
+  //   this.modal = element
+  // }
+
   requestCloseModal () {
     if (this.opts.onRequestCloseModal) {
       return this.opts.onRequestCloseModal()
     } else {
       this.closeModal()
+    }
+  }
+
+  getFocusableNodes () {
+    const nodes = this.modal.querySelectorAll(FOCUSABLE_ELEMENTS)
+    return Object.keys(nodes).map((key) => nodes[key])
+  }
+
+  setFocusToFirstNode () {
+    const focusableNodes = this.getFocusableNodes()
+    console.log(focusableNodes[0])
+    if (focusableNodes.length) focusableNodes[0].focus()
+  }
+
+  maintainFocus (event) {
+    var focusableNodes = this.getFocusableNodes()
+    var focusedItemIndex = focusableNodes.indexOf(document.activeElement)
+
+    if (event.shiftKey && focusedItemIndex === 0) {
+      focusableNodes[focusableNodes.length - 1].focus()
+      event.preventDefault()
+    }
+
+    if (!event.shiftKey && focusedItemIndex === focusableNodes.length - 1) {
+      focusableNodes[0].focus()
+      event.preventDefault()
     }
   }
 
@@ -163,12 +211,17 @@ module.exports = class DashboardUI extends Plugin {
     document.body.classList.add('is-UppyDashboard-open')
     document.body.style.top = `-${this.savedDocumentScrollPosition}px`
 
-    // focus on modal inner block
-    this.target.querySelector('.UppyDashboard-inner').focus()
+    this.setFocusToFirstNode()
 
-    // this.updateDashboardElWidth()
+    // focus on modal inner block
+    // console.log(this.target)
+    // console.log(this.target.querySelector('.UppyDashboard-focus'))
+    // console.log(this.modal)
+    // this.modal.querySelector('.UppyDashboard-focus').focus()
+
+    this.updateDashboardElWidth()
     // to be sure, sometimes when the function runs, container size is still 0
-    setTimeout(this.updateDashboardElWidth, 500)
+    // setTimeout(this.updateDashboardElWidth, 500)
   }
 
   closeModal () {
@@ -432,6 +485,8 @@ module.exports = class DashboardUI extends Plugin {
 
     this.initEvents()
     this.actions()
+
+    this.modal = document.querySelector('.UppyDashboard--modal')
   }
 
   uninstall () {
