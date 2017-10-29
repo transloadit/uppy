@@ -113,7 +113,7 @@
     "prettier-bytes": "1.0.4",
     "prop-types": "^15.5.10",
     "socket.io-client": "2.0.2",
-    "tus-js-client": "^1.4.4",
+    "tus-js-client": "^1.4.5",
     "url-parse": "1.1.9",
     "whatwg-fetch": "2.0.3",
     "yo-yo": "1.4.0",
