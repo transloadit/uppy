@@ -285,13 +285,15 @@ module.exports = class Transloadit extends Plugin {
 
   getPersistentData (setData) {
     const state = this.getPluginState()
-    const assemblies = state.assemblies
+    const assemblyStates = state.assemblies
+    const uploadsAssemblies = state.uploadsAssemblies
     const uploads = Object.keys(state.files)
     const results = state.results.map((result) => result.id)
 
     setData({
       [this.id]: {
-        assemblies,
+        assemblyStates,
+        uploadsAssemblies,
         uploads,
         results
       }
@@ -304,21 +306,17 @@ module.exports = class Transloadit extends Plugin {
     const savedState = pluginData && pluginData[this.id] ? pluginData[this.id] : {}
     const knownUploads = savedState.files || []
     const knownResults = savedState.results || []
-    const previousAssemblies = savedState.assemblies || {}
+    const previousAssemblies = savedState.assemblyStates || {}
+    const uploadsAssemblies = savedState.uploadsAssemblies || {}
 
     const allUploads = []
     const allResults = []
 
     // Fetch up-to-date assembly statuses.
     const loadAssemblies = () => {
-      const fileIDs = Object.keys(this.uppy.state.files)
       const assemblyIDs = []
-      fileIDs.forEach((fileID) => {
-        const file = this.uppy.getFile(fileID)
-        const assemblyID = file && file.transloadit && file.transloadit.assembly
-        if (assemblyID && assemblyIDs.indexOf(assemblyID) === -1) {
-          assemblyIDs.push(file.transloadit.assembly)
-        }
+      Object.keys(uploadsAssemblies).forEach((uploadID) => {
+        assemblyIDs.push(...uploadsAssemblies[uploadID])
       })
 
       return Promise.all(
@@ -337,29 +335,6 @@ module.exports = class Transloadit extends Plugin {
         }
         return this.connectSocket(assembly)
       }))
-    }
-
-    // Recover uploads / assemblies links based on the stored assembly ID
-    // on files.
-    const recoverUploadAssemblies = () => {
-      const uploadsAssemblies = {}
-      const uploads = this.uppy.state.currentUploads || {}
-      Object.keys(uploads).forEach((uploadID) => {
-        const files = uploads[uploadID].fileIDs
-          .map((fileID) => this.uppy.getFile(fileID))
-        const assemblyIDs = []
-
-        files.forEach((file) => {
-          const assemblyID = file && file.transloadit && file.transloadit.assembly
-          if (assemblyID && assemblyIDs.indexOf(assemblyID) === -1) {
-            assemblyIDs.push(file.transloadit.assembly)
-          }
-        })
-
-        uploadsAssemblies[uploadID] = assemblyIDs
-      })
-
-      return uploadsAssemblies
     }
 
     // Convert loaded assembly statuses to a Transloadit plugin state object.
@@ -396,8 +371,6 @@ module.exports = class Transloadit extends Plugin {
           })
         })
       })
-
-      const uploadsAssemblies = recoverUploadAssemblies()
 
       console.info('Transloadit: RESTORED:')
       console.info({
