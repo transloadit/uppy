@@ -345,14 +345,15 @@ describe('core/utils', () => {
   })
 
   describe('settle', () => {
-    it('should reject if all input promises reject', () => {
+    it('should resolve even if all input promises reject', () => {
       return expect(
         utils.settle([
           Promise.reject(new Error('oops')),
           Promise.reject(new Error('this went wrong'))
         ])
-      ).rejects.toMatchObject({
-        message: 'oops'
+      ).resolves.toMatchObject({
+        successful: [],
+        failed: [{ message: 'oops' }, { message: 'this went wrong' }]
       })
     })
 
