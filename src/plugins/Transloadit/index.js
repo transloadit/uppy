@@ -449,12 +449,9 @@ module.exports = class Transloadit extends Plugin {
         return reconnectSockets(assemblies)
       })
       .then(() => {
-        // Wait for a bit, so the Promise resolves and `afterUpload` can
-        // add event handlers.
-        // Then we emit the events.
-        // This is reliable, because Promises use the microtask queue, and timeouts
-        // use the macrotask queue—microtasks are executed first.
-        setTimeout(emitMissedEvents, 10)
+        // Return a callback that will be called by `afterUpload`
+        // once it has attached event listeners etc.
+        return emitMissedEvents
       })
 
     this.restored.then(() => {
@@ -557,8 +554,10 @@ module.exports = class Transloadit extends Plugin {
 
     // If we're still restoring state, wait for that to be done.
     if (this.restored) {
-      return this.restored.then(() => {
-        return this.afterUpload(fileIDs, uploadID)
+      return this.restored.then((emitMissedEvents) => {
+        const promise = this.afterUpload(fileIDs, uploadID)
+        emitMissedEvents()
+        return promise
       })
     }
 
