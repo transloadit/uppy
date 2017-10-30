@@ -72,9 +72,14 @@ const uppy = Uppy({
   // .use(GoldenRetriever, {serviceWorker: true})
   .run()
 
-uppy.on('core:success', (fileList) => {
-  console.log('UPLOAD SUCCESSFUL!!!')
-  console.log(fileList)
+uppy.on('core:complete', ({ successful, failed }) => {
+  if (failed.length === 0) {
+    console.log('UPLOAD SUCCESSFUL!!!')
+  } else {
+    console.warn('UPLOAD FAILED!!!')
+  }
+  console.log('successful files:', successful)
+  console.log('failed files:', failed)
 })
 
 if ('serviceWorker' in navigator) {
