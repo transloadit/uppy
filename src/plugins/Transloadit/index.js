@@ -309,6 +309,11 @@ module.exports = class Transloadit extends Plugin {
     const previousAssemblies = savedState.assemblyStates || {}
     const uploadsAssemblies = savedState.uploadsAssemblies || {}
 
+    if (Object.keys(uploadsAssemblies).length === 0) {
+      // Nothing to restore.
+      return
+    }
+
     const allUploads = []
     const allResults = []
 
