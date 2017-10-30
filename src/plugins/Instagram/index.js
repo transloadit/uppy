@@ -1,4 +1,7 @@
-const html = require('yo-yo')
+const { h } = require('picodom')
+const hyperx = require('hyperx')
+const html = hyperx(h, {attrToProp: false})
+
 const Plugin = require('../Plugin')
 
 const Provider = require('../../Provider')

@@ -1,4 +1,8 @@
-const html = require('yo-yo')
+// const html = require('yo-yo')
+const { h } = require('picodom')
+const hyperx = require('hyperx')
+const html = hyperx(h, {attrToProp: false})
+
 const FileList = require('./FileList')
 const Tabs = require('./Tabs')
 const FileCard = require('./FileCard')
@@ -60,7 +64,7 @@ module.exports = function Dashboard (props) {
                        : props.i18n('dashboardTitle')}"
           role="dialog"
           onpaste=${handlePaste}
-          onload=${() => props.updateDashboardElWidth()}>
+          oncreate=${(el) => props.updateDashboardElWidth(null, el)}>
 
     <div class="UppyDashboard-overlay" onclick=${props.handleClickOutside}></div>
 
