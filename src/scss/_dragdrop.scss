@@ -11,14 +11,15 @@
   .uppy-DragDrop-inner {
     margin: 0;
     text-align: center;
-    padding: 80px 0;
+    padding: 80px 15px;
+    line-height: 1.4;
   }
   
   .uppy-DragDrop-arrow {
     width: 60px;
     height: 60px;
     fill: lighten($color-gray, 30%);
-    margin-bottom: 20px;
+    margin-bottom: 17px;
   }
   
     .uppy-DragDrop-container.is-dragdrop-supported {
@@ -53,7 +54,7 @@
     display: block;
     cursor: pointer;
     font-size: 1.15em;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
   }
 
   .uppy-DragDrop-note {
