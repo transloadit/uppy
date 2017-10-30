@@ -205,6 +205,9 @@ module.exports = class GoldenRetriever extends Plugin {
         this.uppy.log('Attempting to load files from Indexed DB...')
         this.loadFileBlobsFromIndexedDB()
       }
+    } else {
+      this.core.log('No files need to be loaded, only restoring processing state...')
+      this.onBlobsLoaded([])
     }
 
     this.uppy.on('file-added', (file) => {
