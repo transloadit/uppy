@@ -109,13 +109,16 @@ To be released: 2017-11-10
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] core: return `{ successful, failed }` from `uppy.upload()` (@goto-bus-stop)
 - [x] core: refactor `uppy-base` (#382 / @goto-bus-stop)
-- [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
+- [x] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
 - [ ] plugins: add tabindex="0" to buttons and tabs (@arturi)
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] xhrupload: set a timeout in the onprogress event handler to detect stale network (#378 / @goto-bus-stop)
 - [ ] tus: Review b3cc48130e292f08c2a09f2f0adf6b6332bf7692
 - [x] tus: Rename Tus10 → Tus
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
+- [x] uppy-serer: mask sensitive data from request logs (@ifedapoolarewaju)
+- [x] uppy-server: add request body validators (@ifedapoolarewaju)
+- [x] uppy-server: migrate dropbox to use v2 API (@ifedapoolarewaju)
 
 ## 0.20.3
 
