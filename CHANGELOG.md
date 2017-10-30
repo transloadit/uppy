@@ -88,6 +88,11 @@ What we need to do to release Uppy 1.0
 ## 0.22.0
 
 - [ ] core: improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (@goto-bus-stop, @arturi)
+- [ ] provider: improve UI, add icons for file types (@arturi)
+- [ ] dashboard: place upload button into StatusBar, use Alex’s suggestions for retry
+- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
+- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
+- [ ] goldenretriever: add “ghost” files (@arturi)
 
 # next
 
@@ -96,26 +101,24 @@ What we need to do to release Uppy 1.0
 To be released: 2017-11-10
 
 - [x] webcam: look into simplifying / improving webcam plugin (probably good to do modern browsers only) (#382 / @goto-bus-stop)
-- [ ] webcam: only show the webcam tab when browser support is available (@arturi, @goto-bus-stop)
-- [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
-- [ ] provider: improve UI, add icons for file types (@arturi)
+- [ ] webcam: only show the webcam tab when browser support is available (media recorder API) (@arturi, @goto-bus-stop)
+- [ ] core: Redux PR (#216 / @arturi, @goto-bus-stop, @richardwillars)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`. Or increase specificity (with .Uppy) (@arturi)
-- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing (@arturi)
-- [ ] test: add tests for `npm install uppy` and running in different browsers, the real world use case (@arturi)
+- [ ] test: add tests for `npm pack`, modify acceptance/integration tests to not use website? (@arturi)
 - [ ] core: allow setting custom `id` for plugins: https://github.com/transloadit/uppy/pull/328#issuecomment-328242214 (@arturi)
-- [ ] add `FormEncapsulator`: a plugin that is used in conjunction with any other acquirer, responsible for injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think) (@arturi)
-- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
+- [ ] add `Form`: a plugin that is used in conjunction with any other acquirer, responsible for 1\. acquiring the metadata from form; 2\. intercepting submit event on the form, opening Uppy dialog instead; 3\. injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think) (@arturi)
 - [ ] core: return `{ successful, failed }` from `uppy.upload()` (@goto-bus-stop)
 - [x] core: refactor `uppy-base` (#382 / @goto-bus-stop)
-- [ ] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
-- [ ] plugins: add tabindex="0" to buttons and tabs (@arturi)
-- [ ] goldenretriever: add “ghost” files (@arturi)
+- [x] uppy-server: look into storing tokens in user’s browser only (@ifedapoolarewaju)
+- [ ] accessibility: add tabindex="0" to buttons and tabs, aria-, focus; add https://github.com/pa11y/pa11y for automated accessibility testing  (@arturi)
 - [x] xhrupload: set a timeout in the onprogress event handler to detect stale network (#378 / @goto-bus-stop)
 - [ ] tus: Review b3cc48130e292f08c2a09f2f0adf6b6332bf7692
 - [x] tus: Rename Tus10 → Tus
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
+- [x] uppy-serer: mask sensitive data from request logs (@ifedapoolarewaju)
+- [x] uppy-server: add request body validators (@ifedapoolarewaju)
+- [x] uppy-server: migrate dropbox to use v2 API (@ifedapoolarewaju)
 
 ## 0.20.3
 
