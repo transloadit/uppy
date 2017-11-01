@@ -924,8 +924,8 @@ describe('src/Core', () => {
     it('should update the state when receiving the core:error event', () => {
       const core = new Core()
       core.run()
-      core.emit('core:error', { foo: 'bar' })
-      expect(core.state.error).toEqual({foo: 'bar'})
+      core.emit('core:error', new Error('foooooo'))
+      expect(core.state.error).toEqual('foooooo')
     })
 
     it('should update the state when receiving the core:upload-error event', () => {
