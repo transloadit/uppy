@@ -1,5 +1,5 @@
 {
-  "name": "uppy",
+  "name": "@photobox/uppy",
   "version": "0.20.3",
   "description": "Almost as cute as a Puppy :dog:",
   "main": "lib/index.js",
