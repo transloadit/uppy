@@ -21,3 +21,4 @@ config/
 nohup.out
 
 examples/bundled-example/bundle.js
+lib/
