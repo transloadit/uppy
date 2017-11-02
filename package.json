@@ -19,14 +19,10 @@
   "pre-commit": "lint-staged",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/transloadit/uppy.git"
+    "url": "git+git@github.com:photobox/uppy.git"
   },
   "author": "",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/transloadit/uppy/issues"
-  },
-  "homepage": "https://github.com/transloadit/uppy#readme",
   "devDependencies": {
     "autoprefixer": "6.3.7",
     "babel-cli": "6.11.4",
