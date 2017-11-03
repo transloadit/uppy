@@ -93,7 +93,6 @@ module.exports = class DashboardUI extends Plugin {
   addTarget (plugin) {
     const callerPluginId = plugin.id || plugin.constructor.name
     const callerPluginName = plugin.title || callerPluginId
-    // const callerPluginIcon = plugin.icon || this.opts.defaultTabIcon
     const callerPluginType = plugin.type
 
     if (callerPluginType !== 'acquirer' &&
@@ -107,9 +106,7 @@ module.exports = class DashboardUI extends Plugin {
     const target = {
       id: callerPluginId,
       name: callerPluginName,
-      // icon: callerPluginIcon,
       type: callerPluginType,
-      // render: plugin.render,
       isHidden: true
     }
 
@@ -306,19 +303,21 @@ module.exports = class DashboardUI extends Plugin {
     totalSize = prettyBytes(totalSize)
     totalUploadedSize = prettyBytes(totalUploadedSize)
 
-    const acquirers = pluginState.targets.filter(target => {
+    const attachRenderFunctionToTarget = (target) => {
       const plugin = this.core.getPlugin(target.id)
-      target.icon = plugin.icon || this.opts.defaultTabIcon
-      target.render = plugin.render
-      return target.type === 'acquirer'
-    })
+      return Object.assign({}, target, {
+        icon: plugin.icon || this.opts.defaultTabIcon,
+        render: plugin.render
+      })
+    }
 
-    const progressindicators = pluginState.targets.filter(target => {
-      const plugin = this.core.getPlugin(target.id)
-      target.icon = plugin.icon || this.opts.defaultTabIcon
-      target.render = plugin.render
-      return target.type === 'progressindicator'
-    })
+    const acquirers = pluginState.targets
+      .filter(target => target.type === 'acquirer')
+      .map(attachRenderFunctionToTarget)
+
+    const progressindicators = pluginState.targets
+      .filter(target => target.type === 'progressindicator')
+      .map(attachRenderFunctionToTarget)
 
     const startUpload = (ev) => {
       this.core.upload().catch((err) => {
