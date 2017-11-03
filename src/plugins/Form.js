@@ -17,14 +17,15 @@ module.exports = class Form extends Plugin {
       target: null,
       resultName: 'uppyResult',
       getMetaFromForm: true,
-      triggerUploadOnFileSelection: false,
+      addResultToForm: true,
+      // triggerUploadOnFileSelection: false,
       submitOnSuccess: false
     }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.handleFormSubmit = this.handleFormSubmit.bind(this)
+    // this.handleFormSubmit = this.handleFormSubmit.bind(this)
     this.handleUploadStart = this.handleUploadStart.bind(this)
     this.handleSuccess = this.handleSuccess.bind(this)
     this.addResultToForm = this.addResultToForm.bind(this)
@@ -54,12 +55,11 @@ module.exports = class Form extends Plugin {
   }
 
   addResultToForm (result) {
+    if (!this.opts.addResultToForm) return
+
     this.core.log('[Form] Adding result to the original form:')
     this.core.log(result)
-    // const resultInput = this.form.querySelector(this.opts.resultInput)
-    // if (resultInput) {
-    //   resultInput.value = JSON.stringify(result)
-    // }
+
     const resultInput = document.createElement('input')
     resultInput.name = this.opts.resultName
     resultInput.type = 'hidden'
@@ -68,10 +68,9 @@ module.exports = class Form extends Plugin {
   }
 
   handleUploadStart () {
-    if (this.opts.getMetaFromForm) {
-      const formMeta = getFormData(this.form)
-      this.core.setMeta(formMeta)
-    }
+    if (this.opts.getMetaFromForm) return
+    const formMeta = getFormData(this.form)
+    this.core.setMeta(formMeta)
   }
 
   install () {
