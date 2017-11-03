@@ -20,17 +20,14 @@
     </style>
     <main>
       <h1>Uppy is here</h1>
-      <button id="uppyModalOpener">Choose Files</button>
 
-      <div class="Uppy">
-        <form class="MyForm" action="/">
-          <input type="file" />
-          <input type="hidden" name="bla" value="12333">
-          <input type="text" name="yo" value="1">
-          <button type="submit">Upload</button>
-          <input type="submit">
-        </form>
-      </div>
+      <form id="upload-form" action="/">
+        <button type="button" id="uppyModalOpener">Select Files</button>
+        <br><br>
+        <input type="hidden" name="bla" value="12333">
+        <input type="text" name="yo" value="1">
+        <button type="submit">Submit</button>
+      </form>
     </main>
 
     <link href="uppy.min.css" rel="stylesheet">

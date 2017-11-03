@@ -1,10 +1,11 @@
 const Uppy = require('../../src/core')
 const Dashboard = require('../../src/plugins/Dashboard')
 // const GoogleDrive = require('../../src/plugins/GoogleDrive')
-const Dropbox = require('../../src/plugins/Dropbox')
-const Instagram = require('../../src/plugins/Instagram')
+// const Dropbox = require('../../src/plugins/Dropbox')
+// const Instagram = require('../../src/plugins/Instagram')
 const Webcam = require('../../src/plugins/Webcam')
 const Tus = require('../../src/plugins/Tus')
+const Form = require('../../src/plugins/Form')
 // const XHRUpload = require('../../src/plugins/XHRUpload')
 // const FileInput = require('../../src/plugins/FileInput')
 const MetaData = require('../../src/plugins/MetaData')
@@ -46,29 +47,27 @@ const uppy = Uppy({
     // maxWidth: 350,
     // maxHeight: 400,
     inline: false,
-    disableStatusBar: false,
-    disableInformer: false,
     getMetaFromForm: true,
-    replaceTargetContent: true,
-    target: '.MyForm',
-    hideUploadButton: false,
+    // replaceTargetContent: true,
+    // target: '.MyForm',
     closeModalOnClickOutside: false,
     locale: {
-      strings: {browse: 'browse'}
+      strings: { browse: 'browse' }
     }
     // note: 'Images and video only, 300kb or less'
   })
   // .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
-  .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
-  .use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
+  // .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
+  // .use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Webcam, {target: Dashboard})
-  .use(Tus, {endpoint: TUS_ENDPOINT, resume: true})
+  .use(Tus, {endpoint: TUS_ENDPOINT})
   .use(MetaData, {
     fields: [
       { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', value: 'none', placeholder: 'describe what the image is about' }
     ]
   })
+  .use(Form, { target: '#upload-form', submitFormAfterSuccess: false })
   // .use(GoldenRetriever, {serviceWorker: true})
   .run()
 
@@ -90,5 +89,5 @@ if ('serviceWorker' in navigator) {
 
 // uppy.emit('informer', 'Smile!', 'info', 2000)
 
-var modalTrigger = document.querySelector('#uppyModalOpener')
-if (modalTrigger) modalTrigger.click()
+// var modalTrigger = document.querySelector('#uppyModalOpener')
+// if (modalTrigger) modalTrigger.click()
