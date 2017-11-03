@@ -119,6 +119,7 @@ To be released: 2017-11-10
 - [x] uppy-serer: mask sensitive data from request logs (@ifedapoolarewaju)
 - [x] uppy-server: add request body validators (@ifedapoolarewaju)
 - [x] uppy-server: migrate dropbox to use v2 API (@ifedapoolarewaju)
+- [x] Use `tinyify` for the unpkg bundle. (#371 / @goto-bus-stop)
 
 ## 0.20.3
 
