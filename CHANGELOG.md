@@ -80,7 +80,7 @@ What we need to do to release Uppy 1.0
 - [ ] refactoring: clean up code everywhere
 - [ ] docs: on using plugins, all options, list of plugins, i18n
 - [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
-- [ ] uppy-server: security audit 
+- [ ] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 - [ ] automatically host releases on edgly and use that as our main CDN
@@ -95,6 +95,7 @@ What we need to do to release Uppy 1.0
 
 To be released: 2017-11-10
 
+- [x] s3: Automatically wrap XHRUpload. **Users should remove `.use(XHRUpload)` when using S3.** (@goto-bus-stop)
 - [x] webcam: look into simplifying / improving webcam plugin (probably good to do modern browsers only) (#382 / @goto-bus-stop)
 - [ ] webcam: only show the webcam tab when browser support is available (@arturi, @goto-bus-stop)
 - [ ] core: Redux PR (#216, #338 / @arturi, @goto-bus-stop, @richardwillars)
