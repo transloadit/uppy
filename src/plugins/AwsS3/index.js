@@ -1,4 +1,5 @@
 const Plugin = require('../Plugin')
+const XHRUpload = require('../XHRUpload')
 
 module.exports = class AwsS3 extends Plugin {
   constructor (core, opts) {
@@ -47,37 +48,6 @@ module.exports = class AwsS3 extends Plugin {
       })
     })
 
-    this.core.setState({
-      xhrUpload: Object.assign({}, this.core.state.xhrUpload, {
-        responseUrlFieldName: 'location',
-        getResponseData (xhr) {
-          // If no response, we've hopefully done a PUT request to the file
-          // in the bucket on its full URL.
-          if (!xhr.responseXML) {
-            return { location: xhr.responseURL }
-          }
-          function getValue (key) {
-            const el = xhr.responseXML.querySelector(key)
-            return el ? el.textContent : ''
-          }
-          return {
-            location: getValue('Location'),
-            bucket: getValue('Bucket'),
-            key: getValue('Key'),
-            etag: getValue('ETag')
-          }
-        },
-        getResponseError (xhr) {
-          // If no response, we don't have a specific error message, use the default.
-          if (!xhr.responseXML) {
-            return
-          }
-          const error = xhr.responseXML.querySelector('Error > Message')
-          return new Error(error.textContent)
-        }
-      })
-    })
-
     return Promise.all(
       fileIDs.map((id) => {
         const file = this.core.getFile(id)
@@ -106,7 +76,6 @@ module.exports = class AwsS3 extends Plugin {
           method,
           formData: method.toLowerCase() === 'post',
           endpoint: url,
-          fieldName: 'file',
           metaFields: Object.keys(fields)
         }
 
@@ -134,9 +103,42 @@ module.exports = class AwsS3 extends Plugin {
 
   install () {
     this.core.addPreProcessor(this.prepareUpload)
+
+    this.core.use(XHRUpload, {
+      fieldName: 'file',
+      responseUrlFieldName: 'location',
+      getResponseData (xhr) {
+        // If no response, we've hopefully done a PUT request to the file
+        // in the bucket on its full URL.
+        if (!xhr.responseXML) {
+          return { location: xhr.responseURL }
+        }
+        function getValue (key) {
+          const el = xhr.responseXML.querySelector(key)
+          return el ? el.textContent : ''
+        }
+        return {
+          location: getValue('Location'),
+          bucket: getValue('Bucket'),
+          key: getValue('Key'),
+          etag: getValue('ETag')
+        }
+      },
+      getResponseError (xhr) {
+        // If no response, we don't have a specific error message, use the default.
+        if (!xhr.responseXML) {
+          return
+        }
+        const error = xhr.responseXML.querySelector('Error > Message')
+        return new Error(error.textContent)
+      }
+    })
   }
 
   uninstall () {
+    const uploader = this.core.getPlugin('XHRUpload')
+    this.core.removePlugin(uploader)
+
     this.core.removePreProcessor(this.prepareUpload)
   }
 }
