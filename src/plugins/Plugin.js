@@ -1,7 +1,6 @@
 const yo = require('yo-yo')
 const nanoraf = require('nanoraf')
 const { findDOMElement } = require('../core/Utils')
-const getFormData = require('get-form-data')
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -16,9 +15,6 @@ module.exports = class Plugin {
   constructor (core, opts) {
     this.core = core
     this.opts = opts || {}
-
-    // clear everything inside the target selector
-    // this.opts.replaceTargetContent = this.opts.replaceTargetContent !== undefined ? this.opts.replaceTargetContent : true
 
     this.update = this.update.bind(this)
     this.mount = this.mount.bind(this)
@@ -69,12 +65,6 @@ module.exports = class Plugin {
 
     if (targetElement) {
       this.core.log(`Installing ${callerPluginName} to a DOM element`)
-
-      // attempt to extract meta from form element
-      if (this.opts.getMetaFromForm && targetElement.nodeName === 'FORM') {
-        const formMeta = getFormData(targetElement)
-        this.core.setMeta(formMeta)
-      }
 
       // clear everything inside the target container
       if (this.opts.replaceTargetContent) {
