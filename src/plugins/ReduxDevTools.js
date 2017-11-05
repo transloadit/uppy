@@ -63,6 +63,7 @@ module.exports = class ReduxDevTools extends Plugin {
 
   uninstall () {
     if (this.withDevTools) {
+      this.devToolsUnsubscribe()
       this.core.emitter.off('core:state-update', this.handleStateUpdate)
     }
   }
