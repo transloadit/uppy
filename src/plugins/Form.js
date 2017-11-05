@@ -19,23 +19,25 @@ module.exports = class Form extends Plugin {
       getMetaFromForm: true,
       addResultToForm: true,
       // triggerUploadOnFileSelection: false,
-      submitOnSuccess: false
+      submitOnSuccess: false,
+      triggerUploadOnSubmit: false
     }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    // this.handleFormSubmit = this.handleFormSubmit.bind(this)
+    this.handleFormSubmit = this.handleFormSubmit.bind(this)
     this.handleUploadStart = this.handleUploadStart.bind(this)
     this.handleSuccess = this.handleSuccess.bind(this)
     this.addResultToForm = this.addResultToForm.bind(this)
   }
 
-  // handleFormSubmit (ev) {
-  //   ev.preventDefault()
-  //   const formMeta = getFormData(this.form)
-  //   this.core.setMeta(formMeta)
-  // }
+  handleFormSubmit (ev) {
+    if (!this.opts.triggerUploadOnSubmit) return
+    console.log('PREVENT DEFAULT')
+    ev.preventDefault()
+    this.core.upload()
+  }
 
   handleSuccess (data) {
     const result = {}
@@ -60,7 +62,13 @@ module.exports = class Form extends Plugin {
     this.core.log('[Form] Adding result to the original form:')
     this.core.log(result)
 
-    const resultInput = document.createElement('input')
+    let resultInput = this.form.querySelector(`[name="${this.opts.resultName}"]`)
+    if (resultInput) {
+      resultInput.value = JSON.stringify(result)
+      return
+    }
+
+    resultInput = document.createElement('input')
     resultInput.name = this.opts.resultName
     resultInput.type = 'hidden'
     resultInput.value = JSON.stringify(result)
@@ -80,13 +88,13 @@ module.exports = class Form extends Plugin {
       return
     }
 
-    // this.form.addEventListener('submit', this.handleFormSubmit)
+    this.form.addEventListener('submit', this.handleFormSubmit)
     this.core.on('core:upload', this.handleUploadStart)
     this.core.on('core:success', this.handleSuccess)
   }
 
   uninstall () {
-    // this.form.removeEventListener('submit', this.handleFormSubmit)
+    this.form.removeEventListener('submit', this.handleFormSubmit)
     this.core.off('core:upload', this.handleUploadStart)
     this.core.off('core:success', this.handleSuccess)
   }

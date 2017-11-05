@@ -67,7 +67,7 @@ const uppy = Uppy({
       { id: 'caption', name: 'Caption', value: 'none', placeholder: 'describe what the image is about' }
     ]
   })
-  .use(Form, { target: '#upload-form', submitFormAfterSuccess: false })
+  .use(Form, { target: '#upload-form', submitFormAfterSuccess: false, triggerUploadOnSubmit: true })
   // .use(GoldenRetriever, {serviceWorker: true})
   .run()
 

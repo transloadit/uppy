@@ -1,5 +1,5 @@
 const Utils = require('../core/Utils')
-const Translator = require('../core/Translator')
+const Translator = require('./Translator')
 const UppySocket = require('./UppySocket')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
@@ -588,12 +588,6 @@ class Uppy {
     //   this.setState({bla: 'bla'})
     // }, 20)
 
-    // this.on('core:state-update', (prevState, nextState, patch) => {
-    //   if (this.withDevTools) {
-    //     this.devTools.send('UPPY_STATE_UPDATE', nextState)
-    //   }
-    // })
-
     this.on('core:error', (error) => {
       this.setState({ error })
     })
@@ -848,10 +842,6 @@ class Uppy {
    */
   close () {
     this.reset()
-
-    if (this.withDevTools) {
-      this.devToolsUnsubscribe()
-    }
 
     this.iteratePlugins((plugin) => {
       plugin.uninstall()
