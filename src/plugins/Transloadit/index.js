@@ -251,6 +251,7 @@ module.exports = class Transloadit extends Plugin {
     this.setPluginState({
       files: Object.assign({}, state.files, {
         [uploadedFile.id]: {
+          assembly: assemblyId,
           id: file.id,
           uploadedFile
         }
@@ -265,8 +266,15 @@ module.exports = class Transloadit extends Plugin {
     // The `file` may not exist if an import robot was used instead of a file upload.
     result.localId = file ? file.id : null
 
+    const entry = {
+      result,
+      stepName,
+      id: result.id,
+      assembly: assemblyId
+    }
+
     this.setPluginState({
-      results: state.results.concat(result)
+      results: [...state.results, entry]
     })
     this.uppy.emit('transloadit:result', stepName, result, this.getAssembly(assemblyId))
   }
@@ -300,9 +308,70 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  onRestored (pluginData) {
+  /**
+   * Emit the necessary events that must have occured to get from the `prevState`,
+   * to the current state.
+   * For completed uploads, `transloadit:upload` is emitted.
+   * For new results, `transloadit:result` is emitted.
+   * For completed or errored assemblies, `transloadit:complete` or `transloadit:assembly-error` is emitted.
+   */
+  emitEventsDiff (prevState) {
     const opts = this.opts
+    const state = this.getPluginState()
 
+    const emitMissedEvents = () => {
+      // Emit events for completed uploads and completed results
+      // that we've missed while we were away.
+      const newUploads = Object.keys(state.files).filter((fileID) => {
+        return !prevState.files.hasOwnProperty(fileID)
+      }).map((fileID) => state.files[fileID])
+      const newResults = state.results.filter((result) => {
+        return !prevState.results.some((prev) => prev.id === result.id)
+      })
+
+      this.uppy.log('[Transloadit] New fully uploaded files since restore:', newUploads)
+      newUploads.forEach(({ assembly, uploadedFile }) => {
+        this.uppy.log('[Transloadit]  emitting transloadit:upload', uploadedFile.id)
+        this.uppy.emit('transloadit:upload', uploadedFile, this.getAssembly(assembly))
+      })
+      this.uppy.log('[Transloadit] New results since restore:', newResults)
+      newResults.forEach(({ assembly, stepName, result, id }) => {
+        this.uppy.log('[Transloadit]  emitting transloadit:result', stepName, id)
+        this.uppy.emit('transloadit:result', stepName, result, this.getAssembly(assembly))
+      })
+
+      const newAssemblies = state.assemblies
+      const previousAssemblies = prevState.assemblies
+      this.uppy.log('[Transloadit] Current assembly status after restore', newAssemblies)
+      this.uppy.log('[Transloadit] Assembly status before restore', previousAssemblies)
+      Object.keys(newAssemblies).forEach((assemblyId) => {
+        const oldAssembly = previousAssemblies[assemblyId]
+        diffAssemblyStatus(oldAssembly, newAssemblies[assemblyId])
+      })
+    }
+
+    // Emit events for assemblies that have completed or errored while we were away.
+    const diffAssemblyStatus = (prev, next) => {
+      this.uppy.log('[Transloadit] Diff assemblies', prev, next)
+
+      if (opts.waitForEncoding && next.ok === 'ASSEMBLY_COMPLETED' && prev.ok !== 'ASSEMBLY_COMPLETED') {
+        this.uppy.log('[Transloadit]  Emitting transloadit:complete for', next.assembly_id, next)
+        this.uppy.emit('transloadit:complete', next)
+      } else if (opts.waitForMetadata && next.upload_meta_data_extracted && !prev.upload_meta_data_extracted) {
+        this.uppy.log('[Transloadit]  Emitting transloadit:complete after metadata extraction for', next.assembly_id, next)
+        this.uppy.emit('transloadit:complete', next)
+      }
+
+      if (next.error && !prev.error) {
+        this.uppy.log('[Transloadit]  !!! Emitting transloadit:assembly-error for', next.assembly_id, next)
+        this.uppy.emit('transloadit:assembly-error', next, new Error(next.message))
+      }
+    }
+
+    emitMissedEvents()
+  }
+
+  onRestored (pluginData) {
     const savedState = pluginData && pluginData[this.id] ? pluginData[this.id] : {}
     const knownUploads = savedState.files || []
     const knownResults = savedState.results || []
@@ -313,9 +382,6 @@ module.exports = class Transloadit extends Plugin {
       // Nothing to restore.
       return
     }
-
-    const allUploads = []
-    const allResults = []
 
     // Fetch up-to-date assembly statuses.
     const loadAssemblies = () => {
@@ -352,12 +418,9 @@ module.exports = class Transloadit extends Plugin {
 
         assembly.uploads.forEach((uploadedFile) => {
           const file = this.findFile(uploadedFile)
-          allUploads.push({
-            assembly: assembly.assembly_id,
-            uploadedFile
-          })
           files[uploadedFile.id] = {
             id: file.id,
+            assembly: assembly.assembly_id,
             uploadedFile
           }
         })
@@ -367,12 +430,12 @@ module.exports = class Transloadit extends Plugin {
           assembly.results[stepName].forEach((result) => {
             const file = state.files[result.original_id]
             result.localId = file ? file.id : null
-            allResults.push({
-              assembly: assembly.assembly_id,
+            results.push({
+              id: result.id,
+              result,
               stepName,
-              result
+              assembly: assembly.assembly_id
             })
-            results.push(result)
           })
         })
       })
@@ -393,54 +456,6 @@ module.exports = class Transloadit extends Plugin {
       })
     }
 
-    const emitMissedEvents = () => {
-      // Emit events for completed uploads and completed results
-      // that we've missed while we were away.
-      const newUploads = allUploads.filter((up) => {
-        return knownUploads.indexOf(up.uploadedFile.id) === -1
-      })
-      const newResults = allResults.filter((result) => {
-        return knownResults.indexOf(result.result.id) === -1
-      })
-
-      this.uppy.log('[Transloadit] New fully uploaded files since restore:', newUploads)
-      newUploads.forEach(({ assembly, uploadedFile }) => {
-        this.uppy.log('[Transloadit]  emitting transloadit:upload', uploadedFile.id)
-        this.uppy.emit('transloadit:upload', uploadedFile, this.getAssembly(assembly))
-      })
-      this.uppy.log('[Transloadit] New results since restore:', newResults)
-      newResults.forEach(({ assembly, stepName, result }) => {
-        this.uppy.log('[Transloadit]  emitting transloadit:result', stepName, result.id)
-        this.uppy.emit('transloadit:result', stepName, result, this.getAssembly(assembly))
-      })
-
-      const newAssemblies = this.getPluginState().assemblies
-      this.uppy.log('[Transloadit] Current assembly status after restore', newAssemblies)
-      this.uppy.log('[Transloadit] Assembly status before restore', previousAssemblies)
-      Object.keys(newAssemblies).forEach((assemblyId) => {
-        const oldAssembly = previousAssemblies[assemblyId]
-        diffAssemblyStatus(oldAssembly, newAssemblies[assemblyId])
-      })
-    }
-
-    // Emit events for assemblies that have completed or errored while we were away.
-    const diffAssemblyStatus = (prev, next) => {
-      this.uppy.log('[Transloadit] Diff assemblies', prev, next)
-
-      if (opts.waitForEncoding && next.ok === 'ASSEMBLY_COMPLETED' && prev.ok !== 'ASSEMBLY_COMPLETED') {
-        this.uppy.log('[Transloadit]  Emitting transloadit:complete for', next.assembly_id, next)
-        this.uppy.emit('transloadit:complete', next)
-      } else if (opts.waitForMetadata && next.upload_meta_data_extracted && !prev.upload_meta_data_extracted) {
-        this.uppy.log('[Transloadit]  Emitting transloadit:complete after metadata extraction for', next.assembly_id, next)
-        this.uppy.emit('transloadit:complete', next)
-      }
-
-      if (next.error && !prev.error) {
-        this.uppy.log('[Transloadit]  !!! Emitting transloadit:assembly-error for', next.assembly_id, next)
-        this.uppy.emit('transloadit:assembly-error', next, new Error(next.message))
-      }
-    }
-
     // Restore all assembly state.
     this.restored = Promise.resolve()
       .then(loadAssemblies)
@@ -451,7 +466,17 @@ module.exports = class Transloadit extends Plugin {
       .then(() => {
         // Return a callback that will be called by `afterUpload`
         // once it has attached event listeners etc.
-        return emitMissedEvents
+        const newState = this.getPluginState()
+        const previousFiles = {}
+        knownUploads.forEach((id) => {
+          previousFiles[id] = newState.files[id]
+        })
+        return () => this.emitEventsDiff({
+          assemblies: previousAssemblies,
+          files: previousFiles,
+          results: newState.results.filter(({ id }) => knownResults.indexOf(id) !== -1),
+          uploadsAssemblies
+        })
       })
 
     this.restored.then(() => {
