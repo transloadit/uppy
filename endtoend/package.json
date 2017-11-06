@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "name": "uppy-multiple-instances-test",
+  "scripts": {
+    "css": "cp ../dist/uppy.min.css .",
+    "start": "npm run css && budo main.js:bundle.js --port 9966 -- -t babelify -g aliasify"
+  },
+  "aliasify": "./aliasify.js",
+  "dependencies": {
+    "nightwatch": "^0.9.16",
+    "webdriverio": "^4.8.0"
+  },
+  "devDependencies": {
+    "aliasify": "^2.1.0",
+    "babelify": "^7.3.0",
+    "budo": "^10.0.4"
+  }
+}
