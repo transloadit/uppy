@@ -115,10 +115,9 @@ class Uppy {
     // for debugging and testing
     // this.updateNum = 0
     if (this.opts.debug) {
-      global.UppyState = this.state
       global.uppyLog = ''
-      // global.UppyAddFile = this.addFile.bind(this)
-      global._uppy = this
+      global[this.opts.id] = this
+      // global._uppy = this
     }
   }
 
