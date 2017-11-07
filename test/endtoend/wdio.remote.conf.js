@@ -108,9 +108,9 @@ exports.config = {
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
   services: ['static-server', 'sauce'],
-  user: process.env.SAUCE_USERNAME,
-  key: process.env.SAUCE_ACCESS_KEY,
-  sauceConnect: true,
+  // user: process.env.SAUCE_USERNAME,
+  // key: process.env.SAUCE_ACCESS_KEY,
+  // sauceConnect: true,
 
   staticServerFolders: [
       { mount: '/', path: './test/endtoend/dist' }
