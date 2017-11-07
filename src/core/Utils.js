@@ -13,7 +13,7 @@ const fileType = require('../vendor/file-type')
 
 function isTouchDevice () {
   return 'ontouchstart' in window || // works on most browsers
-          navigator.maxTouchPoints   // works on IE10/11 and Surface
+    navigator.maxTouchPoints   // works on IE10/11 and Surface
 }
 
 function truncateString (str, length) {
@@ -339,10 +339,10 @@ function dataURItoBlob (dataURI, opts, toFile) {
 
   // Convert to a File?
   if (toFile) {
-    return new File([new Uint8Array(array)], opts.name || '', {type: mimeType})
+    return new File([new Uint8Array(array)], opts.name || '', { type: mimeType })
   }
 
-  return new Blob([new Uint8Array(array)], {type: mimeType})
+  return new Blob([new Uint8Array(array)], { type: mimeType })
 }
 
 function dataURItoFile (dataURI, opts) {
@@ -490,7 +490,7 @@ function getSocketHost (url) {
 }
 
 function _emitSocketProgress (uploader, progressData, file) {
-  const {progress, bytesUploaded, bytesTotal} = progressData
+  const { progress, bytesUploaded, bytesTotal } = progressData
   if (progress) {
     uploader.core.log(`Upload progress: ${progress}`)
     uploader.core.emitter.emit('core:upload-progress', {
@@ -502,7 +502,7 @@ function _emitSocketProgress (uploader, progressData, file) {
   }
 }
 
-const emitSocketProgress = throttle(_emitSocketProgress, 300, {leading: true, trailing: true})
+const emitSocketProgress = throttle(_emitSocketProgress, 300, { leading: true, trailing: true })
 
 function settle (promises) {
   const resolutions = []
@@ -519,13 +519,6 @@ function settle (promises) {
   )
 
   return wait.then(() => {
-    if (rejections.length === promises.length) {
-      // Very ad-hoc multiple-error reporting, should wrap this in a
-      // CombinedError or whatever kind of error class instead.
-      const error = rejections[0]
-      error.errors = rejections
-      return Promise.reject(error)
-    }
     return {
       successful: resolutions,
       failed: rejections
