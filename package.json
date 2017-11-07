@@ -1,5 +1,5 @@
 {
-  "name": "uppy",
+  "name": "@photobox/uppy",
   "version": "0.20.3",
   "description": "Extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "main": "lib/index.js",
@@ -19,7 +19,7 @@
   "pre-commit": "lint-staged",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/transloadit/uppy.git"
+    "url": "git+git@github.com:photobox/uppy.git"
   },
   "keywords": [
     "file uploader",
@@ -35,10 +35,6 @@
     "webcam"
   ],
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/transloadit/uppy/issues"
-  },
-  "homepage": "https://github.com/transloadit/uppy#readme",
   "devDependencies": {
     "autoprefixer": "6.3.7",
     "babel-cli": "6.11.4",

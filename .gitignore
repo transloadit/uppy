@@ -5,7 +5,6 @@ env.sh
 node_modules
 
 dist/
-lib/
 coverage/
 
 website/db.json
@@ -22,3 +21,4 @@ config/
 nohup.out
 
 examples/bundled-example/bundle.js
+lib/

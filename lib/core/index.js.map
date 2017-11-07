@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/core/index.js"],"names":["Core","require","module","exports"],"mappings":";;AAAA,IAAMA,OAAOC,QAAQ,QAAR,CAAb;AACAC,OAAOC,OAAP,GAAiBH,IAAjB","file":"index.js","sourcesContent":["const Core = require('./Core')\nmodule.exports = Core\n"]}

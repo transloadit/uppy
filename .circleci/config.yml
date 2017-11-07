@@ -1,0 +1,41 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: node:6.11.4
+
+    working_directory: ~/repo
+
+    dependencies:
+    pre:
+        - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: GitHub and NPM Credentials
+          command: sh .circleci/scripts/login.sh
+
+      - run:
+          name: Install Dependencies
+          command: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run:
+          name: Create Build
+          command: npm run build:lib
+
+      - run:
+          name: Publish to NPM registry and create git tag
+          command: sh .circleci/scripts/version.sh
+          
