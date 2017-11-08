@@ -158,7 +158,10 @@ module.exports = class Transloadit extends Plugin {
           // Only send assembly metadata to the tus endpoint.
           metaFields: Object.keys(tlMeta),
           // Make sure tus doesn't resume a previous upload.
-          uploadUrl: null
+          uploadUrl: null,
+          // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
+          // will upload to the same assembly.
+          resume: false
         })
         const transloadit = {
           assembly: assembly.assembly_id

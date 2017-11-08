@@ -100,6 +100,7 @@ What we need to do to release Uppy 1.0
 
 To be released: 2017-11-10
 
+- [x] s3: Automatically wrap XHRUpload. **Users should remove `.use(XHRUpload)` when using S3.** (@goto-bus-stop)
 - [x] webcam: look into simplifying / improving webcam plugin (probably good to do modern browsers only) (#382 / @goto-bus-stop)
 - [ ] webcam: only show the webcam tab when browser support is available (media recorder API) (@arturi, @goto-bus-stop)
 - [ ] core: Redux PR (#216 / @arturi, @goto-bus-stop, @richardwillars)
