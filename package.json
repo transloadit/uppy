@@ -39,6 +39,9 @@
     "url": "https://github.com/transloadit/uppy/issues"
   },
   "homepage": "https://github.com/transloadit/uppy#readme",
+  "jest": {
+    "testPathIgnorePatterns": ["lib"]
+  },
   "devDependencies": {
     "autoprefixer": "6.3.7",
     "babel-cli": "6.11.4",
