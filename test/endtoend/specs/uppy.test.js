@@ -19,7 +19,8 @@ function uppySelectFakeFile (uppyID) {
 function browserSupportsChooseFile (capabilities) {
   // Webdriver for Safari and Edge doesn’t support .chooseFile
   return capabilities.browserName !== 'safari' &&
-         capabilities.browserName !== 'MicrosoftEdge'
+         capabilities.browserName !== 'MicrosoftEdge' &&
+         capabilities.platformName !== 'Android'
 }
 
 browser.url(testURL)
