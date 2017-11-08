@@ -477,7 +477,7 @@ class Uppy {
   retryAll () {
     const updatedFiles = Object.assign({}, this.getState().files)
     const filesToRetry = Object.keys(updatedFiles).filter(file => {
-      return updatedFiles[file].error.message
+      return updatedFiles[file].error
     })
 
     filesToRetry.forEach((file) => {
