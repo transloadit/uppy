@@ -90,6 +90,7 @@
     "tinyify": "^1.0.0",
     "uppy-server": "0.0.7",
     "watchify": "3.7.0",
+    "webdriverio": "^4.8.0",
     "wdio-mocha-framework": "^0.5.11",
     "wdio-sauce-service": "^0.4.4",
     "wdio-static-server-service": "^1.0.1"
@@ -111,8 +112,7 @@
     "url-parse": "1.1.9",
     "whatwg-fetch": "2.0.3",
     "yo-yo": "1.4.0",
-    "yo-yoify": "3.7.2",
-    "webdriverio": "^4.8.0"
+    "yo-yoify": "3.7.2"
   },
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
