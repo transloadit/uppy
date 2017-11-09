@@ -1,6 +1,6 @@
 const React = require('react')
 const PropTypes = require('prop-types')
-const UppyCore = require('../core/Core')
+const UppyCore = require('../core/Core').Uppy
 const DashboardPlugin = require('../plugins/Dashboard')
 
 const h = React.createElement
