@@ -1103,3 +1103,5 @@ class Uppy {
 module.exports = function (opts) {
   return new Uppy(opts)
 }
+// Expose class constructor.
+module.exports.Uppy = Uppy
