@@ -6,7 +6,7 @@ alias: api/
 order: 0
 ---
 
-Uppy is a sleek, modular file uploader that integrates seemlessly with any framework. It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to the final destination. It’s fast, easy to use and let's you worry about more important problems than building a file uploader.
+Uppy is a sleek, modular file uploader that integrates seamlessly with any framework. It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to the final destination. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
 
 Uppy consists of a core module and [various plugins](/docs/plugins/) for selecting, manipulating and uploading files. Here’s how it works:
 
@@ -31,7 +31,7 @@ uppy.on('core:success', (files) => {
 
 Drag and Drop, Webcam, basic file manipulation (adding metadata), uploading via tus resumable uploads or XHR/Multipart is all possible using just the uppy client module.
 
-Adding [Uppy Server](/docs/server/) to the mix enables remote sources, such as Instagram, Google Drive and Dropbox. Uploads from remote sources are handled server-to-serber,(so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Uppy Server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
+Adding [Uppy Server](/docs/server/) to the mix enables remote sources such as Instagram, Google Drive and Dropbox. Uploads from remote sources are handled server-to-server, so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Uppy Server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
 
 ## Installation
 
@@ -43,7 +43,7 @@ We recommend installing from NPM and then using a module bundler such as [Webpac
 
 If you like, you can also use a pre-built bundle, for example from [unpkg CDN](https://unpkg.com/uppy/). In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
-> ⚠️ The bundle currently consists of most Uppy plugins, so this method is not  recommended for production, as your users will have to download all plugins, even if you are using just a few.
+> ⚠️ The bundle currently consists of most Uppy plugins, so this method is not recommended for production, as your users will have to download all plugins, even if you're only using a few of them.
 
 1\. Add a script to the bottom of `<body>`:
 
