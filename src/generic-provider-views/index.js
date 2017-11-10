@@ -166,7 +166,7 @@ module.exports = class View {
     }
 
     Utils.getFileType(tagFile).then(fileType => {
-      if (fileType && Utils.isPreviewSupported(fileType[1])) {
+      if (fileType && Utils.isPreviewSupported(fileType)) {
         tagFile.preview = this.plugin.getItemThumbnailUrl(file)
       }
       this.plugin.core.log('Adding remote file')
