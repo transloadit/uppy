@@ -364,7 +364,9 @@ module.exports = class Tus extends Plugin {
       const current = parseInt(index, 10) + 1
       const total = files.length
 
-      if (!file.isRemote) {
+      if (file.error) {
+        return Promise.reject(new Error(file.error))
+      } else if (!file.isRemote) {
         return this.upload(file, current, total)
       } else {
         return this.uploadRemote(file, current, total)

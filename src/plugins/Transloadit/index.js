@@ -317,6 +317,9 @@ module.exports = class Transloadit extends Plugin {
   }
 
   prepareUpload (fileIDs, uploadID) {
+    // Only use files without errors
+    fileIDs = fileIDs.filter((file) => !file.error)
+
     fileIDs.forEach((fileID) => {
       this.core.emit('core:preprocess-progress', fileID, {
         mode: 'indeterminate',
@@ -367,6 +370,9 @@ module.exports = class Transloadit extends Plugin {
   }
 
   afterUpload (fileIDs, uploadID) {
+    // Only use files without errors
+    fileIDs = fileIDs.filter((file) => !file.error)
+
     const state = this.getPluginState()
     const assemblyIDs = state.uploadsAssemblies[uploadID]
 
