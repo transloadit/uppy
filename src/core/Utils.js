@@ -519,13 +519,6 @@ function settle (promises) {
   )
 
   return wait.then(() => {
-    if (rejections.length === promises.length) {
-      // Very ad-hoc multiple-error reporting, should wrap this in a
-      // CombinedError or whatever kind of error class instead.
-      const error = rejections[0]
-      error.errors = rejections
-      return Promise.reject(error)
-    }
     return {
       successful: resolutions,
       failed: rejections

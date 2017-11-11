@@ -22,8 +22,8 @@ const uppy = Uppy({ autoProceed: false })
   .use(Tus, {endpoint: '//master.tus.io/files/'})
   .run()
  
-uppy.on('core:success', (files) => {
-  console.log(`Upload complete! We’ve uploaded these files: ${files}`)
+uppy.on('core:complete', (result) => {
+  console.log(`Upload complete! We’ve uploaded these files: ${result.successful}`)
 })
 ```
 

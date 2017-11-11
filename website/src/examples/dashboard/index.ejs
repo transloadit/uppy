@@ -57,7 +57,7 @@ const uppy = Uppy({
 })
 .run()
 
-uppy.on('core:success', (fileList) => {
-  console.log('Successfully uploaded:', fileList)
+uppy.on('core:complete', (result) => {
+  console.log('Successfully uploaded:', result.successful)
 })
 {% endcodeblock %}

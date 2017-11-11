@@ -317,6 +317,9 @@ module.exports = class Transloadit extends Plugin {
   }
 
   prepareUpload (fileIDs, uploadID) {
+    // Only use files without errors
+    fileIDs = fileIDs.filter((file) => !file.error)
+
     fileIDs.forEach((fileID) => {
       this.core.emit('core:preprocess-progress', fileID, {
         mode: 'indeterminate',
@@ -367,6 +370,9 @@ module.exports = class Transloadit extends Plugin {
   }
 
   afterUpload (fileIDs, uploadID) {
+    // Only use files without errors
+    fileIDs = fileIDs.filter((file) => !file.error)
+
     const state = this.getPluginState()
     const assemblyIDs = state.uploadsAssemblies[uploadID]
 
@@ -411,12 +417,7 @@ module.exports = class Transloadit extends Plugin {
           this.core.emit('core:postprocess-complete', file.id)
         })
 
-        finishedAssemblies += 1
-        if (finishedAssemblies === assemblyIDs.length) {
-          // We're done, these listeners can be removed
-          removeListeners()
-          resolve()
-        }
+        checkAllComplete()
       }
 
       const onAssemblyError = (assembly, error) => {
@@ -434,14 +435,7 @@ module.exports = class Transloadit extends Plugin {
           this.core.emit('core:postprocess-complete', file.id)
         })
 
-        // Should we remove the listeners here or should we keep handling finished
-        // assemblies?
-        // Doing this for now so that it's not possible to receive more postprocessing
-        // events once the upload has failed.
-        removeListeners()
-
-        // Reject the `afterUpload()` promise.
-        reject(error)
+        checkAllComplete()
       }
 
       const onImportError = (assembly, fileID, error) => {
@@ -455,6 +449,15 @@ module.exports = class Transloadit extends Plugin {
         // In the future we should maybe have a way to resolve uploads with some failures,
         // like returning an object with `{ successful, failed }` uploads.
         onAssemblyError(assembly, error)
+      }
+
+      const checkAllComplete = () => {
+        finishedAssemblies += 1
+        if (finishedAssemblies === assemblyIDs.length) {
+          // We're done, these listeners can be removed
+          removeListeners()
+          resolve()
+        }
       }
 
       const removeListeners = () => {

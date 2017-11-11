@@ -591,7 +591,50 @@ describe('src/Core', () => {
     })
   })
 
-  describe('uploading a file', () => {})
+  describe('uploading a file', () => {
+    it('should return a { successful, failed } pair containing file objects', () => {
+      const core = new Core().run()
+      core.addUploader((fileIDs) => Promise.resolve())
+      return Promise.all([
+        core.addFile({ source: 'jest', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() }),
+        core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
+      ]).then(() => {
+        return expect(core.upload()).resolves.toMatchObject({
+          successful: [
+            { name: 'foo.jpg' },
+            { name: 'bar.jpg' }
+          ],
+          failed: []
+        })
+      })
+    })
+
+    it('should return files with errors in the { failed } key', () => {
+      const core = new Core().run()
+      core.addUploader((fileIDs) => {
+        fileIDs.forEach((fileID) => {
+          if (/bar/.test(core.getFile(fileID).name)) {
+            core.emit('core:upload-error', fileID, new Error('This is bar and I do not like bar'))
+          }
+        })
+        return Promise.resolve()
+      })
+
+      return Promise.all([
+        core.addFile({ source: 'jest', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() }),
+        core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
+      ]).then(() => {
+        return expect(core.upload()).resolves.toMatchObject({
+          successful: [
+            { name: 'foo.jpg' }
+          ],
+          failed: [
+            { name: 'bar.jpg', error: 'This is bar and I do not like bar' }
+          ]
+        })
+      })
+    })
+  })
 
   describe('removing a file', () => {
     it('should remove the file', () => {

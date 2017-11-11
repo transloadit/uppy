@@ -213,9 +213,10 @@ module.exports = class GoldenRetriever extends Plugin {
       this.IndexedDBStore.delete(fileID)
     })
 
-    this.core.on('core:success', (fileIDs) => {
+    this.core.on('core:complete', ({ successful }) => {
+      const fileIDs = successful.map((file) => file.id)
       this.deleteBlobs(fileIDs).then(() => {
-        this.core.log(`[GoldenRetriever] removed ${fileIDs.length} files that finished uploading`)
+        this.core.log(`RestoreFiles: removed ${successful.length} files that finished uploading`)
       })
     })
 

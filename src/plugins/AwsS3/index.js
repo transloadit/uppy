@@ -60,12 +60,18 @@ module.exports = class AwsS3 extends Plugin {
             value: 1
           })
           return params
+        }).catch((error) => {
+          this.core.emit('core:upload-error', file.id, error)
         })
       })
     ).then((responses) => {
       const updatedFiles = {}
       fileIDs.forEach((id, index) => {
         const file = this.core.getFile(id)
+        if (file.error) {
+          return
+        }
+
         const {
           method = 'post',
           url,

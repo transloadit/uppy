@@ -252,7 +252,9 @@ module.exports = class XHRUpload extends Plugin {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
-      if (file.isRemote) {
+      if (file.error) {
+        return Promise.reject(new Error(file.error))
+      } else if (file.isRemote) {
         return this.uploadRemote(file, current, total)
       } else {
         return this.upload(file, current, total)

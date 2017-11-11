@@ -27,8 +27,8 @@ const uppy = Uppy({
 
 uppy.use(Tus, { endpoint: '/upload' })
 
-uppy.on('core:success', (fileIDs) => {
-  const url = uppy.getFile(fileIDs[0]).uploadURL
+uppy.on('core:complete', (result) => {
+  const url = result.successful[0].uploadURL
   store.dispatch({
     type: SET_USER_AVATAR_URL,
     payload: { url: url }
