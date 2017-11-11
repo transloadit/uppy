@@ -53,7 +53,7 @@ module.exports = (props) => {
           handleFileClick: props.addFile,
           handleFolderClick: props.getNextFolder,
           isChecked: props.isChecked,
-          removeFile: props.removeFile,
+          toggleCheckbox: props.toggleCheckbox,
           getItemName: props.getItemName,
           getItemIcon: props.getItemIcon,
           handleScroll: props.handleScroll

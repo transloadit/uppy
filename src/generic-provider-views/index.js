@@ -67,7 +67,7 @@ module.exports = class View {
     this.sortByDate = this.sortByDate.bind(this)
     this.isActiveRow = this.isActiveRow.bind(this)
     this.isChecked = this.isChecked.bind(this)
-    this.removeFile = this.removeFile.bind(this)
+    this.toggleCheckbox = this.toggleCheckbox.bind(this)
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
 
@@ -146,6 +146,7 @@ module.exports = class View {
   getNextFolder (folder) {
     let id = this.plugin.getItemRequestPath(folder)
     this.getFolder(id, this.plugin.getItemName(folder))
+    this.lastCheckbox = undefined
   }
 
   addFile (file, isCheckbox = false) {
@@ -312,20 +313,48 @@ module.exports = class View {
   }
 
   isChecked (file) {
-    const fileId = Utils.generateFileID({
+    return (this.fileToId(file) in this.plugin.core.getState().files)
+  }
+
+  toggleCheckbox (e, file) {
+    e.stopPropagation()
+    e.preventDefault()
+    let {folders, files, filterInput} = this.plugin.core.getState()[this.plugin.stateId]
+    let items = folders.concat(files)
+    if (filterInput !== '') {
+      items = this.filterItems(items)
+    }
+    let itemsToToggle = [file]
+    if (this.lastCheckbox && e.shiftKey) {
+      let prevIndex = items.indexOf(this.lastCheckbox)
+      let currentIndex = items.indexOf(file)
+      if (prevIndex < currentIndex) {
+        itemsToToggle = items.slice(prevIndex, currentIndex + 1)
+      } else {
+        itemsToToggle = items.slice(currentIndex, prevIndex + 1)
+      }
+    }
+    this.lastCheckbox = file
+    if (this.isChecked(file)) {
+      for (let item of itemsToToggle) {
+        const itemId = this.fileToId(item)
+        if (itemId in this.plugin.core.getState().files) {
+          this.plugin.core.removeFile(itemId)
+        }
+      }
+    } else {
+      for (let item of itemsToToggle) {
+        this.addFile(item, true)
+      }
+    }
+  }
+
+  fileToId (file) {
+    return Utils.generateFileID({
       data: this.plugin.getItemData(file),
       name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
       type: this.plugin.getMimeType(file)
     })
-    return (fileId in this.plugin.core.getState().files)
-  }
-
-  removeFile (file) {
-    this.plugin.core.removeFile(Utils.generateFileID({
-      data: this.plugin.getItemData(file),
-      name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
-      type: this.plugin.getMimeType(file)
-    }))
   }
 
   handleDemoAuth () {
@@ -428,7 +457,7 @@ module.exports = class View {
       demo: this.plugin.opts.demo,
       isActiveRow: this.isActiveRow,
       isChecked: this.isChecked,
-      removeFile: this.removeFile,
+      toggleCheckbox: this.toggleCheckbox,
       getItemName: this.plugin.getItemName,
       getItemIcon: this.plugin.getItemIcon,
       handleScroll: this.handleScroll,

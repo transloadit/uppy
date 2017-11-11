@@ -24,8 +24,7 @@ module.exports = (props) => {
             getItemIcon: () => props.getItemIcon(folder),
             handleClick: () => props.handleFolderClick(folder),
             isChecked: props.isChecked(folder),
-            removeFile: () => props.removeFile(folder),
-            handleCheckboxClick: () => props.handleFileClick(folder, true),
+            handleCheckboxClick: (e) => props.toggleCheckbox(e, folder),
             columns: props.columns
           })
         })}
@@ -36,8 +35,7 @@ module.exports = (props) => {
             getItemIcon: () => props.getItemIcon(file),
             handleClick: () => props.handleFileClick(file),
             isChecked: props.isChecked(file),
-            removeFile: () => props.removeFile(file),
-            handleCheckboxClick: () => props.handleFileClick(file, true),
+            handleCheckboxClick: (e) => props.toggleCheckbox(e, file),
             columns: props.columns
           })
         })}
