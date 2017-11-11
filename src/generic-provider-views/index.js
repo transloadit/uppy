@@ -148,7 +148,7 @@ module.exports = class View {
     this.getFolder(id, this.plugin.getItemName(folder))
   }
 
-  addFile (file, isCheckbox=false) {
+  addFile (file, isCheckbox = false) {
     const tagFile = {
       source: this.plugin.id,
       data: this.plugin.getItemData(file),
@@ -315,7 +315,7 @@ module.exports = class View {
     const fileId = Utils.generateFileID({
       data: this.plugin.getItemData(file),
       name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
-      type: this.plugin.getMimeType(file),
+      type: this.plugin.getMimeType(file)
     })
     return (fileId in this.plugin.core.getState().files)
   }
@@ -324,7 +324,7 @@ module.exports = class View {
     this.plugin.core.removeFile(Utils.generateFileID({
       data: this.plugin.getItemData(file),
       name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
-      type: this.plugin.getMimeType(file),
+      type: this.plugin.getMimeType(file)
     }))
   }
 
