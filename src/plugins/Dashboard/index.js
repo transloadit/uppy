@@ -121,10 +121,12 @@ module.exports = class DashboardUI extends Plugin {
     return this.target
   }
 
-  hideAllPanels () {
-    this.setPluginState({
-      activePanel: false
-    })
+  hideAllPanels (file) {
+    if (!file.isCheckbox) {
+      this.setPluginState({
+        activePanel: false
+      })
+    }
   }
 
   showPanel (id) {

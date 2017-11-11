@@ -66,6 +66,8 @@ module.exports = class View {
     this.sortByTitle = this.sortByTitle.bind(this)
     this.sortByDate = this.sortByDate.bind(this)
     this.isActiveRow = this.isActiveRow.bind(this)
+    this.isChecked = this.isChecked.bind(this)
+    this.removeFile = this.removeFile.bind(this)
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
 
@@ -146,13 +148,14 @@ module.exports = class View {
     this.getFolder(id, this.plugin.getItemName(folder))
   }
 
-  addFile (file) {
+  addFile (file, isCheckbox=false) {
     const tagFile = {
       source: this.plugin.id,
       data: this.plugin.getItemData(file),
       name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
       type: this.plugin.getMimeType(file),
       isRemote: true,
+      isCheckbox: isCheckbox,
       body: {
         fileId: this.plugin.getItemId(file)
       },
@@ -308,6 +311,23 @@ module.exports = class View {
     return this.plugin.core.getState()[this.plugin.stateId].activeRow === this.plugin.getItemId(file)
   }
 
+  isChecked (file) {
+    const fileId = Utils.generateFileID({
+      data: this.plugin.getItemData(file),
+      name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
+      type: this.plugin.getMimeType(file),
+    })
+    return (fileId in this.plugin.core.getState().files)
+  }
+
+  removeFile (file) {
+    this.plugin.core.removeFile(Utils.generateFileID({
+      data: this.plugin.getItemData(file),
+      name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
+      type: this.plugin.getMimeType(file),
+    }))
+  }
+
   handleDemoAuth () {
     const state = this.plugin.core.getState()[this.plugin.stateId]
     this.updateState({}, state, {
@@ -407,6 +427,8 @@ module.exports = class View {
       logout: this.logout,
       demo: this.plugin.opts.demo,
       isActiveRow: this.isActiveRow,
+      isChecked: this.isChecked,
+      removeFile: this.removeFile,
       getItemName: this.plugin.getItemName,
       getItemIcon: this.plugin.getItemIcon,
       handleScroll: this.handleScroll,
