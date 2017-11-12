@@ -338,7 +338,8 @@ class Uppy {
           },
           size: file.data.size || 'N/A',
           isRemote: isRemote,
-          isCheckbox: file.isCheckbox,
+          isCheckbox: file.isCheckbox || false,
+          isFolder: file.isFolder || false,
           remote: file.remote || '',
           preview: file.preview
         }
