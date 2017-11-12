@@ -20,15 +20,20 @@ module.exports = (props) => {
   }
 
   const input = html`
-    <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
-           onchange=${props.handleInputChange} />
-  `
+    <input class="UppyDashboard-input"
+          hidden="true"
+          aria-hidden="true" 
+          tabindex="-1" 
+          type="file" 
+          name="files[]" 
+          multiple="true"
+          onchange=${props.handleInputChange} />`
 
   return html`<div class="UppyDashboardTabs">
     <nav>
       <ul class="UppyDashboardTabs-list" role="tablist">
         <li class="UppyDashboardTab">
-          <button type="button" class="UppyDashboardTab-btn UppyDashboard-focus"
+          <button type="button" class="UppyDashboardTab-btn"
                   role="tab"
                   tabindex="0"
                   onclick=${(ev) => {
