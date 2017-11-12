@@ -7,6 +7,7 @@ const { isTouchDevice, toArray } = require('../../core/Utils')
 const { closeIcon } = require('./icons')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
+// https://github.com/ghosh/micromodal
 
 module.exports = function Dashboard (props) {
   function handleInputChange (ev) {
@@ -46,6 +47,20 @@ module.exports = function Dashboard (props) {
         data: blob
       })
     })
+  }
+
+  const renderInnerPanel = (props) => {
+    return html`<div style="width: 100%; height: 100%;">
+          <div class="UppyDashboardContent-bar">
+          <h2 class="UppyDashboardContent-title">
+            ${props.i18n('importFrom')} ${props.activePanel ? props.activePanel.name : null}
+          </h2>
+          <button class="UppyDashboardContent-back"
+                type="button"
+                onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
+        </div>
+        ${props.getPlugin(props.activePanel.id).render(props.state)}
+    </div>`
   }
 
   return html`
@@ -136,15 +151,7 @@ module.exports = function Dashboard (props) {
         <div class="UppyDashboardContent-panel"
              role="tabpanel"
              aria-hidden="${props.activePanel ? 'false' : 'true'}">
-          <div class="UppyDashboardContent-bar">
-            <h2 class="UppyDashboardContent-title">
-              ${props.i18n('importFrom')} ${props.activePanel ? props.activePanel.name : null}
-            </h2>
-            <button class="UppyDashboardContent-back"
-                    type="button"
-                    onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
-          </div>
-          ${props.activePanel ? props.getPlugin(props.activePanel.id).render(props.state) : ''}
+         ${props.activePanel ? renderInnerPanel(props) : ''}
         </div>
 
         <div class="UppyDashboard-progressindicators">
