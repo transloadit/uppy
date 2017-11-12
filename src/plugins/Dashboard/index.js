@@ -96,7 +96,7 @@ module.exports = class DashboardUI extends Plugin {
     this.maintainFocus = this.maintainFocus.bind(this)
 
     this.initEvents = this.initEvents.bind(this)
-    this.handleEscapeKeyPress = this.handleEscapeKeyPress.bind(this)
+    this.onKeydown = this.onKeydown.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
     this.handleFileCard = this.handleFileCard.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
@@ -179,6 +179,7 @@ module.exports = class DashboardUI extends Plugin {
 
   setFocusToFirstNode () {
     const focusableNodes = this.getFocusableNodes()
+    console.log(focusableNodes)
     console.log(focusableNodes[0])
     if (focusableNodes.length) focusableNodes[0].focus()
   }
@@ -213,12 +214,6 @@ module.exports = class DashboardUI extends Plugin {
 
     this.setFocusToFirstNode()
 
-    // focus on modal inner block
-    // console.log(this.target)
-    // console.log(this.target.querySelector('.UppyDashboard-focus'))
-    // console.log(this.modal)
-    // this.modal.querySelector('.UppyDashboard-focus').focus()
-
     this.updateDashboardElWidth()
     // to be sure, sometimes when the function runs, container size is still 0
     // setTimeout(this.updateDashboardElWidth, 500)
@@ -238,7 +233,12 @@ module.exports = class DashboardUI extends Plugin {
     return !this.getPluginState().isHidden || false
   }
 
-  // Close the Modal on esc key press
+  onKeydown (event) {
+    // Close modal on esc key press, maintainFocus on tab key press
+    if (event.keyCode === 27) this.requestCloseModal(event)
+    if (event.keyCode === 9) this.maintainFocus(event)
+  }
+
   handleEscapeKeyPress (event) {
     if (event.keyCode === 27) {
       this.requestCloseModal()
@@ -260,7 +260,9 @@ module.exports = class DashboardUI extends Plugin {
       this.core.log('Dashboard modal trigger not found, you won’t be able to select files. Make sure `trigger` is set correctly in Dashboard options', 'error')
     }
 
-    document.body.addEventListener('keyup', this.handleEscapeKeyPress)
+    if (!this.opts.inline) {
+      document.addEventListener('keydown', this.onKeydown)
+    }
 
     // Drag Drop
     this.removeDragDropListener = dragDrop(this.el, (files) => {
@@ -275,7 +277,10 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     this.removeDragDropListener()
-    document.body.removeEventListener('keyup', this.handleEscapeKeyPress)
+
+    if (!this.opts.inline) {
+      document.removeEventListener('keydown', this.onKeydown)
+    }
   }
 
   actions () {
