@@ -216,7 +216,7 @@ module.exports = class GoldenRetriever extends Plugin {
     this.core.on('core:complete', ({ successful }) => {
       const fileIDs = successful.map((file) => file.id)
       this.deleteBlobs(fileIDs).then(() => {
-        this.core.log(`GoldenRetriever: removed ${successful.length} files that finished uploading`)
+        this.core.log(`[GoldenRetriever] removed ${successful.length} files that finished uploading`)
       })
     })
 
