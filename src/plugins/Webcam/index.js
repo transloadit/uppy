@@ -303,6 +303,11 @@ module.exports = class Webcam extends Plugin {
   }
 
   install () {
+    if (!this.supportsUserMedia) {
+      this.core.log('Camera APIs are not supported in current browser, Webcam not installed', 'warning')
+      return
+    }
+
     this.setPluginState({
       cameraReady: false
     })
