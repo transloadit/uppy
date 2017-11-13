@@ -311,8 +311,17 @@ module.exports = class DashboardUI extends Plugin {
       })
     }
 
+    const isSupported = (target) => {
+      const plugin = this.core.getPlugin(target.id)
+      // If the plugin does not provide a `supported` check, assume the plugin works everywhere.
+      if (typeof plugin.isSupported !== 'function') {
+        return true
+      }
+      return plugin.isSupported()
+    }
+
     const acquirers = pluginState.targets
-      .filter(target => target.type === 'acquirer')
+      .filter(target => target.type === 'acquirer' && isSupported(target))
       .map(attachRenderFunctionToTarget)
 
     const progressindicators = pluginState.targets
