@@ -1,3 +1,6 @@
+/**
+ * Default store that keeps state in a simple object.
+ */
 module.exports = class DefaultStore {
   constructor () {
     this.state = {}
@@ -19,6 +22,7 @@ module.exports = class DefaultStore {
   subscribe (listener) {
     this.callbacks.push(listener)
     return () => {
+      // Remove the listener.
       this.callbacks.splice(
         this.callbacks.indexOf(listener),
         1
