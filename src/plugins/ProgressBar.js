@@ -8,7 +8,7 @@ const html = require('yo-yo')
 module.exports = class ProgressBar extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.id = 'ProgressBar'
+    this.id = this.opts.id || 'ProgressBar'
     this.title = 'Progress Bar'
     this.type = 'progressindicator'
 
@@ -36,9 +36,8 @@ module.exports = class ProgressBar extends Plugin {
 
   install () {
     const target = this.opts.target
-    const plugin = this
     if (target) {
-      this.mount(target, plugin)
+      this.mount(target, this)
     }
   }
 

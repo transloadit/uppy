@@ -39,9 +39,9 @@ module.exports = class Webcam extends Plugin {
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
-    this.type = 'acquirer'
-    this.id = 'Webcam'
+    this.id = this.opts.id || 'Webcam'
     this.title = 'Webcam'
+    this.type = 'acquirer'
     this.icon = WebcamIcon
     this.focus = this.focus.bind(this)
 
@@ -308,8 +308,9 @@ module.exports = class Webcam extends Plugin {
     })
 
     const target = this.opts.target
-    const plugin = this
-    this.target = this.mount(target, plugin)
+    if (target) {
+      this.mount(target, this)
+    }
   }
 
   uninstall () {

@@ -9,7 +9,7 @@ module.exports = class Instagram extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
-    this.id = 'Instagram'
+    this.id = this.opts.id || 'Instagram'
     this.title = 'Instagram'
     this.stateId = 'instagram'
     this.icon = () => html`

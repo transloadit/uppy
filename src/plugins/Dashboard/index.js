@@ -9,12 +9,12 @@ const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
 
 /**
- * Modal Dialog & Dashboard
+ * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
 module.exports = class DashboardUI extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.id = 'Dashboard'
+    this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
 
@@ -404,7 +404,6 @@ module.exports = class DashboardUI extends Plugin {
     })
 
     const target = this.opts.target
-
     if (target) {
       this.mount(target, this)
     }

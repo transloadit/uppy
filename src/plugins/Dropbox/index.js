@@ -10,7 +10,7 @@ module.exports = class Dropbox extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
-    this.id = 'Dropbox'
+    this.id = this.opts.id || 'Dropbox'
     this.title = 'Dropbox'
     this.stateId = 'dropbox'
     this.icon = () => html`
