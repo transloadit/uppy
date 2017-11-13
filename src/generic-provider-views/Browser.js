@@ -54,7 +54,8 @@ module.exports = (props) => {
           handleFolderClick: props.getNextFolder,
           getItemName: props.getItemName,
           getItemIcon: props.getItemIcon,
-          handleScroll: props.handleScroll
+          handleScroll: props.handleScroll,
+          title: props.title
         })}
       </div>
     </div>

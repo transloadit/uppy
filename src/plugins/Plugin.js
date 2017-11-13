@@ -1,5 +1,5 @@
 const yo = require('yo-yo')
-const nanoraf = require('nanoraf')
+// const nanoraf = require('nanoraf')
 const { findDOMElement } = require('../core/Utils')
 const getFormData = require('get-form-data')
 
@@ -63,9 +63,12 @@ module.exports = class Plugin {
     const targetElement = findDOMElement(target)
 
     // Set up nanoraf.
-    this.updateUI = nanoraf((state) => {
+    // this.updateUI = nanoraf((state) => {
+    //   this.el = yo.update(this.el, this.render(state))
+    // })
+    this.updateUI = (state) => {
       this.el = yo.update(this.el, this.render(state))
-    })
+    }
 
     if (targetElement) {
       this.core.log(`Installing ${callerPluginName} to a DOM element`)
