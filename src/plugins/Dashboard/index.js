@@ -234,15 +234,10 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   onKeydown (event) {
-    // Close modal on esc key press, maintainFocus on tab key press
+    // close modal on esc key press
     if (event.keyCode === 27) this.requestCloseModal(event)
+    // maintainFocus on tab key press
     if (event.keyCode === 9) this.maintainFocus(event)
-  }
-
-  handleEscapeKeyPress (event) {
-    if (event.keyCode === 27) {
-      this.requestCloseModal()
-    }
   }
 
   handleClickOutside () {
