@@ -132,6 +132,7 @@ Released: 2017-11-14
 - [x] webcam: only show the webcam tab when browser support is available (media recorder API) (#421 / @arturi, @goto-bus-stop)
 - [x] webcam: simplify and refactor webcam plugin (modern browser APIs only) (#382 / @goto-bus-stop)
 - [x] xhrupload: set a timeout in the onprogress event handler to detect stale network (#378 / @goto-bus-stop)
+- [x] uppy-server: allow flexible whitelist endpoint protocols (@ifedapoolarewaju)
 
 ## 0.20.3
 
