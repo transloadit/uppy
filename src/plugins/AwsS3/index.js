@@ -1,4 +1,5 @@
 const Plugin = require('../Plugin')
+const Translator = require('../../core/Translator')
 const XHRUpload = require('../XHRUpload')
 
 module.exports = class AwsS3 extends Plugin {
@@ -23,6 +24,9 @@ module.exports = class AwsS3 extends Plugin {
     this.locale = Object.assign({}, defaultLocale, this.opts.locale)
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
+    this.translator = new Translator({ locale: this.locale })
+    this.i18n = this.translator.translate.bind(this.translator)
+
     this.prepareUpload = this.prepareUpload.bind(this)
   }
 
@@ -43,7 +47,7 @@ module.exports = class AwsS3 extends Plugin {
     fileIDs.forEach((id) => {
       this.core.emit('core:preprocess-progress', id, {
         mode: 'determinate',
-        message: this.locale.strings.preparingUpload,
+        message: this.i18n('preparingUpload'),
         value: 0
       })
     })
@@ -56,7 +60,7 @@ module.exports = class AwsS3 extends Plugin {
         return paramsPromise.then((params) => {
           this.core.emit('core:preprocess-progress', file.id, {
             mode: 'determinate',
-            message: this.locale.strings.preparingUpload,
+            message: this.i18n('preparingUpload'),
             value: 1
           })
           return params

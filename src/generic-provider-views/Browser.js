@@ -56,7 +56,8 @@ module.exports = (props) => {
           toggleCheckbox: props.toggleCheckbox,
           getItemName: props.getItemName,
           getItemIcon: props.getItemIcon,
-          handleScroll: props.handleScroll
+          handleScroll: props.handleScroll,
+          title: props.title
         })}
       </div>
     </div>

@@ -7,6 +7,7 @@ const { isTouchDevice, toArray } = require('../../core/Utils')
 const { closeIcon } = require('./icons')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
+// https://github.com/ghosh/micromodal
 
 module.exports = function Dashboard (props) {
   function handleInputChange (ev) {
@@ -48,6 +49,20 @@ module.exports = function Dashboard (props) {
     })
   }
 
+  const renderInnerPanel = (props) => {
+    return html`<div style="width: 100%; height: 100%;">
+          <div class="UppyDashboardContent-bar">
+          <h2 class="UppyDashboardContent-title">
+            ${props.i18n('importFrom')} ${props.activePanel ? props.activePanel.name : null}
+          </h2>
+          <button class="UppyDashboardContent-back"
+                type="button"
+                onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
+        </div>
+        ${props.getPlugin(props.activePanel.id).render(props.state)}
+    </div>`
+  }
+
   return html`
     <div class="Uppy UppyTheme--default UppyDashboard
                           ${isTouchDevice() ? 'Uppy--isTouchDevice' : ''}
@@ -58,18 +73,17 @@ module.exports = function Dashboard (props) {
           aria-label="${!props.inline
                        ? props.i18n('dashboardWindowTitle')
                        : props.i18n('dashboardTitle')}"
-          role="dialog"
-          onpaste=${handlePaste}
-          onload=${() => props.updateDashboardElWidth()}>
+          onpaste=${handlePaste}>
 
-    <div class="UppyDashboard-overlay" onclick=${props.handleClickOutside}></div>
+    <div class="UppyDashboard-overlay" tabindex="-1" onclick=${props.handleClickOutside}></div>
 
     <div class="UppyDashboard-inner"
-         tabindex="0"
+         aria-modal="true"
+         role="dialog"
          style="
           ${props.inline && props.maxWidth ? `max-width: ${props.maxWidth}px;` : ''}
-          ${props.inline && props.maxHeight ? `max-height: ${props.maxHeight}px;` : ''}
-         ">
+          ${props.inline && props.maxHeight ? `max-height: ${props.maxHeight}px;` : ''}"
+         onload=${() => props.updateDashboardElWidth()}>
       <button class="UppyDashboard-close"
               type="button"
               aria-label="${props.i18n('closeModal')}"
@@ -137,15 +151,7 @@ module.exports = function Dashboard (props) {
         <div class="UppyDashboardContent-panel"
              role="tabpanel"
              aria-hidden="${props.activePanel ? 'false' : 'true'}">
-          <div class="UppyDashboardContent-bar">
-            <h2 class="UppyDashboardContent-title">
-              ${props.i18n('importFrom')} ${props.activePanel ? props.activePanel.name : null}
-            </h2>
-            <button class="UppyDashboardContent-back"
-                    type="button"
-                    onclick=${props.hideAllPanels}>${props.i18n('done')}</button>
-          </div>
-          ${props.activePanel ? props.getPlugin(props.activePanel.id).render(props.state) : ''}
+         ${props.activePanel ? renderInnerPanel(props) : ''}
         </div>
 
         <div class="UppyDashboard-progressindicators">

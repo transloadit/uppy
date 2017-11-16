@@ -176,7 +176,7 @@ describe('Plugin', () => {
       expect(typeof plugin.updateUI).toBe('function')
     })
 
-    it('sets `el` property when state has changed', () => {
+    xit('sets `el` property when state has changed', () => {
       expect.assertions(4)
 
       expect(plugin.el).toBe(undefined)

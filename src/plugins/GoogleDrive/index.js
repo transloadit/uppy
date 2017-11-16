@@ -9,7 +9,7 @@ module.exports = class GoogleDrive extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
-    this.id = 'GoogleDrive'
+    this.id = this.opts.id || 'GoogleDrive'
     this.title = 'Google Drive'
     this.stateId = 'googleDrive'
     this.icon = () => html`
