@@ -87,9 +87,9 @@ module.exports = class Plugin {
       this.el = plugin.render(this.core.state)
       targetElement.appendChild(this.el)
 
-      this.target = targetElement
+      this.target = this.el
 
-      return targetElement
+      return this.target
     }
 
     let targetPlugin
@@ -111,8 +111,8 @@ module.exports = class Plugin {
     if (targetPlugin) {
       const targetPluginName = targetPlugin.id
       this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
-      this.target = targetPlugin
-      return targetPlugin.addTarget(plugin)
+      this.target = targetPlugin.addTarget(plugin)
+      return this.target
     }
 
     this.core.log(`Not installing ${callerPluginName}`)

@@ -176,8 +176,8 @@ module.exports = class DashboardUI extends Plugin {
 
   setFocusToFirstNode () {
     const focusableNodes = this.getFocusableNodes()
-    console.log(focusableNodes)
-    console.log(focusableNodes[0])
+    // console.log(focusableNodes)
+    // console.log(focusableNodes[0])
     if (focusableNodes.length) focusableNodes[0].focus()
   }
 
