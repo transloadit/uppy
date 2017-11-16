@@ -1,5 +1,4 @@
 const html = require('yo-yo')
-const isFinite = require('lodash.isfinite')
 const { getETA,
          getSpeed,
          prettyETA,
@@ -100,7 +99,7 @@ module.exports = function fileItem (props) {
         }
       </h4>
       <div class="UppyDashboardItem-status">
-        ${isFinite(file.data.size) ? html`<div class="UppyDashboardItem-statusSize">${prettyBytes(file.data.size)}</div>` : ''}
+        ${file.data.size && html`<div class="UppyDashboardItem-statusSize">${prettyBytes(file.data.size)}</div>`}
         ${file.source && html`<div class="UppyDashboardItem-sourceIcon">
             ${acquirers.map(acquirer => {
               if (acquirer.id === file.source) return html`<span title="${props.i18n('fileSource')}: ${acquirer.name}">${acquirer.icon()}</span>`
