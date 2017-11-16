@@ -157,7 +157,6 @@ module.exports = class View {
       type: this.plugin.getMimeType(file),
       isRemote: true,
       isCheckbox: isCheckbox,
-      isFolder: this.plugin.isFolder(file),
       body: {
         fileId: this.plugin.getItemId(file)
       },
