@@ -16,7 +16,7 @@ function getMediaDevices () {
     return navigator.mediaDevices
   }
 
-  let getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia
+  const getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia
   if (!getUserMedia) {
     return null
   }
@@ -39,9 +39,9 @@ module.exports = class Webcam extends Plugin {
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
-    this.type = 'acquirer'
-    this.id = 'Webcam'
+    this.id = this.opts.id || 'Webcam'
     this.title = 'Webcam'
+    this.type = 'acquirer'
     this.icon = WebcamIcon
     this.focus = this.focus.bind(this)
 
@@ -94,25 +94,34 @@ module.exports = class Webcam extends Plugin {
     }
   }
 
-  start () {
-    if (!this.mediaDevices) {
-      return Promise.reject(new Error('Webcam access not supported'))
-    }
+  isSupported () {
+    return !!this.mediaDevices
+  }
 
-    this.webcamActive = true
-
+  getConstraints () {
     const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1 ||
       this.opts.modes.indexOf('audio-only') !== -1
     const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1 ||
       this.opts.modes.indexOf('video-only') !== -1 ||
       this.opts.modes.indexOf('picture') !== -1
 
+    return {
+      audio: acceptsAudio,
+      video: acceptsVideo
+    }
+  }
+
+  start () {
+    if (!this.isSupported()) {
+      return Promise.reject(new Error('Webcam access not supported'))
+    }
+
+    this.webcamActive = true
+
+    const constraints = this.getConstraints()
+
     // ask user for access to their camera
-    return this.mediaDevices
-      .getUserMedia({
-        audio: acceptsAudio,
-        video: acceptsVideo
-      })
+    return this.mediaDevices.getUserMedia(constraints)
       .then((stream) => {
         this.stream = stream
         this.streamSrc = URL.createObjectURL(this.stream)
@@ -308,8 +317,9 @@ module.exports = class Webcam extends Plugin {
     })
 
     const target = this.opts.target
-    const plugin = this
-    this.target = this.mount(target, plugin)
+    if (target) {
+      this.mount(target, this)
+    }
   }
 
   uninstall () {

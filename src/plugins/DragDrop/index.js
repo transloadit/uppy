@@ -12,7 +12,7 @@ module.exports = class DragDrop extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
-    this.id = 'DragDrop'
+    this.id = this.opts.id || 'DragDrop'
     this.title = 'Drag & Drop'
     this.icon = html`
       <svg aria-hidden="true" class="UppyIcon" width="28" height="28" viewBox="0 0 16 16">
@@ -152,9 +152,8 @@ module.exports = class DragDrop extends Plugin {
 
   install () {
     const target = this.opts.target
-    const plugin = this
     if (target) {
-      this.mount(target, plugin)
+      this.mount(target, this)
     }
   }
 

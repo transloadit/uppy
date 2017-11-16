@@ -12,7 +12,7 @@ const prettyBytes = require('prettier-bytes')
 module.exports = class StatusBarUI extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.id = 'StatusBar'
+    this.id = this.opts.id || 'StatusBar'
     this.title = 'StatusBar'
     this.type = 'progressindicator'
 
@@ -154,9 +154,8 @@ module.exports = class StatusBarUI extends Plugin {
 
   install () {
     const target = this.opts.target
-    const plugin = this
     if (target) {
-      this.mount(target, plugin)
+      this.mount(target, this)
     }
   }
 

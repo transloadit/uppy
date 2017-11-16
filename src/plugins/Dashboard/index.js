@@ -8,13 +8,27 @@ const { findAllDOMElements } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
 
+const FOCUSABLE_ELEMENTS = [
+  'a[href]',
+  'area[href]',
+  'input:not([disabled]):not([type="hidden"])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  'button:not([disabled])',
+  'iframe',
+  'object',
+  'embed',
+  '[contenteditable]',
+  '[tabindex]:not([tabindex^="-"])'
+]
+
 /**
- * Modal Dialog & Dashboard
+ * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
 module.exports = class DashboardUI extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.id = 'Dashboard'
+    this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
 
@@ -77,8 +91,12 @@ module.exports = class DashboardUI extends Plugin {
     this.actions = this.actions.bind(this)
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
+    this.getFocusableNodes = this.getFocusableNodes.bind(this)
+    this.setFocusToFirstNode = this.setFocusToFirstNode.bind(this)
+    this.maintainFocus = this.maintainFocus.bind(this)
+
     this.initEvents = this.initEvents.bind(this)
-    this.handleEscapeKeyPress = this.handleEscapeKeyPress.bind(this)
+    this.onKeydown = this.onKeydown.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
     this.handleFileCard = this.handleFileCard.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
@@ -141,11 +159,42 @@ module.exports = class DashboardUI extends Plugin {
     })
   }
 
+  // setModalElement (element) {
+  //   this.modal = element
+  // }
+
   requestCloseModal () {
     if (this.opts.onRequestCloseModal) {
       return this.opts.onRequestCloseModal()
     } else {
       this.closeModal()
+    }
+  }
+
+  getFocusableNodes () {
+    const nodes = this.modal.querySelectorAll(FOCUSABLE_ELEMENTS)
+    return Object.keys(nodes).map((key) => nodes[key])
+  }
+
+  setFocusToFirstNode () {
+    const focusableNodes = this.getFocusableNodes()
+    console.log(focusableNodes)
+    console.log(focusableNodes[0])
+    if (focusableNodes.length) focusableNodes[0].focus()
+  }
+
+  maintainFocus (event) {
+    var focusableNodes = this.getFocusableNodes()
+    var focusedItemIndex = focusableNodes.indexOf(document.activeElement)
+
+    if (event.shiftKey && focusedItemIndex === 0) {
+      focusableNodes[focusableNodes.length - 1].focus()
+      event.preventDefault()
+    }
+
+    if (!event.shiftKey && focusedItemIndex === focusableNodes.length - 1) {
+      focusableNodes[0].focus()
+      event.preventDefault()
     }
   }
 
@@ -162,12 +211,11 @@ module.exports = class DashboardUI extends Plugin {
     document.body.classList.add('is-UppyDashboard-open')
     document.body.style.top = `-${this.savedDocumentScrollPosition}px`
 
-    // focus on modal inner block
-    this.target.querySelector('.UppyDashboard-inner').focus()
+    this.setFocusToFirstNode()
 
-    // this.updateDashboardElWidth()
+    this.updateDashboardElWidth()
     // to be sure, sometimes when the function runs, container size is still 0
-    setTimeout(this.updateDashboardElWidth, 500)
+    // setTimeout(this.updateDashboardElWidth, 500)
   }
 
   closeModal () {
@@ -184,11 +232,11 @@ module.exports = class DashboardUI extends Plugin {
     return !this.getPluginState().isHidden || false
   }
 
-  // Close the Modal on esc key press
-  handleEscapeKeyPress (event) {
-    if (event.keyCode === 27) {
-      this.requestCloseModal()
-    }
+  onKeydown (event) {
+    // close modal on esc key press
+    if (event.keyCode === 27) this.requestCloseModal(event)
+    // maintainFocus on tab key press
+    if (event.keyCode === 9) this.maintainFocus(event)
   }
 
   handleClickOutside () {
@@ -206,7 +254,9 @@ module.exports = class DashboardUI extends Plugin {
       this.core.log('Dashboard modal trigger not found, you won’t be able to select files. Make sure `trigger` is set correctly in Dashboard options', 'error')
     }
 
-    document.body.addEventListener('keyup', this.handleEscapeKeyPress)
+    if (!this.opts.inline) {
+      document.addEventListener('keydown', this.onKeydown)
+    }
 
     // Drag Drop
     this.removeDragDropListener = dragDrop(this.el, (files) => {
@@ -221,7 +271,10 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     this.removeDragDropListener()
-    document.body.removeEventListener('keyup', this.handleEscapeKeyPress)
+
+    if (!this.opts.inline) {
+      document.removeEventListener('keydown', this.onKeydown)
+    }
   }
 
   actions () {
@@ -313,8 +366,17 @@ module.exports = class DashboardUI extends Plugin {
       })
     }
 
+    const isSupported = (target) => {
+      const plugin = this.core.getPlugin(target.id)
+      // If the plugin does not provide a `supported` check, assume the plugin works everywhere.
+      if (typeof plugin.isSupported !== 'function') {
+        return true
+      }
+      return plugin.isSupported()
+    }
+
     const acquirers = pluginState.targets
-      .filter(target => target.type === 'acquirer')
+      .filter(target => target.type === 'acquirer' && isSupported(target))
       .map(attachRenderFunctionToTarget)
 
     const progressindicators = pluginState.targets
@@ -406,7 +468,6 @@ module.exports = class DashboardUI extends Plugin {
     })
 
     const target = this.opts.target
-
     if (target) {
       this.mount(target, this)
     }
@@ -433,6 +494,8 @@ module.exports = class DashboardUI extends Plugin {
 
     this.initEvents()
     this.actions()
+
+    this.modal = document.querySelector('.UppyDashboard--modal')
   }
 
   uninstall () {

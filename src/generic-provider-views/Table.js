@@ -16,7 +16,7 @@ module.exports = (props) => {
 
   return html`
     <table class="BrowserTable" onscroll=${props.handleScroll}>
-      <tbody>
+      <tbody role="listbox" aria-label="List of files from ${props.title}">
         ${props.folders.map((folder) => {
           return Row({
             title: props.getItemName(folder),
