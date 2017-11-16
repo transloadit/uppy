@@ -10,7 +10,7 @@ module.exports = (props) => {
   return html`
     <tr onclick=${props.handleClick} onkeydown=${handleKeyDown} class=${classes} role="option" tabindex="0">
       <td onclick=${props.handleCheckboxClick} class="BrowserTable-column">
-        <input type="checkbox" checked=${props.isChecked} />
+        <input type="checkbox" checked=${props.isChecked} disabled=${props.isDisabled} />
       </td>
       ${Column({
         getItemIcon: props.getItemIcon,

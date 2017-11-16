@@ -313,8 +313,59 @@ module.exports = class View {
     return this.plugin.core.getState()[this.plugin.stateId].activeRow === this.plugin.getItemId(file)
   }
 
-  isChecked (file) {
-    return (this.fileToId(file) in this.plugin.core.getState().files)
+  isChecked (item) {
+    const itemId = this.fileToId(item)
+    if (this.plugin.isFolder(item)) {
+      const state = this.plugin.core.getState()[this.plugin.stateId]
+      const folders = state.selectedFolders || {}
+      if (itemId in folders) {
+        return folders[itemId]
+      }
+      return false
+    }
+    return (itemId in this.plugin.core.getState().files)
+  }
+
+  addFolder (folder) {
+    const folderId = this.fileToId(folder)
+    let state = this.plugin.core.getState()[this.plugin.stateId]
+    let folders = state.selectedFolders || {}
+    if (folderId in folders && folders[folderId].loading) {
+      return
+    }
+    folders[folderId] = {loading: true, files: []}
+    this.updateState({selectedFolders: folders})
+    this.Provider.list(this.plugin.getItemRequestPath(folder)).then((res) => {
+      let files = []
+      this.plugin.getItemSubList(res).forEach((item) => {
+        if (!this.plugin.isFolder(item)) {
+          this.addFile(item, true)
+          files.push(this.fileToId(item))
+        }
+      })
+      state = this.plugin.core.getState()[this.plugin.stateId]
+      state.selectedFolders[folderId] = {loading: false, files: files}
+      this.updateState({selectedFolders: folders})
+    })
+  }
+
+  removeFolder (folderId) {
+    let state = this.plugin.core.getState()[this.plugin.stateId]
+    let folders = state.selectedFolders || {}
+    if (!(folderId in folders)) {
+      return
+    }
+    let folder = folders[folderId]
+    if (folder.loading) {
+      return
+    }
+    for (let fileId of folder.files) {
+      if (fileId in this.plugin.core.getState().files) {
+        this.plugin.core.removeFile(fileId)
+      }
+    }
+    delete folders[folderId]
+    this.updateState({selectedFolders: folders})
   }
 
   toggleCheckbox (e, file) {
@@ -339,13 +390,21 @@ module.exports = class View {
     if (this.isChecked(file)) {
       for (let item of itemsToToggle) {
         const itemId = this.fileToId(item)
-        if (itemId in this.plugin.core.getState().files) {
-          this.plugin.core.removeFile(itemId)
+        if (this.plugin.isFolder(item)) {
+          this.removeFolder(itemId)
+        } else {
+          if (itemId in this.plugin.core.getState().files) {
+            this.plugin.core.removeFile(itemId)
+          }
         }
       }
     } else {
       for (let item of itemsToToggle) {
-        this.addFile(item, true)
+        if (this.plugin.isFolder(item)) {
+          this.addFolder(item)
+        } else {
+          this.addFile(item, true)
+        }
       }
     }
   }
