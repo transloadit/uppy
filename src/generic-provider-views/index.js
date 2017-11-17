@@ -313,7 +313,7 @@ module.exports = class View {
   }
 
   isChecked (item) {
-    const itemId = this.fileToId(item)
+    const itemId = this.providerFileToId(item)
     if (this.plugin.isFolder(item)) {
       const state = this.plugin.core.getState()[this.plugin.stateId]
       const folders = state.selectedFolders || {}
@@ -326,7 +326,7 @@ module.exports = class View {
   }
 
   addFolder (folder) {
-    const folderId = this.fileToId(folder)
+    const folderId = this.providerFileToId(folder)
     let state = this.plugin.core.getState()[this.plugin.stateId]
     let folders = state.selectedFolders || {}
     if (folderId in folders && folders[folderId].loading) {
@@ -339,7 +339,7 @@ module.exports = class View {
       this.plugin.getItemSubList(res).forEach((item) => {
         if (!this.plugin.isFolder(item)) {
           this.addFile(item, true)
-          files.push(this.fileToId(item))
+          files.push(this.providerFileToId(item))
         }
       })
       state = this.plugin.core.getState()[this.plugin.stateId]
@@ -394,7 +394,7 @@ module.exports = class View {
     this.lastCheckbox = file
     if (this.isChecked(file)) {
       for (let item of itemsToToggle) {
-        const itemId = this.fileToId(item)
+        const itemId = this.providerFileToId(item)
         if (this.plugin.isFolder(item)) {
           this.removeFolder(itemId)
         } else {
@@ -414,7 +414,7 @@ module.exports = class View {
     }
   }
 
-  fileToId (file) {
+  providerFileToId (file) {
     return Utils.generateFileID({
       data: this.plugin.getItemData(file),
       name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
