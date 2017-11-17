@@ -345,6 +345,11 @@ module.exports = class View {
       state = this.plugin.core.getState()[this.plugin.stateId]
       state.selectedFolders[folderId] = {loading: false, files: files}
       this.updateState({selectedFolders: folders})
+    }).catch((e) => {
+      state = this.plugin.core.getState()[this.plugin.stateId]
+      delete state.selectedFolders[folderId]
+      this.updateState({selectedFolders: state.selectedFolders})
+      this.handleError(e)
     })
   }
 
