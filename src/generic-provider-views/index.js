@@ -71,6 +71,10 @@ module.exports = class View {
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
 
+    this.plugin.core.on('core:file-removed', (fileId) => {
+      this.updateFolderState(fileId)
+    })
+
     // Visual
     this.render = this.render.bind(this)
   }
@@ -372,6 +376,25 @@ module.exports = class View {
       }
     }
     delete folders[folderId]
+    this.updateState({selectedFolders: folders})
+  }
+
+  updateFolderState (fileId) {
+    let state = this.plugin.core.getState()[this.plugin.stateId]
+    let folders = state.selectedFolders || {}
+    for (let folderId in folders) {
+      let folder = folders[folderId]
+      if (folder.loading) {
+        continue
+      }
+      let i = folder.files.indexOf(fileId)
+      if (i > -1) {
+        folder.files.splice(i, 1)
+      }
+      if (!folder.files.length) {
+        delete folders[folderId]
+      }
+    }
     this.updateState({selectedFolders: folders})
   }
 
