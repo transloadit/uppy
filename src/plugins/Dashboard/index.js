@@ -80,7 +80,7 @@ module.exports = class DashboardUI extends Plugin {
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
     this.translator = new Translator({locale: this.locale})
-    this.containerWidth = this.translator.translate.bind(this.translator)
+    this.i18n = this.translator.translate.bind(this.translator)
 
     this.closeModal = this.closeModal.bind(this)
     this.requestCloseModal = this.requestCloseModal.bind(this)
@@ -422,7 +422,7 @@ module.exports = class DashboardUI extends Plugin {
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
       log: this.core.log,
-      i18n: this.containerWidth,
+      i18n: this.i18n,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
       addFile: this.core.addFile,
