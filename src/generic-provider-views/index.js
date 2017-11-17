@@ -156,7 +156,6 @@ module.exports = class View {
       name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
       type: this.plugin.getMimeType(file),
       isRemote: true,
-      isCheckbox: isCheckbox,
       body: {
         fileId: this.plugin.getItemId(file)
       },
@@ -175,6 +174,9 @@ module.exports = class View {
       }
       this.plugin.core.log('Adding remote file')
       this.plugin.core.addFile(tagFile)
+      if (!isCheckbox) {
+        this.plugin.core.getPlugin('Dashboard').hideAllPanels()
+      }
     })
   }
 

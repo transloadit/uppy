@@ -140,11 +140,9 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   hideAllPanels (file) {
-    if (!file.isCheckbox) {
-      this.setPluginState({
-        activePanel: false
-      })
-    }
+    this.setPluginState({
+      activePanel: false
+    })
   }
 
   showPanel (id) {
@@ -278,7 +276,6 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   actions () {
-    this.core.on('core:file-added', this.hideAllPanels)
     this.core.on('dashboard:file-card', this.handleFileCard)
 
     window.addEventListener('resize', this.updateDashboardElWidth)
@@ -287,7 +284,6 @@ module.exports = class DashboardUI extends Plugin {
   removeActions () {
     window.removeEventListener('resize', this.updateDashboardElWidth)
 
-    this.core.off('core:file-added', this.hideAllPanels)
     this.core.off('dashboard:file-card', this.handleFileCard)
   }
 
