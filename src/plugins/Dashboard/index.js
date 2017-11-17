@@ -139,7 +139,7 @@ module.exports = class DashboardUI extends Plugin {
     return this.target
   }
 
-  hideAllPanels (file) {
+  hideAllPanels () {
     this.setPluginState({
       activePanel: false
     })
