@@ -52,6 +52,7 @@ module.exports = class DashboardUI extends Plugin {
         fileProgress: 'File progress: upload speed and ETA',
         numberOfSelectedFiles: 'Number of selected files',
         uploadAllNewFiles: 'Upload all new files',
+        emptyFolderAdded: 'No files were added from empty folder',
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
           1: 'Added %{smart_count} files from %{folder}'

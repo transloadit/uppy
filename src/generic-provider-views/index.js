@@ -352,9 +352,15 @@ module.exports = class View {
       state.selectedFolders[folderId] = {loading: false, files: files}
       this.updateState({selectedFolders: folders})
       const dashboard = this.plugin.core.getPlugin('Dashboard')
-      this.plugin.core.info(dashboard.i18n('folderAdded', {
-        smart_count: files.length, folder: this.plugin.getItemName(folder)
-      }))
+      let message
+      if (files.length) {
+        message = dashboard.i18n('folderAdded', {
+          smart_count: files.length, folder: this.plugin.getItemName(folder)
+        })
+      } else {
+        message = dashboard.i18n('emptyFolderAdded')
+      }
+      this.plugin.core.info(message)
     }).catch((e) => {
       state = this.plugin.core.getState()[this.plugin.stateId]
       delete state.selectedFolders[folderId]
