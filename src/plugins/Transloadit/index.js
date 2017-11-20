@@ -440,14 +440,6 @@ module.exports = class Transloadit extends Plugin {
         })
       })
 
-      console.info('Transloadit: RESTORED:')
-      console.info({
-        assemblies: assembliesById,
-        files: files,
-        results: results,
-        uploadsAssemblies: uploadsAssemblies
-      })
-
       this.setPluginState({
         assemblies: assembliesById,
         files: files,
