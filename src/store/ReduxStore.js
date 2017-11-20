@@ -20,6 +20,9 @@ class ReduxStore {
     this._store = opts.store
     this._id = opts.id || cuid()
     this._selector = opts.selector || defaultSelector(this._id)
+
+    // Initialise the `uppy[id]` state key.
+    this.setState({})
   }
 
   setState (patch) {

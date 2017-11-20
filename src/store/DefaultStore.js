@@ -1,7 +1,7 @@
 /**
  * Default store that keeps state in a simple object.
  */
-module.exports = class DefaultStore {
+class DefaultStore {
   constructor () {
     this.state = {}
     this.callbacks = []
@@ -35,4 +35,8 @@ module.exports = class DefaultStore {
       listener(...args)
     })
   }
+}
+
+module.exports = function defaultStore () {
+  return new DefaultStore()
 }
