@@ -94,7 +94,7 @@ Theme: 🎄 Christmas edition
 - [ ] add `Form`: a plugin that is used in conjunction with any other acquirer, responsible for 1\. acquiring the metadata from form; 2\. intercepting submit event on the form, opening Uppy dialog instead; 3\. injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think) (@arturi)
 - [ ] core: Redux PR (#216 / @arturi, @goto-bus-stop, @richardwillars)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [ ] core: improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (@goto-bus-stop, @arturi)
+- [x] core: improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (#426 / @goto-bus-stop, @arturi)
 - [ ] core: limit amount of simultaneous uploads, queuing? #360 (@goto-bus-stop)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
