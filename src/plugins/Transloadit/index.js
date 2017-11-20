@@ -295,14 +295,14 @@ module.exports = class Transloadit extends Plugin {
 
   getPersistentData (setData) {
     const state = this.getPluginState()
-    const assemblyStates = state.assemblies
+    const assemblies = state.assemblies
     const uploadsAssemblies = state.uploadsAssemblies
     const uploads = Object.keys(state.files)
     const results = state.results.map((result) => result.id)
 
     setData({
       [this.id]: {
-        assemblyStates,
+        assemblies,
         uploadsAssemblies,
         uploads,
         results
@@ -377,7 +377,7 @@ module.exports = class Transloadit extends Plugin {
     const savedState = pluginData && pluginData[this.id] ? pluginData[this.id] : {}
     const knownUploads = savedState.files || []
     const knownResults = savedState.results || []
-    const previousAssemblies = savedState.assemblyStates || {}
+    const previousAssemblies = savedState.assemblies || {}
     const uploadsAssemblies = savedState.uploadsAssemblies || {}
 
     if (Object.keys(uploadsAssemblies).length === 0) {
