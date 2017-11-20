@@ -259,14 +259,10 @@ describe('Plugin', () => {
       })
 
       it('returns the target DOM element', () => {
-        plugin = new Plugin(mockCore, {replaceTargetContent: true})
+        plugin = new Plugin(mockCore)
         plugin.render = () => {}
         const target = plugin.mount(mockTarget, mockPlugin)
-        expect(target).toEqual({
-          nodeName: 'FORM',
-          innerHTML: '',
-          appendChild
-        })
+        expect(target).toEqual({ el: 'lo' })
       })
     })
 

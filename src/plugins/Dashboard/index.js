@@ -176,8 +176,8 @@ module.exports = class DashboardUI extends Plugin {
 
   setFocusToFirstNode () {
     const focusableNodes = this.getFocusableNodes()
-    console.log(focusableNodes)
-    console.log(focusableNodes[0])
+    // console.log(focusableNodes)
+    // console.log(focusableNodes[0])
     if (focusableNodes.length) focusableNodes[0].focus()
   }
 
@@ -283,14 +283,14 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   removeActions () {
-    window.removeEventListener('resize', this.updateDashboardElWidth)
-
     this.core.off('core:file-added', this.hideAllPanels)
     this.core.off('dashboard:file-card', this.handleFileCard)
+
+    window.removeEventListener('resize', this.updateDashboardElWidth)
   }
 
   updateDashboardElWidth () {
-    const dashboardEl = this.target.querySelector('.UppyDashboard-inner')
+    const dashboardEl = this.el.querySelector('.UppyDashboard-inner')
     this.core.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
     this.setPluginState({
