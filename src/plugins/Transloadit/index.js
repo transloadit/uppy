@@ -241,8 +241,19 @@ module.exports = class Transloadit extends Plugin {
       if (!files.hasOwnProperty(id)) {
         continue
       }
-      if (files[id].uploadURL === uploadedFile.tus_upload_url || (files[id].tus && files[id].tus.uploadUrl === uploadedFile.tus_upload_url)) {
+      // Completed file upload.
+      if (files[id].uploadURL === uploadedFile.tus_upload_url) {
         return files[id]
+      }
+      // In-progress file upload.
+      if (files[id].tus && files[id].tus.uploadUrl === uploadedFile.tus_upload_url) {
+        return files[id]
+      }
+      if (!uploadedFile.is_tus_file) {
+        // Fingers-crossed check for non-tus uploads, eg imported from S3.
+        if (files[id].name === uploadedFile.name && files[id].size === uploadedFile.size) {
+          return files[id]
+        }
       }
     }
   }
