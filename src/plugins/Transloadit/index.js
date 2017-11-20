@@ -3,6 +3,14 @@ const Plugin = require('../../core/Plugin')
 const Client = require('./Client')
 const StatusSocket = require('./Socket')
 
+function defaultGetAssemblyOptions (file, options) {
+  return {
+    params: options.params,
+    signature: options.signature,
+    fields: options.fields
+  }
+}
+
 /**
  * Upload files to Transloadit using Tus.
  */
@@ -29,13 +37,7 @@ module.exports = class Transloadit extends Plugin {
       signature: null,
       params: null,
       fields: {},
-      getAssemblyOptions (file, options) {
-        return {
-          params: options.params,
-          signature: options.signature,
-          fields: options.fields
-        }
-      },
+      getAssemblyOptions: defaultGetAssemblyOptions,
       locale: defaultLocale
     }
 
