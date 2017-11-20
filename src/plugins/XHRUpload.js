@@ -5,7 +5,8 @@ const UppySocket = require('../core/UppySocket')
 const {
   emitSocketProgress,
   getSocketHost,
-  settle
+  settle,
+  limitPromises
 } = require('../core/Utils')
 
 module.exports = class XHRUpload extends Plugin {
@@ -248,19 +249,22 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   uploadFiles (files) {
-    const promises = files.map((file, i) => {
+    const actions = files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
       if (file.error) {
-        return Promise.reject(new Error(file.error))
+        return () => Promise.reject(new Error(file.error))
       } else if (file.isRemote) {
-        return this.uploadRemote(file, current, total)
+        return this.uploadRemote.bind(this, file, current, total)
       } else {
-        return this.upload(file, current, total)
+        return this.upload.bind(this, file, current, total)
       }
     })
 
+    const promises = actions
+      .map(limitPromises(5))
+      .map((action) => action())
     return settle(promises)
   }
 
