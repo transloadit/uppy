@@ -33,6 +33,7 @@ module.exports = class XHRUpload extends Plugin {
       headers: {},
       locale: defaultLocale,
       timeout: 30 * 1000,
+      limit: 0,
       getResponseData (xhr) {
         return JSON.parse(xhr.response)
       },
@@ -51,6 +52,13 @@ module.exports = class XHRUpload extends Plugin {
     this.i18n = this.translator.translate.bind(this.translator)
 
     this.handleUpload = this.handleUpload.bind(this)
+
+    // Simultaneous upload limiting is shared across all uploads with this plugin.
+    if (typeof this.opts.limit === 'number' && this.opts.limit !== 0) {
+      this.limitUploads = limitPromises(this.opts.limit)
+    } else {
+      this.limitUploads = (fn) => fn
+    }
   }
 
   getOptions (file) {
@@ -263,8 +271,9 @@ module.exports = class XHRUpload extends Plugin {
     })
 
     const promises = actions
-      .map(limitPromises(5))
+      .map(this.limitUploads)
       .map((action) => action())
+
     return settle(promises)
   }
 
