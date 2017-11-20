@@ -60,6 +60,7 @@ document.querySelector('#incrementAsync').onclick = () => {
 
 // Uppy using the same store
 const uppy = Uppy({
+  autoProceed: false,
   id: 'redux',
   store: uppyReduxStore({ store: store }),
   // If we had placed our `reducer` elsewhere in Redux, eg. under an `uppy` key in the state for a profile page,
