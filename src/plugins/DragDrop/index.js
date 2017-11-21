@@ -115,7 +115,7 @@ module.exports = class DragDrop extends Plugin {
   }
 
   onBrowseClick (ev) {
-    const input = this.target.querySelector('.uppy-DragDrop-input')
+    const input = this.el.querySelector('.uppy-DragDrop-input')
     input.click()
   }
 

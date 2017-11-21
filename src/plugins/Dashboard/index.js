@@ -136,7 +136,7 @@ module.exports = class DashboardUI extends Plugin {
       targets: newTargets
     })
 
-    return this.target
+    return this.el
   }
 
   hideAllPanels () {
@@ -157,10 +157,6 @@ module.exports = class DashboardUI extends Plugin {
     })
   }
 
-  // setModalElement (element) {
-  //   this.modal = element
-  // }
-
   requestCloseModal () {
     if (this.opts.onRequestCloseModal) {
       return this.opts.onRequestCloseModal()
@@ -170,7 +166,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   getFocusableNodes () {
-    const nodes = this.modal.querySelectorAll(FOCUSABLE_ELEMENTS)
+    const nodes = this.el.querySelectorAll(FOCUSABLE_ELEMENTS)
     return Object.keys(nodes).map((key) => nodes[key])
   }
 
@@ -492,8 +488,6 @@ module.exports = class DashboardUI extends Plugin {
 
     this.initEvents()
     this.actions()
-
-    this.modal = document.querySelector('.UppyDashboard--modal')
   }
 
   uninstall () {

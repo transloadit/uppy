@@ -66,11 +66,12 @@ module.exports = class Plugin {
     // this.updateUI = nanoraf((state) => {
     //   this.el = yo.update(this.el, this.render(state))
     // })
-    this.updateUI = (state) => {
-      this.el = yo.update(this.el, this.render(state))
-    }
 
     if (targetElement) {
+      this.updateUI = (state) => {
+        this.el = yo.update(this.el, this.render(state))
+      }
+
       this.core.log(`Installing ${callerPluginName} to a DOM element`)
 
       // attempt to extract meta from form element
