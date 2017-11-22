@@ -65,6 +65,7 @@ module.exports = class Dropbox extends Plugin {
   }
 
   uninstall () {
+    this.view.tearDown()
     this.unmount()
   }
 

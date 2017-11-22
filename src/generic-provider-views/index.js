@@ -53,6 +53,7 @@ module.exports = class View {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Logic
+    this.updateFolderState = this.updateFolderState.bind(this)
     this.addFile = this.addFile.bind(this)
     this.filterItems = this.filterItems.bind(this)
     this.filterQuery = this.filterQuery.bind(this)
@@ -71,12 +72,14 @@ module.exports = class View {
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
 
-    this.plugin.core.on('core:file-removed', (fileId) => {
-      this.updateFolderState(fileId)
-    })
+    this.plugin.core.on('core:file-removed', this.updateFolderState)
 
     // Visual
     this.render = this.render.bind(this)
+  }
+
+  tearDown () {
+    this.plugin.core.off('core:file-removed', this.updateFolderState)
   }
 
   /**
