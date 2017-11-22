@@ -141,7 +141,7 @@ module.exports = class DashboardUI extends Plugin {
       targets: newTargets
     })
 
-    return this.target
+    return this.el
   }
 
   hideAllPanels () {
@@ -162,10 +162,6 @@ module.exports = class DashboardUI extends Plugin {
     })
   }
 
-  // setModalElement (element) {
-  //   this.modal = element
-  // }
-
   requestCloseModal () {
     if (this.opts.onRequestCloseModal) {
       return this.opts.onRequestCloseModal()
@@ -175,14 +171,14 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   getFocusableNodes () {
-    const nodes = this.modal.querySelectorAll(FOCUSABLE_ELEMENTS)
+    const nodes = this.el.querySelectorAll(FOCUSABLE_ELEMENTS)
     return Object.keys(nodes).map((key) => nodes[key])
   }
 
   setFocusToFirstNode () {
     const focusableNodes = this.getFocusableNodes()
-    console.log(focusableNodes)
-    console.log(focusableNodes[0])
+    // console.log(focusableNodes)
+    // console.log(focusableNodes[0])
     if (focusableNodes.length) focusableNodes[0].focus()
   }
 
@@ -287,13 +283,13 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   removeActions () {
-    window.removeEventListener('resize', this.updateDashboardElWidth)
-
     this.core.off('dashboard:file-card', this.handleFileCard)
+
+    window.removeEventListener('resize', this.updateDashboardElWidth)
   }
 
   updateDashboardElWidth () {
-    const dashboardEl = this.target.querySelector('.UppyDashboard-inner')
+    const dashboardEl = this.el.querySelector('.UppyDashboard-inner')
     this.core.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
     this.setPluginState({
@@ -495,8 +491,6 @@ module.exports = class DashboardUI extends Plugin {
 
     this.initEvents()
     this.actions()
-
-    this.modal = document.querySelector('.UppyDashboard--modal')
   }
 
   uninstall () {

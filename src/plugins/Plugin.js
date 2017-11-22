@@ -66,11 +66,12 @@ module.exports = class Plugin {
     this.updateUI = nanoraf((state) => {
       this.el = yo.update(this.el, this.render(state))
     })
-    // this.updateUI = (state) => {
-    //   this.el = yo.update(this.el, this.render(state))
-    // }
 
     if (targetElement) {
+      this.updateUI = (state) => {
+        this.el = yo.update(this.el, this.render(state))
+      }
+
       this.core.log(`Installing ${callerPluginName} to a DOM element`)
 
       // attempt to extract meta from form element
@@ -87,9 +88,7 @@ module.exports = class Plugin {
       this.el = plugin.render(this.core.state)
       targetElement.appendChild(this.el)
 
-      this.target = targetElement
-
-      return targetElement
+      return this.el
     }
 
     let targetPlugin
@@ -111,8 +110,8 @@ module.exports = class Plugin {
     if (targetPlugin) {
       const targetPluginName = targetPlugin.id
       this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
-      this.target = targetPlugin
-      return targetPlugin.addTarget(plugin)
+      this.el = targetPlugin.addTarget(plugin)
+      return this.el
     }
 
     this.core.log(`Not installing ${callerPluginName}`)
@@ -131,7 +130,7 @@ module.exports = class Plugin {
     if (this.el && this.el.parentNode) {
       this.el.parentNode.removeChild(this.el)
     }
-    this.target = null
+    // this.target = null
   }
 
   install () {

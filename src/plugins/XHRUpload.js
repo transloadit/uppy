@@ -207,7 +207,7 @@ module.exports = class XHRUpload extends Plugin {
         : Object.keys(file.meta)
 
       metaFields.forEach((name) => {
-        fields[name] = file.meta.name
+        fields[name] = file.meta[name]
       })
 
       fetch(file.remote.url, {

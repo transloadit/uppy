@@ -171,11 +171,6 @@ describe('Plugin', () => {
       expect(Plugin.prototype.mount.length).toBe(2)
     })
 
-    it('adds updateUI method', () => {
-      plugin.mount(mockTarget, mockPlugin)
-      expect(typeof plugin.updateUI).toBe('function')
-    })
-
     xit('sets `el` property when state has changed', () => {
       expect.assertions(4)
 
@@ -258,15 +253,16 @@ describe('Plugin', () => {
         expect(mockElement.appendChild.mock.calls[0][0]).toEqual({ el: 'lo' })
       })
 
+      it('adds updateUI method', () => {
+        plugin.mount(mockTarget, mockPlugin)
+        expect(typeof plugin.updateUI).toBe('function')
+      })
+
       it('returns the target DOM element', () => {
-        plugin = new Plugin(mockCore, {replaceTargetContent: true})
+        plugin = new Plugin(mockCore)
         plugin.render = () => {}
         const target = plugin.mount(mockTarget, mockPlugin)
-        expect(target).toEqual({
-          nodeName: 'FORM',
-          innerHTML: '',
-          appendChild
-        })
+        expect(target).toEqual({ el: 'lo' })
       })
     })
 
