@@ -62,15 +62,11 @@ module.exports = class Plugin {
 
     const targetElement = findDOMElement(target)
 
-    // Set up nanoraf.
-    this.updateUI = nanoraf((state) => {
-      this.el = yo.update(this.el, this.render(state))
-    })
-
     if (targetElement) {
-      this.updateUI = (state) => {
+      // Set up nanoraf.
+      this.updateUI = nanoraf((state) => {
         this.el = yo.update(this.el, this.render(state))
-      }
+      })
 
       this.core.log(`Installing ${callerPluginName} to a DOM element`)
 
