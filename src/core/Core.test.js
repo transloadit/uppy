@@ -18,6 +18,7 @@ describe('src/Core', () => {
     jest.spyOn(utils, 'createThumbnail').mockImplementation(path => {
       return Promise.resolve(sampleImageDataURI)
     })
+    utils.createThumbnail.mockClear()
   })
 
   it('should expose a class', () => {
@@ -588,6 +589,33 @@ describe('src/Core', () => {
         type: 'image/jpeg',
         data: null
       })).rejects.toMatchObject({ message: 'onBeforeFileAdded: a plain string' })
+    })
+
+    it('should call utils.generatePreview when core:file-added is triggered', () => {
+      const core = new Core({
+      }).run()
+      const file = {
+        type: 'image/jpeg',
+        isRemote: false
+      }
+      core.emit('core:file-added', file)
+      expect(utils.createThumbnail).toHaveBeenCalledOnce
+      expect(utils.createThumbnail.mock.calls[0][1]).toEqual(200)
+      expect(utils.createThumbnail.mock.calls[0][2]).toEqual(true)
+    })
+
+    it('should call utils.generatePreview when core:file-added is triggered, but the thumbnail generation should be bypassed when specified by the config', () => {
+      const core = new Core({
+        thumbnailGeneration: false
+      }).run()
+      const file = {
+        type: 'image/jpeg',
+        isRemote: false
+      }
+      core.emit('core:file-added', file)
+      expect(utils.createThumbnail).toHaveBeenCalledOnce
+      expect(utils.createThumbnail.mock.calls[0][1]).toEqual(200)
+      expect(utils.createThumbnail.mock.calls[0][2]).toEqual(false)
     })
   })
 

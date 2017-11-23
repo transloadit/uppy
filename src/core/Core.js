@@ -45,7 +45,8 @@ class Uppy {
       meta: {},
       onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
       onBeforeUpload: (files, done) => Promise.resolve(),
-      locale: defaultLocale
+      locale: defaultLocale,
+      thumbnailGeneration: true
     }
 
     // Merge default options with the ones set by user
@@ -394,7 +395,7 @@ class Uppy {
    */
   generatePreview (file) {
     if (Utils.isPreviewSupported(file.type) && !file.isRemote) {
-      Utils.createThumbnail(file, 200).then((thumbnail) => {
+      Utils.createThumbnail(file, 200, this.opts.thumbnailGeneration).then((thumbnail) => {
         this.setPreviewURL(file.id, thumbnail)
       }).catch((err) => {
         console.warn(err.stack || err.message)

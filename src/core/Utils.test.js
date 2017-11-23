@@ -261,9 +261,31 @@ describe('core/utils', () => {
   })
 
   describe('createThumbnail', () => {
+    const RealCreateObjectUrl = global.URL.createObjectURL
+
+    beforeEach(() => {
+      global.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
+    })
+
+    afterEach(() => {
+      global.URL.createObjectURL = RealCreateObjectUrl
+    })
+
     xit(
       'should create a thumbnail of the specified image at the specified width',
       () => {}
+    )
+    it(
+      'should bypass the creation of a thumbnail when the generateThumbnail param is false',
+      () => {
+        const file = {
+          data: 'foobar'
+        }
+        const targetWidth = 200
+        return utils.createThumbnail(file, targetWidth, false).then((url) => {
+          expect(url).toEqual('newUrl')
+        })
+      }
     )
   })
 
