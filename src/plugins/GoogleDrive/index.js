@@ -63,6 +63,7 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   uninstall () {
+    this.view.tearDown()
     this.unmount()
   }
 

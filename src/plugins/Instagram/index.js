@@ -69,6 +69,7 @@ module.exports = class Instagram extends Plugin {
   }
 
   uninstall () {
+    this.view.tearDown()
     this.unmount()
   }
 

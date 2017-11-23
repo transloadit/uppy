@@ -51,7 +51,12 @@ module.exports = class DashboardUI extends Plugin {
         browse: 'browse',
         fileProgress: 'File progress: upload speed and ETA',
         numberOfSelectedFiles: 'Number of selected files',
-        uploadAllNewFiles: 'Upload all new files'
+        uploadAllNewFiles: 'Upload all new files',
+        emptyFolderAdded: 'No files were added from empty folder',
+        folderAdded: {
+          0: 'Added %{smart_count} file from %{folder}',
+          1: 'Added %{smart_count} files from %{folder}'
+        }
       }
     }
 
@@ -80,7 +85,7 @@ module.exports = class DashboardUI extends Plugin {
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
     this.translator = new Translator({locale: this.locale})
-    this.containerWidth = this.translator.translate.bind(this.translator)
+    this.i18n = this.translator.translate.bind(this.translator)
 
     this.closeModal = this.closeModal.bind(this)
     this.requestCloseModal = this.requestCloseModal.bind(this)
@@ -272,14 +277,12 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   actions () {
-    this.core.on('core:file-added', this.hideAllPanels)
     this.core.on('dashboard:file-card', this.handleFileCard)
 
     window.addEventListener('resize', this.updateDashboardElWidth)
   }
 
   removeActions () {
-    this.core.off('core:file-added', this.hideAllPanels)
     this.core.off('dashboard:file-card', this.handleFileCard)
 
     window.removeEventListener('resize', this.updateDashboardElWidth)
@@ -420,7 +423,7 @@ module.exports = class DashboardUI extends Plugin {
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
       log: this.core.log,
-      i18n: this.containerWidth,
+      i18n: this.i18n,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
       addFile: this.core.addFile,
