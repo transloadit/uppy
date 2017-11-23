@@ -334,6 +334,12 @@ module.exports = class View {
     return (itemId in this.plugin.core.getState().files)
   }
 
+  /**
+   * Adds all files found inside of specified folder.
+   *
+   * Uses separated state while folder contents are being fetched and
+   * mantains list of selected folders, which are separated from files.
+   */
   addFolder (folder) {
     const folderId = this.providerFileToId(folder)
     let state = this.plugin.core.getState()[this.plugin.stateId]
@@ -391,6 +397,13 @@ module.exports = class View {
     this.updateState({selectedFolders: folders})
   }
 
+  /**
+   * Updates selected folders state everytime file is being removed.
+   *
+   * Note that this is only important when files are getting removed from the
+   * main screen, and will do nothing when you uncheck folder directly, since
+   * it's already been done in removeFolder method.
+   */
   updateFolderState (fileId) {
     let state = this.plugin.core.getState()[this.plugin.stateId]
     let folders = state.selectedFolders || {}
@@ -410,6 +423,14 @@ module.exports = class View {
     this.updateState({selectedFolders: folders})
   }
 
+  /**
+   * Toggles file/folder checkbox to on/off state while updating files list.
+   *
+   * Note that some extra complexity comes from supporting shift+click to
+   * toggle multiple checkboxes at once, which is done by getting all files
+   * in between last checked file and current one, and applying an on/off state
+   * for all of them, depending on current file state.
+   */
   toggleCheckbox (e, file) {
     e.stopPropagation()
     e.preventDefault()
