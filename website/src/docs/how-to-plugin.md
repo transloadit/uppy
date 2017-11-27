@@ -16,11 +16,7 @@ Plugins can hook into the upload process or render a custom UI, typically to:
 
 ## Creating A Plugin
 
-Plugins are classes that extend from Uppy's `Plugin` class. Each plugin has an `id` and a `type`.
-`id`s are used to identify plugins, both for developers (`uppy.getPlugin('MyId')`) and for other plugins (`targetPlugin: 'MyId'`).
-A `type` can be anything—some plugins use `type`s to determine whether to do something to some other plugin.
-For example, when targeting plugins at the builtin `Dashboard` plugin, the Dashboard uses the `type` to figure out where to mount different UI elements.
-`'acquirer'` type plugins are mounted into the tab bar, while `'progressindicator'` type plugins are mounted into the progress bar area.
+Plugins are classes that extend from Uppy's `Plugin` class. Each plugin has an `id` and a `type`. `id`s are used to identify plugins, both for developers (`uppy.getPlugin('MyId')`) and for other plugins (`targetPlugin: 'MyId'`). A `type` can be anything—some plugins use `type`s to determine whether to do something to some other plugin. For example, when targeting plugins at the builtin `Dashboard` plugin, the Dashboard uses the `type` to figure out where to mount different UI elements. `'acquirer'` type plugins are mounted into the tab bar, while `'progressindicator'` type plugins are mounted into the progress bar area.
 
 The plugin constructor receives the Uppy instance in the first parameter, and any options passed to `uppy.use()` in the second parameter.
 
@@ -37,25 +33,21 @@ module.exports = class MyPlugin extends Plugin {
 
 ## Methods
 
-Plugins can implement methods in order to execute certain tasks.
-The most important method is `install()`, which is called when a plugin is `.use`d.
+Plugins can implement methods in order to execute certain tasks. The most important method is `install()`, which is called when a plugin is `.use`d.
 
 All of the below methods are optional! Only implement the methods you need.
 
 ### `install()`
 
-Called when the plugin is `.use`d.
-Do any setup work here, like attaching events or adding [upload hooks](#todo).
+Called when the plugin is `.use`d. Do any setup work here, like attaching events or adding [upload hooks](#todo).
 
 ### `uninstall()`
 
-Called when the plugin is removed, or the Uppy instance is closed.
-This should undo all of the work done in the `install()` method.
+Called when the plugin is removed, or the Uppy instance is closed. This should undo all of the work done in the `install()` method.
 
 ### `update(state)`
 
-Called on each state update.
-For UI plugins, this is a good time to rerender!
+Called on each state update. For UI plugins, this is a good time to rerender!
 
 ### `mount(target)`
 
@@ -67,15 +59,9 @@ For UI plugins, this is a good time to rerender!
 
 ## Upload Hooks
 
-When creating an upload, Uppy runs files through an upload pipeline.
-The pipeline consists of three parts, each of which can be hooked into: Preprocessing, Uploading, and Postprocessing.
-Preprocessors can be used to configure uploader plugins, encrypt files, resize images, etc., before uploading them.
-Uploaders do the actual uploading work, such as creating an XMLHttpRequest object and sending the file.
-Postprocessors do work after files have been uploaded completely. This could be anything from waiting for a file to propagate across a CDN, to sending another request to relate some metadata to the file.
+When creating an upload, Uppy runs files through an upload pipeline. The pipeline consists of three parts, each of which can be hooked into: Preprocessing, Uploading, and Postprocessing. Preprocessors can be used to configure uploader plugins, encrypt files, resize images, etc., before uploading them. Uploaders do the actual uploading work, such as creating an XMLHttpRequest object and sending the file. Postprocessors do work after files have been uploaded completely. This could be anything from waiting for a file to propagate across a CDN, to sending another request to relate some metadata to the file.
 
-Each hook is a function that receives an array containing the file IDs that are being uploaded, and returns a Promise to signal completion.
-Hooks are added and removed through `Core` methods: `addPreProcessor`, `addUploader`, `addPostProcessor`, and their `remove*` counterparts.
-Normally, hooks should be added during the plugin's `install()` method, and removed during the `uninstall()` method.
+Each hook is a function that receives an array containing the file IDs that are being uploaded, and returns a Promise to signal completion. Hooks are added and removed through `Core` methods: `addPreProcessor`, `addUploader`, `addPostProcessor`, and their `remove*` counterparts. Normally, hooks should be added during the plugin's `install()` method, and removed during the `uninstall()` method.
 
 Additionally, upload hooks can fire events to signal progress.
 
@@ -114,11 +100,7 @@ class MyPlugin extends Plugin {
 
 ## Progress Events
 
-Progress events can be fired for individual files to show feedback to the user.
-For upload progress events, only emitting how many bytes are expected and how many have been uploaded is enough. Uppy will handle calculating progress percentages, upload speed, etc.
-Preprocessing and postprocessing progress events can refer to anything, so Uppy doesn't try to be smart about them.
-There are two types of processing progress events: determinate and indeterminate.
-Some processing does not have meaningful progress beyond "not done" and "done". For example, sending a request to initialize a server-side resource that will be uploaded to. In those situations, indeterminate progress is suitable.
+Progress events can be fired for individual files to show feedback to the user. For upload progress events, only emitting how many bytes are expected and how many have been uploaded is enough. Uppy will handle calculating progress percentages, upload speed, etc. Preprocessing and postprocessing progress events can refer to anything, so Uppy doesn't try to be smart about them. There are two types of processing progress events: determinate and indeterminate. Some processing does not have meaningful progress beyond "not done" and "done". For example, sending a request to initialize a server-side resource that will be uploaded to. In those situations, indeterminate progress is suitable.
 
 ### `core:preprocess-progress(fileID, progress)`
 
