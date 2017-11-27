@@ -95,7 +95,7 @@ Theme: 🎄 Christmas edition
 - [ ] core: Redux PR (#216 / @arturi, @goto-bus-stop, @richardwillars)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (@goto-bus-stop, @arturi)
-- [ ] core: limit amount of simultaneous uploads, queuing? #360 (@goto-bus-stop)
+- [x] core: limit amount of simultaneous uploads, queuing? #360 (#427 / @goto-bus-stop)
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)

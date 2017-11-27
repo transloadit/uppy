@@ -5,7 +5,8 @@ const UppySocket = require('../core/UppySocket')
 const {
   emitSocketProgress,
   getSocketHost,
-  settle
+  settle,
+  limitPromises
 } = require('../core/Utils')
 
 module.exports = class XHRUpload extends Plugin {
@@ -32,6 +33,7 @@ module.exports = class XHRUpload extends Plugin {
       headers: {},
       locale: defaultLocale,
       timeout: 30 * 1000,
+      limit: 0,
       getResponseData (xhr) {
         return JSON.parse(xhr.response)
       },
@@ -50,6 +52,13 @@ module.exports = class XHRUpload extends Plugin {
     this.i18n = this.translator.translate.bind(this.translator)
 
     this.handleUpload = this.handleUpload.bind(this)
+
+    // Simultaneous upload limiting is shared across all uploads with this plugin.
+    if (typeof this.opts.limit === 'number' && this.opts.limit !== 0) {
+      this.limitUploads = limitPromises(this.opts.limit)
+    } else {
+      this.limitUploads = (fn) => fn
+    }
   }
 
   getOptions (file) {
@@ -248,17 +257,22 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   uploadFiles (files) {
-    const promises = files.map((file, i) => {
+    const actions = files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
       if (file.error) {
-        return Promise.reject(new Error(file.error))
+        return () => Promise.reject(new Error(file.error))
       } else if (file.isRemote) {
-        return this.uploadRemote(file, current, total)
+        return this.uploadRemote.bind(this, file, current, total)
       } else {
-        return this.upload(file, current, total)
+        return this.upload.bind(this, file, current, total)
       }
+    })
+
+    const promises = actions.map((action) => {
+      const limitedAction = this.limitUploads(action)
+      return limitedAction()
     })
 
     return settle(promises)
