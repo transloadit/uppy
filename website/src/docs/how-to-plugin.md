@@ -41,9 +41,23 @@ All of the below methods are optional! Only implement the methods you need.
 
 Called when the plugin is `.use`d. Do any setup work here, like attaching events or adding [upload hooks](#Upload-Hooks).
 
+```js
+install () {
+  this.core.on('core:upload-progress', this.onProgress)
+  this.addPostProcessor(this.afterUpload)
+}
+```
+
 ### `uninstall()`
 
 Called when the plugin is removed, or the Uppy instance is closed. This should undo all of the work done in the `install()` method.
+
+```js
+uninstall () {
+  this.core.off('core:upload-progress', this.onProgress)
+  this.removePostProcessor(this.afterUpload)
+}
+```
 
 ### `update(state)`
 
