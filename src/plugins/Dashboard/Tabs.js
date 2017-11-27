@@ -30,9 +30,8 @@ module.exports = (props) => {
           onchange=${props.handleInputChange} />`
 
   return html`<div class="UppyDashboardTabs">
-    <nav>
       <ul class="UppyDashboardTabs-list" role="tablist">
-        <li class="UppyDashboardTab">
+        <li class="UppyDashboardTab" role="presentation">
           <button type="button" class="UppyDashboardTab-btn"
                   role="tab"
                   tabindex="0"
@@ -45,7 +44,7 @@ module.exports = (props) => {
           ${input}
         </li>
         ${props.acquirers.map((target) => {
-          return html`<li class="UppyDashboardTab">
+          return html`<li class="UppyDashboardTab" role="presentation">
             <button class="UppyDashboardTab-btn"
                     type="button"
                     role="tab"
@@ -59,6 +58,5 @@ module.exports = (props) => {
           </li>`
         })}
       </ul>
-    </nav>
   </div>`
 }
