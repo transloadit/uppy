@@ -48,12 +48,15 @@ module.exports = class Informer extends Plugin {
     const {isHidden, type, message, details} = state.info
     const style = `background-color: ${this.opts.typeColors[type].bg}; color: ${this.opts.typeColors[type].text};`
 
-    // @TODO add aria-live for screen-readers
-    // maybe details.length < N to set bubble size
-    return html`<div class="Uppy UppyTheme--default UppyInformer" style="${style}" aria-hidden="${isHidden}">
-      <p>
+    return html`<div class="Uppy UppyInformer" 
+                     style="${style}" 
+                     aria-hidden="${isHidden}" >
+      <p role="alert">
         ${message} 
-        ${details ? html`<span style="color: ${this.opts.typeColors[type].bg}" data-balloon="${details}" data-balloon-pos="up" data-balloon-length="large">?</span>` : null}
+        ${details ? html`<span style="color: ${this.opts.typeColors[type].bg}" 
+                               data-balloon="${details}" 
+                               data-balloon-pos="up" 
+                               data-balloon-length="large">?</span>` : null}
       </p>
     </div>`
   }
