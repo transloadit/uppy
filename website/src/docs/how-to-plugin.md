@@ -39,7 +39,7 @@ All of the below methods are optional! Only implement the methods you need.
 
 ### `install()`
 
-Called when the plugin is `.use`d. Do any setup work here, like attaching events or adding [upload hooks](#todo).
+Called when the plugin is `.use`d. Do any setup work here, like attaching events or adding [upload hooks](#Upload-Hooks).
 
 ### `uninstall()`
 
