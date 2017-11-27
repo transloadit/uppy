@@ -270,9 +270,10 @@ module.exports = class XHRUpload extends Plugin {
       }
     })
 
-    const promises = actions
-      .map(this.limitUploads)
-      .map((action) => action())
+    const promises = actions.map((action) => {
+      const limitedAction = this.limitUploads(action)
+      return limitedAction()
+    })
 
     return settle(promises)
   }
