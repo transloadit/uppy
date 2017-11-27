@@ -5,8 +5,6 @@ title: "Custom Stores"
 permalink: docs/stores/
 ---
 
-<link rel="stylesheet" href="https://uppy.io/css/main.css">
-
 By default, Uppy stores its internal state in an object.
 If your app uses a state management library such as [Redux](https://redux.js.org), it can be useful to have Uppy store its state there instead—that way, you could write custom uploader UI components in the same way as the other components in the application.
 
