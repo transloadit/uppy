@@ -8,7 +8,11 @@ order: 20
 <link rel="stylesheet" href="https://uppy.io/css/main.css">
 
 There are a few useful Uppy plugins out there, but there might come a time when you’ll want to build your own.
-Plugins can hook into the upload process or render a custom UI.
+Plugins can hook into the upload process or render a custom UI, typically to:
+
+ - Render some custom UI element, e.g. [StatusBar](/docs/statusbar) or [Dashboard](/docs/dashboard).
+ - Do the actual uploading, e.g. [XHRUpload](/docs/xhrupload) or [Tus](/docs/tus).
+ - Interact with a third party service to process uploads correctly, e.g. [Transloadit](/docs/transloadit) or [AwsS3](/docs/aws-s3).
 
 ## Creating A Plugin
 
