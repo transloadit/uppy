@@ -451,16 +451,18 @@
   background-color: $color-white;
   display: flex;
   align-items: center;
-  border: 1px solid rgba($color-gray, 0.2);
+  // border: 1px solid rgba($color-gray, 0.2);
+  // margin-bottom: 30px;
 
   .UppyDashboard--wide & {
     flex-direction: column;
     float: left;
     width: 140px;
     height: 170px;
-    margin: 15px 21px;
-    border-radius: 6px;
+    margin: 12px 21px;
+    // border-radius: 6px;
     border: 0;
+    background-color: initial;
   }
 }
 
@@ -508,8 +510,12 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  // box-shadow: 0 0 2px 0 rgba(175, 175, 175, 0.7);
+  // border-radius: 3px;
 
   .UppyDashboard--wide & {
+    box-shadow: 0 0 2px 0 rgba(175, 175, 175, 0.7);
+    border-radius: 3px;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
   }
@@ -527,9 +533,9 @@
     z-index: $zIndex-2;
   }
 
-  .UppyDashboardItem.is-error .UppyDashboardItem-previewInnerWrap:after {
-    background-color: rgba($color-red, 0.85);
-  }
+  // .UppyDashboardItem.is-error .UppyDashboardItem-previewInnerWrap:after {
+  //   background-color: rgba($color-red, 0.85);
+  // }
 
 
 .UppyDashboardItem-preview img {
@@ -575,9 +581,9 @@
     width: 100%;
     max-width: 100%;
     flex: 1;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
-    border: 1px solid rgba($color-gray, 0.2);
+    // border-bottom-left-radius: 6px;
+    // border-bottom-right-radius: 6px;
+    // border: 1px solid rgba($color-gray, 0.2);
     border-top: 0;
   }
 }
@@ -673,24 +679,23 @@
 .UppyDashboardItem-remove {
   @include reset-button;
   cursor: pointer;
-  color: rgba($color-asphalt-gray, 0.6);
+  color: lighten($color-asphalt-gray, 20%);
   width: 16px;
 
   .UppyDashboard--wide & {
     width: 20px;
-    color: $color-asphalt-gray;
+    color: lighten($color-asphalt-gray, 10%);
+    font-size: 20px;
   }
 }
 
-  .UppyDashboardItem.is-inprogress:not(.is-resumable) {
-    .UppyDashboardItem-remove {
-      display: none;
-    }
+  .UppyDashboardItem.is-inprogress:not(.is-resumable) .UppyDashboardItem-remove {
+    display: none;
   }
 
-.UppyDashboardItem-remove .UppyIcon {
-  max-width: 100%;
-}
+// .UppyDashboardItem-remove .UppyIcon {
+//   max-width: 100%;
+// }
 
 .UppyDashboardItem-progress {
   position: absolute;
@@ -707,8 +712,8 @@
 
   .UppyDashboardItem.is-complete .UppyDashboardItem-progress {
     transform: initial;
-    top: -7px;
-    right: -7px;
+    top: -9px;
+    right: -8px;
     left: initial;
     width: auto;
   }
@@ -719,12 +724,11 @@
     display: block;
   }
 
-.UppyDashboardItem-progressBtn {
+.UppyDashboardItem-progressIndicator {
   @include reset-button;
   width: 38px;
   height: 38px;
   opacity: 0.9;
-  // color: $color-white;
   cursor: pointer;
   transition: all .35s ease;
 
@@ -734,7 +738,7 @@
   }
 }
 
-  .UppyDashboardItem.is-error .UppyDashboardItem-progressBtn {
+  .UppyDashboardItem.is-error .UppyDashboardItem-progressIndicator {
     width: 18px;
     height: 18px;
 
@@ -744,7 +748,7 @@
     }
   }
 
-  .UppyDashboardItem.is-complete .UppyDashboardItem-progressBtn {
+  .UppyDashboardItem.is-complete .UppyDashboardItem-progressIndicator {
     width: 18px;
     height: 18px;
     opacity: 1;
@@ -853,7 +857,7 @@
 }
 
 .UppyDashboardItem.is-complete {
-  .UppyDashboardItem-progressBtn {
+  .UppyDashboardItem-progressIndicator {
     cursor: default;
   }
 
@@ -868,86 +872,86 @@
   }
 }
 
-.UppyTotalProgress {
-  @include reset-button;
-  width: 70px;
-  height: 70px;
-  cursor: pointer;
-}
+// .UppyTotalProgress {
+//   @include reset-button;
+//   width: 70px;
+//   height: 70px;
+//   cursor: pointer;
+// }
 
-.UppyTotalProgress .UppyIcon {
-  width: 100%;
-  height: 100%;
-}
+// .UppyTotalProgress .UppyIcon {
+//   width: 100%;
+//   height: 100%;
+// }
 
-.UppyTotalProgress .bg {
-  stroke: rgba($color-cornflower-blue, 0.3);
-  transition: all 0.2s;
-  opacity: 1;
-  box-shadow: 1px 2px 4px 0px rgba($color-black, 0.2);
-}
+// .UppyTotalProgress .bg {
+//   stroke: rgba($color-cornflower-blue, 0.3);
+//   transition: all 0.2s;
+//   opacity: 1;
+//   box-shadow: 1px 2px 4px 0px rgba($color-black, 0.2);
+// }
 
-.UppyTotalProgress .progress {
-  stroke: darken($color-cornflower-blue, 5%);
-  transition: stroke-dashoffset .5s ease-out;
-  opacity: 1;
-}
+// .UppyTotalProgress .progress {
+//   stroke: darken($color-cornflower-blue, 5%);
+//   transition: stroke-dashoffset .5s ease-out;
+//   opacity: 1;
+// }
 
-.UppyTotalProgress .play {
-  stroke: darken($color-cornflower-blue, 5%);
-  fill: darken($color-cornflower-blue, 5%);
-  transition: all 0.2s;
-  opacity: 0;
-}
+// .UppyTotalProgress .play {
+//   stroke: darken($color-cornflower-blue, 5%);
+//   fill: darken($color-cornflower-blue, 5%);
+//   transition: all 0.2s;
+//   opacity: 0;
+// }
 
-.UppyTotalProgress .pause {
-  stroke: darken($color-cornflower-blue, 5%);
-  fill: darken($color-cornflower-blue, 5%);
-  transition: all 0.2s;
-  opacity: 1;
-}
+// .UppyTotalProgress .pause {
+//   stroke: darken($color-cornflower-blue, 5%);
+//   fill: darken($color-cornflower-blue, 5%);
+//   transition: all 0.2s;
+//   opacity: 1;
+// }
 
-.UppyTotalProgress .check {
-  fill: $color-white;
-  transition: all 0.2s;
-  opacity: 0;
-}
+// .UppyTotalProgress .check {
+//   fill: $color-white;
+//   transition: all 0.2s;
+//   opacity: 0;
+// }
 
-.UppyTotalProgress--is-paused {
-  .pause {
-    opacity: 0;
-  }
-  .play {
-    opacity: 1;
-  }
-}
+// .UppyTotalProgress--is-paused {
+//   .pause {
+//     opacity: 0;
+//   }
+//   .play {
+//     opacity: 1;
+//   }
+// }
 
-.UppyTotalProgress--is-complete {
-  cursor: default;
+// .UppyTotalProgress--is-complete {
+//   cursor: default;
 
-  .pause, .play {
-    opacity: 0;
-  }
+//   .pause, .play {
+//     opacity: 0;
+//   }
 
-  .bg {
-    stroke: $color-green;
-    opacity: 1;
-  }
+//   .bg {
+//     stroke: $color-green;
+//     opacity: 1;
+//   }
 
-  .progress {
-    stroke: $color-green;
-    fill: $color-green;
-    opacity: 1;
-  }
-  .check {
-    opacity: 1;
-  }
-}
+//   .progress {
+//     stroke: $color-green;
+//     fill: $color-green;
+//     opacity: 1;
+//   }
+//   .check {
+//     opacity: 1;
+//   }
+// }
 
-.UppyTotalProgress-info {
-  font-size: 10px;
-  color: $color-asphalt-gray;
-}
+// .UppyTotalProgress-info {
+//   font-size: 10px;
+//   color: $color-asphalt-gray;
+// }
 
 .UppyDashboardItem-progressNum {
   position: relative;
@@ -1072,6 +1076,8 @@
 
 .UppyDashboardFileCard-info {
   padding: 30px 20px 20px 20px;
+  height: 55%;
+  overflow-y: auto;
 }
 
 .UppyDashboardFileCard-fieldset {
@@ -1140,10 +1146,10 @@
 
 // StatusBar
 
-.UppyDashboard--wide .UppyStatusBar-content .UppyIcon {
-  width: 17px;
-  height: 17px;
-}
+// .UppyDashboard--wide .UppyStatusBar-content .UppyIcon {
+//   width: 17px;
+//   height: 17px;
+// }
 
 .UppyDashboard--wide .UppyStatusBar {
   height: 40px;
