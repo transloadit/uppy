@@ -108,5 +108,9 @@ Set to `0` to disable this check.
 
 The default is 30 seconds.
 
+### `limit: 0`
+
+Limit the amount of uploads going on at the same time. Passing `0` means no limit.
+
 [FormData]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
 [XHR.timeout]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout
