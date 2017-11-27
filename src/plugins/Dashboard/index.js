@@ -210,9 +210,8 @@ module.exports = class DashboardUI extends Plugin {
     document.body.classList.add('is-UppyDashboard-open')
     document.body.style.top = `-${this.savedDocumentScrollPosition}px`
 
-    this.setFocusToFirstNode()
-
-    this.updateDashboardElWidth()
+    setTimeout(this.setFocusToFirstNode, 100)
+    setTimeout(this.updateDashboardElWidth, 100)
     // to be sure, sometimes when the function runs, container size is still 0
     // setTimeout(this.updateDashboardElWidth, 500)
   }
