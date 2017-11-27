@@ -51,10 +51,6 @@ class Uppy {
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    // // Dictates in what order different plugin types are ran:
-    // this.types = [ 'presetter', 'orchestrator', 'progressindicator',
-    //                 'acquirer', 'modifier', 'uploader', 'presenter', 'debugger']
-
     this.locale = Object.assign({}, defaultLocale, this.opts.locale)
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
@@ -85,6 +81,7 @@ class Uppy {
     this.retryAll = this.retryAll.bind(this)
     this.cancelAll = this.cancelAll.bind(this)
     this.retryUpload = this.retryUpload.bind(this)
+    this.upload = this.upload.bind(this)
 
     // this.bus = this.emitter = ee()
     this.emitter = ee()
@@ -117,7 +114,6 @@ class Uppy {
     if (this.opts.debug) {
       global.uppyLog = ''
       global[this.opts.id] = this
-      // global._uppy = this
     }
   }
 
