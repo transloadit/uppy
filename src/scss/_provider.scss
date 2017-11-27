@@ -280,15 +280,8 @@
 }
 
 
-// .BrowserTable tbody {
-//   display: block;
-//   overflow-x: hidden;
-//   overflow-y: auto;
-//   position: absolute;
-//   top: 0;
-//   bottom: 0;
-//   left: 0;
-//   right: 0;
+// .BrowserTable-checkbox {
+
 // }
 
 .BrowserTable-row {
@@ -345,6 +338,25 @@
 //   display: block;
 //   // width: 708px;
 // }
+
+.Browser-doneBtn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: $zIndex-3;
+  width: 50px;
+  height: 50px;
+
+  .UppyDashboard--wide & {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+.Browser-doneBtn .UppyIcon {
+  width: 30px;
+  height: 30px;
+}
 
 .nav-active {
   font-weight: bold;
