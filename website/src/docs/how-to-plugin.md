@@ -100,7 +100,9 @@ class MyPlugin extends Plugin {
 
 ## Progress Events
 
-Progress events can be fired for individual files to show feedback to the user. For upload progress events, only emitting how many bytes are expected and how many have been uploaded is enough. Uppy will handle calculating progress percentages, upload speed, etc. Preprocessing and postprocessing progress events can refer to anything, so Uppy doesn't try to be smart about them. There are two types of processing progress events: determinate and indeterminate. Some processing does not have meaningful progress beyond "not done" and "done". For example, sending a request to initialize a server-side resource that will be uploaded to. In those situations, indeterminate progress is suitable.
+Progress events can be fired for individual files to show feedback to the user. For upload progress events, only emitting how many bytes are expected and how many have been uploaded is enough. Uppy will handle calculating progress percentages, upload speed, etc.
+
+Preprocessing and postprocessing progress events can refer to anything, so Uppy doesn't try to be smart about them. There are two types of processing progress events: determinate and indeterminate. Some processing does not have meaningful progress beyond "not done" and "done". For example, sending a request to initialize a server-side resource that will be uploaded to. In those situations, indeterminate progress is suitable.
 
 ### `core:preprocess-progress(fileID, progress)`
 
