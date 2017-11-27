@@ -21,6 +21,7 @@ module.exports = class StatusBarUI extends Plugin {
         uploading: 'Uploading',
         uploadComplete: 'Upload complete',
         uploadFailed: 'Upload failed',
+        pleasePressRetry: 'Please press Retry to upload again',
         paused: 'Paused',
         error: 'Error',
         retry: 'Retry',
@@ -28,7 +29,15 @@ module.exports = class StatusBarUI extends Plugin {
         retryUpload: 'Retry upload',
         resumeUpload: 'Resume upload',
         cancelUpload: 'Cancel upload',
-        pauseUpload: 'Pause upload'
+        pauseUpload: 'Pause upload',
+        uploadXFiles: {
+          0: 'Upload %{smart_count} file',
+          1: 'Upload %{smart_count} files'
+        },
+        uploadXNewFiles: {
+          0: 'Upload +%{smart_count} file',
+          1: 'Upload +%{smart_count} files'
+        }
       }
     }
 
@@ -78,6 +87,9 @@ module.exports = class StatusBarUI extends Plugin {
 
     const uploadStartedFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadStarted
+    })
+    const newFiles = Object.keys(files).filter((file) => {
+      return !files[file].progress.uploadStarted
     })
     const completeFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadComplete
@@ -143,7 +155,9 @@ module.exports = class StatusBarUI extends Plugin {
       resumeAll: this.core.resumeAll,
       retryAll: this.core.retryAll,
       cancelAll: this.core.cancelAll,
+      startUpload: this.core.upload,
       complete: completeFiles.length,
+      newFiles: newFiles.length,
       inProgress: uploadStartedFiles.length,
       totalSpeed: totalSpeed,
       totalETA: totalETA,
