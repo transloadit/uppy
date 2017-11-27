@@ -16,7 +16,7 @@ Plugins can hook into the upload process or render a custom UI, typically to:
 
 ## Creating A Plugin
 
-Plugins are classes that extend from Uppy's `Plugin` class. Each plugin has an `id` and a `type`. `id`s are used to identify plugins, both for developers (`uppy.getPlugin('MyId')`) and for other plugins (`targetPlugin: 'MyId'`). A `type` can be anything—some plugins use `type`s to determine whether to do something to some other plugin. For example, when targeting plugins at the builtin `Dashboard` plugin, the Dashboard uses the `type` to figure out where to mount different UI elements. `'acquirer'` type plugins are mounted into the tab bar, while `'progressindicator'` type plugins are mounted into the progress bar area.
+Plugins are classes that extend from Uppy's `Plugin` class. Each plugin has an `id` and a `type`. `id`s are used to uniquely identify plugins. A `type` can be anything—some plugins use `type`s to determine whether to do something to some other plugin. For example, when targeting plugins at the builtin `Dashboard` plugin, the Dashboard uses the `type` to figure out where to mount different UI elements. `'acquirer'` type plugins are mounted into the tab bar, while `'progressindicator'` type plugins are mounted into the progress bar area.
 
 The plugin constructor receives the Uppy instance in the first parameter, and any options passed to `uppy.use()` in the second parameter.
 
