@@ -51,6 +51,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
 - [ ] “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no uppy-server required #362
 - [ ] WordPress plugin
+- [ ] Transformations, cropping, filters for images, see #53
 
 ## 1.0 Goals
 
