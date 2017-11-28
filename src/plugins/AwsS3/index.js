@@ -1,4 +1,4 @@
-const Plugin = require('../Plugin')
+const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const XHRUpload = require('../XHRUpload')
 

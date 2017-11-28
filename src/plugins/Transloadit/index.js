@@ -1,5 +1,5 @@
 const Translator = require('../../core/Translator')
-const Plugin = require('../Plugin')
+const Plugin = require('../../core/Plugin')
 const Client = require('./Client')
 const StatusSocket = require('./Socket')
 

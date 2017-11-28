@@ -1,5 +1,5 @@
 import ReduxPlugin from './Redux'
-import Plugin from './Plugin'
+import Plugin from '../core/Plugin'
 
 describe('uploader/reduxPlugin', () => {
   it('should initialise successfully', () => {

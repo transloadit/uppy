@@ -1,4 +1,4 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 
 /**
  * Meta Data

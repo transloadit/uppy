@@ -1,4 +1,4 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 const html = require('yo-yo')
 // const yo = require('yo-yo')
 

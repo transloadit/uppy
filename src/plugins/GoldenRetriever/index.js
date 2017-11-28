@@ -1,4 +1,4 @@
-const Plugin = require('../Plugin')
+const Plugin = require('../../core/Plugin')
 const ServiceWorkerStore = require('./ServiceWorkerStore')
 const IndexedDBStore = require('./IndexedDBStore')
 const MetaDataStore = require('./MetaDataStore')

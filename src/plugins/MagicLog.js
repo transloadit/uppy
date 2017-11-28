@@ -1,4 +1,4 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 // import deepDiff from 'deep-diff'
 
 /**
@@ -32,11 +32,10 @@ module.exports = class MagicLog extends Plugin {
   }
 
   install () {
-    const uppy = this.core.emitter
-    uppy.on('state-update', this.handleStateUpdate)
+    this.core.on('core:state-update', this.handleStateUpdate)
   }
 
   uninstall () {
-    this.core.emitter.off('state-update', this.handleStateUpdate)
+    this.core.off('core:state-update', this.handleStateUpdate)
   }
 }

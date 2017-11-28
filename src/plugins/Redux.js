@@ -1,4 +1,4 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 
 module.exports = class Redux extends Plugin {
   constructor (core, opts) {

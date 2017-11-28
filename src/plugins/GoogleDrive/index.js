@@ -1,5 +1,5 @@
 const html = require('yo-yo')
-const Plugin = require('../Plugin')
+const Plugin = require('../../core/Plugin')
 
 const Provider = require('../../Provider')
 

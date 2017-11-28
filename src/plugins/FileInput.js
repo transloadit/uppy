@@ -1,4 +1,4 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 const { toArray } = require('../core/Utils')
 const Translator = require('../core/Translator')
 const html = require('yo-yo')
