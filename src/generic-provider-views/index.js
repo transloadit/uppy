@@ -82,16 +82,6 @@ module.exports = class View {
     this.plugin.core.off('core:file-removed', this.updateFolderState)
   }
 
-  /**
-   * Little shorthand to update the state with the plugin's state
-   */
-  updateState (newState) {
-    let stateId = this.plugin.stateId
-    const {state} = this.plugin.core
-
-    this.plugin.core.setState({[stateId]: Object.assign({}, state[stateId], newState)})
-  }
-
   _updateFilesAndFolders (res, files, folders) {
     this.plugin.getItemSubList(res).forEach((item) => {
       if (this.plugin.isFolder(item)) {
@@ -101,18 +91,18 @@ module.exports = class View {
       }
     })
 
-    this.updateState({ folders, files })
+    this.plugin.setPluginState({ folders, files })
   }
 
   checkAuth () {
-    this.updateState({ checkAuthInProgress: true })
+    this.plugin.setPluginState({ checkAuthInProgress: true })
     this.Provider.checkAuth()
       .then((authenticated) => {
-        this.updateState({ checkAuthInProgress: false })
+        this.plugin.setPluginState({ checkAuthInProgress: false })
         this.plugin.onAuth(authenticated)
       })
       .catch((err) => {
-        this.updateState({ checkAuthInProgress: false })
+        this.plugin.setPluginState({ checkAuthInProgress: false })
         this.handleError(err)
       })
   }
@@ -130,7 +120,7 @@ module.exports = class View {
         let files = []
         let updatedDirectories
 
-        const state = this.plugin.core.getState()[this.plugin.stateId]
+        const state = this.plugin.getPluginState()
         const index = state.directories.findIndex((dir) => id === dir.id)
 
         if (index !== -1) {
@@ -140,7 +130,7 @@ module.exports = class View {
         }
 
         this._updateFilesAndFolders(res, files, folders)
-        this.updateState({ directories: updatedDirectories })
+        this.plugin.setPluginState({ directories: updatedDirectories })
       },
       this.handleError)
   }
@@ -201,23 +191,23 @@ module.exports = class View {
             folders: [],
             directories: []
           }
-          this.updateState(newState)
+          this.plugin.setPluginState(newState)
         }
       }).catch(this.handleError)
   }
 
   filterQuery (e) {
-    const state = this.plugin.core.getState()[this.plugin.stateId]
-    this.updateState(Object.assign({}, state, {
+    const state = this.plugin.getPluginState()
+    this.plugin.setPluginState(Object.assign({}, state, {
       filterInput: e.target.value
     }))
   }
 
   toggleSearch () {
-    const state = this.plugin.core.getState()[this.plugin.stateId]
+    const state = this.plugin.getPluginState()
     const searchInputEl = document.querySelector('.Browser-searchInput')
 
-    this.updateState(Object.assign({}, state, {
+    this.plugin.setPluginState(Object.assign({}, state, {
       isSearchVisible: !state.isSearchVisible,
       filterInput: ''
     }))
@@ -229,14 +219,14 @@ module.exports = class View {
   }
 
   filterItems (items) {
-    const state = this.plugin.core.getState()[this.plugin.stateId]
+    const state = this.plugin.getPluginState()
     return items.filter((folder) => {
       return this.plugin.getItemName(folder).toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1
     })
   }
 
   sortByTitle () {
-    const state = Object.assign({}, this.plugin.core.getState()[this.plugin.stateId])
+    const state = Object.assign({}, this.plugin.getPluginState())
     const {files, folders, sorting} = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
@@ -253,7 +243,7 @@ module.exports = class View {
       return this.plugin.getItemName(folderA).localeCompare(this.plugin.getItemName(folderB))
     })
 
-    this.updateState(Object.assign({}, state, {
+    this.plugin.setPluginState(Object.assign({}, state, {
       files: sortedFiles,
       folders: sortedFolders,
       sorting: (sorting === 'titleDescending') ? 'titleAscending' : 'titleDescending'
@@ -261,7 +251,7 @@ module.exports = class View {
   }
 
   sortByDate () {
-    const state = Object.assign({}, this.plugin.core.getState()[this.plugin.stateId])
+    const state = Object.assign({}, this.plugin.getPluginState())
     const {files, folders, sorting} = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
@@ -285,7 +275,7 @@ module.exports = class View {
       return a > b ? 1 : a < b ? -1 : 0
     })
 
-    this.updateState(Object.assign({}, state, {
+    this.plugin.setPluginState(Object.assign({}, state, {
       files: sortedFiles,
       folders: sortedFolders,
       sorting: (sorting === 'dateDescending') ? 'dateAscending' : 'dateDescending'
@@ -293,7 +283,7 @@ module.exports = class View {
   }
 
   sortBySize () {
-    const state = Object.assign({}, this.plugin.core.getState()[this.plugin.stateId])
+    const state = Object.assign({}, this.plugin.getPluginState())
     const {files, sorting} = state
 
     // check that plugin supports file sizes
@@ -311,20 +301,20 @@ module.exports = class View {
       return a > b ? 1 : a < b ? -1 : 0
     })
 
-    this.updateState(Object.assign({}, state, {
+    this.plugin.setPluginState(Object.assign({}, state, {
       files: sortedFiles,
       sorting: (sorting === 'sizeDescending') ? 'sizeAscending' : 'sizeDescending'
     }))
   }
 
   isActiveRow (file) {
-    return this.plugin.core.getState()[this.plugin.stateId].activeRow === this.plugin.getItemId(file)
+    return this.plugin.getPluginState().activeRow === this.plugin.getItemId(file)
   }
 
   isChecked (item) {
     const itemId = this.providerFileToId(item)
     if (this.plugin.isFolder(item)) {
-      const state = this.plugin.core.getState()[this.plugin.stateId]
+      const state = this.plugin.getPluginState()
       const folders = state.selectedFolders || {}
       if (itemId in folders) {
         return folders[itemId]
@@ -342,13 +332,13 @@ module.exports = class View {
    */
   addFolder (folder) {
     const folderId = this.providerFileToId(folder)
-    let state = this.plugin.core.getState()[this.plugin.stateId]
+    let state = this.plugin.getPluginState()
     let folders = state.selectedFolders || {}
     if (folderId in folders && folders[folderId].loading) {
       return
     }
     folders[folderId] = {loading: true, files: []}
-    this.updateState({selectedFolders: folders})
+    this.plugin.setPluginState({selectedFolders: folders})
     this.Provider.list(this.plugin.getItemRequestPath(folder)).then((res) => {
       let files = []
       this.plugin.getItemSubList(res).forEach((item) => {
@@ -357,9 +347,9 @@ module.exports = class View {
           files.push(this.providerFileToId(item))
         }
       })
-      state = this.plugin.core.getState()[this.plugin.stateId]
+      state = this.plugin.getPluginState()
       state.selectedFolders[folderId] = {loading: false, files: files}
-      this.updateState({selectedFolders: folders})
+      this.plugin.setPluginState({selectedFolders: folders})
       const dashboard = this.plugin.core.getPlugin('Dashboard')
       let message
       if (files.length) {
@@ -371,15 +361,15 @@ module.exports = class View {
       }
       this.plugin.core.info(message)
     }).catch((e) => {
-      state = this.plugin.core.getState()[this.plugin.stateId]
+      state = this.plugin.getPluginState()
       delete state.selectedFolders[folderId]
-      this.updateState({selectedFolders: state.selectedFolders})
+      this.plugin.setPluginState({selectedFolders: state.selectedFolders})
       this.handleError(e)
     })
   }
 
   removeFolder (folderId) {
-    let state = this.plugin.core.getState()[this.plugin.stateId]
+    let state = this.plugin.getPluginState()
     let folders = state.selectedFolders || {}
     if (!(folderId in folders)) {
       return
@@ -394,7 +384,7 @@ module.exports = class View {
       }
     }
     delete folders[folderId]
-    this.updateState({selectedFolders: folders})
+    this.plugin.setPluginState({selectedFolders: folders})
   }
 
   /**
@@ -405,7 +395,7 @@ module.exports = class View {
    * it's already been done in removeFolder method.
    */
   updateFolderState (fileId) {
-    let state = this.plugin.core.getState()[this.plugin.stateId]
+    let state = this.plugin.getPluginState()
     let folders = state.selectedFolders || {}
     for (let folderId in folders) {
       let folder = folders[folderId]
@@ -420,7 +410,7 @@ module.exports = class View {
         delete folders[folderId]
       }
     }
-    this.updateState({selectedFolders: folders})
+    this.plugin.setPluginState({selectedFolders: folders})
   }
 
   /**
@@ -434,7 +424,7 @@ module.exports = class View {
   toggleCheckbox (e, file) {
     e.stopPropagation()
     e.preventDefault()
-    let {folders, files, filterInput} = this.plugin.core.getState()[this.plugin.stateId]
+    let { folders, files, filterInput } = this.plugin.getPluginState()
     let items = folders.concat(files)
     if (filterInput !== '') {
       items = this.filterItems(items)
@@ -481,8 +471,8 @@ module.exports = class View {
   }
 
   handleDemoAuth () {
-    const state = this.plugin.core.getState()[this.plugin.stateId]
-    this.updateState({}, state, {
+    const state = this.plugin.getPluginState()
+    this.plugin.setPluginState({}, state, {
       authenticated: true
     })
   }
@@ -532,7 +522,7 @@ module.exports = class View {
     if (scrollPos < 50 && path && !this._isHandlingScroll) {
       this.Provider.list(path)
         .then((res) => {
-          const { files, folders } = this.plugin.core.getState()[this.plugin.stateId]
+          const { files, folders } = this.plugin.getPluginState()
           this._updateFilesAndFolders(res, files, folders)
         }).catch(this.handleError)
         .then(() => { this._isHandlingScroll = false }) // always called
@@ -545,12 +535,12 @@ module.exports = class View {
   _loaderWrapper (promise, then, catch_) {
     promise
       .then(then).catch(catch_)
-      .then(() => this.updateState({ loading: false })) // always called.
-    this.updateState({ loading: true })
+      .then(() => this.plugin.setPluginState({ loading: false })) // always called.
+    this.plugin.setPluginState({ loading: true })
   }
 
   render (state) {
-    const { authenticated, checkAuthInProgress, loading } = state[this.plugin.stateId]
+    const { authenticated, checkAuthInProgress, loading } = this.plugin.getPluginState()
 
     if (loading) {
       return LoaderView()
@@ -567,7 +557,7 @@ module.exports = class View {
       })
     }
 
-    const browserProps = Object.assign({}, state[this.plugin.stateId], {
+    const browserProps = Object.assign({}, this.plugin.getPluginState(), {
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
       addFile: this.addFile,
