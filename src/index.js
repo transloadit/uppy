@@ -1,19 +1,19 @@
-const Core = require('./core/index.js')
+const Core = require('./core')
 
 // Parent
-const Plugin = require('./plugins/Plugin')
+const Plugin = require('./core/Plugin')
 
 // Orchestrators
-const Dashboard = require('./plugins/Dashboard/index.js')
+const Dashboard = require('./plugins/Dashboard')
 
 // Acquirers
 const Dummy = require('./plugins/Dummy')
-const DragDrop = require('./plugins/DragDrop/index.js')
+const DragDrop = require('./plugins/DragDrop')
 const FileInput = require('./plugins/FileInput.js')
-const GoogleDrive = require('./plugins/GoogleDrive/index.js')
-const Dropbox = require('./plugins/Dropbox/index.js')
-const Instagram = require('./plugins/Instagram/index.js')
-const Webcam = require('./plugins/Webcam/index.js')
+const GoogleDrive = require('./plugins/GoogleDrive')
+const Dropbox = require('./plugins/Dropbox')
+const Instagram = require('./plugins/Instagram')
+const Webcam = require('./plugins/Webcam')
 
 // Progressindicators
 const StatusBar = require('./plugins/StatusBar')
