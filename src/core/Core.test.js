@@ -717,8 +717,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.updateMeta({ foo: 'bar', bur: 'mur' }, fileId)
-          core.updateMeta({ boo: 'moo', bur: 'fur' }, fileId)
+          core.setFileMeta(fileId, { foo: 'bar', bur: 'mur' })
+          core.setFileMeta(fileId, { boo: 'moo', bur: 'fur' })
           expect(core.state.files[fileId].meta).toEqual({
             name: 'foo.jpg',
             type: 'image/jpeg',
@@ -741,8 +741,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('core:update-meta', { foo: 'bar', bur: 'mur' }, fileId)
-          core.emit('core:update-meta', { boo: 'moo', bur: 'fur' }, fileId)
+          core.emit('core:update-meta', fileId, { foo: 'bar', bur: 'mur' })
+          core.emit('core:update-meta', fileId, { boo: 'moo', bur: 'fur' })
           expect(core.state.files[fileId].meta).toEqual({
             name: 'foo.jpg',
             type: 'image/jpeg',

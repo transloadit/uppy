@@ -69,7 +69,7 @@ class Uppy {
     this.i18n = this.translator.translate.bind(this.translator)
     this.getState = this.getState.bind(this)
     this.getPlugin = this.getPlugin.bind(this)
-    this.updateMeta = this.updateMeta.bind(this)
+    this.setFileMeta = this.setFileMeta.bind(this)
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
     this.info = this.info.bind(this)
@@ -220,7 +220,7 @@ class Uppy {
     this.setState({meta: newMeta})
   }
 
-  updateMeta (data, fileID) {
+  setFileMeta (fileID, data) {
     const updatedFiles = Object.assign({}, this.state.files)
     if (!updatedFiles[fileID]) {
       this.log('Was trying to set metadata for a file that’s not with us anymore: ', fileID)
@@ -675,8 +675,8 @@ class Uppy {
       this.calculateTotalProgress()
     })
 
-    this.on('core:update-meta', (data, fileID) => {
-      this.updateMeta(data, fileID)
+    this.on('core:update-meta', (fileID, data) => {
+      this.setFileMeta(fileID, data)
     })
 
     this.on('core:preprocess-progress', (fileID, progress) => {

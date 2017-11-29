@@ -27,7 +27,7 @@ module.exports = class MetaData extends Plugin {
     metaFields.forEach((item) => {
       const obj = {}
       obj[item.id] = item.value
-      this.core.updateMeta(obj, file.id)
+      this.core.setFileMeta(file.id, obj)
     })
   }
 
