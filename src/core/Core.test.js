@@ -1,6 +1,6 @@
 import Core from './Core'
 import utils from './Utils'
-import Plugin from '../../src/plugins/Plugin'
+import Plugin from './Plugin'
 import AcquirerPlugin1 from '../../test/mocks/acquirerPlugin1'
 import AcquirerPlugin2 from '../../test/mocks/acquirerPlugin2'
 import InvalidPlugin from '../../test/mocks/invalidPlugin'
