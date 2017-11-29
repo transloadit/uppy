@@ -207,7 +207,7 @@ module.exports = class Tus extends Plugin {
           endpoint = file.tus.endpoint
         }
 
-        this.core.emitter.emit('core:upload-started', file.id)
+        this.core.emit('core:upload-started', file.id)
 
         fetch(file.remote.url, {
           method: 'post',
@@ -230,9 +230,8 @@ module.exports = class Tus extends Plugin {
 
           res.json().then((data) => {
             const token = data.token
+            this.core.setFileState(file.id, { serverToken: token })
             file = this.getFile(file.id)
-            file.serverToken = token
-            this.updateFile(file)
             this.connectToServerSocket(file)
             resolve()
           })
@@ -243,6 +242,7 @@ module.exports = class Tus extends Plugin {
 
   connectToServerSocket (file) {
     const token = file.serverToken
+    console.log('123', token)
     const host = getSocketHost(file.remote.host)
     const socket = new UppySocket({ target: `${host}/api/${token}` })
     this.uploaderSockets[file.id] = socket
@@ -278,7 +278,7 @@ module.exports = class Tus extends Plugin {
     socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
     socket.on('success', (data) => {
-      this.core.emitter.emit('core:upload-success', file.id, data, data.url)
+      this.core.emit('core:upload-success', file.id, data, data.url)
       this.resetUploaderReferences(file.id)
     })
   }
