@@ -70,6 +70,7 @@ class Uppy {
     this.getState = this.getState.bind(this)
     this.getPlugin = this.getPlugin.bind(this)
     this.setFileMeta = this.setFileMeta.bind(this)
+    this.setFileState = this.setFileState.bind(this)
     this.initSocket = this.initSocket.bind(this)
     this.log = this.log.bind(this)
     this.info = this.info.bind(this)
@@ -231,6 +232,17 @@ class Uppy {
       meta: newMeta
     })
     this.setState({files: updatedFiles})
+  }
+
+  /**
+  * Shorthand to set state for a specific file
+  */
+  setFileState (fileID, state) {
+    this.setState({
+      files: Object.assign({}, this.state.files, {
+        [fileID]: Object.assign({}, this.state.files[fileID], state)
+      })
+    })
   }
 
   /**
@@ -524,27 +536,19 @@ class Uppy {
 
   calculateProgress (data) {
     const fileID = data.id
-    const updatedFiles = Object.assign({}, this.getState().files)
 
     // skip progress event for a file that’s been removed
-    if (!updatedFiles[fileID]) {
-      this.log('Trying to set progress for a file that’s not with us anymore: ', fileID)
+    if (!this.getState().files[fileID]) {
+      this.log('Trying to set progress for a file that’s been removed: ', fileID)
       return
     }
 
-    const updatedFile = Object.assign({}, updatedFiles[fileID],
-      Object.assign({}, {
-        progress: Object.assign({}, updatedFiles[fileID].progress, {
-          bytesUploaded: data.bytesUploaded,
-          bytesTotal: data.bytesTotal,
-          percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
-        })
-      }
-    ))
-    updatedFiles[data.id] = updatedFile
-
-    this.setState({
-      files: updatedFiles
+    this.setFileState(fileID, {
+      progress: Object.assign({}, this.getState().files[fileID].progress, {
+        bytesUploaded: data.bytesUploaded,
+        bytesTotal: data.bytesTotal,
+        percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
+      })
     })
 
     this.calculateTotalProgress()
@@ -598,14 +602,10 @@ class Uppy {
     })
 
     this.on('core:upload-error', (fileID, error) => {
-      const updatedFiles = Object.assign({}, this.state.files)
-      const updatedFile = Object.assign({}, updatedFiles[fileID],
-        { error: error.message }
-      )
-      updatedFiles[fileID] = updatedFile
-      this.setState({ files: updatedFiles, error: error.message })
+      this.setFileState(fileID, { error: error.message })
+      this.setState({ error: error.message })
 
-      const fileName = this.state.files[fileID].name
+      const fileName = this.getState().files[fileID].name
       let message = `Failed to upload ${fileName}`
       if (typeof error === 'object' && error.message) {
         message = { message: message, details: error.message }
@@ -630,20 +630,14 @@ class Uppy {
     })
 
     this.on('core:upload-started', (fileID, upload) => {
-      const updatedFiles = Object.assign({}, this.getState().files)
-      const updatedFile = Object.assign({}, updatedFiles[fileID],
-        Object.assign({}, {
-          progress: Object.assign({}, updatedFiles[fileID].progress, {
-            uploadStarted: Date.now(),
-            uploadComplete: false,
-            percentage: 0,
-            bytesUploaded: 0
-          })
-        }
-      ))
-      updatedFiles[fileID] = updatedFile
-
-      this.setState({files: updatedFiles})
+      this.setFileState(fileID, {
+        progress: Object.assign({}, this.getState().files[fileID].progress, {
+          uploadStarted: Date.now(),
+          uploadComplete: false,
+          percentage: 0,
+          bytesUploaded: 0
+        })
+      })
     })
 
     // upload progress events can occur frequently, especially when you have a good
@@ -657,19 +651,13 @@ class Uppy {
     })
 
     this.on('core:upload-success', (fileID, uploadResp, uploadURL) => {
-      const updatedFiles = Object.assign({}, this.getState().files)
-      const updatedFile = Object.assign({}, updatedFiles[fileID], {
-        progress: Object.assign({}, updatedFiles[fileID].progress, {
+      this.setFileState(fileID, {
+        progress: Object.assign({}, this.getState().files[fileID].progress, {
           uploadComplete: true,
           percentage: 100
         }),
         uploadURL: uploadURL,
         isPaused: false
-      })
-      updatedFiles[fileID] = updatedFile
-
-      this.setState({
-        files: updatedFiles
       })
 
       this.calculateTotalProgress()
@@ -680,15 +668,13 @@ class Uppy {
     })
 
     this.on('core:preprocess-progress', (fileID, progress) => {
-      const files = Object.assign({}, this.getState().files)
-      files[fileID] = Object.assign({}, files[fileID], {
-        progress: Object.assign({}, files[fileID].progress, {
+      this.setFileState(fileID, {
+        progress: Object.assign({}, this.getState().files[fileID].progress, {
           preprocess: progress
         })
       })
-
-      this.setState({ files: files })
     })
+
     this.on('core:preprocess-complete', (fileID) => {
       const files = Object.assign({}, this.getState().files)
       files[fileID] = Object.assign({}, files[fileID], {
@@ -698,16 +684,15 @@ class Uppy {
 
       this.setState({ files: files })
     })
+
     this.on('core:postprocess-progress', (fileID, progress) => {
-      const files = Object.assign({}, this.getState().files)
-      files[fileID] = Object.assign({}, files[fileID], {
-        progress: Object.assign({}, files[fileID].progress, {
+      this.setFileState(fileID, {
+        progress: Object.assign({}, this.getState().files[fileID].progress, {
           postprocess: progress
         })
       })
-
-      this.setState({ files: files })
     })
+
     this.on('core:postprocess-complete', (fileID) => {
       const files = Object.assign({}, this.getState().files)
       files[fileID] = Object.assign({}, files[fileID], {
