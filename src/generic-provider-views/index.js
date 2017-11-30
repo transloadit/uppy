@@ -378,7 +378,12 @@ module.exports = class View {
     if (folder.loading) {
       return
     }
-    for (let fileId of folder.files) {
+    // deepcopy the files before iteration because the
+    // original array constantly gets mutated during
+    // the iteration by updateFolderState as each file
+    // is removed and 'core:file-removed' is emitted.
+    const files = folder.files.concat([])
+    for (const fileId of files) {
       if (fileId in this.plugin.core.getState().files) {
         this.plugin.core.removeFile(fileId)
       }
