@@ -12,7 +12,7 @@ module.exports = class DragDrop extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
-    this.id = 'DragDrop'
+    this.id = this.opts.id || 'DragDrop'
     this.title = 'Drag & Drop'
     this.icon = html`
       <svg aria-hidden="true" class="UppyIcon" width="28" height="28" viewBox="0 0 16 16">
@@ -26,10 +26,6 @@ module.exports = class DragDrop extends Plugin {
       strings: {
         dropHereOr: 'Drop files here or',
         browse: 'browse'
-        // selectedFiles: {
-        //   0: '%{smart_count} file selected',
-        //   1: '%{smart_count} files selected'
-        // }
       }
     }
 
@@ -58,8 +54,9 @@ module.exports = class DragDrop extends Plugin {
 
     // Bind `this` to class methods
     this.handleDrop = this.handleDrop.bind(this)
+    this.onBrowseClick = this.onBrowseClick.bind(this)
+    this.onInputChange = this.onInputChange.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
-    this.handleInputChange = this.handleInputChange.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -98,7 +95,7 @@ module.exports = class DragDrop extends Plugin {
     })
   }
 
-  handleInputChange (ev) {
+  onInputChange (ev) {
     this.core.log('[DragDrop] Files selected through input')
 
     const files = toArray(ev.target.files)
@@ -113,14 +110,12 @@ module.exports = class DragDrop extends Plugin {
     })
   }
 
+  onBrowseClick (ev) {
+    const input = this.el.querySelector('.uppy-DragDrop-input')
+    input.click()
+  }
+
   render (state) {
-    const onSelect = (ev) => {
-      const input = this.target.querySelector('.uppy-DragDrop-input')
-      input.click()
-    }
-
-    // const selectedFilesCount = Object.keys(state.files).length
-
     return html`
       <div class="Uppy UppyTheme--default uppy-DragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}"
            style="width: ${this.opts.width}; height: ${this.opts.height};">
@@ -133,8 +128,8 @@ module.exports = class DragDrop extends Plugin {
                  name="files[]"
                  multiple="true"
                  value=""
-                 onchange=${this.handleInputChange.bind(this)} />
-          <label class="uppy-DragDrop-label" onclick=${onSelect}>
+                 onchange=${this.onInputChange} />
+          <label class="uppy-DragDrop-label" onclick=${this.onBrowseClick}>
             ${this.i18n('dropHereOr')}
             <span class="uppy-DragDrop-dragText">${this.i18n('browse')}</span>
           </label>
@@ -144,37 +139,14 @@ module.exports = class DragDrop extends Plugin {
     `
   }
 
-  // ${selectedFilesCount > 0
-  // ? html`<div class="uppy-DragDrop-selectedCount">
-  //     ${this.i18n('selectedFiles', {'smart_count': selectedFilesCount})}
-  //   </div>`
-  // : ''}
-
   install () {
     const target = this.opts.target
-    const plugin = this
     if (target) {
-      this.mount(target, plugin)
+      this.mount(target, this)
     }
-  }
-
-  uninstall () {
-    this.unmount()
-  }
-
-  mount (...args) {
-    super.mount(...args)
-
-    const dndContainer = this.target.querySelector('.uppy-DragDrop-container')
-    this.removeDragDropListener = dragDrop(dndContainer, (files) => {
+    this.removeDragDropListener = dragDrop(this.el, (files) => {
       this.handleDrop(files)
       this.core.log(files)
     })
-  }
-
-  unmount (...args) {
-    this.removeDragDropListener()
-
-    super.unmount(...args)
   }
 }

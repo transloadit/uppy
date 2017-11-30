@@ -7,13 +7,8 @@ fi
 
 VERSION_LENGTH=${#CIRCLE_BUILD_NUM}
 
-if [ "$VERSION_LENGTH" -eq 1 ]; then
-  NEW_VERSION=0.0.$(echo $CIRCLE_BUILD_NUM | cut -c1-1)
-elif [ "$VERSION_LENGTH" -eq 2 ]; then
-  NEW_VERSION=0.$(echo $CIRCLE_BUILD_NUM | cut -c1-1).$(echo $CIRCLE_BUILD_NUM | cut -c2-2)
-elif [ "$VERSION_LENGTH" -ge 3 ]; then
-  NEW_VERSION=$(echo $CIRCLE_BUILD_NUM | cut -c1-1).$(echo $CIRCLE_BUILD_NUM | cut -c2-2).$(echo $CIRCLE_BUILD_NUM | cut -c3-3)
-fi
+NEW_VERSION=$(echo $CIRCLE_BUILD_NUM | cut -c1-1).0.0
+
 
 echo $NEW_VERSION | yarn version --no-git-tag-version
 

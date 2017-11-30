@@ -1,4 +1,6 @@
 const Plugin = require('../Plugin')
+const Translator = require('../../core/Translator')
+const XHRUpload = require('../XHRUpload')
 
 module.exports = class AwsS3 extends Plugin {
   constructor (core, opts) {
@@ -22,6 +24,9 @@ module.exports = class AwsS3 extends Plugin {
     this.locale = Object.assign({}, defaultLocale, this.opts.locale)
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
+    this.translator = new Translator({ locale: this.locale })
+    this.i18n = this.translator.translate.bind(this.translator)
+
     this.prepareUpload = this.prepareUpload.bind(this)
   }
 
@@ -42,39 +47,8 @@ module.exports = class AwsS3 extends Plugin {
     fileIDs.forEach((id) => {
       this.core.emit('core:preprocess-progress', id, {
         mode: 'determinate',
-        message: this.locale.strings.preparingUpload,
+        message: this.i18n('preparingUpload'),
         value: 0
-      })
-    })
-
-    this.core.setState({
-      xhrUpload: Object.assign({}, this.core.state.xhrUpload, {
-        responseUrlFieldName: 'location',
-        getResponseData (xhr) {
-          // If no response, we've hopefully done a PUT request to the file
-          // in the bucket on its full URL.
-          if (!xhr.responseXML) {
-            return { location: xhr.responseURL }
-          }
-          function getValue (key) {
-            const el = xhr.responseXML.querySelector(key)
-            return el ? el.textContent : ''
-          }
-          return {
-            location: getValue('Location'),
-            bucket: getValue('Bucket'),
-            key: getValue('Key'),
-            etag: getValue('ETag')
-          }
-        },
-        getResponseError (xhr) {
-          // If no response, we don't have a specific error message, use the default.
-          if (!xhr.responseXML) {
-            return
-          }
-          const error = xhr.responseXML.querySelector('Error > Message')
-          return new Error(error.textContent)
-        }
       })
     })
 
@@ -86,16 +60,22 @@ module.exports = class AwsS3 extends Plugin {
         return paramsPromise.then((params) => {
           this.core.emit('core:preprocess-progress', file.id, {
             mode: 'determinate',
-            message: this.locale.strings.preparingUpload,
+            message: this.i18n('preparingUpload'),
             value: 1
           })
           return params
+        }).catch((error) => {
+          this.core.emit('core:upload-error', file.id, error)
         })
       })
     ).then((responses) => {
       const updatedFiles = {}
       fileIDs.forEach((id, index) => {
         const file = this.core.getFile(id)
+        if (file.error) {
+          return
+        }
+
         const {
           method = 'post',
           url,
@@ -106,7 +86,6 @@ module.exports = class AwsS3 extends Plugin {
           method,
           formData: method.toLowerCase() === 'post',
           endpoint: url,
-          fieldName: 'file',
           metaFields: Object.keys(fields)
         }
 
@@ -134,9 +113,42 @@ module.exports = class AwsS3 extends Plugin {
 
   install () {
     this.core.addPreProcessor(this.prepareUpload)
+
+    this.core.use(XHRUpload, {
+      fieldName: 'file',
+      responseUrlFieldName: 'location',
+      getResponseData (xhr) {
+        // If no response, we've hopefully done a PUT request to the file
+        // in the bucket on its full URL.
+        if (!xhr.responseXML) {
+          return { location: xhr.responseURL }
+        }
+        function getValue (key) {
+          const el = xhr.responseXML.querySelector(key)
+          return el ? el.textContent : ''
+        }
+        return {
+          location: getValue('Location'),
+          bucket: getValue('Bucket'),
+          key: getValue('Key'),
+          etag: getValue('ETag')
+        }
+      },
+      getResponseError (xhr) {
+        // If no response, we don't have a specific error message, use the default.
+        if (!xhr.responseXML) {
+          return
+        }
+        const error = xhr.responseXML.querySelector('Error > Message')
+        return new Error(error.textContent)
+      }
+    })
   }
 
   uninstall () {
+    const uploader = this.core.getPlugin('XHRUpload')
+    this.core.removePlugin(uploader)
+
     this.core.removePreProcessor(this.prepareUpload)
   }
 }

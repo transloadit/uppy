@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo "Preparing for end to end test: copying static HTML and CSS, building JS"
+rm -rf ./test/endtoend/dist && mkdir ./test/endtoend/dist
+cp ./dist/uppy.min.css ./test/endtoend/dist 
+cp ./test/endtoend/src/index.html ./test/endtoend/dist 
+browserify ./test/endtoend/src/main.js -o ./test/endtoend/dist/bundle.js -t babelify

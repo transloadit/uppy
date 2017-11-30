@@ -29,7 +29,7 @@ const XHRUpload = require('./plugins/XHRUpload')
 const Transloadit = require('./plugins/Transloadit')
 const AwsS3 = require('./plugins/AwsS3')
 
-// Other?
+// Helpers and utilities
 const GoldenRetriever = require('./plugins/GoldenRetriever')
 const ReduxDevTools = require('./plugins/ReduxDevTools')
 const ReduxStore = require('./plugins/Redux')

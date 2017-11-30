@@ -53,6 +53,7 @@ module.exports = class View {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Logic
+    this.updateFolderState = this.updateFolderState.bind(this)
     this.addFile = this.addFile.bind(this)
     this.filterItems = this.filterItems.bind(this)
     this.filterQuery = this.filterQuery.bind(this)
@@ -66,21 +67,19 @@ module.exports = class View {
     this.sortByTitle = this.sortByTitle.bind(this)
     this.sortByDate = this.sortByDate.bind(this)
     this.isActiveRow = this.isActiveRow.bind(this)
+    this.isChecked = this.isChecked.bind(this)
+    this.toggleCheckbox = this.toggleCheckbox.bind(this)
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
+
+    this.plugin.core.on('core:file-removed', this.updateFolderState)
 
     // Visual
     this.render = this.render.bind(this)
   }
 
-  /**
-   * Little shorthand to update the state with the plugin's state
-   */
-  updateState (newState) {
-    let stateId = this.plugin.stateId
-    const {state} = this.plugin.core
-
-    this.plugin.core.setState({[stateId]: Object.assign({}, state[stateId], newState)})
+  tearDown () {
+    this.plugin.core.off('core:file-removed', this.updateFolderState)
   }
 
   _updateFilesAndFolders (res, files, folders) {
@@ -92,18 +91,18 @@ module.exports = class View {
       }
     })
 
-    this.updateState({ folders, files })
+    this.plugin.setPluginState({ folders, files })
   }
 
   checkAuth () {
-    this.updateState({ checkAuthInProgress: true })
+    this.plugin.setPluginState({ checkAuthInProgress: true })
     this.Provider.checkAuth()
       .then((authenticated) => {
-        this.updateState({ checkAuthInProgress: false })
+        this.plugin.setPluginState({ checkAuthInProgress: false })
         this.plugin.onAuth(authenticated)
       })
       .catch((err) => {
-        this.updateState({ checkAuthInProgress: false })
+        this.plugin.setPluginState({ checkAuthInProgress: false })
         this.handleError(err)
       })
   }
@@ -121,7 +120,7 @@ module.exports = class View {
         let files = []
         let updatedDirectories
 
-        const state = this.plugin.core.getState()[this.plugin.stateId]
+        const state = this.plugin.getPluginState()
         const index = state.directories.findIndex((dir) => id === dir.id)
 
         if (index !== -1) {
@@ -131,7 +130,7 @@ module.exports = class View {
         }
 
         this._updateFilesAndFolders(res, files, folders)
-        this.updateState({ directories: updatedDirectories })
+        this.plugin.setPluginState({ directories: updatedDirectories })
       },
       this.handleError)
   }
@@ -144,9 +143,10 @@ module.exports = class View {
   getNextFolder (folder) {
     let id = this.plugin.getItemRequestPath(folder)
     this.getFolder(id, this.plugin.getItemName(folder))
+    this.lastCheckbox = undefined
   }
 
-  addFile (file) {
+  addFile (file, isCheckbox = false) {
     const tagFile = {
       source: this.plugin.id,
       data: this.plugin.getItemData(file),
@@ -166,11 +166,14 @@ module.exports = class View {
     }
 
     Utils.getFileType(tagFile).then(fileType => {
-      if (Utils.isPreviewSupported(fileType[1])) {
+      if (fileType && Utils.isPreviewSupported(fileType)) {
         tagFile.preview = this.plugin.getItemThumbnailUrl(file)
       }
       this.plugin.core.log('Adding remote file')
       this.plugin.core.addFile(tagFile)
+      if (!isCheckbox) {
+        this.plugin.core.getPlugin('Dashboard').hideAllPanels()
+      }
     })
   }
 
@@ -188,23 +191,23 @@ module.exports = class View {
             folders: [],
             directories: []
           }
-          this.updateState(newState)
+          this.plugin.setPluginState(newState)
         }
       }).catch(this.handleError)
   }
 
   filterQuery (e) {
-    const state = this.plugin.core.getState()[this.plugin.stateId]
-    this.updateState(Object.assign({}, state, {
+    const state = this.plugin.getPluginState()
+    this.plugin.setPluginState(Object.assign({}, state, {
       filterInput: e.target.value
     }))
   }
 
   toggleSearch () {
-    const state = this.plugin.core.getState()[this.plugin.stateId]
+    const state = this.plugin.getPluginState()
     const searchInputEl = document.querySelector('.Browser-searchInput')
 
-    this.updateState(Object.assign({}, state, {
+    this.plugin.setPluginState(Object.assign({}, state, {
       isSearchVisible: !state.isSearchVisible,
       filterInput: ''
     }))
@@ -216,14 +219,14 @@ module.exports = class View {
   }
 
   filterItems (items) {
-    const state = this.plugin.core.getState()[this.plugin.stateId]
+    const state = this.plugin.getPluginState()
     return items.filter((folder) => {
       return this.plugin.getItemName(folder).toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1
     })
   }
 
   sortByTitle () {
-    const state = Object.assign({}, this.plugin.core.getState()[this.plugin.stateId])
+    const state = Object.assign({}, this.plugin.getPluginState())
     const {files, folders, sorting} = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
@@ -240,7 +243,7 @@ module.exports = class View {
       return this.plugin.getItemName(folderA).localeCompare(this.plugin.getItemName(folderB))
     })
 
-    this.updateState(Object.assign({}, state, {
+    this.plugin.setPluginState(Object.assign({}, state, {
       files: sortedFiles,
       folders: sortedFolders,
       sorting: (sorting === 'titleDescending') ? 'titleAscending' : 'titleDescending'
@@ -248,7 +251,7 @@ module.exports = class View {
   }
 
   sortByDate () {
-    const state = Object.assign({}, this.plugin.core.getState()[this.plugin.stateId])
+    const state = Object.assign({}, this.plugin.getPluginState())
     const {files, folders, sorting} = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
@@ -272,7 +275,7 @@ module.exports = class View {
       return a > b ? 1 : a < b ? -1 : 0
     })
 
-    this.updateState(Object.assign({}, state, {
+    this.plugin.setPluginState(Object.assign({}, state, {
       files: sortedFiles,
       folders: sortedFolders,
       sorting: (sorting === 'dateDescending') ? 'dateAscending' : 'dateDescending'
@@ -280,7 +283,7 @@ module.exports = class View {
   }
 
   sortBySize () {
-    const state = Object.assign({}, this.plugin.core.getState()[this.plugin.stateId])
+    const state = Object.assign({}, this.plugin.getPluginState())
     const {files, sorting} = state
 
     // check that plugin supports file sizes
@@ -298,19 +301,178 @@ module.exports = class View {
       return a > b ? 1 : a < b ? -1 : 0
     })
 
-    this.updateState(Object.assign({}, state, {
+    this.plugin.setPluginState(Object.assign({}, state, {
       files: sortedFiles,
       sorting: (sorting === 'sizeDescending') ? 'sizeAscending' : 'sizeDescending'
     }))
   }
 
   isActiveRow (file) {
-    return this.plugin.core.getState()[this.plugin.stateId].activeRow === this.plugin.getItemId(file)
+    return this.plugin.getPluginState().activeRow === this.plugin.getItemId(file)
+  }
+
+  isChecked (item) {
+    const itemId = this.providerFileToId(item)
+    if (this.plugin.isFolder(item)) {
+      const state = this.plugin.getPluginState()
+      const folders = state.selectedFolders || {}
+      if (itemId in folders) {
+        return folders[itemId]
+      }
+      return false
+    }
+    return (itemId in this.plugin.core.getState().files)
+  }
+
+  /**
+   * Adds all files found inside of specified folder.
+   *
+   * Uses separated state while folder contents are being fetched and
+   * mantains list of selected folders, which are separated from files.
+   */
+  addFolder (folder) {
+    const folderId = this.providerFileToId(folder)
+    let state = this.plugin.getPluginState()
+    let folders = state.selectedFolders || {}
+    if (folderId in folders && folders[folderId].loading) {
+      return
+    }
+    folders[folderId] = {loading: true, files: []}
+    this.plugin.setPluginState({selectedFolders: folders})
+    this.Provider.list(this.plugin.getItemRequestPath(folder)).then((res) => {
+      let files = []
+      this.plugin.getItemSubList(res).forEach((item) => {
+        if (!this.plugin.isFolder(item)) {
+          this.addFile(item, true)
+          files.push(this.providerFileToId(item))
+        }
+      })
+      state = this.plugin.getPluginState()
+      state.selectedFolders[folderId] = {loading: false, files: files}
+      this.plugin.setPluginState({selectedFolders: folders})
+      const dashboard = this.plugin.core.getPlugin('Dashboard')
+      let message
+      if (files.length) {
+        message = dashboard.i18n('folderAdded', {
+          smart_count: files.length, folder: this.plugin.getItemName(folder)
+        })
+      } else {
+        message = dashboard.i18n('emptyFolderAdded')
+      }
+      this.plugin.core.info(message)
+    }).catch((e) => {
+      state = this.plugin.getPluginState()
+      delete state.selectedFolders[folderId]
+      this.plugin.setPluginState({selectedFolders: state.selectedFolders})
+      this.handleError(e)
+    })
+  }
+
+  removeFolder (folderId) {
+    let state = this.plugin.getPluginState()
+    let folders = state.selectedFolders || {}
+    if (!(folderId in folders)) {
+      return
+    }
+    let folder = folders[folderId]
+    if (folder.loading) {
+      return
+    }
+    for (let fileId of folder.files) {
+      if (fileId in this.plugin.core.getState().files) {
+        this.plugin.core.removeFile(fileId)
+      }
+    }
+    delete folders[folderId]
+    this.plugin.setPluginState({selectedFolders: folders})
+  }
+
+  /**
+   * Updates selected folders state everytime file is being removed.
+   *
+   * Note that this is only important when files are getting removed from the
+   * main screen, and will do nothing when you uncheck folder directly, since
+   * it's already been done in removeFolder method.
+   */
+  updateFolderState (fileId) {
+    let state = this.plugin.getPluginState()
+    let folders = state.selectedFolders || {}
+    for (let folderId in folders) {
+      let folder = folders[folderId]
+      if (folder.loading) {
+        continue
+      }
+      let i = folder.files.indexOf(fileId)
+      if (i > -1) {
+        folder.files.splice(i, 1)
+      }
+      if (!folder.files.length) {
+        delete folders[folderId]
+      }
+    }
+    this.plugin.setPluginState({selectedFolders: folders})
+  }
+
+  /**
+   * Toggles file/folder checkbox to on/off state while updating files list.
+   *
+   * Note that some extra complexity comes from supporting shift+click to
+   * toggle multiple checkboxes at once, which is done by getting all files
+   * in between last checked file and current one, and applying an on/off state
+   * for all of them, depending on current file state.
+   */
+  toggleCheckbox (e, file) {
+    e.stopPropagation()
+    e.preventDefault()
+    let { folders, files, filterInput } = this.plugin.getPluginState()
+    let items = folders.concat(files)
+    if (filterInput !== '') {
+      items = this.filterItems(items)
+    }
+    let itemsToToggle = [file]
+    if (this.lastCheckbox && e.shiftKey) {
+      let prevIndex = items.indexOf(this.lastCheckbox)
+      let currentIndex = items.indexOf(file)
+      if (prevIndex < currentIndex) {
+        itemsToToggle = items.slice(prevIndex, currentIndex + 1)
+      } else {
+        itemsToToggle = items.slice(currentIndex, prevIndex + 1)
+      }
+    }
+    this.lastCheckbox = file
+    if (this.isChecked(file)) {
+      for (let item of itemsToToggle) {
+        const itemId = this.providerFileToId(item)
+        if (this.plugin.isFolder(item)) {
+          this.removeFolder(itemId)
+        } else {
+          if (itemId in this.plugin.core.getState().files) {
+            this.plugin.core.removeFile(itemId)
+          }
+        }
+      }
+    } else {
+      for (let item of itemsToToggle) {
+        if (this.plugin.isFolder(item)) {
+          this.addFolder(item)
+        } else {
+          this.addFile(item, true)
+        }
+      }
+    }
+  }
+
+  providerFileToId (file) {
+    return Utils.generateFileID({
+      data: this.plugin.getItemData(file),
+      name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
+      type: this.plugin.getMimeType(file)
+    })
   }
 
   handleDemoAuth () {
-    const state = this.plugin.core.getState()[this.plugin.stateId]
-    this.updateState({}, state, {
+    const state = this.plugin.getPluginState()
+    this.plugin.setPluginState({}, state, {
       authenticated: true
     })
   }
@@ -360,7 +522,7 @@ module.exports = class View {
     if (scrollPos < 50 && path && !this._isHandlingScroll) {
       this.Provider.list(path)
         .then((res) => {
-          const { files, folders } = this.plugin.core.getState()[this.plugin.stateId]
+          const { files, folders } = this.plugin.getPluginState()
           this._updateFilesAndFolders(res, files, folders)
         }).catch(this.handleError)
         .then(() => { this._isHandlingScroll = false }) // always called
@@ -373,12 +535,12 @@ module.exports = class View {
   _loaderWrapper (promise, then, catch_) {
     promise
       .then(then).catch(catch_)
-      .then(() => this.updateState({ loading: false })) // always called.
-    this.updateState({ loading: true })
+      .then(() => this.plugin.setPluginState({ loading: false })) // always called.
+    this.plugin.setPluginState({ loading: true })
   }
 
   render (state) {
-    const { authenticated, checkAuthInProgress, loading } = state[this.plugin.stateId]
+    const { authenticated, checkAuthInProgress, loading } = this.plugin.getPluginState()
 
     if (loading) {
       return LoaderView()
@@ -395,7 +557,7 @@ module.exports = class View {
       })
     }
 
-    const browserProps = Object.assign({}, state[this.plugin.stateId], {
+    const browserProps = Object.assign({}, this.plugin.getPluginState(), {
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
       addFile: this.addFile,
@@ -407,6 +569,8 @@ module.exports = class View {
       logout: this.logout,
       demo: this.plugin.opts.demo,
       isActiveRow: this.isActiveRow,
+      isChecked: this.isChecked,
+      toggleCheckbox: this.toggleCheckbox,
       getItemName: this.plugin.getItemName,
       getItemIcon: this.plugin.getItemIcon,
       handleScroll: this.handleScroll,

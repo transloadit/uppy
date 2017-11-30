@@ -13,7 +13,7 @@ const fileType = require('../vendor/file-type')
 
 function isTouchDevice () {
   return 'ontouchstart' in window || // works on most browsers
-    navigator.maxTouchPoints   // works on IE10/11 and Surface
+          navigator.maxTouchPoints   // works on IE10/11 and Surface
 }
 
 function truncateString (str, length) {
@@ -217,7 +217,6 @@ function getProportionalHeight (img, width) {
  */
 function createThumbnail (file, targetWidth) {
   const originalUrl = URL.createObjectURL(file.data)
-
   const onload = new Promise((resolve, reject) => {
     const image = new Image()
     image.src = originalUrl
@@ -339,10 +338,10 @@ function dataURItoBlob (dataURI, opts, toFile) {
 
   // Convert to a File?
   if (toFile) {
-    return new File([new Uint8Array(array)], opts.name || '', { type: mimeType })
+    return new File([new Uint8Array(array)], opts.name || '', {type: mimeType})
   }
 
-  return new Blob([new Uint8Array(array)], { type: mimeType })
+  return new Blob([new Uint8Array(array)], {type: mimeType})
 }
 
 function dataURItoFile (dataURI, opts) {
@@ -490,7 +489,7 @@ function getSocketHost (url) {
 }
 
 function _emitSocketProgress (uploader, progressData, file) {
-  const { progress, bytesUploaded, bytesTotal } = progressData
+  const {progress, bytesUploaded, bytesTotal} = progressData
   if (progress) {
     uploader.core.log(`Upload progress: ${progress}`)
     uploader.core.emitter.emit('core:upload-progress', {
@@ -502,7 +501,7 @@ function _emitSocketProgress (uploader, progressData, file) {
   }
 }
 
-const emitSocketProgress = throttle(_emitSocketProgress, 300, { leading: true, trailing: true })
+const emitSocketProgress = throttle(_emitSocketProgress, 300, {leading: true, trailing: true})
 
 function settle (promises) {
   const resolutions = []
@@ -524,6 +523,43 @@ function settle (promises) {
       failed: rejections
     }
   })
+}
+
+/**
+ * Limit the amount of simultaneously pending Promises.
+ * Returns a function that, when passed a function `fn`,
+ * will make sure that at most `limit` calls to `fn` are pending.
+ *
+ * @param {number} limit
+ * @return {function()}
+ */
+function limitPromises (limit) {
+  let pending = 0
+  const queue = []
+  return (fn) => {
+    return (...args) => {
+      const call = () => {
+        pending++
+        const promise = fn(...args)
+        promise.then(onfinish, onfinish)
+        return promise
+      }
+
+      if (pending >= limit) {
+        return new Promise((resolve, reject) => {
+          queue.push(() => {
+            call().then(resolve, reject)
+          })
+        })
+      }
+      return call()
+    }
+  }
+  function onfinish () {
+    pending--
+    const next = queue.shift()
+    if (next) next()
+  }
 }
 
 module.exports = {
@@ -553,5 +589,6 @@ module.exports = {
   findAllDOMElements,
   getSocketHost,
   emitSocketProgress,
-  settle
+  settle,
+  limitPromises
 }

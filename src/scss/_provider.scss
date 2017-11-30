@@ -84,106 +84,6 @@
   content: '/';
 }
 
-// .UppyGoogleDrive-sidebar {
-//   height: 100%;
-//   list-style-type: none;
-//   margin: 0;
-//   padding: 16px 0 16px 16px;
-// }
-
-// .UppyGoogleDrive-sidebar li {
-//   margin: 0 auto 16px;
-//   padding: 0;
-// }
-
-// .UppyGoogleDrive-sidebar img {
-//   margin-right: 8px;
-// }
-
-// .UppyGoogleDrive-browser {
-//   border: 1px solid #eee;
-//   border-collapse: collapse;
-// }
-
-// .UppyGoogleDrive-browser td {
-//   border-bottom: 1px solid #eee;
-//   padding: 8px;
-// }
-
-// .UppyGoogleDrive-browser tbody tr:last-child td {
-//   border-bottom: 0;
-// }
-
-// .UppyGoogleDrive-browser tbody tr .UppyGoogleDrive-fileIcon {
-//   background-color: #fff;
-//   border-radius: 50%;
-//   padding: 6px 8px 5px 8px;
-// }
-
-// .UppyGoogleDrive-browser tbody tr .UppyGoogleDrive-folderIcon {
-//   background-color: #fff;
-//   border-radius: 50%;
-//   padding: 6px 8px 5px 8px;
-//   margin-top: 2px;
-// }
-
-// .UppyGoogleDrive-browser tbody tr.is-active {
-//   background-color: #78BDF2;
-//   color: #fff;
-// }
-
-// .UppyGoogleDrive-fileInfo {
-//   padding: 0 16px;
-// }
-
-// .UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileThumbnail {
-//   width: 50%;
-// }
-
-// .UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileIcon {
-//   margin-right: 8px;
-// }
-
-// .UppyGoogleDrive-sidebar label {
-//   display: block;
-//   margin-bottom: 8px;
-// }
-
-// .UppyGoogleDrive-sidebar input {
-//   margin-bottom: 8px;
-//   padding: 4px;
-// }
-
-// .UppyGoogleDrive-filter {
-//   border: 1px solid #eee;
-// }
-
-// .UppyGoogleDrive-sortableHeader:hover {
-//   background-color: #eee;
-//   cursor: pointer;
-// }
-
-// .UppyGoogleDrive-fileInfo ul {
-//   list-style-type: none;
-//   padding: 0;
-// }
-
-// .UppyGoogleDrive-browserContainer {
-//   height: calc(80vh - 40px);
-//   overflow: hidden;
-//   overflow-y: scroll;
-// }
-
-// .UppyGoogleDrive-browser td {
-//   cursor: default;
-//   max-width: 25%;
-//   padding-right: 8px;
-//   overflow: hidden;
-//   text-overflow: ellipsis;
-//   white-space: nowrap;
-//   width: 25%;
-// }
-
 
 /** NEW PLUGIN BROWSER STYLES */
 
@@ -417,6 +317,16 @@
   vertical-align: text-top;
   margin-right: 3px;
 }
+
+.BrowserTable-column input {
+  margin-top: 0;
+  cursor: pointer;
+}
+
+// .BrowserTable-itemButton {
+//   @include reset-button();
+//   cursor: pointer;
+// }
 
 .BrowserTable-headerColumn {
   cursor: pointer;

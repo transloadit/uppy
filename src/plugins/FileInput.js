@@ -6,7 +6,7 @@ const html = require('yo-yo')
 module.exports = class FileInput extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.id = 'FileInput'
+    this.id = this.opts.id || 'FileInput'
     this.title = 'File Input'
     this.type = 'acquirer'
 
@@ -79,8 +79,9 @@ module.exports = class FileInput extends Plugin {
 
   install () {
     const target = this.opts.target
-    const plugin = this
-    this.target = this.mount(target, plugin)
+    if (target) {
+      this.mount(target, this)
+    }
   }
 
   uninstall () {

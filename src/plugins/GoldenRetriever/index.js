@@ -15,7 +15,7 @@ module.exports = class GoldenRetriever extends Plugin {
     super(core, opts)
     this.type = 'debugger'
     this.id = 'GoldenRetriever'
-    this.title = 'Restore Files'
+    this.title = 'Golden Retriever'
 
     const defaultOptions = {
       expires: 24 * 60 * 60 * 1000, // 24 hours
@@ -213,9 +213,10 @@ module.exports = class GoldenRetriever extends Plugin {
       this.IndexedDBStore.delete(fileID)
     })
 
-    this.core.on('core:success', (fileIDs) => {
+    this.core.on('core:complete', ({ successful }) => {
+      const fileIDs = successful.map((file) => file.id)
       this.deleteBlobs(fileIDs).then(() => {
-        this.core.log(`[GoldenRetriever] removed ${fileIDs.length} files that finished uploading`)
+        this.core.log(`[GoldenRetriever] removed ${successful.length} files that finished uploading`)
       })
     })
 

@@ -261,6 +261,16 @@ describe('core/utils', () => {
   })
 
   describe('createThumbnail', () => {
+    const RealCreateObjectUrl = global.URL.createObjectURL
+
+    beforeEach(() => {
+      global.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
+    })
+
+    afterEach(() => {
+      global.URL.createObjectURL = RealCreateObjectUrl
+    })
+
     xit(
       'should create a thumbnail of the specified image at the specified width',
       () => {}
@@ -345,14 +355,15 @@ describe('core/utils', () => {
   })
 
   describe('settle', () => {
-    it('should reject if all input promises reject', () => {
+    it('should resolve even if all input promises reject', () => {
       return expect(
         utils.settle([
           Promise.reject(new Error('oops')),
           Promise.reject(new Error('this went wrong'))
         ])
-      ).rejects.toMatchObject({
-        message: 'oops'
+      ).resolves.toMatchObject({
+        successful: [],
+        failed: [{ message: 'oops' }, { message: 'this went wrong' }]
       })
     })
 
@@ -366,6 +377,52 @@ describe('core/utils', () => {
       ).resolves.toMatchObject({
         successful: ['resolved', 'also-resolved'],
         failed: [{ message: 'rejected' }]
+      })
+    })
+  })
+
+  describe('limitPromises', () => {
+    let pending = 0
+    function fn () {
+      pending++
+      return new Promise((resolve) => setTimeout(resolve, 10))
+        .then(() => pending--)
+    }
+
+    it('should run at most N promises at the same time', () => {
+      const limit = utils.limitPromises(4)
+      const fn2 = limit(fn)
+
+      const result = Promise.all([
+        fn2(), fn2(), fn2(), fn2(),
+        fn2(), fn2(), fn2(), fn2(),
+        fn2(), fn2()
+      ])
+
+      expect(pending).toBe(4)
+      setTimeout(() => {
+        expect(pending).toBe(4)
+      }, 10)
+
+      return result.then(() => {
+        expect(pending).toBe(0)
+      })
+    })
+
+    it('should accept Infinity as limit', () => {
+      const limit = utils.limitPromises(Infinity)
+      const fn2 = limit(fn)
+
+      const result = Promise.all([
+        fn2(), fn2(), fn2(), fn2(),
+        fn2(), fn2(), fn2(), fn2(),
+        fn2(), fn2()
+      ])
+
+      expect(pending).toBe(10)
+
+      return result.then(() => {
+        expect(pending).toBe(0)
       })
     })
   })

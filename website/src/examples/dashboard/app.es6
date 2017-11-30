@@ -65,9 +65,9 @@ function uppyInit () {
   })
   uppy.run()
 
-  uppy.on('core:success', (fileList) => {
+  uppy.on('core:complete', (result) => {
     console.log('Yo, uploaded: ')
-    console.log(fileList)
+    console.log(result.successful)
   })
 }
 

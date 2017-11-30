@@ -53,6 +53,20 @@ atom src/core/Core.js \
 
 And open <http://0.0.0.0:4000/examples/multipart/index.html> in your webbrowser.
 
+## Tests
+
+Unit tests can be run with:
+
+```npm run test:unit```
+
+For acceptance (or end to end) tests, we use [Webdriverio](http://webdriver.io). For it to run locally, you need to install selenium standalone server, just follow [the guide](http://webdriver.io/guide.html) to do so.
+
+After you’ve installed and launched the selenium standalone server, run:
+
+```
+npm run test:acceptance:local
+```
+
 ## CSS Guidelines
 
 The CSS standards followed in this project closely resemble those from [Medium's CSS Guidelines](https://gist.github.com/fat/a47b882eb5f84293c4ed). If it's not mentioned here, follow their guidelines.

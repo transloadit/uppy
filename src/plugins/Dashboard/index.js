@@ -8,13 +8,27 @@ const { findAllDOMElements } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
 
+const FOCUSABLE_ELEMENTS = [
+  'a[href]',
+  'area[href]',
+  'input:not([disabled]):not([type="hidden"])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  'button:not([disabled])',
+  'iframe',
+  'object',
+  'embed',
+  '[contenteditable]',
+  '[tabindex]:not([tabindex^="-"])'
+]
+
 /**
- * Modal Dialog & Dashboard
+ * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
 module.exports = class DashboardUI extends Plugin {
   constructor (core, opts) {
     super(core, opts)
-    this.id = 'Dashboard'
+    this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
 
@@ -37,7 +51,12 @@ module.exports = class DashboardUI extends Plugin {
         browse: 'browse',
         fileProgress: 'File progress: upload speed and ETA',
         numberOfSelectedFiles: 'Number of selected files',
-        uploadAllNewFiles: 'Upload all new files'
+        uploadAllNewFiles: 'Upload all new files',
+        emptyFolderAdded: 'No files were added from empty folder',
+        folderAdded: {
+          0: 'Added %{smart_count} file from %{folder}',
+          1: 'Added %{smart_count} files from %{folder}'
+        }
       }
     }
 
@@ -66,7 +85,7 @@ module.exports = class DashboardUI extends Plugin {
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
     this.translator = new Translator({locale: this.locale})
-    this.containerWidth = this.translator.translate.bind(this.translator)
+    this.i18n = this.translator.translate.bind(this.translator)
 
     this.closeModal = this.closeModal.bind(this)
     this.requestCloseModal = this.requestCloseModal.bind(this)
@@ -77,8 +96,12 @@ module.exports = class DashboardUI extends Plugin {
     this.actions = this.actions.bind(this)
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
+    this.getFocusableNodes = this.getFocusableNodes.bind(this)
+    this.setFocusToFirstNode = this.setFocusToFirstNode.bind(this)
+    this.maintainFocus = this.maintainFocus.bind(this)
+
     this.initEvents = this.initEvents.bind(this)
-    this.handleEscapeKeyPress = this.handleEscapeKeyPress.bind(this)
+    this.onKeydown = this.onKeydown.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
     this.handleFileCard = this.handleFileCard.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
@@ -93,7 +116,6 @@ module.exports = class DashboardUI extends Plugin {
   addTarget (plugin) {
     const callerPluginId = plugin.id || plugin.constructor.name
     const callerPluginName = plugin.title || callerPluginId
-    // const callerPluginIcon = plugin.icon || this.opts.defaultTabIcon
     const callerPluginType = plugin.type
 
     if (callerPluginType !== 'acquirer' &&
@@ -107,9 +129,7 @@ module.exports = class DashboardUI extends Plugin {
     const target = {
       id: callerPluginId,
       name: callerPluginName,
-      // icon: callerPluginIcon,
       type: callerPluginType,
-      // render: plugin.render,
       isHidden: true
     }
 
@@ -121,7 +141,7 @@ module.exports = class DashboardUI extends Plugin {
       targets: newTargets
     })
 
-    return this.target
+    return this.el
   }
 
   hideAllPanels () {
@@ -150,6 +170,33 @@ module.exports = class DashboardUI extends Plugin {
     }
   }
 
+  getFocusableNodes () {
+    const nodes = this.el.querySelectorAll(FOCUSABLE_ELEMENTS)
+    return Object.keys(nodes).map((key) => nodes[key])
+  }
+
+  setFocusToFirstNode () {
+    const focusableNodes = this.getFocusableNodes()
+    // console.log(focusableNodes)
+    // console.log(focusableNodes[0])
+    if (focusableNodes.length) focusableNodes[0].focus()
+  }
+
+  maintainFocus (event) {
+    var focusableNodes = this.getFocusableNodes()
+    var focusedItemIndex = focusableNodes.indexOf(document.activeElement)
+
+    if (event.shiftKey && focusedItemIndex === 0) {
+      focusableNodes[focusableNodes.length - 1].focus()
+      event.preventDefault()
+    }
+
+    if (!event.shiftKey && focusedItemIndex === focusableNodes.length - 1) {
+      focusableNodes[0].focus()
+      event.preventDefault()
+    }
+  }
+
   openModal () {
     this.setPluginState({
       isHidden: false
@@ -163,12 +210,10 @@ module.exports = class DashboardUI extends Plugin {
     document.body.classList.add('is-UppyDashboard-open')
     document.body.style.top = `-${this.savedDocumentScrollPosition}px`
 
-    // focus on modal inner block
-    this.target.querySelector('.UppyDashboard-inner').focus()
-
-    // this.updateDashboardElWidth()
+    setTimeout(this.setFocusToFirstNode, 100)
+    setTimeout(this.updateDashboardElWidth, 100)
     // to be sure, sometimes when the function runs, container size is still 0
-    setTimeout(this.updateDashboardElWidth, 500)
+    // setTimeout(this.updateDashboardElWidth, 500)
   }
 
   closeModal () {
@@ -185,11 +230,11 @@ module.exports = class DashboardUI extends Plugin {
     return !this.getPluginState().isHidden || false
   }
 
-  // Close the Modal on esc key press
-  handleEscapeKeyPress (event) {
-    if (event.keyCode === 27) {
-      this.requestCloseModal()
-    }
+  onKeydown (event) {
+    // close modal on esc key press
+    if (event.keyCode === 27) this.requestCloseModal(event)
+    // maintainFocus on tab key press
+    if (event.keyCode === 9) this.maintainFocus(event)
   }
 
   handleClickOutside () {
@@ -207,7 +252,9 @@ module.exports = class DashboardUI extends Plugin {
       this.core.log('Dashboard modal trigger not found, you won’t be able to select files. Make sure `trigger` is set correctly in Dashboard options', 'error')
     }
 
-    document.body.addEventListener('keyup', this.handleEscapeKeyPress)
+    if (!this.opts.inline) {
+      document.addEventListener('keydown', this.onKeydown)
+    }
 
     // Drag Drop
     this.removeDragDropListener = dragDrop(this.el, (files) => {
@@ -222,25 +269,26 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     this.removeDragDropListener()
-    document.body.removeEventListener('keyup', this.handleEscapeKeyPress)
+
+    if (!this.opts.inline) {
+      document.removeEventListener('keydown', this.onKeydown)
+    }
   }
 
   actions () {
-    this.core.on('core:file-added', this.hideAllPanels)
     this.core.on('dashboard:file-card', this.handleFileCard)
 
     window.addEventListener('resize', this.updateDashboardElWidth)
   }
 
   removeActions () {
-    window.removeEventListener('resize', this.updateDashboardElWidth)
-
-    this.core.off('core:file-added', this.hideAllPanels)
     this.core.off('dashboard:file-card', this.handleFileCard)
+
+    window.removeEventListener('resize', this.updateDashboardElWidth)
   }
 
   updateDashboardElWidth () {
-    const dashboardEl = this.target.querySelector('.UppyDashboard-inner')
+    const dashboardEl = this.el.querySelector('.UppyDashboard-inner')
     this.core.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
     this.setPluginState({
@@ -306,19 +354,30 @@ module.exports = class DashboardUI extends Plugin {
     totalSize = prettyBytes(totalSize)
     totalUploadedSize = prettyBytes(totalUploadedSize)
 
-    const acquirers = pluginState.targets.filter(target => {
+    const attachRenderFunctionToTarget = (target) => {
       const plugin = this.core.getPlugin(target.id)
-      target.icon = plugin.icon || this.opts.defaultTabIcon
-      target.render = plugin.render
-      return target.type === 'acquirer'
-    })
+      return Object.assign({}, target, {
+        icon: plugin.icon || this.opts.defaultTabIcon,
+        render: plugin.render
+      })
+    }
 
-    const progressindicators = pluginState.targets.filter(target => {
+    const isSupported = (target) => {
       const plugin = this.core.getPlugin(target.id)
-      target.icon = plugin.icon || this.opts.defaultTabIcon
-      target.render = plugin.render
-      return target.type === 'progressindicator'
-    })
+      // If the plugin does not provide a `supported` check, assume the plugin works everywhere.
+      if (typeof plugin.isSupported !== 'function') {
+        return true
+      }
+      return plugin.isSupported()
+    }
+
+    const acquirers = pluginState.targets
+      .filter(target => target.type === 'acquirer' && isSupported(target))
+      .map(attachRenderFunctionToTarget)
+
+    const progressindicators = pluginState.targets
+      .filter(target => target.type === 'progressindicator')
+      .map(attachRenderFunctionToTarget)
 
     const startUpload = (ev) => {
       this.core.upload().catch((err) => {
@@ -363,7 +422,7 @@ module.exports = class DashboardUI extends Plugin {
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
       log: this.core.log,
-      i18n: this.containerWidth,
+      i18n: this.i18n,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
       addFile: this.core.addFile,
@@ -405,7 +464,6 @@ module.exports = class DashboardUI extends Plugin {
     })
 
     const target = this.opts.target
-
     if (target) {
       this.mount(target, this)
     }

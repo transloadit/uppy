@@ -45,7 +45,8 @@ class Uppy {
       meta: {},
       onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
       onBeforeUpload: (files, done) => Promise.resolve(),
-      locale: defaultLocale
+      locale: defaultLocale,
+      thumbnailGeneration: true
     }
 
     // Merge default options with the ones set by user
@@ -59,13 +60,13 @@ class Uppy {
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
     // i18n
-    this.translator = new Translator({ locale: this.locale })
+    this.translator = new Translator({locale: this.locale})
     this.i18n = this.translator.translate.bind(this.translator)
 
     // Container for different types of plugins
     this.plugins = {}
 
-    this.translator = new Translator({ locale: this.opts.locale })
+    this.translator = new Translator({locale: this.opts.locale})
     this.i18n = this.translator.translate.bind(this.translator)
     this.getState = this.getState.bind(this)
     this.getPlugin = this.getPlugin.bind(this)
@@ -115,10 +116,9 @@ class Uppy {
     // for debugging and testing
     // this.updateNum = 0
     if (this.opts.debug) {
-      global.UppyState = this.state
       global.uppyLog = ''
-      // global.UppyAddFile = this.addFile.bind(this)
-      global._uppy = this
+      global[this.opts.id] = this
+      // global._uppy = this
     }
   }
 
@@ -218,7 +218,7 @@ class Uppy {
     const newMeta = Object.assign({}, this.state.meta, data)
     this.log('Adding metadata:')
     this.log(data)
-    this.setState({ meta: newMeta })
+    this.setState({meta: newMeta})
   }
 
   updateMeta (data, fileID) {
@@ -231,7 +231,7 @@ class Uppy {
     updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
       meta: newMeta
     })
-    this.setState({ files: updatedFiles })
+    this.setState({files: updatedFiles})
   }
 
   /**
@@ -241,9 +241,9 @@ class Uppy {
   * @private
   */
   checkMinNumberOfFiles () {
-    const { minNumberOfFiles } = this.opts.restrictions
+    const {minNumberOfFiles} = this.opts.restrictions
     if (Object.keys(this.state.files).length < minNumberOfFiles) {
-      this.info(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`, 'error', 5000)
+      this.info(`${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
       return false
     }
     return true
@@ -258,11 +258,11 @@ class Uppy {
   * @private
   */
   checkRestrictions (file) {
-    const { maxFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
+    const {maxFileSize, maxNumberOfFiles, allowedFileTypes} = this.opts.restrictions
 
     if (maxNumberOfFiles) {
       if (Object.keys(this.state.files).length + 1 > maxNumberOfFiles) {
-        this.info(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`, 'error', 5000)
+        this.info(`${this.i18n('youCanOnlyUploadX', {smart_count: maxNumberOfFiles})}`, 'error', 5000)
         return false
       }
     }
@@ -347,7 +347,7 @@ class Uppy {
         if (!isFileAllowed) return Promise.reject(new Error('File not allowed'))
 
         updatedFiles[fileID] = newFile
-        this.setState({ files: updatedFiles })
+        this.setState({files: updatedFiles})
 
         this.emit('core:file-added', newFile)
         this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
@@ -369,7 +369,7 @@ class Uppy {
     const removedFile = updatedFiles[fileID]
     delete updatedFiles[fileID]
 
-    this.setState({ files: updatedFiles })
+    this.setState({files: updatedFiles})
     this.calculateTotalProgress()
     this.emit('core:file-removed', fileID)
 
@@ -395,8 +395,14 @@ class Uppy {
    */
   generatePreview (file) {
     if (Utils.isPreviewSupported(file.type) && !file.isRemote) {
-      Utils.createThumbnail(file, 200).then((thumbnail) => {
-        this.setPreviewURL(file.id, thumbnail)
+      let previewPromise
+      if (this.opts.thumbnailGeneration === true) {
+        previewPromise = Utils.createThumbnail(file, 200)
+      } else {
+        previewPromise = Promise.resolve(URL.createObjectURL(file.data))
+      }
+      previewPromise.then((preview) => {
+        this.setPreviewURL(file.id, preview)
       }).catch((err) => {
         console.warn(err.stack || err.message)
       })
@@ -430,7 +436,7 @@ class Uppy {
     })
 
     updatedFiles[fileID] = updatedFile
-    this.setState({ files: updatedFiles })
+    this.setState({files: updatedFiles})
 
     this.emit('core:upload-pause', fileID, isPaused)
 
@@ -441,7 +447,7 @@ class Uppy {
     const updatedFiles = Object.assign({}, this.getState().files)
     const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
       return !updatedFiles[file].progress.uploadComplete &&
-        updatedFiles[file].progress.uploadStarted
+             updatedFiles[file].progress.uploadStarted
     })
 
     inProgressUpdatedFiles.forEach((file) => {
@@ -450,7 +456,7 @@ class Uppy {
       })
       updatedFiles[file] = updatedFile
     })
-    this.setState({ files: updatedFiles })
+    this.setState({files: updatedFiles})
 
     this.emit('core:pause-all')
   }
@@ -459,7 +465,7 @@ class Uppy {
     const updatedFiles = Object.assign({}, this.getState().files)
     const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
       return !updatedFiles[file].progress.uploadComplete &&
-        updatedFiles[file].progress.uploadStarted
+             updatedFiles[file].progress.uploadStarted
     })
 
     inProgressUpdatedFiles.forEach((file) => {
@@ -469,7 +475,7 @@ class Uppy {
       })
       updatedFiles[file] = updatedFile
     })
-    this.setState({ files: updatedFiles })
+    this.setState({files: updatedFiles})
 
     this.emit('core:resume-all')
   }
@@ -510,7 +516,7 @@ class Uppy {
 
     this.emit('core:upload-retry', fileID)
 
-    const uploadID = this.createUpload([fileID])
+    const uploadID = this.createUpload([ fileID ])
     return this.runUpload(uploadID)
   }
 
@@ -541,7 +547,7 @@ class Uppy {
           percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
         })
       }
-      ))
+    ))
     updatedFiles[data.id] = updatedFile
 
     this.setState({
@@ -641,17 +647,17 @@ class Uppy {
             bytesUploaded: 0
           })
         }
-        ))
+      ))
       updatedFiles[fileID] = updatedFile
 
-      this.setState({ files: updatedFiles })
+      this.setState({files: updatedFiles})
     })
 
     // upload progress events can occur frequently, especially when you have a good
     // connection to the remote server. Therefore, we are throtteling them to
     // prevent accessive function calls.
     // see also: https://github.com/tus/tus-js-client/commit/9940f27b2361fd7e10ba58b09b60d82422183bbb
-    const throttledCalculateProgress = throttle(this.calculateProgress, 100, { leading: true, trailing: false })
+    const throttledCalculateProgress = throttle(this.calculateProgress, 100, {leading: true, trailing: false})
 
     this.on('core:upload-progress', (data) => {
       throttledCalculateProgress(data)
@@ -1070,11 +1076,11 @@ class Uppy {
     })
   }
 
-  /**
- * Start an upload for all the files that are not currently being uploaded.
- *
- * @return {Promise}
- */
+    /**
+   * Start an upload for all the files that are not currently being uploaded.
+   *
+   * @return {Promise}
+   */
   upload () {
     if (!this.plugins.uploader) {
       this.log('No uploader type plugins are used', 'warning')
@@ -1111,3 +1117,5 @@ class Uppy {
 module.exports = function (opts) {
   return new Uppy(opts)
 }
+// Expose class constructor.
+module.exports.Uppy = Uppy

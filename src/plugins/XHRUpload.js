@@ -1,9 +1,12 @@
 const Plugin = require('./Plugin')
+const cuid = require('cuid')
+const Translator = require('../core/Translator')
 const UppySocket = require('../core/UppySocket')
 const {
   emitSocketProgress,
   getSocketHost,
-  settle
+  settle,
+  limitPromises
 } = require('../core/Utils')
 
 module.exports = class XHRUpload extends Plugin {
@@ -12,6 +15,12 @@ module.exports = class XHRUpload extends Plugin {
     this.type = 'uploader'
     this.id = 'XHRUpload'
     this.title = 'XHRUpload'
+
+    const defaultLocale = {
+      strings: {
+        timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
+      }
+    }
 
     // Default options
     const defaultOptions = {
@@ -22,6 +31,9 @@ module.exports = class XHRUpload extends Plugin {
       responseUrlFieldName: 'url',
       bundle: true,
       headers: {},
+      locale: defaultLocale,
+      timeout: 30 * 1000,
+      limit: 0,
       getResponseData (xhr) {
         return JSON.parse(xhr.response)
       },
@@ -32,8 +44,21 @@ module.exports = class XHRUpload extends Plugin {
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    // i18n
+    this.translator = new Translator({ locale: this.locale })
+    this.i18n = this.translator.translate.bind(this.translator)
 
     this.handleUpload = this.handleUpload.bind(this)
+
+    // Simultaneous upload limiting is shared across all uploads with this plugin.
+    if (typeof this.opts.limit === 'number' && this.opts.limit !== 0) {
+      this.limitUploads = limitPromises(this.opts.limit)
+    } else {
+      this.limitUploads = (fn) => fn
+    }
   }
 
   getOptions (file) {
@@ -83,9 +108,36 @@ module.exports = class XHRUpload extends Plugin {
         ? this.createFormDataUpload(file, opts)
         : this.createBareUpload(file, opts)
 
+      const onTimedOut = () => {
+        xhr.abort()
+        this.core.log(`[XHRUpload] ${id} timed out`)
+        const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
+        this.core.emit('core:upload-error', file.id, error)
+        reject(error)
+      }
+      let aliveTimer
+      const isAlive = () => {
+        clearTimeout(aliveTimer)
+        aliveTimer = setTimeout(onTimedOut, opts.timeout)
+      }
+
       const xhr = new XMLHttpRequest()
+      const id = cuid()
+
+      xhr.upload.addEventListener('loadstart', (ev) => {
+        this.core.log(`[XHRUpload] ${id} started`)
+        if (opts.timeout > 0) {
+          // Begin checking for timeouts when loading starts.
+          isAlive()
+        }
+      })
 
       xhr.upload.addEventListener('progress', (ev) => {
+        this.core.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`)
+        if (opts.timeout > 0) {
+          isAlive()
+        }
+
         if (ev.lengthComputable) {
           this.core.emit('core:upload-progress', {
             uploader: this,
@@ -97,6 +149,9 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.addEventListener('load', (ev) => {
+        this.core.log(`[XHRUpload] ${id} finished`)
+        clearTimeout(aliveTimer)
+
         if (ev.target.status >= 200 && ev.target.status < 300) {
           const resp = opts.getResponseData(xhr)
           const uploadURL = resp[opts.responseUrlFieldName]
@@ -117,9 +172,12 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.addEventListener('error', (ev) => {
+        this.core.log(`[XHRUpload] ${id} errored`)
+        clearTimeout(aliveTimer)
+
         const error = opts.getResponseError(xhr) || new Error('Upload error')
         this.core.emit('core:upload-error', file.id, error)
-        return reject(new Error('Upload error'))
+        return reject(error)
       })
 
       xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
@@ -158,7 +216,7 @@ module.exports = class XHRUpload extends Plugin {
         : Object.keys(file.meta)
 
       metaFields.forEach((name) => {
-        fields[name] = file.meta.name
+        fields[name] = file.meta[name]
       })
 
       fetch(file.remote.url, {
@@ -199,15 +257,22 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   uploadFiles (files) {
-    const promises = files.map((file, i) => {
+    const actions = files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
-      if (file.isRemote) {
-        return this.uploadRemote(file, current, total)
+      if (file.error) {
+        return () => Promise.reject(new Error(file.error))
+      } else if (file.isRemote) {
+        return this.uploadRemote.bind(this, file, current, total)
       } else {
-        return this.upload(file, current, total)
+        return this.upload.bind(this, file, current, total)
       }
+    })
+
+    const promises = actions.map((action) => {
+      const limitedAction = this.limitUploads(action)
+      return limitedAction()
     })
 
     return settle(promises)

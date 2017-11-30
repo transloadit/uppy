@@ -12,7 +12,7 @@ module.exports = class Informer extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'progressindicator'
-    this.id = 'Informer'
+    this.id = this.opts.id || 'Informer'
     this.title = 'Informer'
     // this.timeoutID = undefined
 
@@ -60,7 +60,8 @@ module.exports = class Informer extends Plugin {
 
   install () {
     const target = this.opts.target
-    const plugin = this
-    this.target = this.mount(target, plugin)
+    if (target) {
+      this.mount(target, this)
+    }
   }
 }

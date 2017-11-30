@@ -267,6 +267,25 @@ this.info('Oh my, something good happened!', 'success', 5000)
 
 Start uploading selected files.
 
+Returns a Promise `result` that resolves with an object containing two arrays of uploaded files.
+
+ - `result.successful` - Files that were uploaded successfully.
+ - `result.failed` - Files that did not upload successfully.
+   These file objects will have a `.error` property describing what went wrong.
+
+```js
+uppy.upload().then((result) => {
+  console.info('Successful uploads:', result.successful)
+
+  if (result.failed.length > 0) {
+    console.error('Errors:')
+    result.failed.forEach((file) => {
+      console.error(file.error)
+    })
+  }
+})
+```
+
 ### `uppy.on('event', action)`
 
 Subscribe to an uppy-event. See full list of events below.
@@ -308,12 +327,13 @@ uppy.on('core:upload-success', (fileId, url) => {
 })
 ```
 
-### `core:success`
+### `core:complete`
 
 Fired when all uploads are complete.
+The `result` parameter is an object with arrays of `successful` and `failed` files, just like in [`uppy.upload()`](#uppy-upload)'s return value.
 
 ``` javascript
-uppy.on('core:success', (fileCount) => {
-  console.log(fileCount)
+uppy.on('core:complete', (result) => {
+  console.log(result)
 })
 ```

@@ -10,7 +10,7 @@ module.exports = class Dummy extends Plugin {
   constructor (core, opts) {
     super(core, opts)
     this.type = 'acquirer'
-    this.id = 'Dummy'
+    this.id = this.opts.id || 'Dummy'
     this.title = 'Mr. Plugin'
 
     // set default options
@@ -57,8 +57,9 @@ module.exports = class Dummy extends Plugin {
     this.core.setState({dummy: {text: '123'}})
 
     const target = this.opts.target
-    const plugin = this
-    this.target = this.mount(target, plugin)
+    if (target) {
+      this.mount(target, this)
+    }
 
     setTimeout(() => {
       this.core.setState({dummy: {text: '!!!'}})
