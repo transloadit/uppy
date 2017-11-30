@@ -52,6 +52,9 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no uppy-server required #362
 - [ ] WordPress plugin
 - [ ] Transformations, cropping, filters for images, see #53
+- [ ] Prepare for (piwik-) tracking of usage of uppy ? see #83
+- [ ] screenshot+screencast support similar to Webcam #148
+- [ ] Webcam modes #198
 
 ## 1.0 Goals
 
@@ -84,6 +87,10 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 - [ ] automatically host releases on edgly and use that as our main CDN
+
+## 0.23
+
+- [ ] Audio: audio recording similar to Webcam #143
 
 # next
 
