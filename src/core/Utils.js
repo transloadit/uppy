@@ -217,7 +217,6 @@ function getProportionalHeight (img, width) {
  */
 function createThumbnail (file, targetWidth) {
   const originalUrl = URL.createObjectURL(file.data)
-
   const onload = new Promise((resolve, reject) => {
     const image = new Image()
     image.src = originalUrl
