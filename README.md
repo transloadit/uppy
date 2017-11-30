@@ -125,7 +125,7 @@ Note: we aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firef
 
 ### React support?
 
-Yep. Uppy-React component is in the works, in the meantime you can just use it as any other lib with React, [see here](https://github.com/transloadit/uppy/tree/uppy-react/src/uppy-react).
+Yep, see [Uppy React docs](https://uppy.io/docs/react/).
 
 ### Can I use it with Rails/Node/Go/PHP?
 
