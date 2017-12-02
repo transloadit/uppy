@@ -1,7 +1,7 @@
 const Core = require('./core')
 
 // Parent
-const Plugin = require('./core/Plugin')
+const Plugin = require('./plugins/Plugin')
 
 // Orchestrators
 const Dashboard = require('./plugins/Dashboard')
@@ -21,7 +21,6 @@ const ProgressBar = require('./plugins/ProgressBar.js')
 const Informer = require('./plugins/Informer.js')
 
 // Modifiers
-const MetaData = require('./plugins/MetaData.js')
 
 // Uploaders
 const Tus = require('./plugins/Tus')
@@ -51,39 +50,23 @@ module.exports = {
   Transloadit,
   AwsS3,
   Dashboard,
-  MetaData,
   Webcam,
   GoldenRetriever,
   ReduxDevTools,
   ReduxStore
 }
 
-Object.defineProperty(module.exports, 'RestoreFiles', {
-  enumerable: true,
-  configurable: true,
-  get: () => {
-    console.warn('Uppy.RestoreFiles is deprecated and will be removed in v0.22. Use Uppy.GoldenRetriever instead.')
-    Object.defineProperty(module.exports, 'RestoreFiles', {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: GoldenRetriever
-    })
-    return GoldenRetriever
-  }
-})
-
-Object.defineProperty(module.exports, 'Tus10', {
-  enumerable: true,
-  configurable: true,
-  get: () => {
-    console.warn('Uppy.Tus10 is deprecated and will be removed in v0.22. Use Uppy.Tus instead.')
-    Object.defineProperty(module.exports, 'Tus10', {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: Tus
-    })
-    return Tus
-  }
-})
+// Object.defineProperty(module.exports, 'Tus10', {
+//   enumerable: true,
+//   configurable: true,
+//   get: () => {
+//     console.warn('Uppy.Tus10 is deprecated and will be removed in v0.22. Use Uppy.Tus instead.')
+//     Object.defineProperty(module.exports, 'Tus10', {
+//       enumerable: true,
+//       configurable: true,
+//       writable: true,
+//       value: Tus
+//     })
+//     return Tus
+//   }
+// })
