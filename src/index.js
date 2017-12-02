@@ -1,7 +1,7 @@
 const Core = require('./core')
 
 // Parent
-const Plugin = require('./plugins/Plugin')
+const Plugin = require('./core/Plugin')
 
 // Orchestrators
 const Dashboard = require('./plugins/Dashboard')
