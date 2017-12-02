@@ -21,6 +21,7 @@ const ProgressBar = require('./plugins/ProgressBar.js')
 const Informer = require('./plugins/Informer.js')
 
 // Modifiers
+const MetaData = require('./plugins/MetaData.js')
 
 // Uploaders
 const Tus = require('./plugins/Tus')
@@ -50,6 +51,7 @@ module.exports = {
   Transloadit,
   AwsS3,
   Dashboard,
+  MetaData,
   Webcam,
   GoldenRetriever,
   ReduxDevTools,
