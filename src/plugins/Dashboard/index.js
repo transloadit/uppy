@@ -64,6 +64,7 @@ module.exports = class DashboardUI extends Plugin {
     const defaultOptions = {
       target: 'body',
       getMetaFromForm: true,
+      metaFields: [],
       trigger: '#uppy-select-files',
       inline: false,
       width: 750,
@@ -93,12 +94,12 @@ module.exports = class DashboardUI extends Plugin {
     this.isModalOpen = this.isModalOpen.bind(this)
 
     this.addTarget = this.addTarget.bind(this)
-    this.actions = this.actions.bind(this)
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
     this.getFocusableNodes = this.getFocusableNodes.bind(this)
     this.setFocusToFirstNode = this.setFocusToFirstNode.bind(this)
     this.maintainFocus = this.maintainFocus.bind(this)
+    this.addDashboardMetaToNewFile = this.addDashboardMetaToNewFile.bind(this)
 
     this.initEvents = this.initEvents.bind(this)
     this.onKeydown = this.onKeydown.bind(this)
@@ -260,6 +261,11 @@ module.exports = class DashboardUI extends Plugin {
     this.removeDragDropListener = dragDrop(this.el, (files) => {
       this.handleDrop(files)
     })
+
+    this.core.on('dashboard:file-card', this.handleFileCard)
+    this.core.on('core:file-added', this.addDashboardMetaToNewFile)
+
+    window.addEventListener('resize', this.updateDashboardElWidth)
   }
 
   removeEvents () {
@@ -268,23 +274,26 @@ module.exports = class DashboardUI extends Plugin {
       showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.openModal))
     }
 
-    this.removeDragDropListener()
-
     if (!this.opts.inline) {
       document.removeEventListener('keydown', this.onKeydown)
     }
-  }
 
-  actions () {
-    this.core.on('dashboard:file-card', this.handleFileCard)
+    this.removeDragDropListener()
 
-    window.addEventListener('resize', this.updateDashboardElWidth)
-  }
-
-  removeActions () {
     this.core.off('dashboard:file-card', this.handleFileCard)
+    this.core.off('core:file-added', this.addDashboardMetaToNewFile)
 
     window.removeEventListener('resize', this.updateDashboardElWidth)
+  }
+
+  addDashboardMetaToNewFile (file) {
+    const metaFields = this.opts.metaFields
+
+    metaFields.forEach((item) => {
+      const obj = {}
+      obj[item.id] = item.value
+      this.core.setFileMeta(file.id, obj)
+    })
   }
 
   updateDashboardElWidth () {
@@ -429,7 +438,7 @@ module.exports = class DashboardUI extends Plugin {
       removeFile: this.core.removeFile,
       info: this.core.info,
       note: this.opts.note,
-      metaFields: state.metaFields,
+      metaFields: this.getPluginState().metaFields,
       resumableUploads: this.core.state.capabilities.resumableUploads || false,
       startUpload: startUpload,
       pauseUpload: this.core.pauseResume,
@@ -460,6 +469,7 @@ module.exports = class DashboardUI extends Plugin {
       isHidden: true,
       showFileCard: false,
       activePanel: false,
+      metaFields: this.opts.metaFields,
       targets: []
     })
 
@@ -489,7 +499,6 @@ module.exports = class DashboardUI extends Plugin {
     this.discoverProviderPlugins()
 
     this.initEvents()
-    this.actions()
   }
 
   uninstall () {
@@ -512,7 +521,6 @@ module.exports = class DashboardUI extends Plugin {
     })
 
     this.unmount()
-    this.removeActions()
     this.removeEvents()
   }
 }
