@@ -8,7 +8,10 @@ module.exports = function fileCard (props) {
 
   const tempStoreMetaOrSubmit = (ev) => {
     if (ev.keyCode === 13) {
+      ev.stopPropagation()
+      ev.preventDefault()
       props.done(meta, file.id)
+      return
     }
 
     const value = ev.target.value
@@ -26,7 +29,9 @@ module.exports = function fileCard (props) {
                data-name="${field.id}"
                value="${file.meta[field.id]}"
                placeholder="${field.placeholder || ''}"
-               onkeyup=${tempStoreMetaOrSubmit} /></fieldset>`
+               onkeyup=${tempStoreMetaOrSubmit}
+               onkeydown=${tempStoreMetaOrSubmit}
+               onkeypress=${tempStoreMetaOrSubmit} /></fieldset>`
     })
   }
 
