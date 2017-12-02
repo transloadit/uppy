@@ -51,6 +51,10 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
 - [ ] “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no uppy-server required #362
 - [ ] WordPress plugin
+- [ ] Transformations, cropping, filters for images, see #53
+- [ ] Prepare for (piwik-) tracking of usage of uppy ? see #83
+- [ ] screenshot+screencast support similar to Webcam #148
+- [ ] Webcam modes #198
 
 ## 1.0 Goals
 
@@ -75,7 +79,7 @@ What we need to do to release Uppy 1.0
 - [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
 - [ ] refactoring: possibly add CSS-in-JS
 - [ ] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
-- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say uploading plugins don’t include rendering stuff
+- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say, uploading plugins don’t include rendering stuff
 - [x] refactoring: webcam plugin
 - [ ] docs: on using plugins, all options, list of plugins, i18n
 - [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
@@ -84,6 +88,10 @@ What we need to do to release Uppy 1.0
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 - [ ] automatically host releases on edgly and use that as our main CDN
 
+## 0.23
+
+- [ ] Audio: audio recording similar to Webcam #143
+
 # next
 
 ## 0.22.0
@@ -91,22 +99,24 @@ What we need to do to release Uppy 1.0
 To be released: 2017-12-20
 Theme: 🎄 Christmas edition
 
-- [ ] add `Form`: a plugin that is used in conjunction with any other acquirer, responsible for 1\. acquiring the metadata from form; 2\. intercepting submit event on the form, opening Uppy dialog instead; 3\. injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think) (@arturi)
+- [ ] add `Form`: a plugin that is used in conjunction with any other acquirer, responsible for 1. acquiring the metadata from form; 2. intercepting submit event on the form, opening Uppy dialog instead; 3. injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think) (@arturi)
 - [ ] core: Redux PR (#216 / @arturi, @goto-bus-stop, @richardwillars)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [x] core: improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (#426 / @goto-bus-stop, @arturi)
-- [ ] core: limit amount of simultaneous uploads, queuing? #360 (@goto-bus-stop)
+- [x] core: improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (@goto-bus-stop, @arturi)
+- [x] core: limit amount of simultaneous uploads, queuing? #360 (#427 / @goto-bus-stop)
+- [ ] core: queue preview generation #431
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
-- [ ] dashboard: place upload button into StatusBar, use Alex’s suggestions for retry
+- [ ] dashboard: place upload button into StatusBar, use Alex’s suggestions for retry button
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
-- [ ] docs: writing plugins
+- [ ] docs: on writing plugins
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] provider: improve UI, add icons for file types (@arturi)
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
 - [ ] test: add tests for `npm pack`
 - [ ] tus: Review “tus: Remove old upload and events when starting a new upload.” b3cc48130e292f08c2a09f2f0adf6b6332bf7692 (@arturi)
+- [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 
 ## 0.21.0
 

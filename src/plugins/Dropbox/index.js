@@ -12,7 +12,6 @@ module.exports = class Dropbox extends Plugin {
     this.type = 'acquirer'
     this.id = this.opts.id || 'Dropbox'
     this.title = 'Dropbox'
-    this.stateId = 'dropbox'
     this.icon = () => html`
       <svg class="UppyIcon" width="128" height="118" viewBox="0 0 128 118">
         <path d="M38.145.777L1.108 24.96l25.608 20.507 37.344-23.06z"/>
@@ -23,7 +22,7 @@ module.exports = class Dropbox extends Plugin {
 
     // writing out the key explicitly for readability the key used to store
     // the provider instance must be equal to this.id.
-    this.Dropbox = new Provider(core, {
+    this[this.id] = new Provider(core, {
       host: this.opts.host,
       provider: 'dropbox'
     })
@@ -31,7 +30,7 @@ module.exports = class Dropbox extends Plugin {
     this.files = []
 
     this.onAuth = this.onAuth.bind(this)
-    // Visual
+
     this.render = this.render.bind(this)
 
     // set default options
@@ -44,18 +43,14 @@ module.exports = class Dropbox extends Plugin {
   install () {
     this.view = new View(this)
     // Set default state
-    this.core.setState({
-      // writing out the key explicitly for readability the key used to store
-      // the plugin state must be equal to this.stateId.
-      dropbox: {
-        authenticated: false,
-        files: [],
-        folders: [],
-        directories: [],
-        activeRow: -1,
-        filterInput: '',
-        isSearchVisible: false
-      }
+    this.setPluginState({
+      authenticated: false,
+      files: [],
+      folders: [],
+      directories: [],
+      activeRow: -1,
+      filterInput: '',
+      isSearchVisible: false
     })
 
     const target = this.opts.target
@@ -65,11 +60,12 @@ module.exports = class Dropbox extends Plugin {
   }
 
   uninstall () {
+    this.view.tearDown()
     this.unmount()
   }
 
   onAuth (authenticated) {
-    this.view.updateState({authenticated})
+    this.setPluginState({ authenticated })
     if (authenticated) {
       this.view.getFolder()
     }

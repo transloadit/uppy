@@ -51,7 +51,12 @@ module.exports = class DashboardUI extends Plugin {
         browse: 'browse',
         fileProgress: 'File progress: upload speed and ETA',
         numberOfSelectedFiles: 'Number of selected files',
-        uploadAllNewFiles: 'Upload all new files'
+        uploadAllNewFiles: 'Upload all new files',
+        emptyFolderAdded: 'No files were added from empty folder',
+        folderAdded: {
+          0: 'Added %{smart_count} file from %{folder}',
+          1: 'Added %{smart_count} files from %{folder}'
+        }
       }
     }
 
@@ -80,7 +85,7 @@ module.exports = class DashboardUI extends Plugin {
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
     this.translator = new Translator({locale: this.locale})
-    this.containerWidth = this.translator.translate.bind(this.translator)
+    this.i18n = this.translator.translate.bind(this.translator)
 
     this.closeModal = this.closeModal.bind(this)
     this.requestCloseModal = this.requestCloseModal.bind(this)
@@ -136,7 +141,7 @@ module.exports = class DashboardUI extends Plugin {
       targets: newTargets
     })
 
-    return this.target
+    return this.el
   }
 
   hideAllPanels () {
@@ -157,10 +162,6 @@ module.exports = class DashboardUI extends Plugin {
     })
   }
 
-  // setModalElement (element) {
-  //   this.modal = element
-  // }
-
   requestCloseModal () {
     if (this.opts.onRequestCloseModal) {
       return this.opts.onRequestCloseModal()
@@ -170,14 +171,14 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   getFocusableNodes () {
-    const nodes = this.modal.querySelectorAll(FOCUSABLE_ELEMENTS)
+    const nodes = this.el.querySelectorAll(FOCUSABLE_ELEMENTS)
     return Object.keys(nodes).map((key) => nodes[key])
   }
 
   setFocusToFirstNode () {
     const focusableNodes = this.getFocusableNodes()
-    console.log(focusableNodes)
-    console.log(focusableNodes[0])
+    // console.log(focusableNodes)
+    // console.log(focusableNodes[0])
     if (focusableNodes.length) focusableNodes[0].focus()
   }
 
@@ -209,9 +210,8 @@ module.exports = class DashboardUI extends Plugin {
     document.body.classList.add('is-UppyDashboard-open')
     document.body.style.top = `-${this.savedDocumentScrollPosition}px`
 
-    this.setFocusToFirstNode()
-
-    this.updateDashboardElWidth()
+    setTimeout(this.setFocusToFirstNode, 100)
+    setTimeout(this.updateDashboardElWidth, 100)
     // to be sure, sometimes when the function runs, container size is still 0
     // setTimeout(this.updateDashboardElWidth, 500)
   }
@@ -276,21 +276,19 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   actions () {
-    this.core.on('core:file-added', this.hideAllPanels)
     this.core.on('dashboard:file-card', this.handleFileCard)
 
     window.addEventListener('resize', this.updateDashboardElWidth)
   }
 
   removeActions () {
-    window.removeEventListener('resize', this.updateDashboardElWidth)
-
-    this.core.off('core:file-added', this.hideAllPanels)
     this.core.off('dashboard:file-card', this.handleFileCard)
+
+    window.removeEventListener('resize', this.updateDashboardElWidth)
   }
 
   updateDashboardElWidth () {
-    const dashboardEl = this.target.querySelector('.UppyDashboard-inner')
+    const dashboardEl = this.el.querySelector('.UppyDashboard-inner')
     this.core.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
     this.setPluginState({
@@ -424,7 +422,7 @@ module.exports = class DashboardUI extends Plugin {
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
       log: this.core.log,
-      i18n: this.containerWidth,
+      i18n: this.i18n,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
       addFile: this.core.addFile,
@@ -492,8 +490,6 @@ module.exports = class DashboardUI extends Plugin {
 
     this.initEvents()
     this.actions()
-
-    this.modal = document.querySelector('.UppyDashboard--modal')
   }
 
   uninstall () {

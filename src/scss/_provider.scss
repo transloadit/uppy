@@ -318,6 +318,11 @@
   margin-right: 3px;
 }
 
+.BrowserTable-column input {
+  margin-top: 0;
+  cursor: pointer;
+}
+
 // .BrowserTable-itemButton {
 //   @include reset-button();
 //   cursor: pointer;

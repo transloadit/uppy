@@ -86,7 +86,7 @@ class IndexedDBStore {
       this.ready = IndexedDBStore.cleanup()
         .then(createConnection, createConnection)
     } else {
-      this.ready = createConnection
+      this.ready = createConnection()
     }
   }
 

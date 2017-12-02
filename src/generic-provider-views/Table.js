@@ -18,11 +18,19 @@ module.exports = (props) => {
     <table class="BrowserTable" onscroll=${props.handleScroll}>
       <tbody role="listbox" aria-label="List of files from ${props.title}">
         ${props.folders.map((folder) => {
+          let isDisabled = false
+          let isChecked = props.isChecked(folder)
+          if (isChecked) {
+            isDisabled = isChecked.loading
+          }
           return Row({
             title: props.getItemName(folder),
             active: props.activeRow(folder),
             getItemIcon: () => props.getItemIcon(folder),
             handleClick: () => props.handleFolderClick(folder),
+            isDisabled: isDisabled,
+            isChecked: isChecked,
+            handleCheckboxClick: (e) => props.toggleCheckbox(e, folder),
             columns: props.columns
           })
         })}
@@ -32,6 +40,9 @@ module.exports = (props) => {
             active: props.activeRow(file),
             getItemIcon: () => props.getItemIcon(file),
             handleClick: () => props.handleFileClick(file),
+            isDisabled: false,
+            isChecked: props.isChecked(file),
+            handleCheckboxClick: (e) => props.toggleCheckbox(e, file),
             columns: props.columns
           })
         })}
