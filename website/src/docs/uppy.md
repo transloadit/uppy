@@ -22,7 +22,8 @@ const uppy = Uppy({
   meta: {},
   onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
   onBeforeUpload: (files, done) => Promise.resolve(),
-  locale: defaultLocale
+  locale: defaultLocale,
+  store: defaultStore()
 })
 ```
 
@@ -125,6 +126,14 @@ locale: {
 ```
 
 We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/master/index.js#L37-L60).
+
+## `store: defaultStore()`
+
+The Store to use to keep track of internal state. By default, a simple object is used.
+This option can be used to plug Uppy state into an external state management library, such as Redux.
+Then, you can write custom views with the library that is also used by the rest of the application.
+
+<!-- TODO document store API -->
 
 ## Methods
 
