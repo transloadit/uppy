@@ -108,7 +108,7 @@ Theme: 🎄 Christmas edition
 - [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
-- [ ] dashboard: place upload button into StatusBar, use Alex’s suggestions for retry button
+- [ ] dashboard: place upload button into StatusBar, use Alex’s suggestions for retry button; other UI tweaks (@arturi)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins
 - [ ] goldenretriever: add “ghost” files (@arturi)
@@ -117,6 +117,7 @@ Theme: 🎄 Christmas edition
 - [ ] test: add tests for `npm pack`
 - [ ] tus: Review “tus: Remove old upload and events when starting a new upload.” b3cc48130e292f08c2a09f2f0adf6b6332bf7692 (@arturi)
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
+- [ ] xhrupload: add bundle option to send multiple files in one request #442
 
 ## 0.21.0
 
