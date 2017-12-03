@@ -475,7 +475,8 @@ module.exports = class DashboardUI extends Plugin {
 
     if (!this.opts.disableStatusBar) {
       this.core.use(StatusBar, {
-        target: this
+        target: this,
+        hideUploadButton: this.opts.hideUploadButton
       })
     }
 

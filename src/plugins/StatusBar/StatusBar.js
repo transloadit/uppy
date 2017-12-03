@@ -106,7 +106,8 @@ module.exports = (props) => {
   }
 
   const width = typeof progressValue === 'number' ? progressValue : 100
-  const isHidden = uploadState === STATE_WAITING && !props.newFiles > 0
+  const isHidden = (uploadState === STATE_WAITING && props.hideUploadButton) ||
+    (uploadState === STATE_WAITING && !props.newFiles > 0)
 
   return html`
     <div class="UppyStatusBar is-${uploadState}"
@@ -119,7 +120,7 @@ module.exports = (props) => {
            aria-valuenow="${progressValue}"></div>
       ${progressBarContent}
       <div class="UppyStatusBar-actions">
-        ${props.newFiles ? UploadBtn(props) : ''}
+        ${props.newFiles && !props.hideUploadButton ? UploadBtn(props) : ''}
         ${props.error ? RetryBtn(props) : ''}
       </div>
     </div>

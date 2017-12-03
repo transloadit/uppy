@@ -44,6 +44,7 @@ module.exports = class StatusBarUI extends Plugin {
     // set default options
     const defaultOptions = {
       target: 'body',
+      hideUploadButton: false,
       showProgressDetails: false,
       locale: defaultLocale
     }
@@ -162,7 +163,8 @@ module.exports = class StatusBarUI extends Plugin {
       totalSpeed: totalSpeed,
       totalETA: totalETA,
       files: state.files,
-      resumableUploads: resumableUploads
+      resumableUploads: resumableUploads,
+      hideUploadButton: this.opts.hideUploadButton
     })
   }
 
