@@ -108,6 +108,7 @@
 .UppyStatusBar-actionBtn {
   @include reset-button;
   font-size: 13px;
+  line-height: 1em;
   font-weight: bold;
   padding: 7px 10px;
   border-radius: 4px;
