@@ -147,9 +147,9 @@ module.exports = function fileItem (props) {
                        aria-label="Remove file"
                        title="Remove file"
                        onclick=${() => props.removeFile(file.id)}>
-                 <svg class="UppyIcon" width="22" height="21" viewBox="0 0 18 17">
-                   <ellipse cx="8.62" cy="8.383" rx="8.62" ry="8.383" stroke="#FFF"/>
-                   <path stroke="#FFF" fill="#FFF" d="M11 6.147L10.85 6 8.5 8.284 6.15 6 6 6.147 8.35 8.43 6 10.717l.15.146L8.5 8.578l2.35 2.284.15-.146L8.65 8.43z"/>
+                 <svg aria-hidden="true" class="UppyIcon" width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke="#FFF" stroke-width="0.8px" fill-rule="nonzero" vector-effect="non-scaling-stroke" d="M30 1C14 1 1 14 1 30s13 29 29 29 29-13 29-29S46 1 30 1z" />
+                    <path fill="#FFF" vector-effect="non-scaling-stroke" d="M42 39.667L39.667 42 30 32.333 20.333 42 18 39.667 27.667 30 18 20.333 20.333 18 30 27.667 39.667 18 42 20.333 32.333 30z"/>
                  </svg>
                </button>`
         : null
