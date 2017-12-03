@@ -574,7 +574,7 @@
 }
 
 .UppyDashboardItem-info {
-  padding: 8px 32px 8px 10px;
+  padding: 10px 19px 0 3px;
   position: relative;
   max-width: 70%;
 
@@ -597,7 +597,7 @@
   padding: 0;
   max-height: 28px;
   overflow: hidden;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -634,12 +634,12 @@
   text-align: left;
   cursor: pointer;
   position: absolute;
-  top: 9px;
-  right: 10px;
+  top: 12px;
+  right: 4px;
 
   .UppyDashboard--wide & {
-    top: 8px;
-    right: 8px;
+    top: 9px;
+    right: 3px;
   }
 }
 
@@ -682,11 +682,13 @@
   cursor: pointer;
   color: lighten($color-asphalt-gray, 20%);
   width: 16px;
+  height: 16px;
 
   .UppyDashboard--wide & {
-    width: 20px;
-    color: lighten($color-asphalt-gray, 10%);
-    font-size: 20px;
+    width: 19px;
+    height: 19px;
+    color: lighten($color-asphalt-gray, 8%);
+    // font-size: 20px;
   }
 }
 
