@@ -94,9 +94,8 @@ function iconFile () {
 }
 
 function iconText () {
-  return html`<svg aria-hidden="true" class="UppyIcon" viewBox="0 0 64 64">
-    <path d="M8 64h48V0H22.586L8 14.586V64zm46-2H10V16h14V2h30v60zM11.414 14L22 3.414V14H11.414z"/>
-    <path d="M32 13h14v2H32zM18 23h28v2H18zM18 33h28v2H18zM18 43h28v2H18zM18 53h28v2H18z"/>
+  return html`<svg aria-hidden="true" class="UppyIcon" width="62" height="62" viewBox="0 0 62 62" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4.309 4.309h24.912v53.382h-6.525v3.559h16.608v-3.559h-6.525V4.309h24.912v10.676h3.559V.75H.75v14.235h3.559z" fill-rule="nonzero" fill="#000"/>
   </svg>`
 }
 
