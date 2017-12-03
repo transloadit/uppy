@@ -375,6 +375,7 @@
 .UppyDashboard-files {
   margin: 0;
   padding: 10px;
+  padding-top: 15px;
   overflow-y: auto;
   position: absolute;
   top: 0;
@@ -459,7 +460,7 @@
     float: left;
     width: 140px;
     height: 170px;
-    margin: 12px 21px;
+    margin: 5px 21px;
     // border-radius: 6px;
     border: 0;
     background-color: initial;
@@ -533,10 +534,6 @@
     display: none;
     z-index: $zIndex-2;
   }
-
-  // .UppyDashboardItem.is-error .UppyDashboardItem-previewInnerWrap:after {
-  //   background-color: rgba($color-red, 0.85);
-  // }
 
 
 .UppyDashboardItem-preview img {
@@ -685,8 +682,8 @@
   height: 16px;
 
   .UppyDashboard--wide & {
-    width: 19px;
-    height: 19px;
+    width: 20px;
+    height: 20px;
     color: lighten($color-asphalt-gray, 8%);
     // font-size: 20px;
   }
