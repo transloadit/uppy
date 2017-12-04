@@ -242,7 +242,6 @@ module.exports = class Tus extends Plugin {
 
   connectToServerSocket (file) {
     const token = file.serverToken
-    console.log('123', token)
     const host = getSocketHost(file.remote.host)
     const socket = new UppySocket({ target: `${host}/api/${token}` })
     this.uploaderSockets[file.id] = socket
