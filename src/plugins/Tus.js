@@ -196,8 +196,9 @@ module.exports = class Tus extends Plugin {
       if (!file.isPaused) {
         upload.start()
       }
-
-      this.core.emit('core:upload-started', file.id, upload)
+      if (!file.isRestored) {
+        this.core.emit('core:upload-started', file.id, upload)
+      }
     })
   }
 
