@@ -24,7 +24,7 @@ module.exports = class Transloadit extends Plugin {
     const defaultOptions = {
       waitForEncoding: false,
       waitForMetadata: false,
-      alwaysRunAssembly: false, // TODO name
+      alwaysRunAssembly: false,
       importFromUploadURLs: false,
       signature: null,
       params: null,
