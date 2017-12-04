@@ -55,38 +55,37 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] Prepare for (piwik-) tracking of usage of uppy ? see #83
 - [ ] screenshot+screencast support similar to Webcam #148
 - [ ] Webcam modes #198
+- [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
+- [ ] feature: React Native support
+- [ ] QA: test with real screen reader to identify accessibility problems
+- [ ] refactoring: reduce size where possible, like, transloadit socket.io --> websockets (saves 20KB)
+- [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 
 ## 1.0 Goals
 
 What we need to do to release Uppy 1.0
 
-- [x] feature: restrictions: by size, number of files, file type
-- [x] feature: beta file recovering after closed tab / browser crash
-- [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
-- [x] feature: easy integration with React (UppyReact components)
-- [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
-- [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
-- [ ] feature: React Native support
-- [ ] feature: preset for Transloadit that mimics jQuery SDK
-- [x] QA: tests for core and utils
-- [ ] QA: tests for some plugins
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
-- [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files. add metrics to Librato
 - [ ] QA: test in multiple browsers and mobile devices
-- [ ] QA: test with real screen reader to identify accessibility problems
-- [x] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
-- [ ] ui: refine UI, neat things up (if that’s even a word)
-- [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
+- [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
+- [ ] QA: tests for some plugins
+- [ ] automatically host releases on edgly and use that as our main CDN
+- [ ] docs: on using plugins, all options, list of plugins, i18n
+- [ ] feature: preset for Transloadit that mimics jQuery SDK
 - [ ] refactoring: possibly add CSS-in-JS
 - [ ] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
-- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say, uploading plugins don’t include rendering stuff
+- [ ] refactoring: split uppy into small packages, lerna repo?
+- [x] QA: tests for core and utils
+- [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
+- [x] feature: beta file recovering after closed tab / browser crash
+- [x] feature: easy integration with React (UppyReact components)
+- [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
+- [x] feature: restrictions: by size, number of files, file type
 - [x] refactoring: webcam plugin
-- [ ] docs: on using plugins, all options, list of plugins, i18n
-- [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
-- [ ] uppy-server: security audit
+- [x] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
+- [x] uppy-server: better error handling, general cleanup (remove unused code. etc)
+- [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
-- [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
-- [ ] automatically host releases on edgly and use that as our main CDN
 
 ## 0.23
 
@@ -118,6 +117,9 @@ Theme: 🎄 Christmas edition
 - [ ] tus: Review “tus: Remove old upload and events when starting a new upload.” b3cc48130e292f08c2a09f2f0adf6b6332bf7692 (@arturi)
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request #442
+- [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
+- [ ] uppy-server: security audit, ask @acconut
+- [ ] uppy: refine UI, look into text-based file type icons (@arturi)
 
 ## 0.21.0
 
