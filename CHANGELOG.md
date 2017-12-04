@@ -40,7 +40,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy-server: what happens if access token expires amid an upload/download process.
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
 - [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
-- [ ] uppy-server/s3: make s3 endpoint more configurable (@goto-bus-stop)
+- [x] uppy-server/s3: make s3 endpoint more configurable (@goto-bus-stop)
 - [ ] DnD Bar: drag and drop + statusbar or progressbar ? (@arturi)
 - [ ] possibility to work on already uploaded / in progress files #112, #113
 - [ ] possibility to edit/delete more than one file at once #118, #97
