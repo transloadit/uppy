@@ -124,6 +124,7 @@ module.exports = class Webcam extends Plugin {
     return this.mediaDevices.getUserMedia(constraints)
       .then((stream) => {
         this.stream = stream
+        console.log(stream)
         this.streamSrc = URL.createObjectURL(this.stream)
         this.setPluginState({
           cameraReady: true
@@ -230,6 +231,8 @@ module.exports = class Webcam extends Plugin {
     }).then((tagFile) => {
       this.captureInProgress = false
       this.core.addFile(tagFile)
+      const dashboard = this.core.getPlugin('Dashboard')
+      if (dashboard) dashboard.hideAllPanels()
     }, (error) => {
       this.captureInProgress = false
       throw error

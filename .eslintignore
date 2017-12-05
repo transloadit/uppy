@@ -10,3 +10,4 @@ website/public/**
 website/themes/uppy/source/js/smooth-scroll.min.js
 website/themes/uppy/source/js/uppy.js
 website/themes/uppy/source/uppy/**
+bundle.js

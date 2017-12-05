@@ -211,8 +211,8 @@ module.exports = class DashboardUI extends Plugin {
     document.body.style.top = `-${this.savedDocumentScrollPosition}px`
 
     // timeout is needed because yo-yo/morphdom/nanoraf; not needed without nanoraf
-    setTimeout(this.setFocusToFirstNode, 4)
-    setTimeout(this.updateDashboardElWidth, 4)
+    setTimeout(this.setFocusToFirstNode, 100)
+    setTimeout(this.updateDashboardElWidth, 100)
   }
 
   closeModal () {
