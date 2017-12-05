@@ -12,13 +12,16 @@ module.exports = (props) => {
           <input type="checkbox"
                  role="option" 
                  tabindex="0"
+                 aria-label="Select file: ${props.title}"
                  id=${uniqueId}
                  checked=${props.isChecked}
                  disabled=${props.isDisabled}
                  onchange=${props.handleCheckboxClick} />
           <label for=${uniqueId}></label>
         </div>
-        <button class="BrowserTable-item" tabindex="0" onclick=${props.handleClick}>${props.getItemIcon()} ${props.title}</button>
+        <button type="button" class="BrowserTable-item" aria-label="Select file: ${props.title}" tabindex="0" onclick=${props.handleClick}>
+          ${props.getItemIcon()} ${props.title}
+        </button>
       </td>
     </tr>
   `
