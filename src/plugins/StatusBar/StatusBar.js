@@ -109,7 +109,7 @@ module.exports = (props) => {
   const isHidden = (uploadState === STATE_WAITING && props.hideUploadButton) ||
     (uploadState === STATE_WAITING && !props.newFiles > 0)
 
-  return html`
+  const statusBarEl = html`
     <div class="UppyStatusBar is-${uploadState}"
          aria-hidden="${isHidden}">
       <div class="UppyStatusBar-progress ${progressMode ? `is-${progressMode}` : ''}"
@@ -125,6 +125,12 @@ module.exports = (props) => {
       </div>
     </div>
   `
+
+  if (progressMode === 'determinate') {
+    statusBarEl.setAttribute('aria-valuenow', progressValue)
+  }
+
+  return statusBarEl
 }
 
 const UploadBtn = (props) => {
@@ -178,7 +184,7 @@ const ProgressBarUploading = (props) => {
 
 const ProgressBarComplete = ({ totalProgress, i18n }) => {
   return html`
-    <div class="UppyStatusBar-content" role="alert">
+    <div class="UppyStatusBar-content" role="status">
       <span title="Complete">
         <svg aria-hidden="true" class="UppyStatusBar-statusIndicator UppyIcon" width="18" height="17" viewBox="0 0 23 17">
           <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
