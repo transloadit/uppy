@@ -116,8 +116,7 @@ module.exports = (props) => {
            style="width: ${width}%"
            role="progressbar"
            aria-valuemin="0"
-           aria-valuemax="100"
-           aria-valuenow="${progressValue}"></div>
+           aria-valuemax="100"></div>
       ${progressBarContent}
       <div class="UppyStatusBar-actions">
         ${props.newFiles && !props.hideUploadButton ? UploadBtn(props) : ''}
@@ -126,8 +125,8 @@ module.exports = (props) => {
     </div>
   `
 
-  if (progressMode === 'determinate') {
-    statusBarEl.setAttribute('aria-valuenow', progressValue)
+  if (progressValue) {
+    statusBarEl.querySelector('.UppyStatusBar-progress').setAttribute('aria-valuenow', progressValue)
   }
 
   return statusBarEl
@@ -156,15 +155,11 @@ const RetryBtn = (props) => {
 
 const ProgressBarProcessing = (props) => {
   const value = Math.round(props.value * 100)
+
   return html`
     <div class="UppyStatusBar-content">
-      <div role="progressbar"
-           aria-valuemin="0"
-           aria-valuemax="100"
-           aria-valuenow="${value}">
         ${props.mode === 'determinate' ? `${value}%・` : ''}
         ${props.message}
-      </div>
     </div>
   `
 }
