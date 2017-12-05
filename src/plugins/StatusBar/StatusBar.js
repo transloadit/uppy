@@ -116,7 +116,10 @@ module.exports = (props) => {
            style="width: ${width}%"
            role="progressbar"
            aria-valuemin="0"
-           aria-valuemax="100"></div>
+           aria-valuemax="100"
+           ${progressValue
+           ? { 'aria-valuenow': progressValue }
+           : {}}></div>
       ${progressBarContent}
       <div class="UppyStatusBar-actions">
         ${props.newFiles && !props.hideUploadButton ? UploadBtn(props) : ''}
@@ -125,9 +128,9 @@ module.exports = (props) => {
     </div>
   `
 
-  if (progressValue) {
-    statusBarEl.querySelector('.UppyStatusBar-progress').setAttribute('aria-valuenow', progressValue)
-  }
+  // if (progressValue) {
+  //   statusBarEl.querySelector('.UppyStatusBar-progress').setAttribute('aria-valuenow', progressValue)
+  // }
 
   return statusBarEl
 }
