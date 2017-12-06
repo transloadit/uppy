@@ -90,6 +90,7 @@ What we need to do to release Uppy 1.0
 ## 0.23
 
 - [ ] Audio: audio recording similar to Webcam #143
+- [ ] goldenretriever: confiramtion before restore #443
 
 # next
 
