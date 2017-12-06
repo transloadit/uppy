@@ -10,6 +10,8 @@
   box-sizing: inherit;
 }
 
+// https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4
+
 .UppyIcon {
   max-width: 100%;
   max-height: 100%;
@@ -17,6 +19,13 @@
   display: inline-block;
   vertical-align: text-top;
   overflow: hidden;
+  // width: 1em;
+  // height: 1em;
+}
+
+.UppyIcon--svg-baseline {
+  bottom: -0.125em;
+  position: relative;
 }
 
 .UppyTheme--default {

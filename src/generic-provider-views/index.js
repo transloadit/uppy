@@ -71,6 +71,7 @@ module.exports = class View {
     this.toggleCheckbox = this.toggleCheckbox.bind(this)
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
+    this.donePicking = this.donePicking.bind(this)
 
     this.plugin.core.on('core:file-removed', this.updateFolderState)
 
@@ -172,7 +173,7 @@ module.exports = class View {
       this.plugin.core.log('Adding remote file')
       this.plugin.core.addFile(tagFile)
       if (!isCheckbox) {
-        this.plugin.core.getPlugin('Dashboard').hideAllPanels()
+        this.donePicking()
       }
     })
   }
@@ -536,6 +537,11 @@ module.exports = class View {
     }
   }
 
+  donePicking () {
+    const dashboard = this.plugin.core.getPlugin('Dashboard')
+    if (dashboard) dashboard.hideAllPanels()
+  }
+
   // displays loader view while asynchronous request is being made.
   _loaderWrapper (promise, then, catch_) {
     promise
@@ -579,6 +585,7 @@ module.exports = class View {
       getItemName: this.plugin.getItemName,
       getItemIcon: this.plugin.getItemIcon,
       handleScroll: this.handleScroll,
+      done: this.donePicking,
       title: this.plugin.title,
       viewType: this.opts.viewType
     })

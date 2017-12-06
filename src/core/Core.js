@@ -84,6 +84,7 @@ class Uppy {
     this.retryAll = this.retryAll.bind(this)
     this.cancelAll = this.cancelAll.bind(this)
     this.retryUpload = this.retryUpload.bind(this)
+    this.upload = this.upload.bind(this)
 
     // this.bus = this.emitter = ee()
     this.emitter = ee()
@@ -122,7 +123,6 @@ class Uppy {
     if (this.opts.debug) {
       global.uppyLog = ''
       global[this.opts.id] = this
-      // global._uppy = this
     }
   }
 

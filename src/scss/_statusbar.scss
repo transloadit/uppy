@@ -29,6 +29,12 @@
   padding-left: 0;
 }
 
+.UppyStatusBar[aria-hidden=false].is-waiting {
+  background-color: $color-white;
+  height: 65px;
+  line-height: 65px;
+}
+
 .UppyStatusBar-progress {
   background-color: $color-cornflower-blue;
   height: 100%;
@@ -42,6 +48,10 @@
     background-image: linear-gradient(45deg, $stripe-color 25%, transparent 25%, transparent 50%, $stripe-color 50%, $stripe-color 75%, transparent 75%, transparent);
     animation: statusBarProgressStripes 1s linear infinite;
   }
+}
+
+.UppyStatusBar.is-waiting .UppyStatusBar-progress {
+  display: none;
 }
 
 @keyframes statusBarProgressStripes {
@@ -60,33 +70,79 @@
   color: $color-white;
 }
 
-.UppyStatusBar-content .UppyIcon {
-  width: 15px;
-  height: 15px;
+// .UppyStatusBar-content .UppyIcon {
+//   width: 15px;
+//   height: 15px;
 
-  .UppyDashboard--wide & {
-    width: 17px;
-    height: 17px;
-  }
-}
+//   .UppyDashboard--wide & {
+//     width: 17px;
+//     height: 17px;
+//   }
+// }
 
-.UppyStatusBar-action {
+
+.UppyStatusBar-statusIndicator {
   color: $color-white;
   margin-right: 8px;
 }
 
-button.UppyStatusBar-action {
-  @include reset-button;
-  margin-right: 8px;
-  cursor: pointer;
+  button.UppyStatusBar-statusIndicator {
+    @include reset-button;
+    margin-right: 8px;
+    cursor: pointer;
+  }
+
+.UppyStatusBar-actions {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 15px;
+  z-index: $zIndex-4;
 }
 
-.UppyStatusBar-retryBtn {
-  @include reset-button;
-  cursor: pointer;
-  border-bottom: 1px solid $color-white;
-  font-weight: 600;
+.UppyStatusBar.is-waiting .UppyStatusBar-actions {
+  left: 30px;
+  right: initial;
 }
+
+.UppyStatusBar-actionBtn {
+  @include reset-button;
+  font-size: 13px;
+  line-height: 1em;
+  font-weight: bold;
+  padding: 7px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+  .UppyStatusBar-actionBtn:not(:last-child) {
+    margin-right: 5px;
+  }
+
+  .UppyStatusBar.is-waiting .UppyStatusBar-actionBtn {
+    padding: 13px 30px;
+    font-size: 15px;
+  }
+
+  .UppyStatusBar-actionBtn--upload {
+    background-color: $color-white;
+    color: $color-cornflower-blue;
+  }
+
+    .UppyStatusBar.is-waiting .UppyStatusBar-actionBtn--upload {
+        background-color: $color-cornflower-blue;
+        color: $color-white;
+
+        &:hover { 
+          background-color: darken($color-cornflower-blue, 20%); 
+        }
+      }
+
+  .UppyStatusBar-actionBtn--retry {
+    background-color: $color-white;
+    color: $color-red;
+  }
 
 .UppyStatusBar-details {
   line-height: 12px;
