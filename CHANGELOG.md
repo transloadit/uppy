@@ -91,6 +91,7 @@ What we need to do to release Uppy 1.0
 
 - [ ] Audio: audio recording similar to Webcam #143
 - [ ] goldenretriever: confiramtion before restore #443
+- [ ] i18n all strings + document them
 
 # next
 
@@ -105,10 +106,10 @@ Theme: 🎄 Christmas edition
 - [x] core: improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (@goto-bus-stop, @arturi)
 - [x] core: limit amount of simultaneous uploads, queuing? #360 (#427 / @goto-bus-stop)
 - [ ] core: queue preview generation #431
-- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
+- [ ] core: all: reset or !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
-- [ ] dashboard: place upload button into StatusBar, use Alex’s suggestions for retry button; other UI tweaks (@arturi)
+- [x] dashboard: place upload button into StatusBar, use Alex’s suggestions for retry button; other UI tweaks (@arturi)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins
 - [ ] goldenretriever: add “ghost” files (@arturi)
