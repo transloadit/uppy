@@ -23,11 +23,11 @@ module.exports = class Redux extends Plugin {
   }
 
   install () {
-    this.core.emitter.on('core:state-update', this.handleStateUpdate)
+    this.core.on('state-update', this.handleStateUpdate)
     this.handleStateUpdate({}, this.core.state, this.core.state) // set the initial redux state
   }
 
   uninstall () {
-    this.core.emitter.off('core:state-update', this.handleStateUpdate)
+    this.core.off('state-update', this.handleStateUpdate)
   }
 }

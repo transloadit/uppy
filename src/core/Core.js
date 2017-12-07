@@ -142,7 +142,7 @@ class Uppy {
     const nextState = Object.assign({}, this.state, patch)
 
     this.state = nextState
-    this.emit('core:state-update', prevState, nextState, patch)
+    this.emit('state-update', prevState, nextState, patch)
 
     this.updateAll(this.state)
   }
@@ -178,7 +178,7 @@ class Uppy {
     })
 
     // TODO Document on the website
-    this.emit('core:reset-progress')
+    this.emit('reset-progress')
   }
 
   addPreProcessor (fn) {
@@ -360,7 +360,7 @@ class Uppy {
         updatedFiles[fileID] = newFile
         this.setState({files: updatedFiles})
 
-        this.emit('core:file-added', newFile)
+        this.emit('file-added', newFile)
         this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
 
         if (this.opts.autoProceed && !this.scheduledAutoProceed) {
@@ -382,7 +382,7 @@ class Uppy {
 
     this.setState({files: updatedFiles})
     this.calculateTotalProgress()
-    this.emit('core:file-removed', fileID)
+    this.emit('file-removed', fileID)
 
     // Clean up object URLs.
     if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
@@ -443,7 +443,7 @@ class Uppy {
     updatedFiles[fileID] = updatedFile
     this.setState({files: updatedFiles})
 
-    this.emit('core:upload-pause', fileID, isPaused)
+    this.emit('upload-pause', fileID, isPaused)
 
     return isPaused
   }
@@ -463,7 +463,7 @@ class Uppy {
     })
     this.setState({files: updatedFiles})
 
-    this.emit('core:pause-all')
+    this.emit('pause-all')
   }
 
   resumeAll () {
@@ -482,7 +482,7 @@ class Uppy {
     })
     this.setState({files: updatedFiles})
 
-    this.emit('core:resume-all')
+    this.emit('resume-all')
   }
 
   retryAll () {
@@ -503,7 +503,7 @@ class Uppy {
       error: null
     })
 
-    this.emit('core:retry-all', filesToRetry)
+    this.emit('retry-all', filesToRetry)
 
     const uploadID = this.createUpload(filesToRetry)
     return this.runUpload(uploadID)
@@ -519,7 +519,7 @@ class Uppy {
       files: updatedFiles
     })
 
-    this.emit('core:upload-retry', fileID)
+    this.emit('upload-retry', fileID)
 
     const uploadID = this.createUpload([ fileID ])
     return this.runUpload(uploadID)
@@ -530,7 +530,7 @@ class Uppy {
   }
 
   cancelAll () {
-    this.emit('core:cancel-all')
+    this.emit('cancel-all')
     this.setState({ files: {}, totalProgress: 0 })
   }
 
@@ -591,17 +591,17 @@ class Uppy {
     //   this.setState({bla: 'bla'})
     // }, 20)
 
-    // this.on('core:state-update', (prevState, nextState, patch) => {
+    // this.on('state-update', (prevState, nextState, patch) => {
     //   if (this.withDevTools) {
     //     this.devTools.send('UPPY_STATE_UPDATE', nextState)
     //   }
     // })
 
-    this.on('core:error', (error) => {
+    this.on('error', (error) => {
       this.setState({ error: error.message })
     })
 
-    this.on('core:upload-error', (fileID, error) => {
+    this.on('upload-error', (fileID, error) => {
       this.setFileState(fileID, { error: error.message })
       this.setState({ error: error.message })
 
@@ -613,23 +613,23 @@ class Uppy {
       this.info(message, 'error', 5000)
     })
 
-    this.on('core:upload', () => {
+    this.on('upload', () => {
       this.setState({ error: null })
     })
 
-    this.on('core:file-add', (data) => {
+    this.on('file-add', (data) => {
       this.addFile(data)
     })
 
-    this.on('core:file-added', (file) => {
+    this.on('file-added', (file) => {
       this.generatePreview(file)
     })
 
-    this.on('core:file-remove', (fileID) => {
+    this.on('file-remove', (fileID) => {
       this.removeFile(fileID)
     })
 
-    this.on('core:upload-started', (fileID, upload) => {
+    this.on('upload-started', (fileID, upload) => {
       this.setFileState(fileID, {
         progress: Object.assign({}, this.getState().files[fileID].progress, {
           uploadStarted: Date.now(),
@@ -646,11 +646,11 @@ class Uppy {
     // see also: https://github.com/tus/tus-js-client/commit/9940f27b2361fd7e10ba58b09b60d82422183bbb
     const throttledCalculateProgress = throttle(this.calculateProgress, 100, {leading: true, trailing: false})
 
-    this.on('core:upload-progress', (data) => {
+    this.on('upload-progress', (data) => {
       throttledCalculateProgress(data)
     })
 
-    this.on('core:upload-success', (fileID, uploadResp, uploadURL) => {
+    this.on('upload-success', (fileID, uploadResp, uploadURL) => {
       this.setFileState(fileID, {
         progress: Object.assign({}, this.getState().files[fileID].progress, {
           uploadComplete: true,
@@ -663,11 +663,11 @@ class Uppy {
       this.calculateTotalProgress()
     })
 
-    this.on('core:update-meta', (fileID, data) => {
+    this.on('update-meta', (fileID, data) => {
       this.setFileMeta(fileID, data)
     })
 
-    this.on('core:preprocess-progress', (fileID, progress) => {
+    this.on('preprocess-progress', (fileID, progress) => {
       this.setFileState(fileID, {
         progress: Object.assign({}, this.getState().files[fileID].progress, {
           preprocess: progress
@@ -675,7 +675,7 @@ class Uppy {
       })
     })
 
-    this.on('core:preprocess-complete', (fileID) => {
+    this.on('preprocess-complete', (fileID) => {
       const files = Object.assign({}, this.getState().files)
       files[fileID] = Object.assign({}, files[fileID], {
         progress: Object.assign({}, files[fileID].progress)
@@ -685,7 +685,7 @@ class Uppy {
       this.setState({ files: files })
     })
 
-    this.on('core:postprocess-progress', (fileID, progress) => {
+    this.on('postprocess-progress', (fileID, progress) => {
       this.setFileState(fileID, {
         progress: Object.assign({}, this.getState().files[fileID].progress, {
           postprocess: progress
@@ -693,7 +693,7 @@ class Uppy {
       })
     })
 
-    this.on('core:postprocess-complete', (fileID) => {
+    this.on('postprocess-complete', (fileID) => {
       const files = Object.assign({}, this.getState().files)
       files[fileID] = Object.assign({}, files[fileID], {
         progress: Object.assign({}, files[fileID].progress)
@@ -865,7 +865,7 @@ class Uppy {
       }
     })
 
-    this.emit('core:info-visible')
+    this.emit('info-visible')
 
     window.clearTimeout(this.infoTimeoutID)
     if (duration === 0) {
@@ -884,7 +884,7 @@ class Uppy {
     this.setState({
       info: newInfo
     })
-    this.emit('core:info-hidden')
+    this.emit('info-hidden')
   }
 
   /**
@@ -963,7 +963,7 @@ class Uppy {
   createUpload (fileIDs) {
     const uploadID = cuid()
 
-    this.emit('core:upload', {
+    this.emit('upload', {
       id: uploadID,
       fileIDs: fileIDs
     })
@@ -1034,7 +1034,7 @@ class Uppy {
     // Not returning the `catch`ed promise, because we still want to return a rejected
     // promise from this method if the upload failed.
     lastStep.catch((err) => {
-      this.emit('core:error', err)
+      this.emit('error', err)
 
       this.removeUpload(uploadID)
     })
@@ -1043,10 +1043,10 @@ class Uppy {
       const files = fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => !file.error)
       const failed = files.filter((file) => file.error)
-      this.emit('core:complete', { successful, failed })
+      this.emit('complete', { successful, failed })
 
       // Compatibility with pre-0.21
-      this.emit('core:success', fileIDs)
+      this.emit('success', fileIDs)
 
       this.removeUpload(uploadID)
 

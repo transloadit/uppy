@@ -72,14 +72,14 @@ module.exports = class View {
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
 
-    this.plugin.core.on('core:file-removed', this.updateFolderState)
+    this.plugin.core.on('file-removed', this.updateFolderState)
 
     // Visual
     this.render = this.render.bind(this)
   }
 
   tearDown () {
-    this.plugin.core.off('core:file-removed', this.updateFolderState)
+    this.plugin.core.off('file-removed', this.updateFolderState)
   }
 
   /**

@@ -112,7 +112,7 @@ module.exports = class XHRUpload extends Plugin {
         xhr.abort()
         this.core.log(`[XHRUpload] ${id} timed out`)
         const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
-        this.core.emit('core:upload-error', file.id, error)
+        this.core.emit('upload-error', file.id, error)
         reject(error)
       }
       let aliveTimer
@@ -139,7 +139,7 @@ module.exports = class XHRUpload extends Plugin {
         }
 
         if (ev.lengthComputable) {
-          this.core.emit('core:upload-progress', {
+          this.core.emit('upload-progress', {
             uploader: this,
             id: file.id,
             bytesUploaded: ev.loaded,
@@ -156,7 +156,7 @@ module.exports = class XHRUpload extends Plugin {
           const resp = opts.getResponseData(xhr)
           const uploadURL = resp[opts.responseUrlFieldName]
 
-          this.core.emit('core:upload-success', file.id, resp, uploadURL)
+          this.core.emit('upload-success', file.id, resp, uploadURL)
 
           if (uploadURL) {
             this.core.log(`Download ${file.name} from ${file.uploadURL}`)
@@ -166,7 +166,7 @@ module.exports = class XHRUpload extends Plugin {
         } else {
           const error = opts.getResponseError(xhr) || new Error('Upload error')
           error.request = xhr
-          this.core.emit('core:upload-error', file.id, error)
+          this.core.emit('upload-error', file.id, error)
           return reject(error)
         }
       })
@@ -176,7 +176,7 @@ module.exports = class XHRUpload extends Plugin {
         clearTimeout(aliveTimer)
 
         const error = opts.getResponseError(xhr) || new Error('Upload error')
-        this.core.emit('core:upload-error', file.id, error)
+        this.core.emit('upload-error', file.id, error)
         return reject(error)
       })
 
@@ -188,26 +188,26 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.send(data)
 
-      this.core.on('core:upload-cancel', (fileID) => {
+      this.core.on('upload-cancel', (fileID) => {
         if (fileID === file.id) {
           xhr.abort()
         }
       })
 
-      this.core.on('core:cancel-all', () => {
+      this.core.on('cancel-all', () => {
         // const files = this.core.getState().files
         // if (!files[file.id]) return
         xhr.abort()
       })
 
-      this.core.emit('core:upload-started', file.id)
+      this.core.emit('upload-started', file.id)
     })
   }
 
   uploadRemote (file, current, total) {
     const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
-      this.core.emit('core:upload-started', file.id)
+      this.core.emit('upload-started', file.id)
 
       const fields = {}
       const metaFields = Array.isArray(opts.metaFields)
@@ -247,7 +247,7 @@ module.exports = class XHRUpload extends Plugin {
           socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
           socket.on('success', (data) => {
-            this.core.emit('core:upload-success', file.id, data, data.url)
+            this.core.emit('upload-success', file.id, data, data.url)
             socket.close()
             return resolve()
           })

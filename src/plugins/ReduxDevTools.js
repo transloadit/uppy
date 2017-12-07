@@ -57,14 +57,14 @@ module.exports = class ReduxDevTools extends Plugin {
     this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
     if (this.withDevTools) {
       this.initDevTools()
-      this.core.on('core:state-update', this.handleStateChange)
+      this.core.on('state-update', this.handleStateChange)
     }
   }
 
   uninstall () {
     if (this.withDevTools) {
       this.devToolsUnsubscribe()
-      this.core.emitter.off('core:state-update', this.handleStateUpdate)
+      this.core.off('state-update', this.handleStateUpdate)
     }
   }
 }

@@ -157,7 +157,7 @@ module.exports = class GoldenRetriever extends Plugin {
     this.core.setState({
       files: updatedFiles
     })
-    this.core.emit('core:restored')
+    this.core.emit('restored')
 
     if (obsoleteBlobs.length) {
       this.deleteBlobs(obsoleteBlobs).then(() => {
@@ -192,7 +192,7 @@ module.exports = class GoldenRetriever extends Plugin {
       }
     }
 
-    this.core.on('core:file-added', (file) => {
+    this.core.on('file-added', (file) => {
       if (file.isRemote) return
 
       if (this.ServiceWorkerStore) {
@@ -208,21 +208,21 @@ module.exports = class GoldenRetriever extends Plugin {
       })
     })
 
-    this.core.on('core:file-removed', (fileID) => {
+    this.core.on('file-removed', (fileID) => {
       if (this.ServiceWorkerStore) this.ServiceWorkerStore.delete(fileID)
       this.IndexedDBStore.delete(fileID)
     })
 
-    this.core.on('core:complete', ({ successful }) => {
+    this.core.on('complete', ({ successful }) => {
       const fileIDs = successful.map((file) => file.id)
       this.deleteBlobs(fileIDs).then(() => {
         this.core.log(`[GoldenRetriever] removed ${successful.length} files that finished uploading`)
       })
     })
 
-    this.core.on('core:state-update', this.saveFilesStateToLocalStorage)
+    this.core.on('state-update', this.saveFilesStateToLocalStorage)
 
-    this.core.on('core:restored', () => {
+    this.core.on('restored', () => {
       // start all uploads again when file blobs are restored
       const { currentUploads } = this.core.getState()
       if (currentUploads) {

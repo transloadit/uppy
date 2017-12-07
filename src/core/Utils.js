@@ -493,7 +493,7 @@ function _emitSocketProgress (uploader, progressData, file) {
   const {progress, bytesUploaded, bytesTotal} = progressData
   if (progress) {
     uploader.core.log(`Upload progress: ${progress}`)
-    uploader.core.emitter.emit('core:upload-progress', {
+    uploader.core.emit('upload-progress', {
       uploader,
       id: file.id,
       bytesUploaded: bytesUploaded,

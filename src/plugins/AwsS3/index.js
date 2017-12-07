@@ -45,7 +45,7 @@ module.exports = class AwsS3 extends Plugin {
 
   prepareUpload (fileIDs) {
     fileIDs.forEach((id) => {
-      this.core.emit('core:preprocess-progress', id, {
+      this.core.emit('preprocess-progress', id, {
         mode: 'determinate',
         message: this.i18n('preparingUpload'),
         value: 0
@@ -58,14 +58,14 @@ module.exports = class AwsS3 extends Plugin {
         const paramsPromise = Promise.resolve()
           .then(() => this.opts.getUploadParameters(file))
         return paramsPromise.then((params) => {
-          this.core.emit('core:preprocess-progress', file.id, {
+          this.core.emit('preprocess-progress', file.id, {
             mode: 'determinate',
             message: this.i18n('preparingUpload'),
             value: 1
           })
           return params
         }).catch((error) => {
-          this.core.emit('core:upload-error', file.id, error)
+          this.core.emit('upload-error', file.id, error)
         })
       })
     ).then((responses) => {
@@ -106,7 +106,7 @@ module.exports = class AwsS3 extends Plugin {
       })
 
       fileIDs.forEach((id) => {
-        this.core.emit('core:preprocess-complete', id)
+        this.core.emit('preprocess-complete', id)
       })
     })
   }

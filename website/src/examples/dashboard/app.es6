@@ -5,7 +5,6 @@ const Dropbox = require('uppy/lib/plugins/Dropbox')
 const Instagram = require('uppy/lib/plugins/Instagram')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Tus = require('uppy/lib/plugins/Tus')
-const MetaData = require('uppy/lib/plugins/MetaData')
 
 const UPPY_SERVER = require('../env')
 
@@ -37,7 +36,11 @@ function uppyInit () {
     trigger: '.UppyModalOpenerBtn',
     inline: opts.DashboardInline,
     target: opts.DashboardInline ? '.DashboardContainer' : 'body',
-    note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : ''
+    note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : '',
+    metaFields: [
+      { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
+      { id: 'caption', name: 'Caption', value: '', placeholder: 'describe what the image is about' }
+    ]
   })
 
   if (opts.GoogleDrive) {
@@ -57,15 +60,9 @@ function uppyInit () {
   }
 
   uppy.use(Tus, {endpoint: TUS_ENDPOINT, resume: true})
-  uppy.use(MetaData, {
-    fields: [
-      { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
-      { id: 'caption', name: 'Caption', value: 'none', placeholder: 'describe what the image is about' }
-    ]
-  })
   uppy.run()
 
-  uppy.on('core:complete', (result) => {
+  uppy.on('complete', (result) => {
     console.log('Yo, uploaded: ')
     console.log(result.successful)
   })

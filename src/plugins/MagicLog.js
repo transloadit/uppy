@@ -32,10 +32,10 @@ module.exports = class MagicLog extends Plugin {
   }
 
   install () {
-    this.core.on('core:state-update', this.handleStateUpdate)
+    this.core.on('state-update', this.handleStateUpdate)
   }
 
   uninstall () {
-    this.core.off('core:state-update', this.handleStateUpdate)
+    this.core.off('state-update', this.handleStateUpdate)
   }
 }

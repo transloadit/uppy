@@ -294,7 +294,7 @@ Subscribe to an uppy-event. See full list of events below.
 
 Uppy exposes events that you can subscribe to in your app:
 
-### `core:upload-progress`
+### `upload-progress`
 
 Fired each time file upload progress is available, `data` object looks like this:
 
@@ -307,17 +307,17 @@ data = {
 ```
 
 ```javascript
-uppy.on('core:upload-progress', (data) => {
+uppy.on('upload-progress', (data) => {
   console.log(data.id, data.bytesUploaded, data.bytesTotal)
 })
 ```
 
-### `core:upload-success`
+### `upload-success`
 
 Fired when single upload is complete.
 
 ``` javascript
-uppy.on('core:upload-success', (fileId, url) => {
+uppy.on('upload-success', (fileId, url) => {
   console.log(url)
   var img = new Image()
   img.width = 300
@@ -327,13 +327,13 @@ uppy.on('core:upload-success', (fileId, url) => {
 })
 ```
 
-### `core:complete`
+### `complete`
 
 Fired when all uploads are complete.
 The `result` parameter is an object with arrays of `successful` and `failed` files, just like in [`uppy.upload()`](#uppy-upload)'s return value.
 
 ``` javascript
-uppy.on('core:complete', (result) => {
+uppy.on('complete', (result) => {
   console.log(result)
 })
 ```

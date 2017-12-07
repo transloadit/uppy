@@ -132,7 +132,7 @@ module.exports = class Tus extends Plugin {
 
       optsTus.onError = (err) => {
         this.core.log(err)
-        this.core.emit('core:upload-error', file.id, err)
+        this.core.emit('upload-error', file.id, err)
         err.message = `Failed because: ${err.message}`
 
         this.resetUploaderReferences(file.id)
@@ -141,7 +141,7 @@ module.exports = class Tus extends Plugin {
 
       optsTus.onProgress = (bytesUploaded, bytesTotal) => {
         this.onReceiveUploadUrl(file, upload.url)
-        this.core.emit('core:upload-progress', {
+        this.core.emit('upload-progress', {
           uploader: this,
           id: file.id,
           bytesUploaded: bytesUploaded,
@@ -150,7 +150,7 @@ module.exports = class Tus extends Plugin {
       }
 
       optsTus.onSuccess = () => {
-        this.core.emit('core:upload-success', file.id, upload, upload.url)
+        this.core.emit('upload-success', file.id, upload, upload.url)
 
         if (upload.url) {
           this.core.log('Download ' + upload.file.name + ' from ' + upload.url)
@@ -190,7 +190,7 @@ module.exports = class Tus extends Plugin {
       })
 
       upload.start()
-      this.core.emit('core:upload-started', file.id, upload)
+      this.core.emit('upload-started', file.id, upload)
     })
   }
 
@@ -207,7 +207,7 @@ module.exports = class Tus extends Plugin {
           endpoint = file.tus.endpoint
         }
 
-        this.core.emit('core:upload-started', file.id)
+        this.core.emit('upload-started', file.id)
 
         fetch(file.remote.url, {
           method: 'post',
@@ -277,7 +277,7 @@ module.exports = class Tus extends Plugin {
     socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
     socket.on('success', (data) => {
-      this.core.emit('core:upload-success', file.id, data, data.url)
+      this.core.emit('upload-success', file.id, data, data.url)
       this.resetUploaderReferences(file.id)
     })
   }
@@ -308,13 +308,13 @@ module.exports = class Tus extends Plugin {
   }
 
   onFileRemove (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:file-removed', (targetFileID) => {
+    this.uploaderEvents[fileID].on('file-removed', (targetFileID) => {
       if (fileID === targetFileID) cb(targetFileID)
     })
   }
 
   onPause (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:upload-pause', (targetFileID, isPaused) => {
+    this.uploaderEvents[fileID].on('upload-pause', (targetFileID, isPaused) => {
       if (fileID === targetFileID) {
         // const isPaused = this.core.pauseResume(fileID)
         cb(isPaused)
@@ -323,7 +323,7 @@ module.exports = class Tus extends Plugin {
   }
 
   onRetry (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:upload-retry', (targetFileID) => {
+    this.uploaderEvents[fileID].on('upload-retry', (targetFileID) => {
       if (fileID === targetFileID) {
         cb()
       }
@@ -331,28 +331,28 @@ module.exports = class Tus extends Plugin {
   }
 
   onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:retry-all', (filesToRetry) => {
+    this.uploaderEvents[fileID].on('retry-all', (filesToRetry) => {
       if (!this.core.getFile(fileID)) return
       cb()
     })
   }
 
   onPauseAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:pause-all', () => {
+    this.uploaderEvents[fileID].on('pause-all', () => {
       if (!this.core.getFile(fileID)) return
       cb()
     })
   }
 
   onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:cancel-all', () => {
+    this.uploaderEvents[fileID].on('cancel-all', () => {
       if (!this.core.getFile(fileID)) return
       cb()
     })
   }
 
   onResumeAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:resume-all', () => {
+    this.uploaderEvents[fileID].on('resume-all', () => {
       if (!this.core.getFile(fileID)) return
       cb()
     })
@@ -399,7 +399,7 @@ module.exports = class Tus extends Plugin {
     this.addResumableUploadsCapabilityFlag()
     this.core.addUploader(this.handleUpload)
 
-    this.core.on('core:reset-progress', this.handleResetProgress)
+    this.core.on('reset-progress', this.handleResetProgress)
 
     if (this.opts.autoRetry) {
       this.core.on('back-online', this.core.retryAll)

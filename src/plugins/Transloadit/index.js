@@ -321,7 +321,7 @@ module.exports = class Transloadit extends Plugin {
     fileIDs = fileIDs.filter((file) => !file.error)
 
     fileIDs.forEach((fileID) => {
-      this.core.emit('core:preprocess-progress', fileID, {
+      this.core.emit('preprocess-progress', fileID, {
         mode: 'indeterminate',
         message: this.i18n('creatingAssembly')
       })
@@ -334,7 +334,7 @@ module.exports = class Transloadit extends Plugin {
         }
       }).then(() => {
         fileIDs.forEach((fileID) => {
-          this.core.emit('core:preprocess-complete', fileID)
+          this.core.emit('preprocess-complete', fileID)
         })
       })
     }
@@ -396,7 +396,7 @@ module.exports = class Transloadit extends Plugin {
 
     return new Promise((resolve, reject) => {
       fileIDs.forEach((fileID) => {
-        this.core.emit('core:postprocess-progress', fileID, {
+        this.core.emit('postprocess-progress', fileID, {
           mode: 'indeterminate',
           message: this.i18n('encoding')
         })
@@ -414,7 +414,7 @@ module.exports = class Transloadit extends Plugin {
 
         const files = this.getAssemblyFiles(assembly.assembly_id)
         files.forEach((file) => {
-          this.core.emit('core:postprocess-complete', file.id)
+          this.core.emit('postprocess-complete', file.id)
         })
 
         checkAllComplete()
@@ -430,9 +430,9 @@ module.exports = class Transloadit extends Plugin {
         const files = this.getAssemblyFiles(assembly.assembly_id)
         files.forEach((file) => {
           // TODO Maybe make a postprocess-error event here?
-          this.core.emit('core:upload-error', file.id, error)
+          this.core.emit('upload-error', file.id, error)
 
-          this.core.emit('core:postprocess-complete', file.id)
+          this.core.emit('postprocess-complete', file.id)
         })
 
         checkAllComplete()
@@ -483,7 +483,7 @@ module.exports = class Transloadit extends Plugin {
     this.core.addPostProcessor(this.afterUpload)
 
     if (this.opts.importFromUploadURLs) {
-      this.core.on('core:upload-success', this.onFileUploadURLAvailable)
+      this.core.on('upload-success', this.onFileUploadURLAvailable)
     }
 
     this.setPluginState({
@@ -503,7 +503,7 @@ module.exports = class Transloadit extends Plugin {
     this.core.removePostProcessor(this.afterUpload)
 
     if (this.opts.importFromUploadURLs) {
-      this.core.off('core:upload-success', this.onFileUploadURLAvailable)
+      this.core.off('upload-success', this.onFileUploadURLAvailable)
     }
   }
 

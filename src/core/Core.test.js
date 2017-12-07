@@ -133,7 +133,7 @@ describe('src/Core', () => {
     it('should update the state', () => {
       const core = new Core()
       const stateUpdateEventMock = jest.fn()
-      core.on('core:state-update', stateUpdateEventMock)
+      core.on('state-update', stateUpdateEventMock)
       core.use(AcquirerPlugin1)
       core.use(AcquirerPlugin2)
 
@@ -207,8 +207,8 @@ describe('src/Core', () => {
     // const corePauseEventMock = jest.fn()
     const coreCancelEventMock = jest.fn()
     const coreStateUpdateEventMock = jest.fn()
-    core.on('core:cancel-all', coreCancelEventMock)
-    core.on('core:state-update', coreStateUpdateEventMock)
+    core.on('cancel-all', coreCancelEventMock)
+    core.on('state-update', coreStateUpdateEventMock)
     core.setState({ foo: 'bar', totalProgress: 30 })
 
     core.reset()
@@ -234,9 +234,9 @@ describe('src/Core', () => {
     // const corePauseEventMock = jest.fn()
     const coreCancelEventMock = jest.fn()
     const coreStateUpdateEventMock = jest.fn()
-    // core.on('core:pause-all', corePauseEventMock)
-    core.on('core:cancel-all', coreCancelEventMock)
-    core.on('core:state-update', coreStateUpdateEventMock)
+    // core.on('pause-all', corePauseEventMock)
+    core.on('cancel-all', coreCancelEventMock)
+    core.on('state-update', coreStateUpdateEventMock)
 
     core.close()
 
@@ -316,7 +316,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('core:preprocess-progress', fileId, {
+          core.emit('preprocess-progress', fileId, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -344,7 +344,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('core:preprocess-complete', fileId, {
+          core.emit('preprocess-complete', fileId, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -426,7 +426,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('core:postprocess-progress', fileId, {
+          core.emit('postprocess-progress', fileId, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -454,7 +454,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('core:postprocess-complete', fileId, {
+          core.emit('postprocess-complete', fileId, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -519,7 +519,7 @@ describe('src/Core', () => {
       const fileAddedEventMock = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:file-added', fileAddedEventMock)
+      core.on('file-added', fileAddedEventMock)
       return core
         .addFile({
           source: 'jest',
@@ -614,7 +614,7 @@ describe('src/Core', () => {
       core.addUploader((fileIDs) => {
         fileIDs.forEach((fileID) => {
           if (/bar/.test(core.getFile(fileID).name)) {
-            core.emit('core:upload-error', fileID, new Error('This is bar and I do not like bar'))
+            core.emit('upload-error', fileID, new Error('This is bar and I do not like bar'))
           }
         })
         return Promise.resolve()
@@ -641,7 +641,7 @@ describe('src/Core', () => {
       const fileRemovedEventMock = jest.fn()
 
       const core = new Core()
-      core.on('core:file-removed', fileRemovedEventMock)
+      core.on('file-removed', fileRemovedEventMock)
       core.run()
       return core
         .addFile({
@@ -741,8 +741,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('core:update-meta', fileId, { foo: 'bar', bur: 'mur' })
-          core.emit('core:update-meta', fileId, { boo: 'moo', bur: 'fur' })
+          core.emit('update-meta', fileId, { foo: 'bar', bur: 'mur' })
+          core.emit('update-meta', fileId, { boo: 'moo', bur: 'fur' })
           expect(core.state.files[fileId].meta).toEqual({
             name: 'foo.jpg',
             type: 'image/jpeg',
@@ -838,7 +838,7 @@ describe('src/Core', () => {
       const resetProgressEvent = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:reset-progress', resetProgressEvent)
+      core.on('reset-progress', resetProgressEvent)
       return core
         .addFile({
           source: 'jest',
@@ -967,7 +967,7 @@ describe('src/Core', () => {
     it('should update the state when receiving the core:error event', () => {
       const core = new Core()
       core.run()
-      core.emit('core:error', new Error('foooooo'))
+      core.emit('error', new Error('foooooo'))
       expect(core.state.error).toEqual('foooooo')
     })
 
@@ -977,15 +977,15 @@ describe('src/Core', () => {
       core.state.files['fileId'] = {
         name: 'filename'
       }
-      core.emit('core:upload-error', 'fileId', { message: 'this is the error' })
+      core.emit('upload-error', 'fileId', { message: 'this is the error' })
       expect(core.state.info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
     })
 
     it('should reset the error state when receiving the core:upload event', () => {
       const core = new Core()
       core.run()
-      core.emit('core:error', { foo: 'bar' })
-      core.emit('core:upload')
+      core.emit('error', { foo: 'bar' })
+      core.emit('upload')
       expect(core.state.error).toEqual(null)
     })
   })
@@ -1042,7 +1042,7 @@ describe('src/Core', () => {
       const infoVisibleEvent = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:info-visible', infoVisibleEvent)
+      core.on('info-visible', infoVisibleEvent)
 
       core.info('This is the message', 'info', 0)
       expect(core.state.info).toEqual({
@@ -1059,7 +1059,7 @@ describe('src/Core', () => {
       const infoVisibleEvent = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:info-visible', infoVisibleEvent)
+      core.on('info-visible', infoVisibleEvent)
 
       core.info({
         message: 'This is the message',
@@ -1084,8 +1084,8 @@ describe('src/Core', () => {
       const infoHiddenEvent = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:info-visible', infoVisibleEvent)
-      core.on('core:info-hidden', infoHiddenEvent)
+      core.on('info-visible', infoVisibleEvent)
+      core.on('info-hidden', infoHiddenEvent)
 
       core.info('This is the message', 'info', 100)
       expect(typeof core.infoTimeoutID).toEqual('number')
@@ -1107,8 +1107,8 @@ describe('src/Core', () => {
       const infoHiddenEvent = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:info-visible', infoVisibleEvent)
-      core.on('core:info-hidden', infoHiddenEvent)
+      core.on('info-visible', infoVisibleEvent)
+      core.on('info-hidden', infoHiddenEvent)
 
       core.info('This is the message', 'info', 0)
       expect(typeof core.infoTimeoutID).toEqual('undefined')

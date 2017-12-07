@@ -263,7 +263,7 @@ module.exports = class DashboardUI extends Plugin {
     })
 
     this.core.on('dashboard:file-card', this.handleFileCard)
-    this.core.on('core:file-added', this.addDashboardMetaToNewFile)
+    this.core.on('file-added', this.addDashboardMetaToNewFile)
 
     window.addEventListener('resize', this.updateDashboardElWidth)
   }
@@ -281,7 +281,7 @@ module.exports = class DashboardUI extends Plugin {
     this.removeDragDropListener()
 
     this.core.off('dashboard:file-card', this.handleFileCard)
-    this.core.off('core:file-added', this.addDashboardMetaToNewFile)
+    this.core.off('file-added', this.addDashboardMetaToNewFile)
 
     window.removeEventListener('resize', this.updateDashboardElWidth)
   }
@@ -325,15 +325,15 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   cancelAll () {
-    this.core.emit('core:cancel-all')
+    this.core.emit('cancel-all')
   }
 
   pauseAll () {
-    this.core.emit('core:pause-all')
+    this.core.emit('pause-all')
   }
 
   resumeAll () {
-    this.core.emit('core:resume-all')
+    this.core.emit('resume-all')
   }
 
   render (state) {
@@ -396,8 +396,8 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     const cancelUpload = (fileID) => {
-      this.core.emit('core:upload-cancel', fileID)
-      this.core.emit('core:file-remove', fileID)
+      this.core.emit('upload-cancel', fileID)
+      this.core.emit('file-remove', fileID)
     }
 
     const showFileCard = (fileID) => {

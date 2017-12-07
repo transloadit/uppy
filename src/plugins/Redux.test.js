@@ -33,9 +33,7 @@ describe('uploader/reduxPlugin', () => {
   describe('install', () => {
     it('should subscribe to uppy events', () => {
       const core = {
-        emitter: {
-          on: jest.fn()
-        }
+        on: jest.fn()
       }
 
       const redux = new ReduxPlugin(core, {
@@ -45,18 +43,16 @@ describe('uploader/reduxPlugin', () => {
       redux.handleStateUpdate = jest.fn()
       redux.install()
 
-      expect(core.emitter.on.mock.calls.length).toEqual(1)
-      expect(core.emitter.on.mock.calls[0]).toEqual([
-        'core:state-update',
+      expect(core.on.mock.calls.length).toEqual(1)
+      expect(core.on.mock.calls[0]).toEqual([
+        'state-update',
         redux.handleStateUpdate
       ])
     })
 
     it('should call this.handleStateUpdate with the current state on install', () => {
       const core = {
-        emitter: {
-          on: jest.fn()
-        }
+        on: jest.fn()
       }
 
       const redux = new ReduxPlugin(core, {
@@ -78,9 +74,7 @@ describe('uploader/reduxPlugin', () => {
   describe('uninstall', () => {
     it('should should unsubscribe from uppy events on uninstall', () => {
       const core = {
-        emitter: {
-          off: jest.fn()
-        }
+        off: jest.fn()
       }
 
       const redux = new ReduxPlugin(core, {
@@ -89,9 +83,9 @@ describe('uploader/reduxPlugin', () => {
       })
       redux.uninstall()
 
-      expect(core.emitter.off.mock.calls.length).toEqual(1)
-      expect(core.emitter.off.mock.calls[0]).toEqual([
-        'core:state-update',
+      expect(core.off.mock.calls.length).toEqual(1)
+      expect(core.off.mock.calls[0]).toEqual([
+        'state-update',
         redux.handleStateUpdate
       ])
     })

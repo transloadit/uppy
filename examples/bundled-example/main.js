@@ -71,7 +71,7 @@ const uppy = Uppy({
   // .use(GoldenRetriever, {serviceWorker: true})
   .run()
 
-uppy.on('core:complete', ({ successful, failed }) => {
+uppy.on('complete', ({ successful, failed }) => {
   if (failed.length === 0) {
     console.log('UPLOAD SUCCESSFUL!!!')
   } else {
