@@ -247,12 +247,21 @@ class Uppy {
   }
 
   /**
+   * Get a file object.
+   *
+   * @param {string} fileID The ID of the file object to return.
+   */
+  getFile (fileID) {
+    return this.getState().files[fileID]
+  }
+
+  /**
   * Check if minNumberOfFiles restriction is reached before uploading
   *
   * @return {boolean}
   * @private
   */
-  checkMinNumberOfFiles () {
+  _checkMinNumberOfFiles () {
     const {minNumberOfFiles} = this.opts.restrictions
     if (Object.keys(this.getState().files).length < minNumberOfFiles) {
       this.info(`${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
@@ -269,7 +278,7 @@ class Uppy {
   * @return {boolean}
   * @private
   */
-  checkRestrictions (file) {
+  _checkRestrictions (file) {
     const {maxFileSize, maxNumberOfFiles, allowedFileTypes} = this.opts.restrictions
 
     if (maxNumberOfFiles) {
@@ -355,7 +364,7 @@ class Uppy {
           preview: file.preview
         }
 
-        const isFileAllowed = this.checkRestrictions(newFile)
+        const isFileAllowed = this._checkRestrictions(newFile)
         if (!isFileAllowed) return Promise.reject(new Error('File not allowed'))
 
         updatedFiles[fileID] = newFile
@@ -391,15 +400,6 @@ class Uppy {
     }
 
     this.log(`Removed file: ${fileID}`)
-  }
-
-  /**
-   * Get a file object.
-   *
-   * @param {string} fileID The ID of the file object to return.
-   */
-  getFile (fileID) {
-    return this.getState().files[fileID]
   }
 
   /**
@@ -513,7 +513,7 @@ class Uppy {
     this.emit('retry-all', filesToRetry)
 
     const uploadID = this.createUpload(filesToRetry)
-    return this.runUpload(uploadID)
+    return this._runUpload(uploadID)
   }
 
   retryUpload (fileID) {
@@ -529,7 +529,7 @@ class Uppy {
     this.emit('upload-retry', fileID)
 
     const uploadID = this.createUpload([ fileID ])
-    return this.runUpload(uploadID)
+    return this._runUpload(uploadID)
   }
 
   reset () {
@@ -668,10 +668,6 @@ class Uppy {
       })
 
       this.calculateTotalProgress()
-    })
-
-    this.on('update-meta', (fileID, data) => {
-      this.setFileMeta(fileID, data)
     })
 
     this.on('preprocess-progress', (fileID, progress) => {
@@ -960,7 +956,7 @@ class Uppy {
       return Promise.reject(new Error('Nonexistent upload'))
     }
 
-    return this.runUpload(uploadID)
+    return this._runUpload(uploadID)
   }
 
   /**
@@ -1008,7 +1004,7 @@ class Uppy {
    *
    * @private
    */
-  runUpload (uploadID) {
+  _runUpload (uploadID) {
     const uploadData = this.getState().currentUploads[uploadID]
     const fileIDs = uploadData.fileIDs
     const restoreStep = uploadData.step
@@ -1074,7 +1070,7 @@ class Uppy {
       this.log('No uploader type plugins are used', 'warning')
     }
 
-    const isMinNumberOfFilesReached = this.checkMinNumberOfFiles()
+    const isMinNumberOfFilesReached = this._checkMinNumberOfFiles()
     if (!isMinNumberOfFilesReached) {
       return Promise.reject(new Error('Minimum number of files has not been reached'))
     }
@@ -1097,7 +1093,7 @@ class Uppy {
       })
 
       const uploadID = this.createUpload(waitingFileIDs)
-      return this.runUpload(uploadID)
+      return this._runUpload(uploadID)
     })
   }
 }

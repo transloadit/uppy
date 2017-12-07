@@ -312,7 +312,7 @@ describe('src/Core', () => {
         })
     })
 
-    it('should update the file progress state when core:preprocess-progress event is fired', () => {
+    it('should update the file progress state when preprocess-progress event is fired', () => {
       const core = new Core()
       core.run()
       return core
@@ -340,7 +340,7 @@ describe('src/Core', () => {
         })
     })
 
-    it('should update the file progress state when core:preprocess-complete event is fired', () => {
+    it('should update the file progress state when preprocess-complete event is fired', () => {
       const core = new Core()
       core.run()
       return core
@@ -422,7 +422,7 @@ describe('src/Core', () => {
         })
     })
 
-    it('should update the file progress state when core:postprocess-progress event is fired', () => {
+    it('should update the file progress state when postprocess-progress event is fired', () => {
       const core = new Core()
       core.run()
       return core
@@ -450,7 +450,7 @@ describe('src/Core', () => {
         })
     })
 
-    it('should update the file progress state when core:postprocess-complete event is fired', () => {
+    it('should update the file progress state when postprocess-complete event is fired', () => {
       const core = new Core()
       core.run()
       return core
@@ -598,7 +598,7 @@ describe('src/Core', () => {
       })).rejects.toMatchObject({ message: 'onBeforeFileAdded: a plain string' })
     })
 
-    it('should call utils.generatePreview when core:file-added is triggered and thumbnail generation is allowed', () => {
+    it('should call utils.generatePreview when file-added is triggered and thumbnail generation is allowed', () => {
       const core = new Core({
       }).run()
       const file = {
@@ -610,7 +610,7 @@ describe('src/Core', () => {
       expect(utils.createThumbnail.mock.calls[0][1]).toEqual(200)
     })
 
-    it('should return an object url of the image when core:file-added is triggered and thumbnail generation is disabled', () => {
+    it('should return an object url of the image when file-added is triggered and thumbnail generation is disabled', () => {
       const core = new Core({
         thumbnailGeneration: false
       }).run()
@@ -753,30 +753,6 @@ describe('src/Core', () => {
           const fileId = Object.keys(core.state.files)[0]
           core.setFileMeta(fileId, { foo: 'bar', bur: 'mur' })
           core.setFileMeta(fileId, { boo: 'moo', bur: 'fur' })
-          expect(core.state.files[fileId].meta).toEqual({
-            name: 'foo.jpg',
-            type: 'image/jpeg',
-            foo: 'bar',
-            bur: 'fur',
-            boo: 'moo'
-          })
-        })
-    })
-
-    it('should update meta data for a file by calling core:update-meta', () => {
-      const core = new Core()
-      core.run()
-      return core
-        .addFile({
-          source: 'jest',
-          name: 'foo.jpg',
-          type: 'image/jpeg',
-          data: utils.dataURItoFile(sampleImageDataURI, {})
-        })
-        .then(() => {
-          const fileId = Object.keys(core.state.files)[0]
-          core.emit('update-meta', fileId, { foo: 'bar', bur: 'mur' })
-          core.emit('update-meta', fileId, { boo: 'moo', bur: 'fur' })
           expect(core.state.files[fileId].meta).toEqual({
             name: 'foo.jpg',
             type: 'image/jpeg',
@@ -998,14 +974,14 @@ describe('src/Core', () => {
   })
 
   describe('actions', () => {
-    it('should update the state when receiving the core:error event', () => {
+    it('should update the state when receiving the error event', () => {
       const core = new Core()
       core.run()
       core.emit('error', new Error('foooooo'))
       expect(core.state.error).toEqual('foooooo')
     })
 
-    it('should update the state when receiving the core:upload-error event', () => {
+    it('should update the state when receiving the upload-error event', () => {
       const core = new Core()
       core.run()
       core.state.files['fileId'] = {
@@ -1015,7 +991,7 @@ describe('src/Core', () => {
       expect(core.state.info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
     })
 
-    it('should reset the error state when receiving the core:upload event', () => {
+    it('should reset the error state when receiving the upload event', () => {
       const core = new Core()
       core.run()
       core.emit('error', { foo: 'bar' })
