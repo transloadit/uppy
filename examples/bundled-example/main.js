@@ -1,13 +1,13 @@
 const Uppy = require('../../src/core')
 const Dashboard = require('../../src/plugins/Dashboard')
-// const GoogleDrive = require('../../src/plugins/GoogleDrive')
+const GoogleDrive = require('../../src/plugins/GoogleDrive')
 const Dropbox = require('../../src/plugins/Dropbox')
 const Instagram = require('../../src/plugins/Instagram')
 const Webcam = require('../../src/plugins/Webcam')
 const Tus = require('../../src/plugins/Tus')
 // const XHRUpload = require('../../src/plugins/XHRUpload')
 // const FileInput = require('../../src/plugins/FileInput')
-const MetaData = require('../../src/plugins/MetaData')
+// const MetaData = require('../../src/plugins/MetaData')
 // const Informer = require('../../src/plugins/Informer')
 // const StatusBar = require('../../src/plugins/StatusBar')
 // const DragDrop = require('../../src/plugins/DragDrop')
@@ -43,6 +43,7 @@ const uppy = Uppy({
 })
   .use(Dashboard, {
     trigger: '#uppyModalOpener',
+    target: '.MyForm',
     // maxWidth: 350,
     // maxHeight: 400,
     inline: false,
@@ -55,20 +56,18 @@ const uppy = Uppy({
     closeModalOnClickOutside: false,
     locale: {
       strings: {browse: 'browse'}
-    }
+    },
+    metaFields: [
+      { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
+      { id: 'caption', name: 'Caption', value: '', placeholder: 'describe what the image is about' }
+    ]
     // note: 'Images and video only, 300kb or less'
   })
-  // .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
+  .use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
   .use(Webcam, {target: Dashboard})
   .use(Tus, {endpoint: TUS_ENDPOINT, resume: true})
-  .use(MetaData, {
-    fields: [
-      { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
-      { id: 'caption', name: 'Caption', value: 'none', placeholder: 'describe what the image is about' }
-    ]
-  })
   // .use(GoldenRetriever, {serviceWorker: true})
   .run()
 
@@ -92,8 +91,6 @@ if ('serviceWorker' in navigator) {
       console.log('Registration failed with ' + error)
     })
 }
-
-// uppy.emit('informer', 'Smile!', 'info', 2000)
 
 var modalTrigger = document.querySelector('#uppyModalOpener')
 if (modalTrigger) modalTrigger.click()
