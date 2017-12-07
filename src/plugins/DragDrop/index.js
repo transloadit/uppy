@@ -26,10 +26,6 @@ module.exports = class DragDrop extends Plugin {
       strings: {
         dropHereOr: 'Drop files here or',
         browse: 'browse'
-        // selectedFiles: {
-        //   0: '%{smart_count} file selected',
-        //   1: '%{smart_count} files selected'
-        // }
       }
     }
 

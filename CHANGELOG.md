@@ -40,7 +40,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] uppy-server: what happens if access token expires amid an upload/download process.
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
 - [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
-- [ ] uppy-server/s3: make s3 endpoint more configurable (@goto-bus-stop)
+- [x] uppy-server/s3: make s3 endpoint more configurable (@goto-bus-stop)
 - [ ] DnD Bar: drag and drop + statusbar or progressbar ? (@arturi)
 - [ ] possibility to work on already uploaded / in progress files #112, #113
 - [ ] possibility to edit/delete more than one file at once #118, #97
@@ -51,38 +51,47 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
 - [ ] “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no uppy-server required #362
 - [ ] WordPress plugin
+- [ ] Transformations, cropping, filters for images, see #53
+- [ ] Prepare for (piwik-) tracking of usage of uppy ? see #83
+- [ ] screenshot+screencast support similar to Webcam #148
+- [ ] Webcam modes #198
+- [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
+- [ ] feature: React Native support
+- [ ] QA: test with real screen reader to identify accessibility problems
+- [ ] refactoring: reduce size where possible, like, transloadit socket.io --> websockets (saves 20KB)
+- [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 
 ## 1.0 Goals
 
 What we need to do to release Uppy 1.0
 
-- [x] feature: restrictions: by size, number of files, file type
-- [x] feature: beta file recovering after closed tab / browser crash
-- [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
-- [x] feature: easy integration with React (UppyReact components)
-- [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
-- [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
-- [ ] feature: React Native support
-- [ ] feature: preset for Transloadit that mimics jQuery SDK
-- [x] QA: tests for core and utils
-- [ ] QA: tests for some plugins
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
-- [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files. add metrics to Librato
 - [ ] QA: test in multiple browsers and mobile devices
-- [ ] QA: test with real screen reader to identify accessibility problems
-- [x] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
-- [ ] ui: refine UI, neat things up (if that’s even a word)
-- [ ] refactoring: reduce size where possible, like, socket.io --> websockets (saves 20KB)
+- [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
+- [ ] QA: tests for some plugins
+- [ ] automatically host releases on edgly and use that as our main CDN
+- [ ] docs: on using plugins, all options, list of plugins, i18n
+- [ ] feature: preset for Transloadit that mimics jQuery SDK
 - [ ] refactoring: possibly add CSS-in-JS
 - [ ] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
-- [ ] refactoring: possibly differentiate UI plugins from logic plugins, so that, say, uploading plugins don’t include rendering stuff
+- [ ] refactoring: split uppy into small packages, lerna repo?
+- [x] QA: tests for core and utils
+- [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
+- [x] feature: beta file recovering after closed tab / browser crash
+- [x] feature: easy integration with React (UppyReact components)
+- [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
+- [x] feature: restrictions: by size, number of files, file type
 - [x] refactoring: webcam plugin
-- [ ] docs: on using plugins, all options, list of plugins, i18n
-- [ ] uppy-server: better error handling, general cleanup (remove unused code. etc)
-- [ ] uppy-server: security audit
+- [x] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
+- [x] uppy-server: better error handling, general cleanup (remove unused code. etc)
+- [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
-- [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
-- [ ] automatically host releases on edgly and use that as our main CDN
+
+## 0.23
+
+- [ ] Audio: audio recording similar to Webcam #143
+- [ ] goldenretriever: confiramtion before restore #443
+- [ ] i18n all strings + document them
 
 # next
 
@@ -94,13 +103,13 @@ Theme: 🎄 Christmas edition
 - [ ] add `Form`: a plugin that is used in conjunction with any other acquirer, responsible for 1. acquiring the metadata from form; 2. intercepting submit event on the form, opening Uppy dialog instead; 3. injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think) (@arturi)
 - [ ] core: Redux PR (#216 / @arturi, @goto-bus-stop, @richardwillars)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [ ] core: improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (@goto-bus-stop, @arturi)
+- [x] core: improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (@goto-bus-stop, @arturi)
 - [x] core: limit amount of simultaneous uploads, queuing? #360 (#427 / @goto-bus-stop)
-- [x] core: queue preview generation #431
-- [ ] core: research !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
+- [ ] core: queue preview generation #431
+- [ ] core: all: reset or !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
-- [ ] dashboard: place upload button into StatusBar, use Alex’s suggestions for retry button
+- [x] dashboard: place upload button into StatusBar, use Alex’s suggestions for retry button; other UI tweaks (@arturi)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins
 - [ ] goldenretriever: add “ghost” files (@arturi)
@@ -109,6 +118,10 @@ Theme: 🎄 Christmas edition
 - [ ] test: add tests for `npm pack`
 - [ ] tus: Review “tus: Remove old upload and events when starting a new upload.” b3cc48130e292f08c2a09f2f0adf6b6332bf7692 (@arturi)
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
+- [ ] xhrupload: add bundle option to send multiple files in one request #442
+- [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
+- [ ] uppy-server: security audit, ask @acconut
+- [ ] uppy: refine UI, look into text-based file type icons (@arturi)
 
 ## 0.21.0
 

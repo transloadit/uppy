@@ -2,7 +2,7 @@ const html = require('yo-yo')
 const FileList = require('./FileList')
 const Tabs = require('./Tabs')
 const FileCard = require('./FileCard')
-const UploadBtn = require('./UploadBtn')
+// const UploadBtn = require('./UploadBtn')
 const { isTouchDevice, toArray } = require('../../core/Utils')
 const { closeIcon } = require('./icons')
 
@@ -135,17 +135,6 @@ module.exports = function Dashboard (props) {
             isWide: props.isWide
           })}
 
-          <div class="UppyDashboard-actions">
-            ${!props.hideUploadButton && !props.autoProceed && props.newFiles.length > 0
-              ? UploadBtn({
-                i18n: props.i18n,
-                startUpload: props.startUpload,
-                newFileCount: props.newFiles.length
-              })
-              : null
-            }
-          </div>
-
         </div>
 
         <div class="UppyDashboardContent-panel"
@@ -165,3 +154,14 @@ module.exports = function Dashboard (props) {
   </div>
   `
 }
+
+// <div class="UppyDashboard-actions">
+// ${!props.hideUploadButton && !props.autoProceed && props.newFiles.length > 0
+//  ? UploadBtn({
+//    i18n: props.i18n,
+//    startUpload: props.startUpload,
+//    newFileCount: props.newFiles.length
+//  })
+//  : null
+// }
+// </div>

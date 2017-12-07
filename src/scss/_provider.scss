@@ -21,10 +21,6 @@
   text-align: center;
 }
 
-.UppyProvider-authTitleName {
-  // color: $color-cornflower-blue;
-}
-
 .UppyProvider-authBtn {
   @include reset-button;
   border-radius: 6px;
@@ -268,10 +264,21 @@
   //   flex: auto;
   // }
 
+  .BrowserTable-row {
+    position: relative;
+  }
+
   .BrowserTable-column {
     // width: 100px;
     // padding: 15px 12px;
     padding: 14px 10px;
+  }
+
+  .BrowserTable-checkbox {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    margin-right: 0;
   }
 }
 
@@ -280,16 +287,67 @@
 }
 
 
-// .BrowserTable tbody {
-//   display: block;
-//   overflow-x: hidden;
-//   overflow-y: auto;
-//   position: absolute;
-//   top: 0;
-//   bottom: 0;
-//   left: 0;
-//   right: 0;
-// }
+.BrowserTable-checkbox input {
+  opacity: 0;
+}
+
+// https://medium.com/claritydesignsystem/pure-css-accessible-checkboxes-and-radios-buttons-54063e759bb3
+.BrowserTable-checkbox {
+  position: relative;
+  display: inline-block;
+  top: -3px;
+  margin-right: 25px;
+}
+
+.BrowserTable-checkbox label::before,
+.BrowserTable-checkbox label::after {
+  position: absolute;
+  cursor: pointer;
+}
+
+// Outer circle
+.BrowserTable-checkbox label:before {
+  content: "";
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  top: 0;
+  border: 1px solid $color-cornflower-blue; 
+  background-color: $color-white;
+  border-radius: 50%; 
+}
+
+// Inner checkbox
+.BrowserTable-checkbox label:after {
+  content: "";
+  display: inline-block;
+  height: 5px;
+  width: 8px;
+  left: 6px;
+  top: 7px;
+  border-left: 2px solid $color-white;
+  border-bottom: 2px solid $color-white;
+  transform: rotate(-45deg);
+}
+
+// Hide the checkmark by default
+.BrowserTable-checkbox input + label::after {
+  content: none;
+}
+
+// Unhide the checkmark on the checked state
+.BrowserTable-checkbox input:checked + label::after {
+  content: "";
+}
+
+.BrowserTable-checkbox input:checked + label::before {
+  background-color: $color-cornflower-blue;
+}
+
+// Adding focus styles on the outer-box of the fake checkbox*/
+.BrowserTable-checkbox input:focus + label::before {
+  outline: rgb(59, 153, 252) auto 5px;
+}
 
 .BrowserTable-row {
   // border-bottom: 1px solid #eee;
@@ -323,10 +381,11 @@
   cursor: pointer;
 }
 
-// .BrowserTable-itemButton {
-//   @include reset-button();
-//   cursor: pointer;
-// }
+.BrowserTable-item {
+  @include reset-button();
+  cursor: pointer;
+  font-weight: 600;
+}
 
 .BrowserTable-headerColumn {
   cursor: pointer;
@@ -345,6 +404,25 @@
 //   display: block;
 //   // width: 708px;
 // }
+
+.Browser-doneBtn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: $zIndex-3;
+  width: 50px;
+  height: 50px;
+
+  .UppyDashboard--wide & {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+.Browser-doneBtn .UppyIcon {
+  width: 30px;
+  height: 30px;
+}
 
 .nav-active {
   font-weight: bold;

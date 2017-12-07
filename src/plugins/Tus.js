@@ -171,7 +171,11 @@ module.exports = class Tus extends Plugin {
       })
 
       this.onPause(file.id, (isPaused) => {
-        isPaused ? upload.abort() : upload.start()
+        if (isPaused) {
+          upload.abort()
+        } else {
+          upload.start()
+        }
       })
 
       this.onPauseAll(file.id, () => {
@@ -189,8 +193,12 @@ module.exports = class Tus extends Plugin {
         upload.start()
       })
 
-      upload.start()
-      this.core.emit('upload-started', file.id, upload)
+      if (!file.isPaused) {
+        upload.start()
+      }
+      if (!file.isRestored) {
+        this.core.emit('upload-started', file.id, upload)
+      }
     })
   }
 
@@ -273,6 +281,10 @@ module.exports = class Tus extends Plugin {
       socket.send('pause', {})
       socket.send('resume', {})
     })
+
+    if (file.isPaused) {
+      socket.send('pause', {})
+    }
 
     socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 

@@ -211,10 +211,9 @@ module.exports = class DashboardUI extends Plugin {
     document.body.classList.add('is-UppyDashboard-open')
     document.body.style.top = `-${this.savedDocumentScrollPosition}px`
 
+    // timeout is needed because yo-yo/morphdom/nanoraf; not needed without nanoraf
     setTimeout(this.setFocusToFirstNode, 100)
     setTimeout(this.updateDashboardElWidth, 100)
-    // to be sure, sometimes when the function runs, container size is still 0
-    // setTimeout(this.updateDashboardElWidth, 500)
   }
 
   closeModal () {
@@ -486,7 +485,8 @@ module.exports = class DashboardUI extends Plugin {
 
     if (!this.opts.disableStatusBar) {
       this.core.use(StatusBar, {
-        target: this
+        target: this,
+        hideUploadButton: this.opts.hideUploadButton
       })
     }
 
