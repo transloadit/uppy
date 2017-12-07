@@ -605,7 +605,7 @@ describe('src/Core', () => {
         type: 'image/jpeg',
         isRemote: false
       }
-      core.emit('core:file-added', file)
+      core.emit('file-added', file)
       expect(utils.createThumbnail).toHaveBeenCalledTimes(1)
       expect(utils.createThumbnail.mock.calls[0][1]).toEqual(200)
     })
@@ -619,7 +619,7 @@ describe('src/Core', () => {
         isRemote: false,
         data: 'foo'
       }
-      core.emit('core:file-added', file)
+      core.emit('file-added', file)
       expect(URL.createObjectURL).toHaveBeenCalledTimes(1)
       expect(URL.createObjectURL).toHaveBeenCalledWith('foo')
     })

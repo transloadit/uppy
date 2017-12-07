@@ -115,7 +115,7 @@ class Uppy {
     })
 
     this._storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {
-      this.emit('core:state-update', prevState, nextState, patch)
+      this.emit('state-update', prevState, nextState, patch)
       this.updateAll(nextState)
     })
 
