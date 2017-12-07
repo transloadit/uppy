@@ -1,7 +1,9 @@
 const html = require('yo-yo')
 const Plugin = require('../../core/Plugin')
-const Provider = require('../Provider')
-const View = require('../Provider/view')
+
+const Provider = require('../../Provider')
+
+const View = require('../../generic-provider-views')
 
 module.exports = class Instagram extends Plugin {
   constructor (core, opts) {
