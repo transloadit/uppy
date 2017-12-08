@@ -26,8 +26,8 @@ const FOCUSABLE_ELEMENTS = [
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
 module.exports = class DashboardUI extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
@@ -123,7 +123,7 @@ module.exports = class DashboardUI extends Plugin {
         callerPluginType !== 'progressindicator' &&
         callerPluginType !== 'presenter') {
       let msg = 'Dashboard: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
-      this.core.log(msg)
+      this.uppy.log(msg)
       return
     }
 
@@ -249,7 +249,7 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     if (!this.opts.inline && !showModalTrigger) {
-      this.core.log('Dashboard modal trigger not found, you won’t be able to select files. Make sure `trigger` is set correctly in Dashboard options', 'error')
+      this.uppy.log('Dashboard modal trigger not found, you won’t be able to select files. Make sure `trigger` is set correctly in Dashboard options', 'error')
     }
 
     if (!this.opts.inline) {
@@ -261,8 +261,8 @@ module.exports = class DashboardUI extends Plugin {
       this.handleDrop(files)
     })
 
-    this.core.on('dashboard:file-card', this.handleFileCard)
-    this.core.on('file-added', this.addDashboardMetaToNewFile)
+    this.uppy.on('dashboard:file-card', this.handleFileCard)
+    this.uppy.on('file-added', this.addDashboardMetaToNewFile)
 
     window.addEventListener('resize', this.updateDashboardElWidth)
   }
@@ -279,8 +279,8 @@ module.exports = class DashboardUI extends Plugin {
 
     this.removeDragDropListener()
 
-    this.core.off('dashboard:file-card', this.handleFileCard)
-    this.core.off('file-added', this.addDashboardMetaToNewFile)
+    this.uppy.off('dashboard:file-card', this.handleFileCard)
+    this.uppy.off('file-added', this.addDashboardMetaToNewFile)
 
     window.removeEventListener('resize', this.updateDashboardElWidth)
   }
@@ -291,13 +291,13 @@ module.exports = class DashboardUI extends Plugin {
     metaFields.forEach((item) => {
       const obj = {}
       obj[item.id] = item.value
-      this.core.setFileMeta(file.id, obj)
+      this.uppy.setFileMeta(file.id, obj)
     })
   }
 
   updateDashboardElWidth () {
     const dashboardEl = this.el.querySelector('.UppyDashboard-inner')
-    this.core.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
+    this.uppy.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
     this.setPluginState({
       containerWidth: dashboardEl.offsetWidth
@@ -311,10 +311,10 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   handleDrop (files) {
-    this.core.log('[Dashboard] Files were dropped')
+    this.uppy.log('[Dashboard] Files were dropped')
 
     files.forEach((file) => {
-      this.core.addFile({
+      this.uppy.addFile({
         source: this.id,
         name: file.name,
         type: file.type,
@@ -324,15 +324,15 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   cancelAll () {
-    this.core.emit('cancel-all')
+    this.uppy.emit('cancel-all')
   }
 
   pauseAll () {
-    this.core.emit('pause-all')
+    this.uppy.emit('pause-all')
   }
 
   resumeAll () {
-    this.core.emit('resume-all')
+    this.uppy.emit('resume-all')
   }
 
   render (state) {
@@ -363,7 +363,7 @@ module.exports = class DashboardUI extends Plugin {
     totalUploadedSize = prettyBytes(totalUploadedSize)
 
     const attachRenderFunctionToTarget = (target) => {
-      const plugin = this.core.getPlugin(target.id)
+      const plugin = this.uppy.getPlugin(target.id)
       return Object.assign({}, target, {
         icon: plugin.icon || this.opts.defaultTabIcon,
         render: plugin.render
@@ -371,7 +371,7 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     const isSupported = (target) => {
-      const plugin = this.core.getPlugin(target.id)
+      const plugin = this.uppy.getPlugin(target.id)
       // If the plugin does not provide a `supported` check, assume the plugin works everywhere.
       if (typeof plugin.isSupported !== 'function') {
         return true
@@ -388,24 +388,24 @@ module.exports = class DashboardUI extends Plugin {
       .map(attachRenderFunctionToTarget)
 
     const startUpload = (ev) => {
-      this.core.upload().catch((err) => {
+      this.uppy.upload().catch((err) => {
         // Log error.
-        this.core.log(err.stack || err.message || err)
+        this.uppy.log(err.stack || err.message || err)
       })
     }
 
     const cancelUpload = (fileID) => {
-      this.core.emit('upload-cancel', fileID)
-      this.core.removeFile(fileID)
+      this.uppy.emit('upload-cancel', fileID)
+      this.uppy.removeFile(fileID)
     }
 
     const showFileCard = (fileID) => {
-      this.core.emit('dashboard:file-card', fileID)
+      this.uppy.emit('dashboard:file-card', fileID)
     }
 
     const fileCardDone = (meta, fileID) => {
-      this.core.setFileMeta(fileID, meta)
-      this.core.emit('dashboard:file-card')
+      this.uppy.setFileMeta(fileID, meta)
+      this.uppy.emit('dashboard:file-card')
     }
 
     return Dashboard({
@@ -417,9 +417,9 @@ module.exports = class DashboardUI extends Plugin {
       totalProgress: state.totalProgress,
       acquirers: acquirers,
       activePanel: pluginState.activePanel,
-      getPlugin: this.core.getPlugin,
+      getPlugin: this.uppy.getPlugin,
       progressindicators: progressindicators,
-      autoProceed: this.core.opts.autoProceed,
+      autoProceed: this.uppy.opts.autoProceed,
       hideUploadButton: this.opts.hideUploadButton,
       id: this.id,
       closeModal: this.requestCloseModal,
@@ -429,19 +429,19 @@ module.exports = class DashboardUI extends Plugin {
       semiTransparent: this.opts.semiTransparent,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
-      log: this.core.log,
+      log: this.uppy.log,
       i18n: this.i18n,
       pauseAll: this.pauseAll,
       resumeAll: this.resumeAll,
-      addFile: this.core.addFile,
-      removeFile: this.core.removeFile,
-      info: this.core.info,
+      addFile: this.uppy.addFile,
+      removeFile: this.uppy.removeFile,
+      info: this.uppy.info,
       note: this.opts.note,
       metaFields: this.getPluginState().metaFields,
-      resumableUploads: this.core.state.capabilities.resumableUploads || false,
+      resumableUploads: this.uppy.state.capabilities.resumableUploads || false,
       startUpload: startUpload,
-      pauseUpload: this.core.pauseResume,
-      retryUpload: this.core.retryUpload,
+      pauseUpload: this.uppy.pauseResume,
+      retryUpload: this.uppy.retryUpload,
       cancelUpload: cancelUpload,
       fileCardFor: pluginState.fileCardFor,
       showFileCard: showFileCard,
@@ -455,7 +455,7 @@ module.exports = class DashboardUI extends Plugin {
   }
 
   discoverProviderPlugins () {
-    this.core.iteratePlugins((plugin) => {
+    this.uppy.iteratePlugins((plugin) => {
       if (plugin && !plugin.target && plugin.opts && plugin.opts.target === this.constructor) {
         this.addTarget(plugin)
       }
@@ -479,19 +479,19 @@ module.exports = class DashboardUI extends Plugin {
 
     const plugins = this.opts.plugins || []
     plugins.forEach((pluginID) => {
-      const plugin = this.core.getPlugin(pluginID)
+      const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) plugin.mount(this, plugin)
     })
 
     if (!this.opts.disableStatusBar) {
-      this.core.use(StatusBar, {
+      this.uppy.use(StatusBar, {
         target: this,
         hideUploadButton: this.opts.hideUploadButton
       })
     }
 
     if (!this.opts.disableInformer) {
-      this.core.use(Informer, {
+      this.uppy.use(Informer, {
         target: this
       })
     }
@@ -503,20 +503,20 @@ module.exports = class DashboardUI extends Plugin {
 
   uninstall () {
     if (!this.opts.disableInformer) {
-      const informer = this.core.getPlugin('Informer')
-      if (informer) this.core.removePlugin(informer)
+      const informer = this.uppy.getPlugin('Informer')
+      if (informer) this.uppy.removePlugin(informer)
     }
 
     if (!this.opts.disableStatusBar) {
-      const statusBar = this.core.getPlugin('StatusBar')
+      const statusBar = this.uppy.getPlugin('StatusBar')
       // Checking if this plugin exists, in case it was removed by uppy-core
       // before the Dashboard was.
-      if (statusBar) this.core.removePlugin(statusBar)
+      if (statusBar) this.uppy.removePlugin(statusBar)
     }
 
     const plugins = this.opts.plugins || []
     plugins.forEach((pluginID) => {
-      const plugin = this.core.getPlugin(pluginID)
+      const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) plugin.unmount()
     })
 

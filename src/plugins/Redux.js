@@ -1,8 +1,8 @@
 const Plugin = require('../core/Plugin')
 
 module.exports = class Redux extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'state-sync'
     this.id = 'Redux'
     this.title = 'Redux Emitter'
@@ -23,11 +23,11 @@ module.exports = class Redux extends Plugin {
   }
 
   install () {
-    this.core.on('state-update', this.handleStateUpdate)
-    this.handleStateUpdate({}, this.core.state, this.core.state) // set the initial redux state
+    this.uppy.on('state-update', this.handleStateUpdate)
+    this.handleStateUpdate({}, this.uppy.state, this.uppy.state) // set the initial redux state
   }
 
   uninstall () {
-    this.core.off('state-update', this.handleStateUpdate)
+    this.uppy.off('state-update', this.handleStateUpdate)
   }
 }

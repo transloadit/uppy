@@ -4,8 +4,8 @@ const Translator = require('../core/Translator')
 const html = require('yo-yo')
 
 module.exports = class FileInput extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.id = this.opts.id || 'FileInput'
     this.title = 'File Input'
     this.type = 'acquirer'
@@ -41,12 +41,12 @@ module.exports = class FileInput extends Plugin {
   }
 
   handleInputChange (ev) {
-    this.core.log('All right, something selected through input...')
+    this.uppy.log('All right, something selected through input...')
 
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      this.core.addFile({
+      this.uppy.addFile({
         source: this.id,
         name: file.name,
         type: file.type,

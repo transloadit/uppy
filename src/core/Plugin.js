@@ -13,8 +13,8 @@ const getFormData = require('get-form-data')
  * @return {array | string} files or success/fail message
  */
 module.exports = class Plugin {
-  constructor (core, opts) {
-    this.core = core
+  constructor (uppy, opts) {
+    this.uppy = uppy
     this.opts = opts || {}
 
     // clear everything inside the target selector
@@ -27,14 +27,14 @@ module.exports = class Plugin {
   }
 
   getPluginState () {
-    return this.core.state.plugins[this.id]
+    return this.uppy.state.plugins[this.id]
   }
 
   setPluginState (update) {
-    const plugins = Object.assign({}, this.core.state.plugins)
+    const plugins = Object.assign({}, this.uppy.state.plugins)
     plugins[this.id] = Object.assign({}, plugins[this.id], update)
 
-    this.core.setState({
+    this.uppy.setState({
       plugins: plugins
     })
   }
@@ -68,12 +68,12 @@ module.exports = class Plugin {
         this.el = yo.update(this.el, this.render(state))
       })
 
-      this.core.log(`Installing ${callerPluginName} to a DOM element`)
+      this.uppy.log(`Installing ${callerPluginName} to a DOM element`)
 
       // attempt to extract meta from form element
       if (this.opts.getMetaFromForm && targetElement.nodeName === 'FORM') {
         const formMeta = getFormData(targetElement)
-        this.core.setMeta(formMeta)
+        this.uppy.setMeta(formMeta)
       }
 
       // clear everything inside the target container
@@ -81,7 +81,7 @@ module.exports = class Plugin {
         targetElement.innerHTML = ''
       }
 
-      this.el = plugin.render(this.core.state)
+      this.el = plugin.render(this.uppy.state)
       targetElement.appendChild(this.el)
 
       return this.el
@@ -95,7 +95,7 @@ module.exports = class Plugin {
       // Targeting a plugin type
       const Target = target
       // Find the target plugin instance.
-      this.core.iteratePlugins((plugin) => {
+      this.uppy.iteratePlugins((plugin) => {
         if (plugin instanceof Target) {
           targetPlugin = plugin
           return false
@@ -105,12 +105,12 @@ module.exports = class Plugin {
 
     if (targetPlugin) {
       const targetPluginName = targetPlugin.id
-      this.core.log(`Installing ${callerPluginName} to ${targetPluginName}`)
+      this.uppy.log(`Installing ${callerPluginName} to ${targetPluginName}`)
       this.el = targetPlugin.addTarget(plugin)
       return this.el
     }
 
-    this.core.log(`Not installing ${callerPluginName}`)
+    this.uppy.log(`Not installing ${callerPluginName}`)
     throw new Error(`Invalid target option given to ${callerPluginName}`)
   }
 

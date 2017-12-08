@@ -4,8 +4,8 @@ const Provider = require('../Provider')
 const View = require('../Provider/view')
 
 module.exports = class Instagram extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'acquirer'
     this.id = this.opts.id || 'Instagram'
     this.title = 'Instagram'
@@ -19,7 +19,7 @@ module.exports = class Instagram extends Plugin {
 
     // writing out the key explicitly for readability the key used to store
     // the provider instance must be equal to this.id.
-    this[this.id] = new Provider(core, {
+    this[this.id] = new Provider(uppy, {
       host: this.opts.host,
       provider: 'instagram',
       authProvider: 'instagram'
@@ -126,7 +126,7 @@ module.exports = class Instagram extends Plugin {
   }
 
   getNextPagePath () {
-    const { files } = this.core.getState()[this.stateId]
+    const { files } = this.uppy.getState()[this.stateId]
     return `recent?max_id=${this.getItemId(files[files.length - 1])}`
   }
 

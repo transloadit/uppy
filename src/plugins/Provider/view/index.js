@@ -70,14 +70,14 @@ module.exports = class View {
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
 
-    this.plugin.core.on('file-removed', this.updateFolderState)
+    this.plugin.uppy.on('file-removed', this.updateFolderState)
 
     // Visual
     this.render = this.render.bind(this)
   }
 
   tearDown () {
-    this.plugin.core.off('file-removed', this.updateFolderState)
+    this.plugin.uppy.off('file-removed', this.updateFolderState)
   }
 
   _updateFilesAndFolders (res, files, folders) {
@@ -167,8 +167,8 @@ module.exports = class View {
       if (fileType && Utils.isPreviewSupported(fileType)) {
         tagFile.preview = this.plugin.getItemThumbnailUrl(file)
       }
-      this.plugin.core.log('Adding remote file')
-      this.plugin.core.addFile(tagFile)
+      this.plugin.uppy.log('Adding remote file')
+      this.plugin.uppy.addFile(tagFile)
       if (!isCheckbox) {
         this.donePicking()
       }
@@ -319,7 +319,7 @@ module.exports = class View {
       }
       return false
     }
-    return (itemId in this.plugin.core.getState().files)
+    return (itemId in this.plugin.uppy.getState().files)
   }
 
   /**
@@ -348,7 +348,7 @@ module.exports = class View {
       state = this.plugin.getPluginState()
       state.selectedFolders[folderId] = {loading: false, files: files}
       this.plugin.setPluginState({selectedFolders: folders})
-      const dashboard = this.plugin.core.getPlugin('Dashboard')
+      const dashboard = this.plugin.uppy.getPlugin('Dashboard')
       let message
       if (files.length) {
         message = dashboard.i18n('folderAdded', {
@@ -357,7 +357,7 @@ module.exports = class View {
       } else {
         message = dashboard.i18n('emptyFolderAdded')
       }
-      this.plugin.core.info(message)
+      this.plugin.uppy.info(message)
     }).catch((e) => {
       state = this.plugin.getPluginState()
       delete state.selectedFolders[folderId]
@@ -382,8 +382,8 @@ module.exports = class View {
     // is removed and 'core:file-removed' is emitted.
     const files = folder.files.concat([])
     for (const fileId of files) {
-      if (fileId in this.plugin.core.getState().files) {
-        this.plugin.core.removeFile(fileId)
+      if (fileId in this.plugin.uppy.getState().files) {
+        this.plugin.uppy.removeFile(fileId)
       }
     }
     delete folders[folderId]
@@ -449,8 +449,8 @@ module.exports = class View {
         if (this.plugin.isFolder(item)) {
           this.removeFolder(itemId)
         } else {
-          if (itemId in this.plugin.core.getState().files) {
-            this.plugin.core.removeFile(itemId)
+          if (itemId in this.plugin.uppy.getState().files) {
+            this.plugin.uppy.removeFile(itemId)
           }
         }
       }
@@ -512,10 +512,10 @@ module.exports = class View {
   }
 
   handleError (error) {
-    const core = this.plugin.core
-    const message = core.i18n('uppyServerError')
-    core.log(error.toString())
-    core.info({message: message, details: error.toString()}, 'error', 5000)
+    const uppy = this.plugin.uppy
+    const message = uppy.i18n('uppyServerError')
+    uppy.log(error.toString())
+    uppy.info({message: message, details: error.toString()}, 'error', 5000)
   }
 
   handleScroll (e) {
@@ -535,7 +535,7 @@ module.exports = class View {
   }
 
   donePicking () {
-    const dashboard = this.plugin.core.getPlugin('Dashboard')
+    const dashboard = this.plugin.uppy.getPlugin('Dashboard')
     if (dashboard) dashboard.hideAllPanels()
   }
 

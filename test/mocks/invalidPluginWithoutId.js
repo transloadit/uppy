@@ -1,14 +1,14 @@
 import Plugin from '../../src/core/Plugin.js'
 
 export default class InvalidPluginWithoutName extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'acquirer'
     this.name = this.constructor.name
   }
 
   run (results) {
-    this.core.log({
+    this.uppy.log({
       class: this.constructor.name,
       method: 'run',
       results: results

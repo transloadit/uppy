@@ -8,8 +8,8 @@ const Plugin = require('../core/Plugin')
  *
  */
 module.exports = class MagicLog extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'debugger'
     this.id = 'MagicLog'
     this.title = 'Magic Log'
@@ -32,10 +32,10 @@ module.exports = class MagicLog extends Plugin {
   }
 
   install () {
-    this.core.on('state-update', this.handleStateUpdate)
+    this.uppy.on('state-update', this.handleStateUpdate)
   }
 
   uninstall () {
-    this.core.off('state-update', this.handleStateUpdate)
+    this.uppy.off('state-update', this.handleStateUpdate)
   }
 }

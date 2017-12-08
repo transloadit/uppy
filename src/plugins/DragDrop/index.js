@@ -9,8 +9,8 @@ const html = require('yo-yo')
  *
  */
 module.exports = class DragDrop extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'acquirer'
     this.id = this.opts.id || 'DragDrop'
     this.title = 'Drag & Drop'
@@ -83,10 +83,10 @@ module.exports = class DragDrop extends Plugin {
   }
 
   handleDrop (files) {
-    this.core.log('[DragDrop] Files dropped')
+    this.uppy.log('[DragDrop] Files dropped')
 
     files.forEach((file) => {
-      this.core.addFile({
+      this.uppy.addFile({
         source: this.id,
         name: file.name,
         type: file.type,
@@ -96,12 +96,12 @@ module.exports = class DragDrop extends Plugin {
   }
 
   onInputChange (ev) {
-    this.core.log('[DragDrop] Files selected through input')
+    this.uppy.log('[DragDrop] Files selected through input')
 
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      this.core.addFile({
+      this.uppy.addFile({
         source: this.id,
         name: file.name,
         type: file.type,
@@ -146,7 +146,7 @@ module.exports = class DragDrop extends Plugin {
     }
     this.removeDragDropListener = dragDrop(this.el, (files) => {
       this.handleDrop(files)
-      this.core.log(files)
+      this.uppy.log(files)
     })
   }
 }

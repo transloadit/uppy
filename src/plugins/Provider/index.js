@@ -7,8 +7,8 @@ const _getName = (id) => {
 }
 
 module.exports = class Provider {
-  constructor (core, opts) {
-    this.core = core
+  constructor (uppy, opts) {
+    this.uppy = uppy
     this.opts = opts
     this.provider = opts.provider
     this.id = this.provider
@@ -19,18 +19,18 @@ module.exports = class Provider {
   }
 
   get hostname () {
-    const uppyServer = this.core.state.uppyServer || {}
+    const uppyServer = this.uppy.state.uppyServer || {}
     const host = this.opts.host
     return uppyServer[host] || host
   }
 
   onReceiveResponse (response) {
-    const uppyServer = this.core.state.uppyServer || {}
+    const uppyServer = this.uppy.state.uppyServer || {}
     const host = this.opts.host
     const headers = response.headers
     // Store the self-identified domain name for the uppy-server we just hit.
     if (headers.has('i-am') && headers.get('i-am') !== uppyServer[host]) {
-      this.core.setState({
+      this.uppy.setState({
         uppyServer: Object.assign({}, uppyServer, {
           [host]: headers.get('i-am')
         })
