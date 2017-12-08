@@ -1,9 +1,7 @@
 const html = require('yo-yo')
 const Plugin = require('../../core/Plugin')
-
-const Provider = require('../../Provider')
-
-const View = require('../../generic-provider-views')
+const Provider = require('../Provider')
+const View = require('../Provider/view')
 const icons = require('./icons')
 
 module.exports = class Dropbox extends Plugin {

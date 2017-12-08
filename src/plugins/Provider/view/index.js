@@ -1,7 +1,7 @@
 const AuthView = require('./AuthView')
 const Browser = require('./Browser')
 const LoaderView = require('./Loader')
-const Utils = require('../core/Utils')
+const Utils = require('../../../core/Utils')
 
 /**
  * Class to easily generate generic views for plugins
