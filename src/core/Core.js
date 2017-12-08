@@ -1,6 +1,5 @@
 const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
-const UppySocket = require('./UppySocket')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
 const throttle = require('lodash.throttle')
@@ -70,7 +69,7 @@ class Uppy {
     this.getPlugin = this.getPlugin.bind(this)
     this.setFileMeta = this.setFileMeta.bind(this)
     this.setFileState = this.setFileState.bind(this)
-    this.initSocket = this.initSocket.bind(this)
+    // this._initSocket = this._initSocket.bind(this)
     this.log = this.log.bind(this)
     this.info = this.info.bind(this)
     this.hideInfo = this.hideInfo.bind(this)
@@ -158,6 +157,17 @@ class Uppy {
     return this.getState()
   }
 
+  /**
+  * Shorthand to set state for a specific file
+  */
+  setFileState (fileID, state) {
+    this.setState({
+      files: Object.assign({}, this.getState().files, {
+        [fileID]: Object.assign({}, this.getState().files[fileID], state)
+      })
+    })
+  }
+
   resetProgress () {
     const defaultProgress = {
       percentage: 0,
@@ -233,17 +243,6 @@ class Uppy {
       meta: newMeta
     })
     this.setState({files: updatedFiles})
-  }
-
-  /**
-  * Shorthand to set state for a specific file
-  */
-  setFileState (fileID, state) {
-    this.setState({
-      files: Object.assign({}, this.state.files, {
-        [fileID]: Object.assign({}, this.state.files[fileID], state)
-      })
-    })
   }
 
   /**
@@ -425,14 +424,7 @@ class Uppy {
    * Set the preview URL for a file.
    */
   setPreviewURL (fileID, preview) {
-    const { files } = this.getState()
-    this.setState({
-      files: Object.assign({}, files, {
-        [fileID]: Object.assign({}, files[fileID], {
-          preview: preview
-        })
-      })
-    })
+    this.setFileState(fileID, { preview: preview })
   }
 
   pauseResume (fileID) {
@@ -516,6 +508,11 @@ class Uppy {
     return this._runUpload(uploadID)
   }
 
+  cancelAll () {
+    this.emit('cancel-all')
+    this.setState({ files: {}, totalProgress: 0 })
+  }
+
   retryUpload (fileID) {
     const updatedFiles = Object.assign({}, this.getState().files)
     const updatedFile = Object.assign({}, updatedFiles[fileID],
@@ -534,11 +531,6 @@ class Uppy {
 
   reset () {
     this.cancelAll()
-  }
-
-  cancelAll () {
-    this.emit('cancel-all')
-    this.setState({ files: {}, totalProgress: 0 })
   }
 
   calculateProgress (data) {
@@ -624,9 +616,9 @@ class Uppy {
       this.setState({ error: null })
     })
 
-    this.on('file-add', (data) => {
-      this.addFile(data)
-    })
+    // this.on('file-add', (data) => {
+    //   this.addFile(data)
+    // })
 
     this.on('file-added', (file) => {
       this.generatePreview(file)
@@ -807,7 +799,7 @@ class Uppy {
    * @param function method description
    */
   iteratePlugins (method) {
-    Object.keys(this.plugins).forEach((pluginType) => {
+    Object.keys(this.plugins).forEach(pluginType => {
       this.plugins[pluginType].forEach(method)
     })
   }
@@ -836,19 +828,15 @@ class Uppy {
   close () {
     this.reset()
 
-    if (this.withDevTools) {
-      this.devToolsUnsubscribe()
-    }
-
     this._storeUnsubscribe()
 
     this.iteratePlugins((plugin) => {
       plugin.uninstall()
     })
 
-    if (this.socket) {
-      this.socket.close()
-    }
+    // if (this.socket) {
+    //   this.socket.close()
+    // }
   }
 
   /**
@@ -926,13 +914,13 @@ class Uppy {
     }
   }
 
-  initSocket (opts) {
-    if (!this.socket) {
-      this.socket = new UppySocket(opts)
-    }
+  // _initSocket (opts) {
+  //   if (!this.socket) {
+  //     this.socket = new UppySocket(opts)
+  //   }
 
-    return this.socket
-  }
+  //   return this.socket
+  // }
 
   /**
    * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options

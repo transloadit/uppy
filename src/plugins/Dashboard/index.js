@@ -396,7 +396,7 @@ module.exports = class DashboardUI extends Plugin {
 
     const cancelUpload = (fileID) => {
       this.core.emit('upload-cancel', fileID)
-      this.core.emit('file-remove', fileID)
+      this.core.removeFile(fileID)
     }
 
     const showFileCard = (fileID) => {

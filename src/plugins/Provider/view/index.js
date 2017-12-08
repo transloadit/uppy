@@ -6,11 +6,8 @@ const Utils = require('../../../core/Utils')
 /**
  * Class to easily generate generic views for plugins
  *
- * This class expects the plugin using to have the following attributes
  *
- * stateId {String} object key of which the plugin state is stored
- *
- * This class also expects the plugin instance using it to have the following
+ * This class expects the plugin instance using it to have the following
  * accessor methods.
  * Each method takes the item whose property is to be accessed
  * as a param
