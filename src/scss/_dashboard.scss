@@ -460,7 +460,7 @@
     float: left;
     width: 140px;
     height: 170px;
-    margin: 5px 21px;
+    margin: 5px 15px;
     // border-radius: 6px;
     border: 0;
     background-color: initial;
@@ -571,7 +571,7 @@
 }
 
 .UppyDashboardItem-info {
-  padding: 10px 19px 0 3px;
+  padding: 10px 19px 0 25px;
   position: relative;
   max-width: 70%;
 
@@ -579,6 +579,7 @@
     width: 100%;
     max-width: 100%;
     flex: 1;
+    padding-left: 3px;
     // border-bottom-left-radius: 6px;
     // border-bottom-right-radius: 6px;
     // border: 1px solid rgba($color-gray, 0.2);
