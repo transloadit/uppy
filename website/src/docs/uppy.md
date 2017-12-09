@@ -13,6 +13,7 @@ Core module that orchistrated everything in Uppy, exposing `state`, `events` and
 const uppy = Uppy({
   id: 'uppy',
   autoProceed: true,
+  debug: false,
   restrictions: {
     maxFileSize: false,
     maxNumberOfFiles: false,
@@ -23,7 +24,8 @@ const uppy = Uppy({
   onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
   onBeforeUpload: (files, done) => Promise.resolve(),
   locale: defaultLocale,
-  store: defaultStore()
+  store: new DefaultStore(),
+  thumbnailGeneration: true
 })
 ```
 
@@ -66,7 +68,7 @@ meta: {
 }
 ```
 
-Can be altered with `uppy.setMeta({username: 'Peter'})` method.
+Can be altered with `uppy.setMeta({ username: 'Peter' })` method.
 
 ### `onBeforeFileAdded: (currentFile, files) => Promise.resolve()`
 
@@ -74,10 +76,10 @@ A function run before a file is added to Uppy. Gets passed `(currentFile, files)
 
 ```js
 onBeforeFileAdded: (currentFile, files) => {
-  if (currentFile.name === 'pitercss-IMG_0616.jpg') {
+  if (currentFile.name === 'forest-IMG_0616.jpg') {
     return Promise.resolve()
   }
-  return Promise.reject('this is not the file I was looking for')
+  return Promise.reject('This is not the file I was looking for')
 }
 ```
 
@@ -110,7 +112,8 @@ locale: {
       1: 'You have to select at least %{smart_count} files'
     },
     exceedsSize: 'This file exceeds maximum allowed size of',
-    youCanOnlyUploadFileTypes: 'You can only upload:'
+    youCanOnlyUploadFileTypes: 'You can only upload:',
+    uppyServerError: 'Connection with Uppy Server failed'
   }
 }
 ```
@@ -130,8 +133,8 @@ We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/m
 ## `store: defaultStore()`
 
 The Store to use to keep track of internal state. By default, a simple object is used.
-This option can be used to plug Uppy state into an external state management library, such as Redux.
-Then, you can write custom views with the library that is also used by the rest of the application.
+
+This option can be used to plug Uppy state into an external state management library, such as Redux. Then, you can write custom views with the library that is also used by the rest of the application.
 
 <!-- TODO document store API -->
 
@@ -165,7 +168,7 @@ Add a new file to Uppy’s internal state.
 uppy.addFile({
   name: 'my-file.jpg', // file name
   type: 'image/jpeg', // file type
-  data: fileBlob, // file blob
+  data: blob, // file blob
   source: 'Local', // optional, sets what added the file, for example, Instagram
   isRemote: false // optional, set to true if actual file is not in the browser, but on some remote server, like when using uppy-server + Instagram, for example
 })
@@ -193,13 +196,19 @@ Update `uppy.state`. Usually this method is called internally, but in some cases
 Uppy’s default state on initialization:
 
 ```js
-this.state = {
+{
+  plugins: {},
   files: {},
   capabilities: {
     resumableUploads: false
   },
   totalProgress: 0,
-  meta: Object.assign({}, this.opts.meta)
+  meta: Object.assign({}, this.opts.meta),
+  info: {
+    isHidden: true,
+    type: 'info',
+    message: ''
+  }
 }
 ```
 
@@ -237,15 +246,17 @@ Returns `uppy.state`, which you can also use directly.
 Alters global `meta` object is state, the one that can be set in Uppy options and gets merged with all newly added files.
 
 ```js
-uppy.setMeta({resize: 1500})
+uppy.setMeta({ resize: 1500 })
 ```
 
-### `uppy.updateMeta(data, fileID)`
+### `uppy.setFileMeta(fileID, data)`
 
 Updated metadata for a specific file.
 
 ```js
-uppy.updateMeta({resize: 1500}, 'myfileID')
+uppy.setFileMeta('myfileID', { 
+  resize: 1500 
+})
 ```
 
 ### `uppy.reset()`
@@ -339,10 +350,12 @@ uppy.on('upload-success', (fileId, url) => {
 ### `complete`
 
 Fired when all uploads are complete.
+
 The `result` parameter is an object with arrays of `successful` and `failed` files, just like in [`uppy.upload()`](#uppy-upload)'s return value.
 
 ``` javascript
 uppy.on('complete', (result) => {
-  console.log(result)
+  console.log('successful files:', result.successful)
+  console.log('failed files:', result.failed)
 })
 ```
