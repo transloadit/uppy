@@ -482,7 +482,7 @@ describe('src/Core', () => {
     it('should add an uploader', () => {
       const core = new Core()
       const uploader = function () {}
-      core.addUploader(uploader)
+      core._addUploader(uploader)
       expect(core.uploaders[0]).toEqual(uploader)
     })
 
@@ -495,7 +495,7 @@ describe('src/Core', () => {
       core.addUploader(uploader2)
       core.addUploader(uploader3)
       expect(core.uploaders.length).toEqual(3)
-      core.removeUploader(uploader2)
+      core._removeUploader(uploader2)
       expect(core.uploaders.length).toEqual(2)
     })
   })
@@ -776,7 +776,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId,
             bytesUploaded: 12345,
             bytesTotal: 17175
@@ -789,7 +789,7 @@ describe('src/Core', () => {
             uploadStarted: false
           })
 
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId,
             bytesUploaded: 17175,
             bytesTotal: 17175
@@ -827,13 +827,13 @@ describe('src/Core', () => {
           core.state.files[fileId1].progress.uploadStarted = new Date()
           core.state.files[fileId2].progress.uploadStarted = new Date()
 
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId1,
             bytesUploaded: 12345,
             bytesTotal: 17175
           })
 
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId2,
             bytesUploaded: 10201,
             bytesTotal: 17175
@@ -870,19 +870,19 @@ describe('src/Core', () => {
           core.state.files[fileId1].progress.uploadStarted = new Date()
           core.state.files[fileId2].progress.uploadStarted = new Date()
 
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId1,
             bytesUploaded: 12345,
             bytesTotal: 17175
           })
 
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId2,
             bytesUploaded: 10201,
             bytesTotal: 17175
           })
 
-          core.calculateTotalProgress()
+          core._calculateTotalProgress()
 
           expect(core.state.totalProgress).toEqual(65)
 
@@ -1144,7 +1144,7 @@ describe('src/Core', () => {
         type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
       }).then(() => {
-        core.createUpload(Object.keys(core.state.files))
+        core._createUpload(Object.keys(core.state.files))
         const uploadId = Object.keys(core.state.currentUploads)[0]
         const currentUploadsState = {}
         currentUploadsState[uploadId] = {
@@ -1164,7 +1164,7 @@ describe('src/Core', () => {
           const uploadId = Object.keys(core.state.currentUploads)[0]
           expect(typeof core.state.currentUploads[uploadId]).toEqual('object')
           expect(core.state.currentUploads[uploadId].fileIDs.length).toEqual(1)
-          core.removeUpload(uploadId)
+          core._removeUpload(uploadId)
           expect(typeof core.state.currentUploads[uploadId]).toEqual('undefined')
         })
       }
