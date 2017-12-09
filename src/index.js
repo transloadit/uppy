@@ -55,18 +55,3 @@ module.exports = {
   ReduxDevTools,
   ReduxStore
 }
-
-// Object.defineProperty(module.exports, 'Tus10', {
-//   enumerable: true,
-//   configurable: true,
-//   get: () => {
-//     console.warn('Uppy.Tus10 is deprecated and will be removed in v0.22. Use Uppy.Tus instead.')
-//     Object.defineProperty(module.exports, 'Tus10', {
-//       enumerable: true,
-//       configurable: true,
-//       writable: true,
-//       value: Tus
-//     })
-//     return Tus
-//   }
-// })
