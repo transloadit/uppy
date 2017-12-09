@@ -76,7 +76,7 @@ class Uppy {
     this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
     this.pauseResume = this.pauseResume.bind(this)
-    this.calculateProgress = this.calculateProgress.bind(this)
+    this._calculateProgress = this._calculateProgress.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
 
     this.pauseAll = this.pauseAll.bind(this)
@@ -218,7 +218,7 @@ class Uppy {
     this.uploaders.push(fn)
   }
 
-  removeUploader (fn) {
+  _removeUploader (fn) {
     const i = this.uploaders.indexOf(fn)
     if (i !== -1) {
       this.uploaders.splice(i, 1)
@@ -390,7 +390,7 @@ class Uppy {
     delete updatedFiles[fileID]
 
     this.setState({files: updatedFiles})
-    this.calculateTotalProgress()
+    this._calculateTotalProgress()
     this.emit('file-removed', fileID)
 
     // Clean up object URLs.
@@ -504,7 +504,7 @@ class Uppy {
 
     this.emit('retry-all', filesToRetry)
 
-    const uploadID = this.createUpload(filesToRetry)
+    const uploadID = this._createUpload(filesToRetry)
     return this._runUpload(uploadID)
   }
 
@@ -525,7 +525,7 @@ class Uppy {
 
     this.emit('upload-retry', fileID)
 
-    const uploadID = this.createUpload([ fileID ])
+    const uploadID = this._createUpload([ fileID ])
     return this._runUpload(uploadID)
   }
 
@@ -533,7 +533,7 @@ class Uppy {
     this.cancelAll()
   }
 
-  calculateProgress (data) {
+  _calculateProgress (data) {
     const fileID = data.id
 
     // skip progress event for a file that’s been removed
@@ -550,10 +550,10 @@ class Uppy {
       })
     })
 
-    this.calculateTotalProgress()
+    this._calculateTotalProgress()
   }
 
-  calculateTotalProgress () {
+  _calculateTotalProgress () {
     // calculate total progress, using the number of files currently uploading,
     // multiplied by 100 and the summ of individual progress of each file
     const files = Object.assign({}, this.getState().files)
@@ -643,11 +643,9 @@ class Uppy {
     // connection to the remote server. Therefore, we are throtteling them to
     // prevent accessive function calls.
     // see also: https://github.com/tus/tus-js-client/commit/9940f27b2361fd7e10ba58b09b60d82422183bbb
-    const throttledCalculateProgress = throttle(this.calculateProgress, 100, {leading: true, trailing: false})
+    const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: false })
 
-    this.on('upload-progress', (data) => {
-      throttledCalculateProgress(data)
-    })
+    this.on('upload-progress', _throttledCalculateProgress)
 
     this.on('upload-success', (fileID, uploadResp, uploadURL) => {
       this.setFileState(fileID, {
@@ -659,7 +657,7 @@ class Uppy {
         isPaused: false
       })
 
-      this.calculateTotalProgress()
+      this._calculateTotalProgress()
     })
 
     this.on('preprocess-progress', (fileID, progress) => {
@@ -940,7 +938,7 @@ class Uppy {
     this.log(`Core: attempting to restore upload "${uploadID}"`)
 
     if (!this.getState().currentUploads[uploadID]) {
-      this.removeUpload(uploadID)
+      this._removeUpload(uploadID)
       return Promise.reject(new Error('Nonexistent upload'))
     }
 
@@ -953,7 +951,7 @@ class Uppy {
    * @param {Array<string>} fileIDs File IDs to include in this upload.
    * @return {string} ID of this upload.
    */
-  createUpload (fileIDs) {
+  _createUpload (fileIDs) {
     const uploadID = cuid()
 
     this.emit('upload', {
@@ -978,7 +976,7 @@ class Uppy {
    *
    * @param {string} uploadID The ID of the upload.
    */
-  removeUpload (uploadID) {
+  _removeUpload (uploadID) {
     const currentUploads = Object.assign({}, this.getState().currentUploads)
     delete currentUploads[uploadID]
 
@@ -1030,7 +1028,7 @@ class Uppy {
     lastStep.catch((err) => {
       this.emit('error', err)
 
-      this.removeUpload(uploadID)
+      this._removeUpload(uploadID)
     })
 
     return lastStep.then(() => {
@@ -1042,7 +1040,7 @@ class Uppy {
       // Compatibility with pre-0.21
       this.emit('success', fileIDs)
 
-      this.removeUpload(uploadID)
+      this._removeUpload(uploadID)
 
       return { successful, failed }
     })
@@ -1080,7 +1078,7 @@ class Uppy {
         }
       })
 
-      const uploadID = this.createUpload(waitingFileIDs)
+      const uploadID = this._createUpload(waitingFileIDs)
       return this._runUpload(uploadID)
     })
   }
