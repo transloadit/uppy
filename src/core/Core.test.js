@@ -482,7 +482,7 @@ describe('src/Core', () => {
     it('should add an uploader', () => {
       const core = new Core()
       const uploader = function () {}
-      core._addUploader(uploader)
+      core.addUploader(uploader)
       expect(core.uploaders[0]).toEqual(uploader)
     })
 
@@ -839,7 +839,7 @@ describe('src/Core', () => {
             bytesTotal: 17175
           })
 
-          core.calculateTotalProgress()
+          core._calculateTotalProgress()
           expect(core.state.totalProgress).toEqual(65)
         })
     })
