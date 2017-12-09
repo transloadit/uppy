@@ -60,6 +60,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] QA: test with real screen reader to identify accessibility problems
 - [ ] refactoring: reduce size where possible, like, transloadit socket.io --> websockets (saves 20KB)
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
+- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
+- [ ] test: add tests for `npm pack`
 
 ## 1.0 Goals
 
@@ -87,11 +89,15 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 
-## 0.23
+## 0.23.0
 
-- [ ] Audio: audio recording similar to Webcam #143
-- [ ] goldenretriever: confiramtion before restore #443
-- [ ] i18n all strings + document them
+- [ ] audio: audio recording similar to Webcam #143
+- [ ] dashboard: add image cropping
+- [ ] goldenretriever: confirmation before restore #443
+- [ ] core: i18n all strings + document them
+- [ ] dashboard: try adding optional whitelabel “powered by uppy.io” (@arturi, @nqst)
+- [ ] transloadit: add error reporting
+- [ ] importurl: new plugin that imports files from urls client side, maybe offloading large ones to uppy server (@arturi, @ifedapoolarewaju)
 
 # next
 
@@ -114,8 +120,6 @@ Theme: 🎄 Christmas edition
 - [ ] docs: on writing plugins
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] provider: improve UI, add icons for file types (@arturi)
-- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
-- [ ] test: add tests for `npm pack`
 - [ ] tus: Review “tus: Remove old upload and events when starting a new upload.” b3cc48130e292f08c2a09f2f0adf6b6332bf7692 (@arturi)
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request #442
