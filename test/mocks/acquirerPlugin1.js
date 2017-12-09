@@ -1,4 +1,4 @@
-import Plugin from '../../src/core/Plugin.js'
+import Plugin from '../../src/core/Plugin'
 
 export default class TestSelector1 extends Plugin {
   constructor (uppy, opts) {

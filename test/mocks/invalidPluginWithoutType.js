@@ -1,4 +1,4 @@
-import Plugin from '../../src/core/Plugin.js'
+import Plugin from '../../src/core/Plugin'
 
 export default class InvalidPluginWithoutType extends Plugin {
   constructor (uppy, opts) {
