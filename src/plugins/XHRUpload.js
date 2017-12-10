@@ -59,6 +59,10 @@ module.exports = class XHRUpload extends Plugin {
     } else {
       this.limitUploads = (fn) => fn
     }
+
+    if (this.opts.bundle && !this.opts.formData) {
+      throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.')
+    }
   }
 
   getOptions (file) {
@@ -261,6 +265,78 @@ module.exports = class XHRUpload extends Plugin {
     })
   }
 
+  uploadBundle (files) {
+    return new Promise((resolve, reject) => {
+      const endpoint = this.opts.endpoint
+      const method = this.opts.method
+
+      const formData = new FormData()
+      files.forEach((file, i) => {
+        const opts = this.getOptions(file)
+        formData.append(opts.fieldName, file.data)
+      })
+
+      const xhr = new XMLHttpRequest()
+
+      const emitError = (error) => {
+        files.forEach((file) => {
+          this.uppy.emit('upload-error', file.id, error)
+        })
+      }
+
+      xhr.upload.addEventListener('progress', (ev) => {
+        if (!ev.lengthComputable) return
+        files.forEach((file) => {
+          this.uppy.emit('upload-progress', {
+            uploader: this,
+            id: file.id,
+            bytesUploaded: ev.loaded,
+            bytesTotal: ev.total
+          })
+        })
+      })
+
+      xhr.addEventListener('load', (ev) => {
+        if (ev.target.status >= 200 && ev.target.status < 300) {
+          const resp = this.opts.getResponseData(xhr)
+          files.forEach((file) => {
+            this.uppy.emit('upload-success', file.id, resp)
+          })
+          return resolve()
+        }
+
+        const error = this.opts.getResponseError(xhr) || new Error('Upload error')
+        error.request = xhr
+        emitError(error)
+        return reject(error)
+      })
+
+      xhr.addEventListener('error', (ev) => {
+        const error = this.opts.getResponseError(xhr) || new Error('Upload error')
+        emitError(error)
+        return reject(error)
+      })
+
+      this.uppy.on('cancel-all', () => {
+        // const files = this.uppy.getState().files
+        // if (!files[file.id]) return
+        xhr.abort()
+      })
+
+      xhr.open(method.toUpperCase(), endpoint, true)
+
+      Object.keys(this.opts.headers).forEach((header) => {
+        xhr.setRequestHeader(header, this.opts.headers[header])
+      })
+
+      xhr.send(formData)
+
+      files.forEach((file) => {
+        this.uppy.emit('upload-started', file.id)
+      })
+    })
+  }
+
   uploadFiles (files) {
     const actions = files.map((file, i) => {
       const current = parseInt(i, 10) + 1
@@ -290,9 +366,10 @@ module.exports = class XHRUpload extends Plugin {
     }
 
     this.uppy.log('[XHRUpload] Uploading...')
-    const files = fileIDs.map(getFile, this)
-    function getFile (fileID) {
-      return this.uppy.state.files[fileID]
+    const files = fileIDs.map((fileID) => this.uppy.getFile(fileID))
+
+    if (this.opts.bundle) {
+      return this.uploadBundle(files)
     }
 
     return this.uploadFiles(files).then(() => null)
