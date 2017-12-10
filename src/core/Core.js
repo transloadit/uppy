@@ -218,7 +218,7 @@ class Uppy {
     this.uploaders.push(fn)
   }
 
-  _removeUploader (fn) {
+  removeUploader (fn) {
     const i = this.uploaders.indexOf(fn)
     if (i !== -1) {
       this.uploaders.splice(i, 1)
@@ -589,12 +589,6 @@ class Uppy {
     // setInterval(() => {
     //   this.setState({bla: 'bla'})
     // }, 20)
-
-    // this.on('state-update', (prevState, nextState, patch) => {
-    //   if (this.withDevTools) {
-    //     this.devTools.send('UPPY_STATE_UPDATE', nextState)
-    //   }
-    // })
 
     this.on('error', (error) => {
       this.setState({ error: error.message })

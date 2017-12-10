@@ -495,7 +495,7 @@ describe('src/Core', () => {
       core.addUploader(uploader2)
       core.addUploader(uploader3)
       expect(core.uploaders.length).toEqual(3)
-      core._removeUploader(uploader2)
+      core.removeUploader(uploader2)
       expect(core.uploaders.length).toEqual(2)
     })
   })
