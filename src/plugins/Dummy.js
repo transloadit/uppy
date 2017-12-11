@@ -1,4 +1,4 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 const html = require('yo-yo')
 // const yo = require('yo-yo')
 
@@ -7,8 +7,8 @@ const html = require('yo-yo')
  * A test plugin, does nothing useful
  */
 module.exports = class Dummy extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'acquirer'
     this.id = this.opts.id || 'Dummy'
     this.title = 'Mr. Plugin'
@@ -54,7 +54,7 @@ module.exports = class Dummy extends Plugin {
   }
 
   install () {
-    this.core.setState({dummy: {text: '123'}})
+    this.uppy.setState({dummy: {text: '123'}})
 
     const target = this.opts.target
     if (target) {
@@ -62,7 +62,7 @@ module.exports = class Dummy extends Plugin {
     }
 
     setTimeout(() => {
-      this.core.setState({dummy: {text: '!!!'}})
+      this.uppy.setState({dummy: {text: '!!!'}})
     }, 2000)
   }
 }

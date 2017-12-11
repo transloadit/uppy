@@ -1,6 +1,5 @@
 const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
-const UppySocket = require('./UppySocket')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
 const throttle = require('lodash.throttle')
@@ -68,15 +67,16 @@ class Uppy {
     this.i18n = this.translator.translate.bind(this.translator)
     this.getState = this.getState.bind(this)
     this.getPlugin = this.getPlugin.bind(this)
-    this.updateMeta = this.updateMeta.bind(this)
-    this.initSocket = this.initSocket.bind(this)
+    this.setFileMeta = this.setFileMeta.bind(this)
+    this.setFileState = this.setFileState.bind(this)
+    // this._initSocket = this._initSocket.bind(this)
     this.log = this.log.bind(this)
     this.info = this.info.bind(this)
     this.hideInfo = this.hideInfo.bind(this)
     this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
     this.pauseResume = this.pauseResume.bind(this)
-    this.calculateProgress = this.calculateProgress.bind(this)
+    this._calculateProgress = this._calculateProgress.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
 
     this.pauseAll = this.pauseAll.bind(this)
@@ -114,7 +114,7 @@ class Uppy {
     })
 
     this._storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {
-      this.emit('core:state-update', prevState, nextState, patch)
+      this.emit('state-update', prevState, nextState, patch)
       this.updateAll(nextState)
     })
 
@@ -157,6 +157,17 @@ class Uppy {
     return this.getState()
   }
 
+  /**
+  * Shorthand to set state for a specific file
+  */
+  setFileState (fileID, state) {
+    this.setState({
+      files: Object.assign({}, this.getState().files, {
+        [fileID]: Object.assign({}, this.getState().files[fileID], state)
+      })
+    })
+  }
+
   resetProgress () {
     const defaultProgress = {
       percentage: 0,
@@ -178,7 +189,7 @@ class Uppy {
     })
 
     // TODO Document on the website
-    this.emit('core:reset-progress')
+    this.emit('reset-progress')
   }
 
   addPreProcessor (fn) {
@@ -221,7 +232,7 @@ class Uppy {
     this.setState({meta: newMeta})
   }
 
-  updateMeta (data, fileID) {
+  setFileMeta (fileID, data) {
     const updatedFiles = Object.assign({}, this.getState().files)
     if (!updatedFiles[fileID]) {
       this.log('Was trying to set metadata for a file that’s not with us anymore: ', fileID)
@@ -235,12 +246,21 @@ class Uppy {
   }
 
   /**
+   * Get a file object.
+   *
+   * @param {string} fileID The ID of the file object to return.
+   */
+  getFile (fileID) {
+    return this.getState().files[fileID]
+  }
+
+  /**
   * Check if minNumberOfFiles restriction is reached before uploading
   *
   * @return {boolean}
   * @private
   */
-  checkMinNumberOfFiles () {
+  _checkMinNumberOfFiles () {
     const {minNumberOfFiles} = this.opts.restrictions
     if (Object.keys(this.getState().files).length < minNumberOfFiles) {
       this.info(`${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
@@ -257,7 +277,7 @@ class Uppy {
   * @return {boolean}
   * @private
   */
-  checkRestrictions (file) {
+  _checkRestrictions (file) {
     const {maxFileSize, maxNumberOfFiles, allowedFileTypes} = this.opts.restrictions
 
     if (maxNumberOfFiles) {
@@ -343,13 +363,13 @@ class Uppy {
           preview: file.preview
         }
 
-        const isFileAllowed = this.checkRestrictions(newFile)
+        const isFileAllowed = this._checkRestrictions(newFile)
         if (!isFileAllowed) return Promise.reject(new Error('File not allowed'))
 
         updatedFiles[fileID] = newFile
         this.setState({files: updatedFiles})
 
-        this.emit('core:file-added', newFile)
+        this.emit('file-added', newFile)
         this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
 
         if (this.opts.autoProceed && !this.scheduledAutoProceed) {
@@ -370,8 +390,8 @@ class Uppy {
     delete updatedFiles[fileID]
 
     this.setState({files: updatedFiles})
-    this.calculateTotalProgress()
-    this.emit('core:file-removed', fileID)
+    this._calculateTotalProgress()
+    this.emit('file-removed', fileID)
 
     // Clean up object URLs.
     if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
@@ -379,15 +399,6 @@ class Uppy {
     }
 
     this.log(`Removed file: ${fileID}`)
-  }
-
-  /**
-   * Get a file object.
-   *
-   * @param {string} fileID The ID of the file object to return.
-   */
-  getFile (fileID) {
-    return this.getState().files[fileID]
   }
 
   /**
@@ -413,14 +424,7 @@ class Uppy {
    * Set the preview URL for a file.
    */
   setPreviewURL (fileID, preview) {
-    const { files } = this.getState()
-    this.setState({
-      files: Object.assign({}, files, {
-        [fileID]: Object.assign({}, files[fileID], {
-          preview: preview
-        })
-      })
-    })
+    this.setFileState(fileID, { preview: preview })
   }
 
   pauseResume (fileID) {
@@ -438,7 +442,7 @@ class Uppy {
     updatedFiles[fileID] = updatedFile
     this.setState({files: updatedFiles})
 
-    this.emit('core:upload-pause', fileID, isPaused)
+    this.emit('upload-pause', fileID, isPaused)
 
     return isPaused
   }
@@ -458,7 +462,7 @@ class Uppy {
     })
     this.setState({files: updatedFiles})
 
-    this.emit('core:pause-all')
+    this.emit('pause-all')
   }
 
   resumeAll () {
@@ -477,7 +481,7 @@ class Uppy {
     })
     this.setState({files: updatedFiles})
 
-    this.emit('core:resume-all')
+    this.emit('resume-all')
   }
 
   retryAll () {
@@ -498,10 +502,15 @@ class Uppy {
       error: null
     })
 
-    this.emit('core:retry-all', filesToRetry)
+    this.emit('retry-all', filesToRetry)
 
-    const uploadID = this.createUpload(filesToRetry)
-    return this.runUpload(uploadID)
+    const uploadID = this._createUpload(filesToRetry)
+    return this._runUpload(uploadID)
+  }
+
+  cancelAll () {
+    this.emit('cancel-all')
+    this.setState({ files: {}, totalProgress: 0 })
   }
 
   retryUpload (fileID) {
@@ -514,50 +523,37 @@ class Uppy {
       files: updatedFiles
     })
 
-    this.emit('core:upload-retry', fileID)
+    this.emit('upload-retry', fileID)
 
-    const uploadID = this.createUpload([ fileID ])
-    return this.runUpload(uploadID)
+    const uploadID = this._createUpload([ fileID ])
+    return this._runUpload(uploadID)
   }
 
   reset () {
     this.cancelAll()
   }
 
-  cancelAll () {
-    this.emit('core:cancel-all')
-    this.setState({ files: {}, totalProgress: 0 })
-  }
-
-  calculateProgress (data) {
+  _calculateProgress (data) {
     const fileID = data.id
-    const updatedFiles = Object.assign({}, this.getState().files)
 
     // skip progress event for a file that’s been removed
-    if (!updatedFiles[fileID]) {
-      this.log('Trying to set progress for a file that’s not with us anymore: ', fileID)
+    if (!this.getState().files[fileID]) {
+      this.log('Trying to set progress for a file that’s been removed: ', fileID)
       return
     }
 
-    const updatedFile = Object.assign({}, updatedFiles[fileID],
-      Object.assign({}, {
-        progress: Object.assign({}, updatedFiles[fileID].progress, {
-          bytesUploaded: data.bytesUploaded,
-          bytesTotal: data.bytesTotal,
-          percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
-        })
-      }
-    ))
-    updatedFiles[data.id] = updatedFile
-
-    this.setState({
-      files: updatedFiles
+    this.setFileState(fileID, {
+      progress: Object.assign({}, this.getState().files[fileID].progress, {
+        bytesUploaded: data.bytesUploaded,
+        bytesTotal: data.bytesTotal,
+        percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
+      })
     })
 
-    this.calculateTotalProgress()
+    this._calculateTotalProgress()
   }
 
-  calculateTotalProgress () {
+  _calculateTotalProgress () {
     // calculate total progress, using the number of files currently uploading,
     // multiplied by 100 and the summ of individual progress of each file
     const files = Object.assign({}, this.getState().files)
@@ -594,23 +590,13 @@ class Uppy {
     //   this.setState({bla: 'bla'})
     // }, 20)
 
-    // this.on('core:state-update', (prevState, nextState, patch) => {
-    //   if (this.withDevTools) {
-    //     this.devTools.send('UPPY_STATE_UPDATE', nextState)
-    //   }
-    // })
-
-    this.on('core:error', (error) => {
+    this.on('error', (error) => {
       this.setState({ error: error.message })
     })
 
-    this.on('core:upload-error', (fileID, error) => {
-      const updatedFiles = Object.assign({}, this.getState().files)
-      const updatedFile = Object.assign({}, updatedFiles[fileID],
-        { error: error.message }
-      )
-      updatedFiles[fileID] = updatedFile
-      this.setState({ files: updatedFiles, error: error.message })
+    this.on('upload-error', (fileID, error) => {
+      this.setFileState(fileID, { error: error.message })
+      this.setState({ error: error.message })
 
       const fileName = this.getState().files[fileID].name
       let message = `Failed to upload ${fileName}`
@@ -620,83 +606,63 @@ class Uppy {
       this.info(message, 'error', 5000)
     })
 
-    this.on('core:upload', () => {
+    this.on('upload', () => {
       this.setState({ error: null })
     })
 
-    this.on('core:file-add', (data) => {
-      this.addFile(data)
-    })
+    // this.on('file-add', (data) => {
+    //   this.addFile(data)
+    // })
 
-    this.on('core:file-added', (file) => {
+    this.on('file-added', (file) => {
       this.generatePreview(file)
     })
 
-    this.on('core:file-remove', (fileID) => {
+    this.on('file-remove', (fileID) => {
       this.removeFile(fileID)
     })
 
-    this.on('core:upload-started', (fileID, upload) => {
-      const updatedFiles = Object.assign({}, this.getState().files)
-      const updatedFile = Object.assign({}, updatedFiles[fileID],
-        Object.assign({}, {
-          progress: Object.assign({}, updatedFiles[fileID].progress, {
-            uploadStarted: Date.now(),
-            uploadComplete: false,
-            percentage: 0,
-            bytesUploaded: 0
-          })
-        }
-      ))
-      updatedFiles[fileID] = updatedFile
-
-      this.setState({files: updatedFiles})
+    this.on('upload-started', (fileID, upload) => {
+      this.setFileState(fileID, {
+        progress: Object.assign({}, this.getState().files[fileID].progress, {
+          uploadStarted: Date.now(),
+          uploadComplete: false,
+          percentage: 0,
+          bytesUploaded: 0
+        })
+      })
     })
 
     // upload progress events can occur frequently, especially when you have a good
     // connection to the remote server. Therefore, we are throtteling them to
     // prevent accessive function calls.
     // see also: https://github.com/tus/tus-js-client/commit/9940f27b2361fd7e10ba58b09b60d82422183bbb
-    const throttledCalculateProgress = throttle(this.calculateProgress, 100, {leading: true, trailing: false})
+    const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: false })
 
-    this.on('core:upload-progress', (data) => {
-      throttledCalculateProgress(data)
-    })
+    this.on('upload-progress', _throttledCalculateProgress)
 
-    this.on('core:upload-success', (fileID, uploadResp, uploadURL) => {
-      const updatedFiles = Object.assign({}, this.getState().files)
-      const updatedFile = Object.assign({}, updatedFiles[fileID], {
-        progress: Object.assign({}, updatedFiles[fileID].progress, {
+    this.on('upload-success', (fileID, uploadResp, uploadURL) => {
+      this.setFileState(fileID, {
+        progress: Object.assign({}, this.getState().files[fileID].progress, {
           uploadComplete: true,
           percentage: 100
         }),
         uploadURL: uploadURL,
         isPaused: false
       })
-      updatedFiles[fileID] = updatedFile
 
-      this.setState({
-        files: updatedFiles
-      })
-
-      this.calculateTotalProgress()
+      this._calculateTotalProgress()
     })
 
-    this.on('core:update-meta', (data, fileID) => {
-      this.updateMeta(data, fileID)
-    })
-
-    this.on('core:preprocess-progress', (fileID, progress) => {
-      const files = Object.assign({}, this.getState().files)
-      files[fileID] = Object.assign({}, files[fileID], {
-        progress: Object.assign({}, files[fileID].progress, {
+    this.on('preprocess-progress', (fileID, progress) => {
+      this.setFileState(fileID, {
+        progress: Object.assign({}, this.getState().files[fileID].progress, {
           preprocess: progress
         })
       })
-
-      this.setState({ files: files })
     })
-    this.on('core:preprocess-complete', (fileID) => {
+
+    this.on('preprocess-complete', (fileID) => {
       const files = Object.assign({}, this.getState().files)
       files[fileID] = Object.assign({}, files[fileID], {
         progress: Object.assign({}, files[fileID].progress)
@@ -705,17 +671,16 @@ class Uppy {
 
       this.setState({ files: files })
     })
-    this.on('core:postprocess-progress', (fileID, progress) => {
-      const files = Object.assign({}, this.getState().files)
-      files[fileID] = Object.assign({}, files[fileID], {
-        progress: Object.assign({}, files[fileID].progress, {
+
+    this.on('postprocess-progress', (fileID, progress) => {
+      this.setFileState(fileID, {
+        progress: Object.assign({}, this.getState().files[fileID].progress, {
           postprocess: progress
         })
       })
-
-      this.setState({ files: files })
     })
-    this.on('core:postprocess-complete', (fileID) => {
+
+    this.on('postprocess-complete', (fileID) => {
       const files = Object.assign({}, this.getState().files)
       files[fileID] = Object.assign({}, files[fileID], {
         progress: Object.assign({}, files[fileID].progress)
@@ -826,7 +791,7 @@ class Uppy {
    * @param function method description
    */
   iteratePlugins (method) {
-    Object.keys(this.plugins).forEach((pluginType) => {
+    Object.keys(this.plugins).forEach(pluginType => {
       this.plugins[pluginType].forEach(method)
     })
   }
@@ -855,19 +820,15 @@ class Uppy {
   close () {
     this.reset()
 
-    if (this.withDevTools) {
-      this.devToolsUnsubscribe()
-    }
-
     this._storeUnsubscribe()
 
     this.iteratePlugins((plugin) => {
       plugin.uninstall()
     })
 
-    if (this.socket) {
-      this.socket.close()
-    }
+    // if (this.socket) {
+    //   this.socket.close()
+    // }
   }
 
   /**
@@ -889,7 +850,7 @@ class Uppy {
       }
     })
 
-    this.emit('core:info-visible')
+    this.emit('info-visible')
 
     window.clearTimeout(this.infoTimeoutID)
     if (duration === 0) {
@@ -908,7 +869,7 @@ class Uppy {
     this.setState({
       info: newInfo
     })
-    this.emit('core:info-hidden')
+    this.emit('info-hidden')
   }
 
   /**
@@ -945,13 +906,13 @@ class Uppy {
     }
   }
 
-  initSocket (opts) {
-    if (!this.socket) {
-      this.socket = new UppySocket(opts)
-    }
+  // _initSocket (opts) {
+  //   if (!this.socket) {
+  //     this.socket = new UppySocket(opts)
+  //   }
 
-    return this.socket
-  }
+  //   return this.socket
+  // }
 
   /**
    * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
@@ -971,11 +932,11 @@ class Uppy {
     this.log(`Core: attempting to restore upload "${uploadID}"`)
 
     if (!this.getState().currentUploads[uploadID]) {
-      this.removeUpload(uploadID)
+      this._removeUpload(uploadID)
       return Promise.reject(new Error('Nonexistent upload'))
     }
 
-    return this.runUpload(uploadID)
+    return this._runUpload(uploadID)
   }
 
   /**
@@ -984,10 +945,10 @@ class Uppy {
    * @param {Array<string>} fileIDs File IDs to include in this upload.
    * @return {string} ID of this upload.
    */
-  createUpload (fileIDs) {
+  _createUpload (fileIDs) {
     const uploadID = cuid()
 
-    this.emit('core:upload', {
+    this.emit('upload', {
       id: uploadID,
       fileIDs: fileIDs
     })
@@ -1009,7 +970,7 @@ class Uppy {
    *
    * @param {string} uploadID The ID of the upload.
    */
-  removeUpload (uploadID) {
+  _removeUpload (uploadID) {
     const currentUploads = Object.assign({}, this.getState().currentUploads)
     delete currentUploads[uploadID]
 
@@ -1023,7 +984,7 @@ class Uppy {
    *
    * @private
    */
-  runUpload (uploadID) {
+  _runUpload (uploadID) {
     const uploadData = this.getState().currentUploads[uploadID]
     const fileIDs = uploadData.fileIDs
     const restoreStep = uploadData.step
@@ -1059,21 +1020,21 @@ class Uppy {
     // Not returning the `catch`ed promise, because we still want to return a rejected
     // promise from this method if the upload failed.
     lastStep.catch((err) => {
-      this.emit('core:error', err)
+      this.emit('error', err)
 
-      this.removeUpload(uploadID)
+      this._removeUpload(uploadID)
     })
 
     return lastStep.then(() => {
       const files = fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => !file.error)
       const failed = files.filter((file) => file.error)
-      this.emit('core:complete', { successful, failed })
+      this.emit('complete', { successful, failed })
 
       // Compatibility with pre-0.21
-      this.emit('core:success', fileIDs)
+      this.emit('success', fileIDs)
 
-      this.removeUpload(uploadID)
+      this._removeUpload(uploadID)
 
       return { successful, failed }
     })
@@ -1089,7 +1050,7 @@ class Uppy {
       this.log('No uploader type plugins are used', 'warning')
     }
 
-    const isMinNumberOfFilesReached = this.checkMinNumberOfFiles()
+    const isMinNumberOfFilesReached = this._checkMinNumberOfFiles()
     if (!isMinNumberOfFilesReached) {
       return Promise.reject(new Error('Minimum number of files has not been reached'))
     }
@@ -1111,8 +1072,8 @@ class Uppy {
         }
       })
 
-      const uploadID = this.createUpload(waitingFileIDs)
-      return this.runUpload(uploadID)
+      const uploadID = this._createUpload(waitingFileIDs)
+      return this._runUpload(uploadID)
     })
   }
 }

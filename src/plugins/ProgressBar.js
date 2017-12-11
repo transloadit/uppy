@@ -1,4 +1,4 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 const html = require('yo-yo')
 
 /**
@@ -6,8 +6,8 @@ const html = require('yo-yo')
  *
  */
 module.exports = class ProgressBar extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.id = this.opts.id || 'ProgressBar'
     this.title = 'Progress Bar'
     this.type = 'progressindicator'

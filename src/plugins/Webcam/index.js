@@ -1,4 +1,4 @@
-const Plugin = require('../Plugin')
+const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const {
   getFileTypeExtension,
@@ -34,8 +34,8 @@ function getMediaDevices () {
  * Webcam
  */
 module.exports = class Webcam extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
@@ -168,7 +168,7 @@ module.exports = class Webcam extends Plugin {
       })
       return this.getVideo()
     }).then((file) => {
-      return this.core.addFile(file)
+      return this.uppy.addFile(file)
     }).then(() => {
       this.recordingChunks = null
       this.recorder = null
@@ -207,11 +207,11 @@ module.exports = class Webcam extends Plugin {
         }
 
         if (count > 0) {
-          this.core.info(`${count}...`, 'warning', 800)
+          this.uppy.info(`${count}...`, 'warning', 800)
           count--
         } else {
           clearInterval(countDown)
-          this.core.info(this.i18n('smile'), 'success', 1500)
+          this.uppy.info(this.i18n('smile'), 'success', 1500)
           setTimeout(() => resolve(), 1500)
         }
       }, 1000)
@@ -224,14 +224,14 @@ module.exports = class Webcam extends Plugin {
 
     this.opts.onBeforeSnapshot().catch((err) => {
       const message = typeof err === 'object' ? err.message : err
-      this.core.info(message, 'error', 5000)
+      this.uppy.info(message, 'error', 5000)
       return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
     }).then(() => {
       return this.getImage()
     }).then((tagFile) => {
       this.captureInProgress = false
-      this.core.addFile(tagFile)
-      const dashboard = this.core.getPlugin('Dashboard')
+      this.uppy.addFile(tagFile)
+      const dashboard = this.uppy.getPlugin('Dashboard')
       if (dashboard) dashboard.hideAllPanels()
     }, (error) => {
       this.captureInProgress = false
@@ -286,7 +286,7 @@ module.exports = class Webcam extends Plugin {
   focus () {
     if (this.opts.countdown) return
     setTimeout(() => {
-      this.core.info(this.i18n('smile'), 'success', 1500)
+      this.uppy.info(this.i18n('smile'), 'success', 1500)
     }, 1000)
   }
 

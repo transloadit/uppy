@@ -1,4 +1,4 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 const html = require('yo-yo')
 
 /**
@@ -9,8 +9,8 @@ const html = require('yo-yo')
  *
  */
 module.exports = class Informer extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'progressindicator'
     this.id = this.opts.id || 'Informer'
     this.title = 'Informer'

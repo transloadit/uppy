@@ -33,7 +33,7 @@ const uppy = Uppy({ autoProceed: false })
   .use(GoogleDrive, { target: Dashboard, host: 'https://server.uppy.io' })
   .use(Tus, { endpoint: '://master.tus.io/files/' })
   .run()
-  .on('core:success', files => console.log(`Successfully uploaded these files: ${files}`))
+  .on('success', files => console.log(`Successfully uploaded these files: ${files}`))
 ```
 
 **[Try it online](http://uppy.io/examples/dashboard/)** or **[read the docs](http://uppy.io/docs)**  for details on how to use Uppy and its plugins.

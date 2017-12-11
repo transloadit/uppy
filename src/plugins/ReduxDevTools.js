@@ -1,4 +1,4 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 
 /**
  * Add Redux DevTools support to Uppy
@@ -7,8 +7,8 @@ const Plugin = require('./Plugin')
  * and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  */
 module.exports = class ReduxDevTools extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'debugger'
     this.id = 'ReduxDevTools'
     this.title = 'Redux DevTools'
@@ -36,18 +36,18 @@ module.exports = class ReduxDevTools extends Plugin {
         // Implement monitors actions
         switch (message.payload.type) {
           case 'RESET':
-            this.core.reset()
+            this.uppy.reset()
             return
           case 'IMPORT_STATE':
             const computedStates = message.payload.nextLiftedState.computedStates
-            this.core.state = Object.assign({}, this.core.state, computedStates[computedStates.length - 1].state)
-            this.core.updateAll(this.core.state)
+            this.uppy.state = Object.assign({}, this.uppy.state, computedStates[computedStates.length - 1].state)
+            this.uppy.updateAll(this.uppy.state)
             return
           case 'JUMP_TO_STATE':
           case 'JUMP_TO_ACTION':
             // this.setState(state)
-            this.core.state = Object.assign({}, this.core.state, JSON.parse(message.state))
-            this.core.updateAll(this.core.state)
+            this.uppy.state = Object.assign({}, this.uppy.state, JSON.parse(message.state))
+            this.uppy.updateAll(this.uppy.state)
         }
       }
     })
@@ -57,14 +57,14 @@ module.exports = class ReduxDevTools extends Plugin {
     this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
     if (this.withDevTools) {
       this.initDevTools()
-      this.core.on('core:state-update', this.handleStateChange)
+      this.uppy.on('state-update', this.handleStateChange)
     }
   }
 
   uninstall () {
     if (this.withDevTools) {
       this.devToolsUnsubscribe()
-      this.core.emitter.off('core:state-update', this.handleStateUpdate)
+      this.uppy.off('state-update', this.handleStateUpdate)
     }
   }
 }

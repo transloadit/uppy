@@ -1,14 +1,12 @@
 const html = require('yo-yo')
-const Plugin = require('../Plugin')
-
-const Provider = require('../../Provider')
-
-const View = require('../../generic-provider-views')
+const Plugin = require('../../core/Plugin')
+const Provider = require('../Provider')
+const View = require('../Provider/view')
 const icons = require('./icons')
 
 module.exports = class Dropbox extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'acquirer'
     this.id = this.opts.id || 'Dropbox'
     this.title = 'Dropbox'
@@ -22,7 +20,7 @@ module.exports = class Dropbox extends Plugin {
 
     // writing out the key explicitly for readability the key used to store
     // the provider instance must be equal to this.id.
-    this[this.id] = new Provider(core, {
+    this[this.id] = new Provider(uppy, {
       host: this.opts.host,
       provider: 'dropbox'
     })

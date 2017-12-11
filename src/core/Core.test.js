@@ -1,6 +1,6 @@
 import Core from './Core'
 import utils from './Utils'
-import Plugin from '../../src/plugins/Plugin'
+import Plugin from './Plugin'
 import AcquirerPlugin1 from '../../test/mocks/acquirerPlugin1'
 import AcquirerPlugin2 from '../../test/mocks/acquirerPlugin2'
 import InvalidPlugin from '../../test/mocks/invalidPlugin'
@@ -141,7 +141,7 @@ describe('src/Core', () => {
     it('should update the state', () => {
       const core = new Core()
       const stateUpdateEventMock = jest.fn()
-      core.on('core:state-update', stateUpdateEventMock)
+      core.on('state-update', stateUpdateEventMock)
       core.use(AcquirerPlugin1)
       core.use(AcquirerPlugin2)
 
@@ -215,8 +215,8 @@ describe('src/Core', () => {
     // const corePauseEventMock = jest.fn()
     const coreCancelEventMock = jest.fn()
     const coreStateUpdateEventMock = jest.fn()
-    core.on('core:cancel-all', coreCancelEventMock)
-    core.on('core:state-update', coreStateUpdateEventMock)
+    core.on('cancel-all', coreCancelEventMock)
+    core.on('state-update', coreStateUpdateEventMock)
     core.setState({ foo: 'bar', totalProgress: 30 })
 
     core.reset()
@@ -242,9 +242,9 @@ describe('src/Core', () => {
     // const corePauseEventMock = jest.fn()
     const coreCancelEventMock = jest.fn()
     const coreStateUpdateEventMock = jest.fn()
-    // core.on('core:pause-all', corePauseEventMock)
-    core.on('core:cancel-all', coreCancelEventMock)
-    core.on('core:state-update', coreStateUpdateEventMock)
+    // core.on('pause-all', corePauseEventMock)
+    core.on('cancel-all', coreCancelEventMock)
+    core.on('state-update', coreStateUpdateEventMock)
 
     core.close()
 
@@ -312,7 +312,7 @@ describe('src/Core', () => {
         })
     })
 
-    it('should update the file progress state when core:preprocess-progress event is fired', () => {
+    it('should update the file progress state when preprocess-progress event is fired', () => {
       const core = new Core()
       core.run()
       return core
@@ -324,7 +324,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('core:preprocess-progress', fileId, {
+          core.emit('preprocess-progress', fileId, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -340,7 +340,7 @@ describe('src/Core', () => {
         })
     })
 
-    it('should update the file progress state when core:preprocess-complete event is fired', () => {
+    it('should update the file progress state when preprocess-complete event is fired', () => {
       const core = new Core()
       core.run()
       return core
@@ -352,7 +352,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('core:preprocess-complete', fileId, {
+          core.emit('preprocess-complete', fileId, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -422,7 +422,7 @@ describe('src/Core', () => {
         })
     })
 
-    it('should update the file progress state when core:postprocess-progress event is fired', () => {
+    it('should update the file progress state when postprocess-progress event is fired', () => {
       const core = new Core()
       core.run()
       return core
@@ -434,7 +434,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('core:postprocess-progress', fileId, {
+          core.emit('postprocess-progress', fileId, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -450,7 +450,7 @@ describe('src/Core', () => {
         })
     })
 
-    it('should update the file progress state when core:postprocess-complete event is fired', () => {
+    it('should update the file progress state when postprocess-complete event is fired', () => {
       const core = new Core()
       core.run()
       return core
@@ -462,7 +462,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('core:postprocess-complete', fileId, {
+          core.emit('postprocess-complete', fileId, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -527,7 +527,7 @@ describe('src/Core', () => {
       const fileAddedEventMock = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:file-added', fileAddedEventMock)
+      core.on('file-added', fileAddedEventMock)
       return core
         .addFile({
           source: 'jest',
@@ -598,19 +598,19 @@ describe('src/Core', () => {
       })).rejects.toMatchObject({ message: 'onBeforeFileAdded: a plain string' })
     })
 
-    it('should call utils.generatePreview when core:file-added is triggered and thumbnail generation is allowed', () => {
+    it('should call utils.generatePreview when file-added is triggered and thumbnail generation is allowed', () => {
       const core = new Core({
       }).run()
       const file = {
         type: 'image/jpeg',
         isRemote: false
       }
-      core.emit('core:file-added', file)
+      core.emit('file-added', file)
       expect(utils.createThumbnail).toHaveBeenCalledTimes(1)
       expect(utils.createThumbnail.mock.calls[0][1]).toEqual(200)
     })
 
-    it('should return an object url of the image when core:file-added is triggered and thumbnail generation is disabled', () => {
+    it('should return an object url of the image when file-added is triggered and thumbnail generation is disabled', () => {
       const core = new Core({
         thumbnailGeneration: false
       }).run()
@@ -619,7 +619,7 @@ describe('src/Core', () => {
         isRemote: false,
         data: 'foo'
       }
-      core.emit('core:file-added', file)
+      core.emit('file-added', file)
       expect(URL.createObjectURL).toHaveBeenCalledTimes(1)
       expect(URL.createObjectURL).toHaveBeenCalledWith('foo')
     })
@@ -648,7 +648,7 @@ describe('src/Core', () => {
       core.addUploader((fileIDs) => {
         fileIDs.forEach((fileID) => {
           if (/bar/.test(core.getFile(fileID).name)) {
-            core.emit('core:upload-error', fileID, new Error('This is bar and I do not like bar'))
+            core.emit('upload-error', fileID, new Error('This is bar and I do not like bar'))
           }
         })
         return Promise.resolve()
@@ -675,7 +675,7 @@ describe('src/Core', () => {
       const fileRemovedEventMock = jest.fn()
 
       const core = new Core()
-      core.on('core:file-removed', fileRemovedEventMock)
+      core.on('file-removed', fileRemovedEventMock)
       core.run()
       return core
         .addFile({
@@ -751,32 +751,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.updateMeta({ foo: 'bar', bur: 'mur' }, fileId)
-          core.updateMeta({ boo: 'moo', bur: 'fur' }, fileId)
-          expect(core.state.files[fileId].meta).toEqual({
-            name: 'foo.jpg',
-            type: 'image/jpeg',
-            foo: 'bar',
-            bur: 'fur',
-            boo: 'moo'
-          })
-        })
-    })
-
-    it('should update meta data for a file by calling core:update-meta', () => {
-      const core = new Core()
-      core.run()
-      return core
-        .addFile({
-          source: 'jest',
-          name: 'foo.jpg',
-          type: 'image/jpeg',
-          data: utils.dataURItoFile(sampleImageDataURI, {})
-        })
-        .then(() => {
-          const fileId = Object.keys(core.state.files)[0]
-          core.emit('core:update-meta', { foo: 'bar', bur: 'mur' }, fileId)
-          core.emit('core:update-meta', { boo: 'moo', bur: 'fur' }, fileId)
+          core.setFileMeta(fileId, { foo: 'bar', bur: 'mur' })
+          core.setFileMeta(fileId, { boo: 'moo', bur: 'fur' })
           expect(core.state.files[fileId].meta).toEqual({
             name: 'foo.jpg',
             type: 'image/jpeg',
@@ -800,7 +776,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId,
             bytesUploaded: 12345,
             bytesTotal: 17175
@@ -813,7 +789,7 @@ describe('src/Core', () => {
             uploadStarted: false
           })
 
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId,
             bytesUploaded: 17175,
             bytesTotal: 17175
@@ -851,19 +827,19 @@ describe('src/Core', () => {
           core.state.files[fileId1].progress.uploadStarted = new Date()
           core.state.files[fileId2].progress.uploadStarted = new Date()
 
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId1,
             bytesUploaded: 12345,
             bytesTotal: 17175
           })
 
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId2,
             bytesUploaded: 10201,
             bytesTotal: 17175
           })
 
-          core.calculateTotalProgress()
+          core._calculateTotalProgress()
           expect(core.state.totalProgress).toEqual(65)
         })
     })
@@ -872,7 +848,7 @@ describe('src/Core', () => {
       const resetProgressEvent = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:reset-progress', resetProgressEvent)
+      core.on('reset-progress', resetProgressEvent)
       return core
         .addFile({
           source: 'jest',
@@ -894,19 +870,19 @@ describe('src/Core', () => {
           core.state.files[fileId1].progress.uploadStarted = new Date()
           core.state.files[fileId2].progress.uploadStarted = new Date()
 
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId1,
             bytesUploaded: 12345,
             bytesTotal: 17175
           })
 
-          core.calculateProgress({
+          core._calculateProgress({
             id: fileId2,
             bytesUploaded: 10201,
             bytesTotal: 17175
           })
 
-          core.calculateTotalProgress()
+          core._calculateTotalProgress()
 
           expect(core.state.totalProgress).toEqual(65)
 
@@ -998,28 +974,28 @@ describe('src/Core', () => {
   })
 
   describe('actions', () => {
-    it('should update the state when receiving the core:error event', () => {
+    it('should update the state when receiving the error event', () => {
       const core = new Core()
       core.run()
-      core.emit('core:error', new Error('foooooo'))
+      core.emit('error', new Error('foooooo'))
       expect(core.state.error).toEqual('foooooo')
     })
 
-    it('should update the state when receiving the core:upload-error event', () => {
+    it('should update the state when receiving the upload-error event', () => {
       const core = new Core()
       core.run()
       core.state.files['fileId'] = {
         name: 'filename'
       }
-      core.emit('core:upload-error', 'fileId', { message: 'this is the error' })
+      core.emit('upload-error', 'fileId', { message: 'this is the error' })
       expect(core.state.info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
     })
 
-    it('should reset the error state when receiving the core:upload event', () => {
+    it('should reset the error state when receiving the upload event', () => {
       const core = new Core()
       core.run()
-      core.emit('core:error', { foo: 'bar' })
-      core.emit('core:upload')
+      core.emit('error', { foo: 'bar' })
+      core.emit('upload')
       expect(core.state.error).toEqual(null)
     })
   })
@@ -1076,7 +1052,7 @@ describe('src/Core', () => {
       const infoVisibleEvent = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:info-visible', infoVisibleEvent)
+      core.on('info-visible', infoVisibleEvent)
 
       core.info('This is the message', 'info', 0)
       expect(core.state.info).toEqual({
@@ -1093,7 +1069,7 @@ describe('src/Core', () => {
       const infoVisibleEvent = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:info-visible', infoVisibleEvent)
+      core.on('info-visible', infoVisibleEvent)
 
       core.info({
         message: 'This is the message',
@@ -1118,8 +1094,8 @@ describe('src/Core', () => {
       const infoHiddenEvent = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:info-visible', infoVisibleEvent)
-      core.on('core:info-hidden', infoHiddenEvent)
+      core.on('info-visible', infoVisibleEvent)
+      core.on('info-hidden', infoHiddenEvent)
 
       core.info('This is the message', 'info', 100)
       expect(typeof core.infoTimeoutID).toEqual('number')
@@ -1141,8 +1117,8 @@ describe('src/Core', () => {
       const infoHiddenEvent = jest.fn()
       const core = new Core()
       core.run()
-      core.on('core:info-visible', infoVisibleEvent)
-      core.on('core:info-hidden', infoHiddenEvent)
+      core.on('info-visible', infoVisibleEvent)
+      core.on('info-hidden', infoHiddenEvent)
 
       core.info('This is the message', 'info', 0)
       expect(typeof core.infoTimeoutID).toEqual('undefined')
@@ -1168,7 +1144,7 @@ describe('src/Core', () => {
         type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
       }).then(() => {
-        core.createUpload(Object.keys(core.state.files))
+        core._createUpload(Object.keys(core.state.files))
         const uploadId = Object.keys(core.state.currentUploads)[0]
         const currentUploadsState = {}
         currentUploadsState[uploadId] = {
@@ -1188,7 +1164,7 @@ describe('src/Core', () => {
           const uploadId = Object.keys(core.state.currentUploads)[0]
           expect(typeof core.state.currentUploads[uploadId]).toEqual('object')
           expect(core.state.currentUploads[uploadId].fileIDs.length).toEqual(1)
-          core.removeUpload(uploadId)
+          core._removeUpload(uploadId)
           expect(typeof core.state.currentUploads[uploadId]).toEqual('undefined')
         })
       }
