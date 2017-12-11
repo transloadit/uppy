@@ -79,30 +79,30 @@ Each hook is a function that receives an array containing the file IDs that are 
 
 Additionally, upload hooks can fire events to signal progress.
 
-> When adding hooks, make sure to bind the hook `fn` beforehand! Otherwise it will be impossible to remove. For example:
+When adding hooks, make sure to bind the hook `fn` beforehand! Otherwise it will be impossible to remove. For example:
 
-> ```js
-> class MyPlugin extends Plugin {
->   constructor (uppy, opts) {
->     super(uppy, opts)
->     this.id = opts.id || 'MyPlugin'
->     this.type = 'example'
->     this.prepareUpload = this.prepareUpload.bind(this) // ← this!
->   }
+```js
+class MyPlugin extends Plugin {
+  constructor (uppy, opts) {
+    super(uppy, opts)
+    this.id = opts.id || 'MyPlugin'
+    this.type = 'example'
+    this.prepareUpload = this.prepareUpload.bind(this) // ← this!
+  }
 
->   prepareUpload (fileIDs) {
->     return Promise.resolve()
->   }
+  prepareUpload (fileIDs) {
+    return Promise.resolve()
+  }
 
->   install () {
->     this.uppy.addPreProcessor(this.prepareUpload)
->   }
+  install () {
+    this.uppy.addPreProcessor(this.prepareUpload)
+  }
 
->   uninstall () {
->     this.uppy.removePreProcessor(this.prepareUpload)
->   }
-> }
-> ```
+  uninstall () {
+    this.uppy.removePreProcessor(this.prepareUpload)
+  }
+}
+```
 
 ### `addPreProcessor(fn)`
 
