@@ -43,7 +43,7 @@ Called when the plugin is `.use`d. Do any setup work here, like attaching events
 
 ```js
 install () {
-  this.core.on('core:upload-progress', this.onProgress)
+  this.uppy.on('upload-progress', this.onProgress)
   this.addPostProcessor(this.afterUpload)
 }
 ```
@@ -54,7 +54,7 @@ Called when the plugin is removed, or the Uppy instance is closed. This should u
 
 ```js
 uninstall () {
-  this.core.off('core:upload-progress', this.onProgress)
+  this.uppy.off('upload-progress', this.onProgress)
   this.removePostProcessor(this.afterUpload)
 }
 ```
@@ -75,7 +75,7 @@ Called on each state update. For UI plugins, this is a good time to rerender!
 
 When creating an upload, Uppy runs files through an upload pipeline. The pipeline consists of three parts, each of which can be hooked into: Preprocessing, Uploading, and Postprocessing. Preprocessors can be used to configure uploader plugins, encrypt files, resize images, etc., before uploading them. Uploaders do the actual uploading work, such as creating an XMLHttpRequest object and sending the file. Postprocessors do work after files have been uploaded completely. This could be anything from waiting for a file to propagate across a CDN, to sending another request to relate some metadata to the file.
 
-Each hook is a function that receives an array containing the file IDs that are being uploaded, and returns a Promise to signal completion. Hooks are added and removed through `Core` methods: `addPreProcessor`, `addUploader`, `addPostProcessor`, and their `remove*` counterparts. Normally, hooks should be added during the plugin's `install()` method, and removed during the `uninstall()` method.
+Each hook is a function that receives an array containing the file IDs that are being uploaded, and returns a Promise to signal completion. Hooks are added and removed through `Uppy` methods: `addPreProcessor`, `addUploader`, `addPostProcessor`, and their `remove*` counterparts. Normally, hooks should be added during the plugin's `install()` method, and removed during the `uninstall()` method.
 
 Additionally, upload hooks can fire events to signal progress.
 
@@ -95,11 +95,11 @@ Additionally, upload hooks can fire events to signal progress.
 >   }
 
 >   install () {
->     this.core.addPreProcessor(this.prepareUpload)
+>     this.uppy.addPreProcessor(this.prepareUpload)
 >   }
 
 >   uninstall () {
->     this.core.removePreProcessor(this.prepareUpload)
+>     this.uppy.removePreProcessor(this.prepareUpload)
 >   }
 > }
 > ```
@@ -128,7 +128,7 @@ Progress events can be fired for individual files to show feedback to the user. 
 
 Preprocessing and postprocessing progress events can refer to anything, so Uppy doesn't try to be smart about them. There are two types of processing progress events: determinate and indeterminate. Some processing does not have meaningful progress beyond "not done" and "done". For example, sending a request to initialize a server-side resource that will be uploaded to. In those situations, indeterminate progress is suitable.
 
-### `core:preprocess-progress(fileID, progress)`
+### `preprocess-progress(fileID, progress)`
 
 `progress` is an object with properties:
 
@@ -139,7 +139,7 @@ When `mode` is `'determinate'`, also add the `value` property:
 
  - `value` - A progress value between 0 and 1.
 
-### `core:upload-progress(progress)`
+### `upload-progress(progress)`
 
 `progress` is an object with properties:
 
@@ -148,7 +148,7 @@ When `mode` is `'determinate'`, also add the `value` property:
  - `bytesTotal` - The full amount of bytes to be uploaded.
  - `bytesUploaded` - The amount of bytes that have been uploaded so far.
 
-### `core:postprocess-progress(fileID, progress)`
+### `postprocess-progress(fileID, progress)`
 
 `progress` is an object with properties:
 
