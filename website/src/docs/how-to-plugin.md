@@ -44,7 +44,7 @@ Called when the plugin is `.use`d. Do any setup work here, like attaching events
 ```js
 install () {
   this.uppy.on('upload-progress', this.onProgress)
-  this.addPostProcessor(this.afterUpload)
+  this.uppy.addPostProcessor(this.afterUpload)
 }
 ```
 
@@ -55,7 +55,7 @@ Called when the plugin is removed, or the Uppy instance is closed. This should u
 ```js
 uninstall () {
   this.uppy.off('upload-progress', this.onProgress)
-  this.removePostProcessor(this.afterUpload)
+  this.uppy.removePostProcessor(this.afterUpload)
 }
 ```
 
@@ -159,4 +159,4 @@ When `mode` is `'determinate'`, also add the `value` property:
 
  - `value` - A progress value between 0 and 1.
 
- [core.setfilestate](/docs/uppy#uppy-setFileState-fileID-state)
+ [core.setfilestate]: /docs/uppy#uppy-setFileState-fileID-state
