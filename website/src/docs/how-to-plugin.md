@@ -159,4 +159,8 @@ When `mode` is `'determinate'`, also add the `value` property:
 
  - `value` - A progress value between 0 and 1.
 
- [core.setfilestate]: /docs/uppy#uppy-setFileState-fileID-state
+## UI Plugins
+
+TODO after preact switch
+
+[core.setfilestate]: /docs/uppy#uppy-setFileState-fileID-state
