@@ -43,18 +43,19 @@ const uppy = Uppy({
   target: '.DashboardContainer'
   note: 'Images and video only, 2–3 files, up to 1 MB',
   metaFields: [
-    { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
-    { id: 'caption', name: 'Caption', value: '', placeholder: 'describe what the image is about' }
+    { id: 'license', name: 'License', placeholder: 'specify license' },
+    { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
   ]
 })
-.use(GoogleDrive, {target: Dashboard, host: 'https://server.uppy.io'})
-.use(Dropbox, {target: Dashboard, host: 'https://server.uppy.io'})
-.use(Instagram, {target: Dashboard, host: 'https://server.uppy.io'})
-.use(Webcam, {target: Dashboard})
-.use(Tus, {endpoint: 'https://master.tus.io/files/'})
+.use(GoogleDrive, { target: Dashboard, host: 'https://server.uppy.io' })
+.use(Dropbox, { target: Dashboard, host: 'https://server.uppy.io' })
+.use(Instagram, { target: Dashboard, host: 'https://server.uppy.io' })
+.use(Webcam, { target: Dashboard })
+.use(Tus, { endpoint: 'https://master.tus.io/files/' })
 .run()
 
-uppy.on('complete', (result) => {
-  console.log('Successfully uploaded:', result.successful)
+uppy.on('complete', result => {
+  console.log('successful files:', result.successful)
+  console.log('failed files:', result.failed)
 })
 {% endcodeblock %}
