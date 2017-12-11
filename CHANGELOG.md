@@ -107,25 +107,43 @@ To be released: 2017-12-20
 Theme: 🎄 Christmas edition
 
 - [ ] add `Form`: a plugin that is used in conjunction with any other acquirer, responsible for 1. acquiring the metadata from form; 2. intercepting submit event on the form, opening Uppy dialog instead; 3. injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think) (@arturi)
-- [ ] core: Redux PR (#216 / @arturi, @goto-bus-stop, @richardwillars)
+- [ ] core: large refactor of Core and Plugins: setFileState, merge MetaData plugin into Dashboard, prefix "private" core methods with underscores; 
+- [ ] core: Rename core to uppy in plugins and what not. So instead of this.core.state we would use this.uppy.state;
+- [ ] core: Rename events to remove core: prefix, as been suggested already. So: success, error, upload-started and so on, and prefixed event names for plugins
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [x] core: improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (@goto-bus-stop, @arturi)
-- [x] core: limit amount of simultaneous uploads, queuing? #360 (#427 / @goto-bus-stop)
 - [ ] core: queue preview generation #431
 - [ ] core: all: reset or !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
-- [x] dashboard: place upload button into StatusBar, use Alex’s suggestions for retry button; other UI tweaks (@arturi)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
-- [ ] docs: on writing plugins
+- [ ] docs: on writing plugins (@goto-bus-stop)
 - [ ] goldenretriever: add “ghost” files (@arturi)
-- [ ] provider: improve UI, add icons for file types (@arturi)
 - [ ] tus: Review “tus: Remove old upload and events when starting a new upload.” b3cc48130e292f08c2a09f2f0adf6b6332bf7692 (@arturi)
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request #442
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: security audit, ask @acconut
-- [ ] uppy: refine UI, look into text-based file type icons (@arturi)
+- [ ] uppy: refine UI, look into text-based file type icons or more icons for file types? (@arturi)
+
+## 0.21.1
+
+Released: 2017-12-10.
+
+- [x] StatusBar, Dashboard and Provider UI improvements place upload button into StatusBar, use Alex’s suggestions for retry button; other UI tweaks (#434 / @arturi)
+- [x] XHRUpload: fix fields in XHR remote uploader (#424 / @sadovnychyi)
+- [x] XHRUpload: option to limit simultaneous uploads #360 (#427 / goto-bus-stop)
+- [x] core: Add `isSupported()` API for providers (#421 / @goto-bus-stop, @arturi)
+- [x] core: Add stores. Improve on Redux PR #216 to allow using Redux (or any other solution) for all Uppy state management, instead of proxy-only (#426 / @goto-bus-stop)
+- [x] core: Set `this.el` in `Plugin` class (#425 / @arturi)
+- [x] core: add ability to disable thumbnail generation (#432 / @richardwillars)
+- [x] core: allow to select multiple files at once from remote providers (#419 / @sadovnychyi)
+- [x] core: use setPluginState and getPluginState in Providers (#436 / @arturi)
+- [x] docs: uppy-server docs for s3 `getKey` option (#444 / @goto-bus-stop)
+- [x] goldenretriever: Fix IndexedDB store initialisation when not cleaning up (#430 / @goto-bus-stop)
+- [x] provider: folder deselection did not remove all files (#439 / @ifedapoolarewaju)
+- [x] s3: Use Translator for localised strings (420 / @goto-bus-stop )
+- [x] transloadit: Port old tests from tape (#428 / @goto-bus-stop)
+- [x] tus: Restore correctly from paused state (#443 / @goto-bus-stop)
 
 ## 0.21.0
 
