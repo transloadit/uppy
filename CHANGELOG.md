@@ -106,10 +106,15 @@ What we need to do to release Uppy 1.0
 To be released: 2017-12-20
 Theme: 🎄 Christmas edition
 
+**⚠️ Breaking changes: ⚠️**
+
+- [x] core: large refactor of Core and Plugins: setFileState, merge MetaData plugin into Dashboard, prefix "private" core methods with underscores; (@arturi / #438) 
+- [x] core: renamed core to uppy in plugins and what not. So instead of this.core.state we would use this.uppy.state; (@arturi / #438) 
+- [x] core: renamed events to remove core: prefix, as been suggested already. So: `success`, `error`, `upload-started` and so on, and prefixed event names for plugins sometimes, like `dashboard:file-card` (@arturi / #438) 
+- [x] dashboard: added `metaFields` option, pass an array of settings for UI field objects `{ id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }` (@arturi, @goto-bus-stop / #438)
+
 - [ ] add `Form`: a plugin that is used in conjunction with any other acquirer, responsible for 1. acquiring the metadata from form; 2. intercepting submit event on the form, opening Uppy dialog instead; 3. injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think) (@arturi)
-- [ ] core: large refactor of Core and Plugins: setFileState, merge MetaData plugin into Dashboard, prefix "private" core methods with underscores; 
-- [ ] core: Rename core to uppy in plugins and what not. So instead of this.core.state we would use this.uppy.state;
-- [ ] core: Rename events to remove core: prefix, as been suggested already. So: success, error, upload-started and so on, and prefixed event names for plugins
+- [ ] core: return `processing` results among with `upload` results in `success` event and `upload()` promise
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: queue preview generation #431
 - [ ] core: all: reset or !important styles to be immune to any environment/page. Maybe use smth like `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
@@ -137,7 +142,7 @@ Released: 2017-12-10.
 - [x] core: Set `this.el` in `Plugin` class (#425 / @arturi)
 - [x] core: add ability to disable thumbnail generation (#432 / @richardwillars)
 - [x] core: allow to select multiple files at once from remote providers (#419 / @sadovnychyi)
-- [x] core: use setPluginState and getPluginState in Providers (#436 / @arturi)
+- [x] core: use `setPluginState` and `getPluginState` in Providers (#436 / @arturi)
 - [x] docs: uppy-server docs for s3 `getKey` option (#444 / @goto-bus-stop)
 - [x] goldenretriever: Fix IndexedDB store initialisation when not cleaning up (#430 / @goto-bus-stop)
 - [x] provider: folder deselection did not remove all files (#439 / @ifedapoolarewaju)
