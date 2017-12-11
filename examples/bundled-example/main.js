@@ -20,7 +20,8 @@ const uppy = Uppy({
   debug: true,
   autoProceed: false,
   meta: {
-    username: 'John'
+    username: 'John',
+    license: 'Creative Commons'
   }
   // restrictions: {
   //   maxFileSize: 300000,
@@ -47,19 +48,18 @@ const uppy = Uppy({
     // maxWidth: 350,
     // maxHeight: 400,
     inline: false,
-    // disableStatusBar: true,
-    // disableInformer: true,
+    disableStatusBar: false,
+    disableInformer: false,
     getMetaFromForm: true,
-    // replaceTargetContent: true,
-    // target: '.MyForm',
+    replaceTargetContent: false,
     hideUploadButton: false,
     closeModalOnClickOutside: false,
     locale: {
-      strings: {browse: 'browse'}
+      strings: { browse: 'browse' }
     },
     metaFields: [
-      { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
-      { id: 'caption', name: 'Caption', value: '', placeholder: 'describe what the image is about' }
+      { id: 'license', name: 'License', placeholder: 'specify license' },
+      { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
     ]
     // note: 'Images and video only, 300kb or less'
   })

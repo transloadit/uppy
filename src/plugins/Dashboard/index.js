@@ -99,7 +99,6 @@ module.exports = class DashboardUI extends Plugin {
     this.getFocusableNodes = this.getFocusableNodes.bind(this)
     this.setFocusToFirstNode = this.setFocusToFirstNode.bind(this)
     this.maintainFocus = this.maintainFocus.bind(this)
-    this.addDashboardMetaToNewFile = this.addDashboardMetaToNewFile.bind(this)
 
     this.initEvents = this.initEvents.bind(this)
     this.onKeydown = this.onKeydown.bind(this)
@@ -262,7 +261,6 @@ module.exports = class DashboardUI extends Plugin {
     })
 
     this.uppy.on('dashboard:file-card', this.handleFileCard)
-    this.uppy.on('file-added', this.addDashboardMetaToNewFile)
 
     window.addEventListener('resize', this.updateDashboardElWidth)
   }
@@ -280,19 +278,8 @@ module.exports = class DashboardUI extends Plugin {
     this.removeDragDropListener()
 
     this.uppy.off('dashboard:file-card', this.handleFileCard)
-    this.uppy.off('file-added', this.addDashboardMetaToNewFile)
 
     window.removeEventListener('resize', this.updateDashboardElWidth)
-  }
-
-  addDashboardMetaToNewFile (file) {
-    const metaFields = this.opts.metaFields
-
-    metaFields.forEach((item) => {
-      const obj = {}
-      obj[item.id] = item.value
-      this.uppy.setFileMeta(file.id, obj)
-    })
   }
 
   updateDashboardElWidth () {
