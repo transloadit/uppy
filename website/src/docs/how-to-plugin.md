@@ -79,38 +79,48 @@ Each hook is a function that receives an array containing the file IDs that are 
 
 Additionally, upload hooks can fire events to signal progress.
 
+> When adding hooks, make sure to bind the hook `fn` beforehand! Otherwise it will be impossible to remove. For example:
+
+> ```js
+> class MyPlugin extends Plugin {
+>   constructor (uppy, opts) {
+>     super(uppy, opts)
+>     this.id = opts.id || 'MyPlugin'
+>     this.type = 'example'
+>     this.prepareUpload = this.prepareUpload.bind(this) // ← this!
+>   }
+
+>   prepareUpload (fileIDs) {
+>     return Promise.resolve()
+>   }
+
+>   install () {
+>     this.core.addPreProcessor(this.prepareUpload)
+>   }
+
+>   uninstall () {
+>     this.core.removePreProcessor(this.prepareUpload)
+>   }
+> }
+> ```
+
 ### `addPreProcessor(fn)`
 
-Make sure to bind the hook `fn` beforehand! Otherwise it will be impossible to remove. For example:
-
-```js
-class MyPlugin extends Plugin {
-  constructor (uppy, opts) {
-    super(uppy, opts)
-    this.id = opts.id || 'MyPlugin'
-    this.type = 'example'
-    this.prepareUpload = this.prepareUpload.bind(this) // ← this!
-  }
-
-  prepareUpload (fileIDs) {
-    return Promise.resolve()
-  }
-
-  install () {
-    this.addPreProcessor(this.prepareUpload)
-  }
-
-  uninstall () {
-    this.removePreProcessor(this.prepareUpload)
-  }
-}
-```
+Add a preprocessing function. `fn` gets called with a list of file IDs before an upload starts. `fn` should return a Promise. Its resolution value is ignored. To change file data and such, use Uppy state updates, for example using [`setFileState`][core.setfilestate].
 
 ### `addUploader(fn)`
 
+Add an uploader function. `fn` gets called with a list of file IDs when an upload should start. Uploader functions should do the actual uploading work, such as creating and sending an XMLHttpRequest or calling into some upload service's SDK. `fn` should return a Promise that resolves once all files have been uploaded.
+
+You may choose to still resolve the Promise if some file uploads fail. This way any postprocessing will still run on the files that were uploaded successfully, while uploads that failed will be retried when `uppy.retryAll` is called.
+
 ### `addPostProcessor(fn)`
 
+Add a postprocessing function. `fn` is called with a list of file IDs when an upload has finished. `fn` should return a Promise that resolves when the processing work is complete. Again, the resolution value of the Promise is ignored. This hook can be used to do any finishing work. For example, you could wait for file encoding or CDN propagation to complete, or you could do an HTTP API call to create an album containing all images that were just uploaded.
+
 ### `removePreProcessor/removeUploader/removePostProcessor(fn)`
+
+Remove a processor or uploader function that was added previously. Normally this should be done in the `uninstall()` method.
 
 ## Progress Events
 
@@ -148,3 +158,5 @@ When `mode` is `'determinate'`, also add the `value` property:
 When `mode` is `'determinate'`, also add the `value` property:
 
  - `value` - A progress value between 0 and 1.
+
+ [core.setfilestate](/docs/uppy#uppy-setFileState-fileID-state)
