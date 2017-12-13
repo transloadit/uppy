@@ -168,13 +168,13 @@ module.exports = class Webcam extends Plugin {
         isRecording: false
       })
       return this.getVideo()
-    }).then((file) => {
-      this.uppy.addFile(file)
-      const dashboard = this.uppy.getPlugin('Dashboard')
-      if (dashboard) dashboard.hideAllPanels()
-    }).then(() => {
+    })
+    .then(this.uppy.addFile)
+    .then(() => {
       this.recordingChunks = null
       this.recorder = null
+      const dashboard = this.uppy.getPlugin('Dashboard')
+      if (dashboard) dashboard.hideAllPanels()
     }, (error) => {
       this.recordingChunks = null
       this.recorder = null
