@@ -1,6 +1,9 @@
-const html = require('yo-yo')
 const getFileTypeIcon = require('./getFileTypeIcon')
 const { checkIcon } = require('./icons')
+
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 module.exports = function fileCard (props) {
   const file = props.fileCardFor ? props.files[props.fileCardFor] : false
@@ -57,8 +60,14 @@ module.exports = function fileCard (props) {
             <div class="UppyDashboardFileCard-info">
               <fieldset class="UppyDashboardFileCard-fieldset">
                 <label class="UppyDashboardFileCard-label">Name</label>
-                <input class="UppyDashboardFileCard-input" data-name="name" type="text" value="${file.meta.name}"
-                       onkeyup=${tempStoreMetaOrSubmit} />
+                <input class="UppyDashboardFileCard-input" 
+                       type="text"
+                       data-name="name"
+                       value="${file.meta.name || ''}"
+                       placeholder="name"
+                       onkeyup=${tempStoreMetaOrSubmit}
+                       onkeydown=${tempStoreMetaOrSubmit}
+                       onkeypress=${tempStoreMetaOrSubmit} />
               </fieldset>
               ${renderMetaFields(file)}
             </div>

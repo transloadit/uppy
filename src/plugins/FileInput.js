@@ -1,7 +1,9 @@
 const Plugin = require('../core/Plugin')
 const { toArray } = require('../core/Utils')
 const Translator = require('../core/Translator')
-const html = require('yo-yo')
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 module.exports = class FileInput extends Plugin {
   constructor (uppy, opts) {

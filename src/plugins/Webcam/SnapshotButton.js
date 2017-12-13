@@ -1,4 +1,6 @@
-const html = require('yo-yo')
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 const CameraIcon = require('./CameraIcon')
 
 module.exports = function SnapshotButton ({ onSnapshot }) {

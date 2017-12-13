@@ -1,3 +1,4 @@
+const { h } = require('preact')
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const {
@@ -168,7 +169,9 @@ module.exports = class Webcam extends Plugin {
       })
       return this.getVideo()
     }).then((file) => {
-      return this.uppy.addFile(file)
+      this.uppy.addFile(file)
+      const dashboard = this.uppy.getPlugin('Dashboard')
+      if (dashboard) dashboard.hideAllPanels()
     }).then(() => {
       this.recordingChunks = null
       this.recorder = null
@@ -301,7 +304,7 @@ module.exports = class Webcam extends Plugin {
       return PermissionsScreen(webcamState)
     }
 
-    return CameraScreen(Object.assign({}, webcamState, {
+    return h(CameraScreen, Object.assign({}, webcamState, {
       onSnapshot: this.takeSnapshot,
       onStartRecording: this.startRecording,
       onStopRecording: this.stopRecording,

@@ -1,5 +1,8 @@
-const html = require('yo-yo')
 const throttle = require('lodash.throttle')
+
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 function progressDetails (props) {
   return html`<span>${props.totalProgress || 0}%・${props.complete} / ${props.inProgress}・${props.totalUploadedSize} / ${props.totalSize}・↑ ${props.totalSpeed}/s・${props.totalETA}</span>`
@@ -15,10 +18,6 @@ const STATE_POSTPROCESSING = 'postprocessing'
 const STATE_COMPLETE = 'complete'
 
 function getUploadingState (props, files) {
-  // if (props.error) {
-  //   return STATE_ERROR
-  // }
-
   if (props.isAllErrored) {
     return STATE_ERROR
   }

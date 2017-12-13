@@ -1,6 +1,9 @@
-const html = require('yo-yo')
 const Breadcrumbs = require('./Breadcrumbs')
 const Table = require('./Table')
+
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 module.exports = (props) => {
   let filteredFolders = props.folders

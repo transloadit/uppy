@@ -1,10 +1,12 @@
-const html = require('yo-yo')
 const FileList = require('./FileList')
 const Tabs = require('./Tabs')
 const FileCard = require('./FileCard')
-// const UploadBtn = require('./UploadBtn')
 const { isTouchDevice, toArray } = require('../../core/Utils')
 const { closeIcon } = require('./icons')
+
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal

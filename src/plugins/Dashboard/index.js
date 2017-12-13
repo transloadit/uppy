@@ -210,9 +210,12 @@ module.exports = class DashboardUI extends Plugin {
     document.body.classList.add('is-UppyDashboard-open')
     document.body.style.top = `-${this.savedDocumentScrollPosition}px`
 
+    this.updateDashboardElWidth()
+    this.setFocusToFirstNode()
+
     // timeout is needed because yo-yo/morphdom/nanoraf; not needed without nanoraf
-    setTimeout(this.setFocusToFirstNode, 100)
-    setTimeout(this.updateDashboardElWidth, 100)
+    // setTimeout(this.setFocusToFirstNode, 100)
+    // setTimeout(this.updateDashboardElWidth, 100)
   }
 
   closeModal () {

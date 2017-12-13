@@ -1,7 +1,10 @@
-const html = require('yo-yo')
 const Plugin = require('../../core/Plugin')
 const Provider = require('../Provider')
 const View = require('../Provider/view')
+
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 module.exports = class GoogleDrive extends Plugin {
   constructor (uppy, opts) {

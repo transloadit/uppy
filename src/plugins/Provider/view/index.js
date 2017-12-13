@@ -2,6 +2,7 @@ const AuthView = require('./AuthView')
 const Browser = require('./Browser')
 const LoaderView = require('./Loader')
 const Utils = require('../../../core/Utils')
+const { h } = require('preact')
 
 /**
  * Class to easily generate generic views for plugins
@@ -555,7 +556,7 @@ module.exports = class View {
     }
 
     if (!authenticated) {
-      return AuthView({
+      return h(AuthView, {
         pluginName: this.plugin.title,
         demo: this.plugin.opts.demo,
         checkAuth: this.checkAuth,

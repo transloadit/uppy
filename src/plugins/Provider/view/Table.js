@@ -1,4 +1,6 @@
-const html = require('yo-yo')
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 const Row = require('./TableRow')
 
 module.exports = (props) => {
@@ -17,7 +19,7 @@ module.exports = (props) => {
   return html`
     <table class="BrowserTable" onscroll=${props.handleScroll}>
       <tbody role="listbox" aria-label="List of files from ${props.title}">
-        ${props.folders.map((folder) => {
+        ${props.folders.map(folder => {
           let isDisabled = false
           let isChecked = props.isChecked(folder)
           if (isChecked) {
@@ -25,7 +27,8 @@ module.exports = (props) => {
           }
           return Row({
             title: props.getItemName(folder),
-            active: props.activeRow(folder),
+            type: 'folder',
+            // active: props.activeRow(folder),
             getItemIcon: () => props.getItemIcon(folder),
             handleClick: () => props.handleFolderClick(folder),
             isDisabled: isDisabled,
@@ -34,10 +37,11 @@ module.exports = (props) => {
             columns: props.columns
           })
         })}
-        ${props.files.map((file) => {
+        ${props.files.map(file => {
           return Row({
             title: props.getItemName(file),
-            active: props.activeRow(file),
+            type: 'file',
+            // active: props.activeRow(file),
             getItemIcon: () => props.getItemIcon(file),
             handleClick: () => props.handleFileClick(file),
             isDisabled: false,

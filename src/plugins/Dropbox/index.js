@@ -1,8 +1,11 @@
-const html = require('yo-yo')
 const Plugin = require('../../core/Plugin')
 const Provider = require('../Provider')
 const View = require('../Provider/view')
 const icons = require('./icons')
+
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 module.exports = class Dropbox extends Plugin {
   constructor (uppy, opts) {
@@ -28,7 +31,6 @@ module.exports = class Dropbox extends Plugin {
     this.files = []
 
     this.onAuth = this.onAuth.bind(this)
-
     this.render = this.render.bind(this)
 
     // set default options

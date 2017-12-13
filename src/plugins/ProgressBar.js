@@ -1,5 +1,7 @@
 const Plugin = require('../core/Plugin')
-const html = require('yo-yo')
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 /**
  * Progress bar

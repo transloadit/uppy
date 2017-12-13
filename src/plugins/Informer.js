@@ -1,5 +1,8 @@
 const Plugin = require('../core/Plugin')
-const html = require('yo-yo')
+
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 /**
  * Informer
@@ -14,7 +17,6 @@ module.exports = class Informer extends Plugin {
     this.type = 'progressindicator'
     this.id = this.opts.id || 'Informer'
     this.title = 'Informer'
-    // this.timeoutID = undefined
 
     // set default options
     const defaultOptions = {

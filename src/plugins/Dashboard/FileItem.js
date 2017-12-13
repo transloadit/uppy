@@ -1,4 +1,3 @@
-const html = require('yo-yo')
 const { getETA,
          getSpeed,
          prettyETA,
@@ -9,6 +8,10 @@ const prettyBytes = require('prettier-bytes')
 const FileItemProgress = require('./FileItemProgress')
 const getFileTypeIcon = require('./getFileTypeIcon')
 const { iconEdit, iconCopy, iconRetry } = require('./icons')
+
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 module.exports = function fileItem (props) {
   const file = props.file
@@ -22,7 +25,7 @@ module.exports = function fileItem (props) {
   const error = file.error || false
 
   const fileName = getFileNameAndExtension(file.meta.name).name
-  const truncatedFileName = props.isWide ? truncateString(fileName, 16) : fileName
+  const truncatedFileName = props.isWide ? truncateString(fileName, 14) : fileName
 
   const onPauseResumeCancelRetry = (ev) => {
     if (isUploaded) return
@@ -148,7 +151,7 @@ module.exports = function fileItem (props) {
                        title="Remove file"
                        onclick=${() => props.removeFile(file.id)}>
                  <svg aria-hidden="true" class="UppyIcon" width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke="#FFF" stroke-width="0.8px" fill-rule="nonzero" vector-effect="non-scaling-stroke" d="M30 1C14 1 1 14 1 30s13 29 29 29 29-13 29-29S46 1 30 1z" />
+                    <path stroke="#FFF" stroke-width="1" fill-rule="nonzero" vector-effect="non-scaling-stroke" d="M30 1C14 1 1 14 1 30s13 29 29 29 29-13 29-29S46 1 30 1z" />
                     <path fill="#FFF" vector-effect="non-scaling-stroke" d="M42 39.667L39.667 42 30 32.333 20.333 42 18 39.667 27.667 30 18 20.333 20.333 18 30 27.667 39.667 18 42 20.333 32.333 30z"/>
                  </svg>
                </button>`

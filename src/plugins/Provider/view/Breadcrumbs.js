@@ -1,4 +1,6 @@
-const html = require('yo-yo')
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 const Breadcrumb = require('./Breadcrumb')
 
 module.exports = (props) => {

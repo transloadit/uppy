@@ -1,7 +1,10 @@
-const html = require('yo-yo')
 const FileItem = require('./FileItem')
 const ActionBrowseTagline = require('./ActionBrowseTagline')
 const { dashboardBgIcon } = require('./icons')
+
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 module.exports = (props) => {
   return html`<ul class="UppyDashboard-files

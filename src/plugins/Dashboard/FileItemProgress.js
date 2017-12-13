@@ -1,4 +1,6 @@
-const html = require('yo-yo')
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
 
 // http://codepen.io/Harkko/pen/rVxvNM
 // https://css-tricks.com/svg-line-animation-works/

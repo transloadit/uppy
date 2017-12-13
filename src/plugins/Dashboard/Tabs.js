@@ -1,6 +1,10 @@
-const html = require('yo-yo')
 const ActionBrowseTagline = require('./ActionBrowseTagline')
 const { localIcon } = require('./icons')
+const { h } = require('preact')
+const hyperx = require('hyperx')
+const html = hyperx(h)
+
+let inputEl
 
 module.exports = (props) => {
   const isHidden = Object.keys(props.files).length === 0
@@ -19,29 +23,28 @@ module.exports = (props) => {
     `
   }
 
-  const input = html`
-    <input class="UppyDashboard-input"
-          hidden="true"
-          aria-hidden="true" 
-          tabindex="-1" 
-          type="file" 
-          name="files[]" 
-          multiple="true"
-          onchange=${props.handleInputChange} />`
-
   return html`<div class="UppyDashboardTabs">
       <ul class="UppyDashboardTabs-list" role="tablist">
         <li class="UppyDashboardTab" role="presentation">
-          <button type="button" class="UppyDashboardTab-btn"
+          <button type="button" 
+                  class="UppyDashboardTab-btn"
                   role="tab"
                   tabindex="0"
-                  onclick=${(ev) => {
-                    input.click()
-                  }}>
+                  onclick=${ev => inputEl.click()}>
             ${localIcon()}
             <h5 class="UppyDashboardTab-name">${props.i18n('myDevice')}</h5>
           </button>
-          ${input}
+          <input class="UppyDashboard-input"
+                 hidden="true"
+                 aria-hidden="true" 
+                 tabindex="-1" 
+                 type="file" 
+                 name="files[]" 
+                 multiple="true"
+                 onchange=${props.handleInputChange} 
+                 ref=${(input) => {
+                   inputEl = input
+                 }} />
         </li>
         ${props.acquirers.map((target) => {
           return html`<li class="UppyDashboardTab" role="presentation">
