@@ -47,8 +47,8 @@ module.exports = class DragDrop extends Plugin {
 
     // Bind `this` to class methods
     this.handleDrop = this.handleDrop.bind(this)
-    this.onBrowseClick = this.onBrowseClick.bind(this)
-    this.onInputChange = this.onInputChange.bind(this)
+    this.handleBrowseClick = this.handleBrowseClick.bind(this)
+    this.handleInputChange = this.handleInputChange.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.render = this.render.bind(this)
   }
@@ -88,7 +88,7 @@ module.exports = class DragDrop extends Plugin {
     })
   }
 
-  onInputChange (ev) {
+  handleInputChange (ev) {
     this.uppy.log('[DragDrop] Files selected through input')
 
     const files = toArray(ev.target.files)
@@ -103,15 +103,18 @@ module.exports = class DragDrop extends Plugin {
     })
   }
 
-  onBrowseClick (ev) {
+  handleBrowseClick (ev) {
     this.input.click()
   }
 
   render (state) {
+    const DragDropClass = `Uppy UppyTheme--default uppy-DragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}`
+    const DragDropStyle = {
+      width: this.opts.width,
+      height: this.opts.height
+    }
     return (
-      <div class={`Uppy UppyTheme--default uppy-DragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}`}
-           style={`width: ${this.opts.width}; height: ${this.opts.height};`}
-           onclick={this.onBrowseClick}>
+      <div class={DragDropClass} style={DragDropStyle} onclick={this.handleBrowseClick}>
         <div class="uppy-DragDrop-inner">
           <svg aria-hidden="true" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
             <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd"/>
@@ -124,8 +127,8 @@ module.exports = class DragDrop extends Plugin {
                  ref={(input) => {
                    this.input = input
                  }}
-                 onchange={this.onInputChange} />
-          <label class="uppy-DragDrop-label" onclick={this.onBrowseClick}>
+                 onchange={this.handleInputChange} />
+          <label class="uppy-DragDrop-label" onclick={this.handleBrowseClick}>
             {this.i18n('dropHereOr')} <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
           </label>
           <span class="uppy-DragDrop-note">{this.opts.note}</span>
