@@ -1,5 +1,4 @@
-const yo = require('yo-yo')
-const nanoraf = require('nanoraf')
+const preact = require('preact')
 const { findDOMElement } = require('../core/Utils')
 const getFormData = require('get-form-data')
 
@@ -63,10 +62,9 @@ module.exports = class Plugin {
     const targetElement = findDOMElement(target)
 
     if (targetElement) {
-      // Set up nanoraf.
-      this.updateUI = nanoraf((state) => {
-        this.el = yo.update(this.el, this.render(state))
-      })
+      this.updateUI = (state) => {
+        this.el = preact.render(this.render(state), targetElement, this.el)
+      }
 
       this.uppy.log(`Installing ${callerPluginName} to a DOM element`)
 
@@ -81,8 +79,7 @@ module.exports = class Plugin {
         targetElement.innerHTML = ''
       }
 
-      this.el = plugin.render(this.uppy.state)
-      targetElement.appendChild(this.el)
+      this.el = preact.render(this.render(this.uppy.state), targetElement)
 
       return this.el
     }
