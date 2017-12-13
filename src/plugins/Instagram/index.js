@@ -80,7 +80,7 @@ module.exports = class Instagram extends Plugin {
   }
 
   getItemIcon (item) {
-    return html`<img width="100px" src=${item.images.thumbnail.url}/>`
+    return html`<img width="100" src=${item.images.thumbnail.url}/>`
   }
 
   getItemSubList (item) {
@@ -126,7 +126,7 @@ module.exports = class Instagram extends Plugin {
   }
 
   getNextPagePath () {
-    const { files } = this.uppy.getState()[this.stateId]
+    const { files } = this.getPluginState()
     return `recent?max_id=${this.getItemId(files[files.length - 1])}`
   }
 
