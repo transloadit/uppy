@@ -132,7 +132,9 @@ Theme: 🎄 Christmas edition
 - [ ] uppy: refine UI, look into text-based file type icons or more icons for file types? (@arturi)
 - [x] uppy-server: remove pause/resume socket listeners when upload is done (@ifedapoolarewaju)
 - [x] uppy/uppy-server: remote server error handler #446 (@ifedapoolarewaju)
-- [ ] provider: dropbox thumbnail view seems not to be working (@ifedapoolarewaju)
+- [x] provider: dropbox thumbnail view seems not to be working (@ifedapoolarewaju)
+- [ ] uppy-server: look into typescripting for a type safe servers (@ifedapoolarewaju)
+- [ ] uppy-server: link uppy-server with https://snyk.io/ to aid vulnerability spotting (@ifedapoolarewaju)
 
 ## 0.21.1
 
