@@ -62,6 +62,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
 - [ ] test: add tests for `npm pack`
+- [ ] test: add deepFreeze to test that state in not mutated anywhere by accident
 
 ## 1.0 Goals
 
