@@ -130,9 +130,8 @@ Theme: 🎄 Christmas edition
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: security audit, ask @acconut
 - [ ] uppy: refine UI, look into text-based file type icons or more icons for file types? (@arturi)
-- [x] uppy-server: remove pause/resume socket listeners when upload is done
+- [x] uppy-server: remove pause/resume socket listeners when upload is done (@ifedapoolarewaju)
 - [x] uppy/uppy-server: remote server error handler #446 (@ifedapoolarewaju)
-- [ ] provider: Instagram endless scroll is broken (@ifedapoolarewaju)
 - [ ] provider: dropbox thumbnail view seems not to be working (@ifedapoolarewaju)
 
 ## 0.21.1
