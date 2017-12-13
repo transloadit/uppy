@@ -6,7 +6,7 @@ const cuid = require('cuid')
 module.exports = (props) => {
   const uniqueId = cuid()
 
-  const checkboxSelect = (ev) => {
+  const stop = (ev) => {
     if (ev.keyCode === 13) {
       ev.stopPropagation()
       ev.preventDefault()
@@ -37,9 +37,9 @@ module.exports = (props) => {
                   ? { 'disabled': true }
                  : {}}
                  onchange=${props.handleCheckboxClick}
-                 onkeyup=${checkboxSelect}
-                 onkeydown=${checkboxSelect}
-                 onkeypress=${checkboxSelect} />
+                 onkeyup=${stop}
+                 onkeydown=${stop}
+                 onkeypress=${stop} />
           <label for=${uniqueId}></label>
         </div>
         <button type="button" class="BrowserTable-item" aria-label="Select ${props.title}" tabindex="0" onclick=${handleItemClick}>
