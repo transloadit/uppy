@@ -8,7 +8,6 @@
     "add-module-exports",
     "transform-object-assign",
     "es6-promise",
-    ["transform-react-jsx", { "pragma":"preact.h" }]
-    // "yo-yoify"
+    ["transform-react-jsx", { "pragma":"h" }]
   ]
 }

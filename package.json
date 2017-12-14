@@ -66,6 +66,7 @@
     "disc": "1.3.2",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
+    "eslint-config-standard-preact": "^1.1.6",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jest": "^21.1.0",
     "eslint-plugin-node": "^4.2.3",
