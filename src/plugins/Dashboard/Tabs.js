@@ -13,11 +13,11 @@ module.exports = (props) => {
     return html`
       <div class="UppyDashboardTabs" aria-hidden="${isHidden}">
         <h3 class="UppyDashboardTabs-title">
-        ${ActionBrowseTagline({
-          acquirers: props.acquirers,
-          handleInputChange: props.handleInputChange,
-          i18n: props.i18n
-        })}
+          ${h(ActionBrowseTagline, {
+            acquirers: props.acquirers,
+            handleInputChange: props.handleInputChange,
+            i18n: props.i18n
+          })}
         </h3>
       </div>
     `

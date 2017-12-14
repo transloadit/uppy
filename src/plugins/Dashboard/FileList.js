@@ -13,7 +13,7 @@ module.exports = (props) => {
        ? html`<div class="UppyDashboard-bgIcon">
           ${dashboardBgIcon()}
           <h3 class="UppyDashboard-dropFilesTitle">
-            ${ActionBrowseTagline({
+            ${h(ActionBrowseTagline, {
               acquirers: props.acquirers,
               handleInputChange: props.handleInputChange,
               i18n: props.i18n
