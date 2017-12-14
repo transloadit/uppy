@@ -134,7 +134,7 @@ Theme: 🎄 Christmas edition
 - [x] uppy/uppy-server: remote server error handler #446 (@ifedapoolarewaju)
 - [x] provider: dropbox thumbnail view seems not to be working (@ifedapoolarewaju)
 - [ ] uppy-server: look into typescripting for a type safe servers (@ifedapoolarewaju)
-- [ ] uppy-server: link uppy-server with https://snyk.io/ to aid vulnerability spotting (@ifedapoolarewaju)
+- [x] uppy-server: link uppy-server with https://snyk.io/ to aid vulnerability spotting (@ifedapoolarewaju)
 
 ## 0.21.1
 
