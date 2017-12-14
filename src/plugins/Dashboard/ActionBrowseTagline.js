@@ -12,15 +12,17 @@ class ActionBrowseTagline extends Component {
         }
         <button type="button"
                 class="UppyDashboard-browse"
-                onclick=${(ev) => this.input.click()}>${this.props.i18n('browse')}</button>
+                onclick=${(ev) => this.input.click()}>
+          ${this.props.i18n('browse')}
+        </button>
         <input class="UppyDashboard-input"
                hidden="true"
-               aria-hidden="true" 
+               aria-hidden="true"
                tabindex="-1" 
-               type="file" 
-               name="files[]" 
+               type="file"
+               name="files[]"
                multiple="true"
-               onchange=${this.props.handleInputChange} 
+               onchange=${this.props.handleInputChange}
                ref=${(input) => {
                  this.input = input
                }} />

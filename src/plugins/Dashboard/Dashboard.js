@@ -94,7 +94,7 @@ module.exports = function Dashboard (props) {
 
       <div class="UppyDashboard-innerWrap">
 
-        ${Tabs({
+        ${h(Tabs, {
           files: props.files,
           handleInputChange: handleInputChange,
           acquirers: props.acquirers,
