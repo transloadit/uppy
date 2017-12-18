@@ -416,7 +416,6 @@ class Uppy {
       this.removeUpload(uploadID)
     })
 
-    this.calculateTotalProgress()
     this._calculateTotalProgress()
     this.emit('file-removed', fileID)
 
