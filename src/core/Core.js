@@ -719,6 +719,11 @@ class Uppy {
       this.setState({ files: files })
     })
 
+    this.on('restored', () => {
+      // Files may have changed--ensure progress is still accurate.
+      this._calculateTotalProgress()
+    })
+
     // show informer if offline
     if (typeof window !== 'undefined') {
       window.addEventListener('online', () => this.updateOnlineStatus())

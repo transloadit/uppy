@@ -172,9 +172,6 @@ module.exports = class GoldenRetriever extends Plugin {
     this.uppy.setState({
       files: updatedFiles
     })
-    // Files have changed--make sure the progress is accurate.
-    // TODO make uppy detect that this is necessary somehow?
-    this.uppy._calculateTotalProgress()
 
     this.uppy.emit('restored', this.savedPluginData)
 
