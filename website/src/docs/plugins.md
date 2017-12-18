@@ -13,8 +13,8 @@ Plugins are what makes Uppy useful: they help select, manipulate and upload file
   - FileInput — even more plain and simple, just a button
   - [Provider Plugins](#Provider-Plugins) (remote sources that work through [Uppy Server](/docs/uppy-server/)): Instagram, GoogleDrive, Dropbox
 - **Uploaders:**
-  - Tus — uploads using the tus resumable upload protocol
-  - XHRUpload — classic multipart form uploads or binary uploads using XMLHTTPRequest
+  - [Tus](/docs/tus) — uploads using the [tus](https://tus.io) resumable upload protocol
+  - [XHRUpload](/docs/xhrupload) — classic multipart form uploads or binary uploads using XMLHTTPRequest
   - [AwsS3](/docs/aws-s3) — uploader for AWS S3
 - **Progress:**
   - ProgressBar — add a small YouTube-style progress bar at the top of the page
@@ -59,7 +59,7 @@ In the example above the `Dashboard` gets rendered into an element with ID `uppy
 
 ### `endpoint`
 
-Used by uploader plugins, such as Tus and XHRUpload. Expects a `string` with a url that will be used for file uploading.
+Used by uploader plugins, such as [Tus](/docs/tus) and [XHRUpload](/docs/xhrupload). Expects a `string` with a url that will be used for file uploading.
 
 ### `host`
 
