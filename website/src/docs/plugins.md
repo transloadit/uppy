@@ -17,7 +17,7 @@ Plugins are what makes Uppy useful: they help select, manipulate and upload file
   - [XHRUpload](/docs/xhrupload) — classic multipart form uploads or binary uploads using XMLHTTPRequest
   - [AwsS3](/docs/aws-s3) — uploader for AWS S3
 - **Progress:**
-  - ProgressBar — add a small YouTube-style progress bar at the top of the page
+  - [ProgressBar](/docs/progressbar) — add a small YouTube-style progress bar at the top of the page
   - [StatusBar](/docs/statusbar) — advanced upload progress status bar
   - Informer — show notifications
 - **Helpers:**
