@@ -15,10 +15,6 @@ const STATE_POSTPROCESSING = 'postprocessing'
 const STATE_COMPLETE = 'complete'
 
 function getUploadingState (props, files) {
-  // if (props.error) {
-  //   return STATE_ERROR
-  // }
-
   if (props.isAllErrored) {
     return STATE_ERROR
   }
@@ -198,9 +194,9 @@ const ProgressBarError = ({ error, retryAll, i18n }) => {
     <div class="UppyStatusBar-content" role="alert">
         <strong>${i18n('uploadFailed')}.</strong>
         <span>${i18n('pleasePressRetry')}</span>
-        <span class="UppyStatusBar-details" 
-              data-balloon="${error}" 
-              data-balloon-pos="up" 
+        <span class="UppyStatusBar-details"
+              data-balloon="${error}"
+              data-balloon-pos="up"
               data-balloon-length="large">?</span>
       </div>
   `
