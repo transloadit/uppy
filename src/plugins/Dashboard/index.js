@@ -70,7 +70,7 @@ module.exports = class DashboardUI extends Plugin {
       width: 750,
       height: 550,
       semiTransparent: false,
-      defaultTabIcon: defaultTabIcon(),
+      defaultTabIcon: defaultTabIcon,
       showProgressDetails: false,
       hideUploadButton: false,
       note: null,
