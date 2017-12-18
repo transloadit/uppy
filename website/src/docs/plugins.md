@@ -19,7 +19,7 @@ Plugins are what makes Uppy useful: they help select, manipulate and upload file
 - **Progress:**
   - [ProgressBar](/docs/progressbar) — add a small YouTube-style progress bar at the top of the page
   - [StatusBar](/docs/statusbar) — advanced upload progress status bar
-  - Informer — show notifications
+  - [Informer](/docs/informer) — show notifications
 - **Helpers:**
   - [GoldenRetriever](/docs/golden-retriever) — restore files and continue uploading after a page refresh or a browser crash
 - **Encoding Services:**
