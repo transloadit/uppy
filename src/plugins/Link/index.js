@@ -23,6 +23,8 @@ module.exports = class Link extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
+    this.hostname = this.opts.host
+
     // Bind all event handlers for referencability
     ;['handleChange', 'fetchFile'].forEach(method => {
       this[method] = this[method].bind(this)
@@ -30,25 +32,41 @@ module.exports = class Link extends Plugin {
   }
 
   fetchFile (url) {
-    const processStatus = (response) => {
-      if (response.status === 200 || response.status === 0) {
-        return Promise.resolve(response)
-      } else {
-        return Promise.reject(new Error('Error loading: ' + url))
-      }
-    }
+    // const processStatus = (response) => {
+    //   if (response.status === 200 || response.status === 0) {
+    //     return Promise.resolve(response)
+    //   } else {
+    //     return Promise.reject(new Error('Error loading: ' + url))
+    //   }
+    // }
 
-    fetch(url, { mode: 'cors' })
-      .then(processStatus)
-      .then((response) => {
-        console.log(response)
-        return response.blob()
-      }).then((myBlob) => {
-        console.log(myBlob)
-        var objectURL = URL.createObjectURL(myBlob)
-        this.imgEl.src = objectURL
+    // fetch(url, { mode: 'cors' })
+    //   .then(processStatus)
+    //   .then((response) => {
+    //     console.log(response)
+    //     return response.blob()
+    //   }).then((myBlob) => {
+    //     console.log(myBlob)
+    //     var objectURL = URL.createObjectURL(myBlob)
+    //     this.imgEl.src = objectURL
+    //   })
+    //   .catch(err => this.uppy.info(err))
+
+    return fetch(`${this.hostname}/url/meta`, {
+      method: 'post',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        url: url
       })
-      .catch(err => this.uppy.info(err))
+    })
+    .then((res) => res.json())
+    .then((payload) => {
+      console.log(payload)
+    })
   }
 
   handleKey (ev) {
