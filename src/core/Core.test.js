@@ -601,7 +601,7 @@ describe('src/Core', () => {
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: null
-      })).rejects.toMatchObject({ message: 'onBeforeFileAdded: a plain string' })
+      })).rejects.toMatchObject(new Error('onBeforeFileAdded: a plain string'))
     })
 
     it('should call utils.generatePreview when file-added is triggered and thumbnail generation is allowed', () => {
@@ -935,7 +935,7 @@ describe('src/Core', () => {
         name: 'foo2.jpg',
         type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
-      })).rejects.toMatchObject({ message: 'File not allowed' }).then(() => {
+      })).rejects.toMatchObject(new Error('File not allowed')).then(() => {
         expect(core.state.info.message).toEqual('You can only upload 1 file')
       })
     })
@@ -955,7 +955,7 @@ describe('src/Core', () => {
         name: 'foo2.jpg',
         type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
-      })).rejects.toMatchObject({ message: 'File not allowed' }).then(() => {
+      })).rejects.toMatchObject(new Error('File not allowed')).then(() => {
         expect(core.state.info.message).toEqual('You can only upload: image/gif, image/png')
       })
     })
@@ -973,7 +973,7 @@ describe('src/Core', () => {
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
-      })).rejects.toMatchObject({ message: 'File not allowed' }).then(() => {
+      })).rejects.toMatchObject(new Error('File not allowed')).then(() => {
         expect(core.state.info.message).toEqual('This file exceeds maximum allowed size of 1.2 KB')
       })
     })
@@ -993,7 +993,7 @@ describe('src/Core', () => {
       core.state.files['fileId'] = {
         name: 'filename'
       }
-      core.emit('upload-error', 'fileId', { message: 'this is the error' })
+      core.emit('upload-error', 'fileId', new Error('this is the error'))
       expect(core.state.info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
     })
 
