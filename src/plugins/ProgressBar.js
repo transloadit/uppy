@@ -1,7 +1,5 @@
 const Plugin = require('../core/Plugin')
 const { h } = require('preact')
-const hyperx = require('hyperx')
-const html = hyperx(h)
 
 /**
  * Progress bar
@@ -30,10 +28,10 @@ module.exports = class ProgressBar extends Plugin {
   render (state) {
     const progress = state.totalProgress || 0
 
-    return html`<div class="UppyProgressBar" style="${this.opts.fixed ? 'position: fixed' : 'null'}">
-      <div class="UppyProgressBar-inner" style="width: ${progress}%"></div>
-      <div class="UppyProgressBar-percentage">${progress}</div>
-    </div>`
+    return <div class="UppyProgressBar" style={{ position: this.opts.fixed ? 'fixed' : 'initial' }}>
+      <div class="UppyProgressBar-inner" style={{ width: progress + '%' }} />
+      <div class="UppyProgressBar-percentage">{progress}</div>
+    </div>
   }
 
   install () {

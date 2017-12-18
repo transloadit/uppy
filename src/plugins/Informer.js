@@ -1,8 +1,6 @@
 const Plugin = require('../core/Plugin')
 
 const { h } = require('preact')
-const hyperx = require('hyperx')
-const html = hyperx(h)
 
 /**
  * Informer
@@ -47,20 +45,26 @@ module.exports = class Informer extends Plugin {
   }
 
   render (state) {
-    const {isHidden, type, message, details} = state.info
-    const style = `background-color: ${this.opts.typeColors[type].bg}; color: ${this.opts.typeColors[type].text};`
+    const { isHidden, type, message, details } = state.info
+    const style = {
+      backgroundColor: this.opts.typeColors[type].bg,
+      color: this.opts.typeColors[type].text
+    }
 
-    return html`<div class="Uppy UppyInformer" 
-                     style="${style}" 
-                     aria-hidden="${isHidden}" >
-      <p role="alert">
-        ${message} 
-        ${details ? html`<span style="color: ${this.opts.typeColors[type].bg}" 
-                               data-balloon="${details}" 
-                               data-balloon-pos="up" 
-                               data-balloon-length="large">?</span>` : null}
-      </p>
-    </div>`
+    return (
+      <div class="Uppy UppyInformer"
+        style={style}
+        aria-hidden={isHidden}>
+        <p role="alert">
+          {message}
+          {details && <span style={{ color: this.opts.typeColors[type].bg }}
+            data-balloon="{details}"
+            data-balloon-pos="up"
+            data-balloon-length="large">?</span>
+          }
+        </p>
+      </div>
+    )
   }
 
   install () {

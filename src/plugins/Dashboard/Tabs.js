@@ -29,7 +29,7 @@ class Tabs extends Component {
                     class="UppyDashboardTab-btn"
                     role="tab"
                     tabindex="0"
-                    onclick=${this.input.click}>
+                    onclick=${(ev) => this.input.click()}>
               ${localIcon()}
               <h5 class="UppyDashboardTab-name">${this.props.i18n('myDevice')}</h5>
             </button>
