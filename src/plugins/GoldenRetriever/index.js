@@ -105,6 +105,9 @@ module.exports = class GoldenRetriever extends Plugin {
     )
 
     const pluginData = {}
+    // TODO Find a better way to do this?
+    // Other plugins can attach a restore:get-data listener that receives this callback.
+    // Plugins can then use this callback (sync) to provide data to be stored.
     this.uppy.emit('restore:get-data', (data) => {
       Object.assign(pluginData, data)
     })
