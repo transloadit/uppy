@@ -102,11 +102,11 @@
     "webdriverio": "^4.9.5"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "cuid": "^1.3.8",
     "drag-drop": "2.13.2",
     "es6-promise": "3.2.1",
     "get-form-data": "^1.2.5",
-    "hyperx": "^2.3.2",
     "lodash.throttle": "4.1.1",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.0",
