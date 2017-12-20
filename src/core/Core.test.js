@@ -549,7 +549,7 @@ describe('src/Core', () => {
             isRemote: false,
             meta: { name: 'foo.jpg', type: 'image/jpeg' },
             name: 'foo.jpg',
-            preview: sampleImageDataURI,
+            preview: undefined,
             data: fileData,
             progress: {
               bytesTotal: 17175,
@@ -564,7 +564,6 @@ describe('src/Core', () => {
             type: 'image/jpeg'
           }
           expect(core.state.files[fileId]).toEqual(newFile)
-          newFile.preview = undefined // not sure why this happens.. needs further investigation
           expect(fileAddedEventMock.mock.calls[0][0]).toEqual(newFile)
         })
     })
@@ -602,32 +601,6 @@ describe('src/Core', () => {
         type: 'image/jpeg',
         data: null
       })).rejects.toMatchObject(new Error('onBeforeFileAdded: a plain string'))
-    })
-
-    it('should call utils.generatePreview when file-added is triggered and thumbnail generation is allowed', () => {
-      const core = new Core({
-      }).run()
-      const file = {
-        type: 'image/jpeg',
-        isRemote: false
-      }
-      core.emit('file-added', file)
-      expect(utils.createThumbnail).toHaveBeenCalledTimes(1)
-      expect(utils.createThumbnail.mock.calls[0][1]).toEqual(200)
-    })
-
-    it('should return an object url of the image when file-added is triggered and thumbnail generation is disabled', () => {
-      const core = new Core({
-        thumbnailGeneration: false
-      }).run()
-      const file = {
-        type: 'image/jpeg',
-        isRemote: false,
-        data: 'foo'
-      }
-      core.emit('file-added', file)
-      expect(URL.createObjectURL).toHaveBeenCalledTimes(1)
-      expect(URL.createObjectURL).toHaveBeenCalledWith('foo')
     })
   })
 

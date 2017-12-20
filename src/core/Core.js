@@ -46,8 +46,7 @@ class Uppy {
       onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
       onBeforeUpload: (files, done) => Promise.resolve(),
       locale: defaultLocale,
-      store: new DefaultStore(),
-      thumbnailGeneration: true
+      store: new DefaultStore()
     }
 
     // Merge default options with the ones set by user
@@ -427,32 +426,6 @@ class Uppy {
     this.log(`Removed file: ${fileID}`)
   }
 
-  /**
-   * Generate a preview image for the given file, if possible.
-   */
-  generatePreview (file) {
-    if (Utils.isPreviewSupported(file.type) && !file.isRemote) {
-      let previewPromise
-      if (this.opts.thumbnailGeneration === true) {
-        previewPromise = Utils.createThumbnail(file, 200)
-      } else {
-        previewPromise = Promise.resolve(URL.createObjectURL(file.data))
-      }
-      previewPromise.then((preview) => {
-        this.setPreviewURL(file.id, preview)
-      }).catch((err) => {
-        console.warn(err.stack || err.message)
-      })
-    }
-  }
-
-  /**
-   * Set the preview URL for a file.
-   */
-  setPreviewURL (fileID, preview) {
-    this.setFileState(fileID, { preview: preview })
-  }
-
   pauseResume (fileID) {
     const updatedFiles = Object.assign({}, this.getState().files)
 
@@ -639,10 +612,6 @@ class Uppy {
     // this.on('file-add', (data) => {
     //   this.addFile(data)
     // })
-
-    this.on('file-added', (file) => {
-      this.generatePreview(file)
-    })
 
     this.on('file-remove', (fileID) => {
       this.removeFile(fileID)
