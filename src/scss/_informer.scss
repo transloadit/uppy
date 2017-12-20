@@ -1,4 +1,4 @@
-.UppyInformer {
+.uppy-Informer {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -23,13 +23,13 @@
   }
 }
 
-  .UppyInformer[aria-hidden=true] {
+  .uppy-Informer[aria-hidden=true] {
     opacity: 0;
     transform: translateY(200%);
     transition: all 300ms ease-in;
   }
 
-.UppyInformer p {
+.uppy-Informer p {
   margin: 0;
   padding: 0;
   height: 30px;
@@ -41,7 +41,7 @@
   }
 }
 
-.UppyInformer span {
+.uppy-Informer span {
   line-height: 12px;
   width: 13px;
   height: 13px;
@@ -56,7 +56,7 @@
   margin-left: -1px;
 }
 
-.UppyInformer span:after {
+.uppy-Informer span:after {
   line-height: 1.3;
   word-wrap: break-word;
 }
