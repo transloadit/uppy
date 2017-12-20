@@ -2,11 +2,19 @@
 * General Uppy styles that apply to everything inside the .Uppy container
 */
 
-.Uppy {
+.uppy {
+  all: initial;
   box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont,
+    'avenir next', avenir,
+    helvetica, 'helvetica neue',
+    ubuntu, roboto, noto,
+    'segoe ui', arial, sans-serif;
+  line-height: 1;
+  // -webkit-font-smoothing: antialiased;
 }
 
-.Uppy *, .Uppy *:before, .Uppy *:after {
+.uppy *, .uppy *:before, .uppy *:after {
   box-sizing: inherit;
 }
 
@@ -26,16 +34,6 @@
 .UppyIcon--svg-baseline {
   bottom: -0.125em;
   position: relative;
-}
-
-.UppyTheme--default {
-  font-family: -apple-system, BlinkMacSystemFont,
-               'avenir next', avenir,
-               helvetica, 'helvetica neue',
-               ubuntu, roboto, noto,
-               'segoe ui', arial, sans-serif;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
 }
 
 // Buttons
