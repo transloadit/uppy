@@ -195,7 +195,7 @@ module.exports = class Webcam extends Plugin {
   }
 
   getVideoElement () {
-    return this.el.querySelector('.UppyWebcam-video')
+    return this.el.querySelector('.uppy-Webcam-video')
   }
 
   oneTwoThreeSmile () {

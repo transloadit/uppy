@@ -25,16 +25,16 @@ class CameraScreen extends Component {
     const shouldShowSnapshotButton = isModeAvailable(this.props.modes, 'picture')
 
     return (
-      <div class="UppyWebcam-container">
-        <div class="UppyWebcam-videoContainer">
-          <video class="UppyWebcam-video" autoplay muted src={this.props.src || ''} />
+      <div class="uppy-Webcam-container">
+        <div class="uppy-Webcam-videoContainer">
+          <video class="uppy-Webcam-video" autoplay muted src={this.props.src || ''} />
         </div>
-        <div class="UppyWebcam-buttonContainer" ref={(el) => { this.btnContainer = el }}>
+        <div class="uppy-Webcam-buttonContainer" ref={(el) => { this.btnContainer = el }}>
           {shouldShowSnapshotButton ? SnapshotButton(this.props) : null}
           {' '}
           {shouldShowRecordButton ? RecordButton(this.props) : null}
         </div>
-        <canvas class="UppyWebcam-canvas" style="display: none;" />
+        <canvas class="uppy-Webcam-canvas" style="display: none;" />
       </div>
     )
   }
