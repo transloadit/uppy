@@ -1,11 +1,11 @@
-const html = require('yo-yo')
 const throttle = require('lodash.throttle')
+const { h } = require('preact')
 
 function progressDetails (props) {
-  return html`<span>${props.totalProgress || 0}%・${props.complete} / ${props.inProgress}・${props.totalUploadedSize} / ${props.totalSize}・↑ ${props.totalSpeed}/s・${props.totalETA}</span>`
+  return <span>{props.totalProgress || 0}%・{props.complete} / {props.inProgress}・{props.totalUploadedSize} / {props.totalSize}・↑ {props.totalSpeed}/s・{props.totalETA}</span>
 }
 
-const throttledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
+const ThrottledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
 
 const STATE_ERROR = 'error'
 const STATE_WAITING = 'waiting'
@@ -76,6 +76,20 @@ function calculateProcessingProgress (files) {
   }
 }
 
+function togglePauseResume (props) {
+  if (props.isAllComplete) return
+
+  if (!props.resumableUploads) {
+    return props.cancelAll()
+  }
+
+  if (props.isAllPaused) {
+    return props.resumeAll()
+  }
+
+  return props.pauseAll()
+}
+
 module.exports = (props) => {
   props = props || {}
 
@@ -105,104 +119,93 @@ module.exports = (props) => {
   const isHidden = (uploadState === STATE_WAITING && props.hideUploadButton) ||
     (uploadState === STATE_WAITING && !props.newFiles > 0)
 
-  const statusBarEl = html`
-    <div class="UppyStatusBar is-${uploadState}"
-         aria-hidden="${isHidden}">
-      <div class="UppyStatusBar-progress ${progressMode ? `is-${progressMode}` : ''}"
-           style="width: ${width}%"
-           role="progressbar"
-           aria-valuemin="0"
-           aria-valuemax="100"
-           ${progressValue
-           ? { 'aria-valuenow': progressValue }
-           : {}}></div>
-      ${progressBarContent}
-      <div class="UppyStatusBar-actions">
-        ${props.newFiles && !props.hideUploadButton ? UploadBtn(props) : ''}
-        ${props.error ? RetryBtn(props) : ''}
+  const progressClasses = `uppy-StatusBar-progress 
+                           ${progressMode ? 'is-' + progressMode : ''}`
+
+  return (
+    <div class={`uppy uppy-StatusBar is-${uploadState}`} aria-hidden={isHidden}>
+      <div class={progressClasses}
+        style={{ width: width + '%' }}
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow={progressValue} />
+      {progressBarContent}
+      <div class="uppy-StatusBar-actions">
+        { props.newFiles && !props.hideUploadButton ? <UploadBtn {...props} /> : null }
+        { props.error ? <RetryBtn {...props} /> : null }
       </div>
     </div>
-  `
-
-  // if (progressValue) {
-  //   statusBarEl.querySelector('.UppyStatusBar-progress').setAttribute('aria-valuenow', progressValue)
-  // }
-
-  return statusBarEl
+  )
 }
 
 const UploadBtn = (props) => {
-  return html`<button type="button"
-                      class="UppyStatusBar-actionBtn UppyStatusBar-actionBtn--upload"
-                      aria-label="${props.i18n('uploadXFiles', { smart_count: props.newFiles })}"
-                      onclick=${props.startUpload}>
-                ${props.inProgress
-                  ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
-                  : props.i18n('uploadXFiles', { smart_count: props.newFiles })
-                }
-              </button>`
+  return <button type="button"
+    class="uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--upload"
+    aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
+    onclick={props.startUpload}>
+    {props.inProgress
+      ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
+      : props.i18n('uploadXFiles', { smart_count: props.newFiles })
+    }
+  </button>
 }
 
 const RetryBtn = (props) => {
-  return html`<button type="button"
-                      class="UppyStatusBar-actionBtn UppyStatusBar-actionBtn--retry"
-                      aria-label="${props.i18n('retryUpload')}"
-                      onclick=${props.retryAll}>
-                ${props.i18n('retry')}
-              </button>`
+  return <button type="button"
+    class="uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
+    aria-label={props.i18n('retryUpload')}
+    onclick={props.retryAll}>{props.i18n('retry')}</button>
 }
 
 const ProgressBarProcessing = (props) => {
   const value = Math.round(props.value * 100)
 
-  return html`
-    <div class="UppyStatusBar-content">
-        ${props.mode === 'determinate' ? `${value}%・` : ''}
-        ${props.message}
-    </div>
-  `
+  return <div class="uppy-StatusBar-content">
+    {props.mode === 'determinate' ? `${value}%・` : ''}
+    {props.message}
+  </div>
 }
 
 const ProgressBarUploading = (props) => {
-  return html`
-    <div class="UppyStatusBar-content">
-      ${props.isUploadStarted && !props.isAllComplete
+  return (
+    <div class="uppy-StatusBar-content">
+      {props.isUploadStarted && !props.isAllComplete
         ? !props.isAllPaused
-          ? html`<div title="Uploading">${pauseResumeButtons(props)} Uploading... ${throttledProgressDetails(props)}</div>`
-          : html`<div title="Paused">${pauseResumeButtons(props)} Paused・${props.totalProgress}%</div>`
+          ? <div title="Uploading">{ <PauseResumeButtons {...props} /> } Uploading... { <ThrottledProgressDetails {...props} /> }</div>
+          : <div title="Paused">{ <PauseResumeButtons {...props} /> } Paused・{props.totalProgress}%</div>
         : null
       }
     </div>
-  `
+  )
 }
 
 const ProgressBarComplete = ({ totalProgress, i18n }) => {
-  return html`
-    <div class="UppyStatusBar-content" role="status">
+  return (
+    <div class="uppy-StatusBar-content" role="status">
       <span title="Complete">
-        <svg aria-hidden="true" class="UppyStatusBar-statusIndicator UppyIcon" width="18" height="17" viewBox="0 0 23 17">
+        <svg aria-hidden="true" class="uppy-StatusBar-statusIndicator UppyIcon" width="18" height="17" viewBox="0 0 23 17">
           <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
         </svg>
-        ${i18n('uploadComplete')}・${totalProgress}%
+        {i18n('uploadComplete')}・{totalProgress}%
       </span>
     </div>
-  `
+  )
 }
 
 const ProgressBarError = ({ error, retryAll, i18n }) => {
-  return html`
-    <div class="UppyStatusBar-content" role="alert">
-        <strong>${i18n('uploadFailed')}.</strong>
-        <span>${i18n('pleasePressRetry')}</span>
-        <span class="UppyStatusBar-details"
-              data-balloon="${error}"
-              data-balloon-pos="up"
-              data-balloon-length="large">?</span>
-      </div>
-  `
+  return (
+    <div class="uppy-StatusBar-content" role="alert">
+      <strong>{i18n('uploadFailed')}.</strong> <span>{i18n('pleasePressRetry')}</span>
+      <span class="uppy-StatusBar-details"
+        data-balloon={error}
+        data-balloon-pos="up"
+        data-balloon-length="large">?</span>
+    </div>
+  )
 }
 
-const pauseResumeButtons = (props) => {
+const PauseResumeButtons = (props) => {
   const { resumableUploads, isAllPaused, i18n } = props
   const title = resumableUploads
                 ? isAllPaused
@@ -210,32 +213,18 @@ const pauseResumeButtons = (props) => {
                   : i18n('pauseUpload')
                 : i18n('cancelUpload')
 
-  return html`<button title="${title}" class="UppyStatusBar-statusIndicator" type="button" onclick=${() => togglePauseResume(props)}>
-    ${resumableUploads
+  return <button title={title} class="uppy-StatusBar-statusIndicator" type="button" onclick={() => togglePauseResume(props)}>
+    {resumableUploads
       ? isAllPaused
-        ? html`<svg aria-hidden="true" class="UppyIcon" width="15" height="17" viewBox="0 0 11 13">
+        ? <svg aria-hidden="true" class="UppyIcon" width="15" height="17" viewBox="0 0 11 13">
           <path d="M1.26 12.534a.67.67 0 0 1-.674.012.67.67 0 0 1-.336-.583v-11C.25.724.38.5.586.382a.658.658 0 0 1 .673.012l9.165 5.5a.66.66 0 0 1 .325.57.66.66 0 0 1-.325.573l-9.166 5.5z" />
-        </svg>`
-        : html`<svg aria-hidden="true" class="UppyIcon" width="16" height="17" viewBox="0 0 12 13">
-          <path d="M4.888.81v11.38c0 .446-.324.81-.722.81H2.722C2.324 13 2 12.636 2 12.19V.81c0-.446.324-.81.722-.81h1.444c.398 0 .722.364.722.81zM9.888.81v11.38c0 .446-.324.81-.722.81H7.722C7.324 13 7 12.636 7 12.19V.81c0-.446.324-.81.722-.81h1.444c.398 0 .722.364.722.81z"/>
-        </svg>`
-      : html`<svg aria-hidden="true" class="UppyIcon" width="16px" height="16px" viewBox="0 0 19 19">
-        <path d="M17.318 17.232L9.94 9.854 9.586 9.5l-.354.354-7.378 7.378h.707l-.62-.62v.706L9.318 9.94l.354-.354-.354-.354L1.94 1.854v.707l.62-.62h-.706l7.378 7.378.354.354.354-.354 7.378-7.378h-.707l.622.62v-.706L9.854 9.232l-.354.354.354.354 7.378 7.378.708-.707-7.38-7.378v.708l7.38-7.38.353-.353-.353-.353-.622-.622-.353-.353-.354.352-7.378 7.38h.708L2.56 1.23 2.208.88l-.353.353-.622.62-.353.355.352.353 7.38 7.38v-.708l-7.38 7.38-.353.353.352.353.622.622.353.353.354-.353 7.38-7.38h-.708l7.38 7.38z"/>
-      </svg>`
+        </svg>
+        : <svg aria-hidden="true" class="UppyIcon" width="16" height="17" viewBox="0 0 12 13">
+          <path d="M4.888.81v11.38c0 .446-.324.81-.722.81H2.722C2.324 13 2 12.636 2 12.19V.81c0-.446.324-.81.722-.81h1.444c.398 0 .722.364.722.81zM9.888.81v11.38c0 .446-.324.81-.722.81H7.722C7.324 13 7 12.636 7 12.19V.81c0-.446.324-.81.722-.81h1.444c.398 0 .722.364.722.81z" />
+        </svg>
+      : <svg aria-hidden="true" class="UppyIcon" width="16px" height="16px" viewBox="0 0 19 19">
+        <path d="M17.318 17.232L9.94 9.854 9.586 9.5l-.354.354-7.378 7.378h.707l-.62-.62v.706L9.318 9.94l.354-.354-.354-.354L1.94 1.854v.707l.62-.62h-.706l7.378 7.378.354.354.354-.354 7.378-7.378h-.707l.622.62v-.706L9.854 9.232l-.354.354.354.354 7.378 7.378.708-.707-7.38-7.378v.708l7.38-7.38.353-.353-.353-.353-.622-.622-.353-.353-.354.352-7.378 7.38h.708L2.56 1.23 2.208.88l-.353.353-.622.62-.353.355.352.353 7.38 7.38v-.708l-7.38 7.38-.353.353.352.353.622.622.353.353.354-.353 7.38-7.38h-.708l7.38 7.38z" />
+      </svg>
     }
-  </button>`
-}
-
-const togglePauseResume = (props) => {
-  if (props.isAllComplete) return
-
-  if (!props.resumableUploads) {
-    return props.cancelAll()
-  }
-
-  if (props.isAllPaused) {
-    return props.resumeAll()
-  }
-
-  return props.pauseAll()
+  </button>
 }

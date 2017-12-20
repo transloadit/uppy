@@ -1,9 +1,7 @@
-const html = require('yo-yo')
+const { h } = require('preact')
 
 module.exports = (props) => {
-  return html`
-    <div class="UppyProvider-loading">
-      <span>Loading...</span>
-    </div>
-  `
+  return <div class="uppy-Provider-loading">
+    <span>Loading...</span>
+  </div>
 }

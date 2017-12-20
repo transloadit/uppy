@@ -54,7 +54,7 @@
     "babel-plugin-es6-promise": "1.0.0",
     "babel-plugin-transform-object-assign": "6.8.0",
     "babel-plugin-transform-proto-to-assign": "6.9.0",
-    "babel-plugin-yo-yoify": "0.6.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-polyfill": "6.9.1",
     "babel-preset-es2015": "6.24.0",
     "babel-register": "6.9.0",
@@ -66,6 +66,7 @@
     "disc": "1.3.2",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
+    "eslint-config-standard-preact": "^1.1.6",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jest": "^21.5.0",
     "eslint-plugin-node": "^4.2.3",
@@ -101,6 +102,7 @@
     "webdriverio": "^4.9.5"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "cuid": "^1.3.8",
     "drag-drop": "2.13.2",
     "es6-promise": "3.2.1",
@@ -108,16 +110,13 @@
     "lodash.throttle": "4.1.1",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.0",
-    "nanoraf": "3.0.1",
-    "on-load": "3.2.0",
+    "preact": "^8.2.7",
     "prettier-bytes": "1.0.4",
     "prop-types": "^15.5.10",
     "socket.io-client": "2.0.2",
     "tus-js-client": "^1.4.5",
     "url-parse": "1.1.9",
-    "whatwg-fetch": "2.0.3",
-    "yo-yo": "1.4.0",
-    "yo-yoify": "3.7.2"
+    "whatwg-fetch": "2.0.3"
   },
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",

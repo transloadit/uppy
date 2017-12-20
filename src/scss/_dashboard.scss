@@ -1,25 +1,20 @@
-// @import '_variables.scss';
-// @import '_utils.scss';
-// @import '_animation.scss';
-// @import '_common.scss';
-
-.UppyDashboard--modal {
+.uppy-Dashboard--modal {
   z-index: $zIndex-2;
   // -webkit-overflow-scrolling: touch;
 }
 
-.UppyDashboard--modal[aria-hidden=true] {
+.uppy-Dashboard--modal[aria-hidden=true] {
   display: none;
 }
 
 // Added to body to prevent the page from scrolling when Modal is open
-.is-UppyDashboard-open {
+.uppy-Dashboard-isOpen {
   width: 100%;
   overflow: hidden;
   position: fixed;
 }
 
-.UppyDashboard--modal .UppyDashboard-overlay {
+.uppy-Dashboard--modal .uppy-Dashboard-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -29,7 +24,7 @@
   z-index: $zIndex-2;
 }
 
-.UppyDashboard-inner {
+.uppy-Dashboard-inner {
   position: relative;
   background-color: darken($color-white, 2%);
   max-width: 100%;
@@ -40,7 +35,7 @@
   outline: none;
   border: 1px solid rgba($color-gray, 0.2);
 
-  .UppyDashboard--modal & {
+  .uppy-Dashboard--modal & {
     z-index: $zIndex-3;
   }
 
@@ -51,7 +46,7 @@
   }
 }
 
-.UppyDashboard-innerWrap {
+.uppy-Dashboard-innerWrap {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -59,12 +54,12 @@
   min-height: 300px;
 }
 
-.UppyDashboard--semiTransparent .UppyDashboard-inner {
+.uppy-Dashboard--semiTransparent .uppy-Dashboard-inner {
   background-color: rgba($color-white, 0.8);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 
-.UppyDashboard--modal .UppyDashboard-inner {
+.uppy-Dashboard--modal .uppy-Dashboard-inner {
   position: fixed;
   top: 0;
   left: 0;
@@ -78,7 +73,7 @@
   }
 }
 
-.UppyDashboard-close {
+.uppy-Dashboard-close {
   @include reset-button;
   display: none;
   position: absolute;
@@ -95,7 +90,7 @@
     height: 12px;
   }
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     top: 10px;
     right: 8px;
 
@@ -105,23 +100,23 @@
     }
   }
 
-  .UppyDashboard--modal & {
+  .uppy-Dashboard--modal & {
     z-index: $zIndex-5;
     display: block;
   }
 }
 
-.UppyDashboardTabs {
+.uppy-DashboardTabs {
   padding-top: 7px;
   padding-bottom: 7px;
   border-bottom: 1px dashed lighten($color-gray, 15%);
 }
 
-.UppyDashboardTabs[aria-hidden=true] {
+.uppy-DashboardTabs[aria-hidden=true] {
   display: none;
 }
 
-.UppyDashboardTabs-title {
+.uppy-DashboardTabs-title {
   font-size: 15px;
   line-height: 30px;
   font-weight: 400;
@@ -131,19 +126,19 @@
   text-align: center;
   color: $color-asphalt-gray;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     font-size: 17px;
     line-height: 40px;
   }
 }
 
-.UppyDashboard-browse {
+.uppy-Dashboard-browse {
   @include reset-button;
   cursor: pointer;
   color: darken($color-cornflower-blue, 10%);
 }
 
-.UppyDashboardTabs-list {
+.uppy-DashboardTabs-list {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -152,19 +147,19 @@
   align-items: center;
 }
 
-.UppyDashboardTab {
+.uppy-DashboardTab {
   width: 70px;
   margin: 0;
   display: inline-block;
   text-align: center;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 75px;
     margin: 0 5px;
   }
 }
 
-.UppyDashboardTab-btn {
+.uppy-DashboardTab-btn {
   width: 100%;
   cursor: pointer;
   border: 0;
@@ -181,7 +176,7 @@
   }
 }
 
-.UppyDashboardTab-name {
+.uppy-DashboardTab-name {
   font-size: 8px;
   margin-top: 5px;
   margin-bottom: 0;
@@ -190,24 +185,24 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     font-size: 9px;
   }
 }
 
 // On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
-.UppyDashboardTab .UppyIcon {
+.uppy-DashboardTab .UppyIcon {
   width: 18px;
   height: 18px;
   vertical-align: middle;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 23px;
     height: 23px;
   }
 }
 
-.UppyDashboard-input {
+.uppy-Dashboard-input {
   width: 0.1px;
   height: 0.1px;
   opacity: 0;
@@ -216,7 +211,7 @@
   z-index: -1;
 }
 
-.UppyDashboardContent-bar {
+.uppy-DashboardContent-bar {
   position: absolute;
   top: 0;
   left: 0;
@@ -226,12 +221,12 @@
   z-index: $zIndex-4;
   background-color: darken($color-white, 4%);
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     height: 50px;
   }
 }
 
-.UppyDashboardContent-title {
+.uppy-DashboardContent-title {
   position: absolute;
   top: 0;
   left: 0;
@@ -247,7 +242,7 @@
   overflow-x: hidden;
   margin: auto;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     font-size: 16px;
     line-height: 50px;
     max-width: 300px;
@@ -255,14 +250,14 @@
   }
 }
 
-.UppyDashboardContent-titleFile {
+.uppy-DashboardContent-titleFile {
   text-decoration: underline;
   // overflow: hidden;
   // display: inline-block;
   // vertical-align: text-bottom;
 }
 
-.UppyDashboardContent-back {
+.uppy-DashboardContent-back {
   @include reset-button;
   position: absolute;
   top: 0;
@@ -273,19 +268,19 @@
   cursor: pointer;
   color: $color-cornflower-blue;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     // top: 16px;
     font-size: 15px;
     line-height: 50px;
   }
 }
 
-.UppyDashboardContent-back .UppyIcon {
+.uppy-DashboardContent-back .UppyIcon {
   position: relative;
   margin-right: 3px;
 }
 
-.UppyDashboardContent-panel {
+.uppy-DashboardContent-panel {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -301,22 +296,22 @@
   overflow: hidden;
   z-index: $zIndex-4;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     padding-top: 50px;
   }
 
-  // .UppyDashboard--modal & {
+  // .uppy-Dashboard--modal & {
   //   z-index: $zIndex-4;
   // }
 }
 
-.UppyDashboardContent-panel[aria-hidden=false] {
+.uppy-DashboardContent-panel[aria-hidden=false] {
   transform: none;
 }
 
 // Progress bar placeholder
 
-.UppyDashboard-progress {
+.uppy-Dashboard-progress {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -324,7 +319,7 @@
   height: 12%;
 }
 
-.UppyDashboard-progressBarContainer.is-active {
+.uppy-Dashboard-progressBarContainer.is-active {
   z-index: $zIndex-4;
   position: absolute;
   top: 0;
@@ -333,7 +328,7 @@
   height: 100%;
 }
 
-.UppyDashboard-next {
+.uppy-Dashboard-next {
   position: absolute;
   top: 0;
   left: 0;
@@ -355,7 +350,7 @@
   cursor: not-allowed;
 }
 
-.UppyDashboard-next.is-active {
+.uppy-Dashboard-next.is-active {
   cursor: pointer;
   background-color: $color-cornflower-blue;
 
@@ -364,7 +359,7 @@
   }
 }
 
-.UppyDashboard-filesContainer {
+.uppy-Dashboard-filesContainer {
   @include clearfix;
   position: relative;
   overflow-y: hidden;
@@ -372,7 +367,7 @@
   flex: 1;
 }
 
-.UppyDashboard-files {
+.uppy-Dashboard-files {
   margin: 0;
   padding: 10px;
   padding-top: 15px;
@@ -384,15 +379,15 @@
   bottom: 0;
 }
 
-.UppyDashboard.drag .UppyDashboard-innerWrap  {
+.uppy-Dashboard.drag .uppy-Dashboard-innerWrap  {
   background-color: darken($color-white, 10%)
 }
 
-.UppyDashboard.drag .UppyDashboard-files--noFiles {
+.uppy-Dashboard.drag .uppy-Dashboard-files--noFiles {
   border-color: darken(#E4E4E4, 20%);
 }
 
-.UppyDashboard-bgIcon {
+.uppy-Dashboard-bgIcon {
   width: 100%;
   max-width: 360px;
   position: absolute;
@@ -404,22 +399,22 @@
   padding: 0 20px;
 }
 
-.UppyDashboard-bgIcon .UppyIcon {
+.uppy-Dashboard-bgIcon .UppyIcon {
   width: 100%;
   height: 80px;
   fill: none;
   stroke: $color-asphalt-gray;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     height: 110px;
   }
 }
 
-.UppyDashboard.drag .UppyDashboard-bgIcon {
+.uppy-Dashboard.drag .uppy-Dashboard-bgIcon {
   opacity: 1;
 }
 
-.UppyDashboard-dropFilesTitle {
+.uppy-Dashboard-dropFilesTitle {
   text-align: center;
   font-size: 15px;
   line-height: 1.45;
@@ -428,46 +423,43 @@
   margin: 0;
   margin-top: 25px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     font-size: 18px;
   }
 }
 
-.UppyDashboard-note {
+.uppy-Dashboard-note {
   font-size: 12px;
   line-height: 1.2;
   text-align: center;
   margin-top: 20px;
   color: $color-asphalt-gray;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     font-size: 13px;
   }
 }
 
-.UppyDashboardItem {
+.uppy-DashboardItem {
   list-style: none;
   margin: 10px 0;
   position: relative;
   background-color: $color-white;
   display: flex;
   align-items: center;
-  // border: 1px solid rgba($color-gray, 0.2);
-  // margin-bottom: 30px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     flex-direction: column;
     float: left;
     width: 140px;
     height: 170px;
     margin: 5px 15px;
-    // border-radius: 6px;
     border: 0;
     background-color: initial;
   }
 }
 
-.UppyDashboardItem-preview {
+.uppy-DashboardItem-preview {
   width: 60px;
   height: 60px;
   border-bottom: 0;
@@ -476,33 +468,27 @@
   justify-content: center;
   align-items: center;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 100%;
     height: 100px;
     border: 0;
   }
 }
 
-.UppyDashboardItem-sourceIcon {
-  // position: relative;
-  // left: 3px;
+.uppy-DashboardItem-sourceIcon {
   display: inline-block;
   vertical-align: middle;
   width: 7px;
   height: 7px;
   opacity: 0.7;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 10px;
     height: 10px;
   }
 }
 
-// .UppyDashboardItem-sourceIcon .UppyIcon {
-//   filter: drop-shadow(0 0 1px rgba(0,0,0,0.3));
-// }
-
-.UppyDashboardItem-previewInnerWrap {
+.uppy-DashboardItem-previewInnerWrap {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -514,7 +500,7 @@
   // box-shadow: 0 0 2px 0 rgba(175, 175, 175, 0.7);
   // border-radius: 3px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     // box-shadow: 0 0 2px 0 rgba(175, 175, 175, 0.7);
     box-shadow: 0 1px 3px rgba(0,0,0,.2);
     border-radius: 3px;
@@ -523,7 +509,7 @@
   }
 }
 
-  .UppyDashboardItem-previewInnerWrap:after {
+  .uppy-DashboardItem-previewInnerWrap:after {
     content: '';
     position: absolute;
     top: 0;
@@ -536,26 +522,24 @@
   }
 
 
-.UppyDashboardItem-preview img {
+.uppy-DashboardItem-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 
-.UppyDashboardItem-previewIconWrap {
+.uppy-DashboardItem-previewIconWrap {
   height: 85%;
   position: relative;
 }
 
-.UppyDashboardItem-previewIconBg {
+.uppy-DashboardItem-previewIconBg {
   height: 100%;
   filter: drop-shadow(rgba(0, 0, 0, 0.1) 0px 0px 1px);
 }
 
-.UppyDashboardItem-previewIcon {
-  // width: 34px;
-  // height: 26px;
+.uppy-DashboardItem-previewIcon {
   width: 25%;
   max-height: 55%;
   z-index: $zIndex-1;
@@ -564,18 +548,18 @@
   left: 50%;
   transform: translate(-50%, -50%);
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 40%;
     max-height: 80%;
   }
 }
 
-.UppyDashboardItem-info {
+.uppy-DashboardItem-info {
   padding: 10px 19px 0 25px;
   position: relative;
   max-width: 70%;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 100%;
     max-width: 100%;
     flex: 1;
@@ -587,7 +571,7 @@
   }
 }
 
-.UppyDashboardItem-name {
+.uppy-DashboardItem-name {
   font-size: 11px;
   line-height: 1.35;
   font-weight: 500;
@@ -600,33 +584,33 @@
   white-space: nowrap;
   overflow: hidden;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     word-break: break-all;
     white-space: normal;
   }
 }
 
-.UppyDashboardItem-name a {
+.uppy-DashboardItem-name a {
   text-decoration: underline;
   color: $color-black;
 }
 
-.UppyDashboardItem-status {
+.uppy-DashboardItem-status {
   font-size: 11px;
   font-weight: normal;
   color: $color-gray;
   margin-bottom: 4px;
 }
 
-.UppyDashboardItem-statusSize {
+.uppy-DashboardItem-statusSize {
   display: inline-block;
   vertical-align: bottom;
   text-transform: uppercase;
   margin-right: 3px;
 }
 
-.UppyDashboardItem-edit,
-.UppyDashboardItem-copyLink {
+.uppy-DashboardItem-edit,
+.uppy-DashboardItem-copyLink {
   @include reset-button;
   font-size: 12px;
   text-align: left;
@@ -635,54 +619,54 @@
   top: 12px;
   right: 4px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     top: 9px;
     right: 3px;
   }
 }
 
-.UppyDashboardItem-edit .UppyIcon {
+.uppy-DashboardItem-edit .UppyIcon {
   width: 11px;
   height: 11px;
   color: $color-asphalt-gray;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 12px;
     height: 12px;
   }
 }
 
-.UppyDashboardItem-copyLink .UppyIcon {
+.uppy-DashboardItem-copyLink .UppyIcon {
   width: 11px;
   height: 11px;
   color: $color-asphalt-gray;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 13px;
     height: 13px;
   }
 }
 
-.UppyDashboardItem-action {
+.uppy-DashboardItem-action {
   position: absolute;
   top: 8px;
   right: 5px;
   z-index: $zIndex-3;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     top: -8px;
     right: -8px;
   }
 }
 
-.UppyDashboardItem-remove {
+.uppy-DashboardItem-remove {
   @include reset-button;
   cursor: pointer;
   color: lighten($color-asphalt-gray, 20%);
   width: 16px;
   height: 16px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 20px;
     height: 20px;
     color: lighten($color-asphalt-gray, 8%);
@@ -690,15 +674,15 @@
   }
 }
 
-  .UppyDashboardItem.is-inprogress:not(.is-resumable) .UppyDashboardItem-remove {
+  .uppy-DashboardItem.is-inprogress:not(.is-resumable) .uppy-DashboardItem-remove {
     display: none;
   }
 
-// .UppyDashboardItem-remove .UppyIcon {
+// .uppy-DashboardItem-remove .UppyIcon {
 //   max-width: 100%;
 // }
 
-.UppyDashboardItem-progress {
+.uppy-DashboardItem-progress {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -711,7 +695,7 @@
   transition: all .35 ease;
 }
 
-  .UppyDashboardItem.is-complete .UppyDashboardItem-progress {
+  .uppy-DashboardItem.is-complete .uppy-DashboardItem-progress {
     transform: initial;
     top: -9px;
     right: -8px;
@@ -719,13 +703,13 @@
     width: auto;
   }
 
-  .UppyDashboardItem.is-inprogress .UppyDashboardItem-progress,
-  .UppyDashboardItem.is-complete .UppyDashboardItem-progress,
-  .UppyDashboardItem.is-error .UppyDashboardItem-progress {
+  .uppy-DashboardItem.is-inprogress .uppy-DashboardItem-progress,
+  .uppy-DashboardItem.is-complete .uppy-DashboardItem-progress,
+  .uppy-DashboardItem.is-error .uppy-DashboardItem-progress {
     display: block;
   }
 
-.UppyDashboardItem-progressIndicator {
+.uppy-DashboardItem-progressIndicator {
   @include reset-button;
   width: 38px;
   height: 38px;
@@ -733,34 +717,34 @@
   cursor: pointer;
   transition: all .35s ease;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 55px;
     height: 55px;
   }
 }
 
-  .UppyDashboardItem.is-error .UppyDashboardItem-progressIndicator {
+  .uppy-DashboardItem.is-error .uppy-DashboardItem-progressIndicator {
     width: 18px;
     height: 18px;
 
-    .UppyDashboard--wide & {
+    .uppy-Dashboard--wide & {
       width: 28px;
       height: 28px;
     }
   }
 
-  .UppyDashboardItem.is-complete .UppyDashboardItem-progressIndicator {
+  .uppy-DashboardItem.is-complete .uppy-DashboardItem-progressIndicator {
     width: 18px;
     height: 18px;
     opacity: 1;
 
-    .UppyDashboard--wide & {
+    .uppy-Dashboard--wide & {
       width: 25px;
       height: 25px;
     }
   }
 
-.UppyDashboardItem-progressInfo {
+.uppy-DashboardItem-progressInfo {
   font-size: 9px;
   line-height: 1;
   font-weight: 500;
@@ -772,7 +756,7 @@
   width: 100%;
   text-shadow: 0 1px 0 rgba($color-black, 0.3);
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     display: block;
   }
 }
@@ -782,19 +766,19 @@
   height: 100%;
 }
 
-.UppyDashboardItem .bg {
+.uppy-DashboardItem .bg {
   stroke: rgba($color-white, 0.4);
   opacity: 0;
   // transition: all 0.2s;
 }
 
-.UppyDashboardItem .progress {
+.uppy-DashboardItem .progress {
   stroke: $color-white;
   transition: stroke-dashoffset .5s ease-out;
   opacity: 0;
 }
 
-.UppyDashboardItem .play {
+.uppy-DashboardItem .play {
   stroke: $color-white;
   fill: $color-white;
   opacity: 0;
@@ -802,14 +786,14 @@
   display: none;
 }
 
-.UppyDashboardItem .cancel {
+.uppy-DashboardItem .cancel {
   // stroke: $color-white;
   fill: $color-white;
   opacity: 0;
   transition: all 0.2s;
 }
 
-.UppyDashboardItem .pause {
+.uppy-DashboardItem .pause {
   stroke: $color-white;
   fill: $color-white;
   opacity: 0;
@@ -817,11 +801,11 @@
   display: none;
 }
 
-.UppyDashboardItem.is-error .retry {
+.uppy-DashboardItem.is-error .retry {
   fill: $color-white;
 }
 
-.UppyDashboardItem.is-resumable {
+.uppy-DashboardItem.is-resumable {
   .pause, .play { display: block; }
   .cancel { display: none; }
 }
@@ -832,23 +816,23 @@
   transition: all 0.2s;
 }
 
-.UppyDashboardItem.is-inprogress {
+.uppy-DashboardItem.is-inprogress {
   .bg, .progress, .pause, .cancel {
     opacity: 1;
   }
 
-  .UppyDashboardItem-previewInnerWrap:after {
+  .uppy-DashboardItem-previewInnerWrap:after {
     display: block;
   }
 }
 
-.UppyDashboardItem.is-error {
-  .UppyDashboardItem-previewInnerWrap:after {
+.uppy-DashboardItem.is-error {
+  .uppy-DashboardItem-previewInnerWrap:after {
     display: block;
   }
 }
 
-.UppyDashboardItem.is-paused {
+.uppy-DashboardItem.is-paused {
   .pause {
     opacity: 0;
   }
@@ -857,8 +841,8 @@
   }
 }
 
-.UppyDashboardItem.is-complete {
-  .UppyDashboardItem-progressIndicator {
+.uppy-DashboardItem.is-complete {
+  .uppy-DashboardItem-progressIndicator {
     cursor: default;
   }
 
@@ -954,12 +938,12 @@
 //   color: $color-asphalt-gray;
 // }
 
-.UppyDashboardItem-progressNum {
+.uppy-DashboardItem-progressNum {
   position: relative;
   z-index: $zIndex-2;
 }
 
-.UppyDashboardItem-progressInner {
+.uppy-DashboardItem-progressInner {
   height: 15px;
   background-color: $color-cornflower-blue;
   position: absolute;
@@ -967,46 +951,46 @@
   left: 0;
 }
 
-.UppyDashboard-actions {
+.uppy-Dashboard-actions {
   text-align: center;
   position: absolute;
   bottom: 16px;
   right: 16px;
   z-index: $zIndex-3;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     bottom: 20px;
     right: 20px;
   }
 }
 
-// .UppyDashboard-actions button:nth-child(2) {
+// .uppy-Dashboard-actions button:nth-child(2) {
 //   margin-top: 10px;
 // }
 
-.UppyDashboard-pauseResume .UppyIcon {
+.uppy-Dashboard-pauseResume .UppyIcon {
   width: 100%;
   height: 100%;
 }
 
-.UppyDashboard-upload {
+.uppy-Dashboard-upload {
   position: relative;
   width: 50px;
   height: 50px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 60px;
     height: 60px;
   }
 }
 
-.UppyDashboard-upload .UppyIcon {
+.uppy-Dashboard-upload .UppyIcon {
   position: relative;
   top: 1px;
   width: 50%;
 }
 
-.UppyDashboard-uploadCount {
+.uppy-Dashboard-uploadCount {
   position: absolute;
   top: -12px;
   right: -12px;
@@ -1018,7 +1002,7 @@
   line-height: 16px;
   font-size: 8px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 18px;
     height: 18px;
     line-height: 18px;
@@ -1030,7 +1014,7 @@
 // File Card
 //
 
-.UppyDashboardFileCard {
+.uppy-DashboardFileCard {
   transform: translateY(0);
   transition: all 0.25s ease-in-out;
   width: 100%;
@@ -1045,20 +1029,20 @@
   background-color: $color-white;
 }
 
-.UppyDashboardFileCard[aria-hidden=true] {
+.uppy-DashboardFileCard[aria-hidden=true] {
   transform: translateY(-105%);
 }
 
-.UppyDashboardFileCard-inner {
+.uppy-DashboardFileCard-inner {
   height: 100%;
   padding-top: 40px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     padding-top: 50px;
   }
 }
 
-.UppyDashboardFileCard-preview {
+.uppy-DashboardFileCard-preview {
   height: 45%;
   display: flex;
   align-items: center;
@@ -1068,20 +1052,20 @@
   position: relative;
 }
 
-.UppyDashboardFileCard-preview img {
+.uppy-DashboardFileCard-preview img {
   box-shadow: 0px 3px 20px rgba($color-black, 0.15);
   max-width: 90%;
   max-height: 90%;
   object-fit: cover;
 }
 
-.UppyDashboardFileCard-info {
+.uppy-DashboardFileCard-info {
   padding: 30px 20px 20px 20px;
   height: 55%;
   overflow-y: auto;
 }
 
-.UppyDashboardFileCard-fieldset {
+.uppy-DashboardFileCard-fieldset {
   font-size: 0;
   border: 0;
   padding: 0;
@@ -1092,19 +1076,19 @@
   margin-bottom: 15px;
 }
 
-.UppyDashboardFileCard-label {
+.uppy-DashboardFileCard-label {
   display: inline-block;
   vertical-align: middle;
   width: 25%;
   font-size: 11px;
   color: $color-asphalt-gray;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     font-size: 13px;
   }
 }
 
-.UppyDashboardFileCard-input {
+.uppy-DashboardFileCard-input {
   display: inline-block;
   vertical-align: middle;
   width: 75%;
@@ -1116,30 +1100,30 @@
   padding-left: 5px;
   margin: auto;
 
-  // .UppyDashboard--wide & {
+  // .uppy-Dashboard--wide & {
   //   font-size: 15px;
   // }
 }
 
-.UppyDashboardFileCard-input:focus {
+.uppy-DashboardFileCard-input:focus {
   border-color: $color-asphalt-gray;
 }
 
-.UppyDashboardFileCard-done {
+.uppy-DashboardFileCard-done {
   width: 50px;
   height: 50px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 60px;
     height: 60px;
   }
 }
 
-.UppyDashboardFileCard-done .UppyIcon {
+.uppy-DashboardFileCard-done .UppyIcon {
   width: 25px;
   height: 25px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 30px;
     height: 30px;
   }
@@ -1147,12 +1131,12 @@
 
 // StatusBar
 
-// .UppyDashboard--wide .UppyStatusBar-content .UppyIcon {
+// .uppy-Dashboard--wide .uppy-StatusBar-content .UppyIcon {
 //   width: 17px;
 //   height: 17px;
 // }
 
-.UppyDashboard--wide .UppyStatusBar {
+.uppy-Dashboard--wide .uppy-StatusBar {
   height: 40px;
   line-height: 40px;
   font-size: 14px;
