@@ -1,8 +1,3 @@
-// @import '_variables.scss';
-// @import '_utils.scss';
-// @import '_animation.scss';
-// @import '_common.scss';
-
 .UppyInformer {
   position: absolute;
   bottom: 0;
@@ -21,7 +16,7 @@
   transition: all 300ms ease-in;
   z-index: $zIndex-4;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     height: 40px;
     line-height: 40px;
     font-size: 13px;
@@ -40,7 +35,7 @@
   height: 30px;
   line-height: 30px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     height: 40px;
     line-height: 40px;
   }
