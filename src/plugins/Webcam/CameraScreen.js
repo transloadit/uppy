@@ -1,6 +1,4 @@
 const { h, Component } = require('preact')
-const hyperx = require('hyperx')
-const html = hyperx(h)
 const SnapshotButton = require('./SnapshotButton')
 const RecordButton = require('./RecordButton')
 
@@ -9,21 +7,9 @@ function isModeAvailable (modes, mode) {
 }
 
 class CameraScreen extends Component {
-  constructor (props) {
-    super(props)
-    this.src = this.props.src || ''
-    this.shouldShowRecordButton = this.props.supportsRecording && (
-      isModeAvailable(this.props.modes, 'video-only') ||
-      isModeAvailable(this.props.modes, 'audio-only') ||
-      isModeAvailable(this.props.modes, 'video-audio')
-    )
-    this.shouldShowSnapshotButton = isModeAvailable(this.props.modes, 'picture')
-  }
-
   componentDidMount () {
     this.props.onFocus()
-    // const recordButton = el.querySelector('.UppyWebcam-recordButton')
-    // if (recordButton) recordButton.focus()
+    this.btnContainer.firstChild.focus()
   }
 
   componentWillUnmount () {
@@ -31,18 +17,26 @@ class CameraScreen extends Component {
   }
 
   render () {
-    return html`
+    const shouldShowRecordButton = this.props.supportsRecording && (
+      isModeAvailable(this.props.modes, 'video-only') ||
+      isModeAvailable(this.props.modes, 'audio-only') ||
+      isModeAvailable(this.props.modes, 'video-audio')
+    )
+    const shouldShowSnapshotButton = isModeAvailable(this.props.modes, 'picture')
+
+    return (
       <div class="UppyWebcam-container">
         <div class="UppyWebcam-videoContainer">
-          <video class="UppyWebcam-video" autoplay muted src="${this.src}"></video>
+          <video class="UppyWebcam-video" autoplay muted src={this.props.src || ''} />
         </div>
-        <div class="UppyWebcam-buttonContainer">
-          ${this.shouldShowSnapshotButton ? SnapshotButton(this.props) : null}
-          ${this.shouldShowRecordButton ? RecordButton(this.props) : null}
+        <div class="UppyWebcam-buttonContainer" ref={(el) => { this.btnContainer = el }}>
+          {shouldShowSnapshotButton ? SnapshotButton(this.props) : null}
+          {' '}
+          {shouldShowRecordButton ? RecordButton(this.props) : null}
         </div>
-        <canvas class="UppyWebcam-canvas" style="display: none;"></canvas>
+        <canvas class="UppyWebcam-canvas" style="display: none;" />
       </div>
-    `
+    )
   }
 }
 

@@ -202,19 +202,19 @@ module.exports = class View {
     }))
   }
 
-  toggleSearch () {
+  toggleSearch (inputEl) {
     const state = this.plugin.getPluginState()
-    const searchInputEl = document.querySelector('.Browser-searchInput')
+    // const searchInputEl = document.querySelector('.Browser-searchInput')
 
-    this.plugin.setPluginState(Object.assign({}, state, {
+    this.plugin.setPluginState({
       isSearchVisible: !state.isSearchVisible,
       filterInput: ''
-    }))
+    })
 
-    searchInputEl.value = ''
-    if (!state.isSearchVisible) {
-      searchInputEl.focus()
-    }
+    // searchInputEl.value = ''
+    // if (!state.isSearchVisible) {
+    //   searchInputEl.focus()
+    // }
   }
 
   filterItems (items) {
@@ -426,6 +426,7 @@ module.exports = class View {
    * for all of them, depending on current file state.
    */
   toggleCheckbox (e, file) {
+    console.log(e, e.shiftKey)
     e.stopPropagation()
     e.preventDefault()
     let { folders, files, filterInput } = this.plugin.getPluginState()

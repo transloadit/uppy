@@ -1,16 +1,14 @@
 const { h } = require('preact')
-const hyperx = require('hyperx')
-const html = hyperx(h)
 const CameraIcon = require('./CameraIcon')
 
-module.exports = function SnapshotButton ({ onSnapshot }) {
-  return html`
+module.exports = ({ onSnapshot }) => {
+  return (
     <button class="UppyButton--circular UppyButton--red UppyButton--sizeM UppyWebcam-recordButton"
       type="button"
       title="Take a snapshot"
       aria-label="Take a snapshot"
-      onclick=${onSnapshot}>
-      ${CameraIcon()}
+      onclick={onSnapshot}>
+      {CameraIcon()}
     </button>
-  `
+  )
 }

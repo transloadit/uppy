@@ -1,7 +1,5 @@
-const { h } = require('preact')
-const hyperx = require('hyperx')
-const html = hyperx(h)
 const cuid = require('cuid')
+const { h } = require('preact')
 
 module.exports = (props) => {
   const uniqueId = cuid()
@@ -14,38 +12,35 @@ module.exports = (props) => {
   }
 
   const handleItemClick = (ev) => {
+    ev.preventDefault()
     // when file is clicked, select it, but when folder is clicked, open it
     if (props.type === 'folder') {
-      return props.handleClick()
+      return props.handleClick(ev)
     }
     props.handleCheckboxClick(ev)
   }
 
-  return html`
-    <tr class="BrowserTable-row" onclick=${handleItemClick}>
-      <td class="BrowserTable-column">
-        <div class="BrowserTable-checkbox">
+  return (
+    <tr class="uppy-ProviderBrowserTable-row">
+      <td class="uppy-ProviderBrowserTable-column">
+        <div class="uppy-ProviderBrowserTable-checkbox">
           <input type="checkbox"
-                 role="option" 
-                 tabindex="0"
-                 aria-label="Select ${props.title}"
-                 id=${uniqueId}
-                 ${props.isChecked
-                  ? { 'checked': true }
-                 : {}}
-                 ${props.isDisabled
-                  ? { 'disabled': true }
-                 : {}}
-                 onchange=${props.handleCheckboxClick}
-                 onkeyup=${stop}
-                 onkeydown=${stop}
-                 onkeypress=${stop} />
-          <label for=${uniqueId}></label>
+            role="option"
+            tabindex="0"
+            aria-label={`Select ${props.title}`}
+            id={uniqueId}
+            checked={props.isChecked}
+            disabled={props.isDisabled}
+            onchange={props.handleCheckboxClick}
+            onkeyup={stop}
+            onkeydown={stop}
+            onkeypress={stop} />
+          <label for={uniqueId} onclick={handleItemClick} />
         </div>
-        <button type="button" class="BrowserTable-item" aria-label="Select ${props.title}" tabindex="0" onclick=${handleItemClick}>
-          ${props.getItemIcon()} ${props.title}
+        <button type="button" class="uppy-ProviderBrowserTable-item" aria-label={`Select ${props.title}`} tabindex="0" onclick={handleItemClick}>
+          {props.getItemIcon()} {props.title}
         </button>
       </td>
     </tr>
-  `
+  )
 }

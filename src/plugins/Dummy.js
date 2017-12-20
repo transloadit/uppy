@@ -1,7 +1,5 @@
 const Plugin = require('../core/Plugin')
 const { h } = require('preact')
-const hyperx = require('hyperx')
-const html = hyperx(h)
 
 /**
  * Dummy
@@ -20,7 +18,7 @@ module.exports = class Dummy extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.strange = html`<h1>this is strange 1</h1>`
+    this.strange = <h1>this is strange 1</h1>
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -41,21 +39,21 @@ module.exports = class Dummy extends Plugin {
   }
 
   render (state) {
-    const bla = html`<h2>this is strange 2</h2>`
-    return html`
+    const bla = <h2>this is strange 2</h2>
+    return (
       <div class="wow-this-works">
-        <input class="UppyDummy-firstInput" type="text" value="hello" onload=${(el) => {
-          el.focus()
-        }} />
-        ${this.strange}
-        ${bla}
-        ${state.dummy.text}
+        <input class="UppyDummy-firstInput" type="text" value="hello" />
+        {this.strange}
+        {bla}
+        {state.dummy.text}
       </div>
-    `
+    )
   }
 
   install () {
-    this.uppy.setState({dummy: {text: '123'}})
+    this.uppy.setState({
+      dummy: { text: '123' }
+    })
 
     const target = this.opts.target
     if (target) {
@@ -63,7 +61,9 @@ module.exports = class Dummy extends Plugin {
     }
 
     setTimeout(() => {
-      this.uppy.setState({dummy: {text: '!!!'}})
+      this.uppy.setState({
+        dummy: {text: '!!!'}
+      })
     }, 2000)
   }
 }

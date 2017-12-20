@@ -44,7 +44,6 @@ module.exports = class Webcam extends Plugin {
     this.title = 'Webcam'
     this.type = 'acquirer'
     this.icon = WebcamIcon
-    this.focus = this.focus.bind(this)
 
     const defaultLocale = {
       strings: {
@@ -87,6 +86,7 @@ module.exports = class Webcam extends Plugin {
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
     this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
+    this.focus = this.focus.bind(this)
 
     this.webcamActive = false
 

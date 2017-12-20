@@ -108,7 +108,7 @@ module.exports = class DragDrop extends Plugin {
   }
 
   render (state) {
-    const DragDropClass = `Uppy UppyTheme--default uppy-DragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}`
+    const DragDropClass = `uppy uppy-DragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}`
     const DragDropStyle = {
       width: this.opts.width,
       height: this.opts.height

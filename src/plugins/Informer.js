@@ -52,7 +52,7 @@ module.exports = class Informer extends Plugin {
     }
 
     return (
-      <div class="Uppy UppyInformer"
+      <div class="uppy uppy-Informer"
         style={style}
         aria-hidden={isHidden}>
         <p role="alert">

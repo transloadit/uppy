@@ -1,10 +1,7 @@
 const Plugin = require('../../core/Plugin')
 const Provider = require('../Provider')
 const View = require('../Provider/view')
-
 const { h } = require('preact')
-const hyperx = require('hyperx')
-const html = hyperx(h)
 
 module.exports = class GoogleDrive extends Plugin {
   constructor (uppy, opts) {
@@ -12,14 +9,11 @@ module.exports = class GoogleDrive extends Plugin {
     this.type = 'acquirer'
     this.id = this.opts.id || 'GoogleDrive'
     this.title = 'Google Drive'
-    this.icon = () => html`
+    this.icon = () =>
       <svg aria-hidden="true" class="UppyIcon UppyModalTab-icon" width="28" height="28" viewBox="0 0 16 16">
-        <path d="M2.955 14.93l2.667-4.62H16l-2.667 4.62H2.955zm2.378-4.62l-2.666 4.62L0 10.31l5.19-8.99 2.666 4.62-2.523 4.37zm10.523-.25h-5.333l-5.19-8.99h5.334l5.19 8.99z"/>
+        <path d="M2.955 14.93l2.667-4.62H16l-2.667 4.62H2.955zm2.378-4.62l-2.666 4.62L0 10.31l5.19-8.99 2.666 4.62-2.523 4.37zm10.523-.25h-5.333l-5.19-8.99h5.334l5.19 8.99z" />
       </svg>
-    `
 
-    // writing out the key explicitly for readability the key used to store
-    // the provider instance must be equal to this.id.
     this[this.id] = new Provider(uppy, {
       host: this.opts.host,
       provider: 'drive',
@@ -29,7 +23,6 @@ module.exports = class GoogleDrive extends Plugin {
     this.files = []
 
     this.onAuth = this.onAuth.bind(this)
-    // Visual
     this.render = this.render.bind(this)
 
     // set default options
@@ -79,7 +72,7 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   getItemIcon (item) {
-    return html`<img src=${item.iconLink}/>`
+    return <img src={item.iconLink} />
   }
 
   getItemSubList (item) {
