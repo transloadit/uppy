@@ -5,7 +5,7 @@ function progressDetails (props) {
   return <span>{props.totalProgress || 0}%・{props.complete} / {props.inProgress}・{props.totalUploadedSize} / {props.totalSize}・↑ {props.totalSpeed}/s・{props.totalETA}</span>
 }
 
-const throttledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
+const ThrottledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
 
 const STATE_ERROR = 'error'
 const STATE_WAITING = 'waiting'
@@ -132,8 +132,8 @@ module.exports = (props) => {
         aria-valuenow={progressValue} />
       {progressBarContent}
       <div class="uppy-StatusBar-actions">
-        { props.newFiles && !props.hideUploadButton ? UploadBtn(props) : null }
-        { props.error ? RetryBtn(props) : null }
+        { props.newFiles && !props.hideUploadButton ? <UploadBtn {...props} /> : null }
+        { props.error ? <RetryBtn {...props} /> : null }
       </div>
     </div>
   )
@@ -172,8 +172,8 @@ const ProgressBarUploading = (props) => {
     <div class="uppy-StatusBar-content">
       {props.isUploadStarted && !props.isAllComplete
         ? !props.isAllPaused
-          ? <div title="Uploading">{pauseResumeButtons(props)} Uploading... {throttledProgressDetails(props)}</div>
-          : <div title="Paused">{pauseResumeButtons(props)} Paused・{props.totalProgress}%</div>
+          ? <div title="Uploading">{ <PauseResumeButtons {...props} /> } Uploading... { <ThrottledProgressDetails {...props} /> }</div>
+          : <div title="Paused">{ <PauseResumeButtons {...props} /> } Paused・{props.totalProgress}%</div>
         : null
       }
     </div>
@@ -196,8 +196,7 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
 const ProgressBarError = ({ error, retryAll, i18n }) => {
   return (
     <div class="uppy-StatusBar-content" role="alert">
-      <strong>{i18n('uploadFailed')}.</strong>
-      <span>{i18n('pleasePressRetry')}</span>
+      <strong>{i18n('uploadFailed')}.</strong> <span>{i18n('pleasePressRetry')}</span>
       <span class="uppy-StatusBar-details"
         data-balloon={error}
         data-balloon-pos="up"
@@ -206,7 +205,7 @@ const ProgressBarError = ({ error, retryAll, i18n }) => {
   )
 }
 
-const pauseResumeButtons = (props) => {
+const PauseResumeButtons = (props) => {
   const { resumableUploads, isAllPaused, i18n } = props
   const title = resumableUploads
                 ? isAllPaused
