@@ -363,7 +363,7 @@ describe('core/utils', () => {
         ])
       ).resolves.toMatchObject({
         successful: [],
-        failed: [{ message: 'oops' }, { message: 'this went wrong' }]
+        failed: [ new Error('oops'), new Error('this went wrong') ]
       })
     })
 
@@ -376,7 +376,7 @@ describe('core/utils', () => {
         ])
       ).resolves.toMatchObject({
         successful: ['resolved', 'also-resolved'],
-        failed: [{ message: 'rejected' }]
+        failed: [new Error('rejected')]
       })
     })
   })
