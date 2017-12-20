@@ -121,7 +121,10 @@ function getFileType (file) {
     'markdown': 'text/markdown',
     'mp4': 'video/mp4',
     'mp3': 'audio/mp3',
-    'svg': 'image/svg+xml'
+    'svg': 'image/svg+xml',
+    'jpg': 'image/jpeg',
+    'png': 'image/png',
+    'gif': 'image/gif'
   }
 
   const fileExtension = file.name ? getFileNameAndExtension(file.name).extension : null

@@ -232,7 +232,7 @@ module.exports = class Tus extends Plugin {
           }))
         })
         .then((res) => {
-          if (res.status < 200 && res.status > 300) {
+          if (res.status < 200 || res.status > 300) {
             return reject(res.statusText)
           }
 
@@ -287,6 +287,10 @@ module.exports = class Tus extends Plugin {
     }
 
     socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+
+    socket.on('error', (errData) => {
+      this.uppy.emit('core:upload-error', file.id, new Error(errData.error))
+    })
 
     socket.on('success', (data) => {
       this.uppy.emit('upload-success', file.id, data, data.url)

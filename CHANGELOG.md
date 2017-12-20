@@ -62,6 +62,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
 - [ ] test: add tests for `npm pack`
+- [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
 
 ## 1.0 Goals
 
@@ -129,6 +130,11 @@ Theme: 🎄 Christmas edition
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: security audit, ask @acconut
 - [ ] uppy: refine UI, look into text-based file type icons or more icons for file types? (@arturi)
+- [x] uppy-server: remove pause/resume socket listeners when upload is done (@ifedapoolarewaju)
+- [x] uppy/uppy-server: remote server error handler #446 (@ifedapoolarewaju)
+- [x] provider: dropbox thumbnail view seems not to be working (@ifedapoolarewaju)
+- [ ] uppy-server: look into typescripting for a type safe servers (@ifedapoolarewaju)
+- [x] uppy-server: link uppy-server with https://snyk.io/ to aid vulnerability spotting (@ifedapoolarewaju)
 
 ## 0.21.1
 
