@@ -113,7 +113,6 @@ Theme: 🎄 Christmas edition
 - [x] core: renamed core to uppy in plugins and what not. So instead of this.core.state we would use this.uppy.state; (@arturi / #438) 
 - [x] core: renamed events to remove core: prefix, as been suggested already. So: `success`, `error`, `upload-started` and so on, and prefixed event names for plugins sometimes, like `dashboard:file-card` (@arturi / #438) 
 - [x] dashboard: added `metaFields` option, pass an array of settings for UI field objects `{ id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }` (@arturi, @goto-bus-stop / #438)
-
 - [ ] add `Form`: a plugin that is used in conjunction with any other acquirer, responsible for 1. acquiring the metadata from form; 2. intercepting submit event on the form, opening Uppy dialog instead; 3. injecting any result (like from Transloadit plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field i think) (@arturi)
 - [ ] core: return `processing` results among with `upload` results in `success` event and `upload()` promise
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
@@ -124,7 +123,6 @@ Theme: 🎄 Christmas edition
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins (@goto-bus-stop)
 - [ ] goldenretriever: add “ghost” files (@arturi)
-- [ ] tus: Review “tus: Remove old upload and events when starting a new upload.” b3cc48130e292f08c2a09f2f0adf6b6332bf7692 (@arturi)
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request #442
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
