@@ -1,6 +1,6 @@
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
-const StatusBar = require('./StatusBar')
+const StatusBarUI = require('./StatusBar')
 const { getSpeed } = require('../../core/Utils')
 const { getBytesRemaining } = require('../../core/Utils')
 const { prettyETA } = require('../../core/Utils')
@@ -9,7 +9,7 @@ const prettyBytes = require('prettier-bytes')
 /**
  * A status bar.
  */
-module.exports = class StatusBarUI extends Plugin {
+module.exports = class StatusBar extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'StatusBar'
@@ -141,7 +141,7 @@ module.exports = class StatusBarUI extends Plugin {
 
     const resumableUploads = this.uppy.getState().capabilities.resumableUploads || false
 
-    return StatusBar({
+    return StatusBarUI({
       error: state.error,
       totalProgress: state.totalProgress,
       totalSize: totalSize,

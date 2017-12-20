@@ -25,7 +25,7 @@ class CameraScreen extends Component {
     const shouldShowSnapshotButton = isModeAvailable(this.props.modes, 'picture')
 
     return (
-      <div class="uppy-Webcam-container">
+      <div class="uppy uppy-Webcam-container">
         <div class="uppy-Webcam-videoContainer">
           <video class="uppy-Webcam-video" autoplay muted src={this.props.src || ''} />
         </div>

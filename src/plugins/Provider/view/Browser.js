@@ -13,7 +13,7 @@ module.exports = (props) => {
   }
 
   return (
-    <div class={`uppy-ProviderBrowser uppy-ProviderBrowser-viewType--${props.viewType}`}>
+    <div class={`uppy uppy-ProviderBrowser uppy-ProviderBrowser-viewType--${props.viewType}`}>
       <header class="uppy-ProviderBrowser-header">
         <div class="uppy-ProviderBrowser-search" aria-hidden={!props.isSearchVisible}>
           { props.isSearchVisible && <Filter {...props} /> }

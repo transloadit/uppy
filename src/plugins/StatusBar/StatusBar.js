@@ -123,7 +123,7 @@ module.exports = (props) => {
                            ${progressMode ? 'is-' + progressMode : ''}`
 
   return (
-    <div class={'uppy-StatusBar ' + `is-${uploadState}`} aria-hidden={isHidden}>
+    <div class={'uppy uppy-StatusBar ' + `is-${uploadState}`} aria-hidden={isHidden}>
       <div class={progressClasses}
         style={{ width: width + '%' }}
         role="progressbar"

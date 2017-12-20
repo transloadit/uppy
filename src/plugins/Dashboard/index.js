@@ -1,7 +1,7 @@
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const dragDrop = require('drag-drop')
-const Dashboard = require('./Dashboard')
+const DashboardUI = require('./Dashboard')
 const StatusBar = require('../StatusBar')
 const Informer = require('../Informer')
 const { findAllDOMElements, toArray } = require('../../core/Utils')
@@ -25,7 +25,7 @@ const FOCUSABLE_ELEMENTS = [
 /**
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
-module.exports = class DashboardUI extends Plugin {
+module.exports = class Dashboard extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Dashboard'
@@ -419,7 +419,7 @@ module.exports = class DashboardUI extends Plugin {
       this.uppy.emit('dashboard:file-card')
     }
 
-    return Dashboard({
+    return DashboardUI({
       state: state,
       modal: pluginState,
       newFiles: newFiles,

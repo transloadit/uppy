@@ -71,7 +71,7 @@ module.exports = class FileInput extends Plugin {
       zIndex: -1
     }
 
-    return <div class="Uppy uppy-FileInput-container">
+    return <div class="uppy uppy-FileInput-container">
       <input class="uppy-FileInput-input"
         style={this.opts.pretty && hiddenInputStyle}
         type="file"
