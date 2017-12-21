@@ -18,7 +18,6 @@ module.exports = class Form extends Plugin {
       resultName: 'uppyResult',
       getMetaFromForm: true,
       addResultToForm: true,
-      // triggerUploadOnFileSelection: false,
       submitOnSuccess: false,
       triggerUploadOnSubmit: false
     }
