@@ -30,35 +30,33 @@ module.exports = class Form extends Plugin {
     this.handleUploadStart = this.handleUploadStart.bind(this)
     this.handleSuccess = this.handleSuccess.bind(this)
     this.addResultToForm = this.addResultToForm.bind(this)
+    this.getMetaFromForm = this.getMetaFromForm.bind(this)
   }
 
-  handleFormSubmit (ev) {
-    if (!this.opts.triggerUploadOnSubmit) return
-    console.log('PREVENT DEFAULT')
-    ev.preventDefault()
-    this.uppy.upload()
+  handleUploadStart () {
+    if (this.opts.getMetaFromForm) {
+      this.getMetaFromForm()
+    }
   }
 
-  handleSuccess (data) {
-    const result = {}
-
-    data.forEach(fileID => {
-      result[fileID] = {
-        url: this.uppy.state.files[fileID].uploadURL
-        // transcoding/postprocessing result here too?
-      }
-    })
-
-    this.addResultToForm(result)
+  handleSuccess (result) {
+    if (this.opts.addResultToForm) {
+      this.addResultToForm(result)
+    }
 
     if (this.opts.submitOnSuccess) {
       this.form.submit()
     }
   }
 
-  addResultToForm (result) {
-    if (!this.opts.addResultToForm) return
+  handleFormSubmit (ev) {
+    if (this.opts.triggerUploadOnSubmit) {
+      ev.preventDefault()
+      this.uppy.upload()
+    }
+  }
 
+  addResultToForm (result) {
     this.uppy.log('[Form] Adding result to the original form:')
     this.uppy.log(result)
 
@@ -75,8 +73,7 @@ module.exports = class Form extends Plugin {
     this.form.appendChild(resultInput)
   }
 
-  handleUploadStart () {
-    if (!this.opts.getMetaFromForm) return
+  getMetaFromForm () {
     const formMeta = getFormData(this.form)
     this.uppy.setMeta(formMeta)
   }
@@ -90,12 +87,12 @@ module.exports = class Form extends Plugin {
 
     this.form.addEventListener('submit', this.handleFormSubmit)
     this.uppy.on('upload', this.handleUploadStart)
-    this.uppy.on('success', this.handleSuccess)
+    this.uppy.on('complete', this.handleSuccess)
   }
 
   uninstall () {
     this.form.removeEventListener('submit', this.handleFormSubmit)
     this.uppy.off('upload', this.handleUploadStart)
-    this.uppy.off('success', this.handleSuccess)
+    this.uppy.off('complete', this.handleSuccess)
   }
 }
