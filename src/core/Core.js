@@ -227,10 +227,22 @@ class Uppy {
   }
 
   setMeta (data) {
-    const newMeta = Object.assign({}, this.getState().meta, data)
+    const updatedMeta = Object.assign({}, this.getState().meta, data)
+    const updatedFiles = Object.assign({}, this.getState().files)
+
+    Object.keys(updatedFiles).forEach((fileID) => {
+      updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
+        meta: Object.assign({}, updatedFiles[fileID].meta, data)
+      })
+    })
+
     this.log('Adding metadata:')
     this.log(data)
-    this.setState({ meta: newMeta })
+
+    this.setState({
+      meta: updatedMeta,
+      files: updatedFiles
+    })
   }
 
   setFileMeta (fileID, data) {
@@ -1055,8 +1067,8 @@ class Uppy {
 
     return lastStep.then(() => {
       const files = fileIDs.map((fileID) => this.getFile(fileID))
-      const successful = files.filter((file) => !file.error)
-      const failed = files.filter((file) => file.error)
+      const successful = files.filter((file) => file && !file.error)
+      const failed = files.filter((file) => file && file.error)
       this.emit('complete', { successful, failed })
 
       // Compatibility with pre-0.21
