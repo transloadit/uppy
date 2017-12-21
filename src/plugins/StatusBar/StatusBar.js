@@ -5,7 +5,7 @@ function progressDetails (props) {
   return <span>{props.totalProgress || 0}%・{props.complete} / {props.inProgress}・{props.totalUploadedSize} / {props.totalSize}・↑ {props.totalSpeed}/s・{props.totalETA}</span>
 }
 
-const ThrottledProgressDetails = throttle(progressDetails, 1000, {leading: true, trailing: true})
+const ThrottledProgressDetails = throttle(progressDetails, 500, {leading: true, trailing: true})
 
 const STATE_ERROR = 'error'
 const STATE_WAITING = 'waiting'

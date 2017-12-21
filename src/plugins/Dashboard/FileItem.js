@@ -99,9 +99,9 @@ module.exports = function fileItem (props) {
       </div>
     </div>
     <div class="uppy-DashboardItem-info">
-      <h4 class="uppy-DashboardItem-name" title="{fileName}">
+      <h4 class="uppy-DashboardItem-name" title={fileName}>
         {file.uploadURL
-          ? <a href="{file.uploadURL}" target="_blank">
+          ? <a href={file.uploadURL} target="_blank">
             {file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}
           </a>
           : file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName
@@ -111,7 +111,7 @@ module.exports = function fileItem (props) {
         {file.data.size && <div class="uppy-DashboardItem-statusSize">{prettyBytes(file.data.size)}</div>}
         {file.source && <div class="uppy-DashboardItem-sourceIcon">
             {acquirers.map(acquirer => {
-              if (acquirer.id === file.source) return <span title="{props.i18n('fileSource')}: {acquirer.name}">{acquirer.icon()}</span>
+              if (acquirer.id === file.source) return <span title={`${props.i18n('fileSource')}: ${acquirer.name}`}>{acquirer.icon()}</span>
             })}
           </div>
         }

@@ -1,6 +1,5 @@
 const preact = require('preact')
 const { findDOMElement } = require('../core/Utils')
-const getFormData = require('get-form-data')
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -15,9 +14,6 @@ module.exports = class Plugin {
   constructor (uppy, opts) {
     this.uppy = uppy
     this.opts = opts || {}
-
-    // clear everything inside the target selector
-    // this.opts.replaceTargetContent = this.opts.replaceTargetContent !== undefined ? this.opts.replaceTargetContent : true
 
     this.update = this.update.bind(this)
     this.mount = this.mount.bind(this)
@@ -67,12 +63,6 @@ module.exports = class Plugin {
       }
 
       this.uppy.log(`Installing ${callerPluginName} to a DOM element`)
-
-      // attempt to extract meta from form element
-      if (this.opts.getMetaFromForm && targetElement.nodeName === 'FORM') {
-        const formMeta = getFormData(targetElement)
-        this.uppy.setMeta(formMeta)
-      }
 
       // clear everything inside the target container
       if (this.opts.replaceTargetContent) {

@@ -227,10 +227,22 @@ class Uppy {
   }
 
   setMeta (data) {
-    const newMeta = Object.assign({}, this.getState().meta, data)
+    const updatedMeta = Object.assign({}, this.getState().meta, data)
+    const updatedFiles = Object.assign({}, this.getState().files)
+
+    Object.keys(updatedFiles).forEach((fileID) => {
+      updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
+        meta: Object.assign({}, updatedFiles[fileID].meta, data)
+      })
+    })
+
     this.log('Adding metadata:')
     this.log(data)
-    this.setState({meta: newMeta})
+
+    this.setState({
+      meta: updatedMeta,
+      files: updatedFiles
+    })
   }
 
   setFileMeta (fileID, data) {
@@ -602,13 +614,14 @@ class Uppy {
 
   /**
    * Registers listeners for all global actions, like:
-   * `file-add`, `file-remove`, `upload-progress`, `reset`
+   * `error`, `file-added`, `file-removed`, `upload-progress`
    *
    */
   actions () {
-    // this.bus.on('*', (payload) => {
-    //   console.log('emitted: ', this.event)
-    //   console.log('with payload: ', payload)
+    // const log = this.log
+    // this.on('*', function (payload) {
+    //   log(`[Core] Event: ${this.event}`)
+    //   log(payload)
     // })
 
     // stress-test re-rendering
@@ -856,10 +869,6 @@ class Uppy {
     this.iteratePlugins((plugin) => {
       plugin.uninstall()
     })
-
-    // if (this.socket) {
-    //   this.socket.close()
-    // }
   }
 
   /**
@@ -1058,8 +1067,8 @@ class Uppy {
 
     return lastStep.then(() => {
       const files = fileIDs.map((fileID) => this.getFile(fileID))
-      const successful = files.filter((file) => !file.error)
-      const failed = files.filter((file) => file.error)
+      const successful = files.filter((file) => file && !file.error)
+      const failed = files.filter((file) => file && file.error)
       this.emit('complete', { successful, failed })
 
       // Compatibility with pre-0.21
