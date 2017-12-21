@@ -25,7 +25,6 @@ module.exports = class DragDrop extends Plugin {
     // Default options
     const defaultOpts = {
       target: null,
-      getMetaFromForm: true,
       width: '100%',
       height: '100%',
       note: '',
