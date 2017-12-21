@@ -5,7 +5,6 @@ const Dropbox = require('uppy/lib/plugins/Dropbox')
 const Instagram = require('uppy/lib/plugins/Instagram')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Tus = require('uppy/lib/plugins/Tus')
-const MetaData = require('uppy/lib/plugins/MetaData')
 
 const UPPY_SERVER = require('../env')
 
@@ -37,37 +36,35 @@ function uppyInit () {
     trigger: '.UppyModalOpenerBtn',
     inline: opts.DashboardInline,
     target: opts.DashboardInline ? '.DashboardContainer' : 'body',
-    note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : ''
+    note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : '',
+    metaFields: [
+      { id: 'license', name: 'License', placeholder: 'specify license' },
+      { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
+    ]
   })
 
   if (opts.GoogleDrive) {
-    uppy.use(GoogleDrive, {target: Dashboard, host: UPPY_SERVER})
+    uppy.use(GoogleDrive, { target: Dashboard, host: UPPY_SERVER })
   }
 
   if (opts.Dropbox) {
-    uppy.use(Dropbox, {target: Dashboard, host: UPPY_SERVER})
+    uppy.use(Dropbox, { target: Dashboard, host: UPPY_SERVER })
   }
 
   if (opts.Instagram) {
-    uppy.use(Instagram, {target: Dashboard, host: UPPY_SERVER})
+    uppy.use(Instagram, { target: Dashboard, host: UPPY_SERVER })
   }
 
   if (opts.Webcam) {
-    uppy.use(Webcam, {target: Dashboard})
+    uppy.use(Webcam, { target: Dashboard })
   }
 
-  uppy.use(Tus, {endpoint: TUS_ENDPOINT, resume: true})
-  uppy.use(MetaData, {
-    fields: [
-      { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
-      { id: 'caption', name: 'Caption', value: 'none', placeholder: 'describe what the image is about' }
-    ]
-  })
+  uppy.use(Tus, { endpoint: TUS_ENDPOINT, resume: true })
   uppy.run()
 
-  uppy.on('core:success', (fileList) => {
-    console.log('Yo, uploaded: ')
-    console.log(fileList)
+  uppy.on('complete', result => {
+    console.log('successful files:', result.successful)
+    console.log('failed files:', result.failed)
   })
 }
 

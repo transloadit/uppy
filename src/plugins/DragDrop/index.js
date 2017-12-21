@@ -1,35 +1,24 @@
-const Plugin = require('./../Plugin')
+const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const { toArray } = require('../../core/Utils')
 const dragDrop = require('drag-drop')
-const html = require('yo-yo')
+const { h } = require('preact')
 
 /**
  * Drag & Drop plugin
  *
  */
 module.exports = class DragDrop extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'acquirer'
-    this.id = 'DragDrop'
+    this.id = this.opts.id || 'DragDrop'
     this.title = 'Drag & Drop'
-    this.icon = html`
-      <svg aria-hidden="true" class="UppyIcon" width="28" height="28" viewBox="0 0 16 16">
-        <path d="M15.982 2.97c0-.02 0-.02-.018-.037 0-.017-.017-.035-.035-.053 0 0 0-.018-.02-.018-.017-.018-.034-.053-.052-.07L13.19.123c-.017-.017-.034-.035-.07-.053h-.018c-.018-.017-.035-.017-.053-.034h-.02c-.017 0-.034-.018-.052-.018h-6.31a.415.415 0 0 0-.446.426V11.11c0 .25.196.446.445.446h8.89A.44.44 0 0 0 16 11.11V3.023c-.018-.018-.018-.035-.018-.053zm-2.65-1.46l1.157 1.157h-1.157V1.51zm1.78 9.157h-8V.89h5.332v2.22c0 .25.196.446.445.446h2.22v7.11z"/>
-        <path d="M9.778 12.89H4V2.666a.44.44 0 0 0-.444-.445.44.44 0 0 0-.445.445v10.666c0 .25.197.445.446.445h6.222a.44.44 0 0 0 .444-.445.44.44 0 0 0-.444-.444z"/>
-        <path d="M.444 16h6.223a.44.44 0 0 0 .444-.444.44.44 0 0 0-.443-.445H.89V4.89a.44.44 0 0 0-.446-.446A.44.44 0 0 0 0 4.89v10.666c0 .248.196.444.444.444z"/>
-      </svg>
-    `
 
     const defaultLocale = {
       strings: {
         dropHereOr: 'Drop files here or',
         browse: 'browse'
-        // selectedFiles: {
-        //   0: '%{smart_count} file selected',
-        //   1: '%{smart_count} files selected'
-        // }
       }
     }
 
@@ -46,7 +35,7 @@ module.exports = class DragDrop extends Plugin {
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOpts, opts)
 
-        // Check for browser dragDrop support
+    // Check for browser dragDrop support
     this.isDragDropSupported = this.checkDragDropSupport()
 
     this.locale = Object.assign({}, defaultLocale, this.opts.locale)
@@ -58,15 +47,16 @@ module.exports = class DragDrop extends Plugin {
 
     // Bind `this` to class methods
     this.handleDrop = this.handleDrop.bind(this)
-    this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
+    this.handleBrowseClick = this.handleBrowseClick.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
+    this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.render = this.render.bind(this)
   }
 
-/**
- * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
- * @return {Boolean} true if supported, false otherwise
- */
+  /**
+   * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
+   * @return {Boolean}
+   */
   checkDragDropSupport () {
     const div = document.createElement('div')
 
@@ -86,10 +76,10 @@ module.exports = class DragDrop extends Plugin {
   }
 
   handleDrop (files) {
-    this.core.log('[DragDrop] Files dropped')
+    this.uppy.log('[DragDrop] Files dropped')
 
     files.forEach((file) => {
-      this.core.addFile({
+      this.uppy.addFile({
         source: this.id,
         name: file.name,
         type: file.type,
@@ -99,12 +89,12 @@ module.exports = class DragDrop extends Plugin {
   }
 
   handleInputChange (ev) {
-    this.core.log('[DragDrop] Files selected through input')
+    this.uppy.log('[DragDrop] Files selected through input')
 
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      this.core.addFile({
+      this.uppy.addFile({
         source: this.id,
         name: file.name,
         type: file.type,
@@ -113,68 +103,53 @@ module.exports = class DragDrop extends Plugin {
     })
   }
 
-  render (state) {
-    const onSelect = (ev) => {
-      const input = this.target.querySelector('.uppy-DragDrop-input')
-      input.click()
-    }
-
-    // const selectedFilesCount = Object.keys(state.files).length
-
-    return html`
-      <div class="Uppy UppyTheme--default uppy-DragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}"
-           style="width: ${this.opts.width}; height: ${this.opts.height};">
-        <form class="uppy-DragDrop-inner" onsubmit=${(ev) => ev.preventDefault()}>
-          <svg class="UppyIcon uppy-DragDrop-arrow" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-            <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd"/>
-          </svg>
-          <input class="uppy-DragDrop-input uppy-DragDrop-focus"
-                 type="file"
-                 name="files[]"
-                 multiple="true"
-                 value=""
-                 onchange=${this.handleInputChange.bind(this)} />
-          <label class="uppy-DragDrop-label" onclick=${onSelect}>
-            ${this.i18n('dropHereOr')}
-            <span class="uppy-DragDrop-dragText">${this.i18n('browse')}</span>
-          </label>
-          <span class="uppy-DragDrop-note">${this.opts.note}</span>
-        </form>
-      </div>
-    `
+  handleBrowseClick (ev) {
+    this.input.click()
   }
 
-  // ${selectedFilesCount > 0
-  // ? html`<div class="uppy-DragDrop-selectedCount">
-  //     ${this.i18n('selectedFiles', {'smart_count': selectedFilesCount})}
-  //   </div>`
-  // : ''}
+  render (state) {
+    const DragDropClass = `uppy uppy-DragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}`
+    const DragDropStyle = {
+      width: this.opts.width,
+      height: this.opts.height
+    }
+    return (
+      <div class={DragDropClass} style={DragDropStyle} onclick={this.handleBrowseClick}>
+        <div class="uppy-DragDrop-inner">
+          <svg aria-hidden="true" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
+          </svg>
+          <input class="uppy-DragDrop-input"
+            type="file"
+            name="files[]"
+            multiple="true"
+            value=""
+            ref={(input) => {
+              this.input = input
+            }}
+            onchange={this.handleInputChange} />
+          <label class="uppy-DragDrop-label" onclick={this.handleBrowseClick}>
+            {this.i18n('dropHereOr')} <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
+          </label>
+          <span class="uppy-DragDrop-note">{this.opts.note}</span>
+        </div>
+      </div>
+    )
+  }
 
   install () {
     const target = this.opts.target
-    const plugin = this
     if (target) {
-      this.mount(target, plugin)
+      this.mount(target, this)
     }
+    this.removeDragDropListener = dragDrop(this.el, (files) => {
+      this.handleDrop(files)
+      this.uppy.log(files)
+    })
   }
 
   uninstall () {
     this.unmount()
-  }
-
-  mount (...args) {
-    super.mount(...args)
-
-    const dndContainer = this.target.querySelector('.uppy-DragDrop-container')
-    this.removeDragDropListener = dragDrop(dndContainer, (files) => {
-      this.handleDrop(files)
-      this.core.log(files)
-    })
-  }
-
-  unmount (...args) {
     this.removeDragDropListener()
-
-    super.unmount(...args)
   }
 }

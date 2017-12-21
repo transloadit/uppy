@@ -2,13 +2,23 @@
 * General Uppy styles that apply to everything inside the .Uppy container
 */
 
-.Uppy {
+.uppy {
+  // all: initial;
   box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont,
+    'avenir next', avenir,
+    helvetica, 'helvetica neue',
+    ubuntu, roboto, noto,
+    'segoe ui', arial, sans-serif;
+  line-height: 1;
+  // -webkit-font-smoothing: antialiased;
 }
 
-.Uppy *, .Uppy *:before, .Uppy *:after {
+.uppy *, .uppy *:before, .uppy *:after {
   box-sizing: inherit;
 }
+
+// https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4
 
 .UppyIcon {
   max-width: 100%;
@@ -17,16 +27,13 @@
   display: inline-block;
   vertical-align: text-top;
   overflow: hidden;
+  // width: 1em;
+  // height: 1em;
 }
 
-.UppyTheme--default {
-  font-family: -apple-system, BlinkMacSystemFont,
-               'avenir next', avenir,
-               helvetica, 'helvetica neue',
-               ubuntu, roboto, noto,
-               'segoe ui', arial, sans-serif;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
+.UppyIcon--svg-baseline {
+  bottom: -0.125em;
+  position: relative;
 }
 
 // Buttons

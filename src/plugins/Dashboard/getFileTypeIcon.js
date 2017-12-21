@@ -13,7 +13,7 @@ module.exports = function getIconByMime (fileType) {
 
   if (fileTypeGeneral === 'text') {
     return {
-      color: '#000',
+      color: '#cbcbcb',
       icon: iconText()
     }
   }

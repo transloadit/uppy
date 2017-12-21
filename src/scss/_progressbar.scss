@@ -3,7 +3,7 @@
 // @import '_animation.scss';
 // @import '_common.scss';
 
-.UppyProgressBar {
+.uppy-ProgressBar {
   position: absolute;
   top: 0;
   left: 0;
@@ -12,7 +12,7 @@
   z-index: 10000;
 }
 
-.UppyProgressBar-inner {
+.uppy-ProgressBar-inner {
   background-color: $color-cornflower-blue;
   box-shadow: 0 0 10px rgba($color-cornflower-blue, 0.7);
   height: 100%;
@@ -20,7 +20,7 @@
   transition: width 0.4s ease;
 }
 
-.UppyProgressBar-percentage {
+.uppy-ProgressBar-percentage {
   display: none;
   text-align: center;
   position: absolute;

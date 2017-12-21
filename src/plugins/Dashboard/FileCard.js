@@ -1,68 +1,98 @@
-const html = require('yo-yo')
 const getFileTypeIcon = require('./getFileTypeIcon')
 const { checkIcon } = require('./icons')
+const { h, Component } = require('preact')
 
-module.exports = function fileCard (props) {
-  const file = props.fileCardFor ? props.files[props.fileCardFor] : false
-  const meta = {}
+module.exports = class FileCard extends Component {
+  constructor (props) {
+    super(props)
 
-  const tempStoreMetaOrSubmit = (ev) => {
+    this.meta = {}
+
+    this.tempStoreMetaOrSubmit = this.tempStoreMetaOrSubmit.bind(this)
+    this.renderMetaFields = this.renderMetaFields.bind(this)
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  tempStoreMetaOrSubmit (ev) {
+    const file = this.props.files[this.props.fileCardFor]
+
     if (ev.keyCode === 13) {
-      props.done(meta, file.id)
+      ev.stopPropagation()
+      ev.preventDefault()
+      this.props.fileCardDone(this.meta, file.id)
+      return
     }
 
     const value = ev.target.value
     const name = ev.target.dataset.name
-    meta[name] = value
+    this.meta[name] = value
   }
 
-  function renderMetaFields (file) {
-    const metaFields = props.metaFields || []
+  renderMetaFields (file) {
+    const metaFields = this.props.metaFields || []
     return metaFields.map((field) => {
-      return html`<fieldset class="UppyDashboardFileCard-fieldset">
-        <label class="UppyDashboardFileCard-label">${field.name}</label>
-        <input class="UppyDashboardFileCard-input"
-               type="text"
-               data-name="${field.id}"
-               value="${file.meta[field.id]}"
-               placeholder="${field.placeholder || ''}"
-               onkeyup=${tempStoreMetaOrSubmit} /></fieldset>`
+      return <fieldset class="uppy-DashboardFileCard-fieldset">
+        <label class="uppy-DashboardFileCard-label">{field.name}</label>
+        <input class="uppy-DashboardFileCard-input"
+          type="text"
+          data-name={field.id}
+          value={file.meta[field.id]}
+          placeholder={field.placeholder}
+          onkeyup={this.tempStoreMetaOrSubmit}
+          onkeydown={this.tempStoreMetaOrSubmit}
+          onkeypress={this.tempStoreMetaOrSubmit} /></fieldset>
     })
   }
 
-  return html`<div class="UppyDashboardFileCard" aria-hidden="${!props.fileCardFor}">
-    <div class="UppyDashboardContent-bar">
-      <h2 class="UppyDashboardContent-title">Editing <span class="UppyDashboardContent-titleFile">${file.meta ? file.meta.name : file.name}</span></h2>
-      <button class="UppyDashboardContent-back" type="button" title="Finish editing file"
-              onclick=${() => props.done(meta, file.id)}>Done</button>
-    </div>
-    ${props.fileCardFor
-      ? html`<div class="UppyDashboardFileCard-inner">
-          <div class="UppyDashboardFileCard-preview" style="background-color: ${getFileTypeIcon(file.type).color}">
-            ${file.preview
-              ? html`<img alt="${file.name}" src="${file.preview}">`
-              : html`<div class="UppyDashboardItem-previewIconWrap">
-                <span class="UppyDashboardItem-previewIcon" style="color: ${getFileTypeIcon(file.type).color}">${getFileTypeIcon(file.type).icon}</span>
-                <svg class="UppyDashboardItem-previewIconBg" width="72" height="93" viewBox="0 0 72 93"><g><path d="M24.08 5h38.922A2.997 2.997 0 0 1 66 8.003v74.994A2.997 2.997 0 0 1 63.004 86H8.996A2.998 2.998 0 0 1 6 83.01V22.234L24.08 5z" fill="#FFF"/><path d="M24 5L6 22.248h15.007A2.995 2.995 0 0 0 24 19.244V5z" fill="#E4E4E4"/></g></svg>
-              </div>`
-            }
+  handleClick (ev) {
+    const file = this.props.files[this.props.fileCardFor]
+    this.props.fileCardDone(this.meta, file.id)
+  }
+
+  render () {
+    const file = this.props.files[this.props.fileCardFor]
+
+    return <div class="uppy-DashboardFileCard" aria-hidden={!this.props.fileCardFor}>
+      {this.props.fileCardFor &&
+        <div style="width: 100%; height: 100%;">
+          <div class="uppy-DashboardContent-bar">
+            <h2 class="uppy-DashboardContent-title">Editing <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span></h2>
+            <button class="uppy-DashboardContent-back" type="button" title="Finish editing file"
+              onclick={this.handleClick}>Done</button>
           </div>
-          <div class="UppyDashboardFileCard-info">
-            <fieldset class="UppyDashboardFileCard-fieldset">
-              <label class="UppyDashboardFileCard-label">Name</label>
-              <input class="UppyDashboardFileCard-input" data-name="name" type="text" value="${file.meta.name}"
-                     onkeyup=${tempStoreMetaOrSubmit} />
-            </fieldset>
-            ${renderMetaFields(file)}
+          <div class="uppy-DashboardFileCard-inner">
+            <div class="uppy-DashboardFileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
+              {file.preview
+                ? <img alt={file.name} src={file.preview} />
+                : <div class="uppy-DashboardItem-previewIconWrap">
+                  <span class="uppy-DashboardItem-previewIcon" style={{ color: getFileTypeIcon(file.type).color }}>{getFileTypeIcon(file.type).icon}</span>
+                  <svg class="uppy-DashboardItem-previewIconBg" width="72" height="93" viewBox="0 0 72 93"><g><path d="M24.08 5h38.922A2.997 2.997 0 0 1 66 8.003v74.994A2.997 2.997 0 0 1 63.004 86H8.996A2.998 2.998 0 0 1 6 83.01V22.234L24.08 5z" fill="#FFF" /><path d="M24 5L6 22.248h15.007A2.995 2.995 0 0 0 24 19.244V5z" fill="#E4E4E4" /></g></svg>
+                </div>
+              }
+            </div>
+            <div class="uppy-DashboardFileCard-info">
+              <fieldset class="uppy-DashboardFileCard-fieldset">
+                <label class="uppy-DashboardFileCard-label">Name</label>
+                <input class="uppy-DashboardFileCard-input"
+                  type="text"
+                  data-name="name"
+                  value={file.meta.name || ''}
+                  placeholder="name"
+                  onkeyup={this.tempStoreMetaOrSubmit}
+                  onkeydown={this.tempStoreMetaOrSubmit}
+                  onkeypress={this.tempStoreMetaOrSubmit} />
+              </fieldset>
+              {this.renderMetaFields(file)}
+            </div>
           </div>
-        </div>`
-      : null
-    }
-    <div class="UppyDashboard-actions">
-      <button class="UppyButton--circular UppyButton--blue UppyDashboardFileCard-done"
+          <div class="uppy-Dashboard-actions">
+            <button class="UppyButton--circular UppyButton--blue uppy-DashboardFileCard-done"
               type="button"
               title="Finish editing file"
-              onclick=${() => props.done(meta, file.id)}>${checkIcon()}</button>
+              onclick={this.handleClick}>{checkIcon()}</button>
+          </div>
+        </div>
+      }
     </div>
-  </div>`
+  }
 }

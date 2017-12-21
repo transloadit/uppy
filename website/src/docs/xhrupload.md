@@ -57,7 +57,7 @@ headers: {
 
 ### `getResponseData(xhr)`
 
-When an upload has completed, Uppy will extract response data from the upload endpoint and send it back in the `core:upload-success` event.
+When an upload has completed, Uppy will extract response data from the upload endpoint and send it back in the `upload-success` event.
 By default, Uppy assumes the endpoint will return JSON. So, if `POST /upload` responds with:
 
 ```json
@@ -67,7 +67,7 @@ By default, Uppy assumes the endpoint will return JSON. So, if `POST /upload` re
 }
 ```
 
-That object will be emitted in the `core:upload-success` event.
+That object will be emitted in the `upload-success` event.
 
 Not all endpoints respond with JSON. Providing a `getResponseData` function overrides this behavior.
 The `xhr` parameter is the `XMLHttpRequest` instance used to upload the file.
@@ -107,6 +107,10 @@ Note that unlike the [`XMLHttpRequest.timeout`][XHR.timeout] property, this is a
 Set to `0` to disable this check.
 
 The default is 30 seconds.
+
+### `limit: 0`
+
+Limit the amount of uploads going on at the same time. Passing `0` means no limit.
 
 [FormData]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
 [XHR.timeout]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout

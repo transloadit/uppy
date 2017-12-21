@@ -1,4 +1,5 @@
-const Plugin = require('../Plugin')
+const { h } = require('preact')
+const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const {
   getFileTypeExtension,
@@ -16,7 +17,7 @@ function getMediaDevices () {
     return navigator.mediaDevices
   }
 
-  let getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia
+  const getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia
   if (!getUserMedia) {
     return null
   }
@@ -34,16 +35,15 @@ function getMediaDevices () {
  * Webcam
  */
 module.exports = class Webcam extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
-    this.type = 'acquirer'
-    this.id = 'Webcam'
+    this.id = this.opts.id || 'Webcam'
     this.title = 'Webcam'
+    this.type = 'acquirer'
     this.icon = WebcamIcon
-    this.focus = this.focus.bind(this)
 
     const defaultLocale = {
       strings: {
@@ -86,6 +86,7 @@ module.exports = class Webcam extends Plugin {
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
     this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
+    this.focus = this.focus.bind(this)
 
     this.webcamActive = false
 
@@ -94,27 +95,37 @@ module.exports = class Webcam extends Plugin {
     }
   }
 
-  start () {
-    if (!this.mediaDevices) {
-      return Promise.reject(new Error('Webcam access not supported'))
-    }
+  isSupported () {
+    return !!this.mediaDevices
+  }
 
-    this.webcamActive = true
-
+  getConstraints () {
     const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1 ||
       this.opts.modes.indexOf('audio-only') !== -1
     const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1 ||
       this.opts.modes.indexOf('video-only') !== -1 ||
       this.opts.modes.indexOf('picture') !== -1
 
+    return {
+      audio: acceptsAudio,
+      video: acceptsVideo
+    }
+  }
+
+  start () {
+    if (!this.isSupported()) {
+      return Promise.reject(new Error('Webcam access not supported'))
+    }
+
+    this.webcamActive = true
+
+    const constraints = this.getConstraints()
+
     // ask user for access to their camera
-    return this.mediaDevices
-      .getUserMedia({
-        audio: acceptsAudio,
-        video: acceptsVideo
-      })
+    return this.mediaDevices.getUserMedia(constraints)
       .then((stream) => {
         this.stream = stream
+        console.log(stream)
         this.streamSrc = URL.createObjectURL(this.stream)
         this.setPluginState({
           cameraReady: true
@@ -157,11 +168,13 @@ module.exports = class Webcam extends Plugin {
         isRecording: false
       })
       return this.getVideo()
-    }).then((file) => {
-      return this.core.addFile(file)
-    }).then(() => {
+    })
+    .then(this.uppy.addFile)
+    .then(() => {
       this.recordingChunks = null
       this.recorder = null
+      const dashboard = this.uppy.getPlugin('Dashboard')
+      if (dashboard) dashboard.hideAllPanels()
     }, (error) => {
       this.recordingChunks = null
       this.recorder = null
@@ -182,7 +195,7 @@ module.exports = class Webcam extends Plugin {
   }
 
   getVideoElement () {
-    return this.target.querySelector('.UppyWebcam-video')
+    return this.el.querySelector('.uppy-Webcam-video')
   }
 
   oneTwoThreeSmile () {
@@ -197,11 +210,11 @@ module.exports = class Webcam extends Plugin {
         }
 
         if (count > 0) {
-          this.core.info(`${count}...`, 'warning', 800)
+          this.uppy.info(`${count}...`, 'warning', 800)
           count--
         } else {
           clearInterval(countDown)
-          this.core.info(this.i18n('smile'), 'success', 1500)
+          this.uppy.info(this.i18n('smile'), 'success', 1500)
           setTimeout(() => resolve(), 1500)
         }
       }, 1000)
@@ -214,13 +227,15 @@ module.exports = class Webcam extends Plugin {
 
     this.opts.onBeforeSnapshot().catch((err) => {
       const message = typeof err === 'object' ? err.message : err
-      this.core.info(message, 'error', 5000)
+      this.uppy.info(message, 'error', 5000)
       return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
     }).then(() => {
       return this.getImage()
     }).then((tagFile) => {
       this.captureInProgress = false
-      this.core.addFile(tagFile)
+      this.uppy.addFile(tagFile)
+      const dashboard = this.uppy.getPlugin('Dashboard')
+      if (dashboard) dashboard.hideAllPanels()
     }, (error) => {
       this.captureInProgress = false
       throw error
@@ -274,7 +289,7 @@ module.exports = class Webcam extends Plugin {
   focus () {
     if (this.opts.countdown) return
     setTimeout(() => {
-      this.core.info(this.i18n('smile'), 'success', 1500)
+      this.uppy.info(this.i18n('smile'), 'success', 1500)
     }, 1000)
   }
 
@@ -289,7 +304,7 @@ module.exports = class Webcam extends Plugin {
       return PermissionsScreen(webcamState)
     }
 
-    return CameraScreen(Object.assign({}, webcamState, {
+    return h(CameraScreen, Object.assign({}, webcamState, {
       onSnapshot: this.takeSnapshot,
       onStartRecording: this.startRecording,
       onStopRecording: this.stopRecording,
@@ -308,8 +323,9 @@ module.exports = class Webcam extends Plugin {
     })
 
     const target = this.opts.target
-    const plugin = this
-    this.target = this.mount(target, plugin)
+    if (target) {
+      this.mount(target, this)
+    }
   }
 
   uninstall () {

@@ -1,6 +1,5 @@
 const Uppy = require('uppy/lib/core/Core.js')
 const Dashboard = require('uppy/lib/plugins/Dashboard')
-const XHRUpload = require('uppy/lib/plugins/XHRUpload')
 const AwsS3 = require('uppy/lib/plugins/AwsS3')
 
 const uppy = Uppy({
@@ -12,7 +11,6 @@ uppy.use(Dashboard, {
   inline: true,
   target: 'body'
 })
-uppy.use(XHRUpload)
 uppy.use(AwsS3, {
   getUploadParameters (file) {
     // Send a request to our PHP signing endpoint.

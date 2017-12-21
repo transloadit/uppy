@@ -1,4 +1,4 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 const tus = require('tus-js-client')
 const UppySocket = require('../core/UppySocket')
 const {
@@ -50,8 +50,8 @@ function createEventTracker (emitter) {
  *
  */
 module.exports = class Tus extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'uploader'
     this.id = 'Tus'
     this.title = 'Tus'
@@ -75,7 +75,7 @@ module.exports = class Tus extends Plugin {
   }
 
   handleResetProgress () {
-    const files = Object.assign({}, this.core.state.files)
+    const files = Object.assign({}, this.uppy.state.files)
     Object.keys(files).forEach((fileID) => {
       // Only clone the file object if it has a Tus `uploadUrl` attached.
       if (files[fileID].tus && files[fileID].tus.uploadUrl) {
@@ -85,7 +85,7 @@ module.exports = class Tus extends Plugin {
       }
     })
 
-    this.core.setState({ files })
+    this.uppy.setState({ files })
   }
 
   /**
@@ -116,7 +116,7 @@ module.exports = class Tus extends Plugin {
    * @returns {Promise}
    */
   upload (file, current, total) {
-    this.core.log(`uploading ${current} of ${total}`)
+    this.uppy.log(`uploading ${current} of ${total}`)
 
     this.resetUploaderReferences(file.id)
 
@@ -131,8 +131,8 @@ module.exports = class Tus extends Plugin {
       )
 
       optsTus.onError = (err) => {
-        this.core.log(err)
-        this.core.emit('core:upload-error', file.id, err)
+        this.uppy.log(err)
+        this.uppy.emit('upload-error', file.id, err)
         err.message = `Failed because: ${err.message}`
 
         this.resetUploaderReferences(file.id)
@@ -141,7 +141,7 @@ module.exports = class Tus extends Plugin {
 
       optsTus.onProgress = (bytesUploaded, bytesTotal) => {
         this.onReceiveUploadUrl(file, upload.url)
-        this.core.emit('core:upload-progress', {
+        this.uppy.emit('upload-progress', {
           uploader: this,
           id: file.id,
           bytesUploaded: bytesUploaded,
@@ -150,10 +150,10 @@ module.exports = class Tus extends Plugin {
       }
 
       optsTus.onSuccess = () => {
-        this.core.emit('core:upload-success', file.id, upload, upload.url)
+        this.uppy.emit('upload-success', file.id, upload, upload.url)
 
         if (upload.url) {
-          this.core.log('Download ' + upload.file.name + ' from ' + upload.url)
+          this.uppy.log('Download ' + upload.file.name + ' from ' + upload.url)
         }
 
         this.resetUploaderReferences(file.id)
@@ -163,7 +163,7 @@ module.exports = class Tus extends Plugin {
 
       const upload = new tus.Upload(file.data, optsTus)
       this.uploaders[file.id] = upload
-      this.uploaderEvents[file.id] = createEventTracker(this.core)
+      this.uploaderEvents[file.id] = createEventTracker(this.uppy)
 
       this.onFileRemove(file.id, (targetFileID) => {
         this.resetUploaderReferences(file.id)
@@ -171,7 +171,11 @@ module.exports = class Tus extends Plugin {
       })
 
       this.onPause(file.id, (isPaused) => {
-        isPaused ? upload.abort() : upload.start()
+        if (isPaused) {
+          upload.abort()
+        } else {
+          upload.start()
+        }
       })
 
       this.onPauseAll(file.id, () => {
@@ -189,8 +193,12 @@ module.exports = class Tus extends Plugin {
         upload.start()
       })
 
-      upload.start()
-      this.core.emit('core:upload-started', file.id, upload)
+      if (!file.isPaused) {
+        upload.start()
+      }
+      if (!file.isRestored) {
+        this.uppy.emit('upload-started', file.id, upload)
+      }
     })
   }
 
@@ -198,7 +206,7 @@ module.exports = class Tus extends Plugin {
     this.resetUploaderReferences(file.id)
 
     return new Promise((resolve, reject) => {
-      this.core.log(file.remote.url)
+      this.uppy.log(file.remote.url)
       if (file.serverToken) {
         this.connectToServerSocket(file)
       } else {
@@ -207,7 +215,7 @@ module.exports = class Tus extends Plugin {
           endpoint = file.tus.endpoint
         }
 
-        this.core.emitter.emit('core:upload-started', file.id)
+        this.uppy.emit('upload-started', file.id)
 
         fetch(file.remote.url, {
           method: 'post',
@@ -224,15 +232,14 @@ module.exports = class Tus extends Plugin {
           }))
         })
         .then((res) => {
-          if (res.status < 200 && res.status > 300) {
+          if (res.status < 200 || res.status > 300) {
             return reject(res.statusText)
           }
 
           res.json().then((data) => {
             const token = data.token
+            this.uppy.setFileState(file.id, { serverToken: token })
             file = this.getFile(file.id)
-            file.serverToken = token
-            this.updateFile(file)
             this.connectToServerSocket(file)
             resolve()
           })
@@ -246,7 +253,7 @@ module.exports = class Tus extends Plugin {
     const host = getSocketHost(file.remote.host)
     const socket = new UppySocket({ target: `${host}/api/${token}` })
     this.uploaderSockets[file.id] = socket
-    this.uploaderEvents[file.id] = createEventTracker(this.core)
+    this.uploaderEvents[file.id] = createEventTracker(this.uppy)
 
     this.onFileRemove(file.id, () => socket.send('pause', {}))
 
@@ -275,23 +282,31 @@ module.exports = class Tus extends Plugin {
       socket.send('resume', {})
     })
 
+    if (file.isPaused) {
+      socket.send('pause', {})
+    }
+
     socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
+    socket.on('error', (errData) => {
+      this.uppy.emit('core:upload-error', file.id, new Error(errData.error))
+    })
+
     socket.on('success', (data) => {
-      this.core.emitter.emit('core:upload-success', file.id, data, data.url)
+      this.uppy.emit('upload-success', file.id, data, data.url)
       this.resetUploaderReferences(file.id)
     })
   }
 
   getFile (fileID) {
-    return this.core.state.files[fileID]
+    return this.uppy.state.files[fileID]
   }
 
   updateFile (file) {
-    const files = Object.assign({}, this.core.state.files, {
+    const files = Object.assign({}, this.uppy.state.files, {
       [file.id]: file
     })
-    this.core.setState({ files })
+    this.uppy.setState({ files })
   }
 
   onReceiveUploadUrl (file, uploadURL) {
@@ -309,22 +324,22 @@ module.exports = class Tus extends Plugin {
   }
 
   onFileRemove (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:file-removed', (targetFileID) => {
+    this.uploaderEvents[fileID].on('file-removed', (targetFileID) => {
       if (fileID === targetFileID) cb(targetFileID)
     })
   }
 
   onPause (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:upload-pause', (targetFileID, isPaused) => {
+    this.uploaderEvents[fileID].on('upload-pause', (targetFileID, isPaused) => {
       if (fileID === targetFileID) {
-        // const isPaused = this.core.pauseResume(fileID)
+        // const isPaused = this.uppy.pauseResume(fileID)
         cb(isPaused)
       }
     })
   }
 
   onRetry (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:upload-retry', (targetFileID) => {
+    this.uploaderEvents[fileID].on('upload-retry', (targetFileID) => {
       if (fileID === targetFileID) {
         cb()
       }
@@ -332,29 +347,29 @@ module.exports = class Tus extends Plugin {
   }
 
   onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:retry-all', (filesToRetry) => {
-      if (!this.core.getFile(fileID)) return
+    this.uploaderEvents[fileID].on('retry-all', (filesToRetry) => {
+      if (!this.uppy.getFile(fileID)) return
       cb()
     })
   }
 
   onPauseAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:pause-all', () => {
-      if (!this.core.getFile(fileID)) return
+    this.uploaderEvents[fileID].on('pause-all', () => {
+      if (!this.uppy.getFile(fileID)) return
       cb()
     })
   }
 
   onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:cancel-all', () => {
-      if (!this.core.getFile(fileID)) return
+    this.uploaderEvents[fileID].on('cancel-all', () => {
+      if (!this.uppy.getFile(fileID)) return
       cb()
     })
   }
 
   onResumeAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('core:resume-all', () => {
-      if (!this.core.getFile(fileID)) return
+    this.uploaderEvents[fileID].on('resume-all', () => {
+      if (!this.uppy.getFile(fileID)) return
       cb()
     })
   }
@@ -364,7 +379,9 @@ module.exports = class Tus extends Plugin {
       const current = parseInt(index, 10) + 1
       const total = files.length
 
-      if (!file.isRemote) {
+      if (file.error) {
+        return Promise.reject(new Error(file.error))
+      } else if (!file.isRemote) {
         return this.upload(file, current, total)
       } else {
         return this.uploadRemote(file, current, total)
@@ -376,40 +393,40 @@ module.exports = class Tus extends Plugin {
 
   handleUpload (fileIDs) {
     if (fileIDs.length === 0) {
-      this.core.log('Tus: no files to upload!')
+      this.uppy.log('Tus: no files to upload!')
       return Promise.resolve()
     }
 
-    this.core.log('Tus is uploading...')
-    const filesToUpload = fileIDs.map((fileID) => this.core.getFile(fileID))
+    this.uppy.log('Tus is uploading...')
+    const filesToUpload = fileIDs.map((fileID) => this.uppy.getFile(fileID))
 
     return this.uploadFiles(filesToUpload)
   }
 
   addResumableUploadsCapabilityFlag () {
-    const newCapabilities = Object.assign({}, this.core.getState().capabilities)
+    const newCapabilities = Object.assign({}, this.uppy.getState().capabilities)
     newCapabilities.resumableUploads = true
-    this.core.setState({
+    this.uppy.setState({
       capabilities: newCapabilities
     })
   }
 
   install () {
     this.addResumableUploadsCapabilityFlag()
-    this.core.addUploader(this.handleUpload)
+    this.uppy.addUploader(this.handleUpload)
 
-    this.core.on('core:reset-progress', this.handleResetProgress)
+    this.uppy.on('reset-progress', this.handleResetProgress)
 
     if (this.opts.autoRetry) {
-      this.core.on('back-online', this.core.retryAll)
+      this.uppy.on('back-online', this.uppy.retryAll)
     }
   }
 
   uninstall () {
-    this.core.removeUploader(this.handleUpload)
+    this.uppy.removeUploader(this.handleUpload)
 
     if (this.opts.autoRetry) {
-      this.core.off('back-online', this.core.retryAll)
+      this.uppy.off('back-online', this.uppy.retryAll)
     }
   }
 }

@@ -1,4 +1,4 @@
-.UppyStatusBar {
+.uppy-StatusBar {
   position: relative;
   height: 30px;
   line-height: 30px;
@@ -12,24 +12,30 @@
   transition: height .35s;
 }
 
-.UppyStatusBar[aria-hidden=true] {
+.uppy-StatusBar[aria-hidden=true] {
   height: 0;
 }
 
-.UppyStatusBar.is-complete .UppyStatusBar-progress {
+.uppy-StatusBar.is-complete .uppy-StatusBar-progress {
   background-color: $color-green;
 }
 
-.UppyStatusBar.is-error .UppyStatusBar-progress {
+.uppy-StatusBar.is-error .uppy-StatusBar-progress {
   background-color: $color-red;
 }
 
-.UppyStatusBar.is-complete .UppyStatusBar-content {
+.uppy-StatusBar.is-complete .uppy-StatusBar-content {
   text-align: center;
   padding-left: 0;
 }
 
-.UppyStatusBar-progress {
+.uppy-StatusBar:not([aria-hidden=true]).is-waiting {
+  background-color: $color-white;
+  height: 65px;
+  line-height: 65px;
+}
+
+.uppy-StatusBar-progress {
   background-color: $color-cornflower-blue;
   height: 100%;
   position: absolute;
@@ -44,51 +50,100 @@
   }
 }
 
+.uppy-StatusBar.is-waiting .uppy-StatusBar-progress {
+  display: none;
+}
+
 @keyframes statusBarProgressStripes {
   from { background-position: 64px 0; }
   to { background-position: 0 0; }
 }
 
-.UppyStatusBar-content {
-  font-weight: 600;
+.uppy-StatusBar-content {
+  font-weight: 400;
   position: relative;
   z-index: $zIndex-3;
   padding-left: 15px;
   white-space: nowrap;
   text-overflow: ellipsis;
-  // overflow-x: hidden;
   color: $color-white;
 }
 
-.UppyStatusBar-content .UppyIcon {
-  width: 15px;
-  height: 15px;
+// .uppy-StatusBar-content .UppyIcon {
+//   width: 15px;
+//   height: 15px;
 
-  .UppyDashboard--wide & {
-    width: 17px;
-    height: 17px;
+//   .UppyDashboard--wide & {
+//     width: 17px;
+//     height: 17px;
+//   }
+// }
+
+
+.uppy-StatusBar-statusIndicator {
+  color: $color-white;
+  margin-right: 8px;
+}
+
+  button.uppy-StatusBar-statusIndicator {
+    @include reset-button;
+    margin-right: 8px;
+    cursor: pointer;
   }
+
+.uppy-StatusBar-actions {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 15px;
+  z-index: $zIndex-4;
 }
 
-.UppyStatusBar-action {
-  color: $color-white;
-  margin-right: 8px;
+.uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
+  left: 20px;
+  right: initial;
 }
 
-button.UppyStatusBar-action {
+.uppy-StatusBar-actionBtn {
   @include reset-button;
-  margin-right: 8px;
+  font-size: 13px;
+  line-height: 1em;
+  font-weight: 400;
+  padding: 7px 10px;
+  border-radius: 4px;
   cursor: pointer;
+  transition: all 0.3s;
 }
 
-.UppyStatusBar-retryBtn {
-  @include reset-button;
-  cursor: pointer;
-  border-bottom: 1px solid $color-white;
-  font-weight: 600;
-}
+  .uppy-StatusBar-actionBtn:not(:last-child) {
+    margin-right: 5px;
+  }
 
-.UppyStatusBar-details {
+  .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn {
+    padding: 13px 30px;
+    font-size: 15px;
+  }
+
+  .uppy-StatusBar-actionBtn--upload {
+    background-color: $color-white;
+    color: $color-cornflower-blue;
+  }
+
+    .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+        background-color: $color-cornflower-blue;
+        color: $color-white;
+
+        &:hover { 
+          background-color: darken($color-cornflower-blue, 20%); 
+        }
+      }
+
+  .uppy-StatusBar-actionBtn--retry {
+    background-color: $color-white;
+    color: $color-red;
+  }
+
+.uppy-StatusBar-details {
   line-height: 12px;
   width: 13px;
   height: 13px;
@@ -105,7 +160,7 @@ button.UppyStatusBar-action {
   text-align: center;
 }
 
-.UppyStatusBar-details:after {
+.uppy-StatusBar-details:after {
   line-height: 1.3;
   word-wrap: break-word;
 }

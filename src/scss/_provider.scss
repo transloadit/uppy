@@ -1,9 +1,4 @@
-// @import '_variables.scss';
-// @import '_utils.scss';
-// @import '_animation.scss';
-// @import '_common.scss';
-
-.UppyProvider-auth, .UppyProvider-error, .UppyProvider-loading {
+.uppy-Provider-auth, .uppy-Provider-error, .uppy-Provider-loading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,7 +6,7 @@
   height: 100%;
 }
 
-.UppyProvider-authTitle {
+.uppy-Provider-authTitle {
   font-size: 22px;
   line-height: 1.35;
   font-weight: 300;
@@ -21,16 +16,13 @@
   text-align: center;
 }
 
-.UppyProvider-authTitleName {
-  // color: $color-cornflower-blue;
-}
-
-.UppyProvider-authBtn {
+.uppy-Provider-authBtn {
   @include reset-button;
   border-radius: 6px;
   background-color: $color-cornflower-blue;
   color: $color-white;
   font-size: 20px;
+  font-weight: 400;
   padding: 12px 46px;
   transition: background-color 0.3s;
   text-decoration: none;
@@ -43,7 +35,7 @@
   }
 }
 
-// .UppyProvider-breadcrumbs {
+// .uppy-Provider-breadcrumbs {
 //   color: $color-black;
 //   font-size: 12px;
 //   line-height: 40px;
@@ -53,141 +45,31 @@
 //   // padding: 15px 0;
 // }
 
-.UppyProvider-breadcrumbs button,
-.UppyGoogleDrive-sidebar button {
+.uppy-Provider-breadcrumbs button {
   @include reset-button;
   cursor: pointer;
   font-size: 14px;
 }
 
-.UppyProvider-breadcrumbs button:hover {
+.uppy-Provider-breadcrumbs button:hover {
   text-decoration: underline;
 }
 
-.UppyGoogleDrive-sidebar button {
-  font-size: 14px;
-  padding: 0;
-}
-
-.UppyProvider-breadcrumbs button:focus,
-.UppyGoogleDrive-sidebar button:focus {
+.uppy-Provider-breadcrumbs button:focus {
   outline: 1px dotted #aaa;
 }
 
-.UppyProvider-breadcrumbs li {
+.uppy-Provider-breadcrumbs li {
   display: inline-block;
   margin: 0;
   margin-right: 6px;
 }
 
-.UppyProvider-breadcrumbs li:not(:last-child):after {
-  content: '/';
+.uppy-Provider-breadcrumbs li:not(:last-child):after {
+  content: ' /';
 }
 
-// .UppyGoogleDrive-sidebar {
-//   height: 100%;
-//   list-style-type: none;
-//   margin: 0;
-//   padding: 16px 0 16px 16px;
-// }
-
-// .UppyGoogleDrive-sidebar li {
-//   margin: 0 auto 16px;
-//   padding: 0;
-// }
-
-// .UppyGoogleDrive-sidebar img {
-//   margin-right: 8px;
-// }
-
-// .UppyGoogleDrive-browser {
-//   border: 1px solid #eee;
-//   border-collapse: collapse;
-// }
-
-// .UppyGoogleDrive-browser td {
-//   border-bottom: 1px solid #eee;
-//   padding: 8px;
-// }
-
-// .UppyGoogleDrive-browser tbody tr:last-child td {
-//   border-bottom: 0;
-// }
-
-// .UppyGoogleDrive-browser tbody tr .UppyGoogleDrive-fileIcon {
-//   background-color: #fff;
-//   border-radius: 50%;
-//   padding: 6px 8px 5px 8px;
-// }
-
-// .UppyGoogleDrive-browser tbody tr .UppyGoogleDrive-folderIcon {
-//   background-color: #fff;
-//   border-radius: 50%;
-//   padding: 6px 8px 5px 8px;
-//   margin-top: 2px;
-// }
-
-// .UppyGoogleDrive-browser tbody tr.is-active {
-//   background-color: #78BDF2;
-//   color: #fff;
-// }
-
-// .UppyGoogleDrive-fileInfo {
-//   padding: 0 16px;
-// }
-
-// .UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileThumbnail {
-//   width: 50%;
-// }
-
-// .UppyGoogleDrive-fileInfo .UppyGoogleDrive-fileIcon {
-//   margin-right: 8px;
-// }
-
-// .UppyGoogleDrive-sidebar label {
-//   display: block;
-//   margin-bottom: 8px;
-// }
-
-// .UppyGoogleDrive-sidebar input {
-//   margin-bottom: 8px;
-//   padding: 4px;
-// }
-
-// .UppyGoogleDrive-filter {
-//   border: 1px solid #eee;
-// }
-
-// .UppyGoogleDrive-sortableHeader:hover {
-//   background-color: #eee;
-//   cursor: pointer;
-// }
-
-// .UppyGoogleDrive-fileInfo ul {
-//   list-style-type: none;
-//   padding: 0;
-// }
-
-// .UppyGoogleDrive-browserContainer {
-//   height: calc(80vh - 40px);
-//   overflow: hidden;
-//   overflow-y: scroll;
-// }
-
-// .UppyGoogleDrive-browser td {
-//   cursor: default;
-//   max-width: 25%;
-//   padding-right: 8px;
-//   overflow: hidden;
-//   text-overflow: ellipsis;
-//   white-space: nowrap;
-//   width: 25%;
-// }
-
-
-/** NEW PLUGIN BROWSER STYLES */
-
-.Browser {
+.uppy-ProviderBrowser {
   // border: 1px solid #ddd;
   // border-radius: 5px;
   display: flex;
@@ -200,11 +82,11 @@
   // width: 718px;
 }
 
-.Browser-user {
+.uppy-ProviderBrowser-user {
   margin: 16px 0;
 }
 
-.Browser-header {
+.uppy-ProviderBrowser-header {
   z-index: 1000;
   border-bottom: 1px solid #e5e5e5;
   position: relative;
@@ -226,7 +108,7 @@
    color: rgba(119,119,119,0.75);
 }
 
-.Browser-headerBar {
+.uppy-ProviderBrowser-headerBar {
   height: 50px;
   line-height: 50px;
   display: flex;
@@ -236,7 +118,7 @@
   z-index: $zIndex-2;
 }
 
-.Browser-search {
+.uppy-ProviderBrowser-search {
   height: 50px;
   position: absolute;
   top: 0;
@@ -250,11 +132,11 @@
   align-items: center;
 }
 
-  .Browser-search[aria-hidden=false] {
+  .uppy-ProviderBrowser-search:not([aria-hidden=true]) {
     transform: translate(0, 0);
   }
 
-.Browser-search input {
+.uppy-ProviderBrowser-search input {
   flex: 1;
   background-color: transparent;
   outline: 0;
@@ -266,7 +148,7 @@
 }
 
 
-.Browser-searchToggle {
+.uppy-ProviderBrowser-searchToggle {
   @include reset-button();
   width: 15px;
   cursor: pointer;
@@ -278,7 +160,7 @@
   }
 }
 
-.Browser-searchClose {
+.uppy-ProviderBrowser-searchClose {
   @include reset-button();
   cursor: pointer;
   width: 12px;
@@ -292,7 +174,7 @@
   }
 }
 
-.Browser-userLogout {
+.uppy-ProviderBrowser-userLogout {
   @include reset-button();
   margin-right: 16px;
   cursor: pointer;
@@ -302,7 +184,7 @@
   }
 }
 
-.UppyProvider-breadcrumbs {
+.uppy-Provider-breadcrumbs {
   flex: 1;
   color: $color-black;
   font-size: 12px;
@@ -313,18 +195,18 @@
   margin-left: 16px;
 }
 
-.Browser-breadcrumbs span {
+.uppy-ProviderBrowser-breadcrumbs span {
   font-size: 16px;
   margin-left: 32px;
 }
 
-.Browser-breadcrumbs span.active {
+.uppy-ProviderBrowser-breadcrumbs span.active {
   color: #666;
   flex: 1;
   font-weight: 500;
 }
 
-// .Browser-subHeader {
+// .uppy-ProviderBrowser-subHeader {
 //   display: flex;
 //   justify-content: space-between;
 //   align-items: center;
@@ -335,12 +217,12 @@
 //   z-index: 1000;
 // }
 
-.Browser-body {
+.uppy-ProviderBrowser-body {
   flex: 1;
   position: relative;
 }
 
-.BrowserTable {
+.uppy-ProviderBrowserTable {
   display: block;
   width: 100%;
   height: 100%;
@@ -355,86 +237,182 @@
   right: 0;
 }
 
-.Browser-viewType--grid {
-  .BrowserTable tbody {
+.uppy-ProviderBrowser-viewType--grid {
+  .uppy-ProviderBrowserTable tbody {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-around;
   }
 
-  // .BrowserTable tbody:after {
+  // .uppy-ProviderBrowserTable tbody:after {
   //   content: "";
   //   flex: auto;
   // }
 
-  .BrowserTable-column {
+  .uppy-ProviderBrowserTable-row {
+    position: relative;
+  }
+
+  .uppy-ProviderBrowserTable-column {
     // width: 100px;
     // padding: 15px 12px;
     padding: 14px 10px;
   }
+
+  .uppy-ProviderBrowserTable-checkbox {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    margin-right: 0;
+  }
 }
 
-.BrowserTable tbody {
+.uppy-ProviderBrowserTable tbody {
   display: block;
 }
 
 
-// .BrowserTable tbody {
-//   display: block;
-//   overflow-x: hidden;
-//   overflow-y: auto;
-//   position: absolute;
-//   top: 0;
-//   bottom: 0;
-//   left: 0;
-//   right: 0;
-// }
+.uppy-ProviderBrowserTable-checkbox input {
+  opacity: 0;
+}
 
-.BrowserTable-row {
+// https://medium.com/claritydesignsystem/pure-css-accessible-checkboxes-and-radios-buttons-54063e759bb3
+.uppy-ProviderBrowserTable-checkbox {
+  position: relative;
+  display: inline-block;
+  top: -3px;
+  margin-right: 25px;
+}
+
+.uppy-ProviderBrowserTable-checkbox label {
+  display: block;
+}
+
+.uppy-ProviderBrowserTable-checkbox label::before,
+.uppy-ProviderBrowserTable-checkbox label::after {
+  position: absolute;
+  cursor: pointer;
+}
+
+// Outer circle
+.uppy-ProviderBrowserTable-checkbox label:before {
+  content: "";
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  top: 0;
+  border: 1px solid $color-cornflower-blue; 
+  background-color: $color-white;
+  border-radius: 50%; 
+}
+
+// Inner checkbox
+.uppy-ProviderBrowserTable-checkbox label:after {
+  content: "";
+  display: inline-block;
+  height: 5px;
+  width: 8px;
+  left: 6px;
+  top: 7px;
+  border-left: 2px solid $color-white;
+  border-bottom: 2px solid $color-white;
+  transform: rotate(-45deg);
+}
+
+// Hide the checkmark by default
+.uppy-ProviderBrowserTable-checkbox input + label::after {
+  content: none;
+}
+
+// Unhide the checkmark on the checked state
+.uppy-ProviderBrowserTable-checkbox input:checked + label::after {
+  content: "";
+}
+
+.uppy-ProviderBrowserTable-checkbox input:checked + label::before {
+  background-color: $color-cornflower-blue;
+}
+
+// Adding focus styles on the outer-box of the fake checkbox*/
+.uppy-ProviderBrowserTable-checkbox input:focus + label::before {
+  outline: rgb(59, 153, 252) auto 5px;
+}
+
+.uppy-ProviderBrowserTable-row {
   // border-bottom: 1px solid #eee;
   display: block;
   cursor: pointer;
   // height: 50px;
 }
 
-.BrowserTable-header {
+.uppy-ProviderBrowserTable-header {
   display: block;
 }
 
-  .BrowserTable-header:hover {
+  .uppy-ProviderBrowserTable-header:hover {
     background-color: $color-gray;
   }
 
-.BrowserTable-column {
+.uppy-ProviderBrowserTable-column {
   color: $color-asphalt-gray;
   line-height: 1.2;
   font-weight: bold;
   padding: 16px;
 }
 
-.BrowserTable-column img {
+.uppy-ProviderBrowserTable-column img {
   vertical-align: text-top;
   margin-right: 3px;
 }
 
-.BrowserTable-headerColumn {
+.uppy-ProviderBrowserTable-column input {
+  margin-top: 0;
+  cursor: pointer;
+}
+
+.uppy-ProviderBrowserTable-item {
+  @include reset-button();
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.uppy-ProviderBrowserTable-headerColumn {
   cursor: pointer;
   text-align: left;
 }
 
-.BrowserTable-row:hover {
-  background-color: #eee;
-}
+// .uppy-ProviderBrowserTable-row:hover {
+//   background-color: #eee;
+// }
 
-.BrowserTable-header {
+.uppy-ProviderBrowserTable-header {
   background-color: #fafafa;
 }
 
-// .BrowserTable-rowColumn.BrowserTable-column {
+// .uppy-ProviderBrowserTable-rowColumn.uppy-ProviderBrowserTable-column {
 //   display: block;
 //   // width: 708px;
 // }
+
+.uppy-ProviderBrowser-doneBtn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: $zIndex-3;
+  width: 50px;
+  height: 50px;
+
+  .uppy-Dashboard--wide & {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+.uppy-ProviderBrowser-doneBtn .UppyIcon {
+  width: 30px;
+  height: 30px;
+}
 
 .nav-active {
   font-weight: bold;

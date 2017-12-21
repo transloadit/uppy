@@ -1,23 +1,38 @@
-const html = require('yo-yo')
+const { h, Component } = require('preact')
 
-module.exports = (props) => {
-  const input = html`
-    <input class="UppyDashboard-input" type="file" name="files[]" multiple="true"
-           onchange=${props.handleInputChange} />
-  `
+class ActionBrowseTagline extends Component {
+  constructor (props) {
+    super(props)
+    this.handleClick = this.handleClick.bind(this)
+  }
 
-  return html`
-    <span>
-      ${props.acquirers.length === 0
-        ? props.i18n('dropPaste')
-        : props.i18n('dropPasteImport')
-      }
-      <button type="button"
-              class="UppyDashboard-browse"
-              onclick=${(ev) => {
-                input.click()
-              }}>${props.i18n('browse')}</button>
-      ${input}
-    </span>
-  `
+  handleClick (ev) {
+    this.input.click()
+  }
+
+  render () {
+    return (
+      <span>
+        {this.props.acquirers.length === 0
+          ? this.props.i18n('dropPaste')
+          : this.props.i18n('dropPasteImport')
+        } <button type="button" class="uppy-Dashboard-browse" onclick={this.handleClick}>
+          {this.props.i18n('browse')}
+        </button>
+        <input class="uppy-Dashboard-input"
+          hidden="true"
+          aria-hidden="true"
+          tabindex="-1"
+          type="file"
+          name="files[]"
+          multiple="true"
+          onchange={this.props.handleInputChange}
+          ref={(input) => {
+            this.input = input
+          }} />
+      </span>
+    )
+  }
 }
+
+module.exports = ActionBrowseTagline

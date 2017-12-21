@@ -121,7 +121,10 @@ function getFileType (file) {
     'markdown': 'text/markdown',
     'mp4': 'video/mp4',
     'mp3': 'audio/mp3',
-    'svg': 'image/svg+xml'
+    'svg': 'image/svg+xml',
+    'jpg': 'image/jpeg',
+    'png': 'image/png',
+    'gif': 'image/gif'
   }
 
   const fileExtension = file.name ? getFileNameAndExtension(file.name).extension : null
@@ -217,7 +220,6 @@ function getProportionalHeight (img, width) {
  */
 function createThumbnail (file, targetWidth) {
   const originalUrl = URL.createObjectURL(file.data)
-
   const onload = new Promise((resolve, reject) => {
     const image = new Image()
     image.src = originalUrl
@@ -490,10 +492,10 @@ function getSocketHost (url) {
 }
 
 function _emitSocketProgress (uploader, progressData, file) {
-  const {progress, bytesUploaded, bytesTotal} = progressData
+  const { progress, bytesUploaded, bytesTotal } = progressData
   if (progress) {
-    uploader.core.log(`Upload progress: ${progress}`)
-    uploader.core.emitter.emit('core:upload-progress', {
+    uploader.uppy.log(`Upload progress: ${progress}`)
+    uploader.uppy.emit('upload-progress', {
       uploader,
       id: file.id,
       bytesUploaded: bytesUploaded,
@@ -519,18 +521,48 @@ function settle (promises) {
   )
 
   return wait.then(() => {
-    if (rejections.length === promises.length) {
-      // Very ad-hoc multiple-error reporting, should wrap this in a
-      // CombinedError or whatever kind of error class instead.
-      const error = rejections[0]
-      error.errors = rejections
-      return Promise.reject(error)
-    }
     return {
       successful: resolutions,
       failed: rejections
     }
   })
+}
+
+/**
+ * Limit the amount of simultaneously pending Promises.
+ * Returns a function that, when passed a function `fn`,
+ * will make sure that at most `limit` calls to `fn` are pending.
+ *
+ * @param {number} limit
+ * @return {function()}
+ */
+function limitPromises (limit) {
+  let pending = 0
+  const queue = []
+  return (fn) => {
+    return (...args) => {
+      const call = () => {
+        pending++
+        const promise = fn(...args)
+        promise.then(onfinish, onfinish)
+        return promise
+      }
+
+      if (pending >= limit) {
+        return new Promise((resolve, reject) => {
+          queue.push(() => {
+            call().then(resolve, reject)
+          })
+        })
+      }
+      return call()
+    }
+  }
+  function onfinish () {
+    pending--
+    const next = queue.shift()
+    if (next) next()
+  }
 }
 
 module.exports = {
@@ -560,5 +592,6 @@ module.exports = {
   findAllDOMElements,
   getSocketHost,
   emitSocketProgress,
-  settle
+  settle,
+  limitPromises
 }

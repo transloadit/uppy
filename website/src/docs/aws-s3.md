@@ -6,16 +6,11 @@ permalink: docs/aws-s3/
 ---
 
 The `AwsS3` plugin can be used to upload files directly to an S3 bucket.
-
-As of now, the `AwsS3` plugin "decorates" the XHRUpload plugin.
-To upload files directly to S3, both the XHRUpload and AwsS3 plugins must be used:
+Uploads can be signed using [uppy-server][uppy-server docs] or a custom signing function.
 
 ```js
-// No options have to be provided to the XHRUpload plugin,
-// the S3 plugin will configure it.
-uppy.use(XHRUpload)
 uppy.use(AwsS3, {
-  // Options for S3
+  // Options
 })
 ```
 
@@ -26,7 +21,6 @@ uppy.use(AwsS3, {
 When using [uppy-server][uppy-server docs] to sign S3 uploads, set this option to the root URL of the uppy-server.
 
 ```js
-uppy.use(XHRUpload)
 uppy.use(AwsS3, {
   host: 'https://uppy-server.my-app.com/'
 })
@@ -134,35 +128,33 @@ That way, no private keys to the S3 bucket need to be shared on the client.
 For example, there could be a PHP server endpoint that prepares a presigned URL for a file:
 
 ```js
-uppy
-  .use(XHRUpload)
-  .use(AwsS3, {
-    getUploadParameters (file) {
-      // Send a request to our PHP signing endpoint.
-      return fetch('/s3-sign.php', {
-        method: 'post',
-        // Send and receive JSON.
-        headers: {
-          accept: 'application/json',
-          'content-type': 'application/json'
-        },
-        body: JSON.stringify({
-          filename: file.name,
-          contentType: file.type
-        })
-      }).then((response) => {
-        // Parse the JSON response.
-        return response.json()
-      }).then((data) => {
-        // Return an object in the correct shape.
-        return {
-          method: data.method,
-          url: data.url,
-          fields: {}
-        }
+uppy.use(AwsS3, {
+  getUploadParameters (file) {
+    // Send a request to our PHP signing endpoint.
+    return fetch('/s3-sign.php', {
+      method: 'post',
+      // Send and receive JSON.
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        filename: file.name,
+        contentType: file.type
       })
-    }
-  })
+    }).then((response) => {
+      // Parse the JSON response.
+      return response.json()
+    }).then((data) => {
+      // Return an object in the correct shape.
+      return {
+        method: data.method,
+        url: data.url,
+        fields: {}
+      }
+    })
+  }
+})
 ```
 
 See the [aws-presigned-url example in the uppy repository](https://github.com/transloadit/uppy/tree/master/examples/aws-presigned-url) for a small example that implements both the server-side and the client-side.

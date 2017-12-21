@@ -1,4 +1,4 @@
-.uppy-FileInput-form {
+.uppy-FileInput-container {
   margin-bottom: 15px;
 }
 
@@ -9,13 +9,13 @@
   font-size: 0.85em;
   // text-transform: uppercase;
   padding: 10px 15px;
-  color: $color-pink;
-  border: 1px solid $color-pink;
-  border-radius: 15px;
+  color: darken($color-cornflower-blue, 20%);
+  border: 1px solid darken($color-cornflower-blue, 20%);
+  border-radius: 8px;
   cursor: pointer;
 
   &:hover {
-    background-color: $color-pink;
+    background-color: darken($color-cornflower-blue, 20%);
     color: $color-white;
   }
 }

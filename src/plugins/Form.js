@@ -1,4 +1,4 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 const { findDOMElement } = require('../core/Utils')
 const getFormData = require('get-form-data')
 
@@ -6,8 +6,8 @@ const getFormData = require('get-form-data')
  * Form
  */
 module.exports = class Form extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'acquirer'
     this.id = 'Form'
     this.title = 'Form'
@@ -36,7 +36,7 @@ module.exports = class Form extends Plugin {
     if (!this.opts.triggerUploadOnSubmit) return
     console.log('PREVENT DEFAULT')
     ev.preventDefault()
-    this.core.upload()
+    this.uppy.upload()
   }
 
   handleSuccess (data) {
@@ -44,7 +44,7 @@ module.exports = class Form extends Plugin {
 
     data.forEach(fileID => {
       result[fileID] = {
-        url: this.core.state.files[fileID].uploadURL
+        url: this.uppy.state.files[fileID].uploadURL
         // transcoding/postprocessing result here too?
       }
     })
@@ -59,8 +59,8 @@ module.exports = class Form extends Plugin {
   addResultToForm (result) {
     if (!this.opts.addResultToForm) return
 
-    this.core.log('[Form] Adding result to the original form:')
-    this.core.log(result)
+    this.uppy.log('[Form] Adding result to the original form:')
+    this.uppy.log(result)
 
     let resultInput = this.form.querySelector(`[name="${this.opts.resultName}"]`)
     if (resultInput) {
@@ -76,9 +76,9 @@ module.exports = class Form extends Plugin {
   }
 
   handleUploadStart () {
-    if (this.opts.getMetaFromForm) return
+    if (!this.opts.getMetaFromForm) return
     const formMeta = getFormData(this.form)
-    this.core.setMeta(formMeta)
+    this.uppy.setMeta(formMeta)
   }
 
   install () {
@@ -89,13 +89,13 @@ module.exports = class Form extends Plugin {
     }
 
     this.form.addEventListener('submit', this.handleFormSubmit)
-    this.core.on('core:upload', this.handleUploadStart)
-    this.core.on('core:success', this.handleSuccess)
+    this.uppy.on('upload', this.handleUploadStart)
+    this.uppy.on('success', this.handleSuccess)
   }
 
   uninstall () {
     this.form.removeEventListener('submit', this.handleFormSubmit)
-    this.core.off('core:upload', this.handleUploadStart)
-    this.core.off('core:success', this.handleSuccess)
+    this.uppy.off('upload', this.handleUploadStart)
+    this.uppy.off('success', this.handleSuccess)
   }
 }

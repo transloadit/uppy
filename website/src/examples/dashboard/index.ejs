@@ -26,7 +26,6 @@ const Dropbox = require('uppy/lib/plugins/Dropbox')
 const Instagram = require('uppy/lib/plugins/Instagram')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Tus = require('uppy/lib/plugins/Tus')
-const MetaData = require('uppy/lib/plugins/MetaData')
 
 const uppy = Uppy({
   debug: true,
@@ -42,22 +41,21 @@ const uppy = Uppy({
   trigger: '.UppyModalOpenerBtn',
   inline: true,
   target: '.DashboardContainer'
-  note: 'Images and video only, 2–3 files, up to 1 MB'
-})
-.use(GoogleDrive, {target: Dashboard, host: 'https://server.uppy.io'})
-.use(Dropbox, {target: Dashboard, host: 'https://server.uppy.io'})
-.use(Instagram, {target: Dashboard, host: 'https://server.uppy.io'})
-.use(Webcam, {target: Dashboard})
-.use(Tus, {endpoint: 'https://master.tus.io/files/'})
-.use(MetaData, {
-  fields: [
-    { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
-    { id: 'caption', name: 'Caption', value: 'none', placeholder: 'describe what the image is about' }
+  note: 'Images and video only, 2–3 files, up to 1 MB',
+  metaFields: [
+    { id: 'license', name: 'License', placeholder: 'specify license' },
+    { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
   ]
 })
+.use(GoogleDrive, { target: Dashboard, host: 'https://server.uppy.io' })
+.use(Dropbox, { target: Dashboard, host: 'https://server.uppy.io' })
+.use(Instagram, { target: Dashboard, host: 'https://server.uppy.io' })
+.use(Webcam, { target: Dashboard })
+.use(Tus, { endpoint: 'https://master.tus.io/files/' })
 .run()
 
-uppy.on('core:success', (fileList) => {
-  console.log('Successfully uploaded:', fileList)
+uppy.on('complete', result => {
+  console.log('successful files:', result.successful)
+  console.log('failed files:', result.failed)
 })
 {% endcodeblock %}

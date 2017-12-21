@@ -1,5 +1,6 @@
-const Plugin = require('./Plugin')
-const html = require('yo-yo')
+const Plugin = require('../core/Plugin')
+
+const { h } = require('preact')
 
 /**
  * Informer
@@ -9,12 +10,11 @@ const html = require('yo-yo')
  *
  */
 module.exports = class Informer extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'progressindicator'
-    this.id = 'Informer'
+    this.id = this.opts.id || 'Informer'
     this.title = 'Informer'
-    // this.timeoutID = undefined
 
     // set default options
     const defaultOptions = {
@@ -45,22 +45,32 @@ module.exports = class Informer extends Plugin {
   }
 
   render (state) {
-    const {isHidden, type, message, details} = state.info
-    const style = `background-color: ${this.opts.typeColors[type].bg}; color: ${this.opts.typeColors[type].text};`
+    const { isHidden, type, message, details } = state.info
+    const style = {
+      backgroundColor: this.opts.typeColors[type].bg,
+      color: this.opts.typeColors[type].text
+    }
 
-    // @TODO add aria-live for screen-readers
-    // maybe details.length < N to set bubble size
-    return html`<div class="Uppy UppyTheme--default UppyInformer" style="${style}" aria-hidden="${isHidden}">
-      <p>
-        ${message} 
-        ${details ? html`<span style="color: ${this.opts.typeColors[type].bg}" data-balloon="${details}" data-balloon-pos="up" data-balloon-length="large">?</span>` : null}
-      </p>
-    </div>`
+    return (
+      <div class="uppy uppy-Informer"
+        style={style}
+        aria-hidden={isHidden}>
+        <p role="alert">
+          {message}
+          {details && <span style={{ color: this.opts.typeColors[type].bg }}
+            data-balloon={details}
+            data-balloon-pos="up"
+            data-balloon-length="large">?</span>
+          }
+        </p>
+      </div>
+    )
   }
 
   install () {
     const target = this.opts.target
-    const plugin = this
-    this.target = this.mount(target, plugin)
+    if (target) {
+      this.mount(target, this)
+    }
   }
 }

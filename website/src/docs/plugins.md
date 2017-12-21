@@ -7,19 +7,20 @@ order: 10
 
 Plugins are what makes Uppy useful: they help select, manipulate and upload files.
 
-- **Acquirers (neat UIs for picking files):**
+- **Acquirers (various ways of picking files):**
   - [Dashboard](/docs/dashboard) — full featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more
   - [DragDrop](/docs/dragdrop) — plain and simple drag and drop area
-  - FileInput — even more plain and simple, just a button
+  - [FileInput](/docs/fileinput) — even more plain and simple, just a button
   - [Provider Plugins](#Provider-Plugins) (remote sources that work through [Uppy Server](/docs/uppy-server/)): Instagram, GoogleDrive, Dropbox
+  - [Webcam](/docs/webcam) — upload selfies or audio / video recordings
 - **Uploaders:**
-  - Tus — uploads using the tus resumable upload protocol
-  - XHRUpload — classic multipart form uploads or binary uploads using XMLHTTPRequest
+  - [Tus](/docs/tus) — uploads using the [tus](https://tus.io) resumable upload protocol
+  - [XHRUpload](/docs/xhrupload) — classic multipart form uploads or binary uploads using XMLHTTPRequest
   - [AwsS3](/docs/aws-s3) — uploader for AWS S3
 - **Progress:**
-  - ProgressBar — add a small YouTube-style progress bar at the top of the page
+  - [ProgressBar](/docs/progressbar) — add a small YouTube-style progress bar at the top of the page
   - [StatusBar](/docs/statusbar) — advanced upload progress status bar
-  - Informer — show notifications
+  - [Informer](/docs/informer) — show notifications
 - **Helpers:**
   - [GoldenRetriever](/docs/golden-retriever) — restore files and continue uploading after a page refresh or a browser crash
 - **Encoding Services:**
@@ -59,7 +60,7 @@ In the example above the `Dashboard` gets rendered into an element with ID `uppy
 
 ### `endpoint`
 
-Used by uploader plugins, such as Tus and XHRUpload. Expects a `string` with a url that will be used for file uploading.
+Used by uploader plugins, such as [Tus](/docs/tus) and [XHRUpload](/docs/xhrupload). Expects a `string` with a url that will be used for file uploading.
 
 ### `host`
 

@@ -1,16 +1,17 @@
-const Plugin = require('./Plugin')
+const Plugin = require('../core/Plugin')
 const cuid = require('cuid')
 const Translator = require('../core/Translator')
 const UppySocket = require('../core/UppySocket')
 const {
   emitSocketProgress,
   getSocketHost,
-  settle
+  settle,
+  limitPromises
 } = require('../core/Utils')
 
 module.exports = class XHRUpload extends Plugin {
-  constructor (core, opts) {
-    super(core, opts)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.type = 'uploader'
     this.id = 'XHRUpload'
     this.title = 'XHRUpload'
@@ -32,6 +33,7 @@ module.exports = class XHRUpload extends Plugin {
       headers: {},
       locale: defaultLocale,
       timeout: 30 * 1000,
+      limit: 0,
       getResponseData (xhr) {
         return JSON.parse(xhr.response)
       },
@@ -50,18 +52,25 @@ module.exports = class XHRUpload extends Plugin {
     this.i18n = this.translator.translate.bind(this.translator)
 
     this.handleUpload = this.handleUpload.bind(this)
+
+    // Simultaneous upload limiting is shared across all uploads with this plugin.
+    if (typeof this.opts.limit === 'number' && this.opts.limit !== 0) {
+      this.limitUploads = limitPromises(this.opts.limit)
+    } else {
+      this.limitUploads = (fn) => fn
+    }
   }
 
   getOptions (file) {
     const opts = Object.assign({},
       this.opts,
-      this.core.state.xhrUpload || {},
+      this.uppy.state.xhrUpload || {},
       file.xhrUpload || {}
     )
     opts.headers = {}
     Object.assign(opts.headers, this.opts.headers)
-    if (this.core.state.xhrUpload) {
-      Object.assign(opts.headers, this.core.state.xhrUpload.headers)
+    if (this.uppy.state.xhrUpload) {
+      Object.assign(opts.headers, this.uppy.state.xhrUpload.headers)
     }
     if (file.xhrUpload) {
       Object.assign(opts.headers, file.xhrUpload.headers)
@@ -93,7 +102,7 @@ module.exports = class XHRUpload extends Plugin {
   upload (file, current, total) {
     const opts = this.getOptions(file)
 
-    this.core.log(`uploading ${current} of ${total}`)
+    this.uppy.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
       const data = opts.formData
         ? this.createFormDataUpload(file, opts)
@@ -101,9 +110,9 @@ module.exports = class XHRUpload extends Plugin {
 
       const onTimedOut = () => {
         xhr.abort()
-        this.core.log(`[XHRUpload] ${id} timed out`)
+        this.uppy.log(`[XHRUpload] ${id} timed out`)
         const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
-        this.core.emit('core:upload-error', file.id, error)
+        this.uppy.emit('upload-error', file.id, error)
         reject(error)
       }
       let aliveTimer
@@ -116,7 +125,7 @@ module.exports = class XHRUpload extends Plugin {
       const id = cuid()
 
       xhr.upload.addEventListener('loadstart', (ev) => {
-        this.core.log(`[XHRUpload] ${id} started`)
+        this.uppy.log(`[XHRUpload] ${id} started`)
         if (opts.timeout > 0) {
           // Begin checking for timeouts when loading starts.
           isAlive()
@@ -124,13 +133,13 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.upload.addEventListener('progress', (ev) => {
-        this.core.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`)
+        this.uppy.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`)
         if (opts.timeout > 0) {
           isAlive()
         }
 
         if (ev.lengthComputable) {
-          this.core.emit('core:upload-progress', {
+          this.uppy.emit('upload-progress', {
             uploader: this,
             id: file.id,
             bytesUploaded: ev.loaded,
@@ -140,34 +149,34 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.addEventListener('load', (ev) => {
-        this.core.log(`[XHRUpload] ${id} finished`)
+        this.uppy.log(`[XHRUpload] ${id} finished`)
         clearTimeout(aliveTimer)
 
         if (ev.target.status >= 200 && ev.target.status < 300) {
           const resp = opts.getResponseData(xhr)
           const uploadURL = resp[opts.responseUrlFieldName]
 
-          this.core.emit('core:upload-success', file.id, resp, uploadURL)
+          this.uppy.emit('upload-success', file.id, resp, uploadURL)
 
           if (uploadURL) {
-            this.core.log(`Download ${file.name} from ${file.uploadURL}`)
+            this.uppy.log(`Download ${file.name} from ${file.uploadURL}`)
           }
 
           return resolve(file)
         } else {
           const error = opts.getResponseError(xhr) || new Error('Upload error')
           error.request = xhr
-          this.core.emit('core:upload-error', file.id, error)
+          this.uppy.emit('upload-error', file.id, error)
           return reject(error)
         }
       })
 
       xhr.addEventListener('error', (ev) => {
-        this.core.log(`[XHRUpload] ${id} errored`)
+        this.uppy.log(`[XHRUpload] ${id} errored`)
         clearTimeout(aliveTimer)
 
         const error = opts.getResponseError(xhr) || new Error('Upload error')
-        this.core.emit('core:upload-error', file.id, error)
+        this.uppy.emit('upload-error', file.id, error)
         return reject(error)
       })
 
@@ -179,26 +188,26 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.send(data)
 
-      this.core.on('core:upload-cancel', (fileID) => {
+      this.uppy.on('upload-cancel', (fileID) => {
         if (fileID === file.id) {
           xhr.abort()
         }
       })
 
-      this.core.on('core:cancel-all', () => {
-        // const files = this.core.getState().files
+      this.uppy.on('cancel-all', () => {
+        // const files = this.uppy.getState().files
         // if (!files[file.id]) return
         xhr.abort()
       })
 
-      this.core.emit('core:upload-started', file.id)
+      this.uppy.emit('upload-started', file.id)
     })
   }
 
   uploadRemote (file, current, total) {
     const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
-      this.core.emit('core:upload-started', file.id)
+      this.uppy.emit('upload-started', file.id)
 
       const fields = {}
       const metaFields = Array.isArray(opts.metaFields)
@@ -207,7 +216,7 @@ module.exports = class XHRUpload extends Plugin {
         : Object.keys(file.meta)
 
       metaFields.forEach((name) => {
-        fields[name] = file.meta.name
+        fields[name] = file.meta[name]
       })
 
       fetch(file.remote.url, {
@@ -238,7 +247,7 @@ module.exports = class XHRUpload extends Plugin {
           socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
           socket.on('success', (data) => {
-            this.core.emit('core:upload-success', file.id, data, data.url)
+            this.uppy.emit('upload-success', file.id, data, data.url)
             socket.close()
             return resolve()
           })
@@ -248,15 +257,22 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   uploadFiles (files) {
-    const promises = files.map((file, i) => {
+    const actions = files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
-      if (file.isRemote) {
-        return this.uploadRemote(file, current, total)
+      if (file.error) {
+        return () => Promise.reject(new Error(file.error))
+      } else if (file.isRemote) {
+        return this.uploadRemote.bind(this, file, current, total)
       } else {
-        return this.upload(file, current, total)
+        return this.upload.bind(this, file, current, total)
       }
+    })
+
+    const promises = actions.map((action) => {
+      const limitedAction = this.limitUploads(action)
+      return limitedAction()
     })
 
     return settle(promises)
@@ -264,24 +280,24 @@ module.exports = class XHRUpload extends Plugin {
 
   handleUpload (fileIDs) {
     if (fileIDs.length === 0) {
-      this.core.log('[XHRUpload] No files to upload!')
+      this.uppy.log('[XHRUpload] No files to upload!')
       return Promise.resolve()
     }
 
-    this.core.log('[XHRUpload] Uploading...')
+    this.uppy.log('[XHRUpload] Uploading...')
     const files = fileIDs.map(getFile, this)
     function getFile (fileID) {
-      return this.core.state.files[fileID]
+      return this.uppy.state.files[fileID]
     }
 
     return this.uploadFiles(files).then(() => null)
   }
 
   install () {
-    this.core.addUploader(this.handleUpload)
+    this.uppy.addUploader(this.handleUpload)
   }
 
   uninstall () {
-    this.core.removeUploader(this.handleUpload)
+    this.uppy.removeUploader(this.handleUpload)
   }
 }
