@@ -79,8 +79,11 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 
+# next
+
 ## 0.23.0
-To be released: 2017-12-21.
+
+To be released: 2018-01-26.
 
 - [ ] transloadit: add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (@goto-bus-stop)
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
@@ -105,29 +108,27 @@ To be released: 2017-12-21.
 - [ ] uppy-server: security audit, ask @acconut
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 
-# next
-
 ## 0.22.0
 
-To be released: 2017-12-21.
+Released: 2017-12-21.
 Theme: 🎄 Christmas edition
 
-- [x] **⚠️ Breaking** core: rendering engine switched from `Yo-Yo` to `Preact`, and all views from `html` hyperx template strings to `JSX` (#451 / @arturi)
-- [x] **⚠️ Breaking** core: large refactor of Core and Plugins: `setFileState`, merge `MetaData` plugin into `Dashboard`, prefix "private" core methods with underscores (@arturi / #438) 
-- [x] **⚠️ Breaking** core: renamed `core` to `uppy` in plugins and what not. So instead of `this.core.state` we can now use `this.uppy.state` (#438 / @arturi) 
-- [x] **⚠️ Breaking** core: renamed events to remove `core:` prefix, as been suggested already. So: `success`, `error`, `upload-started` and so on, and prefixed event names for plugins sometimes, like `dashboard:file-card` (#438 / @arturi) 
-- [x] **⚠️ Breaking** core: CSS class names have been altered to use `uppy-` namespace, so `.UppyDashboard-files` --> `.uppy-Dashboard-files` and so on
-- [x] **⚠️ Breaking** dashboard: added `metaFields` option, pass an array of settings for UI field objects `{ id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }` (#438 / @arturi, @goto-bus-stop)
-- [x] **⚠️ Breaking** core: deprecate `getMetaFromForm` in favor of new `Form` plugin (#407 / @arturi)
-- [x] form: add `Form`, a new plugin that is used in conjunction with any acquirer, responsible for: 1. acquiring the metadata from `<form>` when upload starts in Uppy; 2. injecting result array of succesful and failed files back into the form (#407 / @arturi)
-- [x] core: add more extensions for mimetype detection (#452 / @ifedapoolarewaju)
-- [x] docs: more docs for plugins (#456 / @goto-bus-stop)
-- [x] core: misc bugs fixes and improvements in Webcam, Dashboard, Provider and others (#451 / @arturi)
-- [x] dashboard: improved Dashboard UI (@arturi)
-- [x] uppy-server: remove pause/resume socket listeners when upload is done (@ifedapoolarewaju)
-- [x] uppy/uppy-server: remote server error handler (#446 / @ifedapoolarewaju)
-- [x] provider: dropbox thumbnail view seems not to be working (@ifedapoolarewaju)
-- [x] uppy-server: link uppy-server with https://snyk.io/ to aid vulnerability spotting (@ifedapoolarewaju)
+- **⚠️ Breaking** core: rendering engine switched from `Yo-Yo` to `Preact`, and all views from `html` hyperx template strings to `JSX` (#451 / @arturi)
+- **⚠️ Breaking** core: large refactor of Core and Plugins: `setFileState`, merge `MetaData` plugin into `Dashboard`, prefix "private" core methods with underscores (@arturi / #438) 
+- **⚠️ Breaking** core: renamed `core` to `uppy` in plugins and what not. So instead of `this.core.state` we now use `this.uppy.state` (#438 / @arturi) 
+- **⚠️ Breaking** core: renamed events to remove `core:` prefix, as been suggested already. So: `success`, `error`, `upload-started` and so on, and prefixed event names for plugins sometimes, like `dashboard:file-card` (#438 / @arturi) 
+- **⚠️ Breaking** core: CSS class names have been altered to use `uppy-` namespace, so `.UppyDashboard-files` --> `.uppy-Dashboard-files` and so on
+- **⚠️ Breaking** dashboard: added `metaFields` option, pass an array of settings for UI field objects `{ id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }` (#438 / @arturi, @goto-bus-stop)
+- **⚠️ Breaking** core: deprecate `getMetaFromForm` in favor of new `Form` plugin (#407 / @arturi)
+- form: added `Form`, a new plugin that is used in conjunction with any acquirer, responsible for: 1. acquiring the metadata from `<form>` when upload starts in Uppy; 2. injecting result array of succesful and failed files back into the form (#407 / @arturi)
+- core: add more extensions for mimetype detection (#452 / @ifedapoolarewaju)
+- docs: more docs for plugins (#456 / @goto-bus-stop)
+- core: misc bugs fixes and improvements in Webcam, Dashboard, Provider and others (#451 / @arturi)
+- dashboard: improved Dashboard UI (@arturi)
+- uppy-server: remove pause/resume socket listeners when upload is done (@ifedapoolarewaju)
+- uppy/uppy-server: remote server error handler (#446 / @ifedapoolarewaju)
+- provider: dropbox thumbnail view seems not to be working (@ifedapoolarewaju)
+- uppy-server: link uppy-server with https://snyk.io/ to aid vulnerability spotting (@ifedapoolarewaju)
 
 ## 0.21.1
 
