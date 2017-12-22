@@ -298,6 +298,7 @@ module.exports = class Dashboard extends Plugin {
 
     this.uppy.on('dashboard:file-card', this.handleFileCard)
 
+    this.updateDashboardElWidth()
     window.addEventListener('resize', this.updateDashboardElWidth)
   }
 
