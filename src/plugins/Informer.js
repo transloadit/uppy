@@ -57,6 +57,7 @@ module.exports = class Informer extends Plugin {
         aria-hidden={isHidden}>
         <p role="alert">
           {message}
+          {' '}
           {details && <span style={{ color: this.opts.typeColors[type].bg }}
             data-balloon={details}
             data-balloon-pos="up"
