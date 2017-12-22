@@ -9,7 +9,7 @@
   box-shadow: 1px 1px 4px 0 rgba($color-asphalt-gray, 0.3);
   // overflow-x: hidden;
   z-index: $zIndex-2;
-  transition: height .35s;
+  transition: height .2s;
 }
 
 .uppy-StatusBar[aria-hidden=true] {
@@ -114,7 +114,7 @@
   padding: 7px 10px;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
   .uppy-StatusBar-actionBtn:not(:last-child) {
