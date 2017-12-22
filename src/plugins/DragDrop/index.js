@@ -103,6 +103,7 @@ module.exports = class DragDrop extends Plugin {
   }
 
   handleBrowseClick (ev) {
+    ev.stopPropagation()
     this.input.click()
   }
 
@@ -113,7 +114,7 @@ module.exports = class DragDrop extends Plugin {
       height: this.opts.height
     }
     return (
-      <div class={DragDropClass} style={DragDropStyle} onclick={this.handleBrowseClick}>
+      <div class={DragDropClass} style={DragDropStyle}>
         <div class="uppy-DragDrop-inner">
           <svg aria-hidden="true" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
             <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
@@ -122,7 +123,6 @@ module.exports = class DragDrop extends Plugin {
             type="file"
             name="files[]"
             multiple="true"
-            value=""
             ref={(input) => {
               this.input = input
             }}
