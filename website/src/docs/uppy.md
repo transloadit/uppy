@@ -149,7 +149,7 @@ const Uppy = require('uppy/lib/core')
 const DragDrop = require('uppy/lib/plugins/DragDrop')
 
 const uppy = Uppy()
-uppy.use(DragDrop, {target: 'body'})
+uppy.use(DragDrop, { target: 'body' })
 ```
 
 ### `uppy.run()`
@@ -243,10 +243,10 @@ Returns `uppy.state`, which you can also use directly.
 
 ### `uppy.setMeta(data)`
 
-Alters global `meta` object is state, the one that can be set in Uppy options and gets merged with all newly added files.
+Alters global `meta` object is state, the one that can be set in Uppy options and gets merged with all newly added files. Calling `setMeta` will also merge newly added meta data with previously selected files.
 
 ```js
-uppy.setMeta({ resize: 1500 })
+uppy.setMeta({ resize: 1500, token: 'ab5kjfg' })
 ```
 
 ### `uppy.setFileMeta(fileID, data)`

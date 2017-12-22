@@ -38,8 +38,8 @@ Can be a `string` CSS selector, a DOM element, or a Plugin class. Consider the f
 const Uppy = require('uppy/lib/core')
 const DragDrop = require('uppy/lib/plugins/DragDrop')
 const uppy = Uppy()
-uppy.use(DragDrop, {target: 'body'})
-// or: uppy.use(DragDrop, {target: document.body})
+uppy.use(DragDrop, { target: 'body' })
+// or: uppy.use(DragDrop, { target: document.body })
 ```
 
 While in this one, we are using the `Dashboard` plugin, which can act as a host target for other plugins:
@@ -50,8 +50,7 @@ const DragDrop = require('uppy/lib/plugins/Dashboard')
 const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 const uppy = Uppy()
 uppy.use(Dashboard, {
-  trigger: '#uppyModalOpener',
-  target: '#uppy',
+  trigger: '#uppyModalOpener'
 })
 uppy.use(GoogleDrive, {target: Dashboard})
 ```
@@ -72,44 +71,9 @@ const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 uppy.use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
 ```
 
-### `getMetaFromForm: false`
-
-If `getMetaFromForm === true`, UI acquire type plugins, like `Dashboard`, `FileInput` and `DragDrop`, before mounting themselves or doing anything else, will extract FormData from the target `<form>` element (it must be a form currently), and merge the object with the global `uppy.state.meta`.
-
-If you have a form like this one:
-
-```html
-<form class="MyForm" action="/">
-  <input type="file">
-  <input type="hidden" name="bla" value="12333">
-  <input type="text" name="yo" value="1">
-  <button type="submit">Upload</button>
-</form>
-```
-
-And then do:
-
-```js
-uppy.use(DragDrop, {
-  target: '.MyForm',
-  getMetaFromForm: true
-})
-```
-
-Uppy’s `uppy.state.meta` will become:
-
-```js
-state = {
-  meta: {
-    bla: 12333,
-    yo: 1
-  }
-}
-```
-
 ### `replaceTargetContent: false`
 
-By default Uppy will append any UI to a DOM element, if such element is specified as a `target`. This default is the least dangerous option. However, you might want to provide fallback `<form>` with `<button type="submit">` that will be shown if Uppy or JavaScript is not loaded/supported on the page. Set `replaceTargetContent: true` to clear the `target` before appending, that way all your fallback elements will be removed if Uppy is actually functioning.
+By default Uppy will append any UI to a DOM element, if such element is specified as a `target`. This default is the least dangerous option. However, there might be cases when you’d want to clear the container element before place Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not loaded/supported on the page). Set `replaceTargetContent: true` to clear the `target` before appending.
 
 ### `locale: {}`
 
