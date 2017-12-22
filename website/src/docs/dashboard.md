@@ -85,7 +85,7 @@ Optionally specify a string of text that explains something about the upload for
 An array of UI field objects that will be shown when a user clicks “edit” button on that file. Each object requires:
 
 - `id`, the name of the meta field.
-— `name`, the label shown in the interface.
+- `name`, the label shown in the interface.
 - `placeholder`, the text shown when no value it set in the field.
 
 ```js
