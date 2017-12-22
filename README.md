@@ -148,7 +148,7 @@ Yes, there is an S3 plugin, check out the [docs](https://uppy.io/docs/aws-s3/) f
 
 ## Contributions are welcome
 
- - Contributor’s guide in [`website/src/docs/contributing.md`](website/src/guide/contributing.md)
+ - Contributor’s guide in [`website/src/docs/contributing.md`](website/src/docs/contributing.md)
  - Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
 
 ## License
