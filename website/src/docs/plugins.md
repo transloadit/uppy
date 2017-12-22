@@ -23,6 +23,7 @@ Plugins are what makes Uppy useful: they help select, manipulate and upload file
   - [Informer](/docs/informer) — show notifications
 - **Helpers:**
   - [GoldenRetriever](/docs/golden-retriever) — restore files and continue uploading after a page refresh or a browser crash
+  - [Form](/docs/form) — collect metadata from `<form>` right before Uppy upload, then optionally append results back to the form
 - **Encoding Services:**
   - [Transloadit](/docs/transloadit) — manipulate and transcode uploaded files using the [transloadit.com](https://transloadit.com) service
 
