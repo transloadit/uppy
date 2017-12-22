@@ -613,7 +613,7 @@ describe('src/Core', () => {
       }
       core.emit('file-added', file)
       expect(utils.createThumbnail).toHaveBeenCalledTimes(1)
-      expect(utils.createThumbnail.mock.calls[0][1]).toEqual(200)
+      expect(utils.createThumbnail.mock.calls[0][1]).toEqual(280)
     })
 
     it('should return an object url of the image when file-added is triggered and thumbnail generation is disabled', () => {
