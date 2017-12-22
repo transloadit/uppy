@@ -446,7 +446,7 @@ class Uppy {
     if (Utils.isPreviewSupported(file.type) && !file.isRemote) {
       let previewPromise
       if (this.opts.thumbnailGeneration === true) {
-        previewPromise = Utils.createThumbnail(file, 200)
+        previewPromise = Utils.createThumbnail(file, 280)
       } else {
         previewPromise = Promise.resolve(URL.createObjectURL(file.data))
       }
