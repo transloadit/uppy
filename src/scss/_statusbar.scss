@@ -92,6 +92,8 @@
   }
 
 .uppy-StatusBar-actions {
+  display: flex;
+  justify-content: center;
   position: absolute;
   top: 0;
   bottom: 0;
