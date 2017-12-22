@@ -1,6 +1,6 @@
 # [Uppy](http://uppy.io)
 
-<img src="http://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo — a superman puppy in a pink suit" align="right">
+<img src="http://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
 <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
@@ -20,23 +20,29 @@ Uppy is being developed by the [Transloadit](https://transloadit.com) team.
 
 <img width="700" alt="Uppy UI Demo: modal dialog with a few selected files and an upload button" src="https://github.com/transloadit/uppy/raw/master/uppy-screenshot.jpg">
 
+Code used in the above example:
+
 ```js
 const Uppy = require('uppy/lib/core')
 const Dashboard = require('uppy/lib/plugins/Dashboard')
-const Webcam = require('uppy/lib/plugins/Webcam')
 const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
+const Instagram = require('uppy/lib/plugins/Instagram')
+const Webcam = require('uppy/lib/plugins/Webcam')
 const Tus = require('uppy/lib/plugins/Tus')
 
 const uppy = Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })
-  .use(Webcam, { target: Dashboard })
   .use(GoogleDrive, { target: Dashboard, host: 'https://server.uppy.io' })
-  .use(Tus, { endpoint: '://master.tus.io/files/' })
+  .use(Instagram, { target: Dashboard, host: 'https://server.uppy.io' })
+  .use(Webcam, { target: Dashboard })
+  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
   .run()
-  .on('success', files => console.log(`Successfully uploaded these files: ${files}`))
+  .on('complete', (result) => {
+    console.log('Upload result:', result)
+  })
 ```
 
-**[Try it online](http://uppy.io/examples/dashboard/)** or **[read the docs](http://uppy.io/docs)**  for details on how to use Uppy and its plugins.
+**[Try it online](http://uppy.io/examples/dashboard/)** or **[read the docs](http://uppy.io/docs)** for more details on how to use Uppy and its plugins.
 
 ## Features
 
@@ -120,17 +126,17 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
   <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
 </a>
 
-Note: we aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
+We aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
 
 ## FAQ
 
 ### React support?
 
-Yep, see [Uppy React docs](https://uppy.io/docs/react/).
+Yep, we have Uppy React components, please see [Uppy React docs](https://uppy.io/docs/react/).
 
 ### Can I use it with Rails/Node/Go/PHP?
 
-Yes, whatever you want on the backend will work with `XHRUpload` plugin, since it just does a `POST` or `PUT` request. If you want resumability, use [one of tus implementations](http://tus.io/implementations.html) 👌🏼
+Yes, whatever you want on the backend will work with `XHRUpload` plugin, since it just does a `POST` or `PUT` request. If you want resumability with the Tus plugin, use [one of tus server implementations](http://tus.io/implementations.html) 👌🏼
 
 ### Do I need to install special service/server for it?
 
@@ -138,11 +144,11 @@ No, as mentioned previously, `XHRUpload` plugin is old-school and just works wit
 
 ### Does Uppy support S3 uploads?
 
-Yes, since 0.18, there is an S3 plugin. Check out the [docs](https://uppy.io/docs/aws-s3/) for more information.
+Yes, there is an S3 plugin, check out the [docs](https://uppy.io/docs/aws-s3/) for more!
 
 ## Contributions are welcome
 
- - Contributor’s guide in [`website/src/guide/contributing.md`](website/src/guide/contributing.md)
+ - Contributor’s guide in [`website/src/docs/contributing.md`](website/src/guide/contributing.md)
  - Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
 
 ## License
