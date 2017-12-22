@@ -36,7 +36,9 @@ function uppyInit () {
     trigger: '.UppyModalOpenerBtn',
     inline: opts.DashboardInline,
     target: opts.DashboardInline ? '.DashboardContainer' : 'body',
+    replaceTargetContent: true,
     note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : '',
+    maxHeight: 450,
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }

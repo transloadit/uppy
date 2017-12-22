@@ -1,19 +1,11 @@
 import Uppy from 'uppy/lib/core'
 import Dashboard from 'uppy/lib/plugins/Dashboard'
-import Tus10 from 'uppy/lib/plugins/Tus10'
-import MetaData from 'uppy/lib/plugins/MetaData'
+import Tus from 'uppy/lib/plugins/Tus'
  
-const uppy = Uppy({autoProceed: false})
-  .use(Dashboard, {trigger: '#select-files', target: '#upload-form', replaceTargetContent: true})
-  .use(Tus10, {endpoint: '://master.tus.io/files/'})
-  .use(MetaData, {
-    fields: [
-      { id: 'license', name: 'License', value: 'Creative Commons', placeholder: 'specify license' },
-      { id: 'caption', name: 'Caption', value: 'none', placeholder: 'describe what the image is about' }
-    ]
+Uppy({ autoProceed: false })
+  .use(Dashboard, { trigger: '#select-files' })
+  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+  .run()
+  .on('complete', (result) => {
+    console.log('Upload result:', result)
   })
-uppy.run()
- 
-uppy.on('success', (files) => {
-  console.log(`Upload complete! We’ve uploaded these files: ${files}`)
-})
