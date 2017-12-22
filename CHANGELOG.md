@@ -80,7 +80,9 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 
 ## 0.23.0
+To be released: 2017-12-21.
 
+- [ ] transloadit: add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (@goto-bus-stop)
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] goldenretriever: confirmation before restore #443
 - [ ] core: i18n all strings + document them
@@ -116,9 +118,12 @@ Theme: 🎄 Christmas edition
 - [x] **⚠️ Breaking** core: renamed events to remove `core:` prefix, as been suggested already. So: `success`, `error`, `upload-started` and so on, and prefixed event names for plugins sometimes, like `dashboard:file-card` (#438 / @arturi) 
 - [x] **⚠️ Breaking** core: CSS class names have been altered to use `uppy-` namespace, so `.UppyDashboard-files` --> `.uppy-Dashboard-files` and so on
 - [x] **⚠️ Breaking** dashboard: added `metaFields` option, pass an array of settings for UI field objects `{ id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }` (#438 / @arturi, @goto-bus-stop)
-- [ ] form: add `Form`, a new plugin that is used in conjunction with any other acquirer, responsible for: 1. acquiring the metadata from `<form>`; 2. intercepting submit event on the form, opening Uppy dialog instead; 3. injecting any result (like from Transloadit encoding plugin) back into the form (jquery-sdk includes the whole Assembly Status JSON in a hidden field) (@arturi)
-- [x] core: fix various bugs and issues (@arturi)
-- [x] dashboard: improve Dashboard UI (@arturi)
+- [x] **⚠️ Breaking** core: deprecate `getMetaFromForm` in favor of new `Form` plugin (#407 / @arturi)
+- [x] form: add `Form`, a new plugin that is used in conjunction with any acquirer, responsible for: 1. acquiring the metadata from `<form>` when upload starts in Uppy; 2. injecting result array of succesful and failed files back into the form (#407 / @arturi)
+- [x] core: add more extensions for mimetype detection (#452 / @ifedapoolarewaju)
+- [x] docs: more docs for plugins (#456 / @goto-bus-stop)
+- [x] core: misc bugs fixes and improvements in Webcam, Dashboard, Provider and others (#451 / @arturi)
+- [x] dashboard: improved Dashboard UI (@arturi)
 - [x] uppy-server: remove pause/resume socket listeners when upload is done (@ifedapoolarewaju)
 - [x] uppy/uppy-server: remote server error handler (#446 / @ifedapoolarewaju)
 - [x] provider: dropbox thumbnail view seems not to be working (@ifedapoolarewaju)

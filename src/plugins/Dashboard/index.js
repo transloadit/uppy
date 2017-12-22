@@ -63,7 +63,6 @@ module.exports = class Dashboard extends Plugin {
     // set default options
     const defaultOptions = {
       target: 'body',
-      getMetaFromForm: true,
       metaFields: [],
       trigger: '#uppy-select-files',
       inline: false,
@@ -440,13 +439,10 @@ module.exports = class Dashboard extends Plugin {
       handlePaste: this.handlePaste,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
-      semiTransparent: this.opts.semiTransparent,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
       log: this.uppy.log,
       i18n: this.i18n,
-      // pauseAll: this.pauseAll,
-      // resumeAll: this.resumeAll,
       addFile: this.uppy.addFile,
       removeFile: this.uppy.removeFile,
       info: this.uppy.info,

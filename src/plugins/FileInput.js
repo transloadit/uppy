@@ -19,8 +19,6 @@ module.exports = class FileInput extends Plugin {
     // Default options
     const defaultOptions = {
       target: null,
-      getMetaFromForm: true,
-      replaceTargetContent: false,
       allowMultipleFiles: true,
       pretty: true,
       locale: defaultLocale,
