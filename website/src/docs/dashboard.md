@@ -42,14 +42,21 @@ uppy.use(Dashboard, {
       dashboardTitle: 'Uppy Dashboard',
       copyLinkToClipboardSuccess: 'Link copied to clipboard.',
       copyLinkToClipboardFallback: 'Copy the URL below',
+      fileSource: 'File source',
       done: 'Done',
       localDisk: 'Local Disk',
+      myDevice: 'My Device',
       dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
       dropPaste: 'Drop files here, paste or',
       browse: 'browse',
       fileProgress: 'File progress: upload speed and ETA',
       numberOfSelectedFiles: 'Number of selected files',
-      uploadAllNewFiles: 'Upload all new files'
+      uploadAllNewFiles: 'Upload all new files',
+      emptyFolderAdded: 'No files were added from empty folder',
+      folderAdded: {
+        0: 'Added %{smart_count} file from %{folder}',
+        1: 'Added %{smart_count} files from %{folder}'
+      }
     }
   }
 })
