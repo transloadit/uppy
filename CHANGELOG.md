@@ -63,7 +63,7 @@ What we need to do to release Uppy 1.0
 - [ ] QA: tests for some plugins
 - [ ] automatically host releases on edgly and use that as our main CDN
 - [ ] docs: on using plugins, all options, list of plugins, i18n
-- [ ] feature: preset for Transloadit that mimics jQuery SDK
+- [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs
 - [ ] refactoring: possibly add CSS-in-JS
 - [x] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
 - [ ] refactoring: split uppy into small packages, lerna repo?
