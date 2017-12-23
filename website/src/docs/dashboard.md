@@ -24,10 +24,14 @@ uppy.use(Dashboard, {
   inline: false,
   width: 750,
   height: 550,
+  semiTransparent: false,
   showProgressDetails: false,
   hideUploadButton: false,
   note: null,
+  metaFields: [],
   closeModalOnClickOutside: false,
+  disableStatusBar: false,
+  disableInformer: false,
   locale: {
     strings: {
       selectToUpload: 'Select files to upload',
@@ -70,6 +74,14 @@ Maximum width of the Dashboard in pixels. Used when `inline: true`.
 ### `height: 550`
 
 Maximum height of the Dashboard in pixels. Used when `inline: true`.
+
+### `semiTransparent: false`
+
+Make the dashboard semi-transparent.
+
+### `showProgressDetails: false`
+
+Show progress bars for the uploads.
 
 ### `hideUploadButton: false`
 
