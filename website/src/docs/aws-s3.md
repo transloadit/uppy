@@ -159,4 +159,17 @@ uppy.use(AwsS3, {
 
 See the [aws-presigned-url example in the uppy repository](https://github.com/transloadit/uppy/tree/master/examples/aws-presigned-url) for a small example that implements both the server-side and the client-side.
 
+### Retrieving presign parameters of the uploaded file
+
+Once the file is uploaded, it's possible to retrieve the parameters that were
+generated in `getUploadParameters(file)` via the `file.meta` field:
+
+```js
+uppy.on("upload-success", (fileId, data) {
+  const file = uppy.getFile(fileId)
+
+  file.meta['key'] // the S3 object key of the uploaded file
+})
+```
+
 [uppy-server docs]: /docs/server/index.html
