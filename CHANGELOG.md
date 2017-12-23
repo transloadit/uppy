@@ -104,7 +104,6 @@ To be released: 2018-01-26.
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
-- [ ] uppy-server: look into typescripting for a type safe servers (@ifedapoolarewaju)
 - [ ] uppy-server: security audit, ask @acconut
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 
@@ -129,6 +128,7 @@ Theme: 🎄 Christmas edition
 - uppy/uppy-server: remote server error handler (#446 / @ifedapoolarewaju)
 - provider: fix dropbox thumbnail view (@ifedapoolarewaju)
 - uppy-server: link uppy-server with https://snyk.io/ to aid vulnerability spotting (@ifedapoolarewaju)
+- uppy-server: use typescript to compile code for a type safe servers (@ifedapoolarewaju)
 
 ## 0.21.1
 
