@@ -14,7 +14,6 @@ DragDrop renders a simple Drag and Drop area for file selection. Useful when you
 ```js
 uppy.use(DragDrop, {
   target: null,
-  getMetaFromForm: true,
   width: '100%',
   height: '100%',
   note: '',

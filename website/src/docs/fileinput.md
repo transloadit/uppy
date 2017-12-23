@@ -14,8 +14,6 @@ permalink: docs/fileinput/
 ```js
 uppy.use(FileInput, {
   target: '.UppyForm',
-  getMetaFromForm: true,
-  replaceTargetContent: true,
   multipleFiles: true,
   pretty: true,
   locale: {

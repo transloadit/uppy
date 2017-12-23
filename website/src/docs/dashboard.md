@@ -20,7 +20,6 @@ Dashboard is a universal UI plugin for Uppy:
 ```js
 uppy.use(Dashboard, {
   target: 'body',
-  getMetaFromForm: true,
   trigger: '#uppy-select-files',
   inline: false,
   width: 750,

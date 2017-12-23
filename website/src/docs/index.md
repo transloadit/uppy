@@ -81,4 +81,4 @@ If you like, you can also use a pre-built bundle, for example from [unpkg CDN](h
   <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
 </a>
 
-Note: we aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox and Opera. IE6 on the chart above means we recommend setting Uppy to target a `<form>` element, so when Uppy has not yet loaded or is not supported, upload still works. Even on the refrigerator browser. Or, yes, IE6.
+We aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
