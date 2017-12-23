@@ -24,10 +24,14 @@ uppy.use(Dashboard, {
   inline: false,
   width: 750,
   height: 550,
+  semiTransparent: false,
   showProgressDetails: false,
   hideUploadButton: false,
   note: null,
+  metaFields: [],
   closeModalOnClickOutside: false,
+  disableStatusBar: false,
+  disableInformer: false,
   locale: {
     strings: {
       selectToUpload: 'Select files to upload',
@@ -38,14 +42,21 @@ uppy.use(Dashboard, {
       dashboardTitle: 'Uppy Dashboard',
       copyLinkToClipboardSuccess: 'Link copied to clipboard.',
       copyLinkToClipboardFallback: 'Copy the URL below',
+      fileSource: 'File source',
       done: 'Done',
       localDisk: 'Local Disk',
+      myDevice: 'My Device',
       dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
       dropPaste: 'Drop files here, paste or',
       browse: 'browse',
       fileProgress: 'File progress: upload speed and ETA',
       numberOfSelectedFiles: 'Number of selected files',
-      uploadAllNewFiles: 'Upload all new files'
+      uploadAllNewFiles: 'Upload all new files',
+      emptyFolderAdded: 'No files were added from empty folder',
+      folderAdded: {
+        0: 'Added %{smart_count} file from %{folder}',
+        1: 'Added %{smart_count} files from %{folder}'
+      }
     }
   }
 })
@@ -70,6 +81,14 @@ Maximum width of the Dashboard in pixels. Used when `inline: true`.
 ### `height: 550`
 
 Maximum height of the Dashboard in pixels. Used when `inline: true`.
+
+### `semiTransparent: false`
+
+Make the dashboard semi-transparent.
+
+### `showProgressDetails: false`
+
+Show progress bars for the uploads.
 
 ### `hideUploadButton: false`
 
