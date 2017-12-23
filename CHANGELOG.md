@@ -127,7 +127,7 @@ Theme: 🎄 Christmas edition
 - dashboard: improved Dashboard UI (@arturi)
 - uppy-server: remove pause/resume socket listeners when upload is done (@ifedapoolarewaju)
 - uppy/uppy-server: remote server error handler (#446 / @ifedapoolarewaju)
-- provider: dropbox thumbnail view seems not to be working (@ifedapoolarewaju)
+- provider: fix dropbox thumbnail view (@ifedapoolarewaju)
 - uppy-server: link uppy-server with https://snyk.io/ to aid vulnerability spotting (@ifedapoolarewaju)
 
 ## 0.21.1
