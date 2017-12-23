@@ -16,12 +16,12 @@ uppy.use(FileInput, {
   target: '.UppyForm',
   multipleFiles: true,
   pretty: true,
+  inputName: 'files[]',
   locale: {
     strings: {
       selectToUpload: 'Select to upload'
     }
-  },
-  inputName: 'files[]'
+  }
 })
 ```
 
