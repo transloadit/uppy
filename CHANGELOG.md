@@ -89,14 +89,18 @@ To be released: 2018-01-26.
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] goldenretriever: confirmation before restore #443
 - [ ] core: i18n all strings + document them
+- [ ] core: fix blank preview thumbnails for .png images in Safari 10.1 #458
+- [ ] progressbar: option to clear/reset once the upload has finished (@arturi)
+- [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
 - [ ] dashboard: try adding optional whitelabel “powered by uppy.io” (@arturi, @nqst)
+- [ ] dashboard: option for Boolean metadata #454 (@arturi)
 - [ ] transloadit: add error reporting
 - [ ] importurl: new plugin that imports files from urls (@arturi, @ifedapoolarewaju)
 - [ ] core: queue preview generation #431
 - [ ] core: return `processing` results among with `upload` results in `success` event and `upload()` promise
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] look into text-based file type icons to save space, or more icons for file types? (@arturi)
-- [ ] core: all: reset or !important styles to be immune to any environment/page. Maybe `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
+- [ ] core: all: reset or !important styles to be immune to any environment/page, look at screenshots in #446. Maybe `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
