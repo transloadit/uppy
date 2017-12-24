@@ -184,9 +184,14 @@ A shortcut method that returns a specific file object from `uppy.state` by its `
 
 ```js
 const file = uppy.getFile('uppyteamkongjpg1501851828779')
-const img = document.createElement('img')
-img.src = file.preview
-document.body.appendChild(img)
+
+file.id        // 'uppyteamkongjpg1501851828779'
+file.name      // 'nature.jpg'
+file.extension // '.jpg'
+file.type      // 'image/jpeg'
+file.data      // the Blob object
+file.size      // 3947642 (returns 'N/A' if size cannot be determined)
+file.preview   // value that can be used to populate "src" attribute of an "img" tag
 ```
 
 ### `uppy.setState(patch)`
