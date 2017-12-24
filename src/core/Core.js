@@ -341,7 +341,7 @@ class Uppy {
         const updatedFiles = Object.assign({}, this.getState().files)
         let fileName
         if (file.name) {
-          fileName = file.name
+          fileName = file.name.match(/[^\/\\]+$/)[0]
         } else if (fileType.split('/')[0] === 'image') {
           fileName = fileType.split('/')[0] + '.' + fileType.split('/')[1]
         } else {
