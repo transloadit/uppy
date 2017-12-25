@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"website/public/": true,
+			"node_modules/": true,
+			"dist/": true,
+			"lib/": true,
+			"assets/": true,
+			"package-lock.json": true,
+			"yarn-error.log": true,
+			"nohup.out": true,
+			"yarn.lock": true
+		}		
+	}
+}
