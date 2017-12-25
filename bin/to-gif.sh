@@ -12,18 +12,21 @@ __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
 width=600
 speed=0.7
+input="${__root}/assets/uppy-demo2.mov"
+base="$(basename "${input}")"
+output="${__root}/assets/${base}.gif"
 
 ffmpeg \
   -y \
-  -i "${__root}/assets/uppy-demo.mp4" \
-  -vf fps=10,scale=${width}:-1:flags=lanczos,palettegen "${__root}/assets/palette.png"
+  -i "${input}" \
+  -vf fps=10,scale=${width}:-1:flags=lanczos,palettegen "${__root}/assets/${base}-palette.png"
 
 ffmpeg \
   -y \
-  -i "${__root}/assets/uppy-demo.mp4" \
-  -i "${__root}/assets/palette.png" \
+  -i "${input}" \
+  -i "${__root}/assets/${base}-palette.png" \
   -filter_complex "setpts=${speed}*PTS,fps=10,scale=${width}:-1:flags=lanczos[x];[x][1:v]paletteuse" \
-  "${__root}/assets/uppy-demo.gif"
+  "${output}"
 
-du -hs "${__root}/assets/uppy-demo.gif"
-open -a 'Google Chrome' "${__root}/assets/uppy-demo.gif"
+du -hs "${output}"
+open -a 'Google Chrome' "${output}"
