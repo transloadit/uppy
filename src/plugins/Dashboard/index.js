@@ -8,10 +8,13 @@ const { findAllDOMElements, toArray } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
 
+// some code for managing focus was adopted from https://github.com/ghosh/micromodal
+// MIT licence, https://github.com/ghosh/micromodal/blob/master/LICENSE.md
+// Copyright (c) 2017 Indrashish Ghosh
 const FOCUSABLE_ELEMENTS = [
   'a[href]',
   'area[href]',
-  'input:not([disabled]):not([type="hidden"])',
+  'input:not([disabled]):not([type="hidden"]):not([hidden])',
   'select:not([disabled])',
   'textarea:not([disabled])',
   'button:not([disabled])',
@@ -174,8 +177,6 @@ module.exports = class Dashboard extends Plugin {
 
   setFocusToFirstNode () {
     const focusableNodes = this.getFocusableNodes()
-    // console.log(focusableNodes)
-    // console.log(focusableNodes[0])
     if (focusableNodes.length) focusableNodes[0].focus()
   }
 
