@@ -39,7 +39,7 @@ module.exports = class Instagram extends Plugin {
     this.view = new View(this, {
       viewType: 'grid'
     })
-    // Set default state for Google Drive
+    // Set default state for Instagram
     this.setPluginState({
       authenticated: false,
       files: [],

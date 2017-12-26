@@ -39,7 +39,7 @@ module.exports = class Dropbox extends Plugin {
 
   install () {
     this.view = new View(this)
-    // Set default state
+    // Set default state for Dropbox
     this.setPluginState({
       authenticated: false,
       files: [],
