@@ -114,7 +114,7 @@ module.exports = class AwsS3 extends Plugin {
   install () {
     this.uppy.addPreProcessor(this.prepareUpload)
 
-    this.uppy.use(XHRUpload, {
+    this.uppy.use(XHRUpload, Object.assign({
       fieldName: 'file',
       responseUrlFieldName: 'location',
       getResponseData (xhr) {
@@ -142,7 +142,7 @@ module.exports = class AwsS3 extends Plugin {
         const error = xhr.responseXML.querySelector('Error > Message')
         return new Error(error.textContent)
       }
-    })
+    }, this.opts.xhrOptions || {}))
   }
 
   uninstall () {
