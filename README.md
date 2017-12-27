@@ -142,13 +142,13 @@ Yes, whatever you want on the backend will work with `XHRUpload` plugin, since i
 
 Nope, as mentioned previously, the `XHRUpload` plugin is old-school and just works with everything. However, you need [`uppy-server`](https://github.com/transloadit/uppy-server) if you’d like your users to be able to pick files from Instagram, Google Drive or Dropbox (more services coming). And you can add [tus](http://tus.io) if you want resumability.
 
-### Why is all this goodness free?
-
-As with [tus.io](https://tus.io), [Transloadit](https://transloadit.com) is giving this project to the world in the hopes that a small percentage of users won't care for the ops-headaches involved with running Uppy/tus/encoding servers and will come to the source. We (Transloadit) run hosted versions of all these addons. But as said: Uppy is already valuable to add to your current 'Apache setup' without ever spending a dime on us :) and we will keep it that way forever.
-
 ### Does Uppy support S3 uploads?
 
 Yes, there is an S3 plugin, check out the [docs](https://uppy.io/docs/aws-s3/) for more!
+
+### Why is all this goodness free?
+
+Transloadit's team is small and we have a shared ambition to make a living from open source. By giving away projects like [tus.io](https://tus.io) and [Uppy](https://uppy.io), we're hoping to advance the state of the art, make life a tiny little bit better for everyone, and in doing so have rewarding jobs and get some eyes on our commercial service: [a content ingestion & processing platform](https://transloadit.com). Our thinking is that if just a fraction of our open source userbase can see the appeal of hosted versions straight from the source, that could already be enough to sustain our work. So far this is working out! We're able to dedicate 80% of our time to open source and haven't gone bankrupt just yet :D
 
 ## Contributions are welcome
 
