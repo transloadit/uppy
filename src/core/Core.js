@@ -301,7 +301,11 @@ class Uppy {
     }
 
     if (allowedFileTypes) {
-      const isCorrectFileType = allowedFileTypes.filter(match(file.type)).length > 0
+      const isCorrectFileType = allowedFileTypes.filter((type) => {
+        if (!file.type) return false
+        return match(file.type, type)
+      }).length > 0
+
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
         this.info(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
