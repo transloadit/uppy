@@ -42,7 +42,12 @@
   }
 
   // try to get options from localStorage, if its empty, set to defaultOpts
-  window.uppyOptions = JSON.parse(localStorage.getItem('uppyOptions')) || {}
+  try {
+    window.uppyOptions = JSON.parse(localStorage.getItem('uppyOptions')) || {}
+  } catch (err) {
+    window.uppyOptions = {}
+  }
+  
   if (isObjEmpty(window.uppyOptions)) {
     window.uppyOptions = defaultOpts
     localStorage.setItem('uppyOptions', JSON.stringify(window.uppyOptions))
