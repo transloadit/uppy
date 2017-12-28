@@ -46,7 +46,7 @@ const uppy = Uppy({ autoProceed: false })
 ## Features
 
 - Lightweight, modular plugin-based architecture, easy on dependencies :zap:
-- Resumable file uploads via the open [tus](https://tus.io/) standard, so large uploads survice network hiccups
+- Resumable file uploads via the open [tus](https://tus.io/) standard, so large uploads survive network hiccups
 - Supports picking files from: Webcam, Dropbox, Google Drive, Instagram, bypassing the user’s device where possible, syncing between servers directly via [uppy-server](https://github.com/transloadit/uppy-server)
 - Works great with file encoding and processing backends, such as [Transloadit](https://transloadit.com), works great without (just roll your own Apache/Nginx/Node/FFmpeg/etc backend)
 - Sleek user interface :sparkles:
