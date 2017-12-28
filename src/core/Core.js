@@ -429,7 +429,7 @@ class Uppy {
     })
 
     removeUploads.forEach((uploadID) => {
-      this.removeUpload(uploadID)
+      this._removeUpload(uploadID)
     })
 
     this._calculateTotalProgress()
@@ -1111,7 +1111,7 @@ class Uppy {
       Object.keys(this.getState().files).forEach((fileID) => {
         const file = this.getFile(fileID)
 
-        if (!file.progress.uploadStarted || file.isRemote) {
+        if (!file.progress.uploadStarted) {
           waitingFileIDs.push(file.id)
         }
       })
