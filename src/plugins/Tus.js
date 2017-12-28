@@ -236,65 +236,79 @@ module.exports = class Tus extends Plugin {
             return reject(res.statusText)
           }
 
-          res.json().then((data) => {
-            const token = data.token
-            this.uppy.setFileState(file.id, { serverToken: token })
+          return res.json().then((data) => {
+            this.uppy.setFileState(file.id, { serverToken: data.token })
             file = this.getFile(file.id)
-            this.connectToServerSocket(file)
-            resolve()
+            return file
           })
+        })
+        .then((file) => {
+          return this.connectToServerSocket(file)
+        })
+        .then(() => {
+          resolve()
+        })
+        .catch((err) => {
+          reject(new Error(err))
         })
       }
     })
   }
 
   connectToServerSocket (file) {
-    const token = file.serverToken
-    const host = getSocketHost(file.remote.host)
-    const socket = new UppySocket({ target: `${host}/api/${token}` })
-    this.uploaderSockets[file.id] = socket
-    this.uploaderEvents[file.id] = createEventTracker(this.uppy)
+    return new Promise((resolve, reject) => {
+      const token = file.serverToken
+      const host = getSocketHost(file.remote.host)
+      const socket = new UppySocket({ target: `${host}/api/${token}` })
+      this.uploaderSockets[file.id] = socket
+      this.uploaderEvents[file.id] = createEventTracker(this.uppy)
 
-    this.onFileRemove(file.id, () => socket.send('pause', {}))
+      this.onFileRemove(file.id, () => {
+        socket.send('pause', {})
+        resolve(`upload ${file.id} was removed`)
+      })
 
-    this.onPause(file.id, (isPaused) => {
-      isPaused ? socket.send('pause', {}) : socket.send('resume', {})
-    })
+      this.onPause(file.id, (isPaused) => {
+        isPaused ? socket.send('pause', {}) : socket.send('resume', {})
+      })
 
-    this.onPauseAll(file.id, () => socket.send('pause', {}))
+      this.onPauseAll(file.id, () => socket.send('pause', {}))
 
-    this.onCancelAll(file.id, () => socket.send('pause', {}))
+      this.onCancelAll(file.id, () => socket.send('pause', {}))
 
-    this.onResumeAll(file.id, () => {
-      if (file.error) {
+      this.onResumeAll(file.id, () => {
+        if (file.error) {
+          socket.send('pause', {})
+        }
+        socket.send('resume', {})
+      })
+
+      this.onRetry(file.id, () => {
+        socket.send('pause', {})
+        socket.send('resume', {})
+      })
+
+      this.onRetryAll(file.id, () => {
+        socket.send('pause', {})
+        socket.send('resume', {})
+      })
+
+      if (file.isPaused) {
         socket.send('pause', {})
       }
-      socket.send('resume', {})
-    })
 
-    this.onRetry(file.id, () => {
-      socket.send('pause', {})
-      socket.send('resume', {})
-    })
+      socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
-    this.onRetryAll(file.id, () => {
-      socket.send('pause', {})
-      socket.send('resume', {})
-    })
+      socket.on('error', (errData) => {
+        this.uppy.emit('upload-error', file.id, new Error(errData.error))
+        reject(new Error(errData.error))
+      })
 
-    if (file.isPaused) {
-      socket.send('pause', {})
-    }
-
-    socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
-
-    socket.on('error', (errData) => {
-      this.uppy.emit('core:upload-error', file.id, new Error(errData.error))
-    })
-
-    socket.on('success', (data) => {
-      this.uppy.emit('upload-success', file.id, data, data.url)
-      this.resetUploaderReferences(file.id)
+      socket.on('success', (data) => {
+        this.uppy.emit('upload-success', file.id, data, data.url)
+        this.resetUploaderReferences(file.id)
+        resolve()
+      })
     })
   }
 
