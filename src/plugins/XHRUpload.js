@@ -251,6 +251,11 @@ module.exports = class XHRUpload extends Plugin {
             socket.close()
             return resolve()
           })
+
+          socket.on('error', (errData) => {
+            this.uppy.emit('upload-error', file.id, new Error(errData.error))
+            reject(new Error(errData.error))
+          })
         })
       })
     })
