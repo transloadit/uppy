@@ -22,8 +22,8 @@ uppy.use(Dashboard, {
   target: 'body',
   trigger: '#uppy-select-files',
   inline: false,
-  width: 750,
-  height: 550,
+  maxWidth: 750,
+  maxHeight: 550,
   semiTransparent: false,
   showProgressDetails: false,
   hideUploadButton: false,
@@ -74,11 +74,11 @@ By default Dashboard will be rendered as a modal, which is opened via clicking o
 
 String with a CSS selector for a button that will trigger opening Dashboard modal. Multiple buttons or links can be used, if it’s a class selector (`.uppy-choose`, for example).
 
-### `width: 750`
+### `maxWidth: 750`
 
 Maximum width of the Dashboard in pixels. Used when `inline: true`.
 
-### `height: 550`
+### `maxHeight: 550`
 
 Maximum height of the Dashboard in pixels. Used when `inline: true`.
 
