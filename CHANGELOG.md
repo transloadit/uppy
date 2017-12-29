@@ -105,7 +105,7 @@ To be released: 2018-01-26.
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins (@goto-bus-stop)
-- [ ] docs: fix reference to incorrect width/height options (#475 / @xhocquet)
+- [x] docs: fix reference to incorrect width/height options (#475 / @xhocquet)
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
