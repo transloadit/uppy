@@ -5,7 +5,7 @@
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
 <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
 
-Uppy is a sleek, modular file uploader that integrates seemlessly with any application. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
+Uppy is a sleek, modular file uploader that integrates seamlessly with any application. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
 
 - **Fetch** files from local disk, Google Drive, Dropbox, Instagram, or snap and record selfies with a camera;
 - **Preview** and edit metadata with a nice interface;
