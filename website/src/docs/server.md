@@ -83,8 +83,7 @@ Please ensure that the required env variables are set before running/using uppy-
 $ uppy-server
 ```
 
-If you cloned the repo from gtihub and want to run it as a standalone server, you may also run the following command from within its
-directory
+If you cloned the repo from github and want to run it as a standalone server, you may also run the following command from within its directory
 
 ```bash
 npm run start:production
@@ -204,7 +203,7 @@ See [env.example.sh](https://github.com/transloadit/uppy-server/blob/master/env.
   - protocol - `http | https`
   - host(required) - your server host (e.g localhost:3020, mydomain.com)
   - path - the server path to where the uppy app is sitting (e.g if uppy server is at `mydomain.com/uppy`, then the path would be `/uppy`).
-  - oauthDoamin - if you have multiple instances of uppy server with different(and maybe dynamic) subdomains, you can set a master domain(e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect to the slave subdomain with the required credentials on completion.
+  - oauthDoamin - if you have multiple instances of uppy server with different (and maybe dynamic) subdomains, you can set a master domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect to the slave subdomain with the required credentials on completion.
   - validHosts - if you are setting a master `oauthDomain`, you need to set a list of valid hosts, so the master oauth handler can validate the host of the uppy instance requesting the authentication. This is basically a list of valid domains running your uppy server instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
 
 5. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attributes is that, when set, it adds the value as the `i-am` header of every request response.
@@ -235,8 +234,7 @@ The default value simply returns `filename`, so all files will be uploaded to th
 
 ### Adding Custom Providers
 
-As of now, uppy-server supports **Google Drive**, **Dropbox** and **Instagram** out of the box, but you may also choose to add your custom providers. You can do this by passing the `customProviders`
-option when calling the uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
+As of now, uppy-server supports **Google Drive**, **Dropbox** and **Instagram** out of the box, but you may also choose to add your custom providers. You can do this by passing the `customProviders` option when calling the uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
 
 ```javascript
 let options = {
@@ -272,8 +270,8 @@ To work well with uppy server, the **Module** must be a class with the following
   - `options` - is an object containing the following attributes
     - token - authorization token(retrieved from oauth process) to send along with your request.
     - id - id of the file being downloaded.
-  - `onData (chunk)` - a callback that should be called with each data chunk received on download. This is useful if the size of the downloaded file can be pre-determined. This would allow for pipelined upload of the file(to the desired destination), while the download is still going on.
-  - `onResponse (response)` - if the size of the downloaded file can not be pre-determined by uppy-server, then this callback should be called in place of the `onData` callback. This callback would be called after the download is done, and would the downloaded data(response) as argument.
+  - `onData (chunk)` - a callback that should be called with each data chunk received on download. This is useful if the size of the downloaded file can be pre-determined. This would allow for pipelined upload of the file (to the desired destination), while the download is still going on.
+  - `onResponse (response)` - if the size of the downloaded file can not be pre-determined by uppy-server, then this callback should be called in place of the `onData` callback. This callback would be called after the download is done, and would take the downloaded data (response) as the argument.
 
 ## Development
 
@@ -305,9 +303,7 @@ It also expects the [uppy client](https://github.com/transloadit/uppy) to be run
 An example server is running at http://server.uppy.io, which is deployed via
 [Frey](https://github.com/kvz/frey), using the following [Freyfile](infra/Freyfile.toml).
 
-All the secrets are stored in `env.infra.sh`, so using `env.infra.example.sh`, you could
-use the same Freyfile but target a different cloud vendor with different secrets, and run your own
-uppy-server.
+All the secrets are stored in `env.infra.sh`, so using `env.infra.example.sh`, you could use the same Freyfile but target a different cloud vendor with different secrets, and run your own uppy-server.
 
 ## Logging
 
