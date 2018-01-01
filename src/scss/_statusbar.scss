@@ -16,6 +16,10 @@
   height: 0;
 }
 
+.uppy-StatusBar.is-hidden {
+  display: none;
+}
+
 .uppy-StatusBar.is-complete .uppy-StatusBar-progress {
   background-color: $color-green;
 }
@@ -134,8 +138,8 @@
         background-color: $color-cornflower-blue;
         color: $color-white;
 
-        &:hover { 
-          background-color: darken($color-cornflower-blue, 20%); 
+        &:hover {
+          background-color: darken($color-cornflower-blue, 20%);
         }
       }
 
