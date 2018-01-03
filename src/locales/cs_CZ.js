@@ -52,7 +52,7 @@ cs_CZ.pluralize = function (n) {
   if (n >= 2 && n <= 4) {
     return 1
   }
-  
+
   return 2
 }
 
