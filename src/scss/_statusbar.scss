@@ -16,10 +16,6 @@
   height: 0;
 }
 
-.uppy-StatusBar.is-hidden {
-  display: none;
-}
-
 .uppy-StatusBar.is-complete .uppy-StatusBar-progress {
   background-color: $color-green;
 }
