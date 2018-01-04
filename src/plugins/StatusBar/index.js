@@ -47,7 +47,7 @@ module.exports = class StatusBar extends Plugin {
       hideUploadButton: false,
       showProgressDetails: false,
       locale: defaultLocale,
-      hideAfterFinish: false
+      hideAfterFinish: true
     }
 
     // merge default options with the ones set by user
