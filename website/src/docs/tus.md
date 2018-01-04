@@ -9,6 +9,7 @@ The Tus plugin brings [tus.io](http://tus.io) resumable file uploading to Uppy b
 
 ```js
 uppy.use(Tus, {
+  endpoint: 'https://master.tus.io/files/', // use your tus endpoint here
   resume: true,
   autoRetry: true,
   retryDelays: [0, 1000, 3000, 5000]
@@ -17,8 +18,11 @@ uppy.use(Tus, {
 
 ## Options
 
-The Tus plugin supports all of [tus-js-client][]'s options.
-Additionally:
+The Tus plugin supports all of [tus-js-client][]’s options. Additionally:
+
+### `endpoint: ''`
+
+URL to upload to, where your tus.io server is running.
 
 ### `autoRetry: true`
 
