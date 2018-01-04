@@ -13,7 +13,6 @@
       const Dashboard = Uppy.Dashboard
       const Webcam = Uppy.Webcam
       const Tus = Uppy.Tus
-      const Informer = Uppy.Informer
 
       const uppy = Uppy.Core({debug: true, autoProceed: false})
       .use(Uppy.Dashboard, {
@@ -22,7 +21,6 @@
       })
       .use(Webcam, {target: Dashboard})
       .use(Tus, {endpoint: 'https://master.tus.io/files/', resume: true})
-      .use(Informer, {target: Dashboard})
 
       uppy.run()
 

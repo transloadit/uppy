@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"website/public/": true,
+			"node_modules/": true,
+			"website/node_modules/": true,
+			"dist/": true,
+			"lib/": true,
+			"assets/": true,
+			"package-lock.json": true,
+			"website/package-lock.json": true,
+			"yarn-error.log": true,
+			"website/.deploy_git": true,
+			"npm-debug.log": true,
+			"website/npm-debug.log": true,
+			"website/debug.log": true,
+			"nohup.out": true,
+			"yarn.lock": true
+		}		
+	}
+}

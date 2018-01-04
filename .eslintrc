@@ -1,5 +1,5 @@
 {
-  "extends": "standard",
+  "extends": ["standard", "standard-preact"],
   "env": {
     "browser": true,
     "node": true,
@@ -9,5 +9,8 @@
     "window": true,
     "hexo": true
   },
-  "plugins": ["jest"]
+  "plugins": ["jest"],
+  "rules": {
+    "jsx-quotes": ["error", "prefer-double"]
+  }
 }

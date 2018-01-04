@@ -7,7 +7,7 @@ order: 2
 
 Drag and Drop, Webcam, basic file manipulation (adding metadata, for example) and uploading via tus resumable uploads or XHR/Multipart are all possible using just the uppy client module.
 
-However, if you add [uppy-server](https://github.com/transloadit/uppy-server) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your mobile data plan), and then uploaded to the final distanation. Files are removed from uppy-server after an upload is complete, or after a resonable timeout. Access tokens also don’t stick around for long, for security.
+However, if you add [uppy-server](https://github.com/transloadit/uppy-server) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your mobile data plan), and then uploaded to the final destination. Files are removed from uppy-server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security.
 
 Uppy Server handles the server-to-server communication between your server and file storage providers such as Google Drive, Dropbox, Instagram, etc.
 
@@ -77,7 +77,7 @@ This takes your `server` instance and your uppy [options](#Options) as parameter
 
 ### Run as standalone server
 
-Please ensure that the required env varaibles are set before runnning/using uppy-server as a standalone server. [See](#Configure-Standalone).
+Please ensure that the required env variables are set before running/using uppy-server as a standalone server. [See](#Configure-Standalone).
 
 ```bash
 $ uppy-server
@@ -104,7 +104,7 @@ export UPPYSERVER_DOMAIN="YOUR SERVER DOMAIN"
 # corresponds to the filePath option
 export UPPYSERVER_DATADIR="PATH/TO/DOWNLOAD/DIRECTORY"
 
-###### Optionional variables ##########
+###### Optional variables ##########
 
 # corresponds to the server.protocol option. defaults to http
 export UPPYSERVER_PROTOCOL="YOUR SERVER PROTOCOL"
@@ -236,7 +236,7 @@ The default value simply returns `filename`, so all files will be uploaded to th
 ### Adding Custom Providers
 
 As of now, uppy-server supports **Google Drive**, **Dropbox** and **Instagram** out of the box, but you may also choose to add your custom providers. You can do this by passing the `customProviders`
-option when calling the uppy `app` method. The custom provider is expected to supoort Oauth 1 or 2 for authentication/authorization.
+option when calling the uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
 
 ```javascript
 let options = {

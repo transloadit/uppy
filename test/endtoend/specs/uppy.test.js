@@ -33,7 +33,7 @@ describe('File upload with DragDrop + Tus, DragDrop + XHRUpload, i18n translated
       browser.execute(uppySelectFakeFile, 'uppyDragDrop')
     }
     browser.pause(3000)
-    var html = browser.getHTML('#uppyDragDrop-progress .UppyProgressBar-percentage', false)
+    var html = browser.getHTML('#uppyDragDrop-progress .uppy-ProgressBar-percentage', false)
     expect(parseInt(html)).to.be.equal(100)
   })
 
@@ -44,7 +44,7 @@ describe('File upload with DragDrop + Tus, DragDrop + XHRUpload, i18n translated
       browser.execute(uppySelectFakeFile, 'uppyi18n')
     }
     browser.pause(3000)
-    var html = browser.getHTML('#uppyi18n-progress .UppyProgressBar-percentage', false)
+    var html = browser.getHTML('#uppyi18n-progress .uppy-ProgressBar-percentage', false)
     expect(parseInt(html)).to.be.equal(100)
   })
 

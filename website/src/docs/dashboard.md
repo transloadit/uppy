@@ -20,15 +20,18 @@ Dashboard is a universal UI plugin for Uppy:
 ```js
 uppy.use(Dashboard, {
   target: 'body',
-  getMetaFromForm: true,
   trigger: '#uppy-select-files',
   inline: false,
-  width: 750,
-  height: 550,
+  maxWidth: 750,
+  maxHeight: 550,
+  semiTransparent: false,
   showProgressDetails: false,
   hideUploadButton: false,
   note: null,
+  metaFields: [],
   closeModalOnClickOutside: false,
+  disableStatusBar: false,
+  disableInformer: false,
   locale: {
     strings: {
       selectToUpload: 'Select files to upload',
@@ -39,14 +42,21 @@ uppy.use(Dashboard, {
       dashboardTitle: 'Uppy Dashboard',
       copyLinkToClipboardSuccess: 'Link copied to clipboard.',
       copyLinkToClipboardFallback: 'Copy the URL below',
+      fileSource: 'File source',
       done: 'Done',
       localDisk: 'Local Disk',
+      myDevice: 'My Device',
       dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
       dropPaste: 'Drop files here, paste or',
       browse: 'browse',
       fileProgress: 'File progress: upload speed and ETA',
       numberOfSelectedFiles: 'Number of selected files',
-      uploadAllNewFiles: 'Upload all new files'
+      uploadAllNewFiles: 'Upload all new files',
+      emptyFolderAdded: 'No files were added from empty folder',
+      folderAdded: {
+        0: 'Added %{smart_count} file from %{folder}',
+        1: 'Added %{smart_count} files from %{folder}'
+      }
     }
   }
 })
@@ -64,13 +74,21 @@ By default Dashboard will be rendered as a modal, which is opened via clicking o
 
 String with a CSS selector for a button that will trigger opening Dashboard modal. Multiple buttons or links can be used, if it’s a class selector (`.uppy-choose`, for example).
 
-### `width: 750`
+### `maxWidth: 750`
 
 Maximum width of the Dashboard in pixels. Used when `inline: true`.
 
-### `height: 750`
+### `maxHeight: 550`
 
 Maximum height of the Dashboard in pixels. Used when `inline: true`.
+
+### `semiTransparent: false`
+
+Make the dashboard semi-transparent.
+
+### `showProgressDetails: false`
+
+Show progress bars for the uploads.
 
 ### `hideUploadButton: false`
 
@@ -79,6 +97,26 @@ Hide the upload button. Use this if you are providing a custom upload button som
 ### `note: null`
 
 Optionally specify a string of text that explains something about the upload for the user. This is a place to explain `restrictions` that are put in place. For example: `'Images and video only, 2–3 files, up to 1 MB'`.
+
+### `metaFields: []`
+
+An array of UI field objects that will be shown when a user clicks “edit” button on that file. Each object requires:
+
+- `id`, the name of the meta field.
+- `name`, the label shown in the interface.
+- `placeholder`, the text shown when no value it set in the field.
+
+```js
+.use(Dashboard, {
+  trigger: '#pick-files',
+  metaFields: [
+    { id: 'license', name: 'License', placeholder: 'specify license' },
+    { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
+  ]
+})
+```
+
+Note that this meta data will only be set to a file if it’s entered by user. If you want to set certain default meta field to each file regardless of user actions, set [`meta` in Uppy options](docs/uppy/#meta).
 
 ### `closeModalOnClickOutside: false`
 
@@ -91,10 +129,6 @@ Dashboard ships with `StatusBar` plugin that shows upload progress and pause/res
 ### `disableInformer: false`
 
 Dashboard ships with `Informer` plugin that notifies when the browser is offline, or when it’s time to smile if `Webcam` is taking a picture. If you want, you can disable the Informer and/or provide your custom solution.
-
-### `getMetaFromForm: true`
-
-See [general plugin options](/docs/plugins).
 
 ### `locale`
 

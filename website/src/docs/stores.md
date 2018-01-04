@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 4
+order: 3
 title: "Custom Stores"
 permalink: docs/stores/
 ---

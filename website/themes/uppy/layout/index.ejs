@@ -86,15 +86,17 @@
   var PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
   var TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
   
-  var uppy = Uppy.Core({debug: true, autoProceed: false})
-  .use(Uppy.Dashboard, {trigger: '#select-files', target: '#upload-form', replaceTargetContent: true})
-  .use(Uppy.Tus10, {endpoint: TUS_ENDPOINT})
-  .use(Uppy.MetaData, {
-      fields: [
-        { id: 'resizeTo', name: 'Resize to', value: 1200, placeholder: 'specify future image size' },
-        { id: 'description', name: 'Description', value: 'none', placeholder: 'describe what the file is for' }
-      ]
-    })
+  var uppy = Uppy.Core({ debug: true, autoProceed: false })
+  .use(Uppy.Dashboard, { 
+    trigger: '#select-files',
+    target: '#upload-form',
+    replaceTargetContent: true,
+    metaFields: [
+      { id: 'license', name: 'License', placeholder: 'specify license' },
+      { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
+    ]
+  })
+  .use(Uppy.Tus, { endpoint: TUS_ENDPOINT})
   .run()
 
   uppy.on('success', (files) => {

@@ -1,21 +1,31 @@
-const html = require('yo-yo')
-const onload = require('on-load')
 const LoaderView = require('./Loader')
+const { h, Component } = require('preact')
 
-module.exports = (props) => {
-  const demoLink = props.demo ? html`<button class="UppyProvider-authBtnDemo" onclick=${props.handleDemoAuth}>Proceed with Demo Account</button>` : null
-  const AuthBlock = () => html`
-    <div class="UppyProvider-auth">
-      <h1 class="UppyProvider-authTitle">Please connect your ${props.pluginName}<br> account to select files</h1>
-      <button type="button" class="UppyProvider-authBtn" onclick=${props.handleAuth}>Connect to ${props.pluginName}</button>
-      ${demoLink}
-    </div>
-  `
-  return onload(html`
-    <div style="height: 100%;">
-      ${props.checkAuthInProgress
-        ? LoaderView()
-        : AuthBlock()
-      }
-    </div>`, props.checkAuth, null, `auth${props.pluginName}`)
+class AuthView extends Component {
+  componentDidMount () {
+    this.props.checkAuth()
+  }
+
+  render () {
+    const AuthBlock = () => {
+      return <div class="uppy-Provider-auth">
+        <h1 class="uppy-Provider-authTitle">Please authenticate with <span class="uppy-Provider-authTitleName">{this.props.pluginName}</span><br /> to select files</h1>
+        <button type="button" class="uppy-Provider-authBtn" onclick={this.props.handleAuth}>Connect to {this.props.pluginName}</button>
+        {this.props.demo &&
+          <button class="uppy-Provider-authBtnDemo" onclick={this.props.handleDemoAuth}>Proceed with Demo Account</button>
+        }
+      </div>
+    }
+
+    return (
+      <div style="height: 100%;">
+        {this.props.checkAuthInProgress
+          ? LoaderView()
+          : AuthBlock()
+        }
+      </div>
+    )
+  }
 }
+
+module.exports = AuthView

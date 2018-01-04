@@ -1,5 +1,6 @@
 const Plugin = require('../core/Plugin')
-const html = require('yo-yo')
+
+const { h } = require('preact')
 
 /**
  * Informer
@@ -14,7 +15,6 @@ module.exports = class Informer extends Plugin {
     this.type = 'progressindicator'
     this.id = this.opts.id || 'Informer'
     this.title = 'Informer'
-    // this.timeoutID = undefined
 
     // set default options
     const defaultOptions = {
@@ -45,20 +45,27 @@ module.exports = class Informer extends Plugin {
   }
 
   render (state) {
-    const {isHidden, type, message, details} = state.info
-    const style = `background-color: ${this.opts.typeColors[type].bg}; color: ${this.opts.typeColors[type].text};`
+    const { isHidden, type, message, details } = state.info
+    const style = {
+      backgroundColor: this.opts.typeColors[type].bg,
+      color: this.opts.typeColors[type].text
+    }
 
-    return html`<div class="Uppy UppyInformer" 
-                     style="${style}" 
-                     aria-hidden="${isHidden}" >
-      <p role="alert">
-        ${message} 
-        ${details ? html`<span style="color: ${this.opts.typeColors[type].bg}" 
-                               data-balloon="${details}" 
-                               data-balloon-pos="up" 
-                               data-balloon-length="large">?</span>` : null}
-      </p>
-    </div>`
+    return (
+      <div class="uppy uppy-Informer"
+        style={style}
+        aria-hidden={isHidden}>
+        <p role="alert">
+          {message}
+          {' '}
+          {details && <span style={{ color: this.opts.typeColors[type].bg }}
+            data-balloon={details}
+            data-balloon-pos="up"
+            data-balloon-length="large">?</span>
+          }
+        </p>
+      </div>
+    )
   }
 
   install () {

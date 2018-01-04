@@ -1,9 +1,5 @@
-const html = require('yo-yo')
+const { h } = require('preact')
 
 module.exports = (props) => {
-  return html`
-    <li>
-      <button type="button" onclick=${props.getFolder}>${props.title}</button>
-    </li>
-  `
+  return <li><button type="button" onclick={props.getFolder}>{props.title}</button></li>
 }

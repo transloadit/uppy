@@ -12,7 +12,11 @@ const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
 const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 
 function uppyInit () {
-  const opts = window.uppyOptions2
+  if (window.uppy) {
+    window.uppy.close()
+  }
+
+  const opts = window.uppyOptions
   const dashboardEl = document.querySelector('.UppyDashboard')
   if (dashboardEl) {
     const dashboardElParent = dashboardEl.parentNode
@@ -36,7 +40,9 @@ function uppyInit () {
     trigger: '.UppyModalOpenerBtn',
     inline: opts.DashboardInline,
     target: opts.DashboardInline ? '.DashboardContainer' : 'body',
+    replaceTargetContent: opts.DashboardInline,
     note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : '',
+    maxHeight: 450,
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
