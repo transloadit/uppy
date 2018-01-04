@@ -98,7 +98,7 @@ Alternatively, you can also use a pre-built bundle, for example from [unpkg CDN]
 - [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods and events.
 - [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their options.
 - [Server](https://uppy.io/docs/server/) — setting up and running an Uppy Server instance, which adds support for Instagram, Dropbox, Google Drive and other remote sources.
-- [React](/docs/react/) — components to integrate Uppy UI plugins with React apps.
+- [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps.
 - Architecture & Making a Plugin — how to write a plugin for Uppy [documentation in progress].
 
 ## Plugins
