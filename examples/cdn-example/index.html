@@ -10,27 +10,18 @@
     <button id="uppyModalOpener">Open Modal</button>
     <script src="https://unpkg.com/uppy/dist/uppy.min.js"></script>
     <script>
-      const Dashboard = Uppy.Dashboard
-      const Webcam = Uppy.Webcam
-      const Tus = Uppy.Tus
-      const Informer = Uppy.Informer
-
       const uppy = Uppy.Core({debug: true, autoProceed: false})
-      .use(Uppy.Dashboard, {
-        trigger: '#uppyModalOpener',
-        target: 'body'
-      })
-      .use(Webcam, {target: Dashboard})
-      .use(Tus, {endpoint: 'https://master.tus.io/files/', resume: true})
-      .use(Informer, {target: Dashboard})
-
-      uppy.run()
+        .use(Uppy.Dashboard, {
+          trigger: '#uppyModalOpener',
+          target: 'body'
+        })
+        .use(Uppy.Webcam, {target: Dashboard})
+        .use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/', resume: true })
+        .run()
 
       uppy.on('success', (fileCount) => {
         console.log(`${fileCount} files uploaded`)
       })
-
-      document.querySelector('#uppyModalOpener').click()
     </script>
   </body>
 </html>
