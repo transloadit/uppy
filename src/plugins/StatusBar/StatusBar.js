@@ -110,7 +110,7 @@ module.exports = (props) => {
   } else if (uploadState === STATE_COMPLETE) {
     progressBarContent = ProgressBarComplete(props)
     if (props.hideAfterFinish) {
-      hiddenClass = 'is-hidden'
+      hiddenClass = 'uppy--hidden'
     }
   } else if (uploadState === STATE_UPLOADING) {
     progressBarContent = ProgressBarUploading(props)
