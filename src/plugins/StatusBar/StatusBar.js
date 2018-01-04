@@ -98,7 +98,6 @@ module.exports = (props) => {
   let progressValue = props.totalProgress
   let progressMode
   let progressBarContent
-  let hiddenClass = ''
   if (uploadState === STATE_PREPROCESSING || uploadState === STATE_POSTPROCESSING) {
     const progress = calculateProcessingProgress(props.files)
     progressMode = progress.mode
@@ -109,9 +108,6 @@ module.exports = (props) => {
     progressBarContent = ProgressBarProcessing(progress)
   } else if (uploadState === STATE_COMPLETE) {
     progressBarContent = ProgressBarComplete(props)
-    if (props.hideAfterFinish) {
-      hiddenClass = 'uppy--hidden'
-    }
   } else if (uploadState === STATE_UPLOADING) {
     progressBarContent = ProgressBarUploading(props)
   } else if (uploadState === STATE_ERROR) {
@@ -121,13 +117,14 @@ module.exports = (props) => {
 
   const width = typeof progressValue === 'number' ? progressValue : 100
   const isHidden = (uploadState === STATE_WAITING && props.hideUploadButton) ||
-    (uploadState === STATE_WAITING && !props.newFiles > 0)
+    (uploadState === STATE_WAITING && !props.newFiles > 0) ||
+    (uploadState === STATE_COMPLETE && props.hideAfterFinish)
 
   const progressClasses = `uppy-StatusBar-progress
                            ${progressMode ? 'is-' + progressMode : ''}`
 
   return (
-    <div class={`uppy uppy-StatusBar is-${uploadState} ${hiddenClass}`} aria-hidden={isHidden}>
+    <div class={`uppy uppy-StatusBar is-${uploadState}`} aria-hidden={isHidden}>
       <div class={progressClasses}
         style={{ width: width + '%' }}
         role="progressbar"
