@@ -27,6 +27,7 @@ uppy.use(Dashboard, {
   semiTransparent: false,
   showProgressDetails: false,
   hideUploadButton: false,
+  hideProgressAfterFinish: false,
   note: null,
   metaFields: [],
   closeModalOnClickOutside: false,
@@ -93,6 +94,10 @@ Show progress bars for the uploads.
 ### `hideUploadButton: false`
 
 Hide the upload button. Use this if you are providing a custom upload button somewhere on the page using the `uppy.upload()` API.
+
+### `hideProgressAfterFinish: false`
+
+Hide StatusBar after upload finish
 
 ### `note: null`
 
