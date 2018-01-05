@@ -426,7 +426,6 @@ module.exports = class View {
    * for all of them, depending on current file state.
    */
   toggleCheckbox (e, file) {
-    console.log(e, e.shiftKey)
     e.stopPropagation()
     e.preventDefault()
     let { folders, files, filterInput } = this.plugin.getPluginState()

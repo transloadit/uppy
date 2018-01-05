@@ -116,8 +116,6 @@ module.exports = class Tus extends Plugin {
    * @returns {Promise}
    */
   upload (file, current, total) {
-    this.uppy.log(`uploading ${current} of ${total}`)
-
     this.resetUploaderReferences(file.id)
 
     // Create a new tus upload
@@ -208,50 +206,52 @@ module.exports = class Tus extends Plugin {
     return new Promise((resolve, reject) => {
       this.uppy.log(file.remote.url)
       if (file.serverToken) {
-        this.connectToServerSocket(file)
-      } else {
-        let endpoint = this.opts.endpoint
-        if (file.tus && file.tus.endpoint) {
-          endpoint = file.tus.endpoint
+        return this.connectToServerSocket(file)
+          .then(() => resolve())
+          .catch(reject)
+      }
+
+      let endpoint = this.opts.endpoint
+      if (file.tus && file.tus.endpoint) {
+        endpoint = file.tus.endpoint
+      }
+
+      this.uppy.emit('upload-started', file.id)
+
+      fetch(file.remote.url, {
+        method: 'post',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(Object.assign({}, file.remote.body, {
+          endpoint,
+          protocol: 'tus',
+          size: file.data.size,
+          metadata: file.meta
+        }))
+      })
+      .then((res) => {
+        if (res.status < 200 || res.status > 300) {
+          return reject(res.statusText)
         }
 
-        this.uppy.emit('upload-started', file.id)
-
-        fetch(file.remote.url, {
-          method: 'post',
-          credentials: 'include',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(Object.assign({}, file.remote.body, {
-            endpoint,
-            protocol: 'tus',
-            size: file.data.size,
-            metadata: file.meta
-          }))
+        return res.json().then((data) => {
+          this.uppy.setFileState(file.id, { serverToken: data.token })
+          file = this.getFile(file.id)
+          return file
         })
-        .then((res) => {
-          if (res.status < 200 || res.status > 300) {
-            return reject(res.statusText)
-          }
-
-          return res.json().then((data) => {
-            this.uppy.setFileState(file.id, { serverToken: data.token })
-            file = this.getFile(file.id)
-            return file
-          })
-        })
-        .then((file) => {
-          return this.connectToServerSocket(file)
-        })
-        .then(() => {
-          resolve()
-        })
-        .catch((err) => {
-          reject(new Error(err))
-        })
-      }
+      })
+      .then((file) => {
+        return this.connectToServerSocket(file)
+      })
+      .then(() => {
+        resolve()
+      })
+      .catch((err) => {
+        reject(new Error(err))
+      })
     })
   }
 
@@ -395,10 +395,14 @@ module.exports = class Tus extends Plugin {
 
       if (file.error) {
         return Promise.reject(new Error(file.error))
-      } else if (!file.isRemote) {
-        return this.upload(file, current, total)
-      } else {
+      }
+
+      this.uppy.log(`uploading ${current} of ${total}`)
+
+      if (file.isRemote) {
         return this.uploadRemote(file, current, total)
+      } else {
+        return this.upload(file, current, total)
       }
     })
 
