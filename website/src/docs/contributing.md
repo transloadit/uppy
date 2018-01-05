@@ -16,6 +16,24 @@ npm install
 
 Our website's examples section is also our playground, read "Website Development"'s "Local Previews" section to get up and running.
 
+## Tests
+
+Unit tests are using Jest and can be run with:
+
+`npm run test:unit`
+
+For acceptance (or end to end) tests, we use [Webdriverio](http://webdriver.io). For it to run locally, you need to install selenium standalone server, just follow [the guide](http://webdriver.io/guide.html) to do so. You can also install Selenium Standalone server from NPM:
+
+`npm install selenium-standalone`
+
+And then launch it:
+
+`selenium-standalone start`
+
+After you’ve installed and launched the selenium standalone server, run:
+
+`npm run test:acceptance:local`
+
 ## Website Development
 
 We keep the [uppy.io](http://uppy.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity. For those reading this screaming murder, [HashiCorp does this](https://github.com/hashicorp/terraform/tree/master/website) for all their projects, and it's working well for them on a scale vastly more impressive than Uppy's.
@@ -41,29 +59,16 @@ npm start
 
 This will watch the website, as well as Uppy, as the examples, and rebuild everything and refresh your browser as files change.
 
-Then, to work on e.g. the Multipart example, you'd edit the following files:
+Then, to work on e.g. the XHRUpload example, you'd edit the following files:
 
 ```bash
 atom src/core/Core.js \
-  src/plugins/Multipart.js \
-  src/plugins/Formtag.js \
+  src/plugins/XHRUpload.js \
   src/plugins/Plugin.js \
-  website/src/examples/multipart/app.es6
+  website/src/examples/xhrupload/app.es6
 ```
 
-And open <http://0.0.0.0:4000/examples/multipart/index.html> in your webbrowser.
-
-## Tests
-
-Unit tests can be run with:
-
-`npm run test:unit`
-
-For acceptance (or end to end) tests, we use [Webdriverio](http://webdriver.io). For it to run locally, you need to install selenium standalone server, just follow [the guide](http://webdriver.io/guide.html) to do so.
-
-After you’ve installed and launched the selenium standalone server, run:
-
-`npm run test:acceptance:local`
+And open <http://0.0.0.0:4000/examples/xhrupload/> in your webbrowser.
 
 ## CSS Guidelines
 

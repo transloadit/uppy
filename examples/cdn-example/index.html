@@ -11,12 +11,9 @@
     <script src="https://unpkg.com/uppy/dist/uppy.min.js"></script>
     <script>
       const uppy = Uppy.Core({debug: true, autoProceed: false})
-        .use(Uppy.Dashboard, {
-          trigger: '#uppyModalOpener',
-          target: 'body'
-        })
-        .use(Uppy.Webcam, {target: Dashboard})
-        .use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/', resume: true })
+        .use(Uppy.Dashboard, { trigger: '#uppyModalOpener' })
+        .use(Uppy.Webcam, {target: Uppy.Dashboard})
+        .use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
         .run()
 
       uppy.on('success', (fileCount) => {

@@ -14,7 +14,7 @@ const uppyDragDrop = Uppy({
     target: '#uppyDragDrop'
   })
   .use(ProgressBar, { target: '#uppyDragDrop-progress' })
-  .use(Tus, { endpoint: 'http://master.tus.io/files/' })
+  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
   .run()
 
 const uppyi18n = Uppy({
@@ -31,7 +31,7 @@ const uppyi18n = Uppy({
     }
   })
   .use(ProgressBar, { target: '#uppyi18n-progress' })
-  .use(XHRUpload, { endpoint: 'http://api2.transloadit.com' })
+  .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
   .run()
 
 const uppyDashboard = Uppy({
@@ -42,7 +42,7 @@ const uppyDashboard = Uppy({
     target: '#uppyDashboard',
     inline: true
   })
-  .use(Tus, { endpoint: 'http://master.tus.io/files/' })
+  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
   .run()
 
 console.log(uppyDragDrop, uppyi18n, uppyDashboard)

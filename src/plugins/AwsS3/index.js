@@ -16,6 +16,8 @@ module.exports = class AwsS3 extends Plugin {
     }
 
     const defaultOptions = {
+      timeout: 30 * 1000,
+      limit: 0,
       getUploadParameters: this.getUploadParameters.bind(this),
       locale: defaultLocale
     }
@@ -117,6 +119,8 @@ module.exports = class AwsS3 extends Plugin {
     this.uppy.use(XHRUpload, {
       fieldName: 'file',
       responseUrlFieldName: 'location',
+      timeout: this.opts.timeout,
+      limit: this.opts.limit,
       getResponseData (xhr) {
         // If no response, we've hopefully done a PUT request to the file
         // in the bucket on its full URL.
