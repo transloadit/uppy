@@ -10,6 +10,11 @@
   width: 100%;
   height: 3px;
   z-index: 10000;
+  transition: height .2s;
+}
+
+.uppy-ProgressBar[aria-hidden=true] {
+  height: 0;
 }
 
 .uppy-ProgressBar-inner {

@@ -75,6 +75,7 @@ module.exports = class Dashboard extends Plugin {
       defaultTabIcon: defaultTabIcon,
       showProgressDetails: false,
       hideUploadButton: false,
+      hideProgressAfterFinish: false,
       note: null,
       closeModalOnClickOutside: false,
       locale: defaultLocale,
@@ -497,7 +498,8 @@ module.exports = class Dashboard extends Plugin {
     if (!this.opts.disableStatusBar) {
       this.uppy.use(StatusBar, {
         target: this,
-        hideUploadButton: this.opts.hideUploadButton
+        hideUploadButton: this.opts.hideUploadButton,
+        hideAfterFinish: this.opts.hideProgressAfterFinish
       })
     }
 

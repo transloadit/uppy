@@ -46,7 +46,8 @@ module.exports = class StatusBar extends Plugin {
       target: 'body',
       hideUploadButton: false,
       showProgressDetails: false,
-      locale: defaultLocale
+      locale: defaultLocale,
+      hideAfterFinish: true
     }
 
     // merge default options with the ones set by user
@@ -164,7 +165,8 @@ module.exports = class StatusBar extends Plugin {
       totalETA: totalETA,
       files: state.files,
       resumableUploads: resumableUploads,
-      hideUploadButton: this.opts.hideUploadButton
+      hideUploadButton: this.opts.hideUploadButton,
+      hideAfterFinish: this.opts.hideAfterFinish
     })
   }
 

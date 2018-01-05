@@ -16,5 +16,9 @@ Best used together with a simple file source plugin, such as [FileInput][] or [D
 
 DOM element, CSS selector, or plugin to mount the StatusBar into.
 
+### `hideAfterFinish: true`
+
+Hide StatusBar after upload finish
+
 [FileInput]: https://github.com/transloadit/uppy/blob/master/src/plugins/FileInput.js
 [DragDrop]: /docs/dragdrop
