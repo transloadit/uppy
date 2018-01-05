@@ -14,7 +14,8 @@ ProgressBar is a minimalist plugin that shows the current upload progress in a t
 ```js
 uppy.use(ProgressBar, {
   target: '.UploadForm',
-  fixed: false
+  fixed: false,
+  hideAfterFinish: true
 })
 ```
 
@@ -32,3 +33,7 @@ uppy.use(ProgressBar, {
   fixed: true
 })
 ```
+
+### `hideAfterFinish: true`
+
+When true, progress bar hides after the uplaod has finished. If true, it remains visible
