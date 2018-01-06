@@ -52,6 +52,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: add tests for `npm pack`
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
 - [ ] audio: audio recording similar to Webcam #143
+- [ ] add  typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
 
 ## 1.0 Goals
 
@@ -95,6 +96,7 @@ To be released: 2018-01-26.
 - [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
 - [ ] dashboard: try adding optional whitelabel “powered by uppy.io” (@arturi, @nqst)
 - [ ] dashboard: option for Boolean metadata #454 (@arturi)
+- [ ] dashboard: use more accessible tip lib: https://github.com/ghosh/microtip
 - [ ] transloadit: add error reporting
 - [ ] importurl: new plugin that imports files from urls (@arturi, @ifedapoolarewaju)
 - [ ] core: queue preview generation #431

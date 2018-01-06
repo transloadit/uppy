@@ -9,9 +9,11 @@ const DefaultStore = require('../store/DefaultStore')
 // const deepFreeze = require('deep-freeze-strict')
 
 /**
- * Main Uppy core
+ * Uppy Core module.
+ * Manages plugins, state updates, acts as an event bus,
+ * adds/removes files and metadata.
  *
- * @param {object} opts general options, like locales, to show modal or not to show
+ * @param {object} opts — Uppy options
  */
 class Uppy {
   constructor (opts) {
@@ -69,7 +71,6 @@ class Uppy {
     this.getPlugin = this.getPlugin.bind(this)
     this.setFileMeta = this.setFileMeta.bind(this)
     this.setFileState = this.setFileState.bind(this)
-    // this._initSocket = this._initSocket.bind(this)
     this.log = this.log.bind(this)
     this.info = this.info.bind(this)
     this.hideInfo = this.hideInfo.bind(this)
@@ -77,6 +78,7 @@ class Uppy {
     this.removeFile = this.removeFile.bind(this)
     this.pauseResume = this.pauseResume.bind(this)
     this._calculateProgress = this._calculateProgress.bind(this)
+    this.updateOnlineStatus = this.updateOnlineStatus.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
 
     this.pauseAll = this.pauseAll.bind(this)
@@ -86,7 +88,6 @@ class Uppy {
     this.retryUpload = this.retryUpload.bind(this)
     this.upload = this.upload.bind(this)
 
-    // this.bus = this.emitter = ee()
     this.emitter = ee()
     this.on = this.emitter.on.bind(this.emitter)
     this.off = this.emitter.off.bind(this.emitter)
@@ -128,7 +129,8 @@ class Uppy {
   }
 
   /**
-   * Iterate on all plugins and run `update` on them. Called each time state changes
+   * Iterate on all plugins and run `update` on them.
+   * Called each time state changes.
    *
    */
   updateAll (state) {
@@ -147,19 +149,21 @@ class Uppy {
   }
 
   /**
-   * Returns current state
+   * Returns current state.
    */
   getState () {
     return this.store.getState()
   }
 
-  // Back compat.
+  /**
+  * Back compat for when this.state is used instead of this.getState().
+  */
   get state () {
     return this.getState()
   }
 
   /**
-  * Shorthand to set state for a specific file
+  * Shorthand to set state for a specific file.
   */
   setFileState (fileID, state) {
     this.setState({
@@ -268,7 +272,7 @@ class Uppy {
   }
 
   /**
-  * Check if minNumberOfFiles restriction is reached before uploading
+  * Check if minNumberOfFiles restriction is reached before uploading.
   *
   * @return {boolean}
   * @private
@@ -284,7 +288,7 @@ class Uppy {
 
   /**
   * Check if file passes a set of restrictions set in options: maxFileSize,
-  * maxNumberOfFiles and allowedFileTypes
+  * maxNumberOfFiles and allowedFileTypes.
   *
   * @param {object} file object to check
   * @return {boolean}
@@ -429,7 +433,7 @@ class Uppy {
     })
 
     removeUploads.forEach((uploadID) => {
-      this.removeUpload(uploadID)
+      this._removeUpload(uploadID)
     })
 
     this._calculateTotalProgress()
@@ -773,7 +777,7 @@ class Uppy {
   }
 
   /**
-   * Registers a plugin with Core
+   * Registers a plugin with Core.
    *
    * @param {Class} Plugin object
    * @param {Object} options object that will be passed to Plugin later
@@ -817,7 +821,7 @@ class Uppy {
   }
 
   /**
-   * Find one Plugin by name
+   * Find one Plugin by name.
    *
    * @param string name description
    */
@@ -834,7 +838,7 @@ class Uppy {
   }
 
   /**
-   * Iterate through all `use`d plugins
+   * Iterate through all `use`d plugins.
    *
    * @param function method description
    */
@@ -877,7 +881,7 @@ class Uppy {
 
   /**
   * Set info message in `state.info`, so that UI plugins like `Informer`
-  * can display the message
+  * can display the message.
   *
   * @param {string} msg Message to be displayed by the informer
   */
@@ -950,16 +954,8 @@ class Uppy {
     }
   }
 
-  // _initSocket (opts) {
-  //   if (!this.socket) {
-  //     this.socket = new UppySocket(opts)
-  //   }
-
-  //   return this.socket
-  // }
-
   /**
-   * Initializes actions, installs all plugins (by iterating on them and calling `install`), sets options
+   * Initializes actions.
    *
    */
   run () {
@@ -1111,7 +1107,7 @@ class Uppy {
       Object.keys(this.getState().files).forEach((fileID) => {
         const file = this.getFile(fileID)
 
-        if (!file.progress.uploadStarted || file.isRemote) {
+        if (!file.progress.uploadStarted) {
           waitingFileIDs.push(file.id)
         }
       })
