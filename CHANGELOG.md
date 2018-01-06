@@ -89,6 +89,7 @@ To be released: 2018-01-26.
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] goldenretriever: confirmation before restore #443
 - [ ] core: i18n all strings + document them
+- [ ] core: figure out per-plugin locales and i18n strings packs #491
 - [ ] core: fix blank preview thumbnails for .png images in Safari 10.1 #458
 - [ ] progressbar: option to clear/reset once the upload has finished (@arturi)
 - [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
