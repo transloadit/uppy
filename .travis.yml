@@ -19,7 +19,6 @@ cache:
   - website/node_modules
 script:
 - npm run web:install
-- npm run build
 - npm run test
 - if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:acceptance; fi
 env:
