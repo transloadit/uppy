@@ -1,7 +1,7 @@
 ---
 type: docs
-title: "How To Make A Plugin"
-permalink: docs/how-to-plugin/
+title: "Writing Plugins"
+permalink: docs/writing-plugins/
 order: 20
 ---
 
