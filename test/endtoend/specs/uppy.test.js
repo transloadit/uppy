@@ -68,7 +68,7 @@ describe('File upload with DragDrop + Tus, DragDrop + XHRUpload, i18n translated
   // })
 // })
 
-describe.only('XHRUpload with `limit`', () => {
+describe.skip('XHRUpload with `limit`', () => {
   let server = null
   before(() => {
     server = http.createServer((req, res) => {
