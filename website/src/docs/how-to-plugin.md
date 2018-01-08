@@ -5,8 +5,6 @@ permalink: docs/how-to-plugin/
 order: 20
 ---
 
-<link rel="stylesheet" href="https://uppy.io/css/main.css">
-
 There are a few useful Uppy plugins out there, but there might come a time when you’ll want to build your own.
 Plugins can hook into the upload process or render a custom UI, typically to:
 
