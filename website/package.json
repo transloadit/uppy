@@ -41,7 +41,7 @@
     "glob": "7.0.5",
     "mdast-util-inject": "1.1.0",
     "multi-glob": "1.0.1",
-    "node-notifier": "4.6.0",
+    "node-notifier": "^5.1.2",
     "remark": "5.0.1",
     "watchify": "3.7.0"
   }
