@@ -134,7 +134,7 @@ describe.only('XHRUpload with `limit`', () => {
       started: window.uppyXhrLimit.uploadsStarted,
       complete: window.uppyXhrLimit.uploadsComplete
     })).value
-    expect(status.started).to.be.equal(10)
+    expect(status.started).to.be.equal(files.length)
     expect(status.complete).to.be.equal(2)
   })
 })
