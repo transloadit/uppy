@@ -73,6 +73,7 @@ describe.only('XHRUpload with `limit`', () => {
   before(() => {
     server = http.createServer((req, res) => {
       res.writeHead(200, {
+        'content-type': 'application/json',
         'access-control-allow-origin': '*'
       })
       req.pause()
