@@ -153,15 +153,17 @@ When `mode` is `'determinate'`, also add the `value` property:
 
 ## UI Plugins
 
-UI Plugins can be used to show a user interface.
+UI Plugins can be used to show a user interface. Uppy plugins use [preact](https://preactjs.com) for rendering. preact is a very small React-like library that works really well with Uppy's state architecture. Uppy implements preact rendering in the `mount(target)` and `update()` plugin methods, so if you want to write a custom UI plugin using some other library, you can override those methods.
+
+Plugins can implement certain methods to do so, that will be called by Uppy when necessary:
 
 ### `mount(target)`
 
-> UI plugins only.
+Mount this plugin to the `target` element. `target` can be a CSS query selector, a DOM element, or another Plugin. If `target` is a Plugin, the source (current) plugin will register with the target plugin, and the latter can decide how and where to render the source plugin.
+
+This method can be overridden to support for different render engines.
 
 ### `render()`
-
-> UI plugins only.
 
 Render this plugin's UI. Uppy uses [preact](https://preactjs.com) as its view engine, so `render()` should return a preact element.
 `render` is automatically called by Uppy on each state change.
