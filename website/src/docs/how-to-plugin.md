@@ -61,20 +61,7 @@ uninstall () {
 
 ### `update(state)`
 
-Called on each state update. For UI plugins, this is a good time to rerender!
-
-### `mount(target)`
-
-> UI plugins only.
-
-### `render()`
-
-> UI plugins only.
-
-Render this plugin's UI. Uppy uses [preact](https://preactjs.com) as its view engine, so `render()` should return a preact element.
-`render` is automatically called by Uppy on each state change.
-
-Note that we are looking into ways to make Uppy render engine agnostic, so that plugins can choose their own favourite library—whether it's preact, choo, jQuery, or anything else. This means that the `render()` API may change in the future, but we'll detail exactly what you need to do on the [blog](https://uppy.io/blog) if and when that happens.
+Called on each state update. It's rare that you'd need to use this, it's mostly handy if you want to build a UI plugin using something other than preact.
 
 ## Upload Hooks
 
@@ -167,5 +154,18 @@ When `mode` is `'determinate'`, also add the `value` property:
 ## UI Plugins
 
 UI Plugins can be used to show a user interface.
+
+### `mount(target)`
+
+> UI plugins only.
+
+### `render()`
+
+> UI plugins only.
+
+Render this plugin's UI. Uppy uses [preact](https://preactjs.com) as its view engine, so `render()` should return a preact element.
+`render` is automatically called by Uppy on each state change.
+
+Note that we are looking into ways to make Uppy render engine agnostic, so that plugins can choose their own favourite library—whether it's preact, choo, jQuery, or anything else. This means that the `render()` API may change in the future, but we'll detail exactly what you need to do on the [blog](https://uppy.io/blog) if and when that happens.
 
 [core.setfilestate]: /docs/uppy#uppy-setFileState-fileID-state
