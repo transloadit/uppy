@@ -93,6 +93,7 @@
     "redux": "^3.7.2",
     "sass": "0.5.0",
     "tape": "^4.8.0",
+    "temp-write": "^3.4.0",
     "tinyify": "^1.0.0",
     "uppy-server": "0.0.7",
     "watchify": "3.7.0",
