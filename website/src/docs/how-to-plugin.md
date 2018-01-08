@@ -71,6 +71,11 @@ Called on each state update. For UI plugins, this is a good time to rerender!
 
 > UI plugins only.
 
+Render this plugin's UI. Uppy uses [preact](https://preactjs.com) as its view engine, so `render()` should return a preact element.
+`render` is automatically called by Uppy on each state change.
+
+Note that we are looking into ways to make Uppy render engine agnostic, so that plugins can choose their own favourite library—whether it's preact, choo, jQuery, or anything else. This means that the `render()` API may change in the future, but we'll detail exactly what you need to do on the [blog](https://uppy.io/blog) if and when that happens.
+
 ## Upload Hooks
 
 When creating an upload, Uppy runs files through an upload pipeline. The pipeline consists of three parts, each of which can be hooked into: Preprocessing, Uploading, and Postprocessing. Preprocessors can be used to configure uploader plugins, encrypt files, resize images, etc., before uploading them. Uploaders do the actual uploading work, such as creating an XMLHttpRequest object and sending the file. Postprocessors do work after files have been uploaded completely. This could be anything from waiting for a file to propagate across a CDN, to sending another request to relate some metadata to the file.
@@ -126,7 +131,7 @@ Remove a processor or uploader function that was added previously. Normally this
 
 Progress events can be fired for individual files to show feedback to the user. For upload progress events, only emitting how many bytes are expected and how many have been uploaded is enough. Uppy will handle calculating progress percentages, upload speed, etc.
 
-Preprocessing and postprocessing progress events can refer to anything, so Uppy doesn't try to be smart about them. There are two types of processing progress events: determinate and indeterminate. Some processing does not have meaningful progress beyond "not done" and "done". For example, sending a request to initialize a server-side resource that will be uploaded to. In those situations, indeterminate progress is suitable.
+Preprocessing and postprocessing progress events are plugin-dependent and can refer to anything, so Uppy doesn't try to be smart about them. There are two types of processing progress events: determinate and indeterminate. Some processing does not have meaningful progress beyond "not done" and "done". For example, sending a request to initialize a server-side resource that will be uploaded to. In those situations, indeterminate progress is suitable. Other processing does have meaningful progress. For example, encrypting a large file. In those situations, determinate progress is suitable.
 
 ### `preprocess-progress(fileID, progress)`
 
@@ -161,6 +166,6 @@ When `mode` is `'determinate'`, also add the `value` property:
 
 ## UI Plugins
 
-TODO after preact switch
+UI Plugins can be used to show a user interface.
 
 [core.setfilestate]: /docs/uppy#uppy-setFileState-fileID-state
