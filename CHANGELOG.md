@@ -92,17 +92,19 @@ To be released: 2018-01-26.
 - [ ] core: i18n all strings + document them
 - [ ] core: figure out per-plugin locales and i18n strings packs #491
 - [ ] core: fix blank preview thumbnails for .png images in Safari 10.1 #458
-- [ ] progressbar: option to clear/reset once the upload has finished (@arturi)
+- [ ] core: Move limiting to different point, to fix StatusBar and other UI issues #468 (@goto-bus-stop)
+- [x] progressbar and statusbar: option to clear/reset once the upload has finished (#464 / @wilkoklak)
 - [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
-- [ ] dashboard: try adding optional whitelabel “powered by uppy.io” (@arturi, @nqst)
+- [ ] dashboard: try adding optional whitelabel “powered by uppy.io” (@nqst, @arturi)
 - [ ] dashboard: option for Boolean metadata #454 (@arturi)
 - [ ] dashboard: use more accessible tip lib: https://github.com/ghosh/microtip
 - [ ] transloadit: add error reporting
 - [ ] importurl: new plugin that imports files from urls (@arturi, @ifedapoolarewaju)
 - [ ] core: queue preview generation #431
-- [ ] core: return `processing` results among with `upload` results in `success` event and `upload()` promise
+- [ ] core: warn, not error when file cannot be added due to restrictions?
+- [ ] core: return `processing` results among with `upload` results in `success` event and `upload()` promise (@goto-bus-stop)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [ ] look into text-based file type icons to save space, or more icons for file types? (@arturi)
+- [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
 - [ ] core: all: reset or !important styles to be immune to any environment/page, look at screenshots in #446. Maybe `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
@@ -110,10 +112,12 @@ To be released: 2018-01-26.
 - [ ] docs: on writing plugins (@goto-bus-stop)
 - [x] docs: fix reference to incorrect width/height options (#475 / @xhocquet)
 - [ ] goldenretriever: add “ghost” files (@arturi)
+- [ ] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (@goto-bus-stop)
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
 - [ ] uppy-server: security audit, ask @acconut
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
+- [ ] meta: add https://twin.github.io/better-file-uploads-with-shrine-direct-uploads to the next blog post
 
 ## 0.22.0
 
