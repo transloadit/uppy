@@ -62,7 +62,7 @@ const options = {
 app.use(uppy.app(options))
 
 ```
-[See](#Options) for valid configuration options.
+See [Options](#Options) for valid configuration options.
 
 To enable uppy socket for realtime feed to the client while upload is going on, you call the `socket` method like so.
 
@@ -77,7 +77,7 @@ This takes your `server` instance and your uppy [options](#Options) as parameter
 
 ### Run as standalone server
 
-Please ensure that the required env variables are set before running/using uppy-server as a standalone server. [See](#Configure-Standalone).
+Please ensure that the required environment variables are set before running/using uppy-server as a standalone server. See [Configure Standalone](#Configure-Standalone) for the variables required.
 
 ```bash
 $ uppy-server
@@ -196,19 +196,19 @@ See [env.example.sh](https://github.com/transloadit/uppy-server/blob/master/env.
 
 2. **redisUrl(optional)** - URL to running redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
 
-3. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please [see](#Supported-Providers) for supported providers.
+3. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [here for the list of supported providers](#Supported-Providers).
 
 4. **server(optional)** - An object with details mainly used to carry out oauth authentication from any of the enable providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set
 
   - protocol - `http | https`
   - host(required) - your server host (e.g localhost:3020, mydomain.com)
   - path - the server path to where the uppy app is sitting (e.g if uppy server is at `mydomain.com/uppy`, then the path would be `/uppy`).
-  - oauthDoamin - if you have multiple instances of uppy server with different (and maybe dynamic) subdomains, you can set a master domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect to the slave subdomain with the required credentials on completion.
+  - oauthDomain - if you have multiple instances of uppy server with different (and maybe dynamic) subdomains, you can set a master domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect to the slave subdomain with the required credentials on completion.
   - validHosts - if you are setting a master `oauthDomain`, you need to set a list of valid hosts, so the master oauth handler can validate the host of the uppy instance requesting the authentication. This is basically a list of valid domains running your uppy server instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
 
 5. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attributes is that, when set, it adds the value as the `i-am` header of every request response.
 
-6. **customProviders(optional)** - This option enables you add custom providers along with the already supported providers. [See](#Adding-Custom-Providers) for more.
+6. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-Custom-Providers) for more information.
 
 7. **uploadUrls(optional)** - An array of urls (full path), which uppy-server should only upload to.
 
