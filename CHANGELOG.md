@@ -112,7 +112,6 @@ To be released: 2018-01-26.
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
-- [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: security audit, ask @acconut
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 
