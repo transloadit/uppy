@@ -170,4 +170,28 @@ Render this plugin's UI. Uppy uses [preact](https://preactjs.com) as its view en
 
 Note that we are looking into ways to make Uppy render engine agnostic, so that plugins can choose their own favourite library—whether it's preact, choo, jQuery, or anything else. This means that the `render()` API may change in the future, but we'll detail exactly what you need to do on the [blog](https://uppy.io/blog) if and when that happens.
 
+### JSX
+
+Since Uppy uses Preact and not React, the default Babel configuration for JSX elements does not work. You have to import the preact `h` function and tell Babel to use it by adding a `/** @jsx h */` comment at the top of the file.
+
+See the Preact [Getting Started Guide](https://preactjs.com/guide/getting-started) for more on Babel and JSX.
+
+```js
+/** @jsx h */
+const Plugin = require('uppy/lib/core/Plugin')
+const { h } = require('preact')
+
+class NumFiles extends Plugin {
+  render () {
+    const numFiles = Object.keys(this.uppy.state.files).length
+
+    return (
+      <div>
+        Number of files: {numFiles}
+      </div>
+    )
+  }
+}
+```
+
 [core.setfilestate]: /docs/uppy#uppy-setFileState-fileID-state
