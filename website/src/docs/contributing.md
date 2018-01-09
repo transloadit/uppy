@@ -6,7 +6,9 @@ order: 4
 
 ## Uppy Development
 
-First clone and install the project:
+Fork the repository into your own account first. Here's the [link](https://help.github.com/articles/fork-a-repo/) that tells how to fork a repo.  
+
+After you have successfully forked the repo, clone and install the project:
 
 ```bash
 git clone git@github.com:transloadit/uppy.git
