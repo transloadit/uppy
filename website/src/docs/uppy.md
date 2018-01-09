@@ -5,7 +5,7 @@ title: "Uppy"
 permalink: docs/uppy/
 ---
 
-Core module that orchistrated everything in Uppy, exposing `state`, `events` and `methods`.
+Core module that orchestrates everything in Uppy, exposing `state`, `events` and `methods`.
 
 ## Options
 
@@ -118,7 +118,7 @@ locale: {
 }
 ```
 
-As well as the pluralization function, which is used to determin which string will be used for the provided `smart_count` number.
+As well as the pluralization function, which is used to determine which string will be used for the provided `smart_count` number.
 
 For example, for Icelandic language the pluralization function will be:
 
@@ -174,7 +174,7 @@ uppy.addFile({
 })
 ```
 
-`addFile` attemps to determine file type by [magic bytes](https://github.com/sindresorhus/file-type) + the provided `type` + extension; then checks if the file can be added, considering `uppy.opts.restrictions`, sets metadata and generates a preview, if it’s an image.
+`addFile` attempts to determine file type by [magic bytes](https://github.com/sindresorhus/file-type) + the provided `type` + extension; then checks if the file can be added, considering `uppy.opts.restrictions`, sets metadata and generates a preview, if it’s an image.
 
 If `uppy.opts.autoProceed === true`, Uppy will begin uploading after the first file is added.
 
@@ -225,7 +225,7 @@ uppy.setState({
 })
 ```
 
-We don’t mutate `uppy.state`, so internally `setState` creates a new copy of state and replaces uppy.state with it. However, when updating values, it’s your responsibility to not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here’s an example from Uppy.Core that updates progress for a particular file in state:
+We don’t mutate `uppy.state`, so internally `setState` creates a new copy of state and replaces `uppy.state` with it. However, when updating values, it’s your responsibility to not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here’s an example from Uppy.Core that updates progress for a particular file in state:
 
 ```js
 const updatedFiles = Object.assign({}, uppy.getState().files)
@@ -313,7 +313,7 @@ uppy.upload().then((result) => {
 
 ### `uppy.on('event', action)`
 
-Subscribe to an uppy-event. See full list of events below.
+Subscribe to an uppy-event. See below for the full list of events.
 
 ## Events
 
