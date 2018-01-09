@@ -45,4 +45,27 @@ const uppyDashboard = Uppy({
   .use(Tus, { endpoint: 'https://master.tus.io/files/' })
   .run()
 
+function startXHRLimitTest (endpoint) {
+  const uppy = Uppy({
+    id: 'uppyXhrLimit',
+    debug: true,
+    autoProceed: false
+  })
+    .use(DragDrop, { target: '#uppyXhrLimit' })
+    .use(XHRUpload, { endpoint, limit: 2 })
+    .run()
+
+  uppy.uploadsStarted = 0
+  uppy.uploadsComplete = 0
+
+  uppy.on('upload-started', () => {
+    uppy.uploadsStarted++
+  })
+  uppy.on('upload-success', () => {
+    uppy.uploadsComplete++
+  })
+}
+
+window.startXHRLimitTest = startXHRLimitTest
+
 console.log(uppyDragDrop, uppyi18n, uppyDashboard)
