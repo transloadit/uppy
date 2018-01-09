@@ -211,10 +211,6 @@ module.exports = class Dashboard extends Plugin {
 
     this.updateDashboardElWidth()
     this.setFocusToFirstNode()
-
-    // timeout is needed because yo-yo/morphdom/nanoraf; not needed without nanoraf
-    // setTimeout(this.setFocusToFirstNode, 100)
-    // setTimeout(this.updateDashboardElWidth, 100)
   }
 
   closeModal () {
