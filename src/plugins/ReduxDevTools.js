@@ -45,8 +45,7 @@ module.exports = class ReduxDevTools extends Plugin {
             return
           case 'JUMP_TO_STATE':
           case 'JUMP_TO_ACTION':
-            // this.setState(state)
-            this.uppy.state = Object.assign({}, this.uppy.state, JSON.parse(message.state))
+            this.uppy.store.state = Object.assign({}, this.uppy.state, JSON.parse(message.state))
             this.uppy.updateAll(this.uppy.state)
         }
       }
