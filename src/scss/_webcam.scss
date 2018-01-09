@@ -42,8 +42,23 @@
 
 .uppy-Webcam-permissons {
   padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column wrap;
+  height: 100%;
 }
 
 .uppy-Webcam-permissons p {
   line-height: 1.4;
+}
+
+.uppy-Webcam-Title {
+  font-size: 22px;
+  line-height: 1.35;
+  font-weight: 300;
+  margin-bottom: 30px;
+  padding: 0 15px;
+  max-width: 500px;
+  text-align: center;
 }
