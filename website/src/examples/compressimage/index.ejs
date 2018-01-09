@@ -1,0 +1,24 @@
+---
+title: Compress Image Before Upload
+layout: example
+type: examples
+order: 6
+---
+
+{% blockquote %}
+Here you’ll see a demo of how you might want to compress an image before uploading it to server in Uppy.
+{% endblockquote %}
+
+<link rel="stylesheet" href="app.css">
+<% include app.html %>
+
+<hr />
+
+<p id="console-wrapper">
+  Console output (latest logs are at the top): <br />
+</p>
+
+<p>
+  This demo is using pre-buitin of uppy, to compress an image before uploading it to the server we will use the following HTML and JavaScript:
+</p>
+{% include_code lang:html compressimage/app.html %}
