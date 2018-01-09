@@ -110,7 +110,6 @@ To be released: 2018-01-26.
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins (@goto-bus-stop)
-- [x] docs: fix reference to incorrect width/height options (#475 / @xhocquet)
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (@goto-bus-stop)
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
@@ -118,6 +117,21 @@ To be released: 2018-01-26.
 - [ ] uppy-server: security audit, ask @acconut
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] meta: add https://twin.github.io/better-file-uploads-with-shrine-direct-uploads to the next blog post
+
+## 0.22.1
+
+Released: 2018-01-09.
+
+- [x] core: Fix remote uploads (#474 / @arturi)
+- [x] statusbar, progressbar: Add option to hide progress bar after upload finish (#485 / @wilkoklak)
+- [x] s3: Allow passing on XHRUpload options, such as "limit" to AwsS3 Plugin (#471 / @ogtfaber)
+- [x] XHRUpload: Fix progress with `limit`ed XHRUploads (#505 / @goto-bus-stop)
+- [x] core: fix error when `file.type === null`, shouldn’t pass that to match (@arturi)
+- [x] dashboard: input hidden="true" should not be focusable too (@arturi)
+- [x] webcam: Font styling for Webcam option (#509 / @muhammadInam)
+- [x] docs: fix reference to incorrect width/height options (#475 / @xhocquet)
+- [x] docs: Documentation fixes and improvements (#463 / @janko-m)
+- [x] docs: Fixed several typos in docs/server and docs/uppy (#484 / @martiuslim)
 
 ## 0.22.0
 
