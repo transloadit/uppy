@@ -1,5 +1,4 @@
 const Plugin = require('../core/Plugin')
-
 const { h } = require('preact')
 
 /**
