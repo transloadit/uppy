@@ -96,6 +96,7 @@ To be released: 2018-01-26.
 - [x] progressbar and statusbar: option to clear/reset once the upload has finished (#464 / @wilkoklak)
 - [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
 - [ ] dashboard: try adding optional whitelabel “powered by uppy.io” (@nqst, @arturi)
+- [ ] dashboard: restore focus after modal has been closed (@arturi)
 - [ ] dashboard: option for Boolean metadata #454 (@arturi)
 - [ ] dashboard: use more accessible tip lib: https://github.com/ghosh/microtip
 - [ ] transloadit: add error reporting
@@ -106,12 +107,14 @@ To be released: 2018-01-26.
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
 - [ ] core: all: reset or !important styles to be immune to any environment/page, look at screenshots in #446. Maybe `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
+- [ ] Switch to PostCSS, add https://github.com/maximkoretskiy/postcss-autoreset
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins (@goto-bus-stop)
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (@goto-bus-stop)
+- [ ] core: warn, not error, when files don’t pass restrictions: Unhandled Promise Rejection when file doesn't pass restrictions #492
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
 - [ ] uppy-server: security audit, ask @acconut
@@ -122,16 +125,16 @@ To be released: 2018-01-26.
 
 Released: 2018-01-09.
 
-- [x] core: Fix remote uploads (#474 / @arturi)
-- [x] statusbar, progressbar: Add option to hide progress bar after upload finish (#485 / @wilkoklak)
-- [x] s3: Allow passing on XHRUpload options, such as "limit" to AwsS3 Plugin (#471 / @ogtfaber)
-- [x] XHRUpload: Fix progress with `limit`ed XHRUploads (#505 / @goto-bus-stop)
-- [x] core: fix error when `file.type === null`, shouldn’t pass that to match (@arturi)
-- [x] dashboard: input hidden="true" should not be focusable too (@arturi)
-- [x] webcam: Font styling for Webcam option (#509 / @muhammadInam)
-- [x] docs: fix reference to incorrect width/height options (#475 / @xhocquet)
-- [x] docs: Documentation fixes and improvements (#463 / @janko-m)
-- [x] docs: Fixed several typos in docs/server and docs/uppy (#484 / @martiuslim)
+- core: Fix remote uploads (#474 / @arturi)
+- statusbar, progressbar: Add option to hide progress bar after upload finish (#485 / @wilkoklak)
+- s3: Allow passing on XHRUpload options, such as "limit" to AwsS3 Plugin (#471 / @ogtfaber)
+- XHRUpload: Fix progress with `limit`ed XHRUploads (#505 / @goto-bus-stop)
+- core: fix error when `file.type === null`, shouldn’t pass that to match (@arturi)
+- dashboard: input hidden="true" should not be focusable too (@arturi)
+- webcam: Font styling for Webcam option (#509 / @muhammadInam)
+- docs: fix reference to incorrect width/height options (#475 / @xhocquet)
+- docs: Documentation fixes and improvements (#463 / @janko-m)
+- docs: Fixed several typos in docs/server and docs/uppy (#484 / @martiuslim)
 
 ## 0.22.0
 
