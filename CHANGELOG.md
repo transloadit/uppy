@@ -117,6 +117,7 @@ To be released: 2018-01-26.
 - [ ] uppy-server: security audit, ask @acconut
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] meta: add https://twin.github.io/better-file-uploads-with-shrine-direct-uploads to the next blog post
+- [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 
 ## 0.22.1
 
