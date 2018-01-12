@@ -77,13 +77,23 @@ This takes your `server` instance and your uppy [options](#Options) as parameter
 
 ### Run as standalone server
 
-Please ensure that the required environment variables are set before running/using uppy-server as a standalone server. See [Configure Standalone](#Configure-Standalone) for the variables required.
+> Please ensure that the required environment variables are set before running/using uppy-server as a standalone server. See [Configure Standalone](#Configure-Standalone) for the variables required.
+
+Set environment variables first:
 
 ```bash
-$ uppy-server
+export UPPYSERVER_SECRET="shh!Issa Secret!"
+export UPPYSERVER_DOMAIN="YOUR SERVER DOMAIN"
+export UPPYSERVER_DATADIR="PATH/TO/DOWNLOAD/DIRECTORY"
 ```
 
-If you cloned the repo from github and want to run it as a standalone server, you may also run the following command from within its directory
+And then run:
+
+```bash
+uppy-server
+```
+
+If you cloned the repo from GitHub and want to run it as a standalone server, you may also run the following command from within its directory:
 
 ```bash
 npm run start:production
@@ -91,7 +101,7 @@ npm run start:production
 
 #### Configure Standalone
 
-To run uppy-server as a standalone server, you are required to set your uppy [options](#Options) via environment variables
+To run uppy-server as a standalone server, you are required to set your uppy [options](#Options) via environment variables:
 
 ```bash
 ####### Mandatory variables ###########
