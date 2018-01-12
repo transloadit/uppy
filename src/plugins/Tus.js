@@ -326,8 +326,10 @@ module.exports = class Tus extends Plugin {
   onReceiveUploadUrl (file, uploadURL) {
     const currentFile = this.getFile(file.id)
     if (!currentFile) return
-    // Only do the update if we didn't have an upload URL yet.
-    if (!currentFile.tus || currentFile.tus.uploadUrl !== uploadURL) {
+    // Only do the update if we didn't have an upload URL yet,
+    // or resume: false in options
+    if ((!currentFile.tus || currentFile.tus.uploadUrl !== uploadURL) && this.opts.resume) {
+      this.uppy.log('[Tus] Storing upload url')
       const newFile = Object.assign({}, currentFile, {
         tus: Object.assign({}, currentFile.tus, {
           uploadUrl: uploadURL
