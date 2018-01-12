@@ -78,7 +78,6 @@ a.button {
 .highlight {
   // overflow-x: auto;
   position: relative;
-  padding: 0;
   background-color: $color-codebg;
   padding: .6em .6em;
   line-height: 1.1;
@@ -234,7 +233,6 @@ a.button {
   text-align: center;
 
   @media #{$screen-medium} {
-    position: static;
     height: auto;
     padding: 10px 60px;
     box-shadow: none;
@@ -301,7 +299,6 @@ a.button {
     &:focus { border-color: $color-primary; }
 
     @media #{$screen-medium} {
-      width: auto;
       width: 200px;
       margin-bottom: 0;
     }
