@@ -80,40 +80,41 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 
+## 0.24.0 
+
+- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
+- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
+- [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
+
 # next
 
 ## 0.23.0
 
 To be released: 2018-01-26.
 
+- [ ] core: return `processing` results among with `upload` results in `success` event and `upload()` promise (@goto-bus-stop)
 - [ ] transloadit: add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (@goto-bus-stop)
+- [ ] transloadit: add error reporting (@goto-bus-stop)
+- [ ] importurl: new plugin that imports files from urls (@arturi, @ifedapoolarewaju)
+- [ ] core: figure out per-plugin locales and i18n strings packs #491
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] goldenretriever: confirmation before restore #443
+- [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] core: i18n all strings + document them
-- [ ] core: figure out per-plugin locales and i18n strings packs #491
 - [ ] core: fix blank preview thumbnails for .png images in Safari 10.1 #458
 - [ ] core: Move limiting to different point, to fix StatusBar and other UI issues #468 (@goto-bus-stop)
-- [x] progressbar and statusbar: option to clear/reset once the upload has finished (#464 / @wilkoklak)
 - [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
-- [ ] dashboard: try adding optional whitelabel “powered by uppy.io” (@nqst, @arturi)
+- [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
 - [ ] dashboard: restore focus after modal has been closed (@arturi)
 - [ ] dashboard: option for Boolean metadata #454 (@arturi)
 - [ ] dashboard: use more accessible tip lib: https://github.com/ghosh/microtip
-- [ ] transloadit: add error reporting
-- [ ] importurl: new plugin that imports files from urls (@arturi, @ifedapoolarewaju)
 - [ ] core: queue preview generation #431
-- [ ] core: warn, not error when file cannot be added due to restrictions?
-- [ ] core: return `processing` results among with `upload` results in `success` event and `upload()` promise (@goto-bus-stop)
+- [ ] core: warn, not error when file cannot be added due to restrictions? (@arturi)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
-- [ ] core: all: reset or !important styles to be immune to any environment/page, look at screenshots in #446. Maybe `postcss-safe-important`, http://cleanslatecss.com/ Or increase specificity (with .uppy prefix) (@arturi)
-- [ ] Switch to PostCSS, add https://github.com/maximkoretskiy/postcss-autoreset
-- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
-- [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
+- [ ] core: all: reset or !important styles to be immune to any environment/page, look at screenshots in #446. Maybe `postcss-safe-important`, http://cleanslatecss.com/ or https://github.com/maximkoretskiy/postcss-autoreset or increase specificity (with .uppy prefix) (@arturi)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins (@goto-bus-stop)
-- [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (@goto-bus-stop)
 - [ ] core: warn, not error, when files don’t pass restrictions: Unhandled Promise Rejection when file doesn't pass restrictions #492
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject

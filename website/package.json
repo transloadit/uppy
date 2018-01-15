@@ -19,7 +19,7 @@
     "hexo-generator-tag": "^0.2.0",
     "hexo-renderer-ejs": "^0.2.0",
     "hexo-renderer-marked": "^0.3.2",
-    "hexo-renderer-postcss": "https://github.com/goto-bus-stop/hexo-renderer-postcss#new-postcss",
+    "hexo-renderer-postcss": "https://github.com/arturi/hexo-renderer-postcss",
     "hexo-renderer-scss": "^1.1.0",
     "hexo-server": "^0.2.1",
     "hexo-tag-emojis": "^2.0.1",
