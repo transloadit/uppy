@@ -6,8 +6,8 @@
     "version": "3.3.7"
   },
   "dependencies": {
-    "autoprefixer": "6.4.0",
-    "cssnano": "3.7.3",
+    "autoprefixer": "^7.2.5",
+    "cssnano": "^3.10.0",
     "hexo": "^3.3.7",
     "hexo-browsersync": "0.2.0",
     "hexo-deployer-git": "0.2.0",
@@ -19,14 +19,14 @@
     "hexo-generator-tag": "0.2.0",
     "hexo-renderer-ejs": "0.2.0",
     "hexo-renderer-marked": "0.3.0",
-    "hexo-renderer-postcss": "https://github.com/arturi/hexo-renderer-postcss#afca2bc12f5816067b15a9d24017c70e077b9f0b",
+    "hexo-renderer-postcss": "https://github.com/goto-bus-stop/hexo-renderer-postcss#new-postcss",
     "hexo-renderer-scss": "^1.1.0",
     "hexo-server": "^0.2.1",
     "hexo-tag-emojis": "2.0.1",
     "hexo-util": "0.6.0",
     "js-yaml": "3.6.1",
     "mkdirp": "0.5.1",
-    "postcss-inline-svg": "2.0.1",
+    "postcss-inline-svg": "^3.0.0",
     "uuid": "2.0.2"
   },
   "devDependencies": {
