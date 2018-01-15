@@ -48,7 +48,6 @@
     "autoprefixer": "^7.2.5",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
-    "babel-eslint": "6.1.2",
     "babel-jest": "^22.0.6",
     "babel-plugin-add-module-exports": "0.2.1",
     "babel-plugin-es6-promise": "^1.1.1",
