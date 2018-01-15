@@ -13,6 +13,7 @@
 }
 
 .uppy-StatusBar[aria-hidden=true] {
+  overflow-y: hidden;
   height: 0;
 }
 
