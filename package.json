@@ -103,7 +103,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "cuid": "^1.3.8",
+    "cuid": "^2.0.2",
     "drag-drop": "2.13.2",
     "es6-promise": "3.2.1",
     "get-form-data": "^2.0.0",
