@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "aliasify": "^2.1.0",
+    "babel-core": "^6.26.0",
     "babelify": "^8.0.0",
     "browserify": "^15.1.0",
     "chalk": "1.1.3",
