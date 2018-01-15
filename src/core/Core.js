@@ -2,11 +2,11 @@ const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
+const isPlainObject = require('is-plain-obj')
 const throttle = require('lodash.throttle')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
 const DefaultStore = require('../store/DefaultStore')
-// const deepFreeze = require('deep-freeze-strict')
 
 /**
  * Uppy Core module.
@@ -1000,6 +1000,8 @@ class Uppy {
     const fileIDs = uploadData.fileIDs
     const restoreStep = uploadData.step
 
+    const resultData = {}
+
     const steps = [
       ...this.preProcessors,
       ...this.uploaders,
@@ -1025,6 +1027,11 @@ class Uppy {
         // TODO give this the `currentUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
         return fn(fileIDs, uploadID)
+      }).then((result) => {
+        if (result && isPlainObject(result)) {
+          Object.assign(resultData, result)
+        }
+        return null
       })
     })
 
@@ -1040,14 +1047,15 @@ class Uppy {
       const files = fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => file && !file.error)
       const failed = files.filter((file) => file && file.error)
-      this.emit('complete', { successful, failed })
+      Object.assign(resultData, { successful, failed })
 
+      this.emit('complete', resultData)
       // Compatibility with pre-0.21
       this.emit('success', fileIDs)
 
       this._removeUpload(uploadID)
 
-      return { successful, failed }
+      return resultData
     })
   }
 

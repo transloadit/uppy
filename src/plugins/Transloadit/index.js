@@ -687,7 +687,10 @@ module.exports = class Transloadit extends Plugin {
         if (finishedAssemblies === assemblyIDs.length) {
           // We're done, these listeners can be removed
           removeListeners()
-          resolve()
+          const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
+          resolve({
+            transloadit: assemblies
+          })
         }
       }
 
@@ -700,12 +703,14 @@ module.exports = class Transloadit extends Plugin {
       this.uppy.on('transloadit:complete', onAssemblyFinished)
       this.uppy.on('transloadit:assembly-error', onAssemblyError)
       this.uppy.on('transloadit:import-error', onImportError)
-    }).then(() => {
+    }).then((result) => {
       // Clean up uploadID → assemblyIDs, they're no longer going to be used anywhere.
       const state = this.getPluginState()
       const uploadsAssemblies = Object.assign({}, state.uploadsAssemblies)
       delete uploadsAssemblies[uploadID]
       this.setPluginState({ uploadsAssemblies })
+
+      return result
     })
   }
 
