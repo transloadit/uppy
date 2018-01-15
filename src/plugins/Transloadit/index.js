@@ -609,13 +609,14 @@ module.exports = class Transloadit extends Plugin {
         const socket = this.sockets[assemblyID]
         socket.close()
       })
-      return Promise.resolve()
+      const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
+      return Promise.resolve({ transloadit: assemblies })
     }
 
     // If no assemblies were created for this upload, we also do not have to wait.
     // There's also no sockets or anything to close, so just return immediately.
     if (assemblyIDs.length === 0) {
-      return Promise.resolve()
+      return Promise.resolve({ transloadit: [] })
     }
 
     let finishedAssemblies = 0
@@ -688,9 +689,7 @@ module.exports = class Transloadit extends Plugin {
           // We're done, these listeners can be removed
           removeListeners()
           const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
-          resolve({
-            transloadit: assemblies
-          })
+          resolve({ transloadit: assemblies })
         }
       }
 
