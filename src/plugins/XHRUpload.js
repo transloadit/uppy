@@ -9,6 +9,20 @@ const {
   limitPromises
 } = require('../core/Utils')
 
+function buildResponseError (xhr, error) {
+  // No error message
+  if (!error) error = new Error('Upload error')
+  // Got an error message string
+  if (typeof error === 'string') error = new Error(error)
+  // Got something else
+  if (!(error instanceof Error)) {
+    error = Object.assign(new Error('Upload error'), { data: error })
+  }
+
+  error.request = xhr
+  return error
+}
+
 module.exports = class XHRUpload extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -213,8 +227,7 @@ module.exports = class XHRUpload extends Plugin {
 
           return resolve(file)
         } else {
-          const error = opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
-          error.request = xhr
+          const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
           this.uppy.emit('upload-error', file.id, error)
           return reject(error)
         }
@@ -224,7 +237,7 @@ module.exports = class XHRUpload extends Plugin {
         this.uppy.log(`[XHRUpload] ${id} errored`)
         timer.done()
 
-        const error = opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
+        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
         this.uppy.emit('upload-error', file.id, error)
         return reject(error)
       })
