@@ -96,8 +96,22 @@ uppy-server
 If you cloned the repo from GitHub and want to run it as a standalone server, you may also run the following command from within its directory:
 
 ```bash
-npm run start:production
+npm start
 ```
+
+You can also pass in the path to your json config file like so:
+
+```bash
+uppy-server --config /path/to/uppyconf.json
+```
+
+or
+
+```bash
+npm start -- --config /path/to/uppyconf.json
+```
+
+Please see [options](#Options) for possible options.
 
 #### Configure Standalone
 
@@ -198,7 +212,10 @@ See [env.example.sh](https://github.com/transloadit/uppy-server/blob/master/env.
     protocol: "http"
   },
   filePath: "path/to/download/folder",
-  sendSelfEndpoint: "localhost:3020"
+  sendSelfEndpoint: "localhost:3020",
+  secret: 'mysecret',
+  uploadUrls: ['https://myuploadurl.com', 'http://myuploadurl2.com']
+  debug: true
 }
 ```
 
@@ -221,6 +238,10 @@ See [env.example.sh](https://github.com/transloadit/uppy-server/blob/master/env.
 6. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-Custom-Providers) for more information.
 
 7. **uploadUrls(optional)** - An array of urls (full path), which uppy-server should only upload to.
+
+8. **secret(required)** - A secret string with which uppy uses to generate authorization tokens.
+
+9. **debug(optional)** - A boolean flag to tell uppy whether or not to log useful debug information while running.
 
 ### S3 Options
 
