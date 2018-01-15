@@ -4,6 +4,7 @@ var autoprefixer = require('autoprefixer')
 var cssnano = require('cssnano')
 var chalk = require('chalk')
 var fs = require('fs')
+var path = require('path')
 var mkdirp = require('mkdirp')
 
 mkdirp.sync('./dist/')
@@ -17,7 +18,7 @@ function minifyCSS () {
     fs.readFile('./dist/uppy.css', function (err, css) {
       if (err) handleErr(err)
       postcss([ cssnano ])
-        .process(css)
+        .process(css, { from: path.join(__dirname, '../dist/uppy.css') })
         .then(function (postCSSResult) {
           postCSSResult.warnings().forEach(function (warn) {
             console.warn(warn.toString())
@@ -37,7 +38,7 @@ function compileCSS () {
     sass.render({file: './src/scss/uppy.scss'}, function (err, sassResult) {
       if (err) handleErr(err)
       postcss([ autoprefixer ])
-        .process(sassResult.css)
+        .process(sassResult.css, { from: path.join(__dirname, '../src/scss/uppy.scss') })
         .then(function (postCSSResult) {
           postCSSResult.warnings().forEach(function (warn) {
             console.warn(warn.toString())
