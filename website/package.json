@@ -24,10 +24,9 @@
     "hexo-server": "^0.2.1",
     "hexo-tag-emojis": "^2.0.1",
     "hexo-util": "^0.6.0",
-    "js-yaml": "3.6.1",
+    "js-yaml": "^3.10.0",
     "mkdirp": "0.5.1",
-    "postcss-inline-svg": "^3.0.0",
-    "uuid": "2.0.2"
+    "postcss-inline-svg": "^3.0.0"
   },
   "devDependencies": {
     "aliasify": "^2.1.0",
