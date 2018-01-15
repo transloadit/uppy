@@ -91,7 +91,9 @@ module.exports = class StatusBar extends Plugin {
       return files[file].progress.uploadStarted
     })
     const newFiles = Object.keys(files).filter((file) => {
-      return !files[file].progress.uploadStarted
+      return !files[file].progress.uploadStarted &&
+        !files[file].progress.preprocess &&
+        !files[file].progress.postprocess
     })
     const completeFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadComplete
