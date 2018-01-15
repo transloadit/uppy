@@ -74,7 +74,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "exorcist": "^1.0.0",
     "fakefile": "0.0.9",
-    "glob": "7.1.1",
+    "glob": "^7.1.2",
     "isomorphic-fetch": "2.2.1",
     "jest": "^22.0.6",
     "lint-staged": "^6.0.0",
