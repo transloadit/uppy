@@ -2,6 +2,10 @@ const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const XHRUpload = require('../XHRUpload')
 
+function isXml (xhr) {
+  return xhr.getResponseHeader('Content-Type').toLowerCase() === 'application/xml'
+}
+
 module.exports = class AwsS3 extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -124,7 +128,7 @@ module.exports = class AwsS3 extends Plugin {
       getResponseData (xhr) {
         // If no response, we've hopefully done a PUT request to the file
         // in the bucket on its full URL.
-        if (!xhr.responseXML) {
+        if (!isXml(xhr)) {
           return { location: xhr.responseURL }
         }
         function getValue (key) {
@@ -140,7 +144,7 @@ module.exports = class AwsS3 extends Plugin {
       },
       getResponseError (xhr) {
         // If no response, we don't have a specific error message, use the default.
-        if (!xhr.responseXML) {
+        if (!isXml(xhr)) {
           return
         }
         const error = xhr.responseXML.querySelector('Error > Message')
