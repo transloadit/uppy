@@ -35,7 +35,7 @@ module.exports = (props) => {
             onkeyup={stop}
             onkeydown={stop}
             onkeypress={stop} />
-          <label for={uniqueId} onclick={handleItemClick} />
+          <label for={uniqueId} />
         </div>
         <button type="button" class="uppy-ProviderBrowserTable-item" aria-label={`Select ${props.title}`} tabindex="0" onclick={handleItemClick}>
           {props.getItemIcon()} {props.title}
