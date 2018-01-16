@@ -27,6 +27,7 @@ class ActionBrowseTagline extends Component {
           name="files[]"
           multiple="true"
           onchange={this.props.handleInputChange}
+          value=""
           ref={(input) => {
             this.input = input
           }} />
