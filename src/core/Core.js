@@ -583,7 +583,7 @@ class Uppy {
     const fileID = data.id
 
     // skip progress event for a file that’s been removed
-    if (!this.getState().files[fileID]) {
+    if (!this.getFile(fileID)) {
       this.log('Trying to set progress for a file that’s been removed: ', fileID)
       return
     }
@@ -670,12 +670,14 @@ class Uppy {
     })
 
     this.on('upload-started', (fileID, upload) => {
+      const file = this.getFile(fileID)
       this.setFileState(fileID, {
-        progress: Object.assign({}, this.getState().files[fileID].progress, {
+        progress: Object.assign({}, file.progress, {
           uploadStarted: Date.now(),
           uploadComplete: false,
           percentage: 0,
-          bytesUploaded: 0
+          bytesUploaded: 0,
+          bytesTotal: file.size
         })
       })
     })
