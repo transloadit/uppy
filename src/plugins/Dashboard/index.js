@@ -8,7 +8,7 @@ const { findAllDOMElements, toArray } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
 
-// some code for managing focus was adopted from https://github.com/ghosh/micromodal
+// Some code for managing focus was adopted from https://github.com/ghosh/micromodal
 // MIT licence, https://github.com/ghosh/micromodal/blob/master/LICENSE.md
 // Copyright (c) 2017 Indrashish Ghosh
 const FOCUSABLE_ELEMENTS = [
@@ -91,9 +91,9 @@ module.exports = class Dashboard extends Plugin {
     this.translator = new Translator({locale: this.locale})
     this.i18n = this.translator.translate.bind(this.translator)
 
+    this.openModal = this.openModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
     this.requestCloseModal = this.requestCloseModal.bind(this)
-    this.openModal = this.openModal.bind(this)
     this.isModalOpen = this.isModalOpen.bind(this)
 
     this.addTarget = this.addTarget.bind(this)
@@ -202,12 +202,14 @@ module.exports = class Dashboard extends Plugin {
     })
 
     // save scroll position
-    this.savedDocumentScrollPosition = window.scrollY
+    this.savedScrollPosition = window.scrollY
+    // save active element, so we can restore focus when modal is closed
+    this.savedActiveElement = document.activeElement
 
     // add class to body that sets position fixed, move everything back
     // to scroll position
     document.body.classList.add('uppy-Dashboard-isOpen')
-    document.body.style.top = `-${this.savedDocumentScrollPosition}px`
+    document.body.style.top = `-${this.savedScrollPosition}px`
 
     this.updateDashboardElWidth()
     this.setFocusToFirstNode()
@@ -220,7 +222,9 @@ module.exports = class Dashboard extends Plugin {
 
     document.body.classList.remove('uppy-Dashboard-isOpen')
 
-    window.scrollTo(0, this.savedDocumentScrollPosition)
+    this.savedActiveElement.focus()
+
+    window.scrollTo(0, this.savedScrollPosition)
   }
 
   isModalOpen () {
