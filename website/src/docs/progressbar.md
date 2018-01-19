@@ -36,4 +36,4 @@ uppy.use(ProgressBar, {
 
 ### `hideAfterFinish: true`
 
-When true, progress bar hides after the uplaod has finished. If true, it remains visible
+When true, progress bar hides after the uplaod has finished. If false, it remains visible
