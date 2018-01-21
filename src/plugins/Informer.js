@@ -58,9 +58,10 @@ module.exports = class Informer extends Plugin {
           {message}
           {' '}
           {details && <span style={{ color: this.opts.typeColors[type].bg }}
-            data-balloon={details}
-            data-balloon-pos="up"
-            data-balloon-length="large">?</span>
+            aria-label={details}
+            data-microtip-position="top"
+            data-microtip-size="large"
+            role="tooltip">?</span>
           }
         </p>
       </div>

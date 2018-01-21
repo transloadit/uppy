@@ -377,7 +377,7 @@ class Uppy {
             uploadComplete: false,
             uploadStarted: false
           },
-          size: file.data.size || 'N/A',
+          size: file.data.size || 0,
           isRemote: isRemote,
           remote: file.remote || '',
           preview: file.preview
