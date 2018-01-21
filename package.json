@@ -104,6 +104,7 @@
     "drag-drop": "2.13.2",
     "es6-promise": "^4.2.2",
     "get-form-data": "^2.0.0",
+    "is-plain-obj": "^1.1.0",
     "lodash.throttle": "4.1.1",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.0",
