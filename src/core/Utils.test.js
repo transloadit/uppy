@@ -260,23 +260,6 @@ describe('core/utils', () => {
     })
   })
 
-  describe('createThumbnail', () => {
-    const RealCreateObjectUrl = global.URL.createObjectURL
-
-    beforeEach(() => {
-      global.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
-    })
-
-    afterEach(() => {
-      global.URL.createObjectURL = RealCreateObjectUrl
-    })
-
-    xit(
-      'should create a thumbnail of the specified image at the specified width',
-      () => {}
-    )
-  })
-
   describe('dataURItoBlob', () => {
     it('should convert a data uri to a blob', () => {
       const blob = utils.dataURItoBlob(sampleImageDataURI, {})
