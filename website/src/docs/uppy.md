@@ -342,12 +342,12 @@ uppy.on('upload-progress', (data) => {
 Fired when single upload is complete.
 
 ``` javascript
-uppy.on('upload-success', (fileId, url) => {
+uppy.on('upload-success', (fileId, resp, uploadURL) => {
   console.log(url)
   var img = new Image()
   img.width = 300
   img.alt = fileId
-  img.src = url
+  img.src = uploadURL
   document.body.appendChild(img)
 })
 ```
