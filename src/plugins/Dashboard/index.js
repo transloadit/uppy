@@ -4,6 +4,7 @@ const dragDrop = require('drag-drop')
 const DashboardUI = require('./Dashboard')
 const StatusBar = require('../StatusBar')
 const Informer = require('../Informer')
+const ThumbnailGenerator = require('../ThumbnailGenerator')
 const { findAllDOMElements, toArray } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
@@ -71,6 +72,7 @@ module.exports = class Dashboard extends Plugin {
       inline: false,
       width: 750,
       height: 550,
+      thumbnailWidth: 280,
       semiTransparent: false,
       defaultTabIcon: defaultTabIcon,
       showProgressDetails: false,
@@ -78,8 +80,11 @@ module.exports = class Dashboard extends Plugin {
       hideProgressAfterFinish: false,
       note: null,
       closeModalOnClickOutside: false,
-      locale: defaultLocale,
-      onRequestCloseModal: () => this.closeModal()
+      disableStatusBar: false,
+      disableInformer: false,
+      disableThumbnailGenerator: false,
+      onRequestCloseModal: () => this.closeModal(),
+      locale: defaultLocale
     }
 
     // merge default options with the ones set by user
@@ -505,6 +510,12 @@ module.exports = class Dashboard extends Plugin {
       })
     }
 
+    if (!this.opts.disableThumbnailGenerator) {
+      this.uppy.use(ThumbnailGenerator, {
+        thumbnailWidth: this.opts.thumbnailWidth
+      })
+    }
+
     this.discoverProviderPlugins()
 
     this.initEvents()
@@ -513,14 +524,19 @@ module.exports = class Dashboard extends Plugin {
   uninstall () {
     if (!this.opts.disableInformer) {
       const informer = this.uppy.getPlugin('Informer')
+      // Checking if this plugin exists, in case it was removed by uppy-core
+      // before the Dashboard was.
       if (informer) this.uppy.removePlugin(informer)
     }
 
     if (!this.opts.disableStatusBar) {
       const statusBar = this.uppy.getPlugin('StatusBar')
-      // Checking if this plugin exists, in case it was removed by uppy-core
-      // before the Dashboard was.
       if (statusBar) this.uppy.removePlugin(statusBar)
+    }
+
+    if (!this.opts.disableThumbnailGenerator) {
+      const thumbnail = this.uppy.getPlugin('ThumbnailGenerator')
+      if (thumbnail) this.uppy.removePlugin(thumbnail)
     }
 
     const plugins = this.opts.plugins || []
