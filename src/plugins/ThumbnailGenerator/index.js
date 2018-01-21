@@ -15,10 +15,12 @@ module.exports = class ThumbnailGenerator extends Plugin {
     this.queueProcessing = false
 
     const defaultOptions = {
-      thumbnailWidth: 200
+      thumbnailWidth: 280
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.addToQueue = this.addToQueue.bind(this)
   }
 
   /**
