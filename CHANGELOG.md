@@ -107,9 +107,9 @@ To be released: 2018-02-01.
 - [ ] core: Move limiting to different point, to fix StatusBar and other UI issues #468 (@goto-bus-stop)
 - [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
 - [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
-- [ ] dashboard: restore focus after modal has been closed (@arturi)
+- [x] dashboard: restore focus after modal has been closed (@arturi)
 - [ ] dashboard: option for Boolean metadata #454 (@arturi)
-- [ ] dashboard: use more accessible tip lib: https://github.com/ghosh/microtip
+- [x] dashboard: use more accessible tip lib: https://github.com/ghosh/microtip
 - [ ] core: queue preview generation #431
 - [ ] core: warn, not error, when file cannot be added due to restrictions? (@arturi)
 - [ ] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (@goto-bus-stop)
