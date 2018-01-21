@@ -1,6 +1,6 @@
 const Plugin = require('../core/Plugin')
 const { findDOMElement } = require('../core/Utils')
-const getFormData = require('get-form-data')
+const getFormData = require('get-form-data').default
 
 /**
  * Form
