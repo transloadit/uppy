@@ -116,6 +116,7 @@ To be released: 2018-02-01.
 - [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins (@goto-bus-stop)
+- [ ] docs: all useful events (@arturi)
 - [ ] core: warn, not error, when files don’t pass restrictions: Unhandled Promise Rejection when file doesn't pass restrictions #492
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
