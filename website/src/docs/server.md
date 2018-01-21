@@ -7,7 +7,7 @@ order: 2
 
 Drag and Drop, Webcam, basic file manipulation (adding metadata, for example) and uploading via tus resumable uploads or XHR/Multipart are all possible using just the uppy client module.
 
-However, if you add [uppy-server](https://github.com/transloadit/uppy-server) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your mobile data plan), and then uploaded to the final destination. Files are removed from uppy-server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security.
+However, if you add [uppy-server](https://github.com/transloadit/uppy-server) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your users' data plans), and then uploaded to the final destination. Files are removed from uppy-server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security.
 
 Uppy Server handles the server-to-server communication between your server and file storage providers such as Google Drive, Dropbox, Instagram, etc.
 
@@ -29,11 +29,11 @@ npm install uppy-server
 
 ## Usage
 
-Uppy-server may either be used as pluggable express app, which you plug to your already existing server, or it may simply be run as a standalone server:
+Uppy-server may either be used as a pluggable express app, which you plug to your already existing server, or it may simply be run as a standalone server:
 
 ### Plug to already existing server
 
-To plug uppy-server to an existing server, simply call on it's `.app` method, passing in an [options](#Options) object as parameter.
+To plug uppy-server to an existing server, simply call on its `.app` method, passing in an [options](#Options) object as parameter.
 
 ```javascript
 
@@ -64,7 +64,7 @@ app.use(uppy.app(options))
 ```
 See [Options](#Options) for valid configuration options.
 
-To enable uppy socket for realtime feed to the client while upload is going on, you call the `socket` method like so.
+To enable uppy socket for realtime upload progress, you can call the `socket` method like so.
 
 ```javascript
 ...
@@ -225,7 +225,7 @@ See [env.example.sh](https://github.com/transloadit/uppy-server/blob/master/env.
 
 3. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [here for the list of supported providers](#Supported-Providers).
 
-4. **server(optional)** - An object with details mainly used to carry out oauth authentication from any of the enable providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set
+4. **server(optional)** - An object with details mainly used to carry out oauth authentication from any of the enabled providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set:
 
   - protocol - `http | https`
   - host(required) - your server host (e.g localhost:3020, mydomain.com)
@@ -233,13 +233,13 @@ See [env.example.sh](https://github.com/transloadit/uppy-server/blob/master/env.
   - oauthDomain - if you have multiple instances of uppy server with different (and maybe dynamic) subdomains, you can set a master domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect to the slave subdomain with the required credentials on completion.
   - validHosts - if you are setting a master `oauthDomain`, you need to set a list of valid hosts, so the master oauth handler can validate the host of the uppy instance requesting the authentication. This is basically a list of valid domains running your uppy server instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
 
-5. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attributes is that, when set, it adds the value as the `i-am` header of every request response.
+5. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
 6. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-Custom-Providers) for more information.
 
-7. **uploadUrls(optional)** - An array of urls (full path), which uppy-server should only upload to.
+7. **uploadUrls(optional)** - An array of urls (full path), which uppy-server should only upload to (i.e uploads will not be permitted to other urls, except for those specified in this array).
 
-8. **secret(required)** - A secret string with which uppy uses to generate authorization tokens.
+8. **secret(required)** - A secret string which uppy uses to generate authorization tokens.
 
 9. **debug(optional)** - A boolean flag to tell uppy whether or not to log useful debug information while running.
 
@@ -322,12 +322,12 @@ $EDITOR env.sh
 3\. To start the server, simply run:
 
 ```bash
-npm run start
+npm run start:dev
 ```
 
 This would get the uppy-server running on `http://localhost:3020`.
 
-It also expects the [uppy client](https://github.com/transloadit/uppy) to be running on `http://localhost:3452`
+It also expects the [uppy client](https://github.com/transloadit/uppy) to be running on `http://localhost:3452` by default.
 
 ## Running example
 
