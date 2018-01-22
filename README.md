@@ -13,7 +13,7 @@ Uppy is a sleek, modular file uploader that integrates seamlessly with any appli
 
 **[Read the docs](https://uppy.io/docs)** | **[Try Uppy](https://uppy.io/examples/dashboard/)**
 
-Uppy is being developed by the [Transloadit](https://transloadit.com) team.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 
 ## Example
 

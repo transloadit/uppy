@@ -9,7 +9,7 @@ const Dashboard = require('./plugins/Dashboard')
 // Acquirers
 const Dummy = require('./plugins/Dummy')
 const DragDrop = require('./plugins/DragDrop')
-const FileInput = require('./plugins/FileInput.js')
+const FileInput = require('./plugins/FileInput')
 const GoogleDrive = require('./plugins/GoogleDrive')
 const Dropbox = require('./plugins/Dropbox')
 const Instagram = require('./plugins/Instagram')
@@ -17,8 +17,8 @@ const Webcam = require('./plugins/Webcam')
 
 // Progressindicators
 const StatusBar = require('./plugins/StatusBar')
-const ProgressBar = require('./plugins/ProgressBar.js')
-const Informer = require('./plugins/Informer.js')
+const ProgressBar = require('./plugins/ProgressBar')
+const Informer = require('./plugins/Informer')
 
 // Modifiers
 
