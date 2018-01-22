@@ -44,9 +44,9 @@ Whether to wait for metadata to be extracted from uploaded files before completi
 
 ### `importFromUploadURLs`
 
-Instead of uploading to Transloadit's servers directly, allow another plugin to upload files, and then import those files into the Transloadit assembly. Default `false`.
+Instead of uploading to Transloadit's servers directly, allow another plugin to upload files, and then import those files into the Transloadit Assembly. Default `false`.
 
-When enabling this option, Transloadit will *not* configure the Tus plugin to upload to Transloadit. Instead, a separate upload plugin must be used. Once the upload completes, the Transloadit plugin adds the uploaded file to the assembly.
+When enabling this option, Transloadit will *not* configure the Tus plugin to upload to Transloadit. Instead, a separate upload plugin must be used. Once the upload completes, the Transloadit plugin adds the uploaded file to the Assembly.
 
 For example, to upload files to an S3 bucket and then transcode them:
 
@@ -143,19 +143,7 @@ uppy.use(Transloadit, {
 })
 ```
 
-Now, the `${fields.caption}` variable will be available in the assembly template.
-
-`getAssemblyOptions()` may also return a Promise, so it could retrieve signed assembly parameters from a server. For example, assuming an endpoint `/transloadit-params` that responds with a JSON object with `{ params, signature }` properties:
-
-```js
-uppy.use(Transloadit, {
-  getAssemblyOptions (file) {
-    return fetch('/transloadit-params').then((response) => {
-      return response.json()
-    })
-  }
-})
-```
+Now, the `${fields.caption}` variable will be available in the Assembly template.
 
 Combine the `getAssemblyOptions()` option with the [Form](/docs/form) plugin to pass user input from a `<form>` to a Transloadit Assembly:
 
@@ -175,16 +163,28 @@ uppy.use(Transloadit, {
 })
 ```
 
+`getAssemblyOptions()` may also return a Promise, so it could retrieve signed Assembly parameters from a server. For example, assuming an endpoint `/transloadit-params` that responds with a JSON object with `{ params, signature }` properties:
+
+```js
+uppy.use(Transloadit, {
+  getAssemblyOptions (file) {
+    return fetch('/transloadit-params').then((response) => {
+      return response.json()
+    })
+  }
+})
+```
+
 ## Events
 
 ### `transloadit:assembly-created`
 
-Fired when an assembly is created.
+Fired when an Assembly is created.
 
 **Parameters**
 
-  - `assembly` - The initial assembly status.
-  - `fileIDs` - The IDs of the files that will be uploaded to this assembly.
+  - `assembly` - The initial [Assembly Status][assembly-status].
+  - `fileIDs` - The IDs of the files that will be uploaded to this Assembly.
 
 ```js
 uppy.on('transloadit:assembly-created', (assembly, fileIDs) => {
@@ -203,7 +203,7 @@ Fired when Transloadit has received an upload.
 **Parameters**
 
   - `file` - The Transloadit file object that was uploaded.
-  - `assembly` - The assembly status of the assembly the file was uploaded to.
+  - `assembly` - The [Assembly Status][assembly-status] of the Assembly the file was uploaded to.
 
 ### `transloadit:assembly-executing`
 
@@ -215,15 +215,15 @@ Fired when Transloadit has received all uploads, and is now executing the Assemb
 
 ### `transloadit:result`
 
-Fired when a result came in from an assembly.
+Fired when a result came in from an Assembly.
 
 **Parameters**
 
-  - `stepName` - The name of the assembly step that generated this result.
+  - `stepName` - The name of the Assembly step that generated this result.
   - `result` - The result object from Transloadit.
     This result object contains one additional property, namely `localId`.
     This is the ID of the file in Uppy's local state, and can be used with `uppy.getFile(id)`.
-  - `assembly` - The assembly status of the assembly that generated this result.
+  - `assembly` - The [Assembly Status][assembly-status] of the Assembly that generated this result.
 
 ```js
 uppy.on('transloadit:result', (stepName, result) => {
@@ -239,11 +239,11 @@ uppy.on('transloadit:result', (stepName, result) => {
 
 ### `transloadit:complete`
 
-Fired when an assembly completed.
+Fired when an Assembly completed.
 
 **Parameters**
 
-  - `assembly` - The final assembly status of the completed assembly.
+  - `assembly` - The final [Assembly Status][assembly-status] of the completed Assembly.
 
 ```js
 uppy.on('transloadit:complete', (assembly) => {
@@ -251,3 +251,5 @@ uppy.on('transloadit:complete', (assembly) => {
   console.log(assembly.results)
 })
 ```
+
+[assembly-status]: https://transloadit.com/docs/api-docs/#assembly-status-response
