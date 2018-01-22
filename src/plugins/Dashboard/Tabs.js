@@ -29,6 +29,9 @@ class Tabs extends Component {
       )
     }
 
+    // empty value=""  on file input, so we can select same file
+    // after removing it from Uppy — otherwise OS thinks it’s selected
+
     return <div class="uppy-DashboardTabs">
       <ul class="uppy-DashboardTabs-list" role="tablist">
         <li class="uppy-DashboardTab" role="presentation">

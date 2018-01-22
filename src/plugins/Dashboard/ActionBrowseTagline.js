@@ -11,6 +11,8 @@ class ActionBrowseTagline extends Component {
   }
 
   render () {
+    // empty value=""  on file input, so we can select same file
+    // after removing it from Uppy — otherwise OS thinks it’s selected
     return (
       <span>
         {this.props.acquirers.length === 0
