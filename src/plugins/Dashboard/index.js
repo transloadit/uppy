@@ -226,9 +226,7 @@ module.exports = class Dashboard extends Plugin {
     })
 
     document.body.classList.remove('uppy-Dashboard-isOpen')
-
     this.savedActiveElement.focus()
-
     window.scrollTo(0, this.savedScrollPosition)
   }
 
@@ -319,9 +317,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.removeDragDropListener()
-
     this.uppy.off('dashboard:file-card', this.handleFileCard)
-
     window.removeEventListener('resize', this.updateDashboardElWidth)
   }
 

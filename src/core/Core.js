@@ -279,7 +279,7 @@ class Uppy {
   _checkMinNumberOfFiles () {
     const {minNumberOfFiles} = this.opts.restrictions
     if (Object.keys(this.getState().files).length < minNumberOfFiles) {
-      this.info(`${this.i18n('youHaveToAtLeastSelectX', {smart_count: minNumberOfFiles})}`, 'error', 5000)
+      this.info(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`, 'error', 5000)
       return false
     }
     return true
@@ -298,7 +298,7 @@ class Uppy {
 
     if (maxNumberOfFiles) {
       if (Object.keys(this.getState().files).length + 1 > maxNumberOfFiles) {
-        this.info(`${this.i18n('youCanOnlyUploadX', {smart_count: maxNumberOfFiles})}`, 'error', 5000)
+        this.info(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`, 'error', 5000)
         return false
       }
     }
@@ -384,7 +384,9 @@ class Uppy {
         }
 
         const isFileAllowed = this._checkRestrictions(newFile)
-        if (!isFileAllowed) return Promise.reject(new Error('File not allowed'))
+        if (!isFileAllowed) {
+          return Promise.reject(new Error('File not allowed'))
+        }
 
         updatedFiles[fileID] = newFile
         this.setState({files: updatedFiles})
