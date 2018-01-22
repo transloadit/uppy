@@ -9,11 +9,12 @@ The Transloadit plugin can be used to upload files to [Transloadit](https://tran
 
 [Try it live](/examples/transloadit/)
 
-The Transloadit plugin uses the [Tus plugin](/docs/tus) for the uploading itself.
-To upload files to Transloadit directly, both the Tus and Transloadit plugins must be used:
+The Transloadit plugin uses the [Tus plugin](/docs/tus) for the uploading itself. To upload files to Transloadit directly, both the Tus and Transloadit plugins must be used:
 
 ```js
 // The `resume: false` option _must_ be provided to the Tus plugin.
+// Otherwise, the Tus plugin remembers the URLs used to upload to Transloadit,
+// which can cause future uploads to go to old Assemblies.
 uppy.use(Tus, {
   resume: false
 })
@@ -22,27 +23,23 @@ uppy.use(Transloadit, {
 })
 ```
 
-NB: It is not required to use the `Tus` plugin if [importFromUploadURLs](#importFromUploadURLs) is enabled.
+Note: It is not required to use the `Tus` plugin if [`importFromUploadURLs`](#importFromUploadURLs) is enabled.
 
 ## Options
 
 ### `waitForEncoding`
 
-Whether to wait for all assemblies to complete before completing the upload.
+Whether to wait for all Assemblies to complete before completing the upload.
 
 ### `waitForMetadata`
 
-Whether to wait for metadata to be extracted from uploaded files before completing the upload.
-If `waitForEncoding` is enabled, this has no effect.
+Whether to wait for metadata to be extracted from uploaded files before completing the upload. If `waitForEncoding` is enabled, this has no effect.
 
 ### `importFromUploadURLs`
 
-Instead of uploading to Transloadit's servers directly, allow another plugin to upload files, and then import those files into the Transloadit assembly.
-Default `false`.
+Instead of uploading to Transloadit's servers directly, allow another plugin to upload files, and then import those files into the Transloadit assembly. Default `false`.
 
-When enabling this option, Transloadit will *not* configure the Tus plugin to upload to Transloadit.
-Instead, a separate upload plugin must be used.
-Once the upload completes, the Transloadit plugin adds the uploaded file to the assembly.
+When enabling this option, Transloadit will *not* configure the Tus plugin to upload to Transloadit. Instead, a separate upload plugin must be used. Once the upload completes, the Transloadit plugin adds the uploaded file to the assembly.
 
 For example, to upload files to an S3 bucket and then transcode them:
 
@@ -56,35 +53,63 @@ uppy.use(Transloadit, {
   importFromUploadURLs: true,
   params: {
     auth: { key: /* secret */ },
-    template_id: /* secret */
+    template_id: /* not secret */
   }
 })
 ```
 
-In order for this to work, the upload plugin must assign a publically accessible `uploadURL` property to the uploaded file object.
-The Tus and S3 plugins both do this—for the XHRUpload plugin, you may have to specify a custom `getUploadResponse` function.
+In order for this to work, the upload plugin must assign a publically accessible `uploadURL` property to the uploaded file object. The Tus and S3 plugins both do this—for the XHRUpload plugin, you may have to specify a custom `getUploadResponse` function.
 
 ### `params`
 
-The assembly parameters to use for the upload.
+The Assembly parameters to use for the upload. See the Transloadit documentation on [Assembly Instructions](https://transloadit.com/docs/#14-assembly-instructions).
+
+The `auth.key` Assembly parameter is required. You can also use the `steps` or `template_id` options here as described in the Transloadit documentation.
+
+```js
+uppy.use(Transloadit, {
+  params: {
+    auth: { key: 'YOUR_TRANSLOADIT_KEY' },
+    steps: {
+      encode: {
+        robot: '/video/encode',
+        use: {
+          steps: [ ':original' ],
+          fields: [ 'file_input_field2' ]
+        },
+        preset: 'iphone'
+      }
+    }
+  }
+})
+```
 
 ### `signature`
 
-An optional signature for the assembly parameters.
+An optional signature for the Assembly parameters. See the Transloadit documentation on [Signature Authentication](https://transloadit.com/docs/#26-signature-authentication).
 
 If a `signature` is provided, `params` should be a JSON string instead of a JavaScript object, as otherwise the generated JSON in the browser may be different from the JSON string that was used to generate the signature.
 
 ### `fields`
 
-An object of form fields to send along to the assembly.
+An object of form fields to send along to the Assembly. Keys are field names, and values are field values. See also the Transloadit documentation on [Form Fields In Instructions](https://transloadit.com/docs/#23-form-fields-in-instructions).
+
+```js
+uppy.use(Transloadit, {
+  ...,
+  fields: {
+    message: 'This is a form field'
+  }
+})
+```
+
+Using the `fields` option, form fields have to be determined ahead of time. Form fields can also be computed dynamically however, by using the `getAssemblyOptions(file)` option.
 
 ### `getAssemblyOptions(file)`
 
-While `params`, `signature`, and `fields` must be determined ahead of time, the `getAssemblyOptions` allows using dynamically generated values for these options.
-This way, it is possible to use different assembly parameters for different files.
+While `params`, `signature`, and `fields` must be determined ahead of time, the `getAssemblyOptions` allows using dynamically generated values for these options. This way, it is possible to use different Assembly parameters for different files, or to use some user input in an Assembly.
 
-A custom `getAssemblyOptions()` option should return an object or a Promise for an object with properties `{ params, signature, fields }`.
-For example, to add a field with some user-provided data from the `MetaData` plugin:
+A custom `getAssemblyOptions()` option should return an object or a Promise for an object with properties `{ params, signature, fields }`. For example, to add a field with some user-provided data from the `MetaData` plugin:
 
 ```js
 uppy.use(MetaData, {
@@ -109,8 +134,7 @@ uppy.use(Transloadit, {
 
 Now, the `${fields.caption}` variable will be available in the assembly template.
 
-`getAssemblyOptions()` may also return a Promise, so it could retrieve signed assembly parameters from a server.
-For example, assuming an endpoint `/transloadit-params` that responds with a JSON object with `{ params, signature }` properties:
+`getAssemblyOptions()` may also return a Promise, so it could retrieve signed assembly parameters from a server. For example, assuming an endpoint `/transloadit-params` that responds with a JSON object with `{ params, signature }` properties:
 
 ```js
 uppy.use(Transloadit, {
@@ -118,6 +142,24 @@ uppy.use(Transloadit, {
     return fetch('/transloadit-params').then((response) => {
       return response.json()
     })
+  }
+})
+```
+
+Combine the `getAssemblyOptions()` option with the [Form](/docs/form) plugin to pass user input from a `<form>` to a Transloadit Assembly:
+
+```js
+// This will add form field values to each file's `.meta` object:
+uppy.use(Form, { getMetaFromForm: true })
+uppy.use(Transloadit, {
+  getAssemblyOptions (file) {
+    return {
+      params: { ... },
+      // Pass through the fields you need:
+      fields: {
+        message: file.meta.message
+      }
+    }
   }
 })
 ```
