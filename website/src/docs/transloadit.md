@@ -20,6 +20,13 @@ uppy.use(Tus, {
 })
 uppy.use(Transloadit, {
   // Transloadit plugin options
+  waitForEncoding: false,
+  waitForMetadata: false,
+  importFromUploadURLs: false,
+  alwaysRunAssembly: false,
+  params: null,
+  signature: null,
+  fields: {}
 })
 ```
 
@@ -60,9 +67,13 @@ uppy.use(Transloadit, {
 
 In order for this to work, the upload plugin must assign a publically accessible `uploadURL` property to the uploaded file object. The Tus and S3 plugins both do this—for the XHRUpload plugin, you may have to specify a custom `getUploadResponse` function.
 
+### `alwaysRunAssembly`
+
+When true, always create and run an Assembly when `uppy.upload()` is called, even if no files were selected. This allows running Assemblies that do not receive files, but instead use a robot like [`/s3/import`](https://transloadit.com/docs/transcoding/#s3-import) to download the files from elsewhere, for example for a bulk transcoding job.
+
 ### `params`
 
-The Assembly parameters to use for the upload. See the Transloadit documentation on [Assembly Instructions](https://transloadit.com/docs/#14-assembly-instructions).
+The Assembly parameters to use for the upload. See the Transloadit documentation on [Assembly Instructions](https://transloadit.com/docs/#14-assembly-instructions). `params` should be a plain JavaScript object, or a JSON string if you are using the [`signature`](#signature) option.
 
 The `auth.key` Assembly parameter is required. You can also use the `steps` or `template_id` options here as described in the Transloadit documentation.
 
