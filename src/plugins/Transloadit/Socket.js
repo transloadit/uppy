@@ -41,6 +41,10 @@ module.exports = class TransloaditSocket {
       this.emit('upload', file)
     })
 
+    this.socket.on('assembly_uploading_finished', () => {
+      this.emit('executing')
+    })
+
     this.socket.on('assembly_upload_meta_data_extracted', () => {
       this.emit('metadata')
     })

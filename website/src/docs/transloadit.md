@@ -150,6 +150,14 @@ Fired when Transloadit has received an upload.
   - `file` - The Transloadit file object that was uploaded.
   - `assembly` - The assembly status of the assembly the file was uploaded to.
 
+### `transloadit:assembly-executing`
+
+Fired when Transloadit has received all uploads, and is now executing the Assembly.
+
+**Parameters**
+
+ - `assembly` - The [Assembly Status](https://transloadit.com/docs/api-docs/#assembly-status-response) of the Assembly that is now executing.
+
 ### `transloadit:result`
 
 Fired when a result came in from an assembly.

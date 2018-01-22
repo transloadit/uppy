@@ -510,6 +510,10 @@ module.exports = class Transloadit extends Plugin {
       this.uppy.emit('transloadit:assembly-error', assembly, error)
     })
 
+    socket.on('executing', () => {
+      this.uppy.emit('transloadit:assembly-executing', assembly)
+    })
+
     if (this.opts.waitForEncoding) {
       socket.on('result', this.onResult.bind(this, assembly.assembly_id))
     }
