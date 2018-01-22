@@ -3,7 +3,8 @@ const Translator = require('../../core/Translator')
 const XHRUpload = require('../XHRUpload')
 
 function isXml (xhr) {
-  return xhr.getResponseHeader('Content-Type').toLowerCase() === 'application/xml'
+  const contentType = xhr.getResponseHeader('Content-Type')
+  return typeof contentType === 'string' && contentType.toLowerCase() === 'application/xml'
 }
 
 module.exports = class AwsS3 extends Plugin {
