@@ -2,7 +2,6 @@ const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
-const isPlainObject = require('is-plain-obj')
 const throttle = require('lodash.throttle')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
@@ -968,12 +967,35 @@ class Uppy {
       currentUploads: Object.assign({}, this.getState().currentUploads, {
         [uploadID]: {
           fileIDs: fileIDs,
-          step: 0
+          step: 0,
+          result: {}
         }
       })
     })
 
     return uploadID
+  }
+
+  _getUpload (uploadID) {
+    return this.getState().currentUploads[uploadID]
+  }
+
+  /**
+   * Add data to an upload's result object.
+   *
+   * @param {string} uploadID The ID of the upload.
+   * @param {object} data Data properties to add to the result object.
+   */
+  addResultData (uploadID, data) {
+    const currentUploads = this.getState().currentUploads
+    const currentUpload = Object.assign({}, currentUploads[uploadID], {
+      result: Object.assign({}, currentUploads[uploadID].result, data)
+    })
+    this.setState({
+      currentUploads: Object.assign({}, currentUploads, {
+        [uploadID]: currentUpload
+      })
+    })
   }
 
   /**
@@ -999,8 +1021,6 @@ class Uppy {
     const uploadData = this.getState().currentUploads[uploadID]
     const fileIDs = uploadData.fileIDs
     const restoreStep = uploadData.step
-
-    const resultData = {}
 
     const steps = [
       ...this.preProcessors,
@@ -1028,9 +1048,6 @@ class Uppy {
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
         return fn(fileIDs, uploadID)
       }).then((result) => {
-        if (result && isPlainObject(result)) {
-          Object.assign(resultData, result)
-        }
         return null
       })
     })
@@ -1047,15 +1064,17 @@ class Uppy {
       const files = fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => file && !file.error)
       const failed = files.filter((file) => file && file.error)
-      Object.assign(resultData, { successful, failed })
+      this.addResultData(uploadID, { successful, failed })
 
-      this.emit('complete', resultData)
+      const { currentUploads } = this.getState()
+      const result = currentUploads[uploadID].result
+      this.emit('complete', result)
       // Compatibility with pre-0.21
       this.emit('success', fileIDs)
 
       this._removeUpload(uploadID)
 
-      return resultData
+      return result
     })
   }
 

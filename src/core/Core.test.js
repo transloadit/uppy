@@ -273,9 +273,15 @@ describe('src/Core', () => {
   describe('upload hooks', () => {
     it('should add data returned from upload hooks to the .upload() result', () => {
       const core = new Core()
-      core.addPreProcessor(() => Promise.resolve({ pre: 'ok' }))
-      core.addPostProcessor(() => Promise.resolve({ post: 'ok' }))
-      core.addUploader(() => Promise.resolve({ upload: 'ok' }))
+      core.addPreProcessor((fileIDs, uploadID) => {
+        core.addResultData(uploadID, { pre: 'ok' })
+      })
+      core.addPostProcessor((fileIDs, uploadID) => {
+        core.addResultData(uploadID, { post: 'ok' })
+      })
+      core.addUploader((fileIDs, uploadID) => {
+        core.addResultData(uploadID, { upload: 'ok' })
+      })
       core.run()
       return core.upload().then((result) => {
         expect(result.pre).toBe('ok')
@@ -1143,39 +1149,11 @@ describe('src/Core', () => {
         const currentUploadsState = {}
         currentUploadsState[uploadId] = {
           fileIDs: Object.keys(core.state.files),
-          step: 0
+          step: 0,
+          result: {}
         }
         expect(core.state.currentUploads).toEqual(currentUploadsState)
       })
-    })
-  })
-
-  describe('removeUpload', () => {
-    it('should remove all files from the specified upload', () => {
-      // this uploader will run once the upload has started
-      const uploader = () => {
-        return Promise.resolve().then(() => {
-          const uploadId = Object.keys(core.state.currentUploads)[0]
-          expect(typeof core.state.currentUploads[uploadId]).toEqual('object')
-          expect(core.state.currentUploads[uploadId].fileIDs.length).toEqual(1)
-          core._removeUpload(uploadId)
-          expect(typeof core.state.currentUploads[uploadId]).toEqual('undefined')
-        })
-      }
-
-      const core = new Core()
-      core.run()
-      core.addUploader(uploader)
-      return core
-        .addFile({
-          source: 'jest',
-          name: 'foo.jpg',
-          type: 'image/jpeg',
-          data: utils.dataURItoFile(sampleImageDataURI, {})
-        })
-        .then(() => {
-          return core.upload(true)
-        })
     })
   })
 })
