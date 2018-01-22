@@ -270,6 +270,21 @@ describe('src/Core', () => {
     )
   })
 
+  describe('upload hooks', () => {
+    it('should add data returned from upload hooks to the .upload() result', () => {
+      const core = new Core()
+      core.addPreProcessor(() => Promise.resolve({ pre: 'ok' }))
+      core.addPostProcessor(() => Promise.resolve({ post: 'ok' }))
+      core.addUploader(() => Promise.resolve({ upload: 'ok' }))
+      core.run()
+      return core.upload().then((result) => {
+        expect(result.pre).toBe('ok')
+        expect(result.upload).toBe('ok')
+        expect(result.post).toBe('ok')
+      })
+    })
+  })
+
   describe('preprocessors', () => {
     it('should add a preprocessor', () => {
       const core = new Core()
