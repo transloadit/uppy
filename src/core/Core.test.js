@@ -605,20 +605,18 @@ describe('src/Core', () => {
   })
 
   describe('uploading a file', () => {
-    it('should return a { successful, failed } pair containing file objects', () => {
+    it('should return a { successful, failed, uploadId } object containing file objects and the uploadID', () => {
       const core = new Core().run()
       core.addUploader((fileIDs) => Promise.resolve())
       return Promise.all([
         core.addFile({ source: 'jest', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() }),
         core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
       ]).then(() => {
-        return expect(core.upload()).resolves.toMatchObject({
-          successful: [
-            { name: 'foo.jpg' },
-            { name: 'bar.jpg' }
-          ],
-          failed: []
-        })
+        return core.upload()
+      }).then((result) => {
+        expect(result.uploadID.length).toEqual(25)
+        delete result.uploadID
+        expect(result).toMatchSnapshot()
       })
     })
 
@@ -637,14 +635,10 @@ describe('src/Core', () => {
         core.addFile({ source: 'jest', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() }),
         core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
       ]).then(() => {
-        return expect(core.upload()).resolves.toMatchObject({
-          successful: [
-            { name: 'foo.jpg' }
-          ],
-          failed: [
-            { name: 'bar.jpg', error: 'This is bar and I do not like bar' }
-          ]
-        })
+        return core.upload()
+      }).then((result) => {
+        delete result.uploadID
+        expect(result).toMatchSnapshot()
       })
     })
   })

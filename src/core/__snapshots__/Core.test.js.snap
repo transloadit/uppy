@@ -14,3 +14,113 @@ exports[`src/Core plugins should prevent the same plugin from being added more t
         https://github.com/transloadit/uppy/issues/
         if you want us to reconsider."
 `;
+
+exports[`src/Core uploading a file should return a { successful, failed, uploadId } object containing file objects and the uploadID 1`] = `
+Object {
+  "failed": Array [],
+  "successful": Array [
+    Object {
+      "data": Uint8Array [],
+      "extension": "jpg",
+      "id": "uppy-foojpg-image/jpeg",
+      "isRemote": false,
+      "meta": Object {
+        "name": "foo.jpg",
+        "type": null,
+      },
+      "name": "foo.jpg",
+      "preview": undefined,
+      "progress": Object {
+        "bytesTotal": 0,
+        "bytesUploaded": 0,
+        "percentage": 0,
+        "uploadComplete": false,
+        "uploadStarted": false,
+      },
+      "remote": "",
+      "size": 0,
+      "source": "jest",
+      "type": null,
+    },
+    Object {
+      "data": Uint8Array [],
+      "extension": "jpg",
+      "id": "uppy-barjpg-image/jpeg",
+      "isRemote": false,
+      "meta": Object {
+        "name": "bar.jpg",
+        "type": null,
+      },
+      "name": "bar.jpg",
+      "preview": undefined,
+      "progress": Object {
+        "bytesTotal": 0,
+        "bytesUploaded": 0,
+        "percentage": 0,
+        "uploadComplete": false,
+        "uploadStarted": false,
+      },
+      "remote": "",
+      "size": 0,
+      "source": "jest",
+      "type": null,
+    },
+  ],
+}
+`;
+
+exports[`src/Core uploading a file should return files with errors in the { failed } key 1`] = `
+Object {
+  "failed": Array [
+    Object {
+      "data": Uint8Array [],
+      "error": "This is bar and I do not like bar",
+      "extension": "jpg",
+      "id": "uppy-barjpg-image/jpeg",
+      "isRemote": false,
+      "meta": Object {
+        "name": "bar.jpg",
+        "type": null,
+      },
+      "name": "bar.jpg",
+      "preview": undefined,
+      "progress": Object {
+        "bytesTotal": 0,
+        "bytesUploaded": 0,
+        "percentage": 0,
+        "uploadComplete": false,
+        "uploadStarted": false,
+      },
+      "remote": "",
+      "size": 0,
+      "source": "jest",
+      "type": null,
+    },
+  ],
+  "successful": Array [
+    Object {
+      "data": Uint8Array [],
+      "extension": "jpg",
+      "id": "uppy-foojpg-image/jpeg",
+      "isRemote": false,
+      "meta": Object {
+        "name": "foo.jpg",
+        "type": null,
+      },
+      "name": "foo.jpg",
+      "preview": undefined,
+      "progress": Object {
+        "bytesTotal": 0,
+        "bytesUploaded": 0,
+        "percentage": 0,
+        "uploadComplete": false,
+        "uploadStarted": false,
+      },
+      "remote": "",
+      "size": 0,
+      "source": "jest",
+      "type": null,
+    },
+  ],
+}
+`;
