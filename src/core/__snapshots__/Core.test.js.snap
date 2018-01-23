@@ -14,3 +14,57 @@ exports[`src/Core plugins should prevent the same plugin from being added more t
         https://github.com/transloadit/uppy/issues/
         if you want us to reconsider."
 `;
+
+exports[`src/Core uploading a file should only upload files that are not already assigned to another upload id 1`] = `
+Object {
+  "failed": Array [],
+  "successful": Array [
+    Object {
+      "data": Uint8Array [],
+      "extension": "jpg",
+      "id": "uppy-foojpg-image/jpeg",
+      "isRemote": false,
+      "meta": Object {
+        "name": "foo.jpg",
+        "type": null,
+      },
+      "name": "foo.jpg",
+      "preview": undefined,
+      "progress": Object {
+        "bytesTotal": 0,
+        "bytesUploaded": 0,
+        "percentage": 0,
+        "uploadComplete": false,
+        "uploadStarted": false,
+      },
+      "remote": "",
+      "size": 0,
+      "source": "jest",
+      "type": null,
+    },
+    Object {
+      "data": Uint8Array [],
+      "extension": "jpg",
+      "id": "uppy-barjpg-image/jpeg",
+      "isRemote": false,
+      "meta": Object {
+        "name": "bar.jpg",
+        "type": null,
+      },
+      "name": "bar.jpg",
+      "preview": undefined,
+      "progress": Object {
+        "bytesTotal": 0,
+        "bytesUploaded": 0,
+        "percentage": 0,
+        "uploadComplete": false,
+        "uploadStarted": false,
+      },
+      "remote": "",
+      "size": 0,
+      "source": "jest",
+      "type": null,
+    },
+  ],
+}
+`;

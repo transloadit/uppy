@@ -1084,8 +1084,14 @@ class Uppy {
           waitingFileIDs.push(file.id)
         }
       })
+      const { currentUploads } = this.getState()
 
-      const uploadID = this._createUpload(waitingFileIDs)
+      // get a list of files that are currently assigned to uploads
+      const currentlyUploadingFiles = Object.keys(currentUploads).reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
+      // files the list of files that are waiting to be uploaded against ones that are assigned to uploads. This should give us a list of files that have not been
+      // assigned to an upload yet
+      const filesToUpload = waitingFileIDs.filter((fileId) => currentlyUploadingFiles.indexOf(fileId) < 0)
+      const uploadID = this._createUpload(filesToUpload)
       return this._runUpload(uploadID)
     })
   }
