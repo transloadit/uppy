@@ -298,11 +298,12 @@
     background-color: $color-cornflower-blue;
   }
 
+  // Hide checkbox when unchecked in grid view
   .uppy-ProviderBrowserItem-checkbox input + label {
     opacity: 0;
   }
 
-  // Unhide the checkmark on the checked state
+  // Unhide the checkbox on the checked state
   .uppy-ProviderBrowserItem-checkbox input:checked + label {
     opacity: 1;
   }
