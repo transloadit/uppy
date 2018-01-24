@@ -33,27 +33,25 @@ module.exports = (props) => {
           <button type="button" onclick={props.logout} class="uppy-ProviderBrowser-userLogout">Log out</button>
         </div>
       </header>
-      <div class="uppy-ProviderBrowser-body">
-        {Table({
-          columns: [{
-            name: 'Name',
-            key: 'title'
-          }],
-          folders: filteredFolders,
-          files: filteredFiles,
-          activeRow: props.isActiveRow,
-          sortByTitle: props.sortByTitle,
-          sortByDate: props.sortByDate,
-          handleFileClick: props.addFile,
-          handleFolderClick: props.getNextFolder,
-          isChecked: props.isChecked,
-          toggleCheckbox: props.toggleCheckbox,
-          getItemName: props.getItemName,
-          getItemIcon: props.getItemIcon,
-          handleScroll: props.handleScroll,
-          title: props.title
-        })}
-      </div>
+      {Table({
+        columns: [{
+          name: 'Name',
+          key: 'title'
+        }],
+        folders: filteredFolders,
+        files: filteredFiles,
+        activeRow: props.isActiveRow,
+        sortByTitle: props.sortByTitle,
+        sortByDate: props.sortByDate,
+        handleFileClick: props.addFile,
+        handleFolderClick: props.getNextFolder,
+        isChecked: props.isChecked,
+        toggleCheckbox: props.toggleCheckbox,
+        getItemName: props.getItemName,
+        getItemIcon: props.getItemIcon,
+        handleScroll: props.handleScroll,
+        title: props.title
+      })}
       <button class="UppyButton--circular UppyButton--blue uppy-ProviderBrowser-doneBtn"
         type="button"
         aria-label="Done picking files"
