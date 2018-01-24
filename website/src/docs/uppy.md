@@ -339,11 +339,11 @@ uppy.on('upload-progress', (data) => {
 
 ### `upload-success`
 
-Fired when single upload is complete.
+Fired each time a single upload is complete.
 
 ``` javascript
 uppy.on('upload-success', (fileId, resp, uploadURL) => {
-  console.log(url)
+  console.log(uploadURL)
   var img = new Image()
   img.width = 300
   img.alt = fileId
@@ -356,7 +356,7 @@ uppy.on('upload-success', (fileId, resp, uploadURL) => {
 
 Fired when all uploads are complete.
 
-The `result` parameter is an object with arrays of `successful` and `failed` files, just like in [`uppy.upload()`](#uppy-upload)'s return value.
+The `result` parameter is an object with arrays of `successful` and `failed` files, just like in [`uppy.upload()`](#uppy-upload)’s return value.
 
 ``` javascript
 uppy.on('complete', (result) => {
