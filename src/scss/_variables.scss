@@ -1,27 +1,27 @@
 
 // Colors
 
-$color-black: #000;
-$color-gray: #939393;
-$color-pink: #e02177;
-$color-red: #D32F2F;
-$color-green: #7AC824;
-$color-orange: #F6A623;
-$color-yellow: #FFD600;
-$color-white: #fff;
-$color-almost-white: #FAFAFA;
-$color-cornflower-blue: #4A90E2;
-$color-asphalt-gray: #525252;
+$color-black: #000 !default;
+$color-gray: #939393 !default;
+$color-pink: #e02177 !default;
+$color-red: #D32F2F !default;
+$color-green: #7AC824 !default;
+$color-orange: #F6A623 !default;
+$color-yellow: #FFD600 !default;
+$color-white: #fff !default;
+$color-almost-white: #FAFAFA !default;
+$color-cornflower-blue: #4A90E2 !default;
+$color-asphalt-gray: #525252 !default;
 
 // Z-index
 
-$zIndex-negative: -1000;
-$zIndex-1: 100;
-$zIndex-2: 1001;
-$zIndex-3: 1002;
-$zIndex-3: 1003;
-$zIndex-4: 1004;
-$zIndex-5: 1005;
+$zIndex-negative: -1000 !default;
+$zIndex-1: 100 !default;
+$zIndex-2: 1001 !default;
+$zIndex-3: 1002 !default;
+$zIndex-3: 1003 !default;
+$zIndex-4: 1004 !default;
+$zIndex-5: 1005 !default;
 
 // Media Queries
-$screen-medium: 'only screen and (min-width: 768px)';
+$screen-medium: 'only screen and (min-width: 768px)' !default;
