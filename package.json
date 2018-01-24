@@ -99,6 +99,7 @@
     "webdriverio": "^4.10.1"
   },
   "dependencies": {
+    "@xkeshi/image-compressor": "^0.5.3",
     "classnames": "^2.2.5",
     "cuid": "^2.0.2",
     "drag-drop": "2.13.2",

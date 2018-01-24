@@ -21,6 +21,7 @@ const ProgressBar = require('./plugins/ProgressBar')
 const Informer = require('./plugins/Informer')
 
 // Modifiers
+const ImageCompressor = require('./plugins/ImageCompressor')
 
 // Uploaders
 const Tus = require('./plugins/Tus')
@@ -53,5 +54,6 @@ module.exports = {
   Webcam,
   GoldenRetriever,
   ReduxDevTools,
-  ReduxStore
+  ReduxStore,
+  ImageCompressor
 }
