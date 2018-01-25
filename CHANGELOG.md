@@ -62,7 +62,6 @@ What we need to do to release Uppy 1.0
 - [ ] QA: test in multiple browsers and mobile devices
 - [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
 - [ ] QA: tests for some plugins
-- [ ] automatically host releases on edgly and use that as our main CDN
 - [ ] docs: on using plugins, all options, list of plugins, i18n
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs
 - [ ] refactoring: possibly add CSS-in-JS
@@ -125,6 +124,7 @@ To be released: 2018-02-01.
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] meta: add https://twin.github.io/better-file-uploads-with-shrine-direct-uploads to the next blog post
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
+- [x] meta: automatically host releases on edgly and use that as our main CDN (#558 / @kvz)
 
 ## 0.22.1
 
@@ -551,7 +551,7 @@ Theme: Getting together.
 - [x] tus: add `resumable` capability flag (@arturi)
 - [x] tus: start fixing pause/resume issues and race conditions (@arturi)
 - [x] test: working Uppy example on Require Bin — latest version straight from NPM http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105 (@arturi @acconut)
-- [x] meta: update readme docs, add unpkg CDN links (https://unpkg.com/uppy/dist/uppy.min.css) (@arturi)
+- [x] meta: update readme docs, add unpkg CDN links (https://transloadit.edgly.net/releases/uppy/v0.22.0/dist/uppy.min.css) (@arturi)
 - [x] meta: write 0.10 release blog post (@arturi)
 
 ## 0.9.0
