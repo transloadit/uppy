@@ -162,6 +162,7 @@
     "web:preview": "npm-run-all --parallel web:examples:watch web:bundle:update:watch web:serve",
     "web:update:frontpage:code:sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
     "web": "npm-run-all web:clean web:build",
+    "uploadcdn": "bin/upload-to-cdn.sh",
     "prepublishOnly": "npm-run-all clean build"
   }
 }
