@@ -5,8 +5,9 @@
 #
 #  - Assumes EDGLY_KEY and EDGLY_SECRET are available (e.g. set via Travis secrets)
 #  - Tries to load env.sh instead, if not
-#  - Assumed a fully built uppy is in root dir
 #  - Checks if a tag is being built (on Travis - otherwise opts to continue execution regardless)
+#  - Installs AWS CLI if needed
+#  - Assumed a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
 #  - Runs npm pack, and stores files to e.g. https://transloadit.edgly.net/releases/uppy/v0.22.0/dist/uppy.css
 #  - Uses local package by default, if [version] argument was specified, takes package from npm
 #
@@ -50,6 +51,8 @@ pushd "${__root}" > /dev/null 2>&1
       exit 0;
     fi
   fi
+
+  type aws || pip install --user awscli
 
   remoteVersion="${1:-}"
   version="${remoteVersion}"
