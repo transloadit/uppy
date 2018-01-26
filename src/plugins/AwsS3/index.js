@@ -1,5 +1,6 @@
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
+const { limitPromises } = require('../../core/Utils')
 const XHRUpload = require('../XHRUpload')
 
 function isXml (xhr) {
@@ -35,6 +36,12 @@ module.exports = class AwsS3 extends Plugin {
     this.i18n = this.translator.translate.bind(this.translator)
 
     this.prepareUpload = this.prepareUpload.bind(this)
+
+    if (typeof this.opts.limit === 'number' && this.opts.limit !== 0) {
+      this.limitRequests = limitPromises(this.opts.limit)
+    } else {
+      this.limitRequests = (fn) => fn
+    }
   }
 
   getUploadParameters (file) {
@@ -59,11 +66,13 @@ module.exports = class AwsS3 extends Plugin {
       })
     })
 
+    const getUploadParameters = this.limitRequests(this.opts.getUploadParameters)
+
     return Promise.all(
       fileIDs.map((id) => {
         const file = this.uppy.getFile(id)
         const paramsPromise = Promise.resolve()
-          .then(() => this.opts.getUploadParameters(file))
+          .then(() => getUploadParameters(file))
         return paramsPromise.then((params) => {
           this.uppy.emit('preprocess-progress', file.id, {
             mode: 'determinate',
