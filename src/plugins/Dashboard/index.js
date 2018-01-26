@@ -73,7 +73,6 @@ module.exports = class Dashboard extends Plugin {
       width: 750,
       height: 550,
       thumbnailWidth: 280,
-      semiTransparent: false,
       defaultTabIcon: defaultTabIcon,
       showProgressDetails: false,
       hideUploadButton: false,
@@ -83,6 +82,7 @@ module.exports = class Dashboard extends Plugin {
       disableStatusBar: false,
       disableInformer: false,
       disableThumbnailGenerator: false,
+      disablePageScrollWhenModalOpen: true,
       onRequestCloseModal: () => this.closeModal(),
       locale: defaultLocale
     }
@@ -201,6 +201,20 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
+  scrollBehaviour (toggle) {
+    if (!this.opts.disablePageScrollWhenModalOpen) return
+    const body = document.querySelector('body')
+    switch (toggle) {
+      case 'enable':
+        Object.assign(body.style, { overflow: 'initial', height: 'initial' })
+        break
+      case 'disable':
+        Object.assign(body.style, { overflow: 'hidden', height: '100vh' })
+        break
+      default:
+    }
+  }
+
   openModal () {
     this.setPluginState({
       isHidden: false
@@ -213,9 +227,10 @@ module.exports = class Dashboard extends Plugin {
 
     // add class to body that sets position fixed, move everything back
     // to scroll position
-    document.body.classList.add('uppy-Dashboard-isOpen')
-    document.body.style.top = `-${this.savedScrollPosition}px`
+    // document.body.classList.add('uppy-Dashboard-isOpen')
+    // document.body.style.top = `-${this.savedScrollPosition}px`
 
+    this.scrollBehaviour('disable')
     this.updateDashboardElWidth()
     this.setFocusToFirstNode()
   }
@@ -225,9 +240,10 @@ module.exports = class Dashboard extends Plugin {
       isHidden: true
     })
 
-    document.body.classList.remove('uppy-Dashboard-isOpen')
+    // document.body.classList.remove('uppy-Dashboard-isOpen')
+    this.scrollBehaviour('enable')
     this.savedActiveElement.focus()
-    window.scrollTo(0, this.savedScrollPosition)
+    // window.scrollTo(0, this.savedScrollPosition)
   }
 
   isModalOpen () {
