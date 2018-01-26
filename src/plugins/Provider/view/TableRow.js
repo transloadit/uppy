@@ -21,26 +21,28 @@ module.exports = (props) => {
   }
 
   return (
-    <tr class="uppy-ProviderBrowserTable-row">
-      <td class="uppy-ProviderBrowserTable-column">
-        <div class="uppy-ProviderBrowserTable-checkbox">
-          <input type="checkbox"
-            role="option"
-            tabindex="0"
-            aria-label={`Select ${props.title}`}
-            id={uniqueId}
-            checked={props.isChecked}
-            disabled={props.isDisabled}
-            onchange={props.handleCheckboxClick}
-            onkeyup={stop}
-            onkeydown={stop}
-            onkeypress={stop} />
-          <label for={uniqueId} />
-        </div>
-        <button type="button" class="uppy-ProviderBrowserTable-item" aria-label={`Select ${props.title}`} tabindex="0" onclick={handleItemClick}>
-          {props.getItemIcon()} {props.title}
-        </button>
-      </td>
-    </tr>
+    <li class={'uppy-ProviderBrowserItem' + (props.isChecked ? ' uppy-ProviderBrowserItem--selected' : '')}>
+      <div class="uppy-ProviderBrowserItem-checkbox">
+        <input type="checkbox"
+          role="option"
+          tabindex="0"
+          aria-label={`Select ${props.title}`}
+          id={uniqueId}
+          checked={props.isChecked}
+          disabled={props.isDisabled}
+          onchange={props.handleCheckboxClick}
+          onkeyup={stop}
+          onkeydown={stop}
+          onkeypress={stop} />
+        <label for={uniqueId} />
+      </div>
+      <button type="button"
+        class="uppy-ProviderBrowserItem-inner"
+        aria-label={`Select ${props.title}`}
+        tabindex="0"
+        onclick={handleItemClick}>
+        {props.getItemIcon()} {props.title}
+      </button>
+    </li>
   )
 }

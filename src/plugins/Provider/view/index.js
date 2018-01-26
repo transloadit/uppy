@@ -204,17 +204,11 @@ module.exports = class View {
 
   toggleSearch (inputEl) {
     const state = this.plugin.getPluginState()
-    // const searchInputEl = document.querySelector('.Browser-searchInput')
 
     this.plugin.setPluginState({
       isSearchVisible: !state.isSearchVisible,
       filterInput: ''
     })
-
-    // searchInputEl.value = ''
-    // if (!state.isSearchVisible) {
-    //   searchInputEl.focus()
-    // }
   }
 
   filterItems (items) {
