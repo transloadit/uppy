@@ -68,7 +68,7 @@ meta: {
 }
 ```
 
-Can be altered with `uppy.setMeta({ username: 'Peter' })` method.
+Can be altered with [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setmeta-data) method.
 
 ### `onBeforeFileAdded: (currentFile, files) => Promise.resolve()`
 
