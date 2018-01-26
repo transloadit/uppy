@@ -6,7 +6,6 @@ const throttle = require('lodash.throttle')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
 const DefaultStore = require('../store/DefaultStore')
-// const deepFreeze = require('deep-freeze-strict')
 
 /**
  * Uppy Core module.
@@ -970,12 +969,35 @@ class Uppy {
       currentUploads: Object.assign({}, this.getState().currentUploads, {
         [uploadID]: {
           fileIDs: fileIDs,
-          step: 0
+          step: 0,
+          result: {}
         }
       })
     })
 
     return uploadID
+  }
+
+  _getUpload (uploadID) {
+    return this.getState().currentUploads[uploadID]
+  }
+
+  /**
+   * Add data to an upload's result object.
+   *
+   * @param {string} uploadID The ID of the upload.
+   * @param {object} data Data properties to add to the result object.
+   */
+  addResultData (uploadID, data) {
+    const currentUploads = this.getState().currentUploads
+    const currentUpload = Object.assign({}, currentUploads[uploadID], {
+      result: Object.assign({}, currentUploads[uploadID].result, data)
+    })
+    this.setState({
+      currentUploads: Object.assign({}, currentUploads, {
+        [uploadID]: currentUpload
+      })
+    })
   }
 
   /**
@@ -1027,6 +1049,8 @@ class Uppy {
         // TODO give this the `currentUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
         return fn(fileIDs, uploadID)
+      }).then((result) => {
+        return null
       })
     })
 
@@ -1042,14 +1066,17 @@ class Uppy {
       const files = fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => file && !file.error)
       const failed = files.filter((file) => file && file.error)
-      this.emit('complete', { successful, failed })
+      this.addResultData(uploadID, { successful, failed })
 
+      const { currentUploads } = this.getState()
+      const result = currentUploads[uploadID].result
+      this.emit('complete', result)
       // Compatibility with pre-0.21
       this.emit('success', fileIDs)
 
       this._removeUpload(uploadID)
 
-      return { successful, failed }
+      return result
     })
   }
 
