@@ -1042,14 +1042,14 @@ class Uppy {
       const files = fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => file && !file.error)
       const failed = files.filter((file) => file && file.error)
-      this.emit('complete', { successful, failed })
+      this.emit('complete', { successful, failed, uploadID })
 
       // Compatibility with pre-0.21
       this.emit('success', fileIDs)
 
       this._removeUpload(uploadID)
 
-      return { successful, failed }
+      return { successful, failed, uploadID }
     })
   }
 
