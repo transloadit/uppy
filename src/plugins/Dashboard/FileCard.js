@@ -56,9 +56,9 @@ module.exports = class FileCard extends Component {
       {this.props.fileCardFor &&
         <div style="width: 100%; height: 100%;">
           <div class="uppy-DashboardContent-bar">
-            <h2 class="uppy-DashboardContent-title">Editing <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span></h2>
-            <button class="uppy-DashboardContent-back" type="button" title="Finish editing file"
-              onclick={this.handleClick}>Done</button>
+            <h2 class="uppy-DashboardContent-title">{this.props.i18n('editing')} <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span></h2>
+            <button class="uppy-DashboardContent-back" type="button" title={this.props.i18n('finishEditingFile')}
+              onclick={this.handleClick}>{this.props.i18n('done')}</button>
           </div>
           <div class="uppy-DashboardFileCard-inner">
             <div class="uppy-DashboardFileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
@@ -72,12 +72,12 @@ module.exports = class FileCard extends Component {
             </div>
             <div class="uppy-DashboardFileCard-info">
               <fieldset class="uppy-DashboardFileCard-fieldset">
-                <label class="uppy-DashboardFileCard-label">Name</label>
+                <label class="uppy-DashboardFileCard-label">{this.props.i18n('name')}</label>
                 <input class="uppy-DashboardFileCard-input"
                   type="text"
                   data-name="name"
                   value={file.meta.name || ''}
-                  placeholder="name"
+                  placeholder={this.props.i18n('name')}
                   onkeyup={this.tempStoreMetaOrSubmit}
                   onkeydown={this.tempStoreMetaOrSubmit}
                   onkeypress={this.tempStoreMetaOrSubmit} />
@@ -88,7 +88,7 @@ module.exports = class FileCard extends Component {
           <div class="uppy-Dashboard-actions">
             <button class="UppyButton--circular UppyButton--blue uppy-DashboardFileCard-done"
               type="button"
-              title="Finish editing file"
+              title={this.props.i18n('finishEditingFiles')}
               onclick={this.handleClick}>{checkIcon()}</button>
           </div>
         </div>
