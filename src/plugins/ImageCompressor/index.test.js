@@ -16,7 +16,7 @@ describe('modifier/ImageCompressorPlugin', () => {
     expect(plugin1.opts.quality).toEqual(0.8)
 
     const plugin2 = new ImageCompressorPlugin(null, { width: 100, height: 100, quality: 0.6 }) // eslint-disable-line no-new
-    expect(plugin2.opts.thumbnailWidth).toEqual(100)
+    expect(plugin2.opts.width).toEqual(100)
     expect(plugin2.opts.height).toEqual(100)
     expect(plugin2.opts.quality).toEqual(0.4)
   })
