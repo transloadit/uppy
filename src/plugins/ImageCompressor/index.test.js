@@ -18,7 +18,7 @@ describe('modifier/ImageCompressorPlugin', () => {
     const plugin2 = new ImageCompressorPlugin(null, { width: 100, height: 100, quality: 0.6 }) // eslint-disable-line no-new
     expect(plugin2.opts.width).toEqual(100)
     expect(plugin2.opts.height).toEqual(100)
-    expect(plugin2.opts.quality).toEqual(0.4)
+    expect(plugin2.opts.quality).toEqual(0.6)
   })
 
   describe('install', () => {
@@ -76,10 +76,12 @@ describe('modifier/ImageCompressorPlugin', () => {
     })
 
     it('should process items in the queue one by one', () => {
-      const core = {}
+      const core = {
+        log: jest.fn()
+      }
       const plugin = new ImageCompressorPlugin(core)
 
-      plugin.requestThumbnail = jest.fn(() => delay(100))
+      plugin.requestCompressFile = jest.fn(() => delay(100))
 
       const file1 = { foo: 'bar' }
       const file2 = { foo: 'bar2' }
@@ -88,18 +90,18 @@ describe('modifier/ImageCompressorPlugin', () => {
       plugin.addToQueue(file2)
       plugin.addToQueue(file3)
 
-      expect(plugin.requestThumbnail).toHaveBeenCalledTimes(1)
-      expect(plugin.requestThumbnail).toHaveBeenCalledWith(file1)
+      expect(plugin.requestCompressFile).toHaveBeenCalledTimes(1)
+      expect(plugin.requestCompressFile).toHaveBeenCalledWith(file1)
 
       return delay(110)
         .then(() => {
-          expect(plugin.requestThumbnail).toHaveBeenCalledTimes(2)
-          expect(plugin.requestThumbnail).toHaveBeenCalledWith(file2)
+          expect(plugin.requestCompressFile).toHaveBeenCalledTimes(2)
+          expect(plugin.requestCompressFile).toHaveBeenCalledWith(file2)
           return delay(110)
         })
         .then(() => {
-          expect(plugin.requestThumbnail).toHaveBeenCalledTimes(3)
-          expect(plugin.requestThumbnail).toHaveBeenCalledWith(file3)
+          expect(plugin.requestCompressFile).toHaveBeenCalledTimes(3)
+          expect(plugin.requestCompressFile).toHaveBeenCalledWith(file3)
           return delay(110)
         })
         .then(() => {
@@ -122,17 +124,14 @@ describe('modifier/ImageCompressorPlugin', () => {
       const file = { id: 'file1', type: 'image/png', isRemote: false }
       return plugin.requestCompressFile(file).then(() => {
         expect(plugin.compressFile).toHaveBeenCalledTimes(1)
-        expect(plugin.compressFile).toHaveBeenCalledWith(
-          file,
-          plugin.opts.width,
-          plugin.opts.height,
-          plugin.opts.quality
-        )
+        expect(plugin.compressFile).toHaveBeenCalledWith(file)
       })
     })
 
     it('should not call compressFile if it is not a supported filetype', () => {
-      const core = {}
+      const core = {
+        log: jest.fn()
+      }
       const plugin = new ImageCompressorPlugin(core)
 
       plugin.compressFile = jest
@@ -147,7 +146,9 @@ describe('modifier/ImageCompressorPlugin', () => {
     })
 
     it('should not call compressFile if the file is remote', () => {
-      const core = {}
+      const core = {
+        log: jest.fn()
+      }
       const plugin = new ImageCompressorPlugin(core)
 
       plugin.compressFile = jest
@@ -161,7 +162,7 @@ describe('modifier/ImageCompressorPlugin', () => {
       })
     })
 
-    it('should call setCompressedFile with the thumbnail image', () => {
+    it('should call setCompressedFile with the compressed data', () => {
       const core = {}
       const plugin = new ImageCompressorPlugin(core)
 
@@ -180,39 +181,56 @@ describe('modifier/ImageCompressorPlugin', () => {
 
   describe('setCompressedFile', () => {
     it('should update the file data for the specified image', () => {
+      const originFiles = {
+        file1: {
+          data: {
+            name: 'foo',
+            size: 1000
+          },
+          progress: {
+            bytesTotal: 1000
+          },
+          size: 1000
+        },
+        file2: {
+          data: {
+            name: 'boo',
+            size: 1000
+          },
+          progress: {
+            bytesTotal: 1000
+          },
+          size: 1000
+        }
+      }
+
+      const compressedFiles = {
+        file1: {
+          data: {
+            name: 'foo',
+            size: 500
+          },
+          progress: {
+            bytesTotal: 500
+          },
+          size: 500
+        }
+      }
+
       const core = {
         state: {
-          files: {
-            file1: {
-              data: 'foo'
-            },
-            file2: {
-              data: 'boo'
-            }
-          }
+          files: Object.assign({}, originFiles)
         },
-        setState: jest.fn()
+        log: jest.fn(),
+        setState: jest.fn(),
+        getFile: jest.fn().mockReturnValue(Object.assign({}, originFiles.file1))
       }
       const plugin = new ImageCompressorPlugin(core)
-      plugin.setCompressedFile('file1', 'moo')
+      plugin.setCompressedFile('file1', Object.assign({}, compressedFiles.file1.data))
       expect(core.setState).toHaveBeenCalledTimes(1)
       expect(core.setState).toHaveBeenCalledWith({
-        files: { file1: { data: 'moo' }, file2: { data: 'boo' } }
+        files: Object.assign({}, originFiles, compressedFiles)
       })
-    })
-  })
-
-  describe('canvasToBlob', () => {
-    it('should use canvas.toBlob if available', () => {
-      const core = {}
-      const plugin = new ImageCompressorPlugin(core)
-      const canvas = {
-        toBlob: jest.fn()
-      }
-      plugin.canvasToBlob(canvas, 'type', 90)
-      expect(canvas.toBlob).toHaveBeenCalledTimes(1)
-      expect(canvas.toBlob.mock.calls[0][1]).toEqual('type')
-      expect(canvas.toBlob.mock.calls[0][2]).toEqual(90)
     })
   })
 
