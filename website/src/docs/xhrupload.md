@@ -72,11 +72,16 @@ uppy.setFileState(otherFileID, {
 
 ### `getResponseData(xhr)`
 
-When an upload has completed, Uppy will extract response data from the upload endpoint and send it back in the `upload-success` event:
+When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file's `.response` property, and be emitted in the `upload-success` event:
 
 ```js
-uppy.on('upload-success', (fileId, resp, uploadURL) => {
-  // do something with resp
+uppy.getFile(fileID).response
+// { status: HTTP status code,
+//   body: extracted response data }
+
+uppy.on('upload-success', (fileID, body) => {
+  // do something with extracted response data
+  // (`body` is equivalent to `uppy.getFile(fileID).response.body`)
 })
 ```
 
