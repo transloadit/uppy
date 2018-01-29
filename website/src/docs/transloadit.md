@@ -20,6 +20,7 @@ uppy.use(Tus, {
 })
 uppy.use(Transloadit, {
   // Transloadit plugin options
+  service: 'https://api2.transloadit.com',
   waitForEncoding: false,
   waitForMetadata: false,
   importFromUploadURLs: false,
@@ -33,6 +34,10 @@ uppy.use(Transloadit, {
 Note: It is not required to use the `Tus` plugin if [`importFromUploadURLs`](#importFromUploadURLs) is enabled.
 
 ## Options
+
+### `service`
+
+The Transloadit API URL to use. Defaults to `https://api2.transloadit.com`, which will attempt to route traffic efficiently based on where your users are. You can set this to something like `https://api2-us-east-1.transloadit.com` if you want to use a particular region.
 
 ### `waitForEncoding`
 
