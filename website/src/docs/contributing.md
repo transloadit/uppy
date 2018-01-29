@@ -6,10 +6,12 @@ order: 4
 
 ## Uppy Development
 
-First clone and install the project:
+Fork the repository into your own account first. See the [GitHub Help](https://help.github.com/articles/fork-a-repo/) article for instructions.
+
+After you have successfully forked the repo, clone and install the project:
 
 ```bash
-git clone git@github.com:transloadit/uppy.git
+git clone git@github.com:YOUR_USERNAME/uppy.git
 cd uppy
 npm install
 ```
@@ -38,7 +40,7 @@ After you’ve installed and launched the selenium standalone server, run:
 
 We keep the [uppy.io](http://uppy.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity. For those reading this screaming murder, [HashiCorp does this](https://github.com/hashicorp/terraform/tree/master/website) for all their projects, and it's working well for them on a scale vastly more impressive than Uppy's.
 
-The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch with Hexo's build at every change to `master`). The content is written in Markdown and located in `./website/src`. Feel free to fork & hack!  
+The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch with Hexo's build at every change to `master`). The content is written in Markdown and located in `./website/src`. Feel free to fork & hack!
 
 Even though bundled in this repo, the website is regarded as a separate project. So it has its own `package.json` and we aim keep the surface where the two projects interface as small as possible. `./website/update.js` is called during website builds to inject the Uppy knowledge into the site.
 
