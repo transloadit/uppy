@@ -226,7 +226,7 @@ module.exports = class XHRUpload extends Plugin {
           endpoint: opts.endpoint,
           size: file.data.size,
           fieldname: opts.fieldName,
-          fields,
+          metadata: fields,
           headers: opts.headers
         }))
       })
