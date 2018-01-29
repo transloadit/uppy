@@ -41,7 +41,7 @@ $ npm install uppy
 
 We recommend installing from NPM and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Alternatively, you can also use a pre-built bundle, for example from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
+Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
 > ⚠️ The bundle currently consists of most Uppy plugins, so this method is not recommended for production, as your users will have to download all plugins, even if you're only using a few of them.
 

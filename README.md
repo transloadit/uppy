@@ -66,7 +66,7 @@ We recommend installing from npm and then using a module bundler such as [Webpac
 
 Add CSS [uppy.min.css](https://transloadit.edgly.net/releases/uppy/v0.22.0/dist/uppy.min.css), either to `<head>` of your HTML page or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
-Alternatively, you can also use a pre-built bundle, for example from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
+Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
 > ⚠️ The bundle currently consists of most Uppy plugins, so this method is not recommended for production, as your users will have to download all plugins when you are likely using just a few.
 
