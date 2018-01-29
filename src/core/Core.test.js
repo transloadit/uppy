@@ -668,6 +668,28 @@ describe('src/Core', () => {
         })
       })
     })
+
+    it('should only upload files that are not already assigned to another upload id', () => {
+      const core = new Core().run()
+      core.store.state.currentUploads = {
+        upload1: {
+          fileIDs: ['uppy-file1jpg-image/jpeg', 'uppy-file2jpg-image/jpeg', 'uppy-file3jpg-image/jpeg']
+        },
+        upload2: {
+          fileIDs: ['uppy-file4jpg-image/jpeg', 'uppy-file5jpg-image/jpeg', 'uppy-file6jpg-image/jpeg']
+        }
+      }
+      core.addUploader((fileIDs) => Promise.resolve())
+      return Promise.all([
+        core.addFile({ source: 'jest', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() }),
+        core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() }),
+        core.addFile({ source: 'file3', name: 'file3.jpg', type: 'image/jpeg', data: new Uint8Array() })
+      ]).then(() => {
+        return core.upload()
+      }).then((result) => {
+        expect(result).toMatchSnapshot()
+      })
+    })
   })
 
   describe('removing a file', () => {
