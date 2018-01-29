@@ -201,20 +201,6 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  scrollBehaviour (toggle) {
-    if (!this.opts.disablePageScrollWhenModalOpen) return
-    const body = document.querySelector('body')
-    switch (toggle) {
-      case 'enable':
-        Object.assign(body.style, { overflow: 'initial', height: 'initial' })
-        break
-      case 'disable':
-        Object.assign(body.style, { overflow: 'hidden', height: '100vh' })
-        break
-      default:
-    }
-  }
-
   openModal () {
     this.setPluginState({
       isHidden: false
@@ -225,12 +211,10 @@ module.exports = class Dashboard extends Plugin {
     // save active element, so we can restore focus when modal is closed
     this.savedActiveElement = document.activeElement
 
-    // add class to body that sets position fixed, move everything back
-    // to scroll position
-    // document.body.classList.add('uppy-Dashboard-isOpen')
-    // document.body.style.top = `-${this.savedScrollPosition}px`
+    if (!this.opts.disablePageScrollWhenModalOpen) {
+      document.body.classList.remove('uppy-Dashboard-isOpen')
+    }
 
-    this.scrollBehaviour('disable')
     this.updateDashboardElWidth()
     this.setFocusToFirstNode()
   }
@@ -240,10 +224,11 @@ module.exports = class Dashboard extends Plugin {
       isHidden: true
     })
 
-    // document.body.classList.remove('uppy-Dashboard-isOpen')
-    this.scrollBehaviour('enable')
+    if (!this.opts.disablePageScrollWhenModalOpen) {
+      document.body.classList.remove('uppy-Dashboard-isOpen')
+    }
+
     this.savedActiveElement.focus()
-    // window.scrollTo(0, this.savedScrollPosition)
   }
 
   isModalOpen () {
