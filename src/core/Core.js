@@ -1066,7 +1066,7 @@ class Uppy {
       const files = fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => file && !file.error)
       const failed = files.filter((file) => file && file.error)
-      this.addResultData(uploadID, { successful, failed })
+      this.addResultData(uploadID, { successful, failed, uploadID })
 
       const { currentUploads } = this.getState()
       const result = currentUploads[uploadID].result
