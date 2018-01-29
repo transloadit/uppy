@@ -94,8 +94,9 @@ What we need to do to release Uppy 1.0
 
 To be released: 2018-02-10.
 
-- [ ] core: return `processing` results among with `upload` results in `success` event and `upload()` promise (@goto-bus-stop)
-- [ ] transloadit: add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (@goto-bus-stop)
+- [x] core: return `processing` results among with `upload` results in `success` event and `upload()` promise (#527 / @goto-bus-stop)
+- [x] transloadit: add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (#527 / @goto-bus-stop)
+- [x] transloadit: add `transloadit:assembly-executing` event (#547 / @goto-bus-stop)
 - [ ] transloadit: add error reporting (@goto-bus-stop)
 - [ ] importurl: new plugin that imports files from urls (@arturi, @ifedapoolarewaju)
 - [ ] core: figure out per-plugin locales and i18n strings packs #491
@@ -103,7 +104,7 @@ To be released: 2018-02-10.
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] core: i18n all strings + document them
 - [ ] core: fix blank preview thumbnails for .png images in Safari 10.1 #458
-- [ ] core: Move limiting to different point, to fix StatusBar and other UI issues #468 (@goto-bus-stop)
+- [x] core: Move limiting to different point, to fix StatusBar and other UI issues #468 (#524, #526 / @goto-bus-stop)
 - [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
 - [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
 - [x] dashboard: restore focus after modal has been closed (@arturi)
