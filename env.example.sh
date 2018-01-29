@@ -8,6 +8,8 @@ export UPPYSERVER_GOOGLE_KEY="***"
 export UPPYSERVER_GOOGLE_SECRET="***"
 export UPPYSERVER_INSTAGRAM_KEY="***"
 export UPPYSERVER_INSTAGRAM_SECRET="***"
+export EDGLY_KEY="***"
+export EDGLY_SECRET="***"
 
 # Let's not set this by default, because that will make acceptance tests Always run on Saucelabs
 ## export SAUCE_ACCESS_KEY="***"
