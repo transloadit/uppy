@@ -421,6 +421,7 @@ module.exports = class Tus extends Plugin {
     const filesToUpload = fileIDs.map((fileID) => this.uppy.getFile(fileID))
 
     return this.uploadFiles(filesToUpload)
+      .then(() => null)
   }
 
   addResumableUploadsCapabilityFlag () {

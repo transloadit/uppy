@@ -68,7 +68,7 @@ Add CSS [uppy.min.css](https://transloadit.edgly.net/releases/uppy/v0.22.0/dist/
 
 Alternatively, you can also use a pre-built bundle, for example from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
-> ⚠️ The bundle currently consists of most Uppy plugins, so this method is not recommended for production, as your users will have to download all plugins, when you are likely using just a few.
+> ⚠️ The bundle currently consists of most Uppy plugins, so this method is not recommended for production, as your users will have to download all plugins when you are likely using just a few.
 
 1\. Add a script to the bottom of `<body>`:
 
@@ -95,7 +95,7 @@ Alternatively, you can also use a pre-built bundle, for example from Transloadit
 
 ## Documentation
 
-- [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods and events.
+- [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods, and events.
 - [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their options.
 - [Server](https://uppy.io/docs/server/) — setting up and running an Uppy Server instance, which adds support for Instagram, Dropbox, Google Drive and other remote sources.
 - [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps.
@@ -108,7 +108,7 @@ Alternatively, you can also use a pre-built bundle, for example from Transloadit
 - `Transloadit` — support for [Transloadit](http://transloadit.com)’s robust file uploading and encoding backend
 - `Dashboard` — universal UI with previews, progress bars, metadata editor and all the cool stuff
 - `DragDrop` — plain and simple drag and drop area
-- `FileInput` — even more plain “select files” button
+- `FileInput` — even plainer “select files” button
 - `ProgressBar` — minimal progress bar that fills itself when upload progresses
 - `StatusBar` — more detailed progress, pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included by default with `Dashboard`)
 - `Informer` — send notifications like “smile” before taking a selfie or “upload failed” when all is lost (also included by default with `Dashboard`)
@@ -126,7 +126,7 @@ Alternatively, you can also use a pre-built bundle, for example from Transloadit
   <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
 </a>
 
-We aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
+We aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox, and Opera.
 
 ## FAQ
 

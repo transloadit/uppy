@@ -613,12 +613,15 @@ module.exports = class Transloadit extends Plugin {
         const socket = this.sockets[assemblyID]
         socket.close()
       })
+      const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
+      this.uppy.addResultData(uploadID, { transloadit: assemblies })
       return Promise.resolve()
     }
 
     // If no assemblies were created for this upload, we also do not have to wait.
     // There's also no sockets or anything to close, so just return immediately.
     if (assemblyIDs.length === 0) {
+      this.uppy.addResultData(uploadID, { transloadit: [] })
       return Promise.resolve()
     }
 
@@ -691,6 +694,8 @@ module.exports = class Transloadit extends Plugin {
         if (finishedAssemblies === assemblyIDs.length) {
           // We're done, these listeners can be removed
           removeListeners()
+          const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
+          this.uppy.addResultData(uploadID, { transloadit: assemblies })
           resolve()
         }
       }
@@ -704,12 +709,14 @@ module.exports = class Transloadit extends Plugin {
       this.uppy.on('transloadit:complete', onAssemblyFinished)
       this.uppy.on('transloadit:assembly-error', onAssemblyError)
       this.uppy.on('transloadit:import-error', onImportError)
-    }).then(() => {
+    }).then((result) => {
       // Clean up uploadID → assemblyIDs, they're no longer going to be used anywhere.
       const state = this.getPluginState()
       const uploadsAssemblies = Object.assign({}, state.uploadsAssemblies)
       delete uploadsAssemblies[uploadID]
       this.setPluginState({ uploadsAssemblies })
+
+      return result
     })
   }
 

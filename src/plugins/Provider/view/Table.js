@@ -15,8 +15,11 @@ module.exports = (props) => {
   // </thead>
 
   return (
-    <table class="uppy-ProviderBrowserTable" onscroll={props.handleScroll}>
-      <tbody role="listbox" aria-label={`List of files from ${props.title}`}>
+    <div class="uppy-ProviderBrowser-body">
+      <ul class="uppy-ProviderBrowser-list"
+        onscroll={props.handleScroll}
+        role="listbox"
+        aria-label={`List of files from ${props.title}`}>
         {props.folders.map(folder => {
           let isDisabled = false
           let isChecked = props.isChecked(folder)
@@ -48,7 +51,7 @@ module.exports = (props) => {
             columns: props.columns
           })
         })}
-      </tbody>
-    </table>
+      </ul>
+    </div>
   )
 }

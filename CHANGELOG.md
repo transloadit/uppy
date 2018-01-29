@@ -92,7 +92,7 @@ What we need to do to release Uppy 1.0
 
 ## 0.23.0
 
-To be released: 2018-02-01.
+To be released: 2018-02-10.
 
 - [ ] core: return `processing` results among with `upload` results in `success` event and `upload()` promise (@goto-bus-stop)
 - [ ] transloadit: add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (@goto-bus-stop)
@@ -108,8 +108,9 @@ To be released: 2018-02-01.
 - [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
 - [x] dashboard: restore focus after modal has been closed (@arturi)
 - [ ] dashboard: option for Boolean metadata #454 (@arturi)
+- [ ] dashboard: refactor provider views (#554 / @arturi)
 - [x] dashboard: use more accessible tip lib: https://github.com/ghosh/microtip
-- [ ] core: queue preview generation #431
+- [x] core: move preview generation to separate plugin, add queuing (#431 / @richardwillars)
 - [ ] core: warn, not error, when file cannot be added due to restrictions? (@arturi)
 - [ ] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (@goto-bus-stop)
 - [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
@@ -125,6 +126,8 @@ To be released: 2018-02-01.
 - [ ] meta: add https://twin.github.io/better-file-uploads-with-shrine-direct-uploads to the next blog post
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 - [x] meta: automatically host releases on edgly and use that as our main CDN (#558 / @kvz)
+- [ ] uppy-server: pass response from uppy-server upload’s endpoint (@ifedapoolarewaju)
+- [ ] uppy-server: support localhost urls as endpoints (@ifedapoolarewaju)
 
 ## 0.22.1
 
