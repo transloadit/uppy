@@ -64,8 +64,8 @@ uppy.use(AwsS3, {
 uppy.use(Transloadit, {
   importFromUploadURLs: true,
   params: {
-    auth: { key: /* secret */ },
-    template_id: /* not secret */
+    auth: { key: 'YOUR_API_KEY' },
+    template_id: 'YOUR_TEMPLATE_ID'
   }
 })
 ```
