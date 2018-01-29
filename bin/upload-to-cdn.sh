@@ -40,11 +40,11 @@ function fatal () {
 
 pushd "${__root}" > /dev/null 2>&1
   if [ "${TRAVIS:-}" = "true" ]; then
-    if [ "${TRAVIS_PULL_REQUEST:-}" = "true" ]; then
+    if [ "${TRAVIS_PULL_REQUEST:-}" != "false" ]; then
       echo "On Travis (TRAVIS is '${TRAVIS}'), I'm not pushing releases to the CDN for pull requests (TRAVIS_PULL_REQUEST is '${TRAVIS_PULL_REQUEST}')"
       exit 0
     fi
-    if [ -z "${TRAVIS_TAG:-}" ]; then 
+    if [ -z "${TRAVIS_TAG:-}" ]; then
       echo "On Travis (TRAVIS is '${TRAVIS}'), I'm only pushing releases to the CDN when a tag is being built (TRAVIS_TAG is '${TRAVIS_TAG}')"
       exit 0
     fi
@@ -59,7 +59,7 @@ pushd "${__root}" > /dev/null 2>&1
 
   remoteVersion="${1:-}"
   version="${remoteVersion}"
-  if [ -z "${remoteVersion}" ]; then 
+  if [ -z "${remoteVersion}" ]; then
     localVersion=$(node -pe "require('./package.json').version")
     echo "${localVersion}"
     version="${localVersion}"
@@ -75,9 +75,9 @@ pushd "${__root}" > /dev/null 2>&1
   echo "✅"
 
   echo "--> Obtain relevant npm files for uppy ${version} ... "
-  if [ -z "${remoteVersion}" ]; then 
+  if [ -z "${remoteVersion}" ]; then
     npm pack || fatal "Unable to fetch "
-  else 
+  else
     npm pack "uppy@${remoteVersion}"
   fi
   echo "✅"
@@ -87,7 +87,7 @@ pushd "${__root}" > /dev/null 2>&1
   tar zxvf "uppy-${version}.tgz" -C /tmp/uppy-to-edgly/
 
   echo "--> Upload to edgly.net CDN"
-  pushd /tmp/uppy-to-edgly/package 
+  pushd /tmp/uppy-to-edgly/package
     # --delete \
     env \
       AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
@@ -97,7 +97,7 @@ pushd "${__root}" > /dev/null 2>&1
       --exclude 'website/*' \
       --exclude 'node_modules/*' \
       --exclude 'examples/*/node_modules/*' \
-    ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}"    
+    ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}"
   popd > /dev/null 2>&1
   rm -rf /tmp/uppy-to-edgly
 popd > /dev/null 2>&1
