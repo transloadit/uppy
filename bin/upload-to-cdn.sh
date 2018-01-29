@@ -39,18 +39,21 @@ function fatal () {
 }
 
 pushd "${__root}" > /dev/null 2>&1
+  if [ "${TRAVIS:-}" = "true" ]; then
+    if [ "${TRAVIS_PULL_REQUEST:-}" = "true" ]; then
+      echo "On Travis (TRAVIS is '${TRAVIS}'), I'm not pushing releases to the CDN for pull requests (TRAVIS_PULL_REQUEST is '${TRAVIS_PULL_REQUEST}')"
+      exit 0
+    fi
+    if [ -z "${TRAVIS_TAG:-}" ]; then 
+      echo "On Travis (TRAVIS is '${TRAVIS}'), I'm only pushing releases to the CDN when a tag is being built (TRAVIS_TAG is '${TRAVIS_TAG}')"
+      exit 0
+    fi
+  fi
+
   if [ -z "${EDGLY_KEY:-}" ] && [ -f ./env.sh ]; then
     source ./env.sh
   fi
-
   [ -z "${EDGLY_KEY:-}" ] && fatal "Unable to find or source EDGLY_KEY env var"
-
-  if [ "${TRAVIS:-}" = "true" ]; then
-    if [ -z "${TRAVIS_TAG:-}" ]; then 
-      echo "On Travis (TRAVIS is '${TRAVIS}'), I'm only pushing releases to the CDN when a tag is being built (TRAVIS_TAG is '${TRAVIS_TAG}')"
-      exit 0;
-    fi
-  fi
 
   type aws || pip install --user awscli
 
