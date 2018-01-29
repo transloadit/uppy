@@ -1076,22 +1076,20 @@ class Uppy {
       this.info(message, 'error', 5000)
       return Promise.reject(new Error(`onBeforeUpload: ${message}`))
     }).then(() => {
+      const { currentUploads } = this.getState()
+      // get a list of files that are currently assigned to uploads
+      const currentlyUploadingFiles = Object.keys(currentUploads).reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
+
       const waitingFileIDs = []
       Object.keys(this.getState().files).forEach((fileID) => {
         const file = this.getFile(fileID)
-
-        if (!file.progress.uploadStarted) {
+        // if the file hasn't started uploading and hasn't already been assigned to an upload..
+        if ((!file.progress.uploadStarted) && (currentlyUploadingFiles.indexOf(fileID) === -1)) {
           waitingFileIDs.push(file.id)
         }
       })
-      const { currentUploads } = this.getState()
 
-      // get a list of files that are currently assigned to uploads
-      const currentlyUploadingFiles = Object.keys(currentUploads).reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
-      // files the list of files that are waiting to be uploaded against ones that are assigned to uploads. This should give us a list of files that have not been
-      // assigned to an upload yet
-      const filesToUpload = waitingFileIDs.filter((fileId) => currentlyUploadingFiles.indexOf(fileId) < 0)
-      const uploadID = this._createUpload(filesToUpload)
+      const uploadID = this._createUpload(waitingFileIDs)
       return this._runUpload(uploadID)
     })
   }
