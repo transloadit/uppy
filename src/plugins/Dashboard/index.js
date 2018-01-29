@@ -46,8 +46,14 @@ module.exports = class Dashboard extends Plugin {
         dashboardTitle: 'Uppy Dashboard',
         copyLinkToClipboardSuccess: 'Link copied to clipboard.',
         copyLinkToClipboardFallback: 'Copy the URL below',
+        copyLink: 'Copy link',
         fileSource: 'File source',
         done: 'Done',
+        name: 'Name',
+        removeFile: 'Remove file',
+        editFile: 'Edit file',
+        editing: 'Editing',
+        finishEditingFile: 'Finish editing file',
         localDisk: 'Local Disk',
         myDevice: 'My Device',
         dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
@@ -57,6 +63,14 @@ module.exports = class Dashboard extends Plugin {
         numberOfSelectedFiles: 'Number of selected files',
         uploadAllNewFiles: 'Upload all new files',
         emptyFolderAdded: 'No files were added from empty folder',
+        uploadXFiles: {
+          0: 'Upload %{smart_count} file',
+          1: 'Upload %{smart_count} files'
+        },
+        uploadXNewFiles: {
+          0: 'Upload +%{smart_count} file',
+          1: 'Upload +%{smart_count} files'
+        },
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
           1: 'Added %{smart_count} files from %{folder}'
@@ -500,7 +514,8 @@ module.exports = class Dashboard extends Plugin {
       this.uppy.use(StatusBar, {
         target: this,
         hideUploadButton: this.opts.hideUploadButton,
-        hideAfterFinish: this.opts.hideProgressAfterFinish
+        hideAfterFinish: this.opts.hideProgressAfterFinish,
+        locale: this.opts.locale
       })
     }
 
