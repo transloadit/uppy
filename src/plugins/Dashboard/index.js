@@ -87,7 +87,6 @@ module.exports = class Dashboard extends Plugin {
       width: 750,
       height: 550,
       thumbnailWidth: 280,
-      semiTransparent: false,
       defaultTabIcon: defaultTabIcon,
       showProgressDetails: false,
       hideUploadButton: false,
@@ -97,6 +96,7 @@ module.exports = class Dashboard extends Plugin {
       disableStatusBar: false,
       disableInformer: false,
       disableThumbnailGenerator: false,
+      disablePageScrollWhenModalOpen: true,
       onRequestCloseModal: () => this.closeModal(),
       locale: defaultLocale
     }
@@ -225,10 +225,9 @@ module.exports = class Dashboard extends Plugin {
     // save active element, so we can restore focus when modal is closed
     this.savedActiveElement = document.activeElement
 
-    // add class to body that sets position fixed, move everything back
-    // to scroll position
-    document.body.classList.add('uppy-Dashboard-isOpen')
-    document.body.style.top = `-${this.savedScrollPosition}px`
+    if (this.opts.disablePageScrollWhenModalOpen) {
+      document.body.classList.add('uppy-Dashboard-isOpen')
+    }
 
     this.updateDashboardElWidth()
     this.setFocusToFirstNode()
@@ -239,9 +238,11 @@ module.exports = class Dashboard extends Plugin {
       isHidden: true
     })
 
-    document.body.classList.remove('uppy-Dashboard-isOpen')
+    if (this.opts.disablePageScrollWhenModalOpen) {
+      document.body.classList.remove('uppy-Dashboard-isOpen')
+    }
+
     this.savedActiveElement.focus()
-    window.scrollTo(0, this.savedScrollPosition)
   }
 
   isModalOpen () {
