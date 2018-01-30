@@ -16,6 +16,10 @@ Uppy comes with two state management solutions (stores):
  - `DefaultStore`, a simple object-based store.
  - `ReduxStore`, a store that uses a key in a Redux store.
 
+There are also some third party stores:
+
+ - [uppy-store-ngrx](https://github.com/rimlin/uppy-store-ngrx/), keeping Uppy state in a key in an Ngrx store for use with Angular.
+
 ## Using Stores
 
 To use a store, pass an instance to the [`store` option](/docs/uppy#store-defaultstore) in the Uppy constructor:
