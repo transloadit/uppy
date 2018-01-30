@@ -211,8 +211,8 @@ module.exports = class Dashboard extends Plugin {
     // save active element, so we can restore focus when modal is closed
     this.savedActiveElement = document.activeElement
 
-    if (!this.opts.disablePageScrollWhenModalOpen) {
-      document.body.classList.remove('uppy-Dashboard-isOpen')
+    if (this.opts.disablePageScrollWhenModalOpen) {
+      document.body.classList.add('uppy-Dashboard-isOpen')
     }
 
     this.updateDashboardElWidth()
@@ -224,7 +224,7 @@ module.exports = class Dashboard extends Plugin {
       isHidden: true
     })
 
-    if (!this.opts.disablePageScrollWhenModalOpen) {
+    if (this.opts.disablePageScrollWhenModalOpen) {
       document.body.classList.remove('uppy-Dashboard-isOpen')
     }
 
