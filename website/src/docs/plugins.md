@@ -8,7 +8,7 @@ order: 10
 Plugins are what makes Uppy useful: they help select, manipulate and upload files.
 
 - **Acquirers (various ways of picking files):**
-  - [Dashboard](/docs/dashboard) — full featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more
+  - [Dashboard](/docs/dashboard) — full featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more. Includes `StatusBar` and `Informer` plugins by default
   - [DragDrop](/docs/dragdrop) — plain and simple drag and drop area
   - [FileInput](/docs/fileinput) — even more plain and simple, just a button
   - [Provider Plugins](#provider-plugins) (remote sources that work through [Uppy Server](/docs/uppy-server/)): Instagram, GoogleDrive, Dropbox
