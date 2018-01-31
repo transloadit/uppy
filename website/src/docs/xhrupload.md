@@ -32,6 +32,37 @@ This works similarly to using a `<form>` element with an `<input type="file">` f
 When `true`, file metadata is also sent to the endpoint as separate form fields.
 When `false`, only the file contents are sent.
 
+### `data: {}`
+
+A hash with additional data that you want included in the [FormData][] for every upload.
+```js
+...
+data: {
+  // Static include for all files of this instance
+  mySuperCoolProperty: 'This is value for "mySuperCoolProperty" key in the FormData'
+},
+...
+```
+You may also supply a function that returns a hash with the data to be included for each file. 
+```js
+...
+data: (file) => {
+  return {
+    extension: file.extension
+  }
+},
+...
+```
+Alternatively, the function may return a non-object (i.e. string, number) which will be included in each upload's form  
+data with the key of "data".
+```js
+...
+data: (file) => {
+  return file.extension // the extension will go in the form data with the key of "data"
+},
+...
+```
+
 ### `fieldName: 'files[]'`
 
 When `formData` is true, this is used as the form field name for the file to be uploaded.

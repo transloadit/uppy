@@ -25,6 +25,7 @@ module.exports = class XHRUpload extends Plugin {
     // Default options
     const defaultOptions = {
       formData: true,
+      data: {},
       fieldName: 'files[]',
       method: 'post',
       metaFields: null,
@@ -89,6 +90,19 @@ module.exports = class XHRUpload extends Plugin {
     metaFields.forEach((item) => {
       formPost.append(item, file.meta[item])
     })
+
+    let data = opts.data
+    if (typeof opts.data === 'function') {
+      data = opts.data(file)
+    }
+
+    if (data != null) {
+      (typeof data === 'object')
+        ? Object.keys(data).forEach((key) => {
+          formPost.append(key, data[key])
+        })
+        : formPost.append('data', data)
+    }
 
     formPost.append(opts.fieldName, file.data)
 
