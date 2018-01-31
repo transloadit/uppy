@@ -120,6 +120,7 @@ module.exports = class Dashboard extends Plugin {
     this.showPanel = this.showPanel.bind(this)
     this.getFocusableNodes = this.getFocusableNodes.bind(this)
     this.setFocusToFirstNode = this.setFocusToFirstNode.bind(this)
+    this.handlePopState = this.handlePopState.bind(this)
     this.maintainFocus = this.maintainFocus.bind(this)
 
     this.initEvents = this.initEvents.bind(this)
@@ -200,6 +201,21 @@ module.exports = class Dashboard extends Plugin {
     if (focusableNodes.length) focusableNodes[0].focus()
   }
 
+  updateBrowserHistory () {
+    // push to history so that the page is not lost on browser back button press
+    history.pushState({ uppyDashboard: 'open' }, '')
+
+    // listen for back button presses
+    window.addEventListener('popstate', this.handlePopState, false)
+  }
+
+  handlePopState (event) {
+    // check if the state no longer contains our `uppyDashboard: 'open'` flag
+    if (!event.state || !event.state.uppyDashboard || event.state.uppyDashboard !== 'open') {
+      this.closeModal()
+    }
+  }
+
   maintainFocus (event) {
     var focusableNodes = this.getFocusableNodes()
     var focusedItemIndex = focusableNodes.indexOf(document.activeElement)
@@ -231,6 +247,7 @@ module.exports = class Dashboard extends Plugin {
 
     this.updateDashboardElWidth()
     this.setFocusToFirstNode()
+    this.updateBrowserHistory()
   }
 
   closeModal () {
@@ -243,6 +260,8 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.savedActiveElement.focus()
+
+    window.removeEventListener('popstate', this.handlePopState, false)
   }
 
   isModalOpen () {
@@ -334,6 +353,7 @@ module.exports = class Dashboard extends Plugin {
     this.removeDragDropListener()
     this.uppy.off('dashboard:file-card', this.handleFileCard)
     window.removeEventListener('resize', this.updateDashboardElWidth)
+    window.removeEventListener('popstate', this.handlePopState, false)
   }
 
   updateDashboardElWidth () {
