@@ -63,36 +63,55 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * Returns a Canvas with the resized image on it.
    */
   resizeImage (image, targetWidth, targetHeight) {
-    let sourceWidth = image.width
-    let sourceHeight = image.height
+    // let sourceWidth = image.width
+    // let sourceHeight = image.height
 
-    if (targetHeight < image.height / 2) {
-      const steps = Math.floor(
-        Math.log(image.width / targetWidth) / Math.log(2)
-      )
-      const stepScaled = this.downScaleInSteps(image, steps)
-      image = stepScaled.image
-      sourceWidth = stepScaled.sourceWidth
-      sourceHeight = stepScaled.sourceHeight
+    // if (targetHeight < image.height / 2) {
+    //   const steps = Math.floor(
+    //     Math.log(image.width / targetWidth) / Math.log(2)
+    //   )
+    //   const stepScaled = this.downScaleInSteps(image, steps)
+    //   image = stepScaled.image
+    //   sourceWidth = stepScaled.sourceWidth
+    //   sourceHeight = stepScaled.sourceHeight
+    // }
+
+    var steps = Math.ceil(Math.log2(image.width / targetWidth))
+    var sW = targetWidth * Math.pow(2, steps - 1)
+    var sH = targetHeight * Math.pow(2, steps - 1)
+    var x = 2
+
+    while (steps--) {
+      console.log(sW, sH)
+      var canvas = document.createElement('canvas')
+      canvas.width = sW
+      canvas.height = sH
+      canvas.getContext('2d').drawImage(image, 0, 0, sW, sH)
+      image = canvas
+
+      sW = Math.round(sW / x)
+      sH = Math.round(sH / x)
     }
 
-    const canvas = document.createElement('canvas')
-    canvas.width = targetWidth
-    canvas.height = targetHeight
+    return image
 
-    const context = canvas.getContext('2d')
-    context.drawImage(
-      image,
-      0,
-      0,
-      sourceWidth,
-      sourceHeight,
-      0,
-      0,
-      targetWidth,
-      targetHeight
-    )
-    return canvas
+    // const canvas = document.createElement('canvas')
+    // canvas.width = targetWidth
+    // canvas.height = targetHeight
+
+    // const context = canvas.getContext('2d')
+    // context.drawImage(
+    //   image,
+    //   0,
+    //   0,
+    //   sourceWidth,
+    //   sourceHeight,
+    //   0,
+    //   0,
+    //   targetWidth,
+    //   targetHeight
+    // )
+    // return canvas
   }
 
   /**
