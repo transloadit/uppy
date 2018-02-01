@@ -18,7 +18,7 @@ Uppy comes with two state management solutions (stores):
 
 There are also some third party stores:
 
- - [uppy-store-ngrx](https://github.com/rimlin/uppy-store-ngrx/), keeping Uppy state in a key in an Ngrx store for use with Angular.
+ - [uppy-store-ngrx](https://github.com/rimlin/uppy-store-ngrx/), keeping Uppy state in a key in an [Ngrx](https://github.com/ngrx/platform) store for use with Angular.
 
 ## Using Stores
 
