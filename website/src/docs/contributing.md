@@ -26,7 +26,10 @@ Unit tests are using Jest and can be run with:
 
 For acceptance (or end to end) tests, we use [Webdriverio](http://webdriver.io). For it to run locally, you need to install selenium standalone server, just follow [the guide](http://webdriver.io/guide.html) to do so. You can also install Selenium Standalone server from NPM:
 
-`npm install selenium-standalone`
+```bash
+npm install selenium-standalone -g
+selenium-standalone install
+```
 
 And then launch it:
 
