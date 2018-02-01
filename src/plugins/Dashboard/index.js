@@ -1,20 +1,24 @@
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const dragDrop = require('drag-drop')
-const Dashboard = require('./Dashboard')
+const DashboardUI = require('./Dashboard')
 const StatusBar = require('../StatusBar')
 const Informer = require('../Informer')
-const { findAllDOMElements } = require('../../core/Utils')
+const ThumbnailGenerator = require('../ThumbnailGenerator')
+const { findAllDOMElements, toArray } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
 
+// Some code for managing focus was adopted from https://github.com/ghosh/micromodal
+// MIT licence, https://github.com/ghosh/micromodal/blob/master/LICENSE.md
+// Copyright (c) 2017 Indrashish Ghosh
 const FOCUSABLE_ELEMENTS = [
   'a[href]',
   'area[href]',
-  'input:not([disabled]):not([type="hidden"])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  'button:not([disabled])',
+  'input:not([disabled]):not([type="hidden"]):not([aria-hidden])',
+  'select:not([disabled]):not([aria-hidden])',
+  'textarea:not([disabled]):not([aria-hidden])',
+  'button:not([disabled]):not([aria-hidden])',
   'iframe',
   'object',
   'embed',
@@ -25,7 +29,7 @@ const FOCUSABLE_ELEMENTS = [
 /**
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
-module.exports = class DashboardUI extends Plugin {
+module.exports = class Dashboard extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Dashboard'
@@ -42,8 +46,14 @@ module.exports = class DashboardUI extends Plugin {
         dashboardTitle: 'Uppy Dashboard',
         copyLinkToClipboardSuccess: 'Link copied to clipboard.',
         copyLinkToClipboardFallback: 'Copy the URL below',
+        copyLink: 'Copy link',
         fileSource: 'File source',
         done: 'Done',
+        name: 'Name',
+        removeFile: 'Remove file',
+        editFile: 'Edit file',
+        editing: 'Editing',
+        finishEditingFile: 'Finish editing file',
         localDisk: 'Local Disk',
         myDevice: 'My Device',
         dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
@@ -53,6 +63,14 @@ module.exports = class DashboardUI extends Plugin {
         numberOfSelectedFiles: 'Number of selected files',
         uploadAllNewFiles: 'Upload all new files',
         emptyFolderAdded: 'No files were added from empty folder',
+        uploadXFiles: {
+          0: 'Upload %{smart_count} file',
+          1: 'Upload %{smart_count} files'
+        },
+        uploadXNewFiles: {
+          0: 'Upload +%{smart_count} file',
+          1: 'Upload +%{smart_count} files'
+        },
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
           1: 'Added %{smart_count} files from %{folder}'
@@ -63,20 +81,24 @@ module.exports = class DashboardUI extends Plugin {
     // set default options
     const defaultOptions = {
       target: 'body',
-      getMetaFromForm: true,
       metaFields: [],
       trigger: '#uppy-select-files',
       inline: false,
       width: 750,
       height: 550,
-      semiTransparent: false,
+      thumbnailWidth: 280,
       defaultTabIcon: defaultTabIcon,
       showProgressDetails: false,
       hideUploadButton: false,
+      hideProgressAfterFinish: false,
       note: null,
       closeModalOnClickOutside: false,
-      locale: defaultLocale,
-      onRequestCloseModal: () => this.closeModal()
+      disableStatusBar: false,
+      disableInformer: false,
+      disableThumbnailGenerator: false,
+      disablePageScrollWhenModalOpen: true,
+      onRequestCloseModal: () => this.closeModal(),
+      locale: defaultLocale
     }
 
     // merge default options with the ones set by user
@@ -88,9 +110,9 @@ module.exports = class DashboardUI extends Plugin {
     this.translator = new Translator({locale: this.locale})
     this.i18n = this.translator.translate.bind(this.translator)
 
+    this.openModal = this.openModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
     this.requestCloseModal = this.requestCloseModal.bind(this)
-    this.openModal = this.openModal.bind(this)
     this.isModalOpen = this.isModalOpen.bind(this)
 
     this.addTarget = this.addTarget.bind(this)
@@ -105,9 +127,8 @@ module.exports = class DashboardUI extends Plugin {
     this.handleClickOutside = this.handleClickOutside.bind(this)
     this.handleFileCard = this.handleFileCard.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
-    this.pauseAll = this.pauseAll.bind(this)
-    this.resumeAll = this.resumeAll.bind(this)
-    this.cancelAll = this.cancelAll.bind(this)
+    this.handlePaste = this.handlePaste.bind(this)
+    this.handleInputChange = this.handleInputChange.bind(this)
     this.updateDashboardElWidth = this.updateDashboardElWidth.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
@@ -129,8 +150,7 @@ module.exports = class DashboardUI extends Plugin {
     const target = {
       id: callerPluginId,
       name: callerPluginName,
-      type: callerPluginType,
-      isHidden: true
+      type: callerPluginType
     }
 
     const state = this.getPluginState()
@@ -177,8 +197,6 @@ module.exports = class DashboardUI extends Plugin {
 
   setFocusToFirstNode () {
     const focusableNodes = this.getFocusableNodes()
-    // console.log(focusableNodes)
-    // console.log(focusableNodes[0])
     if (focusableNodes.length) focusableNodes[0].focus()
   }
 
@@ -203,16 +221,16 @@ module.exports = class DashboardUI extends Plugin {
     })
 
     // save scroll position
-    this.savedDocumentScrollPosition = window.scrollY
+    this.savedScrollPosition = window.scrollY
+    // save active element, so we can restore focus when modal is closed
+    this.savedActiveElement = document.activeElement
 
-    // add class to body that sets position fixed, move everything back
-    // to scroll position
-    document.body.classList.add('is-UppyDashboard-open')
-    document.body.style.top = `-${this.savedDocumentScrollPosition}px`
+    if (this.opts.disablePageScrollWhenModalOpen) {
+      document.body.classList.add('uppy-Dashboard-isOpen')
+    }
 
-    // timeout is needed because yo-yo/morphdom/nanoraf; not needed without nanoraf
-    setTimeout(this.setFocusToFirstNode, 100)
-    setTimeout(this.updateDashboardElWidth, 100)
+    this.updateDashboardElWidth()
+    this.setFocusToFirstNode()
   }
 
   closeModal () {
@@ -220,9 +238,11 @@ module.exports = class DashboardUI extends Plugin {
       isHidden: true
     })
 
-    document.body.classList.remove('is-UppyDashboard-open')
+    if (this.opts.disablePageScrollWhenModalOpen) {
+      document.body.classList.remove('uppy-Dashboard-isOpen')
+    }
 
-    window.scrollTo(0, this.savedDocumentScrollPosition)
+    this.savedActiveElement.focus()
   }
 
   isModalOpen () {
@@ -240,6 +260,41 @@ module.exports = class DashboardUI extends Plugin {
     if (this.opts.closeModalOnClickOutside) this.requestCloseModal()
   }
 
+  handlePaste (ev) {
+    const files = toArray(ev.clipboardData.items)
+    files.forEach((file) => {
+      if (file.kind !== 'file') return
+
+      const blob = file.getAsFile()
+      if (!blob) {
+        this.uppy.log('[Dashboard] File pasted, but the file blob is empty')
+        this.uppy.info('Error pasting file', 'error')
+        return
+      }
+      this.uppy.log('[Dashboard] File pasted')
+      this.uppy.addFile({
+        source: this.id,
+        name: file.name,
+        type: file.type,
+        data: blob
+      })
+    })
+  }
+
+  handleInputChange (ev) {
+    ev.preventDefault()
+    const files = toArray(ev.target.files)
+
+    files.forEach((file) => {
+      this.uppy.addFile({
+        source: this.id,
+        name: file.name,
+        type: file.type,
+        data: file
+      })
+    })
+  }
+
   initEvents () {
     // Modal open button
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
@@ -248,7 +303,7 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     if (!this.opts.inline && !showModalTrigger) {
-      this.uppy.log('Dashboard modal trigger not found, you won’t be able to select files. Make sure `trigger` is set correctly in Dashboard options', 'error')
+      this.uppy.log('Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options unless you are planning to call openModal() method yourself')
     }
 
     if (!this.opts.inline) {
@@ -262,6 +317,7 @@ module.exports = class DashboardUI extends Plugin {
 
     this.uppy.on('dashboard:file-card', this.handleFileCard)
 
+    this.updateDashboardElWidth()
     window.addEventListener('resize', this.updateDashboardElWidth)
   }
 
@@ -276,14 +332,12 @@ module.exports = class DashboardUI extends Plugin {
     }
 
     this.removeDragDropListener()
-
     this.uppy.off('dashboard:file-card', this.handleFileCard)
-
     window.removeEventListener('resize', this.updateDashboardElWidth)
   }
 
   updateDashboardElWidth () {
-    const dashboardEl = this.el.querySelector('.UppyDashboard-inner')
+    const dashboardEl = this.el.querySelector('.uppy-Dashboard-inner')
     this.uppy.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
     this.setPluginState({
@@ -308,18 +362,6 @@ module.exports = class DashboardUI extends Plugin {
         data: file
       })
     })
-  }
-
-  cancelAll () {
-    this.uppy.emit('cancel-all')
-  }
-
-  pauseAll () {
-    this.uppy.emit('pause-all')
-  }
-
-  resumeAll () {
-    this.uppy.emit('resume-all')
   }
 
   render (state) {
@@ -395,7 +437,7 @@ module.exports = class DashboardUI extends Plugin {
       this.uppy.emit('dashboard:file-card')
     }
 
-    return Dashboard({
+    return DashboardUI({
       state: state,
       modal: pluginState,
       newFiles: newFiles,
@@ -411,15 +453,14 @@ module.exports = class DashboardUI extends Plugin {
       id: this.id,
       closeModal: this.requestCloseModal,
       handleClickOutside: this.handleClickOutside,
+      handleInputChange: this.handleInputChange,
+      handlePaste: this.handlePaste,
       showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
-      semiTransparent: this.opts.semiTransparent,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
       log: this.uppy.log,
       i18n: this.i18n,
-      pauseAll: this.pauseAll,
-      resumeAll: this.resumeAll,
       addFile: this.uppy.addFile,
       removeFile: this.uppy.removeFile,
       info: this.uppy.info,
@@ -473,13 +514,21 @@ module.exports = class DashboardUI extends Plugin {
     if (!this.opts.disableStatusBar) {
       this.uppy.use(StatusBar, {
         target: this,
-        hideUploadButton: this.opts.hideUploadButton
+        hideUploadButton: this.opts.hideUploadButton,
+        hideAfterFinish: this.opts.hideProgressAfterFinish,
+        locale: this.opts.locale
       })
     }
 
     if (!this.opts.disableInformer) {
       this.uppy.use(Informer, {
         target: this
+      })
+    }
+
+    if (!this.opts.disableThumbnailGenerator) {
+      this.uppy.use(ThumbnailGenerator, {
+        thumbnailWidth: this.opts.thumbnailWidth
       })
     }
 
@@ -491,14 +540,19 @@ module.exports = class DashboardUI extends Plugin {
   uninstall () {
     if (!this.opts.disableInformer) {
       const informer = this.uppy.getPlugin('Informer')
+      // Checking if this plugin exists, in case it was removed by uppy-core
+      // before the Dashboard was.
       if (informer) this.uppy.removePlugin(informer)
     }
 
     if (!this.opts.disableStatusBar) {
       const statusBar = this.uppy.getPlugin('StatusBar')
-      // Checking if this plugin exists, in case it was removed by uppy-core
-      // before the Dashboard was.
       if (statusBar) this.uppy.removePlugin(statusBar)
+    }
+
+    if (!this.opts.disableThumbnailGenerator) {
+      const thumbnail = this.uppy.getPlugin('ThumbnailGenerator')
+      if (thumbnail) this.uppy.removePlugin(thumbnail)
     }
 
     const plugins = this.opts.plugins || []

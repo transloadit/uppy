@@ -1,7 +1,7 @@
 const Plugin = require('../core/Plugin')
 const { toArray } = require('../core/Utils')
 const Translator = require('../core/Translator')
-const html = require('yo-yo')
+const { h } = require('preact')
 
 module.exports = class FileInput extends Plugin {
   constructor (uppy, opts) {
@@ -12,19 +12,17 @@ module.exports = class FileInput extends Plugin {
 
     const defaultLocale = {
       strings: {
-        selectToUpload: 'Select to upload'
+        chooseFiles: 'Choose files'
       }
     }
 
     // Default options
     const defaultOptions = {
-      target: '.UppyForm',
-      getMetaFromForm: true,
-      replaceTargetContent: true,
-      multipleFiles: true,
+      target: null,
+      allowMultipleFiles: true,
       pretty: true,
-      locale: defaultLocale,
-      inputName: 'files[]'
+      inputName: 'files[]',
+      locale: defaultLocale
     }
 
     // Merge default options with the ones set by user
@@ -38,10 +36,12 @@ module.exports = class FileInput extends Plugin {
     this.i18n = this.translator.translate.bind(this.translator)
 
     this.render = this.render.bind(this)
+    this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
   handleInputChange (ev) {
-    this.uppy.log('All right, something selected through input...')
+    this.uppy.log('[FileInput] Something selected through input...')
 
     const files = toArray(ev.target.files)
 
@@ -55,26 +55,34 @@ module.exports = class FileInput extends Plugin {
     })
   }
 
+  handleClick (ev) {
+    this.input.click()
+  }
+
   render (state) {
-    const hiddenInputStyle = 'width: 0.1px; height: 0.1px; opacity: 0; overflow: hidden; position: absolute; z-index: -1;'
+    const hiddenInputStyle = {
+      width: '0.1px',
+      height: '0.1px',
+      opacity: 0,
+      overflow: 'hidden',
+      position: 'absolute',
+      zIndex: -1
+    }
 
-    const input = html`<input class="uppy-FileInput-input"
-           style="${this.opts.pretty ? hiddenInputStyle : ''}"
-           type="file"
-           name=${this.opts.inputName}
-           onchange=${this.handleInputChange.bind(this)}
-           multiple="${this.opts.multipleFiles ? 'true' : 'false'}"
-           value="">`
-
-    return html`<form class="Uppy uppy-FileInput-form">
-      ${input}
-      ${this.opts.pretty
-        ? html`<button class="uppy-FileInput-btn" type="button" onclick=${() => input.click()}>
-          ${this.i18n('selectToUpload')}
-        </button>`
-       : null
-     }
-    </form>`
+    return <div class="uppy uppy-FileInput-container">
+      <input class="uppy-FileInput-input"
+        style={this.opts.pretty && hiddenInputStyle}
+        type="file"
+        name={this.opts.inputName}
+        onchange={this.handleInputChange}
+        multiple={this.opts.allowMultipleFiles}
+        ref={(input) => { this.input = input }} />
+      {this.opts.pretty &&
+        <button class="uppy-FileInput-btn" type="button" onclick={this.handleClick}>
+          {this.i18n('chooseFiles')}
+        </button>
+      }
+    </div>
   }
 
   install () {

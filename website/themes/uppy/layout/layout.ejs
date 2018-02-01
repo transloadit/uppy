@@ -1,6 +1,6 @@
 <% var isIndex = page.path === 'index.html' %>
 <% var title = page.title ? page.title + ' — ' + config.title : config.title %>
-<% var excerpt = page.excerpt ? page.excerpt.replace(/(<([^>]+)>)/ig, '') : config.description %>
+<% var excerpt = page.excerpt ? page.excerpt.replace(/(<([^>]+)>)/ig, '').substring(0, 400) : config.description %>
 <% var image = page.image ? page.image : 'http://uppy.io/images/uppy-social.jpg' %>
 
 <!DOCTYPE html>

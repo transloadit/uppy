@@ -5,7 +5,7 @@ title: "Uppy"
 permalink: docs/uppy/
 ---
 
-Core module that orchistrated everything in Uppy, exposing `state`, `events` and `methods`.
+Core module that orchestrates everything in Uppy, exposing `state`, `events` and `methods`.
 
 ## Options
 
@@ -118,7 +118,7 @@ locale: {
 }
 ```
 
-As well as the pluralization function, which is used to determin which string will be used for the provided `smart_count` number.
+As well as the pluralization function, which is used to determine which string will be used for the provided `smart_count` number.
 
 For example, for Icelandic language the pluralization function will be:
 
@@ -149,7 +149,7 @@ const Uppy = require('uppy/lib/core')
 const DragDrop = require('uppy/lib/plugins/DragDrop')
 
 const uppy = Uppy()
-uppy.use(DragDrop, {target: 'body'})
+uppy.use(DragDrop, { target: 'body' })
 ```
 
 ### `uppy.run()`
@@ -174,7 +174,7 @@ uppy.addFile({
 })
 ```
 
-`addFile` attemps to determine file type by [magic bytes](https://github.com/sindresorhus/file-type) + the provided `type` + extension; then checks if the file can be added, considering `uppy.opts.restrictions`, sets metadata and generates a preview, if it’s an image.
+`addFile` attempts to determine file type by [magic bytes](https://github.com/sindresorhus/file-type) + the provided `type` + extension; then checks if the file can be added, considering `uppy.opts.restrictions`, sets metadata and generates a preview, if it’s an image.
 
 If `uppy.opts.autoProceed === true`, Uppy will begin uploading after the first file is added.
 
@@ -184,9 +184,14 @@ A shortcut method that returns a specific file object from `uppy.state` by its `
 
 ```js
 const file = uppy.getFile('uppyteamkongjpg1501851828779')
-const img = document.createElement('img')
-img.src = file.preview
-document.body.appendChild(img)
+
+file.id        // 'uppyteamkongjpg1501851828779'
+file.name      // 'nature.jpg'
+file.extension // '.jpg'
+file.type      // 'image/jpeg'
+file.data      // the Blob object
+file.size      // 3947642 (returns 'N/A' if size cannot be determined)
+file.preview   // value that can be used to populate "src" attribute of an "img" tag
 ```
 
 ### `uppy.setState(patch)`
@@ -220,7 +225,7 @@ uppy.setState({
 })
 ```
 
-We don’t mutate `uppy.state`, so internally `setState` creates a new copy of state and replaces uppy.state with it. However, when updating values, it’s your responsibility to not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here’s an example from Uppy.Core that updates progress for a particular file in state:
+We don’t mutate `uppy.state`, so internally `setState` creates a new copy of state and replaces `uppy.state` with it. However, when updating values, it’s your responsibility to not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here’s an example from Uppy.Core that updates progress for a particular file in state:
 
 ```js
 const updatedFiles = Object.assign({}, uppy.getState().files)
@@ -243,10 +248,10 @@ Returns `uppy.state`, which you can also use directly.
 
 ### `uppy.setMeta(data)`
 
-Alters global `meta` object is state, the one that can be set in Uppy options and gets merged with all newly added files.
+Alters global `meta` object is state, the one that can be set in Uppy options and gets merged with all newly added files. Calling `setMeta` will also merge newly added meta data with previously selected files.
 
 ```js
-uppy.setMeta({ resize: 1500 })
+uppy.setMeta({ resize: 1500, token: 'ab5kjfg' })
 ```
 
 ### `uppy.setFileMeta(fileID, data)`
@@ -308,7 +313,7 @@ uppy.upload().then((result) => {
 
 ### `uppy.on('event', action)`
 
-Subscribe to an uppy-event. See full list of events below.
+Subscribe to an uppy-event. See below for the full list of events.
 
 ## Events
 
@@ -334,15 +339,15 @@ uppy.on('upload-progress', (data) => {
 
 ### `upload-success`
 
-Fired when single upload is complete.
+Fired each time a single upload is complete.
 
 ``` javascript
-uppy.on('upload-success', (fileId, url) => {
-  console.log(url)
+uppy.on('upload-success', (fileId, resp, uploadURL) => {
+  console.log(uploadURL)
   var img = new Image()
   img.width = 300
   img.alt = fileId
-  img.src = url
+  img.src = uploadURL
   document.body.appendChild(img)
 })
 ```
@@ -351,7 +356,7 @@ uppy.on('upload-success', (fileId, url) => {
 
 Fired when all uploads are complete.
 
-The `result` parameter is an object with arrays of `successful` and `failed` files, just like in [`uppy.upload()`](#uppy-upload)'s return value.
+The `result` parameter is an object with arrays of `successful` and `failed` files, just like in [`uppy.upload()`](#uppy-upload)’s return value.
 
 ``` javascript
 uppy.on('complete', (result) => {

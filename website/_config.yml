@@ -7,14 +7,14 @@ google_analytics: UA-63083-12
 root_domain: uppy.io
 
 # Site
-title: Uppy
+title: Uppy File Uploader
 subtitle: "Almost as cute as a puppy"
 logo_large: /images/logos/uppy-dog-full.svg
 logo_medium: /images/logos/uppy-dog-head-arrow.svg
 logo_icon: /images/logos/uppy-dog-head-arrow.png
 description: >
-    Uppy is a sleek, modular file uploader that integrates seemlessly with any framework. 
-    It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to the final destination. 
+    Sleek, modular file uploader that integrates seamlessly with any framework.
+    It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to the final destination.
     It’s fast, easy to use and let's you worry about more important problems than building a file uploader.
 descriptionWho: >
   Uppy is brought to you by the people

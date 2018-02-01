@@ -1,17 +1,24 @@
 ---
 type: docs
-order: 4
+order: 3
 title: "Custom Stores"
 permalink: docs/stores/
 ---
 
+> This section is about storing internal application state, if you work with React/Redux, for example. If none of this rings a bell, you can safely skip this section.
+
 By default, Uppy stores its internal state in an object.
+
 If your app uses a state management library such as [Redux](https://redux.js.org), it can be useful to have Uppy store its state there instead—that way, you could write custom uploader UI components in the same way as the other components in the application.
 
 Uppy comes with two state management solutions (stores):
 
  - `DefaultStore`, a simple object-based store.
  - `ReduxStore`, a store that uses a key in a Redux store.
+
+There are also some third party stores:
+
+ - [uppy-store-ngrx](https://github.com/rimlin/uppy-store-ngrx/), keeping Uppy state in a key in an [Ngrx](https://github.com/ngrx/platform) store for use with Angular.
 
 ## Using Stores
 

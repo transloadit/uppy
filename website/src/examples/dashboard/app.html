@@ -42,28 +42,33 @@
   }
 
   // try to get options from localStorage, if its empty, set to defaultOpts
-  window.uppyOptions2 = JSON.parse(localStorage.getItem('uppyOptions2')) || {}
-  if (isObjEmpty(window.uppyOptions2)) {
-    window.uppyOptions2 = defaultOpts
-    localStorage.setItem('uppyOptions2', JSON.stringify(window.uppyOptions2))
+  try {
+    window.uppyOptions = JSON.parse(localStorage.getItem('uppyOptions')) || {}
+  } catch (err) {
+    window.uppyOptions = {}
+  }
+  
+  if (isObjEmpty(window.uppyOptions)) {
+    window.uppyOptions = defaultOpts
+    localStorage.setItem('uppyOptions', JSON.stringify(window.uppyOptions))
   }
 
   function toggleModalBtn () {
     var btn = document.querySelector('.UppyModalOpenerBtn')
-    window.uppyOptions2.DashboardInline
+    window.uppyOptions.DashboardInline
       ? btn.style.display = 'none'
       : btn.style.display = 'block'
   }
 
   // Map input state to options
   Object.keys(optionInputs).forEach(function (item) {
-    optionInputs[item].checked = window.uppyOptions2[item]
+    optionInputs[item].checked = window.uppyOptions[item]
   })
 
   // When input value changes, update options
   Object.keys(optionInputs).forEach(function (item) {
     optionInputs[item].addEventListener('change', function () {
-      window.uppyOptions2[item] = optionInputs[item].checked
+      window.uppyOptions[item] = optionInputs[item].checked
       localStorage.setItem('uppyOptions', JSON.stringify(window.uppyOptions))
 
       toggleModalBtn()

@@ -1,9 +1,4 @@
-// @import '_variables.scss';
-// @import '_utils.scss';
-// @import '_animation.scss';
-// @import '_common.scss';
-
-.UppyProvider-auth, .UppyProvider-error, .UppyProvider-loading {
+.uppy-Provider-auth, .uppy-Provider-error, .uppy-Provider-loading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,7 +6,7 @@
   height: 100%;
 }
 
-.UppyProvider-authTitle {
+.uppy-Provider-authTitle {
   font-size: 22px;
   line-height: 1.35;
   font-weight: 300;
@@ -21,12 +16,13 @@
   text-align: center;
 }
 
-.UppyProvider-authBtn {
+.uppy-Provider-authBtn {
   @include reset-button;
   border-radius: 6px;
   background-color: $color-cornflower-blue;
   color: $color-white;
   font-size: 20px;
+  font-weight: 400;
   padding: 12px 46px;
   transition: background-color 0.3s;
   text-decoration: none;
@@ -39,70 +35,49 @@
   }
 }
 
-// .UppyProvider-breadcrumbs {
-//   color: $color-black;
-//   font-size: 12px;
-//   line-height: 40px;
-//   list-style-type: none;
-//   margin: 0;
-//   margin-left: 16px;
-//   // padding: 15px 0;
-// }
-
-.UppyProvider-breadcrumbs button,
-.UppyGoogleDrive-sidebar button {
+.uppy-Provider-breadcrumbs button {
   @include reset-button;
   cursor: pointer;
   font-size: 14px;
 }
 
-.UppyProvider-breadcrumbs button:hover {
+.uppy-Provider-breadcrumbs button:hover {
   text-decoration: underline;
 }
 
-.UppyGoogleDrive-sidebar button {
-  font-size: 14px;
-  padding: 0;
-}
-
-.UppyProvider-breadcrumbs button:focus,
-.UppyGoogleDrive-sidebar button:focus {
+.uppy-Provider-breadcrumbs button:focus {
   outline: 1px dotted #aaa;
 }
 
-.UppyProvider-breadcrumbs li {
+.uppy-Provider-breadcrumbs li {
   display: inline-block;
   margin: 0;
-  margin-right: 6px;
 }
 
-.UppyProvider-breadcrumbs li:not(:last-child):after {
+// .uppy-Provider-breadcrumbs li:not(:last-child):after {
+//   content: ' /';
+// }
+
+.uppy-Provider-breadcrumbs li ~ li:before {
   content: '/';
+  padding: 0 10px;
 }
 
-
-/** NEW PLUGIN BROWSER STYLES */
-
-.Browser {
-  // border: 1px solid #ddd;
-  // border-radius: 5px;
+.uppy-ProviderBrowser {
   display: flex;
   flex-direction: column;
   font-size: 13px;
   font-weight: 400;
   height: 100%;
-  // height: 475px;
-  // overflow: hidden;
-  // width: 718px;
 }
 
-.Browser-user {
+.uppy-ProviderBrowser-user {
   margin: 16px 0;
 }
 
-.Browser-header {
-  z-index: 1000;
-  border-bottom: 1px solid #e5e5e5;
+.uppy-ProviderBrowser-header {
+  z-index: $zIndex-2;
+  border-bottom: 1px solid lighten($color-asphalt-gray, 60%);
   position: relative;
 }
 
@@ -110,11 +85,7 @@
    color: rgba(119,119,119,0.75);
 }
 
-:-moz-placeholder { /* Firefox 18- */
-   color: rgba(119,119,119,0.75);
-}
-
-::-moz-placeholder {  /* Firefox 19+ */
+::-moz-placeholder {
    color: rgba(119,119,119,0.75);
 }
 
@@ -122,7 +93,7 @@
    color: rgba(119,119,119,0.75);
 }
 
-.Browser-headerBar {
+.uppy-ProviderBrowser-headerBar {
   height: 50px;
   line-height: 50px;
   display: flex;
@@ -132,7 +103,7 @@
   z-index: $zIndex-2;
 }
 
-.Browser-search {
+.uppy-ProviderBrowser-search {
   height: 50px;
   position: absolute;
   top: 0;
@@ -146,11 +117,11 @@
   align-items: center;
 }
 
-  .Browser-search[aria-hidden=false] {
+  .uppy-ProviderBrowser-search:not([aria-hidden=true]) {
     transform: translate(0, 0);
   }
 
-.Browser-search input {
+.uppy-ProviderBrowser-search input {
   flex: 1;
   background-color: transparent;
   outline: 0;
@@ -162,19 +133,18 @@
 }
 
 
-.Browser-searchToggle {
+.uppy-ProviderBrowser-searchToggle {
   @include reset-button();
   width: 15px;
   cursor: pointer;
   color: $color-gray;
   transition: all .2s;
 
-  &:hover {
-    color: $color-black;
+  &:hover { color: $color-black;
   }
 }
 
-.Browser-searchClose {
+.uppy-ProviderBrowser-searchClose {
   @include reset-button();
   cursor: pointer;
   width: 12px;
@@ -183,60 +153,46 @@
   position: relative;
   right: 16px;
 
-  &:hover {
-    color: $color-black;
-  }
+  &:hover { color: $color-black; }
 }
 
-.Browser-userLogout {
+.uppy-ProviderBrowser-userLogout {
   @include reset-button();
   margin-right: 16px;
   cursor: pointer;
 
-  &:hover {
-    text-decoration: underline;
-  }
+  &:hover { text-decoration: underline; }
 }
 
-.UppyProvider-breadcrumbs {
+.uppy-Provider-breadcrumbs {
   flex: 1;
   color: $color-black;
   font-size: 12px;
-  // line-height: 40px;
   list-style-type: none;
   padding: 0;
   margin: 0;
   margin-left: 16px;
 }
 
-.Browser-breadcrumbs span {
+.uppy-ProviderBrowser-breadcrumbs span {
   font-size: 16px;
   margin-left: 32px;
 }
 
-.Browser-breadcrumbs span.active {
-  color: #666;
+.uppy-ProviderBrowser-breadcrumbs span.active {
+  color: $color-asphalt-gray;
   flex: 1;
   font-weight: 500;
 }
 
-// .Browser-subHeader {
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   // background-color: #fafafa;
-//   // flex-direction: row;
-//   // height: 55px;
-//   // box-shadow: 0px 3px 3px 0px rgba(121,121,121,0.25);
-//   z-index: 1000;
-// }
-
-.Browser-body {
+.uppy-ProviderBrowser-body {
   flex: 1;
   position: relative;
 }
 
-.BrowserTable {
+.uppy-ProviderBrowser-list {
+  flex: 1;
+  position: relative;
   display: block;
   width: 100%;
   height: 100%;
@@ -249,64 +205,139 @@
   bottom: 0;
   left: 0;
   right: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.Browser-viewType--grid {
-  .BrowserTable tbody {
+.uppy-ProviderBrowserItem-inner {
+  @include reset-button();
+  cursor: pointer;
+  font-weight: 600;
+}
+
+// ***
+// View type: list
+// ***
+
+.uppy-ProviderBrowser-viewType--list {
+
+  .uppy-ProviderBrowser-list {
+    padding-top: 6px;
+  }
+
+  .uppy-ProviderBrowserItem {
+    padding: 10px 14px;
+  }
+
+  .uppy-ProviderBrowserItem-inner img {
+    vertical-align: text-top;
+    margin-right: 3px;
+  }
+
+  .uppy-ProviderBrowserItem-checkbox label:before {
+    border-color: rgba($color-asphalt-gray, 0.3);
+  }
+
+  .uppy-ProviderBrowserItem-checkbox input:checked + label:before {
+    border-color: $color-cornflower-blue;
+  }
+
+}
+
+// ***
+// View type: grid
+// ***
+
+.uppy-ProviderBrowser-viewType--grid {
+
+  .uppy-ProviderBrowser-list {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: space-between;
+    padding: 3px;
   }
 
-  // .BrowserTable tbody:after {
-  //   content: "";
-  //   flex: auto;
-  // }
+  .uppy-ProviderBrowser-list:after {
+    content: '';
+    flex: auto;
+  }
 
-  .BrowserTable-row {
+  .uppy-ProviderBrowserItem {
+    display: inline-block;
+    width: 33.3333%;
     position: relative;
+    padding: 3px;
+    opacity: 0.9;
   }
 
-  .BrowserTable-column {
-    // width: 100px;
-    // padding: 15px 12px;
-    padding: 14px 10px;
+    .uppy-ProviderBrowserItem--selected {
+      opacity: 1;
+    }
+
+  .uppy-ProviderBrowserItem-inner {
+    width: 100%;
+    height: 100%;
   }
 
-  .BrowserTable-checkbox {
+  .uppy-ProviderBrowserItem img {
+    width: 100%;
+    height: 100%;
+    vertical-align: middle;
+  }
+
+  .uppy-ProviderBrowserItem-checkbox {
     position: absolute;
-    top: 7px;
-    right: 7px;
+    top: 8px;
+    right: 10px;
     margin-right: 0;
   }
+
+  .uppy-ProviderBrowserItem-checkbox label:before {
+    background-color: $color-cornflower-blue;
+  }
+
+  // Hide checkbox when unchecked in grid view
+  .uppy-ProviderBrowserItem-checkbox input + label {
+    opacity: 0;
+  }
+
+  // Unhide the checkbox on the checked state
+  .uppy-ProviderBrowserItem-checkbox input:checked + label {
+    opacity: 1;
+  }
+
 }
 
-.BrowserTable tbody {
-  display: block;
+.uppy-Dashboard--wide .uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem {
+  width: 20%;
 }
 
-
-.BrowserTable-checkbox input {
+.uppy-ProviderBrowserItem-checkbox input {
   opacity: 0;
 }
 
 // https://medium.com/claritydesignsystem/pure-css-accessible-checkboxes-and-radios-buttons-54063e759bb3
-.BrowserTable-checkbox {
+.uppy-ProviderBrowserItem-checkbox {
   position: relative;
   display: inline-block;
   top: -3px;
   margin-right: 25px;
 }
 
-.BrowserTable-checkbox label::before,
-.BrowserTable-checkbox label::after {
+.uppy-ProviderBrowserItem-checkbox label {
+  display: block;
+}
+
+.uppy-ProviderBrowserItem-checkbox label::before,
+.uppy-ProviderBrowserItem-checkbox label::after {
   position: absolute;
   cursor: pointer;
 }
 
 // Outer circle
-.BrowserTable-checkbox label:before {
+.uppy-ProviderBrowserItem-checkbox label:before {
   content: "";
   display: inline-block;
   height: 20px;
@@ -318,8 +349,8 @@
 }
 
 // Inner checkbox
-.BrowserTable-checkbox label:after {
-  content: "";
+.uppy-ProviderBrowserItem-checkbox label:after {
+  content: '';
   display: inline-block;
   height: 5px;
   width: 8px;
@@ -331,81 +362,25 @@
 }
 
 // Hide the checkmark by default
-.BrowserTable-checkbox input + label::after {
+.uppy-ProviderBrowserItem-checkbox input + label::after {
   content: none;
 }
 
 // Unhide the checkmark on the checked state
-.BrowserTable-checkbox input:checked + label::after {
-  content: "";
+.uppy-ProviderBrowserItem-checkbox input:checked + label::after {
+  content: '';
 }
 
-.BrowserTable-checkbox input:checked + label::before {
+.uppy-ProviderBrowserItem-checkbox input:checked + label::before {
   background-color: $color-cornflower-blue;
 }
 
 // Adding focus styles on the outer-box of the fake checkbox*/
-.BrowserTable-checkbox input:focus + label::before {
+.uppy-ProviderBrowserItem-checkbox input:focus + label::before {
   outline: rgb(59, 153, 252) auto 5px;
 }
 
-.BrowserTable-row {
-  // border-bottom: 1px solid #eee;
-  display: block;
-  cursor: pointer;
-  // height: 50px;
-}
-
-.BrowserTable-header {
-  display: block;
-}
-
-  .BrowserTable-header:hover {
-    background-color: $color-gray;
-  }
-
-.BrowserTable-column {
-  color: $color-asphalt-gray;
-  line-height: 1.2;
-  font-weight: bold;
-  padding: 16px;
-}
-
-.BrowserTable-column img {
-  vertical-align: text-top;
-  margin-right: 3px;
-}
-
-.BrowserTable-column input {
-  margin-top: 0;
-  cursor: pointer;
-}
-
-.BrowserTable-item {
-  @include reset-button();
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.BrowserTable-headerColumn {
-  cursor: pointer;
-  text-align: left;
-}
-
-.BrowserTable-row:hover {
-  background-color: #eee;
-}
-
-.BrowserTable-header {
-  background-color: #fafafa;
-}
-
-// .BrowserTable-rowColumn.BrowserTable-column {
-//   display: block;
-//   // width: 708px;
-// }
-
-.Browser-doneBtn {
+.uppy-ProviderBrowser-doneBtn {
   position: absolute;
   bottom: 16px;
   right: 16px;
@@ -413,17 +388,13 @@
   width: 50px;
   height: 50px;
 
-  .UppyDashboard--wide & {
+  .uppy-Dashboard--wide & {
     width: 60px;
     height: 60px;
   }
 }
 
-.Browser-doneBtn .UppyIcon {
+.uppy-ProviderBrowser-doneBtn .UppyIcon {
   width: 30px;
   height: 30px;
-}
-
-.nav-active {
-  font-weight: bold;
 }

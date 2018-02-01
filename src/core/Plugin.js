@@ -1,7 +1,5 @@
-const yo = require('yo-yo')
-const nanoraf = require('nanoraf')
+const preact = require('preact')
 const { findDOMElement } = require('../core/Utils')
-const getFormData = require('get-form-data')
 
 /**
  * Boilerplate that all Plugins share - and should not be used
@@ -16,9 +14,6 @@ module.exports = class Plugin {
   constructor (uppy, opts) {
     this.uppy = uppy
     this.opts = opts || {}
-
-    // clear everything inside the target selector
-    // this.opts.replaceTargetContent = this.opts.replaceTargetContent !== undefined ? this.opts.replaceTargetContent : true
 
     this.update = this.update.bind(this)
     this.mount = this.mount.bind(this)
@@ -63,26 +58,18 @@ module.exports = class Plugin {
     const targetElement = findDOMElement(target)
 
     if (targetElement) {
-      // Set up nanoraf.
-      this.updateUI = nanoraf((state) => {
-        this.el = yo.update(this.el, this.render(state))
-      })
+      this.updateUI = (state) => {
+        this.el = preact.render(this.render(state), targetElement, this.el)
+      }
 
       this.uppy.log(`Installing ${callerPluginName} to a DOM element`)
-
-      // attempt to extract meta from form element
-      if (this.opts.getMetaFromForm && targetElement.nodeName === 'FORM') {
-        const formMeta = getFormData(targetElement)
-        this.uppy.setMeta(formMeta)
-      }
 
       // clear everything inside the target container
       if (this.opts.replaceTargetContent) {
         targetElement.innerHTML = ''
       }
 
-      this.el = plugin.render(this.uppy.state)
-      targetElement.appendChild(this.el)
+      this.el = preact.render(this.render(this.uppy.state), targetElement)
 
       return this.el
     }

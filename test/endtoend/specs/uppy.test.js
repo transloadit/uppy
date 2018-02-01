@@ -1,5 +1,7 @@
 /* global browser, expect, capabilities  */
 var path = require('path')
+var http = require('http')
+var tempWrite = require('temp-write')
 
 var testURL = 'http://localhost:4567'
 
@@ -33,7 +35,7 @@ describe('File upload with DragDrop + Tus, DragDrop + XHRUpload, i18n translated
       browser.execute(uppySelectFakeFile, 'uppyDragDrop')
     }
     browser.pause(3000)
-    var html = browser.getHTML('#uppyDragDrop-progress .UppyProgressBar-percentage', false)
+    var html = browser.getHTML('#uppyDragDrop-progress .uppy-ProgressBar-percentage', false)
     expect(parseInt(html)).to.be.equal(100)
   })
 
@@ -44,7 +46,7 @@ describe('File upload with DragDrop + Tus, DragDrop + XHRUpload, i18n translated
       browser.execute(uppySelectFakeFile, 'uppyi18n')
     }
     browser.pause(3000)
-    var html = browser.getHTML('#uppyi18n-progress .UppyProgressBar-percentage', false)
+    var html = browser.getHTML('#uppyi18n-progress .uppy-ProgressBar-percentage', false)
     expect(parseInt(html)).to.be.equal(100)
   })
 
@@ -65,3 +67,83 @@ describe('File upload with DragDrop + Tus, DragDrop + XHRUpload, i18n translated
   //     })
   // })
 // })
+
+describe.skip('XHRUpload with `limit`', () => {
+  let server = null
+  before(() => {
+    server = http.createServer((req, res) => {
+      res.writeHead(200, {
+        'content-type': 'application/json',
+        'access-control-allow-origin': '*'
+      })
+      req.pause()
+      setTimeout(() => {
+        req.resume()
+      }, 3000)
+      req.on('end', () => {
+        res.end('{"status":"ok"}')
+      })
+    }).listen()
+  })
+  after(() => {
+    server.close()
+    server = null
+  })
+
+  it('should start counting progress for all files', () => {
+    const files = [
+      makeFile(1000),
+      makeFile(1000),
+      makeFile(1000),
+      makeFile(1000),
+      makeFile(1000),
+      makeFile(1000),
+      makeFile(1000),
+      makeFile(1000),
+      makeFile(1000),
+      makeFile(1000)
+    ]
+
+    const endpoint = `http://localhost:${server.address().port}`
+    browser.execute((endpoint) => {
+      window.startXHRLimitTest(endpoint)
+    }, endpoint)
+
+    if (browserSupportsChooseFile(capabilities)) {
+      files.forEach((file) => {
+        browser.chooseFile('#uppyXhrLimit .uppy-DragDrop-input', file.path)
+      })
+    } else {
+      browser.execute((files) => {
+        files.forEach((data, i) => {
+          window.uppyXhrLimit.addFile({
+            source: 'test',
+            name: `testfile${i}`,
+            type: 'text/plain',
+            data: new Blob([data], { type: 'text/plain' })
+          })
+        })
+      }, files.map((file) => file.content.toString('hex')))
+    }
+
+    browser.execute(() => {
+      window.uppyXhrLimit.upload()
+    })
+    browser.pause(5000)
+    const status = browser.execute(() => ({
+      started: window.uppyXhrLimit.uploadsStarted,
+      complete: window.uppyXhrLimit.uploadsComplete
+    })).value
+    expect(status.started).to.be.equal(files.length)
+    expect(status.complete).to.be.equal(2)
+  })
+})
+
+function makeFile (size) {
+  const content = Buffer.allocUnsafe(size)
+  for (let i = 0; i < size; i++) {
+    content[i] = Math.floor(Math.random() * 255)
+  }
+
+  return { path: tempWrite.sync(content), content }
+}

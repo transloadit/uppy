@@ -1,5 +1,5 @@
 const Plugin = require('../core/Plugin')
-const html = require('yo-yo')
+const { h } = require('preact')
 
 /**
  * Progress bar
@@ -16,7 +16,8 @@ module.exports = class ProgressBar extends Plugin {
     const defaultOptions = {
       target: 'body',
       replaceTargetContent: false,
-      fixed: false
+      fixed: false,
+      hideAfterFinish: true
     }
 
     // merge default options with the ones set by user
@@ -27,11 +28,11 @@ module.exports = class ProgressBar extends Plugin {
 
   render (state) {
     const progress = state.totalProgress || 0
-
-    return html`<div class="UppyProgressBar" style="${this.opts.fixed ? 'position: fixed' : 'null'}">
-      <div class="UppyProgressBar-inner" style="width: ${progress}%"></div>
-      <div class="UppyProgressBar-percentage">${progress}</div>
-    </div>`
+    const isHidden = progress === 100 && this.opts.hideAfterFinish
+    return <div class="uppy uppy-ProgressBar" style={{ position: this.opts.fixed ? 'fixed' : 'initial' }} aria-hidden={isHidden}>
+      <div class="uppy-ProgressBar-inner" style={{ width: progress + '%' }} />
+      <div class="uppy-ProgressBar-percentage">{progress}</div>
+    </div>
   }
 
   install () {

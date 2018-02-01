@@ -199,16 +199,12 @@ module.exports = class XHRUpload extends Plugin {
         // if (!files[file.id]) return
         xhr.abort()
       })
-
-      this.uppy.emit('upload-started', file.id)
     })
   }
 
   uploadRemote (file, current, total) {
     const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
-      this.uppy.emit('upload-started', file.id)
-
       const fields = {}
       const metaFields = Array.isArray(opts.metaFields)
         ? opts.metaFields
@@ -230,7 +226,7 @@ module.exports = class XHRUpload extends Plugin {
           endpoint: opts.endpoint,
           size: file.data.size,
           fieldname: opts.fieldName,
-          fields,
+          metadata: fields,
           headers: opts.headers
         }))
       })
@@ -251,6 +247,11 @@ module.exports = class XHRUpload extends Plugin {
             socket.close()
             return resolve()
           })
+
+          socket.on('error', (errData) => {
+            this.uppy.emit('upload-error', file.id, new Error(errData.error))
+            reject(new Error(errData.error))
+          })
         })
       })
     })
@@ -264,8 +265,12 @@ module.exports = class XHRUpload extends Plugin {
       if (file.error) {
         return () => Promise.reject(new Error(file.error))
       } else if (file.isRemote) {
+        // We emit upload-started here, so that it's also emitted for files
+        // that have to wait due to the `limit` option.
+        this.uppy.emit('upload-started', file.id)
         return this.uploadRemote.bind(this, file, current, total)
       } else {
+        this.uppy.emit('upload-started', file.id)
         return this.upload.bind(this, file, current, total)
       }
     })

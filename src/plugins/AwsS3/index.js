@@ -1,6 +1,12 @@
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
+const { limitPromises } = require('../../core/Utils')
 const XHRUpload = require('../XHRUpload')
+
+function isXml (xhr) {
+  const contentType = xhr.getResponseHeader('Content-Type')
+  return typeof contentType === 'string' && contentType.toLowerCase() === 'application/xml'
+}
 
 module.exports = class AwsS3 extends Plugin {
   constructor (uppy, opts) {
@@ -16,6 +22,8 @@ module.exports = class AwsS3 extends Plugin {
     }
 
     const defaultOptions = {
+      timeout: 30 * 1000,
+      limit: 0,
       getUploadParameters: this.getUploadParameters.bind(this),
       locale: defaultLocale
     }
@@ -28,6 +36,12 @@ module.exports = class AwsS3 extends Plugin {
     this.i18n = this.translator.translate.bind(this.translator)
 
     this.prepareUpload = this.prepareUpload.bind(this)
+
+    if (typeof this.opts.limit === 'number' && this.opts.limit !== 0) {
+      this.limitRequests = limitPromises(this.opts.limit)
+    } else {
+      this.limitRequests = (fn) => fn
+    }
   }
 
   getUploadParameters (file) {
@@ -52,11 +66,13 @@ module.exports = class AwsS3 extends Plugin {
       })
     })
 
+    const getUploadParameters = this.limitRequests(this.opts.getUploadParameters)
+
     return Promise.all(
       fileIDs.map((id) => {
         const file = this.uppy.getFile(id)
         const paramsPromise = Promise.resolve()
-          .then(() => this.opts.getUploadParameters(file))
+          .then(() => getUploadParameters(file))
         return paramsPromise.then((params) => {
           this.uppy.emit('preprocess-progress', file.id, {
             mode: 'determinate',
@@ -117,10 +133,12 @@ module.exports = class AwsS3 extends Plugin {
     this.uppy.use(XHRUpload, {
       fieldName: 'file',
       responseUrlFieldName: 'location',
+      timeout: this.opts.timeout,
+      limit: this.opts.limit,
       getResponseData (xhr) {
         // If no response, we've hopefully done a PUT request to the file
         // in the bucket on its full URL.
-        if (!xhr.responseXML) {
+        if (!isXml(xhr)) {
           return { location: xhr.responseURL }
         }
         function getValue (key) {
@@ -136,7 +154,7 @@ module.exports = class AwsS3 extends Plugin {
       },
       getResponseError (xhr) {
         // If no response, we don't have a specific error message, use the default.
-        if (!xhr.responseXML) {
+        if (!isXml(xhr)) {
           return
         }
         const error = xhr.responseXML.querySelector('Error > Message')
