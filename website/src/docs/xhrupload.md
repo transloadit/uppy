@@ -43,7 +43,7 @@ data: {
 },
 ...
 ```
-You may also supply a function that returns a hash with the data to be included for each file. 
+You may alternatively supply a function that returns a hash with the data to be included for each file. 
 ```js
 ...
 data: (file) => {
@@ -53,7 +53,7 @@ data: (file) => {
 },
 ...
 ```
-Alternatively, the function may return a non-object (i.e. string, number) which will be included in each upload's form  
+Finally, the function may return a non-object (i.e. string, number) which will be included in each upload's form  
 data with the key of "data".
 ```js
 ...
@@ -62,6 +62,10 @@ data: (file) => {
 },
 ...
 ```
+
+*Pro Tip:* if you return `null` or `undefined` in your generator function, no data will be included for that 
+upload. This means you could include data conditionally for each file based on anything your 
+creativity can come up with.
 
 ### `fieldName: 'files[]'`
 
