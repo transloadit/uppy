@@ -533,15 +533,26 @@ describe('src/Core', () => {
 
   describe('removers', () => {
     it('should add a remover', () => {
-      const core = new Core()
+      const core = new Core({
+        removeAfterUpload: true
+      })
       const remover = function () {}
       core.addUploader(() => null, remover)
       expect(core.removers.length).toEqual(1)
       expect(core.removers[0]).toEqual(remover)
     })
 
-    it('should remove a remover', () => {
+    it('should not add a remover when removeAfterUpload does not set', () => {
       const core = new Core()
+      const remover = function () {}
+      core.addUploader(() => null, remover)
+      expect(core.removers.length).toEqual(0)
+    })
+
+    it('should remove a remover', () => {
+      const core = new Core({
+        removeAfterUpload: true
+      })
       const remover1 = function () {}
       const remover2 = function () {}
       const remover3 = function () {}
@@ -751,7 +762,9 @@ describe('src/Core', () => {
     it('should call removers', () => {
       const removerMock = jest.fn()
 
-      const core = new Core()
+      const core = new Core({
+        removeAfterUpload: true
+      })
       core.addUploader(() => null, removerMock)
       core.run()
 

@@ -48,7 +48,7 @@ class Uppy {
       onBeforeUpload: (files, done) => Promise.resolve(),
       locale: defaultLocale,
       store: new DefaultStore(),
-      deleteUploaded: false
+      removeAfterUpload: false
     }
 
     // Merge default options with the ones set by user
@@ -222,7 +222,7 @@ class Uppy {
   addUploader (handleUpload, handleRemove) {
     this.uploaders.push(handleUpload)
 
-    if (typeof handleRemove === 'function') {
+    if (this.opts.removeAfterUpload && typeof handleRemove === 'function') {
       this.removers.push(handleRemove)
     }
   }
