@@ -450,6 +450,7 @@ module.exports = class Dashboard extends Plugin {
       progressindicators: progressindicators,
       autoProceed: this.uppy.opts.autoProceed,
       hideUploadButton: this.opts.hideUploadButton,
+      removeAfterUpload: this.uppy.opts.removeAfterUpload,
       id: this.id,
       closeModal: this.requestCloseModal,
       handleClickOutside: this.handleClickOutside,

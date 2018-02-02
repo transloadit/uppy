@@ -14,6 +14,7 @@ const { h } = require('preact')
 module.exports = function fileItem (props) {
   const file = props.file
   const acquirers = props.acquirers
+  const removeAfterUpload = props.removeAfterUpload
 
   const isProcessing = file.progress.preprocess || file.progress.postprocess
   const isUploaded = file.progress.uploadComplete && !isProcessing && !file.error
@@ -62,7 +63,7 @@ module.exports = function fileItem (props) {
       <div class="uppy-DashboardItem-progress">
         {isUploaded
           ? <div class="uppy-DashboardItem-progressIndicator">
-            {FileItemProgress({
+            {!removeAfterUpload && FileItemProgress({
               progress: file.progress.percentage,
               fileID: file.id
             })}
@@ -141,7 +142,7 @@ module.exports = function fileItem (props) {
       }
     </div>
     <div class="uppy-DashboardItem-action">
-      {!isUploaded &&
+      {(!isUploaded || removeAfterUpload) &&
         <button class="uppy-DashboardItem-remove"
           type="button"
           aria-label={props.i18n('removeFile')}
