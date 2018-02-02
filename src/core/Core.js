@@ -47,7 +47,8 @@ class Uppy {
       onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
       onBeforeUpload: (files, done) => Promise.resolve(),
       locale: defaultLocale,
-      store: new DefaultStore()
+      store: new DefaultStore(),
+      deleteUploaded: false
     }
 
     // Merge default options with the ones set by user
@@ -94,6 +95,7 @@ class Uppy {
 
     this.preProcessors = []
     this.uploaders = []
+    this.removers = []
     this.postProcessors = []
 
     this.store = this.opts.store
@@ -217,14 +219,25 @@ class Uppy {
     }
   }
 
-  addUploader (fn) {
-    this.uploaders.push(fn)
+  addUploader (handleUpload, handleRemove) {
+    this.uploaders.push(handleUpload)
+
+    if (typeof handleRemove === 'function') {
+      this.removers.push(handleRemove)
+    }
   }
 
-  removeUploader (fn) {
-    const i = this.uploaders.indexOf(fn)
-    if (i !== -1) {
-      this.uploaders.splice(i, 1)
+  removeUploader (handleUpload, handleRemove) {
+    const uploaderIndex = this.uploaders.indexOf(handleUpload)
+    if (uploaderIndex !== -1) {
+      this.uploaders.splice(uploaderIndex, 1)
+    }
+
+    if (typeof handleRemove === 'function') {
+      const removerIndex = this.removers.indexOf(handleRemove)
+      if (removerIndex !== -1) {
+        this.removers.splice(removerIndex, 1)
+      }
     }
   }
 
@@ -410,6 +423,10 @@ class Uppy {
     const updatedFiles = Object.assign({}, files)
     const removedFile = updatedFiles[fileID]
     delete updatedFiles[fileID]
+
+    this.removers.forEach((remover) => {
+      remover([fileID])
+    })
 
     // Remove this file from its `currentUpload`.
     const updatedUploads = Object.assign({}, currentUploads)

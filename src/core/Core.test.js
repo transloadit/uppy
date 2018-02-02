@@ -531,6 +531,29 @@ describe('src/Core', () => {
     })
   })
 
+  describe('removers', () => {
+    it('should add a remover', () => {
+      const core = new Core()
+      const remover = function () {}
+      core.addUploader(() => null, remover)
+      expect(core.removers.length).toEqual(1)
+      expect(core.removers[0]).toEqual(remover)
+    })
+
+    it('should remove a remover', () => {
+      const core = new Core()
+      const remover1 = function () {}
+      const remover2 = function () {}
+      const remover3 = function () {}
+      core.addUploader(() => null, remover1)
+      core.addUploader(() => null, remover2)
+      core.addUploader(() => null, remover3)
+      expect(core.removers.length).toEqual(3)
+      core.removeUploader(null, remover2)
+      expect(core.removers.length).toEqual(2)
+    })
+  })
+
   describe('adding a file', () => {
     it('should call onBeforeFileAdded if it was specified in the options when initailising the class', () => {
       const onBeforeFileAdded = jest.fn(value => {
@@ -722,6 +745,35 @@ describe('src/Core', () => {
           expect(Object.keys(core.state.files).length).toEqual(0)
           expect(fileRemovedEventMock.mock.calls[0][0]).toEqual(fileId)
           expect(core.state.totalProgress).toEqual(0)
+        })
+    })
+
+    it('should call removers', () => {
+      const removerMock = jest.fn()
+
+      const core = new Core()
+      core.addUploader(() => null, removerMock)
+      core.run()
+
+      return core
+        .addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: utils.dataURItoFile(sampleImageDataURI, {})
+        })
+        .then(() => {
+          const fileId = Object.keys(core.state.files)[0]
+          core.setState({
+            totalProgress: 100
+          })
+
+          core.removeFile(fileId)
+
+          expect(removerMock.mock.calls.length).toEqual(1)
+          expect(removerMock.mock.calls[0].length).toEqual(1)
+          expect(removerMock.mock.calls[0][0].length).toEqual(1)
+          expect(removerMock.mock.calls[0][0][0]).toEqual(fileId)
         })
     })
   })
