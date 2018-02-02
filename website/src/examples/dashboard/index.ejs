@@ -30,6 +30,7 @@ const Tus = require('uppy/lib/plugins/Tus')
 const uppy = Uppy({
   debug: true,
   autoProceed: false,
+  removeAfterUpload: false,
   restrictions: {
     maxFileSize: 1000000,
     maxNumberOfFiles: 3,

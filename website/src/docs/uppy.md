@@ -25,7 +25,8 @@ const uppy = Uppy({
   onBeforeUpload: (files, done) => Promise.resolve(),
   locale: defaultLocale,
   store: new DefaultStore(),
-  thumbnailGeneration: true
+  thumbnailGeneration: true,
+  removeAfterUpload: false
 })
 ```
 
@@ -69,6 +70,10 @@ meta: {
 ```
 
 Can be altered with `uppy.setMeta({ username: 'Peter' })` method.
+
+### `removeAfterUpload: false`
+
+Set to true to allow deleting files after upload
 
 ### `onBeforeFileAdded: (currentFile, files) => Promise.resolve()`
 

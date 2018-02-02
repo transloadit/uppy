@@ -116,6 +116,14 @@ The default is 30 seconds.
 
 Limit the amount of uploads going on at the same time. Passing `0` means no limit.
 
+### `delete: {}`
+
+Optionally provide rules for deleting files
+
+**Parameters**
+
+- `endpoint` *string*
+
 ## Uploading to a PHP Server
 
 The XHRUpload plugin works similarly to a `<form>` upload. You can use the `$_FILES` variable on the server to work with uploaded files. See the PHP documentation on [Handling file uploads][PHP.file-upload].

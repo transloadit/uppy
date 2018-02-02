@@ -32,6 +32,7 @@ function uppyInit () {
 
   const uppy = Uppy({
     debug: true,
+    removeAfterUpload: opts.removeAfterUpload,
     autoProceed: opts.autoProceed,
     restrictions: opts.restrictions ? restrictions : ''
   })
