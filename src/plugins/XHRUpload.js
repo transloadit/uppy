@@ -34,10 +34,25 @@ module.exports = class XHRUpload extends Plugin {
       locale: defaultLocale,
       timeout: 30 * 1000,
       limit: 0,
-      getResponseData (xhr) {
-        return JSON.parse(xhr.response)
+      /**
+       * @typedef respObj
+       * @property {string} responseText
+       * @property {number} status
+       * @property {string} statusText
+       * @property {Object.<string, string>} headers
+       *
+       * @param {string} responseContent the response body
+       * @param {XMLHttpRequest | respObj} responseObject the response object
+       */
+      getResponseData (responseContent, responseObject) {
+        return JSON.parse(responseContent)
       },
-      getResponseError (xhr) {
+      /**
+       *
+       * @param {string} responseContent the response body
+       * @param {XMLHttpRequest | respObj} responseObject the response object
+       */
+      getResponseError (responseContent, responseObject) {
         return new Error('Upload error')
       }
     }
@@ -153,7 +168,7 @@ module.exports = class XHRUpload extends Plugin {
         clearTimeout(aliveTimer)
 
         if (ev.target.status >= 200 && ev.target.status < 300) {
-          const resp = opts.getResponseData(xhr)
+          const resp = opts.getResponseData(xhr.responseText, xhr)
           const uploadURL = resp[opts.responseUrlFieldName]
 
           this.uppy.emit('upload-success', file.id, resp, uploadURL)
@@ -164,7 +179,7 @@ module.exports = class XHRUpload extends Plugin {
 
           return resolve(file)
         } else {
-          const error = opts.getResponseError(xhr) || new Error('Upload error')
+          const error = opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
           error.request = xhr
           this.uppy.emit('upload-error', file.id, error)
           return reject(error)
@@ -175,7 +190,7 @@ module.exports = class XHRUpload extends Plugin {
         this.uppy.log(`[XHRUpload] ${id} errored`)
         clearTimeout(aliveTimer)
 
-        const error = opts.getResponseError(xhr) || new Error('Upload error')
+        const error = opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
         this.uppy.emit('upload-error', file.id, error)
         return reject(error)
       })
@@ -243,13 +258,17 @@ module.exports = class XHRUpload extends Plugin {
           socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
           socket.on('success', (data) => {
-            this.uppy.emit('upload-success', file.id, data, data.url)
+            const resp = opts.getResponseData(data.response.responseText, data.response)
+            const uploadURL = resp[opts.responseUrlFieldName]
+            this.uppy.emit('upload-success', file.id, resp, uploadURL)
             socket.close()
             return resolve()
           })
 
           socket.on('error', (errData) => {
-            this.uppy.emit('upload-error', file.id, new Error(errData.error))
+            const resp = errData.response
+            const error = resp ? opts.getResponseError(resp.responseText, resp) : new Error(errData.error)
+            this.uppy.emit('upload-error', file.id, error)
             reject(new Error(errData.error))
           })
         })
