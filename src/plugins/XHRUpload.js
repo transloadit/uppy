@@ -339,36 +339,25 @@ module.exports = class XHRUpload extends Plugin {
     })
   }
 
-  removeFiles (fileIds) {
-    const actions = fileIds.map(this.remove.bind(this))
-
-    return settle(actions)
-  }
-
-  handleRemove (fileIds) {
-    if (fileIds.length === 0) {
-      this.uppy.log('[XHRUpload] No files to remove!')
-      return Promise.resolve()
-    }
-
+  handleRemove (fileId) {
     this.uppy.log('[XHRUpload] Removing...')
 
-    return this.removeFiles(fileIds).then(() => null)
+    const promises = [this.remove(fileId)]
+
+    return settle(promises).then(() => null)
   }
 
   install () {
+    this.uppy.addUploader(this.handleUpload)
     if (this.opts.delete.endpoint) {
-      this.uppy.addUploader(this.handleUpload, this.handleRemove)
-    } else {
-      this.uppy.addUploader(this.handleUpload)
+      this.uppy.addRemover(this.handleRemove)
     }
   }
 
   uninstall () {
+    this.uppy.removeUploader(this.handleUpload)
     if (this.opts.delete.endpoint) {
-      this.uppy.removeUploader(this.handleUpload, this.handleRemove)
-    } else {
-      this.uppy.removeUploader(this.handleUpload)
+      this.uppy.removeRemover(this.handleRemove)
     }
   }
 }
