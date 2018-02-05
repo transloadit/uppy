@@ -3,14 +3,6 @@ const Plugin = require('../../core/Plugin')
 const Client = require('./Client')
 const StatusSocket = require('./Socket')
 
-function defaultGetAssemblyOptions (file, options) {
-  return {
-    params: options.params,
-    signature: options.signature,
-    fields: options.fields
-  }
-}
-
 /**
  * Upload files to Transloadit using Tus.
  */
@@ -37,7 +29,13 @@ module.exports = class Transloadit extends Plugin {
       signature: null,
       params: null,
       fields: {},
-      getAssemblyOptions: defaultGetAssemblyOptions,
+      getAssemblyOptions: (file, options) => ({
+        params: options.params,
+        signature: options.signature,
+        // Include global metadata as fields by default.
+        // Works great together with the Form plugin :)
+        fields: Object.assign({}, this.uppy.getState().meta, options.fields)
+      }),
       locale: defaultLocale
     }
 
