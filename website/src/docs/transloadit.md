@@ -119,7 +119,14 @@ uppy.use(Transloadit, {
 })
 ```
 
-Using the `fields` option, form fields have to be determined ahead of time. Form fields can also be computed dynamically however, by using the `getAssemblyOptions(file)` option.
+You can also set `fields: true` to send all global metadata along to the Assembly. Global metadata is set using the [`meta` option](/docs/uppy/#meta) in the Uppy constructor, or using the [`setMeta` method](/docs/uppy/#uppy-setMeta-data). The [Form](/docs/form) plugin also sets global metadata, providing a handy way to use values from HTML form fields:
+
+```js
+uppy.use(Form, { target: 'form#my-form', getMetaFromForm: true })
+uppy.use(Transloadit, { fields: true, params: { ... } })
+```
+
+Form fields can also be computed dynamically using custom logic, by using the [`getAssemblyOptions(file)`](/docs/transloadit/#getAssemblyOptions-file) option.
 
 ### `getAssemblyOptions(file)`
 
