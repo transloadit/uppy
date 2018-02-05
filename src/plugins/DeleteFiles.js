@@ -9,7 +9,10 @@ module.exports = class DeletrFiles extends Plugin {
 
     // Default options
     const defaultOptions = {
-      endpoint: null
+      endpoint: '',
+      method: 'DELETE',
+      fieldName: 'fileId',
+      headers: {}
     }
 
     // Merge default options with the ones set by user
@@ -20,7 +23,9 @@ module.exports = class DeletrFiles extends Plugin {
 
   remove (fileId) {
     return new Promise((resolve, reject) => {
-      const data = { id: fileId }
+      const data = new FormData()
+      data.append(this.opts.fieldName, fileId)
+
       const xhr = new XMLHttpRequest()
 
       xhr.upload.addEventListener('loadstart', (ev) => {
@@ -49,7 +54,11 @@ module.exports = class DeletrFiles extends Plugin {
         return reject(error)
       })
 
-      xhr.open('DELETE', this.opts.endpoint, true)
+      xhr.open(this.opts.method.toUpperCase(), this.opts.endpoint, true)
+
+      Object.keys(this.opts.headers).forEach((header) => {
+        xhr.setRequestHeader(header, this.opts.headers[header])
+      })
 
       xhr.send(data)
     })
