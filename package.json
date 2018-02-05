@@ -115,7 +115,8 @@
     "socket.io-client": "^2.0.4",
     "tus-js-client": "^1.4.5",
     "url-parse": "^1.2.0",
-    "whatwg-fetch": "2.0.3"
+    "whatwg-fetch": "2.0.3",
+    "snyk": "^1.69.6"
   },
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
@@ -166,6 +167,9 @@
     "web:update:frontpage:code:sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
     "web": "npm-run-all web:clean web:build",
     "uploadcdn": "bin/upload-to-cdn.sh",
-    "prepublishOnly": "npm-run-all clean build"
-  }
+    "prepublishOnly": "npm-run-all clean build",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }
