@@ -25,8 +25,7 @@ const uppy = Uppy({
   onBeforeUpload: (files, done) => Promise.resolve(),
   locale: defaultLocale,
   store: new DefaultStore(),
-  thumbnailGeneration: true,
-  removeAfterUpload: false
+  thumbnailGeneration: true
 })
 ```
 
@@ -70,10 +69,6 @@ meta: {
 ```
 
 Can be altered with `uppy.setMeta({ username: 'Peter' })` method.
-
-### `removeAfterUpload: false`
-
-Set to true to allow deleting files after upload
 
 ### `onBeforeFileAdded: (currentFile, files) => Promise.resolve()`
 
@@ -264,8 +259,8 @@ uppy.setMeta({ resize: 1500, token: 'ab5kjfg' })
 Updated metadata for a specific file.
 
 ```js
-uppy.setFileMeta('myfileID', { 
-  resize: 1500 
+uppy.setFileMeta('myfileID', {
+  resize: 1500
 })
 ```
 

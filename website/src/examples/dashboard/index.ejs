@@ -26,11 +26,11 @@ const Dropbox = require('uppy/lib/plugins/Dropbox')
 const Instagram = require('uppy/lib/plugins/Instagram')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Tus = require('uppy/lib/plugins/Tus')
+const DeleteFiles = require('uppy/lib/plugins/DeleteFiles')
 
 const uppy = Uppy({
   debug: true,
   autoProceed: false,
-  removeAfterUpload: false,
   restrictions: {
     maxFileSize: 1000000,
     maxNumberOfFiles: 3,
@@ -55,6 +55,7 @@ const uppy = Uppy({
 .use(Instagram, { target: Dashboard, host: 'https://server.uppy.io' })
 .use(Webcam, { target: Dashboard })
 .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+.use(DeleteFiles, { endpoint: 'https://api2.transloadit.com' })
 .run()
 
 uppy.on('complete', result => {
