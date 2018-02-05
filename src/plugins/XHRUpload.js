@@ -34,9 +34,6 @@ module.exports = class XHRUpload extends Plugin {
       locale: defaultLocale,
       timeout: 30 * 1000,
       limit: 0,
-      delete: {
-        endpoint: null
-      },
       getResponseData (xhr) {
         return JSON.parse(xhr.response)
       },
@@ -55,7 +52,6 @@ module.exports = class XHRUpload extends Plugin {
     this.i18n = this.translator.translate.bind(this.translator)
 
     this.handleUpload = this.handleUpload.bind(this)
-    this.handleRemove = this.handleRemove.bind(this)
 
     // Simultaneous upload limiting is shared across all uploads with this plugin.
     if (typeof this.opts.limit === 'number' && this.opts.limit !== 0) {
@@ -302,62 +298,11 @@ module.exports = class XHRUpload extends Plugin {
     return this.uploadFiles(files).then(() => null)
   }
 
-  remove (fileId) {
-    return new Promise((resolve, reject) => {
-      const data = { id: fileId }
-      const xhr = new XMLHttpRequest()
-
-      xhr.upload.addEventListener('loadstart', (ev) => {
-        this.uppy.log(`[XHRUpload] remove ${fileId} started`)
-      })
-
-      xhr.addEventListener('load', (ev) => {
-        this.uppy.log(`[XHRUpload] remove ${fileId} finished`)
-
-        if (ev.target.status >= 200 && ev.target.status < 300) {
-          this.uppy.emit('remove-success', fileId)
-          return resolve()
-        } else {
-          const error = new Error('Remove error')
-          error.request = xhr
-          this.uppy.emit('remove-error', fileId, error)
-          return reject(error)
-        }
-      })
-
-      xhr.addEventListener('error', (ev) => {
-        this.uppy.log(`[XHRUpload] remove ${fileId} errored`)
-
-        const error = new Error('Remove error')
-        this.uppy.emit('remove-error', fileId, error)
-        return reject(error)
-      })
-
-      xhr.open('DELETE', this.opts.delete.endpoint, true)
-
-      xhr.send(data)
-    })
-  }
-
-  handleRemove (fileId) {
-    this.uppy.log('[XHRUpload] Removing...')
-
-    const promises = [this.remove(fileId)]
-
-    return settle(promises).then(() => null)
-  }
-
   install () {
     this.uppy.addUploader(this.handleUpload)
-    if (this.opts.delete.endpoint) {
-      this.uppy.addRemover(this.handleRemove)
-    }
   }
 
   uninstall () {
     this.uppy.removeUploader(this.handleUpload)
-    if (this.opts.delete.endpoint) {
-      this.uppy.removeRemover(this.handleRemove)
-    }
   }
 }
