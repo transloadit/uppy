@@ -389,13 +389,7 @@ class Uppy {
       .catch((err) => {
         const message = typeof err === 'object' ? err.message : err
         this.info(message, 'error', 5000)
-        const rejected = Promise.reject(typeof err === 'object' ? err : new Error(err))
-        // Silence the unhandled rejection; we have already shown it to the user,
-        // so the consumer may not need to do anything with this result.
-        // Note that the result is still a rejected Promise, it will just not
-        // trigger unhandled rejection warnings in the browser console.
-        rejected.catch(() => {})
-        return rejected
+        return Promise.reject(typeof err === 'object' ? err : new Error(err))
       })
   }
 

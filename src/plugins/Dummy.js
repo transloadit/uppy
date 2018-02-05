@@ -35,7 +35,9 @@ module.exports = class Dummy extends Plugin {
       data: blob
     }
     this.props.log('Adding fake file blob')
-    this.props.addFile(file)
+    this.props.addFile(file).catch(() => {
+      // Ignore
+    })
   }
 
   render (state) {
