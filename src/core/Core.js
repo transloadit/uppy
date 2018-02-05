@@ -278,10 +278,8 @@ class Uppy {
   _checkMinNumberOfFiles () {
     const {minNumberOfFiles} = this.opts.restrictions
     if (Object.keys(this.getState().files).length < minNumberOfFiles) {
-      this.info(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`, 'error', 5000)
-      return false
+      throw new Error(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
     }
-    return true
   }
 
   /**
@@ -289,7 +287,6 @@ class Uppy {
   * maxNumberOfFiles and allowedFileTypes.
   *
   * @param {object} file object to check
-  * @return {boolean}
   * @private
   */
   _checkRestrictions (file) {
@@ -297,8 +294,7 @@ class Uppy {
 
     if (maxNumberOfFiles) {
       if (Object.keys(this.getState().files).length + 1 > maxNumberOfFiles) {
-        this.info(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`, 'error', 5000)
-        return false
+        throw new Error(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
       }
     }
 
@@ -310,19 +306,15 @@ class Uppy {
 
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
-        this.info(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
-        return false
+        throw new Error(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`)
       }
     }
 
     if (maxFileSize) {
       if (file.data.size > maxFileSize) {
-        this.info(`${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`, 'error', 5000)
-        return false
+        throw new Error(`${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`)
       }
     }
-
-    return true
   }
 
   /**
@@ -333,17 +325,12 @@ class Uppy {
   * @param {object} file object to add
   */
   addFile (file) {
-    // Wrap this in a Promise `.then()` handler so errors will reject the Promise
-    // instead of throwing.
-    const beforeFileAdded = Promise.resolve()
+    return Promise.resolve()
+      // Wrap this in a Promise `.then()` handler so errors will reject the Promise
+      // instead of throwing.
       .then(() => this.opts.onBeforeFileAdded(file, this.getState().files))
-
-    return beforeFileAdded.catch((err) => {
-      const message = typeof err === 'object' ? err.message : err
-      this.info(message, 'error', 5000)
-      return Promise.reject(new Error(`onBeforeFileAdded: ${message}`))
-    }).then(() => {
-      return Utils.getFileType(file).then((fileType) => {
+      .then(() => Utils.getFileType(file))
+      .then((fileType) => {
         const updatedFiles = Object.assign({}, this.getState().files)
         let fileName
         if (file.name) {
@@ -382,10 +369,7 @@ class Uppy {
           preview: file.preview
         }
 
-        const isFileAllowed = this._checkRestrictions(newFile)
-        if (!isFileAllowed) {
-          return Promise.reject(new Error('File not allowed'))
-        }
+        this._checkRestrictions(newFile)
 
         updatedFiles[fileID] = newFile
         this.setState({files: updatedFiles})
@@ -402,7 +386,11 @@ class Uppy {
           }, 4)
         }
       })
-    })
+      .catch((err) => {
+        const message = typeof err === 'object' ? err.message : err
+        this.info(message, 'error', 5000)
+        return Promise.reject(typeof err === 'object' ? err : new Error(err))
+      })
   }
 
   removeFile (fileID) {
@@ -1090,35 +1078,31 @@ class Uppy {
       this.log('No uploader type plugins are used', 'warning')
     }
 
-    const isMinNumberOfFilesReached = this._checkMinNumberOfFiles()
-    if (!isMinNumberOfFilesReached) {
-      return Promise.reject(new Error('Minimum number of files has not been reached'))
-    }
-
-    const beforeUpload = Promise.resolve()
+    return Promise.resolve()
       .then(() => this.opts.onBeforeUpload(this.getState().files))
+      .then(() => this._checkMinNumberOfFiles())
+      .then(() => {
+        const { currentUploads } = this.getState()
+        // get a list of files that are currently assigned to uploads
+        const currentlyUploadingFiles = Object.keys(currentUploads).reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
 
-    return beforeUpload.catch((err) => {
-      const message = typeof err === 'object' ? err.message : err
-      this.info(message, 'error', 5000)
-      return Promise.reject(new Error(`onBeforeUpload: ${message}`))
-    }).then(() => {
-      const { currentUploads } = this.getState()
-      // get a list of files that are currently assigned to uploads
-      const currentlyUploadingFiles = Object.keys(currentUploads).reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
+        const waitingFileIDs = []
+        Object.keys(this.getState().files).forEach((fileID) => {
+          const file = this.getFile(fileID)
+          // if the file hasn't started uploading and hasn't already been assigned to an upload..
+          if ((!file.progress.uploadStarted) && (currentlyUploadingFiles.indexOf(fileID) === -1)) {
+            waitingFileIDs.push(file.id)
+          }
+        })
 
-      const waitingFileIDs = []
-      Object.keys(this.getState().files).forEach((fileID) => {
-        const file = this.getFile(fileID)
-        // if the file hasn't started uploading and hasn't already been assigned to an upload..
-        if ((!file.progress.uploadStarted) && (currentlyUploadingFiles.indexOf(fileID) === -1)) {
-          waitingFileIDs.push(file.id)
-        }
+        const uploadID = this._createUpload(waitingFileIDs)
+        return this._runUpload(uploadID)
       })
-
-      const uploadID = this._createUpload(waitingFileIDs)
-      return this._runUpload(uploadID)
-    })
+      .catch((err) => {
+        const message = typeof err === 'object' ? err.message : err
+        this.info(message, 'error', 5000)
+        return Promise.reject(typeof err === 'object' ? err : new Error(err))
+      })
   }
 }
 
