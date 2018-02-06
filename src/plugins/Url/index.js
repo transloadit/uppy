@@ -12,7 +12,7 @@ module.exports = class Link extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Url'
-    this.title = 'Link'
+    this.title = 'Url'
     this.type = 'acquirer'
     this.icon = () => <svg aria-hidden="true" class="UppyIcon UppyModalTab-icon" width="64" height="64" viewBox="0 0 64 64">
       <circle cx="32" cy="32" r="31" />
