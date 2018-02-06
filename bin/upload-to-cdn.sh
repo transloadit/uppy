@@ -100,6 +100,7 @@ pushd "${__root}" > /dev/null 2>&1
       --exclude 'node_modules/*' \
       --exclude 'examples/*/node_modules/*' \
     ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}"
+    echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}/"
   popd > /dev/null 2>&1
   rm -rf /tmp/uppy-to-edgly
 
@@ -110,6 +111,7 @@ pushd "${__root}" > /dev/null 2>&1
     --region="us-east-1" \
     --content-type="text/plain" \
   - "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/latest.txt"
+  echo "Saved https://transloadit.edgly.net/releases/uppy/latest.txt"
   echo "${version}" | env \
     AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
     AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
@@ -117,4 +119,5 @@ pushd "${__root}" > /dev/null 2>&1
     --region="us-east-1" \
     --content-type="text/plain" \
   - "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${majorVersion}-latest.txt"
+  echo "Saved https://transloadit.edgly.net/releases/uppy/v${majorVersion}-latest.txt"
 popd > /dev/null 2>&1
