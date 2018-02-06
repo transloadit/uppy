@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "name": "uppy-multiple-instances-example",
+  "scripts": {
+    "css": "cp ../../dist/uppy.min.css .",
+    "start:client": "npm run css && budo main.js:bundle.js -- -t babelify -g aliasify",
+    "start:server": "node serve.js",
+    "start": "run-p start:*"
+  },
+  "aliasify": "./aliasify.js",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "multer": "^1.3.0"
+  },
+  "devDependencies": {
+    "aliasify": "^2.1.0",
+    "babelify": "^7.3.0",
+    "budo": "^10.0.4",
+    "npm-run-all": "^4.1.2"
+  }
+}

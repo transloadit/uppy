@@ -1,0 +1,23 @@
+{
+  "name": "uppy-with-server-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node ./server/index.js",
+    "client": "light-server -p 3000 -s client",
+    "start": "npm run server & npm run client"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "light-server": "^2.4.0",
+    "upload-server": "^1.1.6",
+    "uppy": "^0.22.2",
+    "uppy-server": "^0.10.0"
+  }
+}
