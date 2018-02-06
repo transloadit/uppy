@@ -65,6 +65,8 @@ pushd "${__root}" > /dev/null 2>&1
     version="${localVersion}"
   fi
 
+  majorVersion=$(echo "${version}" |awk -F. '{print $1}')
+
   echo -n "--> Check if not overwriting an existing tag ... "
   env \
     AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
@@ -100,4 +102,19 @@ pushd "${__root}" > /dev/null 2>&1
     ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}"
   popd > /dev/null 2>&1
   rm -rf /tmp/uppy-to-edgly
+
+  echo "${version}" | env \
+    AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
+    AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
+  aws s3 cp \
+    --region="us-east-1" \
+    --content-type="text/plain" \
+  - "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/latest.txt"
+  echo "${version}" | env \
+    AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
+    AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
+  aws s3 cp \
+    --region="us-east-1" \
+    --content-type="text/plain" \
+  - "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${majorVersion}-latest.txt"
 popd > /dev/null 2>&1
