@@ -254,19 +254,20 @@ module.exports = class Webcam extends Plugin {
     const width = video.videoWidth
     const height = video.videoHeight
 
-    const scaleH = this.opts.mirror ? -1 : 1 // Set horizontal scale to -1 if flip horizontal
-    const scaleV = 1
-    const posX = this.opts.mirror ? width * -1 : 0 // Set x position to -100% if flip horizontal
-    const posY = 0
+    // const scaleH = this.opts.mirror ? -1 : 1 // Set horizontal scale to -1 if flip horizontal
+    // const scaleV = 1
+    // const posX = this.opts.mirror ? width * -1 : 0 // Set x position to -100% if flip horizontal
+    // const posY = 0
 
     const canvas = document.createElement('canvas')
     canvas.width = width
     canvas.height = height
     const ctx = canvas.getContext('2d')
-    ctx.save() // Save the current state
-    ctx.scale(scaleH, scaleV) // Set scale to flip the image
-    ctx.drawImage(video, posX, posY, width, height) // draw the image
-    ctx.restore() // Restore the last saved state
+    ctx.drawImage(video, 0, 0)
+    // ctx.save() // Save the current state
+    // ctx.scale(scaleH, scaleV) // Set scale to flip the image
+    // ctx.drawImage(video, posX, posY, width, height) // draw the image
+    // ctx.restore() // Restore the last saved state
 
     return canvasToBlob(canvas, mimeType).then((blob) => {
       return {
