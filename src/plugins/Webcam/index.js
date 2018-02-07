@@ -57,6 +57,7 @@ module.exports = class Webcam extends Plugin {
       countdown: false,
       locale: defaultLocale,
       mirror: true,
+      facingMode: 'user',
       modes: [
         'video-audio',
         'video-only',
@@ -109,7 +110,7 @@ module.exports = class Webcam extends Plugin {
 
     return {
       audio: acceptsAudio,
-      video: acceptsVideo
+      video: acceptsVideo ? { facingMode: this.opts.facingMode } : false
     }
   }
 
@@ -126,8 +127,7 @@ module.exports = class Webcam extends Plugin {
     return this.mediaDevices.getUserMedia(constraints)
       .then((stream) => {
         this.stream = stream
-        console.log(stream)
-        this.streamSrc = URL.createObjectURL(this.stream)
+        // this.streamSrc = URL.createObjectURL(this.stream)
         this.setPluginState({
           cameraReady: true
         })
@@ -192,7 +192,6 @@ module.exports = class Webcam extends Plugin {
     })
     this.webcamActive = false
     this.stream = null
-    this.streamSrc = null
   }
 
   getVideoElement () {
@@ -327,7 +326,7 @@ module.exports = class Webcam extends Plugin {
       supportsRecording: supportsMediaRecorder(),
       recording: webcamState.isRecording,
       mirror: this.opts.mirror,
-      src: this.streamSrc
+      src: this.stream
     }))
   }
 
