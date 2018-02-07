@@ -83,10 +83,6 @@ Maximum width of the Dashboard in pixels. Used when `inline: true`.
 
 Maximum height of the Dashboard in pixels. Used when `inline: true`.
 
-### `semiTransparent: false`
-
-Make the dashboard semi-transparent.
-
 ### `showProgressDetails: false`
 
 Show progress bars for the uploads.
@@ -121,11 +117,15 @@ An array of UI field objects that will be shown when a user clicks “edit” bu
 })
 ```
 
-Note that this meta data will only be set to a file if it’s entered by user. If you want to set certain default meta field to each file regardless of user actions, set [`meta` in Uppy options](docs/uppy/#meta).
+Note that this meta data will only be set to a file if it’s entered by user. If you want to set certain default meta field to each file regardless of user actions, set [`meta` in Uppy options](/docs/uppy/#meta).
 
 ### `closeModalOnClickOutside: false`
 
 Set to true to automatically close the modal when the user clicks outside it.
+
+### `disablePageScrollWhenModalOpen: true`
+
+By default when Dashboard modal is open, it will disable page scrolling, so when you scroll a list of files in Uppy the website in the background stays still. Set to false to override this behaviour and leave page scrolling intact.
 
 ### `disableStatusBar: false`
 
@@ -134,6 +134,10 @@ Dashboard ships with `StatusBar` plugin that shows upload progress and pause/res
 ### `disableInformer: false`
 
 Dashboard ships with `Informer` plugin that notifies when the browser is offline, or when it’s time to smile if `Webcam` is taking a picture. If you want, you can disable the Informer and/or provide your custom solution.
+
+### `disableThumbnailGenerator: false`
+
+Dashboard ships with `ThumbnailGenerator` plugin that adds small resized image thumbnails to images, for preview purposes only. If you want, you can disable the `ThumbnailGenerator` and/or provide your custom solution.
 
 ### `locale`
 
