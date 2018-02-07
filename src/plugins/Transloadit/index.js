@@ -167,6 +167,14 @@ module.exports = class Transloadit extends Plugin {
           // will upload to the same assembly.
           resume: false
         })
+
+        // Set uppy server location
+        const remote = Object.assign({}, file.remote, {
+          // @TODO Transloadit needs to supply assembly.uppyserver_url, vs this
+          // hack based on websocket_url
+          host: assembly.websocket_url.replace(/\/ws\d+\/?$/, '/uppy-server')
+        })
+
         const transloadit = {
           assembly: assembly.assembly_id
         }
@@ -174,7 +182,7 @@ module.exports = class Transloadit extends Plugin {
         const newFile = Object.assign({}, file, { transloadit })
         // Only configure the Tus plugin if we are uploading straight to Transloadit (the default).
         if (!pluginOptions.importFromUploadURLs) {
-          Object.assign(newFile, { meta, tus })
+          Object.assign(newFile, { meta, tus, remote })
         }
         return newFile
       }
