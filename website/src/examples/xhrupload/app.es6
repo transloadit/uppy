@@ -12,7 +12,8 @@ uppy.use(XHRUpload, {
 })
 uppy.use(ProgressBar, {
   target: 'body',
-  fixed: true
+  fixed: true,
+  hideAfterFinish: false
 })
 uppy.run()
 

@@ -18,7 +18,7 @@ https://transloadit.edgly.net/releases/uppy/v0.22.5/dist/uppy.min.js -->
       }
     }
   });
-  uppy.use(Uppy.ProgressBar, { target: 'body', fixed: true });
+  uppy.use(Uppy.ProgressBar, { target: 'body', fixed: true, hideAfterFinish: false });
   uppy.use(Uppy.Tus, { endpoint: '//master.tus.io/files/' });
   uppy.run();
 
