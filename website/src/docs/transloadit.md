@@ -119,11 +119,14 @@ uppy.use(Transloadit, {
 })
 ```
 
-You can also set `fields: true` to send all global metadata along to the Assembly. Global metadata is set using the [`meta` option](/docs/uppy/#meta) in the Uppy constructor, or using the [`setMeta` method](/docs/uppy/#uppy-setMeta-data). The [Form](/docs/form) plugin also sets global metadata, providing a handy way to use values from HTML form fields:
+You can also pass an array of field names to send global or file metadata along to the Assembly. Global metadata is set using the [`meta` option](/docs/uppy/#meta) in the Uppy constructor, or using the [`setMeta` method](/docs/uppy/#uppy-setMeta-data). File metadata is set using the [`setFileMeta`](/docs/uppy/#uppy-setFileMeta-fileID-data) method. The [Form](/docs/form) plugin also sets global metadata based on the values of `<input />`s in the form, providing a handy way to use values from HTML form fields:
 
 ```js
 uppy.use(Form, { target: 'form#my-form', getMetaFromForm: true })
-uppy.use(Transloadit, { fields: true, params: { ... } })
+uppy.use(Transloadit, {
+  fields: ['field_name', 'other_field_name'],
+  params: { ... }
+})
 ```
 
 Form fields can also be computed dynamically using custom logic, by using the [`getAssemblyOptions(file)`](/docs/transloadit/#getAssemblyOptions-file) option.
