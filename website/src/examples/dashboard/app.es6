@@ -8,9 +8,6 @@ const Tus = require('uppy/lib/plugins/Tus')
 
 const UPPY_SERVER = require('../env')
 
-const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
-const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
-
 function uppyInit () {
   if (window.uppy) {
     window.uppy.close()
@@ -65,7 +62,7 @@ function uppyInit () {
     uppy.use(Webcam, { target: Dashboard })
   }
 
-  uppy.use(Tus, { endpoint: TUS_ENDPOINT, resume: true })
+  uppy.use(Tus, { endpoint: 'https://master.tus.io/files/', resume: true })
   uppy.run()
 
   uppy.on('complete', result => {

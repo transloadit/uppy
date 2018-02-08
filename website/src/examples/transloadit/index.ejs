@@ -1,0 +1,124 @@
+---
+title: Transloadit
+layout: example
+type: examples
+order: 5
+---
+
+{% blockquote %}
+Here’s how you can use <a href="http://transloadit.com">Transloadit</a>’s robust file uploading and encoding backend with Uppy. This example takes your images, resizes them to 250px and adds a copyright caption text at the bottom right corner.
+{% endblockquote %}
+
+<p>For this demo to work, please <a href="https://transloadit.com/signup/" target="_blank">create a free Transloadit account</a> (takes 2 minutes, you can login via GitHub too!) and enter your API key below.</p>
+<p>
+  <label for="transloadit-api-key"
+         style="display: block; font-size: 13px; text-transform: uppercase; font-weight: bold;">
+    Transloadit API Key:</label>
+  <input type="text" 
+         style="font-size: 15px; width: 300px; max-width: 100%; border: 0; border-bottom: 1px solid black; padding: 6px 8px; margin-bottom: 20px;"
+         id="transloadit-api-key" 
+         placeholder="Your Transloadit API key">
+</p>
+
+<link rel="stylesheet" href="app.css">
+<% include app.html %>
+
+<script src="app.js"></script>
+<script>
+  var apiKeyEl = document.getElementById('transloadit-api-key')
+  var storedApiKey = localStorage.getItem('uppyTransloaditApiKey')
+
+  if (storedApiKey) {
+    apiKeyEl.value = storedApiKey
+    window.TRANSLOADIT_API_KEY = storedApiKey
+    initUppy()
+  }
+
+  function handleInputChange (ev) {
+    var enteredApiKey = ev.target.value
+    window.TRANSLOADIT_API_KEY = enteredApiKey
+    localStorage.setItem('uppyTransloaditApiKey', enteredApiKey)
+    initUppy()
+  }
+
+  apiKeyEl.addEventListener('change', handleInputChange)
+  apiKeyEl.addEventListener('keyup',  handleInputChange)
+  apiKeyEl.addEventListener('paste',  handleInputChange)
+</script>
+
+<hr />
+
+<p>On this page we're using the following JavaScript:</p>
+{% codeblock lang:js %}
+const Uppy = require('uppy/lib/core/Core')
+const Dashboard = require('uppy/lib/plugins/Dashboard')
+const Webcam = require('uppy/lib/plugins/Webcam')
+const Transloadit = require('uppy/lib/plugins/Transloadit')
+const Tus = require('uppy/lib/plugins/Tus')
+
+const uppy = Uppy({
+  debug: true,
+  autoProceed: false,
+  restrictions: {
+    maxFileSize: 1024 * 1024 * 1024,
+    maxNumberOfFiles: 2,
+    minNumberOfFiles: 1,
+    allowedFileTypes: ['image/*']
+  }
+})
+
+uppy
+  .use(Tus, { resume: false })
+  .use(Transloadit, {
+    params: {
+      auth: {
+        key: YOUR_TRANSLOADIT_API_KEY
+      },
+      // It's always better to use a template_id and enable
+      // Signature Authentication
+      steps: {
+        resize: {
+          robot: '/image/resize',
+          width: 250,
+          height: 250,
+          resize_strategy: 'fit',
+          text: [
+            {
+              text: '© 2018 Transloadit.com',
+              size: 12,
+              font: 'Ubuntu',
+              color: '#eeeeee',
+              valign: 'bottom',
+              align: 'right',
+              x_offset: 16,
+              y_offset: -10
+            }
+          ]
+        }
+      }
+    },
+    waitForEncoding: true
+  })
+  .use(Dashboard, {
+    inline: true,
+    maxHeight: 400,
+    target: '#uppy-dashboard-container',
+    note: 'Images and video only, 1–2 files, up to 1 MB'
+  })
+  .use(Webcam, { target: Dashboard })
+  .run()
+
+uppy
+  .on('transloadit:result', (stepName, result) => {
+    const file = uppy.getFile(result.localId)
+    var resultContainer = document.createElement('div')
+    resultContainer.innerHTML = `
+      <div>
+        <h3>Name: ${file.name}</h3>
+        <img src="${result.ssl_url}" /> <br />
+        <a href="${result.ssl_url}">View</a>
+      </div>
+    `
+    document.getElementById('uppy-transloadit-result').appendChild(resultContainer)
+  })
+{% endcodeblock %}
