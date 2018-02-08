@@ -167,6 +167,21 @@ module.exports = class Transloadit extends Plugin {
           // will upload to the same assembly.
           resume: false
         })
+
+        // Set uppy server location.
+        // we only add this, if 'file' has the attribute remote, because
+        // this is the criteria to identify remote files. If we add it without
+        // the check, then the file automatically becomes a remote file.
+        // @TODO: this is quite hacky. Please fix this later
+        let remote
+        if (file.remote) {
+          const newHost = assembly.uppyserver_url
+          remote = Object.assign({}, file.remote, {
+            host: newHost,
+            url: file.remote.url.replace(file.remote.host, newHost)
+          })
+        }
+
         const transloadit = {
           assembly: assembly.assembly_id
         }
@@ -174,7 +189,7 @@ module.exports = class Transloadit extends Plugin {
         const newFile = Object.assign({}, file, { transloadit })
         // Only configure the Tus plugin if we are uploading straight to Transloadit (the default).
         if (!pluginOptions.importFromUploadURLs) {
-          Object.assign(newFile, { meta, tus })
+          Object.assign(newFile, { meta, tus, remote })
         }
         return newFile
       }
