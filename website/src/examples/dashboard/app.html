@@ -9,6 +9,7 @@
   <input type="checkbox" id="opts-GoogleDrive" checked/><label for="opts-GoogleDrive">Google Drive</label>
   <input type="checkbox" id="opts-Dropbox" checked/><label for="opts-Dropbox">Dropbox</label>
   <input type="checkbox" id="opts-Instagram" checked/><label for="opts-Instagram">Instagram</label>
+  <input type="checkbox" id="opts-browserBackButtonClose" checked/><label for="opts-browserBackButtonClose">Close on browser back button</label>
 </div>
 
 <!-- Modal trigger -->
@@ -28,7 +29,8 @@
     Dropbox: document.querySelector('#opts-Dropbox'),
     Instagram: document.querySelector('#opts-Instagram'),
     autoProceed: document.querySelector('#opts-autoProceed'),
-    restrictions: document.querySelector('#opts-restrictions')
+    restrictions: document.querySelector('#opts-restrictions'),
+    browserBackButtonClose: document.querySelector('#opts-browserBackButtonClose')
   }
 
   var defaultOpts = {
@@ -38,7 +40,8 @@
     Instagram: true,
     Dropbox: false,
     autoProceed: false,
-    restrictions: false
+    restrictions: false,
+    browserBackButtonClose: false
   }
 
   // try to get options from localStorage, if its empty, set to defaultOpts
@@ -47,7 +50,7 @@
   } catch (err) {
     window.uppyOptions = {}
   }
-  
+
   if (isObjEmpty(window.uppyOptions)) {
     window.uppyOptions = defaultOpts
     localStorage.setItem('uppyOptions', JSON.stringify(window.uppyOptions))

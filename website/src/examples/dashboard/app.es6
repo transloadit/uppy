@@ -46,7 +46,8 @@ function uppyInit () {
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
-    ]
+    ],
+    browserBackButtonClose: opts.browserBackButtonClose
   })
 
   if (opts.GoogleDrive) {

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "hexo": {
-    "version": "3.5.0"
+    "version": "3.4.4"
   },
   "dependencies": {
     "autoprefixer": "^7.2.5",

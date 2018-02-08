@@ -47,7 +47,8 @@ const uppy = Uppy({
   metaFields: [
     { id: 'license', name: 'License', placeholder: 'specify license' },
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
-  ]
+  ],
+  browserBackButtonClose: true
 })
 .use(GoogleDrive, { target: Dashboard, host: 'https://server.uppy.io' })
 .use(Dropbox, { target: Dashboard, host: 'https://server.uppy.io' })
