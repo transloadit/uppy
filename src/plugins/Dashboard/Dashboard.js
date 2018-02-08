@@ -28,7 +28,6 @@ module.exports = function Dashboard (props) {
     'uppy',
     'uppy-Dashboard',
     { 'Uppy--isTouchDevice': isTouchDevice() },
-    { 'uppy-Dashboard--semiTransparent': props.semiTransparent },
     { 'uppy-Dashboard--modal': !props.inline },
     { 'uppy-Dashboard--wide': props.isWide }
   )

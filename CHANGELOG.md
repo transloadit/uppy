@@ -62,7 +62,6 @@ What we need to do to release Uppy 1.0
 - [ ] QA: test in multiple browsers and mobile devices
 - [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
 - [ ] QA: tests for some plugins
-- [ ] automatically host releases on edgly and use that as our main CDN
 - [ ] docs: on using plugins, all options, list of plugins, i18n
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs
 - [ ] refactoring: possibly add CSS-in-JS
@@ -93,10 +92,11 @@ What we need to do to release Uppy 1.0
 
 ## 0.23.0
 
-To be released: 2018-02-01.
+To be released: 2018-02-10.
 
-- [ ] core: return `processing` results among with `upload` results in `success` event and `upload()` promise (@goto-bus-stop)
-- [ ] transloadit: add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (@goto-bus-stop)
+- [x] core: return `processing` results among with `upload` results in `success` event and `upload()` promise (#527 / @goto-bus-stop)
+- [x] transloadit: add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (#527 / @goto-bus-stop)
+- [x] transloadit: add `transloadit:assembly-executing` event (#547 / @goto-bus-stop)
 - [ ] transloadit: add error reporting (@goto-bus-stop)
 - [ ] importurl: new plugin that imports files from urls (@arturi, @ifedapoolarewaju)
 - [ ] core: figure out per-plugin locales and i18n strings packs #491
@@ -104,13 +104,14 @@ To be released: 2018-02-01.
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] core: i18n all strings + document them
 - [ ] core: fix blank preview thumbnails for .png images in Safari 10.1 #458
-- [ ] core: Move limiting to different point, to fix StatusBar and other UI issues #468 (@goto-bus-stop)
+- [x] core: Move limiting to different point, to fix StatusBar and other UI issues #468 (#524, #526 / @goto-bus-stop)
 - [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
 - [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
 - [x] dashboard: restore focus after modal has been closed (@arturi)
 - [ ] dashboard: option for Boolean metadata #454 (@arturi)
+- [ ] dashboard: refactor provider views (#554 / @arturi)
 - [x] dashboard: use more accessible tip lib: https://github.com/ghosh/microtip
-- [ ] core: queue preview generation #431
+- [x] core: move preview generation to separate plugin, add queuing (#431 / @richardwillars)
 - [ ] core: warn, not error, when file cannot be added due to restrictions? (@arturi)
 - [ ] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (@goto-bus-stop)
 - [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
@@ -121,10 +122,17 @@ To be released: 2018-02-01.
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
-- [ ] uppy-server: security audit, ask @acconut
+- [x] uppy-server: security audit, ask @acconut
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] meta: add https://twin.github.io/better-file-uploads-with-shrine-direct-uploads to the next blog post
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
+- [x] meta: automatically host releases on edgly and use that as our main CDN (#558 / @kvz)
+- [x] uppy-server: pass response from uppy-server upload’s endpoint (@ifedapoolarewaju)
+- [x] uppy-server: support localhost urls as endpoints (@ifedapoolarewaju)
+- [x] uppy-server: schedule job to delete stale upload files (@ifedapoolarewaju)
+- [x] uppy-server: detect file upload size from the server (@ifedapoolarewaju)
+- [x] uppy-server: load standalone server options via config path (@ifedapoolarewaju)
+- [x] uppy-server: fix circular json stringify error (@ifedapoolarewaju)
 
 ## 0.22.1
 
@@ -551,7 +559,7 @@ Theme: Getting together.
 - [x] tus: add `resumable` capability flag (@arturi)
 - [x] tus: start fixing pause/resume issues and race conditions (@arturi)
 - [x] test: working Uppy example on Require Bin — latest version straight from NPM http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105 (@arturi @acconut)
-- [x] meta: update readme docs, add unpkg CDN links (https://unpkg.com/uppy/dist/uppy.min.css) (@arturi)
+- [x] meta: update readme docs, add unpkg CDN links (https://transloadit.edgly.net/releases/uppy/v0.22.0/dist/uppy.min.css) (@arturi)
 - [x] meta: write 0.10 release blog post (@arturi)
 
 ## 0.9.0

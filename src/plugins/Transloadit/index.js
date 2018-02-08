@@ -167,6 +167,30 @@ module.exports = class Transloadit extends Plugin {
           // will upload to the same assembly.
           resume: false
         })
+
+        // Set uppy server location.
+        // we only add this, if 'file' has the attribute remote, because
+        // this is the criteria to identify remote files. If we add it without
+        // the check, then the file automatically becomes a remote file.
+        // @TODO: this is quite hacky. Please fix this later
+        let remote
+        if (file.remote) {
+          let newHost = assembly.uppyserver_url
+          // remove tailing slash
+          if (newHost.endsWith('/')) {
+            newHost = newHost.slice(0, -1)
+          }
+          let path = file.remote.url.replace(file.remote.host, '')
+          // remove leading slash
+          if (path.startsWith('/')) {
+            path = path.slice(1)
+          }
+          remote = Object.assign({}, file.remote, {
+            host: newHost,
+            url: `${newHost}/${path}`
+          })
+        }
+
         const transloadit = {
           assembly: assembly.assembly_id
         }
@@ -174,7 +198,7 @@ module.exports = class Transloadit extends Plugin {
         const newFile = Object.assign({}, file, { transloadit })
         // Only configure the Tus plugin if we are uploading straight to Transloadit (the default).
         if (!pluginOptions.importFromUploadURLs) {
-          Object.assign(newFile, { meta, tus })
+          Object.assign(newFile, { meta, tus, remote })
         }
         return newFile
       }
@@ -613,12 +637,15 @@ module.exports = class Transloadit extends Plugin {
         const socket = this.sockets[assemblyID]
         socket.close()
       })
+      const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
+      this.uppy.addResultData(uploadID, { transloadit: assemblies })
       return Promise.resolve()
     }
 
     // If no assemblies were created for this upload, we also do not have to wait.
     // There's also no sockets or anything to close, so just return immediately.
     if (assemblyIDs.length === 0) {
+      this.uppy.addResultData(uploadID, { transloadit: [] })
       return Promise.resolve()
     }
 
@@ -691,6 +718,8 @@ module.exports = class Transloadit extends Plugin {
         if (finishedAssemblies === assemblyIDs.length) {
           // We're done, these listeners can be removed
           removeListeners()
+          const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
+          this.uppy.addResultData(uploadID, { transloadit: assemblies })
           resolve()
         }
       }
@@ -704,12 +733,14 @@ module.exports = class Transloadit extends Plugin {
       this.uppy.on('transloadit:complete', onAssemblyFinished)
       this.uppy.on('transloadit:assembly-error', onAssemblyError)
       this.uppy.on('transloadit:import-error', onImportError)
-    }).then(() => {
+    }).then((result) => {
       // Clean up uploadID → assemblyIDs, they're no longer going to be used anywhere.
       const state = this.getPluginState()
       const uploadsAssemblies = Object.assign({}, state.uploadsAssemblies)
       delete uploadsAssemblies[uploadID]
       this.setPluginState({ uploadsAssemblies })
+
+      return result
     })
   }
 

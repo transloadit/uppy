@@ -9,9 +9,8 @@
 
 // Added to body to prevent the page from scrolling when Modal is open
 .uppy-Dashboard-isOpen {
-  width: 100%;
   overflow: hidden;
-  position: fixed;
+  height: 100vh;
 }
 
 .uppy-Dashboard--modal .uppy-Dashboard-overlay {

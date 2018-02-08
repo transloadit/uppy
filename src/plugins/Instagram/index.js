@@ -77,7 +77,7 @@ module.exports = class Instagram extends Plugin {
   }
 
   getItemIcon (item) {
-    return <img width="100" src={item.images.thumbnail.url} />
+    return <img src={item.images.thumbnail.url} />
   }
 
   getItemSubList (item) {

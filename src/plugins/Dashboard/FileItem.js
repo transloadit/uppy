@@ -119,8 +119,8 @@ module.exports = function fileItem (props) {
       {!uploadInProgressOrComplete &&
         <button class="uppy-DashboardItem-edit"
           type="button"
-          aria-label="Edit file"
-          title="Edit file"
+          aria-label={props.i18n('editFile')}
+          title={props.i18n('editFile')}
           onclick={(e) => props.showFileCard(file.id)}>
           {iconEdit()}
         </button>
@@ -128,15 +128,15 @@ module.exports = function fileItem (props) {
       {file.uploadURL &&
         <button class="uppy-DashboardItem-copyLink"
           type="button"
-          aria-label="Copy link"
-          title="Copy link"
+          aria-label={props.i18n('copyLink')}
+          title={props.i18n('copyLink')}
           onclick={() => {
             copyToClipboard(file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
-            .then(() => {
-              props.log('Link copied to clipboard.')
-              props.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
-            })
-            .catch(props.log)
+              .then(() => {
+                props.log('Link copied to clipboard.')
+                props.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
+              })
+              .catch(props.log)
           }}>{iconCopy()}</button>
       }
     </div>
@@ -144,8 +144,8 @@ module.exports = function fileItem (props) {
       {!isUploaded &&
         <button class="uppy-DashboardItem-remove"
           type="button"
-          aria-label="Remove file"
-          title="Remove file"
+          aria-label={props.i18n('removeFile')}
+          title={props.i18n('removeFile')}
           onclick={() => props.removeFile(file.id)}>
           <svg aria-hidden="true" class="UppyIcon" width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
             <path stroke="#FFF" stroke-width="1" fill-rule="nonzero" vector-effect="non-scaling-stroke" d="M30 1C14 1 1 14 1 30s13 29 29 29 29-13 29-29S46 1 30 1z" />

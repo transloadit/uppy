@@ -34,10 +34,25 @@ module.exports = class XHRUpload extends Plugin {
       locale: defaultLocale,
       timeout: 30 * 1000,
       limit: 0,
-      getResponseData (xhr) {
-        return JSON.parse(xhr.response)
+      /**
+       * @typedef respObj
+       * @property {string} responseText
+       * @property {number} status
+       * @property {string} statusText
+       * @property {Object.<string, string>} headers
+       *
+       * @param {string} responseContent the response body
+       * @param {XMLHttpRequest | respObj} responseObject the response object
+       */
+      getResponseData (responseContent, responseObject) {
+        return JSON.parse(responseContent)
       },
-      getResponseError (xhr) {
+      /**
+       *
+       * @param {string} responseContent the response body
+       * @param {XMLHttpRequest | respObj} responseObject the response object
+       */
+      getResponseError (responseContent, responseObject) {
         return new Error('Upload error')
       }
     }
@@ -59,6 +74,10 @@ module.exports = class XHRUpload extends Plugin {
     } else {
       this.limitUploads = (fn) => fn
     }
+
+    if (this.opts.bundle && !this.opts.formData) {
+      throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.')
+    }
   }
 
   getOptions (file) {
@@ -77,6 +96,40 @@ module.exports = class XHRUpload extends Plugin {
     }
 
     return opts
+  }
+
+  // Helper to abort upload requests if there has not been any progress for `timeout` ms.
+  // Create an instance using `timer = createProgressTimeout(10000, onTimeout)`
+  // Call `timer.progress()` to signal that there has been progress of any kind.
+  // Call `timer.done()` when the upload has completed.
+  createProgressTimeout (timeout, timeoutHandler) {
+    const uppy = this.uppy
+    const self = this
+    function onTimedOut () {
+      uppy.log(`[XHRUpload] timed out`)
+      const error = new Error(self.i18n('timedOut', { seconds: Math.ceil(timeout / 1000) }))
+      timeoutHandler(error)
+    }
+
+    let aliveTimer = null
+    function progress () {
+      if (timeout > 0) {
+        done()
+        aliveTimer = setTimeout(onTimedOut, timeout)
+      }
+    }
+
+    function done () {
+      if (aliveTimer) {
+        clearTimeout(aliveTimer)
+        aliveTimer = null
+      }
+    }
+
+    return {
+      progress,
+      done
+    }
   }
 
   createFormDataUpload (file, opts) {
@@ -108,35 +161,24 @@ module.exports = class XHRUpload extends Plugin {
         ? this.createFormDataUpload(file, opts)
         : this.createBareUpload(file, opts)
 
-      const onTimedOut = () => {
+      const timer = this.createProgressTimeout(opts.timeout, (error) => {
         xhr.abort()
-        this.uppy.log(`[XHRUpload] ${id} timed out`)
-        const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
         this.uppy.emit('upload-error', file.id, error)
         reject(error)
-      }
-      let aliveTimer
-      const isAlive = () => {
-        clearTimeout(aliveTimer)
-        aliveTimer = setTimeout(onTimedOut, opts.timeout)
-      }
+      })
 
       const xhr = new XMLHttpRequest()
       const id = cuid()
 
       xhr.upload.addEventListener('loadstart', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} started`)
-        if (opts.timeout > 0) {
-          // Begin checking for timeouts when loading starts.
-          isAlive()
-        }
+        // Begin checking for timeouts when loading starts.
+        timer.progress()
       })
 
       xhr.upload.addEventListener('progress', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`)
-        if (opts.timeout > 0) {
-          isAlive()
-        }
+        timer.progress()
 
         if (ev.lengthComputable) {
           this.uppy.emit('upload-progress', {
@@ -150,10 +192,10 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.addEventListener('load', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} finished`)
-        clearTimeout(aliveTimer)
+        timer.done()
 
         if (ev.target.status >= 200 && ev.target.status < 300) {
-          const resp = opts.getResponseData(xhr)
+          const resp = opts.getResponseData(xhr.responseText, xhr)
           const uploadURL = resp[opts.responseUrlFieldName]
 
           this.uppy.emit('upload-success', file.id, resp, uploadURL)
@@ -164,7 +206,7 @@ module.exports = class XHRUpload extends Plugin {
 
           return resolve(file)
         } else {
-          const error = opts.getResponseError(xhr) || new Error('Upload error')
+          const error = opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
           error.request = xhr
           this.uppy.emit('upload-error', file.id, error)
           return reject(error)
@@ -173,9 +215,9 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.addEventListener('error', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} errored`)
-        clearTimeout(aliveTimer)
+        timer.done()
 
-        const error = opts.getResponseError(xhr) || new Error('Upload error')
+        const error = opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
         this.uppy.emit('upload-error', file.id, error)
         return reject(error)
       })
@@ -226,7 +268,7 @@ module.exports = class XHRUpload extends Plugin {
           endpoint: opts.endpoint,
           size: file.data.size,
           fieldname: opts.fieldName,
-          fields,
+          metadata: fields,
           headers: opts.headers
         }))
       })
@@ -243,16 +285,108 @@ module.exports = class XHRUpload extends Plugin {
           socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
           socket.on('success', (data) => {
-            this.uppy.emit('upload-success', file.id, data, data.url)
+            const resp = opts.getResponseData(data.response.responseText, data.response)
+            const uploadURL = resp[opts.responseUrlFieldName]
+            this.uppy.emit('upload-success', file.id, resp, uploadURL)
             socket.close()
             return resolve()
           })
 
           socket.on('error', (errData) => {
-            this.uppy.emit('upload-error', file.id, new Error(errData.error))
+            const resp = errData.response
+            const error = resp ? opts.getResponseError(resp.responseText, resp) : new Error(errData.error)
+            this.uppy.emit('upload-error', file.id, error)
             reject(new Error(errData.error))
           })
         })
+      })
+    })
+  }
+
+  uploadBundle (files) {
+    return new Promise((resolve, reject) => {
+      const endpoint = this.opts.endpoint
+      const method = this.opts.method
+
+      const formData = new FormData()
+      files.forEach((file, i) => {
+        const opts = this.getOptions(file)
+        formData.append(opts.fieldName, file.data)
+      })
+
+      const xhr = new XMLHttpRequest()
+
+      const timer = this.createProgressTimeout(this.opts.timeout, (error) => {
+        xhr.abort()
+        emitError(error)
+        reject(error)
+      })
+
+      const emitError = (error) => {
+        files.forEach((file) => {
+          this.uppy.emit('upload-error', file.id, error)
+        })
+      }
+
+      xhr.upload.addEventListener('loadstart', (ev) => {
+        this.uppy.log('[XHRUpload] started uploading bundle')
+        timer.progress()
+      })
+
+      xhr.upload.addEventListener('progress', (ev) => {
+        timer.progress()
+
+        if (!ev.lengthComputable) return
+
+        files.forEach((file) => {
+          this.uppy.emit('upload-progress', {
+            uploader: this,
+            id: file.id,
+            bytesUploaded: ev.loaded,
+            bytesTotal: ev.total
+          })
+        })
+      })
+
+      xhr.addEventListener('load', (ev) => {
+        timer.done()
+
+        if (ev.target.status >= 200 && ev.target.status < 300) {
+          const resp = this.opts.getResponseData(xhr)
+          files.forEach((file) => {
+            this.uppy.emit('upload-success', file.id, resp)
+          })
+          return resolve()
+        }
+
+        const error = this.opts.getResponseError(xhr) || new Error('Upload error')
+        error.request = xhr
+        emitError(error)
+        return reject(error)
+      })
+
+      xhr.addEventListener('error', (ev) => {
+        timer.done()
+
+        const error = this.opts.getResponseError(xhr) || new Error('Upload error')
+        emitError(error)
+        return reject(error)
+      })
+
+      this.uppy.on('cancel-all', () => {
+        xhr.abort()
+      })
+
+      xhr.open(method.toUpperCase(), endpoint, true)
+
+      Object.keys(this.opts.headers).forEach((header) => {
+        xhr.setRequestHeader(header, this.opts.headers[header])
+      })
+
+      xhr.send(formData)
+
+      files.forEach((file) => {
+        this.uppy.emit('upload-started', file.id)
       })
     })
   }
@@ -290,9 +424,10 @@ module.exports = class XHRUpload extends Plugin {
     }
 
     this.uppy.log('[XHRUpload] Uploading...')
-    const files = fileIDs.map(getFile, this)
-    function getFile (fileID) {
-      return this.uppy.state.files[fileID]
+    const files = fileIDs.map((fileID) => this.uppy.getFile(fileID))
+
+    if (this.opts.bundle) {
+      return this.uploadBundle(files)
     }
 
     return this.uploadFiles(files).then(() => null)
