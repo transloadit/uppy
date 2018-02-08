@@ -8,7 +8,7 @@
 #  - Checks if a tag is being built (on Travis - otherwise opts to continue execution regardless)
 #  - Installs AWS CLI if needed
 #  - Assumed a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
-#  - Runs npm pack, and stores files to e.g. https://transloadit.edgly.net/releases/uppy/v0.22.3/dist/uppy.css
+#  - Runs npm pack, and stores files to e.g. https://transloadit.edgly.net/releases/uppy/v0.22.4/dist/uppy.css
 #  - Uses local package by default, if [version] argument was specified, takes package from npm
 #
 # Run as:
