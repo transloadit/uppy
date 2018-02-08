@@ -175,10 +175,19 @@ module.exports = class Transloadit extends Plugin {
         // @TODO: this is quite hacky. Please fix this later
         let remote
         if (file.remote) {
-          const newHost = assembly.uppyserver_url
+          let newHost = assembly.uppyserver_url
+          // remove tailing slash
+          if (newHost.endsWith('/')) {
+            newHost = newHost.splice(0, -1)
+          }
+          let path = file.remote.url.replace(file.remote.host, '')
+          // remove leading slash
+          if (path.startsWith('/')) {
+            path = path.slice(1)
+          }
           remote = Object.assign({}, file.remote, {
             host: newHost,
-            url: file.remote.url.replace(file.remote.host, newHost)
+            url: `${newHost}/${path}`
           })
         }
 
