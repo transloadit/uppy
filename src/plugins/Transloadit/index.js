@@ -178,7 +178,7 @@ module.exports = class Transloadit extends Plugin {
           let newHost = assembly.uppyserver_url
           // remove tailing slash
           if (newHost.endsWith('/')) {
-            newHost = newHost.splice(0, -1)
+            newHost = newHost.slice(0, -1)
           }
           let path = file.remote.url.replace(file.remote.host, '')
           // remove leading slash
