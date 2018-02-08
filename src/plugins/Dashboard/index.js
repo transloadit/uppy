@@ -98,7 +98,8 @@ module.exports = class Dashboard extends Plugin {
       disableThumbnailGenerator: false,
       disablePageScrollWhenModalOpen: true,
       onRequestCloseModal: () => this.closeModal(),
-      locale: defaultLocale
+      locale: defaultLocale,
+      browserBackButtonClose: false
     }
 
     // merge default options with the ones set by user
@@ -247,7 +248,10 @@ module.exports = class Dashboard extends Plugin {
 
     this.updateDashboardElWidth()
     this.setFocusToFirstNode()
-    this.updateBrowserHistory()
+
+    if (this.opts.browserBackButtonClose) {
+      this.updateBrowserHistory()
+    }
   }
 
   closeModal () {
