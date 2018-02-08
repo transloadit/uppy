@@ -88,11 +88,13 @@ module.exports = class Transloadit extends Plugin {
   getAssemblyOptions (fileIDs) {
     const options = this.opts
 
-    const normalizeAssemblyOptions = (assemblyOptions) => {
-      const globalMeta = this.uppy.getState().meta
-      // Include global metadata as fields. Works great together with the Form plugin :)
-      if (assemblyOptions.fields === true) {
-        assemblyOptions.fields = Object.assign({}, globalMeta)
+    const normalizeAssemblyOptions = (file, assemblyOptions) => {
+      if (Array.isArray(assemblyOptions.fields)) {
+        const fieldNames = assemblyOptions.fields
+        assemblyOptions.fields = {}
+        fieldNames.forEach((fieldName) => {
+          assemblyOptions.fields[fieldName] = file.meta[fieldName]
+        })
       }
       if (!assemblyOptions.fields) {
         assemblyOptions.fields = {}
@@ -105,7 +107,7 @@ module.exports = class Transloadit extends Plugin {
         const file = this.uppy.getFile(fileID)
         const promise = Promise.resolve()
           .then(() => options.getAssemblyOptions(file, options))
-          .then(normalizeAssemblyOptions)
+          .then((assemblyOptions) => normalizeAssemblyOptions(file, assemblyOptions))
         return promise.then((assemblyOptions) => {
           this.validateParams(assemblyOptions.params)
 
