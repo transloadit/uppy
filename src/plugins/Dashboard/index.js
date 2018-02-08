@@ -246,12 +246,12 @@ module.exports = class Dashboard extends Plugin {
       document.body.classList.add('uppy-Dashboard-isOpen')
     }
 
-    this.updateDashboardElWidth()
-    this.setFocusToFirstNode()
-
     if (this.opts.browserBackButtonClose) {
       this.updateBrowserHistory()
     }
+
+    this.updateDashboardElWidth()
+    this.setFocusToFirstNode()
   }
 
   closeModal () {
