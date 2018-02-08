@@ -168,12 +168,19 @@ module.exports = class Transloadit extends Plugin {
           resume: false
         })
 
-        // Set uppy server location
-        const remote = Object.assign({}, file.remote, {
-          // @TODO Transloadit needs to supply assembly.uppyserver_url, vs this
-          // hack based on websocket_url
-          host: assembly.websocket_url.replace(/\/ws\d+\/?$/, '/uppy-server')
-        })
+        // Set uppy server location.
+        // we only add this, if 'file' has the attribute remote, because
+        // this is the criteria to identify remote files. If we add it without
+        // the check, then the file automatically becomes a remote file.
+        // @TODO: this is quite hacky. Please fix this later
+        let remote
+        if (file.remote) {
+          const newHost = assembly.uppyserver_url
+          remote = Object.assign({}, file.remote, {
+            host: newHost,
+            url: file.remote.url.replace(file.remote.host, newHost)
+          })
+        }
 
         const transloadit = {
           assembly: assembly.assembly_id
