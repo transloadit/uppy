@@ -5,8 +5,9 @@ title: "Webcam"
 permalink: docs/webcam/
 ---
 
+The Webcam plugin lets you take photos and record videos with a built-in camera on desktop and mobile devices.
 
-[Try it live](/examples/dashboard/) - The Informer is included in the Dashboard by default.
+[Try live!](/examples/dashboard/)
 
 ## Options
 
@@ -20,6 +21,8 @@ uppy.use(Webcam, {
     'audio-only',
     'picture'
   ],
+  mirror: true,
+  facingMode: 'user',
   locale: {
     strings: {
       smile: 'Smile!'
@@ -51,6 +54,20 @@ The types of recording modes to allow.
  - `picture` - Take a picture with the webcam.
 
 By default, all modes are allowed, and the Webcam plugin will show controls for recording video as well as taking pictures.
+
+### `mirror: true`
+
+Whether to mirror preview image from the camera. This option is useful when taking a selfie with a front camera: when you wave your right hand, you will see your hand on the right on the preview screen, like in the mirror. But when you actually take a picture, it will not be mirrored. This is how smartphone selfie cameras behave.
+
+### `facingMode: 'user'`
+
+Devices sometimes have multiple cameras, front and back, for example. There’s a browser API to set which camera will be used, [facingMode](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/facingMode):
+
+- `user`: The video source is facing toward the user; this includes, for example, the front-facing camera on a smartphone.
+- `environment`:  The video source is facing away from the user, thereby viewing their environment. This is the back camera on a smartphone.
+- `left`: The video source is facing toward the user but to their left, such as a camera aimed toward the user but over their left shoulder.
+- `right`: The video source is facing toward the user but to their right, such as a camera aimed toward the user but over their right shoulder.
+
 
 ### `locale: {}`
 

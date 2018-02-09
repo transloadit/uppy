@@ -61,7 +61,9 @@ module.exports = class Webcam extends Plugin {
         'video-only',
         'audio-only',
         'picture'
-      ]
+      ],
+      mirror: true,
+      facingMode: 'user'
     }
 
     // merge default options with the ones set by user
@@ -108,7 +110,7 @@ module.exports = class Webcam extends Plugin {
 
     return {
       audio: acceptsAudio,
-      video: acceptsVideo
+      video: acceptsVideo ? { facingMode: this.opts.facingMode } : false
     }
   }
 
@@ -125,8 +127,7 @@ module.exports = class Webcam extends Plugin {
     return this.mediaDevices.getUserMedia(constraints)
       .then((stream) => {
         this.stream = stream
-        console.log(stream)
-        this.streamSrc = URL.createObjectURL(this.stream)
+        // this.streamSrc = URL.createObjectURL(this.stream)
         this.setPluginState({
           cameraReady: true
         })
@@ -191,7 +192,6 @@ module.exports = class Webcam extends Plugin {
     })
     this.webcamActive = false
     this.stream = null
-    this.streamSrc = null
   }
 
   getVideoElement () {
@@ -251,10 +251,23 @@ module.exports = class Webcam extends Plugin {
     const name = `webcam-${Date.now()}.jpg`
     const mimeType = 'image/jpeg'
 
+    const width = video.videoWidth
+    const height = video.videoHeight
+
+    // const scaleH = this.opts.mirror ? -1 : 1 // Set horizontal scale to -1 if flip horizontal
+    // const scaleV = 1
+    // const posX = this.opts.mirror ? width * -1 : 0 // Set x position to -100% if flip horizontal
+    // const posY = 0
+
     const canvas = document.createElement('canvas')
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    canvas.getContext('2d').drawImage(video, 0, 0)
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(video, 0, 0)
+    // ctx.save() // Save the current state
+    // ctx.scale(scaleH, scaleV) // Set scale to flip the image
+    // ctx.drawImage(video, posX, posY, width, height) // draw the image
+    // ctx.restore() // Restore the last saved state
 
     return canvasToBlob(canvas, mimeType).then((blob) => {
       return {
@@ -313,7 +326,8 @@ module.exports = class Webcam extends Plugin {
       modes: this.opts.modes,
       supportsRecording: supportsMediaRecorder(),
       recording: webcamState.isRecording,
-      src: this.streamSrc
+      mirror: this.opts.mirror,
+      src: this.stream
     }))
   }
 
