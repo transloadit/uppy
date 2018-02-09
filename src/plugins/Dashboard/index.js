@@ -216,7 +216,7 @@ module.exports = class Dashboard extends Plugin {
   handlePopState (event) {
     // Check if the state no longer contains our `uppyDashboard: 'open'` flag
     if (!event.state || !event.state.uppyDashboard) {
-      this.closeModal()
+      this.closeModal({ manualClose: false })
     }
   }
 
@@ -257,7 +257,11 @@ module.exports = class Dashboard extends Plugin {
     this.setFocusToFirstNode()
   }
 
-  closeModal () {
+  closeModal (opts = {}) {
+    const {
+      manualClose = true
+    } = opts
+
     this.setPluginState({
       isHidden: true
     })
@@ -267,6 +271,13 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.savedActiveElement.focus()
+
+    if (manualClose) {
+      if (this.opts.browserBackButtonClose) {
+        // Go back in history to clear out the entry we created for `uppyDashboard` in history state
+        history.go(-1)
+      }
+    }
 
     window.removeEventListener('popstate', this.handlePopState, false)
   }
