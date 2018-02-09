@@ -655,7 +655,7 @@ class Uppy {
     // connection to the remote server. Therefore, we are throtteling them to
     // prevent accessive function calls.
     // see also: https://github.com/tus/tus-js-client/commit/9940f27b2361fd7e10ba58b09b60d82422183bbb
-    const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: false })
+    const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: true })
 
     this.on('upload-progress', _throttledCalculateProgress)
 
