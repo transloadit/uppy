@@ -89,7 +89,6 @@
     "pre-commit": "^1.2.2",
     "redux": "^3.7.2",
     "sass": "0.5.0",
-    "tape": "^4.8.0",
     "temp-write": "^3.4.0",
     "tinyify": "^2.4.0",
     "uppy-server": "^0.10.0",
