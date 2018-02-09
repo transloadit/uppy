@@ -45,7 +45,12 @@ module.exports = class XHRUpload extends Plugin {
        * @param {XMLHttpRequest | respObj} responseObject the response object
        */
       getResponseData (responseContent, responseObject) {
-        return JSON.parse(responseContent)
+        try {
+          return JSON.parse(responseContent)
+        } catch (err) {
+          this.uppy.log(err, 'error')
+          return err
+        }
       },
       /**
        *
@@ -352,7 +357,7 @@ module.exports = class XHRUpload extends Plugin {
         timer.done()
 
         if (ev.target.status >= 200 && ev.target.status < 300) {
-          const resp = this.opts.getResponseData(xhr)
+          const resp = this.opts.getResponseData(xhr.responseText)
           files.forEach((file) => {
             this.uppy.emit('upload-success', file.id, resp)
           })
