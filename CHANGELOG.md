@@ -94,6 +94,7 @@ What we need to do to release Uppy 1.0
 - [ ] goldenretriever: confirmation before restore #443
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] core: i18n all strings + document them
+- [ ] core: update file-type
 
 # next
 
