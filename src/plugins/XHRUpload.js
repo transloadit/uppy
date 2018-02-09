@@ -29,7 +29,7 @@ module.exports = class XHRUpload extends Plugin {
       method: 'post',
       metaFields: null,
       responseUrlFieldName: 'url',
-      bundle: true,
+      bundle: false,
       headers: {},
       locale: defaultLocale,
       timeout: 30 * 1000,
