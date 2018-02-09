@@ -1110,7 +1110,8 @@ class Uppy {
       })
       .catch((err) => {
         const message = typeof err === 'object' ? err.message : err
-        this.info(message, 'error', 5000)
+        this.log(message)
+        this.info(message, 'error', 4000)
         return Promise.reject(typeof err === 'object' ? err : new Error(err))
       })
   }
