@@ -18,6 +18,7 @@ As of now uppy-server is integrated to work with:
 - Google Drive
 - Dropbox
 - Instagram
+- Remote Urls
 - Amazon S3
 - Local disk
 

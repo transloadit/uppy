@@ -24,16 +24,15 @@ const uppy = Uppy({
   onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
   onBeforeUpload: (files, done) => Promise.resolve(),
   locale: defaultLocale,
-  store: new DefaultStore(),
-  thumbnailGeneration: true
+  store: new DefaultStore()
 })
 ```
 
 ### `id: 'uppy'`
 
 A site-wide unique ID for the instance.
-If multiple Uppy instances are being used, for example on two different pages, an `id` should be specified.
-This allows Uppy to store information in `localStorage` without colliding with other Uppy instances.
+
+If multiple Uppy instances are being used, for example on two different pages, an `id` should be specified. This allows Uppy to store information in `localStorage` without colliding with other Uppy instances.
 
 Note that this ID should be persistent across page reloads and navigation—it shouldn't be a random number that's different every time Uppy is loaded.
 For example, if one Uppy instance is used to upload user avatars, and another to add photos to a blog post, you might use:
@@ -130,7 +129,7 @@ locale: {
 
 We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/master/index.js#L37-L60).
 
-## `store: defaultStore()`
+### `store: defaultStore()`
 
 The Store to use to keep track of internal state. By default, a simple object is used.
 
