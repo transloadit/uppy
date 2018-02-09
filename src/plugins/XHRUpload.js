@@ -45,12 +45,14 @@ module.exports = class XHRUpload extends Plugin {
        * @param {XMLHttpRequest | respObj} responseObject the response object
        */
       getResponseData (responseContent, responseObject) {
+        let response = {}
         try {
-          return JSON.parse(responseContent)
+          response = JSON.parse(responseContent)
         } catch (err) {
           this.uppy.log(err, 'error')
-          return err
         }
+
+        return response
       },
       /**
        *
