@@ -357,14 +357,14 @@ module.exports = class XHRUpload extends Plugin {
         timer.done()
 
         if (ev.target.status >= 200 && ev.target.status < 300) {
-          const resp = this.opts.getResponseData(xhr.responseText)
+          const resp = this.opts.getResponseData(xhr.responseText, xhr)
           files.forEach((file) => {
             this.uppy.emit('upload-success', file.id, resp)
           })
           return resolve()
         }
 
-        const error = this.opts.getResponseError(xhr) || new Error('Upload error')
+        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
         error.request = xhr
         emitError(error)
         return reject(error)
@@ -373,7 +373,7 @@ module.exports = class XHRUpload extends Plugin {
       xhr.addEventListener('error', (ev) => {
         timer.done()
 
-        const error = this.opts.getResponseError(xhr) || new Error('Upload error')
+        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
         emitError(error)
         return reject(error)
       })
