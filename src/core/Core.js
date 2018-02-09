@@ -45,7 +45,7 @@ class Uppy {
       },
       meta: {},
       onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
-      onBeforeUpload: (files, done) => Promise.resolve(),
+      onBeforeUpload: (files) => Promise.resolve(),
       locale: defaultLocale,
       store: new DefaultStore()
     }

@@ -22,7 +22,7 @@ const uppy = Uppy({
   },
   meta: {},
   onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
-  onBeforeUpload: (files, done) => Promise.resolve(),
+  onBeforeUpload: (files) => Promise.resolve(),
   locale: defaultLocale,
   store: new DefaultStore()
 })
@@ -67,7 +67,7 @@ meta: {
 }
 ```
 
-Can be altered with `uppy.setMeta({ username: 'Peter' })` method.
+Can be altered with [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setmeta-data) method.
 
 ### `onBeforeFileAdded: (currentFile, files) => Promise.resolve()`
 
@@ -82,7 +82,7 @@ onBeforeFileAdded: (currentFile, files) => {
 }
 ```
 
-### `onBeforeUpload: (files, done) => Promise.resolve()`
+### `onBeforeUpload: (files) => Promise.resolve()`
 
 A function run before an upload begins. Gets passed `files` object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
 
@@ -258,8 +258,8 @@ uppy.setMeta({ resize: 1500, token: 'ab5kjfg' })
 Updated metadata for a specific file.
 
 ```js
-uppy.setFileMeta('myfileID', { 
-  resize: 1500 
+uppy.setFileMeta('myfileID', {
+  resize: 1500
 })
 ```
 

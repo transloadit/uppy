@@ -12,7 +12,8 @@
     <script>
       const uppy = Uppy.Core({debug: true, autoProceed: false})
         .use(Uppy.Dashboard, { trigger: '#uppyModalOpener' })
-        .use(Uppy.Webcam, {target: Uppy.Dashboard})
+        .use(Uppy.Instagram, { target: Uppy.Dashboard, host: 'http://localhost:3020' })
+        .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, host: 'http://localhost:3020' })
         .use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
         .run()
 

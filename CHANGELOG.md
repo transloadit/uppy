@@ -122,13 +122,17 @@ To be released: 2018-02-10.
 - [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
 - [ ] xhrupload: add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
-- [ ] uppy-server: security audit, ask @acconut
+- [x] uppy-server: security audit, ask @acconut
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] meta: add https://twin.github.io/better-file-uploads-with-shrine-direct-uploads to the next blog post
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 - [x] meta: automatically host releases on edgly and use that as our main CDN (#558 / @kvz)
-- [ ] uppy-server: pass response from uppy-server upload’s endpoint (@ifedapoolarewaju)
-- [ ] uppy-server: support localhost urls as endpoints (@ifedapoolarewaju)
+- [x] uppy-server: pass response from uppy-server upload’s endpoint (@ifedapoolarewaju)
+- [x] uppy-server: support localhost urls as endpoints (@ifedapoolarewaju)
+- [x] uppy-server: schedule job to delete stale upload files (@ifedapoolarewaju)
+- [x] uppy-server: detect file upload size from the server (@ifedapoolarewaju)
+- [x] uppy-server: load standalone server options via config path (@ifedapoolarewaju)
+- [x] uppy-server: fix circular json stringify error (@ifedapoolarewaju)
 
 ## 0.22.1
 

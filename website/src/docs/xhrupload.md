@@ -55,6 +55,21 @@ headers: {
 }
 ```
 
+### `bundle: false`
+
+Send all files in a single multipart request. When `bundle` is `true`, `formData` must also be set to `true`.
+
+All files will be appended to the provided `fieldName` field in the request. To upload files on different fields, use [`uppy.setFileState()`](/docs/uppy#uppy-setFileState-fileID-state) to set the `xhrUpload.fieldName` property on the file:
+
+```js
+uppy.setFileState(fileID, {
+  xhrUpload: { fieldName: 'pic0' }
+})
+uppy.setFileState(otherFileID, {
+  xhrUpload: { fieldName: 'pic1' }
+})
+```
+
 ### `getResponseData(xhr)`
 
 When an upload has completed, Uppy will extract response data from the upload endpoint and send it back in the `upload-success` event:
