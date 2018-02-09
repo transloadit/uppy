@@ -203,16 +203,19 @@ module.exports = class Dashboard extends Plugin {
   }
 
   updateBrowserHistory () {
-    // push to history so that the page is not lost on browser back button press
-    history.pushState({ uppyDashboard: 'open' }, '')
+    // Ensure history state does not already contain uppyDashboard to avoid double-pushing
+    if (!history.state || !history.state.uppyDashboard) {
+      // Push to history so that the page is not lost on browser back button press
+      history.pushState({ uppyDashboard: true }, '')
+    }
 
-    // listen for back button presses
+    // Listen for back button presses
     window.addEventListener('popstate', this.handlePopState, false)
   }
 
   handlePopState (event) {
-    // check if the state no longer contains our `uppyDashboard: 'open'` flag
-    if (!event.state || !event.state.uppyDashboard || event.state.uppyDashboard !== 'open') {
+    // Check if the state no longer contains our `uppyDashboard: 'open'` flag
+    if (!event.state || !event.state.uppyDashboard) {
       this.closeModal()
     }
   }
