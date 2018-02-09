@@ -168,6 +168,6 @@ describe('Transloadit', () => {
       }
     })
 
-    return expect(uppy.upload()).rejects.toBe('short-circuited')
+    return expect(uppy.upload()).rejects.toEqual(new Error('short-circuited'))
   })
 })
