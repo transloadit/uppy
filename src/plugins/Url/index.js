@@ -1,6 +1,8 @@
 const Plugin = require('../../core/Plugin')
+const Translator = require('../../core/Translator')
 const { h } = require('preact')
 const Provider = require('../Provider')
+const UrlUI = require('./UrlUI.js')
 // const Utils = require('../../core/Utils')
 require('whatwg-fetch')
 
@@ -22,17 +24,32 @@ module.exports = class Link extends Plugin {
       </g>
     </svg>
 
-    // set default options
-    const defaultOptions = {}
+    // Set default options and locale
+    const defaultLocale = {
+      strings: {
+        addUrl: 'Add url',
+        import: 'Import',
+        enterUrlToImport: 'Enter file url to import'
+      }
+    }
+
+    const defaultOptions = {
+      locale: defaultLocale
+    }
 
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
+    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+
+    this.translator = new Translator({locale: this.locale})
+    this.i18n = this.translator.translate.bind(this.translator)
 
     this.hostname = this.opts.host
 
     // Bind all event handlers for referencability
-    ;['getMeta', 'handleClick'].forEach(method => {
-      this[method] = this[method].bind(this)
-    })
+    this.getMeta = this.getMeta.bind(this)
+    this.addFile = this.addFile.bind(this)
 
     this[this.id] = new Provider(uppy, {
       host: this.opts.host,
@@ -93,31 +110,10 @@ module.exports = class Link extends Plugin {
     })
   }
 
-  handleClick () {
-    this.addFile(this.input.value)
-  }
-
   render (state) {
-    return <div class="uppy-Url">
-      <input
-        class="uppy-Url-input"
-        type="text"
-        placeholder="Enter file url to import"
-        ref={(input) => { this.input = input }}
-        value="" />
-      <button
-        class="uppy-Url-importButton"
-        type="button"
-        aria-label="Add url"
-        onclick={this.handleClick}>
-        <svg aria-hidden="true" class="uppy-icon uppy-Url-importButton-icon" width="63" height="63" viewBox="0 0 63 63" xmlns="http://www.w3.org/2000/svg">
-          <g fill-rule="nonzero" fill="#fff">
-            <path d="M11.309 39.968a5.394 5.394 0 0 1-5.389-5.389l.002-5.828a5.393 5.393 0 0 1 5.387-5.386l9.58-.001v-3.4l-9.582.001c-4.844.002-8.785 3.943-8.786 8.786l-.002 5.83c-.001 2.33.926 4.566 2.578 6.212a8.768 8.768 0 0 0 6.21 2.576h19.165a8.72 8.72 0 0 0 6.214-2.573 8.73 8.73 0 0 0 2.572-6.214l-.002-5.83h-3.4l.003 5.83a5.352 5.352 0 0 1-1.577 3.81 5.351 5.351 0 0 1-3.81 1.576H11.309z" />
-            <path d="M60.773 28.752a8.728 8.728 0 0 0-2.573-6.214l-.001-.001a8.73 8.73 0 0 0-6.213-2.573H32.824a8.725 8.725 0 0 0-6.215 2.573 8.73 8.73 0 0 0-2.575 6.216v5.826l3.4.002v-5.827a5.357 5.357 0 0 1 1.578-3.812 5.353 5.353 0 0 1 3.81-1.576h19.162a5.348 5.348 0 0 1 3.811 1.577 5.353 5.353 0 0 1 1.577 3.811v5.827a5.392 5.392 0 0 1-5.386 5.386h-9.579v3.4l9.583-.001c4.846 0 8.786-3.941 8.786-8.787v-5.826h-.003z" />
-          </g>
-        </svg>
-      </button>
-    </div>
+    return <UrlUI
+      i18n={this.i18n}
+      addFile={this.addFile} />
   }
 
   install () {

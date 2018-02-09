@@ -17,14 +17,15 @@
 
 .uppy-Url-importButton {
   @include reset-button();
-  width: 50px;
+  width: 100px;
   height: 50px;
+  color: $color-white;
   background-color: $color-cornflower-blue;
   cursor: pointer;
   padding: 12px;
 }
 
-.uppy-Url-importButton-icon {
-  width: 100%;
-  height: 100%;
-}
+// .uppy-Url-importButton-icon {
+//   width: 100%;
+//   height: 100%;
+// }
