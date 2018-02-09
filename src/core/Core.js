@@ -87,7 +87,8 @@ class Uppy {
     this.upload = this.upload.bind(this)
 
     this.emitter = ee()
-    this.off = this.emitter.off.bind(this.emitter)
+    this.on = this.on.bind(this)
+    this.off = this.off.bind(this)
     this.once = this.emitter.once.bind(this.emitter)
     this.emit = this.emitter.emit.bind(this.emitter)
 
@@ -127,6 +128,11 @@ class Uppy {
 
   on (event, callback) {
     this.emitter.on(event, callback)
+    return this
+  }
+
+  off (event, callback) {
+    this.emitter.off(event, callback)
     return this
   }
 
