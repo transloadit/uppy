@@ -56,14 +56,14 @@ module.exports = class Webcam extends Plugin {
       onBeforeSnapshot: () => Promise.resolve(),
       countdown: false,
       locale: defaultLocale,
-      mirror: true,
-      facingMode: 'user',
       modes: [
         'video-audio',
         'video-only',
         'audio-only',
         'picture'
-      ]
+      ],
+      mirror: true,
+      facingMode: 'user'
     }
 
     // merge default options with the ones set by user
