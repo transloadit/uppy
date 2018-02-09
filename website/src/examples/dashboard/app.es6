@@ -3,6 +3,7 @@ const Dashboard = require('uppy/lib/plugins/Dashboard')
 const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 const Dropbox = require('uppy/lib/plugins/Dropbox')
 const Instagram = require('uppy/lib/plugins/Instagram')
+const Url = require('uppy/lib/plugins/Url')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Tus = require('uppy/lib/plugins/Tus')
 
@@ -56,6 +57,10 @@ function uppyInit () {
 
   if (opts.Instagram) {
     uppy.use(Instagram, { target: Dashboard, host: UPPY_SERVER })
+  }
+
+  if (opts.Url) {
+    uppy.use(Url, { target: Dashboard, host: UPPY_SERVER })
   }
 
   if (opts.Webcam) {
