@@ -169,7 +169,9 @@ module.exports = class View {
         tagFile.preview = this.plugin.getItemThumbnailUrl(file)
       }
       this.plugin.uppy.log('Adding remote file')
-      this.plugin.uppy.addFile(tagFile)
+      this.plugin.uppy.addFile(tagFile).catch(() => {
+        // Ignore
+      })
       if (!isCheckbox) {
         this.donePicking()
       }

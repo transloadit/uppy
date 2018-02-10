@@ -55,6 +55,21 @@ headers: {
 }
 ```
 
+### `bundle: false`
+
+Send all files in a single multipart request. When `bundle` is `true`, `formData` must also be set to `true`.
+
+All files will be appended to the provided `fieldName` field in the request. To upload files on different fields, use [`uppy.setFileState()`](/docs/uppy#uppy-setFileState-fileID-state) to set the `xhrUpload.fieldName` property on the file:
+
+```js
+uppy.setFileState(fileID, {
+  xhrUpload: { fieldName: 'pic0' }
+})
+uppy.setFileState(otherFileID, {
+  xhrUpload: { fieldName: 'pic1' }
+})
+```
+
 ### `getResponseData(xhr)`
 
 When an upload has completed, Uppy will extract response data from the upload endpoint and send it back in the `upload-success` event:
@@ -116,5 +131,40 @@ The default is 30 seconds.
 
 Limit the amount of uploads going on at the same time. Passing `0` means no limit.
 
+## Uploading to a PHP Server
+
+The XHRUpload plugin works similarly to a `<form>` upload. You can use the `$_FILES` variable on the server to work with uploaded files. See the PHP documentation on [Handling file uploads][PHP.file-upload].
+
+The default form field for file uploads is `files[]`, which means you have to access the `$_FILES` array as described in [Uploading multiple files][PHP.multiple]:
+
+```php
+<?php
+// upload.php
+$files = $_FILES['files'];
+$file_path = $files['tmp_name'][0]; // temporary upload path of the first file
+move_uploaded_file($file_path, './img/img.png'); // save the file at `img/img.png`
+```
+
+Set a custom `fieldName` to make working with the `$_FILES` array a bit less convoluted:
+
+```js
+// app.js
+uppy.use(XHRUpload, {
+  endpoint: '/upload.php',
+  fieldName: 'my_file'
+})
+```
+
+```php
+<?php
+// upload.php
+$my_file = $_FILES['my_file'];
+$file_path = $my_file['tmp_name']; // temporary upload path of the file
+$file_name = $my_file['name']; // original name of the file
+move_uploaded_file($file_path, './img/' . basename($file_name)); // save the file at `img/FILE_NAME`
+```
+
 [FormData]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
 [XHR.timeout]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout
+[PHP.file-upload]: https://secure.php.net/manual/en/features.file-upload.php
+[PHP.multiple]: https://secure.php.net/manual/en/features.file-upload.multiple.php
