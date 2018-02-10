@@ -97,7 +97,8 @@
     "wdio-mocha-framework": "^0.5.12",
     "wdio-sauce-service": "^0.4.6",
     "wdio-static-server-service": "^1.0.1",
-    "webdriverio": "^4.10.1"
+    "webdriverio": "^4.10.1",
+    "json3": "^3.3.2"
   },
   "dependencies": {
     "classnames": "^2.2.5",
