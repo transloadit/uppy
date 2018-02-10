@@ -240,7 +240,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       URL.createObjectURL = originalURLCreateObjectURL
     })
 
-    it('should scale down the image by the specified number of steps', () => {
+    xit('should scale down the image by the specified number of steps', () => {
       const core = {}
       const plugin = new ThumbnailGeneratorPlugin(core)
       const image = {
