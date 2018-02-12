@@ -184,7 +184,7 @@ module.exports = class XHRUpload extends Plugin {
 
       const timer = this.createProgressTimeout(opts.timeout, (error) => {
         xhr.abort()
-        this.uppy.emit('upload-error', file.id, error)
+        this.uppy.emit('upload-error', file, error)
         reject(error)
       })
 
@@ -227,7 +227,7 @@ module.exports = class XHRUpload extends Plugin {
 
           this.uppy.setFileState(file.id, { response })
 
-          this.uppy.emit('upload-success', file.id, body, uploadURL)
+          this.uppy.emit('upload-success', file, body, uploadURL)
 
           if (uploadURL) {
             this.uppy.log(`Download ${file.name} from ${file.uploadURL}`)
@@ -245,7 +245,7 @@ module.exports = class XHRUpload extends Plugin {
 
           this.uppy.setFileState(file.id, { response })
 
-          this.uppy.emit('upload-error', file.id, error)
+          this.uppy.emit('upload-error', file, error)
           return reject(error)
         }
       })
@@ -255,7 +255,7 @@ module.exports = class XHRUpload extends Plugin {
         timer.done()
 
         const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
-        this.uppy.emit('upload-error', file.id, error)
+        this.uppy.emit('upload-error', file, error)
         return reject(error)
       })
 
@@ -324,7 +324,7 @@ module.exports = class XHRUpload extends Plugin {
           socket.on('success', (data) => {
             const resp = opts.getResponseData(data.response.responseText, data.response)
             const uploadURL = resp[opts.responseUrlFieldName]
-            this.uppy.emit('upload-success', file.id, resp, uploadURL)
+            this.uppy.emit('upload-success', file, resp, uploadURL)
             socket.close()
             return resolve()
           })
@@ -332,7 +332,7 @@ module.exports = class XHRUpload extends Plugin {
           socket.on('error', (errData) => {
             const resp = errData.response
             const error = resp ? opts.getResponseError(resp.responseText, resp) : new Error(errData.error)
-            this.uppy.emit('upload-error', file.id, error)
+            this.uppy.emit('upload-error', file, error)
             reject(new Error(errData.error))
           })
         })
@@ -361,7 +361,7 @@ module.exports = class XHRUpload extends Plugin {
 
       const emitError = (error) => {
         files.forEach((file) => {
-          this.uppy.emit('upload-error', file.id, error)
+          this.uppy.emit('upload-error', file, error)
         })
       }
 
@@ -391,7 +391,7 @@ module.exports = class XHRUpload extends Plugin {
         if (ev.target.status >= 200 && ev.target.status < 300) {
           const resp = this.opts.getResponseData(xhr.responseText, xhr)
           files.forEach((file) => {
-            this.uppy.emit('upload-success', file.id, resp)
+            this.uppy.emit('upload-success', file, resp)
           })
           return resolve()
         }

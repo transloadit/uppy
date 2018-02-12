@@ -333,8 +333,8 @@ uppy.on('file-added', (file) => {
 Fired each time file is removed.
 
 ```javascript
-uppy.on('file-removed', (fileID) => {
-  console.log('Removed file', fileID)
+uppy.on('file-removed', (file) => {
+  console.log('Removed file', file)
 })
 ```
 
