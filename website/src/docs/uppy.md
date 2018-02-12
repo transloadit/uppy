@@ -323,8 +323,8 @@ Uppy exposes events that you can subscribe to in your app:
 Fired each time file is added.
 
 ```javascript
-uppy.on('file-added', (fileID) => {
-  console.log('Added file', uppy.getFile(fileID))
+uppy.on('file-added', (file) => {
+  console.log('Added file', file)
 })
 ```
 
