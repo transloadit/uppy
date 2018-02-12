@@ -139,7 +139,7 @@ Released: 2018-02-11.
 - thumbnail: Add thumbnail generation plugin (#461 / @richardwillars)
 - thumbnail: Fix blank preview thumbnails for images in Safari; use slightly different stap scaling (#458, #584 / @arturi)
 - transloadit: Add `transloadit:assembly-executing` event (#547 / @goto-bus-stop)
-- transloadit: Add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (#527 / @goto-bus-stop)
+- transloadit: Add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `complete` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (#527 / @goto-bus-stop)
 - transloadit: Easily pass form fields (#593 / @goto-bus-stop)
 - tus: `resume: false` — don’t store url (@arturi / #507)
 - uppy-server: Detect file upload size from the server (@ifedapoolarewaju)
