@@ -9,17 +9,8 @@ The Transloadit plugin can be used to upload files to [Transloadit](https://tran
 
 [Try it live](/examples/transloadit/)
 
-The Transloadit plugin uses the [Tus plugin](/docs/tus) for the uploading itself. To upload files to Transloadit directly, both the Tus and Transloadit plugins must be used:
-
 ```js
-// The `resume: false` option _must_ be provided to the Tus plugin.
-// Otherwise, the Tus plugin remembers the URLs used to upload to Transloadit,
-// which can cause future uploads to go to old Assemblies.
-uppy.use(Tus, {
-  resume: false
-})
 uppy.use(Transloadit, {
-  // Transloadit plugin options
   service: 'https://api2.transloadit.com',
   waitForEncoding: false,
   waitForMetadata: false,
@@ -31,7 +22,7 @@ uppy.use(Transloadit, {
 })
 ```
 
-Note: It is not required to use the `Tus` plugin if [`importFromUploadURLs`](#importFromUploadURLs) is enabled.
+As of Uppy 0.24 the Transloadit plugin includes the [Tus](/docs/tus) plugin to handle the uploading, so you no longer have to add it manually.
 
 ## Options
 
