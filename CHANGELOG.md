@@ -114,7 +114,7 @@ To be released: 2018-03-01.
 
 Released: 2018-02-11.
 
-- core: Allow plugins to add data to result object. Return `processing` results among with `upload` results in `success` event and `upload()` promise (#527 / @goto-bus-stop)
+- core: Allow plugins to add data to result object. Return `processing` results among with `upload` results in `complete` event and `upload()` promise (#527 / @goto-bus-stop)
 - core: Move limiting to different point, to fix StatusBar and other UI issues #468 (#524, #526 / @goto-bus-stop)
 - core: Add uploadID to complete event (#569 / @richardwillars)
 - core: Allow chanining after .on() and .off() to improve ergonomics (#597 / @arturi)
