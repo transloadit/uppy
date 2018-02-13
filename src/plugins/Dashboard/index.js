@@ -259,7 +259,7 @@ module.exports = class Dashboard extends Plugin {
 
   closeModal (opts = {}) {
     const {
-      manualClose = true
+      manualClose = true // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
     } = opts
 
     this.setPluginState({
@@ -274,8 +274,11 @@ module.exports = class Dashboard extends Plugin {
 
     if (manualClose) {
       if (this.opts.browserBackButtonClose) {
-        // Go back in history to clear out the entry we created for `uppyDashboard` in history state
-        history.go(-1)
+        // Make sure that the latest entry in the history state is `uppyDashboard`
+        if (history.state && 'uppyDashboard' in history.state) {
+          // Go back in history to clear out the entry we created (ultimately closing the modal)
+          history.go(-1)
+        }
       }
     }
 
