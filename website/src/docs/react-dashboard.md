@@ -13,6 +13,7 @@ On top of all the [Dashboard][] options, the `<DashboardModal />` plugin adds tw
 
  - `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
  - `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
+ - `plugins` - Array of plugins you need to use in Dashboard. Example: `plugins={['Webcam']}`.
 
 ```js
 class MusicUploadButton extends React.Component {
@@ -40,6 +41,8 @@ class MusicUploadButton extends React.Component {
   }
 
   render () {
+    this.props.uppy.use(Webcam, { id: "Webcam" });
+
     return (
       <div>
         <button onClick={this.handleOpen}>Upload some music</button>
@@ -48,6 +51,7 @@ class MusicUploadButton extends React.Component {
           closeModalOnClickOutside
           open={this.state.modalOpen}
           onRequestClose={this.handleClose}
+          plugins={['Webcam']}
         />
       </div>
     );
