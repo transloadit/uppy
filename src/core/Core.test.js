@@ -610,7 +610,7 @@ describe('src/Core', () => {
           throw new Error('File was allowed through')
         })
         .catch(e => {
-          expect(e.message).toEqual('File not allowed')
+          expect(e.message).toEqual('You can only upload: image/gif')
         })
     })
 
@@ -625,7 +625,7 @@ describe('src/Core', () => {
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: null
-      })).rejects.toMatchObject(new Error('onBeforeFileAdded: a plain string'))
+      })).rejects.toMatchObject(new Error('a plain string'))
     })
   })
 
@@ -955,7 +955,7 @@ describe('src/Core', () => {
         name: 'foo2.jpg',
         type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
-      })).rejects.toMatchObject(new Error('File not allowed')).then(() => {
+      })).rejects.toMatchObject(new Error('You can only upload 1 file')).then(() => {
         expect(core.state.info.message).toEqual('You can only upload 1 file')
       })
     })
@@ -975,7 +975,7 @@ describe('src/Core', () => {
         name: 'foo2.jpg',
         type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
-      })).rejects.toMatchObject(new Error('File not allowed')).then(() => {
+      })).rejects.toMatchObject(new Error('You can only upload: image/gif, image/png')).then(() => {
         expect(core.state.info.message).toEqual('You can only upload: image/gif, image/png')
       })
     })
@@ -993,7 +993,7 @@ describe('src/Core', () => {
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: utils.dataURItoFile(sampleImageDataURI, {})
-      })).rejects.toMatchObject(new Error('File not allowed')).then(() => {
+      })).rejects.toMatchObject(new Error('This file exceeds maximum allowed size of 1.2 KB')).then(() => {
         expect(core.state.info.message).toEqual('This file exceeds maximum allowed size of 1.2 KB')
       })
     })

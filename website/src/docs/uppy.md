@@ -22,18 +22,17 @@ const uppy = Uppy({
   },
   meta: {},
   onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
-  onBeforeUpload: (files, done) => Promise.resolve(),
+  onBeforeUpload: (files) => Promise.resolve(),
   locale: defaultLocale,
-  store: new DefaultStore(),
-  thumbnailGeneration: true
+  store: new DefaultStore()
 })
 ```
 
 ### `id: 'uppy'`
 
 A site-wide unique ID for the instance.
-If multiple Uppy instances are being used, for example on two different pages, an `id` should be specified.
-This allows Uppy to store information in `localStorage` without colliding with other Uppy instances.
+
+If multiple Uppy instances are being used, for example on two different pages, an `id` should be specified. This allows Uppy to store information in `localStorage` without colliding with other Uppy instances.
 
 Note that this ID should be persistent across page reloads and navigation—it shouldn't be a random number that's different every time Uppy is loaded.
 For example, if one Uppy instance is used to upload user avatars, and another to add photos to a blog post, you might use:
@@ -68,7 +67,7 @@ meta: {
 }
 ```
 
-Can be altered with `uppy.setMeta({ username: 'Peter' })` method.
+Can be altered with [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setmeta-data) method.
 
 ### `onBeforeFileAdded: (currentFile, files) => Promise.resolve()`
 
@@ -83,7 +82,7 @@ onBeforeFileAdded: (currentFile, files) => {
 }
 ```
 
-### `onBeforeUpload: (files, done) => Promise.resolve()`
+### `onBeforeUpload: (files) => Promise.resolve()`
 
 A function run before an upload begins. Gets passed `files` object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
 
@@ -130,7 +129,7 @@ locale: {
 
 We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/master/index.js#L37-L60).
 
-## `store: defaultStore()`
+### `store: defaultStore()`
 
 The Store to use to keep track of internal state. By default, a simple object is used.
 
@@ -259,8 +258,8 @@ uppy.setMeta({ resize: 1500, token: 'ab5kjfg' })
 Updated metadata for a specific file.
 
 ```js
-uppy.setFileMeta('myfileID', { 
-  resize: 1500 
+uppy.setFileMeta('myfileID', {
+  resize: 1500
 })
 ```
 

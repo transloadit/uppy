@@ -52,17 +52,17 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: add tests for `npm pack`
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
 - [ ] audio: audio recording similar to Webcam #143
-- [ ] add  typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
+- [ ] add typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
 
 ## 1.0 Goals
 
 What we need to do to release Uppy 1.0
 
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
-- [ ] QA: test in multiple browsers and mobile devices
+- [ ] QA: test in multiple browsers and mobile devices again
 - [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
 - [ ] QA: tests for some plugins
-- [ ] docs: on using plugins, all options, list of plugins, i18n
+- [x] docs: on using plugins, all options, list of plugins, i18n
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs
 - [ ] refactoring: possibly add CSS-in-JS
 - [x] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
@@ -87,6 +87,14 @@ What we need to do to release Uppy 1.0
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: all: reset or !important styles to be immune to any environment/page, look at screenshots in #446. Maybe `postcss-safe-important`, http://cleanslatecss.com/ or https://github.com/maximkoretskiy/postcss-autoreset or increase specificity (with .uppy prefix) (@arturi)
+- [ ] url: refactor things into Provider, see comments in  https://github.com/transloadit/uppy/pull/588 (@ifedapoolarewaju)
+- [ ] dashboard: option for Boolean metadata #454 (@arturi)
+- [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
+- [ ] core: figure out per-plugin locales and i18n strings packs #491
+- [ ] goldenretriever: confirmation before restore #443
+- [ ] goldenretriever: add “ghost” files (@arturi)
+- [ ] core: i18n all strings + document them
+- [ ] core: update file-type
 
 # next
 
@@ -98,37 +106,35 @@ To be released: 2018-02-10.
 - [x] transloadit: add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (#527 / @goto-bus-stop)
 - [x] transloadit: add `transloadit:assembly-executing` event (#547 / @goto-bus-stop)
 - [ ] transloadit: add error reporting (@goto-bus-stop)
-- [ ] importurl: new plugin that imports files from urls (@arturi, @ifedapoolarewaju)
-- [ ] core: figure out per-plugin locales and i18n strings packs #491
-- [ ] goldenretriever: confirmation before restore #443
-- [ ] goldenretriever: add “ghost” files (@arturi)
-- [ ] core: i18n all strings + document them
+- [x] url: new plugin that imports files from urls (588 / @arturi, @ifedapoolarewaju)
 - [ ] core: fix blank preview thumbnails for .png images in Safari 10.1 #458
 - [x] core: Move limiting to different point, to fix StatusBar and other UI issues #468 (#524, #526 / @goto-bus-stop)
 - [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
 - [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
 - [x] dashboard: restore focus after modal has been closed (@arturi)
-- [ ] dashboard: option for Boolean metadata #454 (@arturi)
-- [ ] dashboard: refactor provider views (#554 / @arturi)
+- [x] dashboard: refactor provider views (#554 / @arturi)
 - [x] dashboard: use more accessible tip lib: https://github.com/ghosh/microtip
 - [x] core: move preview generation to separate plugin, add queuing (#431 / @richardwillars)
-- [ ] core: warn, not error, when file cannot be added due to restrictions? (@arturi)
+- [ ] core: warn, not error, when file cannot be added due to restrictions? (@goto-bus-stop)
 - [ ] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (@goto-bus-stop)
-- [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins (@goto-bus-stop)
 - [ ] docs: all useful events (@arturi)
 - [ ] core: warn, not error, when files don’t pass restrictions: Unhandled Promise Rejection when file doesn't pass restrictions #492
-- [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
-- [ ] xhrupload: add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
+- [x] webcam: mirror image preview, add option to select which camera is used to capture, try filling the whole Dashboard with webcam preview image, remove URL.createObjectURL() (#574 / @arturi, @nqst)
+- [x] xhrupload: add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
-- [ ] uppy-server: security audit, ask @acconut
+- [x] uppy-server: security audit, ask @acconut
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] meta: add https://twin.github.io/better-file-uploads-with-shrine-direct-uploads to the next blog post
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 - [x] meta: automatically host releases on edgly and use that as our main CDN (#558 / @kvz)
-- [ ] uppy-server: pass response from uppy-server upload’s endpoint (@ifedapoolarewaju)
-- [ ] uppy-server: support localhost urls as endpoints (@ifedapoolarewaju)
+- [x] uppy-server: pass response from uppy-server upload’s endpoint (@ifedapoolarewaju)
+- [x] uppy-server: support localhost urls as endpoints (@ifedapoolarewaju)
+- [x] uppy-server: schedule job to delete stale upload files (@ifedapoolarewaju)
+- [x] uppy-server: detect file upload size from the server (@ifedapoolarewaju)
+- [x] uppy-server: load standalone server options via config path (@ifedapoolarewaju)
+- [x] uppy-server: fix circular json stringify error (@ifedapoolarewaju)
 
 ## 0.22.1
 

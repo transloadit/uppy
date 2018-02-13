@@ -7,14 +7,14 @@ const uppyOne = new Uppy({debug: true})
 uppyOne
   .use(DragDrop, {target: '.UppyDragDrop-One'})
   .use(Tus, {endpoint: '//master.tus.io/files/'})
-  .use(ProgressBar, {target: '.UppyDragDrop-One-Progress'})
+  .use(ProgressBar, {target: '.UppyDragDrop-One-Progress', hideAfterFinish: false})
   .run()
 
 const uppyTwo = new Uppy({debug: true, autoProceed: false})
 uppyTwo
   .use(DragDrop, {target: '#UppyDragDrop-Two'})
   .use(Tus, {endpoint: '//master.tus.io/files/'})
-  .use(ProgressBar, {target: '.UppyDragDrop-Two-Progress'})
+  .use(ProgressBar, {target: '.UppyDragDrop-Two-Progress', hideAfterFinish: false})
   .run()
 
 var uploadBtn = document.querySelector('.UppyDragDrop-Two-Upload')
