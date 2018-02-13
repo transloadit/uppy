@@ -109,6 +109,7 @@ To be released: 2018-03-01.
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
+- [x] s3: fix xhr response handlers (#625, @goto-bus-stop)
 
 ## 0.23.0
 
