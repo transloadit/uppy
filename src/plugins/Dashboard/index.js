@@ -35,6 +35,7 @@ module.exports = class Dashboard extends Plugin {
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
+    this.modalName = 'uppy-Dashboard'
 
     const defaultLocale = {
       strings: {
@@ -203,10 +204,10 @@ module.exports = class Dashboard extends Plugin {
   }
 
   updateBrowserHistory () {
-    // Ensure history state does not already contain uppyDashboard to avoid double-pushing
-    if (!history.state || !history.state.uppyDashboard) {
+    // Ensure history state does not already contain our modal name to avoid double-pushing
+    if (!history.state || !history.state[this.modalName]) {
       // Push to history so that the page is not lost on browser back button press
-      history.pushState({ uppyDashboard: true }, '')
+      history.pushState({ [this.modalName]: true }, '')
     }
 
     // Listen for back button presses
@@ -214,8 +215,8 @@ module.exports = class Dashboard extends Plugin {
   }
 
   handlePopState (event) {
-    // Check if the state no longer contains our `uppyDashboard: 'open'` flag
-    if (!event.state || !event.state.uppyDashboard) {
+    // Close the modal if the history state no longer contains our modal name
+    if (!event.state || !event.state[this.modalName]) {
       this.closeModal({ manualClose: false })
     }
   }
@@ -274,8 +275,8 @@ module.exports = class Dashboard extends Plugin {
 
     if (manualClose) {
       if (this.opts.browserBackButtonClose) {
-        // Make sure that the latest entry in the history state is `uppyDashboard`
-        if (history.state && history.state.uppyDashboard) {
+        // Make sure that the latest entry in the history state is our modal name
+        if (history.state && history.state[this.modalName]) {
           // Go back in history to clear out the entry we created (ultimately closing the modal)
           history.go(-1)
         }
