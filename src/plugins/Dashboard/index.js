@@ -275,7 +275,7 @@ module.exports = class Dashboard extends Plugin {
     if (manualClose) {
       if (this.opts.browserBackButtonClose) {
         // Make sure that the latest entry in the history state is `uppyDashboard`
-        if (history.state && 'uppyDashboard' in history.state) {
+        if (history.state && history.state.uppyDashboard) {
           // Go back in history to clear out the entry we created (ultimately closing the modal)
           history.go(-1)
         }
