@@ -219,6 +219,13 @@ module.exports = class Dashboard extends Plugin {
     if (!event.state || !event.state[this.modalName]) {
       this.closeModal({ manualClose: false })
     }
+
+    // When the browser back button is pressed and uppy is now the latest entry in the history but the modal is closed, fix the history by removing the uppy history entry
+    // This occurs when another entry is added into the history state while the modal is open, and then the modal gets manually closed
+    // Solves PR #575 (https://github.com/transloadit/uppy/pull/575)
+    if (!this.isModalOpen() && event.state && event.state[this.modalName]) {
+      history.go(-1)
+    }
   }
 
   maintainFocus (event) {
@@ -282,8 +289,6 @@ module.exports = class Dashboard extends Plugin {
         }
       }
     }
-
-    window.removeEventListener('popstate', this.handlePopState, false)
   }
 
   isModalOpen () {
