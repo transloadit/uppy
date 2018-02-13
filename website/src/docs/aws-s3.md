@@ -43,6 +43,18 @@ When using a POST upload with a policy document, this should be the root URL of 
 The `fields` field is an object with form fields to send along with the upload request.
 For presigned PUT uploads, this should be empty.
 
+### `timeout: 30 * 1000`
+
+When no upload progress events have been received for this amount of milliseconds, assume the connection has an issue and abort the upload. This is passed through to [XHRUpload](/docs/xhrupload#timeout-30-1000); see its documentation page for details.
+Set to `0` to disable this check.
+
+The default is 30 seconds.
+
+### `limit: 0`
+
+Limit the amount of uploads going on at the same time. This is passed through to [XHRUpload](/docs/xhrupload#limit-0); see its documentation page for details.
+Set to `0` to disable limiting.
+
 ## S3 Bucket configuration
 
 S3 buckets do not allow public uploads by default.
