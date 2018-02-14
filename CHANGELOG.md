@@ -53,6 +53,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
 - [ ] audio: audio recording similar to Webcam #143
 - [ ] add typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
+- [ ] transloadit plugin: maybe add option to disable uppy server endpoint overrides
 
 ## 1.0 Goals
 
@@ -109,6 +110,7 @@ To be released: 2018-03-01.
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
+- [ ] test: add typescript with JSDoc (@arturi)
 
 ## 0.23.0
 
