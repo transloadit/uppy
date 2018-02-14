@@ -6,7 +6,6 @@ const Instagram = require('uppy/lib/plugins/Instagram')
 const Url = require('uppy/lib/plugins/Url')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Tus = require('uppy/lib/plugins/Tus')
-const Instagram = require('uppy/lib/plugins/Instagram')
 
 const UPPY_SERVER = require('../env')
 
