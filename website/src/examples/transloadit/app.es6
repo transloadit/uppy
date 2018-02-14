@@ -3,7 +3,7 @@ const Dashboard = require('uppy/lib/plugins/Dashboard')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Transloadit = require('uppy/lib/plugins/Transloadit')
 const Tus = require('uppy/lib/plugins/Tus')
-const Instagram = require('uppy/lib/plugins/Instagram')
+// const Instagram = require('uppy/lib/plugins/Instagram')
 
 function initUppy () {
   if (window.uppy) {
@@ -59,7 +59,7 @@ function initUppy () {
       target: '#uppy-dashboard-container',
       note: 'Images and video only, 1–2 files, up to 1 MB'
     })
-    .use(Instagram, { target: Dashboard, host: 'https://api2.transloadit.com/uppy-server' })
+    // .use(Instagram, { target: Dashboard, host: 'https://api2.transloadit.com/uppy-server' })
     .use(Webcam, { target: Dashboard })
     .run()
 
