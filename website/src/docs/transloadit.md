@@ -7,6 +7,8 @@ permalink: docs/transloadit/
 
 The Transloadit plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and more](https://transloadit.com/services/).
 
+[Try it live](/examples/transloadit/)
+
 The Transloadit plugin uses the [Tus plugin](/docs/tus) for the uploading itself.
 To upload files to Transloadit directly, both the Tus and Transloadit plugins must be used:
 

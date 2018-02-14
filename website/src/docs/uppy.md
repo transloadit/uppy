@@ -318,6 +318,36 @@ Subscribe to an uppy-event. See below for the full list of events.
 
 Uppy exposes events that you can subscribe to in your app:
 
+### `file-added`
+
+Fired each time file is added.
+
+```javascript
+uppy.on('file-added', (file) => {
+  console.log('Added file', file)
+})
+```
+
+### `file-removed`
+
+Fired each time file is removed.
+
+```javascript
+uppy.on('file-removed', (fileID) => {
+  console.log('Removed file', fileID)
+})
+```
+
+### `upload`
+
+Fired when upload starts.
+
+```javascript
+uppy.on('upload', () => {
+  console.log('Starting upload...')
+})
+```
+
 ### `upload-progress`
 
 Fired each time file upload progress is available, `data` object looks like this:
