@@ -87,11 +87,27 @@ module.exports = class Transloadit extends Plugin {
 
   getAssemblyOptions (fileIDs) {
     const options = this.opts
+
+    const normalizeAssemblyOptions = (file, assemblyOptions) => {
+      if (Array.isArray(assemblyOptions.fields)) {
+        const fieldNames = assemblyOptions.fields
+        assemblyOptions.fields = {}
+        fieldNames.forEach((fieldName) => {
+          assemblyOptions.fields[fieldName] = file.meta[fieldName]
+        })
+      }
+      if (!assemblyOptions.fields) {
+        assemblyOptions.fields = {}
+      }
+      return assemblyOptions
+    }
+
     return Promise.all(
       fileIDs.map((fileID) => {
         const file = this.uppy.getFile(fileID)
         const promise = Promise.resolve()
           .then(() => options.getAssemblyOptions(file, options))
+          .then((assemblyOptions) => normalizeAssemblyOptions(file, assemblyOptions))
         return promise.then((assemblyOptions) => {
           this.validateParams(assemblyOptions.params)
 
@@ -167,6 +183,30 @@ module.exports = class Transloadit extends Plugin {
           // will upload to the same assembly.
           resume: false
         })
+
+        // Set uppy server location.
+        // we only add this, if 'file' has the attribute remote, because
+        // this is the criteria to identify remote files. If we add it without
+        // the check, then the file automatically becomes a remote file.
+        // @TODO: this is quite hacky. Please fix this later
+        let remote
+        if (file.remote) {
+          let newHost = assembly.uppyserver_url
+          // remove tailing slash
+          if (newHost.endsWith('/')) {
+            newHost = newHost.slice(0, -1)
+          }
+          let path = file.remote.url.replace(file.remote.host, '')
+          // remove leading slash
+          if (path.startsWith('/')) {
+            path = path.slice(1)
+          }
+          remote = Object.assign({}, file.remote, {
+            host: newHost,
+            url: `${newHost}/${path}`
+          })
+        }
+
         const transloadit = {
           assembly: assembly.assembly_id
         }
@@ -174,7 +214,7 @@ module.exports = class Transloadit extends Plugin {
         const newFile = Object.assign({}, file, { transloadit })
         // Only configure the Tus plugin if we are uploading straight to Transloadit (the default).
         if (!pluginOptions.importFromUploadURLs) {
-          Object.assign(newFile, { meta, tus })
+          Object.assign(newFile, { meta, tus, remote })
         }
         return newFile
       }
@@ -556,6 +596,14 @@ module.exports = class Transloadit extends Plugin {
         fileIDs.forEach((fileID) => {
           this.uppy.emit('preprocess-complete', fileID)
         })
+      }).catch((err) => {
+        // Clear preprocessing state when the assembly could not be created,
+        // otherwise the UI gets confused about the lingering progress keys
+        fileIDs.forEach((fileID) => {
+          this.uppy.emit('preprocess-complete', fileID)
+          this.uppy.emit('upload-error', fileID, err)
+        })
+        throw err
       })
     }
 

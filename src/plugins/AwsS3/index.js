@@ -135,7 +135,7 @@ module.exports = class AwsS3 extends Plugin {
       responseUrlFieldName: 'location',
       timeout: this.opts.timeout,
       limit: this.opts.limit,
-      getResponseData (xhr) {
+      getResponseData (content, xhr) {
         // If no response, we've hopefully done a PUT request to the file
         // in the bucket on its full URL.
         if (!isXml(xhr)) {
@@ -152,7 +152,7 @@ module.exports = class AwsS3 extends Plugin {
           etag: getValue('ETag')
         }
       },
-      getResponseError (xhr) {
+      getResponseError (content, xhr) {
         // If no response, we don't have a specific error message, use the default.
         if (!isXml(xhr)) {
           return

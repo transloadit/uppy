@@ -8,7 +8,7 @@
 #  - Checks if a tag is being built (on Travis - otherwise opts to continue execution regardless)
 #  - Installs AWS CLI if needed
 #  - Assumed a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
-#  - Runs npm pack, and stores files to e.g. https://transloadit.edgly.net/releases/uppy/v0.22.0/dist/uppy.css
+#  - Runs npm pack, and stores files to e.g. https://transloadit.edgly.net/releases/uppy/v0.23.0/dist/uppy.css
 #  - Uses local package by default, if [version] argument was specified, takes package from npm
 #
 # Run as:
@@ -65,6 +65,8 @@ pushd "${__root}" > /dev/null 2>&1
     version="${localVersion}"
   fi
 
+  majorVersion=$(echo "${version}" |awk -F. '{print $1}')
+
   echo -n "--> Check if not overwriting an existing tag ... "
   env \
     AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
@@ -98,6 +100,24 @@ pushd "${__root}" > /dev/null 2>&1
       --exclude 'node_modules/*' \
       --exclude 'examples/*/node_modules/*' \
     ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}"
+    echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}/"
   popd > /dev/null 2>&1
   rm -rf /tmp/uppy-to-edgly
+
+  echo "${version}" | env \
+    AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
+    AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
+  aws s3 cp \
+    --region="us-east-1" \
+    --content-type="text/plain" \
+  - "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/latest.txt"
+  echo "Saved https://transloadit.edgly.net/releases/uppy/latest.txt"
+  echo "${version}" | env \
+    AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
+    AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
+  aws s3 cp \
+    --region="us-east-1" \
+    --content-type="text/plain" \
+  - "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${majorVersion}-latest.txt"
+  echo "Saved https://transloadit.edgly.net/releases/uppy/v${majorVersion}-latest.txt"
 popd > /dev/null 2>&1

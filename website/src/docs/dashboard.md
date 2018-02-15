@@ -20,8 +20,9 @@ Dashboard is a universal UI plugin for Uppy:
 ```js
 uppy.use(Dashboard, {
   target: 'body',
-  trigger: '#uppy-select-files',
   inline: false,
+  trigger: '#uppy-select-files',
+  plugins: [],
   maxWidth: 750,
   maxHeight: 550,
   semiTransparent: false,
@@ -75,6 +76,19 @@ By default Dashboard will be rendered as a modal, which is opened via clicking o
 
 String with a CSS selector for a button that will trigger opening Dashboard modal. Multiple buttons or links can be used, if it’s a class selector (`.uppy-choose`, for example).
 
+### `plugins: []`
+
+List of plugin IDs that should be shown in the Dashboard's top bar. For example, to show the Webcam plugin:
+
+```js
+uppy.use(Webcam)
+uppy.use(Dashboard, {
+  plugins: ['Webcam']
+})
+```
+
+Of course, you can also use the `target` option in the Webcam plugin to achieve this. However, that does not work with the React components. The `target` option may be changed in the future to only accept DOM elements, so it is recommended to use this `plugins` array instead.
+
 ### `maxWidth: 750`
 
 Maximum width of the Dashboard in pixels. Used when `inline: true`.
@@ -82,10 +96,6 @@ Maximum width of the Dashboard in pixels. Used when `inline: true`.
 ### `maxHeight: 550`
 
 Maximum height of the Dashboard in pixels. Used when `inline: true`.
-
-### `semiTransparent: false`
-
-Make the dashboard semi-transparent.
 
 ### `showProgressDetails: false`
 
@@ -121,11 +131,15 @@ An array of UI field objects that will be shown when a user clicks “edit” bu
 })
 ```
 
-Note that this meta data will only be set to a file if it’s entered by user. If you want to set certain default meta field to each file regardless of user actions, set [`meta` in Uppy options](docs/uppy/#meta).
+Note that this meta data will only be set to a file if it’s entered by user. If you want to set certain default meta field to each file regardless of user actions, set [`meta` in Uppy options](/docs/uppy/#meta).
 
 ### `closeModalOnClickOutside: false`
 
 Set to true to automatically close the modal when the user clicks outside it.
+
+### `disablePageScrollWhenModalOpen: true`
+
+By default when Dashboard modal is open, it will disable page scrolling, so when you scroll a list of files in Uppy the website in the background stays still. Set to false to override this behaviour and leave page scrolling intact.
 
 ### `disableStatusBar: false`
 
@@ -134,6 +148,10 @@ Dashboard ships with `StatusBar` plugin that shows upload progress and pause/res
 ### `disableInformer: false`
 
 Dashboard ships with `Informer` plugin that notifies when the browser is offline, or when it’s time to smile if `Webcam` is taking a picture. If you want, you can disable the Informer and/or provide your custom solution.
+
+### `disableThumbnailGenerator: false`
+
+Dashboard ships with `ThumbnailGenerator` plugin that adds small resized image thumbnails to images, for preview purposes only. If you want, you can disable the `ThumbnailGenerator` and/or provide your custom solution.
 
 ### `locale`
 

@@ -103,7 +103,7 @@ emojis:
 
 # Markdown
 ## https://github.com/chjj/marked
-markdown:
+marked:
   gfm: true
   pedantic: false
   sanitize: false
@@ -111,7 +111,8 @@ markdown:
   breaks: true
   smartLists: true
   smartypants: true
-  modifyAnchors: 1
+  # modifyAnchors: 1
+  autolink: true
 
 feed:
   type: atom
