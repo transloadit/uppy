@@ -41,7 +41,7 @@ class MusicUploadButton extends React.Component {
   }
 
   render () {
-    this.props.uppy.use(Webcam, { id: "Webcam" });
+    this.props.uppy.use(Webcam); // the same as this.props.uppy.use(Webcam, { id: "Webcam" });
 
     return (
       <div>
