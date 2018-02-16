@@ -101,7 +101,7 @@ getResponseData (xhr) {
 }
 ```
 
-### `getResponseError(xhr)`
+### `getResponseError(xhr.responseText, xhr)`
 
 If the upload endpoint responds with a non-2xx status code, the upload is assumed to have failed.
 The endpoint might have responded with some information about the error, though.
@@ -110,7 +110,7 @@ Pass in a `getResponseError` function to extract error data from the `XMLHttpReq
 For example, if the endpoint responds with a JSON object containing a `{ message }` property, this would show that message to the user:
 
 ```js
-getResponseError (xhr) {
+getResponseError (responseText, xhr) {
   return new Error(JSON.parse(xhr.response).message)
 }
 ```
