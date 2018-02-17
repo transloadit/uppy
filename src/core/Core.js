@@ -557,7 +557,7 @@ class Uppy {
 
     // skip progress event for a file that’s been removed
     if (!this.getFile(fileID)) {
-      this.log('Trying to set progress for a file that’s been removed: ', fileID)
+      this.log(`Not setting progress for a file that has been removed: ${fileID}`)
       return
     }
 
@@ -639,6 +639,10 @@ class Uppy {
     })
 
     this.on('upload-started', (fileID, upload) => {
+      if (!this.getFile(fileID)) {
+        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+        return
+      }
       const file = this.getFile(fileID)
       this.setFileState(fileID, {
         progress: Object.assign({}, file.progress, {
@@ -660,6 +664,10 @@ class Uppy {
     this.on('upload-progress', _throttledCalculateProgress)
 
     this.on('upload-success', (fileID, uploadResp, uploadURL) => {
+      if (!this.getFile(fileID)) {
+        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+        return
+      }
       this.setFileState(fileID, {
         progress: Object.assign({}, this.getState().files[fileID].progress, {
           uploadComplete: true,
@@ -673,6 +681,10 @@ class Uppy {
     })
 
     this.on('preprocess-progress', (fileID, progress) => {
+      if (!this.getFile(fileID)) {
+        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+        return
+      }
       this.setFileState(fileID, {
         progress: Object.assign({}, this.getState().files[fileID].progress, {
           preprocess: progress
@@ -681,6 +693,10 @@ class Uppy {
     })
 
     this.on('preprocess-complete', (fileID) => {
+      if (!this.getFile(fileID)) {
+        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+        return
+      }
       const files = Object.assign({}, this.getState().files)
       files[fileID] = Object.assign({}, files[fileID], {
         progress: Object.assign({}, files[fileID].progress)
@@ -691,6 +707,10 @@ class Uppy {
     })
 
     this.on('postprocess-progress', (fileID, progress) => {
+      if (!this.getFile(fileID)) {
+        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+        return
+      }
       this.setFileState(fileID, {
         progress: Object.assign({}, this.getState().files[fileID].progress, {
           postprocess: progress
@@ -699,6 +719,10 @@ class Uppy {
     })
 
     this.on('postprocess-complete', (fileID) => {
+      if (!this.getFile(fileID)) {
+        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+        return
+      }
       const files = Object.assign({}, this.getState().files)
       files[fileID] = Object.assign({}, files[fileID], {
         progress: Object.assign({}, files[fileID].progress)
@@ -988,6 +1012,10 @@ class Uppy {
    * @param {object} data Data properties to add to the result object.
    */
   addResultData (uploadID, data) {
+    if (!this._getUpload(uploadID)) {
+      this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
+      return
+    }
     const currentUploads = this.getState().currentUploads
     const currentUpload = Object.assign({}, currentUploads[uploadID], {
       result: Object.assign({}, currentUploads[uploadID].result, data)
@@ -1068,6 +1096,11 @@ class Uppy {
       this.addResultData(uploadID, { successful, failed, uploadID })
 
       const { currentUploads } = this.getState()
+      if (!currentUploads[uploadID]) {
+        this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
+        return
+      }
+
       const result = currentUploads[uploadID].result
       this.emit('complete', result)
       // Compatibility with pre-0.21
