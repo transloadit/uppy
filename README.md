@@ -64,7 +64,7 @@ $ npm install uppy --save
 
 We recommend installing from npm and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Add CSS [uppy.min.css](https://transloadit.edgly.net/releases/uppy/v0.22.5/dist/uppy.min.css), either to `<head>` of your HTML page or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
+Add CSS [uppy.min.css](https://transloadit.edgly.net/releases/uppy/v0.23.0/dist/uppy.min.css), either to `<head>` of your HTML page or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
 Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
@@ -73,12 +73,12 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 1\. Add a script to the bottom of `<body>`:
 
 ``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v0.22.5/dist/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.23.0/dist/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://transloadit.edgly.net/releases/uppy/v0.22.5/dist/uppy.min.css" rel="stylesheet">
+<link href="https://transloadit.edgly.net/releases/uppy/v0.23.0/dist/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize:
@@ -106,6 +106,7 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 - `Tus` — resumable uploads via the open [tus](http://tus.io) standard
 - `XHRUpload` — regular uploads for any backend out there (like Apache, Nginx)
 - `Transloadit` — support for [Transloadit](http://transloadit.com)’s robust file uploading and encoding backend
+- `AwsS3` — upload to AWS S3 (also works for Google Cloud)
 - `Dashboard` — universal UI with previews, progress bars, metadata editor and all the cool stuff
 - `DragDrop` — plain and simple drag and drop area
 - `FileInput` — even plainer “select files” button
@@ -113,11 +114,10 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 - `StatusBar` — more detailed progress, pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included by default with `Dashboard`)
 - `Informer` — send notifications like “smile” before taking a selfie or “upload failed” when all is lost (also included by default with `Dashboard`)
 - `GoldenRetriever` — restores files after a browser crash, like it’s nothing
+- `ThumbnailGenerator` — generates image previews (included by default with `Dashboard`)
 - `Form` — collects metadata from `<form>` right before an Uppy upload, then optionally appends results back to the form
 - `ReduxDevTools` — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
-- `GoogleDrive` — select files from [Google Drive](https://www.google.com/drive/)
-- `Dropbox` — select files from [Dropbox](https://www.dropbox.com/)
-- `Instagram` — you guessed right — select files from [Instagram](https://www.instagram.com/)
+- `GoogleDrive`, `Dropbox`, `Instagram`, `Url` — select files from [Google Drive](https://www.google.com/drive/), [Dropbox](https://www.dropbox.com/), [Instagram](https://www.instagram.com/) and direct urls from anywhere on the web. Note that[`uppy-server`](https://github.com/transloadit/uppy-server) is needed for these.
 - `Webcam` — snap and record those selfies 📷
 
 ## Browser Support
@@ -130,25 +130,43 @@ We aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox, an
 
 ## FAQ
 
-### React support?
+### Why not just use `<input type="file">`?
 
-Yep, we have Uppy React components, please see [Uppy React docs](https://uppy.io/docs/react/).
+Having no JavaScript beats having a lot of it, so that’s a fair question! Running an uploading & encoding business for ten years though we found that in cases, the file input leaves some to be desired:
 
-### Can I use it with Rails/Node/Go/PHP?
+- We received complaints about broken uploads and found that resumable uploads are important, especially for big files and to be inclusive towards people on poorer connections (we also launched [tus.io](https://tus.io) to attack that problem). Uppy uploads can survive network outages and browser crashes or accidental navigate-aways.
+- Uppy supports editing meta information before uploading (and e.g. cropping is planned). 
+- There’s the situation where people are using their mobile devices and want to upload on the go, but they have their picture on Instagram, files in Dropbox, or just a plain file url from anywhere on the open web. Uppy allows to pick files from those and push it to the destination without downloading it to your mobile device first. 
+- Accurate upload progress reporting is an issue on many platforms.
+- Some file validation — size, type, number of files — can be done on the client with Uppy.
+- Uppy integrates webcam support, in case your users want to upload a picture/video/audio that does not exist yet :)
+- A larger drag & drop surface can be pleasant to work with. Some people also like that you can control the styling, language, etc.
+- Uppy is aware of encoding backends. Often after an upload, the server needs to rotate, detect faces, optimize for iPad, or what have you. Uppy can track progress of this and report back to the user in different ways.
+- Sometimes you might want your uploads to happen while you continue to interact on the same single page.
 
-Yes, whatever you want on the backend will work with `XHRUpload` plugin, since it just does a `POST` or `PUT` request. If you want resumability with the Tus plugin, use [one of the tus server implementations](https://tus.io/implementations.html) 👌🏼
-
-### Do I need to install special service/server for it?
-
-Nope, as mentioned previously, the `XHRUpload` plugin is old-school and just works with everything. However, you need [`uppy-server`](https://github.com/transloadit/uppy-server) if you’d like your users to be able to pick files from Instagram, Google Drive or Dropbox (more services coming). And you can add [tus](http://tus.io) if you want resumability.
-
-### Does Uppy support S3 uploads?
-
-Yes, there is an S3 plugin, check out the [docs](https://uppy.io/docs/aws-s3/) for more!
+Not all apps need all of these features. A `<input type="file">` is fine in many situations. But these were a few things that our customers hit / asked about enough to spark us to develop Uppy.
 
 ### Why is all this goodness free?
 
-Transloadit's team is small and we have a shared ambition to make a living from open source. By giving away projects like [tus.io](https://tus.io) and [Uppy](https://uppy.io), we're hoping to advance the state of the art, make life a tiny little bit better for everyone, and in doing so have rewarding jobs and get some eyes on our commercial service: [a content ingestion & processing platform](https://transloadit.com). Our thinking is that if just a fraction of our open source userbase can see the appeal of hosted versions straight from the source, that could already be enough to sustain our work. So far this is working out! We're able to dedicate 80% of our time to open source and haven't gone bankrupt just yet :D
+Transloadit’s team is small and we have a shared ambition to make a living from open source. By giving away projects like [tus.io](https://tus.io) and [Uppy](https://uppy.io),we’re hoping to advance the state of the art, make life a tiny little bit better for everyone, and in doing so have rewarding jobs and get some eyes on our commercial service: [a content ingestion & processing platform](https://transloadit.com). 
+
+Our thinking is that if just a fraction of our open source userbase can see the appeal of hosted versions straight from the source, that could already be enough to sustain our work. So far this is working out! We’re able to dedicate 80% of our time to open source and haven’t gone bankrupt just yet :D
+
+### Does Uppy support React?
+
+Yep, we have Uppy React components, please see [Uppy React docs](https://uppy.io/docs/react/).
+
+### Does Uppy support S3 uploads?
+
+Yes, there is an S3 plugin, please check out the [docs](https://uppy.io/docs/aws-s3/) for more.
+
+### Do I need to install special service/server for Uppy? Can I use it with Rails/Node/Go/PHP?
+
+Yes, whatever you want on the backend will work with `XHRUpload` plugin, since it just does a `POST` or `PUT` request. Here’s a [PHP backend example](https://uppy.io/docs/xhrupload/#Uploading-to-a-PHP-Server). 
+
+If you want resumability with the Tus plugin, use [one of the tus server implementations](https://tus.io/implementations.html) 👌🏼
+
+And you’ll need [`uppy-server`](https://github.com/transloadit/uppy-server) if you’d like your users to be able to pick files from Instagram, Google Drive, Dropbox or via direct urls (with more services coming).
 
 ## Contributions are welcome
 

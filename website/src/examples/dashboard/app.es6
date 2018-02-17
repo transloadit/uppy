@@ -3,13 +3,11 @@ const Dashboard = require('uppy/lib/plugins/Dashboard')
 const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 const Dropbox = require('uppy/lib/plugins/Dropbox')
 const Instagram = require('uppy/lib/plugins/Instagram')
+const Url = require('uppy/lib/plugins/Url')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Tus = require('uppy/lib/plugins/Tus')
 
 const UPPY_SERVER = require('../env')
-
-const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
-const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
 
 function uppyInit () {
   if (window.uppy) {
@@ -61,11 +59,15 @@ function uppyInit () {
     uppy.use(Instagram, { target: Dashboard, host: UPPY_SERVER })
   }
 
+  if (opts.Url) {
+    uppy.use(Url, { target: Dashboard, host: UPPY_SERVER })
+  }
+
   if (opts.Webcam) {
     uppy.use(Webcam, { target: Dashboard })
   }
 
-  uppy.use(Tus, { endpoint: TUS_ENDPOINT, resume: true })
+  uppy.use(Tus, { endpoint: 'https://master.tus.io/files/', resume: true })
   uppy.run()
 
   uppy.on('complete', result => {

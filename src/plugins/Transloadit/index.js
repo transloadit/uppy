@@ -87,11 +87,27 @@ module.exports = class Transloadit extends Plugin {
 
   getAssemblyOptions (fileIDs) {
     const options = this.opts
+
+    const normalizeAssemblyOptions = (file, assemblyOptions) => {
+      if (Array.isArray(assemblyOptions.fields)) {
+        const fieldNames = assemblyOptions.fields
+        assemblyOptions.fields = {}
+        fieldNames.forEach((fieldName) => {
+          assemblyOptions.fields[fieldName] = file.meta[fieldName]
+        })
+      }
+      if (!assemblyOptions.fields) {
+        assemblyOptions.fields = {}
+      }
+      return assemblyOptions
+    }
+
     return Promise.all(
       fileIDs.map((fileID) => {
         const file = this.uppy.getFile(fileID)
         const promise = Promise.resolve()
           .then(() => options.getAssemblyOptions(file, options))
+          .then((assemblyOptions) => normalizeAssemblyOptions(file, assemblyOptions))
         return promise.then((assemblyOptions) => {
           this.validateParams(assemblyOptions.params)
 
@@ -580,6 +596,14 @@ module.exports = class Transloadit extends Plugin {
         fileIDs.forEach((fileID) => {
           this.uppy.emit('preprocess-complete', fileID)
         })
+      }).catch((err) => {
+        // Clear preprocessing state when the assembly could not be created,
+        // otherwise the UI gets confused about the lingering progress keys
+        fileIDs.forEach((fileID) => {
+          this.uppy.emit('preprocess-complete', fileID)
+          this.uppy.emit('upload-error', fileID, err)
+        })
+        throw err
       })
     }
 

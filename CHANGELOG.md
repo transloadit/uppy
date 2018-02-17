@@ -52,17 +52,18 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: add tests for `npm pack`
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
 - [ ] audio: audio recording similar to Webcam #143
-- [ ] add  typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
+- [ ] add typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
+- [ ] transloadit plugin: maybe add option to disable uppy server endpoint overrides
 
 ## 1.0 Goals
 
 What we need to do to release Uppy 1.0
 
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
-- [ ] QA: test in multiple browsers and mobile devices
+- [ ] QA: test in multiple browsers and mobile devices again
 - [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
 - [ ] QA: tests for some plugins
-- [ ] docs: on using plugins, all options, list of plugins, i18n
+- [x] docs: on using plugins, all options, list of plugins, i18n
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs
 - [ ] refactoring: possibly add CSS-in-JS
 - [x] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
@@ -79,7 +80,11 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 
+# next
+
 ## 0.24.0
+
+To be released: 2018-03-01.
 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
@@ -87,52 +92,75 @@ What we need to do to release Uppy 1.0
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: all: reset or !important styles to be immune to any environment/page, look at screenshots in #446. Maybe `postcss-safe-important`, http://cleanslatecss.com/ or https://github.com/maximkoretskiy/postcss-autoreset or increase specificity (with .uppy prefix) (@arturi)
-
-# next
-
-## 0.23.0
-
-To be released: 2018-02-10.
-
-- [x] core: return `processing` results among with `upload` results in `success` event and `upload()` promise (#527 / @goto-bus-stop)
-- [x] transloadit: add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (#527 / @goto-bus-stop)
-- [x] transloadit: add `transloadit:assembly-executing` event (#547 / @goto-bus-stop)
-- [ ] transloadit: add error reporting (@goto-bus-stop)
-- [ ] importurl: new plugin that imports files from urls (@arturi, @ifedapoolarewaju)
+- [ ] url: refactor things into Provider, see comments in  https://github.com/transloadit/uppy/pull/588 (@ifedapoolarewaju, @arturi)
+- [ ] dashboard: option for Boolean metadata #454 (@arturi)
+- [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
 - [ ] core: figure out per-plugin locales and i18n strings packs #491
 - [ ] goldenretriever: confirmation before restore #443
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] core: i18n all strings + document them
-- [ ] core: fix blank preview thumbnails for .png images in Safari 10.1 #458
-- [x] core: Move limiting to different point, to fix StatusBar and other UI issues #468 (#524, #526 / @goto-bus-stop)
-- [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
-- [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
-- [x] dashboard: restore focus after modal has been closed (@arturi)
-- [ ] dashboard: option for Boolean metadata #454 (@arturi)
-- [ ] dashboard: refactor provider views (#554 / @arturi)
-- [x] dashboard: use more accessible tip lib: https://github.com/ghosh/microtip
-- [x] core: move preview generation to separate plugin, add queuing (#431 / @richardwillars)
-- [ ] core: warn, not error, when file cannot be added due to restrictions? (@arturi)
+- [ ] core: update file-type
 - [ ] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (@goto-bus-stop)
-- [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins (@goto-bus-stop)
 - [ ] docs: all useful events (@arturi)
-- [ ] core: warn, not error, when files don’t pass restrictions: Unhandled Promise Rejection when file doesn't pass restrictions #492
-- [ ] webcam: URL.createObjectURL(MediaStream) is deprecated and will be removed soon: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject
-- [ ] xhrupload: add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
-- [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
-- [x] uppy-server: security audit, ask @acconut
+- [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
+- [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
+- [ ] transloadit: add error reporting (@goto-bus-stop)
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
-- [ ] meta: add https://twin.github.io/better-file-uploads-with-shrine-direct-uploads to the next blog post
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
-- [x] meta: automatically host releases on edgly and use that as our main CDN (#558 / @kvz)
-- [x] uppy-server: pass response from uppy-server upload’s endpoint (@ifedapoolarewaju)
-- [x] uppy-server: support localhost urls as endpoints (@ifedapoolarewaju)
-- [x] uppy-server: schedule job to delete stale upload files (@ifedapoolarewaju)
-- [x] uppy-server: detect file upload size from the server (@ifedapoolarewaju)
-- [x] uppy-server: load standalone server options via config path (@ifedapoolarewaju)
-- [x] uppy-server: fix circular json stringify error (@ifedapoolarewaju)
+- [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
+- [x] s3: fix xhr response handlers (#625, @goto-bus-stop)
+- [ ] test: add typescript with JSDoc (@arturi)
+
+## 0.23.0
+
+Released: 2018-02-11.
+
+- core: Allow plugins to add data to result object. Return `processing` results among with `upload` results in `complete` event and `upload()` promise (#527 / @goto-bus-stop)
+- core: Move limiting to different point, to fix StatusBar and other UI issues #468 (#524, #526 / @goto-bus-stop)
+- core: Add uploadID to complete event (#569 / @richardwillars)
+- core: Allow chanining after .on() and .off() to improve ergonomics (#597 / @arturi)
+- core: Allow user to override sass variables (#555 / @chao)
+- core: Move preview generation to separate plugin, add queuing (#431 / @richardwillars)
+- core: Third-party extension, uppy-store-ngrx https://github.com/rimlin/uppy-store-ngrx/ (#532 / @rimlin)
+- core: Warn, not error, when file cannot be added due to restrictions? (#604, #492 / @goto-bus-stop)
+- dashboard: Add more i18n strings (#565 / @arturi)
+- dashboard: Fix modal and page scroll (#564 / @arturi)
+- dashboard: Refactor provider views (#554 / @arturi)
+- dashboard: Restore focus after modal has been closed (#536 / @arturi)
+- dashboard: Use empty input value so same file can be selected multiple times (@arturi / #534)
+- dashboard: Use more accessible tip lib microtip (#536 / @arturi)
+- docs: Add PHP snippets to XHRUpload docs (#567 / @goto-bus-stop)
+- meta: Added instruction to fork the repo first (#512 / muhammadInam)
+- meta: Automatically host releases on edgly and use that as our main CDN (#558 / @kvz)
+- meta: Dependency version updates (#523 / @goto-bus-stop)
+- meta: Remove unused files from published package (#586 / @goto-bus-stop)
+- s3: Respect `limit` option for upload parameter requests too; fix isXml() check when no content-type is available (#545, #544, #528 / @goto-bus-stop)
+- statusbar: Fix status text still showing when statusbar is hidden (#525 / @goto-bus-stop)
+- test: Alter jest testPathPattern to current dir, add chai (#583 / @arturi)
+- thumbnail: Add thumbnail generation plugin (#461 / @richardwillars)
+- thumbnail: Fix blank preview thumbnails for images in Safari; use slightly different stap scaling (#458, #584 / @arturi)
+- transloadit: Add `transloadit:assembly-executing` event (#547 / @goto-bus-stop)
+- transloadit: Add assembly results to to the `complete` callback (#527 / @goto-bus-stop)
+- transloadit: Easily pass form fields (#593 / @goto-bus-stop)
+- tus: `resume: false` — don’t store url (@arturi / #507)
+- uppy-server: Detect file upload size from the server (@ifedapoolarewaju)
+- uppy-server: Fix circular json stringify error (@ifedapoolarewaju)
+- uppy-server: Load standalone server options via config path (@ifedapoolarewaju)
+- uppy-server: Pass response from uppy-server upload’s endpoint (#591 / @ifedapoolarewaju)
+- uppy-server: Schedule job to delete stale upload files (@ifedapoolarewaju)
+- uppy-server: Security audit, ask @acconut
+- uppy-server: Support localhost urls as endpoints (@ifedapoolarewaju)
+- url: New plugin that imports files from urls (#588 / @arturi, @ifedapoolarewaju)
+- webcam: Font styling for Webcam option (#509 / @muhammadInam)
+- webcam: Mirror image preview, add option to select which camera is used to capture, try filling the whole Dashboard with webcam preview image, remove URL.createObjectURL() (#574 / @arturi, @nqst)
+- website: Add Transloadit example to website (#603 / @arturi)
+- website: Doc fixes (#563 / @arturi)
+- website: Improve the Contributing guide (#578 / @arturi)
+- xhrupload: Add bundle option to send multiple files in one request (#442 / @goto-bus-stop)
+- xhrupload: Prevent files from being uploaded multiple times in separate uploads (#552 / @richardwillars)
+- xhrupload: Refactor response and error handling (#591 / @goto-bus-stop, @arturi, @ifedapoolarewaju)
 
 ## 0.22.1
 
@@ -196,127 +224,127 @@ Released: 2017-12-10.
 
 Released: 2017-11-14.
 
-- [x] accessibility: add tabindex="0" to buttons and tabs, aria-labels, focus (#414 / @arturi)
-- [x] core: allow setting custom `id` for plugins to allow a plugin to be used multiple times (#418 / @arturi)
-- [x] core: do not check isPreviewSupported for unknown filetypes (#417 / @sadovnychyi)
-- [x] core: refactor `uppy-base` (#382 / @goto-bus-stop)
-- [x] core: remove functions from state object (#408 / @goto-bus-stop)
-- [x] core: return `{ successful, failed }` from `uppy.upload()` (#404 / @goto-bus-stop)
-- [x] core: update state with error messages rather than error objects (#406 / @richardwillars)
-- [x] core: use `tinyify` for the unpkg bundle. (#371 / @goto-bus-stop)
-- [x] dashboard: Fix pasting files, default `image` file name, add type to meta, file type refactor (#395 / @arturi)
-- [x] dragdrop: Fix of the .uppy-DragDrop-inner spacing on small screens (#405 / @nqst)
-- [x] react: fix `uppy` PropType, closes (#416 / @goto-bus-stop)
-- [x] s3: automatically wrap XHRUpload. **Users should remove `.use(XHRUpload)` when using S3.** (#408 / @goto-bus-stop)
-- [x] test: refactored end-to-end tests to not use website, switched to Webdriver.io, added tests for Edge, Safari, Android and iOS (#410 / @arturi)
-- [x] tus: Rename Tus10 → Tus (#285 / @goto-bus-stop)
-- [x] uppy-serer: mask sensitive data from request logs (@ifedapoolarewaju)
-- [x] uppy-server: add request body validators (@ifedapoolarewaju)
-- [x] uppy-server: migrate dropbox to use v2 API (#386 / @ifedapoolarewaju)
-- [x] uppy-server: store tokens in user’s browser only (@ifedapoolarewaju)
-- [x] webcam: only show the webcam tab when browser support is available (media recorder API) (#421 / @arturi, @goto-bus-stop)
-- [x] webcam: simplify and refactor webcam plugin (modern browser APIs only) (#382 / @goto-bus-stop)
-- [x] xhrupload: set a timeout in the onprogress event handler to detect stale network (#378 / @goto-bus-stop)
-- [x] uppy-server: allow flexible whitelist endpoint protocols (@ifedapoolarewaju)
+- accessibility: add tabindex="0" to buttons and tabs, aria-labels, focus (#414 / @arturi)
+- core: allow setting custom `id` for plugins to allow a plugin to be used multiple times (#418 / @arturi)
+- core: do not check isPreviewSupported for unknown filetypes (#417 / @sadovnychyi)
+- core: refactor `uppy-base` (#382 / @goto-bus-stop)
+- core: remove functions from state object (#408 / @goto-bus-stop)
+- core: return `{ successful, failed }` from `uppy.upload()` (#404 / @goto-bus-stop)
+- core: update state with error messages rather than error objects (#406 / @richardwillars)
+- core: use `tinyify` for the unpkg bundle. (#371 / @goto-bus-stop)
+- dashboard: Fix pasting files, default `image` file name, add type to meta, file type refactor (#395 / @arturi)
+- dragdrop: Fix of the .uppy-DragDrop-inner spacing on small screens (#405 / @nqst)
+- react: fix `uppy` PropType, closes (#416 / @goto-bus-stop)
+- s3: automatically wrap XHRUpload. **Users should remove `.use(XHRUpload)` when using S3.** (#408 / @goto-bus-stop)
+- test: refactored end-to-end tests to not use website, switched to Webdriver.io, added tests for Edge, Safari, Android and iOS (#410 / @arturi)
+- tus: Rename Tus10 → Tus (#285 / @goto-bus-stop)
+- uppy-serer: mask sensitive data from request logs (@ifedapoolarewaju)
+- uppy-server: add request body validators (@ifedapoolarewaju)
+- uppy-server: migrate dropbox to use v2 API (#386 / @ifedapoolarewaju)
+- uppy-server: store tokens in user’s browser only (@ifedapoolarewaju)
+- webcam: only show the webcam tab when browser support is available (media recorder API) (#421 / @arturi, @goto-bus-stop)
+- webcam: simplify and refactor webcam plugin (modern browser APIs only) (#382 / @goto-bus-stop)
+- xhrupload: set a timeout in the onprogress event handler to detect stale network (#378 / @goto-bus-stop)
+- uppy-server: allow flexible whitelist endpoint protocols (@ifedapoolarewaju)
 
 ## 0.20.3
 
 Released: 2017-10-18.
 
-- [x] Start a completely new upload when retrying. (#390 / @goto-bus-stop)
-- [x] dashboard: Show errors that occurred during processing on the file items. (#391 / @goto-bus-stop)
-- [x] transloadit: Mark files as having errored if their assembly fails. (#392 / @goto-bus-stop)
-- [x] core: Clear file upload progress when an upload starts. (#393 / @goto-bus-stop)
-- [x] tus: Clean up `tus.Upload` instance and events when an upload starts, finishes, or fails. (#390 / @goto-bus-stop)
+- Start a completely new upload when retrying. (#390 / @goto-bus-stop)
+- dashboard: Show errors that occurred during processing on the file items. (#391 / @goto-bus-stop)
+- transloadit: Mark files as having errored if their assembly fails. (#392 / @goto-bus-stop)
+- core: Clear file upload progress when an upload starts. (#393 / @goto-bus-stop)
+- tus: Clean up `tus.Upload` instance and events when an upload starts, finishes, or fails. (#390 / @goto-bus-stop)
 
 ## 0.20.2
 
 Released: 2017-10-11.
 
-- [x] docs: fix `getMetaFromForm` documentation (@arturi)
-- [x] core: fix generating thumbnails for images with transparent background (#380 / @goto-bus-stop)
-- [x] transloadit: use Translator class for localised strings (#383 / @goto-bus-stop)
-- [x] goldenretriever: don't crash when required server-side (#384 / @goto-bus-stop)
+- docs: fix `getMetaFromForm` documentation (@arturi)
+- core: fix generating thumbnails for images with transparent background (#380 / @goto-bus-stop)
+- transloadit: use Translator class for localised strings (#383 / @goto-bus-stop)
+- goldenretriever: don't crash when required server-side (#384 / @goto-bus-stop)
 
 ## 0.20.1
 
 Released: 2017-10-05.
 
-- [x] redux: add plugin for syncing uppy state with a Redux store (#376 / @richardwillars)
+- redux: add plugin for syncing uppy state with a Redux store (#376 / @richardwillars)
 
 ## 0.20.0
 
 Released: 2017-10-03.
 Theme: React and Retry
 
-- [x] core: retry/error when upload can’t start or fails (offline, connection lost, wrong endpoint); add error in file progress state, UI, question mark button (#307 / @arturi)
-- [x] core: support for retry in Tus plugin (#307 / @arturi)
-- [x] core: support for retry in XHRUpload plugin (#307 / @arturi)
-- [x] core: Add support for Redux DevTools via a plugin (#373 / @arturi)
-- [x] core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
-- [x] core: improve core.log method, add timestamps (#372 / @arturi)
-- [x] dragdrop: redesign, add note, width/height options, arrow icon (#374 / @arturi)
-- [x] uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
-- [x] uploaders: issue warning when no uploading plugins are used (#372 / @arturi)
-- [x] core: fix `replaceTargetContent` and add tests for `Plugin` (#354 / @gavboulton)
-- [x] goldenretriever: Omit completed uploads from saved file state—previously, when an upload was finished and the user refreshed the page, all the finished files would still be there because we saved the entire list of files. Changed this to only store files that are part of an in-progress upload, or that have yet to be uploaded (#358, #324 / @goto-bus-stop)
-- [x] goldenretriever: Remove files from cache when upload finished—this uses the deleteBlobs function when core:success fires (#358, #324 / @goto-bus-stop)
-- [x] goldenretriever: add a timestamp to cached blobs, and to delete old blobs on boot (#358, #324 / @goto-bus-stop)
-- [x] s3: have some way to configure content-disposition for uploads, see #243 (@goto-bus-stop)
-- [x] core: move `setPluginState` and add `getPluginState` to `Plugin` class (#363 / @goto-bus-stop)
+- core: retry/error when upload can’t start or fails (offline, connection lost, wrong endpoint); add error in file progress state, UI, question mark button (#307 / @arturi)
+- core: support for retry in Tus plugin (#307 / @arturi)
+- core: support for retry in XHRUpload plugin (#307 / @arturi)
+- core: Add support for Redux DevTools via a plugin (#373 / @arturi)
+- core: improve and merge the React PR (#170 / @goto-bus-stop, @arturi)
+- core: improve core.log method, add timestamps (#372 / @arturi)
+- dragdrop: redesign, add note, width/height options, arrow icon (#374 / @arturi)
+- uploaders: upload resolution changes, followup to #323 (#347 / @goto-bus-stop)
+- uploaders: issue warning when no uploading plugins are used (#372 / @arturi)
+- core: fix `replaceTargetContent` and add tests for `Plugin` (#354 / @gavboulton)
+- goldenretriever: Omit completed uploads from saved file state—previously, when an upload was finished and the user refreshed the page, all the finished files would still be there because we saved the entire list of files. Changed this to only store files that are part of an in-progress upload, or that have yet to be uploaded (#358, #324 / @goto-bus-stop)
+- goldenretriever: Remove files from cache when upload finished—this uses the deleteBlobs function when core:success fires (#358, #324 / @goto-bus-stop)
+- goldenretriever: add a timestamp to cached blobs, and to delete old blobs on boot (#358, #324 / @goto-bus-stop)
+- s3: have some way to configure content-disposition for uploads, see #243 (@goto-bus-stop)
+- core: move `setPluginState` and add `getPluginState` to `Plugin` class (#363 / @goto-bus-stop)
 
 ## 0.19.1
 
 Released: 2017-09-20.
 
-- [x] goldenretriever: fix restorefiles with id (#351 / @arturi)
-- [x] goldenretriever: Clean up blobs that are not related to a file in state (#349 / @goto-bus-stop)
-- [x] core: set the newState before emiting `core:state-update` (#341 / @sunil-shrestha, @arturi)
-- [x] docs: Document StatusBar plugin (#350 / @goto-bus-stop)
+- goldenretriever: fix restorefiles with id (#351 / @arturi)
+- goldenretriever: Clean up blobs that are not related to a file in state (#349 / @goto-bus-stop)
+- core: set the newState before emiting `core:state-update` (#341 / @sunil-shrestha, @arturi)
+- docs: Document StatusBar plugin (#350 / @goto-bus-stop)
 
 ## 0.19.0
 
 Released: 2017-09-15.
 Theme: Tests and better APIs
 
-- [x] goldenretriever: allow passing options to `IndexedDbStore` (#339 / sunil-shrestha)
-- [x] core: add Uppy instance ID option, namespace serviceWorker action types, add example using multiple Uppy instances with Goldenretriever (#333 / @goto-bus-stop)
-- [x] core: fix `calculateTotalProgress` - NaN (#342 / @arturi)
-- [x] core: fix and refactor restrictions (#345 / @arturi)
-- [x] core: Better `generateFileID` (#330 / @arturi)
-- [x] core: improve `isOnline()` (#319 / @richardwillars)
-- [x] core: remove unused bootstrap styles (#329 / @arturi)
-- [x] core: experiment with yo-yo --> preact and picodom (#297 / @arturi)
-- [x] dashboard: fix FileItem source icon position and copy (@arturi)
-- [x] dashboard: expose and document the show/hide/isOpen API (@arturi)
-- [x] dashboard: allow multiple `triggers` of the same class `.open-uppy` (#328 / @arturi)
-- [x] plugins: add `aria-hidden` to all SVG icons for accessibility (#4e808ca3d26f06499c58bb77abbf1c3c2b510b4d / @arturi)
-- [x] core: Handle sync returns and throws in possibly-async function options (#315 / @goto-bus-stop)
-- [x] core: switch to Jest tests, add more tests for Core and Utils (#310 / @richardwillars)
-- [x] website: Minify bundle for `disc` (#332 / @goto-bus-stop)
-- [x] transloadit: remove `this.state` getter (#331 / @goto-bus-stop)
-- [x] server: option to define valid upload urls (@ifedapoolarewaju)
-- [x] server: more automated tests (@ifedapoolarewaju)
+- goldenretriever: allow passing options to `IndexedDbStore` (#339 / sunil-shrestha)
+- core: add Uppy instance ID option, namespace serviceWorker action types, add example using multiple Uppy instances with Goldenretriever (#333 / @goto-bus-stop)
+- core: fix `calculateTotalProgress` - NaN (#342 / @arturi)
+- core: fix and refactor restrictions (#345 / @arturi)
+- core: Better `generateFileID` (#330 / @arturi)
+- core: improve `isOnline()` (#319 / @richardwillars)
+- core: remove unused bootstrap styles (#329 / @arturi)
+- core: experiment with yo-yo --> preact and picodom (#297 / @arturi)
+- dashboard: fix FileItem source icon position and copy (@arturi)
+- dashboard: expose and document the show/hide/isOpen API (@arturi)
+- dashboard: allow multiple `triggers` of the same class `.open-uppy` (#328 / @arturi)
+- plugins: add `aria-hidden` to all SVG icons for accessibility (#4e808ca3d26f06499c58bb77abbf1c3c2b510b4d / @arturi)
+- core: Handle sync returns and throws in possibly-async function options (#315 / @goto-bus-stop)
+- core: switch to Jest tests, add more tests for Core and Utils (#310 / @richardwillars)
+- website: Minify bundle for `disc` (#332 / @goto-bus-stop)
+- transloadit: remove `this.state` getter (#331 / @goto-bus-stop)
+- server: option to define valid upload urls (@ifedapoolarewaju)
+- server: more automated tests (@ifedapoolarewaju)
 
 ## 0.18.1
 
 Released: 2017-09-05.
 Note: this version was released as a `@next` npm tag to unblock some users.
 
-- [x] core: gradually resize image previews #275 (@goto-bus-stop)
-- [x] informer: support “explanations”, a (?) button that shows more info on hover / click (#292 / @arturi)
-- [x] fix webcam video recording (@goto-bus-stop)
-- [x] bundle: add missing plugins (s3, statusbar, restoreFiles) to unpkg bundle (#301 / @goto-bus-stop)
-- [x] xhrupload: Use error messages from the endpoint (#305 / @goto-bus-stop)
-- [x] dashboard: prevent submitting outer form when pressing enter key while editing metadata (#306 / @goto-bus-stop)
-- [x] dashboard: save metadata edits when pressing enter key (#308 / @arturi)
-- [x] transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (#280 / @goto-bus-stop)
-- [x] transloadit: add `alwaysRunAssembly` option to run assemblies when no files are uploaded (#290 / @goto-bus-stop)
-- [x] core: use `iteratePlugins` inside `updateAll` (#312 / @richardwillars)
-- [x] core: improve error when plugin does not have ID (#309 / @richardwillars)
-- [x] tus: Clear stored `uploadUrl` on `uppy.resetProgress()` call (#314 / @goto-bus-stop)
-- [x] website: simplify examples and code samples, prevent sidebar subheading links anywhere but in docs (@arturi)
-- [x] website: group plugin docs together in the sidebar (@arturi)
+- core: gradually resize image previews #275 (@goto-bus-stop)
+- informer: support “explanations”, a (?) button that shows more info on hover / click (#292 / @arturi)
+- fix webcam video recording (@goto-bus-stop)
+- bundle: add missing plugins (s3, statusbar, restoreFiles) to unpkg bundle (#301 / @goto-bus-stop)
+- xhrupload: Use error messages from the endpoint (#305 / @goto-bus-stop)
+- dashboard: prevent submitting outer form when pressing enter key while editing metadata (#306 / @goto-bus-stop)
+- dashboard: save metadata edits when pressing enter key (#308 / @arturi)
+- transloadit: upload to S3, then import into :tl: assembly using `/add_file?s3url=${url}` (#280 / @goto-bus-stop)
+- transloadit: add `alwaysRunAssembly` option to run assemblies when no files are uploaded (#290 / @goto-bus-stop)
+- core: use `iteratePlugins` inside `updateAll` (#312 / @richardwillars)
+- core: improve error when plugin does not have ID (#309 / @richardwillars)
+- tus: Clear stored `uploadUrl` on `uppy.resetProgress()` call (#314 / @goto-bus-stop)
+- website: simplify examples and code samples, prevent sidebar subheading links anywhere but in docs (@arturi)
+- website: group plugin docs together in the sidebar (@arturi)
 
 ## 0.18.0
 

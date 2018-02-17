@@ -131,6 +131,31 @@ The default is 30 seconds.
 
 Limit the amount of uploads going on at the same time. Passing `0` means no limit.
 
+## POST Parameters / Form Fields
+
+When using XHRUpload with `formData: true`, file metadata is sent along with each upload request. You can set metadata for a file using [`uppy.setFileMeta(fileID, data)`](/docs/uppy#uppy-setFileMeta-fileID-data), or for all files simultaneously using [`uppy.setMeta(data)`](/docs/uppy#uppy-setMeta-data).
+
+It may be useful to set metadata depending on some file properties, such as the size. You can use the [`file-added`](/docs/uppy/#file-added) event and  the [`uppy.setFileMeta(fileID, data)`](/docs/uppy#uppy-setFileMeta-fileID-data) method to do this:
+
+```js
+uppy.on('file-added', (file) => {
+  uppy.setFileMeta(file.id, {
+    size: file.size
+  })
+})
+```
+
+Now, a form field named `size` will be sent along to the [`endpoint`](#endpoint-39-39) once the upload starts.
+
+By default, all metadata is sent, including Uppy's default `name` and `type` metadata. If you do not want the `name` and `type` metadata properties to be sent to your upload endpoint, you can use the [`metaFields`](#metaFields-null) option to restrict the field names that should be sent.
+
+```js
+uppy.use(XHRUpload, {
+  // Only send our own `size` metadata field.
+  metaFields: ['size']
+})
+```
+
 ## Uploading to a PHP Server
 
 The XHRUpload plugin works similarly to a `<form>` upload. You can use the `$_FILES` variable on the server to work with uploaded files. See the PHP documentation on [Handling file uploads][PHP.file-upload].

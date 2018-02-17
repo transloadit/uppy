@@ -29,7 +29,7 @@ module.exports = class XHRUpload extends Plugin {
       method: 'post',
       metaFields: null,
       responseUrlFieldName: 'url',
-      bundle: true,
+      bundle: false,
       headers: {},
       locale: defaultLocale,
       timeout: 30 * 1000,
@@ -45,7 +45,14 @@ module.exports = class XHRUpload extends Plugin {
        * @param {XMLHttpRequest | respObj} responseObject the response object
        */
       getResponseData (responseContent, responseObject) {
-        return JSON.parse(responseContent)
+        let response = {}
+        try {
+          response = JSON.parse(responseContent)
+        } catch (err) {
+          this.uppy.log(err, 'error')
+        }
+
+        return response
       },
       /**
        *
@@ -352,14 +359,14 @@ module.exports = class XHRUpload extends Plugin {
         timer.done()
 
         if (ev.target.status >= 200 && ev.target.status < 300) {
-          const resp = this.opts.getResponseData(xhr)
+          const resp = this.opts.getResponseData(xhr.responseText, xhr)
           files.forEach((file) => {
             this.uppy.emit('upload-success', file.id, resp)
           })
           return resolve()
         }
 
-        const error = this.opts.getResponseError(xhr) || new Error('Upload error')
+        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
         error.request = xhr
         emitError(error)
         return reject(error)
@@ -368,7 +375,7 @@ module.exports = class XHRUpload extends Plugin {
       xhr.addEventListener('error', (ev) => {
         timer.done()
 
-        const error = this.opts.getResponseError(xhr) || new Error('Upload error')
+        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
         emitError(error)
         return reject(error)
       })

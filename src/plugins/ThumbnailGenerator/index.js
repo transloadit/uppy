@@ -58,81 +58,70 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   /**
+   * Make sure the image doesn’t exceed browser/device canvas limits.
+   * For ios with 256 RAM and ie
+   */
+  protect (image) {
+    // https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element
+
+    var ratio = image.width / image.height
+
+    var maxSquare = 5000000  // ios max canvas square
+    var maxSize = 4096  // ie max canvas dimensions
+
+    var maxW = Math.floor(Math.sqrt(maxSquare * ratio))
+    var maxH = Math.floor(maxSquare / Math.sqrt(maxSquare * ratio))
+    if (maxW > maxSize) {
+      maxW = maxSize
+      maxH = Math.round(maxW / ratio)
+    }
+    if (maxH > maxSize) {
+      maxH = maxSize
+      maxW = Math.round(ratio * maxH)
+    }
+    if (image.width > maxW) {
+      var canvas = document.createElement('canvas')
+      canvas.width = maxW
+      canvas.height = maxH
+      canvas.getContext('2d').drawImage(image, 0, 0, maxW, maxH)
+      image.src = 'about:blank'
+      image.width = 1
+      image.height = 1
+      image = canvas
+    }
+
+    return image
+  }
+
+  /**
    * Resize an image to the target `width` and `height`.
    *
    * Returns a Canvas with the resized image on it.
    */
   resizeImage (image, targetWidth, targetHeight) {
-    let sourceWidth = image.width
-    let sourceHeight = image.height
+    // Resizing in steps refactored to use a solution from
+    // https://blog.uploadcare.com/image-resize-in-browsers-is-broken-e38eed08df01
 
-    if (targetHeight < image.height / 2) {
-      const steps = Math.floor(
-        Math.log(image.width / targetWidth) / Math.log(2)
-      )
-      const stepScaled = this.downScaleInSteps(image, steps)
-      image = stepScaled.image
-      sourceWidth = stepScaled.sourceWidth
-      sourceHeight = stepScaled.sourceHeight
+    image = this.protect(image)
+
+    var steps = Math.ceil(Math.log2(image.width / targetWidth))
+    var sW = targetWidth * Math.pow(2, steps - 1)
+    var sH = targetHeight * Math.pow(2, steps - 1)
+    var x = 2
+
+    while (steps--) {
+      console.log(sW, sH)
+      var canvas = document.createElement('canvas')
+      canvas.width = sW
+      canvas.height = sH
+      canvas.getContext('2d').drawImage(image, 0, 0, sW, sH)
+      image = canvas
+
+      sW = Math.round(sW / x)
+      sH = Math.round(sH / x)
     }
 
-    const canvas = document.createElement('canvas')
-    canvas.width = targetWidth
-    canvas.height = targetHeight
-
-    const context = canvas.getContext('2d')
-    context.drawImage(
-      image,
-      0,
-      0,
-      sourceWidth,
-      sourceHeight,
-      0,
-      0,
-      targetWidth,
-      targetHeight
-    )
-    return canvas
-  }
-
-  /**
-   * Downscale an image by 50% `steps` times.
-   */
-  downScaleInSteps (image, steps) {
-    let source = image
-    let currentWidth = source.width
-    let currentHeight = source.height
-
-    for (let i = 0; i < steps; i += 1) {
-      const canvas = document.createElement('canvas')
-      const context = canvas.getContext('2d')
-      canvas.width = currentWidth / 2
-      canvas.height = currentHeight / 2
-      context.drawImage(
-        source,
-        // The entire source image. We pass width and height here,
-        // because we reuse this canvas, and should only scale down
-        // the part of the canvas that contains the previous scale step.
-        0,
-        0,
-        currentWidth,
-        currentHeight,
-        // Draw to 50% size
-        0,
-        0,
-        currentWidth / 2,
-        currentHeight / 2
-      )
-      currentWidth /= 2
-      currentHeight /= 2
-      source = canvas
-    }
-
-    return {
-      image: source,
-      sourceWidth: currentWidth,
-      sourceHeight: currentHeight
-    }
+    return image
   }
 
   /**
