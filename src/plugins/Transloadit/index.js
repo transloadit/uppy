@@ -589,6 +589,14 @@ module.exports = class Transloadit extends Plugin {
         fileIDs.forEach((fileID) => {
           this.uppy.emit('preprocess-complete', fileID)
         })
+      }).catch((err) => {
+        // Clear preprocessing state when the assembly could not be created,
+        // otherwise the UI gets confused about the lingering progress keys
+        fileIDs.forEach((fileID) => {
+          this.uppy.emit('preprocess-complete', fileID)
+          this.uppy.emit('upload-error', fileID, err)
+        })
+        throw err
       })
     }
 

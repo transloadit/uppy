@@ -53,6 +53,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
 - [ ] audio: audio recording similar to Webcam #143
 - [ ] add typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
+- [ ] transloadit plugin: maybe add option to disable uppy server endpoint overrides
 
 ## 1.0 Goals
 
@@ -109,12 +110,14 @@ To be released: 2018-03-01.
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
+- [x] s3: fix xhr response handlers (#625, @goto-bus-stop)
+- [ ] test: add typescript with JSDoc (@arturi)
 
 ## 0.23.0
 
 Released: 2018-02-11.
 
-- core: Allow plugins to add data to result object. Return `processing` results among with `upload` results in `success` event and `upload()` promise (#527 / @goto-bus-stop)
+- core: Allow plugins to add data to result object. Return `processing` results among with `upload` results in `complete` event and `upload()` promise (#527 / @goto-bus-stop)
 - core: Move limiting to different point, to fix StatusBar and other UI issues #468 (#524, #526 / @goto-bus-stop)
 - core: Add uploadID to complete event (#569 / @richardwillars)
 - core: Allow chanining after .on() and .off() to improve ergonomics (#597 / @arturi)
@@ -134,12 +137,12 @@ Released: 2018-02-11.
 - meta: Dependency version updates (#523 / @goto-bus-stop)
 - meta: Remove unused files from published package (#586 / @goto-bus-stop)
 - s3: Respect `limit` option for upload parameter requests too; fix isXml() check when no content-type is available (#545, #544, #528 / @goto-bus-stop)
-- statusbar: Fix status text still showing when statusbar is hidden (#525 / @goto-bus-stop) 
+- statusbar: Fix status text still showing when statusbar is hidden (#525 / @goto-bus-stop)
 - test: Alter jest testPathPattern to current dir, add chai (#583 / @arturi)
 - thumbnail: Add thumbnail generation plugin (#461 / @richardwillars)
 - thumbnail: Fix blank preview thumbnails for images in Safari; use slightly different stap scaling (#458, #584 / @arturi)
 - transloadit: Add `transloadit:assembly-executing` event (#547 / @goto-bus-stop)
-- transloadit: Add assembly result to the file state (or global state, since it might not be file-specific?), so that it can be used in `success` callback (transloadit jquery-sdk includes the whole Assembly Status JSON in a hidden field, form plugin will do a similar thing) (#527 / @goto-bus-stop)
+- transloadit: Add assembly results to to the `complete` callback (#527 / @goto-bus-stop)
 - transloadit: Easily pass form fields (#593 / @goto-bus-stop)
 - tus: `resume: false` — don’t store url (@arturi / #507)
 - uppy-server: Detect file upload size from the server (@ifedapoolarewaju)

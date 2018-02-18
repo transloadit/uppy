@@ -2,6 +2,7 @@ const Uppy = require('uppy/lib/core/Core')
 const Dashboard = require('uppy/lib/plugins/Dashboard')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Transloadit = require('uppy/lib/plugins/Transloadit')
+const Instagram = require('uppy/lib/plugins/Instagram')
 
 function initUppy () {
   if (window.uppy) {
@@ -25,7 +26,7 @@ function initUppy () {
         auth: {
           key: window.TRANSLOADIT_API_KEY
         },
-        // It's always better to use a template_id and enable
+        // It's more secure to use a template_id and enable
         // Signature Authentication
         steps: {
           resize: {
@@ -56,7 +57,7 @@ function initUppy () {
       target: '#uppy-dashboard-container',
       note: 'Images and video only, 1–2 files, up to 1 MB'
     })
-    // .use(Instagram, { target: Uppy.Dashboard, host: 'https://api2.transloadit.com/uppy-server' })
+    .use(Instagram, { target: Dashboard, host: 'https://api2.transloadit.com/uppy-server' })
     .use(Webcam, { target: Dashboard })
     .run()
 
@@ -71,7 +72,9 @@ function initUppy () {
           <a href="${result.ssl_url}">View</a>
         </div>
       `
-      document.getElementById('uppy-transloadit-result').appendChild(resultContainer)
+      document
+        .getElementById('uppy-transloadit-result')
+        .appendChild(resultContainer)
     })
 }
 

@@ -31,6 +31,10 @@ Plugins are what makes Uppy useful: they help select, manipulate and upload file
 
 Each plugin can have any number of options (please see specific plugin for details), but these are shared between some:
 
+### `id`
+
+A unique string identifying the plugin. By default, the plugin's name is used, so usually it does not need to be configured manually. Use this if you need to add multiple plugins of the same type.
+
 ### `target`
 
 Can be a `string` CSS selector, a DOM element, or a Plugin class. Consider the following example, where `DragDrop` plugin will be rendered into a `body` element:
