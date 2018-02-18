@@ -717,10 +717,11 @@ describe('src/Core', () => {
             totalProgress: 50
           })
 
+          const file = core.getFile(fileId)
           core.removeFile(fileId)
 
           expect(Object.keys(core.state.files).length).toEqual(0)
-          expect(fileRemovedEventMock.mock.calls[0][0]).toEqual(fileId)
+          expect(fileRemovedEventMock.mock.calls[0][0]).toEqual(file)
           expect(core.state.totalProgress).toEqual(0)
         })
     })
