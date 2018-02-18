@@ -54,6 +54,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] audio: audio recording similar to Webcam #143
 - [ ] add typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
 - [ ] transloadit plugin: maybe add option to disable uppy server endpoint overrides
+- [ ] dragdrop: change border color when files doesn’t pass restrictions on drag https://github.com/transloadit/uppy/issues/607
 
 ## 1.0 Goals
 
