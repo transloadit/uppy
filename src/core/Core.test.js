@@ -651,8 +651,9 @@ describe('src/Core', () => {
       const core = new Core().run()
       core.addUploader((fileIDs) => {
         fileIDs.forEach((fileID) => {
-          if (/bar/.test(core.getFile(fileID).name)) {
-            core.emit('upload-error', fileID, new Error('This is bar and I do not like bar'))
+          const file = core.getFile(fileID)
+          if (/bar/.test(file.name)) {
+            core.emit('upload-error', file, new Error('This is bar and I do not like bar'))
           }
         })
         return Promise.resolve()
@@ -1014,7 +1015,7 @@ describe('src/Core', () => {
       core.state.files['fileId'] = {
         name: 'filename'
       }
-      core.emit('upload-error', 'fileId', new Error('this is the error'))
+      core.emit('upload-error', core.state.files['fileId'], new Error('this is the error'))
       expect(core.state.info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
     })
 
