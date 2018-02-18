@@ -35,7 +35,7 @@ This example demonstrates how to unlock Transloadit’s features within Uppy.
   <label for="transloadit-api-key"
          style="display: block; font-size: 13px; text-transform: uppercase; font-weight: bold;">
     Transloadit API Key:</label>
-  <input type="text" 
+  <input type="text"
          style="font-size: 15px; width: 300px; max-width: 100%; border: 0; border-bottom: 1px solid black; padding: 6px 8px; margin-bottom: 20px;"
          id="transloadit-api-key" 
          placeholder="Your Transloadit API Key">
@@ -81,7 +81,6 @@ const Uppy = require('uppy/lib/core/Core')
 const Dashboard = require('uppy/lib/plugins/Dashboard')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Transloadit = require('uppy/lib/plugins/Transloadit')
-const Tus = require('uppy/lib/plugins/Tus')
 const Instagram = require('uppy/lib/plugins/Instagram')
 
 const uppy = Uppy({
@@ -96,7 +95,6 @@ const uppy = Uppy({
 })
 
 uppy
-  .use(Tus, { resume: false })
   .use(Transloadit, {
     params: {
       auth: {
