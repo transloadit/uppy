@@ -59,6 +59,8 @@ headers: {
 
 Send all files in a single multipart request. When `bundle` is `true`, `formData` must also be set to `true`.
 
+> Note: When `bundle` is `true`, file metadata is **not** sent to the endpoint. This is because it's not obvious how metadata should be sent when there are multiple files in a single request. If you need this, please open an issue and we'll try to figure it out together.
+
 All files will be appended to the provided `fieldName` field in the request. To upload files on different fields, use [`uppy.setFileState()`](/docs/uppy#uppy-setFileState-fileID-state) to set the `xhrUpload.fieldName` property on the file:
 
 ```js
