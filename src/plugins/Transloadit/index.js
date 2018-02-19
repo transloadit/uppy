@@ -31,6 +31,7 @@ module.exports = class Transloadit extends Plugin {
     }
 
     const defaultOptions = {
+      service: 'https://api2.transloadit.com',
       waitForEncoding: false,
       waitForMetadata: false,
       alwaysRunAssembly: false,
@@ -60,7 +61,9 @@ module.exports = class Transloadit extends Plugin {
       this.validateParams(this.opts.params)
     }
 
-    this.client = new Client()
+    this.client = new Client({
+      service: this.opts.service
+    })
     this.sockets = {}
   }
 
