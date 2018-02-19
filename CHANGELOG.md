@@ -101,7 +101,7 @@ To be released: 2018-03-01.
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] core: i18n all strings + document them
 - [ ] core: update file-type
-- [ ] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (@goto-bus-stop)
+- [x] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (#641 / @goto-bus-stop)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins (@goto-bus-stop)
 - [ ] docs: all useful events (@arturi)
