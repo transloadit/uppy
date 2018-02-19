@@ -130,7 +130,7 @@ module.exports = class Tus extends Plugin {
 
       optsTus.onError = (err) => {
         this.uppy.log(err)
-        this.uppy.emit('upload-error', file.id, err)
+        this.uppy.emit('upload-error', file, err)
         err.message = `Failed because: ${err.message}`
 
         this.resetUploaderReferences(file.id)
@@ -148,7 +148,7 @@ module.exports = class Tus extends Plugin {
       }
 
       optsTus.onSuccess = () => {
-        this.uppy.emit('upload-success', file.id, upload, upload.url)
+        this.uppy.emit('upload-success', file, upload, upload.url)
 
         if (upload.url) {
           this.uppy.log('Download ' + upload.file.name + ' from ' + upload.url)
@@ -300,12 +300,12 @@ module.exports = class Tus extends Plugin {
       socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
       socket.on('error', (errData) => {
-        this.uppy.emit('upload-error', file.id, new Error(errData.error))
+        this.uppy.emit('upload-error', file, new Error(errData.error))
         reject(new Error(errData.error))
       })
 
       socket.on('success', (data) => {
-        this.uppy.emit('upload-success', file.id, data, data.url)
+        this.uppy.emit('upload-success', file, data, data.url)
         this.resetUploaderReferences(file.id)
         resolve()
       })

@@ -1,5 +1,6 @@
 const Translator = require('../../core/Translator')
 const Plugin = require('../../core/Plugin')
+const Tus = require('../Tus')
 const Client = require('./Client')
 const StatusSocket = require('./Socket')
 
@@ -30,6 +31,7 @@ module.exports = class Transloadit extends Plugin {
     }
 
     const defaultOptions = {
+      service: 'https://api2.transloadit.com',
       waitForEncoding: false,
       waitForMetadata: false,
       alwaysRunAssembly: false,
@@ -60,7 +62,9 @@ module.exports = class Transloadit extends Plugin {
       this.validateParams(this.opts.params)
     }
 
-    this.client = new Client()
+    this.client = new Client({
+      service: this.opts.service
+    })
     this.sockets = {}
   }
 
@@ -166,7 +170,6 @@ module.exports = class Transloadit extends Plugin {
       function attachAssemblyMetadata (file, assembly) {
         // Attach meta parameters for the Tus plugin. See:
         // https://github.com/tus/tusd/wiki/Uploading-to-Transloadit-using-tus#uploading-using-tus
-        // TODO Should this `meta` be moved to a `tus.meta` property instead?
         const tlMeta = {
           assembly_url: assembly.assembly_url,
           filename: file.name,
@@ -175,14 +178,7 @@ module.exports = class Transloadit extends Plugin {
         const meta = Object.assign({}, file.meta, tlMeta)
         // Add assembly-specific Tus endpoint.
         const tus = Object.assign({}, file.tus, {
-          endpoint: assembly.tus_url,
-          // Only send assembly metadata to the tus endpoint.
-          metaFields: Object.keys(tlMeta),
-          // Make sure tus doesn't resume a previous upload.
-          uploadUrl: null,
-          // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
-          // will upload to the same assembly.
-          resume: false
+          endpoint: assembly.tus_url
         })
 
         // Set uppy server location.
@@ -787,7 +783,16 @@ module.exports = class Transloadit extends Plugin {
     this.uppy.addPostProcessor(this.afterUpload)
 
     if (this.opts.importFromUploadURLs) {
+      // No uploader needed when importing; instead we take the upload URL from an existing uploader.
       this.uppy.on('upload-success', this.onFileUploadURLAvailable)
+    } else {
+      this.uppy.use(Tus, {
+        // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
+        // will upload to the same assembly.
+        resume: false,
+        // Only send assembly metadata to the tus endpoint.
+        metaFields: ['assembly_url', 'filename', 'fieldname']
+      })
     }
 
     this.uppy.on('restore:get-data', this.getPersistentData)

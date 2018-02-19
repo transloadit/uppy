@@ -2,7 +2,6 @@ const Uppy = require('uppy/lib/core/Core')
 const Dashboard = require('uppy/lib/plugins/Dashboard')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Transloadit = require('uppy/lib/plugins/Transloadit')
-const Tus = require('uppy/lib/plugins/Tus')
 const Instagram = require('uppy/lib/plugins/Instagram')
 
 function initUppy () {
@@ -22,7 +21,6 @@ function initUppy () {
   })
 
   uppy
-    .use(Tus, { resume: false })
     .use(Transloadit, {
       params: {
         auth: {

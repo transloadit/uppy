@@ -436,7 +436,7 @@ class Uppy {
     })
 
     this._calculateTotalProgress()
-    this.emit('file-removed', fileID)
+    this.emit('file-removed', removedFile)
 
     // Clean up object URLs.
     if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
@@ -614,11 +614,11 @@ class Uppy {
       this.setState({ error: error.message })
     })
 
-    this.on('upload-error', (fileID, error) => {
-      this.setFileState(fileID, { error: error.message })
+    this.on('upload-error', (file, error) => {
+      this.setFileState(file.id, { error: error.message })
       this.setState({ error: error.message })
 
-      const fileName = this.getState().files[fileID].name
+      const fileName = file.name
       let message = `Failed to upload ${fileName}`
       if (typeof error === 'object' && error.message) {
         message = { message: message, details: error.message }
@@ -663,13 +663,9 @@ class Uppy {
 
     this.on('upload-progress', _throttledCalculateProgress)
 
-    this.on('upload-success', (fileID, uploadResp, uploadURL) => {
-      if (!this.getFile(fileID)) {
-        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
-        return
-      }
-      this.setFileState(fileID, {
-        progress: Object.assign({}, this.getState().files[fileID].progress, {
+    this.on('upload-success', (file, uploadResp, uploadURL) => {
+      this.setFileState(file.id, {
+        progress: Object.assign({}, this.state.files[file.id].progress, {
           uploadComplete: true,
           percentage: 100
         }),

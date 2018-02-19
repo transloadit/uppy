@@ -59,6 +59,8 @@ headers: {
 
 Send all files in a single multipart request. When `bundle` is `true`, `formData` must also be set to `true`.
 
+> Note: When `bundle` is `true`, file metadata is **not** sent to the endpoint. This is because it's not obvious how metadata should be sent when there are multiple files in a single request. If you need this, please open an issue and we'll try to figure it out together.
+
 All files will be appended to the provided `fieldName` field in the request. To upload files on different fields, use [`uppy.setFileState()`](/docs/uppy#uppy-setFileState-fileID-state) to set the `xhrUpload.fieldName` property on the file:
 
 ```js
@@ -72,11 +74,16 @@ uppy.setFileState(otherFileID, {
 
 ### `getResponseData(xhr)`
 
-When an upload has completed, Uppy will extract response data from the upload endpoint and send it back in the `upload-success` event:
+When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file's `.response` property, and be emitted in the `upload-success` event:
 
 ```js
-uppy.on('upload-success', (fileId, resp, uploadURL) => {
-  // do something with resp
+uppy.getFile(fileID).response
+// { status: HTTP status code,
+//   body: extracted response data }
+
+uppy.on('upload-success', (fileID, body) => {
+  // do something with extracted response data
+  // (`body` is equivalent to `uppy.getFile(fileID).response.body`)
 })
 ```
 
@@ -101,7 +108,7 @@ getResponseData (xhr) {
 }
 ```
 
-### `getResponseError(xhr)`
+### `getResponseError(xhr.responseText, xhr)`
 
 If the upload endpoint responds with a non-2xx status code, the upload is assumed to have failed.
 The endpoint might have responded with some information about the error, though.
@@ -110,7 +117,7 @@ Pass in a `getResponseError` function to extract error data from the `XMLHttpReq
 For example, if the endpoint responds with a JSON object containing a `{ message }` property, this would show that message to the user:
 
 ```js
-getResponseError (xhr) {
+getResponseError (responseText, xhr) {
   return new Error(JSON.parse(xhr.response).message)
 }
 ```
