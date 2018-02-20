@@ -227,9 +227,9 @@ module.exports = class GoldenRetriever extends Plugin {
       })
     })
 
-    this.uppy.on('file-removed', (fileID) => {
-      if (this.ServiceWorkerStore) this.ServiceWorkerStore.delete(fileID)
-      this.IndexedDBStore.delete(fileID)
+    this.uppy.on('file-removed', (file) => {
+      if (this.ServiceWorkerStore) this.ServiceWorkerStore.delete(file.id)
+      this.IndexedDBStore.delete(file.id)
     })
 
     this.uppy.on('complete', ({ successful }) => {

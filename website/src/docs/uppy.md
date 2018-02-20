@@ -361,8 +361,10 @@ data = {
 ```
 
 ```javascript
-uppy.on('upload-progress', (data) => {
-  console.log(data.id, data.bytesUploaded, data.bytesTotal)
+uppy.on('upload-progress', (file, progress) => {
+  // file: { id, name, type, ... }
+  // progress: { uploader, bytesUploaded, bytesTotal }
+  console.log(file.id, progress.bytesUploaded, progress.bytesTotal)
 })
 ```
 
@@ -371,8 +373,8 @@ uppy.on('upload-progress', (data) => {
 Fired each time a single upload is complete.
 
 ``` javascript
-uppy.on('upload-success', (fileId, resp, uploadURL) => {
-  console.log(uploadURL)
+uppy.on('upload-success', (file, resp, uploadURL) => {
+  console.log(file.name, uploadURL)
   var img = new Image()
   img.width = 300
   img.alt = fileId

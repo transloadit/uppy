@@ -139,9 +139,8 @@ module.exports = class Tus extends Plugin {
 
       optsTus.onProgress = (bytesUploaded, bytesTotal) => {
         this.onReceiveUploadUrl(file, upload.url)
-        this.uppy.emit('upload-progress', {
+        this.uppy.emit('upload-progress', file, {
           uploader: this,
-          id: file.id,
           bytesUploaded: bytesUploaded,
           bytesTotal: bytesTotal
         })
@@ -195,7 +194,7 @@ module.exports = class Tus extends Plugin {
         upload.start()
       }
       if (!file.isRestored) {
-        this.uppy.emit('upload-started', file.id, upload)
+        this.uppy.emit('upload-started', file, upload)
       }
     })
   }
@@ -216,7 +215,7 @@ module.exports = class Tus extends Plugin {
         endpoint = file.tus.endpoint
       }
 
-      this.uppy.emit('upload-started', file.id)
+      this.uppy.emit('upload-started', file)
 
       fetch(file.remote.url, {
         method: 'post',
@@ -340,8 +339,8 @@ module.exports = class Tus extends Plugin {
   }
 
   onFileRemove (fileID, cb) {
-    this.uploaderEvents[fileID].on('file-removed', (targetFileID) => {
-      if (fileID === targetFileID) cb(targetFileID)
+    this.uploaderEvents[fileID].on('file-removed', (file) => {
+      if (fileID === file.id) cb(file.id)
     })
   }
 

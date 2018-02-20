@@ -257,8 +257,7 @@ module.exports = class Transloadit extends Plugin {
    * Used when `importFromUploadURLs` is enabled: adds files to the assembly
    * once they have been fully uploaded.
    */
-  onFileUploadURLAvailable (fileID) {
-    const file = this.uppy.getFile(fileID)
+  onFileUploadURLAvailable (file) {
     if (!file || !file.transloadit || !file.transloadit.assembly) {
       return
     }
@@ -582,7 +581,8 @@ module.exports = class Transloadit extends Plugin {
     fileIDs = fileIDs.filter((file) => !file.error)
 
     fileIDs.forEach((fileID) => {
-      this.uppy.emit('preprocess-progress', fileID, {
+      const file = this.uppy.getFile(fileID)
+      this.uppy.emit('preprocess-progress', file, {
         mode: 'indeterminate',
         message: this.i18n('creatingAssembly')
       })
@@ -595,14 +595,16 @@ module.exports = class Transloadit extends Plugin {
         }
       }).then(() => {
         fileIDs.forEach((fileID) => {
-          this.uppy.emit('preprocess-complete', fileID)
+          const file = this.uppy.getFile(fileID)
+          this.uppy.emit('preprocess-complete', file)
         })
       }).catch((err) => {
         // Clear preprocessing state when the assembly could not be created,
         // otherwise the UI gets confused about the lingering progress keys
         fileIDs.forEach((fileID) => {
-          this.uppy.emit('preprocess-complete', fileID)
-          this.uppy.emit('upload-error', fileID, err)
+          const file = this.uppy.getFile(fileID)
+          this.uppy.emit('preprocess-complete', file)
+          this.uppy.emit('upload-error', file, err)
         })
         throw err
       })
@@ -678,7 +680,8 @@ module.exports = class Transloadit extends Plugin {
 
     return new Promise((resolve, reject) => {
       fileIDs.forEach((fileID) => {
-        this.uppy.emit('postprocess-progress', fileID, {
+        const file = this.uppy.getFile(fileID)
+        this.uppy.emit('postprocess-progress', file, {
           mode: 'indeterminate',
           message: this.i18n('encoding')
         })
@@ -698,7 +701,7 @@ module.exports = class Transloadit extends Plugin {
 
         const files = this.getAssemblyFiles(assembly.assembly_id)
         files.forEach((file) => {
-          this.uppy.emit('postprocess-complete', file.id)
+          this.uppy.emit('postprocess-complete', file)
         })
 
         checkAllComplete()
@@ -717,9 +720,9 @@ module.exports = class Transloadit extends Plugin {
         const files = this.getAssemblyFiles(assembly.assembly_id)
         files.forEach((file) => {
           // TODO Maybe make a postprocess-error event here?
-          this.uppy.emit('upload-error', file.id, error)
+          this.uppy.emit('upload-error', file, error)
 
-          this.uppy.emit('postprocess-complete', file.id)
+          this.uppy.emit('postprocess-complete', file)
         })
 
         checkAllComplete()
@@ -769,15 +772,6 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  removeFileFromPluginState (fileID) {
-    const updatedFiles = this.getPluginState().files
-    delete updatedFiles[fileID]
-
-    this.setPluginState({
-      files: updatedFiles
-    })
-  }
-
   install () {
     this.uppy.addPreProcessor(this.prepareUpload)
     this.uppy.addPostProcessor(this.afterUpload)
@@ -798,8 +792,6 @@ module.exports = class Transloadit extends Plugin {
     this.uppy.on('restore:get-data', this.getPersistentData)
     this.uppy.on('restored', this.onRestored)
 
-    // this.uppy.on('file-removed', this.removeFileFromPluginState)
-
     this.setPluginState({
       // Contains assembly status objects, indexed by their ID.
       assemblies: {},
@@ -815,8 +807,6 @@ module.exports = class Transloadit extends Plugin {
   uninstall () {
     this.uppy.removePreProcessor(this.prepareUpload)
     this.uppy.removePostProcessor(this.afterUpload)
-
-    // this.uppy.off('file-removed', this.removeFileFromPluginState)
 
     if (this.opts.importFromUploadURLs) {
       this.uppy.off('upload-success', this.onFileUploadURLAvailable)

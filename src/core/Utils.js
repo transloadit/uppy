@@ -495,9 +495,8 @@ function _emitSocketProgress (uploader, progressData, file) {
   const { progress, bytesUploaded, bytesTotal } = progressData
   if (progress) {
     uploader.uppy.log(`Upload progress: ${progress}`)
-    uploader.uppy.emit('upload-progress', {
+    uploader.uppy.emit('upload-progress', file, {
       uploader,
-      id: file.id,
       bytesUploaded: bytesUploaded,
       bytesTotal: bytesTotal
     })
