@@ -1,5 +1,6 @@
 const Translator = require('../../core/Translator')
 const Plugin = require('../../core/Plugin')
+const Tus = require('../Tus')
 const Client = require('./Client')
 const StatusSocket = require('./Socket')
 
@@ -30,6 +31,7 @@ module.exports = class Transloadit extends Plugin {
     }
 
     const defaultOptions = {
+      service: 'https://api2.transloadit.com',
       waitForEncoding: false,
       waitForMetadata: false,
       alwaysRunAssembly: false,
@@ -54,12 +56,15 @@ module.exports = class Transloadit extends Plugin {
     this.onFileUploadURLAvailable = this.onFileUploadURLAvailable.bind(this)
     this.onRestored = this.onRestored.bind(this)
     this.getPersistentData = this.getPersistentData.bind(this)
+    this.removeFileFromPluginState = this.removeFileFromPluginState.bind(this)
 
     if (this.opts.params) {
       this.validateParams(this.opts.params)
     }
 
-    this.client = new Client()
+    this.client = new Client({
+      service: this.opts.service
+    })
     this.sockets = {}
   }
 
@@ -87,11 +92,27 @@ module.exports = class Transloadit extends Plugin {
 
   getAssemblyOptions (fileIDs) {
     const options = this.opts
+
+    const normalizeAssemblyOptions = (file, assemblyOptions) => {
+      if (Array.isArray(assemblyOptions.fields)) {
+        const fieldNames = assemblyOptions.fields
+        assemblyOptions.fields = {}
+        fieldNames.forEach((fieldName) => {
+          assemblyOptions.fields[fieldName] = file.meta[fieldName]
+        })
+      }
+      if (!assemblyOptions.fields) {
+        assemblyOptions.fields = {}
+      }
+      return assemblyOptions
+    }
+
     return Promise.all(
       fileIDs.map((fileID) => {
         const file = this.uppy.getFile(fileID)
         const promise = Promise.resolve()
           .then(() => options.getAssemblyOptions(file, options))
+          .then((assemblyOptions) => normalizeAssemblyOptions(file, assemblyOptions))
         return promise.then((assemblyOptions) => {
           this.validateParams(assemblyOptions.params)
 
@@ -149,7 +170,6 @@ module.exports = class Transloadit extends Plugin {
       function attachAssemblyMetadata (file, assembly) {
         // Attach meta parameters for the Tus plugin. See:
         // https://github.com/tus/tusd/wiki/Uploading-to-Transloadit-using-tus#uploading-using-tus
-        // TODO Should this `meta` be moved to a `tus.meta` property instead?
         const tlMeta = {
           assembly_url: assembly.assembly_url,
           filename: file.name,
@@ -158,14 +178,7 @@ module.exports = class Transloadit extends Plugin {
         const meta = Object.assign({}, file.meta, tlMeta)
         // Add assembly-specific Tus endpoint.
         const tus = Object.assign({}, file.tus, {
-          endpoint: assembly.tus_url,
-          // Only send assembly metadata to the tus endpoint.
-          metaFields: Object.keys(tlMeta),
-          // Make sure tus doesn't resume a previous upload.
-          uploadUrl: null,
-          // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
-          // will upload to the same assembly.
-          resume: false
+          endpoint: assembly.tus_url
         })
 
         // Set uppy server location.
@@ -285,6 +298,10 @@ module.exports = class Transloadit extends Plugin {
   onFileUploadComplete (assemblyId, uploadedFile) {
     const state = this.getPluginState()
     const file = this.findFile(uploadedFile)
+    if (!file) {
+      this.uppy.log('[Transloadit] Couldn’t file the file, it was likely removed in the process')
+      return
+    }
     this.setPluginState({
       files: Object.assign({}, state.files, {
         [uploadedFile.id]: {
@@ -580,6 +597,14 @@ module.exports = class Transloadit extends Plugin {
         fileIDs.forEach((fileID) => {
           this.uppy.emit('preprocess-complete', fileID)
         })
+      }).catch((err) => {
+        // Clear preprocessing state when the assembly could not be created,
+        // otherwise the UI gets confused about the lingering progress keys
+        fileIDs.forEach((fileID) => {
+          this.uppy.emit('preprocess-complete', fileID)
+          this.uppy.emit('upload-error', fileID, err)
+        })
+        throw err
       })
     }
 
@@ -744,16 +769,36 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
+  removeFileFromPluginState (fileID) {
+    const updatedFiles = this.getPluginState().files
+    delete updatedFiles[fileID]
+
+    this.setPluginState({
+      files: updatedFiles
+    })
+  }
+
   install () {
     this.uppy.addPreProcessor(this.prepareUpload)
     this.uppy.addPostProcessor(this.afterUpload)
 
     if (this.opts.importFromUploadURLs) {
+      // No uploader needed when importing; instead we take the upload URL from an existing uploader.
       this.uppy.on('upload-success', this.onFileUploadURLAvailable)
+    } else {
+      this.uppy.use(Tus, {
+        // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
+        // will upload to the same assembly.
+        resume: false,
+        // Only send assembly metadata to the tus endpoint.
+        metaFields: ['assembly_url', 'filename', 'fieldname']
+      })
     }
 
     this.uppy.on('restore:get-data', this.getPersistentData)
     this.uppy.on('restored', this.onRestored)
+
+    // this.uppy.on('file-removed', this.removeFileFromPluginState)
 
     this.setPluginState({
       // Contains assembly status objects, indexed by their ID.
@@ -770,6 +815,8 @@ module.exports = class Transloadit extends Plugin {
   uninstall () {
     this.uppy.removePreProcessor(this.prepareUpload)
     this.uppy.removePostProcessor(this.afterUpload)
+
+    // this.uppy.off('file-removed', this.removeFileFromPluginState)
 
     if (this.opts.importFromUploadURLs) {
       this.uppy.off('upload-success', this.onFileUploadURLAvailable)

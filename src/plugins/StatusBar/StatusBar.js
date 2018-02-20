@@ -169,12 +169,13 @@ const ProgressBarProcessing = (props) => {
 }
 
 const ProgressBarUploading = (props) => {
+  const { i18n } = props
   return (
     <div class="uppy-StatusBar-content">
       {props.isUploadStarted && !props.isAllComplete
         ? !props.isAllPaused
-          ? <div title="Uploading">{ <PauseResumeButtons {...props} /> } Uploading... { <ThrottledProgressDetails {...props} /> }</div>
-          : <div title="Paused">{ <PauseResumeButtons {...props} /> } Paused・{props.totalProgress}%</div>
+          ? <div title="Uploading">{ <PauseResumeButtons {...props} /> } {i18n('uploading')} { <ThrottledProgressDetails {...props} /> }</div>
+          : <div title="Paused">{ <PauseResumeButtons {...props} /> } {i18n('paused')}・{props.totalProgress}%</div>
         : null
       }
     </div>

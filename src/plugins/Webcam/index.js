@@ -170,7 +170,7 @@ module.exports = class Webcam extends Plugin {
       })
       return this.getVideo()
     })
-    .then(this.uppy.addFile)
+    .then((file) => this.uppy.addFile(file))
     .then(() => {
       this.recordingChunks = null
       this.recorder = null
@@ -233,9 +233,11 @@ module.exports = class Webcam extends Plugin {
       return this.getImage()
     }).then((tagFile) => {
       this.captureInProgress = false
-      this.uppy.addFile(tagFile)
       const dashboard = this.uppy.getPlugin('Dashboard')
       if (dashboard) dashboard.hideAllPanels()
+      return this.uppy.addFile(tagFile).catch(() => {
+        // Ignore
+      })
     }, (error) => {
       this.captureInProgress = false
       throw error

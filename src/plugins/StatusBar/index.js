@@ -18,7 +18,7 @@ module.exports = class StatusBar extends Plugin {
 
     const defaultLocale = {
       strings: {
-        uploading: 'Uploading',
+        uploading: 'Uploading...',
         uploadComplete: 'Upload complete',
         uploadFailed: 'Upload failed',
         pleasePressRetry: 'Please press Retry to upload again',
@@ -59,6 +59,7 @@ module.exports = class StatusBar extends Plugin {
     this.translator = new Translator({locale: this.locale})
     this.i18n = this.translator.translate.bind(this.translator)
 
+    this.startUpload = this.startUpload.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -82,6 +83,12 @@ module.exports = class StatusBar extends Plugin {
     }, 0)
 
     return Math.round(totalBytesRemaining / totalSpeed * 10) / 10
+  }
+
+  startUpload () {
+    return this.uppy.upload().catch(() => {
+      // Ignore
+    })
   }
 
   render (state) {
@@ -159,7 +166,7 @@ module.exports = class StatusBar extends Plugin {
       resumeAll: this.uppy.resumeAll,
       retryAll: this.uppy.retryAll,
       cancelAll: this.uppy.cancelAll,
-      startUpload: this.uppy.upload,
+      startUpload: this.startUpload,
       complete: completeFiles.length,
       newFiles: newFiles.length,
       inProgress: uploadStartedFiles.length,

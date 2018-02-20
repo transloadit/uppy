@@ -87,8 +87,8 @@ class Uppy {
     this.upload = this.upload.bind(this)
 
     this.emitter = ee()
-    this.on = this.emitter.on.bind(this.emitter)
-    this.off = this.emitter.off.bind(this.emitter)
+    this.on = this.on.bind(this)
+    this.off = this.off.bind(this)
     this.once = this.emitter.once.bind(this.emitter)
     this.emit = this.emitter.emit.bind(this.emitter)
 
@@ -124,6 +124,16 @@ class Uppy {
       global.uppyLog = ''
       global[this.opts.id] = this
     }
+  }
+
+  on (event, callback) {
+    this.emitter.on(event, callback)
+    return this
+  }
+
+  off (event, callback) {
+    this.emitter.off(event, callback)
+    return this
   }
 
   /**
@@ -278,10 +288,8 @@ class Uppy {
   _checkMinNumberOfFiles () {
     const {minNumberOfFiles} = this.opts.restrictions
     if (Object.keys(this.getState().files).length < minNumberOfFiles) {
-      this.info(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`, 'error', 5000)
-      return false
+      throw new Error(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
     }
-    return true
   }
 
   /**
@@ -289,7 +297,6 @@ class Uppy {
   * maxNumberOfFiles and allowedFileTypes.
   *
   * @param {object} file object to check
-  * @return {boolean}
   * @private
   */
   _checkRestrictions (file) {
@@ -297,8 +304,7 @@ class Uppy {
 
     if (maxNumberOfFiles) {
       if (Object.keys(this.getState().files).length + 1 > maxNumberOfFiles) {
-        this.info(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`, 'error', 5000)
-        return false
+        throw new Error(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
       }
     }
 
@@ -310,19 +316,15 @@ class Uppy {
 
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
-        this.info(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`, 'error', 5000)
-        return false
+        throw new Error(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`)
       }
     }
 
     if (maxFileSize) {
       if (file.data.size > maxFileSize) {
-        this.info(`${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`, 'error', 5000)
-        return false
+        throw new Error(`${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`)
       }
     }
-
-    return true
   }
 
   /**
@@ -333,17 +335,12 @@ class Uppy {
   * @param {object} file object to add
   */
   addFile (file) {
-    // Wrap this in a Promise `.then()` handler so errors will reject the Promise
-    // instead of throwing.
-    const beforeFileAdded = Promise.resolve()
+    return Promise.resolve()
+      // Wrap this in a Promise `.then()` handler so errors will reject the Promise
+      // instead of throwing.
       .then(() => this.opts.onBeforeFileAdded(file, this.getState().files))
-
-    return beforeFileAdded.catch((err) => {
-      const message = typeof err === 'object' ? err.message : err
-      this.info(message, 'error', 5000)
-      return Promise.reject(new Error(`onBeforeFileAdded: ${message}`))
-    }).then(() => {
-      return Utils.getFileType(file).then((fileType) => {
+      .then(() => Utils.getFileType(file))
+      .then((fileType) => {
         const updatedFiles = Object.assign({}, this.getState().files)
         let fileName
         if (file.name) {
@@ -382,10 +379,7 @@ class Uppy {
           preview: file.preview
         }
 
-        const isFileAllowed = this._checkRestrictions(newFile)
-        if (!isFileAllowed) {
-          return Promise.reject(new Error('File not allowed'))
-        }
+        this._checkRestrictions(newFile)
 
         updatedFiles[fileID] = newFile
         this.setState({files: updatedFiles})
@@ -402,7 +396,12 @@ class Uppy {
           }, 4)
         }
       })
-    })
+      .catch((err) => {
+        const message = typeof err === 'object' ? err.message : err
+        this.log(message)
+        this.info(message, 'error', 5000)
+        return Promise.reject(typeof err === 'object' ? err : new Error(err))
+      })
   }
 
   removeFile (fileID) {
@@ -437,7 +436,7 @@ class Uppy {
     })
 
     this._calculateTotalProgress()
-    this.emit('file-removed', fileID)
+    this.emit('file-removed', removedFile)
 
     // Clean up object URLs.
     if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
@@ -558,7 +557,7 @@ class Uppy {
 
     // skip progress event for a file that’s been removed
     if (!this.getFile(fileID)) {
-      this.log('Trying to set progress for a file that’s been removed: ', fileID)
+      this.log(`Not setting progress for a file that has been removed: ${fileID}`)
       return
     }
 
@@ -615,11 +614,11 @@ class Uppy {
       this.setState({ error: error.message })
     })
 
-    this.on('upload-error', (fileID, error) => {
-      this.setFileState(fileID, { error: error.message })
+    this.on('upload-error', (file, error) => {
+      this.setFileState(file.id, { error: error.message })
       this.setState({ error: error.message })
 
-      const fileName = this.getState().files[fileID].name
+      const fileName = file.name
       let message = `Failed to upload ${fileName}`
       if (typeof error === 'object' && error.message) {
         message = { message: message, details: error.message }
@@ -640,6 +639,10 @@ class Uppy {
     })
 
     this.on('upload-started', (fileID, upload) => {
+      if (!this.getFile(fileID)) {
+        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+        return
+      }
       const file = this.getFile(fileID)
       this.setFileState(fileID, {
         progress: Object.assign({}, file.progress, {
@@ -656,13 +659,13 @@ class Uppy {
     // connection to the remote server. Therefore, we are throtteling them to
     // prevent accessive function calls.
     // see also: https://github.com/tus/tus-js-client/commit/9940f27b2361fd7e10ba58b09b60d82422183bbb
-    const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: false })
+    const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: true })
 
     this.on('upload-progress', _throttledCalculateProgress)
 
-    this.on('upload-success', (fileID, uploadResp, uploadURL) => {
-      this.setFileState(fileID, {
-        progress: Object.assign({}, this.getState().files[fileID].progress, {
+    this.on('upload-success', (file, uploadResp, uploadURL) => {
+      this.setFileState(file.id, {
+        progress: Object.assign({}, this.state.files[file.id].progress, {
           uploadComplete: true,
           percentage: 100
         }),
@@ -674,6 +677,10 @@ class Uppy {
     })
 
     this.on('preprocess-progress', (fileID, progress) => {
+      if (!this.getFile(fileID)) {
+        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+        return
+      }
       this.setFileState(fileID, {
         progress: Object.assign({}, this.getState().files[fileID].progress, {
           preprocess: progress
@@ -682,6 +689,10 @@ class Uppy {
     })
 
     this.on('preprocess-complete', (fileID) => {
+      if (!this.getFile(fileID)) {
+        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+        return
+      }
       const files = Object.assign({}, this.getState().files)
       files[fileID] = Object.assign({}, files[fileID], {
         progress: Object.assign({}, files[fileID].progress)
@@ -692,6 +703,10 @@ class Uppy {
     })
 
     this.on('postprocess-progress', (fileID, progress) => {
+      if (!this.getFile(fileID)) {
+        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+        return
+      }
       this.setFileState(fileID, {
         progress: Object.assign({}, this.getState().files[fileID].progress, {
           postprocess: progress
@@ -700,6 +715,10 @@ class Uppy {
     })
 
     this.on('postprocess-complete', (fileID) => {
+      if (!this.getFile(fileID)) {
+        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+        return
+      }
       const files = Object.assign({}, this.getState().files)
       files[fileID] = Object.assign({}, files[fileID], {
         progress: Object.assign({}, files[fileID].progress)
@@ -989,6 +1008,10 @@ class Uppy {
    * @param {object} data Data properties to add to the result object.
    */
   addResultData (uploadID, data) {
+    if (!this._getUpload(uploadID)) {
+      this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
+      return
+    }
     const currentUploads = this.getState().currentUploads
     const currentUpload = Object.assign({}, currentUploads[uploadID], {
       result: Object.assign({}, currentUploads[uploadID].result, data)
@@ -1069,6 +1092,11 @@ class Uppy {
       this.addResultData(uploadID, { successful, failed, uploadID })
 
       const { currentUploads } = this.getState()
+      if (!currentUploads[uploadID]) {
+        this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
+        return
+      }
+
       const result = currentUploads[uploadID].result
       this.emit('complete', result)
       // Compatibility with pre-0.21
@@ -1090,35 +1118,32 @@ class Uppy {
       this.log('No uploader type plugins are used', 'warning')
     }
 
-    const isMinNumberOfFilesReached = this._checkMinNumberOfFiles()
-    if (!isMinNumberOfFilesReached) {
-      return Promise.reject(new Error('Minimum number of files has not been reached'))
-    }
-
-    const beforeUpload = Promise.resolve()
+    return Promise.resolve()
       .then(() => this.opts.onBeforeUpload(this.getState().files))
+      .then(() => this._checkMinNumberOfFiles())
+      .then(() => {
+        const { currentUploads } = this.getState()
+        // get a list of files that are currently assigned to uploads
+        const currentlyUploadingFiles = Object.keys(currentUploads).reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
 
-    return beforeUpload.catch((err) => {
-      const message = typeof err === 'object' ? err.message : err
-      this.info(message, 'error', 5000)
-      return Promise.reject(new Error(`onBeforeUpload: ${message}`))
-    }).then(() => {
-      const { currentUploads } = this.getState()
-      // get a list of files that are currently assigned to uploads
-      const currentlyUploadingFiles = Object.keys(currentUploads).reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
+        const waitingFileIDs = []
+        Object.keys(this.getState().files).forEach((fileID) => {
+          const file = this.getFile(fileID)
+          // if the file hasn't started uploading and hasn't already been assigned to an upload..
+          if ((!file.progress.uploadStarted) && (currentlyUploadingFiles.indexOf(fileID) === -1)) {
+            waitingFileIDs.push(file.id)
+          }
+        })
 
-      const waitingFileIDs = []
-      Object.keys(this.getState().files).forEach((fileID) => {
-        const file = this.getFile(fileID)
-        // if the file hasn't started uploading and hasn't already been assigned to an upload..
-        if ((!file.progress.uploadStarted) && (currentlyUploadingFiles.indexOf(fileID) === -1)) {
-          waitingFileIDs.push(file.id)
-        }
+        const uploadID = this._createUpload(waitingFileIDs)
+        return this._runUpload(uploadID)
       })
-
-      const uploadID = this._createUpload(waitingFileIDs)
-      return this._runUpload(uploadID)
-    })
+      .catch((err) => {
+        const message = typeof err === 'object' ? err.message : err
+        this.log(message)
+        this.info(message, 'error', 4000)
+        return Promise.reject(typeof err === 'object' ? err : new Error(err))
+      })
   }
 }
 

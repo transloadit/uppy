@@ -20,8 +20,7 @@ class UrlUI extends Component {
         class="uppy-Url-input"
         type="text"
         placeholder={this.props.i18n('enterUrlToImport')}
-        ref={(input) => { this.input = input }}
-        value="" />
+        ref={(input) => { this.input = input }} />
       <button
         class="uppy-Url-importButton"
         type="button"

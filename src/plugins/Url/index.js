@@ -3,14 +3,13 @@ const Translator = require('../../core/Translator')
 const { h } = require('preact')
 const Provider = require('../Provider')
 const UrlUI = require('./UrlUI.js')
-// const Utils = require('../../core/Utils')
 require('whatwg-fetch')
 
 /**
- * Link
+ * Url
  *
  */
-module.exports = class Link extends Plugin {
+module.exports = class Url extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Url'
@@ -29,7 +28,8 @@ module.exports = class Link extends Plugin {
       strings: {
         addUrl: 'Add url',
         import: 'Import',
-        enterUrlToImport: 'Enter file url to import'
+        enterUrlToImport: 'Enter file url to import',
+        failedToFetch: 'Uppy Server failed to fetch this URL'
       }
     }
 
@@ -46,6 +46,10 @@ module.exports = class Link extends Plugin {
     this.i18n = this.translator.translate.bind(this.translator)
 
     this.hostname = this.opts.host
+
+    if (!this.hostname) {
+      throw new Error('Uppy Server hostname is required, please consult https://uppy.io/docs/server')
+    }
 
     // Bind all event handlers for referencability
     this.getMeta = this.getMeta.bind(this)
@@ -107,6 +111,14 @@ module.exports = class Link extends Plugin {
           const dashboard = this.uppy.getPlugin('Dashboard')
           if (dashboard) dashboard.hideAllPanels()
         })
+    })
+    .catch((err) => {
+      const errorMsg = `${err.message}. Could be CORS issue?`
+      this.uppy.log(errorMsg, 'error')
+      this.uppy.info({
+        message: this.i18n('failedToFetch'),
+        details: errorMsg
+      }, 'error', 4000)
     })
   }
 
