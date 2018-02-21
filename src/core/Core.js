@@ -437,6 +437,7 @@ class Uppy {
 
     this._calculateTotalProgress()
     this.emit('file-removed', removedFile)
+    this.log(`File removed: ${removedFile.id}`)
 
     // Clean up object URLs.
     if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
