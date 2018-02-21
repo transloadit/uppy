@@ -1,6 +1,6 @@
 {
   "name": "uppy",
-  "version": "0.23.0",
+  "version": "0.23.1",
   "description": "Extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
