@@ -56,7 +56,6 @@ module.exports = class Transloadit extends Plugin {
     this.onFileUploadURLAvailable = this.onFileUploadURLAvailable.bind(this)
     this.onRestored = this.onRestored.bind(this)
     this.getPersistentData = this.getPersistentData.bind(this)
-    this.removeFileFromPluginState = this.removeFileFromPluginState.bind(this)
 
     if (this.opts.params) {
       this.validateParams(this.opts.params)

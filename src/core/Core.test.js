@@ -355,7 +355,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('preprocess-progress', fileId, {
+          const file = core.state.files[fileId]
+          core.emit('preprocess-progress', file, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -382,13 +383,14 @@ describe('src/Core', () => {
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
-          const fileId = Object.keys(core.state.files)[0]
-          core.emit('preprocess-complete', fileId, {
+          const fileID = Object.keys(core.state.files)[0]
+          const file = core.state.files[fileID]
+          core.emit('preprocess-complete', file, {
             mode: 'determinate',
             message: 'something',
             value: 0
           })
-          expect(core.state.files[fileId].progress).toEqual({
+          expect(core.state.files[fileID].progress).toEqual({
             percentage: 0,
             bytesUploaded: 0,
             bytesTotal: 17175,
@@ -465,7 +467,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('postprocess-progress', fileId, {
+          const file = core.state.files[fileId]
+          core.emit('postprocess-progress', file, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -493,7 +496,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('postprocess-complete', fileId, {
+          const file = core.state.files[fileId]
+          core.emit('postprocess-complete', file, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -804,8 +808,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core._calculateProgress({
-            id: fileId,
+          const file = core.getFile(fileId)
+          core._calculateProgress(file, {
             bytesUploaded: 12345,
             bytesTotal: 17175
           })
@@ -817,8 +821,7 @@ describe('src/Core', () => {
             uploadStarted: false
           })
 
-          core._calculateProgress({
-            id: fileId,
+          core._calculateProgress(file, {
             bytesUploaded: 17175,
             bytesTotal: 17175
           })
@@ -852,17 +855,17 @@ describe('src/Core', () => {
         }).then(() => {
           const fileId1 = Object.keys(core.state.files)[0]
           const fileId2 = Object.keys(core.state.files)[1]
+          const file1 = core.state.files[fileId1]
+          const file2 = core.state.files[fileId2]
           core.state.files[fileId1].progress.uploadStarted = new Date()
           core.state.files[fileId2].progress.uploadStarted = new Date()
 
-          core._calculateProgress({
-            id: fileId1,
+          core._calculateProgress(file1, {
             bytesUploaded: 12345,
             bytesTotal: 17175
           })
 
-          core._calculateProgress({
-            id: fileId2,
+          core._calculateProgress(file2, {
             bytesUploaded: 10201,
             bytesTotal: 17175
           })
@@ -895,17 +898,17 @@ describe('src/Core', () => {
         }).then(() => {
           const fileId1 = Object.keys(core.state.files)[0]
           const fileId2 = Object.keys(core.state.files)[1]
+          const file1 = core.state.files[fileId1]
+          const file2 = core.state.files[fileId2]
           core.state.files[fileId1].progress.uploadStarted = new Date()
           core.state.files[fileId2].progress.uploadStarted = new Date()
 
-          core._calculateProgress({
-            id: fileId1,
+          core._calculateProgress(file1, {
             bytesUploaded: 12345,
             bytesTotal: 17175
           })
 
-          core._calculateProgress({
-            id: fileId2,
+          core._calculateProgress(file2, {
             bytesUploaded: 10201,
             bytesTotal: 17175
           })
