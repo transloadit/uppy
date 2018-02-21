@@ -116,6 +116,19 @@ To be released: 2018-03-01.
 - [x] s3: fix xhr response handlers (#625, @goto-bus-stop)
 - [ ] test: add typescript with JSDoc (@arturi)
 
+## 0.23.1
+
+- xhrupload: ⚠️ **breaking** Revamped XHR response handling: This adds a response key to files when the upload completed (regardless of whether it succeeded). file.response contains a status and a data property. data is the result of getResponseData. One change here is that getResponseData is also called if there was an error, not sure if that's a good idea; Also changed events to emit file objects instead of IDs here because it touches many of the same places. (#612 / @goto-bus-stop)
+- transloadit: ⚠️ **breaking** Embeded tus plugin: When importFromUploadURLs is not set, add the Tus plugin with the right configuration. (#614 / @goto-bus-stop)
+- transloadit: Allow easy passing of form fields (#593 / @goto-bus-stop)
+- s3: Updated XHR response handling, fixes (#624 / @goto-bus-stop)
+- core: Revamped `addFile()` rejections (#604 / @goto-bus-stop)
+- core: Added wrapper function for emitter.on, so you can chain uppy.on().run()... (#597 / @arturi)
+- core: Fix progress events causing errors for removed files (#638 / @arturi)
+- statusbar: Use translations for Uploading / Paused text, fixes #629 (#640 / goto-bus-stop)
+- thumbnailgenerator: Upsizing image if smaller than thumbnail size, fix infinite loop (#637 / @phitranphitranphitran)
+- website: Added Transloadit example to website (#603 / @arturi)
+
 ## 0.23.0
 
 Released: 2018-02-11.
