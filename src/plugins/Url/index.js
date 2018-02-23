@@ -106,7 +106,7 @@ module.exports = class Url extends Plugin {
       }
 
       this.uppy.log('[Url] Adding remote file')
-      this.uppy.addFile(tagFile)
+      return this.uppy.addFile(tagFile)
         .then(() => {
           const dashboard = this.uppy.getPlugin('Dashboard')
           if (dashboard) dashboard.hideAllPanels()
