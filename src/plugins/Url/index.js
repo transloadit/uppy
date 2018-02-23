@@ -83,7 +83,7 @@ module.exports = class Url extends Plugin {
   }
 
   addFile (url) {
-    this.getMeta(url).then((meta) => {
+    return this.getMeta(url).then((meta) => {
       const tagFile = {
         source: this.id,
         name: this.getFileNameFromUrl(url),
