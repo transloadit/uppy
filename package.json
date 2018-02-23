@@ -1,7 +1,7 @@
 {
   "name": "uppy",
   "version": "0.23.1",
-  "description": "Extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
+  "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
   "unpkg": "dist/uppy.min.js",
@@ -38,7 +38,7 @@
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"
   },
-  "homepage": "https://github.com/transloadit/uppy#readme",
+  "homepage": "https://uppy.io",
   "jest": {
     "testPathIgnorePatterns": [
       "lib"
@@ -136,14 +136,11 @@
     "release": "npm version ${SEMANTIC:-patch} -m \"Release %s\" && npm run replace:versions && git commit -m \"Change Uppy version references to v$npm_package_version\" ./examples/ README.md bin/upload-to-cdn.sh website/src/examples/ website/src/docs/ website/themes/uppy/layout/ && git push && git push --tags && npm publish",
     "start:server": "node bin/start-server",
     "start": "npm-run-all --parallel watch start:server web:preview",
-    "test:acceptance:handleservers": "bin/bootandkill-servers node test/acceptance/index.js",
     "test:acceptance": "./bin/endtoend-build && wdio test/endtoend/wdio.remote.conf.js",
     "test:acceptance:local": "./bin/endtoend-build && wdio test/endtoend/wdio.local.conf.js",
     "test:unit": "jest --testPathPattern=./src --coverage",
     "test": "npm run lint && npm run test:unit",
     "test:watch": "jest --watch --testPathPattern=src",
-    "test:serve": "npm-run-all web:build --parallel start:server web:serve",
-    "test:next-update": "next-update",
     "travis:deletecache": "travis cache --delete",
     "watch:css": "onchange 'src/scss/**/*.scss' --initial --verbose -- npm run build:css",
     "watch:js": "onchange 'src/**/*.js' --initial --verbose -- npm run build:bundle",
