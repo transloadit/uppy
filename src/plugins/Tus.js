@@ -203,17 +203,19 @@ module.exports = class Tus extends Plugin {
   uploadRemote (file, current, total) {
     this.resetUploaderReferences(file.id)
 
+    const opts = Object.assign(
+      {},
+      this.opts,
+      // Install file-specific upload overrides.
+      file.tus || {}
+    )
+
     return new Promise((resolve, reject) => {
       this.uppy.log(file.remote.url)
       if (file.serverToken) {
         return this.connectToServerSocket(file)
           .then(() => resolve())
           .catch(reject)
-      }
-
-      let endpoint = this.opts.endpoint
-      if (file.tus && file.tus.endpoint) {
-        endpoint = file.tus.endpoint
       }
 
       this.uppy.emit('upload-started', file.id)
@@ -226,7 +228,8 @@ module.exports = class Tus extends Plugin {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(Object.assign({}, file.remote.body, {
-          endpoint,
+          endpoint: opts.endpoint,
+          uploadUrl: opts.uploadUrl,
           protocol: 'tus',
           size: file.data.size,
           metadata: file.meta
