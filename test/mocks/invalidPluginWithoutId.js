@@ -1,6 +1,6 @@
-import Plugin from '../../src/core/Plugin'
+const Plugin = require('../../src/core/Plugin')
 
-export default class InvalidPluginWithoutName extends Plugin {
+module.exports = class InvalidPluginWithoutName extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'
