@@ -355,7 +355,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          const file = core.state.files[fileId]
+          const file = core.getFile(fileId)
           core.emit('preprocess-progress', file, {
             mode: 'determinate',
             message: 'something',
@@ -467,7 +467,7 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          const file = core.state.files[fileId]
+          const file = core.getFile(fileId)
           core.emit('postprocess-progress', file, {
             mode: 'determinate',
             message: 'something',
