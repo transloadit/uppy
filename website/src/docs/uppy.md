@@ -350,15 +350,8 @@ uppy.on('upload', () => {
 
 ### `upload-progress`
 
-Fired each time file upload progress is available, `data` object looks like this:
+Fired each time file upload progress is available:
 
-```javascript
-data = {
-  id: myimg12321323,
-  bytesUploaded: 2323254,
-  bytesTotal
-}
-```
 
 ```javascript
 uppy.on('upload-progress', (file, progress) => {
@@ -395,3 +388,39 @@ uppy.on('complete', (result) => {
   console.log('failed files:', result.failed)
 })
 ```
+
+### `error`
+
+Fired when Uppy fails to upload/encode the whole upload. That error is then set to `uppy.state.error`.
+
+### `upload-error`
+
+Fired when an error occures with a specific file:
+
+``` javascript
+uppy.on('upload-error', (file, error) => {
+  console.log('error with file:', file.id)
+  console.log('error message:', error)
+})
+```
+
+### `info-visible`
+
+Fired when “info” message should be visible in the UI. By default `Informer` plugin is displaying these messages (enabled by default in `Dashboard` plugin). You can use this event to show messages in your custom UI:
+
+``` javascript
+uppy.on('info-visible', () => {
+  const info = uppy.getState().info
+  // info: {
+  //  isHidden: false,
+  //  type: 'error',
+  //  message: 'Failed to upload',
+  //  details: 'Error description'
+  // }
+  alert(`${info.message} ${info.details}`)
+})
+```
+
+### `info-hidden`
+
+Fired when “info” message should be hidden in the UI. See [`info-visible`](#info-visible).
