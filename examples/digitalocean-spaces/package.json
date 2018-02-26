@@ -4,7 +4,6 @@
   "scripts": {
     "start": "node ./server.js"
   },
-  "aliasify": "aliasify.js",
   "devDependencies": {
     "aliasify": "^2.1.0",
     "babelify": "^7.3.0"

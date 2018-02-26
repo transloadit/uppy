@@ -41,7 +41,8 @@ app.post('/params', (req, res, next) => {
   }, (err, data) => {
     if (err) return next(err)
 
-    res.json({ method: 'put', url: data })
+    res.setHeader('content-type', 'application/json')
+    res.end(JSON.stringify({ method: 'put', url: data }, null, 2))
   })
 })
 
@@ -60,7 +61,11 @@ budo(path.join(__dirname, 'main.js'), {
   browserify: {
     transform: [
       'babelify',
-      'aliasify'
+      ['aliasify', {
+        replacements: {
+          '^uppy/lib/(.*?)$': path.join(__dirname, '../../src/$1')
+        }
+      }]
     ]
   }
 })
