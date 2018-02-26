@@ -5,9 +5,9 @@
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
 <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
 
-Uppy is a sleek, modular file uploader that integrates seamlessly with any application. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
+Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly with any application. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
 
-- **Fetch** files from local disk, Google Drive, Dropbox, Instagram, or snap and record selfies with a camera;
+- **Fetch** files from local disk, remote urls, Google Drive, Dropbox, Instagram, or snap and record selfies with a camera;
 - **Preview** and edit metadata with a nice interface;
 - **Upload** to the final destination, optionally process/encode
 
@@ -64,7 +64,7 @@ $ npm install uppy --save
 
 We recommend installing from npm and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Add CSS [uppy.min.css](https://transloadit.edgly.net/releases/uppy/v0.23.0/dist/uppy.min.css), either to `<head>` of your HTML page or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
+Add CSS [uppy.min.css](https://transloadit.edgly.net/releases/uppy/v0.23.1/dist/uppy.min.css), either to `<head>` of your HTML page or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
 Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
@@ -73,12 +73,12 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 1\. Add a script to the bottom of `<body>`:
 
 ``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v0.23.0/dist/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.23.1/dist/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://transloadit.edgly.net/releases/uppy/v0.23.0/dist/uppy.min.css" rel="stylesheet">
+<link href="https://transloadit.edgly.net/releases/uppy/v0.23.1/dist/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize:

@@ -234,7 +234,7 @@ module.exports = class XHRUpload extends Plugin {
 
           return resolve(file)
         } else {
-          const body = opts.getResponseData(xhr)
+          const body = opts.getResponseData(xhr.responseText, xhr)
           const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
 
           const response = {

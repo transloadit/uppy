@@ -126,11 +126,13 @@ module.exports = class GoldenRetriever extends Plugin {
       if (numberOfFilesRecovered === numberOfFilesTryingToRecover) {
         this.uppy.log(`[GoldenRetriever] Successfully recovered ${numberOfFilesRecovered} blobs from Service Worker!`)
         this.uppy.info(`Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
-        this.onBlobsLoaded(blobs)
-      } else {
-        this.uppy.log('[GoldenRetriever] Failed to recover blobs from Service Worker, trying IndexedDB now...')
-        this.loadFileBlobsFromIndexedDB()
+        return this.onBlobsLoaded(blobs)
       }
+      this.uppy.log('[GoldenRetriever] No blobs found in Service Worker, trying IndexedDB now...')
+      return this.loadFileBlobsFromIndexedDB()
+    }).catch((err) => {
+      this.uppy.log('[GoldenRetriever] Failed to recover blobs from Service Worker', 'warning')
+      this.uppy.log(err)
     })
   }
 
@@ -139,11 +141,14 @@ module.exports = class GoldenRetriever extends Plugin {
       const numberOfFilesRecovered = Object.keys(blobs).length
 
       if (numberOfFilesRecovered > 0) {
-        this.uppy.log(`[GoldenRetriever] Successfully recovered ${numberOfFilesRecovered} blobs from Indexed DB!`)
+        this.uppy.log(`[GoldenRetriever] Successfully recovered ${numberOfFilesRecovered} blobs from IndexedDB!`)
         this.uppy.info(`Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
         return this.onBlobsLoaded(blobs)
       }
-      this.uppy.log('[GoldenRetriever] Couldn’t recover anything from IndexedDB :(')
+      this.uppy.log('[GoldenRetriever] No blobs found in IndexedDB')
+    }).catch((err) => {
+      this.uppy.log('[GoldenRetriever] Failed to recover blobs from IndexedDB', 'warning')
+      this.uppy.log(err)
     })
   }
 
@@ -178,6 +183,9 @@ module.exports = class GoldenRetriever extends Plugin {
     if (obsoleteBlobs.length) {
       this.deleteBlobs(obsoleteBlobs).then(() => {
         this.uppy.log(`[GoldenRetriever] Cleaned up ${obsoleteBlobs.length} old files`)
+      }).catch((err) => {
+        this.uppy.log(`[GoldenRetriever] Could not clean up ${obsoleteBlobs.length} old files`, 'warning')
+        this.uppy.log(err)
       })
     }
   }
@@ -216,26 +224,37 @@ module.exports = class GoldenRetriever extends Plugin {
 
       if (this.ServiceWorkerStore) {
         this.ServiceWorkerStore.put(file).catch((err) => {
-          this.uppy.log('[GoldenRetriever] Could not store file', 'error')
+          this.uppy.log('[GoldenRetriever] Could not store file', 'warning')
           this.uppy.log(err)
         })
       }
 
       this.IndexedDBStore.put(file).catch((err) => {
-        this.uppy.log('[GoldenRetriever] Could not store file', 'error')
+        this.uppy.log('[GoldenRetriever] Could not store file', 'warning')
         this.uppy.log(err)
       })
     })
 
     this.uppy.on('file-removed', (file) => {
-      if (this.ServiceWorkerStore) this.ServiceWorkerStore.delete(file.id)
-      this.IndexedDBStore.delete(file.id)
+      if (this.ServiceWorkerStore) {
+        this.ServiceWorkerStore.delete(file.id).catch((err) => {
+          this.uppy.log('[GoldenRetriever] Failed to remove file', 'warning')
+          this.uppy.log(err)
+        })
+      }
+      this.IndexedDBStore.delete(file.id).catch((err) => {
+        this.uppy.log('[GoldenRetriever] Failed to remove file', 'warning')
+        this.uppy.log(err)
+      })
     })
 
     this.uppy.on('complete', ({ successful }) => {
       const fileIDs = successful.map((file) => file.id)
       this.deleteBlobs(fileIDs).then(() => {
         this.uppy.log(`[GoldenRetriever] Removed ${successful.length} files that finished uploading`)
+      }).catch((err) => {
+        this.uppy.log(`[GoldenRetriever] Could not remove ${successful.length} files that finished uploading`, 'warning')
+        this.uppy.log(err)
       })
     })
 
