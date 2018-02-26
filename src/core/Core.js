@@ -63,8 +63,6 @@ class Uppy {
     // Container for different types of plugins
     this.plugins = {}
 
-    this.translator = new Translator({locale: this.opts.locale})
-    this.i18n = this.translator.translate.bind(this.translator)
     this.getState = this.getState.bind(this)
     this.getPlugin = this.getPlugin.bind(this)
     this.setFileMeta = this.setFileMeta.bind(this)
