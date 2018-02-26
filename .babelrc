@@ -1,11 +1,11 @@
 {
   "presets": [
-    ["es2015", {
+    ["env", {
+      "modules": false,
       "loose": true
     }]
   ],
   "plugins": [
-    "add-module-exports",
     "transform-object-assign",
     "es6-promise",
     ["transform-react-jsx", { "pragma":"h" }]
