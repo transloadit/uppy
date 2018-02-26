@@ -244,6 +244,17 @@ describe('src/Core', () => {
     })
   })
 
+  it('should clear all uploads on cancelAll()', () => {
+    const core = new Core()
+    const id = core._createUpload([ 'a', 'b' ])
+
+    expect(core.state.currentUploads[id]).toBeDefined()
+
+    core.cancelAll()
+
+    expect(core.state.currentUploads[id]).toBeUndefined()
+  })
+
   it('should close, reset and uninstall when the close method is called', () => {
     const core = new Core()
     core.use(AcquirerPlugin1)
