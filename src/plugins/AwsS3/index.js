@@ -64,8 +64,12 @@ module.exports = class AwsS3 extends Plugin {
       (params.method == null || /^(put|post)$/i.test(params.method))
 
     if (!valid) {
-      throw new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields }'.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+      const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields }'.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+      console.error(err)
+      throw err
     }
+
+    return params
   }
 
   prepareUpload (fileIDs) {
@@ -86,7 +90,8 @@ module.exports = class AwsS3 extends Plugin {
         const paramsPromise = Promise.resolve()
           .then(() => getUploadParameters(file))
         return paramsPromise.then((params) => {
-          this.validateParameters(file, params)
+          return this.validateParameters(file, params)
+        }).then((params) => {
           this.uppy.emit('preprocess-progress', file, {
             mode: 'determinate',
             message: this.i18n('preparingUpload'),
