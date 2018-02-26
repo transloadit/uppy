@@ -81,9 +81,9 @@ uppy.getFile(fileID).response
 // { status: HTTP status code,
 //   body: extracted response data }
 
-uppy.on('upload-success', (fileID, body) => {
+uppy.on('upload-success', (file, body) => {
   // do something with extracted response data
-  // (`body` is equivalent to `uppy.getFile(fileID).response.body`)
+  // (`body` is equivalent to `file.response.body` or `uppy.getFile(fileID).response.body`)
 })
 ```
 

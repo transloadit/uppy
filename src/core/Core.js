@@ -437,6 +437,7 @@ class Uppy {
 
     this._calculateTotalProgress()
     this.emit('file-removed', removedFile)
+    this.log(`File removed: ${removedFile.id}`)
 
     // Clean up object URLs.
     if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
@@ -552,17 +553,14 @@ class Uppy {
     this.cancelAll()
   }
 
-  _calculateProgress (data) {
-    const fileID = data.id
-
-    // skip progress event for a file that’s been removed
-    if (!this.getFile(fileID)) {
-      this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+  _calculateProgress (file, data) {
+    if (!this.getFile(file.id)) {
+      this.log(`Not setting progress for a file that has been removed: ${file.id}`)
       return
     }
 
-    this.setFileState(fileID, {
-      progress: Object.assign({}, this.getState().files[fileID].progress, {
+    this.setFileState(file.id, {
+      progress: Object.assign({}, this.getFile(file.id).progress, {
         bytesUploaded: data.bytesUploaded,
         bytesTotal: data.bytesTotal,
         percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
@@ -618,8 +616,7 @@ class Uppy {
       this.setFileState(file.id, { error: error.message })
       this.setState({ error: error.message })
 
-      const fileName = file.name
-      let message = `Failed to upload ${fileName}`
+      let message = `Failed to upload ${file.name}`
       if (typeof error === 'object' && error.message) {
         message = { message: message, details: error.message }
       }
@@ -630,22 +627,13 @@ class Uppy {
       this.setState({ error: null })
     })
 
-    // this.on('file-add', (data) => {
-    //   this.addFile(data)
-    // })
-
-    this.on('file-remove', (fileID) => {
-      this.removeFile(fileID)
-    })
-
-    this.on('upload-started', (fileID, upload) => {
-      if (!this.getFile(fileID)) {
-        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+    this.on('upload-started', (file, upload) => {
+      if (!this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
-      const file = this.getFile(fileID)
-      this.setFileState(fileID, {
-        progress: Object.assign({}, file.progress, {
+      this.setFileState(file.id, {
+        progress: Object.assign({}, this.getFile(file.id), {
           uploadStarted: Date.now(),
           uploadComplete: false,
           percentage: 0,
@@ -665,7 +653,7 @@ class Uppy {
 
     this.on('upload-success', (file, uploadResp, uploadURL) => {
       this.setFileState(file.id, {
-        progress: Object.assign({}, this.state.files[file.id].progress, {
+        progress: Object.assign({}, this.getFile(file.id).progress, {
           uploadComplete: true,
           percentage: 100
         }),
@@ -676,54 +664,54 @@ class Uppy {
       this._calculateTotalProgress()
     })
 
-    this.on('preprocess-progress', (fileID, progress) => {
-      if (!this.getFile(fileID)) {
-        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+    this.on('preprocess-progress', (file, progress) => {
+      if (!this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
-      this.setFileState(fileID, {
-        progress: Object.assign({}, this.getState().files[fileID].progress, {
+      this.setFileState(file.id, {
+        progress: Object.assign({}, this.getFile(file.id).progress, {
           preprocess: progress
         })
       })
     })
 
-    this.on('preprocess-complete', (fileID) => {
-      if (!this.getFile(fileID)) {
-        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+    this.on('preprocess-complete', (file) => {
+      if (!this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
       const files = Object.assign({}, this.getState().files)
-      files[fileID] = Object.assign({}, files[fileID], {
-        progress: Object.assign({}, files[fileID].progress)
+      files[file.id] = Object.assign({}, files[file.id], {
+        progress: Object.assign({}, files[file.id].progress)
       })
-      delete files[fileID].progress.preprocess
+      delete files[file.id].progress.preprocess
 
       this.setState({ files: files })
     })
 
-    this.on('postprocess-progress', (fileID, progress) => {
-      if (!this.getFile(fileID)) {
-        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+    this.on('postprocess-progress', (file, progress) => {
+      if (!this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
-      this.setFileState(fileID, {
-        progress: Object.assign({}, this.getState().files[fileID].progress, {
+      this.setFileState(file.id, {
+        progress: Object.assign({}, this.getState().files[file.id].progress, {
           postprocess: progress
         })
       })
     })
 
-    this.on('postprocess-complete', (fileID) => {
-      if (!this.getFile(fileID)) {
-        this.log(`Not setting progress for a file that has been removed: ${fileID}`)
+    this.on('postprocess-complete', (file) => {
+      if (!this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
       const files = Object.assign({}, this.getState().files)
-      files[fileID] = Object.assign({}, files[fileID], {
-        progress: Object.assign({}, files[fileID].progress)
+      files[file.id] = Object.assign({}, files[file.id], {
+        progress: Object.assign({}, files[file.id].progress)
       })
-      delete files[fileID].progress.postprocess
+      delete files[file.id].progress.postprocess
       // TODO should we set some kind of `fullyComplete` property on the file object
       // so it's easier to see that the file is upload…fully complete…rather than
       // what we have to do now (`uploadComplete && !postprocess`)
@@ -1099,8 +1087,6 @@ class Uppy {
 
       const result = currentUploads[uploadID].result
       this.emit('complete', result)
-      // Compatibility with pre-0.21
-      this.emit('success', fileIDs)
 
       this._removeUpload(uploadID)
 

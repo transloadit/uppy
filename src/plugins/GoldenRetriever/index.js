@@ -235,14 +235,14 @@ module.exports = class GoldenRetriever extends Plugin {
       })
     })
 
-    this.uppy.on('file-removed', (fileID) => {
+    this.uppy.on('file-removed', (file) => {
       if (this.ServiceWorkerStore) {
-        this.ServiceWorkerStore.delete(fileID).catch((err) => {
+        this.ServiceWorkerStore.delete(file.id).catch((err) => {
           this.uppy.log('[GoldenRetriever] Failed to remove file', 'warning')
           this.uppy.log(err)
         })
       }
-      this.IndexedDBStore.delete(fileID).catch((err) => {
+      this.IndexedDBStore.delete(file.id).catch((err) => {
         this.uppy.log('[GoldenRetriever] Failed to remove file', 'warning')
         this.uppy.log(err)
       })

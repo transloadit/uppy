@@ -394,7 +394,7 @@ module.exports = class View {
    * main screen, and will do nothing when you uncheck folder directly, since
    * it's already been done in removeFolder method.
    */
-  updateFolderState (fileId) {
+  updateFolderState (file) {
     let state = this.plugin.getPluginState()
     let folders = state.selectedFolders || {}
     for (let folderId in folders) {
@@ -402,7 +402,7 @@ module.exports = class View {
       if (folder.loading) {
         continue
       }
-      let i = folder.files.indexOf(fileId)
+      let i = folder.files.indexOf(file.id)
       if (i > -1) {
         folder.files.splice(i, 1)
       }

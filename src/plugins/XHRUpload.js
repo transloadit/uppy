@@ -63,7 +63,7 @@ module.exports = class XHRUpload extends Plugin {
         try {
           response = JSON.parse(responseContent)
         } catch (err) {
-          this.uppy.log(err, 'error')
+          console.log(err)
         }
 
         return response
@@ -202,9 +202,8 @@ module.exports = class XHRUpload extends Plugin {
         timer.progress()
 
         if (ev.lengthComputable) {
-          this.uppy.emit('upload-progress', {
+          this.uppy.emit('upload-progress', file, {
             uploader: this,
-            id: file.id,
             bytesUploaded: ev.loaded,
             bytesTotal: ev.total
           })
@@ -267,8 +266,16 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.send(data)
 
+      this.uppy.on('file-removed', (removedFile) => {
+        if (removedFile.id === file.id) {
+          timer.done()
+          xhr.abort()
+        }
+      })
+
       this.uppy.on('upload-cancel', (fileID) => {
         if (fileID === file.id) {
+          timer.done()
           xhr.abort()
         }
       })
@@ -376,9 +383,8 @@ module.exports = class XHRUpload extends Plugin {
         if (!ev.lengthComputable) return
 
         files.forEach((file) => {
-          this.uppy.emit('upload-progress', {
+          this.uppy.emit('upload-progress', file, {
             uploader: this,
-            id: file.id,
             bytesUploaded: ev.loaded,
             bytesTotal: ev.total
           })
@@ -423,7 +429,7 @@ module.exports = class XHRUpload extends Plugin {
       xhr.send(formData)
 
       files.forEach((file) => {
-        this.uppy.emit('upload-started', file.id)
+        this.uppy.emit('upload-started', file)
       })
     })
   }
@@ -438,10 +444,10 @@ module.exports = class XHRUpload extends Plugin {
       } else if (file.isRemote) {
         // We emit upload-started here, so that it's also emitted for files
         // that have to wait due to the `limit` option.
-        this.uppy.emit('upload-started', file.id)
+        this.uppy.emit('upload-started', file)
         return this.uploadRemote.bind(this, file, current, total)
       } else {
-        this.uppy.emit('upload-started', file.id)
+        this.uppy.emit('upload-started', file)
         return this.upload.bind(this, file, current, total)
       }
     })
