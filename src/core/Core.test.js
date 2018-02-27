@@ -1187,4 +1187,19 @@ describe('src/Core', () => {
       })
     })
   })
+
+  describe('i18n', () => {
+    it('merges in custom locale strings', () => {
+      const core = new Core({
+        locale: {
+          strings: {
+            test: 'beep boop'
+          }
+        }
+      })
+
+      expect(core.i18n('exceedsSize')).toBe('This file exceeds maximum allowed size of')
+      expect(core.i18n('test')).toBe('beep boop')
+    })
+  })
 })

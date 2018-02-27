@@ -4,7 +4,7 @@ const app = require('express')()
 app.use(require('cors')())
 app.use(require('body-parser').json())
 
-app.use(uppy.app({
+const options = {
   providerOptions: {
     s3: {
       getKey: (req, filename) =>
@@ -16,8 +16,12 @@ app.use(uppy.app({
     }
   },
   server: { host: 'localhost:3020' }
-}))
+}
 
-app.listen(3020, () => {
+app.use(uppy.app(options))
+
+const server = app.listen(3020, () => {
   console.log('listening on port 3020')
 })
+
+uppy.socket(server, options)
