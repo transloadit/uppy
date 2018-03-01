@@ -7,7 +7,7 @@ order: 57
 
 Uppy supports Redux in two ways:
 
-### Redux Store
+## Redux Store
 
 You can tell Uppy to use your app’s Redux store for its files and UI state. Please checkout [Custom Stores](/docs/stores/) for more info on that. Here’s an example to give you a sense of how this works:
 
