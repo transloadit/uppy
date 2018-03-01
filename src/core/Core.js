@@ -528,7 +528,19 @@ class Uppy {
 
   cancelAll () {
     this.emit('cancel-all')
-    this.setState({ files: {}, totalProgress: 0 })
+
+    // TODO Or should we just call removeFile on all files?
+    const { currentUploads } = this.getState()
+    const uploadIDs = Object.keys(currentUploads)
+
+    uploadIDs.forEach((id) => {
+      this._removeUpload(id)
+    })
+
+    this.setState({
+      files: {},
+      totalProgress: 0
+    })
   }
 
   retryUpload (fileID) {
