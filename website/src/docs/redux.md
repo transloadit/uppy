@@ -1,59 +1,50 @@
 ---
 title: "Redux"
 type: docs
-permalink: docs/react/redux-sync/
+permalink: docs/redux
 order: 57
 ---
 
-The `Redux` plugin syncs a Redux store with Uppy's internal state. This simplifies writing custom UIs for Uppy in applications that use Redux.
+Uppy supports Redux in two ways:
 
-To use it, define a Redux action and reducer:
+### Redux Store
+
+You can tell Uppy to use your app’s Redux store for its files and UI state. Please checkout [Custom Stores](/docs/stores/) for more info on that. Here’s an example to give you a sense of how this works:
 
 ```js
-// The action creator receives 3 parameters:
-// - The previous state
-// - The new state
-// - The change set
-const uppyStateUpdate = (previous, next, patch) => ({
-  type: 'UPPY_STATE_UPDATE',
-  previous,
-  next,
-  patch
+const { createStore } = require('redux')
+const ReduxStore = require('uppy/lib/store/ReduxStore')
+
+const reducer = combineReducers({
+  ...reducers,
+  uppy: ReduxStore.reducer
 })
 
-function reduce (state = {}, action) {
-  if (action.type === 'UPPY_STATE_UPDATE') {
-    return {
-      ...state,
-      // Merge in the changes.
-      ...action.patch
-    }
-  }
-}
-```
-
-Then pass your Redux store's `dispatch` function and the action creator to the Redux plugin:
-
-```js
-const ReduxStore = require('uppy/lib/Redux')
-uppy.use(ReduxStore, {
-  dispatch: store.dispatch,
-  action: uppyStateUpdate
+const uppy = Uppy({
+  store: ReduxStore({
+    store: createStore(reducer) // That's a lot of stores!
+  })
 })
 ```
 
-## Options
+## Redux Dev Tools
 
-### `dispatch`
+`ReduxDevTools` plugin that simply syncs with [redux-devtools](https://github.com/gaearon/redux-devtools) browser or JS extensions, and allows for basic time travel:
 
-The dispatch function for a Redux store.
+```js
+const Uppy = require('uppy/lib/core')
+const ReduxDevTools = require('uppy/lib/plugins/ReduxDevTools')
 
-### `action`
+const uppy = Uppy({
+  debug: true,
+  autoProceed: false,
+  meta: {
+    username: 'John',
+    license: 'Creative Commons'
+})
+.use(XHRUpload, { endpoint: 'https://example.com' })
+.use(ReduxDevTools)
+.run()
+```
 
-An action creator for uppy state updates.
-
-The action creator receives 3 parameters:
-
-1. The previous state
-1. The new state
-1. The change set: an object that can be merged into the previous state to produce the new state.
+After you `.use(ReduxDevTools)`, you should be able to see Uppy’s state in Redux Dev Tools.
