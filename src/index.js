@@ -29,7 +29,6 @@ const Form = require('./plugins/Form')
 const ThumbnailGenerator = require('./plugins/ThumbnailGenerator')
 const GoldenRetriever = require('./plugins/GoldenRetriever')
 const ReduxDevTools = require('./plugins/ReduxDevTools')
-const ReduxStore = require('./plugins/Redux')
 
 module.exports = {
   Core,
@@ -52,6 +51,5 @@ module.exports = {
   Form,
   ThumbnailGenerator,
   GoldenRetriever,
-  ReduxDevTools,
-  ReduxStore
+  ReduxDevTools
 }
