@@ -20,7 +20,6 @@ As of now uppy-server is integrated to work with:
 - Instagram
 - Remote Urls
 - Amazon S3
-- Local disk
 
 ## Install
 

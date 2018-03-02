@@ -48,7 +48,7 @@ const uppy = Uppy({
     trigger: '#pick-files',
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
-      { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
+      { id: 'caption', name: 'Caption', placeholder: 'add caption' }
     ]
     // target: '.uppy-target',
     // inline: true,

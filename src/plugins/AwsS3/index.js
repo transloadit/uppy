@@ -57,9 +57,25 @@ module.exports = class AwsS3 extends Plugin {
     }).then((response) => response.json())
   }
 
+  validateParameters (file, params) {
+    const valid = typeof params === 'object' && params &&
+      typeof params.url === 'string' &&
+      (typeof params.fields === 'object' || params.fields == null) &&
+      (params.method == null || /^(put|post)$/i.test(params.method))
+
+    if (!valid) {
+      const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields }'.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+      console.error(err)
+      throw err
+    }
+
+    return params
+  }
+
   prepareUpload (fileIDs) {
     fileIDs.forEach((id) => {
-      this.uppy.emit('preprocess-progress', id, {
+      const file = this.uppy.getFile(id)
+      this.uppy.emit('preprocess-progress', file, {
         mode: 'determinate',
         message: this.i18n('preparingUpload'),
         value: 0
@@ -74,14 +90,16 @@ module.exports = class AwsS3 extends Plugin {
         const paramsPromise = Promise.resolve()
           .then(() => getUploadParameters(file))
         return paramsPromise.then((params) => {
-          this.uppy.emit('preprocess-progress', file.id, {
+          return this.validateParameters(file, params)
+        }).then((params) => {
+          this.uppy.emit('preprocess-progress', file, {
             mode: 'determinate',
             message: this.i18n('preparingUpload'),
             value: 1
           })
           return params
         }).catch((error) => {
-          this.uppy.emit('upload-error', file.id, error)
+          this.uppy.emit('upload-error', file, error)
         })
       })
     ).then((responses) => {
@@ -122,7 +140,8 @@ module.exports = class AwsS3 extends Plugin {
       })
 
       fileIDs.forEach((id) => {
-        this.uppy.emit('preprocess-complete', id)
+        const file = this.uppy.getFile(id)
+        this.uppy.emit('preprocess-complete', file)
       })
     })
   }

@@ -12,6 +12,39 @@ Best used together with a simple file source plugin, such as [FileInput][] or [D
 
 ## Options
 
+```js
+uppy.use(StatusBar, {
+  target: 'body',
+  hideUploadButton: false,
+  showProgressDetails: false,
+  hideAfterFinish: true
+  locale: {
+    strings: {
+      uploading: 'Uploading',
+      uploadComplete: 'Upload complete',
+      uploadFailed: 'Upload failed',
+      pleasePressRetry: 'Please press Retry to upload again',
+      paused: 'Paused',
+      error: 'Error',
+      retry: 'Retry',
+      pressToRetry: 'Press to retry',
+      retryUpload: 'Retry upload',
+      resumeUpload: 'Resume upload',
+      cancelUpload: 'Cancel upload',
+      pauseUpload: 'Pause upload',
+      uploadXFiles: {
+        0: 'Upload %{smart_count} file',
+        1: 'Upload %{smart_count} files'
+      },
+      uploadXNewFiles: {
+        0: 'Upload +%{smart_count} file',
+        1: 'Upload +%{smart_count} files'
+      }
+    }
+  }
+})
+```
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the StatusBar into.

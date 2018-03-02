@@ -105,12 +105,14 @@ module.exports = class ThumbnailGenerator extends Plugin {
     image = this.protect(image)
 
     var steps = Math.ceil(Math.log2(image.width / targetWidth))
+    if (steps < 1) {
+      steps = 1
+    }
     var sW = targetWidth * Math.pow(2, steps - 1)
     var sH = targetHeight * Math.pow(2, steps - 1)
     var x = 2
 
     while (steps--) {
-      console.log(sW, sH)
       var canvas = document.createElement('canvas')
       canvas.width = sW
       canvas.height = sH

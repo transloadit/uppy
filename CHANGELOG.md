@@ -54,6 +54,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] audio: audio recording similar to Webcam #143
 - [ ] add typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
 - [ ] transloadit plugin: maybe add option to disable uppy server endpoint overrides
+- [ ] dragdrop: change border color when files doesn’t pass restrictions on drag https://github.com/transloadit/uppy/issues/607
 
 ## 1.0 Goals
 
@@ -88,6 +89,8 @@ To be released: 2018-03-01.
 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
+- [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
+- [ ] dashboard: disallow removing files if `bundle: true` in XHRUpload (@arturi) 
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
@@ -100,7 +103,7 @@ To be released: 2018-03-01.
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] core: i18n all strings + document them
 - [ ] core: update file-type
-- [ ] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (@goto-bus-stop)
+- [x] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (#641 / @goto-bus-stop)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] docs: on writing plugins (@goto-bus-stop)
 - [ ] docs: all useful events (@arturi)
@@ -112,6 +115,20 @@ To be released: 2018-03-01.
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
 - [x] s3: fix xhr response handlers (#625, @goto-bus-stop)
 - [ ] test: add typescript with JSDoc (@arturi)
+- [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
+
+## 0.23.1
+
+- xhrupload: ⚠️ **breaking** Revamped XHR response handling: This adds a response key to files when the upload completed (regardless of whether it succeeded). file.response contains a status and a data property. data is the result of getResponseData. One change here is that getResponseData is also called if there was an error, not sure if that's a good idea; Also changed events to emit file objects instead of IDs here because it touches many of the same places. (#612 / @goto-bus-stop)
+- transloadit: ⚠️ **breaking** Embeded tus plugin: When importFromUploadURLs is not set, add the Tus plugin with the right configuration. (#614 / @goto-bus-stop)
+- transloadit: Allow easy passing of form fields (#593 / @goto-bus-stop)
+- s3: Updated XHR response handling, fixes (#624 / @goto-bus-stop)
+- core: Revamped `addFile()` rejections (#604 / @goto-bus-stop)
+- core: Added wrapper function for emitter.on, so you can chain uppy.on().run()... (#597 / @arturi)
+- core: Fix progress events causing errors for removed files (#638 / @arturi)
+- statusbar: Use translations for Uploading / Paused text, fixes #629 (#640 / goto-bus-stop)
+- thumbnailgenerator: Upsizing image if smaller than thumbnail size, fix infinite loop (#637 / @phitranphitranphitran)
+- website: Added Transloadit example to website (#603 / @arturi)
 
 ## 0.23.0
 

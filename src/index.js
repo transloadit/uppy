@@ -3,16 +3,14 @@ const Core = require('./core')
 // Parent
 const Plugin = require('./core/Plugin')
 
-// Orchestrators
-const Dashboard = require('./plugins/Dashboard')
-
 // Acquirers
-const Dummy = require('./plugins/Dummy')
+const Dashboard = require('./plugins/Dashboard')
 const DragDrop = require('./plugins/DragDrop')
 const FileInput = require('./plugins/FileInput')
 const GoogleDrive = require('./plugins/GoogleDrive')
 const Dropbox = require('./plugins/Dropbox')
 const Instagram = require('./plugins/Instagram')
+const Url = require('./plugins/Url')
 const Webcam = require('./plugins/Webcam')
 
 // Progressindicators
@@ -30,14 +28,14 @@ const Transloadit = require('./plugins/Transloadit')
 const AwsS3 = require('./plugins/AwsS3')
 
 // Helpers and utilities
+const Form = require('./plugins/Form')
+const ThumbnailGenerator = require('./plugins/ThumbnailGenerator')
 const GoldenRetriever = require('./plugins/GoldenRetriever')
 const ReduxDevTools = require('./plugins/ReduxDevTools')
-const ReduxStore = require('./plugins/Redux')
 
 module.exports = {
   Core,
   Plugin,
-  Dummy,
   StatusBar,
   ProgressBar,
   Informer,
@@ -45,6 +43,7 @@ module.exports = {
   GoogleDrive,
   Dropbox,
   Instagram,
+  Url,
   FileInput,
   Tus,
   XHRUpload,
@@ -52,8 +51,9 @@ module.exports = {
   AwsS3,
   Dashboard,
   Webcam,
+  Form,
+  ThumbnailGenerator,
   GoldenRetriever,
   ReduxDevTools,
-  ReduxStore,
   ImageCompressor
 }
