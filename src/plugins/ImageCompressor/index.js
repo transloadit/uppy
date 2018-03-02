@@ -22,6 +22,41 @@ module.exports = class ImageCompressor extends Plugin {
     this.addToQueue = this.addToQueue.bind(this)
   }
 
+  /**
+   * Make sure the image doesn’t exceed browser/device canvas limits.
+   * For ios with 256 RAM and ie
+   */
+  protect (image) {
+    // https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element
+
+    const ratio = image.width / image.height
+    const maxSquare = 5000000  // ios max canvas square
+    const maxSize = 4096  // ie max canvas dimensions
+
+    let maxW = Math.floor(Math.sqrt(maxSquare * ratio))
+    let maxH = Math.floor(maxSquare / Math.sqrt(maxSquare * ratio))
+    if (maxW > maxSize) {
+      maxW = maxSize
+      maxH = Math.round(maxW / ratio)
+    }
+    if (maxH > maxSize) {
+      maxH = maxSize
+      maxW = Math.round(ratio * maxH)
+    }
+    if (image.width > maxW) {
+      const canvas = document.createElement('canvas')
+      canvas.width = maxW
+      canvas.height = maxH
+      canvas.getContext('2d').drawImage(image, 0, 0, maxW, maxH)
+      image.src = 'about:blank'
+      image.width = 1
+      image.height = 1
+      image = canvas
+    }
+
+    return image
+  }
+
   addToQueue (item) {
     this.queue.push(item)
     if (this.queueProcessing === false) {
@@ -34,7 +69,7 @@ module.exports = class ImageCompressor extends Plugin {
     if (this.queue.length > 0) {
       const current = this.queue.shift()
       return this.requestCompressFile(current)
-        .catch(err => {}) // eslint-disable-line handle-callback-err
+        .catch(err => { }) // eslint-disable-line handle-callback-err
         .then(() => this.processQueue())
     } else {
       this.queueProcessing = false
@@ -121,27 +156,31 @@ module.exports = class ImageCompressor extends Plugin {
    * Returns a Canvas with the resized image on it.
    */
   resizeImage (image, targetWidth, targetHeight) {
-    let sourceWidth = image.width
-    let sourceHeight = image.height
+    // Resizing in steps refactored to use a solution from
+    // https://blog.uploadcare.com/image-resize-in-browsers-is-broken-e38eed08df01
 
-    if (targetHeight < image.height / 2) {
-      const steps = Math.floor(Math.log(image.width / targetWidth) / Math.log(2))
-      const stepScaled = this.downScaleInSteps(image, steps)
-      image = stepScaled.image
-      sourceWidth = stepScaled.sourceWidth
-      sourceHeight = stepScaled.sourceHeight
+    image = this.protect(image)
+
+    let steps = Math.ceil(Math.log2(image.width / targetWidth))
+    if (steps < 1) {
+      steps = 1
+    }
+    let sW = targetWidth * Math.pow(2, steps - 1)
+    let sH = targetHeight * Math.pow(2, steps - 1)
+    const x = 2
+
+    while (steps--) {
+      const canvas = document.createElement('canvas')
+      canvas.width = sW
+      canvas.height = sH
+      canvas.getContext('2d').drawImage(image, 0, 0, sW, sH)
+      image = canvas
+
+      sW = Math.round(sW / x)
+      sH = Math.round(sH / x)
     }
 
-    const canvas = document.createElement('canvas')
-    canvas.width = targetWidth
-    canvas.height = targetHeight
-
-    const context = canvas.getContext('2d')
-    context.drawImage(image,
-      0, 0, sourceWidth, sourceHeight,
-      0, 0, targetWidth, targetHeight)
-
-    return canvas
+    return image
   }
 
   /**
