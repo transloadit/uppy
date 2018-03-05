@@ -1213,4 +1213,17 @@ describe('src/Core', () => {
       expect(core.i18n('test')).toBe('beep boop')
     })
   })
+
+  describe('default restrictions', () => {
+    it.only('should be merged with supplied restrictions', () => {
+      const core = new Core({
+        restrictions: {
+          maxNumberOfFiles: 3
+        }
+      })
+
+      expect(core.opts.restrictions.maxNumberOfFiles).toBe(3)
+      expect(core.opts.restrictions.minNumberOfFiles).toBe(false)
+    })
+  })
 })
