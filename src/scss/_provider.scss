@@ -6,6 +6,13 @@
   height: 100%;
 }
 
+.uppy-Provider-authIcon .UppyIcon {
+  width: 100px;
+  height: 75px;
+  color: lighten($color-gray, 15%);
+  margin-bottom: 15px;
+}
+
 .uppy-Provider-authTitle {
   font-size: 22px;
   line-height: 1.35;
@@ -256,7 +263,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
-    padding: 3px;
+    padding: 6px;
   }
 
   .uppy-ProviderBrowser-list:after {
@@ -268,17 +275,24 @@
     display: inline-block;
     width: 33.3333%;
     position: relative;
-    padding: 3px;
-    opacity: 0.9;
+    padding: 12px;
   }
 
-    .uppy-ProviderBrowserItem--selected {
-      opacity: 1;
+    // .uppy-ProviderBrowserItem--selected {
+    //   border-color: $color-cornflower-blue;
+    //   outline: none;
+    // }
+
+    .uppy-ProviderBrowserItem--selected .uppy-ProviderBrowserItem-inner {
+      box-shadow: 0 0 0 3px rgba(darken($color-cornflower-blue, 10%), 0.9);
     }
 
   .uppy-ProviderBrowserItem-inner {
     width: 100%;
     height: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 2px solid transparent;
   }
 
   .uppy-ProviderBrowserItem img {
@@ -288,30 +302,34 @@
   }
 
   .uppy-ProviderBrowserItem-checkbox {
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    margin-right: 0;
+    display: none;
   }
 
-  .uppy-ProviderBrowserItem-checkbox label:before {
-    background-color: $color-cornflower-blue;
-  }
+  // .uppy-ProviderBrowserItem-checkbox {
+  //   position: absolute;
+  //   top: 8px;
+  //   right: 10px;
+  //   margin-right: 0;
+  // }
 
-  // Hide checkbox when unchecked in grid view
-  .uppy-ProviderBrowserItem-checkbox input + label {
-    opacity: 0;
-  }
+  // .uppy-ProviderBrowserItem-checkbox label:before {
+  //   background-color: $color-cornflower-blue;
+  // }
 
-  // Unhide the checkbox on the checked state
-  .uppy-ProviderBrowserItem-checkbox input:checked + label {
-    opacity: 1;
-  }
+  // // Hide checkbox when unchecked in grid view
+  // .uppy-ProviderBrowserItem-checkbox input + label {
+  //   opacity: 0;
+  // }
+
+  // // Unhide the checkbox on the checked state
+  // .uppy-ProviderBrowserItem-checkbox input:checked + label {
+  //   opacity: 1;
+  // }
 
 }
 
 .uppy-Dashboard--wide .uppy-ProviderBrowser-viewType--grid .uppy-ProviderBrowserItem {
-  width: 20%;
+  width: 25%;
 }
 
 .uppy-ProviderBrowserItem-checkbox input {

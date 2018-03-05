@@ -1,10 +1,13 @@
 .uppy-Dashboard--modal {
   z-index: $zIndex-2;
+  // transition: transform 0.2s ease-in-out;
+  // transform: none;
   // -webkit-overflow-scrolling: touch;
 }
 
 .uppy-Dashboard--modal[aria-hidden=true] {
   display: none;
+  // transform: translateY(-50%);
 }
 
 // Added to body to prevent the page from scrolling when Modal is open
@@ -19,7 +22,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba($color-white, 0.8);
+  // background-color: rgba($color-white, 0.8);
+  background-color: rgba($color-black, 0.2);
   z-index: $zIndex-2;
 }
 
@@ -53,11 +57,6 @@
   min-height: 300px;
 }
 
-.uppy-Dashboard--semiTransparent .uppy-Dashboard-inner {
-  background-color: rgba($color-white, 0.8);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-}
-
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
   position: fixed;
   top: 0;
@@ -68,9 +67,14 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0px 0px 20px 7px rgba($color-gray, 0.15);
+    // box-shadow: 0px 0px 20px 7px rgba($color-gray, 0.15);
+    box-shadow: 0 5px 15px 4px rgba($color-black, 0.15);
   }
 }
+
+// .uppy-Dashboard--modal[aria-hidden=true] .uppy-Dashboard-inner {
+
+// }
 
 .uppy-Dashboard-close {
   @include reset-button;
