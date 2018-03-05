@@ -18,6 +18,10 @@
   box-sizing: inherit;
 }
 
+// .uppy *:focus:not(.focus-visible) {
+//   outline: 0;
+// }
+
 // https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4
 
 .UppyIcon {
@@ -105,4 +109,15 @@
 .UppyButton--sizeS {
   width: 45px;
   height: 45px;
+}
+
+.uppy-c-textInput {
+  border: 1px solid rgba($color-gray, 0.5);
+  border-radius: 4px;
+}
+
+.uppy-c-textInput:focus {
+  border-color: $color-cornflower-blue;
+  outline: none;
+  box-shadow: 0 0 1px 1px rgba($color-cornflower-blue, 0.3);
 }

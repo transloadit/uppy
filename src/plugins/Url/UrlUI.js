@@ -22,7 +22,7 @@ class UrlUI extends Component {
   render () {
     return <div class="uppy-Url">
       <input
-        class="uppy-Url-input"
+        class="uppy-c-textInput uppy-Url-input"
         type="text"
         placeholder={this.props.i18n('enterUrlToImport')}
         ref={(input) => { this.input = input }} />
