@@ -316,7 +316,7 @@ module.exports = class Webcam extends Plugin {
     const webcamState = this.getPluginState()
 
     if (!webcamState.cameraReady) {
-      return PermissionsScreen(webcamState)
+      return PermissionsScreen(Object.assign({}, { icon: WebcamIcon }))
     }
 
     return h(CameraScreen, Object.assign({}, webcamState, {

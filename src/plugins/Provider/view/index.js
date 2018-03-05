@@ -554,6 +554,7 @@ module.exports = class View {
     if (!authenticated) {
       return h(AuthView, {
         pluginName: this.plugin.title,
+        pluginIcon: this.plugin.icon,
         demo: this.plugin.opts.demo,
         checkAuth: this.checkAuth,
         handleAuth: this.handleAuth,
