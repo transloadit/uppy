@@ -1215,7 +1215,7 @@ describe('src/Core', () => {
   })
 
   describe('default restrictions', () => {
-    it.only('should be merged with supplied restrictions', () => {
+    it('should be merged with supplied restrictions', () => {
       const core = new Core({
         restrictions: {
           maxNumberOfFiles: 3
