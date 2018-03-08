@@ -1,7 +1,4 @@
-const { getETA,
-         getSpeed,
-         prettyETA,
-         getFileNameAndExtension,
+const { getFileNameAndExtension,
          truncateString,
          copyToClipboard } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
@@ -86,15 +83,6 @@ module.exports = function fileItem (props) {
               })
             }
           </button>
-        }
-        {props.showProgressDetails &&
-          <div class="uppy-DashboardItem-progressInfo"
-            title={props.i18n('fileProgress')}
-            aria-label={props.i18n('fileProgress')}>
-            {(!file.isPaused && !isUploaded) &&
-              <span>{prettyETA(getETA(file.progress))} ・ ↑ {prettyBytes(getSpeed(file.progress))}/s</span>
-            }
-          </div>
         }
       </div>
     </div>

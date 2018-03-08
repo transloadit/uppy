@@ -5,12 +5,22 @@
   font-size: 12px;
   font-weight: 500;
   color: $color-white;
-  background-color: rgba($color-asphalt-gray, 0.7);
+  background-color: rgba($color-black, 0.8);
   box-shadow: 1px 1px 4px 0 rgba($color-asphalt-gray, 0.3);
   // overflow-x: hidden;
   z-index: $zIndex-2;
   transition: height .2s;
 }
+
+  .uppy-Dashboard--wide .uppy-StatusBar {
+    height: 45px;
+    font-size: 14px;
+    // line-height: 40px;
+  }
+
+  // .uppy-StatusBar.uppy-StatusBar--detailedProgress  {
+  //   height: 47px;
+  // }
 
 .uppy-StatusBar[aria-hidden=true] {
   overflow-y: hidden;
@@ -28,12 +38,13 @@
 .uppy-StatusBar.is-complete .uppy-StatusBar-content {
   text-align: center;
   padding-left: 0;
+  justify-content: center;
 }
 
 .uppy-StatusBar:not([aria-hidden=true]).is-waiting {
   background-color: $color-white;
   height: 65px;
-  line-height: 65px;
+  // line-height: 65px;
 }
 
 .uppy-StatusBar-progress {
@@ -61,33 +72,44 @@
 }
 
 .uppy-StatusBar-content {
+  display: flex;
+  align-items: center;
   position: relative;
   z-index: $zIndex-3;
   padding-left: 15px;
   white-space: nowrap;
   text-overflow: ellipsis;
   color: $color-white;
+  height: 100%;
 }
 
-// .uppy-StatusBar-content .UppyIcon {
-//   width: 15px;
-//   height: 15px;
+.uppy-StatusBar-status {
+  line-height: 1.35;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+}
 
-//   .UppyDashboard--wide & {
-//     width: 17px;
-//     height: 17px;
-//   }
-// }
+.uppy-StatusBar-statusPrimary {
+  font-size: 13px;
+}
 
+.uppy-StatusBar-statusSecondary {
+  font-size: 11px;
+  display: none;
+}
+
+  .uppy-StatusBar--detailedProgress .uppy-StatusBar-statusSecondary {
+    display: inline;
+  }
 
 .uppy-StatusBar-statusIndicator {
   color: $color-white;
-  margin-right: 8px;
+  margin-right: 15px;
 }
 
   button.uppy-StatusBar-statusIndicator {
     @include reset-button;
-    margin-right: 8px;
+    margin-right: 15px;
     cursor: pointer;
   }
 
@@ -108,14 +130,20 @@
 
 .uppy-StatusBar-actionBtn {
   @include reset-button;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 1em;
   font-weight: 400;
-  padding: 7px 10px;
-  border-radius: 4px;
+  padding: 4px 6px;
+  border-radius: 2px;
   cursor: pointer;
   transition: all 0.2s;
 }
+
+  .uppy-Dashboard--wide .uppy-StatusBar-actionBtn {
+    font-size: 13px;
+    padding: 7px 10px;
+    border-radius: 4px;
+  }
 
   .uppy-StatusBar-actionBtn:not(:last-child) {
     margin-right: 5px;
@@ -132,13 +160,13 @@
   }
 
     .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
-        background-color: $color-cornflower-blue;
-        color: $color-white;
+      background-color: $color-cornflower-blue;
+      color: $color-white;
 
-        &:hover {
-          background-color: darken($color-cornflower-blue, 20%);
-        }
+      &:hover {
+        background-color: darken($color-cornflower-blue, 20%);
       }
+    }
 
   .uppy-StatusBar-actionBtn--retry {
     background-color: $color-white;

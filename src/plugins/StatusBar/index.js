@@ -18,7 +18,7 @@ module.exports = class StatusBar extends Plugin {
 
     const defaultLocale = {
       strings: {
-        uploading: 'Uploading...',
+        uploading: 'Uploading',
         uploadComplete: 'Upload complete',
         uploadFailed: 'Upload failed',
         pleasePressRetry: 'Please press Retry to upload again',
@@ -30,6 +30,12 @@ module.exports = class StatusBar extends Plugin {
         resumeUpload: 'Resume upload',
         cancelUpload: 'Cancel upload',
         pauseUpload: 'Pause upload',
+        filesUploadedOfTotal: {
+          0: '%{complete} of %{smart_count} file uploaded',
+          1: '%{complete} of %{smart_count} files uploaded'
+        },
+        dataUploadedOfTotal: '%{complete} of %{total}',
+        xTimeLeft: '%{time} left',
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
           1: 'Upload %{smart_count} files'
@@ -117,9 +123,8 @@ module.exports = class StatusBar extends Plugin {
       return files[file].progress.preprocess || files[file].progress.postprocess
     })
 
-    let inProgressFilesArray = []
-    inProgressFiles.forEach((file) => {
-      inProgressFilesArray.push(files[file])
+    let inProgressFilesArray = inProgressFiles.map((file) => {
+      return files[file]
     })
 
     const totalSpeed = prettyBytes(this.getTotalSpeed(inProgressFilesArray))
@@ -174,6 +179,7 @@ module.exports = class StatusBar extends Plugin {
       totalETA: totalETA,
       files: state.files,
       resumableUploads: resumableUploads,
+      showProgressDetails: this.opts.showProgressDetails,
       hideUploadButton: this.opts.hideUploadButton,
       hideAfterFinish: this.opts.hideAfterFinish
     })

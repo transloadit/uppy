@@ -521,6 +521,7 @@ module.exports = class Dashboard extends Plugin {
       this.uppy.use(StatusBar, {
         target: this,
         hideUploadButton: this.opts.hideUploadButton,
+        showProgressDetails: this.opts.showProgressDetails,
         hideAfterFinish: this.opts.hideProgressAfterFinish,
         locale: this.opts.locale
       })

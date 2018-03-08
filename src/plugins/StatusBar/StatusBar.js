@@ -1,11 +1,6 @@
 const throttle = require('lodash.throttle')
+const classNames = require('classnames')
 const { h } = require('preact')
-
-function progressDetails (props) {
-  return <span>{props.totalProgress || 0}%・{props.complete} / {props.inProgress}・{props.totalUploadedSize} / {props.totalSize}・↑ {props.totalSpeed}/s・{props.totalETA}</span>
-}
-
-const ThrottledProgressDetails = throttle(progressDetails, 500, {leading: true, trailing: true})
 
 const STATE_ERROR = 'error'
 const STATE_WAITING = 'waiting'
@@ -98,6 +93,7 @@ module.exports = (props) => {
   let progressValue = props.totalProgress
   let progressMode
   let progressBarContent
+  // let progressBarContentDetails
   if (uploadState === STATE_PREPROCESSING || uploadState === STATE_POSTPROCESSING) {
     const progress = calculateProcessingProgress(props.files)
     progressMode = progress.mode
@@ -120,12 +116,19 @@ module.exports = (props) => {
     (uploadState === STATE_WAITING && !props.newFiles > 0) ||
     (uploadState === STATE_COMPLETE && props.hideAfterFinish)
 
-  const progressClasses = `uppy-StatusBar-progress
+  const progressClassNames = `uppy-StatusBar-progress
                            ${progressMode ? 'is-' + progressMode : ''}`
 
+  const statusBarClassNames = classNames(
+    'uppy',
+    'uppy-StatusBar',
+    `is-${uploadState}`,
+    { 'uppy-StatusBar--detailedProgress': props.showProgressDetails }
+  )
+
   return (
-    <div class={`uppy uppy-StatusBar is-${uploadState}`} aria-hidden={isHidden}>
-      <div class={progressClasses}
+    <div class={statusBarClassNames} aria-hidden={isHidden}>
+      <div class={progressClassNames}
         style={{ width: width + '%' }}
         role="progressbar"
         aria-valuemin="0"
@@ -168,29 +171,40 @@ const ProgressBarProcessing = (props) => {
   </div>
 }
 
+const progressDetails = (props) => {
+  return <span class="uppy-StatusBar-statusSecondary">
+    { props.inProgress > 1 && props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.inProgress }) + '・' }
+    { props.i18n('dataUploadedOfTotal', { complete: props.totalUploadedSize, total: props.totalSize }) }・
+    { props.i18n('xTimeLeft', { time: props.totalETA }) }
+  </span>
+}
+
+const ThrottledProgressDetails = throttle(progressDetails, 500, { leading: true, trailing: true })
+
 const ProgressBarUploading = (props) => {
-  const { i18n } = props
+  if (!props.isUploadStarted || props.isAllComplete) {
+    return null
+  }
+
   return (
-    <div class="uppy-StatusBar-content">
-      {props.isUploadStarted && !props.isAllComplete
-        ? !props.isAllPaused
-          ? <div title="Uploading">{ <PauseResumeButtons {...props} /> } {i18n('uploading')} { <ThrottledProgressDetails {...props} /> }</div>
-          : <div title="Paused">{ <PauseResumeButtons {...props} /> } {i18n('paused')}・{props.totalProgress}%</div>
-        : null
-      }
+    <div class="uppy-StatusBar-content" title={props.isAllPaused ? 'Paused' : 'Uploading'}>
+      { <PauseResumeButtons {...props} /> }
+      <div class="uppy-StatusBar-status">
+        <span class="uppy-StatusBar-statusPrimary">{ props.isAllPaused ? props.i18n('paused') : props.i18n('uploading') }: {props.totalProgress}%</span>
+        <br />
+        { !props.isAllPaused && <ThrottledProgressDetails {...props} /> }
+      </div>
     </div>
   )
 }
 
 const ProgressBarComplete = ({ totalProgress, i18n }) => {
   return (
-    <div class="uppy-StatusBar-content" role="status">
-      <span title="Complete">
-        <svg aria-hidden="true" class="uppy-StatusBar-statusIndicator UppyIcon" width="18" height="17" viewBox="0 0 23 17">
-          <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
-        </svg>
-        {i18n('uploadComplete')}・{totalProgress}%
-      </span>
+    <div class="uppy-StatusBar-content" role="status" title="Complete">
+      <svg aria-hidden="true" class="uppy-StatusBar-statusIndicator UppyIcon" width="18" height="17" viewBox="0 0 23 17">
+        <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
+      </svg>
+      {i18n('uploadComplete')}
     </div>
   )
 }
