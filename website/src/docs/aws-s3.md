@@ -152,7 +152,7 @@ uppy.use(AwsS3, {
       },
       body: JSON.stringify({
         filename: file.name,
-        contentType: file.type
+        type: file.type
       })
     }).then((response) => {
       // Parse the JSON response.
@@ -162,7 +162,7 @@ uppy.use(AwsS3, {
       return {
         method: data.method,
         url: data.url,
-        fields: {}
+        fields: data.fields
       }
     })
   }
