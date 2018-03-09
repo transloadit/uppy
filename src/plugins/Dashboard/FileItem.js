@@ -75,7 +75,7 @@ module.exports = function fileItem (props) {
                       ? file.isPaused
                         ? 'resume upload'
                         : 'pause upload'
-                      : 'error'
+                      : error
                         ? 'retry upload'
                         : 'cancel upload'
                   }
