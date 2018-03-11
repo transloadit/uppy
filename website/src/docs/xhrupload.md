@@ -72,7 +72,7 @@ uppy.setFileState(otherFileID, {
 })
 ```
 
-### `getResponseData(xhr)`
+### `getResponseData(xhr.responseText, xhr)`
 
 When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file's `.response` property, and be emitted in the `upload-success` event:
 
@@ -101,7 +101,7 @@ That object will be emitted in the `upload-success` event. Not all endpoints res
 For example, an endpoint that responds with an XML document:
 
 ```js
-getResponseData (xhr) {
+getResponseData (xhr.responseText, xhr) {
   return {
     url: xhr.responseXML.querySelector('Location').textContent
   }
@@ -124,7 +124,7 @@ getResponseError (responseText, xhr) {
 
 ### `responseUrlFieldName: 'url'`
 
-The field name containing a publically accessible location of the uploaded file in the response data returned by `getResponseData(xhr)`.
+The field name containing a publically accessible location of the uploaded file in the response data returned by `getResponseData(xhr.responseText, xhr)`.
 
 ### `timeout: 30 * 1000`
 
