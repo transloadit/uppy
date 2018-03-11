@@ -446,19 +446,14 @@ class Uppy {
   }
 
   pauseResume (fileID) {
-    const updatedFiles = Object.assign({}, this.getState().files)
+    if (this.getFile(fileID).uploadComplete) return
 
-    if (updatedFiles[fileID].uploadComplete) return
-
-    const wasPaused = updatedFiles[fileID].isPaused || false
+    const wasPaused = this.getFile(fileID).isPaused || false
     const isPaused = !wasPaused
 
-    const updatedFile = Object.assign({}, updatedFiles[fileID], {
+    this.setFileState(fileID, {
       isPaused: isPaused
     })
-
-    updatedFiles[fileID] = updatedFile
-    this.setState({files: updatedFiles})
 
     this.emit('upload-pause', fileID, isPaused)
 
@@ -643,13 +638,13 @@ class Uppy {
         return
       }
       this.setFileState(file.id, {
-        progress: Object.assign({}, this.getFile(file.id), {
+        progress: {
           uploadStarted: Date.now(),
           uploadComplete: false,
           percentage: 0,
           bytesUploaded: 0,
           bytesTotal: file.size
-        })
+        }
       })
     })
 
