@@ -25,7 +25,7 @@ const renderInnerPanel = (props) => {
 
 module.exports = function Dashboard (props) {
   const dashboardClassName = classNames(
-    'uppy',
+    { 'uppy-Root': props.isTargetDOMEl },
     'uppy-Dashboard',
     { 'Uppy--isTouchDevice': isTouchDevice() },
     { 'uppy-Dashboard--modal': !props.inline },

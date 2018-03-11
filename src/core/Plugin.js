@@ -58,6 +58,8 @@ module.exports = class Plugin {
     const targetElement = findDOMElement(target)
 
     if (targetElement) {
+      this.setPluginState({ isTargetDOMEl: true })
+
       this.updateUI = (state) => {
         this.el = preact.render(this.render(state), targetElement, this.el)
       }
@@ -113,7 +115,6 @@ module.exports = class Plugin {
     if (this.el && this.el.parentNode) {
       this.el.parentNode.removeChild(this.el)
     }
-    // this.target = null
   }
 
   install () {
