@@ -14,7 +14,7 @@
 }
 
 .uppy-Provider-authTitle {
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1.35;
   font-weight: 300;
   margin-bottom: 30px;
@@ -24,22 +24,7 @@
 }
 
 .uppy-Provider-authBtn {
-  @include reset-button;
-  border-radius: 6px;
-  background-color: $color-cornflower-blue;
-  color: $color-white;
-  font-size: 20px;
-  font-weight: 400;
-  padding: 12px 46px;
-  transition: background-color 0.3s;
-  text-decoration: none;
-  margin-bottom: 20px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: darken($color-cornflower-blue, 10%);
-    color: $color-white;
-  }
+  font-size: 22px;
 }
 
 .uppy-Provider-breadcrumbs button {
@@ -60,10 +45,6 @@
   display: inline-block;
   margin: 0;
 }
-
-// .uppy-Provider-breadcrumbs li:not(:last-child):after {
-//   content: ' /';
-// }
 
 .uppy-Provider-breadcrumbs li ~ li:before {
   content: '/';

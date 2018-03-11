@@ -3,11 +3,11 @@
   height: 30px;
   line-height: 30px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
   color: $color-white;
-  background-color: rgba($color-black, 0.8);
-  box-shadow: 1px 1px 4px 0 rgba($color-asphalt-gray, 0.3);
-  // overflow-x: hidden;
+  background-color: $color-black;
+  // box-shadow: 1px 1px 4px 0 rgba($color-asphalt-gray, 0.3);
+  // border-top: 1px solid rgba($color-gray, 0.2);
   z-index: $zIndex-2;
   transition: height .2s;
 }
@@ -15,7 +15,6 @@
   .uppy-Dashboard--wide .uppy-StatusBar {
     height: 45px;
     font-size: 14px;
-    // line-height: 40px;
   }
 
   // .uppy-StatusBar.uppy-StatusBar--detailedProgress  {
@@ -44,7 +43,7 @@
 .uppy-StatusBar:not([aria-hidden=true]).is-waiting {
   background-color: $color-white;
   height: 65px;
-  // line-height: 65px;
+  border-top: 1px solid rgba($color-gray, 0.3);
 }
 
 .uppy-StatusBar-progress {
@@ -128,22 +127,22 @@
   right: initial;
 }
 
-.uppy-StatusBar-actionBtn {
-  @include reset-button;
-  font-size: 11px;
-  line-height: 1em;
-  font-weight: 400;
-  padding: 4px 6px;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
+// .uppy-StatusBar-actionBtn {
+//   @include reset-button;
+//   font-size: 11px;
+//   line-height: 1em;
+//   font-weight: 400;
+//   padding: 4px 6px;
+//   border-radius: 2px;
+//   cursor: pointer;
+//   transition: all 0.2s;
+// }
 
-  .uppy-Dashboard--wide .uppy-StatusBar-actionBtn {
-    font-size: 13px;
-    padding: 7px 10px;
-    border-radius: 4px;
-  }
+//   .uppy-Dashboard--wide .uppy-StatusBar-actionBtn {
+//     font-size: 13px;
+//     padding: 7px 10px;
+//     border-radius: 4px;
+//   }
 
   .uppy-StatusBar-actionBtn:not(:last-child) {
     margin-right: 5px;
