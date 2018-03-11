@@ -145,7 +145,7 @@ module.exports = (props) => {
 
 const UploadBtn = (props) => {
   return <button type="button"
-    class="uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--upload"
+    class="uppy-u-reset uppy-c-buttonLarge uppy-c-buttonLarge--blue uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--upload"
     aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
     onclick={props.startUpload}>
     {props.inProgress
