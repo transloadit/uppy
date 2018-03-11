@@ -29,7 +29,7 @@ module.exports = (props) => {
       return FileItem({
         acquirers: props.acquirers,
         file: props.files[fileID],
-        showFileCard: props.showFileCard,
+        toggleFileCard: props.toggleFileCard,
         showProgressDetails: props.showProgressDetails,
         info: props.info,
         log: props.log,
@@ -39,7 +39,9 @@ module.exports = (props) => {
         cancelUpload: props.cancelUpload,
         retryUpload: props.retryUpload,
         resumableUploads: props.resumableUploads,
-        isWide: props.isWide
+        isWide: props.isWide,
+        showLinkToFileUploadResult: props.showLinkToFileUploadResult,
+        metaFields: props.metaFields
       })
     })}
   </ul>

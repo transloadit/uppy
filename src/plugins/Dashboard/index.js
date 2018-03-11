@@ -88,6 +88,7 @@ module.exports = class Dashboard extends Plugin {
       height: 550,
       thumbnailWidth: 280,
       defaultTabIcon: defaultTabIcon,
+      showLinkToFileUploadResult: true,
       showProgressDetails: false,
       hideUploadButton: false,
       hideProgressAfterFinish: false,
@@ -125,7 +126,7 @@ module.exports = class Dashboard extends Plugin {
     this.initEvents = this.initEvents.bind(this)
     this.onKeydown = this.onKeydown.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
-    this.handleFileCard = this.handleFileCard.bind(this)
+    this.toggleFileCard = this.toggleFileCard.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.handlePaste = this.handlePaste.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -319,8 +320,6 @@ module.exports = class Dashboard extends Plugin {
       this.handleDrop(files)
     })
 
-    this.uppy.on('dashboard:file-card', this.handleFileCard)
-
     this.updateDashboardElWidth()
     window.addEventListener('resize', this.updateDashboardElWidth)
   }
@@ -336,7 +335,6 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.removeDragDropListener()
-    this.uppy.off('dashboard:file-card', this.handleFileCard)
     window.removeEventListener('resize', this.updateDashboardElWidth)
   }
 
@@ -349,7 +347,7 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  handleFileCard (fileId) {
+  toggleFileCard (fileId) {
     this.setPluginState({
       fileCardFor: fileId || false
     })
@@ -434,13 +432,9 @@ module.exports = class Dashboard extends Plugin {
       this.uppy.removeFile(fileID)
     }
 
-    const showFileCard = (fileID) => {
-      this.uppy.emit('dashboard:file-card', fileID)
-    }
-
-    const fileCardDone = (meta, fileID) => {
+    const saveFileCard = (meta, fileID) => {
       this.uppy.setFileMeta(fileID, meta)
-      this.uppy.emit('dashboard:file-card')
+      this.toggleFileCard()
     }
 
     return DashboardUI({
@@ -471,20 +465,22 @@ module.exports = class Dashboard extends Plugin {
       removeFile: this.uppy.removeFile,
       info: this.uppy.info,
       note: this.opts.note,
-      metaFields: this.getPluginState().metaFields,
+      metaFields: pluginState.metaFields,
       resumableUploads: this.uppy.state.capabilities.resumableUploads || false,
       startUpload: startUpload,
       pauseUpload: this.uppy.pauseResume,
       retryUpload: this.uppy.retryUpload,
       cancelUpload: cancelUpload,
       fileCardFor: pluginState.fileCardFor,
-      showFileCard: showFileCard,
-      fileCardDone: fileCardDone,
+      toggleFileCard: this.toggleFileCard,
+      saveFileCard: saveFileCard,
       updateDashboardElWidth: this.updateDashboardElWidth,
       maxWidth: this.opts.maxWidth,
       maxHeight: this.opts.maxHeight,
+      showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
       currentWidth: pluginState.containerWidth,
-      isWide: pluginState.containerWidth > 400
+      isWide: pluginState.containerWidth > 400,
+      isTargetDOMEl: pluginState.isTargetDOMEl
     })
   }
 
