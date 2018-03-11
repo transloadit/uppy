@@ -28,11 +28,11 @@ module.exports = class Informer extends Plugin {
         },
         error: {
           text: '#fff',
-          bg: '#e74c3c'
+          bg: '#D32F2F'
         },
         success: {
           text: '#fff',
-          bg: '#7ac824'
+          bg: '#1BB240'
         }
       }
     }
