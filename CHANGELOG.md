@@ -85,7 +85,7 @@ What we need to do to release Uppy 1.0
 
 ## 0.24.0
 
-To be released: 2018-03-01.
+To be released: 2018-03-29.
 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
