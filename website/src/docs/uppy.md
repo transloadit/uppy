@@ -343,8 +343,11 @@ uppy.on('file-removed', (file) => {
 Fired when upload starts.
 
 ```javascript
-uppy.on('upload', () => {
-  console.log('Starting upload...')
+uppy.on('upload', (data) => {
+  // data object consists of `id` with upload id and `fileIDs` array 
+  // with file ids in current upload
+  // data: { id, fileIDs }
+  console.log(`Starting upload ${id} for files ${fileIDs}`)
 })
 ```
 
