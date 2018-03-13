@@ -31,7 +31,7 @@ uppy.on('complete', (result) => {
 
 Drag and Drop, Webcam, basic file manipulation (adding metadata), uploading via tus resumable uploads or XHR/Multipart is all possible using just the uppy client module.
 
-Adding [Uppy Server](/docs/server/) to the mix enables remote sources such as Instagram, Google Drive, Dropbox, and direct urls. Uploads from remote sources are handled server-to-server, so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Uppy Server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
+Adding [Uppy Server](/docs/server/) to the mix enables remote sources such as Instagram, Google Drive, Dropbox, and remote urls. Uploads from remote sources are handled server-to-server, so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Uppy Server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
 
 ## Installation
 

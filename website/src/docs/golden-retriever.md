@@ -35,3 +35,5 @@ if ('serviceWorker' in navigator) {
     })
 }
 ```
+
+Voila, that’s it. Happy retrieving!
