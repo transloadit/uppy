@@ -5,7 +5,7 @@
   font-size: 12px;
   font-weight: 400;
   color: $color-white;
-  background-color: $color-black;
+  background-color: lighten($color-black, 10%);
   // box-shadow: 1px 1px 4px 0 rgba($color-asphalt-gray, 0.3);
   // border-top: 1px solid rgba($color-gray, 0.2);
   z-index: $zIndex-2;
@@ -104,13 +104,19 @@
 .uppy-StatusBar-statusIndicator {
   color: $color-white;
   margin-right: 15px;
+  cursor: pointer;
 }
 
-  button.uppy-StatusBar-statusIndicator {
-    @include reset-button;
-    margin-right: 15px;
-    cursor: pointer;
+  .uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator  {
+    width: 15px;
+    margin-right: 7px;
   }
+
+  // button.uppy-StatusBar-statusIndicator {
+  //   @include reset-button;
+  //   margin-right: 15px;
+  //   cursor: pointer;
+  // }
 
 .uppy-StatusBar-actions {
   display: flex;
@@ -123,34 +129,23 @@
 }
 
 .uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
+  font-size: 1.1em;
   left: 20px;
   right: initial;
 }
 
-// .uppy-StatusBar-actionBtn {
-//   @include reset-button;
-//   font-size: 11px;
-//   line-height: 1em;
-//   font-weight: 400;
-//   padding: 4px 6px;
-//   border-radius: 2px;
-//   cursor: pointer;
-//   transition: all 0.2s;
-// }
+.uppy-StatusBar-actionBtn {
+  font-size: 0.85em;
+  padding: 4px 6px;
+  border-radius: 2px;
+}
 
-//   .uppy-Dashboard--wide .uppy-StatusBar-actionBtn {
-//     font-size: 13px;
-//     padding: 7px 10px;
-//     border-radius: 4px;
-//   }
-
-  .uppy-StatusBar-actionBtn:not(:last-child) {
-    margin-right: 5px;
+  .uppy-Dashboard--wide .uppy-StatusBar-actionBtn {
+    padding: 7px 10px;
   }
 
-  .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn {
-    padding: 13px 30px;
-    font-size: 15px;
+  .uppy-StatusBar-actionBtn:not(:last-child) {
+    margin-right: 10px;
   }
 
   .uppy-StatusBar-actionBtn--upload {
@@ -158,18 +153,15 @@
     color: $color-cornflower-blue;
   }
 
-    .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
-      background-color: $color-cornflower-blue;
-      color: $color-white;
-
-      &:hover {
-        background-color: darken($color-cornflower-blue, 20%);
-      }
-    }
-
   .uppy-StatusBar-actionBtn--retry {
     background-color: $color-white;
     color: $color-red;
+  }
+
+  .uppy-StatusBar-actionBtn--cancel {
+    background-color: lighten($color-asphalt-gray, 8%);
+    border: 1px solid lighten($color-black, 10%);
+    color: $color-white;
   }
 
 .uppy-StatusBar-details {
