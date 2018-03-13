@@ -1,6 +1,7 @@
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const StatusBarUI = require('./StatusBar')
+const statusBarStates = require('./StatusBarStates')
 const { getSpeed } = require('../../core/Utils')
 const { getBytesRemaining } = require('../../core/Utils')
 const { prettyETA } = require('../../core/Utils')
@@ -19,7 +20,7 @@ module.exports = class StatusBar extends Plugin {
     const defaultLocale = {
       strings: {
         uploading: 'Uploading',
-        uploadComplete: 'Upload complete',
+        complete: 'Complete',
         uploadFailed: 'Upload failed',
         pleasePressRetry: 'Please press Retry to upload again',
         paused: 'Paused',
@@ -97,6 +98,37 @@ module.exports = class StatusBar extends Plugin {
     })
   }
 
+  getUploadingState (isAllErrored, isAllComplete, files) {
+    if (isAllErrored) {
+      return statusBarStates.STATE_ERROR
+    }
+
+    if (isAllComplete) {
+      return statusBarStates.STATE_COMPLETE
+    }
+
+    let state = statusBarStates.STATE_WAITING
+    const fileIDs = Object.keys(files)
+    for (let i = 0; i < fileIDs.length; i++) {
+      const progress = files[fileIDs[i]].progress
+      // If ANY files are being uploaded right now, show the uploading state.
+      if (progress.uploadStarted && !progress.uploadComplete) {
+        return statusBarStates.STATE_UPLOADING
+      }
+      // If files are being preprocessed AND postprocessed at this time, we show the
+      // preprocess state. If any files are being uploaded we show uploading.
+      if (progress.preprocess && state !== statusBarStates.STATE_UPLOADING) {
+        state = statusBarStates.STATE_PREPROCESSING
+      }
+      // If NO files are being preprocessed or uploaded right now, but some files are
+      // being postprocessed, show the postprocess state.
+      if (progress.postprocess && state !== statusBarStates.STATE_UPLOADING && state !== statusBarStates.STATE_PREPROCESSING) {
+        state = statusBarStates.STATE_POSTPROCESSING
+      }
+    }
+    return state
+  }
+
   render (state) {
     const files = state.files
 
@@ -154,30 +186,31 @@ module.exports = class StatusBar extends Plugin {
       !isAllErrored &&
       uploadStartedFiles.length > 0
 
-    const resumableUploads = this.uppy.getState().capabilities.resumableUploads || false
+    const resumableUploads = state.capabilities.resumableUploads || false
 
     return StatusBarUI({
       error: state.error,
+      uploadState: this.getUploadingState(isAllErrored, isAllComplete, state.files || {}),
       totalProgress: state.totalProgress,
       totalSize: totalSize,
       totalUploadedSize: totalUploadedSize,
-      uploadStartedFiles: uploadStartedFiles,
+      uploadStarted: uploadStartedFiles.length,
       isAllComplete: isAllComplete,
       isAllPaused: isAllPaused,
       isAllErrored: isAllErrored,
       isUploadStarted: isUploadStarted,
+      complete: completeFiles.length,
+      newFiles: newFiles.length,
+      inProgress: inProgressFiles.length,
+      totalSpeed: totalSpeed,
+      totalETA: totalETA,
+      files: state.files,
       i18n: this.i18n,
       pauseAll: this.uppy.pauseAll,
       resumeAll: this.uppy.resumeAll,
       retryAll: this.uppy.retryAll,
       cancelAll: this.uppy.cancelAll,
       startUpload: this.startUpload,
-      complete: completeFiles.length,
-      newFiles: newFiles.length,
-      inProgress: uploadStartedFiles.length,
-      totalSpeed: totalSpeed,
-      totalETA: totalETA,
-      files: state.files,
       resumableUploads: resumableUploads,
       showProgressDetails: this.opts.showProgressDetails,
       hideUploadButton: this.opts.hideUploadButton,
