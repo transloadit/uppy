@@ -10,10 +10,10 @@ class AuthView extends Component {
     const AuthBlock = () => {
       return <div class="uppy-Provider-auth">
         <div class="uppy-Provider-authIcon">{this.props.pluginIcon()}</div>
-        <h1 class="uppy-Provider-authTitle">Please authenticate with <br /> <span class="uppy-Provider-authTitleName">{this.props.pluginName}</span> to select files</h1>
-        <button type="button" class="uppy-u-reset uppy-c-buttonLarge uppy-c-buttonLarge--blue uppy-Provider-authBtn" onclick={this.props.handleAuth}>Connect to {this.props.pluginName}</button>
+        <h1 class="uppy-Provider-authTitle">Please authenticate with <span class="uppy-Provider-authTitleName">{this.props.pluginName}</span><br /> to select files</h1>
+        <button type="button" class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn" onclick={this.props.handleAuth}>Connect to {this.props.pluginName}</button>
         {this.props.demo &&
-          <button class="uppy-u-reset uppy-c-buttonLarge uppy-c-buttonLarge--blue uppy-Provider-authBtn" onclick={this.props.handleDemoAuth}>Proceed with Demo Account</button>
+          <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn" onclick={this.props.handleDemoAuth}>Proceed with Demo Account</button>
         }
       </div>
     }
