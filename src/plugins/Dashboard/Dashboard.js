@@ -3,7 +3,6 @@ const Tabs = require('./Tabs')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
 const { isTouchDevice } = require('../../core/Utils')
-const { closeIcon } = require('./icons')
 const { h } = require('preact')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
@@ -52,7 +51,7 @@ module.exports = function Dashboard (props) {
           aria-label={props.i18n('closeModal')}
           title={props.i18n('closeModal')}
           onclick={props.closeModal}>
-          {closeIcon()}
+          <span aria-hidden="true">×</span>
         </button>
 
         <div class="uppy-Dashboard-innerWrap">
