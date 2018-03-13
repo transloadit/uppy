@@ -115,7 +115,7 @@ Optionally specify a string of text that explains something about the upload for
 
 ### `metaFields: []`
 
-An array of UI field objects that will be shown when a user clicks “edit” button on that file. Each object requires:
+An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Each object requires:
 
 - `id`, the name of the meta field.
 - `name`, the label shown in the interface.
@@ -131,11 +131,11 @@ An array of UI field objects that will be shown when a user clicks “edit” bu
 })
 ```
 
-Note that this meta data will only be set to a file if it’s entered by user. If you want to set certain default meta field to each file regardless of user actions, set [`meta` in Uppy options](/docs/uppy/#meta).
+Note that this meta data will only be set to a file if it’s entered by the user. If you want to set certain meta field to each file regardless of user actions, set [`meta` in Uppy options](/docs/uppy/#meta).
 
 ### `closeModalOnClickOutside: false`
 
-Set to true to automatically close the modal when the user clicks outside it.
+Set to true to automatically close the modal when the user clicks outside of it.
 
 ### `disablePageScrollWhenModalOpen: true`
 
@@ -143,11 +143,11 @@ By default when Dashboard modal is open, it will disable page scrolling, so when
 
 ### `disableStatusBar: false`
 
-Dashboard ships with `StatusBar` plugin that shows upload progress and pause/resume/cancel buttons. If you want, you can disable the StatusBar to provide your custom solution.
+Dashboard ships with the `StatusBar` plugin that shows upload progress and pause/resume/cancel buttons. If you want, you can disable the StatusBar to provide your custom solution.
 
 ### `disableInformer: false`
 
-Dashboard ships with `Informer` plugin that notifies when the browser is offline, or when it’s time to smile if `Webcam` is taking a picture. If you want, you can disable the Informer and/or provide your custom solution.
+Dashboard ships with the `Informer` plugin that notifies when the browser is offline, or when it’s time to smile if `Webcam` is taking a picture. If you want, you can disable the Informer and/or provide your custom solution.
 
 ### `disableThumbnailGenerator: false`
 

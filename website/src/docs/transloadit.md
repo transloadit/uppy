@@ -12,11 +12,11 @@ The Transloadit plugin can be used to upload files to [Transloadit](https://tran
 ```js
 uppy.use(Transloadit, {
   service: 'https://api2.transloadit.com',
+  params: null,
   waitForEncoding: false,
   waitForMetadata: false,
   importFromUploadURLs: false,
   alwaysRunAssembly: false,
-  params: null,
   signature: null,
   fields: {}
 })
@@ -29,6 +29,31 @@ As of Uppy 0.24 the Transloadit plugin includes the [Tus](/docs/tus) plugin to h
 ### `service`
 
 The Transloadit API URL to use. Defaults to `https://api2.transloadit.com`, which will attempt to route traffic efficiently based on where your users are. You can set this to something like `https://api2-us-east-1.transloadit.com` if you want to use a particular region.
+
+### `params`
+
+The Assembly parameters to use for the upload. See the Transloadit documentation on [Assembly Instructions](https://transloadit.com/docs/#14-assembly-instructions). `params` should be a plain JavaScript object, or a JSON string if you are using the [`signature`](#signature) option.
+
+The `auth.key` Assembly parameter is required. You can also use the `steps` or `template_id` options here as described in the Transloadit documentation.
+
+```js
+uppy.use(Transloadit, {
+  params: {
+    auth: { key: 'YOUR_TRANSLOADIT_KEY' },
+    steps: {
+      encode: {
+        robot: '/video/encode',
+        use: {
+          steps: [ ':original' ],
+          fields: [ 'file_input_field2' ]
+        },
+        preset: 'iphone'
+      }
+    }
+  }
+})
+```
+
 
 ### `waitForEncoding`
 
@@ -66,30 +91,6 @@ In order for this to work, the upload plugin must assign a publically accessible
 ### `alwaysRunAssembly`
 
 When true, always create and run an Assembly when `uppy.upload()` is called, even if no files were selected. This allows running Assemblies that do not receive files, but instead use a robot like [`/s3/import`](https://transloadit.com/docs/transcoding/#s3-import) to download the files from elsewhere, for example for a bulk transcoding job.
-
-### `params`
-
-The Assembly parameters to use for the upload. See the Transloadit documentation on [Assembly Instructions](https://transloadit.com/docs/#14-assembly-instructions). `params` should be a plain JavaScript object, or a JSON string if you are using the [`signature`](#signature) option.
-
-The `auth.key` Assembly parameter is required. You can also use the `steps` or `template_id` options here as described in the Transloadit documentation.
-
-```js
-uppy.use(Transloadit, {
-  params: {
-    auth: { key: 'YOUR_TRANSLOADIT_KEY' },
-    steps: {
-      encode: {
-        robot: '/video/encode',
-        use: {
-          steps: [ ':original' ],
-          fields: [ 'file_input_field2' ]
-        },
-        preset: 'iphone'
-      }
-    }
-  }
-})
-```
 
 ### `signature`
 
