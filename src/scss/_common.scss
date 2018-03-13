@@ -18,7 +18,7 @@
   box-sizing: inherit;
 }
 
-// .uppy *:focus:not(.focus-visible) {
+// .uppy-Root *:focus:not(.focus-visible) {
 //   outline: 0;
 // }
 
@@ -111,20 +111,7 @@
   height: 45px;
 }
 
-// Inputs
-
-.uppy-c-textInput {
-  border: 1px solid rgba($color-gray, 0.5);
-  border-radius: 4px;
-}
-
-  .uppy-c-textInput:focus {
-    border-color: $color-cornflower-blue;
-    outline: none;
-    box-shadow: 0 0 1px 1px rgba($color-cornflower-blue, 0.3);
-  }
-
-// Buttons
+// Utilities
 
 .uppy-u-reset {
   // @include reset-button;
@@ -138,7 +125,7 @@
   border-spacing: 0;
   bottom: auto;
   box-shadow: none;
-  box-sizing: content-box;
+  // box-sizing: content-box;
   caption-side: top;
   clear: none;
   clip: auto;
@@ -154,7 +141,7 @@
   counter-increment: none;
   counter-reset: none;
   cursor: auto;
-  direction: ltr;
+  // direction: ltr;
   display: inline;
   empty-cells: show;
   float: none;
@@ -213,43 +200,95 @@
   all: initial;
 }
 
-.uppy-c-buttonLarge {
-  font-family: inherit;
-  font-weight: 300;
-  font-size: 11px;
-  line-height: 1;
-  padding: 4px 6px;
-  border-radius: 2px;
-  transition: all 0.25s;
-  cursor: pointer;
+// Inputs
+
+.uppy-c-textInput {
+  border: 1px solid rgba($color-gray, 0.5);
   border-radius: 4px;
+  font-size: 15px;
+  line-height: 1.8;
+  padding: 8px 12px;
 }
 
-  .uppy-c-buttonLarge:focus {
+  .uppy-c-textInput:focus {
+    border-color: $color-cornflower-blue;
     outline: none;
-    box-shadow: 0 0 3px 1px rgba($color-cornflower-blue, 0.7);
+    box-shadow: 0 0 1px 1px rgba($color-cornflower-blue, 0.3);
   }
 
-  .uppy-Dashboard--wide .uppy-c-buttonLarge {
-    font-size: 15px;
-    padding: 13px 25px;
-    border-radius: 4px;
+// Buttons
+
+.uppy-c-btn {
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  font-family: inherit;
+  font-size: 1em;
+  line-height: 1;
+  font-weight: 300;
+  transition: all 0.3s;
+  user-select: none;
+}
+
+  .uppy-c-btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
   }
 
-.uppy-c-buttonLarge--blue {
+.uppy-c-btn-primary {
+  // font-size: 13px;
+  padding: 10px 18px;
+  border-radius: 2px;
   background-color: $color-cornflower-blue;
   color: $color-white;
 }
 
-  .uppy-c-buttonLarge--blue:hover {
+  .uppy-Dashboard--wide .uppy-c-btn-primary {
+    // font-size: 15px;
+    padding: 13px 28px;
+    border-radius: 4px;
+  }
+
+  .uppy-c-btn-primary:hover {
     background-color: darken($color-cornflower-blue, 10%);
   }
 
-.uppy-c-buttonLarge--transparent {
+  .uppy-c-btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 3px 1px rgba($color-cornflower-blue, 0.7);
+  }
+
+.uppy-c-btn-link {
+  // font-size: 13px;
+  line-height: 1;
+  padding: 10px 18px;
+  border-radius: 2px;
   background-color: transparent;
-  color: $color-asphalt-gray;
+  color: $color-black;
 }
 
-  .uppy-c-buttonLarge--transparent:hover {
-    color: $color-black;
+  .uppy-Dashboard--wide .uppy-c-btn-link {
+    // font-size: 15px;
+    padding: 13px 28px;
+    border-radius: 4px;
+  }
+
+  .uppy-c-btn-link:hover {
+    text-decoration: underline;
+  }
+
+  .uppy-c-btn-link:focus {
+    outline: none;
+    box-shadow: 0 0 3px 1px rgba($color-cornflower-blue, 0.7);
+  }
+
+.uppy-c-btn--small {
+  font-size: 0.9em;
+  padding: 7px 16px;
+  border-radius: 2px;
+}
+
+  .uppy-Dashboard--wide .uppy-c-btn--small {
+    padding: 8px 10px;
+    border-radius: 2px;
   }

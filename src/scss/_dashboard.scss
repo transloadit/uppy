@@ -79,22 +79,23 @@
   top: 7px;
   right: 7px;
   cursor: pointer;
-  color: lighten($color-asphalt-gray, 20%);
-  transition: all 0.2s;
+  color: rgba($color-asphalt-gray, 0.5);
+  transition: all 0.3s;
+  font-size: 30px;
 
-  .UppyIcon {
-    width: 12px;
-    height: 12px;
-  }
+  // .UppyIcon {
+  //   width: 12px;
+  //   height: 12px;
+  // }
 
   .uppy-Dashboard--wide & {
-    top: 12px;
-    right: 10px;
+    top: 2px;
+    right: 8px;
 
-    .UppyIcon {
-      width: 14px;
-      height: 14px;
-    }
+    // .UppyIcon {
+    //   width: 14px;
+    //   height: 14px;
+    // }
   }
 
   .uppy-Dashboard--modal & {
@@ -269,7 +270,6 @@
   color: $color-cornflower-blue;
 
   .uppy-Dashboard--wide & {
-    // top: 16px;
     font-size: 15px;
     line-height: 50px;
   }
@@ -550,8 +550,8 @@
 }
 
 .uppy-DashboardItem-previewIcon {
-  width: 25%;
-  max-height: 55%;
+  width: 20px;
+  height: 20px;
   z-index: $zIndex-1;
   position: absolute;
   top: 40%;
@@ -559,21 +559,22 @@
   transform: translate(-50%, -40%);
 
   .uppy-Dashboard--wide & {
-    width: 35%;
-    max-height: 80%;
+    width: 25px;
+    height: 25px;
   }
 }
 
 .uppy-DashboardItem-previewType {
   position: absolute;
-  bottom: 13px;
+  bottom: 14px;
   left: 50%;
   transform: translate(-50%, 0);
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 1px;
   color: $color-asphalt-gray;
   z-index: $zIndex-1;
+  user-select: none;
 }
 
 .uppy-DashboardItem-info {
@@ -1022,10 +1023,4 @@
   display: inline-block;
   vertical-align: middle;
   width: 78%;
-  outline: none;
-  font-size: 15px;
-  line-height: 1.8;
-  padding-left: 5px;
-  margin: auto;
-  padding: 8px 12px;
 }

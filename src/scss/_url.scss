@@ -10,18 +10,13 @@
 .uppy-Url-input {
   width: 90%;
   max-width: 650px;
-  height: 50px; 
-  padding-left: 10px;
-  font-size: 15px;
   margin-bottom: 30px;
 }
 
 .uppy-Url-importButton {
-  @include reset-button();
-  color: $color-white;
-  background-color: $color-cornflower-blue;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 14px 34px;
-  border-radius: 4px;
+  padding: 13px 25px;
 }
+
+  .uppy-Dashboard--wide .uppy-Url-importButton {
+    padding: 13px 35px;
+  }
