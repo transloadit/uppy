@@ -316,10 +316,10 @@ module.exports = class Webcam extends Plugin {
     const webcamState = this.getPluginState()
 
     if (!webcamState.cameraReady) {
-      return PermissionsScreen(Object.assign({}, { icon: WebcamIcon }))
+      return <PermissionsScreen icon={WebcamIcon} />
     }
 
-    return h(CameraScreen, Object.assign({}, webcamState, {
+    const CameraScreenProps = Object.assign({}, webcamState, {
       onSnapshot: this.takeSnapshot,
       onStartRecording: this.startRecording,
       onStopRecording: this.stopRecording,
@@ -330,7 +330,9 @@ module.exports = class Webcam extends Plugin {
       recording: webcamState.isRecording,
       mirror: this.opts.mirror,
       src: this.stream
-    }))
+    })
+
+    return <CameraScreen {...CameraScreenProps} />
   }
 
   install () {
