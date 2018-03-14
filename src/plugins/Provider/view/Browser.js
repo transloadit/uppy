@@ -50,7 +50,8 @@ module.exports = (props) => {
         getItemName: props.getItemName,
         getItemIcon: props.getItemIcon,
         handleScroll: props.handleScroll,
-        title: props.title
+        title: props.title,
+        showTitles: props.showTitles
       })}
       <button class="UppyButton--circular UppyButton--blue uppy-ProviderBrowser-doneBtn"
         type="button"

@@ -44,7 +44,8 @@ module.exports = class View {
 
     // set default options
     const defaultOptions = {
-      viewType: 'list'
+      viewType: 'list',
+      showTitles: true
     }
 
     // merge default options with the ones set by user
@@ -582,7 +583,8 @@ module.exports = class View {
       handleScroll: this.handleScroll,
       done: this.donePicking,
       title: this.plugin.title,
-      viewType: this.opts.viewType
+      viewType: this.opts.viewType,
+      showTitles: this.opts.showTitles
     })
 
     return Browser(browserProps)

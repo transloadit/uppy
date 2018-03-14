@@ -35,7 +35,8 @@ module.exports = (props) => {
             isDisabled: isDisabled,
             isChecked: isChecked,
             handleCheckboxClick: (e) => props.toggleCheckbox(e, folder),
-            columns: props.columns
+            columns: props.columns,
+            showTitles: props.showTitles
           })
         })}
         {props.files.map(file => {
@@ -48,7 +49,8 @@ module.exports = (props) => {
             isDisabled: false,
             isChecked: props.isChecked(file),
             handleCheckboxClick: (e) => props.toggleCheckbox(e, file),
-            columns: props.columns
+            columns: props.columns,
+            showTitles: props.showTitles
           })
         })}
       </ul>

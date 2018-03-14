@@ -41,7 +41,7 @@ module.exports = (props) => {
         aria-label={`Select ${props.title}`}
         tabindex="0"
         onclick={handleItemClick}>
-        {props.getItemIcon()} {props.title}
+        {props.getItemIcon()} {props.showTitles && props.title}
       </button>
     </li>
   )
