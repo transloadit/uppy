@@ -115,10 +115,11 @@ data:
   UPPYSERVER_AWS_REGION: "AWS REGION"
   UPPYSERVER_OAUTH_DOMAIN: "sub.domain.com"
   UPPYSERVER_UPLOAD_URLS: "http://master.tus.io/files/,https://master.tus.io/files/"
-kind: ConfigMap
+kind: Secret
 metadata:
   name: uppy-server-env
   namespace: uppy
+type: Opaque
 ```
 
 > uppy-server-deployment.yml
@@ -151,7 +152,7 @@ spec:
           requests:
             memory: 100Mi
         envFrom:
-        - configMapRef:
+        - secretRef:
             name: uppy-server-env
         ports:
         - containerPort: 3020
