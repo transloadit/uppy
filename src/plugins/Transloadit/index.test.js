@@ -98,7 +98,7 @@ describe('Transloadit', () => {
     })
   })
 
-  it('Should merge files with same parameters into one assembly', () => {
+  it('Should merge files with same parameters into one Assembly', () => {
     const uppy = new Core({ autoProceed: false })
 
     uppy.use(Transloadit, {
@@ -145,11 +145,11 @@ describe('Transloadit', () => {
     })
   })
 
-  it('Does not create an assembly if no files are being uploaded', () => {
+  it('Does not create an Assembly if no files are being uploaded', () => {
     const uppy = new Core()
     uppy.use(Transloadit, {
       getAssemblyOptions () {
-        throw new Error('should not create assembly')
+        throw new Error('should not create Assembly')
       }
     })
     uppy.run()
@@ -157,7 +157,7 @@ describe('Transloadit', () => {
     return uppy.upload()
   })
 
-  it('Creates an assembly if no files are being uploaded but `alwaysRunAssembly` is enabled', () => {
+  it('Creates an Assembly if no files are being uploaded but `alwaysRunAssembly` is enabled', () => {
     const uppy = new Core()
     uppy.use(Transloadit, {
       alwaysRunAssembly: true,
