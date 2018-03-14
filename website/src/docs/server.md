@@ -396,8 +396,6 @@ npm run start:dev
 
 This would get the uppy-server running on `http://localhost:3020`.
 
-It also expects the [uppy client](https://github.com/transloadit/uppy) to be running on `http://localhost:3452` by default.
-
 ## Running example
 
 You can checkout uppy-server [repository](https://github.com/transloadit/uppy-server) to see how we run [server.uppy.io](https://server.uppy.io).
