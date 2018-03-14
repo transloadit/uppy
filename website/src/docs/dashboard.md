@@ -25,7 +25,6 @@ uppy.use(Dashboard, {
   plugins: [],
   maxWidth: 750,
   maxHeight: 550,
-  semiTransparent: false,
   showProgressDetails: false,
   hideUploadButton: false,
   hideProgressAfterFinish: false,
