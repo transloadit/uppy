@@ -37,7 +37,8 @@ module.exports = class Instagram extends Plugin {
 
   install () {
     this.view = new View(this, {
-      viewType: 'grid'
+      viewType: 'grid',
+      showTitles: false
     })
     // Set default state for Instagram
     this.setPluginState({
@@ -98,6 +99,10 @@ module.exports = class Instagram extends Plugin {
   }
 
   getItemName (item) {
+    if (item && item['created_time']) {
+      let date = new Date(item['created_time'] * 1000).toUTCString()
+      return `Instagram ${date}`
+    }
     return ''
   }
 
