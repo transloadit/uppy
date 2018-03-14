@@ -48,6 +48,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
 - [ ] feature: React Native support
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
+- [ ] It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them?
+Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
 - [ ] test: add tests for `npm pack`
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
@@ -55,6 +57,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] add typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
 - [ ] transloadit plugin: maybe add option to disable uppy server endpoint overrides
 - [ ] dragdrop: change border color when files doesn’t pass restrictions on drag https://github.com/transloadit/uppy/issues/607
+- [ ] website: automatically generated page with all locale strings used in plugins
+- [ ] transloadit: option for StatusBar’s upload button to act as a "Start assembly" button? Useful if an assembly uses only import robots, such as /s3/import to start a batch transcoding job.
 
 ## 1.0 Goals
 
