@@ -53,11 +53,6 @@
   min-height: 300px;
 }
 
-.uppy-Dashboard--semiTransparent .uppy-Dashboard-inner {
-  background-color: rgba($color-white, 0.8);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-}
-
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
   position: fixed;
   top: 0;

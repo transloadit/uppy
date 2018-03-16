@@ -16,7 +16,7 @@ cd uppy
 npm install
 ```
 
-Our website's examples section is also our playground, read "Website Development"'s "Local Previews" section to get up and running.
+Our website’s examples section is also our playground, please read [Local Previews](#Local-Previews) section to get up and running.
 
 ## Tests
 
@@ -39,13 +39,15 @@ After you’ve installed and launched the selenium standalone server, run:
 
 `npm run test:acceptance:local`
 
+These tests are also run automatically on Travis builds with [SauceLabs](https://saucelabs.com/) cloud service using different OSes.
+
 ## Website Development
 
-We keep the [uppy.io](http://uppy.io) website in `./website` for so it's easy to keep docs & code in sync as we're still iterating at high velocity. For those reading this screaming murder, [HashiCorp does this](https://github.com/hashicorp/terraform/tree/master/website) for all their projects, and it's working well for them on a scale vastly more impressive than Uppy's.
+We keep the [uppy.io](http://uppy.io) website in `./website` so it’s easy to keep docs & code in sync as we’re still iterating at high velocity.
 
 The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch with Hexo's build at every change to `master`). The content is written in Markdown and located in `./website/src`. Feel free to fork & hack!
 
-Even though bundled in this repo, the website is regarded as a separate project. So it has its own `package.json` and we aim keep the surface where the two projects interface as small as possible. `./website/update.js` is called during website builds to inject the Uppy knowledge into the site.
+Even though bundled in this repo, the website is regarded as a separate project. So it has its own `package.json` and we aim to keep the surface where the two projects interface as small as possible. `./website/update.js` is called during website builds to inject the Uppy knowledge into the site.
 
 ### Local Previews
 
