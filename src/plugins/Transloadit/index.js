@@ -25,7 +25,7 @@ module.exports = class Transloadit extends Plugin {
     const defaultLocale = {
       strings: {
         creatingAssembly: 'Preparing upload...',
-        creatingAssemblyFailed: 'Transloadit: Could not create assembly',
+        creatingAssemblyFailed: 'Transloadit: Could not create Assembly',
         encoding: 'Encoding...'
       }
     }
@@ -144,7 +144,7 @@ module.exports = class Transloadit extends Plugin {
   createAssembly (fileIDs, uploadID, options) {
     const pluginOptions = this.opts
 
-    this.uppy.log('[Transloadit] create assembly')
+    this.uppy.log('[Transloadit] create Assembly')
 
     return this.client.createAssembly({
       params: options.params,
@@ -227,7 +227,7 @@ module.exports = class Transloadit extends Plugin {
       return this.connectSocket(assembly)
         .then(() => assembly)
     }).then((assembly) => {
-      this.uppy.log('[Transloadit] Created assembly')
+      this.uppy.log('[Transloadit] Created Assembly')
       return assembly
     }).catch((err) => {
       this.uppy.info(this.i18n('creatingAssemblyFailed'), 'error', 0)
@@ -396,7 +396,7 @@ module.exports = class Transloadit extends Plugin {
 
       const newAssemblies = state.assemblies
       const previousAssemblies = prevState.assemblies
-      this.uppy.log('[Transloadit] Current assembly status after restore')
+      this.uppy.log('[Transloadit] Current Assembly status after restore')
       this.uppy.log(newAssemblies)
       this.uppy.log('[Transloadit] Assembly status before restore')
       this.uppy.log(previousAssemblies)
@@ -689,10 +689,10 @@ module.exports = class Transloadit extends Plugin {
       const onAssemblyFinished = (assembly) => {
         // An assembly for a different upload just finished. We can ignore it.
         if (assemblyIDs.indexOf(assembly.assembly_id) === -1) {
-          this.uppy.log(`[Transloadit] afterUpload(): Ignoring finished assembly ${assembly.assembly_id}`)
+          this.uppy.log(`[Transloadit] afterUpload(): Ignoring finished Assembly ${assembly.assembly_id}`)
           return
         }
-        this.uppy.log(`[Transloadit] afterUpload(): Got assembly finish ${assembly.assembly_id}`)
+        this.uppy.log(`[Transloadit] afterUpload(): Got Assembly finish ${assembly.assembly_id}`)
 
         // TODO set the `file.uploadURL` to a result?
         // We will probably need an option here so the plugin user can tell us
@@ -709,10 +709,10 @@ module.exports = class Transloadit extends Plugin {
       const onAssemblyError = (assembly, error) => {
         // An assembly for a different upload just errored. We can ignore it.
         if (assemblyIDs.indexOf(assembly.assembly_id) === -1) {
-          this.uppy.log(`[Transloadit] afterUpload(): Ignoring errored assembly ${assembly.assembly_id}`)
+          this.uppy.log(`[Transloadit] afterUpload(): Ignoring errored Assembly ${assembly.assembly_id}`)
           return
         }
-        this.uppy.log(`[Transloadit] afterUpload(): Got assembly error ${assembly.assembly_id}`)
+        this.uppy.log(`[Transloadit] afterUpload(): Got Assembly error ${assembly.assembly_id}`)
         this.uppy.log(error)
 
         // Clear postprocessing state for all our files.
