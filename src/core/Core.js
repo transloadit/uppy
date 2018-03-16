@@ -93,6 +93,7 @@ class Uppy {
 
     this.preProcessors = []
     this.uploaders = []
+    this.removers = []
     this.postProcessors = []
 
     this.store = this.opts.store
@@ -226,14 +227,25 @@ class Uppy {
     }
   }
 
-  addUploader (fn) {
-    this.uploaders.push(fn)
+  addUploader (handleUpload) {
+    this.uploaders.push(handleUpload)
   }
 
-  removeUploader (fn) {
-    const i = this.uploaders.indexOf(fn)
-    if (i !== -1) {
-      this.uploaders.splice(i, 1)
+  addRemover (handleRemove) {
+    this.removers.push(handleRemove)
+  }
+
+  removeUploader (handleUpload) {
+    const uploaderIndex = this.uploaders.indexOf(handleUpload)
+    if (uploaderIndex !== -1) {
+      this.uploaders.splice(uploaderIndex, 1)
+    }
+  }
+
+  removeRemover (handleRemove) {
+    const removerIndex = this.removers.indexOf(handleRemove)
+    if (removerIndex !== -1) {
+      this.removers.splice(removerIndex, 1)
     }
   }
 
@@ -408,6 +420,10 @@ class Uppy {
     const updatedFiles = Object.assign({}, files)
     const removedFile = updatedFiles[fileID]
     delete updatedFiles[fileID]
+
+    this.removers.forEach((remover) => {
+      remover(fileID)
+    })
 
     // Remove this file from its `currentUpload`.
     const updatedUploads = Object.assign({}, currentUploads)

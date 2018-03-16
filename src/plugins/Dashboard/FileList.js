@@ -39,6 +39,7 @@ module.exports = (props) => {
         cancelUpload: props.cancelUpload,
         retryUpload: props.retryUpload,
         resumableUploads: props.resumableUploads,
+        removeAfterUpload: props.removeAfterUpload,
         isWide: props.isWide
       })
     })}

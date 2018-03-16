@@ -10,6 +10,7 @@
   <input type="checkbox" id="opts-Dropbox" checked/><label for="opts-Dropbox">Dropbox</label>
   <input type="checkbox" id="opts-Instagram" checked/><label for="opts-Instagram">Instagram</label>
   <input type="checkbox" id="opts-Url" checked/><label for="opts-Url">Url</label>
+  <input type="checkbox" id="opts-removeAfterUpload" /><label for="opts-removeAfterUpload">Remove after upload</label>
 </div>
 
 <!-- Modal trigger -->
@@ -30,7 +31,8 @@
     Instagram: document.querySelector('#opts-Instagram'),
     Url: document.querySelector('#opts-Url'),
     autoProceed: document.querySelector('#opts-autoProceed'),
-    restrictions: document.querySelector('#opts-restrictions')
+    restrictions: document.querySelector('#opts-restrictions'),
+    removeAfterUpload: document.querySelector('#opts-removeAfterUpload')
   }
 
   var defaultOpts = {
@@ -41,7 +43,8 @@
     Dropbox: false,
     Url: true,
     autoProceed: false,
-    restrictions: false
+    restrictions: false,
+    removeAfterUpload: false
   }
 
   // try to get options from localStorage, if its empty, set to defaultOpts
@@ -50,7 +53,7 @@
   } catch (err) {
     window.uppyOptions = {}
   }
-  
+
   if (isObjEmpty(window.uppyOptions)) {
     window.uppyOptions = defaultOpts
     localStorage.setItem('uppyOptions', JSON.stringify(window.uppyOptions))
