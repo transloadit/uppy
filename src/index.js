@@ -18,6 +18,9 @@ const StatusBar = require('./plugins/StatusBar')
 const ProgressBar = require('./plugins/ProgressBar')
 const Informer = require('./plugins/Informer')
 
+// Modifiers
+const ImageCompressor = require('./plugins/ImageCompressor')
+
 // Uploaders
 const Tus = require('./plugins/Tus')
 const XHRUpload = require('./plugins/XHRUpload')
@@ -51,5 +54,6 @@ module.exports = {
   Form,
   ThumbnailGenerator,
   GoldenRetriever,
-  ReduxDevTools
+  ReduxDevTools,
+  ImageCompressor
 }
