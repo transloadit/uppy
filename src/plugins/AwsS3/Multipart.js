@@ -134,11 +134,11 @@ module.exports = class AwsS3Multipart extends Plugin {
           err.message = `Failed because: ${err.message}`
           reject(err)
         },
-        onSuccess: () => {
-          this.uppy.emit('upload-success', file, upload, upload.url)
+        onSuccess: ({ location }) => {
+          this.uppy.emit('upload-success', file, upload, location)
 
-          if (upload.url) {
-            this.uppy.log('Download ' + upload.file.name + ' from ' + upload.url)
+          if (location) {
+            this.uppy.log('Download ' + upload.file.name + ' from ' + location)
           }
 
           resolve(upload)

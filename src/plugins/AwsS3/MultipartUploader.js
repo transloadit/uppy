@@ -226,7 +226,7 @@ class MultipartUploader {
         parts: this.parts
       })
     ).then((result) => {
-      this.options.onSuccess()
+      this.options.onSuccess(result)
     }, (err) => {
       this._onError(err)
     })
