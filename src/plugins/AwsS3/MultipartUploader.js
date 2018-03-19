@@ -6,7 +6,9 @@ const defaultOptions = {
   onProgress () {},
   onPartComplete () {},
   onSuccess () {},
-  onError (err) { console.error(err) }
+  onError (err) {
+    throw err
+  }
 }
 
 function remove (arr, el) {
@@ -237,6 +239,10 @@ class MultipartUploader {
       key: this.key,
       uploadId: this.uploadId
     })
+  }
+
+  _onError (err) {
+    this.options.onError(err)
   }
 
   start () {
