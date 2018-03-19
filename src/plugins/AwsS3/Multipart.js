@@ -1,20 +1,20 @@
 const Plugin = require('../../core/Plugin')
-const Translator = require('../../core/Translator')
 const { limitPromises } = require('../../core/Utils')
 const Uploader = require('./MultipartUploader')
+
+function handleResponse (response) {
+  if (response.ok) return response.json()
+  return response.json().then((err) => {
+    throw err
+  })
+}
 
 module.exports = class AwsS3Multipart extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
-    this.id = 'AwsS3'
-    this.title = 'AWS S3'
-
-    const defaultLocale = {
-      strings: {
-        preparingUpload: 'Preparing upload...'
-      }
-    }
+    this.id = 'AwsS3Multipart'
+    this.title = 'AWS S3 Multipart'
 
     const defaultOptions = {
       timeout: 30 * 1000,
@@ -23,18 +23,11 @@ module.exports = class AwsS3Multipart extends Plugin {
       listParts: this.listParts.bind(this),
       prepareUploadPart: this.prepareUploadPart.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
-      completeMultipartUpload: this.completeMultipartUpload.bind(this),
-      locale: defaultLocale
+      completeMultipartUpload: this.completeMultipartUpload.bind(this)
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
-    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
-    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
-    this.translator = new Translator({ locale: this.locale })
-    this.i18n = this.translator.translate.bind(this.translator)
-
-    this.prepareUpload = this.prepareUpload.bind(this)
     this.upload = this.upload.bind(this)
 
     if (typeof this.opts.limit === 'number' && this.opts.limit !== 0) {
@@ -58,7 +51,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     return fetch(`${this.opts.host}/s3/multipart?filename=${filename}&type=${type}`, {
       method: 'post',
       headers: { accept: 'application/json' }
-    }).then((response) => response.json())
+    }).then(handleResponse)
   }
 
   listParts (file, { key, uploadId }) {
@@ -68,7 +61,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     return fetch(`${this.opts.host}/s3/multipart/${uploadId}?key=${filename}`, {
       method: 'get',
       headers: { accept: 'application/json' }
-    }).then((response) => response.json())
+    }).then(handleResponse)
   }
 
   prepareUploadPart (file, { key, uploadId, number }) {
@@ -78,7 +71,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     return fetch(`${this.opts.host}/s3/multipart/${uploadId}/${number}?key=${filename}`, {
       method: 'get',
       headers: { accept: 'application/json' }
-    }).then((response) => response.json())
+    }).then(handleResponse)
   }
 
   completeMultipartUpload (file, { key, uploadId, parts }) {
@@ -93,7 +86,7 @@ module.exports = class AwsS3Multipart extends Plugin {
         'content-type': 'application/json'
       },
       body: JSON.stringify({ parts })
-    }).then((response) => response.json())
+    }).then(handleResponse)
   }
 
   abortMultipartUpload (file, { key, uploadId }) {
@@ -104,59 +97,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     return fetch(`${this.opts.host}/s3/multipart/${uploadIdEnc}?key=${filename}`, {
       method: 'delete',
       headers: { accept: 'application/json' }
-    }).then((response) => response.json())
-  }
-
-  prepareUpload (fileIDs) {
-    fileIDs.forEach((id) => {
-      const file = this.uppy.getFile(id)
-      this.uppy.emit('preprocess-progress', file, {
-        mode: 'determinate',
-        message: this.i18n('preparingUpload'),
-        value: 0
-      })
-    })
-
-    const createMultipartUpload = this.limitRequests(this.opts.createMultipartUpload)
-
-    return Promise.all(
-      fileIDs.map((id) => {
-        const file = this.uppy.getFile(id)
-        if (file.s3Multipart && file.s3Multipart.uploadId) {
-          return Promise.resolve(file.s3Multipart)
-        }
-
-        const createPromise = Promise.resolve()
-          .then(() => createMultipartUpload(file))
-        return createPromise.then((result) => {
-          const valid = typeof result === 'object' && result &&
-            typeof result.uploadId === 'string' &&
-            typeof result.key === 'string'
-          if (!valid) {
-            throw new TypeError(`AwsS3/Multipart: Got incorrect result from 'createMultipartUpload()' for file '${file.name}', expected an object '{ uploadId, key }'.`)
-          }
-          return result
-        }).then((result) => {
-          this.uppy.emit('preprocess-progress', file, {
-            mode: 'determinate',
-            message: this.i18n('preparingUpload'),
-            value: 1
-          })
-
-          this.uppy.setFileState(file.id, {
-            s3Multipart: Object.assign({
-              parts: []
-            }, result)
-          })
-          this.uppy.emit('preprocess-complete', file)
-
-          return result
-        }).catch((error) => {
-          this.uppy.emit('upload-error', file, error)
-          throw error
-        })
-      })
-    )
+    }).then(handleResponse)
   }
 
   uploadFile (file) {
@@ -165,9 +106,11 @@ module.exports = class AwsS3Multipart extends Plugin {
         // .bind to pass the file object to each handler.
         createMultipartUpload: this.limitRequests(this.opts.createMultipartUpload.bind(this, file)),
         listParts: this.limitRequests(this.opts.listParts.bind(this, file)),
-        prepareUploadPart: this.limitRequests(this.opts.prepareUploadPart.bind(this, file)),
+        prepareUploadPart: this.opts.prepareUploadPart.bind(this, file),
         completeMultipartUpload: this.limitRequests(this.opts.completeMultipartUpload.bind(this, file)),
         abortMultipartUpload: this.limitRequests(this.opts.abortMultipartUpload.bind(this, file)),
+
+        limit: this.opts.limit || 5,
         onStart: (data) => {
           const cFile = this.uppy.getFile(file.id)
           this.uppy.setFileState(file.id, {

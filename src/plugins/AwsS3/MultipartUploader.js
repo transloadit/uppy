@@ -43,6 +43,7 @@ class MultipartUploader {
     this.chunks = chunks
     this.chunkState = chunks.map(() => ({
       uploaded: 0,
+      busy: false,
       done: false
     }))
   }
@@ -62,7 +63,7 @@ class MultipartUploader {
 
       this.options.onStart(result)
     }).then(() => {
-      if (!this.isPaused) this._uploadParts()
+      this._uploadParts()
     })
   }
 
@@ -94,6 +95,8 @@ class MultipartUploader {
   }
 
   _uploadParts () {
+    if (this.isPaused) return
+
     const need = this.options.limit - this.uploading.length
     if (need === 0) return
 
@@ -106,7 +109,7 @@ class MultipartUploader {
     const candidates = []
     for (let i = 0; i < this.chunkState.length; i++) {
       const state = this.chunkState[i]
-      if (state.done) continue
+      if (state.done || state.busy) continue
 
       candidates.push(i)
       if (candidates.length >= need) {
@@ -121,6 +124,8 @@ class MultipartUploader {
 
   _uploadPart (index) {
     const body = this.chunks[index]
+    this.chunkState[index].busy = true
+
     return Promise.resolve(
       this.options.prepareUploadPart({
         key: this.key,
@@ -168,8 +173,6 @@ class MultipartUploader {
     xhr.open('PUT', url, true)
     xhr.responseType = 'text'
 
-    xhr._id = Math.random()
-
     this.uploading.push(xhr)
 
     xhr.upload.addEventListener('progress', (ev) => {
@@ -179,13 +182,14 @@ class MultipartUploader {
     })
 
     xhr.addEventListener('abort', (ev) => {
-      console.log('abort', ev)
       remove(this.uploading, ev.target)
+      this.chunkState[index].busy = false
     })
 
     xhr.addEventListener('load', (ev) => {
-      console.log('load', ev)
       remove(this.uploading, ev.target)
+      this.chunkState[index].busy = false
+
       if (ev.target.status < 200 || ev.target.status >= 300) {
         this._onError(new Error('Non 2xx'))
         return
@@ -201,6 +205,7 @@ class MultipartUploader {
 
     xhr.addEventListener('error', (ev) => {
       remove(this.uploading, ev.target)
+      this.chunkState[index].busy = false
 
       const error = new Error('Unknown error')
       error.source = ev.target
@@ -211,6 +216,9 @@ class MultipartUploader {
   }
 
   _completeUpload () {
+    // Parts may not have completed uploading in sorted order, if limit > 1.
+    this.parts.sort((a, b) => a.PartNumber - b.PartNumber)
+
     return Promise.resolve(
       this.options.completeMultipartUpload({
         key: this.key,
@@ -232,6 +240,7 @@ class MultipartUploader {
   }
 
   start () {
+    this.isPaused = false
     if (this.uploadId) {
       this._resumeUpload()
     } else {
