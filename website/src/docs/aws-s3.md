@@ -173,41 +173,16 @@ See the [aws-presigned-url example in the uppy repository](https://github.com/tr
 
 ### S3 Alternatives
 
-Many other object storage providers have an identical API to S3, so you can use the AwsS3 plugin with them. You do have to provide a custom signing endpoint for these providers. You can use the official AWS SDK for the server-side language of your choice to create one of these endpoints fairly easily.
+Many other object storage providers have an identical API to S3, so you can use the AwsS3 plugin with them. To use them with uppy-server, you can set the `UPPYSERVER_AWS_ENDPOINT` variable to the endpoint of your preferred service.
 
-For example, with DigitalOcean Spaces, you could use the client-side AwsS3 plugin configuration from the [previous example](#Generating-a-presigned-upload-URL-server-side), and create a signing endpoint using [express](https://expressjs.com) and the [aws-sdk](https://npmjs.com/package/aws-sdk) for Node.js:
+For example, with DigitalOcean Spaces, you could do something like this:
 
-```js
-const S3 = require('aws-sdk/clients/s3')
-const app = require('express')()
-
-const s3 = new S3({
-  endpoint: 'YOUR_REGION.digitaloceanspaces.com',
-  accessKeyId: 'YOUR_ACCESS_KEY',
-  secretAccessKey: 'YOUR_SECRET_KEY'
-})
-
-app.post('/params', (req, res) => {
-  const { filename, contentType } = req.body
-
-  s3.getSignedUrl('putObject', {
-    Bucket: 'YOUR_SPACE_NAME',
-    Key: filename,
-    ContentType: contentType,
-    Expires: 5 * 60 * 1000 // 5 minutes
-  }, (err, data) => {
-    if (err) return next(err)
-
-    res.setHeader('content-type', 'application/json')
-    res.end(JSON.stringify({
-      method: 'put',
-      url: data
-    }, null, 2))
-  })
-})
-
-app.listen(8080)
 ```
+export UPPYSERVER_AWS_ENDPOINT="{region}.digitaloceanspaces.com"
+export UPPYSERVER_AWS_BUCKET="my-space-name"
+```
+
+The `{region}` string will be replaced by the contents of the `UPPYSERVER_AWS_REGION` environment variable.
 
 For a working example that you can run and play around with, see the [digitalocean-spaces](https://github.com/transloadit/uppy/tree/master/examples/digitalocean-spaces) folder in the Uppy repository.
 
