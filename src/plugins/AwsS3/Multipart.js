@@ -220,7 +220,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       this.uppy.on('file-removed', (removed) => {
         if (file.id !== removed.id) return
-        upload.abort()
+        upload.abort({ really: true })
         resolve(`upload ${removed.id} was removed`)
       })
 
@@ -238,7 +238,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       })
 
       this.uppy.on('cancel-all', () => {
-        upload.abort()
+        upload.abort({ really: true })
       })
 
       this.uppy.on('resume-all', () => {

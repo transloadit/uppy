@@ -226,6 +226,7 @@ class MultipartUploader {
 
   _abortUpload () {
     this.options.abortMultipartUpload({
+      key: this.key,
       uploadId: this.uploadId
     })
   }
@@ -243,7 +244,9 @@ class MultipartUploader {
     this.isPaused = true
   }
 
-  abort (really = false) {
+  abort (opts = {}) {
+    const really = opts.really || false
+
     if (!really) return this.pause()
 
     this._abortUpload()
