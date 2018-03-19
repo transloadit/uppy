@@ -134,11 +134,11 @@ module.exports = class AwsS3Multipart extends Plugin {
           err.message = `Failed because: ${err.message}`
           reject(err)
         },
-        onSuccess: ({ location }) => {
-          this.uppy.emit('upload-success', file, upload, location)
+        onSuccess: (result) => {
+          this.uppy.emit('upload-success', file, upload, result.location)
 
-          if (location) {
-            this.uppy.log('Download ' + upload.file.name + ' from ' + location)
+          if (result.location) {
+            this.uppy.log('Download ' + upload.file.name + ' from ' + result.location)
           }
 
           resolve(upload)
@@ -158,8 +158,6 @@ module.exports = class AwsS3Multipart extends Plugin {
           this.uppy.emit('s3-multipart:part-uploaded', cFile, part)
         }
       }, file.s3Multipart))
-
-      console.log('uploader', upload)
 
       this.uppy.on('file-removed', (removed) => {
         if (file.id !== removed.id) return
