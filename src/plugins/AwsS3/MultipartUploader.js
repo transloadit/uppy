@@ -249,7 +249,10 @@ class MultipartUploader {
   }
 
   pause () {
-    this.uploading.forEach((xhr) => xhr.abort())
+    const inProgress = this.uploading.slice()
+    inProgress.forEach((xhr) => {
+      xhr.abort()
+    })
     this.isPaused = true
   }
 
