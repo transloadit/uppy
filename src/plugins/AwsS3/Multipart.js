@@ -1,29 +1,7 @@
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const { limitPromises } = require('../../core/Utils')
-
-const MB = 1024 * 1024
-const INTENTIONAL_CANCEL = new Error('Intentional cancel')
-const INTENTIONAL_PAUSE = new Error('Intentional pause')
-
-/**
- * Create a wrapper around an event emitter with a `remove` method to remove
- * all events that were added using the wrapped emitter.
- */
-function createEventTracker (emitter) {
-  const events = []
-  return {
-    on (event, fn) {
-      events.push([ event, fn ])
-      return emitter.on(event, fn)
-    },
-    remove () {
-      events.forEach(([ event, fn ]) => {
-        emitter.off(event, fn)
-      })
-    }
-  }
-}
+const Uploader = require('./MultipartUploader')
 
 module.exports = class AwsS3Multipart extends Plugin {
   constructor (uppy, opts) {
@@ -42,6 +20,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       timeout: 30 * 1000,
       limit: 0,
       createMultipartUpload: this.createMultipartUpload.bind(this),
+      listParts: this.listParts.bind(this),
       prepareUploadPart: this.prepareUploadPart.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
@@ -65,18 +44,6 @@ module.exports = class AwsS3Multipart extends Plugin {
     }
   }
 
-  splitFile (file) {
-    const chunks = []
-    const chunkSize = Math.max(Math.ceil(file.size / 10000), 5 * MB)
-
-    for (let i = 0; i < file.size; i += chunkSize) {
-      const end = Math.min(file.size, i + chunkSize)
-      chunks.push(file.slice(i, end))
-    }
-
-    return chunks
-  }
-
   assertHost () {
     if (!this.opts.host) {
       throw new Error('Expected a `host` option containing an uppy-server address.')
@@ -94,6 +61,16 @@ module.exports = class AwsS3Multipart extends Plugin {
     }).then((response) => response.json())
   }
 
+  listParts (file, { key, uploadId }) {
+    this.assertHost()
+
+    const filename = encodeURIComponent(key)
+    return fetch(`${this.opts.host}/s3/multipart/${uploadId}?key=${filename}`, {
+      method: 'get',
+      headers: { accept: 'application/json' }
+    }).then((response) => response.json())
+  }
+
   prepareUploadPart (file, { key, uploadId, number }) {
     this.assertHost()
 
@@ -102,76 +79,6 @@ module.exports = class AwsS3Multipart extends Plugin {
       method: 'get',
       headers: { accept: 'application/json' }
     }).then((response) => response.json())
-  }
-
-  uploadPart (file, url, partNumber, body, onProgress) {
-    this.uppy.log(`Uploading chunk #${partNumber} of ${body.size} bytes to ${url}`)
-    return new Promise((resolve, reject) => {
-      var xhr = new XMLHttpRequest()
-      xhr.open('PUT', url, true)
-
-      const events = createEventTracker(this.uppy)
-
-      xhr.upload.addEventListener('progress', (ev) => {
-        if (!ev.lengthComputable) return
-
-        onProgress(ev.loaded, ev.total)
-      })
-
-      xhr.addEventListener('load', (ev) => {
-        events.remove()
-        if (ev.target.status < 200 || ev.target.status >= 300) {
-          reject(new Error('Non 2xx'))
-          return
-        }
-
-        onProgress(body.size)
-
-        // NOTE This must be allowed by CORS.
-        const etag = ev.target.getResponseHeader('ETag')
-
-        // Store completed parts in state.
-        const cFile = this.uppy.getFile(file.id)
-        this.uppy.setFileState(file.id, {
-          s3Multipart: Object.assign({}, cFile.s3Multipart, {
-            parts: [
-              ...cFile.s3Multipart.parts,
-              { partNumber, etag }
-            ]
-          })
-        })
-
-        this.uppy.emit('s3-multipart:part-uploaded', cFile, {
-          partNumber,
-          etag
-        })
-
-        resolve({ etag })
-      })
-
-      xhr.addEventListener('error', (ev) => {
-        events.remove()
-        const error = new Error('Unknown error')
-        error.source = ev.target
-        reject(error)
-      })
-
-      events.on('upload-pause', (fileID, isPaused) => {
-        if (fileID === file.id && isPaused) {
-          abort(INTENTIONAL_PAUSE)
-        }
-      })
-      events.on('pause-all', () => abort(INTENTIONAL_PAUSE))
-      events.on('cancel-all', () => abort(INTENTIONAL_CANCEL))
-
-      function abort (reason) {
-        xhr.abort()
-        events.remove()
-        reject(reason)
-      }
-
-      xhr.send(body)
-    })
   }
 
   completeMultipartUpload (file, { key, uploadId, parts }) {
@@ -253,102 +160,98 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   uploadFile (file) {
-    const chunks = this.splitFile(file.data)
-
-    const completeMultipartUpload = this.limitRequests(this.opts.completeMultipartUpload)
-
-    this.uppy.emit('upload-started', file)
-
-    const total = file.size
-    // Keep track of progress for chunks individually, so it's easy to reset progress if one of them fails.
-    const currentProgress = chunks.map(() => 0)
-
-    const doUploadPart = (chunk, index) => {
-      const cFile = this.uppy.getFile(file.id)
-      if (cFile.progress.isPaused) return Promise.reject(INTENTIONAL_PAUSE)
-
-      return Promise.resolve(
-        this.opts.prepareUploadPart(file, {
-          key: file.s3Multipart.key,
-          uploadId: file.s3Multipart.uploadId,
-          body: chunk,
-          number: index + 1
-        })
-      ).then((result) => {
-        const valid = typeof result === 'object' && result &&
-          typeof result.url === 'string'
-        if (!valid) {
-          throw new TypeError(`AwsS3/Multipart: Got incorrect result from 'prepareUploadPart()' for file '${file.name}', expected an object '{ url }'.`)
-        }
-        return result
-      }).then(({ url }) => {
-        return this.uploadPart(file, url, index + 1, chunk, (current) => {
-          currentProgress[index] = current
-
-          this.uppy.emit('upload-progress', this.uppy.getFile(file.id), {
-            uploader: this,
-            bytesUploaded: currentProgress.reduce((a, b) => a + b),
-            bytesTotal: total
-          })
-        }).then(({ etag }) => ({
-          ETag: etag,
-          PartNumber: index + 1
-        }))
-      })
-    }
-
-    // Limit this bundle of Prepare + Upload request instead of the individual requests;
-    // otherwise there might be too much time between Prepare and Upload (> 5 minutes).
-    const uploadPart = this.limitRequests(doUploadPart)
-
-    const partUploads = chunks.map((chunk, index) => {
-      return uploadPart(chunk, index)
-    })
-
-    return Promise.all(partUploads).catch((err) => {
-      if (err === INTENTIONAL_CANCEL) {
-        console.log('cancelled, what to do?')
-      }
-      if (err === INTENTIONAL_PAUSE) {
-        return this.handlePaused(file.id)
-      }
-      throw err
-    }).then(() => {
-      return completeMultipartUpload(file, {
-        key: file.s3Multipart.key,
-        uploadId: file.s3Multipart.uploadId,
-        parts: file.s3Multipart.parts
-      })
-    }).then(() => {
-      this.uppy.emit('upload-success', this.uppy.getFile(file.id))
-    })
-  }
-
-  // When an upload is paused, wait for it to start again.
-  // (This would be easier with a separate internal S3 Multipart uploader class)
-  handlePaused (fileID) {
     return new Promise((resolve, reject) => {
-      const events = createEventTracker(this.uppy)
+      const upload = new Uploader(file.data, Object.assign({
+        // .bind to pass the file object to each handler.
+        createMultipartUpload: this.limitRequests(this.opts.createMultipartUpload.bind(this, file)),
+        listParts: this.limitRequests(this.opts.listParts.bind(this, file)),
+        prepareUploadPart: this.limitRequests(this.opts.prepareUploadPart.bind(this, file)),
+        completeMultipartUpload: this.limitRequests(this.opts.completeMultipartUpload.bind(this, file)),
+        abortMultipartUpload: this.limitRequests(this.opts.abortMultipartUpload.bind(this, file)),
+        onStart: (data) => {
+          const cFile = this.uppy.getFile(file.id)
+          this.uppy.setFileState(file.id, {
+            s3Multipart: Object.assign({}, cFile.s3Multipart, {
+              key: data.key,
+              uploadId: data.uploadId,
+              parts: []
+            })
+          })
+        },
+        onProgress: (bytesUploaded, bytesTotal) => {
+          this.uppy.emit('upload-progress', file, {
+            uploader: this,
+            bytesUploaded: bytesUploaded,
+            bytesTotal: bytesTotal
+          })
+        },
+        onError: (err) => {
+          this.uppy.log(err)
+          this.uppy.emit('upload-error', file, err)
+          err.message = `Failed because: ${err.message}`
+          reject(err)
+        },
+        onSuccess: () => {
+          this.uppy.emit('upload-success', file, upload, upload.url)
 
-      const resume = (resumeIDs) => {
-        events.remove()
-        const file = this.uppy.getFile(fileID)
-        return this.uploadFile(file)
-          .then(resolve, reject)
-      }
+          if (upload.url) {
+            this.uppy.log('Download ' + upload.file.name + ' from ' + upload.url)
+          }
 
-      events.on('resume-all', () => {
-        resume()
+          resolve(upload)
+        },
+        onPartComplete: (part) => {
+          // Store completed parts in state.
+          const cFile = this.uppy.getFile(file.id)
+          this.uppy.setFileState(file.id, {
+            s3Multipart: Object.assign({}, cFile.s3Multipart, {
+              parts: [
+                ...cFile.s3Multipart.parts,
+                part
+              ]
+            })
+          })
+
+          this.uppy.emit('s3-multipart:part-uploaded', cFile, part)
+        }
+      }, file.s3Multipart))
+
+      console.log('uploader', upload)
+
+      this.uppy.on('file-removed', (removed) => {
+        if (file.id !== removed.id) return
+        upload.abort()
+        resolve(`upload ${removed.id} was removed`)
       })
-      events.on('cancel-all', () => {
-        events.remove()
-        reject(INTENTIONAL_CANCEL)
-      })
-      events.on('upload-pause', (unpauseID, isPaused) => {
-        if (fileID === unpauseID && !isPaused) {
-          resume()
+
+      this.uppy.on('upload-pause', (pausee, isPaused) => {
+        if (pausee.id !== file.id) return
+        if (isPaused) {
+          upload.pause()
+        } else {
+          upload.start()
         }
       })
+
+      this.uppy.on('pause-all', () => {
+        upload.pause()
+      })
+
+      this.uppy.on('cancel-all', () => {
+        upload.abort()
+      })
+
+      this.uppy.on('resume-all', () => {
+        upload.start()
+      })
+
+      if (!file.isPaused) {
+        upload.start()
+      }
+
+      if (!file.isRestored) {
+        this.uppy.emit('upload-started', file, upload)
+      }
     })
   }
 
@@ -376,12 +279,10 @@ module.exports = class AwsS3Multipart extends Plugin {
 
   install () {
     this.addResumableUploadsCapabilityFlag()
-    this.uppy.addPreProcessor(this.prepareUpload)
     this.uppy.addUploader(this.upload)
   }
 
   uninstall () {
     this.uppy.removeUploader(this.upload)
-    this.uppy.removePreProcessor(this.prepareUpload)
   }
 }
