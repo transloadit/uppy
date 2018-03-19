@@ -178,7 +178,7 @@ Many other object storage providers have an identical API to S3, so you can use 
 For example, with DigitalOcean Spaces, you could do something like this:
 
 ```
-export UPPYSERVER_AWS_ENDPOINT="{region}.digitaloceanspaces.com"
+export UPPYSERVER_AWS_ENDPOINT="https://{region}.digitaloceanspaces.com"
 export UPPYSERVER_AWS_BUCKET="my-space-name"
 ```
 
