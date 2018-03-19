@@ -1,3 +1,4 @@
+const resolveUrl = require('resolve-url')
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const { limitPromises } = require('../../core/Utils')
@@ -165,7 +166,9 @@ module.exports = class AwsS3 extends Plugin {
           return el ? el.textContent : ''
         }
         return {
-          location: getValue('Location'),
+          // Some S3 alternatives do not reply with an absolute URL.
+          // Eg DigitalOcean Spaces uses /$bucketName/xyz
+          location: resolveUrl(xhr.responseURL, getValue('Location')),
           bucket: getValue('Bucket'),
           key: getValue('Key'),
           etag: getValue('ETag')
