@@ -100,8 +100,16 @@ module.exports = class Instagram extends Plugin {
 
   getItemName (item) {
     if (item && item['created_time']) {
-      let date = new Date(item['created_time'] * 1000).toUTCString()
-      return `Instagram ${date}`
+      let date = new Date(item['created_time'] * 1000)
+      date = date.toLocaleDateString([], {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      })
+      // adding both date and carousel_id, so the name is unique
+      return `Instagram ${date} ${item.carousel_id || ''}`
     }
     return ''
   }
