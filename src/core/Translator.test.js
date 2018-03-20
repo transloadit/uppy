@@ -1,6 +1,6 @@
-import Core from '../../src/core/index.js'
-import russian from '../../src/locales/ru_RU.js'
-import english from '../../src/locales/en_US.js'
+const Core = require('../../src/core/index.js')
+const russian = require('../../src/locales/ru_RU')
+const english = require('../../src/locales/en_US')
 
 describe('core/translator', () => {
   describe('translate', () => {

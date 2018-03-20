@@ -1,4 +1,4 @@
-import Core from './index'
+const Core = require('./index')
 
 describe('core/index', () => {
   it('should expose the uppy core as the default export', () => {
