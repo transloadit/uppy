@@ -1,4 +1,4 @@
-const Row = require('./TableRow')
+const Row = require('./Item')
 const { h } = require('preact')
 
 module.exports = (props) => {
@@ -28,6 +28,7 @@ module.exports = (props) => {
           }
           return Row({
             title: props.getItemName(folder),
+            id: props.getItemId(folder),
             type: 'folder',
             // active: props.activeRow(folder),
             getItemIcon: () => props.getItemIcon(folder),
@@ -42,6 +43,7 @@ module.exports = (props) => {
         {props.files.map(file => {
           return Row({
             title: props.getItemName(file),
+            id: props.getItemId(file),
             type: 'file',
             // active: props.activeRow(file),
             getItemIcon: () => props.getItemIcon(file),

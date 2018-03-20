@@ -578,6 +578,7 @@ module.exports = class View {
       isActiveRow: this.isActiveRow,
       isChecked: this.isChecked,
       toggleCheckbox: this.toggleCheckbox,
+      getItemId: this.plugin.getItemId,
       getItemName: this.plugin.getItemName,
       getItemIcon: this.plugin.getItemIcon,
       handleScroll: this.handleScroll,

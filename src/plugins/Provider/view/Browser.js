@@ -1,6 +1,6 @@
 const Breadcrumbs = require('./Breadcrumbs')
 const Filter = require('./Filter')
-const Table = require('./Table')
+const Table = require('./ItemList')
 const { h } = require('preact')
 
 module.exports = (props) => {
@@ -51,7 +51,8 @@ module.exports = (props) => {
         getItemIcon: props.getItemIcon,
         handleScroll: props.handleScroll,
         title: props.title,
-        showTitles: props.showTitles
+        showTitles: props.showTitles,
+        getItemId: props.getItemId
       })}
       <button class="UppyButton--circular UppyButton--blue uppy-ProviderBrowser-doneBtn"
         type="button"
