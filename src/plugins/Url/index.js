@@ -26,10 +26,10 @@ module.exports = class Url extends Plugin {
     // Set default options and locale
     const defaultLocale = {
       strings: {
-        addUrl: 'Add url',
         import: 'Import',
-        enterUrlToImport: 'Enter file url to import',
-        failedToFetch: 'Uppy Server failed to fetch this URL'
+        enterUrlToImport: 'Enter URL to import a file',
+        failedToFetch: 'Uppy Server failed to fetch this URL, please make sure it’s correct',
+        enterCorrectUrl: 'Please enter correct URL to add file'
       }
     }
 
@@ -62,6 +62,10 @@ module.exports = class Url extends Plugin {
     })
   }
 
+  getFileNameFromUrl (url) {
+    return url.substring(url.lastIndexOf('/') + 1)
+  }
+
   getMeta (url) {
     return fetch(`${this.hostname}/url/meta`, {
       method: 'post',
@@ -76,10 +80,9 @@ module.exports = class Url extends Plugin {
     })
     .then(this[this.id].onReceiveResponse)
     .then((res) => res.json())
-  }
-
-  getFileNameFromUrl (url) {
-    return url.substring(url.lastIndexOf('/') + 1)
+    .then((res) => {
+      if (res.error) throw new Error(res.error)
+    })
   }
 
   addFile (url) {
@@ -105,15 +108,18 @@ module.exports = class Url extends Plugin {
         }
       }
 
+      return tagFile
+    })
+    .then((tagFile) => {
       this.uppy.log('[Url] Adding remote file')
       return this.uppy.addFile(tagFile)
-        .then(() => {
-          const dashboard = this.uppy.getPlugin('Dashboard')
-          if (dashboard) dashboard.hideAllPanels()
-        })
+    })
+    .then(() => {
+      const dashboard = this.uppy.getPlugin('Dashboard')
+      if (dashboard) dashboard.hideAllPanels()
     })
     .catch((err) => {
-      const errorMsg = `${err.message}. Could be CORS issue?`
+      const errorMsg = `${err.message}.`
       this.uppy.log(errorMsg, 'error')
       this.uppy.info({
         message: this.i18n('failedToFetch'),

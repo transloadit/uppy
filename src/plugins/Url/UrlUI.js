@@ -3,6 +3,7 @@ const { h, Component } = require('preact')
 class UrlUI extends Component {
   constructor (props) {
     super(props)
+    this.handleKeyPress = this.handleKeyPress.bind(this)
     this.handleClick = this.handleClick.bind(this)
   }
 
@@ -13,6 +14,12 @@ class UrlUI extends Component {
     setTimeout(() => {
       this.input.focus({ preventScroll: true })
     }, 150)
+  }
+
+  handleKeyPress (ev) {
+    if (ev.keyCode === 13) {
+      this.props.addFile(this.input.value)
+    }
   }
 
   handleClick () {
@@ -26,11 +33,12 @@ class UrlUI extends Component {
         type="text"
         placeholder={this.props.i18n('enterUrlToImport')}
         value=""
+        onkeyup={this.handleKeyPress}
         ref={(input) => { this.input = input }} />
       <button
         class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Url-importButton"
         type="button"
-        aria-label={this.props.i18n('addUrl')}
+        aria-label={this.props.i18n('import')}
         onclick={this.handleClick}>
         {this.props.i18n('import')}
       </button>
