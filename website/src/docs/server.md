@@ -77,179 +77,112 @@ uppy.socket(server, options)
 ```
 This takes your `server` instance and your Uppy [options](#Options) as parameters.
 
-### Run uppy-server on kuberenetes
+### Run as standalone server
 
-You can use our docker container to run uppy-server on kubernetes with the following configuration.
-```bash
-kubectl create ns uppy
-```
-We will need a Redis container that we can get through [helm](https://github.com/kubernetes/helm)
+> Please ensure that the required environment variables are set before running/using Uppy Server as a standalone server. See [Configure Standalone](#Configure-Standalone) for the variables required.
+
+Set environment variables first:
 
 ```bash
- helm install --name uppy \
-  --namespace uppy \
-  --set redisPassword=superSecretPassword \
-    stable/redis
+export UPPYSERVER_SECRET="shh!Issa Secret!"
+export UPPYSERVER_DOMAIN="YOUR SERVER DOMAIN"
+export UPPYSERVER_DATADIR="PATH/TO/DOWNLOAD/DIRECTORY"
 ```
 
-> uppy-server-env.yml
-```yaml
-apiVersion: v1
-data:
-  UPPY_ENDPOINTS: "localhost:3452,uppy.io"
-  UPPYSERVER_DATADIR: "PATH/TO/DOWNLOAD/DIRECTORY"
-  UPPYSERVER_DOMAIN: "YOUR SERVER DOMAIN"
-  UPPYSERVER_DOMAINS: "sub1.domain.com,sub2.domain.com,sub3.domain.com"
-  UPPYSERVER_PROTOCOL: "YOUR SERVER PROTOCOL"
-  UPPYSERVER_REDIS_URL: redis://:superSecretPassword@uppy-redis.uppy.svc.cluster.local:6379
-  UPPYSERVER_SECRET: "shh!Issa Secret!"
-  UPPYSERVER_DROPBOX_KEY: "YOUR DROPBOX KEY"
-  UPPYSERVER_DROPBOX_SECRET: "YOUR DROPBOX SECRET"
-  UPPYSERVER_GOOGLE_KEY: "YOUR GOOGLE KEY"
-  UPPYSERVER_GOOGLE_SECRET: "YOUR GOOGLE SECRET"
-  UPPYSERVER_INSTAGRAM_KEY: "YOUR INSTAGRAM KEY"
-  UPPYSERVER_INSTAGRAM_SECRET: "YOUR INSTAGRAM SECRET"
-  UPPYSERVER_AWS_KEY: "YOUR AWS KEY"
-  UPPYSERVER_AWS_SECRET: "YOUR AWS SECRET"
-  UPPYSERVER_AWS_BUCKET: "YOUR AWS S3 BUCKET"
-  UPPYSERVER_AWS_REGION: "AWS REGION"
-  UPPYSERVER_OAUTH_DOMAIN: "sub.domain.com"
-  UPPYSERVER_UPLOAD_URLS: "http://master.tus.io/files/,https://master.tus.io/files/"
-kind: Secret
-metadata:
-  name: uppy-server-env
-  namespace: uppy
-type: Opaque
+And then run:
+
+```bash
+uppy-server
 ```
 
-> uppy-server-deployment.yml
-```yaml
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: uppy-server
-  namespace: uppy
-spec:
-  replicas: 2
-  minReadySeconds: 5
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 2
-      maxUnavailable: 1
-  template:
-    metadata:
-      labels:
-        app: uppy-server
-    spec:
-      containers:
-      - image: docker.io/transloadit/uppy-server:latest
-        imagePullPolicy: ifNotPresent
-        name: uppy-server        
-        resources:
-          limits:
-            memory: 150Mi
-          requests:
-            memory: 100Mi
-        envFrom:
-        - secretRef:
-            name: uppy-server-env
-        ports:
-        - containerPort: 3020
-        volumeMounts:
-        - name: uppy-server-data
-          mountPath: /mnt/uppy-server-data
-      volumes:
-      - name: uppy-server-data
-        emptyDir: {}
+If you cloned the repo from GitHub and want to run it as a standalone server, you may also run the following command from within its directory:
+
+```bash
+npm start
 ```
 
-`kubectl apply -f uppy-server-deployment.yml`
+You can also pass in the path to your json config file like so:
 
-> uppy-server-service.yml
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: uppy-server
-  namespace: uppy
-spec:
-  ports:
-  - port: 80
-    targetPort: 3020
-    protocol: TCP
-  selector:
-    app: uppy-server
+```bash
+uppy-server --config /path/to/uppyconf.json
 ```
 
-`kubectl apply -f uppy-server-service.yml`
+or
 
+```bash
+npm start -- --config /path/to/uppyconf.json
+```
 
-You can check the full list of possible environment variables here: 
+Please see [options](#Options) for possible options.
+
+#### Configure Standalone
+
+To run Uppy Server as a standalone server, you are required to set your Uppy [options](#Options) via environment variables:
 
 ```bash
 ####### Mandatory variables ###########
 
 # any long set of random characters for the server session
-UPPYSERVER_SECRET="shh!Issa Secret!"
+export UPPYSERVER_SECRET="shh!Issa Secret!"
 # corresponds to the server.host option
-UPPYSERVER_DOMAIN="YOUR SERVER DOMAIN"
+export UPPYSERVER_DOMAIN="YOUR SERVER DOMAIN"
 # corresponds to the filePath option
-UPPYSERVER_DATADIR="PATH/TO/DOWNLOAD/DIRECTORY"
+export UPPYSERVER_DATADIR="PATH/TO/DOWNLOAD/DIRECTORY"
 
 ###### Optional variables ##########
 
 # corresponds to the server.protocol option. defaults to http
-UPPYSERVER_PROTOCOL="YOUR SERVER PROTOCOL"
+export UPPYSERVER_PROTOCOL="YOUR SERVER PROTOCOL"
 # the port to start the server on. defaults to 3020
-UPPYSERVER_PORT="YOUR SERVER PORT"
+export UPPYSERVER_PORT="YOUR SERVER PORT"
 # corresponds to the server.port option. defaults to ''
-UPPYSERVER_PATH="/SERVER/PATH/TO/WHERE/UPPY-SERVER/LIVES"
+export UPPYSERVER_PATH="/SERVER/PATH/TO/WHERE/UPPY-SERVER/LIVES"
 
 # use this in place of UPPYSERVER_PATH if the server path should not be
 # handled by the express.js app but maybe by an external server configuration
 # instead (e.g Nginx).
-UPPYSERVER_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
+export UPPYSERVER_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
 
 # comma separated client hosts to whitlelist by the server
 # if not specified, the server would allow any host
-UPPY_ENDPOINTS="localhost:3452,uppy.io"
+export UPPY_ENDPOINTS="localhost:3452,uppy.io"
 
 # corresponds to the redisUrl option
 # This also enables redis session storage if set
-UPPYSERVER_REDIS_URL="REDIS URL"
+export UPPYSERVER_REDIS_URL="REDIS URL"
 
 # to enable Dropbox
-UPPYSERVER_DROPBOX_KEY="YOUR DROPBOX KEY"
-UPPYSERVER_DROPBOX_SECRET="YOUR DROPBOX SECRET"
+export UPPYSERVER_DROPBOX_KEY="YOUR DROPBOX KEY"
+export UPPYSERVER_DROPBOX_SECRET="YOUR DROPBOX SECRET"
 
 # to enable Google Drive
-UPPYSERVER_GOOGLE_KEY="YOUR GOOGLE KEY"
-UPPYSERVER_GOOGLE_SECRET="YOUR GOOGLE SECRET"
+export UPPYSERVER_GOOGLE_KEY="YOUR GOOGLE KEY"
+export UPPYSERVER_GOOGLE_SECRET="YOUR GOOGLE SECRET"
 
 # to enable Instagram
-UPPYSERVER_INSTAGRAM_KEY="YOUR INSTAGRAM KEY"
-UPPYSERVER_INSTAGRAM_SECRET="YOUR INSTAGRAM SECRET"
+export UPPYSERVER_INSTAGRAM_KEY="YOUR INSTAGRAM KEY"
+export UPPYSERVER_INSTAGRAM_SECRET="YOUR INSTAGRAM SECRET"
 
 # to enable s3
-UPPYSERVER_AWS_KEY="YOUR AWS KEY"
-UPPYSERVER_AWS_SECRET="YOUR AWS SECRET"
-UPPYSERVER_AWS_BUCKET="YOUR AWS S3 BUCKET"
-UPPYSERVER_AWS_REGION="AWS REGION"
+export UPPYSERVER_AWS_KEY="YOUR AWS KEY"
+export UPPYSERVER_AWS_SECRET="YOUR AWS SECRET"
+export UPPYSERVER_AWS_BUCKET="YOUR AWS S3 BUCKET"
+export UPPYSERVER_AWS_REGION="AWS REGION"
 
 # corresponds to the server.oauthDomain option
-UPPYSERVER_OAUTH_DOMAIN="sub.domain.com"
+export UPPYSERVER_OAUTH_DOMAIN="sub.domain.com"
 # corresponds to the server.validHosts option
-UPPYSERVER_DOMAINS="sub1.domain.com,sub2.domain.com,sub3.domain.com"
+export UPPYSERVER_DOMAINS="sub1.domain.com,sub2.domain.com,sub3.domain.com"
 
 # corresponds to the sendSelfEndpoint option
-UPPYSERVER_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
+export UPPYSERVER_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
 
 # comma separated urls
 # corresponds to the uploadUrls option
-UPPYSERVER_UPLOAD_URLS="http://master.tus.io/files/,https://master.tus.io/files/"
+export UPPYSERVER_UPLOAD_URLS="http://master.tus.io/files/,https://master.tus.io/files/"
 ```
+
+See [env.example.sh](https://github.com/transloadit/uppy-server/blob/master/env.example.sh) for an example configuration script.
 
 ### Options
 
@@ -398,12 +331,5 @@ This would get the Uppy Server running on `http://localhost:3020`.
 
 ## Running example
 
-You can checkout uppy-server [repository](https://github.com/transloadit/uppy-server) to see how we run [server.uppy.io](https://server.uppy.io).
+An example server is running at http://server.uppy.io, which is deployed with [Kubernetes](https://github.com/transloadit/uppy-server/blob/master/KUBERNETES.md)
 
-## Logging
-
-You can check the production logs for the production pod using: 
-
-```bash
-kubectl logs my-pod-name 
-```
