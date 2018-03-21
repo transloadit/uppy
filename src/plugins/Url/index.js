@@ -103,7 +103,9 @@ module.exports = class Url extends Plugin {
     .then((res) => res.json())
     .then((res) => {
       if (res.error) {
-        throw new Error(res.error)
+        this.uppy.log('[URL] Error:')
+        this.uppy.log(res.error)
+        throw new Error('Failed to fetch the file')
       }
       return res
     })
@@ -118,14 +120,6 @@ module.exports = class Url extends Plugin {
     }
 
     return this.getMeta(url)
-      .catch((err) => {
-        const errorMsg = `${err.message}.`
-        this.uppy.log(errorMsg, 'error')
-        this.uppy.info({
-          message: this.i18n('failedToFetch'),
-          details: errorMsg
-        }, 'error', 4000)
-      })
       .then((meta) => {
         const tagFile = {
           source: this.id,
@@ -158,11 +152,10 @@ module.exports = class Url extends Plugin {
         if (dashboard) dashboard.hideAllPanels()
       })
       .catch((err) => {
-        const errorMsg = `${err.message}.`
-        this.uppy.log(errorMsg, 'error')
+        this.uppy.log(err)
         this.uppy.info({
           message: this.i18n('failedToFetch'),
-          details: errorMsg
+          details: err
         }, 'error', 4000)
       })
   }
