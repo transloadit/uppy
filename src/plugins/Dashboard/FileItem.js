@@ -46,6 +46,14 @@ module.exports = function fileItem (props) {
     { 'is-resumable': props.resumableUploads }
   )
 
+  const progressIndicatorTitle = isUploaded
+    ? 'upload complete'
+    : props.resumableUploads
+      ? file.isPaused
+        ? 'resume upload'
+        : 'pause upload'
+      : 'cancel upload'
+
   return <li class={dashboardItemClass} id={`uppy_${file.id}`} title={file.meta.name}>
     <div class="uppy-DashboardItem-preview">
       <div class="uppy-DashboardItem-previewInnerWrap" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
@@ -65,14 +73,8 @@ module.exports = function fileItem (props) {
           </div>
           : <button class="uppy-DashboardItem-progressIndicator"
             type="button"
-            title={isUploaded
-                    ? 'upload complete'
-                    : props.resumableUploads
-                      ? file.isPaused
-                        ? 'resume upload'
-                        : 'pause upload'
-                      : 'cancel upload'
-                  }
+            aria-label={progressIndicatorTitle}
+            title={progressIndicatorTitle}
             onclick={onPauseResumeCancelRetry}>
             {error
               ? iconRetry()
@@ -95,10 +97,14 @@ module.exports = function fileItem (props) {
         }
       </h4>
       <div class="uppy-DashboardItem-status">
-        {file.data.size && <div class="uppy-DashboardItem-statusSize">{prettyBytes(file.data.size)}</div>}
+        {file.data.size ? <div class="uppy-DashboardItem-statusSize">{prettyBytes(file.data.size)}</div> : null}
         {file.source && <div class="uppy-DashboardItem-sourceIcon">
             {acquirers.map(acquirer => {
-              if (acquirer.id === file.source) return <span title={`${props.i18n('fileSource')}: ${acquirer.name}`}>{acquirer.icon()}</span>
+              if (acquirer.id === file.source) {
+                return <span title={`${props.i18n('fileSource')}: ${acquirer.name}`}>
+                  {acquirer.icon()}
+                </span>
+              }
             })}
           </div>
         }
