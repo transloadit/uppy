@@ -21,6 +21,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     this.addToQueue = this.addToQueue.bind(this)
+    this.onRestored = this.onRestored.bind(this)
   }
 
   /**
@@ -194,10 +195,24 @@ module.exports = class ThumbnailGenerator extends Plugin {
     return Promise.resolve()
   }
 
+  onRestored () {
+    const fileIDs = Object.keys(this.uppy.getState().files)
+    fileIDs.forEach((fileID) => {
+      const file = this.uppy.getFile(fileID)
+      if (!file.isRestored) return
+      // Only add blob URLs; they are likely invalid after being restored.
+      if (!file.preview || /^blob:/.test(file.preview)) {
+        this.addToQueue(file)
+      }
+    })
+  }
+
   install () {
     this.uppy.on('file-added', this.addToQueue)
+    this.uppy.on('restored', this.onRestored)
   }
   uninstall () {
     this.uppy.off('file-added', this.addToQueue)
+    this.uppy.off('restored', this.onRestored)
   }
 }

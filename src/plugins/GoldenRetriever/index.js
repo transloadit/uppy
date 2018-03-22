@@ -170,8 +170,6 @@ module.exports = class GoldenRetriever extends Plugin {
       }
       const updatedFile = Object.assign({}, originalFile, updatedFileData)
       updatedFiles[fileID] = updatedFile
-
-      this.uppy.generatePreview(updatedFile)
     })
 
     this.uppy.setState({
