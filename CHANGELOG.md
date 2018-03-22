@@ -109,7 +109,6 @@ To be released: 2018-03-29.
 - [ ] core: update file-type
 - [x] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (#641 / @goto-bus-stop)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
-- [ ] docs: on writing plugins (@goto-bus-stop)
 - [ ] docs: all useful events (@arturi)
 - [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
 - [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
@@ -120,6 +119,35 @@ To be released: 2018-03-29.
 - [x] s3: fix xhr response handlers (#625, @goto-bus-stop)
 - [ ] test: add typescript with JSDoc (@arturi)
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
+
+## 0.23.3
+
+- docs: add “Writing Plugins” (@goto-bus-stop)
+- docs: Update aws-s3.md, xhrupload.md (#692 / @bertho-zero)
+- docs: Typos, fixes and improvements (@tim-kos, @ifedapoolarewaju, @arturi / #704)
+- core: add Google Drive to S3 + uppy-server example, update docs (@goto-bus-stop / #711)
+- s3: Support fake XHR from remote uploads (@goto-bus-stop / #711)
+- dashboard: fix FileItem titles (#696 / @bertho-zero)
+- form: Fix `get-form-data` being undefined when built with Rollup (#698 / @goto-bus-stop)
+- transloadit: Capitalise Assembly in user facing messages (#699 / @goto-bus-stop)
+- core: Add yaml file type (#710 / @jessica-coursera)
+- core: Clear uploads on `cancelAll` (#664 / @goto-bus-stop)
+- core: Remove Redux state sync plugin (#667 / @goto-bus-stop)
+- core: merge of restrictions (#677 / @richmeij)
+- core: Check for empty URL (#681 / @arturi)
+- build: Use babel-preset-env, drop modules transform, use CommonJS in test files (#714 / @goto-bus-stop)
+- dashboard: Remove semiTransparent for good (#704 / @arturi)
+- url: Prevent scrolling when focusing on input when Url tab is opened (#179bdf7 / @arturi)
+
+## 0.23.2
+
+- core: ⚠️ **breaking** Emit full file object instead of fileID in events like uppy.on('event', file, data) (#647 / @arturi)
+- core: Fix merging locale strings in Core (#666 / @goto-bus-stop)
+- s3: Check upload parameters shape, fixes #653 (#665 / @goto-bus-stop)
+- docs: Add more Core events to docs (@arturi)
+- xhrupload: Clear timer when upload is removed in XHRUpload (#647 / @arturi)
+- xhrupload: Fix XHRUpload.js error handling (#656 / @rhymes)
+- tus: Configure uploadUrl for uppy-server uploads (#643 / @goto-bus-stop)
 
 ## 0.23.1
 
