@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "uppy-digitalocean-spaces",
+  "scripts": {
+    "start": "node ./server.js"
+  },
+  "devDependencies": {
+    "aliasify": "^2.1.0",
+    "babelify": "^7.3.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "budo": "^11.1.7",
+    "cors": "^2.8.4",
+    "router": "^1.3.2"
+  }
+}

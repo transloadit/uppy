@@ -171,6 +171,21 @@ uppy.use(AwsS3, {
 
 See the [aws-presigned-url example in the uppy repository](https://github.com/transloadit/uppy/tree/master/examples/aws-presigned-url) for a small example that implements both the server-side and the client-side.
 
+### S3 Alternatives
+
+Many other object storage providers have an identical API to S3, so you can use the AwsS3 plugin with them. To use them with uppy-server, you can set the `UPPYSERVER_AWS_ENDPOINT` variable to the endpoint of your preferred service.
+
+For example, with DigitalOcean Spaces, you could do something like this:
+
+```
+export UPPYSERVER_AWS_ENDPOINT="https://{region}.digitaloceanspaces.com"
+export UPPYSERVER_AWS_BUCKET="my-space-name"
+```
+
+The `{region}` string will be replaced by the contents of the `UPPYSERVER_AWS_REGION` environment variable.
+
+For a working example that you can run and play around with, see the [digitalocean-spaces](https://github.com/transloadit/uppy/tree/master/examples/digitalocean-spaces) folder in the Uppy repository.
+
 ### Retrieving presign parameters of the uploaded file
 
 Once the file is uploaded, it's possible to retrieve the parameters that were
