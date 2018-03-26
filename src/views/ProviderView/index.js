@@ -167,18 +167,16 @@ module.exports = class ProviderView {
       }
     }
 
-    Utils.getFileType(tagFile).then(fileType => {
-      if (fileType && Utils.isPreviewSupported(fileType)) {
-        tagFile.preview = this.plugin.getItemThumbnailUrl(file)
-      }
-      this.plugin.uppy.log('Adding remote file')
-      this.plugin.uppy.addFile(tagFile).catch(() => {
-        // Ignore
-      })
-      if (!isCheckbox) {
-        this.donePicking()
-      }
-    })
+    const fileType = Utils.getFileType(tagFile)
+    // TODO Should we just always use the thumbnail URL if it exists?
+    if (fileType && Utils.isPreviewSupported(fileType)) {
+      tagFile.preview = this.plugin.getItemThumbnailUrl(file)
+    }
+    this.plugin.uppy.log('Adding remote file')
+    this.plugin.uppy.addFile(tagFile)
+    if (!isCheckbox) {
+      this.donePicking()
+    }
   }
 
   /**

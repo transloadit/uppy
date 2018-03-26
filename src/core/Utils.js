@@ -1,8 +1,4 @@
 const throttle = require('lodash.throttle')
-// we inline file-type module, as opposed to using the NPM version,
-// because of this https://github.com/sindresorhus/file-type/issues/78
-// and https://github.com/sindresorhus/copy-text-to-clipboard/issues/5
-const fileType = require('../vendor/file-type')
 
 /**
  * A collection of small utility functions that help with dom manipulation, adding listeners,
@@ -133,36 +129,21 @@ function getFileType (file) {
 
   if (file.isRemote) {
     // some remote providers do not support file types
-    const mime = file.type ? file.type : extensionsToMime[fileExtension]
-    return Promise.resolve(mime)
+    return file.type ? file.type : extensionsToMime[fileExtension]
   }
 
-  // 1. try to determine file type from magic bytes with file-type module
-  // this should be the most trustworthy way
-  const chunk = file.data.slice(0, 4100)
-  return getArrayBuffer(chunk)
-    .then((buffer) => {
-      const type = fileType(buffer)
-      if (type && type.mime) {
-        return type.mime
-      }
+  // 2. if that’s no good, check if mime type is set in the file object
+  if (file.type) {
+    return file.type
+  }
 
-      // 2. if that’s no good, check if mime type is set in the file object
-      if (file.type) {
-        return file.type
-      }
+  // 3. if that’s no good, see if we can map extension to a mime type
+  if (fileExtension && extensionsToMime[fileExtension]) {
+    return extensionsToMime[fileExtension]
+  }
 
-      // 3. if that’s no good, see if we can map extension to a mime type
-      if (fileExtension && extensionsToMime[fileExtension]) {
-        return extensionsToMime[fileExtension]
-      }
-
-      // if all fails, well, return empty
-      return null
-    })
-    .catch(() => {
-      return null
-    })
+  // if all fails, well, return empty
+  return null
 }
 
 // TODO Check which types are actually supported in browsers. Chrome likes webm

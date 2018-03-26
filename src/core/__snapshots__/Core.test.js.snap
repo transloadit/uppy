@@ -26,7 +26,7 @@ Object {
       "isRemote": false,
       "meta": Object {
         "name": "foo.jpg",
-        "type": null,
+        "type": "image/jpeg",
       },
       "name": "foo.jpg",
       "preview": undefined,
@@ -40,7 +40,7 @@ Object {
       "remote": "",
       "size": 0,
       "source": "jest",
-      "type": null,
+      "type": "image/jpeg",
     },
     Object {
       "data": Uint8Array [],
@@ -49,7 +49,7 @@ Object {
       "isRemote": false,
       "meta": Object {
         "name": "bar.jpg",
-        "type": null,
+        "type": "image/jpeg",
       },
       "name": "bar.jpg",
       "preview": undefined,
@@ -63,7 +63,7 @@ Object {
       "remote": "",
       "size": 0,
       "source": "jest",
-      "type": null,
+      "type": "image/jpeg",
     },
   ],
   "uploadID": "cjd09qwxb000dlql4tp4doz8h",

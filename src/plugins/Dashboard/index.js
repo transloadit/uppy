@@ -289,8 +289,6 @@ module.exports = class Dashboard extends Plugin {
         name: file.name,
         type: file.type,
         data: blob
-      }).catch(() => {
-        // Ignore
       })
     })
   }
@@ -305,8 +303,6 @@ module.exports = class Dashboard extends Plugin {
         name: file.name,
         type: file.type,
         data: file
-      }).catch(() => {
-        // Ignore
       })
     })
   }
@@ -373,8 +369,6 @@ module.exports = class Dashboard extends Plugin {
         name: file.name,
         type: file.type,
         data: file
-      }).catch(() => {
-        // Ignore
       })
     })
   }

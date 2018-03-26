@@ -83,8 +83,6 @@ module.exports = class DragDrop extends Plugin {
         name: file.name,
         type: file.type,
         data: file
-      }).catch(() => {
-        // Ignore
       })
     })
   }
@@ -100,8 +98,6 @@ module.exports = class DragDrop extends Plugin {
         name: file.name,
         type: file.type,
         data: file
-      }).catch(() => {
-        // Ignore
       })
     })
   }
