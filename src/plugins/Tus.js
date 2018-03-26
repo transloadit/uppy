@@ -260,7 +260,7 @@ module.exports = class Tus extends Plugin {
 
         return res.json().then((data) => {
           this.uppy.setFileState(file.id, { serverToken: data.token })
-          file = this.getFile(file.id)
+          file = this.uppy.getFile(file.id)
           return file
         })
       })
@@ -346,10 +346,6 @@ module.exports = class Tus extends Plugin {
     })
   }
 
-  getFile (fileID) {
-    return this.uppy.state.files[fileID]
-  }
-
   updateFile (file) {
     const files = Object.assign({}, this.uppy.state.files, {
       [file.id]: file
@@ -358,7 +354,7 @@ module.exports = class Tus extends Plugin {
   }
 
   onReceiveUploadUrl (file, uploadURL) {
-    const currentFile = this.getFile(file.id)
+    const currentFile = this.uppy.getFile(file.id)
     if (!currentFile) return
     // Only do the update if we didn't have an upload URL yet,
     // or resume: false in options
