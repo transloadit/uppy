@@ -1,6 +1,6 @@
 const Plugin = require('../../core/Plugin')
-const Provider = require('../Provider')
-const View = require('../Provider/view')
+const { Provider } = require('../../server')
+const { ProviderView } = require('../../views')
 const { h } = require('preact')
 
 module.exports = class Instagram extends Plugin {
@@ -36,7 +36,7 @@ module.exports = class Instagram extends Plugin {
   }
 
   install () {
-    this.view = new View(this, {
+    this.view = new ProviderView(this, {
       viewType: 'grid'
     })
     // Set default state for Instagram

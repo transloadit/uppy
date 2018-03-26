@@ -1,7 +1,7 @@
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const { h } = require('preact')
-const Provider = require('../Provider')
+const { Request } = require('../../server')
 const UrlUI = require('./UrlUI.js')
 require('whatwg-fetch')
 
@@ -56,27 +56,11 @@ module.exports = class Url extends Plugin {
     this.getMeta = this.getMeta.bind(this)
     this.addFile = this.addFile.bind(this)
 
-    this[this.id] = new Provider(uppy, {
-      host: this.opts.host,
-      provider: 'url',
-      authProvider: 'url'
-    })
+    this.server = new Request(uppy, {host: this.opts.host})
   }
 
   getMeta (url) {
-    return fetch(`${this.hostname}/url/meta`, {
-      method: 'post',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        url: url
-      })
-    })
-    .then(this[this.id].onReceiveResponse)
-    .then((res) => res.json())
+    return this.server.post('url/meta', { url })
   }
 
   getFileNameFromUrl (url) {
