@@ -192,9 +192,7 @@ Once the file is uploaded, it's possible to retrieve the parameters that were
 generated in `getUploadParameters(file)` via the `file.meta` field:
 
 ```js
-uppy.on("upload-success", (fileId, data) {
-  const file = uppy.getFile(fileId)
-
+uppy.on('upload-success', (file, data) => {
   file.meta['key'] // the S3 object key of the uploaded file
 })
 ```
