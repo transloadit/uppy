@@ -277,7 +277,7 @@ Returns `uppy.state`, which you can also use directly.
 
 ### `uppy.setFileState(fileID, state)`
 
-Update the state for a single file. This is mostly useful for plugins that may want to store data on file objects, or that need to pass file-spcecific configuration to other plugins that support it.
+Update the state for a single file. This is mostly useful for plugins that may want to store data on file objects, or that need to pass file-specific configuration to other plugins that support it.
 
 `fileID` is the string file ID. `state` is an object that will be merged into the file's state object.
 
