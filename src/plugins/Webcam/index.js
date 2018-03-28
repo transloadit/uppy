@@ -319,20 +319,18 @@ module.exports = class Webcam extends Plugin {
       return <PermissionsScreen icon={WebcamIcon} />
     }
 
-    const CameraScreenProps = Object.assign({}, webcamState, {
-      onSnapshot: this.takeSnapshot,
-      onStartRecording: this.startRecording,
-      onStopRecording: this.stopRecording,
-      onFocus: this.focus,
-      onStop: this.stop,
-      modes: this.opts.modes,
-      supportsRecording: supportsMediaRecorder(),
-      recording: webcamState.isRecording,
-      mirror: this.opts.mirror,
-      src: this.stream
-    })
-
-    return <CameraScreen {...CameraScreenProps} />
+    return <CameraScreen
+      {...webcamState}
+      onSnapshot={this.takeSnapshot}
+      onStartRecording={this.startRecording}
+      onStopRecording={this.stopRecording}
+      onFocus={this.focus}
+      onStop={this.stop}
+      modes={this.opts.modes}
+      supportsRecording={supportsMediaRecorder()}
+      recording={webcamState.isRecording}
+      mirror={this.opts.mirror}
+      src={this.stream} />
   }
 
   install () {
