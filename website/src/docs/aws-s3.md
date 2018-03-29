@@ -14,6 +14,8 @@ uppy.use(AwsS3, {
 })
 ```
 
+There are broadly two ways to upload to S3 in a browser. A server can generate a presigned URL for a [PUT upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html), or a server can generate form data for a [POST upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html). uppy-server uses a POST upload. See [POST uPloads](#post-uploads) for some caveats if you would like to use POST uploads without uppy-server. See [Generating a presigned upload URL server-side](#example-presigned-url) for an example of a PUT upload.
+
 ## Options
 
 ### `host`
@@ -131,8 +133,25 @@ The final configuration should look something like the below:
 
 In-depth documentation about CORS rules is available on the [AWS documentation site](https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html).
 
+## POST Uploads
+
+uppy-server uses POST uploads by default, but you can also use them with your own endpoints. There are a few things to be aware of when doing so:
+
+ - The AwsS3 plugin attempts to read the `<Location>` XML tag from POST upload responses. S3 does not respond with an XML document by default. When generating the form data for POST uploads, you must set the `success_action_status` field to `201`.
+   ```js
+   // `s3` is an instance of the AWS JavaScript SDK's S3 client
+   s3.createPresignedPost({
+     ...,
+     Fields: {
+       ...,
+       success_action_status: '201'
+     }
+   })
+   ```
+
 ## Examples
 
+<a id="example-presigned-url"></a>
 ### Generating a presigned upload URL server-side
 
 The `getUploadParameters` function can return a Promise, so upload parameters can be prepared server-side.
