@@ -1,5 +1,10 @@
 const { h } = require('preact')
-const Breadcrumb = require('./Breadcrumb')
+
+const Breadcrumb = (props) => {
+  return (
+    <li><button type="button" onclick={props.getFolder}>{props.title}</button></li>
+  )
+}
 
 module.exports = (props) => {
   return (

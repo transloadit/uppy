@@ -38,7 +38,7 @@
 }
 
 .uppy-Provider-breadcrumbs button:focus {
-  outline: 1px dotted #aaa;
+  outline: 1px dotted rgb(145, 145, 145);
 }
 
 .uppy-Provider-breadcrumbs li {
@@ -69,84 +69,71 @@
   position: relative;
 }
 
-::-webkit-input-placeholder {
-   color: rgba(119,119,119,0.75);
-}
-
-::-moz-placeholder {
-   color: rgba(119,119,119,0.75);
-}
-
-:-ms-input-placeholder {
-   color: rgba(119,119,119,0.75);
-}
-
 .uppy-ProviderBrowser-headerBar {
-  height: 50px;
-  line-height: 50px;
+  height: 40px;
+  line-height: 40px;
   display: flex;
   align-items: center;
-  padding-left: 16px;
+  padding: 0 16px;
   background-color: lighten($color-gray, 40%);
   z-index: $zIndex-2;
 }
 
-.uppy-ProviderBrowser-search {
-  height: 50px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: $zIndex-3;
-  background-color: lighten($color-gray, 40%);
-  transform: translate(0, -50px);
-  transition: all .2s;
-  display: flex;
-  align-items: center;
+.uppy-ProviderBrowser-headerBar--simple {
+  text-align: center;
+  display: block;
 }
 
-  .uppy-ProviderBrowser-search:not([aria-hidden=true]) {
-    transform: translate(0, 0);
-  }
+.uppy-ProviderBrowser-search {
+  width: 100%;
+  background-color: $color-white;
+  position: relative;
+  height: 30px;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
 
-.uppy-ProviderBrowser-search input {
-  flex: 1;
+.uppy-ProviderBrowser-searchInput {
+  width: 100%;
+  height: 30px;
   background-color: transparent;
   outline: 0;
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 50px;
+  font-family: sans-serif;
+  font-size: 14px;
+  line-height: 30px;
   border: 0;
-  padding: 0 16px;
+  padding: 0 16px 0 43px;
+  z-index: $zIndex-2;
 }
 
-
-.uppy-ProviderBrowser-searchToggle {
-  @include reset-button();
-  width: 15px;
-  cursor: pointer;
-  color: $color-gray;
-  transition: all .2s;
-
-  &:hover { color: $color-black;
+.uppy-ProviderBrowser-searchInput::-webkit-input-placeholder,
+  .uppy-ProviderBrowser-searchInput::-moz-placeholder,
+  .uppy-ProviderBrowser-searchInput::-ms-input-placeholder {
+    color: rgba(119,119,119, 0.75);
   }
+
+.uppy-ProviderBrowser-searchIcon {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 16px;
+  top: 7px;
+  z-index: $zIndex-3;
+  color: rgba($color-gray, 0.6);
 }
 
 .uppy-ProviderBrowser-searchClose {
-  @include reset-button();
-  cursor: pointer;
   width: 12px;
-  color: $color-gray;
-  transition: all .2s;
-  position: relative;
+  height: 12px;
+  position: absolute;
   right: 16px;
-
-  &:hover { color: $color-black; }
+  top: 7px;
+  z-index: $zIndex-3;
+  color: rgba($color-gray, 0.6);
 }
 
 .uppy-ProviderBrowser-userLogout {
   @include reset-button();
-  margin-right: 16px;
   cursor: pointer;
 
   &:hover { text-decoration: underline; }
@@ -159,7 +146,8 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
-  margin-left: 16px;
+  // margin-left: 16px;
+  // background-color: lighten($color-gray, 40%);
 }
 
 .uppy-ProviderBrowser-breadcrumbs span {
@@ -210,8 +198,10 @@
 
 .uppy-ProviderBrowser-viewType--list {
 
+  background-color: $color-white;
+
   .uppy-ProviderBrowser-list {
-    padding-top: 6px;
+    // padding-top: 6px;
   }
 
   .uppy-ProviderBrowserItem {
@@ -224,7 +214,7 @@
   }
 
   .uppy-ProviderBrowserItem-checkbox label:before {
-    border-color: rgba($color-asphalt-gray, 0.3);
+    border-color: rgba($color-asphalt-gray, 0.4);
   }
 
   .uppy-ProviderBrowserItem-checkbox input:checked + label:before {
@@ -322,7 +312,7 @@
   position: relative;
   display: inline-block;
   top: -3px;
-  margin-right: 25px;
+  margin-right: 20px;
 }
 
 .uppy-ProviderBrowserItem-checkbox label {
@@ -339,12 +329,13 @@
 .uppy-ProviderBrowserItem-checkbox label:before {
   content: "";
   display: inline-block;
-  height: 20px;
-  width: 20px;
-  top: 0;
+  height: 18px;
+  width: 18px;
+  top: 2px;
   border: 1px solid $color-cornflower-blue; 
   background-color: $color-white;
-  border-radius: 50%; 
+  border-radius: 2px;
+  // border-radius: 50%;
 }
 
 // Inner checkbox
@@ -353,8 +344,8 @@
   display: inline-block;
   height: 5px;
   width: 8px;
-  left: 6px;
-  top: 7px;
+  left: 5px;
+  top: 8px;
   border-left: 2px solid $color-white;
   border-bottom: 2px solid $color-white;
   transform: rotate(-45deg);

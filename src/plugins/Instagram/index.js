@@ -38,7 +38,9 @@ module.exports = class Instagram extends Plugin {
   install () {
     this.view = new View(this, {
       viewType: 'grid',
-      showTitles: false
+      showTitles: false,
+      showFilter: false,
+      showBreadcrumbs: false
     })
     // Set default state for Instagram
     this.setPluginState({
