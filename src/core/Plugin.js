@@ -58,7 +58,7 @@ module.exports = class Plugin {
     const targetElement = findDOMElement(target)
 
     if (targetElement) {
-      this.setPluginState({ isTargetDOMEl: true })
+      this.isTargetDOMEl = true
 
       this.updateUI = (state) => {
         this.el = preact.render(this.render(state), targetElement, this.el)

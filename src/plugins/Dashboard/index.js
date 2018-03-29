@@ -480,7 +480,7 @@ module.exports = class Dashboard extends Plugin {
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
       currentWidth: pluginState.containerWidth,
       isWide: pluginState.containerWidth > 400,
-      isTargetDOMEl: pluginState.isTargetDOMEl
+      isTargetDOMEl: this.isTargetDOMEl
     })
   }
 
@@ -493,7 +493,7 @@ module.exports = class Dashboard extends Plugin {
   }
 
   install () {
-    // Set default state for Modal
+    // Set default state for Dashboard
     this.setPluginState({
       isHidden: true,
       showFileCard: false,
