@@ -59,6 +59,9 @@ Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] dragdrop: change border color when files doesn’t pass restrictions on drag https://github.com/transloadit/uppy/issues/607
 - [ ] website: automatically generated page with all locale strings used in plugins
 - [ ] transloadit: option for StatusBar’s upload button to act as a "Start assembly" button? Useful if an assembly uses only import robots, such as /s3/import to start a batch transcoding job.
+- [ ] provider: Add Facebook
+- [ ] provider: Add OneDrive
+- [ ] provider: Add Box
 
 ## 1.0 Goals
 
