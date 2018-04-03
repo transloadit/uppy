@@ -1,7 +1,8 @@
 .uppy-StatusBar {
+  display: flex;
   position: relative;
-  height: 30px;
-  line-height: 30px;
+  height: 35px;
+  line-height: 35px;
   font-size: 12px;
   font-weight: 400;
   color: $color-white;
@@ -16,10 +17,6 @@
     height: 45px;
     font-size: 14px;
   }
-
-  // .uppy-StatusBar.uppy-StatusBar--detailedProgress  {
-  //   height: 47px;
-  // }
 
 .uppy-StatusBar[aria-hidden=true] {
   overflow-y: hidden;
@@ -112,12 +109,6 @@
     margin-right: 7px;
   }
 
-  // button.uppy-StatusBar-statusIndicator {
-  //   @include reset-button;
-  //   margin-right: 15px;
-  //   cursor: pointer;
-  // }
-
 .uppy-StatusBar-actions {
   display: flex;
   align-items: center;
@@ -129,28 +120,39 @@
 }
 
 .uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
-  font-size: 1.1em;
-  left: 20px;
-  right: initial;
+  width: 100%;
+  position: static;
+  padding: 0 15px;
 }
 
 .uppy-StatusBar-actionBtn {
-  font-size: 0.85em;
-  padding: 4px 6px;
-  border-radius: 2px;
+  font-size: 12px;
+  padding: 6px;
+  border-radius: 4px;
 }
 
   .uppy-Dashboard--wide .uppy-StatusBar-actionBtn {
     padding: 7px 10px;
   }
 
+  .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+    width: 100%;
+    padding: 15px 10px;
+  }
+
+    .uppy-Dashboard--wide .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+      padding: 13px 28px;
+      width: auto;
+    }
+
   .uppy-StatusBar-actionBtn:not(:last-child) {
     margin-right: 10px;
   }
 
-  .uppy-StatusBar-actionBtn--upload {
-    background-color: $color-white;
-    color: $color-cornflower-blue;
+  .uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
+    background-color: transparent;
+    border: 1px solid $color-white;
+    color: $color-white;
   }
 
   .uppy-StatusBar-actionBtn--retry {

@@ -113,8 +113,10 @@ const UploadBtn = (props) => {
   const uploadBtnClassNames = classNames(
     'uppy-u-reset',
     'uppy-c-btn',
-    { 'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING },
-    { 'uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--upload': props.uploadState !== statusBarStates.STATE_WAITING }
+    'uppy-StatusBar-actionBtn',
+    'uppy-StatusBar-actionBtn--upload',
+    { 'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING }
+    // { 'uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--upload': props.uploadState !== statusBarStates.STATE_WAITING }
   )
 
   return <button type="button"
