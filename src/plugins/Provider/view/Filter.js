@@ -25,6 +25,7 @@ module.exports = class Filter extends Component {
 
   handleClear (ev) {
     this.input.value = ''
+    this.props.filterQuery()
   }
 
   render () {

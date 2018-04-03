@@ -16,6 +16,7 @@ module.exports = (props) => {
     <div class={`uppy-ProviderBrowser uppy-ProviderBrowser-viewType--${props.viewType}`}>
       <div class="uppy-ProviderBrowser-header">
         <div class={`uppy-ProviderBrowser-headerBar ${!props.showBreadcrumbs ? 'uppy-ProviderBrowser-headerBar--simple' : ''}`}>
+          <div class="uppy-Provider-breadcrumbsIcon">{props.pluginIcon && props.pluginIcon()}</div>
           {props.showBreadcrumbs && Breadcrumbs({
             getFolder: props.getFolder,
             directories: props.directories,
@@ -58,3 +59,7 @@ module.exports = (props) => {
     </div>
   )
 }
+
+// <div class="uppy-Dashboard-actions">
+//  <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-actionsBtn" type="button">Select</button>
+// </div>

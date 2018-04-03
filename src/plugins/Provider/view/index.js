@@ -203,7 +203,7 @@ module.exports = class View {
   filterQuery (e) {
     const state = this.plugin.getPluginState()
     this.plugin.setPluginState(Object.assign({}, state, {
-      filterInput: e.target.value
+      filterInput: e ? e.target.value : ''
     }))
   }
 
@@ -589,7 +589,8 @@ module.exports = class View {
       viewType: this.opts.viewType,
       showTitles: this.opts.showTitles,
       showFilter: this.opts.showFilter,
-      showBreadcrumbs: this.opts.showBreadcrumbs
+      showBreadcrumbs: this.opts.showBreadcrumbs,
+      pluginIcon: this.plugin.icon
     })
 
     return Browser(browserProps)
