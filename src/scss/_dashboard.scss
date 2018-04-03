@@ -76,26 +76,17 @@
   @include reset-button;
   display: none;
   position: absolute;
-  top: 7px;
-  right: 7px;
+  top: 2px;
+  right: 8px;
   cursor: pointer;
   color: rgba($color-asphalt-gray, 0.5);
   transition: all 0.3s;
-  font-size: 30px;
-
-  // .UppyIcon {
-  //   width: 12px;
-  //   height: 12px;
-  // }
+  font-size: 23px;
 
   .uppy-Dashboard--wide & {
+    font-size: 30px;
     top: 2px;
     right: 8px;
-
-    // .UppyIcon {
-    //   width: 14px;
-    //   height: 14px;
-    // }
   }
 
   .uppy-Dashboard--modal & {
@@ -220,11 +211,14 @@
   position: absolute;
   top: 0;
   left: 0;
+  display: flex;
+  align-items: center;
   height: 40px;
   width: 100%;
   border-bottom: 1px solid rgba($color-gray, 0.3);
   z-index: $zIndex-4;
   background-color: darken($color-white, 4%);
+  padding: 0 15px;
 
   .uppy-Dashboard--wide & {
     height: 50px;
@@ -260,25 +254,25 @@
 
 .uppy-DashboardContent-back {
   @include reset-button;
-  position: absolute;
-  top: 0;
-  left: 15px;
+  // position: absolute;
+  // top: 0;
+  // left: 15px;
   font-size: 14px;
-  line-height: 40px;
-  font-weight: 500;
+  // line-height: 40px;
+  font-weight: 400;
   cursor: pointer;
   color: $color-cornflower-blue;
 
   .uppy-Dashboard--wide & {
     font-size: 15px;
-    line-height: 50px;
+    // line-height: 50px;
   }
 }
 
-.uppy-DashboardContent-back .UppyIcon {
-  position: relative;
-  margin-right: 3px;
-}
+// .uppy-DashboardContent-back .UppyIcon {
+//   position: relative;
+//   margin-right: 3px;
+// }
 
 .uppy-DashboardContent-panel {
   position: absolute;
@@ -369,8 +363,7 @@
 
 .uppy-Dashboard-files {
   margin: 0;
-  padding: 10px;
-  padding-top: 15px;
+  padding: 0 0 10px 0;
   overflow-y: auto;
   position: absolute;
   top: 0;
@@ -378,6 +371,10 @@
   right: 0;
   bottom: 0;
 }
+
+  .uppy-Dashboard--wide .uppy-Dashboard-files {
+    padding: 15px 10px 10px 10px;
+  }
 
 .uppy-Dashboard.drag .uppy-Dashboard-innerWrap  {
   background-color: darken($color-white, 10%)
@@ -447,6 +444,9 @@
   background-color: $color-white;
   display: flex;
   align-items: center;
+  border-bottom: 1px solid lighten($color-gray, 35%);
+  padding-bottom: 10px;
+  padding-left: 10px;
 
   .uppy-Dashboard--wide & {
     flex-direction: column;
@@ -456,6 +456,9 @@
     margin: 5px 15px;
     border: 0;
     background-color: initial;
+    border-bottom: none;
+    padding-bottom: 0;
+    padding-left: 0;
   }
 }
 
@@ -487,8 +490,8 @@
 .uppy-DashboardItem-sourceIcon {
   display: inline-block;
   vertical-align: middle;
-  width: 7px;
-  height: 7px;
+  width: 10px;
+  height: 10px;
   color: rgba($color-gray, 0.6);
 
   .uppy-Dashboard--wide & {
@@ -506,8 +509,8 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  // box-shadow: 0 0 2px 0 rgba(175, 175, 175, 0.7);
-  // border-radius: 3px;
+  box-shadow: 0 0 2px 0 rgba($color-gray, 0.7);
+  border-radius: 3px;
 
   .uppy-Dashboard--wide & {
     // box-shadow: 0 0 2px 0 rgba(175, 175, 175, 0.7);
@@ -540,23 +543,24 @@
 
 .uppy-DashboardItem-previewIconWrap {
   height: 80px;
+  max-height: 90%;
   position: relative;
 }
 
 .uppy-DashboardItem-previewIconBg {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(rgba(0, 0, 0, 0.1) 0px 0px 1px);
+  filter: drop-shadow(rgba($color-black, 0.1) 0px 0px 1px);
 }
 
 .uppy-DashboardItem-previewIcon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   z-index: $zIndex-1;
   position: absolute;
-  top: 40%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -40%);
+  transform: translate(-50%, -50%);
 
   .uppy-Dashboard--wide & {
     width: 25px;
@@ -578,7 +582,8 @@
 }
 
 .uppy-DashboardItem-info {
-  padding: 10px 19px 0 25px;
+  // padding: 10px 19px 0 25px;
+  padding-left: 15px;
   position: relative;
   max-width: 70%;
 
@@ -586,7 +591,7 @@
     width: 100%;
     max-width: 100%;
     flex: 1;
-    padding-left: 3px;
+    padding: 10px 19px 0 3px;
     // border-bottom-left-radius: 6px;
     // border-bottom-right-radius: 6px;
     // border: 1px solid rgba($color-gray, 0.2);
@@ -638,8 +643,8 @@
   text-align: left;
   cursor: pointer;
   position: absolute;
-  top: 12px;
-  right: 4px;
+  top: 0;
+  right: -20px;
 
   .uppy-Dashboard--wide & {
     top: 9px;
@@ -887,12 +892,16 @@
 }
 
 .uppy-Dashboard-actions {
-  height: 75px;
+  height: 55px;
   border-top: 1px solid rgba($color-gray, 0.2);
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 15px;
 }
+
+  .uppy-Dashboard--wide .uppy-Dashboard-actions {
+    height: 75px;
+  }
 
 .uppy-Dashboard-actionsBtn {
   margin-right: 10px;
@@ -975,10 +984,10 @@
 }
 
 .uppy-DashboardFileCard-preview {
-  height: 40%;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-grow: 1;
   border-bottom: 1px solid rgba($color-gray, 0.3);
   background-color: lighten($color-gray, 40%);
   position: relative;
@@ -994,7 +1003,8 @@
 
 .uppy-DashboardFileCard-info {
   padding: 30px 20px 20px 20px;
-  height: 50%;
+  max-height: 40%;
+  flex-grow: 1;
   overflow-y: auto;
 }
 
