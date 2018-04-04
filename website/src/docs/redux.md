@@ -5,7 +5,7 @@ permalink: docs/redux
 order: 57
 ---
 
-Uppy supports Redux in two ways:
+Uppy supports popular [Redux](https://redux.js.org/) state management library in two ways:
 
 ## Redux Store
 
@@ -48,3 +48,5 @@ const uppy = Uppy({
 ```
 
 After you `.use(ReduxDevTools)`, you should be able to see Uppy’s state in Redux Dev Tools.
+
+You likely don’t need this if you are actually using Redux yourself and Redux Store in Uppy from above, since it will just work.

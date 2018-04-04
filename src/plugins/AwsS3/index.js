@@ -1,10 +1,11 @@
+const resolveUrl = require('resolve-url')
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const { limitPromises } = require('../../core/Utils')
 const XHRUpload = require('../XHRUpload')
 
 function isXml (xhr) {
-  const contentType = xhr.getResponseHeader('Content-Type')
+  const contentType = xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type')
   return typeof contentType === 'string' && contentType.toLowerCase() === 'application/xml'
 }
 
@@ -160,12 +161,29 @@ module.exports = class AwsS3 extends Plugin {
         if (!isXml(xhr)) {
           return { location: xhr.responseURL }
         }
-        function getValue (key) {
-          const el = xhr.responseXML.querySelector(key)
-          return el ? el.textContent : ''
+
+        let getValue = () => ''
+        if (xhr.responseXML) {
+          getValue = (key) => {
+            const el = xhr.responseXML.querySelector(key)
+            return el ? el.textContent : ''
+          }
         }
+
+        if (xhr.responseText) {
+          getValue = (key) => {
+            const start = xhr.responseText.indexOf(`<${key}>`)
+            const end = xhr.responseText.indexOf(`</${key}>`)
+            return start !== -1 && end !== -1
+              ? xhr.responseText.slice(start + key.length + 2, end)
+              : ''
+          }
+        }
+
         return {
-          location: getValue('Location'),
+          // Some S3 alternatives do not reply with an absolute URL.
+          // Eg DigitalOcean Spaces uses /$bucketName/xyz
+          location: resolveUrl(xhr.responseURL, getValue('Location')),
           bucket: getValue('Bucket'),
           key: getValue('Key'),
           etag: getValue('ETag')

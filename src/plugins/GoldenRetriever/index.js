@@ -4,7 +4,7 @@ const IndexedDBStore = require('./IndexedDBStore')
 const MetaDataStore = require('./MetaDataStore')
 
 /**
-* The Golden Retriever plugin — restores selected files and resumes uploads
+* The GoldenRetriever plugin — restores selected files and resumes uploads
 * after a closed tab or a browser crash!
 *
 * Uses localStorage, IndexedDB and ServiceWorker to do its magic, read more:
@@ -170,8 +170,6 @@ module.exports = class GoldenRetriever extends Plugin {
       }
       const updatedFile = Object.assign({}, originalFile, updatedFileData)
       updatedFiles[fileID] = updatedFile
-
-      this.uppy.generatePreview(updatedFile)
     })
 
     this.uppy.setState({

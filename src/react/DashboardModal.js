@@ -60,7 +60,6 @@ DashboardModal.propTypes = {
   plugins: PropTypes.arrayOf(PropTypes.string),
   maxWidth: PropTypes.number,
   maxHeight: PropTypes.number,
-  semiTransparent: PropTypes.bool,
   showProgressDetails: PropTypes.bool,
   hideUploadButton: PropTypes.bool,
   note: PropTypes.string,

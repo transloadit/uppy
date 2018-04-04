@@ -25,7 +25,7 @@ DOM element or CSS selector for the form element. Required for the plugin to wor
 
 ### `getMetaFromForm: true`
 
-Whether to extract metadata from the form.
+Whether to extract metadata from the form. When set to true, `Form` plugin will extract all fields from a `<form>` element before upload begins. Those fields will then be added to global `uppy.state.meta` and each file’s meta, and appended as (meta)data to the upload in an object with `[file input name attribute]` -> `[file input value]` key/values.
 
 ### `addResultToForm: true`
 

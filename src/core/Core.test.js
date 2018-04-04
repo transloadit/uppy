@@ -1,11 +1,11 @@
-import Core from './Core'
-import utils from './Utils'
-import Plugin from './Plugin'
-import AcquirerPlugin1 from '../../test/mocks/acquirerPlugin1'
-import AcquirerPlugin2 from '../../test/mocks/acquirerPlugin2'
-import InvalidPlugin from '../../test/mocks/invalidPlugin'
-import InvalidPluginWithoutId from '../../test/mocks/invalidPluginWithoutId'
-import InvalidPluginWithoutType from '../../test/mocks/invalidPluginWithoutType'
+const Core = require('./Core')
+const utils = require('./Utils')
+const Plugin = require('./Plugin')
+const AcquirerPlugin1 = require('../../test/mocks/acquirerPlugin1')
+const AcquirerPlugin2 = require('../../test/mocks/acquirerPlugin2')
+const InvalidPlugin = require('../../test/mocks/invalidPlugin')
+const InvalidPluginWithoutId = require('../../test/mocks/invalidPluginWithoutId')
+const InvalidPluginWithoutType = require('../../test/mocks/invalidPluginWithoutType')
 
 jest.mock('cuid', () => {
   return () => 'cjd09qwxb000dlql4tp4doz8h'
@@ -1211,6 +1211,19 @@ describe('src/Core', () => {
 
       expect(core.i18n('exceedsSize')).toBe('This file exceeds maximum allowed size of')
       expect(core.i18n('test')).toBe('beep boop')
+    })
+  })
+
+  describe('default restrictions', () => {
+    it('should be merged with supplied restrictions', () => {
+      const core = new Core({
+        restrictions: {
+          maxNumberOfFiles: 3
+        }
+      })
+
+      expect(core.opts.restrictions.maxNumberOfFiles).toBe(3)
+      expect(core.opts.restrictions.minNumberOfFiles).toBe(false)
     })
   })
 })

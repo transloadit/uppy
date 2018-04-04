@@ -48,6 +48,8 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
 - [ ] feature: React Native support
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
+- [ ] It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them?
+Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
 - [ ] test: add tests for `npm pack`
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
@@ -55,6 +57,11 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] add typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
 - [ ] transloadit plugin: maybe add option to disable uppy server endpoint overrides
 - [ ] dragdrop: change border color when files doesn’t pass restrictions on drag https://github.com/transloadit/uppy/issues/607
+- [ ] website: automatically generated page with all locale strings used in plugins
+- [ ] transloadit: option for StatusBar’s upload button to act as a "Start assembly" button? Useful if an assembly uses only import robots, such as /s3/import to start a batch transcoding job.
+- [ ] provider: Add Facebook
+- [ ] provider: Add OneDrive
+- [ ] provider: Add Box
 
 ## 1.0 Goals
 
@@ -85,7 +92,7 @@ What we need to do to release Uppy 1.0
 
 ## 0.24.0
 
-To be released: 2018-03-01.
+To be released: 2018-03-29.
 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
@@ -105,7 +112,6 @@ To be released: 2018-03-01.
 - [ ] core: update file-type
 - [x] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (#641 / @goto-bus-stop)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
-- [ ] docs: on writing plugins (@goto-bus-stop)
 - [ ] docs: all useful events (@arturi)
 - [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
 - [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
@@ -116,6 +122,35 @@ To be released: 2018-03-01.
 - [x] s3: fix xhr response handlers (#625, @goto-bus-stop)
 - [ ] test: add typescript with JSDoc (@arturi)
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
+
+## 0.23.3
+
+- docs: add “Writing Plugins” (@goto-bus-stop)
+- docs: Update aws-s3.md, xhrupload.md (#692 / @bertho-zero)
+- docs: Typos, fixes and improvements (@tim-kos, @ifedapoolarewaju, @arturi / #704)
+- core: add Google Drive to S3 + uppy-server example, update docs (@goto-bus-stop / #711)
+- s3: Support fake XHR from remote uploads (@goto-bus-stop / #711)
+- dashboard: fix FileItem titles (#696 / @bertho-zero)
+- form: Fix `get-form-data` being undefined when built with Rollup (#698 / @goto-bus-stop)
+- transloadit: Capitalise Assembly in user facing messages (#699 / @goto-bus-stop)
+- core: Add yaml file type (#710 / @jessica-coursera)
+- core: Clear uploads on `cancelAll` (#664 / @goto-bus-stop)
+- core: Remove Redux state sync plugin (#667 / @goto-bus-stop)
+- core: merge of restrictions (#677 / @richmeij)
+- core: Check for empty URL (#681 / @arturi)
+- build: Use babel-preset-env, drop modules transform, use CommonJS in test files (#714 / @goto-bus-stop)
+- dashboard: Remove semiTransparent for good (#704 / @arturi)
+- url: Prevent scrolling when focusing on input when Url tab is opened (#179bdf7 / @arturi)
+
+## 0.23.2
+
+- core: ⚠️ **breaking** Emit full file object instead of fileID in events like uppy.on('event', file, data) (#647 / @arturi)
+- core: Fix merging locale strings in Core (#666 / @goto-bus-stop)
+- s3: Check upload parameters shape, fixes #653 (#665 / @goto-bus-stop)
+- docs: Add more Core events to docs (@arturi)
+- xhrupload: Clear timer when upload is removed in XHRUpload (#647 / @arturi)
+- xhrupload: Fix XHRUpload.js error handling (#656 / @rhymes)
+- tus: Configure uploadUrl for uppy-server uploads (#643 / @goto-bus-stop)
 
 ## 0.23.1
 

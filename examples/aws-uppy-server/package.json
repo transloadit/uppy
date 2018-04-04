@@ -13,8 +13,11 @@
     "babelify": "^7.3.0",
     "body-parser": "^1.18.2",
     "budo": "^10.0.4",
+    "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
     "express": "^4.16.2",
-    "npm-run-all": "^4.1.2"
+    "express-session": "^1.15.6",
+    "npm-run-all": "^4.1.2",
+    "rimraf": "^2.6.2"
   }
 }

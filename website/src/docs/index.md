@@ -31,7 +31,7 @@ uppy.on('complete', (result) => {
 
 Drag and Drop, Webcam, basic file manipulation (adding metadata), uploading via tus resumable uploads or XHR/Multipart is all possible using just the uppy client module.
 
-Adding [Uppy Server](/docs/server/) to the mix enables remote sources such as Instagram, Google Drive, Dropbox, and direct urls. Uploads from remote sources are handled server-to-server, so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Uppy Server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
+Adding [Uppy Server](/docs/server/) to the mix enables remote sources such as Instagram, Google Drive, Dropbox, and remote urls. Uploads from remote sources are handled server-to-server, so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Uppy Server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
 
 ## Installation
 
@@ -48,12 +48,12 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 1\. Add a script to the bottom of `<body>`:
 
 ``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v0.23.2/dist/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.23.3/dist/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://transloadit.edgly.net/releases/uppy/v0.23.2/dist/uppy.min.css" rel="stylesheet">
+<link href="https://transloadit.edgly.net/releases/uppy/v0.23.3/dist/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize:

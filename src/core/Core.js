@@ -55,6 +55,7 @@ class Uppy {
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
 
     this.locale = Object.assign({}, defaultLocale, this.opts.locale)
     this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)

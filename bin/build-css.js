@@ -29,6 +29,7 @@ function minifyCSS () {
             resolve()
           })
         })
+        .catch(err => handleErr(err))
     })
   })
 }
@@ -49,6 +50,7 @@ function compileCSS () {
             resolve()
           })
         })
+        .catch(err => handleErr(err))
     })
   })
 }
@@ -58,3 +60,4 @@ compileCSS()
   .then(function () {
     console.info(chalk.yellow('✓ CSS Bundle 🎉'))
   })
+  .catch(err => handleErr(err))
