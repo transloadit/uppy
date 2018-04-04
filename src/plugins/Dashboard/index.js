@@ -98,6 +98,7 @@ module.exports = class Dashboard extends Plugin {
       disableInformer: false,
       disableThumbnailGenerator: false,
       disablePageScrollWhenModalOpen: true,
+      proudlyDisplayPoweredByUppy: true,
       onRequestCloseModal: () => this.closeModal(),
       locale: defaultLocale
     }
@@ -201,6 +202,11 @@ module.exports = class Dashboard extends Plugin {
     if (focusableNodes.length) focusableNodes[0].focus()
   }
 
+  setFocusToBrowse () {
+    const browseBtn = this.el.querySelector('.uppy-Dashboard-browse')
+    if (browseBtn) browseBtn.focus()
+  }
+
   maintainFocus (event) {
     var focusableNodes = this.getFocusableNodes()
     var focusedItemIndex = focusableNodes.indexOf(document.activeElement)
@@ -231,7 +237,8 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.updateDashboardElWidth()
-    this.setFocusToFirstNode()
+    // this.setFocusToFirstNode()
+    this.setFocusToBrowse()
   }
 
   closeModal () {
@@ -478,6 +485,7 @@ module.exports = class Dashboard extends Plugin {
       maxWidth: this.opts.maxWidth,
       maxHeight: this.opts.maxHeight,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
+      proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
       currentWidth: pluginState.containerWidth,
       isWide: pluginState.containerWidth > 400,
       isTargetDOMEl: this.isTargetDOMEl

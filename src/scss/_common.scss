@@ -174,10 +174,16 @@
 .uppy-c-textInput {
   border: 1px solid rgba($color-gray, 0.5);
   border-radius: 4px;
-  font-size: 15px;
-  line-height: 1.8;
-  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 4px 8px;
 }
+
+  .uppy-Dashboard--wide .uppy-c-textInput {
+    font-size: 15px;
+    line-height: 1.8;
+    padding: 8px 12px;
+  }
 
   .uppy-c-textInput:focus {
     border-color: $color-cornflower-blue;

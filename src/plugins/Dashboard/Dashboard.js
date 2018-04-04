@@ -22,6 +22,12 @@ const renderInnerPanel = (props) => {
   </div>
 }
 
+const poweredByUppy = (props) => {
+  return <a href="https://uppy.io" target="_blank" class="uppy-Dashboard-poweredBy">Powered by <svg aria-hidden="true" class="uppy-Dashboard-poweredByIcon" width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="nonzero" d="M8.57 7.554v4.149H3.424V7.554H0L6 0l6 7.554H8.57z" />
+  </svg><span class="uppy-Dashboard-poweredByUppy">Uppy</span></a>
+}
+
 module.exports = function Dashboard (props) {
   const dashboardClassName = classNames(
     { 'uppy-Root': props.isTargetDOMEl },
@@ -76,6 +82,9 @@ module.exports = function Dashboard (props) {
             })}
           </div>
         </div>
+
+        { props.proudlyDisplayPoweredByUppy && poweredByUppy(props) }
+
       </div>
     </div>
   )

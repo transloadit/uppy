@@ -23,19 +23,19 @@
   right: 0;
   bottom: 0;
   // background-color: rgba($color-white, 0.8);
-  background-color: rgba($color-black, 0.2);
+  background-color: rgba($color-black, 0.5);
   z-index: $zIndex-2;
 }
 
 .uppy-Dashboard-inner {
   position: relative;
-  // background-color: darken($color-white, 2%);
-  background-color: $color-white;
+  background-color: darken($color-white, 2%);
+  // background-color: $color-white;
   max-width: 100%;
   max-height: 100%;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  // overflow: hidden;
   outline: none;
   border: 1px solid rgba($color-gray, 0.2);
 
@@ -50,12 +50,52 @@
   }
 }
 
+.uppy-Dashboard-poweredBy {
+  position: absolute;
+  right: 4px;
+  bottom: -20px;
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba($color-gray, 0.8);
+  text-align: right;
+  text-decoration: none;
+}
+
+  .uppy-Dashboard--modal .uppy-Dashboard-poweredBy {
+    color: rgba($color-white, 0.7);
+  }
+
+.uppy-Dashboard-poweredByUppy {
+  color: $color-gray;
+}
+
+  .uppy-Dashboard--modal .uppy-Dashboard-poweredByUppy {
+    color: $color-white;
+  }
+
+.uppy-Dashboard-poweredByIcon {
+  stroke: $color-gray;
+  fill: none;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+  .uppy-Dashboard--modal .uppy-Dashboard-poweredByIcon {
+    stroke: none;
+    fill: $color-uppy-pink;
+  }
+
 .uppy-Dashboard-innerWrap {
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
   min-height: 300px;
+  position: relative;
+
+  @media #{$screen-medium} {
+    border-radius: 5px;
+  }
 }
 
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
@@ -95,9 +135,7 @@
   }
 }
 
-.uppy-Dashboard-close:hover,
-.uppy-Dashboard-close:focus {
-  outline: none;
+.uppy-Dashboard-close:hover {
   color: $color-cornflower-blue; 
 }
 
@@ -130,8 +168,13 @@
 .uppy-Dashboard-browse {
   @include reset-button;
   cursor: pointer;
-  color: darken($color-cornflower-blue, 10%);
+  color: rgba($color-cornflower-blue, 0.9);
 }
+
+  .uppy-Dashboard-browse:focus {
+    outline: none;
+    border-bottom: 2px solid $color-cornflower-blue;
+  }
 
 .uppy-DashboardTabs-list {
   list-style-type: none;
@@ -165,11 +208,10 @@
   color: darken($color-gray, 25%);
 }
 
-  .uppy-DashboardTab-btn:focus,
-  .uppy-DashboardTab-btn:active,
+  // .uppy-DashboardTab-btn:focus,
+  // .uppy-DashboardTab-btn:active,
   .uppy-DashboardTab-btn:hover {
     color: $color-cornflower-blue;
-    outline: none;
   }
 
 .uppy-DashboardTab-name {
@@ -377,34 +419,41 @@
   }
 
 .uppy-Dashboard.drag .uppy-Dashboard-innerWrap  {
-  background-color: darken($color-white, 10%)
+  background-color: darken($color-white, 15%)
 }
 
 .uppy-Dashboard.drag .uppy-Dashboard-files--noFiles {
   border-color: darken(#E4E4E4, 20%);
 }
 
+// .uppy-Dashboard-bgIcon {
+  // width: 100%;
+  // max-width: 460px;
+  // position: absolute;
+  // top: 50%;
+  // left: 50%;
+  // transform: translate(-50%, -50%);
+  // opacity: 0.7;
+  // transition: all 0.3s;
+  // padding: 0 20px;
+// }
+
+// .uppy-Dashboard-bgIcon .UppyIcon {
+//   width: 100%;
+//   height: 80px;
+//   fill: none;
+//   stroke: $color-asphalt-gray;
+
+//   .uppy-Dashboard--wide & {
+//     height: 110px;
+//   }
+// }
+
 .uppy-Dashboard-bgIcon {
-  width: 100%;
-  max-width: 360px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0.7;
-  transition: all 0.3s;
-  padding: 0 20px;
-}
-
-.uppy-Dashboard-bgIcon .UppyIcon {
-  width: 100%;
-  height: 80px;
-  fill: none;
-  stroke: $color-asphalt-gray;
-
-  .uppy-Dashboard--wide & {
-    height: 110px;
-  }
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .uppy-Dashboard.drag .uppy-Dashboard-bgIcon {
@@ -412,28 +461,33 @@
 }
 
 .uppy-Dashboard-dropFilesTitle {
+  max-width: 460px;
   text-align: center;
-  font-size: 15px;
+  font-size: 19px;
   line-height: 1.45;
-  font-weight: normal;
-  color: $color-asphalt-gray;
-  margin: 0;
-  margin-top: 25px;
+  font-weight: 300;
+  color: rgba($color-asphalt-gray, 0.8);
+  // margin: 0;
+  // margin-top: 25px;
 
   .uppy-Dashboard--wide & {
-    font-size: 18px;
+    font-size: 24px;
   }
 }
 
 .uppy-Dashboard-note {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.2;
   text-align: center;
-  margin-top: 20px;
-  color: $color-asphalt-gray;
+  // margin-top: 20px;
+  color: rgba($color-asphalt-gray, 0.7);
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
 
   .uppy-Dashboard--wide & {
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 
@@ -676,7 +730,7 @@
 
 .uppy-DashboardItem-action {
   position: absolute;
-  top: 8px;
+  top: 23px;
   right: 5px;
   z-index: $zIndex-3;
 
