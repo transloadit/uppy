@@ -6,7 +6,7 @@ const {
   canvasToBlob
 } = require('../../core/Utils')
 const supportsMediaRecorder = require('./supportsMediaRecorder')
-const WebcamIcon = require('./WebcamIcon')
+const CameraIcon = require('./CameraIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
 
@@ -43,7 +43,7 @@ module.exports = class Webcam extends Plugin {
     this.id = this.opts.id || 'Webcam'
     this.title = 'Webcam'
     this.type = 'acquirer'
-    this.icon = WebcamIcon
+    this.icon = CameraIcon
 
     const defaultLocale = {
       strings: {
@@ -316,7 +316,7 @@ module.exports = class Webcam extends Plugin {
     const webcamState = this.getPluginState()
 
     if (!webcamState.cameraReady) {
-      return <PermissionsScreen icon={WebcamIcon} />
+      return <PermissionsScreen icon={CameraIcon} />
     }
 
     return <CameraScreen

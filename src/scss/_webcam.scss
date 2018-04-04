@@ -35,9 +35,6 @@
   }
 
 .uppy-Webcam-buttonContainer {
-  // position: absolute;
-  // bottom: 30px;
-  // right: 30px;
   width: 100%;
   height: 75px;
   border-top: 1px solid rgba($color-gray, 0.2);
@@ -47,11 +44,32 @@
   padding: 0 20px;
 }
 
-.uppy-Webcam-recordButton .UppyIcon {
-  width: 50%;
-  height: 50%;
-  position: relative;
-  top: -1px;
+.uppy-Webcam-button {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: $color-red;
+  color: $color-white;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+  .uppy-Dashboard--wide .uppy-Webcam-button {
+    width: 60px;
+    height: 60px;
+  }
+
+  .uppy-Webcam-button:hover {
+    background-color: darken($color-red, 10%);
+  }
+
+  .uppy-Webcam-button .UppyIcon {
+    width: 30px;
+    height: 30px;
+  }
+
+.uppy-Webcam-button--picture {
+  margin-right: 12px;
 }
 
 .uppy-Webcam-permissons {

@@ -3,7 +3,7 @@ const CameraIcon = require('./CameraIcon')
 
 module.exports = ({ onSnapshot }) => {
   return (
-    <button class="UppyButton--circular UppyButton--red UppyButton--sizeM uppy-Webcam-recordButton"
+    <button class="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--picture"
       type="button"
       title="Take a snapshot"
       aria-label="Take a snapshot"
