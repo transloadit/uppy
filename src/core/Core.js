@@ -28,7 +28,9 @@ class Uppy {
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload:',
-        uppyServerError: 'Connection with Uppy Server failed'
+        uppyServerError: 'Connection with Uppy Server failed',
+        noInternetConnection: 'No Internet connection',
+        connectedToInternet: 'Connected to the Intenet!'
       }
     }
 
@@ -744,13 +746,13 @@ class Uppy {
         : true
     if (!online) {
       this.emit('is-offline')
-      this.info('No internet connection', 'error', 0)
+      this.info(this.i18n('noInternetConnection'), 'error', 0)
       this.wasOffline = true
     } else {
       this.emit('is-online')
       if (this.wasOffline) {
         this.emit('back-online')
-        this.info('Connected!', 'success', 3000)
+        this.info(this.i18n('connectedToInternet'), 'success', 3000)
         this.wasOffline = false
       }
     }
