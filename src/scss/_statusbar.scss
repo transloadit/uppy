@@ -32,6 +32,7 @@
 }
 
 .uppy-StatusBar.is-complete .uppy-StatusBar-content {
+  width: 100%;
   text-align: center;
   padding-left: 0;
   justify-content: center;
@@ -136,6 +137,7 @@
   }
 
   .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+    font-size: 14px;
     width: 100%;
     padding: 15px 10px;
   }

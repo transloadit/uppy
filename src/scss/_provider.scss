@@ -253,10 +253,15 @@
 
   .uppy-ProviderBrowserItem {
     display: inline-block;
-    width: 33.3333%;
+    width: 50%;
     position: relative;
-    padding: 12px;
+    padding: 8px;
   }
+
+    .uppy-Dashboard--wide .uppy-ProviderBrowserItem {
+      width: 33.3333%;
+      padding: 12px;
+    }
 
     // .uppy-ProviderBrowserItem--selected {
     //   border-color: $color-cornflower-blue;
@@ -394,6 +399,6 @@
 }
 
 .uppy-ProviderBrowser-doneBtn .UppyIcon {
-  width: 30px;
-  height: 30px;
+  width: 45%;
+  height: 45%;
 }
