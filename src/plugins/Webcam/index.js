@@ -41,13 +41,16 @@ module.exports = class Webcam extends Plugin {
     this.supportsUserMedia = !!this.mediaDevices
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
-    this.title = 'Webcam'
+    this.title = 'Camera'
     this.type = 'acquirer'
     this.icon = CameraIcon
 
     const defaultLocale = {
       strings: {
-        smile: 'Smile!'
+        smile: 'Smile!',
+        takePicture: 'Take a picture',
+        startRecording: 'Begin video recording',
+        stopRecording: 'Stop video recording'
       }
     }
 
@@ -326,6 +329,7 @@ module.exports = class Webcam extends Plugin {
       onStopRecording={this.stopRecording}
       onFocus={this.focus}
       onStop={this.stop}
+      i18n={this.i18n}
       modes={this.opts.modes}
       supportsRecording={supportsMediaRecorder()}
       recording={webcamState.isRecording}

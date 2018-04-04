@@ -63,6 +63,10 @@ module.exports = class Dashboard extends Plugin {
         numberOfSelectedFiles: 'Number of selected files',
         uploadAllNewFiles: 'Upload all new files',
         emptyFolderAdded: 'No files were added from empty folder',
+        uploadComplete: 'Upload complete',
+        resumeUpload: 'Resume upload',
+        pauseUpload: 'Pause upload',
+        retryUpload: 'Retry upload',
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
           1: 'Upload %{smart_count} files'

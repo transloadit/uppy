@@ -193,7 +193,7 @@ const ProgressBarUploading = (props) => {
   }
 
   return (
-    <div class="uppy-StatusBar-content" title={props.isAllPaused ? 'Paused' : 'Uploading'}>
+    <div class="uppy-StatusBar-content" title={props.isAllPaused ? props.i18n('paused') : props.i18n('uploading')}>
       { <PauseResumeButtons {...props} /> }
       <div class="uppy-StatusBar-status">
         <span class="uppy-StatusBar-statusPrimary">{ props.isAllPaused ? props.i18n('paused') : props.i18n('uploading') }: {props.totalProgress}%</span>

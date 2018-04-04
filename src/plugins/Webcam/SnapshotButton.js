@@ -1,12 +1,12 @@
 const { h } = require('preact')
 const CameraIcon = require('./CameraIcon')
 
-module.exports = ({ onSnapshot }) => {
+module.exports = ({ onSnapshot, i18n }) => {
   return (
     <button class="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--picture"
       type="button"
-      title="Take a snapshot"
-      aria-label="Take a snapshot"
+      title={i18n('takePicture')}
+      aria-label={i18n('takePicture')}
       onclick={onSnapshot}>
       {CameraIcon()}
     </button>

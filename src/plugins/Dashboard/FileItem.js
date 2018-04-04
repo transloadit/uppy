@@ -47,12 +47,14 @@ module.exports = function fileItem (props) {
   )
 
   const progressIndicatorTitle = isUploaded
-    ? 'upload complete'
+    ? props.i18n('uploadComplete')
     : props.resumableUploads
       ? file.isPaused
-        ? 'resume upload'
-        : 'pause upload'
-      : 'cancel upload'
+        ? props.i18n('resumeUpload')
+        : props.i18n('pauseUpload')
+      : error
+        ? props.i18n('retryUpload')
+        : props.i18n('cancelUpload')
 
   return <li class={dashboardItemClass} id={`uppy_${file.id}`} title={file.meta.name}>
     <div class="uppy-DashboardItem-preview">
