@@ -1,7 +1,7 @@
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const { h } = require('preact')
-const { Request } = require('../../server')
+const { RequestClient } = require('../../server')
 const UrlUI = require('./UrlUI.js')
 require('whatwg-fetch')
 
@@ -56,7 +56,7 @@ module.exports = class Url extends Plugin {
     this.getMeta = this.getMeta.bind(this)
     this.addFile = this.addFile.bind(this)
 
-    this.server = new Request(uppy, {host: this.opts.host})
+    this.server = new RequestClient(uppy, {host: this.opts.host})
   }
 
   getMeta (url) {

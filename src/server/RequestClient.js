@@ -2,7 +2,7 @@
 
 require('whatwg-fetch')
 
-module.exports = class Request {
+module.exports = class RequestClient {
   constructor (uppy, opts) {
     this.uppy = uppy
     this.opts = opts

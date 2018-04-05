@@ -3,9 +3,9 @@
  * Manages communications with Uppy Server
  */
 
-const Request = require('./Request')
+const RequestClient = require('./RequestClient')
 const Provider = require('./Provider')
 
 module.exports = {
-  Request, Provider
+  RequestClient, Provider
 }

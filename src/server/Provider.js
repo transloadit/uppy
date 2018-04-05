@@ -1,13 +1,13 @@
 'use strict'
 
-const Request = require('./Request')
+const RequestClient = require('./RequestClient')
 require('whatwg-fetch')
 
 const _getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
-module.exports = class Provider extends Request {
+module.exports = class Provider extends RequestClient {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.provider = opts.provider
