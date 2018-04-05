@@ -8,7 +8,8 @@ const { prettyETA } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 
 /**
- * A status bar.
+ * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
+ * progress percentage and time remaining.
  */
 module.exports = class StatusBar extends Plugin {
   constructor (uppy, opts) {
