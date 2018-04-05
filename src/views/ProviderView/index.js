@@ -1,7 +1,7 @@
 const AuthView = require('./AuthView')
 const Browser = require('./Browser')
 const LoaderView = require('./Loader')
-const Utils = require('../../../core/Utils')
+const Utils = require('../../core/Utils')
 const { h } = require('preact')
 
 /**
@@ -34,7 +34,7 @@ const { h } = require('preact')
  * getItemThumbnailUrl
  *    @return {String}
  */
-module.exports = class View {
+module.exports = class ProviderView {
   /**
    * @param {object} instance of the plugin
    */

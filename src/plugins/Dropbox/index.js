@@ -1,6 +1,6 @@
 const Plugin = require('../../core/Plugin')
-const Provider = require('../Provider')
-const View = require('../Provider/view')
+const { Provider } = require('../../server')
+const { ProviderView } = require('../../views')
 const icons = require('./icons')
 const { h } = require('preact')
 
@@ -38,7 +38,7 @@ module.exports = class Dropbox extends Plugin {
   }
 
   install () {
-    this.view = new View(this)
+    this.view = new ProviderView(this)
     // Set default state for Dropbox
     this.setPluginState({
       authenticated: false,

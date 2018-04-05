@@ -1,7 +1,7 @@
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const { h } = require('preact')
-const Provider = require('../Provider')
+const { RequestClient } = require('../../server')
 const UrlUI = require('./UrlUI.js')
 require('whatwg-fetch')
 
@@ -55,11 +55,7 @@ module.exports = class Url extends Plugin {
     this.getMeta = this.getMeta.bind(this)
     this.addFile = this.addFile.bind(this)
 
-    this[this.id] = new Provider(uppy, {
-      host: this.opts.host,
-      provider: 'url',
-      authProvider: 'url'
-    })
+    this.server = new RequestClient(uppy, {host: this.opts.host})
   }
 
   getFileNameFromUrl (url) {
@@ -88,27 +84,15 @@ module.exports = class Url extends Plugin {
   }
 
   getMeta (url) {
-    return fetch(`${this.hostname}/url/meta`, {
-      method: 'post',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        url: url
+    return this.server.post('url/meta', { url })
+      .then((res) => {
+        if (res.error) {
+          this.uppy.log('[URL] Error:')
+          this.uppy.log(res.error)
+          throw new Error('Failed to fetch the file')
+        }
+        return res
       })
-    })
-    .then(this[this.id].onReceiveResponse)
-    .then((res) => res.json())
-    .then((res) => {
-      if (res.error) {
-        this.uppy.log('[URL] Error:')
-        this.uppy.log(res.error)
-        throw new Error('Failed to fetch the file')
-      }
-      return res
-    })
   }
 
   addFile (url) {
