@@ -20,31 +20,43 @@ Dashboard is a universal UI plugin for Uppy:
 ```js
 uppy.use(Dashboard, {
   target: 'body',
-  inline: false,
+  metaFields: [],
   trigger: '#uppy-select-files',
-  plugins: [],
-  maxWidth: 750,
-  maxHeight: 550,
+  inline: false,
+  width: 750,
+  height: 550,
+  thumbnailWidth: 280,
+  defaultTabIcon: defaultTabIcon,
+  showLinkToFileUploadResult: true,
   showProgressDetails: false,
   hideUploadButton: false,
   hideProgressAfterFinish: false,
   note: null,
-  metaFields: [],
   closeModalOnClickOutside: false,
   disableStatusBar: false,
   disableInformer: false,
+  disableThumbnailGenerator: false,
+  disablePageScrollWhenModalOpen: true,
+  proudlyDisplayPoweredByUppy: true,
+  onRequestCloseModal: () => this.closeModal(),
   locale: {
     strings: {
       selectToUpload: 'Select files to upload',
       closeModal: 'Close Modal',
       upload: 'Upload',
-      importFrom: 'Import files from',
+      importFrom: 'Import from',
       dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
       dashboardTitle: 'Uppy Dashboard',
       copyLinkToClipboardSuccess: 'Link copied to clipboard.',
       copyLinkToClipboardFallback: 'Copy the URL below',
+      copyLink: 'Copy link',
       fileSource: 'File source',
       done: 'Done',
+      name: 'Name',
+      removeFile: 'Remove file',
+      editFile: 'Edit file',
+      editing: 'Editing',
+      finishEditingFile: 'Finish editing file',
       localDisk: 'Local Disk',
       myDevice: 'My Device',
       dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
@@ -54,6 +66,18 @@ uppy.use(Dashboard, {
       numberOfSelectedFiles: 'Number of selected files',
       uploadAllNewFiles: 'Upload all new files',
       emptyFolderAdded: 'No files were added from empty folder',
+      uploadComplete: 'Upload complete',
+      resumeUpload: 'Resume upload',
+      pauseUpload: 'Pause upload',
+      retryUpload: 'Retry upload',
+      uploadXFiles: {
+        0: 'Upload %{smart_count} file',
+        1: 'Upload %{smart_count} files'
+      },
+      uploadXNewFiles: {
+        0: 'Upload +%{smart_count} file',
+        1: 'Upload +%{smart_count} files'
+      },
       folderAdded: {
         0: 'Added %{smart_count} file from %{folder}',
         1: 'Added %{smart_count} files from %{folder}'
@@ -139,6 +163,12 @@ Set to true to automatically close the modal when the user clicks outside of it.
 ### `disablePageScrollWhenModalOpen: true`
 
 By default when Dashboard modal is open, it will disable page scrolling, so when you scroll a list of files in Uppy the website in the background stays still. Set to false to override this behaviour and leave page scrolling intact.
+
+### `proudlyDisplayPoweredByUppy: true`
+
+Uppy is provided for the world for free by the [Transloadit team](https://transloadit.com). In return, we ask that you consider keeping tiny Uppy logo at the bottom of the Dashboard, so that more people learn about Uppy. 
+
+This is entirely optional of course, just set this option to false if you wish.
 
 ### `disableStatusBar: false`
 
