@@ -59,7 +59,7 @@ DOM element, CSS selector, or plugin to mount the StatusBar into.
 
 Hide StatusBar after upload is complete.
 
-# `showProgressDetails: false`
+### `showProgressDetails: false`
 
 By default, progress in StatusBar is shown as simple percentage. If you’d like to also display remaining upload size and time, set this to `true`.
 

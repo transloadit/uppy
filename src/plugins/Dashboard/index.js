@@ -466,7 +466,6 @@ module.exports = class Dashboard extends Plugin {
       handleClickOutside: this.handleClickOutside,
       handleInputChange: this.handleInputChange,
       handlePaste: this.handlePaste,
-      showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,

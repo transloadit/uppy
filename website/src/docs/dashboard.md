@@ -122,7 +122,10 @@ Maximum height of the Dashboard in pixels. Used when `inline: true`.
 
 ### `showProgressDetails: false`
 
-Show progress bars for the uploads.
+By default, progress in StatusBar is shown as simple percentage. If you’d like to also display remaining upload size and time, set this to `true`.
+
+`showProgressDetails: false`: Uploading: 45%
+`showProgressDetails: true`: Uploading: 45%・43 MB of 101 MB・8s left
 
 ### `hideUploadButton: false`
 
@@ -166,9 +169,9 @@ By default when Dashboard modal is open, it will disable page scrolling, so when
 
 ### `proudlyDisplayPoweredByUppy: true`
 
-Uppy is provided for the world for free by the [Transloadit team](https://transloadit.com). In return, we ask that you consider keeping tiny Uppy logo at the bottom of the Dashboard, so that more people learn about Uppy. 
+Uppy is provided for the world for free by the [Transloadit team](https://transloadit.com). In return, we ask that you consider keeping a tiny Uppy logo at the bottom of the Dashboard, so that more people can discover and use Uppy. 
 
-This is entirely optional of course, just set this option to false if you wish.
+This is entirely optional of course, just set this option to false if you do not wish to display Uppy logo.
 
 ### `disableStatusBar: false`
 

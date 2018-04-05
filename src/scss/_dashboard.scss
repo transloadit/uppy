@@ -53,7 +53,7 @@
 .uppy-Dashboard-poweredBy {
   position: absolute;
   right: 4px;
-  bottom: -20px;
+  bottom: -23px;
   font-size: 11px;
   font-weight: 300;
   color: rgba($color-gray, 0.8);
@@ -419,11 +419,11 @@
   }
 
 .uppy-Dashboard.drag .uppy-Dashboard-innerWrap  {
-  background-color: darken($color-white, 15%)
+  background-color: darken($color-white, 20%)
 }
 
 .uppy-Dashboard.drag .uppy-Dashboard-files--noFiles {
-  border-color: darken(#E4E4E4, 20%);
+  border-color: darken($color-white, 20%);
 }
 
 // .uppy-Dashboard-bgIcon {
@@ -496,7 +496,7 @@
   list-style: none;
   margin: 10px 0;
   position: relative;
-  background-color: $color-white;
+  // background-color: $color-white;
   display: flex;
   align-items: center;
   border-bottom: 1px solid lighten($color-gray, 35%);
@@ -640,7 +640,7 @@
   // padding: 10px 19px 0 25px;
   padding-left: 15px;
   position: relative;
-  max-width: 70%;
+  max-width: 65%;
 
   .uppy-Dashboard--wide & {
     width: 100%;

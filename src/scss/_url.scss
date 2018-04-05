@@ -10,8 +10,12 @@
 .uppy-Url-input {
   width: 90%;
   max-width: 650px;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 }
+
+  .uppy-Dashboard--wide .uppy-Url-input  {
+    margin-bottom: 30px;
+  }
 
 .uppy-Url-importButton {
   padding: 13px 25px;
