@@ -1,5 +1,13 @@
 const Core = require('./core')
 
+// Communication with Uppy Server
+const Server = require('./server')
+
+// Reusable views
+const Views = require('./views')
+
+const lib = { Views, Server }
+
 // Parent
 const Plugin = require('./core/Plugin')
 
@@ -32,6 +40,7 @@ const ReduxDevTools = require('./plugins/ReduxDevTools')
 
 module.exports = {
   Core,
+  lib,
   Plugin,
   StatusBar,
   ProgressBar,
