@@ -44,7 +44,10 @@ module.exports = class ProviderView {
 
     // set default options
     const defaultOptions = {
-      viewType: 'list'
+      viewType: 'list',
+      showTitles: true,
+      showFilter: true,
+      showBreadcrumbs: true
     }
 
     // merge default options with the ones set by user
@@ -200,7 +203,7 @@ module.exports = class ProviderView {
   filterQuery (e) {
     const state = this.plugin.getPluginState()
     this.plugin.setPluginState(Object.assign({}, state, {
-      filterInput: e.target.value
+      filterInput: e ? e.target.value : ''
     }))
   }
 
@@ -554,6 +557,7 @@ module.exports = class ProviderView {
     if (!authenticated) {
       return h(AuthView, {
         pluginName: this.plugin.title,
+        pluginIcon: this.plugin.icon,
         demo: this.plugin.opts.demo,
         checkAuth: this.checkAuth,
         handleAuth: this.handleAuth,
@@ -576,12 +580,17 @@ module.exports = class ProviderView {
       isActiveRow: this.isActiveRow,
       isChecked: this.isChecked,
       toggleCheckbox: this.toggleCheckbox,
+      getItemId: this.plugin.getItemId,
       getItemName: this.plugin.getItemName,
       getItemIcon: this.plugin.getItemIcon,
       handleScroll: this.handleScroll,
       done: this.donePicking,
       title: this.plugin.title,
-      viewType: this.opts.viewType
+      viewType: this.opts.viewType,
+      showTitles: this.opts.showTitles,
+      showFilter: this.opts.showFilter,
+      showBreadcrumbs: this.opts.showBreadcrumbs,
+      pluginIcon: this.plugin.icon
     })
 
     return Browser(browserProps)

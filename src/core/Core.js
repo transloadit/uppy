@@ -28,7 +28,10 @@ class Uppy {
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload:',
-        uppyServerError: 'Connection with Uppy Server failed'
+        uppyServerError: 'Connection with Uppy Server failed',
+        failedToUpload: 'Failed to upload',
+        noInternetConnection: 'No Internet connection',
+        connectedToInternet: 'Connected to the Intenet!'
       }
     }
 
@@ -447,19 +450,14 @@ class Uppy {
   }
 
   pauseResume (fileID) {
-    const updatedFiles = Object.assign({}, this.getState().files)
+    if (this.getFile(fileID).uploadComplete) return
 
-    if (updatedFiles[fileID].uploadComplete) return
-
-    const wasPaused = updatedFiles[fileID].isPaused || false
+    const wasPaused = this.getFile(fileID).isPaused || false
     const isPaused = !wasPaused
 
-    const updatedFile = Object.assign({}, updatedFiles[fileID], {
+    this.setFileState(fileID, {
       isPaused: isPaused
     })
-
-    updatedFiles[fileID] = updatedFile
-    this.setState({files: updatedFiles})
 
     this.emit('upload-pause', fileID, isPaused)
 
@@ -627,7 +625,7 @@ class Uppy {
       this.setFileState(file.id, { error: error.message })
       this.setState({ error: error.message })
 
-      let message = `Failed to upload ${file.name}`
+      let message = `${this.i18n('failedToUpload')} ${file.name}`
       if (typeof error === 'object' && error.message) {
         message = { message: message, details: error.message }
       }
@@ -644,13 +642,13 @@ class Uppy {
         return
       }
       this.setFileState(file.id, {
-        progress: Object.assign({}, this.getFile(file.id), {
+        progress: {
           uploadStarted: Date.now(),
           uploadComplete: false,
           percentage: 0,
           bytesUploaded: 0,
           bytesTotal: file.size
-        })
+        }
       })
     })
 
@@ -750,13 +748,13 @@ class Uppy {
         : true
     if (!online) {
       this.emit('is-offline')
-      this.info('No internet connection', 'error', 0)
+      this.info(this.i18n('noInternetConnection'), 'error', 0)
       this.wasOffline = true
     } else {
       this.emit('is-online')
       if (this.wasOffline) {
         this.emit('back-online')
-        this.info('Connected!', 'success', 3000)
+        this.info(this.i18n('connectedToInternet'), 'success', 3000)
         this.wasOffline = false
       }
     }

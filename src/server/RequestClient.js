@@ -45,7 +45,7 @@ module.exports = class RequestClient {
   }
 
   post (path, data) {
-    fetch(`${this.hostname}/${path}`, {
+    return fetch(`${this.hostname}/${path}`, {
       method: 'post',
       credentials: 'include',
       headers: {

@@ -2,8 +2,8 @@
 * General Uppy styles that apply to everything inside the .Uppy container
 */
 
-.uppy {
-  // all: initial;
+.uppy-Root {
+  all: initial;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont,
     'avenir next', avenir,
@@ -14,9 +14,13 @@
   // -webkit-font-smoothing: antialiased;
 }
 
-.uppy *, .uppy *:before, .uppy *:after {
+.uppy-Root *, .uppy-Root *:before, .uppy-Root *:after {
   box-sizing: inherit;
 }
+
+// .uppy-Root *:focus:not(.focus-visible) {
+//   outline: 0;
+// }
 
 // https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4
 
@@ -56,37 +60,6 @@
   }
 }
 
-.UppyButton--white {
-  color: $color-asphalt-gray;
-  background-color: $color-white;
-
-  &:hover,
-  &:focus {
-    color: $color-white;
-    background-color: darken($color-cornflower-blue, 10%);
-  }
-}
-
-.UppyButton--yellow {
-  color: $color-white;
-  background-color: $color-yellow;
-
-  &:hover,
-  &:focus {
-    background-color: darken($color-yellow, 5%);
-  }
-}
-
-.UppyButton--green {
-  color: $color-white;
-  background-color: $color-green;
-
-  &:hover,
-  &:focus {
-    background-color: darken($color-green, 10%);
-  }
-}
-
 .UppyButton--red {
   color: $color-white;
   background-color: $color-red;
@@ -106,3 +79,191 @@
   width: 45px;
   height: 45px;
 }
+
+// Utilities
+
+.uppy-u-reset {
+  // @include reset-button;
+  animation: none 0s ease 0s 1 normal none running;
+  backface-visibility: visible;
+  background: transparent none repeat 0 0 / auto auto padding-box border-box scroll;
+  border: medium none currentColor;
+  border-collapse: separate;
+  border-image: none;
+  border-radius: 0;
+  border-spacing: 0;
+  bottom: auto;
+  box-shadow: none;
+  // box-sizing: content-box;
+  caption-side: top;
+  clear: none;
+  clip: auto;
+  color: #000;
+  columns: auto;
+  column-count: auto;
+  column-fill: balance;
+  column-gap: normal;
+  column-rule: medium none currentColor;
+  column-span: 1;
+  column-width: auto;
+  content: normal;
+  counter-increment: none;
+  counter-reset: none;
+  cursor: auto;
+  // direction: ltr;
+  display: inline;
+  empty-cells: show;
+  float: none;
+  font-family: serif;
+  font-size: medium;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  font-stretch: normal;
+  line-height: normal;
+  height: auto;
+  hyphens: none;
+  left: auto;
+  letter-spacing: normal;
+  list-style: disc outside none;
+  margin: 0;
+  max-height: none;
+  max-width: none;
+  min-height: 0;
+  min-width: 0;
+  opacity: 1;
+  orphans: 2;
+  outline: medium none invert;
+  overflow: visible;
+  overflow-x: visible;
+  overflow-y: visible;
+  padding: 0;
+  page-break-after: auto;
+  page-break-before: auto;
+  page-break-inside: auto;
+  perspective: none;
+  perspective-origin: 50% 50%;
+  position: static;
+  right: auto;
+  tab-size: 8;
+  table-layout: auto;
+  text-align: left;
+  text-align-last: auto;
+  text-decoration: none;
+  text-indent: 0;
+  text-shadow: none;
+  text-transform: none;
+  top: auto;
+  transform: none;
+  transform-origin: 50% 50% 0;
+  transform-style: flat;
+  transition: none 0s ease 0s;
+  unicode-bidi: normal;
+  vertical-align: baseline;
+  visibility: visible;
+  white-space: normal;
+  widows: 2;
+  width: auto;
+  word-spacing: normal;
+  z-index: auto;
+  // all: initial;
+}
+
+// Inputs
+
+.uppy-c-textInput {
+  border: 1px solid rgba($color-gray, 0.5);
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 6px 8px;
+}
+
+  .uppy-Dashboard--wide .uppy-c-textInput {
+    font-size: 15px;
+    line-height: 1.8;
+    padding: 8px 12px;
+  }
+
+  .uppy-c-textInput:focus {
+    border-color: $color-cornflower-blue;
+    outline: none;
+    box-shadow: 0 0 1px 1px rgba($color-cornflower-blue, 0.3);
+  }
+
+// Buttons
+
+.uppy-c-btn {
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 300;
+  transition: all 0.3s;
+  user-select: none;
+}
+
+  .uppy-c-btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
+  }
+
+.uppy-c-btn-primary {
+  font-size: 13px;
+  padding: 10px 18px;
+  border-radius: 4px;
+  background-color: $color-cornflower-blue;
+  color: $color-white;
+}
+
+  .uppy-Dashboard--wide .uppy-c-btn-primary {
+    font-size: 15px;
+    padding: 13px 28px;
+    // border-radius: 4px;
+  }
+
+  .uppy-c-btn-primary:hover {
+    background-color: darken($color-cornflower-blue, 10%);
+  }
+
+  .uppy-c-btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 3px 1px rgba($color-cornflower-blue, 0.7);
+  }
+
+.uppy-c-btn-link {
+  font-size: 13px;
+  line-height: 1;
+  padding: 10px 18px;
+  border-radius: 4px;
+  background-color: transparent;
+  color: $color-black;
+}
+
+  .uppy-Dashboard--wide .uppy-c-btn-link {
+    font-size: 15px;
+    padding: 13px 28px;
+    // border-radius: 4px;
+  }
+
+  .uppy-c-btn-link:hover {
+    text-decoration: underline;
+  }
+
+  .uppy-c-btn-link:focus {
+    outline: none;
+    box-shadow: 0 0 3px 1px rgba($color-cornflower-blue, 0.7);
+  }
+
+.uppy-c-btn--small {
+  font-size: 0.9em;
+  padding: 7px 16px;
+  border-radius: 2px;
+}
+
+  .uppy-Dashboard--wide .uppy-c-btn--small {
+    padding: 8px 10px;
+    border-radius: 2px;
+  }

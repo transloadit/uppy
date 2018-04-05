@@ -41,7 +41,7 @@ module.exports = class Dashboard extends Plugin {
         selectToUpload: 'Select files to upload',
         closeModal: 'Close Modal',
         upload: 'Upload',
-        importFrom: 'Import files from',
+        importFrom: 'Import from',
         dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
         dashboardTitle: 'Uppy Dashboard',
         copyLinkToClipboardSuccess: 'Link copied to clipboard.',
@@ -63,6 +63,10 @@ module.exports = class Dashboard extends Plugin {
         numberOfSelectedFiles: 'Number of selected files',
         uploadAllNewFiles: 'Upload all new files',
         emptyFolderAdded: 'No files were added from empty folder',
+        uploadComplete: 'Upload complete',
+        resumeUpload: 'Resume upload',
+        pauseUpload: 'Pause upload',
+        retryUpload: 'Retry upload',
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
           1: 'Upload %{smart_count} files'
@@ -88,6 +92,7 @@ module.exports = class Dashboard extends Plugin {
       height: 550,
       thumbnailWidth: 280,
       defaultTabIcon: defaultTabIcon,
+      showLinkToFileUploadResult: true,
       showProgressDetails: false,
       hideUploadButton: false,
       hideProgressAfterFinish: false,
@@ -97,6 +102,7 @@ module.exports = class Dashboard extends Plugin {
       disableInformer: false,
       disableThumbnailGenerator: false,
       disablePageScrollWhenModalOpen: true,
+      proudlyDisplayPoweredByUppy: true,
       onRequestCloseModal: () => this.closeModal(),
       locale: defaultLocale
     }
@@ -125,7 +131,7 @@ module.exports = class Dashboard extends Plugin {
     this.initEvents = this.initEvents.bind(this)
     this.onKeydown = this.onKeydown.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
-    this.handleFileCard = this.handleFileCard.bind(this)
+    this.toggleFileCard = this.toggleFileCard.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.handlePaste = this.handlePaste.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -200,6 +206,11 @@ module.exports = class Dashboard extends Plugin {
     if (focusableNodes.length) focusableNodes[0].focus()
   }
 
+  setFocusToBrowse () {
+    const browseBtn = this.el.querySelector('.uppy-Dashboard-browse')
+    if (browseBtn) browseBtn.focus()
+  }
+
   maintainFocus (event) {
     var focusableNodes = this.getFocusableNodes()
     var focusedItemIndex = focusableNodes.indexOf(document.activeElement)
@@ -230,7 +241,8 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.updateDashboardElWidth()
-    this.setFocusToFirstNode()
+    // this.setFocusToFirstNode()
+    this.setFocusToBrowse()
   }
 
   closeModal () {
@@ -319,8 +331,6 @@ module.exports = class Dashboard extends Plugin {
       this.handleDrop(files)
     })
 
-    this.uppy.on('dashboard:file-card', this.handleFileCard)
-
     this.updateDashboardElWidth()
     window.addEventListener('resize', this.updateDashboardElWidth)
   }
@@ -336,7 +346,6 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.removeDragDropListener()
-    this.uppy.off('dashboard:file-card', this.handleFileCard)
     window.removeEventListener('resize', this.updateDashboardElWidth)
   }
 
@@ -349,7 +358,7 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  handleFileCard (fileId) {
+  toggleFileCard (fileId) {
     this.setPluginState({
       fileCardFor: fileId || false
     })
@@ -434,13 +443,9 @@ module.exports = class Dashboard extends Plugin {
       this.uppy.removeFile(fileID)
     }
 
-    const showFileCard = (fileID) => {
-      this.uppy.emit('dashboard:file-card', fileID)
-    }
-
-    const fileCardDone = (meta, fileID) => {
+    const saveFileCard = (meta, fileID) => {
       this.uppy.setFileMeta(fileID, meta)
-      this.uppy.emit('dashboard:file-card')
+      this.toggleFileCard()
     }
 
     return DashboardUI({
@@ -461,7 +466,6 @@ module.exports = class Dashboard extends Plugin {
       handleClickOutside: this.handleClickOutside,
       handleInputChange: this.handleInputChange,
       handlePaste: this.handlePaste,
-      showProgressDetails: this.opts.showProgressDetails,
       inline: this.opts.inline,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
@@ -471,20 +475,23 @@ module.exports = class Dashboard extends Plugin {
       removeFile: this.uppy.removeFile,
       info: this.uppy.info,
       note: this.opts.note,
-      metaFields: this.getPluginState().metaFields,
+      metaFields: pluginState.metaFields,
       resumableUploads: this.uppy.state.capabilities.resumableUploads || false,
       startUpload: startUpload,
       pauseUpload: this.uppy.pauseResume,
       retryUpload: this.uppy.retryUpload,
       cancelUpload: cancelUpload,
       fileCardFor: pluginState.fileCardFor,
-      showFileCard: showFileCard,
-      fileCardDone: fileCardDone,
+      toggleFileCard: this.toggleFileCard,
+      saveFileCard: saveFileCard,
       updateDashboardElWidth: this.updateDashboardElWidth,
       maxWidth: this.opts.maxWidth,
       maxHeight: this.opts.maxHeight,
+      showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
+      proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
       currentWidth: pluginState.containerWidth,
-      isWide: pluginState.containerWidth > 400
+      isWide: pluginState.containerWidth > 400,
+      isTargetDOMEl: this.isTargetDOMEl
     })
   }
 
@@ -497,7 +504,7 @@ module.exports = class Dashboard extends Plugin {
   }
 
   install () {
-    // Set default state for Modal
+    // Set default state for Dashboard
     this.setPluginState({
       isHidden: true,
       showFileCard: false,
@@ -521,6 +528,7 @@ module.exports = class Dashboard extends Plugin {
       this.uppy.use(StatusBar, {
         target: this,
         hideUploadButton: this.opts.hideUploadButton,
+        showProgressDetails: this.opts.showProgressDetails,
         hideAfterFinish: this.opts.hideProgressAfterFinish,
         locale: this.opts.locale
       })

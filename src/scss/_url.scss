@@ -1,27 +1,26 @@
 .uppy-Url {
   width: 100%; 
   height: 100%; 
-  display: flex; 
+  display: flex;
+  flex-direction: column;
   justify-content: center; 
   align-items: center;
 }
 
 .uppy-Url-input {
-  width: 80%; 
-  height: 50px; 
-  padding-left: 10px;
-  font-size: 15px;
-  border: 1px solid rgba($color-gray, 0.5);
-  border-right: 0;
+  width: 90%;
+  max-width: 650px;
+  margin-bottom: 15px;
 }
 
+  .uppy-Dashboard--wide .uppy-Url-input  {
+    margin-bottom: 30px;
+  }
+
 .uppy-Url-importButton {
-  @include reset-button();
-  width: 100px;
-  height: 50px;
-  color: $color-white;
-  background-color: $color-cornflower-blue;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 12px;
+  padding: 13px 25px;
 }
+
+  .uppy-Dashboard--wide .uppy-Url-importButton {
+    padding: 13px 35px;
+  }

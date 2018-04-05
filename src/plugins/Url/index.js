@@ -13,7 +13,7 @@ module.exports = class Url extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Url'
-    this.title = 'Url'
+    this.title = 'Link'
     this.type = 'acquirer'
     this.icon = () => <svg aria-hidden="true" class="UppyIcon UppyModalTab-icon" width="64" height="64" viewBox="0 0 64 64">
       <circle cx="32" cy="32" r="31" />
@@ -26,11 +26,10 @@ module.exports = class Url extends Plugin {
     // Set default options and locale
     const defaultLocale = {
       strings: {
-        addUrl: 'Add url',
         import: 'Import',
-        enterUrlToImport: 'Enter file url to import',
+        enterUrlToImport: 'Enter URL to import a file',
         failedToFetch: 'Uppy Server failed to fetch this URL, please make sure it’s correct',
-        enterCorrectUrl: 'Please enter correct URL to add file'
+        enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file'
       }
     }
 
@@ -59,58 +58,90 @@ module.exports = class Url extends Plugin {
     this.server = new RequestClient(uppy, {host: this.opts.host})
   }
 
-  getMeta (url) {
-    return this.server.post('url/meta', { url })
-  }
-
   getFileNameFromUrl (url) {
     return url.substring(url.lastIndexOf('/') + 1)
   }
 
+  checkIfCorrectURL (url) {
+    if (!url) return false
+
+    const protocol = url.match(/^([a-z0-9]+):\/\//)[1]
+    if (protocol !== 'http' && protocol !== 'https') {
+      return false
+    }
+
+    return true
+  }
+
+  addProtocolToURL (url) {
+    const protocolRegex = /^[a-z0-9]+:\/\//
+    const defaultProtocol = 'http://'
+    if (protocolRegex.test(url)) {
+      return url
+    }
+
+    return defaultProtocol + url
+  }
+
+  getMeta (url) {
+    return this.server.post('url/meta', { url })
+      .then((res) => {
+        if (res.error) {
+          this.uppy.log('[URL] Error:')
+          this.uppy.log(res.error)
+          throw new Error('Failed to fetch the file')
+        }
+        return res
+      })
+  }
+
   addFile (url) {
-    if (!url) {
-      this.uppy.log('[URL] Incorrect URL entered')
+    url = this.addProtocolToURL(url)
+    if (!this.checkIfCorrectURL(url)) {
+      this.uppy.log(`[URL] Incorrect URL entered: ${url}`)
       this.uppy.info(this.i18n('enterCorrectUrl'), 'error', 4000)
       return
     }
 
-    return this.getMeta(url).then((meta) => {
-      const tagFile = {
-        source: this.id,
-        name: this.getFileNameFromUrl(url),
-        type: meta.type,
-        data: {
-          size: meta.size
-        },
-        isRemote: true,
-        body: {
-          url: url
-        },
-        remote: {
-          host: this.opts.host,
-          url: `${this.hostname}/url/get`,
+    return this.getMeta(url)
+      .then((meta) => {
+        const tagFile = {
+          source: this.id,
+          name: this.getFileNameFromUrl(url),
+          type: meta.type,
+          data: {
+            size: meta.size
+          },
+          isRemote: true,
           body: {
-            fileId: url,
             url: url
+          },
+          remote: {
+            host: this.opts.host,
+            url: `${this.hostname}/url/get`,
+            body: {
+              fileId: url,
+              url: url
+            }
           }
         }
-      }
-
-      this.uppy.log('[Url] Adding remote file')
-      return this.uppy.addFile(tagFile)
-        .then(() => {
-          const dashboard = this.uppy.getPlugin('Dashboard')
-          if (dashboard) dashboard.hideAllPanels()
-        })
-    })
-    .catch((err) => {
-      const errorMsg = `${err.message}. Could be CORS issue?`
-      this.uppy.log(errorMsg, 'error')
-      this.uppy.info({
-        message: this.i18n('failedToFetch'),
-        details: errorMsg
-      }, 'error', 4000)
-    })
+        return tagFile
+      })
+      .then((tagFile) => {
+        this.uppy.log('[Url] Adding remote file')
+        return this.uppy.addFile(tagFile)
+      })
+      .then(() => {
+        const dashboard = this.uppy.getPlugin('Dashboard')
+        if (dashboard) dashboard.hideAllPanels()
+      })
+      .catch((err) => {
+        this.uppy.log(err)
+        this.uppy.info({
+          message: this.i18n('failedToFetch'),
+          details: err
+        }, 'error', 4000)
+      })
   }
 
   render (state) {

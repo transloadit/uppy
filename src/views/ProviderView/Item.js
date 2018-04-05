@@ -1,9 +1,6 @@
-const cuid = require('cuid')
 const { h } = require('preact')
 
 module.exports = (props) => {
-  const uniqueId = cuid()
-
   const stop = (ev) => {
     if (ev.keyCode === 13) {
       ev.stopPropagation()
@@ -27,21 +24,21 @@ module.exports = (props) => {
           role="option"
           tabindex="0"
           aria-label={`Select ${props.title}`}
-          id={uniqueId}
+          id={props.id}
           checked={props.isChecked}
           disabled={props.isDisabled}
           onchange={props.handleCheckboxClick}
           onkeyup={stop}
           onkeydown={stop}
           onkeypress={stop} />
-        <label for={uniqueId} />
+        <label for={props.id} />
       </div>
       <button type="button"
         class="uppy-ProviderBrowserItem-inner"
         aria-label={`Select ${props.title}`}
         tabindex="0"
         onclick={handleItemClick}>
-        {props.getItemIcon()} {props.title}
+        {props.getItemIcon()} {props.showTitles && props.title}
       </button>
     </li>
   )
