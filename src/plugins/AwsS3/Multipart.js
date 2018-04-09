@@ -93,11 +93,16 @@ module.exports = class AwsS3Multipart extends Plugin {
   createMultipartUpload (file) {
     this.assertHost()
 
-    const filename = encodeURIComponent(file.name)
-    const type = encodeURIComponent(file.type)
-    return fetch(`${this.opts.host}/s3/multipart?filename=${filename}&type=${type}`, {
+    return fetch(`${this.opts.host}/s3/multipart`, {
       method: 'post',
-      headers: { accept: 'application/json' }
+      body: JSON.stringify({
+        filename: file.name,
+        type: file.type
+      }),
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json'
+      }
     }).then(handleResponse)
   }
 
