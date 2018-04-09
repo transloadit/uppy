@@ -44,7 +44,7 @@ const photoUploader = Uppy({ id: 'post' })
 
 ### `autoProceed: true`
 
-Starts upload automatically after the first file is selected.
+Uppy will start uploading automatically after the first file is selected.
 
 ### `restrictions: {}`
 
@@ -67,7 +67,14 @@ meta: {
 }
 ```
 
-Can be altered with [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setmeta-data) method.
+This global metadata is added to each file in Uppy. It can be modified with two methods:
+
+1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setmeta-data) — set or update meta for all files.
+2. [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file. 
+
+Metadata from each file is then attached to uploads in [Tus](/docs/tus/) and [XHRUpload](/docs/tus/) plugins.
+
+Metadata can also be added from a `<form>` element on your page via [Form](/docs/form/)plugin or via UI if you are using Dashboard with [`metaFields`](/docs/dashboard/#metaFields) option.
 
 ### `onBeforeFileAdded: (currentFile, files) => Promise.resolve()`
 
@@ -119,7 +126,7 @@ locale: {
 
 As well as the pluralization function, which is used to determine which string will be used for the provided `smart_count` number.
 
-For example, for Icelandic language the pluralization function will be:
+For example, for Icelandic language the pluralization function would be:
 
 ``` js
 locale: {
@@ -193,6 +200,28 @@ file.size      // 3947642 (returns 'N/A' if size cannot be determined)
 file.preview   // value that can be used to populate "src" attribute of an "img" tag
 ```
 
+### `uppy.upload()`
+
+Start uploading selected files.
+
+Returns a Promise `result` that resolves with an object containing two arrays of uploaded files:
+
+- `result.successful` - Files that were uploaded successfully.
+- `result.failed` - Files that did not upload successfully. These file objects will have a `.error` property describing what went wrong.
+
+```js
+uppy.upload().then((result) => {
+  console.info('Successful uploads:', result.successful)
+
+  if (result.failed.length > 0) {
+    console.error('Errors:')
+    result.failed.forEach((file) => {
+      console.error(file.error)
+    })
+  }
+})
+```
+
 ### `uppy.setState(patch)`
 
 Update `uppy.state`. Usually this method is called internally, but in some cases it might be useful to alter something in `uppy.state` directly.
@@ -203,6 +232,7 @@ Uppy’s default state on initialization:
 {
   plugins: {},
   files: {},
+  currentUploads: {},
   capabilities: {
     resumableUploads: false
   },
@@ -245,6 +275,12 @@ uppy.setState({files: updatedFiles})
 
 Returns `uppy.state`, which you can also use directly.
 
+### `uppy.setFileState(fileID, state)`
+
+Update the state for a single file. This is mostly useful for plugins that may want to store data on file objects, or that need to pass file-specific configuration to other plugins that support it.
+
+`fileID` is the string file ID. `state` is an object that will be merged into the file's state object.
+
 ### `uppy.setMeta(data)`
 
 Alters global `meta` object is state, the one that can be set in Uppy options and gets merged with all newly added files. Calling `setMeta` will also merge newly added meta data with previously selected files.
@@ -258,9 +294,7 @@ uppy.setMeta({ resize: 1500, token: 'ab5kjfg' })
 Updated metadata for a specific file.
 
 ```js
-uppy.setFileMeta('myfileID', {
-  resize: 1500
-})
+uppy.setFileMeta('myfileID', { resize: 1500 })
 ```
 
 ### `uppy.reset()`
@@ -271,44 +305,41 @@ Stop all uploads in progress and clear file selection, set progress to 0. Basica
 
 Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
 
-### `uppy.log(msgString)`
-
-Logs stuff to console, only if `uppy.opts.debug` is set to true. Silent in production.
-
-### `uppy.info()`
-
-```js
-this.info('Oh my, something good happened!', 'success', 5000)
-```
+### `uppy.log()`
 
 #### Parameters
 
-- **message** *string*
-- **type** *string* `info`, `warning`, `success` or `error`
-- **duration** *number* in milliseconds
+- **message** *{string}*
+- **type** *{string=}* `error` or `warning`
 
-### `uppy.upload()`
-
-Start uploading selected files.
-
-Returns a Promise `result` that resolves with an object containing two arrays of uploaded files.
-
- - `result.successful` - Files that were uploaded successfully.
- - `result.failed` - Files that did not upload successfully.
-   These file objects will have a `.error` property describing what went wrong.
+Logs stuff to console, only if `uppy.opts.debug` is set to true. Silent in production.
 
 ```js
-uppy.upload().then((result) => {
-  console.info('Successful uploads:', result.successful)
-
-  if (result.failed.length > 0) {
-    console.error('Errors:')
-    result.failed.forEach((file) => {
-      console.error(file.error)
-    })
-  }
-})
+uppy.log('[Dashboard] adding files...')
 ```
+
+### `uppy.info()`
+
+#### Parameters
+
+- **message** *{(string|object)}* — `'info message'` or `{ message: 'Oh no!', details: 'File couldn’t be uploaded' }`
+- **type** *{string} [type='info']* — `info`, `warning`, `success` or `error`
+- **duration** *{number} [duration = 3000]* — in milliseconds
+
+Sets a message in state, with optional details, that can be shown by notification UI plugins. Currently that means just the [Informer](/docs/informer/) plugin, included by default in Dashboard.
+
+```js
+this.info('Oh my, something good happened!', 'success', 3000)
+```
+
+```js
+this.info({
+    message: 'Oh no, something bad happened!',
+    details: 'File couldn’t be uploaded because there’s no internet connection',
+  }, 'error', 5000)
+```
+
+`info-visible` and `info-hidden` events are emitted when this info message should be visible or hidden.
 
 ### `uppy.on('event', action)`
 
@@ -318,21 +349,49 @@ Subscribe to an uppy-event. See below for the full list of events.
 
 Uppy exposes events that you can subscribe to in your app:
 
-### `upload-progress`
+### `file-added`
 
-Fired each time file upload progress is available, `data` object looks like this:
+Fired each time file is added.
 
 ```javascript
-data = {
-  id: myimg12321323,
-  bytesUploaded: 2323254,
-  bytesTotal
-}
+uppy.on('file-added', (file) => {
+  console.log('Added file', file)
+})
 ```
 
+### `file-removed`
+
+Fired each time file is removed.
+
 ```javascript
-uppy.on('upload-progress', (data) => {
-  console.log(data.id, data.bytesUploaded, data.bytesTotal)
+uppy.on('file-removed', (file) => {
+  console.log('Removed file', file)
+})
+```
+
+### `upload`
+
+Fired when upload starts.
+
+```javascript
+uppy.on('upload', (data) => {
+  // data object consists of `id` with upload id and `fileIDs` array 
+  // with file ids in current upload
+  // data: { id, fileIDs }
+  console.log(`Starting upload ${id} for files ${fileIDs}`)
+})
+```
+
+### `upload-progress`
+
+Fired each time file upload progress is available:
+
+
+```javascript
+uppy.on('upload-progress', (file, progress) => {
+  // file: { id, name, type, ... }
+  // progress: { uploader, bytesUploaded, bytesTotal }
+  console.log(file.id, progress.bytesUploaded, progress.bytesTotal)
 })
 ```
 
@@ -341,8 +400,8 @@ uppy.on('upload-progress', (data) => {
 Fired each time a single upload is complete.
 
 ``` javascript
-uppy.on('upload-success', (fileId, resp, uploadURL) => {
-  console.log(uploadURL)
+uppy.on('upload-success', (file, resp, uploadURL) => {
+  console.log(file.name, uploadURL)
   var img = new Image()
   img.width = 300
   img.alt = fileId
@@ -363,3 +422,39 @@ uppy.on('complete', (result) => {
   console.log('failed files:', result.failed)
 })
 ```
+
+### `error`
+
+Fired when Uppy fails to upload/encode the whole upload. That error is then set to `uppy.state.error`.
+
+### `upload-error`
+
+Fired when an error occures with a specific file:
+
+``` javascript
+uppy.on('upload-error', (file, error) => {
+  console.log('error with file:', file.id)
+  console.log('error message:', error)
+})
+```
+
+### `info-visible`
+
+Fired when “info” message should be visible in the UI. By default `Informer` plugin is displaying these messages (enabled by default in `Dashboard` plugin). You can use this event to show messages in your custom UI:
+
+``` javascript
+uppy.on('info-visible', () => {
+  const info = uppy.getState().info
+  // info: {
+  //  isHidden: false,
+  //  type: 'error',
+  //  message: 'Failed to upload',
+  //  details: 'Error description'
+  // }
+  alert(`${info.message} ${info.details}`)
+})
+```
+
+### `info-hidden`
+
+Fired when “info” message should be hidden in the UI. See [`info-visible`](#info-visible).

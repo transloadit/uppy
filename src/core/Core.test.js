@@ -1,11 +1,11 @@
-import Core from './Core'
-import utils from './Utils'
-import Plugin from './Plugin'
-import AcquirerPlugin1 from '../../test/mocks/acquirerPlugin1'
-import AcquirerPlugin2 from '../../test/mocks/acquirerPlugin2'
-import InvalidPlugin from '../../test/mocks/invalidPlugin'
-import InvalidPluginWithoutId from '../../test/mocks/invalidPluginWithoutId'
-import InvalidPluginWithoutType from '../../test/mocks/invalidPluginWithoutType'
+const Core = require('./Core')
+const utils = require('./Utils')
+const Plugin = require('./Plugin')
+const AcquirerPlugin1 = require('../../test/mocks/acquirerPlugin1')
+const AcquirerPlugin2 = require('../../test/mocks/acquirerPlugin2')
+const InvalidPlugin = require('../../test/mocks/invalidPlugin')
+const InvalidPluginWithoutId = require('../../test/mocks/invalidPluginWithoutId')
+const InvalidPluginWithoutType = require('../../test/mocks/invalidPluginWithoutType')
 
 jest.mock('cuid', () => {
   return () => 'cjd09qwxb000dlql4tp4doz8h'
@@ -244,6 +244,17 @@ describe('src/Core', () => {
     })
   })
 
+  it('should clear all uploads on cancelAll()', () => {
+    const core = new Core()
+    const id = core._createUpload([ 'a', 'b' ])
+
+    expect(core.state.currentUploads[id]).toBeDefined()
+
+    core.cancelAll()
+
+    expect(core.state.currentUploads[id]).toBeUndefined()
+  })
+
   it('should close, reset and uninstall when the close method is called', () => {
     const core = new Core()
     core.use(AcquirerPlugin1)
@@ -355,7 +366,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('preprocess-progress', fileId, {
+          const file = core.getFile(fileId)
+          core.emit('preprocess-progress', file, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -382,13 +394,14 @@ describe('src/Core', () => {
           data: utils.dataURItoFile(sampleImageDataURI, {})
         })
         .then(() => {
-          const fileId = Object.keys(core.state.files)[0]
-          core.emit('preprocess-complete', fileId, {
+          const fileID = Object.keys(core.state.files)[0]
+          const file = core.state.files[fileID]
+          core.emit('preprocess-complete', file, {
             mode: 'determinate',
             message: 'something',
             value: 0
           })
-          expect(core.state.files[fileId].progress).toEqual({
+          expect(core.state.files[fileID].progress).toEqual({
             percentage: 0,
             bytesUploaded: 0,
             bytesTotal: 17175,
@@ -465,7 +478,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('postprocess-progress', fileId, {
+          const file = core.getFile(fileId)
+          core.emit('postprocess-progress', file, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -493,7 +507,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core.emit('postprocess-complete', fileId, {
+          const file = core.state.files[fileId]
+          core.emit('postprocess-complete', file, {
             mode: 'determinate',
             message: 'something',
             value: 0
@@ -651,8 +666,9 @@ describe('src/Core', () => {
       const core = new Core().run()
       core.addUploader((fileIDs) => {
         fileIDs.forEach((fileID) => {
-          if (/bar/.test(core.getFile(fileID).name)) {
-            core.emit('upload-error', fileID, new Error('This is bar and I do not like bar'))
+          const file = core.getFile(fileID)
+          if (/bar/.test(file.name)) {
+            core.emit('upload-error', file, new Error('This is bar and I do not like bar'))
           }
         })
         return Promise.resolve()
@@ -717,10 +733,11 @@ describe('src/Core', () => {
             totalProgress: 50
           })
 
+          const file = core.getFile(fileId)
           core.removeFile(fileId)
 
           expect(Object.keys(core.state.files).length).toEqual(0)
-          expect(fileRemovedEventMock.mock.calls[0][0]).toEqual(fileId)
+          expect(fileRemovedEventMock.mock.calls[0][0]).toEqual(file)
           expect(core.state.totalProgress).toEqual(0)
         })
     })
@@ -802,8 +819,8 @@ describe('src/Core', () => {
         })
         .then(() => {
           const fileId = Object.keys(core.state.files)[0]
-          core._calculateProgress({
-            id: fileId,
+          const file = core.getFile(fileId)
+          core._calculateProgress(file, {
             bytesUploaded: 12345,
             bytesTotal: 17175
           })
@@ -815,8 +832,7 @@ describe('src/Core', () => {
             uploadStarted: false
           })
 
-          core._calculateProgress({
-            id: fileId,
+          core._calculateProgress(file, {
             bytesUploaded: 17175,
             bytesTotal: 17175
           })
@@ -850,17 +866,17 @@ describe('src/Core', () => {
         }).then(() => {
           const fileId1 = Object.keys(core.state.files)[0]
           const fileId2 = Object.keys(core.state.files)[1]
+          const file1 = core.state.files[fileId1]
+          const file2 = core.state.files[fileId2]
           core.state.files[fileId1].progress.uploadStarted = new Date()
           core.state.files[fileId2].progress.uploadStarted = new Date()
 
-          core._calculateProgress({
-            id: fileId1,
+          core._calculateProgress(file1, {
             bytesUploaded: 12345,
             bytesTotal: 17175
           })
 
-          core._calculateProgress({
-            id: fileId2,
+          core._calculateProgress(file2, {
             bytesUploaded: 10201,
             bytesTotal: 17175
           })
@@ -893,17 +909,17 @@ describe('src/Core', () => {
         }).then(() => {
           const fileId1 = Object.keys(core.state.files)[0]
           const fileId2 = Object.keys(core.state.files)[1]
+          const file1 = core.state.files[fileId1]
+          const file2 = core.state.files[fileId2]
           core.state.files[fileId1].progress.uploadStarted = new Date()
           core.state.files[fileId2].progress.uploadStarted = new Date()
 
-          core._calculateProgress({
-            id: fileId1,
+          core._calculateProgress(file1, {
             bytesUploaded: 12345,
             bytesTotal: 17175
           })
 
-          core._calculateProgress({
-            id: fileId2,
+          core._calculateProgress(file2, {
             bytesUploaded: 10201,
             bytesTotal: 17175
           })
@@ -1013,7 +1029,7 @@ describe('src/Core', () => {
       core.state.files['fileId'] = {
         name: 'filename'
       }
-      core.emit('upload-error', 'fileId', new Error('this is the error'))
+      core.emit('upload-error', core.state.files['fileId'], new Error('this is the error'))
       expect(core.state.info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
     })
 
@@ -1180,6 +1196,34 @@ describe('src/Core', () => {
         }
         expect(core.state.currentUploads).toEqual(currentUploadsState)
       })
+    })
+  })
+
+  describe('i18n', () => {
+    it('merges in custom locale strings', () => {
+      const core = new Core({
+        locale: {
+          strings: {
+            test: 'beep boop'
+          }
+        }
+      })
+
+      expect(core.i18n('exceedsSize')).toBe('This file exceeds maximum allowed size of')
+      expect(core.i18n('test')).toBe('beep boop')
+    })
+  })
+
+  describe('default restrictions', () => {
+    it('should be merged with supplied restrictions', () => {
+      const core = new Core({
+        restrictions: {
+          maxNumberOfFiles: 3
+        }
+      })
+
+      expect(core.opts.restrictions.maxNumberOfFiles).toBe(3)
+      expect(core.opts.restrictions.minNumberOfFiles).toBe(false)
     })
   })
 })

@@ -1,5 +1,6 @@
-import ThumbnailGeneratorPlugin from './index'
-import Plugin from '../../core/Plugin'
+const ThumbnailGeneratorPlugin = require('./index')
+const Plugin = require('../../core/Plugin')
+const emitter = require('namespace-emitter')
 
 const delay = duration => new Promise(resolve => setTimeout(resolve, duration))
 
@@ -27,7 +28,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.addToQueue = jest.fn()
       plugin.install()
 
-      expect(core.on).toHaveBeenCalledTimes(1)
+      expect(core.on).toHaveBeenCalledTimes(2)
       expect(core.on).toHaveBeenCalledWith('file-added', plugin.addToQueue)
     })
   })
@@ -43,11 +44,11 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.addToQueue = jest.fn()
       plugin.install()
 
-      expect(core.on).toHaveBeenCalledTimes(1)
+      expect(core.on).toHaveBeenCalledTimes(2)
 
       plugin.uninstall()
 
-      expect(core.off).toHaveBeenCalledTimes(1)
+      expect(core.off).toHaveBeenCalledTimes(2)
       expect(core.off).toHaveBeenCalledWith('file-added', plugin.addToQueue)
     })
   })
@@ -240,7 +241,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       URL.createObjectURL = originalURLCreateObjectURL
     })
 
-    it('should scale down the image by the specified number of steps', () => {
+    xit('should scale down the image by the specified number of steps', () => {
       const core = {}
       const plugin = new ThumbnailGeneratorPlugin(core)
       const image = {
@@ -304,14 +305,6 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         width: 1000,
         height: 800
       }
-      plugin.downScaleInSteps = jest.fn().mockReturnValue({
-        image: {
-          height: 160,
-          width: 200
-        },
-        sourceWidth: 200,
-        sourceHeight: 160
-      })
       const context = {
         drawImage: jest.fn()
       }
@@ -328,6 +321,81 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         height: 160,
         getContext: canvas.getContext
       })
+    })
+
+    it('should upsize if original image is smaller than target size', () => {
+      const core = {}
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      const image = {
+        width: 100,
+        height: 80
+      }
+      const context = {
+        drawImage: jest.fn()
+      }
+      const canvas = {
+        width: 0,
+        height: 0,
+        getContext: jest.fn().mockReturnValue(context)
+      }
+      document.createElement = jest.fn().mockReturnValue(canvas)
+
+      const result = plugin.resizeImage(image, 200, 160)
+      expect(result).toEqual({
+        width: 200,
+        height: 160,
+        getContext: canvas.getContext
+      })
+    })
+  })
+
+  describe('onRestored', () => {
+    it('should enqueue restored files', () => {
+      const files = {
+        a: { preview: 'blob:abc', isRestored: true },
+        b: { preview: 'blob:def' },
+        c: { preview: 'blob:xyz', isRestored: true }
+      }
+      const core = Object.assign(emitter(), {
+        getState () {
+          return { files }
+        },
+        getFile (id) {
+          return files[id]
+        }
+      })
+
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      plugin.addToQueue = jest.fn()
+      plugin.install()
+
+      core.emit('restored')
+
+      expect(plugin.addToQueue).toHaveBeenCalledTimes(2)
+      expect(plugin.addToQueue).toHaveBeenCalledWith(files.a)
+      expect(plugin.addToQueue).toHaveBeenCalledWith(files.c)
+    })
+
+    it('should not regenerate thumbnail for remote files', () => {
+      const files = {
+        a: { preview: 'http://abc', isRestored: true }
+      }
+      const core = Object.assign(emitter(), {
+        getState () {
+          return { files }
+        },
+        getFile (id) {
+          return files[id]
+        }
+      })
+
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      plugin.addToQueue = jest.fn()
+      plugin.install()
+
+      core.emit('restored')
+
+      expect(plugin.addToQueue).not.toHaveBeenCalled()
     })
   })
 })

@@ -130,7 +130,7 @@ module.exports = class Tus extends Plugin {
 
       optsTus.onError = (err) => {
         this.uppy.log(err)
-        this.uppy.emit('upload-error', file.id, err)
+        this.uppy.emit('upload-error', file, err)
         err.message = `Failed because: ${err.message}`
 
         this.resetUploaderReferences(file.id)
@@ -139,16 +139,15 @@ module.exports = class Tus extends Plugin {
 
       optsTus.onProgress = (bytesUploaded, bytesTotal) => {
         this.onReceiveUploadUrl(file, upload.url)
-        this.uppy.emit('upload-progress', {
+        this.uppy.emit('upload-progress', file, {
           uploader: this,
-          id: file.id,
           bytesUploaded: bytesUploaded,
           bytesTotal: bytesTotal
         })
       }
 
       optsTus.onSuccess = () => {
-        this.uppy.emit('upload-success', file.id, upload, upload.url)
+        this.uppy.emit('upload-success', file, upload, upload.url)
 
         if (upload.url) {
           this.uppy.log('Download ' + upload.file.name + ' from ' + upload.url)
@@ -195,13 +194,20 @@ module.exports = class Tus extends Plugin {
         upload.start()
       }
       if (!file.isRestored) {
-        this.uppy.emit('upload-started', file.id, upload)
+        this.uppy.emit('upload-started', file, upload)
       }
     })
   }
 
   uploadRemote (file, current, total) {
     this.resetUploaderReferences(file.id)
+
+    const opts = Object.assign(
+      {},
+      this.opts,
+      // Install file-specific upload overrides.
+      file.tus || {}
+    )
 
     return new Promise((resolve, reject) => {
       this.uppy.log(file.remote.url)
@@ -211,12 +217,7 @@ module.exports = class Tus extends Plugin {
           .catch(reject)
       }
 
-      let endpoint = this.opts.endpoint
-      if (file.tus && file.tus.endpoint) {
-        endpoint = file.tus.endpoint
-      }
-
-      this.uppy.emit('upload-started', file.id)
+      this.uppy.emit('upload-started', file)
 
       fetch(file.remote.url, {
         method: 'post',
@@ -226,7 +227,8 @@ module.exports = class Tus extends Plugin {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(Object.assign({}, file.remote.body, {
-          endpoint,
+          endpoint: opts.endpoint,
+          uploadUrl: opts.uploadUrl,
           protocol: 'tus',
           size: file.data.size,
           metadata: file.meta
@@ -300,12 +302,12 @@ module.exports = class Tus extends Plugin {
       socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
       socket.on('error', (errData) => {
-        this.uppy.emit('upload-error', file.id, new Error(errData.error))
+        this.uppy.emit('upload-error', file, new Error(errData.error))
         reject(new Error(errData.error))
       })
 
       socket.on('success', (data) => {
-        this.uppy.emit('upload-success', file.id, data, data.url)
+        this.uppy.emit('upload-success', file, data, data.url)
         this.resetUploaderReferences(file.id)
         resolve()
       })
@@ -340,8 +342,8 @@ module.exports = class Tus extends Plugin {
   }
 
   onFileRemove (fileID, cb) {
-    this.uploaderEvents[fileID].on('file-removed', (targetFileID) => {
-      if (fileID === targetFileID) cb(targetFileID)
+    this.uploaderEvents[fileID].on('file-removed', (file) => {
+      if (fileID === file.id) cb(file.id)
     })
   }
 

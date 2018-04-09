@@ -1,10 +1,11 @@
+const resolveUrl = require('resolve-url')
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const { limitPromises } = require('../../core/Utils')
 const XHRUpload = require('../XHRUpload')
 
 function isXml (xhr) {
-  const contentType = xhr.getResponseHeader('Content-Type')
+  const contentType = xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type')
   return typeof contentType === 'string' && contentType.toLowerCase() === 'application/xml'
 }
 
@@ -57,9 +58,25 @@ module.exports = class AwsS3 extends Plugin {
     }).then((response) => response.json())
   }
 
+  validateParameters (file, params) {
+    const valid = typeof params === 'object' && params &&
+      typeof params.url === 'string' &&
+      (typeof params.fields === 'object' || params.fields == null) &&
+      (params.method == null || /^(put|post)$/i.test(params.method))
+
+    if (!valid) {
+      const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields }'.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+      console.error(err)
+      throw err
+    }
+
+    return params
+  }
+
   prepareUpload (fileIDs) {
     fileIDs.forEach((id) => {
-      this.uppy.emit('preprocess-progress', id, {
+      const file = this.uppy.getFile(id)
+      this.uppy.emit('preprocess-progress', file, {
         mode: 'determinate',
         message: this.i18n('preparingUpload'),
         value: 0
@@ -74,14 +91,16 @@ module.exports = class AwsS3 extends Plugin {
         const paramsPromise = Promise.resolve()
           .then(() => getUploadParameters(file))
         return paramsPromise.then((params) => {
-          this.uppy.emit('preprocess-progress', file.id, {
+          return this.validateParameters(file, params)
+        }).then((params) => {
+          this.uppy.emit('preprocess-progress', file, {
             mode: 'determinate',
             message: this.i18n('preparingUpload'),
             value: 1
           })
           return params
         }).catch((error) => {
-          this.uppy.emit('upload-error', file.id, error)
+          this.uppy.emit('upload-error', file, error)
         })
       })
     ).then((responses) => {
@@ -122,7 +141,8 @@ module.exports = class AwsS3 extends Plugin {
       })
 
       fileIDs.forEach((id) => {
-        this.uppy.emit('preprocess-complete', id)
+        const file = this.uppy.getFile(id)
+        this.uppy.emit('preprocess-complete', file)
       })
     })
   }
@@ -135,24 +155,41 @@ module.exports = class AwsS3 extends Plugin {
       responseUrlFieldName: 'location',
       timeout: this.opts.timeout,
       limit: this.opts.limit,
-      getResponseData (xhr) {
+      getResponseData (content, xhr) {
         // If no response, we've hopefully done a PUT request to the file
         // in the bucket on its full URL.
         if (!isXml(xhr)) {
           return { location: xhr.responseURL }
         }
-        function getValue (key) {
-          const el = xhr.responseXML.querySelector(key)
-          return el ? el.textContent : ''
+
+        let getValue = () => ''
+        if (xhr.responseXML) {
+          getValue = (key) => {
+            const el = xhr.responseXML.querySelector(key)
+            return el ? el.textContent : ''
+          }
         }
+
+        if (xhr.responseText) {
+          getValue = (key) => {
+            const start = xhr.responseText.indexOf(`<${key}>`)
+            const end = xhr.responseText.indexOf(`</${key}>`)
+            return start !== -1 && end !== -1
+              ? xhr.responseText.slice(start + key.length + 2, end)
+              : ''
+          }
+        }
+
         return {
-          location: getValue('Location'),
+          // Some S3 alternatives do not reply with an absolute URL.
+          // Eg DigitalOcean Spaces uses /$bucketName/xyz
+          location: resolveUrl(xhr.responseURL, getValue('Location')),
           bucket: getValue('Bucket'),
           key: getValue('Key'),
           etag: getValue('ETag')
         }
       },
-      getResponseError (xhr) {
+      getResponseError (content, xhr) {
         // If no response, we don't have a specific error message, use the default.
         if (!isXml(xhr)) {
           return

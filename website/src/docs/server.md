@@ -7,20 +7,19 @@ order: 2
 
 Drag and Drop, Webcam, basic file manipulation (adding metadata, for example) and uploading via tus resumable uploads or XHR/Multipart are all possible using just the uppy client module.
 
-However, if you add [uppy-server](https://github.com/transloadit/uppy-server) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your users' data plans), and then uploaded to the final destination. Files are removed from uppy-server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security.
+However, if you add [Uppy Server](https://github.com/transloadit/uppy-server) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your users’ data plans), and then uploaded to the final destination. Files are removed from Uppy Server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security.
 
 Uppy Server handles the server-to-server communication between your server and file storage providers such as Google Drive, Dropbox, Instagram, etc.
 
 ## Supported Providers
 
-As of now uppy-server is integrated to work with:
+As of now Uppy Server is integrated to work with:
 
 - Google Drive
 - Dropbox
 - Instagram
 - Remote Urls
 - Amazon S3
-- Local disk
 
 ## Install
 
@@ -30,11 +29,11 @@ npm install uppy-server
 
 ## Usage
 
-Uppy-server may either be used as a pluggable express app, which you plug to your already existing server, or it may simply be run as a standalone server:
+Uppy Server may either be used as a pluggable express app, which you plug to your already existing server, or it may simply be run as a standalone server:
 
 ### Plug to already existing server
 
-To plug uppy-server to an existing server, simply call on its `.app` method, passing in an [options](#Options) object as parameter.
+To plug Uppy Server to an existing server, simply call on its `.app` method, passing in an [options](#Options) object as parameter.
 
 ```javascript
 
@@ -67,7 +66,7 @@ app.use(uppy.app(options))
 ```
 See [Options](#Options) for valid configuration options.
 
-To enable uppy socket for realtime upload progress, you can call the `socket` method like so.
+To enable Uppy Socket for realtime upload progress, you can call the `socket` method like so:
 
 ```javascript
 ...
@@ -76,11 +75,11 @@ var server = app.listen(PORT)
 uppy.socket(server, options)
 
 ```
-This takes your `server` instance and your uppy [options](#Options) as parameters.
+This takes your `server` instance and your Uppy [options](#Options) as parameters.
 
 ### Run as standalone server
 
-> Please ensure that the required environment variables are set before running/using uppy-server as a standalone server. See [Configure Standalone](#Configure-Standalone) for the variables required.
+> Please ensure that the required environment variables are set before running/using Uppy Server as a standalone server. See [Configure Standalone](#Configure-Standalone) for the variables required.
 
 Set environment variables first:
 
@@ -118,7 +117,7 @@ Please see [options](#Options) for possible options.
 
 #### Configure Standalone
 
-To run uppy-server as a standalone server, you are required to set your uppy [options](#Options) via environment variables:
+To run Uppy Server as a standalone server, you are required to set your Uppy [options](#Options) via environment variables:
 
 ```bash
 ####### Mandatory variables ###########
@@ -240,11 +239,11 @@ See [env.example.sh](https://github.com/transloadit/uppy-server/blob/master/env.
 
 6. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-Custom-Providers) for more information.
 
-7. **uploadUrls(optional)** - An array of urls (full path), which uppy-server should only upload to (i.e uploads will not be permitted to other urls, except for those specified in this array).
+7. **uploadUrls(optional)** - An array of urls (full paths). If specified, Uppy Server will only accept uploads to these urls (useful when you want to make sure an Uppy Server instance is only allowed to upload to your servers, for example).
 
-8. **secret(required)** - A secret string which uppy uses to generate authorization tokens.
+8. **secret(required)** - A secret string which Uppy Server uses to generate authorization tokens.
 
-9. **debug(optional)** - A boolean flag to tell uppy whether or not to log useful debug information while running.
+9. **debug(optional)** - A boolean flag to tell Uppy Server whether or not to log useful debug information while running.
 
 ### S3 Options
 
@@ -268,7 +267,7 @@ The default value simply returns `filename`, so all files will be uploaded to th
 
 ### Adding Custom Providers
 
-As of now, uppy-server supports **Google Drive**, **Dropbox** and **Instagram** out of the box, but you may also choose to add your custom providers. You can do this by passing the `customProviders` option when calling the uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
+As of now, Uppy Server supports **Google Drive**, **Dropbox**, **Instagram**, and **Url** (remote urls) out of the box, but you may also choose to add your custom providers. You can do this by passing the `customProviders` option when calling the uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
 
 ```javascript
 let options = {
@@ -292,7 +291,7 @@ uppy.app(options)
 
 The `customProviders` option should be an object containing each custom provider. Each custom provider would in turn be an object with two keys, `config` and `module`. The `config` option would contain Oauth API settings, while the `module` would point to the provider module.
 
-To work well with uppy server, the **Module** must be a class with the following methods.
+To work well with Uppy Server, the **Module** must be a class with the following methods.
 
 1. `list (options, done)` - lists json data of user files (e.g list of all the files in a particular directory).
   - `options` - is an object containing the following attributes
@@ -305,11 +304,11 @@ To work well with uppy server, the **Module** must be a class with the following
     - token - authorization token(retrieved from oauth process) to send along with your request.
     - id - id of the file being downloaded.
   - `onData (chunk)` - a callback that should be called with each data chunk received on download. This is useful if the size of the downloaded file can be pre-determined. This would allow for pipelined upload of the file (to the desired destination), while the download is still going on.
-  - `onResponse (response)` - if the size of the downloaded file can not be pre-determined by uppy-server, then this callback should be called in place of the `onData` callback. This callback would be called after the download is done, and would take the downloaded data (response) as the argument.
+  - `onResponse (response)` - if the size of the downloaded file can not be pre-determined by Uppy Server, then this callback should be called in place of the `onData` callback. This callback would be called after the download is done, and would take the downloaded data (response) as the argument.
 
 ## Development
 
-1\. To setup uppy-server for local development, please clone the repo and install like so:
+1\. To setup Uppy Server for local development, please clone the repo and install like so:
 
 ```bash
 git clone https://github.com/transloadit/uppy-server && cd uppy-server && npm install
@@ -328,29 +327,9 @@ $EDITOR env.sh
 npm run start:dev
 ```
 
-This would get the uppy-server running on `http://localhost:3020`.
-
-It also expects the [uppy client](https://github.com/transloadit/uppy) to be running on `http://localhost:3452` by default.
+This would get the Uppy Server running on `http://localhost:3020`.
 
 ## Running example
 
-An example server is running at http://server.uppy.io, which is deployed via
-[Frey](https://github.com/kvz/frey), using the following [Freyfile](infra/Freyfile.toml).
+An example server is running at http://server.uppy.io, which is deployed with [Kubernetes](https://github.com/transloadit/uppy-server/blob/master/KUBERNETES.md)
 
-All the secrets are stored in `env.infra.sh`, so using `env.infra.example.sh`, you could use the same Freyfile but target a different cloud vendor with different secrets, and run your own uppy-server.
-
-## Logging
-
-Requires Frey, if you haven't set it up yet type
-
-```bash
-npm run install:frey
-```
-
-afterwards, production logs are available through:
-
-```bash
-npm run logtail
-```
-
-This requires at least the `FREY_ENCRYPTION_SECRET` key present in your `./env.sh`.

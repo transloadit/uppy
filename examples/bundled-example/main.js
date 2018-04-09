@@ -6,17 +6,7 @@ const Webcam = require('../../src/plugins/Webcam')
 const Tus = require('../../src/plugins/Tus')
 const Form = require('../../src/plugins/Form')
 
-// const Dropbox = require('../../src/plugins/Dropbox')
-// const XHRUpload = require('../../src/plugins/XHRUpload')
-// const FileInput = require('../../src/plugins/FileInput')
-// const MetaData = require('../../src/plugins/MetaData')
-// const Informer = require('../../src/plugins/Informer')
-// const StatusBar = require('../../src/plugins/StatusBar')
-// const DragDrop = require('../../src/plugins/DragDrop')
-// const GoldenRetriever = require('../../src/plugins/GoldenRetriever')
-
-const PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
-const TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
+const TUS_ENDPOINT = 'https://master.tus.io/files/'
 
 const uppy = Uppy({
   debug: true,
@@ -25,41 +15,18 @@ const uppy = Uppy({
     username: 'John',
     license: 'Creative Commons'
   }
-  // restrictions: {
-  //   maxFileSize: 300000,
-  //   maxNumberOfFiles: 10,
-  //   minNumberOfFiles: 2,
-  //   allowedFileTypes: ['image/*', 'video/*']
-  // }
-  // onBeforeFileAdded: (currentFile, files) => {
-  //   if (currentFile.name === 'pitercss-IMG_0616.jpg') {
-  //     return Promise.resolve()
-  //   }
-  //   return Promise.reject('this is not the file I was looking for')
-  // },
-  // onBeforeUpload: (files) => {
-  //   if (Object.keys(files).length < 2) {
-  //     return Promise.reject('too few files')
-  //   }
-  //   return Promise.resolve()
-  // }
 })
   .use(Dashboard, {
     trigger: '#pick-files',
+    // inline: true,
+    // target: 'body',
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
-      { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
-    ]
-    // target: '.uppy-target',
-    // inline: true,
-    // maxWidth: 500,
-    // maxHeight: 350,
-    // replaceTargetContent: true,
-    // closeModalOnClickOutside: false,
-    // note: 'Images and video only, 300kb or less',
-    // locale: {
-    //   strings: { browse: 'browse' }
-    // }
+      { id: 'caption', name: 'Caption', placeholder: 'add caption' }
+    ],
+    showProgressDetails: true,
+    proudlyDisplayPoweredByUppy: true,
+    note: '2 files, images and video only'
   })
   .use(GoogleDrive, { target: Dashboard, host: 'http://localhost:3020' })
   .use(Instagram, { target: Dashboard, host: 'http://localhost:3020' })
@@ -90,5 +57,5 @@ if ('serviceWorker' in navigator) {
     })
 }
 
-// var modalTrigger = document.querySelector('#uppyModalOpener')
-// if (modalTrigger) modalTrigger.click()
+var modalTrigger = document.querySelector('#pick-files')
+if (modalTrigger) modalTrigger.click()

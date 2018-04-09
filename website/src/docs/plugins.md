@@ -31,6 +31,10 @@ Plugins are what makes Uppy useful: they help select, manipulate and upload file
 
 Each plugin can have any number of options (please see specific plugin for details), but these are shared between some:
 
+### `id`
+
+A unique string identifying the plugin. By default, the plugin's name is used, so usually it does not need to be configured manually. Use this if you need to add multiple plugins of the same type.
+
 ### `target`
 
 Can be a `string` CSS selector, a DOM element, or a Plugin class. Consider the following example, where `DragDrop` plugin will be rendered into a `body` element:
@@ -74,11 +78,11 @@ uppy.use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
 
 ### `replaceTargetContent: false`
 
-By default Uppy will append any UI to a DOM element, if such element is specified as a `target`. This default is the least dangerous option. However, there might be cases when you’d want to clear the container element before place Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not loaded/supported on the page). Set `replaceTargetContent: true` to clear the `target` before appending.
+By default Uppy will append any UI to a DOM element, if such element is specified as a `target`. This default is the least dangerous option. However, there might be cases when you’d want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not loaded/supported on the page). Set `replaceTargetContent: true` to clear the `target` before appending.
 
 ### `locale: {}`
 
-Same as with Uppy.Core’s setting from above, this allows you to override plugin’s local string, so that instead of `Select files` in English, your users will see `Выберите файлы` in Russian. Example:
+Same as with Uppy.Core’s setting from above, this allows you to override plugin’s locale string, so that instead of `Select files` in English, your users will see `Выберите файлы` in Russian. Example:
 
 ```js
 .use(FileInput, {
@@ -93,7 +97,7 @@ See plugin documentation pages for other plugin-specific options.
 
 ## Provider Plugins
 
-The Provider plugins help you connect to your accounts with remote file providers such as [Dropbox](https://dropbox.com), [Google Drive](https://drive.google.com), [Instagram](https://instagram.com) and remote urls (import a file by pasting a direct link to it). Because this requires server to server communication, they work tightly with [uppy-server](https://github.com/transloadit/uppy-server) to manage the server to server authroization for your account. Virtually most of the communication (file download/upload) is done on the server-to-server end, so this saves you the stress of data consumption on the client.
+The Provider plugins help you connect to your accounts with remote file providers such as [Dropbox](https://dropbox.com), [Google Drive](https://drive.google.com), [Instagram](https://instagram.com) and remote urls (import a file by pasting a direct link to it). Because this requires server to server communication, they work tightly with [uppy-server](https://github.com/transloadit/uppy-server) to manage the server to server authorization for your account. Virtually most of the communication (file download/upload) is done on the server-to-server end, so this saves you the stress of data consumption on the client.
 
 As of now, the supported providers are **Dropbox**, **GoogleDrive**, **Instagram**, and **Url**.
 

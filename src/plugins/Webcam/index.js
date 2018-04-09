@@ -6,7 +6,7 @@ const {
   canvasToBlob
 } = require('../../core/Utils')
 const supportsMediaRecorder = require('./supportsMediaRecorder')
-const WebcamIcon = require('./WebcamIcon')
+const CameraIcon = require('./CameraIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
 
@@ -41,13 +41,16 @@ module.exports = class Webcam extends Plugin {
     this.supportsUserMedia = !!this.mediaDevices
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
-    this.title = 'Webcam'
+    this.title = 'Camera'
     this.type = 'acquirer'
-    this.icon = WebcamIcon
+    this.icon = CameraIcon
 
     const defaultLocale = {
       strings: {
-        smile: 'Smile!'
+        smile: 'Smile!',
+        takePicture: 'Take a picture',
+        startRecording: 'Begin video recording',
+        stopRecording: 'Stop video recording'
       }
     }
 
@@ -316,21 +319,22 @@ module.exports = class Webcam extends Plugin {
     const webcamState = this.getPluginState()
 
     if (!webcamState.cameraReady) {
-      return PermissionsScreen(webcamState)
+      return <PermissionsScreen icon={CameraIcon} />
     }
 
-    return h(CameraScreen, Object.assign({}, webcamState, {
-      onSnapshot: this.takeSnapshot,
-      onStartRecording: this.startRecording,
-      onStopRecording: this.stopRecording,
-      onFocus: this.focus,
-      onStop: this.stop,
-      modes: this.opts.modes,
-      supportsRecording: supportsMediaRecorder(),
-      recording: webcamState.isRecording,
-      mirror: this.opts.mirror,
-      src: this.stream
-    }))
+    return <CameraScreen
+      {...webcamState}
+      onSnapshot={this.takeSnapshot}
+      onStartRecording={this.startRecording}
+      onStopRecording={this.stopRecording}
+      onFocus={this.focus}
+      onStop={this.stop}
+      i18n={this.i18n}
+      modes={this.opts.modes}
+      supportsRecording={supportsMediaRecorder()}
+      recording={webcamState.isRecording}
+      mirror={this.opts.mirror}
+      src={this.stream} />
   }
 
   install () {

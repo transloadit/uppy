@@ -3,7 +3,6 @@
  */
 module.exports = class Client {
   constructor (opts = {}) {
-    this.apiUrl = 'https://api2.transloadit.com'
     this.opts = opts
   }
 
@@ -32,7 +31,7 @@ module.exports = class Client {
     })
     data.append('num_expected_upload_files', expectedFiles)
 
-    return fetch(`${this.apiUrl}/assemblies`, {
+    return fetch(`${this.opts.service}/assemblies`, {
       method: 'post',
       body: data
     }).then((response) => response.json()).then((assembly) => {

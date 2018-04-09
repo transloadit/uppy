@@ -6,22 +6,49 @@ order: 5
 ---
 
 {% blockquote %}
-Here’s how you can use <a href="http://transloadit.com">Transloadit</a>’s robust file uploading and encoding backend with Uppy. This example takes your images, resizes them to 250px and adds a copyright caption text at the bottom right corner.
+Transloadit is the inventor of <a href="https://tus.io" target="_blank">tus.io</a> and Uppy. Besides a robust encoding platform, Transloadit offers hosted versions of tusd and Uppy Server. This means you can enjoy video encoding, watermarking, face detection, resumable file uploads, fetching from Instagram, etc — all without running a single server yourself.
+
+This example demonstrates how to unlock Transloadit’s features within Uppy.
 {% endblockquote %}
 
-<p>For this demo to work, please <a href="https://transloadit.com/signup/" target="_blank">create a free Transloadit account</a> (takes 2 minutes, you can login via GitHub too!) and enter your API key below.</p>
+<p>
+  In this particular example we take your images (from Instagram), resize them to 250px and add the copyright caption text: <code>© 2018 Transloadit.com</code> at the bottom right corner.
+</p>
+
+<p>
+  For this demo to work you'll need a (free) Transloadit account. To get one:
+</p>
+<ol>
+  <li>
+    <a href="https://transloadit.com/signup/" target="_blank">Claim your account</a>. It will activate instantly. You can also signup via GitHub to avoid password hassle.
+  </li>
+  <li>
+     Copy the API Key that you can find on
+    <a href="https://transloadit.com/accounts/credentials" target="_blank">this page</a> and paste it below.
+  </li>
+  <li>
+    Happy encoding &amp; fetching from Instagram :)
+  </li>
+</ol>
+
 <p>
   <label for="transloadit-api-key"
          style="display: block; font-size: 13px; text-transform: uppercase; font-weight: bold;">
     Transloadit API Key:</label>
-  <input type="text" 
+  <input type="text"
          style="font-size: 15px; width: 300px; max-width: 100%; border: 0; border-bottom: 1px solid black; padding: 6px 8px; margin-bottom: 20px;"
          id="transloadit-api-key" 
-         placeholder="Your Transloadit API key">
+         placeholder="Your Transloadit API Key">
 </p>
 
 <link rel="stylesheet" href="app.css">
 <% include app.html %>
+
+<hr />
+
+<p id="console-wrapper">Console output (latest logs are at the top):
+  <br />
+</p>
 
 <script src="app.js"></script>
 <script>
@@ -54,7 +81,7 @@ const Uppy = require('uppy/lib/core/Core')
 const Dashboard = require('uppy/lib/plugins/Dashboard')
 const Webcam = require('uppy/lib/plugins/Webcam')
 const Transloadit = require('uppy/lib/plugins/Transloadit')
-const Tus = require('uppy/lib/plugins/Tus')
+const Instagram = require('uppy/lib/plugins/Instagram')
 
 const uppy = Uppy({
   debug: true,
@@ -68,13 +95,12 @@ const uppy = Uppy({
 })
 
 uppy
-  .use(Tus, { resume: false })
   .use(Transloadit, {
     params: {
       auth: {
         key: YOUR_TRANSLOADIT_API_KEY
       },
-      // It's always better to use a template_id and enable
+      // It's more secure to use a template_id and enable
       // Signature Authentication
       steps: {
         resize: {
@@ -99,6 +125,7 @@ uppy
     },
     waitForEncoding: true
   })
+  .use(Instagram, { target: Dashboard, host: 'https://api2.transloadit.com/uppy-server' })
   .use(Dashboard, {
     inline: true,
     maxHeight: 400,
@@ -106,9 +133,6 @@ uppy
     note: 'Images and video only, 1–2 files, up to 1 MB'
   })
   .use(Webcam, { target: Dashboard })
-  .run()
-
-uppy
   .on('transloadit:result', (stepName, result) => {
     const file = uppy.getFile(result.localId)
     var resultContainer = document.createElement('div')
@@ -119,6 +143,9 @@ uppy
         <a href="${result.ssl_url}">View</a>
       </div>
     `
-    document.getElementById('uppy-transloadit-result').appendChild(resultContainer)
+    document
+      .getElementById('uppy-transloadit-result')
+      .appendChild(resultContainer)
   })
+  .run()
 {% endcodeblock %}

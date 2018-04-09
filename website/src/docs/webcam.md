@@ -33,12 +33,11 @@ uppy.use(Webcam, {
 
 ### `target: null`
 
-DOM element, CSS selector, or plugin to mount the informer into.
+DOM element, CSS selector, or plugin to mount Webcam into.
 
 ### `countdown: false`
 
-When taking a picture: the amount of seconds to wait before actually taking a snapshot. If `false` or 0, the timeout is disabled entirely.
-This also shows a 'Smile!' message in the [Informer](/docs/informer) before the picture is taken.
+When taking a picture: the amount of seconds to wait before actually taking a snapshot. If `false` or 0, the timeout is disabled entirely. This also shows a `Smile!` message with the [Informer](/docs/informer) before the picture is taken.
 
 ### `onBeforeSnapshot: () => Promise.resolve()`
 

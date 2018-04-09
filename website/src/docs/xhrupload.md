@@ -59,6 +59,8 @@ headers: {
 
 Send all files in a single multipart request. When `bundle` is `true`, `formData` must also be set to `true`.
 
+> Note: When `bundle` is `true`, file metadata is **not** sent to the endpoint. This is because it's not obvious how metadata should be sent when there are multiple files in a single request. If you need this, please open an issue and we'll try to figure it out together.
+
 All files will be appended to the provided `fieldName` field in the request. To upload files on different fields, use [`uppy.setFileState()`](/docs/uppy#uppy-setFileState-fileID-state) to set the `xhrUpload.fieldName` property on the file:
 
 ```js
@@ -70,13 +72,18 @@ uppy.setFileState(otherFileID, {
 })
 ```
 
-### `getResponseData(xhr)`
+### `getResponseData(xhr.responseText, xhr)`
 
-When an upload has completed, Uppy will extract response data from the upload endpoint and send it back in the `upload-success` event:
+When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file's `.response` property, and be emitted in the `upload-success` event:
 
 ```js
-uppy.on('upload-success', (fileId, resp, uploadURL) => {
-  // do something with resp
+uppy.getFile(fileID).response
+// { status: HTTP status code,
+//   body: extracted response data }
+
+uppy.on('upload-success', (file, body) => {
+  // do something with extracted response data
+  // (`body` is equivalent to `file.response.body` or `uppy.getFile(fileID).response.body`)
 })
 ```
 
@@ -94,14 +101,14 @@ That object will be emitted in the `upload-success` event. Not all endpoints res
 For example, an endpoint that responds with an XML document:
 
 ```js
-getResponseData (xhr) {
+getResponseData (xhr.responseText, xhr) {
   return {
     url: xhr.responseXML.querySelector('Location').textContent
   }
 }
 ```
 
-### `getResponseError(xhr)`
+### `getResponseError(xhr.responseText, xhr)`
 
 If the upload endpoint responds with a non-2xx status code, the upload is assumed to have failed.
 The endpoint might have responded with some information about the error, though.
@@ -110,14 +117,14 @@ Pass in a `getResponseError` function to extract error data from the `XMLHttpReq
 For example, if the endpoint responds with a JSON object containing a `{ message }` property, this would show that message to the user:
 
 ```js
-getResponseError (xhr) {
+getResponseError (responseText, xhr) {
   return new Error(JSON.parse(xhr.response).message)
 }
 ```
 
 ### `responseUrlFieldName: 'url'`
 
-The field name containing a publically accessible location of the uploaded file in the response data returned by `getResponseData(xhr)`.
+The field name containing a publically accessible location of the uploaded file in the response data returned by `getResponseData(xhr.responseText, xhr)`.
 
 ### `timeout: 30 * 1000`
 
@@ -130,6 +137,31 @@ The default is 30 seconds.
 ### `limit: 0`
 
 Limit the amount of uploads going on at the same time. Passing `0` means no limit.
+
+## POST Parameters / Form Fields
+
+When using XHRUpload with `formData: true`, file metadata is sent along with each upload request. You can set metadata for a file using [`uppy.setFileMeta(fileID, data)`](/docs/uppy#uppy-setFileMeta-fileID-data), or for all files simultaneously using [`uppy.setMeta(data)`](/docs/uppy#uppy-setMeta-data).
+
+It may be useful to set metadata depending on some file properties, such as the size. You can use the [`file-added`](/docs/uppy/#file-added) event and  the [`uppy.setFileMeta(fileID, data)`](/docs/uppy#uppy-setFileMeta-fileID-data) method to do this:
+
+```js
+uppy.on('file-added', (file) => {
+  uppy.setFileMeta(file.id, {
+    size: file.size
+  })
+})
+```
+
+Now, a form field named `size` will be sent along to the [`endpoint`](#endpoint-39-39) once the upload starts.
+
+By default, all metadata is sent, including Uppy's default `name` and `type` metadata. If you do not want the `name` and `type` metadata properties to be sent to your upload endpoint, you can use the [`metaFields`](#metaFields-null) option to restrict the field names that should be sent.
+
+```js
+uppy.use(XHRUpload, {
+  // Only send our own `size` metadata field.
+  metaFields: ['size']
+})
+```
 
 ## Uploading to a PHP Server
 

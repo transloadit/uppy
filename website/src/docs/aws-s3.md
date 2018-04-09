@@ -14,6 +14,8 @@ uppy.use(AwsS3, {
 })
 ```
 
+There are broadly two ways to upload to S3 in a browser. A server can generate a presigned URL for a [PUT upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html), or a server can generate form data for a [POST upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html). uppy-server uses a POST upload. See [POST uPloads](#post-uploads) for some caveats if you would like to use POST uploads without uppy-server. See [Generating a presigned upload URL server-side](#example-presigned-url) for an example of a PUT upload.
+
 ## Options
 
 ### `host`
@@ -42,6 +44,18 @@ When using a POST upload with a policy document, this should be the root URL of 
 
 The `fields` field is an object with form fields to send along with the upload request.
 For presigned PUT uploads, this should be empty.
+
+### `timeout: 30 * 1000`
+
+When no upload progress events have been received for this amount of milliseconds, assume the connection has an issue and abort the upload. This is passed through to [XHRUpload](/docs/xhrupload#timeout-30-1000); see its documentation page for details.
+Set to `0` to disable this check.
+
+The default is 30 seconds.
+
+### `limit: 0`
+
+Limit the amount of uploads going on at the same time. This is passed through to [XHRUpload](/docs/xhrupload#limit-0); see its documentation page for details.
+Set to `0` to disable limiting.
 
 ## S3 Bucket configuration
 
@@ -119,8 +133,25 @@ The final configuration should look something like the below:
 
 In-depth documentation about CORS rules is available on the [AWS documentation site](https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html).
 
+## POST Uploads
+
+uppy-server uses POST uploads by default, but you can also use them with your own endpoints. There are a few things to be aware of when doing so:
+
+ - The AwsS3 plugin attempts to read the `<Location>` XML tag from POST upload responses. S3 does not respond with an XML document by default. When generating the form data for POST uploads, you must set the `success_action_status` field to `201`.
+   ```js
+   // `s3` is an instance of the AWS JavaScript SDK's S3 client
+   s3.createPresignedPost({
+     ...,
+     Fields: {
+       ...,
+       success_action_status: '201'
+     }
+   })
+   ```
+
 ## Examples
 
+<a id="example-presigned-url"></a>
 ### Generating a presigned upload URL server-side
 
 The `getUploadParameters` function can return a Promise, so upload parameters can be prepared server-side.
@@ -150,7 +181,7 @@ uppy.use(AwsS3, {
       return {
         method: data.method,
         url: data.url,
-        fields: {}
+        fields: data.fields
       }
     })
   }
@@ -159,15 +190,28 @@ uppy.use(AwsS3, {
 
 See the [aws-presigned-url example in the uppy repository](https://github.com/transloadit/uppy/tree/master/examples/aws-presigned-url) for a small example that implements both the server-side and the client-side.
 
+### S3 Alternatives
+
+Many other object storage providers have an identical API to S3, so you can use the AwsS3 plugin with them. To use them with uppy-server, you can set the `UPPYSERVER_AWS_ENDPOINT` variable to the endpoint of your preferred service.
+
+For example, with DigitalOcean Spaces, you could do something like this:
+
+```
+export UPPYSERVER_AWS_ENDPOINT="https://{region}.digitaloceanspaces.com"
+export UPPYSERVER_AWS_BUCKET="my-space-name"
+```
+
+The `{region}` string will be replaced by the contents of the `UPPYSERVER_AWS_REGION` environment variable.
+
+For a working example that you can run and play around with, see the [digitalocean-spaces](https://github.com/transloadit/uppy/tree/master/examples/digitalocean-spaces) folder in the Uppy repository.
+
 ### Retrieving presign parameters of the uploaded file
 
 Once the file is uploaded, it's possible to retrieve the parameters that were
 generated in `getUploadParameters(file)` via the `file.meta` field:
 
 ```js
-uppy.on("upload-success", (fileId, data) {
-  const file = uppy.getFile(fileId)
-
+uppy.on('upload-success', (file, data) => {
   file.meta['key'] // the S3 object key of the uploaded file
 })
 ```

@@ -124,7 +124,9 @@ function getFileType (file) {
     'svg': 'image/svg+xml',
     'jpg': 'image/jpeg',
     'png': 'image/png',
-    'gif': 'image/gif'
+    'gif': 'image/gif',
+    'yaml': 'text/yaml',
+    'yml': 'text/yaml'
   }
 
   const fileExtension = file.name ? getFileNameAndExtension(file.name).extension : null
@@ -495,9 +497,8 @@ function _emitSocketProgress (uploader, progressData, file) {
   const { progress, bytesUploaded, bytesTotal } = progressData
   if (progress) {
     uploader.uppy.log(`Upload progress: ${progress}`)
-    uploader.uppy.emit('upload-progress', {
+    uploader.uppy.emit('upload-progress', file, {
       uploader,
-      id: file.id,
       bytesUploaded: bytesUploaded,
       bytesTotal: bytesTotal
     })

@@ -1,50 +1,7 @@
 const throttle = require('lodash.throttle')
+const classNames = require('classnames')
+const statusBarStates = require('./StatusBarStates')
 const { h } = require('preact')
-
-function progressDetails (props) {
-  return <span>{props.totalProgress || 0}%・{props.complete} / {props.inProgress}・{props.totalUploadedSize} / {props.totalSize}・↑ {props.totalSpeed}/s・{props.totalETA}</span>
-}
-
-const ThrottledProgressDetails = throttle(progressDetails, 500, {leading: true, trailing: true})
-
-const STATE_ERROR = 'error'
-const STATE_WAITING = 'waiting'
-const STATE_PREPROCESSING = 'preprocessing'
-const STATE_UPLOADING = 'uploading'
-const STATE_POSTPROCESSING = 'postprocessing'
-const STATE_COMPLETE = 'complete'
-
-function getUploadingState (props, files) {
-  if (props.isAllErrored) {
-    return STATE_ERROR
-  }
-
-  // If ALL files have been completed, show the completed state.
-  if (props.isAllComplete) {
-    return STATE_COMPLETE
-  }
-
-  let state = STATE_WAITING
-  const fileIDs = Object.keys(files)
-  for (let i = 0; i < fileIDs.length; i++) {
-    const progress = files[fileIDs[i]].progress
-    // If ANY files are being uploaded right now, show the uploading state.
-    if (progress.uploadStarted && !progress.uploadComplete) {
-      return STATE_UPLOADING
-    }
-    // If files are being preprocessed AND postprocessed at this time, we show the
-    // preprocess state. If any files are being uploaded we show uploading.
-    if (progress.preprocess && state !== STATE_UPLOADING) {
-      state = STATE_PREPROCESSING
-    }
-    // If NO files are being preprocessed or uploaded right now, but some files are
-    // being postprocessed, show the postprocess state.
-    if (progress.postprocess && state !== STATE_UPLOADING && state !== STATE_PREPROCESSING) {
-      state = STATE_POSTPROCESSING
-    }
-  }
-  return state
-}
 
 function calculateProcessingProgress (files) {
   // Collect pre or postprocessing progress states.
@@ -93,12 +50,13 @@ function togglePauseResume (props) {
 module.exports = (props) => {
   props = props || {}
 
-  const uploadState = getUploadingState(props, props.files || {})
+  const uploadState = props.uploadState
 
   let progressValue = props.totalProgress
   let progressMode
   let progressBarContent
-  if (uploadState === STATE_PREPROCESSING || uploadState === STATE_POSTPROCESSING) {
+
+  if (uploadState === statusBarStates.STATE_PREPROCESSING || uploadState === statusBarStates.STATE_POSTPROCESSING) {
     const progress = calculateProcessingProgress(props.files)
     progressMode = progress.mode
     if (progressMode === 'determinate') {
@@ -106,26 +64,33 @@ module.exports = (props) => {
     }
 
     progressBarContent = ProgressBarProcessing(progress)
-  } else if (uploadState === STATE_COMPLETE) {
+  } else if (uploadState === statusBarStates.STATE_COMPLETE) {
     progressBarContent = ProgressBarComplete(props)
-  } else if (uploadState === STATE_UPLOADING) {
+  } else if (uploadState === statusBarStates.STATE_UPLOADING) {
     progressBarContent = ProgressBarUploading(props)
-  } else if (uploadState === STATE_ERROR) {
+  } else if (uploadState === statusBarStates.STATE_ERROR) {
     progressValue = undefined
     progressBarContent = ProgressBarError(props)
   }
 
   const width = typeof progressValue === 'number' ? progressValue : 100
-  const isHidden = (uploadState === STATE_WAITING && props.hideUploadButton) ||
-    (uploadState === STATE_WAITING && !props.newFiles > 0) ||
-    (uploadState === STATE_COMPLETE && props.hideAfterFinish)
+  const isHidden = (uploadState === statusBarStates.STATE_WAITING && props.hideUploadButton) ||
+    (uploadState === statusBarStates.STATE_WAITING && !props.newFiles > 0) ||
+    (uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish)
 
-  const progressClasses = `uppy-StatusBar-progress
+  const progressClassNames = `uppy-StatusBar-progress
                            ${progressMode ? 'is-' + progressMode : ''}`
 
+  const statusBarClassNames = classNames(
+    'uppy',
+    'uppy-StatusBar',
+    `is-${uploadState}`,
+    { 'uppy-StatusBar--detailedProgress': props.showProgressDetails }
+  )
+
   return (
-    <div class={`uppy uppy-StatusBar is-${uploadState}`} aria-hidden={isHidden}>
-      <div class={progressClasses}
+    <div class={statusBarClassNames} aria-hidden={isHidden}>
+      <div class={progressClassNames}
         style={{ width: width + '%' }}
         role="progressbar"
         aria-valuemin="0"
@@ -133,19 +98,32 @@ module.exports = (props) => {
         aria-valuenow={progressValue} />
       {progressBarContent}
       <div class="uppy-StatusBar-actions">
-        { props.newFiles && !props.hideUploadButton ? <UploadBtn {...props} /> : null }
+        { props.newFiles && !props.hideUploadButton ? <UploadBtn {...props} uploadState={uploadState} /> : null }
         { props.error ? <RetryBtn {...props} /> : null }
+        { uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
+          ? <CancelBtn {...props} />
+          : null
+        }
       </div>
     </div>
   )
 }
 
 const UploadBtn = (props) => {
+  const uploadBtnClassNames = classNames(
+    'uppy-u-reset',
+    'uppy-c-btn',
+    'uppy-StatusBar-actionBtn',
+    'uppy-StatusBar-actionBtn--upload',
+    { 'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING }
+    // { 'uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--upload': props.uploadState !== statusBarStates.STATE_WAITING }
+  )
+
   return <button type="button"
-    class="uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--upload"
+    class={uploadBtnClassNames}
     aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
     onclick={props.startUpload}>
-    {props.inProgress
+    {props.newFiles && props.uploadStarted
       ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
       : props.i18n('uploadXFiles', { smart_count: props.newFiles })
     }
@@ -154,57 +132,16 @@ const UploadBtn = (props) => {
 
 const RetryBtn = (props) => {
   return <button type="button"
-    class="uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
+    class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
     aria-label={props.i18n('retryUpload')}
     onclick={props.retryAll}>{props.i18n('retry')}</button>
 }
 
-const ProgressBarProcessing = (props) => {
-  const value = Math.round(props.value * 100)
-
-  return <div class="uppy-StatusBar-content">
-    {props.mode === 'determinate' ? `${value}%・` : ''}
-    {props.message}
-  </div>
-}
-
-const ProgressBarUploading = (props) => {
-  return (
-    <div class="uppy-StatusBar-content">
-      {props.isUploadStarted && !props.isAllComplete
-        ? !props.isAllPaused
-          ? <div title="Uploading">{ <PauseResumeButtons {...props} /> } Uploading... { <ThrottledProgressDetails {...props} /> }</div>
-          : <div title="Paused">{ <PauseResumeButtons {...props} /> } Paused・{props.totalProgress}%</div>
-        : null
-      }
-    </div>
-  )
-}
-
-const ProgressBarComplete = ({ totalProgress, i18n }) => {
-  return (
-    <div class="uppy-StatusBar-content" role="status">
-      <span title="Complete">
-        <svg aria-hidden="true" class="uppy-StatusBar-statusIndicator UppyIcon" width="18" height="17" viewBox="0 0 23 17">
-          <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
-        </svg>
-        {i18n('uploadComplete')}・{totalProgress}%
-      </span>
-    </div>
-  )
-}
-
-const ProgressBarError = ({ error, retryAll, i18n }) => {
-  return (
-    <div class="uppy-StatusBar-content" role="alert">
-      <strong>{i18n('uploadFailed')}.</strong> <span>{i18n('pleasePressRetry')}</span>
-      <span class="uppy-StatusBar-details"
-        aria-label={error}
-        data-microtip-position="top"
-        data-microtip-size="large"
-        role="tooltip">?</span>
-    </div>
-  )
+const CancelBtn = (props) => {
+  return <button type="button"
+    class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--cancel"
+    aria-label={props.i18n('cancel')}
+    onclick={props.cancelAll}>Cancel{props.i18n('cancel')}</button>
 }
 
 const PauseResumeButtons = (props) => {
@@ -215,7 +152,7 @@ const PauseResumeButtons = (props) => {
                   : i18n('pauseUpload')
                 : i18n('cancelUpload')
 
-  return <button title={title} class="uppy-StatusBar-statusIndicator" type="button" onclick={() => togglePauseResume(props)}>
+  return <button title={title} class="uppy-u-reset uppy-StatusBar-statusIndicator" type="button" onclick={() => togglePauseResume(props)}>
     {resumableUploads
       ? isAllPaused
         ? <svg aria-hidden="true" class="UppyIcon" width="15" height="17" viewBox="0 0 11 13">
@@ -229,4 +166,65 @@ const PauseResumeButtons = (props) => {
       </svg>
     }
   </button>
+}
+
+const ProgressBarProcessing = (props) => {
+  const value = Math.round(props.value * 100)
+
+  return <div class="uppy-StatusBar-content">
+    {props.mode === 'determinate' ? `${value}%・` : ''}
+    {props.message}
+  </div>
+}
+
+const progressDetails = (props) => {
+  return <span class="uppy-StatusBar-statusSecondary">
+    { props.inProgress > 1 && props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.inProgress }) + '・' }
+    { props.i18n('dataUploadedOfTotal', { complete: props.totalUploadedSize, total: props.totalSize }) }・
+    { props.i18n('xTimeLeft', { time: props.totalETA }) }
+  </span>
+}
+
+const ThrottledProgressDetails = throttle(progressDetails, 500, { leading: true, trailing: true })
+
+const ProgressBarUploading = (props) => {
+  if (!props.isUploadStarted || props.isAllComplete) {
+    return null
+  }
+
+  return (
+    <div class="uppy-StatusBar-content" title={props.isAllPaused ? props.i18n('paused') : props.i18n('uploading')}>
+      { <PauseResumeButtons {...props} /> }
+      <div class="uppy-StatusBar-status">
+        <span class="uppy-StatusBar-statusPrimary">{ props.isAllPaused ? props.i18n('paused') : props.i18n('uploading') }: {props.totalProgress}%</span>
+        <br />
+        { !props.isAllPaused && <ThrottledProgressDetails {...props} /> }
+      </div>
+    </div>
+  )
+}
+
+const ProgressBarComplete = ({ totalProgress, i18n }) => {
+  return (
+    <div class="uppy-StatusBar-content" role="status" title={i18n('complete')}>
+      <svg aria-hidden="true" class="uppy-StatusBar-statusIndicator UppyIcon" width="18" height="17" viewBox="0 0 23 17">
+        <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
+      </svg>
+      {i18n('complete')}
+    </div>
+  )
+}
+
+const ProgressBarError = ({ error, retryAll, i18n }) => {
+  return (
+    <div class="uppy-StatusBar-content" role="alert">
+      <strong>{i18n('uploadFailed')}.</strong>
+      <span>{i18n('pleasePressRetry')}</span>
+      <span class="uppy-StatusBar-details"
+        aria-label={error}
+        data-microtip-position="top"
+        data-microtip-size="large"
+        role="tooltip">?</span>
+    </div>
+  )
 }

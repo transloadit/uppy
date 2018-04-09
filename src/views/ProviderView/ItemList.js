@@ -1,4 +1,4 @@
-const Row = require('./TableRow')
+const Row = require('./Item')
 const { h } = require('preact')
 
 module.exports = (props) => {
@@ -28,6 +28,7 @@ module.exports = (props) => {
           }
           return Row({
             title: props.getItemName(folder),
+            id: props.getItemId(folder),
             type: 'folder',
             // active: props.activeRow(folder),
             getItemIcon: () => props.getItemIcon(folder),
@@ -35,12 +36,14 @@ module.exports = (props) => {
             isDisabled: isDisabled,
             isChecked: isChecked,
             handleCheckboxClick: (e) => props.toggleCheckbox(e, folder),
-            columns: props.columns
+            columns: props.columns,
+            showTitles: props.showTitles
           })
         })}
         {props.files.map(file => {
           return Row({
             title: props.getItemName(file),
+            id: props.getItemId(file),
             type: 'file',
             // active: props.activeRow(file),
             getItemIcon: () => props.getItemIcon(file),
@@ -48,7 +51,8 @@ module.exports = (props) => {
             isDisabled: false,
             isChecked: props.isChecked(file),
             handleCheckboxClick: (e) => props.toggleCheckbox(e, file),
-            columns: props.columns
+            columns: props.columns,
+            showTitles: props.showTitles
           })
         })}
       </ul>

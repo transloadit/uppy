@@ -1,7 +1,7 @@
 const AuthView = require('./AuthView')
 const Browser = require('./Browser')
 const LoaderView = require('./Loader')
-const Utils = require('../../../core/Utils')
+const Utils = require('../../core/Utils')
 const { h } = require('preact')
 
 /**
@@ -34,7 +34,7 @@ const { h } = require('preact')
  * getItemThumbnailUrl
  *    @return {String}
  */
-module.exports = class View {
+module.exports = class ProviderView {
   /**
    * @param {object} instance of the plugin
    */
@@ -44,7 +44,10 @@ module.exports = class View {
 
     // set default options
     const defaultOptions = {
-      viewType: 'list'
+      viewType: 'list',
+      showTitles: true,
+      showFilter: true,
+      showBreadcrumbs: true
     }
 
     // merge default options with the ones set by user
@@ -200,7 +203,7 @@ module.exports = class View {
   filterQuery (e) {
     const state = this.plugin.getPluginState()
     this.plugin.setPluginState(Object.assign({}, state, {
-      filterInput: e.target.value
+      filterInput: e ? e.target.value : ''
     }))
   }
 
@@ -394,7 +397,7 @@ module.exports = class View {
    * main screen, and will do nothing when you uncheck folder directly, since
    * it's already been done in removeFolder method.
    */
-  updateFolderState (fileId) {
+  updateFolderState (file) {
     let state = this.plugin.getPluginState()
     let folders = state.selectedFolders || {}
     for (let folderId in folders) {
@@ -402,7 +405,7 @@ module.exports = class View {
       if (folder.loading) {
         continue
       }
-      let i = folder.files.indexOf(fileId)
+      let i = folder.files.indexOf(file.id)
       if (i > -1) {
         folder.files.splice(i, 1)
       }
@@ -554,6 +557,7 @@ module.exports = class View {
     if (!authenticated) {
       return h(AuthView, {
         pluginName: this.plugin.title,
+        pluginIcon: this.plugin.icon,
         demo: this.plugin.opts.demo,
         checkAuth: this.checkAuth,
         handleAuth: this.handleAuth,
@@ -576,12 +580,17 @@ module.exports = class View {
       isActiveRow: this.isActiveRow,
       isChecked: this.isChecked,
       toggleCheckbox: this.toggleCheckbox,
+      getItemId: this.plugin.getItemId,
       getItemName: this.plugin.getItemName,
       getItemIcon: this.plugin.getItemIcon,
       handleScroll: this.handleScroll,
       done: this.donePicking,
       title: this.plugin.title,
-      viewType: this.opts.viewType
+      viewType: this.opts.viewType,
+      showTitles: this.opts.showTitles,
+      showFilter: this.opts.showFilter,
+      showBreadcrumbs: this.opts.showBreadcrumbs,
+      pluginIcon: this.plugin.icon
     })
 
     return Browser(browserProps)
