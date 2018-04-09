@@ -1,0 +1,4 @@
+uppy.min.css
+node_modules
+output/*
+!output/.empty
