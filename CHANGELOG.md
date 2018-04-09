@@ -32,7 +32,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] maybe restrict system file picking dialog too https://github.com/transloadit/uppy/issues/253
 - [ ] uppy-server: what happens if access token expires amid an upload/download process.
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
-- [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
+- [x] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
 - [ ] DnD Bar: drag and drop + statusbar or progressbar ? (@arturi)
 - [ ] possibility to work on already uploaded / in progress files #112, #113
 - [ ] possibility to edit/delete more than one file at once #118, #97
@@ -129,6 +129,7 @@ To Be Released: 2018-05-31.
 - [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/ (@goto-bus-stop)
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
 - [ ] providers: Add user/account names to Uppy provider views (@ifedapoolarewaju)
+- [x] s3: implement multipart uploads (#726, @goto-bus-stop)
 
 ## 0.24.4
 
