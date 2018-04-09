@@ -634,9 +634,21 @@ module.exports = class Transloadit extends Plugin {
       return Promise.resolve()
     }
 
-    return optionsPromise.then((assemblies) => Promise.all(
-      assemblies.map(createAssembly)
-    ))
+    return optionsPromise.then(
+      (assemblies) => Promise.all(
+        assemblies.map(createAssembly)
+      ),
+      // If something went wrong before any assemblies could be created,
+      // clear all processing state.
+      (err) => {
+        fileIDs.forEach((fileID) => {
+          const file = this.uppy.getFile(fileID)
+          this.uppy.emit('preprocess-complete', file)
+          this.uppy.emit('upload-error', file, err)
+        })
+        throw err
+      }
+    )
   }
 
   afterUpload (fileIDs, uploadID) {
