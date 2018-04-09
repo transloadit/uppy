@@ -22,7 +22,7 @@ const uppy = Uppy({
   },
   meta: {},
   onBeforeFileAdded: (currentFile, files) => currentFile,
-  onBeforeUpload: (files) => Promise.resolve(),
+  onBeforeUpload: (files) => {},
   locale: defaultLocale,
   store: new DefaultStore()
 })
@@ -79,7 +79,7 @@ Metadata can also be added from a `<form>` element on your page via [Form](/docs
 <a id="onBeforeFileAdded"></a>
 ### `onBeforeFileAdded: (currentFile, files) => currentFile`
 
-A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this function to run any number of custom checks on the selected file, or manipulating it, like optimizing a file name, for example.
+A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy. Return a file object or nothing to proceed with adding the file, or throw an error to abort. Use this function to run any number of custom checks on the selected file, or manipulating it, like optimizing a file name, for example.
 
 ```js
 onBeforeFileAdded: (currentFile, files) => {
@@ -90,16 +90,15 @@ onBeforeFileAdded: (currentFile, files) => {
 }
 ```
 
-### `onBeforeUpload: (files) => Promise.resolve()`
+### `onBeforeUpload: (files) => {}`
 
-A function run before an upload begins. Gets passed `files` object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
+A function run before an upload begins. Gets passed `files` object with all files that already are in Uppy. Return nothing to proceed with adding the file or throw an error to abort. Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
 
 ```js
 onBeforeUpload: (files) => {
   if (Object.keys(files).length < 2) {
-    return Promise.reject('too few files')
+    throw new Error('Not enough files.')
   }
-  return Promise.resolve()
 }
 ```
 

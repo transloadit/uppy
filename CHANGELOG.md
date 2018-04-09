@@ -122,7 +122,7 @@ To be released: 2018-03-29.
 - [x] s3: fix xhr response handlers (#625, @goto-bus-stop)
 - [ ] test: add typescript with JSDoc (@arturi)
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
-- [x] core: ⚠️ **breaking** `onBeforeFileAdded()` and `addFile()` are now synchronous. You can no longer return a Promise from `onBeforeFileAdded()`. (#294, @goto-bus-stop)
+- [x] core: ⚠️ **breaking** `onBeforeFileAdded()`, `onBeforeUpload()` and `addFile()` are now synchronous. You can no longer return a Promise from the `onBefore*()` functions. (#294, @goto-bus-stop)
 
 ## 0.23.3
 
