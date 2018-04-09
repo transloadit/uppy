@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "uppy-digitalocean-spaces",
+  "name": "uppy-digitalocean-spaces-example",
   "scripts": {
     "start": "node ./server.js"
   },
