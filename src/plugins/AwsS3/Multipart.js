@@ -1,4 +1,5 @@
 const Plugin = require('../../core/Plugin')
+const RequestClient = require('../../server/RequestClient')
 const UppySocket = require('../../core/UppySocket')
 const {
   emitSocketProgress,
@@ -6,13 +7,6 @@ const {
   limitPromises
 } = require('../../core/Utils')
 const Uploader = require('./MultipartUploader')
-
-function handleResponse (response) {
-  if (response.ok) return response.json()
-  return response.json().then((err) => {
-    throw err
-  })
-}
 
 /**
  * Create a wrapper around an event emitter with a `remove` method to remove
@@ -39,6 +33,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.type = 'uploader'
     this.id = 'AwsS3Multipart'
     this.title = 'AWS S3 Multipart'
+    this.server = new RequestClient(uppy, opts)
 
     const defaultOptions = {
       timeout: 30 * 1000,
@@ -93,37 +88,24 @@ module.exports = class AwsS3Multipart extends Plugin {
   createMultipartUpload (file) {
     this.assertHost()
 
-    return fetch(`${this.opts.host}/s3/multipart`, {
-      method: 'post',
-      body: JSON.stringify({
-        filename: file.name,
-        type: file.type
-      }),
-      headers: {
-        accept: 'application/json',
-        'content-type': 'application/json'
-      }
-    }).then(handleResponse)
+    return this.server.post('s3/multipart', {
+      filename: file.name,
+      type: file.type
+    })
   }
 
   listParts (file, { key, uploadId }) {
     this.assertHost()
 
     const filename = encodeURIComponent(key)
-    return fetch(`${this.opts.host}/s3/multipart/${uploadId}?key=${filename}`, {
-      method: 'get',
-      headers: { accept: 'application/json' }
-    }).then(handleResponse)
+    return this.server.get(`s3/multipart/${uploadId}?key=${filename}`)
   }
 
   prepareUploadPart (file, { key, uploadId, number }) {
     this.assertHost()
 
     const filename = encodeURIComponent(key)
-    return fetch(`${this.opts.host}/s3/multipart/${uploadId}/${number}?key=${filename}`, {
-      method: 'get',
-      headers: { accept: 'application/json' }
-    }).then(handleResponse)
+    return this.server.get(`s3/multipart/${uploadId}/${number}?key=${filename}`)
   }
 
   completeMultipartUpload (file, { key, uploadId, parts }) {
@@ -131,14 +113,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return fetch(`${this.opts.host}/s3/multipart/${uploadIdEnc}/complete?key=${filename}`, {
-      method: 'post',
-      headers: {
-        accept: 'application/json',
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({ parts })
-    }).then(handleResponse)
+    return this.server.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
   }
 
   abortMultipartUpload (file, { key, uploadId }) {
@@ -146,10 +121,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return fetch(`${this.opts.host}/s3/multipart/${uploadIdEnc}?key=${filename}`, {
-      method: 'delete',
-      headers: { accept: 'application/json' }
-    }).then(handleResponse)
+    return this.server.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
   }
 
   uploadFile (file) {
