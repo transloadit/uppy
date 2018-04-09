@@ -341,9 +341,8 @@ class Uppy {
 
     const onError = (msg) => {
       const err = typeof msg === 'object' ? msg : new Error(msg)
-      this.log(err.message)
+      this.log(err, 'warning')
       this.info(err.message, 'error', 5000)
-      throw err
     }
 
     let mappedFile
@@ -351,6 +350,7 @@ class Uppy {
       mappedFile = this.opts.onBeforeFileAdded(file, files)
     } catch (err) {
       onError(err)
+      return
     }
 
     if (typeof mappedFile === 'object' && mappedFile) {
