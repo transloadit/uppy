@@ -62,6 +62,7 @@ Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] provider: Add Facebook
 - [ ] provider: Add OneDrive
 - [ ] provider: Add Box
+- [ ] provider: change ProviderViews signature to receive Provider instance in second param. ref https://github.com/transloadit/uppy/pull/743#discussion_r180106070
 
 ## 1.0 Goals
 
