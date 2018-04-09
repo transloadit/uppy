@@ -227,7 +227,7 @@ module.exports = class Transloadit extends Plugin {
       return this.connectSocket(assembly)
         .then(() => assembly)
     }).then((assembly) => {
-      this.uppy.log('[Transloadit] Created Assembly')
+      this.uppy.log(`[Transloadit] Created Assembly ${assembly.assembly_id}`)
       return assembly
     }).catch((err) => {
       this.uppy.info(this.i18n('creatingAssemblyFailed'), 'error', 0)
