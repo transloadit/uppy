@@ -48,7 +48,7 @@ class Uppy {
       },
       meta: {},
       onBeforeFileAdded: (currentFile, files) => currentFile,
-      onBeforeUpload: (files) => Promise.resolve(),
+      onBeforeUpload: (files) => files,
       locale: defaultLocale,
       store: new DefaultStore()
     }
@@ -1131,7 +1131,9 @@ class Uppy {
     }
 
     return Promise.resolve()
-      .then(() => this.opts.onBeforeUpload(this.getState().files))
+      .then(() => {
+        this.opts.onBeforeUpload(this.getState().files)
+      })
       .then(() => this._checkMinNumberOfFiles())
       .then(() => {
         const { currentUploads } = this.getState()
