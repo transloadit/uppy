@@ -98,7 +98,7 @@ To be released: 2018-03-29.
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
-- [ ] dashboard: disallow removing files if `bundle: true` in XHRUpload (@arturi) 
+- [ ] dashboard: disallow removing files if `bundle: true` in XHRUpload (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
@@ -123,6 +123,7 @@ To be released: 2018-03-29.
 - [x] s3: fix xhr response handlers (#625, @goto-bus-stop)
 - [ ] test: add typescript with JSDoc (@arturi)
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
+- [x] react: Allow overriding `<DashboardModal />` `target` prop (#740, @goto-bus-stop)
 
 ## 0.23.3
 
