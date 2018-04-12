@@ -94,7 +94,8 @@ module.exports = class StatusBar extends Plugin {
   }
 
   startUpload () {
-    return this.uppy.upload().catch(() => {
+    return this.uppy.upload().catch((err) => {
+      this.uppy.log(err.stack || err.message || err)
       // Ignore
     })
   }

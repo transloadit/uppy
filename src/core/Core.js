@@ -289,9 +289,9 @@ class Uppy {
   *
   * @private
   */
-  _checkMinNumberOfFiles () {
+  _checkMinNumberOfFiles (files) {
     const {minNumberOfFiles} = this.opts.restrictions
-    if (Object.keys(this.getState().files).length < minNumberOfFiles) {
+    if (Object.keys(files).length < minNumberOfFiles) {
       throw new Error(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
     }
   }
@@ -348,18 +348,19 @@ class Uppy {
       throw err
     }
 
-    let mappedFile
-    try {
-      mappedFile = this.opts.onBeforeFileAdded(file, files)
-    } catch (err) {
-      onError(err)
+    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
+
+    if (onBeforeFileAddedResult === false) {
+      this.log('Not adding file because onBeforeFileAdded returned false')
+      return
     }
 
-    if (typeof mappedFile === 'object' && mappedFile) {
-      if (mappedFile.then) {
+    if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
+      // warning after the change in 0.24
+      if (onBeforeFileAddedResult.then) {
         throw new TypeError('onBeforeFileAdded() returned a Promise, but this is no longer supported. It must be synchronous.')
       }
-      file = mappedFile
+      file = onBeforeFileAddedResult
     }
 
     const fileType = Utils.getFileType(file)
@@ -1136,18 +1137,31 @@ class Uppy {
       this.log('No uploader type plugins are used', 'warning')
     }
 
+    let files = this.getState().files
+    const onBeforeUploadResult = this.opts.onBeforeUpload(files)
+
+    if (onBeforeUploadResult === false) {
+      return Promise.reject(new Error('Not starting the upload because onBeforeUpload returned false'))
+    }
+
+    if (onBeforeUploadResult && typeof onBeforeUploadResult === 'object') {
+      // warning after the change in 0.24
+      if (onBeforeUploadResult.then) {
+        throw new TypeError('onBeforeUpload() returned a Promise, but this is no longer supported. It must be synchronous.')
+      }
+
+      files = onBeforeUploadResult
+    }
+
     return Promise.resolve()
-      .then(() => {
-        this.opts.onBeforeUpload(this.getState().files)
-      })
-      .then(() => this._checkMinNumberOfFiles())
+      .then(() => this._checkMinNumberOfFiles(files))
       .then(() => {
         const { currentUploads } = this.getState()
         // get a list of files that are currently assigned to uploads
         const currentlyUploadingFiles = Object.keys(currentUploads).reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
 
         const waitingFileIDs = []
-        Object.keys(this.getState().files).forEach((fileID) => {
+        Object.keys(files).forEach((fileID) => {
           const file = this.getFile(fileID)
           // if the file hasn't started uploading and hasn't already been assigned to an upload..
           if ((!file.progress.uploadStarted) && (currentlyUploadingFiles.indexOf(fileID) === -1)) {
