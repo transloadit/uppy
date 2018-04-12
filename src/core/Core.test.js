@@ -617,6 +617,23 @@ describe('src/Core', () => {
         expect(err.message).toEqual('You can only upload: image/gif')
       }
     })
+
+    it('should not allow a file if onBeforeFileAdded returned false', () => {
+      const core = new Core({
+        onBeforeFileAdded: (file, files) => {
+          if (file.source === 'jest') {
+            return false
+          }
+        }
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      expect(Object.keys(core.state.files).length).toEqual(0)
+    })
   })
 
   describe('uploading a file', () => {
@@ -678,6 +695,40 @@ describe('src/Core', () => {
       core.addFile({ source: 'file3', name: 'file3.jpg', type: 'image/jpeg', data: new Uint8Array() })
 
       return expect(core.upload()).resolves.toMatchSnapshot()
+    })
+
+    it('should not upload if onBeforeUpload returned false', () => {
+      const core = new Core({
+        autoProceed: false,
+        onBeforeUpload: (files) => {
+          for (var fileId in files) {
+            if (files[fileId].name === '123.foo') {
+              return false
+            }
+          }
+        }
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'bar.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      core.addFile({
+        source: 'jest',
+        name: '123.foo',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      return core.upload().catch((err) => {
+        expect(err).toMatchObject(new Error('Not starting the upload because onBeforeUpload returned false'))
+      })
     })
   })
 
