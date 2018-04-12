@@ -583,7 +583,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba($color-black, 0.65);
+    background-color: rgba($color-black, 0.65) /* no !important */;
     display: none;
     z-index: $zIndex-2;
   }
@@ -1044,7 +1044,7 @@
   justify-content: center;
   flex-grow: 1;
   border-bottom: 1px solid rgba($color-gray, 0.3);
-  background-color: lighten($color-gray, 40%);
+  background-color: lighten($color-gray, 40%); /* no !important */
   position: relative;
 }
 
