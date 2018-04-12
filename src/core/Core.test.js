@@ -617,26 +617,6 @@ describe('src/Core', () => {
         expect(err.message).toEqual('You can only upload: image/gif')
       }
     })
-
-    it('should work with restriction errors that are not Error class instances', () => {
-      const core = new Core({
-        onBeforeFileAdded () {
-          throw 'a plain string' // eslint-disable-line no-throw-literal
-        }
-      })
-
-      try {
-        core.addFile({
-          source: 'jest',
-          name: 'foo.jpg',
-          type: 'image/jpeg',
-          data: null
-        })
-        throw new Error('should have thrown')
-      } catch (err) {
-        expect(err).toMatchObject(new Error('a plain string'))
-      }
-    })
   })
 
   describe('uploading a file', () => {
