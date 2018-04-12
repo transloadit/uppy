@@ -45,15 +45,14 @@ describe('Transloadit', () => {
 
     const data = Buffer.alloc(4000)
     data.size = data.byteLength
-    return uppy.addFile({
+    uppy.addFile({
       name: 'testfile',
       data
-    }).then(() => {
-      return uppy.upload().then(() => {
-        throw new Error('should have rejected')
-      }, (err) => {
-        expect(err.message).toMatch(/The `params\.auth\.key` option is required/)
-      })
+    })
+    return uppy.upload().then(() => {
+      throw new Error('should have rejected')
+    }, (err) => {
+      expect(err.message).toMatch(/The `params\.auth\.key` option is required/)
     })
   })
 
@@ -84,17 +83,15 @@ describe('Transloadit', () => {
     const data = Buffer.alloc(10)
     data.size = data.byteLength
 
-    return Promise.all([
-      uppy.addFile({ name: 'a.png', data }),
-      uppy.addFile({ name: 'b.png', data }),
-      uppy.addFile({ name: 'c.png', data }),
-      uppy.addFile({ name: 'd.png', data })
-    ]).then(() => {
-      return uppy.upload().then(() => {
-        throw new Error('upload should have been rejected')
-      }, () => {
-        expect(i).toBe(4)
-      })
+    uppy.addFile({ name: 'a.png', data })
+    uppy.addFile({ name: 'b.png', data })
+    uppy.addFile({ name: 'c.png', data })
+    uppy.addFile({ name: 'd.png', data })
+
+    return uppy.upload().then(() => {
+      throw new Error('upload should have been rejected')
+    }, () => {
+      expect(i).toBe(4)
     })
   })
 
@@ -131,17 +128,15 @@ describe('Transloadit', () => {
     const data2 = Buffer.alloc(20)
     data2.size = data2.byteLength
 
-    return Promise.all([
-      uppy.addFile({ name: 'a.png', data }),
-      uppy.addFile({ name: 'b.png', data }),
-      uppy.addFile({ name: 'c.png', data }),
-      uppy.addFile({ name: 'd.png', data: data2 })
-    ]).then(() => {
-      return uppy.upload().then(() => {
-        throw new Error('Upload should have been rejected')
-      }, () => {
-        expect(i).toBe(2)
-      })
+    uppy.addFile({ name: 'a.png', data })
+    uppy.addFile({ name: 'b.png', data })
+    uppy.addFile({ name: 'c.png', data })
+    uppy.addFile({ name: 'd.png', data: data2 })
+
+    return uppy.upload().then(() => {
+      throw new Error('Upload should have been rejected')
+    }, () => {
+      expect(i).toBe(2)
     })
   })
 

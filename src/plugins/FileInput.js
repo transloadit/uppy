@@ -51,8 +51,6 @@ module.exports = class FileInput extends Plugin {
         name: file.name,
         type: file.type,
         data: file
-      }).catch(() => {
-        // Ignore
       })
     })
   }

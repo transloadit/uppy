@@ -21,8 +21,8 @@ const uppy = Uppy({
     allowedFileTypes: false
   },
   meta: {},
-  onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
-  onBeforeUpload: (files) => Promise.resolve(),
+  onBeforeFileAdded: (currentFile, files) => currentFile,
+  onBeforeUpload: (files) => {},
   locale: defaultLocale,
   store: new DefaultStore()
 })
@@ -70,35 +70,35 @@ meta: {
 This global metadata is added to each file in Uppy. It can be modified with two methods:
 
 1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setmeta-data) — set or update meta for all files.
-2. [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file. 
+2. [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file.
 
 Metadata from each file is then attached to uploads in [Tus](/docs/tus/) and [XHRUpload](/docs/tus/) plugins.
 
 Metadata can also be added from a `<form>` element on your page via [Form](/docs/form/)plugin or via UI if you are using Dashboard with [`metaFields`](/docs/dashboard/#metaFields) option.
 
-### `onBeforeFileAdded: (currentFile, files) => Promise.resolve()`
+<a id="onBeforeFileAdded"></a>
+### `onBeforeFileAdded: (currentFile, files) => currentFile`
 
-A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this function to run any number of custom checks on the selected file, or manipulating it, like optimizing a file name, for example.
+A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy. Return a file object or nothing to proceed with adding the file, or throw an error to abort. Use this function to run any number of custom checks on the selected file, or manipulating it, like optimizing a file name, for example.
 
 ```js
 onBeforeFileAdded: (currentFile, files) => {
   if (currentFile.name === 'forest-IMG_0616.jpg') {
-    return Promise.resolve()
+    return true
   }
-  return Promise.reject('This is not the file I was looking for')
+  throw new Error('This is not the file I was looking for')
 }
 ```
 
-### `onBeforeUpload: (files) => Promise.resolve()`
+### `onBeforeUpload: (files) => {}`
 
-A function run before an upload begins. Gets passed `files` object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
+A function run before an upload begins. Gets passed `files` object with all files that already are in Uppy. Return nothing to proceed with adding the file or throw an error to abort. Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
 
 ```js
 onBeforeUpload: (files) => {
   if (Object.keys(files).length < 2) {
-    return Promise.reject('too few files')
+    throw new Error('Not enough files.')
   }
-  return Promise.resolve()
 }
 ```
 
@@ -180,9 +180,9 @@ uppy.addFile({
 })
 ```
 
-`addFile` attempts to determine file type by [magic bytes](https://github.com/sindresorhus/file-type) + the provided `type` + extension; then checks if the file can be added, considering `uppy.opts.restrictions`, sets metadata and generates a preview, if it’s an image.
+`addFile` throws an error if the file cannot be added, either because `onBeforeFileAdded(file)` threw an error, or because `uppy.opts.restrictions` checks failed.
 
-If `uppy.opts.autoProceed === true`, Uppy will begin uploading after the first file is added.
+If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically when files are added.
 
 ### `uppy.getFile(fileID)`
 
@@ -375,7 +375,7 @@ Fired when upload starts.
 
 ```javascript
 uppy.on('upload', (data) => {
-  // data object consists of `id` with upload id and `fileIDs` array 
+  // data object consists of `id` with upload id and `fileIDs` array
   // with file ids in current upload
   // data: { id, fileIDs }
   console.log(`Starting upload ${id} for files ${fileIDs}`)

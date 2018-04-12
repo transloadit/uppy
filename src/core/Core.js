@@ -49,8 +49,8 @@ class Uppy {
         allowedFileTypes: false
       },
       meta: {},
-      onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
-      onBeforeUpload: (files) => Promise.resolve(),
+      onBeforeFileAdded: (currentFile, files) => currentFile,
+      onBeforeUpload: (files) => files,
       locale: defaultLocale,
       store: DefaultStore()
     }
@@ -339,73 +339,90 @@ class Uppy {
   * @param {object} file object to add
   */
   addFile (file) {
-    return Promise.resolve()
-      // Wrap this in a Promise `.then()` handler so errors will reject the Promise
-      // instead of throwing.
-      .then(() => this.opts.onBeforeFileAdded(file, this.getState().files))
-      .then(() => Utils.getFileType(file))
-      .then((fileType) => {
-        const updatedFiles = Object.assign({}, this.getState().files)
-        let fileName
-        if (file.name) {
-          fileName = file.name
-        } else if (fileType.split('/')[0] === 'image') {
-          fileName = fileType.split('/')[0] + '.' + fileType.split('/')[1]
-        } else {
-          fileName = 'noname'
-        }
-        const fileExtension = Utils.getFileNameAndExtension(fileName).extension
-        const isRemote = file.isRemote || false
+    const { files } = this.getState()
 
-        const fileID = Utils.generateFileID(file)
+    const onError = (msg) => {
+      const err = typeof msg === 'object' ? msg : new Error(msg)
+      this.log(err.message)
+      this.info(err.message, 'error', 5000)
+      throw err
+    }
 
-        const newFile = {
-          source: file.source || '',
-          id: fileID,
-          name: fileName,
-          extension: fileExtension || '',
-          meta: Object.assign({}, this.getState().meta, {
-            name: fileName,
-            type: fileType
-          }),
-          type: fileType,
-          data: file.data,
-          progress: {
-            percentage: 0,
-            bytesUploaded: 0,
-            bytesTotal: file.data.size || 0,
-            uploadComplete: false,
-            uploadStarted: false
-          },
-          size: file.data.size || 0,
-          isRemote: isRemote,
-          remote: file.remote || '',
-          preview: file.preview
-        }
+    let mappedFile
+    try {
+      mappedFile = this.opts.onBeforeFileAdded(file, files)
+    } catch (err) {
+      onError(err)
+    }
 
-        this._checkRestrictions(newFile)
+    if (typeof mappedFile === 'object' && mappedFile) {
+      if (mappedFile.then) {
+        throw new TypeError('onBeforeFileAdded() returned a Promise, but this is no longer supported. It must be synchronous.')
+      }
+      file = mappedFile
+    }
 
-        updatedFiles[fileID] = newFile
-        this.setState({files: updatedFiles})
+    const fileType = Utils.getFileType(file)
+    let fileName
+    if (file.name) {
+      fileName = file.name
+    } else if (fileType.split('/')[0] === 'image') {
+      fileName = fileType.split('/')[0] + '.' + fileType.split('/')[1]
+    } else {
+      fileName = 'noname'
+    }
+    const fileExtension = Utils.getFileNameAndExtension(fileName).extension
+    const isRemote = file.isRemote || false
 
-        this.emit('file-added', newFile)
-        this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
+    const fileID = Utils.generateFileID(file)
 
-        if (this.opts.autoProceed && !this.scheduledAutoProceed) {
-          this.scheduledAutoProceed = setTimeout(() => {
-            this.scheduledAutoProceed = null
-            this.upload().catch((err) => {
-              console.error(err.stack || err.message || err)
-            })
-          }, 4)
-        }
+    const newFile = {
+      source: file.source || '',
+      id: fileID,
+      name: fileName,
+      extension: fileExtension || '',
+      meta: Object.assign({}, this.getState().meta, {
+        name: fileName,
+        type: fileType
+      }),
+      type: fileType,
+      data: file.data,
+      progress: {
+        percentage: 0,
+        bytesUploaded: 0,
+        bytesTotal: file.data.size || 0,
+        uploadComplete: false,
+        uploadStarted: false
+      },
+      size: file.data.size || 0,
+      isRemote: isRemote,
+      remote: file.remote || '',
+      preview: file.preview
+    }
+
+    try {
+      this._checkRestrictions(newFile)
+    } catch (err) {
+      onError(err)
+    }
+
+    this.setState({
+      files: Object.assign({}, files, {
+        [fileID]: newFile
       })
-      .catch((err) => {
-        const message = typeof err === 'object' ? err.message : err
-        this.log(message)
-        this.info(message, 'error', 5000)
-        return Promise.reject(typeof err === 'object' ? err : new Error(err))
-      })
+    })
+
+    this.emit('file-added', newFile)
+    this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
+
+    if (this.opts.autoProceed && !this.scheduledAutoProceed) {
+      this.scheduledAutoProceed = setTimeout(() => {
+        this.scheduledAutoProceed = null
+        this.upload().catch((err) => {
+          console.error(err.stack || err.message || err)
+        })
+      }, 4)
+    }
   }
 
   removeFile (fileID) {
@@ -1109,7 +1126,7 @@ class Uppy {
     })
   }
 
-    /**
+  /**
    * Start an upload for all the files that are not currently being uploaded.
    *
    * @return {Promise}
@@ -1120,7 +1137,9 @@ class Uppy {
     }
 
     return Promise.resolve()
-      .then(() => this.opts.onBeforeUpload(this.getState().files))
+      .then(() => {
+        this.opts.onBeforeUpload(this.getState().files)
+      })
       .then(() => this._checkMinNumberOfFiles())
       .then(() => {
         const { currentUploads } = this.getState()
