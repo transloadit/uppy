@@ -184,7 +184,6 @@ module.exports = class ProviderView {
    */
   logout () {
     this.Provider.logout(location.href)
-      .then((res) => res.json())
       .then((res) => {
         if (res.ok) {
           const newState = {

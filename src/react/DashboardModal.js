@@ -17,10 +17,14 @@ class DashboardModal extends React.Component {
       {},
       this.props,
       {
-        target: this.container,
         onRequestCloseModal: this.props.onRequestClose
       }
     )
+
+    if (!options.target) {
+      options.target = this.container
+    }
+
     delete options.uppy
     uppy.use(DashboardPlugin, options)
 
@@ -55,6 +59,8 @@ class DashboardModal extends React.Component {
 
 DashboardModal.propTypes = {
   uppy: PropTypes.instanceOf(UppyCore).isRequired,
+  // Only check this prop type in the browser.
+  target: typeof window !== 'undefined' ? PropTypes.instanceOf(window.HTMLElement) : PropTypes.any,
   open: PropTypes.bool,
   onRequestClose: PropTypes.func,
   plugins: PropTypes.arrayOf(PropTypes.string),

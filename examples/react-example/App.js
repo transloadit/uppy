@@ -73,6 +73,7 @@ module.exports = class App extends React.Component {
           <DashboardModal
             uppy={this.uppy2}
             open={this.state.open}
+            target={document.body}
             onRequestClose={() => this.setState({ open: false })}
           />
         </div>

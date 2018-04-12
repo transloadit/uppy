@@ -62,6 +62,7 @@ Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] provider: Add Facebook
 - [ ] provider: Add OneDrive
 - [ ] provider: Add Box
+- [ ] provider: change ProviderViews signature to receive Provider instance in second param. ref https://github.com/transloadit/uppy/pull/743#discussion_r180106070
 
 ## 1.0 Goals
 
@@ -123,6 +124,7 @@ To be released: 2018-03-29.
 - [ ] test: add typescript with JSDoc (@arturi)
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
 - [x] core: ⚠️ **breaking** `onBeforeFileAdded()`, `onBeforeUpload()` and `addFile()` are now synchronous. You can no longer return a Promise from the `onBefore*()` functions. (#294, @goto-bus-stop)
+- [x] react: Allow overriding `<DashboardModal />` `target` prop (#740, @goto-bus-stop)
 
 ## 0.23.3
 

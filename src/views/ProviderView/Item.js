@@ -31,7 +31,10 @@ module.exports = (props) => {
           onkeyup={stop}
           onkeydown={stop}
           onkeypress={stop} />
-        <label for={props.id} />
+        <label
+          for={props.id}
+          onclick={props.handleCheckboxClick}
+         />
       </div>
       <button type="button"
         class="uppy-ProviderBrowserItem-inner"
