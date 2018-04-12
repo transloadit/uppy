@@ -39,7 +39,8 @@
 }
 
 .uppy-StatusBar:not([aria-hidden=true]).is-waiting {
-  background-color: darken($color-white, 2%);
+  // background-color: darken($color-white, 2%);
+  background-color: $color-white;
   height: 65px;
   border-top: 1px solid rgba($color-gray, 0.3);
 }
