@@ -360,7 +360,6 @@ class Uppy {
       if (onBeforeFileAddedResult.then) {
         throw new TypeError('onBeforeFileAdded() returned a Promise, but this is no longer supported. It must be synchronous.')
       }
-      console.log(onBeforeFileAddedResult)
       file = onBeforeFileAddedResult
     }
 
@@ -1141,6 +1140,10 @@ class Uppy {
     let files = this.getState().files
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
+    if (onBeforeUploadResult === false) {
+      return Promise.reject(new Error('Not starting the upload because onBeforeUpload returned false'))
+    }
+
     if (onBeforeUploadResult && typeof onBeforeUploadResult === 'object') {
       // warning after the change in 0.24
       if (onBeforeUploadResult.then) {
@@ -1153,10 +1156,6 @@ class Uppy {
     return Promise.resolve()
       .then(() => this._checkMinNumberOfFiles(files))
       .then(() => {
-        if (onBeforeUploadResult === false) {
-          this.log('Not starting the upload because onBeforeUpload returned false')
-          return
-        }
         const { currentUploads } = this.getState()
         // get a list of files that are currently assigned to uploads
         const currentlyUploadingFiles = Object.keys(currentUploads).reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
