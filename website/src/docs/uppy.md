@@ -79,28 +79,82 @@ Metadata can also be added from a `<form>` element on your page via [Form](/docs
 <a id="onBeforeFileAdded"></a>
 ### `onBeforeFileAdded: (currentFile, files) => currentFile`
 
-A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy. Return a file object or nothing to proceed with adding the file, or throw an error to abort. Use this function to run any number of custom checks on the selected file, or manipulating it, like optimizing a file name, for example.
+A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy. 
+
+Use this function to run any number of custom checks on the selected file, or manipulating it, like optimizing a file name, for example.
+
+Return true/nothing or a modified file object to proceed with adding the file:
 
 ```js
 onBeforeFileAdded: (currentFile, files) => {
   if (currentFile.name === 'forest-IMG_0616.jpg') {
     return true
   }
-  throw new Error('This is not the file I was looking for')
+}
+
+// or
+
+onBeforeFileAdded: (currentFile, files) => {
+  const modifiedFile = Object.assign(
+    {}, 
+    currentFile, 
+    { name: currentFile + Date.now()
+  })
+  return modifiedFile
 }
 ```
 
-### `onBeforeUpload: (files) => {}`
+Return false to abort adding the file:
 
-A function run before an upload begins. Gets passed `files` object with all files that already are in Uppy. Return nothing to proceed with adding the file or throw an error to abort. Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
+```js
+onBeforeFileAdded: (currentFile, files) => {
+  if (!currentFile.type) {
+    // log to console
+    uppy.log(`Skipping file because it has no type`)
+    // show error message to the user
+    uppy.info(`Skipping file because it has no type`, 'error', 500)
+    return false
+  }
+}
+```
+
+Note: it’s up to you to show a notification to the user about file not passing validation. We recommend showing the info message and logging to console for debugging.
+
+
+<a id="onBeforeUpload"></a>
+### `onBeforeUpload: (files) => files`
+
+A function run before an upload begins. Gets passed `files` object with all the files that are already in Uppy. 
+
+Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
+
+Return true or modified `files` object to proceed:
+
+```js
+onBeforeUpload: (files) => {
+  const updatedFiles = Object.assign({}, files)
+  Object.keys(updatedFiles).forEach(fileId => {
+    updatedFiles[fileId].name = 'myCustomPrefix_' + updatedFiles[fileId].name
+  })
+  return updatedFiles
+}
+```
+
+Return false to abort:
 
 ```js
 onBeforeUpload: (files) => {
   if (Object.keys(files).length < 2) {
-    throw new Error('Not enough files.')
+    // log to console
+    uppy.log(`Aborting upload because only ${Object.keys(files).length} files were selected`)
+    // show error message to the user
+    uppy.info(`You have to select at least 2 files`, 'error', 500)
+    return false
   }
 }
 ```
+
+Note: it’s up to you to show a notification to the user about file not passing validation. We recommend showing the info message and logging to console for debugging.
 
 ### `locale: {}`
 
