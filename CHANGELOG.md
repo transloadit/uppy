@@ -96,26 +96,28 @@ What we need to do to release Uppy 1.0
 To be released: 2018-03-29.
 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
+- [x] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
 - [ ] dashboard: disallow removing files if `bundle: true` in XHRUpload (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: all: reset or !important styles to be immune to any environment/page, look at screenshots in #446. Maybe `postcss-safe-important`, http://cleanslatecss.com/ or https://github.com/maximkoretskiy/postcss-autoreset or increase specificity (with .uppy prefix) (@arturi)
-- [ ] url: refactor things into Provider, see comments in  https://github.com/transloadit/uppy/pull/588 (@ifedapoolarewaju, @arturi)
+- [x] url: refactor things into Provider, see comments in  https://github.com/transloadit/uppy/pull/588 (@ifedapoolarewaju, @arturi)
 - [ ] dashboard: option for Boolean metadata #454 (@arturi)
-- [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
+- [ ] dashboard: huge UI redesign, update provider views, StatusBar, Webcam, FileCard (@arturi, @nqst)
+- [x] statusbar: Statusbar: Move progress details to second line and make them optional (#682 / @arturi)
+- [x] core: fix for all file state was included in progress accidentally (#682 / @arturi)
+- [x] url: add checks for protocols, assume `http` when no protocol is used (#682 / @arturi)
 - [ ] core: figure out per-plugin locales and i18n strings packs #491
 - [ ] goldenretriever: confirmation before restore #443
 - [ ] goldenretriever: add “ghost” files (@arturi)
 - [ ] core: i18n all strings + document them
-- [ ] core: update file-type
 - [x] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (#641 / @goto-bus-stop)
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
-- [ ] docs: all useful events (@arturi)
-- [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
-- [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
+- [x] docs: all useful events (@arturi)
+- [x] s3: document Google Cloud Storage too? See #460
+- [x] dashboard: add optional whitelabel “powered by uppy.io” (@nqst, @arturi)
 - [ ] transloadit: add error reporting (@goto-bus-stop)
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
