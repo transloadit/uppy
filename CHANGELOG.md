@@ -63,6 +63,7 @@ Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] provider: Add OneDrive
 - [ ] provider: Add Box
 - [ ] provider: change ProviderViews signature to receive Provider instance in second param. ref https://github.com/transloadit/uppy/pull/743#discussion_r180106070
+- [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 
 ## 1.0 Goals
 
@@ -91,42 +92,57 @@ What we need to do to release Uppy 1.0
 
 # next
 
-## 0.24.0
-
-To be released: 2018-03-29.
+## 0.25.0
 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [x] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
 - [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
-- [ ] dashboard: disallow removing files if `bundle: true` in XHRUpload (@arturi)
-- [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
-- [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
-- [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [ ] core: all: reset or !important styles to be immune to any environment/page, look at screenshots in #446. Maybe `postcss-safe-important`, http://cleanslatecss.com/ or https://github.com/maximkoretskiy/postcss-autoreset or increase specificity (with .uppy prefix) (@arturi)
-- [x] url: refactor things into Provider, see comments in  https://github.com/transloadit/uppy/pull/588 (@ifedapoolarewaju, @arturi)
 - [ ] dashboard: option for Boolean metadata #454 (@arturi)
-- [ ] dashboard: huge UI redesign, update provider views, StatusBar, Webcam, FileCard (@arturi, @nqst)
-- [x] statusbar: Statusbar: Move progress details to second line and make them optional (#682 / @arturi)
-- [x] core: fix for all file state was included in progress accidentally (#682 / @arturi)
-- [x] url: add checks for protocols, assume `http` when no protocol is used (#682 / @arturi)
 - [ ] core: figure out per-plugin locales and i18n strings packs #491
 - [ ] goldenretriever: confirmation before restore #443
 - [ ] goldenretriever: add “ghost” files (@arturi)
-- [ ] core: i18n all strings + document them
-- [x] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (#641 / @goto-bus-stop)
+- [ ] test: add typescript with JSDoc (@arturi)
+- [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
+- [ ] dashboard: disallow removing files if `bundle: true` in XHRUpload (@arturi)
+- [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
+- [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
-- [x] docs: all useful events (@arturi)
-- [x] s3: document Google Cloud Storage too? See #460
-- [x] dashboard: add optional whitelabel “powered by uppy.io” (@nqst, @arturi)
 - [ ] transloadit: add error reporting (@goto-bus-stop)
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
-- [x] s3: fix xhr response handlers (#625, @goto-bus-stop)
-- [ ] test: add typescript with JSDoc (@arturi)
-- [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
-- [x] core: ⚠️ **breaking** `onBeforeFileAdded()`, `onBeforeUpload()` and `addFile()` are now synchronous. You can no longer return a Promise from the `onBefore*()` functions. (#294, @goto-bus-stop)
-- [x] react: Allow overriding `<DashboardModal />` `target` prop (#740, @goto-bus-stop)
+
+## 0.24.0
+
+Released: 2018-04-12.
+
+- core: ⚠️ **breaking** !important styles to be immune to any environment/page, look at screenshots in #446. Use `postcss-safe-important` (look into http://cleanslatecss.com/ or https://github.com/maximkoretskiy/postcss-autoreset or increasing specificity with .uppy prefix) (#744 / @arturi)
+- core: ⚠️ **breaking** `onBeforeFileAdded()`, `onBeforeUpload()` and `addFile()` are now synchronous. You can no longer return a Promise from the `onBefore*()` functions. (#294, #746, @goto-bus-stop, @arturi)
+- statusbar: ⚠️ **breaking** Move progress details to second line and make them optional (#682 / @arturi)
+- core: Add uppy-Root to a DOM el that gets mounted in mount (#682 / @arturi)
+- core: Fix all file state was included in progress accidentally (#682 / @arturi)
+- core: Fix for all file state was included in progress accidentally (#682 / @arturi)
+- dashboard: Options to disable showLinkToFileUploadResult and meta editing if metaFields is not provided (#682 / @arturi)
+- dashboard: Remove dashed file icon for now (#682 / @arturi)
+- dashboard: Add optional whitelabel “powered by uppy.io” (@nqst, @arturi)
+- dashboard: Huge UI redesign, update provider views, StatusBar, Webcam, FileCard (@arturi, @nqst)
+- docs: Update uppy-server docs to point to Kubernetes (#706 / @kiloreux)
+- docs: Talk about success_action_status for POST uploads (#728 / @goto-bus-stop)
+- docs: Add custom provider example (#743 / @ifedapoolarewaju)
+- docs: Addmore useful events, i18n strings, typos, fixes and improvements following Tim’s feedback (#704 / @arturi)
+- form: Fix `get-form-data` being undefined when built with Rollup (#698 / @goto-bus-stop)
+- goldenretriever: Regenerate thumbnails after restore (#723 / @goto-bus-stop)
+- goldenretriever: Warn, not error, when files cannot be saved by goldenretriever (#641 / @goto-bus-stop)
+- instagram: Use date&time as file name for instagram files (#682 / @arturi)
+- providers: Fix logging out of providers (#742 / @goto-bus-stop)
+- providers: Refactor Provider views: Filter, add showFilter and showBreadcrumbs (#682 / @arturi)
+- react: Allow overriding `<DashboardModal />` `target` prop (#740, @goto-bus-stop)
+- s3: Support fake XHR from remote uploads (#711, @goto-bus-stop)
+- s3: Document Google Cloud Storage too? See #460
+- s3: Fix xhr response handlers (#625, @goto-bus-stop)
+- statusbar: Cancel button for any kind of uploads (@arturi, @goto-bus-stop)
+- url: Add checks for protocols, assume `http` when no protocol is used (#682 / @arturi)
+- url: Refactor things into Provider, see comments in  https://github.com/transloadit/uppy/pull/588; exposing the Provider module and the ProviderView to the public API (#727 / @ifedapoolarewaju, @arturi)
+- webcam: Styles updates: adapt for mobile, better camera icon, move buttons to the bottom bar (#682 / @arturi)
 
 ## 0.23.3
 
