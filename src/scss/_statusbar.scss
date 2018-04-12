@@ -160,11 +160,14 @@
   .uppy-StatusBar-actionBtn--retry {
     background-color: $color-white;
     color: $color-red;
+    border: 1px solid transparent;
   }
 
   .uppy-StatusBar-actionBtn--cancel {
-    background-color: lighten($color-asphalt-gray, 8%);
-    border: 1px solid lighten($color-black, 10%);
+    // background-color: lighten($color-asphalt-gray, 8%);
+    // border: 1px solid lighten($color-black, 10%);
+    background-color: transparent;
+    border: 1px solid $color-white;
     color: $color-white;
   }
 
