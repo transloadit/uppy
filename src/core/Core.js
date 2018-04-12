@@ -11,10 +11,12 @@ const DefaultStore = require('../store/DefaultStore')
  * Uppy Core module.
  * Manages plugins, state updates, acts as an event bus,
  * adds/removes files and metadata.
- *
- * @param {object} opts — Uppy options
  */
 class Uppy {
+  /**
+  * Instansicate Uppy
+  * @param {object} opts — Uppy options
+  */
   constructor (opts) {
     const defaultLocale = {
       strings: {
@@ -50,7 +52,7 @@ class Uppy {
       onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
       onBeforeUpload: (files) => Promise.resolve(),
       locale: defaultLocale,
-      store: new DefaultStore()
+      store: DefaultStore()
     }
 
     // Merge default options with the ones set by user
@@ -122,9 +124,9 @@ class Uppy {
 
     // for debugging and testing
     // this.updateNum = 0
-    if (this.opts.debug) {
-      global.uppyLog = ''
-      global[this.opts.id] = this
+    if (this.opts.debug && typeof window !== 'undefined') {
+      window['uppyLog'] = ''
+      window[this.opts.id] = this
     }
   }
 
@@ -150,9 +152,9 @@ class Uppy {
   }
 
   /**
-   * Updates state
+   * Updates state with a patch
    *
-   * @param {patch} object
+   * @param {object} patch {foo: 'bar'}
    */
   setState (patch) {
     this.store.setState(patch)
@@ -160,6 +162,7 @@ class Uppy {
 
   /**
    * Returns current state.
+   * @return {object}
    */
   getState () {
     return this.store.getState()
@@ -284,7 +287,6 @@ class Uppy {
   /**
   * Check if minNumberOfFiles restriction is reached before uploading.
   *
-  * @return {boolean}
   * @private
   */
   _checkMinNumberOfFiles () {
@@ -625,7 +627,8 @@ class Uppy {
       this.setFileState(file.id, { error: error.message })
       this.setState({ error: error.message })
 
-      let message = `${this.i18n('failedToUpload')} ${file.name}`
+      let message
+      message = `${this.i18n('failedToUpload')} ${file.name}`
       if (typeof error === 'object' && error.message) {
         message = { message: message, details: error.message }
       }
@@ -767,8 +770,8 @@ class Uppy {
   /**
    * Registers a plugin with Core.
    *
-   * @param {Class} Plugin object
-   * @param {Object} options object that will be passed to Plugin later
+   * @param {object} Plugin object
+   * @param {object} [opts] object with options to be passed to Plugin
    * @return {Object} self for chaining
    */
   use (Plugin, opts) {
@@ -811,7 +814,8 @@ class Uppy {
   /**
    * Find one Plugin by name.
    *
-   * @param string name description
+   * @param {string} name description
+   * @return {object | boolean}
    */
   getPlugin (name) {
     let foundPlugin = false
@@ -828,7 +832,7 @@ class Uppy {
   /**
    * Iterate through all `use`d plugins.
    *
-   * @param function method description
+   * @param {function} method that will be run on each plugin
    */
   iteratePlugins (method) {
     Object.keys(this.plugins).forEach(pluginType => {
@@ -839,7 +843,7 @@ class Uppy {
   /**
    * Uninstall and remove a plugin.
    *
-   * @param {Plugin} instance The plugin instance to remove.
+   * @param {object} instance The plugin instance to remove.
    */
   removePlugin (instance) {
     const list = this.plugins[instance.type]
@@ -871,7 +875,9 @@ class Uppy {
   * Set info message in `state.info`, so that UI plugins like `Informer`
   * can display the message.
   *
-  * @param {string} msg Message to be displayed by the informer
+  * @param {string | object} message Message to be displayed by the informer
+  * @param {string} [type]
+  * @param {number} [duration]
   */
 
   info (message, type = 'info', duration = 3000) {
@@ -888,7 +894,7 @@ class Uppy {
 
     this.emit('info-visible')
 
-    window.clearTimeout(this.infoTimeoutID)
+    clearTimeout(this.infoTimeoutID)
     if (duration === 0) {
       this.infoTimeoutID = undefined
       return
@@ -912,7 +918,7 @@ class Uppy {
    * Logs stuff to console, only if `debug` is set to true. Silent in production.
    *
    * @param {String|Object} msg to log
-   * @param {String} type optional `error` or `warning`
+   * @param {String} [type] optional `error` or `warning`
    */
   log (msg, type) {
     if (!this.opts.debug) {
@@ -921,7 +927,7 @@ class Uppy {
 
     let message = `[Uppy] [${Utils.getTimeStamp()}] ${msg}`
 
-    global.uppyLog = global.uppyLog + '\n' + 'DEBUG LOG: ' + msg
+    window['uppyLog'] = window['uppyLog'] + '\n' + 'DEBUG LOG: ' + msg
 
     if (type === 'error') {
       console.error(message)
@@ -1145,5 +1151,6 @@ class Uppy {
 module.exports = function (opts) {
   return new Uppy(opts)
 }
+
 // Expose class constructor.
 module.exports.Uppy = Uppy
