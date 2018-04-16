@@ -30,12 +30,10 @@
 .uppy-Dashboard-inner {
   position: relative;
   background-color: darken($color-white, 2%);
-  // background-color: $color-white;
-  max-width: 100%;
-  max-height: 100%;
-  width: 100%;
-  height: 100%;
-  // overflow: hidden;
+  max-width: 100%; /* no !important */
+  max-height: 100%; /* no !important */
+  width: 100%; /* no !important */
+  height: 100%; /* no !important */
   outline: none;
   border: 1px solid rgba($color-gray, 0.2);
 
@@ -44,8 +42,8 @@
   }
 
   @media #{$screen-medium} {
-    width: 750px;
-    height: 550px;
+    width: 750px; /* no !important */
+    height: 550px; /* no !important */
     border-radius: 5px;
   }
 }
@@ -55,7 +53,6 @@
   right: 4px;
   bottom: -23px;
   font-size: 11px;
-  // font-weight: 300;
   color: rgba($color-gray, 0.8);
   text-align: right;
   text-decoration: none;
