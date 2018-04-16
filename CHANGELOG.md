@@ -124,7 +124,6 @@ Released: 2018-04-12.
 - statusbar: ⚠️ **breaking** Move progress details to second line and make them optional (#682 / @arturi)
 - core: Add uppy-Root to a DOM el that gets mounted in mount (#682 / @arturi)
 - core: Fix all file state was included in progress accidentally (#682 / @arturi)
-- core: Fix for all file state was included in progress accidentally (#682 / @arturi)
 - dashboard: Options to disable showLinkToFileUploadResult and meta editing if metaFields is not provided (#682 / @arturi)
 - dashboard: Remove dashed file icon for now (#682 / @arturi)
 - dashboard: Add optional whitelabel “powered by uppy.io” (@nqst, @arturi)
@@ -133,7 +132,6 @@ Released: 2018-04-12.
 - docs: Talk about success_action_status for POST uploads (#728 / @goto-bus-stop)
 - docs: Add custom provider example (#743 / @ifedapoolarewaju)
 - docs: Addmore useful events, i18n strings, typos, fixes and improvements following Tim’s feedback (#704 / @arturi)
-- form: Fix `get-form-data` being undefined when built with Rollup (#698 / @goto-bus-stop)
 - goldenretriever: Regenerate thumbnails after restore (#723 / @goto-bus-stop)
 - goldenretriever: Warn, not error, when files cannot be saved by goldenretriever (#641 / @goto-bus-stop)
 - instagram: Use date&time as file name for instagram files (#682 / @arturi)
@@ -141,7 +139,7 @@ Released: 2018-04-12.
 - providers: Refactor Provider views: Filter, add showFilter and showBreadcrumbs (#682 / @arturi)
 - react: Allow overriding `<DashboardModal />` `target` prop (#740, @goto-bus-stop)
 - s3: Support fake XHR from remote uploads (#711, @goto-bus-stop)
-- s3: Document Google Cloud Storage too? See #460
+- s3: Document Digital Ocean Spaces
 - s3: Fix xhr response handlers (#625, @goto-bus-stop)
 - statusbar: Cancel button for any kind of uploads (@arturi, @goto-bus-stop)
 - url: Add checks for protocols, assume `http` when no protocol is used (#682 / @arturi)
