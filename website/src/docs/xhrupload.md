@@ -101,12 +101,21 @@ That object will be emitted in the `upload-success` event. Not all endpoints res
 For example, an endpoint that responds with an XML document:
 
 ```js
-getResponseData (xhr.responseText, xhr) {
+getResponseData (responseText, xhr) {
   return {
-    url: xhr.responseXML.querySelector('Location').textContent
+    url: responseText.match(/<Location>(.*?)<\/Location>/)[1]
   }
 }
 ```
+
+The `responseText` is the XHR endpoint response as a string. For uploads from the user's device, `response` is the [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) object.
+
+When uploading files from remote providers such as Dropbox or Instagram, Uppy Server sends upload response data to the client. This is made available in the `getResponseData()` function as well. The `response` object from Uppy Server contains some properties named after their [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) counterparts:
+
+ - `response.responseText` - the XHR endpoint response as a string;
+ - `response.status` - the HTTP status code;
+ - `response.statusText` - the HTTP status text;
+ - `response.headers` - an object mapping lowercase header names to their values.
 
 ### `getResponseError(xhr.responseText, xhr)`
 
@@ -118,7 +127,7 @@ For example, if the endpoint responds with a JSON object containing a `{ message
 
 ```js
 getResponseError (responseText, xhr) {
-  return new Error(JSON.parse(xhr.response).message)
+  return new Error(JSON.parse(responseText).message)
 }
 ```
 
