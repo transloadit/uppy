@@ -194,6 +194,8 @@ See the [aws-presigned-url example in the uppy repository](https://github.com/tr
 
 Many other object storage providers have an identical API to S3, so you can use the AwsS3 plugin with them. To use them with uppy-server, you can set the `UPPYSERVER_AWS_ENDPOINT` variable to the endpoint of your preferred service.
 
+#### DigitalOcean Spaces
+
 For example, with DigitalOcean Spaces, you could do something like this:
 
 ```
@@ -204,6 +206,36 @@ export UPPYSERVER_AWS_BUCKET="my-space-name"
 The `{region}` string will be replaced by the contents of the `UPPYSERVER_AWS_REGION` environment variable.
 
 For a working example that you can run and play around with, see the [digitalocean-spaces](https://github.com/transloadit/uppy/tree/master/examples/digitalocean-spaces) folder in the Uppy repository.
+
+#### Google Cloud Storage
+
+For Google Cloud Storage, you need to take a few more steps. First enable the Interoperability setting and [generate interoperable storage access keys](https://cloud.google.com/storage/docs/migrating#keys) by going to [Google Cloud Storage](https://console.cloud.google.com/storage) » Settings » Interoperability. Then set the environment variables like below:
+
+```
+export UPPYSERVER_AWS_ENDPOINT="https://storage.googleapis.com"
+export UPPYSERVER_AWS_BUCKET="YOUR-GCS-BUCKET-NAME"
+export UPPYSERVER_AWS_KEY="GOOGxxxxxxxxx" # The Access Key
+export UPPYSERVER_AWS_SECRET="YOUR-GCS-SECRET" # The Secret
+``
+
+You do not need to configure the region with GCS.
+
+You also need to configure CORS differently. Unlike Amazon, Google does not offer a UI for CORS configurations. Instead an HTTP API must be used. If you haven't done this already, see [Configuring CORS on a Bucket](https://cloud.google.com/storage/docs/configuring-cors#Configuring-CORS-on-a-Bucket) in the GCS documentation, or follow the below steps to do it using Google's API playground:
+
+ - Create an AWS-style CORS configuration as described above and save it in an XML file (eg. `cors.xml`)
+ - Get a temporary API token from the [Google OAuth2.0 playground](https://developers.google.com/oauthplayground/)
+   - Select the "Cloud Storage API v1" » "full_control" scope
+   - Press "Authorize APIs"
+ - Click "Step 3 - Configure request to API"
+ - Configure it like below:
+   - HTTP Method: PUT
+   - Request URI: `https://storage.googleapis.com/YOUR_BUCKET_NAME?cors`
+   - Content-Type: "Custom…"
+     - A small popover to add a Content-Type header will open.
+     - Enter `text/xml` in the "Header Value" field and click "Add".
+     - Close the popover.
+ - Then, finally, press "Send the request".
+
 
 ### Retrieving presign parameters of the uploaded file
 
