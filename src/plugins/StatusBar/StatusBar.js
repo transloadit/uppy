@@ -218,8 +218,8 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
 const ProgressBarError = ({ error, retryAll, i18n }) => {
   return (
     <div class="uppy-StatusBar-content" role="alert">
-      <strong>{i18n('uploadFailed')}.</strong>
-      <span>{i18n('pleasePressRetry')}</span>
+      <strong class="uppy-StatusBar-contentPadding">{i18n('uploadFailed')}.</strong>
+      <span class="uppy-StatusBar-contentPadding">{i18n('pleasePressRetry')}</span>
       <span class="uppy-StatusBar-details"
         aria-label={error}
         data-microtip-position="top"
