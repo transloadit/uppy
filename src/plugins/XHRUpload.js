@@ -338,9 +338,11 @@ module.exports = class XHRUpload extends Plugin {
 
           socket.on('error', (errData) => {
             const resp = errData.response
-            const error = resp ? opts.getResponseError(resp.responseText, resp) : new Error(errData.error)
+            const error = resp
+              ? opts.getResponseError(resp.responseText, resp)
+              : Object.assign(new Error(errData.error.message), { cause: errData.error })
             this.uppy.emit('upload-error', file, error)
-            reject(new Error(errData.error))
+            reject(error)
           })
         })
       })
