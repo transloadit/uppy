@@ -112,13 +112,13 @@ uppy.use(Dashboard, {
 
 Of course, you can also use the `target` option in the Webcam plugin to achieve this. However, that does not work with the React components. The `target` option may be changed in the future to only accept DOM elements, so it is recommended to use this `plugins` array instead.
 
-### `maxWidth: 750`
+### `width: 750`
 
-Maximum width of the Dashboard in pixels. Used when `inline: true`.
+Width of the Dashboard in pixels. Used when `inline: true`.
 
-### `maxHeight: 550`
+### `height: 550`
 
-Maximum height of the Dashboard in pixels. Used when `inline: true`.
+Height of the Dashboard in pixels. Used when `inline: true`.
 
 ### `showProgressDetails: false`
 

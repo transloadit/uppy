@@ -44,7 +44,6 @@ function uppyInit () {
     showProgressDetails: true,
     metaFields: [
       { id: 'name', name: 'Name', placeholder: 'file name' },
-      { id: 'license', name: 'License', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', placeholder: 'add description' }
     ]
   })
