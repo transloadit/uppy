@@ -302,8 +302,10 @@ module.exports = class Tus extends Plugin {
       socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
       socket.on('error', (errData) => {
-        this.uppy.emit('upload-error', file, new Error(errData.error))
-        reject(new Error(errData.error))
+        const { message } = errData.error
+        const error = Object.assign(new Error(message), { cause: errData.error })
+        this.uppy.emit('upload-error', file, error)
+        reject(error)
       })
 
       socket.on('success', (data) => {

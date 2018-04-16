@@ -114,6 +114,7 @@ What we need to do to release Uppy 1.0
 - [ ] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
 - [ ] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components
+<<<<<<< HEAD
 - [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/.
 - [ ] docs: add note in docs or solve the .run() issue, see #756
 
@@ -125,6 +126,9 @@ To be released: 2018-04-16.
 - core: Avoid important for those styles that need to be overriden by inline-styles + microtip (@arturi)
 - tus & xhrupload: Retain uppy-server error messages, fixes #707 (@goto-bus-stop / #759)
 - dragdrop: Link `<label>` and `<input>`, fixes #749 (@goto-bus-stop / #757)
+=======
+- [ ] dragdrop: link `<label>` and `<input>` (#747, @goto-bus-stop)
+>>>>>>> a1ec755c9fec6d98b4983e74cf88837d8b4da9bf
 
 ## 0.24.0
 
