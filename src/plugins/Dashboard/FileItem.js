@@ -56,8 +56,6 @@ module.exports = function fileItem (props) {
         ? props.i18n('retryUpload')
         : props.i18n('cancelUpload')
 
-  console.log('ЕБА', props.showLinkToFileUploadResult)
-
   return <li class={dashboardItemClass} id={`uppy_${file.id}`} title={file.meta.name}>
     <div class="uppy-DashboardItem-preview">
       <div class="uppy-DashboardItem-previewInnerWrap" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
