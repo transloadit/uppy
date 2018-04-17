@@ -117,6 +117,13 @@ What we need to do to release Uppy 1.0
 - [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/.
 - [ ] docs: add note in docs or solve the .run() issue, see #756
 
+## 0.24.2
+
+Released: 2018-04-17.
+
+- dashboard: Fix showLinkToFileUploadResult option (@arturi / #763)
+- docs: Consistent shape for the getResponseData (responseText, response) (@arturi / #765)
+
 ## 0.24.1
 
 Released: 2018-04-16.
