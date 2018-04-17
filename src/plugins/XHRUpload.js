@@ -55,25 +55,25 @@ module.exports = class XHRUpload extends Plugin {
        * @property {string} statusText
        * @property {Object.<string, string>} headers
        *
-       * @param {string} responseContent the response body
-       * @param {XMLHttpRequest | respObj} responseObject the response object
+       * @param {string} responseText the response body string
+       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
-      getResponseData (responseContent, responseObject) {
-        let response = {}
+      getResponseData (responseText, response) {
+        let parsedResponse = {}
         try {
-          response = JSON.parse(responseContent)
+          parsedResponse = JSON.parse(responseText)
         } catch (err) {
           console.log(err)
         }
 
-        return response
+        return parsedResponse
       },
       /**
        *
-       * @param {string} responseContent the response body
-       * @param {XMLHttpRequest | respObj} responseObject the response object
+       * @param {string} responseText the response body string
+       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
-      getResponseError (responseContent, responseObject) {
+      getResponseError (responseText, response) {
         return new Error('Upload error')
       }
     }
