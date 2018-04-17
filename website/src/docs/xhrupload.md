@@ -72,7 +72,7 @@ uppy.setFileState(otherFileID, {
 })
 ```
 
-### `getResponseData(xhr.responseText, xhr)`
+### `getResponseData(responseText, response)`
 
 When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file's `.response` property, and be emitted in the `upload-success` event:
 
@@ -96,12 +96,12 @@ By default, Uppy assumes the endpoint will return JSON. So, if `POST /upload` re
 }
 ```
 
-That object will be emitted in the `upload-success` event. Not all endpoints respond with JSON. Providing a `getResponseData` function overrides this behavior. The `xhr` parameter is the `XMLHttpRequest` instance used to upload the file.
+That object will be emitted in the `upload-success` event. Not all endpoints respond with JSON. Providing a `getResponseData` function overrides this behavior. The `response` parameter is the `XMLHttpRequest` instance used to upload the file.
 
 For example, an endpoint that responds with an XML document:
 
 ```js
-getResponseData (responseText, xhr) {
+getResponseData (responseText, response) {
   return {
     url: responseText.match(/<Location>(.*?)<\/Location>/)[1]
   }
@@ -117,10 +117,10 @@ When uploading files from remote providers such as Dropbox or Instagram, Uppy Se
  - `response.statusText` - the HTTP status text;
  - `response.headers` - an object mapping lowercase header names to their values.
 
-### `getResponseError(xhr.responseText, xhr)`
+### `getResponseError(responseText, response)`
 
-If the upload endpoint responds with a non-2xx status code, the upload is assumed to have failed.
-The endpoint might have responded with some information about the error, though.
+If the upload endpoint responds with a non-2xx status code, the upload is assumed to have failed. The endpoint might have responded with some information about the error, though.
+
 Pass in a `getResponseError` function to extract error data from the `XMLHttpRequest` instance used for the upload.
 
 For example, if the endpoint responds with a JSON object containing a `{ message }` property, this would show that message to the user:
