@@ -188,7 +188,7 @@
   .uppy-c-textInput:focus {
     border-color: $color-cornflower-blue;
     outline: none;
-    box-shadow: 0 0 1px 1px rgba($color-cornflower-blue, 0.3);
+    box-shadow: 0 0 1px 1px rgba($color-cornflower-blue, 0.5);
   }
 
 // Buttons
@@ -230,7 +230,7 @@
 
   .uppy-c-btn-primary:focus {
     outline: none;
-    box-shadow: 0 0 3px 1px rgba($color-cornflower-blue, 0.7);
+    box-shadow: 0 0 0 3px rgba($color-cornflower-blue, 0.5);
   }
 
 .uppy-c-btn-link {
@@ -254,7 +254,7 @@
 
   .uppy-c-btn-link:focus {
     outline: none;
-    box-shadow: 0 0 3px 1px rgba($color-cornflower-blue, 0.7);
+    box-shadow: 0 0 0 0.2rem rgba($color-cornflower-blue, 0.5);
   }
 
 .uppy-c-btn--small {

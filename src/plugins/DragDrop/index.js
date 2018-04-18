@@ -46,7 +46,6 @@ module.exports = class DragDrop extends Plugin {
 
     // Bind `this` to class methods
     this.handleDrop = this.handleDrop.bind(this)
-    this.handleBrowseClick = this.handleBrowseClick.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
     this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.render = this.render.bind(this)
@@ -102,11 +101,6 @@ module.exports = class DragDrop extends Plugin {
     })
   }
 
-  handleBrowseClick (ev) {
-    ev.stopPropagation()
-    this.input.click()
-  }
-
   render (state) {
     const DragDropClass = `uppy uppy-DragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}`
     const DragDropStyle = {
@@ -119,15 +113,15 @@ module.exports = class DragDrop extends Plugin {
           <svg aria-hidden="true" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
             <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
           </svg>
-          <input class="uppy-DragDrop-input"
-            type="file"
-            name="files[]"
-            multiple="true"
-            ref={(input) => {
-              this.input = input
-            }}
-            onchange={this.handleInputChange} />
-          <label class="uppy-DragDrop-label" onclick={this.handleBrowseClick}>
+          <label class="uppy-DragDrop-label">
+            <input class="uppy-DragDrop-input"
+              type="file"
+              name="files[]"
+              multiple="true"
+              ref={(input) => {
+                this.input = input
+              }}
+              onchange={this.handleInputChange} />
             {this.i18n('dropHereOr')} <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
           </label>
           <span class="uppy-DragDrop-note">{this.opts.note}</span>

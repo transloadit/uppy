@@ -44,7 +44,7 @@ module.exports = class Dashboard extends Plugin {
         importFrom: 'Import from',
         dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
         dashboardTitle: 'Uppy Dashboard',
-        copyLinkToClipboardSuccess: 'Link copied to clipboard.',
+        copyLinkToClipboardSuccess: 'Link copied to clipboard',
         copyLinkToClipboardFallback: 'Copy the URL below',
         copyLink: 'Copy link',
         fileSource: 'File source',
@@ -362,6 +362,7 @@ module.exports = class Dashboard extends Plugin {
 
   handleDrop (files) {
     this.uppy.log('[Dashboard] Files were dropped')
+    console.log(files)
 
     files.forEach((file) => {
       this.uppy.addFile({
@@ -479,8 +480,8 @@ module.exports = class Dashboard extends Plugin {
       toggleFileCard: this.toggleFileCard,
       saveFileCard: saveFileCard,
       updateDashboardElWidth: this.updateDashboardElWidth,
-      maxWidth: this.opts.maxWidth,
-      maxHeight: this.opts.maxHeight,
+      width: this.opts.width,
+      height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
       currentWidth: pluginState.containerWidth,

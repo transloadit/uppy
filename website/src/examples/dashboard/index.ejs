@@ -42,10 +42,11 @@ const uppy = Uppy({
   inline: true,
   target: '.DashboardContainer',
   replaceTargetContent: true,
+  showProgressDetails: true,
   note: 'Images and video only, 2–3 files, up to 1 MB',
-  maxHeight: 450,
+  height: 470,
   metaFields: [
-    { id: 'license', name: 'License', placeholder: 'specify license' },
+    { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
   ]
 })

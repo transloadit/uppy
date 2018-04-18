@@ -91,7 +91,7 @@ module.exports = function fileItem (props) {
     </div>
     <div class="uppy-DashboardItem-info">
       <h4 class="uppy-DashboardItem-name" title={fileName}>
-        {file.uploadURL
+        {props.showLinkToFileUploadResult && file.uploadURL
           ? <a href={file.uploadURL} target="_blank">
             {file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}
           </a>
@@ -121,8 +121,8 @@ module.exports = function fileItem (props) {
         </button>
         : null
       }
-      {file.uploadURL &&
-        <button class="uppy-DashboardItem-copyLink"
+      {props.showLinkToFileUploadResult && file.uploadURL
+        ? <button class="uppy-DashboardItem-copyLink"
           type="button"
           aria-label={props.i18n('copyLink')}
           title={props.i18n('copyLink')}
@@ -134,6 +134,7 @@ module.exports = function fileItem (props) {
               })
               .catch(props.log)
           }}>{iconCopy()}</button>
+        : ''
       }
     </div>
     <div class="uppy-DashboardItem-action">

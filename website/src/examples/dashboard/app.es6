@@ -40,10 +40,11 @@ function uppyInit () {
     target: opts.DashboardInline ? '.DashboardContainer' : 'body',
     replaceTargetContent: opts.DashboardInline,
     note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : '',
-    maxHeight: 450,
+    height: 470,
+    showProgressDetails: true,
     metaFields: [
-      { id: 'license', name: 'License', placeholder: 'specify license' },
-      { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
+      { id: 'name', name: 'Name', placeholder: 'file name' },
+      { id: 'caption', name: 'Caption', placeholder: 'add description' }
     ]
   })
 

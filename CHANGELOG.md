@@ -114,6 +114,24 @@ What we need to do to release Uppy 1.0
 - [ ] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
 - [ ] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components
+- [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/.
+- [ ] docs: add note in docs or solve the .run() issue, see #756
+
+## 0.24.2
+
+Released: 2018-04-17.
+
+- dashboard: Fix showLinkToFileUploadResult option (@arturi / #763)
+- docs: Consistent shape for the getResponseData (responseText, response) (@arturi / #765)
+
+## 0.24.1
+
+Released: 2018-04-16.
+
+- dashboard: ⚠️ **breaking** `maxWidth`, `maxHeight` --> `width` and `height`; update docs and React props too; regardless of what we call those internally, this makes more sense, I think (@arturi)
+- core: Avoid important for those styles that need to be overriden by inline-styles + microtip (@arturi)
+- tus & xhrupload: Retain uppy-server error messages, fixes #707 (@goto-bus-stop / #759)
+- dragdrop: Link `<label>` and `<input>`, fixes #749 (@goto-bus-stop / #757)
 
 ## 0.24.0
 
@@ -124,7 +142,6 @@ Released: 2018-04-12.
 - statusbar: ⚠️ **breaking** Move progress details to second line and make them optional (#682 / @arturi)
 - core: Add uppy-Root to a DOM el that gets mounted in mount (#682 / @arturi)
 - core: Fix all file state was included in progress accidentally (#682 / @arturi)
-- core: Fix for all file state was included in progress accidentally (#682 / @arturi)
 - dashboard: Options to disable showLinkToFileUploadResult and meta editing if metaFields is not provided (#682 / @arturi)
 - dashboard: Remove dashed file icon for now (#682 / @arturi)
 - dashboard: Add optional whitelabel “powered by uppy.io” (@nqst, @arturi)
@@ -133,7 +150,6 @@ Released: 2018-04-12.
 - docs: Talk about success_action_status for POST uploads (#728 / @goto-bus-stop)
 - docs: Add custom provider example (#743 / @ifedapoolarewaju)
 - docs: Addmore useful events, i18n strings, typos, fixes and improvements following Tim’s feedback (#704 / @arturi)
-- form: Fix `get-form-data` being undefined when built with Rollup (#698 / @goto-bus-stop)
 - goldenretriever: Regenerate thumbnails after restore (#723 / @goto-bus-stop)
 - goldenretriever: Warn, not error, when files cannot be saved by goldenretriever (#641 / @goto-bus-stop)
 - instagram: Use date&time as file name for instagram files (#682 / @arturi)
@@ -141,7 +157,7 @@ Released: 2018-04-12.
 - providers: Refactor Provider views: Filter, add showFilter and showBreadcrumbs (#682 / @arturi)
 - react: Allow overriding `<DashboardModal />` `target` prop (#740, @goto-bus-stop)
 - s3: Support fake XHR from remote uploads (#711, @goto-bus-stop)
-- s3: Document Google Cloud Storage too? See #460
+- s3: Document Digital Ocean Spaces
 - s3: Fix xhr response handlers (#625, @goto-bus-stop)
 - statusbar: Cancel button for any kind of uploads (@arturi, @goto-bus-stop)
 - url: Add checks for protocols, assume `http` when no protocol is used (#682 / @arturi)

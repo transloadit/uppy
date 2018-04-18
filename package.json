@@ -1,6 +1,6 @@
 {
   "name": "uppy",
-  "version": "0.24.0",
+  "version": "0.24.2",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -135,7 +135,8 @@
     "release:minor": "env SEMANTIC=minor npm run release",
     "release:patch": "env SEMANTIC=patch npm run release",
     "replace:versions": "replace-x -r 'uppy/v\\d+\\.\\d+\\.\\d+/dist' \"uppy/v$npm_package_version/dist\" ./examples/ README.md bin/upload-to-cdn.sh website/src/examples/ website/src/docs/ website/themes/uppy/layout/ --exclude=node_modules",
-    "release": "npm version ${SEMANTIC:-patch} -m \"Release %s\" && npm run replace:versions && git commit -m \"Change Uppy version references to v$npm_package_version\" ./examples/ README.md bin/upload-to-cdn.sh website/src/examples/ website/src/docs/ website/themes/uppy/layout/ && git push && git push --tags && npm publish",
+    "replace:versions:commit": "git commit -m \"Change Uppy version references to v$npm_package_version\" ./examples/ README.md bin/upload-to-cdn.sh website/src/examples/ website/src/docs/ website/themes/uppy/layout/",
+    "release": "npm version ${SEMANTIC:-patch} -m \"Release %s\" && npm run replace:versions && npm run replace:versions:commit && git push && git push --tags && npm publish",
     "start:server": "node bin/start-server",
     "start": "npm-run-all --parallel watch start:server web:preview",
     "test:acceptance": "./bin/endtoend-build && wdio test/endtoend/wdio.remote.conf.js",

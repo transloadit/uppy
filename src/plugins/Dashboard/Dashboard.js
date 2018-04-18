@@ -49,8 +49,8 @@ module.exports = function Dashboard (props) {
         aria-modal={!props.inline && 'true'}
         role={!props.inline && 'dialog'}
         style={{
-          maxWidth: props.inline && props.maxWidth ? props.maxWidth : '',
-          maxHeight: props.inline && props.maxHeight ? props.maxHeight : ''
+          width: props.inline && props.width ? props.width : '',
+          height: props.inline && props.height ? props.height : ''
         }}>
         <button class="uppy-Dashboard-close"
           type="button"

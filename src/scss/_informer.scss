@@ -9,7 +9,7 @@
   padding: 0 15px;
   height: 35px;
   line-height: 35px;
-  background-color: $color-black;
+  background-color: $color-black; /* no !important */
   color: $color-white;
   opacity: 1;
   transform: none;
