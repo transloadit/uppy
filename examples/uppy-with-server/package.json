@@ -19,6 +19,6 @@
     "light-server": "^2.4.0",
     "upload-server": "^1.1.6",
     "uppy": "^0.22.2",
-    "uppy-server": "^0.10.0"
+    "uppy-server": "^0.12.1"
   }
 }
