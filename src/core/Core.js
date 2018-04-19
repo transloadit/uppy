@@ -285,6 +285,14 @@ class Uppy {
   }
 
   /**
+   * Get all files in an array.
+   */
+  getFiles () {
+    const { files } = this.getState()
+    return Object.keys(files).map((fileID) => files[fileID])
+  }
+
+  /**
   * Check if minNumberOfFiles restriction is reached before uploading.
   *
   * @private
