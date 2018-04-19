@@ -16,9 +16,10 @@ last Friday of every new month.
 
 ## Backlog
 
-Ideas that will be planned and find their way into a release at one point
+Ideas that will be planned and find their way into a release at one point.
+PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
-- [ ] core: Decouple rendering from Plugin ?
+- [ ] core: Decouple rendering from the Plugin base class?
 - [ ] core: Make sure Uppy works well in VR
 - [ ] test: Human should check http://www.webpagetest.org and https://developers.google.com/web/tools/lighthouse/, use it sometimes to test website and Uppy. Will show response/loading times and other issues
 - [ ] test: Human should test with real screen reader to identify accessibility problems
