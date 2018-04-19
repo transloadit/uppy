@@ -118,7 +118,7 @@ onBeforeFileAdded: (currentFile, files) => {
 }
 ```
 
-Note: it’s up to you to show a notification to the user about file not passing validation. We recommend showing the info message and logging to console for debugging.
+Note: it’s up to you to show a notification to the user about file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging.
 
 
 <a id="onBeforeUpload"></a>
@@ -154,7 +154,7 @@ onBeforeUpload: (files) => {
 }
 ```
 
-Note: it’s up to you to show a notification to the user about file not passing validation. We recommend showing the info message and logging to console for debugging.
+Note: it’s up to you to show a notification to the user about file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging.
 
 ### `locale: {}`
 
