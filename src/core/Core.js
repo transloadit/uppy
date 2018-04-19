@@ -14,7 +14,7 @@ const DefaultStore = require('../store/DefaultStore')
  */
 class Uppy {
   /**
-  * Instansicate Uppy
+  * Instantiate Uppy
   * @param {object} opts — Uppy options
   */
   constructor (opts) {

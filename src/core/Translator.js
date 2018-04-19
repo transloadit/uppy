@@ -27,24 +27,19 @@ module.exports = class Translator {
 
     this.opts = Object.assign({}, defaultOptions, opts)
     this.locale = Object.assign({}, defaultOptions.locale, opts.locale)
-
-    // console.log(this.opts.locale)
-
-    // this.locale.pluralize = this.locale ? this.locale.pluralize : defaultPluralize
-    // this.locale.strings = Object.assign({}, en_US.strings, this.opts.locale.strings)
   }
 
-/**
- * Takes a string with placeholder variables like `%{smart_count} file selected`
- * and replaces it with values from options `{smart_count: 5}`
- *
- * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
- * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
- *
- * @param {string} phrase that needs interpolation, with placeholders
- * @param {object} options with values that will be used to replace placeholders
- * @return {string} interpolated
- */
+  /**
+   * Takes a string with placeholder variables like `%{smart_count} file selected`
+   * and replaces it with values from options `{smart_count: 5}`
+   *
+   * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
+   * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
+   *
+   * @param {string} phrase that needs interpolation, with placeholders
+   * @param {object} options with values that will be used to replace placeholders
+   * @return {string} interpolated
+   */
   interpolate (phrase, options) {
     const replace = String.prototype.replace
     const dollarRegex = /\$/g
@@ -68,13 +63,13 @@ module.exports = class Translator {
     return phrase
   }
 
-/**
- * Public translate method
- *
- * @param {string} key
- * @param {object} options with values that will be used later to replace placeholders in string
- * @return {string} translated (and interpolated)
- */
+  /**
+   * Public translate method
+   *
+   * @param {string} key
+   * @param {object} options with values that will be used later to replace placeholders in string
+   * @return {string} translated (and interpolated)
+   */
   translate (key, options) {
     if (options && options.smart_count) {
       var plural = this.locale.pluralize(options.smart_count)
