@@ -73,6 +73,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "exorcist": "^1.0.0",
     "fakefile": "0.0.9",
+    "github-contributors-list": "1.2.3",
     "glob": "^7.1.2",
     "isomorphic-fetch": "2.2.1",
     "jest": "^22.0.6",
@@ -167,6 +168,8 @@
     "web:update:frontpage:code:sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
     "web": "npm-run-all web:clean web:build",
     "uploadcdn": "bin/upload-to-cdn.sh",
-    "prepublishOnly": "npm-run-all clean build"
+    "prepublishOnly": "npm-run-all clean build",
+    "contributors": "githubcontrib --owner transloadit --repo uppy --cols 6 $([ \"${GITHUB_TOKEN:-}\" == \"\" ] && echo \"\" || echo \"--authToken ${GITHUB_TOKEN}\") --showlogin true --sortOrder",
+    "contributors:save": "replace-x -m '<!--contributors-->[\\s\\S]+<!--/contributors-->' \"<!--contributors-->\n## Contributors\n\n$(npm run --silent contributors)\n<!--/contributors-->\" README.md"
   }
 }
