@@ -169,7 +169,7 @@
     "web": "npm-run-all web:clean web:build",
     "uploadcdn": "bin/upload-to-cdn.sh",
     "prepublishOnly": "npm-run-all clean build",
-    "contributors": "echo ''; echo '## Contributors'; echo ''; echo ''; npx githubcontrib --owner transloadit --repo uppy --cols 6 $([ \"${GITHUB_TOKEN:-}\" == \"\" ] && echo \"\" || echo \"--authToken ${GITHUB_TOKEN}\") --showlogin true --sortOrder desc; echo ''",
-    "contributors:save": "replace-x '<contributors>[\\s\\S]+</contributors>', \"hoi\" README.md"
+    "contributors": "githubcontrib --owner transloadit --repo uppy --cols 6 $([ \"${GITHUB_TOKEN:-}\" == \"\" ] && echo \"\" || echo \"--authToken ${GITHUB_TOKEN}\") --showlogin true --sortOrder",
+    "contributors:save": "replace-x -m '<!--contributors-->[\\s\\S]+<!--/contributors-->' \"<!--contributors-->\n## Contributors\n\n$(npm run --silent contributors)\n<!--/contributors-->\" README.md"
   }
 }
