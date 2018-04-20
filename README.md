@@ -173,9 +173,8 @@ And you’ll need [`uppy-server`](https://github.com/transloadit/uppy-server) if
  - Contributor’s guide in [`website/src/docs/contributing.md`](website/src/docs/contributing.md)
  - Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
 
-<!--contrib_open-->
-
-<!--contrib_close-->
+<contributors>
+</contributors>
 
 ## License
 

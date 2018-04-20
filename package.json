@@ -170,6 +170,6 @@
     "uploadcdn": "bin/upload-to-cdn.sh",
     "prepublishOnly": "npm-run-all clean build",
     "contributors": "echo ''; echo '## Contributors'; echo ''; echo ''; npx githubcontrib --owner transloadit --repo uppy --cols 6 $([ \"${GITHUB_TOKEN:-}\" == \"\" ] && echo \"\" || echo \"--authToken ${GITHUB_TOKEN}\") --showlogin true --sortOrder desc; echo ''",
-    "contributors:save": "replace-x '<!--contrib_open-->[\\s\\S]+<!--contrib_close-->', \"<\\!--contrib_open-->hey<\\!--contrib_close-->\" README.md"
+    "contributors:save": "replace-x '<contributors>[\\s\\S]+</contributors>', \"hoi\" README.md"
   }
 }
