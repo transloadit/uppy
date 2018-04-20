@@ -10,6 +10,7 @@ export UPPYSERVER_INSTAGRAM_KEY="***"
 export UPPYSERVER_INSTAGRAM_SECRET="***"
 export EDGLY_KEY="***"
 export EDGLY_SECRET="***"
+export GITHUB_TOKEN="***"
 
 # Let's not set this by default, because that will make acceptance tests Always run on Saucelabs
 ## export SAUCE_ACCESS_KEY="***"
