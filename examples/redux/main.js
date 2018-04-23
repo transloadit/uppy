@@ -76,7 +76,7 @@ const uppy = Uppy({
 uppy.use(Dashboard, {
   target: '#app',
   inline: true,
-  maxWidth: 400
+  width: 400
 })
 uppy.use(Tus, { endpoint: 'https://master.tus.io/' })
 uppy.run()
