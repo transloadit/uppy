@@ -88,7 +88,7 @@ describe('src/Core', () => {
 
     it('should return the plugin that matches the specified name', () => {
       const core = new Core()
-      expect(core.getPlugin('foo')).toEqual(false)
+      expect(core.getPlugin('foo')).toEqual(null)
 
       core.use(AcquirerPlugin1)
       const plugin = core.getPlugin('TestSelector1')
