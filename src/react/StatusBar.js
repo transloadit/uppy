@@ -1,7 +1,6 @@
 const React = require('react')
-const PropTypes = require('prop-types')
-const UppyCore = require('../core').Uppy
 const StatusBarPlugin = require('../plugins/StatusBar')
+const uppyPropType = require('./propTypes').uppy
 
 const h = React.createElement
 
@@ -41,7 +40,7 @@ class StatusBar extends React.Component {
 }
 
 StatusBar.propTypes = {
-  uppy: PropTypes.instanceOf(UppyCore).isRequired
+  uppy: uppyPropType
 }
 StatusBar.defaultProps = {
 }

@@ -1,7 +1,6 @@
 const React = require('react')
-const PropTypes = require('prop-types')
-const UppyCore = require('../core/Core').Uppy
 const DashboardPlugin = require('../plugins/Dashboard')
+const basePropTypes = require('./propTypes').dashboard
 
 const h = React.createElement
 
@@ -39,18 +38,8 @@ class Dashboard extends React.Component {
   }
 }
 
-Dashboard.propTypes = {
-  uppy: PropTypes.instanceOf(UppyCore).isRequired,
-  plugins: PropTypes.arrayOf(PropTypes.string),
-  inline: PropTypes.bool,
-  width: PropTypes.number,
-  height: PropTypes.number,
-  semiTransparent: PropTypes.bool,
-  showProgressDetails: PropTypes.bool,
-  hideUploadButton: PropTypes.bool,
-  note: PropTypes.string,
-  locale: PropTypes.object
-}
+Dashboard.propTypes = basePropTypes
+
 Dashboard.defaultProps = {
   inline: true
 }

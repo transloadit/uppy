@@ -1,7 +1,7 @@
 const React = require('react')
 const PropTypes = require('prop-types')
-const UppyCore = require('../core/Core').Uppy
 const DashboardPlugin = require('../plugins/Dashboard')
+const basePropTypes = require('./propTypes')
 
 const h = React.createElement
 
@@ -57,20 +57,12 @@ class DashboardModal extends React.Component {
   }
 }
 
-DashboardModal.propTypes = {
-  uppy: PropTypes.instanceOf(UppyCore).isRequired,
+DashboardModal.propTypes = Object.assign({
   // Only check this prop type in the browser.
   target: typeof window !== 'undefined' ? PropTypes.instanceOf(window.HTMLElement) : PropTypes.any,
   open: PropTypes.bool,
-  onRequestClose: PropTypes.func,
-  plugins: PropTypes.arrayOf(PropTypes.string),
-  width: PropTypes.number,
-  height: PropTypes.number,
-  showProgressDetails: PropTypes.bool,
-  hideUploadButton: PropTypes.bool,
-  note: PropTypes.string,
-  locale: PropTypes.object
-}
+  onRequestClose: PropTypes.func
+}, basePropTypes)
 
 DashboardModal.defaultProps = {
 }

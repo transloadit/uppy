@@ -1,7 +1,6 @@
 const React = require('react')
-const PropTypes = require('prop-types')
-const UppyCore = require('../core').Uppy
 const DragDropPlugin = require('../plugins/DragDrop')
+const propTypes = require('./propTypes')
 
 const h = React.createElement
 
@@ -41,8 +40,8 @@ class DragDrop extends React.Component {
 }
 
 DragDrop.propTypes = {
-  uppy: PropTypes.instanceOf(UppyCore).isRequired,
-  locale: PropTypes.object
+  uppy: propTypes.uppy,
+  locale: propTypes.locale
 }
 DragDrop.defaultProps = {
 }
