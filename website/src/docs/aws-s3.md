@@ -181,7 +181,7 @@ You do not need to configure the region with GCS.
 
 You also need to configure CORS differently. Unlike Amazon, Google does not offer a UI for CORS configurations. Instead an HTTP API must be used. If you haven't done this already, see [Configuring CORS on a Bucket](https://cloud.google.com/storage/docs/configuring-cors#Configuring-CORS-on-a-Bucket) in the GCS documentation, or follow the below steps to do it using Google's API playground.
 
-GCS has multiple CORS formats, both XML and JSON. Unfortunately their XML format is different from Amazon's, so we can't simply use the one from the [S3 Bucket configuration](#S3-Bucket-configuration) section.
+GCS has multiple CORS formats, both XML and JSON. Unfortunately their XML format is different from Amazon's, so we can't simply use the one from the [S3 Bucket configuration](#S3-Bucket-configuration) section. Google appears to favour the JSON format, so we'll use that.
 
 #### JSON CORS Configuration
 
@@ -204,7 +204,7 @@ The JSON format consists of an array of CORS configuration objects. An example u
 }
 ```
 
-Most AWS configurations should be fairly simple to port to this format.
+Most AWS configurations should be fairly simple to port to this format. When using presigned `PUT` uploads, replace the `"POST"` method by `"PUT"` in the first entry.
 
 If you have the [gsutil](https://cloud.google.com/storage/docs/gsutil) command-line tool, you can apply this configuration using the [gsutil cors](https://cloud.google.com/storage/docs/configuring-cors#configure-cors-bucket) command.
 
@@ -222,51 +222,6 @@ Otherwise, you can manually apply it through the OAuth playground:
    - HTTP Method: PATCH
    - Request URI: `https://www.googleapis.com/storage/v1/b/YOUR_BUCKET_NAME`
    - Content-Type: application/json (should be the default)
-   - Press "Enter request body" and input your CORS configuration
- 1. Then, finally, press "Send the request".
-
-#### XML CORS Configuration
-
-The XML format consists of `<Cors>` tags. Instead of having multiple `<AllowedOrigin>` and other tags at the top level, GCS's format nests origins and methods inside `<Origins>` and `<Methods>` tags. An example using POST policy document uploads is shown here:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<CorsConfig>
-  <Cors>
-    <Origins>
-      <Origin>https://my-app.com</Origin>
-    </Origins>
-    <Methods>
-      <Method>GET</Method>
-      <Method>POST</Method>
-    </Methods>
-    <MaxAgeSec>3000</MaxAgeSec>
-  </Cors>
-  <Cors>
-    <Origins>
-      <Origin>*</Origin>
-    </Origins>
-    <Methods>
-      <Method>GET</Method>
-    </Methods>
-    <MaxAgeSec>3000</MaxAgeSec>
-  </Cors>
-</CorsConfig>
-```
-
-Most AWS configurations should be fairly simple to port to this format.
-
- 1. Get a temporary API token from the [Google OAuth2.0 playground](https://developers.google.com/oauthplayground/)
-   1. Select the "Cloud Storage API v1" » "full_control" scope
-   1. Press "Authorize APIs" and allow access
- 1. Click "Step 3 - Configure request to API"
- 1. Configure it like below:
-   - HTTP Method: PUT
-   - Request URI: `https://storage.googleapis.com/YOUR_BUCKET_NAME?cors`
-   - Content-Type: Custom…
-     1. A small popover to add a Content-Type header will open
-     1. Enter `text/xml` in the "Header Value" field and click "Add"
-     1. Close the popover
    - Press "Enter request body" and input your CORS configuration
  1. Then, finally, press "Send the request".
 
