@@ -617,7 +617,7 @@ module.exports = class Transloadit extends Plugin {
 
     let optionsPromise
     if (fileIDs.length > 0) {
-      optionsPromise = this.getAssemblyOptions(fileIDs)
+      optionsPromise = Promise.resolve(this.getAssemblyOptions(fileIDs))
         .then((allOptions) => this.dedupeAssemblyOptions(allOptions))
     } else if (this.opts.alwaysRunAssembly) {
       optionsPromise = Promise.resolve(
