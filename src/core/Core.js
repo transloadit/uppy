@@ -822,12 +822,9 @@ class Uppy {
 
     let existsPluginAlready = this.getPlugin(pluginId)
     if (existsPluginAlready) {
-      let msg = `Already found a plugin named '${existsPluginAlready.id}'.
-        Tried to use: '${pluginId}'.
-        Uppy is currently limited to running one of every plugin.
-        Share your use case with us over at
-        https://github.com/transloadit/uppy/issues/
-        if you want us to reconsider.`
+      let msg = `Already found a plugin named '${existsPluginAlready.id}'. ` +
+        `Tried to use: '${pluginId}'.\n` +
+        `Uppy plugins must have unique 'id' options. See https://uppy.io/docs/plugins/#id.`
       throw new Error(msg)
     }
 

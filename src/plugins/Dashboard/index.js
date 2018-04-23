@@ -521,6 +521,7 @@ module.exports = class Dashboard extends Plugin {
 
     if (!this.opts.disableStatusBar) {
       this.uppy.use(StatusBar, {
+        id: `${this.id}:StatusBar`,
         target: this,
         hideUploadButton: this.opts.hideUploadButton,
         showProgressDetails: this.opts.showProgressDetails,
@@ -531,12 +532,14 @@ module.exports = class Dashboard extends Plugin {
 
     if (!this.opts.disableInformer) {
       this.uppy.use(Informer, {
+        id: `${this.id}:Informer`,
         target: this
       })
     }
 
     if (!this.opts.disableThumbnailGenerator) {
       this.uppy.use(ThumbnailGenerator, {
+        id: `${this.id}:ThumbnailGenerator`,
         thumbnailWidth: this.opts.thumbnailWidth
       })
     }

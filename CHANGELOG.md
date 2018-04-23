@@ -119,6 +119,7 @@ What we need to do to release Uppy 1.0
 - [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/.
 - [ ] docs: add note in docs or solve the .run() issue, see #756
 - [ ] core: add `uppy.getFiles()` method (@goto-bus-stop / #770)
+- [x] dashboard: fix duplicate plugin IDs, see #702 (@goto-bus-stop)
 
 ## 0.24.2
 
