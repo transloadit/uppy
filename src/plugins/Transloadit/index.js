@@ -53,6 +53,7 @@ module.exports = class Transloadit extends Plugin {
 
     this.prepareUpload = this.prepareUpload.bind(this)
     this.afterUpload = this.afterUpload.bind(this)
+    this.handleError = this.handleError.bind(this)
     this.onFileUploadURLAvailable = this.onFileUploadURLAvailable.bind(this)
     this.onRestored = this.onRestored.bind(this)
     this.getPersistentData = this.getPersistentData.bind(this)
@@ -783,9 +784,26 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
+  handleError (err, uploadID) {
+    this.uppy.log('[Transloadit] handleError')
+    this.uppy.log(err)
+    this.uppy.log(uploadID)
+    const state = this.getPluginState()
+    const assemblyIDs = state.uploadsAssemblies[uploadID]
+
+    assemblyIDs.forEach((assemblyID) => {
+      if (this.sockets[assemblyID]) {
+        this.sockets[assemblyID].close()
+      }
+    })
+  }
+
   install () {
     this.uppy.addPreProcessor(this.prepareUpload)
     this.uppy.addPostProcessor(this.afterUpload)
+
+    // We may need to close socket.io connections on error.
+    this.uppy.on('error', this.handleError)
 
     if (this.opts.importFromUploadURLs) {
       // No uploader needed when importing; instead we take the upload URL from an existing uploader.
@@ -818,6 +836,7 @@ module.exports = class Transloadit extends Plugin {
   uninstall () {
     this.uppy.removePreProcessor(this.prepareUpload)
     this.uppy.removePostProcessor(this.afterUpload)
+    this.uppy.off('error', this.handleError)
 
     if (this.opts.importFromUploadURLs) {
       this.uppy.off('upload-success', this.onFileUploadURLAvailable)
