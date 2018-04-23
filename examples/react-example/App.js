@@ -62,6 +62,9 @@ module.exports = class App extends React.Component {
           <Dashboard
             uppy={this.uppy}
             plugins={['GoogleDrive']}
+            metaFields={[
+              { id: 'name', name: 'Name', placeholder: 'File name' }
+            ]}
           />
         )}
 
