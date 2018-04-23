@@ -57,7 +57,7 @@ module.exports = function Dashboard (props) {
           aria-label={props.i18n('closeModal')}
           title={props.i18n('closeModal')}
           onclick={props.closeModal}>
-          <span aria-hidden="true">×</span>
+          <span aria-hidden="true">&times;</span>
         </button>
 
         <div class="uppy-Dashboard-innerWrap">
