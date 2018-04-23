@@ -13,7 +13,7 @@ class DragDrop extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
     const options = Object.assign(
-      {},
+      { id: 'react:DragDrop' },
       this.props,
       { target: this.container }
     )

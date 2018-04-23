@@ -14,7 +14,7 @@ class DashboardModal extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
     const options = Object.assign(
-      {},
+      { id: 'react:DashboardModal' },
       this.props,
       {
         onRequestCloseModal: this.props.onRequestClose

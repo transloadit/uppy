@@ -14,7 +14,7 @@ class StatusBar extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
     const options = Object.assign(
-      {},
+      { id: 'react:StatusBar' },
       this.props,
       { target: this.container }
     )

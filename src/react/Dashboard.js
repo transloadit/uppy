@@ -13,7 +13,7 @@ class Dashboard extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
     const options = Object.assign(
-      {},
+      { id: 'react:Dashboard' },
       this.props,
       { target: this.container }
     )
