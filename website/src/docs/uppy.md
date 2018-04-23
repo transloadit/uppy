@@ -79,7 +79,7 @@ Metadata can also be added from a `<form>` element on your page via [Form](/docs
 <a id="onBeforeFileAdded"></a>
 ### `onBeforeFileAdded: (currentFile, files) => currentFile`
 
-A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy. 
+A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy.
 
 Use this function to run any number of custom checks on the selected file, or manipulating it, like optimizing a file name, for example.
 
@@ -96,8 +96,8 @@ onBeforeFileAdded: (currentFile, files) => {
 
 onBeforeFileAdded: (currentFile, files) => {
   const modifiedFile = Object.assign(
-    {}, 
-    currentFile, 
+    {},
+    currentFile,
     { name: currentFile + Date.now()
   })
   return modifiedFile
@@ -124,7 +124,7 @@ Note: it’s up to you to show a notification to the user about file not passing
 <a id="onBeforeUpload"></a>
 ### `onBeforeUpload: (files) => files`
 
-A function run before an upload begins. Gets passed `files` object with all the files that are already in Uppy. 
+A function run before an upload begins. Gets passed `files` object with all the files that are already in Uppy.
 
 Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
 
@@ -252,6 +252,18 @@ file.type      // 'image/jpeg'
 file.data      // the Blob object
 file.size      // 3947642 (returns 'N/A' if size cannot be determined)
 file.preview   // value that can be used to populate "src" attribute of an "img" tag
+```
+
+### `uppy.getFiles()`
+
+Get an array of all file objects in Uppy. See [uppy.getFile()](#uppy-getFile-fileID) for an example of the file object format.
+
+```js
+const prettyBytes = require('pretty-bytes')
+const items = uppy.getFiles().map(() =>
+  `<li>${file.name} - ${prettyBytes(file.size)}</li>`
+).join('')
+document.querySelector('.file-list').innerHTML = `<ul>${items}</ul>`
 ```
 
 ### `uppy.upload()`

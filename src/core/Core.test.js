@@ -786,6 +786,34 @@ describe('src/Core', () => {
     })
   })
 
+  describe('getFiles', () => {
+    it('should return an empty array if there are no files', () => {
+      const core = new Core()
+
+      expect(core.getFiles()).toEqual([])
+    })
+
+    it('should return all files as an array', () => {
+      const core = new Core()
+
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'empty.dat',
+        type: 'application/octet-stream',
+        data: new File([Buffer.alloc(1000)], { type: 'application/octet-stream' })
+      })
+
+      expect(core.getFiles()).toHaveLength(2)
+      expect(core.getFiles().map((file) => file.name).sort()).toEqual(['empty.dat', 'foo.jpg'])
+    })
+  })
+
   describe('meta data', () => {
     it('should set meta data by calling setMeta', () => {
       const core = new Core({
