@@ -41,7 +41,8 @@ class ProgressBar extends React.Component {
 
 ProgressBar.propTypes = {
   uppy: uppyPropType,
-  fixed: PropTypes.bool
+  fixed: PropTypes.bool,
+  hideAfterFinish: PropTypes.bool
 }
 ProgressBar.defaultProps = {
 }

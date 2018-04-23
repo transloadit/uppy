@@ -1,7 +1,7 @@
 const React = require('react')
 const PropTypes = require('prop-types')
 const DashboardPlugin = require('../plugins/Dashboard')
-const basePropTypes = require('./propTypes')
+const basePropTypes = require('./propTypes').dashboard
 
 const h = React.createElement
 
@@ -61,7 +61,9 @@ DashboardModal.propTypes = Object.assign({
   // Only check this prop type in the browser.
   target: typeof window !== 'undefined' ? PropTypes.instanceOf(window.HTMLElement) : PropTypes.any,
   open: PropTypes.bool,
-  onRequestClose: PropTypes.func
+  onRequestClose: PropTypes.func,
+  closeModalOnClickOutside: PropTypes.bool,
+  disablePageScrollWhenModalOpen: PropTypes.bool
 }, basePropTypes)
 
 DashboardModal.defaultProps = {

@@ -25,17 +25,23 @@ const metaFields = PropTypes.arrayOf(metaField)
 const dashboard = {
   uppy,
   inline: PropTypes.bool,
+  plugins,
   width: PropTypes.number,
   height: PropTypes.number,
   showProgressDetails: PropTypes.bool,
   hideUploadButton: PropTypes.bool,
+  hideProgressAfterFinish: PropTypes.bool,
   note: PropTypes.string,
-  plugins,
-  locale,
-  metaFields
+  metaFields,
+  proudlyDisplayPoweredByUppy: PropTypes.bool,
+  disableStatusBar: PropTypes.bool,
+  disableInformer: PropTypes.bool,
+  disableThumbnailGenerator: PropTypes.bool,
+  locale
 }
 
 module.exports = {
   uppy,
+  locale,
   dashboard
 }

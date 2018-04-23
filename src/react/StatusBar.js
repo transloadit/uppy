@@ -1,4 +1,5 @@
 const React = require('react')
+const PropTypes = require('prop-types')
 const StatusBarPlugin = require('../plugins/StatusBar')
 const uppyPropType = require('./propTypes').uppy
 
@@ -40,7 +41,9 @@ class StatusBar extends React.Component {
 }
 
 StatusBar.propTypes = {
-  uppy: uppyPropType
+  uppy: uppyPropType,
+  hideAfterFinish: PropTypes.bool,
+  showProgressDetails: PropTypes.bool
 }
 StatusBar.defaultProps = {
 }
