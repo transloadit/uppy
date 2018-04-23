@@ -485,6 +485,7 @@ module.exports = class ProviderView {
     const link = `${this.Provider.authUrl()}?state=${authState}`
 
     const authWindow = window.open(link, '_blank')
+    authWindow.opener = null
     const checkAuth = () => {
       let authWindowUrl
 

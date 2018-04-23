@@ -60,7 +60,7 @@ module.exports = function fileItem (props) {
     <div class="uppy-DashboardItem-preview">
       <div class="uppy-DashboardItem-previewInnerWrap" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
         {props.showLinkToFileUploadResult && file.uploadURL
-          ? <a class="uppy-DashboardItem-previewLink" href={file.uploadURL} target="_blank" />
+          ? <a class="uppy-DashboardItem-previewLink" href={file.uploadURL} rel="noreferrer noopener" target="_blank" />
           : null
         }
         <FilePreview file={file} />
@@ -92,7 +92,7 @@ module.exports = function fileItem (props) {
     <div class="uppy-DashboardItem-info">
       <h4 class="uppy-DashboardItem-name" title={fileName}>
         {props.showLinkToFileUploadResult && file.uploadURL
-          ? <a href={file.uploadURL} target="_blank">
+          ? <a href={file.uploadURL} rel="noreferrer noopener" target="_blank">
             {file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}
           </a>
           : file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName
