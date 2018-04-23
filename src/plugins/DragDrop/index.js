@@ -25,6 +25,7 @@ module.exports = class DragDrop extends Plugin {
     // Default options
     const defaultOpts = {
       target: null,
+      inputName: 'files[]',
       width: '100%',
       height: '100%',
       note: '',
@@ -116,11 +117,9 @@ module.exports = class DragDrop extends Plugin {
           <label class="uppy-DragDrop-label">
             <input class="uppy-DragDrop-input"
               type="file"
-              name="files[]"
-              multiple="true"
-              ref={(input) => {
-                this.input = input
-              }}
+              name={this.opts.inputName}
+              multiple
+              ref={(input) => { this.input = input }}
               onchange={this.handleInputChange} />
             {this.i18n('dropHereOr')} <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
           </label>
