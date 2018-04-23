@@ -206,7 +206,13 @@ The JSON format consists of an array of CORS configuration objects. An example u
 
 Most AWS configurations should be fairly simple to port to this format.
 
-To enable this configuration, do:
+If you have the [gsutil](https://cloud.google.com/storage/docs/gsutil) command-line tool, you can apply this configuration using the [gsutil cors](https://cloud.google.com/storage/docs/configuring-cors#configure-cors-bucket) command.
+
+```bash
+gsutil cors set THAT-FILE.json gs://BUCKET-NAME
+```
+
+Otherwise, you can manually apply it through the OAuth playground:
 
  1. Get a temporary API token from the [Google OAuth2.0 playground](https://developers.google.com/oauthplayground/)
    1. Select the "Cloud Storage JSON API v1" » "devstorage.full_control" scope
