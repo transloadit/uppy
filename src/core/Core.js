@@ -836,7 +836,7 @@ class Uppy {
    * @return {object | boolean}
    */
   getPlugin (name) {
-    let foundPlugin = false
+    let foundPlugin = null
     this.iteratePlugins((plugin) => {
       const pluginName = plugin.id
       if (pluginName === name) {
