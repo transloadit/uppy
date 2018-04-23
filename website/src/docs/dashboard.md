@@ -9,7 +9,8 @@ Dashboard is a universal UI plugin for Uppy:
 
 - Drag and Drop, paste, select from local disk / my device
 - UI for Webcam and remote sources: Google Drive, Dropbox, Instagram (all optional, added via plugins)
-- File previews and info, metadata editor
+- File previews and info
+- Metadata editor
 - Progress: total and for individual files
 - Ability to pause/resume or cancel (depending on uploader plugin) individual or all files
 
@@ -141,7 +142,7 @@ Optionally specify a string of text that explains something about the upload for
 
 ### `metaFields: []`
 
-An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Each object requires:
+An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Configuring this enables the "edit" button on file cards. Each object requires:
 
 - `id`, the name of the meta field.
 - `name`, the label shown in the interface.
@@ -151,13 +152,14 @@ An array of UI field objects that will be shown when a user clicks the “edit�
 .use(Dashboard, {
   trigger: '#pick-files',
   metaFields: [
+    { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'license', name: 'License', placeholder: 'specify license' },
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
   ]
 })
 ```
 
-Note that this meta data will only be set to a file if it’s entered by the user. If you want to set certain meta field to each file regardless of user actions, set [`meta` in Uppy options](/docs/uppy/#meta).
+Note that this metadata will only be set on a file object if it’s entered by the user. If the user doesn't edit a file's metadata, it will not have default values; instead everything will be `undefined`. If you want to set certain meta field to each file regardless of user actions, set [`meta` in the Uppy constructor options](/docs/uppy/#meta).
 
 ### `closeModalOnClickOutside: false`
 
@@ -169,7 +171,7 @@ By default when Dashboard modal is open, it will disable page scrolling, so when
 
 ### `proudlyDisplayPoweredByUppy: true`
 
-Uppy is provided for the world for free by the [Transloadit team](https://transloadit.com). In return, we ask that you consider keeping a tiny Uppy logo at the bottom of the Dashboard, so that more people can discover and use Uppy. 
+Uppy is provided for the world for free by the [Transloadit team](https://transloadit.com). In return, we ask that you consider keeping a tiny Uppy logo at the bottom of the Dashboard, so that more people can discover and use Uppy.
 
 This is entirely optional of course, just set this option to false if you do not wish to display Uppy logo.
 
