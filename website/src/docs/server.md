@@ -318,7 +318,7 @@ To work well with Uppy Server, the **Module** must be a class with the following
 git clone https://github.com/transloadit/uppy-server && cd uppy-server && npm install
 ```
 
-2\. Configure your enviorment variables by copying the `env.example.sh` file to `env.sh` and edit it to its correct values.
+2\. Configure your environment variables by copying the `env.example.sh` file to `env.sh` and edit it to its correct values.
 
 ```bash
 cp env.example.sh env.sh
