@@ -78,6 +78,8 @@ module.exports = class ProviderView {
 
     // Visual
     this.render = this.render.bind(this)
+
+    this.plugin.setPluginState({ addingFiles: [] })
   }
 
   tearDown () {
@@ -149,8 +151,14 @@ module.exports = class ProviderView {
     this.lastCheckbox = undefined
   }
 
+  hasFile (id) {
+    const { addingFiles } = this.plugin.getPluginState()
+    return addingFiles.some((file) => file.id === id)
+  }
+
   addFile (file, isCheckbox = false) {
     const tagFile = {
+      id: this.providerFileToId(file),
       source: this.plugin.id,
       data: this.plugin.getItemData(file),
       name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
@@ -174,10 +182,20 @@ module.exports = class ProviderView {
       tagFile.preview = this.plugin.getItemThumbnailUrl(file)
     }
     this.plugin.uppy.log('Adding remote file')
-    this.plugin.uppy.addFile(tagFile)
+    const { addingFiles } = this.plugin.getPluginState()
+    this.plugin.setPluginState({
+      addingFiles: [...addingFiles, tagFile]
+    })
     if (!isCheckbox) {
       this.donePicking()
     }
+  }
+
+  removeFile (id) {
+    const { addingFiles } = this.plugin.getPluginState()
+    this.plugin.setPluginState({
+      addingFiles: addingFiles.filter((file) => file.id !== id)
+    })
   }
 
   /**
@@ -317,7 +335,7 @@ module.exports = class ProviderView {
       }
       return false
     }
-    return (itemId in this.plugin.uppy.getState().files)
+    return this.hasFile(itemId)
   }
 
   /**
@@ -380,8 +398,8 @@ module.exports = class ProviderView {
     // is removed and 'core:file-removed' is emitted.
     const files = folder.files.concat([])
     for (const fileId of files) {
-      if (fileId in this.plugin.uppy.getState().files) {
-        this.plugin.uppy.removeFile(fileId)
+      if (this.hasFile(fileId)) {
+        this.removeFile(fileId)
       }
     }
     delete folders[folderId]
@@ -446,10 +464,8 @@ module.exports = class ProviderView {
         const itemId = this.providerFileToId(item)
         if (this.plugin.isFolder(item)) {
           this.removeFolder(itemId)
-        } else {
-          if (itemId in this.plugin.uppy.getState().files) {
-            this.plugin.uppy.removeFile(itemId)
-          }
+        } else if (this.hasFile(itemId)) {
+          this.removeFile(itemId)
         }
       }
     } else {
@@ -534,6 +550,13 @@ module.exports = class ProviderView {
   }
 
   donePicking () {
+    const { addingFiles } = this.plugin.getPluginState()
+    addingFiles.forEach((file) => {
+      this.plugin.uppy.addFile(file)
+    })
+
+    this.plugin.setPluginState({ addingFiles: [] })
+
     const dashboard = this.plugin.uppy.getPlugin('Dashboard')
     if (dashboard) dashboard.hideAllPanels()
   }
