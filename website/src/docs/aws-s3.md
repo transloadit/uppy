@@ -10,9 +10,12 @@ Uploads can be signed using [uppy-server][uppy-server docs] or a custom signing 
 
 ```js
 const AwsS3 = require('uppy/lib/plugins/AwsS3')
+const ms = require('ms')
 
 uppy.use(AwsS3, {
-  // Options
+  limit: 2,
+  timeout: ms('1 minute'),
+  host: 'https://uppy-server.myapp.com/'
 })
 ```
 
