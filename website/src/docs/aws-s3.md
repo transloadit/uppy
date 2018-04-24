@@ -33,7 +33,7 @@ uppy.use(AwsS3, {
 > Note: When using [uppy-server][uppy-server docs] to sign S3 uploads, do not define this option.
 
 A function returning upload parameters for a file.
-Parameters should be returned as an object, or a Promise for an object, with keys `{ method, url, fields }`.
+Parameters should be returned as an object, or a Promise for an object, with keys `{ method, url, fields, headers }`.
 
 The `method` field is the HTTP method to use for the upload.
 This should be one of `PUT` or `POST`, depending on the type of upload used.
@@ -44,6 +44,8 @@ When using a POST upload with a policy document, this should be the root URL of 
 
 The `fields` field is an object with form fields to send along with the upload request.
 For presigned PUT uploads, this should be empty.
+
+The `headers` field is an object with request headers to send along with the upload request.
 
 ### `timeout: 30 * 1000`
 
