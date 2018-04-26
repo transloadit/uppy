@@ -61,7 +61,7 @@ module.exports = class RequestClient {
 
   delete (path, data) {
     return fetch(`${this.hostname}/${path}`, {
-      method: 'post',
+      method: 'delete',
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
