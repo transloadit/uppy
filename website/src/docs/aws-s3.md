@@ -157,7 +157,7 @@ Many other object storage providers have an identical API to S3, so you can use 
 
 For example, with DigitalOcean Spaces, you could do something like this:
 
-```
+```bash
 export UPPYSERVER_AWS_ENDPOINT="https://{region}.digitaloceanspaces.com"
 export UPPYSERVER_AWS_BUCKET="my-space-name"
 ```
@@ -170,7 +170,7 @@ For a working example that you can run and play around with, see the [digitaloce
 
 For Google Cloud Storage, you need to take a few more steps. For the AwsS3 plugin to be able to upload to a GCS bucket, it needs the Interoperability setting enabled. You can enable the Interoperability setting and [generate interoperable storage access keys](https://cloud.google.com/storage/docs/migrating#keys) by going to [Google Cloud Storage](https://console.cloud.google.com/storage) » Settings » Interoperability. Then set the environment variables for Uppy Server like below:
 
-```
+```bash
 export UPPYSERVER_AWS_ENDPOINT="https://storage.googleapis.com"
 export UPPYSERVER_AWS_BUCKET="YOUR-GCS-BUCKET-NAME"
 export UPPYSERVER_AWS_KEY="GOOGxxxxxxxxx" # The Access Key
