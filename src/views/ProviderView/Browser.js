@@ -1,3 +1,4 @@
+const classNames = require('classnames')
 const Breadcrumbs = require('./Breadcrumbs')
 const Filter = require('./Filter')
 const Table = require('./ItemList')
@@ -13,9 +14,9 @@ module.exports = (props) => {
   }
 
   return (
-    <div class={`uppy-ProviderBrowser uppy-ProviderBrowser-viewType--${props.viewType}`}>
+    <div class={classNames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${props.viewType}`)}>
       <div class="uppy-ProviderBrowser-header">
-        <div class={`uppy-ProviderBrowser-headerBar ${!props.showBreadcrumbs ? 'uppy-ProviderBrowser-headerBar--simple' : ''}`}>
+        <div class={classNames('uppy-ProviderBrowser-headerBar', !props.showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')}>
           <div class="uppy-Provider-breadcrumbsIcon">{props.pluginIcon && props.pluginIcon()}</div>
           {props.showBreadcrumbs && Breadcrumbs({
             getFolder: props.getFolder,
