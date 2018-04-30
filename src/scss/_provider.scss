@@ -1,5 +1,5 @@
-.uppy-Provider-auth, 
-.uppy-Provider-error, 
+.uppy-Provider-auth,
+.uppy-Provider-error,
 .uppy-Provider-loading {
   display: flex;
   align-items: center;
@@ -243,6 +243,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: flex-start;
     padding: 6px;
   }
 
@@ -346,7 +347,7 @@
   height: 18px;
   width: 18px;
   top: 2px;
-  border: 1px solid $color-cornflower-blue; 
+  border: 1px solid $color-cornflower-blue;
   background-color: $color-white;
   border-radius: 2px;
   // border-radius: 50%;
