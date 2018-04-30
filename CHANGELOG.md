@@ -121,6 +121,7 @@ What we need to do to release Uppy 1.0
 - [x] core: add `uppy.getFiles()` method (@goto-bus-stop / #770)
 - [x] dashboard: fix duplicate plugin IDs, see #702 (@goto-bus-stop)
 - [x] react: update propTypes (#776 / @goto-bus-stop)
+- [x] dashboard/statusbar: fix some unicode characters showing up as gibberish (#787 / @goto-bus-stop)
 
 ## 0.24.2
 
