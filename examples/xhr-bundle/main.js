@@ -17,5 +17,3 @@ uppy.use(XHRUpload, {
   endpoint: 'http://localhost:9967/upload',
   fieldName: 'files'
 })
-
-uppy.run()

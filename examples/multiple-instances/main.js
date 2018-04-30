@@ -14,7 +14,6 @@ const a = Uppy({
     width: 400
   })
   .use(GoldenRetriever, { serviceWorker: false })
-  .run()
 
 const b = Uppy({
   id: 'b',
@@ -26,7 +25,6 @@ const b = Uppy({
     width: 400
   })
   .use(GoldenRetriever, { serviceWorker: false })
-  .run()
 
 window.a = a
 window.b = b

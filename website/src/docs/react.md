@@ -35,8 +35,6 @@ uppy.on('complete', (result) => {
   })
 })
 
-uppy.run()
-
 const AvatarPicker = ({ currentAvatar }) => {
   return (
     <div>

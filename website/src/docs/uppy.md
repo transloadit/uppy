@@ -212,10 +212,6 @@ const uppy = Uppy()
 uppy.use(DragDrop, { target: 'body' })
 ```
 
-### `uppy.run()`
-
-Initializes everything after setup. Must be called before calling `.upload()` or using Uppy in any meaningful way.
-
 ### `uppy.getID()`
 
 Get the uppy instance ID, see the [`id` option](#id-39-uppy-39).

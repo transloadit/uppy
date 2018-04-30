@@ -38,5 +38,3 @@ uppy.use(AwsS3, {
     })
   }
 })
-
-uppy.run()

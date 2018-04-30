@@ -59,7 +59,6 @@ function initUppy () {
     })
     .use(Instagram, { target: Dashboard, host: 'https://api2.transloadit.com/uppy-server' })
     .use(Webcam, { target: Dashboard })
-    .run()
 
   uppy
     .on('transloadit:result', (stepName, result) => {

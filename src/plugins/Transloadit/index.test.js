@@ -147,7 +147,6 @@ describe('Transloadit', () => {
         throw new Error('should not create Assembly')
       }
     })
-    uppy.run()
 
     return uppy.upload()
   })
