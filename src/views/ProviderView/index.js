@@ -82,6 +82,7 @@ module.exports = class ProviderView {
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
+    this.cancelPicking = this.cancelPicking.bind(this)
 
     // Visual
     this.render = this.render.bind(this)
@@ -494,12 +495,19 @@ module.exports = class ProviderView {
       }
     })
 
-    this.plugin.setPluginState({ currentSelection: [] })
-
     this._loaderWrapper(Promise.all(promises), () => {
+      this.plugin.setPluginState({ currentSelection: [] })
+
       const dashboard = this.plugin.uppy.getPlugin('Dashboard')
       if (dashboard) dashboard.hideAllPanels()
     }, () => {})
+  }
+
+  cancelPicking () {
+    this.plugin.setPluginState({ currentSelection: [] })
+
+    const dashboard = this.plugin.uppy.getPlugin('Dashboard')
+    if (dashboard) dashboard.hideAllPanels()
   }
 
   // displays loader view while asynchronous request is being made.
@@ -548,6 +556,7 @@ module.exports = class ProviderView {
       getItemIcon: this.plugin.getItemIcon,
       handleScroll: this.handleScroll,
       done: this.donePicking,
+      cancel: this.cancelPicking,
       title: this.plugin.title,
       viewType: this.opts.viewType,
       showTitles: this.opts.showTitles,

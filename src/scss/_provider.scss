@@ -392,6 +392,19 @@
   outline: rgb(59, 153, 252) auto 5px;
 }
 
+.uppy-ProviderBrowser-footer {
+  display: flex;
+  align-items: center;
+  background: $color-white;
+  height: 65px;
+  border-top: 1px solid rgba($color-gray, 0.3);
+  padding: 0 15px;
+
+  & button {
+    margin-right: 10px;
+  }
+}
+
 .uppy-ProviderBrowser-doneBtn {
   position: absolute;
   bottom: 16px;

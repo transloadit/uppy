@@ -49,6 +49,14 @@ module.exports = (props) => {
         getItemId: props.getItemId,
         i18n: props.i18n
       })}
+      <div class="uppy-ProviderBrowser-footer">
+        <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary" onclick={props.done}>
+          Select
+        </button>
+        <button class="uppy-u-reset uppy-c-btn uppy-c-btn-link" onclick={props.cancel}>
+          Cancel
+        </button>
+      </div>
       <button class="UppyButton--circular UppyButton--blue uppy-ProviderBrowser-doneBtn"
         type="button"
         aria-label="Done picking files"
@@ -61,7 +69,3 @@ module.exports = (props) => {
     </div>
   )
 }
-
-// <div class="uppy-Dashboard-actions">
-//  <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-actionsBtn" type="button">Select</button>
-// </div>
