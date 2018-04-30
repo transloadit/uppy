@@ -240,8 +240,8 @@ module.exports = class Dashboard extends Plugin {
       document.body.classList.add('uppy-Dashboard-isOpen')
     }
 
+    this.rerender()
     this.updateDashboardElWidth()
-    // this.setFocusToFirstNode()
     this.setFocusToBrowse()
   }
 
