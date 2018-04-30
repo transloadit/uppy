@@ -5,6 +5,16 @@ const Utils = require('../../core/Utils')
 const { h } = require('preact')
 
 /**
+ * Array.prototype.findIndex ponyfill for old browsers.
+ */
+function findIndex (array, predicate) {
+  for (let i = 0; i < array.length; i++) {
+    if (predicate(array[i])) return i
+  }
+  return -1
+}
+
+/**
  * Class to easily generate generic views for plugins
  *
  *
@@ -125,7 +135,7 @@ module.exports = class ProviderView {
         let updatedDirectories
 
         const state = this.plugin.getPluginState()
-        const index = state.directories.findIndex((dir) => id === dir.id)
+        const index = findIndex(state.directories, (dir) => id === dir.id)
 
         if (index !== -1) {
           updatedDirectories = state.directories.slice(0, index + 1)
