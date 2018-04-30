@@ -64,7 +64,6 @@ module.exports = class ProviderView {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Logic
-    this.updateFolderState = this.updateFolderState.bind(this)
     this.addFile = this.addFile.bind(this)
     this.filterItems = this.filterItems.bind(this)
     this.filterQuery = this.filterQuery.bind(this)
@@ -84,16 +83,14 @@ module.exports = class ProviderView {
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
 
-    this.plugin.uppy.on('file-removed', this.updateFolderState)
-
     // Visual
     this.render = this.render.bind(this)
 
-    this.plugin.setPluginState({ addingFiles: [] })
+    this.plugin.setPluginState({ currentSelection: [] })
   }
 
   tearDown () {
-    this.plugin.uppy.off('file-removed', this.updateFolderState)
+    // Nothing.
   }
 
   _updateFilesAndFolders (res, files, folders) {
@@ -161,12 +158,7 @@ module.exports = class ProviderView {
     this.lastCheckbox = undefined
   }
 
-  hasFile (id) {
-    const { addingFiles } = this.plugin.getPluginState()
-    return addingFiles.some((file) => file.id === id)
-  }
-
-  addFile (file, isCheckbox = false) {
+  addFile (file) {
     const tagFile = {
       id: this.providerFileToId(file),
       source: this.plugin.id,
@@ -192,19 +184,13 @@ module.exports = class ProviderView {
       tagFile.preview = this.plugin.getItemThumbnailUrl(file)
     }
     this.plugin.uppy.log('Adding remote file')
-    const { addingFiles } = this.plugin.getPluginState()
-    this.plugin.setPluginState({
-      addingFiles: [...addingFiles, tagFile]
-    })
-    if (!isCheckbox) {
-      this.donePicking()
-    }
+    this.plugin.uppy.addFile(tagFile)
   }
 
   removeFile (id) {
-    const { addingFiles } = this.plugin.getPluginState()
+    const { currentSelection } = this.plugin.getPluginState()
     this.plugin.setPluginState({
-      addingFiles: addingFiles.filter((file) => file.id !== id)
+      currentSelection: currentSelection.filter((file) => file.id !== id)
     })
   }
 
@@ -244,6 +230,9 @@ module.exports = class ProviderView {
 
   filterItems (items) {
     const state = this.plugin.getPluginState()
+    if (state.filterInput === '') {
+      return items
+    }
     return items.filter((folder) => {
       return this.plugin.getItemName(folder).toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1
     })
@@ -335,17 +324,9 @@ module.exports = class ProviderView {
     return this.plugin.getPluginState().activeRow === this.plugin.getItemId(file)
   }
 
-  isChecked (item) {
-    const itemId = this.providerFileToId(item)
-    if (this.plugin.isFolder(item)) {
-      const state = this.plugin.getPluginState()
-      const folders = state.selectedFolders || {}
-      if (itemId in folders) {
-        return folders[itemId]
-      }
-      return false
-    }
-    return this.hasFile(itemId)
+  isChecked (file) {
+    const { currentSelection } = this.plugin.getPluginState()
+    return currentSelection.some((item) => item === file)
   }
 
   /**
@@ -363,11 +344,11 @@ module.exports = class ProviderView {
     }
     folders[folderId] = {loading: true, files: []}
     this.plugin.setPluginState({selectedFolders: folders})
-    this.Provider.list(this.plugin.getItemRequestPath(folder)).then((res) => {
+    return this.Provider.list(this.plugin.getItemRequestPath(folder)).then((res) => {
       let files = []
       this.plugin.getItemSubList(res).forEach((item) => {
         if (!this.plugin.isFolder(item)) {
-          this.addFile(item, true)
+          this.addFile(item)
           files.push(this.providerFileToId(item))
         }
       })
@@ -392,100 +373,44 @@ module.exports = class ProviderView {
     })
   }
 
-  removeFolder (folderId) {
-    let state = this.plugin.getPluginState()
-    let folders = state.selectedFolders || {}
-    if (!(folderId in folders)) {
-      return
-    }
-    let folder = folders[folderId]
-    if (folder.loading) {
-      return
-    }
-    // deepcopy the files before iteration because the
-    // original array constantly gets mutated during
-    // the iteration by updateFolderState as each file
-    // is removed and 'core:file-removed' is emitted.
-    const files = folder.files.concat([])
-    for (const fileId of files) {
-      if (this.hasFile(fileId)) {
-        this.removeFile(fileId)
-      }
-    }
-    delete folders[folderId]
-    this.plugin.setPluginState({selectedFolders: folders})
-  }
-
-  /**
-   * Updates selected folders state everytime file is being removed.
-   *
-   * Note that this is only important when files are getting removed from the
-   * main screen, and will do nothing when you uncheck folder directly, since
-   * it's already been done in removeFolder method.
-   */
-  updateFolderState (file) {
-    let state = this.plugin.getPluginState()
-    let folders = state.selectedFolders || {}
-    for (let folderId in folders) {
-      let folder = folders[folderId]
-      if (folder.loading) {
-        continue
-      }
-      let i = folder.files.indexOf(file.id)
-      if (i > -1) {
-        folder.files.splice(i, 1)
-      }
-      if (!folder.files.length) {
-        delete folders[folderId]
-      }
-    }
-    this.plugin.setPluginState({selectedFolders: folders})
-  }
-
   /**
    * Toggles file/folder checkbox to on/off state while updating files list.
    *
    * Note that some extra complexity comes from supporting shift+click to
    * toggle multiple checkboxes at once, which is done by getting all files
-   * in between last checked file and current one, and applying an on/off state
-   * for all of them, depending on current file state.
+   * in between last checked file and current one.
    */
   toggleCheckbox (e, file) {
     e.stopPropagation()
     e.preventDefault()
-    let { folders, files, filterInput } = this.plugin.getPluginState()
-    let items = folders.concat(files)
-    if (filterInput !== '') {
-      items = this.filterItems(items)
-    }
-    let itemsToToggle = [file]
+    let { folders, files } = this.plugin.getPluginState()
+    let items = this.filterItems(folders.concat(files))
+
+    // Shift-clicking selects a single consecutive list of items
+    // starting at the previous click and deselects everything else.
     if (this.lastCheckbox && e.shiftKey) {
-      let prevIndex = items.indexOf(this.lastCheckbox)
-      let currentIndex = items.indexOf(file)
+      let currentSelection
+      const prevIndex = items.indexOf(this.lastCheckbox)
+      const currentIndex = items.indexOf(file)
       if (prevIndex < currentIndex) {
-        itemsToToggle = items.slice(prevIndex, currentIndex + 1)
+        currentSelection = items.slice(prevIndex, currentIndex + 1)
       } else {
-        itemsToToggle = items.slice(currentIndex, prevIndex + 1)
+        currentSelection = items.slice(currentIndex, prevIndex + 1)
       }
+      this.plugin.setPluginState({ currentSelection })
+      return
     }
+
     this.lastCheckbox = file
+    const { currentSelection } = this.plugin.getPluginState()
     if (this.isChecked(file)) {
-      for (let item of itemsToToggle) {
-        const itemId = this.providerFileToId(item)
-        if (this.plugin.isFolder(item)) {
-          this.removeFolder(itemId)
-        } else if (this.hasFile(itemId)) {
-          this.removeFile(itemId)
-        }
-      }
+      this.plugin.setPluginState({
+        currentSelection: currentSelection.filter((item) => item !== file)
+      })
     } else {
-      for (let item of itemsToToggle) {
-        if (this.plugin.isFolder(item)) {
-          this.addFolder(item)
-        } else {
-          this.addFile(item, true)
-        }
-      }
+      this.plugin.setPluginState({
+        currentSelection: currentSelection.concat([file])
+      })
     }
   }
 
@@ -560,15 +485,21 @@ module.exports = class ProviderView {
   }
 
   donePicking () {
-    const { addingFiles } = this.plugin.getPluginState()
-    addingFiles.forEach((file) => {
-      this.plugin.uppy.addFile(file)
+    const { currentSelection } = this.plugin.getPluginState()
+    const promises = currentSelection.map((file) => {
+      if (this.plugin.isFolder(file)) {
+        return this.addFolder(file)
+      } else {
+        return this.addFile(file)
+      }
     })
 
-    this.plugin.setPluginState({ addingFiles: [] })
+    this.plugin.setPluginState({ currentSelection: [] })
 
-    const dashboard = this.plugin.uppy.getPlugin('Dashboard')
-    if (dashboard) dashboard.hideAllPanels()
+    this._loaderWrapper(Promise.all(promises), () => {
+      const dashboard = this.plugin.uppy.getPlugin('Dashboard')
+      if (dashboard) dashboard.hideAllPanels()
+    }, () => {})
   }
 
   // displays loader view while asynchronous request is being made.
@@ -602,7 +533,6 @@ module.exports = class ProviderView {
       username: this.username,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
-      addFile: this.addFile,
       filterItems: this.filterItems,
       filterQuery: this.filterQuery,
       toggleSearch: this.toggleSearch,
