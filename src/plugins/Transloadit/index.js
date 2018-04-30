@@ -216,7 +216,7 @@ module.exports = class Transloadit extends Plugin {
         return newFile
       }
 
-      const files = Object.assign({}, this.uppy.state.files)
+      const files = Object.assign({}, this.uppy.getState().files)
       fileIDs.forEach((id) => {
         files[id] = attachAssemblyMetadata(files[id], assembly)
       })
@@ -272,23 +272,21 @@ module.exports = class Transloadit extends Plugin {
   }
 
   findFile (uploadedFile) {
-    const files = this.uppy.state.files
-    for (const id in files) {
-      if (!files.hasOwnProperty(id)) {
-        continue
-      }
+    const files = this.uppy.getFiles()
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
       // Completed file upload.
-      if (files[id].uploadURL === uploadedFile.tus_upload_url) {
-        return files[id]
+      if (file.uploadURL === uploadedFile.tus_upload_url) {
+        return file
       }
       // In-progress file upload.
-      if (files[id].tus && files[id].tus.uploadUrl === uploadedFile.tus_upload_url) {
-        return files[id]
+      if (file.tus && file.tus.uploadUrl === uploadedFile.tus_upload_url) {
+        return file
       }
       if (!uploadedFile.is_tus_file) {
         // Fingers-crossed check for non-tus uploads, eg imported from S3.
-        if (files[id].name === uploadedFile.name && files[id].size === uploadedFile.size) {
-          return files[id]
+        if (file.name === uploadedFile.name && file.size === uploadedFile.size) {
+          return file
         }
       }
     }
@@ -852,10 +850,7 @@ module.exports = class Transloadit extends Plugin {
   }
 
   getAssemblyFiles (assemblyID) {
-    const fileIDs = Object.keys(this.uppy.state.files)
-    return fileIDs.map((fileID) => {
-      return this.uppy.getFile(fileID)
-    }).filter((file) => {
+    return this.uppy.getFiles().filter((file) => {
       return file && file.transloadit && file.transloadit.assembly === assemblyID
     })
   }

@@ -172,7 +172,7 @@ class Uppy {
   }
 
   /**
-  * Back compat for when this.state is used instead of this.getState().
+  * Back compat for when uppy.state is used instead of uppy.getState().
   */
   get state () {
     return this.getState()
@@ -451,7 +451,7 @@ class Uppy {
   }
 
   removeFile (fileID) {
-    const { files, currentUploads } = this.state
+    const { files, currentUploads } = this.getState()
     const updatedFiles = Object.assign({}, files)
     const removedFile = updatedFiles[fileID]
     delete updatedFiles[fileID]

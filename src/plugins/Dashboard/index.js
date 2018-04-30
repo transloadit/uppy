@@ -380,7 +380,7 @@ module.exports = class Dashboard extends Plugin {
 
   render (state) {
     const pluginState = this.getPluginState()
-    const files = state.files
+    const { files, capabilities } = state
 
     const newFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadStarted
@@ -478,7 +478,7 @@ module.exports = class Dashboard extends Plugin {
       info: this.uppy.info,
       note: this.opts.note,
       metaFields: pluginState.metaFields,
-      resumableUploads: this.uppy.state.capabilities.resumableUploads || false,
+      resumableUploads: capabilities.resumableUploads || false,
       startUpload: startUpload,
       pauseUpload: this.uppy.pauseResume,
       retryUpload: this.uppy.retryUpload,
