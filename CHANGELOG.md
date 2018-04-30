@@ -122,7 +122,7 @@ To Be Released: 2018-05-31.
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
 - [x] core: add more mime-to-extension mappings from https://github.com/micnic/mime.json/blob/master/index.json (which ones?) (#806 /@arturi, @goto-bus-stop)
-- [ ] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
+- [x] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
 - [x] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360 (#844 / @vith)
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
 - [x] core: ⚠️ **breaking** removed .run() (to solve issues like #756), update ddocs (#793 / goto-bus-stop)
