@@ -29,7 +29,7 @@ uppy.use(FileInput, {
 
 DOM element, CSS selector, or plugin to mount the file input into.
 
-### `multipleFiles: true`
+### `allowMultipleFiles: true`
 
 Whether to allow the user to select multiple files at once.
 
