@@ -169,6 +169,14 @@ Released: 2018-04-12.
 - url: Add checks for protocols, assume `http` when no protocol is used (#682 / @arturi)
 - url: Refactor things into Provider, see comments in  https://github.com/transloadit/uppy/pull/588; exposing the Provider module and the ProviderView to the public API (#727 / @ifedapoolarewaju, @arturi)
 - webcam: Styles updates: adapt for mobile, better camera icon, move buttons to the bottom bar (#682 / @arturi)
+- server: Fixed security vulnerability in transient dependency [#70](https://github.com/transloadit/uppy-server/issues/70) (@ifedapoolarewaju)
+- server: Auto-generate tmp download file name to avoid Path traversal (@ifedapoolarewaju)
+- server: Namespace redis key storage/lookup to avoid collisions (@ifedapoolarewaju)
+- server: Validate callback redirect url after completing OAuth (@ifedapoolarewaju)
+- server: Reduce the permission level required by Google Drive (@ifedapoolarewaju)
+- server: Auto-generate Server secret if none is provided on startup (@ifedapoolarewaju)
+- server: We implemented a more standard logger for Uppy Server (@ifedapoolarewaju)
+- server: Added an example project to run Uppy Server on Serverless (@ifedapoolarewaju)
 
 ## 0.23.3
 
