@@ -57,15 +57,6 @@ module.exports = (props) => {
           Cancel
         </button>
       </div>
-      <button class="UppyButton--circular UppyButton--blue uppy-ProviderBrowser-doneBtn"
-        type="button"
-        aria-label="Done picking files"
-        title="Done picking files"
-        onclick={props.done}>
-        <svg aria-hidden="true" class="UppyIcon" width="13px" height="9px" viewBox="0 0 13 9">
-          <polygon points="5 7.293 1.354 3.647 0.646 4.354 5 8.707 12.354 1.354 11.646 0.647" />
-        </svg>
-      </button>
     </div>
   )
 }
