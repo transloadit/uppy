@@ -1,4 +1,5 @@
 const throttle = require('lodash.throttle')
+const mimeTypes = require('./mime-types.json')
 
 /**
  * A collection of small utility functions that help with dom manipulation, adding listeners,
@@ -112,24 +113,48 @@ function getArrayBuffer (chunk) {
 }
 
 function getFileType (file) {
-  const extensionsToMime = {
-    'md': 'text/markdown',
-    'markdown': 'text/markdown',
-    'mp4': 'video/mp4',
-    'mp3': 'audio/mp3',
-    'svg': 'image/svg+xml',
-    'jpg': 'image/jpeg',
-    'png': 'image/png',
-    'gif': 'image/gif',
-    'yaml': 'text/yaml',
-    'yml': 'text/yaml'
-  }
+  // const extensionsToMime = {
+  //   'md': 'text/markdown',
+  //   'markdown': 'text/markdown',
+  //   'mp4': 'video/mp4',
+  //   'mp3': 'audio/mp3',
+  //   'svg': 'image/svg+xml',
+  //   'jpg': 'image/jpeg',
+  //   'png': 'image/png',
+  //   'gif': 'image/gif',
+  //   'yaml': 'text/yaml',
+  //   'yml': 'text/yaml',
+  //   'csv': 'text/csv',
+  //   'avi': 'video/x-msvideo',
+  //   'mks': 'video/x-matroska',
+  //   'mkv': 'video/x-matroska',
+  //   'mov': 'video/quicktime',
+  //   'doc': 'application/msword',
+  //   'docm': 'application/vnd.ms-word.document.macroenabled.12',
+  //   'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  //   'dot': 'application/msword',
+  //   'dotm': 'application/vnd.ms-word.template.macroenabled.12',
+  //   'dotx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
+  //   'xla': 'application/vnd.ms-excel',
+  //   'xlam': 'application/vnd.ms-excel.addin.macroenabled.12',
+  //   'xlc': 'application/vnd.ms-excel',
+  //   'xlf': 'application/x-xliff+xml',
+  //   'xlm': 'application/vnd.ms-excel',
+  //   'xls': 'application/vnd.ms-excel',
+  //   'xlsb': 'application/vnd.ms-excel.sheet.binary.macroenabled.12',
+  //   'xlsm': 'application/vnd.ms-excel.sheet.macroenabled.12',
+  //   'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  //   'xlt': 'application/vnd.ms-excel',
+  //   'xltm': 'application/vnd.ms-excel.template.macroenabled.12',
+  //   'xltx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
+  //   'xlw': 'application/vnd.ms-excel',
+  // }
 
   const fileExtension = file.name ? getFileNameAndExtension(file.name).extension : null
 
   if (file.isRemote) {
     // some remote providers do not support file types
-    return file.type ? file.type : extensionsToMime[fileExtension]
+    return file.type ? file.type : mimeTypes[fileExtension]
   }
 
   // 2. if that’s no good, check if mime type is set in the file object
@@ -138,8 +163,8 @@ function getFileType (file) {
   }
 
   // 3. if that’s no good, see if we can map extension to a mime type
-  if (fileExtension && extensionsToMime[fileExtension]) {
-    return extensionsToMime[fileExtension]
+  if (fileExtension && mimeTypes[fileExtension]) {
+    return mimeTypes[fileExtension]
   }
 
   // if all fails, well, return empty
