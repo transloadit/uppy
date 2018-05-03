@@ -29,7 +29,7 @@ module.exports = class DragDrop extends Plugin {
       allowMultipleFiles: true,
       width: '100%',
       height: '100%',
-      note: '',
+      note: null,
       locale: defaultLocale
     }
 

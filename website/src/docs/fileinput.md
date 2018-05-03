@@ -13,13 +13,13 @@ permalink: docs/fileinput/
 
 ```js
 uppy.use(FileInput, {
-  target: '.UppyForm',
+  target: null,
   allowMultipleFiles: true,
   pretty: true,
   inputName: 'files[]',
   locale: {
     strings: {
-      chooseFiles: 'Select to upload'
+      chooseFiles: 'Choose files'
     }
   }
 })
@@ -29,7 +29,7 @@ uppy.use(FileInput, {
 
 DOM element, CSS selector, or plugin to mount the file input into.
 
-### `multipleFiles: true`
+### `allowMultipleFiles: true`
 
 Whether to allow the user to select multiple files at once.
 
@@ -43,4 +43,4 @@ The `name` attribute for the `<input type="file">` element.
 
 ### `locale: {}`
 
-Custom text to show on the button when `pretty` is true. There is only one string that can be configured: `strings.chooseFiles`.
+Custom text to show on the button when `pretty` is true.
