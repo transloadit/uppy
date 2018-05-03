@@ -24,6 +24,29 @@ uppy.use(Transloadit, {
 
 As of Uppy 0.24 the Transloadit plugin includes the [Tus](/docs/tus) plugin to handle the uploading, so you no longer have to add it manually.
 
+## Properties
+
+### `Transloadit.UPPY_SERVER`
+
+The main endpoint for Transloadit's hosted uppy-servers. You can use this constant in remote provider options, like so:
+
+```js
+const Dropbox = require('uppy/lib/plugins/Dropbox')
+const Transloadit = require('uppy/lib/plugins/Transloadit')
+
+uppy.use(Dropbox, {
+  host: Transloadit.UPPY_SERVER
+})
+```
+
+The value of this constant is `https://api2.transloadit.com/uppy-server`. If you are using a custom [`service`](#service) option, you should also set a custom host option in your provider plugins, by taking a Transloadit API url and appending `/uppy-server`:
+
+```js
+uppy.use(Dropbox, {
+  host: 'https://api2-us-east-1.transloadit.com/uppy-server'
+})
+```
+
 ## Options
 
 ### `service`

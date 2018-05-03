@@ -12,6 +12,10 @@ function defaultGetAssemblyOptions (file, options) {
   }
 }
 
+const UPPY_SERVER = 'https://api2.transloadit.com/uppy-server'
+// Regex used to check if an uppy-server address is run by Transloadit.
+const TL_UPPY_SERVER = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/uppy-server/
+
 /**
  * Upload files to Transloadit using Tus.
  */
@@ -180,13 +184,12 @@ module.exports = class Transloadit extends Plugin {
           endpoint: assembly.tus_url
         })
 
-        // Set uppy server location.
-        // we only add this, if 'file' has the attribute remote, because
-        // this is the criteria to identify remote files. If we add it without
-        // the check, then the file automatically becomes a remote file.
-        // @TODO: this is quite hacky. Please fix this later
+        // Set uppy server location. We only add this, if 'file' has the attribute
+        // remote, because this is the criteria to identify remote files.
+        // We only replace the hostname for Transloadit's uppy-servers, so that
+        // people can self-host them while still using Transloadit for encoding.
         let remote = file.remote
-        if (file.remote) {
+        if (file.remote && TL_UPPY_SERVER.test(file.remote)) {
           let newHost = assembly.uppyserver_url
           let path = file.remote.url.replace(file.remote.host, '')
           // remove tailing slash
@@ -823,3 +826,5 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 }
+
+module.exports.UPPY_SERVER = UPPY_SERVER
