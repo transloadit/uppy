@@ -813,6 +813,9 @@ module.exports = class Transloadit extends Plugin {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
         // will upload to the same assembly.
         resume: false,
+        // Disable Uppy Server's retry optimisation; we need to change the endpoint on retry
+        // so it can't just reuse the same tus.Upload instance server-side.
+        useFastRemoteRetry: false,
         // Only send assembly metadata to the tus endpoint.
         metaFields: ['assembly_url', 'filename', 'fieldname']
       })
