@@ -185,18 +185,15 @@ module.exports = class Transloadit extends Plugin {
         // this is the criteria to identify remote files. If we add it without
         // the check, then the file automatically becomes a remote file.
         // @TODO: this is quite hacky. Please fix this later
-        let remote
+        let remote = file.remote
         if (file.remote) {
           let newHost = assembly.uppyserver_url
-          // remove tailing slash
-          if (newHost.endsWith('/')) {
-            newHost = newHost.slice(0, -1)
-          }
           let path = file.remote.url.replace(file.remote.host, '')
+          // remove tailing slash
+          newHost = newHost.replace(/\/$/, '')
           // remove leading slash
-          if (path.startsWith('/')) {
-            path = path.slice(1)
-          }
+          path = path.replace(/^\//, '')
+
           remote = Object.assign({}, file.remote, {
             host: newHost,
             url: `${newHost}/${path}`
