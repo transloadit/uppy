@@ -46,7 +46,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] Prepare for (piwik-) tracking of usage of uppy ? see #83
 - [ ] screenshot+screencast support similar to Webcam #148
 - [ ] Webcam modes #198
-- [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
 - [ ] feature: React Native support
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 - [ ] It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them?
@@ -65,6 +64,7 @@ Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] provider: Add Box
 - [ ] provider: change ProviderViews signature to receive Provider instance in second param. ref https://github.com/transloadit/uppy/pull/743#discussion_r180106070
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
+- [ ] webcam: Stop recording when file size is exceeded, should be possible given how the MediaRecorder API works
 
 ## 1.0 Goals
 
