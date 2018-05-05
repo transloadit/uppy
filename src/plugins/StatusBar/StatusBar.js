@@ -141,7 +141,7 @@ const CancelBtn = (props) => {
   return <button type="button"
     class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--cancel"
     aria-label={props.i18n('cancel')}
-    onclick={props.cancelAll}>Cancel{props.i18n('cancel')}</button>
+    onclick={props.cancelAll}>{props.i18n('cancel')}</button>
 }
 
 const PauseResumeButtons = (props) => {
