@@ -125,6 +125,7 @@ module.exports = class DragDrop extends Plugin {
           </svg>
           <label class="uppy-DragDrop-label">
             <input style={hiddenInputStyle}
+              class="uppy-DragDrop-input"
               type="file"
               name="files[]"
               multiple={restrictions.maxNumberOfFiles !== 1 || !restrictions.maxNumberOfFiles}
