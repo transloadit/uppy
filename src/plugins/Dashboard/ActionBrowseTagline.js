@@ -13,6 +13,7 @@ class ActionBrowseTagline extends Component {
   render () {
     // empty value=""  on file input, so we can select same file
     // after removing it from Uppy — otherwise OS thinks it’s selected
+
     return (
       <span>
         {this.props.acquirers.length === 0
@@ -27,8 +28,9 @@ class ActionBrowseTagline extends Component {
           tabindex="-1"
           type="file"
           name="files[]"
-          multiple="true"
+          multiple={this.props.maxNumberOfFiles !== 1 || !this.props.maxNumberOfFiles}
           onchange={this.props.handleInputChange}
+          accept={this.props.allowedFileTypes}
           value=""
           ref={(input) => {
             this.input = input

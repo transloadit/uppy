@@ -102,11 +102,21 @@ module.exports = class DragDrop extends Plugin {
   }
 
   render (state) {
-    const DragDropClass = `uppy uppy-DragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}`
+    /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
+    const hiddenInputStyle = {
+      width: '0.1px',
+      height: '0.1px',
+      opacity: 0,
+      overflow: 'hidden',
+      position: 'absolute',
+      zIndex: -1
+    }
+    const DragDropClass = `uppy uppy-DragDrop-container ${this.isDragDropSupported ? 'uppy-DragDrop--is-dragdrop-supported' : ''}`
     const DragDropStyle = {
       width: this.opts.width,
       height: this.opts.height
     }
+    const restrictions = this.uppy.opts.restrictions
     return (
       <div class={DragDropClass} style={DragDropStyle}>
         <div class="uppy-DragDrop-inner">
@@ -114,10 +124,11 @@ module.exports = class DragDrop extends Plugin {
             <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
           </svg>
           <label class="uppy-DragDrop-label">
-            <input class="uppy-DragDrop-input"
+            <input style={hiddenInputStyle}
               type="file"
               name="files[]"
-              multiple="true"
+              multiple={restrictions.maxNumberOfFiles !== 1 || !restrictions.maxNumberOfFiles}
+              accept={restrictions.allowedFileTypes}
               ref={(input) => {
                 this.input = input
               }}

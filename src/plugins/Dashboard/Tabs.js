@@ -49,7 +49,8 @@ class Tabs extends Component {
             tabindex="-1"
             type="file"
             name="files[]"
-            multiple="true"
+            multiple={this.props.maxNumberOfFiles !== 1 || !this.props.maxNumberOfFiles}
+            accept={this.props.allowedFileTypes}
             onchange={this.props.handleInputChange}
             value=""
             ref={(input) => { this.input = input }} />

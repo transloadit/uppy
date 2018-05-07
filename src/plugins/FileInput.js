@@ -60,6 +60,7 @@ module.exports = class FileInput extends Plugin {
   }
 
   render (state) {
+    /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
     const hiddenInputStyle = {
       width: '0.1px',
       height: '0.1px',
@@ -69,13 +70,16 @@ module.exports = class FileInput extends Plugin {
       zIndex: -1
     }
 
+    const restrictions = this.uppy.opts.restrictions
+
     return <div class="uppy uppy-FileInput-container">
       <input class="uppy-FileInput-input"
         style={this.opts.pretty && hiddenInputStyle}
         type="file"
         name={this.opts.inputName}
         onchange={this.handleInputChange}
-        multiple={this.opts.allowMultipleFiles}
+        multiple={restrictions.maxNumberOfFiles !== 1 || !restrictions.maxNumberOfFiles}
+        accept={restrictions.allowedFileTypes}
         ref={(input) => { this.input = input }} />
       {this.opts.pretty &&
         <button class="uppy-FileInput-btn" type="button" onclick={this.handleClick}>
