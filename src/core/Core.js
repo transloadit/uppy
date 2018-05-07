@@ -390,7 +390,7 @@ class Uppy {
       id: fileID,
       name: fileName,
       extension: fileExtension || '',
-      meta: Object.assign({}, this.getState().meta, {
+      meta: Object.assign({}, this.getState().meta, file.meta, {
         name: fileName,
         type: fileType
       }),
