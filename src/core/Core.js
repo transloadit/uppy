@@ -322,10 +322,11 @@ class Uppy {
 
     if (allowedFileTypes) {
       const isCorrectFileType = allowedFileTypes.filter((type) => {
-        if (!file.type) return false
+        // if (!file.type) return false
 
         // is this is a mime-type
         if (type.indexOf('/') > -1) {
+          if (!file.type) return false
           return match(file.type, type)
         }
 
@@ -392,6 +393,7 @@ class Uppy {
       fileName = 'noname'
     }
     const fileExtension = Utils.getFileNameAndExtension(fileName).extension
+    console.log(fileExtension)
     const isRemote = file.isRemote || false
 
     const fileID = Utils.generateFileID(file)
