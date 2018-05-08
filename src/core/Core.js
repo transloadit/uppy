@@ -43,10 +43,10 @@ class Uppy {
       autoProceed: true,
       debug: false,
       restrictions: {
-        maxFileSize: false,
-        maxNumberOfFiles: false,
-        minNumberOfFiles: false,
-        allowedFileTypes: false
+        maxFileSize: null,
+        maxNumberOfFiles: null,
+        minNumberOfFiles: null,
+        allowedFileTypes: null
       },
       meta: {},
       onBeforeFileAdded: (currentFile, files) => currentFile,
