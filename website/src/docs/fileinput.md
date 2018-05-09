@@ -13,13 +13,13 @@ permalink: docs/fileinput/
 
 ```js
 uppy.use(FileInput, {
-  target: '.UppyForm',
+  target: null,
   allowMultipleFiles: true,
   pretty: true,
   inputName: 'files[]',
   locale: {
     strings: {
-      chooseFiles: 'Select to upload'
+      chooseFiles: 'Choose files'
     }
   }
 })
@@ -43,4 +43,4 @@ The `name` attribute for the `<input type="file">` element.
 
 ### `locale: {}`
 
-Custom text to show on the button when `pretty` is true. There is only one string that can be configured: `strings.chooseFiles`.
+Custom text to show on the button when `pretty` is true.

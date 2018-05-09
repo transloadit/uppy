@@ -16,7 +16,8 @@ uppy.use(DragDrop, {
   target: null,
   width: '100%',
   height: '100%',
-  note: '',
+  allowMultipleFiles: true,
+  note: null,
   locale: {
     strings: {
       dropHereOr: 'Drop files here or',
@@ -25,6 +26,22 @@ uppy.use(DragDrop, {
   }
 })
 ```
+
+### `target: null`
+
+DOM element, CSS selector, or plugin to place the drag and drop area into.
+
+### `width: '100%'`
+
+Drag and drop area width, set in inline CSS, so feel free to use percentage, pixels or other values that you like.
+
+### `height: '100%'`
+
+Drag and drop area height, set in inline CSS, so feel free to use percentage, pixels or other values that you like.
+
+### `allowMultipleFiles: true`
+
+Whether to allow user to select multiple files at once via the system file dialog.
 
 ### `note: null`
 
