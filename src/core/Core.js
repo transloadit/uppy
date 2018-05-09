@@ -1107,7 +1107,7 @@ class Uppy {
     // Not returning the `catch`ed promise, because we still want to return a rejected
     // promise from this method if the upload failed.
     lastStep.catch((err) => {
-      this.emit('error', err)
+      this.emit('error', err, uploadID)
 
       this._removeUpload(uploadID)
     })

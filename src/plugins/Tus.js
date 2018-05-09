@@ -60,6 +60,7 @@ module.exports = class Tus extends Plugin {
     const defaultOptions = {
       resume: true,
       autoRetry: true,
+      useFastRemoteRetry: true,
       retryDelays: [0, 1000, 3000, 5000]
     }
 
@@ -304,6 +305,17 @@ module.exports = class Tus extends Plugin {
       socket.on('error', (errData) => {
         const { message } = errData.error
         const error = Object.assign(new Error(message), { cause: errData.error })
+
+        // If the remote retry optimisation should not be used,
+        // close the socket—this will tell uppy-server to clear state and delete the file.
+        if (!this.opts.useFastRemoteRetry) {
+          this.resetUploaderReferences(file.id)
+          // Remove the serverToken so that a new one will be created for the retry.
+          this.uppy.setFileState(file.id, {
+            serverToken: null
+          })
+        }
+
         this.uppy.emit('upload-error', file, error)
         reject(error)
       })
