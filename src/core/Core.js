@@ -393,7 +393,6 @@ class Uppy {
       fileName = 'noname'
     }
     const fileExtension = Utils.getFileNameAndExtension(fileName).extension
-    console.log(fileExtension)
     const isRemote = file.isRemote || false
 
     const fileID = Utils.generateFileID(file)
