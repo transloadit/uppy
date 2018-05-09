@@ -61,7 +61,7 @@ module.exports = class Plugin {
       this.isTargetDOMEl = true
 
       this.updateUI = (state) => {
-        this.el = preact.render(this.render(state), targetElement, this.el)
+        this.el = preact.render(this.render(state), this.shadow, this.el)
       }
 
       this.uppy.log(`Installing ${callerPluginName} to a DOM element`)
@@ -71,7 +71,10 @@ module.exports = class Plugin {
         targetElement.innerHTML = ''
       }
 
-      this.el = preact.render(this.render(this.uppy.state), targetElement)
+      const wrapperEl = document.createElement('div')
+      targetElement.appendChild(wrapperEl)
+      this.shadow = wrapperEl.attachShadow({ mode: 'open' })
+      this.el = preact.render(this.render(this.uppy.state), this.shadow)
 
       return this.el
     }

@@ -69,20 +69,45 @@ module.exports = class FileInput extends Plugin {
       zIndex: -1
     }
 
-    return <div class="uppy uppy-FileInput-container">
-      <input class="uppy-FileInput-input"
-        style={this.opts.pretty && hiddenInputStyle}
-        type="file"
-        name={this.opts.inputName}
-        onchange={this.handleInputChange}
-        multiple={this.opts.allowMultipleFiles}
-        ref={(input) => { this.input = input }} />
-      {this.opts.pretty &&
-        <button class="uppy-FileInput-btn" type="button" onclick={this.handleClick}>
-          {this.i18n('chooseFiles')}
-        </button>
-      }
-    </div>
+    return (
+      <div>
+        <style>{`
+          .uppy-FileInput-container {
+            margin-bottom: 15px;
+          }
+
+          .uppy-FileInput-btn {
+            font-family: sans-serif;
+            font-size: 0.85em;
+            padding: 10px 15px;
+            color: blue;
+            border: 1px solid blue;
+            border-radius: 8px;
+            cursor: pointer;
+          }
+
+          .uppy-FileInput-btn:hover {
+            background-color: blue;
+            color: white;
+          }
+          
+        `}</style>
+        <div class="uppy uppy-FileInput-container">
+          <input class="uppy-FileInput-input"
+            style={this.opts.pretty && hiddenInputStyle}
+            type="file"
+            name={this.opts.inputName}
+            onchange={this.handleInputChange}
+            multiple={this.opts.allowMultipleFiles}
+            ref={(input) => { this.input = input }} />
+          {this.opts.pretty &&
+            <button class="uppy-FileInput-btn" type="button" onclick={this.handleClick}>
+              {this.i18n('chooseFiles')}
+            </button>
+          }
+        </div>
+      </div>
+    )
   }
 
   install () {
