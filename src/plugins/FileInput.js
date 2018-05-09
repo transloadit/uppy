@@ -82,7 +82,7 @@ module.exports = class FileInput extends Plugin {
         onchange={this.handleInputChange}
         multiple={restrictions.maxNumberOfFiles !== 1}
         accept={restrictions.allowedFileTypes}
-        ref={(input) => { this.input = input }} />
+        ref={(input) => { this.input = input }}
         value="" />
       {this.opts.pretty &&
         <button class="uppy-FileInput-btn" type="button" onclick={this.handleClick}>
