@@ -14,7 +14,6 @@ permalink: docs/fileinput/
 ```js
 uppy.use(FileInput, {
   target: null,
-  allowMultipleFiles: true,
   pretty: true,
   inputName: 'files[]',
   locale: {
@@ -25,13 +24,11 @@ uppy.use(FileInput, {
 })
 ```
 
+> Note that certain [restrictions set in Uppy’s main options](/docs/uppy#restrictions), namely `maxNumberOfFiles` and `allowedFileTypes`, affect the system file picker dialog. If `maxNumberOfFiles: 1`, users will only be able to select one file, and `allowedFileTypes: ['image/*, .jpg']` means only image or files with `.jpg` extension will be selectable.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the file input into.
-
-### `allowMultipleFiles: true`
-
-Whether to allow the user to select multiple files at once.
 
 ### `pretty: true`
 

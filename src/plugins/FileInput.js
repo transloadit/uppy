@@ -19,7 +19,6 @@ module.exports = class FileInput extends Plugin {
     // Default options
     const defaultOptions = {
       target: null,
-      allowMultipleFiles: true,
       pretty: true,
       inputName: 'files[]',
       locale: defaultLocale
