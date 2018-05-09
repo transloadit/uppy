@@ -128,7 +128,7 @@ module.exports = class DragDrop extends Plugin {
               class="uppy-DragDrop-input"
               type="file"
               name="files[]"
-              multiple={restrictions.maxNumberOfFiles !== 1 || !restrictions.maxNumberOfFiles}
+              multiple={restrictions.maxNumberOfFiles !== 1}
               accept={restrictions.allowedFileTypes}
               ref={(input) => {
                 this.input = input

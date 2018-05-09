@@ -28,7 +28,7 @@ class ActionBrowseTagline extends Component {
           tabindex="-1"
           type="file"
           name="files[]"
-          multiple={this.props.maxNumberOfFiles !== 1 || !this.props.maxNumberOfFiles}
+          multiple={this.props.maxNumberOfFiles !== 1}
           onchange={this.props.handleInputChange}
           accept={this.props.allowedFileTypes}
           value=""
