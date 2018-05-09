@@ -398,15 +398,16 @@ class Uppy {
 
     const fileID = Utils.generateFileID(file)
 
+    const meta = file.meta || {}
+    meta.name = fileName
+    meta.type = fileType
+
     const newFile = {
       source: file.source || '',
       id: fileID,
       name: fileName,
       extension: fileExtension || '',
-      meta: Object.assign({}, this.getState().meta, {
-        name: fileName,
-        type: fileType
-      }),
+      meta: Object.assign({}, this.getState().meta, meta),
       type: fileType,
       data: file.data,
       progress: {

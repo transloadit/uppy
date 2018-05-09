@@ -850,6 +850,28 @@ describe('src/Core', () => {
         boo: 'moo'
       })
     })
+
+    it('should merge meta data when add file', () => {
+      const core = new Core({
+        meta: { foo2: 'bar2' }
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        meta: {
+          resize: 5000
+        },
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      const fileId = Object.keys(core.state.files)[0]
+      expect(core.state.files[fileId].meta).toEqual({
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        foo2: 'bar2',
+        resize: 5000
+      })
+    })
   })
 
   describe('progress', () => {

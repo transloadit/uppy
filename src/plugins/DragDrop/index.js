@@ -25,9 +25,11 @@ module.exports = class DragDrop extends Plugin {
     // Default options
     const defaultOpts = {
       target: null,
+      inputName: 'files[]',
+      allowMultipleFiles: true,
       width: '100%',
       height: '100%',
-      note: '',
+      note: null,
       locale: defaultLocale
     }
 
@@ -111,12 +113,16 @@ module.exports = class DragDrop extends Plugin {
       position: 'absolute',
       zIndex: -1
     }
-    const DragDropClass = `uppy uppy-DragDrop-container ${this.isDragDropSupported ? 'uppy-DragDrop--is-dragdrop-supported' : ''}`
+    const DragDropClass = `uppy-Root uppy-DragDrop-container ${this.isDragDropSupported ? 'uppy-DragDrop--is-dragdrop-supported' : ''}`
     const DragDropStyle = {
       width: this.opts.width,
       height: this.opts.height
     }
     const restrictions = this.uppy.opts.restrictions
+
+    // empty value="" on file input, so that the input is cleared after a file is selected,
+    // because Uppy will be handling the upload and so we can select same file
+    // after removing — otherwise browser thinks it’s already selected
     return (
       <div class={DragDropClass} style={DragDropStyle}>
         <div class="uppy-DragDrop-inner">
@@ -127,13 +133,14 @@ module.exports = class DragDrop extends Plugin {
             <input style={hiddenInputStyle}
               class="uppy-DragDrop-input"
               type="file"
-              name="files[]"
+              name={this.opts.inputName}
               multiple={restrictions.maxNumberOfFiles !== 1}
               accept={restrictions.allowedFileTypes}
               ref={(input) => {
                 this.input = input
               }}
-              onchange={this.handleInputChange} />
+              onchange={this.handleInputChange} 
+              value="" />
             {this.i18n('dropHereOr')} <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
           </label>
           <span class="uppy-DragDrop-note">{this.opts.note}</span>
