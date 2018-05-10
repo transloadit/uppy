@@ -96,9 +96,10 @@ What we need to do to release Uppy 1.0
 
 ## 0.25.0
 
+To Be Released: 2018-05-31.
+
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
-- [ ] dashboard: option for Boolean metadata #454 (@arturi)
 - [ ] core: figure out per-plugin locales and i18n strings packs #491
 - [ ] goldenretriever: confirmation before restore #443
 - [ ] goldenretriever: add “ghost” files (@arturi)
@@ -112,20 +113,37 @@ What we need to do to release Uppy 1.0
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
-- [ ] core: add more mime-to-extension mappings from https://github.com/micnic/mime.json/blob/master/index.json (which ones?) (@arturi, @goto-bus-stop)
+- [ ] core: add more mime-to-extension mappings from https://github.com/micnic/mime.json/blob/master/index.json (which ones?) # (@arturi, @goto-bus-stop)
 - [ ] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
 - [ ] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
+- [ ] core: Pass allowedFileTypes and maxNumberOfFiles to input[type=file] (@arturi / #814)
 - [x] statusbar: add some spacing between text elements (#760 / @goto-bus-stop)
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
 - [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/.
 - [ ] docs: add note in docs or solve the .run() issue, see #756
-- [x] core: add `uppy.getFiles()` method (@goto-bus-stop / #770)
-- [x] dashboard: fix duplicate plugin IDs, see #702 (@goto-bus-stop)
-- [x] react: update propTypes (#776 / @goto-bus-stop)
-- [x] dashboard/statusbar: fix some unicode characters showing up as gibberish (#787 / @goto-bus-stop)
-- [ ] core: customizing metadata fields, see #809 and related
+
+- [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
+
+## 0.24.3
+
+Released: 2018-05-10.
+
+- core: add `uppy.getFiles()` method (@goto-bus-stop / #770)
+- core: merge meta data when add file (#810 / @mrbatista)
+- dashboard: fix duplicate plugin IDs, see #702 (@goto-bus-stop)
+- dashboard/statusbar: fix some unicode characters showing up as gibberish (#787 / @goto-bus-stop)
+- dashboard: Fix grid item height in remote providers with few files (#791 / @goto-bus-stop)
+- dashboard: Add `rel="noopener noreferrer"` to links containing `target="_blank" (#767 / @kvz)
+- instagram: add extensions to instagram files (@ifedapoolarewaju)
+- transloadit: More robust failure handling for Transloadit, closes #708 
+(#805 / @goto-bus-stop)
+- docs: Document "headers" upload parameter in AwsS3 plugin (#780 / @janko-m)
+- docs: Update some `uppy.state` docs to align with the Stores feature (#792 / @goto-bus-stop)
+- dragdrop: Add `inputName` option like FileInput has, set empty value="", closes #729 (#778 / @goto-bus-stop, @arturi)
+- docs: Google Cloud Storage setup for the AwsS3 plugin (#777 / goto-bus-stop)
+- react: Update React component PropTypes (#776 / @arturi)
 
 ## 0.24.2
 
