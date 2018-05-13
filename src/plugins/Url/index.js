@@ -4,7 +4,6 @@ const { h } = require('preact')
 const { RequestClient } = require('../../server')
 const UrlUI = require('./UrlUI.js')
 const { toArray } = require('../../core/Utils')
-require('whatwg-fetch')
 
 /**
  * Url

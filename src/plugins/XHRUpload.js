@@ -310,49 +310,38 @@ module.exports = class XHRUpload extends Plugin {
         fields[name] = file.meta[name]
       })
 
-      fetch(file.remote.url, {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Object.assign({}, file.remote.body, {
+      file.remote.provider.post(
+        file.remote.url,
+        Object.assign({}, file.remote.body, {
           endpoint: opts.endpoint,
           size: file.data.size,
           fieldname: opts.fieldName,
           metadata: fields,
           headers: opts.headers
-        }))
-      })
+        })
+      )
       .then((res) => {
-        if (res.status < 200 && res.status > 300) {
-          return reject(res.statusText)
-        }
+        const token = res.token
+        const host = getSocketHost(file.remote.host)
+        const socket = new UppySocket({ target: `${host}/api/${token}` })
 
-        res.json().then((data) => {
-          const token = data.token
-          const host = getSocketHost(file.remote.host)
-          const socket = new UppySocket({ target: `${host}/api/${token}` })
+        socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
-          socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+        socket.on('success', (data) => {
+          const resp = opts.getResponseData(data.response.responseText, data.response)
+          const uploadURL = resp[opts.responseUrlFieldName]
+          this.uppy.emit('upload-success', file, resp, uploadURL)
+          socket.close()
+          return resolve()
+        })
 
-          socket.on('success', (data) => {
-            const resp = opts.getResponseData(data.response.responseText, data.response)
-            const uploadURL = resp[opts.responseUrlFieldName]
-            this.uppy.emit('upload-success', file, resp, uploadURL)
-            socket.close()
-            return resolve()
-          })
-
-          socket.on('error', (errData) => {
-            const resp = errData.response
-            const error = resp
-              ? opts.getResponseError(resp.responseText, resp)
-              : Object.assign(new Error(errData.error.message), { cause: errData.error })
-            this.uppy.emit('upload-error', file, error)
-            reject(error)
-          })
+        socket.on('error', (errData) => {
+          const resp = errData.response
+          const error = resp
+            ? opts.getResponseError(resp.responseText, resp)
+            : Object.assign(new Error(errData.error.message), { cause: errData.error })
+          this.uppy.emit('upload-error', file, error)
+          reject(error)
         })
       })
     })
