@@ -203,9 +203,6 @@ module.exports = class Tus extends Plugin {
       if (!file.isPaused) {
         upload.start()
       }
-      if (!file.isRestored) {
-        this.uppy.emit('upload-started', file, upload)
-      }
     })
   }
 
@@ -226,8 +223,6 @@ module.exports = class Tus extends Plugin {
           .then(() => resolve())
           .catch(reject)
       }
-
-      this.uppy.emit('upload-started', file)
 
       fetch(file.remote.url, {
         method: 'post',
