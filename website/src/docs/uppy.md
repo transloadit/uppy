@@ -69,7 +69,7 @@ meta: {
 
 This global metadata is added to each file in Uppy. It can be modified with two methods:
 
-1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setmeta-data) — set or update meta for all files.
+1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setMeta-data) — set or update meta for all files.
 2. [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file.
 
 Metadata from each file is then attached to uploads in [Tus](/docs/tus/) and [XHRUpload](/docs/xhrupload/) plugins.
