@@ -331,7 +331,7 @@ class Uppy {
         }
 
         // otherwise this is likely an extension
-        if (type.startsWith('.') > -1) {
+        if (type[0] === '.') {
           if (file.extension === type.substr(1)) {
             return file.extension
           }
