@@ -183,8 +183,11 @@ The default form field for file uploads is `files[]`, which means you have to ac
 // upload.php
 $files = $_FILES['files'];
 $file_path = $files['tmp_name'][0]; // temporary upload path of the first file
-move_uploaded_file($file_path, './img/img.png'); // save the file at `img/img.png`
+$file_name = $_POST['name']; // desired name of the file
+move_uploaded_file($file_path, './img/' . basename($file_name)); // save the file in `img/`
 ```
+
+Note how we're using `$_POST['name']` instead of `$my_file['name']`. `$my_file['name']` contains the original name of the file on the user's device. `$_POST['name']` contains the `name` metadata value for the uploaded file, which can be edited by the user using the [Dashboard](/docs/dashboard).
 
 Set a custom `fieldName` to make working with the `$_FILES` array a bit less convoluted:
 
@@ -201,7 +204,7 @@ uppy.use(XHRUpload, {
 // upload.php
 $my_file = $_FILES['my_file'];
 $file_path = $my_file['tmp_name']; // temporary upload path of the file
-$file_name = $my_file['name']; // original name of the file
+$file_name = $_POST['name']; // desired name of the file
 move_uploaded_file($file_path, './img/' . basename($file_name)); // save the file at `img/FILE_NAME`
 ```
 
