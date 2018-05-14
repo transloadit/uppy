@@ -1042,7 +1042,7 @@ describe('src/Core', () => {
 
     xit('should enforce the minNumberOfFiles rule', () => {})
 
-    it('should enfore the allowedFileTypes rule', () => {
+    it('should enforce the allowedFileTypes rule', () => {
       const core = new Core({
         autoProceed: false,
         restrictions: {
@@ -1061,6 +1061,28 @@ describe('src/Core', () => {
       } catch (err) {
         expect(err).toMatchObject(new Error('You can only upload: image/gif, image/png'))
         expect(core.state.info.message).toEqual('You can only upload: image/gif, image/png')
+      }
+    })
+
+    it('should enforce the allowedFileTypes rule with file extensions', () => {
+      const core = new Core({
+        autoProceed: false,
+        restrictions: {
+          allowedFileTypes: ['.gif', '.jpg', '.jpeg']
+        }
+      })
+
+      try {
+        core.addFile({
+          source: 'jest',
+          name: 'foo2.png',
+          type: '',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+        throw new Error('should have thrown')
+      } catch (err) {
+        expect(err).toMatchObject(new Error('You can only upload: .gif, .jpg, .jpeg'))
+        expect(core.state.info.message).toEqual('You can only upload: .gif, .jpg, .jpeg')
       }
     })
 
@@ -1295,7 +1317,7 @@ describe('src/Core', () => {
       })
 
       expect(core.opts.restrictions.maxNumberOfFiles).toBe(3)
-      expect(core.opts.restrictions.minNumberOfFiles).toBe(false)
+      expect(core.opts.restrictions.minNumberOfFiles).toBe(null)
     })
   })
 })
