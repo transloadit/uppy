@@ -74,14 +74,15 @@ What we need to do to release Uppy 1.0
 
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
 - [ ] QA: test in multiple browsers and mobile devices again
-- [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
+- [x] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
 - [ ] QA: tests for some plugins
 - [x] docs: on using plugins, all options, list of plugins, i18n
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs
-- [ ] refactoring: possibly add CSS-in-JS
+- [ ] refactoring: possibly add CSS-in-JS, style encapsulation
 - [x] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
 - [ ] refactoring: split uppy into small packages, lerna repo?
 - [x] QA: tests for core and utils
+- [ ] feature: basic Reacte Native support
 - [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
 - [x] feature: beta file recovering after closed tab / browser crash
 - [x] feature: easy integration with React (UppyReact components)
