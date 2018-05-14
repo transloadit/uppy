@@ -59,8 +59,7 @@ Optionally provide rules and conditions for which files can be selected.
 
 `maxNumberOfFiles` affects the number of files user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1` they will only be able to select a single file, otherwise, when `null` or other number, they will be able to select multiple files.
 
-`allowedFileTypes` array also gets passed to the system file dialog (see [`input[type=file]` accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types)), so user will only be able to select images, for example.
-
+`allowedFileTypes` gets passed to the system file dialog via [`<input>`]((https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types))’s accept attribute, so only files matching these types will be selectable.
 
 ### `meta: {}`
 
