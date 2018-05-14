@@ -137,8 +137,7 @@ Released: 2018-05-10.
 - dashboard: Fix grid item height in remote providers with few files (#791 / @goto-bus-stop)
 - dashboard: Add `rel="noopener noreferrer"` to links containing `target="_blank" (#767 / @kvz)
 - instagram: add extensions to instagram files (@ifedapoolarewaju)
-- transloadit: More robust failure handling for Transloadit, closes #708 
-(#805 / @goto-bus-stop)
+- transloadit: More robust failure handling for Transloadit, closes #708 (#805 / @goto-bus-stop)
 - docs: Document "headers" upload parameter in AwsS3 plugin (#780 / @janko-m)
 - docs: Update some `uppy.state` docs to align with the Stores feature (#792 / @goto-bus-stop)
 - dragdrop: Add `inputName` option like FileInput has, set empty value="", closes #729 (#778 / @goto-bus-stop, @arturi)
