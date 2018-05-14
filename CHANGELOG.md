@@ -119,14 +119,22 @@ To Be Released: 2018-05-31.
 - [ ] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
 - [ ] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
-- [ ] core: Pass allowedFileTypes and maxNumberOfFiles to input[type=file] (@arturi / #814)
-- [x] statusbar: add some spacing between text elements (#760 / @goto-bus-stop)
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
 - [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/.
 - [ ] docs: add note in docs or solve the .run() issue, see #756
-
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
+
+## 0.24.4
+
+Released: 2018-05-14.
+
+- core: Pass `allowedFileTypes` and `maxNumberOfFiles` to input[type=file] in UI components: Dashboard, DragDrop, FileInput (#814 / @arturi)
+- transloadit: Update Transloadit plugin's Uppy Server handling (#804 / @goto-bus-stop)
+- tus: respect `limit` option for upload parameter requests (#817 / @ap--)
+- docs: doc: Explain name `metadata` vs. `$_FILES[]["name"]` (#1c1bf2e / @goto-bus-stop)
+- dashboard: improve “powered by” icon (#0284c8e / @arturi)
+- statusbar: add default string for cancel button (#822 / @mrbatista)
 
 ## 0.24.3
 
@@ -145,6 +153,7 @@ Released: 2018-05-10.
 - dragdrop: Add `inputName` option like FileInput has, set empty value="", closes #729 (#778 / @goto-bus-stop, @arturi)
 - docs: Google Cloud Storage setup for the AwsS3 plugin (#777 / goto-bus-stop)
 - react: Update React component PropTypes (#776 / @arturi)
+- statusbar: add some spacing between text elements (#760 / @goto-bus-stop)
 
 ## 0.24.2
 
