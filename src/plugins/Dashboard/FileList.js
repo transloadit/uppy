@@ -18,7 +18,9 @@ module.exports = (props) => {
           {h(ActionBrowseTagline, {
             acquirers: props.acquirers,
             handleInputChange: props.handleInputChange,
-            i18n: props.i18n
+            i18n: props.i18n,
+            allowedFileTypes: props.allowedFileTypes,
+            maxNumberOfFiles: props.maxNumberOfFiles
           })}
         </div>
         { props.note && <div class="uppy-Dashboard-note">{props.note}</div> }
