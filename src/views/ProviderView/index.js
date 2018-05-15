@@ -498,7 +498,7 @@ module.exports = class ProviderView {
       }
 
       // split url because chrome adds '#' to redirects
-      if (authWindowUrl && authWindowUrl.split('#')[0] === redirect) {
+      if (authWindowUrl && (authWindowUrl === redirect || authWindowUrl.split('#')[0] === redirect)) {
         authWindow.close()
         this._loaderWrapper(this.Provider.checkAuth(), this.plugin.onAuth, this.handleError)
       } else {
