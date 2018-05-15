@@ -51,12 +51,10 @@ module.exports = class UppySocket {
   }
 
   on (action, handler) {
-    console.log(action)
     this.emitter.on(action, handler)
   }
 
   emit (action, payload) {
-    console.log(action)
     this.emitter.emit(action, payload)
   }
 
@@ -67,7 +65,6 @@ module.exports = class UppySocket {
   _handleMessage (e) {
     try {
       const message = JSON.parse(e.data)
-      console.log(message)
       this.emit(message.action, message.payload)
     } catch (err) {
       console.log(err)
