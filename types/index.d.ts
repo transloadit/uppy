@@ -369,7 +369,10 @@ export namespace core {
 		id: string;
 		isPaused: boolean;
 		isRemote: boolean;
-		meta: { name: "00300068088_64c66e75.zip", type: "application/zip" }
+		meta: {
+			name: string;
+			type: string;
+		};
 		name: string;
 		preview: string;
 		progress: {
