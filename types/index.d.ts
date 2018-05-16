@@ -363,11 +363,37 @@ export namespace core {
 		uninstall(): void;
 	}
 	type LogType = 'info' | 'warning' | 'error';
+	interface SuccessedFile {
+		data: File;
+		extension: string;
+		id: string;
+		isPaused: boolean;
+		isRemote: boolean;
+		meta: { name: "00300068088_64c66e75.zip", type: "application/zip" }
+		name: string;
+		preview: string;
+		progress: {
+			uploadStarted: number;
+			uploadComplete: boolean;
+			percentage: number;
+			bytesUploaded: number;
+			bytesTotal: number;
+		};
+		remote: string;
+		size: number;
+		source: string;
+		type: string;
+		uploadURL: string;
+	}
+	interface Result {
+		failed: any[];
+		successful: SuccessedFile[];
+	}
 	class Uppy {
 		constructor(conf: Partial<CoreConfig>);
 		on(event: string, callback: (...args: any[]) => any): Uppy;
 		on(event: 'upload-success', callback: (fileCount: File, body: any, uploadurl: string) => any): Uppy;
-		on(event: 'result', callback: (result: any) => any): Uppy;
+		on(event: 'complete', callback: (result: Result) => void): Uppy;
 		off(event: string, callback: any): Uppy;
 		updateAll(state: Store.State): void;
 		setState(patch: Store.State): void;
