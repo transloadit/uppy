@@ -36,4 +36,8 @@ URL to upload to, where your tus.io server is running.
 
 Whether to auto-retry the upload when the user's internet connection is back online after an outage.
 
+### `limit: 0`
+
+Limit the amount of uploads going on at the same time. Passing `0` means no limit.
+
 [tus-js-client]: https://github.com/tus/tus-js-client

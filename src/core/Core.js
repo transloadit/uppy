@@ -43,10 +43,10 @@ class Uppy {
       autoProceed: true,
       debug: false,
       restrictions: {
-        maxFileSize: false,
-        maxNumberOfFiles: false,
-        minNumberOfFiles: false,
-        allowedFileTypes: false
+        maxFileSize: null,
+        maxNumberOfFiles: null,
+        minNumberOfFiles: null,
+        allowedFileTypes: null
       },
       meta: {},
       onBeforeFileAdded: (currentFile, files) => currentFile,
@@ -322,8 +322,20 @@ class Uppy {
 
     if (allowedFileTypes) {
       const isCorrectFileType = allowedFileTypes.filter((type) => {
-        if (!file.type) return false
-        return match(file.type, type)
+        // if (!file.type) return false
+
+        // is this is a mime-type
+        if (type.indexOf('/') > -1) {
+          if (!file.type) return false
+          return match(file.type, type)
+        }
+
+        // otherwise this is likely an extension
+        if (type[0] === '.') {
+          if (file.extension === type.substr(1)) {
+            return file.extension
+          }
+        }
       }).length > 0
 
       if (!isCorrectFileType) {
