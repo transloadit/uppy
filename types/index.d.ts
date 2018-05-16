@@ -58,7 +58,6 @@ export namespace plugins {
 		note: string;
 		showLinkToFileUploadResult: boolean;
 		proudlyDisplayPoweredByUppy: boolean;
-		target: string | core.Plugin;
 		metaFields: string[];
 		plugins: core.Plugin[];
 		disableStatusBar: boolean;
@@ -95,7 +94,6 @@ export namespace plugins {
 		uninstall(): void;
 	}
 	interface DragDropOptions extends core.CoreConfig {
-		target: string | core.Plugin;
 		inputName: string;
 		allowMultipleFiles: boolean;
 		width: string;
@@ -107,9 +105,6 @@ export namespace plugins {
 		checkDragDropSupport(): void;
 		handleDrop(files: File[] | FileList): void;
 		handleInputChange(ev: Event): void;
-		render(state: Store.State): void;
-		install(): void;
-		uninstall(): void;
 	}
 	interface FileOptions {
 		headers: any;
@@ -150,11 +145,190 @@ export namespace plugins {
 		}>;
 		handleUpload(fileIDs: string[]): Promise<null>;
 	}
+	interface GoogleDriveOptions extends core.CoreConfig {
+		expires: number;
+		serviceWorker: boolean;
+		indexedDB: any;
+		host: string;
+	}
+	class GoogleDrive extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<GoogleDriveOptions>);
+		loadFilesStateFromLocalStorage(): void;
+		getWaitingFiles(): { [fileID: string]: File };
+		getUploadingFiles(): { [fileID: string]: File };
+		saveFilesStateToLocalStorage(): void;
+		loadFileBlobsFromServiceWorker(): void;
+		loadFileBlobsFromIndexedDB(): void;
+		deleteBlobs(): Promise<any>;
+	}
+	interface InstagramOptions extends core.CoreConfig {
+		host: string;
+	}
+	class Instagram extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<InstagramOptions>);
+	}
+	interface WebcamOptions extends core.CoreConfig {
+		countdown: boolean;
+	}
+	interface WebcamMedia {
+		source: string;
+		name: string;
+		data: File;
+		type: string;
+	}
+	class Webcam extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<WebcamOptions>);
+		isSupported(): boolean;
+		getConstraints(): { audio: boolean; video: boolean; };
+		start(): Promise<void>;
+		startRecording(): void;
+		stopRecording(): Promise<void>;
+		stop(): void;
+		getVideoElement(): HTMLVideoElement;
+		oneTwoThreeSmile(): Promise<void>;
+		takeSnapshot(): void;
+		getImage(): Promise<WebcamMedia>;
+		getVideo(): Promise<WebcamMedia>;
+		focus(): void;
+	}
+	interface TusOptions extends core.CoreConfig {
+		limit: number;
+		endpoint: string;
+		uploadUrl: string;
+		useFastRemoteRetry: boolean;
+		resume: boolean;
+		autoRetry: boolean;
+	}
+	class Tus extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<TusOptions>);
+	}
+	interface StatusBarOptions extends core.CoreConfig {
+		showProgressDetails: boolean;
+		hideUploadButton: boolean;
+		hideAfterFinish: boolean;
+	}
+	class StatusBar extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<StatusBarOptions>);
+	}
+	interface UrlOptions extends core.CoreConfig {
+		host: string;
+	}
+	class Url extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<UrlOptions>);
+	}
+	interface DropboxOptions extends core.CoreConfig {
+		host: string;
+	}
+	class Dropbox extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<DropboxOptions>);
+	}
+	interface AwsS3Options extends core.CoreConfig {
+		limit: number;
+		host: string;
+		timeout: number;
+	}
+	class AwsS3 extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<AwsS3Options>);
+	}
+	interface GoldenRetrieverOptions extends core.CoreConfig {
+		expires: number;
+		serviceWorker: boolean;
+		indexedDB: any;
+	}
+	class GoldenRetriever extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<GoldenRetrieverOptions>);
+	}
+	interface ThumbnailGeneratorOptions extends core.CoreConfig {
+		thumbnailWidth: number;
+	}
+	class ThumbnailGenerator extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<ThumbnailGeneratorOptions>);
+	}
+	interface TransloaditOptions extends core.CoreConfig {
+		params: any;
+		service: string;
+		waitForEncoding: boolean;
+		waitForMetadata: boolean;
+		importFromUploadURLs: boolean;
+		alwaysRunAssembly: boolean;
+	}
+	class Transloadit extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<TransloaditOptions>);
+	}
+	interface DummyOptions extends core.CoreConfig {
+	}
+	class Dummy extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<DummyOptions>);
+	}
+	interface FileInputOptions extends core.CoreConfig {
+		pretty: boolean;
+		inputName: string;
+	}
+	class FileInput extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<FileInputOptions>);
+	}
+	interface FormOptions extends core.CoreConfig {
+		getMetaFromForm: boolean;
+		addResultToForm: boolean;
+		submitOnSuccess: boolean;
+		triggerUploadOnSubmit: boolean;
+		resultName: string;
+	}
+	class Form extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<FormOptions>);
+	}
+	interface TypeColor {
+		[type: string]: {
+			bg: string | number;
+			text: string | number;
+		};
+	}
+	interface InformerOptions extends core.CoreConfig {
+		typeColors: TypeColor;
+	}
+	class Informer extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<InformerOptions>);
+	}
+	interface MagicLogOptions extends core.CoreConfig {
+	}
+	class MagicLog extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<MagicLogOptions>);
+	}
+	interface ProgressBarOptions extends core.CoreConfig {
+		hideAfterFinish: boolean;
+		fixed: boolean;
+	}
+	class ProgressBar extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<ProgressBarOptions>);
+	}
+	interface ReduxDevToolsOptions extends core.CoreConfig {
+	}
+	class ReduxDevTools extends core.Plugin {
+		constructor(uppy: core.Uppy, opts: Partial<ReduxDevToolsOptions>);
+	}
 }
 
 export const Dashboard: plugins.Dashboard;
 export const DragDrop: plugins.DragDrop;
 export const XHRUpload: plugins.XHRUpload;
+export const GoogleDrive: plugins.GoogleDrive;
+export const Instagram: plugins.Instagram;
+export const Webcam: plugins.Webcam;
+export const Tus: plugins.Tus;
+export const StatusBar: plugins.StatusBar;
+export const Url: plugins.Url;
+export const Dropbox: plugins.Dropbox;
+export const AwsS3: plugins.AwsS3;
+export const GoldenRetriever: plugins.GoldenRetriever;
+export const ThumbnailGenerator: plugins.ThumbnailGenerator;
+export const Transloadit: plugins.Transloadit;
+export const Dummy: plugins.Dummy;
+export const FileInput: plugins.FileInput;
+export const Form: plugins.Form;
+export const Informer: plugins.Informer;
+export const MagicLog: plugins.MagicLog;
+export const ProgressBar: plugins.ProgressBar;
+export const ReduxDevTools: plugins.ReduxDevTools;
 
 export namespace core {
 	interface CoreConfig {
@@ -167,6 +341,7 @@ export namespace core {
 			minNumberOfFiles: false,
 			allowedFileTypes: false
 		};
+		target: string | Plugin;
 		meta: any;
 		// onBeforeFileAdded: (currentFile, files) => currentFile,
 		// onBeforeUpload: (files) => files,
@@ -190,8 +365,9 @@ export namespace core {
 	type LogType = 'info' | 'warning' | 'error';
 	class Uppy {
 		constructor(conf: Partial<CoreConfig>);
-		on(event: string, callback: any): Uppy;
+		on(event: string, callback: (...args: any[]) => any): Uppy;
 		on(event: 'upload-success', callback: (fileCount: File, body: any, uploadurl: string) => any): Uppy;
+		on(event: 'result', callback: (result: any) => any): Uppy;
 		off(event: string, callback: any): Uppy;
 		updateAll(state: Store.State): void;
 		setState(patch: Store.State): void;
@@ -225,6 +401,24 @@ export namespace core {
 		use(Plugin: plugins.Dashboard, opts: Partial<plugins.DashboardOptions>): Uppy;
 		use(Plugin: plugins.DragDrop, opts: Partial<plugins.DragDropOptions>): Uppy;
 		use(Plugin: plugins.XHRUpload, opts: Partial<plugins.XHRUploadOptions>): Uppy;
+		use(Plugin: plugins.GoogleDrive, opts: Partial<plugins.GoogleDriveOptions>): Uppy;
+		use(Plugin: plugins.Instagram, opts: Partial<plugins.InstagramOptions>): Uppy;
+		use(Plugin: plugins.Webcam, opts: Partial<plugins.WebcamOptions>): Uppy;
+		use(Plugin: plugins.Tus, opts: Partial<plugins.TusOptions>): Uppy;
+		use(Plugin: plugins.StatusBar, opts: Partial<plugins.StatusBarOptions>): Uppy;
+		use(Plugin: plugins.Url, opts: Partial<plugins.UrlOptions>): Uppy;
+		use(Plugin: plugins.Dropbox, opts: Partial<plugins.DropboxOptions>): Uppy;
+		use(Plugin: plugins.AwsS3, opts: Partial<plugins.AwsS3Options>): Uppy;
+		use(Plugin: plugins.GoldenRetriever, opts: Partial<plugins.GoldenRetrieverOptions>): Uppy;
+		use(Plugin: plugins.ThumbnailGenerator, opts: Partial<plugins.ThumbnailGeneratorOptions>): Uppy;
+		use(Plugin: plugins.Transloadit, opts: Partial<plugins.TransloaditOptions>): Uppy;
+		use(Plugin: plugins.Dummy, opts: Partial<plugins.DummyOptions>): Uppy;
+		use(Plugin: plugins.FileInput, opts: Partial<plugins.FileInputOptions>): Uppy;
+		use(Plugin: plugins.Form, opts: Partial<plugins.FormOptions>): Uppy;
+		use(Plugin: plugins.Informer, opts: Partial<plugins.InformerOptions>): Uppy;
+		use(Plugin: plugins.MagicLog, opts: Partial<plugins.MagicLogOptions>): Uppy;
+		use(Plugin: plugins.ProgressBar, opts: Partial<plugins.ProgressBarOptions>): Uppy;
+		use(Plugin: plugins.ReduxDevTools, opts: Partial<plugins.ReduxDevToolsOptions>): Uppy;
 		getPlugin(name: string): Plugin;
 		iteratePlugins(method: any): void;
 		removePlugin(instance: Plugin): void;
@@ -239,4 +433,4 @@ export namespace core {
 	}
 }
 
-export function Core(conf: Partial<core.CoreConfig>): core.Uppy;
+export function Core(conf?: Partial<core.CoreConfig>): core.Uppy;
