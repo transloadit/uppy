@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
   "unpkg": "dist/uppy.min.js",
+  "types": "types/index.d.ts",
   "files": [
     "src/",
     "lib/",
