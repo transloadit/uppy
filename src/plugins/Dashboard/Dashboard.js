@@ -43,7 +43,7 @@ module.exports = function Dashboard (props) {
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onpaste={props.handlePaste}>
 
-      <div class="uppy-Dashboard-overlay" tabindex="-1" onclick={props.handleClickOutside} />
+      <div class="uppy-Dashboard-overlay" tabindex={-1} onclick={props.handleClickOutside} />
 
       <div class="uppy-Dashboard-inner"
         aria-modal={!props.inline && 'true'}
