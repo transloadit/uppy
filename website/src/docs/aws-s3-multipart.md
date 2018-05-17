@@ -99,3 +99,21 @@ Return a Promise for an object with properties:
  - `location` - **(Optional)** A publically accessible URL to the object in the S3 bucket.
 
 The default implementation calls out to Uppy Server's S3 signing endpoints.
+
+## S3 Bucket Configuration
+
+S3 buckets do not allow public uploads by default.  In order to allow Uppy to upload to a bucket directly, its CORS permissions need to be configured.
+
+This process is described in the [AwsS3 documentation](/docs/aws-s3/#S3-Bucket-configuration).
+
+On top of the configuration mentioned there, the `ETag` header must also be whitelisted:
+
+```xml
+<CORSRule>
+  <AllowedMethod>PUT</AllowedMethod>
+  <!-- ... all your existingCORS config goes here ... -->
+
+  <!-- The magic: -->
+  <ExposeHeader>ETag</ExposeHeader>
+</CORSRule>
+```
