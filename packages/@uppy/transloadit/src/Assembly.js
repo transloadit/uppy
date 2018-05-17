@@ -66,6 +66,7 @@ class TransloaditAssembly extends Emitter {
   _connectSocket () {
     const parsed = parseUrl(this.status.websocket_url)
     const socket = io().connect(parsed.origin, {
+      transports: ['websocket'],
       path: parsed.pathname
     })
 
