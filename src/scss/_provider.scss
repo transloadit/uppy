@@ -404,22 +404,3 @@
     margin-right: 10px;
   }
 }
-
-.uppy-ProviderBrowser-doneBtn {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-  z-index: $zIndex-3;
-  width: 50px;
-  height: 50px;
-
-  .uppy-Dashboard--wide & {
-    width: 60px;
-    height: 60px;
-  }
-}
-
-.uppy-ProviderBrowser-doneBtn .UppyIcon {
-  width: 45%;
-  height: 45%;
-}
