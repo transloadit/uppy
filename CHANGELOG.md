@@ -67,6 +67,7 @@ Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] webcam: Stop recording when file size is exceeded, should be possible given how the MediaRecorder API works
 - [ ] dashboard: add option to disable uploading from local disk #657
 - [ ] dashboard: display data like image resolution on file cards #783
+- [ ] server: pass metadata to S3 `getKey` option, see https://github.com/transloadit/uppy/issues/689
 
 ## 1.0 Goals
 
