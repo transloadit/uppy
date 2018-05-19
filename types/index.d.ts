@@ -5,9 +5,143 @@
 
 // TypeScript Version: 2.3
 
-export as namespace Uppy;
+// export as namespace Uppy;
 
-export namespace Store {
+declare module 'uppy' {
+	export const Core: Core;
+	export const Dashboard: plugins.Dashboard;
+	export const DragDrop: plugins.DragDrop;
+	export const XHRUpload: plugins.XHRUpload;
+	export const GoogleDrive: plugins.GoogleDrive;
+	export const Instagram: plugins.Instagram;
+	export const Webcam: plugins.Webcam;
+	export const Tus: plugins.Tus;
+	export const StatusBar: plugins.StatusBar;
+	export const Url: plugins.Url;
+	export const Dropbox: plugins.Dropbox;
+	export const AwsS3: plugins.AwsS3;
+	export const GoldenRetriever: plugins.GoldenRetriever;
+	export const ThumbnailGenerator: plugins.ThumbnailGenerator;
+	export const Transloadit: plugins.Transloadit;
+	export const Dummy: plugins.Dummy;
+	export const FileInput: plugins.FileInput;
+	export const Form: plugins.Form;
+	export const Informer: plugins.Informer;
+	export const MagicLog: plugins.MagicLog;
+	export const ProgressBar: plugins.ProgressBar;
+	export const ReduxDevTools: plugins.ReduxDevTools;
+}
+
+declare module 'uppy/lib/core' {
+	export = Core;
+}
+
+declare module 'uppy/lib/plugins/Dashboard' {
+	const Dashboard: plugins.Dashboard;
+	export = Dashboard;
+}
+
+declare module 'uppy/lib/plugins/DragDrop' {
+	const DragDrop: plugins.DragDrop;
+	export = DragDrop;
+}
+
+declare module 'uppy/lib/plugins/XHRUpload' {
+	const XHRUpload: plugins.XHRUpload;
+	export = XHRUpload;
+}
+
+declare module 'uppy/lib/plugins/GoogleDrive' {
+	const GoogleDrive: plugins.GoogleDrive;
+	export = GoogleDrive;
+}
+
+declare module 'uppy/lib/plugins/Instagram' {
+	const Instagram: plugins.Instagram;
+	export = Instagram;
+}
+
+declare module 'uppy/lib/plugins/Webcam' {
+	const Webcam: plugins.Webcam;
+	export = Webcam;
+}
+
+declare module 'uppy/lib/plugins/Tus' {
+	const Tus: plugins.Tus;
+	export = Tus;
+}
+
+declare module 'uppy/lib/plugins/StatusBar' {
+	const StatusBar: plugins.StatusBar;
+	export = StatusBar;
+}
+
+declare module 'uppy/lib/plugins/Url' {
+	const Url: plugins.Url;
+	export = Url;
+}
+
+declare module 'uppy/lib/plugins/Dropbox' {
+	const Dropbox: plugins.Dropbox;
+	export = Dropbox;
+}
+
+declare module 'uppy/lib/plugins/AwsS3' {
+	const AwsS3: plugins.AwsS3;
+	export = AwsS3;
+}
+
+declare module 'uppy/lib/plugins/GoldenRetriever' {
+	const GoldenRetriever: plugins.GoldenRetriever;
+	export = GoldenRetriever;
+}
+
+declare module 'uppy/lib/plugins/ThumbnailGenerator' {
+	const ThumbnailGenerator: plugins.ThumbnailGenerator;
+	export = ThumbnailGenerator;
+}
+
+declare module 'uppy/lib/plugins/Transloadit' {
+	const Transloadit: plugins.Transloadit;
+	export = Transloadit;
+}
+
+declare module 'uppy/lib/plugins/Dummy' {
+	const Dummy: plugins.Dummy;
+	export = Dummy;
+}
+
+declare module 'uppy/lib/plugins/FileInput' {
+	const FileInput: plugins.FileInput;
+	export = FileInput;
+}
+
+declare module 'uppy/lib/plugins/Form' {
+	const Form: plugins.Form;
+	export = Form;
+}
+
+declare module 'uppy/lib/plugins/Informer' {
+	const Informer: plugins.Informer;
+	export = Informer;
+}
+
+declare module 'uppy/lib/plugins/MagicLog' {
+	const MagicLog: plugins.MagicLog;
+	export = MagicLog;
+}
+
+declare module 'uppy/lib/plugins/ProgressBar' {
+	const ProgressBar: plugins.ProgressBar;
+	export = ProgressBar;
+}
+
+declare module 'uppy/lib/plugins/ReduxDevTools' {
+	const ReduxDevTools: plugins.ReduxDevTools;
+	export = ReduxDevTools;
+}
+
+declare namespace Store {
 	// todo
 	type State = any;
 
@@ -25,7 +159,7 @@ export namespace Store {
 	type ReduxStore = Store;
 }
 
-export interface Local {
+declare interface Local {
 	strings: {
 		youCanOnlyUploadX: {
 			0: string;
@@ -44,7 +178,7 @@ export interface Local {
 	};
 }
 
-export namespace plugins {
+declare namespace plugins {
 	interface DashboardOptions extends core.CoreConfig {
 		onRequestCloseModal: () => any;
 		disablePageScrollWhenModalOpen: boolean;
@@ -308,29 +442,7 @@ export namespace plugins {
 	}
 }
 
-export const Dashboard: plugins.Dashboard;
-export const DragDrop: plugins.DragDrop;
-export const XHRUpload: plugins.XHRUpload;
-export const GoogleDrive: plugins.GoogleDrive;
-export const Instagram: plugins.Instagram;
-export const Webcam: plugins.Webcam;
-export const Tus: plugins.Tus;
-export const StatusBar: plugins.StatusBar;
-export const Url: plugins.Url;
-export const Dropbox: plugins.Dropbox;
-export const AwsS3: plugins.AwsS3;
-export const GoldenRetriever: plugins.GoldenRetriever;
-export const ThumbnailGenerator: plugins.ThumbnailGenerator;
-export const Transloadit: plugins.Transloadit;
-export const Dummy: plugins.Dummy;
-export const FileInput: plugins.FileInput;
-export const Form: plugins.Form;
-export const Informer: plugins.Informer;
-export const MagicLog: plugins.MagicLog;
-export const ProgressBar: plugins.ProgressBar;
-export const ReduxDevTools: plugins.ReduxDevTools;
-
-export namespace core {
+declare namespace core {
 	interface CoreConfig {
 		id: string;
 		autoProceed: boolean;
@@ -462,4 +574,8 @@ export namespace core {
 	}
 }
 
-export function Core(conf?: Partial<core.CoreConfig>): core.Uppy;
+interface Core {
+	(conf?: Partial<core.CoreConfig>): core.Uppy;
+}
+
+declare function Core(conf?: Partial<core.CoreConfig>): core.Uppy;

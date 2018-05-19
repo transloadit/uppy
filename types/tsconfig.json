@@ -15,11 +15,14 @@
 		],
 		"types": [],
 		"noEmit": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
 		"strictFunctionTypes": true,
 		"forceConsistentCasingInFileNames": true
 	},
 	"files": [
 	"index.d.ts",
-	"uppy-tests.ts"
+	"uppy-tests.ts",
+	"uppy-tests-official.ts"
 	]
 }

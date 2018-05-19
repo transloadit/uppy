@@ -1,4 +1,4 @@
-import Uppy = require('./');
+import Uppy = require('uppy');
 
 (() => {
 	const uppy = Uppy.Core({ autoProceed: false });
@@ -24,13 +24,13 @@ import Uppy = require('./');
 		.use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
 		.run()
 		.on('complete', (result) => {
-			console.log('Upload result:', result)
+			console.log('Upload result:', result);
 		});
 })();
 
 (() => {
-	var uppy = Uppy.Core()
-	uppy.use(Uppy.DragDrop, { target: '.UppyDragDrop' })
-	uppy.use(Uppy.Tus, { endpoint: '//master.tus.io/files/' })
-	uppy.run()
+	const uppy = Uppy.Core();
+	uppy.use(Uppy.DragDrop, { target: '.UppyDragDrop' });
+	uppy.use(Uppy.Tus, { endpoint: '//master.tus.io/files/' });
+	uppy.run();
 })();
