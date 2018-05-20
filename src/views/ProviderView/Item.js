@@ -22,7 +22,7 @@ module.exports = (props) => {
       <div class="uppy-ProviderBrowserItem-checkbox">
         <input type="checkbox"
           role="option"
-          tabindex="0"
+          tabindex={0}
           aria-label={`Select ${props.title}`}
           id={props.id}
           checked={props.isChecked}
@@ -39,7 +39,7 @@ module.exports = (props) => {
       <button type="button"
         class="uppy-ProviderBrowserItem-inner"
         aria-label={`Select ${props.title}`}
-        tabindex="0"
+        tabindex={0}
         onclick={handleItemClick}>
         {props.getItemIcon()} {props.showTitles && props.title}
       </button>

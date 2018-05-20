@@ -15,10 +15,10 @@ const uppy = Uppy({
   autoProceed: true,
   debug: false,
   restrictions: {
-    maxFileSize: false,
-    maxNumberOfFiles: false,
-    minNumberOfFiles: false,
-    allowedFileTypes: false
+    maxFileSize: null,
+    maxNumberOfFiles: null,
+    minNumberOfFiles: null,
+    allowedFileTypes: null
   },
   meta: {},
   onBeforeFileAdded: (currentFile, files) => currentFile,
@@ -52,10 +52,14 @@ Optionally provide rules and conditions for which files can be selected.
 
 **Parameters**
 
-- `maxFileSize` *number*
-- `maxNumberOfFiles` *number*
-- `minNumberOfFiles` *number*
-- `allowedFileTypes` *array* of wildcards or exact mime types, like `image/*`
+- `maxFileSize` *null | number*
+- `maxNumberOfFiles` *null | number*
+- `minNumberOfFiles` *null | number*
+- `allowedFileTypes` *null | array* of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
+
+`maxNumberOfFiles` affects the number of files user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1` they will only be able to select a single file, otherwise, when `null` or other number, they will be able to select multiple files.
+
+`allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types)’s accept attribute, so only files matching these types will be selectable.
 
 ### `meta: {}`
 
@@ -69,7 +73,7 @@ meta: {
 
 This global metadata is added to each file in Uppy. It can be modified with two methods:
 
-1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setmeta-data) — set or update meta for all files.
+1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setMeta-data) — set or update meta for all files.
 2. [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file.
 
 Metadata from each file is then attached to uploads in [Tus](/docs/tus/) and [XHRUpload](/docs/xhrupload/) plugins.

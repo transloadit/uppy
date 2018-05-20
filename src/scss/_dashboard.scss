@@ -34,8 +34,11 @@
   max-height: 100%; /* no !important */
   width: 100%; /* no !important */
   height: 100%; /* no !important */
+  min-width: 300px;
+  min-height: 400px;
   outline: none;
   border: 1px solid rgba($color-gray, 0.2);
+  margin-bottom: 30px;
 
   .uppy-Dashboard--modal & {
     z-index: $zIndex-3;
@@ -49,13 +52,13 @@
 }
 
 .uppy-Dashboard-poweredBy {
-  position: absolute;
-  right: 4px;
-  bottom: -23px;
+  display: block;
   font-size: 11px;
   color: rgba($color-gray, 0.8);
   text-align: right;
   text-decoration: none;
+  padding-top: 8px;
+  padding-right: 2px;
 }
 
   .uppy-Dashboard--modal .uppy-Dashboard-poweredBy {
@@ -74,11 +77,14 @@
   stroke: $color-gray;
   fill: none;
   margin-left: 1px;
-  margin-right: 2px;
+  margin-right: 1px;
+  position: relative;
+  top: 1px;
+  opacity: 0.9;
 }
 
   .uppy-Dashboard--modal .uppy-Dashboard-poweredByIcon {
-    stroke: none;
+    stroke: transparent;
     fill: $color-uppy-pink;
   }
 
@@ -952,7 +958,7 @@
 }
 
   .uppy-Dashboard--wide .uppy-Dashboard-actions {
-    height: 75px;
+    height: 65px;
   }
 
 .uppy-Dashboard-actionsBtn {

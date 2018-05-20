@@ -2,6 +2,28 @@ const preact = require('preact')
 const { findDOMElement } = require('../core/Utils')
 
 /**
+ * Defer a frequent call to the microtask queue.
+ */
+function debounce (fn) {
+  let calling = null
+  let latestArgs = null
+  return (...args) => {
+    latestArgs = args
+    if (!calling) {
+      calling = Promise.resolve().then(() => {
+        calling = null
+        // At this point `args` may be different from the most
+        // recent state, if multiple calls happened since this task
+        // was queued. So we use the `latestArgs`, which definitely
+        // is the most recent call.
+        return fn(...latestArgs)
+      })
+    }
+    return calling
+  }
+}
+
+/**
  * Boilerplate that all Plugins share - and should not be used
  * directly. It also shows which methods final plugins should implement/override,
  * this deciding on structure.
@@ -39,8 +61,8 @@ module.exports = class Plugin {
       return
     }
 
-    if (this.updateUI) {
-      this.updateUI(state)
+    if (this._updateUI) {
+      this._updateUI(state)
     }
   }
 
@@ -60,9 +82,11 @@ module.exports = class Plugin {
     if (targetElement) {
       this.isTargetDOMEl = true
 
-      this.updateUI = (state) => {
+      // API for plugins that require a synchronous rerender.
+      this.rerender = (state) => {
         this.el = preact.render(this.render(state), targetElement, this.el)
       }
+      this._updateUI = debounce(this.rerender)
 
       this.uppy.log(`Installing ${callerPluginName} to a DOM element`)
 
@@ -71,7 +95,7 @@ module.exports = class Plugin {
         targetElement.innerHTML = ''
       }
 
-      this.el = preact.render(this.render(this.uppy.state), targetElement)
+      this.el = preact.render(this.render(this.uppy.getState()), targetElement)
 
       return this.el
     }
