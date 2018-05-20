@@ -3,6 +3,7 @@ const Translator = require('../../core/Translator')
 const { h } = require('preact')
 const { RequestClient } = require('../../server')
 const UrlUI = require('./UrlUI.js')
+const { toArray } = require('../../core/Utils')
 require('whatwg-fetch')
 
 /**
@@ -57,6 +58,8 @@ module.exports = class Url extends Plugin {
     this.handleDrop = this.handleDrop.bind(this)
     this.handleDragOver = this.handleDragOver.bind(this)
     this.handleDragLeave = this.handleDragLeave.bind(this)
+
+    this.handlePaste = this.handlePaste.bind(this)
 
     this.server = new RequestClient(uppy, {host: this.opts.host})
   }
@@ -150,7 +153,7 @@ module.exports = class Url extends Plugin {
   handleDrop (e) {
     e.preventDefault()
     if (e.dataTransfer.items) {
-      const items = Array.from(e.dataTransfer.items)
+      const items = toArray(e.dataTransfer.items)
       items.forEach((item) => {
         if (item.kind === 'string' && item.type.match('^text/uri-list')) {
           item.getAsString((url) => {
@@ -172,6 +175,27 @@ module.exports = class Url extends Plugin {
     this.el.classList.remove('drag')
   }
 
+  handlePaste (e) {
+    if (e.clipboardData.items) {
+      const items = toArray(e.clipboardData.items)
+
+      // When a file is pasted, it appears as two items: file name string, then
+      // the file itself; Url then treats file name string as URL, which is wrong.
+      // This makes sure Url ignores paste event if it contains an actual file
+      const hasFiles = items.filter(item => item.kind === 'file').length > 0
+      if (hasFiles) return
+
+      items.forEach((item) => {
+        if (item.kind === 'string' && item.type.match('text/plain')) {
+          item.getAsString((url) => {
+            this.uppy.log(`[URL] Adding file from pasted url: ${url}`)
+            this.addFile(url)
+          })
+        }
+      })
+    }
+  }
+
   render (state) {
     return <UrlUI
       i18n={this.i18n}
@@ -187,12 +211,14 @@ module.exports = class Url extends Plugin {
     this.el.addEventListener('drop', this.handleDrop)
     this.el.addEventListener('dragover', this.handleDragOver)
     this.el.addEventListener('dragleave', this.handleDragLeave)
+    this.el.addEventListener('paste', this.handlePaste)
   }
 
   uninstall () {
     this.el.removeEventListener('drop', this.handleDrop)
     this.el.removeEventListener('dragover', this.handleDragOver)
     this.el.removeEventListener('dragleave', this.handleDragLeave)
+    this.el.removeEventListener('paste', this.handlePaste)
 
     this.unmount()
   }
