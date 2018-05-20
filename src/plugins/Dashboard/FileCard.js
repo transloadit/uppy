@@ -79,12 +79,10 @@ module.exports = class FileCard extends Component {
             <div class="uppy-Dashboard-actions">
               <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-actionsBtn"
                 type="button"
-                title={this.props.i18n('finishEditingFiles')}
-                onclick={this.handleSave}>Save changes</button>
+                onclick={this.handleSave}>{this.props.i18n('saveChanges')}</button>
               <button class="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-actionsBtn"
                 type="button"
-                title={this.props.i18n('finishEditingFiles')}
-                onclick={this.handleCancel}>Cancel</button>
+                onclick={this.handleCancel}>{this.props.i18n('cancel')}</button>
             </div>
           </div>
         </div>
