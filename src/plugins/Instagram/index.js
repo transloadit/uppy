@@ -71,6 +71,10 @@ module.exports = class Instagram extends Plugin {
     }
   }
 
+  getUsername (data) {
+    return data.data[0].user.username
+  }
+
   isFolder (item) {
     return false
   }

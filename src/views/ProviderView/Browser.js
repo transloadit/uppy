@@ -22,6 +22,7 @@ module.exports = (props) => {
             directories: props.directories,
             title: props.title
           })}
+          <span class="uppy-ProviderBrowser-user">{props.username}</span>
           <button type="button" onclick={props.logout} class="uppy-ProviderBrowser-userLogout">Log out</button>
         </div>
       </div>

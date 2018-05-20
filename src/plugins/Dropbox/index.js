@@ -68,6 +68,10 @@ module.exports = class Dropbox extends Plugin {
     }
   }
 
+  getUsername (data) {
+    return data.user_email
+  }
+
   isFolder (item) {
     return item['.tag'] === 'folder'
   }
