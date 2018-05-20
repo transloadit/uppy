@@ -71,7 +71,7 @@ module.exports = class Translator {
    * @return {string} translated (and interpolated)
    */
   translate (key, options) {
-    if (options && options.smart_count) {
+    if (options && typeof options.smart_count !== 'undefined') {
       var plural = this.locale.pluralize(options.smart_count)
       return this.interpolate(this.opts.locale.strings[key][plural], options)
     }
