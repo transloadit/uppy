@@ -54,6 +54,8 @@ module.exports = class Dashboard extends Plugin {
         editFile: 'Edit file',
         editing: 'Editing',
         finishEditingFile: 'Finish editing file',
+        saveChanges: 'Save changes',
+        cancel: 'Cancel',
         localDisk: 'Local Disk',
         myDevice: 'My Device',
         dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
