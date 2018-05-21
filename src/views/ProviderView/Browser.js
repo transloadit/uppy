@@ -46,7 +46,8 @@ module.exports = (props) => {
         handleScroll: props.handleScroll,
         title: props.title,
         showTitles: props.showTitles,
-        getItemId: props.getItemId
+        getItemId: props.getItemId,
+        i18n: props.i18n
       })}
       <button class="UppyButton--circular UppyButton--blue uppy-ProviderBrowser-doneBtn"
         type="button"

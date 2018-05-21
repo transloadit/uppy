@@ -590,7 +590,8 @@ module.exports = class ProviderView {
       showTitles: this.opts.showTitles,
       showFilter: this.opts.showFilter,
       showBreadcrumbs: this.opts.showBreadcrumbs,
-      pluginIcon: this.plugin.icon
+      pluginIcon: this.plugin.icon,
+      i18n: this.plugin.uppy.i18n
     })
 
     return Browser(browserProps)

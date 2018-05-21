@@ -2,17 +2,9 @@ const Row = require('./Item')
 const { h } = require('preact')
 
 module.exports = (props) => {
-  // const headers = props.columns.map((column) => {
-  //   return html`
-  //     <th class="uppy-ProviderBrowserTable-headerColumn uppy-ProviderBrowserTable-column" onclick=${props.sortByTitle}>
-  //       ${column.name}
-  //     </th>
-  //   `
-  // })
-
-  // <thead class="uppy-ProviderBrowserTable-header">
-  //   <tr>${headers}</tr>
-  // </thead>
+  if (!props.folders.length && !props.files.length) {
+    return <div class="uppy-Provider-empty">{props.i18n('noFilesFound')}</div>
+  }
 
   return (
     <div class="uppy-ProviderBrowser-body">

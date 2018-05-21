@@ -33,7 +33,8 @@ class Uppy {
         uppyServerError: 'Connection with Uppy Server failed',
         failedToUpload: 'Failed to upload',
         noInternetConnection: 'No Internet connection',
-        connectedToInternet: 'Connected to the Internet'
+        connectedToInternet: 'Connected to the Internet',
+        noFilesFound: 'You have no files or folders here'
       }
     }
 
