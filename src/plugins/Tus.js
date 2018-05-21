@@ -166,7 +166,21 @@ module.exports = class Tus extends Plugin {
         this.resetUploaderReferences(file.id)
         resolve(upload)
       }
-      optsTus.metadata = file.meta
+
+      const copyProp = (obj, srcProp, destProp) => {
+        if (
+          Object.prototype.hasOwnProperty.call(obj, srcProp) &&
+          !Object.prototype.hasOwnProperty.call(obj, destProp)
+        ) {
+          obj[destProp] = obj[srcProp]
+        }
+      }
+
+      // tusd uses metadata fields 'filetype' and 'filename'
+      const meta = Object.assign({}, file.meta)
+      copyProp(meta, 'type', 'filetype')
+      copyProp(meta, 'name', 'filename')
+      optsTus.metadata = meta
 
       const upload = new tus.Upload(file.data, optsTus)
       this.uploaders[file.id] = upload
