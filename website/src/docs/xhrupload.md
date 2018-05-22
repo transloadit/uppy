@@ -19,6 +19,10 @@ uppy.use(XHRUpload, {
 
 ## Options
 
+### `id: 'XHRUpload'`
+
+A unique identifier for this plugin. Defaults to `'XHRUpload'`.
+
 ### `endpoint: ''`
 
 URL to upload to.

@@ -19,6 +19,10 @@ uppy.use(Informer, {
 
 ## Options
 
+### `id: 'Informer'`
+
+A unique identifier for this Informer. Defaults to `'Informer'`. Use this if you need multiple Informer instances.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the informer into.

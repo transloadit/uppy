@@ -34,6 +34,10 @@ uppy.use(FileInput, {
 
 > Note that certain [restrictions set in Uppy’s main options](/docs/uppy#restrictions), namely `maxNumberOfFiles` and `allowedFileTypes`, affect the system file picker dialog. If `maxNumberOfFiles: 1`, users will only be able to select one file, and `allowedFileTypes: ['video/*', '.gif']` means only videos or gifs (files with `.gif` extension) will be selectable.
 
+### `id: 'FileInput'`
+
+A unique identifier for this FileInput. Defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the file input into.

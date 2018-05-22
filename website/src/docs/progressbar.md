@@ -27,6 +27,10 @@ uppy.use(ProgressBar, {
 })
 ```
 
+### `id: 'ProgressBar'`
+
+A unique identifier for this ProgressBar. Defaults to `'ProgressBar'`. Use this if you need to add multiple ProgressBar instances.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the progress bar into.

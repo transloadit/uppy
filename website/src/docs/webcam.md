@@ -41,6 +41,10 @@ uppy.use(Webcam, {
 })
 ```
 
+### `id: 'Webcam'`
+
+A unique identifier for this plugin. Defaults to `'Webcam'`.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount Webcam into.

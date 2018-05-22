@@ -96,6 +96,11 @@ uppy.use(Dashboard, {
 })
 ```
 
+### `id: 'Dashboard'`
+
+A unique identifier for this Dashboard. Defaults to `'Dashboard'`. Change this if you need multiple Dashboard instances.
+Plugins that are added by the Dashboard get unique IDs based on this ID, like `'Dashboard:StatusBar'` and `'Dashboard:Informer'`.
+
 ### `target: 'body'`
 
 Dashboard is rendered into `body` by default, because by default it’s hidden and only opened as a modal when `trigger` is clicked.

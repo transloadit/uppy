@@ -62,10 +62,6 @@ uppy.use(GoogleDrive, {target: Dashboard})
 
 In the example above the `Dashboard` gets rendered into an element with ID `uppy`, while `GoogleDrive` is rendered into the `Dashboard` itself.
 
-### `endpoint`
-
-Used by uploader plugins, such as [Tus](/docs/tus) and [XHRUpload](/docs/xhrupload). Expects a `string` with a url that will be used for file uploading.
-
 ### `host`
 
 Used by remote provider plugins, such as Google Drive, Instagram or Dropbox. Specifies the url to your running `uppy-server`. This allows uppy to know what server to connect to when server related operations are required by the provider plugin.

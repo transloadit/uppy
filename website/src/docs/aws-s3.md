@@ -20,6 +20,10 @@ There are broadly two ways to upload to S3 in a browser. A server can generate a
 
 ## Options
 
+### `id: 'AwsS3'`
+
+A unique identifier for this plugin. Defaults to `'AwsS3'`.
+
 ### `host`
 
 When using [uppy-server][uppy-server docs] to sign S3 uploads, set this option to the root URL of the uppy-server.

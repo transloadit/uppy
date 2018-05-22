@@ -22,6 +22,10 @@ uppy.use(Tus, {
 
 The Tus plugin supports all of [tus-js-client][]’s options. Additionally:
 
+### `id: 'Tus'`
+
+A unique identifier for this plugin. Defaults to `'Tus'`.
+
 ### `resume: true`
 
 A boolean indicating whether tus should attempt to resume the upload if the upload has been started in the past. This includes storing the file’s upload url. Use false to force an entire reupload.

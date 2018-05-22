@@ -51,6 +51,10 @@ uppy.use(Dropbox, {
 
 ## Options
 
+### `id: 'Transloadit'`
+
+A unique identifier for this plugin. Defaults to `'Transloadit'`.
+
 ### `service`
 
 The Transloadit API URL to use. Defaults to `https://api2.transloadit.com`, which will attempt to route traffic efficiently based on where your users are. You can set this to something like `https://api2-us-east-1.transloadit.com` if you want to use a particular region.

@@ -59,6 +59,10 @@ uppy.use(StatusBar, {
 })
 ```
 
+### `id: 'StatusBar'`
+
+A unique identifier for this StatusBar. Defaults to `'StatusBar'`. Use this if you need to add multiple StatusBar instances.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the StatusBar into.

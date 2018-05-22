@@ -27,6 +27,10 @@ uppy.use(Form, {
 })
 ```
 
+### `id: 'Form'`
+
+A unique identifier for this Form. Defaults to `'Form'`.
+
 ### `target: null`
 
 DOM element or CSS selector for the form element. Required for the plugin to work.

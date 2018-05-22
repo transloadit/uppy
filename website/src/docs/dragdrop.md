@@ -36,6 +36,10 @@ uppy.use(DragDrop, {
 
 > Note that certain [restrictions set in Uppy’s main options](/docs/uppy#restrictions), namely `maxNumberOfFiles` and `allowedFileTypes`, affect the system file picker dialog. If `maxNumberOfFiles: 1`, users will only be able to select one file, and `allowedFileTypes: ['video/*', '.gif']` means only videos or gifs (files with `.gif` extension) will be selectable.
 
+### `id: 'DragDrop'`
+
+A unique identifier for this DragDrop. Defaults to `'DragDrop'`. Use this if you need to add multiple DragDrop instances.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to place the drag and drop area into.
