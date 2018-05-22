@@ -188,19 +188,20 @@ strings: {
   // Used as the screen reader label for buttons that open the metadata editor panel for a file.
   editFile: 'Edit file',
   // Shown in the panel header for the metadata editor. Rendered as "Editing image.png".
-  editing: 'Editing',
+  editing: 'Editing %{file}',
   // Used as the screen reader label for the button that saves metadata edits and returns to the
   // file list view.
   finishEditingFile: 'Finish editing file',
   // Used as the label for the tab button that opens the system file selection dialog.
   myDevice: 'My Device',
   // Shown in the main dashboard area when no files have been selected, and one or more
-  // remote provider plugins are in use.
-  dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
+  // remote provider plugins are in use. %{browse} is replaced with a link that opens the system
+  // file selection dialog.
+  dropPasteImport: 'Drop files here, paste, import from one of the locations above or %{browse}',
   // Shown in the main dashboard area when no files have been selected, and no provider
-  // plugins are in use.
-  dropPaste: 'Drop files here, paste or',
-  // Shown after one of the above. Eg "Drop files here, paste or browse"
+  // plugins are in use. %{browse} is replaced with a link that opens the system
+  // file selection dialog.
+  dropPaste: 'Drop files here, paste or %{browse}',
   // This string is clickable and opens the system file selection dialog.
   browse: 'browse',
   // Used as the hover text and screen reader label for file progress indicators when

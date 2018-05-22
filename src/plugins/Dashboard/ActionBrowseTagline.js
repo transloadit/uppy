@@ -11,17 +11,21 @@ class ActionBrowseTagline extends Component {
   }
 
   render () {
+    const browse = (
+      <button type="button" class="uppy-Dashboard-browse" onclick={this.handleClick}>
+        {this.props.i18n('browse')}
+      </button>
+    )
+
     // empty value="" on file input, so that the input is cleared after a file is selected,
     // because Uppy will be handling the upload and so we can select same file
     // after removing — otherwise browser thinks it’s already selected
     return (
       <span>
         {this.props.acquirers.length === 0
-          ? this.props.i18n('dropPaste')
-          : this.props.i18n('dropPasteImport')
-        } <button type="button" class="uppy-Dashboard-browse" onclick={this.handleClick}>
-          {this.props.i18n('browse')}
-        </button>
+          ? this.props.i18nArray('dropPaste', { browse })
+          : this.props.i18nArray('dropPasteImport', { browse })
+        }
         <input class="uppy-Dashboard-input"
           hidden
           aria-hidden="true"

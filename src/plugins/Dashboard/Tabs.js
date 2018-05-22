@@ -23,7 +23,8 @@ class Tabs extends Component {
             <ActionBrowseTagline
               acquirers={this.props.acquirers}
               handleInputChange={this.props.handleInputChange}
-              i18n={this.props.i18n} />
+              i18n={this.props.i18n}
+              i18nArray={this.props.i18nArray} />
           </div>
         </div>
       )

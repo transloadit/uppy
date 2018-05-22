@@ -15,35 +15,36 @@ module.exports = (props) => {
     {noFiles &&
       <div class="uppy-Dashboard-bgIcon">
         <div class="uppy-Dashboard-dropFilesTitle">
-          {h(ActionBrowseTagline, {
-            acquirers: props.acquirers,
-            handleInputChange: props.handleInputChange,
-            i18n: props.i18n,
-            allowedFileTypes: props.allowedFileTypes,
-            maxNumberOfFiles: props.maxNumberOfFiles
-          })}
+          <ActionBrowseTagline
+            acquirers={props.acquirers}
+            handleInputChange={props.handleInputChange}
+            i18n={props.i18n}
+            i18nArray={props.i18nArray}
+            allowedFileTypes={props.allowedFileTypes}
+            maxNumberOfFiles={props.maxNumberOfFiles}
+          />
         </div>
         { props.note && <div class="uppy-Dashboard-note">{props.note}</div> }
       </div>
     }
-    {Object.keys(props.files).map((fileID) => {
-      return FileItem({
-        acquirers: props.acquirers,
-        file: props.files[fileID],
-        toggleFileCard: props.toggleFileCard,
-        showProgressDetails: props.showProgressDetails,
-        info: props.info,
-        log: props.log,
-        i18n: props.i18n,
-        removeFile: props.removeFile,
-        pauseUpload: props.pauseUpload,
-        cancelUpload: props.cancelUpload,
-        retryUpload: props.retryUpload,
-        resumableUploads: props.resumableUploads,
-        isWide: props.isWide,
-        showLinkToFileUploadResult: props.showLinkToFileUploadResult,
-        metaFields: props.metaFields
-      })
-    })}
+    {Object.keys(props.files).map((fileID) => (
+      <FileItem
+        acquirers={props.acquirers}
+        file={props.files[fileID]}
+        toggleFileCard={props.toggleFileCard}
+        showProgressDetails={props.showProgressDetails}
+        info={props.info}
+        log={props.log}
+        i18n={props.i18n}
+        removeFile={props.removeFile}
+        pauseUpload={props.pauseUpload}
+        cancelUpload={props.cancelUpload}
+        retryUpload={props.retryUpload}
+        resumableUploads={props.resumableUploads}
+        isWide={props.isWide}
+        showLinkToFileUploadResult={props.showLinkToFileUploadResult}
+        metaFields={props.metaFields}
+      />
+    ))}
   </ul>
 }
