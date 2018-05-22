@@ -85,6 +85,12 @@
   margin: 0 8px 0 0;
 }
 
+  .uppy-ProviderBrowser-user:after {
+    content: '\00B7';
+    position: relative;
+    left: 4px;
+  }
+
 .uppy-ProviderBrowser-header {
   z-index: $zIndex-2;
   border-bottom: 1px solid lighten($color-asphalt-gray, 60%);
