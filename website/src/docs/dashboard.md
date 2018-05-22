@@ -167,7 +167,7 @@ strings: {
   // When `inline: false`, used as the screen reader label for the button that closes the modal.
   closeModal: 'Close Modal',
   // Used as the header for import panels, eg. "Import from Google Drive"
-  importFrom: 'Import from',
+  importFrom: 'Import from %{name}',
   // When `inline: false`, used as the screen reader label for the dashboard modal.
   dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
   // When `inline: true`, used as the screen reader label for the dashboard area.
@@ -180,7 +180,7 @@ strings: {
   // Used as the hover title and screen reader label for buttons that copy a file link.
   copyLink: 'Copy link',
   // Used as the hover title and screen reader label for file source icons. Eg. "File source: Dropbox"
-  fileSource: 'File source',
+  fileSource: 'File source: %{name}',
   // Used as the label for buttons that accept and close panels (remote providers or metadata editor)
   done: 'Done',
   // Used as the screen reader label for buttons that remove a file.
