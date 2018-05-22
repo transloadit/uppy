@@ -78,5 +78,9 @@ By default, progress in StatusBar is shown as simple percentage. If you’d like
 `showProgressDetails: false`: Uploading: 45%
 `showProgressDetails: true`: Uploading: 45%・43 MB of 101 MB・8s left
 
+### `replaceTargetContent: false`
+
+Remove all children of the `target` element before mounting the StatusBar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case you can set `replaceTargetContent: true` to clear the `target` before appending.
+
 [FileInput]: https://github.com/transloadit/uppy/blob/master/src/plugins/FileInput.js
 [DragDrop]: /docs/dragdrop

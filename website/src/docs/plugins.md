@@ -72,10 +72,6 @@ const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
 uppy.use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
 ```
 
-### `replaceTargetContent: false`
-
-By default Uppy will append any UI to a DOM element, if such element is specified as a `target`. This default is the least dangerous option. However, there might be cases when you’d want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not loaded/supported on the page). Set `replaceTargetContent: true` to clear the `target` before appending.
-
 ### `locale: {}`
 
 Same as with Uppy.Core’s setting from above, this allows you to override plugin’s locale string, so that instead of `Select files` in English, your users will see `Выберите файлы` in Russian. Example:

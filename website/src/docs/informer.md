@@ -41,3 +41,7 @@ uppy.use(Informer, {
   }
 })
 ```
+
+### `replaceTargetContent: false`
+
+Remove all children of the `target` element before mounting the Informer. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case you can set `replaceTargetContent: true` to clear the `target` before appending.
