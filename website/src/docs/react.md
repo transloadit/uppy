@@ -62,8 +62,8 @@ The plugins that are available as React component wrappers are:
 
 [React]: https://facebook.github.io/react
 [Preact]: https://preactjs.com/
-[Dashboard]: /docs/dashboard
-[DragDrop]: /docs/dragdrop
-[ProgressBar]: /docs/progressbar
-[StatusBar]: /docs/statusbar
+[Dashboard]: /docs/react/dashboard
+[DragDrop]: /docs/react/dragdrop
+[ProgressBar]: /docs/react/progressbar
+[StatusBar]: /docs/react/statusbar
 [DashboardModal]: /docs/react/dashboard-modal
