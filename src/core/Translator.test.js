@@ -23,15 +23,15 @@ describe('core/translator', () => {
     it('should translate a string', () => {
       const core = new Core({ locale: russian })
       expect(
-        core.translator.translate('filesChosen', { smart_count: '18' })
+        core.translator.translate('filesChosen', { smart_count: 18 })
       ).toEqual('Выбрано 18 файлов')
 
       expect(
-        core.translator.translate('filesChosen', { smart_count: '1' })
+        core.translator.translate('filesChosen', { smart_count: 1 })
       ).toEqual('Выбран 1 файл')
 
       expect(
-        core.translator.translate('filesChosen', { smart_count: '0' })
+        core.translator.translate('filesChosen', { smart_count: 0 })
       ).toEqual('Выбрано 0 файлов')
     })
   })
