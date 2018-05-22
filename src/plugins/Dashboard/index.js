@@ -52,7 +52,7 @@ module.exports = class Dashboard extends Plugin {
         name: 'Name',
         removeFile: 'Remove file',
         editFile: 'Edit file',
-        editing: 'Editing',
+        editing: 'Editing %{file}',
         finishEditingFile: 'Finish editing file',
         saveChanges: 'Save changes',
         cancel: 'Cancel',
@@ -117,6 +117,7 @@ module.exports = class Dashboard extends Plugin {
 
     this.translator = new Translator({locale: this.locale})
     this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
 
     this.openModal = this.openModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
@@ -467,6 +468,7 @@ module.exports = class Dashboard extends Plugin {
       hideAllPanels: this.hideAllPanels,
       log: this.uppy.log,
       i18n: this.i18n,
+      i18nArray: this.i18nArray,
       addFile: this.uppy.addFile,
       removeFile: this.uppy.removeFile,
       info: this.uppy.info,
