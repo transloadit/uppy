@@ -24,7 +24,7 @@ const uppyi18n = Uppy({
     target: '#uppyi18n',
     locale: {
       strings: {
-        dropHereOr: 'Перенесите файлы сюда или %{browse}',
+        dropHereOr: 'Перенесите файлы сюда или',
         browse: 'выберите'
       }
     }
