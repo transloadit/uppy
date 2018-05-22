@@ -71,6 +71,10 @@ module.exports = class Instagram extends Plugin {
     }
   }
 
+  getUsername (data) {
+    return data.data[0].user.username
+  }
+
   isFolder (item) {
     return false
   }
@@ -102,6 +106,7 @@ module.exports = class Instagram extends Plugin {
 
   getItemName (item) {
     if (item && item['created_time']) {
+      const ext = item.type === 'video' ? 'mp4' : 'jpeg'
       let date = new Date(item['created_time'] * 1000)
       date = date.toLocaleDateString([], {
         year: 'numeric',
@@ -111,7 +116,7 @@ module.exports = class Instagram extends Plugin {
         minute: 'numeric'
       })
       // adding both date and carousel_id, so the name is unique
-      return `Instagram ${date} ${item.carousel_id || ''}`
+      return `Instagram ${date} ${item.carousel_id || ''}.${ext}`
     }
     return ''
   }

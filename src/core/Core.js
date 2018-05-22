@@ -33,7 +33,8 @@ class Uppy {
         uppyServerError: 'Connection with Uppy Server failed',
         failedToUpload: 'Failed to upload',
         noInternetConnection: 'No Internet connection',
-        connectedToInternet: 'Connected to the Internet'
+        connectedToInternet: 'Connected to the Internet',
+        noFilesFound: 'You have no files or folders here'
       }
     }
 
@@ -43,10 +44,10 @@ class Uppy {
       autoProceed: true,
       debug: false,
       restrictions: {
-        maxFileSize: false,
-        maxNumberOfFiles: false,
-        minNumberOfFiles: false,
-        allowedFileTypes: false
+        maxFileSize: null,
+        maxNumberOfFiles: null,
+        minNumberOfFiles: null,
+        allowedFileTypes: null
       },
       meta: {},
       onBeforeFileAdded: (currentFile, files) => currentFile,
@@ -324,8 +325,20 @@ class Uppy {
 
     if (allowedFileTypes) {
       const isCorrectFileType = allowedFileTypes.filter((type) => {
-        if (!file.type) return false
-        return match(file.type, type)
+        // if (!file.type) return false
+
+        // is this is a mime-type
+        if (type.indexOf('/') > -1) {
+          if (!file.type) return false
+          return match(file.type, type)
+        }
+
+        // otherwise this is likely an extension
+        if (type[0] === '.') {
+          if (file.extension === type.substr(1)) {
+            return file.extension
+          }
+        }
       }).length > 0
 
       if (!isCorrectFileType) {
@@ -387,15 +400,16 @@ class Uppy {
 
     const fileID = Utils.generateFileID(file)
 
+    const meta = file.meta || {}
+    meta.name = fileName
+    meta.type = fileType
+
     const newFile = {
       source: file.source || '',
       id: fileID,
       name: fileName,
       extension: fileExtension || '',
-      meta: Object.assign({}, this.getState().meta, {
-        name: fileName,
-        type: fileType
-      }),
+      meta: Object.assign({}, this.getState().meta, meta),
       type: fileType,
       data: file.data,
       progress: {
@@ -1093,7 +1107,7 @@ class Uppy {
     // Not returning the `catch`ed promise, because we still want to return a rejected
     // promise from this method if the upload failed.
     lastStep.catch((err) => {
-      this.emit('error', err)
+      this.emit('error', err, uploadID)
 
       this._removeUpload(uploadID)
     })

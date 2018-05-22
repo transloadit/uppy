@@ -164,4 +164,56 @@ describe('Transloadit', () => {
 
     return expect(uppy.upload()).rejects.toEqual(new Error('short-circuited'))
   })
+
+  it('Does not leave lingering progress if getAssemblyOptions fails', () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      getAssemblyOptions (file) {
+        return Promise.reject(new Error('Failure!'))
+      }
+    })
+
+    uppy.addFile({
+      source: 'jest',
+      name: 'abc',
+      data: new Uint8Array(100)
+    })
+
+    return uppy.upload().then(() => {
+      throw new Error('Should not have succeeded')
+    }, (err) => {
+      const fileID = Object.keys(uppy.getState().files)[0]
+
+      expect(err.message).toBe('Failure!')
+      expect(uppy.getFile(fileID).progress.uploadStarted).toBe(false)
+    })
+  })
+
+  it('Does not leave lingering progress if creating assembly fails', () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      params: {
+        auth: { key: 'some auth key string' },
+        template_id: 'some template id string'
+      }
+    })
+
+    uppy.getPlugin('Transloadit').client.createAssembly = () =>
+      Promise.reject(new Error('Could not create assembly!'))
+
+    uppy.addFile({
+      source: 'jest',
+      name: 'abc',
+      data: new Uint8Array(100)
+    })
+
+    return uppy.upload().then(() => {
+      throw new Error('Should not have succeeded')
+    }, (err) => {
+      const fileID = Object.keys(uppy.getState().files)[0]
+
+      expect(err.message).toBe('Could not create assembly!')
+      expect(uppy.getFile(fileID).progress.uploadStarted).toBe(false)
+    })
+  })
 })

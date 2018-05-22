@@ -13,25 +13,22 @@ permalink: docs/fileinput/
 
 ```js
 uppy.use(FileInput, {
-  target: '.UppyForm',
-  allowMultipleFiles: true,
+  target: null,
   pretty: true,
   inputName: 'files[]',
   locale: {
     strings: {
-      chooseFiles: 'Select to upload'
+      chooseFiles: 'Choose files'
     }
   }
 })
 ```
 
+> Note that certain [restrictions set in Uppy’s main options](/docs/uppy#restrictions), namely `maxNumberOfFiles` and `allowedFileTypes`, affect the system file picker dialog. If `maxNumberOfFiles: 1`, users will only be able to select one file, and `allowedFileTypes: ['video/*', '.gif']` means only videos or gifs (files with `.gif` extension) will be selectable.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the file input into.
-
-### `multipleFiles: true`
-
-Whether to allow the user to select multiple files at once.
 
 ### `pretty: true`
 
@@ -43,4 +40,4 @@ The `name` attribute for the `<input type="file">` element.
 
 ### `locale: {}`
 
-Custom text to show on the button when `pretty` is true. There is only one string that can be configured: `strings.chooseFiles`.
+Custom text to show on the button when `pretty` is true.

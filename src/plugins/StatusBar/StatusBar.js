@@ -141,7 +141,7 @@ const CancelBtn = (props) => {
   return <button type="button"
     class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--cancel"
     aria-label={props.i18n('cancel')}
-    onclick={props.cancelAll}>Cancel{props.i18n('cancel')}</button>
+    onclick={props.cancelAll}>{props.i18n('cancel')}</button>
 }
 
 const PauseResumeButtons = (props) => {
@@ -172,15 +172,15 @@ const ProgressBarProcessing = (props) => {
   const value = Math.round(props.value * 100)
 
   return <div class="uppy-StatusBar-content">
-    {props.mode === 'determinate' ? `${value}%・` : ''}
+    {props.mode === 'determinate' ? `${value}% \u00B7 ` : ''}
     {props.message}
   </div>
 }
 
 const progressDetails = (props) => {
   return <span class="uppy-StatusBar-statusSecondary">
-    { props.inProgress > 1 && props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.inProgress }) + '・' }
-    { props.i18n('dataUploadedOfTotal', { complete: props.totalUploadedSize, total: props.totalSize }) }・
+    { props.inProgress > 1 && props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.inProgress }) + ' \u00B7 ' }
+    { props.i18n('dataUploadedOfTotal', { complete: props.totalUploadedSize, total: props.totalSize }) + ' \u00B7 ' }
     { props.i18n('xTimeLeft', { time: props.totalETA }) }
   </span>
 }

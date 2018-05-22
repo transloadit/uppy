@@ -4,7 +4,8 @@ const UppySocket = require('../core/UppySocket')
 const {
   emitSocketProgress,
   getSocketHost,
-  settle
+  settle,
+  limitPromises
 } = require('../core/Utils')
 require('whatwg-fetch')
 
@@ -60,11 +61,20 @@ module.exports = class Tus extends Plugin {
     const defaultOptions = {
       resume: true,
       autoRetry: true,
+      useFastRemoteRetry: true,
+      limit: 0,
       retryDelays: [0, 1000, 3000, 5000]
     }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+
+    // Simultaneous upload limiting is shared across all uploads with this plugin.
+    if (typeof this.opts.limit === 'number' && this.opts.limit !== 0) {
+      this.limitUploads = limitPromises(this.opts.limit)
+    } else {
+      this.limitUploads = (fn) => fn
+    }
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
@@ -193,9 +203,6 @@ module.exports = class Tus extends Plugin {
       if (!file.isPaused) {
         upload.start()
       }
-      if (!file.isRestored) {
-        this.uppy.emit('upload-started', file, upload)
-      }
     })
   }
 
@@ -216,8 +223,6 @@ module.exports = class Tus extends Plugin {
           .then(() => resolve())
           .catch(reject)
       }
-
-      this.uppy.emit('upload-started', file)
 
       fetch(file.remote.url, {
         method: 'post',
@@ -304,6 +309,17 @@ module.exports = class Tus extends Plugin {
       socket.on('error', (errData) => {
         const { message } = errData.error
         const error = Object.assign(new Error(message), { cause: errData.error })
+
+        // If the remote retry optimisation should not be used,
+        // close the socket—this will tell uppy-server to clear state and delete the file.
+        if (!this.opts.useFastRemoteRetry) {
+          this.resetUploaderReferences(file.id)
+          // Remove the serverToken so that a new one will be created for the retry.
+          this.uppy.setFileState(file.id, {
+            serverToken: null
+          })
+        }
+
         this.uppy.emit('upload-error', file, error)
         reject(error)
       })
@@ -395,21 +411,26 @@ module.exports = class Tus extends Plugin {
   }
 
   uploadFiles (files) {
-    const promises = files.map((file, index) => {
-      const current = parseInt(index, 10) + 1
+    const actions = files.map((file, i) => {
+      const current = parseInt(i, 10) + 1
       const total = files.length
 
       if (file.error) {
-        return Promise.reject(new Error(file.error))
-      }
-
-      this.uppy.log(`uploading ${current} of ${total}`)
-
-      if (file.isRemote) {
-        return this.uploadRemote(file, current, total)
+        return () => Promise.reject(new Error(file.error))
+      } else if (file.isRemote) {
+        // We emit upload-started here, so that it's also emitted for files
+        // that have to wait due to the `limit` option.
+        this.uppy.emit('upload-started', file)
+        return this.uploadRemote.bind(this, file, current, total)
       } else {
-        return this.upload(file, current, total)
+        this.uppy.emit('upload-started', file)
+        return this.upload.bind(this, file, current, total)
       }
+    })
+
+    const promises = actions.map((action) => {
+      const limitedAction = this.limitUploads(action)
+      return limitedAction()
     })
 
     return settle(promises)

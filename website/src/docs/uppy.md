@@ -15,10 +15,10 @@ const uppy = Uppy({
   autoProceed: true,
   debug: false,
   restrictions: {
-    maxFileSize: false,
-    maxNumberOfFiles: false,
-    minNumberOfFiles: false,
-    allowedFileTypes: false
+    maxFileSize: null,
+    maxNumberOfFiles: null,
+    minNumberOfFiles: null,
+    allowedFileTypes: null
   },
   meta: {},
   onBeforeFileAdded: (currentFile, files) => currentFile,
@@ -52,10 +52,14 @@ Optionally provide rules and conditions for which files can be selected.
 
 **Parameters**
 
-- `maxFileSize` *number*
-- `maxNumberOfFiles` *number*
-- `minNumberOfFiles` *number*
-- `allowedFileTypes` *array* of wildcards or exact mime types, like `image/*`
+- `maxFileSize` *null | number*
+- `maxNumberOfFiles` *null | number*
+- `minNumberOfFiles` *null | number*
+- `allowedFileTypes` *null | array* of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
+
+`maxNumberOfFiles` affects the number of files user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1` they will only be able to select a single file, otherwise, when `null` or other number, they will be able to select multiple files.
+
+`allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types)’s accept attribute, so only files matching these types will be selectable.
 
 ### `meta: {}`
 
@@ -69,7 +73,7 @@ meta: {
 
 This global metadata is added to each file in Uppy. It can be modified with two methods:
 
-1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setmeta-data) — set or update meta for all files.
+1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setMeta-data) — set or update meta for all files.
 2. [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file.
 
 Metadata from each file is then attached to uploads in [Tus](/docs/tus/) and [XHRUpload](/docs/xhrupload/) plugins.
@@ -192,9 +196,9 @@ We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/m
 
 ### `store: defaultStore()`
 
-The Store to use to keep track of internal state. By default, a simple object is used.
+The Store to use to keep track of internal state. By [default](/docs/stores/#DefaultStore), a simple object is used.
 
-This option can be used to plug Uppy state into an external state management library, such as Redux. Then, you can write custom views with the library that is also used by the rest of the application.
+This option can be used to plug Uppy state into an external state management library, such as [Redux](/docs/stores/#ReduxStore). Then, you can write custom views with the library that is also used by the rest of the application.
 
 <!-- TODO document store API -->
 
@@ -236,7 +240,7 @@ If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically whe
 
 ### `uppy.getFile(fileID)`
 
-A shortcut method that returns a specific file object from `uppy.state` by its `fileID`.
+Get a specific file object by its ID.
 
 ```js
 const file = uppy.getFile('uppyteamkongjpg1501851828779')
@@ -286,7 +290,7 @@ uppy.upload().then((result) => {
 
 ### `uppy.setState(patch)`
 
-Update `uppy.state`. Usually this method is called internally, but in some cases it might be useful to alter something in `uppy.state` directly.
+Update Uppy's internal state. Usually this method is called internally, but in some cases it might be useful to alter something directly, especially when implementing your own plugins.
 
 Uppy’s default state on initialization:
 
@@ -316,18 +320,18 @@ uppy.setState({
 })
 ```
 
-We don’t mutate `uppy.state`, so internally `setState` creates a new copy of state and replaces `uppy.state` with it. However, when updating values, it’s your responsibility to not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here’s an example from Uppy.Core that updates progress for a particular file in state:
+State in Uppy is considered to be immutable. When updating values, it’s your responsibility to not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here’s an example from Uppy.Core that updates progress for a particular file in state:
 
 ```js
+// We use Object.assign({}, obj) to create a copy of `obj`.
 const updatedFiles = Object.assign({}, uppy.getState().files)
-const updatedFile = Object.assign({}, updatedFiles[fileID],
-  Object.assign({}, {
-    progress: Object.assign({}, updatedFiles[fileID].progress, {
-      bytesUploaded: data.bytesUploaded,
-      bytesTotal: data.bytesTotal,
-      percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
-    })
-  }
+// We use Object.assign({}, obj, update) to create an altered copy of `obj`.
+const updatedFile = Object.assign({}, updatedFiles[fileID], {
+  progress: Object.assign({}, updatedFiles[fileID].progress, {
+    bytesUploaded: data.bytesUploaded,
+    bytesTotal: data.bytesTotal,
+    percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
+  })
 ))
 updatedFiles[data.id] = updatedFile
 uppy.setState({files: updatedFiles})
@@ -335,7 +339,7 @@ uppy.setState({files: updatedFiles})
 
 ### `uppy.getState()`
 
-Returns `uppy.state`, which you can also use directly.
+Returns the current state from the [Store](#store-defaultStore).
 
 ### `uppy.setFileState(fileID, state)`
 
@@ -487,7 +491,7 @@ uppy.on('complete', (result) => {
 
 ### `error`
 
-Fired when Uppy fails to upload/encode the whole upload. That error is then set to `uppy.state.error`.
+Fired when Uppy fails to upload/encode the whole upload. That error is then set to `uppy.getState().error`.
 
 ### `upload-error`
 

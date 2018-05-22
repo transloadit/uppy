@@ -16,7 +16,7 @@ uppy.use(DragDrop, {
   target: null,
   width: '100%',
   height: '100%',
-  note: '',
+  note: null,
   locale: {
     strings: {
       dropHereOr: 'Drop files here or',
@@ -25,6 +25,20 @@ uppy.use(DragDrop, {
   }
 })
 ```
+
+> Note that certain [restrictions set in Uppy’s main options](/docs/uppy#restrictions), namely `maxNumberOfFiles` and `allowedFileTypes`, affect the system file picker dialog. If `maxNumberOfFiles: 1`, users will only be able to select one file, and `allowedFileTypes: ['video/*', '.gif']` means only videos or gifs (files with `.gif` extension) will be selectable.
+
+### `target: null`
+
+DOM element, CSS selector, or plugin to place the drag and drop area into.
+
+### `width: '100%'`
+
+Drag and drop area width, set in inline CSS, so feel free to use percentage, pixels or other values that you like.
+
+### `height: '100%'`
+
+Drag and drop area height, set in inline CSS, so feel free to use percentage, pixels or other values that you like.
 
 ### `note: null`
 

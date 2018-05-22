@@ -11,8 +11,9 @@ class ActionBrowseTagline extends Component {
   }
 
   render () {
-    // empty value=""  on file input, so we can select same file
-    // after removing it from Uppy — otherwise OS thinks it’s selected
+    // empty value="" on file input, so that the input is cleared after a file is selected,
+    // because Uppy will be handling the upload and so we can select same file
+    // after removing — otherwise browser thinks it’s already selected
     return (
       <span>
         {this.props.acquirers.length === 0
@@ -22,13 +23,14 @@ class ActionBrowseTagline extends Component {
           {this.props.i18n('browse')}
         </button>
         <input class="uppy-Dashboard-input"
-          hidden="true"
+          hidden
           aria-hidden="true"
-          tabindex="-1"
+          tabindex={-1}
           type="file"
           name="files[]"
-          multiple="true"
+          multiple={this.props.maxNumberOfFiles !== 1}
           onchange={this.props.handleInputChange}
+          accept={this.props.allowedFileTypes}
           value=""
           ref={(input) => {
             this.input = input

@@ -23,8 +23,8 @@ const renderInnerPanel = (props) => {
 }
 
 const poweredByUppy = (props) => {
-  return <a href="https://uppy.io" rel="noreferrer noopener" target="_blank" class="uppy-Dashboard-poweredBy">Powered by <svg aria-hidden="true" class="uppy-Dashboard-poweredByIcon" width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="nonzero" d="M8.57 7.554v4.149H3.424V7.554H0L6 0l6 7.554H8.57z" />
+  return <a href="https://uppy.io" rel="noreferrer noopener" target="_blank" class="uppy-Dashboard-poweredBy">Powered by <svg aria-hidden="true" class="UppyIcon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fill-rule="evenodd" />
   </svg><span class="uppy-Dashboard-poweredByUppy">Uppy</span></a>
 }
 
@@ -43,7 +43,7 @@ module.exports = function Dashboard (props) {
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onpaste={props.handlePaste}>
 
-      <div class="uppy-Dashboard-overlay" tabindex="-1" onclick={props.handleClickOutside} />
+      <div class="uppy-Dashboard-overlay" tabindex={-1} onclick={props.handleClickOutside} />
 
       <div class="uppy-Dashboard-inner"
         aria-modal={!props.inline && 'true'}
@@ -57,7 +57,7 @@ module.exports = function Dashboard (props) {
           aria-label={props.i18n('closeModal')}
           title={props.i18n('closeModal')}
           onclick={props.closeModal}>
-          <span aria-hidden="true">×</span>
+          <span aria-hidden="true">&times;</span>
         </button>
 
         <div class="uppy-Dashboard-innerWrap">

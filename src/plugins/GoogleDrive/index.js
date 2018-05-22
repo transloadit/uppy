@@ -63,6 +63,18 @@ module.exports = class GoogleDrive extends Plugin {
     }
   }
 
+  getUsername (data) {
+    for (const item of data.items) {
+      if (item.userPermission.role === 'owner') {
+        for (const owner of item.owners) {
+          if (owner.isAuthenticatedUser) {
+            return owner.emailAddress
+          }
+        }
+      }
+    }
+  }
+
   isFolder (item) {
     return item.mimeType === 'application/vnd.google-apps.folder'
   }
