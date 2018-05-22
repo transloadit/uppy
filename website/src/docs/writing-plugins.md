@@ -2,7 +2,7 @@
 type: docs
 title: "Writing Plugins"
 permalink: docs/writing-plugins/
-order: 20
+order: 11
 ---
 
 There are a few useful Uppy plugins out there, but there might come a time when you’ll want to build your own.
