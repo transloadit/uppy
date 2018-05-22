@@ -20,7 +20,6 @@ const uppy = Uppy({ autoProceed: false })
     trigger: '#select-files'
   })
   .use(Tus, {endpoint: 'https://master.tus.io/files/'})
-  .run()
  
 uppy.on('complete', (result) => {
   console.log(`Upload complete! We’ve uploaded these files: ${result.successful}`)
@@ -63,7 +62,6 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
   var uppy = Uppy.Core({ autoProceed: false })
   uppy.use(Uppy.DragDrop, { target: '#drag-drop-area' })
   uppy.use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
-  uppy.run()
 </script>
 ```
 

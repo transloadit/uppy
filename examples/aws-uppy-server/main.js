@@ -21,5 +21,3 @@ uppy.use(Dashboard, {
 uppy.use(AwsS3, {
   host: 'http://localhost:3020'
 })
-
-uppy.run()

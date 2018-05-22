@@ -14,7 +14,6 @@
         .use(Uppy.Dashboard, { trigger: '#uppyModalOpener' })
         .use(Uppy.Webcam, {target: Uppy.Dashboard})
         .use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
-        .run()
 
       uppy.on('success', (fileCount) => {
         console.log(`${fileCount} files uploaded`)

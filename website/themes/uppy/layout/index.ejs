@@ -85,9 +85,9 @@
 <script>
   var PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
   var TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
-  
+
   var uppy = Uppy.Core({ debug: true, autoProceed: false })
-  .use(Uppy.Dashboard, { 
+  .use(Uppy.Dashboard, {
     trigger: '#select-files',
     target: '#upload-form',
     replaceTargetContent: true,
@@ -97,7 +97,6 @@
     ]
   })
   .use(Uppy.Tus, { endpoint: TUS_ENDPOINT})
-  .run()
 
   uppy.on('success', (files) => {
     console.log(`Upload complete! We’ve uploaded these files: ${files}`)

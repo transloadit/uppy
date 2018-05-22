@@ -15,7 +15,6 @@
         .use(Uppy.Instagram, { target: Uppy.Dashboard, host: 'http://localhost:3020' })
         .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, host: 'http://localhost:3020' })
         .use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
-        .run()
 
       uppy.on('success', (fileCount) => {
         console.log(`${fileCount} files uploaded`)

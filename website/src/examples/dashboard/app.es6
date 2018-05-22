@@ -69,7 +69,6 @@ function uppyInit () {
   }
 
   uppy.use(Tus, { endpoint: 'https://master.tus.io/files/', resume: true })
-  uppy.run()
 
   uppy.on('complete', result => {
     console.log('successful files:')

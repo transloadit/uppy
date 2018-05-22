@@ -35,7 +35,6 @@ const uppy = Uppy({ autoProceed: false })
   .use(Instagram, { target: Dashboard, host: 'https://server.uppy.io' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-  .run()
   .on('complete', (result) => {
     console.log('Upload result:', result)
   })
@@ -89,7 +88,6 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
   var uppy = Uppy.Core()
   uppy.use(Uppy.DragDrop, { target: '.UppyDragDrop' })
   uppy.use(Uppy.Tus, { endpoint: '//master.tus.io/files/' })
-  uppy.run()
 </script>
 ```
 
@@ -135,8 +133,8 @@ We aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox, an
 Having no JavaScript beats having a lot of it, so that’s a fair question! Running an uploading & encoding business for ten years though we found that in cases, the file input leaves some to be desired:
 
 - We received complaints about broken uploads and found that resumable uploads are important, especially for big files and to be inclusive towards people on poorer connections (we also launched [tus.io](https://tus.io) to attack that problem). Uppy uploads can survive network outages and browser crashes or accidental navigate-aways.
-- Uppy supports editing meta information before uploading (and e.g. cropping is planned). 
-- There’s the situation where people are using their mobile devices and want to upload on the go, but they have their picture on Instagram, files in Dropbox, or just a plain file url from anywhere on the open web. Uppy allows to pick files from those and push it to the destination without downloading it to your mobile device first. 
+- Uppy supports editing meta information before uploading (and e.g. cropping is planned).
+- There’s the situation where people are using their mobile devices and want to upload on the go, but they have their picture on Instagram, files in Dropbox, or just a plain file url from anywhere on the open web. Uppy allows to pick files from those and push it to the destination without downloading it to your mobile device first.
 - Accurate upload progress reporting is an issue on many platforms.
 - Some file validation — size, type, number of files — can be done on the client with Uppy.
 - Uppy integrates webcam support, in case your users want to upload a picture/video/audio that does not exist yet :)
@@ -148,7 +146,7 @@ Not all apps need all of these features. A `<input type="file">` is fine in many
 
 ### Why is all this goodness free?
 
-Transloadit’s team is small and we have a shared ambition to make a living from open source. By giving away projects like [tus.io](https://tus.io) and [Uppy](https://uppy.io),we’re hoping to advance the state of the art, make life a tiny little bit better for everyone, and in doing so have rewarding jobs and get some eyes on our commercial service: [a content ingestion & processing platform](https://transloadit.com). 
+Transloadit’s team is small and we have a shared ambition to make a living from open source. By giving away projects like [tus.io](https://tus.io) and [Uppy](https://uppy.io),we’re hoping to advance the state of the art, make life a tiny little bit better for everyone, and in doing so have rewarding jobs and get some eyes on our commercial service: [a content ingestion & processing platform](https://transloadit.com).
 
 Our thinking is that if just a fraction of our open source userbase can see the appeal of hosted versions straight from the source, that could already be enough to sustain our work. So far this is working out! We’re able to dedicate 80% of our time to open source and haven’t gone bankrupt just yet :D
 
@@ -162,7 +160,7 @@ Yes, there is an S3 plugin, please check out the [docs](https://uppy.io/docs/aws
 
 ### Do I need to install special service/server for Uppy? Can I use it with Rails/Node/Go/PHP?
 
-Yes, whatever you want on the backend will work with `XHRUpload` plugin, since it just does a `POST` or `PUT` request. Here’s a [PHP backend example](https://uppy.io/docs/xhrupload/#Uploading-to-a-PHP-Server). 
+Yes, whatever you want on the backend will work with `XHRUpload` plugin, since it just does a `POST` or `PUT` request. Here’s a [PHP backend example](https://uppy.io/docs/xhrupload/#Uploading-to-a-PHP-Server).
 
 If you want resumability with the Tus plugin, use [one of the tus server implementations](https://tus.io/implementations.html) 👌🏼
 

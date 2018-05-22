@@ -24,4 +24,3 @@ uppy.use(Dashboard, {
 })
 
 uppy.use(Tus, {endpoint: 'https://master.tus.io/files/'})
-uppy.run()

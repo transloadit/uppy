@@ -123,10 +123,10 @@ To Be Released: 2018-05-31.
 - [ ] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
 - [ ] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
+- [x] docs: add note in docs or solve the .run() issue, see #756
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
 - [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/ (@goto-bus-stop)
-- [ ] docs: add note in docs or solve the .run() issue, see #756
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
 - [ ] providers: Add user/account names to Uppy provider views (@ifedapoolarewaju)
 
@@ -137,7 +137,7 @@ Released: 2018-05-14.
 - core: Pass `allowedFileTypes` and `maxNumberOfFiles` to input[type=file] in UI components: Dashboard, DragDrop, FileInput (#814 / @arturi)
 - transloadit: Update Transloadit plugin's Uppy Server handling (#804 / @goto-bus-stop)
 - tus: respect `limit` option for upload parameter requests (#817 / @ap--)
-- docs: doc: Explain name `metadata` vs. `$_FILES[]["name"]` (#1c1bf2e / @goto-bus-stop)
+- docs: Explain name `metadata` vs. `$_FILES[]["name"]` (#1c1bf2e / @goto-bus-stop)
 - dashboard: improve “powered by” icon (#0284c8e / @arturi)
 - statusbar: add default string for cancel button (#822 / @mrbatista)
 
@@ -150,7 +150,7 @@ Released: 2018-05-10.
 - dashboard: fix duplicate plugin IDs, see #702 (@goto-bus-stop)
 - dashboard/statusbar: fix some unicode characters showing up as gibberish (#787 / @goto-bus-stop)
 - dashboard: Fix grid item height in remote providers with few files (#791 / @goto-bus-stop)
-- dashboard: Add `rel="noopener noreferrer"` to links containing `target="_blank" (#767 / @kvz)
+- dashboard: Add `rel="noopener noreferrer"` to links containing `target="_blank"` (#767 / @kvz)
 - instagram: add extensions to instagram files (@ifedapoolarewaju)
 - transloadit: More robust failure handling for Transloadit, closes #708 (#805 / @goto-bus-stop)
 - docs: Document "headers" upload parameter in AwsS3 plugin (#780 / @janko-m)
