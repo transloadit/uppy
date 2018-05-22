@@ -15,4 +15,12 @@ import StatusBar from 'uppy/lib/react/StatusBar';
 
 The `<StatusBar />` component supports all [StatusBar][] options as props.
 
+```js
+<StatusBar
+  hideUploadButton
+  hideAfterFinish={false}
+  showProgressDetails
+/>
+```
+
 [StatusBar]: /docs/statusbar/

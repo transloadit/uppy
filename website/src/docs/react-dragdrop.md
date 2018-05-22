@@ -15,4 +15,12 @@ import DragDrop from 'uppy/lib/react/DragDrop';
 
 The `<DragDrop />` component supports all [DragDrop][] options as props.
 
+```js
+<DragDrop
+  width="100%"
+  height="100%"
+  note="Images up to 200×200px"
+/>
+```
+
 [DragDrop]: /docs/dragdrop/

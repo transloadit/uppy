@@ -15,4 +15,11 @@ import ProgressBar from 'uppy/lib/react/ProgressBar';
 
 The `<ProgressBar />` component supports all [ProgressBar][] options as props.
 
+```js
+<ProgressBar
+  fixed
+  hideAfterFinish
+/>
+```
+
 [ProgressBar]: /docs/progressbar/
