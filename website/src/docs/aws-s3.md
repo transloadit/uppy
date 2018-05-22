@@ -65,6 +65,19 @@ The default is 30 seconds.
 Limit the amount of uploads going on at the same time. This is passed through to [XHRUpload](/docs/xhrupload#limit-0); see its documentation page for details.
 Set to `0` to disable limiting.
 
+### `locale: {}`
+
+Localize text that is shown to the user.
+
+The default English strings are:
+
+```js
+strings: {
+  // Shown in the StatusBar while the upload is being signed.
+  preparingUpload: 'Preparing upload...'
+}
+```
+
 ## S3 Bucket configuration
 
 S3 buckets do not allow public uploads by default.

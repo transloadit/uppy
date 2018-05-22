@@ -25,12 +25,7 @@ uppy.use(DragDrop, {
   width: '100%',
   height: '100%',
   note: null,
-  locale: {
-    strings: {
-      dropHereOr: 'Drop files here or',
-      browse: 'browse'
-    }
-  }
+  locale: {}
 })
 ```
 
@@ -56,3 +51,16 @@ Drag and drop area height, set in inline CSS, so feel free to use percentage, pi
 
 Optionally specify a string of text that explains something about the upload for the user. This is a place to explain `restrictions` that are put in place. For example: `'Images and video only, 2–3 files, up to 1 MB'`.
 
+### `locale: {}`
+
+Localize text that is shown to the user.
+
+The default English strings are:
+
+```js
+strings: {
+  dropHereOr: 'Drop here or',
+  // Used as the label for the link that opens the system file selection dialog.
+  browse: 'browse'
+}
+```

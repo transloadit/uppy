@@ -153,6 +153,19 @@ The default is 30 seconds.
 
 Limit the amount of uploads going on at the same time. Passing `0` means no limit.
 
+### `locale: {}`
+
+Localize text that is shown to the user.
+
+The default English strings are:
+
+```js
+strings: {
+  // Shown in the Informer if an upload is being canceled because it stalled for too long.
+  timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
+}
+```
+
 ## POST Parameters / Form Fields
 
 When using XHRUpload with `formData: true`, file metadata is sent along with each upload request. You can set metadata for a file using [`uppy.setFileMeta(fileID, data)`](/docs/uppy#uppy-setFileMeta-fileID-data), or for all files simultaneously using [`uppy.setMeta(data)`](/docs/uppy#uppy-setMeta-data).

@@ -33,11 +33,7 @@ uppy.use(Webcam, {
   ],
   mirror: true,
   facingMode: 'user',
-  locale: {
-    strings: {
-      smile: 'Smile!'
-    }
-  }
+  locale: {}
 })
 ```
 
@@ -84,4 +80,22 @@ Devices sometimes have multiple cameras, front and back, for example. There’s 
 
 ### `locale: {}`
 
-There is only one localizable string: `strings.smile`. It's shown before a picture is taken, when the `countdown` option is set to true.
+Localize text that is shown to the user.
+
+The default English strings are:
+
+```js
+strings: {
+  // Shown before a picture is taken when the `countdown` option is set.
+  smile: 'Smile!',
+  // Used as the label for the button that takes a picture.
+  // This is not visibly rendered but is picked up by screen readers.
+  takePicture: 'Take a picture',
+  // Used as the label for the button that starts a video recording.
+  // This is not visibly rendered but is picked up by screen readers.
+  startRecording: 'Begin video recording',
+  // Used as the label for the button that stops a video recording.
+  // This is not visibly rendered but is picked up by screen readers.
+  stopRecording: 'Stop video recording',
+}
+```

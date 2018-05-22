@@ -25,9 +25,6 @@ uppy.use(FileInput, {
   pretty: true,
   inputName: 'files[]',
   locale: {
-    strings: {
-      chooseFiles: 'Choose files'
-    }
   }
 })
 ```
@@ -52,4 +49,10 @@ The `name` attribute for the `<input type="file">` element.
 
 ### `locale: {}`
 
-Custom text to show on the button when `pretty` is true.
+When `pretty` is set, specify a custom label for the button.
+
+```js
+strings: {
+  chooseFiles: 'Choose files'
+}
+```
