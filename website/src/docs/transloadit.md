@@ -10,6 +10,8 @@ The Transloadit plugin can be used to upload files to [Transloadit](https://tran
 [Try it live](/examples/transloadit/)
 
 ```js
+const Transloadit = require('uppy/lib/plugins/Transloadit')
+
 uppy.use(Transloadit, {
   service: 'https://api2.transloadit.com',
   params: null,

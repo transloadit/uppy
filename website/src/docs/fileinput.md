@@ -7,6 +7,14 @@ permalink: docs/fileinput/
 
 `FileInput` is the most barebones UI for selecting files—it shows a single button that, when clicked, opens up the browser's file selector.
 
+```js
+const XHRUpload = require('uppy/lib/plugins/XHRUpload')
+
+uppy.use(XHRUpload, {
+  // Options
+})
+```
+
 [Try it live](/examples/xhrupload) - The XHRUpload example uses a `FileInput`.
 
 ## Options

@@ -8,6 +8,14 @@ permalink: docs/statusbar/
 The StatusBar shows upload progress and speed, ETAs, pre- and post-processing information, and allows users to control (pause/resume/cancel) the upload.
 Best used together with a simple file source plugin, such as [FileInput][] or [DragDrop][], or a custom implementation.
 
+```js
+const StatusBar = require('uppy/lib/plugins/StatusBar')
+
+uppy.use(StatusBar, {
+  // Options
+})
+```
+
 [Try it live](/examples/statusbar/)
 
 ## Options

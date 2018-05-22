@@ -7,6 +7,14 @@ permalink: docs/dragdrop/
 
 DragDrop renders a simple Drag and Drop area for file selection. Useful when you only want the local device as a file source, don’t need file previews and metadata editing UI, and the [Dashboard](/docs/dashboard/) feels like an overkill.
 
+```js
+const DragDrop = require('uppy/lib/plugins/DragDrop')
+
+uppy.use(DragDrop, {
+  // Options
+})
+```
+
 [Try it live](/examples/dragdrop/)
 
 ## Options

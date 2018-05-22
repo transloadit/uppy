@@ -7,6 +7,12 @@ permalink: docs/uppy/
 
 Core module that orchestrates everything in Uppy, exposing `state`, `events` and `methods`.
 
+```js
+const Uppy = require('uppy/lib/core')
+
+const uppy = Uppy()
+```
+
 ## Options
 
 ```js

@@ -7,13 +7,15 @@ permalink: docs/xhrupload/
 
 The XHRUpload plugin handles classic HTML multipart form uploads, as well as uploads using the HTTP `PUT` method.
 
-[Try it live](/examples/xhrupload/)
-
 ```js
+const XHRUpload = require('uppy/lib/plugins/XHRUpload')
+
 uppy.use(XHRUpload, {
   endpoint: 'http://my-website.org/upload'
 })
 ```
+
+[Try it live](/examples/xhrupload/)
 
 ## Options
 

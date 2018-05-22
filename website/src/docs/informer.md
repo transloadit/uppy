@@ -7,6 +7,14 @@ permalink: docs/informer/
 
 The Informer is a pop-up bar for showing notifications. When plugins have some exciting news (or error) to share, they can show a notification here.
 
+```js
+const Informer = require('uppy/lib/plugins/Informer')
+
+uppy.use(Informer, {
+  // Options
+})
+```
+
 [Try it live](/examples/dashboard/) - The Informer is included in the Dashboard by default.
 
 ## Options
