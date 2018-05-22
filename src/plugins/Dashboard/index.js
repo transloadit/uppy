@@ -242,7 +242,7 @@ module.exports = class Dashboard extends Plugin {
       document.body.classList.add('uppy-Dashboard-isOpen')
     }
 
-    this.rerender()
+    this.rerender(this.uppy.getState())
     this.updateDashboardElWidth()
     this.setFocusToBrowse()
   }
@@ -364,7 +364,6 @@ module.exports = class Dashboard extends Plugin {
 
   handleDrop (files) {
     this.uppy.log('[Dashboard] Files were dropped')
-    console.log(files)
 
     files.forEach((file) => {
       this.uppy.addFile({
