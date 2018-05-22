@@ -2,7 +2,7 @@
 title: "Introduction"
 type: docs
 permalink: docs/react/
-order: 50
+order: 60
 ---
 
 Uppy provides [React][] components for the included UI plugins.

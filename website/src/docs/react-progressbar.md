@@ -2,7 +2,7 @@
 title: "&lt;ProgressBar />"
 type: docs
 permalink: docs/react/progressbar/
-order: 53
+order: 63
 ---
 
 The `<ProgressBar />` component wraps the [ProgressBar][] plugin.

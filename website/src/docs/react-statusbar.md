@@ -2,7 +2,7 @@
 title: "&lt;StatusBar />"
 type: docs
 permalink: docs/react/statusbar/
-order: 51
+order: 61
 ---
 
 The `<StatusBar />` component wraps the [StatusBar][] plugin.

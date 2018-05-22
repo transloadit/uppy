@@ -2,7 +2,7 @@
 title: "&lt;DragDrop />"
 type: docs
 permalink: docs/react/dragdrop/
-order: 52
+order: 62
 ---
 
 The `<DragDrop />` component wraps the [DragDrop][] plugin.
