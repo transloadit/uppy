@@ -187,7 +187,7 @@ module.exports = class ProviderView {
         body: {
           fileId: this.plugin.getItemId(file)
         },
-        provider: this.Provider
+        providerOptions: this.Provider.opts
       }
     }
 
