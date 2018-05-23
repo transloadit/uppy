@@ -448,6 +448,16 @@ Subscribe to an uppy-event. See below for the full list of events.
 
 Uppy exposes events that you can subscribe to in your app:
 
+### `directories-dropped`
+
+Fired each time a directory is drag-and-dropped in the `Dasboard` or `DragDrop` plugins.
+
+```javascript
+uppy.on('directories-dropped', (directories) => {
+  console.log('Dropped directories', directories)
+})
+```
+
 ### `file-added`
 
 Fired each time a file is added.

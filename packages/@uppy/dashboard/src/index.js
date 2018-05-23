@@ -437,8 +437,8 @@ module.exports = class Dashboard extends Plugin {
     }
 
     // Drag Drop
-    this.removeDragDropListener = dragDrop(this.el, (files) => {
-      this.handleDrop(files)
+    this.removeDragDropListener = dragDrop(this.el, (files, pos, fileList, directories) => {
+      this.handleDrop(files, directories)
     })
 
     this.updateDashboardElWidth()
@@ -484,8 +484,9 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  handleDrop (files) {
+  handleDrop (files, directories) {
     this.uppy.log('[Dashboard] Files were dropped')
+    this.uppy.emit('directories-dropped', directories)
 
     files.forEach((file) => {
       try {
