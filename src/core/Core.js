@@ -31,7 +31,7 @@ class Uppy {
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload:',
         uppyServerError: 'Connection with Uppy Server failed',
-        failedToUpload: 'Failed to upload',
+        failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
         connectedToInternet: 'Connected to the Internet',
         noFilesFound: 'You have no files or folders here'
@@ -657,8 +657,7 @@ class Uppy {
       this.setFileState(file.id, { error: error.message })
       this.setState({ error: error.message })
 
-      let message
-      message = `${this.i18n('failedToUpload')} ${file.name}`
+      let message = this.i18n('failedToUpload', { file: file.name })
       if (typeof error === 'object' && error.message) {
         message = { message: message, details: error.message }
       }
