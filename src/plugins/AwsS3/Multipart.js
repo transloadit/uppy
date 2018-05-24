@@ -27,6 +27,15 @@ function createEventTracker (emitter) {
   }
 }
 
+function assertServerError (res) {
+  if (res && res.error) {
+    const error = new Error(res.message)
+    Object.assign(error, res.error)
+    throw error
+  }
+  return res
+}
+
 module.exports = class AwsS3Multipart extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -91,7 +100,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     return this.server.post('s3/multipart', {
       filename: file.name,
       type: file.type
-    })
+    }).then(assertServerError)
   }
 
   listParts (file, { key, uploadId }) {
@@ -99,6 +108,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
     const filename = encodeURIComponent(key)
     return this.server.get(`s3/multipart/${uploadId}?key=${filename}`)
+      .then(assertServerError)
   }
 
   prepareUploadPart (file, { key, uploadId, number }) {
@@ -106,6 +116,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
     const filename = encodeURIComponent(key)
     return this.server.get(`s3/multipart/${uploadId}/${number}?key=${filename}`)
+      .then(assertServerError)
   }
 
   completeMultipartUpload (file, { key, uploadId, parts }) {
@@ -114,6 +125,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.server.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
+      .then(assertServerError)
   }
 
   abortMultipartUpload (file, { key, uploadId }) {
@@ -122,6 +134,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.server.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
+      .then(assertServerError)
   }
 
   uploadFile (file) {
