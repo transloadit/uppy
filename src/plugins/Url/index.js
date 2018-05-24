@@ -155,7 +155,7 @@ module.exports = class Url extends Plugin {
     if (e.dataTransfer.items) {
       const items = toArray(e.dataTransfer.items)
       items.forEach((item) => {
-        if (item.kind === 'string' && item.type.match('^text/uri-list')) {
+        if (item.kind === 'string' && item.type === 'text/uri-list') {
           item.getAsString((url) => {
             this.uppy.log(`[URL] Adding file from dropped url: ${url}`)
             this.addFile(url)
@@ -186,7 +186,7 @@ module.exports = class Url extends Plugin {
       if (hasFiles) return
 
       items.forEach((item) => {
-        if (item.kind === 'string' && item.type.match('text/plain')) {
+        if (item.kind === 'string' && item.type === 'text/plain') {
           item.getAsString((url) => {
             this.uppy.log(`[URL] Adding file from pasted url: ${url}`)
             this.addFile(url)
