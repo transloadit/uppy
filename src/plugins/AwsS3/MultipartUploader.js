@@ -66,6 +66,8 @@ class MultipartUploader {
       this.options.onStart(result)
     }).then(() => {
       this._uploadParts()
+    }).catch((err) => {
+      this._onError(err)
     })
   }
 
