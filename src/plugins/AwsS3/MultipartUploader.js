@@ -51,7 +51,9 @@ class MultipartUploader {
   }
 
   _createUpload () {
-    return this.options.createMultipartUpload().then((result) => {
+    return Promise.resolve().then(() =>
+      this.options.createMultipartUpload()
+    ).then((result) => {
       const valid = typeof result === 'object' && result &&
         typeof result.uploadId === 'string' &&
         typeof result.key === 'string'
@@ -72,10 +74,12 @@ class MultipartUploader {
   }
 
   _resumeUpload () {
-    this.options.listParts({
-      uploadId: this.uploadId,
-      key: this.key
-    }).then((parts) => {
+    return Promise.resolve().then(() =>
+      this.options.listParts({
+        uploadId: this.uploadId,
+        key: this.key
+      })
+    ).then((parts) => {
       parts.forEach((part) => {
         const i = part.PartNumber - 1
         this.chunkState[i] = {
@@ -130,7 +134,7 @@ class MultipartUploader {
     const body = this.chunks[index]
     this.chunkState[index].busy = true
 
-    return Promise.resolve(
+    return Promise.resolve().then(() =>
       this.options.prepareUploadPart({
         key: this.key,
         uploadId: this.uploadId,
@@ -227,7 +231,7 @@ class MultipartUploader {
     // Parts may not have completed uploading in sorted order, if limit > 1.
     this.parts.sort((a, b) => a.PartNumber - b.PartNumber)
 
-    return Promise.resolve(
+    return Promise.resolve().then(() =>
       this.options.completeMultipartUpload({
         key: this.key,
         uploadId: this.uploadId,
