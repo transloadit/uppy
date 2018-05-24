@@ -220,10 +220,6 @@ strings: {
 
 Remove all children of the `target` element before mounting the Dashboard. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, there might be cases when you’d want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not available). Set `replaceTargetContent: true` to clear the `target` before appending.
 
-### `locale`
-
-See [general plugin options](/docs/plugins).
-
 ## Methods
 
 ### `openModal()`
