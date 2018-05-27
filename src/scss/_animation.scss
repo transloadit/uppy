@@ -1,23 +1,9 @@
-// Animation
-
-@keyframes zoomOutLeft {
-  40% {
-    opacity: 1;
-    -webkit-transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);
-    transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);
-  }
-
-  to {
-    opacity: 0;
-    -webkit-transform: scale(.1) translate3d(-2000px, 0, 0);
-    transform: scale(.1) translate3d(-2000px, 0, 0);
-    -webkit-transform-origin: left center;
-    transform-origin: left center;
-  }
+@keyframes fadeIn {
+  from { opacity: 0;  }
+  to { opacity: 1;  }
 }
 
-.UppyAnimation-zoomOutLeft {
-  animation-name: zoomOutLeft;
-  animation-duration: 1s;
-  animation-fill-mode: both;
+@keyframes appear {
+  from { transform: translate3d(-50%, -70%, 0); opacity: 0; }
+  to { transform: translate3d(-50%, -50%, 0); opacity: 1; }
 }

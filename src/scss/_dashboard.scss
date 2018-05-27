@@ -7,8 +7,11 @@
 
 .uppy-Dashboard--modal[aria-hidden=true] {
   display: none;
-  // transform: translateY(-50%);
 }
+
+  .uppy-Dashboard--modal:not([aria-hidden='true']) > .uppy-Dashboard-inner {
+    animation: appear 300ms both;
+  }
 
 // Added to body to prevent the page from scrolling when Modal is open
 .uppy-Dashboard-isOpen {
@@ -325,12 +328,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  transform: translateY(-105%);
+  // transform: translateY(-105%);
+  transform: translate3d(0, -105%, 0);
   transition: transform 0.2s ease-in-out;
   will-change: transform;
   background-color: darken($color-white, 4%);
   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
-  // padding: 15px;
   padding-top: 40px;
   overflow: hidden;
   z-index: $zIndex-4;
@@ -338,14 +341,10 @@
   .uppy-Dashboard--wide & {
     padding-top: 50px;
   }
-
-  // .uppy-Dashboard--modal & {
-  //   z-index: $zIndex-4;
-  // }
 }
 
 .uppy-DashboardContent-panel[aria-hidden=false] {
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 
 // Progress bar placeholder
@@ -1012,7 +1011,8 @@
 //
 
 .uppy-DashboardFileCard {
-  transform: translateY(0);
+  // transform: translateY(0);
+  transform: translate3d(0, 0, 0);
   transition: all 0.25s ease-in-out;
   width: 100%;
   height: 100%;
@@ -1028,6 +1028,7 @@
 
 .uppy-DashboardFileCard[aria-hidden=true] {
   transform: translateY(-105%);
+  transform: translate3d(0, -105%, 0);
 }
 
 .uppy-DashboardFileCard-inner {
@@ -1093,3 +1094,6 @@
   vertical-align: middle;
   width: 78%;
 }
+
+
+
