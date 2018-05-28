@@ -123,10 +123,12 @@ To Be Released: 2018-05-31.
 - [ ] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
 - [x] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360 (#844 / @vith)
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
-- [x] core: removed .run() (to solve issues like #756), update ddocs (#793 / goto-bus-stop)
+- [x] core: ⚠️ **breaking** removed .run() (to solve issues like #756), update ddocs (#793 / goto-bus-stop)
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
 - [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/ (@goto-bus-stop)
+- [x] docs: individual React component pages, more plugin options, better groups (#845 / @goto-bus-stop)
+- [x] core: ⚠️ **breaking** Changed some of the strings that we were concatenating in Preact, now their interpolation is handled by the Translator instead. This is important for languages that have different word order than English. (#845 / @goto-bus-stop)
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
 - [x] providers: Add user/account names to Uppy provider views (61bf0a7 / @ifedapoolarewaju)
 - [x] s3: implement multipart uploads (#726 / @goto-bus-stop)
