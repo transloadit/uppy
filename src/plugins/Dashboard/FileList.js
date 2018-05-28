@@ -43,6 +43,7 @@ module.exports = (props) => {
         hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
         hideRetryButton={props.hideRetryButton}
         resumableUploads={props.resumableUploads}
+        bundled={props.bundled}
         isWide={props.isWide}
         showLinkToFileUploadResult={props.showLinkToFileUploadResult}
         metaFields={props.metaFields}

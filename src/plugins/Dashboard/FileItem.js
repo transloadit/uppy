@@ -14,12 +14,15 @@ const FileItemProgressWrapper = (props) => {
     return
   }
 
-  if (props.isUploaded || (props.hidePauseResumeCancelButtons && !props.error)) {
+  if (props.isUploaded ||
+      props.bundled ||
+      (props.hidePauseResumeCancelButtons && !props.error)) {
     return <div class="uppy-DashboardItem-progressIndicator">
       <FileItemProgress
         progress={props.file.progress.percentage}
         fileID={props.file.id}
         hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
+        bundled={props.bundled}
       />
     </div>
   }
@@ -81,7 +84,8 @@ module.exports = function fileItem (props) {
     { 'is-complete': isUploaded },
     { 'is-paused': isPaused },
     { 'is-error': error },
-    { 'is-resumable': props.resumableUploads }
+    { 'is-resumable': props.resumableUploads },
+    { 'is-bundled': props.bundledUpload }
   )
 
   const progressIndicatorTitle = isUploaded

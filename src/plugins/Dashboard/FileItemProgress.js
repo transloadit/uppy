@@ -19,7 +19,7 @@ module.exports = (props) => {
           stroke-dashoffset={circleLength - (circleLength / 100 * props.progress)}
         />
       </g>
-      {!props.hidePauseResumeCancelButtons ? (
+      {!props.hidePauseResumeCancelButtons && !props.bundled ? (
         <g>
           <polygon class="play" transform="translate(3, 3)" points="12 20 12 10 20 15" />
           <g class="pause" transform="translate(14.5, 13)">
