@@ -40,7 +40,7 @@ module.exports = (props) => {
         pauseUpload={props.pauseUpload}
         cancelUpload={props.cancelUpload}
         retryUpload={props.retryUpload}
-        hideCancelButton={props.hideCancelButton}
+        hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
         hideRetryButton={props.hideRetryButton}
         resumableUploads={props.resumableUploads}
         isWide={props.isWide}

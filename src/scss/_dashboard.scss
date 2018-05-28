@@ -792,10 +792,10 @@
 
 .uppy-DashboardItem-progressIndicator {
   @include reset-button;
+  display: inline-block;
   width: 38px;
   height: 38px;
   opacity: 0.9;
-  cursor: pointer;
   transition: all .35s ease;
 
   .uppy-Dashboard--wide & {
@@ -803,6 +803,10 @@
     height: 55px;
   }
 }
+
+  button.uppy-DashboardItem-progressIndicator {
+    cursor: pointer;
+  }
 
   .uppy-DashboardItem.is-error .uppy-DashboardItem-progressIndicator {
     width: 18px;
