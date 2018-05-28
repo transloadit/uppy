@@ -21,7 +21,7 @@ class DragDrop extends React.Component {
 
     uppy.use(DragDropPlugin, options)
 
-    this.plugin = uppy.getPlugin('DragDrop')
+    this.plugin = uppy.getPlugin('react:DragDrop')
   }
 
   componentWillUnmount () {
