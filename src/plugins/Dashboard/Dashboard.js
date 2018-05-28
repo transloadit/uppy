@@ -23,7 +23,7 @@ const renderInnerPanel = (props) => {
 }
 
 const poweredByUppy = (props) => {
-  return <a href="https://uppy.io" rel="noreferrer noopener" target="_blank" class="uppy-Dashboard-poweredBy">Powered by <svg aria-hidden="true" class="UppyIcon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11" xmlns="http://www.w3.org/2000/svg">
+  return <a tabindex="-1" href="https://uppy.io" rel="noreferrer noopener" target="_blank" class="uppy-Dashboard-poweredBy">Powered by <svg aria-hidden="true" class="UppyIcon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11" xmlns="http://www.w3.org/2000/svg">
     <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fill-rule="evenodd" />
   </svg><span class="uppy-Dashboard-poweredByUppy">Uppy</span></a>
 }
@@ -33,6 +33,8 @@ module.exports = function Dashboard (props) {
     { 'uppy-Root': props.isTargetDOMEl },
     'uppy-Dashboard',
     { 'Uppy--isTouchDevice': isTouchDevice() },
+    { 'uppy-Dashboard--animateOpenClose': props.animateOpenClose },
+    { 'uppy-Dashboard--isClosing': props.isClosing },
     { 'uppy-Dashboard--modal': !props.inline },
     { 'uppy-Dashboard--wide': props.isWide }
   )

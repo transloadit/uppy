@@ -1,20 +1,51 @@
 .uppy-Dashboard--modal {
   z-index: $zIndex-2;
-  // transition: transform 0.2s ease-in-out;
-  // transform: none;
-  // -webkit-overflow-scrolling: touch;
 }
 
-.uppy-Dashboard--modal[aria-hidden=true] {
-  display: none;
-}
+  .uppy-Dashboard--modal[aria-hidden=true] {
+    display: none;
+  }
 
-  .uppy-Dashboard--modal:not([aria-hidden='true']) > .uppy-Dashboard-inner {
-    animation: appear 300ms both;
+  // Modal open/close animations
+
+  @keyframes uppy-Dashboard-fadeIn {
+    from { opacity: 0;  }
+    to { opacity: 1;  }
+  }
+
+  @keyframes uppy-Dashboard-fadeOut {
+    from { opacity: 1;  }
+    to { opacity: 0;  }
+  }
+
+  @keyframes uppy-Dashboard-slideDownAndFadeIn {
+    from { transform: translate3d(-50%, -70%, 0); opacity: 0; }
+    to { transform: translate3d(-50%, -50%, 0); opacity: 1; }
+  }
+
+  @keyframes uppy-Dashboard-slideUpFadeOut {
+    from { transform: translate3d(-50%, -50%, 0); opacity: 1; }
+    to { transform: translate3d(-50%, -70%, 0); opacity: 0; }
+  }
+
+  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-inner {
+    animation: uppy-Dashboard-slideDownAndFadeIn 300ms cubic-bezier(0, 0, .2, 1);
+  }
+
+  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-overlay {
+    animation: uppy-Dashboard-fadeIn 300ms cubic-bezier(0, 0, .2, 1);
+  }
+
+  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose.uppy-Dashboard--isClosing > .uppy-Dashboard-inner {
+    animation: uppy-Dashboard-slideUpFadeOut 300ms cubic-bezier(0, 0, .2, 1);
+  }
+
+  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose.uppy-Dashboard--isClosing > .uppy-Dashboard-overlay {
+    animation: uppy-Dashboard-fadeOut 300ms cubic-bezier(0, 0, .2, 1);
   }
 
 // Added to body to prevent the page from scrolling when Modal is open
-.uppy-Dashboard-isOpen {
+.uppy-Dashboard-isFixed {
   overflow: hidden;
   height: 100vh;
 }
@@ -42,6 +73,7 @@
   outline: none;
   border: 1px solid rgba($color-gray, 0.2);
   margin-bottom: 30px;
+  will-change: transform;
 
   .uppy-Dashboard--modal & {
     z-index: $zIndex-3;
