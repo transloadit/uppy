@@ -32,7 +32,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] maybe restrict system file picking dialog too https://github.com/transloadit/uppy/issues/253
 - [ ] uppy-server: what happens if access token expires amid an upload/download process.
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
-- [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
+- [x] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
 - [ ] DnD Bar: drag and drop + statusbar or progressbar ? (@arturi)
 - [ ] possibility to work on already uploaded / in progress files #112, #113
 - [ ] possibility to edit/delete more than one file at once #118, #97
@@ -121,14 +121,15 @@ To Be Released: 2018-05-31.
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
 - [ ] core: add more mime-to-extension mappings from https://github.com/micnic/mime.json/blob/master/index.json (which ones?) # (@arturi, @goto-bus-stop)
 - [ ] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
-- [ ] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360
+- [x] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360 (#844 / @vith)
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
-- [x] docs: add note in docs or solve the .run() issue, see #756
+- [x] core: removed .run() (to solve issues like #756), update ddocs (#793 / goto-bus-stop)
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
 - [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/ (@goto-bus-stop)
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
-- [ ] providers: Add user/account names to Uppy provider views (@ifedapoolarewaju)
+- [x] providers: Add user/account names to Uppy provider views (61bf0a7 / @ifedapoolarewaju)
+- [x] s3: implement multipart uploads (#726 / @goto-bus-stop)
 
 ## 0.24.4
 

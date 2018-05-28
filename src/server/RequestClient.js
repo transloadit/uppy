@@ -58,4 +58,19 @@ module.exports = class RequestClient {
       // @todo validate response status before calling json
       .then((res) => res.json())
   }
+
+  delete (path, data) {
+    return fetch(`${this.hostname}/${path}`, {
+      method: 'delete',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: data ? JSON.stringify(data) : null
+    })
+      .then(this.onReceiveResponse)
+      // @todo validate response status before calling json
+      .then((res) => res.json())
+  }
 }

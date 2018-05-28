@@ -10,13 +10,18 @@ Uploads can be signed using [uppy-server][uppy-server docs] or a custom signing 
 
 ```js
 const AwsS3 = require('uppy/lib/plugins/AwsS3')
+const ms = require('ms')
 
 uppy.use(AwsS3, {
-  // Options
+  limit: 2,
+  timeout: ms('1 minute'),
+  host: 'https://uppy-server.myapp.com/'
 })
 ```
 
 There are broadly two ways to upload to S3 in a browser. A server can generate a presigned URL for a [PUT upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html), or a server can generate form data for a [POST upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html). uppy-server uses a POST upload. See [POST uPloads](#post-uploads) for some caveats if you would like to use POST uploads without uppy-server. See [Generating a presigned upload URL server-side](#example-presigned-url) for an example of a PUT upload.
+
+There is also a separate plugin for S3 Multipart uploads. Multipart in this sense is Amazon's proprietary chunked, resumable upload mechanism for large files. See the [AwsS3Multipart](/docs/aws-s3-multipart) documentation.
 
 ## Options
 
