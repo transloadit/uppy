@@ -168,11 +168,21 @@ describe('core/utils', () => {
     })
 
     it('should determine the filetype from the extension', () => {
-      const file = {
+      const fileMP3 = {
         name: 'foo.mp3',
         data: 'sdfsfhfh329fhwihs'
       }
-      expect(utils.getFileType(file)).toEqual('audio/mp3')
+      const fileYAML = {
+        name: 'bar.yaml',
+        data: 'sdfsfhfh329fhwihs'
+      }
+      const fileMKV = {
+        name: 'bar.mkv',
+        data: 'sdfsfhfh329fhwihs'
+      }
+      expect(utils.getFileType(fileMP3)).toEqual('audio/mp3')
+      expect(utils.getFileType(fileYAML)).toEqual('text/yaml')
+      expect(utils.getFileType(fileMKV)).toEqual('video/x-matroska')
     })
 
     it('should fail gracefully if unable to detect', () => {

@@ -21,11 +21,6 @@ describe('src/Core', () => {
     jest.spyOn(utils, 'findDOMElement').mockImplementation(path => {
       return 'some config...'
     })
-    jest.spyOn(utils, 'createThumbnail').mockImplementation(path => {
-      return Promise.resolve(`data:image/jpeg;base64,${sampleImage.toString('base64')}`)
-    })
-    utils.createThumbnail.mockClear()
-
     global.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
   })
 
