@@ -19,7 +19,6 @@ module.exports = class FileInput extends Plugin {
     // Default options
     const defaultOptions = {
       target: null,
-      allowMultipleFiles: true,
       pretty: true,
       inputName: 'files[]',
       locale: defaultLocale
@@ -60,6 +59,7 @@ module.exports = class FileInput extends Plugin {
   }
 
   render (state) {
+    /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
     const hiddenInputStyle = {
       width: '0.1px',
       height: '0.1px',
@@ -68,6 +68,8 @@ module.exports = class FileInput extends Plugin {
       position: 'absolute',
       zIndex: -1
     }
+
+    const restrictions = this.uppy.opts.restrictions
 
     // empty value="" on file input, so that the input is cleared after a file is selected,
     // because Uppy will be handling the upload and so we can select same file
@@ -78,7 +80,8 @@ module.exports = class FileInput extends Plugin {
         type="file"
         name={this.opts.inputName}
         onchange={this.handleInputChange}
-        multiple={this.opts.allowMultipleFiles}
+        multiple={restrictions.maxNumberOfFiles !== 1}
+        accept={restrictions.allowedFileTypes}
         ref={(input) => { this.input = input }}
         value="" />
       {this.opts.pretty &&

@@ -9,14 +9,25 @@ The `AwsS3` plugin can be used to upload files directly to an S3 bucket.
 Uploads can be signed using [uppy-server][uppy-server docs] or a custom signing function.
 
 ```js
+const AwsS3 = require('uppy/lib/plugins/AwsS3')
+const ms = require('ms')
+
 uppy.use(AwsS3, {
-  // Options
+  limit: 2,
+  timeout: ms('1 minute'),
+  host: 'https://uppy-server.myapp.com/'
 })
 ```
 
 There are broadly two ways to upload to S3 in a browser. A server can generate a presigned URL for a [PUT upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html), or a server can generate form data for a [POST upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html). uppy-server uses a POST upload. See [POST uPloads](#post-uploads) for some caveats if you would like to use POST uploads without uppy-server. See [Generating a presigned upload URL server-side](#example-presigned-url) for an example of a PUT upload.
 
+There is also a separate plugin for S3 Multipart uploads. Multipart in this sense is Amazon's proprietary chunked, resumable upload mechanism for large files. See the [AwsS3Multipart](/docs/aws-s3-multipart) documentation.
+
 ## Options
+
+### `id: 'AwsS3'`
+
+A unique identifier for this plugin. Defaults to `'AwsS3'`.
 
 ### `host`
 
@@ -58,6 +69,19 @@ The default is 30 seconds.
 
 Limit the amount of uploads going on at the same time. This is passed through to [XHRUpload](/docs/xhrupload#limit-0); see its documentation page for details.
 Set to `0` to disable limiting.
+
+### `locale: {}`
+
+Localize text that is shown to the user.
+
+The default English strings are:
+
+```js
+strings: {
+  // Shown in the StatusBar while the upload is being signed.
+  preparingUpload: 'Preparing upload...'
+}
+```
 
 ## S3 Bucket configuration
 

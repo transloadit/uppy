@@ -79,15 +79,15 @@
   <p>© <%- date(Date.now(), 'YYYY') %> <a href="https://transloadit.com" rel="noreferrer noopener" target="_blank">Transloadit</a></p>
 </footer>
 
-<link href="https://transloadit.edgly.net/releases/uppy/v0.24.3/dist/uppy.min.css" rel="stylesheet">
-<script src="https://transloadit.edgly.net/releases/uppy/v0.24.3/dist/uppy.min.js"></script>
+<link href="https://transloadit.edgly.net/releases/uppy/v0.24.4/dist/uppy.min.css" rel="stylesheet">
+<script src="https://transloadit.edgly.net/releases/uppy/v0.24.4/dist/uppy.min.js"></script>
 
 <script>
   var PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'
   var TUS_ENDPOINT = PROTOCOL + '://master.tus.io/files/'
-  
+
   var uppy = Uppy.Core({ debug: true, autoProceed: false })
-  .use(Uppy.Dashboard, { 
+  .use(Uppy.Dashboard, {
     trigger: '#select-files',
     target: '#upload-form',
     replaceTargetContent: true,
@@ -97,7 +97,6 @@
     ]
   })
   .use(Uppy.Tus, { endpoint: TUS_ENDPOINT})
-  .run()
 
   uppy.on('success', (files) => {
     console.log(`Upload complete! We’ve uploaded these files: ${files}`)

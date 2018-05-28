@@ -2,7 +2,7 @@
 title: "Redux"
 type: docs
 permalink: docs/redux
-order: 57
+order: 67
 ---
 
 Uppy supports popular [Redux](https://redux.js.org/) state management library in two ways:
@@ -41,10 +41,10 @@ const uppy = Uppy({
   meta: {
     username: 'John',
     license: 'Creative Commons'
+  }
 })
-.use(XHRUpload, { endpoint: 'https://example.com' })
-.use(ReduxDevTools)
-.run()
+  .use(XHRUpload, { endpoint: 'https://example.com' })
+  .use(ReduxDevTools)
 ```
 
 After you `.use(ReduxDevTools)`, you should be able to see Uppy’s state in Redux Dev Tools.

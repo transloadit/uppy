@@ -31,9 +31,10 @@ class Uppy {
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload:',
         uppyServerError: 'Connection with Uppy Server failed',
-        failedToUpload: 'Failed to upload',
+        failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
-        connectedToInternet: 'Connected to the Internet'
+        connectedToInternet: 'Connected to the Internet',
+        noFilesFound: 'You have no files or folders here'
       }
     }
 
@@ -43,10 +44,10 @@ class Uppy {
       autoProceed: true,
       debug: false,
       restrictions: {
-        maxFileSize: false,
-        maxNumberOfFiles: false,
-        minNumberOfFiles: false,
-        allowedFileTypes: false
+        maxFileSize: null,
+        maxNumberOfFiles: null,
+        minNumberOfFiles: null,
+        allowedFileTypes: null
       },
       meta: {},
       onBeforeFileAdded: (currentFile, files) => currentFile,
@@ -128,6 +129,8 @@ class Uppy {
       window['uppyLog'] = ''
       window[this.opts.id] = this
     }
+
+    this._addListeners()
   }
 
   on (event, callback) {
@@ -322,8 +325,20 @@ class Uppy {
 
     if (allowedFileTypes) {
       const isCorrectFileType = allowedFileTypes.filter((type) => {
-        if (!file.type) return false
-        return match(file.type, type)
+        // if (!file.type) return false
+
+        // is this is a mime-type
+        if (type.indexOf('/') > -1) {
+          if (!file.type) return false
+          return match(file.type, type)
+        }
+
+        // otherwise this is likely an extension
+        if (type[0] === '.') {
+          if (file.extension === type.substr(1)) {
+            return file.extension
+          }
+        }
       }).length > 0
 
       if (!isCorrectFileType) {
@@ -632,20 +647,8 @@ class Uppy {
   /**
    * Registers listeners for all global actions, like:
    * `error`, `file-removed`, `upload-progress`
-   *
    */
-  actions () {
-    // const log = this.log
-    // this.on('*', function (payload) {
-    //   log(`[Core] Event: ${this.event}`)
-    //   log(payload)
-    // })
-
-    // stress-test re-rendering
-    // setInterval(() => {
-    //   this.setState({bla: 'bla'})
-    // }, 20)
-
+  _addListeners () {
     this.on('error', (error) => {
       this.setState({ error: error.message })
     })
@@ -654,8 +657,7 @@ class Uppy {
       this.setFileState(file.id, { error: error.message })
       this.setState({ error: error.message })
 
-      let message
-      message = `${this.i18n('failedToUpload')} ${file.name}`
+      let message = this.i18n('failedToUpload', { file: file.name })
       if (typeof error === 'object' && error.message) {
         message = { message: message, details: error.message }
       }
@@ -973,13 +975,10 @@ class Uppy {
   }
 
   /**
-   * Initializes actions.
-   *
+   * Obsolete, event listeners are now added in the constructor.
    */
   run () {
-    this.log('Core is run, initializing actions...')
-    this.actions()
-
+    this.log('Calling run() is no longer necessary.', 'warning')
     return this
   }
 

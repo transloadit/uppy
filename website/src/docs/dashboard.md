@@ -14,6 +14,14 @@ Dashboard is a universal UI plugin for Uppy:
 - Progress: total and for individual files
 - Ability to pause/resume or cancel (depending on uploader plugin) individual or all files
 
+```js
+const Dashboard = require('uppy/lib/plugins/Dashboard')
+
+uppy.use(Dashboard, {
+  // Options
+})
+```
+
 [Try it live](/examples/dashboard/)
 
 ## Options
@@ -40,53 +48,14 @@ uppy.use(Dashboard, {
   disablePageScrollWhenModalOpen: true,
   proudlyDisplayPoweredByUppy: true,
   onRequestCloseModal: () => this.closeModal(),
-  locale: {
-    strings: {
-      selectToUpload: 'Select files to upload',
-      closeModal: 'Close Modal',
-      upload: 'Upload',
-      importFrom: 'Import from',
-      dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
-      dashboardTitle: 'Uppy Dashboard',
-      copyLinkToClipboardSuccess: 'Link copied to clipboard.',
-      copyLinkToClipboardFallback: 'Copy the URL below',
-      copyLink: 'Copy link',
-      fileSource: 'File source',
-      done: 'Done',
-      name: 'Name',
-      removeFile: 'Remove file',
-      editFile: 'Edit file',
-      editing: 'Editing',
-      finishEditingFile: 'Finish editing file',
-      localDisk: 'Local Disk',
-      myDevice: 'My Device',
-      dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
-      dropPaste: 'Drop files here, paste or',
-      browse: 'browse',
-      fileProgress: 'File progress: upload speed and ETA',
-      numberOfSelectedFiles: 'Number of selected files',
-      uploadAllNewFiles: 'Upload all new files',
-      emptyFolderAdded: 'No files were added from empty folder',
-      uploadComplete: 'Upload complete',
-      resumeUpload: 'Resume upload',
-      pauseUpload: 'Pause upload',
-      retryUpload: 'Retry upload',
-      uploadXFiles: {
-        0: 'Upload %{smart_count} file',
-        1: 'Upload %{smart_count} files'
-      },
-      uploadXNewFiles: {
-        0: 'Upload +%{smart_count} file',
-        1: 'Upload +%{smart_count} files'
-      },
-      folderAdded: {
-        0: 'Added %{smart_count} file from %{folder}',
-        1: 'Added %{smart_count} files from %{folder}'
-      }
-    }
-  }
+  locale: {}
 })
 ```
+
+### `id: 'Dashboard'`
+
+A unique identifier for this Dashboard. Defaults to `'Dashboard'`. Change this if you need multiple Dashboard instances.
+Plugins that are added by the Dashboard get unique IDs based on this ID, like `'Dashboard:StatusBar'` and `'Dashboard:Informer'`.
 
 ### `target: 'body'`
 
@@ -187,9 +156,69 @@ Dashboard ships with the `Informer` plugin that notifies when the browser is off
 
 Dashboard ships with `ThumbnailGenerator` plugin that adds small resized image thumbnails to images, for preview purposes only. If you want, you can disable the `ThumbnailGenerator` and/or provide your custom solution.
 
-### `locale`
+### `locale: {}`
 
-See [general plugin options](/docs/plugins).
+Localize text that is shown to the user.
+
+The default English strings are:
+
+```js
+strings: {
+  // When `inline: false`, used as the screen reader label for the button that closes the modal.
+  closeModal: 'Close Modal',
+  // Used as the header for import panels, eg. "Import from Google Drive"
+  importFrom: 'Import from %{name}',
+  // When `inline: false`, used as the screen reader label for the dashboard modal.
+  dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
+  // When `inline: true`, used as the screen reader label for the dashboard area.
+  dashboardTitle: 'Uppy Dashboard',
+  // Shown in the Informer when a link to a file was copied to the clipboard.
+  copyLinkToClipboardSuccess: 'Link copied to clipboard.',
+  // Used when a link cannot be copied automatically—the user has to select the text from the
+  // input element below this string.
+  copyLinkToClipboardFallback: 'Copy the URL below',
+  // Used as the hover title and screen reader label for buttons that copy a file link.
+  copyLink: 'Copy link',
+  // Used as the hover title and screen reader label for file source icons. Eg. "File source: Dropbox"
+  fileSource: 'File source: %{name}',
+  // Used as the label for buttons that accept and close panels (remote providers or metadata editor)
+  done: 'Done',
+  // Used as the screen reader label for buttons that remove a file.
+  removeFile: 'Remove file',
+  // Used as the screen reader label for buttons that open the metadata editor panel for a file.
+  editFile: 'Edit file',
+  // Shown in the panel header for the metadata editor. Rendered as "Editing image.png".
+  editing: 'Editing %{file}',
+  // Used as the screen reader label for the button that saves metadata edits and returns to the
+  // file list view.
+  finishEditingFile: 'Finish editing file',
+  // Used as the label for the tab button that opens the system file selection dialog.
+  myDevice: 'My Device',
+  // Shown in the main dashboard area when no files have been selected, and one or more
+  // remote provider plugins are in use. %{browse} is replaced with a link that opens the system
+  // file selection dialog.
+  dropPasteImport: 'Drop files here, paste, import from one of the locations above or %{browse}',
+  // Shown in the main dashboard area when no files have been selected, and no provider
+  // plugins are in use. %{browse} is replaced with a link that opens the system
+  // file selection dialog.
+  dropPaste: 'Drop files here, paste or %{browse}',
+  // This string is clickable and opens the system file selection dialog.
+  browse: 'browse',
+  // Used as the hover text and screen reader label for file progress indicators when
+  // they have been fully uploaded.
+  uploadComplete: 'Upload complete',
+  // Used as the hover text and screen reader label for the buttons to resume paused uploads.
+  resumeUpload: 'Resume upload',
+  // Used as the hover text and screen reader label for the buttons to pause uploads.
+  pauseUpload: 'Pause upload',
+  // Used as the hover text and screen reader label for the buttons to retry failed uploads.
+  retryUpload: 'Retry upload'
+}
+```
+
+### `replaceTargetContent: false`
+
+Remove all children of the `target` element before mounting the Dashboard. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, there might be cases when you’d want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not available). Set `replaceTargetContent: true` to clear the `target` before appending.
 
 ## Methods
 

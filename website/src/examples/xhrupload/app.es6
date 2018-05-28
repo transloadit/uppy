@@ -15,6 +15,5 @@ uppy.use(ProgressBar, {
   fixed: true,
   hideAfterFinish: false
 })
-uppy.run()
 
 console.log('Uppy with Formtag and XHRUpload is loaded')

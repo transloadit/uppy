@@ -131,6 +131,7 @@ module.exports = class ProviderView {
           updatedDirectories = state.directories.concat([{id, title: name || this.plugin.getItemName(res)}])
         }
 
+        this.username = this.username ? this.username : this.plugin.getUsername(res)
         this._updateFilesAndFolders(res, files, folders)
         this.plugin.setPluginState({ directories: updatedDirectories })
       },
@@ -565,6 +566,7 @@ module.exports = class ProviderView {
     }
 
     const browserProps = Object.assign({}, this.plugin.getPluginState(), {
+      username: this.username,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
       addFile: this.addFile,
@@ -588,7 +590,8 @@ module.exports = class ProviderView {
       showTitles: this.opts.showTitles,
       showFilter: this.opts.showFilter,
       showBreadcrumbs: this.opts.showBreadcrumbs,
-      pluginIcon: this.plugin.icon
+      pluginIcon: this.plugin.icon,
+      i18n: this.plugin.uppy.i18n
     })
 
     return Browser(browserProps)

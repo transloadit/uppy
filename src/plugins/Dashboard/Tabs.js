@@ -23,7 +23,8 @@ class Tabs extends Component {
             <ActionBrowseTagline
               acquirers={this.props.acquirers}
               handleInputChange={this.props.handleInputChange}
-              i18n={this.props.i18n} />
+              i18n={this.props.i18n}
+              i18nArray={this.props.i18nArray} />
           </div>
         </div>
       )
@@ -38,18 +39,19 @@ class Tabs extends Component {
           <button type="button"
             class="uppy-DashboardTab-btn"
             role="tab"
-            tabindex="0"
+            tabindex={0}
             onclick={this.handleClick}>
             {localIcon()}
             <div class="uppy-DashboardTab-name">{this.props.i18n('myDevice')}</div>
           </button>
           <input class="uppy-Dashboard-input"
-            hidden="true"
+            hidden
             aria-hidden="true"
-            tabindex="-1"
+            tabindex={-1}
             type="file"
             name="files[]"
-            multiple="true"
+            multiple={this.props.maxNumberOfFiles !== 1}
+            accept={this.props.allowedFileTypes}
             onchange={this.props.handleInputChange}
             value=""
             ref={(input) => { this.input = input }} />
@@ -59,7 +61,7 @@ class Tabs extends Component {
             <button class="uppy-DashboardTab-btn"
               type="button"
               role="tab"
-              tabindex="0"
+              tabindex={0}
               aria-controls={`uppy-DashboardContent-panel--${target.id}`}
               aria-selected={this.props.activePanel.id === target.id}
               onclick={() => this.props.showPanel(target.id)}>

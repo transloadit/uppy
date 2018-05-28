@@ -17,7 +17,7 @@ module.exports = class DragDrop extends Plugin {
 
     const defaultLocale = {
       strings: {
-        dropHereOr: 'Drop files here or',
+        dropHereOr: 'Drop files here or %{browse}',
         browse: 'browse'
       }
     }
@@ -26,7 +26,6 @@ module.exports = class DragDrop extends Plugin {
     const defaultOpts = {
       target: null,
       inputName: 'files[]',
-      allowMultipleFiles: true,
       width: '100%',
       height: '100%',
       note: null,
@@ -45,6 +44,7 @@ module.exports = class DragDrop extends Plugin {
     // i18n
     this.translator = new Translator({locale: this.locale})
     this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
 
     // Bind `this` to class methods
     this.handleDrop = this.handleDrop.bind(this)
@@ -104,11 +104,21 @@ module.exports = class DragDrop extends Plugin {
   }
 
   render (state) {
-    const DragDropClass = `uppy-Root uppy-DragDrop-container ${this.isDragDropSupported ? 'is-dragdrop-supported' : ''}`
+    /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
+    const hiddenInputStyle = {
+      width: '0.1px',
+      height: '0.1px',
+      opacity: 0,
+      overflow: 'hidden',
+      position: 'absolute',
+      zIndex: -1
+    }
+    const DragDropClass = `uppy-Root uppy-DragDrop-container ${this.isDragDropSupported ? 'uppy-DragDrop--is-dragdrop-supported' : ''}`
     const DragDropStyle = {
       width: this.opts.width,
       height: this.opts.height
     }
+    const restrictions = this.uppy.opts.restrictions
 
     // empty value="" on file input, so that the input is cleared after a file is selected,
     // because Uppy will be handling the upload and so we can select same file
@@ -120,14 +130,20 @@ module.exports = class DragDrop extends Plugin {
             <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
           </svg>
           <label class="uppy-DragDrop-label">
-            <input class="uppy-DragDrop-input"
+            <input style={hiddenInputStyle}
+              class="uppy-DragDrop-input"
               type="file"
               name={this.opts.inputName}
-              multiple={this.opts.allowMultipleFiles}
-              ref={(input) => { this.input = input }}
+              multiple={restrictions.maxNumberOfFiles !== 1}
+              accept={restrictions.allowedFileTypes}
+              ref={(input) => {
+                this.input = input
+              }}
               onchange={this.handleInputChange}
               value="" />
-            {this.i18n('dropHereOr')} <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
+            {this.i18nArray('dropHereOr', {
+              browse: <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
+            })}
           </label>
           <span class="uppy-DragDrop-note">{this.opts.note}</span>
         </div>

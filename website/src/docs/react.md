@@ -2,7 +2,7 @@
 title: "Introduction"
 type: docs
 permalink: docs/react/
-order: 50
+order: 60
 ---
 
 Uppy provides [React][] components for the included UI plugins.
@@ -35,8 +35,6 @@ uppy.on('complete', (result) => {
   })
 })
 
-uppy.run()
-
 const AvatarPicker = ({ currentAvatar }) => {
   return (
     <div>
@@ -56,16 +54,20 @@ const AvatarPicker = ({ currentAvatar }) => {
 
 The plugins that are available as React component wrappers are:
 
- - [Dashboard][]
- - [DashboardModal][]
- - [DragDrop][]
- - [ProgressBar][]
- - [StatusBar][]
+ - [&lt;Dashboard />][] - renders an inline [Dashboard][]
+ - [&lt;DashboardModal />][] - renders a [Dashboard][] modal
+ - [&lt;DragDrop />][] - renders a [DragDrop][] area
+ - [&lt;ProgressBar />][] - renders a [ProgressBar][]
+ - [&lt;StatusBar />][] - renders a [StatusBar][]
 
 [React]: https://facebook.github.io/react
 [Preact]: https://preactjs.com/
+[&lt;Dashboard />]: /docs/react/dashboard
+[&lt;DragDrop />]: /docs/react/dragdrop
+[&lt;ProgressBar />]: /docs/react/progressbar
+[&lt;StatusBar />]: /docs/react/statusbar
+[&lt;DashboardModal />]: /docs/react/dashboard-modal
 [Dashboard]: /docs/dashboard
 [DragDrop]: /docs/dragdrop
 [ProgressBar]: /docs/progressbar
 [StatusBar]: /docs/statusbar
-[DashboardModal]: /docs/react/dashboard-modal

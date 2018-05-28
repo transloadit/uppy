@@ -1,6 +1,7 @@
 .uppy-Provider-auth,
 .uppy-Provider-error,
-.uppy-Provider-loading {
+.uppy-Provider-loading,
+.uppy-Provider-empty {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -81,8 +82,14 @@
 }
 
 .uppy-ProviderBrowser-user {
-  margin: 16px 0;
+  margin: 0 8px 0 0;
 }
+
+  .uppy-ProviderBrowser-user:after {
+    content: '\00B7';
+    position: relative;
+    left: 4px;
+  }
 
 .uppy-ProviderBrowser-header {
   z-index: $zIndex-2;

@@ -21,11 +21,9 @@ module.exports = class App extends React.Component {
     this.uppy = new Uppy({ autoProceed: false })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
       .use(GoogleDrive, { host: 'https://server.uppy.io' })
-      .run()
 
     this.uppy2 = new Uppy({ autoProceed: false })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-      .run()
   }
 
   componentWillUnmount () {

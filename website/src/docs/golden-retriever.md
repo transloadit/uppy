@@ -22,7 +22,6 @@ require('uppy/lib/plugins/GoldenRetriever/ServiceWorker.js')
 const GoldenRetriever = require('uppy/lib/plugins/GoldenRetriever')
 
 uppy.use(GoldenRetriever, {serviceWorker: true})
-uppy.run()
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker

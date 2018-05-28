@@ -7,15 +7,21 @@ permalink: docs/xhrupload/
 
 The XHRUpload plugin handles classic HTML multipart form uploads, as well as uploads using the HTTP `PUT` method.
 
-[Try it live](/examples/xhrupload/)
-
 ```js
+const XHRUpload = require('uppy/lib/plugins/XHRUpload')
+
 uppy.use(XHRUpload, {
   endpoint: 'http://my-website.org/upload'
 })
 ```
 
+[Try it live](/examples/xhrupload/)
+
 ## Options
+
+### `id: 'XHRUpload'`
+
+A unique identifier for this plugin. Defaults to `'XHRUpload'`.
 
 ### `endpoint: ''`
 
@@ -147,6 +153,19 @@ The default is 30 seconds.
 
 Limit the amount of uploads going on at the same time. Passing `0` means no limit.
 
+### `locale: {}`
+
+Localize text that is shown to the user.
+
+The default English strings are:
+
+```js
+strings: {
+  // Shown in the Informer if an upload is being canceled because it stalled for too long.
+  timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
+}
+```
+
 ## POST Parameters / Form Fields
 
 When using XHRUpload with `formData: true`, file metadata is sent along with each upload request. You can set metadata for a file using [`uppy.setFileMeta(fileID, data)`](/docs/uppy#uppy-setFileMeta-fileID-data), or for all files simultaneously using [`uppy.setMeta(data)`](/docs/uppy#uppy-setMeta-data).
@@ -183,8 +202,11 @@ The default form field for file uploads is `files[]`, which means you have to ac
 // upload.php
 $files = $_FILES['files'];
 $file_path = $files['tmp_name'][0]; // temporary upload path of the first file
-move_uploaded_file($file_path, './img/img.png'); // save the file at `img/img.png`
+$file_name = $_POST['name']; // desired name of the file
+move_uploaded_file($file_path, './img/' . basename($file_name)); // save the file in `img/`
 ```
+
+Note how we're using `$_POST['name']` instead of `$my_file['name']`. `$my_file['name']` contains the original name of the file on the user's device. `$_POST['name']` contains the `name` metadata value for the uploaded file, which can be edited by the user using the [Dashboard](/docs/dashboard).
 
 Set a custom `fieldName` to make working with the `$_FILES` array a bit less convoluted:
 
@@ -201,7 +223,7 @@ uppy.use(XHRUpload, {
 // upload.php
 $my_file = $_FILES['my_file'];
 $file_path = $my_file['tmp_name']; // temporary upload path of the file
-$file_name = $my_file['name']; // original name of the file
+$file_name = $_POST['name']; // desired name of the file
 move_uploaded_file($file_path, './img/' . basename($file_name)); // save the file at `img/FILE_NAME`
 ```
 

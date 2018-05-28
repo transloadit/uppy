@@ -41,9 +41,10 @@ module.exports = class Translator {
    * @return {string} interpolated
    */
   interpolate (phrase, options) {
-    const replace = String.prototype.replace
+    const { split, replace } = String.prototype
     const dollarRegex = /\$/g
     const dollarBillsYall = '$$$$'
+    let interpolated = [phrase]
 
     for (let arg in options) {
       if (arg !== '_' && options.hasOwnProperty(arg)) {
@@ -57,10 +58,28 @@ module.exports = class Translator {
         // We create a new `RegExp` each time instead of using a more-efficient
         // string replace so that the same argument can be replaced multiple times
         // in the same phrase.
-        phrase = replace.call(phrase, new RegExp('%\\{' + arg + '\\}', 'g'), replacement)
+        interpolated = insertReplacement(interpolated, new RegExp('%\\{' + arg + '\\}', 'g'), replacement)
       }
     }
-    return phrase
+
+    return interpolated
+
+    function insertReplacement (source, rx, replacement) {
+      const newParts = []
+      source.forEach((chunk) => {
+        split.call(chunk, rx).forEach((raw, i, list) => {
+          if (raw !== '') {
+            newParts.push(raw)
+          }
+
+          // Interlace with the `replacement` value
+          if (i < list.length - 1) {
+            newParts.push(replacement)
+          }
+        })
+      })
+      return newParts
+    }
   }
 
   /**
@@ -71,7 +90,17 @@ module.exports = class Translator {
    * @return {string} translated (and interpolated)
    */
   translate (key, options) {
-    if (options && options.smart_count) {
+    return this.translateArray(key, options).join('')
+  }
+
+  /**
+   * Get a translation and return the translated and interpolated parts as an array.
+   * @param {string} key
+   * @param {object} options with values that will be used to replace placeholders
+   * @return {Array} The translated and interpolated parts, in order.
+   */
+  translateArray (key, options) {
+    if (options && typeof options.smart_count !== 'undefined') {
       var plural = this.locale.pluralize(options.smart_count)
       return this.interpolate(this.opts.locale.strings[key][plural], options)
     }

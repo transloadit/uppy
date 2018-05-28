@@ -21,11 +21,6 @@ describe('src/Core', () => {
     jest.spyOn(utils, 'findDOMElement').mockImplementation(path => {
       return 'some config...'
     })
-    jest.spyOn(utils, 'createThumbnail').mockImplementation(path => {
-      return Promise.resolve(`data:image/jpeg;base64,${sampleImage.toString('base64')}`)
-    })
-    utils.createThumbnail.mockClear()
-
     global.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
   })
 
@@ -298,7 +293,6 @@ describe('src/Core', () => {
       core.addUploader((fileIDs, uploadID) => {
         core.addResultData(uploadID, { upload: 'ok' })
       })
-      core.run()
       return core.upload().then((result) => {
         expect(result.pre).toBe('ok')
         expect(result.upload).toBe('ok')
@@ -357,7 +351,6 @@ describe('src/Core', () => {
 
     it('should update the file progress state when preprocess-progress event is fired', () => {
       const core = new Core()
-      core.run()
       core.addFile({
         source: 'jest',
         name: 'foo.jpg',
@@ -384,7 +377,6 @@ describe('src/Core', () => {
 
     it('should update the file progress state when preprocess-complete event is fired', () => {
       const core = new Core()
-      core.run()
 
       core.addFile({
         source: 'jest',
@@ -465,7 +457,6 @@ describe('src/Core', () => {
 
     it('should update the file progress state when postprocess-progress event is fired', () => {
       const core = new Core()
-      core.run()
 
       core.addFile({
         source: 'jest',
@@ -493,7 +484,6 @@ describe('src/Core', () => {
 
     it('should update the file progress state when postprocess-complete event is fired', () => {
       const core = new Core()
-      core.run()
 
       core.addFile({
         source: 'jest',
@@ -564,7 +554,6 @@ describe('src/Core', () => {
       const fileData = new File([sampleImage], { type: 'image/jpeg' })
       const fileAddedEventMock = jest.fn()
       const core = new Core()
-      core.run()
       core.on('file-added', fileAddedEventMock)
 
       core.addFile({
@@ -638,7 +627,7 @@ describe('src/Core', () => {
 
   describe('uploading a file', () => {
     it('should return a { successful, failed } pair containing file objects', () => {
-      const core = new Core().run()
+      const core = new Core()
       core.addUploader((fileIDs) => Promise.resolve())
 
       core.addFile({ source: 'jest', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() })
@@ -654,7 +643,7 @@ describe('src/Core', () => {
     })
 
     it('should return files with errors in the { failed } key', () => {
-      const core = new Core().run()
+      const core = new Core()
       core.addUploader((fileIDs) => {
         fileIDs.forEach((fileID) => {
           const file = core.getFile(fileID)
@@ -679,7 +668,7 @@ describe('src/Core', () => {
     })
 
     it('should only upload files that are not already assigned to another upload id', () => {
-      const core = new Core().run()
+      const core = new Core()
       core.store.state.currentUploads = {
         upload1: {
           fileIDs: ['uppy-file1jpg-image/jpeg', 'uppy-file2jpg-image/jpeg', 'uppy-file3jpg-image/jpeg']
@@ -738,7 +727,6 @@ describe('src/Core', () => {
 
       const core = new Core()
       core.on('file-removed', fileRemovedEventMock)
-      core.run()
 
       core.addFile({
         source: 'jest',
@@ -952,7 +940,6 @@ describe('src/Core', () => {
     it('should reset the progress', () => {
       const resetProgressEvent = jest.fn()
       const core = new Core()
-      core.run()
       core.on('reset-progress', resetProgressEvent)
 
       core.addFile({
@@ -1042,7 +1029,7 @@ describe('src/Core', () => {
 
     xit('should enforce the minNumberOfFiles rule', () => {})
 
-    it('should enfore the allowedFileTypes rule', () => {
+    it('should enforce the allowedFileTypes rule', () => {
       const core = new Core({
         autoProceed: false,
         restrictions: {
@@ -1061,6 +1048,28 @@ describe('src/Core', () => {
       } catch (err) {
         expect(err).toMatchObject(new Error('You can only upload: image/gif, image/png'))
         expect(core.state.info.message).toEqual('You can only upload: image/gif, image/png')
+      }
+    })
+
+    it('should enforce the allowedFileTypes rule with file extensions', () => {
+      const core = new Core({
+        autoProceed: false,
+        restrictions: {
+          allowedFileTypes: ['.gif', '.jpg', '.jpeg']
+        }
+      })
+
+      try {
+        core.addFile({
+          source: 'jest',
+          name: 'foo2.png',
+          type: '',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+        throw new Error('should have thrown')
+      } catch (err) {
+        expect(err).toMatchObject(new Error('You can only upload: .gif, .jpg, .jpeg'))
+        expect(core.state.info.message).toEqual('You can only upload: .gif, .jpg, .jpeg')
       }
     })
 
@@ -1090,14 +1099,12 @@ describe('src/Core', () => {
   describe('actions', () => {
     it('should update the state when receiving the error event', () => {
       const core = new Core()
-      core.run()
       core.emit('error', new Error('foooooo'))
       expect(core.state.error).toEqual('foooooo')
     })
 
     it('should update the state when receiving the upload-error event', () => {
       const core = new Core()
-      core.run()
       core.state.files['fileId'] = {
         name: 'filename'
       }
@@ -1107,7 +1114,6 @@ describe('src/Core', () => {
 
     it('should reset the error state when receiving the upload event', () => {
       const core = new Core()
-      core.run()
       core.emit('error', { foo: 'bar' })
       core.emit('upload')
       expect(core.state.error).toEqual(null)
@@ -1165,7 +1171,6 @@ describe('src/Core', () => {
     it('should set a string based message to be displayed infinitely', () => {
       const infoVisibleEvent = jest.fn()
       const core = new Core()
-      core.run()
       core.on('info-visible', infoVisibleEvent)
 
       core.info('This is the message', 'info', 0)
@@ -1182,7 +1187,6 @@ describe('src/Core', () => {
     it('should set a object based message to be displayed infinitely', () => {
       const infoVisibleEvent = jest.fn()
       const core = new Core()
-      core.run()
       core.on('info-visible', infoVisibleEvent)
 
       core.info({
@@ -1207,7 +1211,6 @@ describe('src/Core', () => {
       const infoVisibleEvent = jest.fn()
       const infoHiddenEvent = jest.fn()
       const core = new Core()
-      core.run()
       core.on('info-visible', infoVisibleEvent)
       core.on('info-hidden', infoHiddenEvent)
 
@@ -1230,7 +1233,6 @@ describe('src/Core', () => {
       const infoVisibleEvent = jest.fn()
       const infoHiddenEvent = jest.fn()
       const core = new Core()
-      core.run()
       core.on('info-visible', infoVisibleEvent)
       core.on('info-hidden', infoHiddenEvent)
 
@@ -1251,7 +1253,6 @@ describe('src/Core', () => {
   describe('createUpload', () => {
     it('should assign the specified files to a new upload', () => {
       const core = new Core()
-      core.run()
       core.addFile({
         source: 'jest',
         name: 'foo.jpg',
@@ -1295,7 +1296,7 @@ describe('src/Core', () => {
       })
 
       expect(core.opts.restrictions.maxNumberOfFiles).toBe(3)
-      expect(core.opts.restrictions.minNumberOfFiles).toBe(false)
+      expect(core.opts.restrictions.minNumberOfFiles).toBe(null)
     })
   })
 })

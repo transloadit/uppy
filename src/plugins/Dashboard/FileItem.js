@@ -104,7 +104,7 @@ module.exports = function fileItem (props) {
         {file.source && <div class="uppy-DashboardItem-sourceIcon">
             {acquirers.map(acquirer => {
               if (acquirer.id === file.source) {
-                return <span title={`${props.i18n('fileSource')}: ${acquirer.name}`}>
+                return <span title={props.i18n('fileSource', { name: acquirer.name })}>
                   {acquirer.icon()}
                 </span>
               }

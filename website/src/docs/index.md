@@ -20,7 +20,6 @@ const uppy = Uppy({ autoProceed: false })
     trigger: '#select-files'
   })
   .use(Tus, {endpoint: 'https://master.tus.io/files/'})
-  .run()
  
 uppy.on('complete', (result) => {
   console.log(`Upload complete! We’ve uploaded these files: ${result.successful}`)
@@ -48,12 +47,12 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 1\. Add a script to the bottom of `<body>`:
 
 ``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v0.24.3/dist/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.24.4/dist/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://transloadit.edgly.net/releases/uppy/v0.24.3/dist/uppy.min.css" rel="stylesheet">
+<link href="https://transloadit.edgly.net/releases/uppy/v0.24.4/dist/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize:
@@ -63,7 +62,6 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
   var uppy = Uppy.Core({ autoProceed: false })
   uppy.use(Uppy.DragDrop, { target: '#drag-drop-area' })
   uppy.use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
-  uppy.run()
 </script>
 ```
 
