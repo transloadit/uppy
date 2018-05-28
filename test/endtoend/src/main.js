@@ -15,7 +15,6 @@ const uppyDragDrop = Uppy({
   })
   .use(ProgressBar, { target: '#uppyDragDrop-progress' })
   .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-  .run()
 
 const uppyi18n = Uppy({
   id: 'uppyi18n',
@@ -25,14 +24,13 @@ const uppyi18n = Uppy({
     target: '#uppyi18n',
     locale: {
       strings: {
-        dropHereOr: 'Перенесите файлы сюда или',
+        dropHereOr: 'Перенесите файлы сюда или %{browse}',
         browse: 'выберите'
       }
     }
   })
   .use(ProgressBar, { target: '#uppyi18n-progress' })
   .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
-  .run()
 
 const uppyDashboard = Uppy({
   id: 'uppyDashboard',
@@ -43,7 +41,6 @@ const uppyDashboard = Uppy({
     inline: true
   })
   .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-  .run()
 
 function startXHRLimitTest (endpoint) {
   const uppy = Uppy({
@@ -53,7 +50,6 @@ function startXHRLimitTest (endpoint) {
   })
     .use(DragDrop, { target: '#uppyXhrLimit' })
     .use(XHRUpload, { endpoint, limit: 2 })
-    .run()
 
   uppy.uploadsStarted = 0
   uppy.uploadsComplete = 0

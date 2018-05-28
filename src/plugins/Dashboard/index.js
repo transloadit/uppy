@@ -42,23 +42,25 @@ module.exports = class Dashboard extends Plugin {
         selectToUpload: 'Select files to upload',
         closeModal: 'Close Modal',
         upload: 'Upload',
-        importFrom: 'Import from',
+        importFrom: 'Import from %{name}',
         dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
         dashboardTitle: 'Uppy Dashboard',
-        copyLinkToClipboardSuccess: 'Link copied to clipboard.',
+        copyLinkToClipboardSuccess: 'Link copied to clipboard',
         copyLinkToClipboardFallback: 'Copy the URL below',
         copyLink: 'Copy link',
-        fileSource: 'File source',
+        fileSource: 'File source: %{name}',
         done: 'Done',
         name: 'Name',
         removeFile: 'Remove file',
         editFile: 'Edit file',
-        editing: 'Editing',
+        editing: 'Editing %{file}',
         finishEditingFile: 'Finish editing file',
+        saveChanges: 'Save changes',
+        cancel: 'Cancel',
         localDisk: 'Local Disk',
         myDevice: 'My Device',
-        dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
-        dropPaste: 'Drop files here, paste or',
+        dropPasteImport: 'Drop files here, paste, import from one of the locations above or %{browse}',
+        dropPaste: 'Drop files here, paste or %{browse}',
         browse: 'browse',
         fileProgress: 'File progress: upload speed and ETA',
         numberOfSelectedFiles: 'Number of selected files',
@@ -96,6 +98,8 @@ module.exports = class Dashboard extends Plugin {
       showLinkToFileUploadResult: true,
       showProgressDetails: false,
       hideUploadButton: false,
+      hideRetryButton: false,
+      hideCancelButton: false,
       hideProgressAfterFinish: false,
       note: null,
       closeModalOnClickOutside: false,
@@ -117,6 +121,7 @@ module.exports = class Dashboard extends Plugin {
 
     this.translator = new Translator({locale: this.locale})
     this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
 
     this.openModal = this.openModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
@@ -272,8 +277,8 @@ module.exports = class Dashboard extends Plugin {
       this.updateBrowserHistory()
     }
 
+    this.rerender(this.uppy.getState())
     this.updateDashboardElWidth()
-    // this.setFocusToFirstNode()
     this.setFocusToBrowse()
   }
 
@@ -335,8 +340,6 @@ module.exports = class Dashboard extends Plugin {
         name: file.name,
         type: file.type,
         data: blob
-      }).catch(() => {
-        // Ignore
       })
     })
   }
@@ -351,8 +354,6 @@ module.exports = class Dashboard extends Plugin {
         name: file.name,
         type: file.type,
         data: file
-      }).catch(() => {
-        // Ignore
       })
     })
   }
@@ -420,8 +421,6 @@ module.exports = class Dashboard extends Plugin {
         name: file.name,
         type: file.type,
         data: file
-      }).catch(() => {
-        // Ignore
       })
     })
   }
@@ -508,6 +507,8 @@ module.exports = class Dashboard extends Plugin {
       progressindicators: progressindicators,
       autoProceed: this.uppy.opts.autoProceed,
       hideUploadButton: this.opts.hideUploadButton,
+      hideRetryButton: this.opts.hideRetryButton,
+      hideCancelButton: this.opts.hideCancelButton,
       id: this.id,
       closeModal: this.requestCloseModal,
       handleClickOutside: this.handleClickOutside,
@@ -518,6 +519,7 @@ module.exports = class Dashboard extends Plugin {
       hideAllPanels: this.hideAllPanels,
       log: this.uppy.log,
       i18n: this.i18n,
+      i18nArray: this.i18nArray,
       addFile: this.uppy.addFile,
       removeFile: this.uppy.removeFile,
       info: this.uppy.info,
@@ -532,13 +534,15 @@ module.exports = class Dashboard extends Plugin {
       toggleFileCard: this.toggleFileCard,
       saveFileCard: saveFileCard,
       updateDashboardElWidth: this.updateDashboardElWidth,
-      maxWidth: this.opts.maxWidth,
-      maxHeight: this.opts.maxHeight,
+      width: this.opts.width,
+      height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
       currentWidth: pluginState.containerWidth,
       isWide: pluginState.containerWidth > 400,
-      isTargetDOMEl: this.isTargetDOMEl
+      isTargetDOMEl: this.isTargetDOMEl,
+      allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
+      maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles
     })
   }
 
@@ -573,8 +577,11 @@ module.exports = class Dashboard extends Plugin {
 
     if (!this.opts.disableStatusBar) {
       this.uppy.use(StatusBar, {
+        id: `${this.id}:StatusBar`,
         target: this,
         hideUploadButton: this.opts.hideUploadButton,
+        hideRetryButton: this.opts.hideRetryButton,
+        hideCancelButton: this.opts.hideCancelButton,
         showProgressDetails: this.opts.showProgressDetails,
         hideAfterFinish: this.opts.hideProgressAfterFinish,
         locale: this.opts.locale
@@ -583,12 +590,14 @@ module.exports = class Dashboard extends Plugin {
 
     if (!this.opts.disableInformer) {
       this.uppy.use(Informer, {
+        id: `${this.id}:Informer`,
         target: this
       })
     }
 
     if (!this.opts.disableThumbnailGenerator) {
       this.uppy.use(ThumbnailGenerator, {
+        id: `${this.id}:ThumbnailGenerator`,
         thumbnailWidth: this.opts.thumbnailWidth
       })
     }

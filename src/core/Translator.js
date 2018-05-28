@@ -27,28 +27,24 @@ module.exports = class Translator {
 
     this.opts = Object.assign({}, defaultOptions, opts)
     this.locale = Object.assign({}, defaultOptions.locale, opts.locale)
-
-    // console.log(this.opts.locale)
-
-    // this.locale.pluralize = this.locale ? this.locale.pluralize : defaultPluralize
-    // this.locale.strings = Object.assign({}, en_US.strings, this.opts.locale.strings)
   }
 
-/**
- * Takes a string with placeholder variables like `%{smart_count} file selected`
- * and replaces it with values from options `{smart_count: 5}`
- *
- * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
- * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
- *
- * @param {string} phrase that needs interpolation, with placeholders
- * @param {object} options with values that will be used to replace placeholders
- * @return {string} interpolated
- */
+  /**
+   * Takes a string with placeholder variables like `%{smart_count} file selected`
+   * and replaces it with values from options `{smart_count: 5}`
+   *
+   * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
+   * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
+   *
+   * @param {string} phrase that needs interpolation, with placeholders
+   * @param {object} options with values that will be used to replace placeholders
+   * @return {string} interpolated
+   */
   interpolate (phrase, options) {
-    const replace = String.prototype.replace
+    const { split, replace } = String.prototype
     const dollarRegex = /\$/g
     const dollarBillsYall = '$$$$'
+    let interpolated = [phrase]
 
     for (let arg in options) {
       if (arg !== '_' && options.hasOwnProperty(arg)) {
@@ -62,21 +58,49 @@ module.exports = class Translator {
         // We create a new `RegExp` each time instead of using a more-efficient
         // string replace so that the same argument can be replaced multiple times
         // in the same phrase.
-        phrase = replace.call(phrase, new RegExp('%\\{' + arg + '\\}', 'g'), replacement)
+        interpolated = insertReplacement(interpolated, new RegExp('%\\{' + arg + '\\}', 'g'), replacement)
       }
     }
-    return phrase
+
+    return interpolated
+
+    function insertReplacement (source, rx, replacement) {
+      const newParts = []
+      source.forEach((chunk) => {
+        split.call(chunk, rx).forEach((raw, i, list) => {
+          if (raw !== '') {
+            newParts.push(raw)
+          }
+
+          // Interlace with the `replacement` value
+          if (i < list.length - 1) {
+            newParts.push(replacement)
+          }
+        })
+      })
+      return newParts
+    }
   }
 
-/**
- * Public translate method
- *
- * @param {string} key
- * @param {object} options with values that will be used later to replace placeholders in string
- * @return {string} translated (and interpolated)
- */
+  /**
+   * Public translate method
+   *
+   * @param {string} key
+   * @param {object} options with values that will be used later to replace placeholders in string
+   * @return {string} translated (and interpolated)
+   */
   translate (key, options) {
-    if (options && options.smart_count) {
+    return this.translateArray(key, options).join('')
+  }
+
+  /**
+   * Get a translation and return the translated and interpolated parts as an array.
+   * @param {string} key
+   * @param {object} options with values that will be used to replace placeholders
+   * @return {Array} The translated and interpolated parts, in order.
+   */
+  translateArray (key, options) {
+    if (options && typeof options.smart_count !== 'undefined') {
       var plural = this.locale.pluralize(options.smart_count)
       return this.interpolate(this.opts.locale.strings[key][plural], options)
     }

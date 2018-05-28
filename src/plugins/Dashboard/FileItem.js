@@ -25,13 +25,13 @@ module.exports = function fileItem (props) {
 
   const onPauseResumeCancelRetry = (ev) => {
     if (isUploaded) return
-    if (error) {
+    if (error && !props.hideRetryButton) {
       props.retryUpload(file.id)
       return
     }
     if (props.resumableUploads) {
       props.pauseUpload(file.id)
-    } else {
+    } else if (!props.hideCancelButton) {
       props.cancelUpload(file.id)
     }
   }
@@ -60,7 +60,7 @@ module.exports = function fileItem (props) {
     <div class="uppy-DashboardItem-preview">
       <div class="uppy-DashboardItem-previewInnerWrap" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
         {props.showLinkToFileUploadResult && file.uploadURL
-          ? <a class="uppy-DashboardItem-previewLink" href={file.uploadURL} target="_blank" />
+          ? <a class="uppy-DashboardItem-previewLink" href={file.uploadURL} rel="noreferrer noopener" target="_blank" />
           : null
         }
         <FilePreview file={file} />
@@ -79,10 +79,11 @@ module.exports = function fileItem (props) {
             title={progressIndicatorTitle}
             onclick={onPauseResumeCancelRetry}>
             {error
-              ? iconRetry()
+              ? props.hideCancelButton ? null : iconRetry()
               : FileItemProgress({
                 progress: file.progress.percentage,
-                fileID: file.id
+                fileID: file.id,
+                hideCancelButton: props.hideCancelButton
               })
             }
           </button>
@@ -91,8 +92,8 @@ module.exports = function fileItem (props) {
     </div>
     <div class="uppy-DashboardItem-info">
       <h4 class="uppy-DashboardItem-name" title={fileName}>
-        {file.uploadURL
-          ? <a href={file.uploadURL} target="_blank">
+        {props.showLinkToFileUploadResult && file.uploadURL
+          ? <a href={file.uploadURL} rel="noreferrer noopener" target="_blank">
             {file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}
           </a>
           : file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName
@@ -103,7 +104,7 @@ module.exports = function fileItem (props) {
         {file.source && <div class="uppy-DashboardItem-sourceIcon">
             {acquirers.map(acquirer => {
               if (acquirer.id === file.source) {
-                return <span title={`${props.i18n('fileSource')}: ${acquirer.name}`}>
+                return <span title={props.i18n('fileSource', { name: acquirer.name })}>
                   {acquirer.icon()}
                 </span>
               }
@@ -121,8 +122,8 @@ module.exports = function fileItem (props) {
         </button>
         : null
       }
-      {file.uploadURL &&
-        <button class="uppy-DashboardItem-copyLink"
+      {props.showLinkToFileUploadResult && file.uploadURL
+        ? <button class="uppy-DashboardItem-copyLink"
           type="button"
           aria-label={props.i18n('copyLink')}
           title={props.i18n('copyLink')}
@@ -134,6 +135,7 @@ module.exports = function fileItem (props) {
               })
               .catch(props.log)
           }}>{iconCopy()}</button>
+        : ''
       }
     </div>
     <div class="uppy-DashboardItem-action">

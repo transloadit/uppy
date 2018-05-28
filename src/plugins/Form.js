@@ -53,7 +53,9 @@ module.exports = class Form extends Plugin {
   handleFormSubmit (ev) {
     if (this.opts.triggerUploadOnSubmit) {
       ev.preventDefault()
-      this.uppy.upload()
+      this.uppy.upload().catch((err) => {
+        this.uppy.log(err.stack || err.message || err)
+      })
     }
   }
 

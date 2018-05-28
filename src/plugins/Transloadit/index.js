@@ -12,6 +12,10 @@ function defaultGetAssemblyOptions (file, options) {
   }
 }
 
+const UPPY_SERVER = 'https://api2.transloadit.com/uppy-server'
+// Regex used to check if an uppy-server address is run by Transloadit.
+const TL_UPPY_SERVER = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/uppy-server/
+
 /**
  * Upload files to Transloadit using Tus.
  */
@@ -53,6 +57,7 @@ module.exports = class Transloadit extends Plugin {
 
     this.prepareUpload = this.prepareUpload.bind(this)
     this.afterUpload = this.afterUpload.bind(this)
+    this.handleError = this.handleError.bind(this)
     this.onFileUploadURLAvailable = this.onFileUploadURLAvailable.bind(this)
     this.onRestored = this.onRestored.bind(this)
     this.getPersistentData = this.getPersistentData.bind(this)
@@ -180,23 +185,19 @@ module.exports = class Transloadit extends Plugin {
           endpoint: assembly.tus_url
         })
 
-        // Set uppy server location.
-        // we only add this, if 'file' has the attribute remote, because
-        // this is the criteria to identify remote files. If we add it without
-        // the check, then the file automatically becomes a remote file.
-        // @TODO: this is quite hacky. Please fix this later
-        let remote
-        if (file.remote) {
+        // Set uppy server location. We only add this, if 'file' has the attribute
+        // remote, because this is the criteria to identify remote files.
+        // We only replace the hostname for Transloadit's uppy-servers, so that
+        // people can self-host them while still using Transloadit for encoding.
+        let remote = file.remote
+        if (file.remote && TL_UPPY_SERVER.test(file.remote)) {
           let newHost = assembly.uppyserver_url
-          // remove tailing slash
-          if (newHost.endsWith('/')) {
-            newHost = newHost.slice(0, -1)
-          }
           let path = file.remote.url.replace(file.remote.host, '')
+          // remove tailing slash
+          newHost = newHost.replace(/\/$/, '')
           // remove leading slash
-          if (path.startsWith('/')) {
-            path = path.slice(1)
-          }
+          path = path.replace(/^\//, '')
+
           remote = Object.assign({}, file.remote, {
             host: newHost,
             url: `${newHost}/${path}`
@@ -227,7 +228,7 @@ module.exports = class Transloadit extends Plugin {
       return this.connectSocket(assembly)
         .then(() => assembly)
     }).then((assembly) => {
-      this.uppy.log('[Transloadit] Created Assembly')
+      this.uppy.log(`[Transloadit] Created Assembly ${assembly.assembly_id}`)
       return assembly
     }).catch((err) => {
       this.uppy.info(this.i18n('creatingAssemblyFailed'), 'error', 0)
@@ -617,7 +618,7 @@ module.exports = class Transloadit extends Plugin {
 
     let optionsPromise
     if (fileIDs.length > 0) {
-      optionsPromise = this.getAssemblyOptions(fileIDs)
+      optionsPromise = Promise.resolve(this.getAssemblyOptions(fileIDs))
         .then((allOptions) => this.dedupeAssemblyOptions(allOptions))
     } else if (this.opts.alwaysRunAssembly) {
       optionsPromise = Promise.resolve(
@@ -634,9 +635,21 @@ module.exports = class Transloadit extends Plugin {
       return Promise.resolve()
     }
 
-    return optionsPromise.then((assemblies) => Promise.all(
-      assemblies.map(createAssembly)
-    ))
+    return optionsPromise.then(
+      (assemblies) => Promise.all(
+        assemblies.map(createAssembly)
+      ),
+      // If something went wrong before any assemblies could be created,
+      // clear all processing state.
+      (err) => {
+        fileIDs.forEach((fileID) => {
+          const file = this.uppy.getFile(fileID)
+          this.uppy.emit('preprocess-complete', file)
+          this.uppy.emit('upload-error', file, err)
+        })
+        throw err
+      }
+    )
   }
 
   afterUpload (fileIDs, uploadID) {
@@ -771,9 +784,26 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
+  handleError (err, uploadID) {
+    this.uppy.log('[Transloadit] handleError')
+    this.uppy.log(err)
+    this.uppy.log(uploadID)
+    const state = this.getPluginState()
+    const assemblyIDs = state.uploadsAssemblies[uploadID]
+
+    assemblyIDs.forEach((assemblyID) => {
+      if (this.sockets[assemblyID]) {
+        this.sockets[assemblyID].close()
+      }
+    })
+  }
+
   install () {
     this.uppy.addPreProcessor(this.prepareUpload)
     this.uppy.addPostProcessor(this.afterUpload)
+
+    // We may need to close socket.io connections on error.
+    this.uppy.on('error', this.handleError)
 
     if (this.opts.importFromUploadURLs) {
       // No uploader needed when importing; instead we take the upload URL from an existing uploader.
@@ -783,6 +813,9 @@ module.exports = class Transloadit extends Plugin {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
         // will upload to the same assembly.
         resume: false,
+        // Disable Uppy Server's retry optimisation; we need to change the endpoint on retry
+        // so it can't just reuse the same tus.Upload instance server-side.
+        useFastRemoteRetry: false,
         // Only send assembly metadata to the tus endpoint.
         metaFields: ['assembly_url', 'filename', 'fieldname']
       })
@@ -806,6 +839,7 @@ module.exports = class Transloadit extends Plugin {
   uninstall () {
     this.uppy.removePreProcessor(this.prepareUpload)
     this.uppy.removePostProcessor(this.afterUpload)
+    this.uppy.off('error', this.handleError)
 
     if (this.opts.importFromUploadURLs) {
       this.uppy.off('upload-success', this.onFileUploadURLAvailable)
@@ -826,3 +860,5 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 }
+
+module.exports.UPPY_SERVER = UPPY_SERVER

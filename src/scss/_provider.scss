@@ -1,6 +1,7 @@
-.uppy-Provider-auth, 
-.uppy-Provider-error, 
-.uppy-Provider-loading {
+.uppy-Provider-auth,
+.uppy-Provider-error,
+.uppy-Provider-loading,
+.uppy-Provider-empty {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,7 +19,7 @@
 .uppy-Provider-authTitle {
   font-size: 20px;
   line-height: 1.4;
-  font-weight: 300;
+  font-weight: 400;
   margin-bottom: 30px;
   padding: 0 15px;
   max-width: 500px;
@@ -81,8 +82,14 @@
 }
 
 .uppy-ProviderBrowser-user {
-  margin: 16px 0;
+  margin: 0 8px 0 0;
 }
+
+  .uppy-ProviderBrowser-user:after {
+    content: '\00B7';
+    position: relative;
+    left: 4px;
+  }
 
 .uppy-ProviderBrowser-header {
   z-index: $zIndex-2;
@@ -243,6 +250,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: flex-start;
     padding: 6px;
   }
 
@@ -346,7 +354,7 @@
   height: 18px;
   width: 18px;
   top: 2px;
-  border: 1px solid $color-cornflower-blue; 
+  border: 1px solid $color-cornflower-blue;
   background-color: $color-white;
   border-radius: 2px;
   // border-radius: 50%;

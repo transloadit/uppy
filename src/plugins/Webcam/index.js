@@ -238,9 +238,7 @@ module.exports = class Webcam extends Plugin {
       this.captureInProgress = false
       const dashboard = this.uppy.getPlugin('Dashboard')
       if (dashboard) dashboard.hideAllPanels()
-      return this.uppy.addFile(tagFile).catch(() => {
-        // Ignore
-      })
+      return this.uppy.addFile(tagFile)
     }, (error) => {
       this.captureInProgress = false
       throw error

@@ -7,6 +7,12 @@ permalink: docs/uppy/
 
 Core module that orchestrates everything in Uppy, exposing `state`, `events` and `methods`.
 
+```js
+const Uppy = require('uppy/lib/core')
+
+const uppy = Uppy()
+```
+
 ## Options
 
 ```js
@@ -15,14 +21,14 @@ const uppy = Uppy({
   autoProceed: true,
   debug: false,
   restrictions: {
-    maxFileSize: false,
-    maxNumberOfFiles: false,
-    minNumberOfFiles: false,
-    allowedFileTypes: false
+    maxFileSize: null,
+    maxNumberOfFiles: null,
+    minNumberOfFiles: null,
+    allowedFileTypes: null
   },
   meta: {},
-  onBeforeFileAdded: (currentFile, files) => Promise.resolve(),
-  onBeforeUpload: (files) => Promise.resolve(),
+  onBeforeFileAdded: (currentFile, files) => currentFile,
+  onBeforeUpload: (files) => {},
   locale: defaultLocale,
   store: new DefaultStore()
 })
@@ -52,10 +58,14 @@ Optionally provide rules and conditions for which files can be selected.
 
 **Parameters**
 
-- `maxFileSize` *number*
-- `maxNumberOfFiles` *number*
-- `minNumberOfFiles` *number*
-- `allowedFileTypes` *array* of wildcards or exact mime types, like `image/*`
+- `maxFileSize` *null | number*
+- `maxNumberOfFiles` *null | number*
+- `minNumberOfFiles` *null | number*
+- `allowedFileTypes` *null | array* of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
+
+`maxNumberOfFiles` affects the number of files user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1` they will only be able to select a single file, otherwise, when `null` or other number, they will be able to select multiple files.
+
+`allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types)’s accept attribute, so only files matching these types will be selectable.
 
 ### `meta: {}`
 
@@ -69,38 +79,92 @@ meta: {
 
 This global metadata is added to each file in Uppy. It can be modified with two methods:
 
-1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setmeta-data) — set or update meta for all files.
-2. [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file. 
+1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setMeta-data) — set or update meta for all files.
+2. [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file.
 
-Metadata from each file is then attached to uploads in [Tus](/docs/tus/) and [XHRUpload](/docs/tus/) plugins.
+Metadata from each file is then attached to uploads in [Tus](/docs/tus/) and [XHRUpload](/docs/xhrupload/) plugins.
 
 Metadata can also be added from a `<form>` element on your page via [Form](/docs/form/)plugin or via UI if you are using Dashboard with [`metaFields`](/docs/dashboard/#metaFields) option.
 
-### `onBeforeFileAdded: (currentFile, files) => Promise.resolve()`
+<a id="onBeforeFileAdded"></a>
+### `onBeforeFileAdded: (currentFile, files) => currentFile`
 
-A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this function to run any number of custom checks on the selected file, or manipulating it, like optimizing a file name, for example.
+A function run before a file is added to Uppy. Gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy.
+
+Use this function to run any number of custom checks on the selected file, or manipulating it, like optimizing a file name, for example.
+
+Return true/nothing or a modified file object to proceed with adding the file:
 
 ```js
 onBeforeFileAdded: (currentFile, files) => {
   if (currentFile.name === 'forest-IMG_0616.jpg') {
-    return Promise.resolve()
+    return true
   }
-  return Promise.reject('This is not the file I was looking for')
+}
+
+// or
+
+onBeforeFileAdded: (currentFile, files) => {
+  const modifiedFile = Object.assign(
+    {},
+    currentFile,
+    { name: currentFile + Date.now()
+  })
+  return modifiedFile
 }
 ```
 
-### `onBeforeUpload: (files) => Promise.resolve()`
+Return false to abort adding the file:
 
-A function run before an upload begins. Gets passed `files` object with all files that already are in Uppy. Return `Promise.resolve` to proceed with adding the file or `Promise.reject` to abort. Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
+```js
+onBeforeFileAdded: (currentFile, files) => {
+  if (!currentFile.type) {
+    // log to console
+    uppy.log(`Skipping file because it has no type`)
+    // show error message to the user
+    uppy.info(`Skipping file because it has no type`, 'error', 500)
+    return false
+  }
+}
+```
+
+Note: it’s up to you to show a notification to the user about file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging.
+
+
+<a id="onBeforeUpload"></a>
+### `onBeforeUpload: (files) => files`
+
+A function run before an upload begins. Gets passed `files` object with all the files that are already in Uppy.
+
+Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
+
+Return true or modified `files` object to proceed:
+
+```js
+onBeforeUpload: (files) => {
+  const updatedFiles = Object.assign({}, files)
+  Object.keys(updatedFiles).forEach(fileId => {
+    updatedFiles[fileId].name = 'myCustomPrefix_' + updatedFiles[fileId].name
+  })
+  return updatedFiles
+}
+```
+
+Return false to abort:
 
 ```js
 onBeforeUpload: (files) => {
   if (Object.keys(files).length < 2) {
-    return Promise.reject('too few files')
+    // log to console
+    uppy.log(`Aborting upload because only ${Object.keys(files).length} files were selected`)
+    // show error message to the user
+    uppy.info(`You have to select at least 2 files`, 'error', 500)
+    return false
   }
-  return Promise.resolve()
 }
 ```
+
+Note: it’s up to you to show a notification to the user about file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging.
 
 ### `locale: {}`
 
@@ -138,9 +202,9 @@ We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/m
 
 ### `store: defaultStore()`
 
-The Store to use to keep track of internal state. By default, a simple object is used.
+The Store to use to keep track of internal state. By [default](/docs/stores/#DefaultStore), a simple object is used.
 
-This option can be used to plug Uppy state into an external state management library, such as Redux. Then, you can write custom views with the library that is also used by the rest of the application.
+This option can be used to plug Uppy state into an external state management library, such as [Redux](/docs/stores/#ReduxStore). Then, you can write custom views with the library that is also used by the rest of the application.
 
 <!-- TODO document store API -->
 
@@ -157,10 +221,6 @@ const DragDrop = require('uppy/lib/plugins/DragDrop')
 const uppy = Uppy()
 uppy.use(DragDrop, { target: 'body' })
 ```
-
-### `uppy.run()`
-
-Initializes everything after setup. Must be called before calling `.upload()` or using Uppy in any meaningful way.
 
 ### `uppy.getID()`
 
@@ -180,13 +240,13 @@ uppy.addFile({
 })
 ```
 
-`addFile` attempts to determine file type by [magic bytes](https://github.com/sindresorhus/file-type) + the provided `type` + extension; then checks if the file can be added, considering `uppy.opts.restrictions`, sets metadata and generates a preview, if it’s an image.
+`addFile` throws an error if the file cannot be added, either because `onBeforeFileAdded(file)` threw an error, or because `uppy.opts.restrictions` checks failed.
 
-If `uppy.opts.autoProceed === true`, Uppy will begin uploading after the first file is added.
+If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically when files are added.
 
 ### `uppy.getFile(fileID)`
 
-A shortcut method that returns a specific file object from `uppy.state` by its `fileID`.
+Get a specific file object by its ID.
 
 ```js
 const file = uppy.getFile('uppyteamkongjpg1501851828779')
@@ -198,6 +258,18 @@ file.type      // 'image/jpeg'
 file.data      // the Blob object
 file.size      // 3947642 (returns 'N/A' if size cannot be determined)
 file.preview   // value that can be used to populate "src" attribute of an "img" tag
+```
+
+### `uppy.getFiles()`
+
+Get an array of all file objects in Uppy. See [uppy.getFile()](#uppy-getFile-fileID) for an example of the file object format.
+
+```js
+const prettyBytes = require('pretty-bytes')
+const items = uppy.getFiles().map(() =>
+  `<li>${file.name} - ${prettyBytes(file.size)}</li>`
+).join('')
+document.querySelector('.file-list').innerHTML = `<ul>${items}</ul>`
 ```
 
 ### `uppy.upload()`
@@ -224,7 +296,7 @@ uppy.upload().then((result) => {
 
 ### `uppy.setState(patch)`
 
-Update `uppy.state`. Usually this method is called internally, but in some cases it might be useful to alter something in `uppy.state` directly.
+Update Uppy's internal state. Usually this method is called internally, but in some cases it might be useful to alter something directly, especially when implementing your own plugins.
 
 Uppy’s default state on initialization:
 
@@ -254,18 +326,18 @@ uppy.setState({
 })
 ```
 
-We don’t mutate `uppy.state`, so internally `setState` creates a new copy of state and replaces `uppy.state` with it. However, when updating values, it’s your responsibility to not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here’s an example from Uppy.Core that updates progress for a particular file in state:
+State in Uppy is considered to be immutable. When updating values, it’s your responsibility to not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here’s an example from Uppy.Core that updates progress for a particular file in state:
 
 ```js
+// We use Object.assign({}, obj) to create a copy of `obj`.
 const updatedFiles = Object.assign({}, uppy.getState().files)
-const updatedFile = Object.assign({}, updatedFiles[fileID],
-  Object.assign({}, {
-    progress: Object.assign({}, updatedFiles[fileID].progress, {
-      bytesUploaded: data.bytesUploaded,
-      bytesTotal: data.bytesTotal,
-      percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
-    })
-  }
+// We use Object.assign({}, obj, update) to create an altered copy of `obj`.
+const updatedFile = Object.assign({}, updatedFiles[fileID], {
+  progress: Object.assign({}, updatedFiles[fileID].progress, {
+    bytesUploaded: data.bytesUploaded,
+    bytesTotal: data.bytesTotal,
+    percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
+  })
 ))
 updatedFiles[data.id] = updatedFile
 uppy.setState({files: updatedFiles})
@@ -273,7 +345,7 @@ uppy.setState({files: updatedFiles})
 
 ### `uppy.getState()`
 
-Returns `uppy.state`, which you can also use directly.
+Returns the current state from the [Store](#store-defaultStore).
 
 ### `uppy.setFileState(fileID, state)`
 
@@ -375,7 +447,7 @@ Fired when upload starts.
 
 ```javascript
 uppy.on('upload', (data) => {
-  // data object consists of `id` with upload id and `fileIDs` array 
+  // data object consists of `id` with upload id and `fileIDs` array
   // with file ids in current upload
   // data: { id, fileIDs }
   console.log(`Starting upload ${id} for files ${fileIDs}`)
@@ -425,7 +497,7 @@ uppy.on('complete', (result) => {
 
 ### `error`
 
-Fired when Uppy fails to upload/encode the whole upload. That error is then set to `uppy.state.error`.
+Fired when Uppy fails to upload/encode the whole upload. That error is then set to `uppy.getState().error`.
 
 ### `upload-error`
 

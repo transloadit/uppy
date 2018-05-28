@@ -65,7 +65,7 @@ module.exports = class AwsS3 extends Plugin {
       (params.method == null || /^(put|post)$/i.test(params.method))
 
     if (!valid) {
-      const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields }'.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+      const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields, headers }'.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
       console.error(err)
       throw err
     }

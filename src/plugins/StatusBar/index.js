@@ -27,6 +27,7 @@ module.exports = class StatusBar extends Plugin {
         paused: 'Paused',
         error: 'Error',
         retry: 'Retry',
+        cancel: 'Cancel',
         pressToRetry: 'Press to retry',
         retryUpload: 'Retry upload',
         resumeUpload: 'Resume upload',
@@ -53,6 +54,8 @@ module.exports = class StatusBar extends Plugin {
     const defaultOptions = {
       target: 'body',
       hideUploadButton: false,
+      hideRetryButton: false,
+      hideCancelButton: false,
       showProgressDetails: false,
       locale: defaultLocale,
       hideAfterFinish: true
@@ -94,7 +97,8 @@ module.exports = class StatusBar extends Plugin {
   }
 
   startUpload () {
-    return this.uppy.upload().catch(() => {
+    return this.uppy.upload().catch((err) => {
+      this.uppy.log(err.stack || err.message || err)
       // Ignore
     })
   }
@@ -215,6 +219,8 @@ module.exports = class StatusBar extends Plugin {
       resumableUploads: resumableUploads,
       showProgressDetails: this.opts.showProgressDetails,
       hideUploadButton: this.opts.hideUploadButton,
+      hideRetryButton: this.opts.hideRetryButton,
+      hideCancelButton: this.opts.hideCancelButton,
       hideAfterFinish: this.opts.hideAfterFinish
     })
   }

@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 33
+order: 34
 title: "Transloadit"
 permalink: docs/transloadit/
 ---
@@ -10,6 +10,8 @@ The Transloadit plugin can be used to upload files to [Transloadit](https://tran
 [Try it live](/examples/transloadit/)
 
 ```js
+const Transloadit = require('uppy/lib/plugins/Transloadit')
+
 uppy.use(Transloadit, {
   service: 'https://api2.transloadit.com',
   params: null,
@@ -24,7 +26,34 @@ uppy.use(Transloadit, {
 
 As of Uppy 0.24 the Transloadit plugin includes the [Tus](/docs/tus) plugin to handle the uploading, so you no longer have to add it manually.
 
+## Properties
+
+### `Transloadit.UPPY_SERVER`
+
+The main endpoint for Transloadit's hosted uppy-servers. You can use this constant in remote provider options, like so:
+
+```js
+const Dropbox = require('uppy/lib/plugins/Dropbox')
+const Transloadit = require('uppy/lib/plugins/Transloadit')
+
+uppy.use(Dropbox, {
+  host: Transloadit.UPPY_SERVER
+})
+```
+
+The value of this constant is `https://api2.transloadit.com/uppy-server`. If you are using a custom [`service`](#service) option, you should also set a custom host option in your provider plugins, by taking a Transloadit API url and appending `/uppy-server`:
+
+```js
+uppy.use(Dropbox, {
+  host: 'https://api2-us-east-1.transloadit.com/uppy-server'
+})
+```
+
 ## Options
+
+### `id: 'Transloadit'`
+
+A unique identifier for this plugin. Defaults to `'Transloadit'`.
 
 ### `service`
 
@@ -180,6 +209,24 @@ uppy.use(Transloadit, {
     })
   }
 })
+```
+
+### `locale: {}`
+
+Localize text that is shown to the user.
+
+The default English strings are:
+
+```js
+strings: {
+  // Shown while Assemblies are being created for an upload.
+  creatingAssembly: 'Preparing upload...'
+  // Shown if an Assembly could not be created.
+  creatingAssemblyFailed: 'Transloadit: Could not create Assembly',
+  // Shown after uploads have succeeded, but when the Assembly is still executing.
+  // This only shows if `waitForMetadata` or `waitForEncoding` was set.
+  encoding: 'Encoding...'
+}
 ```
 
 ## Events

@@ -1,62 +1,37 @@
 ---
-title: "DashboardModal"
+title: "&lt;Dashboard />"
 type: docs
-permalink: docs/react/dashboard-modal/
-order: 51
+permalink: docs/react/dashboard/
+order: 64
 ---
 
-The `<DashboardModal />` component wraps the [Dashboard][] plugin, allowing control over the modal `open` state using a prop.
-
-## Options
-
-On top of all the [Dashboard][] options, the `<DashboardModal />` plugin adds two additional props:
-
- - `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
- - `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
- - `plugins` - Array of plugins you need to use in Dashboard. Example: `plugins={['Webcam']}`.
+The `<Dashboard />` component wraps the [Dashboard][] plugin. It only renders the Dashboard inline. To use the Dashboard modal (`inline: false`), use the [`<DashboardModal />`](/docs/react/dashboard-modal) component.
 
 ```js
-class MusicUploadButton extends React.Component {
-  constructor (props) {
-    super(props)
+import Dashboard from 'uppy/lib/react/Dashboard';
+```
 
-    this.state = {
-      modalOpen: false
-    }
+## Props
 
-    this.handleOpen = this.handleOpen.bind(this)
-    this.handleClose = this.handleClose.bind(this)
-  }
+The `<Dashboard />` component supports all [Dashboard][] options as props.
 
-  handleOpen () {
-    this.setState({
-      modalOpen: true
-    })
-  }
+The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins like [Webcam][]. To use other plugins like [Webcam][] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
-  handleClose () {
-    this.setState({
-      modalOpen: false
-    })
-  }
+```js
+// Do this wherever you initialize Uppy, eg. in a React component's constructor method.
+// Do NOT do it in `render()` or any other method that is called more than once!
+uppy.use(Webcam) // `id` defaults to "Webcam"
+uppy.use(Webcam, { id: 'MyWebcam' }) // `id` is… "MyWebcam"
+```
 
-  render () {
-    this.props.uppy.use(Webcam); // the same as this.props.uppy.use(Webcam, { id: "Webcam" });
+Then in `render()` do:
 
-    return (
-      <div>
-        <button onClick={this.handleOpen}>Upload some music</button>
-        <DashboardModal
-          uppy={this.props.uppy}
-          closeModalOnClickOutside
-          open={this.state.modalOpen}
-          onRequestClose={this.handleClose}
-          plugins={['Webcam']}
-        />
-      </div>
-    );
-  }
-}
+```js
+<Dashboard
+  plugins={['Webcam']}
+  {...props}
+/>
 ```
 
 [Dashboard]: /docs/dashboard/
+[Webcam]: /docs/webcam/

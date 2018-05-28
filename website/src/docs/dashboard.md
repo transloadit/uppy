@@ -9,9 +9,18 @@ Dashboard is a universal UI plugin for Uppy:
 
 - Drag and Drop, paste, select from local disk / my device
 - UI for Webcam and remote sources: Google Drive, Dropbox, Instagram (all optional, added via plugins)
-- File previews and info, metadata editor
+- File previews and info
+- Metadata editor
 - Progress: total and for individual files
 - Ability to pause/resume or cancel (depending on uploader plugin) individual or all files
+
+```js
+const Dashboard = require('uppy/lib/plugins/Dashboard')
+
+uppy.use(Dashboard, {
+  // Options
+})
+```
 
 [Try it live](/examples/dashboard/)
 
@@ -39,53 +48,14 @@ uppy.use(Dashboard, {
   disablePageScrollWhenModalOpen: true,
   proudlyDisplayPoweredByUppy: true,
   onRequestCloseModal: () => this.closeModal(),
-  locale: {
-    strings: {
-      selectToUpload: 'Select files to upload',
-      closeModal: 'Close Modal',
-      upload: 'Upload',
-      importFrom: 'Import from',
-      dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
-      dashboardTitle: 'Uppy Dashboard',
-      copyLinkToClipboardSuccess: 'Link copied to clipboard.',
-      copyLinkToClipboardFallback: 'Copy the URL below',
-      copyLink: 'Copy link',
-      fileSource: 'File source',
-      done: 'Done',
-      name: 'Name',
-      removeFile: 'Remove file',
-      editFile: 'Edit file',
-      editing: 'Editing',
-      finishEditingFile: 'Finish editing file',
-      localDisk: 'Local Disk',
-      myDevice: 'My Device',
-      dropPasteImport: 'Drop files here, paste, import from one of the locations above or',
-      dropPaste: 'Drop files here, paste or',
-      browse: 'browse',
-      fileProgress: 'File progress: upload speed and ETA',
-      numberOfSelectedFiles: 'Number of selected files',
-      uploadAllNewFiles: 'Upload all new files',
-      emptyFolderAdded: 'No files were added from empty folder',
-      uploadComplete: 'Upload complete',
-      resumeUpload: 'Resume upload',
-      pauseUpload: 'Pause upload',
-      retryUpload: 'Retry upload',
-      uploadXFiles: {
-        0: 'Upload %{smart_count} file',
-        1: 'Upload %{smart_count} files'
-      },
-      uploadXNewFiles: {
-        0: 'Upload +%{smart_count} file',
-        1: 'Upload +%{smart_count} files'
-      },
-      folderAdded: {
-        0: 'Added %{smart_count} file from %{folder}',
-        1: 'Added %{smart_count} files from %{folder}'
-      }
-    }
-  }
+  locale: {}
 })
 ```
+
+### `id: 'Dashboard'`
+
+A unique identifier for this Dashboard. Defaults to `'Dashboard'`. Change this if you need multiple Dashboard instances.
+Plugins that are added by the Dashboard get unique IDs based on this ID, like `'Dashboard:StatusBar'` and `'Dashboard:Informer'`.
 
 ### `target: 'body'`
 
@@ -112,13 +82,13 @@ uppy.use(Dashboard, {
 
 Of course, you can also use the `target` option in the Webcam plugin to achieve this. However, that does not work with the React components. The `target` option may be changed in the future to only accept DOM elements, so it is recommended to use this `plugins` array instead.
 
-### `maxWidth: 750`
+### `width: 750`
 
-Maximum width of the Dashboard in pixels. Used when `inline: true`.
+Width of the Dashboard in pixels. Used when `inline: true`.
 
-### `maxHeight: 550`
+### `height: 550`
 
-Maximum height of the Dashboard in pixels. Used when `inline: true`.
+Height of the Dashboard in pixels. Used when `inline: true`.
 
 ### `showProgressDetails: false`
 
@@ -141,7 +111,7 @@ Optionally specify a string of text that explains something about the upload for
 
 ### `metaFields: []`
 
-An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Each object requires:
+An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Configuring this enables the "edit" button on file cards. Each object requires:
 
 - `id`, the name of the meta field.
 - `name`, the label shown in the interface.
@@ -151,13 +121,14 @@ An array of UI field objects that will be shown when a user clicks the “edit�
 .use(Dashboard, {
   trigger: '#pick-files',
   metaFields: [
+    { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'license', name: 'License', placeholder: 'specify license' },
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
   ]
 })
 ```
 
-Note that this meta data will only be set to a file if it’s entered by the user. If you want to set certain meta field to each file regardless of user actions, set [`meta` in Uppy options](/docs/uppy/#meta).
+Note that this metadata will only be set on a file object if it’s entered by the user. If the user doesn't edit a file's metadata, it will not have default values; instead everything will be `undefined`. If you want to set certain meta field to each file regardless of user actions, set [`meta` in the Uppy constructor options](/docs/uppy/#meta).
 
 ### `closeModalOnClickOutside: false`
 
@@ -169,7 +140,7 @@ By default when Dashboard modal is open, it will disable page scrolling, so when
 
 ### `proudlyDisplayPoweredByUppy: true`
 
-Uppy is provided for the world for free by the [Transloadit team](https://transloadit.com). In return, we ask that you consider keeping a tiny Uppy logo at the bottom of the Dashboard, so that more people can discover and use Uppy. 
+Uppy is provided for the world for free by the [Transloadit team](https://transloadit.com). In return, we ask that you consider keeping a tiny Uppy logo at the bottom of the Dashboard, so that more people can discover and use Uppy.
 
 This is entirely optional of course, just set this option to false if you do not wish to display Uppy logo.
 
@@ -185,9 +156,69 @@ Dashboard ships with the `Informer` plugin that notifies when the browser is off
 
 Dashboard ships with `ThumbnailGenerator` plugin that adds small resized image thumbnails to images, for preview purposes only. If you want, you can disable the `ThumbnailGenerator` and/or provide your custom solution.
 
-### `locale`
+### `locale: {}`
 
-See [general plugin options](/docs/plugins).
+Localize text that is shown to the user.
+
+The default English strings are:
+
+```js
+strings: {
+  // When `inline: false`, used as the screen reader label for the button that closes the modal.
+  closeModal: 'Close Modal',
+  // Used as the header for import panels, eg. "Import from Google Drive"
+  importFrom: 'Import from %{name}',
+  // When `inline: false`, used as the screen reader label for the dashboard modal.
+  dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
+  // When `inline: true`, used as the screen reader label for the dashboard area.
+  dashboardTitle: 'Uppy Dashboard',
+  // Shown in the Informer when a link to a file was copied to the clipboard.
+  copyLinkToClipboardSuccess: 'Link copied to clipboard.',
+  // Used when a link cannot be copied automatically—the user has to select the text from the
+  // input element below this string.
+  copyLinkToClipboardFallback: 'Copy the URL below',
+  // Used as the hover title and screen reader label for buttons that copy a file link.
+  copyLink: 'Copy link',
+  // Used as the hover title and screen reader label for file source icons. Eg. "File source: Dropbox"
+  fileSource: 'File source: %{name}',
+  // Used as the label for buttons that accept and close panels (remote providers or metadata editor)
+  done: 'Done',
+  // Used as the screen reader label for buttons that remove a file.
+  removeFile: 'Remove file',
+  // Used as the screen reader label for buttons that open the metadata editor panel for a file.
+  editFile: 'Edit file',
+  // Shown in the panel header for the metadata editor. Rendered as "Editing image.png".
+  editing: 'Editing %{file}',
+  // Used as the screen reader label for the button that saves metadata edits and returns to the
+  // file list view.
+  finishEditingFile: 'Finish editing file',
+  // Used as the label for the tab button that opens the system file selection dialog.
+  myDevice: 'My Device',
+  // Shown in the main dashboard area when no files have been selected, and one or more
+  // remote provider plugins are in use. %{browse} is replaced with a link that opens the system
+  // file selection dialog.
+  dropPasteImport: 'Drop files here, paste, import from one of the locations above or %{browse}',
+  // Shown in the main dashboard area when no files have been selected, and no provider
+  // plugins are in use. %{browse} is replaced with a link that opens the system
+  // file selection dialog.
+  dropPaste: 'Drop files here, paste or %{browse}',
+  // This string is clickable and opens the system file selection dialog.
+  browse: 'browse',
+  // Used as the hover text and screen reader label for file progress indicators when
+  // they have been fully uploaded.
+  uploadComplete: 'Upload complete',
+  // Used as the hover text and screen reader label for the buttons to resume paused uploads.
+  resumeUpload: 'Resume upload',
+  // Used as the hover text and screen reader label for the buttons to pause uploads.
+  pauseUpload: 'Pause upload',
+  // Used as the hover text and screen reader label for the buttons to retry failed uploads.
+  retryUpload: 'Retry upload'
+}
+```
+
+### `replaceTargetContent: false`
+
+Remove all children of the `target` element before mounting the Dashboard. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, there might be cases when you’d want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not available). Set `replaceTargetContent: true` to clear the `target` before appending.
 
 ## Methods
 

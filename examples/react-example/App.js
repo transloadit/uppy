@@ -21,11 +21,9 @@ module.exports = class App extends React.Component {
     this.uppy = new Uppy({ autoProceed: false })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
       .use(GoogleDrive, { host: 'https://server.uppy.io' })
-      .run()
 
     this.uppy2 = new Uppy({ autoProceed: false })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-      .run()
   }
 
   componentWillUnmount () {
@@ -62,6 +60,9 @@ module.exports = class App extends React.Component {
           <Dashboard
             uppy={this.uppy}
             plugins={['GoogleDrive']}
+            metaFields={[
+              { id: 'name', name: 'Name', placeholder: 'File name' }
+            ]}
           />
         )}
 
@@ -73,6 +74,7 @@ module.exports = class App extends React.Component {
           <DashboardModal
             uppy={this.uppy2}
             open={this.state.open}
+            target={document.body}
             onRequestClose={() => this.setState({ open: false })}
           />
         </div>

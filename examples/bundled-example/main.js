@@ -34,7 +34,6 @@ const uppy = Uppy({
   .use(Tus, { endpoint: TUS_ENDPOINT })
   .use(Form, { target: '#upload-form' })
   // .use(GoldenRetriever, {serviceWorker: true})
-  .run()
 
 uppy.on('complete', (result) => {
   if (result.failed.length === 0) {

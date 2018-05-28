@@ -131,6 +131,7 @@ module.exports = class ProviderView {
           updatedDirectories = state.directories.concat([{id, title: name || this.plugin.getItemName(res)}])
         }
 
+        this.username = this.username ? this.username : this.plugin.getUsername(res)
         this._updateFilesAndFolders(res, files, folders)
         this.plugin.setPluginState({ directories: updatedDirectories })
       },
@@ -167,18 +168,16 @@ module.exports = class ProviderView {
       }
     }
 
-    Utils.getFileType(tagFile).then(fileType => {
-      if (fileType && Utils.isPreviewSupported(fileType)) {
-        tagFile.preview = this.plugin.getItemThumbnailUrl(file)
-      }
-      this.plugin.uppy.log('Adding remote file')
-      this.plugin.uppy.addFile(tagFile).catch(() => {
-        // Ignore
-      })
-      if (!isCheckbox) {
-        this.donePicking()
-      }
-    })
+    const fileType = Utils.getFileType(tagFile)
+    // TODO Should we just always use the thumbnail URL if it exists?
+    if (fileType && Utils.isPreviewSupported(fileType)) {
+      tagFile.preview = this.plugin.getItemThumbnailUrl(file)
+    }
+    this.plugin.uppy.log('Adding remote file')
+    this.plugin.uppy.addFile(tagFile)
+    if (!isCheckbox) {
+      this.donePicking()
+    }
   }
 
   /**
@@ -186,7 +185,6 @@ module.exports = class ProviderView {
    */
   logout () {
     this.Provider.logout(location.href)
-      .then((res) => res.json())
       .then((res) => {
         if (res.ok) {
           const newState = {
@@ -488,6 +486,7 @@ module.exports = class ProviderView {
     const link = `${this.Provider.authUrl()}?state=${authState}`
 
     const authWindow = window.open(link, '_blank')
+    authWindow.opener = null
     const checkAuth = () => {
       let authWindowUrl
 
@@ -567,6 +566,7 @@ module.exports = class ProviderView {
     }
 
     const browserProps = Object.assign({}, this.plugin.getPluginState(), {
+      username: this.username,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
       addFile: this.addFile,
@@ -590,7 +590,8 @@ module.exports = class ProviderView {
       showTitles: this.opts.showTitles,
       showFilter: this.opts.showFilter,
       showBreadcrumbs: this.opts.showBreadcrumbs,
-      pluginIcon: this.plugin.icon
+      pluginIcon: this.plugin.icon,
+      i18n: this.plugin.uppy.i18n
     })
 
     return Browser(browserProps)

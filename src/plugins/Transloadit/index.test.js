@@ -45,15 +45,14 @@ describe('Transloadit', () => {
 
     const data = Buffer.alloc(4000)
     data.size = data.byteLength
-    return uppy.addFile({
+    uppy.addFile({
       name: 'testfile',
       data
-    }).then(() => {
-      return uppy.upload().then(() => {
-        throw new Error('should have rejected')
-      }, (err) => {
-        expect(err.message).toMatch(/The `params\.auth\.key` option is required/)
-      })
+    })
+    return uppy.upload().then(() => {
+      throw new Error('should have rejected')
+    }, (err) => {
+      expect(err.message).toMatch(/The `params\.auth\.key` option is required/)
     })
   })
 
@@ -84,17 +83,15 @@ describe('Transloadit', () => {
     const data = Buffer.alloc(10)
     data.size = data.byteLength
 
-    return Promise.all([
-      uppy.addFile({ name: 'a.png', data }),
-      uppy.addFile({ name: 'b.png', data }),
-      uppy.addFile({ name: 'c.png', data }),
-      uppy.addFile({ name: 'd.png', data })
-    ]).then(() => {
-      return uppy.upload().then(() => {
-        throw new Error('upload should have been rejected')
-      }, () => {
-        expect(i).toBe(4)
-      })
+    uppy.addFile({ name: 'a.png', data })
+    uppy.addFile({ name: 'b.png', data })
+    uppy.addFile({ name: 'c.png', data })
+    uppy.addFile({ name: 'd.png', data })
+
+    return uppy.upload().then(() => {
+      throw new Error('upload should have been rejected')
+    }, () => {
+      expect(i).toBe(4)
     })
   })
 
@@ -131,17 +128,15 @@ describe('Transloadit', () => {
     const data2 = Buffer.alloc(20)
     data2.size = data2.byteLength
 
-    return Promise.all([
-      uppy.addFile({ name: 'a.png', data }),
-      uppy.addFile({ name: 'b.png', data }),
-      uppy.addFile({ name: 'c.png', data }),
-      uppy.addFile({ name: 'd.png', data: data2 })
-    ]).then(() => {
-      return uppy.upload().then(() => {
-        throw new Error('Upload should have been rejected')
-      }, () => {
-        expect(i).toBe(2)
-      })
+    uppy.addFile({ name: 'a.png', data })
+    uppy.addFile({ name: 'b.png', data })
+    uppy.addFile({ name: 'c.png', data })
+    uppy.addFile({ name: 'd.png', data: data2 })
+
+    return uppy.upload().then(() => {
+      throw new Error('Upload should have been rejected')
+    }, () => {
+      expect(i).toBe(2)
     })
   })
 
@@ -152,7 +147,6 @@ describe('Transloadit', () => {
         throw new Error('should not create Assembly')
       }
     })
-    uppy.run()
 
     return uppy.upload()
   })
@@ -169,5 +163,57 @@ describe('Transloadit', () => {
     })
 
     return expect(uppy.upload()).rejects.toEqual(new Error('short-circuited'))
+  })
+
+  it('Does not leave lingering progress if getAssemblyOptions fails', () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      getAssemblyOptions (file) {
+        return Promise.reject(new Error('Failure!'))
+      }
+    })
+
+    uppy.addFile({
+      source: 'jest',
+      name: 'abc',
+      data: new Uint8Array(100)
+    })
+
+    return uppy.upload().then(() => {
+      throw new Error('Should not have succeeded')
+    }, (err) => {
+      const fileID = Object.keys(uppy.getState().files)[0]
+
+      expect(err.message).toBe('Failure!')
+      expect(uppy.getFile(fileID).progress.uploadStarted).toBe(false)
+    })
+  })
+
+  it('Does not leave lingering progress if creating assembly fails', () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      params: {
+        auth: { key: 'some auth key string' },
+        template_id: 'some template id string'
+      }
+    })
+
+    uppy.getPlugin('Transloadit').client.createAssembly = () =>
+      Promise.reject(new Error('Could not create assembly!'))
+
+    uppy.addFile({
+      source: 'jest',
+      name: 'abc',
+      data: new Uint8Array(100)
+    })
+
+    return uppy.upload().then(() => {
+      throw new Error('Should not have succeeded')
+    }, (err) => {
+      const fileID = Object.keys(uppy.getState().files)[0]
+
+      expect(err.message).toBe('Could not create assembly!')
+      expect(uppy.getFile(fileID).progress.uploadStarted).toBe(false)
+    })
   })
 })

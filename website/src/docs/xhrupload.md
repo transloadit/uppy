@@ -7,15 +7,21 @@ permalink: docs/xhrupload/
 
 The XHRUpload plugin handles classic HTML multipart form uploads, as well as uploads using the HTTP `PUT` method.
 
-[Try it live](/examples/xhrupload/)
-
 ```js
+const XHRUpload = require('uppy/lib/plugins/XHRUpload')
+
 uppy.use(XHRUpload, {
   endpoint: 'http://my-website.org/upload'
 })
 ```
 
+[Try it live](/examples/xhrupload/)
+
 ## Options
+
+### `id: 'XHRUpload'`
+
+A unique identifier for this plugin. Defaults to `'XHRUpload'`.
 
 ### `endpoint: ''`
 
@@ -72,7 +78,7 @@ uppy.setFileState(otherFileID, {
 })
 ```
 
-### `getResponseData(xhr.responseText, xhr)`
+### `getResponseData(responseText, response)`
 
 When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file's `.response` property, and be emitted in the `upload-success` event:
 
@@ -96,29 +102,38 @@ By default, Uppy assumes the endpoint will return JSON. So, if `POST /upload` re
 }
 ```
 
-That object will be emitted in the `upload-success` event. Not all endpoints respond with JSON. Providing a `getResponseData` function overrides this behavior. The `xhr` parameter is the `XMLHttpRequest` instance used to upload the file.
+That object will be emitted in the `upload-success` event. Not all endpoints respond with JSON. Providing a `getResponseData` function overrides this behavior. The `response` parameter is the `XMLHttpRequest` instance used to upload the file.
 
 For example, an endpoint that responds with an XML document:
 
 ```js
-getResponseData (xhr.responseText, xhr) {
+getResponseData (responseText, response) {
   return {
-    url: xhr.responseXML.querySelector('Location').textContent
+    url: responseText.match(/<Location>(.*?)<\/Location>/)[1]
   }
 }
 ```
 
-### `getResponseError(xhr.responseText, xhr)`
+The `responseText` is the XHR endpoint response as a string. For uploads from the user's device, `response` is the [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) object.
 
-If the upload endpoint responds with a non-2xx status code, the upload is assumed to have failed.
-The endpoint might have responded with some information about the error, though.
+When uploading files from remote providers such as Dropbox or Instagram, Uppy Server sends upload response data to the client. This is made available in the `getResponseData()` function as well. The `response` object from Uppy Server contains some properties named after their [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) counterparts:
+
+ - `response.responseText` - the XHR endpoint response as a string;
+ - `response.status` - the HTTP status code;
+ - `response.statusText` - the HTTP status text;
+ - `response.headers` - an object mapping lowercase header names to their values.
+
+### `getResponseError(responseText, response)`
+
+If the upload endpoint responds with a non-2xx status code, the upload is assumed to have failed. The endpoint might have responded with some information about the error, though.
+
 Pass in a `getResponseError` function to extract error data from the `XMLHttpRequest` instance used for the upload.
 
 For example, if the endpoint responds with a JSON object containing a `{ message }` property, this would show that message to the user:
 
 ```js
 getResponseError (responseText, xhr) {
-  return new Error(JSON.parse(xhr.response).message)
+  return new Error(JSON.parse(responseText).message)
 }
 ```
 
@@ -137,6 +152,19 @@ The default is 30 seconds.
 ### `limit: 0`
 
 Limit the amount of uploads going on at the same time. Passing `0` means no limit.
+
+### `locale: {}`
+
+Localize text that is shown to the user.
+
+The default English strings are:
+
+```js
+strings: {
+  // Shown in the Informer if an upload is being canceled because it stalled for too long.
+  timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
+}
+```
 
 ## POST Parameters / Form Fields
 
@@ -174,8 +202,11 @@ The default form field for file uploads is `files[]`, which means you have to ac
 // upload.php
 $files = $_FILES['files'];
 $file_path = $files['tmp_name'][0]; // temporary upload path of the first file
-move_uploaded_file($file_path, './img/img.png'); // save the file at `img/img.png`
+$file_name = $_POST['name']; // desired name of the file
+move_uploaded_file($file_path, './img/' . basename($file_name)); // save the file in `img/`
 ```
+
+Note how we're using `$_POST['name']` instead of `$my_file['name']`. `$my_file['name']` contains the original name of the file on the user's device. `$_POST['name']` contains the `name` metadata value for the uploaded file, which can be edited by the user using the [Dashboard](/docs/dashboard).
 
 Set a custom `fieldName` to make working with the `$_FILES` array a bit less convoluted:
 
@@ -192,7 +223,7 @@ uppy.use(XHRUpload, {
 // upload.php
 $my_file = $_FILES['my_file'];
 $file_path = $my_file['tmp_name']; // temporary upload path of the file
-$file_name = $my_file['name']; // original name of the file
+$file_name = $_POST['name']; // desired name of the file
 move_uploaded_file($file_path, './img/' . basename($file_name)); // save the file at `img/FILE_NAME`
 ```
 

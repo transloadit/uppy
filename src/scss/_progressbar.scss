@@ -1,9 +1,5 @@
-// @import '_variables.scss';
-// @import '_utils.scss';
-// @import '_animation.scss';
-// @import '_common.scss';
-
 .uppy-ProgressBar {
+  /* no important */
   position: absolute;
   top: 0;
   left: 0;
@@ -14,10 +10,12 @@
 }
 
 .uppy-ProgressBar[aria-hidden=true] {
+  /* no important */
   height: 0;
 }
 
 .uppy-ProgressBar-inner {
+  /* no important */
   background-color: $color-cornflower-blue;
   box-shadow: 0 0 10px rgba($color-cornflower-blue, 0.7);
   height: 100%;
@@ -26,6 +24,7 @@
 }
 
 .uppy-ProgressBar-percentage {
+  /* no important */
   display: none;
   text-align: center;
   position: absolute;
@@ -33,8 +32,4 @@
   left: 50%;
   transform: translate(-50%, -50%);
   color: $color-white;
-
-  // &:after {
-  //   content: ' %';
-  // }
 }

@@ -63,6 +63,11 @@
     background-color: darken($color-red, 10%);
   }
 
+  .uppy-Webcam-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba($color-cornflower-blue, 0.5);
+  }
+
   .uppy-Webcam-button .UppyIcon {
     width: 30px;
     height: 30px;
@@ -84,12 +89,13 @@
 .uppy-Webcam-Title {
   font-size: 22px;
   line-height: 1.35;
-  font-weight: 300;
+  font-weight: 400;
   margin: 0;
   margin-bottom: 15px;
   padding: 0 15px;
   max-width: 500px;
   text-align: center;
+  color: $color-black;
 }
 
 .uppy-Webcam-permissons p {

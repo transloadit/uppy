@@ -1,11 +1,11 @@
 <!-- Basic Uppy styles. You can use Transloadit's CDN, Edgly: 
-https://transloadit.edgly.net/releases/uppy/v0.23.3/dist/uppy.min.css -->
+https://transloadit.edgly.net/releases/uppy/v0.24.4/dist/uppy.min.css -->
 <link rel="stylesheet" href="/uppy/uppy.min.css">
 
 <div class="UppyDragDrop"></div>
 
 <!-- Load Uppy pre-built bundled version. You can use Transloadit's CDN, Edgly: 
-https://transloadit.edgly.net/releases/uppy/v0.23.3/dist/uppy.min.js -->
+https://transloadit.edgly.net/releases/uppy/v0.24.4/dist/uppy.min.js -->
 <script src="/uppy/uppy.min.js"></script>
 <script>
   var uppy = Uppy.Core({ debug: true });
@@ -20,7 +20,6 @@ https://transloadit.edgly.net/releases/uppy/v0.23.3/dist/uppy.min.js -->
   });
   uppy.use(Uppy.ProgressBar, { target: 'body', fixed: true, hideAfterFinish: false });
   uppy.use(Uppy.Tus, { endpoint: '//master.tus.io/files/' });
-  uppy.run();
 
   console.log('--> Uppy pre-built version with Tus, DragDrop & Russian language pack has loaded');
 </script>

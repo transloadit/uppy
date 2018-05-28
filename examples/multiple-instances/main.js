@@ -11,10 +11,9 @@ const a = Uppy({
   .use(Dashboard, {
     target: '#a',
     inline: true,
-    maxWidth: 400
+    width: 400
   })
   .use(GoldenRetriever, { serviceWorker: false })
-  .run()
 
 const b = Uppy({
   id: 'b',
@@ -23,10 +22,9 @@ const b = Uppy({
   .use(Dashboard, {
     target: '#b',
     inline: true,
-    maxWidth: 400
+    width: 400
   })
   .use(GoldenRetriever, { serviceWorker: false })
-  .run()
 
 window.a = a
 window.b = b

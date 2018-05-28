@@ -1,6 +1,6 @@
 const React = require('react')
 const PropTypes = require('prop-types')
-const UppyCore = require('../core').Uppy
+const uppyPropType = require('./propTypes').uppy
 
 const h = React.createElement
 
@@ -35,7 +35,7 @@ class UppyWrapper extends React.Component {
 }
 
 UppyWrapper.propTypes = {
-  uppy: PropTypes.instanceOf(UppyCore).isRequired,
+  uppy: uppyPropType,
   plugin: PropTypes.string.isRequired
 }
 

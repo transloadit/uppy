@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "name": "custom-provider-example",
+  "scripts": {
+    "copy": "cp ../../dist/uppy.min.css .",
+    "start:client": "budo client/main.js:bundle.js -- -t babelify -g aliasify",
+    "start:server": "node server/index.js",
+    "start": "npm-run-all --serial copy --parallel start:*"
+  },
+  "aliasify": "client/aliasify.js",
+  "dependencies": {
+    "aliasify": "^2.1.0",
+    "babelify": "^7.3.0",
+    "body-parser": "^1.18.2",
+    "budo": "^10.0.4",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "npm-run-all": "^4.1.2",
+    "uppy-server": "^0.11.0"
+  }
+}

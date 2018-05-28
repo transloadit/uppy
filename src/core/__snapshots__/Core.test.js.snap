@@ -7,12 +7,8 @@ exports[`src/Core plugins should not be able to add a plugin that has no type 1`
 exports[`src/Core plugins should not be able to add an invalid plugin 1`] = `"Expected a plugin class, but got object. Please verify that the plugin was imported and spelled correctly."`;
 
 exports[`src/Core plugins should prevent the same plugin from being added more than once 1`] = `
-"Already found a plugin named 'TestSelector1'.
-        Tried to use: 'TestSelector1'.
-        Uppy is currently limited to running one of every plugin.
-        Share your use case with us over at
-        https://github.com/transloadit/uppy/issues/
-        if you want us to reconsider."
+"Already found a plugin named 'TestSelector1'. Tried to use: 'TestSelector1'.
+Uppy plugins must have unique 'id' options. See https://uppy.io/docs/plugins/#id."
 `;
 
 exports[`src/Core uploading a file should only upload files that are not already assigned to another upload id 1`] = `
@@ -26,7 +22,7 @@ Object {
       "isRemote": false,
       "meta": Object {
         "name": "foo.jpg",
-        "type": null,
+        "type": "image/jpeg",
       },
       "name": "foo.jpg",
       "preview": undefined,
@@ -40,7 +36,7 @@ Object {
       "remote": "",
       "size": 0,
       "source": "jest",
-      "type": null,
+      "type": "image/jpeg",
     },
     Object {
       "data": Uint8Array [],
@@ -49,7 +45,7 @@ Object {
       "isRemote": false,
       "meta": Object {
         "name": "bar.jpg",
-        "type": null,
+        "type": "image/jpeg",
       },
       "name": "bar.jpg",
       "preview": undefined,
@@ -63,7 +59,7 @@ Object {
       "remote": "",
       "size": 0,
       "source": "jest",
-      "type": null,
+      "type": "image/jpeg",
     },
   ],
   "uploadID": "cjd09qwxb000dlql4tp4doz8h",

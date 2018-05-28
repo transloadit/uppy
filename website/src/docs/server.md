@@ -265,6 +265,10 @@ app.use(uppy.app({
 
 The default value simply returns `filename`, so all files will be uploaded to the root of the bucket as their original file name.
 
+### Run in Kubernetes
+
+We have [a detailed guide on running Uppy Server in Kubernetes](https://github.com/transloadit/uppy-server/blob/master/KUBERNETES.md) for you, that’s how we currently run our example server at http://server.uppy.io.
+
 ### Adding Custom Providers
 
 As of now, Uppy Server supports **Google Drive**, **Dropbox**, **Instagram**, and **Url** (remote urls) out of the box, but you may also choose to add your custom providers. You can do this by passing the `customProviders` option when calling the uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
@@ -314,7 +318,7 @@ To work well with Uppy Server, the **Module** must be a class with the following
 git clone https://github.com/transloadit/uppy-server && cd uppy-server && npm install
 ```
 
-2\. Configure your enviorment variables by copying the `env.example.sh` file to `env.sh` and edit it to its correct values.
+2\. Configure your environment variables by copying the `env.example.sh` file to `env.sh` and edit it to its correct values.
 
 ```bash
 cp env.example.sh env.sh
@@ -329,7 +333,6 @@ npm run start:dev
 
 This would get the Uppy Server running on `http://localhost:3020`.
 
-## Running example
+## Live example
 
 An example server is running at http://server.uppy.io, which is deployed with [Kubernetes](https://github.com/transloadit/uppy-server/blob/master/KUBERNETES.md)
-

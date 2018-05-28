@@ -1,7 +1,7 @@
 const React = require('react')
 const PropTypes = require('prop-types')
-const UppyCore = require('../core').Uppy
 const StatusBarPlugin = require('../plugins/StatusBar')
+const uppyPropType = require('./propTypes').uppy
 
 const h = React.createElement
 
@@ -14,7 +14,7 @@ class StatusBar extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
     const options = Object.assign(
-      {},
+      { id: 'react:StatusBar' },
       this.props,
       { target: this.container }
     )
@@ -41,7 +41,9 @@ class StatusBar extends React.Component {
 }
 
 StatusBar.propTypes = {
-  uppy: PropTypes.instanceOf(UppyCore).isRequired
+  uppy: uppyPropType,
+  hideAfterFinish: PropTypes.bool,
+  showProgressDetails: PropTypes.bool
 }
 StatusBar.defaultProps = {
 }

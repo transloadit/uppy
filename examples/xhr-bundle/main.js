@@ -9,7 +9,9 @@ const uppy = Uppy({
 
 uppy.use(Dashboard, {
   target: '#app',
-  inline: true
+  inline: true,
+  hideRetryButton: true,
+  hideCancelButton: true
 })
 
 uppy.use(XHRUpload, {
@@ -17,5 +19,3 @@ uppy.use(XHRUpload, {
   endpoint: 'http://localhost:9967/upload',
   fieldName: 'files'
 })
-
-uppy.run()

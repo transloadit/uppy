@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "uppy-aws-php-example",
+  "name": "uppy-aws-presigned-url-example",
   "scripts": {
     "start": "node ./serve.js"
   },

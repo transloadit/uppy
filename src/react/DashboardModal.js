@@ -1,7 +1,7 @@
 const React = require('react')
 const PropTypes = require('prop-types')
-const UppyCore = require('../core/Core').Uppy
 const DashboardPlugin = require('../plugins/Dashboard')
+const basePropTypes = require('./propTypes').dashboard
 
 const h = React.createElement
 
@@ -14,13 +14,17 @@ class DashboardModal extends React.Component {
   componentDidMount () {
     const uppy = this.props.uppy
     const options = Object.assign(
-      {},
+      { id: 'react:DashboardModal' },
       this.props,
       {
-        target: this.container,
         onRequestCloseModal: this.props.onRequestClose
       }
     )
+
+    if (!options.target) {
+      options.target = this.container
+    }
+
     delete options.uppy
     uppy.use(DashboardPlugin, options)
 
@@ -53,18 +57,14 @@ class DashboardModal extends React.Component {
   }
 }
 
-DashboardModal.propTypes = {
-  uppy: PropTypes.instanceOf(UppyCore).isRequired,
+DashboardModal.propTypes = Object.assign({
+  // Only check this prop type in the browser.
+  target: typeof window !== 'undefined' ? PropTypes.instanceOf(window.HTMLElement) : PropTypes.any,
   open: PropTypes.bool,
   onRequestClose: PropTypes.func,
-  plugins: PropTypes.arrayOf(PropTypes.string),
-  maxWidth: PropTypes.number,
-  maxHeight: PropTypes.number,
-  showProgressDetails: PropTypes.bool,
-  hideUploadButton: PropTypes.bool,
-  note: PropTypes.string,
-  locale: PropTypes.object
-}
+  closeModalOnClickOutside: PropTypes.bool,
+  disablePageScrollWhenModalOpen: PropTypes.bool
+}, basePropTypes)
 
 DashboardModal.defaultProps = {
 }

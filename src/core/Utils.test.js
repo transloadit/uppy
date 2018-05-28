@@ -149,35 +149,13 @@ describe('core/utils', () => {
   })
 
   describe('getFileType', () => {
-    beforeEach(() => {
-      global.FileReader = class FileReader {
-        addEventListener (e, cb) {
-          if (e === 'load') {
-            this.loadCb = cb
-          }
-          if (e === 'error') {
-            this.errorCb = cb
-          }
-        }
-        readAsArrayBuffer (chunk) {
-          this.loadCb({ target: { result: new ArrayBuffer(8) } })
-        }
-      }
-    })
-
-    afterEach(() => {
-      global.FileReader = undefined
-    })
-
     it('should trust the filetype if the file comes from a remote source', () => {
       const file = {
         isRemote: true,
         type: 'audio/webm',
         name: 'foo.webm'
       }
-      return utils.getFileType(file).then(r => {
-        expect(r).toEqual('audio/webm')
-      })
+      expect(utils.getFileType(file)).toEqual('audio/webm')
     })
 
     it('should determine the filetype from the mimetype', () => {
@@ -186,19 +164,25 @@ describe('core/utils', () => {
         name: 'foo.webm',
         data: 'sdfsdfhq9efbicw'
       }
-      return utils.getFileType(file).then(r => {
-        expect(r).toEqual('audio/webm')
-      })
+      expect(utils.getFileType(file)).toEqual('audio/webm')
     })
 
     it('should determine the filetype from the extension', () => {
-      const file = {
+      const fileMP3 = {
         name: 'foo.mp3',
         data: 'sdfsfhfh329fhwihs'
       }
-      return utils.getFileType(file).then(r => {
-        expect(r).toEqual('audio/mp3')
-      })
+      const fileYAML = {
+        name: 'bar.yaml',
+        data: 'sdfsfhfh329fhwihs'
+      }
+      const fileMKV = {
+        name: 'bar.mkv',
+        data: 'sdfsfhfh329fhwihs'
+      }
+      expect(utils.getFileType(fileMP3)).toEqual('audio/mp3')
+      expect(utils.getFileType(fileYAML)).toEqual('text/yaml')
+      expect(utils.getFileType(fileMKV)).toEqual('video/x-matroska')
     })
 
     it('should fail gracefully if unable to detect', () => {
@@ -206,9 +190,7 @@ describe('core/utils', () => {
         name: 'foobar',
         data: 'sdfsfhfh329fhwihs'
       }
-      return utils.getFileType(file).then(r => {
-        expect(r).toEqual(null)
-      })
+      expect(utils.getFileType(file)).toEqual(null)
     })
   })
 

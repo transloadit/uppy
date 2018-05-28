@@ -16,9 +16,10 @@ last Friday of every new month.
 
 ## Backlog
 
-Ideas that will be planned and find their way into a release at one point
+Ideas that will be planned and find their way into a release at one point.
+PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
-- [ ] core: Decouple rendering from Plugin ?
+- [ ] core: Decouple rendering from the Plugin base class?
 - [ ] core: Make sure Uppy works well in VR
 - [ ] test: Human should check http://www.webpagetest.org and https://developers.google.com/web/tools/lighthouse/, use it sometimes to test website and Uppy. Will show response/loading times and other issues
 - [ ] test: Human should test with real screen reader to identify accessibility problems
@@ -31,7 +32,7 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] maybe restrict system file picking dialog too https://github.com/transloadit/uppy/issues/253
 - [ ] uppy-server: what happens if access token expires amid an upload/download process.
 - [ ] good way to change plugin options at runtime—maybe `this.state.options`?
-- [ ] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
+- [x] s3: multipart/"resumable" uploads for large files (@goto-bus-stop)
 - [ ] DnD Bar: drag and drop + statusbar or progressbar ? (@arturi)
 - [ ] possibility to work on already uploaded / in progress files #112, #113
 - [ ] possibility to edit/delete more than one file at once #118, #97
@@ -45,7 +46,6 @@ Ideas that will be planned and find their way into a release at one point
 - [ ] Prepare for (piwik-) tracking of usage of uppy ? see #83
 - [ ] screenshot+screencast support similar to Webcam #148
 - [ ] Webcam modes #198
-- [ ] feature: improved UI for Provider, Google Drive and Instagram, grid/list views
 - [ ] feature: React Native support
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 - [ ] It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them?
@@ -62,6 +62,12 @@ Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] provider: Add Facebook
 - [ ] provider: Add OneDrive
 - [ ] provider: Add Box
+- [ ] provider: change ProviderViews signature to receive Provider instance in second param. ref https://github.com/transloadit/uppy/pull/743#discussion_r180106070
+- [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
+- [ ] webcam: Stop recording when file size is exceeded, should be possible given how the MediaRecorder API works
+- [ ] dashboard: add option to disable uploading from local disk #657
+- [ ] dashboard: display data like image resolution on file cards #783
+- [ ] server: pass metadata to S3 `getKey` option, see https://github.com/transloadit/uppy/issues/689
 
 ## 1.0 Goals
 
@@ -69,14 +75,15 @@ What we need to do to release Uppy 1.0
 
 - [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
 - [ ] QA: test in multiple browsers and mobile devices again
-- [ ] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
+- [x] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
 - [ ] QA: tests for some plugins
 - [x] docs: on using plugins, all options, list of plugins, i18n
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs
-- [ ] refactoring: possibly add CSS-in-JS
+- [ ] refactoring: possibly add CSS-in-JS, style encapsulation
 - [x] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
 - [ ] refactoring: split uppy into small packages, lerna repo?
 - [x] QA: tests for core and utils
+- [ ] feature: basic Reacte Native support
 - [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
 - [x] feature: beta file recovering after closed tab / browser crash
 - [x] feature: easy integration with React (UppyReact components)
@@ -88,40 +95,126 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 
-# next
-
-## 0.24.0
-
-To be released: 2018-03-29.
+# 0.26.0
 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] dashboard: cancel button for any kind of uploads? currently resume/pause only for tus, and cancel for XHR (@arturi, @goto-bus-stop)
+
+# next
+
+## 0.25.0
+
+To Be Released: 2018-05-31.
+
 - [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
-- [ ] dashboard: disallow removing files if `bundle: true` in XHRUpload (@arturi) 
-- [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
-- [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
-- [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [ ] core: all: reset or !important styles to be immune to any environment/page, look at screenshots in #446. Maybe `postcss-safe-important`, http://cleanslatecss.com/ or https://github.com/maximkoretskiy/postcss-autoreset or increase specificity (with .uppy prefix) (@arturi)
-- [ ] url: refactor things into Provider, see comments in  https://github.com/transloadit/uppy/pull/588 (@ifedapoolarewaju, @arturi)
-- [ ] dashboard: option for Boolean metadata #454 (@arturi)
-- [ ] look into text-based file type icons to save space, or more icons for file types? (@nqst, @arturi)
 - [ ] core: figure out per-plugin locales and i18n strings packs #491
 - [ ] goldenretriever: confirmation before restore #443
 - [ ] goldenretriever: add “ghost” files (@arturi)
-- [ ] core: i18n all strings + document them
-- [ ] core: update file-type
-- [x] goldenretriever: warn, not error, when files cannot be saved by goldenretriever (#641 / @goto-bus-stop)
+- [ ] test: add typescript with JSDoc (@arturi)
+- [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
+- [ ] dashboard: disallow removing files if `bundle: true` in XHRUpload (@arturi)
+- [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
+- [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
-- [ ] docs: all useful events (@arturi)
-- [ ] s3: rename `AWS S3` to something more general if it works with Google Cloud Storage too? See #460
-- [ ] dashboard: try adding optional whitelabel “powered by uppy.io”, maybe muted small uppy logo that gains color on hover (@nqst, @arturi)
 - [ ] transloadit: add error reporting (@goto-bus-stop)
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
-- [x] s3: fix xhr response handlers (#625, @goto-bus-stop)
-- [ ] test: add typescript with JSDoc (@arturi)
-- [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
+- [ ] core: add more mime-to-extension mappings from https://github.com/micnic/mime.json/blob/master/index.json (which ones?) # (@arturi, @goto-bus-stop)
+- [ ] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
+- [x] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360 (#844 / @vith)
+- [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
+- [x] core: removed .run() (to solve issues like #756), update ddocs (#793 / goto-bus-stop)
+- [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
+- [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
+- [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/ (@goto-bus-stop)
+- [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
+- [x] providers: Add user/account names to Uppy provider views (61bf0a7 / @ifedapoolarewaju)
+- [x] s3: implement multipart uploads (#726 / @goto-bus-stop)
+
+## 0.24.4
+
+Released: 2018-05-14.
+
+- core: Pass `allowedFileTypes` and `maxNumberOfFiles` to input[type=file] in UI components: Dashboard, DragDrop, FileInput (#814 / @arturi)
+- transloadit: Update Transloadit plugin's Uppy Server handling (#804 / @goto-bus-stop)
+- tus: respect `limit` option for upload parameter requests (#817 / @ap--)
+- docs: Explain name `metadata` vs. `$_FILES[]["name"]` (#1c1bf2e / @goto-bus-stop)
+- dashboard: improve “powered by” icon (#0284c8e / @arturi)
+- statusbar: add default string for cancel button (#822 / @mrbatista)
+
+## 0.24.3
+
+Released: 2018-05-10.
+
+- core: add `uppy.getFiles()` method (@goto-bus-stop / #770)
+- core: merge meta data when add file (#810 / @mrbatista)
+- dashboard: fix duplicate plugin IDs, see #702 (@goto-bus-stop)
+- dashboard/statusbar: fix some unicode characters showing up as gibberish (#787 / @goto-bus-stop)
+- dashboard: Fix grid item height in remote providers with few files (#791 / @goto-bus-stop)
+- dashboard: Add `rel="noopener noreferrer"` to links containing `target="_blank"` (#767 / @kvz)
+- instagram: add extensions to instagram files (@ifedapoolarewaju)
+- transloadit: More robust failure handling for Transloadit, closes #708 (#805 / @goto-bus-stop)
+- docs: Document "headers" upload parameter in AwsS3 plugin (#780 / @janko-m)
+- docs: Update some `uppy.state` docs to align with the Stores feature (#792 / @goto-bus-stop)
+- dragdrop: Add `inputName` option like FileInput has, set empty value="", closes #729 (#778 / @goto-bus-stop, @arturi)
+- docs: Google Cloud Storage setup for the AwsS3 plugin (#777 / goto-bus-stop)
+- react: Update React component PropTypes (#776 / @arturi)
+- statusbar: add some spacing between text elements (#760 / @goto-bus-stop)
+
+## 0.24.2
+
+Released: 2018-04-17.
+
+- dashboard: Fix showLinkToFileUploadResult option (@arturi / #763)
+- docs: Consistent shape for the getResponseData (responseText, response) (@arturi / #765)
+
+## 0.24.1
+
+Released: 2018-04-16.
+
+- dashboard: ⚠️ **breaking** `maxWidth`, `maxHeight` --> `width` and `height`; update docs and React props too; regardless of what we call those internally, this makes more sense, I think (@arturi)
+- core: Avoid important for those styles that need to be overriden by inline-styles + microtip (@arturi)
+- tus & xhrupload: Retain uppy-server error messages, fixes #707 (@goto-bus-stop / #759)
+- dragdrop: Link `<label>` and `<input>`, fixes #749 (@goto-bus-stop / #757)
+
+## 0.24.0
+
+Released: 2018-04-12.
+
+- core: ⚠️ **breaking** !important styles to be immune to any environment/page, look at screenshots in #446. Use `postcss-safe-important` (look into http://cleanslatecss.com/ or https://github.com/maximkoretskiy/postcss-autoreset or increasing specificity with .uppy prefix) (#744 / @arturi)
+- core: ⚠️ **breaking** `onBeforeFileAdded()`, `onBeforeUpload()` and `addFile()` are now synchronous. You can no longer return a Promise from the `onBefore*()` functions. (#294, #746, @goto-bus-stop, @arturi)
+- statusbar: ⚠️ **breaking** Move progress details to second line and make them optional (#682 / @arturi)
+- core: Add uppy-Root to a DOM el that gets mounted in mount (#682 / @arturi)
+- core: Fix all file state was included in progress accidentally (#682 / @arturi)
+- dashboard: Options to disable showLinkToFileUploadResult and meta editing if metaFields is not provided (#682 / @arturi)
+- dashboard: Remove dashed file icon for now (#682 / @arturi)
+- dashboard: Add optional whitelabel “powered by uppy.io” (@nqst, @arturi)
+- dashboard: Huge UI redesign, update provider views, StatusBar, Webcam, FileCard (@arturi, @nqst)
+- docs: Update uppy-server docs to point to Kubernetes (#706 / @kiloreux)
+- docs: Talk about success_action_status for POST uploads (#728 / @goto-bus-stop)
+- docs: Add custom provider example (#743 / @ifedapoolarewaju)
+- docs: Addmore useful events, i18n strings, typos, fixes and improvements following Tim’s feedback (#704 / @arturi)
+- goldenretriever: Regenerate thumbnails after restore (#723 / @goto-bus-stop)
+- goldenretriever: Warn, not error, when files cannot be saved by goldenretriever (#641 / @goto-bus-stop)
+- instagram: Use date&time as file name for instagram files (#682 / @arturi)
+- providers: Fix logging out of providers (#742 / @goto-bus-stop)
+- providers: Refactor Provider views: Filter, add showFilter and showBreadcrumbs (#682 / @arturi)
+- react: Allow overriding `<DashboardModal />` `target` prop (#740, @goto-bus-stop)
+- s3: Support fake XHR from remote uploads (#711, @goto-bus-stop)
+- s3: Document Digital Ocean Spaces
+- s3: Fix xhr response handlers (#625, @goto-bus-stop)
+- statusbar: Cancel button for any kind of uploads (@arturi, @goto-bus-stop)
+- url: Add checks for protocols, assume `http` when no protocol is used (#682 / @arturi)
+- url: Refactor things into Provider, see comments in  https://github.com/transloadit/uppy/pull/588; exposing the Provider module and the ProviderView to the public API (#727 / @ifedapoolarewaju, @arturi)
+- webcam: Styles updates: adapt for mobile, better camera icon, move buttons to the bottom bar (#682 / @arturi)
+- server: Fixed security vulnerability in transient dependency [#70](https://github.com/transloadit/uppy-server/issues/70) (@ifedapoolarewaju)
+- server: Auto-generate tmp download file name to avoid Path traversal (@ifedapoolarewaju)
+- server: Namespace redis key storage/lookup to avoid collisions (@ifedapoolarewaju)
+- server: Validate callback redirect url after completing OAuth (@ifedapoolarewaju)
+- server: Reduce the permission level required by Google Drive (@ifedapoolarewaju)
+- server: Auto-generate Server secret if none is provided on startup (@ifedapoolarewaju)
+- server: We implemented a more standard logger for Uppy Server (@ifedapoolarewaju)
+- server: Added an example project to run Uppy Server on Serverless (@ifedapoolarewaju)
 
 ## 0.23.3
 
