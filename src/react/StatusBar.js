@@ -22,7 +22,7 @@ class StatusBar extends React.Component {
 
     uppy.use(StatusBarPlugin, options)
 
-    this.plugin = uppy.getPlugin('react:StatusBar')
+    this.plugin = uppy.getPlugin(options.id)
   }
 
   componentWillUnmount () {
