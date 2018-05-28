@@ -62,15 +62,6 @@ module.exports = class FileCard extends Component {
 
     const file = this.props.files[this.props.fileCardFor]
 
-    console.log({
-      what: this.props.i18n('editing', {
-        file: 'test'
-      }),
-      ever: this.props.i18nArray('editing', {
-        file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>
-      })
-    })
-
     return (
       <div class="uppy-DashboardFileCard" aria-hidden={!this.props.fileCardFor}>
         <div style={{ width: '100%', height: '100%' }}>
