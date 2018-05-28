@@ -48,8 +48,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] Webcam modes #198
 - [ ] feature: React Native support
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
-- [ ] It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them?
-Sort of like jQuery UI: https://jqueryui.com/download/
+- [ ] It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
 - [ ] test: add tests for `npm pack`
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
@@ -73,22 +72,24 @@ Sort of like jQuery UI: https://jqueryui.com/download/
 
 What we need to do to release Uppy 1.0
 
-- [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
-- [ ] QA: test in multiple browsers and mobile devices again
-- [x] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
-- [ ] QA: tests for some plugins
+- [ ] ~refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
+- [ ] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@alex)
+- [ ] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
+- [ ] QA: add one integration test that uses a Provider (investigate if possible with a dedicated Google Drive API key for uppy server, so _with_ oauth dance) (@ife)
+- [ ] QA: add one integration test that uses more exotic (tus) options such as `useFastRemoteRetry` (@arturi)
+- [ ] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
+- [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
+- [ ] feature: basic React Native support (@arturi owner+ios, @ife android)
+- [ ] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
 - [x] docs: on using plugins, all options, list of plugins, i18n
-- [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs
-- [ ] refactoring: possibly add CSS-in-JS, style encapsulation
-- [x] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
-- [ ] refactoring: split uppy into small packages, lerna repo?
-- [x] QA: tests for core and utils
-- [ ] feature: basic Reacte Native support
-- [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
 - [x] feature: beta file recovering after closed tab / browser crash
 - [x] feature: easy integration with React (UppyReact components)
 - [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
+- [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
 - [x] feature: restrictions: by size, number of files, file type
+- [x] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
+- [x] QA: tests for core and utils
+- [x] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
 - [x] refactoring: webcam plugin
 - [x] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
 - [x] uppy-server: better error handling, general cleanup (remove unused code. etc)
