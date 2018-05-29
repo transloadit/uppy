@@ -281,8 +281,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       this.uppy.on('cancel-all', () => {
-        // const files = this.uppy.getState().files
-        // if (!files[file.id]) return
+        timer.done()
         xhr.abort()
       })
     })
@@ -419,6 +418,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       this.uppy.on('cancel-all', () => {
+        timer.done()
         xhr.abort()
       })
 
