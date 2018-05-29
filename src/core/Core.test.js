@@ -232,6 +232,7 @@ describe('src/Core', () => {
       capabilities: { resumableUploads: false },
       files: {},
       currentUploads: {},
+      error: null,
       foo: 'bar',
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
@@ -271,6 +272,7 @@ describe('src/Core', () => {
       capabilities: { resumableUploads: false },
       files: {},
       currentUploads: {},
+      error: null,
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
       plugins: {},
@@ -1106,9 +1108,10 @@ describe('src/Core', () => {
     it('should update the state when receiving the upload-error event', () => {
       const core = new Core()
       core.state.files['fileId'] = {
+        id: 'fileId',
         name: 'filename'
       }
-      core.emit('upload-error', core.state.files['fileId'], new Error('this is the error'))
+      core.emit('upload-error', core.getState().files['fileId'], new Error('this is the error'))
       expect(core.state.info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
     })
 
