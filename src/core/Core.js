@@ -582,7 +582,8 @@ class Uppy {
 
     this.setState({
       files: {},
-      totalProgress: 0
+      totalProgress: 0,
+      error: null
     })
   }
 
