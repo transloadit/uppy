@@ -232,6 +232,7 @@ describe('src/Core', () => {
       capabilities: { resumableUploads: false },
       files: {},
       currentUploads: {},
+      error: null,
       foo: 'bar',
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
@@ -271,6 +272,7 @@ describe('src/Core', () => {
       capabilities: { resumableUploads: false },
       files: {},
       currentUploads: {},
+      error: null,
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
       plugins: {},
@@ -1102,6 +1104,7 @@ describe('src/Core', () => {
       core.setState({
         files: {
           fileId: {
+            id: 'fileId',
             name: 'filename'
           }
         }

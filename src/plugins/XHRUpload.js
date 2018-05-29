@@ -127,6 +127,8 @@ module.exports = class XHRUpload extends Plugin {
   createProgressTimeout (timeout, timeoutHandler) {
     const uppy = this.uppy
     const self = this
+    let isDone = false
+
     function onTimedOut () {
       uppy.log(`[XHRUpload] timed out`)
       const error = new Error(self.i18n('timedOut', { seconds: Math.ceil(timeout / 1000) }))
@@ -135,17 +137,24 @@ module.exports = class XHRUpload extends Plugin {
 
     let aliveTimer = null
     function progress () {
+      // Some browsers fire another progress event when the upload is
+      // cancelled, so we have to ignore progress after the timer was
+      // told to stop.
+      if (isDone) return
+
       if (timeout > 0) {
-        done()
+        if (aliveTimer) clearTimeout(aliveTimer)
         aliveTimer = setTimeout(onTimedOut, timeout)
       }
     }
 
     function done () {
+      uppy.log(`[XHRUpload] timer done`)
       if (aliveTimer) {
         clearTimeout(aliveTimer)
         aliveTimer = null
       }
+      isDone = true
     }
 
     return {
@@ -282,8 +291,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       this.uppy.on('cancel-all', () => {
-        // const files = this.uppy.getState().files
-        // if (!files[file.id]) return
+        timer.done()
         xhr.abort()
       })
     })
@@ -388,8 +396,8 @@ module.exports = class XHRUpload extends Plugin {
         files.forEach((file) => {
           this.uppy.emit('upload-progress', file, {
             uploader: this,
-            bytesUploaded: ev.loaded,
-            bytesTotal: ev.total
+            bytesUploaded: ev.loaded / ev.total * file.size,
+            bytesTotal: file.size
           })
         })
       })
@@ -420,6 +428,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       this.uppy.on('cancel-all', () => {
+        timer.done()
         xhr.abort()
       })
 

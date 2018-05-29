@@ -182,6 +182,10 @@ class Uppy {
   * Shorthand to set state for a specific file.
   */
   setFileState (fileID, state) {
+    if (!this.getState().files[fileID]) {
+      throw new Error(`Can’t set state for ${fileID} (the file could have been removed)`)
+    }
+
     this.setState({
       files: Object.assign({}, this.getState().files, {
         [fileID]: Object.assign({}, this.getState().files[fileID], state)
@@ -582,7 +586,8 @@ class Uppy {
 
     this.setState({
       files: {},
-      totalProgress: 0
+      totalProgress: 0,
+      error: null
     })
   }
 
