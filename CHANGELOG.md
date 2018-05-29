@@ -132,6 +132,12 @@ To Be Released: 2018-05-31.
 - [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/ (@goto-bus-stop)
 - [x] docs: individual React component pages, more plugin options, better groups (#845 / @goto-bus-stop)
 - [x] core: ⚠️ **breaking** Changed some of the strings that we were concatenating in Preact, now their interpolation is handled by the Translator instead. This is important for languages that have different word order than English. (#845 / @goto-bus-stop)
+  Changed strings:
+    - core: `failedToUpload` needs to contain `%{file}`, substituted by the name of the file that failed
+    - dashboard: `dropPaste` and `dropPasteImport` need to contain `%{browse}`, substituted by the "browse" text button
+    - dashboard: `editing` needs to contain `%{file}`, substituted by the name of the file being edited
+    - dashboard: `fileSource` and `importFrom` need to contain `%{name}`, substituted by the name of the provider
+    - dragdrop: `dropHereOr` needs to contain `%{browse}`, substituted by the "browse" text button
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
 - [x] providers: Add user/account names to Uppy provider views (61bf0a7 / @ifedapoolarewaju)
 - [x] s3: implement multipart uploads (#726 / @goto-bus-stop)
