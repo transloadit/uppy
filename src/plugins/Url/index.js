@@ -135,7 +135,11 @@ module.exports = class Url extends Plugin {
       })
       .then((tagFile) => {
         this.uppy.log('[Url] Adding remote file')
-        return this.uppy.addFile(tagFile)
+        try {
+          this.uppy.addFile(tagFile)
+        } catch (err) {
+          // Nothing, restriction errors handled in Core
+        }
       })
       .then(() => {
         const dashboard = this.uppy.getPlugin('Dashboard')
@@ -158,7 +162,11 @@ module.exports = class Url extends Plugin {
         if (item.kind === 'string' && item.type === 'text/uri-list') {
           item.getAsString((url) => {
             this.uppy.log(`[URL] Adding file from dropped url: ${url}`)
-            this.addFile(url)
+            try {
+              this.addFile(url)
+            } catch (err) {
+              // Nothing, restriction errors handled in Core
+            }
           })
         }
       })
@@ -189,7 +197,11 @@ module.exports = class Url extends Plugin {
         if (item.kind === 'string' && item.type === 'text/plain') {
           item.getAsString((url) => {
             this.uppy.log(`[URL] Adding file from pasted url: ${url}`)
-            this.addFile(url)
+            try {
+              this.addFile(url)
+            } catch (err) {
+              // Nothing, restriction errors handled in Core
+            }
           })
         }
       })

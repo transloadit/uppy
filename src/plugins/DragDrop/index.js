@@ -79,12 +79,16 @@ module.exports = class DragDrop extends Plugin {
     this.uppy.log('[DragDrop] Files dropped')
 
     files.forEach((file) => {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file
-      })
+      try {
+        this.uppy.addFile({
+          source: this.id,
+          name: file.name,
+          type: file.type,
+          data: file
+        })
+      } catch (err) {
+        // Nothing, restriction errors handled in Core
+      }
     })
   }
 
@@ -94,12 +98,16 @@ module.exports = class DragDrop extends Plugin {
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file
-      })
+      try {
+        this.uppy.addFile({
+          source: this.id,
+          name: file.name,
+          type: file.type,
+          data: file
+        })
+      } catch (err) {
+        // Nothing, restriction errors handled in Core
+      }
     })
   }
 
