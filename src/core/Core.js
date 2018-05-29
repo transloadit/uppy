@@ -34,6 +34,7 @@ class Uppy {
         failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
         connectedToInternet: 'Connected to the Internet',
+        // Strings for remote providers
         noFilesFound: 'You have no files or folders here',
         selectXFiles: {
           0: 'Select %{smart_count} file',
