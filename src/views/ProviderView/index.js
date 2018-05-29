@@ -2,7 +2,7 @@ const AuthView = require('./AuthView')
 const Browser = require('./Browser')
 const LoaderView = require('./Loader')
 const Utils = require('../../core/Utils')
-const { h } = require('preact')
+const { h, Component } = require('preact')
 
 /**
  * Array.prototype.findIndex ponyfill for old browsers.
@@ -12,6 +12,16 @@ function findIndex (array, predicate) {
     if (predicate(array[i])) return i
   }
   return -1
+}
+
+class CloseWrapper extends Component {
+  componentWillUnmount () {
+    this.props.onUnmount()
+  }
+
+  render () {
+    return this.props.children[0]
+  }
 }
 
 /**
@@ -83,11 +93,12 @@ module.exports = class ProviderView {
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
+    this.clearSelection = this.clearSelection.bind(this)
 
     // Visual
     this.render = this.render.bind(this)
 
-    this.plugin.setPluginState({ currentSelection: [] })
+    this.clearSelection()
   }
 
   tearDown () {
@@ -496,7 +507,7 @@ module.exports = class ProviderView {
     })
 
     this._loaderWrapper(Promise.all(promises), () => {
-      this.plugin.setPluginState({ currentSelection: [] })
+      this.clearSelection()
 
       const dashboard = this.plugin.uppy.getPlugin('Dashboard')
       if (dashboard) dashboard.hideAllPanels()
@@ -504,10 +515,14 @@ module.exports = class ProviderView {
   }
 
   cancelPicking () {
-    this.plugin.setPluginState({ currentSelection: [] })
+    this.clearSelection()
 
     const dashboard = this.plugin.uppy.getPlugin('Dashboard')
     if (dashboard) dashboard.hideAllPanels()
+  }
+
+  clearSelection () {
+    this.plugin.setPluginState({ currentSelection: [] })
   }
 
   // displays loader view while asynchronous request is being made.
@@ -522,18 +537,26 @@ module.exports = class ProviderView {
     const { authenticated, checkAuthInProgress, loading } = this.plugin.getPluginState()
 
     if (loading) {
-      return <LoaderView />
+      return (
+        <CloseWrapper onUnmount={this.clearSelection}>
+          <LoaderView />
+        </CloseWrapper>
+      )
     }
 
     if (!authenticated) {
-      return <AuthView
-        pluginName={this.plugin.title}
-        pluginIcon={this.plugin.icon}
-        demo={this.plugin.opts.demo}
-        checkAuth={this.checkAuth}
-        handleAuth={this.handleAuth}
-        handleDemoAuth={this.handleDemoAuth}
-        checkAuthInProgress={checkAuthInProgress} />
+      return (
+        <CloseWrapper onUnmount={this.clearSelection}>
+          <AuthView
+            pluginName={this.plugin.title}
+            pluginIcon={this.plugin.icon}
+            demo={this.plugin.opts.demo}
+            checkAuth={this.checkAuth}
+            handleAuth={this.handleAuth}
+            handleDemoAuth={this.handleDemoAuth}
+            checkAuthInProgress={checkAuthInProgress} />
+        </CloseWrapper>
+      )
     }
 
     const browserProps = Object.assign({}, this.plugin.getPluginState(), {
@@ -565,6 +588,10 @@ module.exports = class ProviderView {
       i18n: this.plugin.uppy.i18n
     })
 
-    return <Browser {...browserProps} />
+    return (
+      <CloseWrapper onUnmount={this.clearSelection}>
+        <Browser {...browserProps} />
+      </CloseWrapper>
+    )
   }
 }
