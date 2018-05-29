@@ -386,8 +386,8 @@ module.exports = class XHRUpload extends Plugin {
         files.forEach((file) => {
           this.uppy.emit('upload-progress', file, {
             uploader: this,
-            bytesUploaded: ev.loaded,
-            bytesTotal: ev.total
+            bytesUploaded: ev.loaded / ev.total * file.size,
+            bytesTotal: file.size
           })
         })
       })
