@@ -41,7 +41,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] statusbar: add option to always show
 - [ ] have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
 - [ ] “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no uppy-server required #362
-- [ ] WordPress plugin
+- [ ] WordPress plugin https://www.producthunt.com/posts/uppy-io#comment-559327 (“And Gravity forms”)
 - [ ] Transformations, cropping, filters for images, see #53
 - [ ] Prepare for (piwik-) tracking of usage of uppy ? see #83
 - [ ] screenshot+screencast support similar to Webcam #148
