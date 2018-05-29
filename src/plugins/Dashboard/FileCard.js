@@ -56,13 +56,21 @@ module.exports = class FileCard extends Component {
   }
 
   render () {
+    if (!this.props.fileCardFor) {
+      return <div class="uppy-DashboardFileCard" aria-hidden />
+    }
+
     const file = this.props.files[this.props.fileCardFor]
 
-    return <div class="uppy-DashboardFileCard" aria-hidden={!this.props.fileCardFor}>
-      {this.props.fileCardFor &&
+    return (
+      <div class="uppy-DashboardFileCard" aria-hidden={!this.props.fileCardFor}>
         <div style={{ width: '100%', height: '100%' }}>
           <div class="uppy-DashboardContent-bar">
-            <h2 class="uppy-DashboardContent-title">{this.props.i18n('editing')} <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span></h2>
+            <h2 class="uppy-DashboardContent-title">
+              {this.props.i18nArray('editing', {
+                file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>
+              })}
+            </h2>
             <button class="uppy-DashboardContent-back" type="button" title={this.props.i18n('finishEditingFile')}
               onclick={this.handleSave}>{this.props.i18n('done')}</button>
           </div>
@@ -86,7 +94,7 @@ module.exports = class FileCard extends Component {
             </div>
           </div>
         </div>
-      }
-    </div>
+      </div>
+    )
   }
 }

@@ -7,15 +7,21 @@ permalink: docs/xhrupload/
 
 The XHRUpload plugin handles classic HTML multipart form uploads, as well as uploads using the HTTP `PUT` method.
 
-[Try it live](/examples/xhrupload/)
-
 ```js
+const XHRUpload = require('uppy/lib/plugins/XHRUpload')
+
 uppy.use(XHRUpload, {
   endpoint: 'http://my-website.org/upload'
 })
 ```
 
+[Try it live](/examples/xhrupload/)
+
 ## Options
+
+### `id: 'XHRUpload'`
+
+A unique identifier for this plugin. Defaults to `'XHRUpload'`.
 
 ### `endpoint: ''`
 
@@ -146,6 +152,19 @@ The default is 30 seconds.
 ### `limit: 0`
 
 Limit the amount of uploads going on at the same time. Passing `0` means no limit.
+
+### `locale: {}`
+
+Localize text that is shown to the user.
+
+The default English strings are:
+
+```js
+strings: {
+  // Shown in the Informer if an upload is being canceled because it stalled for too long.
+  timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
+}
+```
 
 ## POST Parameters / Form Fields
 

@@ -48,8 +48,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] Webcam modes #198
 - [ ] feature: React Native support
 - [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
-- [ ] It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them?
-Sort of like jQuery UI: https://jqueryui.com/download/
+- [ ] It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
 - [ ] test: add tests for `npm pack`
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
@@ -73,22 +72,25 @@ Sort of like jQuery UI: https://jqueryui.com/download/
 
 What we need to do to release Uppy 1.0
 
-- [ ] QA: test how everything works together: user experience from `npm install` to production build with Webpack, using in React/Redux environment (npm pack)
-- [ ] QA: test in multiple browsers and mobile devices again
-- [x] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
-- [ ] QA: tests for some plugins
+- [ ] website: big release blog post
+- [ ] ~refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
+- [ ] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
+- [ ] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
+- [ ] QA: add one integration test that uses a Provider (investigate if possible with a dedicated Google Drive API key for uppy server, so _with_ oauth dance) (@ife)
+- [ ] QA: add one integration test that uses more exotic (tus) options such as `useFastRemoteRetry` (@arturi)
+- [ ] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
+- [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
+- [ ] feature: basic React Native support (@arturi owner+ios, @ife android)
+- [ ] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
 - [x] docs: on using plugins, all options, list of plugins, i18n
-- [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs
-- [ ] refactoring: possibly add CSS-in-JS, style encapsulation
-- [x] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
-- [ ] refactoring: split uppy into small packages, lerna repo?
-- [x] QA: tests for core and utils
-- [ ] feature: basic Reacte Native support
-- [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
 - [x] feature: beta file recovering after closed tab / browser crash
 - [x] feature: easy integration with React (UppyReact components)
 - [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
+- [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
 - [x] feature: restrictions: by size, number of files, file type
+- [x] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
+- [x] QA: tests for core and utils
+- [x] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
 - [x] refactoring: webcam plugin
 - [x] uppy-server: add uppy-server to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
 - [x] uppy-server: better error handling, general cleanup (remove unused code. etc)
@@ -119,14 +121,23 @@ To Be Released: 2018-05-31.
 - [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
 - [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
 - [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
-- [ ] core: add more mime-to-extension mappings from https://github.com/micnic/mime.json/blob/master/index.json (which ones?) # (@arturi, @goto-bus-stop)
+- [x] core: add more mime-to-extension mappings from https://github.com/micnic/mime.json/blob/master/index.json (which ones?) (#806 /@arturi, @goto-bus-stop)
 - [ ] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
 - [x] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360 (#844 / @vith)
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
-- [x] core: removed .run() (to solve issues like #756), update ddocs (#793 / goto-bus-stop)
+- [x] core: ⚠️ **breaking** removed .run() (to solve issues like #756), update docs (#793 / goto-bus-stop)
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
+- [ ] core: addFile not passing restrictions shouldn’t throw when called from UI
 - [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/ (@goto-bus-stop)
+- [x] docs: individual React component pages, more plugin options, better groups (#845 / @goto-bus-stop)
+- [x] core: ⚠️ **breaking** Changed some of the strings that we were concatenating in Preact, now their interpolation is handled by the Translator instead. This is important for languages that have different word order than English. (#845 / @goto-bus-stop)
+  Changed strings:
+    - core: `failedToUpload` needs to contain `%{file}`, substituted by the name of the file that failed
+    - dashboard: `dropPaste` and `dropPasteImport` need to contain `%{browse}`, substituted by the "browse" text button
+    - dashboard: `editing` needs to contain `%{file}`, substituted by the name of the file being edited
+    - dashboard: `fileSource` and `importFrom` need to contain `%{name}`, substituted by the name of the provider
+    - dragdrop: `dropHereOr` needs to contain `%{browse}`, substituted by the "browse" text button
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
 - [x] providers: Add user/account names to Uppy provider views (61bf0a7 / @ifedapoolarewaju)
 - [x] s3: implement multipart uploads (#726 / @goto-bus-stop)

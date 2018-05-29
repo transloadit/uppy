@@ -1,4 +1,5 @@
 const throttle = require('lodash.throttle')
+const mimeTypes = require('./mime-types.js')
 
 /**
  * A collection of small utility functions that help with dom manipulation, adding listeners,
@@ -112,34 +113,21 @@ function getArrayBuffer (chunk) {
 }
 
 function getFileType (file) {
-  const extensionsToMime = {
-    'md': 'text/markdown',
-    'markdown': 'text/markdown',
-    'mp4': 'video/mp4',
-    'mp3': 'audio/mp3',
-    'svg': 'image/svg+xml',
-    'jpg': 'image/jpeg',
-    'png': 'image/png',
-    'gif': 'image/gif',
-    'yaml': 'text/yaml',
-    'yml': 'text/yaml'
-  }
-
   const fileExtension = file.name ? getFileNameAndExtension(file.name).extension : null
 
   if (file.isRemote) {
     // some remote providers do not support file types
-    return file.type ? file.type : extensionsToMime[fileExtension]
+    return file.type ? file.type : mimeTypes[fileExtension]
   }
 
-  // 2. if that’s no good, check if mime type is set in the file object
+  // check if mime type is set in the file object
   if (file.type) {
     return file.type
   }
 
-  // 3. if that’s no good, see if we can map extension to a mime type
-  if (fileExtension && extensionsToMime[fileExtension]) {
-    return extensionsToMime[fileExtension]
+  // see if we can map extension to a mime type
+  if (fileExtension && mimeTypes[fileExtension]) {
+    return mimeTypes[fileExtension]
   }
 
   // if all fails, well, return empty
@@ -187,104 +175,6 @@ function getFileNameAndExtension (fullFileName) {
  */
 function isObjectURL (url) {
   return url.indexOf('blob:') === 0
-}
-
-function getProportionalHeight (img, width) {
-  const aspect = img.width / img.height
-  return Math.round(width / aspect)
-}
-
-/**
- * Create a thumbnail for the given Uppy file object.
- *
- * @param {{data: Blob}} file
- * @param {number} width
- * @return {Promise}
- */
-function createThumbnail (file, targetWidth) {
-  const originalUrl = URL.createObjectURL(file.data)
-  const onload = new Promise((resolve, reject) => {
-    const image = new Image()
-    image.src = originalUrl
-    image.onload = () => {
-      URL.revokeObjectURL(originalUrl)
-      resolve(image)
-    }
-    image.onerror = () => {
-      // The onerror event is totally useless unfortunately, as far as I know
-      URL.revokeObjectURL(originalUrl)
-      reject(new Error('Could not create thumbnail'))
-    }
-  })
-
-  return onload.then((image) => {
-    const targetHeight = getProportionalHeight(image, targetWidth)
-    const canvas = resizeImage(image, targetWidth, targetHeight)
-    return canvasToBlob(canvas, 'image/png')
-  }).then((blob) => {
-    return URL.createObjectURL(blob)
-  })
-}
-
-/**
- * Resize an image to the target `width` and `height`.
- *
- * Returns a Canvas with the resized image on it.
- */
-function resizeImage (image, targetWidth, targetHeight) {
-  let sourceWidth = image.width
-  let sourceHeight = image.height
-
-  if (targetHeight < image.height / 2) {
-    const steps = Math.floor(Math.log(image.width / targetWidth) / Math.log(2))
-    const stepScaled = downScaleInSteps(image, steps)
-    image = stepScaled.image
-    sourceWidth = stepScaled.sourceWidth
-    sourceHeight = stepScaled.sourceHeight
-  }
-
-  const canvas = document.createElement('canvas')
-  canvas.width = targetWidth
-  canvas.height = targetHeight
-
-  const context = canvas.getContext('2d')
-  context.drawImage(image,
-    0, 0, sourceWidth, sourceHeight,
-    0, 0, targetWidth, targetHeight)
-
-  return canvas
-}
-
-/**
- * Downscale an image by 50% `steps` times.
- */
-function downScaleInSteps (image, steps) {
-  let source = image
-  let currentWidth = source.width
-  let currentHeight = source.height
-
-  for (let i = 0; i < steps; i += 1) {
-    const canvas = document.createElement('canvas')
-    const context = canvas.getContext('2d')
-    canvas.width = currentWidth / 2
-    canvas.height = currentHeight / 2
-    context.drawImage(source,
-      // The entire source image. We pass width and height here,
-      // because we reuse this canvas, and should only scale down
-      // the part of the canvas that contains the previous scale step.
-      0, 0, currentWidth, currentHeight,
-      // Draw to 50% size
-      0, 0, currentWidth / 2, currentHeight / 2)
-    currentWidth /= 2
-    currentHeight /= 2
-    source = canvas
-  }
-
-  return {
-    image: source,
-    sourceWidth: currentWidth,
-    sourceHeight: currentHeight
-  }
 }
 
 /**
@@ -560,7 +450,6 @@ module.exports = {
   getArrayBuffer,
   isPreviewSupported,
   isObjectURL,
-  createThumbnail,
   secondsToTime,
   dataURItoBlob,
   dataURItoFile,

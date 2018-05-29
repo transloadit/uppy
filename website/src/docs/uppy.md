@@ -7,6 +7,12 @@ permalink: docs/uppy/
 
 Core module that orchestrates everything in Uppy, exposing `state`, `events` and `methods`.
 
+```js
+const Uppy = require('uppy/lib/core')
+
+const uppy = Uppy()
+```
+
 ## Options
 
 ```js
@@ -237,6 +243,16 @@ uppy.addFile({
 `addFile` throws an error if the file cannot be added, either because `onBeforeFileAdded(file)` threw an error, or because `uppy.opts.restrictions` checks failed.
 
 If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically when files are added.
+
+### `uppy.removeFile(fileID)`
+
+Remove a file from Uppy.
+
+```js
+uppy.removeFile('uppyteamkongjpg1501851828779')
+```
+
+Removing a file that is already being uploaded cancels that upload.
 
 ### `uppy.getFile(fileID)`
 

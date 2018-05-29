@@ -8,11 +8,11 @@ const { h } = require('preact')
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
 
-const renderInnerPanel = (props) => {
+const PanelContent = (props) => {
   return <div style={{ width: '100%', height: '100%' }}>
     <div class="uppy-DashboardContent-bar">
       <div class="uppy-DashboardContent-title">
-        {props.i18n('importFrom')} {props.activePanel ? props.activePanel.name : null}
+        {props.i18n('importFrom', { name: props.activePanel.name })}
       </div>
       <button class="uppy-DashboardContent-back"
         type="button"
@@ -75,7 +75,7 @@ module.exports = function Dashboard (props) {
             role="tabpanel"
             id={props.activePanel && `uppy-DashboardContent-panel--${props.activePanel.id}`}
             aria-hidden={props.activePanel ? 'false' : 'true'}>
-            {props.activePanel && renderInnerPanel(props)}
+            {props.activePanel && <PanelContent {...props} />}
           </div>
 
           <div class="uppy-Dashboard-progressindicators">

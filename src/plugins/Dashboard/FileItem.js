@@ -25,13 +25,13 @@ module.exports = function fileItem (props) {
 
   const onPauseResumeCancelRetry = (ev) => {
     if (isUploaded) return
-    if (error) {
+    if (error && !props.hideRetryButton) {
       props.retryUpload(file.id)
       return
     }
     if (props.resumableUploads) {
       props.pauseUpload(file.id)
-    } else {
+    } else if (!props.hideCancelButton) {
       props.cancelUpload(file.id)
     }
   }
@@ -79,10 +79,11 @@ module.exports = function fileItem (props) {
             title={progressIndicatorTitle}
             onclick={onPauseResumeCancelRetry}>
             {error
-              ? iconRetry()
+              ? props.hideCancelButton ? null : iconRetry()
               : FileItemProgress({
                 progress: file.progress.percentage,
-                fileID: file.id
+                fileID: file.id,
+                hideCancelButton: props.hideCancelButton
               })
             }
           </button>
@@ -103,7 +104,7 @@ module.exports = function fileItem (props) {
         {file.source && <div class="uppy-DashboardItem-sourceIcon">
             {acquirers.map(acquirer => {
               if (acquirer.id === file.source) {
-                return <span title={`${props.i18n('fileSource')}: ${acquirer.name}`}>
+                return <span title={props.i18n('fileSource', { name: acquirer.name })}>
                   {acquirer.icon()}
                 </span>
               }
