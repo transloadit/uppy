@@ -448,7 +448,7 @@ class Uppy {
       this.scheduledAutoProceed = setTimeout(() => {
         this.scheduledAutoProceed = null
         this.upload().catch((err) => {
-          console.error(err.stack || err.message || err)
+          onError(err.stack || err.message || err)
         })
       }, 4)
     }
