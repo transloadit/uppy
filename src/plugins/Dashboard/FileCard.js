@@ -66,11 +66,11 @@ module.exports = class FileCard extends Component {
       <div class="uppy-DashboardFileCard" aria-hidden={!this.props.fileCardFor}>
         <div style={{ width: '100%', height: '100%' }}>
           <div class="uppy-DashboardContent-bar">
-            <h2 class="uppy-DashboardContent-title">
+            <div class="uppy-DashboardContent-title">
               {this.props.i18nArray('editing', {
                 file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>
               })}
-            </h2>
+            </div>
             <button class="uppy-DashboardContent-back" type="button" title={this.props.i18n('finishEditingFile')}
               onclick={this.handleSave}>{this.props.i18n('done')}</button>
           </div>
