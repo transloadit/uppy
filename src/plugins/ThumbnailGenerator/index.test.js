@@ -186,13 +186,13 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
             }
           }
         },
-        setState: jest.fn()
+        setFileState: jest.fn()
       }
       const plugin = new ThumbnailGeneratorPlugin(core)
       plugin.setPreviewURL('file1', 'moo')
-      expect(core.setState).toHaveBeenCalledTimes(1)
-      expect(core.setState).toHaveBeenCalledWith({
-        files: { file1: { preview: 'moo' }, file2: { preview: 'boo' } }
+      expect(core.setFileState).toHaveBeenCalledTimes(1)
+      expect(core.setFileState).toHaveBeenCalledWith('file1', {
+        preview: 'moo'
       })
     })
   })

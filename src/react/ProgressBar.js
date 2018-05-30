@@ -21,7 +21,7 @@ class ProgressBar extends React.Component {
 
     uppy.use(ProgressBarPlugin, options)
 
-    this.plugin = uppy.getPlugin('ProgressBar')
+    this.plugin = uppy.getPlugin(options.id)
   }
 
   componentWillUnmount () {

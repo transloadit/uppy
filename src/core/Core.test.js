@@ -160,7 +160,7 @@ describe('src/Core', () => {
         totalProgress: 0
       }
 
-      expect(core.state).toEqual(newState)
+      expect(core.getState()).toEqual(newState)
 
       expect(core.plugins.acquirer[0].mocks.update.mock.calls[1]).toEqual([
         newState
@@ -232,6 +232,7 @@ describe('src/Core', () => {
       capabilities: { resumableUploads: false },
       files: {},
       currentUploads: {},
+      error: null,
       foo: 'bar',
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
@@ -244,11 +245,11 @@ describe('src/Core', () => {
     const core = new Core()
     const id = core._createUpload([ 'a', 'b' ])
 
-    expect(core.state.currentUploads[id]).toBeDefined()
+    expect(core.getState().currentUploads[id]).toBeDefined()
 
     core.cancelAll()
 
-    expect(core.state.currentUploads[id]).toBeUndefined()
+    expect(core.getState().currentUploads[id]).toBeUndefined()
   })
 
   it('should close, reset and uninstall when the close method is called', () => {
@@ -271,6 +272,7 @@ describe('src/Core', () => {
       capabilities: { resumableUploads: false },
       files: {},
       currentUploads: {},
+      error: null,
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
       plugins: {},
@@ -338,7 +340,7 @@ describe('src/Core', () => {
 
       return core.upload()
         .then(() => {
-          const fileId = Object.keys(core.state.files)[0]
+          const fileId = Object.keys(core.getState().files)[0]
           expect(preprocessor1.mock.calls.length).toEqual(1)
 
           expect(preprocessor1.mock.calls[0][0].length).toEqual(1)
@@ -358,14 +360,14 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
 
-      const fileId = Object.keys(core.state.files)[0]
+      const fileId = Object.keys(core.getState().files)[0]
       const file = core.getFile(fileId)
       core.emit('preprocess-progress', file, {
         mode: 'determinate',
         message: 'something',
         value: 0
       })
-      expect(core.state.files[fileId].progress).toEqual({
+      expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
         bytesUploaded: 0,
         bytesTotal: 17175,
@@ -385,14 +387,14 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
 
-      const fileID = Object.keys(core.state.files)[0]
-      const file = core.state.files[fileID]
+      const fileID = Object.keys(core.getState().files)[0]
+      const file = core.getFile(fileID)
       core.emit('preprocess-complete', file, {
         mode: 'determinate',
         message: 'something',
         value: 0
       })
-      expect(core.state.files[fileID].progress).toEqual({
+      expect(core.getFile(fileID).progress).toEqual({
         percentage: 0,
         bytesUploaded: 0,
         bytesTotal: 17175,
@@ -465,14 +467,14 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
 
-      const fileId = Object.keys(core.state.files)[0]
+      const fileId = Object.keys(core.getState().files)[0]
       const file = core.getFile(fileId)
       core.emit('postprocess-progress', file, {
         mode: 'determinate',
         message: 'something',
         value: 0
       })
-      expect(core.state.files[fileId].progress).toEqual({
+      expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
         bytesUploaded: 0,
         bytesTotal: 17175,
@@ -492,14 +494,14 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
 
-      const fileId = Object.keys(core.state.files)[0]
-      const file = core.state.files[fileId]
+      const fileId = Object.keys(core.getState().files)[0]
+      const file = core.getFile(fileId)
       core.emit('postprocess-complete', file, {
         mode: 'determinate',
         message: 'something',
         value: 0
       })
-      expect(core.state.files[fileId].progress).toEqual({
+      expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
         bytesUploaded: 0,
         bytesTotal: 17175,
@@ -563,7 +565,7 @@ describe('src/Core', () => {
         data: fileData
       })
 
-      const fileId = Object.keys(core.state.files)[0]
+      const fileId = Object.keys(core.getState().files)[0]
       const newFile = {
         extension: 'jpg',
         id: fileId,
@@ -584,7 +586,7 @@ describe('src/Core', () => {
         source: 'jest',
         type: 'image/jpeg'
       }
-      expect(core.state.files[fileId]).toEqual(newFile)
+      expect(core.getFile(fileId)).toEqual(newFile)
       expect(fileAddedEventMock.mock.calls[0][0]).toEqual(newFile)
     })
 
@@ -621,7 +623,7 @@ describe('src/Core', () => {
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
-      expect(Object.keys(core.state.files).length).toEqual(0)
+      expect(core.getFiles().length).toEqual(0)
     })
   })
 
@@ -735,8 +737,8 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
 
-      const fileId = Object.keys(core.state.files)[0]
-      expect(Object.keys(core.state.files).length).toEqual(1)
+      const fileId = Object.keys(core.getState().files)[0]
+      expect(core.getFiles().length).toEqual(1)
       core.setState({
         totalProgress: 50
       })
@@ -744,9 +746,9 @@ describe('src/Core', () => {
       const file = core.getFile(fileId)
       core.removeFile(fileId)
 
-      expect(Object.keys(core.state.files).length).toEqual(0)
+      expect(core.getFiles().length).toEqual(0)
       expect(fileRemovedEventMock.mock.calls[0][0]).toEqual(file)
-      expect(core.state.totalProgress).toEqual(0)
+      expect(core.getState().totalProgress).toEqual(0)
     })
   })
 
@@ -767,7 +769,7 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
 
-      const fileId = Object.keys(core.state.files)[0]
+      const fileId = Object.keys(core.getState().files)[0]
       expect(core.getFile(fileId).name).toEqual('foo.jpg')
 
       expect(core.getFile('non existant file')).toEqual(undefined)
@@ -809,7 +811,7 @@ describe('src/Core', () => {
       })
       core.setMeta({ foo: 'bar', bur: 'mur' })
       core.setMeta({ boo: 'moo', bur: 'fur' })
-      expect(core.state.meta).toEqual({
+      expect(core.getState().meta).toEqual({
         foo: 'bar',
         foo2: 'bar2',
         boo: 'moo',
@@ -827,10 +829,10 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
 
-      const fileId = Object.keys(core.state.files)[0]
+      const fileId = Object.keys(core.getState().files)[0]
       core.setFileMeta(fileId, { foo: 'bar', bur: 'mur' })
       core.setFileMeta(fileId, { boo: 'moo', bur: 'fur' })
-      expect(core.state.files[fileId].meta).toEqual({
+      expect(core.getFile(fileId).meta).toEqual({
         name: 'foo.jpg',
         type: 'image/jpeg',
         foo: 'bar',
@@ -852,8 +854,8 @@ describe('src/Core', () => {
         },
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
-      const fileId = Object.keys(core.state.files)[0]
-      expect(core.state.files[fileId].meta).toEqual({
+      const fileId = Object.keys(core.getState().files)[0]
+      expect(core.getFile(fileId).meta).toEqual({
         name: 'foo.jpg',
         type: 'image/jpeg',
         foo2: 'bar2',
@@ -873,13 +875,13 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
 
-      const fileId = Object.keys(core.state.files)[0]
+      const fileId = Object.keys(core.getState().files)[0]
       const file = core.getFile(fileId)
       core._calculateProgress(file, {
         bytesUploaded: 12345,
         bytesTotal: 17175
       })
-      expect(core.state.files[fileId].progress).toEqual({
+      expect(core.getFile(fileId).progress).toEqual({
         percentage: 71,
         bytesUploaded: 12345,
         bytesTotal: 17175,
@@ -891,7 +893,7 @@ describe('src/Core', () => {
         bytesUploaded: 17175,
         bytesTotal: 17175
       })
-      expect(core.state.files[fileId].progress).toEqual({
+      expect(core.getFile(fileId).progress).toEqual({
         percentage: 100,
         bytesUploaded: 17175,
         bytesTotal: 17175,
@@ -916,25 +918,22 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
 
-      const fileId1 = Object.keys(core.state.files)[0]
-      const fileId2 = Object.keys(core.state.files)[1]
-      const file1 = core.state.files[fileId1]
-      const file2 = core.state.files[fileId2]
-      core.state.files[fileId1].progress.uploadStarted = new Date()
-      core.state.files[fileId2].progress.uploadStarted = new Date()
+      const [file1, file2] = core.getFiles()
+      core.setFileState(file1.id, { progress: Object.assign({}, file1.progress, { uploadStarted: new Date() }) })
+      core.setFileState(file2.id, { progress: Object.assign({}, file2.progress, { uploadStarted: new Date() }) })
 
-      core._calculateProgress(file1, {
+      core._calculateProgress(core.getFile(file1.id), {
         bytesUploaded: 12345,
         bytesTotal: 17175
       })
 
-      core._calculateProgress(file2, {
+      core._calculateProgress(core.getFile(file2.id), {
         bytesUploaded: 10201,
         bytesTotal: 17175
       })
 
       core._calculateTotalProgress()
-      expect(core.state.totalProgress).toEqual(65)
+      expect(core.getState().totalProgress).toEqual(65)
     })
 
     it('should reset the progress', () => {
@@ -955,44 +954,41 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
 
-      const fileId1 = Object.keys(core.state.files)[0]
-      const fileId2 = Object.keys(core.state.files)[1]
-      const file1 = core.state.files[fileId1]
-      const file2 = core.state.files[fileId2]
-      core.state.files[fileId1].progress.uploadStarted = new Date()
-      core.state.files[fileId2].progress.uploadStarted = new Date()
+      const [file1, file2] = core.getFiles()
+      core.setFileState(file1.id, { progress: Object.assign({}, file1.progress, { uploadStarted: new Date() }) })
+      core.setFileState(file2.id, { progress: Object.assign({}, file2.progress, { uploadStarted: new Date() }) })
 
-      core._calculateProgress(file1, {
+      core._calculateProgress(core.getFile(file1.id), {
         bytesUploaded: 12345,
         bytesTotal: 17175
       })
 
-      core._calculateProgress(file2, {
+      core._calculateProgress(core.getFile(file2.id), {
         bytesUploaded: 10201,
         bytesTotal: 17175
       })
 
       core._calculateTotalProgress()
 
-      expect(core.state.totalProgress).toEqual(65)
+      expect(core.getState().totalProgress).toEqual(65)
 
       core.resetProgress()
 
-      expect(core.state.files[fileId1].progress).toEqual({
+      expect(core.getFile(file1.id).progress).toEqual({
         percentage: 0,
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: false
       })
-      expect(core.state.files[fileId2].progress).toEqual({
+      expect(core.getFile(file2.id).progress).toEqual({
         percentage: 0,
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: false
       })
-      expect(core.state.totalProgress).toEqual(0)
+      expect(core.getState().totalProgress).toEqual(0)
       expect(resetProgressEvent.mock.calls.length).toEqual(1)
     })
   })
@@ -1023,7 +1019,7 @@ describe('src/Core', () => {
         throw new Error('should have thrown')
       } catch (err) {
         expect(err).toMatchObject(new Error('You can only upload 1 file'))
-        expect(core.state.info.message).toEqual('You can only upload 1 file')
+        expect(core.getState().info.message).toEqual('You can only upload 1 file')
       }
     })
 
@@ -1047,7 +1043,7 @@ describe('src/Core', () => {
         throw new Error('should have thrown')
       } catch (err) {
         expect(err).toMatchObject(new Error('You can only upload: image/gif, image/png'))
-        expect(core.state.info.message).toEqual('You can only upload: image/gif, image/png')
+        expect(core.getState().info.message).toEqual('You can only upload: image/gif, image/png')
       }
     })
 
@@ -1069,7 +1065,7 @@ describe('src/Core', () => {
         throw new Error('should have thrown')
       } catch (err) {
         expect(err).toMatchObject(new Error('You can only upload: .gif, .jpg, .jpeg'))
-        expect(core.state.info.message).toEqual('You can only upload: .gif, .jpg, .jpeg')
+        expect(core.getState().info.message).toEqual('You can only upload: .gif, .jpg, .jpeg')
       }
     })
 
@@ -1091,7 +1087,7 @@ describe('src/Core', () => {
         throw new Error('should have thrown')
       } catch (err) {
         expect(err).toMatchObject(new Error('This file exceeds maximum allowed size of 1.2 KB'))
-        expect(core.state.info.message).toEqual('This file exceeds maximum allowed size of 1.2 KB')
+        expect(core.getState().info.message).toEqual('This file exceeds maximum allowed size of 1.2 KB')
       }
     })
   })
@@ -1100,23 +1096,28 @@ describe('src/Core', () => {
     it('should update the state when receiving the error event', () => {
       const core = new Core()
       core.emit('error', new Error('foooooo'))
-      expect(core.state.error).toEqual('foooooo')
+      expect(core.getState().error).toEqual('foooooo')
     })
 
     it('should update the state when receiving the upload-error event', () => {
       const core = new Core()
-      core.state.files['fileId'] = {
-        name: 'filename'
-      }
-      core.emit('upload-error', core.state.files['fileId'], new Error('this is the error'))
-      expect(core.state.info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
+      core.setState({
+        files: {
+          fileId: {
+            id: 'fileId',
+            name: 'filename'
+          }
+        }
+      })
+      core.emit('upload-error', core.getFile('fileId'), new Error('this is the error'))
+      expect(core.getState().info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
     })
 
     it('should reset the error state when receiving the upload event', () => {
       const core = new Core()
       core.emit('error', { foo: 'bar' })
       core.emit('upload')
-      expect(core.state.error).toEqual(null)
+      expect(core.getState().error).toEqual(null)
     })
   })
 
@@ -1174,7 +1175,7 @@ describe('src/Core', () => {
       core.on('info-visible', infoVisibleEvent)
 
       core.info('This is the message', 'info', 0)
-      expect(core.state.info).toEqual({
+      expect(core.getState().info).toEqual({
         isHidden: false,
         type: 'info',
         message: 'This is the message',
@@ -1195,7 +1196,7 @@ describe('src/Core', () => {
           foo: 'bar'
         }
       }, 'warning', 0)
-      expect(core.state.info).toEqual({
+      expect(core.getState().info).toEqual({
         isHidden: false,
         type: 'warning',
         message: 'This is the message',
@@ -1219,7 +1220,7 @@ describe('src/Core', () => {
       expect(infoHiddenEvent.mock.calls.length).toEqual(0)
       setTimeout(() => {
         expect(infoHiddenEvent.mock.calls.length).toEqual(1)
-        expect(core.state.info).toEqual({
+        expect(core.getState().info).toEqual({
           isHidden: true,
           type: 'info',
           message: 'This is the message',
@@ -1241,7 +1242,7 @@ describe('src/Core', () => {
       expect(infoHiddenEvent.mock.calls.length).toEqual(0)
       core.hideInfo()
       expect(infoHiddenEvent.mock.calls.length).toEqual(1)
-      expect(core.state.info).toEqual({
+      expect(core.getState().info).toEqual({
         isHidden: true,
         type: 'info',
         message: 'This is the message',
@@ -1260,15 +1261,15 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' })
       })
 
-      core._createUpload(Object.keys(core.state.files))
-      const uploadId = Object.keys(core.state.currentUploads)[0]
+      core._createUpload(Object.keys(core.getState().files))
+      const uploadId = Object.keys(core.getState().currentUploads)[0]
       const currentUploadsState = {}
       currentUploadsState[uploadId] = {
-        fileIDs: Object.keys(core.state.files),
+        fileIDs: Object.keys(core.getState().files),
         step: 0,
         result: {}
       }
-      expect(core.state.currentUploads).toEqual(currentUploadsState)
+      expect(core.getState().currentUploads).toEqual(currentUploadsState)
     })
   })
 

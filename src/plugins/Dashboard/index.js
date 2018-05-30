@@ -380,7 +380,7 @@ module.exports = class Dashboard extends Plugin {
 
   render (state) {
     const pluginState = this.getPluginState()
-    const files = state.files
+    const { files, capabilities } = state
 
     const newFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadStarted
