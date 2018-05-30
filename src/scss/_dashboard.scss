@@ -206,6 +206,7 @@
   border: 0;
   background-color: transparent;
   -webkit-appearance: none;
+  appearance: none;
   // outline: none;
   transition: all 0.3s;
   color: darken($color-gray, 25%);
@@ -222,7 +223,7 @@
   margin-top: 5px;
   margin-bottom: 0;
   font-weight: 500;
-  overflow-x: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 
@@ -376,6 +377,7 @@
   background: none;
   background-color: rgba($color-gray, 0.7);
   -webkit-appearance: none;
+  appearance: none;
   border: 0;
   z-index: $zIndex-3;
   transition: background-color 0.5s;
