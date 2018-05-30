@@ -102,15 +102,16 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   getOptions (file) {
+    const overrides = this.uppy.getState().xhrUpload
     const opts = Object.assign({},
       this.opts,
-      this.uppy.state.xhrUpload || {},
+      overrides || {},
       file.xhrUpload || {}
     )
     opts.headers = {}
     Object.assign(opts.headers, this.opts.headers)
-    if (this.uppy.state.xhrUpload) {
-      Object.assign(opts.headers, this.uppy.state.xhrUpload.headers)
+    if (overrides) {
+      Object.assign(opts.headers, overrides.headers)
     }
     if (file.xhrUpload) {
       Object.assign(opts.headers, file.xhrUpload.headers)
