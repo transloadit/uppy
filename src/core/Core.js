@@ -698,10 +698,12 @@ class Uppy {
     this.on('upload-progress', _throttledCalculateProgress)
 
     this.on('upload-success', (file, uploadResp, uploadURL) => {
+      const currentProgress = this.getFile(file.id).progress
       this.setFileState(file.id, {
-        progress: Object.assign({}, this.getFile(file.id).progress, {
+        progress: Object.assign({}, currentProgress, {
           uploadComplete: true,
-          percentage: 100
+          percentage: 100,
+          bytesUploaded: currentProgress.bytesTotal
         }),
         uploadURL: uploadURL,
         isPaused: false
