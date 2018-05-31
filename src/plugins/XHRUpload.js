@@ -489,10 +489,26 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   install () {
+    if (this.opts.bundle) {
+      this.uppy.setState({
+        capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+          bundled: true
+        })
+      })
+    }
+
     this.uppy.addUploader(this.handleUpload)
   }
 
   uninstall () {
+    if (this.opts.bundle) {
+      this.uppy.setState({
+        capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+          bundled: true
+        })
+      })
+    }
+
     this.uppy.removeUploader(this.handleUpload)
   }
 }

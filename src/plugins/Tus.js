@@ -451,16 +451,12 @@ module.exports = class Tus extends Plugin {
       .then(() => null)
   }
 
-  addResumableUploadsCapabilityFlag () {
-    const newCapabilities = Object.assign({}, this.uppy.getState().capabilities)
-    newCapabilities.resumableUploads = true
-    this.uppy.setState({
-      capabilities: newCapabilities
-    })
-  }
-
   install () {
-    this.addResumableUploadsCapabilityFlag()
+    this.uppy.setState({
+      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+        resumableUploads: true
+      })
+    })
     this.uppy.addUploader(this.handleUpload)
 
     this.uppy.on('reset-progress', this.handleResetProgress)
@@ -471,6 +467,11 @@ module.exports = class Tus extends Plugin {
   }
 
   uninstall () {
+    this.uppy.setState({
+      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+        resumableUploads: false
+      })
+    })
     this.uppy.removeUploader(this.handleUpload)
 
     if (this.opts.autoRetry) {

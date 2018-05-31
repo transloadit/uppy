@@ -189,8 +189,12 @@
   top: -1px;
   left: 6px;
   font-size: 10px;
-  // margin-left: -1px;
   text-align: center;
+  cursor: help;
+
+  &:hover {
+    cursor: help;
+  }
 }
 
 .uppy-StatusBar-details:after {

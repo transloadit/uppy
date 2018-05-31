@@ -354,14 +354,6 @@ module.exports = class AwsS3Multipart extends Plugin {
     return Promise.all(promises)
   }
 
-  addResumableUploadsCapabilityFlag () {
-    this.uppy.setState({
-      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
-        resumableUploads: true
-      })
-    })
-  }
-
   onFileRemove (fileID, cb) {
     this.uploaderEvents[fileID].on('file-removed', (file) => {
       if (fileID === file.id) cb(file.id)
@@ -414,11 +406,20 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   install () {
-    this.addResumableUploadsCapabilityFlag()
+    this.uppy.setState({
+      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+        resumableUploads: true
+      })
+    })
     this.uppy.addUploader(this.upload)
   }
 
   uninstall () {
+    this.uppy.setState({
+      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+        resumableUploads: false
+      })
+    })
     this.uppy.removeUploader(this.upload)
   }
 }
