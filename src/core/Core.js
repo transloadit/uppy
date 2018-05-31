@@ -703,6 +703,7 @@ class Uppy {
           uploadComplete: true,
           percentage: 100
         }),
+        response: uploadResp,
         uploadURL: uploadURL,
         isPaused: false
       })
