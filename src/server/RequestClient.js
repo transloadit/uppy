@@ -15,6 +15,13 @@ module.exports = class RequestClient {
     return uppyServer && uppyServer[host] ? uppyServer[host] : host
   }
 
+  get defaultHeaders () {
+    return {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  }
+
   onReceiveResponse (response) {
     const state = this.uppy.getState()
     const uppyServer = state.uppyServer || {}
@@ -32,13 +39,9 @@ module.exports = class RequestClient {
   }
 
   get (path) {
-    return fetch(`${this.hostname}/${path}`, {
+    return fetch(this._getUrl(path), {
       method: 'get',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
+      headers: this.defaultHeaders
     })
       // @todo validate response status before calling json
       .then(this.onReceiveResponse)
@@ -46,18 +49,25 @@ module.exports = class RequestClient {
   }
 
   post (path, data) {
-    return fetch(`${this.hostname}/${path}`, {
+    return fetch(this._getUrl(path), {
       method: 'post',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
+      headers: this.defaultHeaders,
       body: JSON.stringify(data)
     })
       .then(this.onReceiveResponse)
-      // @todo validate response status before calling json
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status < 200 || res.status > 300) {
+          throw new Error(res.statusText)
+        }
+        return res.json()
+      })
+  }
+
+  _getUrl (url) {
+    if (/^https?:/.test(url)) {
+      return url
+    }
+    return `${this.hostname}/${url}`
   }
 
   delete (path, data) {

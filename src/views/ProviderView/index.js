@@ -186,7 +186,8 @@ module.exports = class ProviderView {
         url: `${this.Provider.fileUrl(this.plugin.getItemRequestPath(file))}`,
         body: {
           fileId: this.plugin.getItemId(file)
-        }
+        },
+        providerOptions: this.Provider.opts
       }
     }
 
@@ -446,35 +447,20 @@ module.exports = class ProviderView {
   }
 
   handleAuth () {
-    const urlId = Math.floor(Math.random() * 999999) + 1
-    const redirect = `${location.href}${location.search ? '&' : '?'}id=${urlId}`
-
-    const authState = btoa(JSON.stringify({ redirect }))
+    const authState = btoa(JSON.stringify({ origin: location.origin }))
     const link = `${this.Provider.authUrl()}?state=${authState}`
 
     const authWindow = window.open(link, '_blank')
-    authWindow.opener = null
-    const checkAuth = () => {
-      let authWindowUrl
-
-      try {
-        authWindowUrl = authWindow.location.href
-      } catch (e) {
-        if (e instanceof DOMException || e instanceof TypeError) {
-          return setTimeout(checkAuth, 100)
-        } else throw e
+    const handleToken = (e) => {
+      if (e.origin !== this.plugin.opts.host || e.source !== authWindow) {
+        return
       }
-
-      // split url because chrome adds '#' to redirects
-      if (authWindowUrl && authWindowUrl.split('#')[0] === redirect) {
-        authWindow.close()
-        this._loaderWrapper(this.Provider.checkAuth(), this.plugin.onAuth, this.handleError)
-      } else {
-        setTimeout(checkAuth, 100)
-      }
+      authWindow.close()
+      window.removeEventListener('message', handleToken)
+      this.Provider.setAuthToken(e.data.token)
+      this._loaderWrapper(this.Provider.checkAuth(), this.plugin.onAuth, this.handleError)
     }
-
-    checkAuth()
+    window.addEventListener('message', handleToken)
   }
 
   handleError (error) {
