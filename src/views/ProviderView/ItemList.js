@@ -24,10 +24,10 @@ module.exports = (props) => {
             type: 'folder',
             // active: props.activeRow(folder),
             getItemIcon: () => props.getItemIcon(folder),
-            handleClick: () => props.handleFolderClick(folder),
             isDisabled: isDisabled,
             isChecked: isChecked,
-            handleCheckboxClick: (e) => props.toggleCheckbox(e, folder),
+            handleFolderClick: () => props.handleFolderClick(folder),
+            handleClick: (e) => props.toggleCheckbox(e, folder),
             columns: props.columns,
             showTitles: props.showTitles
           })
@@ -39,10 +39,9 @@ module.exports = (props) => {
             type: 'file',
             // active: props.activeRow(file),
             getItemIcon: () => props.getItemIcon(file),
-            handleClick: () => props.handleFileClick(file),
             isDisabled: false,
             isChecked: props.isChecked(file),
-            handleCheckboxClick: (e) => props.toggleCheckbox(e, file),
+            handleClick: (e) => props.toggleCheckbox(e, file),
             columns: props.columns,
             showTitles: props.showTitles
           })
