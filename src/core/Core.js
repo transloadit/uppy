@@ -2,7 +2,7 @@ const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
-const throttle = require('lodash.throttle')
+// const throttle = require('lodash.throttle')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
 const DefaultStore = require('../store/DefaultStore')
@@ -179,7 +179,7 @@ class Uppy {
   }
 
   /**
-  * Back compat for when this.state is used instead of this.getState().
+  * Back compat for when uppy.state is used instead of uppy.getState().
   */
   get state () {
     return this.getState()
@@ -189,6 +189,10 @@ class Uppy {
   * Shorthand to set state for a specific file.
   */
   setFileState (fileID, state) {
+    if (!this.getState().files[fileID]) {
+      throw new Error(`Can’t set state for ${fileID} (the file could have been removed)`)
+    }
+
     this.setState({
       files: Object.assign({}, this.getState().files, {
         [fileID]: Object.assign({}, this.getState().files[fileID], state)
@@ -458,7 +462,7 @@ class Uppy {
   }
 
   removeFile (fileID) {
-    const { files, currentUploads } = this.state
+    const { files, currentUploads } = this.getState()
     const updatedFiles = Object.assign({}, files)
     const removedFile = updatedFiles[fileID]
     delete updatedFiles[fileID]
@@ -589,7 +593,8 @@ class Uppy {
 
     this.setState({
       files: {},
-      totalProgress: 0
+      totalProgress: 0,
+      error: null
     })
   }
 
@@ -695,15 +700,17 @@ class Uppy {
     // connection to the remote server. Therefore, we are throtteling them to
     // prevent accessive function calls.
     // see also: https://github.com/tus/tus-js-client/commit/9940f27b2361fd7e10ba58b09b60d82422183bbb
-    const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: true })
+    // const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: true })
 
-    this.on('upload-progress', _throttledCalculateProgress)
+    this.on('upload-progress', this._calculateProgress)
 
     this.on('upload-success', (file, uploadResp, uploadURL) => {
+      const currentProgress = this.getFile(file.id).progress
       this.setFileState(file.id, {
-        progress: Object.assign({}, this.getFile(file.id).progress, {
+        progress: Object.assign({}, currentProgress, {
           uploadComplete: true,
-          percentage: 100
+          percentage: 100,
+          bytesUploaded: currentProgress.bytesTotal
         }),
         uploadURL: uploadURL,
         isPaused: false

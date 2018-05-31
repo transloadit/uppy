@@ -13,18 +13,21 @@ const { defaultTabIcon } = require('./icons')
 // MIT licence, https://github.com/ghosh/micromodal/blob/master/LICENSE.md
 // Copyright (c) 2017 Indrashish Ghosh
 const FOCUSABLE_ELEMENTS = [
-  'a[href]',
-  'area[href]',
-  'input:not([disabled]):not([type="hidden"]):not([aria-hidden])',
-  'select:not([disabled]):not([aria-hidden])',
-  'textarea:not([disabled]):not([aria-hidden])',
-  'button:not([disabled]):not([aria-hidden])',
-  'iframe',
-  'object',
-  'embed',
-  '[contenteditable]',
-  '[tabindex]:not([tabindex^="-"])'
+  'a[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
+  'area[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
+  'input:not([disabled]):not([inert]):not([aria-hidden])',
+  'select:not([disabled]):not([inert]):not([aria-hidden])',
+  'textarea:not([disabled]):not([inert]):not([aria-hidden])',
+  'button:not([disabled]):not([inert]):not([aria-hidden])',
+  'iframe:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
+  'object:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
+  'embed:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
+  '[contenteditable]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
+  '[tabindex]:not([tabindex^="-"]):not([inert]):not([aria-hidden])'
 ]
+
+const TAB_KEY = 9
+const ESC_KEY = 27
 
 /**
  * Dashboard UI with previews, metadata editing, tabs for various services and more
@@ -98,7 +101,7 @@ module.exports = class Dashboard extends Plugin {
       showProgressDetails: false,
       hideUploadButton: false,
       hideRetryButton: false,
-      hideCancelButton: false,
+      hidePauseResumeCancelButtons: false,
       hideProgressAfterFinish: false,
       note: null,
       closeModalOnClickOutside: false,
@@ -106,6 +109,7 @@ module.exports = class Dashboard extends Plugin {
       disableInformer: false,
       disableThumbnailGenerator: false,
       disablePageScrollWhenModalOpen: true,
+      animateOpenClose: true,
       proudlyDisplayPoweredByUppy: true,
       onRequestCloseModal: () => this.closeModal(),
       locale: defaultLocale
@@ -242,8 +246,11 @@ module.exports = class Dashboard extends Plugin {
     this.savedActiveElement = document.activeElement
 
     if (this.opts.disablePageScrollWhenModalOpen) {
-      document.body.classList.add('uppy-Dashboard-isOpen')
+      document.body.classList.add('uppy-Dashboard-isFixed')
     }
+
+    // handle ESC and TAB keys in modal dialog
+    document.addEventListener('keydown', this.onKeydown)
 
     this.rerender(this.uppy.getState())
     this.updateDashboardElWidth()
@@ -251,13 +258,30 @@ module.exports = class Dashboard extends Plugin {
   }
 
   closeModal () {
-    this.setPluginState({
-      isHidden: true
-    })
-
     if (this.opts.disablePageScrollWhenModalOpen) {
-      document.body.classList.remove('uppy-Dashboard-isOpen')
+      document.body.classList.remove('uppy-Dashboard-isFixed')
     }
+
+    if (this.opts.animateOpenClose) {
+      this.setPluginState({
+        isClosing: true
+      })
+      const handler = () => {
+        this.setPluginState({
+          isHidden: true,
+          isClosing: false
+        })
+        this.el.removeEventListener('animationend', handler, false)
+      }
+      this.el.addEventListener('animationend', handler, false)
+    } else {
+      this.setPluginState({
+        isHidden: true
+      })
+    }
+
+    // handle ESC and TAB keys in modal dialog
+    document.removeEventListener('keydown', this.onKeydown)
 
     this.savedActiveElement.focus()
   }
@@ -268,9 +292,9 @@ module.exports = class Dashboard extends Plugin {
 
   onKeydown (event) {
     // close modal on esc key press
-    if (event.keyCode === 27) this.requestCloseModal(event)
+    if (event.keyCode === ESC_KEY) this.requestCloseModal(event)
     // maintainFocus on tab key press
-    if (event.keyCode === 9) this.maintainFocus(event)
+    if (event.keyCode === TAB_KEY) this.maintainFocus(event)
   }
 
   handleClickOutside () {
@@ -289,12 +313,16 @@ module.exports = class Dashboard extends Plugin {
         return
       }
       this.uppy.log('[Dashboard] File pasted')
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: blob
-      })
+      try {
+        this.uppy.addFile({
+          source: this.id,
+          name: file.name,
+          type: file.type,
+          data: blob
+        })
+      } catch (err) {
+        // Nothing, restriction errors handled in Core
+      }
     })
   }
 
@@ -303,12 +331,16 @@ module.exports = class Dashboard extends Plugin {
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file
-      })
+      try {
+        this.uppy.addFile({
+          source: this.id,
+          name: file.name,
+          type: file.type,
+          data: file
+        })
+      } catch (err) {
+        // Nothing, restriction errors handled in Core
+      }
     })
   }
 
@@ -321,10 +353,6 @@ module.exports = class Dashboard extends Plugin {
 
     if (!this.opts.inline && !showModalTrigger) {
       this.uppy.log('Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options unless you are planning to call openModal() method yourself')
-    }
-
-    if (!this.opts.inline) {
-      document.addEventListener('keydown', this.onKeydown)
     }
 
     // Drag Drop
@@ -340,10 +368,6 @@ module.exports = class Dashboard extends Plugin {
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
       showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.openModal))
-    }
-
-    if (!this.opts.inline) {
-      document.removeEventListener('keydown', this.onKeydown)
     }
 
     this.removeDragDropListener()
@@ -369,18 +393,22 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.log('[Dashboard] Files were dropped')
 
     files.forEach((file) => {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file
-      })
+      try {
+        this.uppy.addFile({
+          source: this.id,
+          name: file.name,
+          type: file.type,
+          data: file
+        })
+      } catch (err) {
+        // Nothing, restriction errors handled in Core
+      }
     })
   }
 
   render (state) {
     const pluginState = this.getPluginState()
-    const files = state.files
+    const { files, capabilities } = state
 
     const newFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadStarted
@@ -456,12 +484,14 @@ module.exports = class Dashboard extends Plugin {
       totalProgress: state.totalProgress,
       acquirers: acquirers,
       activePanel: pluginState.activePanel,
+      animateOpenClose: this.opts.animateOpenClose,
+      isClosing: pluginState.isClosing,
       getPlugin: this.uppy.getPlugin,
       progressindicators: progressindicators,
       autoProceed: this.uppy.opts.autoProceed,
       hideUploadButton: this.opts.hideUploadButton,
       hideRetryButton: this.opts.hideRetryButton,
-      hideCancelButton: this.opts.hideCancelButton,
+      hidePauseResumeCancelButtons: this.opts.hidePauseResumeCancelButtons,
       id: this.id,
       closeModal: this.requestCloseModal,
       handleClickOutside: this.handleClickOutside,
@@ -478,7 +508,8 @@ module.exports = class Dashboard extends Plugin {
       info: this.uppy.info,
       note: this.opts.note,
       metaFields: pluginState.metaFields,
-      resumableUploads: this.uppy.state.capabilities.resumableUploads || false,
+      resumableUploads: capabilities.resumableUploads || false,
+      bundled: capabilities.bundled || false,
       startUpload: startUpload,
       pauseUpload: this.uppy.pauseResume,
       retryUpload: this.uppy.retryUpload,
@@ -534,7 +565,7 @@ module.exports = class Dashboard extends Plugin {
         target: this,
         hideUploadButton: this.opts.hideUploadButton,
         hideRetryButton: this.opts.hideRetryButton,
-        hideCancelButton: this.opts.hideCancelButton,
+        hidePauseResumeCancelButtons: this.opts.hidePauseResumeCancelButtons,
         showProgressDetails: this.opts.showProgressDetails,
         hideAfterFinish: this.opts.hideProgressAfterFinish,
         locale: this.opts.locale

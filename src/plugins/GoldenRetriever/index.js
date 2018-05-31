@@ -65,11 +65,9 @@ module.exports = class GoldenRetriever extends Plugin {
   getWaitingFiles () {
     const waitingFiles = {}
 
-    const allFiles = this.uppy.state.files
-    Object.keys(allFiles).forEach((fileID) => {
-      const file = this.uppy.getFile(fileID)
+    this.uppy.getFiles().forEach((file) => {
       if (!file.progress || !file.progress.uploadStarted) {
-        waitingFiles[fileID] = file
+        waitingFiles[file.id] = file
       }
     })
 
@@ -84,7 +82,7 @@ module.exports = class GoldenRetriever extends Plugin {
   getUploadingFiles () {
     const uploadingFiles = {}
 
-    const { currentUploads } = this.uppy.state
+    const { currentUploads } = this.uppy.getState()
     if (currentUploads) {
       const uploadIDs = Object.keys(currentUploads)
       uploadIDs.forEach((uploadID) => {
@@ -112,8 +110,9 @@ module.exports = class GoldenRetriever extends Plugin {
       Object.assign(pluginData, data)
     })
 
+    const { currentUploads } = this.uppy.getState()
     this.MetaDataStore.save({
-      currentUploads: this.uppy.state.currentUploads,
+      currentUploads: currentUploads,
       files: filesToSave,
       pluginData: pluginData
     })
@@ -122,7 +121,7 @@ module.exports = class GoldenRetriever extends Plugin {
   loadFileBlobsFromServiceWorker () {
     this.ServiceWorkerStore.list().then((blobs) => {
       const numberOfFilesRecovered = Object.keys(blobs).length
-      const numberOfFilesTryingToRecover = Object.keys(this.uppy.state.files).length
+      const numberOfFilesTryingToRecover = this.uppy.getFiles().length
       if (numberOfFilesRecovered === numberOfFilesTryingToRecover) {
         this.uppy.log(`[GoldenRetriever] Successfully recovered ${numberOfFilesRecovered} blobs from Service Worker!`)
         this.uppy.info(`Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
@@ -154,7 +153,7 @@ module.exports = class GoldenRetriever extends Plugin {
 
   onBlobsLoaded (blobs) {
     const obsoleteBlobs = []
-    const updatedFiles = Object.assign({}, this.uppy.state.files)
+    const updatedFiles = Object.assign({}, this.uppy.getState().files)
     Object.keys(blobs).forEach((fileID) => {
       const originalFile = this.uppy.getFile(fileID)
       if (!originalFile) {
@@ -204,7 +203,7 @@ module.exports = class GoldenRetriever extends Plugin {
   install () {
     this.loadFilesStateFromLocalStorage()
 
-    if (Object.keys(this.uppy.state.files).length > 0) {
+    if (this.uppy.getFiles().length > 0) {
       if (this.ServiceWorkerStore) {
         this.uppy.log('[GoldenRetriever] Attempting to load files from Service Worker...')
         this.loadFileBlobsFromServiceWorker()

@@ -196,7 +196,11 @@ module.exports = class ProviderView {
       tagFile.preview = this.plugin.getItemThumbnailUrl(file)
     }
     this.plugin.uppy.log('Adding remote file')
-    this.plugin.uppy.addFile(tagFile)
+    try {
+      this.plugin.uppy.addFile(tagFile)
+    } catch (err) {
+      // Nothing, restriction errors handled in Core
+    }
   }
 
   removeFile (id) {

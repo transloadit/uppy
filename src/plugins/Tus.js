@@ -85,7 +85,7 @@ module.exports = class Tus extends Plugin {
   }
 
   handleResetProgress () {
-    const files = Object.assign({}, this.uppy.state.files)
+    const files = Object.assign({}, this.uppy.getState().files)
     Object.keys(files).forEach((fileID) => {
       // Only clone the file object if it has a Tus `uploadUrl` attached.
       if (files[fileID].tus && files[fileID].tus.uploadUrl) {
@@ -346,13 +346,6 @@ module.exports = class Tus extends Plugin {
     })
   }
 
-  updateFile (file) {
-    const files = Object.assign({}, this.uppy.state.files, {
-      [file.id]: file
-    })
-    this.uppy.setState({ files })
-  }
-
   onReceiveUploadUrl (file, uploadURL) {
     const currentFile = this.uppy.getFile(file.id)
     if (!currentFile) return
@@ -360,12 +353,11 @@ module.exports = class Tus extends Plugin {
     // or resume: false in options
     if ((!currentFile.tus || currentFile.tus.uploadUrl !== uploadURL) && this.opts.resume) {
       this.uppy.log('[Tus] Storing upload url')
-      const newFile = Object.assign({}, currentFile, {
+      this.uppy.setFileState(currentFile.id, {
         tus: Object.assign({}, currentFile.tus, {
           uploadUrl: uploadURL
         })
       })
-      this.updateFile(newFile)
     }
   }
 
@@ -459,16 +451,12 @@ module.exports = class Tus extends Plugin {
       .then(() => null)
   }
 
-  addResumableUploadsCapabilityFlag () {
-    const newCapabilities = Object.assign({}, this.uppy.getState().capabilities)
-    newCapabilities.resumableUploads = true
-    this.uppy.setState({
-      capabilities: newCapabilities
-    })
-  }
-
   install () {
-    this.addResumableUploadsCapabilityFlag()
+    this.uppy.setState({
+      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+        resumableUploads: true
+      })
+    })
     this.uppy.addUploader(this.handleUpload)
 
     this.uppy.on('reset-progress', this.handleResetProgress)
@@ -479,6 +467,11 @@ module.exports = class Tus extends Plugin {
   }
 
   uninstall () {
+    this.uppy.setState({
+      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+        resumableUploads: false
+      })
+    })
     this.uppy.removeUploader(this.handleUpload)
 
     if (this.opts.autoRetry) {

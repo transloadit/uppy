@@ -244,6 +244,16 @@ uppy.addFile({
 
 If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically when files are added.
 
+### `uppy.removeFile(fileID)`
+
+Remove a file from Uppy.
+
+```js
+uppy.removeFile('uppyteamkongjpg1501851828779')
+```
+
+Removing a file that is already being uploaded cancels that upload.
+
 ### `uppy.getFile(fileID)`
 
 Get a specific file object by its ID.

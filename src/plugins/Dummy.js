@@ -35,7 +35,11 @@ module.exports = class Dummy extends Plugin {
       data: blob
     }
     this.props.log('Adding fake file blob')
-    this.props.addFile(file)
+    try {
+      this.props.addFile(file)
+    } catch (err) {
+      // Nothing, restriction errors handled in Core
+    }
   }
 
   render (state) {

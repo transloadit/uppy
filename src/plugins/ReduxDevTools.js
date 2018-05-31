@@ -40,13 +40,13 @@ module.exports = class ReduxDevTools extends Plugin {
             return
           case 'IMPORT_STATE':
             const computedStates = message.payload.nextLiftedState.computedStates
-            this.uppy.state = Object.assign({}, this.uppy.state, computedStates[computedStates.length - 1].state)
-            this.uppy.updateAll(this.uppy.state)
+            this.uppy.store.state = Object.assign({}, this.uppy.getState(), computedStates[computedStates.length - 1].state)
+            this.uppy.updateAll(this.uppy.getState())
             return
           case 'JUMP_TO_STATE':
           case 'JUMP_TO_ACTION':
-            this.uppy.store.state = Object.assign({}, this.uppy.state, JSON.parse(message.state))
-            this.uppy.updateAll(this.uppy.state)
+            this.uppy.store.state = Object.assign({}, this.uppy.getState(), JSON.parse(message.state))
+            this.uppy.updateAll(this.uppy.getState())
         }
       }
     })

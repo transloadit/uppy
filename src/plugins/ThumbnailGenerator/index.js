@@ -153,13 +153,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * Set the preview URL for a file.
    */
   setPreviewURL (fileID, preview) {
-    const { files } = this.uppy.state
-    this.uppy.setState({
-      files: Object.assign({}, files, {
-        [fileID]: Object.assign({}, files[fileID], {
-          preview: preview
-        })
-      })
+    this.uppy.setFileState(fileID, {
+      preview: preview
     })
   }
 

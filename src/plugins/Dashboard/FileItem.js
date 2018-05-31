@@ -9,6 +9,41 @@ const { iconEdit, iconCopy, iconRetry } = require('./icons')
 const classNames = require('classnames')
 const { h } = require('preact')
 
+const FileItemProgressWrapper = (props) => {
+  if (props.hideRetryButton && props.error) {
+    return
+  }
+
+  if (props.isUploaded ||
+      props.bundled ||
+      (props.hidePauseResumeCancelButtons && !props.error)) {
+    return <div class="uppy-DashboardItem-progressIndicator">
+      <FileItemProgress
+        progress={props.file.progress.percentage}
+        fileID={props.file.id}
+        hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
+        bundled={props.bundled}
+      />
+    </div>
+  }
+
+  return <button
+    class="uppy-DashboardItem-progressIndicator"
+    type="button"
+    aria-label={props.progressIndicatorTitle}
+    title={props.progressIndicatorTitle}
+    onclick={props.onPauseResumeCancelRetry}>
+    {props.error
+      ? props.hideRetryButton ? null : iconRetry()
+      : <FileItemProgress
+        progress={props.file.progress.percentage}
+        fileID={props.file.id}
+        hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
+      />
+    }
+  </button>
+}
+
 module.exports = function fileItem (props) {
   const file = props.file
   const acquirers = props.acquirers
@@ -25,13 +60,19 @@ module.exports = function fileItem (props) {
 
   const onPauseResumeCancelRetry = (ev) => {
     if (isUploaded) return
+
     if (error && !props.hideRetryButton) {
       props.retryUpload(file.id)
       return
     }
+
+    if (props.hidePauseResumeCancelButtons) {
+      return
+    }
+
     if (props.resumableUploads) {
       props.pauseUpload(file.id)
-    } else if (!props.hideCancelButton) {
+    } else {
       props.cancelUpload(file.id)
     }
   }
@@ -43,7 +84,8 @@ module.exports = function fileItem (props) {
     { 'is-complete': isUploaded },
     { 'is-paused': isPaused },
     { 'is-error': error },
-    { 'is-resumable': props.resumableUploads }
+    { 'is-resumable': props.resumableUploads },
+    { 'is-bundled': props.bundledUpload }
   )
 
   const progressIndicatorTitle = isUploaded
@@ -66,39 +108,23 @@ module.exports = function fileItem (props) {
         <FilePreview file={file} />
       </div>
       <div class="uppy-DashboardItem-progress">
-        {isUploaded
-          ? <div class="uppy-DashboardItem-progressIndicator">
-            {FileItemProgress({
-              progress: file.progress.percentage,
-              fileID: file.id
-            })}
-          </div>
-          : <button class="uppy-DashboardItem-progressIndicator"
-            type="button"
-            aria-label={progressIndicatorTitle}
-            title={progressIndicatorTitle}
-            onclick={onPauseResumeCancelRetry}>
-            {error
-              ? props.hideCancelButton ? null : iconRetry()
-              : FileItemProgress({
-                progress: file.progress.percentage,
-                fileID: file.id,
-                hideCancelButton: props.hideCancelButton
-              })
-            }
-          </button>
-        }
+        <FileItemProgressWrapper
+          progressIndicatorTitle={progressIndicatorTitle}
+          onPauseResumeCancelRetry={onPauseResumeCancelRetry}
+          file={file}
+          error={error}
+          {...props} />
       </div>
     </div>
     <div class="uppy-DashboardItem-info">
-      <h4 class="uppy-DashboardItem-name" title={fileName}>
+      <div class="uppy-DashboardItem-name" title={fileName}>
         {props.showLinkToFileUploadResult && file.uploadURL
           ? <a href={file.uploadURL} rel="noreferrer noopener" target="_blank">
             {file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}
           </a>
           : file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName
         }
-      </h4>
+      </div>
       <div class="uppy-DashboardItem-status">
         {file.data.size ? <div class="uppy-DashboardItem-statusSize">{prettyBytes(file.data.size)}</div> : null}
         {file.source && <div class="uppy-DashboardItem-sourceIcon">

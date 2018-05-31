@@ -41,7 +41,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] statusbar: add option to always show
 - [ ] have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
 - [ ] “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no uppy-server required #362
-- [ ] WordPress plugin
+- [ ] WordPress plugin https://www.producthunt.com/posts/uppy-io#comment-559327 (“And Gravity forms”)
 - [ ] Transformations, cropping, filters for images, see #53
 - [ ] Prepare for (piwik-) tracking of usage of uppy ? see #83
 - [ ] screenshot+screencast support similar to Webcam #148
@@ -125,7 +125,7 @@ To Be Released: 2018-05-31.
 - [x] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
 - [x] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360 (#844 / @vith)
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
-- [x] core: ⚠️ **breaking** removed .run() (to solve issues like #756), update ddocs (#793 / goto-bus-stop)
+- [x] core: ⚠️ **breaking** removed .run() (to solve issues like #756), update docs (#793 / goto-bus-stop)
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
 - [ ] core: addFile not passing restrictions shouldn’t throw when called from UI
