@@ -146,3 +146,6 @@ skip_render:
   - '**/*.js'
   - '*.es6'
   - '**/*.es6'
+
+alias:
+  examples/: examples/dashboard/
