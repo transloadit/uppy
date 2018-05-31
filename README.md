@@ -170,6 +170,12 @@ And you’ll need [`uppy-server`](https://github.com/transloadit/uppy-server) if
 
  - Contributor’s guide in [`website/src/docs/contributing.md`](website/src/docs/contributing.md)
  - Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
+ 
+ ## Used by
+ 
+Uppy is used by: [Photobox](http://photobox.com), [Law Insider](https://lawinsider.com), [Cool Tabs](https://cool-tabs.com), [Soundoff](https://soundoff.io), [Scrumi](https://scrumi.io/) and others.
+
+Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issues/769)!
 
 <!--contributors-->
 ## Contributors
