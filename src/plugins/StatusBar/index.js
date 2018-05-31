@@ -55,7 +55,7 @@ module.exports = class StatusBar extends Plugin {
       target: 'body',
       hideUploadButton: false,
       hideRetryButton: false,
-      hideCancelButton: false,
+      hidePauseResumeCancelButtons: false,
       showProgressDetails: false,
       locale: defaultLocale,
       hideAfterFinish: true
@@ -220,7 +220,7 @@ module.exports = class StatusBar extends Plugin {
       showProgressDetails: this.opts.showProgressDetails,
       hideUploadButton: this.opts.hideUploadButton,
       hideRetryButton: this.opts.hideRetryButton,
-      hideCancelButton: this.opts.hideCancelButton,
+      hidePauseResumeCancelButtons: this.opts.hidePauseResumeCancelButtons,
       hideAfterFinish: this.opts.hideAfterFinish
     })
   }

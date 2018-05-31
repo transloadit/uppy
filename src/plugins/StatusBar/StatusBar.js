@@ -100,7 +100,7 @@ module.exports = (props) => {
       <div class="uppy-StatusBar-actions">
         { props.newFiles && !props.hideUploadButton ? <UploadBtn {...props} uploadState={uploadState} /> : null }
         { props.error && !props.hideRetryButton ? <RetryBtn {...props} /> : null }
-        { !props.hideCancelButton && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
+        { !props.hidePauseResumeCancelButtons && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
           ? <CancelBtn {...props} />
           : null
         }
@@ -116,7 +116,6 @@ const UploadBtn = (props) => {
     'uppy-StatusBar-actionBtn',
     'uppy-StatusBar-actionBtn--upload',
     { 'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING }
-    // { 'uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--upload': props.uploadState !== statusBarStates.STATE_WAITING }
   )
 
   return <button type="button"
@@ -161,7 +160,7 @@ const PauseResumeButtons = (props) => {
         : <svg aria-hidden="true" class="UppyIcon" width="16" height="17" viewBox="0 0 12 13">
           <path d="M4.888.81v11.38c0 .446-.324.81-.722.81H2.722C2.324 13 2 12.636 2 12.19V.81c0-.446.324-.81.722-.81h1.444c.398 0 .722.364.722.81zM9.888.81v11.38c0 .446-.324.81-.722.81H7.722C7.324 13 7 12.636 7 12.19V.81c0-.446.324-.81.722-.81h1.444c.398 0 .722.364.722.81z" />
         </svg>
-      : props.hideCancelButton ? null : <svg aria-hidden="true" class="UppyIcon" width="16px" height="16px" viewBox="0 0 19 19">
+      : <svg aria-hidden="true" class="UppyIcon" width="16px" height="16px" viewBox="0 0 19 19">
         <path d="M17.318 17.232L9.94 9.854 9.586 9.5l-.354.354-7.378 7.378h.707l-.62-.62v.706L9.318 9.94l.354-.354-.354-.354L1.94 1.854v.707l.62-.62h-.706l7.378 7.378.354.354.354-.354 7.378-7.378h-.707l.622.62v-.706L9.854 9.232l-.354.354.354.354 7.378 7.378.708-.707-7.38-7.378v.708l7.38-7.38.353-.353-.353-.353-.622-.622-.353-.353-.354.352-7.378 7.38h.708L2.56 1.23 2.208.88l-.353.353-.622.62-.353.355.352.353 7.38 7.38v-.708l-7.38 7.38-.353.353.352.353.622.622.353.353.354-.353 7.38-7.38h-.708l7.38 7.38z" />
       </svg>
     }
@@ -192,11 +191,13 @@ const ProgressBarUploading = (props) => {
     return null
   }
 
+  const title = props.isAllPaused ? props.i18n('paused') : props.i18n('uploading')
+
   return (
-    <div class="uppy-StatusBar-content" title={props.isAllPaused ? props.i18n('paused') : props.i18n('uploading')}>
-      { <PauseResumeButtons {...props} /> }
+    <div class="uppy-StatusBar-content" aria-label={title} title={title}>
+      { !props.hidePauseResumeCancelButtons && <PauseResumeButtons {...props} /> }
       <div class="uppy-StatusBar-status">
-        <span class="uppy-StatusBar-statusPrimary">{ props.isAllPaused ? props.i18n('paused') : props.i18n('uploading') }: {props.totalProgress}%</span>
+        <span class="uppy-StatusBar-statusPrimary">{title}: {props.totalProgress}%</span>
         <br />
         { !props.isAllPaused && <ThrottledProgressDetails {...props} /> }
       </div>
@@ -215,11 +216,11 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
   )
 }
 
-const ProgressBarError = ({ error, retryAll, i18n }) => {
+const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
   return (
     <div class="uppy-StatusBar-content" role="alert">
       <strong class="uppy-StatusBar-contentPadding">{i18n('uploadFailed')}.</strong>
-      <span class="uppy-StatusBar-contentPadding">{i18n('pleasePressRetry')}</span>
+      { !hideRetryButton && <span class="uppy-StatusBar-contentPadding">{i18n('pleasePressRetry')}</span> }
       <span class="uppy-StatusBar-details"
         aria-label={error}
         data-microtip-position="top"
