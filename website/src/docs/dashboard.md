@@ -138,6 +138,10 @@ Set to true to automatically close the modal when the user clicks outside of it.
 
 By default when Dashboard modal is open, it will disable page scrolling, so when you scroll a list of files in Uppy the website in the background stays still. Set to false to override this behaviour and leave page scrolling intact.
 
+## `animateOpenClose: true`
+
+Add light animations when modal dialog is open or closed, for more satisfying user experience.
+
 ### `proudlyDisplayPoweredByUppy: true`
 
 Uppy is provided for the world for free by the [Transloadit team](https://transloadit.com). In return, we ask that you consider keeping a tiny Uppy logo at the bottom of the Dashboard, so that more people can discover and use Uppy.

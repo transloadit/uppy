@@ -1,17 +1,51 @@
 .uppy-Dashboard--modal {
   z-index: $zIndex-2;
-  // transition: transform 0.2s ease-in-out;
-  // transform: none;
-  // -webkit-overflow-scrolling: touch;
 }
 
-.uppy-Dashboard--modal[aria-hidden=true] {
-  display: none;
-  // transform: translateY(-50%);
-}
+  .uppy-Dashboard--modal[aria-hidden=true] {
+    display: none;
+  }
+
+  // Modal open/close animations
+
+  @keyframes uppy-Dashboard-fadeIn {
+    from { opacity: 0;  }
+    to { opacity: 1;  }
+  }
+
+  @keyframes uppy-Dashboard-fadeOut {
+    from { opacity: 1;  }
+    to { opacity: 0;  }
+  }
+
+  @keyframes uppy-Dashboard-slideDownAndFadeIn {
+    from { transform: translate3d(-50%, -70%, 0); opacity: 0; }
+    to { transform: translate3d(-50%, -50%, 0); opacity: 1; }
+  }
+
+  @keyframes uppy-Dashboard-slideUpFadeOut {
+    from { transform: translate3d(-50%, -50%, 0); opacity: 1; }
+    to { transform: translate3d(-50%, -70%, 0); opacity: 0; }
+  }
+
+  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-inner {
+    animation: uppy-Dashboard-slideDownAndFadeIn 0.3s cubic-bezier(0, 0, .2, 1);
+  }
+
+  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-overlay {
+    animation: uppy-Dashboard-fadeIn 0.3s cubic-bezier(0, 0, .2, 1);
+  }
+
+  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose.uppy-Dashboard--isClosing > .uppy-Dashboard-inner {
+    animation: uppy-Dashboard-slideUpFadeOut 0.3s cubic-bezier(0, 0, .2, 1);
+  }
+
+  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose.uppy-Dashboard--isClosing > .uppy-Dashboard-overlay {
+    animation: uppy-Dashboard-fadeOut 0.3s cubic-bezier(0, 0, .2, 1);
+  }
 
 // Added to body to prevent the page from scrolling when Modal is open
-.uppy-Dashboard-isOpen {
+.uppy-Dashboard-isFixed {
   overflow: hidden;
   height: 100vh;
 }
@@ -289,35 +323,20 @@
     font-size: 16px;
     line-height: 50px;
     max-width: 300px;
-    // top: 15px;
   }
-}
-
-.uppy-DashboardContent-titleFile {
-  // text-decoration: underline;
 }
 
 .uppy-DashboardContent-back {
   @include reset-button;
-  // position: absolute;
-  // top: 0;
-  // left: 15px;
   font-size: 14px;
-  // line-height: 40px;
   font-weight: 500;
   cursor: pointer;
   color: $color-cornflower-blue;
 
   .uppy-Dashboard--wide & {
     font-size: 15px;
-    // line-height: 50px;
   }
 }
-
-// .uppy-DashboardContent-back .UppyIcon {
-//   position: relative;
-//   margin-right: 3px;
-// }
 
 .uppy-DashboardContent-panel {
   position: absolute;
@@ -325,12 +344,10 @@
   bottom: 0;
   left: 0;
   right: 0;
-  transform: translateY(-105%);
+  transform: translate3d(0, -105%, 0);
   transition: transform 0.2s ease-in-out;
-  will-change: transform;
   background-color: darken($color-white, 4%);
   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
-  // padding: 15px;
   padding-top: 40px;
   overflow: hidden;
   z-index: $zIndex-4;
@@ -338,14 +355,10 @@
   .uppy-Dashboard--wide & {
     padding-top: 50px;
   }
-
-  // .uppy-Dashboard--modal & {
-  //   z-index: $zIndex-4;
-  // }
 }
 
 .uppy-DashboardContent-panel[aria-hidden=false] {
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 
 // Progress bar placeholder
@@ -428,29 +441,6 @@
 .uppy-Dashboard.drag .uppy-Dashboard-files--noFiles {
   border-color: darken($color-white, 20%);
 }
-
-// .uppy-Dashboard-bgIcon {
-  // width: 100%;
-  // max-width: 460px;
-  // position: absolute;
-  // top: 50%;
-  // left: 50%;
-  // transform: translate(-50%, -50%);
-  // opacity: 0.7;
-  // transition: all 0.3s;
-  // padding: 0 20px;
-// }
-
-// .uppy-Dashboard-bgIcon .UppyIcon {
-//   width: 100%;
-//   height: 80px;
-//   fill: none;
-//   stroke: $color-asphalt-gray;
-
-//   .uppy-Dashboard--wide & {
-//     height: 110px;
-//   }
-// }
 
 .uppy-Dashboard-bgIcon {
   height: 100%;
@@ -1012,8 +1002,9 @@
 //
 
 .uppy-DashboardFileCard {
-  transform: translateY(0);
-  transition: all 0.25s ease-in-out;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.2s ease-in-out;
+  
   width: 100%;
   height: 100%;
   position: absolute;
@@ -1026,9 +1017,9 @@
   background-color: $color-white;
 }
 
-.uppy-DashboardFileCard[aria-hidden=true] {
-  transform: translateY(-105%);
-}
+  .uppy-DashboardFileCard[aria-hidden=true] {
+    transform: translate3d(0, -105%, 0);
+  }
 
 .uppy-DashboardFileCard-inner {
   display: flex;
@@ -1093,3 +1084,6 @@
   vertical-align: middle;
   width: 78%;
 }
+
+
+
