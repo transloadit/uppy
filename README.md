@@ -173,7 +173,7 @@ And you’ll need [`uppy-server`](https://github.com/transloadit/uppy-server) if
  
  ## Used by
  
-Uppy is used by: [Photobox](http://photobox.com), [Law Insider](https://lawinsider.com), [Cool Tabs](https://cool-tabs.com), [Soundoff](https://soundoff.io), [Scrumi](https://scrumi.io/) and others.
+Uppy is used by: [Photobox](http://photobox.com), [Law Insider](https://lawinsider.com), [Cool Tabs](https://cool-tabs.com), [Soundoff](https://soundoff.io), [Scrumi](https://www.scrumi.io/) and others.
 
 Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issues/769)!
 
