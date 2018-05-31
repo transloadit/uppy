@@ -313,12 +313,16 @@ module.exports = class Dashboard extends Plugin {
         return
       }
       this.uppy.log('[Dashboard] File pasted')
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: blob
-      })
+      try {
+        this.uppy.addFile({
+          source: this.id,
+          name: file.name,
+          type: file.type,
+          data: blob
+        })
+      } catch (err) {
+        // Nothing, restriction errors handled in Core
+      }
     })
   }
 
@@ -327,12 +331,16 @@ module.exports = class Dashboard extends Plugin {
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file
-      })
+      try {
+        this.uppy.addFile({
+          source: this.id,
+          name: file.name,
+          type: file.type,
+          data: file
+        })
+      } catch (err) {
+        // Nothing, restriction errors handled in Core
+      }
     })
   }
 
@@ -385,12 +393,16 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.log('[Dashboard] Files were dropped')
 
     files.forEach((file) => {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file
-      })
+      try {
+        this.uppy.addFile({
+          source: this.id,
+          name: file.name,
+          type: file.type,
+          data: file
+        })
+      } catch (err) {
+        // Nothing, restriction errors handled in Core
+      }
     })
   }
 

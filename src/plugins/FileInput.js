@@ -45,12 +45,16 @@ module.exports = class FileInput extends Plugin {
     const files = toArray(ev.target.files)
 
     files.forEach((file) => {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file
-      })
+      try {
+        this.uppy.addFile({
+          source: this.id,
+          name: file.name,
+          type: file.type,
+          data: file
+        })
+      } catch (err) {
+        // Nothing, restriction errors handled in Core
+      }
     })
   }
 
