@@ -162,11 +162,7 @@ module.exports = class Url extends Plugin {
         if (item.kind === 'string' && item.type === 'text/uri-list') {
           item.getAsString((url) => {
             this.uppy.log(`[URL] Adding file from dropped url: ${url}`)
-            try {
-              this.addFile(url)
-            } catch (err) {
-              // Nothing, restriction errors handled in Core
-            }
+            this.addFile(url)
           })
         }
       })
@@ -197,11 +193,7 @@ module.exports = class Url extends Plugin {
         if (item.kind === 'string' && item.type === 'text/plain') {
           item.getAsString((url) => {
             this.uppy.log(`[URL] Adding file from pasted url: ${url}`)
-            try {
-              this.addFile(url)
-            } catch (err) {
-              // Nothing, restriction errors handled in Core
-            }
+            this.addFile(url)
           })
         }
       })
