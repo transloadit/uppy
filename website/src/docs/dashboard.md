@@ -99,7 +99,15 @@ By default, progress in StatusBar is shown as simple percentage. If you’d like
 
 ### `hideUploadButton: false`
 
-Hide the upload button. Use this if you are providing a custom upload button somewhere on the page using the `uppy.upload()` API.
+Hide the upload button. Use this if you are providing a custom upload button somewhere, and using the `uppy.upload()` API.
+
+## `hideRetryButton: false`
+
+Hide the retry button. Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
+
+## `hidePauseResumeCancelButtons: false`
+
+Hide cancel or pause/resume (for resumable uploads, via [tus](http://tus.io), for example) buttons. Use this if you are providing a custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)`, `uppy.cancelAll()` or `uppy.removeFile(fileID)` API.
 
 ### `hideProgressAfterFinish: false`
 
