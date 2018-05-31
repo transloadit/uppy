@@ -2,7 +2,7 @@ const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
-const throttle = require('lodash.throttle')
+// const throttle = require('lodash.throttle')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
 const DefaultStore = require('../store/DefaultStore')
@@ -693,9 +693,9 @@ class Uppy {
     // connection to the remote server. Therefore, we are throtteling them to
     // prevent accessive function calls.
     // see also: https://github.com/tus/tus-js-client/commit/9940f27b2361fd7e10ba58b09b60d82422183bbb
-    const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: true })
+    // const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: true })
 
-    this.on('upload-progress', _throttledCalculateProgress)
+    this.on('upload-progress', this._calculateProgress)
 
     this.on('upload-success', (file, uploadResp, uploadURL) => {
       const currentProgress = this.getFile(file.id).progress
