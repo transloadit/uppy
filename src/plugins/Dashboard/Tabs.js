@@ -66,7 +66,7 @@ class Tabs extends Component {
               aria-selected={this.props.activePanel.id === target.id}
               onclick={() => this.props.showPanel(target.id)}>
               {target.icon()}
-              <h5 class="uppy-DashboardTab-name">{target.name}</h5>
+              <div class="uppy-DashboardTab-name">{target.name}</div>
             </button>
           </li>
         })}

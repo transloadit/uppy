@@ -11,7 +11,7 @@ const { h } = require('preact')
 const PanelContent = (props) => {
   return <div style={{ width: '100%', height: '100%' }}>
     <div class="uppy-DashboardContent-bar">
-      <div class="uppy-DashboardContent-title">
+      <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
         {props.i18n('importFrom', { name: props.activePanel.name })}
       </div>
       <button class="uppy-DashboardContent-back"
