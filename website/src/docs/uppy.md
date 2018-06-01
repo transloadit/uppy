@@ -58,12 +58,12 @@ Optionally provide rules and conditions for which files can be selected.
 
 **Parameters**
 
-- `maxFileSize` *null | number*
-- `maxNumberOfFiles` *null | number*
-- `minNumberOfFiles` *null | number*
+- `maxFileSize` *null | number* — maximum file size for each individual file (total max size [has been requested, and is planned](https://github.com/transloadit/uppy/issues/514))
+- `maxNumberOfFiles` *null | number* — total number of files that can be selected
+- `minNumberOfFiles` *null | number* — minimum number of files that need to be selected before the upload
 - `allowedFileTypes` *null | array* of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
 
-`maxNumberOfFiles` affects the number of files user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1` they will only be able to select a single file, otherwise, when `null` or other number, they will be able to select multiple files.
+`maxNumberOfFiles` also affects the number of files user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1` they will only be able to select a single file, otherwise, when `null` or other number, they will be able to select multiple files.
 
 `allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types)’s accept attribute, so only files matching these types will be selectable.
 
