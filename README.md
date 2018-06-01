@@ -171,7 +171,7 @@ And you’ll need [`uppy-server`](https://github.com/transloadit/uppy-server) if
  - Contributor’s guide in [`website/src/docs/contributing.md`](website/src/docs/contributing.md)
  - Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
  
- ## Used by
+## Used by
  
 Uppy is used by: [Photobox](http://photobox.com), [Law Insider](https://lawinsider.com), [Cool Tabs](https://cool-tabs.com), [Soundoff](https://soundoff.io), [Scrumi](https://www.scrumi.io/) and others.
 
