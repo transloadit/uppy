@@ -97,50 +97,65 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 
-# 0.26.0
-
-- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-
 # next
 
-## 0.25.0
+# 0.26.0
 
-To Be Released: 2018-05-31.
+To Be Released: 2018-06-28.
 
-- [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
+- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
+- [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
 - [ ] core: figure out per-plugin locales and i18n strings packs #491
-- [ ] goldenretriever: confirmation before restore #443
-- [ ] goldenretriever: add “ghost” files (@arturi)
+- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 (@arturi)
 - [ ] test: add typescript with JSDoc (@arturi)
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
-- [ ] dashboard: disallow removing files if `bundle: true` in XHRUpload (@arturi)
+- [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] transloadit: add error reporting (@goto-bus-stop)
-- [ ] uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB)
-- [ ] uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
-- [ ] xhrupload: emit a final `upload-progress` event in the XHRUpload plugin just before firing `upload-complete` (tus-js-client already handles this internally) (@arturi)
-- [x] core: add more mime-to-extension mappings from https://github.com/micnic/mime.json/blob/master/index.json (which ones?) (#806 /@arturi, @goto-bus-stop)
-- [x] providers: select files only after “select” is pressed, don’t add them right away when they are checked (keep a list of fileIds in state?); better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519 (@arturi, @goto-bus-stop)
-- [x] tus: add `filename` and `filetype`, so that tus servers knows what headers to set  https://github.com/tus/tus-js-client/commit/ebc5189eac35956c9f975ead26de90c896dbe360 (#844 / @vith)
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
-- [x] core: ⚠️ **breaking** removed .run() (to solve issues like #756), update docs (#793 / goto-bus-stop)
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
-- [ ] core: addFile not passing restrictions shouldn’t throw when called from UI
-- [ ] docs: improve on React docs https://uppy.io/docs/react/, add small example for each component maybe? Dashboard, DragDrop, ProgressBar? No need to make separate pages for all of them, just headings on the same page. Right now docs are confusing, because they focus on DashboardModal. Also problems with syntax highlight on https://uppy.io/docs/react/dashboard-modal/ (@goto-bus-stop)
-- [x] docs: individual React component pages, more plugin options, better groups (#845 / @goto-bus-stop)
-- [x] core: ⚠️ **breaking** Changed some of the strings that we were concatenating in Preact, now their interpolation is handled by the Translator instead. This is important for languages that have different word order than English. (#845 / @goto-bus-stop)
-  Changed strings:
-    - core: `failedToUpload` needs to contain `%{file}`, substituted by the name of the file that failed
-    - dashboard: `dropPaste` and `dropPasteImport` need to contain `%{browse}`, substituted by the "browse" text button
-    - dashboard: `editing` needs to contain `%{file}`, substituted by the name of the file being edited
-    - dashboard: `fileSource` and `importFrom` need to contain `%{name}`, substituted by the name of the provider
-    - dragdrop: `dropHereOr` needs to contain `%{browse}`, substituted by the "browse" text button
-- [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
-- [x] providers: Add user/account names to Uppy provider views (61bf0a7 / @ifedapoolarewaju)
-- [x] s3: implement multipart uploads (#726 / @goto-bus-stop)
+
+## 0.25.0
+
+- core: ⚠️ **breaking** Removed `.run()` (to solve issues like #756), just `.use()` all the way (#793 / goto-bus-stop)
+- core: ⚠️ **breaking** Changed some of the strings that we were concatenating in Preact, now their interpolation is handled by the Translator instead. This is important for languages that have different word order than English. (#845 / @goto-bus-stop)
+Changed strings:
+  - core: `failedToUpload` needs to contain `%{file}`, substituted by the name of the file that failed
+  - dashboard: `dropPaste` and `dropPasteImport` need to contain `%{browse}`, substituted by the "browse" text button
+  - dashboard: `editing` needs to contain `%{file}`, substituted by the name of the file being edited
+  - dashboard: `fileSource` and `importFrom` need to contain `%{name}`, substituted by the name of the provider
+  - dragdrop: `dropHereOr` needs to contain `%{browse}`, substituted by the "browse" text button
+- providers: ⚠️ **breaking** select files only after “select” is pressed, don’t add them right away when they are checked — better UI + solves issue with autoProceed uploading in background, which is weird; re-read https://github.com/transloadit/uppy/pull/419#issuecomment-345210519(#826 / @goto-bus-stop, @arturi)
+- core: Add error if trying to setFileState() for a file that’s been removed; clear error on cancelAll (#864 / @goto-bus-stop, @arturi)
+- core: Debounce render calls again, fixes #669 (#796 / @goto-bus-stop)
+- core: add more mime-to-extension mappings from https://github.com/micnic/mime.json/blob/master/index.json (#806 /@arturi, @goto-bus-stop)
+- core: addFile not passing restrictions shouldn’t throw when called from UI (@arturi)
+- core: set `bytesUploaded = bytesTotal` when upload is complete (#f51ab0f / @arturi)
+- core: use uppy.getState() instead of uppy.state (#863 / @goto-bus-stop)
+- dashboard & statusbar: allow to hide cancel, pause-resume and retry buttons: hideUploadButton: false, hideRetryButton: false, hidePauseResumeCancelButtons: false (#821, #853 / @mrbatista, @arturi)
+- dashboard: Dashboard open/close animation; move ESC and TAB event listener, improve FOCUSABLE_ELEMENTS, update docs (#852 / @arturi) 
+- dashboard: Don’t use h1-h6 tags (add role=heading), might solve some styling issues for embedded Uppy; fix weird artifacts instead of ellipsis issue (#868 / @arturi)
+- dashboard: Use i18n for save/cancel in Dashboard file card (#841 / @arturi)
+- dashboard: disallow removing files if bundle: true in XHRUpload (#853 / @arturi)
+- docs: improve on React docs https://uppy.io/docs/react/, add small example for each component: Dashboard, DragDrop, ProgressBar, etc; more plugin options, better group (#845 / @goto-bus-stop)
+- provider: Fix an issue where .focus() is scrolling the page, same as in UrlUI (#51df805 / @arturi)
+- provider: show message for empty provider files (#ff628b6 / @ifedapoolarewaju)
+- providers: Add user/account names to Uppy provider views (61bf0a7 / @ifedapoolarewaju)
+- providers: display username in provider view (61bf0a7 / @ifedapoolarewaju)
+- react: Added tests for mounting/unmounting React components (#854 / @goto-bus-stop)
+- react: Fixed plugin ID mismatch in React components, fixes #850 (#854 / @goto-bus-stop)
+- s3: implement multipart uploads (#726 / @goto-bus-stop)
+- tus: add `filename` and `filetype`, so that tusd servers knows what headers to set (#844 / @vith)
+- ui-plugins: Add try/catch to `addfile()` calls from UI plugins (@arturi / #867)
+- uppy-server: benchmarks / stress test, large file, uppy-server / tus / S3 (10 GB) (@ifedapoolarewaju)
+- uppy-server: document docker image setup for uppy-server (@ifedapoolarewaju)
+- url: Add support for drag-dropping urls, links or images from webpages (#836 / @arturi)
+- webcam: swap record/stop button icons, fixes #859 (#fdcca95 / @arturi)
+- xhrupload: fix bytesUploaded and bytesTotal for bundled progress (#864 / @arturi)
+- xhrupload: fix retry/timer issues, add timer.done() to `cancel-all` events; disable progress throttling in Core; Ignore progress events in timeout tracker after upload was aborted (#864 / @goto-bus-stop, @arturi)
 
 ## 0.24.4
 
