@@ -451,8 +451,9 @@ module.exports = class ProviderView {
     const link = `${this.Provider.authUrl()}?state=${authState}`
 
     const authWindow = window.open(link, '_blank')
+    const noProtocol = (url) => url.replace(/^(https?:|)\/\//, '')
     const handleToken = (e) => {
-      if (e.origin !== this.plugin.opts.host || e.source !== authWindow) {
+      if (noProtocol(e.origin) !== noProtocol(this.plugin.opts.host) || e.source !== authWindow) {
         return
       }
       authWindow.close()
