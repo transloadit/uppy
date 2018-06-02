@@ -64,7 +64,7 @@ module.exports = class RequestClient {
   }
 
   _getUrl (url) {
-    if (/^https?:/.test(url)) {
+    if (/^(https?:|)\/\//.test(url)) {
       return url
     }
     return `${this.hostname}/${url}`
