@@ -114,12 +114,6 @@ function getArrayBuffer (chunk) {
 
 function getFileType (file) {
   const fileExtension = file.name ? getFileNameAndExtension(file.name).extension : null
-
-  if (file.isRemote) {
-    // some remote providers do not support file types
-    return file.type ? file.type : mimeTypes[fileExtension]
-  }
-
   // check if mime type is set in the file object
   if (file.type) {
     return file.type
