@@ -1,4 +1,5 @@
 const Plugin = require('../../core/Plugin')
+const Utils = require('../../core/Utils')
 const { Provider } = require('../../server')
 const { ProviderView } = require('../../views')
 const icons = require('./icons')
@@ -93,8 +94,8 @@ module.exports = class Dropbox extends Plugin {
   }
 
   getMimeType (item) {
-    // mime types aren't supported.
-    return null
+    // mime types aren't supported but we try to see if uppy can guess from the file name.
+    return Utils.getFileType({name: item.name})
   }
 
   getItemId (item) {
