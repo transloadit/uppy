@@ -365,7 +365,7 @@ Update the state for a single file. This is mostly useful for plugins that may w
 
 ### `uppy.setMeta(data)`
 
-Alters global `meta` object is state, the one that can be set in Uppy options and gets merged with all newly added files. Calling `setMeta` will also merge newly added meta data with previously selected files.
+Alters global `meta` object in state, the one that can be set in Uppy options and gets merged with all newly added files. Calling `setMeta` will also merge newly added meta data with previously selected files.
 
 ```js
 uppy.setMeta({ resize: 1500, token: 'ab5kjfg' })
