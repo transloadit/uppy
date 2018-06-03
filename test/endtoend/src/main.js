@@ -1,9 +1,9 @@
-const Uppy = require('../../../src/core')
-const DragDrop = require('../../../src/plugins/DragDrop')
-const Dashboard = require('../../../src/plugins/Dashboard')
-const Tus = require('../../../src/plugins/Tus')
-const XHRUpload = require('../../../src/plugins/XHRUpload')
-const ProgressBar = require('../../../src/plugins/ProgressBar')
+const Uppy = require('uppy/lib/core')
+const DragDrop = require('uppy/lib/plugins/DragDrop')
+const Dashboard = require('uppy/lib/plugins/Dashboard')
+const Tus = require('uppy/lib/plugins/Tus')
+const XHRUpload = require('uppy/lib/plugins/XHRUpload')
+const ProgressBar = require('uppy/lib/plugins/ProgressBar')
 
 // Initialise Uppy with Drag & Drop
 const uppyDragDrop = Uppy({
