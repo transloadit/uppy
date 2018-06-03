@@ -5,16 +5,15 @@ permalink: docs/writing-plugins/
 order: 11
 ---
 
-There are a few useful Uppy plugins out there, but there might come a time when you’ll want to build your own.
-Plugins can hook into the upload process or render a custom UI, typically to:
+There are already a few useful Uppy plugins out there, but there might come a time when you will want to build your own. Plugins can hook into the upload process or render a custom UI, typically to:
 
- - Render some custom UI element, e.g. [StatusBar](/docs/statusbar) or [Dashboard](/docs/dashboard).
- - Do the actual uploading, e.g. [XHRUpload](/docs/xhrupload) or [Tus](/docs/tus).
- - Interact with a third party service to process uploads correctly, e.g. [Transloadit](/docs/transloadit) or [AwsS3](/docs/aws-s3).
+ - Render some custom UI element, e.g., [StatusBar](/docs/statusbar) or [Dashboard](/docs/dashboard).
+ - Do the actual uploading, e.g., [XHRUpload](/docs/xhrupload) or [Tus](/docs/tus).
+ - Interact with a third-party service to process uploads correctly, e.g., [Transloadit](/docs/transloadit) or [AwsS3](/docs/aws-s3).
 
 ## Creating A Plugin
 
-Plugins are classes that extend from Uppy's `Plugin` class. Each plugin has an `id` and a `type`. `id`s are used to uniquely identify plugins. A `type` can be anything—some plugins use `type`s to determine whether to do something to some other plugin. For example, when targeting plugins at the builtin `Dashboard` plugin, the Dashboard uses the `type` to figure out where to mount different UI elements. `'acquirer'` type plugins are mounted into the tab bar, while `'progressindicator'` type plugins are mounted into the progress bar area.
+Plugins are classes that extend from Uppy's `Plugin` class. Each plugin has an `id` and a `type`. `id`s are used to uniquely identify plugins. A `type` can be anything—some plugins use `type`s to determine whether to do something to some other plugin. For example, when targeting plugins at the built-in `Dashboard` plugin, the Dashboard uses the `type` to figure out where to mount different UI elements. `'acquirer'`-type plugins are mounted into the tab bar, while `'progressindicator'`-type plugins are mounted into the progress bar area.
 
 The plugin constructor receives the Uppy instance in the first parameter, and any options passed to `uppy.use()` in the second parameter.
 
@@ -59,17 +58,17 @@ uninstall () {
 
 ### `update(state)`
 
-Called on each state update. It's rare that you'd need to use this, it's mostly handy if you want to build a UI plugin using something other than preact.
+Called on each state update. You will rarely need to use this, it is mostly handy if you want to build a UI plugin using something other than Preact.
 
 ## Upload Hooks
 
-When creating an upload, Uppy runs files through an upload pipeline. The pipeline consists of three parts, each of which can be hooked into: Preprocessing, Uploading, and Postprocessing. Preprocessors can be used to configure uploader plugins, encrypt files, resize images, etc., before uploading them. Uploaders do the actual uploading work, such as creating an XMLHttpRequest object and sending the file. Postprocessors do work after files have been uploaded completely. This could be anything from waiting for a file to propagate across a CDN, to sending another request to relate some metadata to the file.
+When creating an upload, Uppy runs files through an upload pipeline. The pipeline consists of three parts, each of which can be hooked into: Preprocessing, Uploading, and Postprocessing. Preprocessors can be used to configure uploader plugins, encrypt files, resize images, etc., before uploading them. Uploaders do the actual uploading work, such as creating an XMLHttpRequest object and sending the file. Postprocessors do their work after files have been uploaded completely. This could be anything from waiting for a file to propagate across a CDN, to sending another request to relate some metadata to the file.
 
 Each hook is a function that receives an array containing the file IDs that are being uploaded, and returns a Promise to signal completion. Hooks are added and removed through `Uppy` methods: `addPreProcessor`, `addUploader`, `addPostProcessor`, and their `remove*` counterparts. Normally, hooks should be added during the plugin's `install()` method, and removed during the `uninstall()` method.
 
 Additionally, upload hooks can fire events to signal progress.
 
-When adding hooks, make sure to bind the hook `fn` beforehand! Otherwise it will be impossible to remove. For example:
+When adding hooks, make sure to bind the hook `fn` beforehand! Otherwise, it will be impossible to remove. For example:
 
 ```js
 class MyPlugin extends Plugin {
@@ -102,7 +101,7 @@ Add a preprocessing function. `fn` gets called with a list of file IDs before an
 
 Add an uploader function. `fn` gets called with a list of file IDs when an upload should start. Uploader functions should do the actual uploading work, such as creating and sending an XMLHttpRequest or calling into some upload service's SDK. `fn` should return a Promise that resolves once all files have been uploaded.
 
-You may choose to still resolve the Promise if some file uploads fail. This way any postprocessing will still run on the files that were uploaded successfully, while uploads that failed will be retried when `uppy.retryAll` is called.
+You may choose to still resolve the Promise if some file uploads fail. This way, any postprocessing will still run on the files that were uploaded successfully, while uploads that failed will be retried when `uppy.retryAll` is called.
 
 ### `addPostProcessor(fn)`
 
@@ -110,13 +109,13 @@ Add a postprocessing function. `fn` is called with a list of file IDs when an up
 
 ### `removePreProcessor/removeUploader/removePostProcessor(fn)`
 
-Remove a processor or uploader function that was added previously. Normally this should be done in the `uninstall()` method.
+Remove a processor or uploader function that was added previously. Normally, this should be done in the `uninstall()` method.
 
-## Progress Events
+## Progress events
 
 Progress events can be fired for individual files to show feedback to the user. For upload progress events, only emitting how many bytes are expected and how many have been uploaded is enough. Uppy will handle calculating progress percentages, upload speed, etc.
 
-Preprocessing and postprocessing progress events are plugin-dependent and can refer to anything, so Uppy doesn't try to be smart about them. There are two types of processing progress events: determinate and indeterminate. Some processing does not have meaningful progress beyond "not done" and "done". For example, sending a request to initialize a server-side resource that will be uploaded to. In those situations, indeterminate progress is suitable. Other processing does have meaningful progress. For example, encrypting a large file. In those situations, determinate progress is suitable.
+Preprocessing and postprocessing progress events are plugin-dependent and can refer to anything, so Uppy doesn't try to be smart about them. There are two types of processing progress events: determinate and indeterminate. Some processing does not have meaningful progress beyond "not done" and "done". For example, sending a request to initialize a server-side resource that will serve as the upload destination. In those situations, indeterminate progress is suitable. Other processing does have meaningful progress. For example, encrypting a large file. In those situations, determinate progress is suitable.
 
 ### `preprocess-progress(fileID, progress)`
 
@@ -163,14 +162,14 @@ This method can be overridden to support for different render engines.
 
 ### `render()`
 
-Render this plugin's UI. Uppy uses [preact](https://preactjs.com) as its view engine, so `render()` should return a preact element.
+Render this plugin's UI. Uppy uses [Preact](https://preactjs.com) as its view engine, so `render()` should return a Preact element.
 `render` is automatically called by Uppy on each state change.
 
-Note that we are looking into ways to make Uppy render engine agnostic, so that plugins can choose their own favourite library—whether it's preact, choo, jQuery, or anything else. This means that the `render()` API may change in the future, but we'll detail exactly what you need to do on the [blog](https://uppy.io/blog) if and when that happens.
+Note that we are looking into ways to make Uppy's render engine agnostic, so that plugins can choose their own favourite library—whether it's Preact, Choo, jQuery, or anything else. This means that the `render()` API may change in the future, but we will detail exactly what you need to do on the [blog](https://uppy.io/blog) if and when that happens.
 
 ### JSX
 
-Since Uppy uses Preact and not React, the default Babel configuration for JSX elements does not work. You have to import the preact `h` function and tell Babel to use it by adding a `/** @jsx h */` comment at the top of the file.
+Since Uppy uses Preact and not React, the default Babel configuration for JSX elements does not work. You have to import the Preact `h` function and tell Babel to use it by adding a `/** @jsx h */` comment at the top of the file.
 
 See the Preact [Getting Started Guide](https://preactjs.com/guide/getting-started) for more on Babel and JSX.
 
