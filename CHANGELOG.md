@@ -73,6 +73,9 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 What we need to do to release Uppy 1.0
 
 - [ ] website: big release blog post
+- [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
+- [ ] chore: remove dead code/commented blocks
+- [ ] chore: rewrite all code based on prettier+standardjs.com
 - [ ] ~refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
 - [ ] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
 - [ ] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
