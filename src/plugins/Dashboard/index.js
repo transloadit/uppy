@@ -593,19 +593,19 @@ module.exports = class Dashboard extends Plugin {
 
   uninstall () {
     if (!this.opts.disableInformer) {
-      const informer = this.uppy.getPlugin('Informer')
+      const informer = this.uppy.getPlugin(`${this.id}:Informer`)
       // Checking if this plugin exists, in case it was removed by uppy-core
       // before the Dashboard was.
       if (informer) this.uppy.removePlugin(informer)
     }
 
     if (!this.opts.disableStatusBar) {
-      const statusBar = this.uppy.getPlugin('StatusBar')
+      const statusBar = this.uppy.getPlugin(`${this.id}:StatusBar`)
       if (statusBar) this.uppy.removePlugin(statusBar)
     }
 
     if (!this.opts.disableThumbnailGenerator) {
-      const thumbnail = this.uppy.getPlugin('ThumbnailGenerator')
+      const thumbnail = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`)
       if (thumbnail) this.uppy.removePlugin(thumbnail)
     }
 
