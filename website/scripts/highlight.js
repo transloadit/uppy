@@ -1,5 +1,5 @@
 /* global hexo */
-const Prism = require('node-prismjs')
+const Prism = require('prismjs')
 const entities = require('he')
 const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
