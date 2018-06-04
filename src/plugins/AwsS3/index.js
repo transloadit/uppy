@@ -159,7 +159,10 @@ module.exports = class AwsS3 extends Plugin {
         // If no response, we've hopefully done a PUT request to the file
         // in the bucket on its full URL.
         if (!isXml(xhr)) {
-          return { location: xhr.responseURL }
+          // Trim the query string because it's going to be a bunch of presign
+          // parameters for a PUT request—doing a GET request with those will
+          // always result in an error
+          return { location: xhr.responseURL.replace(/\?.*$/, '') }
         }
 
         let getValue = () => ''
