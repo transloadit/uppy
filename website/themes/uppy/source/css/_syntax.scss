@@ -4,101 +4,20 @@
 
 pre {
   color: #525252;
+  // background-color: #f8f8f8 !important;
+  // font-size: .8em !important;
+  // .token.function, .token.punctuation { color: inherit; }
 
-  .function .keyword,
-  .constant {
-    color: #0092db;
-  }
+  // Generic
+  .token.comment { color: #b3b3b3; }
 
-  .line {
-    min-height: 1em;
-  }
+  // JS
+  .token.keyword { color: #e96900; }
+  .token.number, .token.boolean { color: #AE81FF; }
+  .token.class-name { color: #2973b7; }
+  .token.string { color: $color-green; }
 
-  .keyword,
-  .attribute {
-    color: #e96900;
-  }
-
-  .number,
-  .literal {
-    color: #AE81FF;
-  }
-
-  .tag,
-  .tag .title,
-  .change,
-  .winutils,
-  .flow,
-  .lisp .title,
-  .clojure .built_in,
-  .nginx .title,
-  .tex .special {
-    color: #2973b7;
-  }
-
-  .class .title {
-    color: #2973b7;
-  }
-
-  .symbol,
-  .symbol .string,
-  .value,
-  .regexp {
-    color: $color-green;
-  }
-
-  .title {
-    color: #A6E22E;
-  }
-
-  .tag .value,
-  .string,
-  .subst,
-  .haskell .type,
-  .preprocessor,
-  .ruby .class .parent,
-  .built_in,
-  .sql .aggregate,
-  .django .template_tag,
-  .django .variable,
-  .smalltalk .class,
-  .javadoc,
-  .django .filter .argument,
-  .smalltalk .localvars,
-  .smalltalk .array,
-  .attr_selector,
-  .pseudo,
-  .addition,
-  .stream,
-  .envvar,
-  .apache .tag,
-  .apache .cbracket,
-  .tex .command,
-  .prompt {
-    color: $color-green;
-  }
-
-  .comment,
-  .java .annotation,
-  .python .decorator,
-  .template_comment,
-  .pi,
-  .doctype,
-  .deletion,
-  .shebang,
-  .apache .sqbracket,
-  .tex .formula {
-    color: #b3b3b3;
-  }
-
-  .coffeescript .javascript,
-  .javascript .xml,
-  .tex .formula,
-  .xml .javascript,
-  .xml .vbscript,
-  .xml .css,
-  .xml .cdata {
-    opacity: 0.5
-  }
-
+  // HTML
+  .token.tag { color: #2973b7; }
+  .token.attr-value { color: $color-green; }
 }

@@ -51,9 +51,7 @@ filename_case: 0
 render_drafts: false
 post_asset_folder: false
 highlight:
-  enable: true
-  line_number: false
-  tab_replace:
+  enable: false
 
 # Category & Tag
 default_category: uncategorized
@@ -113,6 +111,11 @@ marked:
   smartypants: true
   # modifyAnchors: 1
   autolink: true
+
+prism_plugin:
+  mode: 'preprocess'
+  theme: 'tomorrow'
+  line_number: false
 
 feed:
   type: atom
