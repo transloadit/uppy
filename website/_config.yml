@@ -113,11 +113,6 @@ marked:
   # modifyAnchors: 1
   autolink: true
 
-prism_plugin:
-  mode: 'preprocess'
-  theme: 'tomorrow'
-  line_number: false
-
 feed:
   type: atom
   path: atom.xml
