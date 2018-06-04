@@ -52,6 +52,7 @@ render_drafts: false
 post_asset_folder: false
 highlight:
   enable: false
+  line_number: false
 
 # Category & Tag
 default_category: uncategorized

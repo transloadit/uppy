@@ -1,43 +1,28 @@
 /* global hexo */
 const Prism = require('node-prismjs')
-const { decode } = require('he')
+const entities = require('he')
 const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
 const path = require('path')
 
-const regex = /<pre><code class="(.*)?">([\s\S]*?)<\/code><\/pre>/igm
-const captionRegex = /<p><code>(?![\s\S]*<code)(.*?)\s(.*?)\n([\s\S]*)<\/code><\/p>/igm
+const unhighlightedCodeRx = /<pre><code class="(.*)?">([\s\S]*?)<\/code><\/pre>/igm
 
-/**
- * Code transform for prism plugin.
- * @param {Object} data
- * @return {Object}
- */
+function highlight (lang, code) {
+  const startTag = `<figure class="highlight ${lang}"><table><tr><td class="code"><pre>`
+  const endTag = `</pre></td></tr></table></figure>`
+  let parsedCode = ''
+  if (Prism.languages[lang]) {
+    parsedCode = Prism.highlight(code, Prism.languages[lang])
+  } else {
+    parsedCode = code
+  }
+
+  return startTag + parsedCode + endTag
+}
+
 function prismify (data) {
-  // Patch for caption support
-  if (captionRegex.test(data.content)) {
-    // Attempt to parse the code
-    data.content = data.content.replace(captionRegex, (origin, lang, caption, code) => {
-      if (!lang || !caption || !code) return origin
-      return `<figcaption>${caption}</figcaption><pre><code class="${lang}">${code}</code></pre>`
-    })
-  }
-
-  function replace (lang, code) {
-    const startTag = `<figure class="highlight ${lang}"><table><tr><td class="code"><pre>`
-    const endTag = `</pre></td></tr></table></figure>`
-    code = decode(code)
-    let parsedCode = ''
-    if (Prism.languages[lang]) {
-      parsedCode = Prism.highlight(code, Prism.languages[lang])
-    } else {
-      parsedCode = code
-    }
-
-    return startTag + parsedCode + endTag
-  }
-
-  data.content = data.content.replace(regex, (origin, lang, code) => replace(lang, code))
+  data.content = data.content.replace(unhighlightedCodeRx,
+    (_, lang, code) => highlight(lang, entities.decode(code)))
 
   return data
 }
@@ -48,7 +33,7 @@ function code (args, content) {
     lang = args.shift().replace(/^lang:/, '')
   }
 
-  return `<pre><code class="${lang}">${content}</code></pre>`
+  return highlight(lang, content)
 }
 
 function includeCode (args) {
@@ -58,11 +43,16 @@ function includeCode (args) {
   }
 
   const file = path.join(hexo.source_dir, hexo.config.code_dir, args.join(' '))
-  return readFile(file, 'utf8')
-    .then((code) => code.trim())
-    .then((code) => `<pre><code class="${lang}">${code}</code></pre>`)
+  return readFile(file, 'utf8').then((code) => highlight(lang, code.trim()))
 }
 
-hexo.extend.filter.register('after_post_render', prismify)
+// Highlight as many things as we possibly can
+hexo.extend.tag.register('code', code, true)
 hexo.extend.tag.register('codeblock', code, true)
 hexo.extend.tag.register('include_code', includeCode, { async: true })
+hexo.extend.tag.register('include-code', includeCode, { async: true })
+
+// Hexo includes its own code block handling by default which may
+// cause the above to miss some things, so do another pass when the page
+// is done rendering to pick up any code blocks we may have missed.
+hexo.extend.filter.register('after_post_render', prismify)
