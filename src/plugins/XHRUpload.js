@@ -203,8 +203,8 @@ module.exports = class XHRUpload extends Plugin {
       const xhr = new XMLHttpRequest()
       const id = cuid()
 
-      xhr.withCredentials = this.opts.withCredentials
-      
+      xhr.withCredentials = opts.withCredentials
+
       xhr.upload.addEventListener('loadstart', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} started`)
         // Begin checking for timeouts when loading starts.
@@ -364,6 +364,8 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       const xhr = new XMLHttpRequest()
+
+      xhr.withCredentials = this.opts.withCredentials
 
       const timer = this.createProgressTimeout(this.opts.timeout, (error) => {
         xhr.abort()
