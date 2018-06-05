@@ -2,6 +2,11 @@
 
 require('whatwg-fetch')
 
+// Remove the trailing slash so we can always safely append /xyz.
+function stripSlash (url) {
+  return url.replace(/\/$/, '')
+}
+
 module.exports = class RequestClient {
   constructor (uppy, opts) {
     this.uppy = uppy
@@ -12,7 +17,7 @@ module.exports = class RequestClient {
   get hostname () {
     const { uppyServer } = this.uppy.getState()
     const host = this.opts.host
-    return uppyServer && uppyServer[host] ? uppyServer[host] : host
+    return stripSlash(uppyServer && uppyServer[host] ? uppyServer[host] : host)
   }
 
   get defaultHeaders () {
