@@ -33,6 +33,7 @@ module.exports = class Instagram extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts.hostPattern = opts.hostPattern || opts.host
   }
 
   install () {

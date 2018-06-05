@@ -453,7 +453,9 @@ module.exports = class ProviderView {
     const authWindow = window.open(link, '_blank')
     const noProtocol = (url) => url.replace(/^(https?:|)\/\//, '')
     const handleToken = (e) => {
-      if (noProtocol(e.origin) !== noProtocol(this.plugin.opts.host) || e.source !== authWindow) {
+      const allowedOrigin = new RegExp(noProtocol(this.plugin.opts.hostPattern))
+      if (!allowedOrigin.test(noProtocol(e.origin)) || e.source !== authWindow) {
+        console.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.hostPattern}`)
         return
       }
       authWindow.close()
