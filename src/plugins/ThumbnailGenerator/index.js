@@ -107,7 +107,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     // Use the Polyfill for Math.log2() since IE doesn't support log2
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log2#Polyfill
-    var steps = Math.ceil(Math.log(image.width / targetWidth) * Math.LOG2E);
+    var steps = Math.ceil(Math.log(image.width / targetWidth) * Math.LOG2E)
     if (steps < 1) {
       steps = 1
     }
