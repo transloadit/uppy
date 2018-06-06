@@ -190,7 +190,7 @@ module.exports = class Transloadit extends Plugin {
         // We only replace the hostname for Transloadit's uppy-servers, so that
         // people can self-host them while still using Transloadit for encoding.
         let remote = file.remote
-        if (file.remote && TL_UPPY_SERVER.test(file.remote)) {
+        if (file.remote && TL_UPPY_SERVER.test(file.remote.host)) {
           let newHost = assembly.uppyserver_url
           let path = file.remote.url.replace(file.remote.host, '')
           // remove tailing slash
