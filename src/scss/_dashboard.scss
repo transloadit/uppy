@@ -85,43 +85,6 @@
   }
 }
 
-.uppy-Dashboard-poweredBy {
-  display: block;
-  font-size: 11px;
-  color: rgba($color-gray, 0.8);
-  text-align: right;
-  text-decoration: none;
-  padding-top: 8px;
-  padding-right: 2px;
-}
-
-  .uppy-Dashboard--modal .uppy-Dashboard-poweredBy {
-    color: rgba($color-white, 0.7);
-  }
-
-.uppy-Dashboard-poweredByUppy {
-  color: $color-gray;
-}
-
-  .uppy-Dashboard--modal .uppy-Dashboard-poweredByUppy {
-    color: $color-white;
-  }
-
-.uppy-Dashboard-poweredByIcon {
-  stroke: $color-gray;
-  fill: none;
-  margin-left: 1px;
-  margin-right: 1px;
-  position: relative;
-  top: 1px;
-  opacity: 0.9;
-}
-
-  .uppy-Dashboard--modal .uppy-Dashboard-poweredByIcon {
-    stroke: transparent;
-    fill: $color-uppy-pink;
-  }
-
 .uppy-Dashboard-innerWrap {
   display: flex;
   flex-direction: column;
@@ -476,17 +439,53 @@
   font-size: 13px;
   line-height: 1.2;
   text-align: center;
-  // margin-top: 20px;
-  color: rgba($color-asphalt-gray, 0.7);
+  color: rgba($color-asphalt-gray, 0.8);
   position: absolute;
-  bottom: 20px;
+  bottom: 45px;
   left: 0;
   width: 100%;
 
   .uppy-Dashboard--wide & {
-    font-size: 14px;
+    font-size: 16px;
   }
 }
+
+.uppy-Dashboard-poweredBy {
+  position: absolute;
+  bottom: 23px;
+  font-size: 11px;
+  color: $color-gray;
+  text-decoration: none;
+  padding-top: 8px;
+  padding-right: 2px;
+}
+
+  // .uppy-Dashboard--modal .uppy-Dashboard-poweredBy {
+  //   color: rgba($color-white, 0.7);
+  // }
+
+.uppy-Dashboard-poweredByUppy {
+  color: $color-gray;
+}
+
+  // .uppy-Dashboard--modal .uppy-Dashboard-poweredByUppy {
+  //   color: $color-white;
+  // }
+
+.uppy-Dashboard-poweredByIcon {
+  stroke: $color-gray;
+  fill: none;
+  margin-left: 1px;
+  margin-right: 1px;
+  position: relative;
+  top: 1px;
+  opacity: 0.9;
+}
+
+  // .uppy-Dashboard--modal .uppy-Dashboard-poweredByIcon {
+  //   stroke: transparent;
+  //   fill: $color-uppy-pink;
+  // }
 
 .uppy-DashboardItem {
   list-style: none;
