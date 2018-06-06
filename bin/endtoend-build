@@ -4,11 +4,18 @@ echo "Preparing for end to end test: copying static HTML and CSS, building JS"
 rm -rf ./test/endtoend/dist && mkdir ./test/endtoend/dist
 rm -rf ./test/endtoend/node_modules
 
-UPPY_VERSION=$(cat package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,\",]//g' | tr -d '[[:space:]]')
+npm run prepublishOnly
 # archive the uppy package
+echo "Creating archive for Uppy package"
 npm pack
+
+UPPY_VERSION=$(node -e 'console.log(require("./package.json").version)')
 # install from the archived uppy package
+echo "Installing Uppy from archived file uppy-${UPPY_VERSION}.tgz"
 npm install --prefix ./test/endtoend uppy-${UPPY_VERSION}.tgz
+
+# removing package-lock.json because we do not need it.
+rm ./test/endtoend/package-lock.json
 
 cp ./test/endtoend/node_modules/uppy/dist/uppy.min.css ./test/endtoend/dist
 cp ./test/endtoend/src/index.html ./test/endtoend/dist
