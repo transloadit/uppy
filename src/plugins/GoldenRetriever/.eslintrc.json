@@ -1,0 +1,6 @@
+{
+  "extends": "../../../.eslintrc.json",
+  "settings": {
+    "polyfills": ["serviceworkers"]
+  }
+}

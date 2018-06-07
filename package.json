@@ -69,6 +69,7 @@
     "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-config-standard-preact": "^1.1.6",
+    "eslint-plugin-compat": "^2.3.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jest": "^21.6.2",
     "eslint-plugin-node": "^4.2.3",

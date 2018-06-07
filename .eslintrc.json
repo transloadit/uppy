@@ -9,8 +9,12 @@
     "window": true,
     "hexo": true
   },
-  "plugins": ["jest"],
+  "plugins": ["jest", "compat"],
   "rules": {
-    "jsx-quotes": ["error", "prefer-double"]
+    "jsx-quotes": ["error", "prefer-double"],
+    "compat/compat": ["error"]
+  },
+  "settings": {
+    "polyfills": ["fetch", "promises"]
   }
 }
