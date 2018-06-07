@@ -67,6 +67,8 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: add option to disable uploading from local disk #657
 - [ ] dashboard: display data like image resolution on file cards #783
 - [ ] server: pass metadata to S3 `getKey` option, see https://github.com/transloadit/uppy/issues/689
+- [ ] core: I think there is a use case for having a single-use mode or something for Uppy, where pressing "Upload" locks it down (no new files can be added) and once the upload is finished it's just done. especially with the Form plugin
+- [] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 
 ## 1.0 Goals
 
