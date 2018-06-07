@@ -203,8 +203,6 @@ module.exports = class XHRUpload extends Plugin {
       const xhr = new XMLHttpRequest()
       const id = cuid()
 
-      xhr.withCredentials = opts.withCredentials
-
       xhr.upload.addEventListener('loadstart', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} started`)
         // Begin checking for timeouts when loading starts.
@@ -273,6 +271,8 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
+
+      xhr.withCredentials = opts.withCredentials
 
       Object.keys(opts.headers).forEach((header) => {
         xhr.setRequestHeader(header, opts.headers[header])
@@ -429,6 +429,8 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.open(method.toUpperCase(), endpoint, true)
+
+      xhr.withCredentials = this.opts.withCredentials
 
       Object.keys(this.opts.headers).forEach((header) => {
         xhr.setRequestHeader(header, this.opts.headers[header])
