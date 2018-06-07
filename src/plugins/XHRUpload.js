@@ -49,6 +49,7 @@ module.exports = class XHRUpload extends Plugin {
       locale: defaultLocale,
       timeout: 30 * 1000,
       limit: 0,
+      withCredentials: false,
       /**
        * @typedef respObj
        * @property {string} responseText
@@ -201,6 +202,8 @@ module.exports = class XHRUpload extends Plugin {
 
       const xhr = new XMLHttpRequest()
       const id = cuid()
+
+      xhr.withCredentials = opts.withCredentials
 
       xhr.upload.addEventListener('loadstart', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} started`)
@@ -361,6 +364,8 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       const xhr = new XMLHttpRequest()
+
+      xhr.withCredentials = this.opts.withCredentials
 
       const timer = this.createProgressTimeout(this.opts.timeout, (error) => {
         xhr.abort()

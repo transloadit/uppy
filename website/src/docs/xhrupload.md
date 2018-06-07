@@ -153,6 +153,10 @@ The default is 30 seconds.
 
 Limit the amount of uploads going on at the same time. Passing `0` means no limit.
 
+### `withCredentials: false`
+
+Indicates whether or not cross-site Access-Control requests should be made using credentials.
+
 ### `locale: {}`
 
 Localize text that is shown to the user.
