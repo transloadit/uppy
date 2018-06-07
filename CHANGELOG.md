@@ -120,6 +120,8 @@ To Be Released: 2018-06-28.
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
+- [x] thumbnailgenerator: Polyfill Math.log2 since IE11 doesn't support this method (#892 / @DJWassink)
+- [x] xhrupload: Add `withCredentials` option (#874 / @tuoxiansp)
 
 ## 0.25.2
 
@@ -162,7 +164,7 @@ Changed strings:
 - core: set `bytesUploaded = bytesTotal` when upload is complete (#f51ab0f / @arturi)
 - core: use uppy.getState() instead of uppy.state (#863 / @goto-bus-stop)
 - dashboard & statusbar: allow to hide cancel, pause-resume and retry buttons: hideUploadButton: false, hideRetryButton: false, hidePauseResumeCancelButtons: false (#821, #853 / @mrbatista, @arturi)
-- dashboard: Dashboard open/close animation; move ESC and TAB event listener, improve FOCUSABLE_ELEMENTS, update docs (#852 / @arturi) 
+- dashboard: Dashboard open/close animation; move ESC and TAB event listener, improve FOCUSABLE_ELEMENTS, update docs (#852 / @arturi)
 - dashboard: Don’t use h1-h6 tags (add role=heading), might solve some styling issues for embedded Uppy; fix weird artifacts instead of ellipsis issue (#868 / @arturi)
 - dashboard: Use i18n for save/cancel in Dashboard file card (#841 / @arturi)
 - dashboard: disallow removing files if bundle: true in XHRUpload (#853 / @arturi)
