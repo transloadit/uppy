@@ -58,7 +58,7 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 
 **Parameters**
 
-- `maxFileSize` *null | number* — maximum file size for each individual file (total max size [has been requested, and is planned](https://github.com/transloadit/uppy/issues/514))
+- `maxFileSize` *null | number* — maximum file size in bytes for each individual file (total max size [has been requested, and is planned](https://github.com/transloadit/uppy/issues/514))
 - `maxNumberOfFiles` *null | number* — total number of files that can be selected
 - `minNumberOfFiles` *null | number* — minimum number of files that must be selected before the upload
 - `allowedFileTypes` *null | array* of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
