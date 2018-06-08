@@ -455,7 +455,7 @@ module.exports = class ProviderView {
     const handleToken = (e) => {
       const allowedOrigin = new RegExp(noProtocol(this.plugin.opts.hostPattern))
       if (!allowedOrigin.test(noProtocol(e.origin)) || e.source !== authWindow) {
-        console.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.hostPattern}`)
+        this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.hostPattern}`)
         return
       }
       authWindow.close()
