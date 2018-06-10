@@ -3,7 +3,7 @@ const Tabs = require('./Tabs')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
 const { isTouchDevice } = require('../../core/Utils')
-const { h } = require('preact')
+const { h, Component } = require('preact')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
@@ -22,63 +22,73 @@ const PanelContent = (props) => {
   </div>
 }
 
-module.exports = function Dashboard (props) {
-  const dashboardClassName = classNames(
-    { 'uppy-Root': props.isTargetDOMEl },
-    'uppy-Dashboard',
-    { 'Uppy--isTouchDevice': isTouchDevice() },
-    { 'uppy-Dashboard--animateOpenClose': props.animateOpenClose },
-    { 'uppy-Dashboard--isClosing': props.isClosing },
-    { 'uppy-Dashboard--modal': !props.inline },
-    { 'uppy-Dashboard--wide': props.isWide }
-  )
+module.exports = class Dashboard extends Component {
+  componentDidMount () {
+    // const width = this.dashboardInnerEl.offsetWidth
+    // this.props.updateDashboardElWidth()
+  }
 
-  return (
-    <div class={dashboardClassName}
-      aria-hidden={props.inline ? 'false' : props.modal.isHidden}
-      aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
-      onpaste={props.handlePaste}>
+  render () {
+    const dashboardClassName = classNames(
+      { 'uppy-Root': this.props.isTargetDOMEl },
+      'uppy-Dashboard',
+      { 'Uppy--isTouchDevice': isTouchDevice() },
+      { 'uppy-Dashboard--animateOpenClose': this.props.animateOpenClose },
+      { 'uppy-Dashboard--isClosing': this.props.isClosing },
+      { 'uppy-Dashboard--modal': !this.props.inline },
+      { 'uppy-Dashboard--wide': this.props.isWide }
+    )
 
-      <div class="uppy-Dashboard-overlay" tabindex={-1} onclick={props.handleClickOutside} />
+    return (
+      <div class={dashboardClassName}
+        aria-hidden={this.props.inline ? 'false' : this.props.modal.isHidden}
+        aria-label={!this.props.inline ? this.props.i18n('dashboardWindowTitle') : this.props.i18n('dashboardTitle')}
+        onpaste={this.props.handlePaste}>
 
-      <div class="uppy-Dashboard-inner"
-        aria-modal={!props.inline && 'true'}
-        role={!props.inline && 'dialog'}
-        style={{
-          width: props.inline && props.width ? props.width : '',
-          height: props.inline && props.height ? props.height : ''
-        }}>
-        <button class="uppy-Dashboard-close"
-          type="button"
-          aria-label={props.i18n('closeModal')}
-          title={props.i18n('closeModal')}
-          onclick={props.closeModal}>
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <div class="uppy-Dashboard-overlay" tabindex={-1} onclick={this.props.handleClickOutside} />
 
-        <div class="uppy-Dashboard-innerWrap">
-          <Tabs {...props} />
+        <div class="uppy-Dashboard-inner"
+          aria-modal={!this.props.inline && 'true'}
+          role={!this.props.inline && 'dialog'}
+          ref={(el) => {
+            this.dashboardInnerEl = el
+          }}
+          style={{
+            width: this.props.inline && this.props.width ? this.props.width : '',
+            height: this.props.inline && this.props.height ? this.props.height : ''
+          }}>
+          <button class="uppy-Dashboard-close"
+            type="button"
+            aria-label={this.props.i18n('closeModal')}
+            title={this.props.i18n('closeModal')}
+            onclick={this.props.closeModal}>
+            <span aria-hidden="true">&times;</span>
+          </button>
 
-          <FileCard {...props} />
+          <div class="uppy-Dashboard-innerWrap">
+            <Tabs {...this.props} />
 
-          <div class="uppy-Dashboard-filesContainer">
-            <FileList {...props} />
-          </div>
+            <FileCard {...this.props} />
 
-          <div class="uppy-DashboardContent-panel"
-            role="tabpanel"
-            id={props.activePanel && `uppy-DashboardContent-panel--${props.activePanel.id}`}
-            aria-hidden={props.activePanel ? 'false' : 'true'}>
-            {props.activePanel && <PanelContent {...props} />}
-          </div>
+            <div class="uppy-Dashboard-filesContainer">
+              <FileList {...this.props} />
+            </div>
 
-          <div class="uppy-Dashboard-progressindicators">
-            {props.progressindicators.map((target) => {
-              return props.getPlugin(target.id).render(props.state)
-            })}
+            <div class="uppy-DashboardContent-panel"
+              role="tabpanel"
+              id={this.props.activePanel && `uppy-DashboardContent-panel--${this.props.activePanel.id}`}
+              aria-hidden={this.props.activePanel ? 'false' : 'true'}>
+              {this.props.activePanel && <PanelContent {...this.props} />}
+            </div>
+
+            <div class="uppy-Dashboard-progressindicators">
+              {this.props.progressindicators.map((target) => {
+                return this.props.getPlugin(target.id).render(this.props.state)
+              })}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  }
 }

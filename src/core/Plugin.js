@@ -4,22 +4,43 @@ const { findDOMElement } = require('../core/Utils')
 /**
  * Defer a frequent call to the microtask queue.
  */
-function debounce (fn) {
-  let calling = null
-  let latestArgs = null
-  return (...args) => {
-    latestArgs = args
-    if (!calling) {
-      calling = Promise.resolve().then(() => {
-        calling = null
-        // At this point `args` may be different from the most
-        // recent state, if multiple calls happened since this task
-        // was queued. So we use the `latestArgs`, which definitely
-        // is the most recent call.
-        return fn(...latestArgs)
-      })
-    }
-    return calling
+// function debounce (fn) {
+//   let calling = null
+//   let latestArgs = null
+//   return (...args) => {
+//     latestArgs = args
+//     if (!calling) {
+//       calling = Promise.resolve().then(() => {
+//         calling = null
+//         // At this point `args` may be different from the most
+//         // recent state, if multiple calls happened since this task
+//         // was queued. So we use the `latestArgs`, which definitely
+//         // is the most recent call.
+//         return fn(...latestArgs)
+//       })
+//     }
+//     return calling
+//   }
+// }
+
+class PreactWrapper extends preact.Component {
+  constructor (props) {
+    super()
+    this.uppy = props.uppy
+    this.state = this.uppy.getState()
+    this.onUppyState = this.onUppyState.bind(this)
+  }
+
+  componentDidMount () {
+    this.uppy.on('state-update', this.onUppyState)
+  }
+
+  onUppyState (prevState, nextState, patch) {
+    this.setState(nextState)
+  }
+
+  render () {
+    return this.props.render(this.state)
   }
 }
 
@@ -37,7 +58,7 @@ module.exports = class Plugin {
     this.uppy = uppy
     this.opts = opts || {}
 
-    this.update = this.update.bind(this)
+    // this.update = this.update.bind(this)
     this.mount = this.mount.bind(this)
     this.install = this.install.bind(this)
     this.uninstall = this.uninstall.bind(this)
@@ -57,15 +78,15 @@ module.exports = class Plugin {
     })
   }
 
-  update (state) {
-    if (typeof this.el === 'undefined') {
-      return
-    }
+  // update (state) {
+  //   if (typeof this.el === 'undefined') {
+  //     return
+  //   }
 
-    if (this._updateUI) {
-      this._updateUI(state)
-    }
-  }
+  //   if (this._updateUI) {
+  //     this._updateUI(state)
+  //   }
+  // }
 
   /**
    * Check if supplied `target` is a DOM element or an `object`.
@@ -84,10 +105,12 @@ module.exports = class Plugin {
       this.isTargetDOMEl = true
 
       // API for plugins that require a synchronous rerender.
-      this.rerender = (state) => {
-        this.el = preact.render(this.render(state), targetElement, this.el)
-      }
-      this._updateUI = debounce(this.rerender)
+      // this.rerender = (state) => {
+        // this.el = preact.render(this.render(state), targetElement, this.el)
+      // }
+      // this._updateUI = debounce(this.rerender)
+
+      // this._updateUI = () => {}
 
       this.uppy.log(`Installing ${callerPluginName} to a DOM element`)
 
@@ -96,7 +119,10 @@ module.exports = class Plugin {
         targetElement.innerHTML = ''
       }
 
-      this.el = preact.render(this.render(this.uppy.getState()), targetElement)
+      this.el = preact.render(preact.h(PreactWrapper, {
+        uppy: this.uppy,
+        render: this.render
+      }), targetElement)
 
       return this.el
     }

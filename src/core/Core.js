@@ -127,7 +127,7 @@ class Uppy {
 
     this._storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {
       this.emit('state-update', prevState, nextState, patch)
-      this.updateAll(nextState)
+      // this.updateAll(nextState)
     })
 
     // for debugging and testing
@@ -155,11 +155,11 @@ class Uppy {
    * Called each time state changes.
    *
    */
-  updateAll (state) {
-    this.iteratePlugins(plugin => {
-      plugin.update(state)
-    })
-  }
+  // updateAll (state) {
+  //   this.iteratePlugins(plugin => {
+  //     plugin.update(state)
+  //   })
+  // }
 
   /**
    * Updates state with a patch
@@ -886,6 +886,9 @@ class Uppy {
    * @param {object} instance The plugin instance to remove.
    */
   removePlugin (instance) {
+    // console.log('remove plugin')
+    // this.emit('plugin-removed', instance)
+
     const list = this.plugins[instance.type]
 
     if (instance.uninstall) {
@@ -907,7 +910,7 @@ class Uppy {
     this._storeUnsubscribe()
 
     this.iteratePlugins((plugin) => {
-      plugin.uninstall()
+      this.removePlugin(plugin)
     })
   }
 

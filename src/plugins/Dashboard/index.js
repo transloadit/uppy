@@ -8,6 +8,7 @@ const ThumbnailGenerator = require('../ThumbnailGenerator')
 const { findAllDOMElements, toArray } = require('../../core/Utils')
 const prettyBytes = require('prettier-bytes')
 const { defaultTabIcon } = require('./icons')
+const { h } = require('preact')
 
 // Some code for managing focus was adopted from https://github.com/ghosh/micromodal
 // MIT licence, https://github.com/ghosh/micromodal/blob/master/LICENSE.md
@@ -131,6 +132,7 @@ module.exports = class Dashboard extends Plugin {
     this.isModalOpen = this.isModalOpen.bind(this)
 
     this.addTarget = this.addTarget.bind(this)
+    this.removeTarget = this.removeTarget.bind(this)
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
     this.getFocusableNodes = this.getFocusableNodes.bind(this)
@@ -155,9 +157,8 @@ module.exports = class Dashboard extends Plugin {
     const callerPluginType = plugin.type
 
     if (callerPluginType !== 'acquirer' &&
-        callerPluginType !== 'progressindicator' &&
-        callerPluginType !== 'presenter') {
-      let msg = 'Dashboard: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
+        callerPluginType !== 'progressindicator') {
+      let msg = '[Dashboard] Dashboard can only be used by plugins of types: acquirer, progressindicator'
       this.uppy.log(msg)
       return
     }
@@ -177,6 +178,19 @@ module.exports = class Dashboard extends Plugin {
     })
 
     return this.el
+  }
+
+  removeTarget (plugin) {
+    console.log('remove target', plugin)
+    const pluginState = this.getPluginState()
+    const newTargets = pluginState.targets.filter(target => {
+      return target.id !== plugin.id
+    })
+    console.log(newTargets)
+
+    this.setPluginState({
+      targets: newTargets
+    })
   }
 
   hideAllPanels () {
@@ -252,7 +266,7 @@ module.exports = class Dashboard extends Plugin {
     // handle ESC and TAB keys in modal dialog
     document.addEventListener('keydown', this.onKeydown)
 
-    this.rerender(this.uppy.getState())
+    // this.rerender(this.uppy.getState())
     this.updateDashboardElWidth()
     this.setFocusToBrowse()
   }
@@ -362,6 +376,8 @@ module.exports = class Dashboard extends Plugin {
 
     this.updateDashboardElWidth()
     window.addEventListener('resize', this.updateDashboardElWidth)
+
+    this.uppy.on('plugin-removed', this.removeTarget)
   }
 
   removeEvents () {
@@ -372,9 +388,12 @@ module.exports = class Dashboard extends Plugin {
 
     this.removeDragDropListener()
     window.removeEventListener('resize', this.updateDashboardElWidth)
+
+    this.uppy.off('plugin-removed', this.removeTarget)
   }
 
   updateDashboardElWidth () {
+    console.log(this.el)
     const dashboardEl = this.el.querySelector('.uppy-Dashboard-inner')
     this.uppy.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
@@ -475,7 +494,7 @@ module.exports = class Dashboard extends Plugin {
       this.toggleFileCard()
     }
 
-    return DashboardUI({
+    const DashboardUIProps = {
       state: state,
       modal: pluginState,
       newFiles: newFiles,
@@ -527,7 +546,9 @@ module.exports = class Dashboard extends Plugin {
       isTargetDOMEl: this.isTargetDOMEl,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles
-    })
+    }
+
+    return <DashboardUI {...DashboardUIProps} />
   }
 
   discoverProviderPlugins () {
