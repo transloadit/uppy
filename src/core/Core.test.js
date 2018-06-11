@@ -256,10 +256,10 @@ describe('src/Core', () => {
     const core = new Core()
     core.use(AcquirerPlugin1)
 
-    // const corePauseEventMock = jest.fn()
     const coreCancelEventMock = jest.fn()
     const coreStateUpdateEventMock = jest.fn()
-    // core.on('pause-all', corePauseEventMock)
+    const plugin = core.plugins.acquirer[0]
+
     core.on('cancel-all', coreCancelEventMock)
     core.on('state-update', coreStateUpdateEventMock)
 
@@ -278,9 +278,8 @@ describe('src/Core', () => {
       plugins: {},
       totalProgress: 0
     })
-    expect(core.plugins.acquirer[0].mocks.uninstall.mock.calls.length).toEqual(
-      1
-    )
+    expect(plugin.mocks.uninstall.mock.calls.length).toEqual(1)
+    expect(core.plugins[Object.keys(core.plugins)[0]].length).toEqual(0)
   })
 
   describe('upload hooks', () => {

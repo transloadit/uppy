@@ -886,16 +886,22 @@ class Uppy {
    * @param {object} instance The plugin instance to remove.
    */
   removePlugin (instance) {
-    const list = this.plugins[instance.type]
+    this.emit('plugin-remove', instance)
 
     if (instance.uninstall) {
       instance.uninstall()
     }
 
+    const list = this.plugins[instance.type].slice()
     const index = list.indexOf(instance)
     if (index !== -1) {
       list.splice(index, 1)
+      this.plugins[instance.type] = list
     }
+
+    const updatedState = this.getState()
+    delete updatedState.plugins[instance.id]
+    this.setState(updatedState)
   }
 
   /**
@@ -907,7 +913,7 @@ class Uppy {
     this._storeUnsubscribe()
 
     this.iteratePlugins((plugin) => {
-      plugin.uninstall()
+      this.removePlugin(plugin)
     })
   }
 
