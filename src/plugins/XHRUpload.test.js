@@ -13,7 +13,7 @@ describe('XHRUpload', () => {
         .options('/').reply(200, {})
         .post('/').reply(200, {})
 
-      const core = new Core({ autoProceed: false, debug: true })
+      const core = new Core({ autoProceed: false })
       const getResponseData = jest.fn(function () {
         expect(this.some).toEqual('option')
         return {}
