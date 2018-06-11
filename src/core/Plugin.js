@@ -85,6 +85,10 @@ module.exports = class Plugin {
 
       // API for plugins that require a synchronous rerender.
       this.rerender = (state) => {
+        // plugin could be removed, but this.rerender is debounced below,
+        // so it could still be called even after uppy.removePlugin or uppy.close
+        // hence the check
+        if (!this.uppy.getPlugin(this.id)) return
         this.el = preact.render(this.render(state), targetElement, this.el)
       }
       this._updateUI = debounce(this.rerender)
@@ -137,7 +141,7 @@ module.exports = class Plugin {
   }
 
   unmount () {
-    if (this.el && this.el.parentNode) {
+    if (this.isTargetDOMEl && this.el && this.el.parentNode) {
       this.el.parentNode.removeChild(this.el)
     }
   }
