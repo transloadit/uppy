@@ -9,7 +9,7 @@ const getFileType = require('../utils/getFileType')
 const getFileNameAndExtension = require('../utils/getFileNameAndExtension')
 const generateFileID = require('../utils/generateFileID')
 const isObjectURL = require('../utils/isObjectURL')
-const getTimeStamp = require('../utils/getTimeStamp')
+const getTimeStamp = require('./getTimeStamp')
 
 /**
  * Uppy Core module.
