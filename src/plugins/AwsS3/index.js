@@ -148,8 +148,10 @@ module.exports = class AwsS3 extends Plugin {
   }
 
   install () {
+    const { log } = this.uppy
     this.uppy.addPreProcessor(this.prepareUpload)
 
+    let warnedSuccessActionStatus = false
     this.uppy.use(XHRUpload, {
       fieldName: 'file',
       responseUrlFieldName: 'location',
@@ -165,6 +167,10 @@ module.exports = class AwsS3 extends Plugin {
         // in the bucket on its full URL.
         if (!isXml(xhr)) {
           if (opts.method.toUpperCase() === 'POST') {
+            if (!warnedSuccessActionStatus) {
+              log('[AwsS3] No response data found, make sure to set the success_action_status AWS SDK option to 201. See https://uppy.io/docs/aws-s3/#POST-Uploads', 'warning')
+              warnedSuccessActionStatus = true
+            }
             // The responseURL won't contain the object key. Give up.
             return { location: null }
           }
