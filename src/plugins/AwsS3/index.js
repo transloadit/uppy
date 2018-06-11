@@ -155,10 +155,20 @@ module.exports = class AwsS3 extends Plugin {
       responseUrlFieldName: 'location',
       timeout: this.opts.timeout,
       limit: this.opts.limit,
+      // Get the response data from a successful XMLHttpRequest instance.
+      // `content` is the S3 response as a string.
+      // `xhr` is the XMLHttpRequest instance.
       getResponseData (content, xhr) {
+        const opts = this
+
         // If no response, we've hopefully done a PUT request to the file
         // in the bucket on its full URL.
         if (!isXml(xhr)) {
+          if (opts.method.toUpperCase() === 'POST') {
+            // The responseURL won't contain the object key. Give up.
+            return { location: null }
+          }
+
           // Trim the query string because it's going to be a bunch of presign
           // parameters for a PUT request—doing a GET request with those will
           // always result in an error
@@ -192,6 +202,10 @@ module.exports = class AwsS3 extends Plugin {
           etag: getValue('ETag')
         }
       },
+
+      // Get the error data from a failed XMLHttpRequest instance.
+      // `content` is the S3 response as a string.
+      // `xhr` is the XMLHttpRequest instance.
       getResponseError (content, xhr) {
         // If no response, we don't have a specific error message, use the default.
         if (!isXml(xhr)) {
