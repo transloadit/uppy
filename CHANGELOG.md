@@ -83,10 +83,10 @@ What we need to do to release Uppy 1.0
 - [ ] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
 - [ ] QA: add one integration test that uses a Provider (investigate if possible with a dedicated Google Drive API key for uppy server, so _with_ oauth dance) (@ife)
 - [ ] QA: add one integration test that uses more exotic (tus) options such as `useFastRemoteRetry` (@arturi)
-- [ ] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
 - [ ] feature: basic React Native support (@arturi owner+ios, @ife android)
 - [ ] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
+- [x] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
 - [x] docs: on using plugins, all options, list of plugins, i18n
 - [x] feature: beta file recovering after closed tab / browser crash
 - [x] feature: easy integration with React (UppyReact components)
