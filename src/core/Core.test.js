@@ -278,9 +278,7 @@ describe('src/Core', () => {
       plugins: {},
       totalProgress: 0
     })
-    expect(core.plugins.acquirer[0].mocks.uninstall.mock.calls.length).toEqual(
-      1
-    )
+    expect(core.plugins[Object.keys(core.plugins)[0]].length).toEqual(0)
   })
 
   describe('upload hooks', () => {
