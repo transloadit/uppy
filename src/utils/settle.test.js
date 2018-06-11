@@ -1,0 +1,28 @@
+const settle = require('./settle')
+
+describe('settle', () => {
+  it('should resolve even if all input promises reject', () => {
+    return expect(
+        settle([
+          Promise.reject(new Error('oops')),
+          Promise.reject(new Error('this went wrong'))
+        ])
+      ).resolves.toMatchObject({
+        successful: [],
+        failed: [ new Error('oops'), new Error('this went wrong') ]
+      })
+  })
+
+  it('should resolve with an object if some input promises resolve', () => {
+    return expect(
+        settle([
+          Promise.reject(new Error('rejected')),
+          Promise.resolve('resolved'),
+          Promise.resolve('also-resolved')
+        ])
+      ).resolves.toMatchObject({
+        successful: ['resolved', 'also-resolved'],
+        failed: [new Error('rejected')]
+      })
+  })
+})
