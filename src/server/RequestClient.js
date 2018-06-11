@@ -95,7 +95,7 @@ module.exports = class RequestClient {
       // @todo validate response status before calling json
       .then((res) => res.json())
       .catch((err) => {
-        throw new Error(`Could not detele ${this._getUrl(path)}. ${err}`)
+        throw new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
       })
   }
 }
