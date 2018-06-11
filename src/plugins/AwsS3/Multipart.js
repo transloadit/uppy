@@ -1,11 +1,9 @@
 const Plugin = require('../../core/Plugin')
 const RequestClient = require('../../server/RequestClient')
 const UppySocket = require('../../core/UppySocket')
-const {
-  emitSocketProgress,
-  getSocketHost,
-  limitPromises
-} = require('../../core/Utils')
+const emitSocketProgress = require('../../utils/emitSocketProgress')
+const getSocketHost = require('../../utils/getSocketHost')
+const limitPromises = require('../../utils/limitPromises')
 const Uploader = require('./MultipartUploader')
 
 /**

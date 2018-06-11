@@ -2,12 +2,10 @@ const Plugin = require('../core/Plugin')
 const tus = require('tus-js-client')
 const UppySocket = require('../core/UppySocket')
 const Provider = require('../server/Provider')
-const {
-  emitSocketProgress,
-  getSocketHost,
-  settle,
-  limitPromises
-} = require('../core/Utils')
+const emitSocketProgress = require('../utils/emitSocketProgress')
+const getSocketHost = require('../utils/getSocketHost')
+const settle = require('../utils/settle')
+const limitPromises = require('../utils/limitPromises')
 require('whatwg-fetch')
 
 // Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13

@@ -3,12 +3,10 @@ const cuid = require('cuid')
 const Translator = require('../core/Translator')
 const UppySocket = require('../core/UppySocket')
 const Provider = require('../server/Provider')
-const {
-  emitSocketProgress,
-  getSocketHost,
-  settle,
-  limitPromises
-} = require('../core/Utils')
+const emitSocketProgress = require('../utils/emitSocketProgress')
+const getSocketHost = require('../utils/getSocketHost')
+const settle = require('../utils/settle')
+const limitPromises = require('../utils/limitPromises')
 
 function buildResponseError (xhr, error) {
   // No error message

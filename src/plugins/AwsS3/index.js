@@ -1,7 +1,7 @@
 const resolveUrl = require('resolve-url')
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
-const { limitPromises } = require('../../core/Utils')
+const limitPromises = require('../../utils/limitPromises')
 const XHRUpload = require('../XHRUpload')
 
 function isXml (xhr) {

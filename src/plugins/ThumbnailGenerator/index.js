@@ -1,5 +1,7 @@
 const Plugin = require('../../core/Plugin')
-const Utils = require('../../core/Utils')
+const dataURItoBlob = require('../../utils/dataURItoBlob')
+const isPreviewSupported = require('../../utils/isPreviewSupported')
+
 /**
  * The Thumbnail Generator plugin
  *
@@ -142,7 +144,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     }
     return Promise.resolve().then(() => {
-      return Utils.dataURItoBlob(canvas.toDataURL(type, quality), {})
+      return dataURItoBlob(canvas.toDataURL(type, quality), {})
     })
   }
 
@@ -180,7 +182,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   requestThumbnail (file) {
-    if (Utils.isPreviewSupported(file.type) && !file.isRemote) {
+    if (isPreviewSupported(file.type) && !file.isRemote) {
       return this.createThumbnail(file, this.opts.thumbnailWidth)
         .then(preview => {
           this.setPreviewURL(file.id, preview)

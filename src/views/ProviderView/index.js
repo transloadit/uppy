@@ -1,8 +1,10 @@
+const { h, Component } = require('preact')
 const AuthView = require('./AuthView')
 const Browser = require('./Browser')
 const LoaderView = require('./Loader')
-const Utils = require('../../core/Utils')
-const { h, Component } = require('preact')
+const generateFileID = require('../../utils/generateFileID')
+const getFileType = require('../../utils/getFileType')
+const isPreviewSupported = require('../../utils/isPreviewSupported')
 
 /**
  * Array.prototype.findIndex ponyfill for old browsers.
@@ -191,9 +193,9 @@ module.exports = class ProviderView {
       }
     }
 
-    const fileType = Utils.getFileType(tagFile)
+    const fileType = getFileType(tagFile)
     // TODO Should we just always use the thumbnail URL if it exists?
-    if (fileType && Utils.isPreviewSupported(fileType)) {
+    if (fileType && isPreviewSupported(fileType)) {
       tagFile.preview = this.plugin.getItemThumbnailUrl(file)
     }
     this.plugin.uppy.log('Adding remote file')
@@ -432,7 +434,7 @@ module.exports = class ProviderView {
   }
 
   providerFileToId (file) {
-    return Utils.generateFileID({
+    return generateFileID({
       data: this.plugin.getItemData(file),
       name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
       type: this.plugin.getMimeType(file)
