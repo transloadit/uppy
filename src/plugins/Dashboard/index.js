@@ -374,7 +374,7 @@ module.exports = class Dashboard extends Plugin {
     this.updateDashboardElWidth()
     window.addEventListener('resize', this.updateDashboardElWidth)
 
-    this.uppy.on('plugin-removed', this.removeTarget)
+    this.uppy.on('plugin-remove', this.removeTarget)
   }
 
   removeEvents () {
@@ -386,7 +386,7 @@ module.exports = class Dashboard extends Plugin {
     this.removeDragDropListener()
     window.removeEventListener('resize', this.updateDashboardElWidth)
 
-    this.uppy.off('plugin-removed', this.removeTarget)
+    this.uppy.off('plugin-remove', this.removeTarget)
   }
 
   updateDashboardElWidth () {

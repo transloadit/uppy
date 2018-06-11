@@ -886,7 +886,7 @@ class Uppy {
    * @param {object} instance The plugin instance to remove.
    */
   removePlugin (instance) {
-    this.emit('plugin-removed', instance)
+    this.emit('plugin-remove', instance)
 
     if (instance.uninstall) {
       instance.uninstall()
