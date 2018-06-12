@@ -125,6 +125,22 @@ To Be Released: 2018-06-28.
 - [x] thumbnailgenerator: Polyfill Math.log2 since IE11 doesn't support this method (#892 / @DJWassink)
 - [x] xhrupload: Add `withCredentials` option (#874 / @tuoxiansp)
 
+## 0.25.3
+
+Released: 2018-06-12.
+
+- core: fix/refactor `uppy.close()` and `uppy.removePlugin(plugin)`: Remove plugins immutably when uppy.close() is called, not just uninstall; emit event `plugin-remove` before removing plugin; remove plugins from Dashboard when they are removed from Uppy; check if plugin exists in Uppy before re-rendering, since debounced re-render can happen after a plugin is removed, that’s been causing issues in #890 (#898 / @arturi)
+- tests: run integration tests with npm-installed uppy (#880 / @ifedapoolarewaju)
+- xhrupload: add withCredentials option (#874 / @tuoxiansp, @b1ncer)
+- xhrupload: Move .withCredentials assignment to after open(): IE 10 doesn't allow setting it before open() is called (#2698b599d716743bbf7ed3ac70c648fef0fd8976 / @goto-bus-stop)
+- thumbnailgenerator: Updated ThumbnailGenerator to work with IE (#4ddc9da47b13c9dfe49155d8c3bcd76b9fa494f2 / @DJWassink)
+- core: add eslint-plugin-compat (@goto-bus-stop, #894)
+- dashboard: remove Dashboard bottom margin, since “powered by” has been moved (#a561e4e7a2c18f5092ba03185e0836ffa6796d04 / @arturi)
+- dashboard: fix Dashboard open/close animation on small screen (#982d27f62693c0eb026e381d10157afffe1eeb64 / @arturi)
+- awss3: Don't set uploadURL when success_action_status was missing (#900 / @goto-bus-stop)
+- thumbnailgenerator: Add id option to ThumbnailGenerator (#8cded8160b19d3324d9e14be122c4038ed0b9403 / @arturi)
+- react: tiny improvement for Uppy React example (645e15166a6bd100351de131982df080bc71aac6 / @arturi)
+
 ## 0.25.2
 
 Released: 2018-06-05.
