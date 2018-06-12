@@ -886,6 +886,7 @@ class Uppy {
    * @param {object} instance The plugin instance to remove.
    */
   removePlugin (instance) {
+    this.log(`Removing plugin ${instance.id}`)
     this.emit('plugin-remove', instance)
 
     if (instance.uninstall) {
@@ -908,6 +909,8 @@ class Uppy {
    * Uninstall all plugins and close down this Uppy instance.
    */
   close () {
+    this.log(`Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`)
+
     this.reset()
 
     this._storeUnsubscribe()
