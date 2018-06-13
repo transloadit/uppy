@@ -125,6 +125,12 @@ To Be Released: 2018-06-28.
 - [x] thumbnailgenerator: Polyfill Math.log2 since IE11 doesn't support this method (#892 / @DJWassink)
 - [x] xhrupload: Add `withCredentials` option (#874 / @tuoxiansp)
 
+## 0.25.5
+
+Released: 2018-06-13.
+
+- build: exclude and ignore `node_modules` from `test/endtoend` (@arturi, @kvz / #a60c2f0c641f7db580937ebbc0884e25c8ef8583, #355f696a74d8ec56381578f1fb5ad9c913fe8200)
+
 ## 0.25.4
 
 Released: 2018-06-13.
