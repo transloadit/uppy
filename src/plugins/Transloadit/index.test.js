@@ -199,7 +199,7 @@ describe('Transloadit', () => {
     })
 
     uppy.getPlugin('Transloadit').client.createAssembly = () =>
-      Promise.reject(new Error('Could not create assembly!'))
+      Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
 
     uppy.addFile({
       source: 'jest',
@@ -212,7 +212,7 @@ describe('Transloadit', () => {
     }, (err) => {
       const fileID = Object.keys(uppy.getState().files)[0]
 
-      expect(err.message).toBe('Could not create assembly!')
+      expect(err.message).toBe('Transloadit: Could not create Assembly: VIDEO_ENCODE_VALIDATION')
       expect(uppy.getFile(fileID).progress.uploadStarted).toBe(false)
     })
   })
