@@ -98,6 +98,7 @@ pushd "${__root}" > /dev/null 2>&1
       --region="us-east-1" \
       --exclude 'website/*' \
       --exclude 'node_modules/*' \
+      --exclude 'test/*/node_modules/*' \
       --exclude 'examples/*/node_modules/*' \
     ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}"
     echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}/"
