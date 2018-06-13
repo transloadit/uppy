@@ -125,6 +125,13 @@ To Be Released: 2018-06-28.
 - [x] thumbnailgenerator: Polyfill Math.log2 since IE11 doesn't support this method (#892 / @DJWassink)
 - [x] xhrupload: Add `withCredentials` option (#874 / @tuoxiansp)
 
+## 0.25.4
+
+Released: 2018-06-13.
+
+- providers: hanging URL upload (#8e13f416f74e7a453e7bdc829e9618f3b7d68804 / @ifedapoolarewaju)
+- url: fix input focus (#3f9aa3bb7fc7ce5814fe50268a6f88f5965d9f16 / @arturi)
+
 ## 0.25.3
 
 Released: 2018-06-12.
