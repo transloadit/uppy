@@ -18,11 +18,11 @@ module.exports = class App extends React.Component {
   }
 
   componentWillMount () {
-    this.uppy = new Uppy({ autoProceed: false })
+    this.uppy = new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
       .use(GoogleDrive, { host: 'https://server.uppy.io' })
 
-    this.uppy2 = new Uppy({ autoProceed: false })
+    this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
   }
 
@@ -93,6 +93,7 @@ module.exports = class App extends React.Component {
         <h2>Progress Bar</h2>
         <ProgressBar
           uppy={this.uppy}
+          hideAfterFinish={false}
         />
       </div>
     )

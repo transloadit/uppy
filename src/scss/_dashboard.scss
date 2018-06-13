@@ -23,13 +23,27 @@
     to { transform: translate3d(-50%, -50%, 0); opacity: 1; }
   }
 
+    @keyframes uppy-Dashboard-slideDownAndFadeIn--small {
+      from { transform: translate3d(0, -20%, 0); opacity: 0; }
+      to { transform: translate3d(0, 0, 0); opacity: 1; }
+    }
+
   @keyframes uppy-Dashboard-slideUpFadeOut {
     from { transform: translate3d(-50%, -50%, 0); opacity: 1; }
     to { transform: translate3d(-50%, -70%, 0); opacity: 0; }
   }
 
+    @keyframes uppy-Dashboard-slideUpFadeOut--small {
+      from { transform: translate3d(0, 0, 0); opacity: 1; }
+      to { transform: translate3d(0, -20%, 0); opacity: 0; }
+    }
+  
   .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-inner {
-    animation: uppy-Dashboard-slideDownAndFadeIn 0.3s cubic-bezier(0, 0, .2, 1);
+    animation: uppy-Dashboard-slideDownAndFadeIn--small 0.3s cubic-bezier(0, 0, .2, 1);
+
+    @media #{$screen-medium} {
+      animation: uppy-Dashboard-slideDownAndFadeIn 0.3s cubic-bezier(0, 0, .2, 1);
+    }
   }
 
   .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-overlay {
@@ -37,7 +51,11 @@
   }
 
   .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose.uppy-Dashboard--isClosing > .uppy-Dashboard-inner {
-    animation: uppy-Dashboard-slideUpFadeOut 0.3s cubic-bezier(0, 0, .2, 1);
+    animation: uppy-Dashboard-slideUpFadeOut--small 0.3s cubic-bezier(0, 0, .2, 1);
+
+    @media #{$screen-medium} {
+      animation: uppy-Dashboard-slideUpFadeOut 0.3s cubic-bezier(0, 0, .2, 1);
+    }
   }
 
   .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose.uppy-Dashboard--isClosing > .uppy-Dashboard-overlay {

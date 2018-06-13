@@ -9,7 +9,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'thumbnail'
-    this.id = 'ThumbnailGenerator'
+    this.id = this.opts.id || 'ThumbnailGenerator'
     this.title = 'Thumbnail Generator'
     this.queue = []
     this.queueProcessing = false
