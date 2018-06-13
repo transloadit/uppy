@@ -20,3 +20,4 @@ rm ./test/endtoend/package-lock.json
 cp ./test/endtoend/node_modules/uppy/dist/uppy.min.css ./test/endtoend/dist
 cp ./test/endtoend/src/index.html ./test/endtoend/dist
 browserify ./test/endtoend/src/main.js -o ./test/endtoend/dist/bundle.js -t babelify
+rm -rf ./test/endtoend/node_modules
