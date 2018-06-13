@@ -60,7 +60,7 @@ module.exports = class Url extends Plugin {
 
     this.handlePaste = this.handlePaste.bind(this)
 
-    this.server = new RequestClient(uppy, {host: this.opts.host})
+    this.client = new RequestClient(uppy, {host: this.opts.host})
   }
 
   getFileNameFromUrl (url) {
@@ -89,7 +89,7 @@ module.exports = class Url extends Plugin {
   }
 
   getMeta (url) {
-    return this.server.post('url/meta', { url })
+    return this.client.post('url/meta', { url })
       .then((res) => {
         if (res.error) {
           this.uppy.log('[URL] Error:')
@@ -127,7 +127,8 @@ module.exports = class Url extends Plugin {
             body: {
               fileId: url,
               url: url
-            }
+            },
+            providerOptions: this.client.opts
           }
         }
         return tagFile
