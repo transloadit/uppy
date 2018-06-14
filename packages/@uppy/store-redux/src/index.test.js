@@ -1,4 +1,4 @@
-const ReduxStore = require('./ReduxStore')
+const ReduxStore = require('./index')
 const Redux = require('redux')
 
 describe('ReduxStore', () => {
