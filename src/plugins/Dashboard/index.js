@@ -39,6 +39,7 @@ module.exports = class Dashboard extends Plugin {
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
+    this.modalName = 'uppy-Dashboard'
 
     const defaultLocale = {
       strings: {
@@ -113,7 +114,8 @@ module.exports = class Dashboard extends Plugin {
       animateOpenClose: true,
       proudlyDisplayPoweredByUppy: true,
       onRequestCloseModal: () => this.closeModal(),
-      locale: defaultLocale
+      locale: defaultLocale,
+      browserBackButtonClose: false
     }
 
     // merge default options with the ones set by user
@@ -137,6 +139,7 @@ module.exports = class Dashboard extends Plugin {
     this.showPanel = this.showPanel.bind(this)
     this.getFocusableNodes = this.getFocusableNodes.bind(this)
     this.setFocusToFirstNode = this.setFocusToFirstNode.bind(this)
+    this.handlePopState = this.handlePopState.bind(this)
     this.maintainFocus = this.maintainFocus.bind(this)
 
     this.initEvents = this.initEvents.bind(this)
@@ -227,6 +230,31 @@ module.exports = class Dashboard extends Plugin {
     if (focusableNodes.length) focusableNodes[0].focus()
   }
 
+  updateBrowserHistory () {
+    // Ensure history state does not already contain our modal name to avoid double-pushing
+    if (!history.state || !history.state[this.modalName]) {
+      // Push to history so that the page is not lost on browser back button press
+      history.pushState({ [this.modalName]: true }, '')
+    }
+
+    // Listen for back button presses
+    window.addEventListener('popstate', this.handlePopState, false)
+  }
+
+  handlePopState (event) {
+    // Close the modal if the history state no longer contains our modal name
+    if (!event.state || !event.state[this.modalName]) {
+      this.closeModal({ manualClose: false })
+    }
+
+    // When the browser back button is pressed and uppy is now the latest entry in the history but the modal is closed, fix the history by removing the uppy history entry
+    // This occurs when another entry is added into the history state while the modal is open, and then the modal gets manually closed
+    // Solves PR #575 (https://github.com/transloadit/uppy/pull/575)
+    if (!this.isModalOpen() && event.state && event.state[this.modalName]) {
+      history.go(-1)
+    }
+  }
+
   setFocusToBrowse () {
     const browseBtn = this.el.querySelector('.uppy-Dashboard-browse')
     if (browseBtn) browseBtn.focus()
@@ -261,6 +289,10 @@ module.exports = class Dashboard extends Plugin {
       document.body.classList.add('uppy-Dashboard-isFixed')
     }
 
+    if (this.opts.browserBackButtonClose) {
+      this.updateBrowserHistory()
+    }
+
     // handle ESC and TAB keys in modal dialog
     document.addEventListener('keydown', this.onKeydown)
 
@@ -269,7 +301,11 @@ module.exports = class Dashboard extends Plugin {
     this.setFocusToBrowse()
   }
 
-  closeModal () {
+  closeModal (opts = {}) {
+    const {
+      manualClose = true // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
+    } = opts
+
     if (this.opts.disablePageScrollWhenModalOpen) {
       document.body.classList.remove('uppy-Dashboard-isFixed')
     }
@@ -296,6 +332,16 @@ module.exports = class Dashboard extends Plugin {
     document.removeEventListener('keydown', this.onKeydown)
 
     this.savedActiveElement.focus()
+
+    if (manualClose) {
+      if (this.opts.browserBackButtonClose) {
+        // Make sure that the latest entry in the history state is our modal name
+        if (history.state && history.state[this.modalName]) {
+          // Go back in history to clear out the entry we created (ultimately closing the modal)
+          history.go(-1)
+        }
+      }
+    }
   }
 
   isModalOpen () {
@@ -386,7 +432,7 @@ module.exports = class Dashboard extends Plugin {
 
     this.removeDragDropListener()
     window.removeEventListener('resize', this.updateDashboardElWidth)
-
+    window.removeEventListener('popstate', this.handlePopState, false)
     this.uppy.off('plugin-remove', this.removeTarget)
   }
 

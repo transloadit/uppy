@@ -48,7 +48,8 @@ const uppy = Uppy({
   metaFields: [
     { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
-  ]
+  ],
+  browserBackButtonClose: true
 })
 .use(GoogleDrive, { target: Dashboard, host: 'https://server.uppy.io' })
 .use(Dropbox, { target: Dashboard, host: 'https://server.uppy.io' })

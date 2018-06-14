@@ -45,7 +45,8 @@ function uppyInit () {
     metaFields: [
       { id: 'name', name: 'Name', placeholder: 'file name' },
       { id: 'caption', name: 'Caption', placeholder: 'add description' }
-    ]
+    ],
+    browserBackButtonClose: opts.browserBackButtonClose
   })
 
   if (opts.GoogleDrive) {
