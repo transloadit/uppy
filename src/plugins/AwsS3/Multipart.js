@@ -1,6 +1,5 @@
 const Plugin = require('@uppy/core/lib/Plugin')
-const RequestClient = require('../../server/RequestClient')
-const UppySocket = require('../../core/UppySocket')
+const { Socket, RequestClient } = require('@uppy/server-utils')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const limitPromises = require('@uppy/utils/lib/limitPromises')
@@ -286,7 +285,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
       const host = getSocketHost(file.remote.serverUrl)
-      const socket = new UppySocket({ target: `${host}/api/${token}` })
+      const socket = new Socket({ target: `${host}/api/${token}` })
       this.uploaderSockets[socket] = socket
       this.uploaderEvents[file.id] = createEventTracker(this.uppy)
 

@@ -1,7 +1,6 @@
 const Plugin = require('@uppy/core/lib/Plugin')
 const tus = require('tus-js-client')
-const UppySocket = require('../core/UppySocket')
-const { Provider, RequestClient } = require('../server')
+const { Provider, RequestClient, Socket } = require('@uppy/server-utils')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
@@ -270,7 +269,7 @@ module.exports = class Tus extends Plugin {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
       const host = getSocketHost(file.remote.serverUrl)
-      const socket = new UppySocket({ target: `${host}/api/${token}` })
+      const socket = new Socket({ target: `${host}/api/${token}` })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = createEventTracker(this.uppy)
 

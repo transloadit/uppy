@@ -1,7 +1,7 @@
 const Plugin = require('@uppy/core/lib/Plugin')
 const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
-const { RequestClient } = require('../../server')
+const { RequestClient } = require('@uppy/server-utils')
 const UrlUI = require('./UrlUI.js')
 const toArray = require('@uppy/utils/lib/toArray')
 

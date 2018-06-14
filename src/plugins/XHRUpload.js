@@ -1,8 +1,7 @@
 const Plugin = require('@uppy/core/lib/Plugin')
 const cuid = require('cuid')
 const Translator = require('@uppy/utils/lib/Translator')
-const UppySocket = require('../core/UppySocket')
-const Provider = require('../server/Provider')
+const { Provider, Socket } = require('@uppy/server-utils')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
@@ -326,7 +325,7 @@ module.exports = class XHRUpload extends Plugin {
       .then((res) => {
         const token = res.token
         const host = getSocketHost(file.remote.serverUrl)
-        const socket = new UppySocket({ target: `${host}/api/${token}` })
+        const socket = new Socket({ target: `${host}/api/${token}` })
 
         socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 

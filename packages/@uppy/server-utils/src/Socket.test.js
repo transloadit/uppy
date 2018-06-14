@@ -1,6 +1,6 @@
-const UppySocket = require('./UppySocket')
+const UppySocket = require('./Socket')
 
-describe('core/uppySocket', () => {
+describe('Socket', () => {
   let webSocketConstructorSpy
   let webSocketCloseSpy
   let webSocketSendSpy

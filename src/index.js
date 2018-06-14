@@ -1,7 +1,7 @@
 const Core = require('@uppy/core')
 
 // Communication with Uppy Server
-const server = require('./server')
+const server = require('@uppy/server-utils')
 
 // Reusable views
 const views = require('./views')
