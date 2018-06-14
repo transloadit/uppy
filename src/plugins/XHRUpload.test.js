@@ -1,5 +1,5 @@
 const nock = require('nock')
-const Core = require('../core')
+const Core = require('@uppy/core')
 const XHRUpload = require('./XHRUpload')
 
 describe('XHRUpload', () => {

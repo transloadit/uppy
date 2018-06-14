@@ -1,4 +1,4 @@
-const Core = require('./core')
+const Core = require('@uppy/core')
 
 // Communication with Uppy Server
 const server = require('./server')

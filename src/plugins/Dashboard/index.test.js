@@ -1,4 +1,4 @@
-const Core = require('../../core')
+const Core = require('@uppy/core')
 const DashboardPlugin = require('./index')
 const StatusBarPlugin = require('../StatusBar')
 

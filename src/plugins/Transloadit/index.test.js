@@ -1,4 +1,4 @@
-const Core = require('../../core')
+const Core = require('@uppy/core')
 const Transloadit = require('./')
 
 describe('Transloadit', () => {

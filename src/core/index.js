@@ -1,2 +1,1 @@
-const Core = require('./Core')
-module.exports = Core
+module.exports = require('@uppy/core')

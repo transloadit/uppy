@@ -1,5 +1,5 @@
 const PropTypes = require('prop-types')
-const UppyCore = require('../core').Uppy
+const UppyCore = require('@uppy/core').Uppy
 
 // The `uppy` prop receives the Uppy core instance.
 const uppy = PropTypes.instanceOf(UppyCore).isRequired

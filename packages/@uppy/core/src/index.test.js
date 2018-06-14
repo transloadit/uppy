@@ -1,12 +1,12 @@
 const fs = require('fs')
 const path = require('path')
-const Core = require('./Core')
-const Plugin = require('./Plugin')
-const AcquirerPlugin1 = require('../../test/mocks/acquirerPlugin1')
-const AcquirerPlugin2 = require('../../test/mocks/acquirerPlugin2')
-const InvalidPlugin = require('../../test/mocks/invalidPlugin')
-const InvalidPluginWithoutId = require('../../test/mocks/invalidPluginWithoutId')
-const InvalidPluginWithoutType = require('../../test/mocks/invalidPluginWithoutType')
+const Core = require('./index')
+const Plugin = require('../../../../src/core/Plugin')
+const AcquirerPlugin1 = require('../../../../test/mocks/acquirerPlugin1')
+const AcquirerPlugin2 = require('../../../../test/mocks/acquirerPlugin2')
+const InvalidPlugin = require('../../../../test/mocks/invalidPlugin')
+const InvalidPluginWithoutId = require('../../../../test/mocks/invalidPluginWithoutId')
+const InvalidPluginWithoutType = require('../../../../test/mocks/invalidPluginWithoutType')
 
 jest.mock('cuid', () => {
   return () => 'cjd09qwxb000dlql4tp4doz8h'
@@ -15,7 +15,7 @@ jest.mock('@uppy/utils/lib/findDOMElement', () => {
   return () => null
 })
 
-const sampleImage = fs.readFileSync(path.join(__dirname, '../../test/resources/image.jpg'))
+const sampleImage = fs.readFileSync(path.join(__dirname, '../../../../test/resources/image.jpg'))
 
 describe('src/Core', () => {
   const RealCreateObjectUrl = global.URL.createObjectURL
