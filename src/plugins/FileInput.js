@@ -1,4 +1,4 @@
-const Plugin = require('../core/Plugin')
+const Plugin = require('@uppy/core/lib/Plugin')
 const toArray = require('@uppy/utils/lib/toArray')
 const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')

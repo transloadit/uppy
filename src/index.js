@@ -7,7 +7,7 @@ const server = require('./server')
 const views = require('./views')
 
 // Parent
-const Plugin = require('./core/Plugin')
+const Plugin = require('@uppy/core/lib/Plugin')
 
 // Acquirers
 const Dashboard = require('./plugins/Dashboard')

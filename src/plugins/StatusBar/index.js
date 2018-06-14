@@ -1,4 +1,4 @@
-const Plugin = require('../../core/Plugin')
+const Plugin = require('@uppy/core/lib/Plugin')
 const Translator = require('@uppy/utils/lib/Translator')
 const StatusBarUI = require('./StatusBar')
 const statusBarStates = require('./StatusBarStates')

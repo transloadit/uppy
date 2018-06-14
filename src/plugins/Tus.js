@@ -1,4 +1,4 @@
-const Plugin = require('../core/Plugin')
+const Plugin = require('@uppy/core/lib/Plugin')
 const tus = require('tus-js-client')
 const UppySocket = require('../core/UppySocket')
 const { Provider, RequestClient } = require('../server')

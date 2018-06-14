@@ -1,5 +1,5 @@
 const { h } = require('preact')
-const Plugin = require('../../core/Plugin')
+const Plugin = require('@uppy/core/lib/Plugin')
 const Translator = require('@uppy/utils/lib/Translator')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
 const canvasToBlob = require('@uppy/utils/lib/canvasToBlob')

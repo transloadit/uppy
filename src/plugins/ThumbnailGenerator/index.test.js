@@ -1,5 +1,5 @@
 const ThumbnailGeneratorPlugin = require('./index')
-const Plugin = require('../../core/Plugin')
+const Plugin = require('@uppy/core/lib/Plugin')
 const emitter = require('namespace-emitter')
 
 const delay = duration => new Promise(resolve => setTimeout(resolve, duration))

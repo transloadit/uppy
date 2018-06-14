@@ -21,12 +21,13 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "^0.25.5",
     "@uppy/store-default": "^0.25.5",
+    "@uppy/utils": "^0.25.5",
     "cuid": "^2.1.1",
     "lodash.throttle": "^4.1.1",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",
+    "preact": "^8.2.9",
     "prettier-bytes": "^1.0.4"
   }
 }

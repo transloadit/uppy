@@ -1,4 +1,4 @@
-const Plugin = require('../../src/core/Plugin')
+const Plugin = require('@uppy/core/lib/Plugin')
 
 module.exports = class TestSelector1 extends Plugin {
   constructor (uppy, opts) {

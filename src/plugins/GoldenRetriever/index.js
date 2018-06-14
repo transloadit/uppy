@@ -1,4 +1,4 @@
-const Plugin = require('../../core/Plugin')
+const Plugin = require('@uppy/core/lib/Plugin')
 const ServiceWorkerStore = require('./ServiceWorkerStore')
 const IndexedDBStore = require('./IndexedDBStore')
 const MetaDataStore = require('./MetaDataStore')

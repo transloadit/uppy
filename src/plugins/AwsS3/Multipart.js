@@ -1,4 +1,4 @@
-const Plugin = require('../../core/Plugin')
+const Plugin = require('@uppy/core/lib/Plugin')
 const RequestClient = require('../../server/RequestClient')
 const UppySocket = require('../../core/UppySocket')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
