@@ -6,7 +6,7 @@ permalink: docs/aws-s3/
 ---
 
 The `AwsS3` plugin can be used to upload files directly to an S3 bucket.
-Uploads can be signed using [uppy-server][uppy-server docs] or a custom signing function.
+Uploads can be signed using [Uppy Server][uppy-server docs] or a custom signing function.
 
 ```js
 const AwsS3 = require('uppy/lib/plugins/AwsS3')
