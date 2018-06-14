@@ -1,4 +1,4 @@
-const DefaultStore = require('./DefaultStore')
+const DefaultStore = require('./index')
 
 describe('DefaultStore', () => {
   it('can be created with or without new', () => {
