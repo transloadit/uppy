@@ -32,7 +32,7 @@ const AwsS3 = require('./plugins/AwsS3')
 
 // Helpers and utilities
 const Form = require('./plugins/Form')
-const ThumbnailGenerator = require('./plugins/ThumbnailGenerator')
+const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const GoldenRetriever = require('./plugins/GoldenRetriever')
 const ReduxDevTools = require('./plugins/ReduxDevTools')
 
