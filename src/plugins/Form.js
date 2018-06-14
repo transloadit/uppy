@@ -1,5 +1,5 @@
 const Plugin = require('../core/Plugin')
-const { findDOMElement } = require('../core/Utils')
+const findDOMElement = require('../utils/findDOMElement')
 // Rollup uses get-form-data's ES modules build, and rollup-plugin-commonjs automatically resolves `.default`.
 // So, if we are being built using rollup, this require() won't have a `.default` property.
 const getFormData = require('get-form-data').default || require('get-form-data')

@@ -2,9 +2,9 @@ const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const StatusBarUI = require('./StatusBar')
 const statusBarStates = require('./StatusBarStates')
-const { getSpeed } = require('../../core/Utils')
-const { getBytesRemaining } = require('../../core/Utils')
-const { prettyETA } = require('../../core/Utils')
+const getSpeed = require('../../utils/getSpeed')
+const getBytesRemaining = require('../../utils/getBytesRemaining')
+const prettyETA = require('../../utils/prettyETA')
 const prettyBytes = require('prettier-bytes')
 
 /**
@@ -55,7 +55,7 @@ module.exports = class StatusBar extends Plugin {
       target: 'body',
       hideUploadButton: false,
       hideRetryButton: false,
-      hideCancelButton: false,
+      hidePauseResumeCancelButtons: false,
       showProgressDetails: false,
       locale: defaultLocale,
       hideAfterFinish: true
@@ -220,7 +220,7 @@ module.exports = class StatusBar extends Plugin {
       showProgressDetails: this.opts.showProgressDetails,
       hideUploadButton: this.opts.hideUploadButton,
       hideRetryButton: this.opts.hideRetryButton,
-      hideCancelButton: this.opts.hideCancelButton,
+      hidePauseResumeCancelButtons: this.opts.hidePauseResumeCancelButtons,
       hideAfterFinish: this.opts.hideAfterFinish
     })
   }

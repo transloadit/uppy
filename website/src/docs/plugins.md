@@ -8,11 +8,11 @@ order: 10
 Plugins are what makes Uppy useful: they help select, manipulate and upload files.
 
 - **Acquirers (various ways of picking files):**
-  - [Dashboard](/docs/dashboard) — full featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more. Includes `StatusBar` and `Informer` plugins by default
-  - [DragDrop](/docs/dragdrop) — plain and simple drag and drop area
+  - [Dashboard](/docs/dashboard) — full-featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more. Includes `StatusBar` and `Informer` plugins by default
+  - [DragDrop](/docs/dragdrop) — plain and simple drag-and-drop area
   - [FileInput](/docs/fileinput) — even more plain and simple, just a button
   - [Webcam](/docs/webcam) — upload selfies or audio / video recordings
-  - [Provider Plugins](/docs/providers) (remote sources that work through [Uppy Server](/docs/uppy-server/))
+  - [Provider Plugins](/docs/providers) (remote sources that work through [Uppy Server](/docs/server/))
     - [Dropbox](/docs/dropbox) – import files from Dropbox
     - [GoogleDrive](/docs/google-drive) – import files from Google Drive
     - [Instagram](/docs/instagram) – import files from Instagram
@@ -27,13 +27,13 @@ Plugins are what makes Uppy useful: they help select, manipulate and upload file
   - [Informer](/docs/informer) — show notifications
 - **Helpers:**
   - [GoldenRetriever](/docs/golden-retriever) — restore files and continue uploading after a page refresh or a browser crash
-  - [Form](/docs/form) — collect metadata from `<form>` right before Uppy upload, then optionally append results back to the form
+  - [Form](/docs/form) — collect metadata from `<form>` right before the Uppy upload, then optionally append results back to the form
 - **Encoding Services:**
   - [Transloadit](/docs/transloadit) — manipulate and transcode uploaded files using the [transloadit.com](https://transloadit.com) service
 
-## Common Options
+## Common options
 
-Each plugin can have any number of options (please see specific plugin for details), but these are shared between some:
+Each plugin can have any number of options (please see specific plugins for details), but these are shared between some:
 
 ### `id`
 
@@ -64,11 +64,11 @@ uppy.use(Dashboard, {
 uppy.use(GoogleDrive, {target: Dashboard})
 ```
 
-In the example above the `Dashboard` gets rendered into an element with ID `uppy`, while `GoogleDrive` is rendered into the `Dashboard` itself.
+In the example above, the `Dashboard` gets rendered into an element with ID `uppy`, while `GoogleDrive` is rendered into the `Dashboard` itself.
 
 ### `locale: {}`
 
-Same as with Uppy.Core’s setting from above, this allows you to override plugin’s locale string, so that instead of `Select files` in English, your users will see `Выберите файлы` in Russian. Example:
+Same as with Uppy.Core’s setting above, this allows you to override plugin’s locale string, so that instead of `Select files` in English, your users will see `Выберите файлы` in Russian. Example:
 
 ```js
 .use(FileInput, {

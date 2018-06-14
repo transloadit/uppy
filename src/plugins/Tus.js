@@ -1,12 +1,11 @@
 const Plugin = require('../core/Plugin')
 const tus = require('tus-js-client')
 const UppySocket = require('../core/UppySocket')
-const {
-  emitSocketProgress,
-  getSocketHost,
-  settle,
-  limitPromises
-} = require('../core/Utils')
+const { Provider, RequestClient } = require('../server')
+const emitSocketProgress = require('../utils/emitSocketProgress')
+const getSocketHost = require('../utils/getSocketHost')
+const settle = require('../utils/settle')
+const limitPromises = require('../utils/limitPromises')
 require('whatwg-fetch')
 
 // Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
@@ -85,7 +84,7 @@ module.exports = class Tus extends Plugin {
   }
 
   handleResetProgress () {
-    const files = Object.assign({}, this.uppy.state.files)
+    const files = Object.assign({}, this.uppy.getState().files)
     Object.keys(files).forEach((fileID) => {
       // Only clone the file object if it has a Tus `uploadUrl` attached.
       if (files[fileID].tus && files[fileID].tus.uploadUrl) {
@@ -238,31 +237,22 @@ module.exports = class Tus extends Plugin {
           .catch(reject)
       }
 
-      fetch(file.remote.url, {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Object.assign({}, file.remote.body, {
+      this.uppy.emit('upload-started', file)
+      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+      const client = new Client(this.uppy, file.remote.providerOptions)
+      client.post(
+        file.remote.url,
+        Object.assign({}, file.remote.body, {
           endpoint: opts.endpoint,
           uploadUrl: opts.uploadUrl,
           protocol: 'tus',
           size: file.data.size,
           metadata: file.meta
-        }))
-      })
-      .then((res) => {
-        if (res.status < 200 || res.status > 300) {
-          return reject(res.statusText)
-        }
-
-        return res.json().then((data) => {
-          this.uppy.setFileState(file.id, { serverToken: data.token })
-          file = this.uppy.getFile(file.id)
-          return file
         })
+      ).then((res) => {
+        this.uppy.setFileState(file.id, { serverToken: res.token })
+        file = this.uppy.getFile(file.id)
+        return file
       })
       .then((file) => {
         return this.connectToServerSocket(file)
@@ -346,13 +336,6 @@ module.exports = class Tus extends Plugin {
     })
   }
 
-  updateFile (file) {
-    const files = Object.assign({}, this.uppy.state.files, {
-      [file.id]: file
-    })
-    this.uppy.setState({ files })
-  }
-
   onReceiveUploadUrl (file, uploadURL) {
     const currentFile = this.uppy.getFile(file.id)
     if (!currentFile) return
@@ -360,12 +343,11 @@ module.exports = class Tus extends Plugin {
     // or resume: false in options
     if ((!currentFile.tus || currentFile.tus.uploadUrl !== uploadURL) && this.opts.resume) {
       this.uppy.log('[Tus] Storing upload url')
-      const newFile = Object.assign({}, currentFile, {
+      this.uppy.setFileState(currentFile.id, {
         tus: Object.assign({}, currentFile.tus, {
           uploadUrl: uploadURL
         })
       })
-      this.updateFile(newFile)
     }
   }
 
@@ -459,16 +441,12 @@ module.exports = class Tus extends Plugin {
       .then(() => null)
   }
 
-  addResumableUploadsCapabilityFlag () {
-    const newCapabilities = Object.assign({}, this.uppy.getState().capabilities)
-    newCapabilities.resumableUploads = true
-    this.uppy.setState({
-      capabilities: newCapabilities
-    })
-  }
-
   install () {
-    this.addResumableUploadsCapabilityFlag()
+    this.uppy.setState({
+      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+        resumableUploads: true
+      })
+    })
     this.uppy.addUploader(this.handleUpload)
 
     this.uppy.on('reset-progress', this.handleResetProgress)
@@ -479,6 +457,11 @@ module.exports = class Tus extends Plugin {
   }
 
   uninstall () {
+    this.uppy.setState({
+      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+        resumableUploads: false
+      })
+    })
     this.uppy.removeUploader(this.handleUpload)
 
     if (this.opts.autoRetry) {

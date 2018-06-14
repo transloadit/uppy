@@ -2,12 +2,11 @@ const Plugin = require('../core/Plugin')
 const cuid = require('cuid')
 const Translator = require('../core/Translator')
 const UppySocket = require('../core/UppySocket')
-const {
-  emitSocketProgress,
-  getSocketHost,
-  settle,
-  limitPromises
-} = require('../core/Utils')
+const Provider = require('../server/Provider')
+const emitSocketProgress = require('../utils/emitSocketProgress')
+const getSocketHost = require('../utils/getSocketHost')
+const settle = require('../utils/settle')
+const limitPromises = require('../utils/limitPromises')
 
 function buildResponseError (xhr, error) {
   // No error message
@@ -48,6 +47,7 @@ module.exports = class XHRUpload extends Plugin {
       locale: defaultLocale,
       timeout: 30 * 1000,
       limit: 0,
+      withCredentials: false,
       /**
        * @typedef respObj
        * @property {string} responseText
@@ -102,15 +102,16 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   getOptions (file) {
+    const overrides = this.uppy.getState().xhrUpload
     const opts = Object.assign({},
       this.opts,
-      this.uppy.state.xhrUpload || {},
+      overrides || {},
       file.xhrUpload || {}
     )
     opts.headers = {}
     Object.assign(opts.headers, this.opts.headers)
-    if (this.uppy.state.xhrUpload) {
-      Object.assign(opts.headers, this.uppy.state.xhrUpload.headers)
+    if (overrides) {
+      Object.assign(opts.headers, overrides.headers)
     }
     if (file.xhrUpload) {
       Object.assign(opts.headers, file.xhrUpload.headers)
@@ -126,6 +127,8 @@ module.exports = class XHRUpload extends Plugin {
   createProgressTimeout (timeout, timeoutHandler) {
     const uppy = this.uppy
     const self = this
+    let isDone = false
+
     function onTimedOut () {
       uppy.log(`[XHRUpload] timed out`)
       const error = new Error(self.i18n('timedOut', { seconds: Math.ceil(timeout / 1000) }))
@@ -134,17 +137,24 @@ module.exports = class XHRUpload extends Plugin {
 
     let aliveTimer = null
     function progress () {
+      // Some browsers fire another progress event when the upload is
+      // cancelled, so we have to ignore progress after the timer was
+      // told to stop.
+      if (isDone) return
+
       if (timeout > 0) {
-        done()
+        if (aliveTimer) clearTimeout(aliveTimer)
         aliveTimer = setTimeout(onTimedOut, timeout)
       }
     }
 
     function done () {
+      uppy.log(`[XHRUpload] timer done`)
       if (aliveTimer) {
         clearTimeout(aliveTimer)
         aliveTimer = null
       }
+      isDone = true
     }
 
     return {
@@ -260,6 +270,8 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
 
+      xhr.withCredentials = opts.withCredentials
+
       Object.keys(opts.headers).forEach((header) => {
         xhr.setRequestHeader(header, opts.headers[header])
       })
@@ -281,8 +293,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       this.uppy.on('cancel-all', () => {
-        // const files = this.uppy.getState().files
-        // if (!files[file.id]) return
+        timer.done()
         xhr.abort()
       })
     })
@@ -301,49 +312,39 @@ module.exports = class XHRUpload extends Plugin {
         fields[name] = file.meta[name]
       })
 
-      fetch(file.remote.url, {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Object.assign({}, file.remote.body, {
+      const provider = new Provider(this.uppy, file.remote.providerOptions)
+      provider.post(
+        file.remote.url,
+        Object.assign({}, file.remote.body, {
           endpoint: opts.endpoint,
           size: file.data.size,
           fieldname: opts.fieldName,
           metadata: fields,
           headers: opts.headers
-        }))
-      })
+        })
+      )
       .then((res) => {
-        if (res.status < 200 && res.status > 300) {
-          return reject(res.statusText)
-        }
+        const token = res.token
+        const host = getSocketHost(file.remote.host)
+        const socket = new UppySocket({ target: `${host}/api/${token}` })
 
-        res.json().then((data) => {
-          const token = data.token
-          const host = getSocketHost(file.remote.host)
-          const socket = new UppySocket({ target: `${host}/api/${token}` })
+        socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
-          socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+        socket.on('success', (data) => {
+          const resp = opts.getResponseData(data.response.responseText, data.response)
+          const uploadURL = resp[opts.responseUrlFieldName]
+          this.uppy.emit('upload-success', file, resp, uploadURL)
+          socket.close()
+          return resolve()
+        })
 
-          socket.on('success', (data) => {
-            const resp = opts.getResponseData(data.response.responseText, data.response)
-            const uploadURL = resp[opts.responseUrlFieldName]
-            this.uppy.emit('upload-success', file, resp, uploadURL)
-            socket.close()
-            return resolve()
-          })
-
-          socket.on('error', (errData) => {
-            const resp = errData.response
-            const error = resp
-              ? opts.getResponseError(resp.responseText, resp)
-              : Object.assign(new Error(errData.error.message), { cause: errData.error })
-            this.uppy.emit('upload-error', file, error)
-            reject(error)
-          })
+        socket.on('error', (errData) => {
+          const resp = errData.response
+          const error = resp
+            ? opts.getResponseError(resp.responseText, resp)
+            : Object.assign(new Error(errData.error.message), { cause: errData.error })
+          this.uppy.emit('upload-error', file, error)
+          reject(error)
         })
       })
     })
@@ -361,6 +362,8 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       const xhr = new XMLHttpRequest()
+
+      xhr.withCredentials = this.opts.withCredentials
 
       const timer = this.createProgressTimeout(this.opts.timeout, (error) => {
         xhr.abort()
@@ -387,8 +390,8 @@ module.exports = class XHRUpload extends Plugin {
         files.forEach((file) => {
           this.uppy.emit('upload-progress', file, {
             uploader: this,
-            bytesUploaded: ev.loaded,
-            bytesTotal: ev.total
+            bytesUploaded: ev.loaded / ev.total * file.size,
+            bytesTotal: file.size
           })
         })
       })
@@ -419,10 +422,13 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       this.uppy.on('cancel-all', () => {
+        timer.done()
         xhr.abort()
       })
 
       xhr.open(method.toUpperCase(), endpoint, true)
+
+      xhr.withCredentials = this.opts.withCredentials
 
       Object.keys(this.opts.headers).forEach((header) => {
         xhr.setRequestHeader(header, this.opts.headers[header])
@@ -479,10 +485,26 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   install () {
+    if (this.opts.bundle) {
+      this.uppy.setState({
+        capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+          bundled: true
+        })
+      })
+    }
+
     this.uppy.addUploader(this.handleUpload)
   }
 
   uninstall () {
+    if (this.opts.bundle) {
+      this.uppy.setState({
+        capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+          bundled: true
+        })
+      })
+    }
+
     this.uppy.removeUploader(this.handleUpload)
   }
 }

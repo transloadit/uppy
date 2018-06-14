@@ -12,9 +12,9 @@ module.exports = (props) => {
     ev.preventDefault()
     // when file is clicked, select it, but when folder is clicked, open it
     if (props.type === 'folder') {
-      return props.handleClick(ev)
+      return props.handleFolderClick(ev)
     }
-    props.handleCheckboxClick(ev)
+    props.handleClick(ev)
   }
 
   return (
@@ -27,13 +27,13 @@ module.exports = (props) => {
           id={props.id}
           checked={props.isChecked}
           disabled={props.isDisabled}
-          onchange={props.handleCheckboxClick}
+          onchange={props.handleClick}
           onkeyup={stop}
           onkeydown={stop}
           onkeypress={stop} />
         <label
           for={props.id}
-          onclick={props.handleCheckboxClick}
+          onclick={props.handleClick}
          />
       </div>
       <button type="button"

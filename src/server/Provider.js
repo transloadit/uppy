@@ -14,6 +14,17 @@ module.exports = class Provider extends RequestClient {
     this.id = this.provider
     this.authProvider = opts.authProvider || this.provider
     this.name = this.opts.name || _getName(this.id)
+    this.tokenKey = `uppy-server-${this.id}-auth-token`
+  }
+
+  get defaultHeaders () {
+    return Object.assign({}, super.defaultHeaders, {'uppy-auth-token': localStorage.getItem(this.tokenKey)})
+  }
+
+  // @todo(i.olarewaju) consider whether or not this method should be exposed
+  setAuthToken (token) {
+    // @todo(i.olarewaju) add fallback for OOM storage
+    localStorage.setItem(this.tokenKey, token)
   }
 
   checkAuth () {
@@ -37,5 +48,9 @@ module.exports = class Provider extends RequestClient {
 
   logout (redirect = location.href) {
     return this.get(`${this.id}/logout?redirect=${redirect}`)
+      .then((res) => {
+        localStorage.removeItem(this.tokenKey)
+        return res
+      })
   }
 }

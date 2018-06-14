@@ -33,6 +33,7 @@ module.exports = class Instagram extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts.hostPattern = opts.hostPattern || opts.host
   }
 
   install () {
@@ -84,7 +85,12 @@ module.exports = class Instagram extends Plugin {
   }
 
   getItemIcon (item) {
-    return <img src={item.images.thumbnail.url} />
+    if (!item.images) {
+      return <svg viewBox="0 0 58 58" opacity="0.6">
+        <path d="M36.537 28.156l-11-7a1.005 1.005 0 0 0-1.02-.033C24.2 21.3 24 21.635 24 22v14a1 1 0 0 0 1.537.844l11-7a1.002 1.002 0 0 0 0-1.688zM26 34.18V23.82L34.137 29 26 34.18z" /><path d="M57 6H1a1 1 0 0 0-1 1v44a1 1 0 0 0 1 1h56a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1zM10 28H2v-9h8v9zm-8 2h8v9H2v-9zm10 10V8h34v42H12V40zm44-12h-8v-9h8v9zm-8 2h8v9h-8v-9zm8-22v9h-8V8h8zM2 8h8v9H2V8zm0 42v-9h8v9H2zm54 0h-8v-9h8v9z" />
+      </svg>
+    }
+    return <img src={item.images.low_resolution.url} />
   }
 
   getItemSubList (item) {

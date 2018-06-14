@@ -51,9 +51,8 @@ filename_case: 0
 render_drafts: false
 post_asset_folder: false
 highlight:
-  enable: true
+  enable: false
   line_number: false
-  tab_replace:
 
 # Category & Tag
 default_category: uncategorized
@@ -146,3 +145,6 @@ skip_render:
   - '**/*.js'
   - '*.es6'
   - '**/*.es6'
+
+alias:
+  examples/: examples/dashboard/

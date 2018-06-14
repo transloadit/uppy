@@ -1,11 +1,15 @@
-const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
-const throttle = require('lodash.throttle')
+// const throttle = require('lodash.throttle')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
 const DefaultStore = require('../store/DefaultStore')
+const getFileType = require('../utils/getFileType')
+const getFileNameAndExtension = require('../utils/getFileNameAndExtension')
+const generateFileID = require('../utils/generateFileID')
+const isObjectURL = require('../utils/isObjectURL')
+const getTimeStamp = require('../utils/getTimeStamp')
 
 /**
  * Uppy Core module.
@@ -34,7 +38,14 @@ class Uppy {
         failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
         connectedToInternet: 'Connected to the Internet',
-        noFilesFound: 'You have no files or folders here'
+        // Strings for remote providers
+        noFilesFound: 'You have no files or folders here',
+        selectXFiles: {
+          0: 'Select %{smart_count} file',
+          1: 'Select %{smart_count} files'
+        },
+        cancel: 'Cancel',
+        logOut: 'Log out'
       }
     }
 
@@ -172,7 +183,7 @@ class Uppy {
   }
 
   /**
-  * Back compat for when this.state is used instead of this.getState().
+  * Back compat for when uppy.state is used instead of uppy.getState().
   */
   get state () {
     return this.getState()
@@ -182,6 +193,10 @@ class Uppy {
   * Shorthand to set state for a specific file.
   */
   setFileState (fileID, state) {
+    if (!this.getState().files[fileID]) {
+      throw new Error(`Can’t set state for ${fileID} (the file could have been removed)`)
+    }
+
     this.setState({
       files: Object.assign({}, this.getState().files, {
         [fileID]: Object.assign({}, this.getState().files[fileID], state)
@@ -386,7 +401,7 @@ class Uppy {
       file = onBeforeFileAddedResult
     }
 
-    const fileType = Utils.getFileType(file)
+    const fileType = getFileType(file)
     let fileName
     if (file.name) {
       fileName = file.name
@@ -395,10 +410,10 @@ class Uppy {
     } else {
       fileName = 'noname'
     }
-    const fileExtension = Utils.getFileNameAndExtension(fileName).extension
+    const fileExtension = getFileNameAndExtension(fileName).extension
     const isRemote = file.isRemote || false
 
-    const fileID = Utils.generateFileID(file)
+    const fileID = generateFileID(file)
 
     const meta = file.meta || {}
     meta.name = fileName
@@ -451,7 +466,7 @@ class Uppy {
   }
 
   removeFile (fileID) {
-    const { files, currentUploads } = this.state
+    const { files, currentUploads } = this.getState()
     const updatedFiles = Object.assign({}, files)
     const removedFile = updatedFiles[fileID]
     delete updatedFiles[fileID]
@@ -486,7 +501,7 @@ class Uppy {
     this.log(`File removed: ${removedFile.id}`)
 
     // Clean up object URLs.
-    if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
+    if (removedFile.preview && isObjectURL(removedFile.preview)) {
       URL.revokeObjectURL(removedFile.preview)
     }
 
@@ -582,7 +597,8 @@ class Uppy {
 
     this.setState({
       files: {},
-      totalProgress: 0
+      totalProgress: 0,
+      error: null
     })
   }
 
@@ -688,15 +704,17 @@ class Uppy {
     // connection to the remote server. Therefore, we are throtteling them to
     // prevent accessive function calls.
     // see also: https://github.com/tus/tus-js-client/commit/9940f27b2361fd7e10ba58b09b60d82422183bbb
-    const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: true })
+    // const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: true })
 
-    this.on('upload-progress', _throttledCalculateProgress)
+    this.on('upload-progress', this._calculateProgress)
 
     this.on('upload-success', (file, uploadResp, uploadURL) => {
+      const currentProgress = this.getFile(file.id).progress
       this.setFileState(file.id, {
-        progress: Object.assign({}, this.getFile(file.id).progress, {
+        progress: Object.assign({}, currentProgress, {
           uploadComplete: true,
-          percentage: 100
+          percentage: 100,
+          bytesUploaded: currentProgress.bytesTotal
         }),
         uploadURL: uploadURL,
         isPaused: false
@@ -872,28 +890,37 @@ class Uppy {
    * @param {object} instance The plugin instance to remove.
    */
   removePlugin (instance) {
-    const list = this.plugins[instance.type]
+    this.log(`Removing plugin ${instance.id}`)
+    this.emit('plugin-remove', instance)
 
     if (instance.uninstall) {
       instance.uninstall()
     }
 
+    const list = this.plugins[instance.type].slice()
     const index = list.indexOf(instance)
     if (index !== -1) {
       list.splice(index, 1)
+      this.plugins[instance.type] = list
     }
+
+    const updatedState = this.getState()
+    delete updatedState.plugins[instance.id]
+    this.setState(updatedState)
   }
 
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
   close () {
+    this.log(`Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`)
+
     this.reset()
 
     this._storeUnsubscribe()
 
     this.iteratePlugins((plugin) => {
-      plugin.uninstall()
+      this.removePlugin(plugin)
     })
   }
 
@@ -951,7 +978,7 @@ class Uppy {
       return
     }
 
-    let message = `[Uppy] [${Utils.getTimeStamp()}] ${msg}`
+    let message = `[Uppy] [${getTimeStamp()}] ${msg}`
 
     window['uppyLog'] = window['uppyLog'] + '\n' + 'DEBUG LOG: ' + msg
 
@@ -968,7 +995,7 @@ class Uppy {
     if (msg === `${msg}`) {
       console.log(message)
     } else {
-      message = `[Uppy] [${Utils.getTimeStamp()}]`
+      message = `[Uppy] [${getTimeStamp()}]`
       console.log(message)
       console.dir(msg)
     }
@@ -1179,8 +1206,9 @@ class Uppy {
       })
       .catch((err) => {
         const message = typeof err === 'object' ? err.message : err
-        this.log(message)
-        this.info(message, 'error', 4000)
+        const details = typeof err === 'object' ? err.details : null
+        this.log(`${message} ${details}`)
+        this.info({ message: message, details: details }, 'error', 4000)
         return Promise.reject(typeof err === 'object' ? err : new Error(err))
       })
   }

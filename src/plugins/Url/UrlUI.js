@@ -13,6 +13,7 @@ class UrlUI extends Component {
     // Component is mounted right away, but the tab panel might be animating
     // still, so input element is positioned outside viewport. This fixes it.
     setTimeout(() => {
+      if (!this.input) return
       this.input.focus({ preventScroll: true })
     }, 150)
   }

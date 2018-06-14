@@ -190,7 +190,7 @@ module.exports = class Transloadit extends Plugin {
         // We only replace the hostname for Transloadit's uppy-servers, so that
         // people can self-host them while still using Transloadit for encoding.
         let remote = file.remote
-        if (file.remote && TL_UPPY_SERVER.test(file.remote)) {
+        if (file.remote && TL_UPPY_SERVER.test(file.remote.host)) {
           let newHost = assembly.uppyserver_url
           let path = file.remote.url.replace(file.remote.host, '')
           // remove tailing slash
@@ -216,7 +216,7 @@ module.exports = class Transloadit extends Plugin {
         return newFile
       }
 
-      const files = Object.assign({}, this.uppy.state.files)
+      const files = Object.assign({}, this.uppy.getState().files)
       fileIDs.forEach((id) => {
         files[id] = attachAssemblyMetadata(files[id], assembly)
       })
@@ -231,7 +231,8 @@ module.exports = class Transloadit extends Plugin {
       this.uppy.log(`[Transloadit] Created Assembly ${assembly.assembly_id}`)
       return assembly
     }).catch((err) => {
-      this.uppy.info(this.i18n('creatingAssemblyFailed'), 'error', 0)
+      // this.uppy.info(this.i18n('creatingAssemblyFailed'), 'error', 0)
+      err.message = `${this.i18n('creatingAssemblyFailed')}: ${err.message}`
 
       // Reject the promise.
       throw err
@@ -272,23 +273,21 @@ module.exports = class Transloadit extends Plugin {
   }
 
   findFile (uploadedFile) {
-    const files = this.uppy.state.files
-    for (const id in files) {
-      if (!files.hasOwnProperty(id)) {
-        continue
-      }
+    const files = this.uppy.getFiles()
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
       // Completed file upload.
-      if (files[id].uploadURL === uploadedFile.tus_upload_url) {
-        return files[id]
+      if (file.uploadURL === uploadedFile.tus_upload_url) {
+        return file
       }
       // In-progress file upload.
-      if (files[id].tus && files[id].tus.uploadUrl === uploadedFile.tus_upload_url) {
-        return files[id]
+      if (file.tus && file.tus.uploadUrl === uploadedFile.tus_upload_url) {
+        return file
       }
       if (!uploadedFile.is_tus_file) {
         // Fingers-crossed check for non-tus uploads, eg imported from S3.
-        if (files[id].name === uploadedFile.name && files[id].size === uploadedFile.size) {
-          return files[id]
+        if (file.name === uploadedFile.name && file.size === uploadedFile.size) {
+          return file
         }
       }
     }
@@ -727,6 +726,10 @@ module.exports = class Transloadit extends Plugin {
         }
         this.uppy.log(`[Transloadit] afterUpload(): Got Assembly error ${assembly.assembly_id}`)
         this.uppy.log(error)
+        // this.uppy.info({
+        //   message: error.code,
+        //   details: error.status.reason
+        // }, 'error', 5000)
 
         // Clear postprocessing state for all our files.
         const files = this.getAssemblyFiles(assembly.assembly_id)
@@ -852,10 +855,7 @@ module.exports = class Transloadit extends Plugin {
   }
 
   getAssemblyFiles (assemblyID) {
-    const fileIDs = Object.keys(this.uppy.state.files)
-    return fileIDs.map((fileID) => {
-      return this.uppy.getFile(fileID)
-    }).filter((file) => {
+    return this.uppy.getFiles().filter((file) => {
       return file && file.transloadit && file.transloadit.assembly === assemblyID
     })
   }

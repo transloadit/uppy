@@ -1,11 +1,9 @@
 const Plugin = require('../../core/Plugin')
 const RequestClient = require('../../server/RequestClient')
 const UppySocket = require('../../core/UppySocket')
-const {
-  emitSocketProgress,
-  getSocketHost,
-  limitPromises
-} = require('../../core/Utils')
+const emitSocketProgress = require('../../utils/emitSocketProgress')
+const getSocketHost = require('../../utils/getSocketHost')
+const limitPromises = require('../../utils/limitPromises')
 const Uploader = require('./MultipartUploader')
 
 /**
@@ -42,7 +40,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.type = 'uploader'
     this.id = 'AwsS3Multipart'
     this.title = 'AWS S3 Multipart'
-    this.server = new RequestClient(uppy, opts)
+    this.client = new RequestClient(uppy, opts)
 
     const defaultOptions = {
       timeout: 30 * 1000,
@@ -97,7 +95,7 @@ module.exports = class AwsS3Multipart extends Plugin {
   createMultipartUpload (file) {
     this.assertHost()
 
-    return this.server.post('s3/multipart', {
+    return this.client.post('s3/multipart', {
       filename: file.name,
       type: file.type
     }).then(assertServerError)
@@ -107,7 +105,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.assertHost()
 
     const filename = encodeURIComponent(key)
-    return this.server.get(`s3/multipart/${uploadId}?key=${filename}`)
+    return this.client.get(`s3/multipart/${uploadId}?key=${filename}`)
       .then(assertServerError)
   }
 
@@ -115,7 +113,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.assertHost()
 
     const filename = encodeURIComponent(key)
-    return this.server.get(`s3/multipart/${uploadId}/${number}?key=${filename}`)
+    return this.client.get(`s3/multipart/${uploadId}/${number}?key=${filename}`)
       .then(assertServerError)
   }
 
@@ -124,7 +122,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.server.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
+    return this.client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
       .then(assertServerError)
   }
 
@@ -133,7 +131,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.server.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
+    return this.client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
       .then(assertServerError)
   }
 
@@ -354,14 +352,6 @@ module.exports = class AwsS3Multipart extends Plugin {
     return Promise.all(promises)
   }
 
-  addResumableUploadsCapabilityFlag () {
-    this.uppy.setState({
-      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
-        resumableUploads: true
-      })
-    })
-  }
-
   onFileRemove (fileID, cb) {
     this.uploaderEvents[fileID].on('file-removed', (file) => {
       if (fileID === file.id) cb(file.id)
@@ -414,11 +404,20 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   install () {
-    this.addResumableUploadsCapabilityFlag()
+    this.uppy.setState({
+      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+        resumableUploads: true
+      })
+    })
     this.uppy.addUploader(this.upload)
   }
 
   uninstall () {
+    this.uppy.setState({
+      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+        resumableUploads: false
+      })
+    })
     this.uppy.removeUploader(this.upload)
   }
 }

@@ -1,5 +1,5 @@
 const preact = require('preact')
-const { findDOMElement } = require('../core/Utils')
+const findDOMElement = require('../utils/findDOMElement')
 
 /**
  * Defer a frequent call to the microtask queue.
@@ -44,11 +44,12 @@ module.exports = class Plugin {
   }
 
   getPluginState () {
-    return this.uppy.state.plugins[this.id]
+    const { plugins } = this.uppy.getState()
+    return plugins[this.id]
   }
 
   setPluginState (update) {
-    const plugins = Object.assign({}, this.uppy.state.plugins)
+    const plugins = Object.assign({}, this.uppy.getState().plugins)
     plugins[this.id] = Object.assign({}, plugins[this.id], update)
 
     this.uppy.setState({
@@ -84,6 +85,10 @@ module.exports = class Plugin {
 
       // API for plugins that require a synchronous rerender.
       this.rerender = (state) => {
+        // plugin could be removed, but this.rerender is debounced below,
+        // so it could still be called even after uppy.removePlugin or uppy.close
+        // hence the check
+        if (!this.uppy.getPlugin(this.id)) return
         this.el = preact.render(this.render(state), targetElement, this.el)
       }
       this._updateUI = debounce(this.rerender)
@@ -136,7 +141,7 @@ module.exports = class Plugin {
   }
 
   unmount () {
-    if (this.el && this.el.parentNode) {
+    if (this.isTargetDOMEl && this.el && this.el.parentNode) {
       this.el.parentNode.removeChild(this.el)
     }
   }

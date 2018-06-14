@@ -1,5 +1,7 @@
 const Plugin = require('../../core/Plugin')
-const Utils = require('../../core/Utils')
+const dataURItoBlob = require('../../utils/dataURItoBlob')
+const isPreviewSupported = require('../../utils/isPreviewSupported')
+
 /**
  * The Thumbnail Generator plugin
  *
@@ -9,7 +11,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'thumbnail'
-    this.id = 'ThumbnailGenerator'
+    this.id = this.opts.id || 'ThumbnailGenerator'
     this.title = 'Thumbnail Generator'
     this.queue = []
     this.queueProcessing = false
@@ -105,7 +107,9 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     image = this.protect(image)
 
-    var steps = Math.ceil(Math.log2(image.width / targetWidth))
+    // Use the Polyfill for Math.log2() since IE doesn't support log2
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log2#Polyfill
+    var steps = Math.ceil(Math.log(image.width / targetWidth) * Math.LOG2E)
     if (steps < 1) {
       steps = 1
     }
@@ -140,7 +144,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     }
     return Promise.resolve().then(() => {
-      return Utils.dataURItoBlob(canvas.toDataURL(type, quality), {})
+      return dataURItoBlob(canvas.toDataURL(type, quality), {})
     })
   }
 
@@ -153,13 +157,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * Set the preview URL for a file.
    */
   setPreviewURL (fileID, preview) {
-    const { files } = this.uppy.state
-    this.uppy.setState({
-      files: Object.assign({}, files, {
-        [fileID]: Object.assign({}, files[fileID], {
-          preview: preview
-        })
-      })
+    this.uppy.setFileState(fileID, {
+      preview: preview
     })
   }
 
@@ -183,7 +182,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   requestThumbnail (file) {
-    if (Utils.isPreviewSupported(file.type) && !file.isRemote) {
+    if (isPreviewSupported(file.type) && !file.isRemote) {
       return this.createThumbnail(file, this.opts.thumbnailWidth)
         .then(preview => {
           this.setPreviewURL(file.id, preview)

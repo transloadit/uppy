@@ -3,7 +3,10 @@ const { h, Component } = require('preact')
 
 class AuthBlock extends Component {
   componentDidMount () {
-    this.connectButton.focus()
+    setTimeout(() => {
+      if (!this.connectButton) return
+      this.connectButton.focus({ preventScroll: true })
+    }, 150)
   }
 
   render () {

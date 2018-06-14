@@ -55,7 +55,7 @@ function initUppy () {
       inline: true,
       maxHeight: 400,
       target: '#uppy-dashboard-container',
-      note: 'Images and video only, 1–2 files, up to 1 MB'
+      note: 'Images only, 1–2 files, up to 1 MB'
     })
     .use(Instagram, { target: Dashboard, host: 'https://api2.transloadit.com/uppy-server' })
     .use(Webcam, { target: Dashboard })

@@ -3,8 +3,7 @@ const Translator = require('../../core/Translator')
 const { h } = require('preact')
 const { RequestClient } = require('../../server')
 const UrlUI = require('./UrlUI.js')
-const { toArray } = require('../../core/Utils')
-require('whatwg-fetch')
+const toArray = require('../../utils/toArray')
 
 /**
  * Url
@@ -61,7 +60,7 @@ module.exports = class Url extends Plugin {
 
     this.handlePaste = this.handlePaste.bind(this)
 
-    this.server = new RequestClient(uppy, {host: this.opts.host})
+    this.client = new RequestClient(uppy, {host: this.opts.host})
   }
 
   getFileNameFromUrl (url) {
@@ -90,7 +89,7 @@ module.exports = class Url extends Plugin {
   }
 
   getMeta (url) {
-    return this.server.post('url/meta', { url })
+    return this.client.post('url/meta', { url })
       .then((res) => {
         if (res.error) {
           this.uppy.log('[URL] Error:')
@@ -128,14 +127,19 @@ module.exports = class Url extends Plugin {
             body: {
               fileId: url,
               url: url
-            }
+            },
+            providerOptions: this.client.opts
           }
         }
         return tagFile
       })
       .then((tagFile) => {
         this.uppy.log('[Url] Adding remote file')
-        return this.uppy.addFile(tagFile)
+        try {
+          this.uppy.addFile(tagFile)
+        } catch (err) {
+          // Nothing, restriction errors handled in Core
+        }
       })
       .then(() => {
         const dashboard = this.uppy.getPlugin('Dashboard')

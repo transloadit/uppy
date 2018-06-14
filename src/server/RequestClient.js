@@ -2,6 +2,11 @@
 
 require('whatwg-fetch')
 
+// Remove the trailing slash so we can always safely append /xyz.
+function stripSlash (url) {
+  return url.replace(/\/$/, '')
+}
+
 module.exports = class RequestClient {
   constructor (uppy, opts) {
     this.uppy = uppy
@@ -10,13 +15,21 @@ module.exports = class RequestClient {
   }
 
   get hostname () {
-    const uppyServer = this.uppy.state.uppyServer || {}
+    const { uppyServer } = this.uppy.getState()
     const host = this.opts.host
-    return uppyServer[host] || host
+    return stripSlash(uppyServer && uppyServer[host] ? uppyServer[host] : host)
+  }
+
+  get defaultHeaders () {
+    return {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
   }
 
   onReceiveResponse (response) {
-    const uppyServer = this.uppy.state.uppyServer || {}
+    const state = this.uppy.getState()
+    const uppyServer = state.uppyServer || {}
     const host = this.opts.host
     const headers = response.headers
     // Store the self-identified domain name for the uppy-server we just hit.
@@ -30,33 +43,42 @@ module.exports = class RequestClient {
     return response
   }
 
+  _getUrl (url) {
+    if (/^(https?:|)\/\//.test(url)) {
+      return url
+    }
+    return `${this.hostname}/${url}`
+  }
+
   get (path) {
-    return fetch(`${this.hostname}/${path}`, {
+    return fetch(this._getUrl(path), {
       method: 'get',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
+      headers: this.defaultHeaders
     })
       // @todo validate response status before calling json
       .then(this.onReceiveResponse)
       .then((res) => res.json())
+      .catch((err) => {
+        throw new Error(`Could not get ${this._getUrl(path)}. ${err}`)
+      })
   }
 
   post (path, data) {
-    return fetch(`${this.hostname}/${path}`, {
+    return fetch(this._getUrl(path), {
       method: 'post',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
+      headers: this.defaultHeaders,
       body: JSON.stringify(data)
     })
       .then(this.onReceiveResponse)
-      // @todo validate response status before calling json
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status < 200 || res.status > 300) {
+          throw new Error(`Could not post ${this._getUrl(path)}. ${res.statusText}`)
+        }
+        return res.json()
+      })
+      .catch((err) => {
+        throw new Error(`Could not post ${this._getUrl(path)}. ${err}`)
+      })
   }
 
   delete (path, data) {
@@ -72,5 +94,8 @@ module.exports = class RequestClient {
       .then(this.onReceiveResponse)
       // @todo validate response status before calling json
       .then((res) => res.json())
+      .catch((err) => {
+        throw new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
+      })
   }
 }
