@@ -1,0 +1,29 @@
+{
+  "name": "@uppy/informer",
+  "description": "A notification and error pop-up bar for Uppy.",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "plugin name and other keywords",
+    "uppy",
+    "uppy-plugin"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "preact": "^8.2.9"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^0.25.5"
+  }
+}
