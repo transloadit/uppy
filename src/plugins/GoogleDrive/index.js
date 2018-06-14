@@ -1,6 +1,6 @@
 const Plugin = require('@uppy/core/lib/Plugin')
 const { Provider } = require('@uppy/server-utils')
-const { ProviderView } = require('../../views')
+const ProviderViews = require('@uppy/provider-views')
 const { h } = require('preact')
 
 module.exports = class GoogleDrive extends Plugin {
@@ -34,7 +34,7 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   install () {
-    this.view = new ProviderView(this)
+    this.view = new ProviderViews(this)
     // Set default state for Google Drive
     this.setPluginState({
       authenticated: false,

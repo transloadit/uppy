@@ -4,7 +4,7 @@ const Core = require('@uppy/core')
 const server = require('@uppy/server-utils')
 
 // Reusable views
-const views = require('./views')
+const ProviderView = require('@uppy/provider-views')
 
 // Parent
 const Plugin = require('@uppy/core/lib/Plugin')
@@ -38,7 +38,7 @@ const ReduxDevTools = require('./plugins/ReduxDevTools')
 
 module.exports = {
   Core,
-  views,
+  views: { ProviderView },
   server,
   Plugin,
   StatusBar,
