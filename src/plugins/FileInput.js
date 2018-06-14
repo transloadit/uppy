@@ -1,5 +1,5 @@
 const Plugin = require('../core/Plugin')
-const { toArray } = require('../core/Utils')
+const toArray = require('../utils/toArray')
 const Translator = require('../core/Translator')
 const { h } = require('preact')
 

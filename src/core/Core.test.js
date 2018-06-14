@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 const Core = require('./Core')
-const utils = require('./Utils')
 const Plugin = require('./Plugin')
 const AcquirerPlugin1 = require('../../test/mocks/acquirerPlugin1')
 const AcquirerPlugin2 = require('../../test/mocks/acquirerPlugin2')
@@ -12,15 +11,15 @@ const InvalidPluginWithoutType = require('../../test/mocks/invalidPluginWithoutT
 jest.mock('cuid', () => {
   return () => 'cjd09qwxb000dlql4tp4doz8h'
 })
+jest.mock('../utils/findDOMElement', () => {
+  return () => null
+})
 
 const sampleImage = fs.readFileSync(path.join(__dirname, '../../test/resources/image.jpg'))
 
 describe('src/Core', () => {
   const RealCreateObjectUrl = global.URL.createObjectURL
   beforeEach(() => {
-    jest.spyOn(utils, 'findDOMElement').mockImplementation(path => {
-      return 'some config...'
-    })
     global.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
   })
 

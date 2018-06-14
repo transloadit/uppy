@@ -1,6 +1,6 @@
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
-const { toArray } = require('../../core/Utils')
+const toArray = require('../../utils/toArray')
 const dragDrop = require('drag-drop')
 const { h } = require('preact')
 

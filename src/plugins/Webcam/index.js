@@ -1,10 +1,8 @@
 const { h } = require('preact')
 const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
-const {
-  getFileTypeExtension,
-  canvasToBlob
-} = require('../../core/Utils')
+const getFileTypeExtension = require('../../utils/getFileTypeExtension')
+const canvasToBlob = require('../../utils/canvasToBlob')
 const supportsMediaRecorder = require('./supportsMediaRecorder')
 const CameraIcon = require('./CameraIcon')
 const CameraScreen = require('./CameraScreen')

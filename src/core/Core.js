@@ -1,4 +1,3 @@
-const Utils = require('../core/Utils')
 const Translator = require('../core/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
@@ -6,6 +5,11 @@ const cuid = require('cuid')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
 const DefaultStore = require('../store/DefaultStore')
+const getFileType = require('../utils/getFileType')
+const getFileNameAndExtension = require('../utils/getFileNameAndExtension')
+const generateFileID = require('../utils/generateFileID')
+const isObjectURL = require('../utils/isObjectURL')
+const getTimeStamp = require('../utils/getTimeStamp')
 
 /**
  * Uppy Core module.
@@ -397,7 +401,7 @@ class Uppy {
       file = onBeforeFileAddedResult
     }
 
-    const fileType = Utils.getFileType(file)
+    const fileType = getFileType(file)
     let fileName
     if (file.name) {
       fileName = file.name
@@ -406,10 +410,10 @@ class Uppy {
     } else {
       fileName = 'noname'
     }
-    const fileExtension = Utils.getFileNameAndExtension(fileName).extension
+    const fileExtension = getFileNameAndExtension(fileName).extension
     const isRemote = file.isRemote || false
 
-    const fileID = Utils.generateFileID(file)
+    const fileID = generateFileID(file)
 
     const meta = file.meta || {}
     meta.name = fileName
@@ -497,7 +501,7 @@ class Uppy {
     this.log(`File removed: ${removedFile.id}`)
 
     // Clean up object URLs.
-    if (removedFile.preview && Utils.isObjectURL(removedFile.preview)) {
+    if (removedFile.preview && isObjectURL(removedFile.preview)) {
       URL.revokeObjectURL(removedFile.preview)
     }
 
@@ -974,7 +978,7 @@ class Uppy {
       return
     }
 
-    let message = `[Uppy] [${Utils.getTimeStamp()}] ${msg}`
+    let message = `[Uppy] [${getTimeStamp()}] ${msg}`
 
     window['uppyLog'] = window['uppyLog'] + '\n' + 'DEBUG LOG: ' + msg
 
@@ -991,7 +995,7 @@ class Uppy {
     if (msg === `${msg}`) {
       console.log(message)
     } else {
-      message = `[Uppy] [${Utils.getTimeStamp()}]`
+      message = `[Uppy] [${getTimeStamp()}]`
       console.log(message)
       console.dir(msg)
     }
