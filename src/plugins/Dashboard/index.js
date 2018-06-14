@@ -132,6 +132,7 @@ module.exports = class Dashboard extends Plugin {
     this.isModalOpen = this.isModalOpen.bind(this)
 
     this.addTarget = this.addTarget.bind(this)
+    this.removeTarget = this.removeTarget.bind(this)
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
     this.getFocusableNodes = this.getFocusableNodes.bind(this)
@@ -148,6 +149,16 @@ module.exports = class Dashboard extends Plugin {
     this.updateDashboardElWidth = this.updateDashboardElWidth.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
+  }
+
+  removeTarget (plugin) {
+    const pluginState = this.getPluginState()
+    // filter out the one we want to remove
+    const newTargets = pluginState.targets.filter(target => target.id !== plugin.id)
+
+    this.setPluginState({
+      targets: newTargets
+    })
   }
 
   addTarget (plugin) {
@@ -363,6 +374,8 @@ module.exports = class Dashboard extends Plugin {
 
     this.updateDashboardElWidth()
     window.addEventListener('resize', this.updateDashboardElWidth)
+
+    this.uppy.on('plugin-remove', this.removeTarget)
   }
 
   removeEvents () {
@@ -373,6 +386,8 @@ module.exports = class Dashboard extends Plugin {
 
     this.removeDragDropListener()
     window.removeEventListener('resize', this.updateDashboardElWidth)
+
+    this.uppy.off('plugin-remove', this.removeTarget)
   }
 
   updateDashboardElWidth () {

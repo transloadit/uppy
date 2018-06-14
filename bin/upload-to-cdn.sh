@@ -8,7 +8,7 @@
 #  - Checks if a tag is being built (on Travis - otherwise opts to continue execution regardless)
 #  - Installs AWS CLI if needed
 #  - Assumed a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
-#  - Runs npm pack, and stores files to e.g. https://transloadit.edgly.net/releases/uppy/v0.25.2/dist/uppy.css
+#  - Runs npm pack, and stores files to e.g. https://transloadit.edgly.net/releases/uppy/v0.25.5/dist/uppy.css
 #  - Uses local package by default, if [version] argument was specified, takes package from npm
 #
 # Run as:
@@ -98,6 +98,7 @@ pushd "${__root}" > /dev/null 2>&1
       --region="us-east-1" \
       --exclude 'website/*' \
       --exclude 'node_modules/*' \
+      --exclude 'test/*/node_modules/*' \
       --exclude 'examples/*/node_modules/*' \
     ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}"
     echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}/"

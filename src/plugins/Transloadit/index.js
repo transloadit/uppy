@@ -231,7 +231,8 @@ module.exports = class Transloadit extends Plugin {
       this.uppy.log(`[Transloadit] Created Assembly ${assembly.assembly_id}`)
       return assembly
     }).catch((err) => {
-      this.uppy.info(this.i18n('creatingAssemblyFailed'), 'error', 0)
+      // this.uppy.info(this.i18n('creatingAssemblyFailed'), 'error', 0)
+      err.message = `${this.i18n('creatingAssemblyFailed')}: ${err.message}`
 
       // Reject the promise.
       throw err
@@ -725,6 +726,10 @@ module.exports = class Transloadit extends Plugin {
         }
         this.uppy.log(`[Transloadit] afterUpload(): Got Assembly error ${assembly.assembly_id}`)
         this.uppy.log(error)
+        // this.uppy.info({
+        //   message: error.code,
+        //   details: error.status.reason
+        // }, 'error', 5000)
 
         // Clear postprocessing state for all our files.
         const files = this.getAssemblyFiles(assembly.assembly_id)

@@ -43,6 +43,13 @@ module.exports = class RequestClient {
     return response
   }
 
+  _getUrl (url) {
+    if (/^(https?:|)\/\//.test(url)) {
+      return url
+    }
+    return `${this.hostname}/${url}`
+  }
+
   get (path) {
     return fetch(this._getUrl(path), {
       method: 'get',
@@ -51,6 +58,9 @@ module.exports = class RequestClient {
       // @todo validate response status before calling json
       .then(this.onReceiveResponse)
       .then((res) => res.json())
+      .catch((err) => {
+        throw new Error(`Could not get ${this._getUrl(path)}. ${err}`)
+      })
   }
 
   post (path, data) {
@@ -62,17 +72,13 @@ module.exports = class RequestClient {
       .then(this.onReceiveResponse)
       .then((res) => {
         if (res.status < 200 || res.status > 300) {
-          throw new Error(res.statusText)
+          throw new Error(`Could not post ${this._getUrl(path)}. ${res.statusText}`)
         }
         return res.json()
       })
-  }
-
-  _getUrl (url) {
-    if (/^(https?:|)\/\//.test(url)) {
-      return url
-    }
-    return `${this.hostname}/${url}`
+      .catch((err) => {
+        throw new Error(`Could not post ${this._getUrl(path)}. ${err}`)
+      })
   }
 
   delete (path, data) {
@@ -88,5 +94,8 @@ module.exports = class RequestClient {
       .then(this.onReceiveResponse)
       // @todo validate response status before calling json
       .then((res) => res.json())
+      .catch((err) => {
+        throw new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
+      })
   }
 }

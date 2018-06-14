@@ -40,7 +40,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.type = 'uploader'
     this.id = 'AwsS3Multipart'
     this.title = 'AWS S3 Multipart'
-    this.server = new RequestClient(uppy, opts)
+    this.client = new RequestClient(uppy, opts)
 
     const defaultOptions = {
       timeout: 30 * 1000,
@@ -95,7 +95,7 @@ module.exports = class AwsS3Multipart extends Plugin {
   createMultipartUpload (file) {
     this.assertHost()
 
-    return this.server.post('s3/multipart', {
+    return this.client.post('s3/multipart', {
       filename: file.name,
       type: file.type
     }).then(assertServerError)
@@ -105,7 +105,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.assertHost()
 
     const filename = encodeURIComponent(key)
-    return this.server.get(`s3/multipart/${uploadId}?key=${filename}`)
+    return this.client.get(`s3/multipart/${uploadId}?key=${filename}`)
       .then(assertServerError)
   }
 
@@ -113,7 +113,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.assertHost()
 
     const filename = encodeURIComponent(key)
-    return this.server.get(`s3/multipart/${uploadId}/${number}?key=${filename}`)
+    return this.client.get(`s3/multipart/${uploadId}/${number}?key=${filename}`)
       .then(assertServerError)
   }
 
@@ -122,7 +122,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.server.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
+    return this.client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
       .then(assertServerError)
   }
 
@@ -131,7 +131,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.server.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
+    return this.client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
       .then(assertServerError)
   }
 
