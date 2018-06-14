@@ -82,6 +82,7 @@
     "isomorphic-fetch": "2.2.1",
     "jest": "^22.0.6",
     "json3": "^3.3.2",
+    "lerna": "^2.11.0",
     "lint-staged": "^6.0.0",
     "minify-stream": "^1.1.0",
     "mkdirp": "0.5.1",
