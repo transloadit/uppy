@@ -20,7 +20,7 @@ const Url = require('./plugins/Url')
 const Webcam = require('./plugins/Webcam')
 
 // Progressindicators
-const StatusBar = require('./plugins/StatusBar')
+const StatusBar = require('@uppy/statusbar')
 const ProgressBar = require('./plugins/ProgressBar')
 const Informer = require('@uppy/informer')
 

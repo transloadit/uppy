@@ -1,6 +1,6 @@
 const React = require('react')
 const PropTypes = require('prop-types')
-const StatusBarPlugin = require('../plugins/StatusBar')
+const StatusBarPlugin = require('@uppy/statusbar')
 const uppyPropType = require('./propTypes').uppy
 
 const h = React.createElement
