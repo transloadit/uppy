@@ -25,7 +25,7 @@ const ProgressBar = require('./plugins/ProgressBar')
 const Informer = require('./plugins/Informer')
 
 // Uploaders
-const Tus = require('./plugins/Tus')
+const Tus = require('@uppy/tus')
 const XHRUpload = require('./plugins/XHRUpload')
 const Transloadit = require('./plugins/Transloadit')
 const AwsS3 = require('./plugins/AwsS3')
