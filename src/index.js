@@ -17,7 +17,7 @@ const GoogleDrive = require('./plugins/GoogleDrive')
 const Dropbox = require('./plugins/Dropbox')
 const Instagram = require('./plugins/Instagram')
 const Url = require('./plugins/Url')
-const Webcam = require('./plugins/Webcam')
+const Webcam = require('@uppy/webcam')
 
 // Progressindicators
 const StatusBar = require('@uppy/statusbar')

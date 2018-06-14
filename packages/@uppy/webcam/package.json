@@ -1,0 +1,35 @@
+{
+  "name": "@uppy/webcam",
+  "description": "Uppy plugin that takes photos or records videos using the device's camera.",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "uppy",
+    "uppy-plugin",
+    "webcam",
+    "picture",
+    "photo",
+    "video",
+    "record",
+    "mediarecorder"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/utils": "^0.25.5",
+    "preact": "^8.2.9"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^0.25.5"
+  }
+}
