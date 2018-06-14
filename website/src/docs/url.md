@@ -24,7 +24,7 @@ uppy.use(Url, {
 ```js
 uppy.use(Url, {
   target: Dashboard,
-  host: 'https://server.uppy.io/',
+  serverUrl: 'https://server.uppy.io/',
   locale: {}
 })
 ```
@@ -37,7 +37,7 @@ A unique identifier for this plugin. Defaults to `'Url'`.
 
 DOM element, CSS selector, or plugin to mount the Url provider into. This should normally be the Dashboard.
 
-### `host: null`
+### `serverUrl: null`
 
 URL to an Uppy Server instance.
 

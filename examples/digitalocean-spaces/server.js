@@ -39,7 +39,7 @@ app.use('/uppy-server', uppy.app({
       region: process.env.UPPYSERVER_AWS_REGION
     }
   },
-  server: { host: `localhost:${PORT}` }
+  server: { serverUrl: `localhost:${PORT}` }
 }))
 
 // Serve the built CSS file.

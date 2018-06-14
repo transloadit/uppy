@@ -16,7 +16,7 @@ module.exports = class RequestClient {
 
   get hostname () {
     const { uppyServer } = this.uppy.getState()
-    const host = this.opts.host
+    const host = this.opts.serverUrl
     return stripSlash(uppyServer && uppyServer[host] ? uppyServer[host] : host)
   }
 
@@ -30,7 +30,7 @@ module.exports = class RequestClient {
   onReceiveResponse (response) {
     const state = this.uppy.getState()
     const uppyServer = state.uppyServer || {}
-    const host = this.opts.host
+    const host = this.opts.serverUrl
     const headers = response.headers
     // Store the self-identified domain name for the uppy-server we just hit.
     if (headers.has('i-am') && headers.get('i-am') !== uppyServer[host]) {

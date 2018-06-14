@@ -9,7 +9,7 @@ The Provider plugins help you connect to your accounts with remote file provider
 
 As of now, the supported providers are [**Dropbox**](/docs/dropbox), [**GoogleDrive**](/docs/google-drive), [**Instagram**](/docs/instagram), and [**Url**](/docs/url).
 
-Usage of the Provider plugins is not that different from any other *acquirer* plugin, except that it takes an extra option `host`, which specifies the url to your running `uppy-server`. This allows Uppy to know what server to connect to when server related operations are required by the provider plugin. Here's a quick example.
+Usage of the Provider plugins is not that different from any other *acquirer* plugin, except that it takes an extra option `serverUrl`, which specifies the url to your running `uppy-server`. This allows Uppy to know what server to connect to when server related operations are required by the provider plugin. Here's a quick example.
 
 ```js
 const Uppy = require('uppy/lib/core')
@@ -21,17 +21,17 @@ uppy.use(Dashboard, {
 
 // for Google Drive
 const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
-uppy.use(GoogleDrive, {target: Dashboard, host: 'http://localhost:3020'})
+uppy.use(GoogleDrive, {target: Dashboard, serverUrl: 'http://localhost:3020'})
 
 // for Dropbox
 const Dropbox = require('uppy/lib/plugins/Dropbox')
-uppy.use(Dropbox, {target: Dashboard, host: 'http://localhost:3020'})
+uppy.use(Dropbox, {target: Dashboard, serverUrl: 'http://localhost:3020'})
 
 // for Instagram
 const Instagram = require('uppy/lib/plugins/Instagram')
-uppy.use(Instagram, {target: Dashboard, host: 'http://localhost:3020'})
+uppy.use(Instagram, {target: Dashboard, serverUrl: 'http://localhost:3020'})
 
 // for Url
 const Url = require('uppy/lib/plugins/Url')
-uppy.use(Url, {target: Dashboard, host: 'http://localhost:3020'})
+uppy.use(Url, {target: Dashboard, serverUrl: 'http://localhost:3020'})
 ```

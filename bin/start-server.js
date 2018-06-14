@@ -9,7 +9,7 @@ Object.assign(process.env, {
   UPPYSERVER_PROTOCOL: 'http',
   UPPYSERVER_PORT: '3020',
   UPPY_ENDPOINT: 'localhost:3452',
-  UPPY_ENDPOINTS: 'localhost:3452'
+  UPPY_ENDPOINTS: 'localhost:3452,localhost:4000'
 })
 
 require('uppy-server/lib/standalone/start-server')

@@ -102,7 +102,7 @@
     "temp-write": "^3.4.0",
     "tinyify": "^2.4.0",
     "typescript": "^2.8.1",
-    "uppy-server": "^0.11.2",
+    "uppy-server": "^0.13.1",
     "watchify": "^3.9.0",
     "wdio-mocha-framework": "^0.5.12",
     "wdio-sauce-service": "^0.4.6",

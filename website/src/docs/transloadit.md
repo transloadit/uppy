@@ -37,7 +37,7 @@ const Dropbox = require('uppy/lib/plugins/Dropbox')
 const Transloadit = require('uppy/lib/plugins/Transloadit')
 
 uppy.use(Dropbox, {
-  host: Transloadit.UPPY_SERVER
+  serverUrl: Transloadit.UPPY_SERVER
 })
 ```
 
@@ -45,7 +45,7 @@ The value of this constant is `https://api2.transloadit.com/uppy-server`. If you
 
 ```js
 uppy.use(Dropbox, {
-  host: 'https://api2-us-east-1.transloadit.com/uppy-server'
+  serverUrl: 'https://api2-us-east-1.transloadit.com/uppy-server'
 })
 ```
 

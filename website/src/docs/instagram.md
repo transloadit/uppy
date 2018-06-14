@@ -24,7 +24,7 @@ uppy.use(Instagram, {
 ```js
 uppy.use(Instagram, {
   target: Dashboard,
-  host: 'https://server.uppy.io/',
+  serverUrl: 'https://server.uppy.io/',
 })
 ```
 
@@ -36,7 +36,7 @@ A unique identifier for this plugin. Defaults to `'Instagram'`.
 
 DOM element, CSS selector, or plugin to mount the Instagram provider into. This should normally be the Dashboard.
 
-### `host: null`
+### `serverUrl: null`
 
 URL to an Uppy Server instance.
 

@@ -13,4 +13,4 @@ uppy.use(Dashboard, {
 })
 
 // No client side changes needed!
-uppy.use(AwsS3, { host: '/uppy-server' })
+uppy.use(AwsS3, { serverUrl: '/uppy-server' })

@@ -283,7 +283,7 @@ declare namespace plugins {
 		expires: number;
 		serviceWorker: boolean;
 		indexedDB: any;
-		host: string;
+		serverUrl: string;
 	}
 	class GoogleDrive extends core.Plugin {
 		constructor(uppy: core.Uppy, opts: Partial<GoogleDriveOptions>);
@@ -296,7 +296,7 @@ declare namespace plugins {
 		deleteBlobs(): Promise<any>;
 	}
 	interface InstagramOptions extends core.CoreConfig {
-		host: string;
+		serverUrl: string;
 	}
 	class Instagram extends core.Plugin {
 		constructor(uppy: core.Uppy, opts: Partial<InstagramOptions>);
@@ -345,20 +345,20 @@ declare namespace plugins {
 		constructor(uppy: core.Uppy, opts: Partial<StatusBarOptions>);
 	}
 	interface UrlOptions extends core.CoreConfig {
-		host: string;
+		serverUrl: string;
 	}
 	class Url extends core.Plugin {
 		constructor(uppy: core.Uppy, opts: Partial<UrlOptions>);
 	}
 	interface DropboxOptions extends core.CoreConfig {
-		host: string;
+		serverUrl: string;
 	}
 	class Dropbox extends core.Plugin {
 		constructor(uppy: core.Uppy, opts: Partial<DropboxOptions>);
 	}
 	interface AwsS3Options extends core.CoreConfig {
 		limit: number;
-		host: string;
+		serverUrl: string;
 		timeout: number;
 	}
 	class AwsS3 extends core.Plugin {

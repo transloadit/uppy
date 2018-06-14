@@ -24,7 +24,7 @@ uppy.use(GoogleDrive, {
 ```js
 uppy.use(GoogleDrive, {
   target: Dashboard,
-  host: 'https://server.uppy.io/',
+  serverUrl: 'https://server.uppy.io/',
 })
 ```
 
@@ -36,7 +36,7 @@ A unique identifier for this plugin. Defaults to `'GoogleDrive'`.
 
 DOM element, CSS selector, or plugin to mount the GoogleDrive provider into. This should normally be the Dashboard.
 
-### `host: null`
+### `serverUrl: null`
 
 URL to an Uppy Server instance.
 

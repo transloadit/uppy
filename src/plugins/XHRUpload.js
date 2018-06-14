@@ -325,7 +325,7 @@ module.exports = class XHRUpload extends Plugin {
       )
       .then((res) => {
         const token = res.token
-        const host = getSocketHost(file.remote.host)
+        const host = getSocketHost(file.remote.serverUrl)
         const socket = new UppySocket({ target: `${host}/api/${token}` })
 
         socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
