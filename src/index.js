@@ -15,7 +15,7 @@ const DragDrop = require('@uppy/drag-drop')
 const FileInput = require('./plugins/FileInput')
 const GoogleDrive = require('./plugins/GoogleDrive')
 const Dropbox = require('./plugins/Dropbox')
-const Instagram = require('./plugins/Instagram')
+const Instagram = require('@uppy/instagram')
 const Url = require('./plugins/Url')
 const Webcam = require('@uppy/webcam')
 
