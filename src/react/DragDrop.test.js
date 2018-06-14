@@ -7,7 +7,7 @@ beforeAll(() => {
   configure({ adapter: new ReactAdapter() })
 })
 
-jest.mock('../plugins/DragDrop', () => require('./__mocks__/DragDropPlugin'))
+jest.mock('@uppy/drag-drop', () => require('./__mocks__/DragDropPlugin'))
 
 const DragDrop = require('./DragDrop')
 
