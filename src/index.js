@@ -31,7 +31,7 @@ const Transloadit = require('./plugins/Transloadit')
 const AwsS3 = require('./plugins/AwsS3')
 
 // Helpers and utilities
-const Form = require('./plugins/Form')
+const Form = require('@uppy/form')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const GoldenRetriever = require('./plugins/GoldenRetriever')
 const ReduxDevTools = require('./plugins/ReduxDevTools')
