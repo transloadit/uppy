@@ -87,8 +87,8 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   assertHost () {
-    if (!this.opts.host) {
-      throw new Error('Expected a `host` option containing an uppy-server address.')
+    if (!this.opts.serverUrl) {
+      throw new Error('Expected a `serverUrl` option containing an uppy-server address.')
     }
   }
 
@@ -285,7 +285,7 @@ module.exports = class AwsS3Multipart extends Plugin {
   connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
-      const host = getSocketHost(file.remote.host)
+      const host = getSocketHost(file.remote.serverUrl)
       const socket = new UppySocket({ target: `${host}/api/${token}` })
       this.uploaderSockets[socket] = socket
       this.uploaderEvents[file.id] = createEventTracker(this.uppy)

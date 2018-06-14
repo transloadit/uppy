@@ -21,7 +21,7 @@ module.exports = class Dropbox extends Plugin {
     // writing out the key explicitly for readability the key used to store
     // the provider instance must be equal to this.id.
     this[this.id] = new Provider(uppy, {
-      host: this.opts.host,
+      serverUrl: this.opts.serverUrl,
       provider: 'dropbox'
     })
 
@@ -35,7 +35,7 @@ module.exports = class Dropbox extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
-    this.opts.hostPattern = opts.hostPattern || opts.host
+    this.opts.serverPattern = opts.serverPattern || opts.serverUrl
   }
 
   install () {
@@ -111,7 +111,7 @@ module.exports = class Dropbox extends Plugin {
   }
 
   getItemThumbnailUrl (item) {
-    return `${this.opts.host}/${this.Dropbox.id}/thumbnail/${this.getItemRequestPath(item)}`
+    return `${this.opts.serverUrl}/${this.Dropbox.id}/thumbnail/${this.getItemRequestPath(item)}`
   }
 
   render (state) {

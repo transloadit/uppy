@@ -15,7 +15,7 @@ module.exports = class GoogleDrive extends Plugin {
       </svg>
 
     this[this.id] = new Provider(uppy, {
-      host: this.opts.host,
+      serverUrl: this.opts.serverUrl,
       provider: 'drive',
       authProvider: 'google'
     })
@@ -30,7 +30,7 @@ module.exports = class GoogleDrive extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
-    this.opts.hostPattern = opts.hostPattern || opts.host
+    this.opts.serverPattern = opts.serverPattern || opts.serverUrl
   }
 
   install () {
@@ -115,7 +115,7 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   getItemThumbnailUrl (item) {
-    return `${this.opts.host}/${this.GoogleDrive.id}/thumbnail/${this.getItemRequestPath(item)}`
+    return `${this.opts.serverUrl}/${this.GoogleDrive.id}/thumbnail/${this.getItemRequestPath(item)}`
   }
 
   render (state) {

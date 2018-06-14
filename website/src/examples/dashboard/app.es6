@@ -50,19 +50,19 @@ function uppyInit () {
   })
 
   if (opts.GoogleDrive) {
-    uppy.use(GoogleDrive, { target: Dashboard, host: UPPY_SERVER })
+    uppy.use(GoogleDrive, { target: Dashboard, serverUrl: UPPY_SERVER })
   }
 
   if (opts.Dropbox) {
-    uppy.use(Dropbox, { target: Dashboard, host: UPPY_SERVER })
+    uppy.use(Dropbox, { target: Dashboard, serverUrl: UPPY_SERVER })
   }
 
   if (opts.Instagram) {
-    uppy.use(Instagram, { target: Dashboard, host: UPPY_SERVER })
+    uppy.use(Instagram, { target: Dashboard, serverUrl: UPPY_SERVER })
   }
 
   if (opts.Url) {
-    uppy.use(Url, { target: Dashboard, host: UPPY_SERVER })
+    uppy.use(Url, { target: Dashboard, serverUrl: UPPY_SERVER })
   }
 
   if (opts.Webcam) {

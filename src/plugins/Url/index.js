@@ -45,7 +45,7 @@ module.exports = class Url extends Plugin {
     this.translator = new Translator({locale: this.locale})
     this.i18n = this.translator.translate.bind(this.translator)
 
-    this.hostname = this.opts.host
+    this.hostname = this.opts.serverUrl
 
     if (!this.hostname) {
       throw new Error('Uppy Server hostname is required, please consult https://uppy.io/docs/server')
@@ -60,7 +60,7 @@ module.exports = class Url extends Plugin {
 
     this.handlePaste = this.handlePaste.bind(this)
 
-    this.client = new RequestClient(uppy, {host: this.opts.host})
+    this.client = new RequestClient(uppy, { serverUrl: this.opts.serverUrl })
   }
 
   getFileNameFromUrl (url) {
@@ -122,7 +122,7 @@ module.exports = class Url extends Plugin {
             url: url
           },
           remote: {
-            host: this.opts.host,
+            serverUrl: this.opts.serverUrl,
             url: `${this.hostname}/url/get`,
             body: {
               fileId: url,

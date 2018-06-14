@@ -10,11 +10,11 @@ const uppy = Uppy({
 })
 
 uppy.use(GoogleDrive, {
-  host: 'http://localhost:3020'
+  serverUrl: 'http://localhost:3020'
 })
 
 uppy.use(MyCustomProvider, {
-  host: 'http://localhost:3020'
+  serverUrl: 'http://localhost:3020'
 })
 
 uppy.use(Dashboard, {

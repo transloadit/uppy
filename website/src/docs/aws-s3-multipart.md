@@ -11,7 +11,7 @@ The `AwsS3Multipart` plugin can be used to upload files directly to an S3 bucket
 const AwsS3Multipart = require('uppy/lib/plugins/AwsS3/Multipart')
 uppy.use(AwsS3Multipart, {
   limit: 4,
-  host: 'https://uppy-server.myapp.net/'
+  serverUrl: 'https://uppy-server.myapp.net/'
 })
 ```
 
@@ -21,7 +21,7 @@ uppy.use(AwsS3Multipart, {
 
 The maximum amount of chunks to upload simultaneously. `0` means unlimited.
 
-### host: null
+### serverUrl: null
 
 The Uppy Server URL to use to proxy calls to the S3 Multipart API.
 

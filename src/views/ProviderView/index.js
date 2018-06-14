@@ -184,7 +184,7 @@ module.exports = class ProviderView {
         fileId: this.plugin.getItemId(file)
       },
       remote: {
-        host: this.plugin.opts.host,
+        serverUrl: this.plugin.opts.serverUrl,
         url: `${this.Provider.fileUrl(this.plugin.getItemRequestPath(file))}`,
         body: {
           fileId: this.plugin.getItemId(file)
@@ -455,9 +455,9 @@ module.exports = class ProviderView {
     const authWindow = window.open(link, '_blank')
     const noProtocol = (url) => url.replace(/^(https?:|)\/\//, '')
     const handleToken = (e) => {
-      const allowedOrigin = new RegExp(noProtocol(this.plugin.opts.hostPattern))
+      const allowedOrigin = new RegExp(noProtocol(this.plugin.opts.serverPattern))
       if (!allowedOrigin.test(noProtocol(e.origin)) || e.source !== authWindow) {
-        this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.hostPattern}`)
+        this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.serverPattern}`)
         return
       }
       authWindow.close()

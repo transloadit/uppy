@@ -20,7 +20,7 @@ module.exports = class App extends React.Component {
   componentWillMount () {
     this.uppy = new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-      .use(GoogleDrive, { host: 'https://server.uppy.io' })
+      .use(GoogleDrive, { serverUrl: 'https://server.uppy.io' })
 
     this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
