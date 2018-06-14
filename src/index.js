@@ -12,7 +12,7 @@ const Plugin = require('@uppy/core/lib/Plugin')
 // Acquirers
 const Dashboard = require('@uppy/dashboard')
 const DragDrop = require('@uppy/drag-drop')
-const FileInput = require('./plugins/FileInput')
+const FileInput = require('@uppy/file-input')
 const GoogleDrive = require('./plugins/GoogleDrive')
 const Dropbox = require('./plugins/Dropbox')
 const Instagram = require('@uppy/instagram')

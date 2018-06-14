@@ -1,0 +1,30 @@
+{
+  "name": "@uppy/file-input",
+  "description": "Simple UI of a file input button that works with Uppy right out of the box",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "upload",
+    "uppy",
+    "uppy-plugin",
+    "file-input"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/utils": "^0.25.5"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^0.25.5"
+  }
+}
