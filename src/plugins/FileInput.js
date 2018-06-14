@@ -1,6 +1,6 @@
 const Plugin = require('../core/Plugin')
 const toArray = require('@uppy/utils/lib/toArray')
-const Translator = require('../core/Translator')
+const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 
 module.exports = class FileInput extends Plugin {

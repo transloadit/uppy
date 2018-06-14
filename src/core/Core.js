@@ -1,4 +1,4 @@
-const Translator = require('../core/Translator')
+const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
 // const throttle = require('lodash.throttle')

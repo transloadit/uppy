@@ -1,5 +1,5 @@
 const Plugin = require('../../core/Plugin')
-const Translator = require('../../core/Translator')
+const Translator = require('@uppy/utils/lib/Translator')
 const dragDrop = require('drag-drop')
 const DashboardUI = require('./Dashboard')
 const StatusBar = require('../StatusBar')

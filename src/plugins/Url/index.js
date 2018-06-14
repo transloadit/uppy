@@ -1,5 +1,5 @@
 const Plugin = require('../../core/Plugin')
-const Translator = require('../../core/Translator')
+const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 const { RequestClient } = require('../../server')
 const UrlUI = require('./UrlUI.js')

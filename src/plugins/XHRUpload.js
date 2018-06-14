@@ -1,6 +1,6 @@
 const Plugin = require('../core/Plugin')
 const cuid = require('cuid')
-const Translator = require('../core/Translator')
+const Translator = require('@uppy/utils/lib/Translator')
 const UppySocket = require('../core/UppySocket')
 const Provider = require('../server/Provider')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')

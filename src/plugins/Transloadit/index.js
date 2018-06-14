@@ -1,4 +1,4 @@
-const Translator = require('../../core/Translator')
+const Translator = require('@uppy/utils/lib/Translator')
 const Plugin = require('../../core/Plugin')
 const Tus = require('../Tus')
 const Client = require('./Client')

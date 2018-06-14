@@ -1,5 +1,5 @@
 const Plugin = require('../../core/Plugin')
-const Translator = require('../../core/Translator')
+const Translator = require('@uppy/utils/lib/Translator')
 const toArray = require('@uppy/utils/lib/toArray')
 const dragDrop = require('drag-drop')
 const { h } = require('preact')

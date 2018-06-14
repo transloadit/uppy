@@ -1,5 +1,5 @@
 const Plugin = require('../../core/Plugin')
-const Translator = require('../../core/Translator')
+const Translator = require('@uppy/utils/lib/Translator')
 const StatusBarUI = require('./StatusBar')
 const statusBarStates = require('./StatusBarStates')
 const getSpeed = require('@uppy/utils/lib/getSpeed')
