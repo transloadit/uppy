@@ -22,7 +22,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "^0.25.5"
+    "@uppy/utils": "^0.25.5",
+    "preact": "^8.2.9"
   },
   "peerDependencies": {
     "@uppy/core": "^0.25.5"
