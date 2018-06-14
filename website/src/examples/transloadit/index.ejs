@@ -125,7 +125,7 @@ uppy
     },
     waitForEncoding: true
   })
-  .use(Instagram, { target: Dashboard, host: 'https://api2.transloadit.com/uppy-server' })
+  .use(Instagram, { target: Dashboard, serverUrl: 'https://api2.transloadit.com/uppy-server' })
   .use(Dashboard, {
     inline: true,
     maxHeight: 400,

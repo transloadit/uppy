@@ -18,7 +18,7 @@ module.exports = class Instagram extends Plugin {
     )
 
     this[this.id] = new Provider(uppy, {
-      host: this.opts.host,
+      serverUrl: this.opts.serverUrl,
       provider: 'instagram',
       authProvider: 'instagram'
     })
@@ -33,7 +33,7 @@ module.exports = class Instagram extends Plugin {
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
-    this.opts.hostPattern = opts.hostPattern || opts.host
+    this.opts.serverPattern = opts.serverPattern || opts.serverUrl
   }
 
   install () {

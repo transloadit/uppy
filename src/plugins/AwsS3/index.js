@@ -46,13 +46,13 @@ module.exports = class AwsS3 extends Plugin {
   }
 
   getUploadParameters (file) {
-    if (!this.opts.host) {
-      throw new Error('Expected a `host` option containing an uppy-server address.')
+    if (!this.opts.serverUrl) {
+      throw new Error('Expected a `serverUrl` option containing an uppy-server address.')
     }
 
     const filename = encodeURIComponent(file.name)
     const type = encodeURIComponent(file.type)
-    return fetch(`${this.opts.host}/s3/params?filename=${filename}&type=${type}`, {
+    return fetch(`${this.opts.serverUrl}/s3/params?filename=${filename}&type=${type}`, {
       method: 'get',
       headers: { accept: 'application/json' }
     }).then((response) => response.json())

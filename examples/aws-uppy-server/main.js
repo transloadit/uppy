@@ -10,7 +10,7 @@ const uppy = Uppy({
 })
 
 uppy.use(GoogleDrive, {
-  host: 'http://localhost:3020'
+  serverUrl: 'http://localhost:3020'
 })
 uppy.use(Webcam)
 uppy.use(Dashboard, {
@@ -19,5 +19,5 @@ uppy.use(Dashboard, {
   plugins: ['GoogleDrive', 'Webcam']
 })
 uppy.use(AwsS3, {
-  host: 'http://localhost:3020'
+  serverUrl: 'http://localhost:3020'
 })

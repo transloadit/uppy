@@ -33,8 +33,8 @@ const Tus = require('uppy/lib/plugins/Tus')
 
 const uppy = Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })
-  .use(GoogleDrive, { target: Dashboard, host: 'https://server.uppy.io' })
-  .use(Instagram, { target: Dashboard, host: 'https://server.uppy.io' })
+  .use(GoogleDrive, { target: Dashboard, serverUrl: 'https://server.uppy.io' })
+  .use(Instagram, { target: Dashboard, serverUrl: 'https://server.uppy.io' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: 'https://master.tus.io/files/' })
   .on('complete', (result) => {

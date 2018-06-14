@@ -15,7 +15,7 @@ const ms = require('ms')
 uppy.use(AwsS3, {
   limit: 2,
   timeout: ms('1 minute'),
-  host: 'https://uppy-server.myapp.com/'
+  serverUrl: 'https://uppy-server.myapp.com/'
 })
 ```
 
@@ -29,13 +29,13 @@ There is also a separate plugin for S3 Multipart uploads. Multipart in this sens
 
 A unique identifier for this plugin. Defaults to `'AwsS3'`.
 
-### `host`
+### `serverUrl`
 
 When using [uppy-server][uppy-server docs] to sign S3 uploads, set this option to the root URL of the uppy-server.
 
 ```js
 uppy.use(AwsS3, {
-  host: 'https://uppy-server.my-app.com/'
+  serverUrl: 'https://uppy-server.my-app.com/'
 })
 ```
 

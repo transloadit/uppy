@@ -57,7 +57,7 @@ function initUppy () {
       target: '#uppy-dashboard-container',
       note: 'Images only, 1–2 files, up to 1 MB'
     })
-    .use(Instagram, { target: Dashboard, host: 'https://api2.transloadit.com/uppy-server' })
+    .use(Instagram, { target: Dashboard, serverUrl: 'https://api2.transloadit.com/uppy-server' })
     .use(Webcam, { target: Dashboard })
 
   uppy

@@ -18,8 +18,8 @@ import Uppy = require('uppy');
 (() => {
 	const uppy = Uppy.Core({ autoProceed: false })
 		.use(Uppy.Dashboard, { trigger: '#select-files' })
-		.use(Uppy.GoogleDrive, { target: Uppy.Dashboard, host: 'https://server.uppy.io' })
-		.use(Uppy.Instagram, { target: Uppy.Dashboard, host: 'https://server.uppy.io' })
+		.use(Uppy.GoogleDrive, { target: Uppy.Dashboard, serverUrl: 'https://server.uppy.io' })
+		.use(Uppy.Instagram, { target: Uppy.Dashboard, serverUrl: 'https://server.uppy.io' })
 		.use(Uppy.Webcam, { target: Uppy.Dashboard })
 		.use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
 		.run()

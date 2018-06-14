@@ -50,9 +50,9 @@ const uppy = Uppy({
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
   ]
 })
-.use(GoogleDrive, { target: Dashboard, host: 'https://server.uppy.io' })
-.use(Dropbox, { target: Dashboard, host: 'https://server.uppy.io' })
-.use(Instagram, { target: Dashboard, host: 'https://server.uppy.io' })
+.use(GoogleDrive, { target: Dashboard, serverUrl: 'https://server.uppy.io' })
+.use(Dropbox, { target: Dashboard, serverUrl: 'https://server.uppy.io' })
+.use(Instagram, { target: Dashboard, serverUrl: 'https://server.uppy.io' })
 .use(Webcam, { target: Dashboard })
 .use(Tus, { endpoint: 'https://master.tus.io/files/' })
 

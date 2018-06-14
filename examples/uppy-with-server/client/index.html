@@ -12,8 +12,8 @@
     <script>
       const uppy = Uppy.Core({debug: true, autoProceed: false})
         .use(Uppy.Dashboard, { trigger: '#uppyModalOpener' })
-        .use(Uppy.Instagram, { target: Uppy.Dashboard, host: 'http://localhost:3020' })
-        .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, host: 'http://localhost:3020' })
+        .use(Uppy.Instagram, { target: Uppy.Dashboard, serverUrl: 'http://localhost:3020' })
+        .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, serverUrl: 'http://localhost:3020' })
         .use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
 
       uppy.on('success', (fileCount) => {
