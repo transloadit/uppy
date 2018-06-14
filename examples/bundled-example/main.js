@@ -1,10 +1,11 @@
-const Uppy = require('../../src/core')
-const Dashboard = require('../../src/plugins/Dashboard')
-const Instagram = require('../../src/plugins/Instagram')
-const GoogleDrive = require('../../src/plugins/GoogleDrive')
-const Webcam = require('../../src/plugins/Webcam')
-const Tus = require('../../src/plugins/Tus')
-const Form = require('../../src/plugins/Form')
+const Uppy = require('@uppy/core')
+const Dashboard = require('@uppy/dashboard')
+const Instagram = require('@uppy/instagram')
+// Not ported yet
+// const GoogleDrive = require('@uppy/google-drive')
+const Webcam = require('@uppy/webcam')
+const Tus = require('@uppy/tus')
+const Form = require('@uppy/form')
 
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
 
@@ -28,7 +29,7 @@ const uppy = Uppy({
     proudlyDisplayPoweredByUppy: true,
     note: '2 files, images and video only'
   })
-  .use(GoogleDrive, { target: Dashboard, serverUrl: 'http://localhost:3020' })
+  // .use(GoogleDrive, { target: Dashboard, serverUrl: 'http://localhost:3020' })
   .use(Instagram, { target: Dashboard, serverUrl: 'http://localhost:3020' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: TUS_ENDPOINT })
@@ -45,6 +46,7 @@ uppy.on('complete', (result) => {
   console.log('failed files:', result.failed)
 })
 
+/* eslint-disable compat/compat */
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
     .register('/sw.js')
@@ -55,6 +57,7 @@ if ('serviceWorker' in navigator) {
       console.log('Registration failed with ' + error)
     })
 }
+/* eslint-enable */
 
 var modalTrigger = document.querySelector('#pick-files')
 if (modalTrigger) modalTrigger.click()
