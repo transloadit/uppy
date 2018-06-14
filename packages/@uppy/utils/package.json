@@ -18,5 +18,7 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
-  "dependencies": {}
+  "dependencies": {
+    "lodash.throttle": "^4.1.1"
+  }
 }

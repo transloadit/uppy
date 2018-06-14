@@ -3,7 +3,7 @@ const Translator = require('../../core/Translator')
 const { h } = require('preact')
 const { RequestClient } = require('../../server')
 const UrlUI = require('./UrlUI.js')
-const toArray = require('../../utils/toArray')
+const toArray = require('@uppy/utils/lib/toArray')
 
 /**
  * Url

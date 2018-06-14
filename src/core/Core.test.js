@@ -11,7 +11,7 @@ const InvalidPluginWithoutType = require('../../test/mocks/invalidPluginWithoutT
 jest.mock('cuid', () => {
   return () => 'cjd09qwxb000dlql4tp4doz8h'
 })
-jest.mock('../utils/findDOMElement', () => {
+jest.mock('@uppy/utils/lib/findDOMElement', () => {
   return () => null
 })
 

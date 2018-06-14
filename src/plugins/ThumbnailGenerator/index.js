@@ -1,6 +1,6 @@
 const Plugin = require('../../core/Plugin')
-const dataURItoBlob = require('../../utils/dataURItoBlob')
-const isPreviewSupported = require('../../utils/isPreviewSupported')
+const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
+const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 
 /**
  * The Thumbnail Generator plugin

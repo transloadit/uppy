@@ -2,9 +2,9 @@ const { h, Component } = require('preact')
 const AuthView = require('./AuthView')
 const Browser = require('./Browser')
 const LoaderView = require('./Loader')
-const generateFileID = require('../../utils/generateFileID')
-const getFileType = require('../../utils/getFileType')
-const isPreviewSupported = require('../../utils/isPreviewSupported')
+const generateFileID = require('@uppy/utils/lib/generateFileID')
+const getFileType = require('@uppy/utils/lib/getFileType')
+const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 
 /**
  * Array.prototype.findIndex ponyfill for old browsers.

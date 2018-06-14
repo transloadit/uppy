@@ -2,9 +2,9 @@ const Plugin = require('../../core/Plugin')
 const Translator = require('../../core/Translator')
 const StatusBarUI = require('./StatusBar')
 const statusBarStates = require('./StatusBarStates')
-const getSpeed = require('../../utils/getSpeed')
-const getBytesRemaining = require('../../utils/getBytesRemaining')
-const prettyETA = require('../../utils/prettyETA')
+const getSpeed = require('@uppy/utils/lib/getSpeed')
+const getBytesRemaining = require('@uppy/utils/lib/getBytesRemaining')
+const prettyETA = require('@uppy/utils/lib/prettyETA')
 const prettyBytes = require('prettier-bytes')
 
 /**

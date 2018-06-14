@@ -5,11 +5,11 @@ const cuid = require('cuid')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
 const DefaultStore = require('../store/DefaultStore')
-const getFileType = require('../utils/getFileType')
-const getFileNameAndExtension = require('../utils/getFileNameAndExtension')
-const generateFileID = require('../utils/generateFileID')
-const isObjectURL = require('../utils/isObjectURL')
-const getTimeStamp = require('../utils/getTimeStamp')
+const getFileType = require('@uppy/utils/lib/getFileType')
+const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
+const generateFileID = require('@uppy/utils/lib/generateFileID')
+const isObjectURL = require('@uppy/utils/lib/isObjectURL')
+const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
 
 /**
  * Uppy Core module.
