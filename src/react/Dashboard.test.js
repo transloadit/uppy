@@ -7,7 +7,7 @@ beforeAll(() => {
   configure({ adapter: new ReactAdapter() })
 })
 
-jest.mock('../plugins/Dashboard', () => require('./__mocks__/DashboardPlugin'))
+jest.mock('@uppy/dashboard', () => require('./__mocks__/DashboardPlugin'))
 
 const Dashboard = require('./Dashboard')
 

@@ -3,7 +3,7 @@ const { mount, configure } = require('enzyme')
 const ReactAdapter = require('enzyme-adapter-react-16')
 const Uppy = require('@uppy/core')
 
-jest.mock('../plugins/Dashboard', () => require('./__mocks__/DashboardPlugin'))
+jest.mock('@uppy/dashboard', () => require('./__mocks__/DashboardPlugin'))
 
 const DashboardModal = require('./DashboardModal')
 
@@ -12,7 +12,7 @@ beforeAll(() => {
 })
 
 beforeEach(() => {
-  Object.assign(require('../plugins/Dashboard').prototype, {
+  Object.assign(require('@uppy/dashboard').prototype, {
     openModal: jest.fn(),
     closeModal: jest.fn()
   })
