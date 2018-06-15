@@ -179,16 +179,14 @@
   text-align: center;
   margin: 0;
   padding: 0;
-  position: relative;
-  top: -20px;
 }
 
 .TryMe-btn {
   @include reset-button();
   font-size: 12px;
   display: inline-block;
-  padding: 6px 10px;
-  border-radius: 25px;
+  padding: 4px 8px;
+  border-radius: 23px;
   transition: all .3s ease;
   background-color: $color-primary;
   color: $color-white;
@@ -248,6 +246,7 @@
   overflow: hidden;
   max-width: 500px;
   margin: auto;
+  margin-bottom: 30px;
   font-size: 1em;
 
   @media #{$screen-medium} {
@@ -259,8 +258,15 @@
   }
 }
 
+  .IndexExample-block:nth-child(2) {
+    @media #{$screen-medium} {
+      padding-left: 30px;
+    }
+  }
+
 .IndexExample-video {
   max-width: 100%;
+  margin-bottom: 5px;
 }
 
 .IndexExample-block img {
