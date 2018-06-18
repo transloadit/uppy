@@ -14,7 +14,7 @@
   }
 
   function InnerPage () {
-    var main = document.querySelector('.js-MainContent')
+    // var main = document.querySelector('.js-MainContent')
     var menuButton = document.querySelector('.js-MenuBtn')
     var header = document.querySelector('.js-MainHeader')
     var menu = document.querySelector('.js-Sidebar')
@@ -23,13 +23,19 @@
     var animating = false
     var allLinks = []
 
+    // listen for scroll event to do positioning & highlights
+    window.addEventListener('scroll', updateSidebar)
+    window.addEventListener('resize', updateSidebar)
+
     function updateSidebar () {
       var top = (doc && doc.scrollTop) || body.scrollTop
       var headerHeight = header.offsetHeight
-      if (top > headerHeight) {
-        main.classList.add('fix-sidebar')
+      if (top > (headerHeight - 25)) {
+        // main.classList.add('fix-sidebar')
+        header.classList.add('fix-header')
       } else {
-        main.classList.remove('fix-sidebar')
+        // main.classList.remove('fix-sidebar')
+        header.classList.remove('fix-header')
       }
       if (animating || !allLinks) return
       var last
@@ -180,8 +186,8 @@
       }
 
       // listen for scroll event to do positioning & highlights
-      window.addEventListener('scroll', updateSidebar)
-      window.addEventListener('resize', updateSidebar)
+      // window.addEventListener('scroll', updateSidebar)
+      // window.addEventListener('resize', updateSidebar)
     }
 
     var isBlog = menu.classList.contains('is-blog')

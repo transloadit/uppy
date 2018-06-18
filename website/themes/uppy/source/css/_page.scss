@@ -27,14 +27,15 @@
   }
 
   &.is-open { transform: translate(0, 0); }
-  .fix-sidebar & { position: fixed; }
+  // .fix-sidebar & { position: fixed; }
 
   @media #{$screen-medium} {
-    position: absolute;
-    top: 0;
+    // position: absolute;
+    top: 60px;
     left: 60px;
-    bottom: 0;
+    // bottom: 0;
     padding: 2.2em 0;
+    padding-bottom: 130px;
     width: 230px;
     margin-right: 20px;
     overflow-x: hidden;
