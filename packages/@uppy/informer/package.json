@@ -9,9 +9,11 @@
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
-    "plugin name and other keywords",
     "uppy",
-    "uppy-plugin"
+    "uppy-plugin",
+    "notification",
+    "bar",
+    "ui"
   ],
   "homepage": "https://uppy.io",
   "bugs": {

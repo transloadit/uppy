@@ -8,9 +8,9 @@
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
-    "plugin name and other keywords",
     "uppy",
-    "uppy-plugin"
+    "uppy-plugin",
+    "redux"
   ],
   "homepage": "https://uppy.io",
   "bugs": {
