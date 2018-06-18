@@ -28,10 +28,13 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "^0.25.5",
     "@uppy/provider-views": "^0.25.5",
     "@uppy/server-utils": "^0.25.5",
-    "@uppy/tus": "^0.25.5"
+    "@uppy/tus": "^0.25.5",
+    "@uppy/utils": "^0.25.5",
+    "namespace-emitter": "^2.0.1",
+    "socket.io-client": "^2.1.1",
+    "url-parse": "^1.4.1"
   },
   "devDependencies": {
     "@uppy/core": "^0.25.5"

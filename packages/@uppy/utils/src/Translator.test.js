@@ -1,7 +1,7 @@
 const Translator = require('./Translator')
 // TODO use stubs instead
-const russian = require('../../../../src/locales/ru_RU')
-const english = require('../../../../src/locales/en_US')
+const russian = require('../../../../locales/ru_RU')
+const english = require('../../../../locales/en_US')
 
 describe('Translator', () => {
   describe('translate', () => {
