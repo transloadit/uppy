@@ -26,7 +26,7 @@ const Informer = require('@uppy/informer')
 
 // Uploaders
 const Tus = require('@uppy/tus')
-const XHRUpload = require('./plugins/XHRUpload')
+const XHRUpload = require('@uppy/aws-s3')
 const Transloadit = require('./plugins/Transloadit')
 const AwsS3 = require('@uppy/aws-s3')
 
