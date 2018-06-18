@@ -7,7 +7,7 @@ beforeAll(() => {
   configure({ adapter: new ReactAdapter() })
 })
 
-jest.mock('../plugins/ProgressBar', () => require('./__mocks__/ProgressBarPlugin'))
+jest.mock('@uppy/progress-bar', () => require('./__mocks__/ProgressBarPlugin'))
 
 const ProgressBar = require('./ProgressBar')
 

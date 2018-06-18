@@ -1,6 +1,6 @@
 const React = require('react')
 const PropTypes = require('prop-types')
-const ProgressBarPlugin = require('../plugins/ProgressBar')
+const ProgressBarPlugin = require('@uppy/progress-bar')
 const uppyPropType = require('./propTypes').uppy
 
 const h = React.createElement
