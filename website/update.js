@@ -5,7 +5,7 @@ var exec = require('child_process').exec
 var YAML = require('js-yaml')
 
 var webRoot = __dirname
-var uppyRoot = path.dirname(__dirname)
+var uppyRoot = path.join(__dirname, '../packages/uppy')
 
 var configPath = webRoot + '/themes/uppy/_config.yml'
 var version = require(uppyRoot + '/package.json').version

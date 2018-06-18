@@ -77,7 +77,7 @@ glob(srcPattern, function (err, files) {
       .transform(babelify)
       .transform(aliasify, {
         aliases: {
-          '@uppy': path.join(__dirname, '../packages/@uppy')
+          '@uppy': path.relative(process.cwd(), path.join(__dirname, '../packages/@uppy'))
         }
       })
 
