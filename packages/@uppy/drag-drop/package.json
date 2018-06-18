@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "@uppy/utils": "^0.25.5",
-    "drag-drop": "^2.14.0"
+    "drag-drop": "^2.14.0",
+    "preact": "^8.2.9"
   },
   "peerDependencies": {
     "@uppy/core": "^0.25.5"
