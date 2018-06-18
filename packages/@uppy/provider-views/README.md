@@ -36,9 +36,11 @@ class GoogleDrive extends Plugin {
 $ npm install @uppy/provider-views --save
 ```
 
+<!-- Undocumented currently
 ## Documentation
 
 Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/DOC_PAGE_HERE).
+-->
 
 ## License
 

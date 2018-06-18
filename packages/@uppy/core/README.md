@@ -36,7 +36,7 @@ Alternatively, you can also use this plugin in a pre-built bundle from Transload
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/DOC_PAGE_HERE).
+Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/uppy).
 
 ## License
 
