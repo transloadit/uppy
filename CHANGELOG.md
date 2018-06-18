@@ -127,6 +127,7 @@ To Be Released: 2018-06-28.
 - [x] thumbnailgenerator: Polyfill Math.log2 since IE11 doesn't support this method (#892 / @DJWassink)
 - [x] xhrupload: Add `withCredentials` option (#874 / @tuoxiansp)
 - [ ] core: default `autoProceed` to `false`
+- [x] **breaking** provider: rename `host` option to `serverUrl` (#905, @ifedapoolarewaju)
 
 ## 0.25.5
 
