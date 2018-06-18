@@ -5,8 +5,7 @@
 .uppy-Root {
   all: initial;
   box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, 
-    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: $font-family-base;
   line-height: 1;
   -webkit-font-smoothing: antialiased;
 }
