@@ -1,3 +1,7 @@
+// Type definitions for uppy 0.25.5
+// Project: https://uppy.io
+// Definitions by: taoqf <https://github.com/taoqf>
+
 declare module 'uppy' {
   // Core
   export { default as Core } from '@uppy/core';
