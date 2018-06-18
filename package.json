@@ -8,18 +8,12 @@
   },
   "pre-commit": "lint-staged",
   "license": "MIT",
-  "jest": {
-    "testPathIgnorePatterns": [
-      "lib"
-    ]
-  },
   "devDependencies": {
     "aliasify": "^2.1.0",
     "autoprefixer": "^7.2.5",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-jest": "^22.0.6",
-    "babel-plugin-es6-promise": "^1.1.1",
     "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-plugin-transform-proto-to-assign": "^6.26.0",
     "babel-plugin-transform-react-jsx": "^6.24.1",
@@ -78,24 +72,6 @@
     "wdio-sauce-service": "^0.4.6",
     "wdio-static-server-service": "^1.0.1",
     "webdriverio": "^4.10.1"
-  },
-  "dependencies": {
-    "classnames": "^2.2.5",
-    "cuid": "^2.0.2",
-    "drag-drop": "2.13.2",
-    "es6-promise": "^4.2.2",
-    "get-form-data": "^2.0.0",
-    "lodash.throttle": "4.1.1",
-    "mime-match": "^1.0.2",
-    "namespace-emitter": "^2.0.0",
-    "preact": "^8.2.7",
-    "prettier-bytes": "1.0.4",
-    "prop-types": "^15.5.10",
-    "resolve-url": "^0.2.1",
-    "socket.io-client": "^2.0.4",
-    "tus-js-client": "^1.4.5",
-    "url-parse": "^1.2.0",
-    "whatwg-fetch": "2.0.3"
   },
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
