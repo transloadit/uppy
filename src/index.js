@@ -16,7 +16,7 @@ const FileInput = require('@uppy/file-input')
 const GoogleDrive = require('@uppy/google-drive')
 const Dropbox = require('@uppy/dropbox')
 const Instagram = require('@uppy/instagram')
-const Url = require('./plugins/Url')
+const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
 
 // Progressindicators
