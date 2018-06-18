@@ -1,3 +1,5 @@
+/*eslint-disable */
+
 const isSupported = typeof navigator !== 'undefined' && 'serviceWorker' in navigator
 
 function waitForServiceWorker () {

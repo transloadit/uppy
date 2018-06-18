@@ -33,7 +33,7 @@ const AwsS3 = require('@uppy/aws-s3')
 // Helpers and utilities
 const Form = require('@uppy/form')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
-const GoldenRetriever = require('./plugins/GoldenRetriever')
+const GoldenRetriever = require('@uppy/golden-retriever')
 const ReduxDevTools = require('./plugins/ReduxDevTools')
 
 module.exports = {
