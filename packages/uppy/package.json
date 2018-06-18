@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
+  "unpkg": "dist/uppy.min.js",
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",

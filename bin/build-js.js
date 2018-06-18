@@ -7,8 +7,8 @@ var tinyify = require('tinyify')
 var browserify = require('browserify')
 var exorcist = require('exorcist')
 
-var distPath = './dist'
-var srcPath = './src'
+var distPath = './packages/uppy/dist'
+var srcPath = './packages/uppy'
 
 function handleErr (err) {
   console.error(chalk.red('✗ Error:'), chalk.red(err.message))
