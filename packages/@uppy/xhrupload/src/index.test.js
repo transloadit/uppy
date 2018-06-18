@@ -1,6 +1,6 @@
 const nock = require('nock')
 const Core = require('@uppy/core')
-const XHRUpload = require('./XHRUpload')
+const XHRUpload = require('./index')
 
 describe('XHRUpload', () => {
   describe('getResponseData', () => {
