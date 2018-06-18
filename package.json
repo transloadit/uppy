@@ -113,7 +113,10 @@
     "release:patch": "env SEMANTIC=patch npm run release",
     "replace:versions": "replace-x -r 'uppy/v\\d+\\.\\d+\\.\\d+/dist' \"uppy/v$npm_package_version/dist\" ./examples/ README.md bin/upload-to-cdn.sh website/src/examples/ website/src/docs/ website/themes/uppy/layout/ --exclude=node_modules",
     "replace:versions:commit": "git commit -m \"Change Uppy version references to v$npm_package_version\" ./examples/ README.md bin/upload-to-cdn.sh website/src/examples/ website/src/docs/ website/themes/uppy/layout/",
-    "release": "npm version ${SEMANTIC:-patch} -m \"Release %s\" && npm run replace:versions && npm run replace:versions:commit && git push && git push --tags && npm publish",
+    "release:tag": "npm version ${SEMANTIC:-patch} -m \"Release %s\"",
+    "release:build": "npm-run-all clean build release:copy-uppy-readme",
+    "release:copy-uppy-readme": "cp README.md packages/uppy/README.md",
+    "release": "npm-run-all release:tag release:build replace:versions replace:versions:commit && git push && git push --tags && npm publish",
     "start:server": "node bin/start-server",
     "start": "npm-run-all --parallel watch start:server web:preview",
     "test:acceptance": "./bin/endtoend-build && wdio test/endtoend/wdio.remote.conf.js",
@@ -145,7 +148,6 @@
     "web": "npm-run-all web:clean web:build",
     "uploadcdn": "bin/upload-to-cdn.sh",
     "prepare": "lerna bootstrap",
-    "prepublishOnly": "npm-run-all clean build",
     "contributors": "githubcontrib --owner transloadit --repo uppy --cols 6 $([ \"${GITHUB_TOKEN:-}\" == \"\" ] && echo \"\" || echo \"--authToken ${GITHUB_TOKEN}\") --showlogin true --sortOrder desc",
     "contributors:save": "replace-x -m '<!--contributors-->[\\s\\S]+<!--/contributors-->' \"<!--contributors-->\n## Contributors\n\n$(npm run --silent contributors)\n<!--/contributors-->\" README.md"
   }
