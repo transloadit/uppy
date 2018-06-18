@@ -6,6 +6,7 @@
   "main": "index.js",
   "module": "index.mjs",
   "unpkg": "dist/uppy.min.js",
+  "style": "dist/style.min.css",
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",

@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
+  "style": "dist/style.min.css",
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
@@ -21,6 +22,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@uppy/utils": "^0.25.5",
     "preact": "^8.2.9"
   },
   "peerDependencies": {

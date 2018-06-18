@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
+  "style": "dist/style.min.css",
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",

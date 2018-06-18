@@ -1,3 +1,7 @@
+@import '@uppy/core/src/style.scss';
+@import '@uppy/informer/src/style.scss';
+@import '@uppy/statusbar/src/style.scss';
+
 .uppy-Dashboard--modal {
   z-index: $zIndex-2;
 }
@@ -37,7 +41,7 @@
       from { transform: translate3d(0, 0, 0); opacity: 1; }
       to { transform: translate3d(0, -20%, 0); opacity: 0; }
     }
-  
+
   .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-inner {
     animation: uppy-Dashboard-slideDownAndFadeIn--small 0.3s cubic-bezier(0, 0, .2, 1);
 
@@ -152,7 +156,7 @@
 }
 
 .uppy-Dashboard-close:hover {
-  color: $color-cornflower-blue; 
+  color: $color-cornflower-blue;
 }
 
 
@@ -1028,7 +1032,7 @@
 .uppy-DashboardFileCard {
   transform: translate3d(0, 0, 0);
   transition: transform 0.2s ease-in-out;
-  
+
   width: 100%;
   height: 100%;
   position: absolute;

@@ -1,3 +1,5 @@
+@import '@uppy/core/src/style.scss';
+
 // .Uppy {
 
   .uppy-DragDrop-container {
@@ -8,30 +10,30 @@
     background-color: $color-white;
     // cursor: pointer;
   }
-  
+
   .uppy-DragDrop-inner {
     margin: 0;
     text-align: center;
     padding: 80px 20px;
     line-height: 1.4;
   }
-  
+
   .uppy-DragDrop-arrow {
     width: 60px;
     height: 60px;
     fill: lighten($color-gray, 30%);
     margin-bottom: 17px;
   }
-  
+
     .uppy-DragDrop--is-dragdrop-supported {
       border: 2px dashed;
       border-color: lighten($color-gray, 10%);
     }
-  
+
     // .uppy-DragDrop-container.is-dragdrop-supported .uppy-DragDrop-dragText {
     //   display: inline;
     // }
-  
+
     .uppy-DragDrop-container.drag {
       border-color: $color-gray;
       background-color: darken($color-white, 10%);
@@ -40,7 +42,7 @@
     .uppy-DragDrop-container.drag .uppy-DragDrop-arrow {
       fill: $color-gray;
     }
-  
+
   .uppy-DragDrop-label {
     display: block;
     cursor: pointer;
@@ -52,7 +54,7 @@
     font-size: 1em;
     color: lighten($color-gray, 10%);
   }
-  
+
   .uppy-DragDrop-dragText {
     color: $color-cornflower-blue;
   }
