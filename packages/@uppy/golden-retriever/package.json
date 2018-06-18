@@ -27,6 +27,9 @@
     "@uppy/utils": "^0.25.5",
     "prettier-bytes": "1.0.4"
   },
+  "devDependencies": {
+    "@uppy/core": "^0.25.5"
+  },
   "peerDependencies": {
     "@uppy/core": "^0.25.5"
   }

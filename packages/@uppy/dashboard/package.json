@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@uppy/informer": "^0.25.5",
+    "@uppy/provider-views": "^0.25.5",
     "@uppy/statusbar": "^0.25.5",
     "@uppy/thumbnail-generator": "^0.25.5",
     "@uppy/utils": "^0.25.5",

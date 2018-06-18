@@ -23,10 +23,11 @@
   "dependencies": {
     "@uppy/utils": "^0.25.5"
   },
+  "devDependencies": {
+    "@uppy/core": "^0.25.5",
+    "namespace-emitter": "^2.0.1"
+  },
   "peerDependencies": {
     "@uppy/core": "^0.25.5"
-  },
-  "devDependencies": {
-    "namespace-emitter": "^2.0.1"
   }
 }

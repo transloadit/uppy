@@ -24,6 +24,9 @@
     "@uppy/utils": "^0.25.5",
     "get-form-data": "^2.0.0"
   },
+  "devDependencies": {
+    "@uppy/core": "^0.25.5"
+  },
   "peerDependencies": {
     "@uppy/core": "^0.25.5"
   }

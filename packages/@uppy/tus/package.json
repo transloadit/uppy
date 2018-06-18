@@ -27,6 +27,9 @@
     "@uppy/utils": "^0.25.5",
     "tus-js-client": "^1.5.1"
   },
+  "devDependencies": {
+    "@uppy/core": "^0.25.5"
+  },
   "peerDependencies": {
     "@uppy/core": "^0.25.5"
   }

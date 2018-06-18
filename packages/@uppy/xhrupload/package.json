@@ -26,7 +26,11 @@
   },
   "dependencies": {
     "@uppy/utils": "^0.25.5",
+    "@uppy/server-utils": "^0.25.5",
     "cuid": "^2.0.2"
+  },
+  "devDependencies": {
+    "@uppy/core": "^0.25.5"
   },
   "peerDependencies": {
     "@uppy/core": "^0.25.5"

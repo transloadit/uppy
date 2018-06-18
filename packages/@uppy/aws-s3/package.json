@@ -27,6 +27,9 @@
     "@uppy/xhrupload": "^0.25.5",
     "resolve-url": "^0.2.1"
   },
+  "devDependencies": {
+    "@uppy/core": "^0.25.5"
+  },
   "peerDependencies": {
     "@uppy/core": "^0.25.5"
   }

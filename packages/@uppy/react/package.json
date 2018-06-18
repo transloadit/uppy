@@ -28,6 +28,9 @@
     "@uppy/utils": "^0.25.5",
     "prop-types": "^15.6.1"
   },
+  "devDependencies": {
+    "@uppy/core": "^0.25.5"
+  },
   "peerDependencies": {
     "@uppy/core": "^0.25.5"
   }

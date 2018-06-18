@@ -25,6 +25,9 @@
     "@uppy/utils": "^0.25.5",
     "preact": "^8.2.9"
   },
+  "devDependencies": {
+    "@uppy/core": "^0.25.5"
+  },
   "peerDependencies": {
     "@uppy/core": "^0.25.5"
   }
