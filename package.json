@@ -106,7 +106,7 @@
     "build": "npm-run-all --parallel build:js build:css --serial build:gzip size",
     "clean": "rm -rf packages/*/lib packages/@uppy/*/lib && rm -rf packages/uppy/dist",
     "lint:fix": "npm run lint -- --fix",
-    "lint": "eslint packages/*/src packages/@uppy/*/src test website/scripts website/build-examples.js website/update.js website/themes/uppy/source/js/common.js",
+    "lint": "eslint . --cache",
     "lint-staged": "lint-staged",
     "release:major": "env SEMANTIC=major npm run release",
     "release:minor": "env SEMANTIC=minor npm run release",
