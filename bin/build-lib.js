@@ -1,3 +1,4 @@
+const chalk = require('chalk')
 const babel = require('babel-core')
 const { promisify } = require('util')
 const glob = promisify(require('glob'))
@@ -24,7 +25,7 @@ async function buildLib () {
       writeFile(libFile, code),
       writeFile(libFile + '.map', JSON.stringify(map))
     ])
-    console.log(libFile)
+    console.log(chalk.green('Compiled lib:'), chalk.magenta(libFile))
   }
 }
 

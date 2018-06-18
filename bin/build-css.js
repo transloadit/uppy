@@ -51,7 +51,8 @@ async function compileCSS () {
     })
 
     const outdir = path.join(path.dirname(file), '../dist')
-    const outfile = path.join(outdir, 'style.css')
+    // Save the `uppy` package's CSS as `uppy.css`, the rest as `style.css`.
+    const outfile = path.join(outdir, outdir.includes('packages/uppy/') ? 'uppy.css' : 'style.css')
     await mkdirp(outdir)
     await writeFile(outfile, postcssResult.css)
     console.info(
