@@ -7,12 +7,12 @@ rm -rf ./test/endtoend/node_modules
 npm run prepublishOnly
 # archive the uppy package
 echo "Creating archive for Uppy package"
-npm pack
+cd packages/uppy && npm pack && cd ../..
 
-UPPY_VERSION=$(node -e 'console.log(require("./package.json").version)')
+UPPY_VERSION=$(node -e 'console.log(require("./packages/uppy/package.json").version)')
 # install from the archived uppy package
 echo "Installing Uppy from archived file uppy-${UPPY_VERSION}.tgz"
-npm install --prefix ./test/endtoend uppy-${UPPY_VERSION}.tgz
+npm install --prefix ./test/endtoend packages/uppy/uppy-${UPPY_VERSION}.tgz
 
 # removing package-lock.json because we do not need it.
 rm ./test/endtoend/package-lock.json

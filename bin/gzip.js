@@ -25,7 +25,7 @@ function gzip (file) {
 
 function gzipDist () {
   return new Promise(function (resolve) {
-    glob('./dist/**/*.*(css|js)', function (err, files) {
+    glob('./{,packages/uppy/}dist/**/*.*(css|js)', function (err, files) {
       if (err) console.log(err)
       var gzipPromises = []
       files.forEach(function (file) {
