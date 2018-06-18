@@ -1,6 +1,6 @@
-const Uppy = require('uppy/lib/core')
-const Dashboard = require('uppy/lib/plugins/Dashboard')
-const AwsS3 = require('uppy/lib/plugins/AwsS3')
+const Uppy = require('@uppy/core')
+const Dashboard = require('@uppy/dashboard')
+const AwsS3 = require('@uppy/aws-s3')
 
 const uppy = Uppy({
   debug: true,

@@ -1,6 +1,6 @@
-const Uppy = require('uppy/lib/core')
-const Dashboard = require('uppy/lib/plugins/Dashboard')
-const XHRUpload = require('uppy/lib/plugins/XHRUpload')
+const Uppy = require('@uppy/core')
+const Dashboard = require('@uppy/dashboard')
+const XHRUpload = require('@uppy/xhrupload')
 
 const uppy = Uppy({
   autoProceed: false,

@@ -7,7 +7,11 @@
     "start:server": "node serve.js",
     "start": "run-p start:*"
   },
-  "aliasify": "./aliasify.js",
+  "aliasify": {
+    "aliases": {
+      "@uppy": "../../packages/@uppy"
+    }
+  },
   "dependencies": {
     "cors": "^2.8.4",
     "express": "^4.16.2",

@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "aliasify": "^2.1.0",
+    "babel-core": "^6.26.3",
+    "babelify": "^8.0.0",
+    "watchify": "^3.11.0"
+  },
+  "scripts": {
+    "watch": "watchify -t babelify -t aliasify main.js -o bundle.js -vd"
+  },
+  "aliasify": {
+    "aliases": {
+      "@uppy": "../../packages/@uppy"
+    }
+  }
+}

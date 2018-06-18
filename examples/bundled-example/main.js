@@ -1,8 +1,7 @@
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const Instagram = require('@uppy/instagram')
-// Not ported yet
-// const GoogleDrive = require('@uppy/google-drive')
+const GoogleDrive = require('@uppy/google-drive')
 const Webcam = require('@uppy/webcam')
 const Tus = require('@uppy/tus')
 const Form = require('@uppy/form')
@@ -29,7 +28,7 @@ const uppy = Uppy({
     proudlyDisplayPoweredByUppy: true,
     note: '2 files, images and video only'
   })
-  // .use(GoogleDrive, { target: Dashboard, serverUrl: 'http://localhost:3020' })
+  .use(GoogleDrive, { target: Dashboard, serverUrl: 'http://localhost:3020' })
   .use(Instagram, { target: Dashboard, serverUrl: 'http://localhost:3020' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: TUS_ENDPOINT })

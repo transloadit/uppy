@@ -1,9 +1,9 @@
 /* eslint-disable */
 const React = require('react')
-const Uppy = require('uppy/lib/core')
-const Tus = require('uppy/lib/plugins/Tus')
-const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
-const { Dashboard, DashboardModal, DragDrop, ProgressBar } = require('uppy/lib/react')
+const Uppy = require('@uppy/core')
+const Tus = require('@uppy/tus')
+const GoogleDrive = require('@uppy/google-drive')
+const { Dashboard, DashboardModal, DragDrop, ProgressBar } = require('@uppy/react')
 
 module.exports = class App extends React.Component {
   constructor (props) {

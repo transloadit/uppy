@@ -1,6 +1,6 @@
-const Plugin = require('uppy/lib/core/Plugin')
-const { Provider } = require('uppy/lib/server')
-const { ProviderView } = require('uppy/lib/views')
+const Plugin = require('@uppy/core/lib/Plugin')
+const { Provider } = require('@uppy/server-utils')
+const ProviderViews = require('@uppy/provider-views')
 const { h } = require('preact')
 
 module.exports = class MyCustomProvider extends Plugin {
@@ -29,7 +29,7 @@ module.exports = class MyCustomProvider extends Plugin {
   }
 
   install () {
-    this.view = new ProviderView(this)
+    this.view = new ProviderViews(this)
     // Set default state
     this.setPluginState({
       authenticated: false,
