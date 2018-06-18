@@ -28,7 +28,7 @@ const Informer = require('@uppy/informer')
 const Tus = require('@uppy/tus')
 const XHRUpload = require('./plugins/XHRUpload')
 const Transloadit = require('./plugins/Transloadit')
-const AwsS3 = require('./plugins/AwsS3')
+const AwsS3 = require('@uppy/aws-s3')
 
 // Helpers and utilities
 const Form = require('@uppy/form')

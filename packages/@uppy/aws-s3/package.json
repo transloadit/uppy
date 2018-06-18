@@ -1,0 +1,32 @@
+{
+  "name": "@uppy/aws-s3",
+  "description": "Upload to Amazon S3 with Uppy",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "aws s3",
+    "amazon s3",
+    "s3",
+    "uppy",
+    "uppy-plugin"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/utils": "^0.25.5",
+    "resolve-url": "^0.2.1"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^0.25.5"
+  }
+}
