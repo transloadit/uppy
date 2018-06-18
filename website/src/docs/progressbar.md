@@ -8,7 +8,7 @@ permalink: docs/progressbar/
 ProgressBar is a minimalist plugin that shows the current upload progress in a thin bar element, similar to the ones used by YouTube and GitHub when navigating between pages.
 
 ```js
-const ProgressBar = require('uppy/lib/plugins/ProgressBar')
+const ProgressBar = require('@uppy/progress-bar')
 
 uppy.use(ProgressBar, {
   // Options

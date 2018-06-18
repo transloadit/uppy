@@ -13,7 +13,7 @@ You can tell Uppy to use your app’s Redux store for its files and UI state. Pl
 
 ```js
 const { createStore } = require('redux')
-const ReduxStore = require('uppy/lib/store/ReduxStore')
+const ReduxStore = require('@uppy/store-redux')
 
 const reducer = combineReducers({
   ...reducers,
@@ -32,8 +32,8 @@ const uppy = Uppy({
 `ReduxDevTools` plugin that simply syncs with [redux-devtools](https://github.com/gaearon/redux-devtools) browser or JS extensions, and allows for basic time travel:
 
 ```js
-const Uppy = require('uppy/lib/core')
-const ReduxDevTools = require('uppy/lib/plugins/ReduxDevTools')
+const Uppy = require('@uppy/core')
+const ReduxDevTools = require('@uppy/redux-dev-tools')
 
 const uppy = Uppy({
   debug: true,

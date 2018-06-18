@@ -24,12 +24,12 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 Code used in the above example:
 
 ```js
-const Uppy = require('uppy/lib/core')
-const Dashboard = require('uppy/lib/plugins/Dashboard')
-const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
-const Instagram = require('uppy/lib/plugins/Instagram')
-const Webcam = require('uppy/lib/plugins/Webcam')
-const Tus = require('uppy/lib/plugins/Tus')
+const Uppy = require('@uppy/core')
+const Dashboard = require('@uppy/dashboard')
+const GoogleDrive = require('@uppy/google-drive')
+const Instagram = require('@uppy/instagram')
+const Webcam = require('@uppy/webcam')
+const Tus = require('@uppy/Tus')
 
 const uppy = Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })
@@ -172,9 +172,9 @@ And you’ll need [`uppy-server`](https://github.com/transloadit/uppy-server) if
 
  - Contributor’s guide in [`website/src/docs/contributing.md`](website/src/docs/contributing.md)
  - Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
- 
+
 ## Used by
- 
+
 Uppy is used by: [Photobox](http://photobox.com), [Law Insider](https://lawinsider.com), [Cool Tabs](https://cool-tabs.com), [Soundoff](https://soundoff.io), [Scrumi](https://www.scrumi.io/) and others.
 
 Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issues/769)!

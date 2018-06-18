@@ -76,8 +76,8 @@ glob(srcPattern, function (err, files) {
     browseFy
       .transform(babelify)
       .transform(aliasify, {
-        replacements: {
-          '^uppy/lib/(.*?)$': path.join(__dirname, '../src/$1')
+        aliases: {
+          '@uppy': path.join(__dirname, '../packages/@uppy')
         }
       })
 

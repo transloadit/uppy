@@ -8,7 +8,8 @@ order: 61
 The `<StatusBar />` component wraps the [StatusBar][] plugin.
 
 ```js
-import StatusBar from 'uppy/lib/react/StatusBar';
+import StatusBar from '@uppy/react/lib/StatusBar'
+import { StatusBar } from '@uppy/react'
 ```
 
 ## Props

@@ -15,7 +15,7 @@ Dashboard is a universal UI plugin for Uppy:
 - Ability to pause/resume or cancel (depending on uploader plugin) individual or all files
 
 ```js
-const Dashboard = require('uppy/lib/plugins/Dashboard')
+const Dashboard = require('@uppy/dashboard')
 
 uppy.use(Dashboard, {
   // Options

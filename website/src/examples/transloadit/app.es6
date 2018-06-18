@@ -1,8 +1,8 @@
-const Uppy = require('uppy/lib/core/Core')
-const Dashboard = require('uppy/lib/plugins/Dashboard')
-const Webcam = require('uppy/lib/plugins/Webcam')
-const Transloadit = require('uppy/lib/plugins/Transloadit')
-const Instagram = require('uppy/lib/plugins/Instagram')
+const Uppy = require('@uppy/core')
+const Dashboard = require('@uppy/dashboard')
+const Webcam = require('@uppy/webcam')
+const Transloadit = require('@uppy/transloadit')
+const Instagram = require('@uppy/instagram')
 
 function initUppy () {
   if (window.uppy) {

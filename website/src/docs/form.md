@@ -8,7 +8,7 @@ permalink: docs/form/
 Form plugin collects metadata from any specified `<form>` element, right before Uppy begins uploading/processing files. And then optionally appends results back to the form. Currently the appended result is a stringified version of a [`result`](docs/uppy/#uppy-upload) returned from `uppy.upload()` or `complete` event.
 
 ```js
-const Form = require('uppy/lib/plugins/Form')
+const Form = require('@uppy/form')
 
 uppy.use(Form, {
   // Options

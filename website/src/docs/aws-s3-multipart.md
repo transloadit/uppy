@@ -8,7 +8,7 @@ permalink: docs/aws-s3-multipart/
 The `AwsS3Multipart` plugin can be used to upload files directly to an S3 bucket using S3's Multipart upload strategy. With this strategy, files are chopped up in parts of 5MB+ each, so they can be uploaded concurrently. It's also very reliable: if a single part fails to upload, only that 5MB has to be retried.
 
 ```js
-const AwsS3Multipart = require('uppy/lib/plugins/AwsS3/Multipart')
+const AwsS3Multipart = require('@uppy/aws-s3/lib/Multipart')
 uppy.use(AwsS3Multipart, {
   limit: 4,
   serverUrl: 'https://uppy-server.myapp.net/'

@@ -8,7 +8,8 @@ order: 65
 The `<DashboardModal />` component wraps the [Dashboard][] plugin, allowing control over the modal `open` state using a prop.
 
 ```js
-import DashboardModal from 'uppy/lib/react/DashboardModal';
+import DashboardModal from '@uppy/react/lib/DashboardModal'
+import { DashboardModal } from '@uppy/react'
 ```
 
 <!-- Make sure the old name of this section still works -->

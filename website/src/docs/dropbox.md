@@ -10,7 +10,7 @@ The Dropbox plugin lets users import files their Google Drive account.
 An Uppy Server instance is required for the Dropbox plugin to work. Uppy Server handles authentication with Dropbox, downloads the files, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const Dropbox = require('uppy/lib/plugins/Dropbox')
+const Dropbox = require('@uppy/dropbox')
 
 uppy.use(Dropbox, {
   // Options

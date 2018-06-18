@@ -8,7 +8,7 @@ permalink: docs/tus/
 The Tus plugin brings [tus.io](http://tus.io) resumable file uploading to Uppy by wrapping the [tus-js-client][].
 
 ```js
-const Tus = require('uppy/lib/plugins/Tus')
+const Tus = require('@uppy/tus')
 
 uppy.use(Tus, {
   endpoint: 'https://master.tus.io/files/', // use your tus endpoint here

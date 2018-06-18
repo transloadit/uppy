@@ -12,14 +12,14 @@ The GoldenRetriever plugin saves selected files in your browser cache (Local Sto
 ```js
 // sw.js
 
-require('uppy/lib/plugins/GoldenRetriever/ServiceWorker.js')
+require('@uppy/golden-retriever/lib/ServiceWorker')
 ```
 
 2\. Register it in your app entry point:
 
 ```js
 // you app.js entry point
-const GoldenRetriever = require('uppy/lib/plugins/GoldenRetriever')
+const GoldenRetriever = require('@uppy/golden-retriever')
 
 uppy.use(GoldenRetriever, {serviceWorker: true})
 

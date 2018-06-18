@@ -8,7 +8,8 @@ order: 62
 The `<DragDrop />` component wraps the [DragDrop][] plugin.
 
 ```js
-import DragDrop from 'uppy/lib/react/DragDrop';
+import DragDrop from '@uppy/react/lib/DragDrop';
+import { DragDrop } from '@uppy/react';
 ```
 
 ## Props

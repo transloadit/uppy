@@ -15,9 +15,9 @@ Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instan
 All other props are passed as options to the plugin.
 
 ```js
-const Uppy = require('uppy/lib/core')
-const Tus = require('uppy/lib/plugins/Tus')
-const DragDrop = require('uppy/lib/react/DragDrop')
+const Uppy = require('@uppy/core')
+const Tus = require('@uppy/tus')
+const DragDrop = require('@uppy/drag-drop')
 
 const uppy = Uppy({
   meta: { type: 'avatar' },
