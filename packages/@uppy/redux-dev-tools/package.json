@@ -1,0 +1,28 @@
+{
+  "name": "@uppy/redux-dev-tools",
+  "description": "Redux developer tools plugin for Uppy that simply syncs Uppy’s state with redux-devtools browser or JS extensions, and allows for basic time travel",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "redux",
+    "redux-dev-tools",
+    "uppy",
+    "uppy-plugin"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "@uppy/core": "^0.25.5"
+  }
+}
