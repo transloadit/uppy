@@ -27,15 +27,18 @@
   }
 
   &.is-open { transform: translate(0, 0); }
-  .fix-sidebar & { position: fixed; }
+  // .fix-sidebar & { position: fixed; }
 
   @media #{$screen-medium} {
-    position: absolute;
-    top: 0;
-    left: 60px;
-    bottom: 0;
-    padding: 2.2em 0;
-    width: 230px;
+    // position: absolute;
+    top: 60px;
+    left: 0;
+    // bottom: 0;
+    // padding: 2.2em 0;
+    padding-top: 35px;
+    padding-left: 60px;
+    padding-bottom: 130px;
+    // width: 20px;
     margin-right: 20px;
     overflow-x: hidden;
     overflow-y: auto;
@@ -166,6 +169,24 @@
     vertical-align: middle;
     width: 280px;
     margin-left: 20px;
+  }
+
+  // h2, h3 {
+  //   padding-top: 80px;
+  // }
+
+  // for ancor links to work with fixed header
+  h2:before, h3:before {
+    content: '';
+    display: block;
+    margin-top: -60px;
+    height: 60px;
+    visibility: hidden;
+
+    @media #{$screen-large} {
+      margin-top: -90px;
+      height: 90px;
+    }
   }
 
   .post h1,

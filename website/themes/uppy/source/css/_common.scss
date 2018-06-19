@@ -144,7 +144,7 @@ a.button {
   padding: 2em 1.4em 0;
 
   @media #{$screen-medium} {
-    padding: 0 60px 30px;
+    padding: 60px 60px 30px;
   }
 }
 
@@ -236,10 +236,15 @@ a.button {
     height: auto;
     padding: 10px 60px;
     box-shadow: none;
-    position: relative;
+    // position: relative;
     z-index: 2;
     border-top: 3px solid $color-primary;
+    border-bottom: 1px solid rgba($color-lightgray, 0.3);
     text-align: left;
+
+    // &.fix-header {
+    //   box-shadow: 0 0 4px rgba(0,0,0,.25);
+    // }
   }
 }
 
