@@ -219,6 +219,9 @@ Changed strings:
 - webcam: swap record/stop button icons, fixes #859 (#fdcca95 / @arturi)
 - xhrupload: fix bytesUploaded and bytesTotal for bundled progress (#864 / @arturi)
 - xhrupload: fix retry/timer issues, add timer.done() to `cancel-all` events; disable progress throttling in Core; Ignore progress events in timeout tracker after upload was aborted (#864 / @goto-bus-stop, @arturi)
+- Server: Allow custom headers to be set for remote multipart uploads (@ifedapoolarewaju)
+- Server: Add type to metadata as `filetype`
+- uppy/uppy-server: refactor oauth flow tonot use cookies anymore (@ifedapoolarewaju)
 
 ## 0.24.4
 
