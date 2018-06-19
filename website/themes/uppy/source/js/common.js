@@ -23,9 +23,9 @@
     var animating = false
     var allLinks = []
 
-    // listen for scroll event to do positioning & highlights
-    window.addEventListener('scroll', updateSidebar)
-    window.addEventListener('resize', updateSidebar)
+    // // listen for scroll event to do positioning & highlights
+    // window.addEventListener('scroll', updateSidebar)
+    // window.addEventListener('resize', updateSidebar)
 
     function updateSidebar () {
       var top = (doc && doc.scrollTop) || body.scrollTop
@@ -178,16 +178,16 @@
 
         // init smooth scroll
         window.smoothScroll.init({
-          speed: 400,
-          offset: window.innerWidth > 720
-            ? 40
-            : 58
+          speed: 400
+          // offset: window.innerWidth > 720
+          //   ? 40
+          //   : 58
         })
       }
 
       // listen for scroll event to do positioning & highlights
-      // window.addEventListener('scroll', updateSidebar)
-      // window.addEventListener('resize', updateSidebar)
+      window.addEventListener('scroll', updateSidebar)
+      window.addEventListener('resize', updateSidebar)
     }
 
     var isBlog = menu.classList.contains('is-blog')
