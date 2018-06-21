@@ -17,7 +17,7 @@ exports.DragDrop = require('@uppy/drag-drop')
 exports.FileInput = require('@uppy/file-input')
 exports.Informer = require('@uppy/informer')
 exports.ProgressBar = require('@uppy/progress-bar')
-exports.StatusBar = require('@uppy/statusbar')
+exports.StatusBar = require('@uppy/status-bar')
 
 // Acquirers
 exports.Dropbox = require('@uppy/dropbox')
@@ -31,7 +31,7 @@ exports.AwsS3 = require('@uppy/aws-s3')
 exports.AwsS3Multipart = require('@uppy/aws-s3-multipart')
 exports.Transloadit = require('@uppy/transloadit')
 exports.Tus = require('@uppy/tus')
-exports.XHRUpload = require('@uppy/xhrupload')
+exports.XHRUpload = require('@uppy/xhr-upload')
 
 // Miscellaneous
 exports.Form = require('@uppy/form')
