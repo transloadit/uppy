@@ -1,5 +1,5 @@
 {
-  "name": "@uppy/statusbar",
+  "name": "@uppy/status-bar",
   "description": "A progress bar for Uppy, with many bells and whistles.",
   "version": "0.25.5",
   "license": "MIT",
@@ -12,6 +12,7 @@
     "uppy",
     "uppy-plugin",
     "progress bar",
+    "status bar",
     "progress",
     "upload",
     "eta",
