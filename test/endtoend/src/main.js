@@ -1,3 +1,4 @@
+require('es6-promise/auto')
 const Uppy = require('@uppy/core')
 const DragDrop = require('@uppy/drag-drop')
 const Dashboard = require('@uppy/dashboard')
