@@ -1,5 +1,5 @@
 {
-  "name": "@uppy/xhrupload",
+  "name": "@uppy/xhr-upload",
   "description": "Plain and simple classic HTML multipart form uploads with Uppy, as well as uploads using the HTTP PUT method.",
   "version": "0.25.5",
   "license": "MIT",
