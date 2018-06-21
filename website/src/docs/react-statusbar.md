@@ -1,7 +1,8 @@
 ---
 title: "&lt;StatusBar />"
 type: docs
-permalink: docs/react/statusbar/
+permalink: docs/react/status-bar/
+alias: docs/react/statusbar/
 order: 61
 ---
 

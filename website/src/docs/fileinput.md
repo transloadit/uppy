@@ -2,7 +2,9 @@
 type: docs
 order: 25
 title: "FileInput"
-permalink: docs/fileinput/
+permalink: docs/file-input/
+alias: docs/fileinput/
+
 ---
 
 `FileInput` is the most barebones UI for selecting files—it shows a single button that, when clicked, opens up the browser's file selector.

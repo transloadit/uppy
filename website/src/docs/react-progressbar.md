@@ -1,7 +1,8 @@
 ---
 title: "&lt;ProgressBar />"
 type: docs
-permalink: docs/react/progressbar/
+permalink: docs/react/progress-bar/
+alias: docs/react/progressbar/
 order: 63
 ---
 

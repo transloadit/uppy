@@ -2,7 +2,8 @@
 type: docs
 order: 31
 title: "XHRUpload"
-permalink: docs/xhrupload/
+permalink: docs/xhr-upload/
+alias: docs/xhrupload/
 ---
 
 The XHRUpload plugin handles classic HTML multipart form uploads, as well as uploads using the HTTP `PUT` method.

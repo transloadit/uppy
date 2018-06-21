@@ -2,7 +2,8 @@
 type: docs
 order: 22
 title: "StatusBar"
-permalink: docs/statusbar/
+permalink: docs/status-bar/
+alias: docs/statusbar/
 ---
 
 The StatusBar shows upload progress and speed, ETAs, pre- and post-processing information, and allows users to control (pause/resume/cancel) the upload.

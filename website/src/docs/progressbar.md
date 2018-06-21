@@ -2,7 +2,8 @@
 type: docs
 order: 23
 title: "ProgressBar"
-permalink: docs/progressbar/
+permalink: docs/progress-bar/
+alias: docs/progressbar/
 ---
 
 ProgressBar is a minimalist plugin that shows the current upload progress in a thin bar element, similar to the ones used by YouTube and GitHub when navigating between pages.

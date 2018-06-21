@@ -2,7 +2,8 @@
 type: docs
 order: 21
 title: "DragDrop"
-permalink: docs/dragdrop/
+permalink: docs/drag-drop/
+alias: docs/dragdrop/
 ---
 
 DragDrop renders a simple Drag and Drop area for file selection. Useful when you only want the local device as a file source, don’t need file previews and metadata editing UI, and the [Dashboard](/docs/dashboard/) feels like an overkill.

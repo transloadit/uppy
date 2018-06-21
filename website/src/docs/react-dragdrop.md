@@ -1,7 +1,8 @@
 ---
 title: "&lt;DragDrop />"
 type: docs
-permalink: docs/react/dragdrop/
+permalink: docs/react/drag-drop/
+alias: docs/react/dragdrop/
 order: 62
 ---
 
