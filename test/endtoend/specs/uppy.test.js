@@ -25,9 +25,11 @@ function browserSupportsChooseFile (capabilities) {
          capabilities.platformName !== 'Android'
 }
 
-browser.url(testURL)
-
 describe('File upload with DragDrop + Tus, DragDrop + XHRUpload, i18n translated string', () => {
+  beforeEach(() => {
+    browser.url(testURL)
+  })
+
   it('should upload a file with Tus and set progressbar to 100%', () => {
     if (browserSupportsChooseFile(capabilities)) {
       browser.chooseFile('#uppyDragDrop .uppy-DragDrop-input', path.join(__dirname, '../fixtures/image.jpg'))
@@ -88,6 +90,10 @@ describe.skip('XHRUpload with `limit`', () => {
   after(() => {
     server.close()
     server = null
+  })
+
+  beforeEach(() => {
+    browser.url(testURL)
   })
 
   it('should start counting progress for all files', () => {
