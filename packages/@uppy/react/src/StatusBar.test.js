@@ -7,7 +7,7 @@ beforeAll(() => {
   configure({ adapter: new ReactAdapter() })
 })
 
-jest.mock('@uppy/statusbar', () => require('./__mocks__/StatusBarPlugin'))
+jest.mock('@uppy/status-bar', () => require('./__mocks__/StatusBarPlugin'))
 
 const StatusBar = require('./StatusBar')
 

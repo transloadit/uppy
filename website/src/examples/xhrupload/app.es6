@@ -1,6 +1,6 @@
 const Uppy = require('@uppy/core')
 const FileInput = require('@uppy/file-input')
-const XHRUpload = require('@uppy/xhrupload')
+const XHRUpload = require('@uppy/xhr-upload')
 const ProgressBar = require('@uppy/progress-bar')
 
 const uppy = new Uppy({ debug: true, autoProceed: true })

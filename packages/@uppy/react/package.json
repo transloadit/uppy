@@ -25,7 +25,7 @@
     "@uppy/dashboard": "^0.25.5",
     "@uppy/drag-drop": "^0.25.5",
     "@uppy/progress-bar": "^0.25.5",
-    "@uppy/statusbar": "^0.25.5",
+    "@uppy/status-bar": "^0.25.5",
     "@uppy/utils": "^0.25.5",
     "prop-types": "^15.6.1"
   },

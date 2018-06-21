@@ -10,7 +10,7 @@ alias: docs/fileinput/
 `FileInput` is the most barebones UI for selecting files—it shows a single button that, when clicked, opens up the browser's file selector.
 
 ```js
-const XHRUpload = require('@uppy/xhrupload')
+const XHRUpload = require('@uppy/xhr-upload')
 
 uppy.use(XHRUpload, {
   // Options

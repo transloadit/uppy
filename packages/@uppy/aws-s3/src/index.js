@@ -2,7 +2,7 @@ const resolveUrl = require('resolve-url')
 const Plugin = require('@uppy/core/lib/Plugin')
 const Translator = require('@uppy/utils/lib/Translator')
 const limitPromises = require('@uppy/utils/lib/limitPromises')
-const XHRUpload = require('@uppy/xhrupload')
+const XHRUpload = require('@uppy/xhr-upload')
 
 function isXml (xhr) {
   const contentType = xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type')

@@ -16,7 +16,7 @@ declare module 'uppy' {
   export { default as FileInput } from '@uppy/file-input';
   export { default as Informer } from '@uppy/informer';
   export { default as ProgressBar } from '@uppy/progress-bar';
-  export { default as StatusBar } from '@uppy/statusbar';
+  export { default as StatusBar } from '@uppy/status-bar';
 
   // Acquirers
   export { default as Dropbox } from '@uppy/dropbox';
@@ -30,7 +30,7 @@ declare module 'uppy' {
   export { default as AwsS3Multipart } from '@uppy/aws-s3-multipart';
   export { default as Transloadit } from '@uppy/transloadit';
   export { default as Tus } from '@uppy/tus';
-  export { default as XHRUpload } from '@uppy/xhrupload';
+  export { default as XHRUpload } from '@uppy/xhr-upload';
 
   // Miscellaneous
   export { default as Form } from '@uppy/form';

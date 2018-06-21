@@ -46,7 +46,7 @@
     "@uppy/provider-views": "0.25.5",
     "@uppy/redux-dev-tools": "0.25.5",
     "@uppy/server-utils": "0.25.5",
-    "@uppy/statusbar": "0.25.5",
+    "@uppy/status-bar": "0.25.5",
     "@uppy/store-default": "0.25.5",
     "@uppy/store-redux": "0.25.5",
     "@uppy/thumbnail-generator": "0.25.5",
@@ -54,6 +54,6 @@
     "@uppy/tus": "0.25.5",
     "@uppy/url": "0.25.5",
     "@uppy/webcam": "0.25.5",
-    "@uppy/xhrupload": "0.25.5"
+    "@uppy/xhr-upload": "0.25.5"
   }
 }

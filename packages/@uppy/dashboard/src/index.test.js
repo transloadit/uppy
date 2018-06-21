@@ -1,6 +1,6 @@
 const Core = require('@uppy/core')
 const DashboardPlugin = require('./index')
-const StatusBarPlugin = require('@uppy/statusbar')
+const StatusBarPlugin = require('@uppy/status-bar')
 
 describe('Dashboard', () => {
   it('can safely be added together with the StatusBar without id conflicts', () => {

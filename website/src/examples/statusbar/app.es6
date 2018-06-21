@@ -1,6 +1,6 @@
 const Uppy = require('@uppy/core')
 const FileInput = require('@uppy/file-input')
-const StatusBar = require('@uppy/statusbar')
+const StatusBar = require('@uppy/status-bar')
 const Tus = require('@uppy/tus')
 
 const uppyOne = new Uppy({debug: true})

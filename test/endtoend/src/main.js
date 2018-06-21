@@ -3,7 +3,7 @@ const Uppy = require('@uppy/core')
 const DragDrop = require('@uppy/drag-drop')
 const Dashboard = require('@uppy/dashboard')
 const Tus = require('@uppy/tus')
-const XHRUpload = require('@uppy/xhrupload')
+const XHRUpload = require('@uppy/xhr-upload')
 const ProgressBar = require('@uppy/progress-bar')
 
 // Initialise Uppy with Drag & Drop
