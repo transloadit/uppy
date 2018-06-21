@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+set -o pipefail
+set -o errexit
+set -o nounset
+set -o xtrace
+
+# Set magic variables for current file & dir
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
+__base="$(basename ${__file} .sh)"
+__root="$(cd "$(dirname "${__dir}")" && pwd)"
+
+# Add readme file to the main `uppy` package.
+cp README.md packages/uppy/README.md
+
+npm run clean
+npm run build
+
+lerna publish --message="Release" --exact
+
+# Replace version numbers in URLs
+version_files="./examples/ README.md bin/upload-to-cdn.sh website/src/examples/ website/src/docs/ website/themes/uppy/layout/"
+main_package_version=$(node -p "require('./packages/uppy/package.json').version")
+replace-x -r 'uppy/v\d+\.\d+\.\d+/dist' "uppy/v$main_package_version/dist" $version_files --exclude=node_modules
+git commit -m "Change Uppy version references to v$main_package_version" $version_files
+
+git push
+git push --tags
