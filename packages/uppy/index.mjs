@@ -27,6 +27,7 @@ export { default as Webcam } from '@uppy/webcam'
 
 // Uploaders
 export { default as AwsS3 } from '@uppy/aws-s3'
+export { default as AwsS3Multipart } from '@uppy/aws-s3-multipart'
 export { default as Transloadit } from '@uppy/transloadit'
 export { default as Tus } from '@uppy/tus'
 export { default as XHRUpload } from '@uppy/xhrupload'
