@@ -11,13 +11,21 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
+VERDACCIO_REGISTRY=http://localhost:4002
+
+cleanup() {
+  rm -rf "${__root}/test/endtoend/node_modules"
+  rm -rf "${__root}/test/endtoend/tmp"
+}
+
 echo "Preparing for end to end test: copying static HTML and CSS, building JS"
 rm -rf "${__root}/test/endtoend/dist" && mkdir "${__root}/test/endtoend/dist"
 rm -rf "${__root}/test/endtoend/node_modules"
 
-sleep 4
+PACKAGES="$(for pkg in packages/@uppy/*; do echo "${pkg#packages/}"; done)"
 
-VERDACCIO_REGISTRY=http://localhost:4002
+cleanup
+npm run build
 
 # https://github.com/facebook/create-react-app/pull/4626
 (cd && npm-auth-to-token -u user -p password -e user@example.com -r "$VERDACCIO_REGISTRY")
@@ -27,19 +35,23 @@ VERDACCIO_REGISTRY=http://localhost:4002
 # Use --cd-version to skip version prompts
 lerna publish --yes \
   --force-publish="*" \
-  --registry=$VERDACCIO_REGISTRY \
+  --registry="$VERDACCIO_REGISTRY" \
   --npm-client=npm \
   --skip-git \
   --cd-version=prerelease
 
-exit 0
+# revert version changes
+git checkout -- packages/*/package.json packages/@uppy/*/package.json
 
-npm run build
+# install all packages to the endtoend folder
+# (Don't use the npm cache, don't generate a package-lock, don't save dependencies to any package.json)
+(cd "${__root}/test/endtoend" && npm install --prefer-online --registry "$VERDACCIO_REGISTRY" --no-package-lock --no-save uppy $PACKAGES)
 
 cp "${__root}/packages/uppy/dist/uppy.min.css" "${__root}/test/endtoend/dist"
 cp "${__root}/test/endtoend/src/index.html" "${__root}/test/endtoend/dist"
+
 browserify "${__root}/test/endtoend/src/main.js" \
   -o "${__root}/test/endtoend/dist/bundle.js" \
-  -t babelify \
-  -t aliasify
-rm -rf "${__root}/test/endtoend/node_modules"
+  -t babelify
+
+cleanup
