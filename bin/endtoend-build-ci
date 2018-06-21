@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -o pipefail
+set -o errexit
+set -o nounset
+set -o xtrace
+
+# Set magic variables for current file & dir
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
+__base="$(basename ${__file} .sh)"
+__root="$(cd "$(dirname "${__dir}")" && pwd)"
+
+echo "Preparing for end to end test: copying static HTML and CSS, building JS"
+rm -rf "${__root}/test/endtoend/dist" && mkdir "${__root}/test/endtoend/dist"
+rm -rf "${__root}/test/endtoend/node_modules"
+
+sleep 4
+
+VERDACCIO_REGISTRY=http://localhost:4002
+
+# https://github.com/facebook/create-react-app/pull/4626
+(cd && npm-auth-to-token -u user -p password -e user@example.com -r "$VERDACCIO_REGISTRY")
+
+# Simulate a publish of everything, to the local registry,
+# without changing things in git
+# Use --cd-version to skip version prompts
+lerna publish --yes \
+  --force-publish="*" \
+  --registry=$VERDACCIO_REGISTRY \
+  --npm-client=npm \
+  --skip-git \
+  --cd-version=prerelease
+
+exit 0
+
+npm run build
+
+cp "${__root}/packages/uppy/dist/uppy.min.css" "${__root}/test/endtoend/dist"
+cp "${__root}/test/endtoend/src/index.html" "${__root}/test/endtoend/dist"
+browserify "${__root}/test/endtoend/src/main.js" \
+  -o "${__root}/test/endtoend/dist/bundle.js" \
+  -t babelify \
+  -t aliasify
+rm -rf "${__root}/test/endtoend/node_modules"
