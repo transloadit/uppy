@@ -7,6 +7,14 @@ order: 60
 
 Uppy provides [React][] components for the included UI plugins.
 
+## Installation
+
+All React components are provided through the `@uppy/react` package.
+
+```shell
+npm install @uppy/react
+```
+
 ## Usage
 
 The components can be used with [React][] or API-compatible alternatives such as [Preact][].
@@ -15,9 +23,9 @@ Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instan
 All other props are passed as options to the plugin.
 
 ```js
-const Uppy = require('uppy/lib/core')
-const Tus = require('uppy/lib/plugins/Tus')
-const DragDrop = require('uppy/lib/react/DragDrop')
+const Uppy = require('@uppy/core')
+const Tus = require('@uppy/tus')
+const DragDrop = require('@uppy/drag-drop')
 
 const uppy = Uppy({
   meta: { type: 'avatar' },

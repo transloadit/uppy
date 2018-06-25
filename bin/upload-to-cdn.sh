@@ -60,7 +60,7 @@ pushd "${__root}" > /dev/null 2>&1
   remoteVersion="${1:-}"
   version="${remoteVersion}"
   if [ -z "${remoteVersion}" ]; then
-    localVersion=$(node -pe "require('./package.json').version")
+    localVersion=$(node -pe "require('./packages/uppy/package.json').version")
     echo "${localVersion}"
     version="${localVersion}"
   fi
@@ -77,16 +77,18 @@ pushd "${__root}" > /dev/null 2>&1
   echo "✅"
 
   echo "--> Obtain relevant npm files for uppy ${version} ... "
-  if [ -z "${remoteVersion}" ]; then
-    npm pack || fatal "Unable to fetch "
-  else
-    npm pack "uppy@${remoteVersion}"
-  fi
+  pushd packages/uppy
+    if [ -z "${remoteVersion}" ]; then
+      npm pack || fatal "Unable to fetch "
+    else
+      npm pack "uppy@${remoteVersion}"
+    fi
+  popd > /dev/null 2>&1
   echo "✅"
   rm -rf /tmp/uppy-to-edgly
   mkdir -p /tmp/uppy-to-edgly
-  cp -af "uppy-${version}.tgz" /tmp/uppy-to-edgly/
-  tar zxvf "uppy-${version}.tgz" -C /tmp/uppy-to-edgly/
+  cp -af "packages/uppy/uppy-${version}.tgz" /tmp/uppy-to-edgly/
+  tar zxvf "packages/uppy/uppy-${version}.tgz" -C /tmp/uppy-to-edgly/
 
   echo "--> Upload to edgly.net CDN"
   pushd /tmp/uppy-to-edgly/package
@@ -96,10 +98,7 @@ pushd "${__root}" > /dev/null 2>&1
       AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
     aws s3 sync \
       --region="us-east-1" \
-      --exclude 'website/*' \
       --exclude 'node_modules/*' \
-      --exclude 'test/*/node_modules/*' \
-      --exclude 'examples/*/node_modules/*' \
     ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}"
     echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}/"
   popd > /dev/null 2>&1

@@ -1,0 +1,22 @@
+{
+  "name": "@uppy/store-default",
+  "description": "The default simple object-based store for Uppy.",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "uppy",
+    "uppy-store"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  }
+}

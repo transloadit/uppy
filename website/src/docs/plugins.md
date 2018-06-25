@@ -44,8 +44,8 @@ A unique string identifying the plugin. By default, the plugin's name is used, s
 Can be a `string` CSS selector, a DOM element, or a Plugin class. Consider the following example, where `DragDrop` plugin will be rendered into a `body` element:
 
 ```js
-const Uppy = require('uppy/lib/core')
-const DragDrop = require('uppy/lib/plugins/DragDrop')
+const Uppy = require('@uppy/core')
+const DragDrop = require('@uppy/drag-drop')
 const uppy = Uppy()
 uppy.use(DragDrop, { target: 'body' })
 // or: uppy.use(DragDrop, { target: document.body })
@@ -54,9 +54,9 @@ uppy.use(DragDrop, { target: 'body' })
 While in this one, we are using the `Dashboard` plugin, which can act as a host target for other plugins:
 
 ```js
-const Uppy = require('uppy/lib/core')
-const DragDrop = require('uppy/lib/plugins/Dashboard')
-const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
+const Uppy = require('@uppy/core')
+const DragDrop = require('@uppy/drag-drop')
+const GoogleDrive = require('@uppy/google-drive')
 const uppy = Uppy()
 uppy.use(Dashboard, {
   trigger: '#uppyModalOpener'

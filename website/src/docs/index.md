@@ -10,10 +10,15 @@ Uppy is a sleek, modular file uploader that integrates seamlessly with any frame
 
 Uppy consists of a core module and [various plugins](/docs/plugins/) for selecting, manipulating and uploading files. Here’s how it works:
 
+```shell
+# install dependencies
+npm install @uppy/core @uppy/dashboard @uppy/tus
+```
+
 ```js
-const Uppy = require('uppy/lib/core')
-const Dashboard = require('uppy/lib/plugins/Dashboard')
-const Tus = require('uppy/lib/plugins/Tus')
+const Uppy = require('@uppy/core')
+const Dashboard = require('@uppy/dashboard')
+const Tus = require('@uppy/tus')
  
 const uppy = Uppy({ autoProceed: false })
   .use(Dashboard, {
@@ -39,6 +44,8 @@ $ npm install uppy
 ```
 
 We recommend installing from NPM and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
+
+> You may need polyfills if your application supports Internet Explorer or other older browsers. See [Browser Support](#browser-support).
 
 Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly. In that case, `Uppy` will attach itself to the global `window.Uppy` object.
 
@@ -80,3 +87,18 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 </a>
 
 We currently aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
+
+### Polyfills
+
+Uppy heavily uses Promises. If your target environment [does not support Promises](https://caniuse.com/#feat=promises), use a polyfill like `es6-promise` before initialising Uppy.
+
+When using remote providers like Google Drive or Dropbox, the Fetch API is used. If your target environment does not support the [Fetch API](https://caniuse.com/#feat=fetch), use a polyfill like `whatwg-fetch` before initialising Uppy. The Fetch API polyfill must be loaded _after_ the Promises polyfill, because Fetch uses Promises.
+
+```shell
+npm install es6-promise whatwg-fetch
+```
+```js
+require('es6-promise/auto')
+require('whatwg-fetch')
+const Uppy = require('@uppy/core')
+```

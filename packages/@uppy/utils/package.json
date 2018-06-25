@@ -1,0 +1,24 @@
+{
+  "name": "@uppy/utils",
+  "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "uppy"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "lodash.throttle": "^4.1.1"
+  }
+}

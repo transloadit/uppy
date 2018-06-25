@@ -41,6 +41,37 @@ After you have installed and launched the selenium standalone server, run:
 
 These tests are also run automatically on Travis builds with [SauceLabs](https://saucelabs.com/) cloud service using different OSes.
 
+## Releases
+
+Before doing a release, check that the examples on the website work:
+
+```bash
+npm start
+open http://localhost:4000/examples/dashboard
+```
+
+Also check the other examples:
+
+```bash
+cd examples/EXAMPLENAME
+npm install
+npm start
+```
+
+Releases are managed by [Lerna](https://github.com/lerna/lerna/tree/2.x). We do some cleanup and compile work around releases too. Use the npm release script:
+
+```bash
+npm run release
+```
+
+If you have two factor authentication enabled on your npm account, you will need to temporarily disable it when doing an uppy release. Lerna doesn't support 2FA, and while there are workarounds, they don't reliably work for us. (In particular, using the `npm_config_otp` environment variable will fail because the token expires by the time the release script starts publishing anything.)
+
+```bash
+npm profile disable-2fa
+npm run release
+npm profile enable-2fa auth-only
+```
+
 ## Website development
 
 We keep the [uppy.io](http://uppy.io) website in `./website`, so it’s easy to keep docs and code in sync as we are still iterating at high velocity.

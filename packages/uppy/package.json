@@ -1,0 +1,59 @@
+{
+  "name": "uppy",
+  "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "index.js",
+  "module": "index.mjs",
+  "unpkg": "dist/uppy.min.js",
+  "style": "dist/style.min.css",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "drag-drop",
+    "progress",
+    "preview",
+    "resumable uploads",
+    "xhr",
+    "tus",
+    "s3",
+    "google drive",
+    "dropbox",
+    "webcam"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/aws-s3": "0.25.5",
+    "@uppy/aws-s3-multipart": "0.25.5",
+    "@uppy/core": "0.25.5",
+    "@uppy/dashboard": "0.25.5",
+    "@uppy/drag-drop": "0.25.5",
+    "@uppy/dropbox": "0.25.5",
+    "@uppy/file-input": "0.25.5",
+    "@uppy/form": "0.25.5",
+    "@uppy/golden-retriever": "0.25.5",
+    "@uppy/google-drive": "0.25.5",
+    "@uppy/informer": "0.25.5",
+    "@uppy/instagram": "0.25.5",
+    "@uppy/progress-bar": "0.25.5",
+    "@uppy/provider-views": "0.25.5",
+    "@uppy/redux-dev-tools": "0.25.5",
+    "@uppy/server-utils": "0.25.5",
+    "@uppy/status-bar": "0.25.5",
+    "@uppy/store-default": "0.25.5",
+    "@uppy/store-redux": "0.25.5",
+    "@uppy/thumbnail-generator": "0.25.5",
+    "@uppy/transloadit": "0.25.5",
+    "@uppy/tus": "0.25.5",
+    "@uppy/url": "0.25.5",
+    "@uppy/webcam": "0.25.5",
+    "@uppy/xhr-upload": "0.25.5"
+  }
+}

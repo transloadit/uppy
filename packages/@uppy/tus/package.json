@@ -1,0 +1,36 @@
+{
+  "name": "@uppy/tus",
+  "description": "Resumable uploads for Uppy using Tus.io",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "uppy",
+    "uppy-plugin",
+    "upload",
+    "resumable",
+    "tus"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/server-utils": "^0.25.5",
+    "@uppy/utils": "^0.25.5",
+    "tus-js-client": "^1.5.1"
+  },
+  "devDependencies": {
+    "@uppy/core": "^0.25.5"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^0.25.5"
+  }
+}

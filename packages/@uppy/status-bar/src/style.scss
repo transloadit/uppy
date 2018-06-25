@@ -1,0 +1,206 @@
+@import '@uppy/core/src/style.scss';
+@import '@uppy/utils/src/microtip.scss';
+
+.uppy-StatusBar {
+  display: flex;
+  position: relative;
+  height: 40px;
+  line-height: 40px;
+  font-size: 12px;
+  font-weight: 400;
+  color: $color-white;
+  background-color: lighten($color-black, 10%);
+  // box-shadow: 1px 1px 4px 0 rgba($color-asphalt-gray, 0.3);
+  // border-top: 1px solid rgba($color-gray, 0.2);
+  z-index: $zIndex-2;
+  transition: height .2s;
+}
+
+  .uppy-Dashboard--wide .uppy-StatusBar {
+    height: 45px;
+    font-size: 14px;
+  }
+
+.uppy-StatusBar[aria-hidden=true] {
+  overflow-y: hidden;
+  height: 0;
+}
+
+.uppy-StatusBar.is-complete .uppy-StatusBar-progress {
+  background-color: $color-green;
+}
+
+.uppy-StatusBar.is-error .uppy-StatusBar-progress {
+  background-color: $color-red;
+}
+
+.uppy-StatusBar.is-complete .uppy-StatusBar-content {
+  width: 100%;
+  text-align: center;
+  padding-left: 0;
+  justify-content: center;
+}
+
+.uppy-StatusBar:not([aria-hidden=true]).is-waiting {
+  // background-color: darken($color-white, 2%);
+  background-color: $color-white;
+  height: 65px;
+  border-top: 1px solid rgba($color-gray, 0.3);
+}
+
+.uppy-StatusBar-progress {
+  background-color: $color-cornflower-blue;
+  height: 100%;
+  position: absolute;
+  z-index: $zIndex-2;
+  transition: background-color, width .3s ease-out;
+
+  &.is-indeterminate {
+    $stripe-color: darken($color-cornflower-blue, 10%);
+    background-size: 64px 64px;
+    background-image: linear-gradient(45deg, $stripe-color 25%, transparent 25%, transparent 50%, $stripe-color 50%, $stripe-color 75%, transparent 75%, transparent);
+    animation: statusBarProgressStripes 1s linear infinite;
+  }
+}
+
+.uppy-StatusBar.is-waiting .uppy-StatusBar-progress {
+  display: none;
+}
+
+@keyframes statusBarProgressStripes {
+  from { background-position: 64px 0; }
+  to { background-position: 0 0; }
+}
+
+.uppy-StatusBar-content {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: $zIndex-3;
+  padding-left: 15px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: $color-white;
+  height: 100%;
+}
+
+.uppy-StatusBar-contentPadding {
+  margin-right: 0.5ch; // ½ the size of a 0, roughly the size of a space usually
+}
+
+.uppy-StatusBar-status {
+  line-height: 1.35;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+}
+
+.uppy-StatusBar-statusPrimary {
+  font-size: 13px;
+}
+
+.uppy-StatusBar-statusSecondary {
+  font-size: 11px;
+  display: none;
+}
+
+  .uppy-StatusBar--detailedProgress .uppy-StatusBar-statusSecondary {
+    display: inline;
+  }
+
+.uppy-StatusBar-statusIndicator {
+  color: $color-white;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+  .uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator  {
+    width: 15px;
+    margin-right: 7px;
+  }
+
+.uppy-StatusBar-actions {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 15px;
+  z-index: $zIndex-4;
+}
+
+.uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
+  width: 100%;
+  position: static;
+  padding: 0 15px;
+}
+
+.uppy-StatusBar-actionBtn {
+  font-size: 12px;
+  padding: 6px;
+  border-radius: 4px;
+}
+
+  .uppy-Dashboard--wide .uppy-StatusBar-actionBtn {
+    padding: 7px 10px;
+  }
+
+  .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+    font-size: 14px;
+    width: 100%;
+    padding: 15px 10px;
+  }
+
+    .uppy-Dashboard--wide .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+      padding: 13px 28px;
+      width: auto;
+    }
+
+  .uppy-StatusBar-actionBtn:not(:last-child) {
+    margin-right: 10px;
+  }
+
+  .uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
+    background-color: transparent;
+    border: 1px solid $color-white;
+    color: $color-white;
+  }
+
+  .uppy-StatusBar-actionBtn--retry {
+    background-color: $color-white;
+    color: $color-red;
+    border: 1px solid transparent;
+  }
+
+  .uppy-StatusBar-actionBtn--cancel {
+    // background-color: lighten($color-asphalt-gray, 8%);
+    // border: 1px solid lighten($color-black, 10%);
+    background-color: transparent;
+    border: 1px solid $color-white;
+    color: $color-white;
+  }
+
+.uppy-StatusBar-details {
+  line-height: 12px;
+  width: 13px;
+  height: 13px;
+  display: inline-block;
+  vertical-align: middle;
+  color: $color-red;
+  background-color: $color-white;
+  border-radius: 50%;
+  position: relative;
+  top: -1px;
+  left: 6px;
+  font-size: 10px;
+  text-align: center;
+  cursor: help;
+
+  &:hover {
+    cursor: help;
+  }
+}
+
+.uppy-StatusBar-details:after {
+  line-height: 1.3;
+  word-wrap: break-word;
+}

@@ -25,7 +25,7 @@ There are also some third-party stores:
 To use a store, pass an instance to the [`store` option](/docs/uppy#store-defaultstore) in the Uppy constructor:
 
 ```js
-const defaultStore = require('uppy/lib/store/DefaultStore')
+const defaultStore = require('@uppy/store-default')
 
 const uppy = Uppy({
   store: defaultStore()
@@ -47,7 +47,7 @@ This way, you get most of the benefits of Redux, including support for the Redux
 To use the `ReduxStore`, add its reducer to the `uppy` key:
 
 ```js
-const ReduxStore = require('uppy/lib/store/ReduxStore')
+const ReduxStore = require('@uppy/store-redux')
 const reducer = combineReducers({
   ...reducers,
   uppy: ReduxStore.reducer
@@ -58,7 +58,7 @@ Then pass a Redux store instance to the Uppy constructor:
 
 ```js
 const { createStore } = require('redux')
-const ReduxStore = require('uppy/lib/store/ReduxStore')
+const ReduxStore = require('@uppy/store-redux')
 
 const store = createStore(reducer)
 const uppy = Uppy({

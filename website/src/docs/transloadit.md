@@ -10,7 +10,7 @@ The Transloadit plugin can be used to upload files to [Transloadit](https://tran
 [Try it live](/examples/transloadit/)
 
 ```js
-const Transloadit = require('uppy/lib/plugins/Transloadit')
+const Transloadit = require('@uppy/transloadit')
 
 uppy.use(Transloadit, {
   service: 'https://api2.transloadit.com',
@@ -26,6 +26,14 @@ uppy.use(Transloadit, {
 
 As of Uppy 0.24 the Transloadit plugin includes the [Tus](/docs/tus) plugin to handle the uploading, so you no longer have to add it manually.
 
+## Installation
+
+This plugin is published as the `@uppy/transloadit` package.
+
+```shell
+npm install @uppy/transloadit
+```
+
 ## Properties
 
 ### `Transloadit.UPPY_SERVER`
@@ -33,8 +41,8 @@ As of Uppy 0.24 the Transloadit plugin includes the [Tus](/docs/tus) plugin to h
 The main endpoint for Transloadit's hosted uppy-servers. You can use this constant in remote provider options, like so:
 
 ```js
-const Dropbox = require('uppy/lib/plugins/Dropbox')
-const Transloadit = require('uppy/lib/plugins/Transloadit')
+const Dropbox = require('@uppy/dropbox')
+const Transloadit = require('@uppy/transloadit')
 
 uppy.use(Dropbox, {
   serverUrl: Transloadit.UPPY_SERVER

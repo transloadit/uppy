@@ -1,0 +1,42 @@
+{
+  "name": "@uppy/status-bar",
+  "description": "A progress bar for Uppy, with many bells and whistles.",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "style": "dist/style.min.css",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "uppy",
+    "uppy-plugin",
+    "progress bar",
+    "status bar",
+    "progress",
+    "upload",
+    "eta",
+    "speed"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/utils": "^0.25.5",
+    "classnames": "^2.2.6",
+    "lodash.throttle": "^4.1.1",
+    "preact": "^8.2.9",
+    "prettier-bytes": "^1.0.4"
+  },
+  "devDependencies": {
+    "@uppy/core": "^0.25.5"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^0.25.5"
+  }
+}

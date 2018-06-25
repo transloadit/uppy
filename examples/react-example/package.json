@@ -5,7 +5,11 @@
     "css": "cp ../../dist/uppy.min.css .",
     "start": "npm run css && budo main.js:bundle.js -- -r react:react -r react-dom:react-dom -t babelify -g aliasify"
   },
-  "aliasify": "./aliasify.js",
+  "aliasify": {
+    "aliases": {
+      "@uppy": "../../packages/@uppy"
+    }
+  },
   "dependencies": {
     "babel-preset-react": "^6.24.1",
     "react": "^15.6.1",

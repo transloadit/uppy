@@ -1,9 +1,9 @@
 const { createStore, compose, combineReducers, applyMiddleware } = require('redux')
 const logger = require('redux-logger').default
-const Uppy = require('uppy/lib/core')
-const uppyReduxStore = require('uppy/lib/store/ReduxStore')
-const Dashboard = require('uppy/lib/plugins/Dashboard')
-const Tus = require('uppy/lib/plugins/Tus')
+const Uppy = require('@uppy/core')
+const uppyReduxStore = require('@uppy/store-redux')
+const Dashboard = require('@uppy/dashboard')
+const Tus = require('@uppy/tus')
 
 function counter (state = 0, action) {
   switch (action.type) {

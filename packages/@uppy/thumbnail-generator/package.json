@@ -1,0 +1,35 @@
+{
+  "name": "@uppy/thumbnail-generator",
+  "description": "Uppy plugin that generates small previews of images to show on your upload UI.",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "uppy",
+    "uppy-plugin",
+    "thumbnail",
+    "preview",
+    "resize"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/utils": "^0.25.5"
+  },
+  "devDependencies": {
+    "@uppy/core": "^0.25.5",
+    "namespace-emitter": "^2.0.1"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^0.25.5"
+  }
+}

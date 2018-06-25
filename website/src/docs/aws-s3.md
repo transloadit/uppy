@@ -9,7 +9,7 @@ The `AwsS3` plugin can be used to upload files directly to an S3 bucket.
 Uploads can be signed using [Uppy Server][uppy-server docs] or a custom signing function.
 
 ```js
-const AwsS3 = require('uppy/lib/plugins/AwsS3')
+const AwsS3 = require('@uppy/aws-s3')
 const ms = require('ms')
 
 uppy.use(AwsS3, {
@@ -22,6 +22,14 @@ uppy.use(AwsS3, {
 There are broadly two ways to upload to S3 in a browser. A server can generate a presigned URL for a [PUT upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html), or a server can generate form data for a [POST upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html). uppy-server uses a POST upload. See [POST uPloads](#post-uploads) for some caveats if you would like to use POST uploads without uppy-server. See [Generating a presigned upload URL server-side](#example-presigned-url) for an example of a PUT upload.
 
 There is also a separate plugin for S3 Multipart uploads. Multipart in this sense is Amazon's proprietary chunked, resumable upload mechanism for large files. See the [AwsS3Multipart](/docs/aws-s3-multipart) documentation.
+
+## Installation
+
+This plugin is published as the `@uppy/aws-s3` package.
+
+```shell
+npm install @uppy/aws-s3
+```
 
 ## Options
 

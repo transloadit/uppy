@@ -10,7 +10,7 @@ The GoogleDrive plugin lets users import files from their Google Drive account.
 An Uppy Server instance is required for the GoogleDrive plugin to work. Uppy Server handles authentication with Google, downloads files from the Drive and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
+const GoogleDrive = require('@uppy/google-drive')
 
 uppy.use(GoogleDrive, {
   // Options
@@ -18,6 +18,14 @@ uppy.use(GoogleDrive, {
 ```
 
 [Try live!](/examples/dashboard/)
+
+## Installation
+
+This plugin is published as the `@uppy/google-drive` package.
+
+```shell
+npm install @uppy/google-drive
+```
 
 ## Options
 

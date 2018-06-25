@@ -1,6 +1,6 @@
-const Uppy = require('uppy/lib/core')
-const Dashboard = require('uppy/lib/plugins/Dashboard')
-const GoldenRetriever = require('uppy/lib/plugins/GoldenRetriever')
+const Uppy = require('@uppy/core')
+const Dashboard = require('@uppy/dashboard')
+const GoldenRetriever = require('@uppy/golden-retriever')
 
 // Initialise two Uppy instances with the GoldenRetriever plugin,
 // but with different `id`s.

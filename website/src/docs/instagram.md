@@ -10,7 +10,7 @@ The Instagram plugin lets users import files their Instagram account.
 An Uppy Server instance is required for the Instagram plugin to work. Uppy Server handles authentication with Instagram, downloads the pictures and videos, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const Instagram = require('uppy/lib/plugins/Instagram')
+const Instagram = require('@uppy/instagram')
 
 uppy.use(Instagram, {
   // Options
@@ -18,6 +18,16 @@ uppy.use(Instagram, {
 ```
 
 [Try live!](/examples/dashboard/)
+
+## Installation
+
+> If you are using the `uppy` package, you do not need to install this plugin manually.
+
+This plugin is published as the `@uppy/instagram` package.
+
+```shell
+npm install @uppy/instagram
+```
 
 ## Options
 

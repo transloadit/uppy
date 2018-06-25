@@ -1,6 +1,6 @@
-import Uppy from 'uppy/lib/core'
-import Dashboard from 'uppy/lib/plugins/Dashboard'
-import Tus from 'uppy/lib/plugins/Tus'
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Tus from '@uppy/tus'
 
 Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })

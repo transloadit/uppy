@@ -1,7 +1,7 @@
-const Uppy = require('uppy/lib/core/Core')
-const FileInput = require('uppy/lib/plugins/FileInput')
-const StatusBar = require('uppy/lib/plugins/StatusBar')
-const Tus = require('uppy/lib/plugins/Tus')
+const Uppy = require('@uppy/core')
+const FileInput = require('@uppy/file-input')
+const StatusBar = require('@uppy/status-bar')
+const Tus = require('@uppy/tus')
 
 const uppyOne = new Uppy({debug: true})
 uppyOne

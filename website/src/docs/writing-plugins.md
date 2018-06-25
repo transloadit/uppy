@@ -18,7 +18,7 @@ Plugins are classes that extend from Uppy's `Plugin` class. Each plugin has an `
 The plugin constructor receives the Uppy instance in the first parameter, and any options passed to `uppy.use()` in the second parameter.
 
 ```js
-const Plugin = require('uppy/lib/plugins/Plugin')
+const Plugin = require('@uppy/core/lib/Plugin')
 module.exports = class MyPlugin extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -175,7 +175,7 @@ See the Preact [Getting Started Guide](https://preactjs.com/guide/getting-starte
 
 ```js
 /** @jsx h */
-const Plugin = require('uppy/lib/core/Plugin')
+const Plugin = require('@uppy/core/lib/Plugin')
 const { h } = require('preact')
 
 class NumFiles extends Plugin {

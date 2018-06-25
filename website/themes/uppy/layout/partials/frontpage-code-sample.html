@@ -4,10 +4,10 @@ save it as a layout partial
 -->
 <figure class="highlight bash"><table><tr><td class="code"><pre>$ npm install uppy</pre></td></tr></table></figure>
 
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="token keyword">import</span> Uppy <span class="token keyword">from</span> <span class="token string">'uppy/lib/core'</span>
-<span class="token keyword">import</span> Dashboard <span class="token keyword">from</span> <span class="token string">'uppy/lib/plugins/Dashboard'</span>
-<span class="token keyword">import</span> Tus <span class="token keyword">from</span> <span class="token string">'uppy/lib/plugins/Tus'</span>
- 
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="token keyword">import</span> Uppy <span class="token keyword">from</span> <span class="token string">'@uppy/core'</span>
+<span class="token keyword">import</span> Dashboard <span class="token keyword">from</span> <span class="token string">'@uppy/dashboard'</span>
+<span class="token keyword">import</span> Tus <span class="token keyword">from</span> <span class="token string">'@uppy/tus'</span>
+
 <span class="token function">Uppy</span><span class="token punctuation">(</span><span class="token punctuation">{</span> autoProceed<span class="token punctuation">:</span> <span class="token boolean">false</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
   <span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Dashboard<span class="token punctuation">,</span> <span class="token punctuation">{</span> trigger<span class="token punctuation">:</span> <span class="token string">'#select-files'</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
   <span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Tus<span class="token punctuation">,</span> <span class="token punctuation">{</span> endpoint<span class="token punctuation">:</span> <span class="token string">'https://master.tus.io/files/'</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>

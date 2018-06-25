@@ -1,0 +1,27 @@
+{
+  "name": "@uppy/server-utils",
+  "description": "Client library for communication with Uppy Server. Intended for use in Uppy plugins.",
+  "version": "0.25.5",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "uppy",
+    "uppy-plugin",
+    "uppy-server",
+    "provider"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "namespace-emitter": "^2.0.1"
+  }
+}

@@ -7,7 +7,11 @@
     "start:server": "node server/index.js",
     "start": "npm-run-all --serial copy --parallel start:*"
   },
-  "aliasify": "client/aliasify.js",
+  "aliasify": {
+    "aliases": {
+      "@uppy": "../../packages/@uppy"
+    }
+  },
   "dependencies": {
     "aliasify": "^2.1.0",
     "babelify": "^7.3.0",

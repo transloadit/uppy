@@ -2,13 +2,14 @@
 type: docs
 order: 31
 title: "XHRUpload"
-permalink: docs/xhrupload/
+permalink: docs/xhr-upload/
+alias: docs/xhrupload/
 ---
 
 The XHRUpload plugin handles classic HTML multipart form uploads, as well as uploads using the HTTP `PUT` method.
 
 ```js
-const XHRUpload = require('uppy/lib/plugins/XHRUpload')
+const XHRUpload = require('@uppy/xhr-upload')
 
 uppy.use(XHRUpload, {
   endpoint: 'http://my-website.org/upload'
@@ -16,6 +17,14 @@ uppy.use(XHRUpload, {
 ```
 
 [Try it live](/examples/xhrupload/)
+
+## Installation
+
+This plugin is published as the `@uppy/xhr-upload` package.
+
+```shell
+npm install @uppy/xhr-upload
+```
 
 ## Options
 
