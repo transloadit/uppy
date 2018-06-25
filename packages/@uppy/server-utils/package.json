@@ -22,7 +22,6 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "namespace-emitter": "^2.0.1",
-    "whatwg-fetch": "^2.0.4"
+    "namespace-emitter": "^2.0.1"
   }
 }

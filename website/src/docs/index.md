@@ -45,6 +45,8 @@ $ npm install uppy
 
 We recommend installing from NPM and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
+> You may need polyfills if your application supports Internet Explorer or other older browsers. See [Browser Support](#browser-support).
+
 Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly. In that case, `Uppy` will attach itself to the global `window.Uppy` object.
 
 > ⚠️ The bundle currently consists of most Uppy plugins. This method is therefore not recommended for production, as your users will have to download all plugins, even if you are only using a few of them.
@@ -85,3 +87,18 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 </a>
 
 We currently aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
+
+### Polyfills
+
+Uppy heavily uses Promises. If your target environment [does not support Promises](https://caniuse.com/#feat=promises), use a polyfill like `es6-promise` before initialising Uppy.
+
+When using remote providers like Google Drive or Dropbox, the Fetch API is used. If your target environment does not support the [Fetch API](https://caniuse.com/#feat=fetch), use a polyfill like `whatwg-fetch` before initialising Uppy. The Fetch API polyfill must be loaded _after_ the Promises polyfill, because Fetch uses Promises.
+
+```shell
+npm install es6-promise whatwg-fetch
+```
+```js
+require('es6-promise/auto')
+require('whatwg-fetch')
+const Uppy = require('@uppy/core')
+```

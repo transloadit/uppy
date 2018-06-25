@@ -1,7 +1,5 @@
 'use strict'
 
-require('whatwg-fetch')
-
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash (url) {
   return url.replace(/\/$/, '')

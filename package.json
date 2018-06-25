@@ -123,7 +123,7 @@
     "web:update:frontpage:code:sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
     "web": "npm-run-all web:clean web:build",
     "uploadcdn": "bin/upload-to-cdn.sh",
-    "prepare": "lerna bootstrap",
+    "prepare": "lerna bootstrap --hoist",
     "contributors": "githubcontrib --owner transloadit --repo uppy --cols 6 $([ \"${GITHUB_TOKEN:-}\" == \"\" ] && echo \"\" || echo \"--authToken ${GITHUB_TOKEN}\") --showlogin true --sortOrder desc",
     "contributors:save": "replace-x -m '<!--contributors-->[\\s\\S]+<!--/contributors-->' \"<!--contributors-->\n## Contributors\n\n$(npm run --silent contributors)\n<!--/contributors-->\" README.md"
   }
