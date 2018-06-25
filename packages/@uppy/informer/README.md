@@ -13,7 +13,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 
 ```js
 const Uppy = require('@uppy/core')
-const PLUGIN = require('@uppy/informer')
+const Informer = require('@uppy/informer')
 
 const uppy = Uppy()
 uppy.use(Informer, {
