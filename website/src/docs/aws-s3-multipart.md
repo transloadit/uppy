@@ -44,9 +44,9 @@ Return a Promise for an object with keys:
 
 The default implementation calls out to Uppy Server's S3 signing endpoints.
 
-### listParts({ uploadId, key })
+### listParts(file, { uploadId, key })
 
-A function that calls the S3 Multipart API to list the parts of a file that have already been uploaded. Receives an object with keys:
+A function that calls the S3 Multipart API to list the parts of a file that have already been uploaded. Receives the `file` object from Uppy's state, and an object with keys:
 
  - `uploadId` - The UploadID of this Multipart upload.
  - `key` - The object key of this Multipart upload.
@@ -59,9 +59,9 @@ Return a Promise for an array of S3 Part objects, as returned by the S3 Multipar
 
 The default implementation calls out to Uppy Server's S3 signing endpoints.
 
-### prepareUploadPart(partData)
+### prepareUploadPart(file, partData)
 
-A function that generates a signed URL to upload a single part. The `partData` argument is an object with keys:
+A function that generates a signed URL to upload a single part. Receives the `file` object from Uppy's state. The `partData` argument is an object with keys:
 
  - `uploadId` - The UploadID of this Multipart upload.
  - `key` - The object key in the S3 bucket.
@@ -83,9 +83,9 @@ Return a Promise for an object with keys:
    }, (err, url) => { /* there's the url! */ })
    ```
 
-### abortMultipartUpload({ uploadId, key })
+### abortMultipartUpload(file, { uploadId, key })
 
-A function that calls the S3 Multipart API to abort a Multipart upload, and delete all parts that have been uploaded so far. Receives an object with keys:
+A function that calls the S3 Multipart API to abort a Multipart upload, and delete all parts that have been uploaded so far. Receives the `file` object from Uppy's state, and an object with keys:
 
  - `uploadId` - The UploadID of this Multipart upload.
  - `key` - The object key of this Multipart upload.
@@ -94,9 +94,9 @@ This is typically called when the user cancels an upload. Cancellation cannot fa
 
 The default implementation calls out to Uppy Server's S3 signing endpoints.
 
-### completeMultipartUpload({ uploadId, key, parts })
+### completeMultipartUpload(file, { uploadId, key, parts })
 
-A function that calls the S3 Multipart API to complete a Multipart upload, combining all parts into a single object in the S3 bucket. Receives an object with keys:
+A function that calls the S3 Multipart API to complete a Multipart upload, combining all parts into a single object in the S3 bucket. Receives the `file` object from Uppy's state, and an object with keys:
 
  - `uploadId` - The UploadID of this Multipart upload.
  - `key` - The object key of this Multipart upload.
