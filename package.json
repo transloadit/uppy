@@ -12,7 +12,8 @@
     "dist/",
     "test/",
     "bin/",
-    "examples/"
+    "examples/",
+    "types/"
   ],
   "lint-staged": {
     "*.js": "eslint"
