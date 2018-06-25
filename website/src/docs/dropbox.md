@@ -19,6 +19,14 @@ uppy.use(Dropbox, {
 
 [Try live!](/examples/dashboard/)
 
+## Installation
+
+This plugin is published as the `@uppy/dropbox` package.
+
+```shell
+npm install @uppy/dropbox
+```
+
 ## Options
 
 ```js

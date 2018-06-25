@@ -7,6 +7,16 @@ order: 40
 
 The GoldenRetriever plugin saves selected files in your browser cache (Local Storage for metadata, then Service Worker for all blobs + IndexedDB for small blobs), so that if the browser crashes, Uppy can restore everything and continue uploading like nothing happened. Read more about it [on the blog](https://uppy.io/blog/2017/07/golden-retriever/).
 
+## Installation
+
+This plugin is published as the `@uppy/golden-retriever` package.
+
+```shell
+npm install @uppy/golden-retriever
+```
+
+## Usage
+
 1\. Bundle your own service worker `sw.js` file with Uppy GoldenRetriever’s service worker. If you’re using Browserify, just bundle it separately, for Webpack there is a plugin [serviceworker-webpack-plugin](https://github.com/oliviertassinari/serviceworker-webpack-plugin).
 
 ```js

@@ -11,6 +11,7 @@ Uppy is a sleek, modular file uploader that integrates seamlessly with any frame
 Uppy consists of a core module and [various plugins](/docs/plugins/) for selecting, manipulating and uploading files. Here’s how it works:
 
 ```shell
+# install dependencies
 npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 

@@ -8,6 +8,12 @@ order: 63
 
 The `<ProgressBar />` component wraps the [ProgressBar][] plugin.
 
+## Installation
+
+```shell
+npm install @uppy/react
+```
+
 ```js
 import ProgressBar from '@uppy/react/lib/ProgressBar'
 import { ProgressBar } from '@uppy/react'

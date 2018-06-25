@@ -18,6 +18,14 @@ uppy.use(XHRUpload, {
 
 [Try it live](/examples/xhrupload/)
 
+## Installation
+
+This plugin is published as the `@uppy/xhr-upload` package.
+
+```shell
+npm install @uppy/xhr-upload
+```
+
 ## Options
 
 ### `id: 'XHRUpload'`

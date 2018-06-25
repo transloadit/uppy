@@ -19,6 +19,14 @@ uppy.use(Webcam, {
 
 [Try live!](/examples/dashboard/)
 
+## Installation
+
+This plugin is published as the `@uppy/webcam` package.
+
+```shell
+npm install @uppy/webcam
+```
+
 ## Options
 
 ```js

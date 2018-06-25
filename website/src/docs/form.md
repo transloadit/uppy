@@ -15,6 +15,14 @@ uppy.use(Form, {
 })
 ```
 
+## Installation
+
+This plugin is published as the `@uppy/form` package.
+
+```shell
+npm install @uppy/form
+```
+
 ## Options
 
 ```js

@@ -18,6 +18,14 @@ uppy.use(Tus, {
 })
 ```
 
+## Installation
+
+This plugin is published as the `@uppy/tus` package.
+
+```shell
+npm install @uppy/tus
+```
+
 ## Options
 
 The Tus plugin supports all of [tus-js-client][]’s options. Additionally:

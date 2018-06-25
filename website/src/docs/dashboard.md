@@ -24,6 +24,14 @@ uppy.use(Dashboard, {
 
 [Try it live](/examples/dashboard/)
 
+## Installation
+
+This plugin is published as the `@uppy/dashboard` package.
+
+```shell
+npm install @uppy/dashboard
+```
+
 ## Options
 
 ```js

@@ -19,6 +19,14 @@ uppy.use(StatusBar, {
 
 [Try it live](/examples/statusbar/)
 
+## Installation
+
+This plugin is published as the `@uppy/status-bar` package.
+
+```shell
+npm install @uppy/status-bar
+```
+
 ## Options
 
 ```js

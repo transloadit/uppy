@@ -18,6 +18,14 @@ uppy.use(ProgressBar, {
 
 [Try it live](/examples/dragdrop/) - The DragDrop example uses ProgressBars to show progress.
 
+## Installation
+
+This plugin is published as the `@uppy/progress-bar` package.
+
+```shell
+npm install @uppy/progress-bar
+```
+
 ## Options
 
 ```js

@@ -8,6 +8,12 @@ order: 62
 
 The `<DragDrop />` component wraps the [DragDrop][] plugin.
 
+## Installation
+
+```shell
+npm install @uppy/react
+```
+
 ```js
 import DragDrop from '@uppy/react/lib/DragDrop';
 import { DragDrop } from '@uppy/react';

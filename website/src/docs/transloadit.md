@@ -26,6 +26,14 @@ uppy.use(Transloadit, {
 
 As of Uppy 0.24 the Transloadit plugin includes the [Tus](/docs/tus) plugin to handle the uploading, so you no longer have to add it manually.
 
+## Installation
+
+This plugin is published as the `@uppy/transloadit` package.
+
+```shell
+npm install @uppy/transloadit
+```
+
 ## Properties
 
 ### `Transloadit.UPPY_SERVER`

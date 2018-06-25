@@ -23,6 +23,14 @@ There are broadly two ways to upload to S3 in a browser. A server can generate a
 
 There is also a separate plugin for S3 Multipart uploads. Multipart in this sense is Amazon's proprietary chunked, resumable upload mechanism for large files. See the [AwsS3Multipart](/docs/aws-s3-multipart) documentation.
 
+## Installation
+
+This plugin is published as the `@uppy/aws-s3` package.
+
+```shell
+npm install @uppy/aws-s3
+```
+
 ## Options
 
 ### `id: 'AwsS3'`

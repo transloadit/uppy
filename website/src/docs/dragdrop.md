@@ -18,6 +18,14 @@ uppy.use(DragDrop, {
 
 [Try it live](/examples/dragdrop/)
 
+## Installation
+
+This plugin is published as the `@uppy/drag-drop` package.
+
+```shell
+npm install @uppy/drag-drop
+```
+
 ## Options
 
 ```js

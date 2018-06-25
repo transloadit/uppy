@@ -13,6 +13,12 @@ const Uppy = require('@uppy/core')
 const uppy = Uppy()
 ```
 
+## Installation
+
+```shell
+npm install @uppy/core
+```
+
 ## Options
 
 ```js

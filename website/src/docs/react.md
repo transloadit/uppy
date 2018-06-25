@@ -7,6 +7,14 @@ order: 60
 
 Uppy provides [React][] components for the included UI plugins.
 
+## Installation
+
+All React components are provided through the `@uppy/react` package.
+
+```shell
+npm install @uppy/react
+```
+
 ## Usage
 
 The components can be used with [React][] or API-compatible alternatives such as [Preact][].

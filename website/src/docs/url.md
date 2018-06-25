@@ -19,6 +19,14 @@ uppy.use(Url, {
 
 [Try live!](/examples/dashboard/)
 
+## Installation
+
+This plugin is published as the `@uppy/url` package.
+
+```shell
+npm install @uppy/url
+```
+
 ## Options
 
 ```js

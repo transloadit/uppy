@@ -7,6 +7,12 @@ order: 64
 
 The `<Dashboard />` component wraps the [Dashboard][] plugin. It only renders the Dashboard inline. To use the Dashboard modal (`inline: false`), use the [`<DashboardModal />`](/docs/react/dashboard-modal) component.
 
+## Installation
+
+```shell
+npm install @uppy/react
+```
+
 ```js
 import Dashboard from '@uppy/react/lib/Dashboard'
 import { Dashboard } from '@uppy/react'

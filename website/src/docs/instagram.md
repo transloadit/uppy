@@ -19,6 +19,16 @@ uppy.use(Instagram, {
 
 [Try live!](/examples/dashboard/)
 
+## Installation
+
+> If you are using the `uppy` package, you do not need to install this plugin manually.
+
+This plugin is published as the `@uppy/instagram` package.
+
+```shell
+npm install @uppy/instagram
+```
+
 ## Options
 
 ```js

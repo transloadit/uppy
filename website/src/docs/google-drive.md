@@ -19,6 +19,14 @@ uppy.use(GoogleDrive, {
 
 [Try live!](/examples/dashboard/)
 
+## Installation
+
+This plugin is published as the `@uppy/google-drive` package.
+
+```shell
+npm install @uppy/google-drive
+```
+
 ## Options
 
 ```js

@@ -17,6 +17,16 @@ uppy.use(Informer, {
 
 [Try it live](/examples/dashboard/) - The Informer is included in the Dashboard by default.
 
+## Installation
+
+> If you are using the `uppy` package, you do not need to install this plugin manually.
+
+This plugin is published as the `@uppy/informer` package.
+
+```shell
+npm install @uppy/informer
+```
+
 ## Options
 
 ### `id: 'Informer'`
