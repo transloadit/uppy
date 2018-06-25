@@ -1,6 +1,6 @@
 <section id="hero" class="IndexHero">
   <header id="logo-wrap" class="IndexHero-header">
-    <img id="logo" class="IndexHero-logo" title="Uppy" alt="Uppy" src="<%- config.logo_large %>">
+    <img id="logo" class="IndexHero-logo" title="Uppy" alt="Uppy" src="<%- config.logo_medium %>">
     <h1 class="IndexHero-title"><%- config.title %></h1>
 
     <h2 class="IndexHero-tagline">
@@ -23,8 +23,10 @@
 
   <div class="IndexExample-block">
     <video class="IndexExample-video"
-           src="/images/uppy-demo.mp4"
-           autoplay loop muted></video>
+           autoplay loop muted playsinline>
+      <source src="/images/uppy-demo-2.mp4" type="video/mp4">
+      Your browser does not support the video tag, you can <a href="/images/blog/0.25/link-drop-demo.mp4">download the video</a> to watch it.
+    </video>
     <form id="upload-form">
       <input type="file">
     </form>
@@ -79,8 +81,8 @@
   <p>© <%- date(Date.now(), 'YYYY') %> <a href="https://transloadit.com" rel="noreferrer noopener" target="_blank">Transloadit</a></p>
 </footer>
 
-<link href="https://transloadit.edgly.net/releases/uppy/v0.25.5/dist/uppy.min.css" rel="stylesheet">
-<script src="https://transloadit.edgly.net/releases/uppy/v0.25.5/dist/uppy.min.js"></script>
+<link href="https://transloadit.edgly.net/releases/uppy/v0.25.6/dist/uppy.min.css" rel="stylesheet">
+<script src="https://transloadit.edgly.net/releases/uppy/v0.25.6/dist/uppy.min.js"></script>
 
 <script>
   var PROTOCOL = location.protocol === 'https:' ? 'https' : 'http'

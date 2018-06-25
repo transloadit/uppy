@@ -1,7 +1,6 @@
 {
   "private": true,
   "name": "uppy-build",
-  "version": "0.25.5",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
     "*.js": "eslint"

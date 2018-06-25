@@ -5,7 +5,7 @@ title: "GoogleDrive"
 permalink: docs/google-drive/
 ---
 
-The GoogleDrive plugin lets users import files their Google Drive account.
+The GoogleDrive plugin lets users import files from their Google Drive account.
 
 An Uppy Server instance is required for the GoogleDrive plugin to work. Uppy Server handles authentication with Google, downloads files from the Drive and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 

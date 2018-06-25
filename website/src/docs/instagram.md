@@ -5,7 +5,7 @@ title: "Instagram"
 permalink: docs/instagram/
 ---
 
-The Instagram plugin lets users import files their Google Drive account.
+The Instagram plugin lets users import files their Instagram account.
 
 An Uppy Server instance is required for the Instagram plugin to work. Uppy Server handles authentication with Instagram, downloads the pictures and videos, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
