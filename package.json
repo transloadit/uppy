@@ -119,7 +119,7 @@
     "web:bundle:update:watch": "onchange 'packages/uppy/dist/**/*.css' 'packages/uppy/dist/**/*.js' --initial --verbose -- node website/update.js",
     "web:examples:watch": "cd website && node build-examples.js watch",
     "web:serve": "cd website && ./node_modules/.bin/hexo server",
-    "web:preview": "npm-run-all --parallel web:examples:watch web:bundle:update:watch web:serve",
+    "web:preview": "npm-run-all build:lib --parallel web:examples:watch web:bundle:update:watch web:serve",
     "web:update:frontpage:code:sample": "cd website && ./node_modules/.bin/hexo generate && cp -f public/frontpage-code-sample.html ./themes/uppy/layout/partials/frontpage-code-sample.html",
     "web": "npm-run-all web:clean web:build",
     "uploadcdn": "bin/upload-to-cdn.sh",
