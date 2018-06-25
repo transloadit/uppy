@@ -27,7 +27,7 @@
   "dependencies": {
     "@uppy/utils": "^0.25.5",
     "@uppy/server-utils": "^0.25.5",
-    "cuid": "^2.0.2"
+    "cuid": "^2.1.1"
   },
   "devDependencies": {
     "@uppy/core": "^0.25.5"
