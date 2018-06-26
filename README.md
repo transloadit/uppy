@@ -25,6 +25,12 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 
 Code used in the above example:
 
+<blockquote>
+  <p>⚠️<strong>Attention:</strong> the docs have already been updated to use separate uppy packages, but we’ll actually publish those packages in the next few days. 
+  In the meantime, for correct require/import paths, please refer to the <a href="https://github.com/transloadit/uppy/tree/a35eb6e8f93cc07391dda87a0e4cc31d76783d0e/website/src/docs">0.25.6 documentation</a>.</p>
+  <p><strong>TL;DR</strong> use <code>uppy</code> package (<code>npm install uppy --save</code>) with paths like this: <code>require('uppy/lib/core')</code>, <code>require('uppy/lib/plugins/Dashboard')</code> and so on.</p>
+</blockquote>
+
 ```js
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
