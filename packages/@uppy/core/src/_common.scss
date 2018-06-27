@@ -19,6 +19,11 @@
 //   outline: 0;
 // }
 
+.uppy-Root *:focus {
+  outline: 2px solid $color-cornflower-blue;
+  outline-offset: 3px;
+}
+
 // https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4
 
 .UppyIcon {
