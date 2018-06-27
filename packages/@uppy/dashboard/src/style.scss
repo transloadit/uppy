@@ -162,8 +162,8 @@
 
 
 .uppy-DashboardTabs {
-  padding-top: 7px;
-  padding-bottom: 7px;
+  padding: 7px;
+  padding-right: 28px;
   border-bottom: 1px solid rgba($color-gray, 0.3);
 }
 
@@ -201,9 +201,13 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+  white-space: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  text-align: center;
 }
 
 .uppy-DashboardTab {
@@ -410,6 +414,7 @@
   margin: 0;
   padding: 0 0 10px 0;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   position: absolute;
   top: 0;
   left: 0;
@@ -1085,6 +1090,7 @@
   max-height: 40%;
   flex-grow: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .uppy-DashboardFileCard-fieldset {
