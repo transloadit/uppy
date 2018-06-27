@@ -101,7 +101,7 @@
     "test": "npm run lint && npm run test:unit && npm run test:type",
     "test:watch": "jest --watch --testPathPattern=src",
     "travis:deletecache": "travis cache --delete",
-    "watch:css": "onchange 'src/scss/**/*.scss' --initial --verbose -- npm run build:css",
+    "watch:css": "onchange 'packages/**/*.scss' --initial --verbose -- npm run build:css",
     "watch:js": "onchange 'packages/{@uppy/,}*/src/**/*.js' --initial --verbose -- npm run build:bundle",
     "watch": "npm-run-all --parallel watch:js watch:css",
     "watch:fast": "npm-run-all --parallel watch:css web:preview",

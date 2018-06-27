@@ -1,10 +1,10 @@
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const Instagram = require('@uppy/instagram')
-const GoogleDrive = require('@uppy/google-drive')
-const Webcam = require('@uppy/webcam')
-const Tus = require('@uppy/tus')
-const Form = require('@uppy/form')
+const Uppy = require('./../../packages/@uppy/core/src')
+const Dashboard = require('./../../packages/@uppy/dashboard/src')
+const Instagram = require('./../../packages/@uppy/instagram/src')
+const GoogleDrive = require('./../../packages/@uppy/google-drive/src')
+const Webcam = require('./../../packages/@uppy/webcam/src')
+const Tus = require('./../../packages/@uppy/tus/src')
+const Form = require('./../../packages/@uppy/form/src')
 
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
 
