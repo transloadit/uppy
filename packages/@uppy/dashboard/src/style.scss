@@ -163,8 +163,12 @@
 
 .uppy-DashboardTabs {
   padding: 7px;
-  padding-right: 28px;
+  // padding-right: 28px;
   border-bottom: 1px solid rgba($color-gray, 0.3);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  // overflow-x: auto;
+  // -webkit-overflow-scrolling: touch;
 }
 
 .uppy-DashboardTabs[aria-hidden=true] {
@@ -205,8 +209,6 @@
   // justify-content: center;
   // align-items: center;
   white-space: nowrap;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
   text-align: center;
 }
 
