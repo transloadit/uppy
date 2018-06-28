@@ -17,10 +17,6 @@ declare module '@uppy/utils/lib/canvasToBlob' {
   export default function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number): Promise<Blob>;
 }
 
-declare module '@uppy/utils/lib/copyToClipboard' {
-  export default function copyToClipboard(text: string, fallbackMessage: string);
-}
-
 declare module '@uppy/utils/lib/dataURItoBlob' {
   export default function dataURItoBlob(dataURI: string, opts: { mimeType?: string, name?: string }): Blob;
 }
