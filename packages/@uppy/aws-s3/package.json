@@ -1,7 +1,7 @@
 {
   "name": "@uppy/aws-s3",
   "description": "Upload to Amazon S3 with Uppy",
-  "version": "0.25.5",
+  "version": "0.25.6",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -23,14 +23,14 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "^0.25.5",
-    "@uppy/xhr-upload": "^0.25.5",
+    "@uppy/utils": "^0.25.6",
+    "@uppy/xhr-upload": "^0.25.6",
     "resolve-url": "^0.2.1"
   },
   "devDependencies": {
-    "@uppy/core": "^0.25.5"
+    "@uppy/core": "^0.25.6"
   },
   "peerDependencies": {
-    "@uppy/core": "^0.25.5"
+    "@uppy/core": "^0.25.6"
   }
 }

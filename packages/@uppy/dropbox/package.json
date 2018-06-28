@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dropbox",
   "description": "Import files from Dropbox, into Uppy.",
-  "version": "0.25.5",
+  "version": "0.25.6",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -21,15 +21,15 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/provider-views": "^0.25.5",
-    "@uppy/server-utils": "^0.25.5",
-    "@uppy/utils": "^0.25.5",
+    "@uppy/provider-views": "^0.25.6",
+    "@uppy/server-utils": "^0.25.6",
+    "@uppy/utils": "^0.25.6",
     "preact": "^8.2.9"
   },
   "devDependencies": {
-    "@uppy/core": "^0.25.5"
+    "@uppy/core": "^0.25.6"
   },
   "peerDependencies": {
-    "@uppy/core": "^0.25.5"
+    "@uppy/core": "^0.25.6"
   }
 }

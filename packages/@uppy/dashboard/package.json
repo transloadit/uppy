@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "0.25.5",
+  "version": "0.25.6",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -23,20 +23,20 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/informer": "^0.25.5",
-    "@uppy/provider-views": "^0.25.5",
-    "@uppy/status-bar": "^0.25.5",
-    "@uppy/thumbnail-generator": "^0.25.5",
-    "@uppy/utils": "^0.25.5",
+    "@uppy/informer": "^0.25.6",
+    "@uppy/provider-views": "^0.25.6",
+    "@uppy/status-bar": "^0.25.6",
+    "@uppy/thumbnail-generator": "^0.25.6",
+    "@uppy/utils": "^0.25.6",
     "classnames": "^2.2.6",
     "drag-drop": "^2.14.0",
     "preact": "^8.2.9",
     "prettier-bytes": "^1.0.4"
   },
   "devDependencies": {
-    "@uppy/core": "^0.25.5"
+    "@uppy/core": "^0.25.6"
   },
   "peerDependencies": {
-    "@uppy/core": "^0.25.5"
+    "@uppy/core": "^0.25.6"
   }
 }

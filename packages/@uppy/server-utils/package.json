@@ -1,7 +1,7 @@
 {
   "name": "@uppy/server-utils",
   "description": "Client library for communication with Uppy Server. Intended for use in Uppy plugins.",
-  "version": "0.25.5",
+  "version": "0.25.6",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
