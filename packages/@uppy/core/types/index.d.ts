@@ -1,4 +1,3 @@
-// TODO actually use the properties here
 export interface UppyFile {
   data: Blob | File;
   extension: string;
@@ -27,6 +26,11 @@ export interface UppyFile {
   source?: string;
   type?: string;
   uploadURL?: string;
+}
+
+export interface AddFileOptions extends Partial<UppyFile> {
+  // `.data` is the only required property here.
+  data: Blob | File;
 }
 
 export interface PluginOptions {
@@ -71,16 +75,16 @@ export interface UppyOptions {
 }
 
 export interface UploadResult {
-  successful: Array<UppyFile>;
-  failed: Array<UppyFile>;
+  successful: UppyFile[];
+  failed: UppyFile[];
 }
 
 type LogLevel = 'info' | 'warning' | 'error';
 export class Uppy {
   constructor(opts?: Partial<UppyOptions>);
-  on(event: 'upload-success', callback: (file: UppyFile, body: any, uploadURL: string) => any): Uppy;
+  on(event: 'upload-success', callback: (file: UppyFile, body: any, uploadURL: string) => void): Uppy;
   on(event: 'complete', callback: (result: UploadResult) => void): Uppy;
-  on(event: string, callback: (...args: any[]) => any): Uppy;
+  on(event: string, callback: (...args: any[]) => void): Uppy;
   off(event: string, callback: any): Uppy;
   updateAll(state: object): void;
   setState(patch: object): void;
@@ -95,10 +99,10 @@ export class Uppy {
   addUploader(fn: any): void;
   removeUploader(fn: any): void;
   setMeta(data: any): void;
-  setFileMeta(fileID: string, data: any): void;
+  setFileMeta(fileID: string, data: object): void;
   getFile(fileID: string): UppyFile;
   getFiles(): UppyFile[];
-  addFile(file: object): void;
+  addFile(file: AddFileOptions): void;
   removeFile(fileID: string): void;
   pauseResume(fileID: string): boolean;
   pauseAll(): void;
@@ -108,18 +112,18 @@ export class Uppy {
   retryUpload(fileID: string): any;
   reset(): void;
   getID(): string;
-  use(plugin: typeof Plugin, opts: any): Uppy;
+  use<T extends typeof Plugin>(pluginClass: T, opts: object): Uppy;
   getPlugin(name: string): Plugin;
-  iteratePlugins(method: any): void;
+  iteratePlugins(callback: (plugin: Plugin) => void): void;
   removePlugin(instance: Plugin): void;
   close(): void;
   info(message: string | { message: string; details: string; }, type?: LogLevel, duration?: number): void;
   hideInfo(): void;
   log(msg: string, type?: LogLevel): void;
   run(): Uppy;
-  restore(uploadID: string): Promise<any>;
-  addResultData(uploadID: string, data: any): void;
-  upload(): Promise<any>;
+  restore(uploadID: string): Promise<UploadResult>;
+  addResultData(uploadID: string, data: object): void;
+  upload(): Promise<UploadResult>;
 }
 
 export default function createUppy(opts?: Partial<UppyOptions>): Uppy;

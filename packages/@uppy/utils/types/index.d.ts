@@ -1,3 +1,5 @@
+import { UppyFile } from '@uppy/core';
+
 declare module '@uppy/utils/lib/Translator' {
   export interface TranslatorOptions {
     locale: {
@@ -32,7 +34,7 @@ declare module '@uppy/utils/lib/emitSocketProgress' {
     bytesTotal: number;
   }
 
-  export default function emitSocketProgress(uploader: object, progressData: ProgressData, file: object);
+  export default function emitSocketProgress(uploader: object, progressData: ProgressData, file: UppyFile): void;
 }
 
 declare module '@uppy/utils/lib/findAllDOMElements' {
@@ -40,11 +42,11 @@ declare module '@uppy/utils/lib/findAllDOMElements' {
 }
 
 declare module '@uppy/utils/lib/findDOMElement' {
-  export default function findDOMElement(element: string | HTMLElement): HTMLElement?;
+  export default function findDOMElement(element: string | HTMLElement): HTMLElement | null;
 }
 
 declare module '@uppy/utils/lib/generateFileID' {
-  export default function generateFileID(file: object): string;
+  export default function generateFileID(file: UppyFile): string;
 }
 
 declare module '@uppy/utils/lib/getBytesRemaining' {
@@ -60,7 +62,7 @@ declare module '@uppy/utils/lib/getFileNameAndExtension' {
 }
 
 declare module '@uppy/utils/lib/getFileType' {
-  export default function getFileType(file: object): string?;
+  export default function getFileType(file: UppyFile): string | null;
 }
 
 declare module '@uppy/utils/lib/getFileTypeExtension' {
@@ -98,10 +100,10 @@ declare module '@uppy/utils/lib/isTouchDevice' {
 declare module '@uppy/utils/lib/limitPromises' {
   // TODO guess this could be generic but it's probably fine this way
   // because it's mostly for internal use
-  type LimitedFunction = (...args: any[]) => Promise<any>;
-  type LimitedFunctionFactory = (fn: function) => LimitedFunction;
+  type LimitedFunction<T> = (...args: any[]) => Promise<T>;
+  type LimitedFunctionFactory<T> = (fn: (...args: any[]) => Promise<T>) => LimitedFunction<T>;
 
-  export default function limitPromises(limit: number): LimitedFunctionFactory;
+  export default function limitPromises<T>(limit: number): LimitedFunctionFactory<T>;
 }
 
 declare module '@uppy/utils/lib/prettyETA' {
@@ -113,9 +115,9 @@ declare module '@uppy/utils/lib/secondsToTime' {
 }
 
 declare module '@uppy/utils/lib/settle' {
-  export default function settle(promises: Promise[]): Promise<{ successful: any[], failed: any[] }>;
+  export default function settle<T>(promises: Promise<T>[]): Promise<{ successful: T[], failed: any[] }>;
 }
 
 declare module '@uppy/utils/lib/toArray' {
-  export default function toArray(list: any): Array;
+  export default function toArray(list: any): any[];
 }

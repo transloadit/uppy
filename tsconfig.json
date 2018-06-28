@@ -9,10 +9,6 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "baseUrl": "../",
-    "typeRoots": [
-      "../"
-    ],
     "types": [],
     "noEmit": true,
     "esModuleInterop": true,
@@ -20,8 +16,10 @@
     "strictFunctionTypes": true,
     "forceConsistentCasingInFileNames": true
   },
-  "files": [
-    "index.d.ts",
-    "uppy-tests.ts"
+  "include": [
+    "packages/*/types/index.d.ts",
+    "packages/*/types/*-tests.ts",
+    "packages/@uppy/*/types/index.d.ts",
+    "packages/@uppy/*/types/*-tests.ts",
   ]
 }

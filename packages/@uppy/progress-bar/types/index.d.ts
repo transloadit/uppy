@@ -8,3 +8,9 @@ export interface ProgressBarOptions extends PluginOptions {
 export default class ProgressBar extends Plugin {
   constructor(uppy: Uppy, opts: Partial<ProgressBarOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof ProgressBar, opts: Partial<ProgressBarOptions>): Uppy;
+  }
+}

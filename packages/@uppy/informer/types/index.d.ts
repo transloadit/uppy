@@ -14,3 +14,9 @@ export interface InformerOptions extends PluginOptions {
 export default class Informer extends Plugin {
   constructor(uppy: Uppy, opts: Partial<InformerOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof Informer, opts: Partial<InformerOptions>): Uppy;
+  }
+}

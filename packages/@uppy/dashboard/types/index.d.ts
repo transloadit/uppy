@@ -8,8 +8,8 @@ export interface DashboardOptions extends PluginOptions {
   inline: boolean;
   defaultTabIcon: string;
   hideUploadButton: boolean;
-  width: string;
-  height: string;
+  width: string | number;
+  height: string | number;
   note: string;
   showLinkToFileUploadResult: boolean;
   proudlyDisplayPoweredByUppy: boolean;
@@ -32,4 +32,10 @@ export default class Dashboard extends Plugin {
   render(state: object): void;
   install(): void;
   uninstall(): void;
+}
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof Dashboard, opts: Partial<DashboardOptions>): Uppy;
+  }
 }

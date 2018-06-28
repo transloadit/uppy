@@ -8,3 +8,9 @@ export interface FileInputOptions extends PluginOptions {
 export default class FileInput extends Plugin {
   constructor(uppy: Uppy, opts: Partial<FileInputOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof FileInput, opts: Partial<FileInputOptions>): Uppy;
+  }
+}

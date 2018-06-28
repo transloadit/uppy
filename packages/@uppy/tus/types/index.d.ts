@@ -12,3 +12,9 @@ export interface TusOptions extends PluginOptions {
 export default class Tus extends Plugin {
   constructor(uppy: Uppy, opts: Partial<TusOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof Tus, opts: Partial<TusOptions>): Uppy;
+  }
+}

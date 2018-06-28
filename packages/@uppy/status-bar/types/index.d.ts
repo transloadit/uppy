@@ -9,3 +9,9 @@ export interface StatusBarOptions extends PluginOptions {
 export default class StatusBar extends Plugin {
   constructor(uppy: Uppy, opts: Partial<StatusBarOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof StatusBar, opts: Partial<StatusBarOptions>): Uppy;
+  }
+}

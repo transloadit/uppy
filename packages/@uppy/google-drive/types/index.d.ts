@@ -8,3 +8,9 @@ export interface GoogleDriveOptions extends PluginOptions {
 export default class GoogleDrive extends Plugin {
   constructor(uppy: Uppy, opts: Partial<GoogleDriveOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof GoogleDrive, opts: Partial<GoogleDriveOptions>): Uppy;
+  }
+}

@@ -8,3 +8,9 @@ export interface InstagramOptions extends PluginOptions {
 export default class Instagram extends Plugin {
   constructor(uppy: Uppy, opts: Partial<InstagramOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof Instagram, opts: Partial<InstagramOptions>): Uppy;
+  }
+}
