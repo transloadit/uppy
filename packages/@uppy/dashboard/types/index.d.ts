@@ -8,8 +8,8 @@ export interface DashboardOptions extends PluginOptions {
   inline: boolean;
   defaultTabIcon: string;
   hideUploadButton: boolean;
-  width: string;
-  height: string;
+  width: string | number;
+  height: string | number;
   note: string;
   showLinkToFileUploadResult: boolean;
   proudlyDisplayPoweredByUppy: boolean;
