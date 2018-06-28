@@ -108,11 +108,6 @@ declare module '@uppy/utils/lib/prettyETA' {
   export default function prettyETA(seconds: number): string;
 }
 
-declare module '@uppy/utils/lib/runPromiseSequence' {
-  type Promiser = (...args: any[]) => Promise<void>;
-  export default function runPromiseSequence(functions: Promiser[], ...args: any[]): Promise<void>;
-}
-
 declare module '@uppy/utils/lib/secondsToTime' {
   export default function secondsToTime(seconds: number): string;
 }
