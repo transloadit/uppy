@@ -23,7 +23,7 @@
     "browser-sync": "^2.23.5",
     "browserify": "^16.2.2",
     "chai": "^4.1.2",
-    "chalk": "1.1.3",
+    "chalk": "^2.4.1",
     "cssnano": "^3.10.0",
     "disc": "^1.3.3",
     "enzyme": "^3.3.0",
