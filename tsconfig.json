@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "noEmit": true,
     "target": "esnext",
     "module": "commonjs",
     "lib": [
@@ -9,19 +10,11 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "baseUrl": "../",
-    "typeRoots": [
-      "../"
-    ],
     "types": [],
     "noEmit": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strictFunctionTypes": true,
     "forceConsistentCasingInFileNames": true
-  },
-  "files": [
-    "index.d.ts",
-    "uppy-tests.ts"
-  ]
+  }
 }

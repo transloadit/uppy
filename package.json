@@ -95,7 +95,7 @@
     "test:acceptance": "npm run test:prepare-ci && wdio test/endtoend/wdio.remote.conf.js",
     "test:acceptance:local": "npm run test:build && wdio test/endtoend/wdio.local.conf.js",
     "test:unit": "jest --testPathPattern=./src --coverage",
-    "test:type": "tsc -p packages/uppy/types && tsc -p packages/@uppy/core/types",
+    "test:type": "tsc -p .",
     "test": "npm run lint && npm run test:unit && npm run test:type",
     "test:watch": "jest --watch --testPathPattern=src",
     "travis:deletecache": "travis cache --delete",
