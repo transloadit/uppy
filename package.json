@@ -60,7 +60,7 @@
     "pre-commit": "^1.2.2",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
-    "redux": "^3.7.2",
+    "redux": "^4.0.0",
     "replace-x": "^1.5.0",
     "temp-write": "^3.4.0",
     "tinyify": "^2.4.0",
