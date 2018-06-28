@@ -87,8 +87,8 @@ What we need to do to release Uppy 1.0
 - [ ] QA: add one integration test that uses more exotic (tus) options such as `useFastRemoteRetry` (@arturi)
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
 - [ ] feature: basic React Native support (@arturi owner+ios, @ife android)
-- [ ] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
-- [ ] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
+- [x] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
+- [x] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
 - [x] docs: on using plugins, all options, list of plugins, i18n
 - [x] feature: beta file recovering after closed tab / browser crash
 - [x] feature: easy integration with React (UppyReact components)
@@ -106,9 +106,7 @@ What we need to do to release Uppy 1.0
 
 # next
 
-# 0.26.0
-
-To Be Released: 2018-06-28.
+## 0.27.0
 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
@@ -124,9 +122,19 @@ To Be Released: 2018-06-28.
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
-- [x] xhrupload: Add `withCredentials` option (#874 / @tuoxiansp)
 - [ ] core: default `autoProceed` to `false`
-- [x] **breaking** provider: rename `host` option to `serverUrl` (#905, @ifedapoolarewaju)
+
+## 0.26.0
+
+Released: 2018-06-28.
+
+- ⚠️ **breaking** split into many packages (#906 / @goto-bus-stop, @arturi)
+- xhr-upload: Add `withCredentials` option (#874 / @tuoxiansp)
+- utils: Move single-use utils into their appropriate packages. (#926 / @goto-bus-stop)
+- core: Export Plugin class from @uppy/core (#924 / @goto-bus-stop)
+- Typescript typings improvements (#923 / @goto-bus-stop)
+- core: change focus to solid line for all elements (ade214e5aab822e1fc3ab8e0fac80c4fc04d7bc3 / @arturi)
+- dashboard: fix Dashboards tabs overflow by adding scroll; improve scroll (b974244c7f4e01adcf2478b7f651dada63d342f1 / @arturi)
 
 ## 0.25.6
 
