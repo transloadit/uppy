@@ -17,10 +17,6 @@ declare module '@uppy/utils/lib/canvasToBlob' {
   export default function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number): Promise<Blob>;
 }
 
-declare module '@uppy/utils/lib/copyToClipboard' {
-  export default function copyToClipboard(text: string, fallbackMessage: string);
-}
-
 declare module '@uppy/utils/lib/dataURItoBlob' {
   export default function dataURItoBlob(dataURI: string, opts: { mimeType?: string, name?: string }): Blob;
 }
@@ -49,10 +45,6 @@ declare module '@uppy/utils/lib/findDOMElement' {
 
 declare module '@uppy/utils/lib/generateFileID' {
   export default function generateFileID(file: object): string;
-}
-
-declare module '@uppy/utils/lib/getArrayBuffer' {
-  export default function getArrayBuffer(file: File): Promise<ArrayBuffer>;
 }
 
 declare module '@uppy/utils/lib/getBytesRemaining' {
@@ -116,11 +108,6 @@ declare module '@uppy/utils/lib/prettyETA' {
   export default function prettyETA(seconds: number): string;
 }
 
-declare module '@uppy/utils/lib/runPromiseSequence' {
-  type Promiser = (...args: any[]) => Promise<void>;
-  export default function runPromiseSequence(functions: Promiser[], ...args: any[]): Promise<void>;
-}
-
 declare module '@uppy/utils/lib/secondsToTime' {
   export default function secondsToTime(seconds: number): string;
 }
@@ -131,8 +118,4 @@ declare module '@uppy/utils/lib/settle' {
 
 declare module '@uppy/utils/lib/toArray' {
   export default function toArray(list: any): Array;
-}
-
-declare module '@uppy/utils/lib/truncateString' {
-  export default function truncateString(input: string): string;
 }
