@@ -60,7 +60,10 @@ module.exports = class Url extends Plugin {
 
     this.handlePaste = this.handlePaste.bind(this)
 
-    this.client = new RequestClient(uppy, { serverUrl: this.opts.serverUrl })
+    this.client = new RequestClient(uppy, {
+      serverUrl: this.opts.serverUrl,
+      serverHeaders: this.opts.serverHeaders
+    })
   }
 
   getFileNameFromUrl (url) {

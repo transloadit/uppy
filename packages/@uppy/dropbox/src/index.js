@@ -22,6 +22,7 @@ module.exports = class Dropbox extends Plugin {
     // the provider instance must be equal to this.id.
     this[this.id] = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
+      serverHeaders: this.opts.serverHeaders,
       provider: 'dropbox'
     })
 
