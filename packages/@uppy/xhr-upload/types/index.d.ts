@@ -16,3 +16,9 @@ export interface XHRUploadOptions extends PluginOptions {
 export default class XHRUpload extends Plugin {
   constructor(uppy: Uppy, opts: Partial<XHRUploadOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof XHRUpload, opts: Partial<XHRUploadOptions>): Uppy;
+  }
+}

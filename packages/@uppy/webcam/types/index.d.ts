@@ -11,3 +11,9 @@ export interface WebcamOptions extends PluginOptions {
 export default class Webcam extends Plugin {
   constructor(uppy: Uppy, opts: Partial<WebcamOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof Webcam, opts: Partial<WebcamOptions>): Uppy;
+  }
+}

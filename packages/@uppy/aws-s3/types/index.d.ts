@@ -17,3 +17,9 @@ export interface AwsS3Options extends PluginOptions {
 export default class AwsS3 extends Plugin {
   constructor(uppy: Uppy, opts: Partial<AwsS3Options>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof AwsS3, opts: Partial<AwsS3Options>): Uppy;
+  }
+}

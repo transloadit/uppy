@@ -33,3 +33,9 @@ export default class Dashboard extends Plugin {
   install(): void;
   uninstall(): void;
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof Dashboard, opts: Partial<DashboardOptions>): Uppy;
+  }
+}

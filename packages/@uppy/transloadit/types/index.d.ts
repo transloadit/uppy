@@ -20,3 +20,9 @@ export interface TransloaditOptions extends PluginOptions {
 export default class Transloadit extends Plugin {
   constructor(uppy: Uppy, opts: Partial<TransloaditOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof Transloadit, opts: Partial<TransloaditOptions>): Uppy;
+  }
+}

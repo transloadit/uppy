@@ -11,3 +11,9 @@ export interface DragDropOptions extends PluginOptions {
 export default class DragDrop extends Plugin {
   constructor(uppy: Uppy, opts: Partial<DragDropOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof DragDrop, opts: Partial<DragDropOptions>): Uppy;
+  }
+}

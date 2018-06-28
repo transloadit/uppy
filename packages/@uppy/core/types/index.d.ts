@@ -112,7 +112,7 @@ export class Uppy {
   retryUpload(fileID: string): any;
   reset(): void;
   getID(): string;
-  use(pluginClass: typeof Plugin, opts: object): Uppy;
+  use<T extends typeof Plugin>(pluginClass: T, opts: object): Uppy;
   getPlugin(name: string): Plugin;
   iteratePlugins(callback: (plugin: Plugin) => void): void;
   removePlugin(instance: Plugin): void;

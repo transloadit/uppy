@@ -9,3 +9,9 @@ export interface GoldenRetrieverOptions extends PluginOptions {
 export default class GoldenRetriever extends Plugin {
   constructor(uppy: Uppy, opts: Partial<GoldenRetrieverOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof GoldenRetriever, opts: Partial<GoldenRetrieverOptions>): Uppy;
+  }
+}

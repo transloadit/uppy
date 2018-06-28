@@ -20,3 +20,9 @@ export interface AwsS3MultipartOptions extends PluginOptions {
 export default class AwsS3Multipart extends Plugin {
   constructor(uppy: Uppy, opts: Partial<AwsS3MultipartOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof AwsS3Multipart, opts: Partial<AwsS3MultipartOptions>): Uppy;
+  }
+}

@@ -8,3 +8,9 @@ export interface UrlOptions extends PluginOptions {
 export default class Url extends Plugin {
   constructor(uppy: Uppy, opts: Partial<UrlOptions>);
 }
+
+declare module '@uppy/core' {
+  export interface Uppy {
+    use(pluginClass: typeof Url, opts: Partial<UrlOptions>): Uppy;
+  }
+}
