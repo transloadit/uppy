@@ -1,3 +1,5 @@
+import { UppyFile } from '@uppy/core';
+
 declare module '@uppy/utils/lib/Translator' {
   export interface TranslatorOptions {
     locale: {
@@ -32,7 +34,7 @@ declare module '@uppy/utils/lib/emitSocketProgress' {
     bytesTotal: number;
   }
 
-  export default function emitSocketProgress(uploader: object, progressData: ProgressData, file: object);
+  export default function emitSocketProgress(uploader: object, progressData: ProgressData, file: UppyFile);
 }
 
 declare module '@uppy/utils/lib/findAllDOMElements' {
@@ -44,7 +46,7 @@ declare module '@uppy/utils/lib/findDOMElement' {
 }
 
 declare module '@uppy/utils/lib/generateFileID' {
-  export default function generateFileID(file: object): string;
+  export default function generateFileID(file: UppyFile): string;
 }
 
 declare module '@uppy/utils/lib/getBytesRemaining' {
@@ -60,7 +62,7 @@ declare module '@uppy/utils/lib/getFileNameAndExtension' {
 }
 
 declare module '@uppy/utils/lib/getFileType' {
-  export default function getFileType(file: object): string?;
+  export default function getFileType(file: UppyFile): string?;
 }
 
 declare module '@uppy/utils/lib/getFileTypeExtension' {

@@ -1,4 +1,4 @@
-import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import { Plugin, PluginOptions, Uppy, UppyFile } from '@uppy/core';
 
 export interface AwsS3Part {
   PartNumber: number;
@@ -8,7 +8,7 @@ export interface AwsS3Part {
 
 export interface AwsS3MultipartOptions extends PluginOptions {
   serverUrl: string;
-  createMultipartUpload(file: object): Promise<{uploadId: string, key: string}>;
+  createMultipartUpload(file: UppyFile): Promise<{uploadId: string, key: string}>;
   listParts(opts: {uploadId: string, key: string}): Promise<AwsS3Part>;
   prepareUploadPart(partData: {uploadId: string, key: string, body: Blob, number: number}): Promise<{url: string}>;
   abortMultipartUpload(opts: {uploadId: string, key: string}): Promise<void>;

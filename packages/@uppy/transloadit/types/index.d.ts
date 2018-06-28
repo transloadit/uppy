@@ -1,4 +1,4 @@
-import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import { Plugin, PluginOptions, Uppy, UppyFile } from '@uppy/core';
 
 export interface AssemblyOptions {
   params: object;
@@ -14,7 +14,7 @@ export interface TransloaditOptions extends PluginOptions {
   waitForMetadata: boolean;
   importFromUploadURLs: boolean;
   alwaysRunAssembly: boolean;
-  getAssemblyOptions: (file: object) => AssemblyOptions | Promise<AssemblyOptions>;
+  getAssemblyOptions: (file: UppyFile) => AssemblyOptions | Promise<AssemblyOptions>;
 }
 
 export default class Transloadit extends Plugin {
