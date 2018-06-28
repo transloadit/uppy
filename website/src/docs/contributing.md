@@ -72,6 +72,10 @@ npm run release
 npm profile enable-2fa auth-only
 ```
 
+Other things to keep in mind:
+
+* When doing a minor release below 1.0, or a major release >= 1.0, of the `@uppy/core` package, the peerDependency of the plugin packages needs to be updated first. Eg when updating from 0.25.5 to 0.26.0, the peerDependency of each should be `"@uppy/core": "^0.26.0"` before doing `npm run release`.
+
 ## Website development
 
 We keep the [uppy.io](http://uppy.io) website in `./website`, so it’s easy to keep docs and code in sync as we are still iterating at high velocity.
