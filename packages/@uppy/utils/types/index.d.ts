@@ -124,7 +124,3 @@ declare module '@uppy/utils/lib/settle' {
 declare module '@uppy/utils/lib/toArray' {
   export default function toArray(list: any): Array;
 }
-
-declare module '@uppy/utils/lib/truncateString' {
-  export default function truncateString(input: string): string;
-}

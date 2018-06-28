@@ -1,5 +1,5 @@
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
-const truncateString = require('@uppy/utils/lib/truncateString')
+const truncateString = require('./truncateString')
 const copyToClipboard = require('./copyToClipboard')
 const prettyBytes = require('prettier-bytes')
 const FileItemProgress = require('./FileItemProgress')
