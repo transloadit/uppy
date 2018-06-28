@@ -50,7 +50,6 @@
     "minify-stream": "^1.1.0",
     "mkdirp": "0.5.1",
     "multi-glob": "1.0.1",
-    "next-update": "^3.6.0",
     "nock": "^9.3.2",
     "node-sass": "^4.9.0",
     "npm-auth-to-token": "^1.0.0",
