@@ -1,4 +1,4 @@
-const Plugin = require('@uppy/core/lib/Plugin')
+const { Plugin } = require('@uppy/core')
 
 module.exports = class StatusBar extends Plugin {
   constructor (uppy, opts) {

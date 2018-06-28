@@ -1,4 +1,4 @@
-const Plugin = require('@uppy/core/lib/Plugin')
+const { Plugin } = require('@uppy/core')
 const cuid = require('cuid')
 const Translator = require('@uppy/utils/lib/Translator')
 const { Provider, Socket } = require('@uppy/server-utils')

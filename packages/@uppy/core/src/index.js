@@ -10,6 +10,7 @@ const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension
 const generateFileID = require('@uppy/utils/lib/generateFileID')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
+const Plugin = require('./Plugin') // Exported from here.
 
 /**
  * Uppy Core module.
@@ -1220,3 +1221,4 @@ module.exports = function (opts) {
 
 // Expose class constructor.
 module.exports.Uppy = Uppy
+module.exports.Plugin = Plugin

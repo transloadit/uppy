@@ -1,5 +1,5 @@
 const resolveUrl = require('resolve-url')
-const Plugin = require('@uppy/core/lib/Plugin')
+const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const limitPromises = require('@uppy/utils/lib/limitPromises')
 const XHRUpload = require('@uppy/xhr-upload')
