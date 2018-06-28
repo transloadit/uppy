@@ -17,8 +17,6 @@ Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly wit
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 
-⚠️**ATTENTION** ☢️Uppy [is transitioning](https://github.com/transloadit/uppy/issues/862) into a [Lerna repo](https://lernajs.io/) this/next week, please wait with new PRs to avoid conflicts 💛
-
 ## Example
 
 <img width="700" alt="Uppy UI Demo: modal dialog with a few selected files and an upload button" src="https://github.com/transloadit/uppy/raw/master/uppy-screenshot.jpg">
