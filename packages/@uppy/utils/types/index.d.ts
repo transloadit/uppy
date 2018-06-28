@@ -47,10 +47,6 @@ declare module '@uppy/utils/lib/generateFileID' {
   export default function generateFileID(file: object): string;
 }
 
-declare module '@uppy/utils/lib/getArrayBuffer' {
-  export default function getArrayBuffer(file: File): Promise<ArrayBuffer>;
-}
-
 declare module '@uppy/utils/lib/getBytesRemaining' {
   export default function getBytesRemaining(progress: { bytesTotal: number, bytesUploaded: number }): number;
 }
