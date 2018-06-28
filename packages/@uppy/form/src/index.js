@@ -1,4 +1,4 @@
-const Plugin = require('@uppy/core/lib/Plugin')
+const { Plugin } = require('@uppy/core')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 // Rollup uses get-form-data's ES modules build, and rollup-plugin-commonjs automatically resolves `.default`.
 // So, if we are being built using rollup, this require() won't have a `.default` property.

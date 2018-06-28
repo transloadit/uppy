@@ -1,4 +1,4 @@
-const Plugin = require('@uppy/core/lib/Plugin')
+const { Plugin } = require('@uppy/core')
 const { Provider } = require('@uppy/server-utils')
 const ProviderViews = require('@uppy/provider-views')
 const icons = require('./icons')

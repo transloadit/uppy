@@ -1,5 +1,5 @@
 const Translator = require('@uppy/utils/lib/Translator')
-const Plugin = require('@uppy/core/lib/Plugin')
+const { Plugin } = require('@uppy/core')
 const Tus = require('@uppy/tus')
 const Client = require('./Client')
 const StatusSocket = require('./Socket')
