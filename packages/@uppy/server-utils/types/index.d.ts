@@ -2,6 +2,7 @@ import { Uppy } from '@uppy/core';
 
 export interface RequestClientOptions {
   serverUrl: string;
+  serverHeaders?: object;
 }
 
 export class RequestClient {
@@ -11,8 +12,7 @@ export class RequestClient {
   delete (path: string, data: object): Promise<any>;
 }
 
-export interface ProviderOptions {
-  serverUrl: string;
+export interface ProviderOptions extends RequestClientOptions {
   provider: string;
   authProvider?: string;
   name?: string;

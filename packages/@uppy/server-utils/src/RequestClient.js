@@ -25,6 +25,10 @@ module.exports = class RequestClient {
     }
   }
 
+  get headers () {
+    return Object.assign({}, this.defaultHeaders, this.opts.serverHeaders || {})
+  }
+
   onReceiveResponse (response) {
     const state = this.uppy.getState()
     const uppyServer = state.uppyServer || {}
@@ -51,7 +55,7 @@ module.exports = class RequestClient {
   get (path) {
     return fetch(this._getUrl(path), {
       method: 'get',
-      headers: this.defaultHeaders
+      headers: this.headers
     })
       // @todo validate response status before calling json
       .then(this.onReceiveResponse)
@@ -64,7 +68,7 @@ module.exports = class RequestClient {
   post (path, data) {
     return fetch(this._getUrl(path), {
       method: 'post',
-      headers: this.defaultHeaders,
+      headers: this.headers,
       body: JSON.stringify(data)
     })
       .then(this.onReceiveResponse)
@@ -82,11 +86,7 @@ module.exports = class RequestClient {
   delete (path, data) {
     return fetch(`${this.hostname}/${path}`, {
       method: 'delete',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
+      headers: this.headers,
       body: data ? JSON.stringify(data) : null
     })
       .then(this.onReceiveResponse)
