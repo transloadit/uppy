@@ -1,7 +1,9 @@
 import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import { ProviderOptions } from '@uppy/server-utils';
 
-export interface DropboxOptions extends PluginOptions {
+export interface DropboxOptions extends PluginOptions, ProviderOptions {
   serverUrl: string;
+  serverPattern: string | RegExp | Array<string | RegExp>;
 }
 
 export default class Dropbox extends Plugin {

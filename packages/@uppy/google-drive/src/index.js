@@ -6,7 +6,7 @@ const { h } = require('preact')
 module.exports = class GoogleDrive extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
-    this.type = 'acquirer'
+    Provider.initPlugin(this, opts)
     this.id = this.opts.id || 'GoogleDrive'
     this.title = 'Google Drive'
     this.icon = () =>
@@ -21,17 +21,8 @@ module.exports = class GoogleDrive extends Plugin {
       authProvider: 'google'
     })
 
-    this.files = []
-
     this.onAuth = this.onAuth.bind(this)
     this.render = this.render.bind(this)
-
-    // set default options
-    const defaultOptions = {}
-
-    // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
-    this.opts.serverPattern = opts.serverPattern || opts.serverUrl
   }
 
   install () {

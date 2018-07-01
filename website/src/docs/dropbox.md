@@ -46,7 +46,19 @@ DOM element, CSS selector, or plugin to mount the Dropbox provider into. This sh
 
 ### `serverUrl: null`
 
-URL to an Uppy Server instance.
+URL to an [Uppy Server](/docs/server) instance.
+
+### `serverHeaders: {}`
+
+Custom headers that should be sent along to [Uppy Server](/docs/server) on every request.
+
+### `serverPattern: serverUrl`
+
+The valid and authorised URL(s) from which OAuth responses should be accepted.
+
+This value can be a `String`, a `Regex` pattern, or an `Array` of both.
+
+This is useful when you have your [Uppy Server](/docs/server) running on multiple hosts. Otherwise the default value should do just fine.
 
 ### `locale: {}`
 

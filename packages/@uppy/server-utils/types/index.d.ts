@@ -1,4 +1,4 @@
-import { Uppy } from '@uppy/core';
+import { Uppy, Plugin } from '@uppy/core';
 
 export interface RequestClientOptions {
   serverUrl: string;
@@ -25,6 +25,7 @@ export class Provider extends RequestClient {
   fileUrl (id: string): string;
   list (directory: string): Promise<any>;
   logout (redirect?: string): Promise<any>;
+  static initPlugin(plugin: Plugin, opts: object, defaultOpts?: object): void;
 }
 
 export interface SocketOptions {
