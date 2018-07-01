@@ -523,8 +523,13 @@ module.exports = class ProviderView {
   // displays loader view while asynchronous request is being made.
   _loaderWrapper (promise, then, catch_) {
     promise
-      .then(then).catch(catch_)
-      .then(() => this.plugin.setPluginState({ loading: false })) // always called.
+      .then((result) => {
+        this.plugin.setPluginState({ loading: false })
+        then(result)
+      }).catch((err) => {
+        this.plugin.setPluginState({ loading: false })
+        catch_(err)
+      })
     this.plugin.setPluginState({ loading: true })
   }
 
