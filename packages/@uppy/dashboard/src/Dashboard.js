@@ -1,5 +1,6 @@
 const FileList = require('./FileList')
-const Tabs = require('./Tabs')
+const AddFiles = require('./AddFiles')
+const AddFilesPanel = require('./AddFilesPanel')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
 const isTouchDevice = require('@uppy/utils/lib/isTouchDevice')
@@ -23,6 +24,7 @@ const PanelContent = (props) => {
 }
 
 module.exports = function Dashboard (props) {
+  const noFiles = props.totalFileCount === 0
   const dashboardClassName = classNames(
     { 'uppy-Root': props.isTargetDOMEl },
     'uppy-Dashboard',
@@ -57,18 +59,18 @@ module.exports = function Dashboard (props) {
         </button>
 
         <div class="uppy-Dashboard-innerWrap">
-          <Tabs {...props} />
+          { noFiles && <AddFiles {...props} /> }
+
+          <AddFilesPanel {...props} />
 
           <FileCard {...props} />
 
-          <div class="uppy-Dashboard-filesContainer">
-            <FileList {...props} />
-          </div>
+          <FileList {...props} />
 
           <div class="uppy-DashboardContent-panel"
             role="tabpanel"
             id={props.activePanel && `uppy-DashboardContent-panel--${props.activePanel.id}`}
-            aria-hidden={props.activePanel ? 'false' : 'true'}>
+            hidden={!props.activePanel}>
             {props.activePanel && <PanelContent {...props} />}
           </div>
 
