@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 51
+order: 31
 title: "Dropbox"
 permalink: docs/dropbox/
 ---

@@ -1,7 +1,7 @@
 ---
 type: docs
-order: 32
-title: "Aws S3"
+order: 42
+title: "AWS S3"
 permalink: docs/aws-s3/
 ---
 

@@ -2,7 +2,7 @@
 title: "Golden Retriever"
 type: docs
 permalink: docs/golden-retriever/
-order: 40
+order: 71
 ---
 
 The GoldenRetriever plugin saves selected files in your browser cache (Local Storage for metadata, then Service Worker for all blobs + IndexedDB for small blobs), so that if the browser crashes, Uppy can restore everything and continue uploading like nothing happened. Read more about it [on the blog](https://uppy.io/blog/2017/07/golden-retriever/).

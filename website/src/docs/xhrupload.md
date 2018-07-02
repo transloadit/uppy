@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 31
+order: 41
 title: "XHR Upload"
 permalink: docs/xhr-upload/
 alias: docs/xhrupload/

@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 24
+order: 52
 title: "Informer"
 permalink: docs/informer/
 ---

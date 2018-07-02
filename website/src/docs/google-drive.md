@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 52
+order: 32
 title: "Google Drive"
 permalink: docs/google-drive/
 ---

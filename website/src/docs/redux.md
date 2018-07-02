@@ -2,7 +2,7 @@
 title: "Redux"
 type: docs
 permalink: docs/redux
-order: 67
+order: 87
 ---
 
 Uppy supports popular [Redux](https://redux.js.org/) state management library in two ways:

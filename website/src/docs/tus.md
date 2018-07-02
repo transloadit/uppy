@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 30
+order: 40
 title: "Tus"
 permalink: docs/tus/
 ---

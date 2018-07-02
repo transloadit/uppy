@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 53
+order: 33
 title: "Instagram"
 permalink: docs/instagram/
 ---

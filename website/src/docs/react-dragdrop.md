@@ -3,7 +3,7 @@ title: "&lt;DragDrop />"
 type: docs
 permalink: docs/react/drag-drop/
 alias: docs/react/dragdrop/
-order: 62
+order: 82
 ---
 
 The `<DragDrop />` component wraps the [DragDrop][] plugin.

@@ -1,7 +1,7 @@
 ---
 type: docs
-order: 33
-title: "Aws S3 Multipart"
+order: 43
+title: "AWS S3 Multipart"
 permalink: docs/aws-s3-multipart/
 ---
 
