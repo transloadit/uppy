@@ -2,7 +2,7 @@
 type: docs
 order: 31
 title: "Dropbox"
-module: @uppy/dropbox
+module: "@uppy/dropbox"
 permalink: docs/dropbox/
 ---
 

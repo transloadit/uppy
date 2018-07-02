@@ -2,7 +2,7 @@
 type: docs
 order: 32
 title: "Google Drive"
-module: @uppy/google-drive
+module: "@uppy/google-drive"
 permalink: docs/google-drive/
 ---
 

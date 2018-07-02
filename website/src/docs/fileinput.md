@@ -2,7 +2,7 @@
 type: docs
 order: 22
 title: "File Input"
-module: @uppy/file-input
+module: "@uppy/file-input"
 permalink: docs/file-input/
 alias: docs/fileinput/
 

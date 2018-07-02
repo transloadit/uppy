@@ -2,7 +2,7 @@
 type: docs
 order: 52
 title: "Informer"
-module: @uppy/informer
+module: "@uppy/informer"
 permalink: docs/informer/
 ---
 

@@ -2,7 +2,7 @@
 type: docs
 order: 70
 title: "Form"
-module: @uppy/form
+module: "@uppy/form"
 permalink: docs/form/
 ---
 

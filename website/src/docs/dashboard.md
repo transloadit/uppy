@@ -2,7 +2,7 @@
 type: docs
 order: 20
 title: "Dashboard"
-module: @uppy/dashboard
+module: "@uppy/dashboard"
 permalink: docs/dashboard/
 ---
 

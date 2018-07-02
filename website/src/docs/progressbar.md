@@ -2,7 +2,7 @@
 type: docs
 order: 51
 title: "Progress Bar"
-module: @uppy/progress-bar
+module: "@uppy/progress-bar"
 permalink: docs/progress-bar/
 alias: docs/progressbar/
 ---

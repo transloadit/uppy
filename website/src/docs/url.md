@@ -2,7 +2,7 @@
 type: docs
 order: 34
 title: "Import From URL"
-module: @uppy/url
+module: "@uppy/url"
 permalink: docs/url/
 ---
 

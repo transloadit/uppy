@@ -2,7 +2,7 @@
 type: docs
 order: 21
 title: "Drag & Drop"
-module: @uppy/drag-drop
+module: "@uppy/drag-drop"
 permalink: docs/drag-drop/
 alias: docs/dragdrop/
 ---

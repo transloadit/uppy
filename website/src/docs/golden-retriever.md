@@ -1,6 +1,6 @@
 ---
 title: "Golden Retriever"
-module: @uppy/golden-retriever
+module: "@uppy/golden-retriever"
 type: docs
 permalink: docs/golden-retriever/
 order: 71

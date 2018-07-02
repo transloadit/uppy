@@ -2,7 +2,7 @@
 type: docs
 order: 40
 title: "Tus"
-module: @uppy/tus
+module: "@uppy/tus"
 permalink: docs/tus/
 ---
 

@@ -2,7 +2,7 @@
 type: docs
 order: 33
 title: "Instagram"
-module: @uppy/instagram
+module: "@uppy/instagram"
 permalink: docs/instagram/
 ---
 

@@ -2,7 +2,7 @@
 type: docs
 order: 60
 title: "Transloadit"
-module: @uppy/transloadit
+module: "@uppy/transloadit"
 permalink: docs/transloadit/
 ---
 

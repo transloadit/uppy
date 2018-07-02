@@ -2,7 +2,7 @@
 type: docs
 order: 26
 title: "Webcam"
-module: @uppy/webcam
+module: "@uppy/webcam"
 permalink: docs/webcam/
 ---
 

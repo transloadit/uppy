@@ -2,7 +2,7 @@
 type: docs
 order: 50
 title: "Status Bar"
-module: @uppy/status-bar
+module: "@uppy/status-bar"
 permalink: docs/status-bar/
 alias: docs/statusbar/
 ---

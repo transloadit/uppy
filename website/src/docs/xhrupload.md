@@ -2,7 +2,7 @@
 type: docs
 order: 41
 title: "XHR Upload"
-module: @uppy/xhr-upload
+module: "@uppy/xhr-upload"
 permalink: docs/xhr-upload/
 alias: docs/xhrupload/
 ---
