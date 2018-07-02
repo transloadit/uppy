@@ -19,6 +19,12 @@ const uppy = Uppy()
 npm install @uppy/core
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const Core = Uppy.Core
+```
+
 ## Options
 
 ```js

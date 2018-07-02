@@ -29,6 +29,12 @@ Install from NPM:
 npm install @uppy/file-input
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const FileInput = Uppy.FileInput
+```
+
 ## CSS
 
 The FileInput plugin includes some simple styles for use with the [`pretty`](#pretty-true) option, like shown in the [example](/examples/xhrupload). You can also choose not to use it and provide your own styles instead.

@@ -34,6 +34,12 @@ Install from NPM:
 npm install @uppy/dashboard
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const Dashboard = Uppy.Dashboard
+```
+
 ## CSS
 
 The Dashboard plugin includes CSS for the Dashboard itself, and the plugins the Dashboard uses ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.

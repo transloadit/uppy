@@ -15,6 +15,12 @@ This plugin is published as the `@uppy/golden-retriever` package.
 npm install @uppy/golden-retriever
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const GoldenRetriever = Uppy.GoldenRetriever
+```
+
 ## Usage
 
 1\. Bundle your own service worker `sw.js` file with Uppy GoldenRetriever’s service worker. If you’re using Browserify, just bundle it separately, for Webpack there is a plugin [serviceworker-webpack-plugin](https://github.com/oliviertassinari/serviceworker-webpack-plugin).

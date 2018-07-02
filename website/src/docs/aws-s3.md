@@ -31,6 +31,12 @@ This plugin is published as the `@uppy/aws-s3` package.
 npm install @uppy/aws-s3
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const AwsS3 = Uppy.AwsS3
+```
+
 ## Options
 
 ### `id: 'AwsS3'`

@@ -28,6 +28,12 @@ Install from NPM:
 npm install @uppy/xhr-upload
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const XHRUpload = Uppy.XHRUpload
+```
+
 ## Options
 
 The XHRUpload plugin has the following configurable options:

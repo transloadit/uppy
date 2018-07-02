@@ -28,6 +28,12 @@ Install from NPM:
 npm install @uppy/drag-drop
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const DragDrop = Uppy.DragDrop
+```
+
 ## CSS
 
 The DragDrop plugin includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead.

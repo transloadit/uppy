@@ -34,6 +34,12 @@ This plugin is published as the `@uppy/transloadit` package.
 npm install @uppy/transloadit
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const Transloadit = Uppy.Transloadit
+```
+
 ## Properties
 
 ### `Transloadit.UPPY_SERVER`
