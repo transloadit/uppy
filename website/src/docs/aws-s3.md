@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 32
-title: "@uppy/aws-s3"
+title: "Aws S3"
 permalink: docs/aws-s3/
 ---
 

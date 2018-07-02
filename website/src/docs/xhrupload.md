@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 31
-title: "@uppy/xhr-upload"
+title: "XHR Upload"
 permalink: docs/xhr-upload/
 alias: docs/xhrupload/
 ---

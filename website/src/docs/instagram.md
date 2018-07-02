@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 53
-title: "@uppy/instagram"
+title: "Instagram"
 permalink: docs/instagram/
 ---
 
