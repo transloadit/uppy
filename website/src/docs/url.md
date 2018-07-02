@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 54
-title: "Import From URL"
+title: "@uppy/url"
 permalink: docs/url/
 ---
 

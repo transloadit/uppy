@@ -1,5 +1,5 @@
 ---
-title: "Golden Retriever"
+title: "@uppy/golden-retriever"
 type: docs
 permalink: docs/golden-retriever/
 order: 40

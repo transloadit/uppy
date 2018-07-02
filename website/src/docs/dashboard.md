@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 20
-title: "Dashboard"
+title: "@uppy/dashboard"
 permalink: docs/dashboard/
 ---
 

@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 51
-title: "Dropbox"
+title: "@uppy/dropbox"
 permalink: docs/dropbox/
 ---
 

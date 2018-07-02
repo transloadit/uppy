@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 30
-title: "Tus"
+title: "@uppy/tus"
 permalink: docs/tus/
 ---
 

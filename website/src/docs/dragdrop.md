@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 21
-title: "Drag & Drop"
+title: "@uppy/drag-drop"
 permalink: docs/drag-drop/
 alias: docs/dragdrop/
 ---

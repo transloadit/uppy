@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 25
-title: "File Input"
+title: "@uppy/file-input"
 permalink: docs/file-input/
 alias: docs/fileinput/
 

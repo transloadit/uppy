@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 34
-title: "Transloadit"
+title: "@uppy/transloadit"
 permalink: docs/transloadit/
 ---
 

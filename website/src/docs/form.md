@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 30
-title: "Form"
+title: "@uppy/form"
 permalink: docs/form/
 ---
 

@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 24
-title: "Informer"
+title: "@uppy/informer"
 permalink: docs/informer/
 ---
 

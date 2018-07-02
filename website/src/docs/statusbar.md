@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 22
-title: "Status Bar"
+title: "@uppy/status-bar"
 permalink: docs/status-bar/
 alias: docs/statusbar/
 ---

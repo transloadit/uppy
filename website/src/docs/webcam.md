@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 26
-title: "Webcam"
+title: "@uppy/webcam"
 permalink: docs/webcam/
 ---
 

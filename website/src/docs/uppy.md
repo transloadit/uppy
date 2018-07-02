@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 1
-title: "Uppy"
+title: "@uppy/core"
 permalink: docs/uppy/
 ---
 
