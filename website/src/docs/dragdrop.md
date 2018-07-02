@@ -28,6 +28,14 @@ Install from NPM:
 npm install @uppy/drag-drop
 ```
 
+## CSS
+
+The DragDrop plugin includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead.
+
+The CSS file lives at `@uppy/drag-drop/dist/style.css`. A minified version is at `@uppy/drag-drop/dist/style.min.css`.
+
+Import one of these files into your project. The way to do this depends on your build system.
+
 ## Options
 
 The DragDrop plugin has the following configurable options:

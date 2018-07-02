@@ -34,6 +34,14 @@ Install from NPM:
 npm install @uppy/dashboard
 ```
 
+## CSS
+
+The Dashboard plugin includes CSS for the Dashboard itself, and the plugins the Dashboard uses ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
+
+The CSS file lives at `@uppy/dashboard/dist/style.css`. A minified version is at `@uppy/dashboard/dist/style.min.css`.
+
+Import one of these files into your project. The way to do this depends on your build system.
+
 ## Options
 
 The Dashboard can be extensively customized by configuring the options below to your liking:

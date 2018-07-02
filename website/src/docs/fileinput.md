@@ -29,6 +29,14 @@ Install from NPM:
 npm install @uppy/file-input
 ```
 
+## CSS
+
+The FileInput plugin includes some simple styles for use with the [`pretty`](#pretty-true) option, like shown in the [example](/examples/xhrupload). You can also choose not to use it and provide your own styles instead.
+
+The CSS file lives at `@uppy/file-input/dist/style.css`. A minified version is at `@uppy/file-input/dist/style.min.css`.
+
+Import one of these files into your project. The way to do this depends on your build system.
+
 ## Options
 
 The FileInput plugin has the following configurable options:

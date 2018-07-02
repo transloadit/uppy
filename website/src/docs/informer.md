@@ -29,6 +29,14 @@ Install from NPM:
 npm install @uppy/informer
 ```
 
+## CSS
+
+The Informer plugin includes CSS a file for styling. If you use the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the Informer, because the Dashboard already includes it.
+
+The CSS file lives at `@uppy/informer/dist/style.css`. A minified version is at `@uppy/informer/dist/style.min.css`.
+
+Import one of these files into your project. The way to do this depends on your build system.
+
 ## Options
 
 The Informer plugin has the following configurable options:

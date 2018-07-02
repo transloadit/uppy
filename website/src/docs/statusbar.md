@@ -29,6 +29,14 @@ Install from NPM:
 npm install @uppy/status-bar
 ```
 
+## CSS
+
+The StatusBar plugin includes CSS a file for styling. If you use the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the StatusBar, because the Dashboard already includes it.
+
+The CSS file lives at `@uppy/status-bar/dist/style.css`. A minified version is at `@uppy/status-bar/dist/style.min.css`.
+
+Import one of these files into your project. The way to do this depends on your build system.
+
 ## Options
 
 The StatusBar plugin has the following configurable options:
