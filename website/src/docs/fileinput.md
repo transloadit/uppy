@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 25
-title: "FileInput"
+title: "File Input"
 permalink: docs/file-input/
 alias: docs/fileinput/
 

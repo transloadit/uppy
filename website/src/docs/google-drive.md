@@ -1,7 +1,7 @@
 ---
 type: docs
 order: 52
-title: "GoogleDrive"
+title: "Google Drive"
 permalink: docs/google-drive/
 ---
 
