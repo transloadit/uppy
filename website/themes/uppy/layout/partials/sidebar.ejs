@@ -1,3 +1,10 @@
+<%
+var categories = [
+  { path: 'docs/plugins/', name: 'Plugins', link: true },
+  { path: 'docs/providers/', name: 'Remote Providers', link: true },
+  { path: 'docs/react/', name: 'React Components', link: true },
+]
+%>
 <div class="Sidebar js-Sidebar">
   <ul class="main-menu">
     <%- partial('partials/main_menu') %>
@@ -9,26 +16,17 @@
       <% } %>
     </h2>
     <ul class="menu-root">
-      <% site.pages.find({type: type}).sort('order').each(function (p) { %>
+      <% site.pages.find({ type }).sort('order').each((p) => { %>
         <% var path = p.path.replace(/index\.html$/, ''); %>
+        <% var category = categories.find((c) => c.path === path) %>
         <% // see https://github.com/vuejs/vuejs.org/blob/master/themes/vue/layout/partials/toc.ejs %>
-        <% if (path === 'docs/plugins/') { %>
+        <% if (category) { %>
           <li>
-            <h3><a href="/docs/plugins/">Plugins</a></h3>
-          </li>
-          <li>
-            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
-          </li>
-        <% } else if (path === 'docs/providers/') { %>
-          <li>
-            <h3><a href="/docs/providers/">Remote Providers</a></h3>
-          </li>
-          <li>
-            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
-          </li>
-        <% } else if (path === 'docs/react/') { %>
-          <li>
-            <h3><a href="/docs/react/">React Components</a></h3>
+            <% if (category.link) { %>
+              <h3><a href="<%- category.path %>"><%- category.name %></a></h3>
+            <% } else { %>
+              <h3><%- category.name %></h3>
+            <% } %>
           </li>
           <li>
             <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
