@@ -47,6 +47,7 @@ module.exports = class Dashboard extends Plugin {
         closeModal: 'Close Modal',
         upload: 'Upload',
         importFrom: 'Import from %{name}',
+        addingMoreFiles: 'Adding more files',
         dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
         dashboardTitle: 'Uppy Dashboard',
         copyLinkToClipboardSuccess: 'Link copied to clipboard',
@@ -54,6 +55,7 @@ module.exports = class Dashboard extends Plugin {
         copyLink: 'Copy link',
         fileSource: 'File source: %{name}',
         done: 'Done',
+        back: 'Back',
         name: 'Name',
         removeFile: 'Remove file',
         editFile: 'Edit file',
@@ -63,7 +65,7 @@ module.exports = class Dashboard extends Plugin {
         cancel: 'Cancel',
         localDisk: 'Local Disk',
         myDevice: 'My Device',
-        dropPasteImport: 'Drop files here, paste, import from one of the locations above or %{browse}',
+        dropPasteImport: 'Drop files here, paste, %{browse} or import from',
         dropPaste: 'Drop files here, paste or %{browse}',
         browse: 'browse',
         fileProgress: 'File progress: upload speed and ETA',
@@ -146,6 +148,7 @@ module.exports = class Dashboard extends Plugin {
     this.onKeydown = this.onKeydown.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
     this.toggleFileCard = this.toggleFileCard.bind(this)
+    this.toggleAddFilesPanel = this.toggleAddFilesPanel.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.handlePaste = this.handlePaste.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -451,6 +454,12 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
+  toggleAddFilesPanel () {
+    this.setPluginState({
+      showAddFilesPanel: !this.getPluginState().showAddFilesPanel
+    })
+  }
+
   handleDrop (files) {
     this.uppy.log('[Dashboard] Files were dropped')
 
@@ -576,8 +585,11 @@ module.exports = class Dashboard extends Plugin {
       pauseUpload: this.uppy.pauseResume,
       retryUpload: this.uppy.retryUpload,
       cancelUpload: cancelUpload,
+      cancelAll: this.uppy.cancelAll,
       fileCardFor: pluginState.fileCardFor,
       toggleFileCard: this.toggleFileCard,
+      toggleAddFilesPanel: this.toggleAddFilesPanel,
+      showAddFilesPanel: pluginState.showAddFilesPanel,
       saveFileCard: saveFileCard,
       updateDashboardElWidth: this.updateDashboardElWidth,
       width: this.opts.width,
@@ -605,6 +617,7 @@ module.exports = class Dashboard extends Plugin {
     this.setPluginState({
       isHidden: true,
       showFileCard: false,
+      showAddFilesPanel: false,
       activePanel: false,
       metaFields: this.opts.metaFields,
       targets: []
