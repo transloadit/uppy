@@ -77,9 +77,13 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 What we need to do to release Uppy 1.0
 
 - [ ] website: big release blog post
+- [ ] website: add 2 real world demos (avatar, form elements: github-comment-style-textarea)
 - [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
 - [ ] chore: remove dead code/commented blocks
+- [ ] chore: remove the not-working npm scripts
 - [ ] chore: rewrite all code based on prettier+standardjs.com
+- [ ] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear
+- [ ] dashboard: implement Alex' redesign
 - [ ] ~refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
 - [ ] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
 - [ ] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
