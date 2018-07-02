@@ -36,7 +36,7 @@ var categories = [
         <% if (category) { %>
           <li>
             <% if (category.link) { %>
-              <h3><a href="<%- category.path %>"><%- category.name %></a></h3>
+              <h3><a href="/<%- category.path %>"><%- category.name %></a></h3>
             <% } else { %>
               <h3><%- category.name %></h3>
             <% } %>
