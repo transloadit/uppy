@@ -2,10 +2,11 @@
 type: docs
 order: 52
 title: "Informer"
+module: @uppy/informer
 permalink: docs/informer/
 ---
 
-The Informer plugin is a pop-up bar for showing notifications. When plugins have some exciting news (or error) to share, they can show a notification here.
+The `@uppy/informer` plugin is a pop-up bar for showing notifications. When plugins have some exciting news (or error) to share, they can show a notification here.
 
 ```js
 const Informer = require('@uppy/informer')
@@ -53,7 +54,7 @@ A unique identifier for this Informer. It defaults to `'Informer'`. Use this if 
 
 ### `target: null`
 
-DOM element, CSS selector, or plugin to mount the informer into.
+DOM element, CSS selector, or plugin to mount the Informer into.
 
 ### `typeColors: {}`
 

@@ -2,11 +2,12 @@
 type: docs
 order: 21
 title: "Drag & Drop"
+module: @uppy/drag-drop
 permalink: docs/drag-drop/
 alias: docs/dragdrop/
 ---
 
-DragDrop renders a simple drag and drop area for file selection. it can be useful when you only want the local device as a file source, don’t need file previews and a UI for metadata editing, and the [Dashboard](/docs/dashboard/) feels like overkill.
+The `@uppy/drag-drop` plugin renders a simple drag and drop area for file selection. it can be useful when you only want the local device as a file source, don’t need file previews and a UI for metadata editing, and the [Dashboard](/docs/dashboard/) feels like overkill.
 
 ```js
 const DragDrop = require('@uppy/drag-drop')
@@ -36,7 +37,7 @@ const DragDrop = Uppy.DragDrop
 
 ## CSS
 
-The DragDrop plugin includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead.
+The `@uppy/drag-drop` plugin includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead.
 
 The CSS file lives at `@uppy/drag-drop/dist/style.css`. A minified version is at `@uppy/drag-drop/dist/style.min.css`.
 
@@ -60,7 +61,7 @@ uppy.use(DragDrop, {
 
 ### `id: 'DragDrop'`
 
-A unique identifier for this DragDrop. It defaults to `'DragDrop'`. Use this if you need to add multiple DragDrop instances.
+A unique identifier for this plugin. It defaults to `'DragDrop'`. Use this if you need to add multiple DragDrop instances.
 
 ### `target: null`
 

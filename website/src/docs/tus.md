@@ -2,10 +2,11 @@
 type: docs
 order: 40
 title: "Tus"
+module: @uppy/tus
 permalink: docs/tus/
 ---
 
-The Tus plugin brings resumable file uploading by [tus.io](http://tus.io) to Uppy by wrapping the [tus-js-client][].
+The `@uppy/tus` plugin brings resumable file uploading by [tus.io](http://tus.io) to Uppy by wrapping the [tus-js-client][].
 
 ```js
 const Tus = require('@uppy/tus')
@@ -36,7 +37,7 @@ const Tus = Uppy.Tus
 
 ## Options
 
-The Tus plugin supports all of [tus-js-client][]’s options. In addition tot that, it has the following configurable options:
+The `@uppy/tus` plugin supports all of [tus-js-client][]’s options. In addition tot that, it has the following configurable options:
 
 ### `id: 'Tus'`
 

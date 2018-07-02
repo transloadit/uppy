@@ -2,10 +2,11 @@
 type: docs
 order: 60
 title: "Transloadit"
+module: @uppy/transloadit
 permalink: docs/transloadit/
 ---
 
-The Transloadit plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and more](https://transloadit.com/services/).
+The `@uppy/transloadit` plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and more](https://transloadit.com/services/).
 
 [Try it live](/examples/transloadit/)
 

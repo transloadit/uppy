@@ -2,10 +2,11 @@
 type: docs
 order: 1
 title: "Uppy"
+module: @uppy/core
 permalink: docs/uppy/
 ---
 
-This is the core module that orchestrates everything in Uppy, exposing `state`, `events` and `methods`.
+This is the core module that orchestrates everything in Uppy, managing state and events and providing methods.
 
 ```js
 const Uppy = require('@uppy/core')

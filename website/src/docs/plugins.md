@@ -7,29 +7,32 @@ order: 10
 
 Plugins are what makes Uppy useful: they help select, manipulate and upload files.
 
-- **Acquirers (various ways of picking files):**
-  - [Dashboard](/docs/dashboard) — full-featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more. Includes `StatusBar` and `Informer` plugins by default
-  - [DragDrop](/docs/dragdrop) — plain and simple drag-and-drop area
-  - [FileInput](/docs/fileinput) — even more plain and simple, just a button
-  - [Webcam](/docs/webcam) — upload selfies or audio / video recordings
-  - [Provider Plugins](/docs/providers) (remote sources that work through [Uppy Server](/docs/server/))
-    - [Dropbox](/docs/dropbox) – import files from Dropbox
-    - [GoogleDrive](/docs/google-drive) – import files from Google Drive
-    - [Instagram](/docs/instagram) – import files from Instagram
-    - [Url](/docs/url) – import files from any public URL
+- **Local Sources:**
+  - [@uppy/dashboard](/docs/dashboard) — full-featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more. Includes `StatusBar` and `Informer` plugins by default
+  - [@uppy/drag-drop](/docs/drag-drop) — plain and simple drag-and-drop area
+  - [@uppy/file-input](/docs/file-input) — even more plain and simple, just a button
+  - [@uppy/webcam](/docs/webcam) — upload selfies or audio / video recordings
+- **[Remote Providers](/docs/providers):** (remote sources that work through [Uppy Server](/docs/server/))
+  - [@uppy/dropbox](/docs/dropbox) – import files from Dropbox
+  - [@uppy/google-drive](/docs/google-drive) – import files from Google Drive
+  - [@uppy/instagram](/docs/instagram) – import files from Instagram
+  - [@uppy/url](/docs/url) – import files from any public URL
 - **Uploaders:**
-  - [Tus](/docs/tus) — uploads using the [tus](https://tus.io) resumable upload protocol
-  - [XHRUpload](/docs/xhrupload) — classic multipart form uploads or binary uploads using XMLHTTPRequest
-  - [AwsS3](/docs/aws-s3) — uploader for AWS S3
-- **Progress:**
-  - [ProgressBar](/docs/progressbar) — add a small YouTube-style progress bar at the top of the page
-  - [StatusBar](/docs/statusbar) — advanced upload progress status bar
-  - [Informer](/docs/informer) — show notifications
-- **Helpers:**
-  - [GoldenRetriever](/docs/golden-retriever) — restore files and continue uploading after a page refresh or a browser crash
-  - [Form](/docs/form) — collect metadata from `<form>` right before the Uppy upload, then optionally append results back to the form
+  - [@uppy/tus](/docs/tus) — uploads using the [tus](https://tus.io) resumable upload protocol
+  - [@uppy/xhr-upload](/docs/xhr-upload) — classic multipart form uploads or binary uploads using XMLHTTPRequest
+  - [@uppy/aws-s3](/docs/aws-s3) — uploader for AWS S3
+  - [@uppy/aws-s3-multipart](/docs/aws-s3-multipart) — uploader for AWS S3 using its resumable Multipart protocol
+- **UI Elements:**
+  - [@uppy/progress-bar](/docs/progress-bar) — add a small YouTube-style progress bar at the top of the page
+  - [@uppy/status-bar](/docs/status-bar) — advanced upload progress status bar
+  - [@uppy/informer](/docs/informer) — show notifications
 - **Encoding Services:**
-  - [Transloadit](/docs/transloadit) — manipulate and transcode uploaded files using the [transloadit.com](https://transloadit.com) service
+  - [@uppy/transloadit](/docs/transloadit) — manipulate and transcode uploaded files using the [transloadit.com](https://transloadit.com) service
+- **Miscellaneous:**
+  - [@uppy/form](/docs/form) — collect metadata from `<form>` right before the Uppy upload, then optionally append results back to the form
+  <!-- TODO document? -->
+  - @uppy/thumbnail-generator — generate preview thumbnails for images to be uploaded [documentation not yet available]
+  - [@uppy/golden-retriever](/docs/golden-retriever) — restore files and continue uploading after a page refresh or a browser crash
 
 ## Common options
 
@@ -51,11 +54,11 @@ uppy.use(DragDrop, { target: 'body' })
 // or: uppy.use(DragDrop, { target: document.body })
 ```
 
-While in this one, we are using the `Dashboard` plugin, which can act as a host target for other plugins:
+While in this one, we are using the `@uppy/dashboard` plugin, which can act as a host target for other plugins:
 
 ```js
 const Uppy = require('@uppy/core')
-const DragDrop = require('@uppy/drag-drop')
+const Dashboard = require('@uppy/dashboard')
 const GoogleDrive = require('@uppy/google-drive')
 const uppy = Uppy()
 uppy.use(Dashboard, {
@@ -81,6 +84,8 @@ Same as with Uppy.Core’s setting above, this allows you to override plugin’s
 
 See plugin documentation pages for other plugin-specific options.
 
+<!-- Keep this heading, it is here to avoid breaking existing URLs -->
+<!-- Previously the content that is now at /docs/providers was here -->
 ## Provider Plugins
 
 See the [Provider Plugins](/docs/providers) documentation page for information on provider plugins.

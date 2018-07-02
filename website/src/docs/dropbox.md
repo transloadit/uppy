@@ -2,10 +2,11 @@
 type: docs
 order: 31
 title: "Dropbox"
+module: @uppy/dropbox
 permalink: docs/dropbox/
 ---
 
-The Dropbox plugin lets users import files their Dropbox account.
+The `@uppy/dropbox` plugin lets users import files their Dropbox account.
 
 An Uppy Server instance is required for the Dropbox plugin to work. Uppy Server handles authentication with Dropbox, downloads the files, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 

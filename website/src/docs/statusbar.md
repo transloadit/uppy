@@ -2,12 +2,13 @@
 type: docs
 order: 50
 title: "Status Bar"
+module: @uppy/status-bar
 permalink: docs/status-bar/
 alias: docs/statusbar/
 ---
 
-The StatusBar shows upload progress and speed, ETAs, pre- and post-processing information, and allows users to control (pause/resume/cancel) the upload.
-Best used in combination with with a simple file source plugin, such as [FileInput][] or [DragDrop][], or a custom implementation.
+The `@uppy/status-bar` plugin shows upload progress and speed, ETAs, pre- and post-processing information, and allows users to control (pause/resume/cancel) the upload.
+Best used in combination with with a simple file source plugin, such as [`@uppy/file-input`][] or [`@uppy/drag-drop`][], or a custom implementation.
 
 ```js
 const StatusBar = require('@uppy/status-bar')
@@ -59,19 +60,19 @@ uppy.use(StatusBar, {
 
 ### `id: 'StatusBar'`
 
-A unique identifier for this StatusBar. It defaults to `'StatusBar'`. Use this if you need to add multiple StatusBar instances.
+A unique identifier for this Status Bar. It defaults to `'StatusBar'`. Use this if you need to add multiple StatusBar instances.
 
 ### `target: null`
 
-DOM element, CSS selector, or plugin to mount the StatusBar into.
+DOM element, CSS selector, or plugin to mount the Status Bar into.
 
 ### `hideAfterFinish: true`
 
-Hide StatusBar after the upload is complete.
+Hide the Status Bar after the upload is complete.
 
 ### `showProgressDetails: false`
 
-By default, progress in StatusBar is shown as simple percentage. If you would like to also display remaining upload size and time, set this to `true`.
+By default, progress in the Status Bar is shown as simple percentage. If you would like to also display remaining upload size and time, set this to `true`.
 
 `showProgressDetails: false`: Uploading: 45%
 `showProgressDetails: true`: Uploading: 45%・43 MB of 101 MB・8s left
@@ -132,7 +133,7 @@ strings: {
 
 ### `replaceTargetContent: false`
 
-Remove all children of the `target` element before mounting the StatusBar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.
+Remove all children of the `target` element before mounting the Status Bar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.
 
-[FileInput]: https://github.com/transloadit/uppy/blob/master/src/plugins/FileInput.js
-[DragDrop]: /docs/dragdrop
+[`@uppy/file-input`]: /docs/file-input
+[`@uppy/drag-drop`]: /docs/drag-drop

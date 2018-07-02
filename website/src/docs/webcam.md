@@ -2,10 +2,11 @@
 type: docs
 order: 26
 title: "Webcam"
+module: @uppy/webcam
 permalink: docs/webcam/
 ---
 
-The Webcam plugin lets you take photos and record videos with a built-in camera on desktop and mobile devices.
+The `@uppy/webcam` plugin lets you take photos and record videos with a built-in camera on desktop and mobile devices.
 
 > To use the Webcam plugin in Chrome, [your site should be served over https](https://developers.google.com/web/updates/2015/10/chrome-47-webrtc#public_service_announcements). This restriction does not apply on `localhost`, so you don't have to jump through many hoops during development.
 

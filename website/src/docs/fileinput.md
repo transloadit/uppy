@@ -2,12 +2,13 @@
 type: docs
 order: 22
 title: "File Input"
+module: @uppy/file-input
 permalink: docs/file-input/
 alias: docs/fileinput/
 
 ---
 
-`FileInput` is the most barebones UI for selecting files — it shows a single button that, when clicked, opens up the browser's file selector.
+`@uppy/file-input` is the most barebones UI for selecting files — it shows a single button that, when clicked, opens up the browser's file selector.
 
 ```js
 const FileInput = require('@uppy/file-input')
@@ -17,7 +18,7 @@ uppy.use(FileInput, {
 })
 ```
 
-[Try it live](/examples/xhrupload) - The XHRUpload example uses a `FileInput`.
+[Try it live](/examples/xhrupload) - The `@uppy/xhr-upload` example uses `@uppy/file-input` with the [`pretty`](#pretty-true) option enabled.
 
 ## Installation
 
@@ -61,7 +62,7 @@ uppy.use(FileInput, {
 
 ### `id: 'FileInput'`
 
-A unique identifier for this FileInput. It defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
+A unique identifier for this File Input. It defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
 
 ### `target: null`
 
