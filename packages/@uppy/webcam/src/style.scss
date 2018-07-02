@@ -56,6 +56,17 @@
   transition: all 0.3s;
 }
 
+  .uppy-Webcam-button svg {
+    width: 30px;
+    height: 30px;
+    max-width: 100%;
+    max-height: 100%;
+    display: inline-block;
+    vertical-align: text-top;
+    overflow: hidden;
+    fill: currentColor;
+  }
+
   .uppy-Dashboard--wide .uppy-Webcam-button {
     width: 60px;
     height: 60px;
