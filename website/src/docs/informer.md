@@ -5,7 +5,7 @@ title: "Informer"
 permalink: docs/informer/
 ---
 
-The Informer is a pop-up bar for showing notifications. When plugins have some exciting news (or error) to share, they can show a notification here.
+The Informer plugin is a pop-up bar for showing notifications. When plugins have some exciting news (or error) to share, they can show a notification here.
 
 ```js
 const Informer = require('@uppy/informer')
@@ -15,7 +15,7 @@ uppy.use(Informer, {
 })
 ```
 
-[Try it live](/examples/dashboard/) - The Informer is included in the Dashboard by default.
+[Try it live](/examples/dashboard/) - The Informer plugin is included in the Dashboard by default.
 
 ## Installation
 
@@ -23,15 +23,19 @@ uppy.use(Informer, {
 
 This plugin is published as the `@uppy/informer` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/informer
 ```
 
 ## Options
 
+The Informer plugin has the following configurable options:
+
 ### `id: 'Informer'`
 
-A unique identifier for this Informer. Defaults to `'Informer'`. Use this if you need multiple Informer instances.
+A unique identifier for this Informer, it defaults to `'Informer'`. Use this if you need multiple Informer instances.
 
 ### `target: null`
 
@@ -54,4 +58,4 @@ uppy.use(Informer, {
 
 ### `replaceTargetContent: false`
 
-Remove all children of the `target` element before mounting the Informer. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case you can set `replaceTargetContent: true` to clear the `target` before appending.
+Remove all children of the `target` element before mounting the Informer. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.
