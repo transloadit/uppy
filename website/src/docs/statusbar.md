@@ -45,7 +45,7 @@ uppy.use(StatusBar, {
 
 ### `id: 'StatusBar'`
 
-A unique identifier for this StatusBar. Defaults to `'StatusBar'`. Use this if you need to add multiple StatusBar instances.
+A unique identifier for this StatusBar. It defaults to `'StatusBar'`. Use this if you need to add multiple StatusBar instances.
 
 ### `target: null`
 
