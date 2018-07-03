@@ -22,11 +22,15 @@ uppy.use(ProgressBar, {
 
 This plugin is published as the `@uppy/progress-bar` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/progress-bar
 ```
 
 ## Options
+
+The Progressbar plugin has the following configurable options:
 
 ```js
 uppy.use(ProgressBar, {
@@ -61,4 +65,4 @@ When true, hides the progress bar after the upload has finished. If false, it re
 
 ### `replaceTargetContent: false`
 
-Remove all children of the `target` element before mounting the ProgressBar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case you can set `replaceTargetContent: true` to clear the `target` before appending.
+Remove all children of the `target` element before mounting the ProgressBar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.
