@@ -7,7 +7,7 @@ alias: docs/statusbar/
 ---
 
 The StatusBar shows upload progress and speed, ETAs, pre- and post-processing information, and allows users to control (pause/resume/cancel) the upload.
-Best used together with a simple file source plugin, such as [FileInput][] or [DragDrop][], or a custom implementation.
+Best used in combination with with a simple file source plugin, such as [FileInput][] or [DragDrop][], or a custom implementation.
 
 ```js
 const StatusBar = require('@uppy/status-bar')
@@ -23,11 +23,15 @@ uppy.use(StatusBar, {
 
 This plugin is published as the `@uppy/status-bar` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/status-bar
 ```
 
 ## Options
+
+The StatusBar plugin has the following configurable options:
 
 ```js
 uppy.use(StatusBar, {
@@ -49,11 +53,11 @@ DOM element, CSS selector, or plugin to mount the StatusBar into.
 
 ### `hideAfterFinish: true`
 
-Hide StatusBar after upload is complete.
+Hide StatusBar after the upload is complete.
 
 ### `showProgressDetails: false`
 
-By default, progress in StatusBar is shown as simple percentage. If you’d like to also display remaining upload size and time, set this to `true`.
+By default, progress in StatusBar is shown as simple percentage. If you would like to also display remaining upload size and time, set this to `true`.
 
 `showProgressDetails: false`: Uploading: 45%
 `showProgressDetails: true`: Uploading: 45%・43 MB of 101 MB・8s left
@@ -114,7 +118,7 @@ strings: {
 
 ### `replaceTargetContent: false`
 
-Remove all children of the `target` element before mounting the StatusBar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case you can set `replaceTargetContent: true` to clear the `target` before appending.
+Remove all children of the `target` element before mounting the StatusBar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.
 
 [FileInput]: https://github.com/transloadit/uppy/blob/master/src/plugins/FileInput.js
 [DragDrop]: /docs/dragdrop
