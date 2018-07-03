@@ -5,7 +5,7 @@ title: "Dashboard"
 permalink: docs/dashboard/
 ---
 
-Dashboard is a universal UI plugin for Uppy, offering several handy features:
+Dashboard is a universal UI plugin for Uppy, offering several useful features:
 
 - Drag and drop, paste, select from local disk / my device
 - UI for the Webcam plugin and remote sources, such as Google Drive, Dropbox, Instagram (all optional, added via plugins)
