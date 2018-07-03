@@ -5,10 +5,10 @@ title: "Dashboard"
 permalink: docs/dashboard/
 ---
 
-Dashboard is a universal UI plugin for Uppy:
+Dashboard is a universal UI plugin for Uppy, offering several handy features:
 
-- Drag and Drop, paste, select from local disk / my device
-- UI for Webcam and remote sources: Google Drive, Dropbox, Instagram (all optional, added via plugins)
+- Drag and drop, paste, select from local disk / my device
+- UI for the Webcam plugin and remote sources, such as Google Drive, Dropbox, Instagram (all optional, added via plugins)
 - File previews and info
 - Metadata editor
 - Progress: total and for individual files
@@ -28,11 +28,15 @@ uppy.use(Dashboard, {
 
 This plugin is published as the `@uppy/dashboard` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/dashboard
 ```
 
 ## Options
+
+The Dashboard can be extensively customized by configuring the options below to your liking:
 
 ```js
 uppy.use(Dashboard, {
@@ -62,20 +66,20 @@ uppy.use(Dashboard, {
 
 ### `id: 'Dashboard'`
 
-A unique identifier for this Dashboard. Defaults to `'Dashboard'`. Change this if you need multiple Dashboard instances.
+A unique identifier for this Dashboard. It defaults to `'Dashboard'`, but you can change this if you need multiple Dashboard instances.
 Plugins that are added by the Dashboard get unique IDs based on this ID, like `'Dashboard:StatusBar'` and `'Dashboard:Informer'`.
 
 ### `target: 'body'`
 
-Dashboard is rendered into `body` by default, because by default it’s hidden and only opened as a modal when `trigger` is clicked.
+Dashboard is rendered into `body`, because it is hidden by default and only opened as a modal when `trigger` is clicked.
 
 ### `inline: false`
 
-By default Dashboard will be rendered as a modal, which is opened via clicking on `trigger`. If `inline: true`, Dashboard will be rendered into `target` and fit right in.
+By default, Dashboard will be rendered as a modal, which is opened by clicking on `trigger`. If `inline: true`, Dashboard will be rendered into `target` and fit right in.
 
 ### `trigger: '#uppy-select-files'`
 
-String with a CSS selector for a button that will trigger opening Dashboard modal. Multiple buttons or links can be used, if it’s a class selector (`.uppy-choose`, for example).
+String with a CSS selector for a button that will trigger opening the Dashboard modal. Multiple buttons or links can be used, as long as it is a class selector (`.uppy-choose`, for example).
 
 ### `plugins: []`
 
@@ -100,7 +104,7 @@ Height of the Dashboard in pixels. Used when `inline: true`.
 
 ### `showProgressDetails: false`
 
-By default, progress in StatusBar is shown as simple percentage. If you’d like to also display remaining upload size and time, set this to `true`.
+By default, progress in StatusBar is shown as a simple percentage. If you would like to also display remaining upload size and time, set this to `true`.
 
 `showProgressDetails: false`: Uploading: 45%
 `showProgressDetails: true`: Uploading: 45%・43 MB of 101 MB・8s left
@@ -115,15 +119,15 @@ Hide the retry button. Use this if you are providing a custom retry button somew
 
 ## `hidePauseResumeCancelButtons: false`
 
-Hide cancel or pause/resume (for resumable uploads, via [tus](http://tus.io), for example) buttons. Use this if you are providing a custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)`, `uppy.cancelAll()` or `uppy.removeFile(fileID)` API.
+Hide the cancel or pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)`, `uppy.cancelAll()` or `uppy.removeFile(fileID)` API.
 
 ### `hideProgressAfterFinish: false`
 
-Hide StatusBar after upload finish
+Hide StatusBar after the upload has finished.
 
 ### `note: null`
 
-Optionally specify a string of text that explains something about the upload for the user. This is a place to explain `restrictions` that are put in place. For example: `'Images and video only, 2–3 files, up to 1 MB'`.
+Optionally, specify a string of text that explains something about the upload for the user. This is a place to explain any `restrictions` that are put in place. For example: `'Images and video only, 2–3 files, up to 1 MB'`.
 
 ### `metaFields: []`
 
@@ -131,7 +135,7 @@ An array of UI field objects that will be shown when a user clicks the “edit�
 
 - `id`, the name of the meta field.
 - `name`, the label shown in the interface.
-- `placeholder`, the text shown when no value it set in the field.
+- `placeholder`, the text shown when no value is set in the field.
 
 ```js
 .use(Dashboard, {
@@ -144,7 +148,7 @@ An array of UI field objects that will be shown when a user clicks the “edit�
 })
 ```
 
-Note that this metadata will only be set on a file object if it’s entered by the user. If the user doesn't edit a file's metadata, it will not have default values; instead everything will be `undefined`. If you want to set certain meta field to each file regardless of user actions, set [`meta` in the Uppy constructor options](/docs/uppy/#meta).
+Note that this metadata will only be set on a file object if it is entered by the user. If the user doesn't edit a file's metadata, it will not have default values; instead everything will be `undefined`. If you want to set a certain meta field to each file regardless of user actions, set [`meta` in the Uppy constructor options](/docs/uppy/#meta).
 
 ### `closeModalOnClickOutside: false`
 
@@ -152,29 +156,29 @@ Set to true to automatically close the modal when the user clicks outside of it.
 
 ### `disablePageScrollWhenModalOpen: true`
 
-By default when Dashboard modal is open, it will disable page scrolling, so when you scroll a list of files in Uppy the website in the background stays still. Set to false to override this behaviour and leave page scrolling intact.
+Page scrolling is disabled by default when the Dashboard modal is open, so when you scroll a list of files in Uppy, the website in the background stays still. Set to false to override this behaviour and leave page scrolling intact.
 
 ## `animateOpenClose: true`
 
-Add light animations when modal dialog is open or closed, for more satisfying user experience.
+Add light animations when the modal dialog is opened or closed, for a more satisfying user experience.
 
 ### `proudlyDisplayPoweredByUppy: true`
 
-Uppy is provided for the world for free by the [Transloadit team](https://transloadit.com). In return, we ask that you consider keeping a tiny Uppy logo at the bottom of the Dashboard, so that more people can discover and use Uppy.
+Uppy is provided to the world for free by the team behind [Transloadit](https://transloadit.com). In return, we ask that you consider keeping a tiny Uppy logo at the bottom of the Dashboard, so that more people can discover and use Uppy.
 
-This is entirely optional of course, just set this option to false if you do not wish to display Uppy logo.
+This is, of course, entirely optional. Just set this option to false if you do not wish to display the Uppy logo.
 
 ### `disableStatusBar: false`
 
-Dashboard ships with the `StatusBar` plugin that shows upload progress and pause/resume/cancel buttons. If you want, you can disable the StatusBar to provide your custom solution.
+Dashboard ships with the `StatusBar` plugin that shows upload progress and pause/resume/cancel buttons. If you want, you can disable the StatusBar to provide your own custom solution.
 
 ### `disableInformer: false`
 
-Dashboard ships with the `Informer` plugin that notifies when the browser is offline, or when it’s time to smile if `Webcam` is taking a picture. If you want, you can disable the Informer and/or provide your custom solution.
+Dashboard ships with the `Informer` plugin that notifies when the browser is offline, or when it is time to say cheese if `Webcam` is taking a picture. If you want, you can disable the Informer and/or provide your own custom solution.
 
 ### `disableThumbnailGenerator: false`
 
-Dashboard ships with `ThumbnailGenerator` plugin that adds small resized image thumbnails to images, for preview purposes only. If you want, you can disable the `ThumbnailGenerator` and/or provide your custom solution.
+Dashboard ships with the `ThumbnailGenerator` plugin that adds small resized image thumbnails to images, for preview purposes only. If you want, you can disable the `ThumbnailGenerator` and/or provide your own custom solution.
 
 ### `locale: {}`
 
@@ -186,7 +190,7 @@ The default English strings are:
 strings: {
   // When `inline: false`, used as the screen reader label for the button that closes the modal.
   closeModal: 'Close Modal',
-  // Used as the header for import panels, eg. "Import from Google Drive"
+  // Used as the header for import panels, e.g., "Import from Google Drive".
   importFrom: 'Import from %{name}',
   // When `inline: false`, used as the screen reader label for the dashboard modal.
   dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
@@ -194,12 +198,12 @@ strings: {
   dashboardTitle: 'Uppy Dashboard',
   // Shown in the Informer when a link to a file was copied to the clipboard.
   copyLinkToClipboardSuccess: 'Link copied to clipboard.',
-  // Used when a link cannot be copied automatically—the user has to select the text from the
+  // Used when a link cannot be copied automatically — the user has to select the text from the
   // input element below this string.
   copyLinkToClipboardFallback: 'Copy the URL below',
   // Used as the hover title and screen reader label for buttons that copy a file link.
   copyLink: 'Copy link',
-  // Used as the hover title and screen reader label for file source icons. Eg. "File source: Dropbox"
+  // Used as the hover title and screen reader label for file source icons, e.g., "File source: Dropbox".
   fileSource: 'File source: %{name}',
   // Used as the label for buttons that accept and close panels (remote providers or metadata editor)
   done: 'Done',
@@ -238,7 +242,7 @@ strings: {
 
 ### `replaceTargetContent: false`
 
-Remove all children of the `target` element before mounting the Dashboard. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, there might be cases when you’d want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not available). Set `replaceTargetContent: true` to clear the `target` before appending.
+Remove all children of the `target` element before mounting the Dashboard. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, there might be cases when you would want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not available). Set `replaceTargetContent: true` to clear the `target` before appending.
 
 ## Methods
 
