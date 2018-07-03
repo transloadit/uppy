@@ -113,11 +113,11 @@ By default, progress in StatusBar is shown as a simple percentage. If you would 
 
 Hide the upload button. Use this if you are providing a custom upload button somewhere, and using the `uppy.upload()` API.
 
-## `hideRetryButton: false`
+### `hideRetryButton: false`
 
 Hide the retry button. Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
 
-## `hidePauseResumeCancelButtons: false`
+### `hidePauseResumeCancelButtons: false`
 
 Hide the cancel or pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)`, `uppy.cancelAll()` or `uppy.removeFile(fileID)` API.
 
@@ -158,7 +158,7 @@ Set to true to automatically close the modal when the user clicks outside of it.
 
 Page scrolling is disabled by default when the Dashboard modal is open, so when you scroll a list of files in Uppy, the website in the background stays still. Set to false to override this behaviour and leave page scrolling intact.
 
-## `animateOpenClose: true`
+### `animateOpenClose: true`
 
 Add light animations when the modal dialog is opened or closed, for a more satisfying user experience.
 
