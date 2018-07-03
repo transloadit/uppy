@@ -46,7 +46,7 @@ uppy.use(DragDrop, {
 
 ### `id: 'DragDrop'`
 
-A unique identifier for this DragDrop. Defaults to `'DragDrop'`. Use this if you need to add multiple DragDrop instances.
+A unique identifier for this DragDrop. It defaults to `'DragDrop'`. Use this if you need to add multiple DragDrop instances.
 
 ### `target: null`
 
