@@ -7,7 +7,7 @@ alias: docs/fileinput/
 
 ---
 
-`FileInput` is the most barebones UI for selecting files—it shows a single button that, when clicked, opens up the browser's file selector.
+`FileInput` is the most barebones UI for selecting files — it shows a single button that, when clicked, opens up the browser's file selector.
 
 ```js
 const FileInput = require('@uppy/file-input')
@@ -23,11 +23,15 @@ uppy.use(FileInput, {
 
 This plugin is published as the `@uppy/file-input` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/file-input
 ```
 
 ## Options
+
+The FileInput plugin has the following configurable options:
 
 ```js
 uppy.use(FileInput, {
@@ -43,7 +47,7 @@ uppy.use(FileInput, {
 
 ### `id: 'FileInput'`
 
-A unique identifier for this FileInput. Defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
+A unique identifier for this FileInput. It defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
 
 ### `target: null`
 
