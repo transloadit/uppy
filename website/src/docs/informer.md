@@ -35,7 +35,7 @@ The Informer plugin has the following configurable options:
 
 ### `id: 'Informer'`
 
-A unique identifier for this Informer, it defaults to `'Informer'`. Use this if you need multiple Informer instances.
+A unique identifier for this Informer. It defaults to `'Informer'`. Use this if you need multiple Informer instances.
 
 ### `target: null`
 
