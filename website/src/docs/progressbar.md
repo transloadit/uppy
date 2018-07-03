@@ -42,7 +42,7 @@ uppy.use(ProgressBar, {
 
 ### `id: 'ProgressBar'`
 
-A unique identifier for this ProgressBar. Defaults to `'ProgressBar'`. Use this if you need to add multiple ProgressBar instances.
+A unique identifier for this ProgressBar. It defaults to `'ProgressBar'`. Use this if you need to add multiple ProgressBar instances.
 
 ### `target: null`
 
