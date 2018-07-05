@@ -1,22 +1,8 @@
 /* global browser, expect, capabilities  */
-var path = require('path')
 var http = require('http')
 var tempWrite = require('temp-write')
 
 var testURL = 'http://localhost:4567/xhr-limit'
-
-function uppySelectFakeFile (uppyID) {
-  var blob = new Blob(
-    ['data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='],
-    { type: 'image/svg+xml' }
-  )
-  window[uppyID].addFile({
-    source: 'test',
-    name: 'test-file',
-    type: blob.type,
-    data: blob
-  })
-}
 
 function browserSupportsChooseFile (capabilities) {
   // Webdriver for Safari and Edge doesn’t support .chooseFile
