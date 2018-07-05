@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -o pipefail
+set -o errexit
+set -o nounset
+set -o xtrace
+
+# Set magic variables for current file & dir
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
+__base="$(basename ${__file} .sh)"
+__root="$(cd "$(dirname "${__dir}")" && pwd)"
+
+browserify_args="$@"
+tests="tus-drag-drop tus-dashboard i18n-drag-drop xhr-limit"
+
+for t in $tests; do
+  mkdir -p "${__root}/test/endtoend/$t/dist"
+  cp "${__root}/packages/uppy/dist/uppy.min.css" "${__root}/test/endtoend/$t/dist"
+  cp "${__root}/test/endtoend/$t/index.html" "${__root}/test/endtoend/$t/dist"
+  browserify "${__root}/test/endtoend/$t/main.js" \
+    -o "${__root}/test/endtoend/$t/dist/bundle.js" \
+    -t babelify $browserify_args
+done

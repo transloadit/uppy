@@ -19,7 +19,6 @@ cleanup() {
 }
 
 echo "Preparing for end to end test: copying static HTML and CSS, building JS"
-rm -rf "${__root}/test/endtoend/dist" && mkdir "${__root}/test/endtoend/dist"
 rm -rf "${__root}/test/endtoend/node_modules"
 
 PACKAGES="$(for pkg in packages/@uppy/*; do echo "${pkg#packages/}"; done)"
@@ -47,11 +46,6 @@ git checkout -- packages/*/package.json packages/@uppy/*/package.json
 # (Don't use the npm cache, don't generate a package-lock, don't save dependencies to any package.json)
 (cd "${__root}/test/endtoend" && npm install --prefer-online --registry "$VERDACCIO_REGISTRY" --no-package-lock --no-save uppy $PACKAGES)
 
-cp "${__root}/packages/uppy/dist/uppy.min.css" "${__root}/test/endtoend/dist"
-cp "${__root}/test/endtoend/src/index.html" "${__root}/test/endtoend/dist"
-
-browserify "${__root}/test/endtoend/src/main.js" \
-  -o "${__root}/test/endtoend/dist/bundle.js" \
-  -t babelify
+bash "${__dir}/endtoend-build-tests"
 
 cleanup

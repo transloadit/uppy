@@ -12,15 +12,10 @@ __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
 echo "Preparing for end to end test: copying static HTML and CSS, building JS"
-rm -rf "${__root}/test/endtoend/dist" && mkdir "${__root}/test/endtoend/dist"
 rm -rf "${__root}/test/endtoend/node_modules"
 
 npm run build
 
-cp "${__root}/packages/uppy/dist/uppy.min.css" "${__root}/test/endtoend/dist"
-cp "${__root}/test/endtoend/src/index.html" "${__root}/test/endtoend/dist"
-browserify "${__root}/test/endtoend/src/main.js" \
-  -o "${__root}/test/endtoend/dist/bundle.js" \
-  -t babelify \
-  -t aliasify
+bash "${__dir}/endtoend-build-tests" -t aliasify
+
 rm -rf "${__root}/test/endtoend/node_modules"
