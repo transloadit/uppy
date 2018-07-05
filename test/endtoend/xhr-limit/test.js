@@ -1,8 +1,15 @@
 /* global browser, expect, capabilities  */
-var http = require('http')
-var tempWrite = require('temp-write')
+const http = require('http')
+const tempWrite = require('temp-write')
+const { Writable } = require('stream')
 
-var testURL = 'http://localhost:4567/xhr-limit'
+const devNull = () => Writable({
+  write (chunk, enc, cb) {
+    cb()
+  }
+})
+
+const testURL = 'http://localhost:4567/xhr-limit'
 
 function browserSupportsChooseFile (capabilities) {
   // Webdriver for Safari and Edge doesn’t support .chooseFile
@@ -11,7 +18,7 @@ function browserSupportsChooseFile (capabilities) {
          capabilities.platformName !== 'Android'
 }
 
-describe('XHRUpload with `limit`', () => {
+describe.skip('XHRUpload with `limit`', () => {
   let server = null
   before(() => {
     server = http.createServer((req, res) => {
@@ -19,10 +26,7 @@ describe('XHRUpload with `limit`', () => {
         'content-type': 'application/json',
         'access-control-allow-origin': '*'
       })
-      req.pause()
-      setTimeout(() => {
-        req.resume()
-      }, 3000)
+      req.pipe(devNull())
       req.on('end', () => {
         res.end('{"status":"ok"}')
       })
