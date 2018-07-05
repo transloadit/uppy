@@ -48,6 +48,7 @@ module.exports = class Dashboard extends Plugin {
         upload: 'Upload',
         importFrom: 'Import from %{name}',
         addingMoreFiles: 'Adding more files',
+        addMoreFiles: 'Add more files',
         dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
         dashboardTitle: 'Uppy Dashboard',
         copyLinkToClipboardSuccess: 'Link copied to clipboard',
@@ -76,6 +77,10 @@ module.exports = class Dashboard extends Plugin {
         resumeUpload: 'Resume upload',
         pauseUpload: 'Pause upload',
         retryUpload: 'Retry upload',
+        xFilesSelected: {
+          0: '%{smart_count} file selected',
+          1: '%{smart_count} files selected'
+        },
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
           1: 'Upload %{smart_count} files'
@@ -199,7 +204,8 @@ module.exports = class Dashboard extends Plugin {
 
   hideAllPanels () {
     this.setPluginState({
-      activePanel: false
+      activePanel: false,
+      showAddFilesPanel: false
     })
   }
 
@@ -225,6 +231,7 @@ module.exports = class Dashboard extends Plugin {
 
   getFocusableNodes () {
     const nodes = this.el.querySelectorAll(FOCUSABLE_ELEMENTS)
+    console.log(Object.keys(nodes).map((key) => nodes[key]))
     return Object.keys(nodes).map((key) => nodes[key])
   }
 
@@ -425,6 +432,7 @@ module.exports = class Dashboard extends Plugin {
     window.addEventListener('resize', this.updateDashboardElWidth)
 
     this.uppy.on('plugin-remove', this.removeTarget)
+    this.uppy.on('file-added', (ev) => this.toggleAddFilesPanel(false))
   }
 
   removeEvents () {
@@ -437,6 +445,7 @@ module.exports = class Dashboard extends Plugin {
     window.removeEventListener('resize', this.updateDashboardElWidth)
     window.removeEventListener('popstate', this.handlePopState, false)
     this.uppy.off('plugin-remove', this.removeTarget)
+    this.uppy.off('file-added', (ev) => this.toggleAddFilesPanel(false))
   }
 
   updateDashboardElWidth () {
@@ -454,9 +463,9 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  toggleAddFilesPanel () {
+  toggleAddFilesPanel (show) {
     this.setPluginState({
-      showAddFilesPanel: !this.getPluginState().showAddFilesPanel
+      showAddFilesPanel: show
     })
   }
 

@@ -10,8 +10,6 @@
   font-weight: 400;
   color: $color-white;
   background-color: lighten($color-black, 10%);
-  // box-shadow: 1px 1px 4px 0 rgba($color-asphalt-gray, 0.3);
-  // border-top: 1px solid rgba($color-gray, 0.2);
   z-index: $zIndex-2;
   transition: height .2s;
 }
@@ -148,7 +146,12 @@
     font-size: 14px;
     width: 100%;
     padding: 15px 10px;
+    background-color: $color-green;
   }
+
+    .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload:hover {
+      background-color: darken($color-green, 10%);
+    }
 
     .uppy-Dashboard--wide .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
       padding: 13px 28px;

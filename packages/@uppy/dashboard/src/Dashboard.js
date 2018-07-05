@@ -1,27 +1,15 @@
 const FileList = require('./FileList')
 const AddFiles = require('./AddFiles')
 const AddFilesPanel = require('./AddFilesPanel')
+const PanelContent = require('./PanelContent')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
 const isTouchDevice = require('@uppy/utils/lib/isTouchDevice')
 const { h } = require('preact')
+const PreactCSSTransitionGroup = require('preact-css-transition-group')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
-
-const PanelContent = (props) => {
-  return <div style={{ width: '100%', height: '100%' }}>
-    <div class="uppy-DashboardContent-bar">
-      <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
-        {props.i18n('importFrom', { name: props.activePanel.name })}
-      </div>
-      <button class="uppy-DashboardContent-back"
-        type="button"
-        onclick={props.hideAllPanels}>{props.i18n('done')}</button>
-    </div>
-    {props.getPlugin(props.activePanel.id).render(props.state)}
-  </div>
-}
 
 module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
@@ -32,7 +20,8 @@ module.exports = function Dashboard (props) {
     { 'uppy-Dashboard--animateOpenClose': props.animateOpenClose },
     { 'uppy-Dashboard--isClosing': props.isClosing },
     { 'uppy-Dashboard--modal': !props.inline },
-    { 'uppy-Dashboard--wide': props.isWide }
+    { 'uppy-Dashboard--wide': props.isWide },
+    { 'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel }
   )
 
   return (
@@ -59,20 +48,28 @@ module.exports = function Dashboard (props) {
         </button>
 
         <div class="uppy-Dashboard-innerWrap">
-          { noFiles && <AddFiles {...props} /> }
+          { noFiles ? <AddFiles {...props} /> : <FileList {...props} /> }
 
-          <AddFilesPanel {...props} />
+          <PreactCSSTransitionGroup
+            transitionName="uppy-transition-slideDownUp"
+            transitionEnterTimeout={200}
+            transitionLeaveTimeout={200}>
+            { props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} /> : null }
+          </PreactCSSTransitionGroup>
 
-          <FileCard {...props} />
+          <PreactCSSTransitionGroup
+            transitionName="uppy-transition-slideDownUp"
+            transitionEnterTimeout={200}
+            transitionLeaveTimeout={200}>
+            { props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null }
+          </PreactCSSTransitionGroup>
 
-          <FileList {...props} />
-
-          <div class="uppy-DashboardContent-panel"
-            role="tabpanel"
-            id={props.activePanel && `uppy-DashboardContent-panel--${props.activePanel.id}`}
-            hidden={!props.activePanel}>
-            {props.activePanel && <PanelContent {...props} />}
-          </div>
+          <PreactCSSTransitionGroup
+            transitionName="uppy-transition-slideDownUp"
+            transitionEnterTimeout={200}
+            transitionLeaveTimeout={200}>
+            { props.activePanel ? <PanelContent key="PanelContent" {...props} /> : null }
+          </PreactCSSTransitionGroup>
 
           <div class="uppy-Dashboard-progressindicators">
             {props.progressindicators.map((target) => {

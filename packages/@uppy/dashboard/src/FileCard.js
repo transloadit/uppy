@@ -56,42 +56,40 @@ module.exports = class FileCard extends Component {
   }
 
   render () {
-    if (!this.props.fileCardFor) {
-      return <div class="uppy-DashboardFileCard" aria-hidden />
-    }
+    // if (!this.props.fileCardFor) {
+    //   return <div class="uppy-DashboardFileCard" aria-hidden />
+    // }
 
     const file = this.props.files[this.props.fileCardFor]
 
     return (
-      <div class="uppy-DashboardFileCard" aria-hidden={!this.props.fileCardFor}>
-        <div style={{ width: '100%', height: '100%' }}>
-          <div class="uppy-DashboardContent-bar">
-            <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
-              {this.props.i18nArray('editing', {
-                file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>
-              })}
-            </div>
-            <button class="uppy-DashboardContent-back" type="button" title={this.props.i18n('finishEditingFile')}
-              onclick={this.handleSave}>{this.props.i18n('done')}</button>
+      <div class="uppy-DashboardFileCard">
+        <div class="uppy-DashboardContent-bar">
+          <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
+            {this.props.i18nArray('editing', {
+              file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>
+            })}
+          </div>
+          <button class="uppy-DashboardContent-back" type="button" title={this.props.i18n('finishEditingFile')}
+            onclick={this.handleSave}>{this.props.i18n('done')}</button>
+        </div>
+
+        <div class="uppy-DashboardFileCard-inner">
+          <div class="uppy-DashboardFileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
+            <FilePreview file={file} />
           </div>
 
-          <div class="uppy-DashboardFileCard-inner">
-            <div class="uppy-DashboardFileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
-              <FilePreview file={file} />
-            </div>
+          <div class="uppy-DashboardFileCard-info">
+            {this.renderMetaFields(file)}
+          </div>
 
-            <div class="uppy-DashboardFileCard-info">
-              {this.renderMetaFields(file)}
-            </div>
-
-            <div class="uppy-Dashboard-actions">
-              <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-actionsBtn"
-                type="button"
-                onclick={this.handleSave}>{this.props.i18n('saveChanges')}</button>
-              <button class="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-actionsBtn"
-                type="button"
-                onclick={this.handleCancel}>{this.props.i18n('cancel')}</button>
-            </div>
+          <div class="uppy-Dashboard-actions">
+            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-actionsBtn"
+              type="button"
+              onclick={this.handleSave}>{this.props.i18n('saveChanges')}</button>
+            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-actionsBtn"
+              type="button"
+              onclick={this.handleCancel}>{this.props.i18n('cancel')}</button>
           </div>
         </div>
       </div>

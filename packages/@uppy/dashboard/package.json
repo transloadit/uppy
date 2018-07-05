@@ -31,7 +31,8 @@
     "classnames": "^2.2.6",
     "drag-drop": "^2.14.0",
     "preact": "^8.2.9",
-    "prettier-bytes": "^1.0.4"
+    "prettier-bytes": "^1.0.4",
+    "preact-css-transition-group": "^1.3.0"
   },
   "devDependencies": {
     "@uppy/core": "0.26.0"
