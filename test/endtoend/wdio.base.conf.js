@@ -78,7 +78,8 @@ exports.config = {
   staticServerFolders: [
     { mount: '/i18n-drag-drop', path: './test/endtoend/i18n-drag-drop/dist' },
     { mount: '/tus-drag-drop', path: './test/endtoend/tus-drag-drop/dist' },
-    { mount: '/xhr-limit', path: './test/endtoend/xhr-limit/dist' }
+    { mount: '/xhr-limit', path: './test/endtoend/xhr-limit/dist' },
+    { mount: '/create-react-app', path: './test/endtoend/create-react-app/build' }
   ],
 
   // Framework you want to run your specs with.
