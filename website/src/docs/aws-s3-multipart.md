@@ -1,11 +1,12 @@
 ---
 type: docs
-order: 33
-title: "AwsS3Multipart"
+order: 43
+title: "AWS S3 Multipart"
+module: "@uppy/aws-s3-multipart"
 permalink: docs/aws-s3-multipart/
 ---
 
-The `AwsS3Multipart` plugin can be used to upload files directly to an S3 bucket using S3's Multipart upload strategy. With this strategy, files are chopped up in parts of 5MB+ each, so they can be uploaded concurrently. It's also very reliable: if a single part fails to upload, only that 5MB has to be retried.
+The `@uppy/aws-s3-multipart` plugin can be used to upload files directly to an S3 bucket using S3's Multipart upload strategy. With this strategy, files are chopped up in parts of 5MB+ each, so they can be uploaded concurrently. It's also very reliable: if a single part fails to upload, only that 5MB has to be retried.
 
 ```js
 const AwsS3Multipart = require('@uppy/aws-s3-multipart')
@@ -21,6 +22,12 @@ This plugin is published as the `@uppy/aws-s3-multipart` package.
 
 ```shell
 npm install @uppy/aws-s3-multipart
+```
+
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const AwsS3Multipart = Uppy.AwsS3Multipart
 ```
 
 ## Options

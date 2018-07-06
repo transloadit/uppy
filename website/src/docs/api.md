@@ -1,6 +1,6 @@
-\----		
-type: docs		
-order: 30	
+\----
+type: docs
+order: 99
 
 ## title: "Generated API"
 

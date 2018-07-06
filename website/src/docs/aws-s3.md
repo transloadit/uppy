@@ -1,11 +1,12 @@
 ---
 type: docs
-order: 32
-title: "AwsS3"
+order: 42
+title: "AWS S3"
+module: "@uppy/aws-s3"
 permalink: docs/aws-s3/
 ---
 
-The `AwsS3` plugin can be used to upload files directly to an S3 bucket.
+The `@uppy/aws-s3` plugin can be used to upload files directly to an S3 bucket.
 Uploads can be signed using [Uppy Server][uppy-server docs] or a custom signing function.
 
 ```js
@@ -21,7 +22,7 @@ uppy.use(AwsS3, {
 
 There are broadly two ways to upload to S3 in a browser. A server can generate a presigned URL for a [PUT upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html), or a server can generate form data for a [POST upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html). uppy-server uses a POST upload. See [POST uPloads](#post-uploads) for some caveats if you would like to use POST uploads without uppy-server. See [Generating a presigned upload URL server-side](#example-presigned-url) for an example of a PUT upload.
 
-There is also a separate plugin for S3 Multipart uploads. Multipart in this sense is Amazon's proprietary chunked, resumable upload mechanism for large files. See the [AwsS3Multipart](/docs/aws-s3-multipart) documentation.
+There is also a separate plugin for S3 Multipart uploads. Multipart in this sense is Amazon's proprietary chunked, resumable upload mechanism for large files. See the [`@uppy/aws-s3-multipart`](/docs/aws-s3-multipart) documentation.
 
 ## Installation
 
@@ -29,6 +30,12 @@ This plugin is published as the `@uppy/aws-s3` package.
 
 ```shell
 npm install @uppy/aws-s3
+```
+
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const AwsS3 = Uppy.AwsS3
 ```
 
 ## Options
@@ -171,7 +178,7 @@ In-depth documentation about CORS rules is available on the [AWS documentation s
 
 uppy-server uses POST uploads by default, but you can also use them with your own endpoints. There are a few things to be aware of when doing so:
 
- - The AwsS3 plugin attempts to read the `<Location>` XML tag from POST upload responses. S3 does not respond with an XML document by default. When generating the form data for POST uploads, you must set the `success_action_status` field to `201`.
+ - The `@uppy/aws-s3` plugin attempts to read the `<Location>` XML tag from POST upload responses. S3 does not respond with an XML document by default. When generating the form data for POST uploads, you must set the `success_action_status` field to `201`.
    ```js
    // `s3` is an instance of the AWS JavaScript SDK's S3 client
    s3.createPresignedPost({
@@ -185,7 +192,7 @@ uppy-server uses POST uploads by default, but you can also use them with your ow
 
 ## S3 Alternatives
 
-Many other object storage providers have an identical API to S3, so you can use the AwsS3 plugin with them. To use them with Uppy Server, you can set the `UPPYSERVER_AWS_ENDPOINT` variable to the endpoint of your preferred service.
+Many other object storage providers have an identical API to S3, so you can use the `@uppy/aws-s3` plugin with them. To use them with Uppy Server, you can set the `UPPYSERVER_AWS_ENDPOINT` variable to the endpoint of your preferred service.
 
 ### DigitalOcean Spaces
 
@@ -202,7 +209,7 @@ For a working example that you can run and play around with, see the [digitaloce
 
 ### Google Cloud Storage
 
-For Google Cloud Storage, you need to take a few more steps. For the AwsS3 plugin to be able to upload to a GCS bucket, it needs the Interoperability setting enabled. You can enable the Interoperability setting and [generate interoperable storage access keys](https://cloud.google.com/storage/docs/migrating#keys) by going to [Google Cloud Storage](https://console.cloud.google.com/storage) » Settings » Interoperability. Then set the environment variables for Uppy Server like below:
+For Google Cloud Storage, you need to take a few more steps. For the `@uppy/aws-s3` plugin to be able to upload to a GCS bucket, it needs the Interoperability setting enabled. You can enable the Interoperability setting and [generate interoperable storage access keys](https://cloud.google.com/storage/docs/migrating#keys) by going to [Google Cloud Storage](https://console.cloud.google.com/storage) » Settings » Interoperability. Then set the environment variables for Uppy Server like below:
 
 ```bash
 export UPPYSERVER_AWS_ENDPOINT="https://storage.googleapis.com"

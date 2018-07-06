@@ -1,12 +1,13 @@
 ---
 type: docs
-order: 23
-title: "ProgressBar"
+order: 51
+title: "Progress Bar"
+module: "@uppy/progress-bar"
 permalink: docs/progress-bar/
 alias: docs/progressbar/
 ---
 
-ProgressBar is a minimalist plugin that shows the current upload progress in a thin bar element, similar to the ones used by YouTube and GitHub when navigating between pages.
+`@uppy/progress-bar` is a minimalist plugin that shows the current upload progress in a thin bar element, similar to the ones used by YouTube and GitHub when navigating between pages.
 
 ```js
 const ProgressBar = require('@uppy/progress-bar')
@@ -16,7 +17,7 @@ uppy.use(ProgressBar, {
 })
 ```
 
-[Try it live](/examples/dragdrop/) - The DragDrop example uses ProgressBars to show progress.
+[Try it live](/examples/dragdrop/) - The `@uppy/drag-drop` example uses a Progress Bar to show progress.
 
 ## Installation
 
@@ -26,6 +27,12 @@ Install from NPM:
 
 ```shell
 npm install @uppy/progress-bar
+```
+
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const ProgressBar = Uppy.ProgressBar
 ```
 
 ## Options
@@ -42,7 +49,7 @@ uppy.use(ProgressBar, {
 
 ### `id: 'ProgressBar'`
 
-A unique identifier for this ProgressBar. It defaults to `'ProgressBar'`. Use this if you need to add multiple ProgressBar instances.
+A unique identifier for this Progress Bar. It defaults to `'ProgressBar'`. Use this if you need to add multiple ProgressBar instances.
 
 ### `target: null`
 
@@ -65,4 +72,4 @@ When true, hides the progress bar after the upload has finished. If false, it re
 
 ### `replaceTargetContent: false`
 
-Remove all children of the `target` element before mounting the ProgressBar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.
+Remove all children of the `target` element before mounting the Progress Bar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.

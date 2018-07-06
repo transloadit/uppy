@@ -1,11 +1,12 @@
 ---
 type: docs
-order: 51
+order: 31
 title: "Dropbox"
+module: "@uppy/dropbox"
 permalink: docs/dropbox/
 ---
 
-The Dropbox plugin lets users import files their Dropbox account.
+The `@uppy/dropbox` plugin lets users import files their Dropbox account.
 
 An Uppy Server instance is required for the Dropbox plugin to work. Uppy Server handles authentication with Dropbox, downloads the files, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
@@ -25,6 +26,12 @@ This plugin is published as the `@uppy/dropbox` package.
 
 ```shell
 npm install @uppy/dropbox
+```
+
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const Dropbox = Uppy.Dropbox
 ```
 
 ## Options
