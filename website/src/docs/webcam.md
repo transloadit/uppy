@@ -55,7 +55,7 @@ A unique identifier for this plugin. It defaults to `'Webcam'`.
 
 ### `target: null`
 
-DOM element, CSS selector, or plugin to mount the webcam into.
+DOM element, CSS selector, or plugin to mount Webcam into.
 
 ### `countdown: false`
 
