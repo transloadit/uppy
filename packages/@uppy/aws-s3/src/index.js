@@ -175,6 +175,11 @@ module.exports = class AwsS3 extends Plugin {
             return { location: null }
           }
 
+          // responseURL is not available in older browsers.
+          if (!xhr.responseURL) {
+            return { location: null }
+          }
+
           // Trim the query string because it's going to be a bunch of presign
           // parameters for a PUT request—doing a GET request with those will
           // always result in an error
