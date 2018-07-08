@@ -11,7 +11,7 @@ const writeFile = promisify(fs.writeFile)
 
 const SOURCE = 'packages/{*,@uppy/*}/src/**/*.js'
 // Files not to build (such as tests)
-const IGNORE = /\.test\.js$|__mocks__/
+const IGNORE = /\.test\.js$|__mocks__|service-dog/
 
 async function buildLib () {
   const files = await glob(SOURCE)

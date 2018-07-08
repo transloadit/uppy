@@ -21,6 +21,7 @@ script:
 - npm run web:install
 - npm run build
 - npm run test
+- npm run test:service-dog
 - if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:acceptance; fi
 - npm run uploadcdn
 env:

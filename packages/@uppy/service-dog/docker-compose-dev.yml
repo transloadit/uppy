@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  uppy:
+    image: service-dog
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - "3020:3020"
+    command: ["/usr/bin/nodemon", "/app/lib/standalone/start-server.js", "--config", "/app/nodemon.json"]

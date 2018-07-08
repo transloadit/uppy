@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+sh ../env.sh
+
+export UPPYSERVER_DATADIR="./packages/@uppy/service-dog/output"
+export UPPYSERVER_DOMAIN="localhost:3020"
+export UPPYSERVER_PROTOCOL="http"
+export UPPYSERVER_PORT=3020
+export UPPY_ENDPOINTS=""
+export UPPYSERVER_SECRET="development"
+
+nodemon --exec node ./packages/@uppy/service-dog/src/standalone/start-server.js
