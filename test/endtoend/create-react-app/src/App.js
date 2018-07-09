@@ -19,7 +19,7 @@ class App extends Component {
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
 
     this.state = {
-      showInlineDashboard: false,
+      showInlineDashboard: true,
       open: false
     }
   }
@@ -44,6 +44,7 @@ class App extends Component {
         <h2>Inline Dashboard</h2>
         <label>
           <input
+            id="inline-dashboard-toggle"
             type="checkbox"
             checked={showInlineDashboard}
             onChange={(event) => {
