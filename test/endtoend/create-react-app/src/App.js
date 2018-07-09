@@ -22,6 +22,8 @@ class App extends Component {
       showInlineDashboard: true,
       open: false
     }
+
+    this.handleModalClick = this.handleModalClick.bind(this)
   }
 
   componentWillUnmount () {
@@ -42,58 +44,64 @@ class App extends Component {
         <h1>React Examples</h1>
 
         <h2>Inline Dashboard</h2>
-        <label>
-          <input
-            id="inline-dashboard-toggle"
-            type="checkbox"
-            checked={showInlineDashboard}
-            onChange={(event) => {
-              this.setState({
-                showInlineDashboard: event.target.checked
-              })
-            }}
-          />
-          Show Dashboard
-        </label>
-        {showInlineDashboard && (
-          <Dashboard
-            uppy={this.uppy}
-            plugins={['GoogleDrive']}
-            metaFields={[
-              { id: 'name', name: 'Name', placeholder: 'File name' }
-            ]}
-          />
-        )}
+        <div id="inline-dashboard">
+          <label>
+            <input
+              id="inline-dashboard-toggle"
+              type="checkbox"
+              checked={showInlineDashboard}
+              onChange={(event) => {
+                this.setState({
+                  showInlineDashboard: event.target.checked
+                })
+              }}
+            />
+            Show Dashboard
+          </label>
+          {showInlineDashboard && (
+            <Dashboard
+              uppy={this.uppy}
+              plugins={['GoogleDrive']}
+              metaFields={[
+                { id: 'name', name: 'Name', placeholder: 'File name' }
+              ]}
+            />
+          )}
+        </div>
 
         <h2>Modal Dashboard</h2>
-        <div>
-          <button onClick={this.handleModalClick}>
+        <div id="modal-dashboard">
+          <button onClick={this.handleModalClick} id="modal-dashboard-toggle">
             {this.state.open ? 'Close dashboard' : 'Open dashboard'}
           </button>
           <DashboardModal
             uppy={this.uppy2}
             open={this.state.open}
-            target={document.body}
+            target="#modal-dashboard"
             onRequestClose={() => this.setState({ open: false })}
           />
         </div>
 
         <h2>Drag Drop Area</h2>
-        <DragDrop
-          uppy={this.uppy}
-          locale={{
-            strings: {
-              chooseFile: 'Boop a file',
-              orDragDrop: 'or yoink it here'
-            }
-          }}
-        />
+        <div id="drag-drop">
+          <DragDrop
+            uppy={this.uppy}
+            locale={{
+              strings: {
+                chooseFile: 'Boop a file',
+                orDragDrop: 'or yoink it here'
+              }
+            }}
+          />
+        </div>
 
         <h2>Progress Bar</h2>
-        <ProgressBar
-          uppy={this.uppy}
-          hideAfterFinish={false}
-        />
+        <div id="progress-bar">
+          <ProgressBar
+            uppy={this.uppy}
+            hideAfterFinish={false}
+          />
+        </div>
       </div>
     )
   }

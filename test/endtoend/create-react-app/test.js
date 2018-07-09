@@ -7,7 +7,7 @@ describe('webpack build', () => {
   })
 
   it('should include CSS', () => {
-    const el = $('.uppy-Dashboard-inner')
+    const el = $('#inline-dashboard .uppy-Dashboard-inner')
     el.waitForExist()
     const bgColor = el.getCssProperty('background-color').value
     // computed value is rgb(), not hex (but using a regex here to show the expected value too)
@@ -21,7 +21,7 @@ describe('React: Dashboard', () => {
   })
 
   it('should have Google Drive panel', () => {
-    const el = $('.uppy-Dashboard-inner')
+    const el = $('#inline-dashboard .uppy-Dashboard-inner')
     el.waitForExist()
 
     const tabs = $$('.uppy-DashboardTab-name')
@@ -29,7 +29,7 @@ describe('React: Dashboard', () => {
   })
 
   it('should survive being mounted and unmounted', () => {
-    const el = $('.uppy-Dashboard-inner')
+    const el = $('#inline-dashboard .uppy-Dashboard-inner')
     el.waitForExist()
 
     // close
@@ -55,11 +55,28 @@ describe('React: Dashboard', () => {
   })
 })
 
-describe.skip('React: DashboardModal', () => {
+describe('React: DashboardModal', () => {
   beforeEach(() => {
     browser.url(testURL)
   })
 
-  it('should upload a file with Tus and set progressbar to 100%', () => {
+  it('should have controlled open and close', () => {
+    const modalToggle = $('#modal-dashboard-toggle')
+    const modalWrapper = $('#modal-dashboard .uppy-Dashboard--modal')
+    const modalClose = $('#modal-dashboard .uppy-Dashboard-close')
+
+    expect(modalWrapper.getAttribute('aria-hidden')).to.equal('true')
+
+    modalToggle.click()
+    browser.pause(50) // wait for the animation to start
+
+    expect(modalWrapper.getAttribute('aria-hidden')).to.equal(null)
+
+    browser.pause(500) // wait for the animation to complete
+
+    modalClose.click()
+    browser.pause(500) // wait for the animation to complete
+
+    expect(modalWrapper.getAttribute('aria-hidden')).to.equal('true')
   })
 })
