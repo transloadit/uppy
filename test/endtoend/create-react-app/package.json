@@ -2,6 +2,7 @@
   "name": "create-react-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/create-react-app/",
   "dependencies": {
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
