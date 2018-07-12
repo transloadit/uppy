@@ -5,29 +5,21 @@
   <div class="Stats-bundleSizes">
     <strong class="underline">Bundle Sizes</strong>
     <dl>
-      <% for (var type in theme.uppy_bundle_kb_sizes) { %>
-        <% var kb = theme.uppy_bundle_kb_sizes[type]; %>
+      <% for (const [name, { minified, gzipped, prettyMinified, prettyGzipped }] of Object.entries(theme.uppy_bundle_kb_sizes)) { %>
         <dt>
-          <% if (kb === 'N/A') { %>
-            <%- type %>
-          <% } else { %>
-            <a href="/uppy/<%- type %>"><%- type %></a>
-          <% }%>
+          <%- name %>
         </dt>
         <dd class="
-          <% if (kb > 100) { %>
-            red
-          <% } %>
-          <% if (kb < 50) { %>
-            green
-          <% } %>
+          <% if (minified > 50 * 1000) { %>red<% } %>
+          <% if (minified < 20 * 1000) { %>green<% } %>
         ">
-
-          <% if (kb === 'N/A') { %>
-            <%- kb %>
-          <% } else { %>
-            <%- kb %> Kb
-          <% }%>
+          <%- prettyMinified %> min
+        </dd>
+        <dd class="
+          <% if (gzipped > 30 * 1000) { %>red<% } %>
+          <% if (gzipped < 10 * 1000) { %>green<% } %>
+        ">
+          <%- prettyGzipped %> gz
         </dd>
       <% } %>
     </dl>
