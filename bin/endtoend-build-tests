@@ -11,7 +11,7 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
-tests="tus-drag-drop tus-dashboard i18n-drag-drop xhr-limit providers"
+tests="tus-drag-drop tus-dashboard i18n-drag-drop xhr-limit providers thumbnails"
 
 for t in $tests; do
   mkdir -p "${__root}/test/endtoend/$t/dist"
