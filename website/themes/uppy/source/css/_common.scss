@@ -111,7 +111,7 @@ a.button {
     margin: 0;
   }
 
-  &.html, &.js, &.bash, &.css {
+  &.html, &.js, &.bash, &.css, &.php {
     .code:after {
       position: absolute;
       top: 0;
@@ -130,6 +130,7 @@ a.button {
   &.js .code:after { content: 'JS'; }
   &.bash .code:after { content: 'Shell'; }
   &.css .code:after { content: 'CSS'; }
+  &.php .code:after { content: 'PHP'; }
 }
 
 .page {

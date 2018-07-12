@@ -5,6 +5,14 @@ const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
 const path = require('path')
 
+// oof
+// I think this is the way to add Prism components that it doesn't include
+// in the default build?
+global.Prism = Prism
+require('prismjs/components/prism-markup-templating')
+require('prismjs/components/prism-php')
+delete global.Prism
+
 const unhighlightedCodeRx = /<pre><code class="(.*)?">([\s\S]*?)<\/code><\/pre>/igm
 
 function highlight (lang, code) {
