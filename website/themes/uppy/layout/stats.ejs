@@ -2,28 +2,6 @@
 
 <div class="Content js-Content <%- page.type ? page.type + ' with-sidebar' : '' %>">
   <h1><%- page.title %></h1>
-  <div class="Stats-bundleSizes">
-    <strong class="underline">Bundle Sizes</strong>
-    <dl>
-      <% for (const [name, { minified, gzipped, prettyMinified, prettyGzipped }] of Object.entries(theme.uppy_bundle_kb_sizes)) { %>
-        <dt>
-          <%- name %>
-        </dt>
-        <dd class="
-          <% if (minified > 50 * 1000) { %>red<% } %>
-          <% if (minified < 20 * 1000) { %>green<% } %>
-        ">
-          <%- prettyMinified %> min
-        </dd>
-        <dd class="
-          <% if (gzipped > 30 * 1000) { %>red<% } %>
-          <% if (gzipped < 10 * 1000) { %>green<% } %>
-        ">
-          <%- prettyGzipped %> gz
-        </dd>
-      <% } %>
-    </dl>
-  </div>
 
   <p class="Stats-infoText">
     To keep Uppy lightweight, we’re aiming to carefully select what packages we include.
@@ -41,6 +19,37 @@
   <a href="https://twitter.com/hughskennedy">Hugh Kennedy</a>’s excellent
   <a href="http://hughsk.io/disc/">disc</a>.
   <hr />
+
+  <h2>Bundle Sizes</h2>
+  <table width="100%">
+    <thead>
+      <tr>
+        <th align="left">Package</th>
+        <th align="left">Minified</th>
+        <th align="left">Gzip</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const [name, sizes] of Object.entries(theme.uppy_bundle_kb_sizes)) { %>
+        <% const { minified, gzipped, prettyMinified, prettyGzipped } = sizes %>
+        <tr>
+          <td><%- name %></td>
+          <td class="
+            <% if (minified > 50 * 1000) { %>red<% } %>
+            <% if (minified < 20 * 1000) { %>green<% } %>
+          ">
+            <%- prettyMinified %>
+          </td>
+          <td class="
+            <% if (gzipped > 30 * 1000) { %>red<% } %>
+            <% if (gzipped < 10 * 1000) { %>green<% } %>
+          ">
+            <%- prettyGzipped %>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
 
   <h2>Browser support</h2>
 
