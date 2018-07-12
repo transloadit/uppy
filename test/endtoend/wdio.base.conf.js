@@ -1,3 +1,12 @@
+const glob = require('glob').sync
+const path = require('path')
+
+const suites = {}
+glob('test/endtoend/*/test.js').forEach((file) => {
+  const name = path.basename(path.dirname(file))
+  suites[name] = [file]
+})
+
 exports.config = {
   // ==================
   // Specify Test Files
@@ -15,6 +24,9 @@ exports.config = {
   exclude: [
     // 'path/to/excluded/files'
   ],
+
+  // Suites allows you to do `wdio config.js --suite $name` to run a subset of tests.
+  suites,
 
   // ============
   // Capabilities
