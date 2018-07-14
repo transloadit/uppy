@@ -6,8 +6,8 @@ const { h } = require('preact')
 module.exports = class Instagram extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
-    Provider.initPlugin(this, opts)
     this.id = this.opts.id || 'Instagram'
+    Provider.initPlugin(this, opts)
     this.title = 'Instagram'
     this.icon = () => (
       <svg aria-hidden="true" class="UppyIcon" width="28" height="28" viewBox="0 0 512 512">

@@ -6,8 +6,8 @@ const { h } = require('preact')
 module.exports = class GoogleDrive extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
-    Provider.initPlugin(this, opts)
     this.id = this.opts.id || 'GoogleDrive'
+    Provider.initPlugin(this, opts)
     this.title = 'Google Drive'
     this.icon = () =>
       <svg aria-hidden="true" class="UppyIcon UppyModalTab-icon" width="28" height="28" viewBox="0 0 16 16">

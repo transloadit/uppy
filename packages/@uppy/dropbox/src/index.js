@@ -7,8 +7,8 @@ const { h } = require('preact')
 module.exports = class Dropbox extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
-    Provider.initPlugin(this, opts)
     this.id = this.opts.id || 'Dropbox'
+    Provider.initPlugin(this, opts)
     this.title = 'Dropbox'
     this.icon = () => (
       <svg class="UppyIcon" width="128" height="118" viewBox="0 0 128 118">

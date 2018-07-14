@@ -63,7 +63,7 @@ module.exports = class Provider extends RequestClient {
       const pattern = opts.serverPattern
       // validate serverPattern param
       if (typeof pattern !== 'string' && !Array.isArray(pattern) && !(pattern instanceof RegExp)) {
-        throw new TypeError('Provider: the option `serverPattern` must be one of string, Array, RegExp')
+        throw new TypeError(`${plugin.id}: the option "serverPattern" must be one of string, Array, RegExp`)
       }
       plugin.opts.serverPattern = pattern
     } else {
