@@ -7,8 +7,8 @@ const { h } = require('preact')
 module.exports = class Dropbox extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
-    this.type = 'acquirer'
     this.id = this.opts.id || 'Dropbox'
+    Provider.initPlugin(this, opts)
     this.title = 'Dropbox'
     this.icon = () => (
       <svg class="UppyIcon" width="128" height="118" viewBox="0 0 128 118">
@@ -18,25 +18,14 @@ module.exports = class Dropbox extends Plugin {
       </svg>
     )
 
-    // writing out the key explicitly for readability the key used to store
-    // the provider instance must be equal to this.id.
     this[this.id] = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
       serverHeaders: this.opts.serverHeaders,
       provider: 'dropbox'
     })
 
-    this.files = []
-
     this.onAuth = this.onAuth.bind(this)
     this.render = this.render.bind(this)
-
-    // set default options
-    const defaultOptions = {}
-
-    // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
-    this.opts.serverPattern = opts.serverPattern || opts.serverUrl
   }
 
   install () {

@@ -6,8 +6,8 @@ const { h } = require('preact')
 module.exports = class Instagram extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
-    this.type = 'acquirer'
     this.id = this.opts.id || 'Instagram'
+    Provider.initPlugin(this, opts)
     this.title = 'Instagram'
     this.icon = () => (
       <svg aria-hidden="true" class="UppyIcon" width="28" height="28" viewBox="0 0 512 512">
@@ -24,17 +24,8 @@ module.exports = class Instagram extends Plugin {
       authProvider: 'instagram'
     })
 
-    this.files = []
-
     this.onAuth = this.onAuth.bind(this)
     this.render = this.render.bind(this)
-
-    // set default options
-    const defaultOptions = {}
-
-    // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
-    this.opts.serverPattern = opts.serverPattern || opts.serverUrl
   }
 
   install () {

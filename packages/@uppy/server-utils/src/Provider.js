@@ -52,4 +52,27 @@ module.exports = class Provider extends RequestClient {
         return res
       })
   }
+
+  static initPlugin (plugin, opts, defaultOpts) {
+    plugin.type = 'acquirer'
+    plugin.files = []
+    if (defaultOpts) {
+      plugin.opts = Object.assign({}, defaultOpts, opts)
+    }
+    if (opts.serverPattern) {
+      const pattern = opts.serverPattern
+      // validate serverPattern param
+      if (typeof pattern !== 'string' && !Array.isArray(pattern) && !(pattern instanceof RegExp)) {
+        throw new TypeError(`${plugin.id}: the option "serverPattern" must be one of string, Array, RegExp`)
+      }
+      plugin.opts.serverPattern = pattern
+    } else {
+      // does not start with https://
+      if (/^(?!https?:\/\/).*$/.test(opts.serverUrl)) {
+        plugin.opts.serverPattern = `${location.protocol}//${opts.serverUrl.replace(/^\/\//, '')}`
+      } else {
+        plugin.opts.serverPattern = opts.serverUrl
+      }
+    }
+  }
 }

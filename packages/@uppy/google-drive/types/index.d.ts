@@ -1,8 +1,9 @@
 import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import { ProviderOptions } from '@uppy/server-utils';
 
-export interface GoogleDriveOptions extends PluginOptions {
+export interface GoogleDriveOptions extends PluginOptions, ProviderOptions {
   serverUrl: string;
-  // TODO inherit from ProviderOptions
+  serverPattern: string | RegExp | Array<string | RegExp>;
 }
 
 export default class GoogleDrive extends Plugin {
