@@ -3,7 +3,7 @@ const NRP = require('node-redis-pubsub')
 
 /**
  * This class simulates the builtin events.EventEmitter but with the use of redis.
- * This is useful for when service-dog is running on multiple instances and events need
+ * This is useful for when companion is running on multiple instances and events need
  * to be distributed across.
  */
 class RedisEmitter extends NRP {

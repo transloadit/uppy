@@ -81,8 +81,8 @@ app.use((req, res, next) => {
   const protocol = process.env.UPPYSERVER_PROTOCOL || 'http'
 
   // if endpoint urls are specified, then we only allow those endpoints
-  // otherwise, we allow any client url to access service-dog.
-  // here we also enforce that only the protocol allowed by service-dog is used.
+  // otherwise, we allow any client url to access companion.
+  // here we also enforce that only the protocol allowed by companion is used.
   if (process.env.UPPY_ENDPOINTS) {
     const whitelist = process.env.UPPY_ENDPOINTS
       .split(',')

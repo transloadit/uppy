@@ -8,7 +8,7 @@ const crypto = require('crypto')
 const { version } = require('../../package.json')
 
 /**
- * Reads all service-dog configuration set via environment variables
+ * Reads all companion configuration set via environment variables
  * and via the config file path
  *
  * @returns {object}
@@ -117,7 +117,7 @@ const getConfigPath = () => {
 }
 
 /**
- * validates that the mandatory service-dog options are set.
+ * validates that the mandatory companion options are set.
  * If it is invalid, it will console an error of unset options and exits the process.
  * If it is valid, nothing happens.
  *
@@ -137,7 +137,7 @@ exports.validateConfig = (config) => {
   // vaidate that all required config is specified
   if (unspecified.length) {
     console.error('\x1b[31m', 'Please specify the following options',
-      'to run service-dog as Standalone:\n', unspecified.join(',\n'), '\x1b[0m')
+      'to run companion as Standalone:\n', unspecified.join(',\n'), '\x1b[0m')
     process.exit(1)
   }
 

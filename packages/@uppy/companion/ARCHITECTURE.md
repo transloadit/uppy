@@ -25,8 +25,8 @@ redirects to Google's oAuth page.  So on the client side, you just need to link 
 
 After the user completes the oAuth flow, they should always be redirected to `https://your-server/:provider/callback`.
 The `/:provider/callback` routes are handled by the `callback` controller at `server/controllers/callback.js`.  
-This controller receives the oAuth token, generates a json web token with it, and sends the generated json web token to the client by adding it to the cookies. This way service-dog doesn't have to save users' oAuth tokens (which is good from the security perspective).
-This json web token would be sent to service-dog in subsequent requests and the oAuth token can be read from it.
+This controller receives the oAuth token, generates a json web token with it, and sends the generated json web token to the client by adding it to the cookies. This way companion doesn't have to save users' oAuth tokens (which is good from the security perspective).
+This json web token would be sent to companion in subsequent requests and the oAuth token can be read from it.
 
 ## Routing And Controllers
 There are four generic routes:
@@ -81,4 +81,4 @@ One issue here is that `Grant` has different versions for Koa, Express, and Hapi
 All of this may be more trouble than it's worth if no one needs it, so I'd get some community feedback beforehand.
 
 ## Allow users to add new providers
-Suppose a developer wants to use Uppy with a third party API provider that we don't support.  There needs to be some way for them to be able to add their own custom providers, hopefully without having to edit `service-dog`'s source (adding files to `server/providers`).
+Suppose a developer wants to use Uppy with a third party API provider that we don't support.  There needs to be some way for them to be able to add their own custom providers, hopefully without having to edit `companion`'s source (adding files to `server/providers`).

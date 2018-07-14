@@ -2,7 +2,7 @@ version: '2'
 
 services:
   uppy:
-    image: service-dog
+    image: companion
     build:
       context: .
       dockerfile: Dockerfile

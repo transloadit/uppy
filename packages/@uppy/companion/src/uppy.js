@@ -36,7 +36,7 @@ const defaultOptions = {
 }
 
 /**
- * Entry point into initializing the service-dog app.
+ * Entry point into initializing the companion app.
  *
  * @param {object} options
  */
@@ -172,7 +172,7 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
       if (body === unwantedBody) {
         logger.error(`grant.js responded with error: ${body}`, 'grant.oauth.error')
         send([
-          'Service-Dog was unable to complete the OAuth process :(',
+          'Companion was unable to complete the OAuth process :(',
           '(Hint, try clearing your cookies and try again)'
         ].join('\n'))
       } else {

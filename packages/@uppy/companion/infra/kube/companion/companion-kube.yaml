@@ -1,33 +1,33 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-dog
+  name: companion
   namespace: uppy
   labels: 
-    app: service-dog
+    app: companion
 spec:
   ports:
   - port: 80
     targetPort: 3020
     protocol: TCP
   selector:
-    app: service-dog
+    app: companion
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: service-dog
+  name: companion
   namespace: uppy
 spec:
   selector:
     matchLabels:
-      app: service-dog
+      app: companion
   replicas: 2
-  serviceName: "service-dog"
+  serviceName: "companion"
   template:
     metadata:
       labels:
-        app: service-dog
+        app: companion
     spec:
       affinity:
         nodeAffinity:
@@ -43,12 +43,12 @@ spec:
               - key: app
                 operator: In
                 values:
-                - service-dog
+                - companion
             topologyKey: kubernetes.io/hostname    
       containers:
-      - image: docker.io/transloadit/service-dog:latest
+      - image: docker.io/transloadit/companion:latest
         imagePullPolicy: Always
-        name: service-dog        
+        name: companion        
         resources:
           limits:
             memory: 2Gi
@@ -56,15 +56,15 @@ spec:
             memory: 2Gi
         envFrom:
         - configMapRef:
-            name: service-dog-env
+            name: companion-env
         ports:
         - containerPort: 3020
         volumeMounts:
-        - name: service-dog-data
-          mountPath: /mnt/service-dog-data
+        - name: companion-data
+          mountPath: /mnt/companion-data
   volumeClaimTemplates:
   - metadata:
-      name: service-dog-data
+      name: companion-data
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "standard"
@@ -75,7 +75,7 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: service-dog
+  name: companion
   namespace: uppy
   annotations:
     kubernetes.io/tls-acme: "true"
@@ -87,26 +87,26 @@ spec:
   tls:
   - hosts:
     - server.uppy.io
-    secretName: service-dog-tls
+    secretName: companion-tls
   rules:
   - host: server.uppy.io
     http:
       paths:
       - path: /
         backend:
-          serviceName: service-dog
+          serviceName: companion
           servicePort: 80
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: service-dog
+  name: companion
   namespace: uppy
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Statefulset
-    name: service-dog
+    name: companion
   minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80

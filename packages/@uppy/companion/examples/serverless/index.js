@@ -6,7 +6,7 @@ const cors = require('cors')
 const compression = require('compression')
 const awsServerlessExpress = require('aws-serverless-express')
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
-const uppy = require('@uppy/service-dog')
+const uppy = require('@uppy/companion')
 
 const app = express()
 

@@ -23,6 +23,6 @@
     "packages/@uppy/*/types/*-tests.ts",
   ],
   "exclude": [
-    "packages/@uppy/service-dog"
+    "packages/@uppy/companion"
   ]
 }

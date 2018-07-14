@@ -1,5 +1,5 @@
 {
-  "name": "@uppy/service-dog",
+  "name": "@uppy/companion",
   "version": "0.13.4",
   "description": "Server component for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "main": "lib/uppy.js",
@@ -26,7 +26,7 @@
     "realtime"
   ],
   "bin": {
-    "service-dog": "./lib/standalone/start-server.js"
+    "companion": "./lib/standalone/start-server.js"
   },
   "devDependencies": {
     "@types/aws-serverless-express": "^3.0.1",
@@ -95,7 +95,7 @@
   },
   "scripts": {
     "build": "tsc -p .",
-    "deploy": "kubectl apply -f infra/kube/service-dog-kube.yml",
+    "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "npm run build",
     "start": "node ./lib/standalone/start-server.js",
     "test": "/bin/bash -c 'npm run build && source env.test.sh && jest'",

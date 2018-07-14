@@ -359,7 +359,7 @@ class Uploader {
    */
   _uploadS3 (stream) {
     if (!this.options.s3) {
-      this.emitError(new Error('The S3 client is not configured on this service-dog instance.'))
+      this.emitError(new Error('The S3 client is not configured on this companion instance.'))
       return
     }
 

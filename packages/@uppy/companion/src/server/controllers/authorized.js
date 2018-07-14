@@ -4,7 +4,7 @@
 const logger = require('../logger')
 
 /**
- * checks if service-dog is authorized to access a user's provider account.
+ * checks if companion is authorized to access a user's provider account.
  *
  * @param {object} req
  * @param {object} res

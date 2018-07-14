@@ -24,7 +24,7 @@ const cleanUpFinishedUploads = (dirPath) => {
 
     logger.info(`found ${files.length} files`, 'jobs.cleanup.files')
     files.forEach((file, fileIndex) => {
-      // if it does not contain FILE_NAME_PREFIX then it probably wasn't created by service-dog.
+      // if it does not contain FILE_NAME_PREFIX then it probably wasn't created by companion.
       // this is to avoid deleting unintended files, e.g if a wrong path was accidentally given
       // by a developer.
       if (!file.startsWith(FILE_NAME_PREFIX)) {
