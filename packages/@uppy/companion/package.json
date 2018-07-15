@@ -45,7 +45,6 @@
     "@types/tus-js-client": "^1.4.1",
     "@types/uuid": "^3.4.3",
     "@types/ws": "^3.2.1",
-    "eslint": "^4.19.1",
     "jest-cli": "^23.1.0",
     "nodemon": "^1.17.5",
     "supertest": "3.0.0"
@@ -96,9 +95,11 @@
   "scripts": {
     "build": "tsc -p .",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
+    "fix": "eslint . --fix",
+    "lint": "eslint .",
     "prepublishOnly": "npm run build",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "/bin/bash -c 'npm run build && source env.test.sh && jest'",
+    "test": "/bin/bash -c 'npm run lint && npm run build && source env.test.sh && jest'",
     "test:watch": "npm test -- --watch"
   },
   "engines": {
