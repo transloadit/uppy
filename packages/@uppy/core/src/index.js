@@ -785,7 +785,7 @@ class Uppy {
     })
 
     // show informer if offline
-    if (typeof window !== 'undefined') {
+    if (typeof document !== 'undefined') {
       window.addEventListener('online', () => this.updateOnlineStatus())
       window.addEventListener('offline', () => this.updateOnlineStatus())
       setTimeout(() => this.updateOnlineStatus(), 3000)
