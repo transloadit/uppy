@@ -3,7 +3,8 @@
   "name": "uppy-build",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
-    "*.js": "eslint"
+    "*.js": "eslint",
+    "packages/@uppy/companion/**/*.js": "eslint --ignore-path packages/@uppy/companion/.eslintignore -c packages/@uppy/companion/.eslintrc.json"
   },
   "pre-commit": "lint-staged",
   "license": "MIT",
@@ -87,6 +88,7 @@
     "build": "npm-run-all --parallel build:js build:css --serial build:gzip size",
     "clean": "rm -rf packages/*/lib packages/@uppy/*/lib && rm -rf packages/uppy/dist",
     "lint:fix": "npm run lint -- --fix",
+    "lint:companion": "eslint --ignore-path packages/@uppy/companion/.eslintignore -c packages/@uppy/companion/.eslintrc.json packages/@uppy/companion/.",
     "lint": "eslint . --cache",
     "lint-staged": "lint-staged",
     "release": "./bin/release",
@@ -101,7 +103,7 @@
     "test:unit": "jest --testPathPattern=./src --coverage",
     "test:type": "tsc -p .",
     "test": "npm run lint && npm run test:unit && npm run test:type",
-    "test:companion": "cd ./packages/@uppy/companion && npm run test",
+    "test:companion": "npm run lint:companion && cd ./packages/@uppy/companion && npm run test",
     "test:watch": "jest --watch --testPathPattern=src",
     "travis:deletecache": "travis cache --delete",
     "watch:css": "onchange 'packages/**/*.scss' --initial --verbose -- npm run build:css",

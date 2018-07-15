@@ -95,11 +95,9 @@
   "scripts": {
     "build": "tsc -p .",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
-    "fix": "eslint . --fix",
-    "lint": "eslint .",
     "prepublishOnly": "npm run build",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "/bin/bash -c 'npm run lint && npm run build && source env.test.sh && jest'",
+    "test": "/bin/bash -c 'npm run build && source env.test.sh && jest'",
     "test:watch": "npm test -- --watch"
   },
   "engines": {
