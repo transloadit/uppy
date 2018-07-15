@@ -1,5 +1,5 @@
 const { Plugin } = require('@uppy/core')
-const { Socket, RequestClient } = require('@uppy/server-utils')
+const { Socket, RequestClient } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const limitPromises = require('@uppy/utils/lib/limitPromises')

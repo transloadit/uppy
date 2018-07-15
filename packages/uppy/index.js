@@ -2,7 +2,7 @@
 exports.Core = require('@uppy/core')
 
 // Utilities
-exports.server = require('@uppy/server-utils')
+exports.server = require('@uppy/companion-client')
 exports.views = {
   ProviderView: require('@uppy/provider-views')
 }

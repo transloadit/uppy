@@ -1,5 +1,5 @@
 import { Plugin, PluginOptions, Uppy } from '@uppy/core';
-import { ProviderOptions } from '@uppy/server-utils';
+import { ProviderOptions } from '@uppy/companion-client';
 
 export interface GoogleDriveOptions extends PluginOptions, ProviderOptions {
   serverUrl: string;
