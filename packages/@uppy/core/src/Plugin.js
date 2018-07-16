@@ -49,11 +49,13 @@ module.exports = class Plugin {
   }
 
   setPluginState (update) {
-    const plugins = Object.assign({}, this.uppy.getState().plugins)
-    plugins[this.id] = Object.assign({}, plugins[this.id], update)
+    const { plugins } = this.uppy.getState()
 
     this.uppy.setState({
-      plugins: plugins
+      plugins: {
+        ...plugins,
+        [this.id]: update
+      }
     })
   }
 
