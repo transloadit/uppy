@@ -64,7 +64,7 @@ export interface UppyOptions {
     maxFileSize: number | null,
     maxNumberOfFiles: number | null,
     minNumberOfFiles: number | null,
-    allowedFileTypes: number | null
+    allowedFileTypes: string[] | null
   };
   target: string | Plugin;
   meta: any;
