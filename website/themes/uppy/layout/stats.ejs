@@ -24,30 +24,25 @@
   <p>
     Below are the minified and gzipped sizes for each Uppy package. Note that this includes the dependencies for each package, some of which are shared when you install multiple plugins—for example, the `@uppy/dropbox` and `@uppy/instagram` package are both over 11kB including dependencies, but only sum up to about 15kB when they are used together.
   </p>
-  <table width="100%">
+  <table class="Stats-bundleSizes">
     <thead>
       <tr>
-        <th align="left">Package</th>
-        <th align="left">Minified</th>
-        <th align="left">Gzip</th>
+        <th class="Stats-bundleSizeHeader">Package</th>
+        <th class="Stats-bundleSizeHeader">Minified</th>
+        <th class="Stats-bundleSizeHeader">Gzip</th>
       </tr>
     </thead>
     <tbody>
       <% for (const [name, sizes] of Object.entries(theme.uppy_bundle_kb_sizes)) { %>
         <% const { minified, gzipped, prettyMinified, prettyGzipped } = sizes %>
         <tr>
-          <td><%- name %></td>
+          <td><a class="Stats-package" target="_blank" href="https://npmjs.com/package/<%= name %>"><%= name %></a></td>
+          <td><%= prettyMinified %></td>
           <td class="
-            <% if (minified > 50 * 1000) { %>red<% } %>
-            <% if (minified < 20 * 1000) { %>green<% } %>
+            <% if (gzipped > 30 * 1000) { %>Stats-large<% } %>
+            <% if (gzipped < 10 * 1000) { %>Stats-small<% } %>
           ">
-            <%- prettyMinified %>
-          </td>
-          <td class="
-            <% if (gzipped > 30 * 1000) { %>red<% } %>
-            <% if (gzipped < 10 * 1000) { %>green<% } %>
-          ">
-            <%- prettyGzipped %>
+            <%= prettyGzipped %>
           </td>
         </tr>
       <% } %>
