@@ -77,11 +77,11 @@ This example demonstrates how to unlock Transloadit’s features within Uppy.
 
 <p>On this page we're using the following JavaScript:</p>
 {% codeblock lang:js %}
-const Uppy = require('uppy/lib/core/Core')
-const Dashboard = require('uppy/lib/plugins/Dashboard')
-const Webcam = require('uppy/lib/plugins/Webcam')
-const Transloadit = require('uppy/lib/plugins/Transloadit')
-const Instagram = require('uppy/lib/plugins/Instagram')
+const Uppy = require('@uppy/core')
+const Dashboard = require('@uppy/transloadit')
+const Webcam = require('@uppy/webcam')
+const Transloadit = require('@uppy/transloadit')
+const Instagram = require('@uppy/instagram')
 
 const uppy = Uppy({
   debug: true,

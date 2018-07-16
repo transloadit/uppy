@@ -1,0 +1,7 @@
+{
+  "aliasify": {
+    "aliases": {
+      "@uppy": "../../packages/@uppy"
+    }
+  }
+}

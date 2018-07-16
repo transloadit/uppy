@@ -1,10 +1,10 @@
-const Uppy = require('../../src/core')
-const Dashboard = require('../../src/plugins/Dashboard')
-const Instagram = require('../../src/plugins/Instagram')
-const GoogleDrive = require('../../src/plugins/GoogleDrive')
-const Webcam = require('../../src/plugins/Webcam')
-const Tus = require('../../src/plugins/Tus')
-const Form = require('../../src/plugins/Form')
+const Uppy = require('./../../packages/@uppy/core/src')
+const Dashboard = require('./../../packages/@uppy/dashboard/src')
+const Instagram = require('./../../packages/@uppy/instagram/src')
+const GoogleDrive = require('./../../packages/@uppy/google-drive/src')
+const Webcam = require('./../../packages/@uppy/webcam/src')
+const Tus = require('./../../packages/@uppy/tus/src')
+const Form = require('./../../packages/@uppy/form/src')
 
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
 
@@ -45,6 +45,7 @@ uppy.on('complete', (result) => {
   console.log('failed files:', result.failed)
 })
 
+/* eslint-disable compat/compat */
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
     .register('/sw.js')
@@ -55,6 +56,7 @@ if ('serviceWorker' in navigator) {
       console.log('Registration failed with ' + error)
     })
 }
+/* eslint-enable */
 
 var modalTrigger = document.querySelector('#pick-files')
 if (modalTrigger) modalTrigger.click()

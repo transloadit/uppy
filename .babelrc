@@ -7,7 +7,6 @@
   ],
   "plugins": [
     "transform-object-assign",
-    "es6-promise",
     ["transform-react-jsx", { "pragma":"h" }]
   ]
 }

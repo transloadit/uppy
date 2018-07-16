@@ -16,7 +16,7 @@ function minifyify () {
   })
 }
 
-const bundler = browserify(path.join(__dirname, '../src/index.js'), {
+const bundler = browserify(path.join(__dirname, '../packages/uppy/index.js'), {
   fullPaths: true,
   standalone: 'Uppy'
 })

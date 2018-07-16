@@ -1,0 +1,23 @@
+@import '@uppy/core/src/style.scss';
+
+.uppy-FileInput-container {
+  margin-bottom: 15px;
+}
+
+.uppy-FileInput-btn {
+  @include reset-button;
+
+  font-family: sans-serif;
+  font-size: 0.85em;
+  // text-transform: uppercase;
+  padding: 10px 15px;
+  color: darken($color-cornflower-blue, 20%);
+  border: 1px solid darken($color-cornflower-blue, 20%);
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken($color-cornflower-blue, 20%);
+    color: $color-white;
+  }
+}

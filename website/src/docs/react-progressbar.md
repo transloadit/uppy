@@ -1,19 +1,27 @@
 ---
 title: "&lt;ProgressBar />"
 type: docs
-permalink: docs/react/progressbar/
-order: 63
+permalink: docs/react/progress-bar/
+alias: docs/react/progressbar/
+order: 83
 ---
 
-The `<ProgressBar />` component wraps the [ProgressBar][] plugin.
+The `<ProgressBar />` component wraps the [`@uppy/progress-bar`][] plugin.
+
+## Installation
+
+```shell
+npm install @uppy/react
+```
 
 ```js
-import ProgressBar from 'uppy/lib/react/ProgressBar';
+import ProgressBar from '@uppy/react/lib/ProgressBar'
+import { ProgressBar } from '@uppy/react'
 ```
 
 ## Props
 
-The `<ProgressBar />` component supports all [ProgressBar][] options as props.
+The `<ProgressBar />` component supports all [`@uppy/progress-bar`][] options as props.
 
 ```js
 <ProgressBar
@@ -22,4 +30,4 @@ The `<ProgressBar />` component supports all [ProgressBar][] options as props.
 />
 ```
 
-[ProgressBar]: /docs/progressbar/
+[`@uppy/progress-bar`]: /docs/progress-bar/

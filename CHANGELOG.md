@@ -70,23 +70,28 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: I think there is a use case for having a single-use mode or something for Uppy, where pressing "Upload" locks it down (no new files can be added) and once the upload is finished it's just done. especially with the Form plugin
 - [] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 - [ ] test: Add a prepublish test that checks if `npm pack` is not massive
+- [ ] Add release documentation. eg: test on transloadit website, check examples on the uppy.io website
 
 ## 1.0 Goals
 
 What we need to do to release Uppy 1.0
 
 - [ ] website: big release blog post
+- [ ] website: add 2 real world demos (avatar, form elements: github-comment-style-textarea)
 - [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
 - [ ] chore: remove dead code/commented blocks
+- [ ] chore: remove the not-working npm scripts
 - [ ] chore: rewrite all code based on prettier+standardjs.com
-- [ ] ~refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
+- [ ] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear
 - [ ] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
-- [ ] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
 - [ ] QA: add one integration test that uses a Provider (investigate if possible with a dedicated Google Drive API key for uppy server, so _with_ oauth dance) (@ife)
 - [ ] QA: add one integration test that uses more exotic (tus) options such as `useFastRemoteRetry` (@arturi)
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
+- [ ] dashboard: implement Alex' redesign (@arturi)
 - [ ] feature: basic React Native support (@arturi owner+ios, @ife android)
-- [ ] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
+- [ ] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
+- [ ] refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
+- [x] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
 - [x] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
 - [x] docs: on using plugins, all options, list of plugins, i18n
 - [x] feature: beta file recovering after closed tab / browser crash
@@ -105,9 +110,7 @@ What we need to do to release Uppy 1.0
 
 # next
 
-# 0.26.0
-
-To Be Released: 2018-06-28.
+## 0.27.0
 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
@@ -123,8 +126,30 @@ To Be Released: 2018-06-28.
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
-- [x] thumbnailgenerator: Polyfill Math.log2 since IE11 doesn't support this method (#892 / @DJWassink)
-- [x] xhrupload: Add `withCredentials` option (#874 / @tuoxiansp)
+- [ ] core: default `autoProceed` to `false`
+
+## 0.26.0
+
+Released: 2018-06-28.
+
+- ⚠️ **breaking** split into many packages (#906 / @goto-bus-stop, @arturi)
+- xhr-upload: Add `withCredentials` option (#874 / @tuoxiansp)
+- utils: Move single-use utils into their appropriate packages. (#926 / @goto-bus-stop)
+- core: Export Plugin class from @uppy/core (#924 / @goto-bus-stop)
+- Typescript typings improvements (#923 / @goto-bus-stop)
+- core: change focus to solid line for all elements (ade214e5aab822e1fc3ab8e0fac80c4fc04d7bc3 / @arturi)
+- dashboard: fix Dashboards tabs overflow by adding scroll; improve scroll (b974244c7f4e01adcf2478b7f651dada63d342f1 / @arturi)
+
+## 0.25.6
+
+Released: 2018-06-25.
+
+- core: ⚠️ **breaking** rename `host` option to `serverUrl` (#905 / @ifedapoolarewaju)
+- dashboard: added browser back button listening (#575 / @zcallan)
+- core: Split utils into separate files (#899 / @goto-bus-stop)
+- providers: Better provider errors (#895 / @arturi)
+- instagram: better thumbnail quality for ig (#901, #887 / @ifedapoolarewaju)
+- core: add `types` to uppy npm package (#0c2d66e8ac005d6a4200948de1bc3a44057f0393 / @arturi)
 
 ## 0.25.5
 
@@ -147,7 +172,7 @@ Released: 2018-06-12.
 - tests: run integration tests with npm-installed uppy (#880 / @ifedapoolarewaju)
 - xhrupload: add withCredentials option (#874 / @tuoxiansp, @b1ncer)
 - xhrupload: Move .withCredentials assignment to after open(): IE 10 doesn't allow setting it before open() is called (#2698b599d716743bbf7ed3ac70c648fef0fd8976 / @goto-bus-stop)
-- thumbnailgenerator: Updated ThumbnailGenerator to work with IE (#4ddc9da47b13c9dfe49155d8c3bcd76b9fa494f2 / @DJWassink)
+- thumbnailgenerator: Polyfill Math.log2 since IE11 doesn't support this method (#4ddc9da47b13c9dfe49155d8c3bcd76b9fa494f2. #892 / @DJWassink)
 - core: add eslint-plugin-compat (@goto-bus-stop, #894)
 - dashboard: remove Dashboard bottom margin, since “powered by” has been moved (#a561e4e7a2c18f5092ba03185e0836ffa6796d04 / @arturi)
 - dashboard: fix Dashboard open/close animation on small screen (#982d27f62693c0eb026e381d10157afffe1eeb64 / @arturi)
@@ -216,6 +241,9 @@ Changed strings:
 - webcam: swap record/stop button icons, fixes #859 (#fdcca95 / @arturi)
 - xhrupload: fix bytesUploaded and bytesTotal for bundled progress (#864 / @arturi)
 - xhrupload: fix retry/timer issues, add timer.done() to `cancel-all` events; disable progress throttling in Core; Ignore progress events in timeout tracker after upload was aborted (#864 / @goto-bus-stop, @arturi)
+- Server: Allow custom headers to be set for remote multipart uploads (@ifedapoolarewaju)
+- Server: Add type to metadata as `filetype`
+- uppy/uppy-server: refactor oauth flow tonot use cookies anymore (@ifedapoolarewaju)
 
 ## 0.24.4
 

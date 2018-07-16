@@ -19,13 +19,13 @@ Dashboard is the full-featured UI for Uppy that shows nice file previews and up
 <p>On this page we're using the following JavaScript snippet:</p>
 
 {% codeblock lang:js %}
-const Uppy = require('uppy/lib/core')
-const Dashboard = require('uppy/lib/plugins/Dashboard')
-const GoogleDrive = require('uppy/lib/plugins/GoogleDrive')
-const Dropbox = require('uppy/lib/plugins/Dropbox')
-const Instagram = require('uppy/lib/plugins/Instagram')
-const Webcam = require('uppy/lib/plugins/Webcam')
-const Tus = require('uppy/lib/plugins/Tus')
+const Uppy = require('@uppy/core')
+const Dashboard = require('@uppy/dashboard')
+const GoogleDrive = require('@uppy/google-drive')
+const Dropbox = require('@uppy/dropbox')
+const Instagram = require('@uppy/instagram')
+const Webcam = require('@uppy/webcam')
+const Tus = require('@uppy/tus')
 
 const uppy = Uppy({
   debug: true,

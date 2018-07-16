@@ -2,20 +2,27 @@
 title: "&lt;Dashboard />"
 type: docs
 permalink: docs/react/dashboard/
-order: 64
+order: 84
 ---
 
-The `<Dashboard />` component wraps the [Dashboard][] plugin. It only renders the Dashboard inline. To use the Dashboard modal (`inline: false`), use the [`<DashboardModal />`](/docs/react/dashboard-modal) component.
+The `<Dashboard />` component wraps the [`@uppy/dashboard`][] plugin. It only renders the Dashboard inline. To use the Dashboard modal (`inline: false`), use the [`<DashboardModal />`](/docs/react/dashboard-modal) component.
+
+## Installation
+
+```shell
+npm install @uppy/react
+```
 
 ```js
-import Dashboard from 'uppy/lib/react/Dashboard';
+import Dashboard from '@uppy/react/lib/Dashboard'
+import { Dashboard } from '@uppy/react'
 ```
 
 ## Props
 
-The `<Dashboard />` component supports all [Dashboard][] options as props.
+The `<Dashboard />` component supports all [`@uppy/dashboard`][] options as props.
 
-The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins like [Webcam][]. To use other plugins like [Webcam][] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins like [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
 ```js
 // Do this wherever you initialize Uppy, eg. in a React component's constructor method.
@@ -33,5 +40,5 @@ Then in `render()` do:
 />
 ```
 
-[Dashboard]: /docs/dashboard/
-[Webcam]: /docs/webcam/
+[`@uppy/dashboard`]: /docs/dashboard/
+[`@uppy/webcam`]: /docs/webcam/

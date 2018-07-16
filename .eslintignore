@@ -1,10 +1,8 @@
-dist/**
-lib/**
-src/vendor/**
-node_modules/**
+node_modules
+lib
+dist
+coverage/**
 test/lib/**
-playground/**
-website/node_modules/**
 website/private_modules/hexo-renderer-uppyexamples/node_modules/**
 website/public/**
 website/themes/uppy/source/js/smooth-scroll.min.js

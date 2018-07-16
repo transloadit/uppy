@@ -1,23 +1,52 @@
 ---
 type: docs
-order: 25
-title: "FileInput"
-permalink: docs/fileinput/
+order: 22
+title: "File Input"
+module: "@uppy/file-input"
+permalink: docs/file-input/
+alias: docs/fileinput/
+
 ---
 
-`FileInput` is the most barebones UI for selecting files—it shows a single button that, when clicked, opens up the browser's file selector.
+`@uppy/file-input` is the most barebones UI for selecting files — it shows a single button that, when clicked, opens up the browser's file selector.
 
 ```js
-const XHRUpload = require('uppy/lib/plugins/XHRUpload')
+const FileInput = require('@uppy/file-input')
 
-uppy.use(XHRUpload, {
+uppy.use(FileInput, {
   // Options
 })
 ```
 
-[Try it live](/examples/xhrupload) - The XHRUpload example uses a `FileInput`.
+[Try it live](/examples/xhrupload) - The `@uppy/xhr-upload` example uses `@uppy/file-input` with the [`pretty`](#pretty-true) option enabled.
+
+## Installation
+
+This plugin is published as the `@uppy/file-input` package.
+
+Install from NPM:
+
+```shell
+npm install @uppy/file-input
+```
+
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const FileInput = Uppy.FileInput
+```
+
+## CSS
+
+The FileInput plugin includes some simple styles for use with the [`pretty`](#pretty-true) option, like shown in the [example](/examples/xhrupload). You can also choose not to use it and provide your own styles instead.
+
+The CSS file lives at `@uppy/file-input/dist/style.css`. A minified version is at `@uppy/file-input/dist/style.min.css`.
+
+Import one of these files into your project. The way to do this depends on your build system.
 
 ## Options
+
+The FileInput plugin has the following configurable options:
 
 ```js
 uppy.use(FileInput, {
@@ -33,7 +62,7 @@ uppy.use(FileInput, {
 
 ### `id: 'FileInput'`
 
-A unique identifier for this FileInput. Defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
+A unique identifier for this File Input. It defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
 
 ### `target: null`
 

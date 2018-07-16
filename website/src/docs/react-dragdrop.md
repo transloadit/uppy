@@ -1,14 +1,22 @@
 ---
 title: "&lt;DragDrop />"
 type: docs
-permalink: docs/react/dragdrop/
-order: 62
+permalink: docs/react/drag-drop/
+alias: docs/react/dragdrop/
+order: 82
 ---
 
-The `<DragDrop />` component wraps the [DragDrop][] plugin.
+The `<DragDrop />` component wraps the [`@uppy/drag-drop`][] plugin.
+
+## Installation
+
+```shell
+npm install @uppy/react
+```
 
 ```js
-import DragDrop from 'uppy/lib/react/DragDrop';
+import DragDrop from '@uppy/react/lib/DragDrop';
+import { DragDrop } from '@uppy/react';
 ```
 
 ## Props
@@ -23,4 +31,4 @@ The `<DragDrop />` component supports all [DragDrop][] options as props.
 />
 ```
 
-[DragDrop]: /docs/dragdrop/
+[`@uppy/drag-drop`]: /docs/drag-drop/

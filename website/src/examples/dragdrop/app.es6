@@ -1,7 +1,7 @@
-const Uppy = require('uppy/lib/core/Core')
-const DragDrop = require('uppy/lib/plugins/DragDrop')
-const ProgressBar = require('uppy/lib/plugins/ProgressBar')
-const Tus = require('uppy/lib/plugins/Tus')
+const Uppy = require('@uppy/core')
+const DragDrop = require('@uppy/drag-drop')
+const ProgressBar = require('@uppy/progress-bar')
+const Tus = require('@uppy/tus')
 
 const uppyOne = new Uppy({debug: true})
 uppyOne

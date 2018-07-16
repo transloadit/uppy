@@ -2,15 +2,28 @@
 type: docs
 order: 1
 title: "Uppy"
+module: "@uppy/core"
 permalink: docs/uppy/
 ---
 
-This is the core module that orchestrates everything in Uppy, exposing `state`, `events` and `methods`.
+This is the core module that orchestrates everything in Uppy, managing state and events and providing methods.
 
 ```js
-const Uppy = require('uppy/lib/core')
+const Uppy = require('@uppy/core')
 
 const uppy = Uppy()
+```
+
+## Installation
+
+```shell
+npm install @uppy/core
+```
+
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const Core = Uppy.Core
 ```
 
 ## Options
@@ -215,8 +228,8 @@ This option can be used to plug Uppy state into an external state management lib
 Add a plugin to Uppy, with an optional plugin options object.
 
 ```js
-const Uppy = require('uppy/lib/core')
-const DragDrop = require('uppy/lib/plugins/DragDrop')
+const Uppy = require('@uppy/core')
+const DragDrop = require('@uppy/drag-drop')
 
 const uppy = Uppy()
 uppy.use(DragDrop, { target: 'body' })
