@@ -11,17 +11,17 @@ const images = [
   path.join(__dirname, '../../resources/kodim23.png')
 ]
 
-describe.only('Thumbnail generation through the Dashboard', () => {
+describe.only('ThumbnailGenerator', () => {
   beforeEach(() => {
     browser.url(testURL)
   })
 
-  it('should generate thumbnails', () => {
-    $('#uppyThumbnails .uppy-Dashboard-input').waitForExist()
+  it('should generate thumbnails for images', () => {
+    $('#uppyThumbnails .uppy-FileInput-input').waitForExist()
 
     if (supportsChooseFile()) {
       for (const img of images) {
-        browser.chooseFile('#uppyThumbnails .uppy-Dashboard-input', img)
+        browser.chooseFile('#uppyThumbnails .uppy-FileInput-input', img)
       }
     } else {
       for (const img of images) {
@@ -34,6 +34,7 @@ describe.only('Thumbnail generation through the Dashboard', () => {
         )
       }
     }
+
     browser.pause(20 * 1000)
   })
 })

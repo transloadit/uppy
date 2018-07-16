@@ -35,19 +35,20 @@ module.exports = class ThumbnailGenerator extends Plugin {
    */
   createThumbnail (file, targetWidth) {
     const originalUrl = URL.createObjectURL(file.data)
+    const revoke = () => URL.revokeObjectURL(originalUrl)
     const onload = new Promise((resolve, reject) => {
       const image = new Image()
       image.src = originalUrl
       image.onload = () => {
-        URL.revokeObjectURL(originalUrl)
         resolve(image)
       }
       image.onerror = () => {
         // The onerror event is totally useless unfortunately, as far as I know
-        URL.revokeObjectURL(originalUrl)
         reject(new Error('Could not create thumbnail'))
       }
     })
+
+    onload.then(revoke, revoke)
 
     return onload
       .then(image => {
@@ -175,6 +176,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
         .then(() => this.processQueue())
     } else {
       this.queueProcessing = false
+      this.uppy.emit('thumbnail:ready')
     }
   }
 
@@ -183,9 +185,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
       return this.createThumbnail(file, this.opts.thumbnailWidth)
         .then(preview => {
           this.setPreviewURL(file.id, preview)
+          this.uppy.emit('thumbnail:generated', file, preview)
         })
         .catch(err => {
           console.warn(err.stack || err.message)
+          this.uppy.emit('thumbnail:error', file, err)
         })
     }
     return Promise.resolve()
