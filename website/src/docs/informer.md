@@ -16,7 +16,9 @@ uppy.use(Informer, {
 })
 ```
 
-[Try it live](/examples/dashboard/) - The Informer plugin is included in the Dashboard by default.
+<a class="TryButton" href="/examples/dashboard/">Try it live</a>
+
+The Informer plugin is included in the Dashboard by default.
 
 ## Installation
 

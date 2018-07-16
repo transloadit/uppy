@@ -17,7 +17,7 @@ uppy.use(DragDrop, {
 })
 ```
 
-[Try it live](/examples/dragdrop/)
+<a class="TryButton" href="/examples/dragdrop/">Try it live</a>
 
 ## Installation
 

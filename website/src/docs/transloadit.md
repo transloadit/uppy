@@ -8,7 +8,7 @@ permalink: docs/transloadit/
 
 The `@uppy/transloadit` plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and more](https://transloadit.com/services/).
 
-[Try it live](/examples/transloadit/)
+<a class="TryButton" href="/examples/transloadit/">Try it live</a>
 
 ```js
 const Transloadit = require('@uppy/transloadit')

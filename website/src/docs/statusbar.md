@@ -18,7 +18,7 @@ uppy.use(StatusBar, {
 })
 ```
 
-[Try it live](/examples/statusbar/)
+<a class="TryButton" href="/examples/statusbar/">Try it live</a>
 
 ## Installation
 

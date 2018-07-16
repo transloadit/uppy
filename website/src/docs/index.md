@@ -31,7 +31,7 @@ uppy.on('complete', (result) => {
 })
 ```
 
-[Try it live!](/examples/dashboard/)
+<a class="TryButton" href="/examples/dashboard/">Try it live</a>
 
 Drag and drop, webcam, basic file manipulation (adding metadata), uploading via tus-resumable uploads or XHR/Multipart is all possible using just the Uppy client module.
 
