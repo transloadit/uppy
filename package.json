@@ -14,6 +14,7 @@
     "babel-core": "^6.26.3",
     "babel-jest": "^22.4.4",
     "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-proto-to-assign": "^6.26.0",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-polyfill": "^6.26.0",
