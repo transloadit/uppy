@@ -17,7 +17,7 @@ uppy.use(XHRUpload, {
 })
 ```
 
-[Try it live](/examples/xhrupload/)
+<a class="TryButton" href="/examples/xhrupload/">Try it live</a>
 
 ## Installation
 

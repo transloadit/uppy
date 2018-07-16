@@ -1,7 +1,7 @@
 ---
 title: "Redux"
 type: docs
-permalink: docs/redux
+permalink: docs/redux/
 order: 87
 ---
 
@@ -22,7 +22,7 @@ const reducer = combineReducers({
 
 const uppy = Uppy({
   store: ReduxStore({
-    store: createStore(reducer) // That's a lot of stores!
+    store: createStore(reducer) // That’s a lot of stores!
   })
 })
 ```

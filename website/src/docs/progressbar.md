@@ -17,7 +17,9 @@ uppy.use(ProgressBar, {
 })
 ```
 
-[Try it live](/examples/dragdrop/) - The `@uppy/drag-drop` example uses a Progress Bar to show progress.
+<a class="TryButton" href="/examples/dragdrop/">Try it live</a>
+
+The `@uppy/drag-drop` example uses a Progress Bar to show progress.
 
 ## Installation
 

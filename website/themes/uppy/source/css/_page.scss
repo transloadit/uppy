@@ -359,3 +359,21 @@
   border-top: 1px solid #e5e5e5;
   font-size: .9em;
 }
+
+.TryButton,
+a.TryButton {
+  @include reset-button;
+  font-size: 0.8em;
+  padding: 7px 16px;
+  border: 1px solid $color-primary;
+  transition: all .2s;
+  color: $color-primary;
+  cursor: pointer;
+  border-radius: 15px;
+  margin-bottom: 1.5em;
+
+  &:hover {
+    background-color: $color-primary;
+    color: $color-white;
+  }
+}

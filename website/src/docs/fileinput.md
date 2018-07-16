@@ -18,7 +18,9 @@ uppy.use(FileInput, {
 })
 ```
 
-[Try it live](/examples/xhrupload) - The `@uppy/xhr-upload` example uses `@uppy/file-input` with the [`pretty`](#pretty-true) option enabled.
+<a class="TryButton" href="/examples/xhrupload/">Try it live</a>
+
+The `@uppy/xhr-upload` example uses `@uppy/file-input` with the [`pretty`](#pretty-true) option enabled.
 
 ## Installation
 
