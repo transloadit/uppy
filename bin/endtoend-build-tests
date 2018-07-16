@@ -26,5 +26,5 @@ done
 # Speeecial tests that need custom builds.
 pushd "${__root}/test/endtoend/create-react-app"
   npm install
-  npm run build > /dev/null
+  npm run build
 popd

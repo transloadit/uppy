@@ -2,11 +2,13 @@
 const path = require('path')
 const { spawn } = require('child_process')
 
+// This function must be valid ES5, because it is run in the browser
+// and IE10/IE11 do not support new syntax features
 function selectFakeFile (uppyID, name, type, b64) {
   if (!b64) b64 = 'PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='
 
   var blob = new Blob(
-    [`data:image/svg+xml;base64,${b64}`],
+    ['data:image/svg+xml;base64,' + b64],
     { type: type || 'image/svg+xml' }
   )
   window[uppyID].addFile({
