@@ -8,6 +8,4 @@ window.onerror = (err) => {
 }
 window.errors = errors
 
-const h = React.createElement
-
 ReactDOM.render(<App />, document.getElementById('root'))

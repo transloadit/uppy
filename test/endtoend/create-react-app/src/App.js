@@ -5,8 +5,6 @@ import GoogleDrive from '@uppy/google-drive'
 import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/react'
 import '@uppy/dashboard/dist/style.min.css'
 
-const h = React.createElement
-
 class App extends Component {
   constructor (props) {
     super(props)
