@@ -20,7 +20,7 @@ const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const Tus = require('@uppy/tus')
  
-const uppy = Uppy({ autoProceed: false })
+const uppy = Uppy()
   .use(Dashboard, {
     trigger: '#select-files'
   })

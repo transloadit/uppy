@@ -37,7 +37,6 @@ const ReduxDevTools = require('@uppy/redux-dev-tools')
 
 const uppy = Uppy({
   debug: true,
-  autoProceed: false,
   meta: {
     username: 'John',
     license: 'Creative Commons'
