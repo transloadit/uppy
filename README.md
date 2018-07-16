@@ -190,7 +190,7 @@ Yes, there is an S3 plugin, please check out the [docs](https://uppy.io/docs/aws
 
 ### Do I need to install special service/server for Uppy? Can I use it with Rails/Node/Go/PHP?
 
-Yes, whatever you want on the backend will work with `XHR Upload` plugin, since it just does a `POST` or `PUT` request. Here’s a [PHP backend example](https://uppy.io/docs/xhrupload/#Uploading-to-a-PHP-Server).
+Yes, whatever you want on the backend will work with `@uppy/xhr-upload` plugin, since it just does a `POST` or `PUT` request. Here’s a [PHP backend example](https://uppy.io/docs/xhr-upload/#Uploading-to-a-PHP-Server).
 
 If you want resumability with the Tus plugin, use [one of the tus server implementations](https://tus.io/implementations.html) 👌🏼
 
