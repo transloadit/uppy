@@ -119,9 +119,17 @@ async function injectBuiltFiles () {
   })
 }
 
+async function readConfig () {
+  try {
+    const buf = await promisify(fs.readFile)(configPath, 'utf8')
+    return YAML.safeLoad(buf)
+  } catch (err) {
+    return {}
+  }
+}
+
 async function update () {
-  const buf = await promisify(fs.readFile)(configPath, 'utf8')
-  const config = YAML.safeLoad(buf)
+  const config = await readConfig()
 
   config.uppy_version = version
   config.uppy_version_anchor = version.replace(/[^\d]+/g, '')
