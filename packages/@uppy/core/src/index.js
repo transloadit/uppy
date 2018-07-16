@@ -53,7 +53,7 @@ class Uppy {
     // set default options
     const defaultOptions = {
       id: 'uppy',
-      autoProceed: true,
+      autoProceed: false,
       debug: false,
       restrictions: {
         maxFileSize: null,
