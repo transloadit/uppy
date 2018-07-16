@@ -61,10 +61,10 @@ export interface UppyOptions {
   autoProceed: boolean;
   debug: boolean;
   restrictions: {
-    maxFileSize: false,
-    maxNumberOfFiles: false,
-    minNumberOfFiles: false,
-    allowedFileTypes: false
+    maxFileSize: number | null,
+    maxNumberOfFiles: number | null,
+    minNumberOfFiles: number | null,
+    allowedFileTypes: number | null
   };
   target: string | Plugin;
   meta: any;
