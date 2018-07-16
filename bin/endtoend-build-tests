@@ -11,6 +11,7 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
+# Tests using a simple build setup.
 tests="tus-drag-drop tus-dashboard i18n-drag-drop xhr-limit providers thumbnails"
 
 for t in $tests; do
@@ -22,4 +23,8 @@ for t in $tests; do
     -t babelify
 done
 
-(cd "${__root}/test/endtoend/create-react-app" && npm install && npm run build > /dev/null)
+# Speeecial tests that need custom builds.
+pushd "${__root}/test/endtoend/create-react-app"
+  npm install
+  npm run build > /dev/null
+popd
