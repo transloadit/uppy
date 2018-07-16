@@ -60,7 +60,7 @@ const uppy = Uppy({ autoProceed: false })
 ## Installation
 
 ``` bash
-$ npm install uppy --save
+$ npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](http://webpack.github.io/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
@@ -71,20 +71,14 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 
 > ⚠️ The bundle currently consists of most Uppy plugins, so this method is not recommended for production, as your users will have to download all plugins when you are likely using just a few.
 
-1\. Add a script to the bottom of `<body>`:
-
-``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v0.26.0/dist/uppy.min.js"></script>
-```
-
-2\. Add CSS to `<head>`:
-``` html
+```html
+<!-- 1. Add CSS to `<head>` -->
 <link href="https://transloadit.edgly.net/releases/uppy/v0.26.0/dist/uppy.min.css" rel="stylesheet">
-```
 
-3\. Initialize:
+<!-- 2. Add JS before the closing `</body>` -->
+<script src="https://transloadit.edgly.net/releases/uppy/v0.26.0/dist/uppy.min.js"></script>
 
-``` html
+<!-- 3. Initialize -->
 <div class="UppyDragDrop"></div>
 <script>
   var uppy = Uppy.Core()
@@ -97,28 +91,47 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 
 - [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods, and events.
 - [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their options.
-- [Server](https://uppy.io/docs/server/) — setting up and running an Uppy Server instance, which adds support for Instagram, Dropbox, Google Drive and other remote sources.
+- [Server](https://uppy.io/docs/server/) — setting up and running an Uppy Server instance, which adds support for Instagram, Dropbox, Google Drive and remote urls.
 - [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps.
-- [Architecture & Making a Plugin](https://uppy.io/docs/writing-plugins/) — how to write a plugin for Uppy [documentation in progress].
+- [Architecture & Writing a Plugin](https://uppy.io/docs/writing-plugins/) — how to write a plugin for Uppy.
 
 ## Plugins
 
-- `Tus` — resumable uploads via the open [tus](http://tus.io) standard
-- `XHRUpload` — regular uploads for any backend out there (like Apache, Nginx)
-- `Transloadit` — support for [Transloadit](http://transloadit.com)’s robust file uploading and encoding backend
-- `AwsS3` — upload to AWS S3 (also works for Google Cloud)
-- `Dashboard` — universal UI with previews, progress bars, metadata editor and all the cool stuff
-- `DragDrop` — plain and simple drag and drop area
-- `FileInput` — even plainer “select files” button
-- `ProgressBar` — minimal progress bar that fills itself when upload progresses
-- `StatusBar` — more detailed progress, pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included by default with `Dashboard`)
-- `Informer` — send notifications like “smile” before taking a selfie or “upload failed” when all is lost (also included by default with `Dashboard`)
-- `GoldenRetriever` — restores files after a browser crash, like it’s nothing
-- `ThumbnailGenerator` — generates image previews (included by default with `Dashboard`)
-- `Form` — collects metadata from `<form>` right before an Uppy upload, then optionally appends results back to the form
-- `ReduxDevTools` — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
-- `GoogleDrive`, `Dropbox`, `Instagram`, `Url` — select files from [Google Drive](https://www.google.com/drive/), [Dropbox](https://www.dropbox.com/), [Instagram](https://www.instagram.com/) and direct urls from anywhere on the web. Note that[`uppy-server`](https://github.com/transloadit/uppy-server) is needed for these.
-- `Webcam` — snap and record those selfies 📷
+[List of plugins and their common options](https://uppy.io/docs/plugins/)
+
+### Local Sources
+
+- [`Dashboard`](https://uppy.io/docs/dashboard/) — universal UI with previews, progress bars, metadata editor and all the cool stuff
+- [`Drag & Drop`](https://uppy.io/docs/drag-drop/) — plain and simple drag and drop area
+- [`File Input`](https://uppy.io/docs/file-input/) — even plainer “select files” button
+- [`Webcam`](https://uppy.io/docs/webcam/) — snap and record those selfies 📷
+
+### Remote Providers
+
+- [`Google Drive`](https://uppy.io/docs/google-drive/), [`Dropbox`](https://uppy.io/docs/dropbox/), [`Instagram`](https://uppy.io/docs/instagram/), [`Import From URL`](https://uppy.io/docs/url/) — support picking files from remote providers or direct URLs from anywhere on the web. Note that[`uppy-server`](https://github.com/transloadit/uppy-server) is needed for these.
+
+### Uploaders 
+
+- [`Tus`](https://uppy.io/docs/tus/) — resumable uploads via the open [tus](http://tus.io) standard
+- [`XHR Upload`](https://uppy.io/docs/xhr-upload/) — regular uploads for any backend out there (like Apache, Nginx)
+- [`AWS S3`](https://uppy.io/docs/aws-s3/) and [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — upload to AWS S3.
+
+### UI Elements
+
+- [`Progress Bar`](https://uppy.io/docs/progress-bar/) — minimal progress bar that fills itself when upload progresses
+- [`Status Bar`](https://uppy.io/docs/status-bar/) — more detailed progress, pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included by default with `Dashboard`)
+- [`Informer`](https://uppy.io/docs/informer/) — send notifications like “smile” before taking a selfie or “upload failed” when all is lost (also included by default with `Dashboard`)
+
+### File Processing
+
+- [`Transloadit`](https://uppy.io/docs/transloadit/) — support for [Transloadit](http://transloadit.com)’s robust file uploading and encoding backend
+
+### Miscellaneous
+
+- [`Golden Retriever`](https://uppy.io/docs/golden-retriever/) — restores files after a browser crash, like it’s nothing
+- `Thumbnail Generator` — generates image previews (included by default with `Dashboard`)
+- [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right before an Uppy upload, then optionally appends results back to the form
+- [`Redux`](https://uppy.io/docs/redux/) — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
 
 ## Browser Support
 
@@ -162,7 +175,7 @@ Yes, there is an S3 plugin, please check out the [docs](https://uppy.io/docs/aws
 
 ### Do I need to install special service/server for Uppy? Can I use it with Rails/Node/Go/PHP?
 
-Yes, whatever you want on the backend will work with `XHRUpload` plugin, since it just does a `POST` or `PUT` request. Here’s a [PHP backend example](https://uppy.io/docs/xhrupload/#Uploading-to-a-PHP-Server).
+Yes, whatever you want on the backend will work with `XHR Upload` plugin, since it just does a `POST` or `PUT` request. Here’s a [PHP backend example](https://uppy.io/docs/xhrupload/#Uploading-to-a-PHP-Server).
 
 If you want resumability with the Tus plugin, use [one of the tus server implementations](https://tus.io/implementations.html) 👌🏼
 
