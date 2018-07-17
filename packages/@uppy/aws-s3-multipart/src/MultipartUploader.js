@@ -150,6 +150,8 @@ class MultipartUploader {
       return result
     }).then(({ url }) => {
       this._uploadPartBytes(index, url)
+    }, (err) => {
+      this._onError(err)
     })
   }
 
