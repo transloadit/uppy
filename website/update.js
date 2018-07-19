@@ -46,6 +46,7 @@ const packages = [
   '@uppy/form',
   '@uppy/golden-retriever',
   '@uppy/react',
+  '@uppy/thumbnail-generator',
   '@uppy/store-default',
   '@uppy/store-redux'
 ]
