@@ -199,6 +199,8 @@ Dashboard ships with the `ThumbnailGenerator` plugin that adds small resized ima
 
 Localize text that is shown to the user.
 
+The Dashboard also contains the [`@uppy/status-bar`](/docs/status-bar) plugin by default, which has its own strings. Strings for the Status Bar can also be specified in the Dashboard `locale.strings` option, and will be passed down. They are not all listed below—see the [`@uppy/status-bar`](/docs/status-bar) documentation pages for the full list.
+
 The default English strings are:
 
 ```js
@@ -251,7 +253,12 @@ strings: {
   // Used as the hover text and screen reader label for the buttons to pause uploads.
   pauseUpload: 'Pause upload',
   // Used as the hover text and screen reader label for the buttons to retry failed uploads.
-  retryUpload: 'Retry upload'
+  retryUpload: 'Retry upload',
+
+  // @uppy/status-bar strings:
+  uploading: 'Uploading',
+  complete: 'Complete'
+  // ...etc
 }
 ```
 
