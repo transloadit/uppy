@@ -89,8 +89,8 @@ What we need to do to release Uppy 1.0
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
 - [ ] dashboard: implement Alex' redesign (@arturi)
 - [ ] feature: basic React Native support (@arturi owner+ios, @ife android)
-- [ ] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
 - [ ] refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
+- [x] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
 - [x] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
 - [x] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
 - [x] docs: on using plugins, all options, list of plugins, i18n
@@ -126,7 +126,11 @@ What we need to do to release Uppy 1.0
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
-- [ ] core: default `autoProceed` to `false`
+- [ ] core: default `autoProceed` to `false` (@arturi)
+- [x] website: list bundle sizes for each package on stats page (#962 / @goto-bus-stop)
+- [x] s3: Abort all chunk requests when aborting the multipart upload (#967 / @pekala)
+- [x] s3: Catch and handle errors in prepareUploadPart (#966 / @pekala)
+- [x] Split integration tests and add one using create-react-app (#952)
 
 ## 0.26.0
 
