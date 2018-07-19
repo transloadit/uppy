@@ -245,6 +245,9 @@ class MultipartUploader {
   }
 
   _abortUpload () {
+    this.uploading.slice().forEach(xhr => {
+      xhr.abort()
+    })
     this.options.abortMultipartUpload({
       key: this.key,
       uploadId: this.uploadId
