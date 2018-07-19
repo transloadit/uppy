@@ -1,84 +1,152 @@
-var fs = require('fs')
-var path = require('path')
-var chalk = require('chalk')
-var exec = require('child_process').exec
-var YAML = require('js-yaml')
+const fs = require('fs')
+const path = require('path')
+const chalk = require('chalk')
+const { exec } = require('child_process')
+const YAML = require('js-yaml')
+const { promisify } = require('util')
+const gzipSize = require('gzip-size')
+const bytes = require('pretty-bytes')
+const browserify = require('browserify')
 
-var webRoot = __dirname
-var uppyRoot = path.join(__dirname, '../packages/uppy')
+const webRoot = __dirname
+const uppyRoot = path.join(__dirname, '../packages/uppy')
 
-var configPath = webRoot + '/themes/uppy/_config.yml'
-var version = require(uppyRoot + '/package.json').version
+const configPath = path.join(webRoot, '/themes/uppy/_config.yml')
+const { version } = require(path.join(uppyRoot, '/package.json'))
 
-var defaultConfig = {
+const defaultConfig = {
   comment: 'Auto updated by update.js',
   uppy_version_anchor: '001',
   uppy_version: '0.0.1',
-  uppy_bundle_kb_sizes: {
-    'uppy.js': 'N/A'
-  },
+  uppy_bundle_kb_sizes: {},
   config: {}
 }
 
-var loadedConfig
-var buf
-try {
-  buf = fs.readFileSync(configPath, 'utf-8')
-  loadedConfig = YAML.safeLoad(buf)
-} catch (e) {
+// Keeping a whitelist so utils etc are excluded
+// It may be easier to maintain a blacklist instead
+const packages = [
+  'uppy',
+  '@uppy/core',
+  '@uppy/dashboard',
+  '@uppy/drag-drop',
+  '@uppy/file-input',
+  '@uppy/webcam',
+  '@uppy/dropbox',
+  '@uppy/google-drive',
+  '@uppy/instagram',
+  '@uppy/url',
+  '@uppy/tus',
+  '@uppy/xhr-upload',
+  '@uppy/aws-s3',
+  '@uppy/aws-s3-multipart',
+  '@uppy/status-bar',
+  '@uppy/progress-bar',
+  '@uppy/informer',
+  '@uppy/transloadit',
+  '@uppy/form',
+  '@uppy/golden-retriever',
+  '@uppy/react',
+  '@uppy/thumbnail-generator',
+  '@uppy/store-default',
+  '@uppy/store-redux'
+]
 
+const excludes = {
+  '@uppy/react': ['react']
 }
 
-// Inject current Uppy version and sizes in website's _config.yml
-// @todo: Refer to actual minified builds in dist:
-var locations = {
-  'uppy.js': uppyRoot + '/dist/uppy.js',
-  'uppy.js.gz': uppyRoot + '/dist/uppy.js.gz',
-  'uppy.min.js': uppyRoot + '/dist/uppy.min.js',
-  'uppy.min.js.gz': uppyRoot + '/dist/uppy.min.js.gz',
-  'uppy.css': uppyRoot + '/dist/uppy.css',
-  'uppy.css.gz': uppyRoot + '/dist/uppy.css.gz',
-  'uppy.min.css': uppyRoot + '/dist/uppy.min.css',
-  'uppy.min.css.gz': uppyRoot + '/dist/uppy.min.css.gz'
+update().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})
+
+async function getMinifiedSize (pkg, name) {
+  const b = browserify(pkg)
+  if (name !== '@uppy/core' && name !== 'uppy') {
+    b.exclude('@uppy/core')
+  }
+  if (excludes[name]) {
+    b.exclude(excludes[name])
+  }
+  b.plugin('tinyify')
+
+  const bundle = await promisify(b.bundle).call(b)
+  const gzipped = await gzipSize(bundle)
+
+  return {
+    minified: bundle.length,
+    gzipped
+  }
 }
 
-var scanConfig = {}
-for (var type in locations) {
-  var filepath = locations[type]
-  var filesize = 0
+async function updateSizes (config) {
+  console.info(chalk.grey('Generating bundle sizes…'))
+  const padTarget = packages.reduce((max, cur) => Math.max(max, cur.length), 0) + 2
+
+  const sizesPromise = Promise.all(
+    packages.map(async (pkg) => {
+      const result = await getMinifiedSize(path.join(__dirname, '../packages', pkg), pkg)
+      console.info(chalk.green(
+        // ✓ @uppy/pkgname:     10.0 kB min  / 2.0 kB gz
+        `  ✓ ${pkg}: ${' '.repeat(padTarget - pkg.length)}` +
+        `${bytes(result.minified)} min`.padEnd(10) +
+        ` / ${bytes(result.gzipped)} gz`
+      ))
+      return Object.assign(result, {
+        prettyMinified: bytes(result.minified),
+        prettyGzipped: bytes(result.gzipped)
+      })
+    })
+  ).then((list) => {
+    const map = {}
+    list.forEach((size, i) => {
+      map[packages[i]] = size
+    })
+    return map
+  })
+
+  config.uppy_bundle_kb_sizes = await sizesPromise
+}
+
+async function injectBuiltFiles () {
+  const cmds = [
+    `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy')}`,
+    `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`
+  ].join(' && ')
+
+  const { stdout } = await promisify(exec)(cmds)
+  stdout.trim().split('\n').forEach(function (line) {
+    console.info(chalk.green('✓ injected: '), chalk.grey(line))
+  })
+}
+
+async function readConfig () {
   try {
-    filesize = fs.statSync(filepath, 'utf-8').size
-    filesize = (filesize / 1024).toFixed(2)
-  } catch (e) {
-    filesize = 'N/A'
+    const buf = await promisify(fs.readFile)(configPath, 'utf8')
+    return YAML.safeLoad(buf)
+  } catch (err) {
+    return {}
   }
-  if (!scanConfig.uppy_bundle_kb_sizes) {
-    scanConfig.uppy_bundle_kb_sizes = {}
-  }
-  scanConfig.uppy_bundle_kb_sizes[type] = filesize
 }
 
-scanConfig['uppy_version'] = version
-scanConfig['uppy_version_anchor'] = version.replace(/[^\d]+/g, '')
+async function update () {
+  const config = await readConfig()
 
-var saveConfig = Object.assign({}, defaultConfig, loadedConfig, scanConfig)
-fs.writeFileSync(configPath, YAML.safeDump(saveConfig), 'utf-8')
-console.info(chalk.green('✓ rewritten: '), chalk.dim(configPath))
+  config.uppy_version = version
+  config.uppy_version_anchor = version.replace(/[^\d]+/g, '')
+  await updateSizes(config)
 
-var cmds = [
-  'mkdir -p ' + webRoot + '/themes/uppy/source/uppy',
-  'cp -vfR ' + uppyRoot + '/dist/* ' + webRoot + '/themes/uppy/source/uppy/'
-].join(' && ')
+  const saveConfig = Object.assign({}, defaultConfig, config)
+  await promisify(fs.writeFile)(configPath, YAML.safeDump(saveConfig), 'utf-8')
+  console.info(chalk.green('✓ rewritten: '), chalk.grey(configPath))
 
-exec(cmds, function (error, stdout, stderr) {
-  if (error) {
+  try {
+    await injectBuiltFiles()
+  } catch (error) {
     console.error(
       chalk.red('x failed to inject: '),
-      chalk.dim('uppy bundle into site, because: ' + error)
+      chalk.grey('uppy bundle into site, because: ' + error)
     )
-    return
+    process.exit(1)
   }
-  stdout.trim().split('\n').forEach(function (line) {
-    console.info(chalk.green('✓ injected: '), chalk.dim(line))
-  })
-})
+}
