@@ -34,7 +34,8 @@
     "prettier-bytes": "^1.0.4"
   },
   "devDependencies": {
-    "@uppy/core": "0.26.0"
+    "@uppy/core": "0.26.0",
+    "@uppy/google-drive": "0.26.0"
   },
   "peerDependencies": {
     "@uppy/core": "^0.26.0"

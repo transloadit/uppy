@@ -45,7 +45,7 @@ module.exports = class Plugin {
 
   getPluginState () {
     const { plugins } = this.uppy.getState()
-    return plugins[this.id]
+    return plugins[this.id] || {}
   }
 
   setPluginState (update) {
@@ -54,7 +54,10 @@ module.exports = class Plugin {
     this.uppy.setState({
       plugins: {
         ...plugins,
-        [this.id]: update
+        [this.id]: {
+          ...plugins[this.id],
+          ...update
+        }
       }
     })
   }
