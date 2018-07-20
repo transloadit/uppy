@@ -5,8 +5,10 @@ export interface UppyFile {
   isPaused: boolean;
   isRemote: boolean;
   meta: {
-    name: string;
-    type?: string;
+      name: string;
+      type?: string;
+      [key: string]: any;
+      [key: number]: any;
   };
   name: string;
   preview?: string;
@@ -38,6 +40,9 @@ export interface PluginOptions {
 }
 
 export class Plugin {
+  id: string;
+  uppy: Uppy;
+  type: string;
   constructor(uppy: Uppy, opts?: PluginOptions);
   getPluginState(): object;
   setPluginState(update: any): object;
@@ -56,21 +61,25 @@ export interface Store {
   subscribe(listener: any): () => void;
 }
 
+interface LocaleObject {
+  [key: string]: string | LocaleObject;
+}
 export interface UppyOptions {
   id: string;
   autoProceed: boolean;
   debug: boolean;
+  showLinkToFileUploadResult: boolean;
   restrictions: {
-    maxFileSize: number | null,
-    maxNumberOfFiles: number | null,
-    minNumberOfFiles: number | null,
-    allowedFileTypes: string[] | null
+    maxFileSize: number | null;
+    maxNumberOfFiles: number | null;
+    minNumberOfFiles: number | null;
+    allowedFileTypes: string[] | null;
   };
   target: string | Plugin;
   meta: any;
-  // onBeforeFileAdded: (currentFile, files) => currentFile,
-  // onBeforeUpload: (files) => files,
-  locale: any;
+  onBeforeFileAdded: (currentFile: UppyFile, files: {[key: string]: UppyFile}) => UppyFile | false | undefined;
+  onBeforeUpload: (files: {[key: string]: UppyFile}) => {[key: string]: UppyFile} | false;
+  locale: LocaleObject;
   store: Store;
 }
 
@@ -117,7 +126,7 @@ export class Uppy {
   iteratePlugins(callback: (plugin: Plugin) => void): void;
   removePlugin(instance: Plugin): void;
   close(): void;
-  info(message: string | { message: string; details: string; }, type?: LogLevel, duration?: number): void;
+  info(message: string | {message: string; details: string}, type?: LogLevel, duration?: number): void;
   hideInfo(): void;
   log(msg: string, type?: LogLevel): void;
   run(): Uppy;
