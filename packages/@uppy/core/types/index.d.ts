@@ -1,15 +1,18 @@
+interface IndexedObject<T> {
+  [key: string]: T;
+  [key: number]: T;
+}
 export interface UppyFile {
   data: Blob | File;
+  error?: string;
   extension: string;
   id: string;
-  isPaused: boolean;
+  isPaused?: boolean;
   isRemote: boolean;
   meta: {
       name: string;
       type?: string;
-      [key: string]: any;
-      [key: number]: any;
-  };
+  } & IndexedObject<any>;
   name: string;
   preview?: string;
   progress?: {
@@ -77,8 +80,8 @@ export interface UppyOptions {
   };
   target: string | Plugin;
   meta: any;
-  onBeforeFileAdded: (currentFile: UppyFile, files: {[key: string]: UppyFile}) => UppyFile | false | undefined;
-  onBeforeUpload: (files: {[key: string]: UppyFile}) => {[key: string]: UppyFile} | false;
+  onBeforeFileAdded: (currentFile: UppyFile, files: {[key: string]: UppyFile}) => UppyFile | boolean | undefined;
+  onBeforeUpload: (files: {[key: string]: UppyFile}) => {[key: string]: UppyFile} | boolean;
   locale: LocaleObject;
   store: Store;
 }
@@ -88,6 +91,20 @@ export interface UploadResult {
   failed: UppyFile[];
 }
 
+interface State extends IndexedObject<any> {
+  capabilities?: {resumableUploads?: boolean};
+  currentUploads: {};
+  error?: string;
+  files: {[key: string]: UppyFile};
+  info?: {
+    isHidden: boolean;
+    type: string;
+    message: string;
+    details: string;
+  };
+  plugins?: IndexedObject<any>;
+  totalProgress: number;
+}
 type LogLevel = 'info' | 'warning' | 'error';
 export class Uppy {
   constructor(opts?: Partial<UppyOptions>);
@@ -97,8 +114,8 @@ export class Uppy {
   off(event: string, callback: any): Uppy;
   updateAll(state: object): void;
   setState(patch: object): void;
-  getState(): object;
-  readonly state: object;
+  getState(): State;
+  readonly state: State;
   setFileState(fileID: string, state: object): void;
   resetProgress(): void;
   addPreProcessor(fn: any): void;
