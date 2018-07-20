@@ -7,7 +7,8 @@ const ProgressBar = require('@uppy/progress-bar')
 
 const uppyi18n = Uppy({
   id: 'uppyi18n',
-  debug: true
+  debug: true,
+  autoProceed: true
 })
 
 uppyi18n

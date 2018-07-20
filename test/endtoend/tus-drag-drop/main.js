@@ -8,7 +8,8 @@ const ProgressBar = require('@uppy/progress-bar')
 // Initialise Uppy with Drag & Drop
 const uppyDragDrop = Uppy({
   id: 'uppyDragDrop',
-  debug: true
+  debug: true,
+  autoProceed: true
 })
 
 uppyDragDrop
