@@ -3,7 +3,6 @@ const Dashboard = require('@uppy/dashboard')
 const XHRUpload = require('@uppy/xhr-upload')
 
 const uppy = Uppy({
-  autoProceed: false,
   debug: true
 })
 

@@ -31,7 +31,7 @@ const Core = Uppy.Core
 ```js
 const uppy = Uppy({
   id: 'uppy',
-  autoProceed: true,
+  autoProceed: false,
   debug: false,
   restrictions: {
     maxFileSize: null,
@@ -61,9 +61,9 @@ const avatarUploader = Uppy({ id: 'avatar' })
 const photoUploader = Uppy({ id: 'post' })
 ```
 
-### `autoProceed: true`
+### `autoProceed: false`
 
-Uppy will start uploading automatically after the first file is selected.
+By default Uppy will wait for an upload button to be pressed in the UI, or an `.upload()` method to be called, before starting an upload. Setting this to `autoProceed: true` will start uploading automatically after the first file is selected.
 
 ### `restrictions: {}`
 
