@@ -19,13 +19,17 @@
 }
 
 .uppy-Provider-authTitle {
-  font-size: 20px;
+  font-size: 17px;
   line-height: 1.4;
   font-weight: 400;
   margin-bottom: 30px;
   padding: 0 15px;
   max-width: 500px;
   text-align: center;
+
+  .uppy-Dashboard--wide & {
+    font-size: 20px;
+  }
 }
 
 .uppy-Provider-breadcrumbs {

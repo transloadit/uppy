@@ -248,13 +248,12 @@
 
 .uppy-DashboardTab {
   width: 70px;
-  // margin: 0;
+  margin-bottom: 15px;
   display: inline-block;
   text-align: center;
 
   .uppy-Dashboard--wide & {
     width: 90px;
-    // margin: 0 3px;
   }
 }
 
@@ -355,8 +354,8 @@
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 14px;
-  line-height: 50px;
+  font-size: 13px;
+  line-height: 40px;
   font-weight: normal;
   max-width: 170px;
   text-overflow: ellipsis;
@@ -365,8 +364,7 @@
   margin: auto;
 
   .uppy-Dashboard--wide & {
-    // font-size: 16px;
-    // line-height: 50px;
+    font-size: 14px;
     max-width: 300px;
   }
 }
@@ -507,6 +505,7 @@
   left: 0;
   right: 0;
   bottom: 0;
+  padding-top: 40px;
 }
 
   .uppy-Dashboard--wide .uppy-Dashboard-files {
@@ -526,17 +525,19 @@
 }
 
 .uppy-Dashboard-dropFilesTitle {
-  max-width: 400px;
+  max-width: 300px;
   text-align: center;
   font-size: 18px;
   line-height: 1.45;
   font-weight: 400;
   color: $color-asphalt-gray;
   margin: auto;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 
   .uppy-Dashboard--wide & {
+    max-width: 400px;
     font-size: 27px;
+    margin-bottom: 30px;
   }
 }
 
@@ -806,17 +807,19 @@
 .uppy-DashboardItem-edit,
 .uppy-DashboardItem-copyLink {
   @include reset-button;
-  font-size: 12px;
-  text-align: left;
+  display: inline-block;
+  vertical-align: bottom;
+  // font-size: 12px;
+  // text-align: left;
   cursor: pointer;
-  position: absolute;
-  top: 0;
-  right: -20px;
+  // position: absolute;
+  // top: 0;
+  // right: -20px;
 
-  .uppy-Dashboard--wide & {
-    top: 9px;
-    right: 3px;
-  }
+  // .uppy-Dashboard--wide & {
+  //   top: 9px;
+  //   right: 3px;
+  // }
 }
 
 .uppy-DashboardItem-edit .UppyIcon {

@@ -5,7 +5,7 @@ const prettyBytes = require('prettier-bytes')
 const FileItemProgress = require('./FileItemProgress')
 const getFileTypeIcon = require('./getFileTypeIcon')
 const FilePreview = require('./FilePreview')
-const { iconEdit, iconCopy, iconRetry } = require('./icons')
+const { iconCopy, iconRetry } = require('./icons')
 const classNames = require('classnames')
 const { h } = require('preact')
 
@@ -137,17 +137,17 @@ module.exports = function fileItem (props) {
             })}
           </div>
         }
+        {(!uploadInProgressOrComplete && props.metaFields && props.metaFields.length)
+          ? <button class="uppy-DashboardItem-edit"
+            type="button"
+            aria-label={props.i18n('editFile')}
+            title={props.i18n('editFile')}
+            onclick={(e) => props.toggleFileCard(file.id)}>
+            Edit
+          </button>
+          : null
+        }
       </div>
-      {(!uploadInProgressOrComplete && props.metaFields && props.metaFields.length)
-        ? <button class="uppy-DashboardItem-edit"
-          type="button"
-          aria-label={props.i18n('editFile')}
-          title={props.i18n('editFile')}
-          onclick={(e) => props.toggleFileCard(file.id)}>
-          {iconEdit()}
-        </button>
-        : null
-      }
       {props.showLinkToFileUploadResult && file.uploadURL
         ? <button class="uppy-DashboardItem-copyLink"
           type="button"
