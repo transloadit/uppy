@@ -2,8 +2,11 @@ import React, { Component } from 'react'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import GoogleDrive from '@uppy/google-drive'
-import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/react'
-import '@uppy/dashboard/dist/style.min.css'
+import { Dashboard, DashboardModal } from '@uppy/react'
+// import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/react'
+import '@uppy/dashboard/dist/style.css'
+// import '@uppy/drag-drop/dist/style.css'
+// import '@uppy/progress-bar/dist/style.css'
 
 class App extends Component {
   constructor (props) {
@@ -80,7 +83,7 @@ class App extends Component {
           />
         </div>
 
-        <h2>Drag Drop Area</h2>
+        {/* <h2>Drag Drop Area</h2>
         <div id="drag-drop">
           <DragDrop
             uppy={this.uppy}
@@ -99,7 +102,7 @@ class App extends Component {
             uppy={this.uppy}
             hideAfterFinish={false}
           />
-        </div>
+        </div> */}
       </div>
     )
   }
