@@ -76,7 +76,7 @@
     "redis": "^2.7.1",
     "request": "2.85.0",
     "serialize-error": "^2.1.0",
-    "tus-js-client": "1.4.5",
+    "tus-js-client": "^1.5.1",
     "uuid": "2.0.2",
     "validator": "^9.0.0",
     "ws": "1.1.5"

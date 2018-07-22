@@ -3,8 +3,7 @@
   "name": "uppy-build",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
-    "*.js": "eslint",
-    "packages/@uppy/companion/**/*.js": "eslint --ignore-path packages/@uppy/companion/.eslintignore -c packages/@uppy/companion/.eslintrc.json"
+    "*.js": "eslint"
   },
   "pre-commit": "lint-staged",
   "license": "MIT",
@@ -81,14 +80,14 @@
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
     "build:css": "node ./bin/build-css.js",
+    "build:companion": "cd ./packages/@uppy/companion && npm run build",
     "build:gzip": "node ./bin/gzip.js",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "build:js": "npm-run-all build:lib build:bundle",
     "build:lib": "babel --version && node ./bin/build-lib.js",
-    "build": "npm-run-all --parallel build:js build:css --serial build:gzip size",
+    "build": "npm-run-all --parallel build:js build:css build:companion --serial build:gzip size",
     "clean": "rm -rf packages/*/lib packages/@uppy/*/lib && rm -rf packages/uppy/dist",
     "lint:fix": "npm run lint -- --fix",
-    "lint:companion": "eslint --ignore-path packages/@uppy/companion/.eslintignore -c packages/@uppy/companion/.eslintrc.json packages/@uppy/companion/.",
     "lint": "eslint . --cache",
     "lint-staged": "lint-staged",
     "release": "./bin/release",
@@ -101,9 +100,9 @@
     "test:acceptance": "npm run test:prepare-ci && wdio test/endtoend/wdio.remote.conf.js",
     "test:acceptance:local": "npm run test:build && wdio test/endtoend/wdio.local.conf.js",
     "test:unit": "jest --testPathPattern=./src --coverage",
+    "test:companion": "cd ./packages/@uppy/companion && npm run test",
     "test:type": "tsc -p .",
-    "test": "npm run lint && npm run test:unit && npm run test:type",
-    "test:companion": "npm run lint:companion && cd ./packages/@uppy/companion && npm run test",
+    "test": "npm run lint && npm run test:unit && npm run test:type && npm run test:companion",
     "test:watch": "jest --watch --testPathPattern=src",
     "travis:deletecache": "travis cache --delete",
     "watch:css": "onchange 'packages/**/*.scss' --initial --verbose -- npm run build:css",

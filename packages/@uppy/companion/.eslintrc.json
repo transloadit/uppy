@@ -3,5 +3,6 @@
   "env": {
     "browser": false,
     "node": true
-  }
+  },
+  "root": true
 }
