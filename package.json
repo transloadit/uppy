@@ -92,7 +92,7 @@
     "lint-staged": "lint-staged",
     "release": "./bin/release",
     "start:companion": "sh ./bin/companion",
-    "start": "npm-run-all --parallel watch start:server web:preview",
+    "start": "npm-run-all --parallel watch start:companion web:preview",
     "test:registry": "verdaccio --listen 4002 --config test/endtoend/verdaccio.yaml",
     "test:build": "./bin/endtoend-build",
     "test:build-ci": "./bin/endtoend-build-ci",
