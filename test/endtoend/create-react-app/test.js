@@ -11,7 +11,7 @@ describe('webpack build', () => {
     el.waitForExist()
     const bgColor = el.getCssProperty('background-color').value
     // computed value is rgb() or rgba(), not hex (but listing it here to show the expected value too)
-    expect(/^rgb\(250, ?250, ?250(?:, ?1)?\)$|^#fafafa$/.test(bgColor)).to.equal(true)
+    expect(/^rgba?\(250, ?250, ?250(?:, ?1)?\)$|^#fafafa$/.test(bgColor)).to.equal(true)
   })
 })
 
