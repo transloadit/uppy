@@ -56,7 +56,7 @@ module.exports = function fileItem (props) {
   const error = file.error || false
 
   const fileName = getFileNameAndExtension(file.meta.name).name
-  const truncatedFileName = props.isWide ? truncateString(fileName, 14) : fileName
+  const truncatedFileName = props.isWide ? truncateString(fileName, 30) : fileName
 
   const onPauseResumeCancelRetry = (ev) => {
     if (isUploaded) return
@@ -127,7 +127,7 @@ module.exports = function fileItem (props) {
       </div>
       <div class="uppy-DashboardItem-status">
         {file.data.size ? <div class="uppy-DashboardItem-statusSize">{prettyBytes(file.data.size)}</div> : null}
-        {file.source && <div class="uppy-DashboardItem-sourceIcon">
+        {(file.source && file.source !== props.id) && <div class="uppy-DashboardItem-sourceIcon">
             {acquirers.map(acquirer => {
               if (acquirer.id === file.source) {
                 return <span title={props.i18n('fileSource', { name: acquirer.name })}>
