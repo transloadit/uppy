@@ -10,8 +10,8 @@ describe('webpack build', () => {
     const el = $('#inline-dashboard .uppy-Dashboard-inner')
     el.waitForExist()
     const bgColor = el.getCssProperty('background-color').value
-    // computed value is rgb(), not hex (but using a regex here to show the expected value too)
-    expect(/^rgb\(250, ?250, ?250\)$|^#fafafa$/.test(bgColor)).to.equal(true)
+    // computed value is rgb() or rgba(), not hex (but listing it here to show the expected value too)
+    expect(/^rgba?\(250, ?250, ?250(?:, ?1)?\)$|^#fafafa$/.test(bgColor)).to.equal(true)
   })
 })
 
@@ -34,20 +34,20 @@ describe('React: Dashboard', () => {
 
     // close
     browser.click('#inline-dashboard-toggle')
-    browser.pause(50)
+    browser.pause(250)
     // open
     browser.click('#inline-dashboard-toggle')
-    browser.pause(50)
+    browser.pause(250)
     // close
     browser.click('#inline-dashboard-toggle')
-    browser.pause(50)
+    browser.pause(250)
     // open
     browser.click('#inline-dashboard-toggle')
-    browser.pause(50)
+    browser.pause(250)
 
     // open GDrive panel
-    browser.click('.uppy-DashboardTab:nth-child(2)')
-    browser.pause(50)
+    browser.click('.uppy-DashboardTab:nth-child(2) button')
+    browser.pause(500)
 
     // side effecting property access, not a function!
     // eslint-disable-next-line no-unused-expressions
@@ -70,7 +70,8 @@ describe('React: DashboardModal', () => {
     modalToggle.click()
     browser.pause(50) // wait for the animation to start
 
-    expect(modalWrapper.getAttribute('aria-hidden')).to.equal(null)
+    // Edge appears to report empty string while others report null
+    expect(modalWrapper.getAttribute('aria-hidden')).to.be.oneOf([null, ''])
 
     browser.pause(500) // wait for the animation to complete
 
