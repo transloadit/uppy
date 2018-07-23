@@ -1,5 +1,5 @@
 {
-  "name": "@uppy/server-utils",
+  "name": "@uppy/companion-client",
   "description": "Client library for communication with Uppy Server. Intended for use in Uppy plugins.",
   "version": "0.26.0",
   "license": "MIT",

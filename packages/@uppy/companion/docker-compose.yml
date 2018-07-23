@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  uppy:
+    image: companion
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /app/node_modules
+    ports:
+      - "3020:3020"

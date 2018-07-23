@@ -18,9 +18,11 @@ website/themes/uppy/source/uppy/
 website/themes/uppy/_config.yml
 
 npm-debug.log*
-config/
 nohup.out
 
 examples/bundled-example/bundle.js
 uppy-*.tgz
 .eslintcache
+
+output/*
+!output/.keep

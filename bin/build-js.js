@@ -41,57 +41,9 @@ function buildUppyBundle (minify) {
   })
 }
 
-// function copyLocales () {
-//   var copyCommand = 'cp -R ' + path.join(srcPath, 'locales/') + ' ' + path.join(distPath, 'locales/')
-//   return new Promise(function (resolve, reject) {
-//     exec(copyCommand, function (error, stdout, stderr) {
-//       if (error) {
-//         handleErr(error)
-//         reject(error)
-//         return
-//       }
-//       console.info(chalk.green('✓ Copied locales to dist'))
-//       resolve()
-//     })
-//   })
-// }
-
-// function buildLocale (file) {
-//   return new Promise(function (resolve, reject) {
-//     var fileName = path.basename(file, '.js')
-//     browserify(file)
-//       .transform(babelify)
-//       .on('error', handleErr)
-//       .bundle()
-//       .pipe(fs.createWriteStream('./dist/locales/' + fileName + '.js', 'utf8'))
-//       .on('error', handleErr)
-//       .on('finish', function () {
-//         console.info(chalk.green('✓ Built Locale:'), chalk.magenta(fileName + '.js'))
-//         resolve()
-//       })
-//   })
-// }
-
-// function buildUppyLocales () {
-//   mkdirp.sync('./dist/locales')
-//   var localePromises = []
-//   glob('./src/locales/*.js', function (err, files) {
-//     if (err) console.log(err)
-//     files.forEach(function (file) {
-//       localePromises.push(buildLocale(file))
-//     })
-//   })
-//   return Promise.all(localePromises)
-// }
-
 mkdirp.sync(distPath)
 
 Promise.all([buildUppyBundle(), buildUppyBundle(true)])
   .then(function () {
     console.info(chalk.yellow('✓ JS Bundle 🎉'))
   })
-
-// Promise.all([buildUppyBundle(), buildUppyBundle(true), buildUppyLocales()])
-//   .then(function () {
-//     console.info(chalk.yellow('✓ JS Bundle 🎉'))
-//   })

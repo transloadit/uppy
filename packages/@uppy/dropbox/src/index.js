@@ -1,5 +1,5 @@
 const { Plugin } = require('@uppy/core')
-const { Provider } = require('@uppy/server-utils')
+const { Provider } = require('@uppy/companion-client')
 const ProviderViews = require('@uppy/provider-views')
 const icons = require('./icons')
 const { h } = require('preact')
