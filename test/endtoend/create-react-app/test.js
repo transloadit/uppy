@@ -10,8 +10,8 @@ describe('webpack build', () => {
     const el = $('#inline-dashboard .uppy-Dashboard-inner')
     el.waitForExist()
     const bgColor = el.getCssProperty('background-color').value
-    // computed value is rgb(), not hex (but using a regex here to show the expected value too)
-    expect(/^rgb\(250, ?250, ?250\)$|^#fafafa$/.test(bgColor)).to.equal(true)
+    // computed value is rgb() or rgba(), not hex (but listing it here to show the expected value too)
+    expect(/^rgb\(250, ?250, ?250(?:, ?1)?\)$|^#fafafa$/.test(bgColor)).to.equal(true)
   })
 })
 
