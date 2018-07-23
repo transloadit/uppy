@@ -2,6 +2,7 @@ const FileList = require('./FileList')
 const AddFiles = require('./AddFiles')
 const AddFilesPanel = require('./AddFilesPanel')
 const PanelContent = require('./PanelContent')
+const PanelTopBar = require('./PanelTopBar')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
 const isTouchDevice = require('@uppy/utils/lib/isTouchDevice')
@@ -48,26 +49,28 @@ module.exports = function Dashboard (props) {
         </button>
 
         <div class="uppy-Dashboard-innerWrap">
+          { !noFiles && <PanelTopBar {...props} /> }
+
           { noFiles ? <AddFiles {...props} /> : <FileList {...props} /> }
 
           <PreactCSSTransitionGroup
             transitionName="uppy-transition-slideDownUp"
-            transitionEnterTimeout={200}
-            transitionLeaveTimeout={200}>
+            transitionEnterTimeout={250}
+            transitionLeaveTimeout={250}>
             { props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} /> : null }
           </PreactCSSTransitionGroup>
 
           <PreactCSSTransitionGroup
             transitionName="uppy-transition-slideDownUp"
-            transitionEnterTimeout={200}
-            transitionLeaveTimeout={200}>
+            transitionEnterTimeout={250}
+            transitionLeaveTimeout={250}>
             { props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null }
           </PreactCSSTransitionGroup>
 
           <PreactCSSTransitionGroup
             transitionName="uppy-transition-slideDownUp"
-            transitionEnterTimeout={200}
-            transitionLeaveTimeout={200}>
+            transitionEnterTimeout={250}
+            transitionLeaveTimeout={250}>
             { props.activePanel ? <PanelContent key="PanelContent" {...props} /> : null }
           </PreactCSSTransitionGroup>
 
