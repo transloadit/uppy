@@ -4,6 +4,8 @@ set -o errexit
 set -o nounset
 # set -o xtrace
 
+if [ -n "${WEBSITE-}" ]; then exit 0; fi
+
 git config --global user.name 'Uppy Bot'
 git config --global user.email 'uppybot@uppy.io'
 
