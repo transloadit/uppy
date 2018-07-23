@@ -46,7 +46,7 @@ describe('React: Dashboard', () => {
     browser.pause(50)
 
     // open GDrive panel
-    browser.click('.uppy-DashboardTab:nth-child(2)')
+    browser.click('.uppy-DashboardTab:nth-child(2) button')
     browser.pause(50)
 
     // side effecting property access, not a function!
