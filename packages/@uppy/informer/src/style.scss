@@ -3,26 +3,30 @@
 
 .uppy-Informer {
   position: absolute;
-  bottom: 0;
+  bottom: 60px;
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   padding: 0 15px;
-  height: 35px;
-  line-height: 35px;
+  height: 25px;
+  line-height: 25px;
   background-color: $color-black; /* no !important */
   color: $color-white;
   opacity: 1;
   transform: none;
-  transition: all 300ms ease-in;
-  z-index: $zIndex-4;
+  transition: all 250ms ease-in;
+  z-index: $zIndex-5;
+  border-radius: 18px;
+  max-width: 400px;
+  margin: auto;
+  opacity: 0.85;
 
   .uppy-Dashboard--wide & {
-    height: 45px;
-    line-height: 45px;
-    font-size: 13px;
+    height: 35px;
+    line-height: 35px;
+    font-size: 12px;
   }
 }
 
@@ -35,12 +39,12 @@
 .uppy-Informer p {
   margin: 0;
   padding: 0;
-  height: 35px;
-  line-height: 35px;
+  height: 25px;
+  line-height: 25px;
 
   .uppy-Dashboard--wide & {
-    height: 45px;
-    line-height: 45px;
+    height: 35px;
+    line-height: 35px;
   }
 }
 
