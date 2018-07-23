@@ -70,7 +70,8 @@ describe('React: DashboardModal', () => {
     modalToggle.click()
     browser.pause(50) // wait for the animation to start
 
-    expect(modalWrapper.getAttribute('aria-hidden')).to.equal(null)
+    // Edge appears to report empty string while others report null
+    expect(modalWrapper.getAttribute('aria-hidden')).to.be.oneOf([null, ''])
 
     browser.pause(500) // wait for the animation to complete
 
