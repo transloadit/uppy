@@ -2,17 +2,16 @@ interface IndexedObject<T> {
   [key: string]: T;
   [key: number]: T;
 }
-export interface UppyFile {
+export interface UppyFile<TMeta extends IndexedObject<any> = {}> {
   data: Blob | File;
-  error?: string;
   extension: string;
   id: string;
   isPaused?: boolean;
   isRemote: boolean;
   meta: {
-      name: string;
-      type?: string;
-  } & IndexedObject<any>;
+    name: string;
+    type?: string;
+  } & TMeta;
   name: string;
   preview?: string;
   progress?: {
@@ -30,7 +29,14 @@ export interface UppyFile {
   size: number;
   source?: string;
   type?: string;
-  uploadURL?: string;
+}
+
+export interface UploadedUppyFile<TMeta extends IndexedObject<any> = {}> extends UppyFile<TMeta> {
+  uploadURL: string;
+}
+
+export interface FailedUppyFile<TMeta extends IndexedObject<any> = {}> extends UppyFile<TMeta> {
+  error: string;
 }
 
 export interface AddFileOptions extends Partial<UppyFile> {
@@ -86,16 +92,16 @@ export interface UppyOptions {
   store: Store;
 }
 
-export interface UploadResult {
-  successful: UppyFile[];
-  failed: UppyFile[];
+export interface UploadResult<TMeta extends IndexedObject<any> = {}> {
+  successful: UploadedUppyFile<TMeta>[];
+  failed: FailedUppyFile<TMeta>[];
 }
 
-interface State extends IndexedObject<any> {
+interface State<TMeta extends IndexedObject<any> = {}> extends IndexedObject<any> {
   capabilities?: {resumableUploads?: boolean};
   currentUploads: {};
   error?: string;
-  files: {[key: string]: UppyFile};
+  files: {[key: string]: UploadedUppyFile<TMeta> | FailedUppyFile<TMeta>};
   info?: {
     isHidden: boolean;
     type: string;
@@ -114,7 +120,7 @@ export class Uppy {
   off(event: string, callback: any): Uppy;
   updateAll(state: object): void;
   setState(patch: object): void;
-  getState(): State;
+  getState<TMeta extends IndexedObject<any> = {}>(): State<TMeta>;
   readonly state: State;
   setFileState(fileID: string, state: object): void;
   resetProgress(): void;
@@ -126,8 +132,8 @@ export class Uppy {
   removeUploader(fn: any): void;
   setMeta(data: any): void;
   setFileMeta(fileID: string, data: object): void;
-  getFile(fileID: string): UppyFile;
-  getFiles(): UppyFile[];
+  getFile<TMeta extends IndexedObject<any> = {}>(fileID: string): UppyFile<TMeta>;
+  getFiles<TMeta extends IndexedObject<any> = {}>(): Array<UppyFile<TMeta>>;
   addFile(file: AddFileOptions): void;
   removeFile(fileID: string): void;
   pauseResume(fileID: string): boolean;
