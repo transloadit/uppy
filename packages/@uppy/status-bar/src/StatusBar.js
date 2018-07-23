@@ -219,7 +219,7 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
 const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
   return (
     <div class="uppy-StatusBar-content" role="alert">
-      <strong class="uppy-StatusBar-contentPadding">{i18n('uploadFailed')}.</strong>
+      <span class="uppy-StatusBar-contentPadding">{i18n('uploadFailed')}.</span>
       { !hideRetryButton && <span class="uppy-StatusBar-contentPadding">{i18n('pleasePressRetry')}</span> }
       <span class="uppy-StatusBar-details"
         aria-label={error}
