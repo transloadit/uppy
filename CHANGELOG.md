@@ -131,6 +131,7 @@ What we need to do to release Uppy 1.0
 - [x] s3: Abort all chunk requests when aborting the multipart upload (#967 / @pekala)
 - [x] s3: Catch and handle errors in prepareUploadPart (#966 / @pekala)
 - [x] Split integration tests and add one using create-react-app (#952)
+- [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
 
 ## 0.26.0
 
