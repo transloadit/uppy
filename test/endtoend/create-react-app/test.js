@@ -34,20 +34,20 @@ describe('React: Dashboard', () => {
 
     // close
     browser.click('#inline-dashboard-toggle')
-    browser.pause(50)
+    browser.pause(250)
     // open
     browser.click('#inline-dashboard-toggle')
-    browser.pause(50)
+    browser.pause(250)
     // close
     browser.click('#inline-dashboard-toggle')
-    browser.pause(50)
+    browser.pause(250)
     // open
     browser.click('#inline-dashboard-toggle')
-    browser.pause(50)
+    browser.pause(250)
 
     // open GDrive panel
     browser.click('.uppy-DashboardTab:nth-child(2) button')
-    browser.pause(50)
+    browser.pause(500)
 
     // side effecting property access, not a function!
     // eslint-disable-next-line no-unused-expressions
