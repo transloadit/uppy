@@ -7,9 +7,12 @@ set -o nounset
 # Set magic variables for current FILE & DIR
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __kube="${__dir}"
+__companion="$(dirname "$(dirname "${__kube}")")"
+
+echo ${__companion}
 
 # Store the new image in docker hub
-docker build --quiet -t transloadit/uppy-server:latest -t transloadit/uppy-companion:$TRAVIS_COMMIT .;
+docker build --quiet -t transloadit/uppy-server:latest -t transloadit/uppy-companion:$TRAVIS_COMMIT -f "${__companion}/Dockerfile" "${__companion}";
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
 docker push transloadit/uppy-companion:$TRAVIS_COMMIT;
 docker push transloadit/uppy-companion:latest;
@@ -33,7 +36,7 @@ kubectl apply -f "${__kube}/companion/uppy-env.yaml"
 sleep 10s # This cost me some precious debugging time.
 kubectl apply -f "${__kube}/companion/uppy-server-kube.yaml"
 kubectl apply -f "${__kube}/companion/uppy-server-redis.yaml"
-kubectl set image statefulset uppy-server --namespace=uppy uppy-server=docker.io/transloadit/uppy-companion:$TRAVIS_COMMIT
+kubectl set image statefulset uppy-server --namespace=uppy companion=docker.io/transloadit/uppy-companion:$TRAVIS_COMMIT
 sleep 10s
 
 kubectl get pods --namespace=uppy
