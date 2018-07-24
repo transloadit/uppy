@@ -45,7 +45,6 @@
     "@types/tus-js-client": "^1.4.1",
     "@types/uuid": "^3.4.3",
     "@types/ws": "^3.2.1",
-    "jest-cli": "^23.1.0",
     "nodemon": "^1.17.5",
     "supertest": "3.0.0"
   },
