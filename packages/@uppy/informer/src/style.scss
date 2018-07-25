@@ -7,27 +7,26 @@
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 0 15px;
-  height: 25px;
-  line-height: 25px;
-  background-color: $color-black; /* no !important */
-  color: $color-white;
+  // padding: 0 15px;
+  // height: 25px;
+  // line-height: 25px;
+
   opacity: 1;
   transform: none;
   transition: all 250ms ease-in;
   z-index: $zIndex-5;
-  border-radius: 18px;
-  max-width: 400px;
-  margin: auto;
-  opacity: 0.85;
+  // border-radius: 18px;
+  // max-width: 100%;
+  // margin: auto;
+  
 
-  .uppy-Dashboard--wide & {
-    height: 35px;
-    line-height: 35px;
-    font-size: 12px;
-  }
+  // .uppy-Dashboard--wide & {
+  //   height: 35px;
+  //   line-height: 35px;
+  //   font-size: 12px;
+  //   // max-width: 500px;
+  //   padding: 0 15px;
+  // }
 }
 
   .uppy-Informer[aria-hidden=true] {
@@ -37,14 +36,27 @@
   }
 
 .uppy-Informer p {
+  display: inline-block;
   margin: 0;
   padding: 0;
   height: 25px;
   line-height: 25px;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 0 15px;
+  background-color: rgba($color-asphalt-gray, 0.7); /* no !important */
+  color: $color-white;
+  border-radius: 18px;
+  max-width: 90%;
+  white-space: nowrap;
+  overflow-x: auto;
 
   .uppy-Dashboard--wide & {
     height: 35px;
     line-height: 35px;
+    font-size: 14px;
+    max-width: 500px;
+    padding: 0 20px;
   }
 }
 
