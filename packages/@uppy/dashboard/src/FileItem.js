@@ -147,22 +147,22 @@ module.exports = function fileItem (props) {
           </button>
           : null
         }
+        {props.showLinkToFileUploadResult && file.uploadURL
+          ? <button class="uppy-DashboardItem-copyLink"
+            type="button"
+            aria-label={props.i18n('copyLink')}
+            title={props.i18n('copyLink')}
+            onclick={() => {
+              copyToClipboard(file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
+                .then(() => {
+                  props.log('Link copied to clipboard.')
+                  props.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
+                })
+                .catch(props.log)
+            }}>{iconCopy()}</button>
+          : ''
+        }
       </div>
-      {props.showLinkToFileUploadResult && file.uploadURL
-        ? <button class="uppy-DashboardItem-copyLink"
-          type="button"
-          aria-label={props.i18n('copyLink')}
-          title={props.i18n('copyLink')}
-          onclick={() => {
-            copyToClipboard(file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
-              .then(() => {
-                props.log('Link copied to clipboard.')
-                props.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
-              })
-              .catch(props.log)
-          }}>{iconCopy()}</button>
-        : ''
-      }
     </div>
     <div class="uppy-DashboardItem-action">
       {!isUploaded &&
