@@ -142,14 +142,14 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 15px;
+  right: 10px;
   z-index: $zIndex-4;
 }
 
 .uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
   width: 100%;
   position: static;
-  padding: 0 20px;
+  padding: 0 15px;
   background-color: $color-almost-white;
 }
 
@@ -177,7 +177,7 @@
     }
 
     .uppy-Dashboard--wide .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
-      padding: 13px 28px;
+      padding: 16px 22px;
       width: auto;
     }
 
