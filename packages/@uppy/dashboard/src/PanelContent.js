@@ -13,7 +13,9 @@ const PanelContent = (props) => {
           type="button"
           onclick={props.hideAllPanels}>{props.i18n('done')}</button>
       </div>
-      {props.getPlugin(props.activePanel.id).render(props.state)}
+      <div class="uppy-DashboardContent-panelBody">
+        {props.getPlugin(props.activePanel.id).render(props.state)}
+      </div>
     </div>
   )
 }

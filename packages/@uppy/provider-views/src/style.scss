@@ -1,5 +1,12 @@
 @import '@uppy/core/src/style.scss';
 
+.uppy-DashboardContent-panelBody {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
 .uppy-Provider-auth,
 .uppy-Provider-error,
 .uppy-Provider-loading,
@@ -46,12 +53,10 @@
   display: inline;
   color: darken($color-gray, 25%);
   vertical-align: middle;
-  // position: relative;
-  // top: 1px;
   margin-right: 8px;
 }
 
-  .uppy-Provider-breadcrumbsIcon .UppyIcon {
+  .uppy-Provider-breadcrumbsIcon svg {
     width: 13px;
     height: 13px;
   }
@@ -83,6 +88,7 @@
 .uppy-ProviderBrowser {
   display: flex;
   flex-direction: column;
+  flex: 1;
   font-size: 13px;
   font-weight: 400;
   height: 100%;
@@ -125,7 +131,7 @@
   background-color: $color-white;
   position: relative;
   height: 30px;
-  margin-top: 15px;
+  margin-top: 5px;
   margin-bottom: 5px;
 }
 
@@ -269,7 +275,7 @@
   .uppy-ProviderBrowserItem {
     display: inline-block;
     width: 50%;
-    height: 200px;
+    height: 180px;
     position: relative;
     padding: 8px;
   }

@@ -7,7 +7,6 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  flex: 1;
 }
 
 .uppy-Webcam-videoContainer {
@@ -16,10 +15,6 @@
   flex-grow: 1;
   overflow: hidden;
   background-color: $color-black;
-  // height: 100%;
-  // display: flex;
-  // justify-content: center;
-  // align-items: center;
 }
 
   .uppy-Dashboard--wide .uppy-Webcam-videoContainer {
@@ -82,11 +77,6 @@
     box-shadow: 0 0 0 0.2rem rgba($color-cornflower-blue, 0.5);
   }
 
-  .uppy-Webcam-button .UppyIcon {
-    width: 30px;
-    height: 30px;
-  }
-
 .uppy-Webcam-button--picture {
   margin-right: 12px;
 }
@@ -101,7 +91,7 @@
   flex: 1;
 }
 
-.uppy-Webcam-Title {
+.uppy-Webcam-title {
   font-size: 22px;
   line-height: 1.35;
   font-weight: 400;
