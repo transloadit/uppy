@@ -1,6 +1,6 @@
 const { Plugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
-const ProviderViews = require('@uppy/provider-views')
+const DriveProviderViews = require('./DriveProviderViews')
 const { h } = require('preact')
 
 module.exports = class GoogleDrive extends Plugin {
@@ -26,7 +26,7 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   install () {
-    this.view = new ProviderViews(this)
+    this.view = new DriveProviderViews(this)
     // Set default state for Google Drive
     this.setPluginState({
       authenticated: false,
@@ -35,7 +35,10 @@ module.exports = class GoogleDrive extends Plugin {
       directories: [],
       activeRow: -1,
       filterInput: '',
-      isSearchVisible: false
+      isSearchVisible: false,
+      hasTeamDrives: false,
+      teamDrives: [],
+      teamDriveId: ''
     })
 
     const target = this.opts.target
@@ -53,7 +56,17 @@ module.exports = class GoogleDrive extends Plugin {
     this.setPluginState({ authenticated })
     if (authenticated) {
       this.view.getFolder('root')
+      this.getTeamDrives()
     }
+  }
+
+  getTeamDrives () {
+    this[this.id].get(`${this.GoogleDrive.id}/list/?listTeamDrives=true`)
+      .then((payload) => {
+        if (payload.teamDrives && payload.teamDrives.length) {
+          this.setPluginState({hasTeamDrives: true, teamDrives: payload.teamDrives})
+        }
+      })
   }
 
   getUsername (data) {
@@ -111,6 +124,41 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   render (state) {
+    // If the user has access to any Team Drives, handle them as needed.
+    if (state.plugins[this.id].hasTeamDrives) {
+      let folders = state.plugins[this.id].folders
+
+      // Add Team Drive id parameter to any folders within Team Drives.
+      // This is needed in order to retrieve file lists.
+      folders.forEach((folder) => {
+        if (folder.teamDriveId) {
+          folder.id += `?teamDriveId=${folder.teamDriveId}`
+          delete folder.teamDriveId
+        }
+      })
+
+      // Remove any Team Drives we've previously pushed into the list of folders.
+      folders = folders.filter((folder) => {
+        return folder.kind !== 'drive#teamDrive'
+      })
+
+      // If viewing the Google Drive root, add Team Drives to the top of the list.
+      if (state.plugins[this.id].directories.length === 1) {
+        state.plugins[this.id].teamDrives.forEach((teamDrive) => {
+          folders.splice(0, 0, {
+            // Instead of a "normal" id, set it as a query param which will be handled by the server.
+            id: '?teamDriveId=' + teamDrive.id,
+            name: teamDrive.name,
+            kind: teamDrive.kind,
+            // Team Drives don't offer an icon, but do have a background image.
+            // The extra bit added onto the end crops/resizes the background image, yielding the same icon
+            // which is shown in the list of Team Drives within the Google Drive web UI.
+            iconLink: teamDrive.backgroundImageLink + '=w16-h16-n'
+          })
+        })
+      }
+      state.plugins[this.id].folders = folders
+    }
     return this.view.render(state)
   }
 }

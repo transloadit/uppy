@@ -2,8 +2,9 @@ const request = require('request')
 // @ts-ignore
 const purest = require('purest')({ request })
 const logger = require('../logger')
-const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink'
+const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
+const TEAM_DRIVE_FIELDS = 'teamDrives(kind,id,name,backgroundImageLink)'
 /**
  * @class
  * @implements {Provider}
@@ -24,23 +25,49 @@ class Drive {
   list (options, done) {
     const directory = options.directory || 'root'
     const trashed = options.trashed || false
+    const query = options.query || {}
+    const listTeamDrives = query.listTeamDrives || 'false'
+    const teamDriveId = query.teamDriveId || false
 
-    return this.client
-      .query()
-      .get('files')
-      .where({
+    if (listTeamDrives === 'true') {
+      // Just return a list of all Team Drives which the user can access.
+      return this.client
+        .query()
+        .get('teamdrives')
+        .where({ fields: TEAM_DRIVE_FIELDS })
+        .auth(options.token)
+        .request(done)
+    } else {
+      let where = {
         fields: DRIVE_FILES_FIELDS,
         q: `'${directory}' in parents and trashed=${trashed}`
-      })
-      .auth(options.token)
-      .request(done)
+      }
+      if (teamDriveId) {
+        // Team Drives require several extra parameters in order to work.
+        where.supportsTeamDrives = true
+        where.includeTeamDriveItems = true
+        where.teamDriveId = teamDriveId
+        where.corpora = 'teamDrive'
+        if (directory === 'root') {
+          // To list the top-level contents of a Team Drive, filter for the Team Drive id as a parent.
+          where.q = `'${teamDriveId}' in parents and trashed=${trashed}`
+        }
+      }
+
+      return this.client
+        .query()
+        .get('files')
+        .where(where)
+        .auth(options.token)
+        .request(done)
+    }
   }
 
   stats ({ id, token }, done) {
     return this.client
       .query()
       .get(`files/${id}`)
-      .where({fields: DRIVE_FILE_FIELDS})
+      .where({ fields: DRIVE_FILE_FIELDS, supportsTeamDrives: true })
       .auth(token)
       .request(done)
   }
@@ -49,7 +76,7 @@ class Drive {
     return this.client
       .query()
       .get(`files/${id}`)
-      .where({ alt: 'media' })
+      .where({ alt: 'media', supportsTeamDrives: true })
       .auth(token)
       .request()
       .on('data', onData)
