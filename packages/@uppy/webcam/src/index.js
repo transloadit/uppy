@@ -39,7 +39,7 @@ module.exports = class Webcam extends Plugin {
     this.supportsUserMedia = !!this.mediaDevices
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
-    this.title = 'Camera'
+    this.title = this.opts.title || 'Camera'
     this.type = 'acquirer'
     this.icon = CameraIcon
 

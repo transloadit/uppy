@@ -9,7 +9,7 @@ module.exports = class Dropbox extends Plugin {
     super(uppy, opts)
     this.type = 'acquirer'
     this.id = this.opts.id || 'Dropbox'
-    this.title = 'Dropbox'
+    this.title = this.opts.title || 'Dropbox'
     this.icon = () => (
       <svg class="UppyIcon" width="128" height="118" viewBox="0 0 128 118">
         <path d="M38.145.777L1.108 24.96l25.608 20.507 37.344-23.06z" />
