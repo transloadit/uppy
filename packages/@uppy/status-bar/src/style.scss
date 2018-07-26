@@ -9,7 +9,7 @@
   font-size: 12px;
   font-weight: 400;
   color: $color-white;
-  // background-color: lighten($color-black, 10%);
+  background-color: $color-white;
   z-index: $zIndex-2;
   transition: height .2s;
 }
@@ -29,7 +29,6 @@
     width: 100%;
     height: 2px;
     background-color: rgba($color-gray, 0.25);
-
   }
 
 .uppy-StatusBar[aria-hidden=true] {
@@ -58,7 +57,6 @@
 }
 
 .uppy-StatusBar:not([aria-hidden=true]).is-waiting {
-  // background-color: darken($color-white, 2%);
   background-color: $color-white;
   height: 65px;
   border-top: 1px solid rgba($color-gray, 0.3);
@@ -125,11 +123,14 @@
   }
 
 .uppy-StatusBar-statusIndicator {
-  // color: $color-white;
   color: $color-asphalt-gray;
   margin-right: 15px;
   cursor: pointer;
 }
+
+  .uppy-StatusBar-statusIndicator svg {
+    vertical-align: text-bottom;
+  }
 
   .uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator  {
     width: 15px;
