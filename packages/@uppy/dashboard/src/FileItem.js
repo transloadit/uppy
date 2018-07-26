@@ -143,7 +143,7 @@ module.exports = function fileItem (props) {
             aria-label={props.i18n('editFile')}
             title={props.i18n('editFile')}
             onclick={(e) => props.toggleFileCard(file.id)}>
-            Edit
+            {props.i18n('edit')}
           </button>
           : null
         }
