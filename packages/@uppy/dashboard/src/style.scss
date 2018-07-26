@@ -129,7 +129,6 @@
   @media #{$screen-medium} {
     width: 750px; /* no !important */
     height: 550px; /* no !important */
-    // border-radius: 5px;
   }
 }
 
@@ -259,6 +258,7 @@
 
 .uppy-DashboardTab {
   width: 70px;
+  margin: 0 5px;
   margin-bottom: 15px;
   display: inline-block;
   text-align: center;
@@ -269,18 +269,17 @@
 }
 
 .uppy-DashboardTab-btn {
-  // width: 100%;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
   border: 0;
   background-color: transparent;
   -webkit-appearance: none;
   appearance: none;
-  transition: all 0.2s;
   color: darken($color-gray, 25%);
 }
 
   .uppy-DashboardTab-btn:hover {
-    // transform: scale(1.1);
     color: $color-cornflower-blue;
   }
 
@@ -291,16 +290,12 @@
     display: inline-block;
     vertical-align: text-top;
     overflow: hidden;
-    transition: all 0.2s;
+    transition: transform 0.2s;
+    will-change: transform;
   }
 
-  // .uppy-DashboardTab-btn:hover svg, 
-  // .uppy-DashboardTab-btn:hover svg * {
-  //   fill: currentColor;
-  // }
-
   .uppy-DashboardTab-btn:hover svg {
-    transform: scale(1.2, 1.2);
+    transform: scale(1.1, 1.1);
   }
 
 .uppy-DashboardTab-name {
@@ -350,6 +345,7 @@
   height: 40px;
   width: 100%;
   border-bottom: 1px solid rgba($color-gray, 0.3);
+  
   z-index: $zIndex-4;
   background-color: $color-almost-white;
   padding: 0 10px;
@@ -426,6 +422,7 @@
   border-radius: 5px;
   display: flex;
   flex-direction: column;
+  flex: 1;
 
   // .uppy-Dashboard--wide & {
   //   padding-top: 50px;
@@ -1103,7 +1100,7 @@
 
 .uppy-Dashboard-actions {
   height: 55px;
-  border-top: 1px solid rgba($color-gray, 0.2);
+  border-top: 1px solid rgba($color-gray, 0.3);
   display: flex;
   align-items: center;
   padding: 0 15px;
