@@ -16,7 +16,7 @@ module.exports = class FileCard extends Component {
 
   componentDidMount () {
     setTimeout(() => {
-      if (!this.input) return
+      if (!this.firstInput) return
       this.firstInput.focus({ preventScroll: true })
     }, 150)
   }
