@@ -115,7 +115,7 @@ What we need to do to release Uppy 1.0
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
 - [ ] core: figure out per-plugin locales and i18n strings packs #491
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 (@arturi)
+- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
 - [ ] test: add typescript with JSDoc (@arturi)
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
 - [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
