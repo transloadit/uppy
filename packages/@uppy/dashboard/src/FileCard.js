@@ -14,6 +14,10 @@ module.exports = class FileCard extends Component {
     this.handleCancel = this.handleCancel.bind(this)
   }
 
+  componentDidMount () {
+    this.firstInput.focus()
+  }
+
   tempStoreMetaOrSubmit (ev) {
     const file = this.props.files[this.props.fileCardFor]
 
@@ -31,7 +35,7 @@ module.exports = class FileCard extends Component {
 
   renderMetaFields (file) {
     const metaFields = this.props.metaFields || []
-    return metaFields.map((field) => {
+    return metaFields.map((field, i) => {
       return <fieldset class="uppy-DashboardFileCard-fieldset">
         <label class="uppy-DashboardFileCard-label">{field.name}</label>
         <input class="uppy-c-textInput uppy-DashboardFileCard-input"
@@ -41,7 +45,10 @@ module.exports = class FileCard extends Component {
           placeholder={field.placeholder}
           onkeyup={this.tempStoreMetaOrSubmit}
           onkeydown={this.tempStoreMetaOrSubmit}
-          onkeypress={this.tempStoreMetaOrSubmit} /></fieldset>
+          onkeypress={this.tempStoreMetaOrSubmit}
+          ref={(el) => {
+            if (i === 0) this.firstInput = el
+          }} /></fieldset>
     })
   }
 
