@@ -15,7 +15,10 @@ module.exports = class FileCard extends Component {
   }
 
   componentDidMount () {
-    this.firstInput.focus()
+    setTimeout(() => {
+      if (!this.input) return
+      this.firstInput.focus({ preventScroll: true })
+    }, 150)
   }
 
   tempStoreMetaOrSubmit (ev) {
