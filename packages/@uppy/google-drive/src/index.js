@@ -92,7 +92,7 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   getItemIcon (item) {
-    return <img src={item.iconLink} />
+    return item.iconLink
   }
 
   getItemSubList (item) {
