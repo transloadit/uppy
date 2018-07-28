@@ -9,12 +9,12 @@ function DashboardContentTitle (props) {
 function PanelTopBar (props) {
   return (
     <div class="uppy-DashboardContent-bar">
-      <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
-        <DashboardContentTitle {...props} />
-      </div>
       <button class="uppy-DashboardContent-back"
         type="button"
         onclick={props.cancelAll}>{props.i18n('cancel')}</button>
+      <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
+        <DashboardContentTitle {...props} />
+      </div>
       <button class="uppy-DashboardContent-addMore"
         type="button"
         aria-label={props.i18n('addMoreFiles')}
