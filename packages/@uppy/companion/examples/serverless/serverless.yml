@@ -1,0 +1,32 @@
+service: uppyloader
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+
+  environment:
+    # NOTE: Make sure you set this to the url of your service endpoint
+
+    DOMAIN: <YOUR_SERVICE_ENDPOINT>
+
+    # NOTE: Make sure you set the API Keys for your chosen provider
+
+    AWS_S3_BUCKET: <YOUR_AWS_S3_BUCKET_NAME>
+    AWS_S3_REGION: <YOUR_AWS_S3_BUCKET_REGION>
+
+    # INSTAGRAM_KEY: <YOUR_INSTAGRAM_KEY>
+    # INSTAGRAM_SECRET: <YOUR_INSTAGRAM_SECRET>
+
+    # GOOGLE_KEY: <YOUR_GOOGLE_KEY>
+    # GOOGLE_SECRET: <YOUR_GOOGLE_SECRET>
+
+    # DROPBOX_KEY: <YOUR_DROPBOX_KEY>
+    # DROPBOX_SECRET: <YOUR_DROPBOX_SECRET>
+
+functions:
+  uppy:
+    handler: handler.uppy
+
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'

@@ -16,30 +16,43 @@
  * Since each example is dependent on Uppy's source,
  * changing one source file causes the 'file changed'
  * notification to fire multiple times. To stop this,
- * files are added to a 'muted' array that is checked
+ * files are added to a 'muted' Set that is checked
  * before announcing a changed file.  It's removed from
- * the array when it has been bundled.
+ * the Set when it has been bundled.
  */
-var createStream = require('fs').createWriteStream
-var glob = require('multi-glob').glob
-var chalk = require('chalk')
-var path = require('path')
-var mkdirp = require('mkdirp')
-var notifier = require('node-notifier')
-var babelify = require('babelify')
-var aliasify = require('aliasify')
-var browserify = require('browserify')
-var watchify = require('watchify')
 
-var webRoot = __dirname
-// var uppyRoot = path.dirname(webRoot)
+const createStream = require('fs').createWriteStream
+const glob = require('multi-glob').glob
+const chalk = require('chalk')
+const path = require('path')
+const mkdirp = require('mkdirp')
+const notifier = require('node-notifier')
+const babelify = require('babelify')
+const aliasify = require('aliasify')
+const browserify = require('browserify')
+const watchify = require('watchify')
 
-var srcPattern = webRoot + '/src/examples/**/app.es6'
-var dstPattern = webRoot + '/public/examples/**/app.js'
+const bresolve = require('browser-resolve')
+function useSourcePackages (b) {
+  b._bresolve = (id, opts, cb) => {
+    bresolve(id, opts, (err, result, pkg) => {
+      if (err) return cb(err)
+      if (/packages\/@uppy\/.*?\/lib\//.test(result)) {
+        result = result.replace(/packages\/@uppy\/(.*?)\/lib\//, 'packages/@uppy/$1/src/')
+      }
+      cb(err, result, pkg)
+    })
+  }
+}
 
-var watchifyEnabled = process.argv[2] === 'watch'
+const webRoot = __dirname
 
-var browserifyPlugins = []
+let srcPattern = `${webRoot}/src/examples/**/app.es6`
+let dstPattern = `${webRoot}/public/examples/**/app.js`
+
+const watchifyEnabled = process.argv[2] === 'watch'
+
+const browserifyPlugins = [useSourcePackages]
 if (watchifyEnabled) {
   browserifyPlugins.push(watchify)
 }
@@ -54,18 +67,18 @@ if (!watchifyEnabled && process.argv[2]) {
 }
 
 // Find each app.es6 file with glob.
-glob(srcPattern, function (err, files) {
+glob(srcPattern, (err, files) => {
   if (err) throw new Error(err)
 
   if (watchifyEnabled) {
     console.log('--> Watching examples..')
   }
 
-  var muted = []
+  const muted = new Set()
 
   // Create a new watchify instance for each file.
-  files.forEach(function (file) {
-    var browseFy = browserify(file, {
+  files.forEach((file) => {
+    const b = browserify(file, {
       cache: {},
       packageCache: {},
       debug: true,
@@ -73,23 +86,21 @@ glob(srcPattern, function (err, files) {
     })
 
     // Aliasing for using `require('uppy')`, etc.
-    browseFy
+    b
       .transform(babelify)
       .transform(aliasify, {
         aliases: {
-          '@uppy': path.relative(process.cwd(), path.join(__dirname, '../packages/@uppy'))
+          '@uppy': `./${path.relative(process.cwd(), path.join(__dirname, '../packages/@uppy'))}`
         }
       })
 
     // Listeners for changes, errors, and completion.
-    browseFy
+    b
       .on('update', bundle)
       .on('error', onError)
-      .on('file', function (file, id, parent) {
+      .on('file', (file) => {
         // When file completes, unmute it.
-        muted = muted.filter(function (mutedId) {
-          return id !== mutedId
-        })
+        muted.delete(file)
       })
 
     // Call bundle() manually to start watch processes.
@@ -101,27 +112,29 @@ glob(srcPattern, function (err, files) {
      * @param  {[type]} ids [description]
      * @return {[type]}     [description]
      */
-    function bundle (ids) {
-      ids = ids || []
-      ids.forEach(function (id) {
-        if (!isMuted(id, muted)) {
-          console.info(chalk.cyan('change:'), id)
-          muted.push(id)
+    function bundle (ids = []) {
+      ids.forEach((id) => {
+        if (!muted.has(id)) {
+          console.info(chalk.cyan('change:'), path.relative(process.cwd(), id))
+          muted.add(id)
         }
       })
 
-      var exampleName = path.basename(path.dirname(file))
-      var output = dstPattern.replace('**', exampleName)
-      var parentDir = path.dirname(output)
+      const exampleName = path.basename(path.dirname(file))
+      const output = dstPattern.replace('**', exampleName)
+      const parentDir = path.dirname(output)
 
       mkdirp.sync(parentDir)
 
-      console.info(chalk.green('✓ building:'), chalk.green(path.relative(process.cwd(), file)))
+      console.info(chalk.grey(`⏳ building: ${path.relative(process.cwd(), file)}`))
 
-      browseFy
+      b
         .bundle()
         .on('error', onError)
         .pipe(createStream(output))
+        .on('finish', () => {
+          console.info(chalk.green(`✓ built: ${path.relative(process.cwd(), file)}`))
+        })
     }
   })
 })
@@ -134,8 +147,8 @@ glob(srcPattern, function (err, files) {
 function onError (err) {
   console.error(chalk.red('✗ error:'), chalk.red(err.message))
   notifier.notify({
-    'title': 'Build failed:',
-    'message': err.message
+    title: 'Build failed:',
+    message: err.message
   })
   this.emit('end')
 
@@ -143,17 +156,4 @@ function onError (err) {
   if (!watchifyEnabled) {
     process.exit(1)
   }
-}
-
-/**
- * Checks if a file has been added to muted list.
- * This stops single changes from logging multiple times.
- * @param  {string}  id   Name of changed file
- * @param  {Array<string>}  list Muted files array
- * @return {Boolean}      True if file is muted
- */
-function isMuted (id, list) {
-  return list.reduce(function (prev, curr) {
-    return prev || (curr === id)
-  }, false)
 }

@@ -688,7 +688,6 @@ describe('src/Core', () => {
 
     it('should not upload if onBeforeUpload returned false', () => {
       const core = new Core({
-        autoProceed: false,
         onBeforeUpload: (files) => {
           for (var fileId in files) {
             if (files[fileId].name === '123.foo') {
@@ -994,7 +993,6 @@ describe('src/Core', () => {
   describe('checkRestrictions', () => {
     it('should enforce the maxNumberOfFiles rule', () => {
       const core = new Core({
-        autoProceed: false,
         restrictions: {
           maxNumberOfFiles: 1
         }
@@ -1025,7 +1023,6 @@ describe('src/Core', () => {
 
     it('should enforce the allowedFileTypes rule', () => {
       const core = new Core({
-        autoProceed: false,
         restrictions: {
           allowedFileTypes: ['image/gif', 'image/png']
         }
@@ -1047,7 +1044,6 @@ describe('src/Core', () => {
 
     it('should enforce the allowedFileTypes rule with file extensions', () => {
       const core = new Core({
-        autoProceed: false,
         restrictions: {
           allowedFileTypes: ['.gif', '.jpg', '.jpeg']
         }
@@ -1069,7 +1065,6 @@ describe('src/Core', () => {
 
     it('should enforce the maxFileSize rule', () => {
       const core = new Core({
-        autoProceed: false,
         restrictions: {
           maxFileSize: 1234
         }

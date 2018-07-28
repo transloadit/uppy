@@ -13,8 +13,8 @@ If your app uses a state management library such as [Redux](https://redux.js.org
 
 Uppy comes with two state management solutions (stores):
 
- - `DefaultStore`, a simple object-based store.
- - `ReduxStore`, a store that uses a key in a Redux store.
+ - `@uppy/store-default`, a simple object-based store.
+ - `@uppy/store-redux`, a store that uses a key in a Redux store.
 
 There are also some third-party stores:
 

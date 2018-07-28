@@ -68,7 +68,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: display data like image resolution on file cards #783
 - [ ] server: pass metadata to S3 `getKey` option, see https://github.com/transloadit/uppy/issues/689
 - [ ] core: I think there is a use case for having a single-use mode or something for Uppy, where pressing "Upload" locks it down (no new files can be added) and once the upload is finished it's just done. especially with the Form plugin
-- [] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
+- [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 - [ ] test: Add a prepublish test that checks if `npm pack` is not massive
 - [ ] Add release documentation. eg: test on transloadit website, check examples on the uppy.io website
 
@@ -77,16 +77,20 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 What we need to do to release Uppy 1.0
 
 - [ ] website: big release blog post
+- [ ] website: add 2 real world demos (avatar, form elements: github-comment-style-textarea)
 - [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
 - [ ] chore: remove dead code/commented blocks
+- [ ] chore: remove the not-working npm scripts
 - [ ] chore: rewrite all code based on prettier+standardjs.com
-- [ ] ~refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
+- [ ] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear
 - [ ] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
-- [ ] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
 - [ ] QA: add one integration test that uses a Provider (investigate if possible with a dedicated Google Drive API key for uppy server, so _with_ oauth dance) (@ife)
 - [ ] QA: add one integration test that uses more exotic (tus) options such as `useFastRemoteRetry` (@arturi)
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
+- [ ] dashboard: implement Alex' redesign (@arturi)
 - [ ] feature: basic React Native support (@arturi owner+ios, @ife android)
+- [ ] refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
+- [x] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
 - [x] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
 - [x] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
 - [x] docs: on using plugins, all options, list of plugins, i18n
@@ -111,7 +115,7 @@ What we need to do to release Uppy 1.0
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
 - [ ] core: figure out per-plugin locales and i18n strings packs #491
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 (@arturi)
+- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
 - [ ] test: add typescript with JSDoc (@arturi)
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
 - [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
@@ -122,7 +126,12 @@ What we need to do to release Uppy 1.0
 - [ ] core: look into utilizing https://github.com/que-etc/resize-observer-polyfill for responsive components. See also https://github.com/transloadit/uppy/issues/750
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
-- [ ] core: default `autoProceed` to `false`
+- [ ] core: default `autoProceed` to `false` (@arturi)
+- [x] website: list bundle sizes for each package on stats page (#962 / @goto-bus-stop)
+- [x] s3: Abort all chunk requests when aborting the multipart upload (#967 / @pekala)
+- [x] s3: Catch and handle errors in prepareUploadPart (#966 / @pekala)
+- [x] Split integration tests and add one using create-react-app (#952)
+- [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
 
 ## 0.26.0
 

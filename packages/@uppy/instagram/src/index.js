@@ -1,13 +1,13 @@
 const { Plugin } = require('@uppy/core')
-const { Provider } = require('@uppy/server-utils')
+const { Provider } = require('@uppy/companion-client')
 const ProviderViews = require('@uppy/provider-views')
 const { h } = require('preact')
 
 module.exports = class Instagram extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
-    this.type = 'acquirer'
     this.id = this.opts.id || 'Instagram'
+    Provider.initPlugin(this, opts)
     this.title = this.opts.title || 'Instagram'
     this.icon = () => (
       <svg aria-hidden="true" fill="#DE3573" width="28" height="28" viewBox="0 0 512 512">
@@ -19,21 +19,13 @@ module.exports = class Instagram extends Plugin {
 
     this[this.id] = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
+      serverHeaders: this.opts.serverHeaders,
       provider: 'instagram',
       authProvider: 'instagram'
     })
 
-    this.files = []
-
     this.onAuth = this.onAuth.bind(this)
     this.render = this.render.bind(this)
-
-    // set default options
-    const defaultOptions = {}
-
-    // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
-    this.opts.serverPattern = opts.serverPattern || opts.serverUrl
   }
 
   install () {

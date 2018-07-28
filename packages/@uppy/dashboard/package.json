@@ -36,7 +36,8 @@
     "lodash.throttle": "^4.1.1"
   },
   "devDependencies": {
-    "@uppy/core": "0.26.0"
+    "@uppy/core": "0.26.0",
+    "@uppy/google-drive": "0.26.0"
   },
   "peerDependencies": {
     "@uppy/core": "^0.26.0"

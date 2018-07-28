@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  uppy:
+    image: companion
+    build:
+      context: .
+      dockerfile: Dockerfile.test

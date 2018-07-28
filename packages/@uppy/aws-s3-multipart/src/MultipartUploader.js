@@ -150,6 +150,8 @@ class MultipartUploader {
       return result
     }).then(({ url }) => {
       this._uploadPartBytes(index, url)
+    }, (err) => {
+      this._onError(err)
     })
   }
 
@@ -245,6 +247,9 @@ class MultipartUploader {
   }
 
   _abortUpload () {
+    this.uploading.slice().forEach(xhr => {
+      xhr.abort()
+    })
     this.options.abortMultipartUpload({
       key: this.key,
       uploadId: this.uploadId

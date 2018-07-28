@@ -5,8 +5,7 @@ const MyCustomProvider = require('./MyCustomProvider')
 const Dashboard = require('@uppy/dashboard')
 
 const uppy = Uppy({
-  debug: true,
-  autoProceed: false
+  debug: true
 })
 
 uppy.use(GoogleDrive, {

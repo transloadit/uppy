@@ -1,13 +1,14 @@
 ---
 type: docs
-order: 34
+order: 60
 title: "Transloadit"
+module: "@uppy/transloadit"
 permalink: docs/transloadit/
 ---
 
-The Transloadit plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and more](https://transloadit.com/services/).
+The `@uppy/transloadit` plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and more](https://transloadit.com/services/).
 
-[Try it live](/examples/transloadit/)
+<a class="TryButton" href="/examples/transloadit/">Try it live</a>
 
 ```js
 const Transloadit = require('@uppy/transloadit')
@@ -32,6 +33,12 @@ This plugin is published as the `@uppy/transloadit` package.
 
 ```shell
 npm install @uppy/transloadit
+```
+
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const Transloadit = Uppy.Transloadit
 ```
 
 ## Properties

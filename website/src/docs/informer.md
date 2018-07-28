@@ -1,11 +1,12 @@
 ---
 type: docs
-order: 24
+order: 52
 title: "Informer"
+module: "@uppy/informer"
 permalink: docs/informer/
 ---
 
-The Informer is a pop-up bar for showing notifications. When plugins have some exciting news (or error) to share, they can show a notification here.
+The `@uppy/informer` plugin is a pop-up bar for showing notifications. When plugins have some exciting news (or error) to share, they can show a notification here.
 
 ```js
 const Informer = require('@uppy/informer')
@@ -15,7 +16,9 @@ uppy.use(Informer, {
 })
 ```
 
-[Try it live](/examples/dashboard/) - The Informer is included in the Dashboard by default.
+<a class="TryButton" href="/examples/dashboard/">Try it live</a>
+
+The Informer plugin is included in the Dashboard by default.
 
 ## Installation
 
@@ -23,19 +26,37 @@ uppy.use(Informer, {
 
 This plugin is published as the `@uppy/informer` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/informer
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const Informer = Uppy.Informer
+```
+
+## CSS
+
+The Informer plugin includes CSS a file for styling. If you use the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the Informer, because the Dashboard already includes it.
+
+The CSS file lives at `@uppy/informer/dist/style.css`. A minified version is at `@uppy/informer/dist/style.min.css`.
+
+Import one of these files into your project. The way to do this depends on your build system.
+
 ## Options
+
+The Informer plugin has the following configurable options:
 
 ### `id: 'Informer'`
 
-A unique identifier for this Informer. Defaults to `'Informer'`. Use this if you need multiple Informer instances.
+A unique identifier for this Informer. It defaults to `'Informer'`. Use this if you need multiple Informer instances.
 
 ### `target: null`
 
-DOM element, CSS selector, or plugin to mount the informer into.
+DOM element, CSS selector, or plugin to mount the Informer into.
 
 ### `typeColors: {}`
 
@@ -54,4 +75,4 @@ uppy.use(Informer, {
 
 ### `replaceTargetContent: false`
 
-Remove all children of the `target` element before mounting the Informer. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case you can set `replaceTargetContent: true` to clear the `target` before appending.
+Remove all children of the `target` element before mounting the Informer. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.

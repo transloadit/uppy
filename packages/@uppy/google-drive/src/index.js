@@ -1,18 +1,16 @@
 const { Plugin } = require('@uppy/core')
-const { Provider } = require('@uppy/server-utils')
+const { Provider } = require('@uppy/companion-client')
 const ProviderViews = require('@uppy/provider-views')
 const { h } = require('preact')
 
 module.exports = class GoogleDrive extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
-    this.type = 'acquirer'
     this.id = this.opts.id || 'GoogleDrive'
     this.title = this.opts.title || 'Google Drive'
-    this.icon = () =>
-      // <svg aria-hidden="true" class="UppyIcon" width="28" height="28" viewBox="0 0 16 16">
-      //   <path d="M2.955 14.93l2.667-4.62H16l-2.667 4.62H2.955zm2.378-4.62l-2.666 4.62L0 10.31l5.19-8.99 2.666 4.62-2.523 4.37zm10.523-.25h-5.333l-5.19-8.99h5.334l5.19 8.99z" />
-      // </svg>
+    Provider.initPlugin(this, opts)
+    this.title = this.opts.title || 'Google Drive'
+    this.icon = () => (
       <svg aria-hidden="true" width="18px" height="16px" viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
         <g fill-rule="evenodd">
           <polygon fill="#3089FC" points="6.32475 10.2 18 10.2 14.999625 15.3 3.324375 15.3" />
@@ -20,24 +18,17 @@ module.exports = class GoogleDrive extends Plugin {
           <polygon fill="#FFD024" points="11.838375 9.92402597 5.999625 0 12.000375 0 17.839125 9.92402597" />
         </g>
       </svg>
+    )
 
     this[this.id] = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
+      serverHeaders: this.opts.serverHeaders,
       provider: 'drive',
       authProvider: 'google'
     })
 
-    this.files = []
-
     this.onAuth = this.onAuth.bind(this)
     this.render = this.render.bind(this)
-
-    // set default options
-    const defaultOptions = {}
-
-    // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
-    this.opts.serverPattern = opts.serverPattern || opts.serverUrl
   }
 
   install () {

@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@uppy/provider-views": "0.26.0",
-    "@uppy/server-utils": "0.26.0",
+    "@uppy/companion-client": "0.26.0",
     "@uppy/utils": "0.26.0",
     "preact": "^8.2.9"
   },

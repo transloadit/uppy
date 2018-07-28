@@ -17,7 +17,7 @@
   @include reset-button;
   padding: 10px 15px;
   border: 1px solid $color-primary;
-  background-transition: all .3s;
+  transition: all .2s;
   font-size: 13px;
   color: $color-primary;
   cursor: pointer;

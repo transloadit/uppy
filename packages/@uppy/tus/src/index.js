@@ -1,6 +1,6 @@
 const { Plugin } = require('@uppy/core')
 const tus = require('tus-js-client')
-const { Provider, RequestClient, Socket } = require('@uppy/server-utils')
+const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')

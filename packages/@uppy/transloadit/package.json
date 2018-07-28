@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@uppy/provider-views": "0.26.0",
-    "@uppy/server-utils": "0.26.0",
+    "@uppy/companion-client": "0.26.0",
     "@uppy/tus": "0.26.0",
     "@uppy/utils": "0.26.0",
     "namespace-emitter": "^2.0.1",

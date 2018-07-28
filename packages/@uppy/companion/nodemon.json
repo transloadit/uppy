@@ -1,0 +1,13 @@
+{
+    "restartable": "rs",
+    "verbose": true,
+    "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "app:*",
+        "DEBUG_COLORS": true
+    },
+    "debug": true,
+    "watch": ["/app/", "/src/"],
+    "ext": "js dust html ejs css scss rb json htpasswd",
+    "exec": "node /app/lib/standalone/start-server.js"
+}

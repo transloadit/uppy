@@ -1,8 +1,8 @@
 ---
 title: "Redux"
 type: docs
-permalink: docs/redux
-order: 67
+permalink: docs/redux/
+order: 87
 ---
 
 Uppy supports popular [Redux](https://redux.js.org/) state management library in two ways:
@@ -22,7 +22,7 @@ const reducer = combineReducers({
 
 const uppy = Uppy({
   store: ReduxStore({
-    store: createStore(reducer) // That's a lot of stores!
+    store: createStore(reducer) // That’s a lot of stores!
   })
 })
 ```
@@ -37,7 +37,6 @@ const ReduxDevTools = require('@uppy/redux-dev-tools')
 
 const uppy = Uppy({
   debug: true,
-  autoProceed: false,
   meta: {
     username: 'John',
     license: 'Creative Commons'
