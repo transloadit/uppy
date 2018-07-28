@@ -14,7 +14,7 @@
   transition: height .2s;
 }
 
-  .uppy-Dashboard--wide .uppy-StatusBar {
+  .uppy-size--md .uppy-StatusBar {
     height: 45px;
     font-size: 14px;
   }
@@ -104,9 +104,11 @@
 }
 
 .uppy-StatusBar-status {
-  line-height: 1.35;
+  line-height: 1.5;
   font-weight: normal;
-  letter-spacing: 0.5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .uppy-StatusBar-statusPrimary {
@@ -116,10 +118,19 @@
 .uppy-StatusBar-statusSecondary {
   font-size: 11px;
   display: none;
+  color: rgba($color-asphalt-gray, 0.8);
+  max-width: 170px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+
+  .uppy-size--md & {
+    max-width: 500px;
+  }
 }
 
   .uppy-StatusBar--detailedProgress .uppy-StatusBar-statusSecondary {
-    display: inline;
+    display: inline-block;
   }
 
 .uppy-StatusBar-statusIndicator {
@@ -161,7 +172,7 @@
   color: $color-cornflower-blue;
 }
 
-  .uppy-Dashboard--wide .uppy-StatusBar-actionBtn {
+  .uppy-size--md .uppy-StatusBar-actionBtn {
     padding: 3px 5px;
   }
 
@@ -177,7 +188,7 @@
       background-color: darken($color-green, 10%);
     }
 
-    .uppy-Dashboard--wide .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+    .uppy-size--md .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
       padding: 16px 22px;
       width: auto;
     }

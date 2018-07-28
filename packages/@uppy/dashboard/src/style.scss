@@ -137,7 +137,7 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  min-height: 300px;
+  // min-height: 300px;
   position: relative;
   border-radius: 5px;
 
@@ -171,13 +171,6 @@
   cursor: pointer;
   color: rgba($color-white, 0.9);
   font-size: 27px;
-  // transition: all 0.3s;
-
-  // .uppy-Dashboard--wide & {
-  //   font-size: 35px;
-  //   top: -10px;
-  //   right: -35px;
-  // }
 
   @media #{$screen-medium} {
     font-size: 35px;
@@ -191,10 +184,6 @@
   }
 }
 
-// .uppy-Dashboard-close:hover {
-//   color: $color-cornflower-blue;
-// }
-
 .uppy-DashboarAddFiles {
   display: flex;
   justify-content: center;
@@ -206,21 +195,16 @@
   flex: 1;
 }
 
-
 .uppy-DashboardTabs {
   display: flex;
   flex-direction: column;
-  
-  // padding: 7px;
-  // border-bottom: 1px solid rgba($color-gray, 0.3);
-  // overflow-x: auto;
-  // -webkit-overflow-scrolling: touch;
+  justify-content: center;
+  width: 100%;
 
+  .uppy-size--md & {
+    align-items: center;
+  }
 }
-
-// .uppy-DashboardTabs[aria-hidden=true] {
-//   display: none;
-// }
 
 .uppy-DashboardTabs-title {
   font-size: 15px;
@@ -231,7 +215,7 @@
   text-align: center;
   color: $color-asphalt-gray;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     font-size: 17px;
     line-height: 40px;
   }
@@ -249,22 +233,31 @@
   }
 
 .uppy-DashboardTabs-list {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  // white-space: nowrap;
-  // text-align: center;
+  display: flex;
+  flex-direction: column;
+  max-height: 300px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  .uppy-size--md & {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 600px;
+    overflow-x: initial;
+  }
 }
 
 .uppy-DashboardTab {
-  width: 70px;
-  margin: 0 5px;
-  margin-bottom: 15px;
+  width: 100%;
   display: inline-block;
   text-align: center;
+  border-bottom: 1px solid rgba($color-gray, 0.2);
 
-  .uppy-Dashboard--wide & {
-    width: 90px;
+  .uppy-size--md & {
+    width: initial;
+    margin-bottom: 20px;
+    border-bottom: initial;
   }
 }
 
@@ -277,10 +270,30 @@
   -webkit-appearance: none;
   appearance: none;
   color: darken($color-gray, 25%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 14px 20px;
+  line-height: 1;
+
+  .uppy-size--md & {
+    width: 90px;
+    margin: 0 5px;
+    flex-direction: column;
+    padding: 0;
+  }
 }
 
   .uppy-DashboardTab-btn:hover {
     color: $color-cornflower-blue;
+  }
+
+  .uppy-DashboardTab-btn svg {
+    margin-right: 10px;
+
+    .uppy-size--md & {
+      margin-right: 0;
+    }
   }
 
   .uppy-DashboardTab-btn svg,
@@ -299,18 +312,20 @@
   }
 
 .uppy-DashboardTab-name {
-  font-size: 8px;
-  line-height: 11px;
-  margin-top: 8px;
-  margin-bottom: 0;
+  font-size: 14px;
+  // line-height: 14px;
+  // margin-top: 8px;
+  // margin-bottom: 0;
   font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  // overflow: hidden;
+  // text-overflow: ellipsis;
+  // white-space: nowrap;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     font-size: 11px;
     line-height: 14px;
+    margin-top: 8px;
+    margin-bottom: 0;
   }
 }
 
@@ -320,7 +335,7 @@
   height: 18px;
   vertical-align: middle;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     width: 27px;
     height: 27px;
   }
@@ -350,7 +365,7 @@
   background-color: $color-almost-white;
   padding: 0 10px;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     height: 50px;
     padding: 0 15px;
   }
@@ -362,7 +377,7 @@
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 40px;
   font-weight: normal;
   max-width: 170px;
@@ -371,7 +386,7 @@
   overflow-x: hidden;
   margin: auto;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     font-size: 14px;
     line-height: 50px;
     max-width: 300px;
@@ -385,7 +400,7 @@
   cursor: pointer;
   color: $color-cornflower-blue;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     font-size: 15px;
   }
 }
@@ -400,11 +415,15 @@
   width: 13px;
   height: 13px;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     width: 15px;
     height: 15px;
   }
 }
+
+  .uppy-DashboardContent-addMore svg {
+    vertical-align: text-top;
+  }
 
 .uppy-DashboardContent-panel {
   position: absolute;
@@ -424,7 +443,7 @@
   flex-direction: column;
   flex: 1;
 
-  // .uppy-Dashboard--wide & {
+  // .uppy-size--md & {
   //   padding-top: 50px;
   // }
 }
@@ -445,7 +464,7 @@
   flex-direction: column;
 
   // padding-top: 40px;
-  // .uppy-Dashboard--wide & {
+  // .uppy-size--md & {
   //   padding-top: 50px;
   // }
 }
@@ -531,7 +550,7 @@
   flex: 1;
 }
 
-  .uppy-Dashboard--wide .uppy-Dashboard-files {
+  .uppy-size--md .uppy-Dashboard-files {
     padding-top: 10px;
   }
 
@@ -555,10 +574,10 @@
   font-weight: 400;
   color: $color-asphalt-gray;
   margin: auto;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   padding: 0 15px;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     max-width: 400px;
     font-size: 27px;
     margin-bottom: 30px;
@@ -575,7 +594,7 @@
   left: 0;
   width: 100%;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     font-size: 16px;
   }
 }
@@ -623,19 +642,18 @@
   list-style: none;
   margin: 10px 0;
   position: relative;
-  // background-color: $color-white;
   display: flex;
   align-items: center;
   border-bottom: 1px solid lighten($color-gray, 35%);
   padding-bottom: 10px;
   padding-left: 10px;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     flex-direction: column;
     float: left;
     width: 140px;
     height: 170px;
-    margin: 5px 15px;
+    margin: 5px 20px;
     border: 0;
     background-color: initial;
     border-bottom: none;
@@ -653,7 +671,7 @@
   justify-content: center;
   align-items: center;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     width: 100%;
     height: 100px;
     border: 0;
@@ -674,9 +692,9 @@
   vertical-align: middle;
   width: 11px;
   height: 11px;
-  color: rgba($color-gray, 0.6);
+  color: rgba($color-gray, 0.85);
 
-  // .uppy-Dashboard--wide & {
+  // .uppy-size--md & {
   //   width: 10px;
   //   height: 10px;
   // }
@@ -704,7 +722,7 @@
   box-shadow: 0 0 2px 0 rgba($color-gray, 0.7);
   border-radius: 3px;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     box-shadow: 0 1px 3px rgba($color-black,.2);
   }
 }
@@ -750,7 +768,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     width: 25px;
     height: 25px;
   }
@@ -775,7 +793,7 @@
   position: relative;
   max-width: 65%;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     width: 100%;
     max-width: 100%;
     flex: 1;
@@ -799,7 +817,7 @@
   white-space: nowrap;
   overflow: hidden;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     word-break: break-all;
     white-space: normal;
     overflow: initial;
@@ -815,7 +833,7 @@
   font-size: 11px;
   line-height: 11px;
   font-weight: normal;
-  color: $color-gray;
+  color: darken($color-gray, 15%);
   margin-bottom: 4px;
 }
 
@@ -838,9 +856,9 @@
   height: 11px;
 }
 
-.uppy-DashboardItem-edit,
-.uppy-DashboardItem-copyLink,
-.uppy-DashboardItem-sourceIcon {
+.uppy-DashboardItem-edit:not(:first-child),
+.uppy-DashboardItem-copyLink:not(:first-child),
+.uppy-DashboardItem-sourceIcon:not(:first-child) {
   position: relative;
   margin-left: 14px;
   // margin-right: 7px;
@@ -860,7 +878,7 @@
 //   height: 11px;
 //   color: $color-asphalt-gray;
 
-//   .uppy-Dashboard--wide & {
+//   .uppy-size--md & {
 //     width: 12px;
 //     height: 12px;
 //   }
@@ -871,7 +889,7 @@
 //   height: 11px;
 //   color: $color-asphalt-gray;
 
-//   .uppy-Dashboard--wide & {
+//   .uppy-size--md & {
 //     width: 13px;
 //     height: 13px;
 //   }
@@ -883,7 +901,7 @@
   right: 10px;
   z-index: $zIndex-3;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     top: -8px;
     right: -8px;
   }
@@ -897,7 +915,7 @@
   height: 16px;
   opacity: 0.75;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     width: 20px;
     height: 20px;
   }
@@ -943,7 +961,7 @@
   opacity: 0.9;
   transition: all .35s ease;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     width: 55px;
     height: 55px;
   }
@@ -957,7 +975,7 @@
     width: 18px;
     height: 18px;
 
-    .uppy-Dashboard--wide & {
+    .uppy-size--md & {
       width: 28px;
       height: 28px;
     }
@@ -968,7 +986,7 @@
     height: 18px;
     opacity: 1;
 
-    .uppy-Dashboard--wide & {
+    .uppy-size--md & {
       width: 25px;
       height: 25px;
     }
@@ -986,7 +1004,7 @@
   width: 100%;
   text-shadow: 0 1px 0 rgba($color-black, 0.3);
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     display: block;
   }
 }
@@ -1107,7 +1125,7 @@
   background-color: $color-almost-white;
 }
 
-  .uppy-Dashboard--wide .uppy-Dashboard-actions {
+  .uppy-size--md .uppy-Dashboard-actions {
     height: 65px;
   }
 
@@ -1125,7 +1143,7 @@
   width: 50px;
   height: 50px;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     width: 60px;
     height: 60px;
   }
@@ -1149,7 +1167,7 @@
   line-height: 16px;
   font-size: 8px;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     width: 18px;
     height: 18px;
     line-height: 18px;
@@ -1189,7 +1207,7 @@
   flex: 1;
   // padding-top: 40px;
 
-  // .uppy-Dashboard--wide & {
+  // .uppy-size--md & {
   //   padding-top: 50px;
   // }
 }
@@ -1237,7 +1255,7 @@
   font-size: 12px;
   color: $color-asphalt-gray;
 
-  .uppy-Dashboard--wide & {
+  .uppy-size--md & {
     font-size: 13px;
   }
 }
