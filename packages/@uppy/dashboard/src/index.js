@@ -8,6 +8,7 @@ const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const prettyBytes = require('prettier-bytes')
+const throttle = require('lodash.throttle')
 const { defaultTabIcon } = require('./icons')
 
 // Some code for managing focus was adopted from https://github.com/ghosh/micromodal
@@ -159,6 +160,7 @@ module.exports = class Dashboard extends Plugin {
     this.handlePaste = this.handlePaste.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
     this.updateDashboardElWidth = this.updateDashboardElWidth.bind(this)
+    this.throttledUpdateDashboardElWidth = throttle(this.updateDashboardElWidth, 500, { leading: true, trailing: true })
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -430,7 +432,7 @@ module.exports = class Dashboard extends Plugin {
     })
 
     this.updateDashboardElWidth()
-    window.addEventListener('resize', this.updateDashboardElWidth)
+    window.addEventListener('resize', this.throttledUpdateDashboardElWidth)
 
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', (ev) => this.toggleAddFilesPanel(false))
@@ -608,6 +610,7 @@ module.exports = class Dashboard extends Plugin {
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
       currentWidth: pluginState.containerWidth,
       isWide: pluginState.containerWidth > 400,
+      containerWidth: pluginState.containerWidth,
       isTargetDOMEl: this.isTargetDOMEl,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles
