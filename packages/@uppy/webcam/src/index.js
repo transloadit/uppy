@@ -48,7 +48,9 @@ module.exports = class Webcam extends Plugin {
         smile: 'Smile!',
         takePicture: 'Take a picture',
         startRecording: 'Begin video recording',
-        stopRecording: 'Stop video recording'
+        stopRecording: 'Stop video recording',
+        allowAccessTitle: 'Please allow access to your camera',
+        allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.'
       }
     }
 
@@ -325,7 +327,9 @@ module.exports = class Webcam extends Plugin {
     const webcamState = this.getPluginState()
 
     if (!webcamState.cameraReady) {
-      return <PermissionsScreen icon={CameraIcon} />
+      return <PermissionsScreen
+        icon={CameraIcon}
+        i18n={this.i18n} />
     }
 
     return <CameraScreen
