@@ -1,8 +1,9 @@
-const getFileTypeIcon = require('./getFileTypeIcon')
+const getFileTypeIcon = require('../utils/getFileTypeIcon')
 const FilePreview = require('./FilePreview')
+const ignoreEvent = require('../utils/ignoreEvent.js')
 const { h, Component } = require('preact')
 
-module.exports = class FileCard extends Component {
+class FileCard extends Component {
   constructor (props) {
     super(props)
 
@@ -66,14 +67,14 @@ module.exports = class FileCard extends Component {
   }
 
   render () {
-    // if (!this.props.fileCardFor) {
-    //   return <div class="uppy-DashboardFileCard" aria-hidden />
-    // }
-
     const file = this.props.files[this.props.fileCardFor]
 
     return (
-      <div class="uppy-DashboardFileCard">
+      <div class="uppy-DashboardFileCard"
+        onDragOver={ignoreEvent}
+        onDragLeave={ignoreEvent}
+        onDrop={ignoreEvent}
+        onPaste={ignoreEvent}>
         <div class="uppy-DashboardContent-bar">
           <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
             {this.props.i18nArray('editing', {
@@ -106,3 +107,5 @@ module.exports = class FileCard extends Component {
     )
   }
 }
+
+module.exports = FileCard

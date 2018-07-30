@@ -1,10 +1,15 @@
 const { h } = require('preact')
+const ignoreEvent = require('../utils/ignoreEvent.js')
 
-const PanelContent = (props) => {
+function PanelContent (props) {
   return (
     <div class="uppy-DashboardContent-panel"
       role="tabpanel"
-      id={props.activePanel && `uppy-DashboardContent-panel--${props.activePanel.id}`}>
+      id={props.activePanel && `uppy-DashboardContent-panel--${props.activePanel.id}`}
+      onDragOver={ignoreEvent}
+      onDragLeave={ignoreEvent}
+      onDrop={ignoreEvent}
+      onPaste={ignoreEvent}>
       <div class="uppy-DashboardContent-bar">
         <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
           {props.i18n('importFrom', { name: props.activePanel.name })}
