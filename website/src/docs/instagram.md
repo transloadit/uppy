@@ -6,7 +6,7 @@ module: "@uppy/instagram"
 permalink: docs/instagram/
 ---
 
-The `@uppy/instagram` plugin lets users import files their Instagram account.
+The `@uppy/instagram` plugin lets users import files from their Instagram account.
 
 An Uppy Server instance is required for the `@uppy/instagram` plugin to work. Uppy Server handles authentication with Instagram, downloads the pictures and videos, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
@@ -26,6 +26,8 @@ uppy.use(Instagram, {
 
 This plugin is published as the `@uppy/instagram` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/instagram
 ```
@@ -38,6 +40,8 @@ const Instagram = Uppy.Instagram
 
 ## Options
 
+The Instagram plugin has the following configurable options:
+
 ```js
 uppy.use(Instagram, {
   target: Dashboard,
@@ -47,7 +51,7 @@ uppy.use(Instagram, {
 
 ### `id: 'Instagram'`
 
-A unique identifier for this plugin. Defaults to `'Instagram'`.
+A unique identifier for this plugin. It defaults to `'Instagram'`.
 
 ### `target: null`
 
@@ -67,7 +71,7 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Uppy Server](/docs/server) running on multiple hosts. Otherwise the default value should be good enough.
+This is useful when you have your [Uppy Server](/docs/server) running on multiple hosts. Otherwise, the default value should be good enough.
 
 ### `locale: {}`
 
