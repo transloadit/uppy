@@ -114,8 +114,6 @@
   background-color: $color-almost-white;
   max-width: 100%; /* no !important */
   max-height: 100%; /* no !important */
-  // width: 100%; /* no !important */
-  // height: 100%; /* no !important */
   min-width: 290px;
   min-height: 400px;
   outline: none;
@@ -137,13 +135,8 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  // min-height: 300px;
   position: relative;
   border-radius: 5px;
-
-  // @media #{$screen-medium} {
-  //   border-radius: 5px;
-  // }
 }
 
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
@@ -313,10 +306,8 @@
 
 .uppy-DashboardTab-name {
   font-size: 14px;
-  // line-height: 14px;
-  // margin-top: 8px;
-  // margin-bottom: 0;
   font-weight: 500;
+  // line-height: 14px;
   // overflow: hidden;
   // text-overflow: ellipsis;
   // white-space: nowrap;
@@ -351,9 +342,6 @@
 }
 
 .uppy-DashboardContent-bar {
-  // position: absolute;
-  // top: 0;
-  // left: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -431,21 +419,13 @@
   bottom: 0;
   left: 0;
   right: 0;
-  // transform: translate3d(0, -105%, 0);
-  // transition: transform 0.2s ease-in-out;
   background-color: darken($color-white, 4%);
-  // box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
-  // padding-top: 40px;
   overflow: hidden;
   z-index: $zIndex-5;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
   flex: 1;
-
-  // .uppy-size--md & {
-  //   padding-top: 50px;
-  // }
 }
 
 .uppy-Dashboard-AddFilesPanel {
@@ -462,21 +442,16 @@
   border-radius: 5px;
   display: flex;
   flex-direction: column;
-
-  // padding-top: 40px;
-  // .uppy-size--md & {
-  //   padding-top: 50px;
-  // }
 }
 
   .uppy-Dashboard--isAddFilesPanelVisible .uppy-Dashboard-files {
     filter: blur(2px);
   }
 
-.uppy-Dashboard-AddFilesPanel[aria-hidden=true],
-.uppy-DashboardContent-panel[aria-hidden=true] {
-  // transform: translate3d(0, 0, 0);
-}
+// .uppy-Dashboard-AddFilesPanel[aria-hidden=true],
+// .uppy-DashboardContent-panel[aria-hidden=true] {
+//   transform: translate3d(0, 0, 0);
+// }
 
 // Progress bar placeholder
 
@@ -542,11 +517,6 @@
   padding: 0 0 10px 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  // position: absolute;
-  // top: 0;
-  // left: 0;
-  // right: 0;
-  // bottom: 0;
   flex: 1;
 }
 
@@ -611,17 +581,9 @@
   padding-right: 2px;
 }
 
-  // .uppy-Dashboard--modal .uppy-Dashboard-poweredBy {
-  //   color: rgba($color-white, 0.7);
-  // }
-
 .uppy-Dashboard-poweredByUppy {
   color: $color-gray;
 }
-
-  // .uppy-Dashboard--modal .uppy-Dashboard-poweredByUppy {
-  //   color: $color-white;
-  // }
 
 .uppy-Dashboard-poweredByIcon {
   stroke: $color-gray;
@@ -632,11 +594,6 @@
   top: 1px;
   opacity: 0.9;
 }
-
-  // .uppy-Dashboard--modal .uppy-Dashboard-poweredByIcon {
-  //   stroke: transparent;
-  //   fill: $color-uppy-pink;
-  // }
 
 .uppy-DashboardItem {
   list-style: none;
@@ -693,11 +650,6 @@
   width: 11px;
   height: 11px;
   color: rgba($color-gray, 0.85);
-
-  // .uppy-size--md & {
-  //   width: 10px;
-  //   height: 10px;
-  // }
 }
 
 .uppy-DashboardItem-sourceIcon svg,
@@ -788,7 +740,6 @@
 }
 
 .uppy-DashboardItem-info {
-  // padding: 10px 19px 0 25px;
   padding-left: 15px;
   position: relative;
   max-width: 65%;
@@ -798,9 +749,6 @@
     max-width: 100%;
     flex: 1;
     padding: 8px 3px 0 3px;
-    // border-bottom-left-radius: 6px;
-    // border-bottom-right-radius: 6px;
-    // border: 1px solid rgba($color-gray, 0.2);
     border-top: 0;
   }
 }
@@ -872,28 +820,6 @@
     font-weight: 700;
   }
 }
-
-// .uppy-DashboardItem-edit svg {
-//   width: 11px;
-//   height: 11px;
-//   color: $color-asphalt-gray;
-
-//   .uppy-size--md & {
-//     width: 12px;
-//     height: 12px;
-//   }
-// }
-
-// .uppy-DashboardItem-copyLink .UppyIcon {
-//   width: 11px;
-//   height: 11px;
-//   color: $color-asphalt-gray;
-
-//   .uppy-size--md & {
-//     width: 13px;
-//     height: 13px;
-//   }
-// }
 
 .uppy-DashboardItem-action {
   position: absolute;
@@ -1205,11 +1131,6 @@
   flex-direction: column;
   height: 100%;
   flex: 1;
-  // padding-top: 40px;
-
-  // .uppy-size--md & {
-  //   padding-top: 50px;
-  // }
 }
 
 .uppy-DashboardFileCard-preview {

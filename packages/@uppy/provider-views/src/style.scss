@@ -15,14 +15,12 @@
   align-items: center;
   justify-content: center;
   flex-flow: column wrap;
-  // height: 100%;
   flex: 1;
 }
 
 .uppy-Provider-authIcon svg {
   width: 100px;
   height: 75px;
-  // color: rgba($color-asphalt-gray, 0.3);
   margin-bottom: 15px;
 }
 
@@ -242,10 +240,6 @@
 .uppy-ProviderBrowser-viewType--list {
   background-color: $color-white;
 
-  .uppy-ProviderBrowser-list {
-    // padding-top: 6px;
-  }
-
   .uppy-ProviderBrowserItem {
     display: flex;
     padding: 10px 15px;
@@ -264,13 +258,11 @@
     }
 
   .uppy-ProviderBrowserItem-inner {
-    // max-width: 80%;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     text-align: left;
     line-height: 1.4;
-    // vertical-align: top;
   }
 
   .uppy-ProviderBrowserItem-inner img,
@@ -322,16 +314,18 @@
     // }
 
   .uppy-ProviderBrowserItem-inner {
-    // width: 100%;
-    // height: 100%;
     border-radius: 4px;
     overflow: hidden;
-    // border: 2px solid transparent;
     position: absolute;
     top: 7px;
     left: 7px;
     right: 7px;
     bottom: 7px;
+  }
+
+  .uppy-ProviderBrowserItem-inner:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($color-cornflower-blue, 0.9);
   }
 
   .uppy-ProviderBrowserItem img,
@@ -427,7 +421,6 @@
   border: 1px solid $color-cornflower-blue;
   background-color: $color-white;
   border-radius: 2px;
-  // border-radius: 50%;
 }
 
 // Inner checkbox
