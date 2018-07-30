@@ -51,6 +51,10 @@ uppy.use(GoogleDrive, {
 
 A unique identifier for this plugin. It defaults to `'GoogleDrive'`.
 
+### `title: 'Google Drive'`
+
+Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Google Drive'`.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the Google Drive provider into. This should normally be the the [`@uppy/dashboard`](/docs/dashboard) plugin.
