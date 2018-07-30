@@ -59,7 +59,7 @@ DOM element, CSS selector, or plugin to mount the progress bar into.
 
 ### `fixed: false`
 
-When true, show the progress bar at the top of the page with `position: fixed`. When false, show the progress bar inline wherever it is mounted.
+When set to true, show the progress bar at the top of the page with `position: fixed`. When set to false, show the progress bar inline wherever it is mounted.
 
 ```js
 uppy.use(ProgressBar, {
@@ -70,7 +70,7 @@ uppy.use(ProgressBar, {
 
 ### `hideAfterFinish: true`
 
-When true, hides the progress bar after the upload has finished. If false, it remains visible.
+When set to true, hides the progress bar after the upload has finished. If set to false, it remains visible.
 
 ### `replaceTargetContent: false`
 
