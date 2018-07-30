@@ -47,6 +47,10 @@ uppy.use(Dropbox, {
 
 A unique identifier for this plugin. Defaults to `'Dropbox'`.
 
+### `title: 'Dropbox'`
+
+Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Dropbox'`.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the Dropbox provider into. This should normally be the Dashboard.

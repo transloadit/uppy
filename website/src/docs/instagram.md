@@ -49,6 +49,10 @@ uppy.use(Instagram, {
 
 A unique identifier for this plugin. Defaults to `'Instagram'`.
 
+### `title: 'Instagram'`
+
+Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Instagram'`.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the Instagram provider into. This should normally be the Dashboard.

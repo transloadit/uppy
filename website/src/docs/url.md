@@ -48,6 +48,10 @@ uppy.use(Url, {
 
 A unique identifier for this plugin. Defaults to `'Url'`.
 
+### `title: 'Link'`
+
+Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Link'`.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the Url provider into. This should normally be the Dashboard.

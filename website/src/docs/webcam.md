@@ -60,6 +60,10 @@ uppy.use(Webcam, {
 
 A unique identifier for this plugin. It defaults to `'Webcam'`.
 
+### `title: 'Camera'`
+
+Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Camera'`.
+
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount Webcam into.

@@ -230,6 +230,8 @@ strings: {
   editFile: 'Edit file',
   // Shown in the panel header for the metadata editor. Rendered as "Editing image.png".
   editing: 'Editing %{file}',
+  // Text for a button shown on the file preview, used to edit file metadata
+  edit: 'Edit',
   // Used as the screen reader label for the button that saves metadata edits and returns to the
   // file list view.
   finishEditingFile: 'Finish editing file',
@@ -238,7 +240,7 @@ strings: {
   // Shown in the main dashboard area when no files have been selected, and one or more
   // remote provider plugins are in use. %{browse} is replaced with a link that opens the system
   // file selection dialog.
-  dropPasteImport: 'Drop files here, paste, import from one of the locations above or %{browse}',
+  dropPasteImport: 'Drop files here, paste, %{browse} or import from',
   // Shown in the main dashboard area when no files have been selected, and no provider
   // plugins are in use. %{browse} is replaced with a link that opens the system
   // file selection dialog.
@@ -254,6 +256,12 @@ strings: {
   pauseUpload: 'Pause upload',
   // Used as the hover text and screen reader label for the buttons to retry failed uploads.
   retryUpload: 'Retry upload',
+
+  // Used in a title, how many files are currently selected
+  xFilesSelected: {
+    0: '%{smart_count} file selected',
+    1: '%{smart_count} files selected'
+  },
 
   // @uppy/status-bar strings:
   uploading: 'Uploading',
