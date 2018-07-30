@@ -24,6 +24,8 @@ uppy.use(GoogleDrive, {
 
 This plugin is published as the `@uppy/google-drive` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/google-drive
 ```
@@ -36,6 +38,8 @@ const GoogleDrive = Uppy.GoogleDrive
 
 ## Options
 
+The Google Drive plugin has the following configurable options:
+
 ```js
 uppy.use(GoogleDrive, {
   target: Dashboard,
@@ -45,7 +49,7 @@ uppy.use(GoogleDrive, {
 
 ### `id: 'GoogleDrive'`
 
-A unique identifier for this plugin. Defaults to `'GoogleDrive'`.
+A unique identifier for this plugin. It defaults to `'GoogleDrive'`.
 
 ### `target: null`
 
@@ -65,7 +69,7 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Uppy Server](/docs/server) running on multiple hosts. Otherwise the default value should be good enough.
+This is useful when you have your [Uppy Server](/docs/server) running on multiple hosts. Otherwise, the default value should be good enough.
 
 ### `locale: {}`
 
