@@ -1,4 +1,4 @@
-const { iconText, iconAudio, iconVideo, iconPDF } = require('./icons')
+const { iconText, iconAudio, iconVideo, iconPDF } = require('../components/icons')
 
 module.exports = function getIconByMime (fileType) {
   const defaultChoice = {

@@ -1,7 +1,7 @@
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const dragDrop = require('drag-drop')
-const DashboardUI = require('./Dashboard')
+const DashboardUI = require('./components/Dashboard')
 const StatusBar = require('@uppy/status-bar')
 const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
@@ -9,7 +9,7 @@ const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const prettyBytes = require('prettier-bytes')
 const throttle = require('lodash.throttle')
-const { defaultTabIcon } = require('./icons')
+const { defaultTabIcon } = require('./components/icons')
 
 // Some code for managing focus was adopted from https://github.com/ghosh/micromodal
 // MIT licence, https://github.com/ghosh/micromodal/blob/master/LICENSE.md
