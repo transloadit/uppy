@@ -120,5 +120,9 @@ strings: {
   // Used as the label for the button that stops a video recording.
   // This is not visibly rendered but is picked up by screen readers.
   stopRecording: 'Stop video recording',
+  // Title on the “allow access” screen
+  allowAccessTitle: 'Please allow access to your camera',
+  // Description on the “allow access” screen
+  allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.'
 }
 ```
