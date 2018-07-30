@@ -289,10 +289,6 @@ module.exports = class Dashboard extends Plugin {
   }
 
   openModal () {
-    this.setPluginState({
-      isHidden: false
-    })
-
     // save scroll position
     this.savedScrollPosition = window.scrollY
     // save active element, so we can restore focus when modal is closed
@@ -300,6 +296,20 @@ module.exports = class Dashboard extends Plugin {
 
     if (this.opts.disablePageScrollWhenModalOpen) {
       document.body.classList.add('uppy-Dashboard-isFixed')
+    }
+
+    if (this.opts.animateOpenClose && this.getPluginState().isClosing) {
+      const handler = () => {
+        this.setPluginState({
+          isHidden: false
+        })
+        this.el.removeEventListener('animationend', handler, false)
+      }
+      this.el.addEventListener('animationend', handler, false)
+    } else {
+      this.setPluginState({
+        isHidden: false
+      })
     }
 
     if (this.opts.browserBackButtonClose) {
@@ -453,6 +463,8 @@ module.exports = class Dashboard extends Plugin {
 
   updateDashboardElWidth () {
     const dashboardEl = this.el.querySelector('.uppy-Dashboard-inner')
+    if (!dashboardEl) return
+
     this.uppy.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
     this.setPluginState({
