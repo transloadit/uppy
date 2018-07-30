@@ -179,24 +179,25 @@ module.exports = class Url extends Plugin {
   }
 
   handlePaste (e) {
-    if (e.clipboardData.items) {
-      const items = toArray(e.clipboardData.items)
-
-      // When a file is pasted, it appears as two items: file name string, then
-      // the file itself; Url then treats file name string as URL, which is wrong.
-      // This makes sure Url ignores paste event if it contains an actual file
-      const hasFiles = items.filter(item => item.kind === 'file').length > 0
-      if (hasFiles) return
-
-      items.forEach((item) => {
-        if (item.kind === 'string' && item.type === 'text/plain') {
-          item.getAsString((url) => {
-            this.uppy.log(`[URL] Adding file from pasted url: ${url}`)
-            this.addFile(url)
-          })
-        }
-      })
+    if (!e.clipboardData.items) {
+      return
     }
+    const items = toArray(e.clipboardData.items)
+
+    // When a file is pasted, it appears as two items: file name string, then
+    // the file itself; Url then treats file name string as URL, which is wrong.
+    // This makes sure Url ignores paste event if it contains an actual file
+    const hasFiles = items.filter(item => item.kind === 'file').length > 0
+    if (hasFiles) return
+
+    items.forEach((item) => {
+      if (item.kind === 'string' && item.type === 'text/plain') {
+        item.getAsString((url) => {
+          this.uppy.log(`[URL] Adding file from pasted url: ${url}`)
+          this.addFile(url)
+        })
+      }
+    })
   }
 
   render (state) {
