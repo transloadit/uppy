@@ -13,6 +13,10 @@ const PreactCSSTransitionGroup = require('preact-css-transition-group')
 // https://github.com/ghosh/micromodal
 
 module.exports = function Dashboard (props) {
+  // if (!props.inline && props.modal.isHidden) {
+  //   return <span />
+  // }
+
   const noFiles = props.totalFileCount === 0
   const dashboardClassName = classNames(
     { 'uppy-Root': props.isTargetDOMEl },
