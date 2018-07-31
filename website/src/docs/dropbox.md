@@ -38,7 +38,7 @@ const Dropbox = Uppy.Dropbox
 
 ## Options
 
-The Dropbox plugin has the following configurable options:
+The `@uppy/dropbox` plugin has the following configurable options:
 
 ```js
 uppy.use(Dropbox, {
