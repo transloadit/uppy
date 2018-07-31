@@ -40,7 +40,7 @@ const Informer = Uppy.Informer
 
 ## CSS
 
-The Informer plugin includes CSS a file for styling. If you use the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the Informer, because the Dashboard already includes it.
+The `@uppy/informer` plugin includes CSS a file for styling. If you use the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the Informer, because the Dashboard already includes it.
 
 The CSS file lives at `@uppy/informer/dist/style.css`. A minified version is at `@uppy/informer/dist/style.min.css`.
 
@@ -48,11 +48,11 @@ Import one of these files into your project. The way to do this depends on your 
 
 ## Options
 
-The Informer plugin has the following configurable options:
+The `@uppy/informer` plugin has the following configurable options:
 
 ### `id: 'Informer'`
 
-A unique identifier for this Informer. It defaults to `'Informer'`. Use this if you need multiple Informer instances.
+A unique identifier for this plugin. It defaults to `'Informer'`. Use this if you need multiple Informer instances.
 
 ### `target: null`
 
