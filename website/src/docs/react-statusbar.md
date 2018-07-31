@@ -10,6 +10,8 @@ The `<StatusBar />` component wraps the [`@uppy/status-bar`][] plugin.
 
 ## Installation
 
+Install from NPM:
+
 ```shell
 npm install @uppy/react
 ```
