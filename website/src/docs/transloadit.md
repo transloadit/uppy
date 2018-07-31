@@ -68,7 +68,7 @@ uppy.use(Dropbox, {
 
 ## Options
 
-The Transloadit plugin has the following configurable options:
+The `@uppy/transloadit` plugin has the following configurable options:
 
 ### `id: 'Transloadit'`
 
