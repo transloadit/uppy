@@ -34,6 +34,8 @@ const AwsS3Multipart = Uppy.AwsS3Multipart
 
 ## Options
 
+The `@uppy/aws-s3-multipart` plugin has the following configurable options:
+
 ### limit: 0
 
 The maximum amount of chunks to upload simultaneously. Set to `0` to disable limiting.
