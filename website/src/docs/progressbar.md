@@ -39,7 +39,7 @@ const ProgressBar = Uppy.ProgressBar
 
 ## Options
 
-The Progressbar plugin has the following configurable options:
+The `@uppy/progress-bar` plugin has the following configurable options:
 
 ```js
 uppy.use(ProgressBar, {
