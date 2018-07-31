@@ -6,9 +6,9 @@ module: "@uppy/url"
 permalink: docs/url/
 ---
 
-The `@uppy/url` plugin lets users import files from the Internet. Paste any URL and it'll be added!
+The `@uppy/url` plugin allows users to import files from the internet. Paste any URL and it will be added!
 
-An Uppy Server instance is required for the `@uppy/url` plugin to work. Uppy Server will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps avoid CORS restrictions.
+An Uppy Server instance is required for the `@uppy/url` plugin to work. Uppy Server will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps to avoid CORS restrictions.
 
 ```js
 const Url = require('@uppy/url')
@@ -24,6 +24,8 @@ uppy.use(Url, {
 
 This plugin is published as the `@uppy/url` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/url
 ```
@@ -36,6 +38,8 @@ const Url = Uppy.Url
 
 ## Options
 
+The `@uppy/url` plugin has the following configurable options:
+
 ```js
 uppy.use(Url, {
   target: Dashboard,
@@ -46,15 +50,15 @@ uppy.use(Url, {
 
 ### `id: 'Url'`
 
-A unique identifier for this plugin. Defaults to `'Url'`.
+A unique identifier for this plugin. It defaults to `'Url'`.
 
 ### `title: 'Link'`
 
-Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Link'`.
+Configures the title / name shown in the UI, for instance, on Dashboard tabs. It defaults to `'Link'`.
 
 ### `target: null`
 
-DOM element, CSS selector, or plugin to mount the Url provider into. This should normally be the Dashboard.
+DOM element, CSS selector, or plugin to mount the URL provider into. This should normally be the Dashboard.
 
 ### `serverUrl: null`
 
