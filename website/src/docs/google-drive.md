@@ -38,7 +38,7 @@ const GoogleDrive = Uppy.GoogleDrive
 
 ## Options
 
-The Google Drive plugin has the following configurable options:
+The `@uppy/google-drive` plugin has the following configurable options:
 
 ```js
 uppy.use(GoogleDrive, {
@@ -53,7 +53,7 @@ A unique identifier for this plugin. It defaults to `'GoogleDrive'`.
 
 ### `title: 'Google Drive'`
 
-Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Google Drive'`.
+Configures the title / name shown in the UI, for instance, on Dashboard tabs. It defaults to `'Google Drive'`.
 
 ### `target: null`
 
