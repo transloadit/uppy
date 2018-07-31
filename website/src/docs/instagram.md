@@ -40,7 +40,7 @@ const Instagram = Uppy.Instagram
 
 ## Options
 
-The Instagram plugin has the following configurable options:
+The `@uppy/instagram` plugin has the following configurable options:
 
 ```js
 uppy.use(Instagram, {
@@ -55,7 +55,7 @@ A unique identifier for this plugin. It defaults to `'Instagram'`.
 
 ### `title: 'Instagram'`
 
-Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Instagram'`.
+Configures the title / name shown in the UI, for instance, on Dashboard tabs. It defaults to `'Instagram'`.
 
 ### `target: null`
 
