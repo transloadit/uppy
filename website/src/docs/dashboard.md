@@ -81,7 +81,7 @@ uppy.use(Dashboard, {
 
 ### `id: 'Dashboard'`
 
-A unique identifier for this Dashboard. It defaults to `'Dashboard'`, but you can change this if you need multiple Dashboard instances.
+A unique identifier for this plugin. It defaults to `'Dashboard'`, but you can change this if you need multiple Dashboard instances.
 Plugins that are added by the Dashboard get unique IDs based on this ID, like `'Dashboard:StatusBar'` and `'Dashboard:Informer'`.
 
 ### `target: 'body'`
