@@ -38,7 +38,7 @@ const Webcam = Uppy.Webcam
 
 ## Options
 
-The Webcam plugin has the following configurable options:
+The `@uppy/webcam` plugin has the following configurable options:
 
 ```js
 uppy.use(Webcam, {
@@ -62,7 +62,7 @@ A unique identifier for this plugin. It defaults to `'Webcam'`.
 
 ### `title: 'Camera'`
 
-Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Camera'`.
+Configures the title / name shown in the UI, for instance, on Dashboard tabs. It defaults to `'Camera'`.
 
 ### `target: null`
 
