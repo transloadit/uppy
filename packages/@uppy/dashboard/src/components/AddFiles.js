@@ -19,18 +19,21 @@ class AddFiles extends Component {
   }
 
   render () {
-    const isHidden = Object.keys(this.props.files).length === 0
+    // const isHidden = Object.keys(this.props.files).length === 0
     const hasAcquirers = this.props.acquirers.length !== 0
 
     if (!hasAcquirers) {
       return (
-        <div class="uppy-DashboardTabs" aria-hidden={isHidden}>
-          <div class="uppy-DashboardTabs-title">
+        <div class="uppy-DashboarAddFiles">
+          <div class="uppy-DashboardTabs">
             <ActionBrowseTagline
               acquirers={this.props.acquirers}
               handleInputChange={this.props.handleInputChange}
               i18n={this.props.i18n}
-              i18nArray={this.props.i18nArray} />
+              i18nArray={this.props.i18nArray}
+              allowedFileTypes={this.props.allowedFileTypes}
+              maxNumberOfFiles={this.props.maxNumberOfFiles}
+            />
           </div>
         </div>
       )

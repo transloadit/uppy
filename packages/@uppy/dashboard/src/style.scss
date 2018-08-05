@@ -231,6 +231,7 @@
   max-height: 300px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  margin-top: 10px;
 
   .uppy-size--md & {
     flex-direction: row;
@@ -238,6 +239,7 @@
     justify-content: center;
     max-width: 600px;
     overflow-x: initial;
+    margin-top: 30px;
   }
 }
 
@@ -544,13 +546,13 @@
   font-weight: 400;
   color: $color-asphalt-gray;
   margin: auto;
-  margin-bottom: 10px;
+  // margin-bottom: 10px;
   padding: 0 15px;
 
   .uppy-size--md & {
     max-width: 400px;
     font-size: 27px;
-    margin-bottom: 30px;
+    // margin-bottom: 30px;
   }
 }
 
