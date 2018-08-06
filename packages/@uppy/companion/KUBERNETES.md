@@ -1,6 +1,6 @@
-### Run uppy-server on kuberenetes
+### Run companion on kuberenetes
 
-You can use our docker container to run uppy-server on kubernetes with the following configuration.
+You can use our docker container to run companion on kubernetes with the following configuration.
 ```bash
 kubectl create ns uppy
 ```
@@ -13,7 +13,7 @@ We will need a Redis container that we can get through [helm](https://github.com
     stable/redis
 ```
 
-> uppy-server-env.yml
+> companion-env.yml
 ```yaml
 apiVersion: v1
 data:
@@ -38,17 +38,17 @@ data:
   UPPYSERVER_UPLOAD_URLS: "http://master.tus.io/files/,https://master.tus.io/files/"
 kind: Secret
 metadata:
-  name: uppy-server-env
+  name: companion-env
   namespace: uppy
 type: Opaque
 ```
 
-> uppy-server-deployment.yml
+> companion-deployment.yml
 ```yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: uppy-server
+  name: companion
   namespace: uppy
 spec:
   replicas: 2
@@ -61,12 +61,12 @@ spec:
   template:
     metadata:
       labels:
-        app: uppy-server
+        app: companion
     spec:
       containers:
-      - image: docker.io/transloadit/uppy-server:latest
+      - image: docker.io/transloadit/companion:latest
         imagePullPolicy: ifNotPresent
-        name: uppy-server        
+        name: companion        
         resources:
           limits:
             memory: 150Mi
@@ -74,26 +74,26 @@ spec:
             memory: 100Mi
         envFrom:
         - secretRef:
-            name: uppy-server-env
+            name: companion-env
         ports:
         - containerPort: 3020
         volumeMounts:
-        - name: uppy-server-data
-          mountPath: /mnt/uppy-server-data
+        - name: companion-data
+          mountPath: /mnt/companion-data
       volumes:
-      - name: uppy-server-data
+      - name: companion-data
         emptyDir: {}
 ```
 
-`kubectl apply -f uppy-server-deployment.yml`
+`kubectl apply -f companion-deployment.yml`
 
-> uppy-server-service.yml
+> companion-service.yml
 
 ```yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: uppy-server
+  name: companion
   namespace: uppy
 spec:
   ports:
@@ -101,10 +101,10 @@ spec:
     targetPort: 3020
     protocol: TCP
   selector:
-    app: uppy-server
+    app: companion
 ```
 
-`kubectl apply -f uppy-server-service.yml`
+`kubectl apply -f companion-service.yml`
 
 ## Logging
 

@@ -1,10 +1,10 @@
-# uppy-server
+# Companion
 
 <img src="http://uppy.io/images/logos/uppy-dog-full.svg" width="120" alt="Uppy logo — a superman puppy in a pink suit" align="right">
 
-[![Build Status](https://travis-ci.org/transloadit/uppy-server.svg?branch=master)](https://travis-ci.org/transloadit/uppy-server)
+[![Build Status](https://travis-ci.org/transloadit/uppy.svg?branch=master)](https://travis-ci.org/transloadit/uppy)
 
-Uppy-server is a server integration for [Uppy](https://github.com/transloadit/uppy) file uploader.
+Companion is a server integration for [Uppy](https://github.com/transloadit/uppy) file uploader.
 
 It handles the server-to-server communication between your server and file storage providers such as Google Drive, Dropbox,
 Instagram, etc. [See here for full documentation](https://uppy.io/docs/server/)
@@ -12,12 +12,12 @@ Instagram, etc. [See here for full documentation](https://uppy.io/docs/server/)
 ## Install
 
 ```bash
-npm install uppy-server
+npm install @uppy/companion
 ```
 
 ## Usage
 
-Uppy-server may either be used as pluggable express app, which you plug to your already existing server, or it may simply be run as a standalone server:
+companion may either be used as pluggable express app, which you plug to your already existing server, or it may simply be run as a standalone server:
 
 ### Plug to already existing server
 
@@ -26,7 +26,7 @@ Uppy-server may either be used as pluggable express app, which you plug to your 
 var express = require('express')
 var bodyParser = require('body-parser')
 var session = require('express-session')
-var uppy = require('uppy-server')
+var uppy = require('@uppy/companion')
 
 var app = express()
 app.use(bodyParser.json())
@@ -62,10 +62,10 @@ uppy.socket(server, options)
 ```
 
 ### Run as standalone server
-Please ensure that the required env variables are set before runnning/using uppy-server as a standalone server. [See](https://uppy.io/docs/server/#Configure-Standalone).
+Please ensure that the required env variables are set before runnning/using companion as a standalone server. [See](https://uppy.io/docs/server/#Configure-Standalone).
 
 ```bash
-$ uppy-server
+$ companion
 ```
 
 If you cloned the repo from gtihub and want to run it as a standalone server, you may also run the following command from within its
@@ -77,7 +77,7 @@ npm start
 
 ### Run as a serverless function
 
-Uppy-server can be deployed as a serverless function to AWS Lambda or other cloud providers through `serverless`. Check [this guide](https://serverless.com/framework/docs/getting-started/) to get started.
+Companion can be deployed as a serverless function to AWS Lambda or other cloud providers through `serverless`. Check [this guide](https://serverless.com/framework/docs/getting-started/) to get started.
 
 After you have cloned the repo go inside `examples/serverless`:
 ```
