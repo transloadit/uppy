@@ -44,8 +44,8 @@ pushd "${__root}" > /dev/null 2>&1
       echo "On Travis (TRAVIS is '${TRAVIS}'), I'm not pushing releases to the CDN for pull requests (TRAVIS_PULL_REQUEST is '${TRAVIS_PULL_REQUEST}')"
       exit 0
     fi
-    if [ -z "${TRAVIS_TAG:-}" ]; then
-      echo "On Travis (TRAVIS is '${TRAVIS}'), I'm only pushing releases to the CDN when a tag is being built (TRAVIS_TAG is '${TRAVIS_TAG}')"
+    if [[ ! "$TRAVIS_COMMIT" =~ ^Release* ]]; then
+      echo "On Travis (TRAVIS is '${TRAVIS}'), I'm not pushing releases to the CDN unless commit message starts with 'Release' (TRAVIS_COMMIT is '${TRAVIS_COMMIT}')"
       exit 0
     fi
   fi
