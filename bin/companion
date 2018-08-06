@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-sh ../env.sh
+. ./env.sh
 
 env \
   UPPYSERVER_DATADIR="./output" \
