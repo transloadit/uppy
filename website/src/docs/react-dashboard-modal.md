@@ -9,6 +9,8 @@ The `<DashboardModal />` component wraps the [`@uppy/dashboard`][] plugin, allow
 
 ## Installation
 
+Install from NPM:
+
 ```shell
 npm install @uppy/react
 ```
@@ -30,7 +32,7 @@ On top of all the [`@uppy/dashboard`][] options, the `<DashboardModal />` plugin
 To use other plugins like [`@uppy/webcam`][] with the `<DashboardModal />` component, add them to the Uppy instance and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
 ```js
-// Do this wherever you initialize Uppy, eg. in a React component's constructor method.
+// Do this wherever you initialize Uppy, e.g., in a React component's constructor method.
 // Do NOT do it in `render()` or any other method that is called more than once!
 uppy.use(Webcam) // `id` defaults to "Webcam"
 uppy.use(Webcam, { id: 'MyWebcam' }) // `id` is… "MyWebcam"
@@ -38,7 +40,7 @@ uppy.use(Webcam, { id: 'MyWebcam' }) // `id` is… "MyWebcam"
 
 Then do `plugins={['Webcam']}`.
 
-A full example that uses a button to open the modal is shown below:
+Here is a full example that uses a button to open the modal:
 
 ```js
 class MusicUploadButton extends React.Component {

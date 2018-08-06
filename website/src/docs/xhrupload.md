@@ -37,7 +37,7 @@ const XHRUpload = Uppy.XHRUpload
 
 ## Options
 
-The XHRUpload plugin has the following configurable options:
+The `@uppy/xhr-upload` plugin has the following configurable options:
 
 ### `id: 'XHRUpload'`
 

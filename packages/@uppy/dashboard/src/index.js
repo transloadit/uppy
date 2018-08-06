@@ -1,14 +1,15 @@
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const dragDrop = require('drag-drop')
-const DashboardUI = require('./Dashboard')
+const DashboardUI = require('./components/Dashboard')
 const StatusBar = require('@uppy/status-bar')
 const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const prettyBytes = require('prettier-bytes')
-const { defaultTabIcon } = require('./icons')
+const throttle = require('lodash.throttle')
+const { defaultTabIcon } = require('./components/icons')
 
 // Some code for managing focus was adopted from https://github.com/ghosh/micromodal
 // MIT licence, https://github.com/ghosh/micromodal/blob/master/LICENSE.md
@@ -47,6 +48,8 @@ module.exports = class Dashboard extends Plugin {
         closeModal: 'Close Modal',
         upload: 'Upload',
         importFrom: 'Import from %{name}',
+        addingMoreFiles: 'Adding more files',
+        addMoreFiles: 'Add more files',
         dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
         dashboardTitle: 'Uppy Dashboard',
         copyLinkToClipboardSuccess: 'Link copied to clipboard',
@@ -54,16 +57,18 @@ module.exports = class Dashboard extends Plugin {
         copyLink: 'Copy link',
         fileSource: 'File source: %{name}',
         done: 'Done',
+        back: 'Back',
         name: 'Name',
         removeFile: 'Remove file',
         editFile: 'Edit file',
         editing: 'Editing %{file}',
+        edit: 'Edit',
         finishEditingFile: 'Finish editing file',
         saveChanges: 'Save changes',
         cancel: 'Cancel',
         localDisk: 'Local Disk',
         myDevice: 'My Device',
-        dropPasteImport: 'Drop files here, paste, import from one of the locations above or %{browse}',
+        dropPasteImport: 'Drop files here, paste, %{browse} or import from',
         dropPaste: 'Drop files here, paste or %{browse}',
         browse: 'browse',
         fileProgress: 'File progress: upload speed and ETA',
@@ -74,6 +79,10 @@ module.exports = class Dashboard extends Plugin {
         resumeUpload: 'Resume upload',
         pauseUpload: 'Pause upload',
         retryUpload: 'Retry upload',
+        xFilesSelected: {
+          0: '%{smart_count} file selected',
+          1: '%{smart_count} files selected'
+        },
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
           1: 'Upload %{smart_count} files'
@@ -146,10 +155,12 @@ module.exports = class Dashboard extends Plugin {
     this.onKeydown = this.onKeydown.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
     this.toggleFileCard = this.toggleFileCard.bind(this)
+    this.toggleAddFilesPanel = this.toggleAddFilesPanel.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.handlePaste = this.handlePaste.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
     this.updateDashboardElWidth = this.updateDashboardElWidth.bind(this)
+    this.throttledUpdateDashboardElWidth = throttle(this.updateDashboardElWidth, 500, { leading: true, trailing: true })
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -196,7 +207,8 @@ module.exports = class Dashboard extends Plugin {
 
   hideAllPanels () {
     this.setPluginState({
-      activePanel: false
+      activePanel: false,
+      showAddFilesPanel: false
     })
   }
 
@@ -222,6 +234,7 @@ module.exports = class Dashboard extends Plugin {
 
   getFocusableNodes () {
     const nodes = this.el.querySelectorAll(FOCUSABLE_ELEMENTS)
+    console.log(Object.keys(nodes).map((key) => nodes[key]))
     return Object.keys(nodes).map((key) => nodes[key])
   }
 
@@ -276,10 +289,6 @@ module.exports = class Dashboard extends Plugin {
   }
 
   openModal () {
-    this.setPluginState({
-      isHidden: false
-    })
-
     // save scroll position
     this.savedScrollPosition = window.scrollY
     // save active element, so we can restore focus when modal is closed
@@ -287,6 +296,20 @@ module.exports = class Dashboard extends Plugin {
 
     if (this.opts.disablePageScrollWhenModalOpen) {
       document.body.classList.add('uppy-Dashboard-isFixed')
+    }
+
+    if (this.opts.animateOpenClose && this.getPluginState().isClosing) {
+      const handler = () => {
+        this.setPluginState({
+          isHidden: false
+        })
+        this.el.removeEventListener('animationend', handler, false)
+      }
+      this.el.addEventListener('animationend', handler, false)
+    } else {
+      this.setPluginState({
+        isHidden: false
+      })
     }
 
     if (this.opts.browserBackButtonClose) {
@@ -419,9 +442,10 @@ module.exports = class Dashboard extends Plugin {
     })
 
     this.updateDashboardElWidth()
-    window.addEventListener('resize', this.updateDashboardElWidth)
+    window.addEventListener('resize', this.throttledUpdateDashboardElWidth)
 
     this.uppy.on('plugin-remove', this.removeTarget)
+    this.uppy.on('file-added', (ev) => this.toggleAddFilesPanel(false))
   }
 
   removeEvents () {
@@ -434,10 +458,13 @@ module.exports = class Dashboard extends Plugin {
     window.removeEventListener('resize', this.updateDashboardElWidth)
     window.removeEventListener('popstate', this.handlePopState, false)
     this.uppy.off('plugin-remove', this.removeTarget)
+    this.uppy.off('file-added', (ev) => this.toggleAddFilesPanel(false))
   }
 
   updateDashboardElWidth () {
     const dashboardEl = this.el.querySelector('.uppy-Dashboard-inner')
+    if (!dashboardEl) return
+
     this.uppy.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
 
     this.setPluginState({
@@ -448,6 +475,12 @@ module.exports = class Dashboard extends Plugin {
   toggleFileCard (fileId) {
     this.setPluginState({
       fileCardFor: fileId || false
+    })
+  }
+
+  toggleAddFilesPanel (show) {
+    this.setPluginState({
+      showAddFilesPanel: show
     })
   }
 
@@ -576,8 +609,11 @@ module.exports = class Dashboard extends Plugin {
       pauseUpload: this.uppy.pauseResume,
       retryUpload: this.uppy.retryUpload,
       cancelUpload: cancelUpload,
+      cancelAll: this.uppy.cancelAll,
       fileCardFor: pluginState.fileCardFor,
       toggleFileCard: this.toggleFileCard,
+      toggleAddFilesPanel: this.toggleAddFilesPanel,
+      showAddFilesPanel: pluginState.showAddFilesPanel,
       saveFileCard: saveFileCard,
       updateDashboardElWidth: this.updateDashboardElWidth,
       width: this.opts.width,
@@ -586,6 +622,7 @@ module.exports = class Dashboard extends Plugin {
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
       currentWidth: pluginState.containerWidth,
       isWide: pluginState.containerWidth > 400,
+      containerWidth: pluginState.containerWidth,
       isTargetDOMEl: this.isTargetDOMEl,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles
@@ -605,6 +642,7 @@ module.exports = class Dashboard extends Plugin {
     this.setPluginState({
       isHidden: true,
       showFileCard: false,
+      showAddFilesPanel: false,
       activePanel: false,
       metaFields: this.opts.metaFields,
       targets: []

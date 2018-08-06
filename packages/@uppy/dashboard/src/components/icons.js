@@ -3,7 +3,7 @@ const { h } = require('preact')
 // https://css-tricks.com/creating-svg-icon-system-react/
 
 function defaultTabIcon () {
-  return <svg aria-hidden="true" class="UppyIcon" width="30" height="30" viewBox="0 0 30 30">
+  return <svg aria-hidden="true" width="30" height="30" viewBox="0 0 30 30">
     <path d="M15 30c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15C6.716 0 0 6.716 0 15c0 8.284 6.716 15 15 15zm4.258-12.676v6.846h-8.426v-6.846H5.204l9.82-12.364 9.82 12.364H19.26z" />
   </svg>
 }
@@ -30,21 +30,15 @@ function iconPause () {
   </svg>
 }
 
-function iconEdit () {
-  return <svg aria-hidden="true" class="UppyIcon" width="28" height="28" viewBox="0 0 28 28">
-    <path d="M25.436 2.566a7.98 7.98 0 0 0-2.078-1.51C22.638.703 21.906.5 21.198.5a3 3 0 0 0-1.023.17 2.436 2.436 0 0 0-.893.562L2.292 18.217.5 27.5l9.28-1.796 16.99-16.99c.255-.254.444-.56.562-.888a3 3 0 0 0 .17-1.023c0-.708-.205-1.44-.555-2.16a8 8 0 0 0-1.51-2.077zM9.01 24.252l-4.313.834c0-.03.008-.06.012-.09.007-.944-.74-1.715-1.67-1.723-.04 0-.078.007-.118.01l.83-4.29L17.72 5.024l5.264 5.264L9.01 24.252zm16.84-16.96a.818.818 0 0 1-.194.31l-1.57 1.57-5.26-5.26 1.57-1.57a.82.82 0 0 1 .31-.194 1.45 1.45 0 0 1 .492-.074c.397 0 .917.126 1.468.397.55.27 1.13.678 1.656 1.21.53.53.94 1.11 1.208 1.655.272.55.397 1.07.393 1.468.004.193-.027.358-.074.488z" />
-  </svg>
-}
-
 function localIcon () {
-  return <svg aria-hidden="true" class="UppyIcon" width="27" height="25" viewBox="0 0 27 25">
+  return <svg aria-hidden="true" fill="#607d8b" width="27" height="25" viewBox="0 0 27 25">
     <path d="M5.586 9.288a.313.313 0 0 0 .282.176h4.84v3.922c0 1.514 1.25 2.24 2.792 2.24 1.54 0 2.79-.726 2.79-2.24V9.464h4.84c.122 0 .23-.068.284-.176a.304.304 0 0 0-.046-.324L13.735.106a.316.316 0 0 0-.472 0l-7.63 8.857a.302.302 0 0 0-.047.325z" />
     <path d="M24.3 5.093c-.218-.76-.54-1.187-1.208-1.187h-4.856l1.018 1.18h3.948l2.043 11.038h-7.193v2.728H9.114v-2.725h-7.36l2.66-11.04h3.33l1.018-1.18H3.907c-.668 0-1.06.46-1.21 1.186L0 16.456v7.062C0 24.338.676 25 1.51 25h23.98c.833 0 1.51-.663 1.51-1.482v-7.062L24.3 5.093z" />
   </svg>
 }
 
 function iconRetry () {
-  return <svg class="UppyIcon retry" width="28" height="31" viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+  return <svg aria-hidden="true" class="UppyIcon retry" width="28" height="31" viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
     <path d="M16 11a8 8 0 1 1-8-8v2a6 6 0 1 0 6 6h2z" />
     <path d="M7.9 3H10v2H7.9z" />
     <path d="M8.536.5l3.535 3.536-1.414 1.414L7.12 1.914z" />
@@ -88,25 +82,17 @@ function iconText () {
   </svg>
 }
 
-function dashboardBgIcon () {
-  return <svg aria-hidden="true" class="UppyIcon" width="48" height="69" viewBox="0 0 48 69">
-    <path d="M.5 1.5h5zM10.5 1.5h5zM20.5 1.5h5zM30.504 1.5h5zM45.5 11.5v5zM45.5 21.5v5zM45.5 31.5v5zM45.5 41.502v5zM45.5 51.502v5zM45.5 61.5v5zM45.5 66.502h-4.998zM35.503 66.502h-5zM25.5 66.502h-5zM15.5 66.502h-5zM5.5 66.502h-5zM.5 66.502v-5zM.5 56.502v-5zM.5 46.503V41.5zM.5 36.5v-5zM.5 26.5v-5zM.5 16.5v-5zM.5 6.5V1.498zM44.807 11H36V2.195z" />
-  </svg>
-}
-
 module.exports = {
   defaultTabIcon,
   iconCopy,
   iconResume,
   iconPause,
   iconRetry,
-  iconEdit,
   localIcon,
   checkIcon,
   iconAudio,
   iconVideo,
   iconPDF,
   iconFile,
-  iconText,
-  dashboardBgIcon
+  iconText
 }

@@ -34,14 +34,10 @@ class AuthView extends Component {
   }
 
   render () {
-    return (
-      <div style={{ height: '100%' }}>
-        {this.props.checkAuthInProgress
-          ? <LoaderView />
-          : <AuthBlock {...this.props} />
-        }
-      </div>
-    )
+    if (this.props.checkAuthInProgress) {
+      return <LoaderView />
+    }
+    return <AuthBlock {...this.props} />
   }
 }
 

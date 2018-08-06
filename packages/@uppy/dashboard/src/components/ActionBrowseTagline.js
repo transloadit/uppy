@@ -21,7 +21,7 @@ class ActionBrowseTagline extends Component {
     // because Uppy will be handling the upload and so we can select same file
     // after removing — otherwise browser thinks it’s already selected
     return (
-      <span>
+      <div class="uppy-Dashboard-dropFilesTitle">
         {this.props.acquirers.length === 0
           ? this.props.i18nArray('dropPaste', { browse })
           : this.props.i18nArray('dropPasteImport', { browse })
@@ -39,7 +39,7 @@ class ActionBrowseTagline extends Component {
           ref={(input) => {
             this.input = input
           }} />
-      </span>
+      </div>
     )
   }
 }

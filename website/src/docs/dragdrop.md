@@ -45,7 +45,7 @@ Import one of these files into your project. The way to do this depends on your 
 
 ## Options
 
-The DragDrop plugin has the following configurable options:
+The `@uppy/drag-drop` plugin has the following configurable options:
 
 ```js
 uppy.use(DragDrop, {

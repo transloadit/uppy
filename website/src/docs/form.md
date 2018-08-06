@@ -37,7 +37,7 @@ const Form = Uppy.Form
 
 ## Options
 
-The Form plugin has the following configurable options:
+The `@uppy/form` plugin has the following configurable options:
 
 ```js
 uppy.use(Form, {
@@ -51,7 +51,7 @@ uppy.use(Form, {
 
 ### `id: 'Form'`
 
-A unique identifier for this Form. It defaults to `'Form'`.
+A unique identifier for this plugin. It defaults to `'Form'`.
 
 ### `target: null`
 

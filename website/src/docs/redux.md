@@ -5,11 +5,11 @@ permalink: docs/redux/
 order: 87
 ---
 
-Uppy supports popular [Redux](https://redux.js.org/) state management library in two ways:
+Uppy supports the popular [Redux](https://redux.js.org/) state management library in two ways:
 
 ## Redux Store
 
-You can tell Uppy to use your app’s Redux store for its files and UI state. Please checkout [Custom Stores](/docs/stores/) for more info on that. Here’s an example to give you a sense of how this works:
+You can tell Uppy to use your app’s Redux store for its files and UI state. Please check out [Custom Stores](/docs/stores/) for more information on that. Here’s an example to give you a sense of how this works:
 
 ```js
 const { createStore } = require('redux')
@@ -29,7 +29,7 @@ const uppy = Uppy({
 
 ## Redux Dev Tools
 
-`ReduxDevTools` plugin that simply syncs with [redux-devtools](https://github.com/gaearon/redux-devtools) browser or JS extensions, and allows for basic time travel:
+This is a `ReduxDevTools` plugin that simply syncs with the [redux-devtools](https://github.com/gaearon/redux-devtools) browser or JS extensions, and allows for basic time travel:
 
 ```js
 const Uppy = require('@uppy/core')
@@ -48,4 +48,4 @@ const uppy = Uppy({
 
 After you `.use(ReduxDevTools)`, you should be able to see Uppy’s state in Redux Dev Tools.
 
-You likely don’t need this if you are actually using Redux yourself and Redux Store in Uppy from above, since it will just work.
+You will likely not need this if you are actually using Redux yourself, as well as Redux Store in Uppy like in the example above, since it will just work automatically in that case.

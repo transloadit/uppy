@@ -20,12 +20,14 @@ const Browser = (props) => {
     <div class={classNames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${props.viewType}`)}>
       <div class="uppy-ProviderBrowser-header">
         <div class={classNames('uppy-ProviderBrowser-headerBar', !props.showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')}>
-          <div class="uppy-Provider-breadcrumbsIcon">{props.pluginIcon && props.pluginIcon()}</div>
-          {props.showBreadcrumbs && Breadcrumbs({
-            getFolder: props.getFolder,
-            directories: props.directories,
-            title: props.title
-          })}
+          <div class="uppy-Provider-breadcrumbsWrap">
+            <div class="uppy-Provider-breadcrumbsIcon">{props.pluginIcon && props.pluginIcon()}</div>
+            {props.showBreadcrumbs && Breadcrumbs({
+              getFolder: props.getFolder,
+              directories: props.directories,
+              title: props.title
+            })}
+          </div>
           <span class="uppy-ProviderBrowser-user">{props.username}</span>
           <button type="button" onclick={props.logout} class="uppy-ProviderBrowser-userLogout">
             {props.i18n('logOut')}
