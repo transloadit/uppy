@@ -29,11 +29,6 @@ function urlToBlob (url) {
   })
 }
 
-// var blob = new Blob(
-//   ['data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='],
-//   { type: 'image/svg+xml' }
-// )
-
 export default class App extends React.Component {
   constructor () {
     super()
@@ -52,11 +47,7 @@ export default class App extends React.Component {
   componentDidMount () {
     this.uppy = Uppy({ autoProceed: false, debug: true })
     this.uppy.use(XHRUpload, {
-      endpoint: 'http://b519d44f.ngrok.io/upload.php',
-      fieldName: 'my_file'
-      // getResponseData: (responseText, response) => {
-      //   console.log(responseText)
-      // }
+      endpoint: 'http://192.168.1.7:7000/',
     })
     // this.uppy.use(Tus, { endpoint: 'https://master.tus.io/files/' })
     this.uppy.on('upload-progress', (file, progress) => {
@@ -72,28 +63,55 @@ export default class App extends React.Component {
       console.log('tadada!')
       console.log(this.uppy.state.files)
     })
-    // this.uppy.addFile({
-    //   source: 'ReactNative',
-    //   name: 'test-file.svg',
-    //   type: blob.type,
-    //   data: blob
-    // })
   }
 
   addFileToUppy (file) {
     console.log(file)
-    urlToBlob(file.base64)
-      .then(blob => {
-        console.log(blob)
-        this.uppy.addFile({
-          source: 'React Native',
-          name: 'fileName.jpg',
-          type: blob.type,
-          data: blob
-        })
-      })
-    // console.log('there is a file:', this.uppy.state.files)
+    var photo = {
+      uri: file.uri,
+      type: file.type,
+      name: 'photo.jpg',
+    }
+
+    this.uppy.addFile({
+      source: 'React Native',
+      name: 'photo.jpg',
+      type: file.type,
+      data: photo
+    })
   }
+
+  // uploadFileDirecrly (file) {
+  //     var photo = {
+  //       uri: file.uri,
+  //       type: file.type,
+  //       name: 'photo.jpg',
+  //     };
+
+  //     var data = new FormData();
+  //     data.append('photo', photo);
+
+  //     // Create the config object for the POST
+  //     // You typically have an OAuth2 token that you use for authentication
+  //     const config = {
+  //       method: 'POST',
+  //       headers: {
+  //         Accept: 'application/json',
+  //         'Content-Type': 'multipart/form-data;'
+  //       },
+  //       body: data
+  //     };
+
+  //     fetch('http://192.168.1.7:7000/', config)
+  //       .then(responseData => {
+  //         // Log the response form the server
+  //         // Here we get what we sent to Postman back
+  //         console.log(responseData);
+  //       })
+  //       .catch(err => {
+  //         console.log(err);
+  //       });
+  // }
 
   selectPhotoTapped () {
     console.log('SELECT PHOTO')
@@ -101,14 +119,12 @@ export default class App extends React.Component {
     Permissions.askAsync(Permissions.CAMERA_ROLL).then((isAllowed) => {
       if (!isAllowed) return
 
-      ImagePicker.launchImageLibraryAsync({
-        // allowsEditing: true,
-        base64: true
-      })
+      ImagePicker.launchImageLibraryAsync({})
       .then((result) => {
         console.log(result)
         if (!result.cancelled) {
           this.setState({ file: result })
+          // this.uploadFileDirecrly(result)
           this.addFileToUppy(result)
         }
       })
