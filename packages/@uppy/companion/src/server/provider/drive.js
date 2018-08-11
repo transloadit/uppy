@@ -2,7 +2,8 @@ const request = require('request')
 // @ts-ignore
 const purest = require('purest')({ request })
 const logger = require('../logger')
-
+const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink'
+const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 /**
  * @class
  * @implements {Provider}
@@ -11,6 +12,7 @@ class Drive {
   constructor (options) {
     this.authProvider = options.provider = Drive.authProvider
     options.alias = 'drive'
+    options.version = 'v3'
 
     this.client = purest(options)
   }
@@ -26,13 +28,21 @@ class Drive {
     return this.client
       .query()
       .get('files')
-      .where({ q: `'${directory}' in parents and trashed=${trashed}` })
+      .where({
+        fields: DRIVE_FILES_FIELDS,
+        q: `'${directory}' in parents and trashed=${trashed}`
+      })
       .auth(options.token)
       .request(done)
   }
 
   stats ({ id, token }, done) {
-    return this.client.query().get(`files/${id}`).auth(token).request(done)
+    return this.client
+      .query()
+      .get(`files/${id}`)
+      .where({fields: DRIVE_FILE_FIELDS})
+      .auth(token)
+      .request(done)
   }
 
   download ({ id, token }, onData) {
@@ -65,7 +75,7 @@ class Drive {
         logger.error(err, 'provider.drive.size.error')
         return done(null)
       }
-      done(parseInt(body.fileSize))
+      done(parseInt(body.size))
     })
   }
 }
