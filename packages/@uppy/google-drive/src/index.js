@@ -63,11 +63,11 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   getUsername (data) {
-    for (const item of data.items) {
-      if (item.userPermission.role === 'owner') {
-        for (const owner of item.owners) {
-          if (owner.isAuthenticatedUser) {
-            return owner.emailAddress
+    for (const item of data.files) {
+      if (item.ownedByMe) {
+        for (const permission of item.permissions) {
+          if (permission.role === 'owner') {
+            return permission.emailAddress
           }
         }
       }
@@ -79,7 +79,7 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   getItemData (item) {
-    return Object.assign({}, item, {size: parseFloat(item.fileSize)})
+    return Object.assign({}, item, {size: parseFloat(item.size)})
   }
 
   getItemIcon (item) {
@@ -87,13 +87,13 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   getItemSubList (item) {
-    return item.items.filter((i) => {
+    return item.files.filter((i) => {
       return this.isFolder(i) || !i.mimeType.startsWith('application/vnd.google')
     })
   }
 
   getItemName (item) {
-    return item.title ? item.title : '/'
+    return item.name ? item.name : '/'
   }
 
   getMimeType (item) {
@@ -109,7 +109,7 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   getItemModifiedDate (item) {
-    return item.modifiedByMeDate
+    return item.modifiedTime
   }
 
   getItemThumbnailUrl (item) {
