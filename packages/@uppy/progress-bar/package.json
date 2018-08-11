@@ -1,7 +1,7 @@
 {
   "name": "@uppy/progress-bar",
   "description": "A progress bar UI for Uppy",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -24,11 +24,11 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "0.26.0",
+    "@uppy/utils": "0.27.0",
     "preact": "^8.2.9"
   },
   "devDependencies": {
-    "@uppy/core": "0.26.0"
+    "@uppy/core": "0.27.0"
   },
   "peerDependencies": {
     "@uppy/core": "^0.26.0"
