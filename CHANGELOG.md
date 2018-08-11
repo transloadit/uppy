@@ -124,31 +124,36 @@ What we need to do to release Uppy 1.0
 - [ ] transloadit: add error reporting (@goto-bus-stop)
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
+- [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
 
 # next
 
 ## 0.27.0
 
-To Be Released: 2018-08-07.
+To Be Released: 2018-08-11.
 
-- [x] core: default `autoProceed` to `false` (#961 / @arturi)
-- [x] core: fix `setPluginState` (#968 / @goto-bus-stop)
-- [x] website: list bundle sizes for each package on stats page (#962 / @goto-bus-stop)
-- [x] s3: Abort all chunk requests when aborting the multipart upload (#967 / @pekala)
-- [x] s3: Catch and handle errors in prepareUploadPart (#966 / @pekala)
-- [x] Split integration tests and add one using create-react-app (#952 / @goto-bus-stop)
-- [x] ⚠️ **breaking** dashboard: UI overhaul: AddFiles panel, significantly improved mobile styles,  (#942 / @arturi, @nqst)
-- [x] ⚠️ **breaking** dashboard: Introduce `.uppy-size--md` and `.uppy-size--lg` breakpoint classes; throttle the function that checks for width (#942 / @arturi)
-- [x] dashboard: downgrade `drag-drop` module to support folders again (#942 / @arturi)
-- [x] dashboard: fix animation — wait for closing animation to finish before opening modal (#942 / @arturi)
-- [x] webcam: add webcam permission screen i18 strings, fixes #931 (#942 / @arturi)
-- [x] ⚠️ **breaking** informer: make it monochrome and round. always gray, no status colors (#942 / @arturi)
-- [x] url: fix Url plugin reacting to wrong drop/paste events, add ignoreEvent (#942 / @arturi)
-- [x] core: allow editing plugin titles (names) so that e.g. “Camera” can be translated into different languages, fixes #920 (#942 / @arturi)
-- [x] core: remove all: initial — was causing issues when multiple uppy stylesheets are used (#942 / @arturi)
-- [x] provider-views: fix wrong 'no files available' msg flash (#938 / @ifedapoolarewaju)
+- [x] @uppy/aws-s3-multipart: Check for file existance (#981 / @bartvde)
+- [x] @uppy/aws-s3: Abort all chunk requests when aborting the multipart upload (#967 / @pekala)
+- [x] @uppy/aws-s3: Catch and handle errors in prepareUploadPart (#966 / @pekala)
+- [x] @uppy/core: allow editing plugin titles (names) so that e.g. “Camera” can be translated into different languages, fixes #920 (#942 / @arturi)
+- [x] @uppy/core: fix `setPluginState` (#968 / @goto-bus-stop)
+- [x] @uppy/core: make Uppy run in React Native (by adding `window !== undefined` check) (@arturi / #960)
+- [x] @uppy/core: remove all: initial — was causing issues when multiple uppy stylesheets are used (#942 / @arturi)
+- [x] @uppy/core: ⚠️ **breaking**  default `autoProceed` to `false` (#961 / @arturi)
+- [x] @uppy/dashboard: downgrade `drag-drop` module to support folders again (#942 / @arturi)
+- [x] @uppy/dashboard: fix animation — wait for closing animation to finish before opening modal (#942 / @arturi)
+- [x] @uppy/dashboard: ⚠️ **breaking** Introduce `.uppy-size--md` and `.uppy-size--lg` breakpoint classes; throttle the function that checks for width (#942 / @arturi)
+- [x] @uppy/dashboard: ⚠️ **breaking** UI overhaul: AddFiles panel, significantly improved mobile styles,  (#942 / @arturi, @nqst)
+- [x] @uppy/informer: ⚠️ **breaking** make it monochrome and round. always gray, no status colors (#942 / @arturi)
+- [x] @uppy/provider-views: fix wrong 'no files available' msg flash (#938 / @ifedapoolarewaju)
+- [x] @uppy/url: fix Url plugin reacting to wrong drop/paste events, add ignoreEvent (#942 / @arturi)
+- [x] @uppy/webcam: add webcam permission screen i18 strings, fixes #931 (#942 / @arturi)
 - [x] build: Add object rest spread transform (#965 / @goto-bus-stop)
-- [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
+- [x] build: Split integration tests and add one using create-react-app (#952 / @goto-bus-stop)
+- [x] build: Upload to CDN when commit starts with “Release” (#989 / @arturi)
+- [x] server: google Drive — move to v3 API (#977 / @pauln)
+- [x] website: docs fixes and improvements @@AJvanLoon)
+- [x] website: list bundle sizes for each package on stats page (#962 / @goto-bus-stop)
 
 ## 0.26.0
 
