@@ -110,6 +110,8 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 
+# next
+
 ## 0.28.0
 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
@@ -126,11 +128,9 @@ What we need to do to release Uppy 1.0
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
 - [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
 
-# next
-
 ## 0.27.0
 
-To Be Released: 2018-08-11.
+Released: 2018-08-11.
 
 - [x] @uppy/aws-s3-multipart: Check for file existance (#981 / @bartvde)
 - [x] @uppy/aws-s3: Abort all chunk requests when aborting the multipart upload (#967 / @pekala)
