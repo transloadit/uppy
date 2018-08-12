@@ -45,7 +45,7 @@ pushd "${__root}" > /dev/null 2>&1
       exit 0
     fi
     if [[ ! "$TRAVIS_COMMIT_MESSAGE" =~ ^Release* ]]; then
-      echo "On Travis (TRAVIS is '${TRAVIS}'), I'm not pushing releases to the CDN unless commit message starts with 'Release' (TRAVIS_COMMIT is '${$TRAVIS_COMMIT_MESSAGE}')"
+      echo "On Travis (TRAVIS is '${TRAVIS}'), I'm not pushing releases to the CDN unless commit message starts with 'Release' (TRAVIS_COMMIT is '${TRAVIS_COMMIT_MESSAGE}')"
       exit 0
     fi
   fi
