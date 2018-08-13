@@ -36,7 +36,7 @@ b.on('error', console.error)
 
 bundle()
 
-fs.createReadStream(path.join(__dirname, '../../dist/uppy.min.css'))
+fs.createReadStream(path.join(__dirname, '../../packages/uppy/dist/uppy.min.css'))
   .pipe(fs.createWriteStream(path.join(__dirname, './uppy.min.css')))
 
 // Start the PHP delevopment server.
