@@ -14,12 +14,12 @@
   },
   "dependencies": {
     "aliasify": "^2.1.0",
-    "babelify": "^7.3.0",
+    "babelify": "^8.0.0",
     "body-parser": "^1.18.2",
-    "budo": "^10.0.4",
+    "budo": "^11.3.2",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "npm-run-all": "^4.1.2",
-    "uppy-server": "^0.11.0"
+    "uppy-server": "^0.13.4"
   }
 }
