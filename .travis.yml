@@ -43,8 +43,13 @@ notifications:
 # Travis docs: Note that pull request builds skip deployment step altogether.
 # https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
 deploy:
+- provider: script
   skip_cleanup: true
-  provider: script
   script: bin/travis-deploy
+  on:
+    branch: master
+- provider: script
+  skip_cleanup: true
+  script: packages/@uppy/companion/infra/kube/gcloud-deploy.sh
   on:
     branch: master

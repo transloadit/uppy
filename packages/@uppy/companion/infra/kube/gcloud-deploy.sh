@@ -8,8 +8,11 @@ set -o nounset
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __kube="${__dir}"
 __companion="$(dirname "$(dirname "${__kube}")")"
+# Install kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
 
-echo ${__companion}
 
 # Store the new image in docker hub
 docker build --quiet -t transloadit/uppy-server:latest -t transloadit/uppy-companion:$TRAVIS_COMMIT -f "${__companion}/Dockerfile" "${__companion}";
@@ -17,15 +20,8 @@ docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
 docker push transloadit/uppy-companion:$TRAVIS_COMMIT;
 docker push transloadit/uppy-companion:latest;
 
-echo $CA_CRT | base64 --decode -i > ${HOME}/ca.crt
+echo $KUBECONFIG | base64 --decode -i > ${HOME}/.kube/config
 
-gcloud config set container/use_client_certificate True
-export CLOUDSDK_CONTAINER_USE_CLIENT_CERTIFICATE=True
-
-kubectl config set-cluster transloadit-gke-cluster --embed-certs=true --server=${CLUSTER_ENDPOINT} --certificate-authority=${HOME}/ca.crt
-kubectl config set-credentials travis-uppy --token=$SA_TOKEN
-kubectl config set-context travis --cluster=$CLUSTER_NAME --user=travis-uppy --namespace=uppy
-kubectl config use-context travis
 # Should be already removed. Using it temporarily.
 rm -f "${__kube}/companion/uppy-env.yaml"
 echo $UPPY_ENV | base64 --decode > "${__kube}/companion/uppy-env.yaml"
