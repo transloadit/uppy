@@ -11,23 +11,9 @@ import {
 import Uppy from '@uppy/core'
 import XHRUpload from '@uppy/xhr-upload'
 import { ImagePicker, Permissions } from 'expo'
+import testUploadFileWithTus from './tus-test.js'
 // import ImagePicker from 'react-native-image-picker'
 // import Tus from '@uppy/tus'
-
-function urlToBlob (url) {
-  return new Promise((resolve, reject) => {
-      var xhr = new XMLHttpRequest()
-      xhr.onerror = reject
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-          resolve(xhr.response)
-        }
-      };
-      xhr.open('GET', url)
-      xhr.responseType = 'blob' // convert type
-      xhr.send()
-  })
-}
 
 export default class App extends React.Component {
   constructor () {
@@ -72,6 +58,8 @@ export default class App extends React.Component {
       type: file.type,
       name: 'photo.jpg',
     }
+
+    testUploadFileWithTus(photo)
 
     this.uppy.addFile({
       source: 'React Native',

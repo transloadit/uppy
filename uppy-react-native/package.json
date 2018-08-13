@@ -25,6 +25,7 @@
     "expo": "^27.0.1",
     "react": "16.3.1",
     "react-native": "~0.55.2",
-    "react-native-image-picker": "^0.26.10"
+    "react-native-image-picker": "^0.26.10",
+    "tus-js-client": "https://github.com/tus/tus-js-client"
   }
 }
