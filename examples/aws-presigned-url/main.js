@@ -3,8 +3,7 @@ const Dashboard = require('@uppy/dashboard')
 const AwsS3 = require('@uppy/aws-s3')
 
 const uppy = Uppy({
-  debug: true,
-  autoProceed: false
+  debug: true
 })
 
 uppy.use(Dashboard, {

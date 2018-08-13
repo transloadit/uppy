@@ -1,4 +1,6 @@
-
+// Fonts
+$font-family-base: system-ui, -apple-system, BLinkMacSystemFont, Segoe UI, Roboto,
+                   Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif !default;
 // Colors
 
 $color-black: #000 !default;
@@ -26,4 +28,4 @@ $zIndex-4: 1004 !default;
 $zIndex-5: 1005 !default;
 
 // Media Queries
-$screen-medium: 'only screen and (min-width: 768px)' !default;
+$screen-medium: 'only screen and (min-width: 820px)' !default;

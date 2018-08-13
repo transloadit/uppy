@@ -1,11 +1,15 @@
 ---
 type: docs
-order: 30
+order: 70
 title: "Form"
+module: "@uppy/form"
 permalink: docs/form/
 ---
 
-The Form plugin collects metadata from any specified `<form>` element, right before Uppy begins uploading/processing files, and then optionally appends results back to the form. Currently, the appended result is a stringified version of a [`result`](docs/uppy/#uppy-upload) returned from `uppy.upload()` or `complete` event.
+The `@uppy/form` plugin has several features to integrate with HTML `<form>` elements.
+
+- It collects user-specified metadata from form fields, right before Uppy begins uploading/processing files.
+- It can append upload results back to the form as a hidden field. Currently the appended result is a stringified version of a [`result`](docs/uppy/#uppy-upload) returned from `uppy.upload()` or `complete` event.
 
 ```js
 const Form = require('@uppy/form')
@@ -25,9 +29,15 @@ Install from NPM:
 npm install @uppy/form
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const Form = Uppy.Form
+```
+
 ## Options
 
-The Form plugin has the following configurable options:
+The `@uppy/form` plugin has the following configurable options:
 
 ```js
 uppy.use(Form, {
@@ -41,7 +51,7 @@ uppy.use(Form, {
 
 ### `id: 'Form'`
 
-A unique identifier for this Form. It defaults to `'Form'`.
+A unique identifier for this plugin. It defaults to `'Form'`.
 
 ### `target: null`
 

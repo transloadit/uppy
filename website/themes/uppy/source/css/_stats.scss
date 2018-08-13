@@ -11,52 +11,19 @@
 
 .Stats-bundleSizes {
   margin-bottom: 1em;
+  width: 100%;
 
-  @media #{$screen-large} {
-    max-width: 320px;
-    float: right;
-    margin-right: -320px;
-    padding-left: 50px;
-  }
+  th { text-align: left; }
 }
 
-.Stats-bundleSizes {
-  strong.underline {
-    display: inline-block;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 5px;
-  }
-
-  dl {
-    @include clearfix;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  dt {
-    float: left;
-    width: 50%;
-    padding: 0;
-    margin: 0;
-    a {
-      color: #e02177;
-    }
-  }
-
-  dd {
-    float: left;
-    width: 50%;
-    padding: 0;
-    margin: 0;
-    &.red {
-      color: red;
-    }
-    &.green {
-      color: #3FC33F;
-    }
-  }
+a.Stats-package {
+  color: #e02177;
+}
+.Stats-large {
+  color: red;
+}
+.Stats-small {
+  color: #3FC33F;
 }
 
 .Disc {

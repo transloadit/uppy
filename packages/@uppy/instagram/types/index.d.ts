@@ -1,8 +1,9 @@
 import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import { ProviderOptions } from '@uppy/companion-client';
 
-export interface InstagramOptions extends PluginOptions {
+export interface InstagramOptions extends PluginOptions, ProviderOptions {
   serverUrl: string;
-  // TODO inherit from ProviderOptions
+  serverPattern: string | RegExp | Array<string | RegExp>;
 }
 
 export default class Instagram extends Plugin {

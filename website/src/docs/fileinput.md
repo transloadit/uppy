@@ -1,13 +1,14 @@
 ---
 type: docs
-order: 25
-title: "FileInput"
+order: 22
+title: "File Input"
+module: "@uppy/file-input"
 permalink: docs/file-input/
 alias: docs/fileinput/
 
 ---
 
-`FileInput` is the most barebones UI for selecting files — it shows a single button that, when clicked, opens up the browser's file selector.
+`@uppy/file-input` is the most barebones UI for selecting files — it shows a single button that, when clicked, opens up the browser's file selector.
 
 ```js
 const FileInput = require('@uppy/file-input')
@@ -17,7 +18,9 @@ uppy.use(FileInput, {
 })
 ```
 
-[Try it live](/examples/xhrupload) - The XHRUpload example uses a `FileInput`.
+<a class="TryButton" href="/examples/xhrupload/">Try it live</a>
+
+The `@uppy/xhr-upload` example uses `@uppy/file-input` with the [`pretty`](#pretty-true) option enabled.
 
 ## Installation
 
@@ -29,9 +32,23 @@ Install from NPM:
 npm install @uppy/file-input
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const FileInput = Uppy.FileInput
+```
+
+## CSS
+
+The `@uppy/file-input` plugin includes some simple styles for use with the [`pretty`](#pretty-true) option, like shown in the [example](/examples/xhrupload). You can also choose not to use it and provide your own styles instead.
+
+The CSS file lives at `@uppy/file-input/dist/style.css`. A minified version is at `@uppy/file-input/dist/style.min.css`.
+
+Import one of these files into your project. The way to do this depends on your build system.
+
 ## Options
 
-The FileInput plugin has the following configurable options:
+The `@uppy/file-input` plugin has the following configurable options:
 
 ```js
 uppy.use(FileInput, {
@@ -47,7 +64,7 @@ uppy.use(FileInput, {
 
 ### `id: 'FileInput'`
 
-A unique identifier for this FileInput. It defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
+A unique identifier for this plugin. It defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
 
 ### `target: null`
 

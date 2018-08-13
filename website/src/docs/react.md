@@ -2,7 +2,7 @@
 title: "Introduction"
 type: docs
 permalink: docs/react/
-order: 60
+order: 80
 ---
 
 Uppy provides [React][] components for the included UI plugins.
@@ -11,13 +11,15 @@ Uppy provides [React][] components for the included UI plugins.
 
 All React components are provided through the `@uppy/react` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/react
 ```
 
 ## Usage
 
-The components can be used with [React][] or API-compatible alternatives such as [Preact][].
+The components can be used with either [React][] or API-compatible alternatives such as [Preact][].
 
 Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop.
 All other props are passed as options to the plugin.
@@ -60,22 +62,22 @@ const AvatarPicker = ({ currentAvatar }) => {
 }
 ```
 
-The plugins that are available as React component wrappers are:
+The following plugins are available as React component wrappers:
 
- - [&lt;Dashboard />][] - renders an inline [Dashboard][]
- - [&lt;DashboardModal />][] - renders a [Dashboard][] modal
- - [&lt;DragDrop />][] - renders a [DragDrop][] area
- - [&lt;ProgressBar />][] - renders a [ProgressBar][]
- - [&lt;StatusBar />][] - renders a [StatusBar][]
+ - [&lt;Dashboard />][] - renders an inline [`@uppy/dashboard`][]
+ - [&lt;DashboardModal />][] - renders a [`@uppy/dashboard`][] modal
+ - [&lt;DragDrop />][] - renders a [`@uppy/drag-drop`][] area
+ - [&lt;ProgressBar />][] - renders a [`@uppy/progress-bar`][]
+ - [&lt;StatusBar />][] - renders a [`@uppy/status-bar`][]
 
 [React]: https://facebook.github.io/react
 [Preact]: https://preactjs.com/
 [&lt;Dashboard />]: /docs/react/dashboard
 [&lt;DragDrop />]: /docs/react/dragdrop
-[&lt;ProgressBar />]: /docs/react/progressbar
-[&lt;StatusBar />]: /docs/react/statusbar
+[&lt;ProgressBar />]: /docs/react/progress-bar
+[&lt;StatusBar />]: /docs/react/status-bar
 [&lt;DashboardModal />]: /docs/react/dashboard-modal
-[Dashboard]: /docs/dashboard
-[DragDrop]: /docs/dragdrop
-[ProgressBar]: /docs/progressbar
-[StatusBar]: /docs/statusbar
+[`@uppy/dashboard`]: /docs/dashboard
+[`@uppy/drag-drop`]: /docs/drag-drop
+[`@uppy/progress-bar`]: /docs/progress-bar
+[`@uppy/status-bar`]: /docs/status-bar

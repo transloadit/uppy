@@ -2,10 +2,11 @@
 type: docs
 order: 26
 title: "Webcam"
+module: "@uppy/webcam"
 permalink: docs/webcam/
 ---
 
-The Webcam plugin lets you take photos and record videos with a built-in camera on desktop and mobile devices.
+The `@uppy/webcam` plugin lets you take photos and record videos with a built-in camera on desktop and mobile devices.
 
 > To use the Webcam plugin in Chrome, [your site should be served over https](https://developers.google.com/web/updates/2015/10/chrome-47-webrtc#public_service_announcements). This restriction does not apply on `localhost`, so you don't have to jump through many hoops during development.
 
@@ -29,9 +30,15 @@ Install from NPM:
 npm install @uppy/webcam
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const Webcam = Uppy.Webcam
+```
+
 ## Options
 
-The Webcam plugin has the following configurable options:
+The `@uppy/webcam` plugin has the following configurable options:
 
 ```js
 uppy.use(Webcam, {
@@ -53,9 +60,13 @@ uppy.use(Webcam, {
 
 A unique identifier for this plugin. It defaults to `'Webcam'`.
 
+### `title: 'Camera'`
+
+Configures the title / name shown in the UI, for instance, on Dashboard tabs. It defaults to `'Camera'`.
+
 ### `target: null`
 
-DOM element, CSS selector, or plugin to mount the webcam into.
+DOM element, CSS selector, or plugin to mount Webcam into.
 
 ### `countdown: false`
 
@@ -109,5 +120,9 @@ strings: {
   // Used as the label for the button that stops a video recording.
   // This is not visibly rendered but is picked up by screen readers.
   stopRecording: 'Stop video recording',
+  // Title on the “allow access” screen
+  allowAccessTitle: 'Please allow access to your camera',
+  // Description on the “allow access” screen
+  allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.'
 }
 ```

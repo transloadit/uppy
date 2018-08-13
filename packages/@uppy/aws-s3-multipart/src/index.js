@@ -1,5 +1,5 @@
 const { Plugin } = require('@uppy/core')
-const { Socket, RequestClient } = require('@uppy/server-utils')
+const { Socket, RequestClient } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const limitPromises = require('@uppy/utils/lib/limitPromises')
@@ -183,6 +183,9 @@ module.exports = class AwsS3Multipart extends Plugin {
         onPartComplete: (part) => {
           // Store completed parts in state.
           const cFile = this.uppy.getFile(file.id)
+          if (!cFile) {
+            return
+          }
           this.uppy.setFileState(file.id, {
             s3Multipart: Object.assign({}, cFile.s3Multipart, {
               parts: [

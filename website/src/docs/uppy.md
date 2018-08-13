@@ -2,10 +2,11 @@
 type: docs
 order: 1
 title: "Uppy"
+module: "@uppy/core"
 permalink: docs/uppy/
 ---
 
-This is the core module that orchestrates everything in Uppy, exposing `state`, `events` and `methods`.
+This is the core module that orchestrates everything in Uppy, managing state and events and providing methods.
 
 ```js
 const Uppy = require('@uppy/core')
@@ -15,16 +16,26 @@ const uppy = Uppy()
 
 ## Installation
 
+Install from NPM:
+
 ```shell
 npm install @uppy/core
 ```
 
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const Core = Uppy.Core
+```
+
 ## Options
+
+The Uppy core module has the following configurable options:
 
 ```js
 const uppy = Uppy({
   id: 'uppy',
-  autoProceed: true,
+  autoProceed: false,
   debug: false,
   restrictions: {
     maxFileSize: null,
@@ -54,9 +65,9 @@ const avatarUploader = Uppy({ id: 'avatar' })
 const photoUploader = Uppy({ id: 'post' })
 ```
 
-### `autoProceed: true`
+### `autoProceed: false`
 
-Uppy will start uploading automatically after the first file is selected.
+By default Uppy will wait for an upload button to be pressed in the UI, or an `.upload()` method to be called, before starting an upload. Setting this to `autoProceed: true` will start uploading automatically after the first file is selected.
 
 ### `restrictions: {}`
 

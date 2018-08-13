@@ -3,12 +3,14 @@ title: "&lt;StatusBar />"
 type: docs
 permalink: docs/react/status-bar/
 alias: docs/react/statusbar/
-order: 61
+order: 81
 ---
 
-The `<StatusBar />` component wraps the [StatusBar][] plugin.
+The `<StatusBar />` component wraps the [`@uppy/status-bar`][] plugin.
 
 ## Installation
+
+Install from NPM:
 
 ```shell
 npm install @uppy/react
@@ -21,7 +23,7 @@ import { StatusBar } from '@uppy/react'
 
 ## Props
 
-The `<StatusBar />` component supports all [StatusBar][] options as props.
+The `<StatusBar />` component supports all [`@uppy/status-bar`][] options as props.
 
 ```js
 <StatusBar
@@ -31,4 +33,4 @@ The `<StatusBar />` component supports all [StatusBar][] options as props.
 />
 ```
 
-[StatusBar]: /docs/statusbar/
+[`@uppy/status-bar`]: /docs/status-bar/

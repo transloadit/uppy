@@ -3,12 +3,11 @@
 */
 
 .uppy-Root {
-  all: initial;
   box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, 
-    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: $font-family-base;
   line-height: 1;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .uppy-Root *, .uppy-Root *:before, .uppy-Root *:after {
@@ -29,57 +28,14 @@
 .UppyIcon {
   max-width: 100%;
   max-height: 100%;
-  fill: currentColor;
+  fill: currentColor; /* no !important */
   display: inline-block;
-  vertical-align: text-top;
   overflow: hidden;
-  // width: 1em;
-  // height: 1em;
 }
 
 .UppyIcon--svg-baseline {
   bottom: -0.125em;
   position: relative;
-}
-
-// Buttons
-
-.UppyButton--circular {
-  @include reset-button;
-  box-shadow: 1px 2px 4px 0px rgba($color-black, 0.2);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.UppyButton--blue {
-  color: $color-white;
-  background-color: $color-cornflower-blue;
-
-  &:hover,
-  &:focus {
-    background-color: darken($color-cornflower-blue, 10%);
-  }
-}
-
-.UppyButton--red {
-  color: $color-white;
-  background-color: $color-red;
-
-  &:hover,
-  &:focus {
-    background-color: darken($color-red, 10%);
-  }
-}
-
-.UppyButton--sizeM {
-  width: 60px;
-  height: 60px;
-}
-
-.UppyButton--sizeS {
-  width: 45px;
-  height: 45px;
 }
 
 // Utilities
@@ -181,7 +137,7 @@
   padding: 6px 8px;
 }
 
-  .uppy-Dashboard--wide .uppy-c-textInput {
+  .uppy-size--md .uppy-c-textInput {
     font-size: 15px;
     line-height: 1.8;
     padding: 8px 12px;
@@ -204,7 +160,7 @@
   font-size: 16px;
   line-height: 1;
   font-weight: 500;
-  transition: all 0.3s;
+  transition: background-color 0.3s;
   user-select: none;
 }
 
@@ -220,10 +176,9 @@
   color: $color-white;
 }
 
-  .uppy-Dashboard--wide .uppy-c-btn-primary {
+  .uppy-size--md .uppy-c-btn-primary {
     font-size: 15px;
-    padding: 13px 28px;
-    // border-radius: 4px;
+    padding: 13px 22px;
   }
 
   .uppy-c-btn-primary:hover {
@@ -244,7 +199,7 @@
   color: $color-black;
 }
 
-  .uppy-Dashboard--wide .uppy-c-btn-link {
+  .uppy-size--md .uppy-c-btn-link {
     font-size: 15px;
     padding: 13px 28px;
     // border-radius: 4px;
@@ -265,7 +220,7 @@
   border-radius: 2px;
 }
 
-  .uppy-Dashboard--wide .uppy-c-btn--small {
+  .uppy-size--md .uppy-c-btn--small {
     padding: 8px 10px;
     border-radius: 2px;
   }

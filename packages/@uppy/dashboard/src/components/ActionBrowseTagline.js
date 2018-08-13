@@ -1,0 +1,47 @@
+const { h, Component } = require('preact')
+
+class ActionBrowseTagline extends Component {
+  constructor (props) {
+    super(props)
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  handleClick (ev) {
+    this.input.click()
+  }
+
+  render () {
+    const browse = (
+      <button type="button" class="uppy-Dashboard-browse" onclick={this.handleClick}>
+        {this.props.i18n('browse')}
+      </button>
+    )
+
+    // empty value="" on file input, so that the input is cleared after a file is selected,
+    // because Uppy will be handling the upload and so we can select same file
+    // after removing — otherwise browser thinks it’s already selected
+    return (
+      <div class="uppy-Dashboard-dropFilesTitle">
+        {this.props.acquirers.length === 0
+          ? this.props.i18nArray('dropPaste', { browse })
+          : this.props.i18nArray('dropPasteImport', { browse })
+        }
+        <input class="uppy-Dashboard-input"
+          hidden
+          aria-hidden="true"
+          tabindex={-1}
+          type="file"
+          name="files[]"
+          multiple={this.props.maxNumberOfFiles !== 1}
+          onchange={this.props.handleInputChange}
+          accept={this.props.allowedFileTypes}
+          value=""
+          ref={(input) => {
+            this.input = input
+          }} />
+      </div>
+    )
+  }
+}
+
+module.exports = ActionBrowseTagline

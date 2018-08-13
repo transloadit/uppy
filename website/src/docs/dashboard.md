@@ -2,10 +2,11 @@
 type: docs
 order: 20
 title: "Dashboard"
+module: "@uppy/dashboard"
 permalink: docs/dashboard/
 ---
 
-Dashboard is a universal UI plugin for Uppy, offering several useful features:
+`@uppy/dashboard` is a universal UI plugin for Uppy, offering several useful features:
 
 - Drag and drop, paste, select from local disk / my device
 - UI for the Webcam plugin and remote sources, such as Google Drive, Dropbox, Instagram (all optional, added via plugins)
@@ -22,7 +23,7 @@ uppy.use(Dashboard, {
 })
 ```
 
-[Try it live](/examples/dashboard/)
+<a class="TryButton" href="/examples/dashboard/">Try it live</a>
 
 ## Installation
 
@@ -33,6 +34,20 @@ Install from NPM:
 ```shell
 npm install @uppy/dashboard
 ```
+
+In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+
+```js
+const Dashboard = Uppy.Dashboard
+```
+
+## CSS
+
+The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
+
+The CSS file lives at `@uppy/dashboard/dist/style.css`. A minified version is at `@uppy/dashboard/dist/style.min.css`.
+
+Import one of these files into your project. The way to do this depends on your build system.
 
 ## Options
 
@@ -66,7 +81,7 @@ uppy.use(Dashboard, {
 
 ### `id: 'Dashboard'`
 
-A unique identifier for this Dashboard. It defaults to `'Dashboard'`, but you can change this if you need multiple Dashboard instances.
+A unique identifier for this plugin. It defaults to `'Dashboard'`, but you can change this if you need multiple Dashboard instances.
 Plugins that are added by the Dashboard get unique IDs based on this ID, like `'Dashboard:StatusBar'` and `'Dashboard:Informer'`.
 
 ### `target: 'body'`
@@ -184,6 +199,8 @@ Dashboard ships with the `ThumbnailGenerator` plugin that adds small resized ima
 
 Localize text that is shown to the user.
 
+The Dashboard also contains the [`@uppy/status-bar`](/docs/status-bar) plugin by default, which has its own strings. Strings for the Status Bar can also be specified in the Dashboard `locale.strings` option, and will be passed down. They are not all listed below—see the [`@uppy/status-bar`](/docs/status-bar) documentation pages for the full list.
+
 The default English strings are:
 
 ```js
@@ -213,6 +230,8 @@ strings: {
   editFile: 'Edit file',
   // Shown in the panel header for the metadata editor. Rendered as "Editing image.png".
   editing: 'Editing %{file}',
+  // Text for a button shown on the file preview, used to edit file metadata
+  edit: 'Edit',
   // Used as the screen reader label for the button that saves metadata edits and returns to the
   // file list view.
   finishEditingFile: 'Finish editing file',
@@ -221,7 +240,7 @@ strings: {
   // Shown in the main dashboard area when no files have been selected, and one or more
   // remote provider plugins are in use. %{browse} is replaced with a link that opens the system
   // file selection dialog.
-  dropPasteImport: 'Drop files here, paste, import from one of the locations above or %{browse}',
+  dropPasteImport: 'Drop files here, paste, %{browse} or import from',
   // Shown in the main dashboard area when no files have been selected, and no provider
   // plugins are in use. %{browse} is replaced with a link that opens the system
   // file selection dialog.
@@ -236,7 +255,18 @@ strings: {
   // Used as the hover text and screen reader label for the buttons to pause uploads.
   pauseUpload: 'Pause upload',
   // Used as the hover text and screen reader label for the buttons to retry failed uploads.
-  retryUpload: 'Retry upload'
+  retryUpload: 'Retry upload',
+
+  // Used in a title, how many files are currently selected
+  xFilesSelected: {
+    0: '%{smart_count} file selected',
+    1: '%{smart_count} files selected'
+  },
+
+  // @uppy/status-bar strings:
+  uploading: 'Uploading',
+  complete: 'Complete'
+  // ...etc
 }
 ```
 

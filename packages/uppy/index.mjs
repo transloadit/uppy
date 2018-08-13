@@ -2,7 +2,7 @@
 export { default as Core } from '@uppy/core'
 
 // Utilities
-export { default as server } from '@uppy/server-utils'
+export { default as server } from '@uppy/companion-client'
 import ProviderView from '@uppy/provider-views'
 export var views = { ProviderView: ProviderView }
 

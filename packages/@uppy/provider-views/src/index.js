@@ -453,10 +453,8 @@ module.exports = class ProviderView {
     const link = `${this.Provider.authUrl()}?state=${authState}`
 
     const authWindow = window.open(link, '_blank')
-    const noProtocol = (url) => url.replace(/^(https?:|)\/\//, '')
     const handleToken = (e) => {
-      const allowedOrigin = new RegExp(noProtocol(this.plugin.opts.serverPattern))
-      if (!allowedOrigin.test(noProtocol(e.origin)) || e.source !== authWindow) {
+      if (!this._isOriginAllowed(e.origin, this.plugin.opts.serverPattern) || e.source !== authWindow) {
         this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.serverPattern}`)
         return
       }
@@ -466,6 +464,21 @@ module.exports = class ProviderView {
       this._loaderWrapper(this.Provider.checkAuth(), this.plugin.onAuth, this.handleError)
     }
     window.addEventListener('message', handleToken)
+  }
+
+  _isOriginAllowed (origin, allowedOrigin) {
+    const getRegex = (value) => {
+      if (typeof value === 'string') {
+        return new RegExp(`^${value}$`)
+      } else if (value instanceof RegExp) {
+        return value
+      }
+    }
+
+    const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
+    return patterns
+      .filter((pattern) => pattern !== null)
+      .some((pattern) => pattern.test(origin))
   }
 
   handleError (error) {
@@ -523,8 +536,13 @@ module.exports = class ProviderView {
   // displays loader view while asynchronous request is being made.
   _loaderWrapper (promise, then, catch_) {
     promise
-      .then(then).catch(catch_)
-      .then(() => this.plugin.setPluginState({ loading: false })) // always called.
+      .then((result) => {
+        this.plugin.setPluginState({ loading: false })
+        then(result)
+      }).catch((err) => {
+        this.plugin.setPluginState({ loading: false })
+        catch_(err)
+      })
     this.plugin.setPluginState({ loading: true })
   }
 

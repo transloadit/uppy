@@ -2,13 +2,13 @@ const { h } = require('preact')
 
 const Breadcrumb = (props) => {
   return (
-    <li><button type="button" onclick={props.getFolder}>{props.title}</button></li>
+    <button type="button" onclick={props.getFolder}>{props.title}</button>
   )
 }
 
 module.exports = (props) => {
   return (
-    <ul class="uppy-Provider-breadcrumbs">
+    <div class="uppy-Provider-breadcrumbs">
       {
         props.directories.map((directory, i) => {
           return Breadcrumb({
@@ -17,6 +17,6 @@ module.exports = (props) => {
           })
         })
       }
-    </ul>
+    </div>
   )
 }

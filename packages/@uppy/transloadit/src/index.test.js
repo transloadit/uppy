@@ -32,7 +32,7 @@ describe('Transloadit', () => {
   })
 
   it('Validates response from getAssemblyOptions()', () => {
-    const uppy = new Core({ autoProceed: false })
+    const uppy = new Core()
 
     uppy.use(Transloadit, {
       getAssemblyOptions: (file) => {
@@ -57,7 +57,7 @@ describe('Transloadit', () => {
   })
 
   it('Uses different assemblies for different params', () => {
-    const uppy = new Core({ autoProceed: false })
+    const uppy = new Core()
 
     uppy.use(Transloadit, {
       getAssemblyOptions: (file) => ({
@@ -96,7 +96,7 @@ describe('Transloadit', () => {
   })
 
   it('Should merge files with same parameters into one Assembly', () => {
-    const uppy = new Core({ autoProceed: false })
+    const uppy = new Core()
 
     uppy.use(Transloadit, {
       getAssemblyOptions: (file) => ({

@@ -1,7 +1,9 @@
 const Uppy = require('./../../packages/@uppy/core/src')
 const Dashboard = require('./../../packages/@uppy/dashboard/src')
 const Instagram = require('./../../packages/@uppy/instagram/src')
+const Dropbox = require('./../../packages/@uppy/dropbox/src')
 const GoogleDrive = require('./../../packages/@uppy/google-drive/src')
+const Url = require('./../../packages/@uppy/url/src')
 const Webcam = require('./../../packages/@uppy/webcam/src')
 const Tus = require('./../../packages/@uppy/tus/src')
 const Form = require('./../../packages/@uppy/form/src')
@@ -10,7 +12,6 @@ const TUS_ENDPOINT = 'https://master.tus.io/files/'
 
 const uppy = Uppy({
   debug: true,
-  autoProceed: false,
   meta: {
     username: 'John',
     license: 'Creative Commons'
@@ -30,6 +31,8 @@ const uppy = Uppy({
   })
   .use(GoogleDrive, { target: Dashboard, serverUrl: 'http://localhost:3020' })
   .use(Instagram, { target: Dashboard, serverUrl: 'http://localhost:3020' })
+  .use(Dropbox, { target: Dashboard, serverUrl: 'http://localhost:3020' })
+  .use(Url, { target: Dashboard, serverUrl: 'http://localhost:3020' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: TUS_ENDPOINT })
   .use(Form, { target: '#upload-form' })
