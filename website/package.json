@@ -22,26 +22,24 @@
     "hexo-renderer-marked": "^0.3.2",
     "hexo-renderer-postcss": "git+https://github.com/arturi/hexo-renderer-postcss.git",
     "hexo-renderer-scss": "^1.2.0",
-    "hexo-server": "^0.3.1",
+    "hexo-server": "^0.3.2",
     "hexo-tag-emojis": "^2.0.1",
     "hexo-util": "^0.6.3",
-    "js-yaml": "^3.11.0",
+    "js-yaml": "^3.12.0",
     "mkdirp": "0.5.1",
     "postcss-inline-svg": "^3.1.1",
-    "prismjs": "^1.14.0"
+    "prismjs": "^1.15.0"
   },
   "devDependencies": {
     "aliasify": "^2.1.0",
     "babel-core": "^6.26.3",
     "babelify": "^8.0.0",
-    "browserify": "^16.2.0",
+    "browserify": "^16.2.2",
     "chalk": "^2.4.1",
-    "documentation": "4.0.0-beta9",
     "glob": "^7.1.2",
     "mdast-util-inject": "1.1.0",
     "multi-glob": "1.0.1",
     "node-notifier": "^5.2.1",
-    "remark": "5.0.1",
     "watchify": "^3.11.0"
   }
 }
