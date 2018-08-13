@@ -40,7 +40,7 @@ const FileInput = Uppy.FileInput
 
 ## CSS
 
-The FileInput plugin includes some simple styles for use with the [`pretty`](#pretty-true) option, like shown in the [example](/examples/xhrupload). You can also choose not to use it and provide your own styles instead.
+The `@uppy/file-input` plugin includes some simple styles for use with the [`pretty`](#pretty-true) option, like shown in the [example](/examples/xhrupload). You can also choose not to use it and provide your own styles instead.
 
 The CSS file lives at `@uppy/file-input/dist/style.css`. A minified version is at `@uppy/file-input/dist/style.min.css`.
 
@@ -48,7 +48,7 @@ Import one of these files into your project. The way to do this depends on your 
 
 ## Options
 
-The FileInput plugin has the following configurable options:
+The `@uppy/file-input` plugin has the following configurable options:
 
 ```js
 uppy.use(FileInput, {
@@ -64,7 +64,7 @@ uppy.use(FileInput, {
 
 ### `id: 'FileInput'`
 
-A unique identifier for this File Input. It defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
+A unique identifier for this plugin. It defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
 
 ### `target: null`
 

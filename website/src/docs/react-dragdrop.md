@@ -10,6 +10,8 @@ The `<DragDrop />` component wraps the [`@uppy/drag-drop`][] plugin.
 
 ## Installation
 
+Install from NPM:
+
 ```shell
 npm install @uppy/react
 ```

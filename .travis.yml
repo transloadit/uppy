@@ -15,8 +15,9 @@ addons:
 cache:
   apt: true
   directories:
-  - node_modules
-  - website/node_modules
+  - ~/.npm
+before_install:
+- nvm install-latest-npm
 script:
 - npm run web:install
 - npm run build

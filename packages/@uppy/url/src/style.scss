@@ -7,6 +7,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex: 1;
 }
 
 .uppy-Url-input {
@@ -15,7 +16,7 @@
   margin-bottom: 15px;
 }
 
-  .uppy-Dashboard--wide .uppy-Url-input  {
+  .uppy-size--md .uppy-Url-input  {
     margin-bottom: 30px;
   }
 
@@ -23,6 +24,6 @@
   padding: 13px 25px;
 }
 
-  .uppy-Dashboard--wide .uppy-Url-importButton {
+  .uppy-size--md .uppy-Url-importButton {
     padding: 13px 35px;
   }

@@ -102,7 +102,10 @@ a.button {
   .gutter { width: 1.5em; }
 
   .code {
-    font-size: 0.85em;
+    font-size: 10px;
+    @media #{$screen-medium} {
+      font-size: 15px;
+    }
   }
 
   .code pre {

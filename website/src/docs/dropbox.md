@@ -6,7 +6,7 @@ module: "@uppy/dropbox"
 permalink: docs/dropbox/
 ---
 
-The `@uppy/dropbox` plugin lets users import files their Dropbox account.
+The `@uppy/dropbox` plugin lets users import files from their Dropbox account.
 
 An Uppy Server instance is required for the Dropbox plugin to work. Uppy Server handles authentication with Dropbox, downloads the files, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
@@ -24,6 +24,8 @@ uppy.use(Dropbox, {
 
 This plugin is published as the `@uppy/dropbox` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/dropbox
 ```
@@ -36,6 +38,8 @@ const Dropbox = Uppy.Dropbox
 
 ## Options
 
+The `@uppy/dropbox` plugin has the following configurable options:
+
 ```js
 uppy.use(Dropbox, {
   target: Dashboard,
@@ -45,7 +49,11 @@ uppy.use(Dropbox, {
 
 ### `id: 'Dropbox'`
 
-A unique identifier for this plugin. Defaults to `'Dropbox'`.
+A unique identifier for this plugin. It defaults to `'Dropbox'`.
+
+### `title: 'Dropbox'`
+
+Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Dropbox'`.
 
 ### `target: null`
 
@@ -65,7 +73,7 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Uppy Server](/docs/server) running on multiple hosts. Otherwise the default value should do just fine.
+This is useful when you have your [Uppy Server](/docs/server) running on multiple hosts. Otherwise, the default value should do just fine.
 
 ### `locale: {}`
 

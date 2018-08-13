@@ -1,11 +1,11 @@
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
-const truncateString = require('./truncateString')
-const copyToClipboard = require('./copyToClipboard')
+const truncateString = require('../utils/truncateString')
+const copyToClipboard = require('../utils/copyToClipboard')
 const prettyBytes = require('prettier-bytes')
 const FileItemProgress = require('./FileItemProgress')
-const getFileTypeIcon = require('./getFileTypeIcon')
+const getFileTypeIcon = require('../utils/getFileTypeIcon')
 const FilePreview = require('./FilePreview')
-const { iconEdit, iconCopy, iconRetry } = require('./icons')
+const { iconCopy, iconRetry } = require('./icons')
 const classNames = require('classnames')
 const { h } = require('preact')
 
@@ -56,7 +56,7 @@ module.exports = function fileItem (props) {
   const error = file.error || false
 
   const fileName = getFileNameAndExtension(file.meta.name).name
-  const truncatedFileName = props.isWide ? truncateString(fileName, 14) : fileName
+  const truncatedFileName = props.isWide ? truncateString(fileName, 30) : fileName
 
   const onPauseResumeCancelRetry = (ev) => {
     if (isUploaded) return
@@ -127,7 +127,7 @@ module.exports = function fileItem (props) {
       </div>
       <div class="uppy-DashboardItem-status">
         {file.data.size ? <div class="uppy-DashboardItem-statusSize">{prettyBytes(file.data.size)}</div> : null}
-        {file.source && <div class="uppy-DashboardItem-sourceIcon">
+        {(file.source && file.source !== props.id) && <div class="uppy-DashboardItem-sourceIcon">
             {acquirers.map(acquirer => {
               if (acquirer.id === file.source) {
                 return <span title={props.i18n('fileSource', { name: acquirer.name })}>
@@ -137,32 +137,32 @@ module.exports = function fileItem (props) {
             })}
           </div>
         }
+        {(!uploadInProgressOrComplete && props.metaFields && props.metaFields.length)
+          ? <button class="uppy-DashboardItem-edit"
+            type="button"
+            aria-label={props.i18n('editFile')}
+            title={props.i18n('editFile')}
+            onclick={(e) => props.toggleFileCard(file.id)}>
+            {props.i18n('edit')}
+          </button>
+          : null
+        }
+        {props.showLinkToFileUploadResult && file.uploadURL
+          ? <button class="uppy-DashboardItem-copyLink"
+            type="button"
+            aria-label={props.i18n('copyLink')}
+            title={props.i18n('copyLink')}
+            onclick={() => {
+              copyToClipboard(file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
+                .then(() => {
+                  props.log('Link copied to clipboard.')
+                  props.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
+                })
+                .catch(props.log)
+            }}>{iconCopy()}</button>
+          : ''
+        }
       </div>
-      {(!uploadInProgressOrComplete && props.metaFields && props.metaFields.length)
-        ? <button class="uppy-DashboardItem-edit"
-          type="button"
-          aria-label={props.i18n('editFile')}
-          title={props.i18n('editFile')}
-          onclick={(e) => props.toggleFileCard(file.id)}>
-          {iconEdit()}
-        </button>
-        : null
-      }
-      {props.showLinkToFileUploadResult && file.uploadURL
-        ? <button class="uppy-DashboardItem-copyLink"
-          type="button"
-          aria-label={props.i18n('copyLink')}
-          title={props.i18n('copyLink')}
-          onclick={() => {
-            copyToClipboard(file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
-              .then(() => {
-                props.log('Link copied to clipboard.')
-                props.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
-              })
-              .catch(props.log)
-          }}>{iconCopy()}</button>
-        : ''
-      }
     </div>
     <div class="uppy-DashboardItem-action">
       {!isUploaded &&

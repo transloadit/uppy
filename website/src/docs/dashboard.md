@@ -43,7 +43,7 @@ const Dashboard = Uppy.Dashboard
 
 ## CSS
 
-The Dashboard plugin includes CSS for the Dashboard itself, and the plugins the Dashboard uses ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
+The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
 
 The CSS file lives at `@uppy/dashboard/dist/style.css`. A minified version is at `@uppy/dashboard/dist/style.min.css`.
 
@@ -81,7 +81,7 @@ uppy.use(Dashboard, {
 
 ### `id: 'Dashboard'`
 
-A unique identifier for this Dashboard. It defaults to `'Dashboard'`, but you can change this if you need multiple Dashboard instances.
+A unique identifier for this plugin. It defaults to `'Dashboard'`, but you can change this if you need multiple Dashboard instances.
 Plugins that are added by the Dashboard get unique IDs based on this ID, like `'Dashboard:StatusBar'` and `'Dashboard:Informer'`.
 
 ### `target: 'body'`
@@ -230,6 +230,8 @@ strings: {
   editFile: 'Edit file',
   // Shown in the panel header for the metadata editor. Rendered as "Editing image.png".
   editing: 'Editing %{file}',
+  // Text for a button shown on the file preview, used to edit file metadata
+  edit: 'Edit',
   // Used as the screen reader label for the button that saves metadata edits and returns to the
   // file list view.
   finishEditingFile: 'Finish editing file',
@@ -238,7 +240,7 @@ strings: {
   // Shown in the main dashboard area when no files have been selected, and one or more
   // remote provider plugins are in use. %{browse} is replaced with a link that opens the system
   // file selection dialog.
-  dropPasteImport: 'Drop files here, paste, import from one of the locations above or %{browse}',
+  dropPasteImport: 'Drop files here, paste, %{browse} or import from',
   // Shown in the main dashboard area when no files have been selected, and no provider
   // plugins are in use. %{browse} is replaced with a link that opens the system
   // file selection dialog.
@@ -254,6 +256,12 @@ strings: {
   pauseUpload: 'Pause upload',
   // Used as the hover text and screen reader label for the buttons to retry failed uploads.
   retryUpload: 'Retry upload',
+
+  // Used in a title, how many files are currently selected
+  xFilesSelected: {
+    0: '%{smart_count} file selected',
+    1: '%{smart_count} files selected'
+  },
 
   // @uppy/status-bar strings:
   uploading: 'Uploading',

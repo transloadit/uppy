@@ -38,7 +38,7 @@ const Webcam = Uppy.Webcam
 
 ## Options
 
-The Webcam plugin has the following configurable options:
+The `@uppy/webcam` plugin has the following configurable options:
 
 ```js
 uppy.use(Webcam, {
@@ -59,6 +59,10 @@ uppy.use(Webcam, {
 ### `id: 'Webcam'`
 
 A unique identifier for this plugin. It defaults to `'Webcam'`.
+
+### `title: 'Camera'`
+
+Configures the title / name shown in the UI, for instance, on Dashboard tabs. It defaults to `'Camera'`.
 
 ### `target: null`
 
@@ -116,5 +120,9 @@ strings: {
   // Used as the label for the button that stops a video recording.
   // This is not visibly rendered but is picked up by screen readers.
   stopRecording: 'Stop video recording',
+  // Title on the “allow access” screen
+  allowAccessTitle: 'Please allow access to your camera',
+  // Description on the “allow access” screen
+  allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.'
 }
 ```

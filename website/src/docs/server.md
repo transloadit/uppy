@@ -23,6 +23,8 @@ As of now, Uppy Server is integrated to work with:
 
 ## Installation
 
+Install from NPM:
+
 ```bash
 npm install uppy-server
 ```

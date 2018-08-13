@@ -183,6 +183,9 @@ module.exports = class AwsS3Multipart extends Plugin {
         onPartComplete: (part) => {
           // Store completed parts in state.
           const cFile = this.uppy.getFile(file.id)
+          if (!cFile) {
+            return
+          }
           this.uppy.setFileState(file.id, {
             s3Multipart: Object.assign({}, cFile.s3Multipart, {
               parts: [

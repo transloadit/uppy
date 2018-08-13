@@ -44,20 +44,19 @@ module.exports = class Informer extends Plugin {
   }
 
   render (state) {
-    const { isHidden, type, message, details } = state.info
-    const style = {
-      backgroundColor: this.opts.typeColors[type].bg,
-      color: this.opts.typeColors[type].text
-    }
+    const { isHidden, message, details } = state.info
+    // const style = {
+    //   backgroundColor: this.opts.typeColors[type].bg,
+    //   color: this.opts.typeColors[type].text
+    // }
 
     return (
       <div class="uppy uppy-Informer"
-        style={style}
         aria-hidden={isHidden}>
         <p role="alert">
           {message}
           {' '}
-          {details && <span style={{ color: this.opts.typeColors[type].bg }}
+          {details && <span
             aria-label={details}
             data-microtip-position="top"
             data-microtip-size="large"

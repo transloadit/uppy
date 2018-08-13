@@ -16,6 +16,8 @@ const uppy = Uppy()
 
 ## Installation
 
+Install from NPM:
+
 ```shell
 npm install @uppy/core
 ```
@@ -27,6 +29,8 @@ const Core = Uppy.Core
 ```
 
 ## Options
+
+The Uppy core module has the following configurable options:
 
 ```js
 const uppy = Uppy({

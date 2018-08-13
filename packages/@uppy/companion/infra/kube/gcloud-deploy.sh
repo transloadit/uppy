@@ -15,10 +15,10 @@ sudo mv ./kubectl /usr/local/bin/kubectl
 
 
 # Store the new image in docker hub
-docker build --quiet -t transloadit/uppy-server:latest -t transloadit/uppy-companion:$TRAVIS_COMMIT -f "${__companion}/Dockerfile" "${__companion}";
+docker build --quiet -t transloadit/companion:latest -t transloadit/companion:$TRAVIS_COMMIT .;
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-docker push transloadit/uppy-companion:$TRAVIS_COMMIT;
-docker push transloadit/uppy-companion:latest;
+docker push transloadit/companion:$TRAVIS_COMMIT;
+docker push transloadit/companion:latest;
 
 echo $KUBECONFIG | base64 --decode -i > ${HOME}/.kube/config
 
@@ -30,9 +30,9 @@ kubectl config current-context
 
 kubectl apply -f "${__kube}/companion/uppy-env.yaml"
 sleep 10s # This cost me some precious debugging time.
-kubectl apply -f "${__kube}/companion/uppy-server-kube.yaml"
-kubectl apply -f "${__kube}/companion/uppy-server-redis.yaml"
-kubectl set image statefulset uppy-server --namespace=uppy companion=docker.io/transloadit/uppy-companion:$TRAVIS_COMMIT
+kubectl apply -f "${__kube}/companion/companion-kube.yaml"
+kubectl apply -f "${__kube}/companion/companion-redis.yaml"
+kubectl set image statefulset companion --namespace=uppy companion=docker.io/transloadit/companion:$TRAVIS_COMMIT
 sleep 10s
 
 kubectl get pods --namespace=uppy

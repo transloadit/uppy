@@ -11,13 +11,15 @@ Uppy provides [React][] components for the included UI plugins.
 
 All React components are provided through the `@uppy/react` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/react
 ```
 
 ## Usage
 
-The components can be used with [React][] or API-compatible alternatives such as [Preact][].
+The components can be used with either [React][] or API-compatible alternatives such as [Preact][].
 
 Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop.
 All other props are passed as options to the plugin.
@@ -60,7 +62,7 @@ const AvatarPicker = ({ currentAvatar }) => {
 }
 ```
 
-The plugins that are available as React component wrappers are:
+The following plugins are available as React component wrappers:
 
  - [&lt;Dashboard />][] - renders an inline [`@uppy/dashboard`][]
  - [&lt;DashboardModal />][] - renders a [`@uppy/dashboard`][] modal

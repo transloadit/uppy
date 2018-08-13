@@ -72,9 +72,16 @@ npm run release
 npm profile enable-2fa auth-only
 ```
 
-Other things to keep in mind:
+Other things to keep in mind during release:
 
 * When doing a minor release below 1.0, or a major release >= 1.0, of the `@uppy/core` package, the peerDependency of the plugin packages needs to be updated first. Eg when updating from 0.25.5 to 0.26.0, the peerDependency of each should be `"@uppy/core": "^0.26.0"` before doing `npm run release`.
+
+After a release, the demos on transloadit.com should also be updated. After updating, check that some things work locally:
+
+ - the demos in the demo section work (try one that uses an import robot, and one that you need to upload to)
+ - the demos on the homepage work and can import from GDrive, Insta, Dropbox
+
+If you don't have access to the transloadit.com source code ping @arturi or @goto-bus-stop and we'll pick it up. :sparkles:
 
 ## Website development
 

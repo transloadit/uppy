@@ -178,18 +178,18 @@ exports.buildHelpfulStartupMessage = (uppyOptions) => {
   })
 
   return stripIndent`
-    Welcome to Uppy Server v${version}
+    Welcome to Companion v${version}
     ===================================
 
-    Congratulations on setting up Uppy Server! Thanks for joining our cause, you have taken
+    Congratulations on setting up Companion! Thanks for joining our cause, you have taken
     the first step towards the future of file uploading! We
     hope you are as excited about this as we are!
 
-    While you did an awesome job on getting Uppy Server running, this is just the welcome
+    While you did an awesome job on getting Companion running, this is just the welcome
     message, so let's talk about the places that really matter:
 
     - Be sure to add ${callbackURLs.join(', ')} as your Oauth redirect uris on their corresponding developer interfaces.
-    - The URL ${buildURL('/metrics', true)} is available for  statistics to keep Uppy Server running smoothly
+    - The URL ${buildURL('/metrics', true)} is available for  statistics to keep Companion running smoothly
     - https://github.com/transloadit/uppy/issues - report your bugs here
 
     So quit lollygagging, start uploading and experience the future!

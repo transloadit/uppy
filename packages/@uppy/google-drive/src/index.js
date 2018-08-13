@@ -7,12 +7,18 @@ module.exports = class GoogleDrive extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'GoogleDrive'
+    this.title = this.opts.title || 'Google Drive'
     Provider.initPlugin(this, opts)
-    this.title = 'Google Drive'
-    this.icon = () =>
-      <svg aria-hidden="true" class="UppyIcon UppyModalTab-icon" width="28" height="28" viewBox="0 0 16 16">
-        <path d="M2.955 14.93l2.667-4.62H16l-2.667 4.62H2.955zm2.378-4.62l-2.666 4.62L0 10.31l5.19-8.99 2.666 4.62-2.523 4.37zm10.523-.25h-5.333l-5.19-8.99h5.334l5.19 8.99z" />
+    this.title = this.opts.title || 'Google Drive'
+    this.icon = () => (
+      <svg aria-hidden="true" width="18px" height="16px" viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <g fill-rule="evenodd">
+          <polygon fill="#3089FC" points="6.32475 10.2 18 10.2 14.999625 15.3 3.324375 15.3" />
+          <polygon fill="#00A85D" points="3.000375 15.3 0 10.2 5.83875 0.275974026 8.838 5.37597403 5.999625 10.2" />
+          <polygon fill="#FFD024" points="11.838375 9.92402597 5.999625 0 12.000375 0 17.839125 9.92402597" />
+        </g>
       </svg>
+    )
 
     this[this.id] = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
@@ -57,11 +63,11 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   getUsername (data) {
-    for (const item of data.items) {
-      if (item.userPermission.role === 'owner') {
-        for (const owner of item.owners) {
-          if (owner.isAuthenticatedUser) {
-            return owner.emailAddress
+    for (const item of data.files) {
+      if (item.ownedByMe) {
+        for (const permission of item.permissions) {
+          if (permission.role === 'owner') {
+            return permission.emailAddress
           }
         }
       }
@@ -73,21 +79,21 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   getItemData (item) {
-    return Object.assign({}, item, {size: parseFloat(item.fileSize)})
+    return Object.assign({}, item, {size: parseFloat(item.size)})
   }
 
   getItemIcon (item) {
-    return <img src={item.iconLink} />
+    return item.iconLink
   }
 
   getItemSubList (item) {
-    return item.items.filter((i) => {
+    return item.files.filter((i) => {
       return this.isFolder(i) || !i.mimeType.startsWith('application/vnd.google')
     })
   }
 
   getItemName (item) {
-    return item.title ? item.title : '/'
+    return item.name ? item.name : '/'
   }
 
   getMimeType (item) {
@@ -103,7 +109,7 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   getItemModifiedDate (item) {
-    return item.modifiedByMeDate
+    return item.modifiedTime
   }
 
   getItemThumbnailUrl (item) {

@@ -6,7 +6,7 @@ module: "@uppy/aws-s3-multipart"
 permalink: docs/aws-s3-multipart/
 ---
 
-The `@uppy/aws-s3-multipart` plugin can be used to upload files directly to an S3 bucket using S3's Multipart upload strategy. With this strategy, files are chopped up in parts of 5MB+ each, so they can be uploaded concurrently. It's also very reliable: if a single part fails to upload, only that 5MB has to be retried.
+The `@uppy/aws-s3-multipart` plugin can be used to upload files directly to an S3 bucket using S3's Multipart upload strategy. With this strategy, files are chopped up in parts of 5MB+ each, so they can be uploaded concurrently. It is also very reliable: if a single part fails to upload, only that 5MB chunk has to be retried.
 
 ```js
 const AwsS3Multipart = require('@uppy/aws-s3-multipart')
@@ -20,6 +20,8 @@ uppy.use(AwsS3Multipart, {
 
 This plugin is published as the `@uppy/aws-s3-multipart` package.
 
+Install from NPM:
+
 ```shell
 npm install @uppy/aws-s3-multipart
 ```
@@ -32,13 +34,15 @@ const AwsS3Multipart = Uppy.AwsS3Multipart
 
 ## Options
 
+The `@uppy/aws-s3-multipart` plugin has the following configurable options:
+
 ### limit: 0
 
-The maximum amount of chunks to upload simultaneously. `0` means unlimited.
+The maximum amount of chunks to upload simultaneously. Set to `0` to disable limiting.
 
 ### serverUrl: null
 
-The Uppy Server URL to use to proxy calls to the S3 Multipart API.
+The Uppy Server URL to use for proxying calls to the S3 Multipart API.
 
 ### createMultipartUpload(file)
 
@@ -85,7 +89,7 @@ Return a Promise for an object with keys:
      Key: partData.key,
      UploadId: partData.uploadId,
      PartNumber: partData.number,
-     Body: '', // Empty, because it's uploaded later
+     Body: '', // Empty, because it is uploaded later
      Expires: Date.now() + 5 * 60 * 1000
    }, (err, url) => { /* there's the url! */ })
    ```

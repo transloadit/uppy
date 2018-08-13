@@ -177,11 +177,11 @@ const ProgressBarProcessing = (props) => {
 }
 
 const progressDetails = (props) => {
-  return <span class="uppy-StatusBar-statusSecondary">
+  return <div class="uppy-StatusBar-statusSecondary">
     { props.inProgress > 1 && props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.inProgress }) + ' \u00B7 ' }
     { props.i18n('dataUploadedOfTotal', { complete: props.totalUploadedSize, total: props.totalSize }) + ' \u00B7 ' }
     { props.i18n('xTimeLeft', { time: props.totalETA }) }
-  </span>
+  </div>
 }
 
 const ThrottledProgressDetails = throttle(progressDetails, 500, { leading: true, trailing: true })
@@ -197,8 +197,7 @@ const ProgressBarUploading = (props) => {
     <div class="uppy-StatusBar-content" aria-label={title} title={title}>
       { !props.hidePauseResumeCancelButtons && <PauseResumeButtons {...props} /> }
       <div class="uppy-StatusBar-status">
-        <span class="uppy-StatusBar-statusPrimary">{title}: {props.totalProgress}%</span>
-        <br />
+        <div class="uppy-StatusBar-statusPrimary">{title}: {props.totalProgress}%</div>
         { !props.isAllPaused && <ThrottledProgressDetails {...props} /> }
       </div>
     </div>
@@ -219,7 +218,7 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
 const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
   return (
     <div class="uppy-StatusBar-content" role="alert">
-      <strong class="uppy-StatusBar-contentPadding">{i18n('uploadFailed')}.</strong>
+      <span class="uppy-StatusBar-contentPadding">{i18n('uploadFailed')}.</span>
       { !hideRetryButton && <span class="uppy-StatusBar-contentPadding">{i18n('pleasePressRetry')}</span> }
       <span class="uppy-StatusBar-details"
         aria-label={error}
