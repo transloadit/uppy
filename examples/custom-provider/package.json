@@ -19,7 +19,6 @@
     "budo": "^11.3.2",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
-    "npm-run-all": "^4.1.2",
-    "uppy-server": "^0.13.4"
+    "npm-run-all": "^4.1.2"
   }
 }
