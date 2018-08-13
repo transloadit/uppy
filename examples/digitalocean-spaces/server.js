@@ -45,7 +45,7 @@ app.use('/uppy-server', uppy.app({
 // Serve the built CSS file.
 app.get('/uppy.min.css', (req, res) => {
   res.setHeader('content-type', 'text/css')
-  fs.createReadStream(path.join('../../dist/uppy.min.css')).pipe(res)
+  fs.createReadStream(path.join('../../packages/uppy/dist/uppy.min.css')).pipe(res)
 })
 
 // Start the development server, budo.
