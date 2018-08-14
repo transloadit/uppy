@@ -46,7 +46,7 @@ spec:
                 - companion
             topologyKey: kubernetes.io/hostname    
       containers:
-      - image: docker.io/transloadit/uppy-companion:latest
+      - image: docker.io/kiloreux/uppy-companion:latest
         imagePullPolicy: Always
         name: companion        
         resources:
@@ -56,7 +56,7 @@ spec:
             memory: 2Gi
         envFrom:
         - configMapRef:
-            name: companion-env
+            name: uppy-companion-env
         ports:
         - containerPort: 3020
         volumeMounts:
