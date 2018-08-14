@@ -15,7 +15,7 @@ mv ./kubectl ${HOME}/.local/bin/
 
 
 # Store the new image in docker hub
-docker build --quiet -t kiloreux/uppy-companion:latest -t kiloreux/uppy-companion:$TRAVIS_COMMIT .;
+docker build --quiet -t kiloreux/uppy-companion:latest -t kiloreux/uppy-companion:$TRAVIS_COMMIT -f packages/@uppy/companion/Dockerfile packages/@uppy/companion;
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
 docker push kiloreux/uppy-companion:$TRAVIS_COMMIT;
 docker push kiloreux/uppy-companion:latest;
