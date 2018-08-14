@@ -20,7 +20,7 @@ class MockPurest {
           kind: 'drive#fileList',
           etag: '"bcIyJ9A3gXa8oTYmz6nzAjQd-lY/eQc3WbZHkXpcItNyGKDuKXM_bNY"',
           items: [{ id: '0B2x-PmqQHSKdT013TE1VVjZ3TWs' }],
-          fileSize: 300
+          size: 300
         }
       }
       const body = responses[this.opts.providerName]
