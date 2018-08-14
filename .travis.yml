@@ -14,10 +14,10 @@ node_js:
 #       secure: OY3oWwiJghfty9wSPVvlhirvFGxPHDdIRuVkzAv6j7C/hj2BWYAP/UHrwdQ9XiYisHi/B5mGeyRVlrAf0MNGrG84rTDUbTWZbmktfuxl7A+Y6c0czk+s4SdhOiANG5b3tFl5wKq8h7uhrWH5/jWoKQ2Fz1VDCqxTvvZQbo41jSBhi7TBia626hxEePzdaiuw6HhGFZtfaoVs/FX30ylz8WDNrBjwCynjxsT52BaQrVvgEhuyzlOpI69YkZBPOq4fc3KiZ2YR43gLTx8K+sYCE9yJxdg1xT/UAawEhmedU83nyBZVo4rr7+03AixIxtI28MUCfBMlcsGwBxcKEKY/IWcp9UkPCq6+zALQoncV478tP21eYvlmxSFhYCrv+WEQlN+BcNjr4OJlmmFDbCVaF7r9qLeQPImU0+9iJU3OjrW7lpfLxORpGDEr2Nx6awKkIJCxNyK9weefeNo6Fz3V1kkyZ/7yWFeniJnRUCbahrB2XgzxIE+W307s1Qs4fm6JK7hVLTtG4fBzjChmAyGIzu744ws9WqmjvkC9D7OfnuXqanv/VcBFqPiudInerv7NL8FketUC+fxe/7XJfcxdaDGBjk8Kq7zXDohGRGymUXEoMDNJsKkMMlaKzdf7tgqdhsRJoH9NCVqrDXuG5al0UtrDP5RS7qfoxUunJmNFhlg=
 services:
   - docker
-cache:
-  apt: true
-  directories:
-  - ~/.npm
+# cache:
+#   apt: true
+#   directories:
+#   - ~/.npm
 # before_install:
 # - nvm install-latest-npm
 script:
