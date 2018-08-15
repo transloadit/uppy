@@ -18,6 +18,8 @@ cache:
   - ~/.npm
 before_install:
 - nvm install-latest-npm
+services:
+  - docker
 script:
 - packages/@uppy/companion/infra/kube/gcloud-deploy.sh
 - npm run web:install
