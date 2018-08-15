@@ -13,6 +13,7 @@ RUN apk --update add  --virtual native-dep \
   apk del native-dep
 RUN apk add bash
 COPY . /app
+ENV PATH="/app/node_modules/.bin:${PATH}"
 RUN npm run build
 CMD ["node","/app/lib/standalone/start-server.js"]
 # This can be overwritten later
