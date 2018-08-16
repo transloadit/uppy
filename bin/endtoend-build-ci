@@ -36,8 +36,8 @@ lerna publish --yes \
   --force-publish="*" \
   --registry="$VERDACCIO_REGISTRY" \
   --npm-client=npm \
-  --skip-git \
-  --cd-version=prerelease
+  --no-git-tag-version --no-push \
+  --canary
 
 # revert version changes
 git checkout -- packages/*/package.json packages/@uppy/*/package.json
