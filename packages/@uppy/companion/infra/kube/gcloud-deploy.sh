@@ -28,6 +28,7 @@ mkdir ${HOME}/.kube
 echo "Writing KUBECONFIG to file..."
 echo $KUBECONFIGVAR | base64 --decode -i > ${HOME}/.kube/config
 echo "KUBECONFIG file written"
+
 sleep 10s # This cost me some precious debugging time.
 kubectl apply -f "${__kube}/companion/companion-kube.yaml"
 kubectl apply -f "${__kube}/companion/companion-redis.yaml"
@@ -40,7 +41,7 @@ kubectl get deployment --namespace=uppy
 
 function cleanup {
     printf "Cleaning up...\n"
-    rm -vf "${__kube}/companion/companion-env.yaml"
+    rm -vf ${HOME}/.kube/config
     printf "Cleaning done."
 }
 

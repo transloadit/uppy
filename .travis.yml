@@ -57,4 +57,4 @@ deploy:
   skip_cleanup: true
   script: packages/@uppy/companion/infra/kube/gcloud-deploy.sh
   on:
-    branch: companion-fixes
+    branch: master
