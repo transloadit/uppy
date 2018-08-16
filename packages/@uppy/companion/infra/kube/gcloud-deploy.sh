@@ -22,6 +22,9 @@ docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
 docker push kiloreux/uppy-companion:$TRAVIS_COMMIT;
 docker push kiloreux/uppy-companion:latest;
 
+
+echo "base64 testing..."
+echo $TRAVIS|base64 --decode -i
 echo "Create directory..."
 mkdir ${HOME}/.kube
 echo "Writing KUBECONFIG to file..."
