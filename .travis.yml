@@ -22,7 +22,6 @@ before_install:
 services:
   - docker
 script:
-- packages/@uppy/companion/infra/kube/gcloud-deploy.sh
 - npm run web:install
 - npm run build
 - npm run test
