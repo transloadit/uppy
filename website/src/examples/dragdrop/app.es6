@@ -3,7 +3,7 @@ const DragDrop = require('@uppy/drag-drop')
 const ProgressBar = require('@uppy/progress-bar')
 const Tus = require('@uppy/tus')
 
-const uppyOne = new Uppy({debug: true})
+const uppyOne = new Uppy({debug: true, autoProceed: true})
 uppyOne
   .use(DragDrop, {target: '.UppyDragDrop-One'})
   .use(Tus, {endpoint: '//master.tus.io/files/'})
