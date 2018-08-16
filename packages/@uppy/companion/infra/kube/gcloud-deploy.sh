@@ -22,13 +22,14 @@ docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
 docker push kiloreux/uppy-companion:$TRAVIS_COMMIT;
 docker push kiloreux/uppy-companion:latest;
 
-
+echo "Create directory..."
 mkdir ${HOME}/.kube
-touch ${HOME}/.kube/config
+echo "Writing KUBECONFIG to file..."
 echo $KUBECONFIG | base64 --decode -i > ${HOME}/.kube/config
 
 # Should be already removed. Using it temporarily.
 rm -f "${__kube}/companion/companion-env.yaml"
+echo "Writing COMPANION_ENV to file..."
 echo $COMPANION_ENV | base64 --decode > "${__kube}/companion/companion-env.yaml"
 
 kubectl apply -f "${__kube}/companion/companion-env.yaml"
