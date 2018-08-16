@@ -1,7 +1,7 @@
 {
   "name": "@uppy/google-drive",
   "description": "The Google Drive plugin for Uppy lets users import files from their Google Drive account",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -22,8 +22,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/companion-client": "0.27.0",
-    "@uppy/provider-views": "0.27.0",
+    "@uppy/companion-client": "0.27.1",
+    "@uppy/provider-views": "0.27.1",
     "@uppy/utils": "0.27.0",
     "preact": "^8.2.9"
   },
