@@ -25,6 +25,6 @@
     "@uppy/core": "0.27.0"
   },
   "peerDependencies": {
-    "@uppy/core": "^0.26.0"
+    "@uppy/core": "^0.27.0"
   }
 }
