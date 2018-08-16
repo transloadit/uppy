@@ -2,7 +2,7 @@
   "private": true,
   "name": "custom-provider-example",
   "scripts": {
-    "copy": "cp ../../dist/uppy.min.css .",
+    "copy": "cp ../../packages/uppy/dist/uppy.min.css .",
     "start:client": "budo client/main.js:bundle.js -- -t babelify -g aliasify",
     "start:server": "node server/index.js",
     "start": "npm-run-all --serial copy --parallel start:*"
