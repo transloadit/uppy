@@ -31,7 +31,7 @@ const options = {
       region: process.env.UPPYSERVER_AWS_REGION
     }
   },
-  server: { serverUrl: 'localhost:3020' },
+  server: { host: 'localhost:3020' },
   filePath: DATA_DIR,
   secret: 'blah blah',
   debug: true
