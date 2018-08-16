@@ -26,14 +26,8 @@ docker push kiloreux/uppy-companion:latest;
 echo "Create directory..."
 mkdir ${HOME}/.kube
 echo "Writing KUBECONFIG to file..."
-echo $KUBECONFIG | base64 --decode -i > ${HOME}/.kube/config
-
-# Should be already removed. Using it temporarily.
-# rm -f "${__kube}/companion/companion-env.yaml"
-# echo "Writing COMPANION_ENV to file..."
-# echo $COMPANION_ENV | base64 --decode > "${__kube}/companion/companion-env.yaml"
-
-# kubectl apply -f "${__kube}/companion/companion-env.yaml"
+echo $KUBECONFIGVAR | base64 --decode -i > ${HOME}/.kube/config
+echo "KUBECONFIG file written"
 sleep 10s # This cost me some precious debugging time.
 kubectl apply -f "${__kube}/companion/companion-kube.yaml"
 kubectl apply -f "${__kube}/companion/companion-redis.yaml"
