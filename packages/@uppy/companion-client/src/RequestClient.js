@@ -55,7 +55,8 @@ module.exports = class RequestClient {
   get (path) {
     return fetch(this._getUrl(path), {
       method: 'get',
-      headers: this.headers
+      headers: this.headers,
+      credentials: 'same-origin'
     })
       // @todo validate response status before calling json
       .then(this.onReceiveResponse)
@@ -69,6 +70,7 @@ module.exports = class RequestClient {
     return fetch(this._getUrl(path), {
       method: 'post',
       headers: this.headers,
+      credentials: 'same-origin',
       body: JSON.stringify(data)
     })
       .then(this.onReceiveResponse)
@@ -87,6 +89,7 @@ module.exports = class RequestClient {
     return fetch(`${this.hostname}/${path}`, {
       method: 'delete',
       headers: this.headers,
+      credentials: 'same-origin',
       body: data ? JSON.stringify(data) : null
     })
       .then(this.onReceiveResponse)
