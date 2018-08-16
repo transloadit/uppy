@@ -69,7 +69,6 @@
     "temp-write": "^3.4.0",
     "tinyify": "^2.4.3",
     "typescript": "^2.9.2",
-    "uppy-server": "^0.13.4",
     "verdaccio": "^3.6.0",
     "watchify": "^3.11.0",
     "wdio-mocha-framework": "^0.5.13",
