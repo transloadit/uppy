@@ -14,7 +14,7 @@ RUN apk --update add  --virtual native-dep \
 RUN apk add bash
 COPY . /app
 ENV PATH "${PATH}:/app/node_modules/.bin"
-RUN /app/node_modules/.bin/tsc -p .
+RUN npm run build
 CMD ["node","/app/lib/standalone/start-server.js"]
 # This can be overwritten later
 EXPOSE 3020
