@@ -29,7 +29,6 @@ echo $KUBECONFIG | base64 --decode -i > ${HOME}/.kube/config
 
 # Should be already removed. Using it temporarily.
 rm -f "${__kube}/companion/companion-env.yaml"
-touch "${__kube}/companion/companion-env.yaml"
 echo $COMPANION_ENV | base64 --decode > "${__kube}/companion/companion-env.yaml"
 
 kubectl apply -f "${__kube}/companion/companion-env.yaml"
