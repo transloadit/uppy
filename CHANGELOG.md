@@ -126,7 +126,17 @@ What we need to do to release Uppy 1.0
 - [ ] transloadit: add error reporting (@goto-bus-stop)
 - [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
+- [ ] core: update babel once v7 is out
 - [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
+- [ ] companion: option validation (can use https://npm.im/ajv + JSON schema)
+- [x] companion: rename Server → Companion in documentation (#1007 / @goto-bus-stop)
+- [x] website: Load all prism languages (#1004 / @goto-bus-stop)
+- [x] core: Fix peerDependencies of plugin packages. (#1005 / @goto-bus-stop)
+- [x] companion-client: Send cookies with fetch requests (#1000 / @geoffappleford)
+- [x] Add e2e test for providers (#990 / @ifedapoolarewaju)
+- [x] website: attempt to fix font sizes on mobile vs desktop (@arturi)
+- [x] dashboard:  show note and “powered by” when no acquire/sources plugins are used too (@arturi)
+- [x] Update dependencies. (#995 / @goto-bus-stop)
 
 ## 0.27.0
 
