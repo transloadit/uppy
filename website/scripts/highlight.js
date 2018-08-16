@@ -9,8 +9,8 @@ const path = require('path')
 // I think this is the way to add Prism components that it doesn't include
 // in the default build?
 global.Prism = Prism
-require('prismjs/components/prism-markup-templating')
-require('prismjs/components/prism-php')
+// the / is needed to force it to resolve to the directory
+require('prismjs/components/')()
 delete global.Prism
 
 const unhighlightedCodeRx = /<pre><code class="(.*)?">([\s\S]*?)<\/code><\/pre>/igm
