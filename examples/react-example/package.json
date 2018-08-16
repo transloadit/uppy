@@ -11,13 +11,12 @@
     }
   },
   "dependencies": {
-    "babel-preset-react": "^6.24.1",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1"
-  },
-  "devDependencies": {
     "aliasify": "^2.1.0",
-    "babelify": "^7.3.0",
-    "budo": "^10.0.4"
+    "babel-core": "^6.26.3",
+    "babel-preset-react": "^6.24.1",
+    "babelify": "^8.0.0",
+    "budo": "^11.3.2",
+    "react": "^15.6.2",
+    "react-dom": "^15.6.2"
   }
 }

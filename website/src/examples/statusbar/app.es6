@@ -3,7 +3,7 @@ const FileInput = require('@uppy/file-input')
 const StatusBar = require('@uppy/status-bar')
 const Tus = require('@uppy/tus')
 
-const uppyOne = new Uppy({debug: true})
+const uppyOne = new Uppy({debug: true, autoProceed: true})
 uppyOne
   .use(FileInput, { target: '.UppyInput', pretty: false })
   .use(Tus, { endpoint: '//master.tus.io/files/' })

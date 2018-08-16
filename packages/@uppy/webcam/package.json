@@ -1,7 +1,7 @@
 {
   "name": "@uppy/webcam",
   "description": "Uppy plugin that takes photos or records videos using the device's camera.",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -34,6 +34,6 @@
     "@uppy/core": "0.27.0"
   },
   "peerDependencies": {
-    "@uppy/core": "^0.26.0"
+    "@uppy/core": "^0.27.0"
   }
 }

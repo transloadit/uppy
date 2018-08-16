@@ -8,6 +8,8 @@ module.exports = class MyCustomProvider extends Plugin {
     super(uppy, opts)
     this.type = 'acquirer'
     this.id = this.opts.id || 'MyCustomProvider'
+    Provider.initPlugin(this, opts)
+
     this.title = 'MyCustomProvider'
     this.icon = () => (
       <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="23" />
@@ -68,9 +70,7 @@ module.exports = class MyCustomProvider extends Plugin {
   }
 
   getItemIcon (item) {
-    return () => (
-      <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" />
-    )
+    return 'https://uppy.io/images/logos/uppy-dog-head-arrow.svg'
   }
 
   getItemSubList (item) {
@@ -100,6 +100,10 @@ module.exports = class MyCustomProvider extends Plugin {
 
   getItemThumbnailUrl (item) {
     return 'https://uppy.io/images/logos/uppy-dog-head-arrow.svg'
+  }
+
+  getUsername () {
+    return 'Cool Dog'
   }
 
   render (state) {

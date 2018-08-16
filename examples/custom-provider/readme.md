@@ -1,6 +1,6 @@
-# Uppy + Server + Custom Provider  Example
+# Uppy + Companion + Custom Provider  Example
 
-This example uses uppy-server with a dummy custom provider.
+This example uses @uppy/companion with a dummy custom provider.
 This serves as an illustration on how integrating custom providers would work
 
 ## Run it

@@ -44,7 +44,7 @@ const isForbiddenHeader = (header) => {
     forbiddenRegex.findIndex((regex) => regex.test(headerLower)) >= 0
 
   if (forbidden) {
-    logger.warn(`Header forbbiden: ${header}`, 'header.forbidden')
+    logger.warn(`Header forbidden: ${header}`, 'header.forbidden')
   }
   return forbidden
 }

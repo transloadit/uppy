@@ -117,6 +117,10 @@ Width of the Dashboard in pixels. Used when `inline: true`.
 
 Height of the Dashboard in pixels. Used when `inline: true`.
 
+### `showLinkToFileUploadResult: true`
+
+By default, when a file upload has completed, the file icon in the Dashboard turns into a link to the uploaded file. If your app does not publicly store uploaded files or if it's otherwise unwanted, pass `showLinkToFileUploadResult: false`.
+
 ### `showProgressDetails: false`
 
 By default, progress in StatusBar is shown as a simple percentage. If you would like to also display remaining upload size and time, set this to `true`.
