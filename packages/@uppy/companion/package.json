@@ -46,7 +46,8 @@
     "@types/uuid": "^3.4.3",
     "@types/ws": "^3.2.1",
     "nodemon": "^1.17.5",
-    "supertest": "3.0.0"
+    "supertest": "3.0.0",
+    "typescript": "^2.9.2"
   },
   "dependencies": {
     "@purest/providers": "1.0.0",
