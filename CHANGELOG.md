@@ -129,6 +129,12 @@ What we need to do to release Uppy 1.0
 - [ ] core: update babel once v7 is out
 - [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
 - [ ] companion: option validation (can use https://npm.im/ajv + JSON schema)
+
+## 0.27.1
+
+Released: 2018-08-16.
+
+- [x] companion: use explicit typescript devDependency.
 - [x] companion: rename Server → Companion in documentation (#1007 / @goto-bus-stop)
 - [x] website: Load all prism languages (#1004 / @goto-bus-stop)
 - [x] core: Fix peerDependencies of plugin packages. (#1005 / @goto-bus-stop)
