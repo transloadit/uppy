@@ -18,7 +18,6 @@ cache:
   - ~/.npm
 before_install:
 - nvm install-latest-npm
-- npm install -g npm@6.3
 services:
   - docker
 script:

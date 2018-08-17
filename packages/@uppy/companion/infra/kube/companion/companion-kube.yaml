@@ -46,7 +46,7 @@ spec:
                 - companion
             topologyKey: kubernetes.io/hostname    
       containers:
-      - image: docker.io/kiloreux/uppy-companion:latest
+      - image: docker.io/transloadit/companion:latest
         imagePullPolicy: Always
         name: companion        
         resources:
@@ -87,7 +87,7 @@ spec:
   tls:
   - hosts:
     - server.uppy.io
-    secretName: companion-tls
+    secretName: server-tls
   - hosts:
     - companion.uppy.io
     secretName: companion-tls
