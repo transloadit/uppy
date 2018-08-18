@@ -67,26 +67,32 @@ class TransloaditAssembly extends Emitter {
     })
 
     socket.on('assembly_finished', () => {
+      // TODO Update assembly status
       this.emit('finished')
     })
 
     socket.on('assembly_upload_finished', (file) => {
+      // TODO Add to assembly status
       this.emit('upload', file)
     })
 
     socket.on('assembly_uploading_finished', () => {
+      // TODO Update assembly status
       this.emit('executing')
     })
 
     socket.on('assembly_upload_meta_data_extracted', () => {
+      // TODO Update assembly status
       this.emit('metadata')
     })
 
     socket.on('assembly_result_finished', (stepName, result) => {
+      // TODO Add to assembly status
       this.emit('result', stepName, result)
     })
 
     socket.on('assembly_error', (err) => {
+      // TODO Update assembly status
       this._onError(err)
     })
 

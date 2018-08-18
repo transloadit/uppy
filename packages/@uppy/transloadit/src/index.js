@@ -362,99 +362,27 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
+  /**
+   * Custom state serialization for the Golden Retriever plugin.
+   * It will pass this back to the `onRestored` function.
+   *
+   * @param {function} setData
+   */
   getPersistentData (setData) {
     const state = this.getPluginState()
     const assemblies = state.assemblies
     const uploadsAssemblies = state.uploadsAssemblies
-    const uploads = Object.keys(state.files)
-    const results = state.results.map((result) => result.id)
 
     setData({
       [this.id]: {
         assemblies,
-        uploadsAssemblies,
-        uploads,
-        results
+        uploadsAssemblies
       }
     })
   }
 
-  /**
-   * Emit the necessary events that must have occured to get from the `prevState`,
-   * to the current state.
-   * For completed uploads, `transloadit:upload` is emitted.
-   * For new results, `transloadit:result` is emitted.
-   * For completed or errored assemblies, `transloadit:complete` or `transloadit:assembly-error` is emitted.
-   */
-  emitEventsDiff (prevState) {
-    const opts = this.opts
-    const state = this.getPluginState()
-
-    const emitMissedEvents = () => {
-      // Emit events for completed uploads and completed results
-      // that we've missed while we were away.
-      const newUploads = Object.keys(state.files).filter((fileID) => {
-        return !prevState.files.hasOwnProperty(fileID)
-      }).map((fileID) => state.files[fileID])
-      const newResults = state.results.filter((result) => {
-        return !prevState.results.some((prev) => prev.id === result.id)
-      })
-
-      this.uppy.log('[Transloadit] New fully uploaded files since restore:')
-      this.uppy.log(newUploads)
-      newUploads.forEach(({ assembly, uploadedFile }) => {
-        this.uppy.log(`[Transloadit]  emitting transloadit:upload ${uploadedFile.id}`)
-        this.uppy.emit('transloadit:upload', uploadedFile, this.getAssembly(assembly))
-      })
-      this.uppy.log('[Transloadit] New results since restore:')
-      this.uppy.log(newResults)
-      newResults.forEach(({ assembly, stepName, result, id }) => {
-        this.uppy.log(`[Transloadit]  emitting transloadit:result ${stepName}, ${id}`)
-        this.uppy.emit('transloadit:result', stepName, result, this.getAssembly(assembly))
-      })
-
-      const newAssemblies = state.assemblies
-      const previousAssemblies = prevState.assemblies
-      this.uppy.log('[Transloadit] Current Assembly status after restore')
-      this.uppy.log(newAssemblies)
-      this.uppy.log('[Transloadit] Assembly status before restore')
-      this.uppy.log(previousAssemblies)
-      Object.keys(newAssemblies).forEach((assemblyId) => {
-        const oldAssembly = previousAssemblies[assemblyId]
-        diffAssemblyStatus(oldAssembly, newAssemblies[assemblyId])
-      })
-    }
-
-    // Emit events for assemblies that have completed or errored while we were away.
-    const diffAssemblyStatus = (prev, next) => {
-      this.uppy.log('[Transloadit] Diff assemblies')
-      this.uppy.log(prev)
-      this.uppy.log(next)
-
-      if (opts.waitForEncoding && next.ok === 'ASSEMBLY_COMPLETED' && prev.ok !== 'ASSEMBLY_COMPLETED') {
-        this.uppy.log(`[Transloadit]  Emitting transloadit:complete for ${next.assembly_id}`)
-        this.uppy.log(next)
-        this.uppy.emit('transloadit:complete', next)
-      } else if (opts.waitForMetadata && next.upload_meta_data_extracted && !prev.upload_meta_data_extracted) {
-        this.uppy.log(`[Transloadit]  Emitting transloadit:complete after metadata extraction for ${next.assembly_id}`)
-        this.uppy.log(next)
-        this.uppy.emit('transloadit:complete', next)
-      }
-
-      if (next.error && !prev.error) {
-        this.uppy.log(`[Transloadit]  !!! Emitting transloadit:assembly-error for ${next.assembly_id}`)
-        this.uppy.log(next)
-        this.uppy.emit('transloadit:assembly-error', next, new Error(next.message))
-      }
-    }
-
-    emitMissedEvents()
-  }
-
   onRestored (pluginData) {
     const savedState = pluginData && pluginData[this.id] ? pluginData[this.id] : {}
-    const knownUploads = savedState.files || []
-    const knownResults = savedState.results || []
     const previousAssemblies = savedState.assemblies || {}
     const uploadsAssemblies = savedState.uploadsAssemblies || {}
 
@@ -463,93 +391,69 @@ module.exports = class Transloadit extends Plugin {
       return
     }
 
-    // Fetch up-to-date assembly statuses.
-    const loadAssemblies = () => {
-      const assemblyIDs = []
-      Object.keys(uploadsAssemblies).forEach((uploadID) => {
-        assemblyIDs.push(...uploadsAssemblies[uploadID])
-      })
-
-      return Promise.all(
-        assemblyIDs.map((assemblyID) => {
-          const url = `https://api2.transloadit.com/assemblies/${assemblyID}`
-          return this.client.getAssemblyStatus(url)
-        })
-      )
-    }
-
-    const reconnectSockets = (assemblies) => {
-      return Promise.all(assemblies.map((assembly) => {
-        // No need to connect to the socket if the assembly has completed by now.
-        if (assembly.ok === 'ASSEMBLY_COMPLETE') {
-          return null
-        }
-        return this.connectSocket(assembly)
-      }))
-    }
-
     // Convert loaded assembly statuses to a Transloadit plugin state object.
     const restoreState = (assemblies) => {
-      const assembliesById = {}
       const files = {}
       const results = []
-      assemblies.forEach((assembly) => {
-        assembliesById[assembly.assembly_id] = assembly
+      Object.keys(assemblies).forEach((id) => {
+        const status = assemblies[id]
 
-        assembly.uploads.forEach((uploadedFile) => {
+        status.uploads.forEach((uploadedFile) => {
           const file = this.findFile(uploadedFile)
           files[uploadedFile.id] = {
             id: file.id,
-            assembly: assembly.assembly_id,
+            assembly: id,
             uploadedFile
           }
         })
 
         const state = this.getPluginState()
-        Object.keys(assembly.results).forEach((stepName) => {
-          assembly.results[stepName].forEach((result) => {
+        Object.keys(status.results).forEach((stepName) => {
+          status.results[stepName].forEach((result) => {
             const file = state.files[result.original_id]
             result.localId = file ? file.id : null
             results.push({
               id: result.id,
               result,
               stepName,
-              assembly: assembly.assembly_id
+              assembly: id
             })
           })
         })
       })
 
       this.setPluginState({
-        assemblies: assembliesById,
-        files: files,
-        results: results,
-        uploadsAssemblies: uploadsAssemblies
+        assemblies,
+        files,
+        results,
+        uploadsAssemblies
       })
     }
 
+    // Set up the Assembly instances for existing assemblies.
+    const restoreAssemblies = () => {
+      const { assemblies } = this.getPluginState()
+      Object.keys(assemblies).forEach((id) => {
+        this.connectAssembly(assemblies[id])
+      })
+    }
+
+    // Force-update all assemblies to check for missed events.
+    const updateAssemblies = () => {
+      const { assemblies } = this.getPluginState()
+      return Promise.all(
+        Object.keys(assemblies).map((id) => {
+          return this.activeAssemblies[id].update()
+        })
+      )
+    }
+
     // Restore all assembly state.
-    this.restored = Promise.resolve()
-      .then(loadAssemblies)
-      .then((assemblies) => {
-        restoreState(assemblies)
-        return reconnectSockets(assemblies)
-      })
-      .then(() => {
-        // Return a callback that will be called by `afterUpload`
-        // once it has attached event listeners etc.
-        const newState = this.getPluginState()
-        const previousFiles = {}
-        knownUploads.forEach((id) => {
-          previousFiles[id] = newState.files[id]
-        })
-        return () => this.emitEventsDiff({
-          assemblies: previousAssemblies,
-          files: previousFiles,
-          results: newState.results.filter(({ id }) => knownResults.indexOf(id) !== -1),
-          uploadsAssemblies
-        })
-      })
+    this.restored = Promise.resolve().then(() => {
+      restoreState(previousAssemblies)
+      restoreAssemblies()
+      return updateAssemblies()
+    })
 
     this.restored.then(() => {
       this.restored = null
@@ -560,6 +464,8 @@ module.exports = class Transloadit extends Plugin {
     const { status } = assembly
     const id = status.assembly_id
     this.activeAssemblies[id] = assembly
+
+    // TODO Sync local `assemblies` state
 
     assembly.on('upload', this.onFileUploadComplete.bind(this, id))
     assembly.on('error', (error) => {
@@ -584,15 +490,23 @@ module.exports = class Transloadit extends Plugin {
       })
     }
 
-    assembly.connect()
+    // No need to connect to the socket if the assembly has completed by now.
+    if (assembly.ok === 'ASSEMBLY_COMPLETE') {
+      return assembly
+    }
 
-    return new Promise((resolve, reject) => {
+    // TODO Do we still need this for anything…?
+    // eslint-disable-next-line no-unused-vars
+    const connected = new Promise((resolve, reject) => {
       assembly.once('connect', resolve)
       assembly.once('status', resolve)
       assembly.once('error', reject)
     }).then(() => {
       this.uppy.log('[Transloadit] Socket is ready')
     })
+
+    assembly.connect()
+    return assembly
   }
 
   prepareUpload (fileIDs, uploadID) {
@@ -679,10 +593,8 @@ module.exports = class Transloadit extends Plugin {
 
     // If we're still restoring state, wait for that to be done.
     if (this.restored) {
-      return this.restored.then((emitMissedEvents) => {
-        const promise = this.afterUpload(fileIDs, uploadID)
-        emitMissedEvents()
-        return promise
+      return this.restored.then(() => {
+        return this.afterUpload(fileIDs, uploadID)
       })
     }
 
@@ -793,6 +705,8 @@ module.exports = class Transloadit extends Plugin {
         this.uppy.off('transloadit:import-error', onImportError)
       }
 
+      // TODO Move these handlers up
+      // They can also fire during the upload, especially when restoring
       this.uppy.on('transloadit:complete', onAssemblyFinished)
       this.uppy.on('transloadit:assembly-error', onAssemblyError)
       this.uppy.on('transloadit:import-error', onImportError)
