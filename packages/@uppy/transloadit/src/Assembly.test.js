@@ -17,39 +17,39 @@ describe('Transloadit/Assembly', () => {
     it('ASSEMBLY_UPLOADING → ASSEMBLY_EXECUTING', () => {
       const result = attemptDiff({
         ok: 'ASSEMBLY_UPLOADING',
-        files: {},
+        uploads: {},
         results: {}
       }, {
         ok: 'ASSEMBLY_EXECUTING',
-        files: {},
+        uploads: {},
         results: {}
       })
 
       expect(result[0]).toEqual(['executing'])
     })
 
-    it('ASSEMBLY_EXECUTING → ASSEMBLY_FINISHED', () => {
+    it('ASSEMBLY_EXECUTING → ASSEMBLY_COMPLETED', () => {
       const result = attemptDiff({
         ok: 'ASSEMBLY_EXECUTING',
-        files: {},
+        uploads: {},
         results: {}
       }, {
-        ok: 'ASSEMBLY_FINISHED',
-        files: {},
+        ok: 'ASSEMBLY_COMPLETED',
+        uploads: {},
         results: {}
       })
 
       expect(result[0]).toEqual(['finished'])
     })
 
-    it('ASSEMBLY_UPLOADING → ASSEMBLY_FINISHED', () => {
+    it('ASSEMBLY_UPLOADING → ASSEMBLY_COMPLETED', () => {
       const result = attemptDiff({
         ok: 'ASSEMBLY_UPLOADING',
-        files: {},
+        uploads: {},
         results: {}
       }, {
-        ok: 'ASSEMBLY_FINISHED',
-        files: {},
+        ok: 'ASSEMBLY_COMPLETED',
+        uploads: {},
         results: {}
       })
 
@@ -61,11 +61,11 @@ describe('Transloadit/Assembly', () => {
     it('emits events for new files', () => {
       const result = attemptDiff({
         ok: 'ASSEMBLY_UPLOADING',
-        files: {},
+        uploads: {},
         results: {}
       }, {
         ok: 'ASSEMBLY_UPLOADING',
-        files: {
+        uploads: {
           some_id: { id: 'some_id' }
         },
         results: {}
@@ -77,11 +77,11 @@ describe('Transloadit/Assembly', () => {
     it('emits executing, then upload, on new files + status change', () => {
       const result = attemptDiff({
         ok: 'ASSEMBLY_UPLOADING',
-        files: {},
+        uploads: {},
         results: {}
       }, {
         ok: 'ASSEMBLY_EXECUTING',
-        files: {
+        uploads: {
           some_id: { id: 'some_id' }
         },
         results: {}
@@ -95,14 +95,14 @@ describe('Transloadit/Assembly', () => {
     it('emits new results', () => {
       const one = {
         ok: 'ASSEMBLY_EXECUTING',
-        files: {
+        uploads: {
           cool_video: { id: 'cool_video' }
         },
         results: {}
       }
       const two = {
         ok: 'ASSEMBLY_EXECUTING',
-        files: {
+        uploads: {
           cool_video: { id: 'cool_video' }
         },
         results: {
@@ -115,7 +115,7 @@ describe('Transloadit/Assembly', () => {
       }
       const three = {
         ok: 'ASSEMBLY_EXECUTING',
-        files: {
+        uploads: {
           cool_video: { id: 'cool_video' }
         },
         results: {
@@ -145,12 +145,12 @@ describe('Transloadit/Assembly', () => {
     it('emits correctly jumping straight from uploading to finished', () => {
       const start = {
         ok: 'ASSEMBLY_UPLOADING',
-        files: {},
+        uploads: {},
         results: {}
       }
       const end = {
-        ok: 'ASSEMBLY_FINISHED',
-        files: {
+        ok: 'ASSEMBLY_COMPLETED',
+        uploads: {
           cool_video: { id: 'cool_video' }
         },
         results: {

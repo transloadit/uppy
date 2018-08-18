@@ -4,12 +4,12 @@ const parseUrl = require('url-parse')
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
-const ASSEMBLY_FINISHED = 'ASSEMBLY_FINISHED'
+const ASSEMBLY_COMPLETED = 'ASSEMBLY_COMPLETED'
 
 const statusOrder = [
   ASSEMBLY_UPLOADING,
   ASSEMBLY_EXECUTING,
-  ASSEMBLY_FINISHED
+  ASSEMBLY_COMPLETED
 ]
 
 /**
@@ -56,7 +56,7 @@ class TransloaditAssembly extends Emitter {
 
     socket.on('connect', () => {
       socket.emit('assembly_connect', {
-        id: this.assembly.assembly_id
+        id: this.status.assembly_id
       })
 
       this.emit('connect')
@@ -105,7 +105,7 @@ class TransloaditAssembly extends Emitter {
    */
   _beginPolling () {
     this.pollInterval = setInterval(() => {
-      if (!this.socket.connected) {
+      if (!this.socket || !this.socket.connected) {
         this._fetchStatus()
       }
     }, 2000)
@@ -121,6 +121,7 @@ class TransloaditAssembly extends Emitter {
       .then((status) => {
         // Avoid updating if we closed during this request's lifetime.
         if (this.closed) return
+        this.emit('status', status)
         this.updateStatus(status)
       })
   }
@@ -174,11 +175,11 @@ class TransloaditAssembly extends Emitter {
     }
 
     // Find new uploaded files.
-    Object.keys(next.files)
+    Object.keys(next.uploads)
       .filter((upload) => (
-        !prev.files.hasOwnProperty(upload)
+        !prev.uploads.hasOwnProperty(upload)
       ))
-      .map((upload) => next.files[upload])
+      .map((upload) => next.uploads[upload])
       .forEach((upload) => {
         this.emit('upload', upload)
       })
@@ -199,8 +200,8 @@ class TransloaditAssembly extends Emitter {
         })
     })
 
-    if (isStatus(nextStatus, ASSEMBLY_FINISHED) &&
-        !isStatus(prevStatus, ASSEMBLY_FINISHED)) {
+    if (isStatus(nextStatus, ASSEMBLY_COMPLETED) &&
+        !isStatus(prevStatus, ASSEMBLY_COMPLETED)) {
       this.emit('finished')
     }
   }

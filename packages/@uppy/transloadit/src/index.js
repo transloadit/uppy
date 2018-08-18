@@ -1,8 +1,8 @@
 const Translator = require('@uppy/utils/lib/Translator')
 const { Plugin } = require('@uppy/core')
 const Tus = require('@uppy/tus')
+const Assembly = require('./Assembly')
 const Client = require('./Client')
-const StatusSocket = require('./Socket')
 
 function defaultGetAssemblyOptions (file, options) {
   return {
@@ -69,7 +69,8 @@ module.exports = class Transloadit extends Plugin {
     this.client = new Client({
       service: this.opts.service
     })
-    this.sockets = {}
+    // Contains Assembly instances for in-progress assemblies.
+    this.activeAssemblies = {}
   }
 
   validateParams (params) {
@@ -156,33 +157,36 @@ module.exports = class Transloadit extends Plugin {
       fields: options.fields,
       expectedFiles: fileIDs.length,
       signature: options.signature
-    }).then((assembly) => {
+    }).then((newAssembly) => {
+      const assembly = new Assembly(newAssembly)
+      const status = assembly.status
+
       // Store the list of assemblies related to this upload.
       const state = this.getPluginState()
       const assemblyList = state.uploadsAssemblies[uploadID]
       const uploadsAssemblies = Object.assign({}, state.uploadsAssemblies, {
-        [uploadID]: assemblyList.concat([ assembly.assembly_id ])
+        [uploadID]: assemblyList.concat([ status.assembly_id ])
       })
 
       this.setPluginState({
         assemblies: Object.assign(state.assemblies, {
-          [assembly.assembly_id]: assembly
+          [status.assembly_id]: status
         }),
         uploadsAssemblies
       })
 
-      function attachAssemblyMetadata (file, assembly) {
+      function attachAssemblyMetadata (file, status) {
         // Attach meta parameters for the Tus plugin. See:
         // https://github.com/tus/tusd/wiki/Uploading-to-Transloadit-using-tus#uploading-using-tus
         const tlMeta = {
-          assembly_url: assembly.assembly_url,
+          assembly_url: status.assembly_url,
           filename: file.name,
           fieldname: 'file'
         }
         const meta = Object.assign({}, file.meta, tlMeta)
         // Add assembly-specific Tus endpoint.
         const tus = Object.assign({}, file.tus, {
-          endpoint: assembly.tus_url
+          endpoint: status.tus_url
         })
 
         // Set uppy server location. We only add this, if 'file' has the attribute
@@ -191,7 +195,7 @@ module.exports = class Transloadit extends Plugin {
         // people can self-host them while still using Transloadit for encoding.
         let remote = file.remote
         if (file.remote && TL_UPPY_SERVER.test(file.remote.serverUrl)) {
-          let newHost = assembly.uppyserver_url
+          let newHost = status.uppyserver_url
           let path = file.remote.url.replace(file.remote.serverUrl, '')
           // remove tailing slash
           newHost = newHost.replace(/\/$/, '')
@@ -205,7 +209,7 @@ module.exports = class Transloadit extends Plugin {
         }
 
         const transloadit = {
-          assembly: assembly.assembly_id
+          assembly: status.assembly_id
         }
 
         const newFile = Object.assign({}, file, { transloadit })
@@ -218,15 +222,16 @@ module.exports = class Transloadit extends Plugin {
 
       const files = Object.assign({}, this.uppy.getState().files)
       fileIDs.forEach((id) => {
-        files[id] = attachAssemblyMetadata(files[id], assembly)
+        files[id] = attachAssemblyMetadata(files[id], status)
       })
 
       this.uppy.setState({ files })
 
-      this.uppy.emit('transloadit:assembly-created', assembly, fileIDs)
+      this.uppy.emit('transloadit:assembly-created', status, fileIDs)
 
-      return this.connectSocket(assembly)
-        .then(() => assembly)
+      this.connectAssembly(assembly)
+
+      return assembly
     }).then((assembly) => {
       this.uppy.log(`[Transloadit] Created Assembly ${assembly.assembly_id}`)
       return assembly
@@ -312,6 +317,13 @@ module.exports = class Transloadit extends Plugin {
     this.uppy.emit('transloadit:upload', uploadedFile, this.getAssembly(assemblyId))
   }
 
+  /**
+   * Callback when a new assembly result comes in.
+   *
+   * @param {string} assemblyId
+   * @param {string} stepName
+   * @param {Object} result
+   */
   onResult (assemblyId, stepName, result) {
     const state = this.getPluginState()
     const file = state.files[result.original_id]
@@ -331,15 +343,22 @@ module.exports = class Transloadit extends Plugin {
     this.uppy.emit('transloadit:result', stepName, result, this.getAssembly(assemblyId))
   }
 
-  onAssemblyFinished (url) {
-    this.client.getAssemblyStatus(url).then((assembly) => {
+  /**
+   * When an assembly has finished processing, get the final state
+   * and emit it.
+   *
+   * @param {Object} status
+   */
+  onAssemblyFinished (status) {
+    const url = status.assembly_ssl_url
+    this.client.getAssemblyStatus(url).then((finalStatus) => {
       const state = this.getPluginState()
       this.setPluginState({
         assemblies: Object.assign({}, state.assemblies, {
-          [assembly.assembly_id]: assembly
+          [finalStatus.assembly_id]: finalStatus
         })
       })
-      this.uppy.emit('transloadit:complete', assembly)
+      this.uppy.emit('transloadit:complete', finalStatus)
     })
   }
 
@@ -537,39 +556,40 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  connectSocket (assembly) {
-    const socket = new StatusSocket(
-      assembly.websocket_url,
-      assembly
-    )
-    this.sockets[assembly.assembly_id] = socket
+  connectAssembly (assembly) {
+    const { status } = assembly
+    const id = status.assembly_id
+    this.activeAssemblies[id] = assembly
 
-    socket.on('upload', this.onFileUploadComplete.bind(this, assembly.assembly_id))
-    socket.on('error', (error) => {
-      this.uppy.emit('transloadit:assembly-error', assembly, error)
+    assembly.on('upload', this.onFileUploadComplete.bind(this, id))
+    assembly.on('error', (error) => {
+      this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
 
-    socket.on('executing', () => {
-      this.uppy.emit('transloadit:assembly-executing', assembly)
+    assembly.on('executing', () => {
+      this.uppy.emit('transloadit:assembly-executing', assembly.status)
     })
 
     if (this.opts.waitForEncoding) {
-      socket.on('result', this.onResult.bind(this, assembly.assembly_id))
+      assembly.on('result', this.onResult.bind(this, id))
     }
 
     if (this.opts.waitForEncoding) {
-      socket.on('finished', () => {
-        this.onAssemblyFinished(assembly.assembly_ssl_url)
+      assembly.on('finished', () => {
+        this.onAssemblyFinished(assembly.status)
       })
     } else if (this.opts.waitForMetadata) {
-      socket.on('metadata', () => {
-        this.onAssemblyFinished(assembly.assembly_ssl_url)
+      assembly.on('metadata', () => {
+        this.onAssemblyFinished(assembly.status)
       })
     }
 
+    assembly.connect()
+
     return new Promise((resolve, reject) => {
-      socket.on('connect', resolve)
-      socket.on('error', reject)
+      assembly.once('connect', resolve)
+      assembly.once('status', resolve)
+      assembly.once('error', reject)
     }).then(() => {
       this.uppy.log('[Transloadit] Socket is ready')
     })
@@ -672,8 +692,8 @@ module.exports = class Transloadit extends Plugin {
     // the socket immediately and finish the upload.
     if (!this.shouldWait()) {
       assemblyIDs.forEach((assemblyID) => {
-        const socket = this.sockets[assemblyID]
-        socket.close()
+        const assembly = this.activeAssemblies[assemblyID]
+        assembly.close()
       })
       const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
       this.uppy.addResultData(uploadID, { transloadit: assemblies })
@@ -795,8 +815,8 @@ module.exports = class Transloadit extends Plugin {
     const assemblyIDs = state.uploadsAssemblies[uploadID]
 
     assemblyIDs.forEach((assemblyID) => {
-      if (this.sockets[assemblyID]) {
-        this.sockets[assemblyID].close()
+      if (this.activeAssemblies[assemblyID]) {
+        this.activeAssemblies[assemblyID].close()
       }
     })
   }
