@@ -1,6 +1,6 @@
 const io = require('socket.io-client')
 const Emitter = require('component-emitter')
-const parseUrl = require('url-parse')
+const parseUrl = require('./parseUrl')
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'

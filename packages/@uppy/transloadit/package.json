@@ -33,8 +33,7 @@
     "@uppy/tus": "0.27.1",
     "@uppy/utils": "0.27.0",
     "component-emitter": "^1.2.1",
-    "socket.io-client": "^2.1.1",
-    "url-parse": "^1.4.1"
+    "socket.io-client": "^2.1.1"
   },
   "devDependencies": {
     "@uppy/core": "0.27.0"
