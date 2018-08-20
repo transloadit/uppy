@@ -3,6 +3,7 @@ const { Plugin } = require('@uppy/core')
 const Tus = require('@uppy/tus')
 const Assembly = require('./Assembly')
 const Client = require('./Client')
+const AssemblyOptions = require('./AssemblyOptions')
 
 function defaultGetAssemblyOptions (file, options) {
   return {
@@ -63,7 +64,7 @@ module.exports = class Transloadit extends Plugin {
     this.getPersistentData = this.getPersistentData.bind(this)
 
     if (this.opts.params) {
-      this.validateParams(this.opts.params)
+      AssemblyOptions.validateParams(this.opts.params)
     }
 
     this.client = new Client({
@@ -71,80 +72,6 @@ module.exports = class Transloadit extends Plugin {
     })
     // Contains Assembly instances for in-progress assemblies.
     this.activeAssemblies = {}
-  }
-
-  validateParams (params) {
-    if (!params) {
-      throw new Error('Transloadit: The `params` option is required.')
-    }
-
-    if (typeof params === 'string') {
-      try {
-        params = JSON.parse(params)
-      } catch (err) {
-        // Tell the user that this is not an Uppy bug!
-        err.message = 'Transloadit: The `params` option is a malformed JSON string: ' +
-          err.message
-        throw err
-      }
-    }
-
-    if (!params.auth || !params.auth.key) {
-      throw new Error('Transloadit: The `params.auth.key` option is required. ' +
-        'You can find your Transloadit API key at https://transloadit.com/accounts/credentials.')
-    }
-  }
-
-  getAssemblyOptions (fileIDs) {
-    const options = this.opts
-
-    const normalizeAssemblyOptions = (file, assemblyOptions) => {
-      if (Array.isArray(assemblyOptions.fields)) {
-        const fieldNames = assemblyOptions.fields
-        assemblyOptions.fields = {}
-        fieldNames.forEach((fieldName) => {
-          assemblyOptions.fields[fieldName] = file.meta[fieldName]
-        })
-      }
-      if (!assemblyOptions.fields) {
-        assemblyOptions.fields = {}
-      }
-      return assemblyOptions
-    }
-
-    return Promise.all(
-      fileIDs.map((fileID) => {
-        const file = this.uppy.getFile(fileID)
-        const promise = Promise.resolve()
-          .then(() => options.getAssemblyOptions(file, options))
-          .then((assemblyOptions) => normalizeAssemblyOptions(file, assemblyOptions))
-        return promise.then((assemblyOptions) => {
-          this.validateParams(assemblyOptions.params)
-
-          return {
-            fileIDs: [fileID],
-            options: assemblyOptions
-          }
-        })
-      })
-    )
-  }
-
-  dedupeAssemblyOptions (list) {
-    const dedupeMap = Object.create(null)
-    list.forEach(({ fileIDs, options }) => {
-      const id = JSON.stringify(options)
-      if (dedupeMap[id]) {
-        dedupeMap[id].fileIDs.push(...fileIDs)
-      } else {
-        dedupeMap[id] = {
-          options,
-          fileIDs: [...fileIDs]
-        }
-      }
-    })
-
-    return Object.keys(dedupeMap).map((id) => dedupeMap[id])
   }
 
   createAssembly (fileIDs, uploadID, options) {
@@ -268,8 +195,8 @@ module.exports = class Transloadit extends Plugin {
       return
     }
 
-    const state = this.getPluginState()
-    const assembly = state.assemblies[file.transloadit.assembly]
+    const { assemblies } = this.getPluginState()
+    const assembly = assemblies[file.transloadit.assembly]
 
     this.client.addFile(assembly, file).catch((err) => {
       this.uppy.log(err)
@@ -558,26 +485,10 @@ module.exports = class Transloadit extends Plugin {
       { [uploadID]: [] })
     this.setPluginState({ uploadsAssemblies })
 
-    let optionsPromise
-    if (fileIDs.length > 0) {
-      optionsPromise = Promise.resolve(this.getAssemblyOptions(fileIDs))
-        .then((allOptions) => this.dedupeAssemblyOptions(allOptions))
-    } else if (this.opts.alwaysRunAssembly) {
-      optionsPromise = Promise.resolve(
-        this.opts.getAssemblyOptions(null, this.opts)
-      ).then((options) => {
-        this.validateParams(options.params)
-        return [
-          { fileIDs, options }
-        ]
-      })
-    } else {
-      // If there are no files and we do not `alwaysRunAssembly`,
-      // don't do anything.
-      return Promise.resolve()
-    }
+    const files = fileIDs.map((id) => this.uppy.getFile(id))
+    const assemblyOptions = new AssemblyOptions(files, this.opts)
 
-    return optionsPromise.then(
+    return assemblyOptions.build().then(
       (assemblies) => Promise.all(
         assemblies.map(createAssembly)
       ),
