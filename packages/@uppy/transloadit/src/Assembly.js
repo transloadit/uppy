@@ -37,15 +37,16 @@ class TransloaditAssembly extends Emitter {
     this.pollInterval = null
     // Whether this assembly has been closed (finished or errored)
     this.closed = false
-
-    this.on('finished', () => {
-      this.close()
-    })
   }
 
   connect () {
     this._connectSocket()
     this._beginPolling()
+  }
+
+  _onFinished () {
+    this.emit('finished')
+    this.close()
   }
 
   _connectSocket () {
@@ -67,33 +68,32 @@ class TransloaditAssembly extends Emitter {
     })
 
     socket.on('assembly_finished', () => {
-      // TODO Update assembly status
-      this.emit('finished')
+      this._onFinished()
     })
 
     socket.on('assembly_upload_finished', (file) => {
-      // TODO Add to assembly status
       this.emit('upload', file)
+      this._fetchStatus({ diff: false })
     })
 
     socket.on('assembly_uploading_finished', () => {
-      // TODO Update assembly status
       this.emit('executing')
+      this._fetchStatus({ diff: false })
     })
 
     socket.on('assembly_upload_meta_data_extracted', () => {
-      // TODO Update assembly status
       this.emit('metadata')
+      this._fetchStatus({ diff: false })
     })
 
     socket.on('assembly_result_finished', (stepName, result) => {
-      // TODO Add to assembly status
       this.emit('result', stepName, result)
+      this._fetchStatus({ diff: false })
     })
 
     socket.on('assembly_error', (err) => {
-      // TODO Update assembly status
       this._onError(err)
+      this._fetchStatus({ diff: false })
     })
 
     this.socket = socket
@@ -120,15 +120,23 @@ class TransloaditAssembly extends Emitter {
   /**
    * Reload assembly status.
    * Useful if the socket doesn't work.
+   *
+   * Pass `diff: false` to avoid emitting diff events,
+   * instead only emitting 'status'.
    */
-  _fetchStatus () {
+  _fetchStatus ({ diff = true } = {}) {
     return fetch(this.status.assembly_url)
       .then((response) => response.json())
       .then((status) => {
         // Avoid updating if we closed during this request's lifetime.
         if (this.closed) return
         this.emit('status', status)
-        this.updateStatus(status)
+
+        if (diff) {
+          this.updateStatus(status)
+        } else {
+          this.status = status
+        }
       })
   }
 
