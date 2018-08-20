@@ -71,7 +71,7 @@ module.exports = class Transloadit extends Plugin {
     this.client = new Client({
       service: this.opts.service
     })
-    // Contains Assembly instances for in-progress assemblies.
+    // Contains Assembly instances for in-progress Assemblies.
     this.activeAssemblies = {}
   }
 
@@ -92,7 +92,7 @@ module.exports = class Transloadit extends Plugin {
       filename: file.name,
       fieldname: 'file'
     }
-    // Add assembly-specific Tus endpoint.
+    // Add Assembly-specific Tus endpoint.
     const tus = {
       ...file.tus,
       endpoint: status.tus_url
@@ -117,7 +117,7 @@ module.exports = class Transloadit extends Plugin {
       }
     }
 
-    // Store the assembly ID this file is in on the file under the `transloadit` key.
+    // Store the Assembly ID this file is in on the file under the `transloadit` key.
     const newFile = {
       ...file,
       transloadit: {
@@ -145,12 +145,12 @@ module.exports = class Transloadit extends Plugin {
 
       const { assemblies, uploadsAssemblies } = this.getPluginState()
       this.setPluginState({
-        // Store the assembly status.
+        // Store the Assembly status.
         assemblies: {
           ...assemblies,
           [status.assembly_id]: status
         },
-        // Store the list of assemblies related to this upload.
+        // Store the list of Assemblies related to this upload.
         uploadsAssemblies: {
           ...uploadsAssemblies,
           [uploadID]: [
@@ -192,7 +192,7 @@ module.exports = class Transloadit extends Plugin {
 
   /**
    * Used when `importFromUploadURLs` is enabled: reserves all files in
-   * the assembly.
+   * the Assembly.
    */
   _reserveFiles (assembly, fileIDs) {
     return Promise.all(fileIDs.map((fileID) => {
@@ -202,7 +202,7 @@ module.exports = class Transloadit extends Plugin {
   }
 
   /**
-   * Used when `importFromUploadURLs` is enabled: adds files to the assembly
+   * Used when `importFromUploadURLs` is enabled: adds files to the Assembly
    * once they have been fully uploaded.
    */
   _onFileUploadURLAvailable (file) {
@@ -260,7 +260,7 @@ module.exports = class Transloadit extends Plugin {
   }
 
   /**
-   * Callback when a new assembly result comes in.
+   * Callback when a new Assembly result comes in.
    *
    * @param {string} assemblyId
    * @param {string} stepName
@@ -286,7 +286,7 @@ module.exports = class Transloadit extends Plugin {
   }
 
   /**
-   * When an assembly has finished processing, get the final state
+   * When an Assembly has finished processing, get the final state
    * and emit it.
    *
    * @param {Object} status
@@ -333,7 +333,7 @@ module.exports = class Transloadit extends Plugin {
       return
     }
 
-    // Convert loaded assembly statuses to a Transloadit plugin state object.
+    // Convert loaded Assembly statuses to a Transloadit plugin state object.
     const restoreState = (assemblies) => {
       const files = {}
       const results = []
@@ -372,7 +372,7 @@ module.exports = class Transloadit extends Plugin {
       })
     }
 
-    // Set up the Assembly instances for existing assemblies.
+    // Set up the Assembly instances for existing Assemblies.
     const restoreAssemblies = () => {
       const { assemblies } = this.getPluginState()
       Object.keys(assemblies).forEach((id) => {
@@ -381,7 +381,7 @@ module.exports = class Transloadit extends Plugin {
       })
     }
 
-    // Force-update all assemblies to check for missed events.
+    // Force-update all Assemblies to check for missed events.
     const updateAssemblies = () => {
       const { assemblies } = this.getPluginState()
       return Promise.all(
@@ -391,7 +391,7 @@ module.exports = class Transloadit extends Plugin {
       )
     }
 
-    // Restore all assembly state.
+    // Restore all Assembly state.
     this.restored = Promise.resolve().then(() => {
       restoreState(previousAssemblies)
       restoreAssemblies()
@@ -446,7 +446,7 @@ module.exports = class Transloadit extends Plugin {
       })
     }
 
-    // No need to connect to the socket if the assembly has completed by now.
+    // No need to connect to the socket if the Assembly has completed by now.
     if (assembly.ok === 'ASSEMBLY_COMPLETE') {
       return assembly
     }
@@ -490,7 +490,7 @@ module.exports = class Transloadit extends Plugin {
       }).catch((err) => {
         fileIDs.forEach((fileID) => {
           const file = this.uppy.getFile(fileID)
-          // Clear preprocessing state when the assembly could not be created,
+          // Clear preprocessing state when the Assembly could not be created,
           // otherwise the UI gets confused about the lingering progress keys
           this.uppy.emit('preprocess-complete', file)
           this.uppy.emit('upload-error', file, err)
@@ -514,7 +514,7 @@ module.exports = class Transloadit extends Plugin {
       (assemblies) => Promise.all(
         assemblies.map(createAssembly)
       ),
-      // If something went wrong before any assemblies could be created,
+      // If something went wrong before any Assemblies could be created,
       // clear all processing state.
       (err) => {
         fileIDs.forEach((fileID) => {
@@ -555,14 +555,14 @@ module.exports = class Transloadit extends Plugin {
       return Promise.resolve()
     }
 
-    // If no assemblies were created for this upload, we also do not have to wait.
+    // If no Assemblies were created for this upload, we also do not have to wait.
     // There's also no sockets or anything to close, so just return immediately.
     if (assemblyIDs.length === 0) {
       this.uppy.addResultData(uploadID, { transloadit: [] })
       return Promise.resolve()
     }
 
-    // AssemblyWatcher tracks completion state of all assemblies in this upload.
+    // AssemblyWatcher tracks completion state of all Assemblies in this upload.
     const watcher = new AssemblyWatcher(this.uppy, assemblyIDs)
 
     fileIDs.forEach((fileID) => {
@@ -594,7 +594,7 @@ module.exports = class Transloadit extends Plugin {
     return watcher.promise.then(() => {
       const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
 
-      // Remove the assembly ID list for this upload,
+      // Remove the Assembly ID list for this upload,
       // it's no longer going to be used anywhere.
       const state = this.getPluginState()
       const uploadsAssemblies = { ...state.uploadsAssemblies }
@@ -633,12 +633,12 @@ module.exports = class Transloadit extends Plugin {
     } else {
       this.uppy.use(Tus, {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
-        // will upload to the same assembly.
+        // will upload to the same Assembly.
         resume: false,
         // Disable Uppy Server's retry optimisation; we need to change the endpoint on retry
         // so it can't just reuse the same tus.Upload instance server-side.
         useFastRemoteRetry: false,
-        // Only send assembly metadata to the tus endpoint.
+        // Only send Assembly metadata to the tus endpoint.
         metaFields: ['assembly_url', 'filename', 'fieldname']
       })
     }
@@ -647,9 +647,9 @@ module.exports = class Transloadit extends Plugin {
     this.uppy.on('restored', this._onRestored)
 
     this.setPluginState({
-      // Contains assembly status objects, indexed by their ID.
+      // Contains Assembly status objects, indexed by their ID.
       assemblies: {},
-      // Contains arrays of assembly IDs, indexed by the upload ID that they belong to.
+      // Contains arrays of Assembly IDs, indexed by the upload ID that they belong to.
       uploadsAssemblies: {},
       // Contains file data from Transloadit, indexed by their Transloadit-assigned ID.
       files: {},
