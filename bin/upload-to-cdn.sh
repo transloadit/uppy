@@ -39,13 +39,13 @@ function fatal () {
 }
 
 pushd "${__root}" > /dev/null 2>&1
-  if [ "${TRAVIS:-}" = "true" ]; then
+  if [ -n "${TRAVIS:-}" ]; then
     if [ "${TRAVIS_PULL_REQUEST:-}" != "false" ]; then
       echo "On Travis (TRAVIS is '${TRAVIS}'), I'm not pushing releases to the CDN for pull requests (TRAVIS_PULL_REQUEST is '${TRAVIS_PULL_REQUEST}')"
       exit 0
     fi
     if [[ ! "$TRAVIS_COMMIT_MESSAGE" =~ ^Release* ]]; then
-      echo "On Travis (TRAVIS is '${TRAVIS}'), I'm not pushing releases to the CDN unless commit message starts with 'Release' (TRAVIS_COMMIT is '${TRAVIS_COMMIT_MESSAGE}')"
+      echo "On Travis (TRAVIS is '${TRAVIS}'), I'm not pushing releases to the CDN unless commit message starts with 'Release' (TRAVIS_COMMIT_MESSAGE is '${TRAVIS_COMMIT_MESSAGE}')"
       exit 0
     fi
   fi
