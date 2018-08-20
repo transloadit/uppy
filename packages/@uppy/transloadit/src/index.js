@@ -74,9 +74,63 @@ module.exports = class Transloadit extends Plugin {
     this.activeAssemblies = {}
   }
 
-  createAssembly (fileIDs, uploadID, options) {
-    const pluginOptions = this.opts
+  /**
+   * Attach metadata to files to configure the Tus plugin to upload to Transloadit.
+   * Also use Transloadit's uppy server
+   *
+   * See: https://github.com/tus/tusd/wiki/Uploading-to-Transloadit-using-tus#uploading-using-tus
+   *
+   * @param {Object} file
+   * @param {Object} status
+   */
+  attachAssemblyMetadata (file, status) {
+    // Add the metadata parameters Transloadit needs.
+    const meta = {
+      ...file.meta,
+      assembly_url: status.assembly_url,
+      filename: file.name,
+      fieldname: 'file'
+    }
+    // Add assembly-specific Tus endpoint.
+    const tus = {
+      ...file.tus,
+      endpoint: status.tus_url
+    }
 
+    // Set uppy server location. We only add this, if 'file' has the attribute
+    // remote, because this is the criteria to identify remote files.
+    // We only replace the hostname for Transloadit's uppy-servers, so that
+    // people can also self-host them while still using Transloadit for encoding.
+    let remote = file.remote
+    if (file.remote && TL_UPPY_SERVER.test(file.remote.serverUrl)) {
+      let newHost = status.uppyserver_url
+        .replace(/\/$/, '')
+      let path = file.remote.url
+        .replace(file.remote.serverUrl, '')
+        .replace(/^\//, '')
+
+      remote = {
+        ...file.remote,
+        serverUrl: newHost,
+        url: `${newHost}/${path}`
+      }
+    }
+
+    // Store the assembly ID this file is in on the file under the `transloadit` key.
+    const newFile = {
+      ...file,
+      transloadit: {
+        assembly: status.assembly_id
+      }
+    }
+    // Only configure the Tus plugin if we are uploading straight to Transloadit (the default).
+    if (!this.opts.importFromUploadURLs) {
+      Object.assign(newFile, { meta, tus, remote })
+    }
+    return newFile
+  }
+
+  createAssembly (fileIDs, uploadID, options) {
     this.uppy.log('[Transloadit] create Assembly')
 
     return this.client.createAssembly({
@@ -88,82 +142,42 @@ module.exports = class Transloadit extends Plugin {
       const assembly = new Assembly(newAssembly)
       const status = assembly.status
 
-      // Store the list of assemblies related to this upload.
-      const state = this.getPluginState()
-      const assemblyList = state.uploadsAssemblies[uploadID]
-      const uploadsAssemblies = Object.assign({}, state.uploadsAssemblies, {
-        [uploadID]: assemblyList.concat([ status.assembly_id ])
-      })
-
+      const { assemblies, uploadsAssemblies } = this.getPluginState()
       this.setPluginState({
-        assemblies: Object.assign(state.assemblies, {
+        // Store the assembly status.
+        assemblies: {
+          ...assemblies,
           [status.assembly_id]: status
-        }),
-        uploadsAssemblies
+        },
+        // Store the list of assemblies related to this upload.
+        uploadsAssemblies: {
+          ...uploadsAssemblies,
+          [uploadID]: [
+            ...uploadsAssemblies[uploadID],
+            status.assembly_id
+          ]
+        }
       })
 
-      function attachAssemblyMetadata (file, status) {
-        // Attach meta parameters for the Tus plugin. See:
-        // https://github.com/tus/tusd/wiki/Uploading-to-Transloadit-using-tus#uploading-using-tus
-        const tlMeta = {
-          assembly_url: status.assembly_url,
-          filename: file.name,
-          fieldname: 'file'
-        }
-        const meta = Object.assign({}, file.meta, tlMeta)
-        // Add assembly-specific Tus endpoint.
-        const tus = Object.assign({}, file.tus, {
-          endpoint: status.tus_url
-        })
-
-        // Set uppy server location. We only add this, if 'file' has the attribute
-        // remote, because this is the criteria to identify remote files.
-        // We only replace the hostname for Transloadit's uppy-servers, so that
-        // people can self-host them while still using Transloadit for encoding.
-        let remote = file.remote
-        if (file.remote && TL_UPPY_SERVER.test(file.remote.serverUrl)) {
-          let newHost = status.uppyserver_url
-          let path = file.remote.url.replace(file.remote.serverUrl, '')
-          // remove tailing slash
-          newHost = newHost.replace(/\/$/, '')
-          // remove leading slash
-          path = path.replace(/^\//, '')
-
-          remote = Object.assign({}, file.remote, {
-            serverUrl: newHost,
-            url: `${newHost}/${path}`
-          })
-        }
-
-        const transloadit = {
-          assembly: status.assembly_id
-        }
-
-        const newFile = Object.assign({}, file, { transloadit })
-        // Only configure the Tus plugin if we are uploading straight to Transloadit (the default).
-        if (!pluginOptions.importFromUploadURLs) {
-          Object.assign(newFile, { meta, tus, remote })
-        }
-        return newFile
-      }
-
-      const files = Object.assign({}, this.uppy.getState().files)
+      const { files } = this.uppy.getState()
+      const updatedFiles = {}
       fileIDs.forEach((id) => {
-        files[id] = attachAssemblyMetadata(files[id], status)
+        updatedFiles[id] = this.attachAssemblyMetadata(this.uppy.getFile(id), status)
       })
-
-      this.uppy.setState({ files })
+      this.uppy.setState({
+        files: {
+          ...files,
+          ...updatedFiles
+        }
+      })
 
       this.uppy.emit('transloadit:assembly-created', status, fileIDs)
 
       this.connectAssembly(assembly)
 
-      return assembly
-    }).then((assembly) => {
       this.uppy.log(`[Transloadit] Created Assembly ${assembly.assembly_id}`)
       return assembly
     }).catch((err) => {
-      // this.uppy.info(this.i18n('creatingAssemblyFailed'), 'error', 0)
       err.message = `${this.i18n('creatingAssemblyFailed')}: ${err.message}`
 
       // Reject the promise.
