@@ -1,4 +1,5 @@
 /* global browser, expect  */
+const path = require('path')
 const { spawn } = require('child_process')
 const testURL = 'http://localhost:4567/providers'
 
@@ -8,8 +9,18 @@ describe('File upload with Providers', () => {
     throw new Error('Companion exited early')
   }
   before(() => {
-    companion = spawn('npm', ['run', 'start:companion'], {
-      stdio: 'pipe'
+    companion = spawn('node', [
+      path.join(__dirname, '../../../packages/@uppy/companion/lib/standalone/start-server')
+    ], {
+      stdio: 'pipe',
+      env: Object.assign({}, process.env, {
+        UPPYSERVER_DATADIR: path.join(__dirname, '../../../output'),
+        UPPYSERVER_DOMAIN: 'localhost:3020',
+        UPPYSERVER_PROTOCOL: 'http',
+        UPPYSERVER_PORT: 3020,
+        UPPY_ENDPOINTS: '',
+        UPPYSERVER_SECRET: 'test'
+      })
     })
     return new Promise((resolve, reject) => {
       companion.on('error', reject)
