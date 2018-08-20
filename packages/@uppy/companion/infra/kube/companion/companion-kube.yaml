@@ -56,7 +56,7 @@ spec:
             memory: 2Gi
         envFrom:
         - configMapRef:
-            name: companion-env
+            name: uppy-companion-env
         ports:
         - containerPort: 3020
         volumeMounts:
@@ -87,9 +87,19 @@ spec:
   tls:
   - hosts:
     - server.uppy.io
+    secretName: server-tls
+  - hosts:
+    - companion.uppy.io
     secretName: companion-tls
   rules:
   - host: server.uppy.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: companion
+          servicePort: 80
+  - host: companion.uppy.io
     http:
       paths:
       - path: /
