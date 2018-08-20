@@ -5,8 +5,8 @@
   "homepage": "/create-react-app/",
   "dependencies": {
     "es6-shim": "^0.35.3",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
     "react-scripts": "1.1.4"
   },
   "scripts": {
