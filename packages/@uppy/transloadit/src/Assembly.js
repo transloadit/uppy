@@ -140,6 +140,10 @@ class TransloaditAssembly extends Emitter {
       })
   }
 
+  update () {
+    return this._fetchStatus({ diff: true })
+  }
+
   /**
    * Update this assembly's status with a full new
    * object. Events will be emitted for status changes,

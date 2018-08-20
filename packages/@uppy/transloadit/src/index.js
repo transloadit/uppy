@@ -375,7 +375,8 @@ module.exports = class Transloadit extends Plugin {
     const restoreAssemblies = () => {
       const { assemblies } = this.getPluginState()
       Object.keys(assemblies).forEach((id) => {
-        this.connectAssembly(assemblies[id])
+        const assembly = new Assembly(assemblies[id])
+        this.connectAssembly(assembly)
       })
     }
 
@@ -493,11 +494,13 @@ module.exports = class Transloadit extends Plugin {
       })
     }
 
-    const state = this.getPluginState()
-    const uploadsAssemblies = Object.assign({},
-      state.uploadsAssemblies,
-      { [uploadID]: [] })
-    this.setPluginState({ uploadsAssemblies })
+    const { uploadsAssemblies } = this.getPluginState()
+    this.setPluginState({
+      uploadsAssemblies: {
+        ...uploadsAssemblies,
+        [uploadID]: []
+      }
+    })
 
     const files = fileIDs.map((id) => this.uppy.getFile(id))
     const assemblyOptions = new AssemblyOptions(files, this.opts)
