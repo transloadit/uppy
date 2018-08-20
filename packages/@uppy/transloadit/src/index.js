@@ -4,6 +4,7 @@ const Tus = require('@uppy/tus')
 const Assembly = require('./Assembly')
 const Client = require('./Client')
 const AssemblyOptions = require('./AssemblyOptions')
+const AssemblyWatcher = require('./AssemblyWatcher')
 
 function defaultGetAssemblyOptions (file, options) {
   return {
@@ -185,7 +186,7 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  shouldWait () {
+  shouldWaitAfterUpload () {
     return this.opts.waitForEncoding || this.opts.waitForMetadata
   }
 
@@ -418,7 +419,9 @@ module.exports = class Transloadit extends Plugin {
       })
     })
 
-    assembly.on('upload', this.onFileUploadComplete.bind(this, id))
+    assembly.on('upload', (file) => {
+      this.onFileUploadComplete(id, file)
+    })
     assembly.on('error', (error) => {
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
@@ -428,7 +431,9 @@ module.exports = class Transloadit extends Plugin {
     })
 
     if (this.opts.waitForEncoding) {
-      assembly.on('result', this.onResult.bind(this, id))
+      assembly.on('result', (stepName, result) => {
+        this.onResult(id, stepName, result)
+      })
     }
 
     if (this.opts.waitForEncoding) {
@@ -483,10 +488,10 @@ module.exports = class Transloadit extends Plugin {
           this.uppy.emit('preprocess-complete', file)
         })
       }).catch((err) => {
-        // Clear preprocessing state when the assembly could not be created,
-        // otherwise the UI gets confused about the lingering progress keys
         fileIDs.forEach((fileID) => {
           const file = this.uppy.getFile(fileID)
+          // Clear preprocessing state when the assembly could not be created,
+          // otherwise the UI gets confused about the lingering progress keys
           this.uppy.emit('preprocess-complete', file)
           this.uppy.emit('upload-error', file, err)
         })
@@ -539,10 +544,11 @@ module.exports = class Transloadit extends Plugin {
 
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
-    if (!this.shouldWait()) {
+    if (!this.shouldWaitAfterUpload()) {
       assemblyIDs.forEach((assemblyID) => {
         const assembly = this.activeAssemblies[assemblyID]
         assembly.close()
+        delete this.activeAssemblies[assemblyID]
       })
       const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
       this.uppy.addResultData(uploadID, { transloadit: assemblies })
@@ -556,112 +562,54 @@ module.exports = class Transloadit extends Plugin {
       return Promise.resolve()
     }
 
-    let finishedAssemblies = 0
+    // AssemblyWatcher tracks completion state of all assemblies in this upload.
+    const watcher = new AssemblyWatcher(this.uppy, assemblyIDs)
 
-    return new Promise((resolve, reject) => {
-      fileIDs.forEach((fileID) => {
-        const file = this.uppy.getFile(fileID)
-        this.uppy.emit('postprocess-progress', file, {
-          mode: 'indeterminate',
-          message: this.i18n('encoding')
-        })
+    fileIDs.forEach((fileID) => {
+      const file = this.uppy.getFile(fileID)
+      this.uppy.emit('postprocess-progress', file, {
+        mode: 'indeterminate',
+        message: this.i18n('encoding')
       })
+    })
 
-      const onAssemblyFinished = (assembly) => {
-        // An assembly for a different upload just finished. We can ignore it.
-        if (assemblyIDs.indexOf(assembly.assembly_id) === -1) {
-          this.uppy.log(`[Transloadit] afterUpload(): Ignoring finished Assembly ${assembly.assembly_id}`)
-          return
-        }
-        this.uppy.log(`[Transloadit] afterUpload(): Got Assembly finish ${assembly.assembly_id}`)
+    watcher.on('assembly-complete', (id) => {
+      const files = this.getAssemblyFiles(id)
+      files.forEach((file) => {
+        this.uppy.emit('postprocess-complete', file)
+      })
+    })
 
-        // TODO set the `file.uploadURL` to a result?
-        // We will probably need an option here so the plugin user can tell us
-        // which result to pick…?
+    watcher.on('assembly-error', (id, error) => {
+      // Clear postprocessing state for all our files.
+      const files = this.getAssemblyFiles(id)
+      files.forEach((file) => {
+        // TODO Maybe make a postprocess-error event here?
+        this.uppy.emit('upload-error', file, error)
 
-        const files = this.getAssemblyFiles(assembly.assembly_id)
-        files.forEach((file) => {
-          this.uppy.emit('postprocess-complete', file)
-        })
+        this.uppy.emit('postprocess-complete', file)
+      })
+    })
 
-        checkAllComplete()
-      }
+    return watcher.promise.then(() => {
+      const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
 
-      const onAssemblyError = (assembly, error) => {
-        // An assembly for a different upload just errored. We can ignore it.
-        if (assemblyIDs.indexOf(assembly.assembly_id) === -1) {
-          this.uppy.log(`[Transloadit] afterUpload(): Ignoring errored Assembly ${assembly.assembly_id}`)
-          return
-        }
-        this.uppy.log(`[Transloadit] afterUpload(): Got Assembly error ${assembly.assembly_id}`)
-        this.uppy.log(error)
-        // this.uppy.info({
-        //   message: error.code,
-        //   details: error.status.reason
-        // }, 'error', 5000)
-
-        // Clear postprocessing state for all our files.
-        const files = this.getAssemblyFiles(assembly.assembly_id)
-        files.forEach((file) => {
-          // TODO Maybe make a postprocess-error event here?
-          this.uppy.emit('upload-error', file, error)
-
-          this.uppy.emit('postprocess-complete', file)
-        })
-
-        checkAllComplete()
-      }
-
-      const onImportError = (assembly, fileID, error) => {
-        if (assemblyIDs.indexOf(assembly.assembly_id) === -1) {
-          return
-        }
-
-        // Not sure if we should be doing something when it's just one file failing.
-        // ATM, the only options are 1) ignoring or 2) failing the entire upload.
-        // I think failing the upload is better than silently ignoring.
-        // In the future we should maybe have a way to resolve uploads with some failures,
-        // like returning an object with `{ successful, failed }` uploads.
-        onAssemblyError(assembly, error)
-      }
-
-      const checkAllComplete = () => {
-        finishedAssemblies += 1
-        if (finishedAssemblies === assemblyIDs.length) {
-          // We're done, these listeners can be removed
-          removeListeners()
-          const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
-          this.uppy.addResultData(uploadID, { transloadit: assemblies })
-          resolve()
-        }
-      }
-
-      const removeListeners = () => {
-        this.uppy.off('transloadit:complete', onAssemblyFinished)
-        this.uppy.off('transloadit:assembly-error', onAssemblyError)
-        this.uppy.off('transloadit:import-error', onImportError)
-      }
-
-      // TODO Move these handlers up
-      // They can also fire during the upload, especially when restoring
-      this.uppy.on('transloadit:complete', onAssemblyFinished)
-      this.uppy.on('transloadit:assembly-error', onAssemblyError)
-      this.uppy.on('transloadit:import-error', onImportError)
-    }).then((result) => {
-      // Clean up uploadID → assemblyIDs, they're no longer going to be used anywhere.
+      // Remove the assembly ID list for this upload,
+      // it's no longer going to be used anywhere.
       const state = this.getPluginState()
-      const uploadsAssemblies = Object.assign({}, state.uploadsAssemblies)
+      const uploadsAssemblies = { ...state.uploadsAssemblies }
       delete uploadsAssemblies[uploadID]
       this.setPluginState({ uploadsAssemblies })
 
-      return result
+      this.uppy.addResultData(uploadID, {
+        transloadit: assemblies
+      })
     })
   }
 
   handleError (err, uploadID) {
-    this.uppy.log('[Transloadit] handleError')
+    this.uppy.log(`[Transloadit] handleError in upload ${uploadID}`)
     this.uppy.log(err)
-    this.uppy.log(uploadID)
     const state = this.getPluginState()
     const assemblyIDs = state.uploadsAssemblies[uploadID]
 
