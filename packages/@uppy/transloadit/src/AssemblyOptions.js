@@ -24,8 +24,8 @@ function validateParams (params) {
 }
 
 /**
- * Turn Transloadit plugin options and a list of files
- * into a list of Assembly options.
+ * Turn Transloadit plugin options and a list of files into a list of Assembly
+ * options.
  */
 class AssemblyOptions {
   constructor (files, opts) {
@@ -34,8 +34,8 @@ class AssemblyOptions {
   }
 
   /**
-   * Normalize Uppy-specific Assembly option features
-   * to a Transloadit-compatible object.
+   * Normalize Uppy-specific Assembly option features to a Transloadit-
+   * compatible object.
    */
   _normalizeAssemblyOptions (file, assemblyOptions) {
     if (Array.isArray(assemblyOptions.fields)) {
@@ -77,8 +77,8 @@ class AssemblyOptions {
   }
 
   /**
-   * Combine Assemblies with the same options into a
-   * single Assembly for all the relevant files.
+   * Combine Assemblies with the same options into a single Assembly for all the
+   * relevant files.
    */
   _dedupe (list) {
     const dedupeMap = Object.create(null)

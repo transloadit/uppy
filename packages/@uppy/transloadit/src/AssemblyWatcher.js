@@ -5,7 +5,8 @@ const Emitter = require('component-emitter')
  *
  * Emits 'assembly-complete' when an assembly completes.
  * Emits 'assembly-error' when an assembly fails.
- * Exposes a `.promise` property that resolves when all assemblies have completed (or failed).
+ * Exposes a `.promise` property that resolves when all assemblies have
+ * completed (or failed).
  */
 class TransloaditAssemblyWatcher extends Emitter {
   constructor (uppy, assemblyIDs) {
