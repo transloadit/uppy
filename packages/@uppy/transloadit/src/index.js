@@ -465,7 +465,16 @@ module.exports = class Transloadit extends Plugin {
     const id = status.assembly_id
     this.activeAssemblies[id] = assembly
 
-    // TODO Sync local `assemblies` state
+    // Sync local `assemblies` state
+    assembly.on('status', (newStatus) => {
+      const { assemblies } = this.getPluginState()
+      this.setPluginState({
+        assemblies: {
+          ...assemblies,
+          [id]: newStatus
+        }
+      })
+    })
 
     assembly.on('upload', this.onFileUploadComplete.bind(this, id))
     assembly.on('error', (error) => {
