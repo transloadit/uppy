@@ -35,11 +35,11 @@ uppy.on('complete', (result) => {
 
 Drag and drop, webcam, basic file manipulation (adding metadata), uploading via tus-resumable uploads or XHR/Multipart is all possible using just the Uppy client module.
 
-Adding [Uppy Server](/docs/server/) to the mix enables remote sources such as Instagram, Google Drive, Dropbox, and remote URLs. Uploads from remote sources are handled server-to-server, so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Uppy Server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
+Adding [Uppy Companion](/docs/companion/) to the mix enables remote sources such as Instagram, Google Drive, Dropbox, and remote URLs. Uploads from remote sources are handled server-to-server, so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Uppy Companion after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
 
 ## Installation
 
-Uppy can be used with a module bundler such as [Webpack](http://webpack.github.io/) or [Browserify](http://browserify.org/), or by including it in a script tag.
+Uppy can be used with a module bundler such as [Webpack](http://webpack.js.org/) or [Browserify](http://browserify.org/), or by including it in a script tag.
 
 > You may need polyfills if your application supports Internet Explorer or other older browsers. See [Browser Support](#browser-support).
 

@@ -7,7 +7,7 @@ permalink: docs/aws-s3/
 ---
 
 The `@uppy/aws-s3` plugin can be used to upload files directly to an S3 bucket.
-Uploads can be signed using either [Uppy Server][uppy-server docs] or a custom signing function.
+Uploads can be signed using either [Uppy Companion][companion docs] or a custom signing function.
 
 ```js
 const AwsS3 = require('@uppy/aws-s3')
@@ -16,11 +16,11 @@ const ms = require('ms')
 uppy.use(AwsS3, {
   limit: 2,
   timeout: ms('1 minute'),
-  serverUrl: 'https://uppy-server.myapp.com/'
+  serverUrl: 'https://uppy-companion.myapp.com/'
 })
 ```
 
-There are broadly two ways of uploading to S3 in a browser. A server can generate a presigned URL for a [PUT upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html), or a server can generate form data for a [POST upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html). Uppy-server uses a POST upload. See [POST Uploads](#post-uploads) for some caveats if you would like to use POST uploads without uppy-server. See [Generating a presigned upload URL server-side](#example-presigned-url) for an example of a PUT upload.
+There are broadly two ways of uploading to S3 in a browser. A server can generate a presigned URL for a [PUT upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html), or a server can generate form data for a [POST upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html). Uppy Companion uses a POST upload. See [POST Uploads](#post-uploads) for some caveats if you would like to use POST uploads without Uppy Companion. See [Generating a presigned upload URL server-side](#example-presigned-url) for an example of a PUT upload.
 
 There is also a separate plugin for S3 Multipart uploads. Multipart in this sense refers to Amazon's proprietary chunked, resumable upload mechanism for large files. See the [`@uppy/aws-s3-multipart`](/docs/aws-s3-multipart) documentation.
 
@@ -50,17 +50,17 @@ A unique identifier for this plugin. Defaults to `'AwsS3'`.
 
 ### `serverUrl`
 
-When using [uppy-server][uppy-server docs] to sign S3 uploads, set this option to the root URL of the uppy-server.
+When using [Uppy Companion][companion docs] to sign S3 uploads, set this option to the root URL of the Companion instance.
 
 ```js
 uppy.use(AwsS3, {
-  serverUrl: 'https://uppy-server.my-app.com/'
+  serverUrl: 'https://uppy-companion.my-app.com/'
 })
 ```
 
 ### `getUploadParameters(file)`
 
-> Note: When using [uppy-server][uppy-server docs] to sign S3 uploads, do not define this option.
+> Note: When using [Uppy Companion][companion docs] to sign S3 uploads, do not define this option.
 
 A function that returns upload parameters for a file.
 Parameters should be returned as an object, or a Promise for an object, with keys `{ method, url, fields, headers }`.
@@ -137,7 +137,7 @@ At minimum, the domain from which the uploads will happen must be whitelisted, a
 <MaxAgeSeconds>3000</MaxAgeSeconds>
 ```
 
-When using uppy-server, which generates a POST policy document, the following permissions must be granted:
+When using Uppy Companion, which generates a POST policy document, the following permissions must be granted:
 
 ```xml
 <AllowedMethod>POST</AllowedMethod>
@@ -180,7 +180,7 @@ In-depth documentation about CORS rules is available on the [AWS documentation s
 
 ## POST uploads
 
-uppy-server uses POST uploads by default, but you can also use them with your own endpoints. There are a few things to be aware of when doing so:
+Uppy Companion uses POST uploads by default, but you can also use them with your own endpoints. There are a few things to be aware of when doing so:
 
  - The `@uppy/aws-s3` plugin attempts to read the `<Location>` XML tag from POST upload responses. S3 does not respond with an XML document by default. When generating the form data for POST uploads, you must set the `success_action_status` field to `201`.
    ```js
@@ -196,7 +196,7 @@ uppy-server uses POST uploads by default, but you can also use them with your ow
 
 ## S3 alternatives
 
-Many other object storage providers have an identical API to S3, so you can use the `@uppy/aws-s3` plugin with them as well. To use them with Uppy Server, you can set the `UPPYSERVER_AWS_ENDPOINT` variable to the endpoint of your preferred service.
+Many other object storage providers have an identical API to S3, so you can use the `@uppy/aws-s3` plugin with them as well. To use them with Uppy Companion, you can set the `UPPYSERVER_AWS_ENDPOINT` variable to the endpoint of your preferred service.
 
 ### DigitalOcean Spaces
 
@@ -213,7 +213,7 @@ For a working example that you can run and play around with, see the [digitaloce
 
 ### Google Cloud Storage
 
-For Google Cloud Storage, you need to take a few more steps. For the `@uppy/aws-s3` plugin to be able to upload to a GCS bucket, it needs the Interoperability setting enabled. You can enable the Interoperability setting and [generate interoperable storage access keys](https://cloud.google.com/storage/docs/migrating#keys) by going to [Google Cloud Storage](https://console.cloud.google.com/storage) » Settings » Interoperability. Then set the environment variables for Uppy Server like this:
+For Google Cloud Storage, you need to take a few more steps. For the `@uppy/aws-s3` plugin to be able to upload to a GCS bucket, it needs the Interoperability setting enabled. You can enable the Interoperability setting and [generate interoperable storage access keys](https://cloud.google.com/storage/docs/migrating#keys) by going to [Google Cloud Storage](https://console.cloud.google.com/storage) » Settings » Interoperability. Then set the environment variables for Uppy Companion like this:
 
 ```bash
 export UPPYSERVER_AWS_ENDPOINT="https://storage.googleapis.com"
@@ -322,4 +322,4 @@ uppy.on('upload-success', (file, data) => {
 })
 ```
 
-[uppy-server docs]: /docs/server/index.html
+[companion docs]: /docs/companion

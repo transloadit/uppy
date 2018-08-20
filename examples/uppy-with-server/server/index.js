@@ -1,5 +1,5 @@
 const express = require('express')
-const uppy = require('uppy-server')
+const uppy = require('../../../packages/@uppy/companion')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 
@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 // Routes
 app.get('/', (req, res) => {
   res.setHeader('Content-Type', 'text/plain')
-  res.send('Welcome to my uppy server')
+  res.send('Welcome to Uppy Companion')
 })
 
 // initialize uppy
@@ -69,5 +69,5 @@ app.use((err, req, res, next) => {
 
 uppy.socket(app.listen(3020), uppyOptions)
 
-console.log('Welcome to Uppy Server!')
+console.log('Welcome to Uppy Companion!')
 console.log(`Listening on http://0.0.0.0:${3020}`)

@@ -12,7 +12,7 @@ Plugins are what makes Uppy useful: they help select, manipulate and upload file
   - [@uppy/drag-drop](/docs/drag-drop) — plain and simple drag-and-drop area
   - [@uppy/file-input](/docs/file-input) — even more plain and simple, just a button
   - [@uppy/webcam](/docs/webcam) — upload selfies or audio / video recordings
-- **[Remote Providers](/docs/providers):** (remote sources that work through [Uppy Server](/docs/server/))
+- **[Remote Providers](/docs/providers):** (remote sources that work through [Uppy Companion](/docs/companion/))
   - [@uppy/dropbox](/docs/dropbox) – import files from Dropbox
   - [@uppy/google-drive](/docs/google-drive) – import files from Google Drive
   - [@uppy/instagram](/docs/instagram) – import files from Instagram

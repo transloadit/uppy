@@ -33,8 +33,8 @@ const Tus = require('@uppy/Tus')
 
 const uppy = Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })
-  .use(GoogleDrive, { target: Dashboard, serverUrl: 'https://server.uppy.io' })
-  .use(Instagram, { target: Dashboard, serverUrl: 'https://server.uppy.io' })
+  .use(GoogleDrive, { target: Dashboard, serverUrl: 'https://companion.uppy.io' })
+  .use(Instagram, { target: Dashboard, serverUrl: 'https://companion.uppy.io' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: 'https://master.tus.io/files/' })
   .on('complete', (result) => {
@@ -48,7 +48,7 @@ const uppy = Uppy({ autoProceed: false })
 
 - Lightweight, modular plugin-based architecture, easy on dependencies :zap:
 - Resumable file uploads via the open [tus](https://tus.io/) standard, so large uploads survive network hiccups
-- Supports picking files from: Webcam, Dropbox, Google Drive, Instagram, bypassing the user’s device where possible, syncing between servers directly via [uppy-server](https://github.com/transloadit/uppy-server)
+- Supports picking files from: Webcam, Dropbox, Google Drive, Instagram, bypassing the user’s device where possible, syncing between servers directly via [@uppy/companion](https://uppy.io/docs/companion)
 - Works great with file encoding and processing backends, such as [Transloadit](https://transloadit.com), works great without (just roll your own Apache/Nginx/Node/FFmpeg/etc backend)
 - Sleek user interface :sparkles:
 - Optional file recovery (after a browser crash) with [Golden Retriever](https://uppy.io/docs/golden-retriever/)
@@ -91,7 +91,7 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 
 - [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods, and events.
 - [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their options.
-- [Server](https://uppy.io/docs/server/) — setting up and running an Uppy Server instance, which adds support for Instagram, Dropbox, Google Drive and remote urls.
+- [Companion](https://uppy.io/docs/companion/) — setting up and running an Uppy Companion instance, which adds support for Instagram, Dropbox, Google Drive and remote urls.
 - [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps.
 - [Architecture & Writing a Plugin](https://uppy.io/docs/writing-plugins/) — how to write a plugin for Uppy.
 
@@ -108,9 +108,9 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 
 ### Remote Providers
 
-- [`Google Drive`](https://uppy.io/docs/google-drive/), [`Dropbox`](https://uppy.io/docs/dropbox/), [`Instagram`](https://uppy.io/docs/instagram/), [`Import From URL`](https://uppy.io/docs/url/) — support picking files from remote providers or direct URLs from anywhere on the web. Note that[`uppy-server`](https://github.com/transloadit/uppy-server) is needed for these.
+- [`Google Drive`](https://uppy.io/docs/google-drive/), [`Dropbox`](https://uppy.io/docs/dropbox/), [`Instagram`](https://uppy.io/docs/instagram/), [`Import From URL`](https://uppy.io/docs/url/) — support picking files from remote providers or direct URLs from anywhere on the web. Note that [`@uppy/companion`](https://uppy.io/docs/companion) is needed for these.
 
-### Uploaders 
+### Uploaders
 
 - [`Tus`](https://uppy.io/docs/tus/) — resumable uploads via the open [tus](http://tus.io) standard
 - [`XHR Upload`](https://uppy.io/docs/xhr-upload/) — regular uploads for any backend out there (like Apache, Nginx)
@@ -194,7 +194,7 @@ Yes, whatever you want on the backend will work with `@uppy/xhr-upload` plugin, 
 
 If you want resumability with the Tus plugin, use [one of the tus server implementations](https://tus.io/implementations.html) 👌🏼
 
-And you’ll need [`uppy-server`](https://github.com/transloadit/uppy-server) if you’d like your users to be able to pick files from Instagram, Google Drive, Dropbox or via direct urls (with more services coming).
+And you’ll need [`@uppy/companion`](https://uppy.io/docs/companion) if you’d like your users to be able to pick files from Instagram, Google Drive, Dropbox or via direct urls (with more services coming).
 
 ## Contributions are welcome
 

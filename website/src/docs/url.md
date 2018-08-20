@@ -8,7 +8,7 @@ permalink: docs/url/
 
 The `@uppy/url` plugin allows users to import files from the internet. Paste any URL and it will be added!
 
-An Uppy Server instance is required for the `@uppy/url` plugin to work. Uppy Server will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps to avoid CORS restrictions.
+An Uppy Companion instance is required for the `@uppy/url` plugin to work. Uppy Companion will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps to avoid CORS restrictions.
 
 ```js
 const Url = require('@uppy/url')
@@ -43,7 +43,7 @@ The `@uppy/url` plugin has the following configurable options:
 ```js
 uppy.use(Url, {
   target: Dashboard,
-  serverUrl: 'https://server.uppy.io/',
+  serverUrl: 'https://companion.uppy.io/',
   locale: {}
 })
 ```
@@ -62,7 +62,7 @@ DOM element, CSS selector, or plugin to mount the URL provider into. This should
 
 ### `serverUrl: null`
 
-URL to an Uppy Server instance.
+URL to an Uppy Companion instance.
 
 ### `locale: {}`
 
@@ -76,8 +76,8 @@ strings: {
   import: 'Import',
   // Placeholder text for the URL input.
   enterUrlToImport: 'Enter URL to import a file',
-  // Error message shown if Uppy Server could not load a URL.
-  failedToFetch: 'Uppy Server failed to fetch this URL, please make sure it’s correct',
+  // Error message shown if Uppy Companion could not load a URL.
+  failedToFetch: 'Uppy Companion failed to fetch this URL, please make sure it’s correct',
   // Error message shown if the input does not look like a URL.
   enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file'
 }

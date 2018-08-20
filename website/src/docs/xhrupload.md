@@ -136,7 +136,7 @@ getResponseData (responseText, response) {
 
 The `responseText` is the XHR endpoint response as a string. For uploads from the user's device, `response` is the [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) object.
 
-When uploading files from remote providers such as Dropbox or Instagram, Uppy Server sends upload response data to the client. This is made available in the `getResponseData()` function as well. The `response` object from Uppy Server contains some properties named after their [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) counterparts:
+When uploading files from remote providers such as Dropbox or Instagram, Uppy Companion sends upload response data to the client. This is made available in the `getResponseData()` function as well. The `response` object from Uppy Companion contains some properties named after their [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) counterparts:
 
  - `response.responseText` - the XHR endpoint response as a string;
  - `response.status` - the HTTP status code;
