@@ -1,5 +1,5 @@
 /**
- * Check that assembly parameters are present and include all required fields.
+ * Check that Assembly parameters are present and include all required fields.
  */
 function validateParams (params) {
   if (!params) {
@@ -25,7 +25,7 @@ function validateParams (params) {
 
 /**
  * Turn Transloadit plugin options and a list of files
- * into a list of assembly options.
+ * into a list of Assembly options.
  */
 class AssemblyOptions {
   constructor (files, opts) {
@@ -33,7 +33,11 @@ class AssemblyOptions {
     this.opts = opts
   }
 
-  normalizeAssemblyOptions (file, assemblyOptions) {
+  /**
+   * Normalize Uppy-specific Assembly option features
+   * to a Transloadit-compatible object.
+   */
+  _normalizeAssemblyOptions (file, assemblyOptions) {
     if (Array.isArray(assemblyOptions.fields)) {
       const fieldNames = assemblyOptions.fields
       assemblyOptions.fields = {}
@@ -41,13 +45,18 @@ class AssemblyOptions {
         assemblyOptions.fields[fieldName] = file.meta[fieldName]
       })
     }
+
     if (!assemblyOptions.fields) {
       assemblyOptions.fields = {}
     }
+
     return assemblyOptions
   }
 
-  getAssemblyOptions (file) {
+  /**
+   * Get Assembly options for a file.
+   */
+  _getAssemblyOptions (file) {
     const options = this.opts
 
     return Promise.resolve()
@@ -55,7 +64,7 @@ class AssemblyOptions {
         return options.getAssemblyOptions(file, options)
       })
       .then((assemblyOptions) => {
-        return this.normalizeAssemblyOptions(file, assemblyOptions)
+        return this._normalizeAssemblyOptions(file, assemblyOptions)
       })
       .then((assemblyOptions) => {
         validateParams(assemblyOptions.params)
@@ -67,7 +76,11 @@ class AssemblyOptions {
       })
   }
 
-  dedupe (list) {
+  /**
+   * Combine Assemblies with the same options into a
+   * single Assembly for all the relevant files.
+   */
+  _dedupe (list) {
     const dedupeMap = Object.create(null)
     list.forEach(({ fileIDs, options }) => {
       const id = JSON.stringify(options)
@@ -84,19 +97,25 @@ class AssemblyOptions {
     return Object.keys(dedupeMap).map((id) => dedupeMap[id])
   }
 
+  /**
+   * Generate a set of Assemblies that will handle the upload.
+   * Returns a Promise for an object with keys:
+   *  - fileIDs - an array of file IDs to add to this Assembly
+   *  - options - Assembly options
+   */
   build () {
     const options = this.opts
 
     if (this.files.length > 0) {
       return Promise.all(
-        this.files.map((file) => this.getAssemblyOptions(file))
+        this.files.map((file) => this._getAssemblyOptions(file))
       ).then((list) => {
-        return this.dedupe(list)
+        return this._dedupe(list)
       })
     }
 
     if (options.alwaysRunAssembly) {
-      // No files, just generate one assembly
+      // No files, just generate one Assembly
       return Promise.resolve(
         options.getAssemblyOptions(null, options)
       ).then((assemblyOptions) => {

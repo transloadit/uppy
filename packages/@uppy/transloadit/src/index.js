@@ -57,12 +57,12 @@ module.exports = class Transloadit extends Plugin {
     this.translator = new Translator({ locale: this.locale })
     this.i18n = this.translator.translate.bind(this.translator)
 
-    this.prepareUpload = this.prepareUpload.bind(this)
-    this.afterUpload = this.afterUpload.bind(this)
-    this.handleError = this.handleError.bind(this)
-    this.onFileUploadURLAvailable = this.onFileUploadURLAvailable.bind(this)
-    this.onRestored = this.onRestored.bind(this)
-    this.getPersistentData = this.getPersistentData.bind(this)
+    this._prepareUpload = this._prepareUpload.bind(this)
+    this._afterUpload = this._afterUpload.bind(this)
+    this._handleError = this._handleError.bind(this)
+    this._onFileUploadURLAvailable = this._onFileUploadURLAvailable.bind(this)
+    this._onRestored = this._onRestored.bind(this)
+    this._getPersistentData = this._getPersistentData.bind(this)
 
     if (this.opts.params) {
       AssemblyOptions.validateParams(this.opts.params)
@@ -84,7 +84,7 @@ module.exports = class Transloadit extends Plugin {
    * @param {Object} file
    * @param {Object} status
    */
-  attachAssemblyMetadata (file, status) {
+  _attachAssemblyMetadata (file, status) {
     // Add the metadata parameters Transloadit needs.
     const meta = {
       ...file.meta,
@@ -131,7 +131,7 @@ module.exports = class Transloadit extends Plugin {
     return newFile
   }
 
-  createAssembly (fileIDs, uploadID, options) {
+  _createAssembly (fileIDs, uploadID, options) {
     this.uppy.log('[Transloadit] create Assembly')
 
     return this.client.createAssembly({
@@ -163,7 +163,7 @@ module.exports = class Transloadit extends Plugin {
       const { files } = this.uppy.getState()
       const updatedFiles = {}
       fileIDs.forEach((id) => {
-        updatedFiles[id] = this.attachAssemblyMetadata(this.uppy.getFile(id), status)
+        updatedFiles[id] = this._attachAssemblyMetadata(this.uppy.getFile(id), status)
       })
       this.uppy.setState({
         files: {
@@ -174,7 +174,7 @@ module.exports = class Transloadit extends Plugin {
 
       this.uppy.emit('transloadit:assembly-created', status, fileIDs)
 
-      this.connectAssembly(assembly)
+      this._connectAssembly(assembly)
 
       this.uppy.log(`[Transloadit] Created Assembly ${assembly.assembly_id}`)
       return assembly
@@ -186,7 +186,7 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  shouldWaitAfterUpload () {
+  _shouldWaitAfterUpload () {
     return this.opts.waitForEncoding || this.opts.waitForMetadata
   }
 
@@ -194,7 +194,7 @@ module.exports = class Transloadit extends Plugin {
    * Used when `importFromUploadURLs` is enabled: reserves all files in
    * the assembly.
    */
-  reserveFiles (assembly, fileIDs) {
+  _reserveFiles (assembly, fileIDs) {
     return Promise.all(fileIDs.map((fileID) => {
       const file = this.uppy.getFile(fileID)
       return this.client.reserveFile(assembly, file)
@@ -205,7 +205,7 @@ module.exports = class Transloadit extends Plugin {
    * Used when `importFromUploadURLs` is enabled: adds files to the assembly
    * once they have been fully uploaded.
    */
-  onFileUploadURLAvailable (file) {
+  _onFileUploadURLAvailable (file) {
     if (!file || !file.transloadit || !file.transloadit.assembly) {
       return
     }
@@ -219,7 +219,7 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  findFile (uploadedFile) {
+  _findFile (uploadedFile) {
     const files = this.uppy.getFiles()
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
@@ -240,9 +240,9 @@ module.exports = class Transloadit extends Plugin {
     }
   }
 
-  onFileUploadComplete (assemblyId, uploadedFile) {
+  _onFileUploadComplete (assemblyId, uploadedFile) {
     const state = this.getPluginState()
-    const file = this.findFile(uploadedFile)
+    const file = this._findFile(uploadedFile)
     if (!file) {
       this.uppy.log('[Transloadit] Couldn’t file the file, it was likely removed in the process')
       return
@@ -266,7 +266,7 @@ module.exports = class Transloadit extends Plugin {
    * @param {string} stepName
    * @param {Object} result
    */
-  onResult (assemblyId, stepName, result) {
+  _onResult (assemblyId, stepName, result) {
     const state = this.getPluginState()
     const file = state.files[result.original_id]
     // The `file` may not exist if an import robot was used instead of a file upload.
@@ -291,7 +291,7 @@ module.exports = class Transloadit extends Plugin {
    *
    * @param {Object} status
    */
-  onAssemblyFinished (status) {
+  _onAssemblyFinished (status) {
     const url = status.assembly_ssl_url
     this.client.getAssemblyStatus(url).then((finalStatus) => {
       const state = this.getPluginState()
@@ -306,11 +306,11 @@ module.exports = class Transloadit extends Plugin {
 
   /**
    * Custom state serialization for the Golden Retriever plugin.
-   * It will pass this back to the `onRestored` function.
+   * It will pass this back to the `_onRestored` function.
    *
    * @param {function} setData
    */
-  getPersistentData (setData) {
+  _getPersistentData (setData) {
     const state = this.getPluginState()
     const assemblies = state.assemblies
     const uploadsAssemblies = state.uploadsAssemblies
@@ -323,7 +323,7 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  onRestored (pluginData) {
+  _onRestored (pluginData) {
     const savedState = pluginData && pluginData[this.id] ? pluginData[this.id] : {}
     const previousAssemblies = savedState.assemblies || {}
     const uploadsAssemblies = savedState.uploadsAssemblies || {}
@@ -341,7 +341,7 @@ module.exports = class Transloadit extends Plugin {
         const status = assemblies[id]
 
         status.uploads.forEach((uploadedFile) => {
-          const file = this.findFile(uploadedFile)
+          const file = this._findFile(uploadedFile)
           files[uploadedFile.id] = {
             id: file.id,
             assembly: id,
@@ -377,7 +377,7 @@ module.exports = class Transloadit extends Plugin {
       const { assemblies } = this.getPluginState()
       Object.keys(assemblies).forEach((id) => {
         const assembly = new Assembly(assemblies[id])
-        this.connectAssembly(assembly)
+        this._connectAssembly(assembly)
       })
     }
 
@@ -403,7 +403,7 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  connectAssembly (assembly) {
+  _connectAssembly (assembly) {
     const { status } = assembly
     const id = status.assembly_id
     this.activeAssemblies[id] = assembly
@@ -420,7 +420,7 @@ module.exports = class Transloadit extends Plugin {
     })
 
     assembly.on('upload', (file) => {
-      this.onFileUploadComplete(id, file)
+      this._onFileUploadComplete(id, file)
     })
     assembly.on('error', (error) => {
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
@@ -432,17 +432,17 @@ module.exports = class Transloadit extends Plugin {
 
     if (this.opts.waitForEncoding) {
       assembly.on('result', (stepName, result) => {
-        this.onResult(id, stepName, result)
+        this._onResult(id, stepName, result)
       })
     }
 
     if (this.opts.waitForEncoding) {
       assembly.on('finished', () => {
-        this.onAssemblyFinished(assembly.status)
+        this._onAssemblyFinished(assembly.status)
       })
     } else if (this.opts.waitForMetadata) {
       assembly.on('metadata', () => {
-        this.onAssemblyFinished(assembly.status)
+        this._onAssemblyFinished(assembly.status)
       })
     }
 
@@ -465,7 +465,7 @@ module.exports = class Transloadit extends Plugin {
     return assembly
   }
 
-  prepareUpload (fileIDs, uploadID) {
+  _prepareUpload (fileIDs, uploadID) {
     // Only use files without errors
     fileIDs = fileIDs.filter((file) => !file.error)
 
@@ -478,9 +478,9 @@ module.exports = class Transloadit extends Plugin {
     })
 
     const createAssembly = ({ fileIDs, options }) => {
-      return this.createAssembly(fileIDs, uploadID, options).then((assembly) => {
+      return this._createAssembly(fileIDs, uploadID, options).then((assembly) => {
         if (this.opts.importFromUploadURLs) {
-          return this.reserveFiles(assembly, fileIDs)
+          return this._reserveFiles(assembly, fileIDs)
         }
       }).then(() => {
         fileIDs.forEach((fileID) => {
@@ -527,7 +527,7 @@ module.exports = class Transloadit extends Plugin {
     )
   }
 
-  afterUpload (fileIDs, uploadID) {
+  _afterUpload (fileIDs, uploadID) {
     // Only use files without errors
     fileIDs = fileIDs.filter((file) => !file.error)
 
@@ -536,7 +536,7 @@ module.exports = class Transloadit extends Plugin {
     // If we're still restoring state, wait for that to be done.
     if (this.restored) {
       return this.restored.then(() => {
-        return this.afterUpload(fileIDs, uploadID)
+        return this._afterUpload(fileIDs, uploadID)
       })
     }
 
@@ -544,7 +544,7 @@ module.exports = class Transloadit extends Plugin {
 
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
-    if (!this.shouldWaitAfterUpload()) {
+    if (!this._shouldWaitAfterUpload()) {
       assemblyIDs.forEach((assemblyID) => {
         const assembly = this.activeAssemblies[assemblyID]
         assembly.close()
@@ -607,8 +607,8 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  handleError (err, uploadID) {
-    this.uppy.log(`[Transloadit] handleError in upload ${uploadID}`)
+  _handleError (err, uploadID) {
+    this.uppy.log(`[Transloadit] _handleError in upload ${uploadID}`)
     this.uppy.log(err)
     const state = this.getPluginState()
     const assemblyIDs = state.uploadsAssemblies[uploadID]
@@ -621,15 +621,15 @@ module.exports = class Transloadit extends Plugin {
   }
 
   install () {
-    this.uppy.addPreProcessor(this.prepareUpload)
-    this.uppy.addPostProcessor(this.afterUpload)
+    this.uppy.addPreProcessor(this._prepareUpload)
+    this.uppy.addPostProcessor(this._afterUpload)
 
     // We may need to close socket.io connections on error.
-    this.uppy.on('error', this.handleError)
+    this.uppy.on('error', this._handleError)
 
     if (this.opts.importFromUploadURLs) {
       // No uploader needed when importing; instead we take the upload URL from an existing uploader.
-      this.uppy.on('upload-success', this.onFileUploadURLAvailable)
+      this.uppy.on('upload-success', this._onFileUploadURLAvailable)
     } else {
       this.uppy.use(Tus, {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
@@ -643,8 +643,8 @@ module.exports = class Transloadit extends Plugin {
       })
     }
 
-    this.uppy.on('restore:get-data', this.getPersistentData)
-    this.uppy.on('restored', this.onRestored)
+    this.uppy.on('restore:get-data', this._getPersistentData)
+    this.uppy.on('restored', this._onRestored)
 
     this.setPluginState({
       // Contains assembly status objects, indexed by their ID.
@@ -659,12 +659,12 @@ module.exports = class Transloadit extends Plugin {
   }
 
   uninstall () {
-    this.uppy.removePreProcessor(this.prepareUpload)
-    this.uppy.removePostProcessor(this.afterUpload)
-    this.uppy.off('error', this.handleError)
+    this.uppy.removePreProcessor(this._prepareUpload)
+    this.uppy.removePostProcessor(this._afterUpload)
+    this.uppy.off('error', this._handleError)
 
     if (this.opts.importFromUploadURLs) {
-      this.uppy.off('upload-success', this.onFileUploadURLAvailable)
+      this.uppy.off('upload-success', this._onFileUploadURLAvailable)
     }
   }
 
