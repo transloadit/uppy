@@ -334,12 +334,15 @@ module.exports = class Tus extends Plugin {
     })
   }
 
+  /**
+   * Store the uploadUrl on the file options, so that when Golden Retriever
+   * restores state, we will continue uploading to the correct URL.
+   */
   onReceiveUploadUrl (file, uploadURL) {
     const currentFile = this.uppy.getFile(file.id)
     if (!currentFile) return
-    // Only do the update if we didn't have an upload URL yet,
-    // or resume: false in options
-    if ((!currentFile.tus || currentFile.tus.uploadUrl !== uploadURL) && this.opts.resume) {
+    // Only do the update if we didn't have an upload URL yet.
+    if (!currentFile.tus || currentFile.tus.uploadUrl !== uploadURL) {
       this.uppy.log('[Tus] Storing upload url')
       this.uppy.setFileState(currentFile.id, {
         tus: Object.assign({}, currentFile.tus, {
