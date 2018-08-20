@@ -40,7 +40,9 @@ export interface FailedUppyFile<TMeta extends IndexedObject<any> = {}> extends U
 }
 
 export interface AddFileOptions extends Partial<UppyFile> {
-  // `.data` is the only required property here.
+  // `data` `name` and `type` are the only required properties here.
+  name: string;
+  type: string;
   data: Blob | File;
 }
 
@@ -70,9 +72,14 @@ export interface Store {
   subscribe(listener: any): () => void;
 }
 
-interface LocaleObject {
-  [key: string]: string | LocaleObject;
+interface LocaleStrings {
+  [key: string]: string | LocaleStrings;
 }
+interface Locale {
+  strings: LocaleStrings;
+  pluralize?: (n: number) => number;
+}
+
 export interface UppyOptions {
   id: string;
   autoProceed: boolean;
@@ -88,7 +95,7 @@ export interface UppyOptions {
   meta: any;
   onBeforeFileAdded: (currentFile: UppyFile, files: {[key: string]: UppyFile}) => UppyFile | boolean | undefined;
   onBeforeUpload: (files: {[key: string]: UppyFile}) => {[key: string]: UppyFile} | boolean;
-  locale: LocaleObject;
+  locale: Locale;
   store: Store;
 }
 
