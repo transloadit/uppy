@@ -1,7 +1,37 @@
 /* global browser, expect  */
+const { spawn } = require('child_process')
 const testURL = 'http://localhost:4567/providers'
 
 describe('File upload with Providers', () => {
+  let companion
+  function prematureExit () {
+    throw new Error('Companion exited early')
+  }
+  before(() => {
+    companion = spawn('npm', ['run', 'start:companion'], {
+      stdio: 'pipe'
+    })
+    return new Promise((resolve, reject) => {
+      companion.on('error', reject)
+      companion.stdout.on('data', (chunk) => {
+        if (`${chunk}`.includes('Listening on')) {
+          resolve()
+        }
+      })
+
+      companion.on('error', console.error)
+      companion.stderr.pipe(process.stderr)
+      companion.on('exit', prematureExit)
+    })
+  })
+  after(() => {
+    return new Promise((resolve) => {
+      companion.removeListener('exit', prematureExit)
+      companion.on('exit', () => resolve())
+      companion.kill('SIGINT')
+    })
+  })
+
   beforeEach(() => {
     browser.url(testURL)
   })
@@ -10,24 +40,36 @@ describe('File upload with Providers', () => {
     browser.reload()
   })
 
-  it('should upload a file completely with Google Drive', () => {
+  it('should upload a file completely with Google Drive', function () {
+    if (process.env.UPPY_GOOGLE_EMAIL === undefined) {
+      return this.skip()
+    }
+
     startUploadTest(browser, 'GoogleDrive')
     signIntoGoogle(browser)
     finishUploadTest(browser)
   })
 
-  it('should upload a file completely with Instagram', () => {
+  it('should upload a file completely with Instagram', function () {
+    if (process.env.UPPY_INSTAGRAM_USERNAME === undefined) {
+      return this.skip()
+    }
+
     startUploadTest(browser, 'Instagram')
     // do oauth authentication
     browser.waitForExist('input[name=username]')
     browser.setValue('input[name=username]', process.env.UPPY_INSTAGRAM_USERNAME)
     browser.setValue('input[name=password]', process.env.UPPY_INSTAGRAM_PASSWORD)
-    browser.click('button')
+    browser.click('form button')
 
     finishUploadTest(browser)
   })
 
-  it('should upload a file completely with Dropbox', () => {
+  it('should upload a file completely with Dropbox', function () {
+    if (process.env.UPPY_GOOGLE_EMAIL === undefined) {
+      return this.skip()
+    }
+
     startUploadTest(browser, 'Dropbox')
     // do oauth authentication
     browser.waitForVisible('button.auth-google')
