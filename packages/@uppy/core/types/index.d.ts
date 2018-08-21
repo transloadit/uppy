@@ -40,9 +40,7 @@ export interface FailedUppyFile<TMeta extends IndexedObject<any> = {}> extends U
 }
 
 export interface AddFileOptions extends Partial<UppyFile> {
-  // `data` `name` and `type` are the only required properties here.
-  name: string;
-  type: string;
+  // `.data` is the only required property here.
   data: Blob | File;
 }
 
