@@ -112,6 +112,13 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   getItemRequestPath (item) {
+    // If it's from a Team Drive, add the Team Drive ID as a query param.
+    // The server needs the Team Drive ID to list files in a Team Drive folder.
+    if (item.teamDriveId) {
+      item.id += `?teamDriveId=${item.teamDriveId}`
+      delete item.teamDriveId
+    }
+
     return this.getItemId(item)
   }
 
@@ -124,18 +131,11 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   render (state) {
-    // If the user has access to any Team Drives, handle them as needed.
-    if (state.plugins[this.id].hasTeamDrives) {
-      let folders = state.plugins[this.id].folders
+    let pluginState = this.getPluginState()
 
-      // Add Team Drive id parameter to any folders within Team Drives.
-      // This is needed in order to retrieve file lists.
-      folders.forEach((folder) => {
-        if (folder.teamDriveId) {
-          folder.id += `?teamDriveId=${folder.teamDriveId}`
-          delete folder.teamDriveId
-        }
-      })
+    // If the user has access to any Team Drives, handle them as needed.
+    if (pluginState.hasTeamDrives) {
+      let folders = pluginState.folders
 
       // Remove any Team Drives we've previously pushed into the list of folders.
       folders = folders.filter((folder) => {
@@ -143,8 +143,8 @@ module.exports = class GoogleDrive extends Plugin {
       })
 
       // If viewing the Google Drive root, add Team Drives to the top of the list.
-      if (state.plugins[this.id].directories.length === 1) {
-        state.plugins[this.id].teamDrives.forEach((teamDrive) => {
+      if (pluginState.directories.length === 1) {
+        pluginState.teamDrives.forEach((teamDrive) => {
           folders.splice(0, 0, {
             // Instead of a "normal" id, set it as a query param which will be handled by the server.
             id: '?teamDriveId=' + teamDrive.id,
@@ -157,7 +157,7 @@ module.exports = class GoogleDrive extends Plugin {
           })
         })
       }
-      state.plugins[this.id].folders = folders
+      pluginState.folders = folders
     }
     return this.view.render(state)
   }
