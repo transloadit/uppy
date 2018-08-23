@@ -1,6 +1,19 @@
-const io = require('socket.io-client')
+const io = requireSocketIo
 const Emitter = require('component-emitter')
 const parseUrl = require('./parseUrl')
+
+// Lazy load socket.io to avoid a console error
+// in IE 10 when the Transloadit plugin is not used.
+// (The console.error call comes from `buffer`. I
+// think we actually don't use that part of socket.io
+// at all…)
+let socketIo
+function requireSocketIo () {
+  if (!socketIo) {
+    socketIo = require('socket.io-client')
+  }
+  return socketIo
+}
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
@@ -52,7 +65,7 @@ class TransloaditAssembly extends Emitter {
 
   _connectSocket () {
     const parsed = parseUrl(this.status.websocket_url)
-    const socket = io.connect(parsed.origin, {
+    const socket = io().connect(parsed.origin, {
       path: parsed.pathname
     })
 
