@@ -130,19 +130,27 @@ What we need to do to release Uppy 1.0
 - [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
 - [ ] companion: option validation (can use https://npm.im/ajv + JSON schema)
 
+## 0.27.2
+
+Released: 2018-08-23.
+
+- @uppy/companion: Auto deploy Companion. (#1008 / @kiloreux)
+- @uppy/transloadit: Refactors and add fallback if socket connection fails. (#1011 / @goto-bus-stop)
+- ci: No need to web:install if we're not deploying. (#1012 / @goto-bus-stop)
+
 ## 0.27.1
 
 Released: 2018-08-16.
 
-- [x] companion: use explicit typescript devDependency.
-- [x] companion: rename Server → Companion in documentation (#1007 / @goto-bus-stop)
-- [x] website: Load all prism languages (#1004 / @goto-bus-stop)
-- [x] core: Fix peerDependencies of plugin packages. (#1005 / @goto-bus-stop)
-- [x] companion-client: Send cookies with fetch requests (#1000 / @geoffappleford)
-- [x] Add e2e test for providers (#990 / @ifedapoolarewaju)
-- [x] website: attempt to fix font sizes on mobile vs desktop (@arturi)
-- [x] dashboard:  show note and “powered by” when no acquire/sources plugins are used too (@arturi)
-- [x] Update dependencies. (#995 / @goto-bus-stop)
+- @uppy/companion: use explicit typescript devDependency.
+- @uppy/companion: rename Server → Companion in documentation (#1007 / @goto-bus-stop)
+- website: Load all prism languages (#1004 / @goto-bus-stop)
+- @uppy/core: Fix peerDependencies of plugin packages. (#1005 / @goto-bus-stop)
+- @uppy/companion-client: Send cookies with fetch requests (#1000 / @geoffappleford)
+- Add e2e test for providers (#990 / @ifedapoolarewaju)
+- website: attempt to fix font sizes on mobile vs desktop (@arturi)
+- @uppy/dashboard:  show note and “powered by” when no acquire/sources plugins are used too (@arturi)
+- Update dependencies. (#995 / @goto-bus-stop)
 
 ## 0.27.0
 
