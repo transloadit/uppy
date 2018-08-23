@@ -1,4 +1,4 @@
-import Uppy = require('uppy');
+import * as Uppy from '../';
 
 (() => {
   const uppy = Uppy.Core({ autoProceed: false });
