@@ -176,15 +176,15 @@ const ProgressBarProcessing = (props) => {
   </div>
 }
 
-const progressDetails = (props) => {
+const ProgressDetails = (props) => {
   return <div class="uppy-StatusBar-statusSecondary">
-    { props.inProgress > 1 && props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.inProgress }) + ' \u00B7 ' }
+    { props.numUploads > 1 && props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.numUploads }) + ' \u00B7 ' }
     { props.i18n('dataUploadedOfTotal', { complete: props.totalUploadedSize, total: props.totalSize }) + ' \u00B7 ' }
     { props.i18n('xTimeLeft', { time: props.totalETA }) }
   </div>
 }
 
-const ThrottledProgressDetails = throttle(progressDetails, 500, { leading: true, trailing: true })
+const ThrottledProgressDetails = throttle(ProgressDetails, 500, { leading: true, trailing: true })
 
 const ProgressBarUploading = (props) => {
   if (!props.isUploadStarted || props.isAllComplete) {
