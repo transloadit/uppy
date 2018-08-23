@@ -3,13 +3,21 @@
 set -o pipefail
 set -o errexit
 set -o nounset
-set -o xtrace
 
 # Set magic variables for current file & dir
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
+
+if [[ ! "$@" =~ -y ]]; then
+  echo "Make sure to read https://uppy.io/docs/contributing#Releases!"
+  echo "Press Enter when ready, or Ctrl+C if you still need to do something."
+  echo "Use 'npm run release -- -y' to bypass this message."
+  read
+fi
+
+set -o xtrace
 
 # Add readme file to the main `uppy` package.
 cp README.md packages/uppy/README.md
