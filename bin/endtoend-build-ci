@@ -46,6 +46,9 @@ git checkout -- packages/*/package.json packages/@uppy/*/package.json
 # (Don't use the npm cache, don't generate a package-lock, don't save dependencies to any package.json)
 (cd "${__root}/test/endtoend" && npm install --prefer-online --registry "$VERDACCIO_REGISTRY" --no-package-lock --no-save uppy $PACKAGES)
 
+# revert to public registry
+npm set registry https://registry.npmjs.com
+
 bash "${__dir}/endtoend-build-tests"
 
 cleanup
