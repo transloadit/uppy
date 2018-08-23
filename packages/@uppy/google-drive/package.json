@@ -1,7 +1,7 @@
 {
   "name": "@uppy/google-drive",
   "description": "The Google Drive plugin for Uppy lets users import files from their Google Drive account",
-  "version": "0.27.1",
+  "version": "0.27.2",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",

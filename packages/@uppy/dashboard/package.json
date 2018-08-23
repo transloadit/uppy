@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "0.27.1",
+  "version": "0.27.2",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@uppy/core": "0.27.0",
-    "@uppy/google-drive": "0.27.1"
+    "@uppy/google-drive": "0.27.2"
   },
   "peerDependencies": {
     "@uppy/core": "^0.27.0"
