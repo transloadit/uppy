@@ -1,13 +1,17 @@
-export interface UppyFile {
+interface IndexedObject<T> {
+  [key: string]: T;
+  [key: number]: T;
+}
+export interface UppyFile<TMeta extends IndexedObject<any> = {}> {
   data: Blob | File;
   extension: string;
   id: string;
-  isPaused: boolean;
+  isPaused?: boolean;
   isRemote: boolean;
   meta: {
     name: string;
     type?: string;
-  };
+  } & TMeta;
   name: string;
   preview?: string;
   progress?: {
@@ -25,7 +29,14 @@ export interface UppyFile {
   size: number;
   source?: string;
   type?: string;
-  uploadURL?: string;
+}
+
+export interface UploadedUppyFile<TMeta extends IndexedObject<any> = {}> extends UppyFile<TMeta> {
+  uploadURL: string;
+}
+
+export interface FailedUppyFile<TMeta extends IndexedObject<any> = {}> extends UppyFile<TMeta> {
+  error: string;
 }
 
 export interface AddFileOptions extends Partial<UppyFile> {
@@ -38,6 +49,9 @@ export interface PluginOptions {
 }
 
 export class Plugin {
+  id: string;
+  uppy: Uppy;
+  type: string;
   constructor(uppy: Uppy, opts?: PluginOptions);
   getPluginState(): object;
   setPluginState(update: any): object;
@@ -56,29 +70,52 @@ export interface Store {
   subscribe(listener: any): () => void;
 }
 
+interface LocaleStrings {
+  [key: string]: string | LocaleStrings;
+}
+interface Locale {
+  strings: LocaleStrings;
+  pluralize?: (n: number) => number;
+}
+
 export interface UppyOptions {
   id: string;
   autoProceed: boolean;
   debug: boolean;
+  showLinkToFileUploadResult: boolean;
   restrictions: {
-    maxFileSize: number | null,
-    maxNumberOfFiles: number | null,
-    minNumberOfFiles: number | null,
-    allowedFileTypes: string[] | null
+    maxFileSize: number | null;
+    maxNumberOfFiles: number | null;
+    minNumberOfFiles: number | null;
+    allowedFileTypes: string[] | null;
   };
   target: string | Plugin;
   meta: any;
-  // onBeforeFileAdded: (currentFile, files) => currentFile,
-  // onBeforeUpload: (files) => files,
-  locale: any;
+  onBeforeFileAdded: (currentFile: UppyFile, files: {[key: string]: UppyFile}) => UppyFile | boolean | undefined;
+  onBeforeUpload: (files: {[key: string]: UppyFile}) => {[key: string]: UppyFile} | boolean;
+  locale: Locale;
   store: Store;
 }
 
-export interface UploadResult {
-  successful: UppyFile[];
-  failed: UppyFile[];
+export interface UploadResult<TMeta extends IndexedObject<any> = {}> {
+  successful: UploadedUppyFile<TMeta>[];
+  failed: FailedUppyFile<TMeta>[];
 }
 
+interface State<TMeta extends IndexedObject<any> = {}> extends IndexedObject<any> {
+  capabilities?: {resumableUploads?: boolean};
+  currentUploads: {};
+  error?: string;
+  files: {[key: string]: UploadedUppyFile<TMeta> | FailedUppyFile<TMeta>};
+  info?: {
+    isHidden: boolean;
+    type: string;
+    message: string;
+    details: string;
+  };
+  plugins?: IndexedObject<any>;
+  totalProgress: number;
+}
 type LogLevel = 'info' | 'warning' | 'error';
 export class Uppy {
   constructor(opts?: Partial<UppyOptions>);
@@ -88,8 +125,8 @@ export class Uppy {
   off(event: string, callback: any): Uppy;
   updateAll(state: object): void;
   setState(patch: object): void;
-  getState(): object;
-  readonly state: object;
+  getState<TMeta extends IndexedObject<any> = {}>(): State<TMeta>;
+  readonly state: State;
   setFileState(fileID: string, state: object): void;
   resetProgress(): void;
   addPreProcessor(fn: any): void;
@@ -100,8 +137,8 @@ export class Uppy {
   removeUploader(fn: any): void;
   setMeta(data: any): void;
   setFileMeta(fileID: string, data: object): void;
-  getFile(fileID: string): UppyFile;
-  getFiles(): UppyFile[];
+  getFile<TMeta extends IndexedObject<any> = {}>(fileID: string): UppyFile<TMeta>;
+  getFiles<TMeta extends IndexedObject<any> = {}>(): Array<UppyFile<TMeta>>;
   addFile(file: AddFileOptions): void;
   removeFile(fileID: string): void;
   pauseResume(fileID: string): boolean;
@@ -117,7 +154,7 @@ export class Uppy {
   iteratePlugins(callback: (plugin: Plugin) => void): void;
   removePlugin(instance: Plugin): void;
   close(): void;
-  info(message: string | { message: string; details: string; }, type?: LogLevel, duration?: number): void;
+  info(message: string | {message: string; details: string}, type?: LogLevel, duration?: number): void;
   hideInfo(): void;
   log(msg: string, type?: LogLevel): void;
   run(): Uppy;
