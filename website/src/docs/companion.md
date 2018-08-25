@@ -7,7 +7,7 @@ permalink: docs/companion/
 alias: docs/server/
 ---
 
-> Uppy Companion was previously known as Uppy Server. It was renamed in v0.14.0.
+> Uppy Companion was previously known as Uppy Server. It was renamed in v0.27.0.
 
 Drag and drop, webcam, basic file manipulation (adding metadata, for example) and uploading via tus-resumable uploads or XHR/Multipart are all possible using just the Uppy client module.
 
