@@ -156,6 +156,11 @@ module.exports = class StatusBar extends Plugin {
              files[file].progress.uploadStarted &&
              !files[file].isPaused
     })
+    const startedFiles = Object.keys(files).filter((file) => {
+      return files[file].progress.uploadStarted ||
+        files[file].progress.preprocess ||
+        files[file].progress.postprocess
+    })
     const processingFiles = Object.keys(files).filter((file) => {
       return files[file].progress.preprocess || files[file].progress.postprocess
     })
@@ -206,7 +211,7 @@ module.exports = class StatusBar extends Plugin {
       isUploadStarted: isUploadStarted,
       complete: completeFiles.length,
       newFiles: newFiles.length,
-      inProgress: inProgressFiles.length,
+      numUploads: startedFiles.length,
       totalSpeed: totalSpeed,
       totalETA: totalETA,
       files: state.files,
