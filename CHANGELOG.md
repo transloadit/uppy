@@ -91,7 +91,7 @@ What we need to do to release Uppy 1.0
 - [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
 - [x] dashboard: implement Alex and Artur’s Dashboard redesign (@arturi)
 - [ ] feature: basic React Native support (@arturi owner+ios, @ife android)
-- [ ] refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
+- [x] refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
 - [x] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
 - [x] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
 - [x] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
