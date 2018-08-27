@@ -70,9 +70,9 @@ module.exports = class AwsS3Multipart extends Plugin {
    * Clean up all references for a file's upload: the MultipartUploader instance,
    * any events related to the file, and the uppy-server WebSocket connection.
    */
-  resetUploaderReferences (fileID) {
+  resetUploaderReferences (fileID, opts = {}) {
     if (this.uploaders[fileID]) {
-      this.uploaders[fileID].abort()
+      this.uploaders[fileID].abort({ really: opts.abort || false })
       this.uploaders[fileID] = null
     }
     if (this.uploaderEvents[fileID]) {
@@ -203,7 +203,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       this.uploaderEvents[file.id] = createEventTracker(this.uppy)
 
       this.onFileRemove(file.id, (removed) => {
-        this.resetUploaderReferences(file.id)
+        this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${removed.id} was removed`)
       })
 
@@ -217,10 +217,6 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       this.onPauseAll(file.id, () => {
         upload.pause()
-      })
-
-      this.onCancelAll(file.id, () => {
-        upload.abort({ really: true })
       })
 
       this.onResumeAll(file.id, () => {
@@ -293,7 +289,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       this.uploaderEvents[file.id] = createEventTracker(this.uppy)
 
       this.onFileRemove(file.id, (removed) => {
-        socket.send('pause', {})
+        this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was removed`)
       })
 
@@ -302,8 +298,6 @@ module.exports = class AwsS3Multipart extends Plugin {
       })
 
       this.onPauseAll(file.id, () => socket.send('pause', {}))
-
-      this.onCancelAll(file.id, () => socket.send('pause', {}))
 
       this.onResumeAll(file.id, () => {
         if (file.error) {
@@ -391,13 +385,6 @@ module.exports = class AwsS3Multipart extends Plugin {
     })
   }
 
-  onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
-      if (!this.uppy.getFile(fileID)) return
-      cb()
-    })
-  }
-
   onResumeAll (fileID, cb) {
     this.uploaderEvents[fileID].on('resume-all', () => {
       if (!this.uppy.getFile(fileID)) return
@@ -406,12 +393,20 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   install () {
+    const { capabilities } = this.uppy.getState()
     this.uppy.setState({
-      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+      capabilities: {
+        ...capabilities,
         resumableUploads: true
-      })
+      }
     })
     this.uppy.addUploader(this.upload)
+
+    this.uppy.on('cancel-all', () => {
+      this.uppy.getFiles().forEach((file) => {
+        this.resetUploaderReferences(file.id, { abort: true })
+      })
+    })
   }
 
   uninstall () {
