@@ -1,5 +1,5 @@
 const express = require('express')
-const uppy = require('../../../packages/@uppy/companion')
+const companion = require('../../../packages/@uppy/companion')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 
@@ -54,7 +54,7 @@ const uppyOptions = {
   debug: true
 }
 
-app.use(uppy.app(uppyOptions))
+app.use(companion.app(uppyOptions))
 
 // handle 404
 app.use((req, res, next) => {
@@ -67,7 +67,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ message: err.message, error: err })
 })
 
-uppy.socket(app.listen(3020), uppyOptions)
+companion.socket(app.listen(3020), uppyOptions)
 
 console.log('Welcome to Uppy Companion!')
 console.log(`Listening on http://0.0.0.0:${3020}`)

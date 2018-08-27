@@ -1,6 +1,6 @@
 # Uploading to DigitalOcean Spaces
 
-This example uses Uppy to upload files to a DigitolOcean Space. DigitalOcean Spaces has an identical API to S3, so we can use the [AwsS3](https://uppy.io/docs/aws-s3) plugin. We use uppy-server with a [custom `endpoint` configuration](./server.js#L32-L33) that points to DigitalOcean.
+This example uses Uppy to upload files to a DigitolOcean Space. DigitalOcean Spaces has an identical API to S3, so we can use the [AwsS3](https://uppy.io/docs/aws-s3) plugin. We use @uppy/companion with a [custom `endpoint` configuration](./server.js#L32-L33) that points to DigitalOcean.
 
 To try this example, first run:
 

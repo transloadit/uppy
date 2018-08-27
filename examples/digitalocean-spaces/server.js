@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const budo = require('budo')
 const router = require('router')
-const uppy = require('uppy-server')
+const companion = require('../../packages/@uppy/companion')
 
 /**
  * Environment variables:
@@ -26,7 +26,7 @@ const app = router()
 // Set up the /params endpoint that will create signed URLs for us.
 app.use(require('cors')())
 app.use(require('body-parser').json())
-app.use('/uppy-server', uppy.app({
+app.use('/companion', companion.app({
   providerOptions: {
     s3: {
       // This is the crucial part; set an endpoint template for the service you want to use.
