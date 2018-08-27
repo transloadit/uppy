@@ -9,7 +9,16 @@
   "pre-commit": "lint-staged",
   "license": "MIT",
   "devDependencies": {
+    "@uppy/companion-client": "^0.27.1",
+    "@uppy/core": "^0.27.0",
     "@uppy/fs-tail-stream": "^1.2.0",
+    "@uppy/google-drive": "^0.27.2",
+    "@uppy/informer": "^0.27.1",
+    "@uppy/provider-views": "^0.27.1",
+    "@uppy/status-bar": "^0.27.1",
+    "@uppy/thumbnail-generator": "^0.27.1",
+    "@uppy/utils": "^0.27.0",
+    "@uppy/xhr-upload": "^0.27.1",
     "aliasify": "^2.1.0",
     "autoprefixer": "^7.2.6",
     "babel-cli": "^6.26.0",
@@ -82,6 +91,7 @@
     "redux": "^4.0.0",
     "replace-x": "^1.5.0",
     "serialize-error": "^2.1.0",
+    "socket.io-client": "^2.1.1",
     "temp-write": "^3.4.0",
     "tinyify": "^2.4.3",
     "typescript": "^2.9.2",
@@ -91,7 +101,8 @@
     "wdio-mocha-framework": "^0.5.13",
     "wdio-sauce-service": "^0.4.10",
     "wdio-static-server-service": "^1.0.1",
-    "webdriverio": "^4.13.2"
+    "webdriverio": "^4.13.2",
+    "ws": "^6.0.0"
   },
   "scripts": {
     "build:bundle": "node ./bin/build-js.js",
