@@ -132,6 +132,7 @@ postcss:
       browsers:
         - 'last 2 versions'
     cssnano:
+      safe: true
 
 browsersync:
   files: 'public/examples/**/*.js'
