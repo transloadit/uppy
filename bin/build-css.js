@@ -60,8 +60,9 @@ async function compileCSS () {
       chalk.magenta(path.relative(cwd, outfile))
     )
 
-    const minifiedResult = await postcss([ cssnano ])
-        .process(postcssResult.css, { from: outfile })
+    const minifiedResult = await postcss([
+      cssnano({ safe: true })
+    ]).process(postcssResult.css, { from: outfile })
     minifiedResult.warnings().forEach(function (warn) {
       console.warn(warn.toString())
     })
