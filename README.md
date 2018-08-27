@@ -29,7 +29,7 @@ const Dashboard = require('@uppy/dashboard')
 const GoogleDrive = require('@uppy/google-drive')
 const Instagram = require('@uppy/instagram')
 const Webcam = require('@uppy/webcam')
-const Tus = require('@uppy/Tus')
+const Tus = require('@uppy/tus')
 
 const uppy = Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })
