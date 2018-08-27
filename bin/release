@@ -19,6 +19,11 @@ fi
 
 set -o xtrace
 
+# Update README before publishing `uppy`
+# So up-to-date contributors are shown on the npm page.
+npm run contributors:save
+git commit -m "Update contributors" README.md
+
 # Add readme file to the main `uppy` package.
 cp README.md packages/uppy/README.md
 
