@@ -42,6 +42,6 @@ describe('getFileType', () => {
       name: 'foobar',
       data: 'sdfsfhfh329fhwihs'
     }
-    expect(getFileType(file)).toEqual(null)
+    expect(getFileType(file)).toEqual('application/octet-stream')
   })
 })
