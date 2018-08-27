@@ -19,6 +19,6 @@ module.exports = function getFileType (file) {
     return mimeTypes[fileExtension]
   }
 
-  // if all fails, well, return empty
-  return null
+  // if all fails, fall back to a generic byte stream type
+  return 'application/octet-stream'
 }
