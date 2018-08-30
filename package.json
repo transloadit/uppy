@@ -91,6 +91,7 @@
     "lint": "eslint . --cache",
     "lint-staged": "lint-staged",
     "release": "./bin/release",
+    "version": "./bin/sync-version-numbers",
     "start:companion": "sh ./bin/companion",
     "start": "npm-run-all --parallel watch start:companion web:preview",
     "test:registry": "verdaccio --listen 4002 --config test/endtoend/verdaccio.yaml",
