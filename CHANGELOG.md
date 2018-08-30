@@ -129,6 +129,13 @@ What we need to do to release Uppy 1.0
 - [ ] core: update babel once v7 is out
 - [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
 - [ ] companion: option validation (can use https://npm.im/ajv + JSON schema)
+- [x] build: Update readme contributors list before publish (#1023 / @goto-bus-stop)
+- [x] build: Enable cssnano safe mode. Fixes `z-index` primarily. (@goto-bus-stop)
+- [x] @uppy/status-bar: Show number of started uploads, fixes #983 (@goto-bus-stop)
+- [x] @uppy/thumbnail-generator: Remove image clear code, fixes #1025. (#1028 / @goto-bus-stop)
+- [x] @uppy/aws-s3-multipart: Proper cleanup on cancellation, fixes #992 (#1021 / @goto-bus-stop)
+- [x] @uppy/utils: Add fallback to `getFileType` (#1022 / @goto-bus-stop)
+- [x] @uppy/transloadit: Lazy load socket.io-client, avoiding `buffer` warnings in IE10 when using the `uppy` CDN package. (#1019 / @goto-bus-stop)
 
 ## 0.27.2
 
