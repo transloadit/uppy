@@ -87,9 +87,6 @@ module.exports = class ThumbnailGenerator extends Plugin {
       canvas.width = maxW
       canvas.height = maxH
       canvas.getContext('2d').drawImage(image, 0, 0, maxW, maxH)
-      image.src = 'about:blank'
-      image.width = 1
-      image.height = 1
       image = canvas
     }
 
