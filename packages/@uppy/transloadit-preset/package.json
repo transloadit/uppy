@@ -1,0 +1,37 @@
+{
+  "name": "@uppy/transloadit-preset",
+  "description": "Transloadit SDK for browsers based on Uppy",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "jsnext:main": "src/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "transloadit",
+    "file encoding",
+    "encoding",
+    "file processing",
+    "video encoding",
+    "crop",
+    "resize",
+    "watermark",
+    "uppy",
+    "uppy-plugin"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/core": "0.27.0",
+    "@uppy/dashboard": "0.27.2",
+    "@uppy/form": "0.27.1",
+    "@uppy/transloadit": "0.27.2",
+    "@uppy/utils": "0.27.0"
+  }
+}
