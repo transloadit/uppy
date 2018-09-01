@@ -38,6 +38,7 @@
     "glob": "^7.1.2",
     "mdast-util-inject": "1.1.0",
     "multi-glob": "1.0.1",
+    "namespace-emitter": "^2.0.1",
     "node-notifier": "^5.2.1",
     "watchify": "^3.11.0"
   }

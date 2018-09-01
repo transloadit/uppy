@@ -13,6 +13,7 @@
     }
   },
   "dependencies": {
+    "@uppy/companion": "^0.14.2",
     "aliasify": "^2.1.0",
     "babel-core": "^6.26.3",
     "babelify": "^8.0.0",
