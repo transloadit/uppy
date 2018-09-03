@@ -325,8 +325,8 @@ $EDITOR env.sh
 npm run start:companion
 ```
 
-This would get the Companion server running on `http://localhost:3020`. It uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart when files are changed.
+This would get the Companion instance running on `http://localhost:3020`. It uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart when files are changed.
 
 ## Live example
 
-An example server is running at http://server.uppy.io, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md)
+An example server is running at http://companion.uppy.io, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md)

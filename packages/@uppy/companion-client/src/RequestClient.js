@@ -34,7 +34,7 @@ module.exports = class RequestClient {
     const companion = state.companion || {}
     const host = this.opts.serverUrl
     const headers = response.headers
-    // Store the self-identified domain name for the Companion server we just hit.
+    // Store the self-identified domain name for the Companion instance we just hit.
     if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
       this.uppy.setState({
         companion: Object.assign({}, companion, {
