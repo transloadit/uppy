@@ -83,8 +83,8 @@ app.use((req, res, next) => {
   // if endpoint urls are specified, then we only allow those endpoints
   // otherwise, we allow any client url to access companion.
   // here we also enforce that only the protocol allowed by companion is used.
-  if (process.env.UPPY_ENDPOINTS) {
-    const whitelist = process.env.UPPY_ENDPOINTS
+  if (process.env.COMPANION_CLIENT_ORIGINS) {
+    const whitelist = process.env.COMPANION_CLIENT_ORIGINS
       .split(',')
       .map((url) => helper.hasProtocol(url) ? url : `${protocol}://${url}`)
 

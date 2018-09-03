@@ -42,7 +42,7 @@ The maximum amount of chunks to upload simultaneously. Set to `0` to disable lim
 
 ### serverUrl: null
 
-The Uppy Companion URL to use for proxying calls to the S3 Multipart API.
+The Companion URL to use for proxying calls to the S3 Multipart API.
 
 ### createMultipartUpload(file)
 
@@ -53,7 +53,7 @@ Return a Promise for an object with keys:
  - `uploadId` - The UploadID returned by S3.
  - `key` - The object key for the file. This needs to be returned to allow it to be different from the `file.name`.
 
-The default implementation calls out to Uppy Companion's S3 signing endpoints.
+The default implementation calls out to Companion's S3 signing endpoints.
 
 ### listParts(file, { uploadId, key })
 
@@ -68,7 +68,7 @@ Return a Promise for an array of S3 Part objects, as returned by the S3 Multipar
  - `Size` - The size of the part in bytes.
  - `ETag` - The ETag of the part, used to identify it when completing the multipart upload and combining all parts into a single file.
 
-The default implementation calls out to Uppy Companion's S3 signing endpoints.
+The default implementation calls out to Companion's S3 signing endpoints.
 
 ### prepareUploadPart(file, partData)
 
@@ -103,7 +103,7 @@ A function that calls the S3 Multipart API to abort a Multipart upload, and dele
 
 This is typically called when the user cancels an upload. Cancellation cannot fail in Uppy, so the result of this function is ignored.
 
-The default implementation calls out to Uppy Companion's S3 signing endpoints.
+The default implementation calls out to Companion's S3 signing endpoints.
 
 ### completeMultipartUpload(file, { uploadId, key, parts })
 
@@ -117,7 +117,7 @@ Return a Promise for an object with properties:
 
  - `location` - **(Optional)** A publically accessible URL to the object in the S3 bucket.
 
-The default implementation calls out to Uppy Companion's S3 signing endpoints.
+The default implementation calls out to Companion's S3 signing endpoints.
 
 ## S3 Bucket Configuration
 

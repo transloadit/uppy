@@ -1,23 +1,23 @@
 ---
 type: docs
 order: 2
-title: "Uppy Companion"
+title: "Companion"
 module: "@uppy/companion"
 permalink: docs/companion/
 alias: docs/server/
 ---
 
-> Uppy Companion was previously known as Uppy Server. It was renamed in v0.14.0.
+> Companion was previously known as Uppy Server. It was renamed in v0.14.0.
 
 Drag and drop, webcam, basic file manipulation (adding metadata, for example) and uploading via tus-resumable uploads or XHR/Multipart are all possible using just the Uppy client module.
 
-However, if you add [Uppy Companion](https://github.com/transloadit/uppy/tree/master/packages/@uppy/companion) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your users’ data plans), and then uploaded to the final destination. Files are removed from Uppy Companion after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
+However, if you add [Companion](https://github.com/transloadit/uppy/tree/master/packages/@uppy/companion) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your users’ data plans), and then uploaded to the final destination. Files are removed from Companion after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
 
-Uppy Companion handles the server-to-server communication between your server and file storage providers such as Google Drive, Dropbox, Instagram, etc. Note that you can **not** upload files **to** Uppy Companion, it just handles the third party integrations.
+Companion handles the server-to-server communication between your server and file storage providers such as Google Drive, Dropbox, Instagram, etc. Note that you can **not** upload files **to** Companion, it just handles the third party integrations.
 
 ## Supported providers
 
-As of now, Uppy Companion is integrated to work with:
+As of now, Companion is integrated to work with:
 
 - Google Drive
 - Dropbox
@@ -35,11 +35,11 @@ npm install @uppy/companion
 
 ## Usage
 
-Uppy Companion may either be used as a pluggable express app, which you plug into your already existing server, or it may simply be run as a standalone server:
+Companion may either be used as a pluggable express app, which you plug into your already existing server, or it may simply be run as a standalone server:
 
 ### Plugging into an already existing server
 
-To plug Uppy Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter.
+To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter.
 
 ```javascript
 
@@ -85,7 +85,7 @@ This takes your `server` instance and your Uppy [Options](#Options) as parameter
 
 ### Running as a standalone server
 
-> Please ensure that the required environment variables are set before running/using Uppy Companion as a standalone server. See [Configure Standalone](#Configure-Standalone) for the variables required.
+> Please ensure that the required environment variables are set before running/using Companion as a standalone server. See [Configure Standalone](#Configure-Standalone) for the variables required.
 
 Set environment variables first:
 
@@ -111,7 +111,7 @@ Please see [Options](#Options) for possible options.
 
 #### Configuring a standalone server
 
-To run Uppy Companion as a standalone server, you are required to set your Uppy [Options](#Options) via environment variables:
+To run Companion as a standalone server, you are required to set your Uppy [Options](#Options) via environment variables:
 
 ```bash
 ####### Mandatory variables ###########
@@ -139,7 +139,7 @@ export COMPANION_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
 
 # comma-separated client hosts to whitlelist by the server
 # if not specified, the server would allow any host
-export UPPY_ENDPOINTS="localhost:3452,uppy.io"
+export COMPANION_CLIENT_ORIGINS="localhost:3452,uppy.io"
 
 # corresponds to the redisUrl option
 # this also enables Redis session storage if set
@@ -225,19 +225,19 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
   - protocol - `http | https`
   - host(required) - your server host (e.g localhost:3020, mydomain.com)
-  - path - the server path to where the Uppy app is sitting (e.g if Uppy Companion is at `mydomain.com/uppy`, then the path would be `/uppy`).
-  - oauthDomain - if you have multiple instances of Uppy Companion with different (and perhaps dynamic) subdomains, you can set a master domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect to the slave subdomain with the required credentials on completion.
-  - validHosts - if you are setting a master `oauthDomain`, you need to set a list of valid hosts, so the master oauth handler can validate the host of the Uppy instance requesting the authentication. This is basically a list of valid domains running your Uppy Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
+  - path - the server path to where the Uppy app is sitting (e.g if Companion is at `mydomain.com/uppy`, then the path would be `/uppy`).
+  - oauthDomain - if you have multiple instances of Companion with different (and perhaps dynamic) subdomains, you can set a master domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect to the slave subdomain with the required credentials on completion.
+  - validHosts - if you are setting a master `oauthDomain`, you need to set a list of valid hosts, so the master oauth handler can validate the host of the Uppy instance requesting the authentication. This is basically a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
 
 5. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
 6. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-Custom-Providers) for more information.
 
-7. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Uppy Companion will only accept uploads to these URLs (useful when you want to make sure an Uppy Companion instance is only allowed to upload to your servers, for example).
+7. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure an Companion instance is only allowed to upload to your servers, for example).
 
-8. **secret(required)** - A secret string which Uppy Companion uses to generate authorization tokens.
+8. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
 
-9. **debug(optional)** - A boolean flag to tell Uppy Companion whether or not to log useful debug information while running.
+9. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
 
 ### S3 options
 
@@ -261,11 +261,11 @@ The default value simply returns `filename`, so all files will be uploaded to th
 
 ### Running in Kubernetes
 
-We have [a detailed guide on running Uppy Companion in Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we currently run our example server at http://server.uppy.io.
+We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we currently run our example server at http://server.uppy.io.
 
 ### Adding custom providers
 
-As of now, Uppy Companion supports **Google Drive**, **Dropbox**, **Instagram**, and **URL** (remote urls) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
+As of now, Companion supports **Google Drive**, **Dropbox**, **Instagram**, and **URL** (remote urls) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
 
 ```javascript
 let options = {
@@ -289,7 +289,7 @@ uppy.app(options)
 
 The `customProviders` option should be an object containing each custom provider. Each custom provider would, in turn, be an object with two keys, `config` and `module`. The `config` option would contain Oauth API settings, while the `module` would point to the provider module.
 
-To work well with Uppy Companion, the **Module** must be a class with the following methods.
+To work well with Companion, the **Module** must be a class with the following methods.
 
 1. `list (options, done)` - lists JSON data of user files (e.g. list of all the files in a particular directory).
   - `options` - is an object containing the following attributes
@@ -302,11 +302,11 @@ To work well with Uppy Companion, the **Module** must be a class with the follow
     - token - authorization token (retrieved from oauth process) to send along with your request.
     - id - ID of the file being downloaded.
   - `onData (chunk)` - a callback that should be called with each data chunk received on download. This is useful if the size of the downloaded file can be pre-determined. This would allow for pipelined upload of the file (to the desired destination), while the download is still going on.
-  - `onResponse (response)` - if the size of the downloaded file can not be pre-determined by Uppy Companion, then this callback should be called in place of the `onData` callback. This callback would be called after the download is done, and would take the downloaded data (response) as the argument.
+  - `onResponse (response)` - if the size of the downloaded file can not be pre-determined by Companion, then this callback should be called in place of the `onData` callback. This callback would be called after the download is done, and would take the downloaded data (response) as the argument.
 
 ## Development
 
-1\. To set up Uppy Companion for local development, please clone the Uppy repo and install, like so:
+1\. To set up Companion for local development, please clone the Uppy repo and install, like so:
 
 ```bash
 git clone https://github.com/transloadit/uppy && cd uppy && npm install
@@ -325,7 +325,7 @@ $EDITOR env.sh
 npm run start:companion
 ```
 
-This would get the Uppy Companion running on `http://localhost:3020`. It uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart when files are changed.
+This would get the Companion server running on `http://localhost:3020`. It uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart when files are changed.
 
 ## Live example
 

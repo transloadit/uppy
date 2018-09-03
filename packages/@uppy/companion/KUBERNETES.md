@@ -17,7 +17,7 @@ We will need a Redis container that we can get through [helm](https://github.com
 ```yaml
 apiVersion: v1
 data:
-  UPPY_ENDPOINTS: "localhost:3452,uppy.io"
+  COMPANION_CLIENT_ORIGINS: "localhost:3452,uppy.io"
   COMPANION_DATADIR: "PATH/TO/DOWNLOAD/DIRECTORY"
   COMPANION_DOMAIN: "YOUR SERVER DOMAIN"
   COMPANION_DOMAINS: "sub1.domain.com,sub2.domain.com,sub3.domain.com"

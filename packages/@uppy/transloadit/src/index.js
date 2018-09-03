@@ -15,7 +15,7 @@ function defaultGetAssemblyOptions (file, options) {
 }
 
 const COMPANION = 'https://api2.transloadit.com/companion'
-// Regex used to check if an companion address is run by Transloadit.
+// Regex used to check if a Companion address is run by Transloadit.
 const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 
 /**

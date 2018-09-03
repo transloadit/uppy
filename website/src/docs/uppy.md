@@ -200,7 +200,7 @@ locale: {
     },
     exceedsSize: 'This file exceeds maximum allowed size of',
     youCanOnlyUploadFileTypes: 'You can only upload:',
-    companionError: 'Connection with Uppy Companion failed'
+    companionError: 'Connection with Companion failed'
   }
 }
 ```

@@ -97,7 +97,7 @@ module.exports = class Tus extends Plugin {
 
   /**
    * Clean up all references for a file's upload: the tus.Upload instance,
-   * any events related to the file, and the companion WebSocket connection.
+   * any events related to the file, and the Companion WebSocket connection.
    */
   resetUploaderReferences (fileID) {
     if (this.uploaders[fileID]) {
