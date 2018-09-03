@@ -17,6 +17,7 @@ function defaultGetAssemblyOptions (file, options) {
 const COMPANION = 'https://api2.transloadit.com/companion'
 // Regex used to check if a Companion address is run by Transloadit.
 const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
+const TL_UPPY_SERVER = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/uppy-server/
 
 /**
  * Upload files to Transloadit using Tus.
@@ -103,6 +104,18 @@ module.exports = class Transloadit extends Plugin {
     // We only replace the hostname for Transloadit's companions, so that
     // people can also self-host them while still using Transloadit for encoding.
     let remote = file.remote
+    if (file.remote && TL_UPPY_SERVER.test(file.remote.serverUrl)) {
+      const err = new Error(
+        'The https://api2.transloadit.com/uppy-server endpoint was renamed to ' +
+        'https://api2.transloadit.com/companion, please update your `serverUrl` ' +
+        'options accordingly.')
+      // Explicitly log this error here because it is caught by the `createAssembly`
+      // Promise further along.
+      // That's fine, but createAssembly only shows the informer, we need something a
+      // little more noisy.
+      this.uppy.log(err)
+      throw err
+    }
     if (file.remote && TL_COMPANION.test(file.remote.serverUrl)) {
       let newHost = status.companion_url
         .replace(/\/$/, '')
@@ -681,3 +694,4 @@ module.exports = class Transloadit extends Plugin {
 }
 
 module.exports.COMPANION = COMPANION
+module.exports.UPPY_SERVER = COMPANION
