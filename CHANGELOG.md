@@ -129,17 +129,39 @@ What we need to do to release Uppy 1.0
 - [ ] core: update babel once v7 is out
 - [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
 - [ ] companion: option validation (can use https://npm.im/ajv + JSON schema)
-- [x] build: Update readme contributors list before publish (#1023 / @goto-bus-stop)
-- [x] build: Enable cssnano safe mode. Fixes `z-index` primarily. (@goto-bus-stop)
-- [x] @uppy/status-bar: Show number of started uploads, fixes #983 (@goto-bus-stop)
-- [x] @uppy/thumbnail-generator: Remove image clear code, fixes #1025. (#1028 / @goto-bus-stop)
-- [x] @uppy/aws-s3-multipart: Proper cleanup on cancellation, fixes #992 (#1021 / @goto-bus-stop)
-- [x] @uppy/utils: Add fallback to `getFileType` (#1022 / @goto-bus-stop)
-- [x] @uppy/transloadit: Lazy load socket.io-client, avoiding `buffer` warnings in IE10 when using the `uppy` CDN package. (#1019 / @goto-bus-stop)
+
+## 0.27.3
+
+Released: 2018-09-03.
+
+- build: Update readme contributors list before publish (#1023 / @goto-bus-stop)
+- build: Enable cssnano safe mode. Fixes `z-index` primarily. (@goto-bus-stop)
+- @uppy/status-bar: Show number of started uploads, fixes #983 (@goto-bus-stop)
+- @uppy/thumbnail-generator: Remove image clear code, fixes #1025. (#1028 / @goto-bus-stop)
+- @uppy/aws-s3-multipart: Proper cleanup on cancellation, fixes #992 (#1021 / @goto-bus-stop)
+- @uppy/utils: Add fallback to `getFileType` (#1022 / @goto-bus-stop)
+- @uppy/transloadit: Lazy load socket.io-client, avoiding `buffer` warnings in IE10 when using the `uppy` CDN package. (#1019 / @goto-bus-stop)
+- @uppy/webcam: Fix for Cordova mangling new File instances (#1034 / @firesharkstudios)
+- @uppy/xhr-upload: Add file name to Blob instance uploads (#1034 / @firesharkstudios)
+- @uppy/transloadit: Only use socket.io's WebSocket transport. (#1029 / @goto-bus-stop)
+- @uppy/companion: Rename `UPPYSERVER_` environment variables to `COMPANION_` + more. The old names still work for now but will be dropped in a future release (#1037 / @kvz)
+- ⚠️ **breaking** @uppy/transloadit: Change hosted Companion URLs to `https://api2.transloadit.com/companion`, using the hosted uppy-server URLs will now throw an error (#1038 / @goto-bus-stop)
 
 ## 0.27.2
 
 Released: 2018-08-23.
+
+Versions in this release:
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| uppy | 0.27.2 | @uppy/react | 0.27.2 |
+| @uppy/companion | 0.14.2 | @uppy/transloadit | 0.27.2 |
+| @uppy/dashboard | 0.27.2 | @uppy/tus | 0.27.2 |
+| @uppy/google-drive | 0.27.2 | @uppy/url | 0.27.2 |
+| @uppy/instagram | 0.27.2 | - | - |
+
+Changes:
 
 - @uppy/companion: Auto deploy Companion. (#1008 / @kiloreux)
 - @uppy/transloadit: Refactors and add fallback if socket connection fails. (#1011 / @goto-bus-stop)
@@ -148,6 +170,26 @@ Released: 2018-08-23.
 ## 0.27.1
 
 Released: 2018-08-16.
+
+Versions in this release:
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| uppy | 0.27.1 | @uppy/instagram | 0.27.1 |
+| @uppy/aws-s3-multipart | 0.27.1 | @uppy/progress-bar | 0.27.1 |
+| @uppy/aws-s3 | 0.27.1 | @uppy/provider-views | 0.27.1 |
+| @uppy/companion-client | 0.27.1 | @uppy/react | 0.27.1 |
+| @uppy/companion | 0.14.1 | @uppy/redux-dev-tools | 0.27.1 |
+| @uppy/dashboard | 0.27.1 | @uppy/status-bar | 0.27.1 |
+| @uppy/drag-drop | 0.27.1 | @uppy/thumbnail-generator | 0.27.1 |
+| @uppy/dropbox | 0.27.1 | @uppy/transloadit | 0.27.1 |
+| @uppy/file-input | 0.27.1 | @uppy/tus | 0.27.1 |
+| @uppy/form | 0.27.1 | @uppy/url | 0.27.1 |
+| @uppy/golden-retriever | 0.27.1 | @uppy/webcam | 0.27.1 |
+| @uppy/google-drive | 0.27.1 | @uppy/xhr-upload | 0.27.1 |
+| @uppy/informer | 0.27.1 | - | - |
+
+Changes:
 
 - @uppy/companion: use explicit typescript devDependency.
 - @uppy/companion: rename Server → Companion in documentation (#1007 / @goto-bus-stop)
