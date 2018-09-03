@@ -25,6 +25,9 @@ rm -rf "${__root}/test/endtoend/node_modules"
 PACKAGES="$(for pkg in packages/@uppy/*; do echo "${pkg#packages/}"; done)"
 
 cleanup
+# Initialise verdaccio storage path.
+mkir -p "${__root}/test/endtoend/tmp/verdaccio"
+
 npm run build
 
 # https://github.com/facebook/create-react-app/pull/4626
