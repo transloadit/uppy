@@ -21,6 +21,7 @@ cleanup() {
 echo "Preparing for end to end test: copying static HTML and CSS, building JS"
 rm -rf "${__root}/test/endtoend/node_modules"
 
+# list of @uppy/* packages
 PACKAGES="$(for pkg in packages/@uppy/*; do echo "${pkg#packages/}"; done)"
 
 cleanup
@@ -44,7 +45,14 @@ git checkout -- packages/*/package.json packages/@uppy/*/package.json
 
 # install all packages to the endtoend folder
 # (Don't use the npm cache, don't generate a package-lock, don't save dependencies to any package.json)
-(cd "${__root}/test/endtoend" && npm install --prefer-online --registry "$VERDACCIO_REGISTRY" --no-package-lock --no-save uppy $PACKAGES)
+pushd "${__root}/test/endtoend"
+  npm install \
+    --prefer-online \
+    --registry "$VERDACCIO_REGISTRY" \
+    --no-package-lock \
+    --no-save \
+    uppy $PACKAGES
+popd
 
 # revert to public registry
 npm set registry https://registry.npmjs.com
