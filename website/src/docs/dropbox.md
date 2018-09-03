@@ -8,7 +8,7 @@ permalink: docs/dropbox/
 
 The `@uppy/dropbox` plugin lets users import files from their Dropbox account.
 
-An Companion instance is required for the Dropbox plugin to work. Companion handles authentication with Dropbox, downloads the files, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
+A Companion instance is required for the Dropbox plugin to work. Companion handles authentication with Dropbox, downloads the files, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
 const Dropbox = require('@uppy/dropbox')

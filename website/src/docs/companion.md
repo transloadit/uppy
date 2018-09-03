@@ -233,7 +233,7 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 6. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-Custom-Providers) for more information.
 
-7. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure an Companion instance is only allowed to upload to your servers, for example).
+7. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure a Companion instance is only allowed to upload to your servers, for example).
 
 8. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
 

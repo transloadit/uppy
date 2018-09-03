@@ -7,7 +7,7 @@
 
 The Google Drive plugin for Uppy lets users import files from their Google Drive account.
 
-An Companion instance is required for the GoogleDrive plugin to work. Companion handles authentication with Google, downloads files from the Drive and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
+A Companion instance is required for the GoogleDrive plugin to work. Companion handles authentication with Google, downloads files from the Drive and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.

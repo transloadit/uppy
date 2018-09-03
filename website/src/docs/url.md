@@ -8,7 +8,7 @@ permalink: docs/url/
 
 The `@uppy/url` plugin allows users to import files from the internet. Paste any URL and it will be added!
 
-An Companion instance is required for the `@uppy/url` plugin to work. Companion will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps to avoid CORS restrictions.
+A Companion instance is required for the `@uppy/url` plugin to work. Companion will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps to avoid CORS restrictions.
 
 ```js
 const Url = require('@uppy/url')
