@@ -455,7 +455,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.removeDragDropListener()
-    window.removeEventListener('resize', this.updateDashboardElWidth)
+    window.removeEventListener('resize', this.throttledUpdateDashboardElWidth)
     window.removeEventListener('popstate', this.handlePopState, false)
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', (ev) => this.toggleAddFilesPanel(false))
