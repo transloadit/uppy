@@ -26,7 +26,7 @@ PACKAGES="$(for pkg in packages/@uppy/*; do echo "${pkg#packages/}"; done)"
 
 cleanup
 # Initialise verdaccio storage path.
-mkir -p "${__root}/test/endtoend/tmp/verdaccio"
+mkdir -p "${__root}/test/endtoend/tmp/verdaccio"
 
 npm run build
 
