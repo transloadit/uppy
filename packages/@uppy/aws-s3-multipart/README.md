@@ -18,7 +18,7 @@ const AwsS3Multipart = require('@uppy/aws-s3-multipart')
 const uppy = Uppy()
 uppy.use(AwsS3Multipart, {
   limit: 2,
-  serverUrl: 'https://uppy-server.myapp.com/'
+  serverUrl: 'https://companion.myapp.com/'
 })
 ```
 

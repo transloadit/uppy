@@ -106,7 +106,7 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 
 - [Uppy](/docs/uppy/) — full list of options, methods and events.
 - [Plugins](/docs/plugins/) — list of Uppy plugins and their options.
-- [Server](/docs/server/) — setting up and running an uppy-server instance, which adds support for Instagram, Dropbox, Google Drive, direct links, and other remote sources.
+- [Server](/docs/companion/) — setting up and running an companion instance, which adds support for Instagram, Dropbox, Google Drive, direct links, and other remote sources.
 - [React](/docs/react/) — components to integrate Uppy UI plugins with React apps.
 - [Writing Plugins](/docs/writing-plugins) — how to write a plugin for Uppy [documentation in progress].
 

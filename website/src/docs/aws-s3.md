@@ -196,18 +196,18 @@ Uppy Companion uses POST uploads by default, but you can also use them with your
 
 ## S3 alternatives
 
-Many other object storage providers have an identical API to S3, so you can use the `@uppy/aws-s3` plugin with them as well. To use them with Uppy Companion, you can set the `UPPYSERVER_AWS_ENDPOINT` variable to the endpoint of your preferred service.
+Many other object storage providers have an identical API to S3, so you can use the `@uppy/aws-s3` plugin with them as well. To use them with Uppy Companion, you can set the `COMPANION_AWS_ENDPOINT` variable to the endpoint of your preferred service.
 
 ### DigitalOcean Spaces
 
 For example, with DigitalOcean Spaces, you could do something like this:
 
 ```bash
-export UPPYSERVER_AWS_ENDPOINT="https://{region}.digitaloceanspaces.com"
-export UPPYSERVER_AWS_BUCKET="my-space-name"
+export COMPANION_AWS_ENDPOINT="https://{region}.digitaloceanspaces.com"
+export COMPANION_AWS_BUCKET="my-space-name"
 ```
 
-The `{region}` string will be replaced by the contents of the `UPPYSERVER_AWS_REGION` environment variable.
+The `{region}` string will be replaced by the contents of the `COMPANION_AWS_REGION` environment variable.
 
 For a working example that you can run and play around with, see the [digitalocean-spaces](https://github.com/transloadit/uppy/tree/master/examples/digitalocean-spaces) folder in the Uppy repository.
 
@@ -216,10 +216,10 @@ For a working example that you can run and play around with, see the [digitaloce
 For Google Cloud Storage, you need to take a few more steps. For the `@uppy/aws-s3` plugin to be able to upload to a GCS bucket, it needs the Interoperability setting enabled. You can enable the Interoperability setting and [generate interoperable storage access keys](https://cloud.google.com/storage/docs/migrating#keys) by going to [Google Cloud Storage](https://console.cloud.google.com/storage) » Settings » Interoperability. Then set the environment variables for Uppy Companion like this:
 
 ```bash
-export UPPYSERVER_AWS_ENDPOINT="https://storage.googleapis.com"
-export UPPYSERVER_AWS_BUCKET="YOUR-GCS-BUCKET-NAME"
-export UPPYSERVER_AWS_KEY="GOOGxxxxxxxxx" # The Access Key
-export UPPYSERVER_AWS_SECRET="YOUR-GCS-SECRET" # The Secret
+export COMPANION_AWS_ENDPOINT="https://storage.googleapis.com"
+export COMPANION_AWS_BUCKET="YOUR-GCS-BUCKET-NAME"
+export COMPANION_AWS_KEY="GOOGxxxxxxxxx" # The Access Key
+export COMPANION_AWS_SECRET="YOUR-GCS-SECRET" # The Secret
 ```
 
 You do not need to configure the region with GCS.

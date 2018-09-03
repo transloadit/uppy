@@ -97,7 +97,7 @@ module.exports = class Tus extends Plugin {
 
   /**
    * Clean up all references for a file's upload: the tus.Upload instance,
-   * any events related to the file, and the uppy-server WebSocket connection.
+   * any events related to the file, and the companion WebSocket connection.
    */
   resetUploaderReferences (fileID) {
     if (this.uploaders[fileID]) {
@@ -313,7 +313,7 @@ module.exports = class Tus extends Plugin {
         const error = Object.assign(new Error(message), { cause: errData.error })
 
         // If the remote retry optimisation should not be used,
-        // close the socket—this will tell uppy-server to clear state and delete the file.
+        // close the socket—this will tell companion to clear state and delete the file.
         if (!this.opts.useFastRemoteRetry) {
           this.resetUploaderReferences(file.id)
           // Remove the serverToken so that a new one will be created for the retry.

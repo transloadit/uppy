@@ -19,16 +19,16 @@ app.use(require('express-session')({
 const options = {
   providerOptions: {
     google: {
-      key: process.env.UPPYSERVER_GOOGLE_KEY,
-      secret: process.env.UPPYSERVER_GOOGLE_SECRET
+      key: process.env.COMPANION_GOOGLE_KEY || process.env.UPPYSERVER_GOOGLE_KEY,
+      secret: process.env.COMPANION_GOOGLE_SECRET || process.env.UPPYSERVER_GOOGLE_SECRET
     },
     s3: {
       getKey: (req, filename) =>
         `whatever/${Math.random().toString(32).slice(2)}/${filename}`,
-      key: process.env.UPPYSERVER_AWS_KEY,
-      secret: process.env.UPPYSERVER_AWS_SECRET,
-      bucket: process.env.UPPYSERVER_AWS_BUCKET,
-      region: process.env.UPPYSERVER_AWS_REGION
+      key: process.env.COMPANION_AWS_KEY || process.env.UPPYSERVER_AWS_KEY,
+      secret: process.env.COMPANION_AWS_SECRET || process.env.UPPYSERVER_AWS_SECRET,
+      bucket: process.env.COMPANION_AWS_BUCKET || process.env.UPPYSERVER_AWS_BUCKET,
+      region: process.env.COMPANION_AWS_REGION || process.env.UPPYSERVER_AWS_REGION
     }
   },
   server: { host: 'localhost:3020' },

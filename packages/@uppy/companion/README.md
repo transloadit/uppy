@@ -7,7 +7,7 @@
 Companion is a server integration for [Uppy](https://github.com/transloadit/uppy) file uploader.
 
 It handles the server-to-server communication between your server and file storage providers such as Google Drive, Dropbox,
-Instagram, etc. **Companion is not a target to upload files to**. For this, use a <https://tus.io> server (if you want resumable) or your existing Apache/Nginx server (if you don't). [See here for full documentation](https://uppy.io/docs/server/)
+Instagram, etc. **Companion is not a target to upload files to**. For this, use a <https://tus.io> server (if you want resumable) or your existing Apache/Nginx server (if you don't). [See here for full documentation](https://uppy.io/docs/companion/)
 
 ## Install
 
@@ -62,7 +62,7 @@ uppy.socket(server, options)
 ```
 
 ### Run as standalone server
-Please ensure that the required env variables are set before runnning/using companion as a standalone server. [See](https://uppy.io/docs/server/#Configure-Standalone).
+Please ensure that the required env variables are set before runnning/using companion as a standalone server. [See](https://uppy.io/docs/companion/#Configure-Standalone).
 
 ```bash
 $ companion
@@ -96,4 +96,4 @@ npm install && sls deploy
 ```
 
 
-See [full documentation](https://uppy.io/docs/server/)
+See [full documentation](https://uppy.io/docs/companion/)

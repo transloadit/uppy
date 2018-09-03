@@ -11,9 +11,9 @@ npm install
 Then configure some environment variables and run it:
 
 ```bash
-UPPYSERVER_AWS_REGION=ams3 \
-UPPYSERVER_AWS_KEY=your_access_key_id \
-UPPYSERVER_AWS_SECRET=your_secret_access_key \
-UPPYSERVER_AWS_BUCKET=your_space_name \
+COMPANION_AWS_REGION=ams3 \
+COMPANION_AWS_KEY=your_access_key_id \
+COMPANION_AWS_SECRET=your_secret_access_key \
+COMPANION_AWS_BUCKET=your_space_name \
 npm start
 ```

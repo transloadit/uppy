@@ -90,9 +90,9 @@ This takes your `server` instance and your Uppy [Options](#Options) as parameter
 Set environment variables first:
 
 ```bash
-export UPPYSERVER_SECRET="shh!Issa Secret!"
-export UPPYSERVER_DOMAIN="YOUR SERVER DOMAIN"
-export UPPYSERVER_DATADIR="PATH/TO/DOWNLOAD/DIRECTORY"
+export COMPANION_SECRET="shh!Issa Secret!"
+export COMPANION_DOMAIN="YOUR SERVER DOMAIN"
+export COMPANION_DATADIR="PATH/TO/DOWNLOAD/DIRECTORY"
 ```
 
 And then run:
@@ -117,25 +117,25 @@ To run Uppy Companion as a standalone server, you are required to set your Uppy 
 ####### Mandatory variables ###########
 
 # any long set of random characters for the server session
-export UPPYSERVER_SECRET="shh!Issa Secret!"
+export COMPANION_SECRET="shh!Issa Secret!"
 # corresponds to the server.host option
-export UPPYSERVER_DOMAIN="YOUR SERVER DOMAIN"
+export COMPANION_DOMAIN="YOUR SERVER DOMAIN"
 # corresponds to the filePath option
-export UPPYSERVER_DATADIR="PATH/TO/DOWNLOAD/DIRECTORY"
+export COMPANION_DATADIR="PATH/TO/DOWNLOAD/DIRECTORY"
 
 ###### Optional variables ##########
 
 # corresponds to the server.protocol option, defaults to http
-export UPPYSERVER_PROTOCOL="YOUR SERVER PROTOCOL"
+export COMPANION_PROTOCOL="YOUR SERVER PROTOCOL"
 # the port on which to start the server, defaults to 3020
-export UPPYSERVER_PORT="YOUR SERVER PORT"
+export COMPANION_PORT="YOUR SERVER PORT"
 # corresponds to the server.port option, defaults to ''
-export UPPYSERVER_PATH="/SERVER/PATH/TO/WHERE/COMPANION/LIVES"
+export COMPANION_PATH="/SERVER/PATH/TO/WHERE/COMPANION/LIVES"
 
-# use this in place of UPPYSERVER_PATH if the server path should not be
+# use this in place of COMPANION_PATH if the server path should not be
 # handled by the express.js app, but maybe by an external server configuration
 # instead (e.g Nginx).
-export UPPYSERVER_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
+export COMPANION_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
 
 # comma-separated client hosts to whitlelist by the server
 # if not specified, the server would allow any host
@@ -143,37 +143,37 @@ export UPPY_ENDPOINTS="localhost:3452,uppy.io"
 
 # corresponds to the redisUrl option
 # this also enables Redis session storage if set
-export UPPYSERVER_REDIS_URL="REDIS URL"
+export COMPANION_REDIS_URL="REDIS URL"
 
 # to enable Dropbox
-export UPPYSERVER_DROPBOX_KEY="YOUR DROPBOX KEY"
-export UPPYSERVER_DROPBOX_SECRET="YOUR DROPBOX SECRET"
+export COMPANION_DROPBOX_KEY="YOUR DROPBOX KEY"
+export COMPANION_DROPBOX_SECRET="YOUR DROPBOX SECRET"
 
 # to enable Google Drive
-export UPPYSERVER_GOOGLE_KEY="YOUR GOOGLE KEY"
-export UPPYSERVER_GOOGLE_SECRET="YOUR GOOGLE SECRET"
+export COMPANION_GOOGLE_KEY="YOUR GOOGLE KEY"
+export COMPANION_GOOGLE_SECRET="YOUR GOOGLE SECRET"
 
 # to enable Instagram
-export UPPYSERVER_INSTAGRAM_KEY="YOUR INSTAGRAM KEY"
-export UPPYSERVER_INSTAGRAM_SECRET="YOUR INSTAGRAM SECRET"
+export COMPANION_INSTAGRAM_KEY="YOUR INSTAGRAM KEY"
+export COMPANION_INSTAGRAM_SECRET="YOUR INSTAGRAM SECRET"
 
 # to enable S3
-export UPPYSERVER_AWS_KEY="YOUR AWS KEY"
-export UPPYSERVER_AWS_SECRET="YOUR AWS SECRET"
-export UPPYSERVER_AWS_BUCKET="YOUR AWS S3 BUCKET"
-export UPPYSERVER_AWS_REGION="AWS REGION"
+export COMPANION_AWS_KEY="YOUR AWS KEY"
+export COMPANION_AWS_SECRET="YOUR AWS SECRET"
+export COMPANION_AWS_BUCKET="YOUR AWS S3 BUCKET"
+export COMPANION_AWS_REGION="AWS REGION"
 
 # corresponds to the server.oauthDomain option
-export UPPYSERVER_OAUTH_DOMAIN="sub.domain.com"
+export COMPANION_OAUTH_DOMAIN="sub.domain.com"
 # corresponds to the server.validHosts option
-export UPPYSERVER_DOMAINS="sub1.domain.com,sub2.domain.com,sub3.domain.com"
+export COMPANION_DOMAINS="sub1.domain.com,sub2.domain.com,sub3.domain.com"
 
 # corresponds to the sendSelfEndpoint option
-export UPPYSERVER_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
+export COMPANION_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
 
 # comma-separated URLs
 # corresponds to the uploadUrls option
-export UPPYSERVER_UPLOAD_URLS="http://master.tus.io/files/,https://master.tus.io/files/"
+export COMPANION_UPLOAD_URLS="http://master.tus.io/files/,https://master.tus.io/files/"
 ```
 
 See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example.sh) for an example configuration script.

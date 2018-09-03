@@ -13,9 +13,9 @@ module.exports = class RequestClient {
   }
 
   get hostname () {
-    const { uppyServer } = this.uppy.getState()
+    const { companion } = this.uppy.getState()
     const host = this.opts.serverUrl
-    return stripSlash(uppyServer && uppyServer[host] ? uppyServer[host] : host)
+    return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
   get defaultHeaders () {
@@ -31,13 +31,13 @@ module.exports = class RequestClient {
 
   onReceiveResponse (response) {
     const state = this.uppy.getState()
-    const uppyServer = state.uppyServer || {}
+    const companion = state.companion || {}
     const host = this.opts.serverUrl
     const headers = response.headers
-    // Store the self-identified domain name for the uppy-server we just hit.
-    if (headers.has('i-am') && headers.get('i-am') !== uppyServer[host]) {
+    // Store the self-identified domain name for the companion we just hit.
+    if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
       this.uppy.setState({
-        uppyServer: Object.assign({}, uppyServer, {
+        companion: Object.assign({}, companion, {
           [host]: headers.get('i-am')
         })
       })
