@@ -286,7 +286,7 @@ module.exports = class Webcam extends Plugin {
       return {
         source: this.id,
         name: name,
-        data: new File([blob], name, { type: mimeType }),
+        data: new Blob([blob], { type: mimeType }),
         type: mimeType
       }
     })
@@ -305,7 +305,7 @@ module.exports = class Webcam extends Plugin {
     const file = {
       source: this.id,
       name: name,
-      data: new File([blob], name, { type: mimeType }),
+      data: new Blob([blob], { type: mimeType }),
       type: mimeType
     }
 
