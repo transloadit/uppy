@@ -139,7 +139,7 @@ class TransloaditAssembly extends Emitter {
    * 'status'.
    */
   _fetchStatus ({ diff = true } = {}) {
-    return fetch(this.status.assembly_url)
+    return fetch(this.status.assembly_ssl_url)
       .then((response) => response.json())
       .then((status) => {
         // Avoid updating if we closed during this request's lifetime.
