@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react",
   "description": "React component wrappers around Uppy's official UI plugins.",
-  "version": "0.27.2",
+  "version": "0.27.3",
   "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
@@ -22,15 +22,15 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/dashboard": "0.27.2",
-    "@uppy/drag-drop": "0.27.1",
-    "@uppy/progress-bar": "0.27.1",
-    "@uppy/status-bar": "0.27.1",
-    "@uppy/utils": "0.27.0",
+    "@uppy/dashboard": "0.27.3",
+    "@uppy/drag-drop": "0.27.2",
+    "@uppy/progress-bar": "0.27.2",
+    "@uppy/status-bar": "0.27.2",
+    "@uppy/utils": "0.27.1",
     "prop-types": "^15.6.1"
   },
   "devDependencies": {
-    "@uppy/core": "0.27.0"
+    "@uppy/core": "0.27.1"
   },
   "peerDependencies": {
     "@uppy/core": "^0.27.0"
