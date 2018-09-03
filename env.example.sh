@@ -17,12 +17,12 @@ export GITHUB_TOKEN="***"
 ## export SAUCE_USERNAME="***"
 
 # travis encrypt --add GHPAGES_URL=https://secret_access_token@github.com/transloadit/uppy.git
-# travis encrypt --add env.global "COMPANION_DROPBOX_KEY"
-# travis encrypt --add env.global "COMPANION_DROPBOX_SECRET"
-# travis encrypt --add env.global "COMPANION_GOOGLE_KEY"
-# travis encrypt --add env.global "COMPANION_GOOGLE_SECRET"
-# travis encrypt --add env.global "COMPANION_INSTAGRAM_KEY"
-# travis encrypt --add env.global "COMPANION_INSTAGRAM_SECRET"
+# travis encrypt --add env.global "COMPANION_DROPBOX_KEY=${COMPANION_DROPBOX_KEY}"
+# travis encrypt --add env.global "COMPANION_DROPBOX_SECRET=${COMPANION_DROPBOX_SECRET}"
+# travis encrypt --add env.global "COMPANION_GOOGLE_KEY=${COMPANION_GOOGLE_KEY}"
+# travis encrypt --add env.global "COMPANION_GOOGLE_SECRET=${COMPANION_GOOGLE_SECRET}"
+# travis encrypt --add env.global "COMPANION_INSTAGRAM_KEY=${COMPANION_INSTAGRAM_KEY}"
+# travis encrypt --add env.global "COMPANION_INSTAGRAM_SECRET=${COMPANION_INSTAGRAM_SECRET}"
 
 # The Travis Sauce Connect addon exports the SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables,
 # and relays connections to the hub URL back to Sauce Labs.
