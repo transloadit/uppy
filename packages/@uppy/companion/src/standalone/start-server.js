@@ -3,9 +3,9 @@ const uppy = require('../uppy')
 // @ts-ignore
 const { version } = require('../../package.json')
 const { app } = require('.')
-const PORT = process.env.UPPYSERVER_PORT || 3020
+const port = process.env.COMPANION_PORT || process.env.UPPYSERVER_PORT || 3020
 
-uppy.socket(app.listen(PORT))
+uppy.socket(app.listen(port))
 
 console.log(`Welcome to Companion! v${version}`)
-console.log(`Listening on http://0.0.0.0:${PORT}`)
+console.log(`Listening on http://0.0.0.0:${port}`)

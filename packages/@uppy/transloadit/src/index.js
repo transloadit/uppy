@@ -14,9 +14,9 @@ function defaultGetAssemblyOptions (file, options) {
   }
 }
 
-const UPPY_SERVER = 'https://api2.transloadit.com/uppy-server'
-// Regex used to check if an uppy-server address is run by Transloadit.
-const TL_UPPY_SERVER = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/uppy-server/
+const COMPANION = 'https://api2.transloadit.com/companion'
+// Regex used to check if a Companion address is run by Transloadit.
+const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 
 /**
  * Upload files to Transloadit using Tus.
@@ -77,7 +77,7 @@ module.exports = class Transloadit extends Plugin {
 
   /**
    * Attach metadata to files to configure the Tus plugin to upload to Transloadit.
-   * Also use Transloadit's uppy server
+   * Also use Transloadit's Companion
    *
    * See: https://github.com/tus/tusd/wiki/Uploading-to-Transloadit-using-tus#uploading-using-tus
    *
@@ -98,13 +98,13 @@ module.exports = class Transloadit extends Plugin {
       endpoint: status.tus_url
     }
 
-    // Set uppy server location. We only add this, if 'file' has the attribute
+    // Set Companion location. We only add this, if 'file' has the attribute
     // remote, because this is the criteria to identify remote files.
-    // We only replace the hostname for Transloadit's uppy-servers, so that
+    // We only replace the hostname for Transloadit's companions, so that
     // people can also self-host them while still using Transloadit for encoding.
     let remote = file.remote
-    if (file.remote && TL_UPPY_SERVER.test(file.remote.serverUrl)) {
-      let newHost = status.uppyserver_url
+    if (file.remote && TL_COMPANION.test(file.remote.serverUrl)) {
+      let newHost = status.companion_url
         .replace(/\/$/, '')
       let path = file.remote.url
         .replace(file.remote.serverUrl, '')
@@ -635,7 +635,7 @@ module.exports = class Transloadit extends Plugin {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
         // will upload to the same Assembly.
         resume: false,
-        // Disable Uppy Server's retry optimisation; we need to change the endpoint on retry
+        // Disable Companion's retry optimisation; we need to change the endpoint on retry
         // so it can't just reuse the same tus.Upload instance server-side.
         useFastRemoteRetry: false,
         // Only send Assembly metadata to the tus endpoint.
@@ -680,4 +680,4 @@ module.exports = class Transloadit extends Plugin {
   }
 }
 
-module.exports.UPPY_SERVER = UPPY_SERVER
+module.exports.COMPANION = COMPANION

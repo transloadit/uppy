@@ -10,8 +10,8 @@ client secret, scopes, and the callback URL you wish to use.  For example:
 
 ```
   google: {
-    key: process.env.UPPYSERVER_GOOGLE_KEY,
-    secret: process.env.UPPYSERVER_GOOGLE_SECRET,
+    key: process.env.COMPANION_GOOGLE_KEY,
+    secret: process.env.COMPANION_GOOGLE_SECRET,
     scope: [
       'https://www.googleapis.com/auth/drive',
       'https://www.googleapis.com/auth/drive.file'

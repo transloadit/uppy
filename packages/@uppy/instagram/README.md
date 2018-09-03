@@ -7,7 +7,7 @@
 
 The Instagram plugin lets users import photos from their Instagram account.
 
-An [Uppy Companion](https://uppy.io/docs/server) instance is required for the Instagram plugin to work. Uppy Companion handles authentication with Instagram, downloads the pictures and videos, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
+A [Companion](https://uppy.io/docs/companion) instance is required for the Instagram plugin to work. Companion handles authentication with Instagram, downloads the pictures and videos, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 

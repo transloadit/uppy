@@ -5,7 +5,7 @@ Files are uploaded to a randomly named directory inside the `whatever/` director
 
 ## Run it
 
-First set up the `UPPYSERVER_AWS_KEY`, `UPPYSERVER_AWS_SECRET`, `UPPYSERVER_AWS_REGION`, and `UPPYSERVER_AWS_BUCKET` environment variables for @uppy/companion.
+First set up the `COMPANION_AWS_KEY`, `COMPANION_AWS_SECRET`, `COMPANION_AWS_REGION`, and `COMPANION_AWS_BUCKET` environment variables for @uppy/companion.
 
 Move into this directory, then:
 

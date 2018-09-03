@@ -200,7 +200,7 @@ locale: {
     },
     exceedsSize: 'This file exceeds maximum allowed size of',
     youCanOnlyUploadFileTypes: 'You can only upload:',
-    uppyServerError: 'Connection with Uppy Companion failed'
+    companionError: 'Connection with Companion failed'
   }
 }
 ```
@@ -253,7 +253,7 @@ uppy.addFile({
   type: 'image/jpeg', // file type
   data: blob, // file blob
   source: 'Local', // optional, determines the source of the file, for example, Instagram
-  isRemote: false // optional, set to true if actual file is not in the browser, but on some remote server, for example, when using uppy-server in combination with Instagram
+  isRemote: false // optional, set to true if actual file is not in the browser, but on some remote server, for example, when using companion in combination with Instagram
 })
 ```
 

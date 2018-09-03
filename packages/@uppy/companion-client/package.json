@@ -1,6 +1,6 @@
 {
   "name": "@uppy/companion-client",
-  "description": "Client library for communication with Uppy Server. Intended for use in Uppy plugins.",
+  "description": "Client library for communication with Companion. Intended for use in Uppy plugins.",
   "version": "0.27.1",
   "license": "MIT",
   "main": "lib/index.js",
@@ -10,7 +10,7 @@
     "file uploader",
     "uppy",
     "uppy-plugin",
-    "uppy-server",
+    "companion",
     "provider"
   ],
   "homepage": "https://uppy.io",

@@ -20,7 +20,7 @@ const collectDefaultMetrics = promClient.collectDefaultMetrics
 const promInterval = collectDefaultMetrics({ register: promClient.register, timeout: 5000 })
 
 // Add version as a prometheus gauge
-const versionGauge = new promClient.Gauge({ name: 'uppyserver_version', help: 'npm version as an integer' })
+const versionGauge = new promClient.Gauge({ name: 'companion_version', help: 'npm version as an integer' })
 const numberVersion = version.replace(/\D/g, '') * 1
 versionGauge.set(numberVersion)
 
@@ -61,16 +61,16 @@ const sessionOptions = {
   saveUninitialized: true
 }
 
-if (process.env.UPPYSERVER_REDIS_URL) {
+if (process.env.COMPANION_REDIS_URL || process.env.UPPYSERVER_REDIS_URL) {
   const RedisStore = require('connect-redis')(session)
   sessionOptions.store = new RedisStore({
-    url: process.env.UPPYSERVER_REDIS_URL
+    url: process.env.COMPANION_REDIS_URL || process.env.UPPYSERVER_REDIS_URL
   })
 }
 
-if (process.env.UPPYSERVER_COOKIE_DOMAIN) {
+if (process.env.COMPANION_COOKIE_DOMAIN || process.env.UPPYSERVER_COOKIE_DOMAIN) {
   sessionOptions.cookie = {
-    domain: process.env.UPPYSERVER_COOKIE_DOMAIN,
+    domain: process.env.COMPANION_COOKIE_DOMAIN || process.env.UPPYSERVER_COOKIE_DOMAIN,
     maxAge: 24 * 60 * 60 * 1000 // 1 day
   }
 }
@@ -78,13 +78,13 @@ if (process.env.UPPYSERVER_COOKIE_DOMAIN) {
 app.use(session(sessionOptions))
 
 app.use((req, res, next) => {
-  const protocol = process.env.UPPYSERVER_PROTOCOL || 'http'
+  const protocol = process.env.COMPANION_PROTOCOL || process.env.UPPYSERVER_PROTOCOL || 'http'
 
   // if endpoint urls are specified, then we only allow those endpoints
   // otherwise, we allow any client url to access companion.
   // here we also enforce that only the protocol allowed by companion is used.
-  if (process.env.UPPY_ENDPOINTS) {
-    const whitelist = process.env.UPPY_ENDPOINTS
+  if (process.env.COMPANION_CLIENT_ORIGINS) {
+    const whitelist = process.env.COMPANION_CLIENT_ORIGINS
       .split(',')
       .map((url) => helper.hasProtocol(url) ? url : `${protocol}://${url}`)
 
@@ -116,8 +116,8 @@ app.get('/', (req, res) => {
 
 // initialize uppy
 helper.validateConfig(uppyOptions)
-if (process.env.UPPYSERVER_PATH) {
-  app.use(process.env.UPPYSERVER_PATH, uppy.app(uppyOptions))
+if (process.env.COMPANION_PATH || process.env.UPPYSERVER_PATH) {
+  app.use(process.env.COMPANION_PATH || process.env.UPPYSERVER_PATH, uppy.app(uppyOptions))
 } else {
   app.use(uppy.app(uppyOptions))
 }

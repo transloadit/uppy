@@ -1,6 +1,6 @@
 'use-strict'
 /**
- * Manages communications with Uppy Server
+ * Manages communications with Companion
  */
 
 const RequestClient = require('./RequestClient')

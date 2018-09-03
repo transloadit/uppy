@@ -36,7 +36,7 @@ const defaultOptions = {
 }
 
 /**
- * Entry point into initializing the companion app.
+ * Entry point into initializing the Companion app.
  *
  * @param {object} options
  */

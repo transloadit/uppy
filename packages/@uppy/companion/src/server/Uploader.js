@@ -401,6 +401,6 @@ class Uploader {
 
 Uploader.FILE_NAME_PREFIX = 'uppy-file'
 // @todo do a proper migration to change this name
-Uploader.STORAGE_PREFIX = 'uppy-server'
+Uploader.STORAGE_PREFIX = 'companion'
 
 module.exports = Uploader

@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 // Routes
 app.get('/', (req, res) => {
   res.setHeader('Content-Type', 'text/plain')
-  res.send('Welcome to Uppy Companion')
+  res.send('Welcome to Companion')
 })
 
 // initialize uppy
@@ -69,5 +69,5 @@ app.use((err, req, res, next) => {
 
 companion.socket(app.listen(3020), uppyOptions)
 
-console.log('Welcome to Uppy Companion!')
+console.log('Welcome to Companion!')
 console.log(`Listening on http://0.0.0.0:${3020}`)

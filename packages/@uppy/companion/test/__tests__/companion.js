@@ -19,7 +19,7 @@ const authData = {
   dropbox: 'token value',
   drive: 'token value'
 }
-const token = tokenService.generateToken(authData, process.env.UPPYSERVER_SECRET)
+const token = tokenService.generateToken(authData, process.env.COMPANION_SECRET || process.env.UPPYSERVER_SECRET)
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 
 describe('set i-am header', () => {

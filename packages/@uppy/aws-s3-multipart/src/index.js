@@ -68,7 +68,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
   /**
    * Clean up all references for a file's upload: the MultipartUploader instance,
-   * any events related to the file, and the uppy-server WebSocket connection.
+   * any events related to the file, and the Companion WebSocket connection.
    */
   resetUploaderReferences (fileID, opts = {}) {
     if (this.uploaders[fileID]) {
@@ -87,7 +87,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
   assertHost () {
     if (!this.opts.serverUrl) {
-      throw new Error('Expected a `serverUrl` option containing an uppy-server address.')
+      throw new Error('Expected a `serverUrl` option containing a Companion address.')
     }
   }
 

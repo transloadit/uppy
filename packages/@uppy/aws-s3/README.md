@@ -5,7 +5,7 @@
 <a href="https://www.npmjs.com/package/@uppy/aws-s3"><img src="https://img.shields.io/npm/v/@uppy/aws-s3.svg?style=flat-square"></a>
 <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
 
-The AwsS3 plugin can be used to upload files directly to an S3 bucket. Uploads can be signed using Uppy Server or a custom signing function.
+The AwsS3 plugin can be used to upload files directly to an S3 bucket. Uploads can be signed using Companion or a custom signing function.
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 
@@ -19,7 +19,7 @@ const uppy = Uppy()
 uppy.use(AwsS3, {
   limit: 2,
   timeout: ms('1 minute'),
-  serverUrl: 'https://uppy-server.myapp.com/'
+  serverUrl: 'https://companion.myapp.com/'
 })
 ```
 

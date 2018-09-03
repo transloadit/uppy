@@ -50,7 +50,7 @@ class CloseWrapper extends Component {
  * getItemId
  *    @return {String} unique id of the item
  * getItemRequestPath
- *    @return {String} unique request path of the item when making calls to uppy server
+ *    @return {String} unique request path of the item when making calls to Companion
  * getItemModifiedDate
  *    @return {object} or {String} date of when last the item was modified
  * getItemThumbnailUrl
@@ -483,7 +483,7 @@ module.exports = class ProviderView {
 
   handleError (error) {
     const uppy = this.plugin.uppy
-    const message = uppy.i18n('uppyServerError')
+    const message = uppy.i18n('companionError')
     uppy.log(error.toString())
     uppy.info({message: message, details: error.toString()}, 'error', 5000)
   }

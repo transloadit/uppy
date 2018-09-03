@@ -24,7 +24,7 @@ module.exports = class Url extends Plugin {
       strings: {
         import: 'Import',
         enterUrlToImport: 'Enter URL to import a file',
-        failedToFetch: 'Uppy Server failed to fetch this URL, please make sure it’s correct',
+        failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
         enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file'
       }
     }
@@ -44,7 +44,7 @@ module.exports = class Url extends Plugin {
     this.hostname = this.opts.serverUrl
 
     if (!this.hostname) {
-      throw new Error('Uppy Server hostname is required, please consult https://uppy.io/docs/server')
+      throw new Error('Companion hostname is required, please consult https://uppy.io/docs/companion')
     }
 
     // Bind all event handlers for referencability

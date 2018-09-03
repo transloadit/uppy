@@ -8,7 +8,7 @@ permalink: docs/google-drive/
 
 The `@uppy/google-drive` plugin lets users import files from their Google Drive account.
 
-An Uppy Companion instance is required for the `@uppy/google-drive` plugin to work. Uppy Companion handles authentication with Google, downloads files from the Drive and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
+A Companion instance is required for the `@uppy/google-drive` plugin to work. Companion handles authentication with Google, downloads files from the Drive and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
 const GoogleDrive = require('@uppy/google-drive')
@@ -61,11 +61,11 @@ DOM element, CSS selector, or plugin to mount the Google Drive provider into. Th
 
 ### `serverUrl: null`
 
-URL to an [Uppy Companion](/docs/companion) instance.
+URL to a [Companion](/docs/companion) instance.
 
 ### `serverHeaders: {}`
 
-Custom headers that should be sent along to [Uppy Companion](/docs/companion) on every request.
+Custom headers that should be sent along to [Companion](/docs/companion) on every request.
 
 ### `serverPattern: serverUrl`
 
@@ -73,7 +73,7 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Uppy Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should be good enough.
+This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should be good enough.
 
 ### `locale: {}`
 

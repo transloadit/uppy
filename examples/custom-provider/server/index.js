@@ -87,5 +87,5 @@ app.use((err, req, res, next) => {
 
 uppy.socket(app.listen(3020), uppyOptions)
 
-console.log('Welcome to Uppy Companion!')
+console.log('Welcome to Companion!')
 console.log(`Listening on http://0.0.0.0:${3020}`)

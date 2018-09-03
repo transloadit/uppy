@@ -7,7 +7,7 @@ permalink: docs/aws-s3/
 ---
 
 The `@uppy/aws-s3` plugin can be used to upload files directly to an S3 bucket.
-Uploads can be signed using either [Uppy Companion][companion docs] or a custom signing function.
+Uploads can be signed using either [Companion][companion docs] or a custom signing function.
 
 ```js
 const AwsS3 = require('@uppy/aws-s3')
@@ -20,7 +20,7 @@ uppy.use(AwsS3, {
 })
 ```
 
-There are broadly two ways of uploading to S3 in a browser. A server can generate a presigned URL for a [PUT upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html), or a server can generate form data for a [POST upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html). Uppy Companion uses a POST upload. See [POST Uploads](#post-uploads) for some caveats if you would like to use POST uploads without Uppy Companion. See [Generating a presigned upload URL server-side](#example-presigned-url) for an example of a PUT upload.
+There are broadly two ways of uploading to S3 in a browser. A server can generate a presigned URL for a [PUT upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html), or a server can generate form data for a [POST upload](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html). Companion uses a POST upload. See [POST Uploads](#post-uploads) for some caveats if you would like to use POST uploads without Companion. See [Generating a presigned upload URL server-side](#example-presigned-url) for an example of a PUT upload.
 
 There is also a separate plugin for S3 Multipart uploads. Multipart in this sense refers to Amazon's proprietary chunked, resumable upload mechanism for large files. See the [`@uppy/aws-s3-multipart`](/docs/aws-s3-multipart) documentation.
 
@@ -50,7 +50,7 @@ A unique identifier for this plugin. Defaults to `'AwsS3'`.
 
 ### `serverUrl`
 
-When using [Uppy Companion][companion docs] to sign S3 uploads, set this option to the root URL of the Companion instance.
+When using [Companion][companion docs] to sign S3 uploads, set this option to the root URL of the Companion instance.
 
 ```js
 uppy.use(AwsS3, {
@@ -60,7 +60,7 @@ uppy.use(AwsS3, {
 
 ### `getUploadParameters(file)`
 
-> Note: When using [Uppy Companion][companion docs] to sign S3 uploads, do not define this option.
+> Note: When using [Companion][companion docs] to sign S3 uploads, do not define this option.
 
 A function that returns upload parameters for a file.
 Parameters should be returned as an object, or a Promise for an object, with keys `{ method, url, fields, headers }`.
@@ -137,7 +137,7 @@ At minimum, the domain from which the uploads will happen must be whitelisted, a
 <MaxAgeSeconds>3000</MaxAgeSeconds>
 ```
 
-When using Uppy Companion, which generates a POST policy document, the following permissions must be granted:
+When using Companion, which generates a POST policy document, the following permissions must be granted:
 
 ```xml
 <AllowedMethod>POST</AllowedMethod>
@@ -180,7 +180,7 @@ In-depth documentation about CORS rules is available on the [AWS documentation s
 
 ## POST uploads
 
-Uppy Companion uses POST uploads by default, but you can also use them with your own endpoints. There are a few things to be aware of when doing so:
+Companion uses POST uploads by default, but you can also use them with your own endpoints. There are a few things to be aware of when doing so:
 
  - The `@uppy/aws-s3` plugin attempts to read the `<Location>` XML tag from POST upload responses. S3 does not respond with an XML document by default. When generating the form data for POST uploads, you must set the `success_action_status` field to `201`.
    ```js
@@ -196,30 +196,30 @@ Uppy Companion uses POST uploads by default, but you can also use them with your
 
 ## S3 alternatives
 
-Many other object storage providers have an identical API to S3, so you can use the `@uppy/aws-s3` plugin with them as well. To use them with Uppy Companion, you can set the `UPPYSERVER_AWS_ENDPOINT` variable to the endpoint of your preferred service.
+Many other object storage providers have an identical API to S3, so you can use the `@uppy/aws-s3` plugin with them as well. To use them with Companion, you can set the `COMPANION_AWS_ENDPOINT` variable to the endpoint of your preferred service.
 
 ### DigitalOcean Spaces
 
 For example, with DigitalOcean Spaces, you could do something like this:
 
 ```bash
-export UPPYSERVER_AWS_ENDPOINT="https://{region}.digitaloceanspaces.com"
-export UPPYSERVER_AWS_BUCKET="my-space-name"
+export COMPANION_AWS_ENDPOINT="https://{region}.digitaloceanspaces.com"
+export COMPANION_AWS_BUCKET="my-space-name"
 ```
 
-The `{region}` string will be replaced by the contents of the `UPPYSERVER_AWS_REGION` environment variable.
+The `{region}` string will be replaced by the contents of the `COMPANION_AWS_REGION` environment variable.
 
 For a working example that you can run and play around with, see the [digitalocean-spaces](https://github.com/transloadit/uppy/tree/master/examples/digitalocean-spaces) folder in the Uppy repository.
 
 ### Google Cloud Storage
 
-For Google Cloud Storage, you need to take a few more steps. For the `@uppy/aws-s3` plugin to be able to upload to a GCS bucket, it needs the Interoperability setting enabled. You can enable the Interoperability setting and [generate interoperable storage access keys](https://cloud.google.com/storage/docs/migrating#keys) by going to [Google Cloud Storage](https://console.cloud.google.com/storage) » Settings » Interoperability. Then set the environment variables for Uppy Companion like this:
+For Google Cloud Storage, you need to take a few more steps. For the `@uppy/aws-s3` plugin to be able to upload to a GCS bucket, it needs the Interoperability setting enabled. You can enable the Interoperability setting and [generate interoperable storage access keys](https://cloud.google.com/storage/docs/migrating#keys) by going to [Google Cloud Storage](https://console.cloud.google.com/storage) » Settings » Interoperability. Then set the environment variables for Companion like this:
 
 ```bash
-export UPPYSERVER_AWS_ENDPOINT="https://storage.googleapis.com"
-export UPPYSERVER_AWS_BUCKET="YOUR-GCS-BUCKET-NAME"
-export UPPYSERVER_AWS_KEY="GOOGxxxxxxxxx" # The Access Key
-export UPPYSERVER_AWS_SECRET="YOUR-GCS-SECRET" # The Secret
+export COMPANION_AWS_ENDPOINT="https://storage.googleapis.com"
+export COMPANION_AWS_BUCKET="YOUR-GCS-BUCKET-NAME"
+export COMPANION_AWS_KEY="GOOGxxxxxxxxx" # The Access Key
+export COMPANION_AWS_SECRET="YOUR-GCS-SECRET" # The Secret
 ```
 
 You do not need to configure the region with GCS.

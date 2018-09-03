@@ -45,24 +45,24 @@ const Transloadit = Uppy.Transloadit
 
 ## Properties
 
-### `Transloadit.UPPY_SERVER`
+### `Transloadit.COMPANION`
 
-The main endpoint for Transloadit's hosted uppy-servers. You can use this constant in remote provider options, like so:
+The main endpoint for Transloadit's hosted companions. You can use this constant in remote provider options, like so:
 
 ```js
 const Dropbox = require('@uppy/dropbox')
 const Transloadit = require('@uppy/transloadit')
 
 uppy.use(Dropbox, {
-  serverUrl: Transloadit.UPPY_SERVER
+  serverUrl: Transloadit.COMPANION
 })
 ```
 
-The value of this constant is `https://api2.transloadit.com/uppy-server`. If you are using a custom [`service`](#service) option, you should also set a custom host option in your provider plugins, by taking a Transloadit API url and appending `/uppy-server`:
+The value of this constant is `https://api2.transloadit.com/companion`. If you are using a custom [`service`](#service) option, you should also set a custom host option in your provider plugins, by taking a Transloadit API url and appending `/companion`:
 
 ```js
 uppy.use(Dropbox, {
-  serverUrl: 'https://api2-us-east-1.transloadit.com/uppy-server'
+  serverUrl: 'https://api2-us-east-1.transloadit.com/companion'
 })
 ```
 
