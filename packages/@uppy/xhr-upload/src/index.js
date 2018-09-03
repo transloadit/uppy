@@ -173,7 +173,12 @@ module.exports = class XHRUpload extends Plugin {
       formPost.append(item, file.meta[item])
     })
 
-    formPost.append(opts.fieldName, file.data)
+    if (file.name) {
+      formPost.append(opts.fieldName, file.data, file.name);
+    }
+    else {
+      formPost.append(opts.fieldName, file.data);
+    }
 
     return formPost
   }
