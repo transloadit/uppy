@@ -137,6 +137,7 @@ Released: 2018-09-03.
 New versions in this release:
 
 | Package | Version | Package | Version |
+|-|-|-|-|
 | uppy | 0.27.3 | @uppy/instagram | 0.27.3 |
 | @uppy/aws-s3-multipart | 0.27.2 | @uppy/progress-bar | 0.27.2 |
 | @uppy/aws-s3 | 0.27.2 | @uppy/provider-views | 0.27.2 |
