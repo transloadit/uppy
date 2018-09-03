@@ -17,6 +17,12 @@ cleanup() {
   rm -rf "${__root}/test/endtoend/node_modules"
   rm -rf "${__root}/test/endtoend/tmp"
 }
+function on_exit() {
+  # revert to public registry
+  npm set registry https://registry.npmjs.org
+  cleanup
+}
+trap on_exit EXIT
 
 echo "Preparing for end to end test: copying static HTML and CSS, building JS"
 rm -rf "${__root}/test/endtoend/node_modules"
@@ -56,9 +62,6 @@ pushd "${__root}/test/endtoend"
     --no-save \
     uppy $PACKAGES
 popd
-
-# revert to public registry
-npm set registry https://registry.npmjs.org
 
 bash "${__dir}/endtoend-build-tests"
 
