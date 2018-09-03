@@ -58,7 +58,7 @@ pushd "${__root}/test/endtoend"
 popd
 
 # revert to public registry
-npm set registry https://registry.npmjs.com
+npm set registry https://registry.npmjs.org
 
 bash "${__dir}/endtoend-build-tests"
 
