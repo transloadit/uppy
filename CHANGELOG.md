@@ -134,6 +134,26 @@ What we need to do to release Uppy 1.0
 
 Released: 2018-09-03.
 
+New versions in this release:
+
+| Package | Version | Package | Version |
+| uppy | 0.27.3 | @uppy/instagram | 0.27.3 |
+| @uppy/aws-s3-multipart | 0.27.2 | @uppy/progress-bar | 0.27.2 |
+| @uppy/aws-s3 | 0.27.2 | @uppy/provider-views | 0.27.2 |
+| @uppy/companion-client | 0.27.2 | @uppy/react | 0.27.3 |
+| @uppy/companion | 0.14.3 | @uppy/redux-dev-tools | 0.27.2 |
+| @uppy/core | 0.27.1 | @uppy/status-bar | 0.27.2 |
+| @uppy/dashboard | 0.27.3 | @uppy/thumbnail-generator | 0.27.2 |
+| @uppy/drag-drop | 0.27.2 | @uppy/transloadit | 0.27.3 |
+| @uppy/dropbox | 0.27.2 | @uppy/tus | 0.27.3 |
+| @uppy/file-input | 0.27.2 | @uppy/url | 0.27.3 |
+| @uppy/form | 0.27.2 | @uppy/utils | 0.27.1 |
+| @uppy/golden-retriever | 0.27.2 | @uppy/webcam | 0.27.2 |
+| @uppy/google-drive | 0.27.3 | @uppy/xhr-upload | 0.27.2 |
+| @uppy/informer | 0.27.2 | - | - |
+
+Changes:
+
 - build: Update readme contributors list before publish (#1023 / @goto-bus-stop)
 - build: Enable cssnano safe mode. Fixes `z-index` primarily. (@goto-bus-stop)
 - @uppy/status-bar: Show number of started uploads, fixes #983 (@goto-bus-stop)
@@ -151,7 +171,7 @@ Released: 2018-09-03.
 
 Released: 2018-08-23.
 
-Versions in this release:
+New versions in this release:
 
 | Package | Version | Package | Version |
 |-|-|-|-|
@@ -171,7 +191,7 @@ Changes:
 
 Released: 2018-08-16.
 
-Versions in this release:
+New versions in this release:
 
 | Package | Version | Package | Version |
 |-|-|-|-|
