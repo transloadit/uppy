@@ -17,13 +17,23 @@ cleanup() {
   rm -rf "${__root}/test/endtoend/node_modules"
   rm -rf "${__root}/test/endtoend/tmp"
 }
+function on_exit() {
+  # revert to public registry
+  npm set registry https://registry.npmjs.org
+  cleanup
+}
+trap on_exit EXIT
 
 echo "Preparing for end to end test: copying static HTML and CSS, building JS"
 rm -rf "${__root}/test/endtoend/node_modules"
 
+# list of @uppy/* packages
 PACKAGES="$(for pkg in packages/@uppy/*; do echo "${pkg#packages/}"; done)"
 
 cleanup
+# Initialise verdaccio storage path.
+mkdir -p "${__root}/test/endtoend/tmp/verdaccio"
+
 npm run build
 
 # https://github.com/facebook/create-react-app/pull/4626
@@ -44,10 +54,14 @@ git checkout -- packages/*/package.json packages/@uppy/*/package.json
 
 # install all packages to the endtoend folder
 # (Don't use the npm cache, don't generate a package-lock, don't save dependencies to any package.json)
-(cd "${__root}/test/endtoend" && npm install --prefer-online --registry "$VERDACCIO_REGISTRY" --no-package-lock --no-save uppy $PACKAGES)
-
-# revert to public registry
-npm set registry https://registry.npmjs.com
+pushd "${__root}/test/endtoend"
+  npm install \
+    --prefer-online \
+    --registry "$VERDACCIO_REGISTRY" \
+    --no-package-lock \
+    --no-save \
+    uppy $PACKAGES
+popd
 
 bash "${__dir}/endtoend-build-tests"
 
