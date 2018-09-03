@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+
+/**
+ * Generate a version table from the most recent "Release" commit,
+ * for use in changelogs.
+ *
+ * Usage:
+ *   $ ./bin/make-new-versions-table
+ */
+
+const { execSync } = require('child_process')
+
+const stdout = execSync('git log --grep Release -1 --pretty=raw')
+const str = stdout.toString()
+const rx = /- ([@/\w]+)@(\d+\.\d+\.\d+)/g
+
+const versions = []
+let m
+while ((m = rx.exec(str))) {
+  const [, pkg, version] = m
+  versions.push({ pkg, version })
+}
+
+const mid = Math.ceil(versions.length / 2)
+let table = [
+  '| Package | Version | Package | Version |',
+  '|-|-|-|-|'
+]
+for (let i = 0; i < mid; i++) {
+  const left = versions[i] || { pkg: '-', version: '-' }
+  const right = versions[i + mid] || { pkg: '-', version: '-' }
+  table.push(`| ${left.pkg} | ${left.version} | ${right.pkg} | ${right.version} |`)
+}
+
+console.log(table.join('\n'))
