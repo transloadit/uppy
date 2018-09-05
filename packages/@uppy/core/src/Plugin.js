@@ -134,7 +134,9 @@ module.exports = class Plugin {
     }
 
     this.uppy.log(`Not installing ${callerPluginName}`)
-    throw new Error(`Invalid target option given to ${callerPluginName}`)
+    throw new Error(`Invalid target option given to ${callerPluginName}. Please make sure that the element 
+      exists on the page, or that the plugin you are targeting has been installed. Check that the <script> tag initializing Uppy 
+      comes at the bottom of the page, before the </body> (see https://github.com/transloadit/uppy/issues/1042).`)
   }
 
   render (state) {
