@@ -80,17 +80,17 @@ metadata:
   annotations:
     kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.class: "nginx"
+    certmanager.k8s.io/cluster-issuer: "letsencrypt-prod"
+    certmanager.k8s.io/acme-http01-edit-in-place: "true"
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/session-cookie-name: "route"
     nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
 spec:
   tls:
-  - hosts:
-    - server.uppy.io
-    secretName: server-tls
-  - hosts:
-    - companion.uppy.io
-    secretName: companion-tls
+    - secretName: server-tls
+      hosts:
+        - companion.uppy.io
+        - server.uppy.io
   rules:
   - host: server.uppy.io
     http:
