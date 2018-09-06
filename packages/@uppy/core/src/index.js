@@ -380,13 +380,17 @@ class Uppy {
   * @param {object} file object to add
   */
   addFile (file) {
-    const { files } = this.getState()
+    const { files, allowNewUpload } = this.getState()
 
     const onError = (msg) => {
       const err = typeof msg === 'object' ? msg : new Error(msg)
       this.log(err.message)
       this.info(err.message, 'error', 5000)
       throw err
+    }
+
+    if (allowNewUpload === false) {
+      onError(new Error('Cannot add new files: already uploading.'))
     }
 
     const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)

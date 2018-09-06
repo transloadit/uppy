@@ -36,6 +36,7 @@ The Uppy core module has the following configurable options:
 const uppy = Uppy({
   id: 'uppy',
   autoProceed: false,
+  allowMultipleUploads: true,
   debug: false,
   restrictions: {
     maxFileSize: null,
@@ -68,6 +69,14 @@ const photoUploader = Uppy({ id: 'post' })
 ### `autoProceed: false`
 
 By default Uppy will wait for an upload button to be pressed in the UI, or an `.upload()` method to be called, before starting an upload. Setting this to `autoProceed: true` will start uploading automatically after the first file is selected.
+
+### `allowMultipleUploads: true`
+
+Whether to allow multiple upload batches. This means multiple calls to `.upload()`, or a user pressing an upload button multiple times, perhaps after adding more files. An upload batch is made up of the files that were added since the previous `.upload()` call.
+
+With this option set to `true`, users can upload some files, and then add _more_ files and upload those as well. A model use case for this is uploading images to a gallery or adding attachments to an email.
+
+With this option set to `false`, users can upload some files, and you can listen for the ['complete'](/docs/uppy/#complete) event to continue to the next step in your app's upload flow. A model use case for this is uploading a new profile picture. If you are integrating with an existing HTML form, this option gives the closest behaviour to a bare `<input type="file">`.
 
 ### `restrictions: {}`
 
