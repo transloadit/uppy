@@ -2,7 +2,9 @@ const Uppy = require('@uppy/core')
 const addTransloaditPlugin = require('./addTransloaditPlugin')
 
 function upload (files, opts) {
-  const uppy = Uppy({})
+  const uppy = Uppy({
+    allowMultipleUploads: false
+  })
 
   addTransloaditPlugin(uppy, opts)
 

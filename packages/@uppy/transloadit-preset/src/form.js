@@ -44,6 +44,7 @@ class TransloaditFormResult extends Uppy.Plugin {
 
 function form (target, opts) {
   const uppy = Uppy({
+    allowMultipleUploads: false,
     restrictions: opts.restrictions
   })
   addTransloaditPlugin(uppy, opts)
