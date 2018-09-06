@@ -71,6 +71,7 @@ uppy.use(Dashboard, {
   hideProgressAfterFinish: false,
   note: null,
   closeModalOnClickOutside: false,
+  closeAfterFinish: false,
   disableStatusBar: false,
   disableInformer: false,
   disableThumbnailGenerator: false,
@@ -183,6 +184,10 @@ Note that this metadata will only be set on a file object if it is entered by th
 ### `closeModalOnClickOutside: false`
 
 Set to true to automatically close the modal when the user clicks outside of it.
+
+### `closeAfterFinish: false`
+
+Set to true to automatically close the modal when all current uploads are complete. You can use this together with the [`allowMultipleUploads: false`](/docs/uppy#allowMultipleUploads-true) option in Uppy Core to create a smooth experience when uploading a single (batch of) file(s).
 
 ### `disablePageScrollWhenModalOpen: true`
 

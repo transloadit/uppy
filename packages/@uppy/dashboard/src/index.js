@@ -117,6 +117,7 @@ module.exports = class Dashboard extends Plugin {
       hideProgressAfterFinish: false,
       note: null,
       closeModalOnClickOutside: false,
+      closeAfterFinish: false,
       disableStatusBar: false,
       disableInformer: false,
       disableThumbnailGenerator: false,
@@ -458,7 +459,16 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', (ev) => {
       this.toggleAddFilesPanel(false)
-      this.hideAllPanels()
+    })
+    this.uppy.on('complete', ({ uploadID }) => {
+      const { currentUploads } = this.uppy.getState()
+      if (this.opts.closeAfterFinish &&
+          // This is the very last upload still in state
+          // (and will be removed by core after this handler is complete)
+          Object.keys(currentUploads).length === 1 && currentUploads[uploadID]) {
+        // All uploads are done
+        this.requestCloseModal()
+      }
     })
   }
 
