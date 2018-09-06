@@ -152,6 +152,7 @@ describe('src/Core', () => {
         capabilities: { resumableUploads: false },
         files: {},
         currentUploads: {},
+        allowNewUpload: true,
         foo: 'baar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -175,6 +176,7 @@ describe('src/Core', () => {
         capabilities: { resumableUploads: false },
         files: {},
         currentUploads: {},
+        allowNewUpload: true,
         foo: 'bar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -187,6 +189,7 @@ describe('src/Core', () => {
         capabilities: { resumableUploads: false },
         files: {},
         currentUploads: {},
+        allowNewUpload: true,
         foo: 'baar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -204,6 +207,7 @@ describe('src/Core', () => {
         capabilities: { resumableUploads: false },
         files: {},
         currentUploads: {},
+        allowNewUpload: true,
         foo: 'bar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -231,6 +235,7 @@ describe('src/Core', () => {
       capabilities: { resumableUploads: false },
       files: {},
       currentUploads: {},
+      allowNewUpload: true,
       error: null,
       foo: 'bar',
       info: { isHidden: true, message: '', type: 'info' },
@@ -289,6 +294,7 @@ describe('src/Core', () => {
       capabilities: { resumableUploads: false },
       files: {},
       currentUploads: {},
+      allowNewUpload: true,
       error: null,
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
@@ -735,6 +741,34 @@ describe('src/Core', () => {
       return core.upload().catch((err) => {
         expect(err).toMatchObject(new Error('Not starting the upload because onBeforeUpload returned false'))
       })
+    })
+
+    it('only allows a single upload() batch when allowMultipleUploads: false', async () => {
+      const core = new Core({ allowMultipleUploads: false })
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'bar.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+
+      await expect(core.upload()).resolves.toBeDefined()
+
+      core.addFile({
+        source: 'jest',
+        name: '123.foo',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      await expect(core.upload()).rejects.toThrow(
+        /Cannot create a new upload: already uploading\./
+      )
     })
   })
 

@@ -54,6 +54,7 @@ class Uppy {
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
+      allowMultipleUploads: true,
       debug: false,
       restrictions: {
         maxFileSize: null,
@@ -118,11 +119,12 @@ class Uppy {
       plugins: {},
       files: {},
       currentUploads: {},
+      allowNewUpload: true,
       capabilities: {
         resumableUploads: false
       },
       totalProgress: 0,
-      meta: Object.assign({}, this.opts.meta),
+      meta: { ...this.opts.meta },
       info: {
         isHidden: true,
         type: 'info',
@@ -1025,6 +1027,11 @@ class Uppy {
    * @return {string} ID of this upload.
    */
   _createUpload (fileIDs) {
+    const { allowNewUpload, currentUploads } = this.getState()
+    if (!allowNewUpload) {
+      throw new Error('Cannot create a new upload: already uploading.')
+    }
+
     const uploadID = cuid()
 
     this.emit('upload', {
@@ -1033,20 +1040,25 @@ class Uppy {
     })
 
     this.setState({
-      currentUploads: Object.assign({}, this.getState().currentUploads, {
+      allowNewUpload: this.opts.allowMultipleUploads !== false,
+
+      currentUploads: {
+        ...currentUploads,
         [uploadID]: {
           fileIDs: fileIDs,
           step: 0,
           result: {}
         }
-      })
+      }
     })
 
     return uploadID
   }
 
   _getUpload (uploadID) {
-    return this.getState().currentUploads[uploadID]
+    const { currentUploads } = this.getState()
+
+    return currentUploads[uploadID]
   }
 
   /**
