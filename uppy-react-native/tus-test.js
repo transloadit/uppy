@@ -2,6 +2,7 @@ import tus from 'tus-js-client'
 
 function testUploadFileWithTus (file) {
   console.log('Attempting a tus upload in React Native...')
+  console.log('with file: ', file)
   // Create a new tus upload
   var upload = new tus.Upload(file, {
     endpoint: 'https://master.tus.io/files/',
