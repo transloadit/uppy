@@ -19,9 +19,9 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@uppy/core": "^0.26.0",
-    "@uppy/tus": "^0.26.0",
-    "@uppy/xhr-upload": "^0.26.0",
+    "@uppy/core": "^0.27.0",
+    "@uppy/tus": "^0.27.0",
+    "@uppy/xhr-upload": "^0.27.0",
     "expo": "^27.0.1",
     "react": "16.3.1",
     "react-native": "~0.55.2",
