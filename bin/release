@@ -17,6 +17,19 @@ if [[ ! "$@" =~ -y ]]; then
   read
 fi
 
+if [[ ! "$(npm get registry)" =~ https://registry\.npmjs\.(com|org)/? ]]; then
+  echo "Found unexpected npm registry: $(npm get registry)"
+  echo "Run this to fix:"
+  echo "npm set registry https://registry.npmjs.org"
+  exit 1
+fi
+
+if ! npm whoami > /dev/null; then
+  echo "Not authenticated with npm. First do:"
+  echo "npm login"
+  exit 1
+fi
+
 set -o xtrace
 
 # Update README before publishing `uppy`
