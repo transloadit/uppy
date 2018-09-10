@@ -20,13 +20,25 @@ fi
 if [[ ! "$(npm get registry)" =~ https://registry\.npmjs\.(com|org)/? ]]; then
   echo "Found unexpected npm registry: $(npm get registry)"
   echo "Run this to fix:"
+  echo ""
   echo "npm set registry https://registry.npmjs.org"
   exit 1
 fi
 
 if ! npm whoami > /dev/null; then
   echo "Not authenticated with npm. First do:"
+  echo ""
   echo "npm login"
+  exit 1
+fi
+
+if [ "$(npm profile get --json | jq .tfa.mode -r)" == "auth-and-writes" ]; then
+  echo "Two-factor auth is enabled for publishing. This doesn't work well with lerna."
+  echo "Temporarily switch to authentication-only 2FA using the link below:"
+  echo ""
+  echo "https://www.npmjs.com/settings/$(npm whoami)/tfa"
+  echo ""
+  echo "You can re-enable 2FA for publishing using the same link after this release is complete."
   exit 1
 fi
 
