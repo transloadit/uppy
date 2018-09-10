@@ -19,8 +19,8 @@
 // }
 
 .uppy-Root *:focus {
-  outline: 2px solid $color-cornflower-blue;
-  outline-offset: 3px;
+  outline: $size-focus-outline solid $color-cornflower-blue;
+  outline-offset: $size-focus-offset;
 }
 
 // https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4

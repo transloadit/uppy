@@ -289,6 +289,9 @@
 
   .uppy-DashboardTab-btn:focus {
     outline-offset: 0;
+    .uppy-size--md & {
+      outline-offset: $size-focus-offset;
+    }
   }
 
   .uppy-DashboardTab-btn svg {
