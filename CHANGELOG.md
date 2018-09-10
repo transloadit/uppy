@@ -130,7 +130,7 @@ What we need to do to release Uppy 1.0
 - [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
 - [ ] companion: option validation (can use https://npm.im/ajv + JSON schema)
 - [ ] transloadit: add end2end test for transloadit https://uppy.io/examples/transloadit/ (@arturi, @goto-bus-stop)
-- [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionPattern` (@ifedapoolarewaju)
+- [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
 
 ## 0.27.3
 
