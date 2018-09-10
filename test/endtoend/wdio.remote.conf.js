@@ -1,4 +1,5 @@
 const base = require('./wdio.base.conf')
+const { CompanionService } = require('./utils')
 
 function createCapability (capability) {
   return Object.assign({
@@ -30,7 +31,7 @@ exports.config = Object.assign(base.config, {
   // Services take over a specific job you don't want to take care of. They enhance
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
-  services: ['static-server', 'sauce'],
+  services: ['static-server', 'sauce', new CompanionService()],
   user: process.env.SAUCE_USERNAME,
   key: process.env.SAUCE_ACCESS_KEY
 })
