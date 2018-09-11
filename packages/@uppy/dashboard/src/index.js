@@ -8,7 +8,7 @@ const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const prettyBytes = require('prettier-bytes')
-const throttle = require('lodash.throttle')
+const ResizeObserver = require('resize-observer-polyfill')
 const { defaultTabIcon } = require('./components/icons')
 
 // Some code for managing focus was adopted from https://github.com/ghosh/micromodal
@@ -159,8 +159,6 @@ module.exports = class Dashboard extends Plugin {
     this.handleDrop = this.handleDrop.bind(this)
     this.handlePaste = this.handlePaste.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
-    this.updateDashboardElWidth = this.updateDashboardElWidth.bind(this)
-    this.throttledUpdateDashboardElWidth = throttle(this.updateDashboardElWidth, 500, { leading: true, trailing: true })
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
   }
@@ -319,8 +317,7 @@ module.exports = class Dashboard extends Plugin {
     // handle ESC and TAB keys in modal dialog
     document.addEventListener('keydown', this.onKeydown)
 
-    this.rerender(this.uppy.getState())
-    this.updateDashboardElWidth()
+    // this.rerender(this.uppy.getState())
     this.setFocusToBrowse()
   }
 
@@ -441,8 +438,21 @@ module.exports = class Dashboard extends Plugin {
       this.handleDrop(files)
     })
 
-    this.updateDashboardElWidth()
-    window.addEventListener('resize', this.throttledUpdateDashboardElWidth)
+    // Watch for Dashboard container (`.uppy-Dashboard-inner`) resize
+    // and update containerWidth/containerHeight in plugin state accordingly
+    this.ro = new ResizeObserver((entries, observer) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect
+
+        this.uppy.log(`[Dashboard] resized: ${width} / ${height}`)
+
+        this.setPluginState({
+          containerWidth: width,
+          containerHeight: height
+        })
+      }
+    })
+    this.ro.observe(this.el.querySelector('.uppy-Dashboard-inner'))
 
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', (ev) => this.toggleAddFilesPanel(false))
@@ -454,22 +464,13 @@ module.exports = class Dashboard extends Plugin {
       showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.openModal))
     }
 
+    this.ro.unobserve(this.el.querySelector('.uppy-Dashboard-inner'))
+
     this.removeDragDropListener()
-    window.removeEventListener('resize', this.throttledUpdateDashboardElWidth)
+    // window.removeEventListener('resize', this.throttledUpdateDashboardElWidth)
     window.removeEventListener('popstate', this.handlePopState, false)
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', (ev) => this.toggleAddFilesPanel(false))
-  }
-
-  updateDashboardElWidth () {
-    const dashboardEl = this.el.querySelector('.uppy-Dashboard-inner')
-    if (!dashboardEl) return
-
-    this.uppy.log(`Dashboard width: ${dashboardEl.offsetWidth}`)
-
-    this.setPluginState({
-      containerWidth: dashboardEl.offsetWidth
-    })
   }
 
   toggleFileCard (fileId) {
@@ -615,7 +616,6 @@ module.exports = class Dashboard extends Plugin {
       toggleAddFilesPanel: this.toggleAddFilesPanel,
       showAddFilesPanel: pluginState.showAddFilesPanel,
       saveFileCard: saveFileCard,
-      updateDashboardElWidth: this.updateDashboardElWidth,
       width: this.opts.width,
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,

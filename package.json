@@ -139,5 +139,8 @@
     "testMatch": [
       "**/packages/**/*.test.js"
     ]
+  },
+  "dependencies": {
+    "resize-observer-polyfill": "^1.5.0"
   }
 }
