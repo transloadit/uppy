@@ -35,8 +35,10 @@ class AddFiles extends Component {
               maxNumberOfFiles={this.props.maxNumberOfFiles}
             />
           </div>
-          { this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div> }
-          { this.props.proudlyDisplayPoweredByUppy && poweredByUppy(this.props) }
+          <div class="uppy-DashboarAddFiles-info">
+            { this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div> }
+            { this.props.proudlyDisplayPoweredByUppy && poweredByUppy(this.props) }
+          </div>
         </div>
       )
     }
@@ -93,8 +95,10 @@ class AddFiles extends Component {
             })}
           </div>
         </div>
-        { this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div> }
-        { this.props.proudlyDisplayPoweredByUppy && poweredByUppy(this.props) }
+        <div class="uppy-DashboarAddFiles-info">
+          { this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div> }
+          { this.props.proudlyDisplayPoweredByUppy && poweredByUppy(this.props) }
+        </div>
       </div>
     )
   }
