@@ -214,6 +214,19 @@
   }
 }
 
+.uppy-DashboarAddFiles-info {
+  padding-top: 30px;
+  padding-bottom: 15px;
+
+  .uppy-size--md & {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    padding-bottom: 0;
+  }
+}
+
 .uppy-Dashboard-browse {
   @include reset-button;
   cursor: pointer;
@@ -320,10 +333,6 @@
 .uppy-DashboardTab-name {
   font-size: 14px;
   font-weight: 500;
-  // line-height: 14px;
-  // overflow: hidden;
-  // text-overflow: ellipsis;
-  // white-space: nowrap;
 
   .uppy-size--md & {
     font-size: 11px;
@@ -461,11 +470,6 @@
     filter: blur(2px);
   }
 
-// .uppy-Dashboard-AddFilesPanel[aria-hidden=true],
-// .uppy-DashboardContent-panel[aria-hidden=true] {
-//   transform: translate3d(0, 0, 0);
-// }
-
 // Progress bar placeholder
 
 .uppy-Dashboard-progress {
@@ -557,13 +561,12 @@
   font-weight: 400;
   color: $color-asphalt-gray;
   margin: auto;
-  // margin-bottom: 10px;
   padding: 0 15px;
+  padding-top: 20px;
 
   .uppy-size--md & {
     max-width: 400px;
     font-size: 27px;
-    // margin-bottom: 30px;
   }
 }
 
@@ -572,9 +575,9 @@
   line-height: 1.2;
   text-align: center;
   color: rgba($color-asphalt-gray, 0.8);
-  position: absolute;
-  bottom: 45px;
-  left: 0;
+  // position: absolute;
+  // bottom: 45px;
+  // left: 0;
   width: 100%;
 
   .uppy-size--md & {
@@ -583,15 +586,12 @@
 }
 
 .uppy-Dashboard-poweredBy {
-  // width: 100%;
+  display: inline-block;
   text-align: center;
-  position: absolute;
-  bottom: 23px;
   font-size: 11px;
   color: $color-gray;
   text-decoration: none;
   margin-top: 8px;
-  padding-right: 2px;
 }
 
 .uppy-Dashboard-poweredByUppy {
