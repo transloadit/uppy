@@ -9,7 +9,7 @@ const { iconCopy, iconRetry } = require('./icons')
 const classNames = require('classnames')
 const { h } = require('preact')
 
-const FileItemProgressWrapper = (props) => {
+function FileItemProgressWrapper (props) {
   if (props.hideRetryButton && props.error) {
     return
   }
@@ -58,7 +58,7 @@ module.exports = function fileItem (props) {
   const fileName = getFileNameAndExtension(file.meta.name).name
   const truncatedFileName = props.isWide ? truncateString(fileName, 30) : fileName
 
-  const onPauseResumeCancelRetry = (ev) => {
+  function onPauseResumeCancelRetry (ev) {
     if (isUploaded) return
 
     if (error && !props.hideRetryButton) {
@@ -77,6 +77,26 @@ module.exports = function fileItem (props) {
     }
   }
 
+  function progressIndicatorTitle (props) {
+    if (isUploaded) {
+      return props.i18n('uploadComplete')
+    }
+
+    if (error) {
+      return props.i18n('retryUpload')
+    }
+
+    if (props.resumableUploads) {
+      if (file.isPaused) {
+        return props.i18n('resumeUpload')
+      }
+      return props.i18n('pauseUpload')
+    } else {
+      console.log('ЗДЕСЬ Я')
+      return props.i18n('cancelUpload')
+    }
+  }
+
   const dashboardItemClass = classNames(
     'uppy-DashboardItem',
     { 'is-inprogress': uploadInProgress },
@@ -87,16 +107,6 @@ module.exports = function fileItem (props) {
     { 'is-resumable': props.resumableUploads },
     { 'is-bundled': props.bundledUpload }
   )
-
-  const progressIndicatorTitle = isUploaded
-    ? props.i18n('uploadComplete')
-    : props.resumableUploads
-      ? file.isPaused
-        ? props.i18n('resumeUpload')
-        : props.i18n('pauseUpload')
-      : error
-        ? props.i18n('retryUpload')
-        : props.i18n('cancelUpload')
 
   return <li class={dashboardItemClass} id={`uppy_${file.id}`} title={file.meta.name}>
     <div class="uppy-DashboardItem-preview">
@@ -109,7 +119,7 @@ module.exports = function fileItem (props) {
       </div>
       <div class="uppy-DashboardItem-progress">
         <FileItemProgressWrapper
-          progressIndicatorTitle={progressIndicatorTitle}
+          progressIndicatorTitle={progressIndicatorTitle(props)}
           onPauseResumeCancelRetry={onPauseResumeCancelRetry}
           file={file}
           error={error}
