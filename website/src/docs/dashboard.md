@@ -66,6 +66,8 @@ uppy.use(Dashboard, {
   showLinkToFileUploadResult: true,
   showProgressDetails: false,
   hideUploadButton: false,
+  hideRetryButton: false,
+  hidePauseResumeCancelButtons: false,
   hideProgressAfterFinish: false,
   note: null,
   closeModalOnClickOutside: false,
@@ -73,9 +75,12 @@ uppy.use(Dashboard, {
   disableInformer: false,
   disableThumbnailGenerator: false,
   disablePageScrollWhenModalOpen: true,
+  animateOpenClose: true,
   proudlyDisplayPoweredByUppy: true,
   onRequestCloseModal: () => this.closeModal(),
-  locale: {}
+  showSelectedFiles: true,
+  locale: defaultLocale,
+  browserBackButtonClose: false
 })
 ```
 
@@ -143,6 +148,12 @@ Hide the cancel or pause/resume buttons (for resumable uploads, via [tus](http:/
 ### `hideProgressAfterFinish: false`
 
 Hide StatusBar after the upload has finished.
+
+### `showSelectedFiles: true`
+
+Show the list (grid) of selected files with preview and file name. In case you are showing selected files in your own app’s UI and want the Uppy Dashboard to just be a picker, the list can be hidden with this option.
+
+See also `disableStatusBar` option, which can hide the progress and upload button.
 
 ### `note: null`
 
