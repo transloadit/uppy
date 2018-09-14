@@ -79,6 +79,7 @@ module.exports = class Dashboard extends Plugin {
         resumeUpload: 'Resume upload',
         pauseUpload: 'Pause upload',
         retryUpload: 'Retry upload',
+        cancelUpload: 'Cancel upload',
         xFilesSelected: {
           0: '%{smart_count} file selected',
           1: '%{smart_count} files selected'
