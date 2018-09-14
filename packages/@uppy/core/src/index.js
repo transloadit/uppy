@@ -505,8 +505,6 @@ class Uppy {
     if (removedFile.preview && isObjectURL(removedFile.preview)) {
       URL.revokeObjectURL(removedFile.preview)
     }
-
-    this.log(`Removed file: ${fileID}`)
   }
 
   pauseResume (fileID) {
@@ -588,16 +586,18 @@ class Uppy {
   cancelAll () {
     this.emit('cancel-all')
 
-    // TODO Or should we just call removeFile on all files?
     const { currentUploads } = this.getState()
     const uploadIDs = Object.keys(currentUploads)
-
     uploadIDs.forEach((id) => {
       this._removeUpload(id)
     })
 
+    const files = Object.keys(this.getState().files)
+    files.forEach((fileID) => {
+      this.removeFile(fileID)
+    })
+
     this.setState({
-      files: {},
       totalProgress: 0,
       error: null
     })
