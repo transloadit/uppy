@@ -37,7 +37,11 @@ class CompanionService {
         COMPANION_DOMAIN: 'localhost:3020',
         COMPANION_PROTOCOL: 'http',
         COMPANION_PORT: 3020,
-        COMPANION_SECRET: 'test'
+        COMPANION_SECRET: process.env.TEST_COMPANION_SECRET,
+        COMPANION_DROPBOX_KEY: process.env.TEST_COMPANION_DROPBOX_KEY,
+        COMPANION_DROPBOX_SECRET: process.env.TEST_COMPANION_DROPBOX_SECRET,
+        COMPANION_GOOGLE_KEY: process.env.TEST_COMPANION_GOOGLE_KEY,
+        COMPANION_GOOGLE_SECRET: process.env.TEST_COMPANION_GOOGLE_SECRET
       })
     })
     return new Promise((resolve, reject) => {
