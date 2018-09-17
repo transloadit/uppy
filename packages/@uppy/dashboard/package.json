@@ -33,7 +33,8 @@
     "lodash.throttle": "^4.1.1",
     "preact": "^8.2.9",
     "preact-css-transition-group": "^1.3.0",
-    "prettier-bytes": "^1.0.4"
+    "prettier-bytes": "^1.0.4",
+    "resize-observer-polyfill": "^1.5.0"
   },
   "devDependencies": {
     "@uppy/core": "0.27.1",
