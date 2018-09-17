@@ -102,6 +102,49 @@ strings: {
 }
 ```
 
+### `getUploadHeaders()`
+
+Set the default headers for the request to be sent to the server.
+A common use case is adding the `Authorization` header with your JWT token.
+```js
+getUploadHeaders: () => {
+  return {
+    Authorization: localStorage.getItem('token')
+  }
+}
+```
+
+This can be used in your server as follows:
+```js
+const options = {
+  secret: process.env.COMPANION_SECRET,
+  server: {
+    host: process.env.COMPANION_DOMAIN,
+    protocol: process.env.COMPANION_PROTOCOL,
+  },
+  filePath: process.env.DATA_DIR,
+  debug: true,
+  providerOptions: {
+    s3: {
+      // Example use case, generating a folder in the bucket
+      // for each user
+      getKey: (req, filename) => {
+        const userId = jwt.decode(req.headers.authorization)
+        const key = `${userId}/${filename}`
+        return key
+      },
+      key: process.env.COMPANION_AWS_KEY,
+      secret: process.env.COMPANION_AWS_SECRET,
+      bucket: process.env.COMPANION_AWS_BUCKET,
+      region: process.env.COMPANION_AWS_REGION,
+    },
+  },
+}
+
+// Adding to your express server later on
+app.use(companion(options))
+```
+
 ## S3 Bucket configuration
 
 S3 buckets do not allow public uploads by default.
