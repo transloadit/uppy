@@ -26,7 +26,8 @@ module.exports = class AwsS3 extends Plugin {
       timeout: 30 * 1000,
       limit: 0,
       getUploadParameters: this.getUploadParameters.bind(this),
-      locale: defaultLocale
+      locale: defaultLocale,
+      getUploadHeaders: () => ({})
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -54,7 +55,10 @@ module.exports = class AwsS3 extends Plugin {
     const type = encodeURIComponent(file.type)
     return fetch(`${this.opts.serverUrl}/s3/params?filename=${filename}&type=${type}`, {
       method: 'get',
-      headers: { accept: 'application/json' }
+      headers: {
+        accept: 'application/json',
+        ...this.opts.getUploadHeaders()
+      }
     }).then((response) => response.json())
   }
 
