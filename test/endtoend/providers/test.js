@@ -14,12 +14,15 @@ describe('File upload with Providers', () => {
     ], {
       stdio: 'pipe',
       env: Object.assign({}, process.env, {
-        UPPYSERVER_DATADIR: path.join(__dirname, '../../../output'),
-        UPPYSERVER_DOMAIN: 'localhost:3020',
-        UPPYSERVER_PROTOCOL: 'http',
-        UPPYSERVER_PORT: 3020,
-        UPPY_ENDPOINTS: '',
-        UPPYSERVER_SECRET: 'test'
+        COMPANION_DATADIR: path.join(__dirname, '../../../output'),
+        COMPANION_DOMAIN: 'localhost:3020',
+        COMPANION_PROTOCOL: 'http',
+        COMPANION_PORT: 3020,
+        COMPANION_SECRET: process.env.TEST_COMPANION_SECRET,
+        COMPANION_DROPBOX_KEY: process.env.TEST_COMPANION_DROPBOX_KEY,
+        COMPANION_DROPBOX_SECRET: process.env.TEST_COMPANION_DROPBOX_SECRET,
+        COMPANION_GOOGLE_KEY: process.env.TEST_COMPANION_GOOGLE_KEY,
+        COMPANION_GOOGLE_SECRET: process.env.TEST_COMPANION_GOOGLE_SECRET
       })
     })
     return new Promise((resolve, reject) => {
