@@ -124,6 +124,7 @@ module.exports = class Dashboard extends Plugin {
       animateOpenClose: true,
       proudlyDisplayPoweredByUppy: true,
       onRequestCloseModal: () => this.closeModal(),
+      showSelectedFiles: true,
       locale: defaultLocale,
       browserBackButtonClose: false
     }
@@ -626,7 +627,8 @@ module.exports = class Dashboard extends Plugin {
       containerWidth: pluginState.containerWidth,
       isTargetDOMEl: this.isTargetDOMEl,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
-      maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles
+      maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
+      showSelectedFiles: this.opts.showSelectedFiles
     })
   }
 

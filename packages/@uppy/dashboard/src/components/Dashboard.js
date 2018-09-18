@@ -18,6 +18,7 @@ module.exports = function Dashboard (props) {
   // }
 
   const noFiles = props.totalFileCount === 0
+
   const dashboardClassName = classNames(
     { 'uppy-Root': props.isTargetDOMEl },
     'uppy-Dashboard',
@@ -25,7 +26,6 @@ module.exports = function Dashboard (props) {
     { 'uppy-Dashboard--animateOpenClose': props.animateOpenClose },
     { 'uppy-Dashboard--isClosing': props.isClosing },
     { 'uppy-Dashboard--modal': !props.inline },
-    // { 'uppy-Dashboard--wide': props.isWide },
     { 'uppy-size--md': props.containerWidth > 576 },
     { 'uppy-size--lg': props.containerWidth > 700 },
     { 'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel }
@@ -55,9 +55,13 @@ module.exports = function Dashboard (props) {
         </button>
 
         <div class="uppy-Dashboard-innerWrap">
-          { !noFiles && <PanelTopBar {...props} /> }
+          { (!noFiles && props.showSelectedFiles) && <PanelTopBar {...props} /> }
 
-          { noFiles ? <AddFiles {...props} /> : <FileList {...props} /> }
+          { props.showSelectedFiles ? (
+            noFiles ? <AddFiles {...props} /> : <FileList {...props} />
+          ) : (
+            <AddFiles {...props} />
+          )}
 
           <PreactCSSTransitionGroup
             transitionName="uppy-transition-slideDownUp"
