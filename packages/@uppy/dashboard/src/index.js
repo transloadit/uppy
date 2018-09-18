@@ -234,7 +234,6 @@ module.exports = class Dashboard extends Plugin {
 
   getFocusableNodes () {
     const nodes = this.el.querySelectorAll(FOCUSABLE_ELEMENTS)
-    console.log(Object.keys(nodes).map((key) => nodes[key]))
     return Object.keys(nodes).map((key) => nodes[key])
   }
 
