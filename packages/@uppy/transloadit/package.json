@@ -1,7 +1,7 @@
 {
   "name": "@uppy/transloadit",
   "description": "The Transloadit plugin can be used to upload files to Transloadit for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, and more",
-  "version": "0.27.3",
+  "version": "0.27.4",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -29,14 +29,14 @@
   },
   "dependencies": {
     "@uppy/companion-client": "0.27.2",
-    "@uppy/provider-views": "0.27.2",
-    "@uppy/tus": "0.27.3",
+    "@uppy/provider-views": "0.27.3",
+    "@uppy/tus": "0.27.4",
     "@uppy/utils": "0.27.1",
     "component-emitter": "^1.2.1",
     "socket.io-client": "^2.1.1"
   },
   "devDependencies": {
-    "@uppy/core": "0.27.1"
+    "@uppy/core": "0.27.2"
   },
   "peerDependencies": {
     "@uppy/core": "^0.27.0"

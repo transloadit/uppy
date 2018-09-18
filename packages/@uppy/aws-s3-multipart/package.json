@@ -1,7 +1,7 @@
 {
   "name": "@uppy/aws-s3-multipart",
   "description": "Upload to Amazon S3 with Uppy and S3's Multipart upload strategy",
-  "version": "0.27.2",
+  "version": "0.27.3",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -29,7 +29,7 @@
     "resolve-url": "^0.2.1"
   },
   "devDependencies": {
-    "@uppy/core": "0.27.1"
+    "@uppy/core": "0.27.2"
   },
   "peerDependencies": {
     "@uppy/core": "^0.27.0"
