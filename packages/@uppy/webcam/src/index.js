@@ -183,8 +183,13 @@ module.exports = class Webcam extends Plugin {
     .then(() => {
       this.recordingChunks = null
       this.recorder = null
-      const dashboard = this.uppy.getPlugin('Dashboard')
-      if (dashboard) dashboard.hideAllPanels()
+
+      // Close the Dashboard panel if plugin is installed
+      // into Dashboard (could be other parent UI plugin)
+      // const parent = this.uppy.getPlugin(this.parent)
+      // if (parent && parent.hideAllPanels) {
+      //   parent.hideAllPanels()
+      // }
     }, (error) => {
       this.recordingChunks = null
       this.recorder = null
@@ -242,8 +247,12 @@ module.exports = class Webcam extends Plugin {
       return this.getImage()
     }).then((tagFile) => {
       this.captureInProgress = false
-      const dashboard = this.uppy.getPlugin('Dashboard')
-      if (dashboard) dashboard.hideAllPanels()
+      // Close the Dashboard panel if plugin is installed
+      // into Dashboard (could be other parent UI plugin)
+      // const parent = this.uppy.getPlugin(this.parent)
+      // if (parent && parent.hideAllPanels) {
+      //   parent.hideAllPanels()
+      // }
       try {
         this.uppy.addFile(tagFile)
       } catch (err) {
