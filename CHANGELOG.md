@@ -132,6 +132,38 @@ What we need to do to release Uppy 1.0
 - [ ] transloadit: add end2end test for transloadit https://uppy.io/examples/transloadit/ (@arturi, @goto-bus-stop)
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
 
+## 0.27.4
+
+Released: 2018-09-18
+
+New versions in this release:
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| uppy | 0.27.4 | @uppy/instagram | 0.27.4 |
+| @uppy/companion | 0.14.4 | @uppy/react | 0.27.4 |
+| @uppy/core | 0.27.2 | @uppy/transloadit | 0.27.4 |
+| @uppy/dashboard | 0.27.4 | @uppy/tus | 0.27.4 |
+| @uppy/dropbox | 0.27.3 | @uppy/url | 0.27.4 |
+| @uppy/form | 0.27.3 | @uppy/webcam | 0.27.3 |
+| @uppy/informer | 0.27.3 | - | - |
+
+Changes:
+
+- build: Add initial version table script [skip ci] (@goto-bus-stop)
+- build: Add more checks to release script (#1050 / @goto-bus-stop)
+- build: start companion once in tests (#1052 / @ifedapoolarewaju)
+- buid: set companion config values when running test (@ifedapoolarewaju)
+- @uppy/core: Note that the `<script>` tag should come at the bottom of the page (#1043 / @arturi)
+- @uppy/dashboard: Add paddings and remove outline-offset for tab buttons so that the outline is visible (26037ac145111d3c636a63840bb4daa61304bae5 / @arturi)
+- @uppy/dashboard: Replace updateDashboardElWidth with ResizeObserver (using resize-observer-polyfill) (#1053 / @arturi)
+- @uppy/dashboard: Add showSelectedFiles option (#1055 / @arturi)
+- @uppy/dashboard: Fix incorrect title (tooltip) message on file preview by refactoring (#1056 / @arturi)
+- @uppy/companion: Google Drive: Support Team Drives (#978 / @pauln)
+- @uppy/companion: Provider integration test fixes #(1013 / @goto-bus-stop)
+- @uppy/companion: Fix bug: oauth always redirects to root path (#1030 / @tranvansang)
+- @uppy/companion: Fix certificate generation for companion (#1041 / @kiloreux)
+
 ## 0.27.3
 
 Released: 2018-09-03.
