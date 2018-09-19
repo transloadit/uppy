@@ -456,7 +456,10 @@ module.exports = class Dashboard extends Plugin {
     this.ro.observe(this.el.querySelector('.uppy-Dashboard-inner'))
 
     this.uppy.on('plugin-remove', this.removeTarget)
-    this.uppy.on('file-added', (ev) => this.toggleAddFilesPanel(false))
+    this.uppy.on('file-added', (ev) => {
+      this.toggleAddFilesPanel(false)
+      this.hideAllPanels()
+    })
   }
 
   removeEvents () {
@@ -658,7 +661,9 @@ module.exports = class Dashboard extends Plugin {
     const plugins = this.opts.plugins || []
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
-      if (plugin) plugin.mount(this, plugin)
+      if (plugin) {
+        plugin.mount(this, plugin)
+      }
     })
 
     if (!this.opts.disableStatusBar) {
