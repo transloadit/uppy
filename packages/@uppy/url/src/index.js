@@ -143,9 +143,8 @@ module.exports = class Url extends Plugin {
       .then(() => {
         // Close the Dashboard panel if plugin is installed
         // into Dashboard (could be other parent UI plugin)
-        // const parent = this.uppy.getPlugin(this.parent)
-        // if (parent && parent.hideAllPanels) {
-        //   parent.hideAllPanels()
+        // if (this.parent && this.parent.hideAllPanels) {
+        //   this.parent.hideAllPanels()
         // }
       })
       .catch((err) => {

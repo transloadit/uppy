@@ -139,7 +139,7 @@ module.exports = class Plugin {
 
     if (targetPlugin) {
       this.uppy.log(`Installing ${callerPluginName} to ${targetPlugin.id}`)
-      this.parent = targetPlugin.id
+      this.parent = targetPlugin
       this.el = targetPlugin.addTarget(plugin)
 
       this.onMount()
