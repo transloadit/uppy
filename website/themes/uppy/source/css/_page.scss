@@ -363,6 +363,7 @@
 .TryButton,
 a.TryButton {
   @include reset-button;
+  display: inline-block;
   font-size: 0.8em;
   padding: 7px 16px;
   border: 1px solid $color-primary;
@@ -370,7 +371,7 @@ a.TryButton {
   color: $color-primary;
   cursor: pointer;
   border-radius: 15px;
-  margin-bottom: 1.5em;
+  margin: 0.7em 0;
 
   &:hover {
     background-color: $color-primary;
