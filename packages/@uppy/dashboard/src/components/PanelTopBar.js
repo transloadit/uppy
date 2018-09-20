@@ -7,7 +7,9 @@ function DashboardContentTitle (props) {
 }
 
 function PanelTopBar (props) {
-  const notOverFileLimit = props.maxNumberOfFiles !== props.totalFileCount
+  const notOverFileLimit = props.maxNumberOfFiles
+    ? props.totalFileCount < props.maxNumberOfFiles
+    : true
 
   return (
     <div class="uppy-DashboardContent-bar">
