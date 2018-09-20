@@ -91,8 +91,8 @@ export interface UppyOptions {
   };
   target: string | Plugin;
   meta: any;
-  onBeforeFileAdded: (currentFile: UppyFile, files: {[key: string]: UppyFile}) => UppyFile | boolean | undefined;
-  onBeforeUpload: (files: {[key: string]: UppyFile}) => {[key: string]: UppyFile} | boolean;
+  onBeforeFileAdded: (currentFile: UppyFile, files: { [key: string]: UppyFile }) => UppyFile | boolean | undefined;
+  onBeforeUpload: (files: { [key: string]: UppyFile }) => { [key: string]: UppyFile } | boolean;
   locale: Locale;
   store: Store;
 }
@@ -103,10 +103,10 @@ export interface UploadResult<TMeta extends IndexedObject<any> = {}> {
 }
 
 interface State<TMeta extends IndexedObject<any> = {}> extends IndexedObject<any> {
-  capabilities?: {resumableUploads?: boolean};
+  capabilities?: { resumableUploads?: boolean };
   currentUploads: {};
   error?: string;
-  files: {[key: string]: UploadedUppyFile<TMeta> | FailedUppyFile<TMeta>};
+  files: { [key: string]: UploadedUppyFile<TMeta> | FailedUppyFile<TMeta> };
   info?: {
     isHidden: boolean;
     type: string;
@@ -121,6 +121,7 @@ export class Uppy {
   constructor(opts?: Partial<UppyOptions>);
   on(event: 'upload-success', callback: (file: UppyFile, body: any, uploadURL: string) => void): Uppy;
   on(event: 'complete', callback: (result: UploadResult) => void): Uppy;
+  on(event: 'upload-all-success', files: UppyFile[], resp: any): Uppy;
   on(event: string, callback: (...args: any[]) => void): Uppy;
   off(event: string, callback: any): Uppy;
   updateAll(state: object): void;
@@ -154,7 +155,7 @@ export class Uppy {
   iteratePlugins(callback: (plugin: Plugin) => void): void;
   removePlugin(instance: Plugin): void;
   close(): void;
-  info(message: string | {message: string; details: string}, type?: LogLevel, duration?: number): void;
+  info(message: string | { message: string; details: string }, type?: LogLevel, duration?: number): void;
   hideInfo(): void;
   log(msg: string, type?: LogLevel): void;
   run(): Uppy;

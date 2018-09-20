@@ -407,6 +407,7 @@ module.exports = class XHRUpload extends Plugin {
           files.forEach((file) => {
             this.uppy.emit('upload-success', file, resp)
           })
+          this.uppy.emit('upload-all-success', files, resp)
           return resolve()
         }
 
