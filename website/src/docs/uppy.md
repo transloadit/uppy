@@ -239,6 +239,14 @@ const uppy = Uppy()
 uppy.use(DragDrop, { target: 'body' })
 ```
 
+### `uppy.removePlugin(instance)`
+
+Uninstall and remove a plugin.
+
+### `uppy.getPlugin(id)`
+
+Get a plugin by its [`id`](/docs/plugins/#id) to access its methods.
+
 ### `uppy.getID()`
 
 Get the Uppy instance ID, see the [`id` option](#id-39-uppy-39).
@@ -323,6 +331,26 @@ uppy.upload().then((result) => {
 })
 ```
 
+### `uppy.pauseResume(fileID)`
+
+Toggle pause/resume on an upload. Will only work if resumable upload plugin, such as [Tus](/docs/tus/), is used.
+
+### `uppy.pauseAll()`
+
+Pause all uploads. Will only work if resumable upload plugin, such as [Tus](/docs/tus/), is used.
+
+### `uppy.resumeAll()`
+
+Resume all uploads. Will only work if resumable upload plugin, such as [Tus](/docs/tus/), is used.
+
+### `uppy.retryUpload(fileID)`
+
+Retry an upload (after an error, for example).
+
+### `uppy.retryAll()`
+
+Retry all uploads (after an error, for example).
+
 ### `uppy.cancelAll()`
 
 Cancel all uploads, resets progress and removes all files.
@@ -385,6 +413,10 @@ Returns the current state from the [Store](#store-defaultStore).
 Update the state for a single file. This is mostly useful for plugins that may want to store data on file objects, or that need to pass file-specific configurations to other plugins that support it.
 
 `fileID` is the string file ID. `state` is an object that will be merged into the file's state object.
+
+```js
+uppy.getPlugin('Url').addFile('path/to/remote-file.jpg')
+```
 
 ### `uppy.setMeta(data)`
 
