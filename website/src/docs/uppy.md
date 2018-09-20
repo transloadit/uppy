@@ -323,6 +323,10 @@ uppy.upload().then((result) => {
 })
 ```
 
+### `uppy.cancelAll()`
+
+Cancel all uploads, resets progress and removes all files.
+
 ### `uppy.setState(patch)`
 
 Update Uppy's internal state. Usually, this method is called internally, but in some cases it might be useful to alter something directly, especially when implementing your own plugins.
@@ -539,6 +543,16 @@ uppy.on('upload-error', (file, error) => {
 })
 ```
 
+### `upload-retry`
+
+Fired when an upload has been retried (after an error, for example):
+
+```js
+uppy.on('upload-retry', (fileID) => {
+  console.log('upload retried:', fileID)
+})
+```
+
 ### `info-visible`
 
 Fired when “info” message should be visible in the UI. By default, `Informer` plugin is displaying these messages (enabled by default in `Dashboard` plugin). You can use this event to show messages in your custom UI:
@@ -559,3 +573,7 @@ uppy.on('info-visible', () => {
 ### `info-hidden`
 
 Fired when “info” message should be hidden in the UI. See [`info-visible`](#info-visible).
+
+### `cancel-all`
+
+Fired when [`uppy.cancelAll()`]() is called, all uploads are canceled, files removed and progress is reset.
