@@ -261,6 +261,8 @@ uppy.addFile({
 
 If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically when files are added.
 
+> Sometimes you might need to add a remote file to Uppy. This can be achieved by [fetching the file, then creating a Blob object, or using the Url plugin with Companion](https://github.com/transloadit/uppy/issues/1006#issuecomment-413495493).
+
 ### `uppy.removeFile(fileID)`
 
 Remove a file from Uppy.
