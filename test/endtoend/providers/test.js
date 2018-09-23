@@ -6,10 +6,6 @@ describe('File upload with Providers', () => {
     browser.url(testURL)
   })
 
-  afterEach(() => {
-    browser.reload()
-  })
-
   // not using arrow functions as cb so to keep mocha in the 'this' context
   it('should upload a file completely with Google Drive', function () {
     if (process.env.UPPY_GOOGLE_EMAIL === undefined) {
@@ -17,6 +13,8 @@ describe('File upload with Providers', () => {
       return this.skip()
     }
 
+    // ensure session is cleared
+    browser.reload()
     startUploadTest(browser, 'GoogleDrive')
     signIntoGoogle(browser)
     finishUploadTest(browser)
@@ -29,6 +27,8 @@ describe('File upload with Providers', () => {
       return this.skip()
     }
 
+    // ensure session is cleared
+    browser.reload()
     startUploadTest(browser, 'Instagram')
     // do oauth authentication
     browser.waitForExist('input[name=username]')
@@ -46,6 +46,8 @@ describe('File upload with Providers', () => {
       return this.skip()
     }
 
+    // ensure session is cleared
+    browser.reload()
     startUploadTest(browser, 'Dropbox')
     // do oauth authentication
     browser.waitForVisible('button.auth-google')
