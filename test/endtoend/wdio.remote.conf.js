@@ -10,13 +10,13 @@ function createCapability (capability) {
 
 exports.config = Object.assign(base.config, {
   capabilities: [
-    { browserName: 'firefox', version: '38.0', platform: 'Linux' },
-    { browserName: 'internet explorer', version: '10.0', platform: 'Windows 7' },
-    { browserName: 'chrome', version: '50.0', platform: 'Windows 7' },
-    { browserName: 'MicrosoftEdge', version: '14.14393', platform: 'Windows 10' },
+    // { browserName: 'firefox', version: '38.0', platform: 'Linux' },
+    // { browserName: 'internet explorer', version: '10.0', platform: 'Windows 7' },
+    { browserName: 'chrome', version: '50.0', platform: 'Windows 7' }
+    // { browserName: 'MicrosoftEdge', version: '14.14393', platform: 'Windows 10' },
     // { browserName: 'safari', version: '11.0', platform: 'macOS 10.12' },
-    { browserName: 'safari', version: '10.0', platformName: 'iOS', platformVersion: '10.0', deviceOrientation: 'portrait', deviceName: 'iPhone 6 Simulator', appiumVersion: '1.7.1' },
-    { browserName: 'chrome', platformName: 'Android', platformVersion: '6.0', deviceOrientation: 'portrait', deviceName: 'Android Emulator', appiumVersion: '1.7.1' }
+    // { browserName: 'safari', version: '10.0', platformName: 'iOS', platformVersion: '10.0', deviceOrientation: 'portrait', deviceName: 'iPhone 6 Simulator', appiumVersion: '1.7.1' },
+    // { browserName: 'chrome', platformName: 'Android', platformVersion: '6.0', deviceOrientation: 'portrait', deviceName: 'Android Emulator', appiumVersion: '1.7.1' }
   ].map(createCapability),
 
   // If you only want to run your tests until a specific amount of tests have failed use
