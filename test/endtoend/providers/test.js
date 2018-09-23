@@ -14,7 +14,7 @@ describe('File upload with Providers', () => {
     }
 
     // ensure session is cleared
-    browser.reload()
+    // browser.reload()
     startUploadTest(browser, 'GoogleDrive')
     signIntoGoogle(browser)
     finishUploadTest(browser)
@@ -28,7 +28,7 @@ describe('File upload with Providers', () => {
     }
 
     // ensure session is cleared
-    browser.reload()
+    // browser.reload()
     startUploadTest(browser, 'Instagram')
     // do oauth authentication
     browser.waitForExist('input[name=username]')
@@ -47,7 +47,7 @@ describe('File upload with Providers', () => {
     }
 
     // ensure session is cleared
-    browser.reload()
+    // browser.reload()
     startUploadTest(browser, 'Dropbox')
     // do oauth authentication
     browser.waitForVisible('button.auth-google')
