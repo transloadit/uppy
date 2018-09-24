@@ -1,6 +1,6 @@
 const request = require('request')
 const purest = require('purest')({ request })
-const logger = require('../logger')
+const logger = require('../../logger')
 
 /**
  *
@@ -127,6 +127,10 @@ class DropBox {
 
         done(body.size)
       })
+  }
+
+  adaptData() {
+
   }
 }
 

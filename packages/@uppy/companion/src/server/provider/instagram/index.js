@@ -1,7 +1,8 @@
 const request = require('request')
 const purest = require('purest')({ request })
-const utils = require('../helpers/utils')
-const logger = require('../logger')
+const utils = require('../../helpers/utils')
+const logger = require('../../logger')
+const adapter = require('./adapter')
 
 class Instagram {
   constructor (options) {
@@ -85,6 +86,29 @@ class Instagram {
             done()
           })
       })
+  }
+
+  /** {username: string, items: [{
+   * items: [], icon: string, mimeType: string, id: string, isFolder: bool, name: string, requestPath: string, thumbnail: string, nextPagePath: string, modifiedDate: string
+   * }]} */
+  adaptData(res) {
+    const data = { username: adapter.getUsername(res), items: [] }
+    const items = adapter.getItemSubList(data)
+    items.forEach((item) => {
+      data.items.push({
+        isFolder: adapter.isFolder(item),
+        icon: adapter.getItemIcon(item),
+        name: adapter.getItemName(item),
+        mimeType: adapter.getMimeType(item),
+        id: adapter.getItemId(item),
+        thumbnail: adapter.getItemThumbnailUrl(item),
+        nextPagePath: adapter.getNextPagePath(item),
+        requestPath: adapter.getItemRequestPath(item),
+        modifiedDate: adapter.getItemModifiedDate(item)
+      })
+    })
+
+    return data
   }
 }
 

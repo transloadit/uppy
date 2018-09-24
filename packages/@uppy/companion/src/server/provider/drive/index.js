@@ -1,7 +1,7 @@
 const request = require('request')
 // @ts-ignore
 const purest = require('purest')({ request })
-const logger = require('../logger')
+const logger = require('../../logger')
 const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 const TEAM_DRIVE_FIELDS = 'teamDrives(kind,id,name,backgroundImageLink)'
@@ -104,6 +104,10 @@ class Drive {
       }
       done(parseInt(body.size))
     })
+  }
+
+  adaptData () {
+    
   }
 }
 
