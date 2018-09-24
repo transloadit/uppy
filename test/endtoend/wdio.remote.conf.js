@@ -21,7 +21,7 @@ exports.config = Object.assign(base.config, {
 
   // If you only want to run your tests until a specific amount of tests have failed use
   // bail (default is 0 - don't bail, run all tests).
-  bail: 0,
+  bail: 3,
 
   // Set a base URL in order to shorten url command calls. If your url parameter starts
   // with "/", then the base url gets prepended.
@@ -33,11 +33,5 @@ exports.config = Object.assign(base.config, {
   // commands. Instead, they hook themselves up into the test process.
   services: ['static-server', 'sauce', new CompanionService()],
   user: process.env.SAUCE_USERNAME,
-  key: process.env.SAUCE_ACCESS_KEY,
-  // Options to be passed to Mocha.
-  // See the full list at http://mochajs.org/
-  mochaOpts: {
-    ui: 'dot',
-    timeout: 60000
-  }
+  key: process.env.SAUCE_ACCESS_KEY
 })
