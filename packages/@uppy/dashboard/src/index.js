@@ -8,7 +8,7 @@ const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const prettyBytes = require('prettier-bytes')
-const ResizeObserver = require('resize-observer-polyfill')
+const ResizeObserver = require('resize-observer-polyfill').default
 const { defaultTabIcon } = require('./components/icons')
 
 // Some code for managing focus was adopted from https://github.com/ghosh/micromodal
