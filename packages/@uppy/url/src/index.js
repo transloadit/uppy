@@ -141,8 +141,11 @@ module.exports = class Url extends Plugin {
         }
       })
       .then(() => {
-        const dashboard = this.uppy.getPlugin('Dashboard')
-        if (dashboard) dashboard.hideAllPanels()
+        // Close the Dashboard panel if plugin is installed
+        // into Dashboard (could be other parent UI plugin)
+        // if (this.parent && this.parent.hideAllPanels) {
+        //   this.parent.hideAllPanels()
+        // }
       })
       .catch((err) => {
         this.uppy.log(err)
@@ -206,23 +209,29 @@ module.exports = class Url extends Plugin {
       addFile={this.addFile} />
   }
 
+  onMount () {
+    if (this.el) {
+      this.el.addEventListener('drop', this.handleDrop)
+      this.el.addEventListener('dragover', this.handleDragOver)
+      this.el.addEventListener('dragleave', this.handleDragLeave)
+      this.el.addEventListener('paste', this.handlePaste)
+    }
+  }
+
   install () {
     const target = this.opts.target
     if (target) {
       this.mount(target, this)
     }
-
-    this.el.addEventListener('drop', this.handleDrop)
-    this.el.addEventListener('dragover', this.handleDragOver)
-    this.el.addEventListener('dragleave', this.handleDragLeave)
-    this.el.addEventListener('paste', this.handlePaste)
   }
 
   uninstall () {
-    this.el.removeEventListener('drop', this.handleDrop)
-    this.el.removeEventListener('dragover', this.handleDragOver)
-    this.el.removeEventListener('dragleave', this.handleDragLeave)
-    this.el.removeEventListener('paste', this.handlePaste)
+    if (this.el) {
+      this.el.removeEventListener('drop', this.handleDrop)
+      this.el.removeEventListener('dragover', this.handleDragOver)
+      this.el.removeEventListener('dragleave', this.handleDragLeave)
+      this.el.removeEventListener('paste', this.handlePaste)
+    }
 
     this.unmount()
   }
