@@ -446,6 +446,10 @@ this.info({
 
 Subscribe to an uppy-event. See below for the full list of events.
 
+### `uppy.off('event', action)`
+
+Unsubscribe to an uppy-event. See below for the full list of events.
+
 ## Events
 
 Uppy exposes events that you can subscribe to in your app:
