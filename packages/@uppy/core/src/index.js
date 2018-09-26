@@ -586,12 +586,6 @@ class Uppy {
   cancelAll () {
     this.emit('cancel-all')
 
-    const { currentUploads } = this.getState()
-    const uploadIDs = Object.keys(currentUploads)
-    uploadIDs.forEach((id) => {
-      this._removeUpload(id)
-    })
-
     const files = Object.keys(this.getState().files)
     files.forEach((fileID) => {
       this.removeFile(fileID)
