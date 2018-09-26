@@ -240,15 +240,33 @@ describe('src/Core', () => {
     })
   })
 
-  it('should clear all uploads on cancelAll()', () => {
+  it('should clear all uploads and files on cancelAll()', () => {
     const core = new Core()
-    const id = core._createUpload([ 'a', 'b' ])
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo1.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' })
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo2.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' })
+    })
+
+    const fileIDs = Object.keys(core.getState().files)
+    const id = core._createUpload(fileIDs)
 
     expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
 
     core.cancelAll()
 
     expect(core.getState().currentUploads[id]).toBeUndefined()
+    expect(Object.keys(core.getState().files).length).toEqual(0)
   })
 
   it('should close, reset and uninstall when the close method is called', () => {
