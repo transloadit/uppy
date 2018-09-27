@@ -6,5 +6,9 @@ const Tus = require('@uppy/tus')
 const uppyOne = new Uppy({debug: true, autoProceed: true})
 uppyOne
   .use(FileInput, { target: '.UppyInput', pretty: false })
-  .use(Tus, { endpoint: '//master.tus.io/files/' })
-  .use(StatusBar, { target: '.UppyInput-Progress', hideUploadButton: true })
+  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+  .use(StatusBar, {
+    target: '.UppyInput-Progress',
+    hideUploadButton: true,
+    hideAfterFinish: false
+  })

@@ -226,7 +226,8 @@ module.exports = class StatusBar extends Plugin {
       hideUploadButton: this.opts.hideUploadButton,
       hideRetryButton: this.opts.hideRetryButton,
       hidePauseResumeCancelButtons: this.opts.hidePauseResumeCancelButtons,
-      hideAfterFinish: this.opts.hideAfterFinish
+      hideAfterFinish: this.opts.hideAfterFinish,
+      isTargetDOMEl: this.isTargetDOMEl
     })
   }
 
