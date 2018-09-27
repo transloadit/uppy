@@ -647,6 +647,29 @@ describe('src/Core', () => {
       })
       expect(core.getFiles().length).toEqual(0)
     })
+
+    it('allows no new files after upload when allowMultipleUploads: false', async () => {
+      const core = new Core({ allowMultipleUploads: false })
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+
+      await core.upload()
+
+      expect(() => {
+        core.addFile({
+          source: 'jest',
+          name: '123.foo',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+      }).toThrow(
+        /Cannot add new files: already uploading\./
+      )
+    })
   })
 
   describe('uploading a file', () => {
@@ -760,12 +783,16 @@ describe('src/Core', () => {
 
       await expect(core.upload()).resolves.toBeDefined()
 
-      core.addFile({
-        source: 'jest',
-        name: '123.foo',
-        type: 'image/jpeg',
-        data: new File([sampleImage], { type: 'image/jpeg' })
-      })
+      // expect(() => {
+      //   core.addFile({
+      //     source: 'jest',
+      //     name: '123.foo',
+      //     type: 'image/jpeg',
+      //     data: new File([sampleImage], { type: 'image/jpeg' })
+      //   })
+      // }).toThrow(
+      //   /Cannot add new files: already uploading\./
+      // )
       await expect(core.upload()).rejects.toThrow(
         /Cannot create a new upload: already uploading\./
       )
