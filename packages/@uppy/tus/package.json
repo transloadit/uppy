@@ -1,7 +1,7 @@
 {
   "name": "@uppy/tus",
   "description": "Resumable uploads for Uppy using Tus.io",
-  "version": "0.27.4",
+  "version": "0.27.5",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -28,7 +28,7 @@
     "tus-js-client": "^1.5.1"
   },
   "devDependencies": {
-    "@uppy/core": "0.27.2"
+    "@uppy/core": "0.27.3"
   },
   "peerDependencies": {
     "@uppy/core": "^0.27.0"

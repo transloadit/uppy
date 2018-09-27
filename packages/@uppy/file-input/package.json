@@ -1,7 +1,7 @@
 {
   "name": "@uppy/file-input",
   "description": "Simple UI of a file input button that works with Uppy right out of the box",
-  "version": "0.27.3",
+  "version": "0.27.4",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -27,7 +27,7 @@
     "preact": "^8.2.9"
   },
   "devDependencies": {
-    "@uppy/core": "0.27.2"
+    "@uppy/core": "0.27.3"
   },
   "peerDependencies": {
     "@uppy/core": "^0.27.0"
