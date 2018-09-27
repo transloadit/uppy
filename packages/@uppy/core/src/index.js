@@ -621,6 +621,7 @@ class Uppy {
 
   reset () {
     this.cancelAll()
+    this.setState({ allowNewUpload: true })
   }
 
   _calculateProgress (file, data) {

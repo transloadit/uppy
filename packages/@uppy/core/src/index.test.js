@@ -230,7 +230,7 @@ describe('src/Core', () => {
 
     // expect(corePauseEventMock.mock.calls.length).toEqual(1)
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
-    expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
+    expect(coreStateUpdateEventMock.mock.calls.length).toEqual(3)
     expect(coreStateUpdateEventMock.mock.calls[1][1]).toEqual({
       capabilities: { resumableUploads: false },
       files: {},
@@ -289,7 +289,7 @@ describe('src/Core', () => {
 
     // expect(corePauseEventMock.mock.calls.length).toEqual(1)
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
-    expect(coreStateUpdateEventMock.mock.calls.length).toEqual(1)
+    expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
     expect(coreStateUpdateEventMock.mock.calls[0][1]).toEqual({
       capabilities: { resumableUploads: false },
       files: {},
@@ -782,20 +782,31 @@ describe('src/Core', () => {
       })
 
       await expect(core.upload()).resolves.toBeDefined()
-
-      // expect(() => {
-      //   core.addFile({
-      //     source: 'jest',
-      //     name: '123.foo',
-      //     type: 'image/jpeg',
-      //     data: new File([sampleImage], { type: 'image/jpeg' })
-      //   })
-      // }).toThrow(
-      //   /Cannot add new files: already uploading\./
-      // )
       await expect(core.upload()).rejects.toThrow(
         /Cannot create a new upload: already uploading\./
       )
+    })
+
+    it('allows new files again with allowMultipleUploads: false after reset() was called', async () => {
+      const core = new Core({ allowMultipleUploads: false })
+
+      core.addFile({
+        source: 'jest',
+        name: 'bar.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      await expect(core.upload()).resolves.toBeDefined()
+
+      core.reset()
+
+      core.addFile({
+        source: 'jest',
+        name: '123.foo',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      await expect(core.upload()).resolves.toBeDefined()
     })
   })
 
