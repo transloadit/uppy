@@ -18,12 +18,12 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
   <head>
     <meta charset="utf-8">
     <title>Uppy</title>
-    <link href="https://transloadit.edgly.net/releases/uppy/v0.27.4/dist/uppy.min.css" rel="stylesheet">
+    <link href="https://transloadit.edgly.net/releases/uppy/v0.27.5/dist/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <div id="drag-drop-area"></div>
 
-    <script src="https://transloadit.edgly.net/releases/uppy/v0.27.4/dist/uppy.min.js"></script>
+    <script src="https://transloadit.edgly.net/releases/uppy/v0.27.5/dist/uppy.min.js"></script>
     <script>
       var uppy = Uppy.Core()
         .use(Uppy.Dashboard, {
@@ -107,12 +107,12 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 1\. Add a script at the bottom of the closing `</body>` tag:
 
 ``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v0.27.4/dist/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.27.5/dist/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://transloadit.edgly.net/releases/uppy/v0.27.4/dist/uppy.min.css" rel="stylesheet">
+<link href="https://transloadit.edgly.net/releases/uppy/v0.27.5/dist/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize at the bottom of the closing `</body>` tag:
