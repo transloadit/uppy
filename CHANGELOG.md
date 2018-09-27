@@ -122,15 +122,34 @@ What we need to do to release Uppy 1.0
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
 - [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
-- [ ] docs: quick start guide: https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (@arturi)
 - [ ] transloadit: add error reporting (@goto-bus-stop)
-- [ ] core: use Browserslist config to share between PostCSS, Autoprefixer and Babel https://github.com/browserslist/browserslist, https://github.com/amilajack/eslint-plugin-compat (@arturi)
 - [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
 - [ ] core: update babel once v7 is out
 - [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion
 - [ ] companion: option validation (can use https://npm.im/ajv + JSON schema)
 - [ ] transloadit: add end2end test for transloadit https://uppy.io/examples/transloadit/ (@arturi, @goto-bus-stop)
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
+
+## 0.27.5
+
+Released: 2018-09-27
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| uppy | 0.27.5 | @uppy/instagram | 0.27.5 |
+| @uppy/core | 0.27.3 | @uppy/react | 0.27.5 |
+| @uppy/dashboard | 0.27.5 | @uppy/transloadit | 0.27.5 |
+| @uppy/dropbox | 0.27.4 | @uppy/tus | 0.27.5 |
+| @uppy/form | 0.27.4 | @uppy/url | 0.27.5 |
+| @uppy/informer | 0.27.4 | @uppy/webcam | 0.27.4 |
+
+- core: Add onMount and this.parent to Plugin (#1062 / @arturi)
+- core: Call `removeFile` on each file when doing `cancelAll` (#1058 / @arturi)
+- dashboard: Fixing “ResizeObserver is not a constructor”, issue #1070, by doing Use require('resize-observer-polyfill').default || require('resize-observer-polyfill') (#1078 / @yoldar, @arturi, @goto-bus-stop)
+- dashboard: Only show the plus button if props.totalFileCount < props.maxNumberOfFiles(#1063 / @arturi)
+- status-bar: use uppy-Root in status-bar when it’s mounted in DOM (#1081 / @arturi)
+- docs: added uppy.off() info (#1077 / @dviry)
+- docs: quick start guide, add simple HTML page snippet with Uppy https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (#1068 / @arturi)
 
 ## 0.27.4
 
