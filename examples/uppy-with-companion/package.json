@@ -8,7 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "node ./server/index.js",
     "client": "light-server -p 3000 -s client",
-    "start": "npm run server & npm run client"
+    "start": "npm run server & npm run client",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +19,8 @@
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "light-server": "^2.4.0",
-    "upload-server": "^1.1.6"
-  }
+    "upload-server": "^1.1.6",
+    "snyk": "^1.99.1"
+  },
+  "snyk": true
 }
