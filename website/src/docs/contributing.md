@@ -14,7 +14,10 @@ After you have successfully forked the repo, clone and install the project:
 git clone git@github.com:YOUR_USERNAME/uppy.git
 cd uppy
 npm install
+npm run bootstrap
 ```
+
+We use lerna to manage the many plugin packages Uppy has. You should always do `npm run bootstrap` after an `npm install` to make sure lerna has installed the dependencies of each package and that the `package-lock.json` in the repository root is up to date.
 
 Our website’s examples section is also our playground, please read the [Local Previews](#Local-Previews) section to get up and running.
 

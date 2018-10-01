@@ -39,15 +39,22 @@ npm run build
 # https://github.com/facebook/create-react-app/pull/4626
 (cd && npm-auth-to-token -u user -p password -e user@example.com -r "$VERDACCIO_REGISTRY")
 
+git checkout -b endtoend-test-build
+# HACK this thing changes all the time for some reason on CI
+# so I'll just ignore it…
+git checkout -- package-lock.json
+
 # Simulate a publish of everything, to the local registry,
 # without changing things in git
-# Use --cd-version to skip version prompts
-lerna publish --yes \
+lerna version prerelease --yes \
+  --exact \
   --force-publish \
-  --registry="$VERDACCIO_REGISTRY" \
   --npm-client=npm \
-  --no-git-tag-version --no-push \
-  --canary
+  --no-push
+lerna publish from-git --yes \
+  --registry="$VERDACCIO_REGISTRY" \
+  --no-verify-access \
+  --npm-client=npm
 
 # revert version changes
 git checkout -- packages/*/package.json packages/@uppy/*/package.json

@@ -1,12 +1,24 @@
 const base = require('./wdio.base.conf')
 const { CompanionService } = require('./utils')
 
+// Use "npm run test:acceptance:local -- -b chrome" to test in chrome
+// "npm run test:acceptance:local -- -b firefox -b chrome" to test in FF and chrome
+let prevIsDashB = false
+const capabilities = []
+process.argv.forEach((arg) => {
+  if (prevIsDashB) {
+    capabilities.push({ browserName: arg })
+  }
+  prevIsDashB = arg === '-b'
+})
+
+// default to testing in firefox
+if (capabilities.length === 0) {
+  capabilities.push({ browserName: 'firefox' })
+}
+
 exports.config = Object.assign(base.config, {
-  capabilities: [
-    { browserName: 'firefox' }
-    // { browserName: 'MicrosoftEdge', version: '14.14393', platform: 'Windows 10' },
-    // { browserName: 'safari', version: '11.0', platform: 'macOS 10.12' }
-  ],
+  capabilities,
 
   // If you only want to run your tests until a specific amount of tests have failed use
   // bail (default is 0 - don't bail, run all tests).
