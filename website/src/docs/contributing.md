@@ -25,7 +25,9 @@ Our website’s examples section is also our playground, please read the [Local 
 
 Unit tests are using Jest and can be run with:
 
-`npm run test:unit`
+```bash
+npm run test:unit
+```
 
 For acceptance (or end-to-end) tests, we use [Webdriverio](http://webdriver.io). For it to run locally, you need to install a Selenium standalone server. Just follow [the guide](http://webdriver.io/guide.html) to do so. You can also install a Selenium standalone server from NPM:
 
@@ -36,11 +38,35 @@ selenium-standalone install
 
 And then launch it:
 
-`selenium-standalone start`
+```bash
+selenium-standalone start
+```
 
 After you have installed and launched the selenium standalone server, run:
 
-`npm run test:acceptance:local`
+```bash
+npm run test:acceptance:local
+```
+
+By default, `test:acceptance:local` uses Firefox. You can use a different browser, like Chrome, by passing the `-b` flag:
+
+```bash
+npm run test:acceptance:local -- -b chrome
+```
+
+> Note: The `--` is important, it tells npm that the remaining arguments should be interpreted by the script itself, not by npm.
+
+You can run in multiple browsers by passing multiple `-b` flags:
+
+```bash
+npm run test:acceptance:local -- -b chrome -b firefox
+```
+
+When trying to get a specific integration test to pass, it's not that helpful to continuously run _all_ tests. You can use the `--suite` flag to run tests from a single `./test/endtoend` folder. For example, `--suite thumbnails` will only run the tests from `./test/endtoend/thumbnails`. Of course, it can also be combined with one or more `-b` flags.
+
+```bash
+npm run test:acceptance:local -- -b chrome --suite thumbnails
+```
 
 These tests are also run automatically on Travis builds with [SauceLabs](https://saucelabs.com/) cloud service using different OSes.
 
