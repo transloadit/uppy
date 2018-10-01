@@ -143,12 +143,12 @@ Released: 2018-09-27
 | @uppy/form | 0.27.4 | @uppy/url | 0.27.5 |
 | @uppy/informer | 0.27.4 | @uppy/webcam | 0.27.4 |
 
-- core: Add onMount and this.parent to Plugin (#1062 / @arturi)
+- core: Add `onMount()` and `this.parent` to Plugin (#1062 / @arturi)
 - core: Call `removeFile` on each file when doing `cancelAll` (#1058 / @arturi)
-- dashboard: Fixing “ResizeObserver is not a constructor”, issue #1070, by doing Use require('resize-observer-polyfill').default || require('resize-observer-polyfill') (#1078 / @yoldar, @arturi, @goto-bus-stop)
-- dashboard: Only show the plus button if props.totalFileCount < props.maxNumberOfFiles(#1063 / @arturi)
-- status-bar: use uppy-Root in status-bar when it’s mounted in DOM (#1081 / @arturi)
-- docs: added uppy.off() info (#1077 / @dviry)
+- dashboard: Fixing “ResizeObserver is not a constructor”, issue #1070, by doing `require('resize-observer-polyfill').default || require('resize-observer-polyfill')` (#1078 / @yoldar, @arturi, @goto-bus-stop)
+- dashboard: Only show the plus button if `props.totalFileCount < props.maxNumberOfFiles` (#1063 / @arturi)
+- status-bar: use `uppy-Root` in Status Bar when it’s mounted in DOM (#1081 / @arturi)
+- docs: added `uppy.off()` info (#1077 / @dviry)
 - docs: quick start guide, add simple HTML page snippet with Uppy https://community.transloadit.com/t/quick-start-guide-would-be-really-helpful/14605 (#1068 / @arturi)
 
 ## 0.27.4
