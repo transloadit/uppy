@@ -20,7 +20,10 @@ module.exports = class ThumbnailGenerator extends Plugin {
       thumbnailWidth: 200
     }
 
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = {
+      ...defaultOptions,
+      ...opts
+    }
 
     this.addToQueue = this.addToQueue.bind(this)
     this.onRestored = this.onRestored.bind(this)
@@ -35,18 +38,18 @@ module.exports = class ThumbnailGenerator extends Plugin {
    */
   createThumbnail (file, targetWidth) {
     const originalUrl = URL.createObjectURL(file.data)
+
     const onload = new Promise((resolve, reject) => {
       const image = new Image()
       image.src = originalUrl
-      image.onload = () => {
+      image.addEventListener('load', () => {
         URL.revokeObjectURL(originalUrl)
         resolve(image)
-      }
-      image.onerror = () => {
-        // The onerror event is totally useless unfortunately, as far as I know
+      })
+      image.addEventListener('error', (event) => {
         URL.revokeObjectURL(originalUrl)
-        reject(new Error('Could not create thumbnail'))
-      }
+        reject(event.error || new Error('Could not create thumbnail'))
+      })
     })
 
     return onload
@@ -154,9 +157,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * Set the preview URL for a file.
    */
   setPreviewURL (fileID, preview) {
-    this.uppy.setFileState(fileID, {
-      preview: preview
-    })
+    this.uppy.setFileState(fileID, { preview })
   }
 
   addToQueue (item) {
@@ -175,6 +176,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
         .then(() => this.processQueue())
     } else {
       this.queueProcessing = false
+      this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue')
+      this.uppy.emit('thumbnail:all-generated')
     }
   }
 
@@ -183,9 +186,13 @@ module.exports = class ThumbnailGenerator extends Plugin {
       return this.createThumbnail(file, this.opts.thumbnailWidth)
         .then(preview => {
           this.setPreviewURL(file.id, preview)
+          this.uppy.log(`[ThumbnailGenerator] Generated thumbnail for ${file.id}`)
+          this.uppy.emit('thumbnail:generated', this.uppy.getFile(file.id), preview)
         })
         .catch(err => {
-          console.warn(err.stack || err.message)
+          this.uppy.log(`[ThumbnailGenerator] Failed thumbnail for ${file.id}`)
+          this.uppy.log(err, 'warning')
+          this.uppy.emit('thumbnail:error', this.uppy.getFile(file.id), err)
         })
     }
     return Promise.resolve()
