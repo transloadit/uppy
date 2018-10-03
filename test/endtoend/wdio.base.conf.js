@@ -92,7 +92,8 @@ exports.config = {
     { mount: '/tus-drag-drop', path: './test/endtoend/tus-drag-drop/dist' },
     { mount: '/xhr-limit', path: './test/endtoend/xhr-limit/dist' },
     { mount: '/providers', path: './test/endtoend/providers/dist' },
-    { mount: '/create-react-app', path: './test/endtoend/create-react-app/build' }
+    { mount: '/create-react-app', path: './test/endtoend/create-react-app/build' },
+    { mount: '/transloadit', path: './test/endtoend/transloadit/dist' }
   ],
 
   // Framework you want to run your specs with.
