@@ -18,10 +18,16 @@ function setTransloaditKeyAndInit (transloaditKey) {
 describe('Transloadit file processing', () => {
   beforeEach(() => {
     browser.url(testURL)
-    browser.execute(setTransloaditKeyAndInit, process.env.TRANSLOADIT_KEY)
   })
 
   it('should upload a file to Transloadit and crop it', () => {
+    const transloaditKey = process.env.TRANSLOADIT_KEY
+    if (transloaditKey === undefined) {
+      console.log('skipping Transloadit integration test')
+      return this.skip()
+    }
+    browser.execute(setTransloaditKeyAndInit, transloaditKey)
+
     const inputPath = '#uppy-transloadit .uppy-Dashboard-input'
     const resultPath = '#uppy-result'
 
@@ -33,9 +39,9 @@ describe('Transloadit file processing', () => {
     } else {
       browser.execute(selectFakeFile, 'uppyTransloadit')
     }
-    browser.pause(15000)
+    // browser.pause(15000)
     // $('.uppy-StatusBar-actionBtn--upload').click()
-    // $(resultPath).waitForExist()
+    $(resultPath).waitForExist(15000)
     const text = browser.getText(resultPath)
     expect(text).to.be.equal('ok')
   })
