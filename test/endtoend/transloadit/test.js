@@ -20,7 +20,7 @@ describe('Transloadit file processing', () => {
     browser.url(testURL)
   })
 
-  it('should upload a file to Transloadit and crop it', () => {
+  it('should upload a file to Transloadit and crop it', function () {
     const transloaditKey = process.env.TRANSLOADIT_KEY
     if (transloaditKey === undefined) {
       console.log('skipping Transloadit integration test')
