@@ -1,5 +1,6 @@
 /* global browser, expect, capabilities, $ */
 const path = require('path')
+const fs = require('fs')
 const { selectFakeFile, supportsChooseFile } = require('../utils')
 
 const testURL = 'http://localhost:4567/transloadit'
@@ -37,10 +38,16 @@ describe('Transloadit file processing', () => {
       browser.execute(unhideTheInput)
       browser.chooseFile(inputPath, path.join(__dirname, '../../resources/image.jpg'))
     } else {
+      const img = path.join(__dirname, '../../resources/image.jpg')
+      browser.execute(
+        selectFakeFile,
+        'uppyTransloadit',
+        path.basename(img), // name
+        `image/jpeg`, // type
+        fs.readFileSync(img, 'base64') // b64
+      )
       browser.execute(selectFakeFile, 'uppyTransloadit')
     }
-    // browser.pause(15000)
-    // $('.uppy-StatusBar-actionBtn--upload').click()
     $(resultPath).waitForExist(15000)
     const text = browser.getText(resultPath)
     expect(text).to.be.equal('ok')
