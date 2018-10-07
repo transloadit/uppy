@@ -242,3 +242,19 @@
   line-height: 1.3;
   word-wrap: break-word;
 }
+
+.uppy-StatusBar-spinner {
+  animation-name: uppy-StatusBar-spinnerAnimation;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes uppy-StatusBar-spinnerAnimation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
