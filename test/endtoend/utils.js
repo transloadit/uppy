@@ -6,11 +6,32 @@ const { spawn } = require('child_process')
 // and IE10/IE11 do not support new syntax features
 function selectFakeFile (uppyID, name, type, b64) {
   if (!b64) b64 = 'PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='
+  if (!type) type = 'image/svg+xml'
 
-  var blob = new Blob(
-    ['data:image/svg+xml;base64,' + b64],
-    { type: type || 'image/svg+xml' }
-  )
+  // https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
+  function base64toBlob (base64Data, contentType) {
+    contentType = contentType || ''
+    var sliceSize = 1024
+    var byteCharacters = atob(base64Data)
+    var bytesLength = byteCharacters.length
+    var slicesCount = Math.ceil(bytesLength / sliceSize)
+    var byteArrays = new Array(slicesCount)
+
+    for (var sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+      var begin = sliceIndex * sliceSize
+      var end = Math.min(begin + sliceSize, bytesLength)
+
+      var bytes = new Array(end - begin)
+      for (var offset = begin, i = 0; offset < end; ++i, ++offset) {
+        bytes[i] = byteCharacters[offset].charCodeAt(0)
+      }
+      byteArrays[sliceIndex] = new Uint8Array(bytes)
+    }
+    return new Blob(byteArrays, { type: contentType })
+  }
+
+  var blob = base64toBlob(b64, type)
+
   window[uppyID].addFile({
     source: 'test',
     name: name || 'test-file',
