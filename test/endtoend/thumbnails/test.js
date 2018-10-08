@@ -21,11 +21,6 @@ describe('ThumbnailGenerator', () => {
   })
 
   it('should generate thumbnails for images', function () {
-    // FIXME why isn't the selectFakeFile alternative below working?
-    if (!supportsChooseFile()) {
-      return this.skip()
-    }
-
     $('#uppyThumbnails .uppy-FileInput-input').waitForExist()
 
     browser.execute(/* must be valid ES5 for IE */ function () {
