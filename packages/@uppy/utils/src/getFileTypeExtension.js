@@ -7,10 +7,13 @@ const mimeToExtensions = {
   'audio/ogg': 'ogg',
   'video/webm': 'webm',
   'audio/webm': 'webm',
+  'video/x-matroska': 'mkv',
   'video/mp4': 'mp4',
   'audio/mp3': 'mp3'
 }
 
 module.exports = function getFileTypeExtension (mimeType) {
+  // Remove the ; bit in 'video/x-matroska;codecs=avc1'
+  mimeType = mimeType.replace(/;.*$/, '')
   return mimeToExtensions[mimeType] || null
 }
