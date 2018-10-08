@@ -76,7 +76,8 @@ module.exports = (props) => {
   const width = typeof progressValue === 'number' ? progressValue : 100
   const isHidden = (uploadState === statusBarStates.STATE_WAITING && props.hideUploadButton) ||
     (uploadState === statusBarStates.STATE_WAITING && !props.newFiles > 0) ||
-    (uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish)
+    (uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish) ||
+    !props.allowNewUpload
 
   const progressClassNames = `uppy-StatusBar-progress
                            ${progressMode ? 'is-' + progressMode : ''}`

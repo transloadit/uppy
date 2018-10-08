@@ -7,9 +7,11 @@ function DashboardContentTitle (props) {
 }
 
 function PanelTopBar (props) {
-  const notOverFileLimit = props.maxNumberOfFiles
-    ? props.totalFileCount < props.maxNumberOfFiles
-    : true
+  let { allowNewUpload } = props.allowNewUpload
+  // TODO maybe this should be done in ../index.js, then just pass that down as `allowNewUpload`
+  if (allowNewUpload && props.maxNumberOfFiles) {
+    allowNewUpload = props.totalFileCount < props.maxNumberOfFiles
+  }
 
   return (
     <div class="uppy-DashboardContent-bar">
@@ -19,7 +21,7 @@ function PanelTopBar (props) {
       <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
         <DashboardContentTitle {...props} />
       </div>
-      { notOverFileLimit &&
+      { allowNewUpload &&
         <button class="uppy-DashboardContent-addMore"
           type="button"
           aria-label={props.i18n('addMoreFiles')}
@@ -30,7 +32,6 @@ function PanelTopBar (props) {
           </svg>
         </button>
       }
-
     </div>
   )
 }
