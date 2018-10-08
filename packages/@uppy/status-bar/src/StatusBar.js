@@ -82,7 +82,7 @@ module.exports = (props) => {
                            ${progressMode ? 'is-' + progressMode : ''}`
 
   const statusBarClassNames = classNames(
-    'uppy',
+    { 'uppy-Root': props.isTargetDOMEl },
     'uppy-StatusBar',
     `is-${uploadState}`,
     { 'uppy-StatusBar--detailedProgress': props.showProgressDetails }

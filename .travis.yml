@@ -1,6 +1,22 @@
 language: node_js
 node_js:
 - 8.11.4
+before_install:
+- nvm install-latest-npm
+install:
+- npm install
+- npm run bootstrap -- --no-ci
+script:
+- npm run build
+- npm run test
+- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:acceptance; fi
+- npm run uploadcdn
+cache:
+  apt: true
+  directories:
+  - "~/.npm"
+services:
+- docker
 addons:
   apt:
     sources:
@@ -12,19 +28,6 @@ addons:
       secure: nAMJ/d1fm9urTYsQ+1uqj6Jjf71J8rzwYBSZbTDAeUEZzAdvGc0a9H3PYWM4pnUDPo5s1c9MMetXi2XNdUbXgMKHbEnePZ2mJamqFtXMmpG8pgFmMqj+btMd7Yybt070tRsn4Vy0uBSi2H/en7F3j+grABJV+SAXqWkSB7CU1fZaN/u0DpoGBNj1ZNwkYCIhpLueYJTPRWBOodMAarXuFv5+7KFOKuZM3tF/JjsMNSSaDgTkz13BZnbX6vNPxGJJNJcyJGSaXrVW8hh1Zmvnk/XdiLy+vt7Wz1wz3A9ebiFDuydo5AAkxrLFsCJ5nGEqLg3bkr6NaTRpbM84ZT3i1FQMTdKP6OHHqwAeBscB6BkyhZhzvsFtl2YRBNK9mA3OtOYvBmTkFkNqvrPQlfu7cFtyG5+AUfSCiTTgS/vWIwoqSVAXaOEqN8Fp54ecUdkzCTttl3gXteZzNLRYvyQcFpoJb6E+dS8qAW0OFOteiwKVuPCh3nGUzBP13bRo1i9UAX7ZCTlpjinkxE8ryzbToo6ZcVQMBAkKhaw/x8GzOtfm5rgYMeQzGEoBJNfr7qqfs7JMxAIEMYjrTL9PXVOp/R8F3FdsqbV70jSyfsxMSMkwSWFRmVslG8+Djy8P3LnckGy1FEbMHnH8GZHZg+hbBzN8Be1/1fV0oRRAr939WRc=
     access_key:
       secure: OY3oWwiJghfty9wSPVvlhirvFGxPHDdIRuVkzAv6j7C/hj2BWYAP/UHrwdQ9XiYisHi/B5mGeyRVlrAf0MNGrG84rTDUbTWZbmktfuxl7A+Y6c0czk+s4SdhOiANG5b3tFl5wKq8h7uhrWH5/jWoKQ2Fz1VDCqxTvvZQbo41jSBhi7TBia626hxEePzdaiuw6HhGFZtfaoVs/FX30ylz8WDNrBjwCynjxsT52BaQrVvgEhuyzlOpI69YkZBPOq4fc3KiZ2YR43gLTx8K+sYCE9yJxdg1xT/UAawEhmedU83nyBZVo4rr7+03AixIxtI28MUCfBMlcsGwBxcKEKY/IWcp9UkPCq6+zALQoncV478tP21eYvlmxSFhYCrv+WEQlN+BcNjr4OJlmmFDbCVaF7r9qLeQPImU0+9iJU3OjrW7lpfLxORpGDEr2Nx6awKkIJCxNyK9weefeNo6Fz3V1kkyZ/7yWFeniJnRUCbahrB2XgzxIE+W307s1Qs4fm6JK7hVLTtG4fBzjChmAyGIzu744ws9WqmjvkC9D7OfnuXqanv/VcBFqPiudInerv7NL8FketUC+fxe/7XJfcxdaDGBjk8Kq7zXDohGRGymUXEoMDNJsKkMMlaKzdf7tgqdhsRJoH9NCVqrDXuG5al0UtrDP5RS7qfoxUunJmNFhlg=
-cache:
-  apt: true
-  directories:
-  - ~/.npm
-before_install:
-- nvm install-latest-npm
-services:
-  - docker
-script:
-- npm run build
-- npm run test
-- '{ if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:acceptance; fi } || true'
-- npm run uploadcdn
 env:
   global:
   - CXX=g++-4.8
@@ -50,12 +53,10 @@ env:
   - secure: V6qVB6vHAuSt1YPgzYpknLglnxbYJM5bsjAjQi78zZQSqrrWCMBgp5Q+Sq7Ad8nycgnPl8W8VpMnUIBqZcK4ciCW+vJBtZ7fBJLIEGMEk8+c8az8JePFcBRiaEicZPvZFuIHPteaAy6jK1GRVpjSjJi3NYEMpcDUs2aTM2bIpX0ks2WjUqTXiK8EvIaK2LTOgSBvyGUOiHwwTkom+PyD50t7jP98g+9Pn7GPwtWaUo1K8UpLArwR2fZ/nm0F2DU6ohz7o2t4LATFXuZhbOCj7O9vh+CmBf+/0C7giT3K23LbckDSK8CNTCDC2bsv8zDo5ZZtgdOvdatOD+VlsbAMkmUzzDgQ3410arZ8g1LVQw8eJwu1H+etcAinYf4r+Tr7s3dTBliMX70/IpjZrkHR9uXEi4LelBNYn6TKdLTW3lfVWkiFs/HPu4SoAmu1+sxSvwxVDDLeexQmb2fwp0r2tDKZ3eRfpQXLPACBaORnGW6ki9qXo8PBdaElxPbpzEWzAfT3F6zRjebpow+cdFBQrAga7/LrOrXerZxH2ekRWKgXzuhw7ERwVFrVN4/NlmDJXo+rm4na7n7CxY/QpZcdpthksDO9KYCqmn5dqMqFGislRvRe7PqIti8gC4pSdeUhDKsIh9OEgVNjCczvnA8rMRQ5aNmFx6wspmrBvO7qRLM=
   - secure: rVsiFPA9TvH/d2wkP8+1i5QGUuYw0q2BUAUdxyxO9hQcG/nRiHXtQfLbTRZHKwvqf0vyV6J1pJqLlVN4JO/bPhAvk55KAQJWl8UqyaeZiEN9KMcTr3fJuNFlBj4ciYiZ3BWwakblsiaGCjKMRdjki58a9f8XL2rcM8R6ccndjkTMYnBKaopSsAgouI8D5n74wQz6lODUayGOlbwlGLfGtPYplUfSLK4wghC+jgWsNjJySqJhfgYS0JCZc10Qw+FI2BoU4SZ4+P0L0YPIC9zV/cUW4qDT11N/oUgwfjZbPWfM9A/xn/d7sgDH+SpeoGdYler/lvxojj6L2mD/wAh8/lg1E6nL2aKgExE3z+fd2XV8L0osB/sulB7/Exrezg/mVejAx2IkWVHi4VEJmcTV+3WeEvTFOM3fID8dOVf+GUv+hcHdZMxS/hfj3keKCYG1P5ameMJO8FehRqhetNYnr6FTyrK+S+xitaZ/nXrTbHItPS0pZ4XA6CFs5uzMBPeDnk5/D7paPyrE/k2HAc1WmA6g37OyzYIMEV1laBz8IG0qMqg6JJmr09P/Iwrim5Ex2fAssT9Yr1WuOE2gWoF0A3XuVXQHVf4tJT6x/WDKChmbX588a47AvBgkFyoXLRilUYlET2tWnEpVxUovsbJXqvHwTXWMLO9riRjjeInbpvA=
   - secure: eq5hOqRBN2R7YO2dYdn5OjZc/zLLYYDZcCpCu/K/8fU4HYWTqxrBntjv8T0sZ5qdlAs3IniEfXxemz9V3zwvxR+vh2bGuYr2Xo7RRa2TIDuw+KUPZogrVxhXHPKfyJqstxy+dee2+pWhGkAP7caiu49eyqlboBMkzgpO/xcdehEWYRY5jPgvnlH+QRZ3GADKs1JEeltHDiZ6rYA7nj5Tyx9UoLgv4Av9UXdC29we7dLFTkVfCHE//7wfZW9+/IbxthA4qMjQOFaBrmagN5yweDg87iPTqNMth7FjzOavdUgQ2TW6d10VDEhLIZh36gLGreViKMDCEWKMQ8f/mv05Ao8+DXyXgxIn56II8lhUp5ukQ27ZWixfEKFx2lynJWRZE0pWwf8ec1+bXLQiBOE181Cl4nUT/TbFWzvV6yA+cMiQKe4y59bC4nhkK3IYgpR5kfCFOT+1tFknQ4hNJNacWwUmaDFMxYJaXEtRUn5jJa7eGRYSCrmnymbnzZ6w3Q3nQGNvNxpbBIXX/pzs0VDVTxSlgN4gA+n2jeCyjgVVrMQ/HoAS4uwm1cx89AttW+TANppg1PqWhhrJYuVEZSnvV8PM6R7rbvlS5tluezQj41YklgjsSopH7//+dbGGDNbrTTLic4J9PJR3yEtlAMdOCi53iT0R0Dt5X2WBv2QT5Eg=
+  - secure: ZOSwtE0lBuVO8ncxedW3yGRactSMy+QH/ySPBy79eRmuqrNR+c4mfhiYQAyJ9jmw746YT+8+X/eRwlKOa0SDzUOxEdq6lHqUjubaLvLvy7mr5WHR2b2HDmVYUNNvKgLxn9QPgNwja1toSq/gtK/oi69ENbQLMOHgP8anOK4P6UK4NvoMu1DjyPmBStMAWeEMwuwAaYf4RgAkCsOLTJBejL8kCtWSZNBJmT05lBbE1oSFy77Tg4h93PESOOODek2RRgIikR7LK2rI4tG2oHeo5uFnCe83yu7ZTEI3ArxYtqynYn8iy/zOHf3ewIwgqcqRV/EcvKKwCHx7yi/VNk3qKoz5/jWzE9+ceoUd3vXaU7r1SfXX8ACTmQArZqzU7Rng2s+7r8I8//XCGAsGI6/cOOlS7I7Yr7Ack6CqLlL2HBIoNGYT+jXP/VY9pgkm6YlpNAphdoQrZ1vm/0CtQQ/q5H0fW16qgUJZ1vCk+3PZYNt//83bI7TyIwX72dCrMKzub6bhQtWRMSCfxZELFgue8f+cQf/+NmHhmd9yRJyVhiZvtE/4RN4F32dJbJjtOb4HjFTQIAyE2rZlB4tjOsTKJK7cT+X4enRzyinDYpAjMgNwloAg8xsn+YE53pZJLFUqk8q1yUE6XkSK9fYRSKVc3mb4ICDY4/hTzJRBf+tSUSI=
 notifications:
   slack:
     secure: L3iQQE8sZ0ik1Z26gPoNMiIam9EOEwYhraHCY60Jk/wmfH6SW/727yKXpgcb/yayx37rUZplvoO7H8e05ISxTJKSepEeqbBUIBQs48S8hr+FHk0VPtpP4HGxqaITRLm+mI1coPRvfISxzrB8d240oup6muhC9Ws4/LXi6v8miyIOs2zoYmGxd56TrUeON3UYlKt6dMava0V4bugARzrafN/tfyI9ccqbHzQLBspQvBI61DzZ5I2vnWpkjfWgIHz9Fl4VzXHqMXwjuTUEu8ibA12b3dHZiJEAoqeb9Oj9QcLPbstPLhlNTZZaOrfiFtwLctI2rFh37slDpAfk5idv3ycxcoG5rbCxgyg5i6dpQqrqHxnyglgHg2/nZ+YA5okeS7nJJNtU/4S6AFRWOUUWMVVY0VBEV+8w+uurl0PDy80RUY3uyK64qAgQ8U0M81/Ys1oyWyn78TqHcbby7V2Ws5I9Yakrq8D+mdfsWYCio8F6LXHSwJ0mt2FanJtdDvpPk9sAwsXZN0n8xhELt5TiRp3bzVIQ0IPUgF54dTG9/zWRvC1P4TFaFU/2fg73ZEUC5aWJoFMnLSZjbZvp5gwpCVd0MjSBk80nF9dHYcavIgJ0wMGI3BMb8Nn6+T11Gw/ycr7OGU4NMkj7i8vSFgKF74piWZyiNW8orkMN6XZgM+o=
-
-# Travis docs: Note that pull request builds skip deployment step altogether.
-# https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
 deploy:
 - provider: script
   skip_cleanup: true

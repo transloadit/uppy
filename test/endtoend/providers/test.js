@@ -6,17 +6,15 @@ describe('File upload with Providers', () => {
     browser.url(testURL)
   })
 
-  afterEach(() => {
-    browser.reload()
-  })
-
   // not using arrow functions as cb so to keep mocha in the 'this' context
   it('should upload a file completely with Google Drive', function () {
-    if (process.env.UPPY_GOOGLE_EMAIL === undefined) {
+    if (process.env.UPPY_GOOGLE_EMAIL || process.env.UPPY_GOOGLE_EMAIL === undefined) {
       console.log('skipping Google Drive integration test')
       return this.skip()
     }
 
+    // ensure session is cleared
+    browser.reload()
     startUploadTest(browser, 'GoogleDrive')
     signIntoGoogle(browser)
     finishUploadTest(browser)
@@ -24,11 +22,13 @@ describe('File upload with Providers', () => {
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
   it('should upload a file completely with Instagram', function () {
-    if (process.env.UPPY_INSTAGRAM_USERNAME === undefined) {
+    if (process.env.UPPY_INSTAGRAM_USERNAME || process.env.UPPY_INSTAGRAM_USERNAME === undefined) {
       console.log('skipping Instagram integration test')
       return this.skip()
     }
 
+    // ensure session is cleared
+    browser.reload()
     startUploadTest(browser, 'Instagram')
     // do oauth authentication
     browser.waitForExist('input[name=username]')
@@ -41,11 +41,13 @@ describe('File upload with Providers', () => {
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
   it('should upload a file completely with Dropbox', function () {
-    if (process.env.UPPY_GOOGLE_EMAIL === undefined) {
+    if (process.env.UPPY_GOOGLE_EMAIL || process.env.UPPY_GOOGLE_EMAIL === undefined) {
       console.log('skipping Dropbox integration test')
       return this.skip()
     }
 
+    // ensure session is cleared
+    browser.reload()
     startUploadTest(browser, 'Dropbox')
     // do oauth authentication
     browser.waitForVisible('button.auth-google')

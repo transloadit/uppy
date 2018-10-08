@@ -1,7 +1,7 @@
 {
   "name": "@uppy/status-bar",
   "description": "A progress bar for Uppy, with many bells and whistles.",
-  "version": "0.27.3",
+  "version": "0.27.4",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -34,7 +34,7 @@
     "prettier-bytes": "^1.0.4"
   },
   "devDependencies": {
-    "@uppy/core": "0.27.2"
+    "@uppy/core": "0.27.3"
   },
   "peerDependencies": {
     "@uppy/core": "^0.27.0"

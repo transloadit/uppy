@@ -92,7 +92,6 @@ module.exports = function fileItem (props) {
       }
       return props.i18n('pauseUpload')
     } else {
-      console.log('ЗДЕСЬ Я')
       return props.i18n('cancelUpload')
     }
   }

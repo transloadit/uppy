@@ -8,7 +8,7 @@ const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const prettyBytes = require('prettier-bytes')
-const ResizeObserver = require('resize-observer-polyfill')
+const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultTabIcon } = require('./components/icons')
 
 // Some code for managing focus was adopted from https://github.com/ghosh/micromodal
@@ -456,7 +456,10 @@ module.exports = class Dashboard extends Plugin {
     this.ro.observe(this.el.querySelector('.uppy-Dashboard-inner'))
 
     this.uppy.on('plugin-remove', this.removeTarget)
-    this.uppy.on('file-added', (ev) => this.toggleAddFilesPanel(false))
+    this.uppy.on('file-added', (ev) => {
+      this.toggleAddFilesPanel(false)
+      this.hideAllPanels()
+    })
   }
 
   removeEvents () {
@@ -658,7 +661,9 @@ module.exports = class Dashboard extends Plugin {
     const plugins = this.opts.plugins || []
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
-      if (plugin) plugin.mount(this, plugin)
+      if (plugin) {
+        plugin.mount(this, plugin)
+      }
     })
 
     if (!this.opts.disableStatusBar) {
