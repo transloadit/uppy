@@ -129,7 +129,6 @@ module.exports = class Transloadit extends Plugin {
       remote = {
         ...file.remote,
         serverUrl: newHost,
-        serverPattern: ALLOWED_COMPANION_PATTERN,
         url: `${newHost}/${path}`
       }
     }
@@ -699,3 +698,4 @@ module.exports = class Transloadit extends Plugin {
 
 module.exports.COMPANION = COMPANION
 module.exports.UPPY_SERVER = COMPANION
+module.exports.COMPANION_PATTERN = ALLOWED_COMPANION_PATTERN

@@ -55,6 +55,7 @@ const Transloadit = require('@uppy/transloadit')
 
 uppy.use(Dropbox, {
   serverUrl: Transloadit.COMPANION
+  serverPattern: Transloadit.COMPANION_PATTERN
 })
 ```
 
@@ -65,6 +66,24 @@ uppy.use(Dropbox, {
   serverUrl: 'https://api2-us-east-1.transloadit.com/companion'
 })
 ```
+
+### `Transloadit.COMPANION_PATTERN`
+
+A RegExp pattern matching Transloadit's hosted companion endpoints. The pattern is used in remote provider `serverPattern` options, to ensure that third party authentication messages cannot be faked by an attacker's page, but can only originate from Transloadit's servers.
+
+Use it whenever you use `serverUrl: Transloadit.COMPANION`, like so:
+
+```js
+const Dropbox = require('@uppy/dropbox')
+const Transloadit = require('@uppy/transloadit')
+
+uppy.use(Dropbox, {
+  serverUrl: Transloadit.COMPANION
+  serverPattern: Transloadit.COMPANION_PATTERN
+})
+```
+
+The value of this constant covers _all_ Transloadit's Companion servers, so it does not need to be changed if you are using a custom [`service`](#service) option. However, if you are not using the Transloadit Companion servers at `*.transloadit.com`, make sure to set the `serverPattern` option to something that matches what you do use.
 
 ## Options
 
