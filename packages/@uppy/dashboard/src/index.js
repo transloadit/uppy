@@ -460,12 +460,8 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.on('file-added', (ev) => {
       this.toggleAddFilesPanel(false)
     })
-    this.uppy.on('complete', ({ uploadID }) => {
-      const { currentUploads } = this.uppy.getState()
-      if (this.opts.closeAfterFinish &&
-          // This is the very last upload still in state
-          // (and will be removed by core after this handler is complete)
-          Object.keys(currentUploads).length === 1 && currentUploads[uploadID]) {
+    this.uppy.on('complete', ({ failed, uploadID }) => {
+      if (this.opts.closeAfterFinish && failed.length === 0) {
         // All uploads are done
         this.requestCloseModal()
       }
@@ -663,7 +659,13 @@ module.exports = class Dashboard extends Plugin {
       targets: []
     })
 
-    const target = this.opts.target
+    const { closeAfterFinish } = this.opts
+    const { allowMultipleUploads } = this.uppy.opts
+    if (allowMultipleUploads && closeAfterFinish) {
+      this.uppy.log('[Dashboard] When using `closeAfterFinish`, we recommended setting the `allowMultipleUploads` option to `false` in the Uppy constructor. See https://uppy.io/docs/uppy/#allowMultipleUploads-true', 'warning')
+    }
+
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
