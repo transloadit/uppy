@@ -39,9 +39,12 @@ module.exports = class AwsS3 extends Plugin {
       locale: defaultLocale
     }
 
-    this.opts = Object.assign({}, defaultOptions, opts)
-    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
-    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+    this.opts = { ...defaultOptions, ...opts }
+    this.locale = {
+      ...defaultLocale,
+      ...this.opts.locale,
+      strings: { ...defaultLocale.strings, ...this.opts.locale.strings }
+    }
 
     this.translator = new Translator({ locale: this.locale })
     this.i18n = this.translator.translate.bind(this.translator)
