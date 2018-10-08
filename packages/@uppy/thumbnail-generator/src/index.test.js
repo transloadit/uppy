@@ -37,8 +37,8 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.addToQueue = jest.fn()
       plugin.install()
 
-      expect(core.on).toHaveBeenCalledTimes(2)
-      expect(core.on).toHaveBeenCalledWith('file-added', plugin.addToQueue)
+      expect(core.on).toHaveBeenCalledTimes(3)
+      expect(core.on).toHaveBeenCalledWith('file-added', plugin.onFileAdded)
     })
   })
 
@@ -53,12 +53,12 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.addToQueue = jest.fn()
       plugin.install()
 
-      expect(core.on).toHaveBeenCalledTimes(2)
+      expect(core.on).toHaveBeenCalledTimes(3)
 
       plugin.uninstall()
 
-      expect(core.off).toHaveBeenCalledTimes(2)
-      expect(core.off).toHaveBeenCalledWith('file-added', plugin.addToQueue)
+      expect(core.off).toHaveBeenCalledTimes(3)
+      expect(core.off).toHaveBeenCalledWith('file-added', plugin.onFileAdded)
     })
   })
 
@@ -112,6 +112,44 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
           expect(plugin.queue).toEqual([])
           expect(plugin.queueProcessing).toEqual(false)
         })
+    })
+
+    it('should revoke object URLs when files are removed', async () => {
+      const core = new MockCore()
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      plugin.install()
+
+      URL.revokeObjectURL = jest.fn(() => null)
+
+      try {
+        plugin.createThumbnail = jest.fn(async () => {
+          await delay(50)
+          return 'blob:http://uppy.io/fake-thumbnail'
+        })
+        plugin.setPreviewURL = jest.fn((id, preview) => {
+          if (id === 1) file1.preview = preview
+          if (id === 2) file2.preview = preview
+        })
+
+        const file1 = { id: 1, name: 'bar.jpg', type: 'image/jpeg' }
+        const file2 = { id: 2, name: 'bar2.jpg', type: 'image/jpeg' }
+        core.emit('file-added', file1)
+        core.emit('file-added', file2)
+        expect(plugin.queue).toHaveLength(1)
+        // should drop it from the queue
+        core.emit('file-removed', file2)
+        expect(plugin.queue).toHaveLength(0)
+
+        expect(plugin.createThumbnail).toHaveBeenCalledTimes(1)
+        expect(URL.revokeObjectURL).not.toHaveBeenCalled()
+
+        await delay(110)
+
+        core.emit('file-removed', file1)
+        expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1)
+      } finally {
+        delete URL.revokeObjectURL
+      }
     })
   })
 
