@@ -230,7 +230,7 @@ describe('src/Core', () => {
 
     // expect(corePauseEventMock.mock.calls.length).toEqual(1)
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
-    expect(coreStateUpdateEventMock.mock.calls.length).toEqual(3)
+    expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
     expect(coreStateUpdateEventMock.mock.calls[1][1]).toEqual({
       capabilities: { resumableUploads: false },
       files: {},
@@ -289,7 +289,7 @@ describe('src/Core', () => {
 
     // expect(corePauseEventMock.mock.calls.length).toEqual(1)
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
-    expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
+    expect(coreStateUpdateEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls[0][1]).toEqual({
       capabilities: { resumableUploads: false },
       files: {},
