@@ -15,6 +15,8 @@ function defaultGetAssemblyOptions (file, options) {
 }
 
 const COMPANION = 'https://api2.transloadit.com/companion'
+// Regex matching acceptable postMessage() origins for authentication feedback from companion.
+const ALLOWED_COMPANION_PATTERN = /\.transloadit\.com$/
 // Regex used to check if a Companion address is run by Transloadit.
 const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 const TL_UPPY_SERVER = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/uppy-server/
@@ -116,16 +118,18 @@ module.exports = class Transloadit extends Plugin {
       this.uppy.log(err)
       throw err
     }
+
     if (file.remote && TL_COMPANION.test(file.remote.serverUrl)) {
-      let newHost = status.companion_url
+      const newHost = status.companion_url
         .replace(/\/$/, '')
-      let path = file.remote.url
+      const path = file.remote.url
         .replace(file.remote.serverUrl, '')
         .replace(/^\//, '')
 
       remote = {
         ...file.remote,
         serverUrl: newHost,
+        serverPattern: ALLOWED_COMPANION_PATTERN,
         url: `${newHost}/${path}`
       }
     }
