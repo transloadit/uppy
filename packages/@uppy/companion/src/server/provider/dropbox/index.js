@@ -1,6 +1,7 @@
 const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
+const adapter = require('./adapter')
 
 /**
  *
@@ -37,10 +38,14 @@ class DropBox {
     let stats
     let reqErr
     const finishReq = () => {
-      if (!reqErr) {
+      if (reqErr) {
+        done(reqErr)
+      } else if (stats.statusCode !== 200) {
+        done(new Error(`request to ${this.authProvider} returned ${stats.statusCode}`))
+      } else {
         stats.body.user_email = userInfo.body.email
+        done(null, this.adaptData(stats.body, options.uppy))
       }
-      done(reqErr, stats, stats.body)
     }
 
     this.stats(options, (err, resp) => {
@@ -129,8 +134,26 @@ class DropBox {
       })
   }
 
-  adaptData() {
+  adaptData (res, uppy) {
+    const data = { username: adapter.getUsername(res), items: [] }
+    const items = adapter.getItemSubList(res)
+    items.forEach((item) => {
+      data.items.push({
+        isFolder: adapter.isFolder(item),
+        icon: adapter.getItemIcon(item),
+        name: adapter.getItemName(item),
+        mimeType: adapter.getMimeType(item),
+        id: adapter.getItemId(item),
+        thumbnail: uppy.buildURL(adapter.getItemThumbnailUrl(item), true),
+        requestPath: adapter.getItemRequestPath(item),
+        modifiedDate: adapter.getItemModifiedDate(item),
+        raw: item
+      })
+    })
 
+    data.nextPagePath = null
+
+    return data
   }
 }
 

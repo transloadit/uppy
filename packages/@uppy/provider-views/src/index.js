@@ -27,34 +27,7 @@ class CloseWrapper extends Component {
 }
 
 /**
- * Class to easily generate generic views for plugins
- *
- *
- * This class expects the plugin instance using it to have the following
- * accessor methods.
- * Each method takes the item whose property is to be accessed
- * as a param
- *
- * isFolder
- *    @return {Boolean} for if the item is a folder or not
- * getItemData
- *    @return {Object} that is format ready for uppy upload/download
- * getItemIcon
- *    @return {Object} html instance of the item's icon
- * getItemSubList
- *    @return {Array} sub-items in the item. e.g a folder may contain sub-items
- * getItemName
- *    @return {String} display friendly name of the item
- * getMimeType
- *    @return {String} mime type of the item
- * getItemId
- *    @return {String} unique id of the item
- * getItemRequestPath
- *    @return {String} unique request path of the item when making calls to Companion
- * getItemModifiedDate
- *    @return {object} or {String} date of when last the item was modified
- * getItemThumbnailUrl
- *    @return {String}
+ * Class to easily generate generic views for Provider plugins
  */
 module.exports = class ProviderView {
   /**
@@ -108,8 +81,8 @@ module.exports = class ProviderView {
   }
 
   _updateFilesAndFolders (res, files, folders) {
-    this.plugin.getItemSubList(res).forEach((item) => {
-      if (this.plugin.isFolder(item)) {
+    res.items.forEach((item) => {
+      if (item.isFolder) {
         folders.push(item)
       } else {
         files.push(item)
@@ -151,10 +124,11 @@ module.exports = class ProviderView {
         if (index !== -1) {
           updatedDirectories = state.directories.slice(0, index + 1)
         } else {
-          updatedDirectories = state.directories.concat([{id, title: name || this.plugin.getItemName(res)}])
+          updatedDirectories = state.directories.concat([{id, title: name}])
         }
 
-        this.username = this.username ? this.username : this.plugin.getUsername(res)
+        this.username = this.username ? this.username : res.username
+        this.nextPagePath = res.nextPagePath
         this._updateFilesAndFolders(res, files, folders)
         this.plugin.setPluginState({ directories: updatedDirectories })
       },
@@ -167,8 +141,7 @@ module.exports = class ProviderView {
    * @param  {String} title Folder title
    */
   getNextFolder (folder) {
-    let id = this.plugin.getItemRequestPath(folder)
-    this.getFolder(id, this.plugin.getItemName(folder))
+    this.getFolder(folder.requestPath, folder.name)
     this.lastCheckbox = undefined
   }
 
@@ -176,18 +149,18 @@ module.exports = class ProviderView {
     const tagFile = {
       id: this.providerFileToId(file),
       source: this.plugin.id,
-      data: this.plugin.getItemData(file),
-      name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
-      type: this.plugin.getMimeType(file),
+      data: file,
+      name: file.name || file.id,
+      type: file.mimeType,
       isRemote: true,
       body: {
-        fileId: this.plugin.getItemId(file)
+        fileId: file.id
       },
       remote: {
         serverUrl: this.plugin.opts.serverUrl,
-        url: `${this.Provider.fileUrl(this.plugin.getItemRequestPath(file))}`,
+        url: `${this.Provider.fileUrl(file.requestPath)}`,
         body: {
-          fileId: this.plugin.getItemId(file)
+          fileId: file.id
         },
         providerOptions: this.Provider.opts
       }
@@ -196,7 +169,7 @@ module.exports = class ProviderView {
     const fileType = getFileType(tagFile)
     // TODO Should we just always use the thumbnail URL if it exists?
     if (fileType && isPreviewSupported(fileType)) {
-      tagFile.preview = this.plugin.getItemThumbnailUrl(file)
+      tagFile.preview = file.thumbnail
     }
     this.plugin.uppy.log('Adding remote file')
     try {
@@ -253,7 +226,7 @@ module.exports = class ProviderView {
       return items
     }
     return items.filter((folder) => {
-      return this.plugin.getItemName(folder).toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1
+      return folder.name.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1
     })
   }
 
@@ -263,16 +236,16 @@ module.exports = class ProviderView {
 
     let sortedFiles = files.sort((fileA, fileB) => {
       if (sorting === 'titleDescending') {
-        return this.plugin.getItemName(fileB).localeCompare(this.plugin.getItemName(fileA))
+        return fileB.name.localeCompare(fileA.name)
       }
-      return this.plugin.getItemName(fileA).localeCompare(this.plugin.getItemName(fileB))
+      return fileA.name.localeCompare(fileB.name)
     })
 
     let sortedFolders = folders.sort((folderA, folderB) => {
       if (sorting === 'titleDescending') {
-        return this.plugin.getItemName(folderB).localeCompare(this.plugin.getItemName(folderA))
+        return folderB.name.localeCompare(folderA.name)
       }
-      return this.plugin.getItemName(folderA).localeCompare(this.plugin.getItemName(folderB))
+      return folderA.name.localeCompare(folderB.name)
     })
 
     this.plugin.setPluginState(Object.assign({}, state, {
@@ -287,8 +260,8 @@ module.exports = class ProviderView {
     const {files, folders, sorting} = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
-      let a = new Date(this.plugin.getItemModifiedDate(fileA))
-      let b = new Date(this.plugin.getItemModifiedDate(fileB))
+      let a = new Date(fileA.modifiedDate)
+      let b = new Date(fileB.modifiedDate)
 
       if (sorting === 'dateDescending') {
         return a > b ? -1 : a < b ? 1 : 0
@@ -297,8 +270,8 @@ module.exports = class ProviderView {
     })
 
     let sortedFolders = folders.sort((folderA, folderB) => {
-      let a = new Date(this.plugin.getItemModifiedDate(folderA))
-      let b = new Date(this.plugin.getItemModifiedDate(folderB))
+      let a = new Date(folderA.modifiedDate)
+      let b = new Date(folderB.modifiedDate)
 
       if (sorting === 'dateDescending') {
         return a > b ? -1 : a < b ? 1 : 0
@@ -324,8 +297,8 @@ module.exports = class ProviderView {
     }
 
     let sortedFiles = files.sort((fileA, fileB) => {
-      let a = this.plugin.getItemData(fileA).size
-      let b = this.plugin.getItemData(fileB).size
+      let a = fileA.size
+      let b = fileB.size
 
       if (sorting === 'sizeDescending') {
         return a > b ? -1 : a < b ? 1 : 0
@@ -363,10 +336,10 @@ module.exports = class ProviderView {
     }
     folders[folderId] = {loading: true, files: []}
     this.plugin.setPluginState({selectedFolders: folders})
-    return this.Provider.list(this.plugin.getItemRequestPath(folder)).then((res) => {
+    return this.Provider.list(folder.requestPath).then((res) => {
       let files = []
-      this.plugin.getItemSubList(res).forEach((item) => {
-        if (!this.plugin.isFolder(item)) {
+      res.items.forEach((item) => {
+        if (!item.isFolder) {
           this.addFile(item)
           files.push(this.providerFileToId(item))
         }
@@ -378,7 +351,7 @@ module.exports = class ProviderView {
       let message
       if (files.length) {
         message = dashboard.i18n('folderAdded', {
-          smart_count: files.length, folder: this.plugin.getItemName(folder)
+          smart_count: files.length, folder: folder.name
         })
       } else {
         message = dashboard.i18n('emptyFolderAdded')
@@ -435,9 +408,9 @@ module.exports = class ProviderView {
 
   providerFileToId (file) {
     return generateFileID({
-      data: this.plugin.getItemData(file),
-      name: this.plugin.getItemName(file) || this.plugin.getItemId(file),
-      type: this.plugin.getMimeType(file)
+      data: file,
+      name: file.name || file.id,
+      type: file.mimeType
     })
   }
 
@@ -490,7 +463,7 @@ module.exports = class ProviderView {
 
   handleScroll (e) {
     const scrollPos = e.target.scrollHeight - (e.target.scrollTop + e.target.offsetHeight)
-    const path = this.plugin.getNextPagePath ? this.plugin.getNextPagePath() : null
+    const path = this.nextPagePath ? this.nextPagePath : null
 
     if (scrollPos < 50 && path && !this._isHandlingScroll) {
       this.Provider.list(path)
@@ -507,7 +480,7 @@ module.exports = class ProviderView {
   donePicking () {
     const { currentSelection } = this.plugin.getPluginState()
     const promises = currentSelection.map((file) => {
-      if (this.plugin.isFolder(file)) {
+      if (file.isFolder) {
         return this.addFolder(file)
       } else {
         return this.addFile(file)
@@ -586,9 +559,6 @@ module.exports = class ProviderView {
       isActiveRow: this.isActiveRow,
       isChecked: this.isChecked,
       toggleCheckbox: this.toggleCheckbox,
-      getItemId: this.plugin.getItemId,
-      getItemName: this.plugin.getItemName,
-      getItemIcon: this.plugin.getItemIcon,
       handleScroll: this.handleScroll,
       done: this.donePicking,
       cancel: this.cancelPicking,

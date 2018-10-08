@@ -20,7 +20,15 @@ class Instagram {
       .select(`users/self/media/${directory}`)
       .qs(qs)
       .auth(token)
-      .request(done)
+      .request((err, resp, body) => {
+        if (err) {
+          done(err)
+        } else if (resp.statusCode !== 200) {
+          done(new Error(`request to ${this.authProvider} returned ${resp.statusCode}`))
+        } else {
+          done(null, this.adaptData(body))
+        }
+      })
   }
 
   _getMediaUrl (body, carouselId) {
@@ -88,12 +96,9 @@ class Instagram {
       })
   }
 
-  /** {username: string, items: [{
-   * items: [], icon: string, mimeType: string, id: string, isFolder: bool, name: string, requestPath: string, thumbnail: string, nextPagePath: string, modifiedDate: string
-   * }]} */
-  adaptData(res) {
+  adaptData (res) {
     const data = { username: adapter.getUsername(res), items: [] }
-    const items = adapter.getItemSubList(data)
+    const items = adapter.getItemSubList(res)
     items.forEach((item) => {
       data.items.push({
         isFolder: adapter.isFolder(item),
@@ -102,12 +107,13 @@ class Instagram {
         mimeType: adapter.getMimeType(item),
         id: adapter.getItemId(item),
         thumbnail: adapter.getItemThumbnailUrl(item),
-        nextPagePath: adapter.getNextPagePath(item),
         requestPath: adapter.getItemRequestPath(item),
-        modifiedDate: adapter.getItemModifiedDate(item)
+        modifiedDate: adapter.getItemModifiedDate(item),
+        raw: item
       })
     })
 
+    data.nextPagePath = adapter.getNextPagePath(items)
     return data
   }
 }

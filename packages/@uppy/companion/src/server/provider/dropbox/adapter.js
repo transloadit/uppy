@@ -36,5 +36,5 @@ exports.getItemModifiedDate = (item) => {
 }
 
 exports.getItemThumbnailUrl = (item) => {
-  return `${this.opts.serverUrl}/${this.Dropbox.id}/thumbnail/${this.getItemRequestPath(item)}`
+  return `/dropbox/thumbnail/${exports.getItemRequestPath(item)}`
 }

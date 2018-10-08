@@ -18,7 +18,7 @@ function authorized (req, res) {
   }
 
   const token = uppy.providerTokens[providerName]
-  uppy.provider.list({ token }, (err, response, body) => {
+  uppy.provider.list({ token, uppy }, (err, response, body) => {
     const notAuthenticated = Boolean(err)
     if (notAuthenticated) {
       logger.debug(`${providerName} failed authorizarion test err:${err}`, 'provider.auth.check')

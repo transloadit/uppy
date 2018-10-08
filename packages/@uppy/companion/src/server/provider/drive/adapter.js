@@ -11,7 +11,7 @@ exports.getUsername = (data) => {
 }
 
 exports.isFolder = (item) => {
-  return item.mimeType === 'application/vnd.google-apps.folder'
+  return item.mimeType === 'application/vnd.google-apps.folder' || item.kind === 'drive#teamDrive'
 }
 
 exports.getItemData = (item) => {
@@ -19,12 +19,15 @@ exports.getItemData = (item) => {
 }
 
 exports.getItemIcon = (item) => {
+  if (item.kind === 'drive#teamDrive') {
+    return item.backgroundImageLink + '=w16-h16-n'
+  }
   return item.iconLink
 }
 
 exports.getItemSubList = (item) => {
   return item.files.filter((i) => {
-    return this.isFolder(i) || !i.mimeType.startsWith('application/vnd.google')
+    return exports.isFolder(i) || !i.mimeType.startsWith('application/vnd.google')
   })
 }
 
@@ -44,11 +47,10 @@ exports.getItemRequestPath = (item) => {
   // If it's from a Team Drive, add the Team Drive ID as a query param.
   // The server needs the Team Drive ID to list files in a Team Drive folder.
   if (item.teamDriveId) {
-    item.id += `?teamDriveId=${item.teamDriveId}`
-    delete item.teamDriveId
+    return item.id + `?teamDriveId=${item.teamDriveId}`
   }
 
-  return this.getItemId(item)
+  return item.id
 }
 
 exports.getItemModifiedDate = (item) => {
@@ -56,5 +58,5 @@ exports.getItemModifiedDate = (item) => {
 }
 
 exports.getItemThumbnailUrl = (item) => {
-  return `${this.opts.serverUrl}/${this.GoogleDrive.id}/thumbnail/${this.getItemRequestPath(item)}`
+  return `/drive/thumbnail/${exports.getItemRequestPath(item)}`
 }

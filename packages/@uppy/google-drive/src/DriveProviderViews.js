@@ -6,7 +6,7 @@ module.exports = class DriveProviderViews extends ProviderViews {
     e.preventDefault()
 
     // Team Drives aren't selectable; for all else, defer to the base ProviderView.
-    if (file.kind !== 'drive#teamDrive') {
+    if (file.raw.kind !== 'drive#teamDrive') {
       super.toggleCheckbox(e, file)
     }
   }

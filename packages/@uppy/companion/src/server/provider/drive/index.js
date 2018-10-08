@@ -2,9 +2,11 @@ const request = require('request')
 // @ts-ignore
 const purest = require('purest')({ request })
 const logger = require('../../logger')
+const adapter = require('./adapter')
 const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 const TEAM_DRIVE_FIELDS = 'teamDrives(kind,id,name,backgroundImageLink)'
+
 /**
  * @class
  * @implements {Provider}
@@ -24,43 +26,67 @@ class Drive {
 
   list (options, done) {
     const directory = options.directory || 'root'
-    const trashed = options.trashed || false
     const query = options.query || {}
-    const listTeamDrives = query.listTeamDrives || 'false'
-    const teamDriveId = query.teamDriveId || false
+    const teamDrive = query.teamDrive
+    let listDone = false
+    let teamDrivesDone = false
+    let teamDrives
+    let listResponse
+    let reqErr
+    const finishReq = () => {
+      if (reqErr) {
+        done(reqErr)
+      } else if (listResponse.statusCode !== 200) {
+        done(new Error(`request to ${this.authProvider} returned ${listResponse.statusCode}`))
+      } else {
+        done(null, this.adaptData(listResponse.body, teamDrives ? teamDrives.body : null, options.uppy))
+      }
+    }
 
-    if (listTeamDrives === 'true') {
-      // Just return a list of all Team Drives which the user can access.
-      return this.client
+    if (directory === 'root') {
+      // fetch a list of all Team Drives which the user can access.
+      this.client
         .query()
         .get('teamdrives')
         .where({ fields: TEAM_DRIVE_FIELDS })
         .auth(options.token)
-        .request(done)
-    } else {
-      let where = {
-        fields: DRIVE_FILES_FIELDS,
-        q: `'${directory}' in parents and trashed=${trashed}`
-      }
-      if (teamDriveId) {
-        // Team Drives require several extra parameters in order to work.
-        where.supportsTeamDrives = true
-        where.includeTeamDriveItems = true
-        where.teamDriveId = teamDriveId
-        where.corpora = 'teamDrive'
-        if (directory === 'root') {
-          // To list the top-level contents of a Team Drive, filter for the Team Drive id as a parent.
-          where.q = `'${teamDriveId}' in parents and trashed=${trashed}`
-        }
-      }
-
-      return this.client
-        .query()
-        .get('files')
-        .where(where)
-        .auth(options.token)
-        .request(done)
+        .request((err, resp) => {
+          if (err) {
+            logger.error(err, 'provider.drive.teamDrive.error')
+          }
+          teamDrivesDone = true
+          teamDrives = resp
+          if (listDone) {
+            finishReq()
+          }
+        })
     }
+
+    let where = {
+      fields: DRIVE_FILES_FIELDS,
+      q: `'${directory}' in parents and trashed=false`
+    }
+    if (teamDrive) {
+      // Team Drives require several extra parameters in order to work.
+      where.supportsTeamDrives = true
+      where.includeTeamDriveItems = true
+      where.teamDriveId = directory
+      where.corpora = 'teamDrive'
+    }
+
+    this.client
+      .query()
+      .get('files')
+      .where(where)
+      .auth(options.token)
+      .request((err, resp) => {
+        listDone = true
+        listResponse = resp
+        reqErr = err
+        if (teamDrivesDone || directory !== 'root') {
+          finishReq()
+        }
+      })
   }
 
   stats ({ id, token }, done) {
@@ -106,8 +132,27 @@ class Drive {
     })
   }
 
-  adaptData () {
-    
+  adaptData (res, teamDrivesResp, uppy) {
+    const data = { username: adapter.getUsername(res), items: [] }
+    const items = adapter.getItemSubList(res)
+    const teamDrives = teamDrivesResp ? teamDrivesResp.teamDrives || [] : []
+    items.concat(teamDrives).forEach((item) => {
+      data.items.push({
+        isFolder: adapter.isFolder(item),
+        icon: adapter.getItemIcon(item),
+        name: adapter.getItemName(item),
+        mimeType: adapter.getMimeType(item),
+        id: adapter.getItemId(item),
+        thumbnail: uppy.buildURL(adapter.getItemThumbnailUrl(item), true),
+        requestPath: adapter.getItemRequestPath(item),
+        modifiedDate: adapter.getItemModifiedDate(item),
+        raw: item
+      })
+    })
+
+    data.nextPagePath = null
+
+    return data
   }
 }
 

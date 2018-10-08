@@ -65,10 +65,9 @@ exports.getItemModifiedDate = (item) => {
 }
 
 exports.getItemThumbnailUrl = (item) => {
-  return item.images.thumbnail.url
+  return item.images ? item.images.thumbnail.url : null
 }
 
-exports.getNextPagePath = (data) => {
-  const { files } = this.getPluginState()
-  return `recent?max_id=${this.getItemId(files[files.length - 1])}`
+exports.getNextPagePath = (items) => {
+  return `recent?max_id=${exports.getItemId(items[items.length - 1])}`
 }
