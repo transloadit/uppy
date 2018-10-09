@@ -1,4 +1,5 @@
-import tus from 'tus-js-client'
+// import tus from 'tus-js-client'
+import tus from 'react-native-tus-client'
 
 function testUploadFileWithTus (file) {
   console.log('Attempting a tus upload in React Native...')
