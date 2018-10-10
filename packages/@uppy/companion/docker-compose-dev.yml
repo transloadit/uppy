@@ -2,7 +2,7 @@ version: '2'
 
 services:
   uppy:
-    image: companion
+    image: transloadit/companion
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,6 +11,9 @@ services:
     volumes:
       - ./:/app
       - /app/node_modules
+      - /mnt/uppy-server-data:/mnt/uppy-server-data
     ports:
       - "3020:3020"
-    command: ["/usr/bin/nodemon", "/app/lib/standalone/start-server.js", "--config", "/app/nodemon.json"]
+    command: "/app/src/standalone/start-server.js --config nodemon.json"
+    env_file:
+     - .env
