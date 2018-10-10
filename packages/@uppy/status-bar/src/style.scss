@@ -70,20 +70,21 @@
   transition: background-color, width .3s ease-out;
 
   &.is-indeterminate {
-    $stripe-color: darken($color-cornflower-blue, 10%);
+    background-color: $color-orange;
+    $stripe-color: darken($color-orange, 10%);
     background-size: 64px 64px;
     background-image: linear-gradient(45deg, $stripe-color 25%, transparent 25%, transparent 50%, $stripe-color 50%, $stripe-color 75%, transparent 75%, transparent);
-    animation: statusBarProgressStripes 1s linear infinite;
+    animation: uppy-StatusBar-ProgressStripes 1s linear infinite;
   }
 }
 
+  @keyframes uppy-StatusBar-ProgressStripes {
+    from { background-position: 0 0; }
+    to { background-position: 64px 0; }
+  }
+
 .uppy-StatusBar.is-waiting .uppy-StatusBar-progress {
   display: none;
-}
-
-@keyframes statusBarProgressStripes {
-  from { background-position: 64px 0; }
-  to { background-position: 0 0; }
 }
 
 .uppy-StatusBar-content {
@@ -113,6 +114,7 @@
 
 .uppy-StatusBar-statusPrimary {
   font-size: 13px;
+  font-weight: 400;
 }
 
 .uppy-StatusBar-statusSecondary {
@@ -167,13 +169,13 @@
 
 .uppy-StatusBar-actionBtn {
   font-size: 12px;
-  padding: 6px;
+  padding: 4px;
   // border-radius: 4px;
   color: $color-cornflower-blue;
 }
 
   .uppy-size--md .uppy-StatusBar-actionBtn {
-    padding: 3px 5px;
+    padding: 2px 4px;
   }
 
   .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
@@ -248,13 +250,21 @@
   animation-duration: 1s;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
+  margin-right: 10px;
+  fill: $color-cornflower-blue;
 }
 
-@keyframes uppy-StatusBar-spinnerAnimation {
-  0% {
-    transform: rotate(0deg);
+  .uppy-StatusBar.is-preprocessing .uppy-StatusBar-spinner,
+  .uppy-StatusBar.is-postprocessing .uppy-StatusBar-spinner {
+    fill: $color-orange;
   }
-  100% {
-    transform: rotate(360deg);
+
+
+  @keyframes uppy-StatusBar-spinnerAnimation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
-}

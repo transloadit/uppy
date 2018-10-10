@@ -28,11 +28,13 @@ module.exports = class StatusBar extends Plugin {
         error: 'Error',
         retry: 'Retry',
         cancel: 'Cancel',
+        pause: 'Pause',
+        resume: 'Resume',
         pressToRetry: 'Press to retry',
-        retryUpload: 'Retry upload',
-        resumeUpload: 'Resume upload',
-        cancelUpload: 'Cancel upload',
-        pauseUpload: 'Pause upload',
+        // retryUpload: 'Retry upload',
+        // resumeUpload: 'Resume upload',
+        // cancelUpload: 'Cancel upload',
+        // pauseUpload: 'Pause upload',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
           1: '%{complete} of %{smart_count} files uploaded'
