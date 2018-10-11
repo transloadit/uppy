@@ -106,7 +106,11 @@ module.exports = (props) => {
       {progressBarContent}
       <div class="uppy-StatusBar-actions">
         { newFiles && !hideUploadButton ? <UploadBtn {...props} uploadState={uploadState} /> : null }
-        { !hidePauseResumeCancelButtons && resumableUploads && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
+        { !hidePauseResumeCancelButtons &&
+          resumableUploads &&
+          uploadState !== statusBarStates.STATE_WAITING &&
+          uploadState !== statusBarStates.STATE_COMPLETE &&
+          uploadState !== statusBarStates.STATE_POSTPROCESSING
           ? <PauseResumeButtons {...props} />
           : null
         }
