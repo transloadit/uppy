@@ -566,7 +566,6 @@ module.exports = class Dashboard extends Plugin {
     }
 
     const cancelUpload = (fileID) => {
-      this.uppy.emit('upload-cancel', fileID)
       this.uppy.removeFile(fileID)
     }
 

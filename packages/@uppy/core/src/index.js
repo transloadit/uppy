@@ -514,7 +514,10 @@ class Uppy {
   }
 
   pauseResume (fileID) {
-    if (this.getFile(fileID).uploadComplete) return
+    if (!this.getState().capabilities.resumableUploads ||
+         this.getFile(fileID).uploadComplete) {
+      return
+    }
 
     const wasPaused = this.getFile(fileID).isPaused || false
     const isPaused = !wasPaused
@@ -860,14 +863,13 @@ class Uppy {
   /**
    * Find one Plugin by name.
    *
-   * @param {string} name description
+   * @param {string} id plugin id
    * @return {object | boolean}
    */
-  getPlugin (name) {
+  getPlugin (id) {
     let foundPlugin = null
     this.iteratePlugins((plugin) => {
-      const pluginName = plugin.id
-      if (pluginName === name) {
+      if (plugin.id === id) {
         foundPlugin = plugin
         return false
       }
