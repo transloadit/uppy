@@ -189,6 +189,8 @@ Set to true to automatically close the modal when the user clicks outside of it.
 
 Set to true to automatically close the modal when all current uploads are complete. You can use this together with the [`allowMultipleUploads: false`](/docs/uppy#allowMultipleUploads-true) option in Uppy Core to create a smooth experience when uploading a single (batch of) file(s).
 
+> Setting [`allowMultipleUploads: false`](/docs/uppy#allowMultipleUploads-true) is **strongly** recommended when using this option. With multiple upload batches, the auto-closing behavior can be very confusing for users.
+
 ### `disablePageScrollWhenModalOpen: true`
 
 Page scrolling is disabled by default when the Dashboard modal is open, so when you scroll a list of files in Uppy, the website in the background stays still. Set to false to override this behaviour and leave page scrolling intact.
