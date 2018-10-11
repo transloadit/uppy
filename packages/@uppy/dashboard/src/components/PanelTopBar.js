@@ -7,7 +7,7 @@ function DashboardContentTitle (props) {
 }
 
 function PanelTopBar (props) {
-  let { allowNewUpload } = props.allowNewUpload
+  let allowNewUpload = props.allowNewUpload
   // TODO maybe this should be done in ../index.js, then just pass that down as `allowNewUpload`
   if (allowNewUpload && props.maxNumberOfFiles) {
     allowNewUpload = props.totalFileCount < props.maxNumberOfFiles
