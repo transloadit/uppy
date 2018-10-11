@@ -337,7 +337,7 @@ Toggle pause/resume on an upload. Will only work if resumable upload plugin, suc
 
 ### `uppy.pauseAll()`
 
-Pause all uploads. Will only work if resumable upload plugin, such as [Tus](/docs/tus/), is used.
+Pause all uploads. Will only work if a resumable upload plugin, such as [Tus](/docs/tus/), is used.
 
 ### `uppy.resumeAll()`
 
@@ -353,7 +353,7 @@ Retry all uploads (after an error, for example).
 
 ### `uppy.cancelAll()`
 
-Cancel all uploads, resets progress and removes all files.
+Cancel all uploads, reset progress and remove all files.
 
 ### `uppy.setState(patch)`
 
