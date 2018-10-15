@@ -67,7 +67,9 @@ module.exports = class Transloadit extends Plugin {
     this._onRestored = this._onRestored.bind(this)
     this._getPersistentData = this._getPersistentData.bind(this)
 
-    if (this.opts.params) {
+    if (this.opts.params ||
+        // No params _and_ no custom getAssemblyOptions is an early error.
+        this.opts.getAssemblyOptions === defaultOptions.getAssemblyOptions) {
       AssemblyOptions.validateParams(this.opts.params)
     }
 
