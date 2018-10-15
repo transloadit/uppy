@@ -1,3 +1,5 @@
+const Transloadit = require('@uppy/transloadit')
+
 const remoteProviders = {
   dropbox: require('@uppy/dropbox'),
   'google-drive': require('@uppy/google-drive'),
@@ -23,7 +25,12 @@ const localProviderOptionNames = [
 
 function addRemoteProvider (uppy, name, opts) {
   const Provider = remoteProviders[name]
-  const providerOptions = {}
+  const providerOptions = {
+    // Default to the :tl: Companion servers.
+    serverUrl: Transloadit.COMPANION,
+    serverPattern: Transloadit.COMPANION_PATTERN
+  }
+
   remoteProviderOptionNames.forEach((name) => {
     if (opts.hasOwnProperty(name)) providerOptions[name] = opts[name]
   })
@@ -31,12 +38,14 @@ function addRemoteProvider (uppy, name, opts) {
   if (typeof opts[name] === 'object') {
     Object.assign(providerOptions, opts[name])
   }
+
   uppy.use(Provider, providerOptions)
 }
 
 function addLocalProvider (uppy, name, opts) {
   const Provider = localProviders[name]
   const providerOptions = {}
+
   localProviderOptionNames.forEach((name) => {
     if (opts.hasOwnProperty(name)) providerOptions[name] = opts[name]
   })
@@ -44,6 +53,7 @@ function addLocalProvider (uppy, name, opts) {
   if (typeof opts[name] === 'object') {
     Object.assign(providerOptions, opts[name])
   }
+
   uppy.use(Provider, providerOptions)
 }
 
