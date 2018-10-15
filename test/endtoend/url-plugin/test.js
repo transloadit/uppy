@@ -17,6 +17,6 @@ describe('File upload with URL plugin', () => {
     // do the upload
     browser.waitForVisible('.uppy-u-reset.uppy-c-btn.uppy-c-btn-primary.uppy-StatusBar-actionBtn--upload')
     browser.click('.uppy-u-reset.uppy-c-btn.uppy-c-btn-primary.uppy-StatusBar-actionBtn--upload')
-    browser.waitForVisible('.uppy-StatusBar-content[title="Complete"]', 20000)
+    browser.waitForVisible('.uppy-StatusBar.is-complete', 20000)
   })
 })
