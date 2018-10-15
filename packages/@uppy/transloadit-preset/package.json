@@ -28,10 +28,15 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/core": "0.27.0",
-    "@uppy/dashboard": "0.27.2",
-    "@uppy/form": "0.27.1",
-    "@uppy/transloadit": "0.27.2",
-    "@uppy/utils": "0.27.0"
+    "@uppy/core": "0.27.3",
+    "@uppy/dashboard": "0.27.5",
+    "@uppy/dropbox": "0.27.4",
+    "@uppy/form": "0.27.4",
+    "@uppy/google-drive": "0.27.5",
+    "@uppy/instagram": "0.27.5",
+    "@uppy/transloadit": "0.27.5",
+    "@uppy/url": "0.27.5",
+    "@uppy/utils": "0.27.1",
+    "@uppy/webcam": "0.27.4"
   }
 }
