@@ -7,8 +7,7 @@ const Tus = require('@uppy/tus')
 
 Uppy({
   id: 'uppyProvider',
-  debug: true,
-  autoProceed: true
+  debug: true
 })
   .use(Dashboard, {
     target: '#uppyDashboard',
