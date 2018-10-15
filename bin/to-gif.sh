@@ -12,7 +12,7 @@ __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
 width=600
 speed=0.7
-input="${__root}/assets/uppy-demo2.mov"
+input="${__root}/assets/uppy-demo-oct-2018.mov"
 base="$(basename "${input}")"
 output="${__root}/assets/${base}.gif"
 
