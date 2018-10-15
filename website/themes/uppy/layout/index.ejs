@@ -24,8 +24,8 @@
   <div class="IndexExample-block">
     <video class="IndexExample-video"
            autoplay loop muted playsinline>
-      <source src="/images/uppy-demo-2.mp4" type="video/mp4">
-      Your browser does not support the video tag, you can <a href="/images/blog/0.25/link-drop-demo.mp4">download the video</a> to watch it.
+      <source src="/images/uppy-demo-oct-2018.mp4" type="video/mp4">
+      Your browser does not support the video tag, you can <a href="/images/uppy-demo-oct-2018.mp4">download the video</a> to watch it.
     </video>
     <form id="upload-form">
       <input type="file">
@@ -42,8 +42,8 @@
 
 <section class="IndexAbout">
   <div class="IndexAbout-item">
-    <img class="IndexAbout-icon" src="/images/traffic-light.svg">
-    <h2 class="IndexSection-title">Work in progress</h2>
+    <!-- <img class="IndexAbout-icon" src="/images/traffic-light.svg"> -->
+    <h2 class="IndexSection-title">What is Uppy</h2>
     <p><%- config.description %></p>
   </div>
   <div class="IndexAbout-item">
@@ -86,18 +86,26 @@
 
 <script>
   var TUS_ENDPOINT = 'https://master.tus.io/files/'
+  var COMPANION_ENDPOINT = 'http://localhost:3020'
+  if (location.hostname === 'uppy.io') {
+    COMPANION_ENDPOINT = '//companion.uppy.io'
+  }
 
   var uppy = Uppy.Core({ debug: true, autoProceed: false })
-  .use(Uppy.Dashboard, {
-    trigger: '#select-files',
-    target: '#upload-form',
-    replaceTargetContent: true,
-    metaFields: [
-      { id: 'license', name: 'License', placeholder: 'specify license' },
-      { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
-    ]
-  })
-  .use(Uppy.Tus, { endpoint: TUS_ENDPOINT})
+    .use(Uppy.Dashboard, {
+      trigger: '#select-files',
+      target: '#upload-form',
+      replaceTargetContent: true,
+      metaFields: [
+        { id: 'license', name: 'License', placeholder: 'specify license' },
+        { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
+      ]
+    })
+    .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, serverUrl: COMPANION_ENDPOINT })
+    .use(Uppy.Instagram, { target: Uppy.Dashboard, serverUrl: COMPANION_ENDPOINT })
+    .use(Uppy.Webcam, { target: Uppy.Dashboard })
+    .use(Uppy.Url, { target: Uppy.Dashboard, serverUrl: COMPANION_ENDPOINT })
+    .use(Uppy.Tus, { endpoint: TUS_ENDPOINT})
 
   uppy.on('success', (files) => {
     console.log(`Upload complete! We’ve uploaded these files: ${files}`)
