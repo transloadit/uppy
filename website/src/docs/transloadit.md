@@ -59,6 +59,8 @@ uppy.use(Dropbox, {
 })
 ```
 
+When using `Transloadit.COMPANION`, you should also configure [`serverPattern: Transloadit.COMPANION_PATTERN`](#Transloadit-COMPANION-PATTERN).
+
 The value of this constant is `https://api2.transloadit.com/companion`. If you are using a custom [`service`](#service) option, you should also set a custom host option in your provider plugins, by taking a Transloadit API url and appending `/companion`:
 
 ```js
