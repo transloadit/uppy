@@ -27,7 +27,7 @@ All other props are passed as options to the plugin.
 ```js
 const Uppy = require('@uppy/core')
 const Tus = require('@uppy/tus')
-const DragDrop = require('@uppy/drag-drop')
+import {DragDrop} from '@uppy/react';
 
 const uppy = Uppy({
   meta: { type: 'avatar' },
