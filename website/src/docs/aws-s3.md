@@ -58,6 +58,12 @@ uppy.use(AwsS3, {
 })
 ```
 
+### `serverHeaders: {}`
+
+> Note: This only applies when using [Companion][companion docs] to sign S3 uploads.
+
+Custom headers that should be sent along to [Companion][companion docs] on every request.
+
 ### `getUploadParameters(file)`
 
 > Note: When using [Companion][companion docs] to sign S3 uploads, do not define this option.

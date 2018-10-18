@@ -2,11 +2,21 @@ const resolveUrl = require('resolve-url')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const limitPromises = require('@uppy/utils/lib/limitPromises')
+const { RequestClient } = require('@uppy/companion-client')
 const XHRUpload = require('@uppy/xhr-upload')
 
 function isXml (xhr) {
   const contentType = xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type')
   return typeof contentType === 'string' && contentType.toLowerCase() === 'application/xml'
+}
+
+function assertServerError (res) {
+  if (res && res.error) {
+    const error = new Error(res.message)
+    Object.assign(error, res.error)
+    throw error
+  }
+  return res
 }
 
 module.exports = class AwsS3 extends Plugin {
@@ -29,12 +39,17 @@ module.exports = class AwsS3 extends Plugin {
       locale: defaultLocale
     }
 
-    this.opts = Object.assign({}, defaultOptions, opts)
-    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
-    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+    this.opts = { ...defaultOptions, ...opts }
+    this.locale = {
+      ...defaultLocale,
+      ...this.opts.locale,
+      strings: { ...defaultLocale.strings, ...this.opts.locale.strings }
+    }
 
     this.translator = new Translator({ locale: this.locale })
     this.i18n = this.translator.translate.bind(this.translator)
+
+    this.client = new RequestClient(uppy, opts)
 
     this.prepareUpload = this.prepareUpload.bind(this)
 
@@ -52,10 +67,8 @@ module.exports = class AwsS3 extends Plugin {
 
     const filename = encodeURIComponent(file.name)
     const type = encodeURIComponent(file.type)
-    return fetch(`${this.opts.serverUrl}/s3/params?filename=${filename}&type=${type}`, {
-      method: 'get',
-      headers: { accept: 'application/json' }
-    }).then((response) => response.json())
+    return this.client.get(`s3/params?filename=${filename}&type=${type}`)
+      .then(assertServerError)
   }
 
   validateParameters (file, params) {
