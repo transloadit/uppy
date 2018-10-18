@@ -60,6 +60,8 @@ module.exports = de_DE
     strings: {
       // When `inline: false`, used as the screen reader label for the button that closes the modal.
       closeModal: 'Fenster schließen',
+      // Some comment from #1111
+      addMoreFiles: 'Weitere Dateien hinzufügen',
       // Used as the header for import panels, e.g., "Import from Google Drive".
       importFrom: 'Von %{name} importieren',
       // When `inline: false`, used as the screen reader label for the dashboard modal.
