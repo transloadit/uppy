@@ -6,6 +6,6 @@ ID = "uppy"
 
 [context.deploy-preview]
 # netlify caches node_modules and doesn't run `npm install` after the first time,
-# so we have to `run prepare` manually in order to get lerna to do its thing
-command = "npm run prepare && npm run build && npm run web:install && npm run web:disc && npm run web:build"
+# so we have to `run bootstrap` manually in order to get lerna to do its thing
+command = "npm run bootstrap && npm run build && npm run web:install && npm run web:disc && npm run web:build"
 publish = "website/public"
