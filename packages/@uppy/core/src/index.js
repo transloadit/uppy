@@ -73,11 +73,9 @@ class Uppy {
     this.opts = Object.assign({}, defaultOptions, opts)
     this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
 
-    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
-    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
-
     // i18n
-    this.translator = new Translator({locale: this.locale})
+    this.translator = new Translator([ defaultLocale, this.opts.locale ])
+    this.locale = this.translator.locale
     this.i18n = this.translator.translate.bind(this.translator)
 
     // Container for different types of plugins
