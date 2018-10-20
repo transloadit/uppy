@@ -146,7 +146,9 @@ class Drive {
         thumbnail: uppy.buildURL(adapter.getItemThumbnailUrl(item), true),
         requestPath: adapter.getItemRequestPath(item),
         modifiedDate: adapter.getItemModifiedDate(item),
-        raw: item
+        custom: {
+          isTeamDrive: adapter.isTeamDrive(item)
+        }
       })
     })
 

@@ -108,8 +108,7 @@ class Instagram {
         id: adapter.getItemId(item),
         thumbnail: adapter.getItemThumbnailUrl(item),
         requestPath: adapter.getItemRequestPath(item),
-        modifiedDate: adapter.getItemModifiedDate(item),
-        raw: item
+        modifiedDate: adapter.getItemModifiedDate(item)
       })
     })
 

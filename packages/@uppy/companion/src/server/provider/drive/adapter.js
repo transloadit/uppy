@@ -60,3 +60,7 @@ exports.getItemModifiedDate = (item) => {
 exports.getItemThumbnailUrl = (item) => {
   return `/drive/thumbnail/${exports.getItemRequestPath(item)}`
 }
+
+exports.isTeamDrive = (item) => {
+  return item.kind === 'drive#teamDrive'
+}

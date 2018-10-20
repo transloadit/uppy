@@ -146,8 +146,7 @@ class DropBox {
         id: adapter.getItemId(item),
         thumbnail: uppy.buildURL(adapter.getItemThumbnailUrl(item), true),
         requestPath: adapter.getItemRequestPath(item),
-        modifiedDate: adapter.getItemModifiedDate(item),
-        raw: item
+        modifiedDate: adapter.getItemModifiedDate(item)
       })
     })
 
