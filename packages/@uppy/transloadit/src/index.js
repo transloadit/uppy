@@ -71,6 +71,8 @@ module.exports = class Transloadit extends Plugin {
     if (this.opts.params) {
       AssemblyOptions.validateParams(this.opts.params)
     } else if (!hasCustomAssemblyOptions) {
+      // Throw the same error that we'd throw if the `params` returned from a
+      // `getAssemblyOptions()` function is null.
       AssemblyOptions.validateParams(null)
     }
 
