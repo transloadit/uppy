@@ -59,9 +59,9 @@ class CompanionService {
       stdio: 'pipe',
       env: Object.assign({}, process.env, {
         COMPANION_DATADIR: path.join(__dirname, '../../output'),
-        COMPANION_DOMAIN: 'localhost:3020',
+        COMPANION_DOMAIN: 'localhost:3030',
         COMPANION_PROTOCOL: 'http',
-        COMPANION_PORT: 3020,
+        COMPANION_PORT: 3030,
         COMPANION_SECRET: process.env.TEST_COMPANION_SECRET,
         COMPANION_DROPBOX_KEY: process.env.TEST_COMPANION_DROPBOX_KEY,
         COMPANION_DROPBOX_SECRET: process.env.TEST_COMPANION_DROPBOX_SECRET,

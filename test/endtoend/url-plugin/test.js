@@ -1,12 +1,14 @@
 /* global browser, expect  */
-const testURL = 'http://localhost:4567/url-plugin'
-
 describe('File upload with URL plugin', () => {
-  beforeEach(() => {
-    browser.url(testURL)
-  })
-
   it('should import  and upload a file completely with Url Plugin', () => {
+    browser.url('http://localhost:4567/url-plugin')
+
+    const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
+    const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3030'
+    browser.execute(function (companionUrl) {
+      window.initUrlPlugin(companionUrl)
+    }, companionUrl)
+
     // select url plugin
     browser.click(`.uppy-DashboardTab-btn[aria-controls=uppy-DashboardContent-panel--Url]`)
     // import set url value

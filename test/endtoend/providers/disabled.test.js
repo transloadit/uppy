@@ -1,4 +1,14 @@
 /* global browser, expect  */
+
+/*
+  WARNING! PLEASE READ THIS BEFORE ENABLING THIS TEST ON TRAVIS.
+
+  Before enabling this test on travis, please keep in mind that with this "no_ssl_bump_domains" option set
+  here https://github.com/transloadit/uppy/blob/998c7b1805acb8d305a562dd9726ebae98575e07/.travis.yml#L33
+  SSL encryption may not be enabled between the running companion and the testing browser client.
+
+  Hence, provider tokens (Google, Instagram, Dropbox) may be at risk of getting hijacked.
+*/
 const testURL = 'http://localhost:4567/providers'
 
 describe('File upload with Providers', () => {
