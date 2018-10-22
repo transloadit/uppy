@@ -250,32 +250,37 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
   })
 
   describe('getProportionalDimensions', () => {
-    const core = new MockCore()
-    const plugin = new ThumbnailGeneratorPlugin(core)
-
-    function resize (image, width, height) {
-      return plugin.getProportionalDimensions(image, width, height)
+    function resize (thumbnailPlugin, image, width, height) {
+      return thumbnailPlugin.getProportionalDimensions(image, width, height)
     }
 
     it('should calculate the thumbnail dimensions based on the width whilst keeping aspect ratio', () => {
-      expect(resize({ width: 200, height: 100 }, 50)).toEqual({ width: 50, height: 25 })
-      expect(resize({ width: 66, height: 66 }, 33)).toEqual({ width: 33, height: 33 })
-      expect(resize({ width: 201.2, height: 198.2 }, 47)).toEqual({ width: 47, height: 46 })
+      const core = new MockCore()
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      expect(resize(plugin, { width: 200, height: 100 }, 50)).toEqual({ width: 50, height: 25 })
+      expect(resize(plugin, { width: 66, height: 66 }, 33)).toEqual({ width: 33, height: 33 })
+      expect(resize(plugin, { width: 201.2, height: 198.2 }, 47)).toEqual({ width: 47, height: 46 })
     })
 
     it('should calculate the thumbnail dimensions based on the height whilst keeping aspect ratio', () => {
-      expect(resize({ width: 200, height: 100 }, null, 50)).toEqual({ width: 100, height: 50 })
-      expect(resize({ width: 66, height: 66 }, null, 33)).toEqual({ width: 33, height: 33 })
-      expect(resize({ width: 201.2, height: 198.2 }, null, 47)).toEqual({ width: 48, height: 47 })
+      const core = new MockCore()
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      expect(resize(plugin, { width: 200, height: 100 }, null, 50)).toEqual({ width: 100, height: 50 })
+      expect(resize(plugin, { width: 66, height: 66 }, null, 33)).toEqual({ width: 33, height: 33 })
+      expect(resize(plugin, { width: 201.2, height: 198.2 }, null, 47)).toEqual({ width: 48, height: 47 })
     })
 
     it('should calculate the thumbnail dimensions based on the default width if no custom width is given', () => {
+      const core = new MockCore()
+      const plugin = new ThumbnailGeneratorPlugin(core)
       plugin.defaultThumbnailDimension = 50
-      expect(resize({ width: 200, height: 100 })).toEqual({ width: 50, height: 25 })
+      expect(resize(plugin, { width: 200, height: 100 })).toEqual({ width: 50, height: 25 })
     })
 
     it('should calculate the thumbnail dimensions based on the width if both width and height are given', () => {
-      expect(resize({ width: 200, height: 100 }, 50, 42)).toEqual({ width: 50, height: 25 })
+      const core = new MockCore()
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      expect(resize(plugin, { width: 200, height: 100 }, 50, 42)).toEqual({ width: 50, height: 25 })
     })
   })
 
