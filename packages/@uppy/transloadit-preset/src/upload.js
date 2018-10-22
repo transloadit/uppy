@@ -1,8 +1,13 @@
-const Uppy = require('@uppy/core')
+const toArray = require('@uppy/utils/lib/toArray')
+const createUppy = require('./createUppy')
 const addTransloaditPlugin = require('./addTransloaditPlugin')
 
-function upload (files, opts) {
-  const uppy = Uppy({
+function upload (files, opts = {}) {
+  if (!Array.isArray(files) && typeof files.length === 'number') {
+    files = toArray(files)
+  }
+
+  const uppy = createUppy(opts, {
     allowMultipleUploads: false
   })
 
@@ -12,7 +17,8 @@ function upload (files, opts) {
     uppy.addFile({
       data: file,
       type: file.type,
-      name: file.name
+      name: file.name,
+      meta: file.meta || {}
     })
   })
 
