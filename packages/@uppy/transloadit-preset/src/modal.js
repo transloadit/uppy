@@ -17,8 +17,6 @@ function modal (target, opts = {}) {
     closeAfterFinish: true
   })
 
-  window.u = uppy
-
   if (Array.isArray(opts.providers)) {
     addProviders(uppy, opts.providers, {
       ...opts,
