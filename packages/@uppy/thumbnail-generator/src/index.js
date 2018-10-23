@@ -1,10 +1,10 @@
 const { Plugin } = require('@uppy/core')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
+const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 
 /**
  * The Thumbnail Generator plugin
- *
  */
 
 module.exports = class ThumbnailGenerator extends Plugin {
@@ -25,7 +25,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
       ...opts
     }
 
-    this.addToQueue = this.addToQueue.bind(this)
+    this.onFileAdded = this.onFileAdded.bind(this)
+    this.onFileRemoved = this.onFileRemoved.bind(this)
     this.onRestored = this.onRestored.bind(this)
   }
 
@@ -198,24 +199,45 @@ module.exports = class ThumbnailGenerator extends Plugin {
     return Promise.resolve()
   }
 
+  onFileAdded (file) {
+    if (!file.preview) {
+      this.addToQueue(file)
+    }
+  }
+
+  onFileRemoved (file) {
+    const index = this.queue.indexOf(file)
+    if (index !== -1) {
+      this.queue.splice(index, 1)
+    }
+
+    // Clean up object URLs.
+    if (file.preview && isObjectURL(file.preview)) {
+      URL.revokeObjectURL(file.preview)
+    }
+  }
+
   onRestored () {
-    const fileIDs = Object.keys(this.uppy.getState().files)
+    const { files } = this.uppy.getState()
+    const fileIDs = Object.keys(files)
     fileIDs.forEach((fileID) => {
       const file = this.uppy.getFile(fileID)
       if (!file.isRestored) return
       // Only add blob URLs; they are likely invalid after being restored.
-      if (!file.preview || /^blob:/.test(file.preview)) {
+      if (!file.preview || isObjectURL(file.preview)) {
         this.addToQueue(file)
       }
     })
   }
 
   install () {
-    this.uppy.on('file-added', this.addToQueue)
+    this.uppy.on('file-added', this.onFileAdded)
+    this.uppy.on('file-removed', this.onFileRemoved)
     this.uppy.on('restored', this.onRestored)
   }
   uninstall () {
-    this.uppy.off('file-added', this.addToQueue)
+    this.uppy.off('file-added', this.onFileAdded)
+    this.uppy.off('file-removed', this.onFileRemoved)
     this.uppy.off('restored', this.onRestored)
   }
 }
