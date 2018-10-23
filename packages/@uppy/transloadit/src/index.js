@@ -67,8 +67,13 @@ module.exports = class Transloadit extends Plugin {
     this._onRestored = this._onRestored.bind(this)
     this._getPersistentData = this._getPersistentData.bind(this)
 
+    const hasCustomAssemblyOptions = this.opts.getAssemblyOptions !== defaultOptions.getAssemblyOptions
     if (this.opts.params) {
       AssemblyOptions.validateParams(this.opts.params)
+    } else if (!hasCustomAssemblyOptions) {
+      // Throw the same error that we'd throw if the `params` returned from a
+      // `getAssemblyOptions()` function is null.
+      AssemblyOptions.validateParams(null)
     }
 
     this.client = new Client({
