@@ -15,9 +15,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
     this.title = 'Thumbnail Generator'
     this.queue = []
     this.queueProcessing = false
+    this.defaultThumbnailDimension = 200
 
     const defaultOptions = {
-      thumbnailWidth: 200
+      thumbnailWidth: null,
+      thumbnailHeight: null
     }
 
     this.opts = {
@@ -37,7 +39,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * @param {number} width
    * @return {Promise}
    */
-  createThumbnail (file, targetWidth) {
+  createThumbnail (file, targetWidth, targetHeight) {
     const originalUrl = URL.createObjectURL(file.data)
 
     const onload = new Promise((resolve, reject) => {
@@ -55,13 +57,42 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     return onload
       .then(image => {
-        const targetHeight = this.getProportionalHeight(image, targetWidth)
-        const canvas = this.resizeImage(image, targetWidth, targetHeight)
+        const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight)
+        const canvas = this.resizeImage(image, dimensions.width, dimensions.height)
         return this.canvasToBlob(canvas, 'image/png')
       })
       .then(blob => {
         return URL.createObjectURL(blob)
       })
+  }
+
+  /**
+   * Get the new calculated dimensions for the given image and a target width
+   * or height. If both width and height are given, only width is taken into
+   * account. If neither width nor height are given, the default dimension
+   * is used.
+   */
+  getProportionalDimensions (img, width, height) {
+    const aspect = img.width / img.height
+
+    if (width != null) {
+      return {
+        width: width,
+        height: Math.round(width / aspect)
+      }
+    }
+
+    if (height != null) {
+      return {
+        width: Math.round(height * aspect),
+        height: height
+      }
+    }
+
+    return {
+      width: this.defaultThumbnailDimension,
+      height: Math.round(this.defaultThumbnailDimension / aspect)
+    }
   }
 
   /**
@@ -149,11 +180,6 @@ module.exports = class ThumbnailGenerator extends Plugin {
     })
   }
 
-  getProportionalHeight (img, width) {
-    const aspect = img.width / img.height
-    return Math.round(width / aspect)
-  }
-
   /**
    * Set the preview URL for a file.
    */
@@ -184,7 +210,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
   requestThumbnail (file) {
     if (isPreviewSupported(file.type) && !file.isRemote) {
-      return this.createThumbnail(file, this.opts.thumbnailWidth)
+      return this.createThumbnail(file, this.opts.thumbnailWidth, this.opts.thumbnailHeight)
         .then(preview => {
           this.setPreviewURL(file.id, preview)
           this.uppy.log(`[ThumbnailGenerator] Generated thumbnail for ${file.id}`)
