@@ -178,6 +178,33 @@
   background-color: $color-almost-white;
 }
 
+.uppy-StatusBar-actionCircleBtn {
+  display: block;
+  width: 20px;
+  height: 20px;
+  line-height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: rgba($color-black, 0.6);
+  background-color: rgba($color-gray, 0.3);
+  text-align: center;
+}
+
+  .uppy-StatusBar-actionCircleBtn:not(:last-child) {
+    margin-right: 8px;
+  }
+
+  // .uppy-size--md .uppy-StatusBar-actionCircleBtn {
+  //   padding: 1px 4px;
+  // }
+
+  .uppy-StatusBar-actionCircleBtn svg {
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+    // vertical-align: middle;
+  }
+
 .uppy-StatusBar-actionBtn {
   font-size: 12px;
   padding: 4px;
@@ -216,14 +243,14 @@
     color: $color-cornflower-blue;
   }
 
-  .uppy-StatusBar-actionBtn--cancel {
-    color: $color-asphalt-gray;
-  }
+  // .uppy-StatusBar-actionBtn--cancel {
+  //   color: $color-asphalt-gray;
+  // }
 
-  .uppy-StatusBar-actionBtn--cancel svg {
-    width: 100%;
-    height: 100%;
-  }
+  // .uppy-StatusBar-actionBtn--cancel svg {
+  //   width: 100%;
+  //   height: 100%;
+  // }
 
   // .uppy-StatusBar-actionBtn--retry {
   //   background-color: $color-white;

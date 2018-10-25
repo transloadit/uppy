@@ -51,6 +51,7 @@ module.exports = (props) => {
   props = props || {}
 
   const { newFiles,
+    resumableUploads,
     error,
     hideUploadButton,
     hideRetryButton,
@@ -94,6 +95,9 @@ module.exports = (props) => {
     { 'uppy-StatusBar--detailedProgress': props.showProgressDetails }
   )
 
+  const showCancelBtn = !hidePauseResumeCancelButtons && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
+  const showPauseResumeBtn = !hidePauseResumeCancelButtons && resumableUploads && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
+
   return (
     <div class={statusBarClassNames} aria-hidden={isHidden}>
       <div class={progressClassNames}
@@ -106,10 +110,8 @@ module.exports = (props) => {
       <div class="uppy-StatusBar-actions">
         { newFiles && !hideUploadButton ? <UploadBtn {...props} uploadState={uploadState} /> : null }
         { error && !hideRetryButton ? <RetryBtn {...props} /> : null }
-        { !hidePauseResumeCancelButtons && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
-          ? <CancelBtn {...props} />
-          : null
-        }
+        { showPauseResumeBtn ? <PauseResumeButton {...props} /> : null }
+        { showCancelBtn ? <CancelBtn {...props} /> : null }
       </div>
     </div>
   )
@@ -144,41 +146,27 @@ const RetryBtn = (props) => {
 
 const CancelBtn = (props) => {
   return <button type="button"
-    class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--cancel"
+    class="uppy-u-reset uppy-StatusBar-actionCircleBtn"
     title={props.i18n('cancel')}
     aria-label={props.i18n('cancel')}
     onclick={props.cancelAll}>
-    <svg aria-hidden="true" class="UppyIcon" width="13px" height="13px" viewBox="0 0 13 13">
-      <polygon points="5.05555556 6.5 9.07164532e-16 1.44444444 1.44444444 0 6.5 5.05555556 11.5555556 2.7214936e-15 13 1.44444444 7.94444444 6.5 13 11.5555556 11.5555556 13 6.5 7.94444444 1.44444444 13 0 11.5555556" />
+    <svg aria-hidden="true" class="UppyIcon" width="8" height="8" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5.21 4.104l1.658 1.658-1.106 1.106-1.658-1.659-1.659 1.659L1.34 5.762l1.658-1.658L1.34 2.445 2.445 1.34l1.659 1.658L5.762 1.34l1.106 1.105-1.659 1.659z" fill-rule="evenodd" />
     </svg>
   </button>
 }
 
-const PauseResumeButtons = (props) => {
-  const { resumableUploads, isAllPaused, i18n } = props
-  const title = resumableUploads
-                ? isAllPaused
-                  ? i18n('resume')
-                  : i18n('pause')
-                : i18n('cancel')
+const PauseResumeButton = (props) => {
+  const { isAllPaused, i18n } = props
+  const title = isAllPaused ? i18n('resume') : i18n('pause')
 
-  // return <button class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--pauseResume"
-  //   type="button"
-  //   onclick={() => togglePauseResume(props)}>
-  //   {title}
-  // </button>
-
-  return <button title={title} class="uppy-u-reset uppy-StatusBar-statusIndicator" type="button" onclick={() => togglePauseResume(props)}>
-    {resumableUploads
-      ? isAllPaused
-        ? <svg aria-hidden="true" class="UppyIcon" width="15" height="17" viewBox="0 0 11 13">
-          <path d="M1.26 12.534a.67.67 0 0 1-.674.012.67.67 0 0 1-.336-.583v-11C.25.724.38.5.586.382a.658.658 0 0 1 .673.012l9.165 5.5a.66.66 0 0 1 .325.57.66.66 0 0 1-.325.573l-9.166 5.5z" />
-        </svg>
-        : <svg aria-hidden="true" class="UppyIcon" width="16" height="17" viewBox="0 0 12 13">
-          <path d="M4.888.81v11.38c0 .446-.324.81-.722.81H2.722C2.324 13 2 12.636 2 12.19V.81c0-.446.324-.81.722-.81h1.444c.398 0 .722.364.722.81zM9.888.81v11.38c0 .446-.324.81-.722.81H7.722C7.324 13 7 12.636 7 12.19V.81c0-.446.324-.81.722-.81h1.444c.398 0 .722.364.722.81z" />
-        </svg>
-      : <svg aria-hidden="true" class="UppyIcon" width="16px" height="16px" viewBox="0 0 19 19">
-        <path d="M17.318 17.232L9.94 9.854 9.586 9.5l-.354.354-7.378 7.378h.707l-.62-.62v.706L9.318 9.94l.354-.354-.354-.354L1.94 1.854v.707l.62-.62h-.706l7.378 7.378.354.354.354-.354 7.378-7.378h-.707l.622.62v-.706L9.854 9.232l-.354.354.354.354 7.378 7.378.708-.707-7.38-7.378v.708l7.38-7.38.353-.353-.353-.353-.622-.622-.353-.353-.354.352-7.378 7.38h.708L2.56 1.23 2.208.88l-.353.353-.622.62-.353.355.352.353 7.38 7.38v-.708l-7.38 7.38-.353.353.352.353.622.622.353.353.354-.353 7.38-7.38h-.708l7.38 7.38z" />
+  return <button title={title} class="uppy-u-reset uppy-StatusBar-actionCircleBtn" type="button" onclick={() => togglePauseResume(props)}>
+    {isAllPaused
+      ? <svg aria-hidden="true" class="UppyIcon" width="8" height="8" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6.736 3.852l-4.472 2.84V1.075z" fill-rule="evenodd" />
+      </svg>
+      : <svg aria-hidden="true" class="UppyIcon" width="8" height="8" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 1h2v6H1zM5 1h2v6H5z" fill-rule="evenodd" />
       </svg>
     }
   </button>
@@ -219,14 +207,7 @@ const ProgressBarUploading = (props) => {
 
   return (
     <div class="uppy-StatusBar-content" aria-label={title} title={title}>
-      { !props.hidePauseResumeCancelButtons && props.resumableUploads
-        ? <PauseResumeButtons {...props} />
-        : null
-      }
-      { !props.resumableUploads
-        ? <LoadingSpinner {...props} />
-        : null
-      }
+      { !props.isAllPaused ? <LoadingSpinner {...props} /> : null }
       <div class="uppy-StatusBar-status">
         <div class="uppy-StatusBar-statusPrimary">{title}: {props.totalProgress}%</div>
         { !props.isAllPaused && <ThrottledProgressDetails {...props} /> }
