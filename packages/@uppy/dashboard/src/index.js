@@ -76,6 +76,7 @@ module.exports = class Dashboard extends Plugin {
         uploadAllNewFiles: 'Upload all new files',
         emptyFolderAdded: 'No files were added from empty folder',
         uploadComplete: 'Upload complete',
+        uploadPaused: 'Upload paused',
         resumeUpload: 'Resume upload',
         pauseUpload: 'Pause upload',
         retryUpload: 'Retry upload',
@@ -87,6 +88,10 @@ module.exports = class Dashboard extends Plugin {
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
           1: 'Upload %{smart_count} files'
+        },
+        uploadingXFiles: {
+          0: 'Uploading %{smart_count} file',
+          1: 'Uploading %{smart_count} files'
         },
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
@@ -513,11 +518,42 @@ module.exports = class Dashboard extends Plugin {
     const newFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadStarted
     })
+
+    const uploadStartedFiles = Object.keys(files).filter((file) => {
+      return files[file].progress.uploadStarted
+    })
+
+    const completeFiles = Object.keys(files).filter((file) => {
+      return files[file].progress.uploadComplete
+    })
+
+    const erroredFiles = Object.keys(files).filter((file) => {
+      return files[file].error
+    })
+
     const inProgressFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadComplete &&
              files[file].progress.uploadStarted &&
              !files[file].isPaused
     })
+
+    const processingFiles = Object.keys(files).filter((file) => {
+      return files[file].progress.preprocess || files[file].progress.postprocess
+    })
+
+    const isUploadStarted = uploadStartedFiles.length > 0
+
+    const isAllComplete = state.totalProgress === 100 &&
+      completeFiles.length === Object.keys(files).length &&
+      processingFiles.length === 0
+
+    const isAllErrored = isUploadStarted &&
+      erroredFiles.length === uploadStartedFiles.length
+
+    const isAllPaused = inProgressFiles.length === 0 &&
+      !isAllComplete &&
+      !isAllErrored &&
+      uploadStartedFiles.length > 0
 
     let inProgressFilesArray = []
     inProgressFiles.forEach((file) => {
@@ -578,8 +614,17 @@ module.exports = class Dashboard extends Plugin {
     return DashboardUI({
       state: state,
       modal: pluginState,
-      newFiles: newFiles,
       files: files,
+      newFiles,
+      uploadStartedFiles,
+      completeFiles,
+      erroredFiles,
+      inProgressFiles,
+      processingFiles,
+      isUploadStarted,
+      isAllComplete,
+      isAllErrored,
+      isAllPaused,
       totalFileCount: Object.keys(files).length,
       totalProgress: state.totalProgress,
       acquirers: acquirers,
@@ -589,9 +634,6 @@ module.exports = class Dashboard extends Plugin {
       getPlugin: this.uppy.getPlugin,
       progressindicators: progressindicators,
       autoProceed: this.uppy.opts.autoProceed,
-      hideUploadButton: this.opts.hideUploadButton,
-      hideRetryButton: this.opts.hideRetryButton,
-      hidePauseResumeCancelButtons: this.opts.hidePauseResumeCancelButtons,
       id: this.id,
       closeModal: this.requestCloseModal,
       handleClickOutside: this.handleClickOutside,
@@ -672,7 +714,8 @@ module.exports = class Dashboard extends Plugin {
         target: this,
         hideUploadButton: this.opts.hideUploadButton,
         hideRetryButton: this.opts.hideRetryButton,
-        hidePauseResumeCancelButtons: this.opts.hidePauseResumeCancelButtons,
+        hidePauseResumeButton: this.opts.hidePauseResumeButton,
+        hideCancelButton: this.opts.hideCancelButton,
         showProgressDetails: this.opts.showProgressDetails,
         hideAfterFinish: this.opts.hideProgressAfterFinish,
         locale: this.opts.locale
