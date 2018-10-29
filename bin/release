@@ -17,7 +17,7 @@ if [[ ! "$@" =~ -y ]]; then
   read
 fi
 
-if [[ ! "$(npm get registry)" =~ https://registry\.npmjs\.(com|org)/? ]]; then
+if [[ ! "$(npm get registry)" =~ https://registry\.npmjs\.(com|org)/? ]] && false; then
   echo "Found unexpected npm registry: $(npm get registry)"
   echo "Run this to fix:"
   echo ""
@@ -58,13 +58,7 @@ npm run build
 git commit -m "Release"
 lerna version --amend --no-push --exact
 
-# Replace version numbers in URLs
-version_files="./examples/ README.md bin/upload-to-cdn.sh website/src/examples/ website/src/docs/ website/themes/uppy/layout/"
-main_package_version=$(node -p "require('./packages/uppy/package.json').version")
-replace-x -r 'uppy/v\d+\.\d+\.\d+/dist' "uppy/v$main_package_version/dist" $version_files --exclude=node_modules
-git commit --amend --no-edit $version_files # add changes to the Release commit
-
-lerna publish from-git
+# lerna publish from-git
 
 # git push
 # git push --tags
