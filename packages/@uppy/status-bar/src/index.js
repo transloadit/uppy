@@ -151,6 +151,14 @@ module.exports = class StatusBar extends Plugin {
       error
     } = state
 
+    // TODO: move this to Core, to share between Status Bar and Dashboard
+    // (and any other plugin that might need it, too)
+    const newFiles = Object.keys(files).filter((file) => {
+      return !files[file].progress.uploadStarted &&
+        !files[file].progress.preprocess &&
+        !files[file].progress.postprocess
+    })
+
     const uploadStartedFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadStarted
     })
@@ -159,11 +167,6 @@ module.exports = class StatusBar extends Plugin {
       return files[file].isPaused
     })
 
-    const newFiles = Object.keys(files).filter((file) => {
-      return !files[file].progress.uploadStarted &&
-        !files[file].progress.preprocess &&
-        !files[file].progress.postprocess
-    })
     const completeFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadComplete
     })
@@ -186,6 +189,7 @@ module.exports = class StatusBar extends Plugin {
         files[file].progress.preprocess ||
         files[file].progress.postprocess
     })
+
     const processingFiles = Object.keys(files).filter((file) => {
       return files[file].progress.preprocess || files[file].progress.postprocess
     })
@@ -216,13 +220,12 @@ module.exports = class StatusBar extends Plugin {
     const isAllErrored = isUploadStarted &&
       erroredFiles.length === uploadStartedFiles.length
 
+    const isAllPaused = inProgressFiles.length !== 0 &&
+      pausedFiles.length === inProgressFiles.length
     // const isAllPaused = inProgressFiles.length === 0 &&
     //   !isAllComplete &&
     //   !isAllErrored &&
     //   uploadStartedFiles.length > 0
-
-    const isAllPaused = inProgressFiles.length !== 0 &&
-      pausedFiles.length === inProgressFiles.length
 
     const isUploadInProgress = inProgressFiles.length > 0
 

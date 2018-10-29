@@ -1026,6 +1026,10 @@
   }
 }
 
+.uppy-DashboardItem.is-processing .uppy-DashboardItem-progress {
+  opacity: 0;
+}
+
 .uppy-DashboardItem.is-complete {
   .uppy-DashboardItem-progressIndicator {
     cursor: default;

@@ -97,6 +97,8 @@ module.exports = (props) => {
     uploadState !== statusBarStates.STATE_COMPLETE
   const showPauseResumeBtn = resumableUploads && !hidePauseResumeButton &&
     uploadState !== statusBarStates.STATE_WAITING &&
+    uploadState !== statusBarStates.STATE_PREPROCESSING &&
+    uploadState !== statusBarStates.STATE_POSTPROCESSING &&
     uploadState !== statusBarStates.STATE_COMPLETE
   const showRetryBtn = error && !hideRetryButton
 

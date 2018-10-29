@@ -56,6 +56,9 @@ function UploadStatus (props) {
   switch (uploadingState) {
     case 'uploading':
       return props.i18n('uploadingXFiles', { smart_count: props.inProgressNotPausedFiles.length })
+    case 'preprocessing':
+    case 'postprocessing':
+      return props.i18n('processingXFiles', { smart_count: props.processingFiles.length })
     case 'paused':
       return props.i18n('uploadPaused')
     case 'waiting':

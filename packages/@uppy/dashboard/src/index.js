@@ -7,7 +7,7 @@ const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
-const prettyBytes = require('prettier-bytes')
+// const prettyBytes = require('prettier-bytes')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultTabIcon } = require('./components/icons')
 
@@ -92,6 +92,10 @@ module.exports = class Dashboard extends Plugin {
         uploadingXFiles: {
           0: 'Uploading %{smart_count} file',
           1: 'Uploading %{smart_count} files'
+        },
+        processingXFiles: {
+          0: 'Processing %{smart_count} file',
+          1: 'Processing %{smart_count} files'
         },
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
@@ -528,6 +532,8 @@ module.exports = class Dashboard extends Plugin {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
 
+    // TODO: move this to Core, to share between Status Bar and Dashboard
+    // (and any other plugin that might need it, too)
     const newFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadStarted
     })
@@ -570,27 +576,26 @@ module.exports = class Dashboard extends Plugin {
     const isAllErrored = isUploadStarted &&
       erroredFiles.length === uploadStartedFiles.length
 
+    const isAllPaused = inProgressFiles.length !== 0 &&
+      pausedFiles.length === inProgressFiles.length
     // const isAllPaused = inProgressNotPausedFiles.length === 0 &&
     //   !isAllComplete &&
     //   !isAllErrored &&
     //   uploadStartedFiles.length > 0
 
-    const isAllPaused = inProgressFiles.length !== 0 &&
-      pausedFiles.length === inProgressFiles.length
+    // let inProgressNotPausedFilesArray = []
+    // inProgressNotPausedFiles.forEach((file) => {
+    //   inProgressNotPausedFilesArray.push(files[file])
+    // })
 
-    let inProgressNotPausedFilesArray = []
-    inProgressNotPausedFiles.forEach((file) => {
-      inProgressNotPausedFilesArray.push(files[file])
-    })
-
-    let totalSize = 0
-    let totalUploadedSize = 0
-    inProgressNotPausedFilesArray.forEach((file) => {
-      totalSize = totalSize + (file.progress.bytesTotal || 0)
-      totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
-    })
-    totalSize = prettyBytes(totalSize)
-    totalUploadedSize = prettyBytes(totalUploadedSize)
+    // let totalSize = 0
+    // let totalUploadedSize = 0
+    // inProgressNotPausedFilesArray.forEach((file) => {
+    //   totalSize = totalSize + (file.progress.bytesTotal || 0)
+    //   totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
+    // })
+    // totalSize = prettyBytes(totalSize)
+    // totalUploadedSize = prettyBytes(totalUploadedSize)
 
     const attachRenderFunctionToTarget = (target) => {
       const plugin = this.uppy.getPlugin(target.id)
