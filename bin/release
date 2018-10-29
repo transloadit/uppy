@@ -17,7 +17,7 @@ if [[ ! "$@" =~ -y ]]; then
   read
 fi
 
-if [[ ! "$(npm get registry)" =~ https://registry\.npmjs\.(com|org)/? ]] && false; then
+if [[ ! "$(npm get registry)" =~ https://registry\.npmjs\.(com|org)/? ]]; then
   echo "Found unexpected npm registry: $(npm get registry)"
   echo "Run this to fix:"
   echo ""
