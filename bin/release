@@ -58,7 +58,7 @@ npm run build
 git commit -m "Release"
 lerna version --amend --no-push --exact
 
-# lerna publish from-git
+lerna publish from-git
 
-# git push
-# git push --tags
+git push
+git push --tags
