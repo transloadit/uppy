@@ -129,26 +129,40 @@ By default, when a file upload has completed, the file icon in the Dashboard tur
 
 ### `showProgressDetails: false`
 
-By default, progress in StatusBar is shown as a simple percentage. If you would like to also display remaining upload size and time, set this to `true`.
+Passed to the Status Bar plugin used in the Dashboard.
+
+By default, progress in Status Bar is shown as a simple percentage. If you would like to also display remaining upload size and time, set this to `true`.
 
 `showProgressDetails: false`: Uploading: 45%
 `showProgressDetails: true`: Uploading: 45%・43 MB of 101 MB・8s left
 
 ### `hideUploadButton: false`
 
+Passed to the Status Bar plugin used in the Dashboard.
+
 Hide the upload button. Use this if you are providing a custom upload button somewhere, and using the `uppy.upload()` API.
 
 ### `hideRetryButton: false`
 
+Passed to the Status Bar plugin used in the Dashboard.
+
 Hide the retry button. Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
 
-### `hidePauseResumeCancelButtons: false`
+### `hidePauseResumeButton: false`
 
-Hide the cancel or pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)`, `uppy.cancelAll()` or `uppy.removeFile(fileID)` API.
+Passed to the Status Bar plugin used in the Dashboard. 
+
+Hide pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)` or `uppy.removeFile(fileID)` API.
+
+### `hideCancelButton: false`
+
+Passed to the Status Bar plugin used in the Dashboard.
+
+Hide the cancel button. Use this if you are providing a custom retry button somewhere, and using the `uppy.cancelAll()` API.
 
 ### `hideProgressAfterFinish: false`
 
-Hide StatusBar after the upload has finished.
+Hide Status Bar after the upload has finished.
 
 ### `showSelectedFiles: true`
 
