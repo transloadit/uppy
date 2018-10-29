@@ -3,9 +3,6 @@ const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
 
-/**
- *
- */
 class DropBox {
   constructor (options) {
     this.authProvider = options.provider = DropBox.authProvider

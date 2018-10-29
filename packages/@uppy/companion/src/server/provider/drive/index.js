@@ -7,10 +7,6 @@ const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emai
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 const TEAM_DRIVE_FIELDS = 'teamDrives(kind,id,name,backgroundImageLink)'
 
-/**
- * @class
- * @implements {Provider}
- */
 class Drive {
   constructor (options) {
     this.authProvider = options.provider = Drive.authProvider

@@ -1,5 +1,8 @@
 exports.getUsername = (data) => {
-  return data.data[0].user.username
+  // @todo implement a better way to get usernames
+  if (data.data && data.data.length) {
+    return data.data[0].user.username
+  }
 }
 
 exports.isFolder = (item) => {
