@@ -118,7 +118,7 @@
 
 .IndexAbout-item:first-child {
   @media #{$screen-medium} {
-    padding-left: 130px;
+    // padding-left: 130px;
 
     .IndexAbout-icon {
       top: 20px;
@@ -285,7 +285,7 @@
 
 .IndexDesignGoals {
   padding: 4em 1em;
-  background-color: $color-primary;
+  background-color: darken($color-primary, 15%);
   color: $color-white;
   overflow: hidden;
 

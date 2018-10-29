@@ -11,15 +11,15 @@ Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly wit
 - **Preview** and edit metadata with a nice interface;
 - **Upload** to the final destination, optionally process/encode
 
-<img src="https://github.com/transloadit/uppy/raw/master/assets/uppy-demo-2.gif">
+<img src="https://github.com/transloadit/uppy/raw/master/assets/uppy-demo-oct-2018.gif">
 
 **[Read the docs](https://uppy.io/docs)** | **[Try Uppy](https://uppy.io/examples/dashboard/)**
+
+<a href="https://transloadit.com" target="_blank"><img width="185" src="https://github.com/transloadit/uppy/raw/master/assets/developed-by-transloadit.png"></a>
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 
 ## Example
-
-<img width="700" alt="Uppy UI Demo: modal dialog with a few selected files and an upload button" src="https://github.com/transloadit/uppy/raw/master/uppy-screenshot.jpg">
 
 Code used in the above example:
 
@@ -176,7 +176,7 @@ Not all apps need all of these features. A `<input type="file">` is fine in many
 
 ### Why is all this goodness free?
 
-Transloadit’s team is small and we have a shared ambition to make a living from open source. By giving away projects like [tus.io](https://tus.io) and [Uppy](https://uppy.io),we’re hoping to advance the state of the art, make life a tiny little bit better for everyone, and in doing so have rewarding jobs and get some eyes on our commercial service: [a content ingestion & processing platform](https://transloadit.com).
+Transloadit’s team is small and we have a shared ambition to make a living from open source. By giving away projects like [tus.io](https://tus.io) and [Uppy](https://uppy.io), we’re hoping to advance the state of the art, make life a tiny little bit better for everyone, and in doing so have rewarding jobs and get some eyes on our commercial service: [a content ingestion & processing platform](https://transloadit.com).
 
 Our thinking is that if just a fraction of our open source userbase can see the appeal of hosted versions straight from the source, that could already be enough to sustain our work. So far this is working out! We’re able to dedicate 80% of our time to open source and haven’t gone bankrupt just yet :D
 

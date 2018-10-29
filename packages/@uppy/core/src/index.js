@@ -8,7 +8,6 @@ const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
-const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
 const Plugin = require('./Plugin') // Exported from here.
 
@@ -54,6 +53,7 @@ class Uppy {
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
+      allowMultipleUploads: true,
       debug: false,
       restrictions: {
         maxFileSize: null,
@@ -118,11 +118,12 @@ class Uppy {
       plugins: {},
       files: {},
       currentUploads: {},
+      allowNewUpload: true,
       capabilities: {
         resumableUploads: false
       },
       totalProgress: 0,
-      meta: Object.assign({}, this.opts.meta),
+      meta: { ...this.opts.meta },
       info: {
         isHidden: true,
         type: 'info',
@@ -378,13 +379,17 @@ class Uppy {
   * @param {object} file object to add
   */
   addFile (file) {
-    const { files } = this.getState()
+    const { files, allowNewUpload } = this.getState()
 
     const onError = (msg) => {
       const err = typeof msg === 'object' ? msg : new Error(msg)
       this.log(err.message)
       this.info(err.message, 'error', 5000)
       throw err
+    }
+
+    if (allowNewUpload === false) {
+      onError(new Error('Cannot add new files: already uploading.'))
     }
 
     const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
@@ -500,15 +505,13 @@ class Uppy {
     this._calculateTotalProgress()
     this.emit('file-removed', removedFile)
     this.log(`File removed: ${removedFile.id}`)
-
-    // Clean up object URLs.
-    if (removedFile.preview && isObjectURL(removedFile.preview)) {
-      URL.revokeObjectURL(removedFile.preview)
-    }
   }
 
   pauseResume (fileID) {
-    if (this.getFile(fileID).uploadComplete) return
+    if (!this.getState().capabilities.resumableUploads ||
+         this.getFile(fileID).uploadComplete) {
+      return
+    }
 
     const wasPaused = this.getFile(fileID).isPaused || false
     const isPaused = !wasPaused
@@ -592,6 +595,7 @@ class Uppy {
     })
 
     this.setState({
+      allowNewUpload: true,
       totalProgress: 0,
       error: null
     })
@@ -853,14 +857,13 @@ class Uppy {
   /**
    * Find one Plugin by name.
    *
-   * @param {string} name description
+   * @param {string} id plugin id
    * @return {object | boolean}
    */
-  getPlugin (name) {
+  getPlugin (id) {
     let foundPlugin = null
     this.iteratePlugins((plugin) => {
-      const pluginName = plugin.id
-      if (pluginName === name) {
+      if (plugin.id === id) {
         foundPlugin = plugin
         return false
       }
@@ -1025,6 +1028,11 @@ class Uppy {
    * @return {string} ID of this upload.
    */
   _createUpload (fileIDs) {
+    const { allowNewUpload, currentUploads } = this.getState()
+    if (!allowNewUpload) {
+      throw new Error('Cannot create a new upload: already uploading.')
+    }
+
     const uploadID = cuid()
 
     this.emit('upload', {
@@ -1033,20 +1041,25 @@ class Uppy {
     })
 
     this.setState({
-      currentUploads: Object.assign({}, this.getState().currentUploads, {
+      allowNewUpload: this.opts.allowMultipleUploads !== false,
+
+      currentUploads: {
+        ...currentUploads,
         [uploadID]: {
           fileIDs: fileIDs,
           step: 0,
           result: {}
         }
-      })
+      }
     })
 
     return uploadID
   }
 
   _getUpload (uploadID) {
-    return this.getState().currentUploads[uploadID]
+    const { currentUploads } = this.getState()
+
+    return currentUploads[uploadID]
   }
 
   /**

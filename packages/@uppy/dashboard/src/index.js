@@ -513,7 +513,7 @@ module.exports = class Dashboard extends Plugin {
 
   render (state) {
     const pluginState = this.getPluginState()
-    const { files, capabilities } = state
+    const { files, capabilities, allowNewUpload } = state
 
     const newFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadStarted
@@ -602,7 +602,6 @@ module.exports = class Dashboard extends Plugin {
     }
 
     const cancelUpload = (fileID) => {
-      this.uppy.emit('upload-cancel', fileID)
       this.uppy.removeFile(fileID)
     }
 
@@ -612,9 +611,9 @@ module.exports = class Dashboard extends Plugin {
     }
 
     return DashboardUI({
-      state: state,
+      state,
       modal: pluginState,
-      files: files,
+      files,
       newFiles,
       uploadStartedFiles,
       completeFiles,
@@ -627,7 +626,8 @@ module.exports = class Dashboard extends Plugin {
       isAllPaused,
       totalFileCount: Object.keys(files).length,
       totalProgress: state.totalProgress,
-      acquirers: acquirers,
+      allowNewUpload,
+      acquirers,
       activePanel: pluginState.activePanel,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
@@ -652,16 +652,16 @@ module.exports = class Dashboard extends Plugin {
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
       bundled: capabilities.bundled || false,
-      startUpload: startUpload,
+      startUpload,
       pauseUpload: this.uppy.pauseResume,
       retryUpload: this.uppy.retryUpload,
-      cancelUpload: cancelUpload,
+      cancelUpload,
       cancelAll: this.uppy.cancelAll,
       fileCardFor: pluginState.fileCardFor,
       toggleFileCard: this.toggleFileCard,
       toggleAddFilesPanel: this.toggleAddFilesPanel,
       showAddFilesPanel: pluginState.showAddFilesPanel,
-      saveFileCard: saveFileCard,
+      saveFileCard,
       width: this.opts.width,
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,

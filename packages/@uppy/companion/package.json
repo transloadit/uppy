@@ -28,27 +28,6 @@
   "bin": {
     "companion": "./lib/standalone/start-server.js"
   },
-  "devDependencies": {
-    "@types/aws-serverless-express": "^3.0.1",
-    "@types/compression": "0.0.36",
-    "@types/connect-redis": "0.0.7",
-    "@types/cookie-parser": "^1.4.1",
-    "@types/cors": "^2.8.3",
-    "@types/express-session": "^1.15.6",
-    "@types/helmet": "0.0.37",
-    "@types/jsonwebtoken": "^7.2.5",
-    "@types/lodash.merge": "^4.6.3",
-    "@types/morgan": "^1.7.35",
-    "@types/ms": "^0.7.30",
-    "@types/node": "^8.5.1",
-    "@types/request": "^2.0.9",
-    "@types/tus-js-client": "^1.4.1",
-    "@types/uuid": "^3.4.3",
-    "@types/ws": "^3.2.1",
-    "nodemon": "^1.17.5",
-    "supertest": "3.0.0",
-    "typescript": "^2.9.2"
-  },
   "dependencies": {
     "@purest/providers": "1.0.0",
     "@uppy/fs-tail-stream": "^1.2.0",
@@ -77,10 +56,30 @@
     "request": "2.85.0",
     "serialize-error": "^2.1.0",
     "tus-js-client": "^1.5.1",
-    "typescript": "^2.9.2",
     "uuid": "2.0.2",
     "validator": "^9.0.0",
     "ws": "1.1.5"
+  },
+  "devDependencies": {
+    "@types/aws-serverless-express": "^3.0.1",
+    "@types/compression": "0.0.36",
+    "@types/connect-redis": "0.0.7",
+    "@types/cookie-parser": "^1.4.1",
+    "@types/cors": "^2.8.3",
+    "@types/express-session": "^1.15.6",
+    "@types/helmet": "0.0.37",
+    "@types/jsonwebtoken": "^7.2.5",
+    "@types/lodash.merge": "^4.6.3",
+    "@types/morgan": "^1.7.35",
+    "@types/ms": "^0.7.30",
+    "@types/node": "^8.5.1",
+    "@types/request": "^2.0.9",
+    "@types/tus-js-client": "^1.4.1",
+    "@types/uuid": "^3.4.3",
+    "@types/ws": "^3.2.1",
+    "nodemon": "^1.17.5",
+    "supertest": "3.0.0",
+    "typescript": "^2.9.2"
   },
   "files": [
     "lib/"

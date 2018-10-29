@@ -19,12 +19,16 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
     expect(plugin instanceof Plugin).toEqual(true)
   })
 
-  it('should accept the thumbnailWidth option and override the default', () => {
+  it('should accept the thumbnailWidth and thumbnailHeight option and override the default', () => {
     const plugin1 = new ThumbnailGeneratorPlugin(new MockCore()) // eslint-disable-line no-new
-    expect(plugin1.opts.thumbnailWidth).toEqual(200)
+    expect(plugin1.opts.thumbnailWidth).toEqual(null)
+    expect(plugin1.opts.thumbnailHeight).toEqual(null)
 
     const plugin2 = new ThumbnailGeneratorPlugin(new MockCore(), { thumbnailWidth: 100 }) // eslint-disable-line no-new
     expect(plugin2.opts.thumbnailWidth).toEqual(100)
+
+    const plugin3 = new ThumbnailGeneratorPlugin(new MockCore(), { thumbnailHeight: 100 }) // eslint-disable-line no-new
+    expect(plugin3.opts.thumbnailHeight).toEqual(100)
   })
 
   describe('install', () => {
@@ -37,8 +41,8 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.addToQueue = jest.fn()
       plugin.install()
 
-      expect(core.on).toHaveBeenCalledTimes(2)
-      expect(core.on).toHaveBeenCalledWith('file-added', plugin.addToQueue)
+      expect(core.on).toHaveBeenCalledTimes(3)
+      expect(core.on).toHaveBeenCalledWith('file-added', plugin.onFileAdded)
     })
   })
 
@@ -53,12 +57,12 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.addToQueue = jest.fn()
       plugin.install()
 
-      expect(core.on).toHaveBeenCalledTimes(2)
+      expect(core.on).toHaveBeenCalledTimes(3)
 
       plugin.uninstall()
 
-      expect(core.off).toHaveBeenCalledTimes(2)
-      expect(core.off).toHaveBeenCalledWith('file-added', plugin.addToQueue)
+      expect(core.off).toHaveBeenCalledTimes(3)
+      expect(core.off).toHaveBeenCalledWith('file-added', plugin.onFileAdded)
     })
   })
 
@@ -112,6 +116,44 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
           expect(plugin.queue).toEqual([])
           expect(plugin.queueProcessing).toEqual(false)
         })
+    })
+
+    it('should revoke object URLs when files are removed', async () => {
+      const core = new MockCore()
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      plugin.install()
+
+      URL.revokeObjectURL = jest.fn(() => null)
+
+      try {
+        plugin.createThumbnail = jest.fn(async () => {
+          await delay(50)
+          return 'blob:http://uppy.io/fake-thumbnail'
+        })
+        plugin.setPreviewURL = jest.fn((id, preview) => {
+          if (id === 1) file1.preview = preview
+          if (id === 2) file2.preview = preview
+        })
+
+        const file1 = { id: 1, name: 'bar.jpg', type: 'image/jpeg' }
+        const file2 = { id: 2, name: 'bar2.jpg', type: 'image/jpeg' }
+        core.emit('file-added', file1)
+        core.emit('file-added', file2)
+        expect(plugin.queue).toHaveLength(1)
+        // should drop it from the queue
+        core.emit('file-removed', file2)
+        expect(plugin.queue).toHaveLength(0)
+
+        expect(plugin.createThumbnail).toHaveBeenCalledTimes(1)
+        expect(URL.revokeObjectURL).not.toHaveBeenCalled()
+
+        await delay(110)
+
+        core.emit('file-removed', file1)
+        expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1)
+      } finally {
+        delete URL.revokeObjectURL
+      }
     })
   })
 
@@ -168,7 +210,8 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         expect(plugin.createThumbnail).toHaveBeenCalledTimes(1)
         expect(plugin.createThumbnail).toHaveBeenCalledWith(
           file,
-          plugin.opts.thumbnailWidth
+          plugin.opts.thumbnailWidth,
+          plugin.opts.thumbnailHeight
         )
       })
     })
@@ -244,19 +287,38 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
     })
   })
 
-  describe('getProportionalHeight', () => {
-    it('should calculate the resized height based on the specified width of the image whilst keeping aspect ratio', () => {
+  describe('getProportionalDimensions', () => {
+    function resize (thumbnailPlugin, image, width, height) {
+      return thumbnailPlugin.getProportionalDimensions(image, width, height)
+    }
+
+    it('should calculate the thumbnail dimensions based on the width whilst keeping aspect ratio', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
-      expect(
-        plugin.getProportionalHeight({ width: 200, height: 100 }, 50)
-      ).toEqual(25)
-      expect(
-        plugin.getProportionalHeight({ width: 66, height: 66 }, 33)
-      ).toEqual(33)
-      expect(
-        plugin.getProportionalHeight({ width: 201.2, height: 198.2 }, 47)
-      ).toEqual(46)
+      expect(resize(plugin, { width: 200, height: 100 }, 50)).toEqual({ width: 50, height: 25 })
+      expect(resize(plugin, { width: 66, height: 66 }, 33)).toEqual({ width: 33, height: 33 })
+      expect(resize(plugin, { width: 201.2, height: 198.2 }, 47)).toEqual({ width: 47, height: 46 })
+    })
+
+    it('should calculate the thumbnail dimensions based on the height whilst keeping aspect ratio', () => {
+      const core = new MockCore()
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      expect(resize(plugin, { width: 200, height: 100 }, null, 50)).toEqual({ width: 100, height: 50 })
+      expect(resize(plugin, { width: 66, height: 66 }, null, 33)).toEqual({ width: 33, height: 33 })
+      expect(resize(plugin, { width: 201.2, height: 198.2 }, null, 47)).toEqual({ width: 48, height: 47 })
+    })
+
+    it('should calculate the thumbnail dimensions based on the default width if no custom width is given', () => {
+      const core = new MockCore()
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      plugin.defaultThumbnailDimension = 50
+      expect(resize(plugin, { width: 200, height: 100 })).toEqual({ width: 50, height: 25 })
+    })
+
+    it('should calculate the thumbnail dimensions based on the width if both width and height are given', () => {
+      const core = new MockCore()
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      expect(resize(plugin, { width: 200, height: 100 }, 50, 42)).toEqual({ width: 50, height: 25 })
     })
   })
 

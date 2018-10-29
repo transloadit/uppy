@@ -1,10 +1,10 @@
 const { Plugin } = require('@uppy/core')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
+const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 
 /**
  * The Thumbnail Generator plugin
- *
  */
 
 module.exports = class ThumbnailGenerator extends Plugin {
@@ -15,9 +15,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
     this.title = 'Thumbnail Generator'
     this.queue = []
     this.queueProcessing = false
+    this.defaultThumbnailDimension = 200
 
     const defaultOptions = {
-      thumbnailWidth: 200
+      thumbnailWidth: null,
+      thumbnailHeight: null
     }
 
     this.opts = {
@@ -25,7 +27,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
       ...opts
     }
 
-    this.addToQueue = this.addToQueue.bind(this)
+    this.onFileAdded = this.onFileAdded.bind(this)
+    this.onFileRemoved = this.onFileRemoved.bind(this)
     this.onRestored = this.onRestored.bind(this)
   }
 
@@ -36,7 +39,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * @param {number} width
    * @return {Promise}
    */
-  createThumbnail (file, targetWidth) {
+  createThumbnail (file, targetWidth, targetHeight) {
     const originalUrl = URL.createObjectURL(file.data)
 
     const onload = new Promise((resolve, reject) => {
@@ -54,13 +57,42 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     return onload
       .then(image => {
-        const targetHeight = this.getProportionalHeight(image, targetWidth)
-        const canvas = this.resizeImage(image, targetWidth, targetHeight)
+        const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight)
+        const canvas = this.resizeImage(image, dimensions.width, dimensions.height)
         return this.canvasToBlob(canvas, 'image/png')
       })
       .then(blob => {
         return URL.createObjectURL(blob)
       })
+  }
+
+  /**
+   * Get the new calculated dimensions for the given image and a target width
+   * or height. If both width and height are given, only width is taken into
+   * account. If neither width nor height are given, the default dimension
+   * is used.
+   */
+  getProportionalDimensions (img, width, height) {
+    const aspect = img.width / img.height
+
+    if (width != null) {
+      return {
+        width: width,
+        height: Math.round(width / aspect)
+      }
+    }
+
+    if (height != null) {
+      return {
+        width: Math.round(height * aspect),
+        height: height
+      }
+    }
+
+    return {
+      width: this.defaultThumbnailDimension,
+      height: Math.round(this.defaultThumbnailDimension / aspect)
+    }
   }
 
   /**
@@ -148,11 +180,6 @@ module.exports = class ThumbnailGenerator extends Plugin {
     })
   }
 
-  getProportionalHeight (img, width) {
-    const aspect = img.width / img.height
-    return Math.round(width / aspect)
-  }
-
   /**
    * Set the preview URL for a file.
    */
@@ -183,7 +210,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
   requestThumbnail (file) {
     if (isPreviewSupported(file.type) && !file.isRemote) {
-      return this.createThumbnail(file, this.opts.thumbnailWidth)
+      return this.createThumbnail(file, this.opts.thumbnailWidth, this.opts.thumbnailHeight)
         .then(preview => {
           this.setPreviewURL(file.id, preview)
           this.uppy.log(`[ThumbnailGenerator] Generated thumbnail for ${file.id}`)
@@ -198,24 +225,45 @@ module.exports = class ThumbnailGenerator extends Plugin {
     return Promise.resolve()
   }
 
+  onFileAdded (file) {
+    if (!file.preview) {
+      this.addToQueue(file)
+    }
+  }
+
+  onFileRemoved (file) {
+    const index = this.queue.indexOf(file)
+    if (index !== -1) {
+      this.queue.splice(index, 1)
+    }
+
+    // Clean up object URLs.
+    if (file.preview && isObjectURL(file.preview)) {
+      URL.revokeObjectURL(file.preview)
+    }
+  }
+
   onRestored () {
-    const fileIDs = Object.keys(this.uppy.getState().files)
+    const { files } = this.uppy.getState()
+    const fileIDs = Object.keys(files)
     fileIDs.forEach((fileID) => {
       const file = this.uppy.getFile(fileID)
       if (!file.isRestored) return
       // Only add blob URLs; they are likely invalid after being restored.
-      if (!file.preview || /^blob:/.test(file.preview)) {
+      if (!file.preview || isObjectURL(file.preview)) {
         this.addToQueue(file)
       }
     })
   }
 
   install () {
-    this.uppy.on('file-added', this.addToQueue)
+    this.uppy.on('file-added', this.onFileAdded)
+    this.uppy.on('file-removed', this.onFileRemoved)
     this.uppy.on('restored', this.onRestored)
   }
   uninstall () {
-    this.uppy.off('file-added', this.addToQueue)
+    this.uppy.off('file-added', this.onFileAdded)
+    this.uppy.off('file-removed', this.onFileRemoved)
     this.uppy.off('restored', this.onRestored)
   }
 }

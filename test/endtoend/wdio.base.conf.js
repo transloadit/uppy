@@ -93,6 +93,8 @@ exports.config = {
     { mount: '/xhr-limit', path: './test/endtoend/xhr-limit/dist' },
     { mount: '/providers', path: './test/endtoend/providers/dist' },
     { mount: '/thumbnails', path: './test/endtoend/thumbnails/dist' },
+    { mount: '/transloadit', path: './test/endtoend/transloadit/dist' },
+    { mount: '/url-plugin', path: './test/endtoend/url-plugin/dist' },
     { mount: '/create-react-app', path: './test/endtoend/create-react-app/build' }
   ],
 

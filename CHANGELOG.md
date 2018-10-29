@@ -73,6 +73,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] test: Add a prepublish test that checks if `npm pack` is not massive
 - [ ] Add release documentation. eg: test on transloadit website, check examples on the uppy.io website
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
+- [ ] webcam: Pick format based on `restrictions.allowedFileTypes`, eg. use PNG for snapshot instead of JPG if `allowedFileTypes: ['.png']` is set
 
 ## 1.0 Goals
 
@@ -129,6 +130,10 @@ What we need to do to release Uppy 1.0
 - [ ] companion: option validation (can use https://npm.im/ajv + JSON schema)
 - [ ] transloadit: add end2end test for transloadit https://uppy.io/examples/transloadit/ (@arturi, @goto-bus-stop)
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
+- [x] @uppy/aws-s3: Use RequestClient (#1091 / @goto-bus-stop)
+- [x] @uppy/transloadit: Add `COMPANION_PATTERN` constant (#1104 / @goto-bus-stop)
+- [x] @uppy/core: Add `allowMultipleUploads` option (#1064 / @goto-bus-stop)
+- [x] @uppy/webcam: Fix getting data from Webcam recording if mime type includes codec metadata (#1094 / @goto-bus-stop)
 
 ## 0.27.5
 

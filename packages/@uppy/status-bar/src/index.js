@@ -143,7 +143,13 @@ module.exports = class StatusBar extends Plugin {
   }
 
   render (state) {
-    const files = state.files
+    const {
+      capabilities,
+      files,
+      allowNewUpload,
+      totalProgress,
+      error
+    } = state
 
     const uploadStartedFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadStarted
@@ -192,7 +198,7 @@ module.exports = class StatusBar extends Plugin {
 
     const isUploadStarted = uploadStartedFiles.length > 0
 
-    const isAllComplete = state.totalProgress === 100 &&
+    const isAllComplete = totalProgress === 100 &&
       completeFiles.length === Object.keys(files).length &&
       processingFiles.length === 0
 
@@ -206,14 +212,15 @@ module.exports = class StatusBar extends Plugin {
 
     const isUploadInProgress = inProgressFiles.length > 0
 
-    const resumableUploads = state.capabilities.resumableUploads || false
+    const resumableUploads = capabilities.resumableUploads || false
 
     return StatusBarUI({
       error: state.error,
       uploadState: this.getUploadingState(isAllErrored, isAllComplete, state.files || {}),
-      totalProgress: state.totalProgress,
-      totalSize: totalSize,
-      totalUploadedSize: totalUploadedSize,
+      allowNewUpload,
+      totalProgress,
+      totalSize,
+      totalUploadedSize,
       isAllComplete,
       isAllPaused,
       isAllErrored,
@@ -222,9 +229,9 @@ module.exports = class StatusBar extends Plugin {
       complete: completeFiles.length,
       newFiles: newFiles.length,
       numUploads: startedFiles.length,
-      totalSpeed: totalSpeed,
-      totalETA: totalETA,
-      files: state.files,
+      totalSpeed,
+      totalETA,
+      files,
       i18n: this.i18n,
       pauseAll: this.uppy.pauseAll,
       resumeAll: this.uppy.resumeAll,
