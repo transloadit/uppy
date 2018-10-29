@@ -101,15 +101,16 @@
 }
 
 .uppy-StatusBar-status {
-  line-height: 1.5;
+  line-height: 1.4;
   font-weight: normal;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: 250px;
-  overflow: hidden;
+  max-width: 170px;
+  overflow-x: hidden;
 
   .uppy-size--md & {
+    line-height: 1.5;
     max-width: 400px;
   }
 }
@@ -125,22 +126,33 @@
 
 .uppy-StatusBar-statusSecondary {
   font-size: 10px;
-  display: none;
+  // line-height: 1;
+  display: inline-block;
   color: rgba($color-asphalt-gray, 0.8);
-  max-width: 170px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  overflow: hidden;
+  overflow-x: hidden;
+  // max-width: 170px;
 
   .uppy-size--md & {
     font-size: 11px;
-    max-width: 500px;
+    // max-width: 500px;
   }
 }
 
-  .uppy-StatusBar--detailedProgress .uppy-StatusBar-statusSecondary {
+  .uppy-StatusBar-statusSecondaryHint {
     display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+
+    .uppy-size--md & {
+      margin-right: 8px;
+    }
   }
+
+  // .uppy-StatusBar--detailedProgress .uppy-StatusBar-statusSecondary {
+  //   display: inline-block;
+  // }
 
 .uppy-StatusBar-statusIndicator {
   color: $color-asphalt-gray;
@@ -206,15 +218,21 @@
   }
 
 .uppy-StatusBar-actionBtn {
-  font-size: 12px;
-  padding: 4px;
-  // border-radius: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 10px;
+  // margin-left: 6px;
+  // margin-right: 6px;
   color: $color-cornflower-blue;
+
+  .uppy-size--md & {
+    font-size: 11px;
+  }
 }
 
-  .uppy-size--md .uppy-StatusBar-actionBtn {
-    padding: 2px 4px;
-  }
+  // .uppy-size--md .uppy-StatusBar-actionBtn {
+  //   padding: 2px 4px;
+  // }
 
   .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
     font-size: 14px;
@@ -242,29 +260,6 @@
     // border: 1px solid $color-white;
     color: $color-cornflower-blue;
   }
-
-  // .uppy-StatusBar-actionBtn--cancel {
-  //   color: $color-asphalt-gray;
-  // }
-
-  // .uppy-StatusBar-actionBtn--cancel svg {
-  //   width: 100%;
-  //   height: 100%;
-  // }
-
-  // .uppy-StatusBar-actionBtn--retry {
-  //   background-color: $color-white;
-  //   color: $color-red;
-  //   border: 1px solid transparent;
-  // }
-
-  // .uppy-StatusBar-actionBtn--cancel {
-  //   // background-color: lighten($color-asphalt-gray, 8%);
-  //   // border: 1px solid lighten($color-black, 10%);
-  //   background-color: transparent;
-  //   border: 1px solid $color-white;
-  //   color: $color-white;
-  // }
 
 .uppy-StatusBar-details {
   line-height: 12px;

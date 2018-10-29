@@ -21,6 +21,7 @@ module.exports = class StatusBar extends Plugin {
     const defaultLocale = {
       strings: {
         uploading: 'Uploading',
+        upload: 'Upload',
         complete: 'Complete',
         uploadFailed: 'Upload failed',
         pleasePressRetry: 'Please press Retry to upload again',
@@ -48,6 +49,10 @@ module.exports = class StatusBar extends Plugin {
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
           1: 'Upload +%{smart_count} files'
+        },
+        xMoreFilesAdded: {
+          0: '%{smart_count} more file added',
+          1: '%{smart_count} more files added'
         }
       }
     }
@@ -57,7 +62,8 @@ module.exports = class StatusBar extends Plugin {
       target: 'body',
       hideUploadButton: false,
       hideRetryButton: false,
-      hidePauseResumeCancelButtons: false,
+      hidePauseResumeButton: false,
+      hideCancelButton: false,
       showProgressDetails: false,
       locale: defaultLocale,
       hideAfterFinish: true
@@ -198,6 +204,8 @@ module.exports = class StatusBar extends Plugin {
       !isAllErrored &&
       uploadStartedFiles.length > 0
 
+    const isUploadInProgress = inProgressFiles.length > 0
+
     const resumableUploads = state.capabilities.resumableUploads || false
 
     return StatusBarUI({
@@ -206,11 +214,11 @@ module.exports = class StatusBar extends Plugin {
       totalProgress: state.totalProgress,
       totalSize: totalSize,
       totalUploadedSize: totalUploadedSize,
-      uploadStarted: uploadStartedFiles.length,
-      isAllComplete: isAllComplete,
-      isAllPaused: isAllPaused,
-      isAllErrored: isAllErrored,
-      isUploadStarted: isUploadStarted,
+      isAllComplete,
+      isAllPaused,
+      isAllErrored,
+      isUploadStarted,
+      isUploadInProgress,
       complete: completeFiles.length,
       newFiles: newFiles.length,
       numUploads: startedFiles.length,
@@ -227,7 +235,8 @@ module.exports = class StatusBar extends Plugin {
       showProgressDetails: this.opts.showProgressDetails,
       hideUploadButton: this.opts.hideUploadButton,
       hideRetryButton: this.opts.hideRetryButton,
-      hidePauseResumeCancelButtons: this.opts.hidePauseResumeCancelButtons,
+      hidePauseResumeButton: this.opts.hidePauseResumeButton,
+      hideCancelButton: this.opts.hideCancelButton,
       hideAfterFinish: this.opts.hideAfterFinish,
       isTargetDOMEl: this.isTargetDOMEl
     })

@@ -51,11 +51,13 @@ module.exports = (props) => {
   props = props || {}
 
   const { newFiles,
+    isUploadStarted,
     resumableUploads,
     error,
     hideUploadButton,
-    hideRetryButton,
-    hidePauseResumeCancelButtons } = props
+    hidePauseResumeButton,
+    hideCancelButton,
+    hideRetryButton } = props
 
   const uploadState = props.uploadState
 
@@ -91,13 +93,13 @@ module.exports = (props) => {
   const statusBarClassNames = classNames(
     { 'uppy-Root': props.isTargetDOMEl },
     'uppy-StatusBar',
-    `is-${uploadState}`,
-    { 'uppy-StatusBar--detailedProgress': props.showProgressDetails }
+    `is-${uploadState}`
   )
 
-  const showCancelBtn = !hidePauseResumeCancelButtons && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
-  const showPauseResumeBtn = !hidePauseResumeCancelButtons && resumableUploads && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
-
+  const showUploadBtn = !error && newFiles && !isUploadStarted && !hideUploadButton
+  const showCancelBtn = !hideCancelButton && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
+  const showPauseResumeBtn = resumableUploads && !hidePauseResumeButton && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
+  const showRetryBtn = error && !hideRetryButton
   return (
     <div class={statusBarClassNames} aria-hidden={isHidden}>
       <div class={progressClassNames}
@@ -108,8 +110,8 @@ module.exports = (props) => {
         aria-valuenow={progressValue} />
       {progressBarContent}
       <div class="uppy-StatusBar-actions">
-        { newFiles && !hideUploadButton ? <UploadBtn {...props} uploadState={uploadState} /> : null }
-        { error && !hideRetryButton ? <RetryBtn {...props} /> : null }
+        { showUploadBtn ? <UploadBtn {...props} uploadState={uploadState} /> : null }
+        { showRetryBtn ? <RetryBtn {...props} /> : null }
         { showPauseResumeBtn ? <PauseResumeButton {...props} /> : null }
         { showCancelBtn ? <CancelBtn {...props} /> : null }
       </div>
@@ -130,7 +132,7 @@ const UploadBtn = (props) => {
     class={uploadBtnClassNames}
     aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
     onclick={props.startUpload}>
-    {props.newFiles && props.uploadStarted
+    {props.newFiles && props.isUploadStarted
       ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
       : props.i18n('uploadXFiles', { smart_count: props.newFiles })
     }
@@ -196,6 +198,26 @@ const ProgressDetails = (props) => {
   </div>
 }
 
+const UploadNewlyAddedFiles = (props) => {
+  const uploadBtnClassNames = classNames(
+    'uppy-u-reset',
+    'uppy-c-btn',
+    'uppy-StatusBar-actionBtn'
+  )
+
+  return <div class="uppy-StatusBar-statusSecondary">
+    <div class="uppy-StatusBar-statusSecondaryHint">
+      { props.i18n('xMoreFilesAdded', { smart_count: props.newFiles }) }
+    </div>
+    <button type="button"
+      class={uploadBtnClassNames}
+      aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
+      onclick={props.startUpload}>
+      {props.i18n('upload')}
+    </button>
+  </div>
+}
+
 const ThrottledProgressDetails = throttle(ProgressDetails, 500, { leading: true, trailing: true })
 
 const ProgressBarUploading = (props) => {
@@ -204,13 +226,18 @@ const ProgressBarUploading = (props) => {
   }
 
   const title = props.isAllPaused ? props.i18n('paused') : props.i18n('uploading')
+  const showUploadNewlyAddedFiles = props.newFiles && props.isUploadStarted
 
   return (
     <div class="uppy-StatusBar-content" aria-label={title} title={title}>
       { !props.isAllPaused ? <LoadingSpinner {...props} /> : null }
       <div class="uppy-StatusBar-status">
         <div class="uppy-StatusBar-statusPrimary">{title}: {props.totalProgress}%</div>
-        { !props.isAllPaused && <ThrottledProgressDetails {...props} /> }
+        { !props.isAllPaused && !showUploadNewlyAddedFiles && props.showProgressDetails
+          ? <ThrottledProgressDetails {...props} />
+          : null
+        }
+        { showUploadNewlyAddedFiles ? <UploadNewlyAddedFiles {...props} /> : null }
       </div>
     </div>
   )
