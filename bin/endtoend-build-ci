@@ -16,6 +16,8 @@ VERDACCIO_REGISTRY=http://localhost:4002
 cleanup() {
   rm -rf "${__root}/test/endtoend/node_modules"
   rm -rf "${__root}/test/endtoend/tmp"
+  git reset
+  git checkout -- .
 }
 function on_exit() {
   # revert to public registry
@@ -46,12 +48,12 @@ git checkout -- package-lock.json
 
 # Simulate a publish of everything, to the local registry,
 # without changing things in git
-lerna version prerelease --yes \
+ENDTOEND=1 lerna version prerelease --yes \
   --exact \
   --force-publish \
   --npm-client=npm \
   --no-push
-lerna publish from-git --yes \
+ENDTOEND=1 lerna publish from-git --yes \
   --registry="$VERDACCIO_REGISTRY" \
   --no-verify-access \
   --npm-client=npm
