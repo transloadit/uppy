@@ -51,6 +51,7 @@ module.exports = (props) => {
   props = props || {}
 
   const { newFiles,
+    allowNewUpload,
     isUploadStarted,
     resumableUploads,
     error,
@@ -85,8 +86,13 @@ module.exports = (props) => {
   const width = typeof progressValue === 'number' ? progressValue : 100
   const isHidden = (uploadState === statusBarStates.STATE_WAITING && props.hideUploadButton) ||
     (uploadState === statusBarStates.STATE_WAITING && !props.newFiles > 0) ||
-    (uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish) ||
-    !props.allowNewUpload
+    (uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish)
+
+  const showUploadButton = props.newFiles && !props.hideUploadButton && props.allowNewUpload
+  const showRetryButton = props.error && !props.hideRetryButton
+  const showCancelButton = !props.hidePauseResumeCancelButtons &&
+    uploadState !== statusBarStates.STATE_WAITING &&
+    uploadState !== statusBarStates.STATE_COMPLETE
 
   const progressClassNames = `uppy-StatusBar-progress
                            ${progressMode ? 'is-' + progressMode : ''}`
@@ -97,7 +103,7 @@ module.exports = (props) => {
     `is-${uploadState}`
   )
 
-  const showUploadBtn = !error && newFiles && !isUploadStarted && !hideUploadButton
+  const showUploadBtn = !error && newFiles && !isUploadStarted && allowNewUpload && !hideUploadButton
   const showCancelBtn = !hideCancelButton && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
   const showPauseResumeBtn = resumableUploads && !hidePauseResumeButton && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
   const showRetryBtn = error && !hideRetryButton
