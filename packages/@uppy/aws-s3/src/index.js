@@ -40,14 +40,11 @@ module.exports = class AwsS3 extends Plugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
-    this.locale = {
-      ...defaultLocale,
-      ...this.opts.locale,
-      strings: { ...defaultLocale.strings, ...this.opts.locale.strings }
-    }
 
-    this.translator = new Translator({ locale: this.locale })
+    // i18n
+    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
 
     this.client = new RequestClient(uppy, opts)
 
