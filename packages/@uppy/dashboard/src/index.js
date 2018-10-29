@@ -117,6 +117,7 @@ module.exports = class Dashboard extends Plugin {
       hideProgressAfterFinish: false,
       note: null,
       closeModalOnClickOutside: false,
+      closeAfterFinish: false,
       disableStatusBar: false,
       disableInformer: false,
       disableThumbnailGenerator: false,
@@ -154,7 +155,9 @@ module.exports = class Dashboard extends Plugin {
     this.maintainFocus = this.maintainFocus.bind(this)
 
     this.initEvents = this.initEvents.bind(this)
-    this.onKeydown = this.onKeydown.bind(this)
+    this.handleKeyDown = this.handleKeyDown.bind(this)
+    this.handleFileAdded = this.handleFileAdded.bind(this)
+    this.handleComplete = this.handleComplete.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
     this.toggleFileCard = this.toggleFileCard.bind(this)
     this.toggleAddFilesPanel = this.toggleAddFilesPanel.bind(this)
@@ -316,7 +319,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     // handle ESC and TAB keys in modal dialog
-    document.addEventListener('keydown', this.onKeydown)
+    document.addEventListener('keydown', this.handleKeyDown)
 
     // this.rerender(this.uppy.getState())
     this.setFocusToBrowse()
@@ -350,7 +353,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     // handle ESC and TAB keys in modal dialog
-    document.removeEventListener('keydown', this.onKeydown)
+    document.removeEventListener('keydown', this.handleKeyDown)
 
     this.savedActiveElement.focus()
 
@@ -369,7 +372,7 @@ module.exports = class Dashboard extends Plugin {
     return !this.getPluginState().isHidden || false
   }
 
-  onKeydown (event) {
+  handleKeyDown (event) {
     // close modal on esc key press
     if (event.keyCode === ESC_KEY) this.requestCloseModal(event)
     // maintainFocus on tab key press
@@ -456,10 +459,19 @@ module.exports = class Dashboard extends Plugin {
     this.ro.observe(this.el.querySelector('.uppy-Dashboard-inner'))
 
     this.uppy.on('plugin-remove', this.removeTarget)
-    this.uppy.on('file-added', (ev) => {
-      this.toggleAddFilesPanel(false)
-      this.hideAllPanels()
-    })
+    this.uppy.on('file-added', this.handleFileAdded)
+    this.uppy.on('complete', this.handleComplete)
+  }
+
+  handleFileAdded () {
+    this.toggleAddFilesPanel(false)
+  }
+
+  handleComplete ({ failed, uploadID }) {
+    if (this.opts.closeAfterFinish && failed.length === 0) {
+      // All uploads are done
+      this.requestCloseModal()
+    }
   }
 
   removeEvents () {
@@ -474,7 +486,8 @@ module.exports = class Dashboard extends Plugin {
     // window.removeEventListener('resize', this.throttledUpdateDashboardElWidth)
     window.removeEventListener('popstate', this.handlePopState, false)
     this.uppy.off('plugin-remove', this.removeTarget)
-    this.uppy.off('file-added', (ev) => this.toggleAddFilesPanel(false))
+    this.uppy.off('file-added', this.handleFileAdded)
+    this.uppy.off('complete', this.handleComplete)
   }
 
   toggleFileCard (fileId) {
@@ -653,7 +666,17 @@ module.exports = class Dashboard extends Plugin {
       targets: []
     })
 
-    const target = this.opts.target
+    const { inline, closeAfterFinish } = this.opts
+    if (inline && closeAfterFinish) {
+      throw new Error('[Dashboard] `closeAfterFinish: true` cannot be used on an inline Dashboard, because an inline Dashboard cannot be closed at all. Either set `inline: false`, or disable the `closeAfterFinish` option.')
+    }
+
+    const { allowMultipleUploads } = this.uppy.opts
+    if (allowMultipleUploads && closeAfterFinish) {
+      this.uppy.log('[Dashboard] When using `closeAfterFinish`, we recommended setting the `allowMultipleUploads` option to `false` in the Uppy constructor. See https://uppy.io/docs/uppy/#allowMultipleUploads-true', 'warning')
+    }
+
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
