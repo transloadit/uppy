@@ -130,6 +130,10 @@ What we need to do to release Uppy 1.0
 - [ ] companion: option validation (can use https://npm.im/ajv + JSON schema)
 - [ ] transloadit: add end2end test for transloadit https://uppy.io/examples/transloadit/ (@arturi, @goto-bus-stop)
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
+- [x] @uppy/aws-s3: Use RequestClient (#1091 / @goto-bus-stop)
+- [x] @uppy/transloadit: Add `COMPANION_PATTERN` constant (#1104 / @goto-bus-stop)
+- [x] @uppy/core: Add `allowMultipleUploads` option (#1064 / @goto-bus-stop)
+- [x] @uppy/webcam: Fix getting data from Webcam recording if mime type includes codec metadata (#1094 / @goto-bus-stop)
 
 ## 0.27.5
 

@@ -8,7 +8,6 @@ const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
-const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
 const Plugin = require('./Plugin') // Exported from here.
 
@@ -506,11 +505,6 @@ class Uppy {
     this._calculateTotalProgress()
     this.emit('file-removed', removedFile)
     this.log(`File removed: ${removedFile.id}`)
-
-    // Clean up object URLs.
-    if (removedFile.preview && isObjectURL(removedFile.preview)) {
-      URL.revokeObjectURL(removedFile.preview)
-    }
   }
 
   pauseResume (fileID) {

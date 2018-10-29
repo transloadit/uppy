@@ -222,6 +222,8 @@ The default English strings are:
 strings: {
   // When `inline: false`, used as the screen reader label for the button that closes the modal.
   closeModal: 'Close Modal',
+  // Used as the screen reader label for the plus (+) button that shows the “Add more files” screen
+  addMoreFiles: 'Add more files',
   // Used as the header for import panels, e.g., "Import from Google Drive".
   importFrom: 'Import from %{name}',
   // When `inline: false`, used as the screen reader label for the dashboard modal.
