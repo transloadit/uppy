@@ -78,6 +78,12 @@ module.exports = (props) => {
     (uploadState === statusBarStates.STATE_WAITING && !props.newFiles > 0) ||
     (uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish)
 
+  const showUploadButton = props.newFiles && !props.hideUploadButton && props.allowNewUpload
+  const showRetryButton = props.error && !props.hideRetryButton
+  const showCancelButton = !props.hidePauseResumeCancelButtons &&
+    uploadState !== statusBarStates.STATE_WAITING &&
+    uploadState !== statusBarStates.STATE_COMPLETE
+
   const progressClassNames = `uppy-StatusBar-progress
                            ${progressMode ? 'is-' + progressMode : ''}`
 
@@ -98,12 +104,9 @@ module.exports = (props) => {
         aria-valuenow={progressValue} />
       {progressBarContent}
       <div class="uppy-StatusBar-actions">
-        { props.newFiles && !props.hideUploadButton ? <UploadBtn {...props} uploadState={uploadState} /> : null }
-        { props.error && !props.hideRetryButton ? <RetryBtn {...props} /> : null }
-        { !props.hidePauseResumeCancelButtons && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
-          ? <CancelBtn {...props} />
-          : null
-        }
+        { showUploadButton ? <UploadBtn {...props} uploadState={uploadState} /> : null }
+        { showRetryButton ? <RetryBtn {...props} /> : null }
+        { showCancelButton ? <CancelBtn {...props} /> : null }
       </div>
     </div>
   )
