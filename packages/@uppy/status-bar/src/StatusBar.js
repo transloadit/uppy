@@ -52,7 +52,8 @@ module.exports = (props) => {
 
   const { newFiles,
     allowNewUpload,
-    isUploadStarted,
+    isUploadInProgress,
+    isAllPaused,
     resumableUploads,
     error,
     hideUploadButton,
@@ -88,11 +89,16 @@ module.exports = (props) => {
     (uploadState === statusBarStates.STATE_WAITING && !props.newFiles > 0) ||
     (uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish)
 
-  const showUploadButton = props.newFiles && !props.hideUploadButton && props.allowNewUpload
-  const showRetryButton = props.error && !props.hideRetryButton
-  const showCancelButton = !props.hidePauseResumeCancelButtons &&
+  const showUploadBtn = !error && newFiles &&
+    !isUploadInProgress && !isAllPaused &&
+    allowNewUpload && !hideUploadButton
+  const showCancelBtn = !hideCancelButton &&
     uploadState !== statusBarStates.STATE_WAITING &&
     uploadState !== statusBarStates.STATE_COMPLETE
+  const showPauseResumeBtn = resumableUploads && !hidePauseResumeButton &&
+    uploadState !== statusBarStates.STATE_WAITING &&
+    uploadState !== statusBarStates.STATE_COMPLETE
+  const showRetryBtn = error && !hideRetryButton
 
   const progressClassNames = `uppy-StatusBar-progress
                            ${progressMode ? 'is-' + progressMode : ''}`
@@ -103,10 +109,6 @@ module.exports = (props) => {
     `is-${uploadState}`
   )
 
-  const showUploadBtn = !error && newFiles && !isUploadStarted && allowNewUpload && !hideUploadButton
-  const showCancelBtn = !hideCancelButton && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
-  const showPauseResumeBtn = resumableUploads && !hidePauseResumeButton && uploadState !== statusBarStates.STATE_WAITING && uploadState !== statusBarStates.STATE_COMPLETE
-  const showRetryBtn = error && !hideRetryButton
   return (
     <div class={statusBarClassNames} aria-hidden={isHidden}>
       <div class={progressClassNames}
@@ -265,7 +267,9 @@ const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
   return (
     <div class="uppy-StatusBar-content" role="alert">
       <span class="uppy-StatusBar-contentPadding">{i18n('uploadFailed')}.</span>
-      { !hideRetryButton && <span class="uppy-StatusBar-contentPadding">{i18n('pleasePressRetry')}</span> }
+      {!hideRetryButton &&
+        <span class="uppy-StatusBar-contentPadding">{i18n('pleasePressRetry')}</span>
+      }
       <span class="uppy-StatusBar-details"
         aria-label={error}
         data-microtip-position="top"

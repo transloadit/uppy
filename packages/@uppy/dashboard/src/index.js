@@ -536,6 +536,10 @@ module.exports = class Dashboard extends Plugin {
       return files[file].progress.uploadStarted
     })
 
+    const pausedFiles = Object.keys(files).filter((file) => {
+      return files[file].isPaused
+    })
+
     const completeFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadComplete
     })
@@ -546,8 +550,11 @@ module.exports = class Dashboard extends Plugin {
 
     const inProgressFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadComplete &&
-             files[file].progress.uploadStarted &&
-             !files[file].isPaused
+             files[file].progress.uploadStarted
+    })
+
+    const inProgressNotPausedFiles = inProgressFiles.filter((file) => {
+      return !files[file].isPaused
     })
 
     const processingFiles = Object.keys(files).filter((file) => {
@@ -563,19 +570,22 @@ module.exports = class Dashboard extends Plugin {
     const isAllErrored = isUploadStarted &&
       erroredFiles.length === uploadStartedFiles.length
 
-    const isAllPaused = inProgressFiles.length === 0 &&
-      !isAllComplete &&
-      !isAllErrored &&
-      uploadStartedFiles.length > 0
+    // const isAllPaused = inProgressNotPausedFiles.length === 0 &&
+    //   !isAllComplete &&
+    //   !isAllErrored &&
+    //   uploadStartedFiles.length > 0
 
-    let inProgressFilesArray = []
-    inProgressFiles.forEach((file) => {
-      inProgressFilesArray.push(files[file])
+    const isAllPaused = inProgressFiles.length !== 0 &&
+      pausedFiles.length === inProgressFiles.length
+
+    let inProgressNotPausedFilesArray = []
+    inProgressNotPausedFiles.forEach((file) => {
+      inProgressNotPausedFilesArray.push(files[file])
     })
 
     let totalSize = 0
     let totalUploadedSize = 0
-    inProgressFilesArray.forEach((file) => {
+    inProgressNotPausedFilesArray.forEach((file) => {
       totalSize = totalSize + (file.progress.bytesTotal || 0)
       totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
     })
@@ -632,6 +642,7 @@ module.exports = class Dashboard extends Plugin {
       completeFiles,
       erroredFiles,
       inProgressFiles,
+      inProgressNotPausedFiles,
       processingFiles,
       isUploadStarted,
       isAllComplete,

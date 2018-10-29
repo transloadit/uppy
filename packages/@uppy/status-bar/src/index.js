@@ -154,6 +154,11 @@ module.exports = class StatusBar extends Plugin {
     const uploadStartedFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadStarted
     })
+
+    const pausedFiles = uploadStartedFiles.filter((file) => {
+      return files[file].isPaused
+    })
+
     const newFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadStarted &&
         !files[file].progress.preprocess &&
@@ -162,14 +167,20 @@ module.exports = class StatusBar extends Plugin {
     const completeFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadComplete
     })
+
     const erroredFiles = Object.keys(files).filter((file) => {
       return files[file].error
     })
+
     const inProgressFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadComplete &&
-             files[file].progress.uploadStarted &&
-             !files[file].isPaused
+             files[file].progress.uploadStarted
     })
+
+    const inProgressNotPausedFiles = inProgressFiles.filter((file) => {
+      return !files[file].isPaused
+    })
+
     const startedFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadStarted ||
         files[file].progress.preprocess ||
@@ -179,17 +190,17 @@ module.exports = class StatusBar extends Plugin {
       return files[file].progress.preprocess || files[file].progress.postprocess
     })
 
-    let inProgressFilesArray = inProgressFiles.map((file) => {
+    let inProgressNotPausedFilesArray = inProgressNotPausedFiles.map((file) => {
       return files[file]
     })
 
-    const totalSpeed = prettyBytes(this.getTotalSpeed(inProgressFilesArray))
-    const totalETA = prettyETA(this.getTotalETA(inProgressFilesArray))
+    const totalSpeed = prettyBytes(this.getTotalSpeed(inProgressNotPausedFilesArray))
+    const totalETA = prettyETA(this.getTotalETA(inProgressNotPausedFilesArray))
 
     // total size and uploaded size
     let totalSize = 0
     let totalUploadedSize = 0
-    inProgressFilesArray.forEach((file) => {
+    inProgressNotPausedFilesArray.forEach((file) => {
       totalSize = totalSize + (file.progress.bytesTotal || 0)
       totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
     })
@@ -205,17 +216,20 @@ module.exports = class StatusBar extends Plugin {
     const isAllErrored = isUploadStarted &&
       erroredFiles.length === uploadStartedFiles.length
 
-    const isAllPaused = inProgressFiles.length === 0 &&
-      !isAllComplete &&
-      !isAllErrored &&
-      uploadStartedFiles.length > 0
+    // const isAllPaused = inProgressFiles.length === 0 &&
+    //   !isAllComplete &&
+    //   !isAllErrored &&
+    //   uploadStartedFiles.length > 0
+
+    const isAllPaused = inProgressFiles.length !== 0 &&
+      pausedFiles.length === inProgressFiles.length
 
     const isUploadInProgress = inProgressFiles.length > 0
 
     const resumableUploads = capabilities.resumableUploads || false
 
     return StatusBarUI({
-      error: state.error,
+      error,
       uploadState: this.getUploadingState(isAllErrored, isAllComplete, state.files || {}),
       allowNewUpload,
       totalProgress,

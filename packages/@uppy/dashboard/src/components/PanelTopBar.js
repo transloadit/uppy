@@ -11,7 +11,6 @@ const uploadStates = {
 }
 
 function getUploadingState (isAllErrored, isAllComplete, isAllPaused, files = {}) {
-  console.log(isAllComplete)
   if (isAllErrored) {
     return uploadStates.STATE_ERROR
   }
@@ -56,7 +55,7 @@ function UploadStatus (props) {
 
   switch (uploadingState) {
     case 'uploading':
-      return props.i18n('uploadingXFiles', { smart_count: props.inProgressFiles.length })
+      return props.i18n('uploadingXFiles', { smart_count: props.inProgressNotPausedFiles.length })
     case 'paused':
       return props.i18n('uploadPaused')
     case 'waiting':
