@@ -516,9 +516,6 @@ module.exports = class ProviderView {
 
     this._loaderWrapper(Promise.all(promises), () => {
       this.clearSelection()
-
-      const dashboard = this.plugin.uppy.getPlugin('Dashboard')
-      if (dashboard) dashboard.hideAllPanels()
     }, () => {})
   }
 

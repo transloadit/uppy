@@ -462,7 +462,7 @@ module.exports = class Dashboard extends Plugin {
   }
 
   handleFileAdded () {
-    this.toggleAddFilesPanel(false)
+    this.hideAllPanels()
   }
 
   handleComplete ({ failed, uploadID }) {
