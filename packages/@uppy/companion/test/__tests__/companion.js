@@ -38,7 +38,7 @@ describe('list provider files', () => {
       .get('/dropbox/list/')
       .set('uppy-auth-token', token)
       .expect(200)
-      .then((res) => expect(res.body.hash).toBe('0a9f95a989dd4b1851f0103c31e304ce'))
+      .then((res) => expect(res.body.username).toBe('foo@bar.com'))
   })
 
   test('list files for google drive', () => {
@@ -46,7 +46,7 @@ describe('list provider files', () => {
       .get('/drive/list/')
       .set('uppy-auth-token', token)
       .expect(200)
-      .then((res) => expect(res.body.etag).toBe('"bcIyJ9A3gXa8oTYmz6nzAjQd-lY/eQc3WbZHkXpcItNyGKDuKXM_bNY"'))
+      .then((res) => expect(res.body.username).toBe('ife@bala.com'))
   })
 })
 

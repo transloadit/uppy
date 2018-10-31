@@ -19,11 +19,11 @@ module.exports = (props) => {
             isDisabled = isChecked.loading
           }
           return Row({
-            title: props.getItemName(folder),
-            id: props.getItemId(folder),
+            title: folder.name,
+            id: folder.id,
             type: 'folder',
             // active: props.activeRow(folder),
-            getItemIcon: () => props.getItemIcon(folder),
+            getItemIcon: () => folder.icon,
             isDisabled: isDisabled,
             isChecked: isChecked,
             handleFolderClick: () => props.handleFolderClick(folder),
@@ -34,11 +34,11 @@ module.exports = (props) => {
         })}
         {props.files.map(file => {
           return Row({
-            title: props.getItemName(file),
-            id: props.getItemId(file),
+            title: file.name,
+            id: file.id,
             type: 'file',
             // active: props.activeRow(file),
-            getItemIcon: () => props.getItemIcon(file),
+            getItemIcon: () => file.icon,
             isDisabled: false,
             isChecked: props.isChecked(file),
             handleClick: (e) => props.toggleCheckbox(e, file),

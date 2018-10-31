@@ -58,51 +58,6 @@ module.exports = class Dropbox extends Plugin {
     }
   }
 
-  getUsername (data) {
-    return data.user_email
-  }
-
-  isFolder (item) {
-    return item['.tag'] === 'folder'
-  }
-
-  getItemData (item) {
-    return item
-  }
-
-  getItemIcon (item) {
-    return item['.tag']
-  }
-
-  getItemSubList (item) {
-    return item.entries
-  }
-
-  getItemName (item) {
-    return item.name || ''
-  }
-
-  getMimeType (item) {
-    // mime types aren't supported.
-    return null
-  }
-
-  getItemId (item) {
-    return item.id
-  }
-
-  getItemRequestPath (item) {
-    return encodeURIComponent(item.path_lower)
-  }
-
-  getItemModifiedDate (item) {
-    return item.server_modified
-  }
-
-  getItemThumbnailUrl (item) {
-    return `${this.opts.serverUrl}/${this.Dropbox.id}/thumbnail/${this.getItemRequestPath(item)}`
-  }
-
   render (state) {
     return this.view.render(state)
   }
