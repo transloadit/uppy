@@ -77,13 +77,21 @@ By default, progress in the Status Bar is shown as simple percentage. If you wou
 `showProgressDetails: false`: Uploading: 45%
 `showProgressDetails: true`: Uploading: 45%・43 MB of 101 MB・8s left
 
+### `hideUploadButton: false`
+
+Hide the upload button. Use this if you are providing a custom upload button somewhere, and using the `uppy.upload()` API.
+
 ### `hideRetryButton: false`
 
 Hide the retry button. Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
 
-### `hidePauseResumeCancelButtons: false`
+### `hidePauseResumeButton: false`
 
-Hide the cancel or pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)`, `uppy.cancelAll()` or `uppy.removeFile(fileID)` API.
+Hide pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)` or `uppy.removeFile(fileID)` API.
+
+### `hideCancelButton: false`
+
+Hide the cancel button. Use this if you are providing a custom retry button somewhere, and using the `uppy.cancelAll()` API.
 
 ### `locale: {}`
 

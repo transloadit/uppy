@@ -21,6 +21,7 @@ module.exports = class StatusBar extends Plugin {
     const defaultLocale = {
       strings: {
         uploading: 'Uploading',
+        upload: 'Upload',
         complete: 'Complete',
         uploadFailed: 'Upload failed',
         pleasePressRetry: 'Please press Retry to upload again',
@@ -28,11 +29,13 @@ module.exports = class StatusBar extends Plugin {
         error: 'Error',
         retry: 'Retry',
         cancel: 'Cancel',
+        pause: 'Pause',
+        resume: 'Resume',
         pressToRetry: 'Press to retry',
-        retryUpload: 'Retry upload',
-        resumeUpload: 'Resume upload',
-        cancelUpload: 'Cancel upload',
-        pauseUpload: 'Pause upload',
+        // retryUpload: 'Retry upload',
+        // resumeUpload: 'Resume upload',
+        // cancelUpload: 'Cancel upload',
+        // pauseUpload: 'Pause upload',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
           1: '%{complete} of %{smart_count} files uploaded'
@@ -46,6 +49,10 @@ module.exports = class StatusBar extends Plugin {
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
           1: 'Upload +%{smart_count} files'
+        },
+        xMoreFilesAdded: {
+          0: '%{smart_count} more file added',
+          1: '%{smart_count} more files added'
         }
       }
     }
@@ -55,7 +62,8 @@ module.exports = class StatusBar extends Plugin {
       target: 'body',
       hideUploadButton: false,
       hideRetryButton: false,
-      hidePauseResumeCancelButtons: false,
+      hidePauseResumeButton: false,
+      hideCancelButton: false,
       showProgressDetails: false,
       locale: defaultLocale,
       hideAfterFinish: true
@@ -140,45 +148,60 @@ module.exports = class StatusBar extends Plugin {
       error
     } = state
 
-    const uploadStartedFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadStarted
-    })
+    // TODO: move this to Core, to share between Status Bar and Dashboard
+    // (and any other plugin that might need it, too)
     const newFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadStarted &&
         !files[file].progress.preprocess &&
         !files[file].progress.postprocess
     })
+
+    const uploadStartedFiles = Object.keys(files).filter((file) => {
+      return files[file].progress.uploadStarted
+    })
+
+    const pausedFiles = uploadStartedFiles.filter((file) => {
+      return files[file].isPaused
+    })
+
     const completeFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadComplete
     })
+
     const erroredFiles = Object.keys(files).filter((file) => {
       return files[file].error
     })
+
     const inProgressFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadComplete &&
-             files[file].progress.uploadStarted &&
-             !files[file].isPaused
+             files[file].progress.uploadStarted
     })
+
+    const inProgressNotPausedFiles = inProgressFiles.filter((file) => {
+      return !files[file].isPaused
+    })
+
     const startedFiles = Object.keys(files).filter((file) => {
       return files[file].progress.uploadStarted ||
         files[file].progress.preprocess ||
         files[file].progress.postprocess
     })
+
     const processingFiles = Object.keys(files).filter((file) => {
       return files[file].progress.preprocess || files[file].progress.postprocess
     })
 
-    let inProgressFilesArray = inProgressFiles.map((file) => {
+    let inProgressNotPausedFilesArray = inProgressNotPausedFiles.map((file) => {
       return files[file]
     })
 
-    const totalSpeed = prettyBytes(this.getTotalSpeed(inProgressFilesArray))
-    const totalETA = prettyETA(this.getTotalETA(inProgressFilesArray))
+    const totalSpeed = prettyBytes(this.getTotalSpeed(inProgressNotPausedFilesArray))
+    const totalETA = prettyETA(this.getTotalETA(inProgressNotPausedFilesArray))
 
     // total size and uploaded size
     let totalSize = 0
     let totalUploadedSize = 0
-    inProgressFilesArray.forEach((file) => {
+    inProgressNotPausedFilesArray.forEach((file) => {
       totalSize = totalSize + (file.progress.bytesTotal || 0)
       totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
     })
@@ -194,25 +217,29 @@ module.exports = class StatusBar extends Plugin {
     const isAllErrored = isUploadStarted &&
       erroredFiles.length === uploadStartedFiles.length
 
-    const isAllPaused = inProgressFiles.length === 0 &&
-      !isAllComplete &&
-      !isAllErrored &&
-      uploadStartedFiles.length > 0
+    const isAllPaused = inProgressFiles.length !== 0 &&
+      pausedFiles.length === inProgressFiles.length
+    // const isAllPaused = inProgressFiles.length === 0 &&
+    //   !isAllComplete &&
+    //   !isAllErrored &&
+    //   uploadStartedFiles.length > 0
+
+    const isUploadInProgress = inProgressFiles.length > 0
 
     const resumableUploads = capabilities.resumableUploads || false
 
     return StatusBarUI({
       error,
-      uploadState: this.getUploadingState(isAllErrored, isAllComplete, files || {}),
+      uploadState: this.getUploadingState(isAllErrored, isAllComplete, state.files || {}),
       allowNewUpload,
       totalProgress,
       totalSize,
       totalUploadedSize,
-      uploadStarted: uploadStartedFiles.length,
       isAllComplete,
       isAllPaused,
       isAllErrored,
       isUploadStarted,
+      isUploadInProgress,
       complete: completeFiles.length,
       newFiles: newFiles.length,
       numUploads: startedFiles.length,
@@ -229,7 +256,8 @@ module.exports = class StatusBar extends Plugin {
       showProgressDetails: this.opts.showProgressDetails,
       hideUploadButton: this.opts.hideUploadButton,
       hideRetryButton: this.opts.hideRetryButton,
-      hidePauseResumeCancelButtons: this.opts.hidePauseResumeCancelButtons,
+      hidePauseResumeButton: this.opts.hidePauseResumeButton,
+      hideCancelButton: this.opts.hideCancelButton,
       hideAfterFinish: this.opts.hideAfterFinish,
       isTargetDOMEl: this.isTargetDOMEl
     })

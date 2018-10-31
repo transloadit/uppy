@@ -633,8 +633,8 @@
 }
 
 .uppy-DashboardItem-preview {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-bottom: 0;
   position: relative;
   display: flex;
@@ -836,7 +836,7 @@
 
 .uppy-DashboardItem-action {
   position: absolute;
-  top: 23px;
+  top: 18px;
   right: 10px;
   z-index: $zIndex-3;
 
@@ -1024,6 +1024,10 @@
   .play {
     opacity: 1;
   }
+}
+
+.uppy-DashboardItem.is-processing .uppy-DashboardItem-progress {
+  opacity: 0;
 }
 
 .uppy-DashboardItem.is-complete {

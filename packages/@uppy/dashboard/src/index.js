@@ -7,7 +7,7 @@ const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
-const prettyBytes = require('prettier-bytes')
+// const prettyBytes = require('prettier-bytes')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultTabIcon } = require('./components/icons')
 
@@ -76,6 +76,7 @@ module.exports = class Dashboard extends Plugin {
         uploadAllNewFiles: 'Upload all new files',
         emptyFolderAdded: 'No files were added from empty folder',
         uploadComplete: 'Upload complete',
+        uploadPaused: 'Upload paused',
         resumeUpload: 'Resume upload',
         pauseUpload: 'Pause upload',
         retryUpload: 'Retry upload',
@@ -87,6 +88,14 @@ module.exports = class Dashboard extends Plugin {
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
           1: 'Upload %{smart_count} files'
+        },
+        uploadingXFiles: {
+          0: 'Uploading %{smart_count} file',
+          1: 'Uploading %{smart_count} files'
+        },
+        processingXFiles: {
+          0: 'Processing %{smart_count} file',
+          1: 'Processing %{smart_count} files'
         },
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
@@ -521,28 +530,70 @@ module.exports = class Dashboard extends Plugin {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
 
+    // TODO: move this to Core, to share between Status Bar and Dashboard
+    // (and any other plugin that might need it, too)
     const newFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadStarted
     })
+
+    const uploadStartedFiles = Object.keys(files).filter((file) => {
+      return files[file].progress.uploadStarted
+    })
+
+    const pausedFiles = Object.keys(files).filter((file) => {
+      return files[file].isPaused
+    })
+
+    const completeFiles = Object.keys(files).filter((file) => {
+      return files[file].progress.uploadComplete
+    })
+
+    const erroredFiles = Object.keys(files).filter((file) => {
+      return files[file].error
+    })
+
     const inProgressFiles = Object.keys(files).filter((file) => {
       return !files[file].progress.uploadComplete &&
-             files[file].progress.uploadStarted &&
-             !files[file].isPaused
+             files[file].progress.uploadStarted
     })
 
-    let inProgressFilesArray = []
-    inProgressFiles.forEach((file) => {
-      inProgressFilesArray.push(files[file])
+    const inProgressNotPausedFiles = inProgressFiles.filter((file) => {
+      return !files[file].isPaused
     })
 
-    let totalSize = 0
-    let totalUploadedSize = 0
-    inProgressFilesArray.forEach((file) => {
-      totalSize = totalSize + (file.progress.bytesTotal || 0)
-      totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
+    const processingFiles = Object.keys(files).filter((file) => {
+      return files[file].progress.preprocess || files[file].progress.postprocess
     })
-    totalSize = prettyBytes(totalSize)
-    totalUploadedSize = prettyBytes(totalUploadedSize)
+
+    const isUploadStarted = uploadStartedFiles.length > 0
+
+    const isAllComplete = state.totalProgress === 100 &&
+      completeFiles.length === Object.keys(files).length &&
+      processingFiles.length === 0
+
+    const isAllErrored = isUploadStarted &&
+      erroredFiles.length === uploadStartedFiles.length
+
+    const isAllPaused = inProgressFiles.length !== 0 &&
+      pausedFiles.length === inProgressFiles.length
+    // const isAllPaused = inProgressNotPausedFiles.length === 0 &&
+    //   !isAllComplete &&
+    //   !isAllErrored &&
+    //   uploadStartedFiles.length > 0
+
+    // let inProgressNotPausedFilesArray = []
+    // inProgressNotPausedFiles.forEach((file) => {
+    //   inProgressNotPausedFilesArray.push(files[file])
+    // })
+
+    // let totalSize = 0
+    // let totalUploadedSize = 0
+    // inProgressNotPausedFilesArray.forEach((file) => {
+    //   totalSize = totalSize + (file.progress.bytesTotal || 0)
+    //   totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
+    // })
+    // totalSize = prettyBytes(totalSize)
+    // totalUploadedSize = prettyBytes(totalUploadedSize)
 
     const attachRenderFunctionToTarget = (target) => {
       const plugin = this.uppy.getPlugin(target.id)
@@ -588,8 +639,18 @@ module.exports = class Dashboard extends Plugin {
     return DashboardUI({
       state,
       modal: pluginState,
-      newFiles,
       files,
+      newFiles,
+      uploadStartedFiles,
+      completeFiles,
+      erroredFiles,
+      inProgressFiles,
+      inProgressNotPausedFiles,
+      processingFiles,
+      isUploadStarted,
+      isAllComplete,
+      isAllErrored,
+      isAllPaused,
       totalFileCount: Object.keys(files).length,
       totalProgress: state.totalProgress,
       allowNewUpload,
@@ -600,9 +661,6 @@ module.exports = class Dashboard extends Plugin {
       getPlugin: this.uppy.getPlugin,
       progressindicators: progressindicators,
       autoProceed: this.uppy.opts.autoProceed,
-      hideUploadButton: this.opts.hideUploadButton,
-      hideRetryButton: this.opts.hideRetryButton,
-      hidePauseResumeCancelButtons: this.opts.hidePauseResumeCancelButtons,
       id: this.id,
       closeModal: this.requestCloseModal,
       handleClickOutside: this.handleClickOutside,
@@ -693,7 +751,8 @@ module.exports = class Dashboard extends Plugin {
         target: this,
         hideUploadButton: this.opts.hideUploadButton,
         hideRetryButton: this.opts.hideRetryButton,
-        hidePauseResumeCancelButtons: this.opts.hidePauseResumeCancelButtons,
+        hidePauseResumeButton: this.opts.hidePauseResumeButton,
+        hideCancelButton: this.opts.hideCancelButton,
         showProgressDetails: this.opts.showProgressDetails,
         hideAfterFinish: this.opts.hideProgressAfterFinish,
         locale: this.opts.locale
