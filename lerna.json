@@ -1,8 +1,12 @@
 {
-  "lerna": "2.11.0",
+  "version": "independent",
   "packages": [
     "packages/*",
     "packages/@uppy/*"
   ],
-  "version": "independent"
+  "command": {
+    "bootstrap": {
+      "hoist": true
+    }
+  }
 }
