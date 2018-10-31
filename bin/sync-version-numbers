@@ -18,7 +18,7 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
-if [ "$ENDTOEND" = "1" ]; then
+if [ "${ENDTOEND:=0}" = "1" ]; then
   echo "Publishing for e2e tests, skipping version number sync."
   exit 0
 fi
