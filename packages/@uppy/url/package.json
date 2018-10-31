@@ -1,7 +1,7 @@
 {
   "name": "@uppy/url",
   "description": "The Url plugin lets users import files from the Internet. Paste any URL and it’ll be added!",
-  "version": "0.27.5",
+  "version": "0.28.0",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -24,11 +24,11 @@
   },
   "dependencies": {
     "@uppy/companion-client": "0.27.2",
-    "@uppy/utils": "0.27.1",
+    "@uppy/utils": "0.28.0",
     "preact": "^8.2.9"
   },
   "devDependencies": {
-    "@uppy/core": "0.27.3"
+    "@uppy/core": "0.28.0"
   },
   "peerDependencies": {
     "@uppy/core": "^0.28.0"

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/provider-views",
   "description": "View library for Uppy remote provider plugins.",
-  "version": "0.27.4",
+  "version": "0.28.0",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -20,12 +20,12 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "0.27.1",
+    "@uppy/utils": "0.28.0",
     "classnames": "^2.2.6",
     "preact": "^8.2.9"
   },
   "devDependencies": {
-    "@uppy/core": "0.27.3"
+    "@uppy/core": "0.28.0"
   },
   "peerDependencies": {
     "@uppy/core": "^0.28.0"
