@@ -1,6 +1,10 @@
 const http = require('http')
 const qs = require('querystring')
 
+/**
+ * A very haxxor server that outputs some of the data it receives in a POST form parameter.
+ */
+
 http.createServer((req, res) => {
   if (req.url !== '/test') {
     res.writeHead(404, {'content-type': 'text/html'})
