@@ -10,13 +10,22 @@
 
 const { execSync } = require('child_process')
 
-const stdout = execSync('git log --grep Release -1 --pretty=raw')
-const str = stdout.toString()
-const rx = /- ([@/\w]+)@(\d+\.\d+\.\d+)/g
+const logStdout = execSync('git log --grep \'Release$\' -1 --pretty=oneline --no-decorate')
+let match = /^([0-9a-f]+) .*?$/m.exec(logStdout.toString())
+if (!match) {
+  console.error('Could not read Release commit')
+  process.exit(1)
+}
+
+const commit = match[1]
+
+const tagStdout = execSync(`git tag --list --contains ${commit}`)
+const tags = tagStdout.toString()
+const rx = /([@/\w-]+)@(\d+\.\d+\.\d+)/g
 
 const versions = []
 let m
-while ((m = rx.exec(str))) {
+while ((m = rx.exec(tags))) {
   const [, pkg, version] = m
   versions.push({ pkg, version })
 }
