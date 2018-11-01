@@ -19,6 +19,7 @@ function form (target, opts) {
 
   uppy.use(Form, {
     target,
+    triggerUploadOnSubmit: true,
     submitOnSuccess: true,
     addResultToForm: false // using custom implementation instead
   })
