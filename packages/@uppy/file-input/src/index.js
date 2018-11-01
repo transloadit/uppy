@@ -83,7 +83,7 @@ module.exports = class FileInput extends Plugin {
         name={this.opts.inputName}
         onchange={this.handleInputChange}
         multiple={restrictions.maxNumberOfFiles !== 1}
-        accept={restrictions.allowedFileTypes}
+        accept={restrictions.allowedFileTypes.join(',')}
         ref={(input) => { this.input = input }}
         value="" />
       {this.opts.pretty &&
