@@ -7,38 +7,66 @@
   </head>
   <body>
     <style>
-      main {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        flex-direction: column;
+      html {
+        /* windows 98 */
+        background: #3fa2b5 linear-gradient(180deg, #026073 0%, #3fa2b5 100%);
       }
-      h1 { text-align: center }
+      main {
+        padding: 20px;
+        font: 12pt sans-serif;
+        background: white;
+        width: 800px;
+        margin: auto;
+      }
+      hr {
+        border: 0;
+        background-color: #111e33;
+        height: 1px;
+      }
+      #logo { height: 1em; vertical-align: middle; }
     </style>
     <main>
-      <h1>Uppy :tl: playground</h1>
+      <h1>Uppy <img src="https://transloadit.edgly.net/assets/images/logo-small.svg" alt="Transloadit" id="logo"> playground</h1>
 
       <hr>
+      <h2>transloadit.form()</h2>
 
       <form id="test-form" method="post" action="http://localhost:9967/test">
-        <h2>leave a message</h2>
+        <p><strong>leave a message</strong>
         <p>
-          name:
-          <input type="text" name="name">
+          <label>name:
+            <input type="text" name="name">
+          </label>
         <p>
-          message: <br>
-          <textarea name="message"></textarea>
+          <label>message: <br>
+            <textarea name="message"></textarea>
+          </label>
 
         <p>
-          attachments:
-          <input type="file">
+          <label>
+            attachments:
+            <input type="file">
+          </label>
 
         <p>
           <button type="submit">
             Upload
           </button>
       </form>
+
       <hr>
+      <h2>transloadit.modal()</h2>
+
+      <p>
+        <button onclick="openModal()">Open</button>
+
+      <hr>
+      <h2>transloadit.upload()</h2>
+      <p>
+        An &lt;input type=file&gt; backed by `transloadit.upload`:
+
+      <p>
+        <input type="file" multiple onchange="doUpload(event)">
     </main>
 
     <link href="uppy.min.css" rel="stylesheet">
