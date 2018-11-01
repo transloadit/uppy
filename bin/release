@@ -32,7 +32,13 @@ if ! npm whoami > /dev/null; then
   exit 1
 fi
 
-if [ "$(npm profile get --json | jq .tfa.mode -r)" == "auth-and-writes" ]; then
+if ! which jq; then
+  echo "https://stedolan.github.io/jq/ needs to be installed and available in PATH to do a release."
+  exit 1
+fi
+
+perm="$(npm profile get --json | jq .tfa.mode -r)"
+if [ "$perm" == "auth-and-writes" ]; then
   echo "Two-factor auth is enabled for publishing. This doesn't work well with lerna."
   echo "Temporarily switch to authentication-only 2FA using the link below:"
   echo ""
