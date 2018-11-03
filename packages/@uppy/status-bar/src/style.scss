@@ -192,10 +192,11 @@
 }
 
 .uppy-StatusBar-actionCircleBtn {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 20px;
   height: 20px;
-  line-height: 22px;
   border-radius: 50%;
   cursor: pointer;
   color: rgba($color-black, 0.6);
