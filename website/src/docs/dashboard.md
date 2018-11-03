@@ -55,6 +55,7 @@ The Dashboard can be extensively customized by configuring the options below to 
 
 ```js
 uppy.use(Dashboard, {
+  id: 'Dashboard',
   target: 'body',
   metaFields: [],
   trigger: '#uppy-select-files',
@@ -67,7 +68,8 @@ uppy.use(Dashboard, {
   showProgressDetails: false,
   hideUploadButton: false,
   hideRetryButton: false,
-  hidePauseResumeCancelButtons: false,
+  hidePauseResumeButton: false,
+  hideCancelButton: false,
   hideProgressAfterFinish: false,
   note: null,
   closeModalOnClickOutside: false,

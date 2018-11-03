@@ -50,10 +50,14 @@ The `@uppy/status-bar` plugin has the following configurable options:
 
 ```js
 uppy.use(StatusBar, {
+  id: 'StatusBar',
   target: 'body',
-  hideUploadButton: false,
+  hideAfterFinish: true,
   showProgressDetails: false,
-  hideAfterFinish: true
+  hideUploadButton: false,
+  hideRetryButton: false,
+  hidePauseResumeButton: false,
+  hideCancelButton: false
   locale: {}
 })
 ```
@@ -62,7 +66,7 @@ uppy.use(StatusBar, {
 
 A unique identifier for this Status Bar. It defaults to `'StatusBar'`. Use this if you need to add multiple StatusBar instances.
 
-### `target: null`
+### `target: body`
 
 DOM element, CSS selector, or plugin to mount the Status Bar into.
 
