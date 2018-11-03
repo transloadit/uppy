@@ -26,7 +26,10 @@ const dashboard = {
   uppy,
   inline: PropTypes.bool,
   plugins,
-  width: PropTypes.number,
+  width: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ]),
   height: PropTypes.number,
   showProgressDetails: PropTypes.bool,
   hideUploadButton: PropTypes.bool,
