@@ -9,6 +9,7 @@
   "pre-commit": "lint-staged",
   "license": "MIT",
   "devDependencies": {
+    "@types/react": "^16.4.18",
     "aliasify": "^2.1.0",
     "autoprefixer": "^7.2.6",
     "babel-cli": "^6.26.0",
