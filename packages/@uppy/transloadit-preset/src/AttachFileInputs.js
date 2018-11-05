@@ -17,7 +17,11 @@ class AttachFileInputs extends Plugin {
   }
 
   handleChange (event) {
-    const files = toArray(event.target.files)
+    this.addFiles(event.target)
+  }
+
+  addFiles (input) {
+    const files = toArray(input.files)
     files.forEach((file) => {
       try {
         this.uppy.addFile({
@@ -55,6 +59,10 @@ class AttachFileInputs extends Plugin {
       if (!input.hasAttribute('accept') && restrictions.allowedFileTypes) {
         input.setAttribute('accept', restrictions.allowedFileTypes.join(','))
       }
+
+      // Check if this input already contains files (eg. user selected them before Uppy loaded,
+      // or the page was refreshed and the browser kept files selected)
+      this.addFiles(input)
     })
   }
 
