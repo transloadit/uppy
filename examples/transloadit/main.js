@@ -4,7 +4,7 @@ const transloadit = require('@uppy/transloadit-preset')
  * transloadit.form
  */
 
-window.formUppy = transloadit.form('#test-form', {
+const formUppy = transloadit.form('#test-form', {
   debug: true,
   restrictions: {
     allowedFileTypes: ['.png']
@@ -15,6 +15,18 @@ window.formUppy = transloadit.form('#test-form', {
     template_id: 'be001500a56011e889f9cddd88df842c'
   }
 })
+
+formUppy.on('error', (err) => {
+  document.querySelector('#test-form .error')
+    .textContent = err.message
+})
+
+formUppy.on('upload-error', (file, err) => {
+  document.querySelector('#test-form .error')
+    .textContent = err.message
+})
+
+window.formUppy = formUppy
 
 /**
  * transloadit.modal
