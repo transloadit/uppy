@@ -45,6 +45,7 @@ uppy.use(Form, {
   getMetaFromForm: true,
   addResultToForm: true,
   resultName: 'uppyResult',
+  triggerUploadOnSubmit: false,
   submitOnSuccess: false
 })
 ```
@@ -68,6 +69,13 @@ Configures whether or not to add upload/encoding results back to the form in an 
 ### `resultName: 'uppyResult'`
 
 The `name` attribute for the `<input type="hidden">` where the result will be added.
+
+### `triggerUploadOnSubmit: false`
+
+Configures whether or not to start the upload when the form is submitted. When the user presses a submit button, this will prevent form submission, and instead upload files. You can then:
+
+ - use `submitOnSuccess: true` if you need the form to _actually_ be submitted once all files have been uploaded.
+ - listen for `uppy.on('complete')` to do something else if the file uploads are all you need. For example, if the form is used for file metadata only.
 
 ### `submitOnSuccess: false`
 
