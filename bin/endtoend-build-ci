@@ -12,12 +12,13 @@ __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
 VERDACCIO_REGISTRY=http://localhost:4002
+CURRENT_COMMIT="$(git rev-parse HEAD)"
 
 cleanup() {
   rm -rf "${__root}/test/endtoend/node_modules"
   rm -rf "${__root}/test/endtoend/tmp"
   git reset
-  git checkout -- .
+  git checkout $CURRENT_COMMIT
 }
 function on_exit() {
   # revert to public registry
@@ -57,9 +58,6 @@ ENDTOEND=1 lerna publish from-git --yes \
   --registry="$VERDACCIO_REGISTRY" \
   --no-verify-access \
   --npm-client=npm
-
-# revert version changes
-git checkout -- packages/*/package.json packages/@uppy/*/package.json
 
 # install all packages to the endtoend folder
 # (Don't use the npm cache, don't generate a package-lock, don't save dependencies to any package.json)
