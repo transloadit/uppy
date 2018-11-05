@@ -1020,7 +1020,7 @@ describe('src/Core', () => {
       })
 
       core._calculateTotalProgress()
-      expect(core.getState().totalProgress).toEqual(65)
+      expect(core.getState().totalProgress).toEqual(66)
     })
 
     it('should reset the progress', () => {
@@ -1057,7 +1057,7 @@ describe('src/Core', () => {
 
       core._calculateTotalProgress()
 
-      expect(core.getState().totalProgress).toEqual(65)
+      expect(core.getState().totalProgress).toEqual(66)
 
       core.resetProgress()
 

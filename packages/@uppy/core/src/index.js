@@ -645,6 +645,11 @@ class Uppy {
       return file.progress.uploadStarted
     })
 
+    if (inProgress.length === 0) {
+      this.setState({ totalProgress: 0 })
+      return
+    }
+
     const sizedFiles = inProgress.filter((file) => file.progress.bytesTotal != null)
     const unsizedFiles = inProgress.filter((file) => file.progress.bytesTotal == null)
 
@@ -653,7 +658,9 @@ class Uppy {
       const currentProgress = unsizedFiles.reduce((acc, file) => {
         return acc + file.progress.percentage
       }, 0)
-      return Math.round(currentProgress / progressMax * 100)
+      const totalProgress = Math.round(currentProgress / progressMax * 100)
+      this.setState({ totalProgress })
+      return
     }
 
     let totalSize = sizedFiles.reduce((acc, file) => {
@@ -674,9 +681,7 @@ class Uppy {
       ? 0
       : Math.round(uploadedSize / totalSize * 100)
 
-    this.setState({
-      totalProgress: totalProgress
-    })
+    this.setState({ totalProgress })
   }
 
   /**
