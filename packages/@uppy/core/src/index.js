@@ -639,18 +639,40 @@ class Uppy {
   _calculateTotalProgress () {
     // calculate total progress, using the number of files currently uploading,
     // multiplied by 100 and the summ of individual progress of each file
-    const files = Object.assign({}, this.getState().files)
+    const files = this.getFiles()
 
-    const inProgress = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadStarted
-    })
-    const progressMax = inProgress.length * 100
-    let progressAll = 0
-    inProgress.forEach((file) => {
-      progressAll = progressAll + files[file].progress.percentage
+    const inProgress = files.filter((file) => {
+      return file.progress.uploadStarted
     })
 
-    const totalProgress = progressMax === 0 ? 0 : Math.floor((progressAll * 100 / progressMax).toFixed(2))
+    const sizedFiles = inProgress.filter((file) => file.progress.bytesTotal != null)
+    const unsizedFiles = inProgress.filter((file) => file.progress.bytesTotal == null)
+
+    if (sizedFiles.length === 0) {
+      const progressMax = inProgress.length
+      const currentProgress = unsizedFiles.reduce((acc, file) => {
+        return acc + file.progress.percentage
+      }, 0)
+      return Math.round(currentProgress / progressMax * 100)
+    }
+
+    let totalSize = sizedFiles.reduce((acc, file) => {
+      return acc + file.progress.bytesTotal
+    }, 0)
+    const averageSize = totalSize / sizedFiles.length
+    totalSize += averageSize * unsizedFiles.length
+
+    let uploadedSize = 0
+    sizedFiles.forEach((file) => {
+      uploadedSize += file.progress.bytesUploaded
+    })
+    unsizedFiles.forEach((file) => {
+      uploadedSize += averageSize * (file.progress.percentage || 0)
+    })
+
+    const totalProgress = totalSize === 0
+      ? 0
+      : Math.round(uploadedSize / totalSize * 100)
 
     this.setState({
       totalProgress: totalProgress
