@@ -8,7 +8,7 @@ order: 0
 
 Uppy is a sleek and modular file uploader. It fetches files from local disk, Google Drive,Instagram, remote urls, cameras etc, and then uploads them to the final destination. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
 
-Uppy consists of a core module and [various plugins](/docs/plugins/) for selecting, manipulating and uploading files. 
+Uppy consists of a core module and [various plugins](/docs/plugins/) for selecting, manipulating and uploading files.
 
 Here’s the simplest example html page with Uppy (it uses a CDN bundle, while we recommend to use a bundler, see [Installation](#Installation)):
 
@@ -147,6 +147,8 @@ Uppy heavily uses Promises. If your target environment [does not support Promise
 
 When using remote providers like Google Drive or Dropbox, the Fetch API is used. If your target environment does not support the [Fetch API](https://caniuse.com/#feat=fetch), use a polyfill like `whatwg-fetch` before initialising Uppy. The Fetch API polyfill must be loaded _after_ the Promises polyfill, because Fetch uses Promises.
 
+With a module bundler, you can use the required polyfills like so:
+
 ```shell
 npm install es6-promise whatwg-fetch
 ```
@@ -154,4 +156,12 @@ npm install es6-promise whatwg-fetch
 require('es6-promise/auto')
 require('whatwg-fetch')
 const Uppy = require('@uppy/core')
+```
+
+If you're using Uppy via a script tag, you can load the polyfills from [JSDelivr](https://www.jsdelivr.com/) like so:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4.2.5/dist/es6-promise.auto.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.28.0/dist/uppy.min.js"></script>
 ```
