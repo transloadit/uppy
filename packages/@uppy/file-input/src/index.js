@@ -72,6 +72,7 @@ module.exports = class FileInput extends Plugin {
     }
 
     const restrictions = this.uppy.opts.restrictions
+    const accept = restrictions.allowedFileTypes ? restrictions.allowedFileTypes.join(',') : null
 
     // empty value="" on file input, so that the input is cleared after a file is selected,
     // because Uppy will be handling the upload and so we can select same file
@@ -83,7 +84,7 @@ module.exports = class FileInput extends Plugin {
         name={this.opts.inputName}
         onchange={this.handleInputChange}
         multiple={restrictions.maxNumberOfFiles !== 1}
-        accept={restrictions.allowedFileTypes.join(',')}
+        accept={accept}
         ref={(input) => { this.input = input }}
         value="" />
       {this.opts.pretty &&
