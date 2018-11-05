@@ -4,8 +4,6 @@ const StatusBarUI = require('./StatusBar')
 const statusBarStates = require('./StatusBarStates')
 const getSpeed = require('@uppy/utils/lib/getSpeed')
 const getBytesRemaining = require('@uppy/utils/lib/getBytesRemaining')
-const prettyETA = require('@uppy/utils/lib/prettyETA')
-const prettyBytes = require('prettier-bytes')
 
 /**
  * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
@@ -195,8 +193,7 @@ module.exports = class StatusBar extends Plugin {
       return files[file]
     })
 
-    const totalSpeed = prettyBytes(this.getTotalSpeed(inProgressNotPausedFilesArray))
-    const totalETA = prettyETA(this.getTotalETA(inProgressNotPausedFilesArray))
+    const totalETA = this.getTotalETA(inProgressNotPausedFilesArray)
 
     // total size and uploaded size
     let totalSize = 0
@@ -205,8 +202,6 @@ module.exports = class StatusBar extends Plugin {
       totalSize = totalSize + (file.progress.bytesTotal || 0)
       totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
     })
-    totalSize = prettyBytes(totalSize)
-    totalUploadedSize = prettyBytes(totalUploadedSize)
 
     const isUploadStarted = uploadStartedFiles.length > 0
 
@@ -243,7 +238,6 @@ module.exports = class StatusBar extends Plugin {
       complete: completeFiles.length,
       newFiles: newFiles.length,
       numUploads: startedFiles.length,
-      totalSpeed,
       totalETA,
       files,
       i18n: this.i18n,

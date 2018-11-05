@@ -1,6 +1,8 @@
 const throttle = require('lodash.throttle')
 const classNames = require('classnames')
 const statusBarStates = require('./StatusBarStates')
+const prettyBytes = require('prettier-bytes')
+const prettyETA = require('@uppy/utils/lib/prettyETA')
 const { h } = require('preact')
 
 function calculateProcessingProgress (files) {
@@ -204,8 +206,11 @@ const ProgressBarProcessing = (props) => {
 const ProgressDetails = (props) => {
   return <div class="uppy-StatusBar-statusSecondary">
     { props.numUploads > 1 && props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.numUploads }) + ' \u00B7 ' }
-    { props.i18n('dataUploadedOfTotal', { complete: props.totalUploadedSize, total: props.totalSize }) + ' \u00B7 ' }
-    { props.i18n('xTimeLeft', { time: props.totalETA }) }
+    { props.i18n('dataUploadedOfTotal', {
+      complete: prettyBytes(props.totalUploadedSize),
+      total: prettyBytes(props.totalSize)
+    }) + ' \u00B7 ' }
+    { props.i18n('xTimeLeft', { time: prettyETA(props.totalETA) }) }
   </div>
 }
 
