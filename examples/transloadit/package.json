@@ -10,7 +10,9 @@
       "@uppy": "../../packages/@uppy"
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "he": "^1.2.0"
+  },
   "devDependencies": {
     "aliasify": "^2.1.0",
     "babel-core": "^6.26.3",
