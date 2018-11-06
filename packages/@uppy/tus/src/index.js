@@ -154,7 +154,7 @@ module.exports = class Tus extends Plugin {
       }
 
       optsTus.onSuccess = () => {
-        this.uppy.emit('upload-success', file, upload, upload.url)
+        this.uppy.emit('upload-success', file, null, upload.url)
 
         if (upload.url) {
           this.uppy.log('Download ' + upload.file.name + ' from ' + upload.url)
@@ -327,7 +327,7 @@ module.exports = class Tus extends Plugin {
       })
 
       socket.on('success', (data) => {
-        this.uppy.emit('upload-success', file, data, data.url)
+        this.uppy.emit('upload-success', file, null, data.url)
         this.resetUploaderReferences(file.id)
         resolve()
       })

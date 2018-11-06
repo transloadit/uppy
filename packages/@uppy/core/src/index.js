@@ -713,6 +713,7 @@ class Uppy {
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal
         }),
+        response: uploadResp,
         uploadURL: uploadURL,
         isPaused: false
       })

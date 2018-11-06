@@ -236,9 +236,9 @@ module.exports = class XHRUpload extends Plugin {
             uploadURL
           }
 
-          this.uppy.setFileState(file.id, { response })
+          // this.uppy.setFileState(file.id, { response })
 
-          this.uppy.emit('upload-success', file, body, uploadURL)
+          this.uppy.emit('upload-success', file, response)
 
           if (uploadURL) {
             this.uppy.log(`Download ${file.name} from ${file.uploadURL}`)
@@ -254,9 +254,9 @@ module.exports = class XHRUpload extends Plugin {
             body
           }
 
-          this.uppy.setFileState(file.id, { response })
+          // this.uppy.setFileState(file.id, { response })
 
-          this.uppy.emit('upload-error', file, error)
+          this.uppy.emit('upload-error', file, response, error)
           return reject(error)
         }
       })
@@ -326,9 +326,16 @@ module.exports = class XHRUpload extends Plugin {
         socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
         socket.on('success', (data) => {
-          const resp = opts.getResponseData(data.response.responseText, data.response)
-          const uploadURL = resp[opts.responseUrlFieldName]
-          this.uppy.emit('upload-success', file, resp, uploadURL)
+          const body = opts.getResponseData(data.response.responseText, data.response)
+          const uploadURL = body[opts.responseUrlFieldName]
+
+          const response = {
+            status: data.response.status,
+            body,
+            uploadURL
+          }
+
+          this.uppy.emit('upload-success', file, response)
           socket.close()
           return resolve()
         })
