@@ -105,7 +105,7 @@ module.exports.app = (options = {}) => {
  *
  * @param {object} server
  */
-module.exports.socket = (server, option) => {
+module.exports.socket = (server) => {
   const wss = new SocketServer({ server })
   const redisClient = redis.client()
 
@@ -114,12 +114,10 @@ module.exports.socket = (server, option) => {
   // client attempts to reconnect.
   wss.on('connection', (ws) => {
     // @ts-ignore
-    let fullPath = ws.upgradeReq.url
-    if (option && option.server && option.server.path && fullPath.startsWith(option.server.path))
-      fullPath = fullPath.slice(option.server.path.length)
+    const fullPath = ws.upgradeReq.url
     // the token identifies which ongoing upload's progress, the socket
     // connection wishes to listen to.
-    const token = fullPath.replace(/\/api\//, '')
+    const token = fullPath.replace(/^.*\/api\//, '')
     logger.info(`connection received from ${token}`, 'socket.connect')
 
     /**
