@@ -10,6 +10,14 @@ function isXml (xhr) {
   return typeof contentType === 'string' && contentType.toLowerCase() === 'application/xml'
 }
 
+function getXmlValue (source, key) {
+  const start = source.indexOf(`<${key}>`)
+  const end = source.indexOf(`</${key}>`, start)
+  return start !== -1 && end !== -1
+    ? source.slice(start + key.length + 2, end)
+    : ''
+}
+
 function assertServerError (res) {
   if (res && res.error) {
     const error = new Error(res.message)
@@ -197,31 +205,13 @@ module.exports = class AwsS3 extends Plugin {
           return { location: xhr.responseURL.replace(/\?.*$/, '') }
         }
 
-        let getValue = () => ''
-        if (xhr.responseXML) {
-          getValue = (key) => {
-            const el = xhr.responseXML.querySelector(key)
-            return el ? el.textContent : ''
-          }
-        }
-
-        if (xhr.responseText) {
-          getValue = (key) => {
-            const start = xhr.responseText.indexOf(`<${key}>`)
-            const end = xhr.responseText.indexOf(`</${key}>`)
-            return start !== -1 && end !== -1
-              ? xhr.responseText.slice(start + key.length + 2, end)
-              : ''
-          }
-        }
-
         return {
           // Some S3 alternatives do not reply with an absolute URL.
           // Eg DigitalOcean Spaces uses /$bucketName/xyz
-          location: resolveUrl(xhr.responseURL, getValue('Location')),
-          bucket: getValue('Bucket'),
-          key: getValue('Key'),
-          etag: getValue('ETag')
+          location: resolveUrl(xhr.responseURL, getXmlValue(content, 'Location')),
+          bucket: getXmlValue(content, 'Bucket'),
+          key: getXmlValue(content, 'Key'),
+          etag: getXmlValue(content, 'ETag')
         }
       },
 
@@ -233,8 +223,8 @@ module.exports = class AwsS3 extends Plugin {
         if (!isXml(xhr)) {
           return
         }
-        const error = xhr.responseXML.querySelector('Error > Message')
-        return new Error(error.textContent)
+        const error = getXmlValue(content, 'Message')
+        return new Error(error)
       }
     })
   }
