@@ -14,6 +14,13 @@ declare class ReduxStore implements Store {
   subscribe(listener: any): () => void;
 }
 
-export default function createReduxStore(opts: ReduxStoreOptions): ReduxStore;
 export const reducer: Reducer<object>;
 export const middleware: Middleware;
+// Redux action name.
+export const STATE_UPDATE: string;
+
+// Typescript forbids the next two lines with the following error message:
+// "An export assignment cannot be used in a module with other exported elements."
+
+// declare function createReduxStore(opts: ReduxStoreOptions): ReduxStore;
+// export = createReduxStore;
