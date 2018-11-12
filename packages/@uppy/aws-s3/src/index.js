@@ -167,6 +167,7 @@ module.exports = class AwsS3 extends Plugin {
       responseUrlFieldName: 'location',
       timeout: this.opts.timeout,
       limit: this.opts.limit,
+      responseType: 'text',
       // Get the response data from a successful XMLHttpRequest instance.
       // `content` is the S3 response as a string.
       // `xhr` is the XMLHttpRequest instance.
