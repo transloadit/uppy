@@ -173,6 +173,10 @@ The default for the timeout is 30 seconds.
 
 Limit the amount of uploads going on at the same time. Setting this to `0` means there is no limit on concurrent uploads.
 
+### `responseType: ''`
+
+The response type expected from the server, determining how the `xhr.response` property should be filled. The `xhr.response` property can be accessed in a custom [`getResponseData()`](#getResponseData-responseText-response) callback. This option sets the [`XMLHttpRequest.responseType][XHR.responseType] property. Only '', 'text', 'arraybuffer', 'blob' and 'document' are widely supported by browsers, so it's recommended to use one of those. The default is the empty string, which is equivalent to 'text' for the `xhr.response` property.
+
 ### `withCredentials: false`
 
 Indicates whether or not cross-site Access-Control requests should be made using credentials.
@@ -253,5 +257,6 @@ move_uploaded_file($file_path, './img/' . basename($file_name)); // save the fil
 
 [FormData]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
 [XHR.timeout]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout
+[XHR.responseType]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
 [PHP.file-upload]: https://secure.php.net/manual/en/features.file-upload.php
 [PHP.multiple]: https://secure.php.net/manual/en/features.file-upload.multiple.php

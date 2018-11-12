@@ -47,6 +47,7 @@ module.exports = class XHRUpload extends Plugin {
       timeout: 30 * 1000,
       limit: 0,
       withCredentials: false,
+      responseType: '',
       /**
        * @typedef respObj
        * @property {string} responseText
@@ -201,6 +202,8 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       const xhr = new XMLHttpRequest()
+      xhr.responseType = opts.responseType
+
       const id = cuid()
 
       xhr.upload.addEventListener('loadstart', (ev) => {
@@ -271,7 +274,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
-
+      // IE10 does not allow setting `withCredentials` before `open()` is called.
       xhr.withCredentials = opts.withCredentials
 
       Object.keys(opts.headers).forEach((header) => {
@@ -357,8 +360,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       const xhr = new XMLHttpRequest()
-
-      xhr.withCredentials = this.opts.withCredentials
+      xhr.responseType = this.opts.responseType
 
       const timer = this.createProgressTimeout(this.opts.timeout, (error) => {
         xhr.abort()
@@ -422,7 +424,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.open(method.toUpperCase(), endpoint, true)
-
+      // IE10 does not allow setting `withCredentials` before `open()` is called.
       xhr.withCredentials = this.opts.withCredentials
 
       Object.keys(this.opts.headers).forEach((header) => {
