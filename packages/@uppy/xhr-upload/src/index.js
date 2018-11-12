@@ -47,7 +47,7 @@ module.exports = class XHRUpload extends Plugin {
       timeout: 30 * 1000,
       limit: 0,
       withCredentials: false,
-      responseType: 'text',
+      responseType: '',
       /**
        * @typedef respObj
        * @property {string} responseText
