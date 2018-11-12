@@ -64,7 +64,7 @@ export default class App extends React.Component {
       name: 'photo.jpg',
     }
 
-    await testUploadFileWithTus(photo)
+    testUploadFileWithTus(photo)
 
     // this.uppy.addFile({
     //   source: 'React Native',
@@ -113,7 +113,7 @@ export default class App extends React.Component {
       if (!isAllowed) return
 
       ImagePicker.launchImageLibraryAsync({
-        base64: true
+        base64: false
       })
         .then((result) => {
           console.log(result)
@@ -154,7 +154,7 @@ export default class App extends React.Component {
     this.setState({
       status: 'Uploading...'
     })
-    this.uppy.upload()
+    // this.uppy.upload()
   }
 
   showFilePicker (visible) {
