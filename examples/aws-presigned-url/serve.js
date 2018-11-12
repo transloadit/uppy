@@ -26,20 +26,23 @@ b.transform(aliasify, {
 })
 
 function bundle () {
-  return b.bundle()
-    .pipe(createWriteStream(path.join(__dirname, './bundle.js')))
+  return b.bundle((err, data) => {
+    if (err) console.error(err.stack)
+    else console.log('bundle complete')
+  }).pipe(createWriteStream(path.join(__dirname, './bundle.js')))
 }
 
 b.on('log', console.log)
 b.on('update', bundle)
 b.on('error', console.error)
 
-bundle()
-
 fs.createReadStream(path.join(__dirname, '../../packages/uppy/dist/uppy.min.css'))
   .pipe(fs.createWriteStream(path.join(__dirname, './uppy.min.css')))
 
-// Start the PHP delevopment server.
-spawn('php', ['-S', `localhost:${port}`], {
-  stdio: 'inherit'
+console.log('bundling...')
+bundle().on('finish', () => {
+  // Start the PHP delevopment server.
+  spawn('php', ['-S', `localhost:${port}`], {
+    stdio: 'inherit'
+  })
 })
