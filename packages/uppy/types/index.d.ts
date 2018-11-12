@@ -6,7 +6,9 @@
 export { default as Core } from '@uppy/core';
 
 // Stores
-export { default as DefaultStore } from '@uppy/store-default';
+import DefaultStore = require('@uppy/store-default');
+export { DefaultStore };  // this is weird: exporting a function as something that sounds like a class name!
+// do we really mean what the line above says?
 export { default as ReduxStore } from '@uppy/store-redux';
 
 // UI plugins
