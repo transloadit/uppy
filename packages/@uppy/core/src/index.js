@@ -1119,15 +1119,13 @@ class Uppy {
 
       lastStep = lastStep.then(() => {
         const { currentUploads } = this.getState()
-        const currentUpload = {
-          ...currentUploads[uploadID],
+        const currentUpload = Object.assign({}, currentUploads[uploadID], {
           step: step
-        }
+        })
         this.setState({
-          currentUploads: {
-            ...currentUploads,
+          currentUploads: Object.assign({}, currentUploads, {
             [uploadID]: currentUpload
-          }
+          })
         })
 
         // TODO give this the `currentUpload` object as its only parameter maybe?
