@@ -7,10 +7,12 @@ import {
   View,
   Button,
   TouchableOpacity,
+  TouchableHighlight,
   Image } from 'react-native'
 import Uppy from '@uppy/core'
 import XHRUpload from '@uppy/xhr-upload'
 import { ImagePicker, Permissions } from 'expo'
+import FilePicker from './file-picker.js'
 import testUploadFileWithTus from './tus-test.js'
 // import ImagePicker from 'react-native-image-picker'
 // import Tus from '@uppy/tus'
@@ -22,18 +24,21 @@ export default class App extends React.Component {
     this.state = {
       progress: 0,
       total: 0,
-      file: null
+      file: null,
+      isFilePickerVisible: false
     }
 
     this.startUpload = this.startUpload.bind(this)
     this.selectPhotoTapped = this.selectPhotoTapped.bind(this)
     this.addFileToUppy = this.addFileToUppy.bind(this)
+    this.showFilePicker = this.showFilePicker.bind(this)
   }
 
   componentDidMount () {
     this.uppy = Uppy({ autoProceed: false, debug: true })
     this.uppy.use(XHRUpload, {
-      endpoint: 'http://192.168.1.7:7000/',
+      // endpoint: 'http://192.168.1.7:7000/',
+      endpoint: 'http://api2.transloadit.com/',
     })
     // this.uppy.use(Tus, { endpoint: 'https://master.tus.io/files/' })
     this.uppy.on('upload-progress', (file, progress) => {
@@ -51,7 +56,7 @@ export default class App extends React.Component {
     })
   }
 
-  addFileToUppy (file) {
+  async addFileToUppy (file) {
     console.log(file)
     var photo = {
       uri: file.uri,
@@ -59,14 +64,14 @@ export default class App extends React.Component {
       name: 'photo.jpg',
     }
 
-    testUploadFileWithTus(photo)
+    await testUploadFileWithTus(photo)
 
-    this.uppy.addFile({
-      source: 'React Native',
-      name: 'photo.jpg',
-      type: file.type,
-      data: photo
-    })
+    // this.uppy.addFile({
+    //   source: 'React Native',
+    //   name: 'photo.jpg',
+    //   type: file.type,
+    //   data: photo
+    // })
   }
 
   // uploadFileDirecrly (file) {
@@ -107,15 +112,19 @@ export default class App extends React.Component {
     Permissions.askAsync(Permissions.CAMERA_ROLL).then((isAllowed) => {
       if (!isAllowed) return
 
-      ImagePicker.launchImageLibraryAsync({})
-      .then((result) => {
-        console.log(result)
-        if (!result.cancelled) {
-          this.setState({ file: result })
-          // this.uploadFileDirecrly(result)
-          this.addFileToUppy(result)
-        }
+      ImagePicker.launchImageLibraryAsync({
+        base64: true,
+        mediaTypes: 'All',
+        allowsEditing: true
       })
+        .then((result) => {
+          // console.log(result)
+          if (!result.cancelled) {
+            this.setState({ file: result })
+            // this.uploadFileDirecrly(result)
+            this.addFileToUppy(result)
+          }
+        })
     })
 
     // ImagePicker.showImagePicker(options, (response) => {
@@ -150,37 +159,69 @@ export default class App extends React.Component {
     this.uppy.upload()
   }
 
+  showFilePicker (visible) {
+    this.setState({
+      isFilePickerVisible: visible
+    })
+  }
+
   render () {
     return (
-      <View style={styles.container}>
-        <Text>Uppy running in React Native</Text>
-        <TouchableOpacity onPress={this.selectPhotoTapped}>
-          { this.state.file === null 
-            ? <Text>Select a Photo</Text> 
-            : <Image
-                style={{ width: 200, height: 200 }}
-                source={{ uri: this.state.file.uri }}
-              />
-          }
-        </TouchableOpacity>
-        <Text>Status: {this.state.status}</Text>
-        <Text>{this.state.progress} of {this.state.total}</Text>
-        <Button
-          onPress={this.startUpload}
-          title="Start Upload"
-          color="#841584"
-          accessibilityLabel="Start uploading a file"
-        />
+      <View style={{
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <SelectAndUploadFileWithUppy 
+          state={this.state}
+          selectPhotoTapped={this.selectPhotoTapped}
+          startUpload={this.startUpload} 
+          showFilePicker={this.showFilePicker} />
+        <FilePicker show={this.state.isFilePickerVisible} />
       </View>
     )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
-})
+function SelectAndUploadFileWithUppy (props) {
+  return (
+    <View style={{
+      flex: 1,
+      paddingVertical: 100
+    }}>
+      <Text>Uppy running in React Native</Text>
+      <TouchableOpacity onPress={props.selectPhotoTapped}>
+        { props.state.file === null 
+          ? <Text>Select a Photo</Text> 
+          : <Image
+              style={{ width: 200, height: 200 }}
+              source={{ uri: props.state.file.uri }} />
+        }
+      </TouchableOpacity>
+      <Text>Status: {props.status}</Text>
+      <Text>{props.progress} of {props.total}</Text>
+      <Button
+        onPress={props.startUpload}
+        title="Start Upload"
+        color="#841584"
+        accessibilityLabel="Start uploading a file"
+      />
+      <TouchableHighlight
+        onPress={() => {
+          props.showFilePicker(true)
+        }}>
+        <Text>Select files from Uppy</Text>
+      </TouchableHighlight>
+    </View>
+  )
+}
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//     alignItems: 'center',
+//     justifyContent: 'center'
+//   }
+// })

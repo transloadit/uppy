@@ -1,5 +1,4 @@
 {
-  "expo": {
-    "sdkVersion": "27.0.0"
-  }
+  "displayName": "uppy-react-native",
+  "name": "emptyprojecttemplate"
 }

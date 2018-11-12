@@ -1,33 +1,24 @@
 {
-  "name": "uppy-react-native",
-  "version": "0.1.0",
+  "name": "empty-project-template",
   "private": true,
-  "devDependencies": {
-    "babel-plugin-module-resolver": "^3.1.1",
-    "jest-expo": "~27.0.0",
-    "react-native-scripts": "1.14.0",
-    "react-test-renderer": "16.3.1"
-  },
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
-    "start": "react-native-scripts start",
-    "eject": "react-native-scripts eject",
-    "android": "react-native-scripts android",
-    "ios": "react-native-scripts ios",
-    "test": "jest"
-  },
-  "jest": {
-    "preset": "jest-expo"
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios"
   },
   "dependencies": {
-    "@uppy/core": "^0.27.0",
-    "@uppy/tus": "^0.27.0",
-    "@uppy/xhr-upload": "^0.27.0",
-    "expo": "^27.0.1",
-    "react": "16.3.1",
-    "react-native": "~0.55.2",
-    "react-native-image-picker": "^0.26.10",
+    "@uppy/core": "^0.28.0",
+    "@uppy/tus": "^0.28.0",
+    "@uppy/xhr-upload": "^0.28.0",
+    "base-64": "^0.1.0",
+    "react": "16.5.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
+    "react-native-fs": "https://github.com/expo/exponent-react-native-fs",
+    "react-native-image-picker": "^0.27.1",
     "react-native-tus-client": "^1.0.2",
     "tus-js-client": "https://github.com/tus/tus-js-client"
+  },
+  "devDependencies": {
+    "babel-preset-expo": "^5.0.0"
   }
 }
