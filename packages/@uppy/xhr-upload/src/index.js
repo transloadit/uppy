@@ -47,6 +47,7 @@ module.exports = class XHRUpload extends Plugin {
       timeout: 30 * 1000,
       limit: 0,
       withCredentials: false,
+      responseType: 'text',
       /**
        * @typedef respObj
        * @property {string} responseText
@@ -201,6 +202,9 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       const xhr = new XMLHttpRequest()
+      xhr.responseType = opts.responseType
+      xhr.withCredentials = opts.withCredentials
+
       const id = cuid()
 
       xhr.upload.addEventListener('loadstart', (ev) => {
@@ -271,8 +275,6 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
-
-      xhr.withCredentials = opts.withCredentials
 
       Object.keys(opts.headers).forEach((header) => {
         xhr.setRequestHeader(header, opts.headers[header])
@@ -358,6 +360,7 @@ module.exports = class XHRUpload extends Plugin {
 
       const xhr = new XMLHttpRequest()
 
+      xhr.responseType = this.opts.responseType
       xhr.withCredentials = this.opts.withCredentials
 
       const timer = this.createProgressTimeout(this.opts.timeout, (error) => {
