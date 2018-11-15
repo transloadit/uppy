@@ -15,18 +15,18 @@ const notImages = [
   { type: 'text/javascript', file: __filename }
 ]
 
-describe('ThumbnailGenerator', function () {
-  // Does not work on IE right now
-  if (capabilities.browserName === 'internet explorer') {
-    this.skip()
-    return
-  }
-
+describe('ThumbnailGenerator', () => {
   beforeEach(() => {
     browser.url(testURL)
   })
 
   it('should generate thumbnails for images', function () {
+    // Does not work on IE right now
+    if (capabilities.browserName === 'internet explorer') {
+      this.skip()
+      return
+    }
+
     $('#uppyThumbnails .uppy-FileInput-input').waitForExist()
 
     browser.execute(/* must be valid ES5 for IE */ function () {
