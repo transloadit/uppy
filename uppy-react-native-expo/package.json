@@ -18,8 +18,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
     "react-native-fs": "https://github.com/expo/exponent-react-native-fs",
     "react-native-image-picker": "^0.27.1",
-    "react-native-tus-client": "^1.0.2",
-    "tus-js-client": "https://github.com/tus/tus-js-client"
+    "react-native-tus-client": "^1.0.2"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0"

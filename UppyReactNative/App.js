@@ -9,13 +9,9 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Image } from 'react-native'
-// import Uppy from '@uppy/core'
-// import XHRUpload from '@uppy/xhr-upload'
-import { ImagePicker, Permissions } from 'expo'
-import FilePicker from './file-picker.js'
+// import FilePicker from './file-picker.js'
 import testUploadFileWithTus from './tus-test.js'
-// import ImagePicker from 'react-native-image-picker'
-// import Tus from '@uppy/tus'
+import ImagePicker from 'react-native-image-picker'
 
 export default class App extends React.Component {
   constructor () {
@@ -61,8 +57,8 @@ export default class App extends React.Component {
   }
 
   componentDidMount () {
-    console.log('Is this React Native?', this.isReactNative)
-    this.createAndUploadTextFileWithTus()
+    console.log('is this React Native?', this.isReactNative)
+    // this.createAndUploadTextFileWithTus()
     // this.uppy = Uppy({ autoProceed: false, debug: true })
     // this.uppy.use(XHRUpload, {
     //   // endpoint: 'http://192.168.1.7:7000/',
@@ -119,44 +115,45 @@ export default class App extends React.Component {
   selectPhotoTapped () {
     console.log('Selecting photo...')
 
-    Permissions.askAsync(Permissions.CAMERA_ROLL).then((isAllowed) => {
-      if (!isAllowed) return
+    // Permissions.askAsync(Permissions.CAMERA_ROLL).then((isAllowed) => {
+    //   if (!isAllowed) return
 
-      ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'All'
-      })
-        .then((result) => {
-          console.log(result)
-          if (!result.cancelled) {
-            this.setState({ file: result })
-            this.addFile(result)
-          }
-        })
-    })
-
-    // ImagePicker.showImagePicker(options, (response) => {
-    //   console.log('Response = ', response);
-
-    //   if (response.didCancel) {
-    //     console.log('User cancelled photo picker');
-    //   }
-    //   else if (response.error) {
-    //     console.log('ImagePicker Error: ', response.error);
-    //   }
-    //   else if (response.customButton) {
-    //     console.log('User tapped custom button: ', response.customButton);
-    //   }
-    //   else {
-    //     let source = { uri: response.uri };
-
-    //     // You can also display the image using data:
-    //     // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-    //     this.setState({
-    //       ImageSource: source
-    //     });
-    //   }
+    //   ImagePicker.launchImageLibraryAsync({
+    //     mediaTypes: 'All'
+    //   })
+    //     .then((result) => {
+    //       console.log(result)
+    //       if (!result.cancelled) {
+    //         this.setState({ file: result })
+    //         this.addFile(result)
+    //       }
+    //     })
     // })
+
+    ImagePicker.showImagePicker({}, (response) => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = { 
+          uri: response.uri 
+        }
+
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+        this.setState({
+          file: source,
+        })
+  
+        this.addFile(source)
+      }
+    });
   }
 
   startUpload () {
@@ -184,7 +181,7 @@ export default class App extends React.Component {
           state={this.state}
           selectPhotoTapped={this.selectPhotoTapped}
           showFilePicker={this.showFilePicker} />
-        <FilePicker show={this.state.isFilePickerVisible} />
+        {/* <FilePicker show={this.state.isFilePickerVisible} /> */}
       </View>
     )
   }
