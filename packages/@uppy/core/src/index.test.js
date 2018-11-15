@@ -373,6 +373,34 @@ describe('src/Core', () => {
         })
     })
 
+    it('should not pass removed file IDs to next step', async () => {
+      const core = new Core()
+      const uploader = jest.fn()
+      core.addPreProcessor((fileIDs) => {
+        core.removeFile(fileIDs[0])
+      })
+      core.addUploader(uploader)
+
+      core.addFile({
+        source: 'jest',
+        name: 'rmd.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'kept.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+
+      await core.upload()
+
+      expect(uploader.mock.calls.length).toEqual(1)
+      expect(uploader.mock.calls[0][0].length).toEqual(1, 'Got 1 file ID')
+      expect(core.getFile(uploader.mock.calls[0][0][0]).name).toEqual('kept.jpg')
+    })
+
     it('should update the file progress state when preprocess-progress event is fired', () => {
       const core = new Core()
       core.addFile({

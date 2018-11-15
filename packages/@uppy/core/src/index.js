@@ -1103,7 +1103,6 @@ class Uppy {
    */
   _runUpload (uploadID) {
     const uploadData = this.getState().currentUploads[uploadID]
-    const fileIDs = uploadData.fileIDs
     const restoreStep = uploadData.step
 
     const steps = [
@@ -1128,9 +1127,10 @@ class Uppy {
             [uploadID]: currentUpload
           })
         })
+
         // TODO give this the `currentUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-        return fn(fileIDs, uploadID)
+        return fn(currentUpload.fileIDs, uploadID)
       }).then((result) => {
         return null
       })
@@ -1140,23 +1140,31 @@ class Uppy {
     // promise from this method if the upload failed.
     lastStep.catch((err) => {
       this.emit('error', err, uploadID)
-
       this._removeUpload(uploadID)
     })
 
     return lastStep.then(() => {
-      const files = fileIDs.map((fileID) => this.getFile(fileID))
-      const successful = files.filter((file) => file && !file.error)
-      const failed = files.filter((file) => file && file.error)
-      this.addResultData(uploadID, { successful, failed, uploadID })
-
+      // Set result data.
       const { currentUploads } = this.getState()
-      if (!currentUploads[uploadID]) {
+      const currentUpload = currentUploads[uploadID]
+      if (!currentUpload) {
         this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
         return
       }
 
-      const result = currentUploads[uploadID].result
+      const files = currentUpload.fileIDs
+        .map((fileID) => this.getFile(fileID))
+      const successful = files.filter((file) => !file.error)
+      const failed = files.filter((file) => file.error)
+      this.addResultData(uploadID, { successful, failed, uploadID })
+    }).then(() => {
+      // Emit completion events.
+      // This is in a separate function so that the `currentUploads` variable
+      // always refers to the latest state. In the handler right above it refers
+      // to an outdated object without the `.result` property.
+      const { currentUploads } = this.getState()
+      const currentUpload = currentUploads[uploadID]
+      const result = currentUpload.result
       this.emit('complete', result)
 
       this._removeUpload(uploadID)
