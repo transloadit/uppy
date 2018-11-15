@@ -1,4 +1,4 @@
-/* global browser, expect, $, $$ */
+/* global browser, capabilities, expect, $, $$ */
 const path = require('path')
 const fs = require('fs')
 const { selectFakeFile, supportsChooseFile } = require('../utils')
@@ -15,7 +15,13 @@ const notImages = [
   { type: 'text/javascript', file: __filename }
 ]
 
-describe('ThumbnailGenerator', () => {
+describe('ThumbnailGenerator', function () {
+  // Does not work on IE right now
+  if (capabilities.browserName === 'internet explorer') {
+    this.skip()
+    return
+  }
+
   beforeEach(() => {
     browser.url(testURL)
   })
