@@ -17,7 +17,8 @@ exports.config = {
   // directory is where your package.json resides, so `wdio` will be called from there.
   //
   specs: [
-    'test/endtoend/*/test.js'
+    // 'test/endtoend/*/test.js',
+    'test/endtoend/transloadit/test.js'
   ],
 
   // Patterns to exclude.
