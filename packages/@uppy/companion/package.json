@@ -41,7 +41,7 @@
     "express-interceptor": "^1.2.0",
     "express-prom-bundle": "^3.1.0",
     "express-session": "1.15.6",
-    "grant-express": "^4.0.1",
+    "grant-express": "4.1.2",
     "helmet": "3.8.2",
     "isobject": "3.0.1",
     "jsonwebtoken": "^8.0.1",

@@ -27,8 +27,7 @@ module.exports = function callback (req, res, next) {
   // add the token to cookies for thumbnail/image requests
   tokenService.addToCookies(res, uppyAuthToken, req.uppy.options)
 
-  const grant = (req.session.grant || {})
-  const state = grant.dynamic ? grant.dynamic.state : grant.state
+  const state = (req.session.grant || {}).state
   if (state) {
     const origin = oAuthState.getFromState(state, 'origin', req.uppy.options.secret)
     const allowedClients = req.uppy.options.clients
