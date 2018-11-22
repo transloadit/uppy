@@ -1,9 +1,9 @@
 const form = require('./form')
-const modal = require('./modal')
+const pick = require('./pick')
 const upload = require('./upload')
 
 module.exports = {
   form,
-  modal,
+  pick,
   upload
 }

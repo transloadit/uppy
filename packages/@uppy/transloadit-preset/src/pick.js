@@ -5,8 +5,8 @@ const addProviders = require('./addProviders')
 
 const CANCEL = {}
 
-function modal (target, opts = {}) {
-  const pluginId = 'modal'
+function pick (target, opts = {}) {
+  const pluginId = 'pick'
   const uppy = createUppy(opts, {
     allowMultipleUploads: false
   })
@@ -47,4 +47,4 @@ function modal (target, opts = {}) {
   })
 }
 
-module.exports = modal
+module.exports = pick
