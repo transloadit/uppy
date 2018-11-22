@@ -45,7 +45,7 @@ import '@uppy/core/dist/style.css'
 import '@uppy/status-bar/dist/style.css'
 ```
 
-Import general Core styles from `@uppy/core/dist/style.css` first, then add the Informer styles from `@uppy/status-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Status Bar styles from `@uppy/status-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
 
 ⚠️ If you use the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the Progress Bar, because the Dashboard already includes it.
 

@@ -45,7 +45,7 @@ import '@uppy/core/dist/style.css'
 import '@uppy/url/dist/style.css'
 ```
 
-Import general Core styles from `@uppy/core/dist/style.css` first, then add the Informer styles from `@uppy/url/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Url styles from `@uppy/url/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
 
 ## Options
 
