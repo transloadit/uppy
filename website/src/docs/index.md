@@ -67,9 +67,14 @@ npm install @uppy/core @uppy/xhr-upload @uppy/dashboard
 ```
 
 ```js
+// Import the plugins
 const Uppy = require('@uppy/core')
 const XHRUpload = require('@uppy/xhr-upload')
 const Dashboard = require('@uppy/dashboard')
+
+// And their styles (for UI plugins)
+require('@uppy/core/dist/style.css')
+require('@uppy/dashboard/dist/style.css')
  
 const uppy = Uppy()
   .use(Dashboard, {

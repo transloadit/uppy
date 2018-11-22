@@ -40,11 +40,16 @@ const Informer = Uppy.Informer
 
 ## CSS
 
-The `@uppy/informer` plugin includes CSS a file for styling. If you use the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the Informer, because the Dashboard already includes it.
+The `@uppy/informer` plugin comes with a CSS file for styling:
 
-The CSS file lives at `@uppy/informer/dist/style.css`. A minified version is at `@uppy/informer/dist/style.min.css`.
+```js
+import '@uppy/core/dist/style.css'
+import '@uppy/informer/dist/style.css'
+```
 
-Import one of these files into your project. The way to do this depends on your build system.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Informer styles from `@uppy/informer/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+
+⚠️ If you use the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the Progress Bar, because the Dashboard already includes it.
 
 ## Options
 

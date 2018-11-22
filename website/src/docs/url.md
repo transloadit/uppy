@@ -36,6 +36,17 @@ In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` gl
 const Url = Uppy.Url
 ```
 
+## CSS
+
+The `@uppy/url` plugin comes with a CSS file for styling:
+
+```js
+import '@uppy/core/dist/style.css'
+import '@uppy/url/dist/style.css'
+```
+
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Informer styles from `@uppy/url/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+
 ## Options
 
 The `@uppy/url` plugin has the following configurable options:
