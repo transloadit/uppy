@@ -40,7 +40,7 @@ const Informer = Uppy.Informer
 
 ## CSS
 
-The `@uppy/informer` plugin comes with a CSS file for styling:
+The `@uppy/informer` plugin requires the following CSS for styling:
 
 ```js
 import '@uppy/core/dist/style.css'

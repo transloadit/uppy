@@ -38,7 +38,7 @@ const Webcam = Uppy.Webcam
 
 ## CSS
 
-The `@uppy/webcam` plugin comes with a CSS file for styling:
+The `@uppy/webcam` plugin requires the following CSS for styling:
 
 ```js
 import '@uppy/core/dist/style.css'

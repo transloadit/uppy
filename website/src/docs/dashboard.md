@@ -43,7 +43,7 @@ const Dashboard = Uppy.Dashboard
 
 ## CSS
 
-The `@uppy/dashboard` plugin comes with a CSS file for styling:
+The `@uppy/dashboard` plugin requires the following CSS for styling:
 
 ```js
 import '@uppy/core/dist/style.css'

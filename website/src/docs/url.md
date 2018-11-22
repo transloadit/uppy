@@ -38,7 +38,7 @@ const Url = Uppy.Url
 
 ## CSS
 
-The `@uppy/url` plugin comes with a CSS file for styling:
+The `@uppy/url` plugin requires the following CSS for styling:
 
 ```js
 import '@uppy/core/dist/style.css'

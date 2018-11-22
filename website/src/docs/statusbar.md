@@ -38,7 +38,7 @@ const StatusBar = Uppy.StatusBar
 
 ## CSS
 
-The `@uppy/status-bar` plugin comes with a CSS file for styling:
+The `@uppy/status-bar` plugin requires the following CSS for styling:
 
 ```js
 import '@uppy/core/dist/style.css'

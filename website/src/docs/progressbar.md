@@ -39,7 +39,7 @@ const ProgressBar = Uppy.ProgressBar
 
 ## CSS
 
-The `@uppy/progress-bar` plugin comes with a CSS file for styling:
+The `@uppy/progress-bar` plugin requires the following CSS for styling:
 
 ```js
 import '@uppy/core/dist/style.css'
