@@ -248,7 +248,6 @@ const ProgressBarUploading = (props) => {
     return null
   }
 
-  const supportsUploadProgress = props.capabilities.uploadProgress
   const title = props.isAllPaused ? props.i18n('paused') : props.i18n('uploading')
   const showUploadNewlyAddedFiles = props.newFiles && props.isUploadStarted
 
@@ -257,10 +256,10 @@ const ProgressBarUploading = (props) => {
       { !props.isAllPaused ? <LoadingSpinner {...props} /> : null }
       <div class="uppy-StatusBar-status">
         <div class="uppy-StatusBar-statusPrimary">
-          {supportsUploadProgress ? `${title}: ${props.totalProgress}%` : title}
+          {props.supportsUploadProgress ? `${title}: ${props.totalProgress}%` : title}
         </div>
         { !props.isAllPaused && !showUploadNewlyAddedFiles && props.showProgressDetails
-          ? (supportsUploadProgress ? <ThrottledProgressDetails {...props} /> : <UnknownProgressDetails />)
+          ? (props.supportsUploadProgress ? <ThrottledProgressDetails {...props} /> : <UnknownProgressDetails {...props} />)
           : null
         }
         { showUploadNewlyAddedFiles ? <UploadNewlyAddedFiles {...props} /> : null }
