@@ -40,6 +40,7 @@ module.exports = class StatusBar extends Plugin {
         },
         dataUploadedOfTotal: '%{complete} of %{total}',
         xTimeLeft: '%{time} left',
+        progressUnavailable: 'Unknown time left',
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
           1: 'Upload %{smart_count} files'

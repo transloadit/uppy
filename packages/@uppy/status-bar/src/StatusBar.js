@@ -214,6 +214,13 @@ const ProgressDetails = (props) => {
   </div>
 }
 
+const UnknownProgressDetails = (props) => {
+  return <div class="uppy-StatusBar-statusSecondary">
+    { props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.numUploads }) + ' \u00B7 ' }
+    { props.i18n('progressUnavailable') }
+  </div>
+}
+
 const UploadNewlyAddedFiles = (props) => {
   const uploadBtnClassNames = classNames(
     'uppy-u-reset',
@@ -241,6 +248,7 @@ const ProgressBarUploading = (props) => {
     return null
   }
 
+  const supportsUploadProgress = props.capabilities.uploadProgress
   const title = props.isAllPaused ? props.i18n('paused') : props.i18n('uploading')
   const showUploadNewlyAddedFiles = props.newFiles && props.isUploadStarted
 
@@ -248,9 +256,11 @@ const ProgressBarUploading = (props) => {
     <div class="uppy-StatusBar-content" aria-label={title} title={title}>
       { !props.isAllPaused ? <LoadingSpinner {...props} /> : null }
       <div class="uppy-StatusBar-status">
-        <div class="uppy-StatusBar-statusPrimary">{title}: {props.totalProgress}%</div>
+        <div class="uppy-StatusBar-statusPrimary">
+          {supportsUploadProgress ? `${title}: ${props.totalProgress}%` : title}
+        </div>
         { !props.isAllPaused && !showUploadNewlyAddedFiles && props.showProgressDetails
-          ? <ThrottledProgressDetails {...props} />
+          ? (supportsUploadProgress ? <ThrottledProgressDetails {...props} /> : <UnknownProgressDetails />)
           : null
         }
         { showUploadNewlyAddedFiles ? <UploadNewlyAddedFiles {...props} /> : null }
