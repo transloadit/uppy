@@ -35,7 +35,7 @@ module.exports = class ProviderView {
    */
   constructor (plugin, opts) {
     this.plugin = plugin
-    this.Provider = plugin[plugin.id]
+    this.provider = opts.provider
 
     // set default options
     const defaultOptions = {
@@ -94,7 +94,7 @@ module.exports = class ProviderView {
 
   checkAuth () {
     this.plugin.setPluginState({ checkAuthInProgress: true })
-    this.Provider.checkAuth()
+    this.provider.checkAuth()
       .then((authenticated) => {
         this.plugin.setPluginState({ checkAuthInProgress: false })
         this.plugin.onAuth(authenticated)
@@ -112,7 +112,7 @@ module.exports = class ProviderView {
    */
   getFolder (id, name) {
     return this._loaderWrapper(
-      this.Provider.list(id),
+      this.provider.list(id),
       (res) => {
         let folders = []
         let files = []
@@ -158,11 +158,11 @@ module.exports = class ProviderView {
       },
       remote: {
         serverUrl: this.plugin.opts.serverUrl,
-        url: `${this.Provider.fileUrl(file.requestPath)}`,
+        url: `${this.provider.fileUrl(file.requestPath)}`,
         body: {
           fileId: file.id
         },
-        providerOptions: this.Provider.opts
+        providerOptions: this.provider.opts
       }
     }
 
@@ -190,7 +190,7 @@ module.exports = class ProviderView {
    * Removes session token on client side.
    */
   logout () {
-    this.Provider.logout(location.href)
+    this.provider.logout(location.href)
       .then((res) => {
         if (res.ok) {
           const newState = {
@@ -336,7 +336,7 @@ module.exports = class ProviderView {
     }
     folders[folderId] = {loading: true, files: []}
     this.plugin.setPluginState({selectedFolders: folders})
-    return this.Provider.list(folder.requestPath).then((res) => {
+    return this.provider.list(folder.requestPath).then((res) => {
       let files = []
       res.items.forEach((item) => {
         if (!item.isFolder) {
@@ -423,7 +423,7 @@ module.exports = class ProviderView {
 
   handleAuth () {
     const authState = btoa(JSON.stringify({ origin: location.origin }))
-    const link = `${this.Provider.authUrl()}?state=${authState}`
+    const link = `${this.provider.authUrl()}?state=${authState}`
 
     const authWindow = window.open(link, '_blank')
     const handleToken = (e) => {
@@ -433,8 +433,8 @@ module.exports = class ProviderView {
       }
       authWindow.close()
       window.removeEventListener('message', handleToken)
-      this.Provider.setAuthToken(e.data.token)
-      this._loaderWrapper(this.Provider.checkAuth(), this.plugin.onAuth, this.handleError)
+      this.provider.setAuthToken(e.data.token)
+      this._loaderWrapper(this.provider.checkAuth(), this.plugin.onAuth, this.handleError)
     }
     window.addEventListener('message', handleToken)
   }
@@ -466,7 +466,7 @@ module.exports = class ProviderView {
     const path = this.nextPagePath ? this.nextPagePath : null
 
     if (scrollPos < 50 && path && !this._isHandlingScroll) {
-      this.Provider.list(path)
+      this.provider.list(path)
         .then((res) => {
           const { files, folders } = this.plugin.getPluginState()
           this._updateFilesAndFolders(res, files, folders)
