@@ -50,15 +50,23 @@ const resultPromise = transloadit.pick('body', {
 
 ## Form
 
-Add resumable uploads and Transloadit's processing to your existing HTML form uploads.
+Add resumable uploads and Transloadit's processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
 
-```js
+```html
+<form id="myForm" method="POST" action="/upload">
+  <input type="file" multiple>
+  <!-- Will be inserted by `transloadit.form()`: -->
+  <!-- <input type="hidden" name="transloadit" value="{...json...}"> -->
+  <button type="submit">Upload</button>
+</form>
+<script>
 transloadit.form('form#myForm', {
   params: {
     auth: { key: '' },
     template_id: ''
   }
 })
+</script>
 ```
 
 <a class="MoreButton" href="/docs/transloadit-preset/form">View Documentation</a>
