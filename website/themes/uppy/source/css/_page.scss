@@ -318,6 +318,16 @@
       font-size: 14px;
     }
   }
+
+  table {
+    width: 100%;
+    text-align: left;
+    td {
+      vertical-align: top;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+  }
 }
 
 .PostAuthor {

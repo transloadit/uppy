@@ -21,6 +21,28 @@ const resultPromise = transloadit.pick(target, {
 
 DOM element or CSS selector to place the modal element in. `document.body` is usually fine in this case because the modal is absolutely positioned on top of everything anyway.
 
+## Restrictions
+
+Set rules and conditions to limit the type and/or number of files that can be selected. Restrictions are configured by the `restrictions` option.
+
+### `restrictions.maxFileSize`
+
+Maximum file size in bytes for each individual file.
+
+### `restrictions.maxNumberOfFiles`
+
+The total number of files that can be selected. If this is equal to 1, users can only select a single file in system dialogs; else they can select multiple.
+
+### `restrictions.minNumberOfFiles`
+
+The minimum number of files that must be selected before the upload.
+
+### `restrictions.allowedFileTypes`
+
+Array of mime type wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`.
+
+If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types) attribute will be used for the internal file input field, so only acceptable files can be selected in the system file dialog.
+
 ## Providers
 
 Providers import files from third party services using [Uppy Companion][companion] or from local sources like the device camera.
