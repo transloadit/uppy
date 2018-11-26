@@ -110,7 +110,7 @@ This global metadata is added to each file in Uppy. It can be modified by two me
 
 Metadata from each file is then attached to uploads in [Tus](/docs/tus/) and [XHRUpload](/docs/xhrupload/) plugins.
 
-Metadata can also be added from a `<form>` element on your page, through the [Form](/docs/form/)plugin or through the UI if you are using Dashboard with the [`metaFields`](/docs/dashboard/#metaFields) option.
+Metadata can also be added from a `<form>` element on your page, through the [Form](/docs/form/) plugin or through the UI if you are using Dashboard with the [`metaFields`](/docs/dashboard/#metaFields) option.
 
 <a id="onBeforeFileAdded"></a>
 ### `onBeforeFileAdded: (currentFile, files) => currentFile`
