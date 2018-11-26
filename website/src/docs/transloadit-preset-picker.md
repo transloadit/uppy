@@ -17,9 +17,21 @@ const resultPromise = transloadit.pick(target, {
 })
 ```
 
+`resultPromise` is a [Promise][promise] that resolves with an object:
+
+ - `successful` - An array containing data about files that were uploaded successfully
+ - `failed` - An array containing data about files that failed to upload
+ - `transloadit` - An array of Assembly statuses
+
 ## `target`
 
 DOM element or CSS selector to place the modal element in. `document.body` is usually fine in this case because the modal is absolutely positioned on top of everything anyway.
+
+## Transloadit
+
+**TODO inline most of this?**
+
+All the options to the [Transloadit][transloadit] plugin are supported.
 
 ## Restrictions
 
@@ -96,3 +108,4 @@ Specific options for the [URL](/docs/url) provider.
 Specific options for the [Webcam](/docs/webcam) provider.
 
 [companion]: /docs/companion
+[transloadit]: /docs/transloadit#options

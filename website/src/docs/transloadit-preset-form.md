@@ -32,6 +32,12 @@ When the user submits the form, we intercept it and send the files to Transloadi
 
 Finally, we _really_ submit the form—without files, but with those Assembly status objects. You can then handle that in your backend.
 
+## Transloadit
+
+**TODO inline most of this?**
+
+All the options to the [Transloadit][transloadit] plugin are supported.
+
 ## Restrictions
 
 Set rules and conditions to limit the type and/or number of files that can be selected. Restrictions are configured by the `restrictions` option.

@@ -17,18 +17,25 @@ const resultPromise = transloadit.upload(files, {
 })
 ```
 
+`resultPromise` is a [Promise][promise] that resolves with an object:
+
+ - `successful` - An array containing data about files that were uploaded successfully
+ - `failed` - An array containing data about files that failed to upload
+ - `transloadit` - An array of Assembly statuses
+
 ## `files`
 
 An array of [File][file] objects, obtained from an `<input type="file">` or elsewhere.
 
 These can also be [Blob][blob]s with a `.name` property. That way you can upload files that were created using JavaScript.
 
-## Options
+## Transloadit
 
-This method supports all the options of the [Transloadit Plugin][tl-options].
+**TODO inline most of this?**
 
-TODO inline them here probably
+All the options to the [Transloadit][tl-options] plugin are supported.
 
 [file]: https://developer.mozilla.org/en-US/docs/Web/API/File
 [blob]: https://developer.mozilla.org/en-US/docs/Web/API/Blob
+[promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 [tl-options]: /docs/transloadit#options
