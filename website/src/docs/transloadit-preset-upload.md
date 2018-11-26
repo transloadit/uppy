@@ -5,7 +5,6 @@ permalink: docs/transloadit-preset/upload/
 hidden: true
 ---
 
-
 Upload files straight to Transloadit from your own custom UI. Give us an array of files, and we'll give you an array of results!
 
 ```js
