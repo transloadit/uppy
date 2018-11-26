@@ -18,7 +18,7 @@ uppy.use(Dropbox, {
 })
 ```
 
-[Try live!](/examples/dashboard/)
+<a class="TryButton" href="/examples/dashboard/">Try it live</a>
 
 ## Installation
 

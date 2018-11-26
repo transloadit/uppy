@@ -1,4 +1,4 @@
-/* global browser, expect, $, $$ */
+/* global browser, capabilities, expect, $, $$ */
 const path = require('path')
 const fs = require('fs')
 const { selectFakeFile, supportsChooseFile } = require('../utils')
@@ -21,6 +21,12 @@ describe('ThumbnailGenerator', () => {
   })
 
   it('should generate thumbnails for images', function () {
+    // Does not work on IE right now
+    if (capabilities.browserName === 'internet explorer') {
+      this.skip()
+      return
+    }
+
     $('#uppyThumbnails .uppy-FileInput-input').waitForExist()
 
     browser.execute(/* must be valid ES5 for IE */ function () {

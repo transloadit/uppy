@@ -46,9 +46,9 @@ describe('Transloadit file processing', () => {
         `image/jpeg`, // type
         fs.readFileSync(img, 'base64') // b64
       )
-      browser.execute(selectFakeFile, 'uppyTransloadit')
+      // browser.execute(selectFakeFile, 'uppyTransloadit')
     }
-    $(resultPath).waitForExist(15000)
+    $(resultPath).waitForExist(25000)
     const text = browser.getText(resultPath)
     expect(text).to.be.equal('ok')
   })

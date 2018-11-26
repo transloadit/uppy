@@ -117,7 +117,7 @@ module.exports.socket = (server) => {
     const fullPath = ws.upgradeReq.url
     // the token identifies which ongoing upload's progress, the socket
     // connection wishes to listen to.
-    const token = fullPath.replace(/\/api\//, '')
+    const token = fullPath.replace(/^.*\/api\//, '')
     logger.info(`connection received from ${token}`, 'socket.connect')
 
     /**

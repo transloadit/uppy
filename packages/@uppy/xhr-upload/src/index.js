@@ -202,7 +202,9 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       const xhr = new XMLHttpRequest()
-      xhr.responseType = opts.responseType
+      if (opts.responseType !== '') {
+        xhr.responseType = opts.responseType
+      }
 
       const id = cuid()
 
@@ -360,7 +362,9 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       const xhr = new XMLHttpRequest()
-      xhr.responseType = this.opts.responseType
+      if (this.opts.responseType !== '') {
+        xhr.responseType = this.opts.responseType
+      }
 
       const timer = this.createProgressTimeout(this.opts.timeout, (error) => {
         xhr.abort()

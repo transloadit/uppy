@@ -639,22 +639,49 @@ class Uppy {
   _calculateTotalProgress () {
     // calculate total progress, using the number of files currently uploading,
     // multiplied by 100 and the summ of individual progress of each file
-    const files = Object.assign({}, this.getState().files)
+    const files = this.getFiles()
 
-    const inProgress = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadStarted
-    })
-    const progressMax = inProgress.length * 100
-    let progressAll = 0
-    inProgress.forEach((file) => {
-      progressAll = progressAll + files[file].progress.percentage
+    const inProgress = files.filter((file) => {
+      return file.progress.uploadStarted
     })
 
-    const totalProgress = progressMax === 0 ? 0 : Math.floor((progressAll * 100 / progressMax).toFixed(2))
+    if (inProgress.length === 0) {
+      this.setState({ totalProgress: 0 })
+      return
+    }
 
-    this.setState({
-      totalProgress: totalProgress
+    const sizedFiles = inProgress.filter((file) => file.progress.bytesTotal != null)
+    const unsizedFiles = inProgress.filter((file) => file.progress.bytesTotal == null)
+
+    if (sizedFiles.length === 0) {
+      const progressMax = inProgress.length
+      const currentProgress = unsizedFiles.reduce((acc, file) => {
+        return acc + file.progress.percentage
+      }, 0)
+      const totalProgress = Math.round(currentProgress / progressMax * 100)
+      this.setState({ totalProgress })
+      return
+    }
+
+    let totalSize = sizedFiles.reduce((acc, file) => {
+      return acc + file.progress.bytesTotal
+    }, 0)
+    const averageSize = totalSize / sizedFiles.length
+    totalSize += averageSize * unsizedFiles.length
+
+    let uploadedSize = 0
+    sizedFiles.forEach((file) => {
+      uploadedSize += file.progress.bytesUploaded
     })
+    unsizedFiles.forEach((file) => {
+      uploadedSize += averageSize * (file.progress.percentage || 0)
+    })
+
+    const totalProgress = totalSize === 0
+      ? 0
+      : Math.round(uploadedSize / totalSize * 100)
+
+    this.setState({ totalProgress })
   }
 
   /**
@@ -1103,7 +1130,6 @@ class Uppy {
    */
   _runUpload (uploadID) {
     const uploadData = this.getState().currentUploads[uploadID]
-    const fileIDs = uploadData.fileIDs
     const restoreStep = uploadData.step
 
     const steps = [
@@ -1128,9 +1154,10 @@ class Uppy {
             [uploadID]: currentUpload
           })
         })
+
         // TODO give this the `currentUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-        return fn(fileIDs, uploadID)
+        return fn(currentUpload.fileIDs, uploadID)
       }).then((result) => {
         return null
       })
@@ -1140,23 +1167,31 @@ class Uppy {
     // promise from this method if the upload failed.
     lastStep.catch((err) => {
       this.emit('error', err, uploadID)
-
       this._removeUpload(uploadID)
     })
 
     return lastStep.then(() => {
-      const files = fileIDs.map((fileID) => this.getFile(fileID))
-      const successful = files.filter((file) => file && !file.error)
-      const failed = files.filter((file) => file && file.error)
-      this.addResultData(uploadID, { successful, failed, uploadID })
-
+      // Set result data.
       const { currentUploads } = this.getState()
-      if (!currentUploads[uploadID]) {
+      const currentUpload = currentUploads[uploadID]
+      if (!currentUpload) {
         this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
         return
       }
 
-      const result = currentUploads[uploadID].result
+      const files = currentUpload.fileIDs
+        .map((fileID) => this.getFile(fileID))
+      const successful = files.filter((file) => !file.error)
+      const failed = files.filter((file) => file.error)
+      this.addResultData(uploadID, { successful, failed, uploadID })
+    }).then(() => {
+      // Emit completion events.
+      // This is in a separate function so that the `currentUploads` variable
+      // always refers to the latest state. In the handler right above it refers
+      // to an outdated object without the `.result` property.
+      const { currentUploads } = this.getState()
+      const currentUpload = currentUploads[uploadID]
+      const result = currentUpload.result
       this.emit('complete', result)
 
       this._removeUpload(uploadID)
