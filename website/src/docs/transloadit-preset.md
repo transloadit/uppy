@@ -44,6 +44,10 @@ const resultPromise = transloadit.pick('body', {
 })
 ```
 
+**ADD IMAGE OR GIF HERE**
+
+<a class="MoreButton" href="/docs/transloadit-preset/picker">View Documentation</a>
+
 ## Form
 
 Add resumable uploads and Transloadit's processing to your existing HTML form uploads.
@@ -57,6 +61,8 @@ transloadit.form('form#myForm', {
 })
 ```
 
+<a class="MoreButton" href="/docs/transloadit-preset/form">View Documentation</a>
+
 ## Programmatic Uploads
 
 Upload files straight to Transloadit from your own custom UI. Give us an array of files, and we'll give you an array of results!
@@ -69,6 +75,8 @@ const resultPromise = transloadit.upload(files, {
   }
 })
 ```
+
+<a class="MoreButton" href="/docs/transloadit-preset/upload">View Documentation</a>
 
 [transloadit]: https://transloadit.com/
 [browserify]: https://browserify.org
