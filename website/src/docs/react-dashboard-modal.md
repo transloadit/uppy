@@ -2,7 +2,7 @@
 title: "&lt;DashboardModal />"
 type: docs
 permalink: docs/react/dashboard-modal/
-order: 85
+order: 95
 ---
 
 The `<DashboardModal />` component wraps the [`@uppy/dashboard`][] plugin, allowing control over the modal `open` state using a prop.

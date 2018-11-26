@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 20
+order: 30
 title: "Dashboard"
 module: "@uppy/dashboard"
 permalink: docs/dashboard/
@@ -152,7 +152,7 @@ Hide the retry button. Use this if you are providing a custom retry button somew
 
 ### `hidePauseResumeButton: false`
 
-Passed to the Status Bar plugin used in the Dashboard. 
+Passed to the Status Bar plugin used in the Dashboard.
 
 Hide pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)` or `uppy.removeFile(fileID)` API.
 

@@ -1,20 +1,22 @@
 <%
 var categories = [
   // order: 1x
-  { path: 'docs/plugins/', name: 'Plugins', link: true },
+  { path: 'docs/transloadit-preset/', name: 'Transloadit Preset', link: true },
   // order: 2x
-  { path: 'docs/dashboard/', name: 'Local Sources', link: false },
+  { path: 'docs/plugins/', name: 'Plugins', link: true },
   // order: 3x
-  { path: 'docs/providers/', name: 'Remote Providers', link: true },
+  { path: 'docs/dashboard/', name: 'Local Sources', link: false },
   // order: 4x
-  { path: 'docs/tus/', name: 'Uploaders', link: false },
+  { path: 'docs/providers/', name: 'Remote Providers', link: true },
   // order: 5x
-  { path: 'docs/status-bar/', name: 'UI Elements', link: false },
+  { path: 'docs/tus/', name: 'Uploaders', link: false },
   // order: 6x
-  { path: 'docs/transloadit/', name: 'File Processing', link: false },
+  { path: 'docs/status-bar/', name: 'UI Elements', link: false },
   // order: 7x
-  { path: 'docs/form/', name: 'Miscellaneous', link: false },
+  { path: 'docs/transloadit/', name: 'File Processing', link: false },
   // order: 8x
+  { path: 'docs/form/', name: 'Miscellaneous', link: false },
+  // order: 9x
   { path: 'docs/react/', name: 'React Components', link: true },
 ]
 %>
@@ -43,11 +45,11 @@ var categories = [
             <% } %>
           </li>
           <li>
-            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
+            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.menu || p.title %></a>
           </li>
         <% } else { %>
           <li>
-            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
+            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.menu || p.title %></a>
           </li>
         <% } %>
       <% }) %>

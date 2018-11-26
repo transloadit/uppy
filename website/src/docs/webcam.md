@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 26
+order: 36
 title: "Webcam"
 module: "@uppy/webcam"
 permalink: docs/webcam/

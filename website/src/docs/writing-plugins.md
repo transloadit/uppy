@@ -2,7 +2,7 @@
 type: docs
 title: "Writing Plugins"
 permalink: docs/writing-plugins/
-order: 11
+order: 21
 ---
 
 There are already a few useful Uppy plugins out there, but there might come a time when you will want to build your own. Plugins can hook into the upload process or render a custom UI, typically to:

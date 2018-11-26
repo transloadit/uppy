@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 60
+order: 70
 title: "Transloadit"
 module: "@uppy/transloadit"
 permalink: docs/transloadit/

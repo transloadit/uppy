@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 40
+order: 50
 title: "Tus"
 module: "@uppy/tus"
 permalink: docs/tus/

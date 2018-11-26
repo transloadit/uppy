@@ -1,8 +1,9 @@
 ---
 type: docs
-title: "File Picker API Documentation"
+title: "Transloadit Preset: File Picker API"
+menu: "File Picker"
 permalink: docs/transloadit-preset/picker/
-hidden: true
+order: 11
 ---
 
 Show a modal UI that allows users to pick files from their device and from the web. It uploads files to Transloadit for processing.

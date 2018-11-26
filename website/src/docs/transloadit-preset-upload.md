@@ -1,8 +1,9 @@
 ---
 type: docs
-title: "Upload API Documentation"
+title: "Transloadit Preset: Upload API"
+menu: "Upload"
 permalink: docs/transloadit-preset/upload/
-hidden: true
+order: 13
 ---
 
 Upload files straight to Transloadit from your own custom UI. Give us an array of files, and we'll give you an array of results!

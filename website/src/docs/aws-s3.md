@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 42
+order: 52
 title: "AWS S3"
 module: "@uppy/aws-s3"
 permalink: docs/aws-s3/

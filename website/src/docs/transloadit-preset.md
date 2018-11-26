@@ -1,7 +1,8 @@
 ---
 type: docs
-order: 4
+order: 10
 title: "Transloadit Preset"
+menu: "Introduction"
 module: "@uppy/transloadit-preset"
 permalink: docs/transloadit-preset/
 ---

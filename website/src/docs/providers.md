@@ -2,14 +2,14 @@
 title: "Provider Plugins"
 type: docs
 permalink: docs/providers/
-order: 30
+order: 40
 ---
 
 The Provider plugins help you connect to your accounts with remote file providers such as [Dropbox](https://dropbox.com), [Google Drive](https://drive.google.com), [Instagram](https://instagram.com) and remote URLs (importing a file by pasting a direct link to it). Because this requires server-to-server communication, they work tightly with [Companion](https://github.com/transloadit/companion) to manage the server-to-server authorization for your account. Almost all of the communication (file download/upload) is done on the server-to-server end, so this saves you the stress and bills of data consumption on the client.
 
 As of now, the supported providers are [**Dropbox**](/docs/dropbox), [**GoogleDrive**](/docs/google-drive), [**Instagram**](/docs/instagram), and [**URL**](/docs/url).
 
-Usage of the Provider plugins is not that different from any other *acquirer* plugin, except that it takes an extra option `serverUrl`, which specifies the URL to the Companion that you are running. This allows Uppy to know what server to connect to when datacenter operations are required by the provider plugin. 
+Usage of the Provider plugins is not that different from any other *acquirer* plugin, except that it takes an extra option `serverUrl`, which specifies the URL to the Companion that you are running. This allows Uppy to know what server to connect to when datacenter operations are required by the provider plugin.
 
 Here's a quick example:
 
