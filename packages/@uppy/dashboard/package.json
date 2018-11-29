@@ -41,6 +41,6 @@
     "@uppy/google-drive": "0.28.0"
   },
   "peerDependencies": {
-    "@uppy/core": "^0.28.0"
+    "@uppy/core": "^0.29.0"
   }
 }
