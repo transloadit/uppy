@@ -17,7 +17,7 @@ module.exports = class Dropbox extends Plugin {
       </svg>
     )
 
-    this[this.id] = new Provider(uppy, {
+    this.provider = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
       serverHeaders: this.opts.serverHeaders,
       provider: 'dropbox'
@@ -28,7 +28,9 @@ module.exports = class Dropbox extends Plugin {
   }
 
   install () {
-    this.view = new ProviderViews(this)
+    this.view = new ProviderViews(this, {
+      provider: this.provider
+    })
     // Set default state for Dropbox
     this.setPluginState({
       authenticated: false,
