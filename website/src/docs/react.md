@@ -17,6 +17,10 @@ Install from NPM:
 npm install @uppy/react
 ```
 
+## CSS
+
+Make sure to also include the nessesary CSS files for each Uppy React component you are using. Follow links for individual components docs below for details on that.
+
 ## Usage
 
 The components can be used with either [React][] or API-compatible alternatives such as [Preact][].

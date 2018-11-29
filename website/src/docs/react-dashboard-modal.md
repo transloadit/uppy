@@ -20,8 +20,24 @@ import DashboardModal from '@uppy/react/lib/DashboardModal'
 import { DashboardModal } from '@uppy/react'
 ```
 
+## CSS
+
+The `DashboardModal` component requires the following CSS for styling:
+
+```js
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
+```
+
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+
+⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
+
+Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not inluded. If you are using those, please see their docs and make sure to include styles for them as well.
+
 <!-- Make sure the old name of this section still works -->
 <a id="Options"></a>
+
 ## Props
 
 On top of all the [`@uppy/dashboard`][] options, the `<DashboardModal />` plugin adds two additional props:

@@ -39,9 +39,12 @@ const DragDrop = Uppy.DragDrop
 
 The `@uppy/drag-drop` plugin includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead.
 
-The CSS file lives at `@uppy/drag-drop/dist/style.css`. A minified version is at `@uppy/drag-drop/dist/style.min.css`.
+```js
+import '@uppy/core/dist/style.css'
+import '@uppy/drag-drop/dist/style.css'
+```
 
-Import one of these files into your project. The way to do this depends on your build system.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Drag & Drop styles from `@uppy/drag-drop/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
 
 ## Options
 
