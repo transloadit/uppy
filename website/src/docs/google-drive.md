@@ -40,7 +40,7 @@ const GoogleDrive = Uppy.GoogleDrive
 
 Dashboard plugin is recommended as a container to all Provider plugins, including Google Drive. If you are using Dashboard, it [comes with all the nessesary styles](/docs/dashboard/#CSS) for Dropbox as well.
 
-⚠️ If you are feeling adventerous, and want to use Google Drive plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officialy supported and not recommened.
+⚠️ If you are feeling adventurous, and want to use Google Drive plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officialy supported and not recommended.
 
 ## Options
 
