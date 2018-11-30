@@ -106,9 +106,9 @@ What we need to do to release Uppy 1.0
 
 # next
 
-## 0.29.0
+## 0.30.0
 
-- [ ] add polyfils to uppy bundle and a note about that in uppy readme.md
+- [ ] add polyfils to uppy bundle 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
@@ -121,6 +121,39 @@ What we need to do to release Uppy 1.0
 - [ ] core: update babel to v7
 - [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion (@ifedapoolarewaju)
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
+
+## 0.29.0
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 0.29.0 | @uppy/progress-bar | 0.29.0 |
+| @uppy/aws-s3 | 0.29.0 | @uppy/provider-views | 0.29.0 |
+| @uppy/companion | 0.16.0 | @uppy/react | 0.29.0 |
+| @uppy/core | 0.29.0 | @uppy/redux-dev-tools | 0.29.0 |
+| @uppy/dashboard | 0.29.0 | @uppy/status-bar | 0.29.0 |
+| @uppy/drag-drop | 0.29.0 | @uppy/thumbnail-generator | 0.29.0 |
+| @uppy/dropbox | 0.29.0 | @uppy/transloadit | 0.29.0 |
+| @uppy/file-input | 0.29.0 | @uppy/tus | 0.29.0 |
+| @uppy/form | 0.29.0 | @uppy/url | 0.29.0 |
+| @uppy/golden-retriever | 0.29.0 | @uppy/utils | 0.29.0 |
+| @uppy/google-drive | 0.29.0 | @uppy/webcam | 0.29.0 |
+| @uppy/informer | 0.29.0 | @uppy/xhr-upload | 0.29.0 |
+| @uppy/instagram | 0.29.0 | uppy | 0.29.0 |
+
+- @uppy/core: ⚠️ **breaking** Separate Core and Plugin styles — @uppy/core styles and plugins (@uppy/webcam, for example) now have to be included separately (#1167 / @arturi)
+- @uppy/core: Don't pass removed file IDs to next upload step, fixes (#1148 / @goto-bus-stop)
+- @uppy/core: Fixed getFileType() when passed a file with an upper case extension (#1169 / @jderrough)
+- @uppy/xhr-upload: Add `responseType` option — allows configuring the XMLHttpRequest `.responseType` value (#1150 / @goto-bus-stop)
+- @uppy/companion: Use `createCipheriv` instead of deprecated `createCipher` (#1149 / @goto-bus-stop)
+- @uppy/companion: Store Provider instances on `this.provider` instead of `this[this.id]` (@goto-bus-stop / #1174)
+- @uppy/companion: Pin grant to known stable version (@ifedapoolarewaju / #1165)
+- @uppy/companion: Fix — socket does not handle server.path option (#1142 / @tranvansang)
+- @uppy/status-bar: Use file sizes for progress calculations (#1153 / @goto-bus-stop)
+- @uppy/webcam: Fix a bug with Webcam video overflowing its container (68730f8a1bf731898d46883e00fed937d3ab54ab / @arturi)
+- docs: Add `triggerUploadOnSubmit` to Form docs, add docs about options of hiding upload/pause/resume/cancel buttons; talk about bundler-less polyfill use (@goto-bus-stop, @arturi)
+- @uppy/dashboard: Better center pause/resume/cancel icons (@arturi / 5112ecf1f48bec9c67309244120fce5f005241ce)
+- @uppy/react: Allow Dashboard props width and height to accept a string for 100% (#1129 / craigcbrunner)
+- Added note about uppy bundle polyfils in uppy readme.md (@goto-bus-stop)
 
 ## 0.28.0
 
