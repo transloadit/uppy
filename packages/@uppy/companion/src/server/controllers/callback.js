@@ -6,6 +6,7 @@ const tokenService = require('../helpers/jwt')
 const parseUrl = require('url').parse
 const { hasMatch } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
+const logger = require('../logger')
 
 /**
  *
@@ -22,7 +23,7 @@ module.exports = function callback (req, res, next) {
 
   // TODO see if the access_token can be transported in a different way that url query params
   req.uppy.providerTokens[providerName] = req.query.access_token
-  req.uppy.debugLog(`Generating auth token for provider ${providerName}.`)
+  logger.debug(`Generating auth token for provider ${providerName}.`)
   const uppyAuthToken = tokenService.generateToken(req.uppy.providerTokens, req.uppy.options.secret)
   // add the token to cookies for thumbnail/image requests
   tokenService.addToCookies(res, uppyAuthToken, req.uppy.options)
