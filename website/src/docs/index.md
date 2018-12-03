@@ -33,7 +33,7 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
         .use(Uppy.Tus, {endpoint: 'https://master.tus.io/files/'})
 
       uppy.on('complete', (result) => {
-        console.log(`Upload complete! We’ve uploaded these files: ${result.successful}`)
+        console.log('Upload complete! We’ve uploaded these files:', result.successful)
       })
     </script>
   </body>
@@ -83,7 +83,7 @@ const uppy = Uppy()
   .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
  
 uppy.on('complete', (result) => {
-  console.log(`Upload complete! We’ve uploaded these files: ${result.successful}`)
+  console.log('Upload complete! We’ve uploaded these files:', result.successful)
 })
 ```
 
