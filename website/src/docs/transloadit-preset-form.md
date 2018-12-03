@@ -62,7 +62,25 @@ If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web
 
 ## Progress Reporting
 
-**TODO have an option to mount a status bar somewhere**
+**TODO also have an onProgress() callback or something for custom progress**
+
+Uploads using HTML forms have no builtin progress reporting. With the Transloadit Preset, you can use the `progressBar` option to show an [@uppy/status-bar](/docs/status-bar): an element styled like a progress bar, reporting both upload and Assembly execution progress.
+
+Point it to an element or a CSS selector:
+
+```html
+<form id="my-form" ...>
+  <div class="progress"></div>
+</form>
+<script>
+transloadit.form('form#my-form', {
+  progressBar: '#my-form .progress'
+  // ...
+})
+</script>
+```
+
+The progress bar will be inserted _into_ that element (thus _not_ replace it).
 
 ## Dashboard
 

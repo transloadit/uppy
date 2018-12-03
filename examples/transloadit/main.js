@@ -13,7 +13,8 @@ const formUppy = transloadit.form('#test-form', {
   params: {
     auth: { key: '05a61ed019fe11e783fdbd1f56c73eb0' },
     template_id: 'be001500a56011e889f9cddd88df842c'
-  }
+  },
+  progressBar: '#test-form .progress'
 })
 
 formUppy.on('error', (err) => {
