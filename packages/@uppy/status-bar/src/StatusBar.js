@@ -221,8 +221,7 @@ const ProgressDetails = (props) => {
 
 const UnknownProgressDetails = (props) => {
   return <div class="uppy-StatusBar-statusSecondary">
-    { props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.numUploads }) + ' \u00B7 ' }
-    { props.i18n('progressUnavailable') }
+    { props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.numUploads }) }
   </div>
 }
 
