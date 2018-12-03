@@ -149,7 +149,7 @@ describe('src/Core', () => {
 
       const newState = {
         bee: 'boo',
-        capabilities: { resumableUploads: false },
+        capabilities: { uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
         allowNewUpload: true,
@@ -173,7 +173,7 @@ describe('src/Core', () => {
       // current state
       expect(stateUpdateEventMock.mock.calls[1][0]).toEqual({
         bee: 'boo',
-        capabilities: { resumableUploads: false },
+        capabilities: { uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
         allowNewUpload: true,
@@ -186,7 +186,7 @@ describe('src/Core', () => {
       // new state
       expect(stateUpdateEventMock.mock.calls[1][1]).toEqual({
         bee: 'boo',
-        capabilities: { resumableUploads: false },
+        capabilities: { uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
         allowNewUpload: true,
@@ -204,7 +204,7 @@ describe('src/Core', () => {
       core.setState({ foo: 'bar' })
 
       expect(core.getState()).toEqual({
-        capabilities: { resumableUploads: false },
+        capabilities: { uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
         allowNewUpload: true,
@@ -232,7 +232,7 @@ describe('src/Core', () => {
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
     expect(coreStateUpdateEventMock.mock.calls[1][1]).toEqual({
-      capabilities: { resumableUploads: false },
+      capabilities: { uploadProgress: true, resumableUploads: false },
       files: {},
       currentUploads: {},
       allowNewUpload: true,
@@ -291,7 +291,7 @@ describe('src/Core', () => {
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls[0][1]).toEqual({
-      capabilities: { resumableUploads: false },
+      capabilities: { uploadProgress: true, resumableUploads: false },
       files: {},
       currentUploads: {},
       allowNewUpload: true,
