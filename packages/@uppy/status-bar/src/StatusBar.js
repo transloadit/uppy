@@ -80,6 +80,11 @@ module.exports = (props) => {
   } else if (uploadState === statusBarStates.STATE_COMPLETE) {
     progressBarContent = ProgressBarComplete(props)
   } else if (uploadState === statusBarStates.STATE_UPLOADING) {
+    if (!props.supportsUploadProgress) {
+      progressMode = 'indeterminate'
+      progressValue = null
+    }
+
     progressBarContent = ProgressBarUploading(props)
   } else if (uploadState === statusBarStates.STATE_ERROR) {
     progressValue = undefined
