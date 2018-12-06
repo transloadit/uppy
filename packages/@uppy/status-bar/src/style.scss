@@ -76,6 +76,11 @@
     to { background-position: 64px 0; }
   }
 
+  .uppy-StatusBar.is-preprocessing .uppy-StatusBar-progress,
+  .uppy-StatusBar.is-postprocessing .uppy-StatusBar-progress {
+    background-color: $color-orange;
+  }
+
 .uppy-StatusBar.is-waiting .uppy-StatusBar-progress {
   display: none;
 }
