@@ -222,6 +222,7 @@ module.exports = class StatusBar extends Plugin {
     const isUploadInProgress = inProgressFiles.length > 0
 
     const resumableUploads = capabilities.resumableUploads || false
+    const supportsUploadProgress = capabilities.uploadProgress !== false
 
     return StatusBarUI({
       error,
@@ -246,7 +247,8 @@ module.exports = class StatusBar extends Plugin {
       retryAll: this.uppy.retryAll,
       cancelAll: this.uppy.cancelAll,
       startUpload: this.startUpload,
-      resumableUploads: resumableUploads,
+      resumableUploads,
+      supportsUploadProgress,
       showProgressDetails: this.opts.showProgressDetails,
       hideUploadButton: this.opts.hideUploadButton,
       hideRetryButton: this.opts.hideRetryButton,
