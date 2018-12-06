@@ -55,5 +55,9 @@
     "@uppy/url": "0.29.0",
     "@uppy/webcam": "0.29.0",
     "@uppy/xhr-upload": "0.29.0"
+  },
+  "devDependencies": {
+    "es6-promise": "4.2.5",
+    "whatwg-fetch": "3.0.0"
   }
 }
