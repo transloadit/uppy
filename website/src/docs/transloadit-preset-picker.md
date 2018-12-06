@@ -9,7 +9,7 @@ order: 11
 Show a modal UI that allows users to pick files from their device and from the web. It uploads files to Transloadit for processing.
 
 ```js
-const resultPromise = transloadit.pick(target, {
+const resultPromise = transloadit.pick({
   params: {
     auth: { key: '' },
     template_id: ''
@@ -23,7 +23,7 @@ const resultPromise = transloadit.pick(target, {
  - `failed` - An array containing data about files that failed to upload
  - `transloadit` - An array of Assembly statuses
 
-## `target`
+## `options.target`
 
 DOM element or CSS selector to place the modal element in. `document.body` is usually fine in this case because the modal is absolutely positioned on top of everything anyway.
 

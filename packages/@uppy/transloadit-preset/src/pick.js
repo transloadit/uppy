@@ -5,7 +5,9 @@ const addProviders = require('./addProviders')
 
 const CANCEL = {}
 
-function pick (target, opts = {}) {
+function pick (opts = {}) {
+  const target = opts.target || document.body
+
   const pluginId = 'pick'
   const uppy = createUppy(opts, {
     allowMultipleUploads: false

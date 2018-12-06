@@ -34,7 +34,7 @@ window.formUppy = formUppy
  */
 
 function openModal () {
-  transloadit.modal('body', {
+  transloadit.pick({
     restrictions: {
       allowedFileTypes: ['.png']
     },
