@@ -29,9 +29,9 @@ function form (target, opts) {
     target
   })
 
-  if (opts.progressBar) {
+  if (opts.statusBar) {
     uppy.use(StatusBar, {
-      target: opts.progressBar,
+      target: opts.statusBar,
       // hide most of the things to keep our api simple,
       // we can change this in the future if someone needs it
       hideUploadButton: true,
