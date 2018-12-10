@@ -4,6 +4,7 @@ describe('Project compiled with Uppy\'s TypeScript typings', () => {
     browser.url('http://localhost:4567/typescript')
 
     browser.waitForExist('.uppy-Root')
+    browser.click('#pick-files')
 
     const typeofUppy = browser.execute(function () {
       return typeof window.uppy

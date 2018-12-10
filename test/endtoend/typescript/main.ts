@@ -47,6 +47,3 @@ uppy.on('complete', (result) => {
   console.log('successful files:', result.successful)
   console.log('failed files:', result.failed)
 })
-
-var modalTrigger = document.querySelector('#pick-files')
-if (modalTrigger) (modalTrigger as HTMLButtonElement).click()
