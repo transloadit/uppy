@@ -1,9 +1,9 @@
 import { Uppy } from './CommonTypes';
 
 export interface ProgressBarProps {
-    uppy: Uppy;
-    fixed?: boolean;
-    hideAfterFinish?: boolean;
+  uppy: Uppy;
+  fixed?: boolean;
+  hideAfterFinish?: boolean;
 }
 
 /**

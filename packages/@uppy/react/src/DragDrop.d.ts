@@ -1,8 +1,8 @@
 import { Uppy, Locale } from './CommonTypes';
 
 export interface DragDropProps {
-    uppy: Uppy;
-    locale?: Locale;
+  uppy: Uppy;
+  locale?: Locale;
 }
 
 /**
