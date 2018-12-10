@@ -28,3 +28,9 @@ pushd "${__root}/test/endtoend/create-react-app"
   npm install
   npm run build
 popd
+pushd "${__root}/test/endtoend/typescript"
+  mkdir -p dist
+  cp "${__root}/packages/uppy/dist/uppy.min.css" dist/
+  cp index.html dist/
+  browserify main.ts -p tsify -o dist/bundle.js
+popd

@@ -17,8 +17,7 @@ exports.config = {
   // directory is where your package.json resides, so `wdio` will be called from there.
   //
   specs: [
-    // 'test/endtoend/*/test.js',
-    'test/endtoend/transloadit/test.js'
+    'test/endtoend/*/test.js'
   ],
 
   // Patterns to exclude.
@@ -95,6 +94,7 @@ exports.config = {
     { mount: '/providers', path: './test/endtoend/providers/dist' },
     { mount: '/thumbnails', path: './test/endtoend/thumbnails/dist' },
     { mount: '/transloadit', path: './test/endtoend/transloadit/dist' },
+    { mount: '/typescript', path: './test/endtoend/typescript/dist' },
     { mount: '/url-plugin', path: './test/endtoend/url-plugin/dist' },
     { mount: '/create-react-app', path: './test/endtoend/create-react-app/build' }
   ],
