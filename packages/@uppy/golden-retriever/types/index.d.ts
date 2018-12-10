@@ -1,17 +1,21 @@
 import { Plugin, PluginOptions, Uppy } from '@uppy/core';
 
-export interface GoldenRetrieverOptions extends PluginOptions {
-  expires: number;
-  serviceWorker: boolean;
-  indexedDB: any;
+declare module GoldenRetriever {
+  interface GoldenRetrieverOptions extends PluginOptions {
+    expires: number;
+    serviceWorker: boolean;
+    indexedDB: any;
+  }
 }
 
-export default class GoldenRetriever extends Plugin {
-  constructor(uppy: Uppy, opts: Partial<GoldenRetrieverOptions>);
+declare class GoldenRetriever extends Plugin {
+  constructor(uppy: Uppy, opts: Partial<GoldenRetriever.GoldenRetrieverOptions>);
 }
+
+export = GoldenRetriever;
 
 declare module '@uppy/core' {
   export interface Uppy {
-    use(pluginClass: typeof GoldenRetriever, opts: Partial<GoldenRetrieverOptions>): Uppy;
+    use(pluginClass: typeof GoldenRetriever, opts: Partial<GoldenRetriever.GoldenRetrieverOptions>): Uppy;
   }
 }

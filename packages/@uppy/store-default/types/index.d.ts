@@ -7,4 +7,5 @@ declare class DefaultStore implements Store {
   subscribe(listener: any): () => void;
 }
 
-export default function createDefaultStore(): DefaultStore;
+declare function createDefaultStore(): DefaultStore;
+export = createDefaultStore;
