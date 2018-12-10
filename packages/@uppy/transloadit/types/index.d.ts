@@ -1,4 +1,4 @@
-import { Plugin, PluginOptions, Uppy, UppyFile } from '@uppy/core';
+import Uppy = require('@uppy/core');
 
 declare module Transloadit {
   interface AssemblyParameters {
@@ -15,7 +15,7 @@ declare module Transloadit {
     signature?: string;
   }
 
-  interface TransloaditOptions extends PluginOptions {
+  interface TransloaditOptions extends Uppy.PluginOptions {
     params: AssemblyParameters;
     signature: string;
     service: string;
@@ -23,18 +23,18 @@ declare module Transloadit {
     waitForMetadata: boolean;
     importFromUploadURLs: boolean;
     alwaysRunAssembly: boolean;
-    getAssemblyOptions: (file: UppyFile) => AssemblyOptions | Promise<AssemblyOptions>;
+    getAssemblyOptions: (file: Uppy.UppyFile) => AssemblyOptions | Promise<AssemblyOptions>;
   }
 }
 
-declare class Transloadit extends Plugin {
-  constructor(uppy: Uppy, opts: Partial<Transloadit.TransloaditOptions>);
+declare class Transloadit extends Uppy.Plugin {
+  constructor(uppy: Uppy.Uppy, opts: Partial<Transloadit.TransloaditOptions>);
 }
 
 export = Transloadit;
 
 declare module '@uppy/core' {
   export interface Uppy {
-    use(pluginClass: typeof Transloadit, opts: Partial<Transloadit.TransloaditOptions>): Uppy;
+    use(pluginClass: typeof Transloadit, opts: Partial<Transloadit.TransloaditOptions>): Uppy.Uppy;
   }
 }

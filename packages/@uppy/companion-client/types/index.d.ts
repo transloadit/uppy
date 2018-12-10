@@ -1,4 +1,4 @@
-import { Uppy, Plugin } from '@uppy/core';
+import Uppy = require('@uppy/core');
 
 export interface RequestClientOptions {
   serverUrl: string;
@@ -6,7 +6,7 @@ export interface RequestClientOptions {
 }
 
 export class RequestClient {
-  constructor (uppy: Uppy, opts: RequestClientOptions);
+  constructor (uppy: Uppy.Uppy, opts: RequestClientOptions);
   get (path: string): Promise<any>;
   post (path: string, data: object): Promise<any>;
   delete (path: string, data: object): Promise<any>;
@@ -19,13 +19,13 @@ export interface ProviderOptions extends RequestClientOptions {
 }
 
 export class Provider extends RequestClient {
-  constructor (uppy: Uppy, opts: ProviderOptions);
+  constructor (uppy: Uppy.Uppy, opts: ProviderOptions);
   checkAuth (): Promise<boolean>;
   authUrl (): string;
   fileUrl (id: string): string;
   list (directory: string): Promise<any>;
   logout (redirect?: string): Promise<any>;
-  static initPlugin(plugin: Plugin, opts: object, defaultOpts?: object): void;
+  static initPlugin(plugin: Uppy.Plugin, opts: object, defaultOpts?: object): void;
 }
 
 export interface SocketOptions {

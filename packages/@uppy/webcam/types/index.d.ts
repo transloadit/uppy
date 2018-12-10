@@ -1,10 +1,9 @@
-import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import Uppy = require('@uppy/core');
 
 declare module Webcam {
-
     export type WebcamMode = 'video-audio' | 'video-only' | 'audio-only' | 'picture';
 
-    export interface WebcamOptions extends PluginOptions {
+    export interface WebcamOptions extends Uppy.PluginOptions {
         onBeforeSnapshot?: () => Promise<void>;
         countdown?: number | boolean;
         mirror?: boolean;
@@ -13,14 +12,14 @@ declare module Webcam {
     }
 }
 
-declare class Webcam extends Plugin {
-    constructor(uppy: Uppy, opts: Partial<Webcam.WebcamOptions>);
+declare class Webcam extends Uppy.Plugin {
+    constructor(uppy: Uppy.Uppy, opts: Partial<Webcam.WebcamOptions>);
 }
 
 export = Webcam;
 
 declare module '@uppy/core' {
     export interface Uppy {
-        use(pluginClass: typeof Webcam, opts: Partial<Webcam.WebcamOptions>): Uppy;
+        use(pluginClass: typeof Webcam, opts: Partial<Webcam.WebcamOptions>): Uppy.Uppy;
     }
 }

@@ -1,7 +1,7 @@
-import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import Uppy = require('@uppy/core');
 
 declare module Dashboard {
-  interface DashboardOptions extends PluginOptions {
+  interface DashboardOptions extends Uppy.PluginOptions {
     onRequestCloseModal: () => void;
     disablePageScrollWhenModalOpen: boolean;
     closeModalOnClickOutside: boolean;
@@ -24,9 +24,9 @@ declare module Dashboard {
   }
 }
 
-declare class Dashboard extends Plugin {
-  constructor(uppy: Uppy, opts: Partial<Dashboard.DashboardOptions>);
-  addTarget(plugin: Plugin): HTMLElement;
+declare class Dashboard extends Uppy.Plugin {
+  constructor(uppy: Uppy.Uppy, opts: Partial<Dashboard.DashboardOptions>);
+  addTarget(plugin: Uppy.Plugin): HTMLElement;
   hideAllPanels(): void;
   openModal(): void;
   closeModal(): void;
@@ -40,6 +40,6 @@ export = Dashboard;
 
 declare module '@uppy/core' {
   export interface Uppy {
-    use(pluginClass: typeof Dashboard, opts: Partial<Dashboard.DashboardOptions>): Uppy;
+    use(pluginClass: typeof Dashboard, opts: Partial<Dashboard.DashboardOptions>): Uppy.Uppy;
   }
 }
