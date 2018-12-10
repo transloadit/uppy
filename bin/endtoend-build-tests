@@ -32,5 +32,5 @@ pushd "${__root}/test/endtoend/typescript"
   mkdir -p dist
   cp "${__root}/packages/uppy/dist/uppy.min.css" dist/
   cp index.html dist/
-  browserify main.ts -p tsify -o dist/bundle.js
+  browserify main.ts -p [ tsify --target ES3 ] -o dist/bundle.js
 popd

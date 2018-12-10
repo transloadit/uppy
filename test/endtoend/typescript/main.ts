@@ -8,12 +8,6 @@ import Webcam = require('@uppy/webcam')
 import Tus = require('@uppy/tus')
 import Form = require('@uppy/form')
 
-window.onerror = (err) => {
-  const el = document.createElement('p') as HTMLParagraphElement
-  el.textContent = err.stack
-  document.body.appendChild(el)
-}
-
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
 
 const uppy = Uppy({
