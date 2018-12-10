@@ -1,3 +1,5 @@
+import 'es6-promise/auto'
+import 'whatwg-fetch'
 import Uppy = require('@uppy/core')
 import Dashboard = require('@uppy/dashboard')
 import Instagram = require('@uppy/instagram')
