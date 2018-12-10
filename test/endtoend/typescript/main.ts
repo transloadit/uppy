@@ -8,6 +8,12 @@ import Webcam = require('@uppy/webcam')
 import Tus = require('@uppy/tus')
 import Form = require('@uppy/form')
 
+window.onerror = (err) => {
+  const el = document.createElement('p') as HTMLParagraphElement
+  el.textContent = err.stack
+  document.body.appendChild(el)
+}
+
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
 
 const uppy = Uppy({
@@ -18,9 +24,8 @@ const uppy = Uppy({
   }
 })
   .use(Dashboard, {
+    target: document.body,
     trigger: '#pick-files',
-    // inline: true,
-    // target: 'body',
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', placeholder: 'add caption' }
