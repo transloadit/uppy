@@ -159,6 +159,19 @@
     vertical-align: middle;
   }
 
+  table {
+    display: block;
+    font-size: 85%;
+    border-spacing: 10px;
+    overflow-x: auto;
+    // white-space: nowrap;
+  }
+
+  // table td,
+  // table th {
+  //   padding-right: 30px;
+  // }
+
   .light {
     color: $color-light;
   }
