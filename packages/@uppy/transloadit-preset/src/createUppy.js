@@ -1,6 +1,7 @@
 const Uppy = require('@uppy/core')
 
 const uppyOptionNames = [
+  'autoProceed',
   'restrictions',
   'meta',
   'onBeforeFileAdded',

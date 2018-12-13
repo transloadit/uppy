@@ -6,10 +6,7 @@ const TransloaditFormResult = require('./TransloaditFormResult')
 const addTransloaditPlugin = require('./addTransloaditPlugin')
 
 function form (target, opts) {
-  const uppy = Uppy({
-    allowMultipleUploads: false,
-    restrictions: opts.restrictions
-  })
+  const uppy = Uppy(opts)
   addTransloaditPlugin(uppy, opts)
 
   uppy.use(TransloaditFormResult, {
