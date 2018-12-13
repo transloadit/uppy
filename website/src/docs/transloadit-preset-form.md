@@ -120,21 +120,21 @@ The equivalent options are listed below.
 | jQuery option | Transloadit Preset option |
 |---------------|---------------------------|
 | `service` | `service` |
-| `region` | Set the `service` option to `https://api2-regionname.transloadit.com` |
+| `region` | Not supported, instead set the `service` option to `https://api2-regionname.transloadit.com` |
 | `wait: true` | `waitForEncoding: true` |
 | `requireUploadMetadata: true` | `waitForMetadata: true` |
 | `params` | `params` |
 | `signature` | `signature` |
 | `modal` | Currently unavailable |
 | `autoSubmit` | `submitOnSuccess` |
-| `triggerUploadOnFileSelection` | Currently unavailable |
+| `triggerUploadOnFileSelection` | `autoProceed: true` |
 | `processZeroFiles` | `alwaysRunAssembly` |
 | `maxNumberOfUploadedFiles` | Use [restrictions](#Restrictions) instead. `restrictions.maxNumberOfFiles`. |
 | `locale` | No longer supported, this will be addressed by the equivalent to the `translations` option instead. |
 | `translations` | Currently unavailable |
 | `exclude` | Currently unavailable |
 | `fields` | `fields`. The CSS selector format is no longer supported. Instead, specify an array of form field names. `['field1']` instead of `'input[name=field1]`. |
-| `debug` | Currently unavailable |
+| `debug` | Obsolete, as Transloadit's backend has improved error reporting. |
 
 ### Events
 
