@@ -17,7 +17,7 @@ module.exports = class Instagram extends Plugin {
       </svg>
     )
 
-    this[this.id] = new Provider(uppy, {
+    this.provider = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
       serverHeaders: this.opts.serverHeaders,
       provider: 'instagram',
@@ -30,6 +30,7 @@ module.exports = class Instagram extends Plugin {
 
   install () {
     this.view = new ProviderViews(this, {
+      provider: this.provider,
       viewType: 'grid',
       showTitles: false,
       showFilter: false,

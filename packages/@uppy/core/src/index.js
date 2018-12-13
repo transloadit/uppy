@@ -9,6 +9,7 @@ const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
 const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
+const supportsUploadProgress = require('./supportsUploadProgress')
 const Plugin = require('./Plugin') // Exported from here.
 
 /**
@@ -118,6 +119,7 @@ class Uppy {
       currentUploads: {},
       allowNewUpload: true,
       capabilities: {
+        uploadProgress: supportsUploadProgress(),
         resumableUploads: false
       },
       totalProgress: 0,

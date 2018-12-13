@@ -1,13 +1,14 @@
 const tokenService = require('./helpers/jwt')
+const logger = require('./logger')
 
 exports.hasSessionAndProvider = (req, res, next) => {
   if (!req.session || !req.body) {
-    req.uppy.debugLog('No session/body attached to req object. Exiting dispatcher.')
+    logger.debug('No session/body attached to req object. Exiting dispatcher.')
     return res.sendStatus(400)
   }
 
   if (!req.uppy.provider) {
-    req.uppy.debugLog('No provider/provider-handler found. Exiting dispatcher.')
+    logger.debug('No provider/provider-handler found. Exiting dispatcher.')
     return res.sendStatus(400)
   }
 

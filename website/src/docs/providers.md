@@ -37,3 +37,7 @@ uppy.use(Instagram, {target: Dashboard, serverUrl: 'http://localhost:3020'})
 const Url = require('@uppy/url')
 uppy.use(Url, {target: Dashboard, serverUrl: 'http://localhost:3020'})
 ```
+
+⚠️ The [Dashboard](/docs/dashboard) plugin is recommended as a universal container to all Provider plugins. It also comes with file previews, progress reporting and more. If you are using the Dashboard, it already [comes with all the nessesary styles](/docs/dashboard/#CSS) and functionality for Providers to work well.
+
+If you are feeling adventurous, you can technically use a Provider plugin separately, without the Dashboard. Make sure to then include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. But this is experimental, not officialy supported and not recommended.

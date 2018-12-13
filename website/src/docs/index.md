@@ -18,12 +18,12 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
   <head>
     <meta charset="utf-8">
     <title>Uppy</title>
-    <link href="https://transloadit.edgly.net/releases/uppy/v0.28.0/dist/uppy.min.css" rel="stylesheet">
+    <link href="https://transloadit.edgly.net/releases/uppy/v0.29.0/dist/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <div id="drag-drop-area"></div>
 
-    <script src="https://transloadit.edgly.net/releases/uppy/v0.28.0/dist/uppy.min.js"></script>
+    <script src="https://transloadit.edgly.net/releases/uppy/v0.29.0/dist/uppy.min.js"></script>
     <script>
       var uppy = Uppy.Core()
         .use(Uppy.Dashboard, {
@@ -33,7 +33,7 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
         .use(Uppy.Tus, {endpoint: 'https://master.tus.io/files/'})
 
       uppy.on('complete', (result) => {
-        console.log(`Upload complete! We’ve uploaded these files: ${result.successful}`)
+        console.log('Upload complete! We’ve uploaded these files:', result.successful)
       })
     </script>
   </body>
@@ -67,9 +67,14 @@ npm install @uppy/core @uppy/xhr-upload @uppy/dashboard
 ```
 
 ```js
+// Import the plugins
 const Uppy = require('@uppy/core')
 const XHRUpload = require('@uppy/xhr-upload')
 const Dashboard = require('@uppy/dashboard')
+
+// And their styles (for UI plugins)
+require('@uppy/core/dist/style.css')
+require('@uppy/dashboard/dist/style.css')
  
 const uppy = Uppy()
   .use(Dashboard, {
@@ -78,7 +83,7 @@ const uppy = Uppy()
   .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
  
 uppy.on('complete', (result) => {
-  console.log(`Upload complete! We’ve uploaded these files: ${result.successful}`)
+  console.log('Upload complete! We’ve uploaded these files:', result.successful)
 })
 ```
 
@@ -107,12 +112,12 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 1\. Add a script at the bottom of the closing `</body>` tag:
 
 ``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v0.28.0/dist/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.29.0/dist/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://transloadit.edgly.net/releases/uppy/v0.28.0/dist/uppy.min.css" rel="stylesheet">
+<link href="https://transloadit.edgly.net/releases/uppy/v0.29.0/dist/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize at the bottom of the closing `</body>` tag:
@@ -163,5 +168,5 @@ If you're using Uppy via a script tag, you can load the polyfills from [JSDelivr
 ```html
 <script src="https://cdn.jsdelivr.net/npm/es6-promise@4.2.5/dist/es6-promise.auto.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.min.js"></script>
-<script src="https://transloadit.edgly.net/releases/uppy/v0.28.0/dist/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.29.0/dist/uppy.min.js"></script>
 ```

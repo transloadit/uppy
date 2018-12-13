@@ -20,7 +20,7 @@ module.exports = class GoogleDrive extends Plugin {
       </svg>
     )
 
-    this[this.id] = new Provider(uppy, {
+    this.provider = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
       serverHeaders: this.opts.serverHeaders,
       provider: 'drive',
@@ -32,7 +32,9 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   install () {
-    this.view = new DriveProviderViews(this)
+    this.view = new DriveProviderViews(this, {
+      provider: this.provider
+    })
     // Set default state for Google Drive
     this.setPluginState({
       authenticated: false,

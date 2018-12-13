@@ -37,7 +37,7 @@ if ! which jq; then
   exit 1
 fi
 
-perm="$(npm profile get --json | jq .tfa.mode -r)"
+perm="$(npm profile get --json | jq .tfa.mode? -r)"
 if [ "$perm" == "auth-and-writes" ]; then
   echo "Two-factor auth is enabled for publishing. This doesn't work well with lerna."
   echo "Temporarily switch to authentication-only 2FA using the link below:"

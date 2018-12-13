@@ -183,29 +183,6 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
 })
 
 /**
- * returns a logger function, that would log a message only if
- * the debug option is set to true
- *
- * @param {{debug: boolean}} options
- * @returns {function}
- */
-const getDebugLogger = (options) => {
-  // TODO: deprecate this.
-  // TODO: add line number and originating file
-  /**
-   *
-   * @param {string} message
-   */
-  const conditonalLogger = (message) => {
-    if (options.debug) {
-      logger.debug(message, 'debugLog')
-    }
-  }
-
-  return conditonalLogger
-}
-
-/**
  *
  * @param {object} options
  */
@@ -241,7 +218,6 @@ const getOptionsMiddleware = (options) => {
       options,
       s3Client,
       authToken: req.header('uppy-auth-token'),
-      debugLog: getDebugLogger(options),
       buildURL: getURLBuilder(options)
     }
     next()

@@ -81,8 +81,8 @@ interface Locale {
 export interface UppyOptions {
   id: string;
   autoProceed: boolean;
+  allowMultipleUploads: boolean;
   debug: boolean;
-  showLinkToFileUploadResult: boolean;
   restrictions: {
     maxFileSize: number | null;
     maxNumberOfFiles: number | null;

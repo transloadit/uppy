@@ -1,7 +1,7 @@
 /**
  * INFO level log
  * @param {string} msg the message to log
- * @param {string} tag a unique tag to easily search for this message
+ * @param {string=} tag a unique tag to easily search for this message
  */
 exports.info = (msg, tag) => {
   log(msg, tag, 'info')
@@ -10,7 +10,7 @@ exports.info = (msg, tag) => {
 /**
  * WARN level log
  * @param {string} msg the message to log
- * @param {string} tag a unique tag to easily search for this message
+ * @param {string=} tag a unique tag to easily search for this message
  */
 exports.warn = (msg, tag) => {
   log(msg, tag, 'warn')
@@ -19,7 +19,7 @@ exports.warn = (msg, tag) => {
 /**
  * ERROR level log
  * @param {string | Error} msg the message to log
- * @param {string} tag a unique tag to easily search for this message
+ * @param {string=} tag a unique tag to easily search for this message
  */
 exports.error = (msg, tag) => {
   log(msg, tag, 'error')
@@ -28,7 +28,7 @@ exports.error = (msg, tag) => {
 /**
  * DEBUG level log
  * @param {string} msg the message to log
- * @param {string} tag a unique tag to easily search for this message
+ * @param {string=} tag a unique tag to easily search for this message
  */
 exports.debug = (msg, tag) => {
   if (process.env.NODE_ENV !== 'production') {
@@ -45,5 +45,5 @@ exports.debug = (msg, tag) => {
 const log = (msg, tag, level) => {
   // @TODO add some colors based on log level
   const time = new Date().toISOString()
-  console.log(`uppy: ${time} [${level}] ${tag} ${msg}`)
+  console.log(`uppy: ${time} [${level}] ${tag || ''} ${msg}`)
 }
