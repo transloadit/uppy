@@ -1,8 +1,8 @@
 ---
 type: docs
-title: "Transloadit Preset: File Picker API"
+title: "Transloadit Wrapper: File Picker API"
 menu: "File Picker"
-permalink: docs/transloadit-preset/picker/
+permalink: docs/transloadit-wrapper/picker/
 order: 11
 ---
 

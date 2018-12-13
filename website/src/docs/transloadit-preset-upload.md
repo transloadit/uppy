@@ -1,8 +1,8 @@
 ---
 type: docs
-title: "Transloadit Preset: Upload API"
+title: "Transloadit Wrapper: Upload API"
 menu: "Upload"
-permalink: docs/transloadit-preset/upload/
+permalink: docs/transloadit-wrapper/upload/
 order: 13
 ---
 

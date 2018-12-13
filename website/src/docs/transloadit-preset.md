@@ -1,31 +1,31 @@
 ---
 type: docs
 order: 10
-title: "Transloadit Preset"
+title: "Transloadit Wrapper"
 menu: "Introduction"
-module: "@uppy/transloadit-preset"
-permalink: docs/transloadit-preset/
+module: "@uppy/transloadit-wrapper"
+permalink: docs/transloadit-wrapper/
 ---
 
 [Transloadit][transloadit] is a service that helps you handle file uploads, resize, crop and watermark your images, make GIFs, transcode your videos, extract thumbnails, generate audio waveforms, and so much more. In short, [Transloadit][transloadit] is the Swiss Army Knife for your files.
 
-The Transloadit Preset is an Uppy-based library that helps you talk to the Transloadit API. It includes a modal UI file picker with support for imports from third-party services, integration with HTML forms, and more. Because it's based on Uppy, you can add any existing Uppy plugin to add more functionality.
+The Transloadit Wrapper is an Uppy-based library that helps you talk to the Transloadit API. It includes a modal UI file picker with support for imports from third-party services, integration with HTML forms, and more. Because it's based on Uppy, you can add any existing Uppy plugin to add more functionality.
 
 ## Install
 
-The Transloadit Preset can be downloaded from npm:
+The Transloadit Wrapper can be downloaded from npm:
 
 ```shell
-npm install --save @uppy/transloadit-preset
+npm install --save @uppy/transloadit-wrapper
 ```
 
 Then, with a bundler such as [webpack][webpack] or [Browserify][browserify], do:
 
 ```js
-const transloadit = require('@uppy/transloadit-preset')
+const transloadit = require('@uppy/transloadit-wrapper')
 ```
 
-If you are not using a bundler, you can also import the Transloadit Preset using an HTML script tag.
+If you are not using a bundler, you can also import the Transloadit Wrapper using an HTML script tag.
 
 ```html
 <link rel="stylesheet" href="https://transloadit.edgly.net/TODO_INSERT_URL.css">
@@ -47,7 +47,7 @@ const resultPromise = transloadit.pick('body', {
 
 **ADD IMAGE OR GIF HERE**
 
-<a class="MoreButton" href="/docs/transloadit-preset/picker">View Documentation</a>
+<a class="MoreButton" href="/docs/transloadit-wrapper/picker">View Documentation</a>
 
 ## Form
 
@@ -70,7 +70,7 @@ transloadit.form('form#myForm', {
 </script>
 ```
 
-<a class="MoreButton" href="/docs/transloadit-preset/form">View Documentation</a>
+<a class="MoreButton" href="/docs/transloadit-wrapper/form">View Documentation</a>
 
 ## Programmatic Uploads
 
@@ -85,7 +85,7 @@ const resultPromise = transloadit.upload(files, {
 })
 ```
 
-<a class="MoreButton" href="/docs/transloadit-preset/upload">View Documentation</a>
+<a class="MoreButton" href="/docs/transloadit-wrapper/upload">View Documentation</a>
 
 [transloadit]: https://transloadit.com/
 [browserify]: https://browserify.org
