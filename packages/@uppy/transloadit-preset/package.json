@@ -37,6 +37,8 @@
     "@uppy/transloadit": "0.27.5",
     "@uppy/url": "0.27.5",
     "@uppy/utils": "0.27.1",
-    "@uppy/webcam": "0.27.4"
+    "@uppy/webcam": "0.27.4",
+    "es6-promise": "^4.2.5",
+    "whatwg-fetch": "^3.0.0"
   }
 }
