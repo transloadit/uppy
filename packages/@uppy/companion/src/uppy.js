@@ -51,7 +51,7 @@ module.exports.app = (options = {}) => {
 
   // create singleton redis client
   if (options.redisUrl) {
-    redis.client({ url: options.redisUrl })
+    redis.client(merge({ url: options.redisUrl }, options.redisOptions || {}))
   }
   emitter(options.multipleInstances && options.redisUrl)
 
