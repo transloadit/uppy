@@ -53,7 +53,7 @@
     "lint-staged": "^6.1.1",
     "minify-stream": "^1.2.0",
     "mkdirp": "0.5.1",
-    "multi-glob": "1.0.1",
+    "multi-glob": "^1.0.2",
     "nock": "^9.6.1",
     "node-sass": "^4.10.0",
     "npm-auth-to-token": "^1.0.0",
