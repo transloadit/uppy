@@ -1,0 +1,59 @@
+Arguments: 
+  /Users/artur/.nvm/versions/node/v8.11.2/bin/node /Users/artur/.nvm/versions/node/v8.11.2/bin/yarn
+
+PATH: 
+  /Users/artur/.nvm/versions/node/v8.11.2/bin:/Users/artur/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Volumes/Mars/Apps/android/emulator:/Volumes/Mars/Apps/android/tools:/Volumes/Mars/Apps/android/tools/bin:/Volumes/Mars/Apps/android/platform-tools
+
+Yarn version: 
+  1.7.0
+
+Node version: 
+  8.11.2
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: https://registry.npmjs.org/@uppy%2freact-native: Not found
+      at Request.params.callback [as _callback] (/Users/artur/.nvm/versions/node/v8.11.2/lib/node_modules/yarn/lib/cli.js:65656:18)
+      at Request.self.callback (/Users/artur/.nvm/versions/node/v8.11.2/lib/node_modules/yarn/lib/cli.js:134675:22)
+      at emitTwo (events.js:126:13)
+      at Request.emit (events.js:214:7)
+      at Request.<anonymous> (/Users/artur/.nvm/versions/node/v8.11.2/lib/node_modules/yarn/lib/cli.js:135658:10)
+      at emitOne (events.js:116:13)
+      at Request.emit (events.js:211:7)
+      at IncomingMessage.<anonymous> (/Users/artur/.nvm/versions/node/v8.11.2/lib/node_modules/yarn/lib/cli.js:135578:12)
+      at Object.onceWrapper (events.js:313:30)
+      at emitNone (events.js:111:20)
+
+npm manifest: 
+  {
+    "name": "empty-project-template",
+    "main": "node_modules/expo/AppEntry.js",
+    "private": true,
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "eject": "expo eject"
+    },
+    "dependencies": {
+      "@uppy/core": "^0.28.0",
+      "@uppy/tus": "^0.28.0",
+      "@uppy/xhr-upload": "^0.28.0",
+      "@uppy/react-native": "*",
+      "base-64": "^0.1.0",
+      "expo": "^31.0.2",
+      "react": "16.5.0",
+      "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz"
+    },
+    "devDependencies": {
+      "babel-preset-expo": "^5.0.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
