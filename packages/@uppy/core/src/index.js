@@ -705,7 +705,7 @@ class Uppy {
 
     this.on('upload-progress', this._calculateProgress)
 
-    this.on('upload-success', (file, uploadResp, uploadURL) => {
+    this.on('upload-success', (file, uploadResp) => {
       const currentProgress = this.getFile(file.id).progress
       this.setFileState(file.id, {
         progress: Object.assign({}, currentProgress, {
@@ -714,7 +714,7 @@ class Uppy {
           bytesUploaded: currentProgress.bytesTotal
         }),
         response: uploadResp,
-        uploadURL: uploadURL,
+        uploadURL: uploadResp.uploadURL,
         isPaused: false
       })
 
