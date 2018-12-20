@@ -1,9 +1,12 @@
 const Uppy = require('@uppy/core')
 const Form = require('@uppy/form')
 const StatusBar = require('@uppy/status-bar')
+const Dashboard = require('@uppy/dashboard')
+const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 const AttachFileInputs = require('./AttachFileInputs')
 const TransloaditFormResult = require('./TransloaditFormResult')
 const addTransloaditPlugin = require('./addTransloaditPlugin')
+const addProviders = require('./addProviders')
 
 function form (target, opts) {
   const uppy = Uppy(opts)
@@ -22,9 +25,37 @@ function form (target, opts) {
     addResultToForm: false // using custom implementation instead
   })
 
-  uppy.use(AttachFileInputs, {
-    target
-  })
+  const useDashboard = opts.dashboard || opts.modal
+
+  if (useDashboard) {
+    const dashboardTarget = findDOMElement(opts.dashboard)
+    const dashboardId = 'form:Dashboard'
+    const dashboardOpts = {
+      id: dashboardId,
+      target: dashboardTarget
+    }
+    if (opts.modal) {
+      let trigger = 'input[type="file"]'
+      const button = document.createElement('button')
+      button.textContent = 'Select files'
+      const old = findDOMElement(trigger, findDOMElement(target))
+      old.parentNode.replaceChild(old, button)
+      dashboardOpts.trigger = button
+    } else {
+      dashboardOpts.inline = true
+      dashboardOpts.hideUploadButton = true
+    }
+    uppy.use(Dashboard, dashboardOpts)
+
+    if (Array.isArray(opts.providers)) {
+      addProviders(uppy, opts.providers, {
+        ...opts,
+        target: uppy.getPlugin(dashboardId)
+      })
+    }
+  } else {
+    uppy.use(AttachFileInputs, { target })
+  }
 
   if (opts.statusBar) {
     uppy.use(StatusBar, {

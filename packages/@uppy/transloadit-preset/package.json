@@ -34,6 +34,7 @@
     "@uppy/form": "0.29.0",
     "@uppy/google-drive": "0.29.0",
     "@uppy/instagram": "0.29.0",
+    "@uppy/status-bar": "0.29.0",
     "@uppy/transloadit": "0.29.0",
     "@uppy/url": "0.29.0",
     "@uppy/utils": "0.29.0",
