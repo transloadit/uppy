@@ -69,6 +69,7 @@
     "replace-x": "^1.5.0",
     "temp-write": "^3.4.0",
     "tinyify": "^2.4.3",
+    "tsify": "^4.0.1",
     "typescript": "^2.9.2",
     "verdaccio": "^3.8.5",
     "watchify": "^3.11.0",

@@ -1,28 +1,28 @@
 import { Uppy, Locale } from './CommonTypes';
 
 interface MetaField {
-    id: string;
-    name: string;
-    placeholder?: string;
+  id: string;
+  name: string;
+  placeholder?: string;
 }
 
 export interface DashboardProps {
-    uppy: Uppy;
-    inline?: boolean;
-    plugins?: Array<string>;
-    width?: number;
-    height?: number;
-    showProgressDetails?: boolean;
-    showLinkToFileUploadResult?: boolean;
-    hideUploadButton?: boolean;
-    hideProgressAfterFinish?: boolean;
-    note?: string;
-    metaFields?: Array<MetaField>;
-    proudlyDisplayPoweredByUppy?: boolean;
-    disableStatusBar?: boolean;
-    disableInformer?: boolean;
-    disableThumbnailGenerator?: boolean;
-    locale?: Locale;
+  uppy: Uppy;
+  inline?: boolean;
+  plugins?: Array<string>;
+  width?: number;
+  height?: number;
+  showProgressDetails?: boolean;
+  showLinkToFileUploadResult?: boolean;
+  hideUploadButton?: boolean;
+  hideProgressAfterFinish?: boolean;
+  note?: string;
+  metaFields?: Array<MetaField>;
+  proudlyDisplayPoweredByUppy?: boolean;
+  disableStatusBar?: boolean;
+  disableInformer?: boolean;
+  disableThumbnailGenerator?: boolean;
+  locale?: Locale;
 }
 
 /**

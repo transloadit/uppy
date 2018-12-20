@@ -1,4 +1,4 @@
-import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import Uppy = require('@uppy/core');
 
 declare module Informer {
   interface Color {
@@ -6,21 +6,21 @@ declare module Informer {
     text: string | number;
   }
 
-  interface InformerOptions extends PluginOptions {
+  interface InformerOptions extends Uppy.PluginOptions {
     typeColors: {
       [type: string]: Color
     };
   }
 }
 
-declare class Informer extends Plugin {
-  constructor(uppy: Uppy, opts: Partial<Informer.InformerOptions>);
+declare class Informer extends Uppy.Plugin {
+  constructor(uppy: Uppy.Uppy, opts: Partial<Informer.InformerOptions>);
 }
 
 export = Informer;
 
 declare module '@uppy/core' {
   export interface Uppy {
-    use(pluginClass: typeof Informer, opts: Partial<Informer.InformerOptions>): Uppy;
+    use(pluginClass: typeof Informer, opts: Partial<Informer.InformerOptions>): Uppy.Uppy;
   }
 }

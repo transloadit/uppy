@@ -1,4 +1,4 @@
-import { Plugin, PluginOptions, Uppy, UppyFile } from '@uppy/core';
+import Uppy = require('@uppy/core');
 
 declare module AwsS3 {
   interface AwsS3UploadParameters {
@@ -8,22 +8,22 @@ declare module AwsS3 {
     headers?: { [type: string]: string };
   }
 
-  interface AwsS3Options extends PluginOptions {
+  interface AwsS3Options extends Uppy.PluginOptions {
     serverUrl: string;
-    getUploadParameters(file: UppyFile): Promise<AwsS3UploadParameters>;
+    getUploadParameters(file: Uppy.UppyFile): Promise<AwsS3UploadParameters>;
     timeout: number;
     limit: number;
   }
 }
 
-declare class AwsS3 extends Plugin {
-  constructor(uppy: Uppy, opts: Partial<AwsS3.AwsS3Options>);
+declare class AwsS3 extends Uppy.Plugin {
+  constructor(uppy: Uppy.Uppy, opts: Partial<AwsS3.AwsS3Options>);
 }
 
 export = AwsS3;
 
 declare module '@uppy/core' {
   export interface Uppy {
-    use(pluginClass: typeof AwsS3, opts: Partial<AwsS3.AwsS3Options>): Uppy;
+    use(pluginClass: typeof AwsS3, opts: Partial<AwsS3.AwsS3Options>): Uppy.Uppy;
   }
 }
