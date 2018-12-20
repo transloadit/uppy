@@ -28,18 +28,19 @@ function form (target, opts) {
   const useDashboard = opts.dashboard || opts.modal
 
   if (useDashboard) {
-    const dashboardTarget = findDOMElement(opts.dashboard)
+    const dashboardTarget = findDOMElement(opts.dashboard) || document.body
     const dashboardId = 'form:Dashboard'
     const dashboardOpts = {
       id: dashboardId,
       target: dashboardTarget
     }
     if (opts.modal) {
-      let trigger = 'input[type="file"]'
+      const trigger = 'input[type="file"]'
       const button = document.createElement('button')
       button.textContent = 'Select files'
+      button.type = 'button'
       const old = findDOMElement(trigger, findDOMElement(target))
-      old.parentNode.replaceChild(old, button)
+      old.parentNode.replaceChild(button, old)
       dashboardOpts.trigger = button
     } else {
       dashboardOpts.inline = true
