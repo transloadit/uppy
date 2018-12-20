@@ -1,4 +1,4 @@
-<% if (page.type) { %>
+<% if (page.type && page.type !== 'page') { %>
     <%- partial('partials/sidebar', { type: page.type, index: page.index }) %>
 <% } %>
 <div class="Content js-Content <%- page.type ? page.type + ' with-sidebar' : '' %>">
