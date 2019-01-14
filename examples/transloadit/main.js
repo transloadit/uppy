@@ -6,6 +6,7 @@ const transloadit = require('@uppy/transloadit-preset')
 
 const formUppy = transloadit.form('#test-form', {
   debug: true,
+  fields: ['message'],
   restrictions: {
     allowedFileTypes: ['.png']
   },
