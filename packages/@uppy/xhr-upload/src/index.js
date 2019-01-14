@@ -207,12 +207,12 @@ module.exports = class XHRUpload extends Plugin {
 
       xhr.upload.addEventListener('loadstart', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} started`)
-        // Begin checking for timeouts when loading starts.
-        timer.progress()
       })
 
       xhr.upload.addEventListener('progress', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`)
+        // Begin checking for timeouts when progress starts, instead of loading,
+        // to avoid timing out requests on browser concurrency queue
         timer.progress()
 
         if (ev.lengthComputable) {
