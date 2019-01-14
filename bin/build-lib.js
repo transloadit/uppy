@@ -40,6 +40,7 @@ async function buildLib () {
     if (!process.env.FRESH) {
       const srcMtime = await lastModified(file)
       const libMtime = await lastModified(libFile)
+        .catch(() => 0) // probably doesn't exist
       // Skip files that haven't changed
       if (srcMtime < libMtime && metaMtime < libMtime) {
         continue
