@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "drag-drop": "^4.2.0",
+    "marked": "^0.6.0"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.3",
+    "ecstatic": "^3.0.0"
+  },
+  "scripts": {
+    "start": "browserify main.js > bundle.js && ecstatic"
+  }
+}
