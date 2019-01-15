@@ -4,7 +4,6 @@
   "version": "0.29.0",
   "license": "MIT",
   "main": "lib/index.js",
-  "jsnext:main": "src/index.js",
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
