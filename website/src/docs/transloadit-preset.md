@@ -32,6 +32,18 @@ If you are not using a bundler, you can also import the Transloadit Wrapper usin
 <script src="https://transloadit.edgly.net/TODO_INSERT_URL.js"></script>
 ```
 
+## Methods
+
+The Transloadit Wrapper has several methods for different use cases.
+
+If you want to have a modal UI that users can use to select files from their local device or from third party sources like Instagram, use the [File Picker API](#File-Picker). This can be used for one-off uploads _outside_ an HTML form, like profile avatars or images to embed in a blog post.
+
+If you already have an HTML form, you can use the [Form API](#Form) to add Transloadit's encoding capabilities to it. Files will be uploaded to Transloadit, and the form will submit JSON information about the files and encoding results. You can also optionally show upload progress using Uppy's Status Bar UI, or even use the advanced Dashboard UI so users can import files from third party sources as well.
+
+Finally, you can use the [Programmatic Upload API](#Programmatic-Uploads) with your custom UI implementation.
+
+And if any of these methods are not flexible enough, you can always replace them with a custom Uppy setup using the [Transloadit Plugin](/docs/transloadit) instead!
+
 ## File Picker
 
 Show a modal UI that allows users to pick files from their device and from the web. It uploads files to Transloadit for processing.
