@@ -31,6 +31,22 @@ formUppy.on('upload-error', (file, err) => {
 
 window.formUppy = formUppy
 
+const formUppyWithDashboard = transloadit.form('#dashboard-form', {
+  debug: true,
+  fields: ['message'],
+  restrictions: {
+    allowedFileTypes: ['.png']
+  },
+  waitForEncoding: true,
+  params: {
+    auth: { key: '05a61ed019fe11e783fdbd1f56c73eb0' },
+    template_id: 'be001500a56011e889f9cddd88df842c'
+  },
+  dashboard: '#dashboard-form .dashboard'
+})
+
+window.formUppyWithDashboard = formUppyWithDashboard
+
 /**
  * transloadit.modal
  */

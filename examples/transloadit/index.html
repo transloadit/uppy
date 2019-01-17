@@ -45,9 +45,7 @@
         <p>
           <label>
             attachments:
-            <span class="dashboard">
-              <input type="file" name="files" multiple>
-            </span>
+            <input type="file" name="files" multiple>
           </label>
           <div class="progress"></div>
 
@@ -58,6 +56,34 @@
 
           <span class="error"></span>
       </form>
+
+      <hr>
+      <h2>transloadit.form() with dashboard</h2>
+      <form id="dashboard-form" method="post" action="http://localhost:9967/test">
+        <p><strong>leave a message</strong>
+        <p>
+          <label>name:
+            <input type="text" name="name">
+          </label>
+        <p>
+          <label>message: <br>
+            <textarea name="message"></textarea>
+          </label>
+
+        <p>
+          <label>
+            attachments:
+            <span class="dashboard"></span>
+          </label>
+
+        <p>
+          <button type="submit">
+            Upload
+          </button>
+
+          <span class="error"></span>
+      </form>
+
 
       <hr>
       <h2>transloadit.pick()</h2>
