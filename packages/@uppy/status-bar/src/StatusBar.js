@@ -171,7 +171,7 @@ const CancelBtn = (props) => {
     title={props.i18n('cancel')}
     aria-label={props.i18n('cancel')}
     onclick={props.cancelAll}>
-    <svg aria-hidden="true" class="UppyIcon" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
       <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm1.414-8l2.122-2.121-1.415-1.415L8 6.586 5.879 4.464 4.464 5.88 6.586 8l-2.122 2.121 1.415 1.415L8 9.414l2.121 2.122 1.415-1.415L9.414 8z" fill="#949494" fill-rule="evenodd" />
     </svg>
   </button>
@@ -183,14 +183,15 @@ const PauseResumeButton = (props) => {
 
   return <button
     title={title}
+    aria-label={title}
     class="uppy-u-reset uppy-StatusBar-actionCircleBtn"
     type="button"
     onclick={() => togglePauseResume(props)}>
     {isAllPaused
-      ? <svg aria-hidden="true" class="UppyIcon" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+      ? <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
         <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM6 5v6l5-3-5-3z" fill="#949494" fill-rule="evenodd" />
       </svg>
-      : <svg aria-hidden="true" class="UppyIcon" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+      : <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
         <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM5 5v6h2V5H5zm4 0v6h2V5H9z" fill="#949494" fill-rule="evenodd" />
       </svg>
     }
