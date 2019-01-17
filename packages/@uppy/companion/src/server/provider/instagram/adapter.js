@@ -72,5 +72,7 @@ exports.getItemThumbnailUrl = (item) => {
 }
 
 exports.getNextPagePath = (items) => {
-  return `recent?max_id=${exports.getItemId(items[items.length - 1])}`
+  if (items.length) {
+    return `recent?max_id=${exports.getItemId(items[items.length - 1])}`
+  }
 }

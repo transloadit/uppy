@@ -37,7 +37,7 @@ const Tus = Uppy.Tus
 
 ## Options
 
-The `@uppy/tus` plugin supports all of [tus-js-client][]’s options. In addition tot that, it has the following configurable options:
+The `@uppy/tus` plugin supports all of [tus-js-client][]’s options. In addition to that, it has the following configurable options:
 
 ### `id: 'Tus'`
 

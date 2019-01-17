@@ -1,9 +1,9 @@
 import { Uppy } from './CommonTypes';
 
 export interface StatusBarProps {
-    uppy: Uppy;
-    showProgressDetails?: boolean;
-    hideAfterFinish?: boolean;
+  uppy: Uppy;
+  showProgressDetails?: boolean;
+  hideAfterFinish?: boolean;
 }
 
 /**

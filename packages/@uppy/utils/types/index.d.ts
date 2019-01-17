@@ -26,7 +26,7 @@ declare module '@uppy/utils/lib/dataURItoFile' {
 }
 
 declare module '@uppy/utils/lib/emitSocketProgress' {
-  import { UppyFile } from '@uppy/core';
+  import Uppy = require('@uppy/core');
 
   interface ProgressData {
     progress: number;
@@ -34,7 +34,7 @@ declare module '@uppy/utils/lib/emitSocketProgress' {
     bytesTotal: number;
   }
 
-  export default function emitSocketProgress(uploader: object, progressData: ProgressData, file: UppyFile): void;
+  export default function emitSocketProgress(uploader: object, progressData: ProgressData, file: Uppy.UppyFile): void;
 }
 
 declare module '@uppy/utils/lib/findAllDOMElements' {
@@ -46,9 +46,9 @@ declare module '@uppy/utils/lib/findDOMElement' {
 }
 
 declare module '@uppy/utils/lib/generateFileID' {
-  import { UppyFile } from '@uppy/core';
+  import Uppy = require('@uppy/core');
 
-  export default function generateFileID(file: UppyFile): string;
+  export default function generateFileID(file: Uppy.UppyFile): string;
 }
 
 declare module '@uppy/utils/lib/getBytesRemaining' {
@@ -64,9 +64,9 @@ declare module '@uppy/utils/lib/getFileNameAndExtension' {
 }
 
 declare module '@uppy/utils/lib/getFileType' {
-  import { UppyFile } from '@uppy/core';
+  import Uppy = require('@uppy/core');
 
-  export default function getFileType(file: UppyFile): string | null;
+  export default function getFileType(file: Uppy.UppyFile): string | null;
 }
 
 declare module '@uppy/utils/lib/getFileTypeExtension' {

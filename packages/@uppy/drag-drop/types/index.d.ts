@@ -1,7 +1,7 @@
-import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import Uppy = require('@uppy/core');
 
 declare module DragDrop {
-  interface DragDropOptions extends PluginOptions {
+  interface DragDropOptions extends Uppy.PluginOptions {
     inputName: string;
     allowMultipleFiles: boolean;
     width: string;
@@ -10,14 +10,14 @@ declare module DragDrop {
   }
 }
 
-declare class DragDrop extends Plugin {
-  constructor(uppy: Uppy, opts: Partial<DragDrop.DragDropOptions>);
+declare class DragDrop extends Uppy.Plugin {
+  constructor(uppy: Uppy.Uppy, opts: Partial<DragDrop.DragDropOptions>);
 }
 
 export = DragDrop;
 
 declare module '@uppy/core' {
   export interface Uppy {
-    use(pluginClass: typeof DragDrop, opts: Partial<DragDrop.DragDropOptions>): Uppy;
+    use(pluginClass: typeof DragDrop, opts: Partial<DragDrop.DragDropOptions>): Uppy.Uppy;
   }
 }

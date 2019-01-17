@@ -1,11 +1,11 @@
 import { DashboardProps } from './Dashboard';
 
 export interface DashboardModalProps extends DashboardProps {
-    target?: HTMLElement;
-    open?: boolean;
-    onRequestClose?: VoidFunction;
-    closeModalOnClickOutside?: boolean;
-    disablePageScrollWhenModalOpen?: boolean;
+  target: string | HTMLElement;
+  open?: boolean;
+  onRequestClose?: VoidFunction;
+  closeModalOnClickOutside?: boolean;
+  disablePageScrollWhenModalOpen?: boolean;
 }
 
 /**
