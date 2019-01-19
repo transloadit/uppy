@@ -666,8 +666,12 @@ class Uppy {
       this.setState({ error: error.message })
     })
 
-    this.on('upload-error', (file, error) => {
-      this.setFileState(file.id, { error: error.message })
+    this.on('upload-error', (file, error, response) => {
+      this.setFileState(file.id, {
+        error: error.message,
+        response
+      })
+
       this.setState({ error: error.message })
 
       let message = this.i18n('failedToUpload', { file: file.name })

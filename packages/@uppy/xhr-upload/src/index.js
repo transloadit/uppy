@@ -244,10 +244,15 @@ module.exports = class XHRUpload extends Plugin {
 
           return resolve(file)
         } else {
-          // const body = opts.getResponseData(xhr.responseText, xhr)
+          const body = opts.getResponseData(xhr.responseText, xhr)
           const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
 
-          this.uppy.emit('upload-error', file, error)
+          const response = {
+            status: ev.target.status,
+            body
+          }
+
+          this.uppy.emit('upload-error', file, error, response)
           return reject(error)
         }
       })
