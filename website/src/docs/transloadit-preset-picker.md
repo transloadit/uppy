@@ -22,6 +22,7 @@ const resultPromise = transloadit.pick({
  - `successful` - An array containing data about files that were uploaded successfully
  - `failed` - An array containing data about files that failed to upload
  - `transloadit` - An array of Assembly statuses
+ - `results` - An array of results produced by the assembly, if `waitForEncoding` was used
 
 ## `options.target`
 
@@ -32,6 +33,12 @@ DOM element or CSS selector to place the modal element in. `document.body` is us
 **TODO inline most of this?**
 
 All the options to the [Transloadit][transloadit] plugin are supported.
+
+The Promise resolution value has a `transloadit` and `results` key.
+
+`result.transloadit` contains an array of Assembly statuses. Assembly statuses are objects as described in the [Transloadit documentation][assembly-status]. There may be multiple Assembly statuses if the `getAssemblyOptions` option was used, because different files may be processed by different Assemblies.
+
+`result.results` contains an array of results produced by the Assemblies. Each result has an `assemblyId` property containing the string ID of the Assembly that produced it, and a `stepName` property containing the string name of the Assembly step that produced it.
 
 ## Restrictions
 
@@ -109,3 +116,4 @@ Specific options for the [Webcam](/docs/webcam) provider.
 
 [companion]: /docs/companion
 [transloadit]: /docs/transloadit#options
+[assembly-status]: https://transloadit.com/docs/api/#assembly-status-response
