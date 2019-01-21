@@ -22,6 +22,10 @@ class DashboardModal extends React.Component {
     }
   }
 
+  componentWillUnmount () {
+    this.uninstallPlugin()
+  }
+
   installPlugin () {
     const uppy = this.props.uppy
     const options = Object.assign(

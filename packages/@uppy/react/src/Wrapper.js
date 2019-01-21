@@ -22,6 +22,10 @@ class UppyWrapper extends React.Component {
     }
   }
 
+  componentWillUnmount () {
+    this.uninstallPlugin()
+  }
+
   installPlugin () {
     const plugin = this.props.uppy
       .getPlugin(this.props.plugin)
