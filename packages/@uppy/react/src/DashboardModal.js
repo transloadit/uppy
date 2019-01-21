@@ -12,6 +12,17 @@ const h = React.createElement
 
 class DashboardModal extends React.Component {
   componentDidMount () {
+    this.installPlugin()
+  }
+
+  componentDidUpdate (prevProps) {
+    if (prevProps.uppy !== this.props.uppy) {
+      this.uninstallPlugin(prevProps)
+      this.installPlugin()
+    }
+  }
+
+  installPlugin () {
     const uppy = this.props.uppy
     const options = Object.assign(
       { id: 'react:DashboardModal' },
@@ -34,8 +45,8 @@ class DashboardModal extends React.Component {
     }
   }
 
-  componentWillUnmount () {
-    const uppy = this.props.uppy
+  uninstallPlugin (props = this.props) {
+    const uppy = props.uppy
 
     uppy.removePlugin(this.plugin)
   }
