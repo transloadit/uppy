@@ -64,7 +64,7 @@ If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web
 
 **TODO also have an onProgress() callback or something for custom progress**
 
-Uploads using HTML forms have no builtin progress reporting. With the Transloadit Preset, you can use the `statusBar` option to show an [@uppy/status-bar](/docs/status-bar): an element styled like a progress bar, reporting both upload and Assembly execution progress.
+Uploads using HTML forms have no builtin progress reporting. With the Transloadit Wrapper, you can use the `statusBar` option to show an [@uppy/status-bar](/docs/status-bar): an element styled like a progress bar, reporting both upload and Assembly execution progress.
 
 Point it to an element or a CSS selector:
 
@@ -90,7 +90,7 @@ The progress bar will be inserted _into_ that element (thus _not_ replace it).
 
 We now recommend using Uppy over the jQuery SDK. Uppy is framework- and library-agnostic, and much more extensible.
 
-Like the Transloadit jQuery SDK, this API enhances an existing form. That makes this a good candidate for migration. Most of the jQuery SDK options have a direct equivalent in the Transloadit Preset.
+Like the Transloadit jQuery SDK, this API enhances an existing form. That makes this a good candidate for migration. Most of the jQuery SDK options have a direct equivalent in the Transloadit Wrapper.
 
 First, change your import URLs and initialization code:
 
@@ -104,7 +104,7 @@ $(selector).transloadit({
 </script>
 ```
 ```html
-<!-- The new Transloadit Preset way! -->
+<!-- The new Transloadit Wrapper way! -->
 <script src="//transloadit.edgly.net/TODO_INSERT_URL.js"></script>
 <script>
 transloadit.form(selector, {
@@ -117,7 +117,7 @@ The equivalent options are listed below.
 
 ### Options
 
-| jQuery option | Transloadit Preset option |
+| jQuery option | Transloadit Wrapper option |
 |---------------|---------------------------|
 | `service` | `service` |
 | `region` | Not supported, instead set the `service` option to `https://api2-regionname.transloadit.com` |
@@ -140,7 +140,7 @@ The equivalent options are listed below.
 
 The `transloadit.form()` method returns an Uppy object, so you can listen to events there. There are no `on*()` _options_ anymore, but an `.on('*')` method is provided instead.
 
-| jQuery option | Transloadit Preset Event |
+| jQuery option | Transloadit Wrapper Event |
 |---------------|--------------------------|
 | `onStart` | `uppy.on('transloadit:assembly-created')` |
 | `onExecuting` | `uppy.on('transloadit:assembly-executing')` |
