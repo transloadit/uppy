@@ -95,7 +95,7 @@ Their privacy policy is located here: https://policies.google.com/privacy.
 
 ## How to disable cookies
 
-You may be able to configure your browser or our website to restrict cookies or block all cookies, if you wish. If you disable cookies, you may find that this affects your ability to use certain parts of our website. For more information about cookies and instructions on how to adjust your browser settings to accept, delete or reject cookies, see the [www.allaboutcookies.org](www.allaboutcookies.org) website.
+You may be able to configure your browser or our website to restrict cookies or block all cookies, if you wish. If you disable cookies, you may find that this affects your ability to use certain parts of our website. For more information about cookies and instructions on how to adjust your browser settings to accept, delete or reject cookies, see the [allaboutcookies.org](http://allaboutcookies.org) website.
 
 ## Data Processing Addendum (DPA)
 
@@ -103,5 +103,4 @@ If you require a countersigned copy of our DPA, please  <a href="mailto:hello@tr
 
 ## Last Updated
 
-This privacy policy was last updated on Dec 12, 2018.
-
+This privacy policy was last updated on Jan 23, 2018.
