@@ -28,8 +28,8 @@ const transloadit = require('@uppy/transloadit-wrapper')
 If you are not using a bundler, you can also import the Transloadit Wrapper using an HTML script tag.
 
 ```html
-<link rel="stylesheet" href="https://transloadit.edgly.net/TODO_INSERT_URL.css">
-<script src="https://transloadit.edgly.net/TODO_INSERT_URL.js"></script>
+<link rel="stylesheet" href="https://transloadit.edgly.net/releases/transloadit-wrapper/v1.0.0/dist/style.min.css">
+<script src="https://transloadit.edgly.net/releases/transloadit-wrapper/v1.0.0/dist/transloadit.min.js"></script>
 ```
 
 ## Methods
