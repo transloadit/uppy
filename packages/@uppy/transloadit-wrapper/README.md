@@ -20,7 +20,7 @@ Uploads files on form submission, adds results to a hidden input,
 then really submits the form.
 
 ```js
-const transloadit = require('@uppy/transloadit-preset')
+const transloadit = require('@uppy/transloadit-wrapper')
 
 transloadit.form('#form', {
   params: {

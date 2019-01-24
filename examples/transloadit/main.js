@@ -1,4 +1,4 @@
-const transloadit = require('@uppy/transloadit-preset')
+const transloadit = require('@uppy/transloadit-wrapper')
 
 /**
  * transloadit.form

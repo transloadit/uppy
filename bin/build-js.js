@@ -35,7 +35,7 @@ function buildBundle (srcFile, bundleFile, { minify = false } = {}) {
 }
 
 mkdirp.sync('./packages/uppy/dist')
-mkdirp.sync('./packages/@uppy/transloadit-preset/dist')
+mkdirp.sync('./packages/@uppy/transloadit-wrapper/dist')
 
 Promise.all([
   buildBundle(
@@ -48,12 +48,12 @@ Promise.all([
     { minify: true }
   ),
   buildBundle(
-    './packages/@uppy/transloadit-preset/bundle.js',
-    './packages/@uppy/transloadit-preset/dist/transloadit.js'
+    './packages/@uppy/transloadit-wrapper/bundle.js',
+    './packages/@uppy/transloadit-wrapper/dist/transloadit.js'
   ),
   buildBundle(
-    './packages/@uppy/transloadit-preset/bundle.js',
-    './packages/@uppy/transloadit-preset/dist/transloadit.min.js',
+    './packages/@uppy/transloadit-wrapper/bundle.js',
+    './packages/@uppy/transloadit-wrapper/dist/transloadit.min.js',
     { minify: true }
   )
 ]).then(function () {
