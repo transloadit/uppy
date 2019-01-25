@@ -62,6 +62,7 @@ const AvatarPicker = ({ currentAvatar }) => {
             dropHereOr: 'Drop here or %{browse}',
             // Used as the label for the link that opens the system file selection dialog.
             browse: 'browse'
+          }
         }}
       />
     </div>
