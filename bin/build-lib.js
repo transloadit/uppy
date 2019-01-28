@@ -1,5 +1,5 @@
 const chalk = require('chalk')
-const babel = require('babel-core')
+const babel = require('@babel/core')
 const { promisify } = require('util')
 const glob = promisify(require('glob'))
 const mkdirp = promisify(require('mkdirp'))
@@ -15,7 +15,7 @@ const SOURCE = 'packages/{*,@uppy/*}/src/**/*.js'
 const IGNORE = /\.test\.js$|__mocks__|companion\//
 // Files that should trigger a rebuild of everything on change
 const META_FILES = [
-  '.babelrc',
+  'babel.config.js',
   'package.json',
   'package-lock.json',
   'bin/build-lib.js'
@@ -57,7 +57,7 @@ async function buildLib () {
   }
 }
 
-console.log('Using Babel version:', require('babel-core/package.json').version)
+console.log('Using Babel version:', require('@babel/core/package.json').version)
 buildLib().catch((err) => {
   console.error(err.stack)
   process.exit(1)
