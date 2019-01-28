@@ -60,8 +60,6 @@ If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web
 
 ## Progress Reporting
 
-**TODO also have an onProgress() callback or something for custom progress**
-
 Uploads using HTML forms have no builtin progress reporting. With the Transloadit Wrapper, you can use the `statusBar` option to show an [@uppy/status-bar](/docs/status-bar): an element styled like a progress bar, reporting both upload and Assembly execution progress.
 
 Point it to an element or a CSS selector:
@@ -80,9 +78,11 @@ transloadit.form('form#my-form', {
 
 The progress bar will be inserted _into_ that element (thus _not_ replace it).
 
+<!--
 ## Dashboard
 
 **TODO have an option to replace the inputs with a Dashboard modal button?**
+-->
 
 ## Migrating From the jQuery SDK
 
@@ -103,7 +103,7 @@ $(selector).transloadit({
 ```
 ```html
 <!-- The new Transloadit Wrapper way! -->
-<script src="//transloadit.edgly.net/TODO_INSERT_URL.js"></script>
+<script src="//transloadit.edgly.net/transloadit-wrapper/v1.0.0/dist/transloadit.js"></script>
 <script>
 transloadit.form(selector, {
   ...options

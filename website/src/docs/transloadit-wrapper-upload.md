@@ -31,8 +31,6 @@ These can also be [Blob][blob]s with a `.name` property. That way you can upload
 
 ## Transloadit
 
-**TODO inline most of this?**
-
 All the options to the [Transloadit][tl-options] plugin are supported.
 
 [file]: https://developer.mozilla.org/en-US/docs/Web/API/File

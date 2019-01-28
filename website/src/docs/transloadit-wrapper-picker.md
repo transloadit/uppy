@@ -30,8 +30,6 @@ DOM element or CSS selector to place the modal element in. `document.body` is us
 
 ## Transloadit
 
-**TODO inline most of this?**
-
 All the options to the [Transloadit][transloadit] plugin are supported.
 
 The Promise resolution value has a `transloadit` and `results` key.
