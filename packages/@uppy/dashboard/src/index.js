@@ -341,7 +341,8 @@ module.exports = class Dashboard extends Plugin {
       manualClose = true // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
     } = opts
 
-    if (this.getPluginState().isClosing) {
+    const { isHidden, isClosing } = this.getPluginState()
+    if (isHidden || isClosing) {
       // short-circuit if animation is ongoing
       return
     }
