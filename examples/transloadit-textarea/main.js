@@ -1,7 +1,7 @@
 /* eslint-env browser */
 const marked = require('marked')
 const dragdrop = require('drag-drop')
-const transloadit = require('@uppy/transloadit-wrapper')
+const transloadit = require('@uppy/robodog')
 
 // TOP SECRET!!!!!!!
 const TRANSLOADIT_KEY = '05a61ed019fe11e783fdbd1f56c73eb0'

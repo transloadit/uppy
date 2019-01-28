@@ -35,7 +35,7 @@ function buildBundle (srcFile, bundleFile, { minify = false } = {}) {
 }
 
 mkdirp.sync('./packages/uppy/dist')
-mkdirp.sync('./packages/@uppy/transloadit-wrapper/dist')
+mkdirp.sync('./packages/@uppy/robodog/dist')
 
 Promise.all([
   buildBundle(
@@ -48,12 +48,12 @@ Promise.all([
     { minify: true }
   ),
   buildBundle(
-    './packages/@uppy/transloadit-wrapper/bundle.js',
-    './packages/@uppy/transloadit-wrapper/dist/transloadit.js'
+    './packages/@uppy/robodog/bundle.js',
+    './packages/@uppy/robodog/dist/transloadit.js'
   ),
   buildBundle(
-    './packages/@uppy/transloadit-wrapper/bundle.js',
-    './packages/@uppy/transloadit-wrapper/dist/transloadit.min.js',
+    './packages/@uppy/robodog/bundle.js',
+    './packages/@uppy/robodog/dist/transloadit.min.js',
     { minify: true }
   )
 ]).then(function () {

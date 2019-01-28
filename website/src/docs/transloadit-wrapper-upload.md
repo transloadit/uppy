@@ -1,8 +1,8 @@
 ---
 type: docs
-title: "Transloadit Wrapper: Upload API"
+title: "Robodog: Upload API"
 menu: "Upload"
-permalink: docs/transloadit-wrapper/upload/
+permalink: docs/robodog/upload/
 order: 13
 ---
 

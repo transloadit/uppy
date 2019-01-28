@@ -1,8 +1,8 @@
 ---
 type: docs
-title: "Transloadit Wrapper: File Picker API"
+title: "Robodog: File Picker API"
 menu: "File Picker"
-permalink: docs/transloadit-wrapper/picker/
+permalink: docs/robodog/picker/
 order: 11
 ---
 

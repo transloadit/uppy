@@ -1,9 +1,9 @@
 ---
 type: docs
 order: 12
-title: "Transloadit Wrapper: Form API"
+title: "Robodog: Form API"
 menu: "Form"
-permalink: docs/transloadit-wrapper/form/
+permalink: docs/robodog/form/
 ---
 
 Add resumable uploads and Transloadit's processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
@@ -60,7 +60,7 @@ If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web
 
 ## Progress Reporting
 
-Uploads using HTML forms have no builtin progress reporting. With the Transloadit Wrapper, you can use the `statusBar` option to show an [@uppy/status-bar](/docs/status-bar): an element styled like a progress bar, reporting both upload and Assembly execution progress.
+Uploads using HTML forms have no builtin progress reporting. With the Robodog, you can use the `statusBar` option to show an [@uppy/status-bar](/docs/status-bar): an element styled like a progress bar, reporting both upload and Assembly execution progress.
 
 Point it to an element or a CSS selector:
 
@@ -88,7 +88,7 @@ The progress bar will be inserted _into_ that element (thus _not_ replace it).
 
 We now recommend using Uppy over the jQuery SDK. Uppy is framework- and library-agnostic, and much more extensible.
 
-Like the Transloadit jQuery SDK, this API enhances an existing form. That makes this a good candidate for migration. Most of the jQuery SDK options have a direct equivalent in the Transloadit Wrapper.
+Like the Transloadit jQuery SDK, this API enhances an existing form. That makes this a good candidate for migration. Most of the jQuery SDK options have a direct equivalent in the Robodog.
 
 First, change your import URLs and initialization code:
 
@@ -102,8 +102,8 @@ $(selector).transloadit({
 </script>
 ```
 ```html
-<!-- The new Transloadit Wrapper way! -->
-<script src="//transloadit.edgly.net/transloadit-wrapper/v1.0.0/dist/transloadit.js"></script>
+<!-- The new Robodog way! -->
+<script src="//transloadit.edgly.net/robodog/v1.0.0/dist/transloadit.js"></script>
 <script>
 transloadit.form(selector, {
   ...options
@@ -115,7 +115,7 @@ The equivalent options are listed below.
 
 ### Options
 
-| jQuery option | Transloadit Wrapper option |
+| jQuery option | Robodog option |
 |---------------|---------------------------|
 | `service` | `service` |
 | `region` | Not supported, instead set the `service` option to `https://api2-regionname.transloadit.com` |
@@ -144,7 +144,7 @@ As for the options that are unavailable:
 
 The `transloadit.form()` method returns an Uppy object, so you can listen to events there. There are no `on*()` _options_ anymore, but an `.on('*')` method is provided instead.
 
-| jQuery option | Transloadit Wrapper Event |
+| jQuery option | Robodog Event |
 |---------------|--------------------------|
 | `onStart` | `uppy.on('transloadit:assembly-created')` |
 | `onExecuting` | `uppy.on('transloadit:assembly-executing')` |

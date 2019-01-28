@@ -1,5 +1,5 @@
 {
-  "name": "@uppy/transloadit-wrapper",
+  "name": "@uppy/robodog",
   "description": "Transloadit SDK for browsers based on Uppy",
   "version": "0.0.0",
   "license": "MIT",

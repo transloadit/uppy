@@ -1,40 +1,40 @@
 ---
 type: docs
 order: 10
-title: "Transloadit Wrapper"
+title: "Robodog"
 menu: "Introduction"
-module: "@uppy/transloadit-wrapper"
-permalink: docs/transloadit-wrapper/
+module: "@uppy/robodog"
+permalink: docs/robodog/
 ---
 
 [Transloadit][transloadit] is a service that helps you handle file uploads, resize, crop and watermark your images, make GIFs, transcode your videos, extract thumbnails, generate audio waveforms, and so much more. In short, [Transloadit][transloadit] is the Swiss Army Knife for your files.
 
-The Transloadit Wrapper is an Uppy-based library that helps you talk to the Transloadit API. It includes a modal UI file picker with support for imports from third-party services, integration with HTML forms, and more. Because it's based on Uppy, you can add any existing Uppy plugin to add more functionality.
+Robodog is an Uppy-based library that helps you talk to the Transloadit API. It includes a modal UI file picker with support for imports from third-party services, integration with HTML forms, and more. Because it's based on Uppy, you can add any existing Uppy plugin to add more functionality.
 
 ## Install
 
-The Transloadit Wrapper can be downloaded from npm:
+Robodog can be downloaded from npm:
 
 ```shell
-npm install --save @uppy/transloadit-wrapper
+npm install --save @uppy/robodog
 ```
 
 Then, with a bundler such as [webpack][webpack] or [Browserify][browserify], do:
 
 ```js
-const transloadit = require('@uppy/transloadit-wrapper')
+const transloadit = require('@uppy/robodog')
 ```
 
-If you are not using a bundler, you can also import the Transloadit Wrapper using an HTML script tag.
+If you are not using a bundler, you can also import the Robodog using an HTML script tag.
 
 ```html
-<link rel="stylesheet" href="https://transloadit.edgly.net/releases/transloadit-wrapper/v1.0.0/dist/style.min.css">
-<script src="https://transloadit.edgly.net/releases/transloadit-wrapper/v1.0.0/dist/transloadit.min.js"></script>
+<link rel="stylesheet" href="https://transloadit.edgly.net/releases/robodog/v1.0.0/dist/style.min.css">
+<script src="https://transloadit.edgly.net/releases/robodog/v1.0.0/dist/transloadit.min.js"></script>
 ```
 
 ## Methods
 
-The Transloadit Wrapper has several methods for different use cases.
+Robodog has several methods for different use cases.
 
 If you want to have a modal UI that users can use to select files from their local device or from third party sources like Instagram, use the [File Picker API](#File-Picker). This can be used for one-off uploads _outside_ an HTML form, like profile avatars or images to embed in a blog post.
 
@@ -59,7 +59,7 @@ const resultPromise = transloadit.pick('body', {
 
 **ADD IMAGE OR GIF HERE**
 
-<a class="MoreButton" href="/docs/transloadit-wrapper/picker">View Documentation</a>
+<a class="MoreButton" href="/docs/robodog/picker">View Documentation</a>
 
 ## Form
 
@@ -82,7 +82,7 @@ transloadit.form('form#myForm', {
 </script>
 ```
 
-<a class="MoreButton" href="/docs/transloadit-wrapper/form">View Documentation</a>
+<a class="MoreButton" href="/docs/robodog/form">View Documentation</a>
 
 ## Programmatic Uploads
 
@@ -97,7 +97,7 @@ const resultPromise = transloadit.upload(files, {
 })
 ```
 
-<a class="MoreButton" href="/docs/transloadit-wrapper/upload">View Documentation</a>
+<a class="MoreButton" href="/docs/robodog/upload">View Documentation</a>
 
 [transloadit]: https://transloadit.com/
 [browserify]: https://browserify.org

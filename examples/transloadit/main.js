@@ -1,4 +1,4 @@
-const transloadit = require('@uppy/transloadit-wrapper')
+const transloadit = require('@uppy/robodog')
 
 /**
  * transloadit.form
