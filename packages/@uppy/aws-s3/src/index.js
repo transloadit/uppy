@@ -70,8 +70,8 @@ module.exports = class AwsS3 extends Plugin {
       throw new Error('Expected a `serverUrl` option containing a Companion address.')
     }
 
-    const filename = encodeURIComponent(file.name)
-    const type = encodeURIComponent(file.type)
+    const filename = encodeURIComponent(file.meta.name)
+    const type = encodeURIComponent(file.meta.type)
     return this.client.get(`s3/params?filename=${filename}&type=${type}`)
       .then(assertServerError)
   }
