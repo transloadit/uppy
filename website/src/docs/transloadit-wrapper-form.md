@@ -34,8 +34,6 @@ Finally, we _really_ submit the form—without files, but with those Assembly st
 
 ## Transloadit
 
-**TODO inline most of this?**
-
 All the options to the [Transloadit][transloadit] plugin are supported.
 
 ## Restrictions
@@ -136,6 +134,12 @@ The equivalent options are listed below.
 | `fields` | `fields`. The CSS selector format is no longer supported. Instead, specify an array of form field names. `['field1']` instead of `'input[name=field1]`. |
 | `debug` | Obsolete, as Transloadit's backend has improved error reporting. |
 
+As for the options that are unavailable:
+
+- `modal` will be added in the future.
+- `exclude` is intended to exclude certain `<input type="file">` inputs from Transloadit processing. It will likely not be added, but we'll perhaps have a `include` CSS selector option instead.
+- `debug` will not be added.
+
 ### Events
 
 The `transloadit.form()` method returns an Uppy object, so you can listen to events there. There are no `on*()` _options_ anymore, but an `.on('*')` method is provided instead.
@@ -153,5 +157,3 @@ The `transloadit.form()` method returns an Uppy object, so you can listen to eve
 | `onSuccess` | `uppy.on('complete')` |
 | `onDisconnect` | Currently unavailable |
 | `onReconnect` | Currently unavailable |
-
-**TODO Need a simpler method to get progress, possibly a `'progress'` event that emits the result of `_calculateTotalProgress`**
