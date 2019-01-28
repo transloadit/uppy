@@ -7,6 +7,7 @@ const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
+const cuid = require('cuid')
 // const prettyBytes = require('prettier-bytes')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultTabIcon } = require('./components/icons')
@@ -40,7 +41,7 @@ module.exports = class Dashboard extends Plugin {
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
-    this.modalName = 'uppy-Dashboard'
+    this.modalName = `uppy-Dashboard-${cuid()}`
 
     const defaultLocale = {
       strings: {
@@ -140,7 +141,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
     // i18n
     this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
@@ -256,7 +257,10 @@ module.exports = class Dashboard extends Plugin {
     // Ensure history state does not already contain our modal name to avoid double-pushing
     if (!history.state || !history.state[this.modalName]) {
       // Push to history so that the page is not lost on browser back button press
-      history.pushState({ [this.modalName]: true }, '')
+      history.pushState({
+        ...history.state,
+        [this.modalName]: true
+      }, '')
     }
 
     // Listen for back button presses
@@ -265,7 +269,7 @@ module.exports = class Dashboard extends Plugin {
 
   handlePopState (event) {
     // Close the modal if the history state no longer contains our modal name
-    if (!event.state || !event.state[this.modalName]) {
+    if (this.isModalOpen() && (!event.state || !event.state[this.modalName])) {
       this.closeModal({ manualClose: false })
     }
 
@@ -336,6 +340,11 @@ module.exports = class Dashboard extends Plugin {
     const {
       manualClose = true // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
     } = opts
+
+    if (this.getPluginState().isClosing) {
+      // short-circuit if animation is ongoing
+      return
+    }
 
     if (this.opts.disablePageScrollWhenModalOpen) {
       document.body.classList.remove('uppy-Dashboard-isFixed')
