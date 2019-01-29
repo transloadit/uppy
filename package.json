@@ -141,5 +141,6 @@
     "testMatch": [
       "**/packages/**/*.test.js"
     ]
-  }
+  },
+  "dependencies": {}
 }
