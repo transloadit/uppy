@@ -1,4 +1,4 @@
-import Uppy, { UppyFile } from '../';
+import Uppy = require('../');
 
 {
   const uppy = Uppy();

@@ -36,7 +36,7 @@ const defaultOptions = {
 }
 
 /**
- * Entry point into initializing the companion app.
+ * Entry point into initializing the Companion app.
  *
  * @param {object} options
  */
@@ -51,7 +51,7 @@ module.exports.app = (options = {}) => {
 
   // create singleton redis client
   if (options.redisUrl) {
-    redis.client({ url: options.redisUrl })
+    redis.client(merge({ url: options.redisUrl }, options.redisOptions || {}))
   }
   emitter(options.multipleInstances && options.redisUrl)
 
@@ -117,7 +117,7 @@ module.exports.socket = (server) => {
     const fullPath = ws.upgradeReq.url
     // the token identifies which ongoing upload's progress, the socket
     // connection wishes to listen to.
-    const token = fullPath.replace(/\/api\//, '')
+    const token = fullPath.replace(/^.*\/api\//, '')
     logger.info(`connection received from ${token}`, 'socket.connect')
 
     /**
@@ -183,29 +183,6 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
 })
 
 /**
- * returns a logger function, that would log a message only if
- * the debug option is set to true
- *
- * @param {{debug: boolean}} options
- * @returns {function}
- */
-const getDebugLogger = (options) => {
-  // TODO: deprecate this.
-  // TODO: add line number and originating file
-  /**
-   *
-   * @param {string} message
-   */
-  const conditonalLogger = (message) => {
-    if (options.debug) {
-      logger.debug(message, 'debugLog')
-    }
-  }
-
-  return conditonalLogger
-}
-
-/**
  *
  * @param {object} options
  */
@@ -241,7 +218,6 @@ const getOptionsMiddleware = (options) => {
       options,
       s3Client,
       authToken: req.header('uppy-auth-token'),
-      debugLog: getDebugLogger(options),
       buildURL: getURLBuilder(options)
     }
     next()

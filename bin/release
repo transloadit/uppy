@@ -3,7 +3,6 @@
 set -o pipefail
 set -o errexit
 set -o nounset
-set -o xtrace
 
 # Set magic variables for current file & dir
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,19 +10,61 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
+if [[ ! "$@" =~ -y ]]; then
+  echo "Make sure to read https://uppy.io/docs/contributing#Releases!"
+  echo "Press Enter when ready, or Ctrl+C if you still need to do something."
+  echo "Use 'npm run release -- -y' to bypass this message."
+  read
+fi
+
+if [[ ! "$(npm get registry)" =~ https://registry\.npmjs\.(com|org)/? ]]; then
+  echo "Found unexpected npm registry: $(npm get registry)"
+  echo "Run this to fix:"
+  echo ""
+  echo "npm set registry https://registry.npmjs.org"
+  exit 1
+fi
+
+if ! npm whoami > /dev/null; then
+  echo "Not authenticated with npm. First do:"
+  echo ""
+  echo "npm login"
+  exit 1
+fi
+
+if ! which jq; then
+  echo "https://stedolan.github.io/jq/ needs to be installed and available in PATH to do a release."
+  exit 1
+fi
+
+perm="$(npm profile get --json | jq .tfa.mode? -r)"
+if [ "$perm" == "auth-and-writes" ]; then
+  echo "Two-factor auth is enabled for publishing. This doesn't work well with lerna."
+  echo "Temporarily switch to authentication-only 2FA using the link below:"
+  echo ""
+  echo "https://www.npmjs.com/settings/$(npm whoami)/tfa"
+  echo ""
+  echo "You can re-enable 2FA for publishing using the same link after this release is complete."
+  exit 1
+fi
+
+set -o xtrace
+
+# Update README before publishing `uppy`
+# So up-to-date contributors are shown on the npm page.
+npm run contributors:save
+git add README.md
+
 # Add readme file to the main `uppy` package.
 cp README.md packages/uppy/README.md
 
 npm run clean
-npm run build
+FRESH=1 npm run build
 
-lerna publish --message="Release" --exact
+git commit -m "Release"
+lerna version --amend --no-push --exact
 
-# Replace version numbers in URLs
-version_files="./examples/ README.md bin/upload-to-cdn.sh website/src/examples/ website/src/docs/ website/themes/uppy/layout/"
-main_package_version=$(node -p "require('./packages/uppy/package.json').version")
-replace-x -r 'uppy/v\d+\.\d+\.\d+/dist' "uppy/v$main_package_version/dist" $version_files --exclude=node_modules
-git commit -m "Change Uppy version references to v$main_package_version" $version_files
+lerna publish from-git
 
 git push
 git push --tags

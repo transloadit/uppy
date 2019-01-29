@@ -2,7 +2,8 @@ const getFileNameAndExtension = require('./getFileNameAndExtension')
 const mimeTypes = require('./mimeTypes')
 
 module.exports = function getFileType (file) {
-  const fileExtension = file.name ? getFileNameAndExtension(file.name).extension : null
+  let fileExtension = file.name ? getFileNameAndExtension(file.name).extension : null
+  fileExtension = fileExtension ? fileExtension.toLowerCase() : null
 
   if (file.isRemote) {
     // some remote providers do not support file types
@@ -19,6 +20,6 @@ module.exports = function getFileType (file) {
     return mimeTypes[fileExtension]
   }
 
-  // if all fails, well, return empty
-  return null
+  // if all fails, fall back to a generic byte stream type
+  return 'application/octet-stream'
 }

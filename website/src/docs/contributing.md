@@ -14,7 +14,10 @@ After you have successfully forked the repo, clone and install the project:
 git clone git@github.com:YOUR_USERNAME/uppy.git
 cd uppy
 npm install
+npm run bootstrap
 ```
+
+We use lerna to manage the many plugin packages Uppy has. You should always do `npm run bootstrap` after an `npm install` to make sure lerna has installed the dependencies of each package and that the `package-lock.json` in the repository root is up to date.
 
 Our website’s examples section is also our playground, please read the [Local Previews](#Local-Previews) section to get up and running.
 
@@ -22,7 +25,9 @@ Our website’s examples section is also our playground, please read the [Local 
 
 Unit tests are using Jest and can be run with:
 
-`npm run test:unit`
+```bash
+npm run test:unit
+```
 
 For acceptance (or end-to-end) tests, we use [Webdriverio](http://webdriver.io). For it to run locally, you need to install a Selenium standalone server. Just follow [the guide](http://webdriver.io/guide.html) to do so. You can also install a Selenium standalone server from NPM:
 
@@ -33,11 +38,35 @@ selenium-standalone install
 
 And then launch it:
 
-`selenium-standalone start`
+```bash
+selenium-standalone start
+```
 
 After you have installed and launched the selenium standalone server, run:
 
-`npm run test:acceptance:local`
+```bash
+npm run test:acceptance:local
+```
+
+By default, `test:acceptance:local` uses Firefox. You can use a different browser, like Chrome, by passing the `-b` flag:
+
+```bash
+npm run test:acceptance:local -- -b chrome
+```
+
+> Note: The `--` is important, it tells npm that the remaining arguments should be interpreted by the script itself, not by npm.
+
+You can run in multiple browsers by passing multiple `-b` flags:
+
+```bash
+npm run test:acceptance:local -- -b chrome -b firefox
+```
+
+When trying to get a specific integration test to pass, it's not that helpful to continuously run _all_ tests. You can use the `--suite` flag to run tests from a single `./test/endtoend` folder. For example, `--suite thumbnails` will only run the tests from `./test/endtoend/thumbnails`. Of course, it can also be combined with one or more `-b` flags.
+
+```bash
+npm run test:acceptance:local -- -b chrome --suite thumbnails
+```
 
 These tests are also run automatically on Travis builds with [SauceLabs](https://saucelabs.com/) cloud service using different OSes.
 
@@ -72,9 +101,16 @@ npm run release
 npm profile enable-2fa auth-only
 ```
 
-Other things to keep in mind:
+Other things to keep in mind during release:
 
 * When doing a minor release below 1.0, or a major release >= 1.0, of the `@uppy/core` package, the peerDependency of the plugin packages needs to be updated first. Eg when updating from 0.25.5 to 0.26.0, the peerDependency of each should be `"@uppy/core": "^0.26.0"` before doing `npm run release`.
+
+After a release, the demos on transloadit.com should also be updated. After updating, check that some things work locally:
+
+ - the demos in the demo section work (try one that uses an import robot, and one that you need to upload to)
+ - the demos on the homepage work and can import from GDrive, Insta, Dropbox
+
+If you don't have access to the transloadit.com source code ping @arturi or @goto-bus-stop and we'll pick it up. :sparkles:
 
 ## Website development
 

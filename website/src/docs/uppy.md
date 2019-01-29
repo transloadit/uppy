@@ -36,6 +36,7 @@ The Uppy core module has the following configurable options:
 const uppy = Uppy({
   id: 'uppy',
   autoProceed: false,
+  allowMultipleUploads: true,
   debug: false,
   restrictions: {
     maxFileSize: null,
@@ -69,6 +70,14 @@ const photoUploader = Uppy({ id: 'post' })
 
 By default Uppy will wait for an upload button to be pressed in the UI, or an `.upload()` method to be called, before starting an upload. Setting this to `autoProceed: true` will start uploading automatically after the first file is selected.
 
+### `allowMultipleUploads: true`
+
+Whether to allow multiple upload batches. This means multiple calls to `.upload()`, or a user adding more files after already uploading some. An upload batch is made up of the files that were added since the previous `.upload()` call.
+
+With this option set to `true`, users can upload some files, and then add _more_ files and upload those as well. A model use case for this is uploading images to a gallery or adding attachments to an email.
+
+With this option set to `false`, users can upload some files, and you can listen for the ['complete'](/docs/uppy/#complete) event to continue to the next step in your app's upload flow. A typical use case for this is uploading a new profile picture. If you are integrating with an existing HTML form, this option gives the closest behaviour to a bare `<input type="file">`.
+
 ### `restrictions: {}`
 
 Optionally, provide rules and conditions to limit the type and/or number of files that can be selected.
@@ -101,7 +110,7 @@ This global metadata is added to each file in Uppy. It can be modified by two me
 
 Metadata from each file is then attached to uploads in [Tus](/docs/tus/) and [XHRUpload](/docs/xhrupload/) plugins.
 
-Metadata can also be added from a `<form>` element on your page, through the [Form](/docs/form/)plugin or through the UI if you are using Dashboard with the [`metaFields`](/docs/dashboard/#metaFields) option.
+Metadata can also be added from a `<form>` element on your page, through the [Form](/docs/form/) plugin or through the UI if you are using Dashboard with the [`metaFields`](/docs/dashboard/#metaFields) option.
 
 <a id="onBeforeFileAdded"></a>
 ### `onBeforeFileAdded: (currentFile, files) => currentFile`
@@ -200,7 +209,7 @@ locale: {
     },
     exceedsSize: 'This file exceeds maximum allowed size of',
     youCanOnlyUploadFileTypes: 'You can only upload:',
-    uppyServerError: 'Connection with Uppy Server failed'
+    companionError: 'Connection with Companion failed'
   }
 }
 ```
@@ -239,6 +248,14 @@ const uppy = Uppy()
 uppy.use(DragDrop, { target: 'body' })
 ```
 
+### `uppy.removePlugin(instance)`
+
+Uninstall and remove a plugin.
+
+### `uppy.getPlugin(id)`
+
+Get a plugin by its [`id`](/docs/plugins/#id) to access its methods.
+
 ### `uppy.getID()`
 
 Get the Uppy instance ID, see the [`id` option](#id-39-uppy-39).
@@ -253,13 +270,15 @@ uppy.addFile({
   type: 'image/jpeg', // file type
   data: blob, // file blob
   source: 'Local', // optional, determines the source of the file, for example, Instagram
-  isRemote: false // optional, set to true if actual file is not in the browser, but on some remote server, for example, when using uppy-server in combination with Instagram
+  isRemote: false // optional, set to true if actual file is not in the browser, but on some remote server, for example, when using companion in combination with Instagram
 })
 ```
 
 `addFile` gives an error if the file cannot be added, either because `onBeforeFileAdded(file)` gave an error, or because `uppy.opts.restrictions` checks failed.
 
 If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically when files are added.
+
+> Sometimes you might need to add a remote file to Uppy. This can be achieved by [fetching the file, then creating a Blob object, or using the Url plugin with Companion](https://github.com/transloadit/uppy/issues/1006#issuecomment-413495493).
 
 ### `uppy.removeFile(fileID)`
 
@@ -321,6 +340,30 @@ uppy.upload().then((result) => {
 })
 ```
 
+### `uppy.pauseResume(fileID)`
+
+Toggle pause/resume on an upload. Will only work if resumable upload plugin, such as [Tus](/docs/tus/), is used.
+
+### `uppy.pauseAll()`
+
+Pause all uploads. Will only work if a resumable upload plugin, such as [Tus](/docs/tus/), is used.
+
+### `uppy.resumeAll()`
+
+Resume all uploads. Will only work if resumable upload plugin, such as [Tus](/docs/tus/), is used.
+
+### `uppy.retryUpload(fileID)`
+
+Retry an upload (after an error, for example).
+
+### `uppy.retryAll()`
+
+Retry all uploads (after an error, for example).
+
+### `uppy.cancelAll()`
+
+Cancel all uploads, reset progress and remove all files.
+
 ### `uppy.setState(patch)`
 
 Update Uppy's internal state. Usually, this method is called internally, but in some cases it might be useful to alter something directly, especially when implementing your own plugins.
@@ -379,6 +422,10 @@ Returns the current state from the [Store](#store-defaultStore).
 Update the state for a single file. This is mostly useful for plugins that may want to store data on file objects, or that need to pass file-specific configurations to other plugins that support it.
 
 `fileID` is the string file ID. `state` is an object that will be merged into the file's state object.
+
+```js
+uppy.getPlugin('Url').addFile('path/to/remote-file.jpg')
+```
 
 ### `uppy.setMeta(data)`
 
@@ -443,6 +490,10 @@ this.info({
 ### `uppy.on('event', action)`
 
 Subscribe to an uppy-event. See below for the full list of events.
+
+### `uppy.off('event', action)`
+
+Unsubscribe to an uppy-event. See below for the full list of events.
 
 ## Events
 
@@ -537,6 +588,16 @@ uppy.on('upload-error', (file, error) => {
 })
 ```
 
+### `upload-retry`
+
+Fired when an upload has been retried (after an error, for example):
+
+```js
+uppy.on('upload-retry', (fileID) => {
+  console.log('upload retried:', fileID)
+})
+```
+
 ### `info-visible`
 
 Fired when “info” message should be visible in the UI. By default, `Informer` plugin is displaying these messages (enabled by default in `Dashboard` plugin). You can use this event to show messages in your custom UI:
@@ -557,3 +618,7 @@ uppy.on('info-visible', () => {
 ### `info-hidden`
 
 Fired when “info” message should be hidden in the UI. See [`info-visible`](#info-visible).
+
+### `cancel-all`
+
+Fired when [`uppy.cancelAll()`]() is called, all uploads are canceled, files removed and progress is reset.

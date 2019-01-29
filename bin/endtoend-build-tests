@@ -11,7 +11,8 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
-tests="tus-drag-drop tus-dashboard i18n-drag-drop xhr-limit"
+# Tests using a simple build setup.
+tests="tus-drag-drop tus-dashboard i18n-drag-drop xhr-limit providers thumbnails transloadit url-plugin"
 
 for t in $tests; do
   mkdir -p "${__root}/test/endtoend/$t/dist"
@@ -22,4 +23,14 @@ for t in $tests; do
     -t babelify
 done
 
-(cd "${__root}/test/endtoend/create-react-app" && npm install && npm run build > /dev/null)
+# Speeecial tests that need custom builds.
+pushd "${__root}/test/endtoend/create-react-app"
+  npm install
+  npm run build
+popd
+pushd "${__root}/test/endtoend/typescript"
+  mkdir -p dist
+  cp "${__root}/packages/uppy/dist/uppy.min.css" dist/
+  cp index.html dist/
+  browserify main.ts -p [ tsify --target ES3 ] -o dist/bundle.js
+popd

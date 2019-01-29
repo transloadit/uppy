@@ -47,6 +47,7 @@ module.exports = class XHRUpload extends Plugin {
       timeout: 30 * 1000,
       limit: 0,
       withCredentials: false,
+      responseType: '',
       /**
        * @typedef respObj
        * @property {string} responseText
@@ -79,12 +80,11 @@ module.exports = class XHRUpload extends Plugin {
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
-    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
-    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
 
     // i18n
-    this.translator = new Translator({ locale: this.locale })
+    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
 
     this.handleUpload = this.handleUpload.bind(this)
 
@@ -173,7 +173,11 @@ module.exports = class XHRUpload extends Plugin {
       formPost.append(item, file.meta[item])
     })
 
-    formPost.append(opts.fieldName, file.data)
+    if (file.name) {
+      formPost.append(opts.fieldName, file.data, file.name)
+    } else {
+      formPost.append(opts.fieldName, file.data)
+    }
 
     return formPost
   }
@@ -198,16 +202,17 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       const xhr = new XMLHttpRequest()
+
       const id = cuid()
 
       xhr.upload.addEventListener('loadstart', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} started`)
-        // Begin checking for timeouts when loading starts.
-        timer.progress()
       })
 
       xhr.upload.addEventListener('progress', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`)
+        // Begin checking for timeouts when progress starts, instead of loading,
+        // to avoid timing out requests on browser concurrency queue
         timer.progress()
 
         if (ev.lengthComputable) {
@@ -268,8 +273,12 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
-
+      // IE10 does not allow setting `withCredentials` and `responseType`
+      // before `open()` is called.
       xhr.withCredentials = opts.withCredentials
+      if (opts.responseType !== '') {
+        xhr.responseType = opts.responseType
+      }
 
       Object.keys(opts.headers).forEach((header) => {
         xhr.setRequestHeader(header, opts.headers[header])
@@ -279,13 +288,6 @@ module.exports = class XHRUpload extends Plugin {
 
       this.uppy.on('file-removed', (removedFile) => {
         if (removedFile.id === file.id) {
-          timer.done()
-          xhr.abort()
-        }
-      })
-
-      this.uppy.on('upload-cancel', (fileID) => {
-        if (fileID === file.id) {
           timer.done()
           xhr.abort()
         }
@@ -362,8 +364,6 @@ module.exports = class XHRUpload extends Plugin {
 
       const xhr = new XMLHttpRequest()
 
-      xhr.withCredentials = this.opts.withCredentials
-
       const timer = this.createProgressTimeout(this.opts.timeout, (error) => {
         xhr.abort()
         emitError(error)
@@ -426,8 +426,12 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       xhr.open(method.toUpperCase(), endpoint, true)
-
+      // IE10 does not allow setting `withCredentials` and `responseType`
+      // before `open()` is called.
       xhr.withCredentials = this.opts.withCredentials
+      if (this.opts.responseType !== '') {
+        xhr.responseType = this.opts.responseType
+      }
 
       Object.keys(this.opts.headers).forEach((header) => {
         xhr.setRequestHeader(header, this.opts.headers[header])

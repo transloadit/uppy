@@ -8,7 +8,7 @@ permalink: docs/google-drive/
 
 The `@uppy/google-drive` plugin lets users import files from their Google Drive account.
 
-An Uppy Server instance is required for the `@uppy/google-drive` plugin to work. Uppy Server handles authentication with Google, downloads files from the Drive and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
+A Companion instance is required for the `@uppy/google-drive` plugin to work. Companion handles authentication with Google, downloads files from the Drive and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
 const GoogleDrive = require('@uppy/google-drive')
@@ -18,7 +18,7 @@ uppy.use(GoogleDrive, {
 })
 ```
 
-[Try live!](/examples/dashboard/)
+<a class="TryButton" href="/examples/dashboard/">Try it live</a>
 
 ## Installation
 
@@ -36,6 +36,12 @@ In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` gl
 const GoogleDrive = Uppy.GoogleDrive
 ```
 
+## CSS
+
+Dashboard plugin is recommended as a container to all Provider plugins, including Google Drive. If you are using Dashboard, it [comes with all the nessesary styles](/docs/dashboard/#CSS) for Dropbox as well.
+
+⚠️ If you are feeling adventurous, and want to use Google Drive plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officialy supported and not recommended.
+
 ## Options
 
 The `@uppy/google-drive` plugin has the following configurable options:
@@ -43,7 +49,7 @@ The `@uppy/google-drive` plugin has the following configurable options:
 ```js
 uppy.use(GoogleDrive, {
   target: Dashboard,
-  serverUrl: 'https://server.uppy.io/',
+  serverUrl: 'https://companion.uppy.io/',
 })
 ```
 
@@ -61,11 +67,11 @@ DOM element, CSS selector, or plugin to mount the Google Drive provider into. Th
 
 ### `serverUrl: null`
 
-URL to an [Uppy Server](/docs/server) instance.
+URL to a [Companion](/docs/companion) instance.
 
 ### `serverHeaders: {}`
 
-Custom headers that should be sent along to [Uppy Server](/docs/server) on every request.
+Custom headers that should be sent along to [Companion](/docs/companion) on every request.
 
 ### `serverPattern: serverUrl`
 
@@ -73,7 +79,7 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Uppy Server](/docs/server) running on multiple hosts. Otherwise, the default value should be good enough.
+This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should be good enough.
 
 ### `locale: {}`
 

@@ -6,40 +6,49 @@ alias: api/
 order: 0
 ---
 
-Uppy is a sleek, modular file uploader that integrates seamlessly with any framework. It fetches files from local disk, Google Drive, Dropbox, Instagram, remote urls, cameras and other exciting locations, and then uploads them to the final destination. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
+Uppy is a sleek and modular file uploader. It fetches files from local disk, Google Drive,Instagram, remote urls, cameras etc, and then uploads them to the final destination. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
 
-Uppy consists of a core module and [various plugins](/docs/plugins/) for selecting, manipulating and uploading files. Here’s how it works:
+Uppy consists of a core module and [various plugins](/docs/plugins/) for selecting, manipulating and uploading files.
 
-```bash
-# install dependencies
-npm install @uppy/core @uppy/dashboard @uppy/tus
-```
+Here’s the simplest example html page with Uppy (it uses a CDN bundle, while we recommend to use a bundler, see [Installation](#Installation)):
 
-```js
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const Tus = require('@uppy/tus')
- 
-const uppy = Uppy()
-  .use(Dashboard, {
-    trigger: '#select-files'
-  })
-  .use(Tus, {endpoint: 'https://master.tus.io/files/'})
- 
-uppy.on('complete', (result) => {
-  console.log(`Upload complete! We’ve uploaded these files: ${result.successful}`)
-})
+```html
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Uppy</title>
+    <link href="https://transloadit.edgly.net/releases/uppy/v0.29.1/dist/uppy.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="drag-drop-area"></div>
+
+    <script src="https://transloadit.edgly.net/releases/uppy/v0.29.1/dist/uppy.min.js"></script>
+    <script>
+      var uppy = Uppy.Core()
+        .use(Uppy.Dashboard, {
+          inline: true,
+          target: '#drag-drop-area'
+        })
+        .use(Uppy.Tus, {endpoint: 'https://master.tus.io/files/'})
+
+      uppy.on('complete', (result) => {
+        console.log('Upload complete! We’ve uploaded these files:', result.successful)
+      })
+    </script>
+  </body>
+</html>
 ```
 
 <a class="TryButton" href="/examples/dashboard/">Try it live</a>
 
 Drag and drop, webcam, basic file manipulation (adding metadata), uploading via tus-resumable uploads or XHR/Multipart is all possible using just the Uppy client module.
 
-Adding [Uppy Server](/docs/server/) to the mix enables remote sources such as Instagram, Google Drive, Dropbox, and remote URLs. Uploads from remote sources are handled server-to-server, so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Uppy Server after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
+Adding [Companion](/docs/companion/) to the mix enables remote sources such as Instagram, Google Drive, Dropbox, and remote URLs. Uploads from remote sources are handled server-to-server, so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Companion after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
 
 ## Installation
 
-Uppy can be used with a module bundler such as [Webpack](http://webpack.github.io/) or [Browserify](http://browserify.org/), or by including it in a script tag.
+Uppy can be used with a module bundler such as [Webpack](http://webpack.js.org/) or [Browserify](http://browserify.org/), or by including it in a script tag.
 
 > You may need polyfills if your application supports Internet Explorer or other older browsers. See [Browser Support](#browser-support).
 
@@ -53,10 +62,29 @@ $ npm install @uppy/core
 
 And install the plugins you need separately. The documentation pages for plugins in the sidebar show the necessary `npm install` commands. You can then import Uppy like so:
 
+```bash
+npm install @uppy/core @uppy/xhr-upload @uppy/dashboard
+```
+
 ```js
+// Import the plugins
 const Uppy = require('@uppy/core')
 const XHRUpload = require('@uppy/xhr-upload')
-const DragDrop = require('@uppy/drag-drop')
+const Dashboard = require('@uppy/dashboard')
+
+// And their styles (for UI plugins)
+require('@uppy/core/dist/style.css')
+require('@uppy/dashboard/dist/style.css')
+ 
+const uppy = Uppy()
+  .use(Dashboard, {
+    trigger: '#select-files'
+  })
+  .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
+ 
+uppy.on('complete', (result) => {
+  console.log('Upload complete! We’ve uploaded these files:', result.successful)
+})
 ```
 
 Many plugins include a CSS file for the necessary styles in their `dist/` folder. The plugin documentation pages will tell you which to use and when. When using multiple plugin CSS files, some code is duplicated. A CSS minifier like [clean-css](https://www.npmjs.com/package/clean-css) is recommended to remove the duplicate selectors.
@@ -78,25 +106,25 @@ And add the `uppy/dist/uppy.min.css` file to your page.
 ### With a script tag
 
 You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will attach itself to the global `window.Uppy` object.
-⚠️
-> The bundle consists of all plugins maintained by the Uppy team. This method is therefore not recommended for production, as your users will have to download all plugins, even if you are only using a few of them.
 
-1\. Add a script to the bottom of `<body>`:
+> ⚠️ The bundle consists of all plugins maintained by the Uppy team. This method is therefore not recommended for production, as your users will have to download all plugins, even if you are only using a few of them.
+
+1\. Add a script at the bottom of the closing `</body>` tag:
 
 ``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v0.26.0/dist/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.29.1/dist/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://transloadit.edgly.net/releases/uppy/v0.26.0/dist/uppy.min.css" rel="stylesheet">
+<link href="https://transloadit.edgly.net/releases/uppy/v0.29.1/dist/uppy.min.css" rel="stylesheet">
 ```
 
-3\. Initialize:
+3\. Initialize at the bottom of the closing `</body>` tag:
 
 ``` html
 <script>
-  var uppy = Uppy.Core({ autoProceed: false })
+  var uppy = Uppy.Core()
   uppy.use(Uppy.DragDrop, { target: '#drag-drop-area' })
   uppy.use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
 </script>
@@ -106,7 +134,7 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 
 - [Uppy](/docs/uppy/) — full list of options, methods and events.
 - [Plugins](/docs/plugins/) — list of Uppy plugins and their options.
-- [Server](/docs/server/) — setting up and running an uppy-server instance, which adds support for Instagram, Dropbox, Google Drive, direct links, and other remote sources.
+- [Server](/docs/companion/) — setting up and running a Companion instance, which adds support for Instagram, Dropbox, Google Drive, direct links, and other remote sources.
 - [React](/docs/react/) — components to integrate Uppy UI plugins with React apps.
 - [Writing Plugins](/docs/writing-plugins) — how to write a plugin for Uppy [documentation in progress].
 
@@ -124,6 +152,8 @@ Uppy heavily uses Promises. If your target environment [does not support Promise
 
 When using remote providers like Google Drive or Dropbox, the Fetch API is used. If your target environment does not support the [Fetch API](https://caniuse.com/#feat=fetch), use a polyfill like `whatwg-fetch` before initialising Uppy. The Fetch API polyfill must be loaded _after_ the Promises polyfill, because Fetch uses Promises.
 
+With a module bundler, you can use the required polyfills like so:
+
 ```shell
 npm install es6-promise whatwg-fetch
 ```
@@ -131,4 +161,12 @@ npm install es6-promise whatwg-fetch
 require('es6-promise/auto')
 require('whatwg-fetch')
 const Uppy = require('@uppy/core')
+```
+
+If you're using Uppy via a script tag, you can load the polyfills from [JSDelivr](https://www.jsdelivr.com/) like so:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4.2.5/dist/es6-promise.auto.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.29.1/dist/uppy.min.js"></script>
 ```

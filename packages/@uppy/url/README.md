@@ -7,7 +7,7 @@
 
 The Url plugin lets users import files from the Internet. Paste any URL and it’ll be added!
 
-An Uppy Server instance is required for the Url plugin to work. Uppy Server will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps avoid CORS restrictions.
+A Companion instance is required for the Url plugin to work. Companion will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps avoid CORS restrictions.
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 

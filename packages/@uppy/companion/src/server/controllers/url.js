@@ -19,10 +19,10 @@ module.exports = () => {
  * @param {object} res expressJS response object
  */
 const meta = (req, res) => {
-  req.uppy.debugLog('URL file import handler running')
+  logger.debug('URL file import handler running')
 
   if (!validator.isURL(req.body.url, { require_protocol: true, require_tld: !req.uppy.options.debug })) {
-    req.uppy.debugLog('Invalid request body detected. Exiting url meta handler.')
+    logger.debug('Invalid request body detected. Exiting url meta handler.')
     return res.status(400).json({error: 'Invalid request body'})
   }
 
@@ -42,13 +42,13 @@ const meta = (req, res) => {
  * @param {object} res expressJS response object
  */
 const get = (req, res) => {
-  req.uppy.debugLog('URL file import handler running')
+  logger.debug('URL file import handler running')
 
   utils.getURLMeta(req.body.url)
     .then(({ size }) => {
       // @ts-ignore
       const { filePath } = req.uppy.options
-      req.uppy.debugLog('Instantiating uploader.')
+      logger.debug('Instantiating uploader.')
       const uploader = new Uploader({
         uppyOptions: req.uppy.options,
         endpoint: req.body.endpoint,
@@ -61,9 +61,9 @@ const get = (req, res) => {
         headers: req.body.headers
       })
 
-      req.uppy.debugLog('Waiting for socket connection before beginning remote download.')
+      logger.debug('Waiting for socket connection before beginning remote download.')
       uploader.onSocketReady(() => {
-        req.uppy.debugLog('Socket connection received. Starting remote download.')
+        logger.debug('Socket connection received. Starting remote download.')
         downloadURL(req.body.url, uploader.handleChunk.bind(uploader))
       })
 

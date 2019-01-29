@@ -42,9 +42,12 @@ const FileInput = Uppy.FileInput
 
 The `@uppy/file-input` plugin includes some simple styles for use with the [`pretty`](#pretty-true) option, like shown in the [example](/examples/xhrupload). You can also choose not to use it and provide your own styles instead.
 
-The CSS file lives at `@uppy/file-input/dist/style.css`. A minified version is at `@uppy/file-input/dist/style.min.css`.
+```js
+import '@uppy/core/dist/style.css'
+import '@uppy/file-input/dist/style.css'
+```
 
-Import one of these files into your project. The way to do this depends on your build system.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Drag & Drop styles from `@uppy/file-input/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
 
 ## Options
 

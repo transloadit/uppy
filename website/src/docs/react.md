@@ -17,6 +17,10 @@ Install from NPM:
 npm install @uppy/react
 ```
 
+## CSS
+
+Make sure to also include the nessesary CSS files for each Uppy React component you are using. Follow links for individual components docs below for details on that.
+
 ## Usage
 
 The components can be used with either [React][] or API-compatible alternatives such as [Preact][].
@@ -27,7 +31,7 @@ All other props are passed as options to the plugin.
 ```js
 const Uppy = require('@uppy/core')
 const Tus = require('@uppy/tus')
-const DragDrop = require('@uppy/drag-drop')
+const { DragDrop } = require('@uppy/react')
 
 const uppy = Uppy({
   meta: { type: 'avatar' },
@@ -53,7 +57,11 @@ const AvatarPicker = ({ currentAvatar }) => {
         uppy={uppy}
         locale={{
           strings: {
-            chooseFile: 'Pick a new avatar'
+            // Text to show on the droppable area.
+            // `%{browse}` is replaced with a link that opens the system file selection dialog.
+            dropHereOr: 'Drop here or %{browse}',
+            // Used as the label for the link that opens the system file selection dialog.
+            browse: 'browse'
           }
         }}
       />

@@ -400,6 +400,6 @@ class Uploader {
 }
 
 Uploader.FILE_NAME_PREFIX = 'uppy-file'
-Uploader.STORAGE_PREFIX = 'uppy-server'
+Uploader.STORAGE_PREFIX = 'companion'
 
 module.exports = Uploader

@@ -1,16 +1,20 @@
-import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import Uppy = require('@uppy/core');
 
-export interface FileInputOptions extends PluginOptions {
-  pretty: boolean;
-  inputName: string;
+declare module FileInput {
+  interface FileInputOptions extends Uppy.PluginOptions {
+    pretty: boolean;
+    inputName: string;
+  }
 }
 
-export default class FileInput extends Plugin {
-  constructor(uppy: Uppy, opts: Partial<FileInputOptions>);
+declare class FileInput extends Uppy.Plugin {
+  constructor(uppy: Uppy.Uppy, opts: Partial<FileInput.FileInputOptions>);
 }
+
+export = FileInput;
 
 declare module '@uppy/core' {
   export interface Uppy {
-    use(pluginClass: typeof FileInput, opts: Partial<FileInputOptions>): Uppy;
+    use(pluginClass: typeof FileInput, opts: Partial<FileInput.FileInputOptions>): Uppy.Uppy;
   }
 }

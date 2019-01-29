@@ -13,12 +13,12 @@ logo_large: /images/logos/uppy-dog-full.svg
 logo_medium: /images/logos/uppy-dog-head-arrow.svg
 logo_icon: /images/logos/uppy-dog-head-arrow.png
 description: >
-    Sleek, modular file uploader that integrates seamlessly with any framework.
-    It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras and other exciting locations, and then uploads them to the final destination.
+    Sleek, modular file uploader that integrates seamlessly with any website or app.
+    It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras etc, and then uploads them to the final destination.
     It’s fast, easy to use and let's you worry about more important problems than building a file uploader.
 descriptionWho: >
   Uppy is brought to you by the people
-  behind <a href="https://transloadit.com">Transloadit</a> and as such will have first class support
+  behind <a href="https://transloadit.com">Transloadit</a>, and as such will have first class support
   for adding their uploading and encoding backend, but this is opt-in,
   and you can just as easily roll your own.
 author: Transloadit
@@ -132,6 +132,7 @@ postcss:
       browsers:
         - 'last 2 versions'
     cssnano:
+      safe: true
 
 browsersync:
   files: 'public/examples/**/*.js'

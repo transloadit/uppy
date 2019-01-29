@@ -4,6 +4,7 @@ import Tus from '@uppy/tus'
 import GoogleDrive from '@uppy/google-drive'
 import { Dashboard, DashboardModal } from '@uppy/react'
 // import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/react'
+import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
 // import '@uppy/drag-drop/dist/style.css'
 // import '@uppy/progress-bar/dist/style.css'
@@ -14,7 +15,7 @@ class App extends Component {
 
     this.uppy = new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-      .use(GoogleDrive, { serverUrl: 'https://server.uppy.io' })
+      .use(GoogleDrive, { serverUrl: 'https://companion.uppy.io' })
 
     this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })

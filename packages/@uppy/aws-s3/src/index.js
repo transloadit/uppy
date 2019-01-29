@@ -2,11 +2,29 @@ const resolveUrl = require('resolve-url')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const limitPromises = require('@uppy/utils/lib/limitPromises')
+const { RequestClient } = require('@uppy/companion-client')
 const XHRUpload = require('@uppy/xhr-upload')
 
 function isXml (xhr) {
   const contentType = xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type')
   return typeof contentType === 'string' && contentType.toLowerCase() === 'application/xml'
+}
+
+function getXmlValue (source, key) {
+  const start = source.indexOf(`<${key}>`)
+  const end = source.indexOf(`</${key}>`, start)
+  return start !== -1 && end !== -1
+    ? source.slice(start + key.length + 2, end)
+    : ''
+}
+
+function assertServerError (res) {
+  if (res && res.error) {
+    const error = new Error(res.message)
+    Object.assign(error, res.error)
+    throw error
+  }
+  return res
 }
 
 module.exports = class AwsS3 extends Plugin {
@@ -29,12 +47,14 @@ module.exports = class AwsS3 extends Plugin {
       locale: defaultLocale
     }
 
-    this.opts = Object.assign({}, defaultOptions, opts)
-    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
-    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
+    this.opts = { ...defaultOptions, ...opts }
 
-    this.translator = new Translator({ locale: this.locale })
+    // i18n
+    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
+
+    this.client = new RequestClient(uppy, opts)
 
     this.prepareUpload = this.prepareUpload.bind(this)
 
@@ -47,15 +67,13 @@ module.exports = class AwsS3 extends Plugin {
 
   getUploadParameters (file) {
     if (!this.opts.serverUrl) {
-      throw new Error('Expected a `serverUrl` option containing an uppy-server address.')
+      throw new Error('Expected a `serverUrl` option containing a Companion address.')
     }
 
-    const filename = encodeURIComponent(file.name)
-    const type = encodeURIComponent(file.type)
-    return fetch(`${this.opts.serverUrl}/s3/params?filename=${filename}&type=${type}`, {
-      method: 'get',
-      headers: { accept: 'application/json' }
-    }).then((response) => response.json())
+    const filename = encodeURIComponent(file.meta.name)
+    const type = encodeURIComponent(file.meta.type)
+    return this.client.get(`s3/params?filename=${filename}&type=${type}`)
+      .then(assertServerError)
   }
 
   validateParameters (file, params) {
@@ -157,6 +175,7 @@ module.exports = class AwsS3 extends Plugin {
       responseUrlFieldName: 'location',
       timeout: this.opts.timeout,
       limit: this.opts.limit,
+      responseType: 'text',
       // Get the response data from a successful XMLHttpRequest instance.
       // `content` is the S3 response as a string.
       // `xhr` is the XMLHttpRequest instance.
@@ -186,31 +205,13 @@ module.exports = class AwsS3 extends Plugin {
           return { location: xhr.responseURL.replace(/\?.*$/, '') }
         }
 
-        let getValue = () => ''
-        if (xhr.responseXML) {
-          getValue = (key) => {
-            const el = xhr.responseXML.querySelector(key)
-            return el ? el.textContent : ''
-          }
-        }
-
-        if (xhr.responseText) {
-          getValue = (key) => {
-            const start = xhr.responseText.indexOf(`<${key}>`)
-            const end = xhr.responseText.indexOf(`</${key}>`)
-            return start !== -1 && end !== -1
-              ? xhr.responseText.slice(start + key.length + 2, end)
-              : ''
-          }
-        }
-
         return {
           // Some S3 alternatives do not reply with an absolute URL.
           // Eg DigitalOcean Spaces uses /$bucketName/xyz
-          location: resolveUrl(xhr.responseURL, getValue('Location')),
-          bucket: getValue('Bucket'),
-          key: getValue('Key'),
-          etag: getValue('ETag')
+          location: resolveUrl(xhr.responseURL, getXmlValue(content, 'Location')),
+          bucket: getXmlValue(content, 'Bucket'),
+          key: getXmlValue(content, 'Key'),
+          etag: getXmlValue(content, 'ETag')
         }
       },
 
@@ -222,8 +223,8 @@ module.exports = class AwsS3 extends Plugin {
         if (!isXml(xhr)) {
           return
         }
-        const error = xhr.responseXML.querySelector('Error > Message')
-        return new Error(error.textContent)
+        const error = getXmlValue(content, 'Message')
+        return new Error(error)
       }
     })
   }

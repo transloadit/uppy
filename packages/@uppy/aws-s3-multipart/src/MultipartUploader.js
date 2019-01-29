@@ -254,6 +254,7 @@ class MultipartUploader {
       key: this.key,
       uploadId: this.uploadId
     })
+    this.uploading = []
   }
 
   _onError (err) {

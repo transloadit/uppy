@@ -1,3 +1,5 @@
+require('es6-promise/auto')
+require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const GoogleDrive = require('@uppy/google-drive')
@@ -7,7 +9,7 @@ const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
 const Tus = require('@uppy/tus')
 
-const UPPY_SERVER = require('../env')
+const COMPANION = require('../env')
 
 function uppyInit () {
   if (window.uppy) {
@@ -50,19 +52,19 @@ function uppyInit () {
   })
 
   if (opts.GoogleDrive) {
-    uppy.use(GoogleDrive, { target: Dashboard, serverUrl: UPPY_SERVER })
+    uppy.use(GoogleDrive, { target: Dashboard, serverUrl: COMPANION })
   }
 
   if (opts.Dropbox) {
-    uppy.use(Dropbox, { target: Dashboard, serverUrl: UPPY_SERVER })
+    uppy.use(Dropbox, { target: Dashboard, serverUrl: COMPANION })
   }
 
   if (opts.Instagram) {
-    uppy.use(Instagram, { target: Dashboard, serverUrl: UPPY_SERVER })
+    uppy.use(Instagram, { target: Dashboard, serverUrl: COMPANION })
   }
 
   if (opts.Url) {
-    uppy.use(Url, { target: Dashboard, serverUrl: UPPY_SERVER })
+    uppy.use(Url, { target: Dashboard, serverUrl: COMPANION })
   }
 
   if (opts.Webcam) {

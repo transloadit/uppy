@@ -43,11 +43,18 @@ const Dashboard = Uppy.Dashboard
 
 ## CSS
 
-The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
+The `@uppy/dashboard` plugin requires the following CSS for styling:
 
-The CSS file lives at `@uppy/dashboard/dist/style.css`. A minified version is at `@uppy/dashboard/dist/style.min.css`.
+```js
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
+```
 
-Import one of these files into your project. The way to do this depends on your build system.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+
+⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
+
+Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not inluded. If you are using those, please see their docs and make sure to include styles for them as well.
 
 ## Options
 
@@ -55,6 +62,7 @@ The Dashboard can be extensively customized by configuring the options below to 
 
 ```js
 uppy.use(Dashboard, {
+  id: 'Dashboard',
   target: 'body',
   metaFields: [],
   trigger: '#uppy-select-files',
@@ -66,16 +74,23 @@ uppy.use(Dashboard, {
   showLinkToFileUploadResult: true,
   showProgressDetails: false,
   hideUploadButton: false,
+  hideRetryButton: false,
+  hidePauseResumeButton: false,
+  hideCancelButton: false,
   hideProgressAfterFinish: false,
   note: null,
   closeModalOnClickOutside: false,
+  closeAfterFinish: false,
   disableStatusBar: false,
   disableInformer: false,
   disableThumbnailGenerator: false,
   disablePageScrollWhenModalOpen: true,
+  animateOpenClose: true,
   proudlyDisplayPoweredByUppy: true,
   onRequestCloseModal: () => this.closeModal(),
-  locale: {}
+  showSelectedFiles: true,
+  locale: defaultLocale,
+  browserBackButtonClose: false
 })
 ```
 
@@ -117,28 +132,52 @@ Width of the Dashboard in pixels. Used when `inline: true`.
 
 Height of the Dashboard in pixels. Used when `inline: true`.
 
+### `showLinkToFileUploadResult: true`
+
+By default, when a file upload has completed, the file icon in the Dashboard turns into a link to the uploaded file. If your app does not publicly store uploaded files or if it's otherwise unwanted, pass `showLinkToFileUploadResult: false`.
+
 ### `showProgressDetails: false`
 
-By default, progress in StatusBar is shown as a simple percentage. If you would like to also display remaining upload size and time, set this to `true`.
+Passed to the Status Bar plugin used in the Dashboard.
+
+By default, progress in Status Bar is shown as a simple percentage. If you would like to also display remaining upload size and time, set this to `true`.
 
 `showProgressDetails: false`: Uploading: 45%
 `showProgressDetails: true`: Uploading: 45%・43 MB of 101 MB・8s left
 
 ### `hideUploadButton: false`
 
+Passed to the Status Bar plugin used in the Dashboard.
+
 Hide the upload button. Use this if you are providing a custom upload button somewhere, and using the `uppy.upload()` API.
 
 ### `hideRetryButton: false`
 
+Passed to the Status Bar plugin used in the Dashboard.
+
 Hide the retry button. Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
 
-### `hidePauseResumeCancelButtons: false`
+### `hidePauseResumeButton: false`
 
-Hide the cancel or pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)`, `uppy.cancelAll()` or `uppy.removeFile(fileID)` API.
+Passed to the Status Bar plugin used in the Dashboard. 
+
+Hide pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)` or `uppy.removeFile(fileID)` API.
+
+### `hideCancelButton: false`
+
+Passed to the Status Bar plugin used in the Dashboard.
+
+Hide the cancel button. Use this if you are providing a custom retry button somewhere, and using the `uppy.cancelAll()` API.
 
 ### `hideProgressAfterFinish: false`
 
-Hide StatusBar after the upload has finished.
+Hide Status Bar after the upload has finished.
+
+### `showSelectedFiles: true`
+
+Show the list (grid) of selected files with preview and file name. In case you are showing selected files in your own app’s UI and want the Uppy Dashboard to just be a picker, the list can be hidden with this option.
+
+See also `disableStatusBar` option, which can hide the progress and upload button.
 
 ### `note: null`
 
@@ -168,6 +207,14 @@ Note that this metadata will only be set on a file object if it is entered by th
 ### `closeModalOnClickOutside: false`
 
 Set to true to automatically close the modal when the user clicks outside of it.
+
+### `closeAfterFinish: false`
+
+Set to true to automatically close the modal when all current uploads are complete. You can use this together with the [`allowMultipleUploads: false`](/docs/uppy#allowMultipleUploads-true) option in Uppy Core to create a smooth experience when uploading a single (batch of) file(s).
+
+With this option, the modal is only automatically closed when uploads are complete _and successful_. If some uploads failed, the modal stays open so the user can retry failed uploads or cancel the current batch and upload an entirely different set of files instead.
+
+> Setting [`allowMultipleUploads: false`](/docs/uppy#allowMultipleUploads-true) is **strongly** recommended when using this option. With multiple upload batches, the auto-closing behavior can be very confusing for users.
 
 ### `disablePageScrollWhenModalOpen: true`
 
@@ -207,6 +254,8 @@ The default English strings are:
 strings: {
   // When `inline: false`, used as the screen reader label for the button that closes the modal.
   closeModal: 'Close Modal',
+  // Used as the screen reader label for the plus (+) button that shows the “Add more files” screen
+  addMoreFiles: 'Add more files',
   // Used as the header for import panels, e.g., "Import from Google Drive".
   importFrom: 'Import from %{name}',
   // When `inline: false`, used as the screen reader label for the dashboard modal.

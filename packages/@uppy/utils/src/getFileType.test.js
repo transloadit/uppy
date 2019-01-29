@@ -32,9 +32,13 @@ describe('getFileType', () => {
       name: 'bar.mkv',
       data: 'sdfsfhfh329fhwihs'
     }
+    const toUpper = (file) => Object.assign({}, file, { name: file.name.toUpperCase() })
     expect(getFileType(fileMP3)).toEqual('audio/mp3')
+    expect(getFileType(toUpper(fileMP3))).toEqual('audio/mp3')
     expect(getFileType(fileYAML)).toEqual('text/yaml')
+    expect(getFileType(toUpper(fileYAML))).toEqual('text/yaml')
     expect(getFileType(fileMKV)).toEqual('video/x-matroska')
+    expect(getFileType(toUpper(fileMKV))).toEqual('video/x-matroska')
   })
 
   it('should fail gracefully if unable to detect', () => {
@@ -42,6 +46,6 @@ describe('getFileType', () => {
       name: 'foobar',
       data: 'sdfsfhfh329fhwihs'
     }
-    expect(getFileType(file)).toEqual(null)
+    expect(getFileType(file)).toEqual('application/octet-stream')
   })
 })

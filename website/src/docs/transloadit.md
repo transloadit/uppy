@@ -45,26 +45,47 @@ const Transloadit = Uppy.Transloadit
 
 ## Properties
 
-### `Transloadit.UPPY_SERVER`
+### `Transloadit.COMPANION`
 
-The main endpoint for Transloadit's hosted uppy-servers. You can use this constant in remote provider options, like so:
+The main endpoint for Transloadit's hosted companions. You can use this constant in remote provider options, like so:
 
 ```js
 const Dropbox = require('@uppy/dropbox')
 const Transloadit = require('@uppy/transloadit')
 
 uppy.use(Dropbox, {
-  serverUrl: Transloadit.UPPY_SERVER
+  serverUrl: Transloadit.COMPANION
+  serverPattern: Transloadit.COMPANION_PATTERN
 })
 ```
 
-The value of this constant is `https://api2.transloadit.com/uppy-server`. If you are using a custom [`service`](#service) option, you should also set a custom host option in your provider plugins, by taking a Transloadit API url and appending `/uppy-server`:
+When using `Transloadit.COMPANION`, you should also configure [`serverPattern: Transloadit.COMPANION_PATTERN`](#Transloadit-COMPANION-PATTERN).
+
+The value of this constant is `https://api2.transloadit.com/companion`. If you are using a custom [`service`](#service) option, you should also set a custom host option in your provider plugins, by taking a Transloadit API url and appending `/companion`:
 
 ```js
 uppy.use(Dropbox, {
-  serverUrl: 'https://api2-us-east-1.transloadit.com/uppy-server'
+  serverUrl: 'https://api2-us-east-1.transloadit.com/companion'
 })
 ```
+
+### `Transloadit.COMPANION_PATTERN`
+
+A RegExp pattern matching Transloadit's hosted companion endpoints. The pattern is used in remote provider `serverPattern` options, to ensure that third party authentication messages cannot be faked by an attacker's page, but can only originate from Transloadit's servers.
+
+Use it whenever you use `serverUrl: Transloadit.COMPANION`, like so:
+
+```js
+const Dropbox = require('@uppy/dropbox')
+const Transloadit = require('@uppy/transloadit')
+
+uppy.use(Dropbox, {
+  serverUrl: Transloadit.COMPANION
+  serverPattern: Transloadit.COMPANION_PATTERN
+})
+```
+
+The value of this constant covers _all_ Transloadit's Companion servers, so it does not need to be changed if you are using a custom [`service`](#service) option. However, if you are not using the Transloadit Companion servers at `*.transloadit.com`, make sure to set the `serverPattern` option to something that matches what you do use.
 
 ## Options
 

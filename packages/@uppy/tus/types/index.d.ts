@@ -1,20 +1,24 @@
-import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import Uppy = require('@uppy/core');
 
-export interface TusOptions extends PluginOptions {
-  limit: number;
-  endpoint: string;
-  uploadUrl: string;
-  useFastRemoteRetry: boolean;
-  resume: boolean;
-  autoRetry: boolean;
+declare module Tus {
+  export interface TusOptions extends Uppy.PluginOptions {
+    limit: number;
+    endpoint: string;
+    uploadUrl: string;
+    useFastRemoteRetry: boolean;
+    resume: boolean;
+    autoRetry: boolean;
+  }
 }
 
-export default class Tus extends Plugin {
-  constructor(uppy: Uppy, opts: Partial<TusOptions>);
+declare class Tus extends Uppy.Plugin {
+  constructor(uppy: Uppy.Uppy, opts: Partial<Tus.TusOptions>);
 }
+
+export = Tus;
 
 declare module '@uppy/core' {
   export interface Uppy {
-    use(pluginClass: typeof Tus, opts: Partial<TusOptions>): Uppy;
+    use(pluginClass: typeof Tus, opts: Partial<Tus.TusOptions>): Uppy.Uppy;
   }
 }

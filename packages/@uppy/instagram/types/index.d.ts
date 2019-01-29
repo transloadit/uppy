@@ -1,17 +1,21 @@
-import { Plugin, PluginOptions, Uppy } from '@uppy/core';
-import { ProviderOptions } from '@uppy/companion-client';
+import Uppy = require('@uppy/core');
+import CompanionClient = require('@uppy/companion-client');
 
-export interface InstagramOptions extends PluginOptions, ProviderOptions {
-  serverUrl: string;
-  serverPattern: string | RegExp | Array<string | RegExp>;
+declare module Instagram {
+  interface InstagramOptions extends Uppy.PluginOptions, CompanionClient.ProviderOptions {
+    serverUrl: string;
+    serverPattern: string | RegExp | Array<string | RegExp>;
+  }
 }
 
-export default class Instagram extends Plugin {
-  constructor(uppy: Uppy, opts: Partial<InstagramOptions>);
+declare class Instagram extends Uppy.Plugin {
+  constructor(uppy: Uppy.Uppy, opts: Partial<Instagram.InstagramOptions>);
 }
+
+export = Instagram;
 
 declare module '@uppy/core' {
   export interface Uppy {
-    use(pluginClass: typeof Instagram, opts: Partial<InstagramOptions>): Uppy;
+    use(pluginClass: typeof Instagram, opts: Partial<Instagram.InstagramOptions>): Uppy.Uppy;
   }
 }

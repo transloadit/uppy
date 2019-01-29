@@ -159,6 +159,19 @@
     vertical-align: middle;
   }
 
+  table {
+    display: block;
+    font-size: 85%;
+    border-spacing: 10px;
+    overflow-x: auto;
+    // white-space: nowrap;
+  }
+
+  // table td,
+  // table th {
+  //   padding-right: 30px;
+  // }
+
   .light {
     color: $color-light;
   }
@@ -200,7 +213,7 @@
     font-size: 1.3em;
     margin: 1.6em 0 .4em 0;
     padding-bottom: .2em;
-    position: relative;
+    // position: relative;
     // border-bottom: 1px solid $color-border;
 
     // &:before {
@@ -363,6 +376,7 @@
 .TryButton,
 a.TryButton {
   @include reset-button;
+  display: inline-block;
   font-size: 0.8em;
   padding: 7px 16px;
   border: 1px solid $color-primary;
@@ -370,7 +384,7 @@ a.TryButton {
   color: $color-primary;
   cursor: pointer;
   border-radius: 15px;
-  margin-bottom: 1.5em;
+  margin: 0.7em 0;
 
   &:hover {
     background-color: $color-primary;

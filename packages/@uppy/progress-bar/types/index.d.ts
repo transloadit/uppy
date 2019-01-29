@@ -1,16 +1,20 @@
-import { Plugin, PluginOptions, Uppy } from '@uppy/core';
+import Uppy = require('@uppy/core');
 
-export interface ProgressBarOptions extends PluginOptions {
-  hideAfterFinish: boolean;
-  fixed: boolean;
+declare module ProgressBar {
+  interface ProgressBarOptions extends Uppy.PluginOptions {
+    hideAfterFinish: boolean;
+    fixed: boolean;
+  }
 }
 
-export default class ProgressBar extends Plugin {
-  constructor(uppy: Uppy, opts: Partial<ProgressBarOptions>);
+declare class ProgressBar extends Uppy.Plugin {
+  constructor(uppy: Uppy.Uppy, opts: Partial<ProgressBar.ProgressBarOptions>);
 }
+
+export = ProgressBar;
 
 declare module '@uppy/core' {
   export interface Uppy {
-    use(pluginClass: typeof ProgressBar, opts: Partial<ProgressBarOptions>): Uppy;
+    use(pluginClass: typeof ProgressBar, opts: Partial<ProgressBar.ProgressBarOptions>): Uppy.Uppy;
   }
 }

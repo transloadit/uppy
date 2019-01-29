@@ -1,5 +1,5 @@
-@import '@uppy/core/src/style.scss';
-@import '@uppy/utils/src/microtip.scss';
+@import '@uppy/core/src/_utils.scss';
+@import '@uppy/core/src/_variables.scss';
 
 .uppy-Informer {
   position: absolute;
@@ -33,6 +33,7 @@
     opacity: 0;
     transform: translateY(350%);
     transition: all 300ms ease-in;
+    z-index: $zIndex-negative;
   }
 
 .uppy-Informer p {

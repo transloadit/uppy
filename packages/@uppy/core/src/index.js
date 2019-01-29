@@ -8,8 +8,8 @@ const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
-const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
+const supportsUploadProgress = require('./supportsUploadProgress')
 const Plugin = require('./Plugin') // Exported from here.
 
 /**
@@ -35,7 +35,7 @@ class Uppy {
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload:',
-        uppyServerError: 'Connection with Uppy Server failed',
+        companionError: 'Connection with Companion failed',
         failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
         connectedToInternet: 'Connected to the Internet',
@@ -54,6 +54,7 @@ class Uppy {
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
+      allowMultipleUploads: true,
       debug: false,
       restrictions: {
         maxFileSize: null,
@@ -72,11 +73,9 @@ class Uppy {
     this.opts = Object.assign({}, defaultOptions, opts)
     this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
 
-    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
-    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
-
     // i18n
-    this.translator = new Translator({locale: this.locale})
+    this.translator = new Translator([ defaultLocale, this.opts.locale ])
+    this.locale = this.translator.locale
     this.i18n = this.translator.translate.bind(this.translator)
 
     // Container for different types of plugins
@@ -118,11 +117,13 @@ class Uppy {
       plugins: {},
       files: {},
       currentUploads: {},
+      allowNewUpload: true,
       capabilities: {
+        uploadProgress: supportsUploadProgress(),
         resumableUploads: false
       },
       totalProgress: 0,
-      meta: Object.assign({}, this.opts.meta),
+      meta: { ...this.opts.meta },
       info: {
         isHidden: true,
         type: 'info',
@@ -378,13 +379,17 @@ class Uppy {
   * @param {object} file object to add
   */
   addFile (file) {
-    const { files } = this.getState()
+    const { files, allowNewUpload } = this.getState()
 
     const onError = (msg) => {
       const err = typeof msg === 'object' ? msg : new Error(msg)
       this.log(err.message)
       this.info(err.message, 'error', 5000)
       throw err
+    }
+
+    if (allowNewUpload === false) {
+      onError(new Error('Cannot add new files: already uploading.'))
     }
 
     const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
@@ -500,17 +505,13 @@ class Uppy {
     this._calculateTotalProgress()
     this.emit('file-removed', removedFile)
     this.log(`File removed: ${removedFile.id}`)
-
-    // Clean up object URLs.
-    if (removedFile.preview && isObjectURL(removedFile.preview)) {
-      URL.revokeObjectURL(removedFile.preview)
-    }
-
-    this.log(`Removed file: ${fileID}`)
   }
 
   pauseResume (fileID) {
-    if (this.getFile(fileID).uploadComplete) return
+    if (!this.getState().capabilities.resumableUploads ||
+         this.getFile(fileID).uploadComplete) {
+      return
+    }
 
     const wasPaused = this.getFile(fileID).isPaused || false
     const isPaused = !wasPaused
@@ -588,16 +589,13 @@ class Uppy {
   cancelAll () {
     this.emit('cancel-all')
 
-    // TODO Or should we just call removeFile on all files?
-    const { currentUploads } = this.getState()
-    const uploadIDs = Object.keys(currentUploads)
-
-    uploadIDs.forEach((id) => {
-      this._removeUpload(id)
+    const files = Object.keys(this.getState().files)
+    files.forEach((fileID) => {
+      this.removeFile(fileID)
     })
 
     this.setState({
-      files: {},
+      allowNewUpload: true,
       totalProgress: 0,
       error: null
     })
@@ -643,22 +641,49 @@ class Uppy {
   _calculateTotalProgress () {
     // calculate total progress, using the number of files currently uploading,
     // multiplied by 100 and the summ of individual progress of each file
-    const files = Object.assign({}, this.getState().files)
+    const files = this.getFiles()
 
-    const inProgress = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadStarted
-    })
-    const progressMax = inProgress.length * 100
-    let progressAll = 0
-    inProgress.forEach((file) => {
-      progressAll = progressAll + files[file].progress.percentage
+    const inProgress = files.filter((file) => {
+      return file.progress.uploadStarted
     })
 
-    const totalProgress = progressMax === 0 ? 0 : Math.floor((progressAll * 100 / progressMax).toFixed(2))
+    if (inProgress.length === 0) {
+      this.setState({ totalProgress: 0 })
+      return
+    }
 
-    this.setState({
-      totalProgress: totalProgress
+    const sizedFiles = inProgress.filter((file) => file.progress.bytesTotal != null)
+    const unsizedFiles = inProgress.filter((file) => file.progress.bytesTotal == null)
+
+    if (sizedFiles.length === 0) {
+      const progressMax = inProgress.length
+      const currentProgress = unsizedFiles.reduce((acc, file) => {
+        return acc + file.progress.percentage
+      }, 0)
+      const totalProgress = Math.round(currentProgress / progressMax * 100)
+      this.setState({ totalProgress })
+      return
+    }
+
+    let totalSize = sizedFiles.reduce((acc, file) => {
+      return acc + file.progress.bytesTotal
+    }, 0)
+    const averageSize = totalSize / sizedFiles.length
+    totalSize += averageSize * unsizedFiles.length
+
+    let uploadedSize = 0
+    sizedFiles.forEach((file) => {
+      uploadedSize += file.progress.bytesUploaded
     })
+    unsizedFiles.forEach((file) => {
+      uploadedSize += averageSize * (file.progress.percentage || 0)
+    })
+
+    const totalProgress = totalSize === 0
+      ? 0
+      : Math.round(uploadedSize / totalSize * 100)
+
+    this.setState({ totalProgress })
   }
 
   /**
@@ -785,7 +810,7 @@ class Uppy {
     })
 
     // show informer if offline
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && window.addEventListener) {
       window.addEventListener('online', () => this.updateOnlineStatus())
       window.addEventListener('offline', () => this.updateOnlineStatus())
       setTimeout(() => this.updateOnlineStatus(), 3000)
@@ -859,14 +884,13 @@ class Uppy {
   /**
    * Find one Plugin by name.
    *
-   * @param {string} name description
+   * @param {string} id plugin id
    * @return {object | boolean}
    */
-  getPlugin (name) {
+  getPlugin (id) {
     let foundPlugin = null
     this.iteratePlugins((plugin) => {
-      const pluginName = plugin.id
-      if (pluginName === name) {
+      if (plugin.id === id) {
         foundPlugin = plugin
         return false
       }
@@ -1031,6 +1055,11 @@ class Uppy {
    * @return {string} ID of this upload.
    */
   _createUpload (fileIDs) {
+    const { allowNewUpload, currentUploads } = this.getState()
+    if (!allowNewUpload) {
+      throw new Error('Cannot create a new upload: already uploading.')
+    }
+
     const uploadID = cuid()
 
     this.emit('upload', {
@@ -1039,20 +1068,25 @@ class Uppy {
     })
 
     this.setState({
-      currentUploads: Object.assign({}, this.getState().currentUploads, {
+      allowNewUpload: this.opts.allowMultipleUploads !== false,
+
+      currentUploads: {
+        ...currentUploads,
         [uploadID]: {
           fileIDs: fileIDs,
           step: 0,
           result: {}
         }
-      })
+      }
     })
 
     return uploadID
   }
 
   _getUpload (uploadID) {
-    return this.getState().currentUploads[uploadID]
+    const { currentUploads } = this.getState()
+
+    return currentUploads[uploadID]
   }
 
   /**
@@ -1098,7 +1132,6 @@ class Uppy {
    */
   _runUpload (uploadID) {
     const uploadData = this.getState().currentUploads[uploadID]
-    const fileIDs = uploadData.fileIDs
     const restoreStep = uploadData.step
 
     const steps = [
@@ -1123,9 +1156,10 @@ class Uppy {
             [uploadID]: currentUpload
           })
         })
+
         // TODO give this the `currentUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-        return fn(fileIDs, uploadID)
+        return fn(currentUpload.fileIDs, uploadID)
       }).then((result) => {
         return null
       })
@@ -1135,23 +1169,31 @@ class Uppy {
     // promise from this method if the upload failed.
     lastStep.catch((err) => {
       this.emit('error', err, uploadID)
-
       this._removeUpload(uploadID)
     })
 
     return lastStep.then(() => {
-      const files = fileIDs.map((fileID) => this.getFile(fileID))
-      const successful = files.filter((file) => file && !file.error)
-      const failed = files.filter((file) => file && file.error)
-      this.addResultData(uploadID, { successful, failed, uploadID })
-
+      // Set result data.
       const { currentUploads } = this.getState()
-      if (!currentUploads[uploadID]) {
+      const currentUpload = currentUploads[uploadID]
+      if (!currentUpload) {
         this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
         return
       }
 
-      const result = currentUploads[uploadID].result
+      const files = currentUpload.fileIDs
+        .map((fileID) => this.getFile(fileID))
+      const successful = files.filter((file) => !file.error)
+      const failed = files.filter((file) => file.error)
+      this.addResultData(uploadID, { successful, failed, uploadID })
+    }).then(() => {
+      // Emit completion events.
+      // This is in a separate function so that the `currentUploads` variable
+      // always refers to the latest state. In the handler right above it refers
+      // to an outdated object without the `.result` property.
+      const { currentUploads } = this.getState()
+      const currentUpload = currentUploads[uploadID]
+      const result = currentUpload.result
       this.emit('complete', result)
 
       this._removeUpload(uploadID)

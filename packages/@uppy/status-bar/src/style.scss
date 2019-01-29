@@ -1,4 +1,5 @@
-@import '@uppy/core/src/style.scss';
+@import '@uppy/core/src/_utils.scss';
+@import '@uppy/core/src/_variables.scss';
 @import '@uppy/utils/src/microtip.scss';
 
 .uppy-StatusBar {
@@ -15,7 +16,7 @@
 }
 
   .uppy-size--md .uppy-StatusBar {
-    height: 45px;
+    height: 46px;
     font-size: 14px;
   }
 
@@ -44,13 +45,6 @@
   background-color: $color-red;
 }
 
-.uppy-StatusBar.is-complete .uppy-StatusBar-content {
-  // width: 100%;
-  // text-align: center;
-  // padding-left: 0;
-  // justify-content: center;
-}
-
 .uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator {
   cursor: default;
   color: $color-green;
@@ -70,20 +64,25 @@
   transition: background-color, width .3s ease-out;
 
   &.is-indeterminate {
-    $stripe-color: darken($color-cornflower-blue, 10%);
+    $stripe-color: rgba(0, 0, 0, 0.3);
     background-size: 64px 64px;
     background-image: linear-gradient(45deg, $stripe-color 25%, transparent 25%, transparent 50%, $stripe-color 50%, $stripe-color 75%, transparent 75%, transparent);
-    animation: statusBarProgressStripes 1s linear infinite;
+    animation: uppy-StatusBar-ProgressStripes 1s linear infinite;
   }
 }
 
+  @keyframes uppy-StatusBar-ProgressStripes {
+    from { background-position: 0 0; }
+    to { background-position: 64px 0; }
+  }
+
+  .uppy-StatusBar.is-preprocessing .uppy-StatusBar-progress,
+  .uppy-StatusBar.is-postprocessing .uppy-StatusBar-progress {
+    background-color: $color-orange;
+  }
+
 .uppy-StatusBar.is-waiting .uppy-StatusBar-progress {
   display: none;
-}
-
-@keyframes statusBarProgressStripes {
-  from { background-position: 64px 0; }
-  to { background-position: 0 0; }
 }
 
 .uppy-StatusBar-content {
@@ -91,12 +90,15 @@
   align-items: center;
   position: relative;
   z-index: $zIndex-3;
-  padding-left: 15px;
+  padding-left: 10px;
   white-space: nowrap;
   text-overflow: ellipsis;
-  // color: $color-white;
   color: $color-black;
   height: 100%;
+
+  .uppy-size--md & {
+    padding-left: 15px;
+  }
 }
 
 .uppy-StatusBar-contentPadding {
@@ -104,39 +106,68 @@
 }
 
 .uppy-StatusBar-status {
-  line-height: 1.5;
+  line-height: 1.4;
   font-weight: normal;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  max-width: 170px;
+  overflow-x: hidden;
+
+  .uppy-size--md & {
+    line-height: 1.5;
+    max-width: 400px;
+  }
 }
 
 .uppy-StatusBar-statusPrimary {
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 400;
+
+  .uppy-size--md & {
+    font-size: 13px;
+  }
 }
 
 .uppy-StatusBar-statusSecondary {
-  font-size: 11px;
-  display: none;
+  font-size: 10px;
+  // line-height: 1;
+  display: inline-block;
   color: rgba($color-asphalt-gray, 0.8);
-  max-width: 170px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  overflow: hidden;
+  overflow-x: hidden;
+  // max-width: 170px;
 
   .uppy-size--md & {
-    max-width: 500px;
+    font-size: 11px;
+    // max-width: 500px;
   }
 }
 
-  .uppy-StatusBar--detailedProgress .uppy-StatusBar-statusSecondary {
+  .uppy-StatusBar-statusSecondaryHint {
     display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+    line-height: 1;
+
+    .uppy-size--md & {
+      margin-right: 8px;
+    }
   }
+
+  // .uppy-StatusBar--detailedProgress .uppy-StatusBar-statusSecondary {
+  //   display: inline-block;
+  // }
 
 .uppy-StatusBar-statusIndicator {
   color: $color-asphalt-gray;
-  margin-right: 15px;
+  margin-right: 10px;
   cursor: pointer;
+
+  .uppy-size--md & {
+    margin-right: 12px;
+  }
 }
 
   .uppy-StatusBar-statusIndicator svg {
@@ -165,16 +196,57 @@
   background-color: $color-almost-white;
 }
 
-.uppy-StatusBar-actionBtn {
-  font-size: 12px;
-  padding: 6px;
-  // border-radius: 4px;
-  color: $color-cornflower-blue;
+.uppy-StatusBar-actionCircleBtn {
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  // width: 20px;
+  // height: 20px;
+  // border-radius: 50%;
+  // color: rgba($color-black, 0.6);
+  // background-color: rgba($color-gray, 0.3);
+  // text-align: center;
 }
 
-  .uppy-size--md .uppy-StatusBar-actionBtn {
-    padding: 3px 5px;
+  .uppy-StatusBar-actionCircleBtn:focus {
+    outline: 2px solid $color-cornflower-blue;
+    outline-offset: 0;
   }
+
+  // .uppy-StatusBar-actionCircleBtn:not(:last-child) {
+  //   margin-right: 2px;
+  // }
+
+  // .uppy-size--md .uppy-StatusBar-actionCircleBtn {
+  //   padding: 1px 4px;
+  // }
+
+  .uppy-StatusBar-actionCircleBtn svg {
+    // width: 12px;
+    // height: 12px;
+    // fill: currentColor;
+    vertical-align: bottom;
+  }
+
+.uppy-StatusBar-actionBtn {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 10px;
+  // margin-left: 6px;
+  // margin-right: 6px;
+  color: $color-cornflower-blue;
+
+  .uppy-size--md & {
+    font-size: 11px;
+  }
+}
+
+  // .uppy-size--md .uppy-StatusBar-actionBtn {
+  //   padding: 2px 4px;
+  // }
 
   .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
     font-size: 14px;
@@ -203,20 +275,6 @@
     color: $color-cornflower-blue;
   }
 
-  // .uppy-StatusBar-actionBtn--retry {
-  //   background-color: $color-white;
-  //   color: $color-red;
-  //   border: 1px solid transparent;
-  // }
-
-  // .uppy-StatusBar-actionBtn--cancel {
-  //   // background-color: lighten($color-asphalt-gray, 8%);
-  //   // border: 1px solid lighten($color-black, 10%);
-  //   background-color: transparent;
-  //   border: 1px solid $color-white;
-  //   color: $color-white;
-  // }
-
 .uppy-StatusBar-details {
   line-height: 12px;
   width: 13px;
@@ -242,3 +300,27 @@
   line-height: 1.3;
   word-wrap: break-word;
 }
+
+.uppy-StatusBar-spinner {
+  animation-name: uppy-StatusBar-spinnerAnimation;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  margin-right: 10px;
+  fill: $color-cornflower-blue;
+}
+
+  .uppy-StatusBar.is-preprocessing .uppy-StatusBar-spinner,
+  .uppy-StatusBar.is-postprocessing .uppy-StatusBar-spinner {
+    fill: $color-orange;
+  }
+
+
+  @keyframes uppy-StatusBar-spinnerAnimation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }

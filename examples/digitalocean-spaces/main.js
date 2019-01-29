@@ -12,4 +12,4 @@ uppy.use(Dashboard, {
 })
 
 // No client side changes needed!
-uppy.use(AwsS3, { serverUrl: '/uppy-server' })
+uppy.use(AwsS3, { serverUrl: '/companion' })

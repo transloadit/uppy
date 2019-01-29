@@ -72,12 +72,10 @@ module.exports = class Webcam extends Plugin {
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
-    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
-
     // i18n
-    this.translator = new Translator({locale: this.locale})
+    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
 
     this.install = this.install.bind(this)
     this.setPluginState = this.setPluginState.bind(this)
@@ -183,8 +181,12 @@ module.exports = class Webcam extends Plugin {
     .then(() => {
       this.recordingChunks = null
       this.recorder = null
-      const dashboard = this.uppy.getPlugin('Dashboard')
-      if (dashboard) dashboard.hideAllPanels()
+
+      // Close the Dashboard panel if plugin is installed
+      // into Dashboard (could be other parent UI plugin)
+      // if (this.parent && this.parent.hideAllPanels) {
+      //   this.parent.hideAllPanels()
+      // }
     }, (error) => {
       this.recordingChunks = null
       this.recorder = null
@@ -242,8 +244,11 @@ module.exports = class Webcam extends Plugin {
       return this.getImage()
     }).then((tagFile) => {
       this.captureInProgress = false
-      const dashboard = this.uppy.getPlugin('Dashboard')
-      if (dashboard) dashboard.hideAllPanels()
+      // Close the Dashboard panel if plugin is installed
+      // into Dashboard (could be other parent UI plugin)
+      // if (this.parent && this.parent.hideAllPanels) {
+      //   this.parent.hideAllPanels()
+      // }
       try {
         this.uppy.addFile(tagFile)
       } catch (err) {
@@ -286,7 +291,7 @@ module.exports = class Webcam extends Plugin {
       return {
         source: this.id,
         name: name,
-        data: new File([blob], name, { type: mimeType }),
+        data: new Blob([blob], { type: mimeType }),
         type: mimeType
       }
     })
@@ -305,7 +310,7 @@ module.exports = class Webcam extends Plugin {
     const file = {
       source: this.id,
       name: name,
-      data: new File([blob], name, { type: mimeType }),
+      data: new Blob([blob], { type: mimeType }),
       type: mimeType
     }
 

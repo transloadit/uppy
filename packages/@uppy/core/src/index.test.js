@@ -149,9 +149,10 @@ describe('src/Core', () => {
 
       const newState = {
         bee: 'boo',
-        capabilities: { resumableUploads: false },
+        capabilities: { uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
+        allowNewUpload: true,
         foo: 'baar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -172,9 +173,10 @@ describe('src/Core', () => {
       // current state
       expect(stateUpdateEventMock.mock.calls[1][0]).toEqual({
         bee: 'boo',
-        capabilities: { resumableUploads: false },
+        capabilities: { uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
+        allowNewUpload: true,
         foo: 'bar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -184,9 +186,10 @@ describe('src/Core', () => {
       // new state
       expect(stateUpdateEventMock.mock.calls[1][1]).toEqual({
         bee: 'boo',
-        capabilities: { resumableUploads: false },
+        capabilities: { uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
+        allowNewUpload: true,
         foo: 'baar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -201,9 +204,10 @@ describe('src/Core', () => {
       core.setState({ foo: 'bar' })
 
       expect(core.getState()).toEqual({
-        capabilities: { resumableUploads: false },
+        capabilities: { uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
+        allowNewUpload: true,
         foo: 'bar',
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
@@ -228,9 +232,10 @@ describe('src/Core', () => {
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
     expect(coreStateUpdateEventMock.mock.calls[1][1]).toEqual({
-      capabilities: { resumableUploads: false },
+      capabilities: { uploadProgress: true, resumableUploads: false },
       files: {},
       currentUploads: {},
+      allowNewUpload: true,
       error: null,
       foo: 'bar',
       info: { isHidden: true, message: '', type: 'info' },
@@ -240,15 +245,33 @@ describe('src/Core', () => {
     })
   })
 
-  it('should clear all uploads on cancelAll()', () => {
+  it('should clear all uploads and files on cancelAll()', () => {
     const core = new Core()
-    const id = core._createUpload([ 'a', 'b' ])
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo1.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' })
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo2.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' })
+    })
+
+    const fileIDs = Object.keys(core.getState().files)
+    const id = core._createUpload(fileIDs)
 
     expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
 
     core.cancelAll()
 
     expect(core.getState().currentUploads[id]).toBeUndefined()
+    expect(Object.keys(core.getState().files).length).toEqual(0)
   })
 
   it('should close, reset and uninstall when the close method is called', () => {
@@ -268,9 +291,10 @@ describe('src/Core', () => {
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls[0][1]).toEqual({
-      capabilities: { resumableUploads: false },
+      capabilities: { uploadProgress: true, resumableUploads: false },
       files: {},
       currentUploads: {},
+      allowNewUpload: true,
       error: null,
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
@@ -347,6 +371,34 @@ describe('src/Core', () => {
           expect(preprocessor2.mock.calls[0][0].length).toEqual(1)
           expect(preprocessor2.mock.calls[0][0][0]).toEqual(fileId)
         })
+    })
+
+    it('should not pass removed file IDs to next step', async () => {
+      const core = new Core()
+      const uploader = jest.fn()
+      core.addPreProcessor((fileIDs) => {
+        core.removeFile(fileIDs[0])
+      })
+      core.addUploader(uploader)
+
+      core.addFile({
+        source: 'jest',
+        name: 'rmd.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'kept.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+
+      await core.upload()
+
+      expect(uploader.mock.calls.length).toEqual(1)
+      expect(uploader.mock.calls[0][0].length).toEqual(1, 'Got 1 file ID')
+      expect(core.getFile(uploader.mock.calls[0][0][0]).name).toEqual('kept.jpg')
     })
 
     it('should update the file progress state when preprocess-progress event is fired', () => {
@@ -623,6 +675,29 @@ describe('src/Core', () => {
       })
       expect(core.getFiles().length).toEqual(0)
     })
+
+    it('allows no new files after upload when allowMultipleUploads: false', async () => {
+      const core = new Core({ allowMultipleUploads: false })
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+
+      await core.upload()
+
+      expect(() => {
+        core.addFile({
+          source: 'jest',
+          name: '123.foo',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+      }).toThrow(
+        /Cannot add new files: already uploading\./
+      )
+    })
   })
 
   describe('uploading a file', () => {
@@ -717,6 +792,49 @@ describe('src/Core', () => {
       return core.upload().catch((err) => {
         expect(err).toMatchObject(new Error('Not starting the upload because onBeforeUpload returned false'))
       })
+    })
+
+    it('only allows a single upload() batch when allowMultipleUploads: false', async () => {
+      const core = new Core({ allowMultipleUploads: false })
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'bar.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+
+      await expect(core.upload()).resolves.toBeDefined()
+      await expect(core.upload()).rejects.toThrow(
+        /Cannot create a new upload: already uploading\./
+      )
+    })
+
+    it('allows new files again with allowMultipleUploads: false after reset() was called', async () => {
+      const core = new Core({ allowMultipleUploads: false })
+
+      core.addFile({
+        source: 'jest',
+        name: 'bar.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      await expect(core.upload()).resolves.toBeDefined()
+
+      core.reset()
+
+      core.addFile({
+        source: 'jest',
+        name: '123.foo',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      await expect(core.upload()).resolves.toBeDefined()
     })
   })
 
@@ -930,7 +1048,7 @@ describe('src/Core', () => {
       })
 
       core._calculateTotalProgress()
-      expect(core.getState().totalProgress).toEqual(65)
+      expect(core.getState().totalProgress).toEqual(66)
     })
 
     it('should reset the progress', () => {
@@ -967,7 +1085,7 @@ describe('src/Core', () => {
 
       core._calculateTotalProgress()
 
-      expect(core.getState().totalProgress).toEqual(65)
+      expect(core.getState().totalProgress).toEqual(66)
 
       core.resetProgress()
 

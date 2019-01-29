@@ -24,7 +24,7 @@ module.exports = class Url extends Plugin {
       strings: {
         import: 'Import',
         enterUrlToImport: 'Enter URL to import a file',
-        failedToFetch: 'Uppy Server failed to fetch this URL, please make sure it’s correct',
+        failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
         enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file'
       }
     }
@@ -35,16 +35,15 @@ module.exports = class Url extends Plugin {
 
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.locale = Object.assign({}, defaultLocale, this.opts.locale)
-    this.locale.strings = Object.assign({}, defaultLocale.strings, this.opts.locale.strings)
-
-    this.translator = new Translator({locale: this.locale})
+    // i18n
+    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
 
     this.hostname = this.opts.serverUrl
 
     if (!this.hostname) {
-      throw new Error('Uppy Server hostname is required, please consult https://uppy.io/docs/server')
+      throw new Error('Companion hostname is required, please consult https://uppy.io/docs/companion')
     }
 
     // Bind all event handlers for referencability
@@ -141,8 +140,11 @@ module.exports = class Url extends Plugin {
         }
       })
       .then(() => {
-        const dashboard = this.uppy.getPlugin('Dashboard')
-        if (dashboard) dashboard.hideAllPanels()
+        // Close the Dashboard panel if plugin is installed
+        // into Dashboard (could be other parent UI plugin)
+        // if (this.parent && this.parent.hideAllPanels) {
+        //   this.parent.hideAllPanels()
+        // }
       })
       .catch((err) => {
         this.uppy.log(err)
@@ -206,23 +208,29 @@ module.exports = class Url extends Plugin {
       addFile={this.addFile} />
   }
 
+  onMount () {
+    if (this.el) {
+      this.el.addEventListener('drop', this.handleDrop)
+      this.el.addEventListener('dragover', this.handleDragOver)
+      this.el.addEventListener('dragleave', this.handleDragLeave)
+      this.el.addEventListener('paste', this.handlePaste)
+    }
+  }
+
   install () {
     const target = this.opts.target
     if (target) {
       this.mount(target, this)
     }
-
-    this.el.addEventListener('drop', this.handleDrop)
-    this.el.addEventListener('dragover', this.handleDragOver)
-    this.el.addEventListener('dragleave', this.handleDragLeave)
-    this.el.addEventListener('paste', this.handlePaste)
   }
 
   uninstall () {
-    this.el.removeEventListener('drop', this.handleDrop)
-    this.el.removeEventListener('dragover', this.handleDragOver)
-    this.el.removeEventListener('dragleave', this.handleDragLeave)
-    this.el.removeEventListener('paste', this.handlePaste)
+    if (this.el) {
+      this.el.removeEventListener('drop', this.handleDrop)
+      this.el.removeEventListener('dragover', this.handleDragOver)
+      this.el.removeEventListener('dragleave', this.handleDragLeave)
+      this.el.removeEventListener('paste', this.handlePaste)
+    }
 
     this.unmount()
   }

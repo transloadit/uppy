@@ -38,11 +38,16 @@ const StatusBar = Uppy.StatusBar
 
 ## CSS
 
-The `@uppy/status-bar` plugin includes a CSS file for styling. If you are using the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the StatusBar, because the Dashboard already includes it.
+The `@uppy/status-bar` plugin requires the following CSS for styling:
 
-The CSS file lives at `@uppy/status-bar/dist/style.css`. A minified version can be found at `@uppy/status-bar/dist/style.min.css`.
+```js
+import '@uppy/core/dist/style.css'
+import '@uppy/status-bar/dist/style.css'
+```
 
-Import one of these files into your project. The way to do this depends on your build system.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Status Bar styles from `@uppy/status-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+
+⚠️ If you use the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the Progress Bar, because the Dashboard already includes it.
 
 ## Options
 
@@ -50,10 +55,14 @@ The `@uppy/status-bar` plugin has the following configurable options:
 
 ```js
 uppy.use(StatusBar, {
+  id: 'StatusBar',
   target: 'body',
-  hideUploadButton: false,
+  hideAfterFinish: true,
   showProgressDetails: false,
-  hideAfterFinish: true
+  hideUploadButton: false,
+  hideRetryButton: false,
+  hidePauseResumeButton: false,
+  hideCancelButton: false
   locale: {}
 })
 ```
@@ -62,7 +71,7 @@ uppy.use(StatusBar, {
 
 A unique identifier for this Status Bar. It defaults to `'StatusBar'`. Use this if you need to add multiple StatusBar instances.
 
-### `target: null`
+### `target: body`
 
 DOM element, CSS selector, or plugin to mount the Status Bar into.
 
@@ -77,13 +86,21 @@ By default, progress in the Status Bar is shown as simple percentage. If you wou
 `showProgressDetails: false`: Uploading: 45%
 `showProgressDetails: true`: Uploading: 45%・43 MB of 101 MB・8s left
 
+### `hideUploadButton: false`
+
+Hide the upload button. Use this if you are providing a custom upload button somewhere, and using the `uppy.upload()` API.
+
 ### `hideRetryButton: false`
 
 Hide the retry button. Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
 
-### `hidePauseResumeCancelButtons: false`
+### `hidePauseResumeButton: false`
 
-Hide the cancel or pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)`, `uppy.cancelAll()` or `uppy.removeFile(fileID)` API.
+Hide pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)` or `uppy.removeFile(fileID)` API.
+
+### `hideCancelButton: false`
+
+Hide the cancel button. Use this if you are providing a custom retry button somewhere, and using the `uppy.cancelAll()` API.
 
 ### `locale: {}`
 

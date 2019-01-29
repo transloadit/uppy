@@ -15,7 +15,7 @@ function handleErr (err) {
 }
 
 function buildUppyBundle (minify) {
-  var src = path.join(srcPath, 'index.js')
+  var src = path.join(srcPath, 'bundle.js')
   var bundleFile = minify ? 'uppy.min.js' : 'uppy.js'
 
   var b = browserify(src, { debug: true, standalone: 'Uppy' })

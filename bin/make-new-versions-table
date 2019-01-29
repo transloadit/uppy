@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+
+/**
+ * Generate a version table from the most recent "Release" commit,
+ * for use in changelogs.
+ *
+ * Usage:
+ *   $ ./bin/make-new-versions-table
+ */
+
+const { execSync } = require('child_process')
+
+const logStdout = execSync('git log --grep \'Release$\' -1 --pretty=oneline --no-decorate')
+let match = /^([0-9a-f]+) .*?$/m.exec(logStdout.toString())
+if (!match) {
+  console.error('Could not read Release commit')
+  process.exit(1)
+}
+
+const commit = match[1]
+
+const tagStdout = execSync(`git tag --list --contains ${commit}`)
+const tags = tagStdout.toString()
+const rx = /([@/\w-]+)@(\d+\.\d+\.\d+)/g
+
+const versions = []
+let m
+while ((m = rx.exec(tags))) {
+  const [, pkg, version] = m
+  versions.push({ pkg, version })
+}
+
+const mid = Math.ceil(versions.length / 2)
+let table = [
+  '| Package | Version | Package | Version |',
+  '|-|-|-|-|'
+]
+for (let i = 0; i < mid; i++) {
+  const left = versions[i] || { pkg: '-', version: '-' }
+  const right = versions[i + mid] || { pkg: '-', version: '-' }
+  table.push(`| ${left.pkg} | ${left.version} | ${right.pkg} | ${right.version} |`)
+}
+
+console.log(table.join('\n'))

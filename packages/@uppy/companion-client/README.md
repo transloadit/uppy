@@ -5,7 +5,7 @@
 <a href="https://www.npmjs.com/package/@uppy/companion-client"><img src="https://img.shields.io/npm/v/@uppy/companion-client.svg?style=flat-square"></a>
 <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
 
-Client library for communication with Uppy Server. Intended for use in Uppy plugins.
+Client library for communication with Companion. Intended for use in Uppy plugins.
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 

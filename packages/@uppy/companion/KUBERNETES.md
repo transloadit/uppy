@@ -1,6 +1,6 @@
-### Run uppy-server on kuberenetes
+### Run companion on kuberenetes
 
-You can use our docker container to run uppy-server on kubernetes with the following configuration.
+You can use our docker container to run companion on kubernetes with the following configuration.
 ```bash
 kubectl create ns uppy
 ```
@@ -13,42 +13,42 @@ We will need a Redis container that we can get through [helm](https://github.com
     stable/redis
 ```
 
-> uppy-server-env.yml
+> companion-env.yml
 ```yaml
 apiVersion: v1
 data:
-  UPPY_ENDPOINTS: "localhost:3452,uppy.io"
-  UPPYSERVER_DATADIR: "PATH/TO/DOWNLOAD/DIRECTORY"
-  UPPYSERVER_DOMAIN: "YOUR SERVER DOMAIN"
-  UPPYSERVER_DOMAINS: "sub1.domain.com,sub2.domain.com,sub3.domain.com"
-  UPPYSERVER_PROTOCOL: "YOUR SERVER PROTOCOL"
-  UPPYSERVER_REDIS_URL: redis://:superSecretPassword@uppy-redis.uppy.svc.cluster.local:6379
-  UPPYSERVER_SECRET: "shh!Issa Secret!"
-  UPPYSERVER_DROPBOX_KEY: "YOUR DROPBOX KEY"
-  UPPYSERVER_DROPBOX_SECRET: "YOUR DROPBOX SECRET"
-  UPPYSERVER_GOOGLE_KEY: "YOUR GOOGLE KEY"
-  UPPYSERVER_GOOGLE_SECRET: "YOUR GOOGLE SECRET"
-  UPPYSERVER_INSTAGRAM_KEY: "YOUR INSTAGRAM KEY"
-  UPPYSERVER_INSTAGRAM_SECRET: "YOUR INSTAGRAM SECRET"
-  UPPYSERVER_AWS_KEY: "YOUR AWS KEY"
-  UPPYSERVER_AWS_SECRET: "YOUR AWS SECRET"
-  UPPYSERVER_AWS_BUCKET: "YOUR AWS S3 BUCKET"
-  UPPYSERVER_AWS_REGION: "AWS REGION"
-  UPPYSERVER_OAUTH_DOMAIN: "sub.domain.com"
-  UPPYSERVER_UPLOAD_URLS: "http://master.tus.io/files/,https://master.tus.io/files/"
+  COMPANION_CLIENT_ORIGINS: "localhost:3452,uppy.io"
+  COMPANION_DATADIR: "PATH/TO/DOWNLOAD/DIRECTORY"
+  COMPANION_DOMAIN: "YOUR SERVER DOMAIN"
+  COMPANION_DOMAINS: "sub1.domain.com,sub2.domain.com,sub3.domain.com"
+  COMPANION_PROTOCOL: "YOUR SERVER PROTOCOL"
+  COMPANION_REDIS_URL: redis://:superSecretPassword@uppy-redis.uppy.svc.cluster.local:6379
+  COMPANION_SECRET: "shh!Issa Secret!"
+  COMPANION_DROPBOX_KEY: "YOUR DROPBOX KEY"
+  COMPANION_DROPBOX_SECRET: "YOUR DROPBOX SECRET"
+  COMPANION_GOOGLE_KEY: "YOUR GOOGLE KEY"
+  COMPANION_GOOGLE_SECRET: "YOUR GOOGLE SECRET"
+  COMPANION_INSTAGRAM_KEY: "YOUR INSTAGRAM KEY"
+  COMPANION_INSTAGRAM_SECRET: "YOUR INSTAGRAM SECRET"
+  COMPANION_AWS_KEY: "YOUR AWS KEY"
+  COMPANION_AWS_SECRET: "YOUR AWS SECRET"
+  COMPANION_AWS_BUCKET: "YOUR AWS S3 BUCKET"
+  COMPANION_AWS_REGION: "AWS REGION"
+  COMPANION_OAUTH_DOMAIN: "sub.domain.com"
+  COMPANION_UPLOAD_URLS: "http://master.tus.io/files/,https://master.tus.io/files/"
 kind: Secret
 metadata:
-  name: uppy-server-env
+  name: companion-env
   namespace: uppy
 type: Opaque
 ```
 
-> uppy-server-deployment.yml
+> companion-deployment.yml
 ```yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: uppy-server
+  name: companion
   namespace: uppy
 spec:
   replicas: 2
@@ -61,12 +61,12 @@ spec:
   template:
     metadata:
       labels:
-        app: uppy-server
+        app: companion
     spec:
       containers:
-      - image: docker.io/transloadit/uppy-server:latest
+      - image: docker.io/transloadit/companion:latest
         imagePullPolicy: ifNotPresent
-        name: uppy-server        
+        name: companion        
         resources:
           limits:
             memory: 150Mi
@@ -74,26 +74,26 @@ spec:
             memory: 100Mi
         envFrom:
         - secretRef:
-            name: uppy-server-env
+            name: companion-env
         ports:
         - containerPort: 3020
         volumeMounts:
-        - name: uppy-server-data
-          mountPath: /mnt/uppy-server-data
+        - name: companion-data
+          mountPath: /mnt/companion-data
       volumes:
-      - name: uppy-server-data
+      - name: companion-data
         emptyDir: {}
 ```
 
-`kubectl apply -f uppy-server-deployment.yml`
+`kubectl apply -f companion-deployment.yml`
 
-> uppy-server-service.yml
+> companion-service.yml
 
 ```yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: uppy-server
+  name: companion
   namespace: uppy
 spec:
   ports:
@@ -101,10 +101,10 @@ spec:
     targetPort: 3020
     protocol: TCP
   selector:
-    app: uppy-server
+    app: companion
 ```
 
-`kubectl apply -f uppy-server-service.yml`
+`kubectl apply -f companion-service.yml`
 
 ## Logging
 

@@ -17,7 +17,7 @@ module.exports = class Dropbox extends Plugin {
       </svg>
     )
 
-    this[this.id] = new Provider(uppy, {
+    this.provider = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
       serverHeaders: this.opts.serverHeaders,
       provider: 'dropbox'
@@ -28,7 +28,9 @@ module.exports = class Dropbox extends Plugin {
   }
 
   install () {
-    this.view = new ProviderViews(this)
+    this.view = new ProviderViews(this, {
+      provider: this.provider
+    })
     // Set default state for Dropbox
     this.setPluginState({
       authenticated: false,
@@ -56,51 +58,6 @@ module.exports = class Dropbox extends Plugin {
     if (authenticated) {
       this.view.getFolder()
     }
-  }
-
-  getUsername (data) {
-    return data.user_email
-  }
-
-  isFolder (item) {
-    return item['.tag'] === 'folder'
-  }
-
-  getItemData (item) {
-    return item
-  }
-
-  getItemIcon (item) {
-    return item['.tag']
-  }
-
-  getItemSubList (item) {
-    return item.entries
-  }
-
-  getItemName (item) {
-    return item.name || ''
-  }
-
-  getMimeType (item) {
-    // mime types aren't supported.
-    return null
-  }
-
-  getItemId (item) {
-    return item.id
-  }
-
-  getItemRequestPath (item) {
-    return encodeURIComponent(item.path_lower)
-  }
-
-  getItemModifiedDate (item) {
-    return item.server_modified
-  }
-
-  getItemThumbnailUrl (item) {
-    return `${this.opts.serverUrl}/${this.Dropbox.id}/thumbnail/${this.getItemRequestPath(item)}`
   }
 
   render (state) {

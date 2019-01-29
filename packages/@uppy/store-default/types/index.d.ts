@@ -1,10 +1,11 @@
-import { Store } from '@uppy/core';
+import Uppy = require('@uppy/core');
 
-declare class DefaultStore implements Store {
+declare class DefaultStore implements Uppy.Store {
   constructor();
   getState(): object;
   setState(patch: object): void;
   subscribe(listener: any): () => void;
 }
 
-export default function createDefaultStore(): DefaultStore;
+declare function createDefaultStore(): DefaultStore;
+export = createDefaultStore;

@@ -17,7 +17,7 @@ module.exports = class Instagram extends Plugin {
       </svg>
     )
 
-    this[this.id] = new Provider(uppy, {
+    this.provider = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
       serverHeaders: this.opts.serverHeaders,
       provider: 'instagram',
@@ -30,6 +30,7 @@ module.exports = class Instagram extends Plugin {
 
   install () {
     this.view = new ProviderViews(this, {
+      provider: this.provider,
       viewType: 'grid',
       showTitles: false,
       showFilter: false,
@@ -62,85 +63,6 @@ module.exports = class Instagram extends Plugin {
     if (authenticated) {
       this.view.getFolder('recent')
     }
-  }
-
-  getUsername (data) {
-    return data.data[0].user.username
-  }
-
-  isFolder (item) {
-    return false
-  }
-
-  getItemData (item) {
-    return item
-  }
-
-  getItemIcon (item) {
-    if (!item.images) {
-      return 'video'
-    }
-    return item.images.low_resolution.url
-  }
-
-  getItemSubList (item) {
-    const subItems = []
-    item.data.forEach((subItem) => {
-      if (subItem.carousel_media) {
-        subItem.carousel_media.forEach((i, index) => {
-          const { id, created_time } = subItem
-          const newSubItem = Object.assign({}, i, { id, created_time })
-          newSubItem.carousel_id = index
-          subItems.push(newSubItem)
-        })
-      } else {
-        subItems.push(subItem)
-      }
-    })
-    return subItems
-  }
-
-  getItemName (item) {
-    if (item && item['created_time']) {
-      const ext = item.type === 'video' ? 'mp4' : 'jpeg'
-      let date = new Date(item['created_time'] * 1000)
-      date = date.toLocaleDateString([], {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric'
-      })
-      // adding both date and carousel_id, so the name is unique
-      return `Instagram ${date}${item.carousel_id ? ' ' + item.carousel_id : ''}.${ext}`
-    }
-    return ''
-  }
-
-  getMimeType (item) {
-    return item.type === 'video' ? 'video/mp4' : 'image/jpeg'
-  }
-
-  getItemId (item) {
-    return `${item.id}${item.carousel_id || ''}`
-  }
-
-  getItemRequestPath (item) {
-    const suffix = isNaN(item.carousel_id) ? '' : `?carousel_id=${item.carousel_id}`
-    return `${item.id}${suffix}`
-  }
-
-  getItemModifiedDate (item) {
-    return item.created_time
-  }
-
-  getItemThumbnailUrl (item) {
-    return item.images.thumbnail.url
-  }
-
-  getNextPagePath () {
-    const { files } = this.getPluginState()
-    return `recent?max_id=${this.getItemId(files[files.length - 1])}`
   }
 
   render (state) {

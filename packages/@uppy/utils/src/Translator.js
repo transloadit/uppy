@@ -9,24 +9,37 @@
  *
  * Usage example: `translator.translate('files_chosen', {smart_count: 3})`
  *
- * @param {object} opts
+ * @param {object|Array<object>} locale Locale or list of locales.
  */
 module.exports = class Translator {
-  constructor (opts) {
-    const defaultOptions = {
-      locale: {
-        strings: {},
-        pluralize: function (n) {
-          if (n === 1) {
-            return 0
-          }
-          return 1
+  constructor (locales) {
+    this.locale = {
+      strings: {},
+      pluralize: function (n) {
+        if (n === 1) {
+          return 0
         }
+        return 1
       }
     }
 
-    this.opts = Object.assign({}, defaultOptions, opts)
-    this.locale = Object.assign({}, defaultOptions.locale, opts.locale)
+    if (Array.isArray(locales)) {
+      locales.forEach((locale) => this._apply(locale))
+    } else {
+      this._apply(locales)
+    }
+  }
+
+  _apply (locale) {
+    if (!locale || !locale.strings) {
+      return
+    }
+
+    const prevLocale = this.locale
+    this.locale = Object.assign({}, prevLocale, {
+      strings: Object.assign({}, prevLocale.strings, locale.strings)
+    })
+    this.locale.pluralize = locale.pluralize || prevLocale.pluralize
   }
 
   /**
@@ -102,9 +115,9 @@ module.exports = class Translator {
   translateArray (key, options) {
     if (options && typeof options.smart_count !== 'undefined') {
       var plural = this.locale.pluralize(options.smart_count)
-      return this.interpolate(this.opts.locale.strings[key][plural], options)
+      return this.interpolate(this.locale.strings[key][plural], options)
     }
 
-    return this.interpolate(this.opts.locale.strings[key], options)
+    return this.interpolate(this.locale.strings[key], options)
   }
 }

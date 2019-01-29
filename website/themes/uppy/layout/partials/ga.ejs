@@ -5,5 +5,6 @@
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
   ga('create', '<%- config.google_analytics %>', '<%- config.root_domain %>');
+  ga('set', 'anonymizeIp', true);
   ga('send', 'pageview');
 </script>

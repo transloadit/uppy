@@ -13,7 +13,7 @@ module.exports = class Provider extends RequestClient {
     this.id = this.provider
     this.authProvider = opts.authProvider || this.provider
     this.name = this.opts.name || _getName(this.id)
-    this.tokenKey = `uppy-server-${this.id}-auth-token`
+    this.tokenKey = `companion-${this.id}-auth-token`
   }
 
   get defaultHeaders () {

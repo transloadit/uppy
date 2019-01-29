@@ -146,6 +146,8 @@ module.exports.addProviderOptions = (options, grantConfig) => {
       if (server.implicitPath) {
         // no url builder is used for this because grant internally adds the path
         grantConfig[authProvider].callback = `${server.implicitPath}${grantConfig[authProvider].callback}`
+      } else if (server.path) {
+        grantConfig[authProvider].callback = `${server.path}${grantConfig[authProvider].callback}`
       }
     } else if (authProvider !== 's3') { // TODO: there should be a cleaner way to do this.
       logger.warn(`skipping one found unsupported provider "${authProvider}".`, 'provider.options.skip')

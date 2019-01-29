@@ -8,7 +8,7 @@ permalink: docs/url/
 
 The `@uppy/url` plugin allows users to import files from the internet. Paste any URL and it will be added!
 
-An Uppy Server instance is required for the `@uppy/url` plugin to work. Uppy Server will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps to avoid CORS restrictions.
+A Companion instance is required for the `@uppy/url` plugin to work. Companion will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps to avoid CORS restrictions.
 
 ```js
 const Url = require('@uppy/url')
@@ -18,7 +18,7 @@ uppy.use(Url, {
 })
 ```
 
-[Try live!](/examples/dashboard/)
+<a class="TryButton" href="/examples/dashboard/">Try it live</a>
 
 ## Installation
 
@@ -36,6 +36,17 @@ In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` gl
 const Url = Uppy.Url
 ```
 
+## CSS
+
+The `@uppy/url` plugin requires the following CSS for styling:
+
+```js
+import '@uppy/core/dist/style.css'
+import '@uppy/url/dist/style.css'
+```
+
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Url styles from `@uppy/url/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+
 ## Options
 
 The `@uppy/url` plugin has the following configurable options:
@@ -43,7 +54,7 @@ The `@uppy/url` plugin has the following configurable options:
 ```js
 uppy.use(Url, {
   target: Dashboard,
-  serverUrl: 'https://server.uppy.io/',
+  serverUrl: 'https://companion.uppy.io/',
   locale: {}
 })
 ```
@@ -62,7 +73,7 @@ DOM element, CSS selector, or plugin to mount the URL provider into. This should
 
 ### `serverUrl: null`
 
-URL to an Uppy Server instance.
+URL to an Companion instance.
 
 ### `locale: {}`
 
@@ -76,8 +87,8 @@ strings: {
   import: 'Import',
   // Placeholder text for the URL input.
   enterUrlToImport: 'Enter URL to import a file',
-  // Error message shown if Uppy Server could not load a URL.
-  failedToFetch: 'Uppy Server failed to fetch this URL, please make sure it’s correct',
+  // Error message shown if Companion could not load a URL.
+  failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
   // Error message shown if the input does not look like a URL.
   enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file'
 }
