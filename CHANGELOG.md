@@ -76,6 +76,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: if you specified a delete endpoint, the “remove/cancel upload” button remains after the upload and it not only removes, but also sends a request to that endpoint #1216
 - [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
 - [ ] react: Component wrappers to manage the Uppy instance, many people initialize it in render() which does not work correctly so this could make it easier for them https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951
+- [ ] core: Fire event when a restriction fails #1251
 
 ## 1.0 Goals
 
