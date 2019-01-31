@@ -171,7 +171,11 @@ module.exports = class AwsS3Multipart extends Plugin {
           reject(err)
         },
         onSuccess: (result) => {
-          this.uppy.emit('upload-success', file, upload, result.location)
+          const uploadResp = {
+            uploadURL: result.location
+          }
+
+          this.uppy.emit('upload-success', file, uploadResp)
 
           if (result.location) {
             this.uppy.log('Download ' + upload.file.name + ' from ' + result.location)
@@ -328,7 +332,11 @@ module.exports = class AwsS3Multipart extends Plugin {
       })
 
       socket.on('success', (data) => {
-        this.uppy.emit('upload-success', file, data, data.url)
+        const uploadResp = {
+          uploadURL: data.url
+        }
+
+        this.uppy.emit('upload-success', file, uploadResp)
         resolve()
       })
     })

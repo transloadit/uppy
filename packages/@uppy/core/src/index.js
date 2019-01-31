@@ -695,8 +695,12 @@ class Uppy {
       this.setState({ error: error.message })
     })
 
-    this.on('upload-error', (file, error) => {
-      this.setFileState(file.id, { error: error.message })
+    this.on('upload-error', (file, error, response) => {
+      this.setFileState(file.id, {
+        error: error.message,
+        response
+      })
+
       this.setState({ error: error.message })
 
       let message = this.i18n('failedToUpload', { file: file.name })
@@ -734,7 +738,7 @@ class Uppy {
 
     this.on('upload-progress', this._calculateProgress)
 
-    this.on('upload-success', (file, uploadResp, uploadURL) => {
+    this.on('upload-success', (file, uploadResp) => {
       const currentProgress = this.getFile(file.id).progress
       this.setFileState(file.id, {
         progress: Object.assign({}, currentProgress, {
@@ -742,7 +746,8 @@ class Uppy {
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal
         }),
-        uploadURL: uploadURL,
+        response: uploadResp,
+        uploadURL: uploadResp.uploadURL,
         isPaused: false
       })
 
