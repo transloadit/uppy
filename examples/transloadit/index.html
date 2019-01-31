@@ -22,6 +22,7 @@
         background-color: #111e33;
         height: 1px;
       }
+      .hidden { display: none; }
       .error { color: red; }
       #logo { height: 1em; vertical-align: middle; }
     </style>
@@ -98,6 +99,9 @@
 
       <p>
         <input type="file" multiple onchange="doUpload(event)">
+
+      <p id="upload-result">
+      <p id="upload-error" class="error">
     </main>
 
     <link href="uppy.min.css" rel="stylesheet">
