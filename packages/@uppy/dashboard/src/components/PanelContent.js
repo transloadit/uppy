@@ -5,6 +5,7 @@ function PanelContent (props) {
   return (
     <div class="uppy-DashboardContent-panel"
       role="tabpanel"
+      data-uppy-panelType="PluginPanel"
       id={props.activePanel && `uppy-DashboardContent-panel--${props.activePanel.id}`}
       onDragOver={ignoreEvent}
       onDragLeave={ignoreEvent}

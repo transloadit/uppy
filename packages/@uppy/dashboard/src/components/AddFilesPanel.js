@@ -4,6 +4,7 @@ const AddFiles = require('./AddFiles')
 const AddFilesPanel = (props) => {
   return (
     <div class="uppy-Dashboard-AddFilesPanel"
+      data-uppy-panelType="AddFiles"
       aria-hidden={props.showAddFilesPanel}>
       <div class="uppy-DashboardContent-bar">
         <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">

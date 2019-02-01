@@ -219,7 +219,8 @@ module.exports = class Dashboard extends Plugin {
   hideAllPanels () {
     this.setPluginState({
       activePanel: false,
-      showAddFilesPanel: false
+      showAddFilesPanel: false,
+      activeOverlayType: null
     })
   }
 
@@ -231,7 +232,8 @@ module.exports = class Dashboard extends Plugin {
     })[0]
 
     this.setPluginState({
-      activePanel: activePanel
+      activePanel: activePanel,
+      activeOverlayType: 'PluginPanel'
     })
   }
 
@@ -244,6 +246,14 @@ module.exports = class Dashboard extends Plugin {
   }
 
   getFocusableNodes () {
+    // if an overlay is open, we should trap focus inside the overlay
+    const activeOverlayType = this.getPluginState().activeOverlayType
+    if (activeOverlayType) {
+      const activeOverlay = this.el.querySelector(`[data-uppy-panelType="${activeOverlayType}"]`)
+      const nodes = activeOverlay.querySelectorAll(FOCUSABLE_ELEMENTS)
+      return Object.keys(nodes).map((key) => nodes[key])
+    }
+
     const nodes = this.el.querySelectorAll(FOCUSABLE_ELEMENTS)
     return Object.keys(nodes).map((key) => nodes[key])
   }
@@ -509,13 +519,15 @@ module.exports = class Dashboard extends Plugin {
 
   toggleFileCard (fileId) {
     this.setPluginState({
-      fileCardFor: fileId || false
+      fileCardFor: fileId || false,
+      activeOverlayType: fileId ? 'FileCard' : null
     })
   }
 
   toggleAddFilesPanel (show) {
     this.setPluginState({
-      showAddFilesPanel: show
+      showAddFilesPanel: show,
+      activeOverlayType: show ? 'AddFiles' : null
     })
   }
 
@@ -707,6 +719,7 @@ module.exports = class Dashboard extends Plugin {
       isWide: pluginState.containerWidth > 400,
       containerWidth: pluginState.containerWidth,
       isTargetDOMEl: this.isTargetDOMEl,
+      parentElement: this.el,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
       showSelectedFiles: this.opts.showSelectedFiles
@@ -728,6 +741,7 @@ module.exports = class Dashboard extends Plugin {
       showFileCard: false,
       showAddFilesPanel: false,
       activePanel: false,
+      activeOverlayType: null,
       metaFields: this.opts.metaFields,
       targets: []
     })
