@@ -22,7 +22,7 @@ exports.config = {
 
   // Patterns to exclude.
   exclude: [
-    'test/endtoend/url-plugin/*',
+    // 'test/endtoend/url-plugin/*',
     'test/endtoend/transloadit/*'
   ],
 
