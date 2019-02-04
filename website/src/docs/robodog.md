@@ -56,6 +56,10 @@ const resultPromise = transloadit.pick({
     template_id: ''
   }
 })
+resultPromise.then((bundle) => {
+  bundle.transloadit // Array of Assembly statuses
+  bundle.results // Array of all Assembly results
+})
 ```
 
 **ADD IMAGE OR GIF HERE**
@@ -95,6 +99,10 @@ const resultPromise = transloadit.upload(files, {
     auth: { key: '' },
     template_id: ''
   }
+})
+resultPromise.then((bundle) => {
+  bundle.transloadit // Array of Assembly statuses
+  bundle.results // Array of all Assembly results
 })
 ```
 
