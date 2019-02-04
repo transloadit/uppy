@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 31
+order: 41
 title: "Dropbox"
 module: "@uppy/dropbox"
 permalink: docs/dropbox/

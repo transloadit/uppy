@@ -648,6 +648,7 @@ class Uppy {
     })
 
     if (inProgress.length === 0) {
+      this.emit('progress', 0)
       this.setState({ totalProgress: 0 })
       return
     }
@@ -684,6 +685,7 @@ class Uppy {
       : Math.round(uploadedSize / totalSize * 100)
 
     this.setState({ totalProgress })
+    this.emit('progress', totalProgress)
   }
 
   /**

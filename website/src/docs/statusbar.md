@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 50
+order: 60
 title: "Status Bar"
 module: "@uppy/status-bar"
 permalink: docs/status-bar/

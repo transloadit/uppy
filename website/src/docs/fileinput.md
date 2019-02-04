@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 22
+order: 32
 title: "File Input"
 module: "@uppy/file-input"
 permalink: docs/file-input/
