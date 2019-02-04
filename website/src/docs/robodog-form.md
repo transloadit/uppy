@@ -146,14 +146,14 @@ The `transloadit.form()` method returns an Uppy object, so you can listen to eve
 
 | jQuery option | Robodog Event |
 |---------------|--------------------------|
-| `onStart` | `uppy.on('transloadit:assembly-created')` |
-| `onExecuting` | `uppy.on('transloadit:assembly-executing')` |
-| `onFileSelect` | No longer supported, attach a listener to the DOM element instead. |
-| `onProgress` | `uppy.on('upload-progress')`, then call `uppy.getState().totalProgress` |
-| `onUpload` | `uppy.on('transloadit:upload')` |
-| `onResult` | `uppy.on('transloadit:result')` |
-| `onCancel` | `uppy.on('cancel-all')` |
-| `onError` | `uppy.on('error')` |
-| `onSuccess` | `uppy.on('complete')` |
-| `onDisconnect` | Currently unavailable |
-| `onReconnect` | Currently unavailable |
+| `onStart` | `onAssemblyCreated` |
+| `onExecuting` | `onAssemblyExecuting` |
+| `onFileSelect` | `onFileAdded` |
+| `onProgress` | `onProgress` |
+| `onUpload` | `onUpload` |
+| `onResult` | `onResult` |
+| `onCancel` | `onCancel` (or `onFileCancel` for individual files) |
+| `onError` | `onError` |
+| `onSuccess` | `onComplete` |
+| `onDisconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
+| `onReconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
