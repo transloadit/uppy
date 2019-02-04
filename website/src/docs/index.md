@@ -6,7 +6,7 @@ alias: api/
 order: 0
 ---
 
-Uppy is a sleek and modular file uploader. It fetches files from local disk, Google Drive,Instagram, remote urls, cameras etc, and then uploads them to the final destination. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
+Uppy is a sleek and modular file uploader. It fetches files from local disk, Google Drive, Instagram, remote urls, cameras etc, and then uploads them to the final destination. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
 
 Uppy consists of a core module and [various plugins](/docs/plugins/) for selecting, manipulating and uploading files.
 
