@@ -49,7 +49,8 @@ And if any of these methods are not flexible enough, you can always replace them
 Show a modal UI that allows users to pick files from their device and from the web. It uploads files to Transloadit for processing.
 
 ```js
-const resultPromise = transloadit.pick('body', {
+const resultPromise = transloadit.pick({
+  target: 'body',
   params: {
     auth: { key: '' },
     template_id: ''
