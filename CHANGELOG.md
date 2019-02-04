@@ -50,13 +50,11 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
 - [ ] audio: audio recording similar to Webcam #143
 - [ ] add typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
-- [ ] transloadit plugin: maybe add option to disable uppy server endpoint overrides
+- [ ] transloadit plugin: maybe add option to disable Companion endpoint overrides
 - [ ] dragdrop: change border color when files doesn’t pass restrictions on drag https://github.com/transloadit/uppy/issues/607
 - [ ] website: automatically generated page with all locale strings used in plugins
 - [ ] transloadit: option for StatusBar’s upload button to act as a "Start assembly" button? Useful if an assembly uses only import robots, such as /s3/import to start a batch transcoding job.
-- [ ] provider: Add Facebook
-- [ ] provider: Add OneDrive
-- [ ] provider: Add Box
+- [ ] provider: Add Facebook, OneDrive, Box
 - [ ] provider: change ProviderViews signature to receive Provider instance in second param. ref https://github.com/transloadit/uppy/pull/743#discussion_r180106070
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] webcam: Stop recording when file size is exceeded, should be possible given how the MediaRecorder API works
@@ -66,7 +64,19 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 - [ ] test: Add a prepublish test that checks if `npm pack` is not massive
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
+- [ ] Feature: Plugins - Keybase.io Remote provider plugin! #943
+- [ ] Dashboard allow selecting folders (add separate hidden input button for folders) #447 #1027
+- [ ] core: Add total max size to restrictions #514
+- [ ] core: normalize file names when uploading from iOS? $678
 - [ ] webcam: Pick format based on `restrictions.allowedFileTypes`, eg. use PNG for snapshot instead of JPG if `allowedFileTypes: ['.png']` is set
+- [ ] webcam: UI or separate plugins for choosing between webcam audio-video/video-only/audio-only modes #198
+- [ ] webcam: Specify the resolution of the webcam images. We should add a way to specify any custom constraints to the Webcam plugin #876
+- [ ] transloadit: consider adding option to append result link from transloadit to the link thing in the Dashboard file block #1177
+- [ ] Consider uploading image thumbnails too #1212
+- [ ] dashboard: if you specified a delete endpoint, the “remove/cancel upload” button remains after the upload and it not only removes, but also sends a request to that endpoint #1216
+- [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
+- [ ] react: Component wrappers to manage the Uppy instance, many people initialize it in render() which does not work correctly so this could make it easier for them https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951
+- [ ] core: Fire event when a restriction fails #1251
 
 ## 1.0 Goals
 
@@ -104,23 +114,62 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 
+## 0.31.0
+
+- [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
+- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
+- [ ] build: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
+- [ ] fix incorrectly rotated image thumbnails #472
+
 # next
 
 ## 0.30.0
 
-- [ ] add polyfils to uppy bundle 
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
 - [ ] test: add typescript with JSDoc (@arturi)
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
 - [ ] dashboard: cancel button for transloadit assemblies (@arturi, @goto-bus-stop)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
-- [ ] transloadit: add error reporting (@goto-bus-stop)
-- [ ] core: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
-- [ ] core: update babel to v7
+- [ ] transloadit: add error reporting, see https://github.com/transloadit/jquery-sdk/blob/891e99b08dd8142d8d8adc0553e6511967635ad7/js/lib/Modal.js#L122-L136 (@goto-bus-stop, @arturi)
 - [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion (@ifedapoolarewaju)
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
+- [ ] show thumbnails when connecting with Google Drive #1162
+
+## 0.29.1
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 0.29.1 | @uppy/provider-views | 0.29.1 |
+| @uppy/aws-s3 | 0.29.1 | @uppy/react | 0.29.1 |
+| @uppy/companion-client | 0.27.3 | @uppy/redux-dev-tools | 0.29.1 |
+| @uppy/companion | 0.16.1 | @uppy/status-bar | 0.29.1 |
+| @uppy/core | 0.29.1 | @uppy/store-default | 0.27.1 |
+| @uppy/dashboard | 0.29.1 | @uppy/store-redux | 0.27.1 |
+| @uppy/drag-drop | 0.29.1 | @uppy/thumbnail-generator | 0.29.1 |
+| @uppy/dropbox | 0.29.1 | @uppy/transloadit | 0.29.1 |
+| @uppy/file-input | 0.29.1 | @uppy/tus | 0.29.1 |
+| @uppy/form | 0.29.1 | @uppy/url | 0.29.1 |
+| @uppy/golden-retriever | 0.29.1 | @uppy/utils | 0.29.1 |
+| @uppy/google-drive | 0.29.1 | @uppy/webcam | 0.29.1 |
+| @uppy/informer | 0.29.1 | @uppy/xhr-upload | 0.29.1 |
+| @uppy/instagram | 0.29.1 | uppy | 0.29.1 |
+| @uppy/progress-bar | 0.29.1 | - | - |
+
+- @uppy/react: ⚠️ Make Uppy’s React components usable from Typescript (#1131 / @mattes3)
+- build: ⚠️ CJSify @uppy/core typings + add more typings tests (#1194 / @goto-bus-stop)
+- build: ⚠️ Added Promise and Fetch polyfills to uppy bundle (#1187 / @arturi)
+- build: ⚠️ Only rebuild changed files with `npm run build:lib` (#1237 / @goto-bus-stop)
+- build: ⚠️ Remove jsnext:main since it’s been deprecated https://github.com/stereobooster/package.json#jsnextmain (#1242 / @arturi)
+- @uppy/companion: ⚠️ Fix: return next page path for ig only when posts exist (e5a2694a2d95e1923dd2ca515e7d37132a5828ba / @ifedapoolarewaju)
+- @uppy/status-bar: Account for MS Edge’s missing progress updates, fixes #945. Previously, upload progress would be stuck at 0% until everything is finished. With this patch, in the affected MS Edge versions, the status bar is transformed into an “indeterminate” progress state (#1184 / @goto-bus-stop)
+- @uppy/dashboard: Log error if `trigger` is not found (#1217 / @goto-bus-stop)
+- @uppy/xhr-upload: Fix `responseType` in IE 11, fixes #1228: The same restriction applies to responseType as to withCredentials. Both must be set after the open() call in Internet Explorer. (#1231 / @goto-bus-stop)
+- @uppy/xhr-upload: Postpone timeout countdown until upload has started (i.e. has left browser concurrency queue (fixes #1190) (#1195 / @davilima6)
+- website: Add polyfills to website examples that do not use prebundled uppy.js (#1229 / @goto-bus-stop)
+- docs: Add privacy policy (#1196 / @arturi)
+- docs: Update aws-s3.md wrt S3 public access settings (#1236 / @manuelkiessling)
+- @uppy/companion: deprecate deprecate debugLogger (8f9946346904217e714e256db06b759cc3bb66b0 / @ifedapoolarewaju)
+- @uppy/companion: Update morgan dependency, fixes #1227 (#1232 / @goto-bus-stop)
 
 ## 0.29.0
 

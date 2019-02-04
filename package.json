@@ -85,7 +85,7 @@
     "build:gzip": "node ./bin/gzip.js",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "build:js": "npm-run-all build:lib build:bundle",
-    "build:lib": "babel --version && node ./bin/build-lib.js",
+    "build:lib": "node ./bin/build-lib.js",
     "build": "npm-run-all --parallel build:js build:css build:companion --serial build:gzip size",
     "clean": "rm -rf packages/*/lib packages/@uppy/*/lib && rm -rf packages/uppy/dist",
     "lint:fix": "npm run lint -- --fix",
@@ -101,7 +101,7 @@
     "test:prepare-ci": "npm-run-all --parallel --race test:registry test:build-ci",
     "test:acceptance": "npm run test:prepare-ci && wdio test/endtoend/wdio.remote.conf.js",
     "test:acceptance:local": "npm run test:build && wdio test/endtoend/wdio.local.conf.js",
-    "test:unit": "jest",
+    "test:unit": "npm run build:lib && jest",
     "test:companion": "cd ./packages/@uppy/companion && npm run test",
     "test:type": "tsc -p .",
     "test": "npm run lint && npm run test:unit && npm run test:type && npm run test:companion",
@@ -141,5 +141,6 @@
     "testMatch": [
       "**/packages/**/*.test.js"
     ]
-  }
+  },
+  "dependencies": {}
 }

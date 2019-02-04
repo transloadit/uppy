@@ -81,6 +81,7 @@ module.exports = class ProviderView {
   }
 
   _updateFilesAndFolders (res, files, folders) {
+    this.nextPagePath = res.nextPagePath
     res.items.forEach((item) => {
       if (item.isFolder) {
         folders.push(item)
@@ -128,7 +129,6 @@ module.exports = class ProviderView {
         }
 
         this.username = this.username ? this.username : res.username
-        this.nextPagePath = res.nextPagePath
         this._updateFilesAndFolders(res, files, folders)
         this.plugin.setPluginState({ directories: updatedDirectories })
       },
@@ -463,7 +463,7 @@ module.exports = class ProviderView {
 
   handleScroll (e) {
     const scrollPos = e.target.scrollHeight - (e.target.scrollTop + e.target.offsetHeight)
-    const path = this.nextPagePath ? this.nextPagePath : null
+    const path = this.nextPagePath || null
 
     if (scrollPos < 50 && path && !this._isHandlingScroll) {
       this.provider.list(path)

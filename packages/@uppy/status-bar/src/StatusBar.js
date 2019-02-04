@@ -165,13 +165,14 @@ const RetryBtn = (props) => {
 }
 
 const CancelBtn = (props) => {
-  return <button type="button"
+  return <button
+    type="button"
     class="uppy-u-reset uppy-StatusBar-actionCircleBtn"
     title={props.i18n('cancel')}
     aria-label={props.i18n('cancel')}
     onclick={props.cancelAll}>
-    <svg aria-hidden="true" class="UppyIcon" width="8" height="8" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5.21 4.104l1.658 1.658-1.106 1.106-1.658-1.659-1.659 1.659L1.34 5.762l1.658-1.658L1.34 2.445 2.445 1.34l1.659 1.658L5.762 1.34l1.106 1.105-1.659 1.659z" fill-rule="evenodd" />
+    <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm1.414-8l2.122-2.121-1.415-1.415L8 6.586 5.879 4.464 4.464 5.88 6.586 8l-2.122 2.121 1.415 1.415L8 9.414l2.121 2.122 1.415-1.415L9.414 8z" fill="#949494" fill-rule="evenodd" />
     </svg>
   </button>
 }
@@ -180,13 +181,18 @@ const PauseResumeButton = (props) => {
   const { isAllPaused, i18n } = props
   const title = isAllPaused ? i18n('resume') : i18n('pause')
 
-  return <button title={title} class="uppy-u-reset uppy-StatusBar-actionCircleBtn" type="button" onclick={() => togglePauseResume(props)}>
+  return <button
+    title={title}
+    aria-label={title}
+    class="uppy-u-reset uppy-StatusBar-actionCircleBtn"
+    type="button"
+    onclick={() => togglePauseResume(props)}>
     {isAllPaused
-      ? <svg aria-hidden="true" class="UppyIcon" width="8" height="8" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6.736 3.852l-4.472 2.84V1.075z" fill-rule="evenodd" />
+      ? <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM6 5v6l5-3-5-3z" fill="#949494" fill-rule="evenodd" />
       </svg>
-      : <svg aria-hidden="true" class="UppyIcon" width="8" height="8" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1 1h2v6H1zM5 1h2v6H5z" fill-rule="evenodd" />
+      : <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM5 5v6h2V5H5zm4 0v6h2V5H9z" fill="#949494" fill-rule="evenodd" />
       </svg>
     }
   </button>

@@ -1,7 +1,7 @@
 import { DashboardProps } from './Dashboard';
 
 export interface DashboardModalProps extends DashboardProps {
-  target: string | HTMLElement;
+  target?: string | HTMLElement;
   open?: boolean;
   onRequestClose?: VoidFunction;
   closeModalOnClickOutside?: boolean;

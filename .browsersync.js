@@ -27,12 +27,12 @@ module.exports = {
     "middleware": false,
     "serveStatic": ["examples/bundle"],
     "ghostMode": {
-        "clicks": true,
-        "scroll": true,
+        "clicks": false,
+        "scroll": false,
         "forms": {
-            "submit": true,
-            "inputs": true,
-            "toggles": true
+            "submit": false,
+            "inputs": false,
+            "toggles": false
         }
     },
     "logLevel": "info",
