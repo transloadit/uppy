@@ -316,15 +316,13 @@
     }
   }
 
-  .uppy-DashboardTab-btn svg,
-  .uppy-DashboardTab-btn svg * {
+  .uppy-DashboardTab-btn svg {
     max-width: 100%;
     max-height: 100%;
     display: inline-block;
     vertical-align: text-top;
     overflow: hidden;
-    transition: transform 0.2s;
-    will-change: transform;
+    transition: transform ease-in-out 0.2s;
   }
 
   .uppy-DashboardTab-btn:hover svg {
