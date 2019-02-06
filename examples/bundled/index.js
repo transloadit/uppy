@@ -1,12 +1,15 @@
-const Uppy = require('./../../packages/@uppy/core/src')
-const Dashboard = require('./../../packages/@uppy/dashboard/src')
-const Instagram = require('./../../packages/@uppy/instagram/src')
-const Dropbox = require('./../../packages/@uppy/dropbox/src')
-const GoogleDrive = require('./../../packages/@uppy/google-drive/src')
-const Url = require('./../../packages/@uppy/url/src')
-const Webcam = require('./../../packages/@uppy/webcam/src')
-const Tus = require('./../../packages/@uppy/tus/src')
-const Form = require('./../../packages/@uppy/form/src')
+const Uppy = require('@uppy/core')
+const Dashboard = require('@uppy/dashboard')
+const Instagram = require('@uppy/instagram')
+const GoogleDrive = require('@uppy/google-drive')
+const Url = require('@uppy/url')
+const Webcam = require('@uppy/webcam')
+const Tus = require('@uppy/tus')
+
+require('@uppy/core/dist/style.css')
+require('@uppy/dashboard/dist/style.css')
+require('@uppy/url/dist/style.css')
+require('@uppy/webcam/dist/style.css')
 
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
 
@@ -19,8 +22,9 @@ const uppy = Uppy({
 })
   .use(Dashboard, {
     trigger: '#pick-files',
-    // inline: true,
-    // target: 'body',
+    target: '#upload-form',
+    inline: true,
+    replaceTargetContent: true,
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', placeholder: 'add caption' }
@@ -31,11 +35,9 @@ const uppy = Uppy({
   })
   .use(GoogleDrive, { target: Dashboard, serverUrl: 'http://localhost:3020' })
   .use(Instagram, { target: Dashboard, serverUrl: 'http://localhost:3020' })
-  .use(Dropbox, { target: Dashboard, serverUrl: 'http://localhost:3020' })
   .use(Url, { target: Dashboard, serverUrl: 'http://localhost:3020' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: TUS_ENDPOINT })
-  .use(Form, { target: '#upload-form' })
   // .use(GoldenRetriever, {serviceWorker: true})
 
 uppy.on('complete', (result) => {
@@ -60,6 +62,3 @@ if ('serviceWorker' in navigator) {
     })
 }
 /* eslint-enable */
-
-var modalTrigger = document.querySelector('#pick-files')
-if (modalTrigger) modalTrigger.click()
