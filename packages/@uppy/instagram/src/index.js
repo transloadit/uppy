@@ -20,6 +20,7 @@ module.exports = class Instagram extends Plugin {
     this.provider = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
       serverHeaders: this.opts.serverHeaders,
+      storage: this.opts.storage,
       provider: 'instagram',
       authProvider: 'instagram'
     })
