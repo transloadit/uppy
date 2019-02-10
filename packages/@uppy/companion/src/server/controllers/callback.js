@@ -34,20 +34,34 @@ module.exports = function callback (req, res, next) {
     const allowedClients = req.uppy.options.clients
     // if no preset clients then allow any client
     if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch(parseUrl(origin).host, allowedClients)) {
-      return res.send(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8" />
-            <script>
-              window.opener.postMessage({token: "${uppyAuthToken}"}, "${sanitizeHtml(origin)}")
-              window.close()
-            </script>
-        </head>
-        <body></body>
-        </html>`
-      )
+      const redirect = oAuthState.getFromState(state, 'redirect', req.uppy.options.secret)
+      if (redirect) {
+        // if a redirect value is specified from the client, then redirect there instead
+        const query = (parseUrl(redirect).query ? `&` : `?`) + `uppyAuthToken=${uppyAuthToken}`
+        return res.redirect(`${redirect}${query}`)
+      }
+      return res.send(htmlContent(uppyAuthToken, origin))
     }
   }
   next()
+}
+
+/**
+ *
+ * @param {string} token uppy auth token
+ * @param {string} origin url string
+ */
+const htmlContent = (token, origin) => {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <script>
+          window.opener.postMessage({token: "${token}"}, "${sanitizeHtml(origin)}")
+          window.close()
+        </script>
+    </head>
+    <body></body>
+    </html>`
 }
