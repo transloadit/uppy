@@ -46,7 +46,9 @@ class Uppy {
           1: 'Select %{smart_count} files'
         },
         cancel: 'Cancel',
-        logOut: 'Log out'
+        logOut: 'Log out',
+        filter: 'Filter',
+        resetFilter: 'Reset filter'
       }
     }
 
