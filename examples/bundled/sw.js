@@ -1,3 +1,7 @@
+// This service worker is needed for Golden Retriever plugin,
+// only include if you’ve enabled it
+// https://uppy.io/docs/golden-retriever/
+
 /* globals clients */
 
 const fileCache = Object.create(null)

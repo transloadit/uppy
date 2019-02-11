@@ -38,6 +38,11 @@ const uppy = Uppy({
   .use(Url, { target: Dashboard, serverUrl: 'http://localhost:3020' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: TUS_ENDPOINT })
+
+  // You can optinally enable the Golden Retriever plugin — it will
+  // restore files after a browser crash / accidental closed window
+  // see more at https://uppy.io/docs/golden-retriever/
+  //
   // .use(GoldenRetriever, {serviceWorker: true})
 
 uppy.on('complete', (result) => {
@@ -50,15 +55,17 @@ uppy.on('complete', (result) => {
   console.log('failed files:', result.failed)
 })
 
+// uncomment if you enable Golden Retriever
+//
 /* eslint-disable compat/compat */
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker
-    .register('/sw.js')
-    .then((registration) => {
-      console.log('ServiceWorker registration successful with scope: ', registration.scope)
-    })
-    .catch((error) => {
-      console.log('Registration failed with ' + error)
-    })
-}
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker
+//     .register('/sw.js')
+//     .then((registration) => {
+//       console.log('ServiceWorker registration successful with scope: ', registration.scope)
+//     })
+//     .catch((error) => {
+//       console.log('Registration failed with ' + error)
+//     })
+// }
 /* eslint-enable */
