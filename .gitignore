@@ -3,6 +3,7 @@ Thumbs.db
 npm-debug.log
 env.sh
 node_modules
+.cache
 
 dist/
 lib/
