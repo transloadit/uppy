@@ -20,9 +20,10 @@ website/themes/uppy/_config.yml
 npm-debug.log*
 nohup.out
 
-examples/bundled-example/bundle.js
+examples/dev/bundle.js
 uppy-*.tgz
 .eslintcache
+.cache
 
 output/*
 !output/.keep
