@@ -12,6 +12,8 @@ import {
 import takePicture from './takePicture'
 import selectImage from './selectImage'
 import selectDocument from './selectDocument'
+// import Provider from './provider'
+import ProviderGrid from './provider-grid'
 
 export default class UppyReactNativeFilePicker extends React.Component {
   constructor () {
@@ -76,6 +78,9 @@ export default class UppyReactNativeFilePicker extends React.Component {
 
   openProvider (id) {
     console.log('OPEN PROVIDER:', id)
+    this.setState({
+      openProvider: id
+    })
   }
 
   chooseProvider (id) {
@@ -96,52 +101,55 @@ export default class UppyReactNativeFilePicker extends React.Component {
     }
   }
 
-  render () {
-    if (this.state.openProvider) {
-      return 'show provider'
-    }
+  renderSourceList () {
+    return (
+      <ScrollView
+        contentContainerStyle={{
+          flex: '1',
+          marginTop: 22,
+          justifyContent: 'center'
+        }}>
+        <TouchableOpacity
+          style={{
+            alignItems: 'center',
+            backgroundColor: '#DDDDDD',
+            marginBottom: 10,
+            padding: 10
+          }}
+          onPress={ev => this.props.onRequestClose()}>
+          <Text>Close</Text>
+        </TouchableOpacity>
+        {this.state.providers.map((item, index) => {
+          return (
+            <TouchableOpacity
+              style={{
+                alignItems: 'center',
+                backgroundColor: '#DDDDDD',
+                marginBottom: 10,
+                padding: 10
+              }}
+              key={index}
+              onPress={ev => this.chooseProvider(item.id)}>
+              <Text>{item.title}</Text>
+            </TouchableOpacity>
+          )
+        })}
+      </ScrollView>
+    )
+  }
 
+  render () {
     return (
       <Modal
         animationType="slide"
         transparent={false}
         visible={this.props.show}
+        supportedOrientations={['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right']}
         onRequestClose={() => {
           Expo.Alert.alert('Modal has been closed.')
           this.props.onRequestClose()
         }}>
-        <ScrollView
-          contentContainerStyle={{
-            flex: '1',
-            marginTop: 22,
-            justifyContent: 'center'
-          }}>
-          <TouchableOpacity
-            style={{
-              alignItems: 'center',
-              backgroundColor: '#DDDDDD',
-              marginBottom: 10,
-              padding: 10
-            }}
-            onPress={ev => this.props.onRequestClose()}>
-            <Text>Close</Text>
-          </TouchableOpacity>
-          {this.state.providers.map((item, index) => {
-            return (
-              <TouchableOpacity
-                style={{
-                  alignItems: 'center',
-                  backgroundColor: '#DDDDDD',
-                  marginBottom: 10,
-                  padding: 10
-                }}
-                key={index}
-                onPress={ev => this.chooseProvider(item.id)}>
-                <Text>{item.title}</Text>
-              </TouchableOpacity>
-            )
-          })}
-        </ScrollView>
+        {this.state.openProvider ? <ProviderGrid id={this.state.openProvider} /> : this.renderSourceList()}
       </Modal>
     )
   }
