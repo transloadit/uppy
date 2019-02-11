@@ -68,7 +68,7 @@ Please ensure that the required env variables are set before runnning/using comp
 $ companion
 ```
 
-If you cloned the repo from gtihub and want to run it as a standalone server, you may also run the following command from within its
+If you cloned the repo from GitHub and want to run it as a standalone server, you may also run the following command from within its
 directory
 
 ```bash
