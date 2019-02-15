@@ -29,6 +29,6 @@
     "namespace-emitter": "^2.0.1"
   },
   "peerDependencies": {
-    "@uppy/core": "^0.29.0"
+    "@uppy/core": "^0.30.0"
   }
 }
