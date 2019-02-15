@@ -122,8 +122,10 @@ module.exports = class AwsS3Multipart extends Plugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
-      .then(assertServerError)
+    return this.client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, {
+      parts,
+      metadata: file.meta
+    }).then(assertServerError)
   }
 
   abortMultipartUpload (file, { key, uploadId }) {
