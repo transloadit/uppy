@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 10
+order: 100
 title: "Robodog"
 menu: "Introduction"
 module: "@uppy/robodog"
