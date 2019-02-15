@@ -62,7 +62,7 @@ uppy.use(StatusBar, {
   hideUploadButton: false,
   hideRetryButton: false,
   hidePauseResumeButton: false,
-  hideCancelButton: false
+  hideCancelButton: false,
   locale: {}
 })
 ```
