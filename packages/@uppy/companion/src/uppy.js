@@ -87,6 +87,7 @@ module.exports.app = (options = {}) => {
   app.get('/:providerName/redirect', middlewares.hasSessionAndProvider, controllers.redirect)
   app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.gentleVerifyToken, controllers.logout)
   app.get('/:providerName/authorized', middlewares.hasSessionAndProvider, middlewares.gentleVerifyToken, controllers.authorized)
+  app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.sendToken)
   app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
   app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
@@ -217,7 +218,7 @@ const getOptionsMiddleware = (options) => {
     req.uppy = {
       options,
       s3Client,
-      authToken: req.header('uppy-auth-token'),
+      authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
       buildURL: getURLBuilder(options)
     }
     next()

@@ -422,7 +422,7 @@ module.exports = class ProviderView {
   }
 
   handleAuth () {
-    const authState = btoa(JSON.stringify({ origin: location.origin }))
+    const authState = btoa(JSON.stringify({ origin: location.origin, redirect: 'http://localhost:3' }))
     const link = `${this.provider.authUrl()}?state=${authState}`
 
     const authWindow = window.open(link, '_blank')
