@@ -3,6 +3,7 @@ const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
+const AuthError = require('../error')
 const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 const TEAM_DRIVE_FIELDS = 'teamDrives(kind,id,name,backgroundImageLink)'
@@ -33,7 +34,7 @@ class Drive {
       if (reqErr) {
         done(reqErr)
       } else if (listResponse.statusCode !== 200) {
-        done(new Error(`request to ${this.authProvider} returned ${listResponse.statusCode}`))
+        done(this._error(listResponse.statusCode))
       } else {
         done(null, this.adaptData(listResponse.body, teamDrives ? teamDrives.body : null, options.uppy))
       }
@@ -114,7 +115,12 @@ class Drive {
         logger.error(err, 'provider.drive.thumbnail.error')
         return done(null)
       }
-      done(body.thumbnailLink ? request(body.thumbnailLink) : null)
+
+      if (resp.statusCode !== 200) {
+        return done(this._error(resp.statusCode))
+      }
+
+      done(null, body.thumbnailLink ? request(body.thumbnailLink) : null)
     })
   }
 
@@ -124,7 +130,11 @@ class Drive {
         logger.error(err, 'provider.drive.size.error')
         return done(null)
       }
-      done(parseInt(body.size))
+
+      if (resp.statusCode !== 200) {
+        return done(this._error(resp.statusCode))
+      }
+      done(null, parseInt(body.size))
     })
   }
 
@@ -151,6 +161,13 @@ class Drive {
     data.nextPagePath = null
 
     return data
+  }
+
+  _error (statusCode) {
+    if (statusCode === 401) {
+      return new AuthError()
+    }
+    return new Error(`request to ${this.authProvider} returned ${statusCode}`)
   }
 }
 

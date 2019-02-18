@@ -2,6 +2,7 @@ const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
+const AuthError = require('../error')
 
 class DropBox {
   constructor (options) {
@@ -38,7 +39,7 @@ class DropBox {
       if (reqErr) {
         done(reqErr)
       } else if (stats.statusCode !== 200) {
-        done(new Error(`request to ${this.authProvider} returned ${stats.statusCode}`))
+        done(this._error(stats.statusCode))
       } else {
         stats.body.user_email = userInfo.body.email
         done(null, this.adaptData(stats.body, options.uppy))
@@ -106,7 +107,12 @@ class DropBox {
       })
       .auth(token)
       .request()
-      .on('response', done)
+      .on('response', (resp) => {
+        if (resp.statusCode !== 200) {
+          return done(this._error(resp.statusCode))
+        }
+        done(null, resp)
+      })
       .on('error', (err) => {
         logger.error(err, 'provider.dropbox.thumbnail.error')
       })
@@ -127,7 +133,10 @@ class DropBox {
           return done(null)
         }
 
-        done(body.size)
+        if (resp.statusCode !== 200) {
+          return done(this._error(resp.statusCode))
+        }
+        done(null, parseInt(body.size))
       })
   }
 
@@ -150,6 +159,14 @@ class DropBox {
     data.nextPagePath = null
 
     return data
+  }
+
+  _error (statusCode) {
+    if (statusCode === 401) {
+      return new AuthError()
+    }
+
+    return new Error(`request to ${this.authProvider} returned ${statusCode}`)
   }
 }
 
