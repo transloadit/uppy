@@ -49,11 +49,11 @@ Promise.all([
   ),
   buildBundle(
     './packages/@uppy/robodog/bundle.js',
-    './packages/@uppy/robodog/dist/transloadit.js'
+    './packages/@uppy/robodog/dist/robodog.js'
   ),
   buildBundle(
     './packages/@uppy/robodog/bundle.js',
-    './packages/@uppy/robodog/dist/transloadit.min.js',
+    './packages/@uppy/robodog/dist/robodog.min.js',
     { minify: true }
   )
 ]).then(function () {
