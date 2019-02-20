@@ -21,7 +21,8 @@ module.exports = class Dropbox extends Plugin {
       serverUrl: this.opts.serverUrl,
       serverHeaders: this.opts.serverHeaders,
       storage: this.opts.storage,
-      provider: 'dropbox'
+      provider: 'dropbox',
+      pluginId: this.id
     })
 
     this.onAuth = this.onAuth.bind(this)

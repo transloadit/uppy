@@ -22,7 +22,8 @@ module.exports = class Instagram extends Plugin {
       serverHeaders: this.opts.serverHeaders,
       storage: this.opts.storage,
       provider: 'instagram',
-      authProvider: 'instagram'
+      authProvider: 'instagram',
+      pluginId: this.id
     })
 
     this.onAuth = this.onAuth.bind(this)
