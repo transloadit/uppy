@@ -34,7 +34,7 @@ __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
 # copy robodog dist to uppy package dist, before publishing to cdn
-cp -r packages/@uppy/robodog/dist/ packages/uppy/dist/
+cp -vr packages/@uppy/robodog/dist/* packages/uppy/dist/
 
 function fatal () {
   echo "❌ ${*}";
