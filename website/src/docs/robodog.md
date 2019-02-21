@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 10
+order: 100
 title: "Robodog"
 menu: "Introduction"
 module: "@uppy/robodog"
@@ -25,12 +25,14 @@ Then, with a bundler such as [webpack][webpack] or [Browserify][browserify], do:
 const transloadit = require('@uppy/robodog')
 ```
 
+<!-- 
 If you are not using a bundler, you can also import the Robodog using an HTML script tag.
 
 ```html
 <link rel="stylesheet" href="https://transloadit.edgly.net/releases/robodog/v1.0.0/dist/style.min.css">
-<script src="https://transloadit.edgly.net/releases/robodog/v1.0.0/dist/transloadit.min.js"></script>
-```
+<script src="https://transloadit.edgly.net/releases/robodog/v1.0.0/dist/transloadit.min.js"></script> 
+``` 
+-->
 
 ## Methods
 

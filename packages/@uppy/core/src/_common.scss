@@ -19,8 +19,8 @@
 // }
 
 .uppy-Root *:focus {
-  outline: $size-focus-outline solid $color-cornflower-blue;
-  outline-offset: $size-focus-offset;
+  outline: $size-focus-outline solid $color-cornflower-blue; /* no !important */
+  outline-offset: $size-focus-offset; /* no !important */
 }
 
 // https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4
@@ -72,7 +72,7 @@
   display: inline;
   empty-cells: show;
   float: none;
-  font-family: serif;
+  font-family: inherit;
   font-size: medium;
   font-style: normal;
   font-variant: normal;

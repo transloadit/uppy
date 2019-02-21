@@ -33,6 +33,15 @@ exports.jsonStringify = (data) => {
 }
 
 /**
+ * Does a simple html sanitization on the passed value
+ *
+ * @param {string} text
+ */
+exports.sanitizeHtml = (text) => {
+  return text.replace(/<\/?[^>]+(>|$)/g, '')
+}
+
+/**
  * Gets the size and content type of a url's content
  *
  * @param {string} url

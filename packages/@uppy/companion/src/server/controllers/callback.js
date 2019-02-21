@@ -4,7 +4,7 @@
  */
 const tokenService = require('../helpers/jwt')
 const parseUrl = require('url').parse
-const { hasMatch } = require('../helpers/utils')
+const { hasMatch, sanitizeHtml } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 const logger = require('../logger')
 
@@ -40,7 +40,7 @@ module.exports = function callback (req, res, next) {
         <head>
             <meta charset="utf-8" />
             <script>
-              window.opener.postMessage({token: "${uppyAuthToken}"}, "${origin}")
+              window.opener.postMessage({token: "${uppyAuthToken}"}, "${sanitizeHtml(origin)}")
               window.close()
             </script>
         </head>
