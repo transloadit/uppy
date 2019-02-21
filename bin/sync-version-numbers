@@ -32,4 +32,6 @@ fi
 version_files="./examples/ README.md bin/upload-to-cdn.sh website/src/examples/ website/src/docs/ website/themes/uppy/layout/"
 main_package_version=$(node -p "require('./packages/uppy/package.json').version")
 replace-x -r 'uppy/v\d+\.\d+\.\d+/' "uppy/v$main_package_version/" $version_files --exclude=node_modules
+# Legacy defeater for also renaming the old /dist/ locations, can be removed as soon as everything's on the new dist-less thing
+replace-x -r 'uppy/v\d+\.\d+\.\d+/dist/' "uppy/v$main_package_version/" $version_files --exclude=node_modules
 git add $version_files # add changes to the Release commit
