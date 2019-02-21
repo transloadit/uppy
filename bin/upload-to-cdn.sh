@@ -73,7 +73,7 @@ pushd "${__root}" > /dev/null 2>&1
     AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
   aws s3 ls \
     --region="us-east-1" \
-  "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}/package.json" > /dev/null 2>&1 && fatal "Tag ${version} already exists"
+  "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}/uppy.min.css" > /dev/null 2>&1 && fatal "Tag ${version} already exists"
   echo "✅"
 
   echo "--> Obtain relevant npm files for uppy ${version} ... "
@@ -91,7 +91,7 @@ pushd "${__root}" > /dev/null 2>&1
   tar zxvf "packages/uppy/uppy-${version}.tgz" -C /tmp/uppy-to-edgly/
 
   echo "--> Upload to edgly.net CDN"
-  pushd /tmp/uppy-to-edgly/package
+  pushd /tmp/uppy-to-edgly/package/dist
     # --delete \
     env \
       AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
