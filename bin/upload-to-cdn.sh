@@ -33,9 +33,6 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
-# copy robodog dist to uppy package dist, before publishing to cdn
-cp -vr packages/@uppy/robodog/dist/* packages/uppy/dist/
-
 function fatal () {
   echo "❌ ${*}";
   exit 1
@@ -95,6 +92,9 @@ pushd "${__root}" > /dev/null 2>&1
 
   echo "--> Upload to edgly.net CDN"
   pushd /tmp/uppy-to-edgly/package/dist
+    # copy robodog dist to uppy package dist, before publishing to cdn
+    cp -vr ../packages/@uppy/robodog/dist/* ./
+
     # --delete \
     env \
       AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
