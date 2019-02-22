@@ -73,10 +73,10 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 
 ```html
 <!-- 1. Add CSS to `<head>` -->
-<link href="https://transloadit.edgly.net/releases/uppy/v0.30.1/dist/uppy.min.css" rel="stylesheet">
+<link href="https://transloadit.edgly.net/releases/uppy/v0.30.0/dist/uppy.min.css" rel="stylesheet">
 
 <!-- 2. Add JS before the closing `</body>` -->
-<script src="https://transloadit.edgly.net/releases/uppy/v0.30.1/dist/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.30.0/dist/uppy.min.js"></script>
 
 <!-- 3. Initialize -->
 <div class="UppyDragDrop"></div>
