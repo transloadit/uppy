@@ -50,6 +50,7 @@ pushd "${__root}" > /dev/null 2>&1
     fi
   fi
 
+
   if [ -z "${EDGLY_KEY:-}" ] && [ -f ./env.sh ]; then
     source ./env.sh
   fi
@@ -76,6 +77,36 @@ pushd "${__root}" > /dev/null 2>&1
   "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}/uppy.min.css" > /dev/null 2>&1 && fatal "Tag ${version} already exists"
   echo "✅"
 
+
+  echo "--> Obtain relevant npm files for robodog ${version} ... "
+  pushd packages/@uppy/robodog
+    if [ -z "${remoteVersion}" ]; then
+      npm pack || fatal "Unable to fetch "
+    else
+      npm pack "@uppy/robodog@${remoteVersion}"
+    fi
+  popd > /dev/null 2>&1
+  echo "✅"
+  rm -rf /tmp/robodog-to-edgly
+  mkdir -p /tmp/robodog-to-edgly
+  cp -af "packages/@uppy/robodog/uppy-robodog-${version}.tgz" /tmp/robodog-to-edgly/
+  tar zxvf "packages/@uppy/robodog/uppy-robodog-${version}.tgz" -C /tmp/robodog-to-edgly/
+
+  echo "--> Upload robodog to edgly.net CDN"
+  pushd /tmp/robodog-to-edgly/package/dist
+    # --delete \
+    env \
+      AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
+      AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
+    aws s3 sync \
+      --region="us-east-1" \
+      --exclude 'node_modules/*' \
+    ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}"
+    echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}/"
+  popd > /dev/null 2>&1
+  rm -rf /tmp/robodog-to-edgly
+
+
   echo "--> Obtain relevant npm files for uppy ${version} ... "
   pushd packages/uppy
     if [ -z "${remoteVersion}" ]; then
@@ -90,11 +121,8 @@ pushd "${__root}" > /dev/null 2>&1
   cp -af "packages/uppy/uppy-${version}.tgz" /tmp/uppy-to-edgly/
   tar zxvf "packages/uppy/uppy-${version}.tgz" -C /tmp/uppy-to-edgly/
 
-  echo "--> Upload to edgly.net CDN"
+  echo "--> Upload uppy to edgly.net CDN"
   pushd /tmp/uppy-to-edgly/package/dist
-    # copy robodog dist to uppy package dist, before publishing to cdn
-    cp -vr ../packages/@uppy/robodog/dist/* ./
-
     # --delete \
     env \
       AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
@@ -106,6 +134,7 @@ pushd "${__root}" > /dev/null 2>&1
     echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}/"
   popd > /dev/null 2>&1
   rm -rf /tmp/uppy-to-edgly
+
 
   echo "${version}" | env \
     AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
