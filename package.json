@@ -87,7 +87,7 @@
     "build:js": "npm-run-all build:lib build:bundle",
     "build:lib": "node ./bin/build-lib.js",
     "build": "npm-run-all --parallel build:js build:css build:companion --serial build:gzip size",
-    "clean": "rm -rf packages/*/lib packages/@uppy/*/lib && rm -rf packages/uppy/dist && rm -rf packages/@uppy/robodog/dist",
+    "clean": "rm -rf packages/*/lib packages/@uppy/*/lib && rm -rf packages/*/dist packages/@uppy/*/dist",
     "lint:fix": "npm run lint -- --fix",
     "lint": "eslint . --cache",
     "lint-staged": "lint-staged",
