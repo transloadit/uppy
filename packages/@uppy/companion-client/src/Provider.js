@@ -13,17 +13,22 @@ module.exports = class Provider extends RequestClient {
     this.id = this.provider
     this.authProvider = opts.authProvider || this.provider
     this.name = this.opts.name || _getName(this.id)
-    this.tokenKey = `companion-${this.id}-auth-token`
+    this.pluginId = this.opts.pluginId
+    this.tokenKey = `companion-${this.pluginId}-auth-token`
   }
 
   get defaultHeaders () {
-    return Object.assign({}, super.defaultHeaders, {'uppy-auth-token': localStorage.getItem(this.tokenKey)})
+    return Object.assign({}, super.defaultHeaders, {'uppy-auth-token': this.getAuthToken()})
   }
 
   // @todo(i.olarewaju) consider whether or not this method should be exposed
   setAuthToken (token) {
     // @todo(i.olarewaju) add fallback for OOM storage
-    localStorage.setItem(this.tokenKey, token)
+    this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
+  }
+
+  getAuthToken () {
+    return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
   }
 
   checkAuth () {
@@ -48,7 +53,7 @@ module.exports = class Provider extends RequestClient {
   logout (redirect = location.href) {
     return this.get(`${this.id}/logout?redirect=${redirect}`)
       .then((res) => {
-        localStorage.removeItem(this.tokenKey)
+        this.storage.removeItem(this.tokenKey)
         return res
       })
   }
@@ -59,6 +64,7 @@ module.exports = class Provider extends RequestClient {
     if (defaultOpts) {
       plugin.opts = Object.assign({}, defaultOpts, opts)
     }
+
     if (opts.serverPattern) {
       const pattern = opts.serverPattern
       // validate serverPattern param
@@ -74,5 +80,7 @@ module.exports = class Provider extends RequestClient {
         plugin.opts.serverPattern = opts.serverUrl
       }
     }
+
+    plugin.storage = plugin.opts.storage || localStorage
   }
 }
