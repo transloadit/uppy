@@ -88,7 +88,7 @@ module.exports.app = (options = {}) => {
   app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.gentleVerifyToken, controllers.logout)
   app.get('/:providerName/authorized', middlewares.hasSessionAndProvider, middlewares.gentleVerifyToken, controllers.authorized)
   app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
-  app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.gentleVerifyToken, controllers.get)
+  app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
 
   app.param('providerName', providerManager.getProviderMiddleware(providers))
