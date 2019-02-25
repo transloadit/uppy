@@ -11,7 +11,7 @@ __companion="$(dirname "$(dirname "${__kube}")")"
 # Install kubectl
 curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.11.2/bin/linux/amd64/kubectl
 chmod +x ./kubectl
-mkdir ${HOME}/.local/bin/
+mkdir -p ${HOME}/.local/bin/
 export PATH="${HOME}/.local/bin/:$PATH"
 mv ./kubectl ${HOME}/.local/bin/
 
