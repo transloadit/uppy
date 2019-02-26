@@ -1,8 +1,8 @@
 const FileList = require('./FileList')
 const AddFiles = require('./AddFiles')
 const AddFilesPanel = require('./AddFilesPanel')
-const PanelContent = require('./PanelContent')
-const PanelTopBar = require('./PanelTopBar')
+const PickerPanelContent = require('./PickerPanelContent')
+const PanelTopBar = require('./PickerPanelTopBar')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
 const isTouchDevice = require('@uppy/utils/lib/isTouchDevice')
@@ -79,7 +79,7 @@ module.exports = function Dashboard (props) {
           </TransitionWrapper>
 
           <TransitionWrapper>
-            { props.activePickerPanel ? <PanelContent key="PanelContent" {...props} /> : null }
+            { props.activePickerPanel ? <PickerPanelContent key="PickerPanelContent" {...props} /> : null }
           </TransitionWrapper>
 
           <div class="uppy-Dashboard-progressindicators">
