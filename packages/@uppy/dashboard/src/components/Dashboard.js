@@ -12,11 +12,18 @@ const PreactCSSTransitionGroup = require('preact-css-transition-group')
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
 
-module.exports = function Dashboard (props) {
-  // if (!props.inline && props.modal.isHidden) {
-  //   return <span />
-  // }
+function TransitionWrapper (props) {
+  return (
+    <PreactCSSTransitionGroup
+      transitionName="uppy-transition-slideDownUp"
+      transitionEnterTimeout={250}
+      transitionLeaveTimeout={250}>
+      {props.children}
+    </PreactCSSTransitionGroup>
+  )
+}
 
+module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
 
   const dashboardClassName = classNames(
@@ -33,7 +40,7 @@ module.exports = function Dashboard (props) {
 
   return (
     <div class={dashboardClassName}
-      aria-hidden={props.inline ? 'false' : props.modal.isHidden}
+      aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onpaste={props.handlePaste}>
 
@@ -63,26 +70,17 @@ module.exports = function Dashboard (props) {
             <AddFiles {...props} />
           )}
 
-          <PreactCSSTransitionGroup
-            transitionName="uppy-transition-slideDownUp"
-            transitionEnterTimeout={250}
-            transitionLeaveTimeout={250}>
+          <TransitionWrapper>
             { props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} /> : null }
-          </PreactCSSTransitionGroup>
+          </TransitionWrapper>
 
-          <PreactCSSTransitionGroup
-            transitionName="uppy-transition-slideDownUp"
-            transitionEnterTimeout={250}
-            transitionLeaveTimeout={250}>
+          <TransitionWrapper>
             { props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null }
-          </PreactCSSTransitionGroup>
+          </TransitionWrapper>
 
-          <PreactCSSTransitionGroup
-            transitionName="uppy-transition-slideDownUp"
-            transitionEnterTimeout={250}
-            transitionLeaveTimeout={250}>
-            { props.activePanel ? <PanelContent key="PanelContent" {...props} /> : null }
-          </PreactCSSTransitionGroup>
+          <TransitionWrapper>
+            { props.activePickerPanel ? <PanelContent key="PanelContent" {...props} /> : null }
+          </TransitionWrapper>
 
           <div class="uppy-Dashboard-progressindicators">
             {props.progressindicators.map((target) => {
