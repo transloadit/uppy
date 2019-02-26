@@ -5,7 +5,7 @@ const prettyBytes = require('prettier-bytes')
 const FileItemProgress = require('./FileItemProgress')
 const getFileTypeIcon = require('../utils/getFileTypeIcon')
 const FilePreview = require('./FilePreview')
-const { iconCopy, iconRetry } = require('./icons')
+const { iconRetry } = require('./icons')
 const classNames = require('classnames')
 const { h } = require('preact')
 
@@ -168,7 +168,7 @@ module.exports = function fileItem (props) {
                   props.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
                 })
                 .catch(props.log)
-            }}>{iconCopy()}</button>
+            }}>{props.i18n('link')}</button>
           : ''
         }
       </div>

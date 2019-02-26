@@ -64,6 +64,7 @@ module.exports = class Dashboard extends Plugin {
         copyLinkToClipboardSuccess: 'Link copied to clipboard',
         copyLinkToClipboardFallback: 'Copy the URL below',
         copyLink: 'Copy link',
+        link: 'Link',
         fileSource: 'File source: %{name}',
         done: 'Done',
         back: 'Back',
