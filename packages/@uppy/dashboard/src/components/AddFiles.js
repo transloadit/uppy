@@ -86,7 +86,7 @@ class AddFiles extends Component {
                   role="tab"
                   tabindex={0}
                   aria-controls={`uppy-DashboardContent-panel--${target.id}`}
-                  aria-selected={this.props.activePanel.id === target.id}
+                  aria-selected={this.props.activePickerPanel.id === target.id}
                   onclick={() => this.props.showPanel(target.id)}>
                   {target.icon()}
                   <div class="uppy-DashboardTab-name">{target.name}</div>
