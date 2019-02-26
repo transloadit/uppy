@@ -17,7 +17,7 @@ describe('File upload with URL plugin', () => {
     browser.click('button.uppy-Url-importButton')
 
     // do the upload
-    browser.waitForVisible('.uppy-u-reset.uppy-c-btn.uppy-c-btn-primary.uppy-StatusBar-actionBtn--upload')
+    browser.waitForVisible('.uppy-u-reset.uppy-c-btn.uppy-c-btn-primary.uppy-StatusBar-actionBtn--upload', 10000)
     browser.click('.uppy-u-reset.uppy-c-btn.uppy-c-btn-primary.uppy-StatusBar-actionBtn--upload')
     browser.waitForExist('.uppy-StatusBar.is-complete', 20000)
   })

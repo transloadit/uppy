@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 41
+order: 51
 title: "XHR Upload"
 module: "@uppy/xhr-upload"
 permalink: docs/xhr-upload/

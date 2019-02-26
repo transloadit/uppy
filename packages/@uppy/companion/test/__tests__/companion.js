@@ -66,26 +66,35 @@ describe('download provdier file', () => {
 })
 
 describe('test authentication', () => {
-  test('authentication callback redirects to specified url', () => {
+  test('authentication callback redirects to send-token url', () => {
     return request(authServer)
       .get('/drive/callback')
-      .set('uppy-auth-token', token)
+      .expect(302)
+      .expect((res) => {
+        expect(res.header['location']).toContain('http://localhost:3020/drive/send-token?uppyAuthToken=')
+      })
+  })
+
+  test('the token gets sent via cookie and html', () => {
+    return request(authServer)
+      .get(`/drive/send-token?uppyAuthToken=${token}`)
       .expect(200)
       .expect((res) => {
         const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken=')[1]
+        expect(authToken).toEqual(token)
         // see mock ../../src/server/helpers/oauth-state above for http://localhost:3020
         const body = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8" />
-            <script>
-              window.opener.postMessage({token: "${authToken}"}, "http://localhost:3020")
-              window.close()
-            </script>
-        </head>
-        <body></body>
-        </html>`
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <script>
+          window.opener.postMessage({token: "${token}"}, "http://localhost:3020")
+          window.close()
+        </script>
+    </head>
+    <body></body>
+    </html>`
         expect(res.text).toBe(body)
       })
   })

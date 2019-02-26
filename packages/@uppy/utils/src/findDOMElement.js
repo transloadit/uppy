@@ -6,9 +6,9 @@ const isDOMElement = require('./isDOMElement')
  * @param {Node|string} element
  * @return {Node|null}
  */
-module.exports = function findDOMElement (element) {
+module.exports = function findDOMElement (element, context = document) {
   if (typeof element === 'string') {
-    return document.querySelector(element)
+    return context.querySelector(element)
   }
 
   if (typeof element === 'object' && isDOMElement(element)) {

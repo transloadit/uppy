@@ -6,7 +6,7 @@ alias: api/
 order: 0
 ---
 
-Uppy is a sleek and modular file uploader. It fetches files from local disk, Google Drive,Instagram, remote urls, cameras etc, and then uploads them to the final destination. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
+Uppy is a sleek and modular file uploader. It fetches files from local disk, Google Drive, Instagram, remote urls, cameras etc, and then uploads them to the final destination. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
 
 Uppy consists of a core module and [various plugins](/docs/plugins/) for selecting, manipulating and uploading files.
 
@@ -18,12 +18,12 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
   <head>
     <meta charset="utf-8">
     <title>Uppy</title>
-    <link href="https://transloadit.edgly.net/releases/uppy/v0.29.1/dist/uppy.min.css" rel="stylesheet">
+    <link href="https://transloadit.edgly.net/releases/uppy/v0.30.2/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <div id="drag-drop-area"></div>
 
-    <script src="https://transloadit.edgly.net/releases/uppy/v0.29.1/dist/uppy.min.js"></script>
+    <script src="https://transloadit.edgly.net/releases/uppy/v0.30.2/uppy.min.js"></script>
     <script>
       var uppy = Uppy.Core()
         .use(Uppy.Dashboard, {
@@ -112,12 +112,12 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 1\. Add a script at the bottom of the closing `</body>` tag:
 
 ``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v0.29.1/dist/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.30.2/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://transloadit.edgly.net/releases/uppy/v0.29.1/dist/uppy.min.css" rel="stylesheet">
+<link href="https://transloadit.edgly.net/releases/uppy/v0.30.2/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize at the bottom of the closing `</body>` tag:
@@ -168,5 +168,5 @@ If you're using Uppy via a script tag, you can load the polyfills from [JSDelivr
 ```html
 <script src="https://cdn.jsdelivr.net/npm/es6-promise@4.2.5/dist/es6-promise.auto.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.min.js"></script>
-<script src="https://transloadit.edgly.net/releases/uppy/v0.29.1/dist/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v0.30.2/uppy.min.js"></script>
 ```

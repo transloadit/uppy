@@ -52,7 +52,10 @@ module.exports = class Transloadit extends Plugin {
       locale: defaultLocale
     }
 
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = {
+      ...defaultOptions,
+      ...opts
+    }
 
     // i18n
     this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
@@ -268,13 +271,14 @@ module.exports = class Transloadit extends Plugin {
       return
     }
     this.setPluginState({
-      files: Object.assign({}, state.files, {
+      files: {
+        ...state.files,
         [uploadedFile.id]: {
           assembly: assemblyId,
           id: file.id,
           uploadedFile
         }
-      })
+      }
     })
     this.uppy.emit('transloadit:upload', uploadedFile, this.getAssembly(assemblyId))
   }
@@ -316,9 +320,10 @@ module.exports = class Transloadit extends Plugin {
     this.client.getAssemblyStatus(url).then((finalStatus) => {
       const state = this.getPluginState()
       this.setPluginState({
-        assemblies: Object.assign({}, state.assemblies, {
+        assemblies: {
+          ...state.assemblies,
           [finalStatus.assembly_id]: finalStatus
-        })
+        }
       })
       this.uppy.emit('transloadit:complete', finalStatus)
     })

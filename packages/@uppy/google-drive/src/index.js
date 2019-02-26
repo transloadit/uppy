@@ -23,8 +23,10 @@ module.exports = class GoogleDrive extends Plugin {
     this.provider = new Provider(uppy, {
       serverUrl: this.opts.serverUrl,
       serverHeaders: this.opts.serverHeaders,
+      storage: this.opts.storage,
       provider: 'drive',
-      authProvider: 'google'
+      authProvider: 'google',
+      pluginId: this.id
     })
 
     this.onAuth = this.onAuth.bind(this)

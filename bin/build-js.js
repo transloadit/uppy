@@ -1,4 +1,3 @@
-var path = require('path')
 var fs = require('fs')
 var chalk = require('chalk')
 var mkdirp = require('mkdirp')
@@ -7,18 +6,12 @@ var tinyify = require('tinyify')
 var browserify = require('browserify')
 var exorcist = require('exorcist')
 
-var distPath = './packages/uppy/dist'
-var srcPath = './packages/uppy'
-
 function handleErr (err) {
   console.error(chalk.red('✗ Error:'), chalk.red(err.message))
 }
 
-function buildUppyBundle (minify) {
-  var src = path.join(srcPath, 'bundle.js')
-  var bundleFile = minify ? 'uppy.min.js' : 'uppy.js'
-
-  var b = browserify(src, { debug: true, standalone: 'Uppy' })
+function buildBundle (srcFile, bundleFile, { minify = false, standalone = '' } = {}) {
+  var b = browserify(srcFile, { debug: true, standalone })
   if (minify) {
     b.plugin(tinyify)
   }
@@ -27,23 +20,44 @@ function buildUppyBundle (minify) {
 
   return new Promise(function (resolve, reject) {
     b.bundle()
-      .pipe(exorcist(path.join(distPath, bundleFile + '.map')))
-      .pipe(fs.createWriteStream(path.join(distPath, bundleFile), 'utf8'))
+      .pipe(exorcist(bundleFile + '.map'))
+      .pipe(fs.createWriteStream(bundleFile), 'utf8')
       .on('error', handleErr)
       .on('finish', function () {
         if (minify) {
-          console.info(chalk.green('✓ Built Minified Bundle:'), chalk.magenta(bundleFile))
+          console.info(chalk.green(`✓ Built Minified Bundle [${standalone}]:`), chalk.magenta(bundleFile))
         } else {
-          console.info(chalk.green('✓ Built Bundle:'), chalk.magenta(bundleFile))
+          console.info(chalk.green(`✓ Built Bundle [${standalone}]:`), chalk.magenta(bundleFile))
         }
         resolve()
       })
   })
 }
 
-mkdirp.sync(distPath)
+mkdirp.sync('./packages/uppy/dist')
+mkdirp.sync('./packages/@uppy/robodog/dist')
 
-Promise.all([buildUppyBundle(), buildUppyBundle(true)])
-  .then(function () {
-    console.info(chalk.yellow('✓ JS Bundle 🎉'))
-  })
+Promise.all([
+  buildBundle(
+    './packages/uppy/bundle.js',
+    './packages/uppy/dist/uppy.js',
+    { standalone: 'Uppy' }
+  ),
+  buildBundle(
+    './packages/uppy/bundle.js',
+    './packages/uppy/dist/uppy.min.js',
+    { standalone: 'Uppy', minify: true }
+  ),
+  buildBundle(
+    './packages/@uppy/robodog/bundle.js',
+    './packages/@uppy/robodog/dist/robodog.js',
+    { standalone: 'Robodog' }
+  ),
+  buildBundle(
+    './packages/@uppy/robodog/bundle.js',
+    './packages/@uppy/robodog/dist/robodog.min.js',
+    { standalone: 'Robodog', minify: true }
+  )
+]).then(function () {
+  console.info(chalk.yellow('✓ JS bundles 🎉'))
+})

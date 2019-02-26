@@ -331,6 +331,16 @@
       font-size: 14px;
     }
   }
+
+  table {
+    width: 100%;
+    text-align: left;
+    td {
+      vertical-align: top;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+  }
 }
 
 .PostAuthor {
@@ -373,8 +383,8 @@
   font-size: .9em;
 }
 
-.TryButton,
-a.TryButton {
+.TryButton, a.TryButton,
+.MoreButton, a.MoreButton {
   @include reset-button;
   display: inline-block;
   font-size: 0.8em;

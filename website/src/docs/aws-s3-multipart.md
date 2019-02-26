@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 43
+order: 53
 title: "AWS S3 Multipart"
 module: "@uppy/aws-s3-multipart"
 permalink: docs/aws-s3-multipart/

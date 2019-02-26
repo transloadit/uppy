@@ -32,6 +32,15 @@ const FOCUSABLE_ELEMENTS = [
 const TAB_KEY = 9
 const ESC_KEY = 27
 
+function createPromise () {
+  const o = {}
+  o.promise = new Promise((resolve, reject) => {
+    o.resolve = resolve
+    o.reject = reject
+  })
+  return o
+}
+
 /**
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
@@ -312,6 +321,7 @@ module.exports = class Dashboard extends Plugin {
   }
 
   openModal () {
+    const { promise, resolve } = createPromise()
     // save scroll position
     this.savedScrollPosition = window.scrollY
     // save active element, so we can restore focus when modal is closed
@@ -327,12 +337,14 @@ module.exports = class Dashboard extends Plugin {
           isHidden: false
         })
         this.el.removeEventListener('animationend', handler, false)
+        resolve()
       }
       this.el.addEventListener('animationend', handler, false)
     } else {
       this.setPluginState({
         isHidden: false
       })
+      resolve()
     }
 
     if (this.opts.browserBackButtonClose) {
@@ -344,6 +356,8 @@ module.exports = class Dashboard extends Plugin {
 
     // this.rerender(this.uppy.getState())
     this.setFocusToBrowse()
+
+    return promise
   }
 
   closeModal (opts = {}) {
@@ -356,6 +370,8 @@ module.exports = class Dashboard extends Plugin {
       // short-circuit if animation is ongoing
       return
     }
+
+    const { promise, resolve } = createPromise()
 
     if (this.opts.disablePageScrollWhenModalOpen) {
       document.body.classList.remove('uppy-Dashboard-isFixed')
@@ -371,12 +387,14 @@ module.exports = class Dashboard extends Plugin {
           isClosing: false
         })
         this.el.removeEventListener('animationend', handler, false)
+        resolve()
       }
       this.el.addEventListener('animationend', handler, false)
     } else {
       this.setPluginState({
         isHidden: true
       })
+      resolve()
     }
 
     // handle ESC and TAB keys in modal dialog
@@ -393,6 +411,8 @@ module.exports = class Dashboard extends Plugin {
         }
       }
     }
+
+    return promise
   }
 
   isModalOpen () {

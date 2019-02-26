@@ -1,7 +1,7 @@
 ---
 title: "Contributing"
 type: docs
-order: 4
+order: 5
 ---
 
 ## Uppy development
