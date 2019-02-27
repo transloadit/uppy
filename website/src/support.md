@@ -1,5 +1,5 @@
 ---
-title: "Support"
+title: "Uppy Support Options"
 type: page
 layout: page
 permalink: /support/
