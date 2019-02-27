@@ -116,7 +116,7 @@
   max-width: 100%; /* no !important */
   max-height: 100%; /* no !important */
   // min-width: 290px;
-  // min-height: 400px;
+  min-height: 450px;
   outline: none;
   border: 1px solid rgba($color-gray, 0.2);
   border-radius: 5px;
@@ -808,15 +808,13 @@
 
 .uppy-DashboardItem-edit,
 .uppy-DashboardItem-copyLink {
-  @include reset-button;
   display: inline-block;
   vertical-align: bottom;
   cursor: pointer;
-}
-
-.uppy-DashboardItem-copyLink {
-  width: 12px;
-  height: 11px;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1;
+  color: inherit;
 }
 
 .uppy-DashboardItem-edit:not(:first-child),
