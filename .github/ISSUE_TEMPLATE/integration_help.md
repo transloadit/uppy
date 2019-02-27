@@ -15,4 +15,4 @@ Accepting that you are wandering off supported paths may be a valid strategy for
 - using Transloadit-hosted versions (which also gets you support and encoding capabilities) ($49/mo)
 - self-hosting along with with Paid Integration Help ($1499/mo)
 
-**Paid Integration Help**. For deployments where Uppy is critical, [Transloadit Enterprise Customers](https://transloadit.com/pricing/) can purchase commercial support packages starting at $1499/mo. This will get you 1-on-1 access to Uppy core developers. We can help you self-host server components like Companion, debug bundler issues, patch non-current releases, and provide timely responses to all your integration questions. 
+**Paid Integration Help**. For deployments where Uppy is critical, [Transloadit Enterprise Customers](https://transloadit.com/pricing/) can purchase commercial support packages starting at $1499/mo. This will get you 1-on-1 access to Uppy core developers. We can help you self-host server components like Companion, debug bundler issues, patch non-current releases, and provide responses to all your integration questions within guaranteed agreed upon response times. 
