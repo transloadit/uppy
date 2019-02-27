@@ -1,3 +1,4 @@
+<!-- Warning, this file was injected. Please edit in ".github/CONTRIBUTING.md" instead and run "update.js" -->
 ## Uppy development
 
 Fork the repository into your own account first. See the [GitHub Help](https://help.github.com/articles/fork-a-repo/) article for instructions.
@@ -135,7 +136,7 @@ This will watch the website, as well as Uppy, as the examples, and rebuild every
 Then, to work on, for instance, the XHRUpload example, you would edit the following files:
 
 ```bash
-${EDITOR} src/core/Core.js \
+atom src/core/Core.js \
   src/plugins/XHRUpload.js \
   src/plugins/Plugin.js \
   website/src/examples/xhrupload/app.es6

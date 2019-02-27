@@ -122,7 +122,8 @@ async function injectBuiltFiles () {
 
 async function injectMarkdown () {
   let sources = {
-    '.github/ISSUE_TEMPLATE/integration_help.md': `src/_template/integration_help.md`
+    '.github/ISSUE_TEMPLATE/integration_help.md': `src/_template/integration_help.md`,
+    '.github/CONTRIBUTING.md': `src/_template/contributing.md`
   }
 
   let cmds = []
