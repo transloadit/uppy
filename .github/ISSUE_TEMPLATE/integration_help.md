@@ -10,9 +10,12 @@ Thinking how we could offer help to developers and enterprises in a sustainable 
 
 ### 🦄 Community Support
 
-Uppy developers and aficionados alike monitor the [Community Forum](https://community.transloadit.com/c/uppy) and assist where they can. Response times don't come with guarantees. The conversations are public and can benefit others in the future. 
+Uppy developers and aficionados assist where they can on the [Community Forum](https://community.transloadit.com/c/uppy). No guaranteed response times but we do our best! The conversations are public and indexed by search engines so they can benefit others in the future. 
 
-When you are opting to self-host server components, accept that you are wandering off supported paths and that we can't go out of our way fix a problem on your platform. Self-hosting maybe still be a valid strategy for many projects however. We have docs & tests and you will not be paying us anything (**$0/mo**). You might be paying your team's hours and hosting provider however.
+When you are opting to self-host server components, keep in mind that
+
+- Uppy still works without any of our server components. They are only needed for fetching from Dropbox, Instagram, etc, and resumable uploads (tus)
+- You are wandering off supported paths so we can't go out of our way fix a problem. But, you will not be paying anything (**$0/mo**) except for maybe your team's hours and hosting provider
 
 ↬ All integration questions from non-paying users are welcome via the [Community Forum](https://community.transloadit.com/c/uppy).
 
