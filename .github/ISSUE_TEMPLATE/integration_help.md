@@ -12,10 +12,9 @@ We thought about how we could offer assistance to developers and enterprises in 
 
 Uppy developers and aficionados assist where they can on the [Community Forum](https://community.transloadit.com/c/uppy). No guaranteed response times but we do our best! The conversations are public and indexed by search engines so they can benefit others in the future. 
 
-When you are opting to self-host server components, keep in mind that
+Running Companion on a server is required for the Instagram, Dropbox, etc. integrations. Running a tusd server is required to enable resumable file uploads.
 
-- Uppy still works without any of our server components. They are only needed for fetching from Dropbox, Instagram, etc, and resumable uploads (tus)
-- You are wandering off supported paths so we can't go out of our way fix a problem. But, you will not be paying anything (**$0/mo**) except for maybe your team's hours and hosting provider
+The Uppy client still works great without these components, but if you are opting to self-host them, keep in mind that we can't go out of our way fix a problem. But: you will not be paying us anything (**$0/mo**) (hosting & team costs may apply)
 
 ↬ We encourage all users to try our [Community Forum](https://community.transloadit.com/c/uppy).
 
