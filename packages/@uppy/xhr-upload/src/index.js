@@ -286,12 +286,14 @@ module.exports = class XHRUpload extends Plugin {
         if (removedFile.id === file.id) {
           timer.done()
           xhr.abort()
+          reject(new Error('File removed'))
         }
       })
 
       this.uppy.on('cancel-all', () => {
         timer.done()
         xhr.abort()
+        reject(new Error('Upload cancelled'))
       })
     })
   }
