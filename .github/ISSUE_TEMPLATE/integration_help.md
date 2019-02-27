@@ -8,13 +8,11 @@ Uppy is has grown into a massive project, still backed by a small company (Trans
 
 In order to still provide integration help, we're making two options available that are sustainable for us:
 
-**Free Integration Help**. Your question is welcome on our [Community Forum](https://community.transloadit.com/c/uppy), where Uppy developers are supported by aficionados and together they will assist you where and when they can. Response times are often good, but don't come with guarantees. Keep in mind that, especially when you are choosing to self-host server components, that we can't go out of our way if you run into problems. Investing our time in that would eventually simply bankrupt our company and destroy Uppy along with it. If you need assistance or assurance in running server components in a reliable way you can either:
+**Free Integration Help**. Your question is welcome on our [Community Forum](https://community.transloadit.com/c/uppy), where Uppy developers are supported by aficionados and together they will assist you where and when they can. Response times are often good, but don't come with guarantees. Keep in mind that, especially when you are choosing to self-host server components, that we can't go out of our way if you run into problems as that would eventually simply bankrupt our company and destroy Uppy along with it. 
+
+Accepting that you are wandering off supported paths may be fine for many projects. If you need assistance or assurance in running server components in a reliable way however, you can either:
 
 - using Transloadit-hosted versions (gets you support and encoding capabilities) ($49/mo)
 - self-hosting along with with Paid Integration Help ($1499/mo)
-
-Otherwise you should 
-
-- accept that you are wandering off supported paths (which may be totally fine for many projects) ($0/mo)
 
 **Paid Integration Help**. For deployments where Uppy is critical, [Transloadit Enterprise Customers](https://transloadit.com/pricing/) can purchase commercial support packages starting at $1499/mo. This will get you 1-on-1 access to Uppy core developers. We can help you self-host server components like Companion, debug bundler issues, support non-current releases, and provide timely responses to other integration questions. 
