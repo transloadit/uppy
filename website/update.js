@@ -120,6 +120,25 @@ async function injectBuiltFiles () {
   })
 }
 
+async function injectMarkdown () {
+  let sources = {
+    '.github/ISSUE_TEMPLATE/integration_help.md': `src/_template/integration_help.md`
+  }
+
+  let cmds = []
+  for (let src in sources) {
+    let dst = sources[src]
+    // strip yaml frontmatter:
+    cmds.push(`echo '${path.join(uppyRoot, `/../../${src}`)}'`)
+    cmds.push(`(echo '<!-- Warning, this file was injected. Please edit in "${src}" instead and run "${path.basename(__filename)}" -->' && (cat '${path.join(uppyRoot, `/../../${src}`)}' |sed '1 { /^---/ { :a N; /\\n---/! ba; d} }')) > '${path.join(webRoot, dst)}'`)
+  }
+
+  const { stdout } = await promisify(exec)(cmds.join('&&'))
+  stdout.trim().split('\n').forEach(function (line) {
+    console.info(chalk.green('✓ injected: '), chalk.grey(line))
+  })
+}
+
 async function readConfig () {
   try {
     const buf = await promisify(fs.readFile)(configPath, 'utf8')
@@ -131,6 +150,8 @@ async function readConfig () {
 
 async function update () {
   const config = await readConfig()
+
+  await injectMarkdown()
 
   config.uppy_version = version
   config.uppy_version_anchor = version.replace(/[^\d]+/g, '')
