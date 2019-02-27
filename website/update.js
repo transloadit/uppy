@@ -123,7 +123,8 @@ async function injectBuiltFiles () {
 async function injectMarkdown () {
   let sources = {
     '.github/ISSUE_TEMPLATE/integration_help.md': `src/_template/integration_help.md`,
-    '.github/CONTRIBUTING.md': `src/_template/contributing.md`
+    '.github/CONTRIBUTING.md': `src/_template/contributing.md`,
+    '.github/SUPPORT.md': `src/_template/support.md`
   }
 
   let cmds = []
@@ -131,7 +132,7 @@ async function injectMarkdown () {
     let dst = sources[src]
     // strip yaml frontmatter:
     cmds.push(`echo '${path.join(uppyRoot, `/../../${src}`)}'`)
-    cmds.push(`(echo '<!-- Warning, this file was injected. Please edit in "${src}" instead and run "${path.basename(__filename)}" -->' && (cat '${path.join(uppyRoot, `/../../${src}`)}' |sed '1 { /^---/ { :a N; /\\n---/! ba; d} }')) > '${path.join(webRoot, dst)}'`)
+    cmds.push(`(echo '<!-- WARNING! This file was injected. Please edit in "${src}" instead and run "${path.basename(__filename)}" -->' && (cat '${path.join(uppyRoot, `/../../${src}`)}' |sed '1 { /^---/ { :a N; /\\n---/! ba; d} }')) > '${path.join(webRoot, dst)}'`)
   }
 
   const { stdout } = await promisify(exec)(cmds.join('&&'))
