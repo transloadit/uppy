@@ -8,7 +8,7 @@ Uppy is has grown into a massive project, backed by a small company (Transloadit
 
 In order to still provide integration help, we're making two options available that are sustainable:
 
-**Free Integration Help**. Your question is welcome on our [Community Forum](https://community.transloadit.com/c/uppy), where Uppy developers along with aficionados assist you where and when they can. Response times are often good, but don't come with guarantees. Keep in mind that, especially when you are opting to self-host server components, that we can't go out of our way if you run into problems as that would simply eventually bankrupt our company and destroy Uppy along with it. 
+**Free Integration Help**. Your question is welcome on our [Community Forum](https://community.transloadit.com/c/uppy), where Uppy developers along with aficionados assist you where and when they can. Response times are often good, but don't come with guarantees. The answers may benefit others in the future. Keep in mind that, especially when you are opting to self-host server components, that we can't go out of our way if you run into problems as route simply leads to our company's demise, as well as Uppy's. 
 
 Accepting that you are wandering off supported paths may be a valid strategy for many projects. If however you need assistance or assurance in running server components in a reliable way, you can consider:
 
