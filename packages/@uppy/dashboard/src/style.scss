@@ -808,15 +808,13 @@
 
 .uppy-DashboardItem-edit,
 .uppy-DashboardItem-copyLink {
-  @include reset-button;
   display: inline-block;
   vertical-align: bottom;
   cursor: pointer;
-}
-
-.uppy-DashboardItem-copyLink {
-  width: 12px;
-  height: 11px;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1;
+  color: inherit;
 }
 
 .uppy-DashboardItem-edit:not(:first-child),
