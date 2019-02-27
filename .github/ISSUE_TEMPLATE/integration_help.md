@@ -4,7 +4,7 @@ about: Do you need assistance with running the Uppy client in your bundler, or C
 labels: Not Accepted
 ---
 
-Uppy is a massive project backed by a small company (Transloadit), and how much as we would like to help each single use with their integration question, we would quickly bleed ourselves dry if we were to answer them in detail for our equally massive non-paying userbase. In order to still get integration help, here are two options that are sustainable for us:
+Uppy is a massive project backed by a small company (Transloadit), and as much as we would like to help each single non-paying user with their integration question, we would quickly bleed ourselves dry if we were to answer all of them in detail. In order to still get integration help, here are two options for you, that are sustainable for us:
 
 **Free Integration Help**. We are happy to provide pointers and help with bugs & feature requests but for deeper integration help (making things work on your platform, that already work for the larger community) please refer to our our [Community Forum](https://community.transloadit.com/c/uppy). 
 
