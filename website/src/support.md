@@ -5,7 +5,7 @@ layout: page
 permalink: /support/
 ---
 
-Uppy's community is growing quickly. There are dedicated people willing to help you via different channels.
+We classify support requests in three main categories: Bugs, Feature Requests, and Integration Help.
 
 ## 🐛 Bug Reports
 

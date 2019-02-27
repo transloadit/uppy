@@ -133,6 +133,7 @@ async function injectMarkdown () {
     cmds.push(`echo '${path.join(uppyRoot, `/../../${src}`)}'`)
     cmds.push(`(echo '<!-- WARNING! This file was injected. Please edit in "${src}" instead and run "${path.basename(__filename)}" -->' && (cat '${path.join(uppyRoot, `/../../${src}`)}' |sed '1 { /^---/ { :a N; /\\n---/! ba; d} }')) > '${path.join(webRoot, dst)}'`)
   }
+  cmds.push(`touch '${path.join(webRoot, `/src/support.md`)}'`)
 
   const { stdout } = await promisify(exec)(cmds.join('&&'))
   stdout.trim().split('\n').forEach(function (line) {
