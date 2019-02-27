@@ -4,7 +4,7 @@ about: Do you need assistance with running the Uppy client in your bundler, or C
 labels: Not Accepted
 ---
 
-Uppy is has grown into a massive project, still backed by a small company (Transloadit). As much as we would like to assist each and every non-paying user with integration questions (making things work in your situation, that already work for the larger community), that would grind innovation to a halt and burn out our support crew. 
+Uppy is has grown into a massive project, backed by a small company (Transloadit). As much as we would like to assist each and every non-paying user with integration questions (making things work in your situation, that already work for the larger community), that would grind innovation to a halt and burn out our crew quickly 
 
 In order to still provide integration help, we're making two options available that are sustainable for us:
 
