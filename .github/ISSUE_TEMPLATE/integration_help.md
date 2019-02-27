@@ -1,6 +1,6 @@
 ---
 name: Integration help
-about: Do you need assistance with running the Uppy client in your bundler, or Companion on your own preferred server platform?
+about: Do you need assistance with building the Uppy client in your bundler, or running Companion on your own preferred server platform?
 labels: Not Accepted
 ---
 
