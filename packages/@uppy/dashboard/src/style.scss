@@ -115,8 +115,8 @@
   background-color: $color-almost-white;
   max-width: 100%; /* no !important */
   max-height: 100%; /* no !important */
-  min-width: 290px;
-  min-height: 400px;
+  // min-width: 290px;
+  min-height: 450px;
   outline: none;
   border: 1px solid rgba($color-gray, 0.2);
   border-radius: 5px;
@@ -216,7 +216,7 @@
 }
 
 .uppy-DashboarAddFiles-info {
-  padding-top: 30px;
+  padding-top: 15px;
   padding-bottom: 15px;
 
   .uppy-size--md & {
@@ -224,6 +224,7 @@
     bottom: 30px;
     left: 0;
     right: 0;
+    padding-top: 30px;
     padding-bottom: 0;
   }
 }
@@ -316,15 +317,13 @@
     }
   }
 
-  .uppy-DashboardTab-btn svg,
-  .uppy-DashboardTab-btn svg * {
+  .uppy-DashboardTab-btn svg {
     max-width: 100%;
     max-height: 100%;
     display: inline-block;
     vertical-align: text-top;
     overflow: hidden;
-    transition: transform 0.2s;
-    will-change: transform;
+    transition: transform ease-in-out 0.2s;
   }
 
   .uppy-DashboardTab-btn:hover svg {
@@ -573,16 +572,17 @@
 
 .uppy-Dashboard-note {
   font-size: 13px;
-  line-height: 1.2;
+  line-height: 1.25;
   text-align: center;
   color: rgba($color-asphalt-gray, 0.8);
-  // position: absolute;
-  // bottom: 45px;
-  // left: 0;
-  width: 100%;
+  max-width: 350px;
+  margin: auto;
+  padding: 0 15px;
 
   .uppy-size--md & {
     font-size: 16px;
+    line-height: 1.35;
+    max-width: 600px;
   }
 }
 
@@ -607,6 +607,7 @@
   position: relative;
   top: 1px;
   opacity: 0.9;
+  vertical-align: text-top;
 }
 
 .uppy-DashboardItem {
@@ -807,15 +808,13 @@
 
 .uppy-DashboardItem-edit,
 .uppy-DashboardItem-copyLink {
-  @include reset-button;
   display: inline-block;
   vertical-align: bottom;
   cursor: pointer;
-}
-
-.uppy-DashboardItem-copyLink {
-  width: 12px;
-  height: 11px;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1;
+  color: inherit;
 }
 
 .uppy-DashboardItem-edit:not(:first-child),

@@ -232,15 +232,13 @@ module.exports = class XHRUpload extends Plugin {
           const body = opts.getResponseData(xhr.responseText, xhr)
           const uploadURL = body[opts.responseUrlFieldName]
 
-          const response = {
+          const uploadResp = {
             status: ev.target.status,
             body,
             uploadURL
           }
 
-          this.uppy.setFileState(file.id, { response })
-
-          this.uppy.emit('upload-success', file, body, uploadURL)
+          this.uppy.emit('upload-success', file, uploadResp)
 
           if (uploadURL) {
             this.uppy.log(`Download ${file.name} from ${file.uploadURL}`)
@@ -256,9 +254,7 @@ module.exports = class XHRUpload extends Plugin {
             body
           }
 
-          this.uppy.setFileState(file.id, { response })
-
-          this.uppy.emit('upload-error', file, error)
+          this.uppy.emit('upload-error', file, error, response)
           return reject(error)
         }
       })
@@ -332,9 +328,16 @@ module.exports = class XHRUpload extends Plugin {
         socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
         socket.on('success', (data) => {
-          const resp = opts.getResponseData(data.response.responseText, data.response)
-          const uploadURL = resp[opts.responseUrlFieldName]
-          this.uppy.emit('upload-success', file, resp, uploadURL)
+          const body = opts.getResponseData(data.response.responseText, data.response)
+          const uploadURL = body[opts.responseUrlFieldName]
+
+          const uploadResp = {
+            status: data.response.status,
+            body,
+            uploadURL
+          }
+
+          this.uppy.emit('upload-success', file, uploadResp)
           socket.close()
           return resolve()
         })
@@ -399,9 +402,13 @@ module.exports = class XHRUpload extends Plugin {
         timer.done()
 
         if (ev.target.status >= 200 && ev.target.status < 300) {
-          const resp = this.opts.getResponseData(xhr.responseText, xhr)
+          const body = this.opts.getResponseData(xhr.responseText, xhr)
+          const uploadResp = {
+            status: ev.target.status,
+            body
+          }
           files.forEach((file) => {
-            this.uppy.emit('upload-success', file, resp)
+            this.uppy.emit('upload-success', file, uploadResp)
           })
           return resolve()
         }

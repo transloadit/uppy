@@ -549,13 +549,23 @@ uppy.on('upload-progress', (file, progress) => {
 
 Fired each time a single upload is completed.
 
+`response` object (depending on the uploader plugin used, it might contain less info, the example is for `@uppy/xhr-upload`):
+
+```js
+{
+  status, // HTTP status code (0, 200, 300)
+  body, // response body
+  uploadURL // the file url, if it was returned
+}
+```
+
 ``` javascript
-uppy.on('upload-success', (file, resp, uploadURL) => {
-  console.log(file.name, uploadURL)
+uppy.on('upload-success', (file, response) => {
+  console.log(file.name, response.uploadURL)
   var img = new Image()
   img.width = 300
-  img.alt = fileId
-  img.src = uploadURL
+  img.alt = file.id
+  img.src = response.uploadURL
   document.body.appendChild(img)
 })
 ```
@@ -579,10 +589,19 @@ Fired when Uppy fails to upload/encode the entire upload. That error is then set
 
 ### `upload-error`
 
-Fired when an error occurs with a specific file:
+Fired each time a single upload has errored.
+
+`response` object (depending on the uploader plugin used, it might contain less info, the example is for `@uppy/xhr-upload`):
+
+```js
+{
+  status, // HTTP status code (0, 200, 300)
+  body // response body
+}
+```
 
 ``` javascript
-uppy.on('upload-error', (file, error) => {
+uppy.on('upload-error', (file, error, response) => {
   console.log('error with file:', file.id)
   console.log('error message:', error)
 })

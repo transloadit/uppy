@@ -133,4 +133,5 @@ class AssemblyOptions {
   }
 }
 
-module.exports = Object.assign(AssemblyOptions, { validateParams })
+module.exports = AssemblyOptions
+module.exports.validateParams = validateParams

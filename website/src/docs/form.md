@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 70
+order: 80
 title: "Form"
 module: "@uppy/form"
 permalink: docs/form/

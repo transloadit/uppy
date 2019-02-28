@@ -1,5 +1,6 @@
 const { Plugin } = require('@uppy/core')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
+const toArray = require('@uppy/utils/lib/toArray')
 // Rollup uses get-form-data's ES modules build, and rollup-plugin-commonjs automatically resolves `.default`.
 // So, if we are being built using rollup, this require() won't have a `.default` property.
 const getFormData = require('get-form-data').default || require('get-form-data')
@@ -53,7 +54,25 @@ module.exports = class Form extends Plugin {
   handleFormSubmit (ev) {
     if (this.opts.triggerUploadOnSubmit) {
       ev.preventDefault()
-      this.uppy.upload().catch((err) => {
+      const elements = toArray(ev.target.elements)
+      const disabledByUppy = []
+      elements.forEach((el) => {
+        const isButton = el.tagName === 'BUTTON' || (el.tagName === 'INPUT' && el.type === 'submit')
+        if (isButton && !el.disabled) {
+          el.disabled = true
+          disabledByUppy.push(el)
+        }
+      })
+      this.uppy.upload().then(() => {
+        disabledByUppy.forEach((button) => {
+          button.disabled = false
+        })
+      }, (err) => {
+        disabledByUppy.forEach((button) => {
+          button.disabled = false
+        })
+        return Promise.reject(err)
+      }).catch((err) => {
         this.uppy.log(err.stack || err.message || err)
       })
     }

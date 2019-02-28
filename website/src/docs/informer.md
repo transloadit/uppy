@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 52
+order: 62
 title: "Informer"
 module: "@uppy/informer"
 permalink: docs/informer/

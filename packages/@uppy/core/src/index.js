@@ -46,7 +46,9 @@ class Uppy {
           1: 'Select %{smart_count} files'
         },
         cancel: 'Cancel',
-        logOut: 'Log out'
+        logOut: 'Log out',
+        filter: 'Filter',
+        resetFilter: 'Reset filter'
       }
     }
 
@@ -648,6 +650,7 @@ class Uppy {
     })
 
     if (inProgress.length === 0) {
+      this.emit('progress', 0)
       this.setState({ totalProgress: 0 })
       return
     }
@@ -684,6 +687,7 @@ class Uppy {
       : Math.round(uploadedSize / totalSize * 100)
 
     this.setState({ totalProgress })
+    this.emit('progress', totalProgress)
   }
 
   /**
@@ -695,8 +699,12 @@ class Uppy {
       this.setState({ error: error.message })
     })
 
-    this.on('upload-error', (file, error) => {
-      this.setFileState(file.id, { error: error.message })
+    this.on('upload-error', (file, error, response) => {
+      this.setFileState(file.id, {
+        error: error.message,
+        response
+      })
+
       this.setState({ error: error.message })
 
       let message = this.i18n('failedToUpload', { file: file.name })
@@ -734,7 +742,7 @@ class Uppy {
 
     this.on('upload-progress', this._calculateProgress)
 
-    this.on('upload-success', (file, uploadResp, uploadURL) => {
+    this.on('upload-success', (file, uploadResp) => {
       const currentProgress = this.getFile(file.id).progress
       this.setFileState(file.id, {
         progress: Object.assign({}, currentProgress, {
@@ -742,7 +750,8 @@ class Uppy {
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal
         }),
-        uploadURL: uploadURL,
+        response: uploadResp,
+        uploadURL: uploadResp.uploadURL,
         isPaused: false
       })
 
@@ -1192,6 +1201,10 @@ class Uppy {
       // always refers to the latest state. In the handler right above it refers
       // to an outdated object without the `.result` property.
       const { currentUploads } = this.getState()
+      if (!currentUploads[uploadID]) {
+        this.log(`Not setting result for an upload that has been canceled: ${uploadID}`)
+        return
+      }
       const currentUpload = currentUploads[uploadID]
       const result = currentUpload.result
       this.emit('complete', result)

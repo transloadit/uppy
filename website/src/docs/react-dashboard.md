@@ -2,7 +2,7 @@
 title: "&lt;Dashboard />"
 type: docs
 permalink: docs/react/dashboard/
-order: 84
+order: 94
 ---
 
 The `<Dashboard />` component wraps the [`@uppy/dashboard`][] plugin. It only renders the Dashboard inline. To use the Dashboard modal (`inline: false`), use the [`<DashboardModal />`](/docs/react/dashboard-modal) component.

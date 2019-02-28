@@ -51,9 +51,9 @@ function uppyInit () {
     browserBackButtonClose: opts.browserBackButtonClose
   })
 
-  if (opts.GoogleDrive) {
-    uppy.use(GoogleDrive, { target: Dashboard, serverUrl: COMPANION })
-  }
+  // if (opts.GoogleDrive) {
+  //   uppy.use(GoogleDrive, { target: Dashboard, serverUrl: COMPANION })
+  // }
 
   if (opts.Dropbox) {
     uppy.use(Dropbox, { target: Dashboard, serverUrl: COMPANION })

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Uppy :tl: playground</title>
+  </head>
+  <body>
+    <style>
+      html {
+        background: #f1f1f1;
+      }
+      main {
+        padding: 20px;
+        font: 12pt sans-serif;
+        background: white;
+        width: 800px;
+        margin: auto;
+      }
+      hr {
+        border: 0;
+        background-color: #111e33;
+        height: 1px;
+      }
+      .hidden { display: none; }
+      .error { color: red; }
+      #logo { height: 1em; vertical-align: middle; }
+    </style>
+    <main>
+      <h1>Uppy <img src="https://transloadit.edgly.net/assets/images/logo-small.svg" alt="Transloadit" id="logo"> playground</h1>
+
+      <hr>
+      <h2>transloadit.form()</h2>
+
+      <form id="test-form" method="post" action="http://localhost:9967/test">
+        <p><strong>leave a message</strong>
+        <p>
+          <label>name:
+            <input type="text" name="name">
+          </label>
+        <p>
+          <label>message: <br>
+            <textarea name="message"></textarea>
+          </label>
+
+        <p>
+          <label>
+            attachments:
+            <input type="file" name="files" multiple>
+          </label>
+          <div class="progress"></div>
+
+        <p>
+          <button type="submit">
+            Upload
+          </button>
+
+          <span class="error"></span>
+      </form>
+
+      <hr>
+      <h2>transloadit.form() with dashboard</h2>
+      <form id="dashboard-form" method="post" action="http://localhost:9967/test">
+        <p><strong>leave a message</strong>
+        <p>
+          <label>name:
+            <input type="text" name="name">
+          </label>
+        <p>
+          <label>message: <br>
+            <textarea name="message"></textarea>
+          </label>
+
+        <p>
+          <label>
+            attachments:
+            <span class="dashboard"></span>
+          </label>
+
+        <p>
+          <button type="submit">
+            Upload
+          </button>
+
+          <span class="error"></span>
+      </form>
+
+
+      <hr>
+      <h2>transloadit.pick()</h2>
+
+      <p>
+        <button onclick="openModal()">Open</button>
+
+      <hr>
+      <h2>transloadit.upload()</h2>
+      <p>
+        An &lt;input type=file&gt; backed by `transloadit.upload`:
+
+      <p>
+        <input type="file" multiple onchange="doUpload(event)">
+
+      <p id="upload-result">
+      <p id="upload-error" class="error">
+    </main>
+
+    <link href="uppy.min.css" rel="stylesheet">
+    <script src="bundle.js"></script>
+  </body>
+</html>

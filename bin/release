@@ -61,7 +61,7 @@ cp README.md packages/uppy/README.md
 npm run clean
 FRESH=1 npm run build
 
-git commit -m "Release"
+git commit --allow-empty -m "Release"
 lerna version --amend --no-push --exact
 
 lerna publish from-git

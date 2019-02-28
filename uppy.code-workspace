@@ -5,6 +5,10 @@
 		}
 	],
 	"settings": {
+		"workbench.colorCustomizations": {
+			"titleBar.activeForeground": "#ffffff",
+			"titleBar.activeBackground": "#ff009d",
+		},
 		"files.exclude": {
 			"website/public/": true,
 			"node_modules/": true,

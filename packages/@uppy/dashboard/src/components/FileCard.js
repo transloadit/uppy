@@ -71,6 +71,7 @@ class FileCard extends Component {
 
     return (
       <div class="uppy-DashboardFileCard"
+        data-uppy-panelType="FileCard"
         onDragOver={ignoreEvent}
         onDragLeave={ignoreEvent}
         onDrop={ignoreEvent}

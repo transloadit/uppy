@@ -5,7 +5,7 @@ const prettyBytes = require('prettier-bytes')
 const FileItemProgress = require('./FileItemProgress')
 const getFileTypeIcon = require('../utils/getFileTypeIcon')
 const FilePreview = require('./FilePreview')
-const { iconCopy, iconRetry } = require('./icons')
+const { iconRetry } = require('./icons')
 const classNames = require('classnames')
 const { h } = require('preact')
 
@@ -147,7 +147,7 @@ module.exports = function fileItem (props) {
           </div>
         }
         {(!uploadInProgressOrComplete && props.metaFields && props.metaFields.length)
-          ? <button class="uppy-DashboardItem-edit"
+          ? <button class="uppy-u-reset uppy-DashboardItem-edit"
             type="button"
             aria-label={props.i18n('editFile')}
             title={props.i18n('editFile')}
@@ -157,7 +157,7 @@ module.exports = function fileItem (props) {
           : null
         }
         {props.showLinkToFileUploadResult && file.uploadURL
-          ? <button class="uppy-DashboardItem-copyLink"
+          ? <button class="uppy-u-reset uppy-DashboardItem-copyLink"
             type="button"
             aria-label={props.i18n('copyLink')}
             title={props.i18n('copyLink')}
@@ -168,7 +168,7 @@ module.exports = function fileItem (props) {
                   props.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
                 })
                 .catch(props.log)
-            }}>{iconCopy()}</button>
+            }}>{props.i18n('link')}</button>
           : ''
         }
       </div>
