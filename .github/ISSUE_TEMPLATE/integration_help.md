@@ -10,7 +10,7 @@ There is also a different category of support that we'd like to call Integration
 
 As much as we'd like to provide detailed integration help to each non-paying user, Uppy has reached a point where this is no longer sustainable for our small crew. We end up investing our time in a million different projects, but without money flowing back, we can't ramp up our team along with the demand, spreading our team ever thinner, eventually grinding development to a halt.
 
-This is not where we want to be, in order to offer enthusiasts, businesses, and enterprises assistance in a sustainable way, we came up with these three support options:
+This is not where we want to be, so in order to offer enthusiasts, businesses, and enterprises assistance in a sustainable way, we came up with these three support options:
 
 |                                            <br>Support |     🦄<br>Community      |                        🥉<br>Bronze                         |                                🥈<br>Silver and up                                 |
 |-------------------------------------------------------:|:------------------------:|:-----------------------------------------------------------:|:----------------------------------------------------------------------------------:|
