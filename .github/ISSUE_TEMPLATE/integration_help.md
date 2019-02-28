@@ -4,42 +4,36 @@ about: Do you need assistance with building the Uppy client in your bundler, or 
 labels: Not Accepted
 ---
 
-As much as we'd like to provide detailed integration help (making things work for you, that already work for the larger community) to each non-paying user, Uppy has now reached a point where this is no longer feasible for our small company. We'd spread our developers thin, grinding innovation to a halt, and with no money for this coming in, we can't hire our way out of it.
+We are providing Uppy free of charge. If you want you can self-host all components and never pay us anything. There's docs and tests and your Bugs and Feature Requests are always welcome on GitHub. 
 
-In order to offer assistance to developers, businesses, and enterprises in a sustainable way, we present you with three options:
+There is also a different category of support that we'd like to call Integration Help: making things work for you, that are already reported working for the larger community.
 
-### 🦄 Community Support
+As much as we'd like to provide detailed integration help to each non-paying user, Uppy has reached a point where this is no longer sustainable for our small crew. We end up investing our time in a million different projects, but without money flowing back, we can't ramp up our team along with the demand, spreading our team ever thinner, eventually grinding development to a halt.
 
-Uppy developers and aficionados assist where they can on the [Community Forum](https://community.transloadit.com/c/uppy). No guaranteed response times but we do our best! The conversations are public and indexed by search engines so they can benefit others in the future. 
+This is not where we want to be, in order to offer enthusiasts, businesses, and enterprises assistance in a sustainable way, we came up with these three support options:
 
-Running Companion on a server is required for the Instagram, Dropbox, etc. integrations. Running a tusd server is required to enable resumable file uploads.
+|                                            <br>Support |     🦄<br>Community      |                        🥉<br>Bronze                         |                                🥈<br>Silver and up                                 |
+|-------------------------------------------------------:|:------------------------:|:-----------------------------------------------------------:|:----------------------------------------------------------------------------------:|
+|                                                  Price |        anyone, $0        | included for all Transloadit Customers (starting at $49/mo) | packages available to Transloadit Enterprise Customers starting at $1499/mo and up |
+|                                            Bug reports |   ✅ via [GitHub][bugs]   |                    ✅ via [GitHub][bugs]                     |                                ✅ via [GitHub][bugs]                                |
+|                                       Feature requests | ✅ via [GitHub][features] |                  ✅ via [GitHub][features]                   |                         ✅ via [GitHub][features] & private                         |
+|                        Integration Help on Uppy client |       best effort        |                              ✅                              |                                         ✅                                          |
+| Integration Help on Transloadit-hosted Companion & Tus |       best effort        |                              ✅                              |                                         ✅                                          |
+|        Integration Help on self-hosted Companion & Tus |       best effort        |                              -                              |                                         ✅                                          |
+|                                                  Depth |         varying          |                     ✅ General Guidance                      |  ✅ Guidance based on your use-case and circumstances, code & operational reviews   |
+|                                            Provided by |    [Community][forum]    | ✅ [Transloadit][support]<br>(announce your account's email) |            ✅ [Transloadit][support]<br>(announce your account's email)             |
+|          Guaranteed response times within office hours |            -             |                          < 4 days                           |                                     < 8h - 32h                                     |
+|           Access to Transloadit-hosted Companion & Tus |            -             |                              ✅                              |                                         ✅                                          |
+|              Access to Transloadit's encoding features |            -             |                       ✅ 10GB included                       |                                 ✅ 0GB - unlimited                                  |
+|                                        Health & Status |            -             |         ✅ Access to Personal Transloadit Dashboard          | ✅ Access to Personal Transloadit Dashboard. Proactive monitoring & notifications.  |
+|                       1-on-1 access to core developers |            -             |                             1h                              |                                      1h - 20h                                      |
+|                       Support for non-current releases |            -             |                              -                              |                                 ✅ 1 - 10 releases                                  |
 
-The Uppy client still works great without these components, but if you are opting to self-host them, keep in mind that we can't go out of our way fix a problem. But: you will not be paying us anything (**$0/mo**) (hosting & team costs may apply)
+For all questions we recommend first checking out the [Community Forum][forum] as the answer may already be there, and it's a nice place to hang out. If you're interested in 🥉 Bronze support, all you need to do is [sign up for the Startup plan here][pricing]. If you're interested in 🥈 Silver or 🥇 higher and you are not a customer yet, [reach out](mailto:support@transloadit.com?subject=Uppy Enterprise Support).
 
-↬ We encourage all users to try our [Community Forum](https://community.transloadit.com/c/uppy).
+[bugs]: https://github.com/transloadit/uppy/issues/new?template=bug_reports.md  "Bugs welcome in the issue tracker on GitHub"
+[features]: https://github.com/transloadit/uppy/issues/new?template=feature_request.md "Feature requests welcome in the issue tracker on GitHub"
+[forum]: https://community.transloadit.com/c/uppy "Community Forum"
+[pricing]: https://transloadit/pricing/ "Transloadit plans & signup"
+[support]: https://transloadit/support/ "Transloadit Support"
 
-### 🥉 Bronze Support
-
-All paying [Transloadit Customers](https://transloadit.com/pricing/) on all plans enjoy:
- 
- - hosted versions of Uppy's Companion and Tusd
- - as a wide array of encoding features (10GB of credit included)
- - assistence with your Transloadit integration (wether Uppy, or a different client)
- 
-There is no need to purchase support packages. Plans start at **$49/mo**. 
-
-↬ If the Community Forum wasn't helpful, client-side integration questions from paying users are welcome via [Transloadit Support](https://transloadit.com/support/) (please announce your account's email address).
-
-### 🥈 Silver Support
-
-For deployments where Uppy is critical, [Transloadit Enterprise Customers](https://transloadit.com/pricing/) can purchase commercial support packages starting at **$1499/mo**. This will get you 
-
-- 1-on-1 access to Uppy core developers
-- debugging bundler issues, bugs, etc
-- support for non-current releases
-- investigate bugs
-- guaranteed response times
-
-It's possible to purchase these package without encoding volume, as with these packages support can even be extended to self-hosting Uppy and Tus server components.
-
-↬ All integration questions from enterprises are welcome via [Transloadit Support](https://transloadit.com/support/) (please announce your account's email address).
