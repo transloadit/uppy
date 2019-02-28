@@ -12,8 +12,8 @@ import {
 import takePicture from './takePicture'
 import selectImage from './selectImage'
 import selectDocument from './selectDocument'
-// import Provider from './provider'
-import ProviderGrid from './provider-grid'
+import Provider from './provider'
+// import ProviderGrid from './provider-grid'
 
 export default class UppyReactNativeFilePicker extends React.Component {
   constructor () {
@@ -149,7 +149,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
           Expo.Alert.alert('Modal has been closed.')
           this.props.onRequestClose()
         }}>
-        {this.state.openProvider ? <ProviderGrid id={this.state.openProvider} /> : this.renderSourceList()}
+        {this.state.openProvider ? <Provider id={this.state.openProvider} uppy={this.uppy} /> : this.renderSourceList()}
       </Modal>
     )
   }
