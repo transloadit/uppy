@@ -92,7 +92,7 @@ What we need to do to release Uppy 1.0
 - [ ] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
 - [x] QA: add one integration test that uses a Provider — added Url, Google Drive/Instagram/Dropbox tests are written, but tricky to automate (@ife)
 - [ ] QA: add one integration test that uses more exotic (tus) options such as `useFastRemoteRetry` (@arturi)
-- [ ] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
+- [x] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
 - [x] dashboard: implement Alex and Artur’s Dashboard redesign (@arturi)
 - [ ] feature: basic React Native support (@arturi owner+ios, @ife android)
 - [x] refactoring: Make `uppy-server` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
@@ -228,7 +228,7 @@ What we need to do to release Uppy 1.0
 - @uppy/core: bring back i18n locale packs (#1114 / @goto-bus-stop, @arturi)
 - @uppy/companion: option validation (can use https://npm.im/ajv + JSON schema)
 - @uppy/companion: Remove duplicate typescript dependency (#1119 / @goto-bus-stop)
-- @uppy/companion: ⚠️ **breaking** Migrate provider adapter to Companion: saves 5KB on the frontend, all heavy lifting moved to the server side (#1093 / @ifedapoolarewaju) 
+- @uppy/companion: ⚠️ **breaking** Migrate provider adapter to Companion: saves 5KB on the frontend, all heavy lifting moved to the server side (#1093 / @ifedapoolarewaju)
 - @uppy/core: single-use Uppy instance: adds an `allowMultipleUploads` option to @uppy/core. If set to false, uppy.upload() can only be called once. Afterward, no new files can be added and no new uploads can be started. This is intended to serve the `<form>`-like use case. (#1064 / @goto-bus-stop)
 - @uppy/dashboard: Auto close after finish using `closeAfterFinish: true` (#1106 / @goto-bus-stop)
 - @uppy/dashboard: call `hideAllPanels` after a file is added in Dashboard, instead of `toggleAddFilesPanel(false)` that didn’t hide some panels
