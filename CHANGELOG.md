@@ -77,6 +77,8 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
 - [ ] react: Component wrappers to manage the Uppy instance, many people initialize it in render() which does not work correctly so this could make it easier for them https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951
 - [ ] core: Fire event when a restriction fails #1251
+- [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
+- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
 
 ## 1.0 Goals
 
@@ -114,17 +116,12 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 
-## 0.31.0
-
-- [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] build: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
-- [ ] fix incorrectly rotated image thumbnails #472
-
 # next
 
-## 0.30.0
+## 0.31.0
 
+- [ ] build: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
+- [ ] fix incorrectly rotated image thumbnails #472
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] test: add typescript with JSDoc (@arturi)
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
@@ -134,6 +131,45 @@ What we need to do to release Uppy 1.0
 - [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion (@ifedapoolarewaju)
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
 - [ ] show thumbnails when connecting with Google Drive #1162
+
+## 0.30.1 - 0.30.2
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 0.30.2 | @uppy/provider-views | 0.30.2 |
+| @uppy/aws-s3 | 0.30.2 | @uppy/react | 0.30.2 |
+| @uppy/companion-client | 0.28.2 | @uppy/redux-dev-tools | 0.30.2 |
+| @uppy/companion | 0.17.2 | @uppy/robodog | 0.30.2 |
+| @uppy/core | 0.30.2 | @uppy/status-bar | 0.30.2 |
+| @uppy/dashboard | 0.30.2 | @uppy/store-default | 0.28.2 |
+| @uppy/drag-drop | 0.30.2 | @uppy/store-redux | 0.28.2 |
+| @uppy/dropbox | 0.30.2 | @uppy/thumbnail-generator | 0.30.2 |
+| @uppy/file-input | 0.30.2 | @uppy/transloadit | 0.30.2 |
+| @uppy/form | 0.30.2 | @uppy/tus | 0.30.2 |
+| @uppy/golden-retriever | 0.30.2 | @uppy/url | 0.30.2 |
+| @uppy/google-drive | 0.30.2 | @uppy/utils | 0.30.2 |
+| @uppy/informer | 0.30.2 | @uppy/webcam | 0.30.2 |
+| @uppy/instagram | 0.30.2 | @uppy/xhr-upload | 0.30.2 |
+| @uppy/progress-bar | 0.30.2 | uppy | 0.30.2 |
+
+- @uppy/robodog: Add Robodog to CDN (#1304 / @kvz, @arturi)
+
+## 0.30.0
+
+- @uppy/robodog: 📣⚠️Add Robodog — Transloadit browser SDK (#1135 / @goto-bus-stop)
+- @uppy/core: Set response in Core rather than in upload plugins (#1138 / @arturi)
+- @uppy/core: Don’t emit a complete event if an upload has been canceled (#1271 / @arturi)
+- @uppy/companion: Support redis option (auth_pass, etc...) (#1215 / @tranvansang)
+- @uppy/companion: sanitize text before adding to html (f77a102 / @ifedapoolarewaju)
+- @uppy/dashboard: Update pause-resume-cancel icons (#1241 / @arturi, @nqst)
+- @uppy/dashboard: Fix issues with multiple modals (#1258 / @goto-bus-stop, @arturi)
+- @uppy/dashboard: Dashboard ui fixes: fix icon animation jiggling, inherit font, allow overriding outline, fix breadcrumbs, bug with x button being stuck, fix an issue with long note margin on mobile (#1279 / @arturi)
+- @uppy/provider-views: update instagram nextPagePath after every fetch  (25e31e5 / @ifedapoolarewaju)
+- @uppy/react: Allow changing instance in `uppy` prop (#1247 / @goto-bus-stop)
+- @uppy/react: Typescript: Make DashboardModal.target prop optional (#1254 / @mattes3)
+- @uppy/aws-s3: Use user provided filename / type for uploaded object, fixes #1238 (#1257 / @goto-bus-stop)
+- @uppy/tus: Update to tus-js-client@1.6.0 with React Native support (#1250 / @arturi)
+- build: Improve dev npm script: Use Parcel for bundled example, re-build lib automatically, don’t open browser and no ghosts mode, start companion when developing (but there’s optional npm run dev:no-companion) (#1280 / @arturi)
 
 ## 0.29.1
 
