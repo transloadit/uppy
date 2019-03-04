@@ -12,7 +12,26 @@
   "plugins": ["jest", "compat"],
   "rules": {
     "jsx-quotes": ["error", "prefer-double"],
-    "compat/compat": ["error"]
+    "compat/compat": ["error"],
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
+    "key-spacing": [
+      "error",
+      {
+        "multiLine": {
+          "beforeColon": false,
+          "afterColon": true
+        },
+        "align": {
+          "beforeColon": false,
+          "afterColon": true,
+          "on": "colon",
+          "mode": "strict"
+        }
+      }
+    ]    
   },
   "settings": {
     "polyfills": ["fetch", "promises"]
