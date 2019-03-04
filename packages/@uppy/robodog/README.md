@@ -22,6 +22,8 @@ Alternatively, you can also use this package in a pre-built bundle from Transloa
 <script src="https://transloadit.edgly.net/releases/uppy/v0.30.2/robodog.min.js"></script>
 ```
 
+Then, a global `Robodog` variable will be available. For usage instructions, please see the [main Robodog documentation](https://uppy.io/docs/robodog).
+
 ## Documentation
 
 For further details, please read the documentation on the [Uppy website](https://uppy.io/docs/robodog)!
