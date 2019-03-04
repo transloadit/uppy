@@ -7,7 +7,6 @@ const poweredByUppy = (props) => {
     <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fill-rule="evenodd" />
   </svg><span class="uppy-Dashboard-poweredByUppy">Uppy</span></a>
 }
-
 class AddFiles extends Component {
   constructor (props) {
     super(props)
@@ -19,7 +18,6 @@ class AddFiles extends Component {
   }
 
   render () {
-    // const isHidden = Object.keys(this.props.files).length === 0
     const hasAcquirers = this.props.acquirers.length !== 0
 
     if (!hasAcquirers) {
@@ -86,7 +84,7 @@ class AddFiles extends Component {
                   role="tab"
                   tabindex={0}
                   aria-controls={`uppy-DashboardContent-panel--${target.id}`}
-                  aria-selected={this.props.activePanel.id === target.id}
+                  aria-selected={this.props.activePickerPanel.id === target.id}
                   onclick={() => this.props.showPanel(target.id)}>
                   {target.icon()}
                   <div class="uppy-DashboardTab-name">{target.name}</div>

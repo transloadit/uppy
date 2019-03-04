@@ -8,9 +8,8 @@ const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const cuid = require('cuid')
-// const prettyBytes = require('prettier-bytes')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
-const { defaultTabIcon } = require('./components/icons')
+const { defaultPickerIcon } = require('./components/icons')
 
 // Some code for managing focus was adopted from https://github.com/ghosh/micromodal
 // MIT licence, https://github.com/ghosh/micromodal/blob/master/LICENSE.md
@@ -65,6 +64,7 @@ module.exports = class Dashboard extends Plugin {
         copyLinkToClipboardSuccess: 'Link copied to clipboard',
         copyLinkToClipboardFallback: 'Copy the URL below',
         copyLink: 'Copy link',
+        link: 'Link',
         fileSource: 'File source: %{name}',
         done: 'Done',
         back: 'Back',
@@ -127,7 +127,7 @@ module.exports = class Dashboard extends Plugin {
       width: 750,
       height: 550,
       thumbnailWidth: 280,
-      defaultTabIcon: defaultTabIcon,
+      defaultPickerIcon,
       showLinkToFileUploadResult: true,
       showProgressDetails: false,
       hideUploadButton: false,
@@ -145,7 +145,6 @@ module.exports = class Dashboard extends Plugin {
       proudlyDisplayPoweredByUppy: true,
       onRequestCloseModal: () => this.closeModal(),
       showSelectedFiles: true,
-      // locale: defaultLocale,
       browserBackButtonClose: false
     }
 
@@ -227,20 +226,22 @@ module.exports = class Dashboard extends Plugin {
 
   hideAllPanels () {
     this.setPluginState({
-      activePanel: false,
-      showAddFilesPanel: false
+      activePickerPanel: false,
+      showAddFilesPanel: false,
+      activeOverlayType: null
     })
   }
 
   showPanel (id) {
     const { targets } = this.getPluginState()
 
-    const activePanel = targets.filter((target) => {
+    const activePickerPanel = targets.filter((target) => {
       return target.type === 'acquirer' && target.id === id
     })[0]
 
     this.setPluginState({
-      activePanel: activePanel
+      activePickerPanel: activePickerPanel,
+      activeOverlayType: 'PickerPanel'
     })
   }
 
@@ -253,6 +254,14 @@ module.exports = class Dashboard extends Plugin {
   }
 
   getFocusableNodes () {
+    // if an overlay is open, we should trap focus inside the overlay
+    const activeOverlayType = this.getPluginState().activeOverlayType
+    if (activeOverlayType) {
+      const activeOverlay = this.el.querySelector(`[data-uppy-panelType="${activeOverlayType}"]`)
+      const nodes = activeOverlay.querySelectorAll(FOCUSABLE_ELEMENTS)
+      return Object.keys(nodes).map((key) => nodes[key])
+    }
+
     const nodes = this.el.querySelectorAll(FOCUSABLE_ELEMENTS)
     return Object.keys(nodes).map((key) => nodes[key])
   }
@@ -529,13 +538,15 @@ module.exports = class Dashboard extends Plugin {
 
   toggleFileCard (fileId) {
     this.setPluginState({
-      fileCardFor: fileId || false
+      fileCardFor: fileId || null,
+      activeOverlayType: fileId ? 'FileCard' : null
     })
   }
 
   toggleAddFilesPanel (show) {
     this.setPluginState({
-      showAddFilesPanel: show
+      showAddFilesPanel: show,
+      activeOverlayType: show ? 'AddFiles' : null
     })
   }
 
@@ -606,29 +617,11 @@ module.exports = class Dashboard extends Plugin {
 
     const isAllPaused = inProgressFiles.length !== 0 &&
       pausedFiles.length === inProgressFiles.length
-    // const isAllPaused = inProgressNotPausedFiles.length === 0 &&
-    //   !isAllComplete &&
-    //   !isAllErrored &&
-    //   uploadStartedFiles.length > 0
-
-    // let inProgressNotPausedFilesArray = []
-    // inProgressNotPausedFiles.forEach((file) => {
-    //   inProgressNotPausedFilesArray.push(files[file])
-    // })
-
-    // let totalSize = 0
-    // let totalUploadedSize = 0
-    // inProgressNotPausedFilesArray.forEach((file) => {
-    //   totalSize = totalSize + (file.progress.bytesTotal || 0)
-    //   totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
-    // })
-    // totalSize = prettyBytes(totalSize)
-    // totalUploadedSize = prettyBytes(totalUploadedSize)
 
     const attachRenderFunctionToTarget = (target) => {
       const plugin = this.uppy.getPlugin(target.id)
       return Object.assign({}, target, {
-        icon: plugin.icon || this.opts.defaultTabIcon,
+        icon: plugin.icon || this.opts.defaultPickerIcon,
         render: plugin.render
       })
     }
@@ -668,7 +661,7 @@ module.exports = class Dashboard extends Plugin {
 
     return DashboardUI({
       state,
-      modal: pluginState,
+      isHidden: pluginState.isHidden,
       files,
       newFiles,
       uploadStartedFiles,
@@ -685,7 +678,7 @@ module.exports = class Dashboard extends Plugin {
       totalProgress: state.totalProgress,
       allowNewUpload,
       acquirers,
-      activePanel: pluginState.activePanel,
+      activePickerPanel: pluginState.activePickerPanel,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
       getPlugin: this.uppy.getPlugin,
@@ -727,6 +720,7 @@ module.exports = class Dashboard extends Plugin {
       isWide: pluginState.containerWidth > 400,
       containerWidth: pluginState.containerWidth,
       isTargetDOMEl: this.isTargetDOMEl,
+      parentElement: this.el,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
       showSelectedFiles: this.opts.showSelectedFiles
@@ -745,9 +739,10 @@ module.exports = class Dashboard extends Plugin {
     // Set default state for Dashboard
     this.setPluginState({
       isHidden: true,
-      showFileCard: false,
+      fileCardFor: null,
+      activeOverlayType: null,
       showAddFilesPanel: false,
-      activePanel: false,
+      activePickerPanel: false,
       metaFields: this.opts.metaFields,
       targets: []
     })
