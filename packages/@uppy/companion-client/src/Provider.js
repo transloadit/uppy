@@ -53,7 +53,7 @@ module.exports = class Provider extends RequestClient {
   logout (redirect = location.href) {
     return this.get(`${this.id}/logout?redirect=${redirect}`)
       .then((res) => {
-        this.storage.removeItem(this.tokenKey)
+        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
         return res
       })
   }
