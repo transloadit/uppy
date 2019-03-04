@@ -13,25 +13,13 @@
   "rules": {
     "jsx-quotes": ["error", "prefer-double"],
     "compat/compat": ["error"],
-    "comma-dangle": [
-      "error",
-      "always-multiline"
-    ],
-    "key-spacing": [
-      "error",
-      {
-        "multiLine": {
-          "beforeColon": false,
-          "afterColon": true
-        },
-        "align": {
-          "beforeColon": false,
-          "afterColon": true,
-          "on": "colon",
-          "mode": "strict"
-        }
-      }
-    ]    
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "ignore"
+    }]
   },
   "settings": {
     "polyfills": ["fetch", "promises"]
