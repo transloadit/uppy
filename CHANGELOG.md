@@ -85,6 +85,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] fix incorrectly rotated image thumbnails #472
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
+- [ ] show thumbnails when connecting with Google Drive #1162 (@ifedapoolarewaju)
 
 ## 1.0 Goals
 
@@ -97,7 +98,7 @@ What we need to do to release Uppy 1.0
 - [ ] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear
 - [ ] locale: update the locales of languages that we know ourselves. leave rest to community
 - [ ] locale: cdn (just in folder like Robodog, will attach to global) / for module to all languages in one big `@uppy/locales`
-- [ ] feature: basic React Native support (@arturi owner+ios, @ife android)
+- [ ] feature: basic React Native support (@arturi owner, @ifedapoolarewaju)
 - [ ] QA: add one integration test that uses more exotic (tus) options such as `useFastRemoteRetry` (@arturi)
 - [ ] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
 - [ ] website: replace transloadit example with robodog example <-- add transloadit test key with restricted usage (no need to sign up yourself to try it)
@@ -107,10 +108,8 @@ What we need to do to release Uppy 1.0
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
 - [ ] transloadit: add error reporting, see https://github.com/transloadit/jquery-sdk/blob/891e99b08dd8142d8d8adc0553e6511967635ad7/js/lib/Modal.js#L122-L136 (@goto-bus-stop, @arturi)
 - [ ] transloadit: should adhere cancel event and abort assembly (@arturi, @goto-bus-stop)
-
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
-- [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion (@ifedapoolarewaju)
-- [ ] show thumbnails when connecting with Google Drive #1162
+- [ ] uppy-server: bump minor and deprecate that on npm in favour of @uppy/companion (@ifedapoolarewaju)
 
 - [x] dashboard: implement Alex and Artur’s Dashboard redesign (@arturi)
 - [x] docs: on using plugins, all options, list of plugins, i18n
@@ -133,7 +132,6 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: better error handling, general cleanup (remove unused code. etc)
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
-
 
 ## 0.30.1 - 0.30.2
 
