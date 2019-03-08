@@ -57,6 +57,7 @@ class Uppy {
       id: 'uppy',
       autoProceed: false,
       allowMultipleUploads: true,
+      allowDuplicateFiles: true,
       debug: false,
       restrictions: {
         maxFileSize: null,
@@ -421,7 +422,16 @@ class Uppy {
     const fileExtension = getFileNameAndExtension(fileName).extension
     const isRemote = file.isRemote || false
 
-    const fileID = generateFileID(file)
+    let fileID = generateFileID(file)
+
+    if (this.state.files[fileID]) {
+      if (!this.opts.allowDuplicateFiles) {
+        onError(new Error('This file has already been added'))
+        return
+      }
+
+      fileID = `${fileID}/${cuid()}`
+    }
 
     const meta = file.meta || {}
     meta.name = fileName
