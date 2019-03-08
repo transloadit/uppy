@@ -116,18 +116,23 @@
   max-width: 100%; /* no !important */
   max-height: 100%; /* no !important */
   // min-width: 290px;
+  // min-height: 450px is required for everything to fit on mobile
   min-height: 450px;
   outline: none;
   border: 1px solid rgba($color-gray, 0.2);
   border-radius: 5px;
 
-  .uppy-Dashboard--modal & {
-    z-index: $zIndex-3;
+  .uppy-size--md & {
+    min-height: auto;
   }
 
   @media #{$screen-medium} {
     width: 750px; /* no !important */
     height: 550px; /* no !important */
+  }
+
+  .uppy-Dashboard--modal & {
+    z-index: $zIndex-3;
   }
 }
 
