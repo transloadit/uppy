@@ -18,9 +18,6 @@ const uppy = Uppy({
   meta: {
     username: 'John',
     license: 'Creative Commons'
-  },
-  restrictions: {
-    allowedFileTypes: ['.png']
   }
 })
   .use(Dashboard, {
