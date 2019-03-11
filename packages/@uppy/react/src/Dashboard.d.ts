@@ -15,6 +15,7 @@ export interface DashboardProps {
   height?: number;
   showProgressDetails?: boolean;
   showLinkToFileUploadResult?: boolean;
+  showSelectedFiles?: boolean;
   hideUploadButton?: boolean;
   hideProgressAfterFinish?: boolean;
   note?: string;
