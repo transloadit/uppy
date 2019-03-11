@@ -143,6 +143,7 @@
 
   figure.wide {
     @media #{$screen-large} {
+      width: 135%;
       max-width: 135%;
       img, video { max-width: 135%; }
     }
