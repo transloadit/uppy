@@ -2,7 +2,7 @@ const sass = require('node-sass')
 const postcss = require('postcss')
 const autoprefixer = require('autoprefixer')
 const cssnano = require('cssnano')
-const safeImportant = require('postcss-safe-important')
+// const safeImportant = require('postcss-safe-important')
 const chalk = require('chalk')
 const { promisify } = require('util')
 const fs = require('fs')
@@ -44,7 +44,7 @@ async function compileCSS () {
       }
     })
 
-    const postcssResult = await postcss([ autoprefixer, safeImportant ])
+    const postcssResult = await postcss([ autoprefixer ])
       .process(scssResult.css, { from: file })
     postcssResult.warnings().forEach(function (warn) {
       console.warn(warn.toString())
