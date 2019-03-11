@@ -1179,6 +1179,13 @@ describe('src/Core', () => {
         expect(err).toMatchObject(new Error('You can only upload: .gif, .jpg, .jpeg'))
         expect(core.getState().info.message).toEqual('You can only upload: .gif, .jpg, .jpeg')
       }
+
+      expect(() => core.addFile({
+        source: 'jest',
+        name: 'foo2.JPG',
+        type: '',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      }).not.toThrow())
     })
 
     it('should enforce the maxFileSize rule', () => {
