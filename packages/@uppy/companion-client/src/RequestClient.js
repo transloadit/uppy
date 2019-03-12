@@ -29,6 +29,16 @@ module.exports = class RequestClient {
     return Promise.resolve(Object.assign({}, this.defaultHeaders, this.opts.serverHeaders || {}))
   }
 
+  _getPostResponseFunc (skip) {
+    return (response) => {
+      if (!skip) {
+        return this.onReceiveResponse(response)
+      }
+
+      return response
+    }
+  }
+
   onReceiveResponse (response) {
     const state = this.uppy.getState()
     const companion = state.companion || {}
@@ -52,7 +62,18 @@ module.exports = class RequestClient {
     return `${this.hostname}/${url}`
   }
 
-  get (path) {
+  _json(res) {
+    if (res.status === 401) {
+      throw new Error('Auth required')
+    }
+
+    if (res.status < 200 || res.status > 300) {
+      throw new Error(`Failed request to ${res.url}. ${res.statusText}`)
+    }
+    return res.json()
+  }
+
+  get (path, skipPostResponse) {
     return new Promise((resolve, reject) => {
       this.headers().then((headers) => {
         fetch(this._getUrl(path), {
@@ -60,9 +81,8 @@ module.exports = class RequestClient {
           headers: headers,
           credentials: 'same-origin'
         })
-          // @todo validate response status before calling json
-          .then(this.onReceiveResponse)
-          .then((res) => res.json().then(resolve))
+          .then(this._getPostResponseFunc(skipPostResponse))
+          .then((res) => this._json(res).then(resolve))
           .catch((err) => {
             reject(new Error(`Could not get ${this._getUrl(path)}. ${err}`))
           })
@@ -70,7 +90,7 @@ module.exports = class RequestClient {
     })
   }
 
-  post (path, data) {
+  post (path, data, skipPostResponse) {
     return new Promise((resolve, reject) => {
       this.headers().then((headers) => {
         fetch(this._getUrl(path), {
@@ -79,14 +99,8 @@ module.exports = class RequestClient {
           credentials: 'same-origin',
           body: JSON.stringify(data)
         })
-          .then(this.onReceiveResponse)
-          .then((res) => {
-            if (res.status < 200 || res.status > 300) {
-              reject(new Error(`Could not post ${this._getUrl(path)}. ${res.statusText}`))
-              return
-            }
-            res.json().then(resolve)
-          })
+          .then(this._getPostResponseFunc(skipPostResponse))
+          .then((res) => this._json(res).then(resolve))
           .catch((err) => {
             reject(new Error(`Could not post ${this._getUrl(path)}. ${err}`))
           })
@@ -94,7 +108,7 @@ module.exports = class RequestClient {
     })
   }
 
-  delete (path, data) {
+  delete (path, data, skipPostResponse) {
     return new Promise((resolve, reject) => {
       this.headers().then((headers) => {
         fetch(`${this.hostname}/${path}`, {
@@ -103,9 +117,8 @@ module.exports = class RequestClient {
           credentials: 'same-origin',
           body: data ? JSON.stringify(data) : null
         })
-          .then(this.onReceiveResponse)
-          // @todo validate response status before calling json
-          .then((res) => res.json().then(resolve))
+          .then(this._getPostResponseFunc(skipPostResponse))
+          .then((res) => this._json(res).then(resolve))
           .catch((err) => {
             reject(new Error(`Could not delete ${this._getUrl(path)}. ${err}`))
           })
