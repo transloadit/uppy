@@ -30,7 +30,7 @@ As of now, Companion is integrated to work with:
 Install from NPM:
 
 ```bash
-npm install @uppy/companion
+sudo npm install -g @uppy/companion
 ```
 
 ## Usage
