@@ -9,15 +9,16 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@uppy/core": "^0.30.2",
-    "@uppy/instagram": "^0.30.2",
-    "@uppy/tus": "^0.30.2",
-    "@uppy/xhr-upload": "^0.30.2",
+    "@uppy/core": "^0.30.3",
+    "@uppy/instagram": "^0.30.3",
+    "@uppy/tus": "^0.30.3",
+    "@uppy/url": "^0.30.3",
+    "@uppy/xhr-upload": "^0.30.3",
     "base-64": "^0.1.0",
     "expo": "^31.0.2",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
-    "react-native-super-grid": "^3.0.1"
+    "react-native-super-grid": "^3.0.3"
   },
   "devDependencies": {
     "@babel/runtime": "^7.2.0",
