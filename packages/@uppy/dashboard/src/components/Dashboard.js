@@ -53,13 +53,17 @@ module.exports = function Dashboard (props) {
           width: props.inline && props.width ? props.width : '',
           height: props.inline && props.height ? props.height : ''
         }}>
-        <button class="uppy-Dashboard-close"
-          type="button"
-          aria-label={props.i18n('closeModal')}
-          title={props.i18n('closeModal')}
-          onclick={props.closeModal}>
-          <span aria-hidden="true">&times;</span>
-        </button>
+
+        {!props.inline
+          ? <button class="uppy-u-reset uppy-Dashboard-close"
+            type="button"
+            aria-label={props.i18n('closeModal')}
+            title={props.i18n('closeModal')}
+            onclick={props.closeModal}>
+            <span aria-hidden="true">&times;</span>
+          </button>
+            : null
+          }
 
         <div class="uppy-Dashboard-innerWrap">
           { (!noFiles && props.showSelectedFiles) && <PanelTopBar {...props} /> }

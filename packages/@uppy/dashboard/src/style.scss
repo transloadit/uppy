@@ -162,24 +162,19 @@
 }
 
 .uppy-Dashboard-close {
-  @include reset-button;
-  display: none;
+  display: block;
   position: absolute;
   top: -33px;
   right: -2px;
   cursor: pointer;
   color: rgba($color-white, 0.9);
   font-size: 27px;
+  z-index: $zIndex-5;
 
   @media #{$screen-medium} {
     font-size: 35px;
     top: -10px;
     right: -35px;
-  }
-
-  .uppy-Dashboard--modal & {
-    z-index: $zIndex-5;
-    display: block;
   }
 }
 
