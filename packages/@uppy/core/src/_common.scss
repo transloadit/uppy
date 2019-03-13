@@ -23,6 +23,10 @@
   outline-offset: $size-focus-offset; /* no !important */
 }
 
+.uppy-Root [hidden] {
+  display: none;
+}
+
 // https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4
 
 .UppyIcon {
