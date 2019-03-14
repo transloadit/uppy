@@ -3,11 +3,15 @@ import React from 'react'
 import {
   // StyleSheet,
   // FlatList,
-  // View,
   // Image,
+  // TouchableOpacity,
+  // Text,
+  // TextInput,
+  // View,
+  AsyncStorage,
   WebView } from 'react-native'
-
 import Instagram from '@uppy/instagram'
+import Url from './url'
 
 function getQueryParamValueFromUrl (name, url) {
   name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]')
@@ -17,7 +21,7 @@ function getQueryParamValueFromUrl (name, url) {
   return results == null ? null : results[1]
 }
 
-export default class Provider extends React.Component {
+export default class UppyRNProvider extends React.Component {
   constructor () {
     super()
 
@@ -41,13 +45,12 @@ export default class Provider extends React.Component {
 
   componentDidMount () {
     this.uppy = this.props.uppy
-    // console.log('123', this.uppy)
-    this.plugin = new Instagram(this.uppy, {
-      serverUrl: 'http://localhost:3020'
+    this.uppy.use(Instagram, {
+      serverUrl: 'http://localhost:3020',
+      storage: AsyncStorage
     })
-    // this.authUrl = 'http://localhost:3020'
+    this.plugin = this.uppy.getPlugin('Instagram')
     this.setState({
-      // authUrl: 'http://localhost:3020'
       authUrl: this.plugin.provider.authUrl()
     })
   }
@@ -69,23 +72,28 @@ export default class Provider extends React.Component {
   //   )
   // }
 
-  render () {
+  renderInstagram () {
     console.log(this.state.authUrl)
     return <WebView
       source={{ uri: this.state.authUrl }}
-      style={{marginTop: 20}}
+      style={{ marginTop: 20 }}
       onNavigationStateChange={(ev) => {
         const url = ev.url
         const token = getQueryParamValueFromUrl('uppyAuthToken', url)
         console.log(token)
-        // this.plugin.provider.setAuthToken(token)
-        // console.log(this.plugin.provider.list())
+        this.plugin.provider.setAuthToken(token)
+        console.log(this.plugin.provider.list('recent'))
+        // return this.renderGrid(this.state.instagram.items)
       }}
     />
-    // plugin.provider.setAuthToken('')
-    // plugin.provider.list()
+  }
 
-    // return this.renderGrid(this.state.instagram.items)
+  render () {
+    if (this.props.id === 'Url') {
+      return <Url uppy={this.props.uppy} />
+    }
+
+    return this.renderInstagram()
   }
 }
 
