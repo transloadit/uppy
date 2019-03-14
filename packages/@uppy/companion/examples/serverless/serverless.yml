@@ -2,7 +2,7 @@ service: uppyloader
 
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs8.10
 
   environment:
     # NOTE: Make sure you set this to the url of your service endpoint
@@ -25,7 +25,7 @@ provider:
 
 functions:
   uppy:
-    handler: handler.uppy
+    handler: index.uppy
 
     events:
       - http: ANY /
