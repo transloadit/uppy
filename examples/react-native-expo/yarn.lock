@@ -600,18 +600,20 @@
   version "0.0.27"
   resolved "http://registry.npmjs.org/@types/websql/-/websql-0.0.27.tgz#621a666a7f02018e7cbb4abab956a25736c27d71"
 
-"@uppy/companion-client@0.27.2":
-  version "0.27.2"
-  resolved "https://registry.yarnpkg.com/@uppy/companion-client/-/companion-client-0.27.2.tgz#526572b5129d7786c06368e8def5bc46c5980048"
+"@uppy/companion-client@0.28.3":
+  version "0.28.3"
+  resolved "https://registry.yarnpkg.com/@uppy/companion-client/-/companion-client-0.28.3.tgz#c41800f1f609b8e0e25a2266886e68df0485b121"
+  integrity sha512-+j9mFGpZi2H5MStQiGIOGZ1VYyPMH6i9kjcV01SF8fQPfwgXhssF65gNsa9HwmANtGeCFyvfgUd+PJN8vFT+Mg==
   dependencies:
     namespace-emitter "^2.0.1"
 
-"@uppy/core@^0.28.0":
-  version "0.28.0"
-  resolved "https://registry.yarnpkg.com/@uppy/core/-/core-0.28.0.tgz#a9baae85f73bf127763cf7a95cf9b837e95bb938"
+"@uppy/core@^0.30.3":
+  version "0.30.3"
+  resolved "https://registry.yarnpkg.com/@uppy/core/-/core-0.30.3.tgz#12694645697d8548d3ebfafaba6e42b88857fc8c"
+  integrity sha512-UDcFV9WnghOAZecg5oKnXEj97CTdqKxMuajkmhGC64rS5Ef3tcTB5JreKVEAvC/z8DgCAqrPex39+vkafns7cA==
   dependencies:
-    "@uppy/store-default" "0.27.0"
-    "@uppy/utils" "0.28.0"
+    "@uppy/store-default" "0.28.3"
+    "@uppy/utils" "0.30.3"
     cuid "^2.1.1"
     lodash.throttle "^4.1.1"
     mime-match "^1.0.2"
@@ -619,30 +621,62 @@
     preact "^8.2.9"
     prettier-bytes "^1.0.4"
 
-"@uppy/store-default@0.27.0":
-  version "0.27.0"
-  resolved "https://registry.yarnpkg.com/@uppy/store-default/-/store-default-0.27.0.tgz#3afeb640352d142fe1b15d6e73b1034626ab4ced"
-
-"@uppy/tus@^0.28.0":
-  version "0.28.0"
-  resolved "https://registry.yarnpkg.com/@uppy/tus/-/tus-0.28.0.tgz#97a81c503a7ea72caaf21091347ad48a49d26a8f"
+"@uppy/instagram@^0.30.3":
+  version "0.30.3"
+  resolved "https://registry.yarnpkg.com/@uppy/instagram/-/instagram-0.30.3.tgz#46b625181295d246123dc78166a2b32dec34459e"
+  integrity sha512-5qdUirioRHlgXwTdeIsSKcS3v6WZUtcKZE/WGiXarAZvAzTRbhSDjqgRGjBzCiX6B/FFgwWg5gBykJp1VMjW8Q==
   dependencies:
-    "@uppy/companion-client" "0.27.2"
-    "@uppy/utils" "0.28.0"
-    tus-js-client "^1.5.1"
+    "@uppy/companion-client" "0.28.3"
+    "@uppy/provider-views" "0.30.3"
+    "@uppy/utils" "0.30.3"
+    preact "^8.2.9"
 
-"@uppy/utils@0.28.0":
-  version "0.28.0"
-  resolved "https://registry.yarnpkg.com/@uppy/utils/-/utils-0.28.0.tgz#7a511fd24bf95ca529571bc7cc0cac80abbfa732"
+"@uppy/provider-views@0.30.3":
+  version "0.30.3"
+  resolved "https://registry.yarnpkg.com/@uppy/provider-views/-/provider-views-0.30.3.tgz#366a2f22e1547990afd15a56785e5153b1761ea4"
+  integrity sha512-rXWYvSFeyu/TG4PTNWUWjF3IvHlbpRUcGRoYpytVTp718Bgi8mEO6O8f4czgFuOWQzBUiJi8gKqpWjrKJQfoww==
+  dependencies:
+    "@uppy/utils" "0.30.3"
+    classnames "^2.2.6"
+    preact "^8.2.9"
+
+"@uppy/store-default@0.28.3":
+  version "0.28.3"
+  resolved "https://registry.yarnpkg.com/@uppy/store-default/-/store-default-0.28.3.tgz#0dd37badf68f1ca4d16e23c3813626ed01127643"
+  integrity sha512-H3dHvYnna1D3qGMeEW2Mc4BDe2+73IsshqyqyNawZcOG4EF053D5ZeeoB0DQoXaL290vsHMhYilZbp6O0v6Z8g==
+
+"@uppy/tus@^0.30.3":
+  version "0.30.3"
+  resolved "https://registry.yarnpkg.com/@uppy/tus/-/tus-0.30.3.tgz#1234158920f44a1ce1e365fe04888f18345b73d1"
+  integrity sha512-2DPd8woh3m44V0YZ/ipN9JXCtnuVaZGM8yC0NFTcwakOXc1sQzDbV4fZ2i5nkP64Vp+33Hlgd+xMLMMMOtWYiw==
+  dependencies:
+    "@uppy/companion-client" "0.28.3"
+    "@uppy/utils" "0.30.3"
+    tus-js-client "1.6.0"
+
+"@uppy/url@^0.30.3":
+  version "0.30.3"
+  resolved "https://registry.yarnpkg.com/@uppy/url/-/url-0.30.3.tgz#2bf29e2486e220a404c2760ec043139f58659db1"
+  integrity sha512-CoQF5QjyLXFlrY0c8VDpwgyaLfqwMuJsmewSwxRzu3s+nIj5ipYef21ho6QHonQjqXmOosVxIXsjOS5rY7siEQ==
+  dependencies:
+    "@uppy/companion-client" "0.28.3"
+    "@uppy/utils" "0.30.3"
+    preact "^8.2.9"
+
+"@uppy/utils@0.30.3":
+  version "0.30.3"
+  resolved "https://registry.yarnpkg.com/@uppy/utils/-/utils-0.30.3.tgz#b2f78db1974ae24290b572d0916e1f4eb1de61a8"
+  integrity sha512-v0+3+p70Rl4qMS5p5+n89Oa/Z61FAitcJ8HS06NHiGo2HArO8VseBBAbNncF/SdUqczWhz7dWQ3/uXUx8jli3Q==
   dependencies:
     lodash.throttle "^4.1.1"
 
-"@uppy/xhr-upload@^0.28.0":
-  version "0.28.0"
-  resolved "https://registry.yarnpkg.com/@uppy/xhr-upload/-/xhr-upload-0.28.0.tgz#add62f43d80007a3df964da6d3ccee40d304b7af"
+"@uppy/xhr-upload@^0.30.3":
+  version "0.30.3"
+  resolved "https://registry.yarnpkg.com/@uppy/xhr-upload/-/xhr-upload-0.30.3.tgz#21340ef713ae7cb3930e3f778412a931817699c7"
+  integrity sha512-LBC5L8lWsm9KJ2/1AbB7khBc++vCkvUKi5BbBvRTIQ13g4vJ1Tp1oiQQY/sPubDTx5IKvh6w/lN30edzcNHFXA==
   dependencies:
-    "@uppy/companion-client" "0.27.2"
-    "@uppy/utils" "0.28.0"
+    "@uppy/companion-client" "0.28.3"
+    "@uppy/utils" "0.30.3"
     cuid "^2.1.1"
 
 abbrev@1:
@@ -1442,6 +1476,11 @@ class-utils@^0.3.5:
     define-property "^0.2.5"
     isobject "^3.0.0"
     static-extend "^0.1.1"
+
+classnames@^2.2.6:
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
+  integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
 
 cli-cursor@^2.1.0:
   version "2.1.0"
@@ -2732,6 +2771,11 @@ jest-worker@23.2.0, jest-worker@^23.2.0:
   dependencies:
     merge-stream "^1.0.1"
 
+js-base64@^2.4.9:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.5.1.tgz#1efa39ef2c5f7980bb1784ade4a8af2de3291121"
+  integrity sha512-M7kLczedRMYX4L8Mdh4MzyAMM9O5osx+4FcOQuTvr3A9F2D9S5JXheN0ewNbrvK2UatkTRhL5ejGmGSjNMiZuw==
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -3822,6 +3866,13 @@ react-native-screens@1.0.0-alpha.15:
   version "1.0.0-alpha.15"
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-1.0.0-alpha.15.tgz#5b5a0041310b46f12048fda1908d52e7290ec18f"
 
+react-native-super-grid@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-super-grid/-/react-native-super-grid-3.0.3.tgz#0fe577647826fe426e747c96627d8f6c343dd1be"
+  integrity sha512-cQc7fkT0pqSUtsfLjeyU559LWa92U65CfsPLMuDWfdOmb8Gh8YIfG6dQKqvgqiNhh2e1tF3n02OU232PFh74hg==
+  dependencies:
+    prop-types "^15.6.0"
+
 react-native-svg@8.0.8:
   version "8.0.8"
   resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-8.0.8.tgz#5d4c636751d9db2d98a9b3cfc4ef45c4eac65d60"
@@ -4518,12 +4569,14 @@ trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
-tus-js-client@^1.5.1:
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/tus-js-client/-/tus-js-client-1.5.2.tgz#fa6f0804c3fae9315480fd29f4ed9f3926002bc1"
+tus-js-client@1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/tus-js-client/-/tus-js-client-1.6.0.tgz#b6ea17c97a2de382b7e477fe133c7bedf3964272"
+  integrity sha512-8y3A/pq5SKHZPJPU2LZ0KC+TNaol7TDNplprS5PEsfnjOcqHU2pJ7E6oTEXsA32tZkWHs+4JguAfXZd4XV0Jlg==
   dependencies:
     buffer-from "^0.1.1"
     extend "^3.0.0"
+    js-base64 "^2.4.9"
     lodash.throttle "^4.1.1"
     url-parse "^1.4.3"
 
