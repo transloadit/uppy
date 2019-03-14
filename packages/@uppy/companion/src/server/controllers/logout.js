@@ -11,11 +11,7 @@ function logout (req, res) {
 
   if (req.uppy.providerTokens[providerName]) {
     delete req.uppy.providerTokens[providerName]
-    tokenService.addToCookies(
-      res,
-      tokenService.generateToken(req.uppy.providerTokens, req.uppy.options.secret),
-      req.uppy.options
-    )
+    tokenService.removeFromCookies(res, req.uppy.options, req.uppy.provider.authProviderName)
   }
 
   if (session.grant) {

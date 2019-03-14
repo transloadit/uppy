@@ -80,7 +80,7 @@ describe('test authentication', () => {
       .get(`/drive/send-token?uppyAuthToken=${token}`)
       .expect(200)
       .expect((res) => {
-        const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken=')[1]
+        const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken--google=')[1]
         expect(authToken).toEqual(token)
         // see mock ../../src/server/helpers/oauth-state above for http://localhost:3020
         const body = `
