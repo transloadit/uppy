@@ -170,9 +170,22 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * @return {Promise}
    */
   canvasToBlob (canvas, type, quality) {
+    try {
+      canvas.getContext('2d').getImageData(0, 0, 1, 1)
+    } catch (err) {
+      if (err.code === 18) {
+        return Promise.reject(new Error('cannot read image, probably an svg with external resources'))
+      }
+    }
+
     if (canvas.toBlob) {
       return new Promise(resolve => {
         canvas.toBlob(resolve, type, quality)
+      }).then((blob) => {
+        if (blob === null) {
+          throw new Error('cannot read image, probably an svg with external resources')
+        }
+        return blob
       })
     }
     return Promise.resolve().then(() => {
@@ -217,7 +230,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
           this.uppy.emit('thumbnail:generated', this.uppy.getFile(file.id), preview)
         })
         .catch(err => {
-          this.uppy.log(`[ThumbnailGenerator] Failed thumbnail for ${file.id}`)
+          this.uppy.log(`[ThumbnailGenerator] Failed thumbnail for ${file.id}:`, 'warning')
           this.uppy.log(err, 'warning')
           this.uppy.emit('thumbnail:error', this.uppy.getFile(file.id), err)
         })
