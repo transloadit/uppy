@@ -24,6 +24,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
         { id: 'LocalImages', title: 'Pick Local Images/Videos' },
         { id: 'LocalDocuments', title: 'Pick Documents' },
         { id: 'LocalCamera', title: 'Take a Picture' },
+        { id: 'Url', title: 'Url' },
         { id: 'GoogleDrive', title: 'Google Drive' },
         { id: 'Instagram', title: 'Instagram' }
       ],
@@ -37,6 +38,11 @@ export default class UppyReactNativeFilePicker extends React.Component {
 
   componentDidMount () {
     this.uppy = this.props.uppy
+
+    this.uppy.on('info-visible', () => {
+      const info = this.uppy.getState().info
+      console.log('uppy-info', info)
+    })
   }
 
   takePicture () {
@@ -112,7 +118,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
         <TouchableOpacity
           style={{
             alignItems: 'center',
-            backgroundColor: '#DDDDDD',
+            backgroundColor: '#c6e1f3',
             marginBottom: 10,
             padding: 10
           }}
@@ -124,7 +130,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
             <TouchableOpacity
               style={{
                 alignItems: 'center',
-                backgroundColor: '#DDDDDD',
+                backgroundColor: '#c6e1f3',
                 marginBottom: 10,
                 padding: 10
               }}
@@ -149,7 +155,10 @@ export default class UppyReactNativeFilePicker extends React.Component {
           Expo.Alert.alert('Modal has been closed.')
           this.props.onRequestClose()
         }}>
-        {this.state.openProvider ? <Provider id={this.state.openProvider} uppy={this.uppy} /> : this.renderSourceList()}
+        {this.state.openProvider
+          ? <Provider id={this.state.openProvider} uppy={this.uppy} />
+          : this.renderSourceList()
+        }
       </Modal>
     )
   }
