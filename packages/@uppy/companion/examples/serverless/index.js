@@ -3,14 +3,12 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const compression = require('compression')
 const awsServerlessExpress = require('aws-serverless-express')
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 const uppy = require('@uppy/companion')
 
 const app = express()
 
-app.use(compression())
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
