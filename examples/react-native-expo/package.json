@@ -1,7 +1,5 @@
 {
-  "name": "empty-project-template",
   "main": "node_modules/expo/AppEntry.js",
-  "private": true,
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -14,14 +12,12 @@
     "@uppy/tus": "^0.30.3",
     "@uppy/url": "^0.30.3",
     "@uppy/xhr-upload": "^0.30.3",
-    "base-64": "^0.1.0",
-    "expo": "^31.0.2",
+    "expo": "^32.0.0",
     "react": "16.5.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
-    "react-native-super-grid": "^3.0.3"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz"
   },
   "devDependencies": {
-    "@babel/runtime": "^7.2.0",
     "babel-preset-expo": "^5.0.0"
-  }
+  },
+  "private": true
 }
