@@ -1,4 +1,4 @@
-import Expo from 'expo'
+import * as Expo from 'expo'
 import React from 'react'
 import {
   Text,
@@ -9,10 +9,8 @@ import {
   Image,
   Linking } from 'react-native'
 import Uppy from '@uppy/core'
-import XHRUpload from '@uppy/xhr-upload'
-// import Tus from '@uppy/tus'
+import Tus from '@uppy/tus'
 import UppyFilePicker from './react-native/file-picker'
-import testUploadFileWithTus from './tus-test.js'
 
 export default class App extends React.Component {
   constructor () {
@@ -32,18 +30,12 @@ export default class App extends React.Component {
 
     this.startUpload = this.startUpload.bind(this)
     this.selectPhotoTapped = this.selectPhotoTapped.bind(this)
-    this.addFile = this.addFile.bind(this)
     this.showFilePicker = this.showFilePicker.bind(this)
     this.hideFilePicker = this.hideFilePicker.bind(this)
 
     console.log('Is this React Native?', this.isReactNative)
-    // this.createAndUploadTextFileWithTus()
-    this.uppy = Uppy({ autoProceed: false, debug: true })
-    this.uppy.use(XHRUpload, {
-      // endpoint: 'http://192.168.1.7:7000/',
-      endpoint: 'http://api2.transloadit.com/'
-    })
-    // this.uppy.use(Tus, { endpoint: 'https://master.tus.io/files/' })
+    this.uppy = Uppy({ autoProceed: true, debug: true })
+    this.uppy.use(Tus, { endpoint: 'https://master.tus.io/files/' })
     this.uppy.on('upload-progress', (file, progress) => {
       this.setState({
         progress: progress.bytesUploaded,
@@ -60,76 +52,10 @@ export default class App extends React.Component {
     })
   }
 
-  createAndUploadTextFileWithTus () {
-    const string = 'Hello, how are you doing? ' + Date.now()
-    Expo.FileSystem.writeAsStringAsync(Expo.FileSystem.documentDirectory + '/myfile.txt', string)
-      .then(() => {
-        const path = Expo.FileSystem.documentDirectory + '/myfile.txt'
-        const file = {
-          uri: path
-        }
-        testUploadFileWithTus(file)
-          .then((url) => {
-            this.setState({
-              status: `Upload successful: ${url}`
-            })
-          })
-          .catch((err) => {
-            this.setState({
-              status: `Error: ${err}`
-            })
-          })
-      })
-  }
-
-  addFile (file) {
-    console.log(file)
-    var photo = {
-      uri: file.uri,
-      type: file.type,
-      name: 'photo.jpg'
-    }
-
-    this.setState({
-      status: 'Uploading...'
-    })
-
-    testUploadFileWithTus(photo)
-      .then((url) => {
-        this.setState({
-          status: `Upload successful`,
-          uploadUrl: url
-        })
-      })
-      .catch((err) => {
-        this.setState({
-          status: `Error: ${err}`
-        })
-      })
-
-    // this.uppy.addFile({
-    //   source: 'React Native',
-    //   name: 'photo.jpg',
-    //   type: file.type,
-    //   data: photo
-    // })
-  }
-
   selectPhotoTapped () {
     console.log('Selecting photo...')
 
-    // Expo.DocumentPicker.getDocumentAsync({
-    //   copyToCacheDirectory: false
-    // })
-    //   .then((result) => {
-    //     console.log(result)
-    //     if (!result.cancelled) {
-    //       this.setState({ file: result })
-    //       this.addFile(result)
-    //     }
-    //   })
-
-    Permissions.askAsync(Permissions.CAMERA_ROLL).then((isAllowed) => {
+    Expo.Permissions.askAsync(Expo.Permissions.CAMERA_ROLL).then((isAllowed) => {
       if (!isAllowed) return
 
       Expo.ImagePicker.launchImageLibraryAsync({
@@ -178,7 +104,8 @@ export default class App extends React.Component {
         <UppyFilePicker
           show={this.state.isFilePickerVisible}
           uppy={this.uppy}
-          onRequestClose={this.hideFilePicker} />
+          onRequestClose={this.hideFilePicker}
+          serverUrl="http://localhost:3020" />
       </View>
     )
   }
@@ -210,12 +137,6 @@ function SelectAndUploadFileWithUppy (props) {
       </TouchableOpacity>
       <Text>Status: {props.state.status}</Text>
       <Text>{props.state.progress} of {props.state.total}</Text>
-      {/* <Button
-        onPress={props.startUpload}
-        title="Start Upload"
-        color="#841584"
-        accessibilityLabel="Start uploading a file"
-      /> */}
       <TouchableHighlight
         onPress={() => {
           props.showFilePicker(true)
