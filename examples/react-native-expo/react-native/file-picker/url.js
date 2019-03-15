@@ -1,7 +1,7 @@
 import React from 'react'
 
 import {
-  // StyleSheet,
+  StyleSheet,
   TouchableOpacity,
   Text,
   TextInput,
@@ -20,23 +20,26 @@ export default class UppyRNUrl extends React.Component {
   }
 
   componentDidMount () {
-    this.uppy = this.props.uppy
-    this.uppy.use(Url, {
-      id: 'uppyRN:Url',
-      serverUrl: 'http://localhost:3020'
-    })
-    this.plugin = this.uppy.getPlugin('uppyRN:Url')
+    const uppy = this.props.uppy
+    const options = Object.assign(
+      { id: 'uppyRN:Url' },
+      this.props,
+      { }
+    )
+    delete options.uppy
+
+    uppy.use(Url, options)
+    this.plugin = uppy.getPlugin(options.id)
   }
 
   componentWillUnmount () {
-    this.uppy.removePlugin(this.plugin)
+    const uppy = this.props.uppy
+    uppy.removePlugin(this.plugin)
   }
 
   onPressImport () {
     this.plugin.addFile(this.state.url)
-      .then(() => {
-        console.log('success')
-      })
+      .then(this.props.onSuccess)
       .catch((err) => {
         console.log(err)
       })
@@ -44,34 +47,19 @@ export default class UppyRNUrl extends React.Component {
 
   render () {
     return (
-      <View style={{
-        flex: '1',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
+      <View style={styles.container}>
         <TextInput
-          style={{
-            width: '90%',
-            height: 40,
-            borderColor: '#7f8a93',
-            borderWidth: 1,
-            padding: 5,
-            marginBottom: 15
-          }}
+          style={styles.input}
+          autoFocus
           onChangeText={(text) => this.setState({
             url: text
           })}
           placeholder="Enter URL to import a file"
         />
         <TouchableOpacity
-          style={{
-            alignItems: 'center',
-            backgroundColor: '#2275d7',
-            paddingHorizontal: 15,
-            paddingVertical: 8
-          }}
+          style={styles.button}
           onPress={this.onPressImport}>
-          <Text style={{ color: '#fff' }}>Import</Text>
+          <Text style={styles.buttonText}>Import</Text>
         </TouchableOpacity>
         <Text>{this.state.text}</Text>
       </View>
@@ -79,15 +67,28 @@ export default class UppyRNUrl extends React.Component {
   }
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     justifyContent: 'center',
-//     flex: 1,
-//     paddingTop: 30
-//   },
-//   item: {
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     height: 100
-//   }
-// })
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  input: {
+    width: '90%',
+    height: 40,
+    borderColor: '#7f8a93',
+    borderWidth: 1,
+    padding: 5,
+    borderRadius: 4,
+    marginBottom: 15
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#2275d7',
+    paddingHorizontal: 15,
+    paddingVertical: 8
+  },
+  buttonText: {
+    color: '#fff'
+  }
+})

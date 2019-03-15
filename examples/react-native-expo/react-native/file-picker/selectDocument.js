@@ -1,4 +1,4 @@
-import Expo from 'expo'
+import * as Expo from 'expo'
 
 function selectDocumentWithExpo (options) {
   return Expo.DocumentPicker.getDocumentAsync({

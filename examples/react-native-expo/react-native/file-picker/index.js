@@ -156,7 +156,16 @@ export default class UppyReactNativeFilePicker extends React.Component {
           this.props.onRequestClose()
         }}>
         {this.state.openProvider
-          ? <Provider id={this.state.openProvider} uppy={this.uppy} />
+          ? <Provider
+            providerID={this.state.openProvider}
+            uppy={this.uppy}
+            onSuccess={() => {
+              this.setState({
+                openProvider: null
+              })
+              this.props.onRequestClose()
+            }}
+            {...this.props} />
           : this.renderSourceList()
         }
       </Modal>

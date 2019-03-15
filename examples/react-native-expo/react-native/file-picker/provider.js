@@ -1,13 +1,5 @@
 import React from 'react'
-// import Expo from 'expo'
 import {
-  // StyleSheet,
-  // FlatList,
-  // Image,
-  // TouchableOpacity,
-  // Text,
-  // TextInput,
-  // View,
   AsyncStorage,
   WebView } from 'react-native'
 import Instagram from '@uppy/instagram'
@@ -44,15 +36,24 @@ export default class UppyRNProvider extends React.Component {
   }
 
   componentDidMount () {
-    this.uppy = this.props.uppy
-    this.uppy.use(Instagram, {
-      serverUrl: 'http://localhost:3020',
-      storage: AsyncStorage
-    })
-    this.plugin = this.uppy.getPlugin('Instagram')
+    const uppy = this.props.uppy
+    const options = Object.assign(
+      { id: 'uppyRN:Instagram' },
+      this.props,
+      { storage: AsyncStorage }
+    )
+    delete options.uppy
+    uppy.use(Instagram, options)
+    this.plugin = uppy.getPlugin(options.id)
+
     this.setState({
       authUrl: this.plugin.provider.authUrl()
     })
+  }
+
+  componentWillUnmount () {
+    const uppy = this.props.uppy
+    uppy.removePlugin(this.plugin)
   }
 
   // renderGrid (items) {
@@ -89,8 +90,8 @@ export default class UppyRNProvider extends React.Component {
   }
 
   render () {
-    if (this.props.id === 'Url') {
-      return <Url uppy={this.props.uppy} />
+    if (this.props.providerID === 'Url') {
+      return <Url {...this.props} />
     }
 
     return this.renderInstagram()

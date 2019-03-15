@@ -1,4 +1,4 @@
-import Expo from 'expo'
+import * as Expo from 'expo'
 
 function takePictureWithExpo (options) {
   return new Promise((resolve, reject) => {
