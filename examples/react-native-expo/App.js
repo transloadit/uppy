@@ -65,7 +65,12 @@ export default class App extends React.Component {
           console.log(result)
           if (!result.cancelled) {
             this.setState({ file: result })
-            this.addFile(result)
+            this.uppy.addFile({
+              source: 'React Native',
+              name: 'photo.jpg',
+              type: result.type,
+              data: result
+            })
           }
         })
     })
