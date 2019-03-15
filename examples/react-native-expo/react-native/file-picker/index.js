@@ -65,7 +65,6 @@ export default class UppyReactNativeFilePicker extends React.Component {
         type: file.type,
         data: file
       })
-      this.uppy.upload()
       this.props.onRequestClose()
     })
   }
