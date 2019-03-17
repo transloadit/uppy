@@ -14,6 +14,10 @@ const headerSanitize = require('./header-blacklist')
 
 class Uploader {
   /**
+   * Uploads file to destination based on the supplied protocol (tus, s3-multipart, multipart)
+   * For tus uploads, the deferredLength option is enabled, because file size value can be unreliable
+   * for some providers (Instagram particularly)
+   *
    * @typedef {object} UploaderOptions
    * @property {string} endpoint
    * @property {string=} uploadUrl
@@ -273,6 +277,10 @@ class Uploader {
     const metadata = Object.assign({ filename: fname, filetype: ftype }, this.options.metadata || {})
     const file = deferLength ? this.duplexStream : fs.createReadStream(this.options.path)
     const uploader = this
+    const oneGB = 1024 * 1024 * 1024  // 1 GB
+    // chunk size can't be infinity with deferred length.
+    // cap value to 1GB to avoid buffer allocation error (RangeError)
+    const chunkSize = Math.min(this.options.size || oneGB, oneGB)
 
     // @ts-ignore
     this.tus = new tus.Upload(file, {
@@ -283,7 +291,7 @@ class Uploader {
       resume: true,
       uploadSize: deferLength ? null : (this.options.size || fs.statSync(this.options.path).size),
       metadata,
-      chunkSize: this.bytesWritten,
+      chunkSize,
       /**
        *
        * @param {Error} error
