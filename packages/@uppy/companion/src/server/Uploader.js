@@ -74,6 +74,10 @@ class Uploader {
     })
   }
 
+  hasError () {
+    return this._errRespMessage != null
+  }
+
   /**
    * returns a substring of the token
    */

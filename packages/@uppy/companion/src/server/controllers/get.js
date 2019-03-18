@@ -35,6 +35,12 @@ function get (req, res) {
       headers: body.headers
     })
 
+    if (uploader.hasError()) {
+      const response = uploader.getResponse()
+      res.status(response.status).json(response.body)
+      return
+    }
+
     // wait till the client has connected to the socket, before starting
     // the download, so that the client can receive all download/upload progress.
     logger.debug('Waiting for socket connection before beginning remote download.')

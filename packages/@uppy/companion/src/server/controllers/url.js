@@ -61,6 +61,12 @@ const get = (req, res) => {
         headers: req.body.headers
       })
 
+      if (uploader.hasError()) {
+        const response = uploader.getResponse()
+        res.status(response.status).json(response.body)
+        return
+      }
+
       logger.debug('Waiting for socket connection before beginning remote download.')
       uploader.onSocketReady(() => {
         logger.debug('Socket connection received. Starting remote download.')
