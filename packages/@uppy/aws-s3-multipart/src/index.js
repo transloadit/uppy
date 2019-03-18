@@ -1,5 +1,5 @@
 const { Plugin } = require('@uppy/core')
-const { Socket, RequestClient } = require('@uppy/companion-client')
+const { Socket, Provider, RequestClient } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const limitPromises = require('@uppy/utils/lib/limitPromises')
@@ -249,28 +249,19 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       this.uppy.emit('upload-started', file)
 
-      fetch(file.remote.url, {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Object.assign({}, file.remote.body, {
+      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+      const client = new Client(this.uppy, file.remote.providerOptions)
+      client.post(
+        file.remote.url,
+        Object.assign({}, file.remote.body, {
           protocol: 's3-multipart',
           size: file.data.size,
           metadata: file.meta
-        }))
-      })
-      .then((res) => {
-        if (res.status < 200 || res.status > 300) {
-          return reject(res.statusText)
-        }
-
-        return res.json().then((data) => {
-          this.uppy.setFileState(file.id, { serverToken: data.token })
-          return this.uppy.getFile(file.id)
         })
+      ).then((res) => {
+        this.uppy.setFileState(file.id, { serverToken: res.token })
+        file = this.uppy.getFile(file.id)
+        return file
       })
       .then((file) => {
         return this.connectToServerSocket(file)

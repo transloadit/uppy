@@ -52,6 +52,13 @@ class Uploader {
    * @returns {boolean}
    */
   validateOptions (options) {
+    // s3 uploads don't require upload destination
+    // validation, because the destination is determined
+    // by the server's s3 config
+    if (options.protocol === 's3-multipart') {
+      return true
+    }
+
     if (!options.endpoint && !options.uploadUrl) {
       this._errRespMessage = 'No destination specified'
       return false
