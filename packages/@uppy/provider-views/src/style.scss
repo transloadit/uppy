@@ -190,8 +190,8 @@
   @include reset-button();
   cursor: pointer;
 
-  &:hover { 
-    text-decoration: underline; 
+  &:hover {
+    text-decoration: underline;
   }
 }
 
@@ -237,6 +237,7 @@
   .uppy-ProviderBrowserItem {
     display: flex;
     padding: 10px 15px;
+    margin: 0;
   }
 
   .uppy-ProviderBrowserItem-checkbox {
