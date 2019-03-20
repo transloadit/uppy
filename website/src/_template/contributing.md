@@ -1,4 +1,5 @@
 <!-- WARNING! This file was injected. Please edit in ".github/CONTRIBUTING.md" instead and run "update.js" -->
+
 ## Uppy development
 
 Fork the repository into your own account first. See the [GitHub Help](https://help.github.com/articles/fork-a-repo/) article for instructions.
