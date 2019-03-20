@@ -1,4 +1,4 @@
-Our combined changelog and roadmap. It contains todos as well as dones.
+-Our combined changelog and roadmap. It contains todos as well as dones.
 
 Items can be optionally be tagged tagged by GitHub owner issue if discussion
 happened / is needed.
@@ -134,6 +134,36 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: better error handling, general cleanup (remove unused code. etc)
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
+
+## 0.30.3
+
+Released: 2019-03-08
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 0.30.3 | @uppy/provider-views | 0.30.3 |
+| @uppy/aws-s3 | 0.30.3 | @uppy/react | 0.30.3 |
+| @uppy/companion-client | 0.28.3 | @uppy/redux-dev-tools | 0.30.3 |
+| @uppy/companion | 0.17.3 | @uppy/robodog | 0.30.3 |
+| @uppy/core | 0.30.3 | @uppy/status-bar | 0.30.3 |
+| @uppy/dashboard | 0.30.3 | @uppy/store-default | 0.28.3 |
+| @uppy/drag-drop | 0.30.3 | @uppy/store-redux | 0.28.3 |
+| @uppy/dropbox | 0.30.3 | @uppy/thumbnail-generator | 0.30.3 |
+| @uppy/file-input | 0.30.3 | @uppy/transloadit | 0.30.3 |
+| @uppy/form | 0.30.3 | @uppy/tus | 0.30.3 |
+| @uppy/golden-retriever | 0.30.3 | @uppy/url | 0.30.3 |
+| @uppy/google-drive | 0.30.3 | @uppy/utils | 0.30.3 |
+| @uppy/informer | 0.30.3 | @uppy/webcam | 0.30.3 |
+| @uppy/instagram | 0.30.3 | @uppy/xhr-upload | 0.30.3 |
+| @uppy/progress-bar | 0.30.3 | uppy | 0.30.3 |
+
+- @uppy/dashboard: Dashboard a11y improvements: trap focus in the active panel only (#1272 / @arturi)
+- @uppy/companion: Make providers support react native (#1286 / @ifedapoolarewaju)
+- @uppy/xhr-upload: Reject cancelled uploads (#1316 / @arturi)
+- @uppy/aws-s3: Avoid throwing error when file has been removed (#1318 / @craigjennings11)
+- @uppy/companion: Remove resources requirements for companion (#1311 / @kiloreux)
+- @uppy/webcam: Don’t show Smile! if countdown is false (#1324 / @arturi)
+- docs: update webpack homepage URLs, update Robodog readme (#1323 / @goto-bus-stop)
 
 ## 0.30.1 - 0.30.2
 
