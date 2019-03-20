@@ -10,6 +10,7 @@ export interface DashboardProps {
   uppy: Uppy;
   inline?: boolean;
   plugins?: Array<string>;
+  trigger?: string;
   width?: number;
   height?: number;
   showProgressDetails?: boolean;
