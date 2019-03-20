@@ -24,9 +24,9 @@ Here are the options in detail:
 | Guaranteed response times within office hours |          -           |                          < 4 days                           |                                    < 8h - 32h                                     |
 |              1-on-1 access to core developers |          -           |                             1h                              |                                     1h - 20h                                      |
 |                               Health & Status |          -           |         ✅ Access to Personal Transloadit Dashboard          | ✅ Access to Personal Transloadit Dashboard. Proactive monitoring & notifications. |
-|              Support for non-current releases |          -           |                              -                              |                              ✅ 1 - 10 releases back                               |
+|              Support for non-current releases |          -           |                              -                              |                              ✅ 0 - 10 releases back                               |
 
-For all questions we recommend first checking out the [Community Forum][forum] as the answer may already be there, and it's a nice place to hang out. If you're interested in 🥉 Bronze support, all you need to do is [sign up for the Startup plan here][pricing]. If you're interested in 🥈 Silver or 🥇 higher and you are not a customer yet, [reach out](mailto:support@transloadit.com?subject=Uppy Enterprise Support).
+For all questions we recommend first checking out the [Community Forum][forum] as the answer may already be there, and it's a nice place to hang out. If you're interested in 🥉 Bronze support, all you need to do is [sign up for the Startup plan here][pricing]. If you're interested in 🥈 Silver or 🥇 higher and you are not a customer yet, [reach out](mailto:support@transloadit.com?subject=Uppy+Enterprise+Support).
 
 [bugs]: https://github.com/transloadit/uppy/issues/new?template=bug_reports.md  "Bugs welcome in the issue tracker on GitHub"
 [features]: https://github.com/transloadit/uppy/issues/new?template=feature_request.md "Feature requests welcome in the issue tracker on GitHub"
