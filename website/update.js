@@ -7,6 +7,7 @@ const { promisify } = require('util')
 const gzipSize = require('gzip-size')
 const bytes = require('pretty-bytes')
 const browserify = require('browserify')
+const touch = require('touch')
 
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
@@ -120,6 +121,30 @@ async function injectBuiltFiles () {
   })
 }
 
+async function injectMarkdown () {
+  let sources = {
+    '.github/ISSUE_TEMPLATE/integration_help.md': `src/_template/integration_help.md`,
+    '.github/CONTRIBUTING.md': `src/_template/contributing.md`
+  }
+
+  for (let src in sources) {
+    let dst = sources[src]
+    // strip yaml frontmatter:
+    let srcpath = path.join(uppyRoot, `/../../${src}`)
+    let dstpath = path.join(webRoot, dst)
+    let parts = fs.readFileSync(srcpath, 'utf-8').split(/---\s*\n/)
+    if (parts.length >= 3) {
+      parts.shift()
+      parts.shift()
+    }
+    let content = `<!-- WARNING! This file was injected. Please edit in "${src}" instead and run "${path.basename(__filename)}" -->\n\n`
+    content += parts.join('---\n')
+    fs.writeFileSync(dstpath, content, 'utf-8')
+    console.info(chalk.green(`✓ injected: `), chalk.grey(srcpath))
+  }
+  touch(path.join(webRoot, `/src/support.md`))
+}
+
 async function readConfig () {
   try {
     const buf = await promisify(fs.readFile)(configPath, 'utf8')
@@ -131,6 +156,8 @@ async function readConfig () {
 
 async function update () {
   const config = await readConfig()
+
+  await injectMarkdown()
 
   config.uppy_version = version
   config.uppy_version_anchor = version.replace(/[^\d]+/g, '')

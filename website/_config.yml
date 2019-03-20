@@ -149,3 +149,7 @@ skip_render:
 
 alias:
   examples/: examples/dashboard/
+
+include_markdown:
+  dir: "src/_template"   # Base directory of template markdown
+  verbose : true    
