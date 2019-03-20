@@ -98,6 +98,7 @@ npm profile enable-2fa auth-only
 Other things to keep in mind during release:
 
 * When doing a minor release below 1.0, or a major release >= 1.0, of the `@uppy/core` package, the peerDependency of the plugin packages needs to be updated first. Eg when updating from 0.25.5 to 0.26.0, the peerDependency of each should be `"@uppy/core": "^0.26.0"` before doing `npm run release`.
+* When publishing a new package, publish it manually first with `npm publish --access public`, since by default `@`-prefixed packages are private on NPM, and Lerna will fail.
 
 After a release, the demos on transloadit.com should also be updated. After updating, check that some things work locally:
 
