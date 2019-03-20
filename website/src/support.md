@@ -7,7 +7,7 @@ permalink: /support/
 
 <!-- md integration_help.md -->
 
-Here are the options in detail:
+This approach is new, we may make changes as we learn. Here are the current options in detail:
 
 |                                   <br>Support |   🦄<br>Community    |                        🥉<br>Bronze                         |                                🥈<br>Silver and up                                |
 |----------------------------------------------:|:--------------------:|:-----------------------------------------------------------:|:---------------------------------------------------------------------------------:|
