@@ -38,6 +38,6 @@ exports.gentleVerifyToken = (req, res, next) => {
 }
 
 exports.cookieAuthToken = (req, res, next) => {
-  req.uppy.authToken = req.cookies.uppyAuthToken
+  req.uppy.authToken = req.cookies[`uppyAuthToken--${req.uppy.provider.authProvider}`]
   return next()
 }

@@ -16,7 +16,7 @@ const oAuthState = require('../helpers/oauth-state')
 module.exports = function sendToken (req, res, next) {
   const uppyAuthToken = req.uppy.authToken
   // add the token to cookies for thumbnail/image requests
-  tokenService.addToCookies(res, uppyAuthToken, req.uppy.options)
+  tokenService.addToCookies(res, uppyAuthToken, req.uppy.options, req.uppy.provider.authProvider)
 
   const state = (req.session.grant || {}).state
   if (state) {

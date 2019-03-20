@@ -1,4 +1,4 @@
-Our combined changelog and roadmap. It contains todos as well as dones.
+-Our combined changelog and roadmap. It contains todos as well as dones.
 
 Items can be optionally be tagged tagged by GitHub owner issue if discussion
 happened / is needed.
@@ -56,6 +56,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] transloadit: option for StatusBar’s upload button to act as a "Start assembly" button? Useful if an assembly uses only import robots, such as /s3/import to start a batch transcoding job.
 - [ ] provider: Add Facebook, OneDrive, Box
 - [ ] provider: change ProviderViews signature to receive Provider instance in second param. ref https://github.com/transloadit/uppy/pull/743#discussion_r180106070
+- [ ] provider: add sorting, filtering, previews #254
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] webcam: Stop recording when file size is exceeded, should be possible given how the MediaRecorder API works
 - [ ] dashboard: add option to disable uploading from local disk #657
@@ -73,6 +74,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] webcam: Specify the resolution of the webcam images. We should add a way to specify any custom constraints to the Webcam plugin #876
 - [ ] transloadit: consider adding option to append result link from transloadit to the link thing in the Dashboard file block #1177
 - [ ] Consider uploading image thumbnails too #1212
+- [ ] Add `directories-dropped` event #849
 - [ ] dashboard: if you specified a delete endpoint, the “remove/cancel upload” button remains after the upload and it not only removes, but also sends a request to that endpoint #1216
 - [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
 - [ ] react: Component wrappers to manage the Uppy instance, many people initialize it in render() which does not work correctly so this could make it easier for them https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951
@@ -85,6 +87,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] fix incorrectly rotated image thumbnails #472
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
+- [ ] show thumbnails when connecting with Google Drive #1162 (@ifedapoolarewaju)
 
 ## 1.0 Goals
 
@@ -97,7 +100,7 @@ What we need to do to release Uppy 1.0
 - [ ] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear
 - [ ] locale: update the locales of languages that we know ourselves. leave rest to community
 - [ ] locale: cdn (just in folder like Robodog, will attach to global) / for module to all languages in one big `@uppy/locales`
-- [ ] feature: basic React Native support (@arturi owner+ios, @ife android)
+- [ ] feature: basic React Native support (@arturi, @ifedapoolarewaju)
 - [ ] QA: add one integration test that uses more exotic (tus) options such as `useFastRemoteRetry` (@arturi)
 - [ ] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
 - [ ] website: replace transloadit example with robodog example <-- add transloadit test key with restricted usage (no need to sign up yourself to try it)
@@ -107,11 +110,9 @@ What we need to do to release Uppy 1.0
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
 - [ ] transloadit: add error reporting, see https://github.com/transloadit/jquery-sdk/blob/891e99b08dd8142d8d8adc0553e6511967635ad7/js/lib/Modal.js#L122-L136 (@goto-bus-stop, @arturi)
 - [ ] transloadit: should adhere cancel event and abort assembly (@arturi, @goto-bus-stop)
-
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
-- [ ] server: bump minor and deprecate that on npm in favour of @uppy/companion (@ifedapoolarewaju)
-- [ ] show thumbnails when connecting with Google Drive #1162
 
+- [x] uppy-server: bump minor and deprecate that on npm in favour of @uppy/companion (@arturi)
 - [x] dashboard: implement Alex and Artur’s Dashboard redesign (@arturi)
 - [x] docs: on using plugins, all options, list of plugins, i18n
 - [x] feature: beta file recovering after closed tab / browser crash
@@ -134,6 +135,35 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
 
+## 0.30.3
+
+Released: 2019-03-08
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 0.30.3 | @uppy/provider-views | 0.30.3 |
+| @uppy/aws-s3 | 0.30.3 | @uppy/react | 0.30.3 |
+| @uppy/companion-client | 0.28.3 | @uppy/redux-dev-tools | 0.30.3 |
+| @uppy/companion | 0.17.3 | @uppy/robodog | 0.30.3 |
+| @uppy/core | 0.30.3 | @uppy/status-bar | 0.30.3 |
+| @uppy/dashboard | 0.30.3 | @uppy/store-default | 0.28.3 |
+| @uppy/drag-drop | 0.30.3 | @uppy/store-redux | 0.28.3 |
+| @uppy/dropbox | 0.30.3 | @uppy/thumbnail-generator | 0.30.3 |
+| @uppy/file-input | 0.30.3 | @uppy/transloadit | 0.30.3 |
+| @uppy/form | 0.30.3 | @uppy/tus | 0.30.3 |
+| @uppy/golden-retriever | 0.30.3 | @uppy/url | 0.30.3 |
+| @uppy/google-drive | 0.30.3 | @uppy/utils | 0.30.3 |
+| @uppy/informer | 0.30.3 | @uppy/webcam | 0.30.3 |
+| @uppy/instagram | 0.30.3 | @uppy/xhr-upload | 0.30.3 |
+| @uppy/progress-bar | 0.30.3 | uppy | 0.30.3 |
+
+- @uppy/dashboard: Dashboard a11y improvements: trap focus in the active panel only (#1272 / @arturi)
+- @uppy/companion: Make providers support react native (#1286 / @ifedapoolarewaju)
+- @uppy/xhr-upload: Reject cancelled uploads (#1316 / @arturi)
+- @uppy/aws-s3: Avoid throwing error when file has been removed (#1318 / @craigjennings11)
+- @uppy/companion: Remove resources requirements for companion (#1311 / @kiloreux)
+- @uppy/webcam: Don’t show Smile! if countdown is false (#1324 / @arturi)
+- docs: update webpack homepage URLs, update Robodog readme (#1323 / @goto-bus-stop)
 
 ## 0.30.1 - 0.30.2
 

@@ -38,7 +38,7 @@ exports.jsonStringify = (data) => {
  * @param {string} text
  */
 exports.sanitizeHtml = (text) => {
-  return text.replace(/<\/?[^>]+(>|$)/g, '')
+  return text ? text.replace(/<\/?[^>]+(>|$)/g, '') : text
 }
 
 /**
