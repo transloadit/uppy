@@ -7,6 +7,7 @@ const { promisify } = require('util')
 const gzipSize = require('gzip-size')
 const bytes = require('pretty-bytes')
 const browserify = require('browserify')
+const touch = require('touch')
 
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
@@ -126,19 +127,20 @@ async function injectMarkdown () {
     '.github/CONTRIBUTING.md': `src/_template/contributing.md`
   }
 
-  let cmds = []
   for (let src in sources) {
     let dst = sources[src]
     // strip yaml frontmatter:
-    cmds.push(`echo '${path.join(uppyRoot, `/../../${src}`)}'`)
-    cmds.push(`(echo '<!-- WARNING! This file was injected. Please edit in "${src}" instead and run "${path.basename(__filename)}" -->' && (cat '${path.join(uppyRoot, `/../../${src}`)}' |sed '1 { /^---/ { :a N; /\\n---/! ba; d} }')) > '${path.join(webRoot, dst)}'`)
+    let srcpath = path.join(uppyRoot, `/../../${src}`)
+    let dstpath = path.join(webRoot, dst)
+    let parts = fs.readFileSync(srcpath, 'utf-8').split(/---\s*\n/)
+    parts.shift()
+    parts.shift()
+    let content = `<!-- WARNING! This file was injected. Please edit in "${src}" instead and run "${path.basename(__filename)}" -->\n\n`
+    content += parts.join('---\n')
+    fs.writeFileSync(dstpath, content, 'utf-8')
+    console.info(chalk.green(`✓ injected: `), chalk.grey(srcpath))
   }
-  cmds.push(`touch '${path.join(webRoot, `/src/support.md`)}'`)
-
-  const { stdout } = await promisify(exec)(cmds.join('&&'))
-  stdout.trim().split('\n').forEach(function (line) {
-    console.info(chalk.green('✓ injected: '), chalk.grey(line))
-  })
+  touch(path.join(webRoot, `/src/support.md`))
 }
 
 async function readConfig () {
