@@ -133,8 +133,10 @@ async function injectMarkdown () {
     let srcpath = path.join(uppyRoot, `/../../${src}`)
     let dstpath = path.join(webRoot, dst)
     let parts = fs.readFileSync(srcpath, 'utf-8').split(/---\s*\n/)
-    parts.shift()
-    parts.shift()
+    if (parts.length >= 3) {
+      parts.shift()
+      parts.shift()
+    }
     let content = `<!-- WARNING! This file was injected. Please edit in "${src}" instead and run "${path.basename(__filename)}" -->\n\n`
     content += parts.join('---\n')
     fs.writeFileSync(dstpath, content, 'utf-8')
