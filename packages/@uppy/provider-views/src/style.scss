@@ -262,8 +262,10 @@
 
   .uppy-ProviderBrowserItem-inner img,
   .uppy-ProviderBrowserItem-inner svg {
-    vertical-align: top;
+    vertical-align: middle;
     margin-right: 8px;
+    max-width: 20px;
+    max-height: 20px;
   }
 }
 
@@ -392,7 +394,7 @@
 .uppy-ProviderBrowserItem-checkbox {
   position: relative;
   display: inline-block;
-  top: -3px;
+  // top: -3px;
   margin-right: 15px;
 }
 
