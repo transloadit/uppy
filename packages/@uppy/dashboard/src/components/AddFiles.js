@@ -22,7 +22,7 @@ class AddFiles extends Component {
 
     if (!hasAcquirers) {
       return (
-        <div class="uppy-DashboarAddFiles">
+        <div class="uppy-DashboardAddFiles">
           <div class="uppy-DashboardTabs">
             <ActionBrowseTagline
               acquirers={this.props.acquirers}
@@ -33,7 +33,7 @@ class AddFiles extends Component {
               maxNumberOfFiles={this.props.maxNumberOfFiles}
             />
           </div>
-          <div class="uppy-DashboarAddFiles-info">
+          <div class="uppy-DashboardAddFiles-info">
             { this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div> }
             { this.props.proudlyDisplayPoweredByUppy && poweredByUppy(this.props) }
           </div>
@@ -45,7 +45,7 @@ class AddFiles extends Component {
     // because Uppy will be handling the upload and so we can select same file
     // after removing — otherwise browser thinks it’s already selected
     return (
-      <div class="uppy-DashboarAddFiles">
+      <div class="uppy-DashboardAddFiles">
         <div class="uppy-DashboardTabs">
           <ActionBrowseTagline
             acquirers={this.props.acquirers}
@@ -93,7 +93,7 @@ class AddFiles extends Component {
             })}
           </div>
         </div>
-        <div class="uppy-DashboarAddFiles-info">
+        <div class="uppy-DashboardAddFiles-info">
           { this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div> }
           { this.props.proudlyDisplayPoweredByUppy && poweredByUppy(this.props) }
         </div>
