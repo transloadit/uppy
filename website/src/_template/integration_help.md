@@ -1,6 +1,6 @@
 <!-- WARNING! This file was injected. Please edit in ".github/ISSUE_TEMPLATE/integration_help.md" instead and run "update.js" -->
 
-We are providing Uppy free of charge. If you want you can self-host all components and never pay us anything. There's docs and tests and your Bugs and Feature Requests are always welcome on GitHub. 
+Transloadit is providing Uppy free of charge. If you want you can self-host all components and never pay us a dime. There's docs and tests and your Bugs and Feature Requests are always welcome on GitHub. 
 
 There is also a different category of support that we'd like to call Integration Help: making things work for you, that are already reported working for the larger community.
 
