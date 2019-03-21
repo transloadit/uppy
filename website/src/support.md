@@ -31,7 +31,7 @@ For all questions we recommend first checking out the [Community Forum][forum] a
 [bugs]: https://github.com/transloadit/uppy/issues/new?template=bug_reports.md  "Bugs welcome in the issue tracker on GitHub"
 [features]: https://github.com/transloadit/uppy/issues/new?template=feature_request.md "Feature requests welcome in the issue tracker on GitHub"
 [forum]: https://community.transloadit.com/c/uppy "Community Forum"
-[pricing]: https://transloadit/pricing/ "Transloadit plans & signup"
-[support]: https://transloadit/support/ "Transloadit Support"
+[pricing]: https://transloadit.com/pricing/ "Transloadit plans & signup"
+[support]: https://transloadit.com/support/ "Transloadit Support"
 
 
