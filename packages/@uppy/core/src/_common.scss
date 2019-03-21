@@ -8,6 +8,8 @@
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-align: left;
+  position: relative;
 }
 
 .uppy-Root *, .uppy-Root *:before, .uppy-Root *:after {
@@ -21,6 +23,9 @@
 .uppy-Root *:focus {
   outline: $size-focus-outline solid $color-cornflower-blue; /* no !important */
   outline-offset: $size-focus-offset; /* no !important */
+
+  // outline: none;
+  // box-shadow: inset 0 0 0 2px rgba($color-cornflower-blue, 0.5);
 }
 
 .uppy-Root [hidden] {
@@ -109,6 +114,7 @@
   font-size: 13px;
   line-height: 1.5;
   padding: 6px 8px;
+  background-color: $color-white;
 }
 
   .uppy-size--md .uppy-c-textInput {
