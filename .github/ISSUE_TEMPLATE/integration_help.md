@@ -1,10 +1,11 @@
 ---
 name: Integration help
+title: Please use the community forum (or paid support) instead
 about: Do you need assistance with building the Uppy client in your bundler, or running Companion on your own preferred server platform?
 labels: Not Accepted
 ---
 
-We are providing Uppy free of charge. If you want you can self-host all components and never pay us anything. There's docs and tests and your Bugs and Feature Requests are always welcome on GitHub. 
+Transloadit is providing Uppy free of charge. If you want you can self-host all components and never pay us a dime. There's docs and tests and your Bugs and Feature Requests are always welcome on GitHub. 
 
 There is also a different category of support that we'd like to call Integration Help: making things work for you, that are already reported working for the larger community.
 
