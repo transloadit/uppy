@@ -97,21 +97,20 @@ What we need to do to release Uppy 1.0
 - [ ] chore: remove dead code/commented blocks
 - [ ] chore: remove the not-working npm scripts
 - [ ] chore: rewrite all code based on prettier+standardjs.com
-- [ ] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear
 - [ ] locale: update the locales of languages that we know ourselves. leave rest to community
 - [ ] locale: cdn (just in folder like Robodog, will attach to global) / for module to all languages in one big `@uppy/locales`
 - [ ] feature: basic React Native support (@arturi, @ifedapoolarewaju)
-- [ ] QA: add one integration test that uses more exotic (tus) options such as `useFastRemoteRetry` (@arturi)
+- [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
 - [ ] website: replace transloadit example with robodog example <-- add transloadit test key with restricted usage (no need to sign up yourself to try it)
-- [ ] website: give most `./examples` their own page in /examples (as many as makes sense)
-- [ ] website: big release blog post
+- [ ] website: big release blog post or series
 - [ ] website: design polish
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
 - [ ] transloadit: add error reporting, see https://github.com/transloadit/jquery-sdk/blob/891e99b08dd8142d8d8adc0553e6511967635ad7/js/lib/Modal.js#L122-L136 (@goto-bus-stop, @arturi)
 - [ ] transloadit: should adhere cancel event and abort assembly (@arturi, @goto-bus-stop)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 
+- [x] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear
 - [x] uppy-server: bump minor and deprecate that on npm in favour of @uppy/companion (@arturi)
 - [x] dashboard: implement Alex and Artur’s Dashboard redesign (@arturi)
 - [x] docs: on using plugins, all options, list of plugins, i18n
