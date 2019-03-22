@@ -36,10 +36,10 @@ class DropBox {
     let stats
     let reqErr
     const finishReq = () => {
-      if (reqErr) {
-        done(reqErr)
-      } else if (stats.statusCode !== 200) {
-        done(this._error(stats.statusCode))
+      if (reqErr || stats.statusCode !== 200) {
+        const err = this._error(reqErr, stats)
+        logger.error(err, 'provider.dropbox.list.error')
+        done(err)
       } else {
         stats.body.user_email = userInfo.body.email
         done(null, this.adaptData(stats.body, options.uppy))
@@ -109,7 +109,9 @@ class DropBox {
       .request()
       .on('response', (resp) => {
         if (resp.statusCode !== 200) {
-          return done(this._error(resp.statusCode))
+          const err = this._error(null, resp)
+          logger.error(err, 'provider.dropbox.thumbnail.error')
+          return done(err)
         }
         done(null, resp)
       })
@@ -128,13 +130,10 @@ class DropBox {
         include_media_info: true
       })
       .request((err, resp, body) => {
-        if (err) {
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
           logger.error(err, 'provider.dropbox.size.error')
-          return done(null)
-        }
-
-        if (resp.statusCode !== 200) {
-          return done(this._error(resp.statusCode))
+          return done(err)
         }
         done(null, parseInt(body.size))
       })
@@ -161,12 +160,13 @@ class DropBox {
     return data
   }
 
-  _error (statusCode) {
-    if (statusCode === 401) {
-      return new AuthError()
+  _error (err, resp) {
+    if (resp) {
+      const errMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
+      return resp.statusCode === 401 ? new AuthError() : new Error(errMsg)
     }
 
-    return new Error(`request to ${this.authProvider} returned ${statusCode}`)
+    return err
   }
 }
 

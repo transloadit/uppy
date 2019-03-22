@@ -31,10 +31,10 @@ class Drive {
     let listResponse
     let reqErr
     const finishReq = () => {
-      if (reqErr) {
-        done(reqErr)
-      } else if (listResponse.statusCode !== 200) {
-        done(this._error(listResponse.statusCode))
+      if (reqErr || listResponse.statusCode !== 200) {
+        const err = this._error(reqErr, listResponse)
+        logger.error(err, 'provider.drive.list.error')
+        done(err)
       } else {
         done(null, this.adaptData(listResponse.body, teamDrives ? teamDrives.body : null, options.uppy))
       }
@@ -111,13 +111,10 @@ class Drive {
 
   thumbnail ({id, token}, done) {
     return this.stats({id, token}, (err, resp, body) => {
-      if (err) {
+      if (err || resp.statusCode !== 200) {
+        err = this._error(err, resp)
         logger.error(err, 'provider.drive.thumbnail.error')
-        return done(null)
-      }
-
-      if (resp.statusCode !== 200) {
-        return done(this._error(resp.statusCode))
+        return done(err)
       }
 
       done(null, body.thumbnailLink ? request(body.thumbnailLink) : null)
@@ -126,13 +123,10 @@ class Drive {
 
   size ({id, token}, done) {
     return this.stats({ id, token }, (err, resp, body) => {
-      if (err) {
+      if (err || resp.statusCode !== 200) {
+        err = this._error(err, resp)
         logger.error(err, 'provider.drive.size.error')
-        return done(null)
-      }
-
-      if (resp.statusCode !== 200) {
-        return done(this._error(resp.statusCode))
+        return done(err)
       }
       done(null, parseInt(body.size))
     })
@@ -163,11 +157,12 @@ class Drive {
     return data
   }
 
-  _error (statusCode) {
-    if (statusCode === 401) {
-      return new AuthError()
+  _error (err, resp) {
+    if (resp) {
+      const errMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
+      return resp.statusCode === 401 ? new AuthError() : new Error(errMsg)
     }
-    return new Error(`request to ${this.authProvider} returned ${statusCode}`)
+    return err
   }
 }
 
