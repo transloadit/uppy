@@ -1,5 +1,7 @@
 'use strict'
 
+const AuthError = require('./AuthError')
+
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash (url) {
   return url.replace(/\/$/, '')
@@ -64,7 +66,7 @@ module.exports = class RequestClient {
 
   _json(res) {
     if (res.status === 401) {
-      throw new Error('Auth required')
+      throw new AuthError()
     }
 
     if (res.status < 200 || res.status > 300) {
@@ -84,7 +86,8 @@ module.exports = class RequestClient {
           .then(this._getPostResponseFunc(skipPostResponse))
           .then((res) => this._json(res).then(resolve))
           .catch((err) => {
-            reject(new Error(`Could not get ${this._getUrl(path)}. ${err}`))
+            err = err.isAuthError ? err : new Error(`Could not get ${this._getUrl(path)}. ${err}`)
+            reject(err)
           })
       })
     })
@@ -102,7 +105,8 @@ module.exports = class RequestClient {
           .then(this._getPostResponseFunc(skipPostResponse))
           .then((res) => this._json(res).then(resolve))
           .catch((err) => {
-            reject(new Error(`Could not post ${this._getUrl(path)}. ${err}`))
+            err = err.isAuthError ? err : new Error(`Could not post ${this._getUrl(path)}. ${err}`)
+            reject(err)
           })
       })
     })
@@ -120,7 +124,8 @@ module.exports = class RequestClient {
           .then(this._getPostResponseFunc(skipPostResponse))
           .then((res) => this._json(res).then(resolve))
           .catch((err) => {
-            reject(new Error(`Could not delete ${this._getUrl(path)}. ${err}`))
+            err = err.isAuthError ? err : new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
+            reject(err)
           })
       })
     })
