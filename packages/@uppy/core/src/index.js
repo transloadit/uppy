@@ -1160,7 +1160,7 @@ class Uppy {
         if (!currentUpload) {
           return
         }
-        
+
         const updatedUpload = Object.assign({}, currentUpload, {
           step: step
         })
@@ -1170,7 +1170,7 @@ class Uppy {
           })
         })
 
-        // TODO give this the `currentUpload` object as its only parameter maybe?
+        // TODO give this the `updatedUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
         return fn(updatedUpload.fileIDs, uploadID)
       }).then((result) => {
