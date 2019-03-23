@@ -20,7 +20,7 @@ const uppy = Uppy({
   .use(Dashboard, {
     trigger: '#pick-files',
     // inline: true,
-    // target: 'body',
+    target: '.foo',
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', placeholder: 'add caption' }
