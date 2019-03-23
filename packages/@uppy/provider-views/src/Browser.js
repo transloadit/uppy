@@ -27,7 +27,7 @@ const Browser = (props) => {
             title: props.title
           })}
           <span class="uppy-ProviderBrowser-user">{props.username}</span>
-          <button type="button" onclick={props.logout} class="uppy-ProviderBrowser-userLogout">
+          <button type="button" onclick={props.logout} class="uppy-u-reset uppy-ProviderBrowser-userLogout">
             {props.i18n('logOut')}
           </button>
         </div>

@@ -60,7 +60,7 @@ module.exports = (props) => {
          />
       </div>
       <button type="button"
-        class="uppy-ProviderBrowserItem-inner"
+        class="uppy-u-reset uppy-ProviderBrowserItem-inner"
         aria-label={`Select ${props.title}`}
         tabindex={0}
         onclick={handleItemClick}>

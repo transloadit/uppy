@@ -194,7 +194,6 @@
 }
 
 .uppy-ProviderBrowser-userLogout {
-  @include reset-button();
   cursor: pointer;
 
   &:hover {
@@ -229,7 +228,6 @@
 }
 
 .uppy-ProviderBrowserItem-inner {
-  @include reset-button();
   cursor: pointer;
   font-weight: 600;
 }
@@ -324,6 +322,7 @@
     left: 7px;
     right: 7px;
     bottom: 7px;
+    text-align: center;
   }
 
   .uppy-ProviderBrowserItem-inner:focus {
