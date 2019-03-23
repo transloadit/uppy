@@ -1156,18 +1156,23 @@ class Uppy {
 
       lastStep = lastStep.then(() => {
         const { currentUploads } = this.getState()
-        const currentUpload = Object.assign({}, currentUploads[uploadID], {
+        const currentUpload = currentUploads[uploadID]
+        if (!currentUpload) {
+          return
+        }
+        
+        const updatedUpload = Object.assign({}, currentUpload, {
           step: step
         })
         this.setState({
           currentUploads: Object.assign({}, currentUploads, {
-            [uploadID]: currentUpload
+            [uploadID]: updatedUpload
           })
         })
 
         // TODO give this the `currentUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-        return fn(currentUpload.fileIDs, uploadID)
+        return fn(updatedUpload.fileIDs, uploadID)
       }).then((result) => {
         return null
       })
