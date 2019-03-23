@@ -46,6 +46,7 @@
   font-size: 12px;
   line-height: 1;
   margin-bottom: 10px;
+  text-align: left;
 
   .uppy-size--md & {
     margin-bottom: 0;
@@ -159,9 +160,15 @@
   font-size: 13px;
   line-height: 30px;
   border: 0;
-  padding: 0 16px 0 0;
+  margin: 0 16px 0 0;
   z-index: $zIndex-2;
+  border-bottom: 1px solid transparent;
 }
+
+  .uppy-ProviderBrowser-searchInput:focus {
+    outline: 0;
+    border-bottom: 1px solid $color-cornflower-blue;
+  }
 
 .uppy-ProviderBrowser-searchClose {
   width: 12px;
@@ -187,7 +194,6 @@
 }
 
 .uppy-ProviderBrowser-userLogout {
-  @include reset-button();
   cursor: pointer;
 
   &:hover {
@@ -222,7 +228,6 @@
 }
 
 .uppy-ProviderBrowserItem-inner {
-  @include reset-button();
   cursor: pointer;
   font-weight: 600;
 }
@@ -291,6 +296,7 @@
     display: inline-block;
     width: 50%;
     position: relative;
+    margin: 0;
   }
 
     .uppy-ProviderBrowserItem:before {
@@ -316,6 +322,7 @@
     left: 7px;
     right: 7px;
     bottom: 7px;
+    text-align: center;
   }
 
   .uppy-ProviderBrowserItem-inner:focus {

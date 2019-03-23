@@ -178,7 +178,7 @@
   }
 }
 
-.uppy-DashboarAddFiles {
+.uppy-DashboardAddFiles {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -215,7 +215,7 @@
   }
 }
 
-.uppy-DashboarAddFiles-info {
+.uppy-DashboardAddFiles-info {
   padding-top: 15px;
   padding-bottom: 15px;
 
@@ -586,17 +586,13 @@
   }
 }
 
-.uppy-Dashboard-poweredBy {
+a.uppy-Dashboard-poweredBy {
   display: inline-block;
   text-align: center;
   font-size: 11px;
   color: $color-gray;
   text-decoration: none;
   margin-top: 8px;
-}
-
-.uppy-Dashboard-poweredByUppy {
-  color: $color-gray;
 }
 
 .uppy-Dashboard-poweredByIcon {
