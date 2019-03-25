@@ -402,3 +402,9 @@
     color: $color-white;
   }
 }
+
+.postseries-link {
+  &.current {
+    font-weight: 600;
+  }
+}
