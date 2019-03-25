@@ -1,0 +1,92 @@
+{
+  "steps": {
+    ":original": {
+      "robot": "/upload/handle"
+    },
+
+    "images": {
+      "use": [
+        ":original"
+      ],
+      "robot": "/file/filter",
+      "result": true,
+      "accepts": [
+        ["${file.mime}", "regex", "image/"]
+      ]
+    },
+    "videos": {
+      "use": [
+        ":original"
+      ],
+      "robot": "/file/filter",
+      "result": true,
+      "accepts": [
+        ["${file.mime}", "regex", "video/"]
+      ]
+    },
+    "audios": {
+      "use": [
+        ":original"
+      ],
+      "robot": "/file/filter",
+      "result": true,
+      "accepts": [
+        ["${file.mime}", "regex", "audio/"]
+      ]
+    },
+    "others": {
+      "use": [
+        ":original"
+      ],
+      "robot": "/file/filter",
+      "result": true,
+      "rejects": [
+        ["${file.mime}", "regex", "image/"],
+        ["${file.mime}", "regex", "video/"],
+        ["${file.mime}", "regex", "audio/"]
+      ]
+    },
+
+    "audio_thumbnails": {
+      "use": [
+        "audios"
+      ],
+      "robot": "/audio/artwork"
+    },
+    "resized_thumbnails": {
+      "use": [
+        "images",
+        "audio_thumbnails"
+      ],
+      "robot": "/image/resize",
+      "imagemagick_stack": "v1.0.0",
+      "width": 400,
+      "height": 300,
+      "resize_strategy": "fit",
+      "zoom": false
+    },
+    "video_thumbnails": {
+      "use": [
+        "videos"
+      ],
+      "robot": "/video/thumbs",
+      "ffmpeg_stack": "v2.2.3",
+      "count": 1,
+      "offsets": [
+        "50%"
+      ],
+      "format": "jpeg",
+      "width": 400,
+      "height": 300,
+      "resize_strategy": "fit"
+    },
+    "thumbnails": {
+      "use": [
+        "resized_thumbnails",
+        "video_thumbnails"
+      ],
+      "robot": "/image/optimize",
+      "result": true
+    }
+  }
+}
