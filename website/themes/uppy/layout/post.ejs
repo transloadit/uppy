@@ -9,30 +9,8 @@
                 <img src="/images/feed.png" style="width:15px;height:15px">
             </a>
         </h2>
-        <ul>
-        <% 
-        var seriesTracker = {}
-        var totalCnt = 0
-        site.posts.sort('date', -1).each(function (post) { 
-          var title = post.title
-          if (post.series) {
-            var title = post.series
-            if (!seriesTracker[post.series]) {
-              seriesTracker[post.series] = 0
-            }
-            seriesTracker[post.series]++
-          }
-          totalCnt++
 
-          if (totalCnt > 10 || seriesTracker[post.series] > 1) {
-            return false
-          }
-        %>
-            <li>
-                <a href="/<%- post.path %>" class="sidebar-link<%- page.title === post.title ? ' current' : '' %>"><%- title %></a>
-            </li>
-        <% }) %>
-        </ul>
+        <%- partial('partials/sidebar_blog_links') %>
         <%- partial('partials/social') %>
     </div>
 </div>
