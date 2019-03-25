@@ -6,6 +6,10 @@ exports.isFolder = (item) => {
   return item['.tag'] === 'folder'
 }
 
+exports.getItemSize = (item) => {
+  return item.size
+}
+
 exports.getItemIcon = (item) => {
   return item['.tag']
 }

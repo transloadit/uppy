@@ -14,8 +14,8 @@ exports.isFolder = (item) => {
   return item.mimeType === 'application/vnd.google-apps.folder' || item.kind === 'drive#teamDrive'
 }
 
-exports.getItemData = (item) => {
-  return Object.assign({}, item, { size: parseFloat(item.size) })
+exports.getItemSize = (item) => {
+  return parseInt(item.size, 10)
 }
 
 exports.getItemIcon = (item) => {
