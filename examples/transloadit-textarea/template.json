@@ -51,7 +51,8 @@
       "use": [
         "audios"
       ],
-      "robot": "/audio/artwork"
+      "robot": "/audio/artwork",
+      "ffmpeg_stack": "v3.3.3"
     },
     "resized_thumbnails": {
       "use": [
@@ -70,7 +71,7 @@
         "videos"
       ],
       "robot": "/video/thumbs",
-      "ffmpeg_stack": "v2.2.3",
+      "ffmpeg_stack": "v3.3.3",
       "count": 1,
       "offsets": [
         "50%"
