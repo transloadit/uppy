@@ -4,7 +4,7 @@
     </ul>
     <div class="list">
         <h2>
-            Recent Posts
+            Recent Series Posts
             <a href="/atom.xml" rel="noreferrer noopener" target="_blank" style="vertical-align: middle; margin-left: 5px">
                 <img src="/images/feed.png" style="width:15px;height:15px">
             </a>
@@ -38,8 +38,21 @@
 </div>
 
 <div class="Content js-Content with-sidebar">
-  <h1><%- page.title %></h1>
+  <h1><%- page.series %>: <%- page.title %></h1>
   <h4><%- page.date.format('MMM D[,] YYYY') %></h4>
+
+    <% 
+    var seriesList = []
+    site.posts.sort('date', +1).each(function (post) { 
+        if (post.series === page.series) {
+            seriesList.push('<a href="/' + post.path + '" class="postseries-link' + (page.title === post.title ? ' current' : '') + '">' + post.title + '</a>')
+        }
+    })
+    %>
+    <%- '↬ In this series: [ ' + seriesList.join(' | ') + ' ] ' %>
+    <br />
+    <br />
+
   <%- page.content %>
   <div class="PostAuthor">
     <a href="https://transloadit.com/about/#<%- site.data.authors[page.author].id %>">
