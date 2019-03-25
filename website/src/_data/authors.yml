@@ -8,6 +8,21 @@ ife:
   name: 'Ifedapo Olarewaju'
   id: 'ife'
   tagline: 'Software Developer'
+tyler:
+  email: 'tyler@transloadit.com'
+  name: 'Tyler McAllister'
+  id: tyler
+  tagline: 'Transloadit Technical Writer'
+samuel:
+  email: 'samuel@transloadit.com'
+  name: 'Samuel Ogundipe'
+  id: samuel
+  tagline: 'Transloadit Technical Writer'
+aj:
+  email: 'aj@transloadit.com'
+  name: 'A.J. van Loon'
+  id: aj
+  tagline: 'Transloadit Writer & Editor' 
 kvz:
   email: 'kevin@transloadit.com'
   name: 'Kevin van Zonneveld'
