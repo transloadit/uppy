@@ -25,8 +25,8 @@ module.exports = class RequestClient {
     }
   }
 
-  get headers () {
-    return Object.assign({}, this.defaultHeaders, this.opts.serverHeaders || {})
+  headers () {
+    return Promise.resolve(Object.assign({}, this.defaultHeaders, this.opts.serverHeaders || {}))
   }
 
   onReceiveResponse (response) {
@@ -53,50 +53,63 @@ module.exports = class RequestClient {
   }
 
   get (path) {
-    return fetch(this._getUrl(path), {
-      method: 'get',
-      headers: this.headers,
-      credentials: 'same-origin'
-    })
-      // @todo validate response status before calling json
-      .then(this.onReceiveResponse)
-      .then((res) => res.json())
-      .catch((err) => {
-        throw new Error(`Could not get ${this._getUrl(path)}. ${err}`)
+    return new Promise((resolve, reject) => {
+      this.headers().then((headers) => {
+        fetch(this._getUrl(path), {
+          method: 'get',
+          headers: headers,
+          credentials: 'same-origin'
+        })
+          // @todo validate response status before calling json
+          .then(this.onReceiveResponse)
+          .then((res) => res.json().then(resolve))
+          .catch((err) => {
+            reject(new Error(`Could not get ${this._getUrl(path)}. ${err}`))
+          })
       })
+    })
   }
 
   post (path, data) {
-    return fetch(this._getUrl(path), {
-      method: 'post',
-      headers: this.headers,
-      credentials: 'same-origin',
-      body: JSON.stringify(data)
+    return new Promise((resolve, reject) => {
+      this.headers().then((headers) => {
+        fetch(this._getUrl(path), {
+          method: 'post',
+          headers: headers,
+          credentials: 'same-origin',
+          body: JSON.stringify(data)
+        })
+          .then(this.onReceiveResponse)
+          .then((res) => {
+            if (res.status < 200 || res.status > 300) {
+              reject(new Error(`Could not post ${this._getUrl(path)}. ${res.statusText}`))
+              return
+            }
+            res.json().then(resolve)
+          })
+          .catch((err) => {
+            reject(new Error(`Could not post ${this._getUrl(path)}. ${err}`))
+          })
+      })
     })
-      .then(this.onReceiveResponse)
-      .then((res) => {
-        if (res.status < 200 || res.status > 300) {
-          throw new Error(`Could not post ${this._getUrl(path)}. ${res.statusText}`)
-        }
-        return res.json()
-      })
-      .catch((err) => {
-        throw new Error(`Could not post ${this._getUrl(path)}. ${err}`)
-      })
   }
 
   delete (path, data) {
-    return fetch(`${this.hostname}/${path}`, {
-      method: 'delete',
-      headers: this.headers,
-      credentials: 'same-origin',
-      body: data ? JSON.stringify(data) : null
-    })
-      .then(this.onReceiveResponse)
-      // @todo validate response status before calling json
-      .then((res) => res.json())
-      .catch((err) => {
-        throw new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
+    return new Promise((resolve, reject) => {
+      this.headers().then((headers) => {
+        fetch(`${this.hostname}/${path}`, {
+          method: 'delete',
+          headers: headers,
+          credentials: 'same-origin',
+          body: data ? JSON.stringify(data) : null
+        })
+          .then(this.onReceiveResponse)
+          // @todo validate response status before calling json
+          .then((res) => res.json().then(resolve))
+          .catch((err) => {
+            reject(new Error(`Could not delete ${this._getUrl(path)}. ${err}`))
+          })
       })
+    })
   }
 }
