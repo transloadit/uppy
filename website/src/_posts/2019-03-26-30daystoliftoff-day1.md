@@ -8,6 +8,8 @@ seriesSuffix: 'of 30'
 
 When we [started working on Uppy](/blog/2016/07/uppy-begins/) back in early 2016, all we had was an idea and the shared desire to launch file uploading into a new age. We had already been laying the groundwork with the development of [tus.io](https://tus.io/) and felt that its robust back-end deserved a front-end just as robust, modern and user-friendly. 
 
+<!--more-->
+
 But what about open? We initially thought about building a proprietary uploader that would work exclusively with Transloadit's commercial service, but we quickly turned around on it. We knew this could have a real impact. So, just like we did with Tus, we decided to make our new project open source. Three years, [16.000 stargazers](https://github.com/transloadit/uppy/stargazers) and a thriving community later — and we could not be happier. Well, apart from one thing: **getting Uppy 1.0 out the door** has proven harder than expected. Issues keep piling up, which led us down countless sidetracks and hurt our capacity to hammer out those final design goals. 
 
 But now it's time for all that to change. That's why, starting today, we are allocating all of Transloadit's resources into making a big final push and getting Uppy ready for liftoff. Our goal is to launch on **April 25**, exactly thirty days from now. 
