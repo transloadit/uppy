@@ -17,7 +17,13 @@
 
 
 <div class="Content js-Content with-sidebar">
-  <h1><%- page.title %></h1>
+    <% 
+        var title = page.title
+        if (page.series) {
+            title = page.series + ': ' + page.title
+        }
+    %>
+  <h1><%- title %></h1>
   <h4><%- page.date.format('MMM D[,] YYYY') %></h4>
     <% 
         if (page.series) { 
