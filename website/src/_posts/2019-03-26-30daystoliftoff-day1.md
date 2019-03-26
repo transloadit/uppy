@@ -6,9 +6,9 @@ series: 30 Days to Liftoff
 seriesSuffix: 'of 30'
 ---
 
-When we [started working on Uppy](/blog/2016/07/uppy-begins/) back in early 2016, all we had was an idea and the shared desire to launch file uploading into a new age. We had already been laying the groundwork with the development of [tus.io](https://tus.io/) and felt that that robust back-end deserved a front-end just as robust, modern, and user-friendly. 
+When we [started working on Uppy](/blog/2016/07/uppy-begins/) back in early 2016, all we had was an idea and the shared desire to launch file uploading into a new age. We had already been laying the groundwork with the development of [tus.io](https://tus.io/) and felt that its robust back-end deserved a front-end just as robust, modern and user-friendly. 
 
-But what about open? We initially thought to build a proprietary uploader, that would work exclusively with our commercial service. But we quickly turned around on this. Just like we did with Tus, we knew this could have a real impact, and decided to make our new project open source. Three years, [16.000 stargazers](https://github.com/transloadit/uppy/stargazers) and a thriving community later — and we could not be happier. Well, apart from one thing: **getting Uppy 1.0 out the door** has proven harder than expected. Issues keep piling up, which led us down countless sidetracks and hurt our capacity to hammer out those final design goals. 
+But what about open? We initially thought about building a proprietary uploader that would work exclusively with Transloadit's commercial service, but we quickly turned around on this. We knew this could have a real impact. So, just like we did with Tus, we decided to make our new project open source. Three years, [16.000 stargazers](https://github.com/transloadit/uppy/stargazers) and a thriving community later — and we could not be happier. Well, apart from one thing: **getting Uppy 1.0 out the door** has proven harder than expected. Issues keep piling up, which led us down countless sidetracks and hurt our capacity to hammer out those final design goals. 
 
 But now it's time for all that to change. That's why, starting today, we are allocating all of Transloadit's resources into making a big final push and getting Uppy ready for liftoff. Our goal is to launch on **April 25**, exactly thirty days from now. 
 
@@ -16,7 +16,7 @@ We'll need all the help we can get, so for the next thirty days, everyone here a
 
 ## A new post every day
 
-We have added all tasks to a project board, and we thought it might be a fun idea to keep you updated on our day-to-day progress, so we set ourselves an additional challenge: apart from getting Uppy ready for 1.0, we're also going to **write a blog post about it every day**, for thirty days. Starting with this one.
+We have added all tasks to a project board, and we thought it might be a fun idea to keep you updated on our day-to-day progress. So, we set ourselves an additional challenge: apart from getting Uppy ready for 1.0, we're also going to **write a blog post about it every day**, for thirty days. Starting with this one.
 
 A post each day may prove hard to do, but we think it's worth a try. It really fits with the open way in which we have been developing Uppy for the past few years, and gives you a look behind the scenes as we're getting ready for the home stretch. And hopefully we also succeed in spreading the word even farther, reaching people that don't yet know about Uppy, but would be happy to!
 
@@ -27,6 +27,6 @@ We'd love to hear what you think. Whether it is about Uppy in general, or specif
 <!-- <center><img width="400"  class="dropshadow" src="https://media.giphy.com/media/RnX4q6yYDoYCI/giphy.gif"></center> -->
 <center><img width="400"  class="dropshadow" src="https://media.giphy.com/media/SjInxhAJTzU7S/giphy.gif"></center>
 
-We can use your help! As we've said, we're looking to spread the word so any retweet, blog post, star, you name it, is gonna be double extra appreciated. Also, [issue busting](https://github.com/transloadit/uppy/issues) is going to slow down as we're about to head deep into the remaining design goals (e.g. React Native). So, if you want to lend a hand with that, we owe you big time!
+We can use your help! As we've said, we're looking to spread the word so any retweet, blog post, star, you name it, is gonna be double extra appreciated. Also, [issue busting](https://github.com/transloadit/uppy/issues) is going to slow down as we're about to head deep into the remaining design goals (e.g. React Native). So, if you want to lend a hand with that, we'd owe you big time!
 
 See you tomorrow for the first progress update on Day 2 of our 30 Days to Liftoff!
