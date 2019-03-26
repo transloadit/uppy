@@ -174,7 +174,7 @@ module.exports = function fileItem (props) {
       </div>
     </div>
     <div class="uppy-DashboardItem-action">
-      {!isUploaded &&
+      {isUploaded &&
         <button class="uppy-DashboardItem-remove"
           type="button"
           aria-label={props.i18n('removeFile')}
