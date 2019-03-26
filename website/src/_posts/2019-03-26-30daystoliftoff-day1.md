@@ -12,6 +12,8 @@ But what about open? We initially thought to build a proprietary uploader, that 
 
 But now it's time for all that to change. That's why, starting today, we are allocating all of Transloadit's resources into making a big final push and getting Uppy ready for liftoff. Our goal is to launch on **April 25**, exactly thirty days from now. 
 
+<center><img width="400" src="https://media.giphy.com/media/kvw01ozJ06TxS/giphy.gif"></center>
+
 We'll need all the help we can get, so for the next thirty days, everyone here at Transloadit is going to be working exclusively on tasks related to Uppy 1.0. That means the Uppy core team (obviously) and tus core team, our sdk teams, as well as our infra & API engineers, designers, content writers, and the founders themselves — we'll all be chipping in and doing our part to ensure liftoff in thirty days. We're even adding someone new to the Uppy team in April. A warm welcome to [Evgenia Karunus](https://github.com/lakesare) :)
 
 ## A new post every day
