@@ -37,3 +37,5 @@ We'd love to hear what you think. Whether it is about Uppy in general, or specif
 We can use your help! As we've said, we're looking to spread the word so any retweet, blog post, star, you name it, is gonna be double extra appreciated. Also, [issue busting](https://github.com/transloadit/uppy/issues) is going to slow down as we're about to head deep into the remaining design goals (e.g. React Native). So, if you want to lend a hand with that, we'd owe you big time!
 
 See you tomorrow for the first progress update on Day 2 of our 30 Days to Liftoff!
+
+PS If you don't want to miss an update, consider [good ol' RSS](https://uppy.io/atom.xml) :)
