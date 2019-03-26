@@ -1,12 +1,14 @@
 ---
 title: "Day 1"
 author: kvz
-image: "https://uppy.io/images/blog/0.30/robodog-assemble.jpg"
+image: "https://uppy.io/images/blog/30daystoliftoff/inspace.jpg"
 series: 30 Days to Liftoff
 seriesSuffix: 'of 30'
 ---
 
 When we [started working on Uppy](/blog/2016/07/uppy-begins/) back in early 2016, all we had was an idea and the shared desire to launch file uploading into a new age. We had already been laying the groundwork with the development of [tus.io](https://tus.io/) and felt that its robust back-end deserved a front-end just as robust, modern and user-friendly. 
+
+<!--more-->
 
 But what about open? We initially thought about building a proprietary uploader that would work exclusively with Transloadit's commercial service, but we quickly turned around on this. We knew this could have a real impact. So, just like we did with Tus, we decided to make our new project open source. Three years, [16.000 stargazers](https://github.com/transloadit/uppy/stargazers) and a thriving community later — and we could not be happier. Well, apart from one thing: **getting Uppy 1.0 out the door** has proven harder than expected. Issues keep piling up, which led us down countless sidetracks and hurt our capacity to hammer out those final design goals. 
 
