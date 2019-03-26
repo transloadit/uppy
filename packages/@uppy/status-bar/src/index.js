@@ -209,8 +209,8 @@ module.exports = class StatusBar extends Plugin {
       completeFiles.length === Object.keys(files).length &&
       processingFiles.length === 0
 
-    const isAllErrored = isUploadStarted &&
-      erroredFiles.length === uploadStartedFiles.length
+    const isAllErrored = Object.keys(files).length > 0 &&
+      erroredFiles.length === Object.keys(files).length
 
     const isAllPaused = inProgressFiles.length !== 0 &&
       pausedFiles.length === inProgressFiles.length
