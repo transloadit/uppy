@@ -11,6 +11,7 @@ const touch = require('touch')
 
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
+const robodogRoot = path.join(__dirname, '../packages/@uppy/robodog')
 
 const configPath = path.join(webRoot, '/themes/uppy/_config.yml')
 const { version } = require(path.join(uppyRoot, '/package.json'))
@@ -112,7 +113,8 @@ async function updateSizes (config) {
 async function injectBuiltFiles () {
   const cmds = [
     `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy')}`,
-    `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`
+    `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
+    `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`
   ].join(' && ')
 
   const { stdout } = await promisify(exec)(cmds)
