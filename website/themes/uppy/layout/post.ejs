@@ -27,8 +27,8 @@
                     seriesList.push('<a href="/' + post.path + '" class="postseries-link' + (page.title === post.title ? ' current' : '') + '">' + post.title + '</a>')
                 }
             })
-        %>
-    <p><%- '↬ In this series: [ ' + seriesList.join(' | ') + ' ] ' %></p>
+    %>
+        <p><%- '↬ In this series: [ ' + seriesList.join(' | ') + ' ] ' + (page.seriesSuffix || '') %></p>
     <% } %>
   <%- page.content %>
   <div class="PostAuthor">
