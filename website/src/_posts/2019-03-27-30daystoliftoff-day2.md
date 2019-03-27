@@ -18,7 +18,7 @@ First off, [Rene](https://github.com/goto-bus-stop) kickstarted the whole proces
 
 ## The Roadmap to 1.0
 
-We mada an Asana project for uppy, in which we have assigned a lot of cards to the completion of 1.0. Currently we have our cards divided into 4 sections, which are: new, nice to have, to do, in progress and done. 
+We mada an Asana project for uppy, in which we have assigned a lot of cards to the completion of 1.0. Currently we have our cards divided into 5 sections, which are: new, nice to have, to do, in progress and done. 
 
 Currently, we have three items on our done lane, which means we are progressing to the launch of 1.0 on the 25th of April. However, should be noted that while the pace might look slow for now, starting April 1, it's full steam ahead on these issues. So let's cut the engineers some slack.
 
