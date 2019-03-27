@@ -26,7 +26,7 @@ class MarkdownTextarea {
     this.uploadLine.classList.add('form-upload')
 
     this.uploadLine.appendChild(
-      document.createTextNode('Tap here or drop files to upload an attachment'))
+      document.createTextNode('Tap here to upload an attachment'))
   }
 
   install () {

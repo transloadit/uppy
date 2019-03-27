@@ -6,11 +6,15 @@ order: 6
 ---
 
 {% blockquote %}
-This is a demo app that works a bit like Github Gists or Pastebin. You can add markdown snippets, and add file attachments to each snippet by clicking “Upload an attachment”.
+This is a demo app that works a bit like Github Gists or Pastebin. You can add markdown snippets, and add file attachments to each snippet.
+
+Uppy <a href="/docs/robodog/">Robodog</a> (using <a href="https://transloadit.com">Transloadit</a> internally) generates an inline preview image for images, videos, and audio files. 
+
+You can view the <a target="_blank" href="https://github.com/transloadit/uppy/blob/master/examples/transloadit-textarea/template.json">Transloadit Assembly Template</a> and the <a href="#snippet-example-code"> code for this demo</a>.
 {% endblockquote %}
 
 <p>
-  Uppy <a href="/docs/robodog/">Robodog</a> (using <a href="https://transloadit.com">Transloadit</a> internally) generates an inline preview image for images, videos, and audio files. You can <a target="_blank" href="https://github.com/transloadit/uppy/blob/master/examples/transloadit-textarea/template.json">view the Assembly Template here.</a>
+ 
 </p>
 
 <p>
@@ -27,7 +31,7 @@ This is a demo app that works a bit like Github Gists or Pastebin. You can add m
   Console output (latest logs are at the top): <br />
 </p>
 
-<p>
+<p id="snippet-example-code">
   On this page we're using the following HTML snippet:
 </p>
 {% include_code lang:html markdown-snippets/app.html %}
