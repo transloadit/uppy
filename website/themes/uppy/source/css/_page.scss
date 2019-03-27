@@ -344,9 +344,14 @@
   }
 }
 
-.PostAuthor {
+.PostAuthor:first-of-type {
   position: relative;
   margin-top: 40px;
+}
+
+.PostAuthor:not(:first-of-type) {
+  position: relative;
+  margin-top: 10px;
 }
 
 .PostAuthor-img {

@@ -1,6 +1,6 @@
 ---
 title: "Day 1"
-author: kvz
+author: [kvz, aj]
 image: "https://uppy.io/images/blog/30daystoliftoff/inspace.jpg"
 series: 30 Days to Liftoff
 seriesSuffix: 'of 30'
