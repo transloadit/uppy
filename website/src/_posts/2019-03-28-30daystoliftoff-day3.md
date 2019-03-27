@@ -20,6 +20,8 @@ Today marks the third day of our launch preparations, and we have quite a lot go
 
 [Artur](https://github.com/arturi) started out by merging two pull requests from [Renée](https://github.com/goto-bus-stop). The [first](https://github.com/transloadit/uppy/pull/1375) one aims to use Transloadit Templates and demo keys for the `transloadit-textarea` example, and the [second](https://github.com/transloadit/uppy/pull/1374) one makes error reporting across different languages more flexible.
 
+Artur also a [GitHub comment inspired demo](/examples/markdown-snippets/). Add any attachment to your markdown, and it will be uploaded, and converted to a thumbnail suitable for previewing, no matter the media type. 
+
 [Ife](https://github.com/ifedapoolarewaju) then reviewed and merged this [pull request](https://github.com/transloadit/uppy/pull/1366), which updates the callback URIs to reflect their correct location in Companion. Thanks to [HughbertD](https://github.com/HughbertD) for that one!
 
 ## What is the team working on today?
