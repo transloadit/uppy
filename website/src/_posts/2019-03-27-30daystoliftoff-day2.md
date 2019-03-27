@@ -1,11 +1,35 @@
 ---
 title: "Day 2"
 date: 2019-03-27
-author: kvz
+author: samuel
 image: "https://uppy.io/images/blog/0.30/robodog-assemble.jpg"
 published: false
 series: 30 Days to Liftoff
 seriesSuffix: 'of 30'
 ---
 
-Howdy partners!
+Howdy partners!, yesterday, we started a 30 days liftoff toward releasing [Uppy](https://uppy.io) V1.0, and we also introduced a new addition to the team in the person of [Evgenia Karunus](https://github.com/lakesare). Today marks the second day in the development cycle, and we have quite a lot of work going on already. 
+
+<!--more-->
+
+First off, [Rene](https://github.com/goto-bus-stop) kickstarted the whole process when he took a leap towards fixing outdated `ffmpeg_stack` warnings in our examples. 
+
+## What Pull Request was accepted?
+
+Part of the big release that's going to happen in 1.0 is bug fixes. 
+
+[Arthur](https://github.com/arturi) opened the floor by merging a pull request. To be specific, this [pull request](https://github.com/transloadit/uppy/pull/1375) which aims to use template and demo key for `transloadit-textarea` examples. Still, on [Arthur](https://github.com/arturi), he proceeded with this [pull request](https://github.com/transloadit/uppy/pull/1374) which aimed at removing a hardcoded variable 
+
+[Ife](https://github.com/ifedapoolarewaju) picked up from where [Arthur](https://github.com/arturi) stopped, reviewed and merged this [pull request](https://github.com/transloadit/uppy/pull/1366) which updated the callback URIs to reflect their correct location in companion thanks to [HughbertD](https://github.com/HughbertD).
+
+## What is the team working on today?
+
+Currently, the team is working on a companion issue, where we have to deal with invalid access tokens when you select a provider to get your file from. The aim is to return 401 for invalid access token so that the `/authorized` endpoint can be deprecated. You can track the process of the current work as we move ahead with it. Currently, [Ife](https://github.com/ifedapoolarewaju) has opened a pull request to that effect, which can be found [here](https://github.com/transloadit/uppy/pull/1298).
+
+A big update coming to 1.0 is the React Native support. As it stands, a call which will shapen the process has been scheduled for later today. As you might have figured, [Evgenia Karunus](https://github.com/lakesare) is a React expert, and will be joining the call today. React Native lovers, it's time for you to shine. [Uppy](https://uppy.io) is here for you.
+
+
+Friendly reminder that we can use your help! You can be part of the reason why 1.0 becomes a huge success. As we've said, we're looking to spread the word so any retweet, blog post, star, you name it, is gonna be double extra appreciated. Also, [issue busting](https://github.com/transloadit/uppy/issues) is going to slow down as we're about to head deep into the remaining design goals (e.g. React Native). So, if you want to lend a hand with that, we'd owe you big time!
+
+That's it, all the updates I have on the ground. More updates coming your way tomorrow, as we approach day 3 of our 30 Days to Liftoff!
+
