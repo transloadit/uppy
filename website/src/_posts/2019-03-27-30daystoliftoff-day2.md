@@ -34,11 +34,11 @@ A big part of getting Uppy ready for 1.0 is fixing all of the bugs that still oc
 
 ## What is the team working on today?
 
-[Renée](https://github.com/goto-bus-stop) is working hard to fix outdated `ffmpeg_stack` warnings in our examples. Other than that, the team is working on a Companion issue that invalid access tokens are given out when you select a provider to receive your file from. The aim is to return 401 for invalid access tokens, so that the `/authorized` endpoint can be deprecated. You can track the progress of this issue in its [pull request](https://github.com/transloadit/uppy/pull/1298).
+Renée is working hard to fix outdated `ffmpeg_stack` warnings in our examples. Other than that, the team is working on a Companion issue that invalid access tokens are given out when you select a provider to receive your file from. The aim is to return 401 for invalid access tokens, so that the `/authorized` endpoint can be deprecated. You can track the progress of this issue in its [pull request](https://github.com/transloadit/uppy/pull/1298).
 
-A big update that will be part of 1.0 is React Native support for Uppy. Today, [Renée](https://github.com/goto-bus-stop), [Artur](https://github.com/arturi), [Ife](https://github.com/ifedapoolarewaju), [Evgenia](https://github.com/lakesare) and [Kevin](https://github.com/kvz) had a call about it to [insert what the call was about]. 
+A big update that will be part of 1.0 is React Native support for Uppy. Today, Renée, Artur, Ife, [Evgenia](https://github.com/lakesare) and [Kevin](https://github.com/kvz) had a call about it to [insert what the call was about]. 
 
-[Evgenia](https://github.com/lakesare) also submitted her first two PRs: [one](https://github.com/transloadit/uppy/pull/1382) to make sure that the tooltip no longer overflows the Uppy container, and [another](https://github.com/transloadit/uppy/pull/1383) that removes the jumpiness when Uppy loads.
+Evgenia also submitted her first two PRs: [one](https://github.com/transloadit/uppy/pull/1382) to make sure that the tooltip no longer overflows the Uppy container, and [another](https://github.com/transloadit/uppy/pull/1383) that removes the jumpiness when Uppy loads.
 
 That's all the updates I have for you today. See you tomorrow for day 3 of our 30 Days to Liftoff!
 
