@@ -14,6 +14,15 @@ Howdy partners!, yesterday, we started a 30 days liftoff toward releasing [Uppy]
 
 First off, [Rene](https://github.com/goto-bus-stop) kickstarted the whole process when he took a leap towards fixing outdated `ffmpeg_stack` warnings in our examples. 
 
+[Evgenia Karunus](https://github.com/lakesare) also submitted her first 2 PRs, and also closed the accompanying tasks. What a way to blend into the team. The PR's she opened aimed at making the tooltip not overflow the [Uppy](https://uppy.io) container and also remove jumpiness when Uppy](https://uppy.io) loads. The PR's can be found [here](https://github.com/transloadit/uppy/pull/1382) and [here](https://github.com/transloadit/uppy/pull/1383) respectively.
+
+## The Roadmap to 1.0
+
+We mada an Asana project for uppy, in which we have assigned a lot of cards to the completion of 1.0. Currently we have our cards divided into 4 sections, which are: new, nice to have, to do, in progress and done. 
+
+Currently, we have three items on our done lane, which means we are progressing to the launch of 1.0 on the 25th of April. However, should be noted that while the pace might look slow for now, starting April 1, it's full steam ahead on these issues. So let's cut the engineers some slack.
+
+
 ## What Pull Request was accepted?
 
 Part of the big release that's going to happen in 1.0 is bug fixes. 
