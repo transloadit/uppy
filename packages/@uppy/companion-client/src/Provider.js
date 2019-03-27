@@ -1,6 +1,7 @@
 'use strict'
 
 const RequestClient = require('./RequestClient')
+const tokenStorage = require('./tokenStorage')
 
 const _getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
@@ -17,14 +18,18 @@ module.exports = class Provider extends RequestClient {
     this.tokenKey = `companion-${this.pluginId}-auth-token`
   }
 
-  get defaultHeaders () {
-    return Object.assign({}, super.defaultHeaders, {'uppy-auth-token': this.getAuthToken()})
+  headers () {
+    return new Promise((resolve, reject) => {
+      super.headers().then((headers) => {
+        this.getAuthToken().then((token) => {
+          resolve(Object.assign({}, headers, { 'uppy-auth-token': token }))
+        })
+      }).catch(reject)
+    })
   }
 
-  // @todo(i.olarewaju) consider whether or not this method should be exposed
   setAuthToken (token) {
-    // @todo(i.olarewaju) add fallback for OOM storage
-    this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
+    return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
   }
 
   getAuthToken () {
@@ -51,11 +56,14 @@ module.exports = class Provider extends RequestClient {
   }
 
   logout (redirect = location.href) {
-    return this.get(`${this.id}/logout?redirect=${redirect}`)
-      .then((res) => {
-        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
-        return res
-      })
+    return new Promise((resolve, reject) => {
+      this.get(`${this.id}/logout?redirect=${redirect}`)
+        .then((res) => {
+          this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
+            .then(() => resolve(res))
+            .catch(reject)
+        }).catch(reject)
+    })
   }
 
   static initPlugin (plugin, opts, defaultOpts) {
@@ -81,6 +89,6 @@ module.exports = class Provider extends RequestClient {
       }
     }
 
-    plugin.storage = plugin.opts.storage || localStorage
+    plugin.storage = plugin.opts.storage || tokenStorage
   }
 }
