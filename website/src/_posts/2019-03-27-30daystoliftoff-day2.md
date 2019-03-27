@@ -18,7 +18,7 @@ First off, [Rene](https://github.com/goto-bus-stop) kickstarted the whole proces
 
 Part of the big release that's going to happen in 1.0 is bug fixes. 
 
-[Arthur](https://github.com/arturi) opened the floor by merging a pull request. To be specific, this [pull request](https://github.com/transloadit/uppy/pull/1375) which aims to use template and demo key for `transloadit-textarea` examples. Still, on [Arthur](https://github.com/arturi), he proceeded with this [pull request](https://github.com/transloadit/uppy/pull/1374) which aimed at removing a hardcoded variable 
+[Arthur](https://github.com/arturi) opened the floor by merging a pull request. To be specific, this [pull request](https://github.com/transloadit/uppy/pull/1375) which aims to use <dfn>Templates</dfn> and demo key for `transloadit-textarea` examples. Still, on [Arthur](https://github.com/arturi), he proceeded with this [pull request](https://github.com/transloadit/uppy/pull/1374) which aimed at removing a hardcoded variable 
 
 [Ife](https://github.com/ifedapoolarewaju) picked up from where [Arthur](https://github.com/arturi) stopped, reviewed and merged this [pull request](https://github.com/transloadit/uppy/pull/1366) which updated the callback URIs to reflect their correct location in companion thanks to [HughbertD](https://github.com/HughbertD).
 
