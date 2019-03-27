@@ -26,6 +26,7 @@
   padding: 6px;
   border-radius: 5px;
   border: 1px solid #b7b7b4;
+  border-bottom: 1px dashed #b7b7b4;
   min-height: 160px;
   width: 100%;
   resize: vertical;
@@ -35,12 +36,17 @@
   border-bottom-right-radius: 0;
 }
 
-.form-textarea:focus,
-.form-snippetTitle-input:focus {
-  border-color: #7db9e5;
-  outline: none;
-  box-shadow: 0 0 1px 1px #7db9e5;
-}
+  .form-textarea:focus,
+  .form-snippetTitle-input:focus {
+    border-color: #7db9e5;
+    outline: none;
+    box-shadow: 0 0 1px 1px #7db9e5;
+  }
+
+  .form-textarea.drag {
+    background-color: #dee1e3;
+    border: 3px dashed #7f8a93;
+  }
 
 .form-createSnippet {
   -webkit-appearance: none;

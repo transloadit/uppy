@@ -26,7 +26,7 @@ class MarkdownTextarea {
     this.uploadLine.classList.add('form-upload')
 
     this.uploadLine.appendChild(
-      document.createTextNode('Tap to upload an attachment'))
+      document.createTextNode('Tap here or drop files to upload an attachment'))
   }
 
   install () {
@@ -39,6 +39,7 @@ class MarkdownTextarea {
     wrapper.appendChild(this.uploadLine)
 
     this.setupUploadLine()
+    this.setupTextareaDrop()
   }
 
   setupTextareaDrop () {
@@ -48,7 +49,6 @@ class MarkdownTextarea {
   }
 
   setupUploadLine () {
-    console.log(this.uploadLine)
     this.uploadLine.addEventListener('click', () => {
       this.pickFiles()
     })
@@ -103,7 +103,7 @@ class MarkdownTextarea {
   }
 
   uploadFiles (files) {
-    robodog.upload({
+    robodog.upload(files, {
       waitForEncoding: true,
       params: {
         auth: { key: TRANSLOADIT_EXAMPLE_KEY },
