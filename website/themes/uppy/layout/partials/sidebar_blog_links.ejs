@@ -18,7 +18,7 @@
       }
     %>
   <li>
-    <a href="/<%- post.path %>" class="sidebar-link<%- page.title === post.title ? ' current' : '' %>"><%- title %></a>
+    <a href="/<%- post.path %>" class="sidebar-link<%- page.title === post.title || (page.series && page.series === post.series) ? ' current' : '' %>"><%- title %></a>
   </li>
   <% }) %>
 </ul>
