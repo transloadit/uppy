@@ -118,7 +118,7 @@
     "dev:no-companion": "npm-run-all --parallel dev:js watch:css watch:js:lib dev:browsersync",
     "web:build": "cd website && node update.js && touch db.json && ./node_modules/.bin/hexo generate && node build-examples.js",
     "web:clean": "cd website && ./node_modules/.bin/hexo clean",
-    "web:deploy": "npm-run-all web:install web:disc web:build && ./bin/web-deploy",
+    "web:deploy": "npm-run-all web:disc web:build && ./bin/web-deploy",
     "web:disc": "node ./bin/disc.js",
     "web:install": "cd website && npm install",
     "web:bundle:update:watch": "onchange 'packages/uppy/dist/**/*.css' 'packages/uppy/dist/**/*.js' --initial --verbose -- node website/update.js",
