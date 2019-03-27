@@ -12,22 +12,24 @@ Howdy partners!, yesterday, we started a 30 days liftoff toward releasing [Uppy]
 
 <!--more-->
 
-First off, [Rene](https://github.com/goto-bus-stop) kickstarted the whole process when he took a leap towards fixing outdated `ffmpeg_stack` warnings in our examples. 
+First off, [Renée](https://github.com/goto-bus-stop) kickstarted the whole process when he took a leap towards fixing outdated `ffmpeg_stack` warnings in our examples. 
 
 [Evgenia Karunus](https://github.com/lakesare) also submitted her first 2 PRs, and also closed the accompanying tasks. What a way to blend into the team. The PR's she opened aimed at making the tooltip not overflow the [Uppy](https://uppy.io) container and also remove jumpiness when Uppy](https://uppy.io) loads. The PR's can be found [here](https://github.com/transloadit/uppy/pull/1382) and [here](https://github.com/transloadit/uppy/pull/1383) respectively.
 
 ## The Roadmap to 1.0
 
-We mada an Asana project for uppy, in which we have assigned a lot of cards to the completion of 1.0. Currently we have our cards divided into 5 sections, which are: new, nice to have, to do, in progress and done. 
+We made an Asana project for [Uppy](https://uppy.io), in which we have assigned a lot of cards to the completion of 1.0. Currently, we have our cards divided into 5 sections, which are: `new`, `nice to have`, `todo`, `in progress` and `done`. The tasks in the `todo`, `in progress ` and `done` lanes are the ones that are guaranteed to make the 1.0 release. If we have time on our side before the launch date, we will also be sure to take on the nice to have tasks. As for the new tasks, might be seeing them as upgrades after the initial 1.0 big release. Here is a screenshot of what our board looks like:
 
-Currently, we have three items on our done lane, which means we are progressing to the launch of 1.0 on the 25th of April. However, should be noted that while the pace might look slow for now, starting April 1, it's full steam ahead on these issues. So let's cut the engineers some slack.
+<center><img src="/images/blog/30daystoliftoff/2019-03-27-board02.png"></center>
+
+Currently, we have three items on our done lane, which means we are progressing to the launch of 1.0 on the 25th of April. However, should be noted that while the pace might look slow for now, starting April 1, it's full steam ahead on these issues. Before then, we're also planning a lot and busting open issue. So let's cut the engineers some slack.
 
 
 ## What Pull Request was accepted?
 
 Part of the big release that's going to happen in 1.0 is bug fixes. 
 
-[Arthur](https://github.com/arturi) opened the floor by merging a pull request. To be specific, this [pull request](https://github.com/transloadit/uppy/pull/1375) which aims to use <dfn>Templates</dfn> and demo key for `transloadit-textarea` examples. Still, on [Arthur](https://github.com/arturi), he proceeded with this [pull request](https://github.com/transloadit/uppy/pull/1374) which aimed at removing a hardcoded variable 
+[Arthur](https://github.com/arturi) opened the floor by merging a pull request. To be specific, this [pull request](https://github.com/transloadit/uppy/pull/1375) which aims to use <dfn>Templates</dfn> and demo key for `transloadit-textarea` examples opened by [Renée](https://github.com/goto-bus-stop). Still, on [Arthur](https://github.com/arturi), he proceeded with this [pull request](https://github.com/transloadit/uppy/pull/1374) which aimed at removing a hardcoded variable which was also opened by [Renée](https://github.com/goto-bus-stop)
 
 [Ife](https://github.com/ifedapoolarewaju) picked up from where [Arthur](https://github.com/arturi) stopped, reviewed and merged this [pull request](https://github.com/transloadit/uppy/pull/1366) which updated the callback URIs to reflect their correct location in companion thanks to [HughbertD](https://github.com/HughbertD).
 
