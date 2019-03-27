@@ -2,6 +2,7 @@
 title: "Day 3"
 date: 2019-03-28
 author: samuel
+published: false
 image: "https://uppy.io/images/blog/30daystoliftoff/inspace2.jpg"
 series: 30 Days to Liftoff
 seriesSuffix: 'of 30'
