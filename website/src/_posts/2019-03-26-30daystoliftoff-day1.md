@@ -14,7 +14,7 @@ But what about open? We initially thought about building a proprietary uploader 
 
 But now it's time for all that to change. That's why, starting today, we are allocating all of Transloadit's resources into making a big final push and getting Uppy ready for liftoff. Our goal is to launch on **April 25**, exactly thirty days from now. 
 
-<center><img width="400" src="https://media.giphy.com/media/kvw01ozJ06TxS/giphy.gif"></center>
+<center><img width="400" src="https://media.giphy.com/media/kvw01ozJ06TxS/giphy.gif"><br /><br /></center>
 
 We'll need all the help we can get, so for the next thirty days, everyone here at Transloadit is going to be working exclusively on tasks related to Uppy 1.0. That means the Uppy core team (obviously) and tus core team, our SDK teams, as well as our infra & API engineers, designers, content writers, and the founders themselves — we'll all be chipping in and doing our part to ensure liftoff in thirty days. We're even adding someone new to the Uppy team in April. A warm welcome to [Evgenia Karunus](https://github.com/lakesare) :)
 
@@ -29,7 +29,7 @@ A post each day may prove hard to do, but we think it's worth a try. It really f
 We'd love to hear what you think. Whether it is about Uppy in general, or specific issues you feel cannot be forgotten before 1.0, or maybe even about this blog post challenge itself — leave a comment here, use our [forum](https://community.transloadit.com/c/uppy) directly (it also hosts the comments), or let us know on Twitter via [@uppy_io](http://twitter.com/uppy_io/) or [@transloadit](http://twitter.com/transloadit/). 
 
 <!-- <center><img width="400"  class="dropshadow" src="https://media.giphy.com/media/RnX4q6yYDoYCI/giphy.gif"></center> -->
-<center><img width="400"  class="dropshadow" src="https://media.giphy.com/media/SjInxhAJTzU7S/giphy.gif"></center>
+<center><img width="400"  class="dropshadow" src="https://media.giphy.com/media/SjInxhAJTzU7S/giphy.gif"><br /><br /></center>
 
 
 We can use your help! As we've said, we're looking to spread the word so any retweet, blog post, star, you name it, is gonna be double extra appreciated. Also, [issue busting](https://github.com/transloadit/uppy/issues) is going to slow down as we're about to head deep into the remaining design goals (e.g. React Native). So, if you want to lend a hand with that, we'd owe you big time!
