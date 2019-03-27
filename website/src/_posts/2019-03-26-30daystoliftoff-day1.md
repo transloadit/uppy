@@ -1,6 +1,7 @@
 ---
 title: "Day 1"
 author: [kvz, aj]
+date: 2019-03-26
 image: "https://uppy.io/images/blog/30daystoliftoff/inspace.jpg"
 series: 30 Days to Liftoff
 seriesSuffix: 'of 30'

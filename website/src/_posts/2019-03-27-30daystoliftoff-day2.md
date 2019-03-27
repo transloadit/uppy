@@ -1,11 +1,34 @@
 ---
 title: "Day 2"
 date: 2019-03-27
-author: kvz
-image: "https://uppy.io/images/blog/0.30/robodog-assemble.jpg"
-published: false
+author: samuel
+image: "https://uppy.io/images/blog/30daystoliftoff/inspace2.jpg"
 series: 30 Days to Liftoff
 seriesSuffix: 'of 30'
 ---
 
-Howdy partners!
+Yesterday, marked the beginning of our thirty-day blog post challenge to keep you updated on **releasing Uppy 1.0 on April 25**. So here we are again already! 
+ 
+<!--more-->
+
+Our big coding speedrun towards for 1.0 starts April 1, so are are mostly busy with tying up lose ends, busting issues, and planning our work ahead.
+
+<center><img width="400" src="/images/blog/30daystoliftoff/inspace2.jpg"><br /></center>
+
+## Our roadmap for 1.0
+
+With so much still to do before Uppy 1.0 is ready go, it's important that we keep track of all the various tasks. We are doing this with help of an Uppy 1.0 project dashboard that we created in [Asana](https://asana.com). This lets us see in an instant what everyone is working on and what the current status is on specific tasks. 
+
+We currently have our tasks divided into five sections, which are: *Nice To Have*, *To Do*, *In Progress* and *Done*. The tasks in the *To Do* and *In Progress* lanes (and of course those that are *Done*) are planned to make the 1.0 release. And if we have time on our side before the launch date, we'll also try to get as many of the *Nice To Have* tasks checked off as well.
+
+We've discussed our [Changelog](https://github.com/transloadit/uppy/blob/master/CHANGELOG.md#10-goals)'s 1.0 goals and tried to re-prioritize and assign work. 
+
+We didn't manage to fit all of those *To Do*s in the picture, but here is a screenshot of what our board looks like at the moment:
+
+<center><img src="/images/blog/30daystoliftoff/2019-03-27-board02.png"></center>
+
+Aside from planning, we've also been busy onboarding [Evgenia](https://github.com/lakesare) so she can hit the ground running April 1st.
+
+And tomorrow, we'll look at the *To Do*s in more detail, so we can get a clearer idea of subtasks and who will do what, exactly.
+
+That's all the updates I have for you today. See you tomorrow for day 3 of our 30 Days to Liftoff!
