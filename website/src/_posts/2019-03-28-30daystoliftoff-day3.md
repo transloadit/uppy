@@ -28,7 +28,7 @@ Artur also a [GitHub comment inspired demo](/examples/markdown-snippets/). Add a
 
 Renée is working hard to fix outdated `ffmpeg_stack` warnings in our examples. Other than that, the team has been working on a Companion issue that invalid access tokens are given out when you select a provider to receive your file from. The aim is to return 401 for invalid access tokens, so that the `/authorized` endpoint can be deprecated. You can track the progress of this issue in its [pull request](https://github.com/transloadit/uppy/pull/1298).
 
-The biggest update that will be part of Uppy 1.0 is support for React Native. Today, Renée, Artur, Ife, [Evgenia](https://github.com/lakesare) and [Kevin](https://github.com/kvz) had a call about it and talked extensively about what we need for an MVP. The were kind enough to share their notes that i'll happy extend to you as-is :)
+The biggest update that will be part of Uppy 1.0 is support for React Native. Today, Renée, Artur, Ife, [Evgenia](https://github.com/lakesare) and [Kevin](https://github.com/kvz) had a call about it and talked extensively about what we need for an MVP. They were kind enough to share their notes that i'll happily extend to you as-is :)
 
 - get a link provider example to work, including showing companion progress, and resumability
 - it gets its own UI, (re)written for RN
