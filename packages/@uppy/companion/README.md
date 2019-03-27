@@ -68,7 +68,7 @@ Please ensure that the required env variables are set before runnning/using comp
 $ companion
 ```
 
-If you cloned the repo from gtihub and want to run it as a standalone server, you may also run the following command from within its
+If you cloned the repo from GitHub and want to run it as a standalone server, you may also run the following command from within its
 directory
 
 ```bash
@@ -94,6 +94,37 @@ When you are all set install the dependencies and deploy your function:
 ```
 npm install && sls deploy
 ```
+
+### Deploy to heroku
+
+Companion can also be deployed to [Heroku](https://www.heroku.com)
+```
+mkdir uppy-companion && cd uppy-companion
+
+git init
+
+echo 'export COMPANION_PORT=$PORT' > .profile
+echo 'node_modules' > .gitignore
+echo '{
+  "name": "uppy-companion",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "companion"
+  },
+  "dependencies": {
+    "@uppy/companion": "^0.17.0"
+  }
+}' > package.json
+
+npm i
+
+git add . && git commit -am 'first commit'
+
+heroku create
+
+git push heroku master
+```
+Make sure you set the required [environment variables](https://uppy.io/docs/companion/#Configure-Standalone).
 
 
 See [full documentation](https://uppy.io/docs/companion/)

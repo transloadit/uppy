@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 21
+order: 31
 title: "Drag & Drop"
 module: "@uppy/drag-drop"
 permalink: docs/drag-drop/

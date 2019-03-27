@@ -1,8 +1,8 @@
 const FileList = require('./FileList')
 const AddFiles = require('./AddFiles')
 const AddFilesPanel = require('./AddFilesPanel')
-const PanelContent = require('./PanelContent')
-const PanelTopBar = require('./PanelTopBar')
+const PickerPanelContent = require('./PickerPanelContent')
+const PanelTopBar = require('./PickerPanelTopBar')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
 const isTouchDevice = require('@uppy/utils/lib/isTouchDevice')
@@ -12,11 +12,18 @@ const PreactCSSTransitionGroup = require('preact-css-transition-group')
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
 
-module.exports = function Dashboard (props) {
-  // if (!props.inline && props.modal.isHidden) {
-  //   return <span />
-  // }
+function TransitionWrapper (props) {
+  return (
+    <PreactCSSTransitionGroup
+      transitionName="uppy-transition-slideDownUp"
+      transitionEnterTimeout={250}
+      transitionLeaveTimeout={250}>
+      {props.children}
+    </PreactCSSTransitionGroup>
+  )
+}
 
+module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
 
   const dashboardClassName = classNames(
@@ -33,7 +40,7 @@ module.exports = function Dashboard (props) {
 
   return (
     <div class={dashboardClassName}
-      aria-hidden={props.inline ? 'false' : props.modal.isHidden}
+      aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onpaste={props.handlePaste}>
 
@@ -46,13 +53,17 @@ module.exports = function Dashboard (props) {
           width: props.inline && props.width ? props.width : '',
           height: props.inline && props.height ? props.height : ''
         }}>
-        <button class="uppy-Dashboard-close"
-          type="button"
-          aria-label={props.i18n('closeModal')}
-          title={props.i18n('closeModal')}
-          onclick={props.closeModal}>
-          <span aria-hidden="true">&times;</span>
-        </button>
+
+        {!props.inline
+          ? <button class="uppy-u-reset uppy-Dashboard-close"
+            type="button"
+            aria-label={props.i18n('closeModal')}
+            title={props.i18n('closeModal')}
+            onclick={props.closeModal}>
+            <span aria-hidden="true">&times;</span>
+          </button>
+            : null
+          }
 
         <div class="uppy-Dashboard-innerWrap">
           { (!noFiles && props.showSelectedFiles) && <PanelTopBar {...props} /> }
@@ -63,26 +74,17 @@ module.exports = function Dashboard (props) {
             <AddFiles {...props} />
           )}
 
-          <PreactCSSTransitionGroup
-            transitionName="uppy-transition-slideDownUp"
-            transitionEnterTimeout={250}
-            transitionLeaveTimeout={250}>
+          <TransitionWrapper>
             { props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} /> : null }
-          </PreactCSSTransitionGroup>
+          </TransitionWrapper>
 
-          <PreactCSSTransitionGroup
-            transitionName="uppy-transition-slideDownUp"
-            transitionEnterTimeout={250}
-            transitionLeaveTimeout={250}>
+          <TransitionWrapper>
             { props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null }
-          </PreactCSSTransitionGroup>
+          </TransitionWrapper>
 
-          <PreactCSSTransitionGroup
-            transitionName="uppy-transition-slideDownUp"
-            transitionEnterTimeout={250}
-            transitionLeaveTimeout={250}>
-            { props.activePanel ? <PanelContent key="PanelContent" {...props} /> : null }
-          </PreactCSSTransitionGroup>
+          <TransitionWrapper>
+            { props.activePickerPanel ? <PickerPanelContent key="PickerPanelContent" {...props} /> : null }
+          </TransitionWrapper>
 
           <div class="uppy-Dashboard-progressindicators">
             {props.progressindicators.map((target) => {

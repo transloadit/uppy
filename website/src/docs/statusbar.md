@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 50
+order: 60
 title: "Status Bar"
 module: "@uppy/status-bar"
 permalink: docs/status-bar/
@@ -62,7 +62,7 @@ uppy.use(StatusBar, {
   hideUploadButton: false,
   hideRetryButton: false,
   hidePauseResumeButton: false,
-  hideCancelButton: false
+  hideCancelButton: false,
   locale: {}
 })
 ```

@@ -2,15 +2,19 @@
 <link rel="stylesheet" href="/uppy/uppy.min.css">
 
 <div class="DashboardOptions">
-  <input type="checkbox" id="opts-DashboardInline" checked/><label for="opts-DashboardInline">Display inline</label>
-  <input type="checkbox" id="opts-autoProceed" checked/><label for="opts-autoProceed">Autoproceed</label>
-  <input type="checkbox" id="opts-restrictions" checked/><label for="opts-restrictions">Restrictions</label>
-  <input type="checkbox" id="opts-Webcam" checked/><label for="opts-Webcam">Webcam</label>
-  <input type="checkbox" id="opts-GoogleDrive" checked/><label for="opts-GoogleDrive">Google Drive</label>
-  <input type="checkbox" id="opts-Dropbox" checked/><label for="opts-Dropbox">Dropbox</label>
-  <input type="checkbox" id="opts-Instagram" checked/><label for="opts-Instagram">Instagram</label>
-  <input type="checkbox" id="opts-Url" checked/><label for="opts-Url">Url</label>
-  <input type="checkbox" id="opts-browserBackButtonClose" checked/><label for="opts-browserBackButtonClose">Close on browser back button</label>
+  <ul>
+    <li><label for="opts-DashboardInline"><input type="checkbox" id="opts-DashboardInline" checked/> Display inline</label></li>
+    <li><label for="opts-autoProceed"><input type="checkbox" id="opts-autoProceed" checked/> Autoproceed</label></li>
+    <li><label for="opts-restrictions"><input type="checkbox" id="opts-restrictions" checked/> Restrictions</label></li>
+    <li><label for="opts-browserBackButtonClose"><input type="checkbox" id="opts-browserBackButtonClose" checked/> Close on browser back button</label></li>
+  </ul>
+  <ul>
+    <li><label for="opts-Webcam"><input type="checkbox" id="opts-Webcam" checked/> Webcam</label></li>
+    <li><label for="opts-GoogleDrive"><input type="checkbox" id="opts-GoogleDrive" checked/> Google Drive</label></li>
+    <li><label for="opts-Dropbox"><input type="checkbox" id="opts-Dropbox" checked/> Dropbox</label></li>
+    <li><label for="opts-Instagram"><input type="checkbox" id="opts-Instagram" checked/> Instagram</label></li>
+    <li><label for="opts-Url"><input type="checkbox" id="opts-Url" checked/> Url</label></li>
+  </ul>
 </div>
 
 <!-- Modal trigger -->
@@ -40,7 +44,7 @@
     Webcam: true,
     GoogleDrive: true,
     Instagram: true,
-    Dropbox: false,
+    Dropbox: true,
     Url: true,
     autoProceed: false,
     restrictions: false,

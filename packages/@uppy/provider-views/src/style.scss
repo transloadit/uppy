@@ -39,16 +39,14 @@
   }
 }
 
-.uppy-Provider-breadcrumbsWrap {
-  flex: 1;
-}
-
 .uppy-Provider-breadcrumbs {
   display: inline-block;
+  flex: 1;
   color: darken($color-gray, 25%);
   font-size: 12px;
   line-height: 1;
   margin-bottom: 10px;
+  text-align: left;
 
   .uppy-size--md & {
     margin-bottom: 0;
@@ -58,7 +56,7 @@
 .uppy-Provider-breadcrumbsIcon {
   display: inline;
   color: darken($color-gray, 25%);
-  vertical-align: middle;
+  vertical-align: text-bottom;
   margin-right: 8px;
   line-height: 1;
 }
@@ -70,23 +68,13 @@
   }
 
 .uppy-Provider-breadcrumbs button {
-  @include reset-button;
   display: inline-block;
-  cursor: pointer;
   font-size: 14px;
 }
 
 .uppy-Provider-breadcrumbs button:hover {
   text-decoration: underline;
-}
-
-// .uppy-Provider-breadcrumbs button:focus {
-//   outline: 1px dotted rgb(145, 145, 145);
-// }
-
-.uppy-Provider-breadcrumbs button ~ button:before {
-  content: '/';
-  padding: 0 7px;
+  cursor: pointer;
 }
 
 .uppy-ProviderBrowser {
@@ -125,9 +113,9 @@
   .uppy-size--md & {
     display: flex;
     align-items: center;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 15px;
+    // height: 40px;
+    // line-height: 40px;
+    padding: 12px 15px;
   }
 }
 
@@ -150,6 +138,17 @@
   height: 30px;
   margin-top: 5px;
   margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.uppy-ProviderBrowser-searchIcon {
+  width: 16px;
+  height: 16px;
+  z-index: $zIndex-3;
+  color: rgba($color-gray, 0.6);
+  margin-left: 16px;
+  margin-right: 7px;
 }
 
 .uppy-ProviderBrowser-searchInput {
@@ -157,48 +156,48 @@
   height: 30px;
   background-color: transparent;
   outline: 0;
-  font-family: sans-serif;
-  font-size: 14px;
+  font-family: $font-family-base;
+  font-size: 13px;
   line-height: 30px;
   border: 0;
-  padding: 0 16px 0 43px;
+  margin: 0 16px 0 0;
   z-index: $zIndex-2;
+  border-bottom: 1px solid transparent;
 }
 
-.uppy-ProviderBrowser-searchInput::-webkit-input-placeholder,
-.uppy-ProviderBrowser-searchInput::-moz-placeholder,
-.uppy-ProviderBrowser-searchInput::-ms-input-placeholder {
-  color: rgba($color-gray, 0.75);
-  letter-spacing: 1px;
-}
-
-.uppy-ProviderBrowser-searchIcon {
-  width: 16px;
-  height: 16px;
-  position: absolute;
-  left: 16px;
-  top: 7px;
-  z-index: $zIndex-3;
-  color: rgba($color-gray, 0.6);
-}
+  .uppy-ProviderBrowser-searchInput:focus {
+    outline: 0;
+    border-bottom: 1px solid $color-cornflower-blue;
+  }
 
 .uppy-ProviderBrowser-searchClose {
   width: 12px;
   height: 12px;
   position: absolute;
   right: 16px;
-  top: 7px;
+  top: 8px;
   z-index: $zIndex-3;
-  color: rgba($color-gray, 0.6);
+  color: $color-gray;
   cursor: pointer;
 }
 
+  .uppy-ProviderBrowser-searchClose svg {
+    vertical-align: text-top;
+  }
+
+.uppy-ProviderBrowser-searchInput::placeholder,
+.uppy-ProviderBrowser-searchInput::-webkit-input-placeholder,
+.uppy-ProviderBrowser-searchInput::-moz-placeholder,
+.uppy-ProviderBrowser-searchInput::-ms-input-placeholder {
+  color: rgba($color-gray, 0.85);
+  letter-spacing: 1px;
+}
+
 .uppy-ProviderBrowser-userLogout {
-  @include reset-button();
   cursor: pointer;
 
-  &:hover { 
-    text-decoration: underline; 
+  &:hover {
+    text-decoration: underline;
   }
 }
 
@@ -229,7 +228,6 @@
 }
 
 .uppy-ProviderBrowserItem-inner {
-  @include reset-button();
   cursor: pointer;
   font-weight: 600;
 }
@@ -244,6 +242,7 @@
   .uppy-ProviderBrowserItem {
     display: flex;
     padding: 10px 15px;
+    margin: 0;
   }
 
   .uppy-ProviderBrowserItem-checkbox {
@@ -297,6 +296,7 @@
     display: inline-block;
     width: 50%;
     position: relative;
+    margin: 0;
   }
 
     .uppy-ProviderBrowserItem:before {
@@ -322,6 +322,7 @@
     left: 7px;
     right: 7px;
     bottom: 7px;
+    text-align: center;
   }
 
   .uppy-ProviderBrowserItem-inner:focus {

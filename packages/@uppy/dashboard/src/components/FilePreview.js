@@ -17,5 +17,3 @@ module.exports = function FilePreview (props) {
     </div>
   )
 }
-
-// <span class="uppy-DashboardItem-previewType">{file.extension && file.extension.length < 5 ? file.extension : null}</span>

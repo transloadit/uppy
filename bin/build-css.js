@@ -2,7 +2,7 @@ const sass = require('node-sass')
 const postcss = require('postcss')
 const autoprefixer = require('autoprefixer')
 const cssnano = require('cssnano')
-const safeImportant = require('postcss-safe-important')
+// const safeImportant = require('postcss-safe-important')
 const chalk = require('chalk')
 const { promisify } = require('util')
 const fs = require('fs')
@@ -44,15 +44,23 @@ async function compileCSS () {
       }
     })
 
-    const postcssResult = await postcss([ autoprefixer, safeImportant ])
+    const postcssResult = await postcss([ autoprefixer ])
       .process(scssResult.css, { from: file })
     postcssResult.warnings().forEach(function (warn) {
       console.warn(warn.toString())
     })
 
     const outdir = path.join(path.dirname(file), '../dist')
-    // Save the `uppy` package's CSS as `uppy.css`, the rest as `style.css`.
-    const outfile = path.join(outdir, outdir.includes('packages/uppy/') ? 'uppy.css' : 'style.css')
+    // Save the `uppy` package's CSS as `uppy.css`,
+    // `@uppy/robodog` as `robodog.css`,
+    // the rest as `style.css`.
+    // const outfile = path.join(outdir, outdir.includes('packages/uppy/') ? 'uppy.css' : 'style.css')
+    let outfile = path.join(outdir, 'style.css')
+    if (outdir.includes('packages/uppy/')) {
+      outfile = path.join(outdir, 'uppy.css')
+    } else if (outdir.includes('packages/@uppy/robodog/')) {
+      outfile = path.join(outdir, 'robodog.css')
+    }
     await mkdirp(outdir)
     await writeFile(outfile, postcssResult.css)
     console.info(

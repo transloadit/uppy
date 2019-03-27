@@ -1,21 +1,23 @@
 <%
 var categories = [
-  // order: 1x
-  { path: 'docs/plugins/', name: 'Plugins', link: true },
   // order: 2x
-  { path: 'docs/dashboard/', name: 'Local Sources', link: false },
+  { path: 'docs/plugins/', name: 'Plugins', link: true },
   // order: 3x
-  { path: 'docs/providers/', name: 'Remote Providers', link: true },
+  { path: 'docs/dashboard/', name: 'Local Sources', link: false },
   // order: 4x
-  { path: 'docs/tus/', name: 'Uploaders', link: false },
+  { path: 'docs/providers/', name: 'Remote Providers', link: true },
   // order: 5x
-  { path: 'docs/status-bar/', name: 'UI Elements', link: false },
+  { path: 'docs/tus/', name: 'Uploaders', link: false },
   // order: 6x
-  { path: 'docs/transloadit/', name: 'File Processing', link: false },
+  { path: 'docs/status-bar/', name: 'UI Elements', link: false },
   // order: 7x
-  { path: 'docs/form/', name: 'Miscellaneous', link: false },
+  { path: 'docs/transloadit/', name: 'File Processing', link: false },
   // order: 8x
+  { path: 'docs/form/', name: 'Miscellaneous', link: false },
+  // order: 9x
   { path: 'docs/react/', name: 'React Components', link: true },
+  // order: 10x
+  { path: 'docs/robodog/', name: 'Robodog', link: true }
 ]
 %>
 <div class="Sidebar js-Sidebar">
@@ -30,6 +32,7 @@ var categories = [
     </h2>
     <ul class="menu-root">
       <% site.pages.find({ type }).sort('order').each((p) => { %>
+        <% if (p.hidden) return; %>
         <% var path = p.path.replace(/index\.html$/, ''); %>
         <% var category = categories.find((c) => c.path === path) %>
         <% // see https://github.com/vuejs/vuejs.org/blob/master/themes/vue/layout/partials/toc.ejs %>
@@ -42,11 +45,11 @@ var categories = [
             <% } %>
           </li>
           <li>
-            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
+            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.menu || p.title %></a>
           </li>
         <% } else { %>
           <li>
-            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.title %></a>
+            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.menu || p.title %></a>
           </li>
         <% } %>
       <% }) %>

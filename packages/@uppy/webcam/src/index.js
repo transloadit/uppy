@@ -318,7 +318,7 @@ module.exports = class Webcam extends Plugin {
   }
 
   focus () {
-    if (this.opts.countdown) return
+    if (!this.opts.countdown) return
     setTimeout(() => {
       this.uppy.info(this.i18n('smile'), 'success', 1500)
     }, 1000)

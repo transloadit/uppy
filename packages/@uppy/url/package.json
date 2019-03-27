@@ -1,7 +1,7 @@
 {
   "name": "@uppy/url",
   "description": "The Url plugin lets users import files from the Internet. Paste any URL and it’ll be added!",
-  "version": "0.29.1",
+  "version": "0.30.3",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -22,14 +22,14 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/companion-client": "0.27.3",
-    "@uppy/utils": "0.29.1",
+    "@uppy/companion-client": "0.28.3",
+    "@uppy/utils": "0.30.3",
     "preact": "^8.2.9"
   },
   "devDependencies": {
-    "@uppy/core": "0.29.1"
+    "@uppy/core": "0.30.3"
   },
   "peerDependencies": {
-    "@uppy/core": "^0.29.0"
+    "@uppy/core": "^0.30.0"
   }
 }

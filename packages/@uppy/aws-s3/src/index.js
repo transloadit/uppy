@@ -125,7 +125,7 @@ module.exports = class AwsS3 extends Plugin {
       const updatedFiles = {}
       fileIDs.forEach((id, index) => {
         const file = this.uppy.getFile(id)
-        if (file.error) {
+        if (!file || file.error) {
           return
         }
 

@@ -2,7 +2,7 @@
 title: "Introduction"
 type: docs
 permalink: docs/react/
-order: 80
+order: 90
 ---
 
 Uppy provides [React][] components for the included UI plugins.
@@ -19,7 +19,7 @@ npm install @uppy/react
 
 ## CSS
 
-Make sure to also include the nessesary CSS files for each Uppy React component you are using. Follow links for individual components docs below for details on that.
+Make sure to also include the necessary CSS files for each Uppy React component you are using. Follow links for individual components docs below for details on that.
 
 ## Usage
 

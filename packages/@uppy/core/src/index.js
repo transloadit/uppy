@@ -34,7 +34,7 @@ class Uppy {
           1: 'You have to select at least %{smart_count} files'
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
-        youCanOnlyUploadFileTypes: 'You can only upload:',
+        youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         companionError: 'Connection with Companion failed',
         failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
@@ -46,7 +46,9 @@ class Uppy {
           1: 'Select %{smart_count} files'
         },
         cancel: 'Cancel',
-        logOut: 'Log out'
+        logOut: 'Log out',
+        filter: 'Filter',
+        resetFilter: 'Reset filter'
       }
     }
 
@@ -341,7 +343,7 @@ class Uppy {
     }
 
     if (allowedFileTypes) {
-      const isCorrectFileType = allowedFileTypes.filter((type) => {
+      const isCorrectFileType = allowedFileTypes.some((type) => {
         // if (!file.type) return false
 
         // is this is a mime-type
@@ -352,15 +354,14 @@ class Uppy {
 
         // otherwise this is likely an extension
         if (type[0] === '.') {
-          if (file.extension === type.substr(1)) {
-            return file.extension
-          }
+          return file.extension.toLowerCase() === type.substr(1).toLowerCase()
         }
-      }).length > 0
+        return false
+      })
 
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
-        throw new Error(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`)
+        throw new Error(this.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }))
       }
     }
 
@@ -648,6 +649,7 @@ class Uppy {
     })
 
     if (inProgress.length === 0) {
+      this.emit('progress', 0)
       this.setState({ totalProgress: 0 })
       return
     }
@@ -684,6 +686,7 @@ class Uppy {
       : Math.round(uploadedSize / totalSize * 100)
 
     this.setState({ totalProgress })
+    this.emit('progress', totalProgress)
   }
 
   /**
@@ -1197,6 +1200,10 @@ class Uppy {
       // always refers to the latest state. In the handler right above it refers
       // to an outdated object without the `.result` property.
       const { currentUploads } = this.getState()
+      if (!currentUploads[uploadID]) {
+        this.log(`Not setting result for an upload that has been canceled: ${uploadID}`)
+        return
+      }
       const currentUpload = currentUploads[uploadID]
       const result = currentUpload.result
       this.emit('complete', result)

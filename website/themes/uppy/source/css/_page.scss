@@ -143,6 +143,7 @@
 
   figure.wide {
     @media #{$screen-large} {
+      width: 135%;
       max-width: 135%;
       img, video { max-width: 135%; }
     }
@@ -331,11 +332,26 @@
       font-size: 14px;
     }
   }
+
+  table {
+    width: 100%;
+    text-align: left;
+    td {
+      vertical-align: top;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+  }
 }
 
-.PostAuthor {
+.PostAuthor:first-of-type {
   position: relative;
   margin-top: 40px;
+}
+
+.PostAuthor:not(:first-of-type) {
+  position: relative;
+  margin-top: 10px;
 }
 
 .PostAuthor-img {
@@ -373,8 +389,8 @@
   font-size: .9em;
 }
 
-.TryButton,
-a.TryButton {
+.TryButton, a.TryButton,
+.MoreButton, a.MoreButton {
   @include reset-button;
   display: inline-block;
   font-size: 0.8em;
@@ -389,5 +405,12 @@ a.TryButton {
   &:hover {
     background-color: $color-primary;
     color: $color-white;
+  }
+}
+
+.postseries-link {
+  font-weight: 300;
+  &.current {
+    font-weight: 600;
   }
 }

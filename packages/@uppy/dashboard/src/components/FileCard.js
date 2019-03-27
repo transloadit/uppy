@@ -42,7 +42,7 @@ class FileCard extends Component {
     return metaFields.map((field, i) => {
       return <fieldset class="uppy-DashboardFileCard-fieldset">
         <label class="uppy-DashboardFileCard-label">{field.name}</label>
-        <input class="uppy-c-textInput uppy-DashboardFileCard-input"
+        <input class="uppy-u-reset uppy-c-textInput uppy-DashboardFileCard-input"
           type="text"
           data-name={field.id}
           value={file.meta[field.id]}
@@ -71,6 +71,7 @@ class FileCard extends Component {
 
     return (
       <div class="uppy-DashboardFileCard"
+        data-uppy-panelType="FileCard"
         onDragOver={ignoreEvent}
         onDragLeave={ignoreEvent}
         onDrop={ignoreEvent}

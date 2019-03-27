@@ -1,0 +1,27 @@
+  <!-- Basic Uppy styles -->
+  <link rel="stylesheet" href="/uppy/robodog.min.css">
+  <form id="new" class="form-snippet">
+    <h2>Create a new snippet</h2>
+    <label class="form-snippetTitle">
+      <div class="form-snippetLabel">Snippet Title</div>
+      <input class="form-snippetTitle-input" type="text" name="title" placeholder="Enter snippet title">
+    </label>
+    <label class="form-snippetText">
+      <div class="form-snippetLabel">Snippet Content</div>
+      <textarea class="form-textarea" name="snippet" placeholder="Enter snippet content"></textarea>
+    </label>
+    <button class="form-createSnippet" type="submit">
+      Create
+    </button>
+  </form>
+
+  <h2>Previous snippets</h2>
+
+  <div id="snippets"></div>
+</main>
+<template id="snippet">
+  <div class="snippet">
+    <h3 class="snippet-title"></h3>
+    <div class="snippet-content"></div>
+  </div>
+</template>

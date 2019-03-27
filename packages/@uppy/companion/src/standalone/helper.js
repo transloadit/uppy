@@ -174,7 +174,7 @@ exports.buildHelpfulStartupMessage = (uppyOptions) => {
       providerName = 'drive'
     }
 
-    callbackURLs.push(buildURL(`/${providerName}/callback`, true))
+    callbackURLs.push(buildURL(`/connect/${providerName}/callback`, true))
   })
 
   return stripIndent`

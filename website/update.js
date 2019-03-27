@@ -7,9 +7,11 @@ const { promisify } = require('util')
 const gzipSize = require('gzip-size')
 const bytes = require('pretty-bytes')
 const browserify = require('browserify')
+const touch = require('touch')
 
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
+const robodogRoot = path.join(__dirname, '../packages/@uppy/robodog')
 
 const configPath = path.join(webRoot, '/themes/uppy/_config.yml')
 const { version } = require(path.join(uppyRoot, '/package.json'))
@@ -111,13 +113,38 @@ async function updateSizes (config) {
 async function injectBuiltFiles () {
   const cmds = [
     `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy')}`,
-    `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`
+    `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
+    `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`
   ].join(' && ')
 
   const { stdout } = await promisify(exec)(cmds)
   stdout.trim().split('\n').forEach(function (line) {
     console.info(chalk.green('✓ injected: '), chalk.grey(line))
   })
+}
+
+async function injectMarkdown () {
+  let sources = {
+    '.github/ISSUE_TEMPLATE/integration_help.md': `src/_template/integration_help.md`,
+    '.github/CONTRIBUTING.md': `src/_template/contributing.md`
+  }
+
+  for (let src in sources) {
+    let dst = sources[src]
+    // strip yaml frontmatter:
+    let srcpath = path.join(uppyRoot, `/../../${src}`)
+    let dstpath = path.join(webRoot, dst)
+    let parts = fs.readFileSync(srcpath, 'utf-8').split(/---\s*\n/)
+    if (parts.length >= 3) {
+      parts.shift()
+      parts.shift()
+    }
+    let content = `<!-- WARNING! This file was injected. Please edit in "${src}" instead and run "${path.basename(__filename)}" -->\n\n`
+    content += parts.join('---\n')
+    fs.writeFileSync(dstpath, content, 'utf-8')
+    console.info(chalk.green(`✓ injected: `), chalk.grey(srcpath))
+  }
+  touch(path.join(webRoot, `/src/support.md`))
 }
 
 async function readConfig () {
@@ -131,6 +158,8 @@ async function readConfig () {
 
 async function update () {
   const config = await readConfig()
+
+  await injectMarkdown()
 
   config.uppy_version = version
   config.uppy_version_anchor = version.replace(/[^\d]+/g, '')

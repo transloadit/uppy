@@ -1,0 +1,19 @@
+{
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "parcel-bundler": "^1.11.0"
+  },
+  "dependencies": {
+    "@uppy/core": "^0.30.3",
+    "@uppy/dashboard": "^0.30.3",
+    "@uppy/google-drive": "^0.30.3",
+    "@uppy/instagram": "^0.30.3",
+    "@uppy/tus": "^0.30.3",
+    "@uppy/url": "^0.30.3",
+    "@uppy/webcam": "^0.30.3"
+  }
+}

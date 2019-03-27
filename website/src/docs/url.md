@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 34
+order: 44
 title: "Import From URL"
 module: "@uppy/url"
 permalink: docs/url/

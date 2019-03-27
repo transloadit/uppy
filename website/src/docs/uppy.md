@@ -208,7 +208,7 @@ locale: {
       1: 'You have to select at least %{smart_count} files'
     },
     exceedsSize: 'This file exceeds maximum allowed size of',
-    youCanOnlyUploadFileTypes: 'You can only upload:',
+    youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
     companionError: 'Connection with Companion failed'
   }
 }

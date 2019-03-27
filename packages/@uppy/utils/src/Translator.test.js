@@ -1,7 +1,44 @@
 const Translator = require('./Translator')
-// TODO use stubs instead
-const russian = require('../../../../locales/ru_RU')
-const english = require('../../../../locales/en_US')
+
+const english = {
+  strings: {
+    chooseFile: 'Choose a file',
+    youHaveChosen: 'You have chosen: %{fileName}',
+    filesChosen: {
+      0: '%{smart_count} file selected',
+      1: '%{smart_count} files selected'
+    },
+    pluralize: function (n) {
+      if (n === 1) {
+        return 0
+      }
+      return 1
+    }
+  }
+}
+
+const russian = {
+  strings: {
+    chooseFile: 'Выберите файл',
+    youHaveChosen: 'Вы выбрали: %{file_name}',
+    filesChosen: {
+      0: 'Выбран %{smart_count} файл',
+      1: 'Выбрано %{smart_count} файла',
+      2: 'Выбрано %{smart_count} файлов'
+    }
+  },
+  pluralize: function (n) {
+    if (n % 10 === 1 && n % 100 !== 11) {
+      return 0
+    }
+
+    if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) {
+      return 1
+    }
+
+    return 2
+  }
+}
 
 describe('Translator', () => {
   describe('translate', () => {
