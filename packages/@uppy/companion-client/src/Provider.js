@@ -28,19 +28,20 @@ module.exports = class Provider extends RequestClient {
     })
   }
 
+  onReceiveResponse (response) {
+    response = super.onReceiveResponse(response)
+    const authenticated = response.status !== 401
+    this.uppy.getPlugin(this.pluginId).setPluginState({ authenticated })
+    return response
+  }
+
+  // @todo(i.olarewaju) consider whether or not this method should be exposed
   setAuthToken (token) {
     return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
   }
 
   getAuthToken () {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
-  }
-
-  checkAuth () {
-    return this.get(`${this.id}/authorized`)
-      .then((payload) => {
-        return payload.authenticated
-      })
   }
 
   authUrl () {

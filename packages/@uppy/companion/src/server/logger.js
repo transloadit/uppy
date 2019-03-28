@@ -45,5 +45,7 @@ exports.debug = (msg, tag) => {
 const log = (msg, tag, level) => {
   // @TODO add some colors based on log level
   const time = new Date().toISOString()
-  console.log(`uppy: ${time} [${level}] ${tag || ''} ${msg}`)
+  // exclude msg from template string so values such as error objects
+  // can be well formatted
+  console.log(`uppy: ${time} [${level}] ${tag || ''}`, msg)
 }
