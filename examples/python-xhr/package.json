@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "uppy-companion-aws-example",
+  "name": "python-xhr-example",
   "scripts": {
     "copy": "cp ../../packages/uppy/dist/uppy.min.css .",
     "start:client": "budo main.js:bundle.js -- -t babelify -g aliasify",
