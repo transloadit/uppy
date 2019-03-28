@@ -64,7 +64,7 @@ module.exports = class RequestClient {
     return `${this.hostname}/${url}`
   }
 
-  _json(res) {
+  _json (res) {
     if (res.status === 401) {
       throw new AuthError()
     }
