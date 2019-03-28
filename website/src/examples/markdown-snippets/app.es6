@@ -22,7 +22,8 @@ class MarkdownTextarea {
     this.element = element
     this.controls = document.createElement('div')
     this.controls.classList.add('mdtxt-controls')
-    this.uploadLine = document.createElement('div')
+    this.uploadLine = document.createElement('button')
+    this.uploadLine.setAttribute('type', 'button')
     this.uploadLine.classList.add('form-upload')
 
     this.uploadLine.appendChild(

@@ -11,6 +11,8 @@
 }
 
 .form-snippetTitle-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
   font-family: inherit;
   font-size: 1em;
   width: 100%;
@@ -20,6 +22,9 @@
 }
 
 .form-textarea {
+  display: block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   font-family: inherit;
   font-size: 1em;
   box-sizing: border-box;
@@ -37,7 +42,8 @@
 }
 
   .form-textarea:focus,
-  .form-snippetTitle-input:focus {
+  .form-snippetTitle-input:focus,
+  .form-upload:focus {
     border-color: #7db9e5;
     outline: none;
     box-shadow: 0 0 1px 1px #7db9e5;
@@ -48,32 +54,16 @@
     border: 3px dashed #7f8a93;
   }
 
-.form-createSnippet {
-  -webkit-appearance: none;
-  border: 0;
-  font-family: inherit;
-  font-size: 16px;
-  border-radius: 5px;
-  padding: 8px;
-  background-color: #0fb800;
-  color: #fff;
-  width: 100%;
-  cursor: pointer;
-  margin-top: 15px;
-  transition: background-color 0.2s;
-}
-
-  .form-createSnippet:hover {
-    background-color: #0b8600;
-  }
-
 .form-upload {
+  display: block;
+  font-family: inherit;
   font-size: 0.95em;
   box-sizing: border-box;
   width: 100%;
   border-radius: 0 0 5px 5px;
   border: 1px solid #b7b7b4;
   border-top-width: 0;
+  background-color: transparent;
   padding: 5px 8px;
   cursor: pointer;
   text-align: center;
@@ -93,6 +83,26 @@
 .form-upload .error .message {
   margin-right: 8px;
 }
+
+.form-createSnippet {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  font-family: inherit;
+  font-size: 16px;
+  border-radius: 5px;
+  padding: 8px;
+  background-color: #0fb800;
+  color: #fff;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.2s;
+}
+
+  .form-createSnippet:hover {
+    background-color: #0b8600;
+  }
 
 .snippet {
   margin-top: 25px;
