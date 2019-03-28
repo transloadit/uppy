@@ -1,11 +1,10 @@
-# Uppy + AWS S3 Example
+# Uppy + Node xhr Example
 
-This example uses @uppy/companion with a custom AWS S3 configuration.
-Files are uploaded to a randomly named directory inside the `whatever/` directory in a bucket.
+This example uses @uppy/xhr to upload files to the local file system.
 
 ## Run it
 
-First set up the `COMPANION_AWS_KEY`, `COMPANION_AWS_SECRET`, `COMPANION_AWS_REGION`, and `COMPANION_AWS_BUCKET` environment variables for @uppy/companion.
+Move into this directory, then:
 
 Move into this directory, then:
 
