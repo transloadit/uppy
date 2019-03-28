@@ -4,6 +4,19 @@ const logger = require('../../logger')
 const adapter = require('./adapter')
 const AuthError = require('../error')
 
+// From https://www.dropbox.com/developers/reference/json-encoding:
+//
+// This function is simple and has OK performance compared to more
+// complicated ones: http://jsperf.com/json-escape-unicode/4
+const charsToEncode = /[\u007f-\uffff]/g
+function httpHeaderSafeJson (v) {
+  return JSON.stringify(v).replace(charsToEncode,
+    function (c) {
+      return '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4)
+    }
+  )
+}
+
 class DropBox {
   constructor (options) {
     this.authProvider = options.provider = DropBox.authProvider
@@ -84,7 +97,7 @@ class DropBox {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': JSON.stringify({path: `${id}`})
+          'Dropbox-API-Arg': httpHeaderSafeJson({path: `${id}`})
         }
       })
       .auth(token)
@@ -102,7 +115,7 @@ class DropBox {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': JSON.stringify({path: `${id}`})
+          'Dropbox-API-Arg': httpHeaderSafeJson({path: `${id}`})
         }
       })
       .auth(token)
