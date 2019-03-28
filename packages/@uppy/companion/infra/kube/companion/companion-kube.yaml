@@ -50,7 +50,7 @@ spec:
         imagePullPolicy: Always
         name: companion
         envFrom:
-        - configMapRef:
+        - secretRef:
             name: uppy-companion-env
         ports:
         - containerPort: 3020
