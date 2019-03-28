@@ -15,6 +15,7 @@ cache:
   apt: true
   directories:
   - "~/.npm"
+  - "~/.transloadit"
 services:
 - docker
 addons:
