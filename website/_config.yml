@@ -118,6 +118,14 @@ feed:
   path: atom.xml
   limit: 20
 
+# https://github.com/crimx/hexo-filter-github-emojis
+githubEmojis:
+  enable: true
+  className: github-emoji
+  inject: true
+  styles:
+  customEmojis:
+
 node_sass:
   debug: false
   outputStyle: compressed
