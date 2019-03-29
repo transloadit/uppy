@@ -142,6 +142,21 @@ function SelectAndUploadFileWithUppy (props) {
             accessibilityLabel="Open uploaded file"
           />
         }
+
+        <Button
+          onPress={(ev) => {
+            this.uppy.pauseAll()
+          }}
+          title="Pause All"
+          accessibilityLabel="Pause All"
+        />
+        <Button
+          onPress={(ev) => {
+            this.uppy.resumeAll()
+          }}
+          title="Resume All"
+          accessibilityLabel="Resume All"
+        />
       </TouchableOpacity>
       <Text>Status: {props.state.status}</Text>
       <Text>{props.state.progress} of {props.state.total}</Text>
