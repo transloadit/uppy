@@ -83,8 +83,8 @@ module.exports = class Provider extends RequestClient {
       plugin.opts.serverPattern = pattern
     } else {
       // does not start with https://
-      if (/^(?!https?:\/\/).*$/.test(opts.serverUrl)) {
-        plugin.opts.serverPattern = `${location.protocol}//${opts.serverUrl.replace(/^\/\//, '')}`
+      if (/^(?!https?:\/\/).*$/i.test(opts.serverUrl)) {
+        plugin.opts.serverPattern = `https://${opts.serverUrl.replace(/^\/\//, '')}`
       } else {
         plugin.opts.serverPattern = opts.serverUrl
       }
