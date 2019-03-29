@@ -2,11 +2,30 @@
 layout: false
 ---
 <!--
-You can `npm run web:inject:frontpagecodesample` to render this code snippet and
+You can `npm run web:inject-frontpagecodesample` to render this code snippet and
 save it as a layout partial
 -->
 {% codeblock lang:bash %}
 $ npm install @uppy/core @uppy/dashboard @uppy/instagram @uppy/tus 
 {% endcodeblock %}
 
-{% include_code lang:js ../api-usage-example.js %}
+{% codeblock lang:js %}
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Instagram from '@uppy/instagram'
+import Tus from '@uppy/tus'
+
+Uppy()
+  .use(Dashboard, {
+    trigger: '#select-files',
+    showProgressDetails: true
+  })
+  .use(Instagram, {
+    target: Dashboard,
+    serverUrl: 'https://companion.uppy.io'
+  })
+  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+  .on('complete', (result) => {
+    console.log('Upload result:', result)
+  })
+{% endcodeblock %}
