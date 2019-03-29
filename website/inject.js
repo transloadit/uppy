@@ -17,7 +17,7 @@ const configPath = path.join(webRoot, '/themes/uppy/_config.yml')
 const { version } = require(path.join(uppyRoot, '/package.json'))
 
 const defaultConfig = {
-  comment: 'Auto updated by update.js',
+  comment: 'Auto updated by inject.js',
   uppy_version_anchor: '001',
   uppy_version: '0.0.1',
   uppy_bundle_kb_sizes: {},
@@ -57,7 +57,7 @@ const excludes = {
   '@uppy/react': ['react']
 }
 
-update().catch((err) => {
+inject().catch((err) => {
   console.error(err)
   process.exit(1)
 })
@@ -81,7 +81,7 @@ async function getMinifiedSize (pkg, name) {
   }
 }
 
-async function updateSizes (config) {
+async function injectSizes (config) {
   console.info(chalk.grey('Generating bundle sizes…'))
   const padTarget = packages.reduce((max, cur) => Math.max(max, cur.length), 0) + 2
 
@@ -110,7 +110,7 @@ async function updateSizes (config) {
   config.uppy_bundle_kb_sizes = await sizesPromise
 }
 
-async function injectBuiltFiles () {
+async function injectBundles () {
   const cmds = [
     `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy')}`,
     `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
@@ -156,21 +156,21 @@ async function readConfig () {
   }
 }
 
-async function update () {
+async function inject () {
   const config = await readConfig()
 
   await injectMarkdown()
 
   config.uppy_version = version
   config.uppy_version_anchor = version.replace(/[^\d]+/g, '')
-  await updateSizes(config)
+  await injectSizes(config)
 
   const saveConfig = Object.assign({}, defaultConfig, config)
   await promisify(fs.writeFile)(configPath, YAML.safeDump(saveConfig), 'utf-8')
   console.info(chalk.green('✓ rewritten: '), chalk.grey(configPath))
 
   try {
-    await injectBuiltFiles()
+    await injectBundles()
   } catch (error) {
     console.error(
       chalk.red('x failed to inject: '),

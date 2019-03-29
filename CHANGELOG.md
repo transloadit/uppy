@@ -95,7 +95,6 @@ What we need to do to release Uppy 1.0
 
 - [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
 - [ ] chore: remove dead code/commented blocks
-- [ ] chore: remove the not-working npm scripts
 - [ ] chore: rewrite all code based on prettier+standardjs.com
 - [ ] locale: update the locales of languages that we know ourselves. leave rest to community
 - [ ] locale: cdn (just in folder like Robodog, will attach to global) / for module to all languages in one big `@uppy/locales`
@@ -109,7 +108,8 @@ What we need to do to release Uppy 1.0
 - [ ] transloadit: add error reporting, see https://github.com/transloadit/jquery-sdk/blob/891e99b08dd8142d8d8adc0553e6511967635ad7/js/lib/Modal.js#L122-L136 (@goto-bus-stop, @arturi)
 - [ ] transloadit: should adhere cancel event and abort assembly (@arturi, @goto-bus-stop)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
-
+- [x] chore: remove the not-working npm scripts (@kvz, @arturi)
+- [x] build: (BREAKING) `npm run dev` no longer starts Companion by default, use `npm run dev:with-companion` for that (@arturi)
 - [x] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear
 - [x] uppy-server: bump minor and deprecate that on npm in favour of @uppy/companion (@arturi)
 - [x] dashboard: implement Alex and Artur’s Dashboard redesign (@arturi)

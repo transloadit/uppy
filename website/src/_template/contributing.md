@@ -41,13 +41,13 @@ selenium-standalone start
 After you have installed and launched the selenium standalone server, run:
 
 ```bash
-npm run test:acceptance:local
+npm run test:endtoend:local
 ```
 
-By default, `test:acceptance:local` uses Firefox. You can use a different browser, like Chrome, by passing the `-b` flag:
+By default, `test:endtoend:local` uses Firefox. You can use a different browser, like Chrome, by passing the `-b` flag:
 
 ```bash
-npm run test:acceptance:local -- -b chrome
+npm run test:endtoend:local -- -b chrome
 ```
 
 > Note: The `--` is important, it tells npm that the remaining arguments should be interpreted by the script itself, not by npm.
@@ -55,13 +55,13 @@ npm run test:acceptance:local -- -b chrome
 You can run in multiple browsers by passing multiple `-b` flags:
 
 ```bash
-npm run test:acceptance:local -- -b chrome -b firefox
+npm run test:endtoend:local -- -b chrome -b firefox
 ```
 
 When trying to get a specific integration test to pass, it's not that helpful to continuously run _all_ tests. You can use the `--suite` flag to run tests from a single `./test/endtoend` folder. For example, `--suite thumbnails` will only run the tests from `./test/endtoend/thumbnails`. Of course, it can also be combined with one or more `-b` flags.
 
 ```bash
-npm run test:acceptance:local -- -b chrome --suite thumbnails
+npm run test:endtoend:local -- -b chrome --suite thumbnails
 ```
 
 These tests are also run automatically on Travis builds with [SauceLabs](https://saucelabs.com/) cloud service using different OSes.
