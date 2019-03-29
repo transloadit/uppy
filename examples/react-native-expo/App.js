@@ -42,13 +42,16 @@ export default class App extends React.Component {
         total: progress.bytesTotal
       })
     })
+    this.uppy.on('upload-success', (file, response) => {
+      console.log(file.name, response)
+    })
     this.uppy.on('complete', (result) => {
       this.setState({
         status: 'Upload complete ✅',
         uploadURL: result.successful[0].uploadURL
       })
       console.log('Upload complete:')
-      console.log(this.uppy.state.files)
+      console.log(result)
     })
   }
 
