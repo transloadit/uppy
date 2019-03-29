@@ -1,4 +1,4 @@
-<!-- WARNING! This file was injected. Please edit in ".github/CONTRIBUTING.md" instead and run "update.js" -->
+<!-- WARNING! This file was injected. Please edit in ".github/CONTRIBUTING.md" instead and run "inject.js" -->
 
 ## Uppy development
 
