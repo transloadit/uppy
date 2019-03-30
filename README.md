@@ -208,7 +208,7 @@ And you’ll need [`@uppy/companion`](https://uppy.io/docs/companion) if you’d
 
 ## Contributions are welcome
 
- - Contributor’s guide in [`website/src/docs/contributing.md`](website/src/docs/contributing.md)
+ - Contributor’s guide in [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)
  - Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Used by
