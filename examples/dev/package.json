@@ -6,7 +6,7 @@
     "watchify": "^3.11.0"
   },
   "scripts": {
-    "watch": "watchify -t babelify -t aliasify main.js -o bundle.js -vd"
+    "watch:sandbox": "watchify -t babelify -t aliasify main.js -o bundle.js -vd"
   },
   "aliasify": {
     "aliases": {

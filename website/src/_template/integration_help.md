@@ -1,4 +1,4 @@
-<!-- WARNING! This file was injected. Please edit in ".github/ISSUE_TEMPLATE/integration_help.md" instead and run "update.js" -->
+<!-- WARNING! This file was injected. Please edit in ".github/ISSUE_TEMPLATE/integration_help.md" instead and run "inject.js" -->
 
 Transloadit is providing Uppy free of charge. If you want you can self-host all components and never pay us a dime. There's docs and tests and your Bugs and Feature Requests are always welcome on GitHub. 
 

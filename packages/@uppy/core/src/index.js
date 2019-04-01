@@ -34,8 +34,9 @@ class Uppy {
           1: 'You have to select at least %{smart_count} files'
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
-        youCanOnlyUploadFileTypes: 'You can only upload:',
+        youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         companionError: 'Connection with Companion failed',
+        companionAuthError: 'Authorization required',
         failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
         connectedToInternet: 'Connected to the Internet',
@@ -361,7 +362,7 @@ class Uppy {
 
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
-        throw new Error(`${this.i18n('youCanOnlyUploadFileTypes')} ${allowedFileTypesString}`)
+        throw new Error(this.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }))
       }
     }
 

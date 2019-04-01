@@ -19,7 +19,7 @@ npm install @uppy/react
 
 ## CSS
 
-Make sure to also include the nessesary CSS files for each Uppy React component you are using. Follow links for individual components docs below for details on that.
+Make sure to also include the necessary CSS files for each Uppy React component you are using. Follow links for individual components docs below for details on that.
 
 ## Usage
 

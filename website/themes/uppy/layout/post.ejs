@@ -9,28 +9,52 @@
                 <img src="/images/feed.png" style="width:15px;height:15px">
             </a>
         </h2>
-        <ul>
-        <% site.posts.sort('date', -1).limit(10).each(function (post) { %>
-            <li>
-                <a href="/<%- post.path %>" class="sidebar-link<%- page.title === post.title ? ' current' : '' %>"><%- post.title %></a>
-            </li>
-        <% }) %>
-        </ul>
+
+        <%- partial('partials/sidebar_blog_links') %>
         <%- partial('partials/social') %>
     </div>
 </div>
 
+
 <div class="Content js-Content with-sidebar">
-  <h1><%- page.title %></h1>
-  <h4><%- page.date.format('MMM D[,] YYYY') %></h4>
-  <%- page.content %>
-  <div class="PostAuthor">
-    <a href="https://transloadit.com/about/#<%- site.data.authors[page.author].id %>">
-      <img class="PostAuthor-img" src="<%- gravatar(site.data.authors[page.author].email, 200) %>">
-      <h4 class="PostAuthor-name"><%- site.data.authors[page.author].name %></h4>
-      <h5 class="PostAuthor-tagline"><%- site.data.authors[page.author].tagline %></h5>
-    </a>
-  </div>
+    <% 
+    
+        var title = page.title
+        if (page.series) {
+            title = page.series + ': ' + page.title
+        }
+    %>
+  <h1><%- title %></h1>
+  <h4><%- page.date.format('dddd MMM D[,] YYYY') %></h4>
+    <% 
+        if (page.series) { 
+            var seriesList = []
+            site.posts.sort('date', +1).each(function (post) { 
+                if (post.series === page.series) {
+                    seriesList.push('<a href="/' + post.path + '" class="postseries-link' + (page.title === post.title ? ' current' : '') + '">' + post.title + '</a>')
+                }
+            })
+    %>
+    <p><%- '↬ In this series: [ ' + seriesList.join(' | ') + ' ] ' + (page.seriesSuffix || '') %></p>
+    <% } %>
+    <%- page.content %>
+    <% 
+        var authors = page.author 
+        if (authors === (authors + '')) { 
+            authors = [ page.author ]
+        }
+
+        for (var i in authors) {
+            var author = authors[i]
+    %>
+        <div class="PostAuthor">
+            <a href="https://transloadit.com/about/#<%- site.data.authors[author].id %>">
+                <img class="PostAuthor-img" src="<%- gravatar(site.data.authors[author].email, 200) %>">
+                <h4 class="PostAuthor-name"><%- site.data.authors[author].name %></h4>
+                <h5 class="PostAuthor-tagline"><%- site.data.authors[author].tagline %></h5>
+            </a>
+        </div>
+    <% } %>
   <br />
   <br />
   <%- partial('partials/comments') %>

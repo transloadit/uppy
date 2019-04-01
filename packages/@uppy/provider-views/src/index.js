@@ -56,7 +56,7 @@ module.exports = class ProviderView {
     this.getFolder = this.getFolder.bind(this)
     this.getNextFolder = this.getNextFolder.bind(this)
     this.logout = this.logout.bind(this)
-    this.checkAuth = this.checkAuth.bind(this)
+    this.preFirstRender = this.preFirstRender.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleDemoAuth = this.handleDemoAuth.bind(this)
     this.sortByTitle = this.sortByTitle.bind(this)
@@ -93,17 +93,13 @@ module.exports = class ProviderView {
     this.plugin.setPluginState({ folders, files })
   }
 
-  checkAuth () {
-    this.plugin.setPluginState({ checkAuthInProgress: true })
-    this.provider.checkAuth()
-      .then((authenticated) => {
-        this.plugin.setPluginState({ checkAuthInProgress: false })
-        this.plugin.onAuth(authenticated)
-      })
-      .catch((err) => {
-        this.plugin.setPluginState({ checkAuthInProgress: false })
-        this.handleError(err)
-      })
+  /**
+   * Called only the first time the provider view is rendered.
+   * Kind of like an init function.
+   */
+  preFirstRender () {
+    this.plugin.setPluginState({ didFirstRender: true })
+    this.plugin.onFirstRender()
   }
 
   /**
@@ -434,7 +430,7 @@ module.exports = class ProviderView {
       authWindow.close()
       window.removeEventListener('message', handleToken)
       this.provider.setAuthToken(e.data.token)
-      this._loaderWrapper(this.provider.checkAuth(), this.plugin.onAuth, this.handleError)
+      this.preFirstRender()
     }
     window.addEventListener('message', handleToken)
   }
@@ -456,8 +452,8 @@ module.exports = class ProviderView {
 
   handleError (error) {
     const uppy = this.plugin.uppy
-    const message = uppy.i18n('companionError')
     uppy.log(error.toString())
+    const message = uppy.i18n(error.isAuthError ? 'companionAuthError' : 'companionError')
     uppy.info({message: message, details: error.toString()}, 'error', 5000)
   }
 
@@ -517,9 +513,14 @@ module.exports = class ProviderView {
   }
 
   render (state) {
-    const { authenticated, checkAuthInProgress, loading } = this.plugin.getPluginState()
+    const { authenticated, didFirstRender } = this.plugin.getPluginState()
+    if (!didFirstRender) {
+      this.preFirstRender()
+    }
 
-    if (loading) {
+    // reload pluginState for "loading" attribute because it might
+    // have changed above.
+    if (this.plugin.getPluginState().loading) {
       return (
         <CloseWrapper onUnmount={this.clearSelection}>
           <LoaderView />
@@ -534,10 +535,8 @@ module.exports = class ProviderView {
             pluginName={this.plugin.title}
             pluginIcon={this.plugin.icon}
             demo={this.plugin.opts.demo}
-            checkAuth={this.checkAuth}
             handleAuth={this.handleAuth}
-            handleDemoAuth={this.handleDemoAuth}
-            checkAuthInProgress={checkAuthInProgress} />
+            handleDemoAuth={this.handleDemoAuth} />
         </CloseWrapper>
       )
     }

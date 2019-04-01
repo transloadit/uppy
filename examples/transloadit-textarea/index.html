@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v0.30.3/uppy.css">
+    <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v0.30.3/robodog.css">
     <style>
       body {
         font-family: Roboto, Open Sans;
@@ -26,7 +26,8 @@
         border-radius: 5px;
       }
 
-      main h2 { margin-top: 0 }
+      main p:first-child { margin-top: 0 }
+
       label {
         display: flex;
         padding-bottom: 16px;
@@ -95,6 +96,19 @@
       .snippet {
         margin-top: 25px;
       }
+
+      /* temp uppy fix, there was a typo in class name */
+      /* remove after uppy@>0.30.3 */
+      .uppy-DashboardAddFiles {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+        text-align: center;
+        flex: 1;
+      }
     </style>
   </head>
   <body>
@@ -102,6 +116,14 @@
       <h1>Markdown Bin</h1>
     </header>
     <main>
+      <p>
+      Markdown Bin is a demo app that works a bit like Github Gists or pastebin. You can add markdown snippets, and add file attachments to each snippet by clicking "Upload an attachment" or by dragging files onto the text area. Transloadit generates an inline preview image for images, videos, and audio files. <a target="_blank" href="https://github.com/transloadit/uppy/blob/master/examples/transloadit-textarea/template.json">&raquo;&nbsp;View the Assembly Template here.</a>
+      </p>
+
+      <p>
+        ⚠️ For this demo, snippets are stored locally in your browser. Attachments are stored in Transloadit's temporary storage and expire after about 24 hours. In a real app, you can easily export files to a permanent storage solution like Amazon S3 or Google Cloud. <a target="_blank" href="https://transloadit.com/docs/#17-saving-conversion-results">&raquo;&nbsp;Learn more</a>
+      </p>
+
       <form id="new">
         <h2>Create a new snippet</h2>
         <label>
@@ -117,7 +139,11 @@
           </button>
         </p>
       </form>
-      <div id="snippets"></div>
+
+      <h2>Previous snippets</h2>
+
+      <div id="snippets">
+      </div>
     </main>
     <template id="snippet">
       <div class="snippet">

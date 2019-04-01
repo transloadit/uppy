@@ -29,7 +29,7 @@ module.exports = class GoogleDrive extends Plugin {
       pluginId: this.id
     })
 
-    this.onAuth = this.onAuth.bind(this)
+    this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -62,11 +62,8 @@ module.exports = class GoogleDrive extends Plugin {
     this.unmount()
   }
 
-  onAuth (authenticated) {
-    this.setPluginState({ authenticated })
-    if (authenticated) {
-      this.view.getFolder('root', '/')
-    }
+  onFirstRender () {
+    return this.view.getFolder('root', '/')
   }
 
   render (state) {

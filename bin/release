@@ -58,7 +58,7 @@ git add README.md
 # Add readme file to the main `uppy` package.
 cp README.md packages/uppy/README.md
 
-npm run clean
+npm run build:clean
 FRESH=1 npm run build
 
 git commit --allow-empty -m "Release"

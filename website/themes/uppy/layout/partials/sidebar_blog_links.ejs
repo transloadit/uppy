@@ -1,0 +1,24 @@
+<ul>
+  <% 
+    var seriesTracker = {}
+    var totalCnt = 0
+    site.posts.sort('date', -1).each(function (post) { 
+      var title = post.title
+      if (post.series) {
+        var title = post.series
+        if (!seriesTracker[post.series]) {
+          seriesTracker[post.series] = 0
+        }
+        seriesTracker[post.series]++
+      }
+      
+      if (totalCnt > 10 || seriesTracker[post.series] > 1) {
+        return false
+      }
+      totalCnt++
+    %>
+  <li>
+    <a href="/<%- post.path %>" class="sidebar-link<%- page.title === post.title || (page.series && page.series === post.series) ? ' current' : '' %>"><%- title %></a>
+  </li>
+  <% }) %>
+</ul>

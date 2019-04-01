@@ -1,0 +1,119 @@
+.form-snippetLabel {
+  font-size: 0.85em;
+  color: #000;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-snippetTitle {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.form-snippetTitle-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font-family: inherit;
+  font-size: 1em;
+  width: 100%;
+  border: 1px solid #b7b7b4;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+.form-textarea {
+  display: block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font-family: inherit;
+  font-size: 1em;
+  box-sizing: border-box;
+  padding: 6px;
+  border-radius: 5px;
+  border: 1px solid #b7b7b4;
+  border-bottom: 1px dashed #b7b7b4;
+  min-height: 160px;
+  width: 100%;
+  resize: vertical;
+  font-family: inherit;
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+  .form-textarea:focus,
+  .form-snippetTitle-input:focus,
+  .form-upload:focus {
+    border-color: #7db9e5;
+    outline: none;
+    box-shadow: 0 0 1px 1px #7db9e5;
+  }
+
+  .form-textarea.drag {
+    background-color: #dee1e3;
+    border: 3px dashed #7f8a93;
+  }
+
+.form-upload {
+  display: block;
+  font-family: inherit;
+  font-size: 0.95em;
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 0 0 5px 5px;
+  border: 1px solid #b7b7b4;
+  border-top-width: 0;
+  background-color: transparent;
+  padding: 5px 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: color 0.2s;
+  color: #374047;
+}
+
+  .form-upload:hover {
+    color: #97a1a7;
+  }
+
+.form-upload .error {
+  border-color: red;
+  color: red;
+}
+
+.form-upload .error .message {
+  margin-right: 8px;
+}
+
+.form-createSnippet {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  font-family: inherit;
+  font-size: 16px;
+  border-radius: 5px;
+  padding: 8px;
+  background-color: #0fb800;
+  color: #fff;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.2s;
+}
+
+  .form-createSnippet:hover {
+    background-color: #0b8600;
+  }
+
+.snippet {
+  margin-top: 25px;
+}
+
+.snippet-content img {
+  display: block;
+  margin: 5px 0;
+  max-width: 100%;
+}
+
+.snippet-content p {
+  margin-bottom: 10px;
+}

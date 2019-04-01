@@ -1,0 +1,42 @@
+---
+title: Robodog Markdown Snippets
+layout: example
+type: examples
+order: 6
+---
+
+{% blockquote %}
+This is a demo app that works a bit like Github Gists or Pastebin. You can add markdown snippets, and add file attachments to each snippet.
+
+Uppy <a href="/docs/robodog/">Robodog</a> (using <a href="https://transloadit.com">Transloadit</a> internally) generates an inline preview image for images, videos, and audio files. 
+
+You can view the <a target="_blank" href="https://github.com/transloadit/uppy/blob/master/examples/transloadit-textarea/template.json">Transloadit Assembly Template</a> and the <a href="#snippet-example-code"> code for this demo</a>.
+{% endblockquote %}
+
+<p>
+ 
+</p>
+
+<p>
+⚠️ For this demo, snippets are stored locally in your browser. Attachments are stored in Transloadit’s temporary storage and <em>expire</em> after about 24 hours. In a real app, you can easily <a target="_blank" href="https://transloadit.com/docs/#17-saving-conversion-results">export files to a permanent storage solution</a>, like Amazon S3 or Google Cloud.
+</p>
+
+<link rel="stylesheet" href="app.css">
+<% include app.html %>
+<script src="app.js"></script>
+
+<hr />
+
+<p id="console-wrapper">
+  Console output (latest logs are at the top): <br />
+</p>
+
+<p id="snippet-example-code">
+  On this page we're using the following HTML snippet:
+</p>
+{% include_code lang:html markdown-snippets/app.html %}
+
+<p>
+  Along with this JavaScript:
+</p>
+{% include_code lang:js markdown-snippets/app.es6 %}

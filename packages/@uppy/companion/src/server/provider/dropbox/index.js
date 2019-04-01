@@ -2,6 +2,20 @@ const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
+const AuthError = require('../error')
+
+// From https://www.dropbox.com/developers/reference/json-encoding:
+//
+// This function is simple and has OK performance compared to more
+// complicated ones: http://jsperf.com/json-escape-unicode/4
+const charsToEncode = /[\u007f-\uffff]/g
+function httpHeaderSafeJson (v) {
+  return JSON.stringify(v).replace(charsToEncode,
+    function (c) {
+      return '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4)
+    }
+  )
+}
 
 class DropBox {
   constructor (options) {
@@ -35,10 +49,10 @@ class DropBox {
     let stats
     let reqErr
     const finishReq = () => {
-      if (reqErr) {
-        done(reqErr)
-      } else if (stats.statusCode !== 200) {
-        done(new Error(`request to ${this.authProvider} returned ${stats.statusCode}`))
+      if (reqErr || stats.statusCode !== 200) {
+        const err = this._error(reqErr, stats)
+        logger.error(err, 'provider.dropbox.list.error')
+        done(err)
       } else {
         stats.body.user_email = userInfo.body.email
         done(null, this.adaptData(stats.body, options.uppy))
@@ -83,7 +97,7 @@ class DropBox {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': JSON.stringify({path: `${id}`})
+          'Dropbox-API-Arg': httpHeaderSafeJson({path: `${id}`})
         }
       })
       .auth(token)
@@ -101,12 +115,19 @@ class DropBox {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': JSON.stringify({path: `${id}`})
+          'Dropbox-API-Arg': httpHeaderSafeJson({path: `${id}`})
         }
       })
       .auth(token)
       .request()
-      .on('response', done)
+      .on('response', (resp) => {
+        if (resp.statusCode !== 200) {
+          const err = this._error(null, resp)
+          logger.error(err, 'provider.dropbox.thumbnail.error')
+          return done(err)
+        }
+        done(null, resp)
+      })
       .on('error', (err) => {
         logger.error(err, 'provider.dropbox.thumbnail.error')
       })
@@ -122,12 +143,12 @@ class DropBox {
         include_media_info: true
       })
       .request((err, resp, body) => {
-        if (err) {
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
           logger.error(err, 'provider.dropbox.size.error')
-          return done(null)
+          return done(err)
         }
-
-        done(body.size)
+        done(null, parseInt(body.size))
       })
   }
 
@@ -151,6 +172,15 @@ class DropBox {
     data.nextPagePath = null
 
     return data
+  }
+
+  _error (err, resp) {
+    if (resp) {
+      const errMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
+      return resp.statusCode === 401 ? new AuthError() : new Error(errMsg)
+    }
+
+    return err
   }
 }
 

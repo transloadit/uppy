@@ -16,7 +16,7 @@ exports.config = Object.assign(base.config, {
     { browserName: 'firefox', version: '61.0', platform: 'Windows 10' },
     { browserName: 'internet explorer', version: '10.0', platform: 'Windows 7' },
     { browserName: 'internet explorer', version: '11.0', platform: 'Windows 7' },
-    { browserName: 'chrome', version: '50.0', platform: 'Windows 7' },
+    { browserName: 'chrome', version: '70.0', platform: 'Windows 10' },
     // { browserName: 'chrome', version: '69.0', platform: 'Windows 10' },
     { browserName: 'MicrosoftEdge', version: '14', platform: 'Windows 10' },
     { browserName: 'MicrosoftEdge', version: '17', platform: 'Windows 10' },

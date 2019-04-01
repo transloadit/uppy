@@ -3,6 +3,7 @@ const purest = require('purest')({ request })
 const utils = require('../../helpers/utils')
 const logger = require('../../logger')
 const adapter = require('./adapter')
+const AuthError = require('../error')
 
 class Instagram {
   constructor (options) {
@@ -21,10 +22,10 @@ class Instagram {
       .qs(qs)
       .auth(token)
       .request((err, resp, body) => {
-        if (err) {
-          done(err)
-        } else if (resp.statusCode !== 200) {
-          done(new Error(`request to ${this.authProvider} returned ${resp.statusCode}`))
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
+          logger.error(err, 'provider.instagram.list.error')
+          return done(err)
         } else {
           done(null, this.adaptData(body))
         }
@@ -67,10 +68,21 @@ class Instagram {
       .get(`media/${id}`)
       .auth(token)
       .request((err, resp, body) => {
-        if (err) return logger.error(err, 'provider.instagram.thumbnail.error')
+        if (err) {
+          err = this._error(err, resp)
+          logger.error(err, 'provider.instagram.thumbnail.error')
+          return done(err)
+        }
 
         request(body.data.images.thumbnail.url)
-          .on('response', done)
+          .on('response', (resp) => {
+            if (resp.statusCode !== 200) {
+              err = this._error(null, resp)
+              logger.error(err, 'provider.instagram.thumbnail.error')
+              return done(err)
+            }
+            done(null, resp)
+          })
           .on('error', (err) => {
             logger.error(err, 'provider.instagram.thumbnail.error')
           })
@@ -82,13 +94,14 @@ class Instagram {
       .get(`media/${id}`)
       .auth(token)
       .request((err, resp, body) => {
-        if (err) {
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
           logger.error(err, 'provider.instagram.size.error')
-          return done()
+          return done(err)
         }
 
         utils.getURLMeta(this._getMediaUrl(body, query.carousel_id))
-          .then(({ size }) => done(size))
+          .then(({ size }) => done(null, size))
           .catch((err) => {
             logger.error(err, 'provider.instagram.size.error')
             done()
@@ -114,6 +127,18 @@ class Instagram {
 
     data.nextPagePath = adapter.getNextPagePath(items)
     return data
+  }
+
+  _error (err, resp) {
+    if (resp) {
+      if (resp.statusCode === 400 && resp.body && resp.body.meta.error_type === 'OAuthAccessTokenException') {
+        return new AuthError()
+      }
+
+      return new Error(`request to ${this.authProvider} returned ${resp.statusCode}`)
+    }
+
+    return err
   }
 }
 

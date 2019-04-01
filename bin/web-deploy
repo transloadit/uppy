@@ -5,16 +5,18 @@ set -o nounset
 # set -o xtrace
 
 # Set magic variables for current file & dir
-__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-__file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
-__base="$(basename ${__file} .sh)"
+# __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
+# __base="$(basename ${__file} .sh)"
 
 ghpages_repo=${GHPAGES_REPO:-"transloadit/uppy"}
 ghpages_branch=${GHPAGES_BRANCH:-"gh-pages"}
 ghpages_url=${GHPAGES_URL:-"git@github.com:${ghpages_repo}.git"}
 
-echo "--> Deploying to GitHub pages.."
-mkdir -p /tmp/deploy-${ghpages_repo}
+localDir="${HOME:-/home/${USER:-travis}}/.${ghpages_repo}/deploy"
+
+echo "--> Deploying to GitHub pages from '${localDir}'.."
+mkdir -p "${localDir}"
 
 # Custom steps
 rsync \
@@ -28,15 +30,17 @@ rsync \
   --no-group \
   --no-motd \
   --no-owner \
-./website/public/ /tmp/deploy-${ghpages_repo} > /dev/null
+./website/public/ "${localDir}" > /dev/null
 
 echo 'This branch is just a deploy target. Do not edit. You changes will be lost.' \
-  |tee /tmp/deploy-${ghpages_repo}/README.md
+  |tee "${localDir}/README.md" > /dev/null
 
-(cd /tmp/deploy-${ghpages_repo} \
-  && git init && git checkout -B ${ghpages_branch} && git add --all . \
-  && git commit -nm "Update ${ghpages_repo} website by ${USER}" \
-  && (git remote add origin ${ghpages_url}|| true)  \
-  && git push origin ${ghpages_branch}:refs/heads/${ghpages_branch} --force) > /dev/null
+(cd "${localDir}" \
+  && ([ -d .git ] || git init) && git checkout -B "${ghpages_branch}" && (git pull origin "${ghpages_branch}" || true) && git add --all . \
+  && git commit --allow-empty --no-verify --message="Update ${ghpages_repo} website by ${USER}" \
+  && (git remote add origin "${ghpages_url}"|| true)  \
+  && (git remote set-url origin "${ghpages_url}" || true)  \
+  && (git push origin "${ghpages_branch}:refs/heads/${ghpages_branch}" || git push origin "${ghpages_branch}:refs/heads/${ghpages_branch}" --force) \
+) > /dev/null
 
-rm -rf /tmp/deploy-${ghpages_repo}
+# rm -rf "${localDir}"

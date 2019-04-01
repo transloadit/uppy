@@ -58,8 +58,8 @@ module.exports = class Informer extends Plugin {
           {' '}
           {details && <span
             aria-label={details}
-            data-microtip-position="top"
-            data-microtip-size="large"
+            data-microtip-position="top-left"
+            data-microtip-size="medium"
             role="tooltip">?</span>
           }
         </p>

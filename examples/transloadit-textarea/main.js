@@ -1,105 +1,22 @@
 /* eslint-env browser */
 const marked = require('marked')
 const dragdrop = require('drag-drop')
-const transloadit = require('@uppy/robodog')
+const robodog = require('@uppy/robodog')
 
-// TOP SECRET!!!!!!!
-const TRANSLOADIT_KEY = '05a61ed019fe11e783fdbd1f56c73eb0'
+const TRANSLOADIT_EXAMPLE_KEY = '35c1aed03f5011e982b6afe82599b6a0'
+const TRANSLOADIT_EXAMPLE_TEMPLATE = '0b2ee2bc25dc43619700c2ce0a75164a'
 
-const THUMB_SIZE = [400, 300]
-
-/* eslint-disable no-template-curly-in-string */
-const IMAGE_FILTER = ['${file.mime}', 'regex', 'image/']
-const VIDEO_FILTER = ['${file.mime}', 'regex', 'video/']
-const AUDIO_FILTER = ['${file.mime}', 'regex', 'audio/']
-/* eslint-enable no-template-curly-in-string */
-
-const transloaditSteps = {
-  ':original': {
-    robot: '/upload/handle'
-  },
-
-  // Separate source files
-
-  images: {
-    use: [':original'],
-    robot: '/file/filter',
-    result: true,
-    accepts: [IMAGE_FILTER]
-  },
-  videos: {
-    use: [':original'],
-    robot: '/file/filter',
-    result: true,
-    accepts: [VIDEO_FILTER]
-  },
-  audios: {
-    use: [':original'],
-    robot: '/file/filter',
-    result: true,
-    accepts: [AUDIO_FILTER]
-  },
-  others: {
-    use: [':original'],
-    robot: '/file/filter',
-    result: true,
-    rejects: [IMAGE_FILTER, VIDEO_FILTER, AUDIO_FILTER]
-  },
-
-  // Generate thumbs for different types of files
-
-  audio_thumbnails: {
-    use: ['audios'],
-    robot: '/audio/artwork'
-  },
-  resized_thumbnails: {
-    use: ['images', 'audio_thumbnails'],
-    robot: '/image/resize',
-    imagemagick_stack: 'v1.0.0',
-    width: THUMB_SIZE[0],
-    height: THUMB_SIZE[1],
-    resize_strategy: 'fit',
-    zoom: false
-  },
-  video_thumbnails: {
-    use: ['videos'],
-    robot: '/video/thumbs',
-    ffmpeg_stack: 'v2.2.3',
-    count: 1,
-    offsets: ['50%'],
-    format: 'jpeg',
-    width: THUMB_SIZE[0],
-    height: THUMB_SIZE[1],
-    resize_strategy: 'fit'
-  },
-
-  // Optimize thumbnails for decent file size
-
-  thumbnails: {
-    use: ['resized_thumbnails', 'video_thumbnails'],
-    robot: '/image/optimize'
-  },
-
-  // Store all the things away
-
-  store_sources: {
-    use: ['images', 'videos', 'audios', 'others'],
-    robot: '/s3/store',
-    credentials: 'uppy_test_s3',
-    // eslint-disable-next-line no-template-curly-in-string
-    path: 'markdownbin/sources/${unique_prefix}/${file.url_name}',
-    result: true
-  },
-  store_thumbnails: {
-    use: ['thumbnails'],
-    robot: '/s3/store',
-    credentials: 'uppy_test_s3',
-    // eslint-disable-next-line no-template-curly-in-string
-    path: 'markdownbin/thumbs/${file.md5hash}',
-    result: true
-  }
-}
-
+/**
+ * A textarea for markdown text, with support for file attachments.
+ *
+ * ## Usage
+ *
+ * ```js
+ * const element = document.querySelector('textarea')
+ * const mdtxt = new MarkdownTextarea(element)
+ * mdtxt.install()
+ * ```
+ */
 class MarkdownTextarea {
   constructor (element) {
     this.element = element
@@ -185,11 +102,11 @@ class MarkdownTextarea {
   }
 
   uploadFiles (files) {
-    transloadit.upload({
+    robodog.upload({
       waitForEncoding: true,
       params: {
-        auth: { key: TRANSLOADIT_KEY },
-        steps: transloaditSteps
+        auth: { key: TRANSLOADIT_EXAMPLE_KEY },
+        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE
       }
     }).then((result) => {
       this.insertAttachments(
@@ -202,11 +119,11 @@ class MarkdownTextarea {
   }
 
   pickFiles () {
-    transloadit.pick({
+    robodog.pick({
       waitForEncoding: true,
       params: {
-        auth: { key: TRANSLOADIT_KEY },
-        steps: transloaditSteps
+        auth: { key: TRANSLOADIT_EXAMPLE_KEY },
+        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE
       }
     }).then((result) => {
       this.insertAttachments(
