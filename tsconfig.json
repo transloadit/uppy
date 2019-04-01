@@ -12,7 +12,7 @@
     "types": [],
     "noEmit": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": false,
     "strictFunctionTypes": true,
     "forceConsistentCasingInFileNames": true
   },
