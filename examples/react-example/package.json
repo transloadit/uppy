@@ -15,7 +15,7 @@
     "babel-core": "^6.26.3",
     "babel-preset-react": "^6.24.1",
     "babelify": "^8.0.0",
-    "budo": "^11.3.2",
+    "budo": "^11.6.1",
     "react": "^15.6.2",
     "react-dom": "^15.6.2"
   }

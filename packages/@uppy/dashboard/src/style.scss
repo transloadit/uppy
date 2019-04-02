@@ -143,7 +143,12 @@
   overflow: hidden;
   position: relative;
   border-radius: 5px;
+  opacity: 0;
 }
+
+  .uppy-Dashboard--isInnerWrapVisible .uppy-Dashboard-innerWrap{
+    opacity: 1;
+  }
 
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
   position: fixed;
