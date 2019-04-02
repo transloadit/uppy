@@ -14,6 +14,7 @@ import Tus from '@uppy/tus'
 import UppyFilePicker from './react-native/file-picker'
 
 function hashCode (str) {
+  // from https://stackoverflow.com/a/8831937/151666
   var hash = 0
   if (str.length === 0) {
     return hash
