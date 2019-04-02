@@ -3,7 +3,7 @@ import React from 'react'
 import {
   Text,
   View,
-  Button,
+  AsyncStorage,
   // TouchableOpacity,
   TouchableHighlight
   // Image,
@@ -12,6 +12,34 @@ import {
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import UppyFilePicker from './react-native/file-picker'
+
+function hashCode (str) {
+  var hash = 0
+  if (str.length === 0) {
+    return hash
+  }
+  for (var i = 0; i < str.length; i++) {
+    var char = str.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash // Convert to 32bit integer
+  }
+  return hash
+}
+
+function customFingerprint (file, options) {
+  console.log('_____________________')
+  console.log('FILE:')
+  console.log(file)
+  console.log('_____________________')
+  let exifHash = 'noexif'
+  if (file.exif) {
+    exifHash = hashCode(JSON.stringify(file.exif))
+  }
+  console.log(exifHash)
+  const fingerprint = ['tus', file.name || 'noname', file.size || 'nosize', exifHash].join('/')
+  console.log(fingerprint)
+  return fingerprint
+}
 
 export default class App extends React.Component {
   constructor () {
@@ -40,7 +68,11 @@ export default class App extends React.Component {
 
     console.log('Is this React Native?', this.isReactNative)
     this.uppy = Uppy({ autoProceed: true, debug: true })
-    this.uppy.use(Tus, { endpoint: 'https://master.tus.io/files/' })
+    this.uppy.use(Tus, {
+      endpoint: 'https://master.tus.io/files/',
+      urlStorage: AsyncStorage,
+      fingerprint: customFingerprint
+    })
     this.uppy.on('upload-progress', (file, progress) => {
       this.setState({
         progress: progress.bytesUploaded,
@@ -58,8 +90,8 @@ export default class App extends React.Component {
         uploadComplete: true,
         uploadStarted: false
       })
-      console.log('Upload complete:')
-      console.log(result)
+      // console.log('Upload complete:')
+      // console.log(result)
     })
   }
 
@@ -186,23 +218,57 @@ function PauseResumeButton (props) {
     return null
   }
 
+  // return (
+  //   <Button
+  //     onPress={props.onPress}
+  //     color="#bb00cc"
+  //     title={props.isPaused ? 'Resume' : 'Pause'}
+  //     accessibilityLabel={props.isPaused ? 'Resume' : 'Pause'}
+  //   />
+  // )
+
   return (
-    <Button
+    <TouchableHighlight
       onPress={props.onPress}
-      color="#bb00cc"
-      title={props.isPaused ? 'Resume' : 'Pause'}
-      accessibilityLabel={props.isPaused ? 'Resume' : 'Pause'}
-    />
+      style={{
+        backgroundColor: '#006bb7',
+        padding: 10
+      }}>
+      <Text
+        style={{
+          color: '#fff',
+          textAlign: 'center',
+          fontSize: 17
+        }}>{props.isPaused ? 'Resume' : 'Pause'}</Text>
+    </TouchableHighlight>
+  )
+}
+
+function SelectFiles (props) {
+  return (
+    <TouchableHighlight
+      onPress={props.showFilePicker}
+      style={{
+        backgroundColor: '#006bb7',
+        padding: 15
+      }}>
+      <Text
+        style={{
+          color: '#fff',
+          textAlign: 'center',
+          fontSize: 17
+        }}>Select files</Text>
+    </TouchableHighlight>
   )
 }
 
 function SelectAndUploadFileWithUppy (props) {
   return (
-    <View style={{
-      flex: 1,
-      paddingVertical: 100
-    }}>
-      <Text>Uppy running in React Native</Text>
+    <View>
+      <Text style={{
+        fontSize: 25,
+        marginBottom: 20
+      }}>Uppy in React Native</Text>
       {/* <TouchableOpacity onPress={props.selectPhotoTapped}>
         { props.state.file === null
           ? <Text>Select a Photo</Text>
@@ -220,8 +286,7 @@ function SelectAndUploadFileWithUppy (props) {
           />
         }
       </TouchableOpacity> */}
-      <Text>Status: {props.state.status}</Text>
-      <Text>{props.state.progress} of {props.state.total}</Text>
+      <SelectFiles showFilePicker={props.showFilePicker} />
       <ProgressBar
         progress={props.state.progress}
         total={props.state.total}
@@ -231,10 +296,8 @@ function SelectAndUploadFileWithUppy (props) {
         onPress={props.togglePauseResume}
         uploadStarted={props.state.uploadStarted}
         uploadComplete={props.state.uploadComplete} />
-      <TouchableHighlight
-        onPress={props.showFilePicker}>
-        <Text>Select files from Uppy</Text>
-      </TouchableHighlight>
+      <Text>{props.state.status ? 'Status: ' + props.state.status : null}</Text>
+      <Text>{props.state.progress} of {props.state.total}</Text>
     </View>
   )
 }
