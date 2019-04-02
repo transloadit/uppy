@@ -30,8 +30,10 @@ As of now, Companion is integrated to work with:
 Install from NPM:
 
 ```bash
-sudo npm install -g @uppy/companion
+npm install @uppy/companion
 ```
+
+If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@0.30.0`.
 
 ## Usage
 
