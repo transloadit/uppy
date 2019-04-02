@@ -11,11 +11,11 @@
     }
   },
   "dependencies": {
-    "babel-core": "^6.26.3",
-    "redux": "^4.0.0",
-    "redux-logger": "^3.0.6",
     "aliasify": "^2.1.0",
+    "babel-core": "^6.26.3",
     "babelify": "^8.0.0",
-    "budo": "^11.3.2"
+    "budo": "^11.6.1",
+    "redux": "^4.0.1",
+    "redux-logger": "^3.0.6"
   }
 }

@@ -3,7 +3,10 @@ function list ({ query, params, uppy }, res, next) {
   const token = uppy.providerTokens[providerName]
 
   uppy.provider.list({ uppy, token, directory: params.id, query }, (err, data) => {
-    return err ? next(err) : res.json(data)
+    if (err) {
+      return err.isAuthError ? res.sendStatus(401) : next(err)
+    }
+    return res.json(data)
   })
 }
 

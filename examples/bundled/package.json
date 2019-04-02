@@ -8,11 +8,12 @@
     "parcel-bundler": "^1.11.0"
   },
   "dependencies": {
-    "@uppy/core": "^0.29.1",
-    "@uppy/dashboard": "^0.29.1",
-    "@uppy/google-drive": "^0.29.1",
-    "@uppy/instagram": "^0.29.1",
-    "@uppy/tus": "^0.29.1",
-    "@uppy/url": "^0.29.1"
+    "@uppy/core": "^0.30.3",
+    "@uppy/dashboard": "^0.30.3",
+    "@uppy/google-drive": "^0.30.3",
+    "@uppy/instagram": "^0.30.3",
+    "@uppy/tus": "^0.30.3",
+    "@uppy/url": "^0.30.3",
+    "@uppy/webcam": "^0.30.3"
   }
 }

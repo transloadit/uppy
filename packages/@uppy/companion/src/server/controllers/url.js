@@ -56,10 +56,17 @@ const get = (req, res) => {
         protocol: req.body.protocol,
         metadata: req.body.metadata,
         size: size,
+        fieldname: req.body.fieldname,
         pathPrefix: `${filePath}`,
         storage: redis.client(),
         headers: req.body.headers
       })
+
+      if (uploader.hasError()) {
+        const response = uploader.getResponse()
+        res.status(response.status).json(response.body)
+        return
+      }
 
       logger.debug('Waiting for socket connection before beginning remote download.')
       uploader.onSocketReady(() => {
@@ -91,5 +98,6 @@ const downloadURL = (url, onDataChunk) => {
 
   request(opts)
     .on('data', onDataChunk)
+    .on('end', () => onDataChunk(null))
     .on('error', (err) => logger.error(err, 'controller.url.download.error'))
 }

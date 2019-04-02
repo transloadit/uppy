@@ -9,13 +9,9 @@ function logout (req, res) {
   const session = req.session
   const providerName = req.params.providerName
 
-  if (req.uppy.providerTokens[providerName]) {
+  if (req.uppy.providerTokens && req.uppy.providerTokens[providerName]) {
     delete req.uppy.providerTokens[providerName]
-    tokenService.addToCookies(
-      res,
-      tokenService.generateToken(req.uppy.providerTokens, req.uppy.options.secret),
-      req.uppy.options
-    )
+    tokenService.removeFromCookies(res, req.uppy.options, req.uppy.provider.authProviderName)
   }
 
   if (session.grant) {

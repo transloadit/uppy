@@ -31,8 +31,19 @@
 }
 
 .DashboardOptions {
-  margin-bottom: 1.5em;
+  margin-bottom: 20px;
   font-size: 0.8em;
 
   label { margin-right: 10px; }
+}
+
+.DashboardOptions ul {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+.DashboardOptions li {
+  list-style: none;
+  display: inline-block;
 }

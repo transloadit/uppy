@@ -15,6 +15,8 @@ Instagram, etc. **Companion is not a target to upload files to**. For this, use 
 npm install @uppy/companion
 ```
 
+If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@0.30.0`.
+
 ## Usage
 
 companion may either be used as pluggable express app, which you plug to your already existing server, or it may simply be run as a standalone server:
@@ -94,6 +96,37 @@ When you are all set install the dependencies and deploy your function:
 ```
 npm install && sls deploy
 ```
+
+### Deploy to heroku
+
+Companion can also be deployed to [Heroku](https://www.heroku.com)
+```
+mkdir uppy-companion && cd uppy-companion
+
+git init
+
+echo 'export COMPANION_PORT=$PORT' > .profile
+echo 'node_modules' > .gitignore
+echo '{
+  "name": "uppy-companion",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "companion"
+  },
+  "dependencies": {
+    "@uppy/companion": "^0.17.0"
+  }
+}' > package.json
+
+npm i
+
+git add . && git commit -am 'first commit'
+
+heroku create
+
+git push heroku master
+```
+Make sure you set the required [environment variables](https://uppy.io/docs/companion/#Configure-Standalone).
 
 
 See [full documentation](https://uppy.io/docs/companion/)

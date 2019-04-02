@@ -2,7 +2,7 @@ const Uploader = require('../Uploader')
 const redis = require('../redis')
 const logger = require('../logger')
 
-function get (req, res) {
+function get (req, res, next) {
   const providerName = req.params.providerName
   const id = req.params.id
   const body = req.body
@@ -11,7 +11,11 @@ function get (req, res) {
   const { providerOptions } = req.uppy.options
 
   // get the file size before proceeding
-  provider.size({ id, token }, (size) => {
+  provider.size({ id, token }, (err, size) => {
+    if (err) {
+      return err.isAuthError ? res.sendStatus(401) : next(err)
+    }
+
     if (!size) {
       logger.error('unable to determine file size', 'controller.get.provider.size')
       return res.status(400).json({error: 'unable to determine file size'})
@@ -34,6 +38,12 @@ function get (req, res) {
       } : null,
       headers: body.headers
     })
+
+    if (uploader.hasError()) {
+      const response = uploader.getResponse()
+      res.status(response.status).json(response.body)
+      return
+    }
 
     // wait till the client has connected to the socket, before starting
     // the download, so that the client can receive all download/upload progress.

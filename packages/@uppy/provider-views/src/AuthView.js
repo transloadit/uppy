@@ -1,4 +1,3 @@
-const LoaderView = require('./Loader')
 const { h, Component } = require('preact')
 
 class AuthBlock extends Component {
@@ -29,14 +28,7 @@ class AuthBlock extends Component {
 }
 
 class AuthView extends Component {
-  componentDidMount () {
-    this.props.checkAuth()
-  }
-
   render () {
-    if (this.props.checkAuthInProgress) {
-      return <LoaderView />
-    }
     return <AuthBlock {...this.props} />
   }
 }

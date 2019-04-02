@@ -48,14 +48,9 @@ spec:
       containers:
       - image: docker.io/transloadit/companion:latest
         imagePullPolicy: Always
-        name: companion        
-        resources:
-          limits:
-            memory: 2Gi
-          requests:
-            memory: 2Gi
+        name: companion
         envFrom:
-        - configMapRef:
+        - secretRef:
             name: uppy-companion-env
         ports:
         - containerPort: 3020

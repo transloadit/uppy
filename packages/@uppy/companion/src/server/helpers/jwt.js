@@ -29,8 +29,9 @@ module.exports.verifyToken = (token, secret) => {
  * @param {object} res
  * @param {string} token
  * @param {object=} uppyOptions
+ * @param {string} providerName
  */
-module.exports.addToCookies = (res, token, uppyOptions) => {
+module.exports.addToCookies = (res, token, uppyOptions, providerName) => {
   const cookieOptions = {
     maxAge: 1000 * 60 * 60 * 24 * 30, // would expire after 30 days
     httpOnly: true
@@ -40,5 +41,24 @@ module.exports.addToCookies = (res, token, uppyOptions) => {
     cookieOptions.domain = uppyOptions.cookieDomain
   }
   // send signed token to client.
-  res.cookie('uppyAuthToken', token, cookieOptions)
+  res.cookie(`uppyAuthToken--${providerName}`, token, cookieOptions)
+}
+
+/**
+ *
+ * @param {object} res
+ * @param {object=} uppyOptions
+ * @param {string} providerName
+ */
+module.exports.removeFromCookies = (res, uppyOptions, providerName) => {
+  const cookieOptions = {
+    maxAge: 1000 * 60 * 60 * 24 * 30, // would expire after 30 days
+    httpOnly: true
+  }
+
+  if (uppyOptions.cookieDomain) {
+    cookieOptions.domain = uppyOptions.cookieDomain
+  }
+
+  res.clearCookie(`uppyAuthToken--${providerName}`, cookieOptions)
 }

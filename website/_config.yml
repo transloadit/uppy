@@ -15,7 +15,7 @@ logo_icon: /images/logos/uppy-dog-head-arrow.png
 description: >
     Sleek, modular file uploader that integrates seamlessly with any website or app.
     It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras etc, and then uploads them to the final destination.
-    It’s fast, easy to use and let's you worry about more important problems than building a file uploader.
+    It’s fast, easy to use and let’s you worry about more important problems than building a file uploader.
 descriptionWho: >
   Uppy is brought to you by the people
   behind <a href="https://transloadit.com">Transloadit</a>, and as such will have first class support
@@ -118,6 +118,14 @@ feed:
   path: atom.xml
   limit: 20
 
+# https://github.com/crimx/hexo-filter-github-emojis
+githubEmojis:
+  enable: true
+  className: github-emoji
+  inject: true
+  styles:
+  customEmojis:
+
 node_sass:
   debug: false
   outputStyle: compressed
@@ -149,3 +157,7 @@ skip_render:
 
 alias:
   examples/: examples/dashboard/
+
+include_markdown:
+  dir: "src/_template"   # Base directory of template markdown
+  verbose : true    

@@ -1,7 +1,7 @@
 const { Plugin } = require('@uppy/core')
 const cuid = require('cuid')
 const Translator = require('@uppy/utils/lib/Translator')
-const { Provider, Socket } = require('@uppy/companion-client')
+const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
@@ -286,12 +286,14 @@ module.exports = class XHRUpload extends Plugin {
         if (removedFile.id === file.id) {
           timer.done()
           xhr.abort()
+          reject(new Error('File removed'))
         }
       })
 
       this.uppy.on('cancel-all', () => {
         timer.done()
         xhr.abort()
+        reject(new Error('Upload cancelled'))
       })
     })
   }
@@ -309,8 +311,9 @@ module.exports = class XHRUpload extends Plugin {
         fields[name] = file.meta[name]
       })
 
-      const provider = new Provider(this.uppy, file.remote.providerOptions)
-      provider.post(
+      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+      const client = new Client(this.uppy, file.remote.providerOptions)
+      client.post(
         file.remote.url,
         Object.assign({}, file.remote.body, {
           endpoint: opts.endpoint,

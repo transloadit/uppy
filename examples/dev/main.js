@@ -6,9 +6,11 @@ const GoogleDrive = require('./../../packages/@uppy/google-drive/src')
 const Url = require('./../../packages/@uppy/url/src')
 const Webcam = require('./../../packages/@uppy/webcam/src')
 const Tus = require('./../../packages/@uppy/tus/src')
+// const XHRUpload = require('./../../packages/@uppy/xhr-upload/src')
 const Form = require('./../../packages/@uppy/form/src')
 
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
+// const XHR_ENDPOINT = 'https://api2.transloadit.com'
 
 const uppy = Uppy({
   debug: true,
@@ -20,7 +22,7 @@ const uppy = Uppy({
   .use(Dashboard, {
     trigger: '#pick-files',
     // inline: true,
-    // target: 'body',
+    target: '.foo',
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', placeholder: 'add caption' }
@@ -35,6 +37,7 @@ const uppy = Uppy({
   .use(Url, { target: Dashboard, serverUrl: 'http://localhost:3020' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: TUS_ENDPOINT })
+  // .use(XHRUpload, { endpoint: XHR_ENDPOINT })
   .use(Form, { target: '#upload-form' })
   // .use(GoldenRetriever, {serviceWorker: true})
 

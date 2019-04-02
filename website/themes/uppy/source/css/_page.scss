@@ -143,8 +143,9 @@
 
   figure.wide {
     @media #{$screen-large} {
+      width: 135%;
       max-width: 135%;
-      img, video { max-width: 135%; }
+      img, video { max-width: 100%; }
     }
   }
 
@@ -343,9 +344,14 @@
   }
 }
 
-.PostAuthor {
+.PostAuthor:first-of-type {
   position: relative;
   margin-top: 40px;
+}
+
+.PostAuthor:not(:first-of-type) {
+  position: relative;
+  margin-top: 10px;
 }
 
 .PostAuthor-img {
@@ -399,5 +405,12 @@
   &:hover {
     background-color: $color-primary;
     color: $color-white;
+  }
+}
+
+.postseries-link {
+  font-weight: 300;
+  &.current {
+    font-weight: 600;
   }
 }
