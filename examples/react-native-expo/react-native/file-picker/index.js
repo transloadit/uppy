@@ -58,7 +58,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
   }
 
   selectImage () {
-    selectImage().then((file) => {
+    selectImage({ exif: true }).then((file) => {
       this.uppy.addFile({
         source: 'React Native',
         name: `media_${Date.now()}.jpg`,
