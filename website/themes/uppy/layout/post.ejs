@@ -17,8 +17,7 @@
 
 
 <div class="Content js-Content with-sidebar">
-    <% 
-    
+    <%
         var title = page.title
         if (page.series) {
             title = page.series + ': ' + page.title
@@ -26,21 +25,25 @@
     %>
   <h1><%- title %></h1>
   <h4><%- page.date.format('dddd MMM D[,] YYYY') %></h4>
-    <% 
-        if (page.series) { 
+    <%
+        if (page.series) {
             var seriesList = []
-            site.posts.sort('date', +1).each(function (post) { 
+            site.posts.sort('date', +1).each(function (post) {
                 if (post.series === page.series) {
-                    seriesList.push('<a href="/' + post.path + '" class="postseries-link' + (page.title === post.title ? ' current' : '') + '">' + post.title + '</a>')
+                    seriesList.push('<option value="/' + post.path + '"' + (page.title === post.title ? ' selected' : '') + '>' + post.title + '</option>')
                 }
             })
     %>
-    <p><%- '↬ In this series: [ ' + seriesList.join(' | ') + ' ] ' + (page.seriesSuffix || '') %></p>
+    <div class="PostSeries">
+      🚀 In this series:
+      <select onchange="javascript:location.href = this.value;"><%- seriesList %></select>
+      <%-(page.seriesSuffix || '')%>
+    </div>
     <% } %>
     <%- page.content %>
-    <% 
-        var authors = page.author 
-        if (authors === (authors + '')) { 
+    <%
+        var authors = page.author
+        if (authors === (authors + '')) {
             authors = [ page.author ]
         }
 

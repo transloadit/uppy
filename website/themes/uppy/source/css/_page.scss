@@ -408,9 +408,10 @@
   }
 }
 
-.postseries-link {
-  font-weight: 300;
-  &.current {
-    font-weight: 600;
-  }
+.PostSeries {
+  margin: 20px 0;
+  padding: 12px 15px;
+  background: #f4f4f4;
+  border-radius: 3px;
+  font-size: 14px;
 }
