@@ -1,10 +1,11 @@
 ---
 type: docs
-order: 3
+order: 13
 title: "Instagram"
+menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/instagram"
 permalink: docs/instagram/
-category: 'Remote Sources'
+category: 'Sources'
 ---
 
 The `@uppy/instagram` plugin lets users import files from their Instagram account.

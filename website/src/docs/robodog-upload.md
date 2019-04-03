@@ -1,10 +1,10 @@
 ---
 type: docs
 title: "Robodog: Upload API"
-menu: "Upload"
+menu: "Robodog Upload"
 permalink: docs/robodog/upload/
 order: 3
-category: 'Robodog'
+category: 'File Processing'
 ---
 
 Upload files straight to Transloadit from your own custom UI. Give us an array of files, and we'll give you an array of results!

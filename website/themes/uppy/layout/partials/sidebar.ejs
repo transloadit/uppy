@@ -3,12 +3,10 @@ var categories = [
   { category: 'Docs', path: 'docs/', link: true, hidden: true },
   { category: 'Plugins', path: 'docs/plugins/', link: true },
   { category: 'UI Elements', path: 'docs/dashboard/', link: false },
-  { category: 'Local Sources', path: 'docs/drag-drop/', link: false },
-  { category: 'Remote Sources', path: 'docs/providers/', link: true },
+  { category: 'Sources', path: 'docs/drag-drop/', link: false },
   { category: 'Destinations', path: 'docs/tus/', link: false },
+  { category: 'File Processing', path: 'docs/robodog/', link: true },
   { category: 'Miscellaneous', path: 'docs/form/', link: false },
-  { category: 'File Processing', path: 'docs/transloadit/', link: false },
-  { category: 'Robodog', path: 'docs/robodog/', link: true },
   { category: 'React', path: 'docs/react/', link: true },
 ]
 
@@ -47,7 +45,7 @@ site.pages.find({ type }).each((p) => {
           <% var firstInCategory = categories.find((c) => c.path === path) %>
           <% // see https://github.com/vuejs/vuejs.org/blob/master/themes/vue/layout/partials/toc.ejs %>
           <li>
-            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.menu || p.title %></a>
+            <%- p.menu_prefix %><a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %>"><%- p.menu || p.title %></a>
           </li>
         <% }) %>
       <% } %>

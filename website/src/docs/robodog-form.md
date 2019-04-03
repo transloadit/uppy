@@ -1,10 +1,10 @@
 ---
 type: docs
 title: "Robodog: Form API"
-menu: "Form"
+menu: "Robodog Form"
 permalink: docs/robodog/form/
 order: 2
-category: 'Robodog'
+category: 'File Processing'
 ---
 
 Add resumable uploads and Transloadit's processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
