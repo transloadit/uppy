@@ -1,4 +1,5 @@
 const fs = require('fs')
+const stream = require('stream')
 const path = require('path')
 const tus = require('tus-js-client')
 const uuid = require('uuid')
@@ -13,6 +14,10 @@ const headerSanitize = require('./header-blacklist')
 
 class Uploader {
   /**
+   * Uploads file to destination based on the supplied protocol (tus, s3-multipart, multipart)
+   * For tus uploads, the deferredLength option is enabled, because file size value can be unreliable
+   * for some providers (Instagram particularly)
+   *
    * @typedef {object} UploaderOptions
    * @property {string} endpoint
    * @property {string=} uploadUrl
@@ -38,11 +43,21 @@ class Uploader {
     this.options = options
     this.token = uuid.v4()
     this.options.path = `${this.options.pathPrefix}/${Uploader.FILE_NAME_PREFIX}-${this.token}`
-    this.writer = fs.createWriteStream(this.options.path, { mode: 0o666 }) // no executable files
+    this.streamsEnded = false
+    this.duplexStream = new stream.PassThrough()
+      .on('error', (err) => logger.error(`${this.shortToken} ${err}`, 'uploader.duplex.error'))
+    this.writeStream = fs.createWriteStream(this.options.path, { mode: 0o666 }) // no executable files
       .on('error', (err) => logger.error(`${this.shortToken} ${err}`, 'uploader.write.error'))
     /** @type {number} */
     this.emittedProgress = 0
     this.storage = options.storage
+  }
+
+  /**
+   * the number of bytes written into the streams
+   */
+  get bytesWritten () {
+    return this.writeStream.bytesWritten
   }
 
   /**
@@ -116,28 +131,31 @@ class Uploader {
    * @param {Buffer | Buffer[]} chunk
    */
   handleChunk (chunk) {
-    logger.debug(`${this.shortToken} ${this.writer.bytesWritten} bytes`, 'uploader.download.progress')
+    logger.debug(`${this.shortToken} ${this.bytesWritten} bytes`, 'uploader.download.progress')
 
     const protocol = this.options.protocol || 'multipart'
 
     // The download has completed; close the file and start an upload if necessary.
     if (chunk === null) {
-      if (this.options.endpoint && protocol === 'multipart') {
-        this.writer.on('finish', () => {
+      this.writeStream.on('finish', () => {
+        this.streamsEnded = true
+        if (this.options.endpoint && protocol === 'multipart') {
           this.uploadMultipart()
-        })
-      }
-      return this.writer.end()
+        }
+      })
+
+      this.duplexStream.end()
+      return this.writeStream.end()
     }
 
-    this.writer.write(chunk, () => {
+    this.writeToStreams(chunk, () => {
       if (protocol === 's3-multipart' && !this.s3Upload) {
         return this.uploadS3Streaming()
       }
       if (!this.options.endpoint) return
 
       if (protocol === 'tus' && !this.tus) {
-        return this.uploadTus()
+        return this.uploadTus(true)
       }
     })
   }
@@ -147,11 +165,11 @@ class Uploader {
    * @param {object} resp
    */
   handleResponse (resp) {
-    resp.pipe(this.writer)
+    resp.pipe(this.writeStream)
 
     const protocol = this.options.protocol || 'multipart'
 
-    this.writer.on('finish', () => {
+    this.writeStream.on('finish', () => {
       if (protocol === 's3-multipart') {
         this.uploadS3Full()
       }
@@ -159,12 +177,29 @@ class Uploader {
       if (!this.options.endpoint) return
 
       if (protocol === 'tus') {
-        this.uploadTus()
+        this.uploadTus(false)
       }
       if (protocol === 'multipart') {
         this.uploadMultipart()
       }
     })
+  }
+
+  /**
+   * @param {Buffer | Buffer[]} chunk
+   * @param {function} cb
+   */
+  writeToStreams (chunk, cb) {
+    const done = []
+    const onDone = () => {
+      done.push(true)
+      if (done.length >= 2) {
+        cb()
+      }
+    }
+
+    this.duplexStream.write(chunk, onDone)
+    this.writeStream.write(chunk, onDone)
   }
 
   getResponse () {
@@ -190,6 +225,9 @@ class Uploader {
    */
   emitProgress (bytesUploaded, bytesTotal) {
     bytesTotal = bytesTotal || this.options.size
+    if (this.tus.options.uploadLengthDeferred && this.streamsEnded) {
+      bytesTotal = this.bytesWritten
+    }
     const percentage = (bytesUploaded / bytesTotal * 100)
     const formatPercentage = percentage.toFixed(2)
     logger.debug(
@@ -240,21 +278,31 @@ class Uploader {
     emitter().emit(this.token, dataToEmit)
   }
 
-  uploadTus () {
+  /**
+   *
+   * @param {boolean} deferLength
+   */
+  uploadTus (deferLength) {
     const fname = path.basename(this.options.path)
     const ftype = this.options.metadata.type
     const metadata = Object.assign({ filename: fname, filetype: ftype }, this.options.metadata || {})
-    const file = fs.createReadStream(this.options.path)
+    const file = deferLength ? this.duplexStream : fs.createReadStream(this.options.path)
     const uploader = this
+    const oneGB = 1024 * 1024 * 1024  // 1 GB
+    // chunk size can't be infinity with deferred length.
+    // cap value to 1GB to avoid buffer allocation error (RangeError)
+    const chunkSize = Math.min(this.options.size || oneGB, oneGB)
 
     // @ts-ignore
     this.tus = new tus.Upload(file, {
       endpoint: this.options.endpoint,
       uploadUrl: this.options.uploadUrl,
+      // @ts-ignore
+      uploadLengthDeferred: deferLength,
       resume: true,
-      uploadSize: this.options.size || fs.statSync(this.options.path).size,
+      uploadSize: deferLength ? null : (this.options.size || fs.statSync(this.options.path).size),
       metadata,
-      chunkSize: this.writer.bytesWritten,
+      chunkSize,
       /**
        *
        * @param {Error} error
@@ -270,15 +318,6 @@ class Uploader {
        */
       onProgress (bytesUploaded, bytesTotal) {
         uploader.emitProgress(bytesUploaded, bytesTotal)
-      },
-      /**
-       *
-       * @param {number} chunkSize
-       * @param {number} bytesUploaded
-       * @param {number} bytesTotal
-       */
-      onChunkComplete (chunkSize, bytesUploaded, bytesTotal) {
-        uploader.tus.options.chunkSize = uploader.writer.bytesWritten - bytesUploaded
       },
       onSuccess () {
         uploader.emitSuccess(uploader.tus.url)
@@ -350,7 +389,7 @@ class Uploader {
       tail: true
     })
 
-    this.writer.on('finish', () => {
+    this.writeStream.on('finish', () => {
       file.close()
     })
 
