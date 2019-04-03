@@ -130,7 +130,7 @@ npm install && cd website && npm install && cd ..
 For local previews on http://localhost:4000, type:
 
 ```bash
-npm start
+npm run web:start # that gets you just the website. if you need companion, etc. you can use `npm start` instead
 ```
 
 This will watch the website, as well as Uppy, as the examples, and rebuild everything and refresh your browser as files change.
