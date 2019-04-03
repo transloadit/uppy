@@ -1,6 +1,5 @@
 ---
 title: "Provider Plugins"
-menu: "Provider Plugins"
 type: docs
 permalink: docs/providers/
 order: 10
