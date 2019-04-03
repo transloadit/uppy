@@ -24,9 +24,9 @@ export default class UppyReactNativeFilePicker extends React.Component {
         { id: 'LocalImages', title: 'Pick Local Images/Videos' },
         { id: 'LocalDocuments', title: 'Pick Documents' },
         { id: 'LocalCamera', title: 'Take a Picture' },
-        { id: 'Url', title: 'Url' },
-        { id: 'GoogleDrive', title: 'Google Drive' },
-        { id: 'Instagram', title: 'Instagram' }
+        { id: 'Url', title: 'Url' }
+        // { id: 'GoogleDrive', title: 'Google Drive' },
+        // { id: 'Instagram', title: 'Instagram' }
       ],
       openProvider: null
     }
