@@ -2,8 +2,8 @@
 import React from 'react'
 import {
   Text,
-  View
-  // AsyncStorage
+  View,
+  AsyncStorage
   // Linking
 } from 'react-native'
 import Uppy from '@uppy/core'
@@ -66,7 +66,7 @@ export default class App extends React.Component {
     this.uppy = Uppy({ autoProceed: true, debug: true })
     this.uppy.use(Tus, {
       endpoint: 'https://master.tus.io/files/',
-      // urlStorage: AsyncStorage,
+      urlStorage: AsyncStorage,
       fingerprint: customFingerprint
     })
     this.uppy.on('upload-progress', (file, progress) => {
@@ -124,7 +124,8 @@ export default class App extends React.Component {
       <View style={{
         paddingTop: 100,
         paddingLeft: 50,
-        paddingRight: 50
+        paddingRight: 50,
+        flex: 1
       }}>
         <Text style={{
           fontSize: 25,
