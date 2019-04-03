@@ -1,9 +1,10 @@
 ---
 type: docs
-order: 44
+order: 4
 title: "Import From URL"
 module: "@uppy/url"
 permalink: docs/url/
+category: 'Remote Sources'
 ---
 
 The `@uppy/url` plugin allows users to import files from the internet. Paste any URL and it will be added!

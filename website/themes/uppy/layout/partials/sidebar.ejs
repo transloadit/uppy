@@ -1,24 +1,23 @@
 <%
 var categories = [
-  // order: 2x
-  { path: 'docs/plugins/', name: 'Plugins', link: true },
-  // order: 3x
-  { path: 'docs/dashboard/', name: 'Local Sources', link: false },
-  // order: 4x
-  { path: 'docs/providers/', name: 'Remote Providers', link: true },
-  // order: 5x
-  { path: 'docs/tus/', name: 'Uploaders', link: false },
-  // order: 6x
-  { path: 'docs/status-bar/', name: 'UI Elements', link: false },
-  // order: 7x
-  { path: 'docs/transloadit/', name: 'File Processing', link: false },
-  // order: 8x
-  { path: 'docs/form/', name: 'Miscellaneous', link: false },
-  // order: 9x
-  { path: 'docs/react/', name: 'React Components', link: true },
-  // order: 10x
-  { path: 'docs/robodog/', name: 'Robodog', link: true }
+  { category: 'Docs', path: 'docs/', link: true, hidden: true },
+  { category: 'Plugins', path: 'docs/plugins/', link: true },
+  { category: 'UI Elements', path: 'docs/dashboard/', link: false },
+  { category: 'Local Sources', path: 'docs/drag-drop/', link: false },
+  { category: 'Remote Sources', path: 'docs/providers/', link: true },
+  { category: 'Destinations', path: 'docs/tus/', link: false },
+  { category: 'Miscellaneous', path: 'docs/form/', link: false },
+  { category: 'File Processing', path: 'docs/transloadit/', link: false },
+  { category: 'Robodog', path: 'docs/robodog/', link: true },
+  { category: 'React', path: 'docs/react/', link: true },
 ]
+
+var catPages = {}
+site.pages.find({ type }).each((p) => {
+  var path = (p.path || '').replace(/index\.html$/, '');
+  catPages[p.category] = catPages[p.category] || [];
+  catPages[p.category].push(p);
+})
 %>
 <div class="Sidebar js-Sidebar">
   <ul class="main-menu">
@@ -30,30 +29,30 @@ var categories = [
         <a href="/<%- type %>"><%- type === 'api' ? 'API' : (type.charAt(0).toUpperCase() + type.slice(1)) %></a>
       <% } %>
     </h2>
+
     <ul class="menu-root">
-      <% site.pages.find({ type }).sort('order').each((p) => { %>
-        <% if (p.hidden) return; %>
-        <% var path = p.path.replace(/index\.html$/, ''); %>
-        <% var category = categories.find((c) => c.path === path) %>
-        <% // see https://github.com/vuejs/vuejs.org/blob/master/themes/vue/layout/partials/toc.ejs %>
-        <% if (category) { %>
+      <% for (var i in categories) { %>
+        <% var sorted = (catPages[categories[i].category] || ['No catPages for: ' + i]).sort((a, b) => {return a.order - b.order}) %>
+        <% if (!categories[i].hidden) { %>
           <li>
-            <% if (category.link) { %>
-              <h3><a href="/<%- category.path %>"><%- category.name %></a></h3>
+            <% if (categories[i].link) { %>
+            <h3><a href="/<%- categories[i].path %>"><%- categories[i].category %></a></h3>
             <% } else { %>
-              <h3><%- category.name %></h3>
+            <h3><%- categories[i].category %></h3>
             <% } %>
           </li>
-          <li>
-            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.menu || p.title %></a>
-          </li>
-        <% } else { %>
-          <li>
-            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.menu || p.title %></a>
-          </li>
         <% } %>
-      <% }) %>
+        <% sorted.forEach((p) => { %>
+          <% var path = (p.path || '').replace(/index\.html$/, ''); %>
+          <% var firstInCategory = categories.find((c) => c.path === path) %>
+          <% // see https://github.com/vuejs/vuejs.org/blob/master/themes/vue/layout/partials/toc.ejs %>
+          <li>
+            <a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %><%- p.is_new ? ' new' : '' %>"><%- p.menu || p.title %></a>
+          </li>
+        <% }) %>
+      <% } %>
     </ul>
     <%- partial('partials/social') %>
   </div>
 </div>
+

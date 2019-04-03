@@ -1,9 +1,10 @@
 ---
 type: docs
-order: 36
+order: 6
 title: "Webcam"
 module: "@uppy/webcam"
 permalink: docs/webcam/
+category: 'Local Sources'
 ---
 
 The `@uppy/webcam` plugin lets you take photos and record videos with a built-in camera on desktop and mobile devices.

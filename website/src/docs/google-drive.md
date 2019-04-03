@@ -1,9 +1,10 @@
 ---
 type: docs
-order: 42
+order: 2
 title: "Google Drive"
 module: "@uppy/google-drive"
 permalink: docs/google-drive/
+category: 'Remote Sources'
 ---
 
 The `@uppy/google-drive` plugin lets users import files from their Google Drive account.

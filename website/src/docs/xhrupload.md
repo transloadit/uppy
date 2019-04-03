@@ -1,10 +1,11 @@
 ---
 type: docs
-order: 51
+order: 1
 title: "XHR Upload"
 module: "@uppy/xhr-upload"
 permalink: docs/xhr-upload/
 alias: docs/xhrupload/
+category: 'Destinations'
 ---
 
 The `@uppy/xhr-upload` plugin handles classic HTML multipart form uploads, as well as uploads using the HTTP `PUT` method.

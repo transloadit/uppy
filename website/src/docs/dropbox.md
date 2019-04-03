@@ -1,9 +1,10 @@
 ---
 type: docs
-order: 41
+order: 1
 title: "Dropbox"
 module: "@uppy/dropbox"
 permalink: docs/dropbox/
+category: 'Remote Sources'
 ---
 
 The `@uppy/dropbox` plugin lets users import files from their Dropbox account.

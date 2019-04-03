@@ -5,6 +5,7 @@ title: "Companion"
 module: "@uppy/companion"
 permalink: docs/companion/
 alias: docs/server/
+category: 'Docs'
 ---
 
 > Companion was previously known as Uppy Server. It was renamed in v0.14.0.
