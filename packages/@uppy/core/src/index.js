@@ -123,6 +123,7 @@ class Uppy {
       allowNewUpload: true,
       capabilities: {
         uploadProgress: supportsUploadProgress(),
+        individualCancellation: true,
         resumableUploads: false
       },
       totalProgress: 0,

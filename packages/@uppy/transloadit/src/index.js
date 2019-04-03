@@ -708,6 +708,15 @@ module.exports = class Transloadit extends Plugin {
       // Contains result data from Transloadit.
       results: []
     })
+
+    // We cannot cancel individual files because Assemblies tend to contain many files.
+    const { capabilities } = this.uppy.getState()
+    this.uppy.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: false
+      }
+    })
   }
 
   uninstall () {
@@ -718,6 +727,14 @@ module.exports = class Transloadit extends Plugin {
     if (this.opts.importFromUploadURLs) {
       this.uppy.off('upload-success', this._onFileUploadURLAvailable)
     }
+
+    const { capabilities } = this.uppy.getState()
+    this.uppy.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: true
+      }
+    })
   }
 
   getAssembly (id) {

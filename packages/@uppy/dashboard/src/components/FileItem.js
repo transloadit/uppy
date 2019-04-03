@@ -15,14 +15,14 @@ function FileItemProgressWrapper (props) {
   }
 
   if (props.isUploaded ||
-      props.bundled ||
+      !props.individualCancellation ||
       (props.hidePauseResumeCancelButtons && !props.error)) {
     return <div class="uppy-DashboardItem-progressIndicator">
       <FileItemProgress
         progress={props.file.progress.percentage}
         fileID={props.file.id}
         hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
-        bundled={props.bundled}
+        individualCancellation={props.individualCancellation}
       />
     </div>
   }
@@ -44,7 +44,7 @@ function FileItemProgressWrapper (props) {
   </button>
 }
 
-module.exports = function fileItem (props) {
+module.exports = function FileItem (props) {
   const file = props.file
   const acquirers = props.acquirers
 
@@ -72,7 +72,7 @@ module.exports = function fileItem (props) {
 
     if (props.resumableUploads) {
       props.pauseUpload(file.id)
-    } else {
+    } else if (props.individualCancellation) {
       props.cancelUpload(file.id)
     }
   }
@@ -91,9 +91,11 @@ module.exports = function fileItem (props) {
         return props.i18n('resumeUpload')
       }
       return props.i18n('pauseUpload')
-    } else {
+    } else if (props.individualCancellation) {
       return props.i18n('cancelUpload')
     }
+
+    return ''
   }
 
   const dashboardItemClass = classNames(

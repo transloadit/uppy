@@ -701,7 +701,7 @@ module.exports = class Dashboard extends Plugin {
       note: this.opts.note,
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
-      bundled: capabilities.bundled || false,
+      individualCancellation: capabilities.individualCancellation,
       startUpload,
       pauseUpload: this.uppy.pauseResume,
       retryUpload: this.uppy.retryUpload,
