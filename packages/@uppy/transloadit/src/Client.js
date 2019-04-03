@@ -46,12 +46,24 @@ module.exports = class Client {
     })
   }
 
+  /**
+   * Reserve resources for a file in an Assembly. Then addFile can be used later.
+   *
+   * @param {object} assembly
+   * @param {UppyFile} file
+   */
   reserveFile (assembly, file) {
     const size = encodeURIComponent(file.size)
     return fetch(`${assembly.assembly_ssl_url}/reserve_file?size=${size}`, { method: 'post' })
       .then((response) => response.json())
   }
 
+  /**
+   * Import a remote file to an Assembly.
+   *
+   * @param {object} assembly
+   * @param {UppyFile} file
+   */
   addFile (assembly, file) {
     if (!file.uploadURL) {
       return Promise.reject(new Error('File does not have an `uploadURL`.'))
@@ -63,6 +75,16 @@ module.exports = class Client {
 
     const qs = `size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${url}`
     return fetch(`${assembly.assembly_ssl_url}/add_file?${qs}`, { method: 'post' })
+      .then((response) => response.json())
+  }
+
+  /**
+   * Cancel a running Assembly.
+   *
+   * @param {object} assembly
+   */
+  cancelAssembly (assembly) {
+    return fetch(assembly.assembly_ssl_url, { method: 'delete' })
       .then((response) => response.json())
   }
 
