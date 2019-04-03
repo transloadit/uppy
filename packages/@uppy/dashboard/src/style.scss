@@ -550,13 +550,13 @@
   display: flex;
   visibility: hidden;
   position: absolute;
-  top: 6px;
-  right: 6px;
-  bottom: 6px;
-  left: 6px;
+  top: 3px;
+  right: 3px;
+  bottom: 3px;
+  left: 3px;
   padding-top: 90px;
   border: 2px dashed $color-cornflower-blue;
-  border-radius: 2px;
+  border-radius: 4px;
   z-index: 2000;
   align-items: center;
   justify-content: center;
