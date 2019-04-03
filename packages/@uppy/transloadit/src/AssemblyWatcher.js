@@ -22,6 +22,7 @@ class TransloaditAssemblyWatcher extends Emitter {
     })
 
     this._onAssemblyComplete = this._onAssemblyComplete.bind(this)
+    this._onAssemblyCancel = this._onAssemblyCancel.bind(this)
     this._onAssemblyError = this._onAssemblyError.bind(this)
     this._onImportError = this._onImportError.bind(this)
 
@@ -43,6 +44,14 @@ class TransloaditAssemblyWatcher extends Emitter {
     this._uppy.log(`[Transloadit] AssemblyWatcher: Got Assembly finish ${assembly.assembly_id}`)
 
     this.emit('assembly-complete', assembly.assembly_id)
+
+    this._checkAllComplete()
+  }
+
+  _onAssemblyCancel (assembly) {
+    if (!this._watching(assembly.assembly_id)) {
+      return
+    }
 
     this._checkAllComplete()
   }
@@ -84,12 +93,14 @@ class TransloaditAssemblyWatcher extends Emitter {
 
   _removeListeners () {
     this._uppy.off('transloadit:complete', this._onAssemblyComplete)
+    this._uppy.off('transloadit:assembly-cancel', this._onAssemblyCancel)
     this._uppy.off('transloadit:assembly-error', this._onAssemblyError)
     this._uppy.off('transloadit:import-error', this._onImportError)
   }
 
   _addListeners () {
     this._uppy.on('transloadit:complete', this._onAssemblyComplete)
+    this._uppy.on('transloadit:assembly-cancel', this._onAssemblyCancel)
     this._uppy.on('transloadit:assembly-error', this._onAssemblyError)
     this._uppy.on('transloadit:import-error', this._onImportError)
   }

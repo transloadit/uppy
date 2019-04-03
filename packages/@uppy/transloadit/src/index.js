@@ -338,29 +338,6 @@ module.exports = class Transloadit extends Plugin {
   }
 
   /**
-   * When a file is removed from Uppy, cancel its corresponding Assembly.
-   */
-  _onFileRemoved (file) {
-    if (!file.transloadit) {
-      // No associated Assembly.
-      return
-    }
-
-    const assemblyID = file.transloadit.assembly
-    const assembly = this.getAssembly(assemblyID)
-
-    const assemblyContainsOtherFiles = this.getAssemblyFiles(assemblyID).length > 0
-    if (assemblyContainsOtherFiles) {
-      return
-    }
-
-    this.client.cancelAssembly(assembly).then(() => {
-      // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
-      this.uppy.emit('transloadit:assembly-cancelled', assembly)
-    })
-  }
-
-  /**
    * When all files are removed, cancel in-progress Assemblies.
    */
   _onCancelAll () {
