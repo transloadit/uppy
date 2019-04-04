@@ -298,8 +298,8 @@ const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
       } */}
       <span class="uppy-StatusBar-details"
         aria-label={error}
-        data-microtip-position="top"
-        data-microtip-size="large"
+        data-microtip-position="top-right"
+        data-microtip-size="medium"
         role="tooltip">?</span>
     </div>
   )
