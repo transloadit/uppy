@@ -366,7 +366,8 @@ class Uppy {
       }
     }
 
-    if (maxFileSize) {
+    // We can't check maxFileSize if the size is unknown.
+    if (maxFileSize && file.data.size != null) {
       if (file.data.size > maxFileSize) {
         throw new Error(`${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`)
       }
@@ -427,6 +428,8 @@ class Uppy {
     meta.name = fileName
     meta.type = fileType
 
+    // `null` means the size is unknown.
+    const size = isFinite(file.data.size) ? file.data.size : null
     const newFile = {
       source: file.source || '',
       id: fileID,
@@ -438,11 +441,11 @@ class Uppy {
       progress: {
         percentage: 0,
         bytesUploaded: 0,
-        bytesTotal: file.data.size || 0,
+        bytesTotal: size,
         uploadComplete: false,
         uploadStarted: false
       },
-      size: file.data.size || 0,
+      size: size,
       isRemote: isRemote,
       remote: file.remote || '',
       preview: file.preview
@@ -629,11 +632,17 @@ class Uppy {
       return
     }
 
+    // bytesTotal may be null or zero; in that case we can't divide by it
+    const canHavePercentage = isFinite(data.bytesTotal) && data.bytesTotal > 0
     this.setFileState(file.id, {
       progress: Object.assign({}, this.getFile(file.id).progress, {
         bytesUploaded: data.bytesUploaded,
         bytesTotal: data.bytesTotal,
-        percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
+        percentage: canHavePercentage
+          // TODO(goto-bus-stop) flooring this should probably be the choice of the UI?
+          // we get more accurate calculations if we don't round this at all.
+          ? Math.floor(data.bytesUploaded / data.bytesTotal * 100)
+          : 0
       })
     })
 
