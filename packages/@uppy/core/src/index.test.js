@@ -992,7 +992,7 @@ describe('src/Core', () => {
 
       const fileId = Object.keys(core.getState().files)[0]
       const file = core.getFile(fileId)
-      core._calculateProgress(file, {
+      core.emit('upload-progress', file, {
         bytesUploaded: 12345,
         bytesTotal: 17175
       })
@@ -1004,7 +1004,7 @@ describe('src/Core', () => {
         uploadStarted: false
       })
 
-      core._calculateProgress(file, {
+      core.emit('upload-progress', file, {
         bytesUploaded: 17175,
         bytesTotal: 17175
       })
@@ -1015,6 +1015,68 @@ describe('src/Core', () => {
         uploadComplete: false,
         uploadStarted: false
       })
+    })
+
+    it('should work with unsized files', async () => {
+      const core = new Core()
+      let proceedUpload
+      let finishUpload
+      const promise = new Promise((resolve) => { proceedUpload = resolve })
+      const finishPromise = new Promise((resolve) => { finishUpload = resolve })
+      core.addUploader(async ([id]) => {
+        core.emit('upload-started', core.getFile(id))
+        await promise
+        core.emit('upload-progress', core.getFile(id), {
+          bytesTotal: 3456,
+          bytesUploaded: 1234
+        })
+        await finishPromise
+        core.emit('upload-success', core.getFile(id), { uploadURL: 'lol' })
+      })
+
+      core.addFile({
+        source: 'instagram',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: {}
+      })
+
+      core._calculateTotalProgress()
+
+      const uploadPromise = core.upload()
+      await new Promise((resolve) => core.once('upload-started', resolve))
+
+      expect(core.getFiles()[0].size).toBeNull()
+      expect(core.getFiles()[0].progress).toMatchObject({
+        bytesUploaded: 0,
+        // null indicates unsized
+        bytesTotal: null,
+        percentage: 0
+      })
+
+      proceedUpload()
+      // wait for progress event
+      await promise
+
+      expect(core.getFiles()[0].size).toBeNull()
+      expect(core.getFiles()[0].progress).toMatchObject({
+        bytesUploaded: 1234,
+        bytesTotal: 3456,
+        percentage: 35
+      })
+
+      finishUpload()
+      // wait for success event
+      await finishPromise
+
+      expect(core.getFiles()[0].size).toBeNull()
+      expect(core.getFiles()[0].progress).toMatchObject({
+        bytesUploaded: 3456,
+        bytesTotal: 3456,
+        percentage: 100
+      })
+
+      await uploadPromise
     })
 
     it('should calculate the total progress of all file uploads', () => {
@@ -1037,12 +1099,12 @@ describe('src/Core', () => {
       core.setFileState(file1.id, { progress: Object.assign({}, file1.progress, { uploadStarted: new Date() }) })
       core.setFileState(file2.id, { progress: Object.assign({}, file2.progress, { uploadStarted: new Date() }) })
 
-      core._calculateProgress(core.getFile(file1.id), {
+      core.emit('upload-progress', core.getFile(file1.id), {
         bytesUploaded: 12345,
         bytesTotal: 17175
       })
 
-      core._calculateProgress(core.getFile(file2.id), {
+      core.emit('upload-progress', core.getFile(file2.id), {
         bytesUploaded: 10201,
         bytesTotal: 17175
       })
@@ -1073,12 +1135,12 @@ describe('src/Core', () => {
       core.setFileState(file1.id, { progress: Object.assign({}, file1.progress, { uploadStarted: new Date() }) })
       core.setFileState(file2.id, { progress: Object.assign({}, file2.progress, { uploadStarted: new Date() }) })
 
-      core._calculateProgress(core.getFile(file1.id), {
+      core.emit('upload-progress', core.getFile(file1.id), {
         bytesUploaded: 12345,
         bytesTotal: 17175
       })
 
-      core._calculateProgress(core.getFile(file2.id), {
+      core.emit('upload-progress', core.getFile(file2.id), {
         bytesUploaded: 10201,
         bytesTotal: 17175
       })
