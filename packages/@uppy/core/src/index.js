@@ -1035,13 +1035,7 @@ class Uppy {
       return
     }
 
-    if (msg === `${msg}`) {
-      console.log(message)
-    } else {
-      message = `[Uppy] [${getTimeStamp()}]`
-      console.log(message)
-      console.dir(msg)
-    }
+    console.log(message)
   }
 
   /**
