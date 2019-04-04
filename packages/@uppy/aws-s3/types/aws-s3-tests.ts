@@ -1,11 +1,11 @@
-import Uppy, { UppyFile } from '@uppy/core';
-import AwsS3 from '../';
+import Uppy = require('@uppy/core');
+import AwsS3 = require('../');
 
 {
   const uppy = Uppy();
   uppy.use(AwsS3, {
     getUploadParameters(file) {
-      file // $ExpectType UppyFile
+      file // $ExpectType Uppy.UppyFile
     }
   });
 }
