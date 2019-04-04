@@ -225,7 +225,7 @@ class Uploader {
    */
   emitProgress (bytesUploaded, bytesTotal) {
     bytesTotal = bytesTotal || this.options.size
-    if (this.tus.options.uploadLengthDeferred && this.streamsEnded) {
+    if (this.tus && this.tus.options.uploadLengthDeferred && this.streamsEnded) {
       bytesTotal = this.bytesWritten
     }
     const percentage = (bytesUploaded / bytesTotal * 100)
