@@ -50,8 +50,7 @@ const options = {
     protocol: protocol
   },
   filePath: '/tmp',
-  secret: process.env.UPPY_SECRET,
-  debug: true
+  secret: process.env.UPPY_SECRET
 }
 
 app.use(uppy.app(options))
