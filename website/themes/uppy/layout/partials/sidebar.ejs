@@ -1,14 +1,27 @@
 <%
-var categories = [
-  { category: 'Docs', path: 'docs/', link: true, hidden: true },
-  { category: 'Plugins', path: 'docs/plugins/', link: true },
-  { category: 'UI Elements', path: 'docs/dashboard/', link: false },
-  { category: 'Sources', path: 'docs/drag-drop/', link: false },
-  { category: 'Destinations', path: 'docs/tus/', link: false },
-  { category: 'File Processing', path: 'docs/robodog/', link: true },
-  { category: 'Miscellaneous', path: 'docs/form/', link: false },
-  { category: 'React', path: 'docs/react/', link: true },
-]
+var categories = []
+
+if (page.type === 'docs') {
+  categories = [
+    { category: 'Docs', path: 'docs/', link: true, hidden: true },
+    { category: 'Plugins', path: 'docs/plugins/', link: true },
+    { category: 'UI Elements', path: 'docs/dashboard/', link: false },
+    { category: 'Sources', path: 'docs/drag-drop/', link: false },
+    { category: 'Destinations', path: 'docs/tus/', link: false },
+    { category: 'File Processing', path: 'docs/robodog/', link: true },
+    { category: 'Miscellaneous', path: 'docs/form/', link: false },
+    { category: 'React', path: 'docs/react/', link: true },
+    ]
+  } else if (page.type === 'examples') {
+    categories = [
+    { category: 'Examples', path: 'examples/', link: true, hidden: true },
+    { category: 'File Processing', path: 'examples/markdown-snippets/', link: true },
+  ]
+} else {
+  categories = [
+    { category: 'Unknown Type: ' + page.type, path: 'unknown/unknown/', link: false },
+  ]
+}
 
 var catPages = {}
 site.pages.find({ type }).each((p) => {
