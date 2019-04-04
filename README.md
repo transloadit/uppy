@@ -285,6 +285,13 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 [rhymes](https://github.com/rhymes) |[functino](https://github.com/functino) |
 <!--/contributors-->
 
+## Software
+
+We use Browserstack for manual testing
+<a href="https://www.browserstack.com" target="_blank">
+  <img align="left" width="117" alt="BrowserStack logo" src="https://i.ibb.co/HDRDHmx/Browserstack-logo-2x.png">
+</a>
+
 ## License
 
 [The MIT License](LICENSE).
