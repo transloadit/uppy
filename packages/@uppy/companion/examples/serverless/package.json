@@ -2,11 +2,15 @@
   "name": "uploader",
   "version": "1.0.0",
   "dependencies": {
-    "aws-serverless-express": "^3.1.3",
-    "body-parser": "^1.18.2",
-    "compression": "^1.7.2",
-    "cors": "^2.8.4",
-    "express": "^4.16.3",
-    "@uppy/companion": "^0.11.2"
+    "@uppy/companion": "^0.17.3",
+    "aws-serverless-express": "^3.3.6",
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6"
+  },
+  "devDependencies": {
+    "serverless-offline": "^4.9.3"
   }
 }

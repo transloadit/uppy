@@ -3,6 +3,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const session = require('express-session')
 const compression = require('compression')
 const awsServerlessExpress = require('aws-serverless-express')
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
@@ -12,8 +13,13 @@ const app = express()
 
 app.use(compression())
 app.use(cors())
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true
+}))
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(awsServerlessExpressMiddleware.eventContext())
 
 const host = process.env.DOMAIN.split('://')[1]
@@ -42,10 +48,17 @@ const options = {
   server: {
     host: host,
     protocol: protocol
-  }
+  },
+  filePath: '/tmp',
+  secret: process.env.UPPY_SECRET
 }
 
 app.use(uppy.app(options))
+
+app.get('/', (req, res) => {
+  res.setHeader('Content-Type', 'text/plain')
+  res.send("Hello there, here's a response from companion")
+})
 
 const server = awsServerlessExpress.createServer(app)
 
