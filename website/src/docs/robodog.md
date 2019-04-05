@@ -1,10 +1,11 @@
 ---
 type: docs
-order: 100
+order: 0
 title: "Robodog"
-menu: "Introduction"
+menu: "Robodog Introduction"
 module: "@uppy/robodog"
 permalink: docs/robodog/
+category: 'File Processing'
 ---
 
 [Transloadit][transloadit] is a service that helps you handle file uploads, resize, crop and watermark your images, make GIFs, transcode your videos, extract thumbnails, generate audio waveforms, and so much more. In short, [Transloadit][transloadit] is the Swiss Army Knife for your files.

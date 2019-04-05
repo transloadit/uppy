@@ -1,10 +1,11 @@
 ---
 type: docs
-order: 60
+order: 0
 title: "Status Bar"
 module: "@uppy/status-bar"
 permalink: docs/status-bar/
 alias: docs/statusbar/
+category: 'UI Elements'
 ---
 
 The `@uppy/status-bar` plugin shows upload progress and speed, ETAs, pre- and post-processing information, and allows users to control (pause/resume/cancel) the upload.

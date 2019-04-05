@@ -1,9 +1,10 @@
 ---
 type: docs
-order: 62
+order: 2
 title: "Informer"
 module: "@uppy/informer"
 permalink: docs/informer/
+category: 'UI Elements'
 ---
 
 The `@uppy/informer` plugin is a pop-up bar for showing notifications. When plugins have some exciting news (or error) to share, they can show a notification here.

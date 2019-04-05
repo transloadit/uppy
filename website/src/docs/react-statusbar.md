@@ -3,7 +3,8 @@ title: "&lt;StatusBar />"
 type: docs
 permalink: docs/react/status-bar/
 alias: docs/react/statusbar/
-order: 91
+order: 1
+category: 'React'
 ---
 
 The `<StatusBar />` component wraps the [`@uppy/status-bar`][] plugin.

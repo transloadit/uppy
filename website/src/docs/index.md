@@ -4,6 +4,7 @@ type: docs
 permalink: docs/
 alias: api/
 order: 0
+category: 'Docs'
 ---
 
 Uppy is a sleek and modular file uploader. It fetches files from local disk, Google Drive, Instagram, remote urls, cameras etc, and then uploads them to the final destination. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.

@@ -2,7 +2,8 @@
 title: "Redux"
 type: docs
 permalink: docs/redux/
-order: 97
+order: 9
+category: 'React'
 ---
 
 Uppy supports the popular [Redux](https://redux.js.org/) state management library in two ways:

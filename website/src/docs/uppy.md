@@ -4,6 +4,7 @@ order: 1
 title: "Uppy"
 module: "@uppy/core"
 permalink: docs/uppy/
+category: 'Docs'
 ---
 
 This is the core module that orchestrates everything in Uppy, managing state and events and providing methods.
