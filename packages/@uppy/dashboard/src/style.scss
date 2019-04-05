@@ -328,7 +328,7 @@
     display: inline-block;
     vertical-align: text-top;
     overflow: hidden;
-    transition: transform ease-in-out 0.2s;
+    transition: transform ease-in-out .15s;
   }
 
   .uppy-DashboardTab-btn:hover svg {
