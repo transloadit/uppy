@@ -15,7 +15,7 @@ Instagram, etc. **Companion is not a target to upload files to**. For this, use 
 npm install @uppy/companion
 ```
 
-If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@0.30.0`.
+If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@0.17.4` (best check the actual latest version, and use that, so (re)installs are reproducible, and upgrades intentional).
 
 ## Usage
 
