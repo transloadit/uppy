@@ -1,18 +1,20 @@
 import 'es6-promise/auto'
 import 'whatwg-fetch'
-import Uppy = require('@uppy/core')
-import Dashboard = require('@uppy/dashboard')
-import Instagram = require('@uppy/instagram')
-import Dropbox = require('@uppy/dropbox')
-import GoogleDrive = require('@uppy/google-drive')
-import Url = require('@uppy/url')
-import Webcam = require('@uppy/webcam')
-import Tus = require('@uppy/tus')
-import Form = require('@uppy/form')
+import {
+  Core,
+  Dashboard,
+  Instagram,
+  Dropbox,
+  GoogleDrive,
+  Url,
+  Webcam,
+  Tus,
+  Form
+} from 'uppy'
 
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
 
-const uppy = Uppy({
+const uppy = Core({
   debug: true,
   meta: {
     username: 'John',

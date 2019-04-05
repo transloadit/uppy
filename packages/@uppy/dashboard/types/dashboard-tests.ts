@@ -1,5 +1,5 @@
-import Uppy from '@uppy/core';
-import Dashboard from '../';
+import Uppy = require('@uppy/core')
+import Dashboard = require('../')
 
 {
   const uppy = Uppy()
@@ -7,7 +7,7 @@ import Dashboard from '../';
     target: 'body'
   })
 
-  const plugin = <Dashboard>uppy.getPlugin('Dashboard')
+  const plugin = uppy.getPlugin('Dashboard') as Dashboard
   plugin.openModal()
   plugin.isModalOpen() // $ExpectType boolean
   plugin.closeModal()

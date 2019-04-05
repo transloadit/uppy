@@ -28,8 +28,8 @@ const transloadit = require('@uppy/robodog')
 If you are not using a bundler, you can also import the Robodog using an HTML script tag.
 
 ```html
-<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v0.30.3/robodog.min.css">
-<script src="https://transloadit.edgly.net/releases/uppy/v0.30.3/robodog.min.js"></script> 
+<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v0.30.4/robodog.min.css">
+<script src="https://transloadit.edgly.net/releases/uppy/v0.30.4/robodog.min.js"></script> 
 ``` 
 
 ## Methods
