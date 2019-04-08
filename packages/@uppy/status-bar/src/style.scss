@@ -114,7 +114,6 @@
   overflow-x: hidden;
 
   .uppy-size--md & {
-    line-height: 1.5;
     max-width: 400px;
   }
 }
@@ -125,7 +124,7 @@
 
 .uppy-StatusBar-statusSecondary {
   font-size: 11px;
-  // line-height: 1;
+  line-height: 1.2;
   display: inline-block;
   color: rgba($color-asphalt-gray, 0.8);
   text-overflow: ellipsis;
@@ -187,7 +186,8 @@
 .uppy-StatusBar-actionCircleBtn {
   line-height: 1;
   cursor: pointer;
-  padding: 4px;
+  padding: 3px;
+  opacity: 0.9;
   // display: flex;
   // align-items: center;
   // justify-content: center;
@@ -197,6 +197,10 @@
   // color: rgba($color-black, 0.6);
   // background-color: rgba($color-gray, 0.3);
   // text-align: center;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
   .uppy-StatusBar-actionCircleBtn:focus {
