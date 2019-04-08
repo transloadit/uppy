@@ -405,10 +405,14 @@
 
 .uppy-DashboardContent-back {
   @include reset-button;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
   cursor: pointer;
   color: $color-cornflower-blue;
+
+  .uppy-size--md & {
+    font-size: 14px;
+  }
 }
 
 .uppy-DashboardContent-addMore {
@@ -856,8 +860,8 @@ a.uppy-Dashboard-poweredBy {
   @include reset-button;
   cursor: pointer;
   color: #111;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   opacity: 0.9;
 
   .uppy-size--md & {
@@ -932,8 +936,8 @@ a.uppy-Dashboard-poweredBy {
     opacity: 1;
 
     .uppy-size--md & {
-      width: 25px;
-      height: 25px;
+      width: 22px;
+      height: 22px;
     }
   }
 
