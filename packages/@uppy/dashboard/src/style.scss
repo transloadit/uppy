@@ -389,7 +389,7 @@
   text-align: center;
   font-size: 12px;
   line-height: 40px;
-  font-weight: normal;
+  font-weight: 500;
   max-width: 170px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -865,7 +865,7 @@ a.uppy-Dashboard-poweredBy {
 .uppy-DashboardItem-remove {
   @include reset-button;
   cursor: pointer;
-  color: $color-black;
+  color: #111;
   width: 16px;
   height: 16px;
   opacity: 0.75;
