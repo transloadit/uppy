@@ -99,7 +99,7 @@
 
 .uppy-ProviderBrowser-header {
   z-index: $zIndex-2;
-  border-bottom: 1px solid rgba($color-gray, 0.3);
+  border-bottom: 1px solid #eaeaea;
   position: relative;
 }
 
@@ -463,7 +463,7 @@
   align-items: center;
   background: $color-white;
   height: 65px;
-  border-top: 1px solid rgba($color-gray, 0.3);
+  border-top: 1px solid #eaeaea;
   padding: 0 15px;
 
   & button {
