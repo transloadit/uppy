@@ -110,16 +110,15 @@
 // Inputs
 
 .uppy-c-textInput {
-  border: 1px solid rgba($color-gray, 0.5);
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   padding: 6px 8px;
   background-color: $color-white;
 }
 
   .uppy-size--md .uppy-c-textInput {
-    font-size: 14px;
     line-height: 1.8;
     padding: 8px 12px;
   }
@@ -150,7 +149,7 @@
   }
 
 .uppy-c-btn-primary {
-  font-size: 13px;
+  font-size: 14px;
   padding: 10px 18px;
   border-radius: 4px;
   background-color: $color-cornflower-blue;
@@ -158,7 +157,6 @@
 }
 
   .uppy-size--md .uppy-c-btn-primary {
-    font-size: 14px;
     padding: 13px 22px;
   }
 
@@ -172,7 +170,7 @@
   }
 
 .uppy-c-btn-link {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1;
   padding: 10px 18px;
   border-radius: 4px;
@@ -181,7 +179,6 @@
 }
 
   .uppy-size--md .uppy-c-btn-link {
-    font-size: 14px;
     padding: 13px 28px;
     // border-radius: 4px;
   }

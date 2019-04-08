@@ -125,12 +125,12 @@
   font-weight: 400;
 
   .uppy-size--md & {
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 
 .uppy-StatusBar-statusSecondary {
-  font-size: 10px;
+  font-size: 11px;
   // line-height: 1;
   display: inline-block;
   color: rgba($color-asphalt-gray, 0.8);
@@ -140,7 +140,6 @@
   // max-width: 170px;
 
   .uppy-size--md & {
-    font-size: 11px;
     // max-width: 500px;
   }
 }
