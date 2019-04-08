@@ -149,7 +149,7 @@ describe('src/Core', () => {
 
       const newState = {
         bee: 'boo',
-        capabilities: { uploadProgress: true, resumableUploads: false },
+        capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
         allowNewUpload: true,
@@ -173,7 +173,7 @@ describe('src/Core', () => {
       // current state
       expect(stateUpdateEventMock.mock.calls[1][0]).toEqual({
         bee: 'boo',
-        capabilities: { uploadProgress: true, resumableUploads: false },
+        capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
         allowNewUpload: true,
@@ -186,7 +186,7 @@ describe('src/Core', () => {
       // new state
       expect(stateUpdateEventMock.mock.calls[1][1]).toEqual({
         bee: 'boo',
-        capabilities: { uploadProgress: true, resumableUploads: false },
+        capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
         allowNewUpload: true,
@@ -203,17 +203,7 @@ describe('src/Core', () => {
 
       core.setState({ foo: 'bar' })
 
-      expect(core.getState()).toEqual({
-        capabilities: { uploadProgress: true, resumableUploads: false },
-        files: {},
-        currentUploads: {},
-        allowNewUpload: true,
-        foo: 'bar',
-        info: { isHidden: true, message: '', type: 'info' },
-        meta: {},
-        plugins: {},
-        totalProgress: 0
-      })
+      expect(core.getState()).toMatchObject({ foo: 'bar' })
     })
   })
 
@@ -228,11 +218,10 @@ describe('src/Core', () => {
 
     core.reset()
 
-    // expect(corePauseEventMock.mock.calls.length).toEqual(1)
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
     expect(coreStateUpdateEventMock.mock.calls[1][1]).toEqual({
-      capabilities: { uploadProgress: true, resumableUploads: false },
+      capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },
       files: {},
       currentUploads: {},
       allowNewUpload: true,
@@ -291,7 +280,7 @@ describe('src/Core', () => {
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls[0][1]).toEqual({
-      capabilities: { uploadProgress: true, resumableUploads: false },
+      capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },
       files: {},
       currentUploads: {},
       allowNewUpload: true,
