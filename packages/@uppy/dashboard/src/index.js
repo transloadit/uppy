@@ -248,9 +248,8 @@ module.exports = class Dashboard extends Plugin {
   requestCloseModal () {
     if (this.opts.onRequestCloseModal) {
       return this.opts.onRequestCloseModal()
-    } else {
-      this.closeModal()
     }
+    return this.closeModal()
   }
 
   getFocusableNodes () {

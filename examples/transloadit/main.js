@@ -48,6 +48,17 @@ const formUppyWithDashboard = transloadit.form('#dashboard-form', {
 
 window.formUppyWithDashboard = formUppyWithDashboard
 
+const dashboard = transloadit.dashboard('#dashboard', {
+  debug: true,
+  waitForEncoding: true,
+  params: {
+    auth: { key: '05a61ed019fe11e783fdbd1f56c73eb0' },
+    template_id: 'be001500a56011e889f9cddd88df842c'
+  }
+})
+
+window.dashboard = dashboard
+
 /**
  * transloadit.modal
  */
