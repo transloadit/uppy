@@ -206,7 +206,7 @@
 }
 
 .uppy-DashboardTabs-title {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 30px;
   font-weight: 400;
   margin: 0;
@@ -215,7 +215,7 @@
   color: $color-asphalt-gray;
 
   .uppy-size--md & {
-    font-size: 17px;
+    font-size: 16px;
     line-height: 40px;
   }
 }
@@ -405,14 +405,10 @@
 
 .uppy-DashboardContent-back {
   @include reset-button;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   color: $color-cornflower-blue;
-
-  .uppy-size--md & {
-    font-size: 15px;
-  }
 }
 
 .uppy-DashboardContent-addMore {
@@ -420,15 +416,9 @@
   font-weight: 500;
   cursor: pointer;
   color: $color-cornflower-blue;
-  stroke: $color-cornflower-blue;
-  stroke-width: 0.7px;
-  width: 13px;
-  height: 13px;
-
-  .uppy-size--md & {
-    width: 15px;
-    height: 15px;
-  }
+  width: 24px;
+  height: 24px;
+  padding: 5px;
 }
 
   .uppy-DashboardContent-addMore svg {
