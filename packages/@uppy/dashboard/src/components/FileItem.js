@@ -15,7 +15,6 @@ function FileItemProgressWrapper (props) {
   }
 
   if (props.isUploaded ||
-      !props.individualCancellation ||
       (props.hidePauseResumeCancelButtons && !props.error)) {
     return <div class="uppy-DashboardItem-progressIndicator">
       <FileItemProgress
@@ -38,6 +37,7 @@ function FileItemProgressWrapper (props) {
       : <FileItemProgress
         progress={props.file.progress.percentage}
         fileID={props.file.id}
+        individualCancellation={props.individualCancellation}
         hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
       />
     }
