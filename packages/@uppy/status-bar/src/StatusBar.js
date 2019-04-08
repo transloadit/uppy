@@ -281,10 +281,14 @@ const ProgressBarUploading = (props) => {
 const ProgressBarComplete = ({ totalProgress, i18n }) => {
   return (
     <div class="uppy-StatusBar-content" role="status" title={i18n('complete')}>
-      <svg aria-hidden="true" class="uppy-StatusBar-statusIndicator UppyIcon" width="18" height="17" viewBox="0 0 23 17">
-        <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
-      </svg>
-      {i18n('complete')}
+      <div class="uppy-StatusBar-status">
+        <div class="uppy-StatusBar-statusPrimary">
+          <svg aria-hidden="true" class="uppy-StatusBar-statusIndicator UppyIcon" width="15" height="11" viewBox="0 0 15 11" xmlns="http://www.w3.org/2000/svg">
+            <path d="M.414 5.843L1.627 4.63l3.472 3.472L13.202 0l1.212 1.213L5.1 10.528z" />
+          </svg>
+          {i18n('complete')}
+        </div>
+      </div>
     </div>
   )
 }

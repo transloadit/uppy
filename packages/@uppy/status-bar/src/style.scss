@@ -17,7 +17,6 @@
 
   .uppy-size--md .uppy-StatusBar {
     height: 46px;
-    font-size: 14px;
   }
 
   .uppy-StatusBar:before {
@@ -121,12 +120,7 @@
 }
 
 .uppy-StatusBar-statusPrimary {
-  font-size: 12px;
-  font-weight: 400;
-
-  .uppy-size--md & {
-    font-size: 14px;
-  }
+  font-weight: 500;
 }
 
 .uppy-StatusBar-statusSecondary {
@@ -138,10 +132,6 @@
   white-space: nowrap;
   overflow-x: hidden;
   // max-width: 170px;
-
-  .uppy-size--md & {
-    // max-width: 500px;
-  }
 }
 
   .uppy-StatusBar-statusSecondaryHint {
@@ -174,8 +164,7 @@
   }
 
   .uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator  {
-    width: 15px;
-    margin-right: 7px;
+    margin-right: 6px;
   }
 
 .uppy-StatusBar-actions {
