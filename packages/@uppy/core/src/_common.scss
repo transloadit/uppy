@@ -120,13 +120,12 @@
 
   .uppy-size--md .uppy-c-textInput {
     line-height: 1.8;
-    padding: 8px 12px;
+    padding: 8px 10px;
   }
 
   .uppy-c-textInput:focus {
     border-color: $color-cornflower-blue;
     outline: none;
-    box-shadow: 0 0 1px 1px rgba($color-cornflower-blue, 0.5);
   }
 
 // Buttons
