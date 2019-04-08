@@ -1,9 +1,10 @@
 ---
 type: docs
-order: 52
+order: 2
 title: "AWS S3"
 module: "@uppy/aws-s3"
 permalink: docs/aws-s3/
+category: 'Destinations'
 ---
 
 The `@uppy/aws-s3` plugin can be used to upload files directly to an S3 bucket.

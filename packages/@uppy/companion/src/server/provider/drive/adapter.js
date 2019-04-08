@@ -14,14 +14,20 @@ exports.isFolder = (item) => {
   return item.mimeType === 'application/vnd.google-apps.folder' || item.kind === 'drive#teamDrive'
 }
 
-exports.getItemData = (item) => {
-  return Object.assign({}, item, { size: parseFloat(item.size) })
+exports.getItemSize = (item) => {
+  return parseInt(item.size, 10)
 }
 
 exports.getItemIcon = (item) => {
   if (item.kind === 'drive#teamDrive') {
     return item.backgroundImageLink + '=w16-h16-n'
   }
+
+  if (item.thumbnailLink) {
+    const smallerThumbnailLink = item.thumbnailLink.replace('s220', 's40')
+    return smallerThumbnailLink
+  }
+
   return item.iconLink
 }
 

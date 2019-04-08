@@ -472,6 +472,48 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
+  // _Why make insides of Dashboard invisible until first ResizeObserver event is emitted?
+  //  ResizeOberserver doesn't emit the first resize event fast enough, users can see the jump from one .uppy-size-- to another (e.g. in Safari)
+  // _Why not apply visibility property to .uppy-Dashboard-inner?
+  //  Because ideally, acc to specs, ResizeObserver should see invisible elements as of width 0. So even though applying invisibility to .uppy-Dashboard-inner works now, it may not work in the future.
+  startListeningToResize () {
+    // Watch for Dashboard container (`.uppy-Dashboard-inner`) resize
+    // and update containerWidth/containerHeight in plugin state accordingly.
+    // Emits first event on initialization.
+    this.resizeObserver = new ResizeObserver((entries, observer) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect
+
+        this.uppy.log(`[Dashboard] resized: ${width} / ${height}`)
+
+        this.setPluginState({
+          containerWidth: width,
+          containerHeight: height,
+          areInsidesReadyToBeVisible: true
+        })
+      }
+    })
+    this.resizeObserver.observe(this.el.querySelector('.uppy-Dashboard-inner'))
+
+    // If ResizeObserver fails to emit an event telling us what size to use - default to the mobile view
+    this.makeDashboardInsidesVisibleAnywayTimeout = setTimeout(() => {
+      const pluginState = this.getPluginState()
+      if (!pluginState.areInsidesReadyToBeVisible) {
+        this.uppy.log("[Dashboard] resize event didn't fire on time: defaulted to mobile layout")
+
+        this.setPluginState({
+          areInsidesReadyToBeVisible: true
+        })
+      }
+    }, 1000)
+  }
+
+  stopListeningToResize () {
+    this.resizeObserver.disconnect()
+
+    clearTimeout(this.makeDashboardInsidesVisibleAnywayTimeout)
+  }
+
   initEvents () {
     // Modal open button
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
@@ -488,21 +530,7 @@ module.exports = class Dashboard extends Plugin {
       this.handleDrop(files)
     })
 
-    // Watch for Dashboard container (`.uppy-Dashboard-inner`) resize
-    // and update containerWidth/containerHeight in plugin state accordingly
-    this.ro = new ResizeObserver((entries, observer) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect
-
-        this.uppy.log(`[Dashboard] resized: ${width} / ${height}`)
-
-        this.setPluginState({
-          containerWidth: width,
-          containerHeight: height
-        })
-      }
-    })
-    this.ro.observe(this.el.querySelector('.uppy-Dashboard-inner'))
+    this.startListeningToResize()
 
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.handleFileAdded)
@@ -526,7 +554,7 @@ module.exports = class Dashboard extends Plugin {
       showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.openModal))
     }
 
-    this.ro.unobserve(this.el.querySelector('.uppy-Dashboard-inner'))
+    this.stopListeningToResize()
 
     this.removeDragDropListener()
     // window.removeEventListener('resize', this.throttledUpdateDashboardElWidth)
@@ -719,6 +747,7 @@ module.exports = class Dashboard extends Plugin {
       currentWidth: pluginState.containerWidth,
       isWide: pluginState.containerWidth > 400,
       containerWidth: pluginState.containerWidth,
+      areInsidesReadyToBeVisible: pluginState.areInsidesReadyToBeVisible,
       isTargetDOMEl: this.isTargetDOMEl,
       parentElement: this.el,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
@@ -744,7 +773,9 @@ module.exports = class Dashboard extends Plugin {
       showAddFilesPanel: false,
       activePickerPanel: false,
       metaFields: this.opts.metaFields,
-      targets: []
+      targets: [],
+      // We'll make them visible once .containerWidth is determined
+      areInsidesReadyToBeVisible: false
     })
 
     const { inline, closeAfterFinish } = this.opts

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/robodog",
   "description": "Transloadit SDK for browsers based on Uppy",
-  "version": "0.30.3",
+  "version": "0.30.4",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -28,17 +28,17 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/core": "0.30.3",
-    "@uppy/dashboard": "0.30.3",
-    "@uppy/dropbox": "0.30.3",
-    "@uppy/form": "0.30.3",
-    "@uppy/google-drive": "0.30.3",
-    "@uppy/instagram": "0.30.3",
-    "@uppy/status-bar": "0.30.3",
-    "@uppy/transloadit": "0.30.3",
-    "@uppy/url": "0.30.3",
-    "@uppy/utils": "0.30.3",
-    "@uppy/webcam": "0.30.3",
+    "@uppy/core": "0.30.4",
+    "@uppy/dashboard": "0.30.4",
+    "@uppy/dropbox": "0.30.4",
+    "@uppy/form": "0.30.4",
+    "@uppy/google-drive": "0.30.4",
+    "@uppy/instagram": "0.30.4",
+    "@uppy/status-bar": "0.30.4",
+    "@uppy/transloadit": "0.30.4",
+    "@uppy/url": "0.30.4",
+    "@uppy/utils": "0.30.4",
+    "@uppy/webcam": "0.30.4",
     "es6-promise": "4.2.5",
     "whatwg-fetch": "3.0.0"
   }

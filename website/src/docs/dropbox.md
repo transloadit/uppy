@@ -1,9 +1,11 @@
 ---
 type: docs
-order: 41
+order: 11
 title: "Dropbox"
+menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/dropbox"
 permalink: docs/dropbox/
+category: 'Sources'
 ---
 
 The `@uppy/dropbox` plugin lets users import files from their Dropbox account.

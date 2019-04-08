@@ -1,9 +1,11 @@
 ---
 type: docs
-order: 44
+order: 14
 title: "Import From URL"
+menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/url"
 permalink: docs/url/
+category: 'Sources'
 ---
 
 The `@uppy/url` plugin allows users to import files from the internet. Paste any URL and it will be added!

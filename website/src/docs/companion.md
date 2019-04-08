@@ -5,6 +5,7 @@ title: "Companion"
 module: "@uppy/companion"
 permalink: docs/companion/
 alias: docs/server/
+category: 'Docs'
 ---
 
 > Companion was previously known as Uppy Server. It was renamed in v0.14.0.
@@ -32,6 +33,8 @@ Install from NPM:
 ```bash
 npm install @uppy/companion
 ```
+
+If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@0.30.0`.
 
 ## Usage
 
@@ -261,7 +264,7 @@ The default value simply returns `filename`, so all files will be uploaded to th
 
 ### Running in Kubernetes
 
-We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we currently run our example server at http://server.uppy.io.
+We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we currently run our example server at https://companion.uppy.io.
 
 ### Adding custom providers
 
@@ -329,4 +332,4 @@ This would get the Companion instance running on `http://localhost:3020`. It use
 
 ## Live example
 
-An example server is running at http://companion.uppy.io, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md)
+An example server is running at https://companion.uppy.io, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md)

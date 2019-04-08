@@ -1,9 +1,10 @@
 ---
 type: docs
-order: 80
+order: 0
 title: "Form"
 module: "@uppy/form"
 permalink: docs/form/
+category: 'Miscellaneous'
 ---
 
 The `@uppy/form` plugin has several features to integrate with HTML `<form>` elements.

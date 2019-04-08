@@ -1,10 +1,11 @@
 ---
 type: docs
-order: 100
+order: 0
 title: "Robodog"
-menu: "Introduction"
+menu: "Robodog Introduction"
 module: "@uppy/robodog"
 permalink: docs/robodog/
+category: 'File Processing'
 ---
 
 [Transloadit][transloadit] is a service that helps you handle file uploads, resize, crop and watermark your images, make GIFs, transcode your videos, extract thumbnails, generate audio waveforms, and so much more. In short, [Transloadit][transloadit] is the Swiss Army Knife for your files.
@@ -28,8 +29,8 @@ const transloadit = require('@uppy/robodog')
 If you are not using a bundler, you can also import the Robodog using an HTML script tag.
 
 ```html
-<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v0.30.3/robodog.min.css">
-<script src="https://transloadit.edgly.net/releases/uppy/v0.30.3/robodog.min.js"></script> 
+<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v0.30.4/robodog.min.css">
+<script src="https://transloadit.edgly.net/releases/uppy/v0.30.4/robodog.min.js"></script> 
 ``` 
 
 ## Methods

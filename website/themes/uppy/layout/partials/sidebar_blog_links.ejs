@@ -11,11 +11,11 @@
         }
         seriesTracker[post.series]++
       }
-      totalCnt++
-
+      
       if (totalCnt > 10 || seriesTracker[post.series] > 1) {
         return false
       }
+      totalCnt++
     %>
   <li>
     <a href="/<%- post.path %>" class="sidebar-link<%- page.title === post.title || (page.series && page.series === post.series) ? ' current' : '' %>"><%- title %></a>

@@ -1,8 +1,8 @@
 const base = require('./wdio.base.conf')
 const { CompanionService } = require('./utils')
 
-// Use "npm run test:acceptance:local -- -b chrome" to test in chrome
-// "npm run test:acceptance:local -- -b firefox -b chrome" to test in FF and chrome
+// Use "npm run test:endtoend:local -- -b chrome" to test in chrome
+// "npm run test:endtoend:local -- -b firefox -b chrome" to test in FF and chrome
 let prevIsDashB = false
 const capabilities = []
 process.argv.forEach((arg) => {

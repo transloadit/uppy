@@ -1,9 +1,10 @@
 ---
 type: docs
-order: 30
+order: 0
 title: "Dashboard"
 module: "@uppy/dashboard"
 permalink: docs/dashboard/
+category: 'UI Elements'
 ---
 
 `@uppy/dashboard` is a universal UI plugin for Uppy, offering several useful features:

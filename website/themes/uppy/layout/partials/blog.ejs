@@ -22,14 +22,14 @@
             }
             seriesTracker[post.series]++
           }
-          totalCnt++
-
+          
           if (totalCnt > 10 || seriesTracker[post.series] > 1) {
             return false
           }
+          totalCnt++
         %>
           <li>
-              <a href="/<%- post.path %>" class="sidebar-link<%- page.title === post.title ? ' current' : '' %>"><%- title %></a>
+              <a href="/<%- post.path %>" class="sidebar-link<%- page.title === post.title || (page.series && page.series === post.series) ? ' current' : '' %>"><%- title %></a>
           </li>
       <% }) %>
       </ul>
@@ -48,7 +48,7 @@
   %>
     <div class="post">
       <h2><a href="/<%- post.path %>"><%- title %></a></h2>
-      <h4><%- post.date.format('MMM D[,] YYYY') %></h4>
+      <h4><%- post.date.format('dddd MMM D[,] YYYY') %></h4>
       <div><%- post.excerpt %></div>
       <a href="/<%- post.path %>">Continue reading ...</a>
     </div>

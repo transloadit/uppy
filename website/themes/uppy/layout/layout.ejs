@@ -1,7 +1,7 @@
 <% var isIndex = page.path === 'index.html' %>
 <% var title = page.title ? page.title + ' — ' + config.title : config.title %>
 <% var excerpt = page.excerpt ? page.excerpt.replace(/(<([^>]+)>)/ig, '').substring(0, 400) : config.description %>
-<% var image = page.image ? page.image : 'http://uppy.io/images/uppy-social-pink.jpg' %>
+<% var image = page.image ? page.image : 'http://uppy.io/images/uppy-social-pink.png' %>
 <% 
 if (page.series) {
   title = page.series + ': ' + page.title
@@ -36,7 +36,8 @@ if (page.series) {
     <script>
       window.PAGE_TYPE = "<%- page.type %>"
     </script>
-    <%- css('css/main') %>
+    <%- css('css/main').replace('.css', '.css?version=2') %>
+    <!-- ^-- poor man's solution to css cache busting. bump the version when there's something new we really want users to see -->
   </head>
   <body class="<%= isIndex ? 'page-index' : 'page-inner' %>">
     <div class="page">

@@ -1,7 +1,7 @@
 const { Plugin } = require('@uppy/core')
 const cuid = require('cuid')
 const Translator = require('@uppy/utils/lib/Translator')
-const { Provider, Socket } = require('@uppy/companion-client')
+const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
@@ -75,6 +75,14 @@ module.exports = class XHRUpload extends Plugin {
        */
       getResponseError (responseText, response) {
         return new Error('Upload error')
+      },
+      /**
+       * @param {number} status the response status code
+       * @param {string} responseText the response body string
+       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
+       */
+      validateStatus (status, responseText, response) {
+        return status >= 200 && status < 300
       }
     }
 
@@ -228,7 +236,7 @@ module.exports = class XHRUpload extends Plugin {
         this.uppy.log(`[XHRUpload] ${id} finished`)
         timer.done()
 
-        if (ev.target.status >= 200 && ev.target.status < 300) {
+        if (opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
           const body = opts.getResponseData(xhr.responseText, xhr)
           const uploadURL = body[opts.responseUrlFieldName]
 
@@ -311,8 +319,9 @@ module.exports = class XHRUpload extends Plugin {
         fields[name] = file.meta[name]
       })
 
-      const provider = new Provider(this.uppy, file.remote.providerOptions)
-      provider.post(
+      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+      const client = new Client(this.uppy, file.remote.providerOptions)
+      client.post(
         file.remote.url,
         Object.assign({}, file.remote.body, {
           endpoint: opts.endpoint,
@@ -403,7 +412,7 @@ module.exports = class XHRUpload extends Plugin {
       xhr.addEventListener('load', (ev) => {
         timer.done()
 
-        if (ev.target.status >= 200 && ev.target.status < 300) {
+        if (this.opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
           const body = this.opts.getResponseData(xhr.responseText, xhr)
           const uploadResp = {
             status: ev.target.status,

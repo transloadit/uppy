@@ -2,7 +2,8 @@
 title: "Provider Plugins"
 type: docs
 permalink: docs/providers/
-order: 40
+order: 10
+category: 'Sources'
 ---
 
 The Provider plugins help you connect to your accounts with remote file providers such as [Dropbox](https://dropbox.com), [Google Drive](https://drive.google.com), [Instagram](https://instagram.com) and remote URLs (importing a file by pasting a direct link to it). Because this requires server-to-server communication, they work tightly with [Companion](https://github.com/transloadit/companion) to manage the server-to-server authorization for your account. Almost all of the communication (file download/upload) is done on the server-to-server end, so this saves you the stress and bills of data consumption on the client.
