@@ -109,6 +109,7 @@
   z-index: $zIndex-2;
   color: darken($color-gray, 20%);
   line-height: 1;
+  font-size: 12px;
 
   .uppy-size--md & {
     display: flex;
