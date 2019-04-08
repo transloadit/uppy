@@ -18,13 +18,21 @@ http.createServer(function (req, res) {
   if (req.url === '/upload' && req.method.toLowerCase() === 'post') {
     // parse a file upload
     var form = new formidable.IncomingForm()
+    form.uploadDir = './uploads'
+    form.keepExtensions = true
 
     form.parse(req, function (err, fields, files) {
       if (err) {
+        console.log('some error', err)
         res.writeHead(200, headers)
         res.write(JSON.stringify(err))
         return res.end()
       }
+      var file = files['files[]']
+      console.log('saved file to', file.path)
+      console.log('original name', file.name)
+      console.log('type', file.type)
+      console.log('size', file.size)
       res.writeHead(200, headers)
       res.write(JSON.stringify({fields, files}))
       return res.end()
