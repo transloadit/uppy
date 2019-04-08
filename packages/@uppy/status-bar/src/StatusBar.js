@@ -172,7 +172,10 @@ const CancelBtn = (props) => {
     aria-label={props.i18n('cancel')}
     onclick={props.cancelAll}>
     <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm1.414-8l2.122-2.121-1.415-1.415L8 6.586 5.879 4.464 4.464 5.88 6.586 8l-2.122 2.121 1.415 1.415L8 9.414l2.121 2.122 1.415-1.415L9.414 8z" fill="#949494" fill-rule="evenodd" />
+      <g fill="none" fill-rule="evenodd">
+        <circle fill="#949494" cx="8" cy="8" r="8" />
+        <path fill="#FFF" d="M9.283 8l2.567 2.567-1.283 1.283L8 9.283 5.433 11.85 4.15 10.567 6.717 8 4.15 5.433 5.433 4.15 8 6.717l2.567-2.567 1.283 1.283z" />
+      </g>
     </svg>
   </button>
 }
@@ -189,10 +192,16 @@ const PauseResumeButton = (props) => {
     onclick={() => togglePauseResume(props)}>
     {isAllPaused
       ? <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM6 5v6l5-3-5-3z" fill="#949494" fill-rule="evenodd" />
+        <g fill="none" fill-rule="evenodd">
+          <circle fill="#949494" cx="8" cy="8" r="8" />
+          <path fill="#FFF" d="M6 4.5L11.5 8 6 11.5z" />
+        </g>
       </svg>
       : <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM5 5v6h2V5H5zm4 0v6h2V5H9z" fill="#949494" fill-rule="evenodd" />
+        <g fill="none" fill-rule="evenodd">
+          <circle fill="#949494" cx="8" cy="8" r="8" />
+          <path d="M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z" fill="#FFF" />
+        </g>
       </svg>
     }
   </button>
