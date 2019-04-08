@@ -109,6 +109,10 @@ module.exports = function FileItem (props) {
     { 'is-bundled': props.bundledUpload }
   )
 
+  const showRemoveButton = props.individualCancellation
+    ? !isUploaded
+    : !uploadInProgress && !isUploaded
+
   return <li class={dashboardItemClass} id={`uppy_${file.id}`} title={file.meta.name}>
     <div class="uppy-DashboardItem-preview">
       <div class="uppy-DashboardItem-previewInnerWrap" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
@@ -176,7 +180,7 @@ module.exports = function FileItem (props) {
       </div>
     </div>
     <div class="uppy-DashboardItem-action">
-      {!isUploaded &&
+      {showRemoveButton &&
         <button class="uppy-DashboardItem-remove"
           type="button"
           aria-label={props.i18n('removeFile')}
