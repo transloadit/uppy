@@ -53,7 +53,8 @@ export default class App extends React.Component {
       isFilePickerVisible: false,
       isPaused: false,
       uploadStarted: false,
-      uploadComplete: false
+      uploadComplete: false,
+      info: null
     }
 
     this.isReactNative = (typeof navigator !== 'undefined' &&
@@ -88,8 +89,21 @@ export default class App extends React.Component {
         uploadComplete: true,
         uploadStarted: false
       })
-      // console.log('Upload complete:')
-      // console.log(result)
+      console.log('Upload complete:', result)
+    })
+
+    this.uppy.on('info-visible', () => {
+      const info = this.uppy.getState().info
+      this.setState({
+        info: info
+      })
+      console.log('uppy-info:', info)
+    })
+
+    this.uppy.on('info-hidden', () => {
+      this.setState({
+        info: null
+      })
     })
   }
 
@@ -141,6 +155,15 @@ export default class App extends React.Component {
           />
         </View>
         <SelectFiles showFilePicker={this.showFilePicker} />
+
+        {this.state.info
+          ? <Text style={{
+            marginBottom: 10,
+            marginTop: 10,
+            color: '#b8006b'}}>{this.state.info.message}</Text>
+          : null
+        }
+
         <ProgressBar
           progress={this.state.progress}
           total={this.state.total}
