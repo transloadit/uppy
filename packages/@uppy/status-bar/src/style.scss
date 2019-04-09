@@ -127,7 +127,7 @@
   font-size: 11px;
   line-height: 1.2;
   display: inline-block;
-  color: rgba($color-asphalt-gray, 0.8);
+  color: $gray-600;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow-x: hidden;
@@ -150,7 +150,7 @@
   // }
 
 .uppy-StatusBar-statusIndicator {
-  color: $color-asphalt-gray;
+  color: $gray-700;
   margin-right: 10px;
   cursor: pointer;
 
@@ -275,7 +275,7 @@
   display: inline-block;
   vertical-align: middle;
   color: $color-white;
-  background-color: $color-asphalt-gray;
+  background-color: $gray-700;
   border-radius: 50%;
   position: relative;
   top: 0;

@@ -212,7 +212,7 @@
   margin: 0;
   padding: 0;
   text-align: center;
-  color: $color-asphalt-gray;
+  color: $gray-700;
 
   .uppy-size--md & {
     font-size: 16px;
@@ -565,7 +565,7 @@
   font-size: 16px;
   line-height: 1.45;
   font-weight: 400;
-  color: $color-asphalt-gray;
+  color: $gray-700;
   margin: auto;
   padding: 0 15px;
   padding-top: 20px;
@@ -580,7 +580,7 @@
   font-size: 14px;
   line-height: 1.25;
   text-align: center;
-  color: rgba($color-asphalt-gray, 0.8);
+  color: $gray-600;
   max-width: 350px;
   margin: auto;
   padding: 0 15px;
@@ -771,7 +771,7 @@ a.uppy-Dashboard-poweredBy {
   text-transform: uppercase;
   font-size: 9px;
   letter-spacing: 1px;
-  color: $color-asphalt-gray;
+  color: $gray-700;
   z-index: $zIndex-1;
   user-select: none;
 }
@@ -1213,7 +1213,7 @@ a.uppy-Dashboard-poweredBy {
   vertical-align: middle;
   width: 22%;
   font-size: 12px;
-  color: $color-asphalt-gray;
+  color: $gray-700;
 
   .uppy-size--md & {
     font-size: 14px;

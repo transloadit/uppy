@@ -263,7 +263,7 @@
   }
 
     .uppy-ProviderBrowserItem-checkbox label:before {
-      border-color: rgba($color-asphalt-gray, 0.35);
+      border-color: $gray-300;
     }
 
     .uppy-ProviderBrowserItem-checkbox input:checked + label:before {

@@ -46,7 +46,7 @@
   line-height: 1.4;
   font-weight: 400;
   padding: 6px 15px;
-  background-color: rgba($color-asphalt-gray, 0.8); /* no !important */
+  background-color: $gray-600; /* no !important */
   color: $color-white;
   border-radius: 18px;
   max-width: 90%;
@@ -65,7 +65,7 @@
   height: 13px;
   display: inline-block;
   vertical-align: middle;
-  color: $color-asphalt-gray;
+  color: $gray-700;
   background-color: $color-white;
   border-radius: 50%;
   position: relative;
