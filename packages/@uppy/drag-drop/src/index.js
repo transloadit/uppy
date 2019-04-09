@@ -131,7 +131,7 @@ module.exports = class DragDrop extends Plugin {
     return (
       <div class={DragDropClass} style={DragDropStyle}>
         <div class="uppy-DragDrop-inner">
-          <svg aria-hidden="true" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+          <svg aria-hidden="true" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
             <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
           </svg>
           <label class="uppy-DragDrop-label">
