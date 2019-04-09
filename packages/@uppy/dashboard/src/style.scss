@@ -237,12 +237,12 @@
 .uppy-Dashboard-browse {
   @include reset-button;
   cursor: pointer;
-  color: rgba($color-cornflower-blue, 0.9);
+  color: rgba($color-blue, 0.9);
 }
 
   .uppy-Dashboard-browse:focus {
     outline: none;
-    border-bottom: 2px solid $color-cornflower-blue;
+    border-bottom: 2px solid $color-blue;
   }
 
 .uppy-DashboardTabs-list {
@@ -304,7 +304,7 @@
 }
 
   .uppy-DashboardTab-btn:hover {
-    color: $color-cornflower-blue;
+    color: $color-blue;
   }
 
   .uppy-DashboardTab-btn:focus {
@@ -408,7 +408,7 @@
   font-size: 12px;
   font-weight: 400;
   cursor: pointer;
-  color: $color-cornflower-blue;
+  color: $color-blue;
 
   .uppy-size--md & {
     font-size: 14px;
@@ -419,7 +419,7 @@
   @include reset-button;
   font-weight: 500;
   cursor: pointer;
-  color: $color-cornflower-blue;
+  color: $color-blue;
   width: 24px;
   height: 24px;
   padding: 5px;
@@ -508,10 +508,10 @@
 
 .uppy-Dashboard-next.is-active {
   cursor: pointer;
-  background-color: $color-cornflower-blue;
+  background-color: $color-blue;
 
   &:hover {
-    background-color: darken($color-cornflower-blue, 20%);
+    background-color: darken($color-blue, 20%);
   }
 }
 
@@ -1063,7 +1063,7 @@ a.uppy-Dashboard-poweredBy {
 
 .uppy-DashboardItem-progressInner {
   height: 15px;
-  background-color: $color-cornflower-blue;
+  background-color: $color-blue;
   position: absolute;
   top: 0;
   left: 0;

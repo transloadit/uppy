@@ -209,7 +209,7 @@
 .uppy-ProviderBrowser-userLogout {
   cursor: pointer;
   line-height: inherit;
-  color: $color-cornflower-blue;
+  color: $color-blue;
 
   &:hover {
     text-decoration: underline;
@@ -270,7 +270,7 @@
     }
 
     .uppy-ProviderBrowserItem-checkbox input:checked + label:before {
-      border-color: $color-cornflower-blue;
+      border-color: $color-blue;
     }
 
   .uppy-ProviderBrowserItem-inner {
@@ -324,12 +324,12 @@
     }
 
     // .uppy-ProviderBrowserItem--selected {
-    //   border-color: $color-cornflower-blue;
+    //   border-color: $color-blue;
     //   outline: none;
     // }
 
     // .uppy-ProviderBrowserItem--selected .uppy-ProviderBrowserItem-inner {
-    //   box-shadow: 0 0 0 3px rgba(darken($color-cornflower-blue, 10%), 0.9);
+    //   box-shadow: 0 0 0 3px rgba(darken($color-blue, 10%), 0.9);
     // }
 
   .uppy-ProviderBrowserItem-inner {
@@ -345,7 +345,7 @@
 
   .uppy-ProviderBrowserItem-inner:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($color-cornflower-blue, 0.9);
+    box-shadow: 0 0 0 3px rgba($color-blue, 0.9);
   }
 
   .uppy-ProviderBrowserItem img,
@@ -376,7 +376,7 @@
   }
 
   .uppy-ProviderBrowserItem-checkbox label:before {
-    background-color: $color-cornflower-blue;
+    background-color: $color-blue;
     border-radius: 50%;
     width: 26px;
     height: 26px;
@@ -437,7 +437,7 @@
   height: 17px;
   width: 17px;
   top: 2px;
-  border: 1px solid $color-cornflower-blue;
+  border: 1px solid $color-blue;
   background-color: $color-white;
   border-radius: 3px;
 }
@@ -466,7 +466,7 @@
 }
 
 .uppy-ProviderBrowserItem-checkbox input:checked + label::before {
-  background-color: $color-cornflower-blue;
+  background-color: $color-blue;
 }
 
 // Adding focus styles on the outer-box of the fake checkbox*/

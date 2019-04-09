@@ -56,7 +56,7 @@
 }
 
 .uppy-StatusBar-progress {
-  background-color: $color-cornflower-blue;
+  background-color: $color-blue;
   height: 2px;
   position: absolute;
   z-index: $zIndex-2;
@@ -205,7 +205,7 @@
 }
 
   .uppy-StatusBar-actionCircleBtn:focus {
-    outline: 2px solid $color-cornflower-blue;
+    outline: 2px solid $color-blue;
     outline-offset: 0;
   }
 
@@ -230,7 +230,7 @@
   font-size: 10px;
   // margin-left: 6px;
   // margin-right: 6px;
-  color: $color-cornflower-blue;
+  color: $color-blue;
 
   .uppy-size--md & {
     font-size: 11px;
@@ -265,7 +265,7 @@
   .uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
     background-color: transparent;
     // border: 1px solid $color-white;
-    color: $color-cornflower-blue;
+    color: $color-blue;
   }
 
 .uppy-StatusBar-details {
@@ -296,7 +296,7 @@
   animation-iteration-count: infinite;
   animation-timing-function: linear;
   margin-right: 10px;
-  fill: $color-cornflower-blue;
+  fill: $color-blue;
 }
 
   .uppy-StatusBar.is-preprocessing .uppy-StatusBar-spinner,
