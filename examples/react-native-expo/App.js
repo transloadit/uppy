@@ -3,7 +3,8 @@ import React from 'react'
 import {
   Text,
   View,
-  AsyncStorage
+  AsyncStorage,
+  Image
   // Linking
 } from 'react-native'
 import Uppy from '@uppy/core'
@@ -13,6 +14,7 @@ import FileList from './FileList'
 import PauseResumeButton from './PauseResumeButton'
 import ProgressBar from './ProgressBar'
 import SelectFiles from './SelectFilesButton'
+// import uppyLogo from './assets/uppy-logo.png'
 
 function hashCode (str) {
   // from https://stackoverflow.com/a/8831937/151666
@@ -129,8 +131,15 @@ export default class App extends React.Component {
       }}>
         <Text style={{
           fontSize: 25,
-          marginBottom: 20
+          marginBottom: 20,
+          textAlign: 'center'
         }}>Uppy in React Native</Text>
+        <View style={{alignItems: 'center'}}>
+          <Image
+            style={{width: 80, height: 78, marginBottom: 50}}
+            source={require('./assets/uppy-logo.png')}
+          />
+        </View>
         <SelectFiles showFilePicker={this.showFilePicker} />
         <ProgressBar
           progress={this.state.progress}
@@ -150,8 +159,8 @@ export default class App extends React.Component {
 
         <FileList uppy={this.uppy} />
 
-        <Text>{this.state.status ? 'Status: ' + this.state.status : null}</Text>
-        <Text>{this.state.progress} of {this.state.total}</Text>
+        {/* <Text>{this.state.status ? 'Status: ' + this.state.status : null}</Text>
+        <Text>{this.state.progress} of {this.state.total}</Text> */}
       </View>
     )
   }
