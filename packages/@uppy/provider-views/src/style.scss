@@ -257,7 +257,7 @@
 
   .uppy-ProviderBrowserItem {
     display: flex;
-    padding: 8px 15px;
+    padding: 7px 15px;
     margin: 0;
   }
 
@@ -266,7 +266,7 @@
   }
 
     .uppy-ProviderBrowserItem-checkbox label:before {
-      border-color: rgba($color-asphalt-gray, 0.4);
+      border-color: rgba($color-asphalt-gray, 0.35);
     }
 
     .uppy-ProviderBrowserItem-checkbox input:checked + label:before {
@@ -434,12 +434,12 @@
 .uppy-ProviderBrowserItem-checkbox label:before {
   content: "";
   display: inline-block;
-  height: 18px;
-  width: 18px;
+  height: 17px;
+  width: 17px;
   top: 2px;
   border: 1px solid $color-cornflower-blue;
   background-color: $color-white;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 // Inner checkbox
@@ -447,9 +447,9 @@
   content: '';
   display: inline-block;
   height: 5px;
-  width: 8px;
-  left: 5px;
-  top: 8px;
+  width: 9px;
+  left: 4px;
+  top: 7px;
   border-left: 2px solid $color-white;
   border-bottom: 2px solid $color-white;
   transform: rotate(-45deg);
