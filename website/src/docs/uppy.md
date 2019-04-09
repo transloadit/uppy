@@ -643,12 +643,12 @@ Fired when “info” message should be hidden in the UI. See [`info-visible`](#
 
 Fired when [`uppy.cancelAll()`]() is called, all uploads are canceled, files removed and progress is reset.
 
-### `restrictions-violated`
+### `restriction-failed`
 
 Fired when a file violates certain restrictions when added. This event is just providing another choice for those who want to customize the behavior of file upload restrictions.
 
 ```javascript
-uppy.on('restrictions-violated', (file, error) => {
+uppy.on('restriction-failed', (file, error) => {
   // do some customized logic like showing system notice to users
 })
 ```
