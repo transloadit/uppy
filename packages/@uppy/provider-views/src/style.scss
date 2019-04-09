@@ -198,10 +198,11 @@
     vertical-align: text-top;
   }
 
-.uppy-ProviderBrowser-searchInput::placeholder,
-.uppy-ProviderBrowser-searchInput::-webkit-input-placeholder,
-.uppy-ProviderBrowser-searchInput::-moz-placeholder,
 .uppy-ProviderBrowser-searchInput::-ms-input-placeholder {
+  color: $color-gray;
+}
+
+.uppy-ProviderBrowser-searchInput::placeholder {
   color: $color-gray;
 }
 
