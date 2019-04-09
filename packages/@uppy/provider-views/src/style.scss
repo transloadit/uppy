@@ -19,6 +19,10 @@
   flex: 1;
 }
 
+.uppy-Provider-empty {
+  color: $color-gray;
+}
+
 .uppy-Provider-authIcon svg {
   width: 100px;
   height: 75px;
@@ -44,7 +48,6 @@
   flex: 1;
   color: darken($color-gray, 25%);
   font-size: 12px;
-  line-height: 1;
   margin-bottom: 10px;
   text-align: left;
 
@@ -54,9 +57,9 @@
 }
 
 .uppy-Provider-breadcrumbsIcon {
-  display: inline;
+  display: inline-block;
   color: darken($color-gray, 25%);
-  vertical-align: text-bottom;
+  vertical-align: bottom;
   margin-right: 8px;
   line-height: 1;
 }
@@ -69,7 +72,8 @@
 
 .uppy-Provider-breadcrumbs button {
   display: inline-block;
-  font-size: 14px;
+  line-height: inherit;
+  // font-size: 14px;
 }
 
 .uppy-Provider-breadcrumbs button:hover {
@@ -147,12 +151,12 @@
 }
 
 .uppy-ProviderBrowser-searchIcon {
-  width: 16px;
-  height: 16px;
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  left: 16px;
   z-index: $zIndex-3;
   color: rgba($color-gray, 0.6);
-  margin-left: 16px;
-  margin-right: 7px;
 }
 
 .uppy-ProviderBrowser-searchInput {
@@ -162,24 +166,30 @@
   outline: 0;
   font-family: $font-family-base;
   font-size: 12px;
-  line-height: 30px;
+  line-height: 1.4;
   border: 0;
-  margin: 0 16px 0 0;
+  margin: 0 8px;
+  padding-left: 27px;
   z-index: $zIndex-2;
-  border-bottom: 1px solid transparent;
+  border-radius: 4px;
 }
 
   .uppy-ProviderBrowser-searchInput:focus {
     outline: 0;
-    border-bottom: 1px solid $color-cornflower-blue;
+    background-color: darken($color-almost-white, 2%);
+
+    & + .uppy-ProviderBrowser-searchIcon {
+      color: rgba($color-gray, 0.8);
+    }
   }
 
 .uppy-ProviderBrowser-searchClose {
-  width: 12px;
-  height: 12px;
   position: absolute;
-  right: 16px;
-  top: 8px;
+  width: 16px;
+  height: 16px;
+  padding: 3px;
+  right: 15px;
+  top: 7px;
   z-index: $zIndex-3;
   color: $color-gray;
   cursor: pointer;
@@ -193,8 +203,7 @@
 .uppy-ProviderBrowser-searchInput::-webkit-input-placeholder,
 .uppy-ProviderBrowser-searchInput::-moz-placeholder,
 .uppy-ProviderBrowser-searchInput::-ms-input-placeholder {
-  color: rgba($color-gray, 0.85);
-  letter-spacing: 1px;
+  color: $color-gray;
 }
 
 .uppy-ProviderBrowser-userLogout {
@@ -235,7 +244,8 @@
 
 .uppy-ProviderBrowserItem-inner {
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 12px;
 }
 
 // ***
@@ -247,7 +257,7 @@
 
   .uppy-ProviderBrowserItem {
     display: flex;
-    padding: 10px 15px;
+    padding: 8px 15px;
     margin: 0;
   }
 
