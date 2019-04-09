@@ -1,26 +1,27 @@
 import React from 'react' // eslint-disable-line no-unused-vars
 import { StyleSheet, View, FlatList, Text, Image } from 'react-native'
 
+function truncateString (str) {
+  const maxChars = 20
+  if (str.length > maxChars) {
+    return str.substring(0, 25) + '...'
+  }
+}
+
+function FileIcon () {
+  return <View style={styles.itemIconContainer}>
+    <Image
+      style={styles.itemIcon}
+      source={require('./assets/file-icon.png')}
+    />
+  </View>
+}
+
 export default function FileList (props) {
   const uppyFiles = props.uppy.state.files
   const uppyFilesArray = Object.keys(uppyFiles).map((id) => uppyFiles[id])
 
   return (
-    // <ScrollView style={styles.container}>
-    //   {Object.keys(uppyFiles).map((id, index) => {
-    //     return <View style={styles.item} key={index}>
-    //       {uppyFiles[id].type === 'image'
-    //         ? <Image
-    //           style={{ width: 100, height: 100, borderRadius: 5, marginBottom: 5 }}
-    //           source={{ uri: uppyFiles[id].data.uri }} />
-    //         : null
-    //       }
-    //       <Text style={styles.itemName}>{uppyFiles[id].name}</Text>
-    //       <Text style={styles.itemType}>{uppyFiles[id].type}</Text>
-    //     </View>
-    //   })}
-    // </ScrollView>
-
     <View style={styles.container}>
       <FlatList
         data={uppyFilesArray}
@@ -33,9 +34,9 @@ export default function FileList (props) {
                 ? <Image
                   style={styles.itemImage}
                   source={{ uri: item.data.uri }} />
-                : null
+                : <FileIcon />
               }
-              <Text style={styles.itemName}>{item.name}</Text>
+              <Text style={styles.itemName}>{truncateString(item.name)}</Text>
               <Text style={styles.itemType}>{item.type}</Text>
             </View>
           )
@@ -64,8 +65,21 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 5
   },
+  itemIconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+    marginBottom: 5,
+    backgroundColor: '#cfd3d6',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  itemIcon: {
+    width: 42,
+    height: 56
+  },
   itemName: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#2c3e50',
     fontWeight: '600'
   },
