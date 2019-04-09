@@ -176,7 +176,7 @@
 
   .uppy-ProviderBrowser-searchInput:focus {
     outline: 0;
-    background-color: darken($color-almost-white, 2%);
+    background-color: $gray-100;
 
     & + .uppy-ProviderBrowser-searchIcon {
       color: rgba($color-gray, 0.8);

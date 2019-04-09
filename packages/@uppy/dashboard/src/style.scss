@@ -112,7 +112,7 @@
 
 .uppy-Dashboard-inner {
   position: relative;
-  background-color: $color-almost-white;
+  background-color: $gray-50;
   max-width: 100%; /* no !important */
   max-height: 100%; /* no !important */
   // min-width: 290px;
@@ -376,7 +376,7 @@
   width: 100%;
   border-bottom: 1px solid $gray-200;
   z-index: $zIndex-4;
-  background-color: $color-almost-white;
+  background-color: $gray-50;
   padding: 0 10px;
 
   .uppy-size--md & {
@@ -462,8 +462,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: $color-almost-white;
-  background: linear-gradient(0deg, $color-almost-white 35%, rgba($color-almost-white, 0.85) 100%);
+  background: $gray-50;
+  background: linear-gradient(0deg, $gray-50 35%, rgba($gray-50, 0.85) 100%);
   box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
   overflow: hidden;
   z-index: $zIndex-5;
@@ -548,15 +548,15 @@
   }
 
 .uppy-Dashboard.drag .uppy-Dashboard-innerWrap {
-  background-color: darken($color-almost-white, 25%)
+  background-color: darken($gray-50, 25%)
 }
 
 .uppy-Dashboard.drag .uppy-Dashboard-AddFilesPanel {
-  background: darken($color-almost-white, 20%)
+  background: darken($gray-50, 20%)
 }
 
 .uppy-Dashboard.drag .uppy-Dashboard-files--noFiles {
-  border-color: darken($color-almost-white, 20%);
+  border-color: darken($gray-50, 20%);
 }
 
 .uppy-Dashboard-dropFilesTitle {
@@ -1087,7 +1087,7 @@ a.uppy-Dashboard-poweredBy {
   display: flex;
   align-items: center;
   padding: 0 15px;
-  background-color: $color-almost-white;
+  background-color: $gray-50;
 }
 
   .uppy-size--md .uppy-Dashboard-actions {
