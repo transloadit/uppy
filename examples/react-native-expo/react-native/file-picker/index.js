@@ -55,6 +55,9 @@ export default class UppyReactNativeFilePicker extends React.Component {
       })
       this.props.onRequestClose()
     })
+    .catch((err) => {
+      console.log(err)
+    })
   }
 
   selectImage () {
@@ -67,6 +70,9 @@ export default class UppyReactNativeFilePicker extends React.Component {
       })
       this.props.onRequestClose()
     })
+    .catch((err) => {
+      console.log(err)
+    })
   }
 
   selectDocument () {
@@ -77,6 +83,9 @@ export default class UppyReactNativeFilePicker extends React.Component {
         data: file
       })
       this.props.onRequestClose()
+    })
+    .catch((err) => {
+      console.log(err)
     })
   }
 
@@ -113,31 +122,38 @@ export default class UppyReactNativeFilePicker extends React.Component {
           marginTop: 22,
           justifyContent: 'center'
         }}>
-        <TouchableOpacity
-          style={{
-            alignItems: 'center',
-            backgroundColor: '#c6e1f3',
-            marginBottom: 10,
-            padding: 10
-          }}
-          onPress={ev => this.props.onRequestClose()}>
-          <Text>Close</Text>
-        </TouchableOpacity>
         {this.state.providers.map((item, index) => {
           return (
             <TouchableOpacity
               style={{
                 alignItems: 'center',
-                backgroundColor: '#c6e1f3',
-                marginBottom: 10,
-                padding: 10
+                backgroundColor: '#0077cc',
+                marginBottom: 15,
+                marginLeft: 50,
+                marginRight: 50,
+                padding: 10,
+                borderRadius: 5
               }}
               key={index}
               onPress={ev => this.chooseProvider(item.id)}>
-              <Text>{item.title}</Text>
+              <Text style={{color: '#fff'}}>{item.title}</Text>
             </TouchableOpacity>
           )
         })}
+        <TouchableOpacity
+          style={{
+            alignItems: 'center',
+            borderWidth: 1,
+            borderColor: '#0077cc',
+            marginBottom: 15,
+            marginLeft: 50,
+            marginRight: 50,
+            padding: 10,
+            borderRadius: 5
+          }}
+          onPress={ev => this.props.onRequestClose()}>
+          <Text style={{color: '#0077cc'}}>Cancel</Text>
+        </TouchableOpacity>
       </ScrollView>
     )
   }
