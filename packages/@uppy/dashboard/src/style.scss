@@ -238,6 +238,10 @@
   @include reset-button;
   cursor: pointer;
   color: rgba($color-blue, 0.9);
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
   .uppy-Dashboard-browse:focus {
@@ -410,6 +414,10 @@
   cursor: pointer;
   color: $color-blue;
 
+  &:hover {
+    color: darken($color-blue, 10%)
+  }
+
   .uppy-size--md & {
     font-size: 14px;
   }
@@ -423,6 +431,10 @@
   width: 24px;
   height: 24px;
   padding: 5px;
+
+  &:hover {
+    color: darken($color-blue, 10%)
+  }
 }
 
   .uppy-DashboardContent-addMore svg {
