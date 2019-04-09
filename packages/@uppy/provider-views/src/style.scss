@@ -88,13 +88,16 @@
 
 .uppy-ProviderBrowser-user {
   margin: 0 8px 0 0;
-  line-height: 1;
+  font-weight: 500;
+  color: $color-black;
 }
 
   .uppy-ProviderBrowser-user:after {
     content: '\00B7';
     position: relative;
     left: 4px;
+    color: darken($color-gray, 20%);
+    font-weight: normal;
   }
 
 .uppy-ProviderBrowser-header {
@@ -108,7 +111,7 @@
   background-color: lighten($color-gray, 40%);
   z-index: $zIndex-2;
   color: darken($color-gray, 20%);
-  line-height: 1;
+  line-height: 1.4;
   font-size: 12px;
 
   .uppy-size--md & {
@@ -196,6 +199,8 @@
 
 .uppy-ProviderBrowser-userLogout {
   cursor: pointer;
+  line-height: inherit;
+  color: $color-cornflower-blue;
 
   &:hover {
     text-decoration: underline;
