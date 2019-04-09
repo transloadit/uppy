@@ -342,7 +342,7 @@
     right: 7px;
     bottom: 7px;
     text-align: center;
-    background-color: $color-black;
+
   }
 
   .uppy-ProviderBrowserItem-inner:focus {
@@ -357,6 +357,7 @@
     object-fit: cover;
     opacity: 0.9;
     transition: opacity 0.1s ease-in-out;
+    border-radius: 4px;
   }
 
   .uppy-ProviderBrowserItem--selected img,
