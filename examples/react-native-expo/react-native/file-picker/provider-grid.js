@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { FlatGrid } from 'react-native-super-grid'
 
+// test grid, can be used for instagram
 export default class Example extends React.Component {
   render () {
     const items = [

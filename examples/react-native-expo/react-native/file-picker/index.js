@@ -1,19 +1,14 @@
 import React from 'react'
-import Expo from 'expo'
 import {
-  // StyleSheet,
+  StyleSheet,
   Modal,
   Text,
-  // View,
   ScrollView,
-  // Button,
-  // Image
   TouchableOpacity } from 'react-native'
 import takePicture from './takePicture'
 import selectImage from './selectImage'
 import selectDocument from './selectDocument'
 import Provider from './provider'
-// import ProviderGrid from './provider-grid'
 
 export default class UppyReactNativeFilePicker extends React.Component {
   constructor () {
@@ -38,11 +33,6 @@ export default class UppyReactNativeFilePicker extends React.Component {
 
   componentDidMount () {
     this.uppy = this.props.uppy
-
-    this.uppy.on('info-visible', () => {
-      const info = this.uppy.getState().info
-      console.log('uppy-info', info)
-    })
   }
 
   takePicture () {
@@ -90,14 +80,14 @@ export default class UppyReactNativeFilePicker extends React.Component {
   }
 
   openProvider (id) {
-    console.log('OPEN PROVIDER:', id)
+    console.log('Open provider:', id)
     this.setState({
       openProvider: id
     })
   }
 
   chooseProvider (id) {
-    console.log('PROVIDER SELECTED:', id)
+    console.log('Provider selected:', id)
 
     switch (id) {
       case 'LocalImages':
@@ -117,42 +107,21 @@ export default class UppyReactNativeFilePicker extends React.Component {
   renderSourceList () {
     return (
       <ScrollView
-        contentContainerStyle={{
-          flex: '1',
-          marginTop: 22,
-          justifyContent: 'center'
-        }}>
+        contentContainerStyle={styles.providerList}>
         {this.state.providers.map((item, index) => {
           return (
             <TouchableOpacity
-              style={{
-                alignItems: 'center',
-                backgroundColor: '#0077cc',
-                marginBottom: 15,
-                marginLeft: 50,
-                marginRight: 50,
-                padding: 10,
-                borderRadius: 5
-              }}
+              style={styles.providerButton}
               key={index}
               onPress={ev => this.chooseProvider(item.id)}>
-              <Text style={{color: '#fff'}}>{item.title}</Text>
+              <Text style={styles.providerButtonText}>{item.title}</Text>
             </TouchableOpacity>
           )
         })}
         <TouchableOpacity
-          style={{
-            alignItems: 'center',
-            borderWidth: 1,
-            borderColor: '#0077cc',
-            marginBottom: 15,
-            marginLeft: 50,
-            marginRight: 50,
-            padding: 10,
-            borderRadius: 5
-          }}
+          style={styles.cancelButton}
           onPress={ev => this.props.onRequestClose()}>
-          <Text style={{color: '#0077cc'}}>Cancel</Text>
+          <Text style={styles.cancelButtonText}>Cancel</Text>
         </TouchableOpacity>
       </ScrollView>
     )
@@ -165,15 +134,12 @@ export default class UppyReactNativeFilePicker extends React.Component {
         transparent={false}
         visible={this.props.show}
         supportedOrientations={['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right']}
-        onRequestClose={() => {
-          Expo.Alert.alert('Modal has been closed.')
-          this.props.onRequestClose()
-        }}>
+        onRequestClose={this.props.onRequestClose}>
         {this.state.openProvider
           ? <Provider
             providerID={this.state.openProvider}
             uppy={this.uppy}
-            onSuccess={() => {
+            onDone={() => {
               this.setState({
                 openProvider: null
               })
@@ -186,3 +152,36 @@ export default class UppyReactNativeFilePicker extends React.Component {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  providerList: {
+    flex: 1,
+    marginTop: 22,
+    justifyContent: 'center'
+  },
+  providerButton: {
+    alignItems: 'center',
+    backgroundColor: '#0077cc',
+    marginBottom: 15,
+    marginLeft: 50,
+    marginRight: 50,
+    padding: 10,
+    borderRadius: 5
+  },
+  providerButtonText: {
+    color: '#fff'
+  },
+  cancelButton: {
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#0077cc',
+    marginBottom: 15,
+    marginLeft: 50,
+    marginRight: 50,
+    padding: 10,
+    borderRadius: 5
+  },
+  cancelButtonText: {
+    color: '#0077cc'
+  }
+})

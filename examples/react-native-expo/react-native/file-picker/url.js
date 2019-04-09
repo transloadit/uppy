@@ -39,7 +39,7 @@ export default class UppyRNUrl extends React.Component {
 
   onPressImport () {
     this.plugin.addFile(this.state.url)
-      .then(this.props.onSuccess)
+      .then(this.props.onDone)
       .catch((err) => {
         console.log(err)
       })
@@ -57,11 +57,15 @@ export default class UppyRNUrl extends React.Component {
           placeholder="Enter URL to import a file"
         />
         <TouchableOpacity
-          style={styles.button}
+          style={styles.buttonImport}
           onPress={this.onPressImport}>
-          <Text style={styles.buttonText}>Import</Text>
+          <Text style={styles.buttonImportText}>Import</Text>
         </TouchableOpacity>
-        <Text>{this.state.text}</Text>
+        <TouchableOpacity
+          style={styles.buttonCancel}
+          onPress={ev => this.props.onDone()}>
+          <Text style={styles.buttonCancelText}>Cancel</Text>
+        </TouchableOpacity>
       </View>
     )
   }
@@ -82,13 +86,24 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginBottom: 15
   },
-  button: {
+  buttonImport: {
     alignItems: 'center',
     backgroundColor: '#2275d7',
-    paddingHorizontal: 15,
-    paddingVertical: 8
+    paddingHorizontal: 25,
+    paddingVertical: 8,
+    borderRadius: 5,
+    marginBottom: 10
   },
-  buttonText: {
+  buttonCancel: {
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 5
+  },
+  buttonImportText: {
     color: '#fff'
+  },
+  buttonCancelText: {
+    color: '#0077cc'
   }
 })
