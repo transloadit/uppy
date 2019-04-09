@@ -374,7 +374,7 @@
   justify-content: space-between;
   height: 40px;
   width: 100%;
-  border-bottom: 1px solid $color-lightgray;
+  border-bottom: 1px solid $gray-200;
   z-index: $zIndex-4;
   background-color: $color-almost-white;
   padding: 0 10px;
@@ -1083,7 +1083,7 @@ a.uppy-Dashboard-poweredBy {
 
 .uppy-Dashboard-actions {
   height: 55px;
-  border-top: 1px solid $color-lightgray;
+  border-top: 1px solid $gray-200;
   display: flex;
   align-items: center;
   padding: 0 15px;
@@ -1177,7 +1177,7 @@ a.uppy-Dashboard-poweredBy {
   align-items: center;
   justify-content: center;
   flex-grow: 1;
-  border-bottom: 1px solid $color-lightgray;
+  border-bottom: 1px solid $gray-200;
   background-color: lighten($color-gray, 40%); /* no !important */
   position: relative;
 }
