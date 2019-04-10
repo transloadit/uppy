@@ -68,6 +68,10 @@ module.exports = function Dashboard (props) {
           }
 
         <div class="uppy-Dashboard-innerWrap">
+          <div class="uppy-Dashboard-drop-files-here-hint">
+            {props.i18n('dropHint')}
+          </div>
+
           { (!noFiles && props.showSelectedFiles) && <PanelTopBar {...props} /> }
 
           { props.showSelectedFiles ? (

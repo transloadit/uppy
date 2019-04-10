@@ -50,8 +50,6 @@ module.exports = class Url extends Plugin {
     this.getMeta = this.getMeta.bind(this)
     this.addFile = this.addFile.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
-    this.handleDragOver = this.handleDragOver.bind(this)
-    this.handleDragLeave = this.handleDragLeave.bind(this)
 
     this.handlePaste = this.handlePaste.bind(this)
 
@@ -170,16 +168,6 @@ module.exports = class Url extends Plugin {
     }
   }
 
-  handleDragOver (e) {
-    e.preventDefault()
-    this.el.classList.add('drag')
-  }
-
-  handleDragLeave (e) {
-    e.preventDefault()
-    this.el.classList.remove('drag')
-  }
-
   handlePaste (e) {
     if (!e.clipboardData.items) {
       return
@@ -211,8 +199,6 @@ module.exports = class Url extends Plugin {
   onMount () {
     if (this.el) {
       this.el.addEventListener('drop', this.handleDrop)
-      this.el.addEventListener('dragover', this.handleDragOver)
-      this.el.addEventListener('dragleave', this.handleDragLeave)
       this.el.addEventListener('paste', this.handlePaste)
     }
   }
@@ -227,8 +213,6 @@ module.exports = class Url extends Plugin {
   uninstall () {
     if (this.el) {
       this.el.removeEventListener('drop', this.handleDrop)
-      this.el.removeEventListener('dragover', this.handleDragOver)
-      this.el.removeEventListener('dragleave', this.handleDragLeave)
       this.el.removeEventListener('paste', this.handlePaste)
     }
 

@@ -80,6 +80,7 @@ module.exports = class Dashboard extends Plugin {
         myDevice: 'My Device',
         dropPasteImport: 'Drop files here, paste, %{browse} or import from',
         dropPaste: 'Drop files here, paste or %{browse}',
+        dropHint: 'Drop your files here',
         browse: 'browse',
         fileProgress: 'File progress: upload speed and ETA',
         numberOfSelectedFiles: 'Number of selected files',
