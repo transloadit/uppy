@@ -495,37 +495,37 @@
   height: 100%;
 }
 
-.uppy-Dashboard-next {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: none;
-  background-color: rgba($gray-500, 0.7);
-  -webkit-appearance: none;
-  appearance: none;
-  border: 0;
-  z-index: $zIndex-3;
-  transition: background-color 0.5s;
-  color: $color-white;
-  font-family: inherit;
-  font-size: 14px;
-  line-height: 1;
-  padding: 0;
-  margin: 0;
-  outline: none;
-  cursor: not-allowed;
-}
+// .uppy-Dashboard-next {
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   background: none;
+//   background-color: rgba($gray-500, 0.7);
+//   -webkit-appearance: none;
+//   appearance: none;
+//   border: 0;
+//   z-index: $zIndex-3;
+//   transition: background-color 0.5s;
+//   color: $color-white;
+//   font-family: inherit;
+//   font-size: 14px;
+//   line-height: 1;
+//   padding: 0;
+//   margin: 0;
+//   outline: none;
+//   cursor: not-allowed;
+// }
 
-.uppy-Dashboard-next.is-active {
-  cursor: pointer;
-  background-color: $color-blue;
+// .uppy-Dashboard-next.is-active {
+//   cursor: pointer;
+//   background-color: $color-blue;
 
-  &:hover {
-    background-color: darken($color-blue, 20%);
-  }
-}
+//   &:hover {
+//     background-color: darken($color-blue, 20%);
+//   }
+// }
 
 .uppy-Dashboard-filesContainer {
   @include clearfix;
