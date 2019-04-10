@@ -18,7 +18,7 @@ export default function PauseResumeButton (props) {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#006bb7',
+    backgroundColor: '#cc0077',
     padding: 10
   },
   text: {
