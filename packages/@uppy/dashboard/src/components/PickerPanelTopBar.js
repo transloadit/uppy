@@ -94,8 +94,8 @@ function PanelTopBar (props) {
           aria-label={props.i18n('addMoreFiles')}
           title={props.i18n('addMoreFiles')}
           onclick={() => props.toggleAddFilesPanel(true)}>
-          <svg class="UppyIcon" width="14" height="14" viewBox="0 0 14 14">
-            <path d="M7.5 6H13a.5.5 0 0 1 .5.5V7a.5.5 0 0 1-.5.5H7.5V13a.5.5 0 0 1-.5.5h-.5A.5.5 0 0 1 6 13V7.5H.5A.5.5 0 0 1 0 7v-.5A.5.5 0 0 1 .5 6H6V.5a.5.5 0 0 1 .5-.5H7a.5.5 0 0 1 .5.5V6z" />
+          <svg class="UppyIcon" width="15" height="15" viewBox="0 0 15 15">
+            <path d="M8 6.5h6a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5H8v6a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V8h-6a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h6v-6A.5.5 0 0 1 7 0h.5a.5.5 0 0 1 .5.5v6z" />
           </svg>
         </button>
       }
