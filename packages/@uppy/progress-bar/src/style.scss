@@ -19,8 +19,8 @@
 
 .uppy-ProgressBar-inner {
   /* no important */
-  background-color: $color-blue;
-  box-shadow: 0 0 10px rgba($color-blue, 0.7);
+  background-color: $blue;
+  box-shadow: 0 0 10px rgba($blue, 0.7);
   height: 100%;
   width: 0;
   transition: width 0.4s ease;
@@ -34,5 +34,5 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: $color-white;
+  color: $white;
 }

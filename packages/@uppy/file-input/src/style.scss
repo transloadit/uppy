@@ -12,13 +12,13 @@
   font-size: 0.85em;
   // text-transform: uppercase;
   padding: 10px 15px;
-  color: darken($color-blue, 20%);
-  border: 1px solid darken($color-blue, 20%);
+  color: darken($blue, 20%);
+  border: 1px solid darken($blue, 20%);
   border-radius: 8px;
   cursor: pointer;
 
   &:hover {
-    background-color: darken($color-blue, 20%);
-    color: $color-white;
+    background-color: darken($blue, 20%);
+    color: $white;
   }
 }
