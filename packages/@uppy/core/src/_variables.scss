@@ -3,32 +3,27 @@ $font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Ari
 
 // Colors
 
-$color-black: #000 !default;
-// $color-gray: #939393 !default;
-// $color-asphalt-gray: #525252 !default;
-// $color-lightgray: #eaeaea !default;
-// $color-almost-white: #fafafa !default;
-$color-white: #fff !default;
-$color-red: #d32f2f !default;
-$color-orange: #f6a623 !default;
-$color-yellow: #ffd600 !default;
-$color-green: #1bb240 !default;
-$color-blue: #2275d7 !default;
+$white: #fff !default;
+$black: #000 !default;
+$red: #d32f2f !default;
+$orange: #f6a623 !default;
+$yellow: #ffd600 !default;
+$green: #1bb240 !default;
+$blue: #2275d7 !default;
 
-// Shades of gray
-// @todo: replace all current grays with them
-$gray-50: #fafafa;
-$gray-100: #f4f4f4;
-$gray-200: #eaeaea;
-$gray-300: #cfcfcf;
-$gray-400: #bbb;
-$gray-500: #939393;
-$gray-600: #757575;
-$gray-700: #525252;
-$gray-800: #333;
-$gray-900: #1f1f1f;
+$gray-50: #fafafa !default;
+$gray-100: #f4f4f4 !default;
+$gray-200: #eaeaea !default;
+$gray-300: #cfcfcf !default;
+$gray-400: #bbb !default;
+$gray-500: #939393 !default;
+$gray-600: #757575 !default;
+$gray-700: #525252 !default;
+$gray-800: #333 !default;
+$gray-900: #1f1f1f !default;
 
-$color-uppy-pink: #eb2177;
+
+$uppy-pink: #eb2177;
 
 // Sizes
 

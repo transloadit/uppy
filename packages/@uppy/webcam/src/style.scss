@@ -55,8 +55,8 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background-color: $color-red;
-  color: $color-white;
+  background-color: $red;
+  color: $white;
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -78,12 +78,12 @@
   }
 
   .uppy-Webcam-button:hover {
-    background-color: darken($color-red, 5%);
+    background-color: darken($red, 5%);
   }
 
   .uppy-Webcam-button:focus {
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba($color-blue, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba($blue, 0.5);
   }
 
 .uppy-Webcam-button--picture {

@@ -9,8 +9,8 @@
   line-height: 40px;
   font-size: 12px;
   font-weight: 400;
-  color: $color-white;
-  background-color: $color-white;
+  color: $white;
+  background-color: $white;
   z-index: $zIndex-2;
   transition: height .2s;
 }
@@ -37,26 +37,26 @@
 }
 
 .uppy-StatusBar.is-complete .uppy-StatusBar-progress {
-  background-color: $color-green;
+  background-color: $green;
 }
 
 .uppy-StatusBar.is-error .uppy-StatusBar-progress {
-  background-color: $color-red;
+  background-color: $red;
 }
 
 .uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator {
   cursor: default;
-  color: $color-green;
+  color: $green;
 }
 
 .uppy-StatusBar:not([aria-hidden=true]).is-waiting {
-  background-color: $color-white;
+  background-color: $white;
   height: 65px;
   border-top: 1px solid $gray-200;
 }
 
 .uppy-StatusBar-progress {
-  background-color: $color-blue;
+  background-color: $blue;
   height: 2px;
   position: absolute;
   z-index: $zIndex-2;
@@ -77,7 +77,7 @@
 
   .uppy-StatusBar.is-preprocessing .uppy-StatusBar-progress,
   .uppy-StatusBar.is-postprocessing .uppy-StatusBar-progress {
-    background-color: $color-orange;
+    background-color: $orange;
   }
 
 .uppy-StatusBar.is-waiting .uppy-StatusBar-progress {
@@ -195,7 +195,7 @@
   // width: 20px;
   // height: 20px;
   // border-radius: 50%;
-  // color: rgba($color-black, 0.6);
+  // color: rgba($black, 0.6);
   // background-color: rgba($gray-500, 0.3);
   // text-align: center;
 
@@ -205,7 +205,7 @@
 }
 
   .uppy-StatusBar-actionCircleBtn:focus {
-    outline: 2px solid $color-blue;
+    outline: 2px solid $blue;
     outline-offset: 0;
   }
 
@@ -230,7 +230,7 @@
   font-size: 10px;
   // margin-left: 6px;
   // margin-right: 6px;
-  color: $color-blue;
+  color: $blue;
 
   .uppy-size--md & {
     font-size: 11px;
@@ -245,12 +245,12 @@
     font-size: 14px;
     width: 100%;
     padding: 15px 10px;
-    color: $color-white;
-    background-color: $color-green;
+    color: $white;
+    background-color: $green;
   }
 
     .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload:hover {
-      background-color: darken($color-green, 10%);
+      background-color: darken($green, 10%);
     }
 
     .uppy-size--md .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
@@ -264,8 +264,8 @@
 
   .uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
     background-color: transparent;
-    // border: 1px solid $color-white;
-    color: $color-blue;
+    // border: 1px solid $white;
+    color: $blue;
   }
 
 .uppy-StatusBar-details {
@@ -274,7 +274,7 @@
   height: 13px;
   display: inline-block;
   vertical-align: middle;
-  color: $color-white;
+  color: $white;
   background-color: $gray-700;
   border-radius: 50%;
   position: relative;
@@ -296,12 +296,12 @@
   animation-iteration-count: infinite;
   animation-timing-function: linear;
   margin-right: 10px;
-  fill: $color-blue;
+  fill: $blue;
 }
 
   .uppy-StatusBar.is-preprocessing .uppy-StatusBar-spinner,
   .uppy-StatusBar.is-postprocessing .uppy-StatusBar-spinner {
-    fill: $color-orange;
+    fill: $orange;
   }
 
 

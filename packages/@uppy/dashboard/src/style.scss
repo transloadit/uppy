@@ -106,7 +106,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba($color-black, 0.5);
+  background-color: rgba($black, 0.5);
   z-index: $zIndex-2;
 }
 
@@ -162,7 +162,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0 5px 15px 4px rgba($color-black, 0.15);
+    box-shadow: 0 5px 15px 4px rgba($black, 0.15);
   }
 }
 
@@ -172,7 +172,7 @@
   top: -33px;
   right: -2px;
   cursor: pointer;
-  color: rgba($color-white, 0.9);
+  color: rgba($white, 0.9);
   font-size: 27px;
   z-index: $zIndex-5;
 
@@ -237,7 +237,7 @@
 .uppy-Dashboard-browse {
   @include reset-button;
   cursor: pointer;
-  color: rgba($color-blue, 0.9);
+  color: rgba($blue, 0.9);
 
   &:hover {
     text-decoration: underline;
@@ -246,7 +246,7 @@
 
   .uppy-Dashboard-browse:focus {
     outline: none;
-    border-bottom: 2px solid $color-blue;
+    border-bottom: 2px solid $blue;
   }
 
 .uppy-DashboardTabs-list {
@@ -308,7 +308,7 @@
 }
 
   .uppy-DashboardTab-btn:hover {
-    color: $color-blue;
+    color: $blue;
   }
 
   .uppy-DashboardTab-btn:focus {
@@ -412,10 +412,10 @@
   font-size: 12px;
   font-weight: 400;
   cursor: pointer;
-  color: $color-blue;
+  color: $blue;
 
   &:hover {
-    color: darken($color-blue, 10%)
+    color: darken($blue, 10%)
   }
 
   .uppy-size--md & {
@@ -427,13 +427,13 @@
   @include reset-button;
   font-weight: 500;
   cursor: pointer;
-  color: $color-blue;
+  color: $blue;
   width: 24px;
   height: 24px;
   padding: 5px;
 
   &:hover {
-    color: darken($color-blue, 10%)
+    color: darken($blue, 10%)
   }
 }
 
@@ -447,7 +447,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: darken($color-white, 4%);
+  background-color: darken($white, 4%);
   overflow: hidden;
   z-index: $zIndex-5;
   border-radius: 5px;
@@ -464,7 +464,7 @@
   right: 0;
   background: $gray-50;
   background: linear-gradient(0deg, $gray-50 35%, rgba($gray-50, 0.85) 100%);
-  box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
+  box-shadow: 0 0 10px 5px rgba($black, 0.15);
   overflow: hidden;
   z-index: $zIndex-5;
   border-radius: 5px;
@@ -508,7 +508,7 @@
 //   border: 0;
 //   z-index: $zIndex-3;
 //   transition: background-color 0.5s;
-//   color: $color-white;
+//   color: $white;
 //   font-family: inherit;
 //   font-size: 14px;
 //   line-height: 1;
@@ -520,10 +520,10 @@
 
 // .uppy-Dashboard-next.is-active {
 //   cursor: pointer;
-//   background-color: $color-blue;
+//   background-color: $blue;
 
 //   &:hover {
-//     background-color: darken($color-blue, 20%);
+//     background-color: darken($blue, 20%);
 //   }
 // }
 
@@ -708,11 +708,11 @@ a.uppy-Dashboard-poweredBy {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  box-shadow: 0 0 2px 0 rgba($color-black, 0.4);
+  box-shadow: 0 0 2px 0 rgba($black, 0.4);
   border-radius: 3px;
 
   .uppy-size--md & {
-    box-shadow: 0 1px 3px rgba($color-black, 0.2);
+    box-shadow: 0 1px 3px rgba($black, 0.2);
   }
 }
 
@@ -723,7 +723,7 @@ a.uppy-Dashboard-poweredBy {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba($color-black, 0.65) /* no !important */;
+    background-color: rgba($black, 0.65) /* no !important */;
     display: none;
     z-index: $zIndex-2;
   }
@@ -745,7 +745,7 @@ a.uppy-Dashboard-poweredBy {
 .uppy-DashboardItem-previewIconBg {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(rgba($color-black, 0.1) 0px 0px 1px);
+  filter: drop-shadow(rgba($black, 0.1) 0px 0px 1px);
 }
 
 .uppy-DashboardItem-previewIcon {
@@ -893,7 +893,7 @@ a.uppy-Dashboard-poweredBy {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: $zIndex-3;
-  color: $color-white;
+  color: $white;
   text-align: center;
   width: 120px;
   display: none;
@@ -963,7 +963,7 @@ a.uppy-Dashboard-poweredBy {
   bottom: -10px;
   left: 0;
   width: 100%;
-  text-shadow: 0 1px 0 rgba($color-black, 0.3);
+  text-shadow: 0 1px 0 rgba($black, 0.3);
 
   .uppy-size--md & {
     display: block;
@@ -976,40 +976,40 @@ a.uppy-Dashboard-poweredBy {
 }
 
 .uppy-DashboardItem .bg {
-  stroke: rgba($color-white, 0.4);
+  stroke: rgba($white, 0.4);
   opacity: 0;
 }
 
 .uppy-DashboardItem .progress {
-  stroke: $color-white;
+  stroke: $white;
   transition: stroke-dashoffset .5s ease-out;
   opacity: 0;
 }
 
 .uppy-DashboardItem .play {
-  stroke: $color-white;
-  fill: $color-white;
+  stroke: $white;
+  fill: $white;
   opacity: 0;
   transition: all 0.2s;
   display: none;
 }
 
 .uppy-DashboardItem .cancel {
-  fill: $color-white;
+  fill: $white;
   opacity: 0;
   transition: all 0.2s;
 }
 
 .uppy-DashboardItem .pause {
-  stroke: $color-white;
-  fill: $color-white;
+  stroke: $white;
+  fill: $white;
   opacity: 0;
   transition: all 0.2s;
   display: none;
 }
 
 .uppy-DashboardItem.is-error .retry {
-  fill: $color-white;
+  fill: $white;
 }
 
 .uppy-DashboardItem.is-resumable {
@@ -1019,7 +1019,7 @@ a.uppy-Dashboard-poweredBy {
 
 .UppyIcon-progressCircle .check {
   opacity: 0;
-  fill: $color-white;
+  fill: $white;
   transition: all 0.2s;
 }
 
@@ -1058,8 +1058,8 @@ a.uppy-Dashboard-poweredBy {
   }
 
   .progress {
-    stroke: $color-green;
-    fill: $color-green;
+    stroke: $green;
+    fill: $green;
     opacity: 1;
   }
 
@@ -1075,7 +1075,7 @@ a.uppy-Dashboard-poweredBy {
 
 .uppy-DashboardItem-progressInner {
   height: 15px;
-  background-color: $color-blue;
+  background-color: $blue;
   position: absolute;
   top: 0;
   left: 0;
@@ -1124,8 +1124,8 @@ a.uppy-Dashboard-poweredBy {
   position: absolute;
   top: -12px;
   right: -12px;
-  background-color: $color-green;
-  color: $color-white;
+  background-color: $green;
+  color: $white;
   border-radius: 50%;
   width: 16px;
   height: 16px;
@@ -1155,8 +1155,8 @@ a.uppy-Dashboard-poweredBy {
   right: 0;
   bottom: 0;
   z-index: $zIndex-5;
-  box-shadow: 0px 0px 10px 4px rgba($color-black, 0.1);
-  background-color: $color-white;
+  box-shadow: 0px 0px 10px 4px rgba($black, 0.1);
+  background-color: $white;
   display: flex;
   flex-direction: column;
 }
@@ -1183,7 +1183,7 @@ a.uppy-Dashboard-poweredBy {
 }
 
 .uppy-DashboardFileCard-preview img {
-  box-shadow: 0px 3px 20px rgba($color-black, 0.15);
+  box-shadow: 0px 3px 20px rgba($black, 0.15);
   max-width: 90%;
   max-height: 90%;
   object-fit: cover;
