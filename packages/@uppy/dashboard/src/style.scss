@@ -119,7 +119,7 @@
   // min-height: 450px is required for everything to fit on mobile
   min-height: 450px;
   outline: none;
-  border: 1px solid rgba($color-gray, 0.2);
+  border: 1px solid $gray-200;
   border-radius: 5px;
 
   .uppy-size--md & {
@@ -712,7 +712,7 @@ a.uppy-Dashboard-poweredBy {
   border-radius: 3px;
 
   .uppy-size--md & {
-    box-shadow: 0 1px 3px rgba($color-black,.2);
+    box-shadow: 0 1px 3px rgba($color-black, 0.2);
   }
 }
 
@@ -811,7 +811,7 @@ a.uppy-Dashboard-poweredBy {
 
 .uppy-DashboardItem-name a {
   text-decoration: underline;
-  color: $color-black;
+  color: $gray-800;
 }
 
 .uppy-DashboardItem-status {

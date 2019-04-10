@@ -10,7 +10,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   position: relative;
-  color: $color-black;
+  color: $gray-800;
 }
 
 .uppy-Root *, .uppy-Root *:before, .uppy-Root *:after {
@@ -173,7 +173,7 @@
   padding: 10px 15px;
   border-radius: 4px;
   background-color: transparent;
-  color: $color-black;
+  color: $gray-800;
 }
 
   .uppy-size--md .uppy-c-btn-link {
