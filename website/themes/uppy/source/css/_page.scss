@@ -80,6 +80,16 @@
     margin: 0.8em 0;
   }
 
+  ul.menu-root {
+    hr {
+      margin-top: -4px;
+      margin-bottom: 4px;
+      width: 85%;
+      border: 1px solid #e9e9e9;
+      margin-left: -1px;
+    }
+  }
+
   .sidebar-link {
     color: $color-light;
 
@@ -408,9 +418,10 @@
   }
 }
 
-.postseries-link {
-  font-weight: 300;
-  &.current {
-    font-weight: 600;
-  }
+.PostSeries {
+  margin: 20px 0;
+  padding: 12px 15px;
+  background: #f4f4f4;
+  border-radius: 3px;
+  font-size: 14px;
 }

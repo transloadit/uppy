@@ -19,11 +19,9 @@ last Friday of every new month.
 Ideas that will be planned and find their way into a release at one point.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
-- [ ] core: Decouple rendering from the Plugin base class?
 - [ ] core: Make sure Uppy works well in VR
 - [ ] test: Human should check http://www.webpagetest.org and https://developers.google.com/web/tools/lighthouse/, use it sometimes to test website and Uppy. Will show response/loading times and other issues
 - [ ] test: Human should test with real screen reader to identify accessibility problems
-- [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] dependencies: es6-promise --> lie https://github.com/calvinmetcalf/lie ?
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
@@ -89,6 +87,11 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
 - [ ] show thumbnails when connecting with Google Drive #1162 (@ifedapoolarewaju)
 
+## 1.1
+
+- [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
+- [ ] dashboard: Bring back "Drop Here" screen for dragged URLs without introducing flickering (tricky! see PR #1400)
+
 ## 1.0 Goals
 
 What we need to do to release Uppy 1.0
@@ -101,13 +104,12 @@ What we need to do to release Uppy 1.0
 - [ ] feature: basic React Native support (@arturi, @ifedapoolarewaju)
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
-- [ ] website: replace transloadit example with robodog example <-- add transloadit test key with restricted usage (no need to sign up yourself to try it)
+- [x] website: replace transloadit example with robodog example <-- add transloadit test key with restricted usage (no need to sign up yourself to try it)
 - [ ] website: big release blog post or series
 - [ ] website: design polish
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
 - [ ] transloadit: add error reporting, see https://github.com/transloadit/jquery-sdk/blob/891e99b08dd8142d8d8adc0553e6511967635ad7/js/lib/Modal.js#L122-L136 (@goto-bus-stop, @arturi)
-- [ ] transloadit: should adhere cancel event and abort assembly (@arturi, @goto-bus-stop)
-- [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
+- [ ] transloadit: should adhere cancel event and abort assembly (@goto-bus-stop)
 - [x] chore: remove the not-working npm scripts (@kvz, @arturi)
 - [x] build: (BREAKING) `npm run dev` no longer starts Companion by default, use `npm run dev:with-companion` for that (@arturi)
 - [x] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear
@@ -133,6 +135,64 @@ What we need to do to release Uppy 1.0
 - [x] uppy-server: better error handling, general cleanup (remove unused code. etc)
 - [x] uppy-server: security audit
 - [x] uppy-server: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
+
+## 0.30.4
+
+Released: 2019-04-04
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 0.30.4 | @uppy/progress-bar | 0.30.4 |
+| @uppy/aws-s3 | 0.30.4 | @uppy/provider-views | 0.30.4 |
+| @uppy/companion-client | 0.28.4 | @uppy/react | 0.30.4 |
+| @uppy/companion | 0.17.4 | @uppy/redux-dev-tools | 0.30.4 |
+| @uppy/core | 0.30.4 | @uppy/robodog | 0.30.4 |
+| @uppy/dashboard | 0.30.4 | @uppy/status-bar | 0.30.4 |
+| @uppy/drag-drop | 0.30.4 | @uppy/thumbnail-generator | 0.30.4 |
+| @uppy/dropbox | 0.30.4 | @uppy/transloadit | 0.30.4 |
+| @uppy/file-input | 0.30.4 | @uppy/tus | 0.30.4 |
+| @uppy/form | 0.30.4 | @uppy/url | 0.30.4 |
+| @uppy/golden-retriever | 0.30.4 | @uppy/utils | 0.30.4 |
+| @uppy/google-drive | 0.30.4 | @uppy/webcam | 0.30.4 |
+| @uppy/informer | 0.30.4 | @uppy/xhr-upload | 0.30.4 |
+| @uppy/instagram | 0.30.4 | uppy | 0.30.4 |
+
+- build: ⚠️ remove !important (postcss-safe-important) (#1344 / @arturi)
+- @uppy/core: un-hardcode concat in `youCanOnlyUploadFileTypes` locale: In some languages, it probably doesn't make much sense to put the list
+of allowed file types at the end. The list of mime types/extensions may not be desired at all, so now you can omit %{types} to not show it. (#1374 / @goto-bus-stop)
+- @uppy/core: ⚠️ YMPT™: Yet More Progress Tweaks — #1093 accidentally omitted file size reporting for GDrive/Dropbox uploads, this adds it back.
+Unsized files (like instagram photos) now are stored with size: null instead of 0 (#1376 / @goto-bus-stop)
+- @uppy/core: make allowedFileTypes extensions case insensitive (#1341 / @goto-bus-stop)
+- @uppy/companion: ⚠️ fix instagram hanging uploads (#1274 / @ifedapoolarewaju)
+- @uppy/companion-client: remove the use of window.location for React Native support (#1393 / @ifedapoolarewaju)
+- typescript: ⚠️ fix uppy package use with allowSyntheticImports: false (#1396 / @goto-bus-stop)
+- @uppy/core: ⚠️ remove console.dir, since it’s probably unnessesary now and not supported in React Native (@arturi / a4f94a8d6b475657837f7c51dfb0670cc77fc3de)
+- @uppy/xhr-upload: allow customized option to set upload status (#1360 / @Mactaivsh)
+- @uppy/dashboard: fix icons jiggling on hover in safari (#1410 / @lakesare)
+- @uppy/dashboard: the list items are now even out (#1398 / @lakesare)
+- @uppy/dashboard: remove jumpiness (mobile --> desktop) when uppy loads (#1383 / @lakesare)
+- @uppy/dashboard: Protect some more styles from bleeding (#1362 / @arturi)
+- build: Refactor npm scripts, clean up unused ones (#1392 / @kvz, @arturi)
+- build: Speed up website deploys (73f89f08d9dde9e096285a952528976a69d923cf / @kvz)
+- @uppy/xhr-upload: ⚠️ load CompanionClient appropriately (c1abfea33d0c3e80809814c1048b156028c8fcf9 / @ifedapoolarewaju)
+- @uppy/companion: ⚠️ send null when download is complete (@ifedapoolarewaju / de04c7978c6713995cbf1717f6ca7ffd292cdeb1)
+- @uppy/companion: overwrite bytestotal for only tus uploads (d9ec8d28f4c97da4c0dcb46fbf5804a0ee484eeb / @ifedapoolarewaju)
+- @uppy/companion: install git so we can fetch tus-js-client fork (#1404 / @goto-bus-stop)
+- @uppy/companion-client: ⚠️ return 401 for invalid access token (#1298 / @ifedapoolarewaju)
+- @uppy/companion-client: ⚠️ add asyn wrapper around token storage (#1369 / @ifedapoolarewaju)
+- @uppy/companion: Updated the callback URIs to reflect their correct location (#1366 / @HughbertD)
+- @uppy/companion: do not use Uploader instance if options validation failed #1354
+- @uppy/status-bar: fix StatusBar error tooltip positioning (f83b4b06d958a1f7e78885a61b645c3371feb1ae / @arturi)
+- @uppy/google-drive Show thumbnails instead of a generic icon in Google Drive (#1363 / @arturi)
+- @uppy/dropbox: HTTP-header-safe JSON for dropbox (#1371 / @yonahforst)
+- @uppy/informer: made the tooltip not overflow the uppy container (#1382 / @lakesare)
+- @uppy/aws-s3-multipart: for remote aws-s3 uploads (#1350 / @ifedapoolarewaju)
+- examples: use template + demo key for transloadit-textarea example (#1375 / @goto-bus-stop)
+- website: add markdown snippets example (#1379 / @arturi)
+- website: provide simple framework for doing blog post series (#1373 / @kvz)
+- locales: Remove outdated locales for now (#1355 / @arturi)
+- @uppy/thumbnail-generator: do not export tainted canvas, fixes #1321 (#1343 / @goto-bus-stop)
+- @uppy/companion: replace text only when text is valid (985fd62ed6017ea3786eefd2c222caeb26d7998e / @ifedapoolarewaju)
 
 ## 0.30.3
 

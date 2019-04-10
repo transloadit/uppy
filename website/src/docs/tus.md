@@ -1,9 +1,10 @@
 ---
 type: docs
-order: 50
+order: 0
 title: "Tus"
 module: "@uppy/tus"
 permalink: docs/tus/
+category: 'Destinations'
 ---
 
 The `@uppy/tus` plugin brings resumable file uploading by [tus.io](http://tus.io) to Uppy by wrapping the [tus-js-client][].

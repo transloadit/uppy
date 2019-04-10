@@ -3,7 +3,8 @@ title: "&lt;ProgressBar />"
 type: docs
 permalink: docs/react/progress-bar/
 alias: docs/react/progressbar/
-order: 93
+order: 3
+category: 'React'
 ---
 
 The `<ProgressBar />` component wraps the [`@uppy/progress-bar`][] plugin.

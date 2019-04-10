@@ -1,40 +1,61 @@
-// Type definitions for uppy 0.25.5
+// Type definitions for uppy
 // Project: https://uppy.io
 // Definitions by: taoqf <https://github.com/taoqf>
 
 // Core
-export { default as Core } from '@uppy/core';
+import Core = require('@uppy/core');
+export { Core };
 
 // Stores
 import DefaultStore = require('@uppy/store-default');
-export { DefaultStore };  // this is weird: exporting a function as something that sounds like a class name!
-// do we really mean what the line above says?
-export { default as ReduxStore } from '@uppy/store-redux';
+export { DefaultStore };
+import ReduxStore = require('@uppy/store-redux');
+export { ReduxStore };
 
 // UI plugins
-export { default as Dashboard } from '@uppy/dashboard';
-export { default as DragDrop } from '@uppy/drag-drop';
-export { default as FileInput } from '@uppy/file-input';
-export { default as Informer } from '@uppy/informer';
-export { default as ProgressBar } from '@uppy/progress-bar';
-export { default as StatusBar } from '@uppy/status-bar';
+import Dashboard = require('@uppy/dashboard');
+export { Dashboard };
+import DragDrop = require('@uppy/drag-drop');
+export { DragDrop };
+import FileInput = require('@uppy/file-input');
+export { FileInput };
+import Informer = require('@uppy/informer');
+export { Informer };
+import ProgressBar = require('@uppy/progress-bar');
+export { ProgressBar };
+import StatusBar = require('@uppy/status-bar');
+export { StatusBar };
 
 // Acquirers
-export { default as Dropbox } from '@uppy/dropbox';
-export { default as GoogleDrive } from '@uppy/google-drive';
-export { default as Instagram } from '@uppy/instagram';
-export { default as Url } from '@uppy/url';
-export { default as Webcam } from '@uppy/webcam';
+import Dropbox = require('@uppy/dropbox');
+export { Dropbox };
+import GoogleDrive = require('@uppy/google-drive');
+export { GoogleDrive };
+import Instagram = require('@uppy/instagram');
+export { Instagram };
+import Url = require('@uppy/url');
+export { Url };
+import Webcam = require('@uppy/webcam');
+export { Webcam };
 
 // Uploaders
-export { default as AwsS3 } from '@uppy/aws-s3';
-export { default as AwsS3Multipart } from '@uppy/aws-s3-multipart';
-export { default as Transloadit } from '@uppy/transloadit';
-export { default as Tus } from '@uppy/tus';
-export { default as XHRUpload } from '@uppy/xhr-upload';
+import AwsS3 = require('@uppy/aws-s3');
+export { AwsS3 };
+import AwsS3Multipart = require('@uppy/aws-s3-multipart');
+export { AwsS3Multipart };
+import Transloadit = require('@uppy/transloadit');
+export { Transloadit };
+import Tus = require('@uppy/tus');
+export { Tus };
+import XHRUpload = require('@uppy/xhr-upload');
+export { XHRUpload };
 
 // Miscellaneous
-export { default as Form } from '@uppy/form';
-export { default as GoldenRetriever } from '@uppy/golden-retriever';
-export { default as ReduxDevTools } from '@uppy/redux-dev-tools';
-export { default as ThumbnailGenerator } from '@uppy/thumbnail-generator';
+import Form = require('@uppy/form');
+export { Form };
+import GoldenRetriever = require('@uppy/golden-retriever');
+export { GoldenRetriever };
+import ReduxDevTools = require('@uppy/redux-dev-tools');
+export { ReduxDevTools };
+import ThumbnailGenerator = require('@uppy/thumbnail-generator');
+export { ThumbnailGenerator };

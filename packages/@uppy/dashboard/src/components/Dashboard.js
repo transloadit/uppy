@@ -35,6 +35,7 @@ module.exports = function Dashboard (props) {
     { 'uppy-Dashboard--modal': !props.inline },
     { 'uppy-size--md': props.containerWidth > 576 },
     { 'uppy-size--lg': props.containerWidth > 700 },
+    { 'uppy-size--xl': props.containerWidth > 900 },
     { 'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel },
     { 'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible }
   )

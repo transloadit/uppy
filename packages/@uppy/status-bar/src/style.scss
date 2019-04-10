@@ -282,7 +282,7 @@
   display: inline-block;
   vertical-align: middle;
   color: $color-white;
-  background-color: rgba($color-black, 0.2);
+  background-color: $color-asphalt-gray;
   border-radius: 50%;
   position: relative;
   top: 0;
@@ -290,10 +290,6 @@
   font-size: 10px;
   text-align: center;
   cursor: help;
-
-  &:hover {
-    cursor: help;
-  }
 }
 
 .uppy-StatusBar-details:after {
