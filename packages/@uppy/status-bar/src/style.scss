@@ -45,8 +45,11 @@
 }
 
 .uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator {
-  cursor: default;
   color: $green;
+}
+
+.uppy-StatusBar.is-error .uppy-StatusBar-statusIndicator {
+  color: $red;
 }
 
 .uppy-StatusBar:not([aria-hidden=true]).is-waiting {
@@ -100,10 +103,6 @@
   }
 }
 
-.uppy-StatusBar-contentPadding {
-  margin-right: 0.5ch; // ½ the size of a 0, roughly the size of a space usually
-}
-
 .uppy-StatusBar-status {
   line-height: 1.4;
   font-weight: normal;
@@ -112,6 +111,7 @@
   justify-content: center;
   max-width: 170px;
   overflow-x: hidden;
+  padding-right: 0.3em;
 
   .uppy-size--md & {
     max-width: 400px;
@@ -150,22 +150,15 @@
   // }
 
 .uppy-StatusBar-statusIndicator {
+  position: relative;
+  top: 1px;
   color: $gray-700;
-  margin-right: 10px;
-  cursor: pointer;
+  margin-right: 7px;
 
-  .uppy-size--md & {
-    margin-right: 12px;
-  }
-}
-
-  .uppy-StatusBar-statusIndicator svg {
+  svg {
     vertical-align: text-bottom;
   }
-
-  .uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator  {
-    margin-right: 6px;
-  }
+}
 
 .uppy-StatusBar-actions {
   display: flex;

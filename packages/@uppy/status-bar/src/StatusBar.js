@@ -304,8 +304,15 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
 
 const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
   return (
-    <div class="uppy-StatusBar-content" role="alert">
-      <span class="uppy-StatusBar-contentPadding">{i18n('uploadFailed')}.</span>
+    <div class="uppy-StatusBar-content" role="alert" title={i18n('uploadFailed')}>
+      <div class="uppy-StatusBar-status">
+        <div class="uppy-StatusBar-statusPrimary">
+          <svg aria-hidden="true" class="uppy-StatusBar-statusIndicator UppyIcon" width="11" height="11" viewBox="0 0 11 11">
+            <path d="M4.278 5.5L0 1.222 1.222 0 5.5 4.278 9.778 0 11 1.222 6.722 5.5 11 9.778 9.778 11 5.5 6.722 1.222 11 0 9.778z" />
+          </svg>
+          {i18n('uploadFailed')}
+        </div>
+      </div>
       {/* {!hideRetryButton &&
         <span class="uppy-StatusBar-contentPadding">{i18n('pleasePressRetry')}</span>
       } */}
