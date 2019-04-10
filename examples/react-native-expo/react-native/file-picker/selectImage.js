@@ -10,7 +10,7 @@ function selectImageWithExpo (options) {
 
         return Expo.ImagePicker.launchImageLibraryAsync(options)
           .then((result) => {
-            console.log(result)
+            // console.log(result)
             if (!result.cancelled) {
               return resolve(result)
             }
