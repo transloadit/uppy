@@ -1,20 +1,47 @@
 import React from 'react' // eslint-disable-line no-unused-vars
 import { StyleSheet, View, FlatList, Text, Image } from 'react-native'
 
-function truncateString (str) {
-  const maxChars = 20
-  if (str.length > maxChars) {
-    return str.substring(0, 25) + '...'
-  }
-}
+import getFileTypeIcon from '@uppy/dashboard/lib/utils/getFileTypeIcon.js'
+import truncateString from '@uppy/dashboard/lib/utils/truncateString.js'
+import renderStringFromJSX from 'preact-render-to-string'
+import SvgUri from 'react-native-svg-uri'
 
-function FileIcon () {
-  return <View style={styles.itemIconContainer}>
-    <Image
-      style={styles.itemIcon}
-      source={require('./assets/file-icon.png')}
-    />
-  </View>
+// function truncateString (str) {
+//   const maxChars = 20
+//   if (str.length > maxChars) {
+//     return str.substring(0, 25) + '...'
+//   }
+
+//   return str
+// }
+
+// function FileIcon () {
+//   return <View style={styles.itemIconContainer}>
+//     <Image
+//       style={styles.itemIcon}
+//       source={require('./assets/file-icon.png')}
+//     />
+//   </View>
+// }
+
+function UppyDashboardFileIcon (props) {
+  const icon = renderStringFromJSX(getFileTypeIcon(props.type).icon)
+  const color = getFileTypeIcon(props.type).color
+  return (
+    <View style={{
+      ...styles.itemIconContainer,
+      backgroundColor: color
+    }}>
+      <SvgUri
+        width={50}
+        height={50}
+        style={styles.itemIconSVG}
+        fill="#ffffff"
+        fillAll
+        svgXmlData={icon}
+      />
+    </View>
+  )
 }
 
 export default function FileList (props) {
@@ -34,9 +61,9 @@ export default function FileList (props) {
                 ? <Image
                   style={styles.itemImage}
                   source={{ uri: item.data.uri }} />
-                : <FileIcon />
+                : <UppyDashboardFileIcon type={item.type} />
               }
-              <Text style={styles.itemName}>{truncateString(item.name)}</Text>
+              <Text style={styles.itemName}>{truncateString(item.name, 20)}</Text>
               <Text style={styles.itemType}>{item.type}</Text>
             </View>
           )
@@ -77,6 +104,10 @@ const styles = StyleSheet.create({
   itemIcon: {
     width: 42,
     height: 56
+  },
+  itemIconSVG: {
+    width: 50,
+    height: 50
   },
   itemName: {
     fontSize: 13,

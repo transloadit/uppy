@@ -14,7 +14,6 @@ import FileList from './FileList'
 import PauseResumeButton from './PauseResumeButton'
 import ProgressBar from './ProgressBar'
 import SelectFiles from './SelectFilesButton'
-// import uppyLogo from './assets/uppy-logo.png'
 
 function hashCode (str) {
   // from https://stackoverflow.com/a/8831937/151666
@@ -80,12 +79,12 @@ export default class App extends React.Component {
       })
     })
     this.uppy.on('upload-success', (file, response) => {
-      console.log(file.name, response)
+      // console.log(file.name, response)
     })
     this.uppy.on('complete', (result) => {
       this.setState({
         status: 'Upload complete ✅',
-        uploadURL: result.successful[0].uploadURL,
+        uploadURL: result.successful[0] ? result.successful[0].uploadURL : null,
         uploadComplete: true,
         uploadStarted: false
       })
