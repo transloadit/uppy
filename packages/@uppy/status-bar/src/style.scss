@@ -221,8 +221,7 @@
   display: inline-block;
   vertical-align: middle;
   font-size: 10px;
-  // margin-left: 6px;
-  // margin-right: 6px;
+  line-height: inherit;
   color: $blue;
 
   .uppy-size--md & {
