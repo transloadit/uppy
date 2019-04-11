@@ -785,19 +785,18 @@ a.uppy-Dashboard-poweredBy {
     width: 100%;
     max-width: 100%;
     flex: 1;
-    padding: 8px 3px 0 3px;
+    padding: 8px 0 0;
     border-top: 0;
   }
 }
 
 .uppy-DashboardItem-name {
-  font-size: 11px;
-  line-height: 1.35;
+  font-size: 12px;
+  line-height: 1.3;
   font-weight: 500;
   margin: 0;
   padding: 0;
-  max-height: 28px;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -810,7 +809,7 @@ a.uppy-Dashboard-poweredBy {
 }
 
 .uppy-DashboardItem-name a {
-  text-decoration: underline;
+  text-decoration: none;
   color: $gray-800;
 }
 
