@@ -264,7 +264,7 @@
     justify-content: center;
     max-width: 600px;
     overflow-x: initial;
-    margin-top: 30px;
+    margin-top: 15px;
     padding-top: 0;
   }
 }
@@ -298,24 +298,29 @@
   align-items: center;
   padding: 12px 20px;
   line-height: 1;
+  text-align: center;
 
   .uppy-size--md & {
-    width: 80px;
-    margin: 0 5px;
+    width: 86px;
+    margin-right: 1px;
     flex-direction: column;
-    padding: 0;
+    padding: 10px 3px;
+    border-radius: 5px;
   }
 }
 
-  .uppy-DashboardTab-btn:hover {
-    color: $blue;
+  .uppy-DashboardTab-btn::-moz-focus-inner {
+    border: 0;
   }
 
+  .uppy-DashboardTab-btn:hover {
+    background-color: $gray-100--highlighted;
+  }
+
+  .uppy-DashboardTab-btn:active,
   .uppy-DashboardTab-btn:focus {
-    outline-offset: 0;
-    .uppy-size--md & {
-      outline-offset: $size-focus-offset;
-    }
+    background-color: darken($gray-100--highlighted, 1%);
+    outline: none;
   }
 
   .uppy-DashboardTab-btn svg {
