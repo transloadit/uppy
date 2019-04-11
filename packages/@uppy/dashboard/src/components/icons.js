@@ -78,7 +78,7 @@ function iconFile () {
 
 function iconText () {
   return <svg aria-hidden="true" class="UppyIcon" width="62" height="62" viewBox="0 0 62 62">
-    <path d="M4.309 4.309h24.912v53.382h-6.525v3.559h16.608v-3.559h-6.525V4.309h24.912v10.676h3.559V.75H.75v14.235h3.559z" fill-rule="nonzero" fill="#cbcbcb" />
+    <path d="M4.309 4.309h24.912v53.382h-6.525v3.559h16.608v-3.559h-6.525V4.309h24.912v10.676h3.559V.75H.75v14.235h3.559z" fill-rule="nonzero" fill="#525252" />
   </svg>
 }
 
