@@ -414,13 +414,17 @@
 
 .uppy-DashboardContent-back {
   @include reset-button;
+  display: inline-block;
   font-size: 12px;
   font-weight: 400;
   cursor: pointer;
   color: $blue;
+  padding: 7px 6px;
+  margin-left: -6px;
+  border-radius: 3px;
 
   &:hover {
-    color: darken($blue, 10%);
+    color: darken($blue, 12%);
   }
 
   .uppy-size--md & {
@@ -430,15 +434,17 @@
 
 .uppy-DashboardContent-addMore {
   @include reset-button;
+  display: inline-block;
   font-weight: 500;
   cursor: pointer;
   color: $blue;
-  width: 25px;
-  height: 25px;
-  padding: 5px;
+  width: 29px;
+  height: 29px;
+  padding: 7px;
+  border-radius: 3px;
 
   &:hover {
-    color: darken($blue, 10%)
+    color: darken($blue, 12%)
   }
 }
 
