@@ -237,6 +237,7 @@
   .uppy-StatusBar-actionBtn--retry {
     height: 16px;
     border-radius: 8px;
+    margin-right: 6px;
     background-color: $pomegranate;
     line-height: 16px;
     color: #fff;
@@ -269,10 +270,6 @@
       padding: 13px 22px;
       width: auto;
     }
-
-  .uppy-StatusBar-actionBtn:not(:last-child) {
-    margin-right: 10px;
-  }
 
   .uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
     background-color: transparent;
