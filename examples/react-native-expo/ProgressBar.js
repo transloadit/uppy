@@ -2,9 +2,7 @@ import React from 'react' // eslint-disable-line no-unused-vars
 import { View, Text } from 'react-native'
 
 export default function ProgressBar (props) {
-  const progress = props.progress || 0
-  const total = props.total || 0
-  const percentage = Math.round(progress / total * 100)
+  const progress = props.progress
 
   const colorGreen = '#0b8600'
   const colorBlue = '#006bb7'
@@ -22,11 +20,11 @@ export default function ProgressBar (props) {
         }}>
         <View style={{
           height: 5,
-          backgroundColor: percentage === 100 ? colorGreen : colorBlue,
-          width: percentage + '%'
+          backgroundColor: progress === 100 ? colorGreen : colorBlue,
+          width: progress + '%'
         }} />
       </View>
-      <Text>{percentage ? percentage + '%' : null}</Text>
+      <Text>{progress ? progress + '%' : null}</Text>
     </View>
   )
 }

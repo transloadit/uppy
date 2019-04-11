@@ -75,6 +75,7 @@ export default class App extends React.Component {
       this.setState({
         progress: progress.bytesUploaded,
         total: progress.bytesTotal,
+        totalProgress: this.uppy.state.totalProgress,
         uploadStarted: true
       })
     })
@@ -163,10 +164,8 @@ export default class App extends React.Component {
           : null
         }
 
-        <ProgressBar
-          progress={this.state.progress}
-          total={this.state.total}
-        />
+        <ProgressBar progress={this.state.totalProgress} />
+
         <PauseResumeButton
           isPaused={this.state.isPaused}
           onPress={this.togglePauseResume}
