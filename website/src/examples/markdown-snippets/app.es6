@@ -111,6 +111,7 @@ class MarkdownTextarea {
         template_id: TRANSLOADIT_EXAMPLE_TEMPLATE
       }
     }).then((result) => {
+      if (result === null) return
       this.insertAttachments(
         this.matchFilesAndThumbs(result.results)
       )
@@ -135,6 +136,7 @@ class MarkdownTextarea {
         'dropbox'
       ]
     }).then((result) => {
+      if (result === null) return
       this.insertAttachments(
         this.matchFilesAndThumbs(result.results)
       )
