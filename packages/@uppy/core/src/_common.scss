@@ -123,8 +123,9 @@
   }
 
   .uppy-c-textInput:focus {
-    border-color: $blue;
+    border-color: rgba($blue, 0.6);
     outline: none;
+    box-shadow: 0 0 0 3px rgba($blue, 0.15);
   }
 
 // Buttons
@@ -168,7 +169,7 @@
 
   .uppy-c-btn-primary:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($blue, 0.5);
+    box-shadow: 0 0 0 3px rgba($blue, 0.4);
   }
 
 .uppy-c-btn-link {
@@ -190,7 +191,7 @@
 
   .uppy-c-btn-link:focus {
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba($blue, 0.5);
+    box-shadow: 0 0 0 3px rgba($blue, 0.25);
   }
 
 .uppy-c-btn--small {
