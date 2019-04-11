@@ -158,10 +158,15 @@ const UploadBtn = (props) => {
 }
 
 const RetryBtn = (props) => {
-  return <button type="button"
-    class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
-    aria-label={props.i18n('retryUpload')}
-    onclick={props.retryAll}>{props.i18n('retry')}</button>
+  return (
+    <button type="button"
+      class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry" aria-label={props.i18n('retryUpload')} onclick={props.retryAll}>
+      <svg aria-hidden="true" class="UppyIcon" width="8" height="10" viewBox="0 0 8 10">
+        <path d="M4 2.408a2.75 2.75 0 1 0 2.75 2.75.626.626 0 0 1 1.25.018v.023a4 4 0 1 1-4-4.041V.25a.25.25 0 0 1 .389-.208l2.299 1.533a.25.25 0 0 1 0 .416l-2.3 1.533A.25.25 0 0 1 4 3.316v-.908z" />
+      </svg>
+      {props.i18n('retry')}
+    </button>
+  )
 }
 
 const CancelBtn = (props) => {

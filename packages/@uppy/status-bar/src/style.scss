@@ -234,6 +234,25 @@
   //   padding: 2px 4px;
   // }
 
+  .uppy-StatusBar-actionBtn--retry {
+    height: 16px;
+    border-radius: 8px;
+    background-color: $pomegranate;
+    line-height: 16px;
+    color: #fff;
+    padding: 0 7px;
+
+    &:hover {
+      background-color: darken($pomegranate, 8%);
+    }
+
+    svg {
+      position: relative;
+      top: 1px;
+      margin-right: 3px;
+    }
+  }
+
   .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
     font-size: 14px;
     width: 100%;
