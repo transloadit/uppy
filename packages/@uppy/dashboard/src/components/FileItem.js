@@ -106,7 +106,7 @@ module.exports = function FileItem (props) {
     { 'is-paused': isPaused },
     { 'is-error': error },
     { 'is-resumable': props.resumableUploads },
-    { 'is-bundled': props.bundledUpload }
+    { 'is-noIndividualCancellation': !props.individualCancellation }
   )
 
   const showRemoveButton = props.individualCancellation
