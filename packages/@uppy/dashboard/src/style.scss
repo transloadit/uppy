@@ -420,7 +420,7 @@
   color: $blue;
 
   &:hover {
-    color: darken($blue, 10%)
+    color: darken($blue, 10%);
   }
 
   .uppy-size--md & {
