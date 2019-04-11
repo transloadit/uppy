@@ -1,12 +1,12 @@
-# Uppy + Node xhr Example
+# Uppy + Node Example
 
-This example uses @uppy/xhr to upload files to the local file system.
+This example uses Node server and `@uppy/xhr-upload` to upload files to the local file system.
 
 ## Run it
 
-Move into this directory, then:
+First run `npm install && npm run bootstrap && npm run build` in the root folder of the uppy project.
 
-Move into this directory, then:
+Then move into this directory (`examples/php-xhr`), and:
 
 ```bash
 npm install

@@ -1,10 +1,12 @@
-# Uppy + Python xhr Example
+# Uppy + Python Example
 
-This example uses @uppy/xhr to upload files to the local file system.
+This example uses a Python Flask server and `@uppy/xhr-upload` to upload files to the local file system.
 
 ## Run it
 
-Move into this directory, then:
+First run `npm install && npm run bootstrap && npm run build` in the root folder of the uppy project.
+
+Then move into this directory (`examples/python-xhr`), and:
 
 ```bash
 npm install

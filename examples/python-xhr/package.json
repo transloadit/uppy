@@ -4,8 +4,8 @@
   "scripts": {
     "copy": "cp ../../packages/uppy/dist/uppy.min.css .",
     "start:client": "budo main.js:bundle.js -- -t babelify -g aliasify",
-    "start:server": "python server.py",
-    "start": "npm-run-all --serial --parallel start:*"
+    "start:server": "mkdir -p uploads && python server.py",
+    "start": "npm-run-all --serial copy --parallel start:*"
   },
   "aliasify": {
     "aliases": {
