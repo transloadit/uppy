@@ -23,7 +23,7 @@ class Uppy {
   * @param {object} opts — Uppy options
   */
   constructor (opts) {
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
         youCanOnlyUploadX: {
           0: 'You can only upload %{smart_count} file',
@@ -68,7 +68,7 @@ class Uppy {
       meta: {},
       onBeforeFileAdded: (currentFile, files) => currentFile,
       onBeforeUpload: (files) => files,
-      locale: defaultLocale,
+      // locale: defaultLocale,
       store: DefaultStore()
     }
 
@@ -77,7 +77,7 @@ class Uppy {
     this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
 
     // i18n
-    this.translator = new Translator([ defaultLocale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.opts.locale ])
     this.locale = this.translator.locale
     this.i18n = this.translator.translate.bind(this.translator)
 
