@@ -694,9 +694,7 @@ a.uppy-Dashboard-poweredBy {
 
 .uppy-DashboardItem-sourceIcon {
   display: inline-block;
-  vertical-align: middle;
-  width: 11px;
-  height: 11px;
+  vertical-align: bottom;
   color: $gray-500;
 }
 
@@ -705,9 +703,11 @@ a.uppy-Dashboard-poweredBy {
   max-width: 100%;
   max-height: 100%;
   display: inline-block;
-  vertical-align: text-top;
+  vertical-align: text-bottom;
   overflow: hidden;
   fill: currentColor;
+  width: 11px;
+  height: 11px;
 }
 
 .uppy-DashboardItem-previewInnerWrap {
@@ -866,7 +866,6 @@ a.uppy-Dashboard-poweredBy {
     top: 0;
     left: -9px;
     color: $gray-600;
-    font-weight: 700;
   }
 }
 
