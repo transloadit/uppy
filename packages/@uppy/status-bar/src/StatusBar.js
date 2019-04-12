@@ -158,10 +158,15 @@ const UploadBtn = (props) => {
 }
 
 const RetryBtn = (props) => {
-  return <button type="button"
-    class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
-    aria-label={props.i18n('retryUpload')}
-    onclick={props.retryAll}>{props.i18n('retry')}</button>
+  return (
+    <button type="button"
+      class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry" aria-label={props.i18n('retryUpload')} onclick={props.retryAll}>
+      <svg aria-hidden="true" class="UppyIcon" width="8" height="10" viewBox="0 0 8 10">
+        <path d="M4 2.408a2.75 2.75 0 1 0 2.75 2.75.626.626 0 0 1 1.25.018v.023a4 4 0 1 1-4-4.041V.25a.25.25 0 0 1 .389-.208l2.299 1.533a.25.25 0 0 1 0 .416l-2.3 1.533A.25.25 0 0 1 4 3.316v-.908z" />
+      </svg>
+      {props.i18n('retry')}
+    </button>
+  )
 }
 
 const CancelBtn = (props) => {
@@ -171,8 +176,11 @@ const CancelBtn = (props) => {
     title={props.i18n('cancel')}
     aria-label={props.i18n('cancel')}
     onclick={props.cancelAll}>
-    <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm1.414-8l2.122-2.121-1.415-1.415L8 6.586 5.879 4.464 4.464 5.88 6.586 8l-2.122 2.121 1.415 1.415L8 9.414l2.121 2.122 1.415-1.415L9.414 8z" fill="#949494" fill-rule="evenodd" />
+    <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16">
+      <g fill="none" fill-rule="evenodd">
+        <circle fill="#888" cx="8" cy="8" r="8" />
+        <path fill="#FFF" d="M9.283 8l2.567 2.567-1.283 1.283L8 9.283 5.433 11.85 4.15 10.567 6.717 8 4.15 5.433 5.433 4.15 8 6.717l2.567-2.567 1.283 1.283z" />
+      </g>
     </svg>
   </button>
 }
@@ -188,18 +196,24 @@ const PauseResumeButton = (props) => {
     type="button"
     onclick={() => togglePauseResume(props)}>
     {isAllPaused
-      ? <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM6 5v6l5-3-5-3z" fill="#949494" fill-rule="evenodd" />
+      ? <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16">
+        <g fill="none" fill-rule="evenodd">
+          <circle fill="#888" cx="8" cy="8" r="8" />
+          <path fill="#FFF" d="M6 4.25L11.5 8 6 11.75z" />
+        </g>
       </svg>
-      : <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM5 5v6h2V5H5zm4 0v6h2V5H9z" fill="#949494" fill-rule="evenodd" />
+      : <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16">
+        <g fill="none" fill-rule="evenodd">
+          <circle fill="#888" cx="8" cy="8" r="8" />
+          <path d="M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z" fill="#FFF" />
+        </g>
       </svg>
     }
   </button>
 }
 
 const LoadingSpinner = (props) => {
-  return <svg class="uppy-StatusBar-spinner" width="14" height="14" xmlns="http://www.w3.org/2000/svg">
+  return <svg class="uppy-StatusBar-spinner" width="14" height="14">
     <path d="M13.983 6.547c-.12-2.509-1.64-4.893-3.939-5.936-2.48-1.127-5.488-.656-7.556 1.094C.524 3.367-.398 6.048.162 8.562c.556 2.495 2.46 4.52 4.94 5.183 2.932.784 5.61-.602 7.256-3.015-1.493 1.993-3.745 3.309-6.298 2.868-2.514-.434-4.578-2.349-5.153-4.84a6.226 6.226 0 0 1 2.98-6.778C6.34.586 9.74 1.1 11.373 3.493c.407.596.693 1.282.842 1.988.127.598.073 1.197.161 1.794.078.525.543 1.257 1.15.864.525-.341.49-1.05.456-1.592-.007-.15.02.3 0 0" fill-rule="evenodd" />
   </svg>
 }
@@ -281,18 +295,29 @@ const ProgressBarUploading = (props) => {
 const ProgressBarComplete = ({ totalProgress, i18n }) => {
   return (
     <div class="uppy-StatusBar-content" role="status" title={i18n('complete')}>
-      <svg aria-hidden="true" class="uppy-StatusBar-statusIndicator UppyIcon" width="18" height="17" viewBox="0 0 23 17">
-        <path d="M8.944 17L0 7.865l2.555-2.61 6.39 6.525L20.41 0 23 2.645z" />
-      </svg>
-      {i18n('complete')}
+      <div class="uppy-StatusBar-status">
+        <div class="uppy-StatusBar-statusPrimary">
+          <svg aria-hidden="true" class="uppy-StatusBar-statusIndicator UppyIcon" width="15" height="11" viewBox="0 0 15 11">
+            <path d="M.414 5.843L1.627 4.63l3.472 3.472L13.202 0l1.212 1.213L5.1 10.528z" />
+          </svg>
+          {i18n('complete')}
+        </div>
+      </div>
     </div>
   )
 }
 
 const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
   return (
-    <div class="uppy-StatusBar-content" role="alert">
-      <span class="uppy-StatusBar-contentPadding">{i18n('uploadFailed')}.</span>
+    <div class="uppy-StatusBar-content" role="alert" title={i18n('uploadFailed')}>
+      <div class="uppy-StatusBar-status">
+        <div class="uppy-StatusBar-statusPrimary">
+          <svg aria-hidden="true" class="uppy-StatusBar-statusIndicator UppyIcon" width="11" height="11" viewBox="0 0 11 11">
+            <path d="M4.278 5.5L0 1.222 1.222 0 5.5 4.278 9.778 0 11 1.222 6.722 5.5 11 9.778 9.778 11 5.5 6.722 1.222 11 0 9.778z" />
+          </svg>
+          {i18n('uploadFailed')}
+        </div>
+      </div>
       {/* {!hideRetryButton &&
         <span class="uppy-StatusBar-contentPadding">{i18n('pleasePressRetry')}</span>
       } */}
