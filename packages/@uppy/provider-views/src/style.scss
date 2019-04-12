@@ -349,14 +349,12 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.9;
-    transition: opacity 0.1s ease-in-out;
     border-radius: 4px;
   }
 
   .uppy-ProviderBrowserItem--selected img,
   .uppy-ProviderBrowserItem--selected svg {
-    opacity: 1;
+    opacity: 0.85;
   }
 
   .uppy-ProviderBrowserItem--noPreview .uppy-ProviderBrowserItem-inner {
@@ -371,10 +369,12 @@
 
   .uppy-ProviderBrowserItem-checkbox {
     position: absolute;
-    top: 13px;
-    right: 22px;
+    width: 26px;
+    height: 26px;
+    top: 16px;
+    right: 16px;
+    display: block;
     margin-right: 0;
-    opacity: 0.95;
     z-index: $zIndex-3;
   }
 
@@ -389,7 +389,7 @@
     width: 12px;
     height: 7px;
     left: 7px;
-    top: 10px;
+    top: 8px;
   }
 
   // Hide checkbox when unchecked in grid view
@@ -439,7 +439,7 @@
   display: inline-block;
   height: 17px;
   width: 17px;
-  top: 2px;
+  top: 0;
   border: 1px solid $blue;
   background-color: $white;
   border-radius: 3px;
