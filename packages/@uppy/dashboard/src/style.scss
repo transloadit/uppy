@@ -438,9 +438,10 @@
   font-weight: 500;
   cursor: pointer;
   color: $blue;
-  width: 29px;
-  height: 29px;
-  padding: 7px;
+  width: 27px;
+  height: 27px;
+  padding: 6px;
+  margin-right: -6px;
   border-radius: 3px;
 
   &:hover {
