@@ -38,7 +38,7 @@ function localIcon () {
 }
 
 function iconRetry () {
-  return <svg aria-hidden="true" class="UppyIcon retry" width="28" height="31" viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+  return <svg aria-hidden="true" class="UppyIcon retry" width="28" height="31" viewBox="0 0 16 19">
     <path d="M16 11a8 8 0 1 1-8-8v2a6 6 0 1 0 6 6h2z" />
     <path d="M7.9 3H10v2H7.9z" />
     <path d="M8.536.5l3.535 3.536-1.414 1.414L7.12 1.914z" />
@@ -77,8 +77,8 @@ function iconFile () {
 }
 
 function iconText () {
-  return <svg aria-hidden="true" class="UppyIcon" width="62" height="62" viewBox="0 0 62 62" xmlns="http://www.w3.org/2000/svg">
-    <path fill="#cbcbcb" d="M4.309 4.309h24.912v53.382h-6.525v3.559h16.608v-3.559h-6.525V4.309h24.912v10.676h3.559V.75H.75v14.235h3.559z" fill-rule="nonzero" />
+  return <svg aria-hidden="true" class="UppyIcon" width="62" height="62" viewBox="0 0 62 62">
+    <path d="M4.309 4.309h24.912v53.382h-6.525v3.559h16.608v-3.559h-6.525V4.309h24.912v10.676h3.559V.75H.75v14.235h3.559z" fill-rule="nonzero" fill="#525252" />
   </svg>
 }
 
