@@ -233,18 +233,19 @@
     border-radius: 8px;
     margin-right: 6px;
     background-color: $pomegranate;
-    line-height: 16px;
+    line-height: 1;
     color: #fff;
-    padding: 0 7px;
+    padding: 1px 6px 3px 18px;
+    position: relative;
 
     &:hover {
       background-color: darken($pomegranate, 8%);
     }
 
     svg {
-      position: relative;
-      top: 1px;
-      margin-right: 3px;
+      position: absolute;
+      top: 3px;
+      left: 6px;
     }
   }
 
