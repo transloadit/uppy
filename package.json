@@ -67,6 +67,7 @@
     "react-dom": "^16.8.6",
     "redux": "^4.0.1",
     "replace-x": "^1.5.0",
+    "stringify-object": "^3.3.0",
     "temp-write": "^3.4.0",
     "tinyify": "^2.5.0",
     "touch": "^3.1.0",
