@@ -8,7 +8,7 @@ declare module AwsS3Multipart {
   }
 
   interface AwsS3MultipartOptions extends Uppy.PluginOptions {
-    serverUrl: string;
+    companionUrl: string;
     createMultipartUpload(file: Uppy.UppyFile): Promise<{ uploadId: string, key: string }>;
     listParts(file: Uppy.UppyFile, opts: { uploadId: string, key: string }): Promise<AwsS3Part[]>;
     prepareUploadPart(file: Uppy.UppyFile, partData: { uploadId: string, key: string, body: Blob, number: number }): Promise<{ url: string }>;

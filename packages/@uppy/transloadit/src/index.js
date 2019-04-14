@@ -113,10 +113,10 @@ module.exports = class Transloadit extends Plugin {
     // We only replace the hostname for Transloadit's companions, so that
     // people can also self-host them while still using Transloadit for encoding.
     let remote = file.remote
-    if (file.remote && TL_UPPY_SERVER.test(file.remote.serverUrl)) {
+    if (file.remote && TL_UPPY_SERVER.test(file.remote.companionUrl)) {
       const err = new Error(
         'The https://api2.transloadit.com/uppy-server endpoint was renamed to ' +
-        'https://api2.transloadit.com/companion, please update your `serverUrl` ' +
+        'https://api2.transloadit.com/companion, please update your `companionUrl` ' +
         'options accordingly.')
       // Explicitly log this error here because it is caught by the `createAssembly`
       // Promise further along.
@@ -126,16 +126,16 @@ module.exports = class Transloadit extends Plugin {
       throw err
     }
 
-    if (file.remote && TL_COMPANION.test(file.remote.serverUrl)) {
+    if (file.remote && TL_COMPANION.test(file.remote.companionUrl)) {
       const newHost = status.companion_url
         .replace(/\/$/, '')
       const path = file.remote.url
-        .replace(file.remote.serverUrl, '')
+        .replace(file.remote.companionUrl, '')
         .replace(/^\//, '')
 
       remote = {
         ...file.remote,
-        serverUrl: newHost,
+        companionUrl: newHost,
         url: `${newHost}/${path}`
       }
     }

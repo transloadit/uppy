@@ -12,8 +12,8 @@ const localProviders = {
 }
 
 const remoteProviderOptionNames = [
-  'serverUrl',
-  'serverPattern',
+  'companionUrl',
+  'companionAllowedHosts',
   'serverHeaders',
   'target'
 ]
@@ -27,8 +27,8 @@ function addRemoteProvider (uppy, name, opts) {
   const Provider = remoteProviders[name]
   const providerOptions = {
     // Default to the :tl: Companion servers.
-    serverUrl: Transloadit.COMPANION,
-    serverPattern: Transloadit.COMPANION_PATTERN
+    companionUrl: Transloadit.COMPANION,
+    companionAllowedHosts: Transloadit.COMPANION_PATTERN
   }
 
   remoteProviderOptionNames.forEach((name) => {
