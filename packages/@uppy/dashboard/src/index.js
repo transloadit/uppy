@@ -53,9 +53,7 @@ module.exports = class Dashboard extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        selectToUpload: 'Select files to upload',
         closeModal: 'Close Modal',
-        upload: 'Upload',
         importFrom: 'Import from %{name}',
         addingMoreFiles: 'Adding more files',
         addMoreFiles: 'Add more files',
@@ -68,7 +66,6 @@ module.exports = class Dashboard extends Plugin {
         fileSource: 'File source: %{name}',
         done: 'Done',
         back: 'Back',
-        name: 'Name',
         removeFile: 'Remove file',
         editFile: 'Edit file',
         editing: 'Editing %{file}',
@@ -76,13 +73,10 @@ module.exports = class Dashboard extends Plugin {
         finishEditingFile: 'Finish editing file',
         saveChanges: 'Save changes',
         cancel: 'Cancel',
-        localDisk: 'Local Disk',
         myDevice: 'My Device',
         dropPasteImport: 'Drop files here, paste, %{browse} or import from',
         dropPaste: 'Drop files here, paste or %{browse}',
         browse: 'browse',
-        numberOfSelectedFiles: 'Number of selected files',
-        uploadAllNewFiles: 'Upload all new files',
         emptyFolderAdded: 'No files were added from empty folder',
         uploadComplete: 'Upload complete',
         uploadPaused: 'Upload paused',
@@ -94,10 +88,6 @@ module.exports = class Dashboard extends Plugin {
           0: '%{smart_count} file selected',
           1: '%{smart_count} files selected'
         },
-        uploadXFiles: {
-          0: 'Upload %{smart_count} file',
-          1: 'Upload %{smart_count} files'
-        },
         uploadingXFiles: {
           0: 'Uploading %{smart_count} file',
           1: 'Uploading %{smart_count} files'
@@ -105,10 +95,6 @@ module.exports = class Dashboard extends Plugin {
         processingXFiles: {
           0: 'Processing %{smart_count} file',
           1: 'Processing %{smart_count} files'
-        },
-        uploadXNewFiles: {
-          0: 'Upload +%{smart_count} file',
-          1: 'Upload +%{smart_count} files'
         },
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',

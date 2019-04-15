@@ -22,14 +22,11 @@ module.exports = class StatusBar extends Plugin {
         upload: 'Upload',
         complete: 'Complete',
         uploadFailed: 'Upload failed',
-        pleasePressRetry: 'Please press Retry to upload again',
         paused: 'Paused',
-        error: 'Error',
         retry: 'Retry',
         cancel: 'Cancel',
         pause: 'Pause',
         resume: 'Resume',
-        pressToRetry: 'Press to retry',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
           1: '%{complete} of %{smart_count} files uploaded'
