@@ -89,7 +89,7 @@ for (let pluginName in plugins) {
 localePack = sortObjectAlphabetically(localePack)
 
 for (let pluginName in sources) {
-  checkForUnused(sources[pluginName], pluginName, localePack)
+  checkForUnused(sources[pluginName], pluginName, plugins[pluginName].defaultLocale.strings)
 }
 
 const prettyLocale = stringifyObject(localePack, {
