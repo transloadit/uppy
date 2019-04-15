@@ -750,7 +750,7 @@ a.uppy-Dashboard-poweredBy {
 
 .uppy-DashboardItem-previewIconWrap {
   height: 75px;
-  max-height: 90%;
+  max-height: 80%;
   position: relative;
 }
 
@@ -761,8 +761,8 @@ a.uppy-Dashboard-poweredBy {
 }
 
 .uppy-DashboardItem-previewIcon {
-  width: 18px;
-  height: 18px;
+  width: 28px;
+  height: 28px;
   z-index: $zIndex-1;
   position: absolute;
   top: 50%;
@@ -770,8 +770,13 @@ a.uppy-Dashboard-poweredBy {
   transform: translate(-50%, -50%);
 
   .uppy-size--md & {
-    width: 25px;
-    height: 25px;
+    width: 40px;
+    height: 40px;
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
   }
 }
 
