@@ -180,7 +180,7 @@ module.exports = function fileItem (props) {
           aria-label={props.i18n('removeFile')}
           title={props.i18n('removeFile')}
           onclick={() => props.removeFile(file.id)}>
-          <svg aria-hidden="true" class="UppyIcon" width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+          <svg aria-hidden="true" class="UppyIcon" width="60" height="60" viewBox="0 0 60 60">
             <path stroke="#FFF" stroke-width="1" fill-rule="nonzero" vector-effect="non-scaling-stroke" d="M30 1C14 1 1 14 1 30s13 29 29 29 29-13 29-29S46 1 30 1z" />
             <path fill="#FFF" vector-effect="non-scaling-stroke" d="M42 39.667L39.667 42 30 32.333 20.333 42 18 39.667 27.667 30 18 20.333 20.333 18 30 27.667 39.667 18 42 20.333 32.333 30z" />
           </svg>

@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const prettyBytes = require('prettier-bytes')
 const Core = require('./index')
 const Plugin = require('./Plugin')
 const AcquirerPlugin1 = require('../../../../test/mocks/acquirerPlugin1')
@@ -1269,6 +1270,29 @@ describe('src/Core', () => {
         expect(err).toMatchObject(new Error('This file exceeds maximum allowed size of 1.2 KB'))
         expect(core.getState().info.message).toEqual('This file exceeds maximum allowed size of 1.2 KB')
       }
+    })
+
+    it('should emit `restriction-failed` event when some rule is violated', () => {
+      const maxFileSize = 100
+      const core = new Core({
+        restrictions: {
+          maxFileSize
+        }
+      })
+      const restrictionsViolatedEventMock = jest.fn()
+      const file = {
+        name: 'test.jpg',
+        data: new Blob([Buffer.alloc(2 * maxFileSize)])
+      }
+      const errorMessage = `${core.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`
+      try {
+        core.on('restriction-failed', restrictionsViolatedEventMock)
+        core.addFile(file)
+      } catch (err) {}
+
+      expect(restrictionsViolatedEventMock.mock.calls.length).toEqual(1)
+      expect(restrictionsViolatedEventMock.mock.calls[0][0].name).toEqual(file.name)
+      expect(restrictionsViolatedEventMock.mock.calls[0][1].message).toEqual(errorMessage)
     })
   })
 

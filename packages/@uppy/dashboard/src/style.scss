@@ -106,20 +106,20 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba($color-black, 0.5);
+  background-color: rgba($black, 0.5);
   z-index: $zIndex-2;
 }
 
 .uppy-Dashboard-inner {
   position: relative;
-  background-color: $color-almost-white;
+  background-color: $gray-50;
   max-width: 100%; /* no !important */
   max-height: 100%; /* no !important */
   // min-width: 290px;
   // min-height: 450px is required for everything to fit on mobile
   min-height: 450px;
   outline: none;
-  border: 1px solid rgba($color-gray, 0.2);
+  border: 1px solid $gray-200;
   border-radius: 5px;
 
   .uppy-size--md & {
@@ -162,7 +162,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0 5px 15px 4px rgba($color-black, 0.15);
+    box-shadow: 0 5px 15px 4px rgba($black, 0.15);
   }
 }
 
@@ -172,7 +172,7 @@
   top: -33px;
   right: -2px;
   cursor: pointer;
-  color: rgba($color-white, 0.9);
+  color: rgba($white, 0.9);
   font-size: 27px;
   z-index: $zIndex-5;
 
@@ -206,16 +206,16 @@
 }
 
 .uppy-DashboardTabs-title {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 30px;
   font-weight: 400;
   margin: 0;
   padding: 0;
   text-align: center;
-  color: $color-asphalt-gray;
+  color: $gray-700;
 
   .uppy-size--md & {
-    font-size: 17px;
+    font-size: 16px;
     line-height: 40px;
   }
 }
@@ -237,12 +237,16 @@
 .uppy-Dashboard-browse {
   @include reset-button;
   cursor: pointer;
-  color: rgba($color-cornflower-blue, 0.9);
+  color: rgba($blue, 0.9);
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
   .uppy-Dashboard-browse:focus {
     outline: none;
-    border-bottom: 2px solid $color-cornflower-blue;
+    border-bottom: 2px solid $blue;
   }
 
 .uppy-DashboardTabs-list {
@@ -260,7 +264,7 @@
     justify-content: center;
     max-width: 600px;
     overflow-x: initial;
-    margin-top: 30px;
+    margin-top: 15px;
     padding-top: 0;
   }
 }
@@ -269,13 +273,13 @@
   width: 100%;
   display: inline-block;
   text-align: center;
-  border-bottom: 1px solid rgba($color-gray, 0.2);
+  border-bottom: 1px solid $gray-200;
   padding: 0px 2px;
 
   .uppy-size--md & {
     width: initial;
     margin-bottom: 20px;
-    border-bottom: initial;
+    border-bottom: none;
     padding: 0;
   }
 }
@@ -288,30 +292,35 @@
   background-color: transparent;
   -webkit-appearance: none;
   appearance: none;
-  color: darken($color-gray, 25%);
+  color: $gray-700;
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 12px 20px;
   line-height: 1;
+  text-align: center;
 
   .uppy-size--md & {
-    width: 80px;
-    margin: 0 5px;
+    width: 86px;
+    margin-right: 1px;
     flex-direction: column;
-    padding: 0;
+    padding: 10px 3px;
+    border-radius: 5px;
   }
 }
 
-  .uppy-DashboardTab-btn:hover {
-    color: $color-cornflower-blue;
+  .uppy-DashboardTab-btn::-moz-focus-inner {
+    border: 0;
   }
 
+  .uppy-DashboardTab-btn:hover {
+    background-color: $gray-100--highlighted;
+  }
+
+  .uppy-DashboardTab-btn:active,
   .uppy-DashboardTab-btn:focus {
-    outline-offset: 0;
-    .uppy-size--md & {
-      outline-offset: $size-focus-offset;
-    }
+    background-color: darken($gray-100--highlighted, 2%);
+    outline: none;
   }
 
   .uppy-DashboardTab-btn svg {
@@ -329,10 +338,6 @@
     vertical-align: text-top;
     overflow: hidden;
     transition: transform ease-in-out .15s;
-  }
-
-  .uppy-DashboardTab-btn:hover svg {
-    transform: translateZ(0) scale(1.1, 1.1);
   }
 
 .uppy-DashboardTab-name {
@@ -375,9 +380,8 @@
   height: 40px;
   width: 100%;
   border-bottom: 1px solid #eaeaea;
-
   z-index: $zIndex-4;
-  background-color: $color-almost-white;
+  background-color: $gray-50;
   padding: 0 10px;
 
   .uppy-size--md & {
@@ -394,7 +398,7 @@
   text-align: center;
   font-size: 12px;
   line-height: 40px;
-  font-weight: normal;
+  font-weight: 500;
   max-width: 170px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -410,29 +414,38 @@
 
 .uppy-DashboardContent-back {
   @include reset-button;
-  font-size: 13px;
-  font-weight: 500;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 400;
   cursor: pointer;
-  color: $color-cornflower-blue;
+  color: $blue;
+  padding: 7px 6px;
+  margin-left: -6px;
+  border-radius: 3px;
+
+  &:hover {
+    color: darken($blue, 12%);
+  }
 
   .uppy-size--md & {
-    font-size: 15px;
+    font-size: 14px;
   }
 }
 
 .uppy-DashboardContent-addMore {
   @include reset-button;
+  display: inline-block;
   font-weight: 500;
   cursor: pointer;
-  color: $color-cornflower-blue;
-  stroke: $color-cornflower-blue;
-  stroke-width: 0.7px;
-  width: 13px;
-  height: 13px;
+  color: $blue;
+  width: 27px;
+  height: 27px;
+  padding: 6px;
+  margin-right: -6px;
+  border-radius: 3px;
 
-  .uppy-size--md & {
-    width: 15px;
-    height: 15px;
+  &:hover {
+    color: darken($blue, 12%)
   }
 }
 
@@ -446,7 +459,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: darken($color-white, 4%);
+  background-color: darken($white, 4%);
   overflow: hidden;
   z-index: $zIndex-5;
   border-radius: 5px;
@@ -461,9 +474,9 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: $color-almost-white;
-  background: linear-gradient(0deg, $color-almost-white 35%, rgba($color-almost-white, 0.85) 100%);
-  box-shadow: 0 0 10px 5px rgba($color-black, 0.15);
+  background: $gray-50;
+  background: linear-gradient(0deg, $gray-50 35%, rgba($gray-50, 0.85) 100%);
+  box-shadow: 0 0 10px 5px rgba($black, 0.15);
   overflow: hidden;
   z-index: $zIndex-5;
   border-radius: 5px;
@@ -494,37 +507,37 @@
   height: 100%;
 }
 
-.uppy-Dashboard-next {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: none;
-  background-color: rgba($color-gray, 0.7);
-  -webkit-appearance: none;
-  appearance: none;
-  border: 0;
-  z-index: $zIndex-3;
-  transition: background-color 0.5s;
-  color: $color-white;
-  font-family: inherit;
-  font-size: 14px;
-  line-height: 1;
-  padding: 0;
-  margin: 0;
-  outline: none;
-  cursor: not-allowed;
-}
+// .uppy-Dashboard-next {
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   background: none;
+//   background-color: rgba($gray-500, 0.7);
+//   -webkit-appearance: none;
+//   appearance: none;
+//   border: 0;
+//   z-index: $zIndex-3;
+//   transition: background-color 0.5s;
+//   color: $white;
+//   font-family: inherit;
+//   font-size: 14px;
+//   line-height: 1;
+//   padding: 0;
+//   margin: 0;
+//   outline: none;
+//   cursor: not-allowed;
+// }
 
-.uppy-Dashboard-next.is-active {
-  cursor: pointer;
-  background-color: $color-cornflower-blue;
+// .uppy-Dashboard-next.is-active {
+//   cursor: pointer;
+//   background-color: $blue;
 
-  &:hover {
-    background-color: darken($color-cornflower-blue, 20%);
-  }
-}
+//   &:hover {
+//     background-color: darken($blue, 20%);
+//   }
+// }
 
 .uppy-Dashboard-filesContainer {
   @include clearfix;
@@ -557,7 +570,7 @@
   bottom: 3px;
   left: 3px;
   padding-top: 90px;
-  border: 2px dashed $color-cornflower-blue;
+  border: 2px dashed rgb(34, 117, 215);
   border-radius: 4px;
   z-index: 2000;
   text-align: center;
@@ -588,7 +601,7 @@
   font-size: 16px;
   line-height: 1.45;
   font-weight: 400;
-  color: $color-asphalt-gray;
+  color: $gray-700;
   margin: auto;
   padding: 0 15px;
   padding-top: 20px;
@@ -600,10 +613,10 @@
 }
 
 .uppy-Dashboard-note {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.25;
   text-align: center;
-  color: rgba($color-asphalt-gray, 0.8);
+  color: $gray-600;
   max-width: 350px;
   margin: auto;
   padding: 0 15px;
@@ -619,13 +632,13 @@ a.uppy-Dashboard-poweredBy {
   display: inline-block;
   text-align: center;
   font-size: 11px;
-  color: $color-gray;
+  color: $gray-500;
   text-decoration: none;
   margin-top: 8px;
 }
 
 .uppy-Dashboard-poweredByIcon {
-  stroke: $color-gray;
+  stroke: $gray-500;
   fill: none;
   margin-left: 1px;
   margin-right: 1px;
@@ -641,7 +654,7 @@ a.uppy-Dashboard-poweredBy {
   position: relative;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid lighten($color-gray, 35%);
+  border-bottom: 1px solid $gray-200;
   padding-bottom: 10px;
   padding-left: 10px;
 
@@ -706,10 +719,8 @@ a.uppy-Dashboard-poweredBy {
 
 .uppy-DashboardItem-sourceIcon {
   display: inline-block;
-  vertical-align: middle;
-  width: 11px;
-  height: 11px;
-  color: rgba($color-gray, 0.85);
+  vertical-align: bottom;
+  color: $gray-500;
 }
 
 .uppy-DashboardItem-sourceIcon svg,
@@ -717,9 +728,11 @@ a.uppy-Dashboard-poweredBy {
   max-width: 100%;
   max-height: 100%;
   display: inline-block;
-  vertical-align: text-top;
+  vertical-align: text-bottom;
   overflow: hidden;
   fill: currentColor;
+  width: 11px;
+  height: 11px;
 }
 
 .uppy-DashboardItem-previewInnerWrap {
@@ -731,11 +744,11 @@ a.uppy-Dashboard-poweredBy {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  box-shadow: 0 0 2px 0 rgba($color-gray, 0.7);
+  box-shadow: 0 0 2px 0 rgba($black, 0.4);
   border-radius: 3px;
 
   .uppy-size--md & {
-    box-shadow: 0 1px 3px rgba($color-black,.2);
+    box-shadow: 0 1px 3px rgba($black, 0.2);
   }
 }
 
@@ -746,7 +759,7 @@ a.uppy-Dashboard-poweredBy {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba($color-black, 0.65) /* no !important */;
+    background-color: rgba($black, 0.65) /* no !important */;
     display: none;
     z-index: $zIndex-2;
   }
@@ -768,7 +781,7 @@ a.uppy-Dashboard-poweredBy {
 .uppy-DashboardItem-previewIconBg {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(rgba($color-black, 0.1) 0px 0px 1px);
+  filter: drop-shadow(rgba($black, 0.1) 0px 0px 1px);
 }
 
 .uppy-DashboardItem-previewIcon {
@@ -794,7 +807,7 @@ a.uppy-Dashboard-poweredBy {
   text-transform: uppercase;
   font-size: 9px;
   letter-spacing: 1px;
-  color: $color-asphalt-gray;
+  color: $gray-700;
   z-index: $zIndex-1;
   user-select: none;
 }
@@ -808,18 +821,17 @@ a.uppy-Dashboard-poweredBy {
     width: 100%;
     max-width: 100%;
     flex: 1;
-    padding: 8px 3px 0 3px;
+    padding: 8px 0 0;
     border-top: 0;
   }
 }
 
 .uppy-DashboardItem-name {
-  font-size: 11px;
-  line-height: 1.35;
+  font-size: 12px;
+  line-height: 1.3;
   font-weight: 500;
   margin: 0;
   padding: 0;
-  max-height: 28px;
   margin-bottom: 5px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -833,15 +845,15 @@ a.uppy-Dashboard-poweredBy {
 }
 
 .uppy-DashboardItem-name a {
-  text-decoration: underline;
-  color: $color-black;
+  text-decoration: none;
+  color: $gray-800;
 }
 
 .uppy-DashboardItem-status {
   font-size: 11px;
-  line-height: 11px;
+  line-height: 1.3;
   font-weight: normal;
-  color: darken($color-gray, 15%);
+  color: $gray-600;
   margin-bottom: 4px;
 }
 
@@ -858,8 +870,12 @@ a.uppy-Dashboard-poweredBy {
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;
-  line-height: 1;
+  line-height: inherit;
   color: inherit;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .uppy-DashboardItem-edit:not(:first-child),
@@ -874,8 +890,7 @@ a.uppy-Dashboard-poweredBy {
     position: absolute;
     top: 0;
     left: -9px;
-    color: $color-gray;
-    font-weight: 700;
+    color: $gray-600;
   }
 }
 
@@ -894,10 +909,10 @@ a.uppy-Dashboard-poweredBy {
 .uppy-DashboardItem-remove {
   @include reset-button;
   cursor: pointer;
-  color: $color-black;
-  width: 16px;
-  height: 16px;
-  opacity: 0.75;
+  color: #111;
+  width: 18px;
+  height: 18px;
+  opacity: 0.9;
 
   .uppy-size--md & {
     width: 20px;
@@ -916,7 +931,7 @@ a.uppy-Dashboard-poweredBy {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: $zIndex-3;
-  color: $color-white;
+  color: $white;
   text-align: center;
   width: 120px;
   display: none;
@@ -943,7 +958,6 @@ a.uppy-Dashboard-poweredBy {
   width: 38px;
   height: 38px;
   opacity: 0.9;
-  transition: all .35s ease;
 
   .uppy-size--md & {
     width: 55px;
@@ -971,8 +985,8 @@ a.uppy-Dashboard-poweredBy {
     opacity: 1;
 
     .uppy-size--md & {
-      width: 25px;
-      height: 25px;
+      width: 22px;
+      height: 22px;
     }
   }
 
@@ -986,7 +1000,7 @@ a.uppy-Dashboard-poweredBy {
   bottom: -10px;
   left: 0;
   width: 100%;
-  text-shadow: 0 1px 0 rgba($color-black, 0.3);
+  text-shadow: 0 1px 0 rgba($black, 0.3);
 
   .uppy-size--md & {
     display: block;
@@ -999,40 +1013,40 @@ a.uppy-Dashboard-poweredBy {
 }
 
 .uppy-DashboardItem .bg {
-  stroke: rgba($color-white, 0.4);
+  stroke: rgba($white, 0.4);
   opacity: 0;
 }
 
 .uppy-DashboardItem .progress {
-  stroke: $color-white;
+  stroke: $white;
   transition: stroke-dashoffset .5s ease-out;
   opacity: 0;
 }
 
 .uppy-DashboardItem .play {
-  stroke: $color-white;
-  fill: $color-white;
+  stroke: $white;
+  fill: $white;
   opacity: 0;
   transition: all 0.2s;
   display: none;
 }
 
 .uppy-DashboardItem .cancel {
-  fill: $color-white;
+  fill: $white;
   opacity: 0;
   transition: all 0.2s;
 }
 
 .uppy-DashboardItem .pause {
-  stroke: $color-white;
-  fill: $color-white;
+  stroke: $white;
+  fill: $white;
   opacity: 0;
   transition: all 0.2s;
   display: none;
 }
 
 .uppy-DashboardItem.is-error .retry {
-  fill: $color-white;
+  fill: $white;
 }
 
 .uppy-DashboardItem.is-resumable {
@@ -1042,7 +1056,7 @@ a.uppy-Dashboard-poweredBy {
 
 .UppyIcon-progressCircle .check {
   opacity: 0;
-  fill: $color-white;
+  fill: $white;
   transition: all 0.2s;
 }
 
@@ -1081,8 +1095,8 @@ a.uppy-Dashboard-poweredBy {
   }
 
   .progress {
-    stroke: $color-green;
-    fill: $color-green;
+    stroke: $green;
+    fill: $green;
     opacity: 1;
   }
 
@@ -1098,7 +1112,7 @@ a.uppy-Dashboard-poweredBy {
 
 .uppy-DashboardItem-progressInner {
   height: 15px;
-  background-color: $color-cornflower-blue;
+  background-color: $blue;
   position: absolute;
   top: 0;
   left: 0;
@@ -1106,11 +1120,11 @@ a.uppy-Dashboard-poweredBy {
 
 .uppy-Dashboard-actions {
   height: 55px;
-  border-top: 1px solid rgba($color-gray, 0.3);
+  border-top: 1px solid $gray-200;
   display: flex;
   align-items: center;
   padding: 0 15px;
-  background-color: $color-almost-white;
+  background-color: $gray-50;
 }
 
   .uppy-size--md .uppy-Dashboard-actions {
@@ -1147,8 +1161,8 @@ a.uppy-Dashboard-poweredBy {
   position: absolute;
   top: -12px;
   right: -12px;
-  background-color: $color-green;
-  color: $color-white;
+  background-color: $green;
+  color: $white;
   border-radius: 50%;
   width: 16px;
   height: 16px;
@@ -1178,8 +1192,8 @@ a.uppy-Dashboard-poweredBy {
   right: 0;
   bottom: 0;
   z-index: $zIndex-5;
-  box-shadow: 0px 0px 10px 4px rgba($color-black, 0.1);
-  background-color: $color-white;
+  box-shadow: 0px 0px 10px 4px rgba($black, 0.1);
+  background-color: $white;
   display: flex;
   flex-direction: column;
 }
@@ -1200,13 +1214,13 @@ a.uppy-Dashboard-poweredBy {
   align-items: center;
   justify-content: center;
   flex-grow: 1;
-  border-bottom: 1px solid rgba($color-gray, 0.3);
-  background-color: lighten($color-gray, 40%); /* no !important */
+  border-bottom: 1px solid $gray-200;
+  background-color: $gray-50; /* no !important */
   position: relative;
 }
 
 .uppy-DashboardFileCard-preview img {
-  box-shadow: 0px 3px 20px rgba($color-black, 0.15);
+  box-shadow: 0px 3px 20px rgba($black, 0.15);
   max-width: 90%;
   max-height: 90%;
   object-fit: cover;
@@ -1236,10 +1250,10 @@ a.uppy-Dashboard-poweredBy {
   vertical-align: middle;
   width: 22%;
   font-size: 12px;
-  color: $color-asphalt-gray;
+  color: $gray-700;
 
   .uppy-size--md & {
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 

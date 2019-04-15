@@ -454,6 +454,7 @@ class Uppy {
     try {
       this._checkRestrictions(newFile)
     } catch (err) {
+      this.emit('restriction-failed', newFile, err)
       onError(err)
     }
 

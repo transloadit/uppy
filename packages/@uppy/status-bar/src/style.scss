@@ -9,15 +9,14 @@
   line-height: 40px;
   font-size: 12px;
   font-weight: 400;
-  color: $color-white;
-  background-color: $color-white;
+  color: $white;
+  background-color: $white;
   z-index: $zIndex-2;
   transition: height .2s;
 }
 
   .uppy-size--md .uppy-StatusBar {
     height: 46px;
-    font-size: 14px;
   }
 
   .uppy-StatusBar:before {
@@ -29,7 +28,7 @@
     bottom: 0;
     width: 100%;
     height: 2px;
-    background-color: rgba($color-gray, 0.25);
+    background-color: $gray-200;
   }
 
 .uppy-StatusBar[aria-hidden=true] {
@@ -38,26 +37,29 @@
 }
 
 .uppy-StatusBar.is-complete .uppy-StatusBar-progress {
-  background-color: $color-green;
+  background-color: $green;
 }
 
 .uppy-StatusBar.is-error .uppy-StatusBar-progress {
-  background-color: $color-red;
+  background-color: $red;
 }
 
 .uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator {
-  cursor: default;
-  color: $color-green;
+  color: $green;
+}
+
+.uppy-StatusBar.is-error .uppy-StatusBar-statusIndicator {
+  color: $red;
 }
 
 .uppy-StatusBar:not([aria-hidden=true]).is-waiting {
-  background-color: $color-white;
+  background-color: $white;
   height: 65px;
   border-top: 1px solid #eaeaea;
 }
 
 .uppy-StatusBar-progress {
-  background-color: $color-cornflower-blue;
+  background-color: $blue;
   height: 2px;
   position: absolute;
   z-index: $zIndex-2;
@@ -78,7 +80,7 @@
 
   .uppy-StatusBar.is-preprocessing .uppy-StatusBar-progress,
   .uppy-StatusBar.is-postprocessing .uppy-StatusBar-progress {
-    background-color: $color-orange;
+    background-color: $orange;
   }
 
 .uppy-StatusBar.is-waiting .uppy-StatusBar-progress {
@@ -93,16 +95,12 @@
   padding-left: 10px;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: $color-black;
+  color: $gray-800;
   height: 100%;
 
   .uppy-size--md & {
     padding-left: 15px;
   }
-}
-
-.uppy-StatusBar-contentPadding {
-  margin-right: 0.5ch; // ½ the size of a 0, roughly the size of a space usually
 }
 
 .uppy-StatusBar-status {
@@ -113,36 +111,27 @@
   justify-content: center;
   max-width: 170px;
   overflow-x: hidden;
+  padding-right: 0.3em;
 
   .uppy-size--md & {
-    line-height: 1.5;
     max-width: 400px;
   }
 }
 
 .uppy-StatusBar-statusPrimary {
-  font-size: 12px;
-  font-weight: 400;
-
-  .uppy-size--md & {
-    font-size: 13px;
-  }
+  font-weight: 500;
 }
 
 .uppy-StatusBar-statusSecondary {
-  font-size: 10px;
-  // line-height: 1;
+  margin-top: 1px;
+  font-size: 11px;
+  line-height: 1.2;
   display: inline-block;
-  color: rgba($color-asphalt-gray, 0.8);
+  color: $gray-600;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow-x: hidden;
   // max-width: 170px;
-
-  .uppy-size--md & {
-    font-size: 11px;
-    // max-width: 500px;
-  }
 }
 
   .uppy-StatusBar-statusSecondaryHint {
@@ -161,23 +150,15 @@
   // }
 
 .uppy-StatusBar-statusIndicator {
-  color: $color-asphalt-gray;
-  margin-right: 10px;
-  cursor: pointer;
+  position: relative;
+  top: 1px;
+  color: $gray-700;
+  margin-right: 7px;
 
-  .uppy-size--md & {
-    margin-right: 12px;
-  }
-}
-
-  .uppy-StatusBar-statusIndicator svg {
+  svg {
     vertical-align: text-bottom;
   }
-
-  .uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator  {
-    width: 15px;
-    margin-right: 7px;
-  }
+}
 
 .uppy-StatusBar-actions {
   display: flex;
@@ -193,28 +174,28 @@
   width: 100%;
   position: static;
   padding: 0 15px;
-  background-color: $color-almost-white;
+  background-color: $gray-50;
 }
 
 .uppy-StatusBar-actionCircleBtn {
   line-height: 1;
   cursor: pointer;
-  padding: 4px;
+  padding: 3px;
+  opacity: 0.9;
   // display: flex;
   // align-items: center;
   // justify-content: center;
   // width: 20px;
   // height: 20px;
   // border-radius: 50%;
-  // color: rgba($color-black, 0.6);
-  // background-color: rgba($color-gray, 0.3);
+  // color: rgba($black, 0.6);
+  // background-color: rgba($gray-500, 0.3);
   // text-align: center;
-}
 
-  .uppy-StatusBar-actionCircleBtn:focus {
-    outline: 2px solid $color-cornflower-blue;
-    outline-offset: 0;
+  &:hover {
+    opacity: 1;
   }
+}
 
   // .uppy-StatusBar-actionCircleBtn:not(:last-child) {
   //   margin-right: 2px;
@@ -235,9 +216,8 @@
   display: inline-block;
   vertical-align: middle;
   font-size: 10px;
-  // margin-left: 6px;
-  // margin-right: 6px;
-  color: $color-cornflower-blue;
+  line-height: inherit;
+  color: $blue;
 
   .uppy-size--md & {
     font-size: 11px;
@@ -248,31 +228,49 @@
   //   padding: 2px 4px;
   // }
 
+  .uppy-StatusBar-actionBtn--retry {
+    height: 16px;
+    border-radius: 8px;
+    margin-right: 6px;
+    background-color: $pomegranate;
+    line-height: 1;
+    color: #fff;
+    padding: 1px 6px 3px 18px;
+    position: relative;
+
+    &:hover {
+      background-color: darken($pomegranate, 8%);
+    }
+
+    svg {
+      position: absolute;
+      top: 3px;
+      left: 6px;
+    }
+  }
+
   .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
     font-size: 14px;
     width: 100%;
     padding: 15px 10px;
-    color: $color-white;
-    background-color: $color-green;
+    color: $white;
+    background-color: $green;
+    line-height: 1;
   }
 
     .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload:hover {
-      background-color: darken($color-green, 10%);
+      background-color: darken($green, 10%);
     }
 
     .uppy-size--md .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
-      padding: 16px 22px;
+      padding: 13px 22px;
       width: auto;
     }
 
-  .uppy-StatusBar-actionBtn:not(:last-child) {
-    margin-right: 10px;
-  }
-
   .uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
     background-color: transparent;
-    // border: 1px solid $color-white;
-    color: $color-cornflower-blue;
+    // border: 1px solid $white;
+    color: $blue;
   }
 
 .uppy-StatusBar-details {
@@ -281,13 +279,14 @@
   height: 13px;
   display: inline-block;
   vertical-align: middle;
-  color: $color-white;
-  background-color: $color-asphalt-gray;
+  color: $white;
+  background-color: $gray-500;
   border-radius: 50%;
   position: relative;
   top: 0;
   left: 2px;
   font-size: 10px;
+  font-weight: 600;
   text-align: center;
   cursor: help;
 }
@@ -303,12 +302,12 @@
   animation-iteration-count: infinite;
   animation-timing-function: linear;
   margin-right: 10px;
-  fill: $color-cornflower-blue;
+  fill: $blue;
 }
 
   .uppy-StatusBar.is-preprocessing .uppy-StatusBar-spinner,
   .uppy-StatusBar.is-postprocessing .uppy-StatusBar-spinner {
-    fill: $color-orange;
+    fill: $orange;
   }
 
 

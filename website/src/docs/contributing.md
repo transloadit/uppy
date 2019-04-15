@@ -1,8 +1,8 @@
 ---
 title: "Contributing"
 type: docs
-order: 5
-category: 'Docs'
+order: 0
+category: 'Contributing'
 ---
 
 <!-- md contributing.md -->
