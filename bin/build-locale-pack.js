@@ -2,8 +2,10 @@ const glob = require('glob')
 const Uppy = require('../packages/@uppy/core')
 const chalk = require('chalk')
 const path = require('path')
+const flatten = require('flat')
 const stringifyObject = require('stringify-object')
 const fs = require('fs')
+const _ = require('lodash')
 
 console.warn('\n--> Make sure to run `npm run build:lib` for this locale script to work properly. ')
 
@@ -169,4 +171,10 @@ const finalLocale = template.replace('en_US.strings = {}', 'en_US.strings = ' + 
 
 const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'en_US.js')
 fs.writeFileSync(localePackagePath, finalLocale, 'utf-8')
-console.log(`\n✅ Written '${localePackagePath}'\n`)
+console.log(`✅ Written '${localePackagePath}'`)
+
+const localePackageFlatPath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'en_US.csv')
+fs.writeFileSync(localePackageFlatPath, _.map(flatten(localePack), (val, key) => {
+  return `${key},${val}`
+}).join('\n'), 'utf-8')
+console.log(`✅ Written '${localePackageFlatPath}'`)
