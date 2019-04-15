@@ -19,10 +19,6 @@ function pick (opts = {}) {
     closeAfterFinish: true
   })
 
-  function close () {
-    uppy.close()
-  }
-
   if (Array.isArray(opts.providers)) {
     addProviders(uppy, opts.providers, {
       ...opts,
