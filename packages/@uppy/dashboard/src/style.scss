@@ -568,18 +568,18 @@
   font-size: 16px;
 }
 
-.uppy-Dashboard.drag .uppy-Dashboard-drop-files-here-hint {
-  visibility: visible;
-}
-
-.uppy-Dashboard.drag .uppy-DashboardContent-bar,
-.uppy-Dashboard.drag .uppy-Dashboard-files,
-.uppy-Dashboard.drag .uppy-Dashboard-progressindicators {
-  opacity: 0.2;
-}
-
-.uppy-Dashboard.drag .uppy-DashboardAddFiles {
-  opacity: 0.03;
+.uppy-Dashboard.uppy-Dashboard--isDraggingOver{
+  .uppy-Dashboard-drop-files-here-hint{
+    visibility: visible;
+  }
+  .uppy-DashboardContent-bar,
+  .uppy-Dashboard-files,
+  .uppy-Dashboard-progressindicators {
+    opacity: 0.2;
+  }
+  .uppy-DashboardAddFiles {
+    opacity: 0.03;
+  }
 }
 
 .uppy-Dashboard-dropFilesTitle {
