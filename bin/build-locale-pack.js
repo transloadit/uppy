@@ -5,6 +5,8 @@ const path = require('path')
 const stringifyObject = require('stringify-object')
 const fs = require('fs')
 
+console.warn('Make sure to run `npm run build:lib` for this locale script to work properly')
+
 const uppy = Uppy()
 
 // Go over all uppy plugins, check if they are constructors
@@ -15,8 +17,9 @@ function buildPluginsList () {
   const packagesGlobPath = path.join(__dirname, '..', 'packages', '@uppy', '*', 'package.json')
   const files = glob.sync(packagesGlobPath)
   const plugins = {}
+  const sources = {}
 
-  files.forEach((file) => {
+  for (let file of files) {
     const dirName = path.dirname(file)
     const pluginName = path.basename(dirName)
     const Plugin = require(dirName)
@@ -29,13 +32,17 @@ function buildPluginsList () {
     }
 
     if (plugin && plugin.defaultLocale) {
+      const sourcesGlobPath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'lib', '**', '*.js')
       plugins[pluginName] = plugin
+      sources[pluginName] = glob.sync(sourcesGlobPath).map((file) => {
+        return fs.readFileSync(file, 'utf-8')
+      })
     }
 
     // console.log(pluginName)
-  })
+  }
 
-  return plugins
+  return { plugins, sources }
 }
 
 function addLocaleToPack (plugin, pluginName) {
@@ -55,6 +62,15 @@ function addLocaleToPack (plugin, pluginName) {
   }
 }
 
+function checkForUnused (fileContents, pluginName, localePack) {
+  for (let key in localePack) {
+    let match = `i18n('${key}')`
+    if (fileContents.join('\n').replace(/i18nArray\('/g, `i18n('`).indexOf(match) === -1) {
+      console.error(`Match "${match}" not found in ${pluginName}`)
+    }
+  }
+}
+
 function sortObjectAlphabetically (obj, sortFunc) {
   return Object.keys(obj).sort(sortFunc).reduce(function (result, key) {
     result[key] = obj[key]
@@ -62,7 +78,8 @@ function sortObjectAlphabetically (obj, sortFunc) {
   }, {})
 }
 
-const plugins = buildPluginsList()
+const { plugins, sources } = buildPluginsList()
+console.log(sources)
 let localePack = {}
 
 for (let pluginName in plugins) {
@@ -70,6 +87,10 @@ for (let pluginName in plugins) {
 }
 
 localePack = sortObjectAlphabetically(localePack)
+
+for (let pluginName in sources) {
+  checkForUnused(sources[pluginName], pluginName, localePack)
+}
 
 const prettyLocale = stringifyObject(localePack, {
   indent: '  ',
