@@ -36,11 +36,9 @@ en_US.strings = {
   encoding: 'Encoding...',
   enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
   enterUrlToImport: 'Enter URL to import a file',
-  error: 'Error',
   exceedsSize: 'This file exceeds maximum allowed size of',
   failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
   failedToUpload: 'Failed to upload %{file}',
-  fileProgress: 'File progress: upload speed and ETA',
   fileSource: 'File source: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} of %{smart_count} file uploaded',
@@ -55,19 +53,14 @@ en_US.strings = {
   import: 'Import',
   importFrom: 'Import from %{name}',
   link: 'Link',
-  localDisk: 'Local Disk',
   logOut: 'Log out',
   myDevice: 'My Device',
-  name: 'Name',
   noFilesFound: 'You have no files or folders here',
   noInternetConnection: 'No Internet connection',
-  numberOfSelectedFiles: 'Number of selected files',
   pause: 'Pause',
   pauseUpload: 'Pause upload',
   paused: 'Paused',
-  pleasePressRetry: 'Please press Retry to upload again',
   preparingUpload: 'Preparing upload...',
-  pressToRetry: 'Press to retry',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',
     '1': 'Processing %{smart_count} files'
@@ -79,7 +72,6 @@ en_US.strings = {
   retry: 'Retry',
   retryUpload: 'Retry upload',
   saveChanges: 'Save changes',
-  selectToUpload: 'Select files to upload',
   selectXFiles: {
     '0': 'Select %{smart_count} file',
     '1': 'Select %{smart_count} files'
@@ -90,7 +82,6 @@ en_US.strings = {
   takePicture: 'Take a picture',
   timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   upload: 'Upload',
-  uploadAllNewFiles: 'Upload all new files',
   uploadComplete: 'Upload complete',
   uploadFailed: 'Upload failed',
   uploadPaused: 'Upload paused',
