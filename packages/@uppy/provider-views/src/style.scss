@@ -387,6 +387,7 @@
     border-radius: 50%;
     width: 26px;
     height: 26px;
+    top: 0;
   }
 
   .uppy-ProviderBrowserItem-checkbox label:after {
@@ -443,7 +444,7 @@
   display: inline-block;
   height: 17px;
   width: 17px;
-  top: 0;
+  top: 2px;
   border: 1px solid $blue;
   background-color: $white;
   border-radius: 3px;
