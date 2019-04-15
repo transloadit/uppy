@@ -47,15 +47,63 @@ function buildPluginsList () {
     const Plugin = require(dirName)
     let plugin
 
-    try {
-      plugin = new Plugin(uppy)
-    } catch (err) {
+    // A few hacks to emulate browser environment because e.g.:
+    // GoldenRetrieves calls upon MetaDataStore in the constructor, which uses localStorage
+    // @TODO Consider rewriting constructors so they don't make imperative calls that rely on
+    // browser environment (OR: just keep this browser mocking, if it's only causing issues for this script, it doesn't matter)
+    global.location = { protocol: 'https' }
+    global.navigator = {}
+    global.localStorage = {
+      key: () => {},
+      getItem: () => {}
+    }
+    global.window = {
+      indexedDB: {
+        open: () => { return {} }
+      }
+    }
+    global.document = {
+      createElement: () => {
+        return { style: { } }
+      }
+    }
 
+    try {
+      if (pluginName === 'provider-views') {
+        plugin = new Plugin(plugins['drag-drop'], {
+          serverPattern: '',
+          serverUrl: 'https://companion.uppy.io'
+        })
+      } else if (pluginName === 'store-redux') {
+        plugin = new Plugin({ store: { dispatch: () => {} } })
+      } else {
+        plugin = new Plugin(uppy, {
+          serverPattern: '',
+          serverUrl: 'https://companion.uppy.io',
+          params: {
+            auth: {
+              key: 'x'
+            }
+          }
+        })
+      }
+    } catch (err) {
+      if (err.message !== 'Plugin is not a constructor') {
+        console.error(`--> While trying to instantiate plugin: ${pluginName}, this error was thrown: `)
+        throw err
+      }
     }
 
     if (plugin && plugin.defaultLocale) {
+      console.log(`[x] Check plugin: ${pluginName}`)
       plugins[pluginName] = plugin
       sources[pluginName] = getSources(pluginName)
+    } else {
+      console.log(`[ ] Check plugin: ${pluginName}`)
+      if (pluginName === 'drag-drop') {
+        console.log(plugin)
+        console.log(Object.keys(plugin))
+      }
     }
   }
 
