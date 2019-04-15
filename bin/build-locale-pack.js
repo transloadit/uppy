@@ -80,7 +80,6 @@ function addLocaleToPack (plugin, pluginName) {
 }
 
 function checkForUnused (fileContents, pluginName, localePack) {
-  // Join all sources of a plugin
   let buff = fileContents.join('\n')
   for (let key in localePack) {
     let regPat = new RegExp(`(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`, 'g')

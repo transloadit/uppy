@@ -10,7 +10,7 @@ module.exports = class FileInput extends Plugin {
     this.title = 'File Input'
     this.type = 'acquirer'
 
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
         chooseFiles: 'Choose files'
       }
@@ -21,14 +21,14 @@ module.exports = class FileInput extends Plugin {
       target: null,
       pretty: true,
       inputName: 'files[]',
-      locale: defaultLocale
+      locale: this.defaultLocale
     }
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // i18n
-    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
