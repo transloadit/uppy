@@ -166,7 +166,7 @@
   padding: 10px 15px;
   border-radius: 4px;
   background-color: transparent;
-  color: $gray-800;
+  color: $gray-700;
 }
 
   .uppy-size--md .uppy-c-btn-link {
@@ -174,7 +174,7 @@
   }
 
   .uppy-c-btn-link:hover {
-    text-decoration: underline;
+    color: $gray-800;
   }
 
   .uppy-c-btn-link:focus {
