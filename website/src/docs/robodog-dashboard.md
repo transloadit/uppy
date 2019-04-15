@@ -22,6 +22,21 @@ robodog.dashboard('#dashboard', {
 </script>
 ```
 
+This API can still be used as a modal, too, by specifying `inline: false`:
+
+```js
+robodog.dashboard(selector, { inline: false })
+```
+
+The `robodog.dashboard()` function returns an Uppy instance, which you can use to listen for any Uppy events.
+
+```js
+const uppy = robodog.dashboard(selector, { ...options })
+  .on('transloadit:result', (result) => {
+    console.log(result)
+  })
+```
+
 ## Transloadit
 
 All the options to the [Transloadit][transloadit] plugin are supported.

@@ -6,7 +6,7 @@ const addProviders = require('./addProviders')
 function dashboard (target, opts = {}) {
   const inline = opts.inline == null ? true : opts.inline
 
-  const pluginId = 'dashboard'
+  const pluginId = 'Dashboard'
   const uppy = createUppy(opts)
   addTransloaditPlugin(uppy, opts)
   uppy.use(Dashboard, {
