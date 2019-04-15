@@ -749,7 +749,7 @@ a.uppy-Dashboard-poweredBy {
 
 
 .uppy-DashboardItem-previewIconWrap {
-  height: 80px;
+  height: 75px;
   max-height: 90%;
   position: relative;
 }
@@ -757,7 +757,7 @@ a.uppy-Dashboard-poweredBy {
 .uppy-DashboardItem-previewIconBg {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(rgba($black, 0.1) 0px 0px 1px);
+  filter: drop-shadow(rgba($black, 0.15) 0px 1px 1px);
 }
 
 .uppy-DashboardItem-previewIcon {
