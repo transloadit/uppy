@@ -100,12 +100,10 @@ function buildPluginsList () {
       sources[pluginName] = getSources(pluginName)
     } else {
       console.log(`[ ] Check plugin: ${pluginName}`)
-      if (pluginName === 'drag-drop') {
-        console.log(plugin)
-        console.log(Object.keys(plugin))
-      }
     }
   }
+
+  console.log(``)
 
   return { plugins, sources }
 }
