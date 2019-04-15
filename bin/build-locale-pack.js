@@ -5,7 +5,7 @@ const path = require('path')
 const stringifyObject = require('stringify-object')
 const fs = require('fs')
 
-console.warn('Make sure to run `npm run build:lib` for this locale script to work properly')
+console.warn('\n--> Make sure to run `npm run build:lib` for this locale script to work properly\n')
 
 const uppy = Uppy()
 
@@ -53,10 +53,10 @@ function addLocaleToPack (plugin, pluginName) {
     const valueInPack = JSON.stringify(localePack[key])
 
     if (key in localePack && valueInPlugin !== valueInPack) {
-      console.error(`Plugin ${chalk.magenta(pluginName)} has a duplicate key: ${chalk.magenta(key)}`)
-      console.error(`Value in plugin: ${chalk.cyan(valueInPlugin)}`)
-      console.error(`Value in pack  : ${chalk.yellow(valueInPack)}`)
-      console.log()
+      console.error(`⚠ Plugin ${chalk.magenta(pluginName)} has a duplicate key: ${chalk.magenta(key)}`)
+      console.error(`  Value in plugin: ${chalk.cyan(valueInPlugin)}`)
+      console.error(`  Value in pack  : ${chalk.yellow(valueInPack)}`)
+      console.error()
     }
     localePack[key] = localeStrings[key]
   }
@@ -79,7 +79,6 @@ function sortObjectAlphabetically (obj, sortFunc) {
 }
 
 const { plugins, sources } = buildPluginsList()
-console.log(sources)
 let localePack = {}
 
 for (let pluginName in plugins) {
@@ -105,3 +104,4 @@ const finalLocale = template.replace('en_US.strings = {}', 'en_US.strings = ' + 
 
 const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'en_US.js')
 fs.writeFileSync(localePackagePath, finalLocale, 'utf-8')
+console.log(`\n✅ Written '${localePackagePath}'\n`)
