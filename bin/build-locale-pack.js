@@ -5,7 +5,7 @@ const path = require('path')
 const stringifyObject = require('stringify-object')
 const fs = require('fs')
 
-console.warn('\n--> Make sure to run `npm run build:lib` for this locale script to work properly\n')
+console.warn('\n--> Make sure to run `npm run build:lib` for this locale script to work properly. ')
 
 const uppy = Uppy()
 
@@ -41,6 +41,7 @@ function buildPluginsList () {
   const plugins = {}
   const sources = {}
 
+  console.log(`--> Checked plugins could be instantiated and have defaultLocale in them:\n`)
   for (let file of files) {
     const dirName = path.dirname(file)
     const pluginName = path.basename(dirName)
