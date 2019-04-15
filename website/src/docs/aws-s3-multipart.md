@@ -13,7 +13,7 @@ The `@uppy/aws-s3-multipart` plugin can be used to upload files directly to an S
 const AwsS3Multipart = require('@uppy/aws-s3-multipart')
 uppy.use(AwsS3Multipart, {
   limit: 4,
-  serverUrl: 'https://uppy-companion.myapp.net/'
+  companionUrl: 'https://uppy-companion.myapp.net/'
 })
 ```
 
@@ -41,7 +41,7 @@ The `@uppy/aws-s3-multipart` plugin has the following configurable options:
 
 The maximum amount of chunks to upload simultaneously. Set to `0` to disable limiting.
 
-### serverUrl: null
+### companionUrl: null
 
 The Companion URL to use for proxying calls to the S3 Multipart API.
 

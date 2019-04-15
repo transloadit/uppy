@@ -52,7 +52,7 @@ The `@uppy/dropbox` plugin has the following configurable options:
 ```js
 uppy.use(Dropbox, {
   target: Dashboard,
-  serverUrl: 'https://companion.uppy.io/',
+  companionUrl: 'https://companion.uppy.io/',
 })
 ```
 
@@ -68,7 +68,7 @@ Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Dropbox'`
 
 DOM element, CSS selector, or plugin to mount the Dropbox provider into. This should normally be the Dashboard.
 
-### `serverUrl: null`
+### `companionUrl: null`
 
 URL to a [Companion](/docs/companion) instance.
 
@@ -76,7 +76,7 @@ URL to a [Companion](/docs/companion) instance.
 
 Custom headers that should be sent along to [Companion](/docs/companion) on every request.
 
-### `serverPattern: serverUrl`
+### `companionAllowedHosts: companionUrl`
 
 The valid and authorised URL(s) from which OAuth responses should be accepted.
 
