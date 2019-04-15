@@ -182,14 +182,18 @@
 
 .uppy-ProviderBrowser-searchClose {
   position: absolute;
-  width: 16px;
-  height: 16px;
-  padding: 3px;
-  right: 15px;
-  top: 7px;
+  width: 22px;
+  height: 22px;
+  padding: 6px;
+  right: 12px;
+  top: 4px;
   z-index: $zIndex-3;
   color: $gray-500;
   cursor: pointer;
+
+  &:hover {
+    color: $gray-600;
+  }
 }
 
   .uppy-ProviderBrowser-searchClose svg {
