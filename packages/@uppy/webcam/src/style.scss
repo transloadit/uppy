@@ -15,7 +15,7 @@
   flex: 1;
   flex-grow: 1;
   overflow: hidden;
-  background-color: $color-black;
+  background-color: $gray-800;
   text-align: center;
   position: relative;
 }
@@ -44,7 +44,7 @@
 .uppy-Webcam-buttonContainer {
   width: 100%;
   height: 75px;
-  border-top: 1px solid rgba($color-gray, 0.2);
+  border-top: 1px solid $gray-200;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,8 +55,8 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background-color: $color-red;
-  color: $color-white;
+  background-color: $red;
+  color: $white;
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -78,12 +78,12 @@
   }
 
   .uppy-Webcam-button:hover {
-    background-color: darken($color-red, 10%);
+    background-color: darken($red, 5%);
   }
 
   .uppy-Webcam-button:focus {
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba($color-cornflower-blue, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba($blue, 0.5);
   }
 
 .uppy-Webcam-button--picture {
@@ -110,23 +110,23 @@
   line-height: 1.35;
   font-weight: 400;
   margin: 0;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   padding: 0 15px;
   max-width: 500px;
   text-align: center;
-  color: $color-black;
+  color: $gray-800;
 }
 
 .uppy-Webcam-permissons p {
   text-align: center;
   line-height: 1.45;
-  color: $color-gray;
+  color: $gray-500;
   margin: 0;
 }
 
 .uppy-Webcam-permissonsIcon svg {
   width: 100px;
   height: 75px;
-  color: lighten($color-gray, 15%);
+  color: $gray-400;
   margin-bottom: 30px;
 }

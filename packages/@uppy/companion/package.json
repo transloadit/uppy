@@ -55,7 +55,7 @@
     "redis": "2.8.0",
     "request": "2.85.0",
     "serialize-error": "^2.1.0",
-    "tus-js-client": "github:ifedapoolarewaju/tus-js-client#849dee9b5eb01b895b39b5643df2e3e205b15e03",
+    "tus-js-client": "github:ifedapoolarewaju/tus-js-client#d63fcf08ee43080a0e1cc968ad5986ace788c2d4",
     "uuid": "2.0.2",
     "validator": "^9.0.0",
     "ws": "1.1.5"
