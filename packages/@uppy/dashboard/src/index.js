@@ -81,7 +81,6 @@ module.exports = class Dashboard extends Plugin {
         dropPasteImport: 'Drop files here, paste, %{browse} or import from',
         dropPaste: 'Drop files here, paste or %{browse}',
         browse: 'browse',
-        fileProgress: 'File progress: upload speed and ETA',
         numberOfSelectedFiles: 'Number of selected files',
         uploadAllNewFiles: 'Upload all new files',
         emptyFolderAdded: 'No files were added from empty folder',
