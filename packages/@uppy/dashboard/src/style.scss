@@ -885,14 +885,14 @@ a.uppy-Dashboard-poweredBy {
 .uppy-DashboardItem-remove {
   @include reset-button;
   cursor: pointer;
-  color: #111;
-  width: 18px;
-  height: 18px;
+  color: $gray-900;
+  width: 20px;
+  height: 20px;
+  padding: 1px;
   opacity: 0.9;
 
-  .uppy-size--md & {
-    width: 20px;
-    height: 20px;
+  &:hover {
+    opacity: 1;
   }
 }
 
