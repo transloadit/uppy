@@ -9,6 +9,7 @@ en_US.strings = {
   browse: 'browse',
   cancel: 'Cancel',
   cancelUpload: 'Cancel upload',
+  chooseFiles: 'Choose files',
   closeModal: 'Close Modal',
   companionAuthError: 'Authorization required',
   companionError: 'Connection with Companion failed',
@@ -55,6 +56,7 @@ en_US.strings = {
   pauseUpload: 'Pause upload',
   paused: 'Paused',
   pleasePressRetry: 'Please press Retry to upload again',
+  preparingUpload: 'Preparing upload...',
   pressToRetry: 'Press to retry',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',
@@ -72,6 +74,7 @@ en_US.strings = {
     '0': 'Select %{smart_count} file',
     '1': 'Select %{smart_count} files'
   },
+  timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   upload: 'Upload',
   uploadAllNewFiles: 'Upload all new files',
   uploadComplete: 'Upload complete',
