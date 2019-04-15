@@ -53,7 +53,8 @@ export default class App extends React.Component {
       isPaused: false,
       uploadStarted: false,
       uploadComplete: false,
-      info: null
+      info: null,
+      totalProgress: 0
     }
 
     this.isReactNative = (typeof navigator !== 'undefined' &&
