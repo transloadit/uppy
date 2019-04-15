@@ -80,10 +80,12 @@ function addLocaleToPack (plugin, pluginName) {
 }
 
 function checkForUnused (fileContents, pluginName, localePack) {
+  // Join all sources of a plugin
+  let buff = fileContents.join('\n')
   for (let key in localePack) {
-    let match = `i18n('${key}')`
-    if (fileContents.join('\n').replace(/i18nArray\('/g, `i18n('`).indexOf(match) === -1) {
-      console.error(`Match "${match}" not found in ${pluginName}`)
+    let regPat = new RegExp(`(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`, 'g')
+    if (!buff.match(regPat)) {
+      console.error(`⚠ defaultLocale key: ${chalk.magenta(key)} not used in plugin: ${chalk.cyan(pluginName)}`)
     }
   }
 }
