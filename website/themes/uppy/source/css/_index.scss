@@ -1,11 +1,15 @@
 .TransloaditBar {
   display: none;
-  padding: 5px 40px;
+  padding: 5px 10px;
   background: #141829;
   color: #fff;
   font-size: 11px;
   justify-content: space-between;
   align-items: center;
+
+  @media #{$screen-medium} {
+    padding: 5px 40px;
+  }
 
   &-link {
     color: #fff;
