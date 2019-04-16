@@ -60,7 +60,7 @@ function iconAudio () {
 
 function iconVideo () {
   return <svg aria-hidden="true" class="UppyIcon" width="25" height="25" viewBox="0 0 25 25">
-    <path d="M16 11.834l4.486-2.691A1 1 0 0 1 22 10v6a1 1 0 0 1-1.514.857L16 14.167V17a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2.834zM15 9H5v8h10V9zm1 4l5 3v-6l-5 3z" fill="#6829CA" fill-rule="nonzero" />
+    <path d="M16 11.834l4.486-2.691A1 1 0 0 1 22 10v6a1 1 0 0 1-1.514.857L16 14.167V17a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2.834zM15 9H5v8h10V9zm1 4l5 3v-6l-5 3z" fill="#19AF67" fill-rule="nonzero" />
   </svg>
 }
 
@@ -72,7 +72,7 @@ function iconPDF () {
 
 function iconFile () {
   return <svg aria-hidden="true" class="UppyIcon" width="25" height="25" viewBox="0 0 25 25">
-    <g fill="#BFC8D1" fill-rule="nonzero">
+    <g fill="#A7AFB7" fill-rule="nonzero">
       <path d="M5.5 22a.5.5 0 0 1-.5-.5v-18a.5.5 0 0 1 .5-.5h10.719a.5.5 0 0 1 .367.16l3.281 3.556a.5.5 0 0 1 .133.339V21.5a.5.5 0 0 1-.5.5h-14zm.5-1h13V7.25L16 4H6v17z" />
       <path d="M15 4v3a1 1 0 0 0 1 1h3V7h-3V4h-1z" />
     </g>
@@ -81,7 +81,7 @@ function iconFile () {
 
 function iconText () {
   return <svg aria-hidden="true" class="UppyIcon" width="25" height="25" viewBox="0 0 25 25">
-    <path d="M4.5 7h13a.5.5 0 1 1 0 1h-13a.5.5 0 0 1 0-1zm0 3h15a.5.5 0 1 1 0 1h-15a.5.5 0 1 1 0-1zm0 3h15a.5.5 0 1 1 0 1h-15a.5.5 0 1 1 0-1zm0 3h10a.5.5 0 1 1 0 1h-10a.5.5 0 1 1 0-1z" fill="#9B9EA1" fill-rule="nonzero" />
+    <path d="M4.5 7h13a.5.5 0 1 1 0 1h-13a.5.5 0 0 1 0-1zm0 3h15a.5.5 0 1 1 0 1h-15a.5.5 0 1 1 0-1zm0 3h15a.5.5 0 1 1 0 1h-15a.5.5 0 1 1 0-1zm0 3h10a.5.5 0 1 1 0 1h-10a.5.5 0 1 1 0-1z" fill="#5A5E69" fill-rule="nonzero" />
   </svg>
 }
 

@@ -2,7 +2,7 @@ const { iconFile, iconText, iconAudio, iconVideo, iconPDF } = require('../compon
 
 module.exports = function getIconByMime (fileType) {
   const defaultChoice = {
-    color: '#babcbe',
+    color: '#838999',
     icon: iconFile()
   }
 
@@ -13,28 +13,28 @@ module.exports = function getIconByMime (fileType) {
 
   if (fileTypeGeneral === 'text') {
     return {
-      color: '#babcbe',
+      color: '#5a5e69',
       icon: iconText()
     }
   }
 
   if (fileTypeGeneral === 'audio') {
     return {
-      color: '#049bcf',
+      color: '#068dbb',
       icon: iconAudio()
     }
   }
 
   if (fileTypeGeneral === 'video') {
     return {
-      color: '#6829ca',
+      color: '#19af67',
       icon: iconVideo()
     }
   }
 
   if (fileTypeGeneral === 'application' && fileTypeSpecific === 'pdf') {
     return {
-      color: '#e74c3c',
+      color: '#e25149',
       icon: iconPDF()
     }
   }

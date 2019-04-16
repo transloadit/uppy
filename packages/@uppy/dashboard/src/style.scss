@@ -752,6 +752,10 @@ a.uppy-Dashboard-poweredBy {
   height: 75px;
   max-height: 80%;
   position: relative;
+
+  .uppy-size--md & {
+    height: 84px;
+  }
 }
 
 .uppy-DashboardItem-previewIconBg {
@@ -770,8 +774,8 @@ a.uppy-Dashboard-poweredBy {
   transform: translate(-50%, -50%);
 
   .uppy-size--md & {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
   }
 
   svg {
