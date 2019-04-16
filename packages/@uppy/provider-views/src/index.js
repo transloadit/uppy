@@ -218,7 +218,7 @@ module.exports = class ProviderView {
 
   filterItems (items) {
     const state = this.plugin.getPluginState()
-    if (state.filterInput === '') {
+    if (!state.filterInput || state.filterInput === '') {
       return items
     }
     return items.filter((folder) => {
