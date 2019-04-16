@@ -1,3 +1,35 @@
+.TransloaditBar {
+  display: none;
+  padding: 5px 40px;
+  background: #141829;
+  color: #fff;
+  font-size: 11px;
+  justify-content: space-between;
+  align-items: center;
+
+  &-link {
+    color: #fff;
+    font-weight: 700;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &-logo {
+    margin-right: 20px;
+  }
+
+  &-about {
+    flex: 1;
+    text-align: right;
+  }
+
+  .page-index & {
+    display: flex;
+  }
+}
+
 .page-index .MainMenu {
   text-align: center;
 
