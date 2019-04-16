@@ -1014,29 +1014,27 @@ class Uppy {
   /**
    * Logs stuff to console, only if `debug` is set to true. Silent in production.
    *
-   * @param {String|Object} msg to log
+   * @param {String|Object} message to log
    * @param {String} [type] optional `error` or `warning`
    */
-  log (msg, type) {
+  log (message, type) {
     if (!this.opts.debug) {
       return
     }
 
-    let message = `[Uppy] [${getTimeStamp()}] ${msg}`
-
-    window['uppyLog'] = window['uppyLog'] + '\n' + 'DEBUG LOG: ' + msg
+    const prefix = `[Uppy] [${getTimeStamp()}]`
 
     if (type === 'error') {
-      console.error(message)
+      console.error(prefix, message)
       return
     }
 
     if (type === 'warning') {
-      console.warn(message)
+      console.warn(prefix, message)
       return
     }
 
-    console.log(message)
+    console.log(prefix, message)
   }
 
   /**
