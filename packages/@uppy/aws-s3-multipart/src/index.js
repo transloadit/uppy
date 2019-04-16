@@ -86,8 +86,8 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   assertHost () {
-    if (!this.opts.serverUrl) {
-      throw new Error('Expected a `serverUrl` option containing a Companion address.')
+    if (!this.opts.companionUrl) {
+      throw new Error('Expected a `companionUrl` option containing a Companion address.')
     }
   }
 
@@ -278,7 +278,7 @@ module.exports = class AwsS3Multipart extends Plugin {
   connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
-      const host = getSocketHost(file.remote.serverUrl)
+      const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}` })
       this.uploaderSockets[socket] = socket
       this.uploaderEvents[file.id] = createEventTracker(this.uppy)

@@ -9,7 +9,7 @@ declare module AwsS3 {
   }
 
   interface AwsS3Options extends Uppy.PluginOptions {
-    serverUrl: string;
+    companionUrl: string;
     getUploadParameters(file: Uppy.UppyFile): Promise<AwsS3UploadParameters>;
     timeout: number;
     limit: number;
