@@ -73,7 +73,7 @@ module.exports = function Dashboard (props) {
           }
 
         <div class="uppy-Dashboard-innerWrap">
-          <div class="uppy-Dashboard-drop-files-here-hint">
+          <div class="uppy-Dashboard-dropFilesHereHint">
             {props.i18n('dropHint')}
           </div>
 

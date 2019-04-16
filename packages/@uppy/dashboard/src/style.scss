@@ -379,7 +379,7 @@
   justify-content: space-between;
   height: 40px;
   width: 100%;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid $gray-200;
   z-index: $zIndex-4;
   background-color: $gray-50;
   padding: 0 10px;
@@ -559,7 +559,7 @@
     padding-top: 10px;
   }
 
-.uppy-Dashboard-drop-files-here-hint {
+.uppy-Dashboard-dropFilesHereHint {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -582,7 +582,7 @@
 }
 
 .uppy-Dashboard.uppy-Dashboard--isDraggingOver{
-  .uppy-Dashboard-drop-files-here-hint{
+  .uppy-Dashboard-dropFilesHereHint{
     visibility: visible;
   }
   .uppy-DashboardContent-bar,

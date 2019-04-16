@@ -55,7 +55,7 @@
 .uppy-StatusBar:not([aria-hidden=true]).is-waiting {
   background-color: $white;
   height: 65px;
-  border-top: 1px solid #eaeaea;
+  border-top: 1px solid $gray-200;
 }
 
 .uppy-StatusBar-progress {
