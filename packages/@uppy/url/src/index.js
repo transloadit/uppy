@@ -29,9 +29,7 @@ module.exports = class Url extends Plugin {
       }
     }
 
-    const defaultOptions = {
-      locale: this.defaultLocale
-    }
+    const defaultOptions = {}
 
     this.opts = Object.assign({}, defaultOptions, opts)
 

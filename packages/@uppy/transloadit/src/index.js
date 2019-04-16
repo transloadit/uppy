@@ -48,8 +48,7 @@ module.exports = class Transloadit extends Plugin {
       signature: null,
       params: null,
       fields: {},
-      getAssemblyOptions: defaultGetAssemblyOptions,
-      locale: this.defaultLocale
+      getAssemblyOptions: defaultGetAssemblyOptions
     }
 
     this.opts = {

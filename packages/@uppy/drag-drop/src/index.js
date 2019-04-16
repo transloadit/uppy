@@ -28,8 +28,7 @@ module.exports = class DragDrop extends Plugin {
       inputName: 'files[]',
       width: '100%',
       height: '100%',
-      note: null,
-      locale: this.defaultLocale
+      note: null
     }
 
     // Merge default options with the ones set by user
