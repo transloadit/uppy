@@ -45,6 +45,9 @@ function buildPluginsList () {
   for (let file of files) {
     const dirName = path.dirname(file)
     const pluginName = path.basename(dirName)
+    if (pluginName === 'locales') {
+      continue
+    }
     const Plugin = require(dirName)
     let plugin
 
@@ -167,6 +170,6 @@ const template = fs.readFileSync(localeTemplatePath, 'utf-8')
 
 const finalLocale = template.replace('en_US.strings = {}', 'en_US.strings = ' + prettyLocale)
 
-const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'en_US.js')
+const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'src', 'en_US.js')
 fs.writeFileSync(localePackagePath, finalLocale, 'utf-8')
 console.log(`✅ Written '${localePackagePath}'`)
