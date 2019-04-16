@@ -28,7 +28,7 @@
     <%
         if (page.series) {
             var seriesList = []
-            site.posts.sort('date', +1).each(function (post) {
+            site.posts.sort('date', +1).reverse().each(function (post) {
                 if (post.series === page.series) {
                     seriesList.push('<option value="/' + post.path + '"' + (page.title === post.title ? ' selected' : '') + '>' + post.title + '</option>')
                 }
