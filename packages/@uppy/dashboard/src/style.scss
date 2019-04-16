@@ -119,7 +119,7 @@
   // min-height: 450px is required for everything to fit on mobile
   min-height: 450px;
   outline: none;
-  border: 1px solid $gray-200;
+  border: 1px solid $gray-100;
   border-radius: 5px;
 
   .uppy-size--md & {
@@ -192,6 +192,13 @@
   position: relative;
   text-align: center;
   flex: 1;
+  margin: 8px;
+  border: 1px dashed $gray-300;
+  border-radius: 3px;
+
+  .uppy-Dashboard-AddFilesPanel & {
+    border: none;
+  }
 }
 
 .uppy-DashboardTabs {
