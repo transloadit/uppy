@@ -86,19 +86,23 @@ module.exports = class Dashboard extends Plugin {
         cancelUpload: 'Cancel upload',
         xFilesSelected: {
           0: '%{smart_count} file selected',
-          1: '%{smart_count} files selected'
+          1: '%{smart_count} files selected',
+          2: '%{smart_count} files selected'
         },
         uploadingXFiles: {
           0: 'Uploading %{smart_count} file',
-          1: 'Uploading %{smart_count} files'
+          1: 'Uploading %{smart_count} files',
+          2: 'Uploading %{smart_count} files'
         },
         processingXFiles: {
           0: 'Processing %{smart_count} file',
-          1: 'Processing %{smart_count} files'
+          1: 'Processing %{smart_count} files',
+          2: 'Processing %{smart_count} files'
         },
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
-          1: 'Added %{smart_count} files from %{folder}'
+          1: 'Added %{smart_count} files from %{folder}',
+          2: 'Added %{smart_count} files from %{folder}'
         }
       }
     }

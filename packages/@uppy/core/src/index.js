@@ -27,11 +27,13 @@ class Uppy {
       strings: {
         youCanOnlyUploadX: {
           0: 'You can only upload %{smart_count} file',
-          1: 'You can only upload %{smart_count} files'
+          1: 'You can only upload %{smart_count} files',
+          2: 'You can only upload %{smart_count} files'
         },
         youHaveToAtLeastSelectX: {
           0: 'You have to select at least %{smart_count} file',
-          1: 'You have to select at least %{smart_count} files'
+          1: 'You have to select at least %{smart_count} files',
+          2: 'You have to select at least %{smart_count} files'
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
@@ -44,7 +46,8 @@ class Uppy {
         noFilesFound: 'You have no files or folders here',
         selectXFiles: {
           0: 'Select %{smart_count} file',
-          1: 'Select %{smart_count} files'
+          1: 'Select %{smart_count} files',
+          2: 'Select %{smart_count} files'
         },
         cancel: 'Cancel',
         logOut: 'Log out',
