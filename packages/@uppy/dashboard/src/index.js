@@ -6,10 +6,10 @@ const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
+const getDroppedFiles = require('@uppy/utils/src/getDroppedFiles')
 const cuid = require('cuid')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultPickerIcon } = require('./components/icons')
-const getDroppedFiles = require('./utils/getDroppedFiles')
 
 // Some code for managing focus was adopted from https://github.com/ghosh/micromodal
 // MIT licence, https://github.com/ghosh/micromodal/blob/master/LICENSE.md
@@ -476,7 +476,12 @@ module.exports = class Dashboard extends Plugin {
         source: this.id,
         name: file.name,
         type: file.type,
-        data: data || file
+        data: data || file,
+        meta: {
+          // path of the file relative to the ancestor directory the user selected.
+          // e.g. 'docs/Old Prague/airbnb.pdf'
+          relativePath: file.relativePath || null
+        }
       })
     } catch (err) {
       // Nothing, restriction errors handled in Core
@@ -563,14 +568,15 @@ module.exports = class Dashboard extends Plugin {
     })
 
     // 4. Add all dropped files
-    getDroppedFiles(event.dataTransfer, (files) => {
-      if (files.length > 0) {
-        this.uppy.log('[Dashboard] Files were dropped')
-        files.forEach((file) =>
-          this.addFile(file)
-        )
-      }
-    })
+    getDroppedFiles(event.dataTransfer)
+      .then((files) => {
+        if (files.length > 0) {
+          this.uppy.log('[Dashboard] Files were dropped')
+          files.forEach((file) =>
+            this.addFile(file)
+          )
+        }
+      })
   }
 
   initEvents () {
