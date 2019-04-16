@@ -106,6 +106,33 @@ pushd "${__root}" > /dev/null 2>&1
   popd > /dev/null 2>&1
   rm -rf /tmp/robodog-to-edgly
 
+  echo "--> Obtain relevant npm files for locales ${version} ... "
+  pushd packages/@uppy/locales
+    if [ -z "${remoteVersion}" ]; then
+      npm pack || fatal "Unable to fetch "
+    else
+      npm pack "@uppy/locales@${remoteVersion}"
+    fi
+  popd > /dev/null 2>&1
+  echo "✅"
+  rm -rf /tmp/locales-to-edgly
+  mkdir -p /tmp/locales-to-edgly
+  cp -af "packages/@uppy/locales/uppy-locales-${version}.tgz" /tmp/locales-to-edgly/
+  tar zxvf "packages/@uppy/locales/uppy-locales-${version}.tgz" -C /tmp/locales-to-edgly/
+
+  echo "--> Upload locales to edgly.net CDN"
+  pushd /tmp/locales-to-edgly/package/dist
+    # --delete \
+    env \
+      AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
+      AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
+    aws s3 sync \
+      --region="us-east-1" \
+      --exclude 'node_modules/*' \
+    ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}/locales"
+    echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}/locales/"
+  popd > /dev/null 2>&1
+  rm -rf /tmp/locales-to-edgly
 
   echo "--> Obtain relevant npm files for uppy ${version} ... "
   pushd packages/uppy
