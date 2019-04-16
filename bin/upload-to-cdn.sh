@@ -33,6 +33,8 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
+# versionSuffix="-test2"
+
 function fatal () {
   echo "❌ ${*}";
   exit 1
@@ -66,7 +68,7 @@ pushd "${__root}" > /dev/null 2>&1
     version="${localVersion}"
   fi
 
-  majorVersion=$(echo "${version}" |awk -F. '{print $1}')
+  majorVersion=$(echo "${version}${versionSuffix}" |awk -F. '{print $1}')
 
   echo -n "--> Check if not overwriting an existing tag ... "
   env \
@@ -74,11 +76,11 @@ pushd "${__root}" > /dev/null 2>&1
     AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
   aws s3 ls \
     --region="us-east-1" \
-  "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}/uppy.min.css" > /dev/null 2>&1 && fatal "Tag ${version} already exists"
+  "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}${versionSuffix}/uppy.min.css" > /dev/null 2>&1 && fatal "Tag ${version}${versionSuffix} already exists"
   echo "✅"
 
 
-  echo "--> Obtain relevant npm files for robodog ${version} ... "
+  echo "--> Obtain relevant npm files for robodog ${version}${versionSuffix} ... "
   pushd packages/@uppy/robodog
     if [ -z "${remoteVersion}" ]; then
       npm pack || fatal "Unable to fetch "
@@ -101,12 +103,12 @@ pushd "${__root}" > /dev/null 2>&1
     aws s3 sync \
       --region="us-east-1" \
       --exclude 'node_modules/*' \
-    ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}"
-    echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}/"
+    ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}${versionSuffix}"
+    echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}${versionSuffix}/"
   popd > /dev/null 2>&1
   rm -rf /tmp/robodog-to-edgly
 
-  echo "--> Obtain relevant npm files for locales ${version} ... "
+  echo "--> Obtain relevant npm files for locales ${version}${versionSuffix} ... "
   pushd packages/@uppy/locales
     if [ -z "${remoteVersion}" ]; then
       npm pack || fatal "Unable to fetch "
@@ -129,12 +131,12 @@ pushd "${__root}" > /dev/null 2>&1
     aws s3 sync \
       --region="us-east-1" \
       --exclude 'node_modules/*' \
-    ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}/locales"
-    echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}/locales/"
+    ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}${versionSuffix}/locales"
+    echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}${versionSuffix}/locales/"
   popd > /dev/null 2>&1
   rm -rf /tmp/locales-to-edgly
 
-  echo "--> Obtain relevant npm files for uppy ${version} ... "
+  echo "--> Obtain relevant npm files for uppy ${version}${versionSuffix} ... "
   pushd packages/uppy
     if [ -z "${remoteVersion}" ]; then
       npm pack || fatal "Unable to fetch "
@@ -157,26 +159,29 @@ pushd "${__root}" > /dev/null 2>&1
     aws s3 sync \
       --region="us-east-1" \
       --exclude 'node_modules/*' \
-    ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}"
-    echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}/"
+    ./ "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${version}${versionSuffix}"
+    echo "Saved https://transloadit.edgly.net/releases/uppy/v${version}${versionSuffix}/"
   popd > /dev/null 2>&1
   rm -rf /tmp/uppy-to-edgly
 
-
-  echo "${version}" | env \
-    AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
-    AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
-  aws s3 cp \
-    --region="us-east-1" \
-    --content-type="text/plain" \
-  - "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/latest.txt"
-  echo "Saved https://transloadit.edgly.net/releases/uppy/latest.txt"
-  echo "${version}" | env \
-    AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
-    AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
-  aws s3 cp \
-    --region="us-east-1" \
-    --content-type="text/plain" \
-  - "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${majorVersion}-latest.txt"
-  echo "Saved https://transloadit.edgly.net/releases/uppy/v${majorVersion}-latest.txt"
+  if [ "${versionSuffix}" != "" ]; then
+    echo "Not setting latest version because versionSuffix was set, which is used for testing only"
+  else 
+    echo "${version}" | env \
+      AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
+      AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
+    aws s3 cp \
+      --region="us-east-1" \
+      --content-type="text/plain" \
+    - "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/latest.txt"
+    echo "Saved https://transloadit.edgly.net/releases/uppy/latest.txt"
+    echo "${version}" | env \
+      AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
+      AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
+    aws s3 cp \
+      --region="us-east-1" \
+      --content-type="text/plain" \
+    - "s3://crates.edgly.net/756b8efaed084669b02cb99d4540d81f/default/releases/uppy/v${majorVersion}-latest.txt"
+    echo "Saved https://transloadit.edgly.net/releases/uppy/v${majorVersion}-latest.txt"
+  fi
 popd > /dev/null 2>&1
