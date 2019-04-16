@@ -1,9 +1,9 @@
-const { iconText, iconAudio, iconVideo, iconPDF } = require('../components/icons')
+const { iconFile, iconText, iconAudio, iconVideo, iconPDF } = require('../components/icons')
 
 module.exports = function getIconByMime (fileType) {
   const defaultChoice = {
     color: '#babcbe',
-    icon: ''
+    icon: iconFile()
   }
 
   if (!fileType) return defaultChoice
