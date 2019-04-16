@@ -43,7 +43,6 @@ module.exports = class XHRUpload extends Plugin {
       responseUrlFieldName: 'url',
       bundle: false,
       headers: {},
-      locale: this.defaultLocale,
       timeout: 30 * 1000,
       limit: 0,
       withCredentials: false,

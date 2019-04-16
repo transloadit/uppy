@@ -71,7 +71,6 @@ class Uppy {
       meta: {},
       onBeforeFileAdded: (currentFile, files) => currentFile,
       onBeforeUpload: (files) => files,
-      // locale: defaultLocale,
       store: DefaultStore()
     }
 

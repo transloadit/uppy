@@ -20,8 +20,7 @@ module.exports = class FileInput extends Plugin {
     const defaultOptions = {
       target: null,
       pretty: true,
-      inputName: 'files[]',
-      locale: this.defaultLocale
+      inputName: 'files[]'
     }
 
     // Merge default options with the ones set by user

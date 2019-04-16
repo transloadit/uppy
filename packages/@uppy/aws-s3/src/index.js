@@ -43,8 +43,7 @@ module.exports = class AwsS3 extends Plugin {
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
-      getUploadParameters: this.getUploadParameters.bind(this),
-      locale: this.defaultLocale
+      getUploadParameters: this.getUploadParameters.bind(this)
     }
 
     this.opts = { ...defaultOptions, ...opts }

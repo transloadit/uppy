@@ -58,7 +58,6 @@ module.exports = class Webcam extends Plugin {
     const defaultOptions = {
       onBeforeSnapshot: () => Promise.resolve(),
       countdown: false,
-      locale: this.defaultLocale,
       modes: [
         'video-audio',
         'video-only',
