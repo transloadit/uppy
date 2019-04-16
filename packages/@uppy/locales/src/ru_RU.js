@@ -26,7 +26,7 @@ ru_RU.strings = {
   dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
   dataUploadedOfTotal: '%{complete} of %{total}',
   done: 'Готово',
-  dropHereOr: 'Drop files here or %{browse}',
+  dropHereOr: 'Перетащите файлы сюда или %{browse}',
   dropPaste: 'Drop files here, paste or %{browse}',
   dropPasteImport: 'Перенесите файлы сюда, вставьте, %{browse} или импортируйте',
   edit: 'Редактировать',
