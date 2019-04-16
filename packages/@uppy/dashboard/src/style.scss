@@ -761,8 +761,8 @@ a.uppy-Dashboard-poweredBy {
 }
 
 .uppy-DashboardItem-previewIcon {
-  width: 28px;
-  height: 28px;
+  width: 25px;
+  height: 25px;
   z-index: $zIndex-1;
   position: absolute;
   top: 50%;
@@ -770,8 +770,8 @@ a.uppy-Dashboard-poweredBy {
   transform: translate(-50%, -50%);
 
   .uppy-size--md & {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
   }
 
   svg {
