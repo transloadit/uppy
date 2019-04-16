@@ -1061,6 +1061,16 @@ a.uppy-Dashboard-poweredBy {
   }
 }
 
+.uppy-DashboardItem.is-noIndividualCancellation {
+  .uppy-DashboardItem-progressIndicator {
+    cursor: default;
+  }
+
+  .cancel {
+    display: none;
+  }
+}
+
 .uppy-DashboardItem.is-processing .uppy-DashboardItem-progress {
   opacity: 0;
 }

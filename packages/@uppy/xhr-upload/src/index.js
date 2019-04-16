@@ -507,10 +507,12 @@ module.exports = class XHRUpload extends Plugin {
 
   install () {
     if (this.opts.bundle) {
+      const { capabilities } = this.uppy.getState()
       this.uppy.setState({
-        capabilities: Object.assign({}, this.uppy.getState().capabilities, {
-          bundled: true
-        })
+        capabilities: {
+          ...capabilities,
+          individualCancellation: false
+        }
       })
     }
 
@@ -519,10 +521,12 @@ module.exports = class XHRUpload extends Plugin {
 
   uninstall () {
     if (this.opts.bundle) {
+      const { capabilities } = this.uppy.getState()
       this.uppy.setState({
-        capabilities: Object.assign({}, this.uppy.getState().capabilities, {
-          bundled: true
-        })
+        capabilities: {
+          ...capabilities,
+          individualCancellation: true
+        }
       })
     }
 
