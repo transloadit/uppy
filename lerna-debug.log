@@ -1,0 +1,1140 @@
+0 silly input []
+1 silly flags { _: [ 'bootstrap' ],
+1 silly flags   'reject-cycles': false,
+1 silly flags   rejectCycles: false,
+1 silly flags   args: [] }
+2 verbose rootPath /Users/artur/Projects/transloadit/uppy
+3 info version 2.11.0
+4 silly existsSync /Users/artur/Projects/transloadit/uppy/VERSION
+5 info versioning independent
+6 silly initialize attempt
+7 silly npmConfig { registry: undefined,
+7 silly npmConfig   npmClient: undefined,
+7 silly npmConfig   npmClientArgs: undefined,
+7 silly npmConfig   mutex: undefined }
+8 silly initialize success
+9 silly execute attempt
+10 info Bootstrapping 30 packages
+11 info lifecycle preinstall
+12 silly runScript preinstall @uppy/companion-client
+13 silly @uppy/companion-client
+14 silly runScript preinstall @uppy/companion
+15 silly @uppy/companion
+16 silly runScript preinstall @uppy/react-native
+17 silly @uppy/react-native
+18 silly runScript preinstall @uppy/store-default
+19 silly @uppy/store-default
+20 silly runScript preinstall @uppy/store-redux
+21 silly @uppy/store-redux
+22 silly runScript preinstall @uppy/utils
+23 silly @uppy/utils
+24 silly runScript preinstall @uppy/core
+25 silly @uppy/core
+26 silly runScript preinstall @uppy/aws-s3-multipart
+27 silly @uppy/aws-s3-multipart
+28 silly runScript preinstall @uppy/drag-drop
+29 silly @uppy/drag-drop
+30 silly runScript preinstall @uppy/file-input
+31 silly @uppy/file-input
+32 silly runScript preinstall @uppy/form
+33 silly @uppy/form
+34 silly runScript preinstall @uppy/golden-retriever
+35 silly @uppy/golden-retriever
+36 silly runScript preinstall @uppy/informer
+37 silly @uppy/informer
+38 silly runScript preinstall @uppy/progress-bar
+39 silly @uppy/progress-bar
+40 silly runScript preinstall @uppy/provider-views
+41 silly @uppy/provider-views
+42 silly runScript preinstall @uppy/redux-dev-tools
+43 silly @uppy/redux-dev-tools
+44 silly runScript preinstall @uppy/status-bar
+45 silly @uppy/status-bar
+46 silly runScript preinstall @uppy/thumbnail-generator
+47 silly @uppy/thumbnail-generator
+48 silly runScript preinstall @uppy/tus
+49 silly @uppy/tus
+50 silly runScript preinstall @uppy/url
+51 silly @uppy/url
+52 silly runScript preinstall @uppy/webcam
+53 silly @uppy/webcam
+54 silly runScript preinstall @uppy/xhr-upload
+55 silly @uppy/xhr-upload
+56 silly runScript preinstall @uppy/aws-s3
+57 silly @uppy/aws-s3
+58 silly runScript preinstall @uppy/dropbox
+59 silly @uppy/dropbox
+60 silly runScript preinstall @uppy/google-drive
+61 silly @uppy/google-drive
+62 silly runScript preinstall @uppy/instagram
+63 silly @uppy/instagram
+64 silly runScript preinstall @uppy/transloadit
+65 silly @uppy/transloadit
+66 silly runScript preinstall @uppy/dashboard
+67 silly @uppy/dashboard
+68 silly runScript preinstall uppy
+69 silly uppy
+70 silly runScript preinstall @uppy/react
+71 silly @uppy/react
+72 silly hasMatchingDependency uppy @uppy/aws-s3
+73 silly hasMatchingDependency uppy @uppy/aws-s3-multipart
+74 silly hasMatchingDependency uppy @uppy/core
+75 silly hasMatchingDependency uppy @uppy/dashboard
+76 silly hasMatchingDependency uppy @uppy/drag-drop
+77 silly hasMatchingDependency uppy @uppy/dropbox
+78 silly hasMatchingDependency uppy @uppy/file-input
+79 silly hasMatchingDependency uppy @uppy/form
+80 silly hasMatchingDependency uppy @uppy/golden-retriever
+81 silly hasMatchingDependency uppy @uppy/google-drive
+82 silly hasMatchingDependency uppy @uppy/informer
+83 silly hasMatchingDependency uppy @uppy/instagram
+84 silly hasMatchingDependency uppy @uppy/progress-bar
+85 silly hasMatchingDependency uppy @uppy/provider-views
+86 silly hasMatchingDependency uppy @uppy/redux-dev-tools
+87 silly hasMatchingDependency uppy @uppy/companion-client
+88 silly hasMatchingDependency uppy @uppy/status-bar
+89 silly hasMatchingDependency uppy @uppy/store-default
+90 silly hasMatchingDependency uppy @uppy/store-redux
+91 silly hasMatchingDependency uppy @uppy/thumbnail-generator
+92 silly hasMatchingDependency uppy @uppy/transloadit
+93 silly hasMatchingDependency uppy @uppy/tus
+94 silly hasMatchingDependency uppy @uppy/url
+95 silly hasMatchingDependency uppy @uppy/webcam
+96 silly hasMatchingDependency uppy @uppy/xhr-upload
+97 silly hasMatchingDependency @uppy/aws-s3-multipart @uppy/core
+98 silly hasMatchingDependency @uppy/aws-s3-multipart @uppy/companion-client
+99 silly hasMatchingDependency @uppy/aws-s3-multipart @uppy/utils
+100 silly hasMatchingDependency @uppy/aws-s3 @uppy/core
+101 silly hasMatchingDependency @uppy/aws-s3 @uppy/utils
+102 silly hasMatchingDependency @uppy/aws-s3 @uppy/xhr-upload
+103 silly hasMatchingDependency @uppy/core @uppy/store-default
+104 silly hasMatchingDependency @uppy/core @uppy/utils
+105 silly hasMatchingDependency @uppy/dashboard @uppy/core
+106 silly hasMatchingDependency @uppy/dashboard @uppy/google-drive
+107 silly hasMatchingDependency @uppy/dashboard @uppy/informer
+108 silly hasMatchingDependency @uppy/dashboard @uppy/provider-views
+109 silly hasMatchingDependency @uppy/dashboard @uppy/status-bar
+110 silly hasMatchingDependency @uppy/dashboard @uppy/thumbnail-generator
+111 silly hasMatchingDependency @uppy/dashboard @uppy/utils
+112 silly hasMatchingDependency @uppy/drag-drop @uppy/core
+113 silly hasMatchingDependency @uppy/drag-drop @uppy/utils
+114 silly hasMatchingDependency @uppy/dropbox @uppy/core
+115 silly hasMatchingDependency @uppy/dropbox @uppy/provider-views
+116 silly hasMatchingDependency @uppy/dropbox @uppy/companion-client
+117 silly hasMatchingDependency @uppy/dropbox @uppy/utils
+118 silly hasMatchingDependency @uppy/file-input @uppy/core
+119 silly hasMatchingDependency @uppy/file-input @uppy/utils
+120 silly hasMatchingDependency @uppy/form @uppy/core
+121 silly hasMatchingDependency @uppy/form @uppy/utils
+122 silly hasMatchingDependency @uppy/golden-retriever @uppy/core
+123 silly hasMatchingDependency @uppy/golden-retriever @uppy/utils
+124 silly hasMatchingDependency @uppy/google-drive @uppy/core
+125 silly hasMatchingDependency @uppy/google-drive @uppy/provider-views
+126 silly hasMatchingDependency @uppy/google-drive @uppy/companion-client
+127 silly hasMatchingDependency @uppy/google-drive @uppy/utils
+128 silly hasMatchingDependency @uppy/informer @uppy/core
+129 silly hasMatchingDependency @uppy/informer @uppy/utils
+130 silly hasMatchingDependency @uppy/instagram @uppy/core
+131 silly hasMatchingDependency @uppy/instagram @uppy/provider-views
+132 silly hasMatchingDependency @uppy/instagram @uppy/companion-client
+133 silly hasMatchingDependency @uppy/instagram @uppy/utils
+134 silly hasMatchingDependency @uppy/progress-bar @uppy/core
+135 silly hasMatchingDependency @uppy/progress-bar @uppy/utils
+136 silly hasMatchingDependency @uppy/provider-views @uppy/core
+137 silly hasMatchingDependency @uppy/provider-views @uppy/utils
+138 silly hasMatchingDependency @uppy/react @uppy/core
+139 silly hasMatchingDependency @uppy/react @uppy/dashboard
+140 silly hasMatchingDependency @uppy/react @uppy/drag-drop
+141 silly hasMatchingDependency @uppy/react @uppy/progress-bar
+142 silly hasMatchingDependency @uppy/react @uppy/status-bar
+143 silly hasMatchingDependency @uppy/react @uppy/utils
+144 silly hasMatchingDependency @uppy/redux-dev-tools @uppy/core
+145 silly hasMatchingDependency @uppy/status-bar @uppy/core
+146 silly hasMatchingDependency @uppy/status-bar @uppy/utils
+147 silly hasMatchingDependency @uppy/thumbnail-generator @uppy/core
+148 silly hasMatchingDependency @uppy/thumbnail-generator @uppy/utils
+149 silly hasMatchingDependency @uppy/transloadit @uppy/core
+150 silly hasMatchingDependency @uppy/transloadit @uppy/provider-views
+151 silly hasMatchingDependency @uppy/transloadit @uppy/companion-client
+152 silly hasMatchingDependency @uppy/transloadit @uppy/tus
+153 silly hasMatchingDependency @uppy/transloadit @uppy/utils
+154 silly hasMatchingDependency @uppy/tus @uppy/core
+155 silly hasMatchingDependency @uppy/tus @uppy/companion-client
+156 silly hasMatchingDependency @uppy/tus @uppy/utils
+157 silly hasMatchingDependency @uppy/url @uppy/core
+158 silly hasMatchingDependency @uppy/url @uppy/companion-client
+159 silly hasMatchingDependency @uppy/url @uppy/utils
+160 silly hasMatchingDependency @uppy/webcam @uppy/core
+161 silly hasMatchingDependency @uppy/webcam @uppy/utils
+162 silly hasMatchingDependency @uppy/xhr-upload @uppy/core
+163 silly hasMatchingDependency @uppy/xhr-upload @uppy/companion-client
+164 silly hasMatchingDependency @uppy/xhr-upload @uppy/utils
+165 silly hasDependencyInstalled @uppy/aws-s3-multipart resolve-url
+166 silly dependencyIsSatisfied [ 'resolve-url',
+166 silly dependencyIsSatisfied   '^0.2.1',
+166 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3-multipart/node_modules' ]
+167 verbose dependencyIsSatisfied resolve-url false
+168 silly hasDependencyInstalled @uppy/aws-s3 resolve-url
+169 silly dependencyIsSatisfied [ 'resolve-url',
+169 silly dependencyIsSatisfied   '^0.2.1',
+169 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3/node_modules' ]
+170 verbose dependencyIsSatisfied resolve-url false
+171 silly hasDependencyInstalled @uppy/companion-client namespace-emitter
+172 silly dependencyIsSatisfied [ 'namespace-emitter',
+172 silly dependencyIsSatisfied   '^2.0.1',
+172 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion-client/node_modules' ]
+173 verbose dependencyIsSatisfied namespace-emitter false
+174 silly hasDependencyInstalled @uppy/core namespace-emitter
+175 silly dependencyIsSatisfied [ 'namespace-emitter',
+175 silly dependencyIsSatisfied   '^2.0.1',
+175 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/core/node_modules' ]
+176 verbose dependencyIsSatisfied namespace-emitter false
+177 silly hasDependencyInstalled @uppy/thumbnail-generator namespace-emitter
+178 silly dependencyIsSatisfied [ 'namespace-emitter',
+178 silly dependencyIsSatisfied   '^2.0.1',
+178 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/thumbnail-generator/node_modules' ]
+179 verbose dependencyIsSatisfied namespace-emitter false
+180 silly hasDependencyInstalled @uppy/transloadit namespace-emitter
+181 silly dependencyIsSatisfied [ 'namespace-emitter',
+181 silly dependencyIsSatisfied   '^2.0.1',
+181 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/transloadit/node_modules' ]
+182 verbose dependencyIsSatisfied namespace-emitter false
+183 silly hasDependencyInstalled @uppy/companion @types/aws-serverless-express
+184 silly dependencyIsSatisfied [ '@types/aws-serverless-express',
+184 silly dependencyIsSatisfied   '^3.0.1',
+184 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+185 verbose dependencyIsSatisfied @types/aws-serverless-express false
+186 silly hasDependencyInstalled @uppy/companion @types/compression
+187 silly dependencyIsSatisfied [ '@types/compression',
+187 silly dependencyIsSatisfied   '0.0.36',
+187 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+188 verbose dependencyIsSatisfied @types/compression false
+189 silly hasDependencyInstalled @uppy/companion @types/connect-redis
+190 silly dependencyIsSatisfied [ '@types/connect-redis',
+190 silly dependencyIsSatisfied   '0.0.7',
+190 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+191 verbose dependencyIsSatisfied @types/connect-redis false
+192 silly hasDependencyInstalled @uppy/companion @types/cookie-parser
+193 silly dependencyIsSatisfied [ '@types/cookie-parser',
+193 silly dependencyIsSatisfied   '^1.4.1',
+193 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+194 verbose dependencyIsSatisfied @types/cookie-parser false
+195 silly hasDependencyInstalled @uppy/companion @types/cors
+196 silly dependencyIsSatisfied [ '@types/cors',
+196 silly dependencyIsSatisfied   '^2.8.3',
+196 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+197 verbose dependencyIsSatisfied @types/cors false
+198 silly hasDependencyInstalled @uppy/companion @types/express-session
+199 silly dependencyIsSatisfied [ '@types/express-session',
+199 silly dependencyIsSatisfied   '^1.15.6',
+199 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+200 verbose dependencyIsSatisfied @types/express-session false
+201 silly hasDependencyInstalled @uppy/companion @types/helmet
+202 silly dependencyIsSatisfied [ '@types/helmet',
+202 silly dependencyIsSatisfied   '0.0.37',
+202 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+203 verbose dependencyIsSatisfied @types/helmet false
+204 silly hasDependencyInstalled @uppy/companion @types/jsonwebtoken
+205 silly dependencyIsSatisfied [ '@types/jsonwebtoken',
+205 silly dependencyIsSatisfied   '^7.2.5',
+205 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+206 verbose dependencyIsSatisfied @types/jsonwebtoken false
+207 silly hasDependencyInstalled @uppy/companion @types/lodash.merge
+208 silly dependencyIsSatisfied [ '@types/lodash.merge',
+208 silly dependencyIsSatisfied   '^4.6.3',
+208 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+209 verbose dependencyIsSatisfied @types/lodash.merge false
+210 silly hasDependencyInstalled @uppy/companion @types/morgan
+211 silly dependencyIsSatisfied [ '@types/morgan',
+211 silly dependencyIsSatisfied   '^1.7.35',
+211 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+212 verbose dependencyIsSatisfied @types/morgan false
+213 silly hasDependencyInstalled @uppy/companion @types/ms
+214 silly dependencyIsSatisfied [ '@types/ms',
+214 silly dependencyIsSatisfied   '^0.7.30',
+214 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+215 verbose dependencyIsSatisfied @types/ms false
+216 silly hasDependencyInstalled @uppy/companion @types/node
+217 silly dependencyIsSatisfied [ '@types/node',
+217 silly dependencyIsSatisfied   '^8.5.1',
+217 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+218 verbose dependencyIsSatisfied @types/node false
+219 silly hasDependencyInstalled @uppy/companion @types/request
+220 silly dependencyIsSatisfied [ '@types/request',
+220 silly dependencyIsSatisfied   '^2.0.9',
+220 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+221 verbose dependencyIsSatisfied @types/request false
+222 silly hasDependencyInstalled @uppy/companion @types/tus-js-client
+223 silly dependencyIsSatisfied [ '@types/tus-js-client',
+223 silly dependencyIsSatisfied   '^1.4.1',
+223 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+224 verbose dependencyIsSatisfied @types/tus-js-client false
+225 silly hasDependencyInstalled @uppy/companion @types/uuid
+226 silly dependencyIsSatisfied [ '@types/uuid',
+226 silly dependencyIsSatisfied   '^3.4.3',
+226 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+227 verbose dependencyIsSatisfied @types/uuid false
+228 silly hasDependencyInstalled @uppy/companion @types/ws
+229 silly dependencyIsSatisfied [ '@types/ws',
+229 silly dependencyIsSatisfied   '^3.2.1',
+229 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+230 verbose dependencyIsSatisfied @types/ws false
+231 silly hasDependencyInstalled @uppy/companion nodemon
+232 silly dependencyIsSatisfied [ 'nodemon',
+232 silly dependencyIsSatisfied   '^1.17.5',
+232 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+233 verbose dependencyIsSatisfied nodemon false
+234 silly hasDependencyInstalled @uppy/companion supertest
+235 silly dependencyIsSatisfied [ 'supertest',
+235 silly dependencyIsSatisfied   '3.0.0',
+235 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+236 verbose dependencyIsSatisfied supertest false
+237 silly hasDependencyInstalled @uppy/companion @purest/providers
+238 silly dependencyIsSatisfied [ '@purest/providers',
+238 silly dependencyIsSatisfied   '1.0.0',
+238 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+239 verbose dependencyIsSatisfied @purest/providers false
+240 silly hasDependencyInstalled @uppy/companion @uppy/fs-tail-stream
+241 silly dependencyIsSatisfied [ '@uppy/fs-tail-stream',
+241 silly dependencyIsSatisfied   '^1.2.0',
+241 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+242 verbose dependencyIsSatisfied @uppy/fs-tail-stream false
+243 silly hasDependencyInstalled @uppy/companion atob
+244 silly dependencyIsSatisfied [ 'atob',
+244 silly dependencyIsSatisfied   '2.1.0',
+244 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+245 verbose dependencyIsSatisfied atob false
+246 silly hasDependencyInstalled @uppy/companion aws-sdk
+247 silly dependencyIsSatisfied [ 'aws-sdk',
+247 silly dependencyIsSatisfied   '^2.254.1',
+247 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+248 verbose dependencyIsSatisfied aws-sdk false
+249 silly hasDependencyInstalled @uppy/companion body-parser
+250 silly dependencyIsSatisfied [ 'body-parser',
+250 silly dependencyIsSatisfied   '1.18.2',
+250 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+251 verbose dependencyIsSatisfied body-parser false
+252 silly hasDependencyInstalled @uppy/companion common-tags
+253 silly dependencyIsSatisfied [ 'common-tags',
+253 silly dependencyIsSatisfied   '^1.7.2',
+253 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+254 verbose dependencyIsSatisfied common-tags false
+255 silly hasDependencyInstalled @uppy/companion connect-redis
+256 silly dependencyIsSatisfied [ 'connect-redis',
+256 silly dependencyIsSatisfied   '^3.3.0',
+256 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+257 verbose dependencyIsSatisfied connect-redis false
+258 silly hasDependencyInstalled @uppy/companion cookie-parser
+259 silly dependencyIsSatisfied [ 'cookie-parser',
+259 silly dependencyIsSatisfied   '1.4.3',
+259 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+260 verbose dependencyIsSatisfied cookie-parser false
+261 silly hasDependencyInstalled @uppy/companion express
+262 silly dependencyIsSatisfied [ 'express',
+262 silly dependencyIsSatisfied   '^4.16.0',
+262 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+263 verbose dependencyIsSatisfied express false
+264 silly hasDependencyInstalled @uppy/companion express-interceptor
+265 silly dependencyIsSatisfied [ 'express-interceptor',
+265 silly dependencyIsSatisfied   '^1.2.0',
+265 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+266 verbose dependencyIsSatisfied express-interceptor false
+267 silly hasDependencyInstalled @uppy/companion express-prom-bundle
+268 silly dependencyIsSatisfied [ 'express-prom-bundle',
+268 silly dependencyIsSatisfied   '^3.1.0',
+268 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+269 verbose dependencyIsSatisfied express-prom-bundle false
+270 silly hasDependencyInstalled @uppy/companion express-session
+271 silly dependencyIsSatisfied [ 'express-session',
+271 silly dependencyIsSatisfied   '1.15.6',
+271 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+272 verbose dependencyIsSatisfied express-session false
+273 silly hasDependencyInstalled @uppy/companion grant-express
+274 silly dependencyIsSatisfied [ 'grant-express',
+274 silly dependencyIsSatisfied   '^4.0.1',
+274 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+275 verbose dependencyIsSatisfied grant-express false
+276 silly hasDependencyInstalled @uppy/companion helmet
+277 silly dependencyIsSatisfied [ 'helmet',
+277 silly dependencyIsSatisfied   '3.8.2',
+277 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+278 verbose dependencyIsSatisfied helmet false
+279 silly hasDependencyInstalled @uppy/companion isobject
+280 silly dependencyIsSatisfied [ 'isobject',
+280 silly dependencyIsSatisfied   '3.0.1',
+280 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+281 verbose dependencyIsSatisfied isobject false
+282 silly hasDependencyInstalled @uppy/companion jsonwebtoken
+283 silly dependencyIsSatisfied [ 'jsonwebtoken',
+283 silly dependencyIsSatisfied   '^8.0.1',
+283 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+284 verbose dependencyIsSatisfied jsonwebtoken false
+285 silly hasDependencyInstalled @uppy/companion lodash.merge
+286 silly dependencyIsSatisfied [ 'lodash.merge',
+286 silly dependencyIsSatisfied   '^4.6.0',
+286 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+287 verbose dependencyIsSatisfied lodash.merge false
+288 silly hasDependencyInstalled @uppy/companion morgan
+289 silly dependencyIsSatisfied [ 'morgan',
+289 silly dependencyIsSatisfied   '1.9.0',
+289 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+290 verbose dependencyIsSatisfied morgan false
+291 silly hasDependencyInstalled @uppy/companion ms
+292 silly dependencyIsSatisfied [ 'ms',
+292 silly dependencyIsSatisfied   '^2.0.0',
+292 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+293 verbose dependencyIsSatisfied ms false
+294 silly hasDependencyInstalled @uppy/companion node-redis-pubsub
+295 silly dependencyIsSatisfied [ 'node-redis-pubsub',
+295 silly dependencyIsSatisfied   '^2.0.0',
+295 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+296 verbose dependencyIsSatisfied node-redis-pubsub false
+297 silly hasDependencyInstalled @uppy/companion node-schedule
+298 silly dependencyIsSatisfied [ 'node-schedule',
+298 silly dependencyIsSatisfied   '^1.3.0',
+298 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+299 verbose dependencyIsSatisfied node-schedule false
+300 silly hasDependencyInstalled @uppy/companion prom-client
+301 silly dependencyIsSatisfied [ 'prom-client',
+301 silly dependencyIsSatisfied   '^10.0.2',
+301 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+302 verbose dependencyIsSatisfied prom-client false
+303 silly hasDependencyInstalled @uppy/companion purest
+304 silly dependencyIsSatisfied [ 'purest',
+304 silly dependencyIsSatisfied   '3.0.0',
+304 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+305 verbose dependencyIsSatisfied purest false
+306 silly hasDependencyInstalled @uppy/companion redis
+307 silly dependencyIsSatisfied [ 'redis',
+307 silly dependencyIsSatisfied   '^2.7.1',
+307 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+308 verbose dependencyIsSatisfied redis false
+309 silly hasDependencyInstalled @uppy/companion request
+310 silly dependencyIsSatisfied [ 'request',
+310 silly dependencyIsSatisfied   '2.85.0',
+310 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+311 verbose dependencyIsSatisfied request false
+312 silly hasDependencyInstalled @uppy/companion serialize-error
+313 silly dependencyIsSatisfied [ 'serialize-error',
+313 silly dependencyIsSatisfied   '^2.1.0',
+313 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+314 verbose dependencyIsSatisfied serialize-error false
+315 silly hasDependencyInstalled @uppy/companion tus-js-client
+316 silly dependencyIsSatisfied [ 'tus-js-client',
+316 silly dependencyIsSatisfied   '^1.5.1',
+316 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+317 verbose dependencyIsSatisfied tus-js-client false
+318 silly hasDependencyInstalled @uppy/tus tus-js-client
+319 silly dependencyIsSatisfied [ 'tus-js-client',
+319 silly dependencyIsSatisfied   '^1.5.1',
+319 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/tus/node_modules' ]
+320 verbose dependencyIsSatisfied tus-js-client false
+321 silly hasDependencyInstalled @uppy/companion uuid
+322 silly dependencyIsSatisfied [ 'uuid',
+322 silly dependencyIsSatisfied   '2.0.2',
+322 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+323 verbose dependencyIsSatisfied uuid false
+324 silly hasDependencyInstalled @uppy/companion validator
+325 silly dependencyIsSatisfied [ 'validator',
+325 silly dependencyIsSatisfied   '^9.0.0',
+325 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+326 verbose dependencyIsSatisfied validator false
+327 silly hasDependencyInstalled @uppy/companion ws
+328 silly dependencyIsSatisfied [ 'ws',
+328 silly dependencyIsSatisfied   '1.1.5',
+328 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion/node_modules' ]
+329 verbose dependencyIsSatisfied ws false
+330 silly hasDependencyInstalled @uppy/core cuid
+331 silly dependencyIsSatisfied [ 'cuid',
+331 silly dependencyIsSatisfied   '^2.1.1',
+331 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/core/node_modules' ]
+332 verbose dependencyIsSatisfied cuid false
+333 silly hasDependencyInstalled @uppy/store-redux cuid
+334 silly dependencyIsSatisfied [ 'cuid',
+334 silly dependencyIsSatisfied   '^2.1.1',
+334 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/store-redux/node_modules' ]
+335 verbose dependencyIsSatisfied cuid false
+336 silly hasDependencyInstalled @uppy/xhr-upload cuid
+337 silly dependencyIsSatisfied [ 'cuid',
+337 silly dependencyIsSatisfied   '^2.1.1',
+337 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/xhr-upload/node_modules' ]
+338 verbose dependencyIsSatisfied cuid false
+339 silly hasDependencyInstalled @uppy/core lodash.throttle
+340 silly dependencyIsSatisfied [ 'lodash.throttle',
+340 silly dependencyIsSatisfied   '^4.1.1',
+340 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/core/node_modules' ]
+341 verbose dependencyIsSatisfied lodash.throttle false
+342 silly hasDependencyInstalled @uppy/dashboard lodash.throttle
+343 silly dependencyIsSatisfied [ 'lodash.throttle',
+343 silly dependencyIsSatisfied   '^4.1.1',
+343 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/dashboard/node_modules' ]
+344 verbose dependencyIsSatisfied lodash.throttle false
+345 silly hasDependencyInstalled @uppy/status-bar lodash.throttle
+346 silly dependencyIsSatisfied [ 'lodash.throttle',
+346 silly dependencyIsSatisfied   '^4.1.1',
+346 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/status-bar/node_modules' ]
+347 verbose dependencyIsSatisfied lodash.throttle false
+348 silly hasDependencyInstalled @uppy/utils lodash.throttle
+349 silly dependencyIsSatisfied [ 'lodash.throttle',
+349 silly dependencyIsSatisfied   '^4.1.1',
+349 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/utils/node_modules' ]
+350 verbose dependencyIsSatisfied lodash.throttle false
+351 silly hasDependencyInstalled @uppy/core mime-match
+352 silly dependencyIsSatisfied [ 'mime-match',
+352 silly dependencyIsSatisfied   '^1.0.2',
+352 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/core/node_modules' ]
+353 verbose dependencyIsSatisfied mime-match false
+354 silly hasDependencyInstalled @uppy/core preact
+355 silly dependencyIsSatisfied [ 'preact',
+355 silly dependencyIsSatisfied   '^8.2.9',
+355 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/core/node_modules' ]
+356 verbose dependencyIsSatisfied preact false
+357 silly hasDependencyInstalled @uppy/dashboard preact
+358 silly dependencyIsSatisfied [ 'preact',
+358 silly dependencyIsSatisfied   '^8.2.9',
+358 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/dashboard/node_modules' ]
+359 verbose dependencyIsSatisfied preact false
+360 silly hasDependencyInstalled @uppy/drag-drop preact
+361 silly dependencyIsSatisfied [ 'preact',
+361 silly dependencyIsSatisfied   '^8.2.9',
+361 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/drag-drop/node_modules' ]
+362 verbose dependencyIsSatisfied preact false
+363 silly hasDependencyInstalled @uppy/dropbox preact
+364 silly dependencyIsSatisfied [ 'preact',
+364 silly dependencyIsSatisfied   '^8.2.9',
+364 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/dropbox/node_modules' ]
+365 verbose dependencyIsSatisfied preact false
+366 silly hasDependencyInstalled @uppy/file-input preact
+367 silly dependencyIsSatisfied [ 'preact',
+367 silly dependencyIsSatisfied   '^8.2.9',
+367 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/file-input/node_modules' ]
+368 verbose dependencyIsSatisfied preact false
+369 silly hasDependencyInstalled @uppy/google-drive preact
+370 silly dependencyIsSatisfied [ 'preact',
+370 silly dependencyIsSatisfied   '^8.2.9',
+370 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/google-drive/node_modules' ]
+371 verbose dependencyIsSatisfied preact false
+372 silly hasDependencyInstalled @uppy/informer preact
+373 silly dependencyIsSatisfied [ 'preact',
+373 silly dependencyIsSatisfied   '^8.2.9',
+373 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/informer/node_modules' ]
+374 verbose dependencyIsSatisfied preact false
+375 silly hasDependencyInstalled @uppy/instagram preact
+376 silly dependencyIsSatisfied [ 'preact',
+376 silly dependencyIsSatisfied   '^8.2.9',
+376 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/instagram/node_modules' ]
+377 verbose dependencyIsSatisfied preact false
+378 silly hasDependencyInstalled @uppy/progress-bar preact
+379 silly dependencyIsSatisfied [ 'preact',
+379 silly dependencyIsSatisfied   '^8.2.9',
+379 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/progress-bar/node_modules' ]
+380 verbose dependencyIsSatisfied preact false
+381 silly hasDependencyInstalled @uppy/provider-views preact
+382 silly dependencyIsSatisfied [ 'preact',
+382 silly dependencyIsSatisfied   '^8.2.9',
+382 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/provider-views/node_modules' ]
+383 verbose dependencyIsSatisfied preact false
+384 silly hasDependencyInstalled @uppy/status-bar preact
+385 silly dependencyIsSatisfied [ 'preact',
+385 silly dependencyIsSatisfied   '^8.2.9',
+385 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/status-bar/node_modules' ]
+386 verbose dependencyIsSatisfied preact false
+387 silly hasDependencyInstalled @uppy/url preact
+388 silly dependencyIsSatisfied [ 'preact',
+388 silly dependencyIsSatisfied   '^8.2.9',
+388 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/url/node_modules' ]
+389 verbose dependencyIsSatisfied preact false
+390 silly hasDependencyInstalled @uppy/webcam preact
+391 silly dependencyIsSatisfied [ 'preact',
+391 silly dependencyIsSatisfied   '^8.2.9',
+391 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/webcam/node_modules' ]
+392 verbose dependencyIsSatisfied preact false
+393 silly hasDependencyInstalled @uppy/core prettier-bytes
+394 silly dependencyIsSatisfied [ 'prettier-bytes',
+394 silly dependencyIsSatisfied   '^1.0.4',
+394 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/core/node_modules' ]
+395 verbose dependencyIsSatisfied prettier-bytes false
+396 silly hasDependencyInstalled @uppy/dashboard prettier-bytes
+397 silly dependencyIsSatisfied [ 'prettier-bytes',
+397 silly dependencyIsSatisfied   '^1.0.4',
+397 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/dashboard/node_modules' ]
+398 verbose dependencyIsSatisfied prettier-bytes false
+399 silly hasDependencyInstalled @uppy/golden-retriever prettier-bytes
+400 silly dependencyIsSatisfied [ 'prettier-bytes',
+400 silly dependencyIsSatisfied   '^1.0.4',
+400 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/golden-retriever/node_modules' ]
+401 verbose dependencyIsSatisfied prettier-bytes false
+402 silly hasDependencyInstalled @uppy/status-bar prettier-bytes
+403 silly dependencyIsSatisfied [ 'prettier-bytes',
+403 silly dependencyIsSatisfied   '^1.0.4',
+403 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/status-bar/node_modules' ]
+404 verbose dependencyIsSatisfied prettier-bytes false
+405 silly hasDependencyInstalled @uppy/dashboard classnames
+406 silly dependencyIsSatisfied [ 'classnames',
+406 silly dependencyIsSatisfied   '^2.2.6',
+406 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/dashboard/node_modules' ]
+407 verbose dependencyIsSatisfied classnames false
+408 silly hasDependencyInstalled @uppy/provider-views classnames
+409 silly dependencyIsSatisfied [ 'classnames',
+409 silly dependencyIsSatisfied   '^2.2.6',
+409 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/provider-views/node_modules' ]
+410 verbose dependencyIsSatisfied classnames false
+411 silly hasDependencyInstalled @uppy/status-bar classnames
+412 silly dependencyIsSatisfied [ 'classnames',
+412 silly dependencyIsSatisfied   '^2.2.6',
+412 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/status-bar/node_modules' ]
+413 verbose dependencyIsSatisfied classnames false
+414 silly hasDependencyInstalled @uppy/dashboard drag-drop
+415 silly dependencyIsSatisfied [ 'drag-drop',
+415 silly dependencyIsSatisfied   '2.13.3',
+415 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/dashboard/node_modules' ]
+416 verbose dependencyIsSatisfied drag-drop false
+417 silly hasDependencyInstalled @uppy/drag-drop drag-drop
+418 silly dependencyIsSatisfied [ 'drag-drop',
+418 silly dependencyIsSatisfied   '2.13.3',
+418 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/drag-drop/node_modules' ]
+419 verbose dependencyIsSatisfied drag-drop false
+420 silly hasDependencyInstalled @uppy/dashboard preact-css-transition-group
+421 silly dependencyIsSatisfied [ 'preact-css-transition-group',
+421 silly dependencyIsSatisfied   '^1.3.0',
+421 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/dashboard/node_modules' ]
+422 verbose dependencyIsSatisfied preact-css-transition-group false
+423 silly hasDependencyInstalled @uppy/form get-form-data
+424 silly dependencyIsSatisfied [ 'get-form-data',
+424 silly dependencyIsSatisfied   '^2.0.0',
+424 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/form/node_modules' ]
+425 verbose dependencyIsSatisfied get-form-data false
+426 silly hasDependencyInstalled @uppy/react-native react-native
+427 silly dependencyIsSatisfied [ 'react-native',
+427 silly dependencyIsSatisfied   'https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz',
+427 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/react-native/node_modules' ]
+428 verbose dependencyIsSatisfied react-native false
+429 silly hasDependencyInstalled @uppy/react prop-types
+430 silly dependencyIsSatisfied [ 'prop-types',
+430 silly dependencyIsSatisfied   '^15.6.1',
+430 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/react/node_modules' ]
+431 verbose dependencyIsSatisfied prop-types false
+432 silly hasDependencyInstalled @uppy/transloadit socket.io-client
+433 silly dependencyIsSatisfied [ 'socket.io-client',
+433 silly dependencyIsSatisfied   '^2.1.1',
+433 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/transloadit/node_modules' ]
+434 verbose dependencyIsSatisfied socket.io-client false
+435 silly hasDependencyInstalled @uppy/transloadit url-parse
+436 silly dependencyIsSatisfied [ 'url-parse',
+436 silly dependencyIsSatisfied   '^1.4.1',
+436 silly dependencyIsSatisfied   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/transloadit/node_modules' ]
+437 verbose dependencyIsSatisfied url-parse false
+438 silly root dependencies []
+439 silly leaf dependencies {
+439 silly leaf dependencies   "@uppy/aws-s3-multipart": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "resolve-url@^0.2.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/aws-s3": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "resolve-url@^0.2.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/companion-client": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "namespace-emitter@^2.0.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/core": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "namespace-emitter@^2.0.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "cuid@^2.1.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "lodash.throttle@^4.1.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "mime-match@^1.0.2",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "prettier-bytes@^1.0.4",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/thumbnail-generator": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "namespace-emitter@^2.0.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/transloadit": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "namespace-emitter@^2.0.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "socket.io-client@^2.1.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "url-parse@^1.4.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/companion": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/aws-serverless-express@^3.0.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/compression@0.0.36",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/connect-redis@0.0.7",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/cookie-parser@^1.4.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/cors@^2.8.3",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/express-session@^1.15.6",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/helmet@0.0.37",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/jsonwebtoken@^7.2.5",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/lodash.merge@^4.6.3",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/morgan@^1.7.35",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/ms@^0.7.30",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/node@^8.5.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/request@^2.0.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/tus-js-client@^1.4.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/uuid@^3.4.3",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@types/ws@^3.2.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "nodemon@^1.17.5",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "supertest@3.0.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@purest/providers@1.0.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "@uppy/fs-tail-stream@^1.2.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "atob@2.1.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "aws-sdk@^2.254.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "body-parser@1.18.2",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "common-tags@^1.7.2",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "connect-redis@^3.3.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "cookie-parser@1.4.3",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "express@^4.16.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "express-interceptor@^1.2.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "express-prom-bundle@^3.1.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "express-session@1.15.6",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "grant-express@^4.0.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "helmet@3.8.2",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "isobject@3.0.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "jsonwebtoken@^8.0.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "lodash.merge@^4.6.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "morgan@1.9.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "ms@^2.0.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "node-redis-pubsub@^2.0.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "node-schedule@^1.3.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "prom-client@^10.0.2",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "purest@3.0.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "redis@^2.7.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "request@2.85.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "serialize-error@^2.1.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "tus-js-client@^1.5.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "uuid@2.0.2",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "validator@^9.0.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "ws@1.1.5",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/tus": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "tus-js-client@^1.5.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/store-redux": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "cuid@^2.1.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/xhr-upload": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "cuid@^2.1.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/dashboard": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "lodash.throttle@^4.1.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "prettier-bytes@^1.0.4",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "classnames@^2.2.6",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "drag-drop@2.13.3",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact-css-transition-group@^1.3.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/status-bar": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "lodash.throttle@^4.1.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "prettier-bytes@^1.0.4",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "classnames@^2.2.6",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/utils": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "lodash.throttle@^4.1.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/drag-drop": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "drag-drop@2.13.3",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/dropbox": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/file-input": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/google-drive": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/informer": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/instagram": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/progress-bar": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/provider-views": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     },
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "classnames@^2.2.6",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/url": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/webcam": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "preact@^8.2.9",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/golden-retriever": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "prettier-bytes@^1.0.4",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/form": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "get-form-data@^2.0.0",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/react-native": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "react-native@https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ],
+439 silly leaf dependencies   "@uppy/react": [
+439 silly leaf dependencies     {
+439 silly leaf dependencies       "dependency": "prop-types@^15.6.1",
+439 silly leaf dependencies       "isSatisfied": false
+439 silly leaf dependencies     }
+439 silly leaf dependencies   ]
+439 silly leaf dependencies }
+440 info Installing external dependencies
+441 verbose actions 27 actions, concurrency 4
+442 silly installInDir aws-s3-multipart [ 'resolve-url@^0.2.1' ]
+443 silly installInDir backup /Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3-multipart/package.json
+444 silly rename [ '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3-multipart/package.json',
+444 silly rename   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3-multipart/package.json.lerna_backup' ]
+445 silly installInDir aws-s3 [ 'resolve-url@^0.2.1' ]
+446 silly installInDir backup /Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3/package.json
+447 silly rename [ '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3/package.json',
+447 silly rename   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3/package.json.lerna_backup' ]
+448 silly installInDir companion-client [ 'namespace-emitter@^2.0.1' ]
+449 silly installInDir backup /Users/artur/Projects/transloadit/uppy/packages/@uppy/companion-client/package.json
+450 silly rename [ '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion-client/package.json',
+450 silly rename   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion-client/package.json.lerna_backup' ]
+451 silly installInDir core [ 'namespace-emitter@^2.0.1',
+451 silly installInDir   'cuid@^2.1.1',
+451 silly installInDir   'lodash.throttle@^4.1.1',
+451 silly installInDir   'mime-match@^1.0.2',
+451 silly installInDir   'preact@^8.2.9',
+451 silly installInDir   'prettier-bytes@^1.0.4' ]
+452 silly installInDir backup /Users/artur/Projects/transloadit/uppy/packages/@uppy/core/package.json
+453 silly rename [ '/Users/artur/Projects/transloadit/uppy/packages/@uppy/core/package.json',
+453 silly rename   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/core/package.json.lerna_backup' ]
+454 silly installInDir writing tempJson { dependencies: { 'resolve-url': '^0.2.1' } }
+455 silly installInDir writing tempJson { dependencies: { 'resolve-url': '^0.2.1' } }
+456 silly installInDir writing tempJson { dependencies: { 'namespace-emitter': '^2.0.1' } }
+457 silly installInDir writing tempJson { dependencies:
+457 silly installInDir    { 'namespace-emitter': '^2.0.1',
+457 silly installInDir      cuid: '^2.1.1',
+457 silly installInDir      'lodash.throttle': '^4.1.1',
+457 silly installInDir      'mime-match': '^1.0.2',
+457 silly installInDir      preact: '^8.2.9',
+457 silly installInDir      'prettier-bytes': '^1.0.4' } }
+458 silly getExecOpts { cwd: '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3-multipart' }
+459 silly installInDir [ 'npm', [ 'install' ] ]
+460 silly getExecOpts { cwd: '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3' }
+461 silly installInDir [ 'npm', [ 'install' ] ]
+462 silly getExecOpts { cwd: '/Users/artur/Projects/transloadit/uppy/packages/@uppy/core' }
+463 silly installInDir [ 'npm', [ 'install' ] ]
+464 silly getExecOpts { cwd: '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion-client' }
+465 silly installInDir [ 'npm', [ 'install' ] ]
+466 silly installInDir cleanup /Users/artur/Projects/transloadit/uppy/packages/@uppy/companion-client/package.json
+467 silly renameSync [ '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion-client/package.json.lerna_backup',
+467 silly renameSync   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/companion-client/package.json' ]
+468 verbose installed leaf @uppy/companion-client
+469 silly installInDir thumbnail-generator [ 'namespace-emitter@^2.0.1' ]
+470 silly installInDir backup /Users/artur/Projects/transloadit/uppy/packages/@uppy/thumbnail-generator/package.json
+471 silly rename [ '/Users/artur/Projects/transloadit/uppy/packages/@uppy/thumbnail-generator/package.json',
+471 silly rename   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/thumbnail-generator/package.json.lerna_backup' ]
+472 silly installInDir writing tempJson { dependencies: { 'namespace-emitter': '^2.0.1' } }
+473 silly getExecOpts { cwd: '/Users/artur/Projects/transloadit/uppy/packages/@uppy/thumbnail-generator' }
+474 silly installInDir [ 'npm', [ 'install' ] ]
+475 silly installInDir cleanup /Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3-multipart/package.json
+476 silly renameSync [ '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3-multipart/package.json.lerna_backup',
+476 silly renameSync   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3-multipart/package.json' ]
+477 verbose installed leaf @uppy/aws-s3-multipart
+478 silly installInDir transloadit [ 'namespace-emitter@^2.0.1',
+478 silly installInDir   'socket.io-client@^2.1.1',
+478 silly installInDir   'url-parse@^1.4.1' ]
+479 silly installInDir backup /Users/artur/Projects/transloadit/uppy/packages/@uppy/transloadit/package.json
+480 silly rename [ '/Users/artur/Projects/transloadit/uppy/packages/@uppy/transloadit/package.json',
+480 silly rename   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/transloadit/package.json.lerna_backup' ]
+481 silly installInDir writing tempJson { dependencies:
+481 silly installInDir    { 'namespace-emitter': '^2.0.1',
+481 silly installInDir      'socket.io-client': '^2.1.1',
+481 silly installInDir      'url-parse': '^1.4.1' } }
+482 silly getExecOpts { cwd: '/Users/artur/Projects/transloadit/uppy/packages/@uppy/transloadit' }
+483 silly installInDir [ 'npm', [ 'install' ] ]
+484 silly installInDir cleanup /Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3/package.json
+485 silly renameSync [ '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3/package.json.lerna_backup',
+485 silly renameSync   '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3/package.json' ]
+486 verbose installed leaf @uppy/aws-s3
+487 error execute callback with error
+488 error Error: Command failed: npm install
+488 error npm WARN checkPermissions Missing write access to /Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3/node_modules/@uppy/xhrupload
+488 error npm WARN optional SKIPPING OPTIONAL DEPENDENCY: @uppy/companion-client@0.26.0 (node_modules/@uppy/xhr-upload/node_modules/@uppy/companion-client):
+488 error npm WARN notarget SKIPPING OPTIONAL DEPENDENCY: No matching version found for @uppy/companion-client@0.26.0
+488 error npm WARN @uppy/aws-s3 No repository field.
+488 error npm WARN @uppy/aws-s3 No license field.
+488 error
+488 error npm ERR! path /Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3/node_modules/@uppy/xhrupload
+488 error npm ERR! code ENOENT
+488 error npm ERR! errno -2
+488 error npm ERR! syscall access
+488 error npm ERR! enoent ENOENT: no such file or directory, access '/Users/artur/Projects/transloadit/uppy/packages/@uppy/aws-s3/node_modules/@uppy/xhrupload'
+488 error npm ERR! enoent This is related to npm not being able to find a file.
+488 error npm ERR! enoent
+488 error
+488 error npm ERR! A complete log of this run can be found in:
+488 error npm ERR!     /Users/artur/.npm/_logs/2018-12-14T16_11_07_938Z-debug.log
+488 error
+488 error     at Promise.all.then.arr (/Users/artur/Projects/transloadit/uppy/node_modules/lerna/node_modules/execa/index.js:236:11)
+488 error     at <anonymous>

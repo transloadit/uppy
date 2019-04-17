@@ -1,0 +1,26 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "@uppy/core": "^0.30.4",
+    "@uppy/dashboard": "^0.30.4",
+    "@uppy/instagram": "^0.30.4",
+    "@uppy/tus": "^0.30.4",
+    "@uppy/url": "^0.30.4",
+    "@uppy/xhr-upload": "^0.30.4",
+    "expo": "^32.0.0",
+    "preact-render-to-string": "^4.1.0",
+    "react": "16.5.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native-svg-uri": "gaboelnuevo/react-native-svg-uri#473e4f958e8846cbd5c69ce5cf59753cd5cea748"
+  },
+  "devDependencies": {
+    "babel-preset-expo": "^5.0.0"
+  },
+  "private": true
+}
