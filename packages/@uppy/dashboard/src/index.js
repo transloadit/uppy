@@ -447,18 +447,10 @@ module.exports = class Dashboard extends Plugin {
     })
 
     // 2. Add all dropped files
-    const files = toArray(event.clipboardData.items)
+    const files = toArray(event.clipboardData.files)
     files.forEach((file) => {
-      if (file.kind !== 'file') return
-
-      const blob = file.getAsFile()
-      if (!blob) {
-        this.uppy.log('[Dashboard] File pasted, but the file blob is empty')
-        this.uppy.info('Error pasting file', 'error')
-        return
-      }
       this.uppy.log('[Dashboard] File pasted')
-      this.addFile(file, blob)
+      this.addFile(file)
     })
   }
 
@@ -470,13 +462,13 @@ module.exports = class Dashboard extends Plugin {
     )
   }
 
-  addFile (file, data = null) {
+  addFile (file) {
     try {
       this.uppy.addFile({
         source: this.id,
         name: file.name,
         type: file.type,
-        data: data || file,
+        data: file,
         meta: {
           // path of the file relative to the ancestor directory the user selected.
           // e.g. 'docs/Old Prague/airbnb.pdf'

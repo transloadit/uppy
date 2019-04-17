@@ -73,12 +73,16 @@ function createPromiseToAddFileOrParseDirectory (files, entry) {
 module.exports = function webkitGetAsEntryApi (dataTransfer) {
   const files = []
 
-  const rootPromises =
-    toArray(dataTransfer.items)
-      .map((item) => {
-        const entry = item.webkitGetAsEntry()
-        return createPromiseToAddFileOrParseDirectory(files, entry)
-      })
+  const rootPromises = []
+
+  toArray(dataTransfer.items)
+    .forEach((item) => {
+      const entry = item.webkitGetAsEntry()
+      // :entry can be null when we drop the url e.g.
+      if (entry) {
+        rootPromises.push(createPromiseToAddFileOrParseDirectory(files, entry))
+      }
+    })
 
   return Promise.all(rootPromises)
     .then(() => files)

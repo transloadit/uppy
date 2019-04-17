@@ -1,37 +1,91 @@
 const toArray = require('@uppy/utils/lib/toArray')
 
-/**
- * Finds all links dropped/pasted from one browser window to another.
- *
- * @param {object} dataTransfer - DataTransfer instance, e.g. e.clipboardData, or e.dataTransfer
- * @param {string} type - either 'drop' or 'paste'
- * @param {function} callback - (urlString) => {}
- */
-module.exports = function forEachDroppedOrPastedUrl (dataTransfer, type, callback) {
+/*
+  SITUATION
+
+    1. Cross-browser dataTransfer.items
+
+      paste in chrome [Copy Image]:
+      0: {kind: "file", type: "image/png"}
+      1: {kind: "string", type: "text/html"}
+      paste in safari [Copy Image]:
+      0: {kind: "file", type: "image/png"}
+      1: {kind: "string", type: "text/html"}
+      2: {kind: "string", type: "text/plain"}
+      3: {kind: "string", type: "text/uri-list"}
+      paste in firefox [Copy Image]:
+      0: {kind: "file", type: "image/png"}
+      1: {kind: "string", type: "text/html"}
+
+      paste in chrome [Copy Image Address]:
+      0: {kind: "string", type: "text/plain"}
+      paste in safari [Copy Image Address]:
+      0: {kind: "string", type: "text/plain"}
+      1: {kind: "string", type: "text/uri-list"}
+      paste in firefox [Copy Image Address]:
+      0: {kind: "string", type: "text/plain"}
+
+      drop in chrome [from browser]:
+      0: {kind: "string", type: "text/uri-list"}
+      1: {kind: "string", type: "text/html"}
+      drop in safari [from browser]:
+      0: {kind: "string", type: "text/uri-list"}
+      1: {kind: "string", type: "text/html"}
+      2: {kind: "file", type: "image/png"}
+      drop in firefox [from browser]:
+      0: {kind: "string", type: "text/uri-list"}
+      1: {kind: "string", type: "text/x-moz-url"}
+      2: {kind: "string", type: "text/plain"}
+
+    2. We can determine if it's a 'copypaste' or a 'drop', but we can't discern between [Copy Image] and [Copy Image Address].
+
+  CONCLUSION
+
+    1. 'paste' ([Copy Image] or [Copy Image Address], we can't discern between these two)
+      Don't do anything if there is 'file' item. .handlePaste in the DashboardPlugin will deal with all 'file' items.
+      If there are no 'file' items - handle 'text/plain' items.
+
+    2. 'drop'
+      Take 'text/uri-list' items. Safari has an additional item of .kind === 'file', and you may worry about the item being duplicated (first by DashboardPlugin, and then by UrlPlugin, now), but don't. Directory handling code won't pay attention to this particular item of kind 'file'.
+*/
+
+// Finds all links dropped/pasted from one browser window to another.
+// @param {object} dataTransfer - DataTransfer instance, e.g. e.clipboardData, or e.dataTransfer
+// @param {string} isDropOrPaste - either 'drop' or 'paste'
+// @param {function} callback - (urlString) => {}
+module.exports = function forEachDroppedOrPastedUrl (dataTransfer, isDropOrPaste, callback) {
   const items = toArray(dataTransfer.items)
 
-  // [Safari workaround]
-  // When file is pasted/dropped
-  //   in firefox/chrome: it appears as 2 items with item.kind === 'string'.
-  //   in safari: it appears as 3 items, one of .kind === 'file' and two of .kind === 'string'.
-  // The 'file' items are handled by the DashboardPlugin, for both dropping and pasting.
-  // However, with the introduction of the 'folder drop' functionality, not all items with the .kind === 'file' are caught by the Dashboard plugin.
-  if (type === 'paste') {
-    // If there is at least one 'file' being dropped, - don't fire the 'url pasted' callback, it's handled by the DashboardPlugin.
-    const atLeastOneFileIsDragged = items.some((item) => item.kind === 'file')
-    if (atLeastOneFileIsDragged) return
-  } else if (type === 'drop') {
-    // Always fire the 'url dropped' callback. It MAY be handled by the DashboardPlugin too, resulting in a double item in some browsers, but in most modern browsers it will result in only one item, just like we need it.
+  let urlItems
+
+  switch (isDropOrPaste) {
+    case 'paste': {
+      const atLeastOneFileIsDragged = items.some((item) => item.kind === 'file')
+      if (atLeastOneFileIsDragged) {
+        return
+      } else {
+        urlItems = items.filter((item) =>
+          item.kind === 'string' &&
+          item.type === 'text/plain'
+        )
+      }
+      break
+    }
+    case 'drop': {
+      urlItems = items.filter((item) =>
+        item.kind === 'string' &&
+        item.type === 'text/uri-list'
+      )
+      break
+    }
+    default: {
+      throw new Error(`isDropOrPaste must be either 'drop' or 'paste', but it's ${isDropOrPaste}`)
+    }
   }
 
-  items
-    // There are usually 2 identical items with .kind === 'string' returned on paste/drop:
-    //  1. with .type === 'text/uri-list' (returned for most browsers), and
-    //  2. with .type === 'text/html' or 'text/plain' (varies between browsers).
-    .filter((item) => item.kind === 'string' && item.type === 'text/uri-list')
-    .forEach((item) => {
-      item.getAsString((urlString) =>
-        callback(urlString)
-      )
-    })
+  urlItems.forEach((item) => {
+    item.getAsString((urlString) =>
+      callback(urlString)
+    )
+  })
 }
