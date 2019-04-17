@@ -3,8 +3,8 @@ import CompanionClient = require('@uppy/companion-client');
 
 declare module GoogleDrive {
   interface GoogleDriveOptions extends Uppy.PluginOptions, CompanionClient.ProviderOptions {
-    serverUrl: string;
-    serverPattern: string | RegExp | Array<string | RegExp>;
+    companionUrl: string;
+    companionAllowedHosts: string | RegExp | Array<string | RegExp>;
   }
 }
 

@@ -35,7 +35,7 @@ describe('Dashboard', () => {
         inline: true,
         target: 'body'
       })
-      core.use(GoogleDrivePlugin, { target: DashboardPlugin, serverUrl: 'https://fake.uppy.io/' })
+      core.use(GoogleDrivePlugin, { target: DashboardPlugin, companionUrl: 'https://fake.uppy.io/' })
     }).not.toThrow()
 
     core.close()
@@ -43,7 +43,7 @@ describe('Dashboard', () => {
 
   it('works when passing plugins in `plugins` array', () => {
     const core = new Core()
-    core.use(GoogleDrivePlugin, { serverUrl: 'https://fake.uppy.io/' })
+    core.use(GoogleDrivePlugin, { companionUrl: 'https://fake.uppy.io/' })
 
     expect(() => {
       core.use(DashboardPlugin, {

@@ -17,7 +17,7 @@ const ms = require('ms')
 uppy.use(AwsS3, {
   limit: 2,
   timeout: ms('1 minute'),
-  serverUrl: 'https://uppy-companion.myapp.com/'
+  companionUrl: 'https://uppy-companion.myapp.com/'
 })
 ```
 
@@ -49,13 +49,13 @@ The `@uppy/aws-s3` plugin has the following configurable options:
 
 A unique identifier for this plugin. Defaults to `'AwsS3'`.
 
-### `serverUrl`
+### `companionUrl`
 
 When using [Companion][companion docs] to sign S3 uploads, set this option to the root URL of the Companion instance.
 
 ```js
 uppy.use(AwsS3, {
-  serverUrl: 'https://uppy-companion.my-app.com/'
+  companionUrl: 'https://uppy-companion.my-app.com/'
 })
 ```
 

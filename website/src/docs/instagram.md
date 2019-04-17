@@ -53,7 +53,7 @@ The `@uppy/instagram` plugin has the following configurable options:
 ```js
 uppy.use(Instagram, {
   target: Dashboard,
-  serverUrl: 'https://companion.uppy.io/',
+  companionUrl: 'https://companion.uppy.io/',
 })
 ```
 
@@ -69,7 +69,7 @@ Configures the title / name shown in the UI, for instance, on Dashboard tabs. It
 
 DOM element, CSS selector, or plugin to mount the Instagram provider into. This should normally be the Dashboard.
 
-### `serverUrl: null`
+### `companionUrl: null`
 
 URL to a [Companion](/docs/companion) instance.
 
@@ -77,7 +77,7 @@ URL to a [Companion](/docs/companion) instance.
 
 Custom headers that should be sent along to [Companion](/docs/companion) on every request.
 
-### `serverPattern: serverUrl`
+### `companionAllowedHosts: companionUrl`
 
 The valid and authorised URL(s) from which OAuth responses should be accepted.
 

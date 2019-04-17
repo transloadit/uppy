@@ -64,7 +64,8 @@ module.exports = class Transloadit extends Plugin {
 
     this._prepareUpload = this._prepareUpload.bind(this)
     this._afterUpload = this._afterUpload.bind(this)
-    this._handleError = this._handleError.bind(this)
+    this._onError = this._onError.bind(this)
+    this._onCancelAll = this._onCancelAll.bind(this)
     this._onFileUploadURLAvailable = this._onFileUploadURLAvailable.bind(this)
     this._onRestored = this._onRestored.bind(this)
     this._getPersistentData = this._getPersistentData.bind(this)
@@ -113,10 +114,10 @@ module.exports = class Transloadit extends Plugin {
     // We only replace the hostname for Transloadit's companions, so that
     // people can also self-host them while still using Transloadit for encoding.
     let remote = file.remote
-    if (file.remote && TL_UPPY_SERVER.test(file.remote.serverUrl)) {
+    if (file.remote && TL_UPPY_SERVER.test(file.remote.companionUrl)) {
       const err = new Error(
         'The https://api2.transloadit.com/uppy-server endpoint was renamed to ' +
-        'https://api2.transloadit.com/companion, please update your `serverUrl` ' +
+        'https://api2.transloadit.com/companion, please update your `companionUrl` ' +
         'options accordingly.')
       // Explicitly log this error here because it is caught by the `createAssembly`
       // Promise further along.
@@ -126,16 +127,16 @@ module.exports = class Transloadit extends Plugin {
       throw err
     }
 
-    if (file.remote && TL_COMPANION.test(file.remote.serverUrl)) {
+    if (file.remote && TL_COMPANION.test(file.remote.companionUrl)) {
       const newHost = status.companion_url
         .replace(/\/$/, '')
       const path = file.remote.url
-        .replace(file.remote.serverUrl, '')
+        .replace(file.remote.companionUrl, '')
         .replace(/^\//, '')
 
       remote = {
         ...file.remote,
-        serverUrl: newHost,
+        companionUrl: newHost,
         url: `${newHost}/${path}`
       }
     }
@@ -326,6 +327,29 @@ module.exports = class Transloadit extends Plugin {
         }
       })
       this.uppy.emit('transloadit:complete', finalStatus)
+    })
+  }
+
+  _cancelAssembly (assembly) {
+    return this.client.cancelAssembly(assembly).then(() => {
+      // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
+      this.uppy.emit('transloadit:assembly-cancelled', assembly)
+    })
+  }
+
+  /**
+   * When all files are removed, cancel in-progress Assemblies.
+   */
+  _onCancelAll () {
+    const { assemblies } = this.getPluginState()
+
+    const cancelPromises = Object.keys(assemblies).map((assemblyID) => {
+      const assembly = this.getAssembly(assemblyID)
+      return this._cancelAssembly(assembly)
+    })
+
+    Promise.all(cancelPromises).catch((err) => {
+      this.uppy.log(err)
     })
   }
 
@@ -632,8 +656,8 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  _handleError (err, uploadID) {
-    this.uppy.log(`[Transloadit] _handleError in upload ${uploadID}`)
+  _onError (err, uploadID) {
+    this.uppy.log(`[Transloadit] _onError in upload ${uploadID}`)
     this.uppy.log(err)
     const state = this.getPluginState()
     const assemblyIDs = state.uploadsAssemblies[uploadID]
@@ -650,7 +674,10 @@ module.exports = class Transloadit extends Plugin {
     this.uppy.addPostProcessor(this._afterUpload)
 
     // We may need to close socket.io connections on error.
-    this.uppy.on('error', this._handleError)
+    this.uppy.on('error', this._onError)
+
+    // Handle cancellation.
+    this.uppy.on('cancel-all', this._onCancelAll)
 
     if (this.opts.importFromUploadURLs) {
       // No uploader needed when importing; instead we take the upload URL from an existing uploader.
@@ -681,21 +708,38 @@ module.exports = class Transloadit extends Plugin {
       // Contains result data from Transloadit.
       results: []
     })
+
+    // We cannot cancel individual files because Assemblies tend to contain many files.
+    const { capabilities } = this.uppy.getState()
+    this.uppy.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: false
+      }
+    })
   }
 
   uninstall () {
     this.uppy.removePreProcessor(this._prepareUpload)
     this.uppy.removePostProcessor(this._afterUpload)
-    this.uppy.off('error', this._handleError)
+    this.uppy.off('error', this._onError)
 
     if (this.opts.importFromUploadURLs) {
       this.uppy.off('upload-success', this._onFileUploadURLAvailable)
     }
+
+    const { capabilities } = this.uppy.getState()
+    this.uppy.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: true
+      }
+    })
   }
 
   getAssembly (id) {
-    const state = this.getPluginState()
-    return state.assemblies[id]
+    const { assemblies } = this.getPluginState()
+    return assemblies[id]
   }
 
   getAssemblyFiles (assemblyID) {

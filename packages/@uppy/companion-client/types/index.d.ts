@@ -1,7 +1,7 @@
 import Uppy = require('@uppy/core');
 
 export interface RequestClientOptions {
-  serverUrl: string;
+  companionUrl: string;
   serverHeaders?: object;
 }
 

@@ -333,7 +333,7 @@ module.exports = class XHRUpload extends Plugin {
       )
       .then((res) => {
         const token = res.token
-        const host = getSocketHost(file.remote.serverUrl)
+        const host = getSocketHost(file.remote.companionUrl)
         const socket = new Socket({ target: `${host}/api/${token}` })
 
         socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
@@ -507,10 +507,12 @@ module.exports = class XHRUpload extends Plugin {
 
   install () {
     if (this.opts.bundle) {
+      const { capabilities } = this.uppy.getState()
       this.uppy.setState({
-        capabilities: Object.assign({}, this.uppy.getState().capabilities, {
-          bundled: true
-        })
+        capabilities: {
+          ...capabilities,
+          individualCancellation: false
+        }
       })
     }
 
@@ -519,10 +521,12 @@ module.exports = class XHRUpload extends Plugin {
 
   uninstall () {
     if (this.opts.bundle) {
+      const { capabilities } = this.uppy.getState()
       this.uppy.setState({
-        capabilities: Object.assign({}, this.uppy.getState().capabilities, {
-          bundled: true
-        })
+        capabilities: {
+          ...capabilities,
+          individualCancellation: true
+        }
       })
     }
 

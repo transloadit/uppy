@@ -123,6 +123,7 @@ class Uppy {
       allowNewUpload: true,
       capabilities: {
         uploadProgress: supportsUploadProgress(),
+        individualCancellation: true,
         resumableUploads: false
       },
       totalProgress: 0,
@@ -1188,7 +1189,6 @@ class Uppy {
       const { currentUploads } = this.getState()
       const currentUpload = currentUploads[uploadID]
       if (!currentUpload) {
-        this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
         return
       }
 
@@ -1204,7 +1204,6 @@ class Uppy {
       // to an outdated object without the `.result` property.
       const { currentUploads } = this.getState()
       if (!currentUploads[uploadID]) {
-        this.log(`Not setting result for an upload that has been canceled: ${uploadID}`)
         return
       }
       const currentUpload = currentUploads[uploadID]
@@ -1213,6 +1212,11 @@ class Uppy {
 
       this._removeUpload(uploadID)
 
+      return result
+    }).then((result) => {
+      if (result == null) {
+        this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
+      }
       return result
     })
   }

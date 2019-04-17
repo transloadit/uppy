@@ -66,8 +66,8 @@ module.exports = class AwsS3 extends Plugin {
   }
 
   getUploadParameters (file) {
-    if (!this.opts.serverUrl) {
-      throw new Error('Expected a `serverUrl` option containing a Companion address.')
+    if (!this.opts.companionUrl) {
+      throw new Error('Expected a `companionUrl` option containing a Companion address.')
     }
 
     const filename = encodeURIComponent(file.meta.name)
