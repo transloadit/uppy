@@ -21,8 +21,12 @@
   }
 
   &-logo {
-    margin-right: 20px;
+    margin-right: 5px;
   }
+
+  &-logoImg {
+		display: block;
+	}
 
   &-about {
     flex: 1;
