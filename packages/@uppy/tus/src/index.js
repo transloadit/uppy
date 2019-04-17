@@ -206,6 +206,7 @@ module.exports = class Tus extends Plugin {
 
       this.onCancelAll(file.id, () => {
         this.resetUploaderReferences(file.id)
+        resolve(`upload ${file.id} was canceled`)
       })
 
       this.onResumeAll(file.id, () => {
