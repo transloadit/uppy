@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
-import UppyFilePicker from './react-native/file-picker'
+import UppyFilePicker from '@uppy/react-native'
 import FileList from './FileList'
 import PauseResumeButton from './PauseResumeButton'
 import ProgressBar from './ProgressBar'
