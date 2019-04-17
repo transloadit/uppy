@@ -9,11 +9,11 @@ const uppy = Uppy({
 })
 
 uppy.use(GoogleDrive, {
-  serverUrl: 'http://localhost:3020'
+  companionUrl: 'http://localhost:3020'
 })
 
 uppy.use(MyCustomProvider, {
-  serverUrl: 'http://localhost:3020'
+  companionUrl: 'http://localhost:3020'
 })
 
 uppy.use(Dashboard, {

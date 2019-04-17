@@ -38,7 +38,7 @@ module.exports = class Url extends Plugin {
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
-    this.hostname = this.opts.serverUrl
+    this.hostname = this.opts.companionUrl
 
     if (!this.hostname) {
       throw new Error('Companion hostname is required, please consult https://uppy.io/docs/companion')
@@ -54,7 +54,7 @@ module.exports = class Url extends Plugin {
     this.handlePaste = this.handlePaste.bind(this)
 
     this.client = new RequestClient(uppy, {
-      serverUrl: this.opts.serverUrl,
+      companionUrl: this.opts.companionUrl,
       serverHeaders: this.opts.serverHeaders
     })
   }
@@ -118,7 +118,7 @@ module.exports = class Url extends Plugin {
             url: url
           },
           remote: {
-            serverUrl: this.opts.serverUrl,
+            companionUrl: this.opts.companionUrl,
             url: `${this.hostname}/url/get`,
             body: {
               fileId: url,

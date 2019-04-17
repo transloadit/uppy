@@ -125,6 +125,7 @@ class Uppy {
       allowNewUpload: true,
       capabilities: {
         uploadProgress: supportsUploadProgress(),
+        individualCancellation: true,
         resumableUploads: false
       },
       totalProgress: 0,
@@ -1016,29 +1017,27 @@ class Uppy {
   /**
    * Logs stuff to console, only if `debug` is set to true. Silent in production.
    *
-   * @param {String|Object} msg to log
+   * @param {String|Object} message to log
    * @param {String} [type] optional `error` or `warning`
    */
-  log (msg, type) {
+  log (message, type) {
     if (!this.opts.debug) {
       return
     }
 
-    let message = `[Uppy] [${getTimeStamp()}] ${msg}`
-
-    window['uppyLog'] = window['uppyLog'] + '\n' + 'DEBUG LOG: ' + msg
+    const prefix = `[Uppy] [${getTimeStamp()}]`
 
     if (type === 'error') {
-      console.error(message)
+      console.error(prefix, message)
       return
     }
 
     if (type === 'warning') {
-      console.warn(message)
+      console.warn(prefix, message)
       return
     }
 
-    console.log(message)
+    console.log(prefix, message)
   }
 
   /**
@@ -1192,7 +1191,6 @@ class Uppy {
       const { currentUploads } = this.getState()
       const currentUpload = currentUploads[uploadID]
       if (!currentUpload) {
-        this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
         return
       }
 
@@ -1208,7 +1206,6 @@ class Uppy {
       // to an outdated object without the `.result` property.
       const { currentUploads } = this.getState()
       if (!currentUploads[uploadID]) {
-        this.log(`Not setting result for an upload that has been canceled: ${uploadID}`)
         return
       }
       const currentUpload = currentUploads[uploadID]
@@ -1217,6 +1214,11 @@ class Uppy {
 
       this._removeUpload(uploadID)
 
+      return result
+    }).then((result) => {
+      if (result == null) {
+        this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
+      }
       return result
     })
   }

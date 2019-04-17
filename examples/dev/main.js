@@ -31,10 +31,10 @@ const uppy = Uppy({
     proudlyDisplayPoweredByUppy: true,
     note: '2 files, images and video only'
   })
-  .use(GoogleDrive, { target: Dashboard, serverUrl: 'http://localhost:3020' })
-  .use(Instagram, { target: Dashboard, serverUrl: 'http://localhost:3020' })
-  .use(Dropbox, { target: Dashboard, serverUrl: 'http://localhost:3020' })
-  .use(Url, { target: Dashboard, serverUrl: 'http://localhost:3020' })
+  .use(GoogleDrive, { target: Dashboard, companionUrl: 'http://localhost:3020' })
+  .use(Instagram, { target: Dashboard, companionUrl: 'http://localhost:3020' })
+  .use(Dropbox, { target: Dashboard, companionUrl: 'http://localhost:3020' })
+  .use(Url, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: TUS_ENDPOINT })
   // .use(XHRUpload, { endpoint: XHR_ENDPOINT })

@@ -22,7 +22,7 @@ Uppy()
   })
   .use(Instagram, {
     target: Dashboard,
-    serverUrl: 'https://companion.uppy.io'
+    companionUrl: 'https://companion.uppy.io'
   })
   .use(Tus, { endpoint: 'https://master.tus.io/files/' })
   .on('complete', (result) => {

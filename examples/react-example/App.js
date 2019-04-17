@@ -16,7 +16,7 @@ module.exports = class App extends React.Component {
 
     this.uppy = new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-      .use(GoogleDrive, { serverUrl: 'https://companion.uppy.io' })
+      .use(GoogleDrive, { companionUrl: 'https://companion.uppy.io' })
 
     this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
