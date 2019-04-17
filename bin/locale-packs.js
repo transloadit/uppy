@@ -4,14 +4,19 @@ const chalk = require('chalk')
 const path = require('path')
 const stringifyObject = require('stringify-object')
 const fs = require('fs')
-
-console.warn('\n--> Make sure to run `npm run build:lib` for this locale script to work properly. ')
-
 const uppy = Uppy()
+let localePack = {}
+const plugins = {}
+const sources = {}
 
-// Go over all uppy plugins, check if they are constructors
-// and instanciate them, check for defaultLocale property,
-// then add to plugins object
+const mode = process.argv[2]
+if (mode === 'build') {
+  build()
+} else if (mode === 'test') {
+  test()
+} else {
+  throw new Error(`First argument must be either 'build' or 'test'`)
+}
 
 function getSources (pluginName) {
   const dependencies = {
@@ -36,10 +41,12 @@ function getSources (pluginName) {
 }
 
 function buildPluginsList () {
+  // Go over all uppy plugins, check if they are constructors
+  // and instanciate them, check for defaultLocale property,
+  // then add to plugins object
+
   const packagesGlobPath = path.join(__dirname, '..', 'packages', '@uppy', '*', 'package.json')
   const files = glob.sync(packagesGlobPath)
-  const plugins = {}
-  const sources = {}
 
   console.log(`--> Checked plugins could be instantiated and have defaultLocale in them:\n`)
   for (let file of files) {
@@ -58,8 +65,8 @@ function buildPluginsList () {
     global.location = { protocol: 'https' }
     global.navigator = {}
     global.localStorage = {
-      key: () => {},
-      getItem: () => {}
+      key: () => { },
+      getItem: () => { }
     }
     global.window = {
       indexedDB: {
@@ -68,22 +75,22 @@ function buildPluginsList () {
     }
     global.document = {
       createElement: () => {
-        return { style: { } }
+        return { style: {} }
       }
     }
 
     try {
       if (pluginName === 'provider-views') {
         plugin = new Plugin(plugins['drag-drop'], {
-          serverPattern: '',
-          serverUrl: 'https://companion.uppy.io'
+          companionPattern: '',
+          companionUrl: 'https://companion.uppy.io'
         })
       } else if (pluginName === 'store-redux') {
-        plugin = new Plugin({ store: { dispatch: () => {} } })
+        plugin = new Plugin({ store: { dispatch: () => { } } })
       } else {
         plugin = new Plugin(uppy, {
-          serverPattern: '',
-          serverUrl: 'https://companion.uppy.io',
+          companionPattern: '',
+          companionUrl: 'https://companion.uppy.io',
           params: {
             auth: {
               key: 'x'
@@ -146,30 +153,37 @@ function sortObjectAlphabetically (obj, sortFunc) {
   }, {})
 }
 
-const { plugins, sources } = buildPluginsList()
-let localePack = {}
+function build () {
+  console.warn('\n--> Make sure to run `npm run build:lib` for this locale script to work properly. ')
 
-for (let pluginName in plugins) {
-  addLocaleToPack(plugins[pluginName], pluginName)
+  const { plugins, sources } = buildPluginsList()
+
+  for (let pluginName in plugins) {
+    addLocaleToPack(plugins[pluginName], pluginName)
+  }
+
+  localePack = sortObjectAlphabetically(localePack)
+
+  for (let pluginName in sources) {
+    checkForUnused(sources[pluginName], pluginName, sortObjectAlphabetically(plugins[pluginName].defaultLocale.strings))
+  }
+
+  const prettyLocale = stringifyObject(localePack, {
+    indent: '  ',
+    singleQuotes: true,
+    inlineCharacterLimit: 12
+  })
+
+  const localeTemplatePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'template.js')
+  const template = fs.readFileSync(localeTemplatePath, 'utf-8')
+
+  const finalLocale = template.replace('en_US.strings = {}', 'en_US.strings = ' + prettyLocale)
+
+  const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'src', 'en_US.js')
+  fs.writeFileSync(localePackagePath, finalLocale, 'utf-8')
+  console.log(`✅ Written '${localePackagePath}'`)
 }
 
-localePack = sortObjectAlphabetically(localePack)
-
-for (let pluginName in sources) {
-  checkForUnused(sources[pluginName], pluginName, sortObjectAlphabetically(plugins[pluginName].defaultLocale.strings))
+function test () {
+  console.log('testing')
 }
-
-const prettyLocale = stringifyObject(localePack, {
-  indent: '  ',
-  singleQuotes: true,
-  inlineCharacterLimit: 12
-})
-
-const localeTemplatePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'template.js')
-const template = fs.readFileSync(localeTemplatePath, 'utf-8')
-
-const finalLocale = template.replace('en_US.strings = {}', 'en_US.strings = ' + prettyLocale)
-
-const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'src', 'en_US.js')
-fs.writeFileSync(localePackagePath, finalLocale, 'utf-8')
-console.log(`✅ Written '${localePackagePath}'`)
