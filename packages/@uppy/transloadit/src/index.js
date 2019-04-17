@@ -64,6 +64,7 @@ module.exports = class Transloadit extends Plugin {
     this._prepareUpload = this._prepareUpload.bind(this)
     this._afterUpload = this._afterUpload.bind(this)
     this._onError = this._onError.bind(this)
+    this._onTusError = this._onTusError.bind(this)
     this._onCancelAll = this._onCancelAll.bind(this)
     this._onFileUploadURLAvailable = this._onFileUploadURLAvailable.bind(this)
     this._onRestored = this._onRestored.bind(this)
@@ -668,6 +669,17 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
+  _onTusError (err) {
+    if (err && /^tus: /.test(err.message)) {
+      const url = err.originalRequest && err.originalRequest.responseURL
+        ? err.originalRequest.responseURL
+        : null
+      this.client.submitError(err, { url }).then((_) => {
+        // if we can't report the error that sucks
+      })
+    }
+  }
+
   install () {
     this.uppy.addPreProcessor(this._prepareUpload)
     this.uppy.addPostProcessor(this._afterUpload)
@@ -677,6 +689,9 @@ module.exports = class Transloadit extends Plugin {
 
     // Handle cancellation.
     this.uppy.on('cancel-all', this._onCancelAll)
+
+    // For error reporting.
+    this.uppy.on('upload-error', this._onTusError)
 
     if (this.opts.importFromUploadURLs) {
       // No uploader needed when importing; instead we take the upload URL from an existing uploader.
