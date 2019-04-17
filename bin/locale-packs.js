@@ -55,7 +55,7 @@ function buildPluginsList () {
   for (let file of files) {
     const dirName = path.dirname(file)
     const pluginName = path.basename(dirName)
-    if (pluginName === 'locales') {
+    if (pluginName === 'locales' || pluginName === 'react-native') {
       continue
     }
     const Plugin = require(dirName)
