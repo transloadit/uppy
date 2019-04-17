@@ -2,7 +2,7 @@
   "name": "@uppy/react-native",
   "description": "React Native Uppy UI components",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "file-picker/index.js",
   "license": "MIT",
   "keywords": [
     "file uploader",
