@@ -23,15 +23,17 @@ class Uppy {
   * @param {object} opts — Uppy options
   */
   constructor (opts) {
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
         youCanOnlyUploadX: {
           0: 'You can only upload %{smart_count} file',
-          1: 'You can only upload %{smart_count} files'
+          1: 'You can only upload %{smart_count} files',
+          2: 'You can only upload %{smart_count} files'
         },
         youHaveToAtLeastSelectX: {
           0: 'You have to select at least %{smart_count} file',
-          1: 'You have to select at least %{smart_count} files'
+          1: 'You have to select at least %{smart_count} files',
+          2: 'You have to select at least %{smart_count} files'
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
@@ -44,7 +46,8 @@ class Uppy {
         noFilesFound: 'You have no files or folders here',
         selectXFiles: {
           0: 'Select %{smart_count} file',
-          1: 'Select %{smart_count} files'
+          1: 'Select %{smart_count} files',
+          2: 'Select %{smart_count} files'
         },
         cancel: 'Cancel',
         logOut: 'Log out',
@@ -68,7 +71,6 @@ class Uppy {
       meta: {},
       onBeforeFileAdded: (currentFile, files) => currentFile,
       onBeforeUpload: (files) => files,
-      locale: defaultLocale,
       store: DefaultStore()
     }
 
@@ -77,7 +79,7 @@ class Uppy {
     this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
 
     // i18n
-    this.translator = new Translator([ defaultLocale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.opts.locale ])
     this.locale = this.translator.locale
     this.i18n = this.translator.translate.bind(this.translator)
 
