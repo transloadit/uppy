@@ -119,7 +119,7 @@
   // min-height: 450px is required for everything to fit on mobile
   min-height: 450px;
   outline: none;
-  border: 1px solid $gray-200;
+  border: 1px solid $gray-100;
   border-radius: 5px;
 
   .uppy-size--md & {
@@ -192,6 +192,13 @@
   position: relative;
   text-align: center;
   flex: 1;
+  margin: 8px;
+  border: 1px dashed $gray-300;
+  border-radius: 3px;
+
+  .uppy-Dashboard-AddFilesPanel & {
+    border: none;
+  }
 }
 
 .uppy-DashboardTabs {
@@ -708,7 +715,7 @@ a.uppy-Dashboard-poweredBy {
   overflow: hidden;
   fill: currentColor;
   width: 11px;
-  height: 11px;
+  height: 12px;
 }
 
 .uppy-DashboardItem-previewInnerWrap {
@@ -749,20 +756,20 @@ a.uppy-Dashboard-poweredBy {
 
 
 .uppy-DashboardItem-previewIconWrap {
-  height: 80px;
-  max-height: 90%;
+  height: 76px;
+  max-height: 75%;
   position: relative;
 }
 
 .uppy-DashboardItem-previewIconBg {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(rgba($black, 0.1) 0px 0px 1px);
+  filter: drop-shadow(rgba($black, 0.1) 0px 1px 1px);
 }
 
 .uppy-DashboardItem-previewIcon {
-  width: 18px;
-  height: 18px;
+  width: 25px;
+  height: 25px;
   z-index: $zIndex-1;
   position: absolute;
   top: 50%;
@@ -770,8 +777,13 @@ a.uppy-Dashboard-poweredBy {
   transform: translate(-50%, -50%);
 
   .uppy-size--md & {
-    width: 25px;
-    height: 25px;
+    width: 38px;
+    height: 38px;
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -885,14 +897,14 @@ a.uppy-Dashboard-poweredBy {
 .uppy-DashboardItem-remove {
   @include reset-button;
   cursor: pointer;
-  color: #111;
-  width: 18px;
-  height: 18px;
+  color: $gray-900;
+  width: 20px;
+  height: 20px;
+  padding: 1px;
   opacity: 0.9;
 
-  .uppy-size--md & {
-    width: 20px;
-    height: 20px;
+  &:hover {
+    opacity: 1;
   }
 }
 
