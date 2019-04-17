@@ -48,7 +48,7 @@ const uppy = Uppy({
   meta: {},
   onBeforeFileAdded: (currentFile, files) => currentFile,
   onBeforeUpload: (files) => {},
-  locale: defaultLocale,
+  locale: {},
   store: new DefaultStore()
 })
 ```
@@ -215,6 +215,17 @@ locale: {
 }
 ```
 
+Instead of overriding strings yourself, consider using [one of our language packs](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/locales) (or contributing one!):
+
+```js
+const russianLocale = require('@uppy/locales/lib/ru_RU')
+const uppy = Uppy({
+  locale: russianLocale,
+})
+```
+
+For flexibility, you can pass a `locale` at the `Uppy`/core level, or to Plugins individually. The locale strings that you set in core take precedence.
+
 It also offers the pluralization function, which is used to determine which string will be used for the provided `smart_count` number.
 
 For example, for the Icelandic language, the pluralization function would be:
@@ -226,6 +237,7 @@ locale: {
 ```
 
 We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/master/index.js#L37-L60).
+
 
 ### `store: defaultStore()`
 
