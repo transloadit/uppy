@@ -41,6 +41,7 @@ module.exports = class Transloadit extends Plugin {
 
     const defaultOptions = {
       service: 'https://api2.transloadit.com',
+      errorReporting: true,
       waitForEncoding: false,
       waitForMetadata: false,
       alwaysRunAssembly: false,
@@ -80,7 +81,8 @@ module.exports = class Transloadit extends Plugin {
     }
 
     this.client = new Client({
-      service: this.opts.service
+      service: this.opts.service,
+      errorReporting: this.opts.errorReporting
     })
     // Contains Assembly instances for in-progress Assemblies.
     this.activeAssemblies = {}

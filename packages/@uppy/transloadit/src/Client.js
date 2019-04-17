@@ -121,6 +121,10 @@ module.exports = class Client {
   }
 
   _reportError (err, params = {}) {
+    if (this.opts.errorReporting === false) {
+      throw err
+    }
+
     const opts = {}
     if (params.assembly) {
       opts.assembly = params.assembly.assembly_id
