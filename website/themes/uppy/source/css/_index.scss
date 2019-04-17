@@ -1,6 +1,7 @@
 .TransloaditBar {
   display: none;
-  padding: 5px 10px;
+  height: 29px;
+  padding: 0 10px;
   background: #141829;
   color: #fff;
   font-size: 11px;
@@ -8,7 +9,7 @@
   align-items: center;
 
   @media #{$screen-medium} {
-    padding: 5px 40px;
+    padding: 0 20px;
   }
 
   &-link {
@@ -21,7 +22,7 @@
   }
 
   &-logo {
-    margin-right: 5px;
+    margin-right: 10px;
   }
 
   &-logoImg {
