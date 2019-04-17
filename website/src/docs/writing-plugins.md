@@ -2,8 +2,8 @@
 type: docs
 title: "Writing Plugins"
 permalink: docs/writing-plugins/
-order: 1
-category: 'Plugins'
+order: 8
+category: 'Contributing'
 ---
 
 There are already a few useful Uppy plugins out there, but there might come a time when you will want to build your own. Plugins can hook into the upload process or render a custom UI, typically to:
@@ -190,6 +190,33 @@ class NumFiles extends Plugin {
     )
   }
 }
+```
+
+## Locales
+
+For any user facing language that you use while writing your Plugin, please provide them as strings in the `defaultLocale` property like so:
+
+```js
+this.defaultLocale = {
+  strings: {
+    youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
+    youCanOnlyUploadX: {
+      0: 'You can only upload %{smart_count} file',
+      1: 'You can only upload %{smart_count} files',
+      2: 'You can only upload %{smart_count} files'
+    }
+  }
+}
+```
+
+This allows them to be overridden by Locale Packs, or directly when users pass `locale: { strings: youCanOnlyUploadFileTypes: 'Something else completely about %{types}'} }`. For this to work, it's currently also required that you add:
+
+```js
+// i18n
+this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
+this.i18n = this.translator.translate.bind(this.translator)
+this.i18nArray = this.translator.translateArray.bind(this.translator) 
+// ^-- Only if you're using i18nArray, which allows you to pass in JSX Components as well.
 ```
 
 [core.setfilestate]: /docs/uppy#uppy-setFileState-fileID-state

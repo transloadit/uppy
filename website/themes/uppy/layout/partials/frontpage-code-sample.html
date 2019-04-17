@@ -12,10 +12,10 @@
   <span class="token punctuation">}</span><span class="token punctuation">)</span>
   <span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Instagram<span class="token punctuation">,</span> <span class="token punctuation">{</span>
     target<span class="token punctuation">:</span> Dashboard<span class="token punctuation">,</span>
-    serverUrl<span class="token punctuation">:</span> <span class="token string">&apos;https://companion.uppy.io&apos;</span>
+    companionUrl<span class="token punctuation">:</span> <span class="token string">&apos;https://companion.uppy.io&apos;</span>
   <span class="token punctuation">}</span><span class="token punctuation">)</span>
   <span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Tus<span class="token punctuation">,</span> <span class="token punctuation">{</span> endpoint<span class="token punctuation">:</span> <span class="token string">&apos;https://master.tus.io/files/&apos;</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
-  <span class="token punctuation">.</span><span class="token function">on</span><span class="token punctuation">(</span><span class="token string">&apos;complete&apos;</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>result<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token punctuation">.</span><span class="token function">on</span><span class="token punctuation">(</span><span class="token string">&apos;complete&apos;</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">result</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
     console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">&apos;Upload result:&apos;</span><span class="token punctuation">,</span> result<span class="token punctuation">)</span>
   <span class="token punctuation">}</span><span class="token punctuation">)</span></pre></td></tr></tbody></table></figure>
 <script>

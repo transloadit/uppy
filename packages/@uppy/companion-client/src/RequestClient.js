@@ -16,7 +16,7 @@ module.exports = class RequestClient {
 
   get hostname () {
     const { companion } = this.uppy.getState()
-    const host = this.opts.serverUrl
+    const host = this.opts.companionUrl
     return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
@@ -44,7 +44,7 @@ module.exports = class RequestClient {
   onReceiveResponse (response) {
     const state = this.uppy.getState()
     const companion = state.companion || {}
-    const host = this.opts.serverUrl
+    const host = this.opts.companionUrl
     const headers = response.headers
     // Store the self-identified domain name for the Companion instance we just hit.
     if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {

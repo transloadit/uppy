@@ -43,7 +43,7 @@ module.exports = class Webcam extends Plugin {
     this.type = 'acquirer'
     this.icon = CameraIcon
 
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
         smile: 'Smile!',
         takePicture: 'Take a picture',
@@ -58,7 +58,6 @@ module.exports = class Webcam extends Plugin {
     const defaultOptions = {
       onBeforeSnapshot: () => Promise.resolve(),
       countdown: false,
-      locale: defaultLocale,
       modes: [
         'video-audio',
         'video-only',
@@ -73,7 +72,7 @@ module.exports = class Webcam extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // i18n
-    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 

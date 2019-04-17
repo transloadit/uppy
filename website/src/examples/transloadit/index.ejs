@@ -126,7 +126,7 @@ uppy
     },
     waitForEncoding: true
   })
-  .use(Instagram, { target: Dashboard, serverUrl: 'https://api2.transloadit.com/companion', serverPattern: /\.transloadit\.com$/ })
+  .use(Instagram, { target: Dashboard, companionUrl: 'https://api2.transloadit.com/companion', companionAllowedHosts: /\.transloadit\.com$/ })
   .use(Dashboard, {
     inline: true,
     maxHeight: 400,

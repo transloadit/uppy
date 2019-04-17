@@ -15,14 +15,13 @@ function FileItemProgressWrapper (props) {
   }
 
   if (props.isUploaded ||
-      props.bundled ||
       (props.hidePauseResumeCancelButtons && !props.error)) {
     return <div class="uppy-DashboardItem-progressIndicator">
       <FileItemProgress
         progress={props.file.progress.percentage}
         fileID={props.file.id}
         hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
-        bundled={props.bundled}
+        individualCancellation={props.individualCancellation}
       />
     </div>
   }
@@ -38,13 +37,14 @@ function FileItemProgressWrapper (props) {
       : <FileItemProgress
         progress={props.file.progress.percentage}
         fileID={props.file.id}
+        individualCancellation={props.individualCancellation}
         hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
       />
     }
   </button>
 }
 
-module.exports = function fileItem (props) {
+module.exports = function FileItem (props) {
   const file = props.file
   const acquirers = props.acquirers
 
@@ -72,7 +72,7 @@ module.exports = function fileItem (props) {
 
     if (props.resumableUploads) {
       props.pauseUpload(file.id)
-    } else {
+    } else if (props.individualCancellation) {
       props.cancelUpload(file.id)
     }
   }
@@ -91,9 +91,11 @@ module.exports = function fileItem (props) {
         return props.i18n('resumeUpload')
       }
       return props.i18n('pauseUpload')
-    } else {
+    } else if (props.individualCancellation) {
       return props.i18n('cancelUpload')
     }
+
+    return ''
   }
 
   const dashboardItemClass = classNames(
@@ -104,8 +106,12 @@ module.exports = function fileItem (props) {
     { 'is-paused': isPaused },
     { 'is-error': error },
     { 'is-resumable': props.resumableUploads },
-    { 'is-bundled': props.bundledUpload }
+    { 'is-noIndividualCancellation': !props.individualCancellation }
   )
+
+  const showRemoveButton = props.individualCancellation
+    ? !isUploaded
+    : !uploadInProgress && !isUploaded
 
   return <li class={dashboardItemClass} id={`uppy_${file.id}`} title={file.meta.name}>
     <div class="uppy-DashboardItem-preview">
@@ -174,15 +180,15 @@ module.exports = function fileItem (props) {
       </div>
     </div>
     <div class="uppy-DashboardItem-action">
-      {!isUploaded &&
+      {showRemoveButton &&
         <button class="uppy-DashboardItem-remove"
           type="button"
           aria-label={props.i18n('removeFile')}
           title={props.i18n('removeFile')}
           onclick={() => props.removeFile(file.id)}>
-          <svg aria-hidden="true" class="UppyIcon" width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-            <path stroke="#FFF" stroke-width="1" fill-rule="nonzero" vector-effect="non-scaling-stroke" d="M30 1C14 1 1 14 1 30s13 29 29 29 29-13 29-29S46 1 30 1z" />
-            <path fill="#FFF" vector-effect="non-scaling-stroke" d="M42 39.667L39.667 42 30 32.333 20.333 42 18 39.667 27.667 30 18 20.333 20.333 18 30 27.667 39.667 18 42 20.333 32.333 30z" />
+          <svg aria-hidden="true" class="UppyIcon" width="18" height="18" viewBox="0 0 18 18">
+            <path d="M9 0C4.034 0 0 4.034 0 9s4.034 9 9 9 9-4.034 9-9-4.034-9-9-9z" />
+            <path fill="#FFF" d="M13 12.222l-.778.778L9 9.778 5.778 13 5 12.222 8.222 9 5 5.778 5.778 5 9 8.222 12.222 5l.778.778L9.778 9z" />
           </svg>
         </button>
       }

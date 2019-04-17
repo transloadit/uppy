@@ -206,6 +206,7 @@ module.exports = class Tus extends Plugin {
 
       this.onCancelAll(file.id, () => {
         this.resetUploaderReferences(file.id)
+        resolve(`upload ${file.id} was canceled`)
       })
 
       this.onResumeAll(file.id, () => {
@@ -271,7 +272,7 @@ module.exports = class Tus extends Plugin {
   connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
-      const host = getSocketHost(file.remote.serverUrl)
+      const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}` })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = createEventTracker(this.uppy)

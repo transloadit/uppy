@@ -153,7 +153,7 @@ module.exports = class ProviderView {
         fileId: file.id
       },
       remote: {
-        serverUrl: this.plugin.opts.serverUrl,
+        companionUrl: this.plugin.opts.companionUrl,
         url: `${this.provider.fileUrl(file.requestPath)}`,
         body: {
           fileId: file.id
@@ -218,7 +218,7 @@ module.exports = class ProviderView {
 
   filterItems (items) {
     const state = this.plugin.getPluginState()
-    if (state.filterInput === '') {
+    if (!state.filterInput || state.filterInput === '') {
       return items
     }
     return items.filter((folder) => {
@@ -423,8 +423,8 @@ module.exports = class ProviderView {
 
     const authWindow = window.open(link, '_blank')
     const handleToken = (e) => {
-      if (!this._isOriginAllowed(e.origin, this.plugin.opts.serverPattern) || e.source !== authWindow) {
-        this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.serverPattern}`)
+      if (!this._isOriginAllowed(e.origin, this.plugin.opts.companionAllowedHosts) || e.source !== authWindow) {
+        this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.companionAllowedHosts}`)
         return
       }
       authWindow.close()

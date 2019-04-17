@@ -15,7 +15,7 @@ module.exports = class DragDrop extends Plugin {
     this.id = this.opts.id || 'DragDrop'
     this.title = 'Drag & Drop'
 
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
         dropHereOr: 'Drop files here or %{browse}',
         browse: 'browse'
@@ -28,8 +28,7 @@ module.exports = class DragDrop extends Plugin {
       inputName: 'files[]',
       width: '100%',
       height: '100%',
-      note: null,
-      locale: defaultLocale
+      note: null
     }
 
     // Merge default options with the ones set by user
@@ -39,7 +38,7 @@ module.exports = class DragDrop extends Plugin {
     this.isDragDropSupported = this.checkDragDropSupport()
 
     // i18n
-    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
@@ -131,7 +130,7 @@ module.exports = class DragDrop extends Plugin {
     return (
       <div class={DragDropClass} style={DragDropStyle}>
         <div class="uppy-DragDrop-inner">
-          <svg aria-hidden="true" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+          <svg aria-hidden="true" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
             <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
           </svg>
           <label class="uppy-DragDrop-label">

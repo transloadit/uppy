@@ -12,6 +12,7 @@ const touch = require('touch')
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
 const robodogRoot = path.join(__dirname, '../packages/@uppy/robodog')
+const localesRoot = path.join(__dirname, '../packages/@uppy/locales')
 
 const configPath = path.join(webRoot, '/themes/uppy/_config.yml')
 const { version } = require(path.join(uppyRoot, '/package.json'))
@@ -113,8 +114,10 @@ async function injectSizes (config) {
 async function injectBundles () {
   const cmds = [
     `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy')}`,
+    `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`,
     `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
-    `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`
+    `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
+    `cp -vfR ${path.join(localesRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`
   ].join(' && ')
 
   const { stdout } = await promisify(exec)(cmds)

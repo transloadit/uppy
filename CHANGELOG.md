@@ -19,11 +19,9 @@ last Friday of every new month.
 Ideas that will be planned and find their way into a release at one point.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
-- [ ] core: Decouple rendering from the Plugin base class?
 - [ ] core: Make sure Uppy works well in VR
 - [ ] test: Human should check http://www.webpagetest.org and https://developers.google.com/web/tools/lighthouse/, use it sometimes to test website and Uppy. Will show response/loading times and other issues
 - [ ] test: Human should test with real screen reader to identify accessibility problems
-- [ ] test: setup an HTML page with all sorts of crazy styles, resets & bootstrap to see what brakes Uppy (@arturi)
 - [ ] dependencies: es6-promise --> lie https://github.com/calvinmetcalf/lie ?
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
@@ -89,6 +87,11 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
 - [ ] show thumbnails when connecting with Google Drive #1162 (@ifedapoolarewaju)
 
+## 1.1
+
+- [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
+- [ ] dashboard: Bring back "Drop Here" screen for dragged URLs without introducing flickering (tricky! see PR #1400)
+
 ## 1.0 Goals
 
 What we need to do to release Uppy 1.0
@@ -106,8 +109,7 @@ What we need to do to release Uppy 1.0
 - [ ] website: design polish
 - [ ] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
 - [ ] transloadit: add error reporting, see https://github.com/transloadit/jquery-sdk/blob/891e99b08dd8142d8d8adc0553e6511967635ad7/js/lib/Modal.js#L122-L136 (@goto-bus-stop, @arturi)
-- [ ] transloadit: should adhere cancel event and abort assembly (@arturi, @goto-bus-stop)
-- [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
+- [ ] transloadit: should adhere cancel event and abort assembly (@goto-bus-stop)
 - [x] chore: remove the not-working npm scripts (@kvz, @arturi)
 - [x] build: (BREAKING) `npm run dev` no longer starts Companion by default, use `npm run dev:with-companion` for that (@arturi)
 - [x] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear

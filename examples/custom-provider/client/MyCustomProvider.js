@@ -18,7 +18,7 @@ module.exports = class MyCustomProvider extends Plugin {
     // writing out the key explicitly for readability the key used to store
     // the provider instance must be equal to this.id.
     this[this.id] = new Provider(uppy, {
-      serverUrl: this.opts.serverUrl,
+      companionUrl: this.opts.companionUrl,
       provider: 'mycustomprovider'
     })
 

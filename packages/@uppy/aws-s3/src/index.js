@@ -34,7 +34,7 @@ module.exports = class AwsS3 extends Plugin {
     this.id = 'AwsS3'
     this.title = 'AWS S3'
 
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
         preparingUpload: 'Preparing upload...'
       }
@@ -43,14 +43,13 @@ module.exports = class AwsS3 extends Plugin {
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
-      getUploadParameters: this.getUploadParameters.bind(this),
-      locale: defaultLocale
+      getUploadParameters: this.getUploadParameters.bind(this)
     }
 
     this.opts = { ...defaultOptions, ...opts }
 
     // i18n
-    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
@@ -66,8 +65,8 @@ module.exports = class AwsS3 extends Plugin {
   }
 
   getUploadParameters (file) {
-    if (!this.opts.serverUrl) {
-      throw new Error('Expected a `serverUrl` option containing a Companion address.')
+    if (!this.opts.companionUrl) {
+      throw new Error('Expected a `companionUrl` option containing a Companion address.')
     }
 
     const filename = encodeURIComponent(file.meta.name)

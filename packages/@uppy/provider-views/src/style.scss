@@ -17,6 +17,11 @@
   justify-content: center;
   flex-flow: column wrap;
   flex: 1;
+  color: $gray-500;
+}
+
+.uppy-Provider-empty {
+  color: $gray-500;
 }
 
 .uppy-Provider-authIcon svg {
@@ -33,6 +38,7 @@
   padding: 0 15px;
   max-width: 500px;
   text-align: center;
+  color: $gray-600;
 
   .uppy-size--md & {
     font-size: 20px;
@@ -40,11 +46,9 @@
 }
 
 .uppy-Provider-breadcrumbs {
-  display: inline-block;
   flex: 1;
-  color: darken($color-gray, 25%);
+  color: $gray-700;
   font-size: 12px;
-  line-height: 1;
   margin-bottom: 10px;
   text-align: left;
 
@@ -54,9 +58,9 @@
 }
 
 .uppy-Provider-breadcrumbsIcon {
-  display: inline;
-  color: darken($color-gray, 25%);
-  vertical-align: text-bottom;
+  display: inline-block;
+  color: $gray-700;
+  vertical-align: bottom;
   margin-right: 8px;
   line-height: 1;
 }
@@ -64,12 +68,13 @@
   .uppy-Provider-breadcrumbsIcon svg {
     width: 13px;
     height: 13px;
-    fill: darken($color-gray, 25%);
+    fill: $gray-700;
   }
 
 .uppy-Provider-breadcrumbs button {
   display: inline-block;
-  font-size: 14px;
+  line-height: inherit;
+  // font-size: 14px;
 }
 
 .uppy-Provider-breadcrumbs button:hover {
@@ -81,34 +86,38 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   height: 100%;
 }
 
 .uppy-ProviderBrowser-user {
   margin: 0 8px 0 0;
-  line-height: 1;
+  font-weight: 500;
+  color: $gray-800;
 }
 
   .uppy-ProviderBrowser-user:after {
     content: '\00B7';
     position: relative;
     left: 4px;
+    color: $gray-500;
+    font-weight: normal;
   }
 
 .uppy-ProviderBrowser-header {
   z-index: $zIndex-2;
-  border-bottom: 1px solid rgba($color-gray, 0.3);
+  border-bottom: 1px solid $gray-200;
   position: relative;
 }
 
 .uppy-ProviderBrowser-headerBar {
   padding: 12px 15px;
-  background-color: lighten($color-gray, 40%);
+  background-color: $gray-50;
   z-index: $zIndex-2;
-  color: darken($color-gray, 20%);
-  line-height: 1;
+  color: $gray-600;
+  line-height: 1.4;
+  font-size: 12px;
 
   .uppy-size--md & {
     display: flex;
@@ -133,22 +142,22 @@
 
 .uppy-ProviderBrowser-search {
   width: 100%;
-  background-color: $color-white;
+  background-color: $white;
   position: relative;
   height: 30px;
-  margin-top: 5px;
+  margin-top: 10px;
   margin-bottom: 5px;
   display: flex;
   align-items: center;
 }
 
 .uppy-ProviderBrowser-searchIcon {
-  width: 16px;
-  height: 16px;
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  left: 16px;
   z-index: $zIndex-3;
-  color: rgba($color-gray, 0.6);
-  margin-left: 16px;
-  margin-right: 7px;
+  color: $gray-400;
 }
 
 .uppy-ProviderBrowser-searchInput {
@@ -157,44 +166,49 @@
   background-color: transparent;
   outline: 0;
   font-family: $font-family-base;
-  font-size: 13px;
-  line-height: 30px;
+  font-size: 12px;
+  line-height: 1.4;
   border: 0;
-  margin: 0 16px 0 0;
+  margin: 0 8px;
+  padding-left: 27px;
   z-index: $zIndex-2;
-  border-bottom: 1px solid transparent;
+  border-radius: 4px;
 }
 
   .uppy-ProviderBrowser-searchInput:focus {
     outline: 0;
-    border-bottom: 1px solid $color-cornflower-blue;
+    background-color: $gray-100;
   }
 
 .uppy-ProviderBrowser-searchClose {
-  width: 12px;
-  height: 12px;
   position: absolute;
-  right: 16px;
-  top: 8px;
+  width: 22px;
+  height: 22px;
+  padding: 6px;
+  right: 12px;
+  top: 4px;
   z-index: $zIndex-3;
-  color: $color-gray;
+  color: $gray-500;
   cursor: pointer;
+
+  &:hover {
+    color: $gray-600;
+  }
 }
 
   .uppy-ProviderBrowser-searchClose svg {
     vertical-align: text-top;
   }
 
-.uppy-ProviderBrowser-searchInput::placeholder,
-.uppy-ProviderBrowser-searchInput::-webkit-input-placeholder,
-.uppy-ProviderBrowser-searchInput::-moz-placeholder,
-.uppy-ProviderBrowser-searchInput::-ms-input-placeholder {
-  color: rgba($color-gray, 0.85);
-  letter-spacing: 1px;
+.uppy-ProviderBrowser-searchInput::placeholder {
+  color: $gray-500;
+  opacity: 1;
 }
 
 .uppy-ProviderBrowser-userLogout {
   cursor: pointer;
+  line-height: inherit;
+  color: $blue;
 
   &:hover {
     text-decoration: underline;
@@ -212,7 +226,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  background-color: $color-white;
+  background-color: $white;
   border-spacing: 0;
   overflow-x: hidden;
   overflow-y: auto;
@@ -229,7 +243,8 @@
 
 .uppy-ProviderBrowserItem-inner {
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 13px;
 }
 
 // ***
@@ -237,11 +252,11 @@
 // ***
 
 .uppy-ProviderBrowser-viewType--list {
-  background-color: $color-white;
+  background-color: $white;
 
   .uppy-ProviderBrowserItem {
     display: flex;
-    padding: 10px 15px;
+    padding: 7px 15px;
     margin: 0;
   }
 
@@ -250,11 +265,11 @@
   }
 
     .uppy-ProviderBrowserItem-checkbox label:before {
-      border-color: rgba($color-asphalt-gray, 0.4);
+      border-color: $gray-300;
     }
 
     .uppy-ProviderBrowserItem-checkbox input:checked + label:before {
-      border-color: $color-cornflower-blue;
+      border-color: $blue;
     }
 
   .uppy-ProviderBrowserItem-inner {
@@ -308,12 +323,12 @@
     }
 
     // .uppy-ProviderBrowserItem--selected {
-    //   border-color: $color-cornflower-blue;
+    //   border-color: $blue;
     //   outline: none;
     // }
 
     // .uppy-ProviderBrowserItem--selected .uppy-ProviderBrowserItem-inner {
-    //   box-shadow: 0 0 0 3px rgba(darken($color-cornflower-blue, 10%), 0.9);
+    //   box-shadow: 0 0 0 3px rgba(darken($blue, 10%), 0.9);
     // }
 
   .uppy-ProviderBrowserItem-inner {
@@ -325,52 +340,61 @@
     right: 7px;
     bottom: 7px;
     text-align: center;
+
   }
 
   .uppy-ProviderBrowserItem-inner:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($color-cornflower-blue, 0.9);
+    box-shadow: 0 0 0 3px rgba($blue, 0.9);
   }
 
   .uppy-ProviderBrowserItem img,
   .uppy-ProviderBrowserItem svg {
     width: 100%;
     height: 100%;
-    vertical-align: middle;
     object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .uppy-ProviderBrowserItem--selected img,
+  .uppy-ProviderBrowserItem--selected svg {
+    opacity: 0.85;
   }
 
   .uppy-ProviderBrowserItem--noPreview .uppy-ProviderBrowserItem-inner {
-    background-color: rgba($color-gray, 0.3);
+    background-color: rgba($gray-500, 0.3);
   }
 
   .uppy-ProviderBrowserItem--noPreview svg {
-    fill: rgba($color-black, 0.7);
+    fill: rgba($black, 0.7);
     width: 30%;
     height: 30%;
   }
 
   .uppy-ProviderBrowserItem-checkbox {
     position: absolute;
-    top: 13px;
-    right: 22px;
+    width: 26px;
+    height: 26px;
+    top: 16px;
+    right: 16px;
+    display: block;
     margin-right: 0;
-    opacity: 0.95;
     z-index: $zIndex-3;
   }
 
   .uppy-ProviderBrowserItem-checkbox label:before {
-    background-color: $color-cornflower-blue;
+    background-color: $blue;
     border-radius: 50%;
     width: 26px;
     height: 26px;
+    top: 0;
   }
 
   .uppy-ProviderBrowserItem-checkbox label:after {
     width: 12px;
     height: 7px;
     left: 7px;
-    top: 10px;
+    top: 8px;
   }
 
   // Hide checkbox when unchecked in grid view
@@ -418,12 +442,12 @@
 .uppy-ProviderBrowserItem-checkbox label:before {
   content: "";
   display: inline-block;
-  height: 18px;
-  width: 18px;
+  height: 17px;
+  width: 17px;
   top: 2px;
-  border: 1px solid $color-cornflower-blue;
-  background-color: $color-white;
-  border-radius: 2px;
+  border: 1px solid $blue;
+  background-color: $white;
+  border-radius: 3px;
 }
 
 // Inner checkbox
@@ -431,11 +455,11 @@
   content: '';
   display: inline-block;
   height: 5px;
-  width: 8px;
-  left: 5px;
-  top: 8px;
-  border-left: 2px solid $color-white;
-  border-bottom: 2px solid $color-white;
+  width: 9px;
+  left: 4px;
+  top: 7px;
+  border-left: 2px solid $white;
+  border-bottom: 2px solid $white;
   transform: rotate(-45deg);
 }
 
@@ -450,7 +474,7 @@
 }
 
 .uppy-ProviderBrowserItem-checkbox input:checked + label::before {
-  background-color: $color-cornflower-blue;
+  background-color: $blue;
 }
 
 // Adding focus styles on the outer-box of the fake checkbox*/
@@ -461,12 +485,12 @@
 .uppy-ProviderBrowser-footer {
   display: flex;
   align-items: center;
-  background: $color-white;
+  background: $white;
   height: 65px;
-  border-top: 1px solid rgba($color-gray, 0.3);
+  border-top: 1px solid $gray-200;
   padding: 0 15px;
 
   & button {
-    margin-right: 10px;
+    margin-right: 8px;
   }
 }

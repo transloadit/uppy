@@ -109,6 +109,8 @@ class MarkdownTextarea {
         template_id: TRANSLOADIT_EXAMPLE_TEMPLATE
       }
     }).then((result) => {
+      // Was cancelled
+      if (result == null) return
       this.insertAttachments(
         this.matchFilesAndThumbs(result.results)
       )
@@ -126,6 +128,8 @@ class MarkdownTextarea {
         template_id: TRANSLOADIT_EXAMPLE_TEMPLATE
       }
     }).then((result) => {
+      // Was cancelled
+      if (result == null) return
       this.insertAttachments(
         this.matchFilesAndThumbs(result.results)
       )

@@ -10,22 +10,11 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   position: relative;
+  color: $gray-800;
 }
 
 .uppy-Root *, .uppy-Root *:before, .uppy-Root *:after {
   box-sizing: inherit;
-}
-
-// .uppy-Root *:focus:not(.focus-visible) {
-//   outline: 0;
-// }
-
-.uppy-Root *:focus {
-  outline: $size-focus-outline solid $color-cornflower-blue; /* no !important */
-  outline-offset: $size-focus-offset; /* no !important */
-
-  // outline: none;
-  // box-shadow: inset 0 0 0 2px rgba($color-cornflower-blue, 0.5);
 }
 
 .uppy-Root [hidden] {
@@ -109,24 +98,22 @@
 // Inputs
 
 .uppy-c-textInput {
-  border: 1px solid rgba($color-gray, 0.5);
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   padding: 6px 8px;
-  background-color: $color-white;
+  background-color: $white;
 }
 
   .uppy-size--md .uppy-c-textInput {
-    font-size: 15px;
-    line-height: 1.8;
-    padding: 8px 12px;
+    padding: 8px 10px;
   }
 
   .uppy-c-textInput:focus {
-    border-color: $color-cornflower-blue;
+    border-color: rgba($blue, 0.6);
     outline: none;
-    box-shadow: 0 0 1px 1px rgba($color-cornflower-blue, 0.5);
+    box-shadow: 0 0 0 3px rgba($blue, 0.15);
   }
 
 // Buttons
@@ -148,50 +135,51 @@
     cursor: pointer;
   }
 
+.uppy-c-btn::-moz-focus-inner {
+   border: 0;
+}
+
 .uppy-c-btn-primary {
-  font-size: 13px;
+  font-size: 14px;
   padding: 10px 18px;
   border-radius: 4px;
-  background-color: $color-cornflower-blue;
-  color: $color-white;
+  background-color: $blue;
+  color: $white;
 }
 
   .uppy-size--md .uppy-c-btn-primary {
-    font-size: 15px;
     padding: 13px 22px;
   }
 
   .uppy-c-btn-primary:hover {
-    background-color: darken($color-cornflower-blue, 10%);
+    background-color: darken($blue, 10%);
   }
 
   .uppy-c-btn-primary:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($color-cornflower-blue, 0.5);
+    box-shadow: 0 0 0 3px rgba($blue, 0.4);
   }
 
 .uppy-c-btn-link {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1;
-  padding: 10px 18px;
+  padding: 10px 15px;
   border-radius: 4px;
   background-color: transparent;
-  color: $color-black;
+  color: $gray-700;
 }
 
   .uppy-size--md .uppy-c-btn-link {
-    font-size: 15px;
-    padding: 13px 28px;
-    // border-radius: 4px;
+    padding: 13px 18px;
   }
 
   .uppy-c-btn-link:hover {
-    text-decoration: underline;
+    color: $gray-800;
   }
 
   .uppy-c-btn-link:focus {
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba($color-cornflower-blue, 0.5);
+    box-shadow: 0 0 0 3px rgba($blue, 0.25);
   }
 
 .uppy-c-btn--small {
