@@ -224,6 +224,8 @@ const uppy = Uppy({
 })
 ```
 
+If you use Uppy from a CDN, [there's an example](/examples/i18n/) showcasing how to change languages.
+
 For flexibility, you can pass a `locale` at the `Uppy`/core level, or to Plugins individually. The locale strings that you set in core take precedence.
 
 It also offers the pluralization function, which is used to determine which string will be used for the provided `smart_count` number.
