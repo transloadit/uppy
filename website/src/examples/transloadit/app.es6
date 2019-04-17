@@ -61,8 +61,8 @@ function initUppy () {
     })
     .use(Instagram, {
       target: Dashboard,
-      serverUrl: 'https://api2.transloadit.com/companion',
-      serverPattern: Transloadit.COMPANION_PATTERN
+      companionUrl: 'https://api2.transloadit.com/companion',
+      companionAllowedHosts: Transloadit.COMPANION_PATTERN
     })
     .use(Webcam, { target: Dashboard })
 

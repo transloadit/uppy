@@ -16,7 +16,7 @@ Uppy({
     target: '#uppyDashboard',
     inline: true
   })
-  .use(GoogleDrive, { target: Dashboard, serverUrl: 'http://localhost:3020' })
-  .use(Instagram, { target: Dashboard, serverUrl: 'http://localhost:3020' })
-  .use(Dropbox, { target: Dashboard, serverUrl: 'http://localhost:3020' })
+  .use(GoogleDrive, { target: Dashboard, companionUrl: 'http://localhost:3020' })
+  .use(Instagram, { target: Dashboard, companionUrl: 'http://localhost:3020' })
+  .use(Dropbox, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Tus, { endpoint: 'https://master.tus.io/files/' })

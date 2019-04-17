@@ -74,19 +74,19 @@ module.exports = class Provider extends RequestClient {
       plugin.opts = Object.assign({}, defaultOpts, opts)
     }
 
-    if (opts.serverPattern) {
-      const pattern = opts.serverPattern
-      // validate serverPattern param
+    if (opts.companionAllowedHosts) {
+      const pattern = opts.companionAllowedHosts
+      // validate companionAllowedHosts param
       if (typeof pattern !== 'string' && !Array.isArray(pattern) && !(pattern instanceof RegExp)) {
-        throw new TypeError(`${plugin.id}: the option "serverPattern" must be one of string, Array, RegExp`)
+        throw new TypeError(`${plugin.id}: the option "companionAllowedHosts" must be one of string, Array, RegExp`)
       }
-      plugin.opts.serverPattern = pattern
+      plugin.opts.companionAllowedHosts = pattern
     } else {
       // does not start with https://
-      if (/^(?!https?:\/\/).*$/i.test(opts.serverUrl)) {
-        plugin.opts.serverPattern = `https://${opts.serverUrl.replace(/^\/\//, '')}`
+      if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
+        plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`
       } else {
-        plugin.opts.serverPattern = opts.serverUrl
+        plugin.opts.companionAllowedHosts = opts.companionUrl
       }
     }
 

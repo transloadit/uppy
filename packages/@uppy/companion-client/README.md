@@ -17,11 +17,11 @@ const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 
 const uppy = Uppy()
 
-const client = new RequestClient(uppy, { serverUrl: 'https://uppy.mywebsite.com/' })
+const client = new RequestClient(uppy, { companionUrl: 'https://uppy.mywebsite.com/' })
 client.get('/drive/list').then(() => {})
 
 const provider = new Provider(uppy, {
-  serverUrl: 'https://uppy.mywebsite.com/',
+  companionUrl: 'https://uppy.mywebsite.com/',
   provider: providerPluginInstance
 })
 provider.checkAuth().then(() => {})

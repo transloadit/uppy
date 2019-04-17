@@ -77,11 +77,11 @@ Array of providers to use. Each entry is the name of a provider. The available o
 - `'url'` – Import files from public Web URLs using [Uppy Companion][companion].
 - `'webcam'` – Take photos and record videos using thee user's device camera.
 
-### `serverUrl: Transloadit.COMPANION`
+### `companionUrl: Transloadit.COMPANION`
 
 The URL to a [Uppy Companion][companion] server to use.
 
-### `serverPattern: Transloadit.COMPANION_PATTERN`
+### `companionAllowedHosts: Transloadit.COMPANION_PATTERN`
 
 The valid and authorised URL(s) from which OAuth responses should be accepted.
 

@@ -2,7 +2,7 @@ import Uppy = require('@uppy/core');
 
 declare module Url {
   export interface UrlOptions extends Uppy.PluginOptions {
-    serverUrl: string;
+    companionUrl: string;
     // TODO inherit from ProviderOptions
   }
 }
