@@ -28,7 +28,7 @@ module.exports = class XHRUpload extends Plugin {
     this.id = 'XHRUpload'
     this.title = 'XHRUpload'
 
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
         timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
       }
@@ -43,7 +43,6 @@ module.exports = class XHRUpload extends Plugin {
       responseUrlFieldName: 'url',
       bundle: false,
       headers: {},
-      locale: defaultLocale,
       timeout: 30 * 1000,
       limit: 0,
       withCredentials: false,
@@ -90,7 +89,7 @@ module.exports = class XHRUpload extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // i18n
-    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 

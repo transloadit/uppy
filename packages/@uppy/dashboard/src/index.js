@@ -51,11 +51,9 @@ module.exports = class Dashboard extends Plugin {
     this.type = 'orchestrator'
     this.modalName = `uppy-Dashboard-${cuid()}`
 
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
-        selectToUpload: 'Select files to upload',
         closeModal: 'Close Modal',
-        upload: 'Upload',
         importFrom: 'Import from %{name}',
         addingMoreFiles: 'Adding more files',
         addMoreFiles: 'Add more files',
@@ -68,7 +66,6 @@ module.exports = class Dashboard extends Plugin {
         fileSource: 'File source: %{name}',
         done: 'Done',
         back: 'Back',
-        name: 'Name',
         removeFile: 'Remove file',
         editFile: 'Edit file',
         editing: 'Editing %{file}',
@@ -76,14 +73,10 @@ module.exports = class Dashboard extends Plugin {
         finishEditingFile: 'Finish editing file',
         saveChanges: 'Save changes',
         cancel: 'Cancel',
-        localDisk: 'Local Disk',
         myDevice: 'My Device',
         dropPasteImport: 'Drop files here, paste, %{browse} or import from',
         dropPaste: 'Drop files here, paste or %{browse}',
         browse: 'browse',
-        fileProgress: 'File progress: upload speed and ETA',
-        numberOfSelectedFiles: 'Number of selected files',
-        uploadAllNewFiles: 'Upload all new files',
         emptyFolderAdded: 'No files were added from empty folder',
         uploadComplete: 'Upload complete',
         uploadPaused: 'Upload paused',
@@ -93,27 +86,23 @@ module.exports = class Dashboard extends Plugin {
         cancelUpload: 'Cancel upload',
         xFilesSelected: {
           0: '%{smart_count} file selected',
-          1: '%{smart_count} files selected'
-        },
-        uploadXFiles: {
-          0: 'Upload %{smart_count} file',
-          1: 'Upload %{smart_count} files'
+          1: '%{smart_count} files selected',
+          2: '%{smart_count} files selected'
         },
         uploadingXFiles: {
           0: 'Uploading %{smart_count} file',
-          1: 'Uploading %{smart_count} files'
+          1: 'Uploading %{smart_count} files',
+          2: 'Uploading %{smart_count} files'
         },
         processingXFiles: {
           0: 'Processing %{smart_count} file',
-          1: 'Processing %{smart_count} files'
-        },
-        uploadXNewFiles: {
-          0: 'Upload +%{smart_count} file',
-          1: 'Upload +%{smart_count} files'
+          1: 'Processing %{smart_count} files',
+          2: 'Processing %{smart_count} files'
         },
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
-          1: 'Added %{smart_count} files from %{folder}'
+          1: 'Added %{smart_count} files from %{folder}',
+          2: 'Added %{smart_count} files from %{folder}'
         }
       }
     }
@@ -152,7 +141,7 @@ module.exports = class Dashboard extends Plugin {
     this.opts = { ...defaultOptions, ...opts }
 
     // i18n
-    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 

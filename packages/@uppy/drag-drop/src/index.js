@@ -15,7 +15,7 @@ module.exports = class DragDrop extends Plugin {
     this.id = this.opts.id || 'DragDrop'
     this.title = 'Drag & Drop'
 
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
         dropHereOr: 'Drop files here or %{browse}',
         browse: 'browse'
@@ -28,8 +28,7 @@ module.exports = class DragDrop extends Plugin {
       inputName: 'files[]',
       width: '100%',
       height: '100%',
-      note: null,
-      locale: defaultLocale
+      note: null
     }
 
     // Merge default options with the ones set by user
@@ -39,7 +38,7 @@ module.exports = class DragDrop extends Plugin {
     this.isDragDropSupported = this.checkDragDropSupport()
 
     // i18n
-    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 

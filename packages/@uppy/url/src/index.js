@@ -20,7 +20,7 @@ module.exports = class Url extends Plugin {
     </svg>
 
     // Set default options and locale
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
         import: 'Import',
         enterUrlToImport: 'Enter URL to import a file',
@@ -29,14 +29,12 @@ module.exports = class Url extends Plugin {
       }
     }
 
-    const defaultOptions = {
-      locale: defaultLocale
-    }
+    const defaultOptions = {}
 
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // i18n
-    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 

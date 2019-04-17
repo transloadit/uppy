@@ -117,11 +117,8 @@ strings: {
   complete: 'Complete',
   // Shown in the status bar if an upload failed.
   uploadFailed: 'Upload failed',
-  // Shown next to `uploadFailed`.
-  pleasePressRetry: 'Please press Retry to upload again',
   // Shown in the status bar while the upload is paused.
   paused: 'Paused',
-  error: 'Error',
   // Used as the label for the button that retries an upload.
   retry: 'Retry',
   // Used as the label for the button that cancels an upload.

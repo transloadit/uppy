@@ -16,41 +16,38 @@ module.exports = class StatusBar extends Plugin {
     this.title = 'StatusBar'
     this.type = 'progressindicator'
 
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
         uploading: 'Uploading',
         upload: 'Upload',
         complete: 'Complete',
         uploadFailed: 'Upload failed',
-        pleasePressRetry: 'Please press Retry to upload again',
         paused: 'Paused',
-        error: 'Error',
         retry: 'Retry',
         cancel: 'Cancel',
         pause: 'Pause',
         resume: 'Resume',
-        pressToRetry: 'Press to retry',
-        // retryUpload: 'Retry upload',
-        // resumeUpload: 'Resume upload',
-        // cancelUpload: 'Cancel upload',
-        // pauseUpload: 'Pause upload',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
-          1: '%{complete} of %{smart_count} files uploaded'
+          1: '%{complete} of %{smart_count} files uploaded',
+          2: '%{complete} of %{smart_count} files uploaded'
         },
         dataUploadedOfTotal: '%{complete} of %{total}',
         xTimeLeft: '%{time} left',
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
-          1: 'Upload %{smart_count} files'
+          1: 'Upload %{smart_count} files',
+          2: 'Upload %{smart_count} files'
         },
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
-          1: 'Upload +%{smart_count} files'
+          1: 'Upload +%{smart_count} files',
+          2: 'Upload +%{smart_count} files'
         },
         xMoreFilesAdded: {
           0: '%{smart_count} more file added',
-          1: '%{smart_count} more files added'
+          1: '%{smart_count} more files added',
+          2: '%{smart_count} more files added'
         }
       }
     }
@@ -63,14 +60,13 @@ module.exports = class StatusBar extends Plugin {
       hidePauseResumeButton: false,
       hideCancelButton: false,
       showProgressDetails: false,
-      locale: defaultLocale,
       hideAfterFinish: true
     }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
 
     this.startUpload = this.startUpload.bind(this)
