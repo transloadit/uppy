@@ -281,11 +281,8 @@ a.button {
 */
 
 .MainMenu {
-  text-transform: uppercase;
-  letter-spacing: 2px;
   list-style-type: none;
   padding: 0;
-  font-size: $fontSize-s;
 
   @media #{$screen-medium} {
     margin: 0;
