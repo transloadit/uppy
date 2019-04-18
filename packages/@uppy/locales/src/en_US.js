@@ -27,6 +27,7 @@ en_US.strings = {
   dataUploadedOfTotal: '%{complete} of %{total}',
   done: 'Done',
   dropHereOr: 'Drop files here or %{browse}',
+  dropHint: 'Drop your files here',
   dropPaste: 'Drop files here, paste or %{browse}',
   dropPasteImport: 'Drop files here, paste, %{browse} or import from',
   edit: 'Edit',
