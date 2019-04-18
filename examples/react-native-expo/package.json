@@ -10,6 +10,7 @@
     "@uppy/core": "^0.30.4",
     "@uppy/dashboard": "^0.30.4",
     "@uppy/instagram": "^0.30.4",
+    "@uppy/react-native": "0.0.2",
     "@uppy/tus": "^0.30.4",
     "@uppy/url": "^0.30.4",
     "@uppy/xhr-upload": "^0.30.4",
