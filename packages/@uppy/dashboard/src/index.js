@@ -1,12 +1,12 @@
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
-const dragDrop = require('drag-drop')
 const DashboardUI = require('./components/Dashboard')
 const StatusBar = require('@uppy/status-bar')
 const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
+const getDroppedFiles = require('@uppy/utils/src/getDroppedFiles')
 const cuid = require('cuid')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultPickerIcon } = require('./components/icons')
@@ -76,6 +76,7 @@ module.exports = class Dashboard extends Plugin {
         myDevice: 'My Device',
         dropPasteImport: 'Drop files here, paste, %{browse} or import from',
         dropPaste: 'Drop files here, paste or %{browse}',
+        dropHint: 'Drop your files here',
         browse: 'browse',
         emptyFolderAdded: 'No files were added from empty folder',
         uploadComplete: 'Upload complete',
@@ -166,11 +167,18 @@ module.exports = class Dashboard extends Plugin {
     this.handleClickOutside = this.handleClickOutside.bind(this)
     this.toggleFileCard = this.toggleFileCard.bind(this)
     this.toggleAddFilesPanel = this.toggleAddFilesPanel.bind(this)
-    this.handleDrop = this.handleDrop.bind(this)
     this.handlePaste = this.handlePaste.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
+
+    this.handleDragOver = this.handleDragOver.bind(this)
+    this.handleDragLeave = this.handleDragLeave.bind(this)
+    this.handleDrop = this.handleDrop.bind(this)
+
+    // Timeouts
+    this.makeDashboardInsidesVisibleAnywayTimeout = null
+    this.removeDragOverClassTimeout = null
   }
 
   removeTarget (plugin) {
@@ -418,47 +426,47 @@ module.exports = class Dashboard extends Plugin {
     if (this.opts.closeModalOnClickOutside) this.requestCloseModal()
   }
 
-  handlePaste (ev) {
-    const files = toArray(ev.clipboardData.items)
-    files.forEach((file) => {
-      if (file.kind !== 'file') return
+  handlePaste (event) {
+    // 1. Let any acquirer plugin (Url/Webcam/etc.) handle pastes to the root
+    this.uppy.iteratePlugins((plugin) => {
+      if (plugin.type === 'acquirer') {
+        // Every Plugin with .type acquirer can define handleRootPaste(event)
+        plugin.handleRootPaste && plugin.handleRootPaste(event)
+      }
+    })
 
-      const blob = file.getAsFile()
-      if (!blob) {
-        this.uppy.log('[Dashboard] File pasted, but the file blob is empty')
-        this.uppy.info('Error pasting file', 'error')
-        return
-      }
+    // 2. Add all dropped files
+    const files = toArray(event.clipboardData.files)
+    files.forEach((file) => {
       this.uppy.log('[Dashboard] File pasted')
-      try {
-        this.uppy.addFile({
-          source: this.id,
-          name: file.name,
-          type: file.type,
-          data: blob
-        })
-      } catch (err) {
-        // Nothing, restriction errors handled in Core
-      }
+      this.addFile(file)
     })
   }
 
-  handleInputChange (ev) {
-    ev.preventDefault()
-    const files = toArray(ev.target.files)
+  handleInputChange (event) {
+    event.preventDefault()
+    const files = toArray(event.target.files)
+    files.forEach((file) =>
+      this.addFile(file)
+    )
+  }
 
-    files.forEach((file) => {
-      try {
-        this.uppy.addFile({
-          source: this.id,
-          name: file.name,
-          type: file.type,
-          data: file
-        })
-      } catch (err) {
-        // Nothing, restriction errors handled in Core
-      }
-    })
+  addFile (file) {
+    try {
+      this.uppy.addFile({
+        source: this.id,
+        name: file.name,
+        type: file.type,
+        data: file,
+        meta: {
+          // path of the file relative to the ancestor directory the user selected.
+          // e.g. 'docs/Old Prague/airbnb.pdf'
+          relativePath: file.relativePath || null
+        }
+      })
+    } catch (err) {
+      // Nothing, restriction errors handled in Core
+    }
   }
 
   // _Why make insides of Dashboard invisible until first ResizeObserver event is emitted?
@@ -503,6 +511,55 @@ module.exports = class Dashboard extends Plugin {
     clearTimeout(this.makeDashboardInsidesVisibleAnywayTimeout)
   }
 
+  handleDragOver (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    clearTimeout(this.removeDragOverClassTimeout)
+    this.setPluginState({ isDraggingOver: true })
+  }
+
+  handleDragLeave (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    clearTimeout(this.removeDragOverClassTimeout)
+    // Timeout against flickering, this solution is taken from drag-drop library. Solution with 'pointer-events: none' didn't work across browsers.
+    this.removeDragOverClassTimeout = setTimeout(() => {
+      this.setPluginState({ isDraggingOver: false })
+    }, 50)
+  }
+
+  handleDrop (event, dropCategory) {
+    event.preventDefault()
+    event.stopPropagation()
+    clearTimeout(this.removeDragOverClassTimeout)
+    // 1. Add a small (+) icon on drop
+    event.dataTransfer.dropEffect = 'copy'
+
+    // 2. Remove dragover class
+    this.setPluginState({ isDraggingOver: false })
+
+    // 3. Let any acquirer plugin (Url/Webcam/etc.) handle drops to the root
+    this.uppy.iteratePlugins((plugin) => {
+      if (plugin.type === 'acquirer') {
+        // Every Plugin with .type acquirer can define handleRootDrop(event)
+        plugin.handleRootDrop && plugin.handleRootDrop(event)
+      }
+    })
+
+    // 4. Add all dropped files
+    getDroppedFiles(event.dataTransfer)
+      .then((files) => {
+        if (files.length > 0) {
+          this.uppy.log('[Dashboard] Files were dropped')
+          files.forEach((file) =>
+            this.addFile(file)
+          )
+        }
+      })
+  }
+
   initEvents () {
     // Modal open button
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
@@ -513,11 +570,6 @@ module.exports = class Dashboard extends Plugin {
     if (!this.opts.inline && !showModalTrigger) {
       this.uppy.log('Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options unless you are planning to call openModal() method yourself', 'error')
     }
-
-    // Drag Drop
-    this.removeDragDropListener = dragDrop(this.el, (files) => {
-      this.handleDrop(files)
-    })
 
     this.startListeningToResize()
 
@@ -545,8 +597,6 @@ module.exports = class Dashboard extends Plugin {
 
     this.stopListeningToResize()
 
-    this.removeDragDropListener()
-    // window.removeEventListener('resize', this.throttledUpdateDashboardElWidth)
     window.removeEventListener('popstate', this.handlePopState, false)
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', this.handleFileAdded)
@@ -564,23 +614,6 @@ module.exports = class Dashboard extends Plugin {
     this.setPluginState({
       showAddFilesPanel: show,
       activeOverlayType: show ? 'AddFiles' : null
-    })
-  }
-
-  handleDrop (files) {
-    this.uppy.log('[Dashboard] Files were dropped')
-
-    files.forEach((file) => {
-      try {
-        this.uppy.addFile({
-          source: this.id,
-          name: file.name,
-          type: file.type,
-          data: file
-        })
-      } catch (err) {
-        // Nothing, restriction errors handled in Core
-      }
     })
   }
 
@@ -741,7 +774,12 @@ module.exports = class Dashboard extends Plugin {
       parentElement: this.el,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
-      showSelectedFiles: this.opts.showSelectedFiles
+      showSelectedFiles: this.opts.showSelectedFiles,
+      // drag props
+      isDraggingOver: pluginState.isDraggingOver,
+      handleDragOver: this.handleDragOver,
+      handleDragLeave: this.handleDragLeave,
+      handleDrop: this.handleDrop
     })
   }
 
