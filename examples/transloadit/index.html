@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Uppy :tl: playground</title>
+    <title>Robodog playground</title>
   </head>
   <body>
     <style>
@@ -27,10 +27,15 @@
       #logo { height: 1em; vertical-align: middle; }
     </style>
     <main>
-      <h1>Uppy <img src="https://transloadit.edgly.net/assets/images/logo-small.svg" alt="Transloadit" id="logo"> playground</h1>
+      <h1>Robodog <img src="https://transloadit.edgly.net/assets/images/logo-small.svg" alt="Transloadit" id="logo"> playground</h1>
+      <p>
+        This page contains small examples for every API offered by the Robodog library. Please see the <a href="https://github.com/transloadit/uppy/tree/master/examples/transloadit">Github repository</a> for the source code.
 
       <hr>
-      <h2>transloadit.form()</h2>
+      <h2>robodog.form()</h2>
+
+      <p>
+        The form API allows you to easily send files through Transloadit's encoding backend. When the user submits the form, any files are uploaded to Transloadit. The form data is then sent to your own backend, with additional data about the Transloadit Assemblies that were started.
 
       <form id="test-form" method="post" action="http://localhost:9967/test">
         <p><strong>leave a message</strong>
@@ -59,7 +64,11 @@
       </form>
 
       <hr>
-      <h2>transloadit.form() with dashboard</h2>
+      <h2>robodog.form() with dashboard</h2>
+
+      <p>
+        You can also use the Dashboard UI inside a plain old HTML form by specifying a <code>dashboard: '.target-css-selector'</code> option.
+
       <form id="dashboard-form" method="post" action="http://localhost:9967/test">
         <p><strong>leave a message</strong>
         <p>
@@ -85,17 +94,27 @@
           <span class="error"></span>
       </form>
 
+      <hr>
+      <h2>robodog.dashboard()</h2>
+
+      <p>
+        The <code>robodog.dashboard</code> API allows you to embed a Dashboard at any location. Users can continuously upload files through this UI, so please make sure this fits your use case!
+
+      <p id="dashboard">
 
       <hr>
-      <h2>transloadit.pick()</h2>
+      <h2>robodog.pick()</h2>
+
+      <p>
+        This API is a one-shot upload UI using a modal overlay. Call the function and receive a Promise with upload results ✌️
 
       <p>
         <button onclick="openModal()">Open</button>
 
       <hr>
-      <h2>transloadit.upload()</h2>
+      <h2>robodog.upload()</h2>
       <p>
-        An &lt;input type=file&gt; backed by `transloadit.upload`:
+        An &lt;input type=file&gt; backed by <code>robodog.upload</code>:
 
       <p>
         <input type="file" multiple onchange="doUpload(event)">

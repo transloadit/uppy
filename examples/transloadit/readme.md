@@ -1,7 +1,6 @@
-# Multiple Instances
+# Robodog
 
-This example uses Uppy with the RestoreFiles plugin.
-It has two instances on the same page, side-by-side, but with different `id`s so their stored files don't interfere with each other.
+This example shows all the different Robodog APIs in action on a single page.
 
 ## Run it
 
