@@ -1,4 +1,4 @@
-const toArray = require('../../../lib/toArray')
+const toArray = require('../../toArray')
 
 // .files fallback, should be implemented in any browser
 module.exports = function fallbackApi (dataTransfer) {

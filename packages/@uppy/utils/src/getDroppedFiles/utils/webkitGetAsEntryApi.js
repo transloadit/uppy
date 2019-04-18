@@ -1,4 +1,4 @@
-const toArray = require('../../../lib/toArray')
+const toArray = require('../../toArray')
 
 // Recursive function, calls the original callback() when the directory is entirely parsed.
 // @param {function} callback - called with ([ all files and directories in that directoryReader ])
