@@ -1,0 +1,3 @@
+flask
+werkzeug
+flask-cors
