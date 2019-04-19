@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react-native",
   "description": "React Native Uppy UI components",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "file-picker/index.js",
   "license": "MIT",
   "keywords": [
@@ -19,8 +19,5 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
-  },
-  "dependencies": {},
-  "devDependencies": {},
-  "peerDependencies": {}
+  }
 }
