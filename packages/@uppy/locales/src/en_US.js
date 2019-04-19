@@ -56,6 +56,7 @@ en_US.strings = {
   import: 'Import',
   importFrom: 'Import from %{name}',
   link: 'Link',
+  loading: 'Loading...',
   logOut: 'Log out',
   myDevice: 'My Device',
   noFilesFound: 'You have no files or folders here',
