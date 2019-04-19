@@ -52,7 +52,8 @@ class Uppy {
         cancel: 'Cancel',
         logOut: 'Log out',
         filter: 'Filter',
-        resetFilter: 'Reset filter'
+        resetFilter: 'Reset filter',
+        loading: 'Loading...'
       }
     }
 
