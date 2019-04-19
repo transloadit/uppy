@@ -142,7 +142,7 @@ a.button {
   min-height: 100vh;
 }
 
-.page-inner .MainContent {
+.MainContent {
   position: relative;
   z-index: 1;
   overflow-x: hidden;
@@ -191,60 +191,45 @@ a.button {
 */
 .MainLogo {
   display: inline-block;
-  font-size: 1.5em;
-  line-height: $size-headerHeight;
-  color: $color-dark;
+  font-size: 27px;
+  color: $color-primary;
   font-family: $fontFamily-logo;
-  font-weight: 500;
+  font-weight: 700;
 
-  img {
-    vertical-align: middle;
-    // margin-right: 6px;
-    width: $size-headerHeight;
-    height: $size-headerHeight;
+  @media #{$screen-medium} {
+    margin-right: 20px;
   }
 }
-
-  .MainLogo-text {
-    display: none;
-    @media #{$screen-medium} {
-      display: inline-block;
-      vertical-align: middle;
-    }
-  }
 
 /**
 * MainHeader
 */
 
 .MainHeader {
+  // position: fixed;
+  // top: 0;
+  // left: 0;
+  // width: 100%;
+  // height: 40px;
+  // z-index: 9;
   position: relative;
-}
-
-.page-index .MainHeader {
-  padding: 1em 0;
-  // border-top: 3px solid $color-primary;
-}
-
-.page-inner .MainHeader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 40px;
-  z-index: 9;
-  box-shadow: 0 0 4px rgba(0,0,0,.25);
+  z-index: 2;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  // box-shadow: 0 0 4px rgba(0,0,0,.25);
   background-color: $color-white;
   text-align: center;
 
   @media #{$screen-medium} {
     height: auto;
-    padding: 10px 60px;
-    box-shadow: none;
+    display: flex;
+    align-items: baseline;
+    padding: 14px 60px 19px;
+    // box-shadow: none;
     // position: relative;
     z-index: 2;
-    border-top: 3px solid $color-primary;
-    border-bottom: 1px solid rgba($color-lightgray, 0.3);
+    // border-top: 3px solid $color-primary;
+    border-bottom: 1px solid rgba($color-lightgray, 0.2);
     text-align: left;
 
     // &.fix-header {
@@ -261,21 +246,25 @@ a.button {
   }
 }
 
-  .page-index .MainHeader-menuBtn {
-    display: none;
-  }
+.MainHeader-menuBtn {
+  background: none;
+  border: 0;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  top: 8px;
+  left: 12px;
+  background: svg-load('burger.svg', fill=#{$color-gray}) center center no-repeat;
+  background-size: 22px;
+  z-index: 10;
+}
 
-  .page-inner .MainHeader-menuBtn {
-    background: none;
-    border: 0;
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    top: 8px;
-    left: 12px;
-    background: svg-load('burger.svg', fill=#{$color-gray}) center center no-repeat;
-    background-size: 22px;
-  }
+.MainHeader-tagline {
+  text-align: right;
+  font-size: 14px;
+  flex: 1;
+  color: $color-gray;
+}
 
 /**
 * MainMenu
@@ -311,13 +300,8 @@ a.button {
     }
   }
 
-  .page-inner .MainMenu {
+  .MainMenu {
     display: none;
-    position: absolute;
-    right: 60px;
-    top: 15px;
-    height: $size-headerHeight;
-    line-height: $size-headerHeight;
 
     li {
       display: inline-block;
@@ -331,17 +315,15 @@ a.button {
   }
 
 .nav-link {
-  color: $color-light;
-  padding-bottom: 3px;
+  color: $color-gray;
   font-size: .85em;
   margin: 0;
   cursor: pointer;
 
   &:first-child { margin-left: 0; }
-  &:hover, &.current { border-bottom: 3px solid $color-primary; }
+  &:hover, &.current { color: $color-dark; }
 
   @media #{$screen-medium} {
-    margin: 0 1.5em;
     font-size: 1em;
   }
 }

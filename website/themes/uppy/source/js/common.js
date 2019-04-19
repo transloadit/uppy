@@ -197,8 +197,9 @@
   }
 
   function IndexPage () {
-    var taglinePart = document.querySelector('.js-IndexHero-taglinePart')
-    var taglineList = document.querySelector('.js-IndexHero-taglineList')
+    var tagline = document.querySelector('.MainHeader-tagline')
+    var taglinePart = document.querySelector('.MainHeader-taglinePart')
+    var taglineList = document.querySelector('.MainHeader-taglineList')
     var taglineCounter = taglineList.children.length
 
     function shuffleTaglines () {
@@ -219,10 +220,10 @@
     }
 
     function showTagline (taglineText) {
-      taglinePart.classList.remove('is-visible')
+      tagline.classList.remove('is-visible')
       setTimeout(function () {
         taglinePart.innerHTML = taglineText
-        taglinePart.classList.add('is-visible')
+        tagline.classList.add('is-visible')
       }, 800)
     }
 
