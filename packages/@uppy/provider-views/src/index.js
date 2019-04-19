@@ -523,7 +523,7 @@ module.exports = class ProviderView {
     if (this.plugin.getPluginState().loading) {
       return (
         <CloseWrapper onUnmount={this.clearSelection}>
-          <LoaderView />
+          <LoaderView i18n={this.plugin.uppy.i18n} />
         </CloseWrapper>
       )
     }
