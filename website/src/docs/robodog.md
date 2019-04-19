@@ -26,12 +26,12 @@ Then, with a bundler such as [webpack][webpack] or [Browserify][browserify], do:
 const transloadit = require('@uppy/robodog')
 ```
 
-If you are not using a bundler, you can also import the Robodog using an HTML script tag.
+If you are not using a bundler, you can also import Robodog using an HTML script tag.
 
 ```html
 <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v0.30.4/robodog.min.css">
-<script src="https://transloadit.edgly.net/releases/uppy/v0.30.4/robodog.min.js"></script> 
-``` 
+<script src="https://transloadit.edgly.net/releases/uppy/v0.30.4/robodog.min.js"></script>
+```
 
 ## Methods
 

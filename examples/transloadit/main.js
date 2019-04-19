@@ -1,6 +1,21 @@
 const { inspect } = require('util')
 const transloadit = require('@uppy/robodog')
 
+const TRANSLOADIT_KEY = '35c1aed03f5011e982b6afe82599b6a0'
+// A trivial template that resizes images, just for example purposes.
+//
+// "steps": {
+//   ":original": { "robot": "/upload/handle" },
+//   "resize": {
+//     "use": ":original",
+//     "robot": "/image/resize",
+//     "width": 100,
+//     "height": 100,
+//     "imagemagick_stack": "v1.0.0"
+//   }
+// }
+const TEMPLATE_ID = 'bbc273f69e0c4694a5a9d1b587abc1bc'
+
 /**
  * transloadit.form
  */
@@ -13,8 +28,8 @@ const formUppy = transloadit.form('#test-form', {
   },
   waitForEncoding: true,
   params: {
-    auth: { key: '05a61ed019fe11e783fdbd1f56c73eb0' },
-    template_id: 'be001500a56011e889f9cddd88df842c'
+    auth: { key: TRANSLOADIT_KEY },
+    template_id: TEMPLATE_ID
   },
   modal: true,
   progressBar: '#test-form .progress'
@@ -40,13 +55,24 @@ const formUppyWithDashboard = transloadit.form('#dashboard-form', {
   },
   waitForEncoding: true,
   params: {
-    auth: { key: '05a61ed019fe11e783fdbd1f56c73eb0' },
-    template_id: 'be001500a56011e889f9cddd88df842c'
+    auth: { key: TRANSLOADIT_KEY },
+    template_id: TEMPLATE_ID
   },
   dashboard: '#dashboard-form .dashboard'
 })
 
 window.formUppyWithDashboard = formUppyWithDashboard
+
+const dashboard = transloadit.dashboard('#dashboard', {
+  debug: true,
+  waitForEncoding: true,
+  params: {
+    auth: { key: TRANSLOADIT_KEY },
+    template_id: TEMPLATE_ID
+  }
+})
+
+window.dashboard = dashboard
 
 /**
  * transloadit.modal
@@ -59,8 +85,8 @@ function openModal () {
     },
     waitForEncoding: true,
     params: {
-      auth: { key: '05a61ed019fe11e783fdbd1f56c73eb0' },
-      template_id: 'be001500a56011e889f9cddd88df842c'
+      auth: { key: TRANSLOADIT_KEY },
+      template_id: TEMPLATE_ID
     },
     providers: [
       'webcam'
@@ -84,8 +110,8 @@ window.doUpload = (event) => {
   transloadit.upload(event.target.files, {
     waitForEncoding: true,
     params: {
-      auth: { key: '05a61ed019fe11e783fdbd1f56c73eb0' },
-      template_id: 'be001500a56011e889f9cddd88df842c'
+      auth: { key: TRANSLOADIT_KEY },
+      template_id: TEMPLATE_ID
     }
   }).then((result) => {
     resultEl.classList.remove('hidden')

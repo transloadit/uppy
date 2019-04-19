@@ -3,7 +3,7 @@ const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 const { RequestClient } = require('@uppy/companion-client')
 const UrlUI = require('./UrlUI.js')
-const toArray = require('@uppy/utils/lib/toArray')
+const forEachDroppedOrPastedUrl = require('../utils/forEachDroppedOrPastedUrl')
 
 /**
  * Url
@@ -20,7 +20,7 @@ module.exports = class Url extends Plugin {
     </svg>
 
     // Set default options and locale
-    const defaultLocale = {
+    this.defaultLocale = {
       strings: {
         import: 'Import',
         enterUrlToImport: 'Enter URL to import a file',
@@ -29,14 +29,12 @@ module.exports = class Url extends Plugin {
       }
     }
 
-    const defaultOptions = {
-      locale: defaultLocale
-    }
+    const defaultOptions = {}
 
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // i18n
-    this.translator = new Translator([ defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
@@ -49,11 +47,8 @@ module.exports = class Url extends Plugin {
     // Bind all event handlers for referencability
     this.getMeta = this.getMeta.bind(this)
     this.addFile = this.addFile.bind(this)
-    this.handleDrop = this.handleDrop.bind(this)
-    this.handleDragOver = this.handleDragOver.bind(this)
-    this.handleDragLeave = this.handleDragLeave.bind(this)
-
-    this.handlePaste = this.handlePaste.bind(this)
+    this.handleRootDrop = this.handleRootDrop.bind(this)
+    this.handleRootPaste = this.handleRootPaste.bind(this)
 
     this.client = new RequestClient(uppy, {
       companionUrl: this.opts.companionUrl,
@@ -155,50 +150,17 @@ module.exports = class Url extends Plugin {
       })
   }
 
-  handleDrop (e) {
-    e.preventDefault()
-    if (e.dataTransfer.items) {
-      const items = toArray(e.dataTransfer.items)
-      items.forEach((item) => {
-        if (item.kind === 'string' && item.type === 'text/uri-list') {
-          item.getAsString((url) => {
-            this.uppy.log(`[URL] Adding file from dropped url: ${url}`)
-            this.addFile(url)
-          })
-        }
-      })
-    }
+  handleRootDrop (e) {
+    forEachDroppedOrPastedUrl(e.dataTransfer, 'drop', (url) => {
+      this.uppy.log(`[URL] Adding file from dropped url: ${url}`)
+      this.addFile(url)
+    })
   }
 
-  handleDragOver (e) {
-    e.preventDefault()
-    this.el.classList.add('drag')
-  }
-
-  handleDragLeave (e) {
-    e.preventDefault()
-    this.el.classList.remove('drag')
-  }
-
-  handlePaste (e) {
-    if (!e.clipboardData.items) {
-      return
-    }
-    const items = toArray(e.clipboardData.items)
-
-    // When a file is pasted, it appears as two items: file name string, then
-    // the file itself; Url then treats file name string as URL, which is wrong.
-    // This makes sure Url ignores paste event if it contains an actual file
-    const hasFiles = items.filter(item => item.kind === 'file').length > 0
-    if (hasFiles) return
-
-    items.forEach((item) => {
-      if (item.kind === 'string' && item.type === 'text/plain') {
-        item.getAsString((url) => {
-          this.uppy.log(`[URL] Adding file from pasted url: ${url}`)
-          this.addFile(url)
-        })
-      }
+  handleRootPaste (e) {
+    forEachDroppedOrPastedUrl(e.clipboardData, 'paste', (url) => {
+      this.uppy.log(`[URL] Adding file from pasted url: ${url}`)
+      this.addFile(url)
     })
   }
 
@@ -206,15 +168,6 @@ module.exports = class Url extends Plugin {
     return <UrlUI
       i18n={this.i18n}
       addFile={this.addFile} />
-  }
-
-  onMount () {
-    if (this.el) {
-      this.el.addEventListener('drop', this.handleDrop)
-      this.el.addEventListener('dragover', this.handleDragOver)
-      this.el.addEventListener('dragleave', this.handleDragLeave)
-      this.el.addEventListener('paste', this.handlePaste)
-    }
   }
 
   install () {
@@ -225,13 +178,6 @@ module.exports = class Url extends Plugin {
   }
 
   uninstall () {
-    if (this.el) {
-      this.el.removeEventListener('drop', this.handleDrop)
-      this.el.removeEventListener('dragover', this.handleDragOver)
-      this.el.removeEventListener('dragleave', this.handleDragLeave)
-      this.el.removeEventListener('paste', this.handlePaste)
-    }
-
     this.unmount()
   }
 }

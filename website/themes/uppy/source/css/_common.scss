@@ -106,6 +106,7 @@ a.button {
     @media #{$screen-medium} {
       font-size: 15px;
     }
+    border-bottom: none;
   }
 
   .code pre {

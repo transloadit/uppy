@@ -1,0 +1,68 @@
+---
+type: docs
+title: "Robodog: Dashboard API"
+menu: "Robodog Dashboard"
+permalink: docs/robodog/dashboard/
+order: 4
+category: 'File Processing'
+---
+
+Add the [Dashboard UI][dashboard] to your page, all wired up and ready to go! This is a basic wrapper around the [Transloadit][transloadit] and [Dashboard][dashboard] plugins. Unlike the [File Picker][file picker] API, this Dashboard is embedded directly into the page. Users can upload multiple files after another.
+
+```html
+<div id="dashboard"></div>
+
+<script>
+robodog.dashboard('#dashboard', {
+  params: {
+    auth: { key: '' },
+    template_id: ''
+  }
+})
+</script>
+```
+
+This API can still be used as a modal, too, by specifying `inline: false`:
+
+```js
+robodog.dashboard(selector, { inline: false })
+```
+
+The `robodog.dashboard()` function returns an Uppy instance, which you can use to listen for any Uppy events.
+
+```js
+const uppy = robodog.dashboard(selector, { ...options })
+  .on('transloadit:result', (result) => {
+    console.log(result)
+  })
+```
+
+## Transloadit
+
+All the options to the [Transloadit][transloadit] plugin are supported.
+
+## Restrictions
+
+Set rules and conditions to limit the type and/or number of files that can be selected. Restrictions are configured by the `restrictions` option.
+
+### `restrictions.maxFileSize`
+
+Maximum file size in bytes for each individual file.
+
+### `restrictions.maxNumberOfFiles`
+
+The total number of files that can be selected. If this is larger than 1, the `multiple` attribute will be added to `<input type="file">` fields.
+
+### `restrictions.minNumberOfFiles`
+
+The minimum number of files that must be selected before the upload. The upload will fail and the form will not be submitted if fewer files were selected.
+
+### `restrictions.allowedFileTypes`
+
+Array of mime type wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`.
+
+If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types) attribute will be added to `<input type="file">` fields, so only acceptable files can be selected in the system file dialog.
+
+[dashboard]: /docs/dashboard
+[transloadit]: /docs/transloadit
+[file picker]: /docs/robodog/picker

@@ -125,3 +125,7 @@ declare module '@uppy/utils/lib/settle' {
 declare module '@uppy/utils/lib/toArray' {
   export default function toArray(list: any): any[];
 }
+
+declare module '@uppy/utils/lib/getDroppedFiles' {
+  export default function getDroppedFiles(dataTransfer: DataTransfer): Promise<File[]>;
+}

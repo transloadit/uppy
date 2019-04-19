@@ -74,6 +74,10 @@ module.exports = class Provider extends RequestClient {
       plugin.opts = Object.assign({}, defaultOpts, opts)
     }
 
+    if (opts.serverUrl || opts.serverPattern) {
+      throw new Error('`serverUrl` and `serverPattern` have been renamed to `companionUrl` and `companionAllowedHosts` respectively in 0.30.5 release. Please consult the docs (for example, https://uppy.io/docs/instagram/ for Instagram plugin) and use the updated options.`')
+    }
+
     if (opts.companionAllowedHosts) {
       const pattern = opts.companionAllowedHosts
       // validate companionAllowedHosts param

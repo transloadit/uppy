@@ -32,6 +32,7 @@ module.exports = function Dashboard (props) {
     { 'Uppy--isTouchDevice': isTouchDevice() },
     { 'uppy-Dashboard--animateOpenClose': props.animateOpenClose },
     { 'uppy-Dashboard--isClosing': props.isClosing },
+    { 'uppy-Dashboard--isDraggingOver': props.isDraggingOver },
     { 'uppy-Dashboard--modal': !props.inline },
     { 'uppy-size--md': props.containerWidth > 576 },
     { 'uppy-size--lg': props.containerWidth > 700 },
@@ -44,8 +45,12 @@ module.exports = function Dashboard (props) {
     <div class={dashboardClassName}
       aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
-      onpaste={props.handlePaste}>
+      onpaste={props.handlePaste}
 
+      onDragOver={props.handleDragOver}
+      onDragLeave={props.handleDragLeave}
+      onDrop={props.handleDrop}
+    >
       <div class="uppy-Dashboard-overlay" tabindex={-1} onclick={props.handleClickOutside} />
 
       <div class="uppy-Dashboard-inner"
@@ -68,6 +73,10 @@ module.exports = function Dashboard (props) {
           }
 
         <div class="uppy-Dashboard-innerWrap">
+          <div class="uppy-Dashboard-dropFilesHereHint">
+            {props.i18n('dropHint')}
+          </div>
+
           { (!noFiles && props.showSelectedFiles) && <PanelTopBar {...props} /> }
 
           { props.showSelectedFiles ? (

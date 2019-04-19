@@ -61,7 +61,7 @@ If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web
 
 ## Progress Reporting
 
-Uploads using HTML forms have no builtin progress reporting. With the Robodog, you can use the `statusBar` option to show an [@uppy/status-bar](/docs/status-bar): an element styled like a progress bar, reporting both upload and Assembly execution progress.
+Uploads using HTML forms have no builtin progress reporting. With Robodog, you can use the `statusBar` option to show an [@uppy/status-bar](/docs/status-bar): an element styled like a progress bar, reporting both upload and Assembly execution progress.
 
 Point it to an element or a CSS selector:
 
@@ -89,7 +89,7 @@ The progress bar will be inserted _into_ that element (thus _not_ replace it).
 
 We now recommend using Uppy over the jQuery SDK. Uppy is framework- and library-agnostic, and much more extensible.
 
-Like the Transloadit jQuery SDK, this API enhances an existing form. That makes this a good candidate for migration. Most of the jQuery SDK options have a direct equivalent in the Robodog.
+Like the Transloadit jQuery SDK, this API enhances an existing form. That makes this a good candidate for migration. Most of the jQuery SDK options have a direct equivalent in Robodog.
 
 First, change your import URLs and initialization code:
 
