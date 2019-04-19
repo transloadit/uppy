@@ -12,12 +12,11 @@ function createCapability (capability) {
 
 exports.config = Object.assign(base.config, {
   capabilities: [
-    { browserName: 'firefox', version: '38.0', platform: 'Linux' },
+    { browserName: 'firefox', version: '40.0', platform: 'Linux' },
     { browserName: 'firefox', version: '61.0', platform: 'Windows 10' },
-    { browserName: 'internet explorer', version: '10.0', platform: 'Windows 7' },
-    { browserName: 'internet explorer', version: '11.0', platform: 'Windows 7' },
+    { browserName: 'internet explorer', version: '10.0', platform: 'Windows 8' },
+    { browserName: 'internet explorer', version: '11.0', platform: 'Windows 10' },
     { browserName: 'chrome', version: '70.0', platform: 'Windows 10' },
-    // { browserName: 'chrome', version: '69.0', platform: 'Windows 10' },
     { browserName: 'MicrosoftEdge', version: '14', platform: 'Windows 10' },
     { browserName: 'MicrosoftEdge', version: '17', platform: 'Windows 10' },
     // { browserName: 'safari', version: '11.0', platform: 'macOS 10.12' },
