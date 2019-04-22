@@ -3,129 +3,132 @@
 const ru_RU = {}
 
 ru_RU.strings = {
-  addMoreFiles: 'Добавить дополнительные файлы',
+  addMoreFiles: 'Добавить еще файлы',
   addingMoreFiles: 'Добавление дополнительных файлов',
-  allowAccessDescription: 'Чтобы сделать фото или видео с помощью вашей камеры, пожалуйста разрешите доступ к камере для этого сайта',
-  allowAccessTitle: 'Пожалуйста, разрешите доступ к камере',
+  allowAccessDescription: 'Чтобы сделать фото или видео, пожалуйста, разрешите доступ к камере для этого сайта',
+  allowAccessTitle: 'Пожалуйста, разрешите доступ к вашей камере',
   back: 'Назад',
   browse: 'выберите',
-  cancel: 'Отмена',
+  cancel: 'Отменить',
   cancelUpload: 'Отменить загрузку',
   chooseFiles: 'Выбрать файлы',
   closeModal: 'Закрыть окно',
   companionAuthError: 'Требуется авторизация',
-  companionError: 'Connection with Companion failed',
+  companionError: 'Не удалось подключиться к Companion',
+  // «Готово» вместо «загрузка завершена», потому что кроме загрузки бывает encoding — транскодирование файлов
   complete: 'Готово',
+  // «Нет подключения к интернету» — «Подключено к интернету»
   connectedToInternet: 'Подключено к интернету',
   copyLink: 'Скопировать ссылку',
-  copyLinkToClipboardFallback: 'Copy the URL below',
+  copyLinkToClipboardFallback: 'Скопируйте ссылку',
   copyLinkToClipboardSuccess: 'Ссылка скопирована в буфер обмена',
-  creatingAssembly: 'Preparing upload...',
-  creatingAssemblyFailed: 'Transloadit: Could not create Assembly',
-  dashboardTitle: 'Uppy Dashboard',
-  dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
-  dataUploadedOfTotal: '%{complete} of %{total}',
+  creatingAssembly: 'Подготовка загрузки...',
+  creatingAssemblyFailed: 'Transloadit: Не удалось создать Assembly',
+  dashboardTitle: 'Загрузчик файлов',
+  dashboardWindowTitle: 'Окно загрузчика файлов (Нажмите escape, чтобы закрыть)',
+  dataUploadedOfTotal: '%{complete} из %{total}',
   done: 'Готово',
   dropHereOr: 'Перетащите файлы сюда или %{browse}',
-  dropPaste: 'Drop files here, paste or %{browse}',
-  dropPasteImport: 'Перенесите файлы сюда, вставьте, %{browse} или импортируйте',
+  dropPaste: 'Перетащите файлы сюда , вставьте или %{browse}',
+  dropPasteImport: 'Перетащите файлы сюда, вставьте, %{browse} или импортируйте',
   edit: 'Редактировать',
   editFile: 'Редактировать файл',
   editing: 'Редактируется %{file}',
-  emptyFolderAdded: 'No files were added from empty folder',
-  encoding: 'Encoding...',
-  enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
-  enterUrlToImport: 'Введите адрес URL, чтобы импортировать файл',
-  exceedsSize: 'This file exceeds maximum allowed size of',
-  failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
-  failedToUpload: 'Failed to upload %{file}',
-  fileSource: 'File source: %{name}',
+  emptyFolderAdded: 'Файлы не были добавлены — папка пуста',
+  encoding: 'Обработка...',
+  enterCorrectUrl: 'Неправильный адрес: пожалуйста, убедитесь что вы используете прямую ссылку на файл',
+  enterUrlToImport: 'Введите адрес, чтобы импортировать файл',
+  exceedsSize: 'Этот файл больше максимально разрешенного размера в',
+  failedToFetch: 'Companion не смог загрузить файл по ссылке, пожалуйста, убедитесь, что адрес верный',
+  failedToUpload: 'Ошибка загрузки %{file}',
+  fileSource: 'Источник файла: %{name}',
   filesUploadedOfTotal: {
-    '0': '%{complete} of %{smart_count} file uploaded',
-    '1': '%{complete} of %{smart_count} files uploaded',
-    '2': '%{complete} of %{smart_count} files uploaded'
+    '0': '%{complete} из %{smart_count} файла загружено',
+    '1': '%{complete} из %{smart_count} файлов загружено',
+    '2': '%{complete} из %{smart_count} файлов загружено'
   },
   filter: 'Фильтр',
-  finishEditingFile: 'Finish editing file',
+  finishEditingFile: 'Закончить редактирование файла',
   folderAdded: {
-    '0': 'Added %{smart_count} file from %{folder}',
-    '1': 'Added %{smart_count} files from %{folder}',
-    '2': 'Added %{smart_count} files from %{folder}'
+    '0': 'Добавлен %{smart_count} файл из %{folder}',
+    '1': 'Добавлено %{smart_count} файла из %{folder}',
+    '2': 'Добавлено %{smart_count} файлов из %{folder}'
   },
   import: 'Импортировать',
   importFrom: 'Импортировать из %{name}',
   link: 'Ссылка',
+  loading: 'Загрузка...',
   logOut: 'Выйти',
   myDevice: 'Мое устройство',
-  noFilesFound: 'You have no files or folders here',
+  noFilesFound: 'Здесь нет файлов или папок',
   noInternetConnection: 'Нет подключения к интернету',
   pause: 'Поставить на паузу',
-  pauseUpload: 'Pause upload',
+  pauseUpload: 'Поставить загрузку на паузу',
   paused: 'На паузе',
-  preparingUpload: 'Приготовление к загрузке...',
+  preparingUpload: 'Подготовка к загрузке...',
   processingXFiles: {
-    '0': 'Processing %{smart_count} file',
-    '1': 'Processing %{smart_count} files',
-    '2': 'Processing %{smart_count} files'
+    '0': 'Обрабатывается %{smart_count} файл',
+    '1': 'Обрабатываются %{smart_count} файла',
+    '2': 'Обрабатываются %{smart_count} файлов'
   },
-  removeFile: 'Remove file',
-  resetFilter: 'Reset filter',
-  resume: 'Resume',
-  resumeUpload: 'Resume upload',
-  retry: 'Retry',
-  retryUpload: 'Retry upload',
+  removeFile: 'Удалить файл',
+  resetFilter: 'Сбросить фильтр',
+  resume: 'Продолжить',
+  resumeUpload: 'Продолжить загрузку',
+  retry: 'Повторить попытку',
+  retryUpload: 'Повторить попытку загрузки',
   saveChanges: 'Сохранить изменения',
   selectXFiles: {
-    '0': 'Select %{smart_count} file',
-    '1': 'Select %{smart_count} files',
-    '2': 'Select %{smart_count} files'
+    '0': 'Выбрать %{smart_count} файл',
+    '1': 'Выбрать %{smart_count} файла',
+    '2': 'Выбрать %{smart_count} файлов'
   },
-  smile: 'Smile!',
-  startRecording: 'Begin video recording',
-  stopRecording: 'Stop video recording',
-  takePicture: 'Take a picture',
-  timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
-  upload: 'Upload',
-  uploadComplete: 'Upload complete',
-  uploadFailed: 'Upload failed',
-  uploadPaused: 'Upload paused',
+  smile: 'Улыбнитесь!',
+  startRecording: 'Начать запись видео',
+  stopRecording: 'Закончить запись видео',
+  takePicture: 'Сделать фотографию',
+  timedOut: 'Загрузка остановилась на %{seconds} секунд, отмена',
+  upload: 'Загрузить',
+  uploadComplete: 'Загрузка завершена',
+  uploadFailed: 'Загрузка не удалась',
+  uploadPaused: 'Загрузка на паузе',
   uploadXFiles: {
-    '0': 'Upload %{smart_count} file',
-    '1': 'Upload %{smart_count} files',
-    '2': 'Upload %{smart_count} files'
+    '0': 'Загрузить %{smart_count} файл',
+    '1': 'Загрузить %{smart_count} файла',
+    '2': 'Загрузить %{smart_count} файлов'
   },
   uploadXNewFiles: {
-    '0': 'Upload +%{smart_count} file',
-    '1': 'Upload +%{smart_count} files',
-    '2': 'Upload +%{smart_count} files'
+    '0': 'Загрузить +%{smart_count} файл',
+    '1': 'Загрузить +%{smart_count} файла',
+    '2': 'Загрузить +%{smart_count} файлов'
   },
-  uploading: 'Uploading',
+  uploading: 'Загрузка',
   uploadingXFiles: {
-    '0': 'Uploading %{smart_count} file',
-    '1': 'Uploading %{smart_count} files',
-    '2': 'Uploading %{smart_count} files'
+    '0': 'Загружается %{smart_count} файл',
+    '1': 'Загружается %{smart_count} файла',
+    '2': 'Загружается %{smart_count} файлов'
   },
   xFilesSelected: {
-    '0': '%{smart_count} file selected',
-    '1': '%{smart_count} files selected',
-    '2': '%{smart_count} files selected'
+    '0': '%{smart_count} файл выбран',
+    '1': '%{smart_count} файла выбрано',
+    '2': '%{smart_count} файлов выбрано'
   },
   xMoreFilesAdded: {
-    '0': '%{smart_count} more file added',
-    '1': '%{smart_count} more files added',
-    '2': '%{smart_count} more files added'
+    '0': '%{smart_count} дополнительный файл добавлен',
+    '1': '%{smart_count} дополнительных файла добавлено',
+    '2': '%{smart_count} дополнительных файлов добавлено'
   },
-  xTimeLeft: '%{time} left',
-  youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
+  xTimeLeft: 'осталось %{time}',
+  youCanOnlyUploadFileTypes: 'Вы можете загрузить только: %{types}',
   youCanOnlyUploadX: {
-    '0': 'You can only upload %{smart_count} file',
-    '1': 'You can only upload %{smart_count} files',
-    '2': 'You can only upload %{smart_count} files'
+    '0': 'Вы можете загрузить только %{smart_count} файл',
+    '1': 'Вы можете загрузить только %{smart_count} файла',
+    '2': 'Вы можете загрузить только %{smart_count} файлов'
   },
   youHaveToAtLeastSelectX: {
-    '0': 'You have to select at least %{smart_count} file',
-    '1': 'You have to select at least %{smart_count} files',
-    '2': 'You have to select at least %{smart_count} files'
+    '0': 'Вы должны выбрать хотя бы %{smart_count} файл',
+    '1': 'Вы должны выбрать хотя бы %{smart_count} файла',
+    '2': 'Вы должны выбрать хотя бы %{smart_count} файлов'
   }
 }
 
