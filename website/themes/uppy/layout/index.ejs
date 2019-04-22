@@ -1,21 +1,15 @@
 <section id="hero" class="IndexHero">
-  <header id="logo-wrap" class="IndexHero-header">
-    <!-- <img id="logo" class="IndexHero-logo" title="Uppy" alt="Uppy" src="<%- config.logo_medium %>">
-    <h1 class="IndexHero-title"><%- config.title %></h1>
-
-    <h2 class="IndexHero-tagline">
-      The file uploader that <br>
-      <span class="IndexHero-taglinePart js-IndexHero-taglinePart is-visible">loves to play fetch</span>
-    </h2> -->
-
-    <!-- <ul class="IndexHero-taglineList js-IndexHero-taglineList">
-      <% site.data.taglines.forEach(function(tagline) {%>
-        <li><%- tagline %></li>
-      <% }); %>
-    </ul> -->
-  </header>
-
-  <%- partial('partials/social') %>
+  <h1 class="IndexHero-title">
+    Sleek, modular open-source JavaScript file uploader
+  </h1>
+  <div class="IndexHero-description">
+    Uppy fetches files locally and from remote places like Dropbox or Instagram. With its seamless integration, reliability
+    and ease of use, Uppy is truly man’s best friend in file uploading.
+  </div>
+  <div class="IndexHero-buttons">
+    <a href="#" class="button button--primary">Get Started</a>
+    <a href="#" class="button btn--secondary">Uppy on GitHub</a>
+  </div>
 </section>
 
 <section id="example" class="IndexExample">
@@ -73,6 +67,10 @@
   <script type="text/javascript">
     $('.on-the-githubs').onthegithubs();
   </script>
+</section>
+
+<section>
+  <%- partial('partials/social') %>
 </section>
 
 <footer class="IndexFooter">

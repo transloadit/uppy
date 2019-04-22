@@ -41,52 +41,31 @@
 
 .IndexHero {
   text-align: center;
-  position: relative;
-  max-width: 950px;
-  margin: auto;
-  padding: 0 20px;
-}
-
-.IndexHero-logo {
-  display: inline-block;
-  vertical-align: middle;
-  max-width: 80px;
-
-  @media #{$screen-medium} {
-    max-width: 130px;
-  }
+  max-width: 640px;
+  margin: 0 auto 40px;
 }
 
 .IndexHero-title {
-  display: inline-block;
-  vertical-align: middle;
-  padding-left: 15px;
-  padding-top: 10px;
-  font-family: $fontFamily-logo;
-  font-weight: 400;
+  font-weight: 700;
   font-size: 2.5em;
-  margin: 0;
-  margin-bottom: 20px;
+  margin: 0 0 16px;
+  font-size: 36px;
+  line-height: 1.145;
 
   @media #{$screen-medium} {
-    padding-left: 20px;
-    font-size: 3.5em;
+    font-size: 48px;
   }
 }
 
-.IndexHero-tagline {
-  // font-size: $fontSize-m;
-  // line-height: 1.3;
-  // font-weight: normal;
-  // text-align: center;
-  // margin: 0 auto;
-  // margin-top: 10px;
-  // margin-bottom: 40px;
-  // color: $color-light;
+.IndexHero-description {
+  color: $color-gray;
+  font-size: 18px;
+  line-height: 1.5;
+  margin-bottom: 27px;
 
   @media #{$screen-medium} {
-    // font-size: $fontSize-l;
-    // line-height: 1.4;
+    font-size: 21px;
+    margin-bottom: 36px;
   }
 }
 
