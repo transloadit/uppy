@@ -618,7 +618,8 @@
   padding-top: 20px;
 
   .uppy-size--md & {
-    max-width: 400px;
+    // wider, to accomodate for different translations
+    max-width: 470px;
     font-size: 27px;
   }
 }
