@@ -1,4 +1,4 @@
--Our combined changelog and roadmap. It contains todos as well as dones.
+Our combined changelog and roadmap. It contains todos as well as dones.
 
 Items can be optionally be tagged tagged by GitHub owner issue if discussion
 happened / is needed.
