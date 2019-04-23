@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 
-var de_DE = {};
+var de_DE = {}
 
 de_DE.strings = {
   addMoreFiles: 'Dateien hinzufügen',
@@ -129,17 +129,17 @@ de_DE.strings = {
     '1': 'Sie müssen mindestens %{smart_count} Dateien auswählen',
     '2': 'Sie müssen mindestens %{smart_count} Dateien auswählen'
   }
-};
+}
 
 de_DE.pluralize = function (n) {
   if (n === 1) {
-    return 0;
+    return 0
   }
-  return 1;
-};
-
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.de_DE = de_DE;
+  return 1
 }
 
-module.exports = de_DE;
+if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
+  window.Uppy.locales.de_DE = de_DE
+}
+
+module.exports = de_DE
