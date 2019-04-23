@@ -105,11 +105,19 @@ $(selector).transloadit({
 ```html
 <!-- The new Robodog way! -->
 <script src="//transloadit.edgly.net/releases/uppy/v0.30.5/robodog.min.js"></script>
+
 <script>
 window.Robodog.form(selector, {
   ...options
 })
 </script>
+```
+
+Make sure to also include the Uppy css file in your `<head>` tag in case you want to use the `modal: true` option:
+```html
+<head>
+  <link href="https://transloadit.edgly.net/releases/uppy/v0.30.5/uppy.min.css" rel="stylesheet">
+</head>
 ```
 
 The equivalent options are listed below.
@@ -124,7 +132,7 @@ The equivalent options are listed below.
 | `requireUploadMetadata: true` | `waitForMetadata: true` |
 | `params` | `params` |
 | `signature` | `signature` |
-| `modal` | Currently unavailable |
+| `modal` | `modal` |
 | `autoSubmit` | `submitOnSuccess` |
 | `triggerUploadOnFileSelection` | `autoProceed: true` |
 | `processZeroFiles` | `alwaysRunAssembly` |
@@ -137,7 +145,6 @@ The equivalent options are listed below.
 
 As for the options that are unavailable:
 
-- `modal` will be added in the future.
 - `exclude` is intended to exclude certain `<input type="file">` inputs from Transloadit processing. It will likely not be added, but we'll perhaps have a `include` CSS selector option instead.
 - `debug` will not be added.
 
