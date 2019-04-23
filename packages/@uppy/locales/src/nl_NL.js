@@ -56,6 +56,7 @@ nl_NL.strings = {
   import: 'Importeer',
   importFrom: 'Importeer vanuit %{name}',
   link: 'Link',
+  loading: 'Bezig met laden...',
   logOut: 'Uitloggen',
   myDevice: 'Mijn apparaat',
   noFilesFound: 'Geen bestanden of mappen gevonden',
@@ -116,7 +117,7 @@ nl_NL.strings = {
     '1': '%{smart_count} extra bestanden toegevoegd',
     '2': '%{smart_count} extra bestanden toegevoegd'
   },
-  xTimeLeft: '%{time} left',
+  xTimeLeft: '%{time} over',
   youCanOnlyUploadFileTypes: 'Je kan enkel volgende types uploaden: %{types}',
   youCanOnlyUploadX: {
     '0': 'Je kan slechts %{smart_count} bestand uploaden',
