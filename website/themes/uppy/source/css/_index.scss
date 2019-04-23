@@ -287,12 +287,17 @@
 }
 
 .IndexActivity {
-  max-width: 760px;
+  max-width: 900px;
   margin: 3em auto;
   padding: 0 20px;
 
   h2 {
     text-align: center;
+    font-size: 30px;
+
+    @media #{$screen-medium} {
+      font-size: 36px;
+    }
   }
 }
 
@@ -311,11 +316,12 @@
     line-height: 1.35;
     font-size: 16px;
     max-width: 900px;
-    margin: 0 auto;
-    padding: 0;
+    margin: 0 auto 40px;
+    padding: 0 20px;
     list-style-type: none;
 
     @media #{$screen-medium} {
+      margin-bottom: 100px;
       column-count: 2;
       column-gap: 40px;
       font-size: 20px;
