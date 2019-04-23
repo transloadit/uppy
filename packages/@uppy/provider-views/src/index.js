@@ -526,7 +526,6 @@ module.exports = class ProviderView {
           <AuthView
             pluginName={this.plugin.title}
             pluginIcon={this.plugin.icon}
-            demo={this.plugin.opts.demo}
             handleAuth={this.handleAuth}
             i18n={this.plugin.uppy.i18n}
             i18nArray={this.plugin.uppy.i18nArray} />
@@ -544,7 +543,6 @@ module.exports = class ProviderView {
       sortByTitle: this.sortByTitle,
       sortByDate: this.sortByDate,
       logout: this.logout,
-      demo: this.plugin.opts.demo,
       isActiveRow: this.isActiveRow,
       isChecked: this.isChecked,
       toggleCheckbox: this.toggleCheckbox,
