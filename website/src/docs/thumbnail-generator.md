@@ -7,7 +7,7 @@ permalink: docs/thumbnail-generator/
 category: 'Miscellaneous'
 ---
 
-`@uppy/thumbnail-generator` generates proportional thumbnails (file previews) for images that are added to Uppy. It then creates a string with a local preview url (via `URL.createObjectURL(blob)`) and sets it to `file.preview`. `thumbnail:generated` event is also emitted, see below for details.
+`@uppy/thumbnail-generator` generates proportional thumbnails (file previews) for images that are added to Uppy.
 
 This plugin is included by default with the [Dashboard](/docs/dashboard), so you don’t have to include it manually. But it is useful if you are not using the Dashboard and want to display image previews in your custom UI.
 
@@ -19,6 +19,8 @@ uppy.use(ThumbnailGenerator, {
   // thumbnailHeight: 200 // optional, use either width or height
 })
 ```
+
+> Now, the `file.preview` property will contain a URL to the thumbnail and `thumbnail:generated` event will be emitted, see below for details.
 
 ## Installation
 
