@@ -271,6 +271,10 @@ hr {
   @media #{$screen-medium} {
     display: none;
   }
+
+  .page-index & {
+    display: none;
+  }
 }
 
 .MainHeader-menuBtn {
@@ -294,14 +298,14 @@ hr {
   color: $color-gray;
   display: none;
 
-  .page-index & {
-    display: block;
-  }
-
   @media #{$screen-medium} {
     margin: 0;
     font-size: 14px;
     text-align: right;
+    
+    .page-index & {
+      display: block;
+    }
   }
 }
 
@@ -312,6 +316,7 @@ hr {
 .MainMenu {
   list-style-type: none;
   padding: 0;
+  margin: 5px 0;
 
   @media #{$screen-medium} {
     margin: 0;
@@ -345,10 +350,18 @@ hr {
     li {
       display: inline-block;
       position: relative;
-      margin: 0 0.6em;
+      margin: 0 0.3em;
+
+      @media #{$screen-medium} {
+        margin: 0 0.6em;
+      }
     }
 
     @media #{$screen-medium} {
+      display: block;
+    }
+
+    .page-index & {
       display: block;
     }
   }
