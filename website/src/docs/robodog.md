@@ -31,6 +31,7 @@ If you are not using a bundler, you can also import Robodog using an HTML script
 ```html
 <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v0.30.5/robodog.min.css">
 <script src="https://transloadit.edgly.net/releases/uppy/v0.30.5/robodog.min.js"></script>
+<!-- you can now use: window.Robodog.pick() -->
 ```
 
 ## Methods
