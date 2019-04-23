@@ -43,16 +43,30 @@
   text-align: center;
   max-width: 640px;
   margin: 0 auto 40px;
+
+  @media #{$screen-medium} {
+    margin-bottom: 80px;
+  }
+}
+
+.IndexHero-logo {
+  max-width: 80px;
+  height: auto;
+
+  @media #{$screen-medium} {
+    max-width: none;
+  }
 }
 
 .IndexHero-title {
   font-weight: 700;
   font-size: 2.5em;
-  margin: 0 0 16px;
+  margin: 12px 0;
   font-size: 36px;
   line-height: 1.145;
 
   @media #{$screen-medium} {
+    margin: 16px 0;
     font-size: 48px;
   }
 }
@@ -60,12 +74,18 @@
 .IndexHero-description {
   color: $color-gray;
   font-size: 18px;
-  line-height: 1.5;
-  margin-bottom: 27px;
+  line-height: 1.45;
+  margin-bottom: 24px;
 
   @media #{$screen-medium} {
-    font-size: 21px;
-    margin-bottom: 36px;
+    font-size: 20px;
+    margin-bottom: 30px;
+  }
+}
+
+.IndexHero-buttons .button {
+  @media #{$screen-medium} {
+    margin-right: 8px;
   }
 }
 
@@ -276,37 +296,31 @@
   }
 }
 
-.IndexDesignGoals {
-  padding: 4em 1em;
-  background-color: darken($color-primary, 15%);
-  color: $color-white;
-  overflow: hidden;
-
-  @media #{$screen-medium} {
-    padding: 4em 0;
-  }
+.IndexFeatures {
 
   h2 {
-    margin-top: 0;
-    color: $color-white;
-    font-size: 1.5em;
     text-align: center;
   }
 
-  ul {
-    line-height: 1.8em;
-    font-size: 1.15em;
-    max-width: 640px;
+  &-list {
+    line-height: 1.35;
+    font-size: 16px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 0;
     list-style-type: none;
+
+    @media #{$screen-medium} {
+      column-count: 2;
+      column-gap: 40px;
+      font-size: 20px;
+    }
   }
 
-  li {
-    background: svg-load('check.svg', fill=#{$color-white}) left 5px no-repeat;
-    background-size: 24px 24px;
-    padding-left: 40px;
-    margin-bottom: 0.5em;
+  &-list li {
+    padding-left: 0;
+    margin-bottom: 0.8375em;
+    break-inside: avoid;
   }
 }
 

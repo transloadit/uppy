@@ -1,19 +1,22 @@
 <section id="hero" class="IndexHero">
+  <img class="IndexHero-logo" title="Uppy" alt="Uppy" src="<%- config.logo_medium %>">
   <h1 class="IndexHero-title">
     Sleek, modular open-source JavaScript file uploader
   </h1>
   <div class="IndexHero-description">
-    Uppy fetches files locally and from remote places like Dropbox or Instagram. With its seamless integration, reliability
-    and ease of use, Uppy is truly man’s best friend in file uploading.
+    <%- config.description %>
   </div>
   <div class="IndexHero-buttons">
-    <a href="#" class="button button--primary">Get Started</a>
-    <a href="#" class="button btn--secondary">Uppy on GitHub</a>
+    <a href="#" class="button button--cta">Get Started</a>
+    <a href="#" class="button button--secondary">Uppy on GitHub</a>
   </div>
 </section>
 
-<section id="example" class="IndexExample">
-  <!-- <h2 class="IndexSection-title">Demo</h2> -->
+<section class="IndexDemo">
+  [demo]
+</section>
+
+<!-- <section id="example" class="IndexExample">
 
   <div class="IndexExample-block">
     <video class="IndexExample-video"
@@ -32,29 +35,22 @@
   </div>
 
   <a class="GetStartedBtn" href="/docs/">Get Started</a>
-</section>
+</section> -->
 
-<section class="IndexAbout">
-  <div class="IndexAbout-item">
-    <!-- <img class="IndexAbout-icon" src="/images/traffic-light.svg"> -->
-    <h2 class="IndexSection-title">What is Uppy</h2>
-    <p><%- config.description %></p>
-  </div>
-  <div class="IndexAbout-item">
-    <a href="https://transloadit.com"><img class="IndexAbout-icon" src="/images/transloadit-logo.png"></a>
-    <h2 class="IndexSection-title">Open Source</h2>
-    <p><%- config.descriptionWho %></p>
-  </div>
-</section>
-
-<section class="IndexDesignGoals">
-  <h2>Design Goals:</h2>
-  <ul>
-    <% for (var k in site.data.design_goals) { var v = site.data.design_goals[k]; %>
-    <li>
-      <%- v %>
-    </li>
-    <% } %>
+<section class="IndexFeatures">
+  <h2>Features</h2>
+  <ul class="IndexFeatures-list">
+    <li><strong>Lightweight,</strong> modular plugin-based architecture, easy on dependencies ⚡️</li>
+    <li><strong>Resumable file uploads</strong> via the open <strong><a href="https://tus.io/">tus</></strong> standard, so large uploads survive network hiccups</li>
+    <li>Supports picking files from <strong>Webcam, Dropbox, Google Drive, Instagram,</strong> bypassing the user’s device where possible, syncing between servers directly via <strong><a href="/docs/companion/">Companion</a></></li>
+    <li>Works great with file encoding and processing backends, such as <strong><a href="https://transloadit.com/">Transloadit</a></strong>, works great without</li>
+    <li><strong>Open source and driven by the community.</strong> We listen closely and adjust the project based on your feedback ❤️</li>
+    <li><strong>Sleek user interface ✨</strong></li>
+    <li>Optional file recovery (after a browser crash) with <strong><a href="/docs/golden-retriever/">Golden Retriever</a></strong></li>
+    <li>Speaks <strong>multiple languages</strong> (i18n) 🌍</li>
+    <li>Built with accessibility in mind</li>
+    <li><strong>Free for the world, forever</strong></li>
+    <li>Cute as a puppy, also accepts cat pictures 🐶</li>
   </ul>
 </section>
 

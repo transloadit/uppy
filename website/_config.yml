@@ -10,12 +10,10 @@ root_domain: uppy.io
 title: Uppy
 subtitle: "Almost as cute as a puppy"
 logo_large: /images/logos/uppy-dog-full.svg
-logo_medium: /images/logos/uppy-dog-head-arrow.svg
+logo_medium: /images/logos/uppy-logo-2019.svg
 logo_icon: /images/logos/uppy-dog-head-arrow.png
 description: >
-    Sleek, modular file uploader that integrates seamlessly with any website or app.
-    It fetches files from local disk, Google Drive, Dropbox, Instagram, remote URLs, cameras etc, and then uploads them to the final destination.
-    It’s fast, easy to use and let’s you worry about more important problems than building a file uploader.
+    Uppy fetches files locally and from remote places like Dropbox or Instagram. With its seamless integration, reliability and ease of use, Uppy is truly man’s best friend in file uploading.
 descriptionWho: >
   Uppy is brought to you by the people
   behind <a href="https://transloadit.com">Transloadit</a>, and as such will have first class support

@@ -8,7 +8,7 @@ body {
   font-size: $fontSize-s;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: $color-medium;
+  color: $color-dark;
   margin: 0;
   background-color: $color-primary;
 
@@ -19,7 +19,7 @@ body {
 
 a {
   text-decoration: none;
-  color: $color-medium;
+  color: $color-blue;
 }
 
 img, video {
@@ -28,7 +28,7 @@ img, video {
   border: 0;
 }
 
-h1, h2, h3, h4, strong {
+h1, h2, h3, h4 {
   font-weight: 600;
   color: $color-dark;
 }
@@ -58,20 +58,42 @@ hr {
   margin: 3em 0;
 }
 
-a.button {
+.button {
   display: inline-block;
-  font-family: $fontFamily-code;
   font-weight: 700;
   color: #fff;
-  background-color: lighten($color-primary, 8%);
-  border-bottom: 2px solid darken($color-primary, 12%);
-  padding: 12px 14px;
-  border-radius: 4px;
+  font-size: 18px;
+  background-color: $color-primary;
+  // border-bottom: 2px solid darken($color-primary, 12%);
+  padding: 12px 20px;
+  border-radius: 8px;
   transition: all .15s ease;
 
   &:hover {
-    background-color: lighten($color-primary, 15%);
-    transform: translate(0, -2px);
+    background-color: lighten($color-primary, 4%);
+  }
+
+  &:active {
+    background-color: darken($color-primary, 4%);
+  }
+}
+
+.button--cta {
+  padding-right: 34px;
+  padding-left: 34px;
+}
+
+.button--secondary {
+  border: 1px solid $color-primary;
+  background-color: #fff;
+  color: $color-primary;
+
+  &:hover {
+    background-color: #f7f7f7;
+  }
+
+  &:active {
+    border-color: darken($color-primary, 10%)
   }
 }
 
@@ -260,10 +282,22 @@ a.button {
 }
 
 .MainHeader-tagline {
-  text-align: right;
-  font-size: 14px;
+  text-align: center;
+  margin-top: 3px;
+  font-size: 12px;
   flex: 1;
   color: $color-gray;
+  display: none;
+
+  .page-index & {
+    display: block;
+  }
+
+  @media #{$screen-medium} {
+    margin: 0;
+    font-size: 14px;
+    text-align: right;
+  }
 }
 
 /**
