@@ -38,7 +38,7 @@ const ThumbnailGenerator = Uppy.ThumbnailGenerator
 
 ## Options
 
-The `@uppy/file-input` plugin has the following configurable options:
+The `@uppy/thumbnail-generator` plugin has the following configurable options:
 
 ```js
 uppy.use(ThumbnailGenerator, {
