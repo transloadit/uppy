@@ -5,7 +5,6 @@ import {
   View,
   AsyncStorage,
   Image
-  // Linking
 } from 'react-native'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
@@ -14,31 +13,6 @@ import FileList from './FileList'
 import PauseResumeButton from './PauseResumeButton'
 import ProgressBar from './ProgressBar'
 import SelectFiles from './SelectFilesButton'
-
-function hashCode (str) {
-  // from https://stackoverflow.com/a/8831937/151666
-  var hash = 0
-  if (str.length === 0) {
-    return hash
-  }
-  for (var i = 0; i < str.length; i++) {
-    var char = str.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash = hash & hash // Convert to 32bit integer
-  }
-  return hash
-}
-
-function customFingerprint (file, options) {
-  let exifHash = 'noexif'
-  if (file.exif) {
-    exifHash = hashCode(JSON.stringify(file.exif))
-  }
-  // console.log(exifHash)
-  const fingerprint = ['tus', file.name || 'noname', file.size || 'nosize', exifHash].join('/')
-  console.log(fingerprint)
-  return fingerprint
-}
 
 export default class App extends React.Component {
   constructor () {
@@ -69,8 +43,8 @@ export default class App extends React.Component {
     this.uppy = Uppy({ autoProceed: true, debug: true })
     this.uppy.use(Tus, {
       endpoint: 'https://master.tus.io/files/',
-      urlStorage: AsyncStorage,
-      fingerprint: customFingerprint
+      urlStorage: AsyncStorage
+      // fingerprint: customFingerprint
     })
     this.uppy.on('upload-progress', (file, progress) => {
       this.setState({
