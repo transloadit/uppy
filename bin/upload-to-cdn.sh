@@ -33,8 +33,8 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
-# versionSuffix="-test2"
 versionSuffix=""
+# versionSuffix="-test3"
 
 function fatal () {
   echo "❌ ${*}";
@@ -84,7 +84,9 @@ pushd "${__root}" > /dev/null 2>&1
   echo "--> Obtain relevant npm files for robodog ${version}${versionSuffix} ... "
   pushd packages/@uppy/robodog
     if [ -z "${remoteVersion}" ]; then
-      npm pack || fatal "Unable to fetch "
+      echo "Warning, writing a local build to the CDN, this is usually not what you want. Sleeping 3s. Press CTRL+C! "
+      sleep 3
+      npm pack
     else
       npm pack "@uppy/robodog@${remoteVersion}"
     fi
