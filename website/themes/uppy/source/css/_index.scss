@@ -2,7 +2,7 @@
   display: none;
   height: 29px;
   padding: 0 10px;
-  background: #141829;
+  background: $color-darkblue;
   color: #fff;
   font-size: 11px;
   justify-content: space-between;
@@ -42,10 +42,10 @@
 .IndexHero {
   text-align: center;
   max-width: 640px;
-  margin: 0 auto 40px;
+  margin: 40px auto;
 
   @media #{$screen-medium} {
-    margin-bottom: 80px;
+    margin: 80px auto;
   }
 }
 
@@ -300,6 +300,11 @@
 
   h2 {
     text-align: center;
+    font-size: 30px;
+
+    @media #{$screen-medium} {
+      font-size: 36px;
+    }
   }
 
   &-list {
@@ -327,11 +332,19 @@
 .IndexFooter {
   text-align: center;
   color: $color-white;
-  padding: 4em 1em;
-  background-color: darken($color-primary, 15%);
+  padding: 2em 1em 3em;
+  font-size: 14px;
+  background-color: $color-darkblue;
+  margin-top: 50px;
 
   @media #{$screen-medium} {
-    padding: 4em 0;
+    margin-top: 100px;
+    padding: 2em 0 3em;
+  }
+
+  &-logo {
+    width: 44px;
+    height: auto;
   }
 
   a {
@@ -339,5 +352,5 @@
     text-decoration: underline;
   }
 
-  p { margin: .3em 0; }
+  p { margin: 1em 0; }
 }

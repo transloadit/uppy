@@ -41,13 +41,12 @@ a.Stats-package {
     @include clearfix;
     list-style-type: none;
     margin: 0;
-    padding: 5px 0;
+    padding: 12px 0;
     position: relative;
-    border-bottom: 1px solid rgba($color-gray, 0.3);
-    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
 
     p {
-      font-size: 15px;
       margin: 0;
       padding: 0;
       display: inline-block;
@@ -58,6 +57,7 @@ a.Stats-package {
     abbr {
       display: block;
       margin-bottom: 5px;
+      color: $color-light;
 
       @media #{$screen-medium} {
         display: inline;
@@ -68,13 +68,14 @@ a.Stats-package {
     }
 
     a {
-      font-weight: normal;
-      text-decoration: underline;
+      font-weight: 700;
+      text-decoration: none;
+      color: inherit;
     }
 
     img {
       float: left;
-      margin: 0 5px 0 0;
+      margin: 0 7px 0 0;
       border-radius: 10px;
       width: 20px;
       height: 20px;
