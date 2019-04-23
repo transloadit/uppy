@@ -19,6 +19,8 @@ last Friday of every new month.
 Ideas that will be planned and find their way into a release at one point.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
+- [ ] Uppy React Native works with Expo, now let's make it work without
+- [ ] Uppy React Native works with Url Plugin, now let's make it work with Instagram
 - [ ] core: Make sure Uppy works well in VR
 - [ ] test: Human should check http://www.webpagetest.org and https://developers.google.com/web/tools/lighthouse/, use it sometimes to test website and Uppy. Will show response/loading times and other issues
 - [ ] test: Human should test with real screen reader to identify accessibility problems
@@ -91,6 +93,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] dashboard: Bring back "Drop Here" screen for dragged URLs without introducing flickering (tricky! see PR #1400)
+- [ ] a11y: Fix remaining issues (https://github.com/transloadit/uppy/issues/created_by/nqst)
+- [ ] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
+- [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
+- [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well (@arturi)
+- [ ] chore: fix up all code using the prettier branch. work is done, just needs an execute and review/okay by the team
+- [ ] !!! dashboard: Remove the Authorization required tooltip on the authentication screen https://github.com/transloadit/uppy/issues/1425
 
 ## 1.0 Goals
 
