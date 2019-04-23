@@ -104,7 +104,8 @@ module.exports = class Dashboard extends Plugin {
           0: 'Added %{smart_count} file from %{folder}',
           1: 'Added %{smart_count} files from %{folder}',
           2: 'Added %{smart_count} files from %{folder}'
-        }
+        },
+        poweredBy: 'Powered by'
       }
     }
 
