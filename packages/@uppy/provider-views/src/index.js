@@ -453,7 +453,10 @@ module.exports = class ProviderView {
   handleError (error) {
     const uppy = this.plugin.uppy
     uppy.log(error.toString())
-    const message = uppy.i18n(error.isAuthError ? 'companionAuthError' : 'companionError')
+    if (error.isAuthError) {
+      return
+    }
+    const message = uppy.i18n('companionError')
     uppy.info({message: message, details: error.toString()}, 'error', 5000)
   }
 
