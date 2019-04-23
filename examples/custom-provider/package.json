@@ -16,7 +16,7 @@
     "aliasify": "^2.1.0",
     "babelify": "^8.0.0",
     "body-parser": "^1.18.2",
-    "budo": "^11.3.2",
+    "budo": "11.6.2",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "npm-run-all": "^4.1.2"

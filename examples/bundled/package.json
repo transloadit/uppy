@@ -5,7 +5,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
-    "parcel-bundler": "^1.11.0"
+    "parcel-bundler": "1.12.3"
   },
   "dependencies": {
     "@uppy/core": "^0.30.3",
