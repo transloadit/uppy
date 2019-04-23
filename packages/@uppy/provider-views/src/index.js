@@ -58,7 +58,6 @@ module.exports = class ProviderView {
     this.logout = this.logout.bind(this)
     this.preFirstRender = this.preFirstRender.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
-    this.handleDemoAuth = this.handleDemoAuth.bind(this)
     this.sortByTitle = this.sortByTitle.bind(this)
     this.sortByDate = this.sortByDate.bind(this)
     this.isActiveRow = this.isActiveRow.bind(this)
@@ -410,13 +409,6 @@ module.exports = class ProviderView {
     })
   }
 
-  handleDemoAuth () {
-    const state = this.plugin.getPluginState()
-    this.plugin.setPluginState({}, state, {
-      authenticated: true
-    })
-  }
-
   handleAuth () {
     const authState = btoa(JSON.stringify({ origin: location.origin }))
     const link = `${this.provider.authUrl()}?state=${authState}`
@@ -536,7 +528,6 @@ module.exports = class ProviderView {
             pluginIcon={this.plugin.icon}
             demo={this.plugin.opts.demo}
             handleAuth={this.handleAuth}
-            handleDemoAuth={this.handleDemoAuth}
             i18n={this.plugin.uppy.i18n}
             i18nArray={this.plugin.uppy.i18nArray} />
         </CloseWrapper>
