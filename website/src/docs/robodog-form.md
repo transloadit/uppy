@@ -104,9 +104,9 @@ $(selector).transloadit({
 ```
 ```html
 <!-- The new Robodog way! -->
-<script src="//transloadit.edgly.net/robodog/v1.0.0/dist/transloadit.js"></script>
+<script src="//transloadit.edgly.net/releases/uppy/v0.30.5/robodog.min.js"></script>
 <script>
-transloadit.form(selector, {
+window.Robodog.form(selector, {
   ...options
 })
 </script>
