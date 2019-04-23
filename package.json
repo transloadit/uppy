@@ -82,6 +82,7 @@
     "webdriverio": "^4.14.4"
   },
   "scripts": {
+    "audit:fix": "for dir in $(find packages examples . -name package.json -maxdepth 2 -exec dirname {} \\;); do echo \"--> ${dir}\"; cd ${dir}; npm i; npm audit fix --force; cd -; done",
     "bootstrap": "lerna bootstrap",
     "build:bundle": "node ./bin/build-bundle.js",
     "build:clean": "rm -rf packages/*/lib packages/@uppy/*/lib packages/*/dist packages/@uppy/*/dist",
