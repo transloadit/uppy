@@ -100,6 +100,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] chore: fix up all code using the prettier branch. work is done, just needs an execute and review/okay by the team
 - [ ] !!! dashboard: Remove the Authorization required tooltip on the authentication screen https://github.com/transloadit/uppy/issues/1425
 - [ ] @uppy/companion: investigate 423 and 500 issues with React Native + Url plugin when pause/resuming an upload
+- [ ] docs: add docs on locales — how to use from NPM and CDN
 
 ## 1.0 Goals
 
