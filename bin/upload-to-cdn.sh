@@ -34,6 +34,7 @@ __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
 # versionSuffix="-test2"
+versionSuffix=""
 
 function fatal () {
   echo "❌ ${*}";
