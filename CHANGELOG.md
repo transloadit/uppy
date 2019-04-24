@@ -102,6 +102,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] @uppy/companion: investigate 423 and 500 issues with React Native + Url plugin when pause/resuming an upload
 - [ ] docs: add docs on locales — how to use from NPM and CDN
 - [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
+- [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
 
 ## 1.0 Goals
 
