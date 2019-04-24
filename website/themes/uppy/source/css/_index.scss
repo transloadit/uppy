@@ -1,89 +1,102 @@
-.page-index .MainMenu {
-  text-align: center;
+.TransloaditBar {
+  display: none;
+  height: 29px;
+  padding: 0 10px;
+  background: $color-darkblue;
+  color: #fff;
+  font-size: 11px;
+  justify-content: space-between;
+  align-items: center;
 
-  li {
-    margin: 0.3em 0;
+  @media #{$screen-medium} {
+    padding: 0 60px;
+  }
 
-    @media #{$screen-medium} {
-      display: inline-block;
-      position: relative;
-      line-height: 40px;
-      margin: 0;
-    }
+  &-link {
+    color: #fff;
+    font-weight: 700;
 
-    &:last-child .nav-link {
-      margin-right: 0;
+    &:hover {
+      text-decoration: underline;
     }
   }
-}
 
-.page-index .MainLogo {
-  display: none;
-}
+  &-logo {
+    margin-right: 10px;
+  }
 
-.page-index .MainMenu-search {
-  display: none;
+  &-logoImg {
+		display: block;
+	}
+
+  &-about {
+    flex: 1;
+    text-align: right;
+  }
+
+  .page-index & {
+    display: flex;
+  }
 }
 
 .IndexHero {
   text-align: center;
-  position: relative;
-  max-width: 950px;
-  margin: auto;
-  padding: 0 20px;
+  max-width: 640px;
+  margin: 30px auto 40px;
+
+  @media #{$screen-medium} {
+    margin: 80px auto;
+  }
 }
 
 .IndexHero-logo {
-  display: inline-block;
-  vertical-align: middle;
   max-width: 80px;
+  height: auto;
 
   @media #{$screen-medium} {
-    max-width: 130px;
+    max-width: none;
   }
 }
 
 .IndexHero-title {
-  display: inline-block;
-  vertical-align: middle;
-  padding-left: 15px;
-  padding-top: 10px;
-  font-family: $fontFamily-logo;
-  font-weight: 400;
+  font-weight: 700;
   font-size: 2.5em;
-  margin: 0;
-  margin-bottom: 20px;
+  margin: 12px 0;
+  font-size: 36px;
+  line-height: 1.145;
 
   @media #{$screen-medium} {
-    padding-left: 20px;
-    font-size: 3.5em;
+    margin: 16px 0;
+    font-size: 48px;
   }
 }
 
-.IndexHero-tagline {
-  font-size: $fontSize-m;
-  line-height: 1.3;
-  font-weight: normal;
-  text-align: center;
-  margin: 0 auto;
-  margin-top: 10px;
-  margin-bottom: 40px;
-  color: $color-light;
+.IndexHero-description {
+  color: $color-gray;
+  font-size: 18px;
+  line-height: 1.45;
+  margin-bottom: 24px;
 
   @media #{$screen-medium} {
-    font-size: $fontSize-l;
-    line-height: 1.4;
+    font-size: 20px;
+    margin-bottom: 30px;
   }
 }
 
-.IndexHero-taglinePart {
-  transition: all ease-in-out 0.6s;
+.IndexHero-buttons .button {
+  @media #{$screen-medium} {
+    margin-right: 8px;
+  }
+}
+
+.MainHeader-tagline {
+  transition: all ease-in-out 0.3s;
   opacity: 0;
 
   &.is-visible { opacity: 1; }
 }
 
-.IndexHero-taglineList {
+.MainHeader-taglineList {
   display: none;
 }
 
@@ -273,58 +286,116 @@
   margin: auto;
 }
 
+.IndexReviews {
+  max-width: 980px;
+  margin: 110px auto;
+
+  &-list {
+    margin: 0;
+    padding: 0 20px;
+    list-style-type: none;
+
+    @media #{$screen-medium} {
+      margin: 0 -10px;
+      padding: 0;
+      display: flex;
+      height: 100%;
+      justify-content: space-between;
+    }
+  }
+
+  &-item {
+    @media #{$screen-medium} {
+      padding: 0 10px;
+      flex: 1;
+    }
+  }
+
+  &-link {
+    display: block;
+    height: 100%;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px 0 rgba(#333, 0.1);
+    padding: 20px 25px 30px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: $color-dark;
+    font-weight: 700;
+
+    @media #{$screen-medium} {
+      border-radius: 7px;
+      box-shadow: 0 10px 30px 0 rgba(#333, 0.15);
+      font-size: 21px;
+      margin-bottom: 0;
+    }
+  }
+}
+
 .IndexActivity {
-  max-width: 760px;
+  max-width: 900px;
   margin: 3em auto;
   padding: 0 20px;
 
   h2 {
     text-align: center;
+    font-size: 30px;
+
+    @media #{$screen-medium} {
+      font-size: 36px;
+    }
   }
 }
 
-.IndexDesignGoals {
-  padding: 4em 1em;
-  background-color: darken($color-primary, 15%);
-  color: $color-white;
-  overflow: hidden;
-
-  @media #{$screen-medium} {
-    padding: 4em 0;
-  }
+.IndexFeatures {
 
   h2 {
-    margin-top: 0;
-    color: $color-white;
-    font-size: 1.5em;
     text-align: center;
+    font-size: 30px;
+
+    @media #{$screen-medium} {
+      font-size: 36px;
+    }
   }
 
-  ul {
-    line-height: 1.8em;
-    font-size: 1.15em;
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 0;
+  &-list {
+    line-height: 1.35;
+    font-size: 16px;
+    max-width: 900px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
     list-style-type: none;
+
+    @media #{$screen-medium} {
+      margin-bottom: 100px;
+      column-count: 2;
+      column-gap: 40px;
+      font-size: 20px;
+    }
   }
 
-  li {
-    background: svg-load('check.svg', fill=#{$color-white}) left 5px no-repeat;
-    background-size: 24px 24px;
-    padding-left: 40px;
-    margin-bottom: 0.5em;
+  &-list li {
+    padding-left: 0;
+    margin-bottom: 0.8375em;
+    break-inside: avoid;
   }
 }
 
 .IndexFooter {
   text-align: center;
   color: $color-white;
-  padding: 4em 1em;
-  background-color: darken($color-primary, 15%);
+  padding: 2em 1em 3em;
+  font-size: 14px;
+  background-color: $color-darkblue;
+  margin-top: 50px;
 
   @media #{$screen-medium} {
-    padding: 4em 0;
+    margin-top: 100px;
+    padding: 2em 0 3em;
+  }
+
+  &-logo {
+    width: 44px;
+    height: auto;
   }
 
   a {
@@ -332,5 +403,5 @@
     text-decoration: underline;
   }
 
-  p { margin: .3em 0; }
+  p { margin: 1em 0; }
 }
