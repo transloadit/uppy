@@ -8,7 +8,7 @@
 #  - Checks if a tag is being built (on Travis - otherwise opts to continue execution regardless)
 #  - Installs AWS CLI if needed
 #  - Assumed a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
-#  - Runs npm pack, and stores files to e.g. https://transloadit.edgly.net/releases/uppy/v0.30.4/uppy.css
+#  - Runs npm pack, and stores files to e.g. https://transloadit.edgly.net/releases/uppy/v0.30.5/uppy.css
 #  - Uses local package by default, if [version] argument was specified, takes package from npm
 #
 # Run as:
@@ -33,7 +33,8 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
-# versionSuffix="-test2"
+versionSuffix=""
+# versionSuffix="-test3"
 
 function fatal () {
   echo "❌ ${*}";
@@ -83,7 +84,9 @@ pushd "${__root}" > /dev/null 2>&1
   echo "--> Obtain relevant npm files for robodog ${version}${versionSuffix} ... "
   pushd packages/@uppy/robodog
     if [ -z "${remoteVersion}" ]; then
-      npm pack || fatal "Unable to fetch "
+      echo "Warning, writing a local build to the CDN, this is usually not what you want. Sleeping 3s. Press CTRL+C! "
+      sleep 3
+      npm pack
     else
       npm pack "@uppy/robodog@${remoteVersion}"
     fi

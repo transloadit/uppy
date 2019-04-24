@@ -57,8 +57,8 @@ module.exports = class Dashboard extends Plugin {
         importFrom: 'Import from %{name}',
         addingMoreFiles: 'Adding more files',
         addMoreFiles: 'Add more files',
-        dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
-        dashboardTitle: 'Uppy Dashboard',
+        dashboardWindowTitle: 'File Uploader Window (Press escape to close)',
+        dashboardTitle: 'File Uploader',
         copyLinkToClipboardSuccess: 'Link copied to clipboard',
         copyLinkToClipboardFallback: 'Copy the URL below',
         copyLink: 'Copy link',
@@ -104,7 +104,8 @@ module.exports = class Dashboard extends Plugin {
           0: 'Added %{smart_count} file from %{folder}',
           1: 'Added %{smart_count} files from %{folder}',
           2: 'Added %{smart_count} files from %{folder}'
-        }
+        },
+        poweredBy: 'Powered by'
       }
     }
 

@@ -388,8 +388,12 @@ class Uploader {
       }
 
       if (response.statusCode >= 400) {
-        logger.error(`upload failed with status: ${response.statusCode}`, 'upload.multipar.error')
+        logger.error(`upload failed with status: ${response.statusCode}`, 'upload.multipart.error')
         this.emitError(new Error(response.statusMessage), respObj)
+      } else if (bytesUploaded !== this.bytesWritten && bytesUploaded !== this.options.size) {
+        const errMsg = `uploaded only ${bytesUploaded} of ${this.bytesWritten} with status: ${response.statusCode}`
+        logger.error(errMsg, 'upload.multipart.mismatch.error')
+        this.emitError(new Error(errMsg))
       } else {
         this.emitSuccess(null, { response: respObj })
       }
