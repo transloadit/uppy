@@ -92,6 +92,10 @@
     margin-right: 8px;
     margin-bottom: 0;
     display: inline-block;
+
+    &:last-child {
+      margin-right: 0;
+    }
   }
 }
 
