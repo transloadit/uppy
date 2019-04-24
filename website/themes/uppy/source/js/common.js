@@ -200,15 +200,15 @@
 
     // Tabs
     window.addEventListener("load", function () {
-      var tabs = document.querySelectorAll(".Tabs-item");
+      var tabs = document.querySelectorAll(".Tabs-link");
       
       function myTabClicks(tabClickEvent) {
         for (var i = 0; i < tabs.length; i++) {
-          tabs[i].classList.remove("Tabs-item--active");
+          tabs[i].classList.remove("Tabs-link--active");
         }
 
         var clickedTab = tabClickEvent.currentTarget;
-        clickedTab.classList.add("Tabs-item--active");
+        clickedTab.classList.add("Tabs-link--active");
         tabClickEvent.preventDefault();
         
         var myContentPanes = document.querySelectorAll(".TabPane");

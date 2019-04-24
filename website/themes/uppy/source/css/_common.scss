@@ -413,7 +413,7 @@ hr {
     }
   }
 
-  &-item--active .Tabs-link {
+  &-link--active {
     color: $color-dark;
     background-color: $color-codebg;
 
