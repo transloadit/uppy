@@ -108,6 +108,11 @@
     max-width: 720px;
     margin: 0 auto;
   }
+
+  &-uppy {
+    box-shadow: 0 15px 30px 0 rgba(#000, 0.07);
+    border-radius: 4px;
+  }
 }
 
 .MainHeader-tagline {

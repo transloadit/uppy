@@ -381,10 +381,12 @@ hr {
 }
 
 .Tabs {
-  margin: 20px 0;
+  margin: 30px 0;
   padding: 0;
   list-style-type: none;
   text-align: center;
+  // position: relative;
+  // z-index: 100;
 
   &-item {
     display: inline-block;
@@ -412,6 +414,20 @@ hr {
 
     &:hover {
       color: $color-dark;
+    }
+
+    .Tabs-icon path {
+      fill: #f37;
+    }
+  }
+
+  &-icon {
+    display: inline-block;
+    margin-right: 3px;
+    vertical-align: middle;
+
+    path {
+      fill: #777;
     }
   }
 }
