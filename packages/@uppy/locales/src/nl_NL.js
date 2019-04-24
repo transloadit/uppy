@@ -7,6 +7,8 @@ nl_NL.strings = {
   addingMoreFiles: 'Bezig met extra bestanden toe te voegen',
   allowAccessDescription: 'Geef toestemming om foto\'s of videobeelden te kunnen maken.',
   allowAccessTitle: 'Geef toestemming om je camera te gebruiken',
+  authenticateWith: 'Verbinden met %{pluginName}',
+  authenticateWithTitle: 'Verbindt met %{pluginName} om bestanden te selecteren',
   back: 'Terug',
   browse: 'blader',
   cancel: 'Annuleer',
@@ -64,6 +66,7 @@ nl_NL.strings = {
   pause: 'Pauze',
   pauseUpload: 'Pauzeer upload',
   paused: 'Gepauzeerd',
+  poweredBy: 'Mogelijk gemaakt door',
   preparingUpload: 'Upload voorbereiden...',
   processingXFiles: {
     '0': 'Bezig met %{smart_count} bestand te verwerken',
