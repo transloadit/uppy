@@ -346,6 +346,7 @@
     margin: 0;
     padding: 0 20px;
     list-style-type: none;
+    text-align: center;
 
     @media #{$screen-medium} {
       margin: 0 -10px;
@@ -353,6 +354,7 @@
       display: flex;
       height: 100%;
       justify-content: space-between;
+      text-align: left;
     }
   }
 
@@ -384,9 +386,14 @@
 
   &-imgWrapper {
     margin-bottom: 15px;
+    justify-content: center;
     height: 50px;
     display: flex;
     align-items: center;
+
+    @media #{$screen-medium} {
+      justify-content: flex-start;
+    }
   }
 }
 
