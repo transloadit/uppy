@@ -676,7 +676,7 @@ module.exports = class Transloadit extends Plugin {
       const url = err.originalRequest && err.originalRequest.responseURL
         ? err.originalRequest.responseURL
         : null
-      this.client.submitError(err, { url }).then((_) => {
+      this.client.submitError(err, { url, type: 'TUS_ERROR' }).then((_) => {
         // if we can't report the error that sucks
       })
     }

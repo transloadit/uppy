@@ -46,7 +46,7 @@ module.exports = class Client {
       }
 
       return assembly
-    }).catch((err) => this._reportError(err, { url }))
+    }).catch((err) => this._reportError(err, { url, type: 'API_ERROR' }))
   }
 
   /**
@@ -60,7 +60,7 @@ module.exports = class Client {
     const url = `${assembly.assembly_ssl_url}/reserve_file?size=${size}`
     return fetch(url, { method: 'post' })
       .then((response) => response.json())
-      .catch((err) => this._reportError(err, { assembly, file, url }))
+      .catch((err) => this._reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
 
   /**
@@ -82,7 +82,7 @@ module.exports = class Client {
     const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
     return fetch(url, { method: 'post' })
       .then((response) => response.json())
-      .catch((err) => this._reportError(err, { assembly, file, url }))
+      .catch((err) => this._reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
 
   /**
@@ -91,8 +91,10 @@ module.exports = class Client {
    * @param {object} assembly
    */
   cancelAssembly (assembly) {
-    return fetch(assembly.assembly_ssl_url, { method: 'delete' })
+    const url = assembly.assembly_ssl_url
+    return fetch(url, { method: 'delete' })
       .then((response) => response.json())
+      .catch((err) => this._reportError(err, { url, type: 'API_ERROR' }))
   }
 
   /**
@@ -103,7 +105,7 @@ module.exports = class Client {
   getAssemblyStatus (url) {
     return fetch(url)
       .then((response) => response.json())
-      .catch((err) => this._reportError(err, { url }))
+      .catch((err) => this._reportError(err, { url, type: 'STATUS_ERROR' }))
   }
 
   submitError (err, { endpoint, instance, assembly }) {
@@ -123,12 +125,14 @@ module.exports = class Client {
     }).then((response) => response.json())
   }
 
-  _reportError (err, params = {}) {
+  _reportError (err, params) {
     if (this.opts.errorReporting === false) {
       throw err
     }
 
-    const opts = {}
+    const opts = {
+      type: params.type
+    }
     if (params.assembly) {
       opts.assembly = params.assembly.assembly_id
       opts.instance = params.assembly.instance
