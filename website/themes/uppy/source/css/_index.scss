@@ -95,6 +95,21 @@
   }
 }
 
+.IndexDemo {
+  margin: 60px auto;
+  max-width: 900px;
+  padding: 0 20px;
+
+  @media #{$screen-medium} {
+    margin: 100px auto;
+  }
+
+  &-uppyWrapper {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+}
+
 .MainHeader-tagline {
   transition: all ease-in-out 0.3s;
   opacity: 0;
@@ -293,7 +308,7 @@
 }
 
 .IndexReviews {
-  max-width: 980px;
+  max-width: 920px;
   margin: 60px auto;
 
   @media #{$screen-medium} {

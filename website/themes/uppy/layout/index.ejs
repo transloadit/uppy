@@ -12,8 +12,22 @@
   </div>
 </section>
 
-<section class="IndexDemo" style="text-align: center; margin: 180px 0;">
-  [demo]
+<section class="IndexDemo">
+  <div class="IndexDemo-uppyWrapper">
+    <div id="demo"></div>
+  </div>
+
+  <ul class="Tabs">
+    <li class="Tabs-item">
+      <a class="Tabs-link Tabs-link--active" href="#">Live demo</a>
+    </li>
+    <li class="Tabs-item">
+      <a class="Tabs-link" href="#">Video</a>
+    </li>
+    <li class="Tabs-item">
+      <a class="Tabs-link" href="#">Code</a>
+    </li>
+  </ul>
 </section>
 
 <!-- <section id="example" class="IndexExample">
@@ -118,7 +132,8 @@
   var uppy = Uppy.Core({ debug: true, autoProceed: false })
     .use(Uppy.Dashboard, {
       trigger: '#select-files',
-      target: '#upload-form',
+      target: '#demo',
+      inline: true,
       replaceTargetContent: true,
       metaFields: [
         { id: 'license', name: 'License', placeholder: 'specify license' },

@@ -380,6 +380,42 @@ hr {
   }
 }
 
+.Tabs {
+  margin: 20px 0;
+  padding: 0;
+  list-style-type: none;
+  text-align: center;
+
+  &-item {
+    display: inline-block;
+    margin: 0 2px;
+    padding: 0;
+  }
+
+  &-link {
+    display: inline-block;
+    font-size: 18px;
+    border-radius: 5px;
+    padding: 9px 15px;
+    font-weight: 700;
+    color: $color-light;
+
+    &:hover {
+      color: $color-gray;
+      background-color: $color-codebg;
+    }
+  }
+
+  &-link--active {
+    color: $color-dark;
+    background-color: $color-codebg;
+
+    &:hover {
+      color: $color-dark;
+    }
+  }
+}
+
 /**
 * BuildBadge
 */
