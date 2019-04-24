@@ -223,14 +223,14 @@ There are no `on*()` _options_ anymore, but `.on('...')` methods are provided in
 
 | jQuery SDK option | Robodog Event |
 |---------------|--------------------------|
-| `onStart` | `.on('transloadit:assembly-created')` |
-| `onExecuting` | `.on('transloadit:assembly-executing')` |
-| `onFileSelect` | `.on('file-added')` |
-| `onProgress` | `.on('upload-progress` |
-| `onUpload` | `.on('transloadit:upload')` |
-| `onResult` | `.on('transloadit:result')` |
-| `onCancel` | `.on('transloadit:cancel')` or `.on('file-cancel')` for individual files |
-| `onError` | `.on('error')` |
-| `onSuccess` | `.on('transloadit:complete')` |
+| `onStart` | `.on('transloadit:assembly-created', (assembly) => {})` |
+| `onExecuting` | `.on('transloadit:assembly-executing', (assembly) => {})` |
+| `onFileSelect` | `.on('file-added', (file) => {})` |
+| `onProgress` | `.on('progress`, (percentage) => {})) for total upload progress taking all files into account.<br />`.on('upload-progress', (file, progress) => {})` for file-specific upload progress. |
+| `onUpload` | `.on('transloadit:upload', (file) => {}))` |
+| `onResult` | `.on('transloadit:result', (stepName, resultFile) => {}))` |
+| `onCancel` | `.on('transloadit:cancel', (assembly) => {}))`<br />or `.on('file-removed', (file) => {})` for individual files |
+| `onError` | `.on('error', (error) => {})` <br /><br />The error object might contain an `.assembly` property with an Assembly status for errors that happened during the execution of the Assembly. |
+| `onSuccess` | `.on('transloadit:complete', (assembly) => {})` |
 | `onDisconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
 | `onReconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
