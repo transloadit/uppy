@@ -372,7 +372,12 @@ module.exports = class XHRUpload extends Plugin {
       const formData = new FormData()
       files.forEach((file, i) => {
         const opts = this.getOptions(file)
-        formData.append(opts.fieldName, file.data)
+        
+        if (file.name) {
+          formData.append(opts.fieldName, file.data, file.name)
+        } else {
+          formData.append(opts.fieldName, file.data)
+        }
       })
 
       const xhr = new XMLHttpRequest()
