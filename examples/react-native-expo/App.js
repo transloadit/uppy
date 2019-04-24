@@ -13,6 +13,7 @@ import FileList from './FileList'
 import PauseResumeButton from './PauseResumeButton'
 import ProgressBar from './ProgressBar'
 import SelectFiles from './SelectFilesButton'
+import getTusFileReader from './tusFileReader'
 
 export default class App extends React.Component {
   constructor () {
@@ -43,8 +44,9 @@ export default class App extends React.Component {
     this.uppy = Uppy({ autoProceed: true, debug: true })
     this.uppy.use(Tus, {
       endpoint: 'https://master.tus.io/files/',
-      urlStorage: AsyncStorage
-      // fingerprint: customFingerprint
+      urlStorage: AsyncStorage,
+      fileReader: getTusFileReader,
+      chunkSize: 10 * 1024 * 1024 // keep the chunk size small to avoid memory exhaustion
     })
     this.uppy.on('upload-progress', (file, progress) => {
       this.setState({
