@@ -197,37 +197,35 @@
   }
 
   function IndexPage () {
-
     // Tabs
-    window.addEventListener("load", function () {
-      var tabs = document.querySelectorAll(".Tabs-link");
-      
-      function myTabClicks(tabClickEvent) {
+    window.addEventListener('load', function () {
+      var tabs = document.querySelectorAll('.Tabs-link')
+
+      function myTabClicks (tabClickEvent) {
         for (var i = 0; i < tabs.length; i++) {
-          tabs[i].classList.remove("Tabs-link--active");
+          tabs[i].classList.remove('Tabs-link--active')
         }
 
-        var clickedTab = tabClickEvent.currentTarget;
-        clickedTab.classList.add("Tabs-link--active");
-        tabClickEvent.preventDefault();
-        
-        var myContentPanes = document.querySelectorAll(".TabPane");
-        
+        var clickedTab = tabClickEvent.currentTarget
+        clickedTab.classList.add('Tabs-link--active')
+        tabClickEvent.preventDefault()
+
+        var myContentPanes = document.querySelectorAll('.TabPane')
+
         for (i = 0; i < myContentPanes.length; i++) {
-          myContentPanes[i].classList.remove("TabPane--active");
+          myContentPanes[i].classList.remove('TabPane--active')
         }
-        
-        var anchorReference = tabClickEvent.target;
-        var activePaneId = anchorReference.getAttribute("href");
-        var activePane = document.querySelector(activePaneId);
-        activePane.classList.add("TabPane--active");
+
+        var anchorReference = tabClickEvent.target
+        var activePaneId = anchorReference.getAttribute('href')
+        var activePane = document.querySelector(activePaneId)
+        activePane.classList.add('TabPane--active')
       }
 
-      for (i = 0; i < tabs.length; i++) {
-        tabs[i].addEventListener("click", myTabClicks)
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].addEventListener('click', myTabClicks)
       }
-    });
-
+    })
 
     var tagline = document.querySelector('.MainHeader-tagline')
     var taglinePart = document.querySelector('.MainHeader-taglinePart')
