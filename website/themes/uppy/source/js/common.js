@@ -209,6 +209,7 @@
         var clickedTab = tabClickEvent.currentTarget
         clickedTab.classList.add('Tabs-link--active')
         tabClickEvent.preventDefault()
+        tabClickEvent.stopPropagation()
 
         var myContentPanes = document.querySelectorAll('.TabPane')
 
@@ -216,7 +217,9 @@
           myContentPanes[i].classList.remove('TabPane--active')
         }
 
-        var anchorReference = tabClickEvent.target
+        // storing reference to event.currentTarget, otherwise we get
+        // all the children like SVGs, instead of our target — the link element
+        var anchorReference = tabClickEvent.currentTarget
         var activePaneId = anchorReference.getAttribute('href')
         var activePane = document.querySelector(activePaneId)
         activePane.classList.add('TabPane--active')
