@@ -9,13 +9,11 @@
 .Sidebar {
   position: fixed;
   background-color: #f9f9f9;
-  // width: 280px;
   height: 100%;
   top: 0;
   right: 0;
   left: 0;
   padding: 80px 30px 20px;
-  // box-shadow: 0 0 10px rgba(0,0,0,.2);
   transition: all .4s cubic-bezier(0.4, 0, 0, 1);
   transform: translate(-100%, 0);
   z-index: 10;
@@ -34,6 +32,8 @@
     // position: absolute;
     top: 0;
     left: 0;
+    right: auto;
+    width: 280px;
     // bottom: 0;
     // padding: 2.2em 0;
     padding-top: 95px;
