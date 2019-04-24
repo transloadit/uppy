@@ -31,6 +31,5 @@ Plugins are what makes Uppy useful: they help select, manipulate and upload file
   - [@uppy/transloadit](/docs/transloadit) — manipulate and transcode uploaded files using the [transloadit.com](https://transloadit.com) service
 - **Miscellaneous:**
   - [@uppy/form](/docs/form) — collect metadata from `<form>` right before the Uppy upload, then optionally append results back to the form
-  <!-- TODO document? -->
-  - @uppy/thumbnail-generator — generate preview thumbnails for images to be uploaded [documentation not yet available]
+  - [@uppy/thumbnail-generator](/docs/thumbnail-generator) — generate preview thumbnails for images to be uploaded
   - [@uppy/golden-retriever](/docs/golden-retriever) — restore files and continue uploading after a page refresh or a browser crash

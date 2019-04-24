@@ -53,7 +53,9 @@ class Uppy {
         logOut: 'Log out',
         filter: 'Filter',
         resetFilter: 'Reset filter',
-        loading: 'Loading...'
+        loading: 'Loading...',
+        authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
+        authenticateWith: 'Connect to %{pluginName}'
       }
     }
 
@@ -83,6 +85,7 @@ class Uppy {
     this.translator = new Translator([ this.defaultLocale, this.opts.locale ])
     this.locale = this.translator.locale
     this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
 
     // Container for different types of plugins
     this.plugins = {}

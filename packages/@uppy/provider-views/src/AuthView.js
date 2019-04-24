@@ -9,16 +9,21 @@ class AuthBlock extends Component {
   }
 
   render () {
+    const pluginNameComponent = (
+      <span class="uppy-Provider-authTitleName">{this.props.pluginName}<br /></span>
+    )
     return <div class="uppy-Provider-auth">
       <div class="uppy-Provider-authIcon">{this.props.pluginIcon()}</div>
-      <h1 class="uppy-Provider-authTitle">Please authenticate with <span class="uppy-Provider-authTitleName">{this.props.pluginName}</span><br /> to select files</h1>
+      <div class="uppy-Provider-authTitle">
+        {this.props.i18nArray('authenticateWithTitle', { pluginName: pluginNameComponent })}
+      </div>
       <button
         type="button"
         class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn"
         onclick={this.props.handleAuth}
         ref={(el) => { this.connectButton = el }}
       >
-        Connect to {this.props.pluginName}
+        {this.props.i18nArray('authenticateWith', { pluginName: this.props.pluginName })}
       </button>
       {this.props.demo &&
         <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn" onclick={this.props.handleDemoAuth}>Proceed with Demo Account</button>

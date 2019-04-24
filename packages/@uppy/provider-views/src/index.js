@@ -536,7 +536,9 @@ module.exports = class ProviderView {
             pluginIcon={this.plugin.icon}
             demo={this.plugin.opts.demo}
             handleAuth={this.handleAuth}
-            handleDemoAuth={this.handleDemoAuth} />
+            handleDemoAuth={this.handleDemoAuth}
+            i18n={this.plugin.uppy.i18n}
+            i18nArray={this.plugin.uppy.i18nArray} />
         </CloseWrapper>
       )
     }

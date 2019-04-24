@@ -105,6 +105,7 @@ $(selector).transloadit({
 ```html
 <!-- The new Robodog way! -->
 <script src="//transloadit.edgly.net/releases/uppy/v0.30.5/robodog.min.js"></script>
+
 <script>
 window.Robodog.form(selector, {
   ...options
@@ -112,11 +113,87 @@ window.Robodog.form(selector, {
 </script>
 ```
 
+Make sure to also include the Uppy css file in your `<head>` tag in case you want to use the `modal: true` option:
+```html
+<head>
+  <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v0.30.5/robodog.min.css">
+</head>
+```
+
+Here is a full copy-pasteable code sample with all updated options and event names and how to use them. Please refer to the explanations below the code sample for details.
+Notice how the form is submitted to the inexistant `/uploads` route once all transcoding is finished. Please do not forget to add your Transloadit auth key to
+`window.YOUR_TRANSLOADIT_AUTH_KEY`.
+
+```js
+<html>
+  <head>
+    <title>Testing Robodog</title>
+    <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v0.30.5/robodog.min.css">
+  </head>
+  <body>
+    <form id="upload-form" action="/uploads" enctype="multipart/form-data" method="POST">
+      <input type="file" name="my_file" multiple="multiple" />
+      <input type="text" name="album_id" value="my_album_id" placeholder="Album ID" />
+      <input type="text" name="song_id" value="my_song_id" placeholder="Song ID" />
+      <button type="submit">Upload</button>
+    </form>
+
+    <script src="https://transloadit.edgly.net/releases/uppy/v0.30.5/robodog.min.js"></script>
+    <script type="text/javascript">
+    window.Robodog.form('#upload-form', {
+      waitForEncoding: true,
+      waitForMetadata: true,
+
+      modal: true,
+
+      alwaysRunAssembly: true,
+      submitOnSuccess: true,
+      autoProceed: true,
+
+      fields: ['album_id'],
+      params: {
+        auth: { key: window.YOUR_TRANSLOADIT_AUTH_KEY },
+        steps: {
+          resize_to_75: {
+            robot: "/image/resize",
+            use: ":original",
+            width: 75,
+            height: 75
+          }
+        }
+      }
+    })
+    .on('transloadit:assembly-created', (assembly) => {
+      console.log(">>> onStart", assembly);
+    })
+    .on('upload-progress', (bytesIn, totalBytes) => {
+      console.log(">>> onProgress", bytesIn, totalBytes);
+    })
+    .on('transloadit:complete', (assembly) => {
+      console.log('>> onSuccess: Assembly finished successfully with', assembly.ok);
+    })
+    .on('transloadit:assembly-executing', () => {
+      console.log('>> Uploading finished!');
+    })
+    .on('transloadit:upload', (uploadedFile) => {
+      console.log('>> Upload added', uploadedFile);
+    })
+    .on('transloadit:result', (stepName, result) => {
+      console.log('>> Result added', stepName, result);
+    })
+    .on('error', (error) => {
+      console.log('>> Assembly got an error:', error);
+    });
+    </script>
+  </body>
+</html>
+```
+
 The equivalent options are listed below.
 
 ### Options
 
-| jQuery option | Robodog option |
+| jQuery SDK option | Robodog option |
 |---------------|---------------------------|
 | `service` | `service` |
 | `region` | Not supported, instead set the `service` option to `https://api2-regionname.transloadit.com` |
@@ -124,7 +201,7 @@ The equivalent options are listed below.
 | `requireUploadMetadata: true` | `waitForMetadata: true` |
 | `params` | `params` |
 | `signature` | `signature` |
-| `modal` | Currently unavailable |
+| `modal` | `modal` |
 | `autoSubmit` | `submitOnSuccess` |
 | `triggerUploadOnFileSelection` | `autoProceed: true` |
 | `processZeroFiles` | `alwaysRunAssembly` |
@@ -137,24 +214,23 @@ The equivalent options are listed below.
 
 As for the options that are unavailable:
 
-- `modal` will be added in the future.
 - `exclude` is intended to exclude certain `<input type="file">` inputs from Transloadit processing. It will likely not be added, but we'll perhaps have a `include` CSS selector option instead.
 - `debug` will not be added.
 
 ### Events
 
-The `transloadit.form()` method returns an Uppy object, so you can listen to events there. There are no `on*()` _options_ anymore, but an `.on('*')` method is provided instead.
+There are no `on*()` _options_ anymore, but `.on('...')` methods are provided instead on the Uppy object that is returned by `window.Robodog.form()`.
 
-| jQuery option | Robodog Event |
+| jQuery SDK option | Robodog Event |
 |---------------|--------------------------|
-| `onStart` | `onAssemblyCreated` |
-| `onExecuting` | `onAssemblyExecuting` |
-| `onFileSelect` | `onFileAdded` |
-| `onProgress` | `onProgress` |
-| `onUpload` | `onUpload` |
-| `onResult` | `onResult` |
-| `onCancel` | `onCancel` (or `onFileCancel` for individual files) |
-| `onError` | `onError` |
-| `onSuccess` | `onComplete` |
+| `onStart` | `.on('transloadit:assembly-created')` |
+| `onExecuting` | `.on('transloadit:assembly-executing')` |
+| `onFileSelect` | `.on('file-added')` |
+| `onProgress` | `.on('upload-progress` |
+| `onUpload` | `.on('transloadit:upload')` |
+| `onResult` | `.on('transloadit:result')` |
+| `onCancel` | `.on('transloadit:cancel')` or `.on('file-cancel')` for individual files |
+| `onError` | `.on('error')` |
+| `onSuccess` | `.on('transloadit:complete')` |
 | `onDisconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
 | `onReconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |

@@ -7,6 +7,8 @@ en_US.strings = {
   addingMoreFiles: 'Adding more files',
   allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
   allowAccessTitle: 'Please allow access to your camera',
+  authenticateWith: 'Connect to %{pluginName}',
+  authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
   back: 'Back',
   browse: 'browse',
   cancel: 'Cancel',
@@ -64,6 +66,7 @@ en_US.strings = {
   pause: 'Pause',
   pauseUpload: 'Pause upload',
   paused: 'Paused',
+  poweredBy: 'Powered by',
   preparingUpload: 'Preparing upload...',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',
