@@ -381,6 +381,13 @@
       margin-bottom: 0;
     }
   }
+
+  &-imgWrapper {
+    margin-bottom: 15px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+  }
 }
 
 .IndexActivity {
