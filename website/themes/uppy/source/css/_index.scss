@@ -85,8 +85,13 @@
 }
 
 .IndexHero-buttons .button {
+  margin-bottom: 10px;
+  display: block;
+
   @media #{$screen-medium} {
     margin-right: 8px;
+    margin-bottom: 0;
+    display: inline-block;
   }
 }
 
@@ -289,7 +294,11 @@
 
 .IndexReviews {
   max-width: 980px;
-  margin: 110px auto;
+  margin: 60px auto;
+
+  @media #{$screen-medium} {
+    margin: 110px auto;
+  }
 
   &-list {
     margin: 0;

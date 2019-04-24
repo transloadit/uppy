@@ -58,6 +58,7 @@ a.Stats-package {
       display: block;
       margin-bottom: 5px;
       color: $color-light;
+      text-decoration: none;
 
       @media #{$screen-medium} {
         display: inline;
