@@ -24,11 +24,19 @@
     </div> <!-- /live-demo -->
     
     <div class="TabPane" id="video">
-      [video]
+      <div class="IndexDemo-video">
+        <video autoplay loop muted playsinline>
+          <source src="/images/uppy-demo-oct-2018.mp4" type="video/mp4">
+          Your browser does not support the video tag, you can <a href="/images/uppy-demo-oct-2018.mp4">download the video</a>
+          to watch it.
+        </video>
+      </div>
     </div> <!-- /video -->
 
     <div class="TabPane" id="code">
-      [code]
+      <div class="IndexDemo-code">
+        <%- partial('partials/frontpage-code-sample') %>
+      </div>
     </div> <!-- /code -->
   </div>
 
