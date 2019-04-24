@@ -471,6 +471,7 @@ module.exports = class Transloadit extends Plugin {
       this._onFileUploadComplete(id, file)
     })
     assembly.on('error', (error) => {
+      error.assembly = assembly.status
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
 
@@ -610,7 +611,7 @@ module.exports = class Transloadit extends Plugin {
       return Promise.resolve()
     }
 
-    // AssemblyWatcher tracks completion state of all Assemblies in this upload.
+    // AssemblyWatcher tracks completion states of all Assemblies in this upload.
     const watcher = new AssemblyWatcher(this.uppy, assemblyIDs)
 
     fileIDs.forEach((fileID) => {
