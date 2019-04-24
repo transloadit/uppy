@@ -111,6 +111,8 @@ hr {
   padding: .6em .6em;
   line-height: 1.1;
   border-radius: $size-radius;
+  margin-right: 0;
+  margin-left: 0;
 
   figcaption {
     display: none;
@@ -131,7 +133,7 @@ hr {
   .gutter { width: 1.5em; }
 
   .code {
-    font-size: 10px;
+    font-size: 12px;
     @media #{$screen-medium} {
       font-size: 15px;
     }
