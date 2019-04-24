@@ -107,15 +107,18 @@ module.exports = class Client {
   }
 
   submitError (err, { endpoint, instance, assembly }) {
+    const message = err.details
+      ? `${err.message} (${err.details})`
+      : err.message
+
     return fetch('https://status.transloadit.com/client_error', {
       method: 'post',
       body: JSON.stringify({
         endpoint,
         instance,
         assembly_id: assembly,
-        ip: null, // can't this just be done by statuspage?
         agent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
-        error: err.message
+        error: message
       })
     }).then((response) => response.json())
   }
