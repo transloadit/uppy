@@ -113,6 +113,10 @@
   &-code {
     max-width: 700px;
     margin: 0 auto;
+
+    @media #{$screen-medium} {
+      min-height: 560px;
+    }
   }
 
   &-uppy {
@@ -120,6 +124,18 @@
     border-radius: 4px;
   }
 }
+
+// We aim for the equal height for the tabs
+// The following code makes the JS code background 100% tall
+.IndexDemo-code {
+  display: flex;
+  flex-direction: column;
+
+  .js {
+    flex: 1;
+  }
+}
+
 
 .MainHeader-tagline {
   transition: all ease-in-out 0.3s;
