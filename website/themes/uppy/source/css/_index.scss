@@ -63,7 +63,7 @@
   font-weight: 700;
   font-size: 2.5em;
   margin: 12px 0;
-  font-size: 27px;
+  font-size: 24px;
   line-height: 1.145;
 
   @media #{$screen-medium} {
@@ -74,7 +74,7 @@
 
 .IndexHero-description {
   color: $color-gray;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.45;
   margin-bottom: 24px;
 
@@ -101,7 +101,7 @@
   padding: 0 20px;
 
   @media #{$screen-medium} {
-    margin: 100px auto;
+    margin: 100px auto 120px;
   }
 
   &-uppyWrapper {
@@ -377,6 +377,11 @@
 }
 
 .IndexFeatures {
+  margin: 60px auto;
+
+  @media #{$screen-medium} {
+    margin: 100px auto;
+  }
 
   h2 {
     text-align: center;

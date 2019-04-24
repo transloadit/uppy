@@ -396,11 +396,16 @@ hr {
 
   &-link {
     display: inline-block;
-    font-size: 18px;
+    font-size: 14px;
     border-radius: 5px;
-    padding: 9px 15px;
+    padding: 7px 7px 6px;
     font-weight: 700;
     color: $color-light;
+
+    @media #{$screen-medium} {
+      font-size: 18px;
+      padding: 9px 15px 8px;
+    }
 
     &:hover {
       color: $color-gray;
@@ -408,7 +413,7 @@ hr {
     }
   }
 
-  &-link--active {
+  &-item--active .Tabs-link {
     color: $color-dark;
     background-color: $color-codebg;
 
@@ -429,6 +434,14 @@ hr {
     path {
       fill: #777;
     }
+  }
+}
+
+.TabPane {
+  display: none;
+
+  &--active {
+    display: block;
   }
 }
 

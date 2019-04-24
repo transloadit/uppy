@@ -197,6 +197,38 @@
   }
 
   function IndexPage () {
+
+    // Tabs
+    window.addEventListener("load", function () {
+      var tabs = document.querySelectorAll(".Tabs-item");
+      
+      function myTabClicks(tabClickEvent) {
+        for (var i = 0; i < tabs.length; i++) {
+          tabs[i].classList.remove("Tabs-item--active");
+        }
+
+        var clickedTab = tabClickEvent.currentTarget;
+        clickedTab.classList.add("Tabs-item--active");
+        tabClickEvent.preventDefault();
+        
+        var myContentPanes = document.querySelectorAll(".TabPane");
+        
+        for (i = 0; i < myContentPanes.length; i++) {
+          myContentPanes[i].classList.remove("TabPane--active");
+        }
+        
+        var anchorReference = tabClickEvent.target;
+        var activePaneId = anchorReference.getAttribute("href");
+        var activePane = document.querySelector(activePaneId);
+        activePane.classList.add("TabPane--active");
+      }
+
+      for (i = 0; i < tabs.length; i++) {
+        tabs[i].addEventListener("click", myTabClicks)
+      }
+    });
+
+
     var tagline = document.querySelector('.MainHeader-tagline')
     var taglinePart = document.querySelector('.MainHeader-taglinePart')
     var taglineList = document.querySelector('.MainHeader-taglineList')
