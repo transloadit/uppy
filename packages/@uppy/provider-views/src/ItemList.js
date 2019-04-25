@@ -1,5 +1,17 @@
-const Row = require('./Item')
 const { h } = require('preact')
+const Item = require('./Item/index')
+
+const getSharedProps = (fileOrFolder, props) => ({
+  id: fileOrFolder.id,
+  title: fileOrFolder.name,
+  getItemIcon: () => fileOrFolder.icon,
+  isChecked: props.isChecked(fileOrFolder),
+
+  toggleCheckbox: (e) => props.toggleCheckbox(e, fileOrFolder),
+  columns: props.columns,
+  showTitles: props.showTitles,
+  viewType: props.viewType
+})
 
 module.exports = (props) => {
   if (!props.folders.length && !props.files.length) {
@@ -12,40 +24,21 @@ module.exports = (props) => {
         onscroll={props.handleScroll}
         role="listbox"
         aria-label={`List of files from ${props.title}`}>
-        {props.folders.map(folder => {
-          let isDisabled = false
-          let isChecked = props.isChecked(folder)
-          if (isChecked) {
-            isDisabled = isChecked.loading
-          }
-          return Row({
-            title: folder.name,
-            id: folder.id,
+        {props.folders.map(folder =>
+          Item({
+            ...getSharedProps(folder, props),
             type: 'folder',
-            // active: props.activeRow(folder),
-            getItemIcon: () => folder.icon,
-            isDisabled: isDisabled,
-            isChecked: isChecked,
-            handleFolderClick: () => props.handleFolderClick(folder),
-            handleClick: (e) => props.toggleCheckbox(e, folder),
-            columns: props.columns,
-            showTitles: props.showTitles
+            isDisabled: props.isChecked(folder) ? props.isChecked(folder).loading : false,
+            handleFolderClick: () => props.handleFolderClick(folder)
           })
-        })}
-        {props.files.map(file => {
-          return Row({
-            title: file.name,
-            id: file.id,
+        )}
+        {props.files.map(file =>
+          Item({
+            ...getSharedProps(file, props),
             type: 'file',
-            // active: props.activeRow(file),
-            getItemIcon: () => file.icon,
-            isDisabled: false,
-            isChecked: props.isChecked(file),
-            handleClick: (e) => props.toggleCheckbox(e, file),
-            columns: props.columns,
-            showTitles: props.showTitles
+            isDisabled: false
           })
-        })}
+        )}
       </ul>
     </div>
   )

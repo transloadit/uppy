@@ -1,0 +1,41 @@
+// ***
+// View type: list
+// ***
+.uppy-ProviderBrowser-viewType--list {
+  background-color: $white;
+
+  li.uppy-ProviderBrowserItem {
+    display: flex;
+    padding: 7px 15px;
+    margin: 0;
+
+    // checkbox
+    > .uppy-ProviderBrowserItem-fakeCheckbox {
+      vertical-align: middle;
+      display: inline-block;
+      margin-right: 30px;
+      &::before {
+        border-color: $gray-300;
+      }
+      &.uppy-ProviderBrowserItem-fakeCheckbox--is-checked::before {
+        border-color: $blue;
+      }
+    }
+
+    // and either a <label/> for a file,
+    // or a button we can click on for a folder
+    > .uppy-ProviderBrowserItem-inner {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      text-align: left;
+      line-height: 1.4;
+      img, svg {
+        vertical-align: middle;
+        margin-right: 8px;
+        max-width: 20px;
+        max-height: 20px;
+      }
+    }
+  }
+}

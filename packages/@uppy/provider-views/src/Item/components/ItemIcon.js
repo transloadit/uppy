@@ -1,9 +1,9 @@
 const { h } = require('preact')
 
-function mapStringToIcon (string) {
-  if (string === null) return
+module.exports = (props) => {
+  if (props.itemIconString === null) return
 
-  switch (string) {
+  switch (props.itemIconString) {
     case 'file':
       return <svg aria-hidden="true" class="UppyIcon" width={11} height={14.5} viewBox="0 0 44 58">
         <path d="M27.437.517a1 1 0 0 0-.094.03H4.25C2.037.548.217 2.368.217 4.58v48.405c0 2.212 1.82 4.03 4.03 4.03H39.03c2.21 0 4.03-1.818 4.03-4.03V15.61a1 1 0 0 0-.03-.28 1 1 0 0 0 0-.093 1 1 0 0 0-.03-.032 1 1 0 0 0 0-.03 1 1 0 0 0-.032-.063 1 1 0 0 0-.03-.063 1 1 0 0 0-.032 0 1 1 0 0 0-.03-.063 1 1 0 0 0-.032-.03 1 1 0 0 0-.03-.063 1 1 0 0 0-.063-.062l-14.593-14a1 1 0 0 0-.062-.062A1 1 0 0 0 28 .708a1 1 0 0 0-.374-.157 1 1 0 0 0-.156 0 1 1 0 0 0-.03-.03l-.003-.003zM4.25 2.547h22.218v9.97c0 2.21 1.82 4.03 4.03 4.03h10.564v36.438a2.02 2.02 0 0 1-2.032 2.032H4.25c-1.13 0-2.032-.9-2.032-2.032V4.58c0-1.13.902-2.032 2.03-2.032zm24.218 1.345l10.375 9.937.75.718H30.5c-1.13 0-2.032-.9-2.032-2.03V3.89z" />
@@ -17,56 +17,6 @@ function mapStringToIcon (string) {
         <path d="M36.537 28.156l-11-7a1.005 1.005 0 0 0-1.02-.033C24.2 21.3 24 21.635 24 22v14a1 1 0 0 0 1.537.844l11-7a1.002 1.002 0 0 0 0-1.688zM26 34.18V23.82L34.137 29 26 34.18z" /><path d="M57 6H1a1 1 0 0 0-1 1v44a1 1 0 0 0 1 1h56a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1zM10 28H2v-9h8v9zm-8 2h8v9H2v-9zm10 10V8h34v42H12V40zm44-12h-8v-9h8v9zm-8 2h8v9h-8v-9zm8-22v9h-8V8h8zM2 8h8v9H2V8zm0 42v-9h8v9H2zm54 0h-8v-9h8v9z" />
       </svg>
     default:
-      return <img src={string} />
+      return <img src={props.itemIconString} />
   }
-}
-
-module.exports = (props) => {
-  const stop = (ev) => {
-    if (ev.keyCode === 13) {
-      ev.stopPropagation()
-      ev.preventDefault()
-    }
-  }
-
-  const handleItemClick = (ev) => {
-    ev.preventDefault()
-    // when file is clicked, select it, but when folder is clicked, open it
-    if (props.type === 'folder') {
-      return props.handleFolderClick(ev)
-    }
-    props.handleClick(ev)
-  }
-
-  const itemIcon = props.getItemIcon()
-
-  return (
-    <li class={'uppy-ProviderBrowserItem' + (props.isChecked ? ' uppy-ProviderBrowserItem--selected' : '') + (itemIcon === 'video' ? ' uppy-ProviderBrowserItem--noPreview' : '')}>
-      <div class="uppy-ProviderBrowserItem-checkbox">
-        <input type="checkbox"
-          role="option"
-          tabindex={0}
-          aria-label={`Select ${props.title}`}
-          id={props.id}
-          checked={props.isChecked}
-          disabled={props.isDisabled}
-          onchange={props.handleClick}
-          onkeyup={stop}
-          onkeydown={stop}
-          onkeypress={stop} />
-        <label
-          for={props.id}
-          onclick={props.handleClick}
-         />
-      </div>
-      <button type="button"
-        class="uppy-u-reset uppy-ProviderBrowserItem-inner"
-        aria-label={`Select ${props.title}`}
-        tabindex={0}
-        onclick={handleItemClick}>
-        {mapStringToIcon(props.getItemIcon())}
-        {props.showTitles && props.title}
-      </button>
-    </li>
-  )
 }
