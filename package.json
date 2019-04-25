@@ -40,6 +40,7 @@
     "eslint-plugin-jest": "^21.27.2",
     "eslint-plugin-node": "^4.2.3",
     "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-standard": "^3.1.0",
     "exorcist": "^1.0.1",
     "fakefile": "0.0.9",

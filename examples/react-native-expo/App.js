@@ -150,10 +150,10 @@ export default class App extends React.Component {
           uploadComplete={this.state.uploadComplete} />
 
         <UppyFilePicker
-          show={this.state.isFilePickerVisible}
           uppy={this.uppy}
+          show={this.state.isFilePickerVisible}
           onRequestClose={this.hideFilePicker}
-          serverUrl="http://localhost:3020" />
+          companionUrl="http://localhost:3020" />
 
         <FileList uppy={this.uppy} />
 
