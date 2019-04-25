@@ -249,7 +249,10 @@ class Uploader {
       return
     }
 
-    const bytesTotal = this.streamsEnded ? this.bytesWritten : this.options.size
+    let bytesTotal = this.streamsEnded ? this.bytesWritten : this.options.size
+    if (!this.streamsEnded) {
+      bytesTotal = Math.max(bytesTotal, this.bytesWritten)
+    }
     bytesUploaded = bytesUploaded || 0
     // for a 10MB file, 10MB of download will account for 5MB upload progress
     // and 10MB of actual upload will account for the other 5MB upload progress.
