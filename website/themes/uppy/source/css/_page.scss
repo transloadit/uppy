@@ -9,14 +9,13 @@
 .Sidebar {
   position: fixed;
   background-color: #f9f9f9;
-  width: 280px;
   height: 100%;
   top: 0;
+  right: 0;
   left: 0;
-  padding: 60px 30px 20px;
-  box-shadow: 0 0 10px rgba(0,0,0,.2);
+  padding: 80px 30px 20px;
   transition: all .4s cubic-bezier(0.4, 0, 0, 1);
-  transform: translate(-280px, 0);
+  transform: translate(-100%, 0);
   z-index: 10;
   overflow-y: scroll;
 
@@ -33,6 +32,8 @@
     // position: absolute;
     top: 0;
     left: 0;
+    right: auto;
+    width: 280px;
     // bottom: 0;
     // padding: 2.2em 0;
     padding-top: 95px;
@@ -64,6 +65,10 @@
 
   li {
     margin-bottom: 0.6em;
+  }
+
+  a {
+    color: $color-darkgray;
   }
 
   .menu-root {
@@ -222,8 +227,8 @@
   .post h2,
   > h2 {
     font-size: 1.3em;
-    margin: 1.6em 0 .4em 0;
-    padding-bottom: .2em;
+    margin: 0.5em 0 .4em 0;
+    // padding-bottom: .2em;
     // position: relative;
     // border-bottom: 1px solid $color-border;
 

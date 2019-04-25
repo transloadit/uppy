@@ -197,8 +197,42 @@
   }
 
   function IndexPage () {
-    var taglinePart = document.querySelector('.js-IndexHero-taglinePart')
-    var taglineList = document.querySelector('.js-IndexHero-taglineList')
+    // Tabs
+    window.addEventListener('load', function () {
+      var tabs = document.querySelectorAll('.Tabs-link')
+
+      function myTabClicks (tabClickEvent) {
+        for (var i = 0; i < tabs.length; i++) {
+          tabs[i].classList.remove('Tabs-link--active')
+        }
+
+        var clickedTab = tabClickEvent.currentTarget
+        clickedTab.classList.add('Tabs-link--active')
+        tabClickEvent.preventDefault()
+        tabClickEvent.stopPropagation()
+
+        var myContentPanes = document.querySelectorAll('.TabPane')
+
+        for (i = 0; i < myContentPanes.length; i++) {
+          myContentPanes[i].classList.remove('TabPane--active')
+        }
+
+        // storing reference to event.currentTarget, otherwise we get
+        // all the children like SVGs, instead of our target — the link element
+        var anchorReference = tabClickEvent.currentTarget
+        var activePaneId = anchorReference.getAttribute('href')
+        var activePane = document.querySelector(activePaneId)
+        activePane.classList.add('TabPane--active')
+      }
+
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].addEventListener('click', myTabClicks)
+      }
+    })
+
+    var tagline = document.querySelector('.MainHeader-tagline')
+    var taglinePart = document.querySelector('.MainHeader-taglinePart')
+    var taglineList = document.querySelector('.MainHeader-taglineList')
     var taglineCounter = taglineList.children.length
 
     function shuffleTaglines () {
@@ -219,10 +253,10 @@
     }
 
     function showTagline (taglineText) {
-      taglinePart.classList.remove('is-visible')
+      tagline.classList.remove('is-visible')
       setTimeout(function () {
         taglinePart.innerHTML = taglineText
-        taglinePart.classList.add('is-visible')
+        tagline.classList.add('is-visible')
       }, 800)
     }
 

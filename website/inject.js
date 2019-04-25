@@ -126,6 +126,23 @@ async function injectBundles () {
   })
 }
 
+async function injectGhStars () {
+  const Octokit = require('@octokit/rest')
+  const octokit = new Octokit()
+
+  let { headers, data } = await octokit.repos.get({
+    owner: 'transloadit',
+    repo: 'uppy'
+  })
+
+  console.log(`${headers['x-ratelimit-remaining']} requests remaining until we hit GitHub ratelimiter`)
+
+  let dstpath = path.join(webRoot, 'themes', 'uppy', 'layout', 'partials', 'generated_stargazers.ejs')
+  fs.writeFileSync(dstpath, data.stargazers_count, 'utf-8')
+
+  console.log(`${data.stargazers_count} stargazers written to '${dstpath}'`)
+}
+
 async function injectMarkdown () {
   let sources = {
     '.github/ISSUE_TEMPLATE/integration_help.md': `src/_template/integration_help.md`,
@@ -161,6 +178,8 @@ async function readConfig () {
 
 async function inject () {
   const config = await readConfig()
+
+  await injectGhStars()
 
   await injectMarkdown()
 

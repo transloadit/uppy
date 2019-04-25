@@ -9,6 +9,7 @@
   "pre-commit": "lint:staged",
   "license": "MIT",
   "devDependencies": {
+    "@octokit/rest": "^16.25.0",
     "@types/react": "^16.8.10",
     "aliasify": "^2.1.0",
     "autoprefixer": "^7.2.6",

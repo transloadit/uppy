@@ -8,7 +8,7 @@ body {
   font-size: $fontSize-s;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: $color-medium;
+  color: $color-dark;
   margin: 0;
   background-color: $color-primary;
 
@@ -19,7 +19,7 @@ body {
 
 a {
   text-decoration: none;
-  color: $color-medium;
+  color: $color-blue;
 }
 
 img, video {
@@ -28,7 +28,7 @@ img, video {
   border: 0;
 }
 
-h1, h2, h3, h4, strong {
+h1, h2, h3, h4 {
   font-weight: 600;
   color: $color-dark;
 }
@@ -58,21 +58,50 @@ hr {
   margin: 3em 0;
 }
 
-a.button {
+.button {
+  box-sizing: border-box;
   display: inline-block;
-  font-family: $fontFamily-code;
   font-weight: 700;
   color: #fff;
-  background-color: lighten($color-primary, 8%);
-  border-bottom: 2px solid darken($color-primary, 12%);
-  padding: 12px 14px;
-  border-radius: 4px;
+  font-size: 18px;
+  background-color: $color-primary;
+  // border-bottom: 2px solid darken($color-primary, 12%);
+  padding: 12px 20px;
+  border-radius: 8px;
   transition: all .15s ease;
 
   &:hover {
-    background-color: lighten($color-primary, 15%);
-    transform: translate(0, -2px);
+    background-color: lighten($color-primary, 4%);
   }
+
+  &:active {
+    background-color: darken($color-primary, 4%);
+  }
+}
+
+.button--cta {
+  padding-right: 34px;
+  padding-left: 34px;
+}
+
+.button--secondary {
+  border: 1px solid $color-primary;
+  background-color: #fff;
+  color: $color-primary;
+
+  &:hover {
+    background-color: #f9f9f9;
+  }
+
+  &:active {
+    border-color: darken($color-primary, 10%);
+    color: darken($color-primary, 10%);
+  }
+}
+
+.GithubStars {
+  font-size: 0.75em;
+  margin-left: 0.25em;
 }
 
 .highlight {
@@ -82,6 +111,8 @@ a.button {
   padding: .6em .6em;
   line-height: 1.1;
   border-radius: $size-radius;
+  margin-right: 0;
+  margin-left: 0;
 
   figcaption {
     display: none;
@@ -102,7 +133,7 @@ a.button {
   .gutter { width: 1.5em; }
 
   .code {
-    font-size: 10px;
+    font-size: 12px;
     @media #{$screen-medium} {
       font-size: 15px;
     }
@@ -191,65 +222,53 @@ a.button {
 */
 .MainLogo {
   display: inline-block;
-  font-size: 1.5em;
-  line-height: $size-headerHeight;
-  color: $color-dark;
+  font-size: 27px;
+  color: $color-primary;
   font-family: $fontFamily-logo;
-  font-weight: 500;
+  font-weight: 700;
 
-  img {
-    vertical-align: middle;
-    // margin-right: 6px;
-    width: $size-headerHeight;
-    height: $size-headerHeight;
+  @media #{$screen-medium} {
+    margin-right: 20px;
   }
 }
-
-  .MainLogo-text {
-    display: none;
-    @media #{$screen-medium} {
-      display: inline-block;
-      vertical-align: middle;
-    }
-  }
 
 /**
 * MainHeader
 */
 
 .MainHeader {
-  position: relative;
-}
-
-.page-index .MainHeader {
-  padding: 1em 0;
-  border-top: 3px solid $color-primary;
-}
-
-.page-inner .MainHeader {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 40px;
+  // height: 40px;
   z-index: 9;
-  box-shadow: 0 0 4px rgba(0,0,0,.25);
+  z-index: 2;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  // box-shadow: 0 0 4px rgba(0,0,0,.25);
   background-color: $color-white;
   text-align: center;
 
   @media #{$screen-medium} {
     height: auto;
-    padding: 10px 60px;
-    box-shadow: none;
+    display: flex;
+    align-items: baseline;
+    padding: 14px 60px 19px;
+    // box-shadow: none;
     // position: relative;
     z-index: 2;
-    border-top: 3px solid $color-primary;
-    border-bottom: 1px solid rgba($color-lightgray, 0.3);
+    // border-top: 3px solid $color-primary;
+    border-bottom: 1px solid rgba($color-lightgray, 0.2);
     text-align: left;
 
     // &.fix-header {
     //   box-shadow: 0 0 4px rgba(0,0,0,.25);
     // }
+  }
+
+  .page-index & {
+    position: relative;
   }
 }
 
@@ -259,34 +278,52 @@ a.button {
   @media #{$screen-medium} {
     display: none;
   }
-}
 
-  .page-index .MainHeader-menuBtn {
+  .page-index & {
     display: none;
   }
+}
 
-  .page-inner .MainHeader-menuBtn {
-    background: none;
-    border: 0;
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    top: 8px;
-    left: 12px;
-    background: svg-load('burger.svg', fill=#{$color-gray}) center center no-repeat;
-    background-size: 22px;
+.MainHeader-menuBtn {
+  background: none;
+  border: 0;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  top: 20px;
+  left: 12px;
+  background: svg-load('burger.svg', fill=#{$color-gray}) center center no-repeat;
+  background-size: 22px;
+  z-index: 10;
+}
+
+.MainHeader-tagline {
+  text-align: center;
+  margin-top: 3px;
+  font-size: 12px;
+  flex: 1;
+  color: $color-gray;
+  display: none;
+
+  @media #{$screen-medium} {
+    margin: 0;
+    font-size: 14px;
+    text-align: right;
+    
+    .page-index & {
+      display: block;
+    }
   }
+}
 
 /**
 * MainMenu
 */
 
 .MainMenu {
-  text-transform: uppercase;
-  letter-spacing: 2px;
   list-style-type: none;
   padding: 0;
-  font-size: $fontSize-s;
+  margin: 5px 0;
 
   @media #{$screen-medium} {
     margin: 0;
@@ -314,38 +351,104 @@ a.button {
     }
   }
 
-  .page-inner .MainMenu {
+  .MainMenu {
     display: none;
-    position: absolute;
-    right: 60px;
-    top: 15px;
-    height: $size-headerHeight;
-    line-height: $size-headerHeight;
 
     li {
       display: inline-block;
       position: relative;
-      margin: 0 0.6em;
+      margin: 0 0.3em;
+
+      @media #{$screen-medium} {
+        margin: 0 0.6em;
+      }
     }
 
     @media #{$screen-medium} {
       display: block;
     }
+
+    .page-index & {
+      display: block;
+    }
   }
 
 .nav-link {
-  color: $color-light;
-  padding-bottom: 3px;
+  color: $color-gray;
   font-size: .85em;
   margin: 0;
   cursor: pointer;
 
   &:first-child { margin-left: 0; }
-  &:hover, &.current { border-bottom: 3px solid $color-primary; }
+  &:hover, &.current { color: $color-dark; }
 
   @media #{$screen-medium} {
-    margin: 0 1.5em;
     font-size: 1em;
+  }
+}
+
+.Tabs {
+  margin: 30px 0;
+  padding: 0;
+  list-style-type: none;
+  text-align: center;
+  // position: relative;
+  // z-index: 100;
+
+  &-item {
+    display: inline-block;
+    margin: 0 2px;
+    padding: 0;
+  }
+
+  &-link {
+    display: inline-block;
+    font-size: 14px;
+    border-radius: 5px;
+    padding: 7px 7px 6px;
+    font-weight: 700;
+    color: $color-light;
+
+    @media #{$screen-medium} {
+      font-size: 18px;
+      padding: 9px 15px 8px;
+    }
+
+    &:hover {
+      color: $color-gray;
+      background-color: $color-codebg;
+    }
+  }
+
+  &-link--active {
+    color: $color-dark;
+    background-color: $color-codebg;
+
+    &:hover {
+      color: $color-dark;
+    }
+
+    .Tabs-icon path {
+      fill: #f37;
+    }
+  }
+
+  &-icon {
+    display: inline-block;
+    margin-right: 3px;
+    vertical-align: middle;
+
+    path {
+      fill: #777;
+    }
+  }
+}
+
+.TabPane {
+  display: none;
+
+  &--active {
+    display: block;
   }
 }
 
