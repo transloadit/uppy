@@ -24,7 +24,7 @@
   "dependencies": {
     "@uppy/companion-client": "0.28.5",
     "@uppy/utils": "0.30.5",
-    "tus-js-client": "github:ifedapoolarewaju/tus-js-client#44dd2a081a551982f8bb4cc024dfb982955b225d"
+    "tus-js-client": "^1.8.0-0"
   },
   "devDependencies": {
     "@uppy/core": "0.30.5"
