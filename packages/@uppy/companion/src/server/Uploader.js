@@ -339,6 +339,7 @@ class Uploader {
       // @ts-ignore
       uploadLengthDeferred: false,
       resume: true,
+      retryDelays: [0, 1000, 3000, 5000],
       uploadSize: this.bytesWritten,
       metadata,
       /**
@@ -363,7 +364,9 @@ class Uploader {
       }
     })
 
-    this.tus.start()
+    if (!this._paused) {
+      this.tus.start()
+    }
   }
 
   uploadMultipart () {
