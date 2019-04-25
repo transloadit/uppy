@@ -31,7 +31,7 @@ If you want to apply for:
 - 🥉 Bronze support, [sign up for the Startup plan][pricing].
 - 🥈 Silver (or 🥇 higher), [reach out](mailto:support@transloadit.com?subject=Uppy+Enterprise+Support).
 
-Afterwards you can contact [Support][support], announcing your account's email address.
+Afterwards, you can contact [Support][support], announcing your account's email address.
 
 [bugs]: https://github.com/transloadit/uppy/issues/new?template=bug_reports.md  "Bugs welcome in the issue tracker on GitHub"
 [features]: https://github.com/transloadit/uppy/issues/new?template=feature_request.md "Feature requests welcome in the issue tracker on GitHub"
