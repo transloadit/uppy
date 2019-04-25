@@ -189,15 +189,18 @@ function test () {
   const leadingLocaleName = 'en_US'
 
   const followerLocales = {}
+  const followerValues = {}
   const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'src', '*.js')
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
     // Builds array with items like: 'uploadingXFiles.2'
-    followerLocales[localeName] = Object.keys(flat(require(localePath).strings))
+    followerValues[localeName] = flat(require(localePath).strings)
+    followerLocales[localeName] = Object.keys(followerValues[localeName])
   })
 
   // Take aside our leading locale: en_US
   const leadingLocale = followerLocales[leadingLocaleName]
+  const leadingValues = followerValues[leadingLocaleName]
   delete followerLocales[leadingLocaleName]
 
   // Compare all follower Locales (RU, DE, etc) with our leader en_US
@@ -211,7 +214,7 @@ function test () {
     missing.forEach((key) => {
       // Items missing are a non-fatal warning because we don't want CI to bum out over all languages
       // as soon as we add some English
-      warnings.push(`${chalk.cyan(followerName)} locale has missing string: '${chalk.red(key)}' that is present in ${chalk.cyan(leadingLocaleName)}. `)
+      warnings.push(`${chalk.cyan(followerName)} locale has missing string: '${chalk.red(key)}' that is present in ${chalk.cyan(leadingLocaleName)} with value: ${chalk.yellow(leadingValues[key])}`)
     })
     excess.forEach((key) => {
       // Items in excess are a fatal because we should clean up follower languages once we remove English strings

@@ -18,10 +18,15 @@ function form (target, opts) {
     name: 'transloadit'
   })
 
+  let submitOnSuccess = true
+  if (opts.hasOwnProperty('submitOnSuccess')) {
+    submitOnSuccess = !!opts.submitOnSuccess
+  }
+
   uppy.use(Form, {
     target,
     triggerUploadOnSubmit: true,
-    submitOnSuccess: true,
+    submitOnSuccess: submitOnSuccess,
     addResultToForm: false // using custom implementation instead
   })
 

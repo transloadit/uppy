@@ -7,6 +7,8 @@ de_DE.strings = {
   addingMoreFiles: 'Dateien hinzufügen',
   allowAccessDescription: 'Um Bilder oder Videos mit Ihrer Kamera aufzunehmen, erlauben Sie dieser Website bitte Zugriff auf Ihre Kamera.',
   allowAccessTitle: 'Bitte erlauben Sie Zugriff auf Ihre Kamera',
+  authenticateWith: 'Mit %{pluginName} verbinden',
+  authenticateWithTitle: 'Bitte authentifizieren Sie sich mit %{pluginName}, um Dateien auszuwählen',
   back: 'Zurück',
   browse: 'durchsuchen',
   cancel: 'Abbrechen',
@@ -64,6 +66,7 @@ de_DE.strings = {
   pause: 'Pausieren',
   pauseUpload: 'Upload pausieren',
   paused: 'Pausiert',
+  poweredBy: 'Angetrieben von',
   preparingUpload: 'Upload vorbereiten...',
   processingXFiles: {
     '0': '%{smart_count} Datei verarbeiten',

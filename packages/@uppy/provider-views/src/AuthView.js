@@ -25,9 +25,6 @@ class AuthBlock extends Component {
       >
         {this.props.i18nArray('authenticateWith', { pluginName: this.props.pluginName })}
       </button>
-      {this.props.demo &&
-        <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn" onclick={this.props.handleDemoAuth}>Proceed with Demo Account</button>
-      }
     </div>
   }
 }
