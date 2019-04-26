@@ -19,75 +19,70 @@ last Friday of every new month.
 Ideas that will be planned and find their way into a release at one point.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
-- [ ] “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no companion required #362
-- [ ] Add `directories-dropped` event #849
-- [ ] add typescript definitions and JSDoc everywhere? https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
-- [ ] an uploader plugin to receive files in a callback instead of uploading them
-- [ ] audio: audio recording similar to Webcam #143
 - [ ] build: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
-- [ ] consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
-- [ ] Consider uploading image thumbnails too #1212
+- [ ] companion: pass metadata to S3 `getKey` option, see https://github.com/transloadit/uppy/issues/689
+- [ ] companion: Transfer files between providers (from instagram to Google drive for example).
+- [ ] companion: what happens if access token expires amid an upload/download process.
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 - [ ] core: Add total max size to restrictions #514
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
 - [ ] core: Fire event when a restriction fails #1251
+- [ ] core: good way to change plugin options at runtime—maybe `this.state.options`?
+- [ ] core: have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
 - [ ] core: Make sure Uppy works well in VR
 - [ ] core: normalize file names when uploading from iOS? $678
-- [ ] Dashboard allow selecting folders (add separate hidden input button for folders) #447 #1027
+- [ ] core: optimize problematic filenames #72
+- [ ] dashbaord: fix incorrectly rotated image thumbnails #472
+- [ ] dashboard: “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no companion required #362
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] dashboard: add option to disable uploading from local disk #657
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
+- [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027
+- [ ] dashboard: Consider uploading image thumbnails too #1212
 - [ ] dashboard: display data like image resolution on file cards #783
 - [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 - [ ] dashboard: if you specified a delete endpoint, the “remove/cancel upload” button remains after the upload and it not only removes, but also sends a request to that endpoint #1216
+- [ ] dashboard: possibility to edit/delete more than one file at once #118, #97
+- [ ] dashboard: possibility to work on already uploaded / in progress files #112, #113
 - [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
 - [ ] dependencies: es6-promise --> lie https://github.com/calvinmetcalf/lie ?
-- [ ] DnD Bar: drag and drop + statusbar or progressbar ? (@arturi)
+- [ ] dragdrop: Add `directories-dropped` event #849
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
 - [ ] dragdrop: change border color when files doesn’t pass restrictions on drag https://github.com/transloadit/uppy/issues/607
-- [ ] Feature: Plugins - Keybase.io Remote provider plugin! #943
-- [ ] fix incorrectly rotated image thumbnails #472
+- [ ] dragdrop: drag and drop + statusbar or progressbar ? (@arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] good way to change plugin options at runtime—maybe `this.state.options`?
-- [ ] have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
-- [ ] It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
-- [ ] locale: investigate preact-i18n@1.2.1, or our own script to report on missing i18n strings
-- [ ] optimize problematic filenames #72
-- [ ] possibility to edit/delete more than one file at once #118, #97
-- [ ] possibility to work on already uploaded / in progress files #112, #113
-- [ ] Prepare for (piwik-) tracking of usage of uppy ? see #83
+- [ ] google: show thumbnails when connecting with Google Drive #1162 (@ifedapoolarewaju)
+- [ ] plugins: audio/memo recording similar to Webcam #143
+- [ ] plugins: Plugins - Keybase.io Remote provider plugin! #943
+- [ ] plugins: screenshot+screencast support similar to Webcam #148
+- [ ] plugins: Transformations, cropping, filters for images, see #53
+- [ ] plugins: WordPress plugin https://www.producthunt.com/posts/uppy-io#comment-559327 (“And Gravity forms”)
 - [ ] provider: Add Facebook, OneDrive, Box
 - [ ] provider: add sorting, filtering, previews #254
 - [ ] provider: change ProviderViews signature to receive Provider instance in second param. ref https://github.com/transloadit/uppy/pull/743#discussion_r180106070
 - [ ] react: Component wrappers to manage the Uppy instance, many people initialize it in render() which does not work correctly so this could make it easier for them https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951
-- [ ] screenshot+screencast support similar to Webcam #148
-- [ ] server: pass metadata to S3 `getKey` option, see https://github.com/transloadit/uppy/issues/689
-- [ ] show thumbnails when connecting with Google Drive #1162 (@ifedapoolarewaju)
+- [ ] rn: Uppy React Native works with Expo, now let's make it work without
+- [ ] rn: Uppy React Native works with Url Plugin, now let's make it work with Instagram
+- [ ] security: consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
 - [ ] statusbar: add option to always show
 - [ ] test: Add a prepublish test that checks if `npm pack` is not massive
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
-- [ ] test: add typescript with JSDoc (@arturi)
-- [ ] test: Human should check http://www.webpagetest.org and https://developers.google.com/web/tools/lighthouse/, use it sometimes to test website and Uppy. Will show response/loading times and other issues
+- [ ] test: add typescript with JSDoc (@arturi) https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
 - [ ] test: Human should test with real screen reader to identify accessibility problems
-- [ ] Transformations, cropping, filters for images, see #53
-- [ ] transloadit plugin: maybe add option to disable Companion endpoint overrides
 - [ ] transloadit: consider adding option to append result link from transloadit to the link thing in the Dashboard file block #1177
+- [ ] transloadit: maybe add option to disable Companion endpoint overrides
 - [ ] transloadit: option for StatusBar’s upload button to act as a "Start assembly" button? Useful if an assembly uses only import robots, such as /s3/import to start a batch transcoding job.
 - [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
-- [ ] rn: Uppy React Native works with Expo, now let's make it work without
-- [ ] rn: Uppy React Native works with Url Plugin, now let's make it work with Instagram
-- [ ] companion: what happens if access token expires amid an upload/download process.
-- [ ] uppy/companion: Transfer files between providers (from instagram to Google drive for example).
-- [ ] Webcam modes #198
 - [ ] webcam: Pick format based on `restrictions.allowedFileTypes`, eg. use PNG for snapshot instead of JPG if `allowedFileTypes: ['.png']` is set
 - [ ] webcam: Specify the resolution of the webcam images. We should add a way to specify any custom constraints to the Webcam plugin #876
 - [ ] webcam: Stop recording when file size is exceeded, should be possible given how the MediaRecorder API works
 - [ ] webcam: UI or separate plugins for choosing between webcam audio-video/video-only/audio-only modes #198
+- [ ] webcam: Webcam modes #198
 - [ ] website: automatically generated page with all locale strings used in plugins
-- [ ] WordPress plugin https://www.producthunt.com/posts/uppy-io#comment-559327 (“And Gravity forms”)
+- [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 
 ## 1.1
 
