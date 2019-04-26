@@ -87,6 +87,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 ## 1.1
 
 - [ ] ! core: _calculateTotalProgress results in incorrectly high (1038%) progress with files that don’t have size (like from Instagram) (@goto-bus-stop)
+- [ ] core: consider removing Preact from Plugin as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 - [ ] !!! dashboard: Remove the Authorization required tooltip on the authentication screen https://github.com/transloadit/uppy/issues/1425
 - [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
 - [ ] a11y: Fix remaining issues (https://github.com/transloadit/uppy/issues/created_by/nqst)
