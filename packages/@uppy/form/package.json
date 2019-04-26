@@ -1,7 +1,7 @@
 {
   "name": "@uppy/form",
   "description": "Connect Uppy to an existing HTML <form>.",
-  "version": "0.30.5",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -24,9 +24,9 @@
     "get-form-data": "^2.0.0"
   },
   "devDependencies": {
-    "@uppy/core": "0.30.5"
+    "@uppy/core": "1.0.0"
   },
   "peerDependencies": {
-    "@uppy/core": "^0.30.0"
+    "@uppy/core": "^1.0.0"
   }
 }

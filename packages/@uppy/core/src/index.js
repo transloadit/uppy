@@ -699,9 +699,15 @@ class Uppy {
       uploadedSize += averageSize * (file.progress.percentage || 0)
     })
 
-    const totalProgress = totalSize === 0
+    let totalProgress = totalSize === 0
       ? 0
       : Math.round(uploadedSize / totalSize * 100)
+
+    // hot fix, because:
+    // uploadedSize ended up larger than totalSize, resulting in 1325% total
+    if (totalProgress > 100) {
+      totalProgress = 100
+    }
 
     this.setState({ totalProgress })
     this.emit('progress', totalProgress)
