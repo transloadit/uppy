@@ -41,6 +41,12 @@
     </div>
     <% } %>
     <%- page.content %>
+
+    <center>
+        <br />
+        <a class="github-button" href="https://github.com/transloadit/uppy" data-icon="octicon-star" data-size="large"
+        data-show-count="true" aria-label="Star transloadit/uppy on GitHub">Star</a>
+    </center>
     <%
         var authors = page.author
         if (authors === (authors + '')) {
@@ -59,9 +65,9 @@
         </div>
     <% } %>
   <br />
-    <ul class="Social">
+    <!-- <ul class="Social">
         <li><iframe src="https://ghbtns.com/github-btn.html?user=transloadit&repo=uppy&type=watch&count=true"
                 allowtransparency="true" frameborder="0" scrolling="0" width="100" height="20"></iframe></li>
-    </ul>
+    </ul> -->
   <%- partial('partials/comments') %>
 </div>
