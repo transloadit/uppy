@@ -649,7 +649,7 @@ class Uppy {
         percentage: canHavePercentage
           // TODO(goto-bus-stop) flooring this should probably be the choice of the UI?
           // we get more accurate calculations if we don't round this at all.
-          ? Math.floor(data.bytesUploaded / data.bytesTotal * 100)
+          ? Math.round(data.bytesUploaded / data.bytesTotal * 100)
           : 0
       })
     })
@@ -676,7 +676,7 @@ class Uppy {
     const unsizedFiles = inProgress.filter((file) => file.progress.bytesTotal == null)
 
     if (sizedFiles.length === 0) {
-      const progressMax = inProgress.length
+      const progressMax = inProgress.length * 100
       const currentProgress = unsizedFiles.reduce((acc, file) => {
         return acc + file.progress.percentage
       }, 0)
