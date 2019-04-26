@@ -157,7 +157,6 @@ module.exports = class Dashboard extends Plugin {
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
     this.getFocusableNodes = this.getFocusableNodes.bind(this)
-    this.setFocusToFirstNode = this.setFocusToFirstNode.bind(this)
     this.handlePopState = this.handlePopState.bind(this)
     this.maintainFocus = this.maintainFocus.bind(this)
 
@@ -251,21 +250,21 @@ module.exports = class Dashboard extends Plugin {
   }
 
   getFocusableNodes () {
+    let nodes = []
+
     // if an overlay is open, we should trap focus inside the overlay
     const activeOverlayType = this.getPluginState().activeOverlayType
     if (activeOverlayType) {
-      const activeOverlay = this.el.querySelector(`[data-uppy-panelType="${activeOverlayType}"]`)
-      const nodes = activeOverlay.querySelectorAll(FOCUSABLE_ELEMENTS)
-      return Object.keys(nodes).map((key) => nodes[key])
+      const activeOverlay = this.el.querySelector(`[data-uppy-paneltype="${activeOverlayType}"]`)
+      // if an overlay already mounted
+      if (activeOverlay) {
+        nodes = toArray(activeOverlay.querySelectorAll(FOCUSABLE_ELEMENTS))
+      }
+    } else {
+      nodes = toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS))
     }
 
-    const nodes = this.el.querySelectorAll(FOCUSABLE_ELEMENTS)
-    return Object.keys(nodes).map((key) => nodes[key])
-  }
-
-  setFocusToFirstNode () {
-    const focusableNodes = this.getFocusableNodes()
-    if (focusableNodes.length) focusableNodes[0].focus()
+    return nodes
   }
 
   updateBrowserHistory () {
@@ -301,15 +300,22 @@ module.exports = class Dashboard extends Plugin {
     if (browseBtn) browseBtn.focus()
   }
 
+  // Traps focus inside of the currently open subview (e.g. Dashboard, or e.g. Instagram)
   maintainFocus (event) {
-    var focusableNodes = this.getFocusableNodes()
-    var focusedItemIndex = focusableNodes.indexOf(document.activeElement)
+    const focusableNodes = this.getFocusableNodes()
+    const focusedItemIndex = focusableNodes.indexOf(document.activeElement)
 
+    // If focus is not within the current overlay!
+    if (focusedItemIndex === -1) {
+      focusableNodes[0].focus()
+      event.preventDefault()
+    }
+    // If we pressed shift + tab, and we're on the first element of a modal - focus on the last one!
     if (event.shiftKey && focusedItemIndex === 0) {
       focusableNodes[focusableNodes.length - 1].focus()
       event.preventDefault()
     }
-
+    // If we pressed tab, and we're on the last element of the modal - focus on the first one!
     if (!event.shiftKey && focusedItemIndex === focusableNodes.length - 1) {
       focusableNodes[0].focus()
       event.preventDefault()

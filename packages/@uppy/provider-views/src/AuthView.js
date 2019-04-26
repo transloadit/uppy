@@ -1,6 +1,6 @@
 const { h, Component } = require('preact')
 
-class AuthBlock extends Component {
+class AuthView extends Component {
   componentDidMount () {
     setTimeout(() => {
       if (!this.connectButton) return
@@ -26,12 +26,6 @@ class AuthBlock extends Component {
         {this.props.i18nArray('authenticateWith', { pluginName: this.props.pluginName })}
       </button>
     </div>
-  }
-}
-
-class AuthView extends Component {
-  render () {
-    return <AuthBlock {...this.props} />
   }
 }
 
