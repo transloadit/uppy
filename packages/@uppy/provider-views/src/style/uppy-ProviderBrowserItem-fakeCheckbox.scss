@@ -1,63 +1,13 @@
-
-// Inner checkbox
-.uppy-ProviderBrowserItem-fakeCheckbox:after {
-  content: '';
-  display: inline-block;
-  height: 5px;
-  width: 9px;
-  left: 4px;
-  top: 7px;
-  border-left: 2px solid $white;
-  border-bottom: 2px solid $white;
-  transform: rotate(-45deg);
-}
-
-// Hide the checkmark by default
-.uppy-ProviderBrowserItem-fakeCheckbox::after {
-  content: none;
-}
-
-// Unhide the checkmark on the checked state
-.uppy-ProviderBrowserItem-fakeCheckbox.uppy-ProviderBrowserItem-fakeCheckbox--is-checked::after {
-  content: '';
-}
-
-.uppy-ProviderBrowserItem-fakeCheckbox.uppy-ProviderBrowserItem-fakeCheckbox--is-checked::before {
-  background-color: $blue;
-}
-
-// THATS FOR A BUTTON
-// Adding focus styles on the outer-box of the fake checkbox*/
-.uppy-ProviderBrowserItem-fakeCheckbox:focus::before {
-  outline: rgb(59, 153, 252) auto 5px;
-}
-
-
-
-// https://medium.com/claritydesignsystem/pure-css-accessible-checkboxes-and-radios-buttons-54063e759bb3
 .uppy-ProviderBrowserItem-fakeCheckbox {
   position: relative;
-}
 
-.uppy-ProviderBrowserItem-fakeCheckbox {
-  display: block;
+  // Checkmark icon
+  &::after {
+    content: '';
+    position: absolute;
+    cursor: pointer;
+    border-left: 2px solid $white;
+    border-bottom: 2px solid $white;
+    transform: rotate(-45deg);
+  }
 }
-
-.uppy-ProviderBrowserItem-fakeCheckbox::before,
-.uppy-ProviderBrowserItem-fakeCheckbox::after {
-  position: absolute;
-  cursor: pointer;
-}
-
-// Outer circle
-.uppy-ProviderBrowserItem-fakeCheckbox:before {
-  content: "";
-  display: inline-block;
-  height: 17px;
-  width: 17px;
-  top: 2px;
-  border: 1px solid $blue;
-  background-color: $white;
-  border-radius: 3px;
-}
-

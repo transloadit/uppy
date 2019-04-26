@@ -1,7 +1,6 @@
 // ***
 // View type: grid
 // ***
-
 .uppy-ProviderBrowser-viewType--grid {
   ul.uppy-ProviderBrowser-list {
     display: flex;
@@ -71,34 +70,25 @@
     }
   }
 
+  // Checkbox
   .uppy-ProviderBrowserItem-fakeCheckbox {
     position: absolute;
-    width: 26px;
-    height: 26px;
-    top: 16px;
-    right: 16px;
-    display: block;
-    margin-right: 0;
+    top: 16px; right: 16px;
+    width: 26px; height: 26px;
+    background-color: $blue;
+    border-radius: 50%;
     z-index: $zIndex-3;
-
-    &:before {
-      background-color: $blue;
-      border-radius: 50%;
-      width: 26px;
-      height: 26px;
-      top: 0;
-    }
-    &:after {
-      width: 12px;
-      height: 7px;
-      left: 7px;
-      top: 8px;
-    }
-    // Hide checkbox when unchecked in grid view
     opacity: 0;
-    // Unhide the checkbox on the checked state
+
+    // Checked: show the checkmark
     &.uppy-ProviderBrowserItem-fakeCheckbox--is-checked{
       opacity: 1;
+    }
+
+    // Checkmark icon
+    &:after {
+      width: 12px; height: 7px;
+      left: 7px; top: 8px;
     }
   }
 }

@@ -1,37 +1,59 @@
 // ***
 // View type: list
 // ***
+
 .uppy-ProviderBrowser-viewType--list {
   background-color: $white;
 
   li.uppy-ProviderBrowserItem {
     display: flex;
+    align-items: center;
     padding: 7px 15px;
     margin: 0;
 
-    // checkbox
+    // Checkbox
     > .uppy-ProviderBrowserItem-fakeCheckbox {
-      vertical-align: middle;
-      display: inline-block;
-      margin-right: 30px;
-      &::before {
-        border-color: $gray-300;
-      }
-      &.uppy-ProviderBrowserItem-fakeCheckbox--is-checked::before {
+      margin-right: 15px;
+      height: 17px; width: 17px;
+      border-radius: 3px;
+      background-color: $white;
+      border: 1px solid $gray-300;
+
+      // Checked: color the background, show the checkmark
+      &.uppy-ProviderBrowserItem-fakeCheckbox--is-checked {
+        background-color: $blue;
         border-color: $blue;
+        &::after {
+          opacity: 1;
+        }
+      }
+      // Focus: show blue outline
+      &:focus {
+        outline: rgb(59, 153, 252) auto 5px;
+      }
+
+      // Checkmark icon
+      &::after {
+        opacity: 0;
+        height: 5px; width: 9px;
+        left: 3px; top: 4px;
       }
     }
 
-    // and either a <label/> for a file,
-    // or a button we can click on for a folder
+    // Either a <label/> for a file,
+    // or a <button/> we can click on for a folder
     > .uppy-ProviderBrowserItem-inner {
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-      text-align: left;
-      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      // For better outline
+      padding: 2px;
+      &:focus {
+        outline: rgb(59, 153, 252) auto 5px;
+      }
       img, svg {
-        vertical-align: middle;
         margin-right: 8px;
         max-width: 20px;
         max-height: 20px;
