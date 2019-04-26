@@ -28,3 +28,4 @@ uppy-*.tgz
 
 output/*
 !output/.keep
+examples/dev/file.txt
