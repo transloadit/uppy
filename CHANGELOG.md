@@ -146,6 +146,44 @@ What we need to do to release Uppy 1.0
 - [x] website: design polish
 - [x] website: replace transloadit example with robodog example <-- add transloadit test key with restricted usage (no need to sign up yourself to try it)
 
+## 1.0.0
+
+Released: 2019-04-25
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.0.0 | @uppy/locales | 1.0.0 |
+| @uppy/aws-s3 | 1.0.0 | @uppy/progress-bar | 1.0.0 |
+| @uppy/companion-client | 1.0.0 | @uppy/provider-views | 1.0.0 |
+| @uppy/companion | 1.0.0 | @uppy/react | 1.0.0 |
+| @uppy/core | 1.0.0 | @uppy/redux-dev-tools | 1.0.0 |
+| @uppy/dashboard | 1.0.0 | @uppy/robodog | 1.0.0 |
+| @uppy/drag-drop | 1.0.0 | @uppy/status-bar | 1.0.0 |
+| @uppy/dropbox | 1.0.0 | @uppy/thumbnail-generator | 1.0.0 |
+| @uppy/file-input | 1.0.0 | @uppy/transloadit | 1.0.0 |
+| @uppy/form | 1.0.0 | @uppy/tus | 1.0.0 |
+| @uppy/golden-retriever | 1.0.0 | @uppy/url | 1.0.0 |
+| @uppy/google-drive | 1.0.0 | @uppy/webcam | 1.0.0 |
+| @uppy/informer | 1.0.0 | @uppy/xhr-upload | 1.0.0 |
+| @uppy/instagram | 1.0.0 | uppy | 1.0.0 |
+
+- @uppy/companion-client: Don’t show informer for an auth error for now (#1478 / @arturi)
+- @uppy/companion: Disable Tus parallel upload/download to solve pause/resume issues, until we figure out a better solution — (#1497 / @ifedapoolarewaju)
+- @uppy/companion: detect bytes upload mismatch for multipart uploads (#1470 / @ifedapoolarewaju)
+- @uppy/locales: Add Dutch locale (nl_NL) (#1462 / @clerx)
+- @uppy/locales: Add French language pack (#1481 / @kiloreux)
+- @uppy/locales: Add German language pack (#1475 / @tim-kos)
+- @uppy/locales: Add Russian language pack (ru_RU), make more strings translatable (#1467 / @arturi)
+- @uppy/react-native: Add custom file reader example for tus: this example uses expo-file-system, which does in reading file chunks for the case of ios. However, for the case of android, it seems to read the entire file. Publishing this example merely as a PoC so that other users can create their own fileReaders based on this example (#1489 / @ifedapoolarewaju)
+- @uppy/robodog: Add support for submitOnSuccess option (#1491 / @tim-kos)
+- @uppy/transloadit: Add assembly status property to assembly errors (#1488 / @goto-bus-stop)
+- @uppy/transloadit: Add connection error reporting (#1484 / @goto-bus-stop)
+- @uppy/tus: update tus-js-client to 1.8.0-0(057fb6200d9a7c6af452c5a79870fa74e362ec2c / @ifedapoolarewaju)
+- @uppy/xhr-upload: Add filename to FormData with `bundle: true` (#1487 / @goto-bus-stop)
+- docs: Add basic @uppy/react-native docs (#1494 / @arturi)
+- docs: Add docs for Thumbnail Generator plugin (#1468 / @arturi)
+- website: New website re-design by Alex (#1483 / @nqst, @arturi)
+
 ## 0.30.5
 
 Released: 2019-04-19
