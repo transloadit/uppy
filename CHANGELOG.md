@@ -99,6 +99,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] docs: add docs on locales — how to use from NPM and CDN, list which languages are supported, invite to add more
 - [ ] goldenretriever: make it work with aws multipart (@goto-bus-stop) https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888
+- [ ] localepacks: Add Arabic, see if right-to-left causes issues, and fix them :)
 - [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
 - [ ] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
