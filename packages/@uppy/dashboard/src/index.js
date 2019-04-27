@@ -7,26 +7,10 @@ const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
+const trapFocus = require('./utils/trapFocus')
 const cuid = require('cuid')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultPickerIcon } = require('./components/icons')
-
-// Some code for managing focus was adopted from https://github.com/ghosh/micromodal
-// MIT licence, https://github.com/ghosh/micromodal/blob/master/LICENSE.md
-// Copyright (c) 2017 Indrashish Ghosh
-const FOCUSABLE_ELEMENTS = [
-  'a[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  'area[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  'input:not([disabled]):not([inert]):not([aria-hidden])',
-  'select:not([disabled]):not([inert]):not([aria-hidden])',
-  'textarea:not([disabled]):not([inert]):not([aria-hidden])',
-  'button:not([disabled]):not([inert]):not([aria-hidden])',
-  'iframe:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  'object:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  'embed:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  '[contenteditable]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  '[tabindex]:not([tabindex^="-"]):not([inert]):not([aria-hidden])'
-]
 
 const TAB_KEY = 9
 const ESC_KEY = 27
@@ -156,9 +140,7 @@ module.exports = class Dashboard extends Plugin {
     this.removeTarget = this.removeTarget.bind(this)
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
-    this.getFocusableNodes = this.getFocusableNodes.bind(this)
     this.handlePopState = this.handlePopState.bind(this)
-    this.maintainFocus = this.maintainFocus.bind(this)
 
     this.initEvents = this.initEvents.bind(this)
     this.handleKeyDown = this.handleKeyDown.bind(this)
@@ -249,24 +231,6 @@ module.exports = class Dashboard extends Plugin {
     return this.closeModal()
   }
 
-  getFocusableNodes () {
-    let nodes = []
-
-    // if an overlay is open, we should trap focus inside the overlay
-    const activeOverlayType = this.getPluginState().activeOverlayType
-    if (activeOverlayType) {
-      const activeOverlay = this.el.querySelector(`[data-uppy-paneltype="${activeOverlayType}"]`)
-      // if an overlay already mounted
-      if (activeOverlay) {
-        nodes = toArray(activeOverlay.querySelectorAll(FOCUSABLE_ELEMENTS))
-      }
-    } else {
-      nodes = toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS))
-    }
-
-    return nodes
-  }
-
   updateBrowserHistory () {
     // Ensure history state does not already contain our modal name to avoid double-pushing
     if (!history.state || !history.state[this.modalName]) {
@@ -298,28 +262,6 @@ module.exports = class Dashboard extends Plugin {
   setFocusToBrowse () {
     const browseBtn = this.el.querySelector('.uppy-Dashboard-browse')
     if (browseBtn) browseBtn.focus()
-  }
-
-  // Traps focus inside of the currently open subview (e.g. Dashboard, or e.g. Instagram)
-  maintainFocus (event) {
-    const focusableNodes = this.getFocusableNodes()
-    const focusedItemIndex = focusableNodes.indexOf(document.activeElement)
-
-    // If focus is not within the current overlay!
-    if (focusedItemIndex === -1) {
-      focusableNodes[0].focus()
-      event.preventDefault()
-    }
-    // If we pressed shift + tab, and we're on the first element of a modal - focus on the last one!
-    if (event.shiftKey && focusedItemIndex === 0) {
-      focusableNodes[focusableNodes.length - 1].focus()
-      event.preventDefault()
-    }
-    // If we pressed tab, and we're on the last element of the modal - focus on the first one!
-    if (!event.shiftKey && focusedItemIndex === focusableNodes.length - 1) {
-      focusableNodes[0].focus()
-      event.preventDefault()
-    }
   }
 
   openModal () {
@@ -424,8 +366,8 @@ module.exports = class Dashboard extends Plugin {
   handleKeyDown (event) {
     // close modal on esc key press
     if (event.keyCode === ESC_KEY) this.requestCloseModal(event)
-    // maintainFocus on tab key press
-    if (event.keyCode === TAB_KEY) this.maintainFocus(event)
+    // trap focus on tab key press
+    if (event.keyCode === TAB_KEY) trapFocus(event, this.getPluginState().activeOverlayType, this.el)
   }
 
   handleClickOutside () {
