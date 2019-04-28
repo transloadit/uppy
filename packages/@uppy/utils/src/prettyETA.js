@@ -10,7 +10,7 @@ module.exports = function prettyETA (seconds) {
   const minutesVal = time.hours ? ('0' + time.minutes).substr(-2) : time.minutes
   const minutesStr = minutesVal ? minutesVal + 'm' : ''
   const secondsVal = minutesVal ? ('0' + time.seconds).substr(-2) : time.seconds
-  const secondsStr = time.hours ? '' : minutesVal ? ' ' + secondsVal + 's' : secondsVal + 's'
+  const secondsStr = time.hours ? '' : (minutesVal ? ' ' + secondsVal + 's' : secondsVal + 's')
 
   return `${hoursStr}${minutesStr}${secondsStr}`
 }
