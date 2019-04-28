@@ -11,6 +11,7 @@ const trapFocus = require('./utils/trapFocus')
 const cuid = require('cuid')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultPickerIcon } = require('./components/icons')
+const createSuperFocus = require('./utils/createSuperFocus')
 
 const TAB_KEY = 9
 const ESC_KEY = 27
@@ -158,6 +159,8 @@ module.exports = class Dashboard extends Plugin {
     this.handleDragLeave = this.handleDragLeave.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
 
+    this.superFocus = createSuperFocus()
+
     // Timeouts
     this.makeDashboardInsidesVisibleAnywayTimeout = null
     this.removeDragOverClassTimeout = null
@@ -259,11 +262,6 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  setFocusToBrowse () {
-    const browseBtn = this.el.querySelector('.uppy-Dashboard-browse')
-    if (browseBtn) browseBtn.focus()
-  }
-
   openModal () {
     const { promise, resolve } = createPromise()
     // save scroll position
@@ -297,9 +295,6 @@ module.exports = class Dashboard extends Plugin {
 
     // handle ESC and TAB keys in modal dialog
     document.addEventListener('keydown', this.handleKeyDown)
-
-    // this.rerender(this.uppy.getState())
-    this.setFocusToBrowse()
 
     return promise
   }
@@ -563,6 +558,10 @@ module.exports = class Dashboard extends Plugin {
       showAddFilesPanel: show,
       activeOverlayType: show ? 'AddFiles' : null
     })
+  }
+
+  afterUpdate () {
+    this.superFocus(this.el, this.getPluginState().activeOverlayType)
   }
 
   render (state) {

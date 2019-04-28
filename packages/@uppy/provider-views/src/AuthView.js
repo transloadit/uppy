@@ -1,13 +1,6 @@
 const { h, Component } = require('preact')
 
 class AuthView extends Component {
-  componentDidMount () {
-    setTimeout(() => {
-      if (!this.connectButton) return
-      this.connectButton.focus({ preventScroll: true })
-    }, 150)
-  }
-
   render () {
     const pluginNameComponent = (
       <span class="uppy-Provider-authTitleName">{this.props.pluginName}<br /></span>
@@ -21,7 +14,7 @@ class AuthView extends Component {
         type="button"
         class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn"
         onclick={this.props.handleAuth}
-        ref={(el) => { this.connectButton = el }}
+        data-uppy-super-focusable
       >
         {this.props.i18nArray('authenticateWith', { pluginName: this.props.pluginName })}
       </button>

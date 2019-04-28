@@ -23,6 +23,7 @@ module.exports = (props) => {
       }
       aria-selected={props.isChecked}
       aria-disabled={props.isDisabled}
+      data-uppy-super-focusable
     />
 
     {

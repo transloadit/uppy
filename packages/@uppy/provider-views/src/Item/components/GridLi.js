@@ -13,6 +13,7 @@ module.exports = (props) => {
       aria-label={`${props.isChecked ? 'Unselect' : 'Select'} ${props.title} file`}
       aria-selected={props.isChecked}
       aria-disabled={props.isDisabled}
+      data-uppy-super-focusable
     >
       {props.itemIconEl}
       {props.showTitles && props.title}

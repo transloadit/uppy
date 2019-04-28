@@ -61,7 +61,8 @@ class AddFiles extends Component {
                 class="uppy-DashboardTab-btn"
                 role="tab"
                 tabindex={0}
-                onclick={this.handleClick}>
+                onclick={this.handleClick}
+                data-uppy-super-focusable>
                 {localIcon()}
                 <div class="uppy-DashboardTab-name">{this.props.i18n('myDevice')}</div>
               </button>
@@ -85,7 +86,8 @@ class AddFiles extends Component {
                   tabindex={0}
                   aria-controls={`uppy-DashboardContent-panel--${target.id}`}
                   aria-selected={this.props.activePickerPanel.id === target.id}
-                  onclick={() => this.props.showPanel(target.id)}>
+                  onclick={() => this.props.showPanel(target.id)}
+                  data-uppy-super-focusable>
                   {target.icon()}
                   <div class="uppy-DashboardTab-name">{target.name}</div>
                 </button>
