@@ -8,9 +8,9 @@ module.exports = function prettyETA (seconds) {
   // Display a leading zero if the there is a preceding unit: 1m 05s, but 5s
   const hoursStr = time.hours ? time.hours + 'h ' : ''
   const minutesVal = time.hours ? ('0' + time.minutes).substr(-2) : time.minutes
-  const minutesStr = minutesVal ? minutesVal + 'm ' : ''
+  const minutesStr = minutesVal ? minutesVal + 'm' : ''
   const secondsVal = minutesVal ? ('0' + time.seconds).substr(-2) : time.seconds
-  const secondsStr = secondsVal + 's'
+  const secondsStr = time.hours ? '' : (minutesVal ? ' ' + secondsVal + 's' : secondsVal + 's')
 
   return `${hoursStr}${minutesStr}${secondsStr}`
 }
