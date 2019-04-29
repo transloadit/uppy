@@ -302,7 +302,7 @@ class Uppy {
     updatedFiles[fileID] = Object.assign({}, updatedFiles[fileID], {
       meta: newMeta
     })
-    this.setState({files: updatedFiles})
+    this.setState({ files: updatedFiles })
   }
 
   /**
@@ -328,7 +328,7 @@ class Uppy {
   * @private
   */
   _checkMinNumberOfFiles (files) {
-    const {minNumberOfFiles} = this.opts.restrictions
+    const { minNumberOfFiles } = this.opts.restrictions
     if (Object.keys(files).length < minNumberOfFiles) {
       throw new Error(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
     }
@@ -342,7 +342,7 @@ class Uppy {
   * @private
   */
   _checkRestrictions (file) {
-    const {maxFileSize, maxNumberOfFiles, allowedFileTypes} = this.opts.restrictions
+    const { maxFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
 
     if (maxNumberOfFiles) {
       if (Object.keys(this.getState().files).length + 1 > maxNumberOfFiles) {
@@ -551,7 +551,7 @@ class Uppy {
       })
       updatedFiles[file] = updatedFile
     })
-    this.setState({files: updatedFiles})
+    this.setState({ files: updatedFiles })
 
     this.emit('pause-all')
   }
@@ -570,7 +570,7 @@ class Uppy {
       })
       updatedFiles[file] = updatedFile
     })
-    this.setState({files: updatedFiles})
+    this.setState({ files: updatedFiles })
 
     this.emit('resume-all')
   }

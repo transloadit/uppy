@@ -104,8 +104,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     var ratio = image.width / image.height
 
-    var maxSquare = 5000000  // ios max canvas square
-    var maxSize = 4096  // ie max canvas dimensions
+    var maxSquare = 5000000 // ios max canvas square
+    var maxSize = 4096 // ie max canvas dimensions
 
     var maxW = Math.floor(Math.sqrt(maxSquare * ratio))
     var maxH = Math.floor(maxSquare / Math.sqrt(maxSquare * ratio))

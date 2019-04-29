@@ -57,7 +57,7 @@ export default function FileList (props) {
         data={uppyFilesArray}
         keyExtractor={(item, index) => item.id}
         numColumns={2}
-        renderItem={({item}) => {
+        renderItem={({ item }) => {
           return (
             <View style={styles.item}>
               {item.type === 'image'

@@ -14,7 +14,7 @@ const { version } = require('../../package.json')
 const app = express()
 
 // for server metrics tracking.
-const metricsMiddleware = promBundle({includeMethod: true})
+const metricsMiddleware = promBundle({ includeMethod: true })
 const promClient = metricsMiddleware.promClient
 const collectDefaultMetrics = promClient.collectDefaultMetrics
 const promInterval = collectDefaultMetrics({ register: promClient.register, timeout: 5000 })

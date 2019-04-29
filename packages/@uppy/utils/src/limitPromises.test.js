@@ -5,7 +5,7 @@ describe('limitPromises', () => {
   function fn () {
     pending++
     return new Promise((resolve) => setTimeout(resolve, 10))
-        .then(() => pending--)
+      .then(() => pending--)
   }
 
   it('should run at most N promises at the same time', () => {

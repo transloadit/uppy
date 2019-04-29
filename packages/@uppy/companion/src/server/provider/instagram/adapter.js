@@ -21,9 +21,12 @@ exports.getItemSubList = (item) => {
   item.data.forEach((subItem) => {
     if (subItem.carousel_media) {
       subItem.carousel_media.forEach((i, index) => {
-        const { id, created_time } = subItem
-        const newSubItem = Object.assign({}, i, { id, created_time })
-        newSubItem.carousel_id = index
+        const newSubItem = {
+          ...i,
+          id: subItem.id,
+          created_time: subItem.created_time,
+          carousel_id: index
+        }
         subItems.push(newSubItem)
       })
     } else {

@@ -46,7 +46,7 @@ module.exports = class ProviderView {
     }
 
     // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
     // Logic
     this.addFile = this.addFile.bind(this)
@@ -120,7 +120,7 @@ module.exports = class ProviderView {
         if (index !== -1) {
           updatedDirectories = state.directories.slice(0, index + 1)
         } else {
-          updatedDirectories = state.directories.concat([{id, title: name}])
+          updatedDirectories = state.directories.concat([{ id, title: name }])
         }
 
         this.username = this.username ? this.username : res.username
@@ -227,7 +227,7 @@ module.exports = class ProviderView {
 
   sortByTitle () {
     const state = Object.assign({}, this.plugin.getPluginState())
-    const {files, folders, sorting} = state
+    const { files, folders, sorting } = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
       if (sorting === 'titleDescending') {
@@ -252,7 +252,7 @@ module.exports = class ProviderView {
 
   sortByDate () {
     const state = Object.assign({}, this.plugin.getPluginState())
-    const {files, folders, sorting} = state
+    const { files, folders, sorting } = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
       let a = new Date(fileA.modifiedDate)
@@ -284,7 +284,7 @@ module.exports = class ProviderView {
 
   sortBySize () {
     const state = Object.assign({}, this.plugin.getPluginState())
-    const {files, sorting} = state
+    const { files, sorting } = state
 
     // check that plugin supports file sizes
     if (!files.length || !this.plugin.getItemData(files[0]).size) {
@@ -329,8 +329,8 @@ module.exports = class ProviderView {
     if (folderId in folders && folders[folderId].loading) {
       return
     }
-    folders[folderId] = {loading: true, files: []}
-    this.plugin.setPluginState({selectedFolders: folders})
+    folders[folderId] = { loading: true, files: [] }
+    this.plugin.setPluginState({ selectedFolders: folders })
     return this.provider.list(folder.requestPath).then((res) => {
       let files = []
       res.items.forEach((item) => {
@@ -340,8 +340,8 @@ module.exports = class ProviderView {
         }
       })
       state = this.plugin.getPluginState()
-      state.selectedFolders[folderId] = {loading: false, files: files}
-      this.plugin.setPluginState({selectedFolders: folders})
+      state.selectedFolders[folderId] = { loading: false, files: files }
+      this.plugin.setPluginState({ selectedFolders: folders })
       const dashboard = this.plugin.uppy.getPlugin('Dashboard')
       let message
       if (files.length) {
@@ -355,7 +355,7 @@ module.exports = class ProviderView {
     }).catch((e) => {
       state = this.plugin.getPluginState()
       delete state.selectedFolders[folderId]
-      this.plugin.setPluginState({selectedFolders: state.selectedFolders})
+      this.plugin.setPluginState({ selectedFolders: state.selectedFolders })
       this.handleError(e)
     })
   }
@@ -461,7 +461,7 @@ module.exports = class ProviderView {
       return
     }
     const message = uppy.i18n('companionError')
-    uppy.info({message: message, details: error.toString()}, 'error', 5000)
+    uppy.info({ message: message, details: error.toString() }, 'error', 5000)
   }
 
   handleScroll (e) {

@@ -18,8 +18,8 @@ module.exports = function dataURItoBlob (dataURI, opts, toFile) {
 
   // Convert to a File?
   if (toFile) {
-    return new File([new Uint8Array(array)], opts.name || '', {type: mimeType})
+    return new File([new Uint8Array(array)], opts.name || '', { type: mimeType })
   }
 
-  return new Blob([new Uint8Array(array)], {type: mimeType})
+  return new Blob([new Uint8Array(array)], { type: mimeType })
 }

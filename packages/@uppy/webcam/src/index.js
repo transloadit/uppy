@@ -169,15 +169,13 @@ module.exports = class Webcam extends Plugin {
         isRecording: false
       })
       return this.getVideo()
-    })
-    .then((file) => {
+    }).then((file) => {
       try {
         this.uppy.addFile(file)
       } catch (err) {
         // Nothing, restriction errors handled in Core
       }
-    })
-    .then(() => {
+    }).then(() => {
       this.recordingChunks = null
       this.recorder = null
 

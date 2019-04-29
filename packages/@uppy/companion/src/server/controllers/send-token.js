@@ -3,7 +3,7 @@
  * sends auth token to uppy client
  */
 const tokenService = require('../helpers/jwt')
-const parseUrl = require('url').parse
+const parseUrl = require('url').parse // eslint-disable-line node/no-deprecated-api
 const { hasMatch, sanitizeHtml } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 

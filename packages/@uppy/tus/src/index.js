@@ -256,14 +256,11 @@ module.exports = class Tus extends Plugin {
         this.uppy.setFileState(file.id, { serverToken: res.token })
         file = this.uppy.getFile(file.id)
         return file
-      })
-      .then((file) => {
+      }).then((file) => {
         return this.connectToServerSocket(file)
-      })
-      .then(() => {
+      }).then(() => {
         resolve()
-      })
-      .catch((err) => {
+      }).catch((err) => {
         reject(new Error(err))
       })
     })

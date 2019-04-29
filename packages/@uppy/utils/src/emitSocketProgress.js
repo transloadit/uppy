@@ -12,4 +12,7 @@ function _emitSocketProgress (uploader, progressData, file) {
   }
 }
 
-module.exports = throttle(_emitSocketProgress, 300, {leading: true, trailing: true})
+module.exports = throttle(_emitSocketProgress, 300, {
+  leading: true,
+  trailing: true
+})

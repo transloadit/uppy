@@ -25,7 +25,7 @@ class MockPurest {
             id: '0B2x-PmqQHSKdT013TE1VVjZ3TWs',
             mimeType: 'image/jpg',
             ownedByMe: true,
-            permissions: [{role: 'owner', emailAddress: 'ife@bala.com'}]
+            permissions: [{ role: 'owner', emailAddress: 'ife@bala.com' }]
           }],
           size: 300
         }
