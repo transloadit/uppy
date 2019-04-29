@@ -16,6 +16,14 @@ function findIndex (array, predicate) {
   return -1
 }
 
+// location.origin does not exist in IE
+function getOrigin () {
+  if ('origin' in location) {
+    return location.origin // eslint-disable-line compat/compat
+  }
+  return `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}`
+}
+
 class CloseWrapper extends Component {
   componentWillUnmount () {
     this.props.onUnmount()
@@ -410,7 +418,7 @@ module.exports = class ProviderView {
   }
 
   handleAuth () {
-    const authState = btoa(JSON.stringify({ origin: location.origin }))
+    const authState = btoa(JSON.stringify({ origin: getOrigin() }))
     // @todo remove this hardcoded version
     const clientVersion = 'companion-client:1.0.2'
     const link = `${this.provider.authUrl()}?state=${authState}&uppyVersions=${clientVersion}`

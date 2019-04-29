@@ -11,7 +11,9 @@ const PermissionsScreen = require('./PermissionsScreen')
 // Setup getUserMedia, with polyfill for older browsers
 // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 function getMediaDevices () {
+  // eslint-disable-next-line compat/compat
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    // eslint-disable-next-line compat/compat
     return navigator.mediaDevices
   }
 

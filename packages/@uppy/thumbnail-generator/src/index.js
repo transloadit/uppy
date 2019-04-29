@@ -190,6 +190,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
     }
     return Promise.resolve().then(() => {
       return dataURItoBlob(canvas.toDataURL(type, quality), {})
+    }).then((blob) => {
+      if (blob === null) {
+        throw new Error('could not extract blob, probably an old browser')
+      }
+      return blob
     })
   }
 
