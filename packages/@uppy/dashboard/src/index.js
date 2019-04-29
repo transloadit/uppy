@@ -567,7 +567,14 @@ module.exports = class Dashboard extends Plugin {
   }
 
   afterUpdate () {
-    this.superFocus(this.el, this.getPluginState().activeOverlayType)
+    // If update is connected to showing the Informer - let the screen reader calmly read it.
+    const isInformerPresent = !this.uppy.getState().info.isHidden
+
+    if (isInformerPresent) {
+      this.superFocus.cancel()
+    } else {
+      this.superFocus(this.el, this.getPluginState().activeOverlayType)
+    }
   }
 
   render (state) {
