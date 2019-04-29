@@ -325,6 +325,10 @@ module.exports = class Dashboard extends Plugin {
           isHidden: true,
           isClosing: false
         })
+
+        this.superFocus.cancel()
+        this.savedActiveElement.focus()
+
         this.el.removeEventListener('animationend', handler, false)
         resolve()
       }
@@ -333,13 +337,15 @@ module.exports = class Dashboard extends Plugin {
       this.setPluginState({
         isHidden: true
       })
+
+      this.superFocus.cancel()
+      this.savedActiveElement.focus()
+
       resolve()
     }
 
     // handle ESC and TAB keys in modal dialog
     document.removeEventListener('keydown', this.handleKeyDown)
-
-    this.savedActiveElement.focus()
 
     if (manualClose) {
       if (this.opts.browserBackButtonClose) {
