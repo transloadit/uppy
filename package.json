@@ -75,7 +75,7 @@
     "tinyify": "^2.5.0",
     "touch": "^3.1.0",
     "tsify": "^4.0.1",
-    "typescript": "^2.9.2",
+    "typescript": "^3.4.5",
     "verdaccio": "^3.11.6",
     "watchify": "^3.11.1",
     "wdio-mocha-framework": "^0.6.4",
