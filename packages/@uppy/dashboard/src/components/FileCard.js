@@ -42,7 +42,8 @@ class FileCard extends Component {
           placeholder={field.placeholder}
           onkeyup={this.tempStoreMetaOrSubmit}
           onkeydown={this.tempStoreMetaOrSubmit}
-          onkeypress={this.tempStoreMetaOrSubmit} />
+          onkeypress={this.tempStoreMetaOrSubmit}
+          data-uppy-super-focusable />
       </fieldset>
     })
   }

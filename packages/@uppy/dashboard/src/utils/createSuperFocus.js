@@ -19,6 +19,10 @@ module.exports = function createSuperFocus () {
     // [Practical check] without this line, typing in the search input in googledrive overlay won't work.
     if (isFocusInOverlay && lastFocusWasOnSuperFocusableEl) return
 
+    // If update is connected to showing the Informer - let the screen reader calmly read it.
+    const informerEl = overlayEl.querySelector('.uppy-Informer')
+    if (informerEl && informerEl.getAttribute('aria-hidden') !== 'true') return
+
     const superFocusableEl = overlayEl.querySelector(`[data-uppy-super-focusable]`)
     if (superFocusableEl) {
       superFocusableEl.focus({ preventScroll: true })

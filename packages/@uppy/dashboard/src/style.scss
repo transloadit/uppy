@@ -727,6 +727,9 @@ a.uppy-Dashboard-poweredBy {
   right: 0;
   bottom: 0;
   z-index: $zIndex-3;
+  &:focus{
+    box-shadow: inset 0px 0px 0px 4px rgb(59, 153, 252);
+  }
 }
 
 .uppy-DashboardItem-sourceIcon {
@@ -895,19 +898,28 @@ a.uppy-Dashboard-poweredBy {
   }
 }
 
-.uppy-DashboardItem-edit:not(:first-child),
-.uppy-DashboardItem-copyLink:not(:first-child),
-.uppy-DashboardItem-sourceIcon:not(:first-child) {
-  position: relative;
-  margin-left: 14px;
-  // margin-right: 7px;
+span.uppy-DashboardItem-statusbar-dot{
+  display: inline-block;
+  color: $gray-600;
+  &:last-child{
+    display: none;
+  }
+}
 
-  &:before {
-    content: '\00B7';
-    position: absolute;
-    top: 0;
-    left: -9px;
-    color: $gray-600;
+.uppy-DashboardItem-statusSize,
+.uppy-DashboardItem-edit,
+.uppy-DashboardItem-copyLink,
+.uppy-DashboardItem-sourceIcon {
+  position: relative;
+  margin-left: 3px;
+  margin-right: 3px;
+
+  padding-left: 3px;
+  padding-right: 3px;
+
+  &:first-child{
+    margin-left: 0;
+    padding-left: 0;
   }
 }
 
