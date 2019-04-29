@@ -1073,7 +1073,7 @@ describe('src/Core', () => {
       core.close()
     })
 
-    it('should calculate the total progress', () => {
+    it('should estimate progress for unsized files', () => {
       const core = new Core()
 
       core.once('file-added', (file) => {

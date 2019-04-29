@@ -696,7 +696,7 @@ class Uppy {
       uploadedSize += file.progress.bytesUploaded
     })
     unsizedFiles.forEach((file) => {
-      uploadedSize += averageSize * (file.progress.percentage || 0)
+      uploadedSize += averageSize * (file.progress.percentage || 0) / 100
     })
 
     let totalProgress = totalSize === 0
