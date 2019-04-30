@@ -15,6 +15,11 @@ We use lerna to manage the many plugin packages Uppy has. You should always do `
 
 Our website’s examples section is also our playground, please read the [Local Previews](#Local-Previews) section to get up and running.
 
+### Requiring files
+
+- If we are `require()`ing a file from the same subpackage (e.g. require `@uppy/dashboard/utils/hi.js` from `@uppy/dashboard/src/index.js`) - we can freely use relative imports, as long as the required file is under the `src` directory (`/:packageName/src/**/*.js`).
+- But if we want to require some file from another subpackage - we should use global @uppy requires, and they should always be in the form of `@uppy/:packageName/(lib instead of src)/(same path).js`
+
 ## Tests
 
 Unit tests are using Jest and can be run with:
