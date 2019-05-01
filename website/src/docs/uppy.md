@@ -219,6 +219,7 @@ Instead of overriding strings yourself, consider using [one of our language pack
 
 ```js
 const russianLocale = require('@uppy/locales/lib/ru_RU')
+// ^-- OR: import russianLocale from '@uppy/locales/lib/ru_RU'
 const uppy = Uppy({
   locale: russianLocale,
 })
