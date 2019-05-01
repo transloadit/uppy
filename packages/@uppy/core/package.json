@@ -26,7 +26,7 @@
     "lodash.throttle": "^4.1.1",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",
-    "preact": "^8.2.9",
+    "preact": "8.2.9",
     "prettier-bytes": "^1.0.4"
   }
 }

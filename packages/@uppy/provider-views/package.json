@@ -21,7 +21,7 @@
   "dependencies": {
     "@uppy/utils": "0.30.5",
     "classnames": "^2.2.6",
-    "preact": "^8.2.9"
+    "preact": "8.2.9"
   },
   "devDependencies": {
     "@uppy/core": "1.0.0"
