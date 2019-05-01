@@ -18,7 +18,9 @@ npm install @uppy/react
 ```
 
 ```js
+// Either:
 import StatusBar from '@uppy/react/lib/StatusBar'
+// Or:
 import { StatusBar } from '@uppy/react'
 ```
 

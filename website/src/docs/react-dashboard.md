@@ -17,7 +17,9 @@ npm install @uppy/react
 ```
 
 ```js
+// Either:
 import Dashboard from '@uppy/react/lib/Dashboard'
+// Or:
 import { Dashboard } from '@uppy/react'
 ```
 

@@ -18,7 +18,9 @@ npm install @uppy/react
 ```
 
 ```js
+// Either:
 import ProgressBar from '@uppy/react/lib/ProgressBar'
+// Or:
 import { ProgressBar } from '@uppy/react'
 ```
 
