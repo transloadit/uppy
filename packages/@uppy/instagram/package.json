@@ -26,7 +26,7 @@
     "@uppy/companion-client": "1.0.0",
     "@uppy/provider-views": "1.0.0",
     "@uppy/utils": "0.30.5",
-    "preact": "^8.2.9"
+    "preact": "8.2.9"
   },
   "devDependencies": {
     "@uppy/core": "1.0.0"
