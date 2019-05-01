@@ -1,35 +1,12 @@
+import UppyUtils = require('@uppy/utils');
+
 declare module Uppy {
+  // This is defined in @uppy/utils instead of core so it can be used there without creating import cycles
+  export type UppyFile<TMeta extends IndexedObject<any> = {}> = UppyUtils.UppyFile<TMeta>;
+
   interface IndexedObject<T> {
     [key: string]: T;
     [key: number]: T;
-  }
-  interface UppyFile<TMeta extends IndexedObject<any> = {}> {
-    data: Blob | File;
-    extension: string;
-    id: string;
-    isPaused?: boolean;
-    isRemote: boolean;
-    meta: {
-      name: string;
-      type?: string;
-    } & TMeta;
-    name: string;
-    preview?: string;
-    progress?: {
-      uploadStarted: number;
-      uploadComplete: boolean;
-      percentage: number;
-      bytesUploaded: number;
-      bytesTotal: number;
-    };
-    remote?: {
-      host: string;
-      url: string;
-      body?: object;
-    };
-    size: number;
-    source?: string;
-    type?: string;
   }
 
   interface UploadedUppyFile<TMeta extends IndexedObject<any> = {}> extends UppyFile<TMeta> {

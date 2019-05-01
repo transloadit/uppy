@@ -26,7 +26,7 @@ declare module '@uppy/utils/lib/dataURItoFile' {
 }
 
 declare module '@uppy/utils/lib/emitSocketProgress' {
-  import Uppy = require('@uppy/core');
+  import UppyUtils = require('@uppy/utils');
 
   interface ProgressData {
     progress: number;
@@ -34,7 +34,7 @@ declare module '@uppy/utils/lib/emitSocketProgress' {
     bytesTotal: number;
   }
 
-  export default function emitSocketProgress(uploader: object, progressData: ProgressData, file: Uppy.UppyFile): void;
+  export default function emitSocketProgress(uploader: object, progressData: ProgressData, file: UppyUtils.UppyFile): void;
 }
 
 declare module '@uppy/utils/lib/findAllDOMElements' {
@@ -46,9 +46,9 @@ declare module '@uppy/utils/lib/findDOMElement' {
 }
 
 declare module '@uppy/utils/lib/generateFileID' {
-  import Uppy = require('@uppy/core');
+  import UppyUtils = require('@uppy/utils');
 
-  export default function generateFileID(file: Uppy.UppyFile): string;
+  export default function generateFileID(file: UppyUtils.UppyFile): string;
 }
 
 declare module '@uppy/utils/lib/getBytesRemaining' {
@@ -64,9 +64,9 @@ declare module '@uppy/utils/lib/getFileNameAndExtension' {
 }
 
 declare module '@uppy/utils/lib/getFileType' {
-  import Uppy = require('@uppy/core');
+  import UppyUtils = require('@uppy/utils');
 
-  export default function getFileType(file: Uppy.UppyFile): string | null;
+  export default function getFileType(file: UppyUtils.UppyFile): string | null;
 }
 
 declare module '@uppy/utils/lib/getFileTypeExtension' {
@@ -128,4 +128,39 @@ declare module '@uppy/utils/lib/toArray' {
 
 declare module '@uppy/utils/lib/getDroppedFiles' {
   export default function getDroppedFiles(dataTransfer: DataTransfer): Promise<File[]>;
+}
+
+declare module '@uppy/utils' {
+  interface IndexedObject<T> {
+    [key: string]: T;
+    [key: number]: T;
+  }
+  export interface UppyFile<TMeta extends IndexedObject<any> = {}> {
+    data: Blob | File;
+    extension: string;
+    id: string;
+    isPaused?: boolean;
+    isRemote: boolean;
+    meta: {
+      name: string;
+      type?: string;
+    } & TMeta;
+    name: string;
+    preview?: string;
+    progress?: {
+      uploadStarted: number;
+      uploadComplete: boolean;
+      percentage: number;
+      bytesUploaded: number;
+      bytesTotal: number;
+    };
+    remote?: {
+      host: string;
+      url: string;
+      body?: object;
+    };
+    size: number;
+    source?: string;
+    type?: string;
+  }
 }
