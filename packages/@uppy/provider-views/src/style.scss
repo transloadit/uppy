@@ -278,6 +278,11 @@
     overflow: hidden;
     text-align: left;
     line-height: 1.4;
+
+    &:focus {
+      outline: none;
+      text-decoration: underline;
+    }
   }
 
   .uppy-ProviderBrowserItem-inner img,
@@ -479,7 +484,8 @@
 
 // Adding focus styles on the outer-box of the fake checkbox*/
 .uppy-ProviderBrowserItem-checkbox input:focus + label::before {
-  outline: rgb(59, 153, 252) auto 5px;
+  border-color: $blue;
+  box-shadow: 0 0 0 3px rgba($blue, 0.25);
 }
 
 .uppy-ProviderBrowser-footer {
