@@ -10,7 +10,7 @@ category: 'File Processing'
 Upload files straight to Transloadit from your own custom UI. Give us an array of files, and we'll give you an array of results!
 
 ```js
-const resultPromise = transloadit.upload(files, {
+const resultPromise = robodog.upload(files, {
   params: {
     auth: { key: '' },
     template_id: ''

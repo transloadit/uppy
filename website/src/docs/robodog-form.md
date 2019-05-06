@@ -16,7 +16,7 @@ Add resumable uploads and Transloadit's processing to your existing HTML upload 
 </form>
 
 <script>
-transloadit.form('form#myForm', {
+window.Robodog.form('form#myForm', {
   params: {
     auth: { key: '' },
     template_id: ''
@@ -70,7 +70,7 @@ Point it to an element or a CSS selector:
   <div class="progress"></div>
 </form>
 <script>
-transloadit.form('form#my-form', {
+window.Robodog.form('form#my-form', {
   statusBar: '#my-form .progress'
   // ...
 })
@@ -234,3 +234,5 @@ There are no `on*()` _options_ anymore, but `.on('...')` methods are provided in
 | `onSuccess` | `.on('transloadit:complete', (assembly) => {})` |
 | `onDisconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
 | `onReconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
+
+[transloadit]: https://transloadit.com
