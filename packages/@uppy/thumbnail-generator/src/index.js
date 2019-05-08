@@ -177,8 +177,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
       var canvas = document.createElement('canvas')
       canvas.width = sW
       canvas.height = sH
-      var context = canvas.getContext('2d')
-      context.drawImage(image, 0, 0, sW, sH)
+      canvas.getContext('2d').drawImage(image, 0, 0, sW, sH)
       image = canvas
 
       sW = Math.round(sW / x)
