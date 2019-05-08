@@ -1,7 +1,9 @@
+const ExifReader = require('exifReader')
 const { Plugin } = require('@uppy/core')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
+const ORIENTATIONS = require('./image-orientations')
 
 /**
  * The Thumbnail Generator plugin
@@ -55,14 +57,20 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     })
 
-    return onload
+    return this.getOrientation(file)
+      .then(orientation => {
+        this.orientation = ORIENTATIONS[orientation.value]
+        return onload
+      })
       .then(image => {
-        const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight)
-        const canvas = this.resizeImage(image, dimensions.width, dimensions.height)
-        return this.canvasToBlob(canvas, 'image/png')
+        const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, this.orientation.rotation)
+        const rotatedImage = this.rotateImage(image, this.orientation)
+        const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
+        return this.canvasToBlob(resizedImage, 'image/png')
       })
       .then(blob => {
-        return URL.createObjectURL(blob)
+        var blobURL = URL.createObjectURL(blob)
+        return blobURL
       })
   }
 
@@ -72,8 +80,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * account. If neither width nor height are given, the default dimension
    * is used.
    */
-  getProportionalDimensions (img, width, height) {
-    const aspect = img.width / img.height
+  getProportionalDimensions (img, width, height, rotation) {
+    var aspect = img.width / img.height
+    if (rotation === 90 || rotation === 270) {
+      aspect = img.height / img.width
+    }
 
     if (width != null) {
       return {
@@ -93,6 +104,22 @@ module.exports = class ThumbnailGenerator extends Plugin {
       width: this.defaultThumbnailDimension,
       height: Math.round(this.defaultThumbnailDimension / aspect)
     }
+  }
+
+  getOrientation (file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (ev) => {
+        try {
+          const tags = ExifReader.load(ev.target.result)
+          delete tags['MakerNote']
+          resolve(tags['Orientation'])
+        } catch (error) {
+          reject(error)
+        }
+      }
+      reader.readAsArrayBuffer(file.data)
+    })
   }
 
   /**
@@ -153,7 +180,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
       var canvas = document.createElement('canvas')
       canvas.width = sW
       canvas.height = sH
-      canvas.getContext('2d').drawImage(image, 0, 0, sW, sH)
+      var context = canvas.getContext('2d')
+      context.drawImage(image, 0, 0, sW, sH)
       image = canvas
 
       sW = Math.round(sW / x)
@@ -161,6 +189,28 @@ module.exports = class ThumbnailGenerator extends Plugin {
     }
 
     return image
+  }
+
+  rotateImage (image, translate) {
+    var w = image.width
+    var h = image.height
+
+    if (translate.rotation === 90 || translate.rotation === 270) {
+      w = image.height
+      h = image.width
+    }
+
+    var canvas = document.createElement('canvas')
+    canvas.width = w
+    canvas.height = h
+
+    var context = canvas.getContext('2d')
+    context.translate(w / 2, h / 2)
+    context.rotate(translate.rotation * Math.PI / 180)
+    context.scale(translate.xScale, translate.yScale)
+    context.drawImage(image, -image.width / 2, -image.height / 2, image.width, image.height)
+
+    return canvas
   }
 
   /**
