@@ -57,20 +57,17 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     })
 
-    return this.getOrientation(file)
-      .then(orientation => {
-        this.orientation = ORIENTATIONS[orientation.value]
-        return onload
-      })
-      .then(image => {
-        const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, this.orientation.rotation)
-        const rotatedImage = this.rotateImage(image, this.orientation)
+    return Promise.all([onload, this.getOrientation(file)])
+      .then(values => {
+        const image = values[0]
+        const orientation = values[1]
+        const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.rotation)
+        const rotatedImage = this.rotateImage(image, orientation)
         const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
         return this.canvasToBlob(resizedImage, 'image/png')
       })
       .then(blob => {
-        var blobURL = URL.createObjectURL(blob)
-        return blobURL
+        return URL.createObjectURL(blob)
       })
   }
 
@@ -112,8 +109,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
       reader.onload = (ev) => {
         try {
           const tags = ExifReader.load(ev.target.result)
-          delete tags['MakerNote']
-          resolve(tags['Orientation'])
+          const value = tags['Orientation'].value
+          resolve(ORIENTATIONS[value])
         } catch (error) {
           reject(error)
         }
