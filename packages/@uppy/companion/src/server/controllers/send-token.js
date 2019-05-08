@@ -42,7 +42,7 @@ const htmlContent = (token, origin) => {
     <head>
         <meta charset="utf-8" />
         <script>
-          window.opener.postMessage({token: "${token}"}, "${sanitizeHtml(origin)}")
+          window.opener.postMessage(JSON.stringify({token: "${token}"}), "${sanitizeHtml(origin)}")
           window.close()
         </script>
     </head>
