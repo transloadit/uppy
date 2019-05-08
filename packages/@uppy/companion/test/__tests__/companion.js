@@ -89,7 +89,7 @@ describe('test authentication', () => {
     <head>
         <meta charset="utf-8" />
         <script>
-          window.opener.postMessage({token: "${token}"}, "http://localhost:3020")
+          window.opener.postMessage(JSON.stringify({token: "${token}"}), "http://localhost:3020")
           window.close()
         </script>
     </head>

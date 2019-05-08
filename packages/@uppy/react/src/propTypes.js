@@ -43,6 +43,8 @@ const dashboard = {
   disableStatusBar: PropTypes.bool,
   disableInformer: PropTypes.bool,
   disableThumbnailGenerator: PropTypes.bool,
+  // pass-through to ThumbnailGenerator
+  thumbnailWidth: PropTypes.number,
   locale
 }
 
