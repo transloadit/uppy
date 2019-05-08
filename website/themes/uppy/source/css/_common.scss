@@ -223,12 +223,15 @@ hr {
 .MainLogo {
   display: inline-block;
   font-size: 27px;
-  color: $color-primary;
   font-family: $fontFamily-logo;
   font-weight: 700;
 
   @media #{$screen-medium} {
     margin-right: 35px;
+  }
+
+  &-link {
+    color: $color-primary;
   }
 
   &-version {
@@ -239,6 +242,10 @@ hr {
     border-radius: 6px;
     color: #fff;
     font-size: 24px;
+
+    &:hover {
+      background-color: darken($color-primary, 7%);
+    }
   }
 
   &-emoji {

@@ -49,16 +49,15 @@ if (page.series) {
       <header id="header" class="MainHeader js-MainHeader">
         <button class="MainHeader-menuBtn js-MenuBtn"></button>
 
-        <a id="logo" class="MainLogo" href="/">
-          <!-- <img class="MainLogo-img" src="<%- config.logo_medium %>"> -->
-          <%- config.title %>
-          <span class="MainLogo-version">
+        <span id="logo" class="MainLogo">
+          <a class="MainLogo-link" href="/"><%- config.title %></a>
+          <a class="MainLogo-version" href="/blog/2019/04/1.0/">
             1.0
             <span class="MainLogo-emoji">
               <img src="/images/party-popper.png" srcset="/images/party-popper@2x.png 2x" alt="🎉">
             </span>
-          </span>
-        </a>
+          </a>
+        </span>
 
         <nav>
           <ul id="nav" class="MainMenu">
