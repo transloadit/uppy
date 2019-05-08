@@ -228,7 +228,24 @@ hr {
   font-weight: 700;
 
   @media #{$screen-medium} {
-    margin-right: 20px;
+    margin-right: 35px;
+  }
+
+  &-version {
+    display: inline-block;
+    padding: 0px 8px 1px;
+    background-color: $color-primary;
+    position: relative;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 24px;
+  }
+
+  &-emoji {
+    font-size: 16px;
+    position: absolute;
+    margin-top: 2px;
+    right: -1.1em;
   }
 }
 
