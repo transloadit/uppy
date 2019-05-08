@@ -147,6 +147,39 @@ What we need to do to release Uppy 1.0
 - [x] website: design polish
 - [x] website: replace transloadit example with robodog example <-- add transloadit test key with restricted usage (no need to sign up yourself to try it)
 
+## 1.0.1
+
+Released: 2019-05-08
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.0.1 | @uppy/progress-bar | 1.0.1 |
+| @uppy/aws-s3 | 1.0.1 | @uppy/provider-views | 1.0.1 |
+| @uppy/companion-client | 1.0.1 | @uppy/react-native | 0.1.1 |
+| @uppy/companion | 1.0.1 | @uppy/react | 1.0.1 |
+| @uppy/core | 1.0.1 | @uppy/redux-dev-tools | 1.0.1 |
+| @uppy/dashboard | 1.0.1 | @uppy/robodog | 1.0.1 |
+| @uppy/drag-drop | 1.0.1 | @uppy/status-bar | 1.0.1 |
+| @uppy/dropbox | 1.0.1 | @uppy/thumbnail-generator | 1.0.1 |
+| @uppy/file-input | 1.0.1 | @uppy/transloadit | 1.0.1 |
+| @uppy/form | 1.0.1 | @uppy/tus | 1.0.1 |
+| @uppy/golden-retriever | 1.0.1 | @uppy/url | 1.0.1 |
+| @uppy/google-drive | 1.0.1 | @uppy/utils | 0.30.6 |
+| @uppy/informer | 1.0.1 | @uppy/webcam | 1.0.1 |
+| @uppy/instagram | 1.0.1 | @uppy/xhr-upload | 1.0.1 |
+| @uppy/locales | 1.1.0 | uppy | 1.0.1 |
+
+This includes some important fixes for webpack, create-react-app, and Internet Explorer support, as well as a bunch of new languages! :sparkles:
+
+- pin preact to v8.2.9, fixes build problems with webpack and create-react-app (#1513 / @goto-bus-stop)
+- @uppy/companion, @uppy/companion-client: pass token through postMessage as JSON, fixes #1424 (@serverdevil, @goto-bus-stop)
+- @uppy/react: add thumbnailWidth prop type for Dashboard components, fixes #1524 (@goto-bus-stop)
+- @uppy/status-bar: hide seconds if ETA more than 1 hour (#1501 / @Tiarhai)
+- @uppy/locales: Add `es_ES` translation (#1502 / @jorgeepc)
+- @uppy/locales: Add `zh_CN` translation (#1503 / @Quorafind)
+- @uppy/locales: Add `fa_IR` translation (#1514 / @hrsh)
+- @uppy/locales: Add `it_IT` translation (#1516 / @tinny77)
+
 ## 1.0.0
 
 Released: 2019-04-25
