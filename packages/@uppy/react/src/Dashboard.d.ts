@@ -24,6 +24,7 @@ export interface DashboardProps {
   disableStatusBar?: boolean;
   disableInformer?: boolean;
   disableThumbnailGenerator?: boolean;
+  thumbnailWidth?: number;
   locale?: Locale;
 }
 
