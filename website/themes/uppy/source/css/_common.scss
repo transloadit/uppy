@@ -328,6 +328,10 @@ hr {
   flex: 1;
   color: $color-gray;
   display: none;
+  transition: all ease-in-out 0.3s;
+  opacity: 0;
+
+  &.is-visible { opacity: 1; }
 
   @media #{$screen-medium} {
     margin: 0;
@@ -338,6 +342,10 @@ hr {
       display: block;
     }
   }
+}
+
+.MainHeader-taglineList {
+  display: none;
 }
 
 /**

@@ -136,17 +136,6 @@
   }
 }
 
-.MainHeader-tagline {
-  transition: all ease-in-out 0.3s;
-  opacity: 0;
-
-  &.is-visible { opacity: 1; }
-}
-
-.MainHeader-taglineList {
-  display: none;
-}
-
 .GetStartedBtn {
   font-size: 1.2em;
   text-decoration: none;
