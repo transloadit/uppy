@@ -126,14 +126,16 @@ S3 buckets do not allow public uploads by default.  In order to allow Uppy to up
 
 This process is described in the [AwsS3 documentation](/docs/aws-s3/#S3-Bucket-configuration).
 
-On top of the configuration mentioned there, the `ETag` header must also be whitelisted:
+While the Uppy AWS S3 plugin uses `POST` requests while uploading files to an S3 bucket, the AWS S3 Multipart plugin uses `PUT` requests when uploading file parts. Additionally, the `ETag` header must also be whitelisted:
 
 ```xml
 <CORSRule>
+  <!-- Change from POST to PUT if you followed the docs for the AWS S3 plugin ... -->
   <AllowedMethod>PUT</AllowedMethod>
-  <!-- ... all your existingCORS config goes here ... -->
+  
+  <!-- ... keep the existing MaxAgeSeconds and AllowedHeader lines and your other stuff ... -->
 
-  <!-- The magic: -->
+  <!-- ... and don't forget to add this tag. -->
   <ExposeHeader>ETag</ExposeHeader>
 </CORSRule>
 ```
