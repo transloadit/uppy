@@ -10,6 +10,7 @@ nl_NL.strings = {
   authenticateWith: 'Verbinden met %{pluginName}',
   authenticateWithTitle: 'Verbindt met %{pluginName} om bestanden te selecteren',
   back: 'Terug',
+  addMore: 'Meer toevoegen',
   browse: 'blader',
   cancel: 'Annuleer',
   cancelUpload: 'Annuleer upload',

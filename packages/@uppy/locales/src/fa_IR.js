@@ -10,6 +10,7 @@ fa_IR.strings = {
   authenticateWith: 'در حال اتصال به %{pluginName}',
   authenticateWithTitle: 'احراز هویت %{pluginName} برای انتخاب فایل ضروریست!',
   back: 'بازگشت',
+  addMore: 'أضف المزيد',
   browse: 'از رایانه',
   cancel: 'انصراف',
   cancelUpload: 'لغو بارگذاری',

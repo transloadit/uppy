@@ -10,6 +10,7 @@ it_IT.strings = {
   authenticateWith: 'Connetti a %{pluginName}',
   authenticateWithTitle: 'Autenticati con %{pluginName} per selezionare i file',
   back: 'Indietro',
+  addMore: 'Aggiungi più',
   browse: 'sfoglia',
   cancel: 'Annulla',
   cancelUpload: 'Annulla upload',

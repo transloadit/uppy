@@ -10,6 +10,7 @@ zh_CN.strings = {
   authenticateWith: '连接到%{pluginName}',
   authenticateWithTitle: '请使用%{pluginName}进行身份验证以选择文件',
   back: '返回',
+  addMore: '添加更多',
   browse: '浏览',
   cancel: '取消',
   cancelUpload: '取消上传',

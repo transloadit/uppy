@@ -10,6 +10,7 @@ de_DE.strings = {
   authenticateWith: 'Mit %{pluginName} verbinden',
   authenticateWithTitle: 'Bitte authentifizieren Sie sich mit %{pluginName}, um Dateien auszuwählen',
   back: 'Zurück',
+  addMore: 'Dateien hinzufügen',
   browse: 'Suche',
   cancel: 'Abbrechen',
   cancelUpload: 'Upload abbrechen',
