@@ -10,6 +10,7 @@ ru_RU.strings = {
   authenticateWithTitle: 'Пожалуйста, авторизуйтесь в %{pluginName} чтобы выбрать файлы',
   authenticateWith: 'Подключиться к %{pluginName}',
   back: 'Назад',
+  addMore: 'Добавить еще',
   browse: 'выберите',
   cancel: 'Отменить',
   cancelUpload: 'Отменить загрузку',

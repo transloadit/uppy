@@ -444,19 +444,38 @@
   @include reset-button;
   @include highlight-focus;
   display: inline-block;
-  font-weight: 500;
   cursor: pointer;
   color: $blue;
   width: 27px;
   height: 27px;
-  padding: 6px;
-  margin-right: -6px;
+  padding: 7px 8px;
+  margin-right: -8px;
   border-radius: 3px;
+
+  .uppy-size--md & {
+    font-size: 14px;
+    width: auto;
+    height: auto;
+  }
 }
 
-  .uppy-DashboardContent-addMore svg {
-    vertical-align: text-top;
+.uppy-DashboardContent-addMore svg {
+  vertical-align: baseline;
+  margin-right: 4px;
+
+  .uppy-size--md & {
+    width: 11px;
+    height: 11px;
   }
+}
+
+.uppy-DashboardContent-addMoreCaption {
+  display: none;
+
+  .uppy-size--md & {
+    display: inline;
+  }
+}
 
 .uppy-DashboardContent-panel {
   position: absolute;

@@ -10,6 +10,7 @@ en_US.strings = {
   authenticateWith: 'Connect to %{pluginName}',
   authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
   back: 'Back',
+  addMore: 'Add more',
   browse: 'browse',
   cancel: 'Cancel',
   cancelUpload: 'Cancel upload',
