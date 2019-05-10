@@ -51,7 +51,7 @@ Adding [Companion](/docs/companion/) to the mix enables remote sources such as I
 
 Uppy can be used with a module bundler such as [Webpack](http://webpack.js.org/) or [Browserify](http://browserify.org/), or by including it in a script tag.
 
-> You may need polyfills if your application supports Internet Explorer or other older browsers. See [Browser Support](#browser-support).
+> You may need polyfills if your application supports Internet Explorer or other older browsers. See [Browser Support](#Browser-Support).
 
 ### With a module bundler
 
