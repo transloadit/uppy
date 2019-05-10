@@ -330,7 +330,7 @@
 
   .uppy-DashboardTab-btn:active,
   .uppy-DashboardTab-btn:focus {
-    background-color: darken($gray-100--highlighted, 2%);
+    background-color: $highlight;
     outline: none;
   }
 
@@ -425,6 +425,7 @@
 
 .uppy-DashboardContent-back {
   @include reset-button;
+  @include highlight-focus;
   display: inline-block;
   font-size: 12px;
   font-weight: 400;
@@ -433,11 +434,7 @@
   padding: 7px 6px;
   margin-left: -6px;
   border-radius: 3px;
-
-  &:hover {
-    color: darken($blue, 12%);
-  }
-
+  
   .uppy-size--md & {
     font-size: 14px;
   }
@@ -445,6 +442,7 @@
 
 .uppy-DashboardContent-addMore {
   @include reset-button;
+  @include highlight-focus;
   display: inline-block;
   font-weight: 500;
   cursor: pointer;
@@ -454,10 +452,6 @@
   padding: 6px;
   margin-right: -6px;
   border-radius: 3px;
-
-  &:hover {
-    color: darken($blue, 12%)
-  }
 }
 
   .uppy-DashboardContent-addMore svg {
@@ -927,13 +921,28 @@ a.uppy-Dashboard-poweredBy {
   @include reset-button;
   cursor: pointer;
   color: $gray-900;
-  width: 20px;
-  height: 20px;
-  padding: 1px;
-  opacity: 0.9;
+  width: 18px;
+  height: 18px;
+  opacity: 0.95;
+
+  svg {
+    border-radius: 9px; // For the proper highlighting when focused
+  }
 
   &:hover {
     opacity: 1;
+  }
+
+  &:focus {
+    outline: none;
+
+    svg {
+      box-shadow: 0 0 0 3px rgba($blue, 0.5);
+    }
+  }
+
+  &::-moz-focus-inner {
+    border: 0;
   }
 }
 
