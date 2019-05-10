@@ -924,10 +924,7 @@ a.uppy-Dashboard-poweredBy {
   width: 18px;
   height: 18px;
   opacity: 0.95;
-
-  svg {
-    border-radius: 9px; // For the proper highlighting when focused
-  }
+  border-radius: 9px;
 
   &:hover {
     opacity: 1;
@@ -935,10 +932,7 @@ a.uppy-Dashboard-poweredBy {
 
   &:focus {
     outline: none;
-
-    svg {
-      box-shadow: 0 0 0 3px rgba($blue, 0.5);
-    }
+    box-shadow: 0 0 0 3px rgba($blue, 0.5);
   }
 
   &::-moz-focus-inner {
