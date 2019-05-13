@@ -14,7 +14,7 @@ jest.mock('../../src/server/helpers/oauth-state', () => {
 
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
-const { authServer, noAuthServer } = require('../mockserver')
+const { authServer } = require('../mockserver')
 const authData = {
   dropbox: 'token value',
   drive: 'token value'
@@ -97,19 +97,6 @@ describe('test authentication', () => {
     </html>`
         expect(res.text).toBe(body)
       })
-  })
-
-  test('check for authenticated provider', () => {
-    request(authServer)
-      .get('/drive/authorized/')
-      .set('uppy-auth-token', token)
-      .expect(200)
-      .then((res) => expect(res.body.authenticated).toBe(true))
-
-    request(noAuthServer)
-      .get('/drive/authorized/')
-      .expect(200)
-      .then((res) => expect(res.body.authenticated).toBe(false))
   })
 
   test('logout provider', () => {

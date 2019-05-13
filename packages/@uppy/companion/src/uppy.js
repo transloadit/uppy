@@ -86,7 +86,6 @@ module.exports.app = (options = {}) => {
   app.get('/:providerName/connect', middlewares.hasSessionAndProvider, controllers.connect)
   app.get('/:providerName/redirect', middlewares.hasSessionAndProvider, controllers.redirect)
   app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.gentleVerifyToken, controllers.logout)
-  app.get('/:providerName/authorized', middlewares.hasSessionAndProvider, middlewares.gentleVerifyToken, controllers.authorized)
   app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.sendToken)
   app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
   app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
