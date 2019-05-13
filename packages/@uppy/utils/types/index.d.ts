@@ -163,4 +163,9 @@ declare module '@uppy/utils' {
     source?: string;
     type?: string;
   }
+  export interface Store {
+    getState(): object;
+    setState(patch: object): void;
+    subscribe(listener: any): () => void;
+  }
 }

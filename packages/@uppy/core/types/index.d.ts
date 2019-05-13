@@ -1,8 +1,9 @@
 import UppyUtils = require('@uppy/utils');
 
 declare module Uppy {
-  // This is defined in @uppy/utils instead of core so it can be used there without creating import cycles
+  // These are defined in @uppy/utils instead of core so it can be used there without creating import cycles
   export type UppyFile<TMeta extends IndexedObject<any> = {}> = UppyUtils.UppyFile<TMeta>;
+  export type Store = UppyUtils.Store;
 
   interface IndexedObject<T> {
     [key: string]: T;
@@ -40,12 +41,6 @@ declare module Uppy {
     unmount(): void;
     install(): void;
     uninstall(): void;
-  }
-
-  interface Store {
-    getState(): object;
-    setState(patch: object): void;
-    subscribe(listener: any): () => void;
   }
 
   interface LocaleStrings {

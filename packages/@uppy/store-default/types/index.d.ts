@@ -1,6 +1,6 @@
-import Uppy = require('@uppy/core');
+import UppyUtils = require('@uppy/utils');
 
-declare class DefaultStore implements Uppy.Store {
+declare class DefaultStore implements UppyUtils.Store {
   constructor();
   getState(): object;
   setState(patch: object): void;
