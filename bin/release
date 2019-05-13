@@ -61,6 +61,11 @@ cp README.md packages/uppy/README.md
 npm run build:clean
 FRESH=1 npm run build
 
+echo "!! The next step is the actual release!"
+echo "!! If something goes wrong after here, it becomes hard to reverse. Please make sure that everything is in order."
+echo "Press Enter when ready, or Ctrl+C if you still need to do something."
+read
+
 git commit --allow-empty -m "Release"
 lerna version --amend --no-push --exact
 

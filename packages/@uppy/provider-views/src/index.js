@@ -419,9 +419,19 @@ module.exports = class ProviderView {
         this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.companionAllowedHosts}`)
         return
       }
+
+      // Check if it's a string before doing the JSON.parse to maintain support
+      // for older Companion versions that used object references
+      const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
+
+      if (!data.token) {
+        this.plugin.uppy.log('did not receive token from auth window')
+        return
+      }
+
       authWindow.close()
       window.removeEventListener('message', handleToken)
-      this.provider.setAuthToken(e.data.token)
+      this.provider.setAuthToken(data.token)
       this.preFirstRender()
     }
     window.addEventListener('message', handleToken)
