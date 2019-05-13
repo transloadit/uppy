@@ -1,4 +1,4 @@
-const ExifReader = require('exifReader')
+const ExifReader = require('exifreader')
 const { Plugin } = require('@uppy/core')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
