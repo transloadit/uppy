@@ -157,8 +157,7 @@ class Uploader {
    * @param {Buffer | Buffer[]} chunk
    */
   handleChunk (chunk) {
-    // @todo a default protocol should not be set. We should ensure that the user specifies her protocol.
-    const protocol = this.options.protocol || PROTOCOLS.multipart
+    const protocol = this.options.protocol
 
     // The download has completed; close the file and start an upload if necessary.
     if (chunk === null) {

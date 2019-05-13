@@ -107,6 +107,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [x] @uppy/companion: investigate 423 and 500 issues with React Native + Url plugin when pause/resuming an upload
 - [x] dashboard: Bring back "Drop Here" screen for dragged URLs without introducing flickering (tricky! see PR #1400)
 - [x] companion: remove deprecated "authorized" endpoint
+- [x] companion: remove default upload protocol
 
 ## 1.0 Goals
 
