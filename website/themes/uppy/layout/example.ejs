@@ -35,7 +35,7 @@
           text = JSON.stringify(text);
         }
 
-        container.value += text;
+        container.value += text + '\n';
         container.scrollTop = container.scrollHeight + '\n';
       };
     }(console.log.bind(console), document.getElementById("console-log")));
