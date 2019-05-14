@@ -248,7 +248,7 @@ module.exports = class XHRUpload extends Plugin {
           this.uppy.emit('upload-success', file, uploadResp)
 
           if (uploadURL) {
-            this.uppy.log(`Download ${file.name} from ${file.uploadURL}`)
+            this.uppy.log(`Download ${file.name} from ${uploadURL}`)
           }
 
           return resolve(file)
