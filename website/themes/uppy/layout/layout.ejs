@@ -37,7 +37,7 @@ if (page.series) {
     <%- css('css/main').replace('.css', '.css?version=2') %>
     <!-- ^-- poor man's solution to css cache busting. bump the version when there's something new we really want users to see -->
   </head>
-  <body class="<%= isIndex ? 'page-index' : 'page-inner' %>">
+  <body class="<%= isIndex ? 'page-index' : 'page-inner' %> <%= page.body_class %>">
     <div class="page">
       <div class="TransloaditBar">
         <a class="TransloaditBar-logo" href="https://transloadit.com/" target="_blank" rel="noopener noreferrer">
