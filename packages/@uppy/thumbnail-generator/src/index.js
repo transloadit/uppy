@@ -109,10 +109,10 @@ module.exports = class ThumbnailGenerator extends Plugin {
       reader.onload = (ev) => {
         try {
           const tags = ExifReader.load(ev.target.result)
-          const value = tags['Orientation'].value
+          const value = tags['Orientation'] ? tags['Orientation'].value : 1
           resolve(ORIENTATIONS[value])
         } catch (error) {
-          reject(error)
+          resolve(ORIENTATIONS[1])
         }
       }
       reader.readAsArrayBuffer(file.data)
