@@ -27,17 +27,18 @@
 
   <textarea id="console-log" class="Console"></textarea>
   <script>
-  console.log = (function (old_function, div_log) {
-    return function (text) {
-      old_function(text);
+    console.log = (function (log, container) {
+      return function (text) {
+        log(text);
 
-      if (text !== (text + '')) {
-        text = JSON.stringify(text);
-      }
+        if (text !== (text + '')) {
+          text = JSON.stringify(text);
+        }
 
-      div_log.value = text + "\n" + div_log.value;
-    };
-  } (console.log.bind(console), document.getElementById("console-log")));
+        container.value += text + '\n';
+        container.scrollTop = container.scrollHeight;
+      };
+    }(console.log.bind(console), document.getElementById("console-log")));
   </script>
 
   <script>
