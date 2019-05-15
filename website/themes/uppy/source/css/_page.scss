@@ -176,17 +176,19 @@
   }
 
   table {
+    width: 100%;
+    text-align: left;
     display: block;
     font-size: 85%;
     border-spacing: 10px;
     overflow-x: auto;
-    // white-space: nowrap;
   }
 
-  // table td,
-  // table th {
-  //   padding-right: 30px;
-  // }
+  table td { 
+    vertical-align: top;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+  }
 
   .light {
     color: $color-light;
@@ -347,16 +349,14 @@
       font-size: 14px;
     }
   }
+}
 
-  table {
-    width: 100%;
-    text-align: left;
-    td {
-      vertical-align: top;
-      padding: 8px;
-      border-bottom: 1px solid #eee;
-    }
-  }
+.page-docs-locales table td {
+  white-space: nowrap;
+}
+
+.page-docs-locales table code {
+  font-size: 75%;
 }
 
 .PostAuthor:first-of-type {
