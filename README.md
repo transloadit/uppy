@@ -129,7 +129,7 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 ### Miscellaneous
 
 - [`Golden Retriever`](https://uppy.io/docs/golden-retriever/) — restores files after a browser crash, like it’s nothing
-- `Thumbnail Generator` — generates image previews (included by default with `Dashboard`)
+- [`Thumbnail Generator`](https://uppy.io/docs/thumbnail-generator/) — generates image previews (included by default with `Dashboard`)
 - [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right before an Uppy upload, then optionally appends results back to the form
 - [`Redux`](https://uppy.io/docs/redux/) — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
 
@@ -208,8 +208,8 @@ And you’ll need [`@uppy/companion`](https://uppy.io/docs/companion) if you’d
 
 ## Contributions are welcome
 
- - Contributor’s guide in [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)
- - Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
+- Contributor’s guide in [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)
+- Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Used by
 
