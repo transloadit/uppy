@@ -108,6 +108,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [x] dashboard: Bring back "Drop Here" screen for dragged URLs without introducing flickering (tricky! see PR #1400)
 - [x] companion: remove deprecated "authorized" endpoint
 - [x] companion: remove default upload protocol
+- [x] companion: remove fallback `UPPYSERVER_*` env options
 
 ## 1.0 Goals
 
