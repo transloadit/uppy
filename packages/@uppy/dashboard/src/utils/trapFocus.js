@@ -18,6 +18,13 @@ function focusOnLastNode (event, nodes) {
   }
 }
 
+// ___Why not just use (focusedItemIndex === -1)?
+//    Firefox thinks <ul> is focusable, but we don't have <ul>s in our FOCUSABLE_ELEMENTS. Which means that if we tab into the <ul>, code will think that we are not in the active overlay, and we should focusOnFirstNode() of the currently active overlay!
+//    [Practical check] if we use (focusedItemIndex === -1), instagram provider in firefox will never get focus on its pics in the <ul>.
+function isFocusInOverlay (activeOverlayEl) {
+  return activeOverlayEl.contains(document.activeElement)
+}
+
 // Traps focus inside of the currently open overlay (e.g. Dashboard, or e.g. Instagram)
 module.exports = function trapFocus (event, activeOverlayType, dashboardEl) {
   const activeOverlayEl = getActiveOverlayEl(dashboardEl, activeOverlayType)
@@ -27,15 +34,13 @@ module.exports = function trapFocus (event, activeOverlayType, dashboardEl) {
 
   // If we pressed tab, and focus is not yet within the current overlay - focus on the first element within the current overlay.
   // This is a safety measure (for when user returns from another tab e.g.), most plugins will try to focus on some important element as it loads.
-  if (focusedItemIndex === -1) {
+  if (!isFocusInOverlay(activeOverlayEl)) {
     focusOnFirstNode(event, focusableNodes)
-  }
   // If we pressed shift + tab, and we're on the first element of a modal
-  if (event.shiftKey && focusedItemIndex === 0) {
+  } else if (event.shiftKey && focusedItemIndex === 0) {
     focusOnLastNode(event, focusableNodes)
-  }
   // If we pressed tab, and we're on the last element of the modal
-  if (!event.shiftKey && focusedItemIndex === focusableNodes.length - 1) {
+  } else if (!event.shiftKey && focusedItemIndex === focusableNodes.length - 1) {
     focusOnFirstNode(event, focusableNodes)
   }
 }
