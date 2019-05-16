@@ -192,9 +192,12 @@
   position: relative;
   text-align: center;
   flex: 1;
-  margin: 7px;
-  border: 1px dashed $gray-250;
-  border-radius: 3px;
+
+  .uppy-size--md & {
+    margin: 7px;
+    border-radius: 3px;
+    border: 1px dashed $gray-250; // Show dashed border on large screens only
+  }
 
   .uppy-Dashboard-AddFilesPanel & {
     border: none;
@@ -610,7 +613,7 @@
   max-width: 300px;
   text-align: center;
   font-size: 16px;
-  line-height: 1.45;
+  line-height: 1.35;
   font-weight: 400;
   color: $gray-700;
   margin: auto;
