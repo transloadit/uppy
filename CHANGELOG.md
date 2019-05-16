@@ -109,6 +109,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [x] companion: remove deprecated "authorized" endpoint
 - [x] companion: remove default upload protocol
 - [x] companion: remove fallback `UPPYSERVER_*` env options
+- [x] companion: change OAuth access token transport
 
 ## 1.0 Goals
 
