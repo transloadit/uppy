@@ -93,6 +93,11 @@ class Uploader {
    * @returns {boolean}
    */
   validateOptions (options) {
+    if (!Object.keys(PROTOCOLS).some((key) => PROTOCOLS[key] === options.protocol)) {
+      this._errRespMessage = 'Invalid upload protocol'
+      return false
+    }
+
     // s3 uploads don't require upload destination
     // validation, because the destination is determined
     // by the server's s3 config
