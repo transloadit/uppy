@@ -12,7 +12,7 @@ const Form = require('./../../packages/@uppy/form/src')
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
 // const XHR_ENDPOINT = 'https://api2.transloadit.com'
 
-const uppy = Uppy({
+const uppyDashboard = Uppy({
   debug: true,
   meta: {
     username: 'John',
@@ -41,7 +41,7 @@ const uppy = Uppy({
   .use(Form, { target: '#upload-form' })
   // .use(GoldenRetriever, {serviceWorker: true})
 
-uppy.on('complete', (result) => {
+uppyDashboard.on('complete', (result) => {
   if (result.failed.length === 0) {
     console.log('Upload successful 😀')
   } else {
@@ -50,6 +50,9 @@ uppy.on('complete', (result) => {
   console.log('successful files:', result.successful)
   console.log('failed files:', result.failed)
 })
+
+const modalTrigger = document.querySelector('#pick-files')
+if (modalTrigger) modalTrigger.click()
 
 /* eslint-disable compat/compat */
 if ('serviceWorker' in navigator) {
@@ -63,6 +66,3 @@ if ('serviceWorker' in navigator) {
     })
 }
 /* eslint-enable */
-
-var modalTrigger = document.querySelector('#pick-files')
-if (modalTrigger) modalTrigger.click()
