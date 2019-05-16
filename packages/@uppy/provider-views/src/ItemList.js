@@ -23,7 +23,9 @@ module.exports = (props) => {
       <ul class="uppy-ProviderBrowser-list"
         onscroll={props.handleScroll}
         role="listbox"
-        aria-label={`List of files from ${props.title}`}>
+        aria-label={`List of files from ${props.title}`}
+        // making <ul> not focusable for firefox
+        tabindex="-1">
         {props.folders.map(folder =>
           Item({
             ...getSharedProps(folder, props),
