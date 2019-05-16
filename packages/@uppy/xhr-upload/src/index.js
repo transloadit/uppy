@@ -324,6 +324,7 @@ module.exports = class XHRUpload extends Plugin {
         file.remote.url,
         Object.assign({}, file.remote.body, {
           endpoint: opts.endpoint,
+          protocol: 'multipart',
           size: file.data.size,
           fieldname: opts.fieldName,
           metadata: fields,
