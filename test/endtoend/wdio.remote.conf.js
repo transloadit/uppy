@@ -21,7 +21,7 @@ exports.config = Object.assign(base.config, {
     { browserName: 'MicrosoftEdge', version: '17', platform: 'Windows 10' },
     // { browserName: 'safari', version: '11.0', platform: 'macOS 10.12' },
     // { browserName: 'safari', version: '10.0', platformName: 'iOS', platformVersion: '10.0', deviceOrientation: 'portrait', deviceName: 'iPhone 6 Simulator', appiumVersion: '1.7.1' },
-    { browserName: 'chrome', platformName: 'Android', platformVersion: '6.0', deviceOrientation: 'portrait', deviceName: 'Android Emulator', appiumVersion: '1.7.1' }
+    { browserName: 'chrome', platformName: 'Android', platformVersion: '6.0', deviceOrientation: 'portrait', deviceName: 'Android Emulator' }
   ].map(createCapability),
 
   // If you only want to run your tests until a specific amount of tests have failed use
