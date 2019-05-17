@@ -132,16 +132,14 @@ module.exports = function FileItem (props) {
       </div>
     </div>
     <div class="uppy-DashboardItem-info">
-      <div class="uppy-DashboardItem-fileWrapper">
-        <div class="uppy-DashboardItem-file">
-          <span className="uppy-DashboardItem-fileName" title={fileName}>
-            {props.showLinkToFileUploadResult && file.uploadURL
-              ? <a href={file.uploadURL} rel="noreferrer noopener" target="_blank">
-                {file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}
-              </a>
-              : file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName
-            }
-          </span>
+      <div class="uppy-DashboardItem-file">
+        <div class="uppy-DashboardItem-name" title={fileName}>
+          {props.showLinkToFileUploadResult && file.uploadURL
+            ? <a href={file.uploadURL} rel="noreferrer noopener" target="_blank">
+              {file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}
+            </a>
+            : file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName
+          }
         </div>
         <div class="uppy-DashboardItem-status">
           {file.data.size ? <div class="uppy-DashboardItem-statusSize">{prettyBytes(file.data.size)}</div> : null}
