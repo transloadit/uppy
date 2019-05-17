@@ -88,7 +88,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 - [ ] ! core: _calculateTotalProgress results in incorrectly high (1038%) progress with files that don’t have size (like from Instagram) (@goto-bus-stop)
 - [ ] core: consider removing Preact from Plugin as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
-- [ ] !!! dashboard: Remove the Authorization required tooltip on the authentication screen https://github.com/transloadit/uppy/issues/1425
+- [x] dashboard: Remove the Authorization required tooltip on the authentication screen https://github.com/transloadit/uppy/issues/1425 (#1478 / @arturi)
 - [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
 - [ ] a11y: Fix remaining issues (https://github.com/transloadit/uppy/issues/created_by/nqst)
 - [ ] chore: fix up all code using the prettier branch. work is done, just needs an execute and review/okay by the team
@@ -98,14 +98,13 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
-- [ ] docs: add docs on locales — how to use from NPM and CDN, list which languages are supported, invite to add more
+- [x] docs: add docs on locales — how to use from NPM and CDN, auto-generated list of languages that are supported already, invitation to add more (#1553 / @arturi, @kvz)
 - [ ] goldenretriever: make it work with aws multipart (@goto-bus-stop) https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888
 - [ ] localepacks: Add Arabic, see if right-to-left causes issues, and fix them :)
 - [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
 - [ ] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [x] @uppy/companion: investigate 423 and 500 issues with React Native + Url plugin when pause/resuming an upload
-- [x] dashboard: Bring back "Drop Here" screen for dragged URLs without introducing flickering (tricky! see PR #1400)
 - [x] companion: remove deprecated "authorized" endpoint
 - [x] companion: remove default upload protocol
 - [x] companion: remove fallback `UPPYSERVER_*` env options
