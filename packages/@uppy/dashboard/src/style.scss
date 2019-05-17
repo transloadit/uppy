@@ -773,7 +773,7 @@ a.uppy-Dashboard-poweredBy {
   border-radius: 3px;
 
   .uppy-size--md & {
-    box-shadow: 0 1px 3px rgba($black, 0.2);
+    box-shadow: 0 1px 2px rgba($black, 0.15);
   }
 }
 
@@ -855,7 +855,7 @@ a.uppy-Dashboard-poweredBy {
     width: 100%;
     max-width: 100%;
     flex: 1;
-    padding: 8px 0 0;
+    padding: 9px 0 0;
     border-top: 0;
   }
 }
