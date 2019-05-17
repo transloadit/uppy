@@ -29,6 +29,7 @@ module.exports = function sendToken (req, res, next) {
     const allowedClients = req.uppy.options.clients
     // if no preset clients then allow any client
     if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch(parseUrl(origin).host, allowedClients)) {
+      // @todo do a more secure client version check, see https://www.npmjs.com/package/semver
       return res.send(clientVersion ? htmlContent(uppyAuthToken, origin) : oldHtmlContent(uppyAuthToken, origin))
     }
   }
