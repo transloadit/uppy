@@ -106,7 +106,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [x] @uppy/companion: investigate 423 and 500 issues with React Native + Url plugin when pause/resuming an upload
 - [x] companion: remove deprecated "authorized" endpoint
-- [x] companion: remove default upload protocol
 - [x] companion: remove fallback `UPPYSERVER_*` env options
 - [x] companion: change OAuth access token transport
 
