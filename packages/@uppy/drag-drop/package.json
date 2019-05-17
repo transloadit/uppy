@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "@uppy/utils": "0.30.6",
-    "drag-drop": "2.13.3",
     "preact": "8.2.9"
   },
   "devDependencies": {

@@ -7,7 +7,6 @@
   justify-content: center;
   border-radius: 7px;
   background-color: $white;
-  // cursor: pointer;
 }
 
 .uppy-DragDrop-inner {
@@ -25,22 +24,16 @@
 }
 
   .uppy-DragDrop--is-dragdrop-supported {
-    border: 2px dashed;
-    border-color: lighten($gray-500, 10%);
+    border: 2px dashed lighten($gray-500, 10%);
   }
 
-  // .uppy-DragDrop-container.is-dragdrop-supported .uppy-DragDrop-dragText {
-  //   display: inline;
-  // }
-
-  .uppy-DragDrop-container.drag {
-    border-color: $gray-500;
-    background-color: darken($white, 10%);
-  }
-
-  .uppy-DragDrop-container.drag .uppy-DragDrop-arrow {
+.uppy-DragDrop--isDraggingOver{
+  border: 2px dashed $blue;
+  background: $gray-200;
+  .uppy-DragDrop-arrow {
     fill: $gray-500;
   }
+}
 
 .uppy-DragDrop-label {
   display: block;
