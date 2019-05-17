@@ -107,7 +107,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [x] @uppy/companion: investigate 423 and 500 issues with React Native + Url plugin when pause/resuming an upload
 - [x] companion: remove deprecated "authorized" endpoint
 - [x] companion: remove fallback `UPPYSERVER_*` env options
-- [x] companion: change OAuth access token transport
 
 ## 1.0 Goals
 

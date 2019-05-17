@@ -17,7 +17,8 @@ module.exports = function callback (req, res, next) {
     req.uppy.providerTokens = {}
   }
 
-  req.uppy.providerTokens[providerName] = req.session.grant.response.access_token
+  // TODO see if the access_token can be transported in a different way that url query params
+  req.uppy.providerTokens[providerName] = req.query.access_token
   logger.debug(`Generating auth token for provider ${providerName}.`)
   const uppyAuthToken = tokenService.generateToken(req.uppy.providerTokens, req.uppy.options.secret)
   return res.redirect(req.uppy.buildURL(`/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`, true))
