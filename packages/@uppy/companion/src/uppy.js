@@ -63,7 +63,7 @@ module.exports.app = (options = {}) => {
   app.use((req, res, next) => {
     res.header(
       'Access-Control-Allow-Headers',
-      [res.get('Access-Control-Allow-Headers'), 'uppy-auth-token'].join(', ')
+      [res.get('Access-Control-Allow-Headers'), 'uppy-auth-token', 'uppy-client'].join(', ')
     )
     next()
   })
@@ -218,6 +218,7 @@ const getOptionsMiddleware = (options) => {
       options,
       s3Client,
       authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
+      clientVersion: req.header('uppy-client') || req.query.uppyClient,
       buildURL: getURLBuilder(options)
     }
     next()
