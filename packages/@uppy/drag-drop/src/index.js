@@ -1,6 +1,7 @@
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const toArray = require('@uppy/utils/lib/toArray')
+const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 const dragDrop = require('drag-drop')
 const { h } = require('preact')
 
@@ -35,7 +36,7 @@ module.exports = class DragDrop extends Plugin {
     this.opts = Object.assign({}, defaultOpts, opts)
 
     // Check for browser dragDrop support
-    this.isDragDropSupported = this.checkDragDropSupport()
+    this.isDragDropSupported = isDragDropSupported()
 
     // i18n
     this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
@@ -45,30 +46,7 @@ module.exports = class DragDrop extends Plugin {
     // Bind `this` to class methods
     this.handleDrop = this.handleDrop.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
-    this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
     this.render = this.render.bind(this)
-  }
-
-  /**
-   * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
-   * @return {Boolean}
-   */
-  checkDragDropSupport () {
-    const div = document.createElement('div')
-
-    if (!('draggable' in div) || !('ondragstart' in div && 'ondrop' in div)) {
-      return false
-    }
-
-    if (!('FormData' in window)) {
-      return false
-    }
-
-    if (!('FileReader' in window)) {
-      return false
-    }
-
-    return true
   }
 
   handleDrop (files) {
