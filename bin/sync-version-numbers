@@ -18,6 +18,11 @@ set -o nounset
 # __base="$(basename ${__file} .sh)"
 # __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
+# disable this script
+# until upload-to-cdn is refactored to publish multiple packages
+# remove when upload-to-cdn is back
+exit 0
+
 if [ "${ENDTOEND:=0}" = "1" ]; then
   echo "Publishing for e2e tests, skipping version number sync."
   exit 0

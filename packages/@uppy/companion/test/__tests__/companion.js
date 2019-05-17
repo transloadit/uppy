@@ -63,17 +63,6 @@ describe('download provdier file', () => {
       .expect(200)
       .then((res) => expect(res.body.token).toBeTruthy())
   })
-
-  test('download should fail if protocol is not specified', () => {
-    return request(authServer)
-      .post('/drive/get/README.md')
-      .set('uppy-auth-token', token)
-      .set('Content-Type', 'application/json')
-      .send({
-        endpoint: 'http://master.tus.com/files'
-      })
-      .expect(400)
-  })
 })
 
 describe('test authentication', () => {
