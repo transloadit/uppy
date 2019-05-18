@@ -76,10 +76,10 @@ If both width and height are given, only width is taken into account.
 
 ## Event
 
-`thumbnail:generated` event is emitted with `fileID` and `preview` local url as arguments:
+`thumbnail:generated` event is emitted with `file` and `preview` local url as arguments:
 
 ```js
-uppy.on('thumbnail:generated', (fileID, preview) => {
+uppy.on('thumbnail:generated', (file, preview) => {
   const img = document.createElement('img')
   img.src = preview
   img.width = 100
