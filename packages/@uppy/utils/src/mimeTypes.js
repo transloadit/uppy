@@ -1,3 +1,8 @@
+// ___Why not add the mime-types package?
+//    It's 19.7kB gzipped, and we only need mime types for well-known extensions (for file previews).
+// ___Where to take new extensions from?
+//    https://github.com/jshttp/mime-db/blob/master/db.json
+
 module.exports = {
   'md': 'text/markdown',
   'markdown': 'text/markdown',
@@ -32,5 +37,10 @@ module.exports = {
   'xlt': 'application/vnd.ms-excel',
   'xltm': 'application/vnd.ms-excel.template.macroenabled.12',
   'xltx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
-  'xlw': 'application/vnd.ms-excel'
+  'xlw': 'application/vnd.ms-excel',
+  'txt': 'text/plain',
+  'text': 'text/plain',
+  'conf': 'text/plain',
+  'log': 'text/plain',
+  'pdf': 'application/pdf'
 }

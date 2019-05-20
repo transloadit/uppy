@@ -1,5 +1,4 @@
 module.exports = {
-  authorized: require('./authorized'),
   callback: require('./callback'),
   sendToken: require('./send-token'),
   get: require('./get'),
