@@ -10,6 +10,7 @@ zh_TW.strings = {
   authenticateWith: '連接到%{pluginName}',
   authenticateWithTitle: '請使用%{pluginName}進行身份驗證以選擇文件',
   back: '返回',
+  addMore: '添加更多',
   browse: '瀏覽',
   cancel: '取消',
   cancelUpload: '取消上傳',
