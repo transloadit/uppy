@@ -155,9 +155,9 @@ module.exports = function FileItem (props) {
           }
         </div>
       </div>
-      <span className="uppy-DashboardItem-fileAction">
+      <div className="uppy-DashboardItem-actionWrapper">
         {(!uploadInProgressOrComplete && props.metaFields && props.metaFields.length)
-          ? <button class="uppy-u-reset uppy-DashboardItem-edit"
+          ? <button class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--edit"
             type="button"
             aria-label={props.i18n('editFile')}
             title={props.i18n('editFile')}
@@ -170,7 +170,7 @@ module.exports = function FileItem (props) {
           : null
         }
         {props.showLinkToFileUploadResult && file.uploadURL
-          ? <button class="uppy-u-reset uppy-DashboardItem-copyLink"
+          ? <button class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--copyLink"
             type="button"
             aria-label={props.i18n('copyLink')}
             title={props.i18n('copyLink')}
@@ -188,21 +188,19 @@ module.exports = function FileItem (props) {
           </button>
           : ''
         }
-      </span>
-    </div>
-    <div class="uppy-DashboardItem-action">
-      {showRemoveButton &&
-        <button class="uppy-DashboardItem-remove"
-          type="button"
-          aria-label={props.i18n('removeFile')}
-          title={props.i18n('removeFile')}
-          onclick={() => props.removeFile(file.id)}>
-          <svg aria-hidden="true" class="UppyIcon" width="18" height="18" viewBox="0 0 18 18">
-            <path d="M9 0C4.034 0 0 4.034 0 9s4.034 9 9 9 9-4.034 9-9-4.034-9-9-9z" />
-            <path fill="#FFF" d="M13 12.222l-.778.778L9 9.778 5.778 13 5 12.222 8.222 9 5 5.778 5.778 5 9 8.222 12.222 5l.778.778L9.778 9z" />
-          </svg>
-        </button>
-      }
+        {showRemoveButton &&
+          <button class="uppy-DashboardItem-action uppy-DashboardItem-action--remove"
+            type="button"
+            aria-label={props.i18n('removeFile')}
+            title={props.i18n('removeFile')}
+            onclick={() => props.removeFile(file.id)}>
+            <svg aria-hidden="true" class="UppyIcon" width="18" height="18" viewBox="0 0 18 18">
+              <path d="M9 0C4.034 0 0 4.034 0 9s4.034 9 9 9 9-4.034 9-9-4.034-9-9-9z" />
+              <path fill="#FFF" d="M13 12.222l-.778.778L9 9.778 5.778 13 5 12.222 8.222 9 5 5.778 5.778 5 9 8.222 12.222 5l.778.778L9.778 9z" />
+            </svg>
+          </button>
+        }
+      </div>
     </div>
   </li>
 }

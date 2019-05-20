@@ -712,6 +712,7 @@ a.uppy-Dashboard-poweredBy {
 .uppy-DashboardItem-preview {
   width: 50px;
   height: 50px;
+  flex-shrink: 0;
   border-bottom: 0;
   position: relative;
   display: flex;
@@ -745,7 +746,7 @@ a.uppy-Dashboard-poweredBy {
 .uppy-DashboardItem-sourceIcon {
   display: inline-block;
   vertical-align: bottom;
-  color: $gray-500;
+  color: $gray-400;
 }
 
 .uppy-DashboardItem-sourceIcon svg,
@@ -843,21 +844,27 @@ a.uppy-Dashboard-poweredBy {
 }
 
 .uppy-DashboardItem-info {
-  padding-left: 15px;
-  position: relative;
-  max-width: 65%;
+  padding-right: 4px;
+  padding-left: 12px;
+  flex: 1;
+  height: 100%;
 
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
 
   .uppy-size--md & {
     width: 100%;
-    max-width: 100%;
+    height: auto;
+    align-items: flex-start;
     flex: 1;
     padding: 9px 0 0;
     border-top: 0;
   }
+}
+
+.uppy-DashboardItem-file {
+  flex: 1;
 }
 
 .uppy-DashboardItem-name {
@@ -865,35 +872,18 @@ a.uppy-Dashboard-poweredBy {
   line-height: 1.3;
   font-weight: 500;
   margin: 0 0 4px;
-  padding: 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
 
   .uppy-size--md & {
+    padding-right: 0;
     word-break: break-all;
     white-space: normal;
     overflow: initial;
   }
 }
 
-.uppy-DashboardItem-fileWrapper {
-  flex: 1;
-}
-
 .uppy-DashboardItem-name a {
   text-decoration: none;
   color: $gray-800;
-}
-
-.uppy-DashboardItem-fileAction {
-  padding-left: 15px;
-  margin-top: 0.1em;
-  color: $gray-500;
-
-  &:hover {
-    color: $gray-600;
-  }
 }
 
 .uppy-DashboardItem-status {
@@ -910,63 +900,73 @@ a.uppy-Dashboard-poweredBy {
   text-transform: uppercase;
 }
 
-.uppy-DashboardItem-edit,
-.uppy-DashboardItem-copyLink {
+.uppy-DashboardItem-actionWrapper {
+  padding-left: 8px;
+  margin-top: 0.1em;
+  white-space: nowrap;
+
+  .uppy-size--md & {
+    margin-top: 1px;
+    white-space: normal;
+    min-width: 24px;
+    padding-left: 12px;
+  }
+}
+
+.uppy-DashboardItem-action {
   display: inline-block;
-  vertical-align: bottom;
+  vertical-align: middle;
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
   color: inherit;
-  width: 16px;
-  height: 16px;
-  text-align: right;
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  text-align: center;
+  color: $gray-500;
+
+  &:hover {
+    color: $gray-600;
+  }
+  
+  .uppy-size--md & {
+    width: 16px;
+    height: 16px;
+    padding: 1px;
+    vertical-align: top;
+  }
 
   &:hover {
     text-decoration: underline;
   }
 }
 
-.uppy-DashboardItem-edit:not(:first-child),
-.uppy-DashboardItem-copyLink:not(:first-child),
 .uppy-DashboardItem-sourceIcon:not(:first-child) {
   position: relative;
   margin-left: 14px;
-  // margin-right: 7px;
-
-  &:before {
-    content: '\00B7';
-    position: absolute;
-    top: 0;
-    left: -9px;
-    color: $gray-600;
-  }
 }
 
-.uppy-DashboardItem-action {
-  position: absolute;
-  top: 18px;
-  right: 10px;
-  z-index: $zIndex-3;
-
-  .uppy-size--md & {
-    top: -8px;
-    right: -8px;
-  }
-}
-
-.uppy-DashboardItem-remove {
+.uppy-DashboardItem-action--remove {
   @include reset-button;
   cursor: pointer;
   color: $gray-900;
-  width: 18px;
-  height: 18px;
   opacity: 0.95;
   border-radius: 9px;
 
+  .uppy-size--md & {
+    z-index: $zIndex-3;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 18px;
+    height: 18px;
+  }
+
   &:hover {
     opacity: 1;
+    color: $gray-900;
   }
 
   &:focus {
@@ -1194,11 +1194,11 @@ a.uppy-Dashboard-poweredBy {
   align-items: center;
   padding: 0 15px;
   background-color: $gray-50;
-}
 
-  .uppy-size--md .uppy-Dashboard-actions {
+  .uppy-size--md & {
     height: 65px;
   }
+}
 
 .uppy-Dashboard-actionsBtn {
   margin-right: 10px;
