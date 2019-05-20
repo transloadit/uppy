@@ -3,7 +3,7 @@ const uppy = require('../uppy')
 // @ts-ignore
 const { version } = require('../../package.json')
 const { app } = require('.')
-const port = process.env.COMPANION_PORT || process.env.UPPYSERVER_PORT || 3020
+const port = process.env.COMPANION_PORT || 3020
 
 uppy.socket(app.listen(port))
 

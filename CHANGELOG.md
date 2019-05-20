@@ -88,7 +88,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 - [ ] ! core: _calculateTotalProgress results in incorrectly high (1038%) progress with files that don’t have size (like from Instagram) (@goto-bus-stop)
 - [ ] core: consider removing Preact from Plugin as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
-- [ ] !!! dashboard: Remove the Authorization required tooltip on the authentication screen https://github.com/transloadit/uppy/issues/1425
+- [x] dashboard: Remove the Authorization required tooltip on the authentication screen https://github.com/transloadit/uppy/issues/1425 (#1478 / @arturi)
 - [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
 - [ ] a11y: Fix remaining issues (https://github.com/transloadit/uppy/issues/created_by/nqst)
 - [ ] chore: fix up all code using the prettier branch. work is done, just needs an execute and review/okay by the team
@@ -98,14 +98,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
-- [ ] docs: add docs on locales — how to use from NPM and CDN, list which languages are supported, invite to add more
 - [ ] goldenretriever: make it work with aws multipart (@goto-bus-stop) https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888
 - [ ] localepacks: Add Arabic, see if right-to-left causes issues, and fix them :)
 - [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
 - [ ] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
-- [x] @uppy/companion: investigate 423 and 500 issues with React Native + Url plugin when pause/resuming an upload
-- [x] dashboard: Bring back "Drop Here" screen for dragged URLs without introducing flickering (tricky! see PR #1400)
+
 
 ## 1.0 Goals
 
@@ -147,6 +145,38 @@ What we need to do to release Uppy 1.0
 - [x] website: design polish
 - [x] website: replace transloadit example with robodog example <-- add transloadit test key with restricted usage (no need to sign up yourself to try it)
 
+## 1.0.2
+
+Released: 2019-05-17
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.0.2 | @uppy/progress-bar | 1.0.2 |
+| @uppy/aws-s3 | 1.0.2 | @uppy/provider-views | 1.0.2 |
+| @uppy/companion | 1.0.2 | @uppy/react | 1.0.2 |
+| @uppy/core | 1.0.2 | @uppy/redux-dev-tools | 1.0.2 |
+| @uppy/dashboard | 1.0.2 | @uppy/robodog | 1.0.2 |
+| @uppy/drag-drop | 1.0.2 | @uppy/status-bar | 1.0.2 |
+| @uppy/dropbox | 1.0.2 | @uppy/thumbnail-generator | 1.0.2 |
+| @uppy/file-input | 1.0.2 | @uppy/transloadit | 1.0.2 |
+| @uppy/form | 1.0.2 | @uppy/tus | 1.0.2 |
+| @uppy/golden-retriever | 1.0.2 | @uppy/url | 1.0.2 |
+| @uppy/google-drive | 1.0.2 | @uppy/utils | 1.0.2 |
+| @uppy/informer | 1.0.2 | @uppy/webcam | 1.0.2 |
+| @uppy/instagram | 1.0.2 | @uppy/xhr-upload | 1.0.2 |
+| @uppy/locales | 1.2.0 | uppy | 1.0.2 |
+
+- @uppy/companion, @uppy/provider-views: ⚠️Send version header: This fix restores backwards-compatibility with Uppy Client ^1.0.0, by introducing `uppyVersions` param (in the future also an `uppy-versions` header). If this param is present, the authentication token is sent in a new way, as a string, otherwise it’s sent the old way, as JSON object (incompatible with IE). Please use @uppy/companion@1.0.2 for backwards-compatibility, @uppy/companion@1.0.1 is deprecated (#1564 / @ifedapoolarewaju)
+- @uppy/core: mimeTypes.js - added pdf file type (#1558 / @lakesare)
+- @uppy/locales: Add zh_TW translation (#1562 / @green-mike)
+- companion: remove deprecated "authorized" endpoint (33add61b613c5fc38c7cbace2f140c97dedc8b73 / @ifedapoolarewaju)
+- companion: remove fallback `UPPYSERVER_*` env options (bf2220ab9f95a0794b8e46fe6ff50af9e4b955d9 / @ifedapoolarewaju)
+- docs: add docs on locales — how to use from NPM and CDN, auto-generated list of languages that are supported already, invitation to add more (#1553 / @arturi, @kvz)
+- docs: document Companions Auth and Token mechanism (#1540 / @ifedapoolarewaju)
+- docs: update AWS S3 Multipart documentation wrt CORS settings (#1539 / @manuelkiessling)
+- website: cleanup (#1536 / @nqst)
+- website: output console logs in order (#1547 / @goto-bus-stop)
+
 ## 1.0.1
 
 Released: 2019-05-08
@@ -168,6 +198,8 @@ Released: 2019-05-08
 | @uppy/informer | 1.0.1 | @uppy/webcam | 1.0.1 |
 | @uppy/instagram | 1.0.1 | @uppy/xhr-upload | 1.0.1 |
 | @uppy/locales | 1.1.0 | uppy | 1.0.1 |
+
+⚠️ `@uppy/companion@1.0.1` from this release has been deprecated, because it accidentally broke backwards-compatibility with Uppy Client `^1.0.0`. It is now fixed in `@uppy/companion@1.0.2`, please update. See https://github.com/transloadit/uppy/pull/1564 for details. Sorry about the trouble!
 
 This includes some important fixes for webpack, create-react-app, and Internet Explorer support, as well as a bunch of new languages! :sparkles:
 
@@ -214,6 +246,7 @@ Released: 2019-04-25
 - @uppy/transloadit: Add connection error reporting (#1484 / @goto-bus-stop)
 - @uppy/tus: update tus-js-client to 1.8.0-0(057fb6200d9a7c6af452c5a79870fa74e362ec2c / @ifedapoolarewaju)
 - @uppy/xhr-upload: Add filename to FormData with `bundle: true` (#1487 / @goto-bus-stop)
+- @uppy/companion: investigate 423 and 500 issues with React Native + Url plugin when pause/resuming an upload (@ifedapoolarewaju)
 - docs: Add basic @uppy/react-native docs (#1494 / @arturi)
 - docs: Add docs for Thumbnail Generator plugin (#1468 / @arturi)
 - website: New website re-design by Alex (#1483 / @nqst, @arturi)

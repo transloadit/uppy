@@ -88,7 +88,7 @@ npm install
 npm start
 ```
 
-Releases are managed by [Lerna](https://github.com/lerna/lerna/tree/2.x). We do some cleanup and compile work around releases too. Use the npm release script:
+Releases are managed by [Lerna](https://github.com/lerna/lerna). We do some cleanup and compile work around releases too. Use the npm release script:
 
 ```bash
 npm run release

@@ -42,14 +42,9 @@ code, pre {
 }
 
 code {
-  // color: $color-orange;
   padding: 3px 5px;
-  // margin: 0 2px;
   border-radius: $size-radius;
-  // white-space: nowrap;
 }
-
-// em { color: $color-light; }
 
 hr {
   border: 0;
@@ -65,7 +60,6 @@ hr {
   color: #fff;
   font-size: 18px;
   background-color: $color-primary;
-  // border-bottom: 2px solid darken($color-primary, 12%);
   padding: 12px 20px;
   border-radius: 8px;
   transition: all .15s ease;
@@ -265,12 +259,10 @@ hr {
   top: 0;
   left: 0;
   width: 100%;
-  // height: 40px;
   z-index: 9;
   z-index: 2;
   padding-top: 15px;
   padding-bottom: 15px;
-  // box-shadow: 0 0 4px rgba(0,0,0,.25);
   background-color: $color-white;
   text-align: center;
 
@@ -279,10 +271,7 @@ hr {
     display: flex;
     align-items: baseline;
     padding: 14px 60px 19px;
-    // box-shadow: none;
-    // position: relative;
     z-index: 2;
-    // border-top: 3px solid $color-primary;
     border-bottom: 1px solid rgba($color-lightgray, 0.2);
     text-align: left;
 
@@ -328,6 +317,10 @@ hr {
   flex: 1;
   color: $color-gray;
   display: none;
+  transition: all ease-in-out 0.3s;
+  opacity: 0;
+
+  &.is-visible { opacity: 1; }
 
   @media #{$screen-medium} {
     margin: 0;
@@ -338,6 +331,10 @@ hr {
       display: block;
     }
   }
+}
+
+.MainHeader-taglineList {
+  display: none;
 }
 
 /**
@@ -416,8 +413,6 @@ hr {
   padding: 0;
   list-style-type: none;
   text-align: center;
-  // position: relative;
-  // z-index: 100;
 
   &-item {
     display: inline-block;
