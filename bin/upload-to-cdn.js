@@ -27,14 +27,51 @@ const AWS = require('aws-sdk')
 const packlist = require('npm-packlist')
 const tar = require('tar')
 const pacote = require('pacote')
-const tempy = require('tempy')
+const concat = require('concat-stream')
+const { promisify } = require('util')
+const readFile = promisify(require('fs').readFile)
+const finished = promisify(require('stream').finished)
 
-async function loadRemoteDist (packageName, version) {
+const AWS_REGION = 'us-east-1'
+const AWS_BUCKET = 'crates.edgly.net'
+const AWS_DIRECTORY = '756b8efaed084669b02cb99d4540d81f/default'
+
+async function getRemoteDistFiles (packageName, version) {
+  const files = new Map()
   const tarball = pacote.tarball.stream(`${packageName}@${version}`)
-    .pipe(tar.Parse())
+    .pipe(new tar.Parse())
+
   tarball.on('entry', (readEntry) => {
+    if (readEntry.path.startsWith('package/dist/')) {
+      readEntry
+        .pipe(concat((buf) => {
+          files.set(readEntry.path.replace(/^package\/dist\//, ''), buf)
+        }))
+        .on('error', (err) => {
+          tarball.emit('error', err)
+        })
+    } else {
+      readEntry.resume()
+    }
   })
+
   await finished(tarball)
+  return files
+}
+
+async function getLocalDistFiles (packagePath) {
+  const files = (await packlist({ path: packagePath }))
+    .filter(f => f.startsWith('dist/'))
+    .map(f => f.replace(/^dist\//, ''))
+
+  const entries = await Promise.all(
+    files.map(async (f) => [
+      f,
+      await readFile(path.join(packagePath, 'dist', f))
+    ])
+  )
+
+  return new Map(entries)
 }
 
 async function main (packageName, version) {
@@ -44,6 +81,19 @@ async function main (packageName, version) {
     process.exit(1)
   }
 
+  if (!process.env.EDGLY_KEY || !process.env.EDGLY_SECRET) {
+    console.error('Missing EDGLY_KEY or EDGLY_SECRET env variables, bailing')
+    process.exit(1)
+  }
+
+  const s3 = new AWS.S3({
+    credentials: new AWS.Credentials({
+      accessKeyId: process.env.EDGLY_KEY,
+      secretAccessKey: process.env.EDGLY_SECRET
+    }),
+    region: AWS_REGION
+  })
+
   const remote = !!version
   if (!remote) {
     version = require(`../packages/${packageName}/package.json`).version
@@ -52,17 +102,28 @@ async function main (packageName, version) {
   const packagePath = remote
     ? `${packageName}@${version}`
     : path.join(__dirname, '..', 'packages', packageName)
-  const temporaryPath = tempy.directory()
 
-  const proc = spawn('npm', ['pack', packagePath], {
-    cwd: temporaryPath,
-    stdio: 'inherit'
-  })
+  const files = remote
+    ? await getRemoteDistFiles(packageName, version)
+    : await getLocalDistFiles(packagePath)
 
-  const code = await once(proc, 'exit')
-  if (code !== 0) {
-    console.error('packing failed')
-    process.exit(1)
+  // uppy → releases/uppy/
+  // @uppy/robodog → releases/uppy/robodog/
+  // @uppy/locales → releases/uppy/locales/
+  const dirName = packageName.startsWith('@uppy/')
+    ? packageName.replace(/^@/, '')
+    : 'uppy'
+
+  const outputPath = path.posix.join('releases', dirName, `v${version}`)
+
+  for (const [filename, buffer] of files.entries()) {
+    const key = path.posix.join(AWS_DIRECTORY, outputPath, filename)
+    console.log(`pushing s3://${AWS_BUCKET}/${key}`)
+    await s3.putObject({
+      Bucket: AWS_BUCKET,
+      Key: key,
+      Body: buffer
+    }).promise()
   }
 }
 

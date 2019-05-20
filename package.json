@@ -74,7 +74,6 @@
     "stringify-object": "^3.3.0",
     "tar": "^4.4.8",
     "temp-write": "^3.4.0",
-    "tempy": "^0.3.0",
     "tinyify": "^2.5.0",
     "touch": "^3.1.0",
     "tsify": "^4.0.1",
