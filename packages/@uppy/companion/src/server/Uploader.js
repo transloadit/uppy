@@ -93,11 +93,6 @@ class Uploader {
    * @returns {boolean}
    */
   validateOptions (options) {
-    if (!Object.keys(PROTOCOLS).some((key) => PROTOCOLS[key] === options.protocol)) {
-      this._errRespMessage = 'Invalid upload protocol'
-      return false
-    }
-
     // s3 uploads don't require upload destination
     // validation, because the destination is determined
     // by the server's s3 config
@@ -162,7 +157,8 @@ class Uploader {
    * @param {Buffer | Buffer[]} chunk
    */
   handleChunk (chunk) {
-    const protocol = this.options.protocol
+    // @todo a default protocol should not be set. We should ensure that the user specifies her protocol.
+    const protocol = this.options.protocol || PROTOCOLS.multipart
 
     // The download has completed; close the file and start an upload if necessary.
     if (chunk === null) {
