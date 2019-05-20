@@ -79,7 +79,7 @@
     "@types/ws": "^3.2.1",
     "nodemon": "^1.17.5",
     "supertest": "3.0.0",
-    "typescript": "^2.9.2"
+    "typescript": "^3.4.5"
   },
   "files": [
     "lib/"

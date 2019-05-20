@@ -1,4 +1,4 @@
-import Uppy = require('@uppy/core');
+import UppyUtils = require('@uppy/utils');
 import { Reducer, Middleware, Store as Redux } from 'redux';
 
 declare namespace ReduxStore {
@@ -8,7 +8,7 @@ declare namespace ReduxStore {
     selector?: (state: any) => object;
   }
 
-  interface ReduxStore extends Uppy.Store {
+  interface ReduxStore extends UppyUtils.Store {
     constructor(opts: ReduxStoreOptions): ReduxStore;
     getState(): object;
     setState(patch: object): void;

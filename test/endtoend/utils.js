@@ -1,3 +1,4 @@
+/* eslint-disable compat/compat */
 /* global window, capabilities */
 const path = require('path')
 const { spawn } = require('child_process')

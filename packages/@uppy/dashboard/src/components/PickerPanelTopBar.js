@@ -79,9 +79,9 @@ function PanelTopBar (props) {
     <div class="uppy-DashboardContent-bar">
       <div>
         {!props.isAllComplete
-        ? <button class="uppy-DashboardContent-back"
-          type="button"
-          onclick={props.cancelAll}>{props.i18n('cancel')}</button>
+          ? <button class="uppy-DashboardContent-back"
+            type="button"
+            onclick={props.cancelAll}>{props.i18n('cancel')}</button>
           : null
         }
       </div>

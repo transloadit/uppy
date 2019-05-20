@@ -1,12 +1,10 @@
-import Uppy = require('@uppy/core');
-
 export interface RequestClientOptions {
   companionUrl: string;
   serverHeaders?: object;
 }
 
 export class RequestClient {
-  constructor (uppy: Uppy.Uppy, opts: RequestClientOptions);
+  constructor (uppy: any, opts: RequestClientOptions);
   get (path: string): Promise<any>;
   post (path: string, data: object): Promise<any>;
   delete (path: string, data: object): Promise<any>;
@@ -19,13 +17,13 @@ export interface ProviderOptions extends RequestClientOptions {
 }
 
 export class Provider extends RequestClient {
-  constructor (uppy: Uppy.Uppy, opts: ProviderOptions);
+  constructor (uppy: any, opts: ProviderOptions);
   checkAuth (): Promise<boolean>;
   authUrl (): string;
   fileUrl (id: string): string;
   list (directory: string): Promise<any>;
   logout (redirect?: string): Promise<any>;
-  static initPlugin(plugin: Uppy.Plugin, opts: object, defaultOpts?: object): void;
+  static initPlugin(plugin: any, opts: object, defaultOpts?: object): void;
 }
 
 export interface SocketOptions {

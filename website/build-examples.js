@@ -87,7 +87,9 @@ glob(srcPattern, (err, files) => {
 
     // Aliasing for using `require('uppy')`, etc.
     b
-      .transform(babelify)
+      .transform(babelify, {
+        root: path.join(__dirname, '..')
+      })
       .transform(aliasify, {
         aliases: {
           '@uppy': `./${path.relative(process.cwd(), path.join(__dirname, '../packages/@uppy'))}`

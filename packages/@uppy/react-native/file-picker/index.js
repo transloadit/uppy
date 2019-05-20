@@ -44,8 +44,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
         data: file
       })
       this.props.onRequestClose()
-    })
-    .catch((err) => {
+    }).catch((err) => {
       console.log(err)
     })
   }
@@ -59,8 +58,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
         data: file
       })
       this.props.onRequestClose()
-    })
-    .catch((err) => {
+    }).catch((err) => {
       console.log(err)
     })
   }
@@ -73,8 +71,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
         data: file
       })
       this.props.onRequestClose()
-    })
-    .catch((err) => {
+    }).catch((err) => {
       console.log(err)
     })
   }

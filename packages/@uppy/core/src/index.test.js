@@ -1303,7 +1303,12 @@ describe('src/Core', () => {
         }
       })
       core.emit('upload-error', core.getFile('fileId'), new Error('this is the error'))
-      expect(core.getState().info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
+      expect(core.getState().info).toEqual({
+        message: 'Failed to upload filename',
+        details: 'this is the error',
+        isHidden: false,
+        type: 'error'
+      })
     })
 
     it('should reset the error state when receiving the upload event', () => {
