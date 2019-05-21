@@ -18,8 +18,8 @@ module.exports = (props) => {
       role="option"
       aria-label={
         props.type === 'folder'
-        ? `${props.isChecked ? 'Unselect' : 'Select'} all files from ${props.title} folder`
-        : `${props.isChecked ? 'Unselect' : 'Select'} ${props.title} file`
+          ? `${props.isChecked ? 'Unselect' : 'Select'} all files from ${props.title} folder`
+          : `${props.isChecked ? 'Unselect' : 'Select'} ${props.title} file`
       }
       aria-selected={props.isChecked}
       aria-disabled={props.isDisabled}
