@@ -14,15 +14,15 @@
     "jsx-quotes": ["error", "prefer-double"],
     "compat/compat": ["error"],
 
-    "jsdoc/check-alignment": ["error"],
-    "jsdoc/check-examples": ["error"],
-    "jsdoc/check-indentation": ["error"],
-    "jsdoc/check-param-names": ["error"],
-    "jsdoc/check-syntax": ["error"],
-    "jsdoc/check-tag-names": ["error"],
-    "jsdoc/check-types": ["error"],
-    "jsdoc/newline-after-description": ["error"],
-    "jsdoc/valid-types": ["error"]
+    "jsdoc/check-alignment": ["warn"],
+    "jsdoc/check-examples": ["warn"],
+    "jsdoc/check-indentation": ["warn"],
+    "jsdoc/check-param-names": ["warn"],
+    "jsdoc/check-syntax": ["warn"],
+    "jsdoc/check-tag-names": ["warn"],
+    "jsdoc/check-types": ["warn"],
+    "jsdoc/newline-after-description": ["warn"],
+    "jsdoc/valid-types": ["warn"]
   },
   "settings": {
     "polyfills": [
