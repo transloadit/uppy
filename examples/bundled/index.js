@@ -39,11 +39,11 @@ const uppy = Uppy({
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: TUS_ENDPOINT })
 
-  // You can optinally enable the Golden Retriever plugin — it will
-  // restore files after a browser crash / accidental closed window
-  // see more at https://uppy.io/docs/golden-retriever/
-  //
-  // .use(GoldenRetriever, {serviceWorker: true})
+// You can optinally enable the Golden Retriever plugin — it will
+// restore files after a browser crash / accidental closed window
+// see more at https://uppy.io/docs/golden-retriever/
+//
+//   .use(GoldenRetriever, { serviceWorker: true })
 
 uppy.on('complete', (result) => {
   if (result.failed.length === 0) {

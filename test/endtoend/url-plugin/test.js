@@ -1,4 +1,4 @@
-/* global browser, expect  */
+/* global browser  */
 describe('File upload with URL plugin', () => {
   it('should import  and upload a file completely with Url Plugin', () => {
     browser.url('http://localhost:4567/url-plugin')

@@ -8,9 +8,9 @@
     "start": "npm-run-all --serial copy --parallel start:*"
   },
   "dependencies": {
+    "@babel/core": "^7.4.4",
     "aliasify": "^2.1.0",
-    "babel-core": "^6.26.3",
-    "babelify": "^8.0.0",
+    "babelify": "^10.0.0",
     "budo": "^11.3.2",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",

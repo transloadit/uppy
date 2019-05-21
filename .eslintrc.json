@@ -25,6 +25,21 @@
     "jsdoc/valid-types": ["error"]
   },
   "settings": {
-    "polyfills": ["fetch", "promises"]
-  }
+    "polyfills": [
+      "Promise",
+      "fetch",
+      "Object.assign"
+    ]
+  },
+  "overrides": [{
+    "files": [
+      "*.test.js",
+      "test/endtoend/*.js",
+      "website/*.js",
+      "bin/*.js"
+    ],
+    "rules": {
+      "compat/compat": "off"
+    }
+  }]
 }

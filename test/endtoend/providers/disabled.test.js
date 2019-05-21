@@ -1,4 +1,4 @@
-/* global browser, expect  */
+/* global browser  */
 
 /*
   WARNING! PLEASE READ THIS BEFORE ENABLING THIS TEST ON TRAVIS.
