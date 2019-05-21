@@ -39,6 +39,7 @@
     "eslint-plugin-compat": "^2.7.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jest": "^21.27.2",
+    "eslint-plugin-jsdoc": "^5.0.2",
     "eslint-plugin-node": "^4.2.3",
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-react": "^7.12.4",

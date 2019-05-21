@@ -9,10 +9,20 @@
     "window": true,
     "hexo": true
   },
-  "plugins": ["jest", "compat"],
+  "plugins": ["jest", "compat", "jsdoc"],
   "rules": {
     "jsx-quotes": ["error", "prefer-double"],
-    "compat/compat": ["error"]
+    "compat/compat": ["error"],
+
+    "jsdoc/check-alignment": ["error"],
+    "jsdoc/check-examples": ["error"],
+    "jsdoc/check-indentation": ["error"],
+    "jsdoc/check-param-names": ["error"],
+    "jsdoc/check-syntax": ["error"],
+    "jsdoc/check-tag-names": ["error"],
+    "jsdoc/check-types": ["error"],
+    "jsdoc/newline-after-description": ["error"],
+    "jsdoc/valid-types": ["error"]
   },
   "settings": {
     "polyfills": ["fetch", "promises"]
