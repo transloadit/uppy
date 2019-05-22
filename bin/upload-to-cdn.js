@@ -32,6 +32,10 @@ const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
 const finished = promisify(require('stream').finished)
 
+function delay (ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 const AWS_REGION = 'us-east-1'
 const AWS_BUCKET = 'crates.edgly.net'
 const AWS_DIRECTORY = '756b8efaed084669b02cb99d4540d81f/default'
@@ -97,6 +101,14 @@ async function main (packageName, version) {
   const remote = !!version
   if (!remote) {
     version = require(`../packages/${packageName}/package.json`).version
+  }
+
+  // Warn if uploading a local build not from CI:
+  // - If we're on CI, this should be a release commit.
+  // - If we're local, normally we should upload a released version, not a local build.
+  if (!remote && !process.env.CI) {
+    console.log('Warning, writing a local build to the CDN, this is usually not what you want. Sleeping 3s. Press CTRL+C!')
+    await delay(3000)
   }
 
   const packagePath = remote

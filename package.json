@@ -120,7 +120,7 @@
     "test:unit": "npm run build:lib && jest",
     "test:watch": "jest --watch",
     "test": "npm-run-all lint test:locale-packs test:unit test:type test:companion",
-    "uploadcdn": "bin/upload-to-cdn.sh",
+    "uploadcdn": "node ./bin/upload-to-cdn",
     "version": "./bin/sync-version-numbers",
     "watch:css": "onchange 'packages/**/*.scss' --initial --verbose -- npm run build:css",
     "watch:js:bundle": "onchange 'packages/{@uppy/,}*/src/**/*.js' --initial --verbose -- npm run build:bundle",

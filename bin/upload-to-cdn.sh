@@ -169,7 +169,7 @@ pushd "${__root}" > /dev/null 2>&1
 
   if [ "${versionSuffix}" != "" ]; then
     echo "Not setting latest version because versionSuffix was set, which is used for testing only"
-  else 
+  else
     echo "${version}" | env \
       AWS_ACCESS_KEY_ID="${EDGLY_KEY}" \
       AWS_SECRET_ACCESS_KEY="${EDGLY_SECRET}" \
