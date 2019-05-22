@@ -151,6 +151,7 @@ module.exports = class Dashboard extends Plugin {
     this.toggleFileCard = this.toggleFileCard.bind(this)
     this.toggleAddFilesPanel = this.toggleAddFilesPanel.bind(this)
     this.handlePaste = this.handlePaste.bind(this)
+    this.handlePasteOnBody = this.handlePasteOnBody.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
@@ -521,10 +522,25 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.startListeningToResize()
+    document.addEventListener('paste', this.handlePasteOnBody)
 
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.handleFileAdded)
     this.uppy.on('complete', this.handleComplete)
+  }
+
+  // ___Why do we listen to the 'paste' event on a document instead of a civil onPaste={props.handlePaste} prop?
+  //    Because (at least) Chrome doesn't handle paste if focus is on some button, e.g. 'My Device'.
+  //    We could add onPaste to each button; and make each button contentEditable={true} for pastes to work while we're focused on them, but it adds a visible cursor, and requires us to be adding onChange={event.preventDefault()} to each button.
+  //    => Therefore, the best option is to listen to all 'paste' events, and only react to them when we are focused on our particular Uppy instance.
+  // ___Why do we still need onPaste={props.handlePaste} for the DashboardUi!
+  //    Because if we click on the 'Drop files here,', `document.activeElement` will be 'body'. Which means our standard determination of whether we're pasting into our Uppy instance won't work.
+  //    => Therefore, we need a traditional onPaste={props.handlePaste} handler too.
+  handlePasteOnBody (event) {
+    const isFocusInOverlay = this.el.contains(document.activeElement)
+    if (isFocusInOverlay) {
+      this.handlePaste(event)
+    }
   }
 
   handleFileAdded () {
@@ -545,6 +561,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.stopListeningToResize()
+    document.removeEventListener('paste', this.handlePasteOnBody)
 
     window.removeEventListener('popstate', this.handlePopState, false)
     this.uppy.off('plugin-remove', this.removeTarget)
@@ -698,7 +715,6 @@ module.exports = class Dashboard extends Plugin {
       closeModal: this.requestCloseModal,
       handleClickOutside: this.handleClickOutside,
       handleInputChange: this.handleInputChange,
-      handlePaste: this.handlePaste,
       inline: this.opts.inline,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
@@ -739,7 +755,8 @@ module.exports = class Dashboard extends Plugin {
       isDraggingOver: pluginState.isDraggingOver,
       handleDragOver: this.handleDragOver,
       handleDragLeave: this.handleDragLeave,
-      handleDrop: this.handleDrop
+      handleDrop: this.handleDrop,
+      handlePaste: this.handlePaste
     })
   }
 

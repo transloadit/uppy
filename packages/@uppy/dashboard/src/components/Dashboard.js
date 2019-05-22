@@ -45,8 +45,7 @@ module.exports = function Dashboard (props) {
     <div class={dashboardClassName}
       aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
-      onpaste={props.handlePaste}
-
+      onPaste={props.handlePaste}
       onDragOver={props.handleDragOver}
       onDragLeave={props.handleDragLeave}
       onDrop={props.handleDrop}
