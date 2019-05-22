@@ -4,19 +4,13 @@
 // This file:
 //
 //  - Assumes EDGLY_KEY and EDGLY_SECRET are available (e.g. set via Travis secrets)
-//  - Tries to load env.sh instead, if not
-//  - Checks if a tag is being built (on Travis - otherwise opts to continue execution regardless)
 //  - Assumed a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
-//  - Runs npm pack, and stores files to e.g. https://transloadit.edgly.net/releases/uppy/v1.0.1/uppy.css
+//  - Collects dist/ files that would be in an npm package release, and uploads to eg. https://transloadit.edgly.net/releases/uppy/v1.0.1/uppy.css
 //  - Uses local package by default, if [version] argument was specified, takes package from npm
 //
 // Run as:
 //
-//  ./upload-to-cdn.sh [version]
-//
-// To upload all versions in one go (DANGER):
-//
-//  git tag |awk -Fv '{print "./bin/upload-to-cdn.sh "$2}' |bash
+//  npm run uploadcdn <package-name> [version]
 //
 // Authors:
 //
@@ -40,6 +34,14 @@ const AWS_REGION = 'us-east-1'
 const AWS_BUCKET = 'crates.edgly.net'
 const AWS_DIRECTORY = '756b8efaed084669b02cb99d4540d81f/default'
 
+/**
+ * Get remote dist/ files by fetching the tarball for the given version
+ * from npm and filtering it down to package/dist/ files.
+ *
+ * @param {string} Package name, eg. @uppy/robodog
+ * @param {string} Package version, eg. "1.2.0"
+ * @returns a Map<string, Buffer>, filename → content
+ */
 async function getRemoteDistFiles (packageName, version) {
   const files = new Map()
   const tarball = pacote.tarball.stream(`${packageName}@${version}`)
@@ -63,6 +65,13 @@ async function getRemoteDistFiles (packageName, version) {
   return files
 }
 
+/**
+ * Get local dist/ files by asking npm-packlist what files would be added
+ * to an npm package during publish, and filtering those down to just dist/ files.
+ *
+ * @param {string} Base file path of the package, eg. ./packages/@uppy/locales
+ * @returns a Map<string, Buffer>, filename → content
+ */
 async function getLocalDistFiles (packagePath) {
   const files = (await packlist({ path: packagePath }))
     .filter(f => f.startsWith('dist/'))
