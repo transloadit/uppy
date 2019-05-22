@@ -2,6 +2,8 @@
 
 const hu_HU = {}
 
+hu_HU.contributors = ['nagyv']
+
 hu_HU.strings = {
   addMoreFiles: 'További fájlok hozzáadása',
   addingMoreFiles: 'További fájlok hozzáadása',
