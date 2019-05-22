@@ -4,7 +4,7 @@
 // This file:
 //
 //  - Assumes EDGLY_KEY and EDGLY_SECRET are available (e.g. set via Travis secrets)
-//  - Assumed a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
+//  - Assumes a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
 //  - Collects dist/ files that would be in an npm package release, and uploads to eg. https://transloadit.edgly.net/releases/uppy/v1.0.1/uppy.css
 //  - Uses local package by default, if [version] argument was specified, takes package from npm
 //
