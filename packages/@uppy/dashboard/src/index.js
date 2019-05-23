@@ -144,7 +144,7 @@ module.exports = class Dashboard extends Plugin {
     this.handlePopState = this.handlePopState.bind(this)
 
     this.initEvents = this.initEvents.bind(this)
-    this.handleKeyDown = this.handleKeyDown.bind(this)
+    this.handleKeyDownInModal = this.handleKeyDownInModal.bind(this)
     this.handleFileAdded = this.handleFileAdded.bind(this)
     this.handleComplete = this.handleComplete.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
@@ -158,8 +158,11 @@ module.exports = class Dashboard extends Plugin {
     this.handleDragOver = this.handleDragOver.bind(this)
     this.handleDragLeave = this.handleDragLeave.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
+    this.superFocusOnEachUpdate = this.superFocusOnEachUpdate.bind(this)
+    this.recordIfFocusedOnUppyAtLeastOnce = this.recordIfFocusedOnUppyAtLeastOnce.bind(this)
 
     this.superFocus = createSuperFocus()
+    this.ifFocusedOnUppyAtLeastOnce = false
 
     // Timeouts
     this.makeDashboardInsidesVisibleAnywayTimeout = null
@@ -294,7 +297,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     // handle ESC and TAB keys in modal dialog
-    document.addEventListener('keydown', this.handleKeyDown)
+    document.addEventListener('keydown', this.handleKeyDownInModal)
 
     return promise
   }
@@ -345,7 +348,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     // handle ESC and TAB keys in modal dialog
-    document.removeEventListener('keydown', this.handleKeyDown)
+    document.removeEventListener('keydown', this.handleKeyDownInModal)
 
     if (manualClose) {
       if (this.opts.browserBackButtonClose) {
@@ -364,7 +367,7 @@ module.exports = class Dashboard extends Plugin {
     return !this.getPluginState().isHidden || false
   }
 
-  handleKeyDown (event) {
+  handleKeyDownInModal (event) {
     // close modal on esc key press
     if (event.keyCode === ESC_KEY) this.requestCloseModal(event)
     // trap focus on tab key press
@@ -525,6 +528,14 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.handleFileAdded)
     this.uppy.on('complete', this.handleComplete)
+
+    document.addEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce, true)
+  }
+
+  recordIfFocusedOnUppyAtLeastOnce (event) {
+    if (!this.ifFocusedOnUppyAtLeastOnce) {
+      this.ifFocusedOnUppyAtLeastOnce = this.el.contains(event.target)
+    }
   }
 
   handleFileAdded () {
@@ -550,6 +561,8 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', this.handleFileAdded)
     this.uppy.off('complete', this.handleComplete)
+
+    document.removeEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce)
   }
 
   toggleFileCard (fileId) {
@@ -566,15 +579,33 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  afterUpdate () {
-    // If update is connected to showing the Informer - let the screen reader calmly read it.
-    const isInformerPresent = !this.uppy.getState().info.isHidden
+  superFocusOnEachUpdate () {
+    // If we are inline
+    if (this.opts.inline) {
+      const isFocusInUppy = this.el.contains(document.activeElement)
+      const isFocusOnBody = document.activeElement === document.querySelector('body')
 
-    if (isInformerPresent) {
-      this.superFocus.cancel()
+      // Only superFocus() if focus:
+      // - is already inside of Uppy,
+      // - or nowhere (== on body) [this is true when some overlay we were focused on disappeared. this IS NOT true when user is focused on some element on the page other than Uppy]
+      //   BUT we have already, at least once, focused on uppy [this is done to avoid focusing related to the page initialisation]
+      if (isFocusInUppy || (isFocusOnBody && this.ifFocusedOnUppyAtLeastOnce)) {
+        this.superFocus(this.el, this.getPluginState().activeOverlayType)
+      }
+    // If we are in a modal
     } else {
-      this.superFocus(this.el, this.getPluginState().activeOverlayType)
+      // If update is connected to showing the Informer - let the screen reader calmly read it.
+      const isInformerPresent = !this.uppy.getState().info.isHidden
+      if (isInformerPresent) {
+        this.superFocus.cancel()
+      } else {
+        this.superFocus(this.el, this.getPluginState().activeOverlayType)
+      }
     }
+  }
+
+  afterUpdate () {
+    this.superFocusOnEachUpdate()
   }
 
   render (state) {
