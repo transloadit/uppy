@@ -389,7 +389,7 @@ class Uploader {
           value: file,
           options: {
             filename: this.metadata.filename,
-            filetype: this.metadata.filetype
+            contentType: this.metadata.filetype
           }
         }
       }
