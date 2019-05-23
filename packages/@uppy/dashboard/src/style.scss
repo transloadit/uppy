@@ -675,7 +675,7 @@ a.uppy-Dashboard-poweredBy {
     float: left;
     margin: 5px $rl-margin;
     width: calc(33.333% - #{$rl-margin} - #{$rl-margin});
-    height: 190px;
+    height: 200px;
 
     flex-direction: column;
     background-color: initial;
@@ -686,6 +686,7 @@ a.uppy-Dashboard-poweredBy {
   }
 
   .uppy-size--lg & {
+    margin: 5px $rl-margin;
     width: calc(25% - #{$rl-margin} - #{$rl-margin});
     height: 190px;
   }
@@ -707,7 +708,7 @@ a.uppy-Dashboard-poweredBy {
 
   .uppy-size--md & {
     width: 100%;
-    height: 129px;
+    height: 139px;
     border: 0;
   }
 
