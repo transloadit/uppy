@@ -675,7 +675,7 @@ a.uppy-Dashboard-poweredBy {
     float: left;
     margin: 5px $rl-margin;
     width: calc(33.333% - #{$rl-margin} - #{$rl-margin});
-    height: 200px;
+    height: 216px;
 
     flex-direction: column;
     background-color: initial;
@@ -702,13 +702,14 @@ a.uppy-Dashboard-poweredBy {
   height: 50px;
   border-bottom: 0;
   position: relative;
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: center;
 
   .uppy-size--md & {
     width: 100%;
-    height: 139px;
+    height: 152px;
     border: 0;
   }
 
