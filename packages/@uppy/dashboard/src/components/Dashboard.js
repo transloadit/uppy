@@ -61,16 +61,15 @@ module.exports = function Dashboard (props) {
           height: props.inline && props.height ? props.height : ''
         }}>
 
-        {!props.inline
-          ? <button class="uppy-u-reset uppy-Dashboard-close"
+        {!props.inline ? (
+          <button class="uppy-u-reset uppy-Dashboard-close"
             type="button"
             aria-label={props.i18n('closeModal')}
             title={props.i18n('closeModal')}
             onclick={props.closeModal}>
             <span aria-hidden="true">&times;</span>
           </button>
-            : null
-          }
+        ) : null}
 
         <div class="uppy-Dashboard-innerWrap">
           <div class="uppy-Dashboard-dropFilesHereHint">

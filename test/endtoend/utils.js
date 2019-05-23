@@ -1,3 +1,4 @@
+/* eslint-disable compat/compat */
 /* global window, capabilities */
 const path = require('path')
 const { spawn } = require('child_process')
@@ -42,7 +43,7 @@ function selectFakeFile (uppyID, name, type, b64) {
 
 function supportsChooseFile () {
   // Webdriver for Safari and Edge doesn’t support .chooseFile
-  return capabilities.browserName !== 'safari' &&
+  return capabilities.browserName !== 'Safari' &&
          capabilities.browserName !== 'MicrosoftEdge' &&
          capabilities.platformName !== 'Android'
 }

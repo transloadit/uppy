@@ -5,9 +5,9 @@
     "start": "node ./serve.js"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.4",
     "aliasify": "^2.1.0",
-    "babel-core": "^6.26.3",
-    "babelify": "^8.0.0",
+    "babelify": "^10.0.0",
     "browserify": "^16.2.3",
     "fs-write-stream-atomic": "^1.0.10"
   }

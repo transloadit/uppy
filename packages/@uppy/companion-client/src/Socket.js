@@ -40,7 +40,7 @@ module.exports = class UppySocket {
     // attach uuid
 
     if (!this.isOpen) {
-      this.queued.push({action, payload})
+      this.queued.push({ action, payload })
       return
     }
 

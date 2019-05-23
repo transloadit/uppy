@@ -109,8 +109,8 @@ class Drive {
       })
   }
 
-  thumbnail ({id, token}, done) {
-    return this.stats({id, token}, (err, resp, body) => {
+  thumbnail ({ id, token }, done) {
+    return this.stats({ id, token }, (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
         err = this._error(err, resp)
         logger.error(err, 'provider.drive.thumbnail.error')
@@ -121,7 +121,7 @@ class Drive {
     })
   }
 
-  size ({id, token}, done) {
+  size ({ id, token }, done) {
     return this.stats({ id, token }, (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
         err = this._error(err, resp)

@@ -13,12 +13,12 @@ logo_large: /images/logos/uppy-dog-full.svg
 logo_medium: /images/logos/uppy-logo-2019.svg
 logo_icon: /images/logos/uppy-dog-head-arrow.png
 description: >
-  Uppy fetches files locally and from remote places like Dropbox or Instagram. 
-  With its seamless integration, reliability and ease of use, 
+  Uppy fetches files locally and from remote places like Dropbox or Instagram.
+  With its seamless integration, reliability and ease of use,
   Uppy is truly your best friend in file uploading.
 descriptionWho: >
   Uppy is brought to you by the people
-  behind <a href="https://transloadit.com">Transloadit</a>, and as such will 
+  behind <a href="https://transloadit.com">Transloadit</a>, and as such will
   have first class support
   for adding their uploading and encoding backend, but this is opt-in,
   and you can just as easily roll your own.
@@ -133,16 +133,6 @@ node_sass:
   precision: 5
   sourceComments: false
 
-postcss:
-  plugins:
-    postcss-inline-svg:
-      path: 'src/images'
-    autoprefixer:
-      browsers:
-        - 'last 2 versions'
-    cssnano:
-      safe: true
-
 browsersync:
   files: 'public/examples/**/*.js'
   watchOptions:
@@ -161,4 +151,4 @@ alias:
 
 include_markdown:
   dir: "src/_template"   # Base directory of template markdown
-  verbose : true    
+  verbose : true

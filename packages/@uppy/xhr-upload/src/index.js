@@ -248,7 +248,7 @@ module.exports = class XHRUpload extends Plugin {
           this.uppy.emit('upload-success', file, uploadResp)
 
           if (uploadURL) {
-            this.uppy.log(`Download ${file.name} from ${file.uploadURL}`)
+            this.uppy.log(`Download ${file.name} from ${uploadURL}`)
           }
 
           return resolve(file)
@@ -320,17 +320,14 @@ module.exports = class XHRUpload extends Plugin {
 
       const Client = file.remote.providerOptions.provider ? Provider : RequestClient
       const client = new Client(this.uppy, file.remote.providerOptions)
-      client.post(
-        file.remote.url,
-        Object.assign({}, file.remote.body, {
-          endpoint: opts.endpoint,
-          size: file.data.size,
-          fieldname: opts.fieldName,
-          metadata: fields,
-          headers: opts.headers
-        })
-      )
-      .then((res) => {
+      client.post(file.remote.url, {
+        ...file.remote.body,
+        endpoint: opts.endpoint,
+        size: file.data.size,
+        fieldname: opts.fieldName,
+        metadata: fields,
+        headers: opts.headers
+      }).then((res) => {
         const token = res.token
         const host = getSocketHost(file.remote.companionUrl)
         const socket = new Socket({ target: `${host}/api/${token}` })

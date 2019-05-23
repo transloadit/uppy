@@ -14,9 +14,9 @@
     "he": "^1.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.4",
     "aliasify": "^2.1.0",
-    "babel-core": "^6.26.3",
-    "babelify": "^8.0.0",
+    "babelify": "^10.0.0",
     "budo": "^11.3.2",
     "express": "^4.16.4"
   }

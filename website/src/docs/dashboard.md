@@ -203,6 +203,8 @@ An array of UI field objects that will be shown when a user clicks the â€œeditâ€
 })
 ```
 
+![](/images/uppy-dashboard-meta-fields.jpg)
+
 Note that this metadata will only be set on a file object if it is entered by the user. If the user doesn't edit a file's metadata, it will not have default values; instead everything will be `undefined`. If you want to set a certain meta field to each file regardless of user actions, set [`meta` in the Uppy constructor options](/docs/uppy/#meta).
 
 ### `closeModalOnClickOutside: false`

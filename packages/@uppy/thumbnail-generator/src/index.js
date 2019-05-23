@@ -128,8 +128,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     var ratio = image.width / image.height
 
-    var maxSquare = 5000000  // ios max canvas square
-    var maxSize = 4096  // ie max canvas dimensions
+    var maxSquare = 5000000 // ios max canvas square
+    var maxSize = 4096 // ie max canvas dimensions
 
     var maxW = Math.floor(Math.sqrt(maxSquare * ratio))
     var maxH = Math.floor(maxSquare / Math.sqrt(maxSquare * ratio))
@@ -236,6 +236,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
     }
     return Promise.resolve().then(() => {
       return dataURItoBlob(canvas.toDataURL(type, quality), {})
+    }).then((blob) => {
+      if (blob === null) {
+        throw new Error('could not extract blob, probably an old browser')
+      }
+      return blob
     })
   }
 
