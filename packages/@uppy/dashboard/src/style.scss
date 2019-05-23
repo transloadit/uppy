@@ -784,6 +784,8 @@ a.uppy-Dashboard-poweredBy {
   // Fixes file previews being partially invisible in safari (for some pics only).
   // (https://stackoverflow.com/a/27971913/3192470)
   transform: translateZ(0);
+  // We need a repeated border-radius because of the transform.
+  border-radius: 3px;
 }
 
 
