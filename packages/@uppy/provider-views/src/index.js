@@ -458,8 +458,8 @@ module.exports = class ProviderView {
 
     const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
     return patterns
-      .filter((pattern) => pattern !== null)
-      .some((pattern) => pattern.test(origin))
+      .filter((pattern) => pattern != null) // loose comparison to catch undefined
+      .some((pattern) => pattern.test(origin) || pattern.test(`${origin}/`)) // allowing for trailing '/'
   }
 
   handleError (error) {
