@@ -4,16 +4,18 @@ const { h, Component } = require('preact')
 class AddFiles extends Component {
   constructor (props) {
     super(props)
-    this.handleClick = this.handleClick.bind(this)
+
+    this.triggerFileInputClick = this.triggerFileInputClick.bind(this)
+
     this.renderPoweredByUppy = this.renderPoweredByUppy.bind(this)
-    this.renderFileInput = this.renderFileInput.bind(this)
+    this.renderHiddenFileInput = this.renderHiddenFileInput.bind(this)
     this.renderDropPasteBrowseTagline = this.renderDropPasteBrowseTagline.bind(this)
     this.renderMyDeviceAcquirer = this.renderMyDeviceAcquirer.bind(this)
     this.renderAcquirer = this.renderAcquirer.bind(this)
   }
 
-  handleClick (ev) {
-    this.input.click()
+  triggerFileInputClick () {
+    this.fileInput.click()
   }
 
   renderPoweredByUppy () {
@@ -26,7 +28,7 @@ class AddFiles extends Component {
     </a>
   }
 
-  renderFileInput () {
+  renderHiddenFileInput () {
     return <input class="uppy-Dashboard-input"
       hidden
       aria-hidden="true"
@@ -34,15 +36,20 @@ class AddFiles extends Component {
       type="file"
       name="files[]"
       multiple={this.props.maxNumberOfFiles !== 1}
-      onchange={this.props.handleInputChange}
+      // Clear file input
+      onchange={(event) => {
+        this.props.handleInputChange(event)
+        event.target.value = null
+      }}
       accept={this.props.allowedFileTypes}
-      value=""
-      ref={(input) => { this.input = input }} />
+      ref={(ref) => { this.fileInput = ref }} />
   }
 
   renderDropPasteBrowseTagline () {
     const browse =
-      <button type="button" class="uppy-Dashboard-browse" onclick={this.handleClick}>
+      <button type="button"
+        class="uppy-Dashboard-browse"
+        onclick={this.triggerFileInputClick}>
         {this.props.i18n('browse')}
       </button>
 
@@ -51,7 +58,6 @@ class AddFiles extends Component {
         ? this.props.i18nArray('dropPaste', { browse })
         : this.props.i18nArray('dropPasteImport', { browse })
       }
-      {this.renderFileInput()}
     </div>
   }
 
@@ -61,11 +67,10 @@ class AddFiles extends Component {
         class="uppy-DashboardTab-btn"
         role="tab"
         tabindex={0}
-        onclick={this.handleClick}>
+        onclick={this.triggerFileInputClick}>
         {localIcon()}
         <div class="uppy-DashboardTab-name">{this.props.i18n('myDevice')}</div>
       </button>
-      {this.renderFileInput()}
     </div>
   }
 
@@ -87,6 +92,7 @@ class AddFiles extends Component {
   render () {
     return (
       <div class="uppy-DashboardAddFiles">
+        {this.renderHiddenFileInput()}
         <div class="uppy-DashboardTabs">
           {this.renderDropPasteBrowseTagline()}
           {
