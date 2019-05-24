@@ -402,21 +402,6 @@ class Uppy {
       onError(new Error('Cannot add new files: already uploading.'))
     }
 
-    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
-
-    if (onBeforeFileAddedResult === false) {
-      this.log('Not adding file because onBeforeFileAdded returned false')
-      return
-    }
-
-    if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
-      // warning after the change in 0.24
-      if (onBeforeFileAddedResult.then) {
-        throw new TypeError('onBeforeFileAdded() returned a Promise, but this is no longer supported. It must be synchronous.')
-      }
-      file = onBeforeFileAddedResult
-    }
-
     const fileType = getFileType(file)
     let fileName
     if (file.name) {
@@ -437,7 +422,7 @@ class Uppy {
 
     // `null` means the size is unknown.
     const size = isFinite(file.data.size) ? file.data.size : null
-    const newFile = {
+    let newFile = {
       source: file.source || '',
       id: fileID,
       name: fileName,
@@ -456,6 +441,17 @@ class Uppy {
       isRemote: isRemote,
       remote: file.remote || '',
       preview: file.preview
+    }
+
+    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, files)
+
+    if (onBeforeFileAddedResult === false) {
+      this.log('Not adding file because onBeforeFileAdded returned false')
+      return
+    }
+
+    if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
+      newFile = onBeforeFileAddedResult
     }
 
     try {
