@@ -47,9 +47,8 @@ class Uploader {
     this.options = options
     this.token = uuid.v4()
     this.path = `${this.options.pathPrefix}/${Uploader.FILE_NAME_PREFIX}-${this.token}`
-    this.metadata = Object.assign({}, this.options.metadata || {})
-    this.metadata.filename = this.metadata.name || path.basename(this.path)
-    this.metadata.filetype = this.metadata.type
+    this.options.metadata = this.options.metadata || {}
+    this.uploadFileName = this.options.metadata.name || path.basename(this.path)
     this.streamsEnded = false
     this.duplexStream = null
     // @TODO disabling parallel uploads and downloads for now
@@ -343,7 +342,13 @@ class Uploader {
       resume: true,
       retryDelays: [0, 1000, 3000, 5000],
       uploadSize: this.bytesWritten,
-      metadata: this.metadata,
+      metadata: Object.assign(
+        {
+          // file name and type as specified by tus protocol
+          filename: this.uploadFileName,
+          filetype: this.options.metadata.type
+        }, this.options.metadata
+      ),
       /**
        *
        * @param {Error} error
@@ -388,8 +393,8 @@ class Uploader {
         [this.options.fieldname]: {
           value: file,
           options: {
-            filename: this.metadata.filename,
-            contentType: this.metadata.filetype
+            filename: this.uploadFileName,
+            contentType: this.options.metadata.type
           }
         }
       }
