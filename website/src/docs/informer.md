@@ -9,6 +9,8 @@ category: 'UI Elements'
 
 The `@uppy/informer` plugin is a pop-up bar for showing notifications. When plugins have some exciting news (or error) to share, they can show a notification here.
 
+Informer gets its data from `uppy.state.info`, which is updated by various plugins via [`uppy.info`](https://uppy.io/docs/uppy/#uppy-info) method.
+
 ```js
 const Informer = require('@uppy/informer')
 
