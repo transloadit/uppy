@@ -532,6 +532,7 @@ module.exports = class Dashboard extends Plugin {
     document.addEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce, true)
   }
 
+  // In firefox only becomes true when we tab into Uppy, not when we click in/on it
   recordIfFocusedOnUppyAtLeastOnce (event) {
     if (!this.ifFocusedOnUppyAtLeastOnce) {
       this.ifFocusedOnUppyAtLeastOnce = this.el.contains(event.target)
@@ -587,10 +588,12 @@ module.exports = class Dashboard extends Plugin {
 
       // Only superFocus() if focus:
       // - is already inside of Uppy,
-      // - or nowhere (== on body) [this is true when some overlay we were focused on disappeared. this IS NOT true when user is focused on some element on the page other than Uppy]
+      // - or nowhere (== on body) [this is true when some overlay we were focused on disappeared. This IS NOT true when user is focused on some element on the page other than Uppy]
       //   BUT we have already, at least once, focused on uppy [this is done to avoid focusing related to the page initialisation]
       if (isFocusInUppy || (isFocusOnBody && this.ifFocusedOnUppyAtLeastOnce)) {
         this.superFocus(this.el, this.getPluginState().activeOverlayType)
+      } else {
+        this.superFocus.cancel()
       }
     // If we are in a modal
     } else {
