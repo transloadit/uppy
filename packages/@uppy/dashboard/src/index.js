@@ -529,13 +529,18 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.on('file-added', this.handleFileAdded)
     this.uppy.on('complete', this.handleComplete)
 
+    // ___Why fire on capture?
+    //    Because this.ifFocusedOnUppyAtLeastOnce needs to change before onUpdate() fires.
+    // ___Why not use { useCapture: true, once: true }?
+    //    To support IE.
     document.addEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce, true)
+    document.addEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce, true)
   }
 
-  // In firefox only becomes true when we tab into Uppy, not when we click in/on it
+  // Executes on 'focus', and on 'click' (because firefox doesn't fire 'focus' when we click on something)
   recordIfFocusedOnUppyAtLeastOnce (event) {
-    if (!this.ifFocusedOnUppyAtLeastOnce) {
-      this.ifFocusedOnUppyAtLeastOnce = this.el.contains(event.target)
+    if (!this.ifFocusedOnUppyAtLeastOnce && this.el.contains(event.target)) {
+      this.ifFocusedOnUppyAtLeastOnce = true
     }
   }
 
@@ -564,6 +569,7 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.off('complete', this.handleComplete)
 
     document.removeEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce)
+    document.removeEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce)
   }
 
   toggleFileCard (fileId) {
@@ -581,29 +587,27 @@ module.exports = class Dashboard extends Plugin {
   }
 
   superFocusOnEachUpdate () {
-    // If we are inline
-    if (this.opts.inline) {
-      const isFocusInUppy = this.el.contains(document.activeElement)
-      const isFocusOnBody = document.activeElement === document.querySelector('body')
+    const isFocusInUppy = this.el.contains(document.activeElement)
+    const isFocusOnBody = document.activeElement === document.querySelector('body')
+    const isInformerHidden = this.uppy.getState().info.isHidden
+    const isModal = !this.opts.inline
 
-      // Only superFocus() if focus:
-      // - is already inside of Uppy,
-      // - or nowhere (== on body) [this is true when some overlay we were focused on disappeared. This IS NOT true when user is focused on some element on the page other than Uppy]
-      //   BUT we have already, at least once, focused on uppy [this is done to avoid focusing related to the page initialisation]
-      if (isFocusInUppy || (isFocusOnBody && this.ifFocusedOnUppyAtLeastOnce)) {
-        this.superFocus(this.el, this.getPluginState().activeOverlayType)
-      } else {
-        this.superFocus.cancel()
-      }
-    // If we are in a modal
-    } else {
+    if (
       // If update is connected to showing the Informer - let the screen reader calmly read it.
-      const isInformerPresent = !this.uppy.getState().info.isHidden
-      if (isInformerPresent) {
-        this.superFocus.cancel()
-      } else {
-        this.superFocus(this.el, this.getPluginState().activeOverlayType)
-      }
+      isInformerHidden &&
+      (
+        // If we are in a modal - always superfocus without concern for other elements on the page (user is unlikely to want to interact with the rest of the page)
+        isModal ||
+        // If we are already inside of Uppy, or
+        isFocusInUppy ||
+        // If we are nowhere (== on body) [this is true when some overlay we were focused on disappeared. This IS NOT true when user is focused on some element on the page other than Uppy]
+        // BUT we have already, at least once, focused on uppy [this is done to avoid focusing related to the page initialisation]
+        (isFocusOnBody && this.ifFocusedOnUppyAtLeastOnce)
+      )
+    ) {
+      this.superFocus(this.el, this.getPluginState().activeOverlayType)
+    } else {
+      this.superFocus.cancel()
     }
   }
 
