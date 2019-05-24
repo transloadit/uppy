@@ -64,21 +64,6 @@ A unique identifier for this plugin. It defaults to `'Informer'`. Use this if yo
 
 DOM element, CSS selector, or plugin to mount the Informer into.
 
-### `typeColors: {}`
-
-Customize the background and foreground colors for different types of notifications. Supported types are `info`, `warning`, `error`, and `success`. To customize colors, pass an object containing `{ bg, text }` color pairs for each type of notification:
-
-```js
-uppy.use(Informer, {
-  typeColors: {
-    info:    { text: '#fff', bg: '#000000' },
-    warning: { text: '#fff', bg: '#f6a623' },
-    error:   { text: '#fff', bg: '#e74c3c' },
-    success: { text: '#fff', bg: '#7ac824' }
-  }
-})
-```
-
 ### `replaceTargetContent: false`
 
 Remove all children of the `target` element before mounting the Informer. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.
