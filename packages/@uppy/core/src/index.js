@@ -443,6 +443,13 @@ class Uppy {
       preview: file.preview
     }
 
+    try {
+      this._checkRestrictions(newFile)
+    } catch (err) {
+      this.emit('restriction-failed', newFile, err)
+      onError(err)
+    }
+
     const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, files)
 
     if (onBeforeFileAddedResult === false) {
@@ -452,13 +459,6 @@ class Uppy {
 
     if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
       newFile = onBeforeFileAddedResult
-    }
-
-    try {
-      this._checkRestrictions(newFile)
-    } catch (err) {
-      this.emit('restriction-failed', newFile, err)
-      onError(err)
     }
 
     this.setState({
@@ -1240,6 +1240,21 @@ class Uppy {
     }
 
     let files = this.getState().files
+
+    const handleError = (err) => {
+      const message = typeof err === 'object' ? err.message : err
+      const details = typeof err === 'object' ? err.details : null
+      this.log(`${message} ${details}`)
+      this.info({ message: message, details: details }, 'error', 4000)
+      return Promise.reject(typeof err === 'object' ? err : new Error(err))
+    }
+
+    try {
+      this._checkMinNumberOfFiles(files)
+    } catch (err) {
+      return handleError(err)
+    }
+
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
     if (onBeforeUploadResult === false) {
@@ -1247,16 +1262,10 @@ class Uppy {
     }
 
     if (onBeforeUploadResult && typeof onBeforeUploadResult === 'object') {
-      // warning after the change in 0.24
-      if (onBeforeUploadResult.then) {
-        throw new TypeError('onBeforeUpload() returned a Promise, but this is no longer supported. It must be synchronous.')
-      }
-
       files = onBeforeUploadResult
     }
 
     return Promise.resolve()
-      .then(() => this._checkMinNumberOfFiles(files))
       .then(() => {
         const { currentUploads } = this.getState()
         // get a list of files that are currently assigned to uploads
@@ -1274,13 +1283,7 @@ class Uppy {
         const uploadID = this._createUpload(waitingFileIDs)
         return this._runUpload(uploadID)
       })
-      .catch((err) => {
-        const message = typeof err === 'object' ? err.message : err
-        const details = typeof err === 'object' ? err.details : null
-        this.log(`${message} ${details}`)
-        this.info({ message: message, details: details }, 'error', 4000)
-        return Promise.reject(typeof err === 'object' ? err : new Error(err))
-      })
+      .catch(handleError)
   }
 }
 
