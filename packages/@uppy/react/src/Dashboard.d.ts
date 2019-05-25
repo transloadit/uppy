@@ -13,19 +13,27 @@ export interface DashboardProps {
   trigger?: string;
   width?: number;
   height?: number;
-  showProgressDetails?: boolean;
   showLinkToFileUploadResult?: boolean;
-  showSelectedFiles?: boolean;
+  showProgressDetails?: boolean;
   hideUploadButton?: boolean;
+  hideRetryButton?: boolean;
+  hidePauseResumeButton?: boolean;
+  hideCancelButton?: boolean;
   hideProgressAfterFinish?: boolean;
+  showSelectedFiles?: boolean;
   note?: string;
   metaFields?: Array<MetaField>;
+  closeModalOnClickOutside?: boolean;
+  closeAfterFinish?: boolean;
+  disablePageScrollWhenModalOpen?: boolean;
+  animateOpenClose?: boolean;
   proudlyDisplayPoweredByUppy?: boolean;
   disableStatusBar?: boolean;
   disableInformer?: boolean;
   disableThumbnailGenerator?: boolean;
   thumbnailWidth?: number;
   locale?: Locale;
+  replaceTargetContent?: boolean;
 }
 
 /**
