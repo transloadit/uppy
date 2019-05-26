@@ -344,7 +344,8 @@ class Uploader {
       uploadSize: this.bytesWritten,
       metadata: Object.assign(
         {
-          // file name and type as specified by tus protocol
+          // file name and type as required by the tusd tus server
+          // https://github.com/tus/tusd/blob/5b376141903c1fd64480c06dde3dfe61d191e53d/unrouted_handler.go#L614-L646
           filename: this.uploadFileName,
           filetype: this.options.metadata.type
         }, this.options.metadata
