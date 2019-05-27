@@ -9,6 +9,8 @@ category: 'UI Elements'
 
 The `@uppy/informer` plugin is a pop-up bar for showing notifications. When plugins have some exciting news (or error) to share, they can show a notification here.
 
+Informer gets its data from `uppy.state.info`, which is updated by various plugins via [`uppy.info`](https://uppy.io/docs/uppy/#uppy-info) method.
+
 ```js
 const Informer = require('@uppy/informer')
 
@@ -63,21 +65,6 @@ A unique identifier for this plugin. It defaults to `'Informer'`. Use this if yo
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the Informer into.
-
-### `typeColors: {}`
-
-Customize the background and foreground colors for different types of notifications. Supported types are `info`, `warning`, `error`, and `success`. To customize colors, pass an object containing `{ bg, text }` color pairs for each type of notification:
-
-```js
-uppy.use(Informer, {
-  typeColors: {
-    info:    { text: '#fff', bg: '#000000' },
-    warning: { text: '#fff', bg: '#f6a623' },
-    error:   { text: '#fff', bg: '#e74c3c' },
-    success: { text: '#fff', bg: '#7ac824' }
-  }
-})
-```
 
 ### `replaceTargetContent: false`
 
