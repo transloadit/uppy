@@ -44,6 +44,28 @@ async function updateVersions (files, packageName) {
   }
 }
 
+async function gitAdd (files) {
+  const git = spawn('git', ['add', ...files], { stdio: 'inherit' })
+  const exitCode = await once(git, 'exit')
+  if (exitCode !== 0) {
+    throw new Error(`git add failed with ${exitCode}`)
+  }
+}
+
+async function npmRunBuild () {
+  const npmRun = spawn('npm', ['run', 'build'], {
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      IS_RELEASE_BUILD: true
+    }
+  })
+  const exitCode = await once(npmRun, 'exit')
+  if (exitCode !== 0) {
+    throw new Error(`npm run build failed with ${exitCode}`)
+  }
+}
+
 async function main () {
   if (process.env.ENDTOEND === '1') {
     console.log('Publishing for e2e tests, skipping version number sync.')
@@ -64,18 +86,16 @@ async function main () {
     'website/src/docs/**',
     'website/src/examples/**',
     'website/themes/uppy/layout/**',
-    '!node_modules'
+    '!**/node_modules/**'
   ])
 
   await updateVersions(files, 'uppy')
   await updateVersions(files, '@uppy/robodog')
   await updateVersions(files, '@uppy/locales')
 
-  const gitAdd = spawn('git', ['add', ...files], { stdio: 'inherit' })
-  const exitCode = await once(gitAdd, 'exit')
-  if (exitCode !== 0) {
-    throw new Error(`git add failed with ${exitCode}`)
-  }
+  await gitAdd(files)
+
+  await npmRunBuild()
 }
 
 main().catch(function (err) {

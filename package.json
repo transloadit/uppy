@@ -23,6 +23,7 @@
     "aliasify": "^2.1.0",
     "autoprefixer": "^9.5.1",
     "babel-jest": "^24.8.0",
+    "babel-plugin-inline-package-json": "^2.0.0",
     "babelify": "^10.0.0",
     "browser-resolve": "^1.11.3",
     "browser-sync": "^2.26.5",

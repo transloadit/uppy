@@ -15,7 +15,8 @@ module.exports = (api) => {
     plugins: [
       '@babel/plugin-proposal-object-rest-spread',
       '@babel/plugin-transform-object-assign',
-      ['@babel/plugin-transform-react-jsx', { pragma: 'h' }]
-    ]
+      ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
+      process.env.IS_RELEASE_BUILD && 'babel-plugin-inline-package-json'
+    ].filter(Boolean)
   }
 }
