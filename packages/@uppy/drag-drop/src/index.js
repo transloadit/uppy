@@ -105,6 +105,10 @@ module.exports = class DragDrop extends Plugin {
         // Nothing, restriction errors handled in Core
       }
     })
+
+    // ___Why not use value="" on <input/> instead?
+    //    Because if we use that method of clearing the input, Chrome will not trigger onChange={} if we drop the same file twice (Issue #768).
+    event.target.value = null
   }
 
   render (state) {
@@ -140,11 +144,7 @@ module.exports = class DragDrop extends Plugin {
               name={this.opts.inputName}
               multiple={restrictions.maxNumberOfFiles !== 1}
               accept={restrictions.allowedFileTypes}
-              ref={(input) => {
-                this.input = input
-              }}
-              onchange={this.handleInputChange}
-              value="" />
+              onchange={this.handleInputChange} />
             {this.i18nArray('dropHereOr', {
               browse: <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
             })}
