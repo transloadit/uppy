@@ -15,8 +15,8 @@
   "private": true,
   "scripts": {
     "watch:sandbox": "npm-run-all --parallel watch:Dashboard watch:DragDrop",
-    "watch:Dashboard": "watchify -vd -t [ babelify --cwd ../../ ] -g aliasify Dashboard.js -o lib/Dashboard.js",
-    "watch:DragDrop": "watchify -vd -t [ babelify --cwd ../../ ] -g aliasify DragDrop.js -o lib/DragDrop.js"
+    "watch:Dashboard": "watchify -vd -t [ babelify --cwd ../../ ] -g aliasify Dashboard.js -o output/Dashboard.js",
+    "watch:DragDrop": "watchify -vd -t [ babelify --cwd ../../ ] -g aliasify DragDrop.js -o output/DragDrop.js"
   },
   "aliasify": {
     "aliases": {
