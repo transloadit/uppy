@@ -510,10 +510,10 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
 
   describe('rotateImage', () => {
     it.each([
-      [0, {width: 100, height: 80}],
-      [90, {width: 80, height: 100}],
-      [180, {width: 100, height: 80}],
-      [270, {width: 80, height: 100}]])(
+      [0, { width: 100, height: 80 }],
+      [90, { width: 80, height: 100 }],
+      [180, { width: 100, height: 80 }],
+      [270, { width: 80, height: 100 }]])(
       'should rotate image with %i degree', (rotation, expectedSize) => {
         const core = new MockCore()
         const plugin = new ThumbnailGeneratorPlugin(core)
