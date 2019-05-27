@@ -507,4 +507,38 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       expect(plugin.addToQueue).not.toHaveBeenCalled()
     })
   })
+
+  describe('rotateImage', () => {
+    it.each([
+      [0, {width: 100, height: 80}],
+      [90, {width: 80, height: 100}],
+      [180, {width: 100, height: 80}],
+      [270, {width: 80, height: 100}]])(
+      'should rotate image with %i degree', (rotation, expectedSize) => {
+        const core = new MockCore()
+        const plugin = new ThumbnailGeneratorPlugin(core)
+        const image = {
+          width: 100,
+          height: 80
+        }
+        const context = {
+          drawImage: jest.fn(),
+          translate: jest.fn(),
+          rotate: jest.fn(),
+          scale: jest.fn()
+        }
+        const canvas = {
+          width: 0,
+          height: 0,
+          getContext: jest.fn().mockReturnValue(context)
+        }
+        document.createElement = jest.fn().mockReturnValue(canvas)
+
+        const result = plugin.rotateImage(image, { rotation: rotation })
+        expect(result).toEqual({
+          ...expectedSize,
+          getContext: canvas.getContext
+        })
+      })
+  })
 })
