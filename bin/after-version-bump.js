@@ -61,6 +61,7 @@ async function npmRunBuild () {
     stdio: 'inherit',
     env: {
       ...process.env,
+      FRESH: true, // force rebuild everything
       IS_RELEASE_BUILD: true
     }
   })
