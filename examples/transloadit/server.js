@@ -1,3 +1,4 @@
+/* eslint-disable compat/compat */
 const http = require('http')
 const qs = require('querystring')
 const e = require('he').encode
@@ -11,7 +12,7 @@ server.listen(9967)
 
 function onrequest (req, res) {
   if (req.url !== '/test') {
-    res.writeHead(404, {'content-type': 'text/html'})
+    res.writeHead(404, { 'content-type': 'text/html' })
     res.end('404')
     return
   }

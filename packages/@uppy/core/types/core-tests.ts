@@ -1,4 +1,5 @@
 import Uppy = require('../');
+import DefaultStore = require('@uppy/store-default');
 
 {
   const uppy = Uppy();
@@ -10,4 +11,9 @@ import Uppy = require('../');
     result.successful[0]; // $ExpectType UppyFile
     result.failed[0]; // $ExpectType UppyFile
   });
+}
+
+{
+  const store = DefaultStore();
+  const uppy = Uppy({ store });
 }

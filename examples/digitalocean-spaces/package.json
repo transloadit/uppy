@@ -5,9 +5,9 @@
     "start": "node ./server.js"
   },
   "dependencies": {
+    "@babel/core": "^7.2.2",
     "aliasify": "^2.1.0",
-    "babel-core": "^6.26.3",
-    "babelify": "^8.0.0",
+    "babelify": "^10.0.0",
     "body-parser": "^1.18.3",
     "budo": "^11.6.1",
     "cors": "^2.8.5",

@@ -675,7 +675,7 @@ a.uppy-Dashboard-poweredBy {
     float: left;
     margin: 5px $rl-margin;
     width: calc(33.333% - #{$rl-margin} - #{$rl-margin});
-    height: 170px;
+    height: 215px;
 
     flex-direction: column;
     background-color: initial;
@@ -686,6 +686,7 @@ a.uppy-Dashboard-poweredBy {
   }
 
   .uppy-size--lg & {
+    margin: 5px $rl-margin;
     width: calc(25% - #{$rl-margin} - #{$rl-margin});
     height: 190px;
   }
@@ -701,13 +702,14 @@ a.uppy-Dashboard-poweredBy {
   height: 50px;
   border-bottom: 0;
   position: relative;
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: center;
 
   .uppy-size--md & {
     width: 100%;
-    height: 100px;
+    height: 140px;
     border: 0;
   }
 
@@ -781,6 +783,11 @@ a.uppy-Dashboard-poweredBy {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  // Fixes file previews being partially invisible in safari (for some pics only).
+  // (https://stackoverflow.com/a/27971913/3192470)
+  transform: translateZ(0);
+  // We need a repeated border-radius because of the transform.
+  border-radius: 3px;
 }
 
 

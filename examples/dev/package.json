@@ -1,15 +1,22 @@
 {
+  "name": "uppy-dev-example",
+  "aliasify": {
+    "aliases": {
+      "@uppy": "../../packages/@uppy"
+    }
+  },
   "dependencies": {
+    "@babel/core": "^7.4.4",
     "aliasify": "^2.1.0",
-    "babel-core": "^6.26.3",
-    "babelify": "^8.0.0",
     "npm-run-all": "^4.1.5",
+    "babelify": "^10.0.0",
     "watchify": "^3.11.0"
   },
+  "private": true,
   "scripts": {
     "watch:sandbox": "npm-run-all --parallel watch:Dashboard watch:DragDrop",
-    "watch:Dashboard": "watchify -t babelify -t aliasify Dashboard.js -o lib/Dashboard.js -vd",
-    "watch:DragDrop": "watchify -t babelify -t aliasify DragDrop.js -o lib/DragDrop.js -vd"
+    "watch:Dashboard": "watchify -vd -t [ babelify --cwd ../../ ] -g aliasify Dashboard.js -o lib/Dashboard.js",
+    "watch:DragDrop": "watchify -vd -t [ babelify --cwd ../../ ] -g aliasify DragDrop.js -o lib/DragDrop.js"
   },
   "aliasify": {
     "aliases": {

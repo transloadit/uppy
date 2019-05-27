@@ -1,5 +1,4 @@
 import { createStore, combineReducers } from 'redux';
-import Uppy = require('@uppy/core');
 import ReduxStore = require('../');
 
 const reducer = combineReducers({
@@ -10,4 +9,5 @@ const store = ReduxStore({
   store: createStore(reducer)
 });
 
-Uppy({ store });
+store.setState({ a: 1 });
+store.getState();
