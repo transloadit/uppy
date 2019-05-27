@@ -1,4 +1,4 @@
-const ExifReader = require('exifreader')
+const Exif = require('exif-js')
 const { Plugin } = require('@uppy/core')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
@@ -104,18 +104,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   getOrientation (file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        try {
-          const tags = ExifReader.load(ev.target.result)
-          const value = tags['Orientation'] ? tags['Orientation'].value : 1
-          resolve(ORIENTATIONS[value])
-        } catch (error) {
-          resolve(ORIENTATIONS[1])
-        }
-      }
-      reader.readAsArrayBuffer(file.data)
+    return new Promise((resolve) => {
+      Exif.getData(file.data, function callback () {
+        const orientation = Exif.getTag(this, 'Orientation') || 1
+        resolve(ORIENTATIONS[orientation])
+      })
     })
   }
 
