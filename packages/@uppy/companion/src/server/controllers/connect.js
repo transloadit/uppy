@@ -21,5 +21,9 @@ module.exports = function connect (req, res) {
     state = oAuthState.addToState(state, { uppyInstance: req.uppy.buildURL('', true) }, secret)
   }
 
+  if (req.uppy.clientVersion) {
+    state = oAuthState.addToState(state, { clientVersion: req.uppy.clientVersion }, secret)
+  }
+
   res.redirect(req.uppy.buildURL(`/connect/${req.uppy.provider.authProvider}?state=${state}`, true))
 }

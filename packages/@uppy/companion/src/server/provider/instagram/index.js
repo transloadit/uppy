@@ -16,7 +16,7 @@ class Instagram {
   }
 
   list ({ directory = 'recent', token, query = {} }, done) {
-    const qs = query.max_id ? {max_id: query.max_id} : {}
+    const qs = query.max_id ? { max_id: query.max_id } : {}
     this.client
       .select(`users/self/media/${directory}`)
       .qs(qs)
@@ -63,7 +63,7 @@ class Instagram {
       })
   }
 
-  thumbnail ({id, token}, done) {
+  thumbnail ({ id, token }, done) {
     return this.client
       .get(`media/${id}`)
       .auth(token)
@@ -89,7 +89,7 @@ class Instagram {
       })
   }
 
-  size ({id, token, query = {}}, done) {
+  size ({ id, token, query = {} }, done) {
     return this.client
       .get(`media/${id}`)
       .auth(token)

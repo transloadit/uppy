@@ -22,4 +22,4 @@ uppy.use(Dashboard, {
   plugins: ['GoogleDrive', 'MyCustomProvider']
 })
 
-uppy.use(Tus, {endpoint: 'https://master.tus.io/files/'})
+uppy.use(Tus, { endpoint: 'https://master.tus.io/files/' })

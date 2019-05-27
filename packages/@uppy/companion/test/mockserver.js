@@ -13,4 +13,4 @@ authServer.all('/drive/send-token', (req, res, next) => {
 
 authServer.use(app)
 
-module.exports = { authServer, noAuthServer: app }
+module.exports = { authServer }

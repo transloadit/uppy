@@ -13,7 +13,7 @@ class RedisEmitter extends NRP {
    */
   constructor (redisUrl) {
     // @ts-ignore
-    super({url: redisUrl})
+    super({ url: redisUrl })
   }
 
   /**

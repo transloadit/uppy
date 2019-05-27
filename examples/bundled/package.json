@@ -4,7 +4,7 @@
     "build": "parcel build index.html"
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
+    "@babel/core": "^7.4.4",
     "parcel-bundler": "^1.11.0"
   },
   "dependencies": {

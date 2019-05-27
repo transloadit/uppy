@@ -125,9 +125,9 @@ export default class App extends React.Component {
           marginBottom: 20,
           textAlign: 'center'
         }}>Uppy in React Native</Text>
-        <View style={{alignItems: 'center'}}>
+        <View style={{ alignItems: 'center' }}>
           <Image
-            style={{width: 80, height: 78, marginBottom: 50}}
+            style={{ width: 80, height: 78, marginBottom: 50 }}
             source={require('./assets/uppy-logo.png')}
           />
         </View>
@@ -137,7 +137,7 @@ export default class App extends React.Component {
           ? <Text style={{
             marginBottom: 10,
             marginTop: 10,
-            color: '#b8006b'}}>{this.state.info.message}</Text>
+            color: '#b8006b' }}>{this.state.info.message}</Text>
           : null
         }
 

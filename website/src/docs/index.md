@@ -51,7 +51,7 @@ Adding [Companion](/docs/companion/) to the mix enables remote sources such as I
 
 Uppy can be used with a module bundler such as [Webpack](http://webpack.js.org/) or [Browserify](http://browserify.org/), or by including it in a script tag.
 
-> You may need polyfills if your application supports Internet Explorer or other older browsers. See [Browser Support](#browser-support).
+> You may need polyfills if your application supports Internet Explorer or other older browsers. See [Browser Support](#Browser-Support).
 
 ### With a module bundler
 
@@ -164,10 +164,8 @@ require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 ```
 
-If you're using Uppy via a script tag, you can load the polyfills from [JSDelivr](https://www.jsdelivr.com/) like so:
+If you're using Uppy from CDN, `es6-promise` and  `whatwg-fetch` are already included in the bundle, no need to include anything additionally:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/es6-promise@4.2.5/dist/es6-promise.auto.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.min.js"></script>
 <script src="https://transloadit.edgly.net/releases/uppy/v1.0.0/uppy.min.js"></script>
 ```

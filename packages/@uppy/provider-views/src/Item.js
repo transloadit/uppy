@@ -57,7 +57,7 @@ module.exports = (props) => {
         <label
           for={props.id}
           onclick={props.handleClick}
-         />
+        />
       </div>
       <button type="button"
         class="uppy-u-reset uppy-ProviderBrowserItem-inner"
