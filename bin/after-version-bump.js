@@ -46,12 +46,13 @@ async function updateVersions (files, packageName) {
 
 async function gitAdd (files) {
   const git = spawn('git', ['add', ...files], { stdio: 'inherit' })
-  const exitCode = await once(git, 'exit')
+  const [exitCode] = await once(git, 'exit')
   if (exitCode !== 0) {
     throw new Error(`git add failed with ${exitCode}`)
   }
 }
 
+// Run the build as a release build (that inlines version numbers etc.)
 async function npmRunBuild () {
   const npmRun = spawn('npm', ['run', 'build'], {
     stdio: 'inherit',
@@ -60,7 +61,7 @@ async function npmRunBuild () {
       IS_RELEASE_BUILD: true
     }
   })
-  const exitCode = await once(npmRun, 'exit')
+  const [exitCode] = await once(npmRun, 'exit')
   if (exitCode !== 0) {
     throw new Error(`npm run build failed with ${exitCode}`)
   }
@@ -93,7 +94,10 @@ async function main () {
   await updateVersions(files, '@uppy/robodog')
   await updateVersions(files, '@uppy/locales')
 
-  await gitAdd(files)
+  // gitignored files were updated for the npm package, but can't be updated
+  // on git.
+  const isIgnored = await globby.gitignore()
+  await gitAdd(files.filter((filename) => !isIgnored(filename)))
 
   await npmRunBuild()
 }
