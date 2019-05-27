@@ -23,17 +23,12 @@ export interface DashboardProps {
   showSelectedFiles?: boolean;
   note?: string;
   metaFields?: Array<MetaField>;
-  closeModalOnClickOutside?: boolean;
-  closeAfterFinish?: boolean;
-  disablePageScrollWhenModalOpen?: boolean;
-  animateOpenClose?: boolean;
   proudlyDisplayPoweredByUppy?: boolean;
   disableStatusBar?: boolean;
   disableInformer?: boolean;
   disableThumbnailGenerator?: boolean;
   thumbnailWidth?: number;
   locale?: Locale;
-  replaceTargetContent?: boolean;
 }
 
 /**
