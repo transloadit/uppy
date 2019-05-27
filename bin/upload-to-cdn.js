@@ -124,10 +124,6 @@ async function main (packageName, version) {
     ? `${packageName}@${version}`
     : path.join(__dirname, '..', 'packages', packageName)
 
-  const files = remote
-    ? await getRemoteDistFiles(packageName, version)
-    : await getLocalDistFiles(packagePath)
-
   // uppy → releases/uppy/
   // @uppy/robodog → releases/uppy/robodog/
   // @uppy/locales → releases/uppy/locales/
@@ -136,6 +132,19 @@ async function main (packageName, version) {
     : 'uppy'
 
   const outputPath = path.posix.join('releases', dirName, `v${version}`)
+
+  const { Contents: existing } = await s3.listObjects({
+    Bucket: AWS_BUCKET,
+    Prefix: `${AWS_DIRECTORY}/${outputPath}/`
+  }).promise()
+  if (existing.length > 0) {
+    console.error(`Release files for ${dirName} v${version} already exist, exiting...`)
+    process.exit(1)
+  }
+
+  const files = remote
+    ? await getRemoteDistFiles(packageName, version)
+    : await getLocalDistFiles(packagePath)
 
   for (const [filename, buffer] of files.entries()) {
     const key = path.posix.join(AWS_DIRECTORY, outputPath, filename)
