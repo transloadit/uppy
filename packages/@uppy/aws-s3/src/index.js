@@ -138,7 +138,7 @@ module.exports = class AwsS3 extends Plugin {
           method,
           formData: method.toLowerCase() === 'post',
           endpoint: url,
-          metaFields: Object.keys(fields)
+          metaFields: fields ? Object.keys(fields) : []
         }
 
         if (headers) {

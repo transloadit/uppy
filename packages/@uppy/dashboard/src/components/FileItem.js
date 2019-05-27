@@ -142,7 +142,8 @@ module.exports = function FileItem (props) {
       </div>
       <div class="uppy-DashboardItem-status">
         {file.data.size ? <div class="uppy-DashboardItem-statusSize">{prettyBytes(file.data.size)}</div> : null}
-        {(file.source && file.source !== props.id) && <div class="uppy-DashboardItem-sourceIcon">
+        {(file.source && file.source !== props.id) && (
+          <div class="uppy-DashboardItem-sourceIcon">
             {acquirers.map(acquirer => {
               if (acquirer.id === file.source) {
                 return <span title={props.i18n('fileSource', { name: acquirer.name })}>
@@ -151,7 +152,7 @@ module.exports = function FileItem (props) {
               }
             })}
           </div>
-        }
+        )}
         {(!uploadInProgressOrComplete && props.metaFields && props.metaFields.length)
           ? <button class="uppy-u-reset uppy-DashboardItem-edit"
             type="button"

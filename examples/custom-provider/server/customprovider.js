@@ -20,7 +20,7 @@ class MyCustomProvider {
         entries: [
           { name: 'file1.jpg' },
           { name: 'file2.jpg' },
-          {name: 'file3.jpg'}
+          { name: 'file3.jpg' }
         ]
       }
     }

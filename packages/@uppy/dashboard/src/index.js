@@ -319,7 +319,7 @@ module.exports = class Dashboard extends Plugin {
   openModal () {
     const { promise, resolve } = createPromise()
     // save scroll position
-    this.savedScrollPosition = window.scrollY
+    this.savedScrollPosition = window.pageYOffset
     // save active element, so we can restore focus when modal is closed
     this.savedActiveElement = document.activeElement
 

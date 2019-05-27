@@ -109,9 +109,11 @@ uppy.getFile(fileID).response
 // { status: HTTP status code,
 //   body: extracted response data }
 
-uppy.on('upload-success', (file, body) => {
-  // do something with extracted response data
-  // (`body` is equivalent to `file.response.body` or `uppy.getFile(fileID).response.body`)
+uppy.on('upload-success', (file, response) => {
+  response.status // HTTP status code
+  response.body   // extracted response data
+
+  // do something with file and response
 })
 ```
 
@@ -124,7 +126,7 @@ By default, Uppy assumes the endpoint will return JSON. So, if `POST /upload` re
 }
 ```
 
-That object will be emitted in the `upload-success` event. Not all endpoints respond with JSON. Providing a `getResponseData` function overrides this behavior. The `response` parameter is the `XMLHttpRequest` instance used to upload the file.
+That object will be the value of `response.body`. Not all endpoints respond with JSON. Providing a `getResponseData` function overrides this behavior. The `response` parameter is the `XMLHttpRequest` instance used to upload the file.
 
 For example, an endpoint that responds with an XML document:
 

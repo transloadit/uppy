@@ -34,7 +34,7 @@ http.createServer(function (req, res) {
       console.log('type', file.type)
       console.log('size', file.size)
       res.writeHead(200, headers)
-      res.write(JSON.stringify({fields, files}))
+      res.write(JSON.stringify({ fields, files }))
       return res.end()
     })
   }

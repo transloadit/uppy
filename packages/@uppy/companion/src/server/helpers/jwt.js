@@ -7,7 +7,7 @@ const { encrypt, decrypt } = require('./utils')
  * @param {string} secret
  */
 module.exports.generateToken = (payload, secret) => {
-  return encrypt(jwt.sign({data: payload}, secret, { expiresIn: 60 * 60 * 24 }), secret)
+  return encrypt(jwt.sign({ data: payload }, secret, { expiresIn: 60 * 60 * 24 }), secret)
 }
 
 /**
@@ -18,9 +18,9 @@ module.exports.generateToken = (payload, secret) => {
 module.exports.verifyToken = (token, secret) => {
   try {
     // @ts-ignore
-    return {payload: jwt.verify(decrypt(token, secret), secret, {}).data}
+    return { payload: jwt.verify(decrypt(token, secret), secret, {}).data }
   } catch (err) {
-    return {err}
+    return { err }
   }
 }
 

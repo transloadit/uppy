@@ -1,5 +1,5 @@
 const qs = require('querystring')
-const parseUrl = require('url').parse
+const parseUrl = require('url').parse // eslint-disable-line node/no-deprecated-api
 const { hasMatch } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 

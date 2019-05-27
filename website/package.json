@@ -6,8 +6,9 @@
     "version": "3.8.0"
   },
   "dependencies": {
-    "autoprefixer": "^7.2.6",
-    "cssnano": "^3.10.0",
+    "@goto-bus-stop/hexo-renderer-postcss": "^2.0.0",
+    "autoprefixer": "^9.5.1",
+    "cssnano": "^4.1.10",
     "he": "^1.1.1",
     "hexo": "3.8.0",
     "hexo-browsersync": "^0.3.0",
@@ -21,7 +22,6 @@
     "hexo-include-markdown": "^1.0.2",
     "hexo-renderer-ejs": "^0.3.1",
     "hexo-renderer-marked": "^0.3.2",
-    "hexo-renderer-postcss": "git+https://github.com/arturi/hexo-renderer-postcss.git",
     "hexo-renderer-scss": "^1.2.0",
     "hexo-server": "^0.3.2",
     "hexo-tag-emojis": "^2.0.1",
@@ -33,9 +33,9 @@
     "prismjs": "^1.15.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.4",
     "aliasify": "^2.1.0",
-    "babel-core": "^6.26.3",
-    "babelify": "^8.0.0",
+    "babelify": "^10.0.0",
     "browserify": "^16.2.2",
     "chalk": "^2.4.1",
     "glob": "^7.1.2",

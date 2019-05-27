@@ -18,7 +18,7 @@ function get (req, res, next) {
 
     if (!size) {
       logger.error('unable to determine file size', 'controller.get.provider.size')
-      return res.status(400).json({error: 'unable to determine file size'})
+      return res.status(400).json({ error: 'unable to determine file size' })
     }
 
     logger.debug('Instantiating uploader.')

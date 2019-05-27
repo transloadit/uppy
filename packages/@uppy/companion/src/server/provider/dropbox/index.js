@@ -81,7 +81,7 @@ class DropBox {
   stats ({ directory, query, token }, done) {
     this.client
       .post('files/list_folder')
-      .options({version: '2'})
+      .options({ version: '2' })
       .where(query)
       .auth(token)
       .json({
@@ -97,7 +97,7 @@ class DropBox {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({path: `${id}`})
+          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` })
         }
       })
       .auth(token)
@@ -109,13 +109,13 @@ class DropBox {
       })
   }
 
-  thumbnail ({id, token}, done) {
+  thumbnail ({ id, token }, done) {
     return this.client
       .post('https://content.dropboxapi.com/2/files/get_thumbnail')
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({path: `${id}`})
+          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` })
         }
       })
       .auth(token)
@@ -133,7 +133,7 @@ class DropBox {
       })
   }
 
-  size ({id, token}, done) {
+  size ({ id, token }, done) {
     return this.client
       .post('files/get_metadata')
       .options({ version: '2' })
