@@ -6,6 +6,7 @@ class AddFiles extends Component {
     super(props)
 
     this.triggerFileInputClick = this.triggerFileInputClick.bind(this)
+    this.handleFileInputChange = this.handleFileInputChange.bind(this)
 
     this.renderPoweredByUppy = this.renderPoweredByUppy.bind(this)
     this.renderHiddenFileInput = this.renderHiddenFileInput.bind(this)
@@ -18,31 +19,43 @@ class AddFiles extends Component {
     this.fileInput.click()
   }
 
+  handleFileInputChange (event) {
+    this.props.handleInputChange(event)
+    // ___Why not use value="" on <input/> instead?
+    //    Because if we use that method of clearing the input, Chrome will not trigger onChange={} if we drop the same file twice (Issue #768).
+    event.target.value = null
+  }
+
   renderPoweredByUppy () {
-    return <a tabindex="-1" href="https://uppy.io" rel="noreferrer noopener" target="_blank" class="uppy-Dashboard-poweredBy">
-      {this.props.i18n('poweredBy')}
-      <svg aria-hidden="true" class="UppyIcon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
-        <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fill-rule="evenodd" />
-      </svg>
-      <span class="uppy-Dashboard-poweredByUppy">Uppy</span>
-    </a>
+    return (
+      <a
+        tabindex="-1"
+        href="https://uppy.io"
+        rel="noreferrer noopener"
+        target="_blank"
+        class="uppy-Dashboard-poweredBy">
+        {this.props.i18n('poweredBy') + ' '}
+        <svg aria-hidden="true" class="UppyIcon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
+          <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fill-rule="evenodd" />
+        </svg>
+        <span class="uppy-Dashboard-poweredByUppy">Uppy</span>
+      </a>
+    )
   }
 
   renderHiddenFileInput () {
-    return <input class="uppy-Dashboard-input"
-      hidden
-      aria-hidden="true"
-      tabindex={-1}
-      type="file"
-      name="files[]"
-      multiple={this.props.maxNumberOfFiles !== 1}
-      // Clear file input
-      onchange={(event) => {
-        this.props.handleInputChange(event)
-        event.target.value = null
-      }}
-      accept={this.props.allowedFileTypes}
-      ref={(ref) => { this.fileInput = ref }} />
+    return (
+      <input class="uppy-Dashboard-input"
+        hidden
+        aria-hidden="true"
+        tabindex={-1}
+        type="file"
+        name="files[]"
+        multiple={this.props.maxNumberOfFiles !== 1}
+        onchange={this.handleFileInputChange}
+        accept={this.props.allowedFileTypes}
+        ref={(ref) => { this.fileInput = ref }} />
+    )
   }
 
   renderDropPasteBrowseTagline () {
@@ -53,40 +66,46 @@ class AddFiles extends Component {
         {this.props.i18n('browse')}
       </button>
 
-    return <div class="uppy-Dashboard-dropFilesTitle">
-      {this.props.acquirers.length === 0
-        ? this.props.i18nArray('dropPaste', { browse })
-        : this.props.i18nArray('dropPasteImport', { browse })
-      }
-    </div>
+    return (
+      <div class="uppy-Dashboard-dropFilesTitle">
+        {this.props.acquirers.length === 0
+          ? this.props.i18nArray('dropPaste', { browse })
+          : this.props.i18nArray('dropPasteImport', { browse })
+        }
+      </div>
+    )
   }
 
   renderMyDeviceAcquirer () {
-    return <div class="uppy-DashboardTab" role="presentation">
-      <button type="button"
-        class="uppy-DashboardTab-btn"
-        role="tab"
-        tabindex={0}
-        onclick={this.triggerFileInputClick}>
-        {localIcon()}
-        <div class="uppy-DashboardTab-name">{this.props.i18n('myDevice')}</div>
-      </button>
-    </div>
+    return (
+      <div class="uppy-DashboardTab" role="presentation">
+        <button type="button"
+          class="uppy-DashboardTab-btn"
+          role="tab"
+          tabindex={0}
+          onclick={this.triggerFileInputClick}>
+          {localIcon()}
+          <div class="uppy-DashboardTab-name">{this.props.i18n('myDevice')}</div>
+        </button>
+      </div>
+    )
   }
 
   renderAcquirer (acquirer) {
-    return <div class="uppy-DashboardTab" role="presentation">
-      <button type="button"
-        class="uppy-DashboardTab-btn"
-        role="tab"
-        tabindex={0}
-        aria-controls={`uppy-DashboardContent-panel--${acquirer.id}`}
-        aria-selected={this.props.activePickerPanel.id === acquirer.id}
-        onclick={() => this.props.showPanel(acquirer.id)}>
-        {acquirer.icon()}
-        <div class="uppy-DashboardTab-name">{acquirer.name}</div>
-      </button>
-    </div>
+    return (
+      <div class="uppy-DashboardTab" role="presentation">
+        <button type="button"
+          class="uppy-DashboardTab-btn"
+          role="tab"
+          tabindex={0}
+          aria-controls={`uppy-DashboardContent-panel--${acquirer.id}`}
+          aria-selected={this.props.activePickerPanel.id === acquirer.id}
+          onclick={() => this.props.showPanel(acquirer.id)}>
+          {acquirer.icon()}
+          <div class="uppy-DashboardTab-name">{acquirer.name}</div>
+        </button>
+      </div>
+    )
   }
 
   render () {
