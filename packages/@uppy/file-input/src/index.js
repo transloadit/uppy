@@ -4,6 +4,8 @@ const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 
 module.exports = class FileInput extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'FileInput'

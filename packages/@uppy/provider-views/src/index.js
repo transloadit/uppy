@@ -38,6 +38,8 @@ class CloseWrapper extends Component {
  * Class to easily generate generic views for Provider plugins
  */
 module.exports = class ProviderView {
+  static VERSION = require('../package.json').version
+
   /**
    * @param {object} instance of the plugin
    */

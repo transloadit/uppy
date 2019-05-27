@@ -18,6 +18,8 @@ const Plugin = require('./Plugin') // Exported from here.
  * adds/removes files and metadata.
  */
 class Uppy {
+  static VERSION = require('../package.json').version
+
   /**
   * Instantiate Uppy
   * @param {object} opts — Uppy options
