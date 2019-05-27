@@ -4,6 +4,8 @@ export interface DashboardModalProps extends DashboardProps {
   target?: string | HTMLElement;
   open?: boolean;
   onRequestClose?: VoidFunction;
+  closeAfterFinish?: boolean;
+  animateOpenClose?: boolean;
   closeModalOnClickOutside?: boolean;
   disablePageScrollWhenModalOpen?: boolean;
 }
