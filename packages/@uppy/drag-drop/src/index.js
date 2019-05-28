@@ -46,12 +46,12 @@ module.exports = class DragDrop extends Plugin {
 
     // Bind `this` to class methods
     this.handleInputChange = this.handleInputChange.bind(this)
-    this.render = this.render.bind(this)
-
     this.handleDragOver = this.handleDragOver.bind(this)
     this.handleDragLeave = this.handleDragLeave.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
+    this.handlePaste = this.handlePaste.bind(this)
     this.addFile = this.addFile.bind(this)
+    this.render = this.render.bind(this)
   }
 
   addFile (file) {
@@ -60,18 +60,25 @@ module.exports = class DragDrop extends Plugin {
         source: this.id,
         name: file.name,
         type: file.type,
-        data: file
+        data: file,
+        meta: {
+          relativePath: file.relativePath || null
+        }
       })
     } catch (err) {
       // Nothing, restriction errors handled in Core
     }
   }
 
-  handleInputChange (ev) {
+  handleInputChange (event) {
     this.uppy.log('[DragDrop] Files selected through input')
+    const files = toArray(event.target.files)
+    files.forEach(this.addFile)
+  }
 
-    const files = toArray(ev.target.files)
-
+  handlePaste (event) {
+    this.uppy.log('[DragDrop] Files were pasted')
+    const files = toArray(event.clipboardData.files)
     files.forEach(this.addFile)
   }
 
@@ -86,12 +93,10 @@ module.exports = class DragDrop extends Plugin {
     this.setPluginState({ isDraggingOver: false })
 
     // 3. Add all dropped files
+    this.uppy.log('[DragDrop] File were dropped')
     getDroppedFiles(event.dataTransfer)
       .then((files) => {
-        if (files.length > 0) {
-          this.uppy.log('[DragDrop] Files were dropped')
-          files.forEach(this.addFile)
-        }
+        files.forEach(this.addFile)
       })
   }
 
@@ -148,7 +153,8 @@ module.exports = class DragDrop extends Plugin {
         style={dragDropStyle}
         onDragOver={this.handleDragOver}
         onDragLeave={this.handleDragLeave}
-        onDrop={this.handleDrop}>
+        onDrop={this.handleDrop}
+        onPaste={this.handlePaste}>
         <div class="uppy-DragDrop-inner">
           <svg aria-hidden="true" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
             <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
