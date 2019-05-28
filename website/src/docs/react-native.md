@@ -8,7 +8,7 @@ category: 'React'
 
 ⚠️ In Beta
 
-`@uppy/react-native` is a basic Uppy component for React Native with Expo. It is in Beta, and is not full-featured. You can select local images or videos, take a picture with a camera or add any file from a remote url with Uppy Companion.
+`@uppy/react-native` is a basic Uppy component for React Native with Expo. It is in Beta, and is not full-featured. You can select local images or videos, take pictures with a camera or add any files from [remote urls](/docs/url) with the help of a server-side component, [Uppy Companion](/docs/companion).
 
 Make sure to check out the example in [examples/react-native-expo](https://github.com/transloadit/uppy/tree/master/examples/react-native-expo).
 

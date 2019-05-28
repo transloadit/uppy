@@ -36,6 +36,8 @@ npm install @uppy/companion
 
 If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@0.30.0`.
 
+Unfortunately, Windows is not a supported platform right now. It may work, and we're happy to accept improvements in this area, but we can't provide assistance.
+
 ## Usage
 
 Companion may either be used as a pluggable express app, which you plug into your already existing server, or it may simply be run as a standalone server:
