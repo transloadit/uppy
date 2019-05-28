@@ -533,8 +533,8 @@ module.exports = class Dashboard extends Plugin {
     //    Because this.ifFocusedOnUppyAtLeastOnce needs to change before onUpdate() fires.
     // ___Why not use { useCapture: true, once: true }?
     //    To support IE.
-    document.addEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce, true)
-    document.addEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce, true)
+    this.el.addEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce, true)
+    this.el.addEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce, true)
   }
 
   // Executes on 'focus', and on 'click' (because firefox doesn't fire 'focus' when we click on something)
@@ -568,8 +568,8 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.off('file-added', this.handleFileAdded)
     this.uppy.off('complete', this.handleComplete)
 
-    document.removeEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce)
-    document.removeEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce)
+    this.el.removeEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce)
+    this.el.removeEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce)
   }
 
   toggleFileCard (fileId) {
