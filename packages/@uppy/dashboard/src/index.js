@@ -145,6 +145,7 @@ module.exports = class Dashboard extends Plugin {
 
     this.initEvents = this.initEvents.bind(this)
     this.handleKeyDownInModal = this.handleKeyDownInModal.bind(this)
+    this.handleKeyDownInInline = this.handleKeyDownInInline.bind(this)
     this.handleFileAdded = this.handleFileAdded.bind(this)
     this.handleComplete = this.handleComplete.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
@@ -371,7 +372,7 @@ module.exports = class Dashboard extends Plugin {
     // close modal on esc key press
     if (event.keyCode === ESC_KEY) this.requestCloseModal(event)
     // trap focus on tab key press
-    if (event.keyCode === TAB_KEY) trapFocus(event, this.getPluginState().activeOverlayType, this.el)
+    if (event.keyCode === TAB_KEY) trapFocus.forModal(event, this.getPluginState().activeOverlayType, this.el)
   }
 
   handleClickOutside () {
@@ -535,6 +536,15 @@ module.exports = class Dashboard extends Plugin {
     //    To support IE.
     this.el.addEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce, true)
     this.el.addEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce, true)
+
+    if (this.opts.inline) {
+      document.addEventListener('keydown', this.handleKeyDownInInline)
+    }
+  }
+
+  handleKeyDownInInline (event) {
+    // trap focus on tab key press
+    if (event.keyCode === TAB_KEY) trapFocus.forInline(event, this.getPluginState().activeOverlayType, this.el)
   }
 
   // Executes on 'focus', and on 'click' (because firefox doesn't fire 'focus' when we click on something)
@@ -570,6 +580,10 @@ module.exports = class Dashboard extends Plugin {
 
     this.el.removeEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce)
     this.el.removeEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce)
+
+    if (this.opts.inline) {
+      document.removeEventListener('keydown', this.handleKeyDownInInline)
+    }
   }
 
   toggleFileCard (fileId) {

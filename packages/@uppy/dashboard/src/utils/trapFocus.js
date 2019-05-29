@@ -25,8 +25,7 @@ function isFocusInOverlay (activeOverlayEl) {
   return activeOverlayEl.contains(document.activeElement)
 }
 
-// Traps focus inside of the currently open overlay (e.g. Dashboard, or e.g. Instagram)
-module.exports = function trapFocus (event, activeOverlayType, dashboardEl) {
+function trapFocus (event, activeOverlayType, dashboardEl) {
   const activeOverlayEl = getActiveOverlayEl(dashboardEl, activeOverlayType)
   const focusableNodes = toArray(activeOverlayEl.querySelectorAll(FOCUSABLE_ELEMENTS))
 
@@ -42,5 +41,25 @@ module.exports = function trapFocus (event, activeOverlayType, dashboardEl) {
   // If we pressed tab, and we're on the last element of the modal
   } else if (!event.shiftKey && focusedItemIndex === focusableNodes.length - 1) {
     focusOnFirstNode(event, focusableNodes)
+  }
+}
+
+module.exports = {
+  // Traps focus inside of the currently open overlay (e.g. Dashboard, or e.g. Instagram), never lets focus disappear from the modal.
+  forModal: (event, activeOverlayType, dashboardEl) => {
+    trapFocus(event, activeOverlayType, dashboardEl)
+  },
+
+  // Traps focus inside of the currently open overlay, unless overlay is null - then let the user tab away.
+  forInline: (event, activeOverlayType, dashboardEl) => {
+    // ___When we're in the bare 'Drop files here, paste, browse or import from' screen
+    if (activeOverlayType === null) {
+      // Do nothing and let the browser handle it, user can tab away from Uppy to other elements on the page
+    // ___When there is some overlay with 'Done' button
+    } else {
+      // Trap the focus inside this overlay!
+      // User can close the overlay (click 'Done') if they want to travel away from Uppy.
+      trapFocus(event, activeOverlayType, dashboardEl)
+    }
   }
 }
