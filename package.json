@@ -44,6 +44,7 @@
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-standard": "^4.0.0",
+    "events.once": "^2.0.2",
     "exorcist": "^1.0.1",
     "fakefile": "0.0.9",
     "flat": "^4.1.0",
@@ -150,6 +151,5 @@
     "testMatch": [
       "**/packages/**/*.test.js"
     ]
-  },
-  "dependencies": {}
+  }
 }

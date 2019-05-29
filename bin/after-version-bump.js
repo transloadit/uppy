@@ -13,7 +13,7 @@
 const lastCommitMessage = require('last-commit-message')
 const { spawn } = require('child_process')
 const { promisify } = require('util')
-const { once } = require('events')
+const once = require('events.once')
 const globby = require('globby')
 const fs = require('fs')
 const readFile = promisify(fs.readFile)
