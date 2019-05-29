@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 
-var es_GL = {};
+var es_GL = {}
 
 es_GL.strings = {
   addMoreFiles: 'Agregar máis arquivos',
@@ -132,17 +132,17 @@ es_GL.strings = {
     '1': 'Tes que seleccionar polo menos %{smart_count} arquivos',
     '2': 'Tes que seleccionar polo menos %{smart_count} arquivos'
   }
-};
+}
 
 es_GL.pluralize = function (n) {
   if (n === 1) {
-    return 0;
+    return 0
   }
-  return 1;
-};
-
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.es_GL = es_GL;
+  return 1
 }
 
-module.exports = es_GL;
+if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
+  window.Uppy.locales.es_GL = es_GL
+}
+
+module.exports = es_GL
