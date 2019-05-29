@@ -38,6 +38,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: add option to disable uploading from local disk #657
 - [ ] dashboard: Allow custom form fields in dashboard meta editing via jsx rendering (#617, #809, #454, @arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
+- [ ] dashboard: Don't hide notifications if they're hovered (https://github.com/transloadit/uppy/issues/1439)
 - [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027
 - [ ] dashboard: Consider uploading image thumbnails too #1212
 - [ ] dashboard: display data like image resolution on file cards #783
@@ -89,9 +90,17 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 2.0 
 
-- [ ] core: rename `Plugin` to `UIPlugin` and `BasePlugin` to `Plugin`
-- [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, for end-user UI it's weird and can lead to problems though)
+- [ ] docs: Completely drop soft IE10 (and IE11?) support
+- [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
+
+## 1.2
+
+- [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
+- [ ] dashboard: Change select button to just say `Select 11` instead of 11 files, or folder (https://github.com/transloadit/uppy/issues/1422)
+- [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418)
+- [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack)
+- [ ] core: check option types early, like making sure `allowedFileTypes` is an array, in cases where JS would not be able to auto-fix via typecasting (otherwise it's BC-breaking)
 
 ## 1.1
 
@@ -107,6 +116,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
+- [ ] docs: Add a note to our browser support page that, while we have a saucelabs test for IE10, we're not actively supporting or fixing issues anymore (https://github.com/transloadit/uppy/issues/1420)
 - [ ] goldenretriever: make it work with aws multipart (@goto-bus-stop) https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888
 - [ ] localepacks: Add Arabic, see if right-to-left causes issues, and fix them :)
 - [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
