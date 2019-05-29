@@ -63,19 +63,34 @@ module.exports.app = (options = {}) => {
   app.use((req, res, next) => {
     res.header(
       'Access-Control-Allow-Headers',
-      [res.get('Access-Control-Allow-Headers'), 'uppy-auth-token', 'uppy-client'].join(', ')
+      [
+        'uppy-auth-token',
+        'uppy-versions',
+        res.get('Access-Control-Allow-Headers')
+      ].join(',')
     )
-    next()
-  })
-  if (options.sendSelfEndpoint) {
-    app.use('*', (req, res, next) => {
+
+    const exposedHeaders = [
+      // exposed so it can be accessed for our custom uppy preflight
+      'Access-Control-Allow-Headers'
+    ]
+
+    if (options.sendSelfEndpoint) {
+      // add it to the exposed headers.
+      exposedHeaders.push('i-am')
+
       const { protocol } = options.server
       res.header('i-am', `${protocol}://${options.sendSelfEndpoint}`)
-      // add it to the exposed custom headers.
-      res.header('Access-Control-Expose-Headers', [res.get('Access-Control-Expose-Headers'), 'i-am'].join(', '))
-      next()
-    })
-  }
+    }
+
+    if (res.get('Access-Control-Expose-Headers')) {
+      // if the header had been previously set, the values should be added too
+      exposedHeaders.push(res.get('Access-Control-Expose-Headers'))
+    }
+
+    res.header('Access-Control-Expose-Headers', exposedHeaders.join(','))
+    next()
+  })
 
   // add uppy options to the request object so it can be accessed by subsequent handlers.
   app.use('*', getOptionsMiddleware(options))

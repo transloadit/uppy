@@ -56,6 +56,7 @@
     "purest": "3.0.0",
     "redis": "2.8.0",
     "request": "2.85.0",
+    "semver": "6.1.1",
     "serialize-error": "^2.1.0",
     "tus-js-client": "^1.8.0-0",
     "uuid": "2.0.2",
