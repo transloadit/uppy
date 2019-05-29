@@ -538,7 +538,7 @@ module.exports = class Dashboard extends Plugin {
     this.el.addEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce, true)
 
     if (this.opts.inline) {
-      document.addEventListener('keydown', this.handleKeyDownInInline)
+      this.el.addEventListener('keydown', this.handleKeyDownInInline)
     }
   }
 
@@ -582,7 +582,7 @@ module.exports = class Dashboard extends Plugin {
     this.el.removeEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce)
 
     if (this.opts.inline) {
-      document.removeEventListener('keydown', this.handleKeyDownInInline)
+      this.el.removeEventListener('keydown', this.handleKeyDownInInline)
     }
   }
 
