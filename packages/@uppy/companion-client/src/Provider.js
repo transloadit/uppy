@@ -8,6 +8,8 @@ const _getName = (id) => {
 }
 
 module.exports = class Provider extends RequestClient {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.provider = opts.provider

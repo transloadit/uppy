@@ -8,6 +8,8 @@ function stripSlash (url) {
 }
 
 module.exports = class RequestClient {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     this.uppy = uppy
     this.opts = opts
