@@ -180,8 +180,13 @@ module.exports = class XHRUpload extends Plugin {
       formPost.append(item, file.meta[item])
     })
 
+    // Set `file.data.type` in the blob to `file.meta.type`,
+    // because we might have detected a more accurate file type in Uppy
+    // https://stackoverflow.com/a/50875615
+    file.data = file.data.slice(0, file.data.size, file.meta.type)
+
     if (file.name) {
-      formPost.append(opts.fieldName, file.data, file.name)
+      formPost.append(opts.fieldName, file.data, file.meta.name)
     } else {
       formPost.append(opts.fieldName, file.data)
     }
@@ -190,6 +195,11 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   createBareUpload (file, opts) {
+    // Set `file.data.type` in the blob to `file.meta.type`,
+    // because we might have detected a more accurate file type in Uppy
+    // https://stackoverflow.com/a/50875615
+    file.data = file.data.slice(0, file.data.size, file.meta.type)
+
     return file.data
   }
 
@@ -370,8 +380,13 @@ module.exports = class XHRUpload extends Plugin {
       files.forEach((file, i) => {
         const opts = this.getOptions(file)
 
+        // Set `file.data.type` in the blob to `file.meta.type`,
+        // because we might have detected a more accurate file type in Uppy
+        // https://stackoverflow.com/a/50875615
+        file.data = file.data.slice(0, file.data.size, file.meta.type)
+
         if (file.name) {
-          formData.append(opts.fieldName, file.data, file.name)
+          formData.append(opts.fieldName, file.data, file.meta.name)
         } else {
           formData.append(opts.fieldName, file.data)
         }
