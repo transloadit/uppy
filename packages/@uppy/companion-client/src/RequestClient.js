@@ -110,6 +110,7 @@ module.exports = class RequestClient {
           // filter to keep only allowed Headers
           Object.keys(headers).forEach((header) => {
             if (allowedHeaders.indexOf(header.toLowerCase()) === -1) {
+              this.uppy.log(`[CompanionClient] excluding unallowed header ${header}`)
               delete headers[header]
             }
           })
