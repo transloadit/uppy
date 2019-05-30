@@ -480,7 +480,7 @@ class Uploader {
       if (error) {
         this.emitError(error)
       } else {
-        const url = data && data.Location ? data.Location : null;
+        const url = data && data.Location ? data.Location : null
         this.emitSuccess(url, {
           response: {
             responseText: JSON.stringify(data),
