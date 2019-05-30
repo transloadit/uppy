@@ -100,7 +100,14 @@ class Uppy {
     this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
     this.pauseResume = this.pauseResume.bind(this)
-    this._calculateProgress = this._calculateProgress.bind(this)
+
+    // ___Why throttle at 500ms?
+    //    - We must throttle at >250ms for superfocus in Dashboard to work well (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
+    //    [Practical Check]: if thottle is at 100ms, then if you are uploading a file, and click 'ADD MORE FILES', - focus won't activate in Firefox.
+    //    - We must throttle at around >500ms to avoid performance lags.
+    //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
+    this._calculateProgress = throttle(this._calculateProgress.bind(this), 500, { leading: true, trailing: true })
+
     this.updateOnlineStatus = this.updateOnlineStatus.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
 
@@ -757,14 +764,7 @@ class Uppy {
       })
     })
 
-    // ___Why throttle at 500ms?
-    //    - We must throttle at >250ms for superfocus in Dashboard to work well (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
-    //    [Practical Check]: if thottle is at 100ms, then if you are uploading a file, and click 'ADD MORE FILES', - focus won't activate in Firefox.
-    //    - We must throttle at around >500ms to avoid performance lags.
-    //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
-    const _throttledCalculateProgress = throttle(this._calculateProgress, 500, { leading: true, trailing: true })
-
-    this.on('upload-progress', _throttledCalculateProgress)
+    this.on('upload-progress', this._calculateProgress)
 
     this.on('upload-success', (file, uploadResp) => {
       const currentProgress = this.getFile(file.id).progress

@@ -998,6 +998,9 @@ describe('src/Core', () => {
         bytesUploaded: 17175,
         bytesTotal: 17175
       })
+
+      core._calculateProgress.flush()
+
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 100,
         bytesUploaded: 17175,
@@ -1100,6 +1103,8 @@ describe('src/Core', () => {
       })
 
       core._calculateTotalProgress()
+      core._calculateProgress.flush()
+
       expect(core.getState().totalProgress).toEqual(66)
     })
 
@@ -1136,6 +1141,7 @@ describe('src/Core', () => {
       })
 
       core._calculateTotalProgress()
+      core._calculateProgress.flush()
 
       expect(core.getState().totalProgress).toEqual(66)
 
