@@ -88,10 +88,10 @@ module.exports = class DragDrop extends Plugin {
     })
   }
 
-  handleInputChange (ev) {
+  handleInputChange (event) {
     this.uppy.log('[DragDrop] Files selected through input')
 
-    const files = toArray(ev.target.files)
+    const files = toArray(event.target.files)
 
     files.forEach((file) => {
       try {
@@ -105,6 +105,14 @@ module.exports = class DragDrop extends Plugin {
         // Nothing, restriction errors handled in Core
       }
     })
+
+    // We clear the input after a file is selected, because otherwise
+    // change event is not fired in Chrome and Safari when a file
+    // with the same name is selected.
+    // ___Why not use value="" on <input/> instead?
+    //    Because if we use that method of clearing the input,
+    //    Chrome will not trigger change if we drop the same file twice (Issue #768).
+    event.target.value = null
   }
 
   render (state) {
@@ -140,11 +148,7 @@ module.exports = class DragDrop extends Plugin {
               name={this.opts.inputName}
               multiple={restrictions.maxNumberOfFiles !== 1}
               accept={restrictions.allowedFileTypes}
-              ref={(input) => {
-                this.input = input
-              }}
-              onchange={this.handleInputChange}
-              value="" />
+              onchange={this.handleInputChange} />
             {this.i18nArray('dropHereOr', {
               browse: <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
             })}
