@@ -121,11 +121,11 @@ pt_BR.strings = {
     '2': '%{smart_count} arquivos adicionados'
   },
   xTimeLeft: '%{time} restantes',
-  youCanOnlyUploadFileTypes: 'Você só pode enviar aquivos: %{types}',
+  youCanOnlyUploadFileTypes: 'Você pode enviar apenas aquivos: %{types}',
   youCanOnlyUploadX: {
-    '0': 'Você só pode enviar %{smart_count} arquivo',
-    '1': 'Você só pode enviar %{smart_count} arquivos',
-    '2': 'Você só pode enviar %{smart_count} arquivos'
+    '0': 'Você pode enviar apenas %{smart_count} arquivo',
+    '1': 'Você pode enviar apenas %{smart_count} arquivos',
+    '2': 'Você pode enviar apenas %{smart_count} arquivos'
   },
   youHaveToAtLeastSelectX: {
     '0': 'Você precisa selecionar pelo menos %{smart_count} arquivo',
