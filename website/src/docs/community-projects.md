@@ -2,7 +2,7 @@
 type: docs
 order: 1
 title: "Community Projects"
-menu: "Other Projects"
+menu: "More Projects"
 permalink: docs/community-projects/
 category: 'Community Projects'
 ---
