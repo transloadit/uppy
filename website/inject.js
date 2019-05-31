@@ -198,7 +198,7 @@ function injectLocaleList () {
     if (parts.length > 2) {
       let lang = parts.shift()
       let country = parts.shift()
-      variant = parts.join('-')
+      variant = parts.join(', ')
       localeNameWithDash = `${lang}-${country}`
     }
 
