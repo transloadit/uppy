@@ -76,10 +76,27 @@ function buildPluginsList () {
         open: () => { return {} }
       }
     }
+
+    // For mutationobserver-shim & wicg-inert
+    global.MutationObserver = function () {
+      this.observe = () => {}
+      this.disconnect = () => {}
+    }
+    window.MutationObserver = global.MutationObserver
+    global.Element = {
+      prototype: {}
+    }
+
     global.document = {
       createElement: () => {
-        return { style: {} }
-      }
+        return { style: {}, setAttribute: () => null }
+      },
+      // For mutationobserver-shim & wicg-inert
+      head: {
+        querySelector: () => null,
+        appendChild: () => null
+      },
+      querySelectorAll: () => []
     }
 
     try {
