@@ -17,7 +17,7 @@ pt_BR.strings = {
   closeModal: 'Fechar Modal',
   companionAuthError: 'Autorização necessária',
   companionError: 'Conexão com serviço falhou',
-  complete: 'Complete',
+  complete: 'Concluído',
   connectedToInternet: 'Conectado á internet',
   copyLink: 'Copiar link',
   copyLinkToClipboardFallback: 'Copiar URL abaixo',
