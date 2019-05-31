@@ -71,7 +71,22 @@ module.exports = function Dashboard (props) {
           </button>
         ) : null}
 
-        <div class="uppy-Dashboard-innerWrap">
+        <TransitionWrapper>
+          { props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} /> : null }
+        </TransitionWrapper>
+
+        <TransitionWrapper>
+          { props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null }
+        </TransitionWrapper>
+
+        <TransitionWrapper>
+          { props.activePickerPanel ? <PickerPanelContent key="PickerPanelContent" {...props} /> : null }
+        </TransitionWrapper>
+
+        <div
+          class="uppy-Dashboard-innerWrap"
+          // If there is some overlay present - make background unfocusable, BUT still visible.
+          inert={!!props.activeOverlayType} >
           <div class="uppy-Dashboard-dropFilesHereHint">
             {props.i18n('dropHint')}
           </div>
@@ -83,18 +98,6 @@ module.exports = function Dashboard (props) {
           ) : (
             <AddFiles {...props} />
           )}
-
-          <TransitionWrapper>
-            { props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} /> : null }
-          </TransitionWrapper>
-
-          <TransitionWrapper>
-            { props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null }
-          </TransitionWrapper>
-
-          <TransitionWrapper>
-            { props.activePickerPanel ? <PickerPanelContent key="PickerPanelContent" {...props} /> : null }
-          </TransitionWrapper>
 
           <div class="uppy-Dashboard-progressindicators">
             {props.progressindicators.map((target) => {
