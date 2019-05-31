@@ -196,8 +196,10 @@ function injectLocaleList () {
     const parts = localeNameWithDash.split('-')
     let variant = ''
     if (parts.length > 2) {
-      variant = parts.pop()
-      localeNameWithDash = parts.join('-')
+      let lang = parts.shift()
+      let country = parts.shift()
+      variant = parts.join('-')
+      localeNameWithDash = `${lang}-${country}`
     }
 
     const languageName = LocaleCode.getLanguageName(localeNameWithDash)
