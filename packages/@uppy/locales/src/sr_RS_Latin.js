@@ -1,8 +1,8 @@
 /* eslint camelcase: 0 */
 
-const sr_Latn_RS = {}
+const sr_RS_Latin = {}
 
-sr_Latn_RS.strings = {
+sr_RS_Latin.strings = {
   addMoreFiles: 'Dodaj još datoteka',
   addingMoreFiles: 'Dodavanje datoteka',
   allowAccessDescription: 'Molimo Vas, dozvolite pristup Vašoj kameri, kako biste mogli da je koristite za snimanje fotografija i video zapisa.',
@@ -134,7 +134,7 @@ sr_Latn_RS.strings = {
   }
 }
 
-sr_Latn_RS.pluralize = function (n) {
+sr_RS_Latin.pluralize = function (n) {
   if (n === 1) {
     return 0
   }
@@ -142,7 +142,7 @@ sr_Latn_RS.pluralize = function (n) {
 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.sr_Latn_RS = sr_Latn_RS
+  window.Uppy.locales.sr_RS_Latin = sr_RS_Latin
 }
 
-module.exports = sr_Latn_RS
+module.exports = sr_RS_Latin
