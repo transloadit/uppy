@@ -1,4 +1,9 @@
+// Polyfill for MutationObserver (only 'wicg-inert' uses it at the moment).
+// Tests will fail if we don't include it, because Jest doesn't yet use a version of Jsdom that implements MutationObserver (see https://github.com/facebook/jest/issues/7926).
+require('mutationobserver-shim')
+// Polyfill that lets us use inert html attribute
 require('wicg-inert')
+
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const DashboardUI = require('./components/Dashboard')
