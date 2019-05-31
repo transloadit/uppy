@@ -55,7 +55,7 @@
       <% } %>
     </li>
   <% } %>
-  <% console.log({sorted}); sorted.forEach((p, j) => { %>
+  <% sorted.forEach((p, j) => { %>
     <% var path = (p.path || '').replace(/index\.html$/, ''); %>
     <% var firstInCategory = categories.find((c) => c.path === path) %>
     <li key="<%-'p-' + j + '-' + p.path %>">
