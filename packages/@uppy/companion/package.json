@@ -46,6 +46,7 @@
     "isobject": "3.0.1",
     "jsonwebtoken": "8.3.0",
     "lodash.merge": "4.6.1",
+    "mime-types": "2.1.24",
     "morgan": "1.9.1",
     "ms": "2.1.1",
     "node-redis-pubsub": "2.0.0",
