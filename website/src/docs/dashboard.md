@@ -5,6 +5,7 @@ title: "Dashboard"
 module: "@uppy/dashboard"
 permalink: docs/dashboard/
 category: 'UI Elements'
+tagline: full-featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more. Includes <code>StatusBar</code> and <code>Informer</code> plugins by default
 ---
 
 `@uppy/dashboard` is a universal UI plugin for Uppy, offering several useful features:

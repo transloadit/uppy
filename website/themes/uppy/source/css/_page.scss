@@ -279,7 +279,8 @@
   .post li,
   > ul li,
   > li {
-    margin-bottom: 0.5em;
+    // @TODO can this safely be removed artur?
+    // margin-bottom: 0.5em;
   }
 
   .post p, .post ul, .post ol,
@@ -353,6 +354,10 @@
 
 .page-docs-locales table td {
   white-space: nowrap;
+}
+
+body.plugin-list li {
+  list-style: none;
 }
 
 .page-docs-locales table code {

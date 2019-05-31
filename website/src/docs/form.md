@@ -5,6 +5,7 @@ title: "Form"
 module: "@uppy/form"
 permalink: docs/form/
 category: 'Miscellaneous'
+tagline: collect metadata from <code>&lt;form&gt;</code> right before the Uppy upload, then optionally append results back to the form
 ---
 
 The `@uppy/form` plugin has several features to integrate with HTML `<form>` elements.

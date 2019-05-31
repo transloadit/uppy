@@ -5,6 +5,7 @@ title: "Thumbnail Generator"
 module: "@uppy/thumbnail-generator"
 permalink: docs/thumbnail-generator/
 category: 'Miscellaneous'
+tagline: generate preview thumbnails for images to be uploaded
 ---
 
 `@uppy/thumbnail-generator` generates proportional thumbnails (file previews) for images that are added to Uppy.
