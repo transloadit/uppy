@@ -1,9 +1,3 @@
-// Polyfill for MutationObserver (only 'wicg-inert' uses it at the moment).
-// Tests will fail if we don't include it, because Jest doesn't yet use a version of Jsdom that implements MutationObserver (see https://github.com/facebook/jest/issues/7926).
-require('mutationobserver-shim')
-// Polyfill that lets us use inert html attribute
-require('wicg-inert')
-
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const DashboardUI = require('./components/Dashboard')
@@ -13,7 +7,7 @@ const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
-const trapFocusInModal = require('./utils/trapFocusInModal')
+const trapFocus = require('./utils/trapFocus')
 const cuid = require('cuid')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultPickerIcon } = require('./components/icons')
@@ -151,6 +145,7 @@ module.exports = class Dashboard extends Plugin {
 
     this.initEvents = this.initEvents.bind(this)
     this.handleKeyDownInModal = this.handleKeyDownInModal.bind(this)
+    this.handleKeyDownInInline = this.handleKeyDownInInline.bind(this)
     this.handleFileAdded = this.handleFileAdded.bind(this)
     this.handleComplete = this.handleComplete.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
@@ -377,7 +372,7 @@ module.exports = class Dashboard extends Plugin {
     // close modal on esc key press
     if (event.keyCode === ESC_KEY) this.requestCloseModal(event)
     // trap focus on tab key press
-    if (event.keyCode === TAB_KEY) trapFocusInModal(event, this.getPluginState().activeOverlayType, this.el)
+    if (event.keyCode === TAB_KEY) trapFocus.forModal(event, this.getPluginState().activeOverlayType, this.el)
   }
 
   handleClickOutside () {
@@ -541,6 +536,15 @@ module.exports = class Dashboard extends Plugin {
     //    To support IE.
     this.el.addEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce, true)
     this.el.addEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce, true)
+
+    if (this.opts.inline) {
+      this.el.addEventListener('keydown', this.handleKeyDownInInline)
+    }
+  }
+
+  handleKeyDownInInline (event) {
+    // trap focus on tab key press
+    if (event.keyCode === TAB_KEY) trapFocus.forInline(event, this.getPluginState().activeOverlayType, this.el)
   }
 
   // Executes on 'focus', and on 'click' (because firefox doesn't fire 'focus' when we click on something)
@@ -576,6 +580,10 @@ module.exports = class Dashboard extends Plugin {
 
     this.el.removeEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce)
     this.el.removeEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce)
+
+    if (this.opts.inline) {
+      this.el.removeEventListener('keydown', this.handleKeyDownInInline)
+    }
   }
 
   toggleFileCard (fileId) {
@@ -714,7 +722,6 @@ module.exports = class Dashboard extends Plugin {
     }
 
     return DashboardUI({
-      activeOverlayType: pluginState.activeOverlayType,
       state,
       isHidden: pluginState.isHidden,
       files,
