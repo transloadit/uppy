@@ -87,7 +87,7 @@ en_US.strings = {
   },
   smile: 'Gülümse!',
   startRecording: 'Video kaydını başlat',
-  stopRecording: 'Video kaydını durdur,
+  stopRecording: 'Video kaydını durdur',
   takePicture: 'Fotoğrafı çek',
   timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   upload: 'Yükle',
