@@ -221,7 +221,7 @@ class Uppy {
       percentage: 0,
       bytesUploaded: 0,
       uploadComplete: false,
-      uploadStarted: false
+      uploadStarted: null
     }
     const files = Object.assign({}, this.getState().files)
     const updatedFiles = {}
@@ -450,7 +450,7 @@ class Uppy {
         bytesUploaded: 0,
         bytesTotal: size,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       },
       size: size,
       isRemote: isRemote,
