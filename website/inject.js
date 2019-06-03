@@ -179,7 +179,7 @@ async function injectMarkdown () {
 function injectLocaleList () {
   const mdTable = [
     `<!-- WARNING! This file was automatically injected. Please run "${path.basename(__filename)}" to re-generate -->\n\n`,
-    '| Language        | NPM                | CDN                 | Source on GitHub |',
+    '| %count% Locales | NPM                | CDN                 | Source on GitHub |',
     '| --------------- | ------------------ | ------------------- | ---------------- |'
   ]
   const mdRows = []
@@ -191,17 +191,27 @@ function injectLocaleList () {
 
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
-    const localeNameWithDash = localeName.replace('_', '-')
+    let localeNameWithDash = localeName.replace(/_/g, '-')
+
+    const parts = localeNameWithDash.split('-')
+    let variant = ''
+    if (parts.length > 2) {
+      let lang = parts.shift()
+      let country = parts.shift()
+      variant = parts.join(', ')
+      localeNameWithDash = `${lang}-${country}`
+    }
+
     const languageName = LocaleCode.getLanguageName(localeNameWithDash)
     const countryName = LocaleCode.getCountryName(localeNameWithDash)
     const npmPath = `<code><a href="https://www.npmjs.com/package/@uppy/locales">@uppy/locales</a>/lib/${localeName}</code>`
     const cdnPath = `[\`${localeName}.min.js\`](https://transloadit.edgly.net/releases/uppy/v${localePackageVersion}/locales/${localeName}.min.js)`
     const githubSource = `[\`${localeName}.js\`](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/locales/src/${localeName}.js)`
-    const mdTableRow = `| ${languageName}<br/> <small>(${countryName})</small> | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
+    const mdTableRow = `| ${languageName}<br/> <small>${countryName}</small>${variant ? `<br /><small>(${variant})</small>` : ''} | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
     mdRows.push(mdTableRow)
   })
 
-  const resultingMdTable = mdTable.concat(mdRows.sort()).join('\n')
+  const resultingMdTable = mdTable.concat(mdRows.sort()).join('\n').replace('%count%', mdRows.length)
 
   let dstpath = path.join(webRoot, 'src', '_template', 'list_of_locale_packs.md')
   fs.writeFileSync(dstpath, resultingMdTable, 'utf-8')

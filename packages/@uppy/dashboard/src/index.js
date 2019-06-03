@@ -152,6 +152,7 @@ module.exports = class Dashboard extends Plugin {
     this.toggleFileCard = this.toggleFileCard.bind(this)
     this.toggleAddFilesPanel = this.toggleAddFilesPanel.bind(this)
     this.handlePaste = this.handlePaste.bind(this)
+    this.handlePasteOnBody = this.handlePasteOnBody.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
@@ -525,6 +526,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.startListeningToResize()
+    document.addEventListener('paste', this.handlePasteOnBody)
 
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.handleFileAdded)
@@ -554,6 +556,19 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
+  // ___Why do we listen to the 'paste' event on a document instead of onPaste={props.handlePaste} prop, or this.el.addEventListener('paste')?
+  //    Because (at least) Chrome doesn't handle paste if focus is on some button, e.g. 'My Device'.
+  //    => Therefore, the best option is to listen to all 'paste' events, and only react to them when we are focused on our particular Uppy instance.
+  // ___Why do we still need onPaste={props.handlePaste} for the DashboardUi?
+  //    Because if we click on the 'Drop files here' caption e.g., `document.activeElement` will be 'body'. Which means our standard determination of whether we're pasting into our Uppy instance won't work.
+  //    => Therefore, we need a traditional onPaste={props.handlePaste} handler too.
+  handlePasteOnBody (event) {
+    const isFocusInOverlay = this.el.contains(document.activeElement)
+    if (isFocusInOverlay) {
+      this.handlePaste(event)
+    }
+  }
+
   handleFileAdded () {
     this.hideAllPanels()
   }
@@ -572,6 +587,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     this.stopListeningToResize()
+    document.removeEventListener('paste', this.handlePasteOnBody)
 
     window.removeEventListener('popstate', this.handlePopState, false)
     this.uppy.off('plugin-remove', this.removeTarget)

@@ -1,3 +1,5 @@
+const mime = require('mime-types')
+
 exports.getUsername = (data) => {
   return data.user_email
 }
@@ -23,8 +25,7 @@ exports.getItemName = (item) => {
 }
 
 exports.getMimeType = (item) => {
-  // mime types aren't supported.
-  return null
+  return mime.lookup(exports.getItemName(item)) || null
 }
 
 exports.getItemId = (item) => {
