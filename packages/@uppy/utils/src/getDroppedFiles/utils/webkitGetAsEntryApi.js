@@ -1,5 +1,22 @@
 const toArray = require('../../toArray')
 
+/**
+ * Get the relative path from the FileEntry#fullPath, because File#webkitRelativePath is always '', at least onDrop.
+ *
+ * @param {FileEntry} fileEntry
+ *
+ * @return {string|null} - if file is not in a folder - return null (this is to be consistent with .relativePath-s of files selected from My Device). If file is in a folder - return its fullPath, e.g. '/simpsons/hi.jpeg'.
+ */
+function getRelativePath (fileEntry) {
+  // fileEntry.fullPath - "/simpsons/hi.jpeg" or undefined (for browsers that don't support it)
+  // fileEntry.name - "hi.jpeg"
+  if (!fileEntry.fullPath || fileEntry.fullPath === '/' + fileEntry.name) {
+    return null
+  } else {
+    return fileEntry.fullPath
+  }
+}
+
 // Recursive function, calls the original callback() when the directory is entirely parsed.
 // @param {function} callback - called with ([ all files and directories in that directoryReader ])
 function readEntries (directoryReader, oldEntries, callback) {
@@ -29,9 +46,7 @@ function addEntryToFiles (resolve, files, fileEntry) {
   // Creates a new File object which can be used to read the file.
   fileEntry.file(
     (file) => {
-      // Preserve the relative path from the FileSystemFileEntry#fullPath, because File#webkitRelativePath is always '', at least onDrop.
-      // => "/docs/Prague/ticket_from_prague_to_ufa.pdf"
-      file.relativePath = fileEntry.fullPath
+      file.relativePath = getRelativePath(fileEntry)
       files.push(file)
       resolve()
     },

@@ -167,11 +167,12 @@
     })
     .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
     .use(Uppy.Instagram, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
+    .use(Uppy.Dropbox, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
     .use(Uppy.Webcam, { target: Uppy.Dashboard })
     .use(Uppy.Url, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
     .use(Uppy.Tus, { endpoint: TUS_ENDPOINT})
 
-  uppy.on('success', (files) => {
-    console.log(`Upload complete! We’ve uploaded these files: ${files}`)
+  uppy.on('success', function (files) {
+    console.log('Upload complete! We’ve uploaded these files:', files)
   })
 </script>
