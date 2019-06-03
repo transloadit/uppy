@@ -33,6 +33,7 @@ module.exports = function createSuperFocus () {
   // ___Why do we need to debounce?
   //    1. To deal with animations: overlay changes via animations, which results in the DOM updating AFTER plugin.update() already executed.
   //    [Practical check] without debounce, if we open the Url overlay, and click 'Done', Dashboard won't get focused again.
+  //    [Practical check] if we delay 250ms instead of 260ms - IE11 won't get focused in same situation.
   //    2. Performance: there can be many state update()s in a second, and this function is called every time.
-  return debounce(superFocus, 250)
+  return debounce(superFocus, 260)
 }

@@ -618,7 +618,8 @@ module.exports = class Dashboard extends Plugin {
 
   superFocusOnEachUpdate () {
     const isFocusInUppy = this.el.contains(document.activeElement)
-    const isFocusOnBody = document.activeElement === document.querySelector('body')
+    // When focus is lost on the page (== focus is on body for most browsers, or focus is null for IE11)
+    const isFocusNowhere = document.activeElement === document.querySelector('body') || document.activeElement === null
     const isInformerHidden = this.uppy.getState().info.isHidden
     const isModal = !this.opts.inline
 
@@ -630,9 +631,10 @@ module.exports = class Dashboard extends Plugin {
         isModal ||
         // If we are already inside of Uppy, or
         isFocusInUppy ||
-        // If we are nowhere (== on body) [this is true when some overlay we were focused on disappeared. This IS NOT true when user is focused on some element on the page other than Uppy]
-        // BUT we have already, at least once, focused on uppy [this is done to avoid focusing related to the page initialisation]
-        (isFocusOnBody && this.ifFocusedOnUppyAtLeastOnce)
+        // If we are not focused on anything BUT we have already, at least once, focused on uppy
+        //   1. We focus when isFocusNowhere, because when the element we were focused on disappears (e.g. an overlay), - focus gets lost. If user is typing something somewhere else on the page, - focus won't be 'nowhere'.
+        //   2. We only focus when focus is nowhere AND this.ifFocusedOnUppyAtLeastOnce, because otherwise we'd focus on Uppy on page load.
+        (isFocusNowhere && this.ifFocusedOnUppyAtLeastOnce)
       )
     ) {
       this.superFocus(this.el, this.getPluginState().activeOverlayType)
