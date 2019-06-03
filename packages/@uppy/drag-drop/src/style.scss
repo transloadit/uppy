@@ -7,6 +7,15 @@
   justify-content: center;
   border-radius: 7px;
   background-color: $white;
+  cursor: pointer;
+  font-size: inherit;
+  font-color: inherit;
+  font-family: $font-family-base;
+  max-width: 100%;
+  &:focus{
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($blue, 0.4);
+  }
 }
 
 .uppy-DragDrop-inner {
@@ -14,6 +23,16 @@
   text-align: center;
   padding: 80px 20px;
   line-height: 1.4;
+}
+
+// http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/
+.uppy-DragDrop-input{
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
 
 .uppy-DragDrop-arrow {
