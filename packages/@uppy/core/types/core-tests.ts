@@ -17,3 +17,12 @@ import DefaultStore = require('@uppy/store-default');
   const store = DefaultStore();
   const uppy = Uppy({ store });
 }
+
+{
+  const uppy = Uppy();
+  uppy.addFile({
+    name: 'empty.json',
+    data: new Blob(['null'], { type: 'application/json' }),
+    meta: { path: 'path/to/file' }
+  });
+}

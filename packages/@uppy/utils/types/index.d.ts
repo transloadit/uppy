@@ -135,16 +135,14 @@ declare module '@uppy/utils' {
     [key: string]: T;
     [key: number]: T;
   }
-  export interface UppyFile<TMeta extends IndexedObject<any> = {}> {
+  export type InternalMetadata = { name: string, type?: string };
+  export interface UppyFile<TMeta = IndexedObject<any>> {
     data: Blob | File;
     extension: string;
     id: string;
     isPaused?: boolean;
     isRemote: boolean;
-    meta: {
-      name: string;
-      type?: string;
-    } & TMeta;
+    meta: InternalMetadata & TMeta;
     name: string;
     preview?: string;
     progress?: {
