@@ -61,8 +61,9 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] plugins: WordPress plugin https://www.producthunt.com/posts/uppy-io#comment-559327 (“And Gravity forms”)
 - [ ] provider: Add Facebook, OneDrive, Box
 - [ ] provider: add sorting, filtering, previews #254
-- [ ] provider: change ProviderViews signature to receive Provider instance in second param. ref https://github.com/transloadit/uppy/pull/743#discussion_r180106070
-- [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450
+- [ ] provider: allow consuming developers to pass in their own ProviderViews to Provider Plugins https://github.com/transloadit/uppy/issues/1143
+- [ ] provider: change ProviderViews signature to receive Provider instance in second param. (https://github.com/transloadit/uppy/pull/743#discussion_r180106070)
+- [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112
 - [ ] react: Component wrappers to manage the Uppy instance, many people initialize it in render() which does not work correctly so this could make it easier for them https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951
 - [ ] core: implement a `uppy.getPlugin(x).setOptions()` method so that you can e.g. dynamically show `hideUploadButton`. we can then use this in the react component so that it rerenders appropriately. Can we also use this for changing Locales? #1193
 - [ ] rn: Uppy React Native works with Expo, now let's make it work without
@@ -96,11 +97,13 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 1.2
 
+- [ ] core: check option types early, like making sure `allowedFileTypes` is an array, in cases where JS would not be able to auto-fix via typecasting (otherwise it's BC-breaking)
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
+- [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510)
 - [ ] dashboard: Change select button to just say `Select 11` instead of 11 files, or folder (https://github.com/transloadit/uppy/issues/1422)
+- [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
 - [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418)
 - [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack)
-- [ ] core: check option types early, like making sure `allowedFileTypes` is an array, in cases where JS would not be able to auto-fix via typecasting (otherwise it's BC-breaking)
 
 ## 1.1
 
@@ -112,7 +115,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] chore: remove dead code/commented blocks
 - [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
-- [ ] core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754)
+- [ ] core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754, #1606)
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
