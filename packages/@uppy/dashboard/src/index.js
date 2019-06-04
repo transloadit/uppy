@@ -161,10 +161,10 @@ module.exports = class Dashboard extends Plugin {
     this.handleDragLeave = this.handleDragLeave.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
     this.superFocusOnEachUpdate = this.superFocusOnEachUpdate.bind(this)
-    this.recordIfFocusedOnUppyAtLeastOnce = this.recordIfFocusedOnUppyAtLeastOnce.bind(this)
+    this.recordIfFocusedOnUppyRecently = this.recordIfFocusedOnUppyRecently.bind(this)
 
     this.superFocus = createSuperFocus()
-    this.ifFocusedOnUppyAtLeastOnce = false
+    this.ifFocusedOnUppyRecently = false
 
     // Timeouts
     this.makeDashboardInsidesVisibleAnywayTimeout = null
@@ -533,11 +533,10 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.on('complete', this.handleComplete)
 
     // ___Why fire on capture?
-    //    Because this.ifFocusedOnUppyAtLeastOnce needs to change before onUpdate() fires.
-    // ___Why not use { useCapture: true, once: true }?
-    //    To support IE.
-    this.el.addEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce, true)
-    this.el.addEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce, true)
+    //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
+    document.addEventListener('focus', this.recordIfFocusedOnUppyRecently, true)
+    document.addEventListener('click', this.recordIfFocusedOnUppyRecently, true)
+    document.addEventListener('touchstart', this.recordIfFocusedOnUppyRecently, true)
 
     if (this.opts.inline) {
       this.el.addEventListener('keydown', this.handleKeyDownInInline)
@@ -549,10 +548,12 @@ module.exports = class Dashboard extends Plugin {
     if (event.keyCode === TAB_KEY) trapFocus.forInline(event, this.getPluginState().activeOverlayType, this.el)
   }
 
-  // Executes on 'focus', and on 'click' (because firefox doesn't fire 'focus' when we click on something)
-  recordIfFocusedOnUppyAtLeastOnce (event) {
-    if (!this.ifFocusedOnUppyAtLeastOnce && this.el.contains(event.target)) {
-      this.ifFocusedOnUppyAtLeastOnce = true
+  // Records whether we have been interacting with uppy right now, which is then used to determine  whether state updates should trigger a refocusing.
+  recordIfFocusedOnUppyRecently (event) {
+    if (this.el.contains(event.target)) {
+      this.ifFocusedOnUppyRecently = true
+    } else {
+      this.ifFocusedOnUppyRecently = false
     }
   }
 
@@ -594,8 +595,9 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.off('file-added', this.handleFileAdded)
     this.uppy.off('complete', this.handleComplete)
 
-    this.el.removeEventListener('focus', this.recordIfFocusedOnUppyAtLeastOnce)
-    this.el.removeEventListener('click', this.recordIfFocusedOnUppyAtLeastOnce)
+    document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
+    document.removeEventListener('click', this.recordIfFocusedOnUppyRecently)
+    document.removeEventListener('touchstart', this.recordIfFocusedOnUppyRecently)
 
     if (this.opts.inline) {
       this.el.removeEventListener('keydown', this.handleKeyDownInInline)
@@ -633,8 +635,9 @@ module.exports = class Dashboard extends Plugin {
         isFocusInUppy ||
         // If we are not focused on anything BUT we have already, at least once, focused on uppy
         //   1. We focus when isFocusNowhere, because when the element we were focused on disappears (e.g. an overlay), - focus gets lost. If user is typing something somewhere else on the page, - focus won't be 'nowhere'.
-        //   2. We only focus when focus is nowhere AND this.ifFocusedOnUppyAtLeastOnce, because otherwise we'd focus on Uppy on page load.
-        (isFocusNowhere && this.ifFocusedOnUppyAtLeastOnce)
+        //   2. We only focus when focus is nowhere AND this.ifFocusedOnUppyRecently, to avoid focus jumps if we do something else on the page.
+        //   [Practical check] Without '&& this.ifFocusedOnUppyRecently', in Safari, in inline mode, when file is uploading, - navigate via tab to the checkbox, try to press space multiple times. Focus will jump to Uppy.
+        (isFocusNowhere && this.ifFocusedOnUppyRecently)
       )
     ) {
       this.superFocus(this.el, this.getPluginState().activeOverlayType)
