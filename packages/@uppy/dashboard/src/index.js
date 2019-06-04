@@ -543,16 +543,20 @@ module.exports = class Dashboard extends Plugin {
   }
 
   handleKeyDownInInline (event) {
-    // trap focus on tab key press
+    // Trap focus on tab key press.
     if (event.keyCode === TAB_KEY) trapFocus.forInline(event, this.getPluginState().activeOverlayType, this.el)
   }
 
-  // Records whether we have been interacting with uppy right now, which is then used to determine  whether state updates should trigger a refocusing.
+  // Records whether we have been interacting with uppy right now, which is then used to determine whether state updates should trigger a refocusing.
   recordIfFocusedOnUppyRecently (event) {
     if (this.el.contains(event.target)) {
       this.ifFocusedOnUppyRecently = true
     } else {
       this.ifFocusedOnUppyRecently = false
+      // ___Why run this.superFocus.cancel here when it already runs in superFocusOnEachUpdate?
+      //    Because superFocus is debounced, when we move from Uppy to some other element on the page,
+      //    previously run superFocus sometimes hits and moves focus back to Uppy.
+      this.superFocus.cancel()
     }
   }
 
