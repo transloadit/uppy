@@ -536,7 +536,6 @@ module.exports = class Dashboard extends Plugin {
     //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
     document.addEventListener('focus', this.recordIfFocusedOnUppyRecently, true)
     document.addEventListener('click', this.recordIfFocusedOnUppyRecently, true)
-    document.addEventListener('touchstart', this.recordIfFocusedOnUppyRecently, true)
 
     if (this.opts.inline) {
       this.el.addEventListener('keydown', this.handleKeyDownInInline)
@@ -597,7 +596,6 @@ module.exports = class Dashboard extends Plugin {
 
     document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
     document.removeEventListener('click', this.recordIfFocusedOnUppyRecently)
-    document.removeEventListener('touchstart', this.recordIfFocusedOnUppyRecently)
 
     if (this.opts.inline) {
       this.el.removeEventListener('keydown', this.handleKeyDownInInline)
