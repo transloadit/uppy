@@ -11,7 +11,7 @@
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
-    "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/plugin-transform-object-assign": "^7.2.0",
     "@babel/plugin-transform-proto-to-assign": "^7.4.4",
     "@babel/plugin-transform-react-jsx": "^7.3.0",
@@ -23,6 +23,7 @@
     "aliasify": "^2.1.0",
     "autoprefixer": "^9.5.1",
     "babel-jest": "^24.8.0",
+    "babel-plugin-inline-package-json": "^2.0.0",
     "babelify": "^10.0.0",
     "browser-resolve": "^1.11.3",
     "browser-sync": "^2.26.5",
@@ -43,15 +44,18 @@
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-standard": "^4.0.0",
+    "events.once": "^2.0.2",
     "exorcist": "^1.0.1",
     "fakefile": "0.0.9",
     "flat": "^4.1.0",
     "github-contributors-list": "1.2.3",
     "glob": "^7.1.3",
+    "globby": "^9.2.0",
     "gzip-size": "^5.0.0",
     "isomorphic-fetch": "2.2.1",
     "jest": "^24.7.1",
     "json3": "^3.3.2",
+    "last-commit-message": "^1.0.0",
     "lerna": "^3.14.1",
     "lint-staged": "^8.1.7",
     "minify-stream": "^1.2.0",
@@ -119,7 +123,7 @@
     "test:watch": "jest --watch",
     "test": "npm-run-all lint test:locale-packs test:unit test:type test:companion",
     "uploadcdn": "bin/upload-to-cdn.sh",
-    "version": "./bin/sync-version-numbers",
+    "version": "node ./bin/after-version-bump.js",
     "watch:css": "onchange 'packages/**/*.scss' --initial --verbose -- npm run build:css",
     "watch:js:bundle": "onchange 'packages/{@uppy/,}*/src/**/*.js' --initial --verbose -- npm run build:bundle",
     "watch:js:lib": "onchange 'packages/{@uppy/,}*/src/**/*.js' --initial --verbose -- npm run build:lib",
@@ -147,6 +151,5 @@
     "testMatch": [
       "**/packages/**/*.test.js"
     ]
-  },
-  "dependencies": {}
+  }
 }

@@ -2,6 +2,8 @@
  * Default store that keeps state in a simple object.
  */
 class DefaultStore {
+  static VERSION = require('../package.json').version
+
   constructor () {
     this.state = {}
     this.callbacks = []

@@ -10,6 +10,8 @@ const getBytesRemaining = require('@uppy/utils/lib/getBytesRemaining')
  * progress percentage and time remaining.
  */
 module.exports = class StatusBar extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'StatusBar'

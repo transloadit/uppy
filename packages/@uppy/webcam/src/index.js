@@ -35,6 +35,8 @@ function getMediaDevices () {
  * Webcam
  */
 module.exports = class Webcam extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
