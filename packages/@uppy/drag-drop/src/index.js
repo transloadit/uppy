@@ -49,6 +49,7 @@ module.exports = class DragDrop extends Plugin {
     this.handleDragOver = this.handleDragOver.bind(this)
     this.handleDragLeave = this.handleDragLeave.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
+    this.handlePaste = this.handlePaste.bind(this)
     this.addFile = this.addFile.bind(this)
     this.render = this.render.bind(this)
   }
@@ -81,6 +82,12 @@ module.exports = class DragDrop extends Plugin {
     //    Because if we use that method of clearing the input,
     //    Chrome will not trigger change if we drop the same file twice (Issue #768).
     event.target.value = null
+  }
+
+  handlePaste (event) {
+    this.uppy.log('[DragDrop] Files were pasted')
+    const files = toArray(event.clipboardData.files)
+    files.forEach(this.addFile)
   }
 
   handleDrop (event, dropCategory) {
@@ -120,51 +127,20 @@ module.exports = class DragDrop extends Plugin {
     }, 50)
   }
 
-  renderHiddenFileInput () {
-    const restrictions = this.uppy.opts.restrictions
-    return (
-      <input
-        class="uppy-DragDrop-input"
-        type="file"
-        tabindex={-1}
-        focusable="false"
-        ref={(ref) => { this.fileInputRef = ref }}
-        name={this.opts.inputName}
-        multiple={restrictions.maxNumberOfFiles !== 1}
-        accept={restrictions.allowedFileTypes}
-        onchange={this.handleInputChange} />
-    )
-  }
-
-  renderArrowSvg () {
-    return (
-      <svg aria-hidden="true" focusable="false" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
-        <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
-      </svg>
-    )
-  }
-
-  renderLabel () {
-    return (
-      <div class="uppy-DragDrop-label">
-        {this.i18nArray('dropHereOr', {
-          browse: <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
-        })}
-      </div>
-    )
-  }
-
-  renderNote () {
-    return (
-      <span class="uppy-DragDrop-note">{this.opts.note}</span>
-    )
-  }
-
   render (state) {
+    /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
+    const hiddenInputStyle = {
+      width: '0.1px',
+      height: '0.1px',
+      opacity: 0,
+      overflow: 'hidden',
+      position: 'absolute',
+      zIndex: -1
+    }
+
     const dragDropClass = `
       uppy-Root
       uppy-DragDrop-container
-      uppy-u-reset
       ${this.isDragDropSupported ? 'uppy-DragDrop--is-dragdrop-supported' : ''}
       ${this.getPluginState().isDraggingOver ? 'uppy-DragDrop--isDraggingOver' : ''}
     `
@@ -174,22 +150,38 @@ module.exports = class DragDrop extends Plugin {
       height: this.opts.height
     }
 
+    const restrictions = this.uppy.opts.restrictions
+
+    // empty value="" on file input, so that the input is cleared after a file is selected,
+    // because Uppy will be handling the upload and so we can select same file
+    // after removing — otherwise browser thinks it’s already selected
     return (
-      <button
-        type="button"
+      <div
         class={dragDropClass}
         style={dragDropStyle}
-        onClick={() => this.fileInputRef.click()}
         onDragOver={this.handleDragOver}
         onDragLeave={this.handleDragLeave}
-        onDrop={this.handleDrop} >
-        {this.renderHiddenFileInput()}
+        onDrop={this.handleDrop}
+        onPaste={this.handlePaste}>
         <div class="uppy-DragDrop-inner">
-          {this.renderArrowSvg()}
-          {this.renderLabel()}
-          {this.renderNote()}
+          <svg aria-hidden="true" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
+            <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
+          </svg>
+          <label class="uppy-DragDrop-label">
+            <input style={hiddenInputStyle}
+              class="uppy-DragDrop-input"
+              type="file"
+              name={this.opts.inputName}
+              multiple={restrictions.maxNumberOfFiles !== 1}
+              accept={restrictions.allowedFileTypes}
+              onchange={this.handleInputChange} />
+            {this.i18nArray('dropHereOr', {
+              browse: <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
+            })}
+          </label>
+          <span class="uppy-DragDrop-note">{this.opts.note}</span>
         </div>
-      </button>
+      </div>
     )
   }
 
