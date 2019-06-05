@@ -139,8 +139,12 @@ async function main (packageName, version) {
     Prefix: `${AWS_DIRECTORY}/${outputPath}/`
   }).promise()
   if (existing.length > 0) {
-    console.error(`Release files for ${dirName} v${version} already exist, exiting...`)
-    process.exit(1)
+    if (process.argv.includes('--force')) {
+      console.warn(`WARN Release files for ${dirName} v${version} already exist, overwriting...`)
+    } else {
+      console.error(`Release files for ${dirName} v${version} already exist, exiting...`)
+      process.exit(1)
+    }
   }
 
   const files = remote
