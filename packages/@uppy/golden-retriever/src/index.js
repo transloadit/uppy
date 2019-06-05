@@ -102,6 +102,25 @@ module.exports = class GoldenRetriever extends Plugin {
       this.getUploadingFiles()
     )
 
+    // We dont’t need to store file.data on local files, because the actual blob will be restored later,
+    // and we want to avoid having weird properties in the serialized object.
+    // Also adding file.isRestored to all files, since they will be restored from local storage
+    const filesToSaveWithoutData = {}
+    Object.keys(filesToSave).forEach((file) => {
+      if (filesToSave[file].isRemote) {
+        filesToSaveWithoutData[file] = {
+          ...filesToSave[file],
+          isRestored: true
+        }
+      } else {
+        filesToSaveWithoutData[file] = {
+          ...filesToSave[file],
+          isRestored: true,
+          data: null
+        }
+      }
+    })
+
     const pluginData = {}
     // TODO Find a better way to do this?
     // Other plugins can attach a restore:get-data listener that receives this callback.
@@ -113,15 +132,22 @@ module.exports = class GoldenRetriever extends Plugin {
     const { currentUploads } = this.uppy.getState()
     this.MetaDataStore.save({
       currentUploads: currentUploads,
-      files: filesToSave,
+      files: filesToSaveWithoutData,
       pluginData: pluginData
     })
   }
 
   loadFileBlobsFromServiceWorker () {
     this.ServiceWorkerStore.list().then((blobs) => {
+      const files = this.uppy.getFiles()
+      const localFilesOnly = files.filter((file) => {
+        // maybe && !file.progress.uploadComplete
+        return !file.isRemote
+      })
+
       const numberOfFilesRecovered = Object.keys(blobs).length
-      const numberOfFilesTryingToRecover = this.uppy.getFiles().length
+      const numberOfFilesTryingToRecover = localFilesOnly.length
+
       if (numberOfFilesRecovered === numberOfFilesTryingToRecover) {
         this.uppy.log(`[GoldenRetriever] Successfully recovered ${numberOfFilesRecovered} blobs from Service Worker!`)
         this.uppy.info(`Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
@@ -154,6 +180,7 @@ module.exports = class GoldenRetriever extends Plugin {
   onBlobsLoaded (blobs) {
     const obsoleteBlobs = []
     const updatedFiles = Object.assign({}, this.uppy.getState().files)
+    // Loop through blobs that we can restore, add blobs to file objects
     Object.keys(blobs).forEach((fileID) => {
       const originalFile = this.uppy.getFile(fileID)
       if (!originalFile) {
@@ -164,11 +191,21 @@ module.exports = class GoldenRetriever extends Plugin {
       const cachedData = blobs[fileID]
 
       const updatedFileData = {
-        data: cachedData,
-        isRestored: true
+        data: cachedData
       }
       const updatedFile = Object.assign({}, originalFile, updatedFileData)
       updatedFiles[fileID] = updatedFile
+    })
+
+    // Loop through files that we can’t restore fully — we only have meta, not blobs,
+    // set .isGhost on them, also set isRestored to all files
+    Object.keys(updatedFiles).forEach((fileID) => {
+      if (updatedFiles[fileID].data === null) {
+        updatedFiles[fileID] = {
+          ...updatedFiles[fileID],
+          isGhost: true
+        }
+      }
     })
 
     this.uppy.setState({
@@ -257,7 +294,7 @@ module.exports = class GoldenRetriever extends Plugin {
 
     this.uppy.on('state-update', this.saveFilesStateToLocalStorage)
 
-    this.uppy.on('restored', () => {
+    this.uppy.on('restore-confirmed', () => {
       // start all uploads again when file blobs are restored
       const { currentUploads } = this.uppy.getState()
       if (currentUploads) {
