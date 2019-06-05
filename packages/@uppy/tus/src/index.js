@@ -48,6 +48,8 @@ function createEventTracker (emitter) {
  *
  */
 module.exports = class Tus extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'

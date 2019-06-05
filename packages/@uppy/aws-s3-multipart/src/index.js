@@ -34,6 +34,8 @@ function assertServerError (res) {
 }
 
 module.exports = class AwsS3Multipart extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
