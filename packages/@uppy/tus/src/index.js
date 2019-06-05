@@ -240,7 +240,6 @@ module.exports = class Tus extends Plugin {
           .catch(reject)
       }
 
-      this.uppy.emit('upload-started', file)
       const Client = file.remote.providerOptions.provider ? Provider : RequestClient
       const client = new Client(this.uppy, file.remote.providerOptions)
       client.post(
@@ -419,10 +418,16 @@ module.exports = class Tus extends Plugin {
       } else if (file.isRemote) {
         // We emit upload-started here, so that it's also emitted for files
         // that have to wait due to the `limit` option.
-        this.uppy.emit('upload-started', file)
+        // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+        if (!file.progress.uploadStarted || !file.isRestored) {
+          this.uppy.emit('upload-started', file)
+        }
         return this.uploadRemote.bind(this, file, current, total)
       } else {
-        this.uppy.emit('upload-started', file)
+        // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+        if (!file.progress.uploadStarted || !file.isRestored) {
+          this.uppy.emit('upload-started', file)
+        }
         return this.upload.bind(this, file, current, total)
       }
     })

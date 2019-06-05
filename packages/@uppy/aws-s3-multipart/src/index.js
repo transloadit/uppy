@@ -231,8 +231,8 @@ module.exports = class AwsS3Multipart extends Plugin {
         upload.start()
       }
 
-      if (!file.isRestored) {
-        this.uppy.emit('upload-started', file, upload)
+      if (!file.progress.uploadStarted || !file.isRestored) {
+        this.uppy.emit('upload-started', file)
       }
     })
   }
@@ -247,7 +247,10 @@ module.exports = class AwsS3Multipart extends Plugin {
           .catch(reject)
       }
 
-      this.uppy.emit('upload-started', file)
+      // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+      if (!file.progress.uploadStarted || !file.isRestored) {
+        this.uppy.emit('upload-started', file)
+      }
 
       const Client = file.remote.providerOptions.provider ? Provider : RequestClient
       const client = new Client(this.uppy, file.remote.providerOptions)
