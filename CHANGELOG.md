@@ -27,23 +27,23 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: Add total max size to restrictions #514
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [ ] core: customizing metadata fields, boolean metadata; see #809, #454 and related (@arturi)
 - [ ] core: Fire event when a restriction fails #1251
 - [ ] core: good way to change plugin options at runtime—maybe `this.state.options`?
 - [ ] core: have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
 - [ ] core: Make sure Uppy works well in VR
 - [ ] core: normalize file names when uploading from iOS? $678
 - [ ] core: optimize problematic filenames #72
-- [ ] dashbaord: fix incorrectly rotated image thumbnails #472
 - [ ] dashboard: “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no companion required #362
 - [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] dashboard: add option to disable uploading from local disk #657
+- [ ] dashboard: Allow custom form fields in dashboard meta editing via jsx rendering (#617, #809, #454, @arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
+- [ ] dashboard: Don't hide notifications if they're hovered (https://github.com/transloadit/uppy/issues/1439)
 - [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027
 - [ ] dashboard: Consider uploading image thumbnails too #1212
 - [ ] dashboard: display data like image resolution on file cards #783
+- [ ] dashboard: fix incorrectly rotated image thumbnails #472
 - [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
-- [ ] dashboard: if you specified a delete endpoint, the “remove/cancel upload” button remains after the upload and it not only removes, but also sends a request to that endpoint #1216
 - [ ] dashboard: possibility to edit/delete more than one file at once #118, #97
 - [ ] dashboard: possibility to work on already uploaded / in progress files #112, #113
 - [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
@@ -61,8 +61,11 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] plugins: WordPress plugin https://www.producthunt.com/posts/uppy-io#comment-559327 (“And Gravity forms”)
 - [ ] provider: Add Facebook, OneDrive, Box
 - [ ] provider: add sorting, filtering, previews #254
-- [ ] provider: change ProviderViews signature to receive Provider instance in second param. ref https://github.com/transloadit/uppy/pull/743#discussion_r180106070
+- [ ] provider: allow consuming developers to pass in their own ProviderViews to Provider Plugins https://github.com/transloadit/uppy/issues/1143
+- [ ] provider: change ProviderViews signature to receive Provider instance in second param. (https://github.com/transloadit/uppy/pull/743#discussion_r180106070)
+- [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112
 - [ ] react: Component wrappers to manage the Uppy instance, many people initialize it in render() which does not work correctly so this could make it easier for them https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951
+- [ ] core: implement a `uppy.getPlugin(x).setOptions()` method so that you can e.g. dynamically show `hideUploadButton`. we can then use this in the react component so that it rerenders appropriately. Can we also use this for changing Locales? #1193
 - [ ] rn: Uppy React Native works with Expo, now let's make it work without
 - [ ] rn: Uppy React Native works with Url Plugin, now let's make it work with Instagram
 - [ ] security: consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
@@ -83,12 +86,28 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] webcam: Webcam modes #198
 - [ ] website: automatically generated page with all locale strings used in plugins
 - [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
+- [ ] xhr: allow sending custom headers per file (as proposed in #785)
+- [-] dashboard: if you specified a delete endpoint, the “remove/cancel upload” button remains after the upload and it not only removes, but also sends a request to that endpoint #1216, #832 <-- not doing this anymore because https://github.com/transloadit/uppy/pull/589#issuecomment-366754294
+
+## 2.0 
+
+- [ ] docs: Completely drop soft IE10 (and IE11?) support
+- [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
+- [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
+
+## 1.2
+
+- [ ] core: check option types early, like making sure `allowedFileTypes` is an array, in cases where JS would not be able to auto-fix via typecasting (otherwise it's BC-breaking)
+- [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
+- [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510)
+- [ ] dashboard: Change select button to just say `Select 11` instead of 11 files, or folder (https://github.com/transloadit/uppy/issues/1422)
+- [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
+- [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418)
+- [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack)
 
 ## 1.1
 
 - [ ] ! core: _calculateTotalProgress results in incorrectly high (1038%) progress with files that don’t have size (like from Instagram) (@goto-bus-stop)
-- [ ] core: consider removing Preact from Plugin as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
-- [x] dashboard: Remove the Authorization required tooltip on the authentication screen https://github.com/transloadit/uppy/issues/1425 (#1478 / @arturi)
 - [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
 - [ ] a11y: Fix remaining issues (https://github.com/transloadit/uppy/issues/created_by/nqst)
 - [ ] chore: fix up all code using the prettier branch. work is done, just needs an execute and review/okay by the team
@@ -96,54 +115,17 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] chore: remove dead code/commented blocks
 - [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
+- [ ] core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754, #1606)
+- [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
+- [ ] docs: Add a note to our browser support page that, while we have a saucelabs test for IE10, we're not actively supporting or fixing issues anymore (https://github.com/transloadit/uppy/issues/1420)
 - [ ] goldenretriever: make it work with aws multipart (@goto-bus-stop) https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888
 - [ ] localepacks: Add Arabic, see if right-to-left causes issues, and fix them :)
 - [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
 - [ ] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
-
-
-## 1.0 Goals
-
-What we need to do to release Uppy 1.0
-
-- [x] build: (BREAKING) `npm run dev` no longer starts Companion by default, use `npm run dev:with-companion` for that (@arturi)
-- [x] chore: remove the not-working npm scripts (@kvz, @arturi)
-- [x] companion: add companion to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
-- [x] companion: better error handling, general cleanup (remove unused code. etc)
-- [x] companion: bump minor and deprecate that on npm in favour of @uppy/companion (@arturi)
-- [x] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
-- [x] companion: security audit
-- [x] companion: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
-- [x] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear
-- [x] dashboard: implement Alex and Artur’s Dashboard redesign (@arturi)
-- [x] docs: on using plugins, all options, list of plugins, i18n
-- [x] feature: basic React Native support (@arturi, @ifedapoolarewaju)
-- [x] feature: beta file recovering after closed tab / browser crash
-- [x] feature: easy integration with React (UppyReact components)
-- [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
-- [x] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
-- [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
-- [x] feature: restrictions: by size, number of files, file type
-- [x] locale: cdn (just in folder like Robodog, will attach to global) / for module to all languages in one big `@uppy/locales`
-- [x] locale: update the locales of languages that we know ourselves. leave rest to community
-- [x] QA: add one integration test that uses a Provider — added Url, Google Drive/Instagram/Dropbox tests are written, but tricky to automate (@ife)
-- [x] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
-- [x] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
-- [x] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
-- [x] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
-- [x] QA: tests for core and utils
-- [x] refactoring: Make `companion` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
-- [x] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
-- [x] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
-- [x] refactoring: webcam plugin
-- [x] transloadit: add error reporting, see https://github.com/transloadit/jquery-sdk/blob/891e99b08dd8142d8d8adc0553e6511967635ad7/js/lib/Modal.js#L122-L136 (@goto-bus-stop, @arturi)
-- [x] transloadit: should adhere cancel event and abort assembly (@goto-bus-stop)
-- [x] website: big release blog post or series
-- [x] website: design polish
-- [x] website: replace transloadit example with robodog example <-- add transloadit test key with restricted usage (no need to sign up yourself to try it)
+- [x] dashboard: Remove the Authorization required tooltip on the authentication screen https://github.com/transloadit/uppy/issues/1425 (#1478 / @arturi)
 
 ## 1.0.2
 

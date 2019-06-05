@@ -8,7 +8,7 @@ const fallbackApi = require('./utils/fallbackApi')
 // @returns {Promise} - Array<File>
 module.exports = function getDroppedFiles (dataTransfer) {
   // Get all files from all subdirs. Works (at least) in Chrome, Mozilla, and Safari
-  if (dataTransfer.items[0] && 'webkitGetAsEntry' in dataTransfer.items[0]) {
+  if (dataTransfer.items && dataTransfer.items[0] && 'webkitGetAsEntry' in dataTransfer.items[0]) {
     return webkitGetAsEntryApi(dataTransfer)
   // Otherwise just return all first-order files
   } else {

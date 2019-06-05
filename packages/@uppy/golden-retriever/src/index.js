@@ -34,7 +34,7 @@ module.exports = class GoldenRetriever extends Plugin {
     }
     this.IndexedDBStore = new IndexedDBStore(Object.assign(
       { expires: this.opts.expires },
-      opts.indexedDB || {},
+      this.opts.indexedDB || {},
       { storeName: uppy.getID() }))
 
     this.saveFilesStateToLocalStorage = this.saveFilesStateToLocalStorage.bind(this)

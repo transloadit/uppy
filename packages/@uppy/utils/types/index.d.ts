@@ -148,7 +148,7 @@ declare module '@uppy/utils' {
     name: string;
     preview?: string;
     progress?: {
-      uploadStarted: number;
+      uploadStarted: number | null;
       uploadComplete: boolean;
       percentage: number;
       bytesUploaded: number;
