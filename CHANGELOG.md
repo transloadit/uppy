@@ -127,47 +127,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [x] dashboard: Remove the Authorization required tooltip on the authentication screen https://github.com/transloadit/uppy/issues/1425 (#1478 / @arturi)
 
-
-## 1.0 Goals
-
-What we need to do to release Uppy 1.0
-
-- [x] build: (BREAKING) `npm run dev` no longer starts Companion by default, use `npm run dev:with-companion` for that (@arturi)
-- [x] chore: remove the not-working npm scripts (@kvz, @arturi)
-- [x] companion: add companion to main API service to scale it horizontally. for the standalone server, we could write the script to support multiple clusters. Not sure how required or neccessary this may be for Transloadit's API service.
-- [x] companion: better error handling, general cleanup (remove unused code. etc)
-- [x] companion: bump minor and deprecate that on npm in favour of @uppy/companion (@arturi)
-- [x] companion: rename `serverUrl` and `serverPattern` to `companionUrl` and `companionAllowedHosts` (@ifedapoolarewaju)
-- [x] companion: security audit
-- [x] companion: storing tokens in user’s browser only (d040281cc9a63060e2f2685c16de0091aee5c7b4)
-- [x] core: uppy should not crash or be slow for many files. Specifically: be able to drop 5 files (or 7mb) without the upload button to take 2 seconds to appear
-- [x] dashboard: implement Alex and Artur’s Dashboard redesign (@arturi)
-- [x] docs: on using plugins, all options, list of plugins, i18n
-- [x] feature: basic React Native support (@arturi, @ifedapoolarewaju)
-- [x] feature: beta file recovering after closed tab / browser crash
-- [x] feature: easy integration with React (UppyReact components)
-- [x] feature: finish the direct-to-s3 upload plugin and test it with the flow to then upload to :transloadit: afterwards. This is because this might influence the inner flow of the plugin architecture quite a bit
-- [x] feature: preset for Transloadit that mimics jQuery SDK, check https://github.com/transloadit/jquery-sdk docs (@goto-bus-stop)
-- [x] feature: Redux and ReduxDevTools support (currently mirrors Uppy state to Redux)
-- [x] feature: restrictions: by size, number of files, file type
-- [x] locale: cdn (just in folder like Robodog, will attach to global) / for module to all languages in one big `@uppy/locales`
-- [x] locale: update the locales of languages that we know ourselves. leave rest to community
-- [x] QA: add one integration test that uses a Provider — added Url, Google Drive/Instagram/Dropbox tests are written, but tricky to automate (@ife)
-- [x] QA: add one integration test that uses a Webpack and React/Redux environment (e.g. via `create-react-app`) (@goto-bus-stop)
-- [x] QA: make it so that all integration tests use `npm pack` and `npm install` first (@ife)
-- [x] QA: manually test in multiple browsers and mobile devices again (SauceLabs can do Android/iOS too) (@nqst)
-- [x] QA: test uppy server. benchmarks / stress test. multiple connections, different setups, large files (10 GB)
-- [x] QA: tests for core and utils
-- [x] refactoring: Make `companion` module live in main Uppy repo in `./server` as a second stage todo (after Lerna is done and we're happy) (@ife)
-- [x] refactoring: possibly switch from Yo-Yo to Preact, because it’s more stable, solves a few issues we are struggling with (onload being weird/hard/modern-browsers-only with bel; no way to pass refs to elements; extra network requests with base64 urls) and mature, “new standard”, larger community
-- [x] refactoring: split uppy into small packages, Lerna.js repo? and figure out how to share styles (during work, maybe add PR warning in `.github/*`? use `git mv` for everything) (@goto-bus-stop, @arturi)
-- [x] refactoring: webcam plugin
-- [x] transloadit: add error reporting, see https://github.com/transloadit/jquery-sdk/blob/891e99b08dd8142d8d8adc0553e6511967635ad7/js/lib/Modal.js#L122-L136 (@goto-bus-stop, @arturi)
-- [x] transloadit: should adhere cancel event and abort assembly (@goto-bus-stop)
-- [x] website: big release blog post or series
-- [x] website: design polish
-- [x] website: replace transloadit example with robodog example <-- add transloadit test key with restricted usage (no need to sign up yourself to try it)
-
 ## 1.0.2
 
 Released: 2019-05-17
