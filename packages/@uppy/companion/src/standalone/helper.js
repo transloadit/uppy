@@ -32,19 +32,19 @@ const getConfigFromEnv = () => {
     providerOptions: {
       google: {
         key: process.env.COMPANION_GOOGLE_KEY,
-        secret: process.env.COMPANION_GOOGLE_SECRET
+        secret: typeof process.env.COMPANION_GOOGLE_SECRET_FILE === 'string' ? fs.readFileSync(process.env.COMPANION_GOOGLE_SECRET_FILE).toString() : process.env.COMPANION_GOOGLE_SECRET
       },
       dropbox: {
         key: process.env.COMPANION_DROPBOX_KEY,
-        secret: process.env.COMPANION_DROPBOX_SECRET
+        secret: typeof process.env.COMPANION_DROPBOX_SECRET_FILE === 'string' ? fs.readFileSync(process.env.COMPANION_DROPBOX_SECRET_FILE).toString() : process.env.COMPANION_DROPBOX_SECRET
       },
       instagram: {
         key: process.env.COMPANION_INSTAGRAM_KEY,
-        secret: process.env.COMPANION_INSTAGRAM_SECRET
+        secret: typeof process.env.COMPANION_INSTAGRAM_SECRET_FILE === 'string' ? fs.readFileSync(process.env.COMPANION_INSTAGRAM_SECRET_FILE).toString() : process.env.COMPANION_INSTAGRAM_SECRET
       },
       s3: {
         key: process.env.COMPANION_AWS_KEY,
-        secret: process.env.COMPANION_AWS_SECRET,
+        secret: typeof process.env.COMPANION_AWS_SECRET_FILE === 'string' ? fs.readFileSync(process.env.COMPANION_AWS_SECRET_FILE).toString() : process.env.COMPANION_AWS_SECRET,
         bucket: process.env.COMPANION_AWS_BUCKET,
         endpoint: process.env.COMPANION_AWS_ENDPOINT,
         region: process.env.COMPANION_AWS_REGION
@@ -62,7 +62,7 @@ const getConfigFromEnv = () => {
     redisUrl: process.env.COMPANION_REDIS_URL,
     sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
-    secret: process.env.COMPANION_SECRET || generateSecret(),
+    secret: typeof process.env.COMPANION_SECRET_FILE === 'string' ? fs.readFileSync(process.env.COMPANION_SECRET_FILE).toString() : process.env.COMPANION_SECRET || generateSecret(),
     debug: process.env.NODE_ENV !== 'production',
     // TODO: this is a temporary hack to support distributed systems.
     // it is not documented, because it should be changed soon.
