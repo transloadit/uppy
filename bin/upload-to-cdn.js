@@ -22,6 +22,7 @@ const packlist = require('npm-packlist')
 const tar = require('tar')
 const pacote = require('pacote')
 const concat = require('concat-stream')
+const mime = require('mime-types')
 const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
 const finished = promisify(require('stream').finished)
@@ -99,6 +100,11 @@ async function main (packageName, version) {
     process.exit(1)
   }
 
+  // version should only be a positional arg and semver string
+  // this deals with usage like `npm run uploadcdn uppy -- --force`
+  // where we force push a local build
+  if (version.startsWith('-')) version = undefined
+
   const s3 = new AWS.S3({
     credentials: new AWS.Credentials({
       accessKeyId: process.env.EDGLY_KEY,
@@ -138,8 +144,12 @@ async function main (packageName, version) {
     Prefix: `${AWS_DIRECTORY}/${outputPath}/`
   }).promise()
   if (existing.length > 0) {
-    console.error(`Release files for ${dirName} v${version} already exist, exiting...`)
-    process.exit(1)
+    if (process.argv.includes('--force')) {
+      console.warn(`WARN Release files for ${dirName} v${version} already exist, overwriting...`)
+    } else {
+      console.error(`Release files for ${dirName} v${version} already exist, exiting...`)
+      process.exit(1)
+    }
   }
 
   const files = remote
@@ -152,6 +162,7 @@ async function main (packageName, version) {
     await s3.putObject({
       Bucket: AWS_BUCKET,
       Key: key,
+      ContentType: mime.lookup(filename),
       Body: buffer
     }).promise()
   }
