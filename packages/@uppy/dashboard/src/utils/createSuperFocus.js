@@ -20,6 +20,10 @@ module.exports = function createSuperFocus () {
     if (isFocusInOverlay && lastFocusWasOnSuperFocusableEl) return
 
     const superFocusableEl = overlayEl.querySelector(`[data-uppy-super-focusable]`)
+    // If we are already in the topmost overlay, AND there are no super focusable elements yet, - leave focus up to the user.
+    // [Practical check] without this line, if you are in an empty folder in google drive, and something's uploading in the bg, - focus will be jumping to Done all the time.
+    if (isFocusInOverlay && !superFocusableEl) return
+
     if (superFocusableEl) {
       superFocusableEl.focus({ preventScroll: true })
       lastFocusWasOnSuperFocusableEl = true
