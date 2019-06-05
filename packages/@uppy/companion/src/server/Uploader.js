@@ -392,7 +392,6 @@ class Uploader {
       this.options.metadata,
       {
         [this.options.fieldname]: {
-          value: file,
           options: {
             filename: this.uploadFileName,
             contentType: this.options.metadata.type
@@ -400,6 +399,10 @@ class Uploader {
         }
       }
     )
+    // avoid setting file value through "Object.assign"
+    // to prevent this issue https://github.com/request/request/issues/2366#issuecomment-400646265
+    formData[this.options.fieldname].value = file
+
     const headers = headerSanitize(this.options.headers)
     request.post({ url: this.options.endpoint, headers, formData, encoding: null }, (error, response, body) => {
       if (error) {
