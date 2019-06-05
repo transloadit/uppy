@@ -100,6 +100,11 @@ async function main (packageName, version) {
     process.exit(1)
   }
 
+  // version should only be a positional arg and semver string
+  // this deals with usage like `npm run uploadcdn uppy -- --force`
+  // where we force push a local build
+  if (version.startsWith('-')) version = undefined
+
   const s3 = new AWS.S3({
     credentials: new AWS.Credentials({
       accessKeyId: process.env.EDGLY_KEY,
