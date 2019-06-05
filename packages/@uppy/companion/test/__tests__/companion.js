@@ -12,11 +12,15 @@ jest.mock('../../src/server/helpers/oauth-state', () => {
       }
 
       if (state === 'state-with-older-version' && key === 'clientVersion') {
-        return '@uppy/companion-client:1.0.1'
+        return '@uppy/companion-client=1.0.1'
       }
 
       if (state === 'state-with-newer-version' && key === 'clientVersion') {
-        return '@uppy/companion-client:1.0.3'
+        return '@uppy/companion-client=1.0.3'
+      }
+
+      if (state === 'state-with-newer-version-old-style' && key === 'clientVersion') {
+        return 'companion-client:1.0.2'
       }
 
       return 'http://localhost:3020'
@@ -111,7 +115,7 @@ describe('test authentication', () => {
       })
   })
 
-  test('the token gets sent to html based on version', () => {
+  test('the token gets to older clients without stringify', () => {
     // see mock ../../src/server/helpers/oauth-state above for state values
     return request(authServer)
       .get(`/drive/send-token?uppyAuthToken=${token}&state=state-with-older-version`)
@@ -124,6 +128,28 @@ describe('test authentication', () => {
         <meta charset="utf-8" />
         <script>
           window.opener.postMessage({token: "${token}"}, "http://localhost:3020")
+          window.close()
+        </script>
+    </head>
+    <body></body>
+    </html>`
+        expect(res.text).toBe(body)
+      })
+  })
+
+  test('the token gets sent to newer clients with old version style', () => {
+    // see mock ../../src/server/helpers/oauth-state above for state values
+    return request(authServer)
+      .get(`/drive/send-token?uppyAuthToken=${token}&state=state-with-newer-version-old-style`)
+      .expect(200)
+      .expect((res) => {
+        const body = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <script>
+          window.opener.postMessage(JSON.stringify({token: "${token}"}), "http://localhost:3020")
           window.close()
         </script>
     </head>

@@ -233,7 +233,7 @@ const getOptionsMiddleware = (options) => {
       options,
       s3Client,
       authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
-      clientVersion: req.header('uppy-versions') || req.query.uppyVersions,
+      clientVersion: req.header('uppy-versions') || decodeURIComponent(req.query.uppyVersions) || '1.0.0',
       buildURL: getURLBuilder(options)
     }
     next()
