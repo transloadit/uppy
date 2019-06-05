@@ -1,7 +1,8 @@
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const toArray = require('@uppy/utils/lib/toArray')
-const dragDrop = require('drag-drop')
+const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
+const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const { h } = require('preact')
 
 /**
@@ -35,7 +36,8 @@ module.exports = class DragDrop extends Plugin {
     this.opts = Object.assign({}, defaultOpts, opts)
 
     // Check for browser dragDrop support
-    this.isDragDropSupported = this.checkDragDropSupport()
+    this.isDragDropSupported = isDragDropSupported()
+    this.removeDragOverClassTimeout = null
 
     // i18n
     this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
@@ -43,68 +45,35 @@ module.exports = class DragDrop extends Plugin {
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
     // Bind `this` to class methods
-    this.handleDrop = this.handleDrop.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
-    this.checkDragDropSupport = this.checkDragDropSupport.bind(this)
+    this.handleDragOver = this.handleDragOver.bind(this)
+    this.handleDragLeave = this.handleDragLeave.bind(this)
+    this.handleDrop = this.handleDrop.bind(this)
+    this.handlePaste = this.handlePaste.bind(this)
+    this.addFile = this.addFile.bind(this)
     this.render = this.render.bind(this)
   }
 
-  /**
-   * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
-   * @return {Boolean}
-   */
-  checkDragDropSupport () {
-    const div = document.createElement('div')
-
-    if (!('draggable' in div) || !('ondragstart' in div && 'ondrop' in div)) {
-      return false
+  addFile (file) {
+    try {
+      this.uppy.addFile({
+        source: this.id,
+        name: file.name,
+        type: file.type,
+        data: file,
+        meta: {
+          relativePath: file.relativePath || null
+        }
+      })
+    } catch (err) {
+      // Nothing, restriction errors handled in Core
     }
-
-    if (!('FormData' in window)) {
-      return false
-    }
-
-    if (!('FileReader' in window)) {
-      return false
-    }
-
-    return true
-  }
-
-  handleDrop (files) {
-    this.uppy.log('[DragDrop] Files dropped')
-
-    files.forEach((file) => {
-      try {
-        this.uppy.addFile({
-          source: this.id,
-          name: file.name,
-          type: file.type,
-          data: file
-        })
-      } catch (err) {
-        // Nothing, restriction errors handled in Core
-      }
-    })
   }
 
   handleInputChange (event) {
     this.uppy.log('[DragDrop] Files selected through input')
-
     const files = toArray(event.target.files)
-
-    files.forEach((file) => {
-      try {
-        this.uppy.addFile({
-          source: this.id,
-          name: file.name,
-          type: file.type,
-          data: file
-        })
-      } catch (err) {
-        // Nothing, restriction errors handled in Core
-      }
-    })
+    files.forEach(this.addFile)
 
     // We clear the input after a file is selected, because otherwise
     // change event is not fired in Chrome and Safari when a file
@@ -113,6 +82,49 @@ module.exports = class DragDrop extends Plugin {
     //    Because if we use that method of clearing the input,
     //    Chrome will not trigger change if we drop the same file twice (Issue #768).
     event.target.value = null
+  }
+
+  handlePaste (event) {
+    this.uppy.log('[DragDrop] Files were pasted')
+    const files = toArray(event.clipboardData.files)
+    files.forEach(this.addFile)
+  }
+
+  handleDrop (event, dropCategory) {
+    event.preventDefault()
+    event.stopPropagation()
+    clearTimeout(this.removeDragOverClassTimeout)
+    // 1. Add a small (+) icon on drop
+    event.dataTransfer.dropEffect = 'copy'
+
+    // 2. Remove dragover class
+    this.setPluginState({ isDraggingOver: false })
+
+    // 3. Add all dropped files
+    this.uppy.log('[DragDrop] File were dropped')
+    getDroppedFiles(event.dataTransfer)
+      .then((files) => {
+        files.forEach(this.addFile)
+      })
+  }
+
+  handleDragOver (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    clearTimeout(this.removeDragOverClassTimeout)
+    this.setPluginState({ isDraggingOver: true })
+  }
+
+  handleDragLeave (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    clearTimeout(this.removeDragOverClassTimeout)
+    // Timeout against flickering, this solution is taken from drag-drop library. Solution with 'pointer-events: none' didn't work across browsers.
+    this.removeDragOverClassTimeout = setTimeout(() => {
+      this.setPluginState({ isDraggingOver: false })
+    }, 50)
   }
 
   render (state) {
@@ -125,18 +137,32 @@ module.exports = class DragDrop extends Plugin {
       position: 'absolute',
       zIndex: -1
     }
-    const DragDropClass = `uppy-Root uppy-DragDrop-container ${this.isDragDropSupported ? 'uppy-DragDrop--is-dragdrop-supported' : ''}`
-    const DragDropStyle = {
+
+    const dragDropClass = `
+      uppy-Root
+      uppy-DragDrop-container
+      ${this.isDragDropSupported ? 'uppy-DragDrop--is-dragdrop-supported' : ''}
+      ${this.getPluginState().isDraggingOver ? 'uppy-DragDrop--isDraggingOver' : ''}
+    `
+
+    const dragDropStyle = {
       width: this.opts.width,
       height: this.opts.height
     }
+
     const restrictions = this.uppy.opts.restrictions
 
     // empty value="" on file input, so that the input is cleared after a file is selected,
     // because Uppy will be handling the upload and so we can select same file
     // after removing — otherwise browser thinks it’s already selected
     return (
-      <div class={DragDropClass} style={DragDropStyle}>
+      <div
+        class={dragDropClass}
+        style={dragDropStyle}
+        onDragOver={this.handleDragOver}
+        onDragLeave={this.handleDragLeave}
+        onDrop={this.handleDrop}
+        onPaste={this.handlePaste}>
         <div class="uppy-DragDrop-inner">
           <svg aria-hidden="true" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
             <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
@@ -160,18 +186,16 @@ module.exports = class DragDrop extends Plugin {
   }
 
   install () {
+    this.setPluginState({
+      isDraggingOver: false
+    })
     const target = this.opts.target
     if (target) {
       this.mount(target, this)
     }
-    this.removeDragDropListener = dragDrop(this.el, (files) => {
-      this.handleDrop(files)
-      this.uppy.log(files)
-    })
   }
 
   uninstall () {
     this.unmount()
-    this.removeDragDropListener()
   }
 }

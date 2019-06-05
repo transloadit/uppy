@@ -95,7 +95,7 @@
     "build": "npm-run-all --parallel build:js build:css --serial size",
     "contributors:fetch": "bash -c 'githubcontrib --owner transloadit --repo uppy --cols 6 $([ \"${GITHUB_TOKEN:-}\" = \"\" ] && echo \"\" || echo \"--authToken ${GITHUB_TOKEN:-}\") --showlogin true --sortOrder desc'",
     "contributors:save": "bash -c 'replace-x -m \"<!--contributors-->[\\s\\S]+<!--/contributors-->\" \"<!--contributors-->\n## Contributors\n\n$(npm run --silent contributors:fetch)\n<!--/contributors-->\" README.md'",
-    "dev:browsersync": "browser-sync start --no-open --no-ghost-mode false --server examples/dev --port 3452 --serveStatic packages/uppy/dist --files \"examples/dev/bundle.js, packages/uppy/dist/uppy.min.css, packages/uppy/lib/**/*\"",
+    "dev:browsersync": "browser-sync start --no-open --no-ghost-mode false --server examples/dev --index Dashboard.html --port 3452 --serveStatic packages/uppy/dist --files \"examples/dev/output/*.js, packages/uppy/dist/uppy.min.css, packages/uppy/lib/**/*\"",
     "dev:watch-sandbox": "cd examples/dev && npm run watch:sandbox",
     "dev:with-companion": "npm-run-all --parallel start:companion dev:watch-sandbox watch:js:lib watch:css dev:browsersync",
     "dev": "npm-run-all --parallel dev:watch-sandbox watch:js:lib watch:css dev:browsersync",

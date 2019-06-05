@@ -818,7 +818,8 @@ module.exports = class Dashboard extends Plugin {
       metaFields: this.opts.metaFields,
       targets: [],
       // We'll make them visible once .containerWidth is determined
-      areInsidesReadyToBeVisible: false
+      areInsidesReadyToBeVisible: false,
+      isDraggingOver: false
     })
 
     const { inline, closeAfterFinish } = this.opts
