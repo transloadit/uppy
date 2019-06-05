@@ -58,6 +58,7 @@
     "last-commit-message": "^1.0.0",
     "lerna": "^3.14.1",
     "lint-staged": "^8.1.7",
+    "mime-types": "2.1.24",
     "minify-stream": "^1.2.0",
     "mkdirp": "0.5.1",
     "multi-glob": "^1.0.2",

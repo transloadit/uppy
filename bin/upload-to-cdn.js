@@ -22,6 +22,7 @@ const packlist = require('npm-packlist')
 const tar = require('tar')
 const pacote = require('pacote')
 const concat = require('concat-stream')
+const mime = require('mime-types')
 const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
 const finished = promisify(require('stream').finished)
@@ -30,8 +31,8 @@ function delay (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-const AWS_REGION = 'us-east-1'
-const AWS_BUCKET = 'crates.edgly.net'
+const AWS_REGION = 'eu-west-2'
+const AWS_BUCKET = 'uppy-test'
 const AWS_DIRECTORY = '756b8efaed084669b02cb99d4540d81f/default'
 
 /**
@@ -152,6 +153,7 @@ async function main (packageName, version) {
     await s3.putObject({
       Bucket: AWS_BUCKET,
       Key: key,
+      ContentType: mime.lookup(filename),
       Body: buffer
     }).promise()
   }
