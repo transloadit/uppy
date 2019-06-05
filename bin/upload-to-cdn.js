@@ -31,8 +31,8 @@ function delay (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-const AWS_REGION = 'eu-west-2'
-const AWS_BUCKET = 'uppy-test'
+const AWS_REGION = 'us-east-1'
+const AWS_BUCKET = 'crates.edgly.net'
 const AWS_DIRECTORY = '756b8efaed084669b02cb99d4540d81f/default'
 
 /**
