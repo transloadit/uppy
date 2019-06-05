@@ -186,8 +186,6 @@ function injectLocaleList () {
 
   const localePackagePath = path.join(localesRoot, 'src', '*.js')
   let localePackageVersion = require(path.join(localesRoot, 'package.json')).version
-  // @TODO: remove next line when upload-to-cdn is updated
-  localePackageVersion = '1.0.0'
 
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
@@ -205,7 +203,7 @@ function injectLocaleList () {
     const languageName = LocaleCode.getLanguageName(localeNameWithDash)
     const countryName = LocaleCode.getCountryName(localeNameWithDash)
     const npmPath = `<code><a href="https://www.npmjs.com/package/@uppy/locales">@uppy/locales</a>/lib/${localeName}</code>`
-    const cdnPath = `[\`${localeName}.min.js\`](https://transloadit.edgly.net/releases/uppy/v${localePackageVersion}/locales/${localeName}.min.js)`
+    const cdnPath = `[\`${localeName}.min.js\`](https://transloadit.edgly.net/releases/uppy/locales/v${localePackageVersion}/${localeName}.min.js)`
     const githubSource = `[\`${localeName}.js\`](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/locales/src/${localeName}.js)`
     const mdTableRow = `| ${languageName}<br/> <small>${countryName}</small>${variant ? `<br /><small>(${variant})</small>` : ''} | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
     mdRows.push(mdTableRow)
