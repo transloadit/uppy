@@ -492,12 +492,11 @@ class Uppy {
 
     // Remove this file from its `currentUpload`.
     const updatedUploads = Object.assign({}, currentUploads)
-    const removeUploads = []
     Object.keys(updatedUploads).forEach((uploadID) => {
       const newFileIDs = currentUploads[uploadID].fileIDs.filter((uploadFileID) => uploadFileID !== fileID)
       // Remove the upload if no files are associated with it anymore.
       if (newFileIDs.length === 0) {
-        removeUploads.push(uploadID)
+        delete updatedUploads[uploadID]
         return
       }
 
@@ -509,10 +508,6 @@ class Uppy {
     this.setState({
       currentUploads: updatedUploads,
       files: updatedFiles
-    })
-
-    removeUploads.forEach((uploadID) => {
-      this._removeUpload(uploadID)
     })
 
     this._calculateTotalProgress()
@@ -746,6 +741,7 @@ class Uppy {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
+
       this.setFileState(file.id, {
         progress: {
           uploadStarted: Date.now(),
