@@ -149,7 +149,8 @@ const UploadBtn = (props) => {
   return <button type="button"
     class={uploadBtnClassNames}
     aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
-    onclick={props.startUpload}>
+    onclick={props.startUpload}
+    disabled={props.isSomeGhost}>
     {props.newFiles && props.isUploadStarted
       ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
       : props.i18n('uploadXFiles', { smart_count: props.newFiles })

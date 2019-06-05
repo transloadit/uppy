@@ -54,6 +54,9 @@ module.exports = function FileItem (props) {
   const uploadInProgress = (file.progress.uploadStarted && !file.progress.uploadComplete) || isProcessing
   const isPaused = file.isPaused || false
   const error = file.error || false
+  // File that Golden Retriever was able to partly restore (only meta, not blob),
+  // users still need to re-add it, so it’s a ghost
+  const isGhost = file.isGhost
 
   const fileName = getFileNameAndExtension(file.meta.name).name
   const truncatedFileName = props.isWide ? truncateString(fileName, 30) : fileName
@@ -106,7 +109,8 @@ module.exports = function FileItem (props) {
     { 'is-paused': isPaused },
     { 'is-error': error },
     { 'is-resumable': props.resumableUploads },
-    { 'is-noIndividualCancellation': !props.individualCancellation }
+    { 'is-noIndividualCancellation': !props.individualCancellation },
+    { 'is-ghost': isGhost }
   )
 
   const showRemoveButton = props.individualCancellation
@@ -141,7 +145,7 @@ module.exports = function FileItem (props) {
         }
       </div>
       <div class="uppy-DashboardItem-status">
-        {file.data.size ? <div class="uppy-DashboardItem-statusSize">{prettyBytes(file.data.size)}</div> : null}
+        {file.size ? <div class="uppy-DashboardItem-statusSize">{prettyBytes(file.size)}</div> : null}
         {(file.source && file.source !== props.id) && (
           <div class="uppy-DashboardItem-sourceIcon">
             {acquirers.map(acquirer => {
