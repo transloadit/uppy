@@ -104,21 +104,18 @@ module.exports = class RequestClient {
   }
 
   preflightAndHeaders (path) {
-    return new Promise((resolve, reject) => {
-      this.preflight(path).then((allowedHeaders) => {
-        this.headers().then((headers) => {
-          // filter to keep only allowed Headers
-          Object.keys(headers).forEach((header) => {
-            if (allowedHeaders.indexOf(header.toLowerCase()) === -1) {
-              this.uppy.log(`[CompanionClient] excluding unallowed header ${header}`)
-              delete headers[header]
-            }
-          })
-
-          resolve(headers)
+    return Promise.all([this.preflight(path), this.headers()])
+      .then(([allowedHeaders, headers]) => {
+        // filter to keep only allowed Headers
+        Object.keys(headers).forEach((header) => {
+          if (allowedHeaders.indexOf(header.toLowerCase()) === -1) {
+            this.uppy.log(`[CompanionClient] excluding unallowed header ${header}`)
+            delete headers[header]
+          }
         })
-      }).catch(reject)
-    })
+
+        return headers
+      })
   }
 
   get (path, skipPostResponse) {
@@ -135,7 +132,7 @@ module.exports = class RequestClient {
             err = err.isAuthError ? err : new Error(`Could not get ${this._getUrl(path)}. ${err}`)
             reject(err)
           })
-      })
+      }).catch(reject)
     })
   }
 
@@ -154,7 +151,7 @@ module.exports = class RequestClient {
             err = err.isAuthError ? err : new Error(`Could not post ${this._getUrl(path)}. ${err}`)
             reject(err)
           })
-      })
+      }).catch(reject)
     })
   }
 
@@ -173,7 +170,7 @@ module.exports = class RequestClient {
             err = err.isAuthError ? err : new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
             reject(err)
           })
-      })
+      }).catch(reject)
     })
   }
 }
