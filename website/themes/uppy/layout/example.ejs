@@ -28,12 +28,19 @@
   <textarea id="console-log" class="Console"></textarea>
   <script>
     console.log = (function (log, container) {
-      return function (text) {
-        log(text);
+      return function () {
+        var text = [];
+        var args = Array.prototype.slice.call(arguments);
+        args.forEach(function (arg) {
+          if (arg !== (arg + '')) {
+            arg = JSON.stringify(arg);
+          }
+          text.push(arg);
+        })
 
-        if (text !== (text + '')) {
-          text = JSON.stringify(text);
-        }
+        text = text.join(' ');
+
+        log(text);
 
         container.value += text + '\n';
         container.scrollTop = container.scrollHeight;
