@@ -22,6 +22,20 @@ describe('Test Provider options', () => {
     expect(grantConfig.instagram.secret).toBe('instagram_secret')
   })
 
+  test('adds provider options for secret files', () => {
+    process.env.COMPANION_DROPBOX_SECRET_FILE = process.env.PWD + '/test/resources/dropbox_secret_file'
+    process.env.COMPANION_GOOGLE_SECRET_FILE = process.env.PWD + '/test/resources/google_secret_file'
+    process.env.COMPANION_INSTAGRAM_SECRET_FILE = process.env.PWD + '/test/resources/instagram_secret_file'
+
+    uppyOptions = require('../../src/standalone/helper').getUppyOptions()
+
+    providerManager.addProviderOptions(uppyOptions, grantConfig)
+
+    expect(grantConfig.dropbox.secret).toBe('xobpord')
+    expect(grantConfig.google.secret).toBe('elgoog')
+    expect(grantConfig.instagram.secret).toBe('margatsni')
+  })
+
   test('does not add provider options if protocol and host are not set', () => {
     delete uppyOptions.server.host
     delete uppyOptions.server.protocol
