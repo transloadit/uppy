@@ -1,10 +1,10 @@
 const Uppy = require('@uppy/core')
 const Form = require('@uppy/form')
 const StatusBar = require('@uppy/status-bar')
-const Dashboard = require('@uppy/dashboard')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 const AttachFileInputs = require('./AttachFileInputs')
 const TransloaditFormResult = require('./TransloaditFormResult')
+const addDashboardPlugin = require('./addDashboardPlugin')
 const addTransloaditPlugin = require('./addTransloaditPlugin')
 const addProviders = require('./addProviders')
 
@@ -51,7 +51,7 @@ function form (target, opts) {
       dashboardOpts.inline = true
       dashboardOpts.hideUploadButton = true
     }
-    uppy.use(Dashboard, dashboardOpts)
+    addDashboardPlugin(uppy, opts, dashboardOpts)
 
     if (Array.isArray(opts.providers)) {
       addProviders(uppy, opts.providers, {

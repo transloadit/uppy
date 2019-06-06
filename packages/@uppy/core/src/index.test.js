@@ -412,7 +412,7 @@ describe('src/Core', () => {
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false,
+        uploadStarted: null,
         preprocess: { mode: 'determinate', message: 'something', value: 0 }
       })
     })
@@ -439,7 +439,7 @@ describe('src/Core', () => {
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
     })
   })
@@ -519,7 +519,7 @@ describe('src/Core', () => {
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false,
+        uploadStarted: null,
         postprocess: { mode: 'determinate', message: 'something', value: 0 }
       })
     })
@@ -546,7 +546,7 @@ describe('src/Core', () => {
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
     })
   })
@@ -619,7 +619,7 @@ describe('src/Core', () => {
           bytesUploaded: 0,
           percentage: 0,
           uploadComplete: false,
-          uploadStarted: false
+          uploadStarted: null
         },
         remote: '',
         size: 17175,
@@ -991,7 +991,7 @@ describe('src/Core', () => {
         bytesUploaded: 12345,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
 
       core.emit('upload-progress', file, {
@@ -1006,7 +1006,7 @@ describe('src/Core', () => {
         bytesUploaded: 17175,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
     })
 
@@ -1152,14 +1152,14 @@ describe('src/Core', () => {
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
       expect(core.getFile(file2.id).progress).toEqual({
         percentage: 0,
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
       expect(core.getState().totalProgress).toEqual(0)
       expect(resetProgressEvent.mock.calls.length).toEqual(1)

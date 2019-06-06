@@ -1,5 +1,5 @@
-const Dashboard = require('@uppy/dashboard')
 const createUppy = require('./createUppy')
+const addDashboardPlugin = require('./addDashboardPlugin')
 const addTransloaditPlugin = require('./addTransloaditPlugin')
 const addProviders = require('./addProviders')
 
@@ -9,7 +9,7 @@ function dashboard (target, opts = {}) {
   const pluginId = 'Dashboard'
   const uppy = createUppy(opts)
   addTransloaditPlugin(uppy, opts)
-  uppy.use(Dashboard, {
+  addDashboardPlugin(uppy, opts, {
     id: pluginId,
     inline,
     target,

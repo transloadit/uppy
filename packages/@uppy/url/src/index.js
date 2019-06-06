@@ -10,6 +10,8 @@ const forEachDroppedOrPastedUrl = require('./utils/forEachDroppedOrPastedUrl')
  *
  */
 module.exports = class Url extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Url'

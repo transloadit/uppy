@@ -3,9 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>uppy</title>
-  </head>
-  <body>
+    <title>Dashboard</title>
     <style>
       main {
         padding-top: 100px;
@@ -18,10 +16,6 @@
         margin: auto;
       }
 
-      a {
-        color: purple;
-      }
-
       button,
       input {
         color: green;
@@ -30,21 +24,24 @@
         border: 2px solid purple;
       }
 
+      /* css to make sure that Dashboard's css overrides page css */
       ul {
         margin: 60px;
       }
-
       li {
         margin: 60px;
       }
-
-      .foo a {
+      a {
         color: purple;
       }
     </style>
-    <main class="foo">
-      <h1>Uppy is here</h1>
+  </head>
 
+  <body>
+    <main class="foo">
+      <h1>Dashboard is here</h1>
+
+      <!-- some inputs in a form to check focus management in Dashboard -->
       <form id="upload-form" action="/">
         <button type="button" id="pick-files">Pick Files</button><br>
         True ? <input type="checkbox" name="check_test" value="1" checked><br>
@@ -55,6 +52,6 @@
     </main>
 
     <link href="uppy.min.css" rel="stylesheet">
-    <script src="bundle.js"></script>
+    <script src="output/index.js"></script>
   </body>
 </html>

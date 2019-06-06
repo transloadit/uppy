@@ -8,6 +8,8 @@ const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
  */
 
 module.exports = class ThumbnailGenerator extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'thumbnail'

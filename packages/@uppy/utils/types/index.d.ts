@@ -93,6 +93,10 @@ declare module '@uppy/utils/lib/isObjectURL' {
   export default function isObjectURL(url: string): boolean;
 }
 
+declare module '@uppy/utils/lib/isDragDropSupported' {
+  export default function isDragDropSupported(): boolean;
+}
+
 declare module '@uppy/utils/lib/isPreviewSupported' {
   export default function isPreviewSupported(mime: string): boolean;
 }
@@ -148,7 +152,7 @@ declare module '@uppy/utils' {
     name: string;
     preview?: string;
     progress?: {
-      uploadStarted: number;
+      uploadStarted: number | null;
       uploadComplete: boolean;
       percentage: number;
       bytesUploaded: number;

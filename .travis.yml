@@ -10,7 +10,13 @@ script:
 - npm run build
 - npm run test
 - if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:endtoend; fi
-#- npm run uploadcdn
+- |
+  if [ "${TRAVIS_PULL_REQUEST}" = "false" ] &&\
+     [[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^Release* ]]; then
+    npm run uploadcdn uppy
+    npm run uploadcdn @uppy/robodog
+    npm run uploadcdn @uppy/locales
+  fi
 cache:
   apt: true
   directories:

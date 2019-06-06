@@ -29,6 +29,8 @@ function createPromise () {
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
 module.exports = class Dashboard extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Dashboard'
@@ -837,7 +839,8 @@ module.exports = class Dashboard extends Plugin {
       metaFields: this.opts.metaFields,
       targets: [],
       // We'll make them visible once .containerWidth is determined
-      areInsidesReadyToBeVisible: false
+      areInsidesReadyToBeVisible: false,
+      isDraggingOver: false
     })
 
     const { inline, closeAfterFinish } = this.opts
