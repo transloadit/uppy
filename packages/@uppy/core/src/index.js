@@ -83,6 +83,8 @@ class Uppy {
     this.opts = Object.assign({}, defaultOptions, opts)
     this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
 
+    this.log(`Using Core v${this.constructor.VERSION}`)
+
     // i18n
     this.translator = new Translator([ this.defaultLocale, this.opts.locale ])
     this.locale = this.translator.locale
@@ -908,6 +910,8 @@ class Uppy {
         `Uppy plugins must have unique 'id' options. See https://uppy.io/docs/plugins/#id.`
       throw new Error(msg)
     }
+
+    this.log(`Using ${pluginId} v${Plugin.VERSION}`)
 
     this.plugins[plugin.type].push(plugin)
     plugin.install()
