@@ -30,10 +30,14 @@
     console.log = (function (log, container) {
       return function () {
         var text = [];
+        // loop through `arguments`, because console.log accepts multiple
         var args = Array.prototype.slice.call(arguments);
         args.forEach(function (arg) {
           if (arg !== (arg + '')) {
-            arg = JSON.stringify(arg);
+            // try/catch to prevent TypeError: cyclic object value
+            try {
+              arg = JSON.stringify(arg);
+            } catch (err) {}
           }
           text.push(arg);
         })
