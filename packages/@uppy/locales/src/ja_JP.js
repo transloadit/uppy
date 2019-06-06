@@ -63,6 +63,75 @@ js_JP.strings = {
   myDevice: 'マイデバイス',
   noFilesFound: 'ファイルやフォルダがありません',
   noInternetConnection: 'インターネット接続がありません',
+  pause: '一時停止',
+  pauseUpload: 'アップロードを一時停止',
+  paused: '停止中',
+  poweredBy: 'Powered by'
+  preparingUpload: 'アップロードを準備中...',
+  processingXFiles: {
+    '0': '%{smart_count} ファイル処理中',
+    '1': '%{smart_count} ファイル処理中',
+    '2': '%{smart_count} ファイル処理中'
+  },
+  removeFile: 'ファイルを消す',
+  resetFilter: 'フィルタをリセット',
+  resume: '再開',
+  resumeUpload: 'アップロードを再開',
+  retry: 'リトライ',
+  retryUpload: 'アップロードをリトライ',
+  saveChanges: '変更を保存',
+  selectXFiles: {
+    '0': '%{smart_count} ファイルを選択',
+    '1': '%{smart_count} ファイルを選択',
+    '2': '%{smart_count} ファイルを選択'
+  },
+  smile: 'スマイル〜！',
+  startRecording: '録画開始',
+  stopRecording: '録画停止',
+  takePicture: '写真を撮る',
+  timedOut: 'アップロードが %{seconds} 秒間止まった為中断。',
+  upload: 'アップロード',
+  uploadComplete: 'アップロード完了',
+  uploadFailed: 'アップロード失敗',
+  uploadPaused: 'アップロード一時停止',
+  uploadXFiles: {
+    '0': '%{smart_count} ファイルをアップロード',
+    '1': '%{smart_count} ファイルをアップロード',
+    '2': '%{smart_count} ファイルをアップロード'
+  },
+  uploadXNewFiles: {
+    '0': '+%{smart_count} ファイルをアップロード',
+    '1': '+%{smart_count} ファイルをアップロード',
+    '2': '+%{smart_count} ファイルをアップロード'
+  },
+  uploading: 'アップロード中',
+  uploadingXFiles: {
+    '0': '%{smart_count} ファイルアップロード中',
+    '1': '%{smart_count} ファイルアップロード中',
+    '2': '%{smart_count} ファイルアップロード中'
+  },
+  xFilesSelected: {
+    '0': '%{smart_count} ファイルを選択',
+    '1': '%{smart_count} ファイルを選択',
+    '2': '%{smart_count} ファイルを選択'
+  },
+  xMoreFilesAdded: {
+    '0': '%{smart_count} ファイルを追加',
+    '1': '%{smart_count} ファイルを追加',
+    '2': '%{smart_count} ファイルを追加'
+  },
+  xTimeLeft: '残り %{time}',
+  youCanOnlyUploadFileTypes: '許可されているファイル形式は次の物です: %{types}',
+  youCanOnlyUploadX: {
+    '0': '%{smart_count} ファイル数のみアップロード可能です',
+    '1': '%{smart_count} ファイル数のみアップロード可能です',
+    '2': '%{smart_count} ファイル数のみアップロード可能です'
+  },
+  youHaveToAtLeastSelectX: {
+    '0': '最低でも %{smart_count} ファイル選択してください',
+    '1': '最低でも %{smart_count} ファイル選択してください',
+    '2': '最低でも %{smart_count} ファイル選択してください'
+  }
 }
 
 jp_JP.pluralize = function (n) {
@@ -73,7 +142,7 @@ jp_JP.pluralize = function (n) {
 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.jp_JP = jp_JP
+  window.Uppy.locales.ja_JP = ja_JP
 }
 
-module.exports = jp_JP
+module.exports = ja_JP
