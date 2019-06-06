@@ -5,7 +5,6 @@
 const config = require('@purest/providers')
 const dropbox = require('./dropbox')
 const drive = require('./drive')
-const fs = require('fs')
 const instagram = require('./instagram')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
@@ -133,13 +132,7 @@ module.exports.addProviderOptions = (options, grantConfig) => {
     if (grantConfig[authProvider]) {
       // explicitly add providerOptions so users don't override other providerOptions.
       grantConfig[authProvider].key = providerOptions[authProvider].key
-
-      // only read and override a secret from file if such a file is not undefined
-      if (typeof providerOptions[authProvider].secretFile === 'string') {
-        grantConfig[authProvider].secret = fs.readFileSync(providerOptions[authProvider].secretFile).toString()
-      } else {
-        grantConfig[authProvider].secret = providerOptions[authProvider].secret
-      }
+      grantConfig[authProvider].secret = providerOptions[authProvider].secret
 
       // override grant.js redirect uri with uppy's custom redirect url
       if (oauthDomain) {
