@@ -89,13 +89,13 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] xhr: allow sending custom headers per file (as proposed in #785)
 - [-] dashboard: if you specified a delete endpoint, the “remove/cancel upload” button remains after the upload and it not only removes, but also sends a request to that endpoint #1216, #832 <-- not doing this anymore because https://github.com/transloadit/uppy/pull/589#issuecomment-366754294
 
-## 2.0 
+## 2.0
 
 - [ ] docs: Completely drop soft IE10 (and IE11?) support
 - [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
 
-## 1.2
+## 1.3
 
 - [ ] core: check option types early, like making sure `allowedFileTypes` is an array, in cases where JS would not be able to auto-fix via typecasting (otherwise it's BC-breaking)
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
@@ -105,7 +105,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418)
 - [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack)
 
-## 1.1
+## 1.2
 
 - [ ] ! core: _calculateTotalProgress results in incorrectly high (1038%) progress with files that don’t have size (like from Instagram) (@goto-bus-stop)
 - [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
@@ -125,7 +125,63 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
 - [ ] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
-- [x] dashboard: Remove the Authorization required tooltip on the authentication screen https://github.com/transloadit/uppy/issues/1425 (#1478 / @arturi)
+
+## 1.1.0
+
+Released: 2019-06-05
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.1.0 | @uppy/provider-views | 1.1.0 |
+| @uppy/aws-s3 | 1.1.0 | @uppy/react-native | 0.1.2 |
+| @uppy/companion-client | 1.1.0 | @uppy/react | 1.1.0 |
+| @uppy/companion | 1.1.0 | @uppy/redux-dev-tools | 1.1.0 |
+| @uppy/core | 1.1.0 | @uppy/robodog | 1.1.0 |
+| @uppy/dashboard | 1.1.0 | @uppy/status-bar | 1.1.0 |
+| @uppy/drag-drop | 1.1.0 | @uppy/store-default | 1.1.0 |
+| @uppy/dropbox | 1.1.0 | @uppy/store-redux | 1.1.0 |
+| @uppy/file-input | 1.1.0 | @uppy/thumbnail-generator | 1.1.0 |
+| @uppy/form | 1.1.0 | @uppy/transloadit | 1.1.0 |
+| @uppy/golden-retriever | 1.1.0 | @uppy/tus | 1.1.0 |
+| @uppy/google-drive | 1.1.0 | @uppy/url | 1.1.0 |
+| @uppy/informer | 1.1.0 | @uppy/utils | 1.1.0 |
+| @uppy/instagram | 1.1.0 | @uppy/webcam | 1.1.0 |
+| @uppy/locales | 1.3.0 | @uppy/xhr-upload | 1.1.0 |
+| @uppy/progress-bar | 1.1.0 | uppy | 1.1.0 |
+
+- @uppy/robodog: actually support specifying Dashboard options (#1504 / @goto-bus-stop)
+- @uppy/aws-s3: Do not extract keys from empty `fields` (#1569 / @alexnj)
+- docs: Thumbnail Generator – Update arguments in "thumbnail:generated" callback docs (#1567 / @janko)
+- docs: polyfills are already included in the CDN bundle (#1576 / @arturi) 
+- docs: xhr-upload: Update the `upload-success` event docs (#1573 / @janko)
+- build: Upgrade build dependencies: Babel to v7, Eslint to v5, Jest to v24, Typescript to v3, Postcss to v7 (#1549 / @goto-bus-stop)
+- build: Update iOS version in integration tests (#1548 / @goto-bus-stop)
+- build: New `uploadcdn` script (#1586 / @goto-bus-stop)
+- @uppy/locales: Added Hungarian translations (#1580 / @nagyv)
+- build: Fix tags for docker build (#1579 / @kiloreux)
+- build: Fix npm and github security warnings (#1601 / @goto-bus-stop)
+- build: New sync version (#1600 / @goto-bus-stop)
+- @uppy/companion: set upload filename from metadata during uploads (#1587 / @ifedapoolarewaju)
+- @uppy/dashboard: fix for file previews being partially invisible sometimes in safari (#1584 / @lakesare)
+@uppy/dashboard: made added-files previews look more proportional (#1588 / @lakesare, @arturi)
+- @uppy/dashboard, @uppy/drag-drop, @uppy/file-input: Fix/on before file added not called (#1597 / @lakesare, @arturi)
+- @uppy/react: dashboard react component prop typings updated (#1598 / @sagar7993)
+- @uppy/informer: Remove color-related code and docs (#1596 / @arturi)
+- @uppy/companion: Add remote-url to emit-success, fix #1607 (#1608 / @Zyclotrop-j)
+- @uppy/golden-retriever: Use this.opts instead of opts (#1618 / @arturi)
+- @uppy/locales: Create sr_Latn_RS.js for Serbian (Latin, Serbia) (#1614 / @arturi)
+- @uppy/locales: Support locale variants, see #1614 (f9f4b5d74b9b3fb2e24aaf935fed4d79ecae42ab / @kvz)
+- @uppy/dashboard: made paste work while we're focused on buttons (#1619 / @lakesare)
+- @uppy/companion: return mimetypes for dropbox files (#1599 / @ifedapoolarewaju)
+- @uppy/locales: Add Portuguese (brazil) language pack (pt_BR) (#1621 / @willycamargo)
+- website: fix demo not working in IE 11 (es5), add Dropbox too (07397ed88bed140cdca1f3cf19e2eaab2726bbb2 / @arturi)
+- docs: examples: mention that you need to install & bootstrap  (513ba53c378766e2d1e9c2885fd0311184b67c1d / @goto-bus-stop)
+- docs: Fix error in documentation of AWS S3 Multipart::prepareUploadPart(file, partData) (c4e739b90a06499918f737c6cdcdfd9b413c69b2 / @kvz, @mattes3)
+- docs: Explain how to not send any meta fields with xhr-upload (#1617 / @arturi)
+- @uppy/core: use `uploadStarted: null` instead of false (#1628 / @goto-bus-stop)
+- @uppy/utils - made getDroppedFiles.js work for IE11, fixes #1622 (#1630 / @lakesare)
+- @uppy/provider-views: make trailing slash optional when validating auth origin (#1589 / @ifedapoolarewaju)
+- @uppy/drag-drop: Feature/replace dnd in drag drop package (#1565 / @lakesare)
 
 ## 1.0.2
 
