@@ -125,9 +125,10 @@ Even though bundled in this repo, the website is regarded as a separate project.
 ### Local previews
 
 1. `npm install`
-2. `cd website && npm install && cd ..` (even if you ran `npm run bootstrap` before)
-3. `npm start`
-4. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
+2. `npm run bootstrap`
+3. `cd website && npm install && cd ..`
+4. `npm start`
+5. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
 
 Then, to work on, for instance, the XHRUpload example, you would edit the following files:
 
