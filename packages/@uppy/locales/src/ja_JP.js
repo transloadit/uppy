@@ -26,7 +26,7 @@ js_JP.strings = {
   creatingAssemblyFailed: 'Transloadit: アセンブリを作成できませんでした',
   dashboardTitle: 'ファイルアップローダー',
   dashboardWindowTitle: 'ファイルアップローダーウィンドウ（閉じるにはEscapeキーを押してください）',
-  dataUploadedOfTotal: '%{total}%{complete}',
+  dataUploadedOfTotal: '%{total} %{complete}',
   done: '完了しました',
   dropHereOr: 'ここにファイルをドロップするか%{browse}してください',
   dropHint: 'ここにファイルをドロップしてください',
@@ -44,16 +44,16 @@ js_JP.strings = {
   failedToUpload: '%{file}のアップロードに失敗しました',
   fileSource: '元ファイル：%{name}',
   filesUploadedOfTotal: {
-    '0': '%{smart_count}個のファイルのアップロードが%{complete}',
-    '1': '%{smart_count}個のファイルのアップロードが%{complete}',
-    '2': '%{cmart_count}個のファイルのアップロードが%{complete}'
+    '0': '%{smart_count} 個のファイルのアップロードが%{complete}',
+    '1': '%{smart_count} 個のファイルのアップロードが%{complete}',
+    '2': '%{cmart_count} 個のファイルのアップロードが%{complete}'
   },
   filter: 'フィルタ',
   finishEditingFile: 'ファイルの編集を終了',
   folderAdded: {
-    '0': '%{folder}から%{smart_count}個のファイルを追加しました',
-    '1': '%{folder}から%{smart_count}個のファイルを追加しました',
-    '2': '%{folder}から%{smart_count}個のファイルを追加しました'
+    '0': '%{folder} から% {smart_count} 個のファイルを追加しました',
+    '1': '%{folder} から% {smart_count} 個のファイルを追加しました',
+    '2': '%{folder} から% {smart_count} 個のファイルを追加しました'
   },
   import: 'インポート',
   importFrom: '%{name}からインポート',
@@ -66,7 +66,7 @@ js_JP.strings = {
   pause: '一時停止',
   pauseUpload: 'アップロードを一時停止',
   paused: '停止中',
-  poweredBy: 'Powered by'
+  poweredBy: 'Powered by',
   preparingUpload: 'アップロードを準備中...',
   processingXFiles: {
     '0': '%{smart_count} ファイル処理中',
@@ -89,7 +89,7 @@ js_JP.strings = {
   startRecording: '録画開始',
   stopRecording: '録画停止',
   takePicture: '写真を撮る',
-  timedOut: 'アップロードが %{seconds} 秒間止まった為中断。',
+  timedOut: 'アップロードが %{seconds} 秒間止まった為中断しました',
   upload: 'アップロード',
   uploadComplete: 'アップロード完了',
   uploadFailed: 'アップロード失敗',
