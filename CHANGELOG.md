@@ -95,7 +95,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
 
-## 1.3
+## 1.4
 
 - [ ] core: check option types early, like making sure `allowedFileTypes` is an array, in cases where JS would not be able to auto-fix via typecasting (otherwise it's BC-breaking)
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
@@ -105,7 +105,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418)
 - [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack)
 
-## 1.2
+## 1.3
 
 - [ ] ! core: _calculateTotalProgress results in incorrectly high (1038%) progress with files that don’t have size (like from Instagram) (@goto-bus-stop)
 - [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
@@ -125,6 +125,22 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
 - [ ] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
+
+## 1.2.0
+
+Released: 2019-06-07
+
+This release fixes an issue when using Transloadit and the @uppy/form plugin. To do so, a new `metaFields` option was added to the @uppy/tus plugin.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.2.0 | @uppy/transloadit | 1.1.1 |
+| @uppy/locales | 1.4.0 | @uppy/tus | 1.2.0 |
+| @uppy/robodog | 1.1.1 | uppy | 1.2.0 |
+
+- @uppy/companion: ability to load secret keys from files (#1632 / @dargmuesli)
+- @uppy/locales: add Japanese (#1643 / @johnmanjiro13, @s-jcs)
+- @uppy/tus: add `metaFields` option (#1644 / @goto-bus-stop)
 
 ## 1.1.0
 
@@ -152,7 +168,7 @@ Released: 2019-06-05
 - @uppy/robodog: actually support specifying Dashboard options (#1504 / @goto-bus-stop)
 - @uppy/aws-s3: Do not extract keys from empty `fields` (#1569 / @alexnj)
 - docs: Thumbnail Generator – Update arguments in "thumbnail:generated" callback docs (#1567 / @janko)
-- docs: polyfills are already included in the CDN bundle (#1576 / @arturi) 
+- docs: polyfills are already included in the CDN bundle (#1576 / @arturi)
 - docs: xhr-upload: Update the `upload-success` event docs (#1573 / @janko)
 - build: Upgrade build dependencies: Babel to v7, Eslint to v5, Jest to v24, Typescript to v3, Postcss to v7 (#1549 / @goto-bus-stop)
 - build: Update iOS version in integration tests (#1548 / @goto-bus-stop)
