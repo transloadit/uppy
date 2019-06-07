@@ -179,10 +179,19 @@ module.exports = class Tus extends Plugin {
         }
       }
 
+      const meta = {}
+      const metaFields = Array.isArray(optsTus.metaFields)
+        ? optsTus.metaFields
+        // Send along all fields by default.
+        : Object.keys(file.meta)
+      metaFields.forEach((item) => {
+        meta[item] = file.meta[item]
+      })
+
       // tusd uses metadata fields 'filetype' and 'filename'
-      const meta = Object.assign({}, file.meta)
       copyProp(meta, 'type', 'filetype')
       copyProp(meta, 'name', 'filename')
+
       optsTus.metadata = meta
 
       const upload = new tus.Upload(file.data, optsTus)
