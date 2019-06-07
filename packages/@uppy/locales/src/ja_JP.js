@@ -1,8 +1,8 @@
 /* eslint camelcase: 0 */
 
-const jp_JP = {}
+const ja_JP = {}
 
-js_JP.strings = {
+ja_JP.strings = {
   addMoreFiles: 'ファイルを追加',
   addingMoreFiles: 'ファイルを追加しています',
   allowAccessDescription: 'カメラやビデオの機能を使用するには、カメラへのアクセスを許可してください。',
@@ -134,7 +134,7 @@ js_JP.strings = {
   }
 }
 
-jp_JP.pluralize = function (n) {
+ja_JP.pluralize = function (n) {
   if (n === 1) {
     return 0
   }
