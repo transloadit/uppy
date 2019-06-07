@@ -1,7 +1,7 @@
 {
   "name": "uppy",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
@@ -50,8 +50,8 @@
     "@uppy/store-default": "1.1.0",
     "@uppy/store-redux": "1.1.0",
     "@uppy/thumbnail-generator": "1.1.0",
-    "@uppy/transloadit": "1.1.0",
-    "@uppy/tus": "1.1.0",
+    "@uppy/transloadit": "1.1.1",
+    "@uppy/tus": "1.2.0",
     "@uppy/url": "1.1.0",
     "@uppy/webcam": "1.1.0",
     "@uppy/xhr-upload": "1.1.0"

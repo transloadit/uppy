@@ -1,7 +1,7 @@
 {
   "name": "@uppy/robodog",
   "description": "Transloadit SDK for browsers based on Uppy",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -35,7 +35,7 @@
     "@uppy/google-drive": "1.1.0",
     "@uppy/instagram": "1.1.0",
     "@uppy/status-bar": "1.1.0",
-    "@uppy/transloadit": "1.1.0",
+    "@uppy/transloadit": "1.1.1",
     "@uppy/url": "1.1.0",
     "@uppy/utils": "1.1.0",
     "@uppy/webcam": "1.1.0",

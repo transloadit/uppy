@@ -29,8 +29,8 @@ const robodog = require('@uppy/robodog')
 If you are not using a bundler, you can also import Robodog using an HTML script tag.
 
 ```html
-<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.1.0/robodog.min.css">
-<script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.1.0/robodog.min.js"></script>
+<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.1.1/robodog.min.css">
+<script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.1.1/robodog.min.js"></script>
 <!-- you can now use: window.Robodog.pick() -->
 ```
 
