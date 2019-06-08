@@ -177,13 +177,14 @@ module.exports = class AwsS3Multipart extends Plugin {
             uploadURL: result.location
           }
 
+          this.resetUploaderReferences(file.id)
+
           this.uppy.emit('upload-success', file, uploadResp)
 
           if (result.location) {
             this.uppy.log('Download ' + upload.file.name + ' from ' + result.location)
           }
 
-          this.resetUploaderReferences(file.id)
           resolve(upload)
         },
         onPartComplete: (part) => {
