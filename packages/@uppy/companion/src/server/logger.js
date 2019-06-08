@@ -1,3 +1,5 @@
+const chalk = require('chalk')
+
 /**
  * INFO level log
  * @param {string} msg the message to log
@@ -13,7 +15,8 @@ exports.info = (msg, tag) => {
  * @param {string=} tag a unique tag to easily search for this message
  */
 exports.warn = (msg, tag) => {
-  log(msg, tag, 'warn')
+  // @ts-ignore
+  log(msg, tag, 'warn', chalk.bold.yellow)
 }
 
 /**
@@ -22,7 +25,8 @@ exports.warn = (msg, tag) => {
  * @param {string=} tag a unique tag to easily search for this message
  */
 exports.error = (msg, tag) => {
-  log(msg, tag, 'error')
+  // @ts-ignore
+  log(msg, tag, 'error', chalk.bold.red)
 }
 
 /**
@@ -41,11 +45,12 @@ exports.debug = (msg, tag) => {
  * @param {string | Error} msg the message to log
  * @param {string} tag a unique tag to easily search for this message
  * @param {string} level error | info | debug
+ * @param {function=} color function to display the log in appropriate color
  */
-const log = (msg, tag, level) => {
-  // @TODO add some colors based on log level
+const log = (msg, tag, level, color) => {
   const time = new Date().toISOString()
+  color = color || ((message) => message)
   // exclude msg from template string so values such as error objects
   // can be well formatted
-  console.log(`uppy: ${time} [${level}] ${tag || ''}`, msg)
+  console.log(color(`uppy: ${time} [${level}] ${tag || ''}`), color(msg))
 }
