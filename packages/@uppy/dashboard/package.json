@@ -22,11 +22,11 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/informer": "1.1.0",
-    "@uppy/provider-views": "1.1.0",
-    "@uppy/status-bar": "1.1.0",
-    "@uppy/thumbnail-generator": "1.1.0",
-    "@uppy/utils": "1.1.0",
+    "@uppy/informer": "file:../informer",
+    "@uppy/provider-views": "file:../provider-views",
+    "@uppy/status-bar": "file:../status-bar",
+    "@uppy/thumbnail-generator": "file:../thumbnail-generator",
+    "@uppy/utils": "file:../utils",
     "classnames": "^2.2.6",
     "cuid": "^2.1.1",
     "lodash.throttle": "^4.1.1",
@@ -36,8 +36,7 @@
     "resize-observer-polyfill": "^1.5.0"
   },
   "devDependencies": {
-    "@uppy/core": "1.1.0",
-    "@uppy/google-drive": "1.1.0"
+    "@uppy/google-drive": "file:../google-drive"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"

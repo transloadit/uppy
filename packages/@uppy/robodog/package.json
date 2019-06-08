@@ -28,17 +28,17 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/core": "1.1.0",
-    "@uppy/dashboard": "1.1.0",
-    "@uppy/dropbox": "1.1.0",
-    "@uppy/form": "1.1.0",
-    "@uppy/google-drive": "1.1.0",
-    "@uppy/instagram": "1.1.0",
-    "@uppy/status-bar": "1.1.0",
-    "@uppy/transloadit": "1.1.1",
-    "@uppy/url": "1.1.0",
-    "@uppy/utils": "1.1.0",
-    "@uppy/webcam": "1.1.0",
+    "@uppy/core": "file:../core",
+    "@uppy/dashboard": "file:../dashboard",
+    "@uppy/dropbox": "file:../dropbox",
+    "@uppy/form": "file:../form",
+    "@uppy/google-drive": "file:../google-drive",
+    "@uppy/instagram": "file:../instagram",
+    "@uppy/status-bar": "file:../status-bar",
+    "@uppy/transloadit": "file:../transloadit",
+    "@uppy/url": "file:../url",
+    "@uppy/utils": "file:../utils",
+    "@uppy/webcam": "file:../webcam",
     "es6-promise": "4.2.5",
     "whatwg-fetch": "3.0.0"
   }

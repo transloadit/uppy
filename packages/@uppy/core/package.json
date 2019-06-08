@@ -20,8 +20,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/store-default": "1.1.0",
-    "@uppy/utils": "1.1.0",
+    "@uppy/store-default": "file:../store-default",
+    "@uppy/utils": "file:../utils",
     "cuid": "^2.1.1",
     "lodash.throttle": "^4.1.1",
     "mime-match": "^1.0.2",

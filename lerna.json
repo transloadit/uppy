@@ -1,6 +1,8 @@
 {
   "version": "independent",
   "packages": [
+    "website",
+    "examples/*",
     "packages/*",
     "packages/@uppy/*"
   ],
