@@ -317,10 +317,12 @@ class Uploader {
    * @param {object=} extraData
    */
   emitError (err, extraData = {}) {
+    const serializedErr = serializeError(err)
+    // delete stack to avoid sending server info to client
+    delete serializedErr.stack
     const dataToEmit = {
       action: 'error',
-      // TODO: consider removing the stack property
-      payload: Object.assign(extraData, { error: serializeError(err) })
+      payload: Object.assign(extraData, { error: serializedErr })
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)
