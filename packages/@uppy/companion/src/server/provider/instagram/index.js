@@ -125,7 +125,7 @@ class Instagram {
       })
     })
 
-    data.nextPagePath = adapter.getNextPagePath(items)
+    data.nextPagePath = adapter.getNextPagePath(res)
     return data
   }
 

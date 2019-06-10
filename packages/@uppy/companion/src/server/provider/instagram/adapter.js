@@ -74,7 +74,8 @@ exports.getItemThumbnailUrl = (item) => {
   return item.images ? item.images.thumbnail.url : null
 }
 
-exports.getNextPagePath = (items) => {
+exports.getNextPagePath = (data) => {
+  const items = exports.getItemSubList(data)
   if (items.length) {
     return `recent?max_id=${exports.getItemId(items[items.length - 1])}`
   }

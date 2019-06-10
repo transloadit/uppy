@@ -1,3 +1,5 @@
+const querystring = require('querystring')
+
 exports.getUsername = (data) => {
   for (const item of data.files) {
     if (item.ownedByMe) {
@@ -20,7 +22,11 @@ exports.getItemSize = (item) => {
 
 exports.getItemIcon = (item) => {
   if (item.kind === 'drive#teamDrive') {
-    return item.backgroundImageLink + '=w16-h16-n'
+    const size = '=w16-h16-n'
+    const sizeParamRegex = /=[-whncsp0-9]*$/
+    return item.backgroundImageLink.match(sizeParamRegex)
+      ? item.backgroundImageLink.replace(sizeParamRegex, size)
+      : `${item.backgroundImageLink}${size}`
   }
 
   if (item.thumbnailLink) {
@@ -50,8 +56,12 @@ exports.getItemId = (item) => {
 }
 
 exports.getItemRequestPath = (item) => {
-  // If it's from a Team Drive, add the Team Drive ID as a query param.
+  // If it's from/is a Team Drive, add the Team Drive ID as a query param.
   // The server needs the Team Drive ID to list files in a Team Drive folder.
+  if (exports.isTeamDrive(item)) {
+    return `${item.id}?teamDriveId=${item.id}`
+  }
+
   if (item.teamDriveId) {
     return item.id + `?teamDriveId=${item.teamDriveId}`
   }
@@ -69,4 +79,15 @@ exports.getItemThumbnailUrl = (item) => {
 
 exports.isTeamDrive = (item) => {
   return item.kind === 'drive#teamDrive'
+}
+
+exports.getNextPagePath = (data, currentQuery, currentPath) => {
+  if (!data.nextPageToken) {
+    return null
+  }
+  const query = {
+    ...currentQuery,
+    nextPageToken: data.nextPageToken
+  }
+  return `${currentPath}?${querystring.stringify(query)}`
 }
