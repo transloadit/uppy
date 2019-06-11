@@ -7,26 +7,11 @@ const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
+const trapFocus = require('./utils/trapFocus')
 const cuid = require('cuid')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultPickerIcon } = require('./components/icons')
-
-// Some code for managing focus was adopted from https://github.com/ghosh/micromodal
-// MIT licence, https://github.com/ghosh/micromodal/blob/master/LICENSE.md
-// Copyright (c) 2017 Indrashish Ghosh
-const FOCUSABLE_ELEMENTS = [
-  'a[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  'area[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  'input:not([disabled]):not([inert]):not([aria-hidden])',
-  'select:not([disabled]):not([inert]):not([aria-hidden])',
-  'textarea:not([disabled]):not([inert]):not([aria-hidden])',
-  'button:not([disabled]):not([inert]):not([aria-hidden])',
-  'iframe:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  'object:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  'embed:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  '[contenteditable]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  '[tabindex]:not([tabindex^="-"]):not([inert]):not([aria-hidden])'
-]
+const createSuperFocus = require('./utils/createSuperFocus')
 
 const TAB_KEY = 9
 const ESC_KEY = 27
@@ -158,13 +143,11 @@ module.exports = class Dashboard extends Plugin {
     this.removeTarget = this.removeTarget.bind(this)
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
-    this.getFocusableNodes = this.getFocusableNodes.bind(this)
-    this.setFocusToFirstNode = this.setFocusToFirstNode.bind(this)
     this.handlePopState = this.handlePopState.bind(this)
-    this.maintainFocus = this.maintainFocus.bind(this)
 
     this.initEvents = this.initEvents.bind(this)
-    this.handleKeyDown = this.handleKeyDown.bind(this)
+    this.handleKeyDownInModal = this.handleKeyDownInModal.bind(this)
+    this.handleKeyDownInInline = this.handleKeyDownInInline.bind(this)
     this.handleFileAdded = this.handleFileAdded.bind(this)
     this.handleComplete = this.handleComplete.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
@@ -179,6 +162,11 @@ module.exports = class Dashboard extends Plugin {
     this.handleDragOver = this.handleDragOver.bind(this)
     this.handleDragLeave = this.handleDragLeave.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
+    this.superFocusOnEachUpdate = this.superFocusOnEachUpdate.bind(this)
+    this.recordIfFocusedOnUppyRecently = this.recordIfFocusedOnUppyRecently.bind(this)
+
+    this.superFocus = createSuperFocus()
+    this.ifFocusedOnUppyRecently = false
 
     // Timeouts
     this.makeDashboardInsidesVisibleAnywayTimeout = null
@@ -253,24 +241,6 @@ module.exports = class Dashboard extends Plugin {
     return this.closeModal()
   }
 
-  getFocusableNodes () {
-    // if an overlay is open, we should trap focus inside the overlay
-    const activeOverlayType = this.getPluginState().activeOverlayType
-    if (activeOverlayType) {
-      const activeOverlay = this.el.querySelector(`[data-uppy-panelType="${activeOverlayType}"]`)
-      const nodes = activeOverlay.querySelectorAll(FOCUSABLE_ELEMENTS)
-      return Object.keys(nodes).map((key) => nodes[key])
-    }
-
-    const nodes = this.el.querySelectorAll(FOCUSABLE_ELEMENTS)
-    return Object.keys(nodes).map((key) => nodes[key])
-  }
-
-  setFocusToFirstNode () {
-    const focusableNodes = this.getFocusableNodes()
-    if (focusableNodes.length) focusableNodes[0].focus()
-  }
-
   updateBrowserHistory () {
     // Ensure history state does not already contain our modal name to avoid double-pushing
     if (!history.state || !history.state[this.modalName]) {
@@ -296,26 +266,6 @@ module.exports = class Dashboard extends Plugin {
     // Solves PR #575 (https://github.com/transloadit/uppy/pull/575)
     if (!this.isModalOpen() && event.state && event.state[this.modalName]) {
       history.go(-1)
-    }
-  }
-
-  setFocusToBrowse () {
-    const browseBtn = this.el.querySelector('.uppy-Dashboard-browse')
-    if (browseBtn) browseBtn.focus()
-  }
-
-  maintainFocus (event) {
-    var focusableNodes = this.getFocusableNodes()
-    var focusedItemIndex = focusableNodes.indexOf(document.activeElement)
-
-    if (event.shiftKey && focusedItemIndex === 0) {
-      focusableNodes[focusableNodes.length - 1].focus()
-      event.preventDefault()
-    }
-
-    if (!event.shiftKey && focusedItemIndex === focusableNodes.length - 1) {
-      focusableNodes[0].focus()
-      event.preventDefault()
     }
   }
 
@@ -351,10 +301,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     // handle ESC and TAB keys in modal dialog
-    document.addEventListener('keydown', this.handleKeyDown)
-
-    // this.rerender(this.uppy.getState())
-    this.setFocusToBrowse()
+    document.addEventListener('keydown', this.handleKeyDownInModal)
 
     return promise
   }
@@ -385,6 +332,10 @@ module.exports = class Dashboard extends Plugin {
           isHidden: true,
           isClosing: false
         })
+
+        this.superFocus.cancel()
+        this.savedActiveElement.focus()
+
         this.el.removeEventListener('animationend', handler, false)
         resolve()
       }
@@ -393,13 +344,15 @@ module.exports = class Dashboard extends Plugin {
       this.setPluginState({
         isHidden: true
       })
+
+      this.superFocus.cancel()
+      this.savedActiveElement.focus()
+
       resolve()
     }
 
     // handle ESC and TAB keys in modal dialog
-    document.removeEventListener('keydown', this.handleKeyDown)
-
-    this.savedActiveElement.focus()
+    document.removeEventListener('keydown', this.handleKeyDownInModal)
 
     if (manualClose) {
       if (this.opts.browserBackButtonClose) {
@@ -418,11 +371,11 @@ module.exports = class Dashboard extends Plugin {
     return !this.getPluginState().isHidden || false
   }
 
-  handleKeyDown (event) {
+  handleKeyDownInModal (event) {
     // close modal on esc key press
     if (event.keyCode === ESC_KEY) this.requestCloseModal(event)
-    // maintainFocus on tab key press
-    if (event.keyCode === TAB_KEY) this.maintainFocus(event)
+    // trap focus on tab key press
+    if (event.keyCode === TAB_KEY) trapFocus.forModal(event, this.getPluginState().activeOverlayType, this.el)
   }
 
   handleClickOutside () {
@@ -580,6 +533,33 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.handleFileAdded)
     this.uppy.on('complete', this.handleComplete)
+
+    // ___Why fire on capture?
+    //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
+    document.addEventListener('focus', this.recordIfFocusedOnUppyRecently, true)
+    document.addEventListener('click', this.recordIfFocusedOnUppyRecently, true)
+
+    if (this.opts.inline) {
+      this.el.addEventListener('keydown', this.handleKeyDownInInline)
+    }
+  }
+
+  handleKeyDownInInline (event) {
+    // Trap focus on tab key press.
+    if (event.keyCode === TAB_KEY) trapFocus.forInline(event, this.getPluginState().activeOverlayType, this.el)
+  }
+
+  // Records whether we have been interacting with uppy right now, which is then used to determine whether state updates should trigger a refocusing.
+  recordIfFocusedOnUppyRecently (event) {
+    if (this.el.contains(event.target)) {
+      this.ifFocusedOnUppyRecently = true
+    } else {
+      this.ifFocusedOnUppyRecently = false
+      // ___Why run this.superFocus.cancel here when it already runs in superFocusOnEachUpdate?
+      //    Because superFocus is debounced, when we move from Uppy to some other element on the page,
+      //    previously run superFocus sometimes hits and moves focus back to Uppy.
+      this.superFocus.cancel()
+    }
   }
 
   // ___Why do we listen to the 'paste' event on a document instead of onPaste={props.handlePaste} prop, or this.el.addEventListener('paste')?
@@ -619,6 +599,13 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', this.handleFileAdded)
     this.uppy.off('complete', this.handleComplete)
+
+    document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
+    document.removeEventListener('click', this.recordIfFocusedOnUppyRecently)
+
+    if (this.opts.inline) {
+      this.el.removeEventListener('keydown', this.handleKeyDownInInline)
+    }
   }
 
   toggleFileCard (fileId) {
@@ -633,6 +620,38 @@ module.exports = class Dashboard extends Plugin {
       showAddFilesPanel: show,
       activeOverlayType: show ? 'AddFiles' : null
     })
+  }
+
+  superFocusOnEachUpdate () {
+    const isFocusInUppy = this.el.contains(document.activeElement)
+    // When focus is lost on the page (== focus is on body for most browsers, or focus is null for IE11)
+    const isFocusNowhere = document.activeElement === document.querySelector('body') || document.activeElement === null
+    const isInformerHidden = this.uppy.getState().info.isHidden
+    const isModal = !this.opts.inline
+
+    if (
+      // If update is connected to showing the Informer - let the screen reader calmly read it.
+      isInformerHidden &&
+      (
+        // If we are in a modal - always superfocus without concern for other elements on the page (user is unlikely to want to interact with the rest of the page)
+        isModal ||
+        // If we are already inside of Uppy, or
+        isFocusInUppy ||
+        // If we are not focused on anything BUT we have already, at least once, focused on uppy
+        //   1. We focus when isFocusNowhere, because when the element we were focused on disappears (e.g. an overlay), - focus gets lost. If user is typing something somewhere else on the page, - focus won't be 'nowhere'.
+        //   2. We only focus when focus is nowhere AND this.ifFocusedOnUppyRecently, to avoid focus jumps if we do something else on the page.
+        //   [Practical check] Without '&& this.ifFocusedOnUppyRecently', in Safari, in inline mode, when file is uploading, - navigate via tab to the checkbox, try to press space multiple times. Focus will jump to Uppy.
+        (isFocusNowhere && this.ifFocusedOnUppyRecently)
+      )
+    ) {
+      this.superFocus(this.el, this.getPluginState().activeOverlayType)
+    } else {
+      this.superFocus.cancel()
+    }
+  }
+
+  afterUpdate () {
+    this.superFocusOnEachUpdate()
   }
 
   render (state) {

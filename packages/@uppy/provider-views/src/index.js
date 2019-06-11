@@ -380,6 +380,7 @@ module.exports = class ProviderView {
   toggleCheckbox (e, file) {
     e.stopPropagation()
     e.preventDefault()
+    e.currentTarget.focus()
     let { folders, files } = this.plugin.getPluginState()
     let items = this.filterItems(folders.concat(files))
 

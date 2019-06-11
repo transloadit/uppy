@@ -149,7 +149,8 @@ const UploadBtn = (props) => {
   return <button type="button"
     class={uploadBtnClassNames}
     aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
-    onclick={props.startUpload}>
+    onclick={props.startUpload}
+    data-uppy-super-focusable>
     {props.newFiles && props.isUploadStarted
       ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
       : props.i18n('uploadXFiles', { smart_count: props.newFiles })
@@ -160,7 +161,8 @@ const UploadBtn = (props) => {
 const RetryBtn = (props) => {
   return (
     <button type="button"
-      class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry" aria-label={props.i18n('retryUpload')} onclick={props.retryAll}>
+      class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry" aria-label={props.i18n('retryUpload')} onclick={props.retryAll}
+      data-uppy-super-focusable>
       <svg aria-hidden="true" class="UppyIcon" width="8" height="10" viewBox="0 0 8 10">
         <path d="M4 2.408a2.75 2.75 0 1 0 2.75 2.75.626.626 0 0 1 1.25.018v.023a4 4 0 1 1-4-4.041V.25a.25.25 0 0 1 .389-.208l2.299 1.533a.25.25 0 0 1 0 .416l-2.3 1.533A.25.25 0 0 1 4 3.316v-.908z" />
       </svg>
@@ -175,7 +177,8 @@ const CancelBtn = (props) => {
     class="uppy-u-reset uppy-StatusBar-actionCircleBtn"
     title={props.i18n('cancel')}
     aria-label={props.i18n('cancel')}
-    onclick={props.cancelAll}>
+    onclick={props.cancelAll}
+    data-uppy-super-focusable>
     <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16">
       <g fill="none" fill-rule="evenodd">
         <circle fill="#888" cx="8" cy="8" r="8" />
@@ -194,7 +197,8 @@ const PauseResumeButton = (props) => {
     aria-label={title}
     class="uppy-u-reset uppy-StatusBar-actionCircleBtn"
     type="button"
-    onclick={() => togglePauseResume(props)}>
+    onclick={() => togglePauseResume(props)}
+    data-uppy-super-focusable>
     {isAllPaused
       ? <svg aria-hidden="true" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16">
         <g fill="none" fill-rule="evenodd">

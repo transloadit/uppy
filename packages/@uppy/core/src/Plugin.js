@@ -72,6 +72,11 @@ module.exports = class Plugin {
     }
   }
 
+  // Called after every state update, after everything's mounted. Debounced.
+  afterUpdate () {
+
+  }
+
   /**
   * Called when plugin is mounted, whether in DOM or into another plugin.
   * Needed because sometimes plugins are mounted separately/after `install`,
@@ -105,6 +110,7 @@ module.exports = class Plugin {
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return
         this.el = preact.render(this.render(state), targetElement, this.el)
+        this.afterUpdate()
       }
       this._updateUI = debounce(this.rerender)
 
@@ -147,8 +153,8 @@ module.exports = class Plugin {
     }
 
     this.uppy.log(`Not installing ${callerPluginName}`)
-    throw new Error(`Invalid target option given to ${callerPluginName}. Please make sure that the element 
-      exists on the page, or that the plugin you are targeting has been installed. Check that the <script> tag initializing Uppy 
+    throw new Error(`Invalid target option given to ${callerPluginName}. Please make sure that the element
+      exists on the page, or that the plugin you are targeting has been installed. Check that the <script> tag initializing Uppy
       comes at the bottom of the page, before the closing </body> tag (see https://github.com/transloadit/uppy/issues/1042).`)
   }
 

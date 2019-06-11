@@ -192,9 +192,12 @@
   position: relative;
   text-align: center;
   flex: 1;
-  margin: 7px;
-  border: 1px dashed $gray-250;
-  border-radius: 3px;
+
+  .uppy-size--md & {
+    margin: 7px;
+    border-radius: 3px;
+    border: 1px dashed $gray-250; // Show dashed border on large screens only
+  }
 
   .uppy-Dashboard-AddFilesPanel & {
     border: none;
@@ -610,7 +613,7 @@
   max-width: 300px;
   text-align: center;
   font-size: 16px;
-  line-height: 1.45;
+  line-height: 1.35;
   font-weight: 400;
   color: $gray-700;
   margin: auto;
@@ -729,6 +732,9 @@ a.uppy-Dashboard-poweredBy {
   right: 0;
   bottom: 0;
   z-index: $zIndex-3;
+  &:focus{
+    box-shadow: inset 0px 0px 0px 4px rgb(59, 153, 252);
+  }
 }
 
 .uppy-DashboardItem-sourceIcon {
@@ -902,19 +908,28 @@ a.uppy-Dashboard-poweredBy {
   }
 }
 
-.uppy-DashboardItem-edit:not(:first-child),
-.uppy-DashboardItem-copyLink:not(:first-child),
-.uppy-DashboardItem-sourceIcon:not(:first-child) {
-  position: relative;
-  margin-left: 14px;
-  // margin-right: 7px;
+span.uppy-DashboardItem-statusbar-dot{
+  display: inline-block;
+  color: $gray-600;
+  &:last-child{
+    display: none;
+  }
+}
 
-  &:before {
-    content: '\00B7';
-    position: absolute;
-    top: 0;
-    left: -9px;
-    color: $gray-600;
+.uppy-DashboardItem-statusSize,
+.uppy-DashboardItem-edit,
+.uppy-DashboardItem-copyLink,
+.uppy-DashboardItem-sourceIcon {
+  position: relative;
+  margin-left: 3px;
+  margin-right: 3px;
+
+  padding-left: 3px;
+  padding-right: 3px;
+
+  &:first-child{
+    margin-left: 0;
+    padding-left: 0;
   }
 }
 
