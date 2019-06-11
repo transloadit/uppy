@@ -7,55 +7,71 @@ class FileCard extends Component {
   constructor (props) {
     super(props)
 
-    this.meta = {}
+    this.state = {}
 
-    this.tempStoreMetaOrSubmit = this.tempStoreMetaOrSubmit.bind(this)
+    this.tempStoreMeta = this.tempStoreMeta.bind(this)
+    this.saveOnEnter = this.saveOnEnter.bind(this)
     this.renderMetaFields = this.renderMetaFields.bind(this)
     this.handleSave = this.handleSave.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
   }
 
-  tempStoreMetaOrSubmit (ev) {
+  componentDidMount () {
     const file = this.props.files[this.props.fileCardFor]
+    const metaFields = this.props.metaFields || []
 
+    const storedMetaData = {}
+    metaFields.forEach((field) => {
+      storedMetaData[field.id] = file.meta[field.id]
+    })
+    this.setState(storedMetaData)
+  }
+
+  saveOnEnter (ev) {
     if (ev.keyCode === 13) {
+      const file = this.props.files[this.props.fileCardFor]
       ev.stopPropagation()
       ev.preventDefault()
-      this.props.saveFileCard(this.meta, file.id)
-      return
+      this.props.saveFileCard(this.state, file.id)
     }
+  }
 
+  tempStoreMeta (ev) {
     const value = ev.target.value
     const name = ev.target.dataset.name
-    this.meta[name] = value
+    this.setState({
+      [name]: value
+    })
+  }
+
+  handleSave (ev) {
+    const fileID = this.props.fileCardFor
+    this.props.saveFileCard(this.state, fileID)
+  }
+
+  handleCancel (ev) {
+    this.setState({})
+    this.props.toggleFileCard()
   }
 
   renderMetaFields (file) {
     const metaFields = this.props.metaFields || []
+
     return metaFields.map((field, i) => {
       return <fieldset class="uppy-DashboardFileCard-fieldset">
         <label class="uppy-DashboardFileCard-label">{field.name}</label>
         <input class="uppy-u-reset uppy-c-textInput uppy-DashboardFileCard-input"
           type="text"
           data-name={field.id}
-          value={file.meta[field.id]}
+          value={this.state[field.id]}
           placeholder={field.placeholder}
-          onkeyup={this.tempStoreMetaOrSubmit}
-          onkeydown={this.tempStoreMetaOrSubmit}
-          onkeypress={this.tempStoreMetaOrSubmit}
+          onkeyup={this.saveOnEnter}
+          onkeydown={this.saveOnEnter}
+          onkeypress={this.saveOnEnter}
+          oninput={this.tempStoreMeta}
           data-uppy-super-focusable />
       </fieldset>
     })
-  }
-
-  handleSave (ev) {
-    const fileID = this.props.fileCardFor
-    this.props.saveFileCard(this.meta, fileID)
-  }
-
-  handleCancel (ev) {
-    this.meta = {}
-    this.props.toggleFileCard()
   }
 
   render () {
