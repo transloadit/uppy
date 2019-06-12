@@ -19,6 +19,11 @@ function initUppy () {
       maxNumberOfFiles: 2,
       minNumberOfFiles: 1,
       allowedFileTypes: ['image/*']
+    },
+    locale: {
+      strings: {
+        youCanOnlyUploadFileTypes: 'You can only upload images'
+      }
     }
   })
 
