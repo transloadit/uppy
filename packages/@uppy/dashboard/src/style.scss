@@ -391,6 +391,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
   height: 40px;
   width: 100%;
   border-bottom: 1px solid $gray-200;
