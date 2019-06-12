@@ -911,7 +911,9 @@ class Uppy {
       throw new Error(msg)
     }
 
-    this.log(`Using ${pluginId} v${Plugin.VERSION}`)
+    if (Plugin.VERSION) {
+      this.log(`Using ${pluginId} v${Plugin.VERSION}`)
+    }
 
     this.plugins[plugin.type].push(plugin)
     plugin.install()
