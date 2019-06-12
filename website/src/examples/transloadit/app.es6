@@ -64,7 +64,7 @@ function initUppy () {
       companionUrl: 'https://api2.transloadit.com/companion',
       companionAllowedHosts: Transloadit.COMPANION_PATTERN
     })
-    .use(Webcam, { target: Dashboard })
+    .use(Webcam, { target: Dashboard, modes: ['picture'] })
 
   uppy
     .on('transloadit:result', (stepName, result) => {
@@ -74,7 +74,7 @@ function initUppy () {
         <div>
           <h3>Name: ${file.name}</h3>
           <img src="${result.ssl_url}" /> <br />
-          <a href="${result.ssl_url}">View</a>
+          <a href="${result.ssl_url}" target="_blank">View</a>
         </div>
       `
       document
