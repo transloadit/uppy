@@ -76,7 +76,8 @@ class Uppy {
       meta: {},
       onBeforeFileAdded: (currentFile, files) => currentFile,
       onBeforeUpload: (files) => files,
-      store: DefaultStore()
+      store: DefaultStore(),
+      customLogger: (message, type) => {}
     }
 
     // Merge default options with the ones set by user
@@ -1037,6 +1038,8 @@ class Uppy {
     if (!this.opts.debug) {
       return
     }
+
+    this.opts.customLogger(message, type)
 
     const prefix = `[Uppy] [${getTimeStamp()}]`
 
