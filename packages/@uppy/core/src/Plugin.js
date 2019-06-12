@@ -114,7 +114,7 @@ module.exports = class Plugin {
       }
       this._updateUI = debounce(this.rerender)
 
-      this.uppy.log(`Installing ${callerPluginName} to a DOM element`)
+      this.uppy.log(`Installing ${callerPluginName} to a DOM element '${target}'`)
 
       // clear everything inside the target container
       if (this.opts.replaceTargetContent) {
