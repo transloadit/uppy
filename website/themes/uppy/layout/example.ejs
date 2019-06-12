@@ -27,7 +27,7 @@
 
   <textarea id="console-log" class="Console"></textarea>
   <script>
-    console.log = (function (log, container) {
+    function customLog (log, container) {
       return function () {
         var text = [];
         // loop through `arguments`, because console.log accepts multiple
@@ -49,7 +49,11 @@
         container.value += text + '\n';
         container.scrollTop = container.scrollHeight;
       };
-    }(console.log.bind(console), document.getElementById("console-log")));
+    }
+
+    console.log = customLog(console.log.bind(console), document.getElementById("console-log"));
+    console.warn = customLog(console.warn.bind(console), document.getElementById("console-log"));
+    console.error = customLog(console.error.bind(console), document.getElementById("console-log"));
   </script>
 
   <script>
