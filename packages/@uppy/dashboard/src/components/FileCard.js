@@ -7,24 +7,23 @@ class FileCard extends Component {
   constructor (props) {
     super(props)
 
-    this.state = {}
-
     this.tempStoreMeta = this.tempStoreMeta.bind(this)
     this.saveOnEnter = this.saveOnEnter.bind(this)
     this.renderMetaFields = this.renderMetaFields.bind(this)
     this.handleSave = this.handleSave.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
-  }
 
-  componentDidMount () {
     const file = this.props.files[this.props.fileCardFor]
     const metaFields = this.props.metaFields || []
 
     const storedMetaData = {}
     metaFields.forEach((field) => {
-      storedMetaData[field.id] = file.meta[field.id]
+      storedMetaData[field.id] = file.meta[field.id] || ''
     })
-    this.setState(storedMetaData)
+
+    this.state = {
+      formState: storedMetaData
+    }
   }
 
   saveOnEnter (ev) {
@@ -32,25 +31,25 @@ class FileCard extends Component {
       const file = this.props.files[this.props.fileCardFor]
       ev.stopPropagation()
       ev.preventDefault()
-      this.props.saveFileCard(this.state, file.id)
+      this.props.saveFileCard(this.state.formState, file.id)
     }
   }
 
-  tempStoreMeta (ev) {
-    const value = ev.target.value
-    const name = ev.target.dataset.name
+  tempStoreMeta (ev, name) {
     this.setState({
-      [name]: value
+      formState: {
+        ...this.state.formState,
+        [name]: ev.target.value
+      }
     })
   }
 
   handleSave (ev) {
     const fileID = this.props.fileCardFor
-    this.props.saveFileCard(this.state, fileID)
+    this.props.saveFileCard(this.state.formState, fileID)
   }
 
   handleCancel (ev) {
-    this.setState({})
     this.props.toggleFileCard()
   }
 
@@ -62,13 +61,12 @@ class FileCard extends Component {
         <label class="uppy-DashboardFileCard-label">{field.name}</label>
         <input class="uppy-u-reset uppy-c-textInput uppy-DashboardFileCard-input"
           type="text"
-          data-name={field.id}
-          value={this.state[field.id]}
+          value={this.state.formState[field.id]}
           placeholder={field.placeholder}
           onkeyup={this.saveOnEnter}
           onkeydown={this.saveOnEnter}
           onkeypress={this.saveOnEnter}
-          oninput={this.tempStoreMeta}
+          oninput={ev => this.tempStoreMeta(ev, field.id)}
           data-uppy-super-focusable />
       </fieldset>
     })
