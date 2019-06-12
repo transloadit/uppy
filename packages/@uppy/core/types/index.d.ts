@@ -51,17 +51,19 @@ declare module Uppy {
     pluralize?: (n: number) => number;
   }
 
+  interface Restrictions {
+    maxFileSize: number | null;
+    maxNumberOfFiles: number | null;
+    minNumberOfFiles: number | null;
+    allowedFileTypes: string[] | null;
+  }
+
   interface UppyOptions {
     id: string;
     autoProceed: boolean;
     allowMultipleUploads: boolean;
     debug: boolean;
-    restrictions: {
-      maxFileSize: number | null;
-      maxNumberOfFiles: number | null;
-      minNumberOfFiles: number | null;
-      allowedFileTypes: string[] | null;
-    };
+    restrictions: Partial<Restrictions>;
     target: string | Plugin;
     meta: any;
     onBeforeFileAdded: (currentFile: UppyFile, files: {[key: string]: UppyFile}) => UppyFile | boolean | undefined;

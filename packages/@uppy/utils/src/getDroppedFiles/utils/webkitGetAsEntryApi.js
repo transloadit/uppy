@@ -5,7 +5,7 @@ const toArray = require('../../toArray')
  *
  * @param {FileEntry} fileEntry
  *
- * @return {string|null} - if file is not in a folder - return null (this is to be consistent with .relativePath-s of files selected from My Device). If file is in a folder - return its fullPath, e.g. '/simpsons/hi.jpeg'.
+ * @returns {string|null} - if file is not in a folder - return null (this is to be consistent with .relativePath-s of files selected from My Device). If file is in a folder - return its fullPath, e.g. '/simpsons/hi.jpeg'.
  */
 function getRelativePath (fileEntry) {
   // fileEntry.fullPath - "/simpsons/hi.jpeg" or undefined (for browsers that don't support it)
@@ -17,8 +17,13 @@ function getRelativePath (fileEntry) {
   }
 }
 
-// Recursive function, calls the original callback() when the directory is entirely parsed.
-// @param {function} callback - called with ([ all files and directories in that directoryReader ])
+/**
+ * Recursive function, calls the original callback() when the directory is entirely parsed.
+ *
+ * @param {FileSystemDirectoryReader} directoryReader
+ * @param {Array} oldEntries
+ * @param {Function} callback - called with ([ all files and directories in that directoryReader ])
+ */
 function readEntries (directoryReader, oldEntries, callback) {
   directoryReader.readEntries(
     (entries) => {
@@ -39,9 +44,11 @@ function readEntries (directoryReader, oldEntries, callback) {
   )
 }
 
-// @param {function} resolve - function that will be called when :files array is appended with a file
-// @param {Array<File>} files - array of files to enhance
-// @param {FileSystemFileEntry} fileEntry
+/**
+ * @param {Function} resolve - function that will be called when :files array is appended with a file
+ * @param {Array<File>} files - array of files to enhance
+ * @param {FileSystemFileEntry} fileEntry
+ */
 function addEntryToFiles (resolve, files, fileEntry) {
   // Creates a new File object which can be used to read the file.
   fileEntry.file(
@@ -56,9 +63,11 @@ function addEntryToFiles (resolve, files, fileEntry) {
   )
 }
 
-// @param {function} resolve - function that will be called when :directoryEntry is done being recursively parsed
-// @param {Array<File>} files - array of files to enhance
-// @param {FileSystemDirectoryEntry} directoryEntry
+/**
+ * @param {Function} resolve - function that will be called when :directoryEntry is done being recursively parsed
+ * @param {Array<File>} files - array of files to enhance
+ * @param {FileSystemDirectoryEntry} directoryEntry
+ */
 function recursivelyAddFilesFromDirectory (resolve, files, directoryEntry) {
   const directoryReader = directoryEntry.createReader()
   readEntries(directoryReader, [], (entries) => {
@@ -73,8 +82,10 @@ function recursivelyAddFilesFromDirectory (resolve, files, directoryEntry) {
   })
 }
 
-// @param {Array<File>} files - array of files to enhance
-// @param {(FileSystemFileEntry|FileSystemDirectoryEntry)} entry
+/**
+ * @param {Array<File>} files - array of files to enhance
+ * @param {(FileSystemFileEntry|FileSystemDirectoryEntry)} entry
+ */
 function createPromiseToAddFileOrParseDirectory (files, entry) {
   return new Promise((resolve) => {
     if (entry.isFile) {

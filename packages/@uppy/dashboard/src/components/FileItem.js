@@ -113,11 +113,11 @@ module.exports = function FileItem (props) {
     ? !isUploaded
     : !uploadInProgress && !isUploaded
 
-  return <li class={dashboardItemClass} id={`uppy_${file.id}`} title={file.meta.name}>
+  return <li class={dashboardItemClass} id={`uppy_${file.id}`}>
     <div class="uppy-DashboardItem-preview">
       <div class="uppy-DashboardItem-previewInnerWrap" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
         {props.showLinkToFileUploadResult && file.uploadURL
-          ? <a class="uppy-DashboardItem-previewLink" href={file.uploadURL} rel="noreferrer noopener" target="_blank" />
+          ? <a class="uppy-DashboardItem-previewLink" href={file.uploadURL} rel="noreferrer noopener" target="_blank" aria-label={file.meta.name} />
           : null
         }
         <FilePreview file={file} />
@@ -128,41 +128,51 @@ module.exports = function FileItem (props) {
           onPauseResumeCancelRetry={onPauseResumeCancelRetry}
           file={file}
           error={error}
+          isUploaded={isUploaded}
           {...props} />
       </div>
     </div>
     <div class="uppy-DashboardItem-info">
-      <div class="uppy-DashboardItem-name" title={fileName}>
-        {props.showLinkToFileUploadResult && file.uploadURL
-          ? <a href={file.uploadURL} rel="noreferrer noopener" target="_blank">
-            {file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}
-          </a>
-          : file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName
-        }
+      <div class="uppy-DashboardItem-name">
+        {file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}
       </div>
       <div class="uppy-DashboardItem-status">
-        {file.data.size ? <div class="uppy-DashboardItem-statusSize">{prettyBytes(file.data.size)}</div> : null}
-        {(file.source && file.source !== props.id) && (
-          <div class="uppy-DashboardItem-sourceIcon">
-            {acquirers.map(acquirer => {
-              if (acquirer.id === file.source) {
-                return <span title={props.i18n('fileSource', { name: acquirer.name })}>
-                  {acquirer.icon()}
-                </span>
-              }
-            })}
-          </div>
-        )}
-        {(!uploadInProgressOrComplete && props.metaFields && props.metaFields.length)
-          ? <button class="uppy-u-reset uppy-DashboardItem-edit"
-            type="button"
-            aria-label={props.i18n('editFile')}
-            title={props.i18n('editFile')}
-            onclick={(e) => props.toggleFileCard(file.id)}>
-            {props.i18n('edit')}
-          </button>
-          : null
+        {
+          file.data.size && [
+            <div class="uppy-DashboardItem-statusSize">
+              {prettyBytes(file.data.size)}
+            </div>,
+            <span class="uppy-DashboardItem-statusbar-dot">·</span>
+          ]
         }
+
+        {
+          (file.source && file.source !== props.id) && [
+            <div class="uppy-DashboardItem-sourceIcon">
+              {acquirers.map(acquirer => {
+                if (acquirer.id === file.source) {
+                  return <span title={props.i18n('fileSource', { name: acquirer.name })}>
+                    {acquirer.icon()}
+                  </span>
+                }
+              })}
+            </div>,
+            <span class="uppy-DashboardItem-statusbar-dot">·</span>
+          ]
+        }
+        {
+          (!uploadInProgressOrComplete && props.metaFields && props.metaFields.length) && [
+            <button class="uppy-u-reset uppy-DashboardItem-edit"
+              type="button"
+              aria-label={props.i18n('editFile') + ' ' + fileName}
+              title={props.i18n('editFile')}
+              onclick={(e) => props.toggleFileCard(file.id)}>
+              {props.i18n('edit')}
+            </button>,
+            <span class="uppy-DashboardItem-statusbar-dot">·</span>
+          ]
+        }
+
         {props.showLinkToFileUploadResult && file.uploadURL
           ? <button class="uppy-u-reset uppy-DashboardItem-copyLink"
             type="button"

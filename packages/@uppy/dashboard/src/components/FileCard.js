@@ -15,13 +15,6 @@ class FileCard extends Component {
     this.handleCancel = this.handleCancel.bind(this)
   }
 
-  componentDidMount () {
-    setTimeout(() => {
-      if (!this.firstInput) return
-      this.firstInput.focus({ preventScroll: true })
-    }, 150)
-  }
-
   tempStoreMetaOrSubmit (ev) {
     const file = this.props.files[this.props.fileCardFor]
 
@@ -50,9 +43,8 @@ class FileCard extends Component {
           onkeyup={this.tempStoreMetaOrSubmit}
           onkeydown={this.tempStoreMetaOrSubmit}
           onkeypress={this.tempStoreMetaOrSubmit}
-          ref={(el) => {
-            if (i === 0) this.firstInput = el
-          }} /></fieldset>
+          data-uppy-super-focusable />
+      </fieldset>
     })
   }
 
