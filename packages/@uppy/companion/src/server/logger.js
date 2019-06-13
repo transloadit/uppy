@@ -52,5 +52,5 @@ const log = (msg, tag, level, color) => {
   color = color || ((message) => message)
   // exclude msg from template string so values such as error objects
   // can be well formatted
-  console.log(color(`uppy: ${time} [${level}] ${tag || ''}`), color(msg))
+  console.log(color(`companion: ${time} [${level}] ${tag || ''}`), color(msg))
 }
