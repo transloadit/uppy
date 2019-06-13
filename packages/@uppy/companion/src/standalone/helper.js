@@ -28,7 +28,6 @@ const getConfigFromEnv = () => {
   const validHosts = domains ? domains.split(',') : []
 
   return {
-    // TODO: Rename providerOptions to providers.
     providerOptions: {
       google: {
         key: process.env.COMPANION_GOOGLE_KEY,
@@ -105,7 +104,6 @@ const getConfigFromFile = () => {
   if (!path) return {}
 
   const rawdata = fs.readFileSync(getConfigPath())
-  // TODO validate the json object fields to match the uppy config schema
   // @ts-ignore
   return JSON.parse(rawdata)
 }
