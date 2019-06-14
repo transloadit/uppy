@@ -1,7 +1,6 @@
 const { h } = require('preact')
 
 module.exports = function RecordButton ({ recording, onStartRecording, onStopRecording, i18n }) {
-  console.log('is recording', recording)
   if (recording) {
     return (
       <button class="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--video"
