@@ -10,6 +10,9 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
+is_local="${LOCAL:-0}"
+echo "Local release: $is_local"
+
 if [[ ! "$@" =~ -y ]]; then
   echo "Make sure to read https://uppy.io/docs/contributing#Releases!"
   echo "Press Enter when ready, or Ctrl+C if you still need to do something."
@@ -17,7 +20,7 @@ if [[ ! "$@" =~ -y ]]; then
   read
 fi
 
-if [[ ! "$(npm get registry)" =~ https://registry\.npmjs\.(com|org)/? ]]; then
+if [ $is_local == "0" ] && [[ ! "$(npm get registry)" =~ https://registry\.npmjs\.(com|org)/? ]]; then
   echo "Found unexpected npm registry: $(npm get registry)"
   echo "Run this to fix:"
   echo ""
@@ -71,5 +74,7 @@ lerna version --amend --no-push --exact
 
 lerna publish from-git
 
-git push
-git push --tags
+if [ $is_local == "0" ]; then
+  git push
+  git push --tags
+fi

@@ -132,6 +132,7 @@ es_GL.strings = {
     '1': 'Tes que seleccionar polo menos %{smart_count} arquivos',
     '2': 'Tes que seleccionar polo menos %{smart_count} arquivos'
   }
+
 };
 
 es_GL.pluralize = function (n) {

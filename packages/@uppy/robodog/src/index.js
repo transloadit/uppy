@@ -7,5 +7,6 @@ module.exports = {
   dashboard,
   form,
   pick,
-  upload
+  upload,
+  VERSION: require('../package.json').version
 }

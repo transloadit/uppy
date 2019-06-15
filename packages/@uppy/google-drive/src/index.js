@@ -4,6 +4,8 @@ const DriveProviderViews = require('./DriveProviderViews')
 const { h } = require('preact')
 
 module.exports = class GoogleDrive extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'GoogleDrive'

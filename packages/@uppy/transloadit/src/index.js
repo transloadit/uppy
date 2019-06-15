@@ -25,6 +25,8 @@ const TL_UPPY_SERVER = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/uppy-server/
  * Upload files to Transloadit using Tus.
  */
 module.exports = class Transloadit extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'

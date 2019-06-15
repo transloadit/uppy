@@ -26,6 +26,7 @@ uppy-*.tgz
 .eslintcache
 .cache
 
-output/*
+**/output/*
 !output/.keep
 examples/dev/file.txt
+issues.txt

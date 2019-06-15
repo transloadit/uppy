@@ -1,7 +1,7 @@
 const classNames = require('classnames')
 const Breadcrumbs = require('./Breadcrumbs')
 const Filter = require('./Filter')
-const Table = require('./ItemList')
+const ItemList = require('./ItemList')
 const FooterActions = require('./FooterActions')
 const { h } = require('preact')
 
@@ -33,7 +33,7 @@ const Browser = (props) => {
         </div>
       </div>
       { props.showFilter && <Filter {...props} /> }
-      <Table
+      <ItemList
         columns={[{
           name: 'Name',
           key: 'title'
@@ -50,6 +50,7 @@ const Browser = (props) => {
         title={props.title}
         showTitles={props.showTitles}
         i18n={props.i18n}
+        viewType={props.viewType}
       />
       {selected > 0 && <FooterActions selected={selected} {...props} />}
     </div>
