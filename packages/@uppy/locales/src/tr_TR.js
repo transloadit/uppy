@@ -95,14 +95,14 @@ tr_TR.strings = {
   uploadFailed: 'Yükleme başarısız',
   uploadPaused: 'Yükleme durduruldu',
   uploadXFiles: {
-    '0': '%{smart_count} dosya yüklendi',
-    '1': '%{smart_count} dosya yüklendi',
-    '2': '%{smart_count} dosya yüklendi'
+    '0': '%{smart_count} dosyayı yükle',
+    '1': '%{smart_count} dosyayı yükle',
+    '2': '%{smart_count} dosyayı yükle'
   },
   uploadXNewFiles: {
-    '0': '+%{smart_count} dosya yüklendi',
-    '1': '+%{smart_count} dosya yüklendi',
-    '2': '+%{smart_count} dosya yüklendi'
+    '0': '+%{smart_count} dosyayı yükle',
+    '1': '+%{smart_count} dosyayı yükle',
+    '2': '+%{smart_count} dosyayı yükle'
   },
   uploading: 'Yükleniyor',
   uploadingXFiles: {
