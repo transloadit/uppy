@@ -29,6 +29,8 @@
     "@uppy/utils": "1.1.0",
     "classnames": "^2.2.6",
     "cuid": "^2.1.1",
+    "drag-drop": "2.13.3",
+    "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "preact": "8.2.9",
     "preact-css-transition-group": "^1.3.0",

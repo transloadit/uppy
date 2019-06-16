@@ -1,10 +1,3 @@
-exports.getUsername = (data) => {
-  // @todo implement a better way to get usernames
-  if (data.data && data.data.length) {
-    return data.data[0].user.username
-  }
-}
-
 exports.isFolder = (item) => {
   return false
 }
