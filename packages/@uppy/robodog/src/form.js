@@ -42,7 +42,7 @@ function form (target, opts) {
     if (opts.modal) {
       const trigger = 'input[type="file"]'
       const button = document.createElement('button')
-      button.textContent = 'Select files'
+      button.textContent = uppy.i18n('chooseFiles')
       button.type = 'button'
       const old = findDOMElement(trigger, findDOMElement(target))
       old.parentNode.replaceChild(button, old)
