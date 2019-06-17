@@ -16,7 +16,8 @@ class Instagram {
   }
 
   list ({ directory = 'recent', token, query = {} }, done) {
-    const qs = query.max_id ? { max_id: query.max_id } : {}
+    const cursor = query.cursor || query.max_id
+    const qs = cursor ? { max_id: cursor } : {}
     this.client
       .select(`users/self/media/${directory}`)
       .qs(qs)

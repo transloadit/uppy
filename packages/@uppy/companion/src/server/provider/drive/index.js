@@ -27,7 +27,7 @@ class Drive {
 
     let teamDrivesPromise = Promise.resolve(undefined)
 
-    const shouldListTeamDrives = directory === 'root' && !query.nextPageToken
+    const shouldListTeamDrives = directory === 'root' && !query.cursor
     if (shouldListTeamDrives) {
       teamDrivesPromise = new Promise((resolve) => {
         this.client
@@ -47,7 +47,7 @@ class Drive {
 
     let where = {
       fields: DRIVE_FILES_FIELDS,
-      pageToken: query.nextPageToken,
+      pageToken: query.cursor,
       q: `'${directory}' in parents and trashed=false`,
       includeItemsFromAllDrives: true,
       supportsAllDrives: true
