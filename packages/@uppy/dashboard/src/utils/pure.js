@@ -11,7 +11,11 @@ module.exports = function pure (Inner) {
     }
 
     render () {
-      return <Inner {...this.props} />
+      // we have to clone this or Preact mutates it:
+      // https://github.com/preactjs/preact/issues/836
+      // TODO can be removed if we upgrade to Preact X
+      const props = { ...this.props }
+      return <Inner {...props} />
     }
   }
 }
