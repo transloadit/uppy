@@ -12,7 +12,7 @@ const cuid = require('cuid')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultPickerIcon } = require('./components/icons')
 const createSuperFocus = require('./utils/createSuperFocus')
-const memoize = require('memoize-one')
+const memoize = require('memoize-one').default || require('memoize-one')
 
 const TAB_KEY = 9
 const ESC_KEY = 27
