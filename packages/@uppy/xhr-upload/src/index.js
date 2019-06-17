@@ -111,12 +111,12 @@ module.exports = class XHRUpload extends Plugin {
 
   getOptions (file) {
     const overrides = this.uppy.getState().xhrUpload
-    const opts = Object.assign({},
-      this.opts,
-      overrides || {},
-      file.xhrUpload || {}
-    )
-    opts.headers = {}
+    const opts = {
+      ...this.opts,
+      ...(overrides || {}),
+      ...(file.xhrUpload || {}),
+      headers: {}
+    }
     Object.assign(opts.headers, this.opts.headers)
     if (overrides) {
       Object.assign(opts.headers, overrides.headers)
@@ -171,22 +171,45 @@ module.exports = class XHRUpload extends Plugin {
     }
   }
 
-  createFormDataUpload (file, opts) {
-    const formPost = new FormData()
-
+  addMetadata (formData, meta, opts) {
     const metaFields = Array.isArray(opts.metaFields)
       ? opts.metaFields
       // Send along all fields by default.
-      : Object.keys(file.meta)
+      : Object.keys(meta)
     metaFields.forEach((item) => {
-      formPost.append(item, file.meta[item])
+      formData.append(item, meta[item])
     })
+  }
+
+  createFormDataUpload (file, opts) {
+    const formPost = new FormData()
+
+    this.addMetadata(formPost, file.meta, opts)
 
     if (file.name) {
       formPost.append(opts.fieldName, file.data, file.name)
     } else {
       formPost.append(opts.fieldName, file.data)
     }
+
+    return formPost
+  }
+
+  createBundledUpload (files, opts) {
+    const formPost = new FormData()
+
+    const { meta } = this.uppy.getState()
+    this.addMetadata(formPost, meta, opts)
+
+    files.forEach((file) => {
+      const opts = this.getOptions(file)
+
+      if (file.name) {
+        formPost.append(opts.fieldName, file.data, file.name)
+      } else {
+        formPost.append(opts.fieldName, file.data)
+      }
+    })
 
     return formPost
   }
@@ -368,15 +391,10 @@ module.exports = class XHRUpload extends Plugin {
       const endpoint = this.opts.endpoint
       const method = this.opts.method
 
-      const formData = new FormData()
-      files.forEach((file, i) => {
-        const opts = this.getOptions(file)
-
-        if (file.name) {
-          formData.append(opts.fieldName, file.data, file.name)
-        } else {
-          formData.append(opts.fieldName, file.data)
-        }
+      const optsFromState = this.uppy.getState().xhrUpload
+      const formData = this.createBundledUpload(files, {
+        ...this.opts,
+        ...(optsFromState || {})
       })
 
       const xhr = new XMLHttpRequest()
