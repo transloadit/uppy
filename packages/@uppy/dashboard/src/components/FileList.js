@@ -9,6 +9,32 @@ module.exports = (props) => {
     { 'uppy-Dashboard-files--noFiles': noFiles }
   )
 
+  const fileProps = {
+    // FIXME This is confusing, it's actually the Dashboard's plugin ID
+    id: props.id,
+    error: props.error,
+    // TODO move this to context
+    i18n: props.i18n,
+    log: props.log,
+    info: props.info,
+    // features
+    acquirers: props.acquirers,
+    resumableUploads: props.resumableUploads,
+    individualCancellation: props.individualCancellation,
+    // visual options
+    hideRetryButton: props.hideRetryButton,
+    hidePauseResumeCancelButtons: props.hidePauseResumeCancelButtons,
+    showLinkToFileUploadResult: props.showLinkToFileUploadResult,
+    isWide: props.isWide,
+    metaFields: props.metaFields,
+    // callbacks
+    retryUpload: props.retryUpload,
+    pauseUpload: props.pauseUpload,
+    cancelUpload: props.cancelUpload,
+    toggleFileCard: props.toggleFileCard,
+    removeFile: props.removeFile
+  }
+
   return (
     <ul
       class={dashboardFilesClass}
@@ -16,7 +42,7 @@ module.exports = (props) => {
       tabindex="-1">
       {Object.keys(props.files).map((fileID) => (
         <FileItem
-          {...props}
+          {...fileProps}
           acquirers={props.acquirers}
           file={props.files[fileID]}
         />

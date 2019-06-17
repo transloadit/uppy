@@ -7,7 +7,18 @@ const getFileTypeIcon = require('../utils/getFileTypeIcon')
 const FilePreview = require('./FilePreview')
 const { iconRetry } = require('./icons')
 const classNames = require('classnames')
-const { h } = require('preact')
+const shallowEqual = require('is-shallow-equal')
+const { h, Component } = require('preact')
+
+function pure (Inner) {
+  return class Pure extends Component {
+    shouldComponentUpdate (nextProps) {
+      return !shallowEqual(this.props, nextProps)
+    }
+
+    render () { return <Inner {...this.props} /> }
+  }
+}
 
 function FileItemProgressWrapper (props) {
   if (props.hideRetryButton && props.error) {
@@ -44,7 +55,7 @@ function FileItemProgressWrapper (props) {
   </button>
 }
 
-module.exports = function FileItem (props) {
+module.exports = pure(function FileItem (props) {
   const file = props.file
   const acquirers = props.acquirers
 
@@ -205,4 +216,4 @@ module.exports = function FileItem (props) {
       }
     </div>
   </li>
-}
+})

@@ -30,6 +30,7 @@
     "classnames": "^2.2.6",
     "cuid": "^2.1.1",
     "drag-drop": "2.13.3",
+    "is-shallow-equal": "^1.0.1",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "preact": "8.2.9",
