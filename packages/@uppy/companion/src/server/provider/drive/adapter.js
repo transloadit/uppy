@@ -56,16 +56,6 @@ exports.getItemId = (item) => {
 }
 
 exports.getItemRequestPath = (item) => {
-  // If it's from/is a Team Drive, add the Team Drive ID as a query param.
-  // The server needs the Team Drive ID to list files in a Team Drive folder.
-  if (exports.isTeamDrive(item)) {
-    return `${item.id}?teamDriveId=${item.id}`
-  }
-
-  if (item.teamDriveId) {
-    return item.id + `?teamDriveId=${item.teamDriveId}`
-  }
-
   return item.id
 }
 

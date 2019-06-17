@@ -24,11 +24,10 @@ class Drive {
   list (options, done) {
     const directory = options.directory || 'root'
     const query = options.query || {}
-    const teamDriveId = query.teamDriveId
 
     let teamDrivesPromise = Promise.resolve(undefined)
 
-    const shouldListTeamDrives = directory === 'root' && !teamDriveId && !query.nextPageToken
+    const shouldListTeamDrives = directory === 'root' && !query.nextPageToken
     if (shouldListTeamDrives) {
       teamDrivesPromise = new Promise((resolve) => {
         this.client
@@ -49,14 +48,9 @@ class Drive {
     let where = {
       fields: DRIVE_FILES_FIELDS,
       pageToken: query.nextPageToken,
-      q: `'${directory}' in parents and trashed=false`
-    }
-    if (teamDriveId) {
-      // Team Drives require several extra parameters in order to work.
-      where.supportsAllDrives = true
-      where.includeItemsFromAllDrives = true
-      where.driveId = teamDriveId
-      where.corpora = 'drive'
+      q: `'${directory}' in parents and trashed=false`,
+      includeItemsFromAllDrives: true,
+      supportsAllDrives: true
     }
 
     const filesPromise = new Promise((resolve, reject) => {
