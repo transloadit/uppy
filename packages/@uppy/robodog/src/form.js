@@ -8,7 +8,26 @@ const addDashboardPlugin = require('./addDashboardPlugin')
 const addTransloaditPlugin = require('./addTransloaditPlugin')
 const addProviders = require('./addProviders')
 
+const defaultLocaleStrings = {
+  chooseFiles: 'Choose files'
+}
+
+function mergeDefaultLocale (defaults, userProvided = {}) {
+  const strings = userProvided.strings || {}
+  return {
+    ...userProvided,
+    strings: { ...defaults, ...strings }
+  }
+}
+
 function form (target, opts) {
+  if (!opts) throw new TypeError('robodog.form: must provide an options object')
+
+  opts = {
+    ...opts,
+    locale: mergeDefaultLocale(defaultLocaleStrings, opts.locale)
+  }
+
   const uppy = Uppy(opts)
   addTransloaditPlugin(uppy, opts)
 
