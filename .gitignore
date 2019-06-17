@@ -17,6 +17,8 @@ website/.deploy*/
 website/src/_drafts
 website/themes/uppy/source/uppy/
 website/themes/uppy/_config.yml
+website/src/_template/list_of_locale_packs.md
+website/themes/uppy/layout/partials/generated_stargazers.ejs
 
 npm-debug.log*
 nohup.out
