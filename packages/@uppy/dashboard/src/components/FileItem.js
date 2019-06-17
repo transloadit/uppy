@@ -4,21 +4,11 @@ const copyToClipboard = require('../utils/copyToClipboard')
 const prettyBytes = require('prettier-bytes')
 const FileItemProgress = require('./FileItemProgress')
 const getFileTypeIcon = require('../utils/getFileTypeIcon')
+const pure = require('../utils/pure')
 const FilePreview = require('./FilePreview')
 const { iconRetry } = require('./icons')
 const classNames = require('classnames')
-const shallowEqual = require('is-shallow-equal')
-const { h, Component } = require('preact')
-
-function pure (Inner) {
-  return class Pure extends Component {
-    shouldComponentUpdate (nextProps) {
-      return !shallowEqual(this.props, nextProps)
-    }
-
-    render () { return <Inner {...this.props} /> }
-  }
-}
+const { h } = require('preact')
 
 function FileItemProgressWrapper (props) {
   if (props.hideRetryButton && props.error) {
