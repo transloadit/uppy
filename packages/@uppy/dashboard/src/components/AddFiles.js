@@ -40,7 +40,7 @@ class AddFiles extends Component {
         target="_blank"
         class="uppy-Dashboard-poweredBy">
         {this.props.i18n('poweredBy') + ' '}
-        <svg aria-hidden="true" class="UppyIcon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
+        <svg aria-hidden="true" focusable="false" class="UppyIcon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
           <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fill-rule="evenodd" />
         </svg>
         <span class="uppy-Dashboard-poweredByUppy">Uppy</span>
@@ -88,6 +88,7 @@ class AddFiles extends Component {
           class="uppy-DashboardTab-btn"
           role="tab"
           tabindex={0}
+          data-uppy-super-focusable
           onclick={this.triggerFileInputClick}>
           {localIcon()}
           <div class="uppy-DashboardTab-name">{this.props.i18n('myDevice')}</div>
@@ -105,6 +106,7 @@ class AddFiles extends Component {
           tabindex={0}
           aria-controls={`uppy-DashboardContent-panel--${acquirer.id}`}
           aria-selected={this.props.activePickerPanel.id === acquirer.id}
+          data-uppy-super-focusable
           onclick={() => this.props.showPanel(acquirer.id)}>
           {acquirer.icon()}
           <div class="uppy-DashboardTab-name">{acquirer.name}</div>

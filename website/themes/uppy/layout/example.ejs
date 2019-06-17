@@ -27,18 +27,33 @@
 
   <textarea id="console-log" class="Console"></textarea>
   <script>
-    console.log = (function (log, container) {
-      return function (text) {
-        log(text);
+    function customLog (log, container) {
+      return function () {
+        var text = [];
+        // loop through `arguments`, because console.log accepts multiple
+        var args = Array.prototype.slice.call(arguments);
+        args.forEach(function (arg) {
+          if (arg !== (arg + '')) {
+            // try/catch to prevent TypeError: cyclic object value
+            try {
+              arg = JSON.stringify(arg);
+            } catch (err) {}
+          }
+          text.push(arg);
+        })
 
-        if (text !== (text + '')) {
-          text = JSON.stringify(text);
-        }
+        text = text.join(' ');
+
+        log(text);
 
         container.value += text + '\n';
         container.scrollTop = container.scrollHeight;
       };
-    }(console.log.bind(console), document.getElementById("console-log")));
+    }
+
+    console.log = customLog(console.log.bind(console), document.getElementById("console-log"));
+    console.warn = customLog(console.warn.bind(console), document.getElementById("console-log"));
+    console.error = customLog(console.error.bind(console), document.getElementById("console-log"));
   </script>
 
   <script>

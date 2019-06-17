@@ -10,6 +10,8 @@ const { h } = require('preact')
  *
  */
 module.exports = class DragDrop extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'

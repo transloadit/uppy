@@ -16,6 +16,8 @@ const defaultSelector = (id) => (state) => state.uppy[id]
  *    Defaults to retrieving `state.uppy[opts.id]`. Override if you placed Uppy state elsewhere in the Redux store.
  */
 class ReduxStore {
+  static VERSION = require('../package.json').version
+
   constructor (opts) {
     this._store = opts.store
     this._id = opts.id || cuid()
