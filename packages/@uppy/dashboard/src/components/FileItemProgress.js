@@ -11,7 +11,7 @@ const circleLength = 2 * Math.PI * 15
 // substracted from circleLength, because its an offset
 module.exports = (props) => {
   return (
-    <svg width="70" height="70" viewBox="0 0 36 36" class="UppyIcon UppyIcon-progressCircle">
+    <svg aria-hidden="true" focusable="false" width="70" height="70" viewBox="0 0 36 36" class="UppyIcon UppyIcon-progressCircle">
       <g class="progress-group">
         <circle class="bg" r="15" cx="18" cy="18" stroke-width="2" fill="none" />
         <circle class="progress" r="15" cx="18" cy="18" transform="rotate(-90, 18, 18)" stroke-width="2" fill="none"
