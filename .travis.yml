@@ -6,6 +6,8 @@ matrix:
     - node_js: 10
       env: UNIT=true
     - node_js: 10
+      env: LINT=true
+    - node_js: 10
       env: WEBSITE=true
     - node_js: 10
       env: ACCEPTANCE=true
