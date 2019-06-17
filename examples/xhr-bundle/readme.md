@@ -6,6 +6,13 @@ This example uses Uppy with XHRUpload plugin in `bundle` mode. Bundle mode uploa
 
 ## Run it
 
+To run this example, make sure you've correctly installed the root repository:
+
+```bash
+npm install
+npm run bootstrap
+```
+
 Move into this directory, then:
 
 ```bash

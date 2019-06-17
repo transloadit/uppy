@@ -68,8 +68,10 @@ When `formData` is set to true, this is used as the form field name for the file
 ### `metaFields: null`
 
 Pass an array of field names to limit the metadata fields that will be sent to the endpoint as form fields.
-For example, `metaFields: ['name']` will only send the `name` field.
-Setting this to `null` (the default) will send *all* metadata fields.
+
+* Set this to `['name']` to only send the `name` field.
+* Set this to `null` (the default) to send *all* metadata fields.
+* Set this to an empty array `[]` to not send any fields.
 
 If the `formData` option is set to false, `metaFields` has no effect.
 

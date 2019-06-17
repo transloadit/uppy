@@ -9,6 +9,8 @@ const getFormData = require('get-form-data').default || require('get-form-data')
  * Form
  */
 module.exports = class Form extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'

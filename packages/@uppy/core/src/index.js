@@ -1,7 +1,7 @@
 const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
-// const throttle = require('lodash.throttle')
+const throttle = require('lodash.throttle')
 const prettyBytes = require('prettier-bytes')
 const match = require('mime-match')
 const DefaultStore = require('@uppy/store-default')
@@ -18,6 +18,8 @@ const Plugin = require('./Plugin') // Exported from here.
  * adds/removes files and metadata.
  */
 class Uppy {
+  static VERSION = require('../package.json').version
+
   /**
   * Instantiate Uppy
   * @param {object} opts — Uppy options
@@ -81,6 +83,8 @@ class Uppy {
     this.opts = Object.assign({}, defaultOptions, opts)
     this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
 
+    this.log(`Using Core v${this.constructor.VERSION}`)
+
     // i18n
     this.translator = new Translator([ this.defaultLocale, this.opts.locale ])
     this.locale = this.translator.locale
@@ -100,7 +104,14 @@ class Uppy {
     this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
     this.pauseResume = this.pauseResume.bind(this)
-    this._calculateProgress = this._calculateProgress.bind(this)
+
+    // ___Why throttle at 500ms?
+    //    - We must throttle at >250ms for superfocus in Dashboard to work well (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
+    //    [Practical Check]: if thottle is at 100ms, then if you are uploading a file, and click 'ADD MORE FILES', - focus won't activate in Firefox.
+    //    - We must throttle at around >500ms to avoid performance lags.
+    //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
+    this._calculateProgress = throttle(this._calculateProgress.bind(this), 500, { leading: true, trailing: true })
+
     this.updateOnlineStatus = this.updateOnlineStatus.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
 
@@ -221,7 +232,7 @@ class Uppy {
       percentage: 0,
       bytesUploaded: 0,
       uploadComplete: false,
-      uploadStarted: false
+      uploadStarted: null
     }
     const files = Object.assign({}, this.getState().files)
     const updatedFiles = {}
@@ -450,7 +461,7 @@ class Uppy {
         bytesUploaded: 0,
         bytesTotal: size,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       },
       size: size,
       isRemote: isRemote,
@@ -757,12 +768,6 @@ class Uppy {
       })
     })
 
-    // upload progress events can occur frequently, especially when you have a good
-    // connection to the remote server. Therefore, we are throtteling them to
-    // prevent accessive function calls.
-    // see also: https://github.com/tus/tus-js-client/commit/9940f27b2361fd7e10ba58b09b60d82422183bbb
-    // const _throttledCalculateProgress = throttle(this._calculateProgress, 100, { leading: true, trailing: true })
-
     this.on('upload-progress', this._calculateProgress)
 
     this.on('upload-success', (file, uploadResp) => {
@@ -905,6 +910,10 @@ class Uppy {
         `Tried to use: '${pluginId}'.\n` +
         `Uppy plugins must have unique 'id' options. See https://uppy.io/docs/plugins/#id.`
       throw new Error(msg)
+    }
+
+    if (Plugin.VERSION) {
+      this.log(`Using ${pluginId} v${Plugin.VERSION}`)
     }
 
     this.plugins[plugin.type].push(plugin)
@@ -1172,18 +1181,23 @@ class Uppy {
 
       lastStep = lastStep.then(() => {
         const { currentUploads } = this.getState()
-        const currentUpload = Object.assign({}, currentUploads[uploadID], {
+        const currentUpload = currentUploads[uploadID]
+        if (!currentUpload) {
+          return
+        }
+
+        const updatedUpload = Object.assign({}, currentUpload, {
           step: step
         })
         this.setState({
           currentUploads: Object.assign({}, currentUploads, {
-            [uploadID]: currentUpload
+            [uploadID]: updatedUpload
           })
         })
 
-        // TODO give this the `currentUpload` object as its only parameter maybe?
+        // TODO give this the `updatedUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-        return fn(currentUpload.fileIDs, uploadID)
+        return fn(updatedUpload.fileIDs, uploadID)
       }).then((result) => {
         return null
       })

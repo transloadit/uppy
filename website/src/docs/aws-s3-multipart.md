@@ -92,7 +92,7 @@ Return a Promise for an object with keys:
      UploadId: partData.uploadId,
      PartNumber: partData.number,
      Body: '', // Empty, because it is uploaded later
-     Expires: Date.now() + 5 * 60 * 1000
+     Expires: 5 * 60,
    }, (err, url) => { /* there's the url! */ })
    ```
 

@@ -352,8 +352,12 @@
   }
 }
 
+.page-docs-locales table {
+  overflow: visible;
+}
 .page-docs-locales table td {
   white-space: nowrap;
+  font-size: 90%;
 }
 
 body.plugin-list li {

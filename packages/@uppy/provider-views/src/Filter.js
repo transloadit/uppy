@@ -3,16 +3,14 @@ const { h, Component } = require('preact')
 module.exports = class Filter extends Component {
   constructor (props) {
     super(props)
-    this.handleKeyPress = this.handleKeyPress.bind(this)
+    this.preventEnterPress = this.preventEnterPress.bind(this)
   }
 
-  handleKeyPress (ev) {
+  preventEnterPress (ev) {
     if (ev.keyCode === 13) {
       ev.stopPropagation()
       ev.preventDefault()
-      return
     }
-    this.props.filterQuery(ev)
   }
 
   render () {
@@ -22,11 +20,11 @@ module.exports = class Filter extends Component {
         type="text"
         placeholder={this.props.i18n('filter')}
         aria-label={this.props.i18n('filter')}
-        onkeyup={this.handleKeyPress}
-        onkeydown={this.handleKeyPress}
-        onkeypress={this.handleKeyPress}
-        value={this.props.filterInput}
-        ref={(input) => { this.input = input }} />
+        onkeyup={this.preventEnterPress}
+        onkeydown={this.preventEnterPress}
+        onkeypress={this.preventEnterPress}
+        oninput={(e) => this.props.filterQuery(e)}
+        value={this.props.filterInput} />
       <svg aria-hidden="true" class="UppyIcon uppy-ProviderBrowser-searchIcon" width="12" height="12" viewBox="0 0 12 12">
         <path d="M8.638 7.99l3.172 3.172a.492.492 0 1 1-.697.697L7.91 8.656a4.977 4.977 0 0 1-2.983.983C2.206 9.639 0 7.481 0 4.819 0 2.158 2.206 0 4.927 0c2.721 0 4.927 2.158 4.927 4.82a4.74 4.74 0 0 1-1.216 3.17zm-3.71.685c2.176 0 3.94-1.726 3.94-3.856 0-2.129-1.764-3.855-3.94-3.855C2.75.964.984 2.69.984 4.819c0 2.13 1.765 3.856 3.942 3.856z" />
       </svg>

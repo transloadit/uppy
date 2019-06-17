@@ -7,7 +7,8 @@ module.exports = ({ onSnapshot, i18n }) => {
       type="button"
       title={i18n('takePicture')}
       aria-label={i18n('takePicture')}
-      onclick={onSnapshot}>
+      onclick={onSnapshot}
+      data-uppy-super-focusable>
       {CameraIcon()}
     </button>
   )

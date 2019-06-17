@@ -123,6 +123,8 @@ To run Companion as a standalone server, you are required to set your Uppy [Opti
 
 # any long set of random characters for the server session
 export COMPANION_SECRET="shh!Issa Secret!"
+# specifying a secret file will override a directly set secret
+export COMPANION_SECRET_FILE="PATH/TO/COMPANION/SECRET/FILE"
 # corresponds to the server.host option
 export COMPANION_DOMAIN="YOUR SERVER DOMAIN"
 # corresponds to the filePath option
@@ -153,18 +155,26 @@ export COMPANION_REDIS_URL="REDIS URL"
 # to enable Dropbox
 export COMPANION_DROPBOX_KEY="YOUR DROPBOX KEY"
 export COMPANION_DROPBOX_SECRET="YOUR DROPBOX SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_DROPBOX_SECRET_FILE="PATH/TO/DROPBOX/SECRET/FILE"
 
 # to enable Google Drive
 export COMPANION_GOOGLE_KEY="YOUR GOOGLE KEY"
 export COMPANION_GOOGLE_SECRET="YOUR GOOGLE SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_GOOGLE_SECRET_FILE="PATH/TO/GOOGLE/SECRET/FILE"
 
 # to enable Instagram
 export COMPANION_INSTAGRAM_KEY="YOUR INSTAGRAM KEY"
 export COMPANION_INSTAGRAM_SECRET="YOUR INSTAGRAM SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_INSTAGRAM_SECRET_FILE="PATH/TO/INSTAGRAM/SECRET/FILE"
 
 # to enable S3
 export COMPANION_AWS_KEY="YOUR AWS KEY"
 export COMPANION_AWS_SECRET="YOUR AWS SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_AWS_SECRET_FILE="PATH/TO/AWS/SECRET/FILE"
 export COMPANION_AWS_BUCKET="YOUR AWS S3 BUCKET"
 export COMPANION_AWS_REGION="AWS REGION"
 
@@ -281,7 +291,7 @@ let options = {
                 access_url: "https://mywebsite.com/token",
                 oauth: 2,
                 key: "***",
-                secret: "**",
+                secret: "***",
                 scope: ["read", "write"]
             },
             module: require('/path/to/provider/module')

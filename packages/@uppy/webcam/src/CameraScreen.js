@@ -9,7 +9,6 @@ function isModeAvailable (modes, mode) {
 class CameraScreen extends Component {
   componentDidMount () {
     this.props.onFocus()
-    this.btnContainer.firstChild.focus()
   }
 
   componentWillUnmount () {
@@ -29,7 +28,7 @@ class CameraScreen extends Component {
         <div class="uppy-Webcam-videoContainer">
           <video class={`uppy-Webcam-video  ${this.props.mirror ? 'uppy-Webcam-video--mirrored' : ''}`} autoplay muted playsinline srcObject={this.props.src || ''} />
         </div>
-        <div class="uppy-Webcam-buttonContainer" ref={(el) => { this.btnContainer = el }}>
+        <div class="uppy-Webcam-buttonContainer">
           {shouldShowSnapshotButton ? SnapshotButton(this.props) : null}
           {' '}
           {shouldShowRecordButton ? RecordButton(this.props) : null}

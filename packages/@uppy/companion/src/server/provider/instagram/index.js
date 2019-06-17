@@ -27,7 +27,24 @@ class Instagram {
           logger.error(err, 'provider.instagram.list.error')
           return done(err)
         } else {
-          done(null, this.adaptData(body))
+          this._getUsername(token, (err, username) => {
+            err ? done(err) : done(null, this.adaptData(body, username))
+          })
+        }
+      })
+  }
+
+  _getUsername (token, done) {
+    this.client
+      .select('users/self')
+      .auth(token)
+      .request((err, resp, body) => {
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
+          logger.error(err, 'provider.instagram.user.error')
+          return done(err)
+        } else {
+          done(null, body.data.username)
         }
       })
   }
@@ -109,8 +126,8 @@ class Instagram {
       })
   }
 
-  adaptData (res) {
-    const data = { username: adapter.getUsername(res), items: [] }
+  adaptData (res, username) {
+    const data = { username: username, items: [] }
     const items = adapter.getItemSubList(res)
     items.forEach((item) => {
       data.items.push({

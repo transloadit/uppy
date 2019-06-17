@@ -10,7 +10,10 @@ module.exports = (props) => {
   )
 
   return (
-    <ul class={dashboardFilesClass}>
+    <ul
+      class={dashboardFilesClass}
+      // making <ul> not focusable for firefox
+      tabindex="-1">
       {Object.keys(props.files).map((fileID) => (
         <FileItem
           {...props}
