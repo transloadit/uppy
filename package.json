@@ -20,6 +20,10 @@
     "@babel/register": "^7.4.4",
     "@octokit/rest": "^16.25.0",
     "@types/react": "^16.8.10",
+    "@wdio/cli": "^5.10.7",
+    "@wdio/local-runner": "^5.10.7",
+    "@wdio/mocha-framework": "^5.0.0",
+    "@wdio/sauce-service": "^5.0.0",
     "aliasify": "^2.1.0",
     "autoprefixer": "^9.5.1",
     "babel-jest": "^24.8.0",
@@ -86,10 +90,8 @@
     "typescript": "^3.4.5",
     "verdaccio": "^4.0.0",
     "watchify": "^3.11.1",
-    "wdio-mocha-framework": "^0.6.4",
-    "wdio-sauce-service": "^0.4.14",
     "wdio-static-server-service": "^1.0.1",
-    "webdriverio": "^4.14.4"
+    "webdriverio": "^5.0.0"
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
