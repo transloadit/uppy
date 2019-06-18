@@ -38,15 +38,15 @@ describe('XHRUpload', () => {
   describe('validateStatus', () => {
     it('emit upload error under status code 200', () => {
       nock('https://fake-endpoint.uppy.io')
-      .defaultReplyHeaders({
-        'access-control-allow-method': 'POST',
-        'access-control-allow-origin': '*'
-      })
-      .options('/').reply(200, {})
-      .post('/').reply(200, {
-        code: 40000,
-        message: 'custom upload error'
-      })
+        .defaultReplyHeaders({
+          'access-control-allow-method': 'POST',
+          'access-control-allow-origin': '*'
+        })
+        .options('/').reply(200, {})
+        .post('/').reply(200, {
+          code: 40000,
+          message: 'custom upload error'
+        })
 
       const core = new Core()
       const validateStatus = jest.fn(function (status, responseText, response) {

@@ -23,7 +23,7 @@ const meta = (req, res) => {
 
   if (!validator.isURL(req.body.url, { require_protocol: true, require_tld: !req.uppy.options.debug })) {
     logger.debug('Invalid request body detected. Exiting url meta handler.')
-    return res.status(400).json({error: 'Invalid request body'})
+    return res.status(400).json({ error: 'Invalid request body' })
   }
 
   utils.getURLMeta(req.body.url)

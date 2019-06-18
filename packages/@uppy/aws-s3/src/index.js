@@ -28,6 +28,8 @@ function assertServerError (res) {
 }
 
 module.exports = class AwsS3 extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
@@ -138,7 +140,7 @@ module.exports = class AwsS3 extends Plugin {
           method,
           formData: method.toLowerCase() === 'post',
           endpoint: url,
-          metaFields: Object.keys(fields)
+          metaFields: fields ? Object.keys(fields) : []
         }
 
         if (headers) {

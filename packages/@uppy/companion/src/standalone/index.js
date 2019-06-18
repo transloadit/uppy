@@ -14,7 +14,7 @@ const { version } = require('../../package.json')
 const app = express()
 
 // for server metrics tracking.
-const metricsMiddleware = promBundle({includeMethod: true})
+const metricsMiddleware = promBundle({ includeMethod: true })
 const promClient = metricsMiddleware.promClient
 const collectDefaultMetrics = promClient.collectDefaultMetrics
 const promInterval = collectDefaultMetrics({ register: promClient.register, timeout: 5000 })
@@ -31,13 +31,20 @@ if (app.get('env') !== 'test') {
 // log server requests.
 app.use(morgan('combined'))
 morgan.token('url', (req, res) => {
-  // don't log access_tokens in urls
-  if (req.query && req.query.access_token) {
+  const mask = (key) => {
+    // don't log access_tokens in urls
     const query = Object.assign({}, req.query)
     // replace logged access token with xxxx character
-    query.access_token = 'x'.repeat(req.query.access_token.length)
+    query[key] = 'x'.repeat(req.query[key].length)
     return `${req.path}?${qs.stringify(query)}`
   }
+
+  if (req.query && req.query['access_token']) {
+    return mask('access_token')
+  } else if (req.query && req.query['uppyAuthToken']) {
+    return mask('uppyAuthToken')
+  }
+
   return req.originalUrl || req.url
 })
 

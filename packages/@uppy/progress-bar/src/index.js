@@ -6,6 +6,8 @@ const { h } = require('preact')
  *
  */
 module.exports = class ProgressBar extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'ProgressBar'

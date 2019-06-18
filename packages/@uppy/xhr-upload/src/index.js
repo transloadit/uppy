@@ -22,6 +22,8 @@ function buildResponseError (xhr, error) {
 }
 
 module.exports = class XHRUpload extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
@@ -320,17 +322,14 @@ module.exports = class XHRUpload extends Plugin {
 
       const Client = file.remote.providerOptions.provider ? Provider : RequestClient
       const client = new Client(this.uppy, file.remote.providerOptions)
-      client.post(
-        file.remote.url,
-        Object.assign({}, file.remote.body, {
-          endpoint: opts.endpoint,
-          size: file.data.size,
-          fieldname: opts.fieldName,
-          metadata: fields,
-          headers: opts.headers
-        })
-      )
-      .then((res) => {
+      client.post(file.remote.url, {
+        ...file.remote.body,
+        endpoint: opts.endpoint,
+        size: file.data.size,
+        fieldname: opts.fieldName,
+        metadata: fields,
+        headers: opts.headers
+      }).then((res) => {
         const token = res.token
         const host = getSocketHost(file.remote.companionUrl)
         const socket = new Socket({ target: `${host}/api/${token}` })

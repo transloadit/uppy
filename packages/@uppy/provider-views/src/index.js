@@ -16,6 +16,14 @@ function findIndex (array, predicate) {
   return -1
 }
 
+// location.origin does not exist in IE
+function getOrigin () {
+  if ('origin' in location) {
+    return location.origin // eslint-disable-line compat/compat
+  }
+  return `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}`
+}
+
 class CloseWrapper extends Component {
   componentWillUnmount () {
     this.props.onUnmount()
@@ -30,6 +38,8 @@ class CloseWrapper extends Component {
  * Class to easily generate generic views for Provider plugins
  */
 module.exports = class ProviderView {
+  static VERSION = require('../package.json').version
+
   /**
    * @param {object} instance of the plugin
    */
@@ -46,7 +56,7 @@ module.exports = class ProviderView {
     }
 
     // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
     // Logic
     this.addFile = this.addFile.bind(this)
@@ -120,7 +130,7 @@ module.exports = class ProviderView {
         if (index !== -1) {
           updatedDirectories = state.directories.slice(0, index + 1)
         } else {
-          updatedDirectories = state.directories.concat([{id, title: name}])
+          updatedDirectories = state.directories.concat([{ id, title: name }])
         }
 
         this.username = this.username ? this.username : res.username
@@ -227,7 +237,7 @@ module.exports = class ProviderView {
 
   sortByTitle () {
     const state = Object.assign({}, this.plugin.getPluginState())
-    const {files, folders, sorting} = state
+    const { files, folders, sorting } = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
       if (sorting === 'titleDescending') {
@@ -252,7 +262,7 @@ module.exports = class ProviderView {
 
   sortByDate () {
     const state = Object.assign({}, this.plugin.getPluginState())
-    const {files, folders, sorting} = state
+    const { files, folders, sorting } = state
 
     let sortedFiles = files.sort((fileA, fileB) => {
       let a = new Date(fileA.modifiedDate)
@@ -284,7 +294,7 @@ module.exports = class ProviderView {
 
   sortBySize () {
     const state = Object.assign({}, this.plugin.getPluginState())
-    const {files, sorting} = state
+    const { files, sorting } = state
 
     // check that plugin supports file sizes
     if (!files.length || !this.plugin.getItemData(files[0]).size) {
@@ -329,8 +339,8 @@ module.exports = class ProviderView {
     if (folderId in folders && folders[folderId].loading) {
       return
     }
-    folders[folderId] = {loading: true, files: []}
-    this.plugin.setPluginState({selectedFolders: folders})
+    folders[folderId] = { loading: true, files: [] }
+    this.plugin.setPluginState({ selectedFolders: folders })
     return this.provider.list(folder.requestPath).then((res) => {
       let files = []
       res.items.forEach((item) => {
@@ -340,8 +350,8 @@ module.exports = class ProviderView {
         }
       })
       state = this.plugin.getPluginState()
-      state.selectedFolders[folderId] = {loading: false, files: files}
-      this.plugin.setPluginState({selectedFolders: folders})
+      state.selectedFolders[folderId] = { loading: false, files: files }
+      this.plugin.setPluginState({ selectedFolders: folders })
       const dashboard = this.plugin.uppy.getPlugin('Dashboard')
       let message
       if (files.length) {
@@ -355,7 +365,7 @@ module.exports = class ProviderView {
     }).catch((e) => {
       state = this.plugin.getPluginState()
       delete state.selectedFolders[folderId]
-      this.plugin.setPluginState({selectedFolders: state.selectedFolders})
+      this.plugin.setPluginState({ selectedFolders: state.selectedFolders })
       this.handleError(e)
     })
   }
@@ -370,6 +380,7 @@ module.exports = class ProviderView {
   toggleCheckbox (e, file) {
     e.stopPropagation()
     e.preventDefault()
+    e.currentTarget.focus()
     let { folders, files } = this.plugin.getPluginState()
     let items = this.filterItems(folders.concat(files))
 
@@ -410,7 +421,7 @@ module.exports = class ProviderView {
   }
 
   handleAuth () {
-    const authState = btoa(JSON.stringify({ origin: location.origin }))
+    const authState = btoa(JSON.stringify({ origin: getOrigin() }))
     // @todo remove this hardcoded version
     const clientVersion = 'companion-client:1.0.2'
     const link = `${this.provider.authUrl()}?state=${authState}&uppyVersions=${clientVersion}`
@@ -450,8 +461,8 @@ module.exports = class ProviderView {
 
     const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
     return patterns
-      .filter((pattern) => pattern !== null)
-      .some((pattern) => pattern.test(origin))
+      .filter((pattern) => pattern != null) // loose comparison to catch undefined
+      .some((pattern) => pattern.test(origin) || pattern.test(`${origin}/`)) // allowing for trailing '/'
   }
 
   handleError (error) {
@@ -461,7 +472,7 @@ module.exports = class ProviderView {
       return
     }
     const message = uppy.i18n('companionError')
-    uppy.info({message: message, details: error.toString()}, 'error', 5000)
+    uppy.info({ message: message, details: error.toString() }, 'error', 5000)
   }
 
   handleScroll (e) {

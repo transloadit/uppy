@@ -192,9 +192,12 @@
   position: relative;
   text-align: center;
   flex: 1;
-  margin: 7px;
-  border: 1px dashed $gray-250;
-  border-radius: 3px;
+
+  .uppy-size--md & {
+    margin: 7px;
+    border-radius: 3px;
+    border: 1px dashed $gray-250; // Show dashed border on large screens only
+  }
 
   .uppy-Dashboard-AddFilesPanel & {
     border: none;
@@ -307,7 +310,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 12px 15px;
+  padding: 12px 20px;
   line-height: 1;
   text-align: center;
 
@@ -330,7 +333,7 @@
 
   .uppy-DashboardTab-btn:active,
   .uppy-DashboardTab-btn:focus {
-    background-color: $highlight;
+    background-color: darken($gray-100--highlighted, 2%);
     outline: none;
   }
 
@@ -388,6 +391,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
   height: 40px;
   width: 100%;
   border-bottom: 1px solid $gray-200;
@@ -425,7 +429,6 @@
 
 .uppy-DashboardContent-back {
   @include reset-button;
-  @include highlight-focus;
   display: inline-block;
   font-size: 12px;
   font-weight: 400;
@@ -434,7 +437,11 @@
   padding: 7px 6px;
   margin-left: -6px;
   border-radius: 3px;
-  
+
+  &:hover {
+    color: darken($blue, 12%);
+  }
+
   .uppy-size--md & {
     font-size: 14px;
   }
@@ -442,40 +449,24 @@
 
 .uppy-DashboardContent-addMore {
   @include reset-button;
-  @include highlight-focus;
   display: inline-block;
+  font-weight: 500;
   cursor: pointer;
   color: $blue;
-  width: 29px;
-  height: 29px;
-  padding: 7px 8px;
-  margin-right: -8px;
+  width: 27px;
+  height: 27px;
+  padding: 6px;
+  margin-right: -6px;
   border-radius: 3px;
 
-  .uppy-size--md & {
-    font-size: 14px;
-    width: auto;
-    height: auto;
+  &:hover {
+    color: darken($blue, 12%)
   }
 }
 
-.uppy-DashboardContent-addMore svg {
-  vertical-align: baseline;
-  margin-right: 4px;
-
-  .uppy-size--md & {
-    width: 11px;
-    height: 11px;
+  .uppy-DashboardContent-addMore svg {
+    vertical-align: text-top;
   }
-}
-
-.uppy-DashboardContent-addMoreCaption {
-  display: none;
-
-  .uppy-size--md & {
-    display: inline;
-  }
-}
 
 .uppy-DashboardContent-panel {
   position: absolute;
@@ -623,7 +614,7 @@
   max-width: 300px;
   text-align: center;
   font-size: 16px;
-  line-height: 1.45;
+  line-height: 1.35;
   font-weight: 400;
   color: $gray-700;
   margin: auto;
@@ -688,7 +679,7 @@ a.uppy-Dashboard-poweredBy {
     float: left;
     margin: 5px $rl-margin;
     width: calc(33.333% - #{$rl-margin} - #{$rl-margin});
-    height: 170px;
+    height: 215px;
 
     flex-direction: column;
     background-color: initial;
@@ -699,6 +690,7 @@ a.uppy-Dashboard-poweredBy {
   }
 
   .uppy-size--lg & {
+    margin: 5px $rl-margin;
     width: calc(25% - #{$rl-margin} - #{$rl-margin});
     height: 190px;
   }
@@ -712,16 +704,16 @@ a.uppy-Dashboard-poweredBy {
 .uppy-DashboardItem-preview {
   width: 50px;
   height: 50px;
-  flex-shrink: 0;
   border-bottom: 0;
   position: relative;
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: center;
 
   .uppy-size--md & {
     width: 100%;
-    height: 100px;
+    height: 140px;
     border: 0;
   }
 
@@ -741,12 +733,15 @@ a.uppy-Dashboard-poweredBy {
   right: 0;
   bottom: 0;
   z-index: $zIndex-3;
+  &:focus{
+    box-shadow: inset 0px 0px 0px 4px rgb(59, 153, 252);
+  }
 }
 
 .uppy-DashboardItem-sourceIcon {
   display: inline-block;
   vertical-align: bottom;
-  color: $gray-400;
+  color: $gray-500;
 }
 
 .uppy-DashboardItem-sourceIcon svg,
@@ -774,7 +769,7 @@ a.uppy-Dashboard-poweredBy {
   border-radius: 3px;
 
   .uppy-size--md & {
-    box-shadow: 0 1px 2px rgba($black, 0.15);
+    box-shadow: 0 1px 3px rgba($black, 0.2);
   }
 }
 
@@ -795,6 +790,11 @@ a.uppy-Dashboard-poweredBy {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  // Fixes file previews being partially invisible in safari (for some pics only).
+  // (https://stackoverflow.com/a/27971913/3192470)
+  transform: translateZ(0);
+  // We need a repeated border-radius because of the transform.
+  border-radius: 3px;
 }
 
 
@@ -844,37 +844,31 @@ a.uppy-Dashboard-poweredBy {
 }
 
 .uppy-DashboardItem-info {
-  padding-right: 4px;
-  padding-left: 12px;
-  flex: 1;
-  height: 100%;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  padding-left: 15px;
+  position: relative;
+  max-width: 65%;
 
   .uppy-size--md & {
     width: 100%;
-    height: auto;
-    align-items: flex-start;
+    max-width: 100%;
     flex: 1;
-    padding: 9px 0 0;
+    padding: 8px 0 0;
     border-top: 0;
   }
-}
-
-.uppy-DashboardItem-file {
-  flex: 1;
 }
 
 .uppy-DashboardItem-name {
   font-size: 12px;
   line-height: 1.3;
   font-weight: 500;
-  margin: 0 0 4px;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 
   .uppy-size--md & {
-    padding-right: 0;
     word-break: break-all;
     white-space: normal;
     overflow: initial;
@@ -891,7 +885,7 @@ a.uppy-Dashboard-poweredBy {
   line-height: 1.3;
   font-weight: normal;
   color: $gray-600;
-  margin: 0 0 4px;
+  margin-bottom: 4px;
 }
 
 .uppy-DashboardItem-statusSize {
@@ -900,83 +894,69 @@ a.uppy-Dashboard-poweredBy {
   text-transform: uppercase;
 }
 
-.uppy-DashboardItem-actionWrapper {
-  padding-left: 8px;
-  margin-top: 0.1em;
-  white-space: nowrap;
-
-  .uppy-size--md & {
-    margin-top: 1px;
-    white-space: normal;
-    min-width: 24px;
-    padding-left: 12px;
-  }
-}
-
-.uppy-DashboardItem-action {
+.uppy-DashboardItem-edit,
+.uppy-DashboardItem-copyLink {
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: bottom;
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
   color: inherit;
-  width: 32px;
-  height: 32px;
-  padding: 8px;
-  text-align: center;
-  color: $gray-500;
-
-  &:hover {
-    color: $gray-600;
-  }
-  
-  .uppy-size--md & {
-    width: 16px;
-    height: 16px;
-    padding: 1px;
-    vertical-align: top;
-  }
 
   &:hover {
     text-decoration: underline;
   }
 }
 
-.uppy-DashboardItem-sourceIcon:not(:first-child) {
-  position: relative;
-  margin-left: 14px;
+span.uppy-DashboardItem-statusbar-dot{
+  display: inline-block;
+  color: $gray-600;
+  &:last-child{
+    display: none;
+  }
 }
 
-.uppy-DashboardItem-action--remove {
+.uppy-DashboardItem-statusSize,
+.uppy-DashboardItem-edit,
+.uppy-DashboardItem-copyLink,
+.uppy-DashboardItem-sourceIcon {
+  position: relative;
+  margin-left: 3px;
+  margin-right: 3px;
+
+  padding-left: 3px;
+  padding-right: 3px;
+
+  &:first-child{
+    margin-left: 0;
+    padding-left: 0;
+  }
+}
+
+.uppy-DashboardItem-action {
+  position: absolute;
+  top: 18px;
+  right: 10px;
+  z-index: $zIndex-3;
+
+  .uppy-size--md & {
+    top: -8px;
+    right: -8px;
+  }
+}
+
+.uppy-DashboardItem-remove {
   @include reset-button;
   cursor: pointer;
   color: $gray-900;
-  opacity: 0.95;
-  border-radius: 9px;
-
-  .uppy-size--md & {
-    z-index: $zIndex-3;
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    width: 18px;
-    height: 18px;
-    padding: 0;
-  }
+  width: 20px;
+  height: 20px;
+  padding: 1px;
+  opacity: 0.9;
 
   &:hover {
     opacity: 1;
-    color: $gray-900;
-  }
-
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba($blue, 0.5);
-  }
-
-  &::-moz-focus-inner {
-    border: 0;
   }
 }
 
@@ -1195,11 +1175,11 @@ a.uppy-Dashboard-poweredBy {
   align-items: center;
   padding: 0 15px;
   background-color: $gray-50;
+}
 
-  .uppy-size--md & {
+  .uppy-size--md .uppy-Dashboard-actions {
     height: 65px;
   }
-}
 
 .uppy-Dashboard-actionsBtn {
   margin-right: 10px;

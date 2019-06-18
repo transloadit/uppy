@@ -34,6 +34,8 @@ function assertServerError (res) {
 }
 
 module.exports = class AwsS3Multipart extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
@@ -175,13 +177,14 @@ module.exports = class AwsS3Multipart extends Plugin {
             uploadURL: result.location
           }
 
+          this.resetUploaderReferences(file.id)
+
           this.uppy.emit('upload-success', file, uploadResp)
 
           if (result.location) {
             this.uppy.log('Download ' + upload.file.name + ' from ' + result.location)
           }
 
-          this.resetUploaderReferences(file.id)
           resolve(upload)
         },
         onPartComplete: (part) => {
@@ -262,14 +265,11 @@ module.exports = class AwsS3Multipart extends Plugin {
         this.uppy.setFileState(file.id, { serverToken: res.token })
         file = this.uppy.getFile(file.id)
         return file
-      })
-      .then((file) => {
+      }).then((file) => {
         return this.connectToServerSocket(file)
-      })
-      .then(() => {
+      }).then(() => {
         resolve()
-      })
-      .catch((err) => {
+      }).catch((err) => {
         reject(new Error(err))
       })
     })

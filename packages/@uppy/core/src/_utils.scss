@@ -28,7 +28,7 @@
   &:hover {
     color: darken($blue, 10%);
   }
-  
+
   &:focus {
     outline: none;
     background-color: $highlight;
@@ -37,5 +37,4 @@
   &::-moz-focus-inner {
     border: 0;
   }
-
 }

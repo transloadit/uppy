@@ -1,14 +1,33 @@
 const Uppy = require('@uppy/core')
 const Form = require('@uppy/form')
 const StatusBar = require('@uppy/status-bar')
-const Dashboard = require('@uppy/dashboard')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 const AttachFileInputs = require('./AttachFileInputs')
 const TransloaditFormResult = require('./TransloaditFormResult')
+const addDashboardPlugin = require('./addDashboardPlugin')
 const addTransloaditPlugin = require('./addTransloaditPlugin')
 const addProviders = require('./addProviders')
 
+const defaultLocaleStrings = {
+  chooseFiles: 'Choose files'
+}
+
+function mergeDefaultLocale (defaults, userProvided = {}) {
+  const strings = userProvided.strings || {}
+  return {
+    ...userProvided,
+    strings: { ...defaults, ...strings }
+  }
+}
+
 function form (target, opts) {
+  if (!opts) throw new TypeError('robodog.form: must provide an options object')
+
+  opts = {
+    ...opts,
+    locale: mergeDefaultLocale(defaultLocaleStrings, opts.locale)
+  }
+
   const uppy = Uppy(opts)
   addTransloaditPlugin(uppy, opts)
 
@@ -42,7 +61,7 @@ function form (target, opts) {
     if (opts.modal) {
       const trigger = 'input[type="file"]'
       const button = document.createElement('button')
-      button.textContent = 'Select files'
+      button.textContent = uppy.i18n('chooseFiles')
       button.type = 'button'
       const old = findDOMElement(trigger, findDOMElement(target))
       old.parentNode.replaceChild(button, old)
@@ -51,7 +70,7 @@ function form (target, opts) {
       dashboardOpts.inline = true
       dashboardOpts.hideUploadButton = true
     }
-    uppy.use(Dashboard, dashboardOpts)
+    addDashboardPlugin(uppy, opts, dashboardOpts)
 
     if (Array.isArray(opts.providers)) {
       addProviders(uppy, opts.providers, {

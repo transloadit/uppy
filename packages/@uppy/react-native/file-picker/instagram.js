@@ -64,9 +64,9 @@ export default class UppyRNInstagram extends React.Component {
       <View style={styles.container}>
         <FlatList
           data={items}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View style={{ flex: 1, flexDirection: 'column', margin: 1 }}>
-              <Image style={styles.item} source={{uri: item.url}} />
+              <Image style={styles.item} source={{ uri: item.url }} />
             </View>
           )}
           keyExtractor={(item, index) => index.toString()}

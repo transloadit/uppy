@@ -9,6 +9,8 @@ const { h } = require('preact')
  *
  */
 module.exports = class Informer extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'progressindicator'
@@ -16,26 +18,7 @@ module.exports = class Informer extends Plugin {
     this.title = 'Informer'
 
     // set default options
-    const defaultOptions = {
-      typeColors: {
-        info: {
-          text: '#fff',
-          bg: '#000'
-        },
-        warning: {
-          text: '#fff',
-          bg: '#F6A623'
-        },
-        error: {
-          text: '#fff',
-          bg: '#D32F2F'
-        },
-        success: {
-          text: '#fff',
-          bg: '#1BB240'
-        }
-      }
-    }
+    const defaultOptions = {}
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -45,10 +28,6 @@ module.exports = class Informer extends Plugin {
 
   render (state) {
     const { isHidden, message, details } = state.info
-    // const style = {
-    //   backgroundColor: this.opts.typeColors[type].bg,
-    //   color: this.opts.typeColors[type].text
-    // }
 
     return (
       <div class="uppy uppy-Informer"

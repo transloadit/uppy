@@ -8,12 +8,15 @@ const disc = require('disc')
 
 const outputPath = path.join(__dirname, '../website/src/disc.html')
 
-function minifyify () {
-  return minify({
-    sourceMap: false,
-    toplevel: true,
-    compress: { unsafe: true }
-  })
+function minifyify (filename) {
+  if (filename.endsWith('.js')) {
+    return minify({
+      sourceMap: false,
+      toplevel: true,
+      compress: { unsafe: true }
+    })
+  }
+  return new PassThrough()
 }
 
 const bundler = browserify(path.join(__dirname, '../packages/uppy/index.js'), {

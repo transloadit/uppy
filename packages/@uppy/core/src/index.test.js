@@ -412,7 +412,7 @@ describe('src/Core', () => {
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false,
+        uploadStarted: null,
         preprocess: { mode: 'determinate', message: 'something', value: 0 }
       })
     })
@@ -439,7 +439,7 @@ describe('src/Core', () => {
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
     })
   })
@@ -519,7 +519,7 @@ describe('src/Core', () => {
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false,
+        uploadStarted: null,
         postprocess: { mode: 'determinate', message: 'something', value: 0 }
       })
     })
@@ -546,7 +546,7 @@ describe('src/Core', () => {
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
     })
   })
@@ -619,7 +619,7 @@ describe('src/Core', () => {
           bytesUploaded: 0,
           percentage: 0,
           uploadComplete: false,
-          uploadStarted: false
+          uploadStarted: null
         },
         remote: '',
         size: 17175,
@@ -991,19 +991,22 @@ describe('src/Core', () => {
         bytesUploaded: 12345,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
 
       core.emit('upload-progress', file, {
         bytesUploaded: 17175,
         bytesTotal: 17175
       })
+
+      core._calculateProgress.flush()
+
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 100,
         bytesUploaded: 17175,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
     })
 
@@ -1100,6 +1103,8 @@ describe('src/Core', () => {
       })
 
       core._calculateTotalProgress()
+      core._calculateProgress.flush()
+
       expect(core.getState().totalProgress).toEqual(66)
     })
 
@@ -1136,6 +1141,7 @@ describe('src/Core', () => {
       })
 
       core._calculateTotalProgress()
+      core._calculateProgress.flush()
 
       expect(core.getState().totalProgress).toEqual(66)
 
@@ -1146,14 +1152,14 @@ describe('src/Core', () => {
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
       expect(core.getFile(file2.id).progress).toEqual({
         percentage: 0,
         bytesUploaded: 0,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: false
+        uploadStarted: null
       })
       expect(core.getState().totalProgress).toEqual(0)
       expect(resetProgressEvent.mock.calls.length).toEqual(1)
@@ -1303,7 +1309,12 @@ describe('src/Core', () => {
         }
       })
       core.emit('upload-error', core.getFile('fileId'), new Error('this is the error'))
-      expect(core.getState().info).toEqual({'message': 'Failed to upload filename', 'details': 'this is the error', 'isHidden': false, 'type': 'error'})
+      expect(core.getState().info).toEqual({
+        message: 'Failed to upload filename',
+        details: 'this is the error',
+        isHidden: false,
+        type: 'error'
+      })
     })
 
     it('should reset the error state when receiving the upload event', () => {

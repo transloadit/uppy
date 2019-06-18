@@ -351,10 +351,13 @@
   }
 }
 
+.page-docs-locales table {
+  overflow: visible;
+}
 .page-docs-locales table td {
   white-space: nowrap;
+  font-size: 90%;
 }
-
 .page-docs-locales table code {
   font-size: 75%;
 }

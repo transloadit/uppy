@@ -11,6 +11,8 @@ const MetaDataStore = require('./MetaDataStore')
 * https://uppy.io/blog/2017/07/golden-retriever/
 */
 module.exports = class GoldenRetriever extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'debugger'
@@ -34,7 +36,7 @@ module.exports = class GoldenRetriever extends Plugin {
     }
     this.IndexedDBStore = new IndexedDBStore(Object.assign(
       { expires: this.opts.expires },
-      opts.indexedDB || {},
+      this.opts.indexedDB || {},
       { storeName: uppy.getID() }))
 
     this.saveFilesStateToLocalStorage = this.saveFilesStateToLocalStorage.bind(this)

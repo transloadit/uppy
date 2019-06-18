@@ -1,35 +1,13 @@
+import UppyUtils = require('@uppy/utils');
+
 declare module Uppy {
+  // These are defined in @uppy/utils instead of core so it can be used there without creating import cycles
+  export type UppyFile<TMeta extends IndexedObject<any> = {}> = UppyUtils.UppyFile<TMeta>;
+  export type Store = UppyUtils.Store;
+
   interface IndexedObject<T> {
     [key: string]: T;
     [key: number]: T;
-  }
-  interface UppyFile<TMeta extends IndexedObject<any> = {}> {
-    data: Blob | File;
-    extension: string;
-    id: string;
-    isPaused?: boolean;
-    isRemote: boolean;
-    meta: {
-      name: string;
-      type?: string;
-    } & TMeta;
-    name: string;
-    preview?: string;
-    progress?: {
-      uploadStarted: number;
-      uploadComplete: boolean;
-      percentage: number;
-      bytesUploaded: number;
-      bytesTotal: number;
-    };
-    remote?: {
-      host: string;
-      url: string;
-      body?: object;
-    };
-    size: number;
-    source?: string;
-    type?: string;
   }
 
   interface UploadedUppyFile<TMeta extends IndexedObject<any> = {}> extends UppyFile<TMeta> {
@@ -65,12 +43,6 @@ declare module Uppy {
     uninstall(): void;
   }
 
-  interface Store {
-    getState(): object;
-    setState(patch: object): void;
-    subscribe(listener: any): () => void;
-  }
-
   interface LocaleStrings {
     [key: string]: string | LocaleStrings;
   }
@@ -79,17 +51,19 @@ declare module Uppy {
     pluralize?: (n: number) => number;
   }
 
+  interface Restrictions {
+    maxFileSize: number | null;
+    maxNumberOfFiles: number | null;
+    minNumberOfFiles: number | null;
+    allowedFileTypes: string[] | null;
+  }
+
   interface UppyOptions {
     id: string;
     autoProceed: boolean;
     allowMultipleUploads: boolean;
     debug: boolean;
-    restrictions: {
-      maxFileSize: number | null;
-      maxNumberOfFiles: number | null;
-      minNumberOfFiles: number | null;
-      allowedFileTypes: string[] | null;
-    };
+    restrictions: Partial<Restrictions>;
     target: string | Plugin;
     meta: any;
     onBeforeFileAdded: (currentFile: UppyFile, files: {[key: string]: UppyFile}) => UppyFile | boolean | undefined;

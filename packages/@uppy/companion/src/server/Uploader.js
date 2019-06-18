@@ -30,7 +30,6 @@ class Uploader {
    * @property {number} size
    * @property {string=} fieldname
    * @property {string} pathPrefix
-   * @property {string=} path
    * @property {any=} s3
    * @property {any} metadata
    * @property {any} uppyOptions
@@ -47,7 +46,9 @@ class Uploader {
 
     this.options = options
     this.token = uuid.v4()
-    this.options.path = `${this.options.pathPrefix}/${Uploader.FILE_NAME_PREFIX}-${this.token}`
+    this.path = `${this.options.pathPrefix}/${Uploader.FILE_NAME_PREFIX}-${this.token}`
+    this.options.metadata = this.options.metadata || {}
+    this.uploadFileName = this.options.metadata.name || path.basename(this.path)
     this.streamsEnded = false
     this.duplexStream = null
     // @TODO disabling parallel uploads and downloads for now
@@ -55,7 +56,7 @@ class Uploader {
     //   this.duplexStream = new stream.PassThrough()
     //     .on('error', (err) => logger.error(`${this.shortToken} ${err}`, 'uploader.duplex.error'))
     // }
-    this.writeStream = fs.createWriteStream(this.options.path, { mode: 0o666 }) // no executable files
+    this.writeStream = fs.createWriteStream(this.path, { mode: 0o666 }) // no executable files
       .on('error', (err) => logger.error(`${this.shortToken} ${err}`, 'uploader.write.error'))
     /** @type {number} */
     this.emittedProgress = 0
@@ -143,9 +144,9 @@ class Uploader {
   }
 
   cleanUp () {
-    fs.unlink(this.options.path, (err) => {
+    fs.unlink(this.path, (err) => {
       if (err) {
-        logger.error(`cleanup failed for: ${this.options.path} err: ${err}`, 'uploader.cleanup.error')
+        logger.error(`cleanup failed for: ${this.path} err: ${err}`, 'uploader.cleanup.error')
       }
     })
     emitter().removeAllListeners(`pause:${this.token}`)
@@ -316,10 +317,12 @@ class Uploader {
    * @param {object=} extraData
    */
   emitError (err, extraData = {}) {
+    const serializedErr = serializeError(err)
+    // delete stack to avoid sending server info to client
+    delete serializedErr.stack
     const dataToEmit = {
       action: 'error',
-      // TODO: consider removing the stack property
-      payload: Object.assign(extraData, { error: serializeError(err) })
+      payload: Object.assign(extraData, { error: serializedErr })
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)
@@ -329,10 +332,7 @@ class Uploader {
    * start the tus upload
    */
   uploadTus () {
-    const fname = path.basename(this.options.path)
-    const ftype = this.options.metadata.type
-    const metadata = Object.assign({ filename: fname, filetype: ftype }, this.options.metadata || {})
-    const file = fs.createReadStream(this.options.path)
+    const file = fs.createReadStream(this.path)
     const uploader = this
 
     // @ts-ignore
@@ -344,7 +344,14 @@ class Uploader {
       resume: true,
       retryDelays: [0, 1000, 3000, 5000],
       uploadSize: this.bytesWritten,
-      metadata,
+      metadata: Object.assign(
+        {
+          // file name and type as required by the tusd tus server
+          // https://github.com/tus/tusd/blob/5b376141903c1fd64480c06dde3dfe61d191e53d/unrouted_handler.go#L614-L646
+          filename: this.uploadFileName,
+          filetype: this.options.metadata.type
+        }, this.options.metadata
+      ),
       /**
        *
        * @param {Error} error
@@ -373,7 +380,7 @@ class Uploader {
   }
 
   uploadMultipart () {
-    const file = fs.createReadStream(this.options.path)
+    const file = fs.createReadStream(this.path)
 
     // upload progress
     let bytesUploaded = 0
@@ -385,7 +392,15 @@ class Uploader {
     const formData = Object.assign(
       {},
       this.options.metadata,
-      { [this.options.fieldname]: file }
+      {
+        [this.options.fieldname]: {
+          value: file,
+          options: {
+            filename: this.uploadFileName,
+            contentType: this.options.metadata.type
+          }
+        }
+      }
     )
     const headers = headerSanitize(this.options.headers)
     request.post({ url: this.options.endpoint, headers, formData, encoding: null }, (error, response, body) => {
@@ -425,7 +440,7 @@ class Uploader {
    * Upload the file to S3 while it is still being downloaded.
    */
   uploadS3 () {
-    const file = createTailReadStream(this.options.path, {
+    const file = createTailReadStream(this.path, {
       tail: true
     })
 
@@ -445,7 +460,7 @@ class Uploader {
       return
     }
 
-    const filename = this.options.metadata.filename || path.basename(this.options.path)
+    const filename = this.options.metadata.filename || path.basename(this.path)
     const { client, options } = this.options.s3
 
     const upload = client.upload({
@@ -467,7 +482,8 @@ class Uploader {
       if (error) {
         this.emitError(error)
       } else {
-        this.emitSuccess(null, {
+        const url = data && data.Location ? data.Location : null
+        this.emitSuccess(url, {
           response: {
             responseText: JSON.stringify(data),
             headers: {
