@@ -90,7 +90,6 @@
     "typescript": "^3.4.5",
     "verdaccio": "^4.0.0",
     "watchify": "^3.11.1",
-    "wdio-static-server-service": "^1.0.1",
     "webdriverio": "^5.0.0"
   },
   "scripts": {

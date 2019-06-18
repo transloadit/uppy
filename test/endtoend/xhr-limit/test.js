@@ -41,7 +41,7 @@ describe.skip('XHRUpload with `limit`', () => {
     browser.url(testURL)
   })
 
-  it('should start counting progress for all files', () => {
+  it('should start counting progress for all files', async () => {
     const files = [
       makeFile(1000),
       makeFile(1000),
@@ -56,16 +56,17 @@ describe.skip('XHRUpload with `limit`', () => {
     ]
 
     const endpoint = `http://localhost:${server.address().port}`
-    browser.execute((endpoint) => {
+    await browser.execute((endpoint) => {
       window.startXHRLimitTest(endpoint)
     }, endpoint)
 
     if (browserSupportsChooseFile(capabilities)) {
-      files.forEach((file) => {
-        browser.chooseFile('#uppyXhrLimit .uppy-DragDrop-input', file.path)
-      })
+      const input = await browser.$('#uppyXhrLimit .uppy-DragDrop-input')
+      for (const file of files) {
+        await input.setValue(file.path)
+      }
     } else {
-      browser.execute((files) => {
+      await browser.execute((files) => {
         files.forEach((data, i) => {
           window.uppyXhrLimit.addFile({
             source: 'test',
@@ -77,11 +78,11 @@ describe.skip('XHRUpload with `limit`', () => {
       }, files.map((file) => file.content.toString('hex')))
     }
 
-    browser.execute(() => {
+    await browser.execute(() => {
       window.uppyXhrLimit.upload()
     })
-    browser.pause(5000)
-    const status = browser.execute(() => ({
+    await browser.pause(5000)
+    const status = await browser.execute(() => ({
       started: window.uppyXhrLimit.uploadsStarted,
       complete: window.uppyXhrLimit.uploadsComplete
     })).value

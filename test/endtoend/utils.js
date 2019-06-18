@@ -2,6 +2,7 @@
 /* global window, capabilities */
 const path = require('path')
 const { spawn } = require('child_process')
+const { promisify } = require('util')
 
 // This function must be valid ES5, because it is run in the browser
 // and IE10/IE11 do not support new syntax features
@@ -58,7 +59,8 @@ class CompanionService {
       path.join(__dirname, '../../packages/@uppy/companion/lib/standalone/start-server')
     ], {
       stdio: 'pipe',
-      env: Object.assign({}, process.env, {
+      env: {
+        ...process.env,
         COMPANION_DATADIR: path.join(__dirname, '../../output'),
         COMPANION_DOMAIN: 'localhost:3030',
         COMPANION_PROTOCOL: 'http',
@@ -68,7 +70,7 @@ class CompanionService {
         COMPANION_DROPBOX_SECRET: process.env.TEST_COMPANION_DROPBOX_SECRET,
         COMPANION_GOOGLE_KEY: process.env.TEST_COMPANION_GOOGLE_KEY,
         COMPANION_GOOGLE_SECRET: process.env.TEST_COMPANION_GOOGLE_SECRET
-      })
+      }
     })
     return new Promise((resolve, reject) => {
       this.companion.on('error', reject)
@@ -93,8 +95,38 @@ class CompanionService {
   }
 }
 
+const express = require('express')
+class StaticServerService {
+  constructor ({ folders, staticServerPort = 4567 }) {
+    this.folders = folders
+    this.port = staticServerPort
+  }
+
+  async onPrepare () {
+    if (!this.folders) return
+
+    this.app = express()
+
+    for (const desc of this.folders) {
+      this.app.use(desc.mount, express.static(desc.path))
+    }
+
+    const listen = promisify(this.app.listen.bind(this.app))
+
+    this.server = await listen(this.port)
+  }
+
+  async onComplete () {
+    if (this.server) {
+      const close = promisify(this.server.close.bind(this.server))
+      await close()
+    }
+  }
+}
+
 module.exports = {
   selectFakeFile,
   supportsChooseFile,
-  CompanionService
+  CompanionService,
+  StaticServerService
 }

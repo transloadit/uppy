@@ -33,7 +33,7 @@ exports.config = Object.assign(base.config, {
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
   services: [
-    'static-server',
+    ...base.config.services,
     [CompanionService]
   ],
 

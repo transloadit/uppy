@@ -9,19 +9,22 @@ describe('File upload with DragDrop + XHRUpload, i18n translated string', () => 
     browser.url(testURL)
   })
 
-  it('should upload a file with XHRUpload and set progressbar to 100%', () => {
+  it('should upload a file with XHRUpload and set progressbar to 100%', async () => {
     if (supportsChooseFile(capabilities)) {
-      browser.chooseFile('#uppyi18n .uppy-DragDrop-input', path.join(__dirname, '../../resources/image.jpg'))
+      const input = await browser.$('#uppyi18n .uppy-DragDrop-input')
+      await input.setValue(path.join(__dirname, '../../resources/image.jpg'))
     } else {
-      browser.execute(selectFakeFile, 'uppyi18n')
+      await browser.execute(selectFakeFile, 'uppyi18n')
     }
-    browser.pause(3000)
-    const html = browser.getHTML('#uppyi18n-progress .uppy-ProgressBar-percentage', false)
+    await browser.pause(3000)
+    const percent = await browser.$('#uppyi18n-progress .uppy-ProgressBar-percentage')
+    const html = await percent.getHTML(false)
     expect(parseInt(html)).to.be.equal(100)
   })
 
-  it('should translate text strings into Russian', () => {
-    const text = browser.getText('#uppyi18n .uppy-DragDrop-label')
+  it('should translate text strings into Russian', async () => {
+    const label = await browser.$('#uppyi18n .uppy-DragDrop-label')
+    const text = await label.getText()
     expect(text.trim()).to.be.equal('Перенесите файлы сюда или выберите')
   })
 })
