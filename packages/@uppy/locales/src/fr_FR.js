@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const fr_FR = {}
 
 fr_FR.strings = {

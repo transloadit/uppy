@@ -41,5 +41,12 @@
     "rules": {
       "compat/compat": "off"
     }
+  },{
+    "files": [
+      "packages/@uppy/locales/src/*.js"
+    ],
+    "rules": {
+      "camelcase": 0
+    }
   }]
 }

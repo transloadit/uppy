@@ -1,6 +1,4 @@
-/* eslint camelcase: 0 */
-
-var de_DE = {}
+const de_DE = {}
 
 de_DE.strings = {
   addMoreFiles: 'Dateien hinzufügen',
