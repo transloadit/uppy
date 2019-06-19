@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const pt_BR = {}
 
 pt_BR.strings = {

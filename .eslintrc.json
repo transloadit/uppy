@@ -41,5 +41,13 @@
     "rules": {
       "compat/compat": "off"
     }
+  },{
+    "files": [
+      "packages/@uppy/locales/src/*.js",
+      "packages/@uppy/locales/template.js"
+    ],
+    "rules": {
+      "camelcase": "off"
+    }
   }]
 }

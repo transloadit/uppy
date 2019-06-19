@@ -39,7 +39,7 @@ module.exports = class AwsS3Multipart extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
-    this.id = 'AwsS3Multipart'
+    this.id = this.opts.id || 'AwsS3Multipart'
     this.title = 'AWS S3 Multipart'
     this.client = new RequestClient(uppy, opts)
 
