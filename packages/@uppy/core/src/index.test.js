@@ -1504,4 +1504,71 @@ describe('src/Core', () => {
       expect(core.opts.restrictions.minNumberOfFiles).toBe(null)
     })
   })
+
+  describe('log', () => {
+    it('is should log via provided logger function', () => {
+      const myTestLogger = {
+        debug: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn()
+      }
+
+      const core = new Core({
+        logger: myTestLogger
+      })
+
+      core.log('test test')
+      core.log('test test', 'error')
+      core.log('test test', 'error')
+      core.log('test test', 'warning')
+
+      expect(core.opts.logger.debug.mock.calls.length).toBe(1)
+      expect(core.opts.logger.error.mock.calls.length).toBe(2)
+      expect(core.opts.logger.warn.mock.calls.length).toBe(1)
+    })
+
+    it('is should log to console when logger: debug or debug: true is set', () => {
+      console.debug = jest.fn()
+      console.error = jest.fn()
+
+      const core = new Core({
+        logger: 'debug'
+      })
+
+      core.log('test test')
+      core.log('beep boop')
+      core.log('beep beep', 'error')
+
+      expect(console.debug.mock.calls.length).toBe(2)
+      expect(console.error.mock.calls.length).toBe(1)
+
+      console.debug.mockClear()
+      console.error.mockClear()
+
+      const core2 = new Core({
+        debug: true
+      })
+
+      core2.log('test test')
+      core2.log('beep boop')
+      core2.log('beep beep', 'error')
+
+      expect(console.debug.mock.calls.length).toBe(2)
+      expect(console.error.mock.calls.length).toBe(1)
+    })
+
+    it('is should not log to console when logger is not set', () => {
+      console.debug = jest.fn()
+      console.error = jest.fn()
+
+      const core = new Core()
+
+      core.log('test test')
+      core.log('beep boop')
+      core.log('beep beep', 'error')
+
+      expect(console.debug.mock.calls.length).toBe(0)
+      expect(console.error.mock.calls.length).toBe(0)
+    })
+  })
 })
