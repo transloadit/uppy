@@ -4,12 +4,12 @@ const classNames = require('classnames')
 
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const truncateString = require('../../utils/truncateString')
+const { iconPencil, iconCross } = require('../icons')
 
 const FileProgress = require('./components/FileProgress')
 const FilePreviewAndLink = require('./components/FilePreviewAndLink')
 const CopyLinkButton = require('./components/CopyLinkButton')
 const FileSource = require('./components/FileSource')
-const RemoveButton = require('./components/RemoveButton')
 
 module.exports = function FileItem (props) {
   const file = props.file
@@ -76,23 +76,29 @@ module.exports = function FileItem (props) {
     !uploadInProgressOrComplete &&
     props.metaFields &&
     props.metaFields.length &&
-    <button class="uppy-u-reset uppy-DashboardItem-edit"
+    <button
+      class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--edit"
       type="button"
       aria-label={props.i18n('editFile') + ' ' + fileName}
       title={props.i18n('editFile')}
       onclick={(e) => props.toggleFileCard(file.id)}
     >
-      {props.i18n('edit')}
+      {iconPencil()}
     </button>
   )
 
-  const renderRemoveButton = () =>
-    <RemoveButton
-      file={file}
-      showRemoveButton={showRemoveButton}
-      removeFile={props.removeFile}
-      i18n={props.i18n}
-    />
+  const renderRemoveButton = () => (
+    showRemoveButton &&
+    <button
+      class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--remove"
+      type="button"
+      aria-label={props.i18n('removeFile')}
+      title={props.i18n('removeFile')}
+      onclick={() => props.removeFile(file.id)}
+    >
+      {iconCross()}
+    </button>
+  )
 
   const renderCopyLinkButton = () =>
     <CopyLinkButton
@@ -111,18 +117,18 @@ module.exports = function FileItem (props) {
       </div>
 
       <div class="uppy-DashboardItem-info">
-        {renderFileName()}
-        <div class="uppy-DashboardItem-status">
-          {renderFileSize()}
-          {renderFileSource()}
-
+        <div class="uppy-DashboardItem-file">
+          {renderFileName()}
+          <div class="uppy-DashboardItem-status">
+            {renderFileSize()}
+            {renderFileSource()}
+          </div>
+        </div>
+        <div className="uppy-DashboardItem-actionWrapper">
           {renderEditButton()}
           {renderCopyLinkButton()}
+          {renderRemoveButton()}
         </div>
-      </div>
-
-      <div class="uppy-DashboardItem-action">
-        {renderRemoveButton()}
       </div>
     </li>
   )

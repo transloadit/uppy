@@ -310,7 +310,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 12px 20px;
+  padding: 12px 15px;
   line-height: 1;
   text-align: center;
 
@@ -333,7 +333,7 @@
 
   .uppy-DashboardTab-btn:active,
   .uppy-DashboardTab-btn:focus {
-    background-color: darken($gray-100--highlighted, 2%);
+    background-color: $highlight;
     outline: none;
   }
 
@@ -429,6 +429,7 @@
 
 .uppy-DashboardContent-back {
   @include reset-button;
+  @include highlight-focus;
   display: inline-block;
   font-size: 12px;
   font-weight: 400;
@@ -436,11 +437,6 @@
   color: $blue;
   padding: 7px 6px;
   margin-left: -6px;
-  border-radius: 3px;
-
-  &:hover {
-    color: darken($blue, 12%);
-  }
 
   .uppy-size--md & {
     font-size: 14px;
@@ -449,23 +445,39 @@
 
 .uppy-DashboardContent-addMore {
   @include reset-button;
+  @include highlight-focus;
   display: inline-block;
   font-weight: 500;
   cursor: pointer;
   color: $blue;
-  width: 27px;
-  height: 27px;
-  padding: 6px;
-  margin-right: -6px;
-  border-radius: 3px;
+  width: 29px;
+  height: 29px;
+  padding: 7px 8px;
 
-  &:hover {
-    color: darken($blue, 12%)
+  .uppy-size--md & {
+    margin-right: -8px;
+    font-size: 14px;
+    width: auto;
+    height: auto;
   }
 }
 
   .uppy-DashboardContent-addMore svg {
-    vertical-align: text-top;
+    vertical-align: baseline;
+    margin-right: 4px;
+
+    .uppy-size--md & {
+      width: 11px;
+      height: 11px;
+    }
+  }
+
+  .uppy-DashboardContent-addMoreCaption {
+    display: none;
+
+    .uppy-size--md & {
+      display: inline;
+    }
   }
 
 .uppy-DashboardContent-panel {
@@ -704,6 +716,7 @@ a.uppy-Dashboard-poweredBy {
 .uppy-DashboardItem-preview {
   width: 50px;
   height: 50px;
+  flex-shrink: 0;
   border-bottom: 0;
   position: relative;
   flex-shrink: 0;
@@ -734,14 +747,18 @@ a.uppy-Dashboard-poweredBy {
   bottom: 0;
   z-index: $zIndex-3;
   &:focus{
-    box-shadow: inset 0px 0px 0px 4px rgb(59, 153, 252);
+    box-shadow: inset 0 0 0 4px lighten($blue, 20%);
   }
 }
 
 .uppy-DashboardItem-sourceIcon {
   display: inline-block;
   vertical-align: bottom;
-  color: $gray-500;
+  color: $gray-400;
+  &:not(:first-child) {
+    position: relative;
+    margin-left: 14px;
+  }
 }
 
 .uppy-DashboardItem-sourceIcon svg,
@@ -769,7 +786,7 @@ a.uppy-Dashboard-poweredBy {
   border-radius: 3px;
 
   .uppy-size--md & {
-    box-shadow: 0 1px 3px rgba($black, 0.2);
+    box-shadow: 0 1px 2px rgba($black, 0.15);
   }
 }
 
@@ -844,31 +861,37 @@ a.uppy-Dashboard-poweredBy {
 }
 
 .uppy-DashboardItem-info {
-  padding-left: 15px;
-  position: relative;
-  max-width: 65%;
+  padding-right: 4px;
+  padding-left: 12px;
+  flex: 1;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
   .uppy-size--md & {
     width: 100%;
-    max-width: 100%;
+    height: auto;
+    align-items: flex-start;
     flex: 1;
-    padding: 8px 0 0;
+    padding: 9px 0 0;
     border-top: 0;
   }
+}
+
+.uppy-DashboardItem-file {
+  flex: 1;
 }
 
 .uppy-DashboardItem-name {
   font-size: 12px;
   line-height: 1.3;
   font-weight: 500;
-  margin: 0;
-  padding: 0;
-  margin-bottom: 5px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+  margin: 0 0 4px;
 
   .uppy-size--md & {
+    padding-right: 0;
     word-break: break-all;
     white-space: normal;
     overflow: initial;
@@ -894,76 +917,68 @@ a.uppy-Dashboard-poweredBy {
   text-transform: uppercase;
 }
 
-.uppy-DashboardItem-edit,
-.uppy-DashboardItem-copyLink {
-  display: inline-block;
-  vertical-align: bottom;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  color: inherit;
+.uppy-DashboardItem-actionWrapper {
+  padding-left: 8px;
+  margin-top: 0.1em;
+  white-space: nowrap;
 
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-span.uppy-DashboardItem-statusbar-dot{
-  display: inline-block;
-  color: $gray-600;
-  &:last-child{
-    display: none;
-  }
-}
-
-.uppy-DashboardItem-statusSize,
-.uppy-DashboardItem-edit,
-.uppy-DashboardItem-copyLink,
-.uppy-DashboardItem-sourceIcon {
-  position: relative;
-  margin-left: 3px;
-  margin-right: 3px;
-
-  padding-left: 3px;
-  padding-right: 3px;
-
-  &:first-child{
-    margin-left: 0;
-    padding-left: 0;
+  .uppy-size--md & {
+    margin-top: 1px;
+    white-space: normal;
+    min-width: 24px;
+    padding-left: 12px;
   }
 }
 
 .uppy-DashboardItem-action {
-  position: absolute;
-  top: 18px;
-  right: 10px;
-  z-index: $zIndex-3;
-
-  .uppy-size--md & {
-    top: -8px;
-    right: -8px;
-  }
-}
-
-.uppy-DashboardItem-remove {
-  @include reset-button;
+  @include blue-border-focus;
+  display: inline-block;
+  vertical-align: middle;
   cursor: pointer;
-  color: $gray-900;
-  width: 20px;
-  height: 20px;
-  padding: 1px;
-  opacity: 0.9;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  text-align: center;
+  color: $gray-500;
 
   &:hover {
     opacity: 1;
+    color: $gray-900;
+  }
+
+  .uppy-size--md & {
+    width: 16px;
+    height: 16px;
+    padding: 1px;
+    vertical-align: top;
   }
 }
 
-  .uppy-DashboardItem.is-inprogress:not(.is-resumable) .uppy-DashboardItem-remove {
+.uppy-DashboardItem-action--remove {
+  cursor: pointer;
+  color: $gray-900;
+  opacity: 0.95;
+
+  .uppy-size--md & {
+    // for the focus style
+    border-radius: 50%;
+
+    z-index: $zIndex-3;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+  }
+}
+
+  .uppy-DashboardItem.is-inprogress:not(.is-resumable) .uppy-DashboardItem-action--remove {
     display: none;
   }
-
 
 .uppy-DashboardItem-progress {
   position: absolute;
@@ -1007,6 +1022,12 @@ span.uppy-DashboardItem-statusbar-dot{
 
   button.uppy-DashboardItem-progressIndicator {
     cursor: pointer;
+    &:focus{
+      outline: none;
+      circle{
+        stroke: lighten($blue, 20%);
+      }
+    }
   }
 
   .uppy-DashboardItem.is-error .uppy-DashboardItem-progressIndicator {
@@ -1175,11 +1196,10 @@ span.uppy-DashboardItem-statusbar-dot{
   align-items: center;
   padding: 0 15px;
   background-color: $gray-50;
-}
-
-  .uppy-size--md .uppy-Dashboard-actions {
+  .uppy-size--md & {
     height: 65px;
   }
+}
 
 .uppy-Dashboard-actionsBtn {
   margin-right: 10px;
