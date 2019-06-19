@@ -28,10 +28,12 @@ function assertServerError (res) {
 }
 
 module.exports = class AwsS3 extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
-    this.id = 'AwsS3'
+    this.id = this.opts.id || 'AwsS3'
     this.title = 'AWS S3'
 
     this.defaultLocale = {

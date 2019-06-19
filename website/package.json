@@ -9,6 +9,7 @@
     "@goto-bus-stop/hexo-renderer-postcss": "^2.0.0",
     "autoprefixer": "^9.5.1",
     "cssnano": "^4.1.10",
+    "drag-drop": "^4.2.0",
     "he": "^1.1.1",
     "hexo": "3.8.0",
     "hexo-browsersync": "^0.3.0",

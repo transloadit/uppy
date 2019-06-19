@@ -7,10 +7,12 @@ const { Plugin } = require('@uppy/core')
  * and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  */
 module.exports = class ReduxDevTools extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'debugger'
-    this.id = 'ReduxDevTools'
+    this.id = this.opts.id || 'ReduxDevTools'
     this.title = 'Redux DevTools'
 
     // set default options

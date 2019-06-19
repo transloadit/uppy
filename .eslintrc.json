@@ -9,10 +9,20 @@
     "window": true,
     "hexo": true
   },
-  "plugins": ["jest", "compat"],
+  "plugins": ["jest", "compat", "jsdoc"],
   "rules": {
     "jsx-quotes": ["error", "prefer-double"],
-    "compat/compat": ["error"]
+    "compat/compat": ["error"],
+
+    "jsdoc/check-alignment": ["warn"],
+    "jsdoc/check-examples": ["warn"],
+    "jsdoc/check-indentation": ["warn"],
+    "jsdoc/check-param-names": ["warn"],
+    "jsdoc/check-syntax": ["warn"],
+    "jsdoc/check-tag-names": ["warn"],
+    "jsdoc/check-types": ["warn"],
+    "jsdoc/newline-after-description": ["warn"],
+    "jsdoc/valid-types": ["warn"]
   },
   "settings": {
     "polyfills": [
@@ -30,6 +40,13 @@
     ],
     "rules": {
       "compat/compat": "off"
+    }
+  },{
+    "files": [
+      "packages/@uppy/locales/src/*.js"
+    ],
+    "rules": {
+      "camelcase": 0
     }
   }]
 }

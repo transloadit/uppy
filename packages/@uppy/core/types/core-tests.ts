@@ -19,6 +19,15 @@ import DefaultStore = require('@uppy/store-default');
 }
 
 {
+  const uppy = Uppy()
+  // this doesn't exist but type checking works anyway :)
+  const f = uppy.getFile('virtual')
+  if (f && f.progress && f.progress.uploadStarted === null) {
+    f.progress.uploadStarted = Date.now()
+  }
+}
+
+{
   const uppy = Uppy();
   uppy.addFile({
     name: 'empty.json',

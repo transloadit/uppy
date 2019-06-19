@@ -4,6 +4,13 @@ This example uses a server-side PHP endpoint to sign uploads to S3.
 
 ## Running It
 
+To run this example, make sure you've correctly installed the root repository:
+
+```bash
+npm install
+npm run bootstrap
+```
+
 This example uses the AWS PHP SDK.
 To install it, [get composer](https://getcomposer.org) and run `composer update` in this folder.
 

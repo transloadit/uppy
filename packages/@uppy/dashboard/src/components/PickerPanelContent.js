@@ -1,12 +1,12 @@
 const { h } = require('preact')
 const ignoreEvent = require('../utils/ignoreEvent.js')
 
-function PanelContent (props) {
+function PickerPanelContent (props) {
   return (
     <div class="uppy-DashboardContent-panel"
       role="tabpanel"
       data-uppy-panelType="PickerPanel"
-      id={props.activePickerPanel && `uppy-DashboardContent-panel--${props.activePickerPanel.id}`}
+      id={`uppy-DashboardContent-panel--${props.activePickerPanel.id}`}
       onDragOver={ignoreEvent}
       onDragLeave={ignoreEvent}
       onDrop={ignoreEvent}
@@ -26,4 +26,4 @@ function PanelContent (props) {
   )
 }
 
-module.exports = PanelContent
+module.exports = PickerPanelContent

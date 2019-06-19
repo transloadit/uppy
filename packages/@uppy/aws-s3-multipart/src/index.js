@@ -34,10 +34,12 @@ function assertServerError (res) {
 }
 
 module.exports = class AwsS3Multipart extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
-    this.id = 'AwsS3Multipart'
+    this.id = this.opts.id || 'AwsS3Multipart'
     this.title = 'AWS S3 Multipart'
     this.client = new RequestClient(uppy, opts)
 
@@ -175,13 +177,14 @@ module.exports = class AwsS3Multipart extends Plugin {
             uploadURL: result.location
           }
 
+          this.resetUploaderReferences(file.id)
+
           this.uppy.emit('upload-success', file, uploadResp)
 
           if (result.location) {
             this.uppy.log('Download ' + upload.file.name + ' from ' + result.location)
           }
 
-          this.resetUploaderReferences(file.id)
           resolve(upload)
         },
         onPartComplete: (part) => {

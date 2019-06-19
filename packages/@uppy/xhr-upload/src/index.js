@@ -22,10 +22,12 @@ function buildResponseError (xhr, error) {
 }
 
 module.exports = class XHRUpload extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
-    this.id = 'XHRUpload'
+    this.id = this.opts.id || 'XHRUpload'
     this.title = 'XHRUpload'
 
     this.defaultLocale = {

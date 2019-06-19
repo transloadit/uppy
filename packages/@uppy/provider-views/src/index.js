@@ -38,6 +38,8 @@ class CloseWrapper extends Component {
  * Class to easily generate generic views for Provider plugins
  */
 module.exports = class ProviderView {
+  static VERSION = require('../package.json').version
+
   /**
    * @param {object} instance of the plugin
    */
@@ -378,6 +380,7 @@ module.exports = class ProviderView {
   toggleCheckbox (e, file) {
     e.stopPropagation()
     e.preventDefault()
+    e.currentTarget.focus()
     let { folders, files } = this.plugin.getPluginState()
     let items = this.filterItems(folders.concat(files))
 
@@ -458,8 +461,8 @@ module.exports = class ProviderView {
 
     const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
     return patterns
-      .filter((pattern) => pattern !== null)
-      .some((pattern) => pattern.test(origin))
+      .filter((pattern) => pattern != null) // loose comparison to catch undefined
+      .some((pattern) => pattern.test(origin) || pattern.test(`${origin}/`)) // allowing for trailing '/'
   }
 
   handleError (error) {

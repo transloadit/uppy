@@ -4,6 +4,8 @@ const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 
 module.exports = class FileInput extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'FileInput'
@@ -12,6 +14,9 @@ module.exports = class FileInput extends Plugin {
 
     this.defaultLocale = {
       strings: {
+        // The same key is used for the same purpose by @uppy/robodog's `form()` API, but our
+        // locale pack scripts can't access it in Robodog. If it is updated here, it should
+        // also be updated there!
         chooseFiles: 'Choose files'
       }
     }
@@ -36,10 +41,10 @@ module.exports = class FileInput extends Plugin {
     this.handleClick = this.handleClick.bind(this)
   }
 
-  handleInputChange (ev) {
+  handleInputChange (event) {
     this.uppy.log('[FileInput] Something selected through input...')
 
-    const files = toArray(ev.target.files)
+    const files = toArray(event.target.files)
 
     files.forEach((file) => {
       try {
@@ -53,6 +58,14 @@ module.exports = class FileInput extends Plugin {
         // Nothing, restriction errors handled in Core
       }
     })
+
+    // We clear the input after a file is selected, because otherwise
+    // change event is not fired in Chrome and Safari when a file
+    // with the same name is selected.
+    // ___Why not use value="" on <input/> instead?
+    //    Because if we use that method of clearing the input,
+    //    Chrome will not trigger change if we drop the same file twice (Issue #768).
+    event.target.value = null
   }
 
   handleClick (ev) {
@@ -73,25 +86,25 @@ module.exports = class FileInput extends Plugin {
     const restrictions = this.uppy.opts.restrictions
     const accept = restrictions.allowedFileTypes ? restrictions.allowedFileTypes.join(',') : null
 
-    // empty value="" on file input, so that the input is cleared after a file is selected,
-    // because Uppy will be handling the upload and so we can select same file
-    // after removing — otherwise browser thinks it’s already selected
-    return <div class="uppy-Root uppy-FileInput-container">
-      <input class="uppy-FileInput-input"
-        style={this.opts.pretty && hiddenInputStyle}
-        type="file"
-        name={this.opts.inputName}
-        onchange={this.handleInputChange}
-        multiple={restrictions.maxNumberOfFiles !== 1}
-        accept={accept}
-        ref={(input) => { this.input = input }}
-        value="" />
-      {this.opts.pretty &&
-        <button class="uppy-FileInput-btn" type="button" onclick={this.handleClick}>
-          {this.i18n('chooseFiles')}
-        </button>
-      }
-    </div>
+    return (
+      <div class="uppy-Root uppy-FileInput-container">
+        <input class="uppy-FileInput-input"
+          style={this.opts.pretty && hiddenInputStyle}
+          type="file"
+          name={this.opts.inputName}
+          onchange={this.handleInputChange}
+          multiple={restrictions.maxNumberOfFiles !== 1}
+          accept={accept}
+          ref={(input) => { this.input = input }} />
+        {this.opts.pretty &&
+          <button class="uppy-FileInput-btn"
+            type="button"
+            onclick={this.handleClick}>
+            {this.i18n('chooseFiles')}
+          </button>
+        }
+      </div>
+    )
   }
 
   install () {

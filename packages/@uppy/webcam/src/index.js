@@ -35,6 +35,8 @@ function getMediaDevices () {
  * Webcam
  */
 module.exports = class Webcam extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
@@ -265,7 +267,7 @@ module.exports = class Webcam extends Plugin {
       return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
     }
 
-    const name = `webcam-${Date.now()}.jpg`
+    const name = `cam-${Date.now()}.jpg`
     const mimeType = 'image/jpeg'
 
     const width = video.videoWidth

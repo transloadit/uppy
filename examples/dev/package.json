@@ -1,18 +1,20 @@
 {
   "name": "uppy-dev-example",
-  "aliasify": {
-    "aliases": {
-      "@uppy": "../../packages/@uppy"
-    }
-  },
   "dependencies": {
     "@babel/core": "^7.4.4",
     "aliasify": "^2.1.0",
     "babelify": "^10.0.0",
-    "watchify": "^3.11.0"
+    "es6-promise": "^4.2.8",
+    "watchify": "^3.11.0",
+    "whatwg-fetch": "^3.0.0"
   },
   "private": true,
   "scripts": {
-    "watch:sandbox": "watchify -vd -t [ babelify --cwd ../../ ] -g aliasify main.js -o bundle.js"
+    "watch:sandbox": "watchify -vd -t [ babelify --cwd ../../ ] -g aliasify index.js -o output/index.js"
+  },
+  "aliasify": {
+    "aliases": {
+      "@uppy": "../../packages/@uppy"
+    }
   }
 }
