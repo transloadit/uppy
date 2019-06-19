@@ -36,15 +36,17 @@ describe('ThumbnailGenerator', () => {
       })
     })
 
-    if (supportsChooseFile()) {
+    const supportsLocalUpload = !process.env.CI && supportsChooseFile()
+    const supportsRemoteUpload = process.env.CI && browser.uploadFile
+    if (supportsLocalUpload || supportsRemoteUpload) {
       for (let file of images) {
-        if (process.env.CI && browser.uploadFile) {
+        if (supportsRemoteUpload) {
           file = await browser.uploadFile(file)
         }
         await input.setValue(file)
       }
       for (let { file } of notImages) {
-        if (process.env.CI && browser.uploadFile) {
+        if (supportsRemoteUpload) {
           file = await browser.uploadFile(file)
         }
         await input.setValue(file)
