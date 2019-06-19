@@ -6,10 +6,10 @@ const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension
 const truncateString = require('../../utils/truncateString')
 const { iconPencil, iconCross } = require('../icons')
 
-const FileProgress = require('./components/FileProgress')
-const FilePreviewAndLink = require('./components/FilePreviewAndLink')
-const CopyLinkButton = require('./components/CopyLinkButton')
-const FileSource = require('./components/FileSource')
+const FileProgress = require('./FileProgress')
+const FilePreviewAndLink = require('./FilePreviewAndLink')
+const CopyLinkButton = require('./CopyLinkButton')
+const FileSource = require('./FileSource')
 
 module.exports = function FileItem (props) {
   const file = props.file

@@ -1,5 +1,5 @@
 const { h } = require('preact')
-const { iconRetry } = require('../../icons')
+const { iconRetry } = require('../icons')
 const PauseResumeCancelIcon = require('./PauseResumeCancelIcon')
 
 function onPauseResumeCancelRetry (props) {

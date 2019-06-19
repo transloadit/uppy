@@ -1,6 +1,6 @@
 const { h } = require('preact')
-const copyToClipboard = require('../../../utils/copyToClipboard')
-const { iconCopyLink } = require('../../icons')
+const copyToClipboard = require('../../utils/copyToClipboard')
+const { iconCopyLink } = require('../icons')
 
 const copyLinkToClipboard = (event, props) =>
   copyToClipboard(props.file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
