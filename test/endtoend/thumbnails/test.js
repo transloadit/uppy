@@ -37,10 +37,16 @@ describe('ThumbnailGenerator', () => {
     })
 
     if (supportsChooseFile()) {
-      for (const img of images) {
-        await input.setValue(img)
+      for (let file of images) {
+        if (process.env.CI && browser.uploadFile) {
+          file = await browser.uploadFile(file)
+        }
+        await input.setValue(file)
       }
-      for (const { file } of notImages) {
+      for (let { file } of notImages) {
+        if (process.env.CI && browser.uploadFile) {
+          file = await browser.uploadFile(file)
+        }
         await input.setValue(file)
       }
     } else {
