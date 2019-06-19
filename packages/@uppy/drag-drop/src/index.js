@@ -150,7 +150,7 @@ module.exports = class DragDrop extends Plugin {
     return (
       <div class="uppy-DragDrop-label">
         {this.i18nArray('dropHereOr', {
-          browse: <span class="uppy-DragDrop-dragText">{this.i18n('browse')}</span>
+          browse: <span class="uppy-DragDrop-browse">{this.i18n('browse')}</span>
         })}
       </div>
     )
@@ -165,8 +165,8 @@ module.exports = class DragDrop extends Plugin {
   render (state) {
     const dragDropClass = `
       uppy-Root
-      uppy-DragDrop-container
       uppy-u-reset
+      uppy-DragDrop-container
       ${this.isDragDropSupported ? 'uppy-DragDrop--is-dragdrop-supported' : ''}
       ${this.getPluginState().isDraggingOver ? 'uppy-DragDrop--isDraggingOver' : ''}
     `

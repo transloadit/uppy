@@ -8,14 +8,14 @@
   border-radius: 7px;
   background-color: $white;
   cursor: pointer;
-  font-size: inherit;
-  font-color: inherit;
   font-family: $font-family-base;
   max-width: 100%;
-  &:focus{
+
+  &:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba($blue, 0.4);
   }
+
   // firefox fix: removes thin dotted outline
   &::-moz-focus-inner {
     border: 0;
@@ -30,7 +30,7 @@
 }
 
 // http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/
-.uppy-DragDrop-input{
+.uppy-DragDrop-input {
   width: 0.1px;
   height: 0.1px;
   opacity: 0;
@@ -50,9 +50,10 @@
     border: 2px dashed lighten($gray-500, 10%);
   }
 
-.uppy-DragDrop--isDraggingOver{
+.uppy-DragDrop--isDraggingOver {
   border: 2px dashed $blue;
   background: $gray-200;
+
   .uppy-DragDrop-arrow {
     fill: $gray-500;
   }
@@ -70,6 +71,6 @@
   color: lighten($gray-500, 10%);
 }
 
-.uppy-DragDrop-dragText {
+.uppy-DragDrop-browse {
   color: $blue;
 }
