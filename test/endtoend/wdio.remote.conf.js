@@ -13,7 +13,7 @@ function createCapability (capability) {
 exports.config = Object.assign(base.config, {
   capabilities: [
     // Previous ESR
-    { browserName: 'firefox', version: '52.0', platform: 'Linux' },
+    { browserName: 'firefox', version: '52.0', platform: 'Windows 7' },
     // Current ESR
     { browserName: 'firefox', version: '62.0', platform: 'Windows 10' },
     { browserName: 'internet explorer', version: '10.0', platform: 'Windows 8' },
