@@ -22,8 +22,8 @@ install:
 - npm run bootstrap -- --no-ci
 script:
 - 'if [ -n "${LINT-}" ]; then npm run lint; fi'
+- 'if [ -n "${LINT-}" ]; then npm run test:type; fi'
 - 'if [ -n "${WEBSITE-}" ]; then npm run web:install; fi'
-- 'if [ -n "${UNIT-}" ]; then npm run test:type; fi'
 - 'if [ -n "${UNIT-}" ]; then npm run test:unit; fi'
 - 'if [ -n "${COMPANION-}" ]; then npm run test:companion; fi'
 - 'if [ -n "${ACCEPTANCE-}" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:endtoend; fi'
