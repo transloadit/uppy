@@ -72,6 +72,8 @@ describe('React: DashboardModal', () => {
     const modalWrapper = await $('#modal-dashboard .uppy-Dashboard--modal')
     const modalClose = await $('#modal-dashboard .uppy-Dashboard-close')
 
+    await modalToggle.waitForExist()
+
     expect(await modalWrapper.getAttribute('aria-hidden')).to.equal('true')
 
     await modalToggle.click()
