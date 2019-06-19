@@ -8,13 +8,17 @@ matrix:
     - node_js: 10
       env: LINT=true
     - node_js: 10
-      env: WEBSITE=true
-    - node_js: 10
-      env: ACCEPTANCE=true
-    - node_js: 10
       env: BUILD=true
     - node_js: 10
       env: COMPANION=true
+    # Build the website when things are merged to master
+    - node_js: 10
+      env: WEBSITE=true
+      if: branch = master
+    # Run e2e tests on branch builds, not PRs
+    - node_js: 10
+      env: ACCEPTANCE=true
+      if: type = push
 before_install:
 - nvm install-latest-npm
 install:
