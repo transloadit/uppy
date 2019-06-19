@@ -17,6 +17,7 @@ function initUppyTransloadit (transloaditKey) {
       inline: true
     })
     .use(Transloadit, {
+      service: 'https://api2-ap-southeast-1.transloadit.com',
       params: {
         auth: { key: transloaditKey },
         steps: {
