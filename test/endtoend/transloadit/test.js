@@ -7,6 +7,7 @@ const testURL = 'http://localhost:4567/transloadit'
 
 function unhideTheInput () {
   var input = document.querySelector('#uppy-transloadit .uppy-Dashboard-input')
+  input.style = 'width: auto; height: auto; opacity: 1; z-index: 199'
   input.removeAttribute('hidden')
   input.removeAttribute('aria-hidden')
   input.removeAttribute('tabindex')
