@@ -125,6 +125,19 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
+- [x] @uppy/core: make `meta.name` not required in addFile() (@goto-bus-stop / #1629)
+- [x] \*: use `opts.id` as the plugin ID for all plugins, fixes #1674 (@goto-bus-stop / https://github.com/transloadit/uppy/commit/e6c52f7681dad5a73c85bac2c7986293eda76a85)
+- [x] @uppy/companion: add colors to logs (@ifedapoolarewaju / #1648)
+- [x] @uppy/robodog: use chooseFiles string like @uppy/file-input (@goto-bus-stop / #1669)
+- [x] @uppy/aws-s3: prevent unnecessary delete multiparts request for completed files (@twarlop / #1650)
+- [x] @uppy/core: Log versions of Uppy plugins for debugging (@arturi / #1640)
+- [x] @uppy/thumbnail-generator: rotate according to EXIF metadata (@Botz, #1532)
+- [x] @uppy/companion: prevent logging uppyAuthToken (@ifedapoolarewaju / #1663)
+- [x] @uppy/locales: add Turkish (@ayhankesicioglu / #1667)
+- [x] @uppy/locales: add Arabic, Saudi Arabia (@HussainAlkhalifah / #1673)
+- [x] @uppy/companion: return nextPagePath for drive/dropbox (@stephentuso / #1652)
+- [x] docs: add custom plugin example (@arturi / #1623)
+- [x] dashboard/providers: many accessibility improvements (@lakesare / #1507)
 
 ## 1.2.0
 
