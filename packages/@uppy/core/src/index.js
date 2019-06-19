@@ -88,6 +88,8 @@ class Uppy {
     if (this.opts.logger === 'debug' || this.opts.debug) {
       this.opts.logger = debugLogger
     }
+    
+    this.log(`Using Core v${this.constructor.VERSION}`)
 
     // i18n
     this.translator = new Translator([ this.defaultLocale, this.opts.locale ])
@@ -916,6 +918,10 @@ class Uppy {
       throw new Error(msg)
     }
 
+    if (Plugin.VERSION) {
+      this.log(`Using ${pluginId} v${Plugin.VERSION}`)
+    }
+
     this.plugins[plugin.type].push(plugin)
     plugin.install()
 
@@ -1171,18 +1177,23 @@ class Uppy {
 
       lastStep = lastStep.then(() => {
         const { currentUploads } = this.getState()
-        const currentUpload = Object.assign({}, currentUploads[uploadID], {
+        const currentUpload = currentUploads[uploadID]
+        if (!currentUpload) {
+          return
+        }
+
+        const updatedUpload = Object.assign({}, currentUpload, {
           step: step
         })
         this.setState({
           currentUploads: Object.assign({}, currentUploads, {
-            [uploadID]: currentUpload
+            [uploadID]: updatedUpload
           })
         })
 
-        // TODO give this the `currentUpload` object as its only parameter maybe?
+        // TODO give this the `updatedUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-        return fn(currentUpload.fileIDs, uploadID)
+        return fn(updatedUpload.fileIDs, uploadID)
       }).then((result) => {
         return null
       })

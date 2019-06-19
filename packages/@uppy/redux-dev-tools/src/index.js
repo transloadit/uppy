@@ -12,7 +12,7 @@ module.exports = class ReduxDevTools extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'debugger'
-    this.id = 'ReduxDevTools'
+    this.id = this.opts.id || 'ReduxDevTools'
     this.title = 'Redux DevTools'
 
     // set default options

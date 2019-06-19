@@ -143,27 +143,27 @@ module.exports = class Dashboard extends Plugin {
     this.removeTarget = this.removeTarget.bind(this)
     this.hideAllPanels = this.hideAllPanels.bind(this)
     this.showPanel = this.showPanel.bind(this)
-    this.handlePopState = this.handlePopState.bind(this)
-
-    this.initEvents = this.initEvents.bind(this)
-    this.handleKeyDownInModal = this.handleKeyDownInModal.bind(this)
-    this.handleKeyDownInInline = this.handleKeyDownInInline.bind(this)
-    this.handleFileAdded = this.handleFileAdded.bind(this)
-    this.handleComplete = this.handleComplete.bind(this)
-    this.handleClickOutside = this.handleClickOutside.bind(this)
     this.toggleFileCard = this.toggleFileCard.bind(this)
     this.toggleAddFilesPanel = this.toggleAddFilesPanel.bind(this)
+
+    this.initEvents = this.initEvents.bind(this)
+    this.handlePopState = this.handlePopState.bind(this)
+    this.handleKeyDownInModal = this.handleKeyDownInModal.bind(this)
+    this.handleKeyDownInInline = this.handleKeyDownInInline.bind(this)
+    this.handleComplete = this.handleComplete.bind(this)
+    this.handleClickOutside = this.handleClickOutside.bind(this)
     this.handlePaste = this.handlePaste.bind(this)
     this.handlePasteOnBody = this.handlePasteOnBody.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
-    this.render = this.render.bind(this)
-    this.install = this.install.bind(this)
-
     this.handleDragOver = this.handleDragOver.bind(this)
     this.handleDragLeave = this.handleDragLeave.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
+
     this.superFocusOnEachUpdate = this.superFocusOnEachUpdate.bind(this)
     this.recordIfFocusedOnUppyRecently = this.recordIfFocusedOnUppyRecently.bind(this)
+
+    this.render = this.render.bind(this)
+    this.install = this.install.bind(this)
 
     this.superFocus = createSuperFocus()
     this.ifFocusedOnUppyRecently = false
@@ -234,41 +234,6 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  requestCloseModal () {
-    if (this.opts.onRequestCloseModal) {
-      return this.opts.onRequestCloseModal()
-    }
-    return this.closeModal()
-  }
-
-  updateBrowserHistory () {
-    // Ensure history state does not already contain our modal name to avoid double-pushing
-    if (!history.state || !history.state[this.modalName]) {
-      // Push to history so that the page is not lost on browser back button press
-      history.pushState({
-        ...history.state,
-        [this.modalName]: true
-      }, '')
-    }
-
-    // Listen for back button presses
-    window.addEventListener('popstate', this.handlePopState, false)
-  }
-
-  handlePopState (event) {
-    // Close the modal if the history state no longer contains our modal name
-    if (this.isModalOpen() && (!event.state || !event.state[this.modalName])) {
-      this.closeModal({ manualClose: false })
-    }
-
-    // When the browser back button is pressed and uppy is now the latest entry in the history but the modal is closed, fix the history by removing the uppy history entry
-    // This occurs when another entry is added into the history state while the modal is open, and then the modal gets manually closed
-    // Solves PR #575 (https://github.com/transloadit/uppy/pull/575)
-    if (!this.isModalOpen() && event.state && event.state[this.modalName]) {
-      history.go(-1)
-    }
-  }
-
   openModal () {
     const { promise, resolve } = createPromise()
     // save scroll position
@@ -302,6 +267,8 @@ module.exports = class Dashboard extends Plugin {
 
     // handle ESC and TAB keys in modal dialog
     document.addEventListener('keydown', this.handleKeyDownInModal)
+
+    this.uppy.emit('dashboard:modal-open')
 
     return promise
   }
@@ -364,6 +331,8 @@ module.exports = class Dashboard extends Plugin {
       }
     }
 
+    this.uppy.emit('dashboard:modal-closed')
+
     return promise
   }
 
@@ -371,40 +340,25 @@ module.exports = class Dashboard extends Plugin {
     return !this.getPluginState().isHidden || false
   }
 
-  handleKeyDownInModal (event) {
-    // close modal on esc key press
-    if (event.keyCode === ESC_KEY) this.requestCloseModal(event)
-    // trap focus on tab key press
-    if (event.keyCode === TAB_KEY) trapFocus.forModal(event, this.getPluginState().activeOverlayType, this.el)
+  requestCloseModal () {
+    if (this.opts.onRequestCloseModal) {
+      return this.opts.onRequestCloseModal()
+    }
+    return this.closeModal()
   }
 
-  handleClickOutside () {
-    if (this.opts.closeModalOnClickOutside) this.requestCloseModal()
-  }
-
-  handlePaste (event) {
-    // 1. Let any acquirer plugin (Url/Webcam/etc.) handle pastes to the root
-    this.uppy.iteratePlugins((plugin) => {
-      if (plugin.type === 'acquirer') {
-        // Every Plugin with .type acquirer can define handleRootPaste(event)
-        plugin.handleRootPaste && plugin.handleRootPaste(event)
-      }
-    })
-
-    // 2. Add all dropped files
-    const files = toArray(event.clipboardData.files)
-    files.forEach((file) => {
-      this.uppy.log('[Dashboard] File pasted')
-      this.addFile(file)
+  toggleFileCard (fileId) {
+    this.setPluginState({
+      fileCardFor: fileId || null,
+      activeOverlayType: fileId ? 'FileCard' : null
     })
   }
 
-  handleInputChange (event) {
-    event.preventDefault()
-    const files = toArray(event.target.files)
-    files.forEach((file) =>
-      this.addFile(file)
-    )
+  toggleAddFilesPanel (show) {
+    this.setPluginState({
+      showAddFilesPanel: show,
+      activeOverlayType: show ? 'AddFiles' : null
+    })
   }
 
   addFile (file) {
@@ -467,6 +421,83 @@ module.exports = class Dashboard extends Plugin {
     clearTimeout(this.makeDashboardInsidesVisibleAnywayTimeout)
   }
 
+  // Records whether we have been interacting with uppy right now, which is then used to determine whether state updates should trigger a refocusing.
+  recordIfFocusedOnUppyRecently (event) {
+    if (this.el.contains(event.target)) {
+      this.ifFocusedOnUppyRecently = true
+    } else {
+      this.ifFocusedOnUppyRecently = false
+      // ___Why run this.superFocus.cancel here when it already runs in superFocusOnEachUpdate?
+      //    Because superFocus is debounced, when we move from Uppy to some other element on the page,
+      //    previously run superFocus sometimes hits and moves focus back to Uppy.
+      this.superFocus.cancel()
+    }
+  }
+
+  updateBrowserHistory () {
+    // Ensure history state does not already contain our modal name to avoid double-pushing
+    if (!history.state || !history.state[this.modalName]) {
+      // Push to history so that the page is not lost on browser back button press
+      history.pushState({
+        ...history.state,
+        [this.modalName]: true
+      }, '')
+    }
+
+    // Listen for back button presses
+    window.addEventListener('popstate', this.handlePopState, false)
+  }
+
+  handlePopState (event) {
+    // Close the modal if the history state no longer contains our modal name
+    if (this.isModalOpen() && (!event.state || !event.state[this.modalName])) {
+      this.closeModal({ manualClose: false })
+    }
+
+    // When the browser back button is pressed and uppy is now the latest entry in the history but the modal is closed, fix the history by removing the uppy history entry
+    // This occurs when another entry is added into the history state while the modal is open, and then the modal gets manually closed
+    // Solves PR #575 (https://github.com/transloadit/uppy/pull/575)
+    if (!this.isModalOpen() && event.state && event.state[this.modalName]) {
+      history.go(-1)
+    }
+  }
+
+  handleKeyDownInModal (event) {
+    // close modal on esc key press
+    if (event.keyCode === ESC_KEY) this.requestCloseModal(event)
+    // trap focus on tab key press
+    if (event.keyCode === TAB_KEY) trapFocus.forModal(event, this.getPluginState().activeOverlayType, this.el)
+  }
+
+  handleClickOutside () {
+    if (this.opts.closeModalOnClickOutside) this.requestCloseModal()
+  }
+
+  handlePaste (event) {
+    // 1. Let any acquirer plugin (Url/Webcam/etc.) handle pastes to the root
+    this.uppy.iteratePlugins((plugin) => {
+      if (plugin.type === 'acquirer') {
+        // Every Plugin with .type acquirer can define handleRootPaste(event)
+        plugin.handleRootPaste && plugin.handleRootPaste(event)
+      }
+    })
+
+    // 2. Add all dropped files
+    const files = toArray(event.clipboardData.files)
+    files.forEach((file) => {
+      this.uppy.log('[Dashboard] File pasted')
+      this.addFile(file)
+    })
+  }
+
+  handleInputChange (event) {
+    event.preventDefault()
+    const files = toArray(event.target.files)
+    files.forEach((file) =>
+      this.addFile(file)
+    )
+  }
+
   handleDragOver (event) {
     event.preventDefault()
     event.stopPropagation()
@@ -516,50 +547,9 @@ module.exports = class Dashboard extends Plugin {
       })
   }
 
-  initEvents () {
-    // Modal open button
-    const showModalTrigger = findAllDOMElements(this.opts.trigger)
-    if (!this.opts.inline && showModalTrigger) {
-      showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.openModal))
-    }
-
-    if (!this.opts.inline && !showModalTrigger) {
-      this.uppy.log('Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options unless you are planning to call openModal() method yourself', 'error')
-    }
-
-    this.startListeningToResize()
-    document.addEventListener('paste', this.handlePasteOnBody)
-
-    this.uppy.on('plugin-remove', this.removeTarget)
-    this.uppy.on('file-added', this.handleFileAdded)
-    this.uppy.on('complete', this.handleComplete)
-
-    // ___Why fire on capture?
-    //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
-    document.addEventListener('focus', this.recordIfFocusedOnUppyRecently, true)
-    document.addEventListener('click', this.recordIfFocusedOnUppyRecently, true)
-
-    if (this.opts.inline) {
-      this.el.addEventListener('keydown', this.handleKeyDownInInline)
-    }
-  }
-
   handleKeyDownInInline (event) {
     // Trap focus on tab key press.
     if (event.keyCode === TAB_KEY) trapFocus.forInline(event, this.getPluginState().activeOverlayType, this.el)
-  }
-
-  // Records whether we have been interacting with uppy right now, which is then used to determine whether state updates should trigger a refocusing.
-  recordIfFocusedOnUppyRecently (event) {
-    if (this.el.contains(event.target)) {
-      this.ifFocusedOnUppyRecently = true
-    } else {
-      this.ifFocusedOnUppyRecently = false
-      // ___Why run this.superFocus.cancel here when it already runs in superFocusOnEachUpdate?
-      //    Because superFocus is debounced, when we move from Uppy to some other element on the page,
-      //    previously run superFocus sometimes hits and moves focus back to Uppy.
-      this.superFocus.cancel()
-    }
   }
 
   // ___Why do we listen to the 'paste' event on a document instead of onPaste={props.handlePaste} prop, or this.el.addEventListener('paste')?
@@ -575,14 +565,39 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  handleFileAdded () {
-    this.hideAllPanels()
-  }
-
   handleComplete ({ failed, uploadID }) {
     if (this.opts.closeAfterFinish && failed.length === 0) {
       // All uploads are done
       this.requestCloseModal()
+    }
+  }
+
+  initEvents () {
+    // Modal open button
+    const showModalTrigger = findAllDOMElements(this.opts.trigger)
+    if (!this.opts.inline && showModalTrigger) {
+      showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.openModal))
+    }
+
+    if (!this.opts.inline && !showModalTrigger) {
+      this.uppy.log('Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options unless you are planning to call openModal() method yourself', 'error')
+    }
+
+    this.startListeningToResize()
+    document.addEventListener('paste', this.handlePasteOnBody)
+
+    this.uppy.on('plugin-remove', this.removeTarget)
+    this.uppy.on('file-added', this.hideAllPanels)
+    this.uppy.on('dashboard:modal-closed', this.hideAllPanels)
+    this.uppy.on('complete', this.handleComplete)
+
+    // ___Why fire on capture?
+    //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
+    document.addEventListener('focus', this.recordIfFocusedOnUppyRecently, true)
+    document.addEventListener('click', this.recordIfFocusedOnUppyRecently, true)
+
+    if (this.opts.inline) {
+      this.el.addEventListener('keydown', this.handleKeyDownInInline)
     }
   }
 
@@ -597,7 +612,8 @@ module.exports = class Dashboard extends Plugin {
 
     window.removeEventListener('popstate', this.handlePopState, false)
     this.uppy.off('plugin-remove', this.removeTarget)
-    this.uppy.off('file-added', this.handleFileAdded)
+    this.uppy.off('file-added', this.hideAllPanels)
+    this.uppy.off('dashboard:modal-closed', this.hideAllPanels)
     this.uppy.off('complete', this.handleComplete)
 
     document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
@@ -606,20 +622,6 @@ module.exports = class Dashboard extends Plugin {
     if (this.opts.inline) {
       this.el.removeEventListener('keydown', this.handleKeyDownInInline)
     }
-  }
-
-  toggleFileCard (fileId) {
-    this.setPluginState({
-      fileCardFor: fileId || null,
-      activeOverlayType: fileId ? 'FileCard' : null
-    })
-  }
-
-  toggleAddFilesPanel (show) {
-    this.setPluginState({
-      showAddFilesPanel: show,
-      activeOverlayType: show ? 'AddFiles' : null
-    })
   }
 
   superFocusOnEachUpdate () {

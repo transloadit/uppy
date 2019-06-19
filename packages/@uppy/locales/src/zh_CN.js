@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const zh_CN = {}
 
 zh_CN.strings = {

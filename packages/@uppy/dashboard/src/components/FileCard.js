@@ -7,55 +7,69 @@ class FileCard extends Component {
   constructor (props) {
     super(props)
 
-    this.meta = {}
-
-    this.tempStoreMetaOrSubmit = this.tempStoreMetaOrSubmit.bind(this)
+    this.tempStoreMeta = this.tempStoreMeta.bind(this)
+    this.saveOnEnter = this.saveOnEnter.bind(this)
     this.renderMetaFields = this.renderMetaFields.bind(this)
     this.handleSave = this.handleSave.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
+
+    const file = this.props.files[this.props.fileCardFor]
+    const metaFields = this.props.metaFields || []
+
+    const storedMetaData = {}
+    metaFields.forEach((field) => {
+      storedMetaData[field.id] = file.meta[field.id] || ''
+    })
+
+    this.state = {
+      formState: storedMetaData
+    }
   }
 
-  tempStoreMetaOrSubmit (ev) {
-    const file = this.props.files[this.props.fileCardFor]
-
+  saveOnEnter (ev) {
     if (ev.keyCode === 13) {
+      const file = this.props.files[this.props.fileCardFor]
       ev.stopPropagation()
       ev.preventDefault()
-      this.props.saveFileCard(this.meta, file.id)
-      return
+      this.props.saveFileCard(this.state.formState, file.id)
     }
-
-    const value = ev.target.value
-    const name = ev.target.dataset.name
-    this.meta[name] = value
   }
 
-  renderMetaFields (file) {
-    const metaFields = this.props.metaFields || []
-    return metaFields.map((field, i) => {
-      return <fieldset class="uppy-DashboardFileCard-fieldset">
-        <label class="uppy-DashboardFileCard-label">{field.name}</label>
-        <input class="uppy-u-reset uppy-c-textInput uppy-DashboardFileCard-input"
-          type="text"
-          data-name={field.id}
-          value={file.meta[field.id]}
-          placeholder={field.placeholder}
-          onkeyup={this.tempStoreMetaOrSubmit}
-          onkeydown={this.tempStoreMetaOrSubmit}
-          onkeypress={this.tempStoreMetaOrSubmit}
-          data-uppy-super-focusable />
-      </fieldset>
+  tempStoreMeta (ev, name) {
+    this.setState({
+      formState: {
+        ...this.state.formState,
+        [name]: ev.target.value
+      }
     })
   }
 
   handleSave (ev) {
     const fileID = this.props.fileCardFor
-    this.props.saveFileCard(this.meta, fileID)
+    this.props.saveFileCard(this.state.formState, fileID)
   }
 
   handleCancel (ev) {
-    this.meta = {}
     this.props.toggleFileCard()
+  }
+
+  renderMetaFields (file) {
+    const metaFields = this.props.metaFields || []
+
+    return metaFields.map((field, i) => {
+      return <fieldset class="uppy-DashboardFileCard-fieldset">
+        <label class="uppy-DashboardFileCard-label">{field.name}</label>
+        <input class="uppy-u-reset uppy-c-textInput uppy-DashboardFileCard-input"
+          type="text"
+          value={this.state.formState[field.id]}
+          placeholder={field.placeholder}
+          onkeyup={this.saveOnEnter}
+          onkeydown={this.saveOnEnter}
+          onkeypress={this.saveOnEnter}
+          oninput={ev => this.tempStoreMeta(ev, field.id)}
+          data-uppy-super-focusable />
+      </fieldset>
+    })
   }
 
   render () {
