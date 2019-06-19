@@ -1,26 +1,33 @@
 import UppyUtils = require('@uppy/utils');
 
 declare module Uppy {
+  // Utility types
+  type OmitKey<T, Key> = Pick<T, Exclude<keyof T, Key>>;
+
   // These are defined in @uppy/utils instead of core so it can be used there without creating import cycles
   export type UppyFile<TMeta extends IndexedObject<any> = {}> = UppyUtils.UppyFile<TMeta>;
   export type Store = UppyUtils.Store;
+  export type InternalMetadata = UppyUtils.InternalMetadata;
 
   interface IndexedObject<T> {
     [key: string]: T;
     [key: number]: T;
   }
 
-  interface UploadedUppyFile<TMeta extends IndexedObject<any> = {}> extends UppyFile<TMeta> {
+  interface UploadedUppyFile<TMeta> extends UppyFile<TMeta> {
     uploadURL: string;
   }
 
-  interface FailedUppyFile<TMeta extends IndexedObject<any> = {}> extends UppyFile<TMeta> {
+  interface FailedUppyFile<TMeta> extends UppyFile<TMeta> {
     error: string;
   }
 
-  interface AddFileOptions extends Partial<UppyFile> {
+  // Replace the `meta` property type with one that allows omitting internal metadata; addFile() will add that
+  type UppyFileWithoutMeta<TMeta> = OmitKey<UppyFile<TMeta>, 'meta'>;
+  interface AddFileOptions<TMeta = IndexedObject<any>> extends Partial<UppyFileWithoutMeta<TMeta>> {
     // `.data` is the only required property here.
     data: Blob | File;
+    meta?: Partial<InternalMetadata> & TMeta;
   }
 
   interface PluginOptions {
@@ -110,11 +117,11 @@ declare module Uppy {
     removePostProcessor(fn: any): void;
     addUploader(fn: any): void;
     removeUploader(fn: any): void;
-    setMeta(data: any): void;
-    setFileMeta(fileID: string, data: object): void;
+    setMeta<TMeta extends IndexedObject<any> = {}>(data: TMeta): void;
+    setFileMeta<TMeta extends IndexedObject<any> = {}>(fileID: string, data: TMeta): void;
     getFile<TMeta extends IndexedObject<any> = {}>(fileID: string): UppyFile<TMeta>;
     getFiles<TMeta extends IndexedObject<any> = {}>(): Array<UppyFile<TMeta>>;
-    addFile(file: AddFileOptions): void;
+    addFile<TMeta extends IndexedObject<any> = {}>(file: AddFileOptions<TMeta>): void;
     removeFile(fileID: string): void;
     pauseResume(fileID: string): boolean;
     pauseAll(): void;
@@ -133,9 +140,9 @@ declare module Uppy {
     hideInfo(): void;
     log(msg: string, type?: LogLevel): void;
     run(): Uppy;
-    restore(uploadID: string): Promise<UploadResult>;
+    restore<TMeta extends IndexedObject<any> = {}>(uploadID: string): Promise<UploadResult>;
     addResultData(uploadID: string, data: object): void;
-    upload(): Promise<UploadResult>;
+    upload<TMeta extends IndexedObject<any> = {}>(): Promise<UploadResult>;
   }
 }
 

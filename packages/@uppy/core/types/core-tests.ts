@@ -26,3 +26,12 @@ import DefaultStore = require('@uppy/store-default');
     f.progress.uploadStarted = Date.now()
   }
 }
+
+{
+  const uppy = Uppy();
+  uppy.addFile({
+    name: 'empty.json',
+    data: new Blob(['null'], { type: 'application/json' }),
+    meta: { path: 'path/to/file' }
+  });
+}
