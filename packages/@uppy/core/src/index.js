@@ -8,8 +8,8 @@ const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
-const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
 const supportsUploadProgress = require('./supportsUploadProgress')
+const { nullLogger, debugLogger } = require('./loggers')
 const Plugin = require('./Plugin') // Exported from here.
 
 /**
@@ -77,12 +77,17 @@ class Uppy {
       onBeforeFileAdded: (currentFile, files) => currentFile,
       onBeforeUpload: (files) => files,
       store: DefaultStore(),
-      customLogger: (message, type) => {}
+      logger: nullLogger
     }
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
     this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
+
+    // Set built-in debug logger, support debug: true for backwards-compatability
+    if (this.opts.logger === 'debug' || this.opts.debug) {
+      this.opts.logger = debugLogger
+    }
 
     // i18n
     this.translator = new Translator([ this.defaultLocale, this.opts.locale ])
@@ -1029,31 +1034,19 @@ class Uppy {
   }
 
   /**
-   * Logs stuff to console, only if `debug` is set to true. Silent in production.
+   * Passes messages to a function, provided in opt.logger.
+   * If `opt.logger === 'debug'` or `opt.debug === true`, logs to the browser console.
    *
    * @param {String|Object} message to log
    * @param {String} [type] optional `error` or `warning`
    */
   log (message, type) {
-    if (!this.opts.debug) {
-      return
+    const { logger } = this.opts
+    switch (type) {
+      case 'error': logger.error(message); break
+      case 'warning': logger.warn(message); break
+      default: logger.debug(message); break
     }
-
-    this.opts.customLogger(message, type)
-
-    const prefix = `[Uppy] [${getTimeStamp()}]`
-
-    if (type === 'error') {
-      console.error(prefix, message)
-      return
-    }
-
-    if (type === 'warning') {
-      console.warn(prefix, message)
-      return
-    }
-
-    console.log(prefix, message)
   }
 
   /**
