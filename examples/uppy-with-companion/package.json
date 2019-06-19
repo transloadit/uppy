@@ -1,6 +1,5 @@
 {
   "name": "@uppy-example/uppy-with-companion",
-  "version": "1.0.0",
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",

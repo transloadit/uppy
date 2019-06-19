@@ -1,6 +1,5 @@
 {
   "name": "uppy.io",
-  "version": "0.0.1",
   "private": true,
   "hexo": {
     "version": "3.8.0"
