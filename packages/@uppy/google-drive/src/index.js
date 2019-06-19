@@ -13,7 +13,7 @@ module.exports = class GoogleDrive extends Plugin {
     Provider.initPlugin(this, opts)
     this.title = this.opts.title || 'Google Drive'
     this.icon = () => (
-      <svg aria-hidden="true" width="18px" height="16px" viewBox="0 0 18 16" version="1.1">
+      <svg aria-hidden="true" focusable="false" width="18px" height="16px" viewBox="0 0 18 16" version="1.1">
         <g fill-rule="evenodd">
           <polygon fill="#3089FC" points="6.32475 10.2 18 10.2 14.999625 15.3 3.324375 15.3" />
           <polygon fill="#00A85D" points="3.000375 15.3 0 10.2 5.83875 0.275974026 8.838 5.37597403 5.999625 10.2" />

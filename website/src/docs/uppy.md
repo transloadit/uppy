@@ -120,6 +120,8 @@ A function run before a file is added to Uppy. It gets passed `(currentFile, fil
 
 Use this function to run any number of custom checks on the selected file, or manipulate it, for instance, by optimizing a file name.
 
+> ⚠️ Note that this method is intended for quick synchronous checks/modifications only. If you need to do an async API call, or heavy work on a file (like compression or encryption), you should utilize a [custom plugin](/docs/writing-plugins/#Example-of-a-custom-plugin) instead.
+
 Return true/nothing or a modified file object to proceed with adding the file:
 
 ```js
@@ -155,7 +157,7 @@ onBeforeFileAdded: (currentFile, files) => {
 }
 ```
 
-**Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes.
+**Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes via [uppy.log()](#uppy-log).
 
 
 <a id="onBeforeUpload"></a>
@@ -164,6 +166,8 @@ onBeforeFileAdded: (currentFile, files) => {
 A function run before an upload begins. Gets passed `files` object with all the files that are already in Uppy.
 
 Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
+
+> ⚠️ Note that this method is intended for quick synchronous checks/modifications only. If you need to do an async API call, or heavy work on a file (like compression or encryption), you should utilize a [custom plugin](/docs/writing-plugins/#Example-of-a-custom-plugin) instead.
 
 Return true or modified `files` object to proceed:
 
@@ -191,7 +195,7 @@ onBeforeUpload: (files) => {
 }
 ```
 
-**Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes.
+**Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes via [uppy.log()](#uppy-log).
 
 ### `locale: {}`
 

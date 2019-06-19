@@ -12,6 +12,10 @@
 //
 //  npm run uploadcdn <package-name> [version]
 //
+// To override an existing release (DANGER!)
+//
+//  npm run uploadcdn <package-name> [version] -- --force
+//
 // Authors:
 //
 //  - Kevin van Zonneveld <kevin@transloadit.com>

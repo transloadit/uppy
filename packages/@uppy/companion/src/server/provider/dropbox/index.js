@@ -79,6 +79,18 @@ class DropBox {
   }
 
   stats ({ directory, query, token }, done) {
+    if (query.cursor) {
+      this.client
+        .post('files/list_folder/continue')
+        .options({ version: '2' })
+        .auth(token)
+        .json({
+          cursor: query.cursor
+        })
+        .request(done)
+      return
+    }
+
     this.client
       .post('files/list_folder')
       .options({ version: '2' })
@@ -169,7 +181,7 @@ class DropBox {
       })
     })
 
-    data.nextPagePath = null
+    data.nextPagePath = adapter.getNextPagePath(res)
 
     return data
   }

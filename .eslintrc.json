@@ -1,5 +1,6 @@
 {
-  "extends": ["standard", "standard-preact"],
+  "parser": "babel-eslint",
+  "extends": ["standard", "standard-jsx"],
   "env": {
     "browser": true,
     "node": true,
@@ -9,12 +10,25 @@
     "window": true,
     "hexo": true
   },
-  "plugins": ["jest", "compat"],
+  "plugins": ["jest", "compat", "jsdoc"],
   "rules": {
     "jsx-quotes": ["error", "prefer-double"],
-    "compat/compat": ["error"]
+    "compat/compat": ["error"],
+
+    "jsdoc/check-alignment": ["warn"],
+    "jsdoc/check-examples": ["warn"],
+    "jsdoc/check-indentation": ["warn"],
+    "jsdoc/check-param-names": ["warn"],
+    "jsdoc/check-syntax": ["warn"],
+    "jsdoc/check-tag-names": ["warn"],
+    "jsdoc/check-types": ["warn"],
+    "jsdoc/newline-after-description": ["warn"],
+    "jsdoc/valid-types": ["warn"]
   },
   "settings": {
+    "react": {
+      "pragma": "h"
+    },
     "polyfills": [
       "Promise",
       "fetch",
@@ -30,6 +44,14 @@
     ],
     "rules": {
       "compat/compat": "off"
+    }
+  },{
+    "files": [
+      "packages/@uppy/locales/src/*.js",
+      "packages/@uppy/locales/template.js"
+    ],
+    "rules": {
+      "camelcase": "off"
     }
   }]
 }

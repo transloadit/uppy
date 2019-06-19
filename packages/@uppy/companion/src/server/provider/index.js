@@ -149,7 +149,7 @@ module.exports.addProviderOptions = (options, grantConfig) => {
       } else if (server.path) {
         grantConfig[authProvider].callback = `${server.path}${grantConfig[authProvider].callback}`
       }
-    } else if (authProvider !== 's3') { // TODO: there should be a cleaner way to do this.
+    } else if (authProvider !== 's3') {
       logger.warn(`skipping one found unsupported provider "${authProvider}".`, 'provider.options.skip')
     }
   })

@@ -9,13 +9,6 @@ class UrlUI extends Component {
 
   componentDidMount () {
     this.input.value = ''
-    // My guess about why browser scrolls to top on focus:
-    // Component is mounted right away, but the tab panel might be animating
-    // still, so input element is positioned outside viewport. This fixes it.
-    setTimeout(() => {
-      if (!this.input) return
-      this.input.focus({ preventScroll: true })
-    }, 150)
   }
 
   handleKeyPress (ev) {
@@ -36,7 +29,8 @@ class UrlUI extends Component {
         aria-label={this.props.i18n('enterUrlToImport')}
         placeholder={this.props.i18n('enterUrlToImport')}
         onkeyup={this.handleKeyPress}
-        ref={(input) => { this.input = input }} />
+        ref={(input) => { this.input = input }}
+        data-uppy-super-focusable />
       <button
         class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Url-importButton"
         type="button"

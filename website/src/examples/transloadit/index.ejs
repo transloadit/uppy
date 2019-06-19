@@ -69,9 +69,7 @@ This example demonstrates how to unlock Transloadit’s features within Uppy.
     initUppy()
   }
 
-  apiKeyEl.addEventListener('change', handleInputChange)
-  apiKeyEl.addEventListener('keyup',  handleInputChange)
-  apiKeyEl.addEventListener('paste',  handleInputChange)
+  apiKeyEl.addEventListener('input', handleInputChange)
 </script>
 
 <hr />
@@ -92,6 +90,11 @@ const uppy = Uppy({
     maxNumberOfFiles: 2,
     minNumberOfFiles: 1,
     allowedFileTypes: ['image/*']
+  },
+  locale: {
+    strings: {
+      youCanOnlyUploadFileTypes: 'You can only upload images'
+    }
   }
 })
 
@@ -101,7 +104,7 @@ uppy
       auth: {
         key: YOUR_TRANSLOADIT_API_KEY
       },
-      // It's more secure to use a template_id and enable
+      // It’s more secure to use a template_id and enable
       // Signature Authentication
       steps: {
         resize: {

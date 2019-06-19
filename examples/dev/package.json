@@ -9,7 +9,9 @@
     "@babel/core": "^7.4.4",
     "aliasify": "^2.1.0",
     "babelify": "^10.0.0",
-    "watchify": "^3.11.0"
+    "es6-promise": "^4.2.8",
+    "watchify": "^3.11.0",
+    "whatwg-fetch": "^3.0.0"
   },
   "private": true,
   "scripts": {
