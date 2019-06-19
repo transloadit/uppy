@@ -2,6 +2,7 @@
 const http = require('http')
 const tempWrite = require('temp-write')
 const { Writable } = require('stream')
+const { supportsChooseFile } = require('../utils')
 
 const devNull = () => Writable({
   write (chunk, enc, cb) {
@@ -11,14 +12,7 @@ const devNull = () => Writable({
 
 const testURL = 'http://localhost:4567/xhr-limit'
 
-function browserSupportsChooseFile (capabilities) {
-  // Webdriver for Safari and Edge doesn’t support .chooseFile
-  return capabilities.browserName !== 'safari' &&
-         capabilities.browserName !== 'MicrosoftEdge' &&
-         capabilities.platformName !== 'Android'
-}
-
-describe('XHRUpload with `limit`', () => {
+describe.skip('XHRUpload with `limit`', () => {
   let server = null
   before(() => {
     server = http.createServer((req, res) => {
@@ -28,7 +22,9 @@ describe('XHRUpload with `limit`', () => {
       })
       req.pipe(devNull())
       req.on('end', () => {
-        res.end('{"status":"ok"}')
+        setTimeout(() => {
+          res.end('{"status":"ok"}')
+        }, 3000)
       })
     }).listen()
   })
@@ -60,8 +56,8 @@ describe('XHRUpload with `limit`', () => {
       window.startXHRLimitTest(endpoint)
     }, endpoint)
 
-    if (browserSupportsChooseFile(capabilities)) {
-      const input = await browser.$('#uppyXhrLimit .uppy-DragDrop-input')
+    if (supportsChooseFile(capabilities)) {
+      const input = await browser.$('#uppyXhrLimit .uppy-FileInput-input')
       for (const file of files) {
         await input.setValue(file.path)
       }
@@ -85,7 +81,8 @@ describe('XHRUpload with `limit`', () => {
     const status = await browser.execute(() => ({
       started: window.uppyXhrLimit.uploadsStarted,
       complete: window.uppyXhrLimit.uploadsComplete
-    })).value
+    }))
+    console.log(status)
     expect(status.started).to.be.equal(files.length)
     expect(status.complete).to.be.equal(2)
   })
