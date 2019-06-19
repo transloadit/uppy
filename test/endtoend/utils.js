@@ -43,6 +43,9 @@ function selectFakeFile (uppyID, name, type, b64) {
 }
 
 function supportsChooseFile () {
+  // no remote file uploads right now...
+  if (process.env.CI) return false
+
   // Webdriver for Safari and Edge doesn’t support .chooseFile
   return capabilities.browserName !== 'Safari' &&
          capabilities.browserName !== 'MicrosoftEdge' &&

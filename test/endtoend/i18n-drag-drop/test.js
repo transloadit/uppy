@@ -11,10 +11,6 @@ describe('File upload with DragDrop + XHRUpload, i18n translated string', () => 
 
   it('should upload a file with XHRUpload and set progressbar to 100%', async () => {
     let testImage = path.join(__dirname, '../../resources/image.jpg')
-    if (process.env.CI && browser.uploadFile) {
-      testImage = await browser.uploadFile(testImage)
-    }
-
     if (supportsChooseFile(capabilities)) {
       const input = await browser.$('#uppyi18n .uppy-DragDrop-input')
       await input.setValue(testImage)
