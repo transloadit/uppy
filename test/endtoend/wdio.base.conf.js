@@ -23,8 +23,8 @@ exports.config = {
 
   // Patterns to exclude.
   exclude: [
-    'test/endtoend/url-plugin/*',
-    'test/endtoend/transloadit/*'
+    // 'test/endtoend/url-plugin/*',
+    // 'test/endtoend/transloadit/*'
   ],
 
   // Suites allows you to do `wdio config.js --suite $name` to run a subset of tests.

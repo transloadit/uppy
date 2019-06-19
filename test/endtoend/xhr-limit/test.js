@@ -18,7 +18,7 @@ function browserSupportsChooseFile (capabilities) {
          capabilities.platformName !== 'Android'
 }
 
-describe.skip('XHRUpload with `limit`', () => {
+describe('XHRUpload with `limit`', () => {
   let server = null
   before(() => {
     server = http.createServer((req, res) => {
