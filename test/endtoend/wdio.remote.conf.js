@@ -41,6 +41,7 @@ exports.config = Object.assign(base.config, {
     'sauce',
     [CompanionService]
   ],
+  sauceConnect: true,
   user: process.env.SAUCE_USERNAME,
   key: process.env.SAUCE_ACCESS_KEY
 })
