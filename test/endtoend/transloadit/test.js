@@ -28,12 +28,16 @@ describe('Transloadit file processing', () => {
       console.log('skipping Transloadit integration test')
       return this.skip()
     }
+
+    const wrapper = await $('#uppy-transloadit')
+    await wrapper.waitForExist()
+
+    await browser.execute(setTransloaditKeyAndInit, transloaditKey)
+
     const input = await $('#uppy-transloadit .uppy-Dashboard-input')
     const result = await $('#uppy-result')
 
     await input.waitForExist()
-
-    await browser.execute(setTransloaditKeyAndInit, transloaditKey)
 
     if (supportsChooseFile(capabilities)) {
       await browser.execute(unhideTheInput)
