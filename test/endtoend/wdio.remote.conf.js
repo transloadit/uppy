@@ -26,6 +26,12 @@ exports.config = Object.assign(base.config, {
     { browserName: 'chrome', platformName: 'Android', platformVersion: '6.0', deviceOrientation: 'portrait', deviceName: 'Android Emulator' }
   ].map(createCapability),
 
+  // Patterns to exclude.
+  exclude: [
+    'test/endtoend/url-plugin/*',
+    'test/endtoend/transloadit/*'
+  ],
+
   // If you only want to run your tests until a specific amount of tests have failed use
   // bail (default is 0 - don't bail, run all tests).
   bail: 3,
