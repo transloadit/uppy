@@ -62,7 +62,7 @@ ENDTOEND=1 lerna publish from-git --yes \
 # install all packages to the endtoend folder
 # (Don't use the npm cache, don't generate a package-lock, don't save dependencies to any package.json)
 pushd "${__root}/test/endtoend"
-  PKG_VERSIONS="$(echo $PACKAGES | sed -e 's/\w*\b/&@latest/g')"
+  PKG_VERSIONS="$(echo $PACKAGES | sed -e 's/\S\+\b/&@latest/g')"
   npm install \
     --prefer-online \
     --registry "$VERDACCIO_REGISTRY" \
