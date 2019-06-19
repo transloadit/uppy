@@ -37,8 +37,8 @@ describe('XHRUpload with `limit`', () => {
     server = null
   })
 
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
   it('should start counting progress for all files', async () => {

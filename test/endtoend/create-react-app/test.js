@@ -2,8 +2,8 @@
 const testURL = 'http://localhost:4567/create-react-app'
 
 describe('webpack build', () => {
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
   it('should include CSS', async () => {
@@ -16,8 +16,8 @@ describe('webpack build', () => {
 })
 
 describe('React: Dashboard', () => {
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
   it('should have Google Drive panel', async () => {
@@ -63,8 +63,8 @@ describe('React: Dashboard', () => {
 })
 
 describe('React: DashboardModal', () => {
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
   it('should have controlled open and close', async () => {

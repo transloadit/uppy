@@ -17,8 +17,8 @@ function setTransloaditKeyAndInit (transloaditKey) {
 }
 
 describe('Transloadit file processing', () => {
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
   it('should upload a file to Transloadit and crop it', async function () {

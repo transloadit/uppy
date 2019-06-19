@@ -5,8 +5,8 @@ const { selectFakeFile, supportsChooseFile } = require('../utils')
 const testURL = 'http://localhost:4567/i18n-drag-drop'
 
 describe('File upload with DragDrop + XHRUpload, i18n translated string', () => {
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
   it('should upload a file with XHRUpload and set progressbar to 100%', async () => {

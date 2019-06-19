@@ -1,7 +1,7 @@
 /* global browser  */
 describe('File upload with URL plugin', () => {
-  it('should import  and upload a file completely with Url Plugin', () => {
-    browser.url('http://localhost:4567/url-plugin')
+  it('should import  and upload a file completely with Url Plugin', async () => {
+    await browser.url('http://localhost:4567/url-plugin')
 
     const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
     const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3030'

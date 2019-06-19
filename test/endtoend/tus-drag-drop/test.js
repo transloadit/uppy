@@ -5,8 +5,8 @@ const { selectFakeFile, supportsChooseFile } = require('../utils')
 const testURL = 'http://localhost:4567/tus-drag-drop'
 
 describe('File upload with DragDrop + Tus', () => {
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
   it('should upload a file with Tus and set progressbar to 100%', async () => {

@@ -1,7 +1,7 @@
 /* global browser, expect  */
 describe('Project compiled with Uppy\'s TypeScript typings', () => {
   it('Should have correct imports (thus not crash)', async () => {
-    browser.url('http://localhost:4567/typescript')
+    await browser.url('http://localhost:4567/typescript')
 
     const root = await browser.$('.uppy-Root')
     const trigger = await browser.$('#pick-files')

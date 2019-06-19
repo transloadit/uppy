@@ -16,8 +16,8 @@ const notImages = [
 ]
 
 describe('ThumbnailGenerator', () => {
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
   it('should generate thumbnails for images', async function () {
