@@ -43,10 +43,11 @@
     }
   },{
     "files": [
-      "packages/@uppy/locales/src/*.js"
+      "packages/@uppy/locales/src/*.js",
+      "packages/@uppy/locales/template.js"
     ],
     "rules": {
-      "camelcase": 0
+      "camelcase": "off"
     }
   }]
 }
