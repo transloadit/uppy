@@ -5,10 +5,5 @@
     "examples/*",
     "packages/*",
     "packages/@uppy/*"
-  ],
-  "command": {
-    "bootstrap": {
-      "hoist": true
-    }
-  }
+  ]
 }
