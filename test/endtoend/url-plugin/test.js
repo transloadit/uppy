@@ -5,20 +5,25 @@ describe('File upload with URL plugin', () => {
 
     const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
     const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3030'
-    browser.execute(function (companionUrl) {
+    await browser.execute(function (companionUrl) {
       window.initUrlPlugin(companionUrl)
     }, companionUrl)
 
     // select url plugin
-    browser.click(`.uppy-DashboardTab-btn[aria-controls=uppy-DashboardContent-panel--Url]`)
+    const urlButton = await browser.$('.uppy-DashboardTab-btn[aria-controls=uppy-DashboardContent-panel--Url]')
+    await urlButton.click()
     // import set url value
-    browser.waitForVisible('input.uppy-Url-input', 3000)
-    browser.setValue('input.uppy-Url-input', 'https://github.com/transloadit/uppy/raw/master/assets/palette.png')
-    browser.click('button.uppy-Url-importButton')
+    const urlInput = await browser.$('input.uppy-Url-input')
+    await urlInput.waitForDisplayed(3000)
+    await urlInput.setValue('https://github.com/transloadit/uppy/raw/master/assets/palette.png')
+    const importButton = await browser.$('button.uppy-Url-importButton')
+    await importButton.click()
 
     // do the upload
-    browser.waitForVisible('.uppy-u-reset.uppy-c-btn.uppy-c-btn-primary.uppy-StatusBar-actionBtn--upload', 10000)
-    browser.click('.uppy-u-reset.uppy-c-btn.uppy-c-btn-primary.uppy-StatusBar-actionBtn--upload')
-    browser.waitForExist('.uppy-StatusBar.is-complete', 20000)
+    const uploadButton = await browser.$('.uppy-u-reset.uppy-c-btn.uppy-c-btn-primary.uppy-StatusBar-actionBtn--upload')
+    await uploadButton.waitForDisplayed(10000)
+    await uploadButton.click()
+    const completeStatusBar = await browser.$('.uppy-StatusBar.is-complete')
+    await completeStatusBar.waitForExist(20000)
   })
 })
