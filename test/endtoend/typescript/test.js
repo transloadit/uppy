@@ -15,7 +15,7 @@ describe('Project compiled with Uppy\'s TypeScript typings', () => {
     expect(typeofUppy).to.equal('object')
 
     // The dashboard is shown
-    const dashboard = browser.$('.uppy-Dashboard')
+    const dashboard = await browser.$('.uppy-Dashboard')
     expect(await dashboard.isDisplayed()).to.equal(true)
   })
 })
