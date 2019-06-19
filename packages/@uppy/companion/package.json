@@ -26,7 +26,7 @@
     "realtime"
   ],
   "bin": {
-    "companion": "./lib/standalone/start-server.js"
+    "companion": "./src/standalone/start-server.js"
   },
   "dependencies": {
     "@purest/providers": "1.0.0",
