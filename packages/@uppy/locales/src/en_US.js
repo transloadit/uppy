@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const en_US = {}
 
 en_US.strings = {

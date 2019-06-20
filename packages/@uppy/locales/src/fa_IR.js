@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const fa_IR = {}
 
 fa_IR.strings = {

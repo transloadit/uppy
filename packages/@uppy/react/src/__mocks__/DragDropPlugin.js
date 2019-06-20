@@ -4,7 +4,7 @@ module.exports = class DragDrop extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
 
-    this.id = opts.id
+    this.id = this.opts.id
     this.type = 'acquirer'
   }
 

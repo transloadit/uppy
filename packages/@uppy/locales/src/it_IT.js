@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const it_IT = {}
 
 it_IT.strings = {

@@ -27,7 +27,7 @@ module.exports = class XHRUpload extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
-    this.id = 'XHRUpload'
+    this.id = this.opts.id || 'XHRUpload'
     this.title = 'XHRUpload'
 
     this.defaultLocale = {

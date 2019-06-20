@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const ru_RU = {}
 
 ru_RU.strings = {

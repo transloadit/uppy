@@ -33,7 +33,7 @@ module.exports = class AwsS3 extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
-    this.id = 'AwsS3'
+    this.id = this.opts.id || 'AwsS3'
     this.title = 'AWS S3'
 
     this.defaultLocale = {

@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const nl_NL = {}
 
 nl_NL.strings = {
