@@ -90,48 +90,57 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 ## Documentation
 
 - [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods, and events.
-- [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their options.
-- [Companion](https://uppy.io/docs/companion/) — setting up and running an Companion instance, which adds support for Instagram, Dropbox, Google Drive and remote urls.
-- [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps.
-- [Architecture & Writing a Plugin](https://uppy.io/docs/writing-plugins/) — how to write a plugin for Uppy.
+- [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their options
+- [Companion](https://uppy.io/docs/companion/) — setting up and running an Companion instance, which adds support for Instagram, Dropbox, Google Drive and remote urls
+- [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps
+- [Architecture & Writing a Plugin](https://uppy.io/docs/writing-plugins/) — how to write a plugin for Uppy
 
 ## Plugins
 
-[List of plugins and their common options](https://uppy.io/docs/plugins/).
-
-### Local Sources
-
-- [`Dashboard`](https://uppy.io/docs/dashboard/) — universal UI with previews, progress bars, metadata editor and all the cool stuff
-- [`Drag & Drop`](https://uppy.io/docs/drag-drop/) — plain and simple drag and drop area
-- [`File Input`](https://uppy.io/docs/file-input/) — even plainer “select files” button
-- [`Webcam`](https://uppy.io/docs/webcam/) — snap and record those selfies 📷
-
-### Remote Providers
-
-- [`Google Drive`](https://uppy.io/docs/google-drive/), [`Dropbox`](https://uppy.io/docs/dropbox/), [`Instagram`](https://uppy.io/docs/instagram/), [`Import From URL`](https://uppy.io/docs/url/) — support picking files from remote providers or direct URLs from anywhere on the web. Note that [`@uppy/companion`](https://uppy.io/docs/companion) is needed for these.
-
-### Uploaders
-
-- [`Tus`](https://uppy.io/docs/tus/) — resumable uploads via the open [tus](http://tus.io) standard
-- [`XHR Upload`](https://uppy.io/docs/xhr-upload/) — regular uploads for any backend out there (like Apache, Nginx)
-- [`AWS S3`](https://uppy.io/docs/aws-s3/) and [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — upload to AWS S3.
+[List of plugins and their common options](https://uppy.io/docs/plugins/)
 
 ### UI Elements
 
+- [`Dashboard`](https://uppy.io/docs/dashboard/) — universal UI with previews, progress bars, metadata editor and all the cool stuff. Required for most UI plugins like Webcam and Instagram
 - [`Progress Bar`](https://uppy.io/docs/progress-bar/) — minimal progress bar that fills itself when upload progresses
 - [`Status Bar`](https://uppy.io/docs/status-bar/) — more detailed progress, pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included by default with `Dashboard`)
 - [`Informer`](https://uppy.io/docs/informer/) — send notifications like “smile” before taking a selfie or “upload failed” when all is lost (also included by default with `Dashboard`)
 
+### Sources
+
+- [`Drag & Drop`](https://uppy.io/docs/drag-drop/) — plain and simple drag and drop area
+- [`File Input`](https://uppy.io/docs/file-input/) — even plainer “select files” button
+- [`Webcam`](https://uppy.io/docs/webcam/) — snap and record those selfies 📷
+- ⓒ [`Google Drive`](https://uppy.io/docs/google-drive/)
+- ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/)
+- ⓒ [`Instagram`](https://uppy.io/docs/instagram/)
+- ⓒ [`Import From URL`](https://uppy.io/docs/url/) — support picking files from remote providers or direct URLs from anywhere on the web
+
+The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a server-side component, is needed for a plugin to work.
+
+### Destinations
+
+- [`Tus`](https://uppy.io/docs/tus/) — resumable uploads via the open [tus](http://tus.io) standard.
+- [`XHR Upload`](https://uppy.io/docs/xhr-upload/) — regular uploads for any backend out there (like Apache, Nginx).
+- [`AWS S3`](https://uppy.io/docs/aws-s3/) — uploader for AWS S3.
+- [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — upload to AWS S3.
+
 ### File Processing
 
+- [`Robodog`](https://uppy.io/docs/robodog/) — user friendly abstraction to do file processing with Transloadit .
 - [`Transloadit`](https://uppy.io/docs/transloadit/) — support for [Transloadit](http://transloadit.com)’s robust file uploading and encoding backend
 
 ### Miscellaneous
 
-- [`Golden Retriever`](https://uppy.io/docs/golden-retriever/) — restores files after a browser crash, like it’s nothing
-- [`Thumbnail Generator`](https://uppy.io/docs/thumbnail-generator/) — generates image previews (included by default with `Dashboard`)
-- [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right before an Uppy upload, then optionally appends results back to the form
-- [`Redux`](https://uppy.io/docs/redux/) — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
+- [`Golden Retriever`](https://uppy.io/docs/golden-retriever/) — restores files after a browser crash, like it’s nothing.
+- [`Thumbnail Generator`](https://uppy.io/docs/thumbnail-generator/) — generates image previews (included by default with `Dashboard`).
+- [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right before an Uppy upload, then optionally appends results back to the form.
+- [`Redux`](https://uppy.io/docs/redux/) — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs.
+
+## React
+
+- [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps
+- [React Native](https://uppy.io//docs/react/native/) — basic Uppy component for React Native with Expo
 
 ## Browser Support
 
