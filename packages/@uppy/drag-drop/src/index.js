@@ -67,7 +67,8 @@ module.exports = class DragDrop extends Plugin {
         }
       })
     } catch (err) {
-      // Nothing, restriction errors handled in Core
+      // Logging the error, restrictions handled in Core
+      this.uppy.log(err)
     }
   }
 

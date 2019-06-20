@@ -133,15 +133,9 @@ module.exports = class Url extends Plugin {
         try {
           this.uppy.addFile(tagFile)
         } catch (err) {
-          // Nothing, restriction errors handled in Core
+          // Logging the error, restrictions handled in Core
+          this.uppy.log(err)
         }
-      })
-      .then(() => {
-        // Close the Dashboard panel if plugin is installed
-        // into Dashboard (could be other parent UI plugin)
-        // if (this.parent && this.parent.hideAllPanels) {
-        //   this.parent.hideAllPanels()
-        // }
       })
       .catch((err) => {
         this.uppy.log(err)

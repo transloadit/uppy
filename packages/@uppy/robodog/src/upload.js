@@ -14,12 +14,17 @@ function upload (files, opts = {}) {
   addTransloaditPlugin(uppy, opts)
 
   files.forEach((file) => {
-    uppy.addFile({
-      data: file,
-      type: file.type,
-      name: file.name,
-      meta: file.meta || {}
-    })
+    try {
+      uppy.addFile({
+        data: file,
+        type: file.type,
+        name: file.name,
+        meta: file.meta || {}
+      })
+    } catch (err) {
+      // Logging the error, restrictions handled in Core
+      uppy.log(err)
+    }
   })
 
   return uppy.upload()

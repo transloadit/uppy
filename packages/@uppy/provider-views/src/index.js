@@ -180,7 +180,8 @@ module.exports = class ProviderView {
     try {
       this.plugin.uppy.addFile(tagFile)
     } catch (err) {
-      // Nothing, restriction errors handled in Core
+      // Logging the error, restrictions handled in Core
+      this.plugin.uppy.log(err)
     }
   }
 

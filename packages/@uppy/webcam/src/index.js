@@ -177,7 +177,8 @@ module.exports = class Webcam extends Plugin {
       try {
         this.uppy.addFile(file)
       } catch (err) {
-        // Nothing, restriction errors handled in Core
+        // Logging the error, restrictions handled in Core
+        this.uppy.log(err)
       }
     }).then(() => {
       this.recordingChunks = null
@@ -253,7 +254,8 @@ module.exports = class Webcam extends Plugin {
       try {
         this.uppy.addFile(tagFile)
       } catch (err) {
-        // Nothing, restriction errors handled in Core
+        // Logging the error, restrictions handled in Core
+        this.uppy.log(err)
       }
     }, (error) => {
       this.captureInProgress = false
