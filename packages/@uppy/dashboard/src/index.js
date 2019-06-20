@@ -807,7 +807,6 @@ module.exports = class Dashboard extends Plugin {
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
       currentWidth: pluginState.containerWidth,
-      isWide: pluginState.containerWidth > 400,
       containerWidth: pluginState.containerWidth,
       areInsidesReadyToBeVisible: pluginState.areInsidesReadyToBeVisible,
       isTargetDOMEl: this.isTargetDOMEl,

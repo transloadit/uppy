@@ -1,5 +1,5 @@
 const { h } = require('preact')
-const { iconRetry } = require('../icons')
+const { iconRetry } = require('../../icons')
 const PauseResumeCancelIcon = require('./PauseResumeCancelIcon')
 
 function onPauseResumeCancelRetry (props) {
@@ -51,7 +51,7 @@ module.exports = function FileProgress (props) {
   ) {
     return (
       <div class="uppy-DashboardItem-progress">
-        <div class="uppy-DashboardItem-progressIndicator">
+        <div class="uppy-u-reset uppy-DashboardItem-progressIndicator">
           <PauseResumeCancelIcon
             progress={props.file.progress.percentage}
             hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
@@ -63,7 +63,7 @@ module.exports = function FileProgress (props) {
     return (
       <div class="uppy-DashboardItem-progress">
         <button
-          class="uppy-DashboardItem-progressIndicator"
+          class="uppy-u-reset uppy-DashboardItem-progressIndicator"
           type="button"
           aria-label={progressIndicatorTitle(props)}
           title={progressIndicatorTitle(props)}

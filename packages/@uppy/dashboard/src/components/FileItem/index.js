@@ -1,15 +1,10 @@
-const prettyBytes = require('prettier-bytes')
 const { h } = require('preact')
 const classNames = require('classnames')
 
-const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
-const truncateString = require('../../utils/truncateString')
-const { iconPencil, iconCross } = require('../icons')
-
-const FileProgress = require('./FileProgress')
 const FilePreviewAndLink = require('./FilePreviewAndLink')
-const CopyLinkButton = require('./CopyLinkButton')
-const FileSource = require('./FileSource')
+const FileProgress = require('./FileProgress')
+const FileInfo = require('./FileInfo')
+const Buttons = require('./Buttons')
 
 module.exports = function FileItem (props) {
   const file = props.file
@@ -21,14 +16,12 @@ module.exports = function FileItem (props) {
   const isPaused = file.isPaused || false
   const error = file.error || false
 
-  const fileName = getFileNameAndExtension(file.meta.name).name
-  const truncatedFileName = props.isWide ? truncateString(fileName, 30) : fileName
-
   const showRemoveButton = props.individualCancellation
     ? !isUploaded
     : !uploadInProgress && !isUploaded
 
   const dashboardItemClass = classNames(
+    'uppy-u-reset',
     'uppy-DashboardItem',
     { 'is-inprogress': uploadInProgress },
     { 'is-processing': isProcessing },
@@ -39,96 +32,43 @@ module.exports = function FileItem (props) {
     { 'is-noIndividualCancellation': !props.individualCancellation }
   )
 
-  const renderFileName = () =>
-    <div class="uppy-DashboardItem-name">
-      {file.extension ? truncatedFileName + '.' + file.extension : truncatedFileName}
-    </div>
-
-  const renderFilePreviewAndLink = () =>
-    <FilePreviewAndLink
-      file={file}
-      showLinkToFileUploadResult={props.showLinkToFileUploadResult}
-    />
-
-  const renderFileProgress = () =>
-    <FileProgress
-      error={error}
-      isUploaded={isUploaded}
-      {...props}
-    />
-
-  const renderFileSize = () => (
-    file.data.size &&
-    <div class="uppy-DashboardItem-statusSize">
-      {prettyBytes(file.data.size)}
-    </div>
-  )
-
-  const renderFileSource = () =>
-    <FileSource
-      file={file}
-      id={props.id}
-      acquirers={props.acquirers}
-      i18n={props.i18n}
-    />
-
-  const renderEditButton = () => (
-    !uploadInProgressOrComplete &&
-    props.metaFields &&
-    props.metaFields.length &&
-    <button
-      class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--edit"
-      type="button"
-      aria-label={props.i18n('editFile') + ' ' + fileName}
-      title={props.i18n('editFile')}
-      onclick={(e) => props.toggleFileCard(file.id)}
-    >
-      {iconPencil()}
-    </button>
-  )
-
-  const renderRemoveButton = () => (
-    showRemoveButton &&
-    <button
-      class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--remove"
-      type="button"
-      aria-label={props.i18n('removeFile')}
-      title={props.i18n('removeFile')}
-      onclick={() => props.removeFile(file.id)}
-    >
-      {iconCross()}
-    </button>
-  )
-
-  const renderCopyLinkButton = () =>
-    <CopyLinkButton
-      file={file}
-      showLinkToFileUploadResult={props.showLinkToFileUploadResult}
-      i18n={props.i18n}
-      log={props.log}
-      info={props.info}
-    />
-
   return (
     <li class={dashboardItemClass} id={`uppy_${file.id}`}>
       <div class="uppy-DashboardItem-preview">
-        {renderFilePreviewAndLink()}
-        {renderFileProgress()}
+        <FilePreviewAndLink
+          file={file}
+          showLinkToFileUploadResult={props.showLinkToFileUploadResult}
+        />
+        <FileProgress
+          error={error}
+          isUploaded={isUploaded}
+          {...props}
+        />
       </div>
 
-      <div class="uppy-DashboardItem-info">
-        <div class="uppy-DashboardItem-file">
-          {renderFileName()}
-          <div class="uppy-DashboardItem-status">
-            {renderFileSize()}
-            {renderFileSource()}
-          </div>
-        </div>
-        <div className="uppy-DashboardItem-actionWrapper">
-          {renderEditButton()}
-          {renderCopyLinkButton()}
-          {renderRemoveButton()}
-        </div>
+      <div class="uppy-DashboardItem-fileInfoAndButtons">
+        <FileInfo
+          file={file}
+          id={props.id}
+          acquirers={props.acquirers}
+          currentWidth={props.currentWidth}
+          i18n={props.i18n}
+        />
+        <Buttons
+          file={file}
+          metaFields={props.metaFields}
+
+          showLinkToFileUploadResult={props.showLinkToFileUploadResult}
+          showRemoveButton={showRemoveButton}
+
+          uploadInProgressOrComplete={uploadInProgressOrComplete}
+          removeFile={props.removeFile}
+          toggleFileCard={props.toggleFileCard}
+
+          i18n={props.i18n}
+          log={props.log}
+          info={props.info}
+        />
       </div>
     </li>
   )
