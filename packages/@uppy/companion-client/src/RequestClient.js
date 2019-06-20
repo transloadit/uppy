@@ -14,7 +14,7 @@ module.exports = class RequestClient {
     this.uppy = uppy
     this.opts = opts
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
-    this.allowedHeaders = ['accept', 'content-type']
+    this.allowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
     this.preflightDone = false
   }
 
@@ -99,7 +99,11 @@ module.exports = class RequestClient {
           this.preflightDone = true
           resolve(this.allowedHeaders.slice())
         })
-        .catch(reject)
+        .catch((err) => {
+          this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning')
+          this.preflightDone = true
+          resolve(this.allowedHeaders.slice())
+        })
     })
   }
 
