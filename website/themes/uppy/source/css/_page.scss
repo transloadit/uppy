@@ -61,6 +61,11 @@
     padding-left: 1em;
   }
 
+  .menu-root > ul {
+    margin: 0;
+    padding-left: 0;
+  }
+
   &.is-blog ul { padding-left: 0; }
 
   li {
@@ -360,11 +365,20 @@
   font-size: 90%;
 }
 
-body.plugin-list li {
-  list-style: none;
+// Plugin list
+
+body.page-plugin-list .Content ul {
+  margin-left: 0;
 }
 
-.page-docs-locales table code {
+body.page-plugin-list .Content li {
+  // list-style: none;
+  margin-bottom: 1em;
+}
+
+// Locales
+
+body.page-docs-locales table code {
   font-size: 75%;
 }
 

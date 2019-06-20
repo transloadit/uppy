@@ -45,24 +45,24 @@
   })
 %>
 <% for (var i in categories) { %>
-  <% var sorted = (catPages[categories[i].category] || []).sort((a, b) => {return a.order - b.order}) %>
-  <% if (!categories[i].hidden && sorted.length) { %>
-    <li key="<%-'category-' + i + '-' + categories[i].category %>">
-      <% if (categories[i].link && add_taglines === false) { %>
-      <h3 data-scroll="no"><a href="/<%- categories[i].path %>"><%- categories[i].category %></a></h3>
-      <% } else { %>
-      <h3 data-scroll="no"><%- categories[i].category %></h3>
-      <% } %>
-    </li>
-  <% } %>
-  <% sorted.forEach((p, j) => { %>
-    <% var path = (p.path || '').replace(/index\.html$/, ''); %>
-    <% var firstInCategory = categories.find((c) => c.path === path) %>
-    <li key="<%-'p-' + j + '-' + p.path %>">
-      <%- p.menu_prefix %><a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %>"><%- add_taglines === true ? p.title : p.menu || p.title %></a>
-      <% if (add_taglines === true && p.tagline) { %>
-        <%- ' — ' + p.tagline %>
-      <%}%>
-    </li>
-  <% }) %>
+    <% var sorted = (catPages[categories[i].category] || []).sort((a, b) => {return a.order - b.order}) %>
+    <% if (!categories[i].hidden && sorted.length) { %>
+        <% if (categories[i].link && add_taglines === false) { %>
+        <h3 key="<%-'category-' + i + '-' + categories[i].category %>" data-scroll="no"><a href="/<%- categories[i].path %>"><%- categories[i].category %></a></h3>
+        <% } else { %>
+        <h3 key="<%-'category-' + i + '-' + categories[i].category %>" data-scroll="no"><%- categories[i].category %></h3>
+        <% } %>
+    <% } %>
+    <ul>
+      <% sorted.forEach((p, j) => { %>
+        <% var path = (p.path || '').replace(/index\.html$/, ''); %>
+        <% var firstInCategory = categories.find((c) => c.path === path) %>
+        <li key="<%-'p-' + j + '-' + p.path %>">
+          <%- p.menu_prefix %><a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %>"><%- add_taglines === true ? p.title : p.menu || p.title %></a>
+          <% if (add_taglines === true && p.tagline) { %>
+            <%- ' — ' + p.tagline %>
+          <%}%>
+        </li>
+      <% }) %>
+    </ul>
 <% } %>

@@ -2,7 +2,7 @@
 title: "List of Plugins"
 type: docs
 subtype: plugin-list
-body_class: plugin-list
+body_class: page-plugin-list
 filter_modules: true
 permalink: docs/plugins/
 order: 3
