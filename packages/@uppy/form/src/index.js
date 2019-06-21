@@ -99,13 +99,16 @@ module.exports = class Form extends Plugin {
 
   getMetaFromForm () {
     const formMeta = getFormData(this.form)
+    // We want to exclude meta the the Form plugin itself has added
+    // See https://github.com/transloadit/uppy/issues/1637
+    delete formMeta[this.opts.resultName]
     this.uppy.setMeta(formMeta)
   }
 
   install () {
     this.form = findDOMElement(this.opts.target)
     if (!this.form || !this.form.nodeName === 'FORM') {
-      console.error('Form plugin requires a <form> target element passed in options to operate, none was found', 'error')
+      this.uppy.log('Form plugin requires a <form> target element passed in options to operate, none was found', 'error')
       return
     }
 
