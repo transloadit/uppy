@@ -86,14 +86,19 @@ module.exports = class Form extends Plugin {
 
     let resultInput = this.form.querySelector(`[name="${this.opts.resultName}"]`)
     if (resultInput) {
-      resultInput.value = JSON.stringify(result)
+      // Append new result to the previous result array
+      const updatedResult = JSON.parse(resultInput.value)
+      updatedResult.push(result)
+      resultInput.value = JSON.stringify(updatedResult)
       return
     }
 
     resultInput = document.createElement('input')
     resultInput.name = this.opts.resultName
     resultInput.type = 'hidden'
-    resultInput.value = JSON.stringify(result)
+
+    // Wrap result in an array so we can have multiple results
+    resultInput.value = JSON.stringify([result])
     this.form.appendChild(resultInput)
   }
 
