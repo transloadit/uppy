@@ -19,10 +19,26 @@ const renderFileSource = (props) => (
   </div>
 )
 
-const renderFileName = (props) =>
-  <div class="uppy-DashboardItem-name">
-    {truncateString(props.file.meta.name, props.currentWidth > 606 ? 35 : 60)}
-  </div>
+const renderFileName = (props) => {
+  // Take up at most 2 lines on any screen
+  let maxNameLength
+  // For very small mobile screens
+  if (props.containerWidth < 352) {
+    maxNameLength = 35
+  // For regular mobile screens
+  } else if (props.containerWidth < 577) {
+    maxNameLength = 60
+  // For desktops
+  } else {
+    maxNameLength = 35
+  }
+
+  return (
+    <div class="uppy-DashboardItem-name">
+      {truncateString(props.file.meta.name, maxNameLength)}
+    </div>
+  )
+}
 
 const renderFileSize = (props) => (
   props.file.data.size &&

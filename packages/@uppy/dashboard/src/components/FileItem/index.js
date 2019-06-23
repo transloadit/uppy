@@ -51,7 +51,7 @@ module.exports = function FileItem (props) {
           file={file}
           id={props.id}
           acquirers={props.acquirers}
-          currentWidth={props.currentWidth}
+          containerWidth={props.containerWidth}
           i18n={props.i18n}
         />
         <Buttons
