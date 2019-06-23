@@ -1,6 +1,7 @@
 const en_US = {}
 
 en_US.strings = {
+  addMore: 'Add more',
   addMoreFiles: 'Add more files',
   addingMoreFiles: 'Adding more files',
   allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
@@ -8,7 +9,6 @@ en_US.strings = {
   authenticateWith: 'Connect to %{pluginName}',
   authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
   back: 'Back',
-  addMore: 'Add more',
   browse: 'browse',
   cancel: 'Cancel',
   cancelUpload: 'Cancel upload',
