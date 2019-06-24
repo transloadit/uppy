@@ -37,6 +37,18 @@ Finally, we _really_ submit the form—without files, but with those Assembly st
 
 All the options to the [Transloadit][transloadit] plugin are supported.
 
+## Locale
+
+You can localize the “Choose files” button that is injected into the form, by setting the `locale.strings` option:
+
+```js
+locale: {
+  strings: {
+    chooseFiles: 'Choose files'
+  }
+}
+```
+
 ## Restrictions
 
 Set rules and conditions to limit the type and/or number of files that can be selected. Restrictions are configured by the `restrictions` option.

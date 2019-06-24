@@ -1,5 +1,6 @@
 {
-  "extends": ["standard", "standard-preact"],
+  "parser": "babel-eslint",
+  "extends": ["standard", "standard-jsx"],
   "env": {
     "browser": true,
     "node": true,
@@ -25,6 +26,9 @@
     "jsdoc/valid-types": ["warn"]
   },
   "settings": {
+    "react": {
+      "pragma": "h"
+    },
     "polyfills": [
       "Promise",
       "fetch",
@@ -40,6 +44,14 @@
     ],
     "rules": {
       "compat/compat": "off"
+    }
+  },{
+    "files": [
+      "packages/@uppy/locales/src/*.js",
+      "packages/@uppy/locales/template.js"
+    ],
+    "rules": {
+      "camelcase": "off"
     }
   }]
 }

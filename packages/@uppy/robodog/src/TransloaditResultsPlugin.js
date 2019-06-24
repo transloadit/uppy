@@ -8,7 +8,7 @@ class TransloaditResultsPlugin extends Plugin {
     super(uppy, opts)
 
     this.type = 'modifier'
-    this.id = 'TransloaditResultsPlugin'
+    this.id = this.opts.id || 'TransloaditResultsPlugin'
     this._afterUpload = this._afterUpload.bind(this)
   }
 

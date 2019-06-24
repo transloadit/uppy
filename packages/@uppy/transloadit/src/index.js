@@ -30,7 +30,7 @@ module.exports = class Transloadit extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
-    this.id = 'Transloadit'
+    this.id = this.opts.id || 'Transloadit'
     this.title = 'Transloadit'
 
     this.defaultLocale = {

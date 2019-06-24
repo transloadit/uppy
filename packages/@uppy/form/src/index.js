@@ -14,7 +14,7 @@ module.exports = class Form extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'
-    this.id = 'Form'
+    this.id = this.opts.id || 'Form'
     this.title = 'Form'
 
     // set default options

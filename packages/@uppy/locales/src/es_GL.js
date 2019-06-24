@@ -1,6 +1,4 @@
-/* eslint camelcase: 0 */
-
-var es_GL = {}
+const es_GL = {}
 
 es_GL.strings = {
   addMoreFiles: 'Agregar máis arquivos',
