@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const tr_TR = {}
 
 tr_TR.strings = {

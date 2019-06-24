@@ -350,3 +350,19 @@ if ( dashboard.isModalOpen() ) {
   dashboard.closeModal()
 }
 ```
+
+## Events
+
+### `dashboard:modal-open`
+
+Fired when the Dashboard modal is open.
+
+```js
+uppy.on('dashboard:modal-open', () => {
+  console.log('Modal is open')
+})
+```
+
+### `dashboard:modal-closed`
+
+Fired when the Dashboard modal is closed.

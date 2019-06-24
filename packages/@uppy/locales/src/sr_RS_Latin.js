@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const sr_RS_Latin = {}
 
 sr_RS_Latin.strings = {

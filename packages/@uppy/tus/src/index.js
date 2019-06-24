@@ -53,7 +53,7 @@ module.exports = class Tus extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
-    this.id = 'Tus'
+    this.id = this.opts.id || 'Tus'
     this.title = 'Tus'
 
     // set default options
