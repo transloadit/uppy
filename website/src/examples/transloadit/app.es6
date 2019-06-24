@@ -58,7 +58,7 @@ function initUppy (opts = {}) {
           resize_strategy: 'fit',
           text: [
             {
-              text: '© 2018 Transloadit.com',
+              text: `© ${(new Date).getFullYear()} Transloadit.com`,
               size: 12,
               font: 'Ubuntu',
               color: '#eeeeee',
