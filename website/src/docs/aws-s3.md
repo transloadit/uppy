@@ -96,6 +96,14 @@ The default is 30 seconds.
 Limit the amount of uploads going on at the same time. This is passed through to [XHRUpload](/docs/xhrupload#limit-0); see its documentation page for details.
 Set to `0` to disable limiting.
 
+### `getResponseData(responseText, response)`
+
+> This is an advanced option intended for use with _almost_ S3-compatible storage solutions.
+
+Customize response handling once an upload is completed. This passes the function through to @uppy/xhr-upload, see its [documentation](https://uppy.io/docs/xhr-upload/#getResponseData-responseText-response) for API details.
+
+This option is useful when uploading to an S3-like service that doesn't reply with an XML document, but with something else such as JSON.
+
 ### `locale: {}`
 
 Localize text that is shown to the user.
