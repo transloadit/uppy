@@ -65,6 +65,7 @@ function form (target, opts) {
       button.type = 'button'
       const old = findDOMElement(trigger, findDOMElement(target))
       old.parentNode.replaceChild(button, old)
+      dashboardOpts.inline = false
       dashboardOpts.trigger = button
     } else {
       dashboardOpts.inline = true
