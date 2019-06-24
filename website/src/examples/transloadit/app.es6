@@ -5,10 +5,10 @@ const Dashboard = require('@uppy/dashboard')
 const Webcam = require('@uppy/webcam')
 const Transloadit = require('@uppy/transloadit')
 const Instagram = require('@uppy/instagram')
-const { createHash } = require('crypto')
+const { createHmac } = require('crypto')
 
-function sha1 (text) {
-  return createHash('sha1')
+function sha1 (key, text) {
+  return createHmac('sha1', key)
     .update(text)
     .digest('hex')
 }
@@ -75,7 +75,7 @@ function initUppy (opts = {}) {
     let signature
     if (opts.secret) {
       params = JSON.stringify(params)
-      signature = sha1(params)
+      signature = sha1(opts.secret, params)
     }
 
     return { params, signature }
