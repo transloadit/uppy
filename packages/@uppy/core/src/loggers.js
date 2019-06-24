@@ -10,7 +10,10 @@ const nullLogger = {
 // Print logs to console with namespace + timestamp,
 // default if logger: 'debug' or debug: true
 const debugLogger = {
-  debug: (...args) => console.debug(`[Uppy] [${getTimeStamp()}]`, ...args),
+  debug: (...args) => {
+    const debug = console.debug || console.log
+    debug(`[Uppy] [${getTimeStamp()}]`, ...args)
+  },
   warn: (...args) => console.warn(`[Uppy] [${getTimeStamp()}]`, ...args),
   error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args)
 }
