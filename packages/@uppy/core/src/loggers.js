@@ -12,7 +12,7 @@ const nullLogger = {
 const debugLogger = {
   debug: (...args) => {
     const debug = console.debug || console.log
-    debug(`[Uppy] [${getTimeStamp()}]`, ...args)
+    debug.call(console, `[Uppy] [${getTimeStamp()}]`, ...args)
   },
   warn: (...args) => console.warn(`[Uppy] [${getTimeStamp()}]`, ...args),
   error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args)

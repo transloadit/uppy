@@ -88,7 +88,7 @@ class Uppy {
     if (this.opts.logger === 'debug' || this.opts.debug) {
       this.opts.logger = debugLogger
     }
-    
+
     this.log(`Using Core v${this.constructor.VERSION}`)
 
     // i18n
