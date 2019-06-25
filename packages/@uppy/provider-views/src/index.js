@@ -75,6 +75,7 @@ module.exports = class ProviderView {
     this.toggleCheckbox = this.toggleCheckbox.bind(this)
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
+    this.listAllFiles = this.listAllFiles.bind(this)
     this.donePicking = this.donePicking.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
     this.clearSelection = this.clearSelection.bind(this)
@@ -347,16 +348,13 @@ module.exports = class ProviderView {
     }
     folders[folderId] = { loading: true, files: [] }
     this.plugin.setPluginState({ selectedFolders: folders })
-    return this.provider.list(folder.requestPath).then((res) => {
-      const files = []
-      res.items.forEach((item) => {
-        if (!item.isFolder) {
-          this.addFile(item)
-          files.push(this.providerFileToId(item))
-        }
+    return this.listAllFiles(folder.requestPath).then((files) => {
+      files.forEach((file) => {
+        this.addFile(file)
       })
+      const ids = files.map(this.providerFileToId)
       state = this.plugin.getPluginState()
-      state.selectedFolders[folderId] = { loading: false, files: files }
+      state.selectedFolders[folderId] = { loading: false, files: ids }
       this.plugin.setPluginState({ selectedFolders: folders })
 
       let message
@@ -496,6 +494,25 @@ module.exports = class ProviderView {
     }
   }
 
+  listAllFiles (path, files = null) {
+    files = files || []
+    return new Promise((resolve) => {
+      this.provider.list(path).then((res) => {
+        res.items.forEach((item) => {
+          if (!item.isFolder) {
+            files.push(item)
+          }
+        })
+        let moreFiles = res.nextPagePath || null
+        if (moreFiles) {
+          return this.listAllFiles(moreFiles, files).then((files) => resolve(files))
+        } else {
+          return resolve(files)
+        }
+      })
+    })
+  }
+
   donePicking () {
     const { currentSelection } = this.plugin.getPluginState()
     const promises = currentSelection.map((file) => {
@@ -578,6 +595,7 @@ module.exports = class ProviderView {
       isChecked: this.isChecked,
       toggleCheckbox: this.toggleCheckbox,
       handleScroll: this.handleScroll,
+      listAllFiles: this.listAllFiles,
       done: this.donePicking,
       cancel: this.cancelPicking,
       title: this.plugin.title,
