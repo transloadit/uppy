@@ -4,7 +4,7 @@
  * will make sure that at most `limit` calls to `fn` are pending.
  *
  * @param {number} limit
- * @return {function()}
+ * @returns {function()}
  */
 module.exports = function limitPromises (limit) {
   let pending = 0
