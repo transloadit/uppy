@@ -375,8 +375,9 @@ module.exports = class Dashboard extends Plugin {
         }
       })
     } catch (err) {
-      // Logging the error, restrictions handled in Core
-      this.uppy.log(err)
+      if (!err.isRestriction) {
+        this.uppy.log(err)
+      }
     }
   }
 

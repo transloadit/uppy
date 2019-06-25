@@ -22,8 +22,9 @@ function upload (files, opts = {}) {
         meta: file.meta || {}
       })
     } catch (err) {
-      // Logging the error, restrictions handled in Core
-      uppy.log(err)
+      if (!err.isRestriction) {
+        uppy.log(err)
+      }
     }
   })
 

@@ -41,7 +41,7 @@ module.exports = class ProviderView {
   static VERSION = require('../package.json').version
 
   /**
-   * @param {object} instance of the plugin
+   * @param {Object} instance of the plugin
    */
   constructor (plugin, opts) {
     this.plugin = plugin
@@ -113,8 +113,9 @@ module.exports = class ProviderView {
 
   /**
    * Based on folder ID, fetch a new folder and update it to state
-   * @param  {String} id Folder id
-   * @return {Promise}   Folders/files in folder
+   *
+   * @param  {string} id Folder id
+   * @returns {Promise}   Folders/files in folder
    */
   getFolder (id, name) {
     return this._loaderWrapper(
@@ -142,8 +143,9 @@ module.exports = class ProviderView {
 
   /**
    * Fetches new folder
+   *
    * @param  {Object} Folder
-   * @param  {String} title Folder title
+   * @param  {string} title Folder title
    */
   getNextFolder (folder) {
     this.getFolder(folder.requestPath, folder.name)
@@ -180,8 +182,9 @@ module.exports = class ProviderView {
     try {
       this.plugin.uppy.addFile(tagFile)
     } catch (err) {
-      // Logging the error, restrictions handled in Core
-      this.plugin.uppy.log(err)
+      if (!err.isRestriction) {
+        this.plugin.uppy.log(err)
+      }
     }
   }
 

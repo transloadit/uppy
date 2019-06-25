@@ -133,8 +133,9 @@ module.exports = class Url extends Plugin {
         try {
           this.uppy.addFile(tagFile)
         } catch (err) {
-          // Logging the error, restrictions handled in Core
-          this.uppy.log(err)
+          if (!err.isRestriction) {
+            this.uppy.log(err)
+          }
         }
       })
       .catch((err) => {
