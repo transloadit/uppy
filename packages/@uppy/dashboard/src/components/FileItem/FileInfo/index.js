@@ -23,10 +23,10 @@ const renderFileName = (props) => {
   // Take up at most 2 lines on any screen
   let maxNameLength
   // For very small mobile screens
-  if (props.containerWidth < 352) {
+  if (props.containerWidth <= 352) {
     maxNameLength = 35
   // For regular mobile screens
-  } else if (props.containerWidth < 577) {
+  } else if (props.containerWidth <= 576) {
     maxNameLength = 60
   // For desktops
   } else {
@@ -34,7 +34,7 @@ const renderFileName = (props) => {
   }
 
   return (
-    <div class="uppy-DashboardItem-name">
+    <div class="uppy-DashboardItem-name" title={props.file.meta.name}>
       {truncateString(props.file.meta.name, maxNameLength)}
     </div>
   )

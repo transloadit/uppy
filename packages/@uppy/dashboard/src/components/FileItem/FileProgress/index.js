@@ -51,7 +51,7 @@ module.exports = function FileProgress (props) {
   ) {
     return (
       <div class="uppy-DashboardItem-progress">
-        <div class="uppy-u-reset uppy-DashboardItem-progressIndicator">
+        <div class="uppy-DashboardItem-progressIndicator">
           <PauseResumeCancelIcon
             progress={props.file.progress.percentage}
             hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
