@@ -4,9 +4,9 @@
  * Falls back to prompt() when the easy way fails (hello, Safari!)
  * From http://stackoverflow.com/a/30810322
  *
- * @param {String} textToCopy
- * @param {String} fallbackString
- * @return {Promise}
+ * @param {string} textToCopy
+ * @param {string} fallbackString
+ * @returns {Promise}
  */
 module.exports = function copyToClipboard (textToCopy, fallbackString) {
   fallbackString = fallbackString || 'Copy the URL below'

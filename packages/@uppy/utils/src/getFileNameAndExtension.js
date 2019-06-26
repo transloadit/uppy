@@ -2,7 +2,7 @@
 * Takes a full filename string and returns an object {name, extension}
 *
 * @param {string} fullFileName
-* @return {object} {name, extension}
+* @returns {Object} {name, extension}
 */
 module.exports = function getFileNameAndExtension (fullFileName) {
   var re = /(?:\.([^.]+))?$/

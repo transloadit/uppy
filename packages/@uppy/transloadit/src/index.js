@@ -361,7 +361,7 @@ module.exports = class Transloadit extends Plugin {
    * Custom state serialization for the Golden Retriever plugin.
    * It will pass this back to the `_onRestored` function.
    *
-   * @param {function} setData
+   * @param {Function} setData
    */
   _getPersistentData (setData) {
     const state = this.getPluginState()
