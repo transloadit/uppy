@@ -7,6 +7,7 @@ const Tus = require('@uppy/tus')
 
 const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
 const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3030'
+const endpoint = isOnTravis ? 'http://companion.test:1080' : 'http://localhost:1080'
 
 window.uppy = Uppy({
   id: 'uppyProvider',
@@ -20,4 +21,4 @@ window.uppy = Uppy({
     target: Dashboard,
     companionUrl: companionUrl
   })
-  .use(Tus, { endpoint: 'http://localhost:1080/files/' })
+  .use(Tus, { endpoint: `${endpoint}/files/` })
