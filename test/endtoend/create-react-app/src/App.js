@@ -9,7 +9,7 @@ import '@uppy/dashboard/dist/style.css'
 // import '@uppy/drag-drop/dist/style.css'
 // import '@uppy/progress-bar/dist/style.css'
 
-const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
+const isOnTravis = process.env.REACT_APP_ON_TRAVIS
 const endpoint = isOnTravis ? 'http://companion.test:1080' : 'http://localhost:1080'
 
 class App extends Component {

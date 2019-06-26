@@ -12,6 +12,7 @@ import {
   Form
 } from 'uppy'
 
+// @ts-ignore
 const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
 const TUS_ENDPOINT = `http://${isOnTravis ? 'companion.test' : 'localhost'}:1080/files/`
 
