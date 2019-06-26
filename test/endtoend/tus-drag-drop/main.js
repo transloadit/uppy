@@ -17,4 +17,4 @@ uppyDragDrop
     target: '#uppyDragDrop'
   })
   .use(ProgressBar, { target: '#uppyDragDrop-progress' })
-  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+  .use(Tus, { endpoint: 'http://localhost:1080/files/' })

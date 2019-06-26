@@ -1,6 +1,6 @@
 const glob = require('glob').sync
 const path = require('path')
-const { StaticServerService } = require('./utils')
+const { CompanionService, StaticServerService, TusService } = require('./utils')
 
 const suites = {}
 glob('test/endtoend/*/test.js').forEach((file) => {
@@ -86,6 +86,7 @@ exports.config = {
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
   services: [
+    [CompanionService],
     [StaticServerService, {
       folders: [
         { mount: '/i18n-drag-drop', path: './test/endtoend/i18n-drag-drop/dist' },
@@ -98,7 +99,8 @@ exports.config = {
         { mount: '/url-plugin', path: './test/endtoend/url-plugin/dist' },
         { mount: '/create-react-app', path: './test/endtoend/create-react-app/build' }
       ]
-    }]
+    }],
+    [TusService]
   ],
 
   // Framework you want to run your specs with.

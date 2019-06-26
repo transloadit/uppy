@@ -14,4 +14,4 @@ uppyDashboard
     target: '#uppyDashboard',
     inline: true
   })
-  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+  .use(Tus, { endpoint: 'http://localhost:1080/files/' })

@@ -124,6 +124,40 @@ class StaticServerService {
       const close = promisify(this.server.close.bind(this.server))
       await close()
     }
+    this.app = null
+  }
+}
+
+const tus = require('tus-node-server')
+const os = require('os')
+const rimraf = promisify(require('rimraf'))
+const { randomBytes } = require('crypto')
+class TusService {
+  constructor ({ tusServerPort = 1080 }) {
+    this.port = tusServerPort
+    this.path = path.join(os.tmpdir(), `uppy-e2e-tus-node-server-${randomBytes(6).toString('hex')}`)
+  }
+
+  async onPrepare () {
+    console.log('Starting TusService', this)
+    this.tusServer = new tus.Server()
+    this.tusServer.datastore = new tus.FileStore({
+      path: '/files',
+      directory: this.path
+    })
+
+    const listen = promisify(this.tusServer.listen.bind(this.tusServer))
+    this.server = await listen({ host: '0.0.0.0', port: this.port })
+  }
+
+  async onComplete () {
+    console.log('Stopping TusService', this)
+    if (this.server) {
+      const close = promisify(this.server.close.bind(this.server))
+      await close()
+    }
+    await rimraf(this.path)
+    this.tusServer = null
   }
 }
 
@@ -131,5 +165,6 @@ module.exports = {
   selectFakeFile,
   supportsChooseFile,
   CompanionService,
-  StaticServerService
+  StaticServerService,
+  TusService
 }

@@ -18,7 +18,7 @@ function initUrlPlugin (companionUrl) {
       target: Dashboard,
       companionUrl: companionUrl
     })
-    .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+    .use(Tus, { endpoint: 'http://localhost:1080/files/' })
 }
 
 window.initUrlPlugin = initUrlPlugin

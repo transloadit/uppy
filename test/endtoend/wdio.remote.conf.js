@@ -1,5 +1,4 @@
 const base = require('./wdio.base.conf')
-const { CompanionService } = require('./utils')
 
 function createCapability (capability) {
   return {
@@ -46,8 +45,7 @@ exports.config = Object.assign(base.config, {
   // commands. Instead, they hook themselves up into the test process.
   services: [
     ...base.config.services,
-    'sauce',
-    [CompanionService]
+    'sauce'
   ],
   sauceConnect: true,
   user: process.env.SAUCE_USERNAME,
