@@ -3,15 +3,12 @@ describe('File upload with URL plugin', () => {
   it('should import  and upload a file completely with Url Plugin', async () => {
     await browser.url('http://localhost:4567/url-plugin')
 
-    const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
-    const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3030'
-    await browser.execute(function (companionUrl) {
-      window.initUrlPlugin(companionUrl)
-    }, companionUrl)
-
     // select url plugin
     const urlButton = await browser.$('.uppy-DashboardTab-btn[aria-controls=uppy-DashboardContent-panel--Url]')
+    await urlButton.waitForDisplayed(10000)
+
     await urlButton.click()
+    await browser.pause(500)
     // import set url value
     const urlInput = await browser.$('input.uppy-Url-input')
     await urlInput.waitForDisplayed(3000)

@@ -139,7 +139,6 @@ class TusService {
   }
 
   async onPrepare () {
-    console.log('Starting TusService', this)
     this.tusServer = new tus.Server()
     this.tusServer.datastore = new tus.FileStore({
       path: '/files',
@@ -151,7 +150,6 @@ class TusService {
   }
 
   async onComplete () {
-    console.log('Stopping TusService', this)
     if (this.server) {
       const close = promisify(this.server.close.bind(this.server))
       await close()

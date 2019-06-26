@@ -7,7 +7,10 @@ const Instagram = require('@uppy/instagram')
 const Dropbox = require('@uppy/dropbox')
 const Tus = require('@uppy/tus')
 
-Uppy({
+const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
+const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3030'
+
+window.uppy = Uppy({
   id: 'uppyProvider',
   debug: true,
   autoProceed: true
@@ -16,7 +19,7 @@ Uppy({
     target: '#uppyDashboard',
     inline: true
   })
-  .use(GoogleDrive, { target: Dashboard, companionUrl: 'http://localhost:3020' })
-  .use(Instagram, { target: Dashboard, companionUrl: 'http://localhost:3020' })
-  .use(Dropbox, { target: Dashboard, companionUrl: 'http://localhost:3020' })
+  .use(GoogleDrive, { target: Dashboard, companionUrl })
+  .use(Instagram, { target: Dashboard, companionUrl })
+  .use(Dropbox, { target: Dashboard, companionUrl })
   .use(Tus, { endpoint: 'http://localhost:1080/files/' })

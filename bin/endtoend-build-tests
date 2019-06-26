@@ -20,6 +20,7 @@ for t in $tests; do
   cp "${__root}/test/endtoend/$t/index.html" "${__root}/test/endtoend/$t/dist"
   browserify "${__root}/test/endtoend/$t/main.js" \
     -o "${__root}/test/endtoend/$t/dist/bundle.js" \
+    -t envify \
     -t babelify
 done
 
