@@ -91,8 +91,12 @@ describe('ThumbnailGenerator', () => {
   })
 })
 
-function getWidth (ref) {
-  return browser.execute(function (el) {
-    return el.getBoundingClientRect().width
-  }, ref)
+async function getWidth (ref) {
+  try {
+    return await ref.getSize('width')
+  } catch (err) {
+    return browser.execute(function (el) {
+      return el.getBoundingClientRect().width
+    }, ref)
+  }
 }
