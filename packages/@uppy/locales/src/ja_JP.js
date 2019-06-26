@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const ja_JP = {}
 
 ja_JP.strings = {

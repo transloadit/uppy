@@ -9,7 +9,7 @@ class AttachFileInputs extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
 
-    this.id = opts.id || 'AttachFileInputs'
+    this.id = this.opts.id || 'AttachFileInputs'
     this.type = 'acquirer'
 
     this.handleChange = this.handleChange.bind(this)

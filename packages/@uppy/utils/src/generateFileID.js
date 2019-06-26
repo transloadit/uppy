@@ -3,7 +3,7 @@
  * removing extra characters and adding type, size and lastModified
  *
  * @param {Object} file
- * @return {String} the fileID
+ * @returns {string} the fileID
  *
  */
 module.exports = function generateFileID (file) {

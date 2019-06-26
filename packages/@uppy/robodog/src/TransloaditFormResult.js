@@ -10,7 +10,7 @@ class TransloaditFormResult extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
 
-    this.id = opts.id || 'TransloaditFormResult'
+    this.id = this.opts.id || 'TransloaditFormResult'
     this.type = 'modifier'
 
     this.handleUpload = this.handleUpload.bind(this)

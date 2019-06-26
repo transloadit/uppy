@@ -1,4 +1,5 @@
 const mime = require('mime-types')
+const querystring = require('querystring')
 
 exports.getUsername = (data) => {
   return data.user_email
@@ -42,4 +43,12 @@ exports.getItemModifiedDate = (item) => {
 
 exports.getItemThumbnailUrl = (item) => {
   return `/dropbox/thumbnail/${exports.getItemRequestPath(item)}`
+}
+
+exports.getNextPagePath = (data) => {
+  if (!data.has_more) {
+    return null
+  }
+  const query = { cursor: data.cursor }
+  return `?${querystring.stringify(query)}`
 }

@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const hu_HU = {}
 
 hu_HU.contributors = ['nagyv']

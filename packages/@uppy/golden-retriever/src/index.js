@@ -16,7 +16,7 @@ module.exports = class GoldenRetriever extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'debugger'
-    this.id = 'GoldenRetriever'
+    this.id = this.opts.id || 'GoldenRetriever'
     this.title = 'Golden Retriever'
 
     const defaultOptions = {
