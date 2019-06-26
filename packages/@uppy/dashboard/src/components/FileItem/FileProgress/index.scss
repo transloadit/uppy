@@ -9,8 +9,8 @@
   text-align: center;
   width: 120px;
   transition: all .35 ease;
-
-  > .uppy-DashboardItem-progressIndicator {
+}
+  .uppy-DashboardItem-progressIndicator {
     display: inline-block;
     width: 38px;
     height: 38px;
@@ -24,7 +24,7 @@
       }
     }
   }
-}
+// ...uppy-DashboardItem-progress|
 
 svg.UppyIcon-progressCircle {
   width: 100%;
@@ -68,7 +68,7 @@ svg.UppyIcon.retry {
 }
 
 
-// Svg styles that depend upon the state of the file.
+// Svg styles that depend on the state of the file.
 .uppy-DashboardItem.is-complete .uppy-DashboardItem-progress {
   transform: initial;
   top: -9px;
