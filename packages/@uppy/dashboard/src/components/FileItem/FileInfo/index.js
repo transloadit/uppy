@@ -30,7 +30,7 @@ const renderFileName = (props) => {
     maxNameLength = 60
   // For desktops
   } else {
-    maxNameLength = 35
+    maxNameLength = 30
   }
 
   return (
