@@ -6,6 +6,7 @@ const tokenService = require('../helpers/jwt')
 const parseUrl = require('url').parse // eslint-disable-line node/no-deprecated-api
 const { hasMatch, sanitizeHtml } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
+const versionCmp = require('../helpers/version')
 
 /**
  *
@@ -29,8 +30,8 @@ module.exports = function sendToken (req, res, next) {
     const allowedClients = req.uppy.options.clients
     // if no preset clients then allow any client
     if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch(parseUrl(origin).host, allowedClients)) {
-      // @todo do a more secure client version check, see https://www.npmjs.com/package/semver
-      return res.send(clientVersion ? htmlContent(uppyAuthToken, origin) : oldHtmlContent(uppyAuthToken, origin))
+      const allowsStringMessage = versionCmp.gte(clientVersion, '1.0.2')
+      return res.send(allowsStringMessage ? htmlContent(uppyAuthToken, origin) : oldHtmlContent(uppyAuthToken, origin))
     }
   }
   next()
