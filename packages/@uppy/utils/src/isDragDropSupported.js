@@ -1,7 +1,7 @@
 /**
  * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
  *
- * @return {Boolean}
+ * @returns {boolean}
  */
 module.exports = function isDragDropSupported () {
   const div = document.createElement('div')

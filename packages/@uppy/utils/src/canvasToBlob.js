@@ -4,7 +4,7 @@ const dataURItoBlob = require('./dataURItoBlob')
  * Save a <canvas> element's content to a Blob object.
  *
  * @param {HTMLCanvasElement} canvas
- * @return {Promise}
+ * @returns {Promise}
  */
 module.exports = function canvasToBlob (canvas, type, quality) {
   if (canvas.toBlob) {
