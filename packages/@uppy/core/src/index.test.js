@@ -1506,7 +1506,7 @@ describe('src/Core', () => {
   })
 
   describe('log', () => {
-    it('is should log via provided logger function', () => {
+    it('should log via provided logger function', () => {
       const myTestLogger = {
         debug: jest.fn(),
         warn: jest.fn(),
@@ -1522,12 +1522,14 @@ describe('src/Core', () => {
       core.log('test test', 'error')
       core.log('test test', 'warning')
 
-      expect(core.opts.logger.debug.mock.calls.length).toBe(1)
+      // logger.debug should have been called 1 time above,
+      // but we call log in Core’s constructor to output VERSION, hence +1 here
+      expect(core.opts.logger.debug.mock.calls.length).toBe(2)
       expect(core.opts.logger.error.mock.calls.length).toBe(2)
       expect(core.opts.logger.warn.mock.calls.length).toBe(1)
     })
 
-    it('is should log to console when logger: debug or debug: true is set', () => {
+    it('should log to console when logger: debug or debug: true is set', () => {
       console.debug = jest.fn()
       console.error = jest.fn()
 
@@ -1539,7 +1541,9 @@ describe('src/Core', () => {
       core.log('beep boop')
       core.log('beep beep', 'error')
 
-      expect(console.debug.mock.calls.length).toBe(2)
+      // console.debug debug should have been called 2 times above,
+      // ibut we call log n Core’ constructor to output VERSION, hence +1 here
+      expect(console.debug.mock.calls.length).toBe(3)
       expect(console.error.mock.calls.length).toBe(1)
 
       console.debug.mockClear()
@@ -1553,11 +1557,13 @@ describe('src/Core', () => {
       core2.log('beep boop')
       core2.log('beep beep', 'error')
 
-      expect(console.debug.mock.calls.length).toBe(2)
+      // console.debug debug should have been called 2 times here,
+      // but we call log in Core constructor to output VERSION, hence +1 here
+      expect(console.debug.mock.calls.length).toBe(3)
       expect(console.error.mock.calls.length).toBe(1)
     })
 
-    it('is should not log to console when logger is not set', () => {
+    it('should not log to console when logger is not set', () => {
       console.debug = jest.fn()
       console.error = jest.fn()
 
