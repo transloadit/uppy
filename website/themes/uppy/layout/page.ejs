@@ -1,9 +1,14 @@
 <% if (page.type && page.type !== 'page') { %>
-    <%- partial('partials/sidebar', { type: page.type, index: page.index }) %>
+    <%- partial('partials/sidebar', { only_modules: false, add_taglines: false, type: page.type, index: page.index }) %>
 <% } %>
 <div class="Content js-Content <%- page.type ? page.type + ' with-sidebar' : '' %>">
     <h1><%- page.title %></h1>
     <%- page.content %>
+    
+    <% if (page.subtype === 'plugin-list') { %>
+      <%- partial('partials/docs_menu', { only_modules: true, add_taglines: true, type: page.type, index: page.index }) %>
+    <% } %>    
+
     <% if (page.type === 'guide') { %>
       <div class="guide-links">
         <% site.pages.find({ type: page.type, order: page.order - 1 }).each(function (page) { %>

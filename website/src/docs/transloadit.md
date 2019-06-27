@@ -5,6 +5,7 @@ title: "Transloadit"
 module: "@uppy/transloadit"
 permalink: docs/transloadit/
 category: 'File Processing'
+tagline: manipulate and transcode uploaded files using the <a href="https://transloadit.com">transloadit.com</a> service
 ---
 
 The `@uppy/transloadit` plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and much more](https://transloadit.com/services/).

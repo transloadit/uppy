@@ -6,6 +6,7 @@ menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/url"
 permalink: docs/url/
 category: 'Sources'
+tagline: import files from any public URL
 ---
 
 The `@uppy/url` plugin allows users to import files from the internet. Paste any URL and it will be added!
