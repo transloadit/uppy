@@ -809,7 +809,7 @@ a.uppy-Dashboard-poweredBy {
   position: relative;
 }
 
-.uppy-DashboardFileCard-preview img {
+.uppy-DashboardFileCard-preview img.uppy-DashboardItem-previewImg {
   box-shadow: 0px 3px 20px rgba($black, 0.15);
   max-width: 90%;
   max-height: 90%;
