@@ -96,10 +96,18 @@ module.exports = class AwsS3Multipart extends Plugin {
   createMultipartUpload (file) {
     this.assertHost()
 
+    let metadata = {};
+
+    Object.keys(file.meta).map(key => {
+      if (file.meta[key] !== null) {
+        metadata[key] = file.meta[key].toString();
+      }
+    });
+
     return this.client.post('s3/multipart', {
       filename: file.name,
       type: file.type,
-      metadata: file.meta
+      metadata
     }).then(assertServerError)
   }
 
