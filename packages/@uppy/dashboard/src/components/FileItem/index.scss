@@ -97,7 +97,7 @@
   }
 }
 .uppy-DashboardItem.is-inprogress:not(.is-resumable) {
-  button.uppy-DashboardItem-action--remove {
+  .uppy-DashboardItem-action--remove {
     display: none;
   }
 }

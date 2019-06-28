@@ -18,7 +18,7 @@
     cursor: pointer;
     &:focus{
       outline: none;
-      svg.UppyIcon-progressCircle circle.bg,
+      svg.UppyIcon-progressCircle .bg,
       svg.retry{
         fill: lighten($blue, 20%);
       }
@@ -29,35 +29,35 @@
 svg.UppyIcon-progressCircle {
   width: 100%;
   height: 100%;
-  circle.bg {
+  .bg {
     stroke: rgba($white, 0.4);
     opacity: 0;
   }
-  circle.progress {
+  .progress {
     stroke: $white;
     transition: stroke-dashoffset .5s ease-out;
     opacity: 0;
   }
-  polygon.play {
+  .play {
     stroke: $white;
     fill: $white;
     opacity: 0;
     transition: all 0.2s;
     display: none;
   }
-  polygon.cancel {
+  .cancel {
     fill: $white;
     opacity: 0;
     transition: all 0.2s;
   }
-  g.pause {
+  .pause {
     stroke: $white;
     fill: $white;
     opacity: 0;
     transition: all 0.2s;
     display: none;
   }
-  polygon.check {
+  .check {
     opacity: 0;
     fill: $white;
     transition: all 0.2s;
@@ -104,10 +104,10 @@ svg.UppyIcon.retry {
 }
 
 .uppy-DashboardItem.is-paused svg.UppyIcon-progressCircle {
-  g.pause {
+  .pause {
     opacity: 0;
   }
-  polygon.play {
+  .play {
     opacity: 1;
   }
 }
@@ -117,7 +117,7 @@ svg.UppyIcon.retry {
     cursor: default;
   }
 
-  polygon.cancel {
+  .cancel {
     display: none;
   }
 }
