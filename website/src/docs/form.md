@@ -43,11 +43,12 @@ The `@uppy/form` plugin has the following configurable options:
 ```js
 uppy.use(Form, {
   target: null,
+  resultName: 'uppyResult',
   getMetaFromForm: true,
   addResultToForm: true,
-  resultName: 'uppyResult',
-  triggerUploadOnSubmit: false,
-  submitOnSuccess: false
+  replaceResultInFormWithNew: true,
+  submitOnSuccess: false,
+  triggerUploadOnSubmit: false
 })
 ```
 
@@ -59,6 +60,10 @@ A unique identifier for this plugin. It defaults to `'Form'`.
 
 DOM element or CSS selector for the form element. This is required for the plugin to work.
 
+### `resultName: 'uppyResult'`
+
+The `name` attribute for the `<input type="hidden">` where the result will be added.
+
 ### `getMetaFromForm: true`
 
 Configures whether or not to extract metadata from the form. When set to true, the `Form` plugin will extract all fields from a `<form>` element before upload begins. Those fields will then be added to global `uppy.state.meta` and each file’s meta, and appended as (meta)data to the upload in an object with `[file input name attribute]` -> `[file input value]` key/values.
@@ -67,9 +72,11 @@ Configures whether or not to extract metadata from the form. When set to true, t
 
 Configures whether or not to add upload/encoding results back to the form in an `<input name="uppyResult" type="hidden">` element.
 
-### `resultName: 'uppyResult'`
+### `replaceResultInFormWithNew: true`
 
-The `name` attribute for the `<input type="hidden">` where the result will be added.
+By default, the Form plugin will _replace_ the `value` of `<input type="hidden">` it adds with the result (if `addResultToForm` is enabled) on each upload / `complete` event. This behavior can be confusing, because if a user uploads a file and then adds another, only the last result will end up in the hidden input and submitted to your server.
+
+Setting this to `false` turns the value of `<input type="hidden">` into an array and _appends_ each result from `complete` event to it. Since this is likely the desired default behavior in most cases, it will be made default in the next major release of Uppy, the option is kept for backwards compatability.
 
 ### `triggerUploadOnSubmit: false`
 
