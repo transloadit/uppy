@@ -323,7 +323,9 @@ module.exports = class ProviderView {
 
   isChecked (file) {
     const { currentSelection } = this.plugin.getPluginState()
-    return currentSelection.some((item) => item === file)
+    // comparing id instead of the file object, because the reference to the object
+    // changes when we switch folders, and the file list is updated
+    return currentSelection.some((item) => item.id === file.id)
   }
 
   /**
@@ -403,7 +405,7 @@ module.exports = class ProviderView {
     const { currentSelection } = this.plugin.getPluginState()
     if (this.isChecked(file)) {
       this.plugin.setPluginState({
-        currentSelection: currentSelection.filter((item) => item !== file)
+        currentSelection: currentSelection.filter((item) => item.id !== file.id)
       })
     } else {
       this.plugin.setPluginState({
