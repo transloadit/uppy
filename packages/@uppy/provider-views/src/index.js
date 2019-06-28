@@ -423,7 +423,7 @@ module.exports = class ProviderView {
   handleAuth () {
     const authState = btoa(JSON.stringify({ origin: getOrigin() }))
     // @todo remove this hardcoded version
-    const clientVersion = 'companion-client:1.0.2'
+    const clientVersion = encodeURIComponent('@uppy/companion-client=1.0.2')
     const link = `${this.provider.authUrl()}?state=${authState}&uppyVersions=${clientVersion}`
 
     const authWindow = window.open(link, '_blank')

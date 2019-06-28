@@ -1,6 +1,7 @@
 ---
 title: "&lt;DragDrop />"
 type: docs
+module: "@uppy/react"
 permalink: docs/react/drag-drop/
 alias: docs/react/dragdrop/
 order: 2

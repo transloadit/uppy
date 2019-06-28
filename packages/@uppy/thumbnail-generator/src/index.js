@@ -41,7 +41,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
    *
    * @param {{data: Blob}} file
    * @param {number} width
-   * @return {Promise}
+   * @returns {Promise}
    */
   createThumbnail (file, targetWidth, targetHeight) {
     const originalUrl = URL.createObjectURL(file.data)
@@ -208,7 +208,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * Save a <canvas> element's content to a Blob object.
    *
    * @param {HTMLCanvasElement} canvas
-   * @return {Promise}
+   * @returns {Promise}
    */
   canvasToBlob (canvas, type, quality) {
     try {

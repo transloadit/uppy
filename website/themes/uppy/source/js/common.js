@@ -102,6 +102,9 @@
     }
 
     function makeLinkClickable (link) {
+      if (link.getAttribute('data-scroll') === 'no') {
+        return
+      }
       var wrapper = document.createElement('a')
       wrapper.href = '#' + link.id
       wrapper.setAttribute('data-scroll', '')

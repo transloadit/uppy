@@ -111,8 +111,9 @@ glob(srcPattern, (err, files) => {
     /**
      * Creates bundle and writes it to static and public folders.
      * Changes to
+     *
      * @param  {[type]} ids [description]
-     * @return {[type]}     [description]
+     * @returns {[type]}     [description]
      */
     function bundle (ids = []) {
       ids.forEach((id) => {
@@ -144,7 +145,8 @@ glob(srcPattern, (err, files) => {
 /**
  * Logs to console and shows desktop notification on error.
  * Calls `this.emit(end)` to stop bundling.
- * @param  {object} err Error object
+ *
+ * @param  {Object} err Error object
  */
 function onError (err) {
   console.error(chalk.red('✗ error:'), chalk.red(err.message))

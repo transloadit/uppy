@@ -1,6 +1,7 @@
 ---
 title: "&lt;StatusBar />"
 type: docs
+module: "@uppy/react"
 permalink: docs/react/status-bar/
 alias: docs/react/statusbar/
 order: 1

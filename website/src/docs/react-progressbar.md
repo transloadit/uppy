@@ -1,6 +1,7 @@
 ---
 title: "&lt;ProgressBar />"
 type: docs
+module: "@uppy/react"
 permalink: docs/react/progress-bar/
 alias: docs/react/progressbar/
 order: 3

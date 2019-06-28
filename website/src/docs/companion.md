@@ -6,6 +6,7 @@ module: "@uppy/companion"
 permalink: docs/companion/
 alias: docs/server/
 category: 'Docs'
+tagline: Server-side proxy that enables remote sources like Instagram, Google Drive, S3
 ---
 
 > Companion was previously known as Uppy Server. It was renamed in v0.14.0.
