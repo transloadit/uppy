@@ -6,7 +6,7 @@
     <%- page.content %>
     
     <% if (page.subtype === 'plugin-list') { %>
-      <%- partial('partials/docs_menu', { only_modules: true, add_taglines: true, type: page.type, index: page.index }) %>
+      <%- partial('partials/docs_menu', { only_modules: true, add_taglines: true, type: page.type, index: page.index, add_category_ids: true }) %>
     <% } %>    
 
     <% if (page.type === 'guide') { %>
