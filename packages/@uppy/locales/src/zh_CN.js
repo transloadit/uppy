@@ -129,7 +129,12 @@ zh_CN.strings = {
     '0': '您至少要选择%{smart_count}个文件',
     '1': '您至少要选择%{smart_count}个文件',
     '2': '您至少要选择%{smart_count}个文件'
-  }
+  },
+  selectAllFilesFromFolderNamed: '从文件夹中选择所有文件 %{name}',
+  unselectAllFilesFromFolderNamed: '取消选择文件夹中的所有文件 %{name}',
+  selectFileNamed: '选择文件 %{name}',
+  unselectFileNamed: '取消选择文件 %{name}',
+  openFolderNamed: '打开文件夹 %{name}'
 }
 
 zh_CN.pluralize = function (n) {

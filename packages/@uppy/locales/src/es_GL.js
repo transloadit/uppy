@@ -129,7 +129,12 @@ es_GL.strings = {
     '0': 'Tes que seleccionar polo menos %{smart_count} arquivo',
     '1': 'Tes que seleccionar polo menos %{smart_count} arquivos',
     '2': 'Tes que seleccionar polo menos %{smart_count} arquivos'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Seleccionar todos los archivos de la carpeta %{name}',
+  unselectAllFilesFromFolderNamed: 'Deselecciona todos los archivos de la carpeta %{name}',
+  selectFileNamed: 'Seleccione archivo %{name}',
+  unselectFileNamed: 'Deseleccionar archivo %{name}',
+  openFolderNamed: 'Carpeta abierta %{name}'
 }
 
 es_GL.pluralize = function (n) {

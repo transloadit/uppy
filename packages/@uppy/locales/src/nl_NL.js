@@ -129,7 +129,12 @@ nl_NL.strings = {
     '0': 'Je moet minstens %{smart_count} bestand selecteren',
     '1': 'Je moet minstens %{smart_count} bestanden selecteren',
     '2': 'Je moet minstens %{smart_count} bestanden selecteren'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Selecteer alle bestanden uit de map %{name}',
+  unselectAllFilesFromFolderNamed: 'Deselecteer alle bestanden uit de map %{name}',
+  selectFileNamed: 'Selecteer bestand %{name}',
+  unselectFileNamed: 'Deselecteer bestand %{name}',
+  openFolderNamed: 'Open folder %{name}'
 }
 
 nl_NL.pluralize = function (n) {

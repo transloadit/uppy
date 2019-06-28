@@ -129,7 +129,12 @@ sr_RS_Latin.strings = {
     '0': 'Izaberite bar jednu datoteku',
     '1': 'Izaberite datoteke. Najmanje: %{smart_count}',
     '2': 'Izaberite datoteke. Najmanje: %{smart_count}'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Izaberite sve datoteke iz foldera %{name}',
+  unselectAllFilesFromFolderNamed: 'Isključite sve datoteke iz fascikle %{name}',
+  selectFileNamed: 'Izaberite fajl %{name}',
+  unselectFileNamed: 'Isključite fajl %{name}',
+  openFolderNamed: 'Otvori folder %{name}'
 }
 
 sr_RS_Latin.pluralize = function (n) {
