@@ -97,8 +97,7 @@ class DropBox {
       .where(query)
       .auth(token)
       .json({
-        path: `${directory || ''}`,
-        include_media_info: true
+        path: `${directory || ''}`
       })
       .request(done)
   }
@@ -150,10 +149,7 @@ class DropBox {
       .post('files/get_metadata')
       .options({ version: '2' })
       .auth(token)
-      .json({
-        path: id,
-        include_media_info: true
-      })
+      .json({ path: id })
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
           err = this._error(err, resp)
