@@ -186,9 +186,10 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
       const unwantedBody = 'error=Grant%3A%20missing%20session%20or%20misconfigured%20provider'
       if (body === unwantedBody) {
         logger.error(`grant.js responded with error: ${body}`, 'grant.oauth.error')
+        res.set('Content-Type', 'text/plain')
         send([
           'Companion was unable to complete the OAuth process :(',
-          '(Hint, try clearing your cookies and try again)'
+          'Error: User session is missing or the Provider was misconfigured'
         ].join('\n'))
       } else {
         send(body)
