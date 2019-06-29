@@ -391,16 +391,21 @@
 }
 
 .uppy-DashboardContent-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   flex-shrink: 0;
   height: 40px;
   width: 100%;
-  border-bottom: 1px solid $gray-200;
-  z-index: $zIndex-4;
-  background-color: $gray-50;
   padding: 0 10px;
+  z-index: $zIndex-4;
+  // For when both 'Cancel' and '+ Add more' buttons are present
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  // For .uppy-DashboardContent-title's position: absolute
+  position: relative;
+
+  border-bottom: 1px solid $gray-200;
+  background-color: $gray-50;
 
   .uppy-size--md & {
     height: 50px;
@@ -417,6 +422,8 @@
   font-size: 12px;
   line-height: 40px;
   font-weight: 500;
+  // MUST be present for title to be visible in IE11
+  width: 100%;
   max-width: 170px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -434,7 +441,6 @@
   @include reset-button;
   @include highlight-focus;
   border-radius: 3px;
-  display: inline-block;
   font-size: 12px;
   font-weight: 400;
   cursor: pointer;
@@ -451,7 +457,6 @@
   @include reset-button;
   @include highlight-focus;
   border-radius: 3px;
-  display: inline-block;
   font-weight: 500;
   cursor: pointer;
   color: $blue;
