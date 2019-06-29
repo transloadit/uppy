@@ -170,6 +170,7 @@
 }
 
 .uppy-Dashboard-close {
+  @include clear-focus;
   display: block;
   position: absolute;
   top: -33px;
@@ -179,6 +180,9 @@
   font-size: 27px;
   z-index: $zIndex-5;
 
+  &:focus{
+    color: lighten($blue, 25%);
+  }
   @media #{$screen-medium} {
     font-size: 35px;
     top: -10px;
@@ -252,19 +256,14 @@
 }
 
 .uppy-Dashboard-browse {
-  @include reset-button;
+  @include clear-focus;
   cursor: pointer;
   color: rgba($blue, 0.9);
 
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-  .uppy-Dashboard-browse:focus {
-    outline: none;
+  &:hover, &:focus {
     border-bottom: 2px solid $blue;
   }
+}
 
 .uppy-DashboardTabs-list {
   display: flex;

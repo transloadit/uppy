@@ -234,12 +234,28 @@ const ProgressBarProcessing = (props) => {
 
 const ProgressDetails = (props) => {
   return <div class="uppy-StatusBar-statusSecondary">
-    { props.numUploads > 1 && props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.numUploads }) + ' \u00B7 ' }
-    { props.i18n('dataUploadedOfTotal', {
-      complete: prettyBytes(props.totalUploadedSize),
-      total: prettyBytes(props.totalSize)
-    }) + ' \u00B7 ' }
-    { props.i18n('xTimeLeft', { time: prettyETA(props.totalETA) }) }
+    {
+      props.numUploads > 1 &&
+      props.i18n('filesUploadedOfTotal', {
+        complete: props.complete,
+        smart_count: props.numUploads
+      }) + ' \u00B7 '
+    }
+    <span class="uppy-StatusBar--onlyForDesktop">
+      {
+        props.i18n('dataUploadedOfTotal', {
+          complete: prettyBytes(props.totalUploadedSize),
+          total: prettyBytes(props.totalSize)
+        }) + ' \u00B7 '
+      }
+    </span>
+    <span class="uppy-StatusBar--onlyForDesktop">
+      {
+        props.i18n('xTimeLeft', {
+          time: prettyETA(props.totalETA)
+        })
+      }
+    </span>
   </div>
 }
 
@@ -253,7 +269,8 @@ const UploadNewlyAddedFiles = (props) => {
   const uploadBtnClassNames = classNames(
     'uppy-u-reset',
     'uppy-c-btn',
-    'uppy-StatusBar-actionBtn'
+    'uppy-StatusBar-actionBtn',
+    'uppy-StatusBar-actionBtn--uploadNewlyAdded'
   )
 
   return <div class="uppy-StatusBar-statusSecondary">
