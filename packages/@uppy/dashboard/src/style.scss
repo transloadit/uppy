@@ -413,83 +413,85 @@
   }
 }
 
-.uppy-DashboardContent-title {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 12px;
-  line-height: 40px;
-  font-weight: 500;
-  // MUST be present for title to be visible in IE11
-  width: 100%;
-  max-width: 170px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow-x: hidden;
-  margin: auto;
-
-  .uppy-size--md & {
-    font-size: 14px;
-    line-height: 50px;
-    max-width: 300px;
-  }
-}
-
-.uppy-DashboardContent-back {
-  @include reset-button;
-  @include highlight-focus;
-  border-radius: 3px;
-  font-size: 12px;
-  font-weight: 400;
-  cursor: pointer;
-  color: $blue;
-  padding: 7px 6px;
-  margin-left: -6px;
-
-  .uppy-size--md & {
-    font-size: 14px;
-  }
-}
-
-.uppy-DashboardContent-addMore {
-  @include reset-button;
-  @include highlight-focus;
-  border-radius: 3px;
-  font-weight: 500;
-  cursor: pointer;
-  color: $blue;
-  width: 29px;
-  height: 29px;
-  padding: 7px 8px;
-  margin-right: -5px;
-
-  .uppy-size--md & {
-    font-size: 14px;
-    width: auto;
-    height: auto;
-    margin-right: -8px;
-  }
-}
-
-  .uppy-DashboardContent-addMore svg {
-    vertical-align: baseline;
-    margin-right: 4px;
+  .uppy-DashboardContent-title {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12px;
+    line-height: 40px;
+    font-weight: 500;
+    // MUST be present for title to be visible in IE11
+    width: 100%;
+    max-width: 170px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
+    margin: auto;
 
     .uppy-size--md & {
-      width: 11px;
-      height: 11px;
+      font-size: 14px;
+      line-height: 50px;
+      max-width: 300px;
     }
   }
 
-  .uppy-DashboardContent-addMoreCaption {
-    display: none;
+  .uppy-DashboardContent-back {
+    @include reset-button;
+    @include highlight-focus;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 400;
+    cursor: pointer;
+    color: $blue;
+    padding: 7px 6px;
+    margin-left: -6px;
 
     .uppy-size--md & {
-      display: inline;
+      font-size: 14px;
     }
   }
+
+  .uppy-DashboardContent-addMore {
+    @include reset-button;
+    @include highlight-focus;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: pointer;
+    color: $blue;
+    width: 29px;
+    height: 29px;
+    padding: 7px 8px;
+    margin-right: -5px;
+
+    .uppy-size--md & {
+      font-size: 14px;
+      width: auto;
+      height: auto;
+      margin-right: -8px;
+    }
+  }
+
+    .uppy-DashboardContent-addMore svg {
+      vertical-align: baseline;
+      margin-right: 4px;
+
+      .uppy-size--md & {
+        width: 11px;
+        height: 11px;
+      }
+    }
+
+    .uppy-DashboardContent-addMoreCaption {
+      display: none;
+
+      .uppy-size--md & {
+        display: inline;
+      }
+    }
+  // ...uppy-DashboardContent-addMore|
+// ...uppy-DashboardContent-bar|
 
 .uppy-DashboardContent-panel {
   position: absolute;
