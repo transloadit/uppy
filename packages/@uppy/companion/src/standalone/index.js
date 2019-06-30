@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 // @ts-ignore
 const promBundle = require('express-prom-bundle')
 const session = require('express-session')
+const addRequestId = require('express-request-id')()
 const helper = require('./helper')
 // @ts-ignore
 const { version } = require('../../package.json')
@@ -29,6 +30,7 @@ if (app.get('env') !== 'test') {
   clearInterval(promInterval)
 }
 
+app.use(addRequestId)
 // log server requests.
 app.use(morgan('combined'))
 morgan.token('url', (req, res) => {

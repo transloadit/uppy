@@ -17,6 +17,7 @@ const interceptor = require('express-interceptor')
 const logger = require('./server/logger')
 const { STORAGE_PREFIX } = require('./server/Uploader')
 const middlewares = require('./server/middlewares')
+const { shortenToken } = require('./server/Uploader')
 
 const providers = providerManager.getDefaultProviders()
 const defaultOptions = {
@@ -141,7 +142,7 @@ module.exports.socket = (server) => {
      */
     function sendProgress (data) {
       ws.send(jsonStringify(data), (err) => {
-        if (err) logger.error(err, 'socket.progress.error')
+        if (err) logger.error(err, 'socket.progress.error', shortenToken(token))
       })
     }
 
@@ -149,7 +150,7 @@ module.exports.socket = (server) => {
     // if we have any already stored progress data on the upload.
     if (redisClient) {
       redisClient.get(`${STORAGE_PREFIX}:${token}`, (err, data) => {
-        if (err) logger.error(err, 'socket.redis.error')
+        if (err) logger.error(err, 'socket.redis.error', shortenToken(token))
         if (data) {
           const dataObj = JSON.parse(data.toString())
           if (dataObj.action) sendProgress(dataObj)
@@ -185,11 +186,13 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
     intercept: (body, send) => {
       const unwantedBody = 'error=Grant%3A%20missing%20session%20or%20misconfigured%20provider'
       if (body === unwantedBody) {
-        logger.error(`grant.js responded with error: ${body}`, 'grant.oauth.error')
+        logger.error(`grant.js responded with error: ${body}`, 'grant.oauth.error', req.id)
         res.set('Content-Type', 'text/plain')
+        const reqHint = req.id ? `Request ID: ${req.id}` : ''
         send([
           'Companion was unable to complete the OAuth process :(',
-          'Error: User session is missing or the Provider was misconfigured'
+          'Error: User session is missing or the Provider was misconfigured',
+          reqHint
         ].join('\n'))
       } else {
         send(body)

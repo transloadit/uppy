@@ -3,12 +3,12 @@ const logger = require('./logger')
 
 exports.hasSessionAndProvider = (req, res, next) => {
   if (!req.session || !req.body) {
-    logger.debug('No session/body attached to req object. Exiting dispatcher.')
+    logger.debug('No session/body attached to req object. Exiting dispatcher.', null, req.id)
     return res.sendStatus(400)
   }
 
   if (!req.uppy.provider) {
-    logger.debug('No provider/provider-handler found. Exiting dispatcher.')
+    logger.debug('No provider/provider-handler found. Exiting dispatcher.', null, req.id)
     return res.sendStatus(400)
   }
 
