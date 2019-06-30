@@ -139,14 +139,14 @@ app.use((req, res, next) => {
 if (app.get('env') === 'production') {
   // @ts-ignore
   app.use((err, req, res, next) => {
-    console.error('\x1b[31m', err, '\x1b[0m')
-    res.status(err.status || 500).json({ message: 'Something went wrong' })
+    console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    res.status(err.status || 500).json({ message: 'Something went wrong', requestId: req.id })
   })
 } else {
   // @ts-ignore
   app.use((err, req, res, next) => {
-    console.error('\x1b[31m', err, '\x1b[0m')
-    res.status(err.status || 500).json({ message: err.message, error: err })
+    console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    res.status(err.status || 500).json({ message: err.message, error: err, requestId: req.id })
   })
 }
 
