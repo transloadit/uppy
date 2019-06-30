@@ -77,7 +77,7 @@ module.exports = class RequestClient {
     }
 
     if (res.status < 200 || res.status > 300) {
-      let errMsg = `Failed request to ${res.url}. ${res.statusText}`
+      let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
       return res.json()
         .then((errData) => {
           errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
