@@ -4,7 +4,9 @@ const { selectFakeFile, supportsChooseFile } = require('../utils')
 
 const testURL = 'http://localhost:4567/tus-drag-drop'
 
-describe('File upload with DragDrop + Tus', () => {
+describe('File upload with DragDrop + Tus', function () {
+  this.retries(2)
+
   beforeEach(async () => {
     await browser.url(testURL)
   })
