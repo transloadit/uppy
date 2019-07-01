@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const fr_FR = {}
 
 fr_FR.strings = {
@@ -10,6 +8,7 @@ fr_FR.strings = {
   authenticateWith: 'Se connecter à %{pluginName}',
   authenticateWithTitle: 'Veuillez vous authentifier avec %{pluginName} pour sélectionner les fichiers',
   back: 'Retour',
+  addMore: 'Ajouter d\'autres',
   browse: 'naviguer',
   cancel: 'Annuler',
   cancelUpload: 'Annuler téléchargement',

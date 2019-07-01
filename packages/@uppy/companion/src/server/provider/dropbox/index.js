@@ -79,14 +79,25 @@ class DropBox {
   }
 
   stats ({ directory, query, token }, done) {
+    if (query.cursor) {
+      this.client
+        .post('files/list_folder/continue')
+        .options({ version: '2' })
+        .auth(token)
+        .json({
+          cursor: query.cursor
+        })
+        .request(done)
+      return
+    }
+
     this.client
       .post('files/list_folder')
       .options({ version: '2' })
       .where(query)
       .auth(token)
       .json({
-        path: `${directory || ''}`,
-        include_media_info: true
+        path: `${directory || ''}`
       })
       .request(done)
   }
@@ -138,10 +149,7 @@ class DropBox {
       .post('files/get_metadata')
       .options({ version: '2' })
       .auth(token)
-      .json({
-        path: id,
-        include_media_info: true
-      })
+      .json({ path: id })
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
           err = this._error(err, resp)
@@ -169,7 +177,7 @@ class DropBox {
       })
     })
 
-    data.nextPagePath = null
+    data.nextPagePath = adapter.getNextPagePath(res)
 
     return data
   }

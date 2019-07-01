@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const fa_IR = {}
 
 fa_IR.strings = {
@@ -10,6 +8,7 @@ fa_IR.strings = {
   authenticateWith: 'در حال اتصال به %{pluginName}',
   authenticateWithTitle: 'احراز هویت %{pluginName} برای انتخاب فایل ضروریست!',
   back: 'بازگشت',
+  addMore: 'اضافه کردن بیشتر',
   browse: 'از رایانه',
   cancel: 'انصراف',
   cancelUpload: 'لغو بارگذاری',

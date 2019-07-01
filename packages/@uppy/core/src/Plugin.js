@@ -92,7 +92,7 @@ module.exports = class Plugin {
    * If it’s an object — target is a plugin, and we search `plugins`
    * for a plugin with same name and return its target.
    *
-   * @param {String|Object} target
+   * @param {string|Object} target
    *
    */
   mount (target, plugin) {

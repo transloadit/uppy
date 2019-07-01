@@ -104,6 +104,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
 - [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418)
 - [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack)
+
 ## 1.3
 
 - [ ] ! core: _calculateTotalProgress results in incorrectly high (1038%) progress with files that don’t have size (like from Instagram) (@goto-bus-stop)
@@ -116,7 +117,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754, #1606)
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
-- [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well (@arturi)
+- [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] docs: Add a note to our browser support page that, while we have a saucelabs test for IE10, we're not actively supporting or fixing issues anymore (https://github.com/transloadit/uppy/issues/1420)
 - [ ] goldenretriever: make it work with aws multipart (@goto-bus-stop) https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888
@@ -125,6 +126,19 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
+- [x] @uppy/core: make `meta.name` not required in addFile() (@goto-bus-stop / #1629)
+- [x] \*: use `opts.id` as the plugin ID for all plugins, fixes #1674 (@goto-bus-stop / https://github.com/transloadit/uppy/commit/e6c52f7681dad5a73c85bac2c7986293eda76a85)
+- [x] @uppy/companion: add colors to logs (@ifedapoolarewaju / #1648)
+- [x] @uppy/robodog: use chooseFiles string like @uppy/file-input (@goto-bus-stop / #1669)
+- [x] @uppy/aws-s3: prevent unnecessary delete multiparts request for completed files (@twarlop / #1650)
+- [x] @uppy/core: Log versions of Uppy plugins for debugging (@arturi / #1640)
+- [x] @uppy/thumbnail-generator: rotate according to EXIF metadata (@Botz, #1532)
+- [x] @uppy/companion: prevent logging uppyAuthToken (@ifedapoolarewaju / #1663)
+- [x] @uppy/locales: add Turkish (@ayhankesicioglu / #1667)
+- [x] @uppy/locales: add Arabic, Saudi Arabia (@HussainAlkhalifah / #1673)
+- [x] @uppy/companion: return nextPagePath for drive/dropbox (@stephentuso / #1652)
+- [x] docs: add custom plugin example (@arturi / #1623)
+- [x] dashboard/providers: many accessibility improvements (@lakesare / #1507)
 
 ## 1.2.0
 

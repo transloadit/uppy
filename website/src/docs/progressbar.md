@@ -6,6 +6,7 @@ module: "@uppy/progress-bar"
 permalink: docs/progress-bar/
 alias: docs/progressbar/
 category: 'UI Elements'
+tagline: add a small YouTube-style progress bar at the top of the page
 ---
 
 `@uppy/progress-bar` is a minimalist plugin that shows the current upload progress in a thin bar element, similar to the ones used by YouTube and GitHub when navigating between pages.

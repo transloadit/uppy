@@ -21,13 +21,26 @@ function buildResponseError (xhr, error) {
   return error
 }
 
+/**
+ * Set `data.type` in the blob to `file.meta.type`,
+ * because we might have detected a more accurate file type in Uppy
+ * https://stackoverflow.com/a/50875615
+ *
+ * @param {Object} file File object with `data`, `size` and `meta` properties
+ * @returns {Object} blob updated with the new `type` set from `file.meta.type`
+ */
+function setTypeInBlob (file) {
+  const dataWithUpdatedType = file.data.slice(0, file.data.size, file.meta.type)
+  return dataWithUpdatedType
+}
+
 module.exports = class XHRUpload extends Plugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
-    this.id = 'XHRUpload'
+    this.id = this.opts.id || 'XHRUpload'
     this.title = 'XHRUpload'
 
     this.defaultLocale = {
@@ -186,10 +199,12 @@ module.exports = class XHRUpload extends Plugin {
 
     this.addMetadata(formPost, file.meta, opts)
 
+    const dataWithUpdatedType = setTypeInBlob(file)
+
     if (file.name) {
-      formPost.append(opts.fieldName, file.data, file.name)
+      formPost.append(opts.fieldName, dataWithUpdatedType, file.meta.name)
     } else {
-      formPost.append(opts.fieldName, file.data)
+      formPost.append(opts.fieldName, dataWithUpdatedType)
     }
 
     return formPost
@@ -204,10 +219,12 @@ module.exports = class XHRUpload extends Plugin {
     files.forEach((file) => {
       const opts = this.getOptions(file)
 
+      const dataWithUpdatedType = setTypeInBlob(file)
+
       if (file.name) {
-        formPost.append(opts.fieldName, file.data, file.name)
+        formPost.append(opts.fieldName, dataWithUpdatedType, file.name)
       } else {
-        formPost.append(opts.fieldName, file.data)
+        formPost.append(opts.fieldName, dataWithUpdatedType)
       }
     })
 

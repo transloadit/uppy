@@ -1,0 +1,51 @@
+.uppy-DashboardItem-previewInnerWrap {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  // For :after positioning
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  box-shadow: 0 0 2px 0 rgba($black, 0.4);
+  border-radius: 3px;
+
+  .uppy-size--md & {
+    box-shadow: 0 1px 2px rgba($black, 0.15);
+  }
+}
+  .uppy-DashboardItem-previewInnerWrap:after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    top: 0; bottom: 0;
+    background-color: rgba($black, 0.65) /* no !important */;
+    display: none;
+    z-index: $zIndex-2;
+  }
+
+  .uppy-DashboardItem-previewLink {
+    position: absolute;
+    left: 0; right: 0;
+    top: 0; bottom: 0;
+
+    z-index: $zIndex-3;
+    &:focus{
+      box-shadow: inset 0 0 0 3px lighten($blue, 20%);
+    }
+  }
+
+  .uppy-DashboardItem-preview img.uppy-DashboardItem-previewImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    // Fixes file previews being partially invisible in safari (for some pics only).
+    // (https://stackoverflow.com/a/27971913/3192470)
+    transform: translateZ(0);
+    // We need a repeated border-radius because of the transform.
+    border-radius: 3px;
+  }
+// ...uppy-DashboardItem-previewInnerWrap|
