@@ -9,7 +9,11 @@ function createCapability (capability) {
   }
 }
 
-exports.config = Object.assign(base.config, {
+exports.config = {
+  ...base.config,
+
+  logLevel: 'warn',
+
   capabilities: [
     // Previous ESR
     { browserName: 'firefox', version: '52.0', platform: 'Windows 7' },
@@ -50,4 +54,4 @@ exports.config = Object.assign(base.config, {
   sauceConnect: true,
   user: process.env.SAUCE_USERNAME,
   key: process.env.SAUCE_ACCESS_KEY
-})
+}
