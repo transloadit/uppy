@@ -1,6 +1,6 @@
 /* global browser, expect, capabilities  */
 const path = require('path')
-const { selectFakeFile, supportsChooseFile } = require('../utils')
+const { selectFakeFile, supportsChooseFile, ensureInputVisible } = require('../utils')
 
 const testURL = 'http://localhost:4567/i18n-drag-drop'
 
@@ -9,6 +9,7 @@ describe('File upload with DragDrop + XHRUpload, i18n translated string', functi
 
   beforeEach(async () => {
     await browser.url(testURL)
+    await browser.execute(ensureInputVisible, '#uppyi18n .uppy-DragDrop-input')
   })
 
   it('should upload a file with XHRUpload and set progressbar to 100%', async () => {

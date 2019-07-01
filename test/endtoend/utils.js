@@ -42,6 +42,14 @@ function selectFakeFile (uppyID, name, type, b64) {
   })
 }
 
+function ensureInputVisible (selector) {
+  var input = document.querySelector(selector)
+  input.style = 'width: auto; height: auto; opacity: 1; z-index: 199'
+  input.removeAttribute('hidden')
+  input.removeAttribute('aria-hidden')
+  input.removeAttribute('tabindex')
+}
+
 function supportsChooseFile () {
   // no remote file uploads right now...
   if (process.env.CI) return false
@@ -161,6 +169,7 @@ class TusService {
 
 module.exports = {
   selectFakeFile,
+  ensureInputVisible,
   supportsChooseFile,
   CompanionService,
   StaticServerService,

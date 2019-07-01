@@ -1,6 +1,6 @@
 /* global browser, expect  */
 const path = require('path')
-const { selectFakeFile, supportsChooseFile } = require('../utils')
+const { selectFakeFile, supportsChooseFile, ensureInputVisible } = require('../utils')
 
 const testURL = 'http://localhost:4567/tus-drag-drop'
 
@@ -12,6 +12,8 @@ describe('File upload with DragDrop + Tus', function () {
   })
 
   it('should upload a file with Tus and set progressbar to 100%', async () => {
+    await browser.execute(ensureInputVisible, '#uppyDragDrop .uppy-DragDrop-input')
+
     if (supportsChooseFile()) {
       const input = await browser.$('#uppyDragDrop .uppy-DragDrop-input')
       await input.setValue(path.join(__dirname, '../../resources/image.jpg'))

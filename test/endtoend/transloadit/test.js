@@ -1,17 +1,9 @@
 /* global browser, expect, capabilities, $ */
 const path = require('path')
 const fs = require('fs')
-const { selectFakeFile, supportsChooseFile } = require('../utils')
+const { selectFakeFile, supportsChooseFile, ensureInputVisible } = require('../utils')
 
 const testURL = 'http://localhost:4567/transloadit'
-
-function unhideTheInput () {
-  var input = document.querySelector('#uppy-transloadit .uppy-Dashboard-input')
-  input.style = 'width: auto; height: auto; opacity: 1; z-index: 199'
-  input.removeAttribute('hidden')
-  input.removeAttribute('aria-hidden')
-  input.removeAttribute('tabindex')
-}
 
 function setTransloaditKeyAndInit (transloaditKey) {
   window.initUppyTransloadit(transloaditKey)
@@ -38,9 +30,9 @@ describe('Transloadit file processing', () => {
     const result = await $('#uppy-result')
 
     await input.waitForExist()
+    await browser.execute(ensureInputVisible, '#uppy-transloadit .uppy-Dashboard-input')
 
     if (supportsChooseFile(capabilities)) {
-      await browser.execute(unhideTheInput)
       await input.setValue(path.join(__dirname, '../../resources/image.jpg'))
     } else {
       const img = path.join(__dirname, '../../resources/image.jpg')
