@@ -27,7 +27,7 @@ function buildResponseError (xhr, error) {
  * https://stackoverflow.com/a/50875615
  *
  * @param {Object} file File object with `data`, `size` and `meta` properties
- * @return {Object} blob updated with the new `type` set from `file.meta.type`
+ * @returns {Object} blob updated with the new `type` set from `file.meta.type`
  */
 function setTypeInBlob (file) {
   const dataWithUpdatedType = file.data.slice(0, file.data.size, file.meta.type)

@@ -1,6 +1,7 @@
 ---
 title: "&lt;Dashboard />"
 type: docs
+module: "@uppy/react"
 permalink: docs/react/dashboard/
 order: 4
 category: 'React'

@@ -1,6 +1,7 @@
 ---
 title: "Introduction"
 type: docs
+module: "@uppy/react"
 permalink: docs/react/
 order: 0
 category: 'React'

@@ -6,6 +6,7 @@ menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/instagram"
 permalink: docs/instagram/
 category: 'Sources'
+tagline: import files from Instagram
 ---
 
 The `@uppy/instagram` plugin lets users import files from their Instagram account.

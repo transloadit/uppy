@@ -1,6 +1,7 @@
 ---
 title: "&lt;DashboardModal />"
 type: docs
+module: "@uppy/react"
 permalink: docs/react/dashboard-modal/
 order: 5
 category: 'React'
