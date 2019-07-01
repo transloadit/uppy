@@ -13,18 +13,23 @@ const testURL = 'http://localhost:4567/providers'
 
 describe('File upload with Providers', () => {
   beforeEach(() => {
+    // close other tabs that might be left from failed tests
+    while (browser.getTabIds().length > 1) {
+      browser.switchTab(browser.getTabIds()[1])
+      browser.close()
+    }
+
     browser.url(testURL)
   })
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
   it('should upload a file completely with Google Drive', function () {
-    if (process.env.UPPY_GOOGLE_EMAIL || process.env.UPPY_GOOGLE_EMAIL === undefined) {
+    if (process.env.UPPY_GOOGLE_EMAIL == undefined) {
       console.log('skipping Google Drive integration test')
       return this.skip()
     }
 
     // ensure session is cleared
-    browser.reload()
     startUploadTest(browser, 'GoogleDrive')
     signIntoGoogle(browser)
     finishUploadTest(browser)
@@ -32,38 +37,66 @@ describe('File upload with Providers', () => {
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
   it('should upload a file completely with Instagram', function () {
-    if (process.env.UPPY_INSTAGRAM_USERNAME || process.env.UPPY_INSTAGRAM_USERNAME === undefined) {
+    const isFirefox = browser.desiredCapabilities.browserName === 'firefox'
+    if (process.env.UPPY_INSTAGRAM_USERNAME == undefined || !isFirefox) {
       console.log('skipping Instagram integration test')
       return this.skip()
     }
 
     // ensure session is cleared
-    browser.reload()
     startUploadTest(browser, 'Instagram')
     // do oauth authentication
-    browser.waitForExist('input[name=username]')
+    browser.waitForExist('input[name=username]', 20000)
     browser.setValue('input[name=username]', process.env.UPPY_INSTAGRAM_USERNAME)
     browser.setValue('input[name=password]', process.env.UPPY_INSTAGRAM_PASSWORD)
-    browser.click('form button')
+    browser.click('form button[type=submit]')
+    if (browser.getTabIds().length > 1) {
+      // wait a bit for submission
+      browser.pause(3000)
+      // if suspicious login was detected, the window will remain unclosed
+      // so we have to input the security code sent
+      if (browser.isExisting('input[name="choice"]')) {
+        browser.click('form button')
+        browser.waitForExist('input[name=security_code]')
+        // we can't automate the submission of security code
+        // because it is sent to the email. So we wait till it is filled manually
+        browser.waitUntil(
+          () => browser('input[name=security_code]').getValue(),
+          30000, 'expected security code to be manually entered')
+      }
+
+      // instagram may ask for auth confirmation to allow companion
+      if (browser.isExisting('button[value="Authorize"]')) {
+        browser.click('button[value="Authorize"]')
+      }
+    }
 
     finishUploadTest(browser)
   })
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
   it('should upload a file completely with Dropbox', function () {
-    if (process.env.UPPY_GOOGLE_EMAIL || process.env.UPPY_GOOGLE_EMAIL === undefined) {
+    if (process.env.UPPY_GOOGLE_EMAIL === undefined) {
       console.log('skipping Dropbox integration test')
       return this.skip()
     }
 
     // ensure session is cleared
-    browser.reload()
     startUploadTest(browser, 'Dropbox')
     // do oauth authentication
     browser.waitForVisible('button.auth-google')
     browser.click('button.auth-google')
+    browser.pause(3000)
     // we login with google to avoid captcha
     signIntoGoogle(browser)
+    browser.pause(5000)
+    // if we dropbox displays a warning about trusting the companion app
+    //  we allow it because we trust companion. Companion is our friend.
+    if (browser.isExisting('#warning-button-continue')) {
+      browser.click('#warning-button-continue')
+    }
+
+    browser.pause(3000)
     // finish oauth
     browser.waitForVisible('button[name=allow_access]')
     browser.click('button[name=allow_access]')
@@ -92,6 +125,12 @@ const finishUploadTest = (browser) => {
 }
 
 const signIntoGoogle = (browser) => {
+  if (browser.isExisting(`li div[data-identifier="${process.env.UPPY_GOOGLE_EMAIL}"]`)) {
+    // if user is already signed in, just select user
+    browser.click(`li div[data-identifier="${process.env.UPPY_GOOGLE_EMAIL}"]`)
+    return
+  }
+
   browser.waitForExist('#identifierId')
   browser.setValue('#identifierId', process.env.UPPY_GOOGLE_EMAIL)
   browser.click('#identifierNext')
@@ -106,12 +145,13 @@ const signIntoGoogle = (browser) => {
       browser.click('li div[data-challengetype="12"]')
       browser.waitForVisible('input[name=knowledgePreregisteredEmailResponse]')
       browser.setValue('input[name=knowledgePreregisteredEmailResponse]', process.env.UPPY_GOOGLE_RECOVERY_EMAIL)
+      browser.click('#next[role=button]')
       // confirm recovery phone number
     } else if (browser.isExisting('#countryList')) {
       browser.click('div#countryList')
       browser.click('div[data-value=nl]')
       browser.setValue('input#phoneNumberId', process.env.UPPY_GOOGLE_PHONE_NO)
+      browser.click('#next[role=button]')
     }
-    browser.click('#next[role=button]')
   }
 }
