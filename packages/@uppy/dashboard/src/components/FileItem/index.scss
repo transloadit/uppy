@@ -1,0 +1,103 @@
+@import './FilePreviewAndLink/index.scss';
+@import './FileProgress/index.scss';
+@import './FileInfo/index.scss';
+@import './Buttons/index.scss';
+
+.uppy-DashboardItem {
+  // @media only mobile
+  .uppy-Dashboard:not(.uppy-size--md) & {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid $gray-200;
+    padding: 10px;
+    padding-right: 0;
+  }
+  // @media bigger than .md
+  $rl-margin: 15px;
+  .uppy-size--md & {
+    // For the Remove button
+    position: relative;
+
+    display: block;
+    float: left;
+    margin: 5px $rl-margin;
+    width: calc(33.333% - #{$rl-margin} - #{$rl-margin});
+    height: 215px;
+  }
+  .uppy-size--lg & {
+    margin: 5px $rl-margin;
+    width: calc(25% - #{$rl-margin} - #{$rl-margin});
+    height: 190px;
+  }
+  .uppy-size--xl & {
+    width: calc(20% - #{$rl-margin} - #{$rl-margin});
+    height: 210px;
+  }
+}
+  .uppy-DashboardItem-preview {
+    // for the FileProgress.js icons
+    position: relative;
+
+    // @media only mobile
+    .uppy-Dashboard:not(.uppy-size--md) & {
+      flex-shrink: 0;
+      flex-grow: 0;
+      width: 50px;
+      height: 50px;
+    }
+    // @media bigger than .md
+    .uppy-size--md & {
+      width: 100%;
+      height: 140px;
+    }
+    .uppy-size--lg & {
+      height: 120px;
+    }
+    .uppy-size--xl & {
+      height: 140px;
+    }
+  }
+  .uppy-DashboardItem-fileInfoAndButtons {
+    flex-grow: 1;
+    padding-right: 8px;
+    padding-left: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .uppy-size--md & {
+      align-items: flex-start;
+      width: 100%;
+      padding: 0;
+      padding-top: 9px;
+    }
+  }
+    .uppy-DashboardItem-fileInfo {
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
+    .uppy-DashboardItem-actionWrapper {
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+  // ...uppy-DashboardItem-fileInfoAndButtons|
+// ...uppy-DashboardItem|
+
+
+// Css that depends on status of the file (could be logic in js instead?)
+.uppy-DashboardItem.is-inprogress {
+  .uppy-DashboardItem-previewInnerWrap:after {
+    display: block;
+  }
+}
+.uppy-DashboardItem.is-error {
+  .uppy-DashboardItem-previewInnerWrap:after {
+    display: block;
+  }
+}
+.uppy-DashboardItem.is-inprogress:not(.is-resumable) {
+  .uppy-DashboardItem-action--remove {
+    display: none;
+  }
+}

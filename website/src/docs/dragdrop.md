@@ -6,6 +6,7 @@ module: "@uppy/drag-drop"
 permalink: docs/drag-drop/
 alias: docs/dragdrop/
 category: 'Sources'
+tagline: plain and simple drag-and-drop area
 ---
 
 The `@uppy/drag-drop` plugin renders a simple drag and drop area for file selection. it can be useful when you only want the local device as a file source, don’t need file previews and a UI for metadata editing, and the [Dashboard](/docs/dashboard/) feels like overkill.

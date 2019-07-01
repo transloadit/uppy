@@ -8,6 +8,7 @@ es_ES.strings = {
   authenticateWith: 'Conectar a %{pluginName}',
   authenticateWithTitle: 'Por favor autentícate con %{pluginName} para seleccionar archivos',
   back: 'Atrás',
+  addMore: 'Agregar más',
   browse: 'navegar',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar subida',

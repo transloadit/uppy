@@ -54,6 +54,7 @@ module.exports = class Dashboard extends Plugin {
         fileSource: 'File source: %{name}',
         done: 'Done',
         back: 'Back',
+        addMore: 'Add more',
         removeFile: 'Remove file',
         editFile: 'Edit file',
         editing: 'Editing %{file}',
@@ -376,7 +377,9 @@ module.exports = class Dashboard extends Plugin {
         }
       })
     } catch (err) {
-      // Nothing, restriction errors handled in Core
+      if (!err.isRestriction) {
+        this.uppy.log(err)
+      }
     }
   }
 
@@ -814,8 +817,6 @@ module.exports = class Dashboard extends Plugin {
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
-      currentWidth: pluginState.containerWidth,
-      isWide: pluginState.containerWidth > 400,
       containerWidth: pluginState.containerWidth,
       areInsidesReadyToBeVisible: pluginState.areInsidesReadyToBeVisible,
       isTargetDOMEl: this.isTargetDOMEl,

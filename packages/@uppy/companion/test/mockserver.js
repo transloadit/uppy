@@ -13,7 +13,7 @@ authServer.all('*/callback', (req, res, next) => {
 })
 authServer.all('/drive/send-token', (req, res, next) => {
   req.session.grant = {
-    state: 'non-empty-value' }
+    state: req.query.state || 'non-empty-value' }
   next()
 })
 

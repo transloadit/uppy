@@ -1,4 +1,4 @@
-const FileItem = require('./FileItem')
+const FileItem = require('./FileItem/index.js')
 const classNames = require('classnames')
 const { h } = require('preact')
 
@@ -43,7 +43,6 @@ module.exports = (props) => {
       {Object.keys(props.files).map((fileID) => (
         <FileItem
           {...fileProps}
-          acquirers={props.acquirers}
           file={props.files[fileID]}
         />
       ))}
