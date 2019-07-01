@@ -99,7 +99,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     let metadata = {}
 
     Object.keys(file.meta).map(key => {
-      if (file.meta[key] !== null) {
+      if (file.meta[key] != null) {
         metadata[key] = file.meta[key].toString()
       }
     })
