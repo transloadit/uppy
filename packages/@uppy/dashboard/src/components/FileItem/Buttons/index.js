@@ -6,7 +6,7 @@ const { iconPencil, iconCross, iconCopyLink } = require('../../icons')
 const renderEditButton = (props) => (
   !props.uploadInProgressOrComplete &&
   props.metaFields &&
-  props.metaFields.length &&
+  props.metaFields.length > 0 &&
   <button
     class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--edit"
     type="button"
