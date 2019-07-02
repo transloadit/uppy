@@ -12,6 +12,7 @@ const cuid = require('cuid')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const { defaultPickerIcon } = require('./components/icons')
 const createSuperFocus = require('./utils/createSuperFocus')
+const memoize = require('memoize-one').default || require('memoize-one')
 
 const TAB_KEY = 9
 const ESC_KEY = 27
@@ -659,6 +660,52 @@ module.exports = class Dashboard extends Plugin {
     this.superFocusOnEachUpdate()
   }
 
+  startUpload = (ev) => {
+    this.uppy.upload().catch((err) => {
+      // Log error.
+      this.uppy.log(err.stack || err.message || err)
+    })
+  }
+
+  cancelUpload = (fileID) => {
+    this.uppy.removeFile(fileID)
+  }
+
+  saveFileCard = (meta, fileID) => {
+    this.uppy.setFileMeta(fileID, meta)
+    this.toggleFileCard()
+  }
+
+  _attachRenderFunctionToTarget = (target) => {
+    const plugin = this.uppy.getPlugin(target.id)
+    return {
+      ...target,
+      icon: plugin.icon || this.opts.defaultPickerIcon,
+      render: plugin.render
+    }
+  }
+
+  _isTargetSupported = (target) => {
+    const plugin = this.uppy.getPlugin(target.id)
+    // If the plugin does not provide a `supported` check, assume the plugin works everywhere.
+    if (typeof plugin.isSupported !== 'function') {
+      return true
+    }
+    return plugin.isSupported()
+  }
+
+  _getAcquirers = memoize((targets) => {
+    return targets
+      .filter(target => target.type === 'acquirer' && this._isTargetSupported(target))
+      .map(this._attachRenderFunctionToTarget)
+  })
+
+  _getProgressIndicators = memoize((targets) => {
+    return targets
+      .filter(target => target.type === 'progressindicator')
+      .map(this._attachRenderFunctionToTarget)
+  })
+
   render (state) {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
@@ -710,46 +757,8 @@ module.exports = class Dashboard extends Plugin {
     const isAllPaused = inProgressFiles.length !== 0 &&
       pausedFiles.length === inProgressFiles.length
 
-    const attachRenderFunctionToTarget = (target) => {
-      const plugin = this.uppy.getPlugin(target.id)
-      return Object.assign({}, target, {
-        icon: plugin.icon || this.opts.defaultPickerIcon,
-        render: plugin.render
-      })
-    }
-
-    const isSupported = (target) => {
-      const plugin = this.uppy.getPlugin(target.id)
-      // If the plugin does not provide a `supported` check, assume the plugin works everywhere.
-      if (typeof plugin.isSupported !== 'function') {
-        return true
-      }
-      return plugin.isSupported()
-    }
-
-    const acquirers = pluginState.targets
-      .filter(target => target.type === 'acquirer' && isSupported(target))
-      .map(attachRenderFunctionToTarget)
-
-    const progressindicators = pluginState.targets
-      .filter(target => target.type === 'progressindicator')
-      .map(attachRenderFunctionToTarget)
-
-    const startUpload = (ev) => {
-      this.uppy.upload().catch((err) => {
-        // Log error.
-        this.uppy.log(err.stack || err.message || err)
-      })
-    }
-
-    const cancelUpload = (fileID) => {
-      this.uppy.removeFile(fileID)
-    }
-
-    const saveFileCard = (meta, fileID) => {
-      this.uppy.setFileMeta(fileID, meta)
-      this.toggleFileCard()
-    }
+    const acquirers = this._getAcquirers(pluginState.targets)
+    const progressindicators = this._getProgressIndicators(pluginState.targets)
 
     return DashboardUI({
       state,
@@ -794,16 +803,16 @@ module.exports = class Dashboard extends Plugin {
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
       individualCancellation: capabilities.individualCancellation,
-      startUpload,
+      startUpload: this.startUpload,
       pauseUpload: this.uppy.pauseResume,
       retryUpload: this.uppy.retryUpload,
-      cancelUpload,
+      cancelUpload: this.cancelUpload,
       cancelAll: this.uppy.cancelAll,
       fileCardFor: pluginState.fileCardFor,
       toggleFileCard: this.toggleFileCard,
       toggleAddFilesPanel: this.toggleAddFilesPanel,
       showAddFilesPanel: pluginState.showAddFilesPanel,
-      saveFileCard,
+      saveFileCard: this.saveFileCard,
       width: this.opts.width,
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,

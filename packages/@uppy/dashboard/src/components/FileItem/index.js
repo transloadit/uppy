@@ -1,12 +1,12 @@
 const { h } = require('preact')
 const classNames = require('classnames')
-
+const pure = require('../../utils/pure')
 const FilePreviewAndLink = require('./FilePreviewAndLink')
 const FileProgress = require('./FileProgress')
 const FileInfo = require('./FileInfo')
 const Buttons = require('./Buttons')
 
-module.exports = function FileItem (props) {
+module.exports = pure(function FileItem (props) {
   const file = props.file
 
   const isProcessing = file.progress.preprocess || file.progress.postprocess
@@ -72,4 +72,4 @@ module.exports = function FileItem (props) {
       </div>
     </li>
   )
-}
+})
