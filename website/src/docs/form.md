@@ -46,7 +46,7 @@ uppy.use(Form, {
   resultName: 'uppyResult',
   getMetaFromForm: true,
   addResultToForm: true,
-  replaceResultInFormWithNew: true,
+  multipleResults: false,
   submitOnSuccess: false,
   triggerUploadOnSubmit: false
 })
@@ -72,18 +72,18 @@ Configures whether or not to extract metadata from the form. When set to true, t
 
 Configures whether or not to add upload/encoding results back to the form in an `<input name="uppyResult" type="hidden">` element.
 
-### `replaceResultInFormWithNew: true`
+### `multipleResults: false`
 
 By default, the Form plugin will _replace_ the `value` of `<input type="hidden">` it adds with the result (if `addResultToForm` is enabled) on each upload / `complete` event. This behavior can be confusing, because if a user uploads a file and then adds another, only the last result will end up in the hidden input and submitted to your server.
 
-Setting this to `false` turns the value of `<input type="hidden">` into an array and _appends_ each result from `complete` event to it. Since this is likely the desired default behavior in most cases, it will be made default in the next major release of Uppy, the option is kept for backwards compatability.
+Setting `multipleResults: true` turns the value of `<input type="hidden">` into an array and _appends_ each result from `complete` event to it. Since this is likely the desired default behavior in most cases, it will be made default in the next major release of Uppy, the option is kept for backwards compatability.
 
 ### `triggerUploadOnSubmit: false`
 
 Configures whether or not to start the upload when the form is submitted. When the user presses a submit button, this will prevent form submission, and instead upload files. You can then:
 
- - use `submitOnSuccess: true` if you need the form to _actually_ be submitted once all files have been uploaded.
- - listen for `uppy.on('complete')` to do something else if the file uploads are all you need. For example, if the form is used for file metadata only.
+- use `submitOnSuccess: true` if you need the form to _actually_ be submitted once all files have been uploaded.
+- listen for `uppy.on('complete')` to do something else if the file uploads are all you need. For example, if the form is used for file metadata only.
 
 ### `submitOnSuccess: false`
 

@@ -23,7 +23,7 @@ module.exports = class Form extends Plugin {
       resultName: 'uppyResult',
       getMetaFromForm: true,
       addResultToForm: true,
-      replaceResultInFormWithNew: true,
+      multipleResults: false,
       submitOnSuccess: false,
       triggerUploadOnSubmit: false
     }
@@ -87,30 +87,30 @@ module.exports = class Form extends Plugin {
 
     let resultInput = this.form.querySelector(`[name="${this.opts.resultName}"]`)
     if (resultInput) {
-      if (this.opts.replaceResultInFormWithNew) {
-        // Replace existing result with the newer result on `complete` event.
-        // This behavior is not ideal, since you most likely want to always keep
-        // all results in the input. This is kept for backwards compatability until 2.0.
-        resultInput.value = JSON.stringify(result)
-      } else {
+      if (this.opts.multipleResults) {
         // Append new result to the previous result array
         const updatedResult = JSON.parse(resultInput.value)
         updatedResult.push(result)
         resultInput.value = JSON.stringify(updatedResult)
-        return
+      } else {
+        // Replace existing result with the newer result on `complete` event.
+        // This behavior is not ideal, since you most likely want to always keep
+        // all results in the input. This is kept for backwards compatability until 2.0.
+        resultInput.value = JSON.stringify(result)
       }
+      return
     }
 
     resultInput = document.createElement('input')
     resultInput.name = this.opts.resultName
     resultInput.type = 'hidden'
 
-    if (this.opts.replaceResultInFormWithNew) {
-      // Result is an object, kept for backwards compatability until 2.0
-      resultInput.value = JSON.stringify(result)
-    } else {
+    if (this.opts.multipleResults) {
       // Wrap result in an array so we can have multiple results
       resultInput.value = JSON.stringify([result])
+    } else {
+      // Result is an object, kept for backwards compatability until 2.0
+      resultInput.value = JSON.stringify(result)
     }
 
     this.form.appendChild(resultInput)
