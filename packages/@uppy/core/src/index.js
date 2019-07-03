@@ -84,8 +84,8 @@ class Uppy {
     this.opts = Object.assign({}, defaultOptions, opts)
     this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
 
-    // Set built-in debug logger, support debug: true for backwards-compatability
-    if (this.opts.logger === 'debug' || this.opts.debug) {
+    // Support debug: true for backwards-compatability
+    if (this.opts.debug) {
       this.opts.logger = debugLogger
     }
 
@@ -1305,3 +1305,4 @@ module.exports = function (opts) {
 // Expose class constructor.
 module.exports.Uppy = Uppy
 module.exports.Plugin = Plugin
+module.exports.debugLogger = debugLogger

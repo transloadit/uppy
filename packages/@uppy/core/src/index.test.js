@@ -1529,12 +1529,12 @@ describe('src/Core', () => {
       expect(core.opts.logger.warn.mock.calls.length).toBe(1)
     })
 
-    it('should log to console when logger: debug or debug: true is set', () => {
+    it('should log to console when logger: Uppy.debugLogger or debug: true is set', () => {
       console.debug = jest.fn()
       console.error = jest.fn()
 
       const core = new Core({
-        logger: 'debug'
+        logger: Core.debugLogger
       })
 
       core.log('test test')
