@@ -49,7 +49,8 @@ const uppy = Uppy({
   onBeforeFileAdded: (currentFile, files) => currentFile,
   onBeforeUpload: (files) => {},
   locale: {},
-  store: new DefaultStore()
+  store: new DefaultStore(),
+  logger: nullLogger
 })
 ```
 
