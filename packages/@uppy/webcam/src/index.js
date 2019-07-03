@@ -146,10 +146,11 @@ module.exports = class Webcam extends Plugin {
 
   startRecording () {
     let options = {}
+    const preferredMimeType = this.opts.preferredMimeType
 
     // Attempt to use the passed preferredMimeType (if any) during recording.
     // If the browser doesn't support it, we'll fall back to the browser default instead
-    if (this.opts.preferredMimeType && MediaRecorder.isTypeSupported(preferredMimeType) && getFileTypeExtension(mimeType) ) {
+    if (preferredMimeType && MediaRecorder.isTypeSupported(preferredMimeType) && getFileTypeExtension(preferredMimeType) ) {
       options.mimeType = preferredMimeType
     }
 
