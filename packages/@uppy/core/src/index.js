@@ -163,10 +163,8 @@ class Uppy {
       this.updateAll(nextState)
     })
 
-    // for debugging and testing
-    // this.updateNum = 0
+    // Exposing uppy object on window for debugging and testing
     if (this.opts.debug && typeof window !== 'undefined') {
-      window['uppyLog'] = ''
       window[this.opts.id] = this
     }
 
@@ -312,7 +310,7 @@ class Uppy {
   setFileMeta (fileID, data) {
     const updatedFiles = Object.assign({}, this.getState().files)
     if (!updatedFiles[fileID]) {
-      this.log('Was trying to set metadata for a file that’s not with us anymore: ', fileID)
+      this.log('Was trying to set metadata for a file that has been removed: ', fileID)
       return
     }
     const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
