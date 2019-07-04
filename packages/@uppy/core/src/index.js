@@ -84,8 +84,11 @@ class Uppy {
     this.opts = Object.assign({}, defaultOptions, opts)
     this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
 
-    // Support debug: true for backwards-compatability
-    if (this.opts.debug) {
+    // Support debug: true for backwards-compatability, unless logger is set in opts
+    // opts instead of this.opts to avoid comparing objects — we set logger: nullLogger in defaultOptions
+    if (opts && opts.logger && opts.debug) {
+      this.log('You are using a custom `logger`, but also set `debug: true`, which uses built-in logger to output logs to console. Ignoring `debug: true` and using your custom `logger`.', 'warning')
+    } else if (opts && opts.debug) {
       this.opts.logger = debugLogger
     }
 
@@ -1038,8 +1041,8 @@ class Uppy {
   }
 
   /**
-   * Passes messages to a function, provided in opt.logger.
-   * If `opt.logger === 'debug'` or `opt.debug === true`, logs to the browser console.
+   * Passes messages to a function, provided in `opt.logger`.
+   * If `opt.logger: Uppy.debugLogger` or `opt.debug: true`, logs to the browser console.
    *
    * @param {String|Object} message to log
    * @param {String} [type] optional `error` or `warning`
