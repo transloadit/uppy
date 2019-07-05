@@ -8,6 +8,7 @@ ru_RU.strings = {
   authenticateWithTitle: 'Пожалуйста, авторизуйтесь в %{pluginName} чтобы выбрать файлы',
   authenticateWith: 'Подключиться к %{pluginName}',
   back: 'Назад',
+  addMore: 'Добавить еще',
   browse: 'выберите',
   cancel: 'Отменить',
   cancelUpload: 'Отменить загрузку',
@@ -79,7 +80,7 @@ ru_RU.strings = {
   resumeUpload: 'Продолжить загрузку',
   retry: 'Повторить попытку',
   retryUpload: 'Повторить попытку загрузки',
-  saveChanges: 'Сохранить изменения',
+  saveChanges: 'Сохранить',
   selectXFiles: {
     '0': 'Выбрать %{smart_count} файл',
     '1': 'Выбрать %{smart_count} файла',

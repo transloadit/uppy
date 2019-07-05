@@ -55,7 +55,9 @@ module.exports = class FileInput extends Plugin {
           data: file
         })
       } catch (err) {
-        // Nothing, restriction errors handled in Core
+        if (!err.isRestriction) {
+          this.uppy.log(err)
+        }
       }
     })
 

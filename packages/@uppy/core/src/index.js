@@ -12,6 +12,13 @@ const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const Plugin = require('./Plugin') // Exported from here.
 
+class RestrictionError extends Error {
+  constructor (...args) {
+    super(...args)
+    this.isRestriction = true
+  }
+}
+
 /**
  * Uppy Core module.
  * Manages plugins, state updates, acts as an event bus,
@@ -197,7 +204,7 @@ class Uppy {
   /**
    * Updates state with a patch
    *
-   * @param {object} patch {foo: 'bar'}
+   * @param {Object} patch {foo: 'bar'}
    */
   setState (patch) {
     this.store.setState(patch)
@@ -205,7 +212,8 @@ class Uppy {
 
   /**
    * Returns current state.
-   * @return {object}
+   *
+   * @returns {Object}
    */
   getState () {
     return this.store.getState()
@@ -347,7 +355,7 @@ class Uppy {
   _checkMinNumberOfFiles (files) {
     const { minNumberOfFiles } = this.opts.restrictions
     if (Object.keys(files).length < minNumberOfFiles) {
-      throw new Error(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
+      throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
     }
   }
 
@@ -355,7 +363,7 @@ class Uppy {
   * Check if file passes a set of restrictions set in options: maxFileSize,
   * maxNumberOfFiles and allowedFileTypes.
   *
-  * @param {object} file object to check
+  * @param {Object} file object to check
   * @private
   */
   _checkRestrictions (file) {
@@ -363,7 +371,7 @@ class Uppy {
 
     if (maxNumberOfFiles) {
       if (Object.keys(this.getState().files).length + 1 > maxNumberOfFiles) {
-        throw new Error(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
+        throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
       }
     }
 
@@ -386,14 +394,14 @@ class Uppy {
 
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
-        throw new Error(this.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }))
+        throw new RestrictionError(this.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }))
       }
     }
 
     // We can't check maxFileSize if the size is unknown.
     if (maxFileSize && file.data.size != null) {
       if (file.data.size > maxFileSize) {
-        throw new Error(`${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`)
+        throw new RestrictionError(`${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`)
       }
     }
   }
@@ -403,7 +411,7 @@ class Uppy {
   * try to guess file type in a clever way, check file against restrictions,
   * and start an upload if `autoProceed === true`.
   *
-  * @param {object} file object to add
+  * @param {Object} file object to add
   */
   addFile (file) {
     const { files, allowNewUpload } = this.getState()
@@ -886,9 +894,9 @@ class Uppy {
   /**
    * Registers a plugin with Core.
    *
-   * @param {object} Plugin object
-   * @param {object} [opts] object with options to be passed to Plugin
-   * @return {Object} self for chaining
+   * @param {Object} Plugin object
+   * @param {Object} [opts] object with options to be passed to Plugin
+   * @returns {Object} self for chaining
    */
   use (Plugin, opts) {
     if (typeof Plugin !== 'function') {
@@ -932,7 +940,7 @@ class Uppy {
    * Find one Plugin by name.
    *
    * @param {string} id plugin id
-   * @return {object | boolean}
+   * @returns {Object|boolean}
    */
   getPlugin (id) {
     let foundPlugin = null
@@ -948,7 +956,7 @@ class Uppy {
   /**
    * Iterate through all `use`d plugins.
    *
-   * @param {function} method that will be run on each plugin
+   * @param {Function} method that will be run on each plugin
    */
   iteratePlugins (method) {
     Object.keys(this.plugins).forEach(pluginType => {
@@ -959,7 +967,7 @@ class Uppy {
   /**
    * Uninstall and remove a plugin.
    *
-   * @param {object} instance The plugin instance to remove.
+   * @param {Object} instance The plugin instance to remove.
    */
   removePlugin (instance) {
     this.log(`Removing plugin ${instance.id}`)
@@ -1042,8 +1050,8 @@ class Uppy {
   /**
    * Logs stuff to console, only if `debug` is set to true. Silent in production.
    *
-   * @param {String|Object} message to log
-   * @param {String} [type] optional `error` or `warning`
+   * @param {string|Object} message to log
+   * @param {string} [type] optional `error` or `warning`
    */
   log (message, type) {
     if (!this.opts.debug) {
@@ -1091,7 +1099,7 @@ class Uppy {
    * Create an upload for a bunch of files.
    *
    * @param {Array<string>} fileIDs File IDs to include in this upload.
-   * @return {string} ID of this upload.
+   * @returns {string} ID of this upload.
    */
   _createUpload (fileIDs) {
     const { allowNewUpload, currentUploads } = this.getState()
@@ -1132,7 +1140,7 @@ class Uppy {
    * Add data to an upload's result object.
    *
    * @param {string} uploadID The ID of the upload.
-   * @param {object} data Data properties to add to the result object.
+   * @param {Object} data Data properties to add to the result object.
    */
   addResultData (uploadID, data) {
     if (!this._getUpload(uploadID)) {
@@ -1256,7 +1264,7 @@ class Uppy {
   /**
    * Start an upload for all the files that are not currently being uploaded.
    *
-   * @return {Promise}
+   * @returns {Promise}
    */
   upload () {
     if (!this.plugins.uploader) {

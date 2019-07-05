@@ -1,6 +1,7 @@
 const en_US = {}
 
 en_US.strings = {
+  addMore: 'Add more',
   addMoreFiles: 'Add more files',
   addingMoreFiles: 'Adding more files',
   allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',

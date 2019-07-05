@@ -1,35 +1,3 @@
-<%
-var categories = []
-
-if (page.type === 'docs') {
-  categories = [
-    { category: 'Docs', path: 'docs/', link: true, hidden: true },
-    { category: 'UI Elements', path: 'docs/dashboard/', link: false },
-    { category: 'Sources', path: 'docs/drag-drop/', link: false },
-    { category: 'Destinations', path: 'docs/tus/', link: false },
-    { category: 'File Processing', path: 'docs/robodog/', link: true },
-    { category: 'Miscellaneous', path: 'docs/form/', link: false },
-    { category: 'React', path: 'docs/react/', link: true },
-    { category: 'Contributing', path: 'docs/contributing/', link: true },
-    ]
-  } else if (page.type === 'examples') {
-    categories = [
-    { category: 'Examples', path: 'examples/', link: true, hidden: true },
-    { category: 'File Processing', path: 'examples/markdown-snippets/', link: true },
-  ]
-} else {
-  categories = [
-    { category: 'Unknown Type: ' + page.type, path: 'unknown/unknown/', link: false },
-  ]
-}
-
-var catPages = {}
-site.pages.find({ type }).each((p) => {
-  var path = (p.path || '').replace(/index\.html$/, '');
-  catPages[p.category] = catPages[p.category] || [];
-  catPages[p.category].push(p);
-})
-%>
 <div class="Sidebar js-Sidebar">
   <ul class="main-menu">
     <%- partial('partials/main_menu') %>
@@ -38,31 +6,12 @@ site.pages.find({ type }).each((p) => {
     <h2>
       <% if (page.type) { %>
         <a href="/<%- type %>"><%- type === 'api' ? 'API' : (type.charAt(0).toUpperCase() + type.slice(1)) %></a>
-      <% } %>
-    </h2>
-
-    <ul class="menu-root">
-      <% for (var i in categories) { %>
-        <% var sorted = (catPages[categories[i].category] || ['No catPages for: ' + i]).sort((a, b) => {return a.order - b.order}) %>
-        <% if (!categories[i].hidden) { %>
-          <li>
-            <% if (categories[i].link) { %>
-            <h3><a href="/<%- categories[i].path %>"><%- categories[i].category %></a></h3>
-            <% } else { %>
-            <h3><%- categories[i].category %></h3>
-            <% } %>
-          </li>
         <% } %>
-        <% sorted.forEach((p) => { %>
-          <% var path = (p.path || '').replace(/index\.html$/, ''); %>
-          <% var firstInCategory = categories.find((c) => c.path === path) %>
-          <% // see https://github.com/vuejs/vuejs.org/blob/master/themes/vue/layout/partials/toc.ejs %>
-          <li>
-            <%- p.menu_prefix %><a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %>"><%- p.menu || p.title %></a>
-          </li>
-        <% }) %>
-      <% } %>
-    </ul>
+      </h2>
+      
+    <div class="menu-root">
+      <%- partial('partials/docs_menu') %>
+    </div>
     <%- partial('partials/social') %>
   </div>
 </div>

@@ -61,6 +61,11 @@
     padding-left: 1em;
   }
 
+  .menu-root > ul {
+    margin: 0;
+    padding-left: 0;
+  }
+
   &.is-blog ul { padding-left: 0; }
 
   li {
@@ -279,7 +284,8 @@
   .post li,
   > ul li,
   > li {
-    margin-bottom: 0.5em;
+    // @TODO can this safely be removed artur?
+    // margin-bottom: 0.5em;
   }
 
   .post p, .post ul, .post ol,
@@ -358,7 +364,21 @@
   white-space: nowrap;
   font-size: 90%;
 }
-.page-docs-locales table code {
+
+// Plugin list
+
+body.page-plugin-list .Content ul {
+  margin-left: 0;
+}
+
+body.page-plugin-list .Content li {
+  // list-style: none;
+  margin-bottom: 0.5em;
+}
+
+// Locales
+
+body.page-docs-locales table code {
   font-size: 75%;
 }
 

@@ -1,5 +1,4 @@
 const base = require('./wdio.base.conf')
-const { CompanionService } = require('./utils')
 
 // Use "npm run test:endtoend:local -- -b chrome" to test in chrome
 // "npm run test:endtoend:local -- -b firefox -b chrome" to test in FF and chrome
@@ -17,7 +16,9 @@ if (capabilities.length === 0) {
   capabilities.push({ browserName: 'firefox' })
 }
 
-exports.config = Object.assign(base.config, {
+exports.config = {
+  ...base.config,
+
   capabilities,
 
   // If you only want to run your tests until a specific amount of tests have failed use
@@ -28,12 +29,6 @@ exports.config = Object.assign(base.config, {
   // with "/", then the base url gets prepended.
   baseUrl: 'http://localhost',
 
-  // Test runner services
-  // Services take over a specific job you don't want to take care of. They enhance
-  // your test setup with almost no effort. Unlike plugins, they don't add new
-  // commands. Instead, they hook themselves up into the test process.
-  services: ['static-server', new CompanionService()],
-
   // Options to be passed to Mocha.
   // See the full list at http://mochajs.org/
   mochaOpts: {
@@ -41,4 +36,4 @@ exports.config = Object.assign(base.config, {
     reporter: 'dot',
     timeout: 60000
   }
-})
+}
