@@ -987,7 +987,7 @@ describe('src/Core', () => {
         bytesTotal: 17175
       })
       expect(core.getFile(fileId).progress).toEqual({
-        percentage: 71,
+        percentage: 72,
         bytesUploaded: 12345,
         bytesTotal: 17175,
         uploadComplete: false,
@@ -1055,8 +1055,10 @@ describe('src/Core', () => {
       expect(core.getFiles()[0].progress).toMatchObject({
         bytesUploaded: 1234,
         bytesTotal: 3456,
-        percentage: 35
+        percentage: 36
       })
+
+      expect(core.getState().totalProgress).toBe(36)
 
       finishUpload()
       // wait for success event
@@ -1070,6 +1072,47 @@ describe('src/Core', () => {
       })
 
       await uploadPromise
+
+      core.close()
+    })
+
+    it('should estimate progress for unsized files', () => {
+      const core = new Core()
+
+      core.once('file-added', (file) => {
+        core.emit('upload-started', file)
+        core.emit('upload-progress', file, {
+          bytesTotal: 3456,
+          bytesUploaded: 1234
+        })
+      })
+      core.addFile({
+        source: 'instagram',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: {}
+      })
+
+      core.once('file-added', (file) => {
+        core.emit('upload-started', file)
+        core.emit('upload-progress', file, {
+          bytesTotal: null,
+          bytesUploaded: null
+        })
+      })
+      core.addFile({
+        source: 'instagram',
+        name: 'bar.jpg',
+        type: 'image/jpeg',
+        data: {}
+      })
+
+      core._calculateTotalProgress()
+
+      // foo.jpg at 35%, bar.jpg at 0%
+      expect(core.getState().totalProgress).toBe(18)
+
+      core.close()
     })
 
     it('should calculate the total progress of all file uploads', () => {
